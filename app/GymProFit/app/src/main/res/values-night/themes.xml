@@ -1,7 +1,12 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.GymProFit" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+<resources>
+    <style name="Theme.GymProFit" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primary_dark</item>
+        <item name="colorOnPrimary">@color/on_primary_dark</item>
+        <item name="colorSurface">@color/surface_dark</item>
+        <item name="colorOnSurface">@color/on_surface_dark</item>
+        <item name="android:colorBackground">@color/background_dark</item>
+
+        <!-- Texto dorado en modo oscuro -->
+        <item name="android:textColorPrimary">@color/golden</item>
     </style>
 </resources>

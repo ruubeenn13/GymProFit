@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="?attr/colorSurface">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:id="@+id/btnCambiarTema"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_moon"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/cambiar_tema" />
+
+        <ImageButton
+            android:id="@+id/btnCambiarIdioma"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentTop="true"
+            android:layout_toStartOf="@id/btnCambiarTema"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="4dp"
+            android:src="@drawable/ic_language"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/cambiar_idioma" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="32dp">
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ic_logo_gym"
+                android:contentDescription="@string/app_name" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/login_titulo"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurface" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/login_subtitulo"
+                android:textSize="16sp"
+                android:textColor="?attr/colorOnSurface"
+                android:alpha="0.7" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:hint="@string/login_usuario"
+                app:boxBackgroundMode="outline"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etUsuario"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="@string/login_password"
+                app:boxBackgroundMode="outline"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:endIconMode="password_toggle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEntrar"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="32dp"
+                android:text="@string/login_entrar"
+                android:textSize="16sp"
+                app:cornerRadius="12dp" />
+
+            <TextView
+                android:id="@+id/tvNoTienesCuenta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/login_no_cuenta"
+                android:textSize="14sp"
+                android:textColor="?attr/colorPrimary" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</ScrollView>

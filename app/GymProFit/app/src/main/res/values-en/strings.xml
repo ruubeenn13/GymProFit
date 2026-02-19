@@ -1,0 +1,26 @@
+<resources>
+    <!-- SPLASH ACTIVITY -->
+    <string name="app_name">GymProFit</string>
+    <string name="splash_subtitle">Your fitness companion</string>
+    <string name="splash_version">v1.0</string>
+
+    <!-- LOGIN -->
+    <string name="login_titulo">Welcome</string>
+    <string name="login_subtitulo">Log in to continue</string>
+    <string name="login_usuario">Username</string>
+    <string name="login_password">Password</string>
+    <string name="login_entrar">Log In</string>
+    <string name="login_no_cuenta">Don\'t have an account? Sign up</string>
+    <string name="error_campos_vacios">Please fill in all fields</string>
+    <string name="registro_proximamente">Registration coming soon</string>
+
+    <!-- THEME -->
+    <string name="cambiar_tema">Change theme</string>
+    <string name="tema_claro">Light mode</string>
+    <string name="tema_oscuro">Dark mode</string>
+
+    <!-- LANGUAGE -->
+    <string name="cambiar_idioma">Change language</string>
+    <string name="idioma_espanol">Español</string>
+    <string name="idioma_ingles">English</string>
+</resources>
