@@ -23,4 +23,65 @@
     <string name="cambiar_idioma">Change language</string>
     <string name="idioma_espanol">Español</string>
     <string name="idioma_ingles">English</string>
+
+    <!-- MAIN ACTIVITY -->
+    <string name="nav_home">Home</string>
+    <string name="nav_rutinas">Routines</string>
+    <string name="nav_ejercicios">Exercises</string>
+    <string name="nav_nutricion">Nutrition</string>
+    <string name="nav_perfil">Profile</string>
+
+    <!-- HOME -->
+    <string name="home_resumen">Today\'s summary</string>
+    <string name="home_entrenamientos">Workouts</string>
+    <string name="home_calorias">Calories</string>
+    <string name="home_minutos">Minutes</string>
+    <string name="home_acciones_rapidas">Quick actions</string>
+    <string name="home_iniciar_entrenamiento">Start workout</string>
+
+    <!-- ROUTINES -->
+    <string name="rutinas_mis_rutinas">My routines</string>
+    <string name="rutinas_full_body">Full Body Routine</string>
+    <string name="rutinas_full_body_desc">5 exercises · 45 minutes</string>
+    <string name="rutinas_fuerza">Strength Routine</string>
+    <string name="rutinas_fuerza_desc">8 exercises · 60 minutes</string>
+    <string name="rutinas_crear_nueva">Create new routine</string>
+
+    <!-- EXERCISES -->
+    <string name="ejercicios_catalogo">Exercise catalog</string>
+    <string name="ejercicios_buscar">Search exercise</string>
+    <string name="ejercicios_pecho">Chest</string>
+    <string name="ejercicios_espalda">Back</string>
+    <string name="ejercicios_press_banca">Bench press</string>
+    <string name="ejercicios_press_banca_desc">Pectoral, Triceps</string>
+    <string name="ejercicios_dominadas">Pull-ups</string>
+    <string name="ejercicios_dominadas_desc">Lats, Biceps</string>
+
+    <!-- NUTRITION -->
+    <string name="nutricion_seguimiento">Nutritional tracking</string>
+    <string name="nutricion_calorias_hoy">Today\'s calories</string>
+    <string name="nutricion_objetivo">Daily goal</string>
+    <string name="nutricion_proteinas">Protein</string>
+    <string name="nutricion_carbohidratos">Carbs</string>
+    <string name="nutricion_grasas">Fat</string>
+    <string name="nutricion_desayuno">Breakfast</string>
+    <string name="nutricion_comida">Lunch</string>
+    <string name="nutricion_cena">Dinner</string>
+    <string name="nutricion_agregar">Add meal</string>
+
+    <!-- PROFILE -->
+    <string name="perfil_mi_perfil">My profile</string>
+    <string name="perfil_informacion">Personal information</string>
+    <string name="perfil_nombre">Name</string>
+    <string name="perfil_email">Email</string>
+    <string name="perfil_configuracion">Settings</string>
+    <string name="perfil_tema">App theme</string>
+    <string name="perfil_idioma">Language</string>
+    <string name="perfil_cerrar_sesion">Log out</string>
+
+    <!-- GENERAL -->
+    <string name="sin_registrar">Not registered</string>
+    <string name="comidas_hoy">Today\'s meals</string>
+    <string name="usuario_ejemplo">User</string>
+    <string name="email_ejemplo">user@email.com</string>
 </resources>

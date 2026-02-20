@@ -12,9 +12,23 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GymProFit">
         <activity
+            android:name=".ui.activities.PerfilActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activities.NutricionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activities.EjerciciosActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activities.RutinasActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activities.HomeActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.activities.LoginActivity"
             android:exported="false" />
-        <!-- Splash - Pantalla de inicio (LAUNCHER) -->
         <activity
             android:name=".ui.activities.SplashActivity"
             android:exported="true">
@@ -23,10 +37,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- Main - Pantalla principal -->
-        <activity
-            android:name=".ui.activities.MainActivity"
-            android:exported="false" />
+        </activity>
     </application>
 
 </manifest>

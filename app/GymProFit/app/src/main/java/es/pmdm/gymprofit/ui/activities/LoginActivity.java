@@ -33,6 +33,7 @@ public class LoginActivity extends AppCompatActivity {
 
         prefsManager = new PreferencesManager(this);
         prefsManager.applyTheme();
+        aplicarIdiomaGuardado();
 
         setContentView(R.layout.activity_login);
 
@@ -60,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, HomeActivity.class);
             startActivity(intent);
             finish();
         });
@@ -89,9 +90,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         prefsManager.saveTheme(newMode);
-        AppCompatDelegate.setDefaultNightMode(newMode);
-
-        actualizarIconoTema();
+        recreate();
     }
 
     private void actualizarIconoTema() {
@@ -121,24 +120,10 @@ public class LoginActivity extends AppCompatActivity {
 
     private void cambiarIdioma(String languageCode) {
         prefsManager.saveLanguage(languageCode);
-
-        Locale locale = new Locale(languageCode);
-        Locale.setDefault(locale);
-
-        Resources resources = getResources();
-        Configuration config = resources.getConfiguration();
-        config.setLocale(locale);
-        resources.updateConfiguration(config, resources.getDisplayMetrics());
-
-        Intent intent = getIntent();
-        finish();
-        startActivity(intent);
+        recreate();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
+    private void aplicarIdiomaGuardado() {
         String savedLanguage = prefsManager.getLanguage();
         if (!savedLanguage.isEmpty()) {
             Locale locale = new Locale(savedLanguage);

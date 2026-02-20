@@ -23,4 +23,65 @@
     <string name="cambiar_idioma">Cambiar idioma</string>
     <string name="idioma_espanol">Español</string>
     <string name="idioma_ingles">English</string>
+
+    <!-- MAIN ACTIVITY -->
+    <string name="nav_home">Inicio</string>
+    <string name="nav_rutinas">Rutinas</string>
+    <string name="nav_ejercicios">Ejercicios</string>
+    <string name="nav_nutricion">Nutrición</string>
+    <string name="nav_perfil">Perfil</string>
+
+    <!-- HOME -->
+    <string name="home_resumen">Resumen de hoy</string>
+    <string name="home_entrenamientos">Entrenamientos</string>
+    <string name="home_calorias">Calorías</string>
+    <string name="home_minutos">Minutos</string>
+    <string name="home_acciones_rapidas">Acciones rápidas</string>
+    <string name="home_iniciar_entrenamiento">Iniciar entrenamiento</string>
+
+    <!-- RUTINAS -->
+    <string name="rutinas_mis_rutinas">Mis rutinas</string>
+    <string name="rutinas_full_body">Rutina Full Body</string>
+    <string name="rutinas_full_body_desc">5 ejercicios · 45 minutos</string>
+    <string name="rutinas_fuerza">Rutina de Fuerza</string>
+    <string name="rutinas_fuerza_desc">8 ejercicios · 60 minutos</string>
+    <string name="rutinas_crear_nueva">Crear nueva rutina</string>
+
+    <!-- EJERCICIOS -->
+    <string name="ejercicios_catalogo">Catálogo de ejercicios</string>
+    <string name="ejercicios_buscar">Buscar ejercicio</string>
+    <string name="ejercicios_pecho">Pecho</string>
+    <string name="ejercicios_espalda">Espalda</string>
+    <string name="ejercicios_press_banca">Press banca</string>
+    <string name="ejercicios_press_banca_desc">Pectoral, Tríceps</string>
+    <string name="ejercicios_dominadas">Dominadas</string>
+    <string name="ejercicios_dominadas_desc">Dorsales, Bíceps</string>
+
+    <!-- NUTRICIÓN -->
+    <string name="nutricion_seguimiento">Seguimiento nutricional</string>
+    <string name="nutricion_calorias_hoy">Calorías de hoy</string>
+    <string name="nutricion_objetivo">Objetivo diario</string>
+    <string name="nutricion_proteinas">Proteínas</string>
+    <string name="nutricion_carbohidratos">Carbohidratos</string>
+    <string name="nutricion_grasas">Grasas</string>
+    <string name="nutricion_desayuno">Desayuno</string>
+    <string name="nutricion_comida">Comida</string>
+    <string name="nutricion_cena">Cena</string>
+    <string name="nutricion_agregar">Agregar comida</string>
+
+    <!-- PERFIL -->
+    <string name="perfil_mi_perfil">Mi perfil</string>
+    <string name="perfil_informacion">Información personal</string>
+    <string name="perfil_nombre">Nombre</string>
+    <string name="perfil_email">Email</string>
+    <string name="perfil_configuracion">Configuración</string>
+    <string name="perfil_tema">Tema de la aplicación</string>
+    <string name="perfil_idioma">Idioma</string>
+    <string name="perfil_cerrar_sesion">Cerrar sesión</string>
+
+    <!-- GENERAL -->
+    <string name="sin_registrar">Sin registrar</string>
+    <string name="comidas_hoy">Comidas de hoy</string>
+    <string name="usuario_ejemplo">Usuario</string>
+    <string name="email_ejemplo">usuario@email.com</string>
 </resources>

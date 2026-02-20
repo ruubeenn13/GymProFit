@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/ic_home"
+        android:title="@string/nav_home" />
+
+    <item
+        android:id="@+id/nav_rutinas"
+        android:icon="@drawable/ic_rutinas"
+        android:title="@string/nav_rutinas" />
+
+    <item
+        android:id="@+id/nav_ejercicios"
+        android:icon="@drawable/ic_ejercicios"
+        android:title="@string/nav_ejercicios" />
+
+    <item
+        android:id="@+id/nav_nutricion"
+        android:icon="@drawable/ic_nutricion"
+        android:title="@string/nav_nutricion" />
+
+    <item
+        android:id="@+id/nav_perfil"
+        android:icon="@drawable/ic_perfil"
+        android:title="@string/nav_perfil" />
+
+</menu>
