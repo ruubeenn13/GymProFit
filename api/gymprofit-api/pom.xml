@@ -8,7 +8,7 @@
 		<version>3.5.7</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>es.pmdm</groupId>
+	<groupId>com.gymprofit.api</groupId>
 	<artifactId>gymprofit-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>GymProFit API</name>
@@ -20,7 +20,7 @@
 	<developers>
 		<developer>
 			<name>Rubén Juan Candela</name>
-			<email>ruubeenn13@gmail.com</email>
+			<email>rubenjuancandela06@gmail.com</email>
 		</developer>
 	</developers>
 	<scm>
@@ -207,7 +207,7 @@
 						</strategy>
 
 						<target>
-							<packageName>es.pmdm.gymprofit.jooq</packageName>
+							<packageName>com.gymprofit.api.jooq</packageName>
 							<directory>target/generated-sources/jooq</directory>
 						</target>
 					</generator>
