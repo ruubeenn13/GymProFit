@@ -34,6 +34,7 @@ CREATE TABLE comidas
     total_carbohidratos DECIMAL(5, 2) NULL,
     total_grasas        DECIMAL(5, 2) NULL,
     notas               TEXT NULL,
+    usuario_id          INT          NOT NULL,
     CONSTRAINT pk_comidas PRIMARY KEY (id)
 );
 
@@ -196,6 +197,9 @@ ALTER TABLE alimentos_comida
 
 ALTER TABLE alimentos_comida
     ADD CONSTRAINT FK_ALIMENTOS_COMIDA_ON_COMIDA FOREIGN KEY (comida_id) REFERENCES comidas (id);
+
+ALTER TABLE comidas
+    ADD CONSTRAINT FK_COMIDAS_ON_USUARIO FOREIGN KEY (usuario_id) REFERENCES usuarios (id);
 
 ALTER TABLE ejercicios_realizados
     ADD CONSTRAINT FK_EJERCICIOS_REALIZADOS_ON_EJERCICIO FOREIGN KEY (ejercicio_id) REFERENCES ejercicios (id);
