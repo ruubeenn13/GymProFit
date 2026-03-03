@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface IAlimentoComidaRepository extends CrudRepository<AlimentoComida, Integer> {
 
-    List<AlimentoComida> fomByComidaId(Integer comidaId);
+    List<AlimentoComida> findByComidaId(Integer comidaId);
 
     List<AlimentoComida> findByAlimentoId(Integer alimentoId);
 }
