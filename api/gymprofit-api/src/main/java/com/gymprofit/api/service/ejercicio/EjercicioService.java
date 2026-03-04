@@ -1,0 +1,180 @@
+package com.gymprofit.api.service.ejercicio;
+
+import com.gymprofit.api.dto.entity.ejercicio.EjercicioCreateDTO;
+import com.gymprofit.api.dto.entity.ejercicio.EjercicioDTO;
+import com.gymprofit.api.entity.Ejercicio;
+import com.gymprofit.api.enums.Dificultad;
+import com.gymprofit.api.enums.GrupoMuscular;
+import com.gymprofit.api.exceptions.CreateEntityException;
+import com.gymprofit.api.exceptions.DeleteEntityException;
+import com.gymprofit.api.exceptions.NotFoundEntityException;
+import com.gymprofit.api.exceptions.UpdateEntityException;
+import com.gymprofit.api.mappers.EjercicioMapper;
+import com.gymprofit.api.repository.jpa.IEjercicioRepository;
+import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@AllArgsConstructor
+public class EjercicioService implements IEjercicioService {
+
+    private final IEjercicioRepository ejercicioRepository;
+    private final EjercicioMapper ejercicioMapper;
+    private final Logger logger = LoggerFactory.getLogger(EjercicioService.class);
+
+    @Override
+    public List<EjercicioDTO> findAll() {
+        logger.info("Buscando todos los ejercicios");
+
+        List<Ejercicio> ejercicios = (List<Ejercicio>) ejercicioRepository.findAll();
+
+        return ejercicioMapper.toDTOList(ejercicios);
+    }
+
+    @Override
+    public EjercicioDTO findById(Integer id) {
+        logger.info("Buscando ejercicio por id: {}", id);
+
+        Ejercicio ejercicio = ejercicioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundEntityException("El ejercicio con id " + id + " no existe"));
+
+        return ejercicioMapper.toDTO(ejercicio);
+    }
+
+    @Override
+    public EjercicioDTO save(EjercicioCreateDTO ejercicioCreateDTO) {
+        logger.info("Creando nuevo ejercicio {}", ejercicioCreateDTO.getNombre());
+
+        try {
+            Ejercicio ejercicio = ejercicioMapper.toEntity(ejercicioCreateDTO);
+            ejercicio.setActivo(true);
+
+            Ejercicio ejercicioGuardado = ejercicioRepository.save(ejercicio);
+
+            return ejercicioMapper.toDTO(ejercicioGuardado);
+        } catch (Exception e) {
+            throw new CreateEntityException(Ejercicio.class.getSimpleName(), ejercicioCreateDTO, e);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void deleteById(Integer id) {
+        logger.info("Desactivando ejercicio con id: {}", id);
+
+        Ejercicio ejercicio = ejercicioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundEntityException("El ejercicio con id " + id + " no existe"));
+
+        try {
+            ejercicio.setActivo(false);
+
+            ejercicioRepository.save(ejercicio);
+
+            logger.info("Ejercicio con id {} desactivado correctamente", id);
+        } catch (Exception e) {
+            throw new DeleteEntityException(Ejercicio.class.getSimpleName(), id, e);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void activateById(Integer id) {
+        logger.info("Activando ejercicio con id: {}", id);
+
+        Ejercicio ejercicio = ejercicioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundEntityException("El ejercicio con id " + id + " no existe"));
+
+        ejercicio.setActivo(true);
+        ejercicioRepository.save(ejercicio);
+
+        logger.info("Ejercicio con id {} activado correctamente", id);
+    }
+
+    @Transactional
+    @Override
+    public void permanentDeleteById(Integer id) {
+        logger.info("Eliminando permanentemente ejercicio con id: {}", id);
+
+        Ejercicio ejercicio = ejercicioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundEntityException("El ejercicio con id " + id + " no existe"));
+
+        try {
+            ejercicioRepository.delete(ejercicio);
+
+            logger.info("Ejercicio con id {} eliminado permanentemente", id);
+        } catch (Exception ex) {
+            throw new DeleteEntityException(Ejercicio.class.getSimpleName(), id, ex);
+        }
+    }
+
+    @Override
+    public EjercicioDTO modify(EjercicioDTO ejercicioDTO) {
+        logger.info("Modificando ejercicio con id: {}", ejercicioDTO.getId());
+
+        Ejercicio ejercicio = ejercicioRepository.findById(ejercicioDTO.getId())
+                .orElseThrow(() -> new NotFoundEntityException("El ejercicio con id " + ejercicioDTO.getId() + " no existe"));
+
+        try {
+            ejercicio.setNombre(ejercicioDTO.getNombre());
+            ejercicio.setDescripcion(ejercicioDTO.getDescripcion());
+            ejercicio.setGrupoMuscular(GrupoMuscular.valueOf(ejercicioDTO.getGrupoMuscular()));
+            ejercicio.setDificultad(Dificultad.valueOf(ejercicioDTO.getDificultad()));
+            ejercicio.setImagenUrl(ejercicioDTO.getImagenUrl());
+            ejercicio.setInstrucciones(ejercicioDTO.getInstrucciones());
+            ejercicio.setCaloriasQuemadas(ejercicioDTO.getCaloriasQuemadas());
+            ejercicio.setEquipoNecesario(ejercicioDTO.getEquipoNecesario());
+            ejercicio.setActivo(ejercicioDTO.getActivo());
+
+            Ejercicio ejercicioActualizado = ejercicioRepository.save(ejercicio);
+
+            return ejercicioMapper.toDTO(ejercicioActualizado);
+        } catch (Exception e) {
+            throw new UpdateEntityException(Ejercicio.class.getSimpleName(), ejercicioDTO, e);
+        }
+    }
+
+    @Override
+    public List<EjercicioDTO> findByGrupoMuscular(String grupoMuscular) {
+        logger.info("Buscando ejercicios por grupo muscular: {}", grupoMuscular);
+
+        GrupoMuscular grupo = GrupoMuscular.valueOf(grupoMuscular.toUpperCase());
+
+        List<Ejercicio> ejercicios = ejercicioRepository.findByGrupoMuscular(grupo);
+
+        return ejercicioMapper.toDTOList(ejercicios);
+    }
+
+    @Override
+    public List<EjercicioDTO> findByDificultad(String dificultad) {
+        logger.info("Buscando ejercicios por dificultad: {}", dificultad);
+
+        Dificultad dif = Dificultad.valueOf(dificultad.toUpperCase());
+
+        List<Ejercicio> ejercicios = ejercicioRepository.findByDificultad(dif);
+
+        return ejercicioMapper.toDTOList(ejercicios);
+    }
+
+    @Override
+    public List<EjercicioDTO> findByNombre(String nombre) {
+        logger.info("Buscando ejercicios por nombre: {}", nombre);
+
+        List<Ejercicio> ejercicios = ejercicioRepository.findByNombreContainingIgnoreCase(nombre);
+
+        return ejercicioMapper.toDTOList(ejercicios);
+    }
+
+    @Override
+    public List<EjercicioDTO> findActivos() {
+        logger.info("Buscando ejercicios activos");
+
+        List<Ejercicio> ejercicios = ejercicioRepository.findByActivoTrue();
+
+        return ejercicioMapper.toDTOList(ejercicios);
+    }
+}

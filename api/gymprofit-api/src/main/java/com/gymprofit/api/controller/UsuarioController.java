@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.hibernate.engine.spi.VersionValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,6 +42,7 @@ public class UsuarioController {
     @GetMapping("/usuarios")
     public ResponseEntity<List<UsuarioDTO>> findAll() {
         List<UsuarioDTO> usuarios = usuarioService.findAll();
+
         return ResponseEntity.ok(usuarios);
     }
 
@@ -56,6 +56,7 @@ public class UsuarioController {
     @GetMapping("/usuarios/{id}")
     public ResponseEntity<UsuarioDTO> obtenerUsuario(@PathVariable Integer id) {
         UsuarioDTO usuario = usuarioService.findById(id);
+
         return ResponseEntity.ok(usuario);
     }
 
@@ -69,6 +70,7 @@ public class UsuarioController {
     @PostMapping("/usuarios")
     public ResponseEntity<UsuarioDTO> guardarUsuario(@Valid @RequestBody UsuarioCreateDTO usuarioCreateDTO) {
         UsuarioDTO usuario = usuarioService.save(usuarioCreateDTO);
+
         return ResponseEntity.ok(usuario);
     }
 
@@ -82,12 +84,13 @@ public class UsuarioController {
     @PutMapping("/usuarios")
     public ResponseEntity<UsuarioDTO> modificarUsuario(@Valid @RequestBody UsuarioUpdateDTO usuarioUpdateDTO) {
         UsuarioDTO usuario = usuarioService.modify(usuarioUpdateDTO);
+
         return ResponseEntity.ok(usuario);
     }
 
-    @Operation(summary = "Elimina un usuario")
+    @Operation(summary = "Desactiva un usuario")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Usuario eliminado correctamente"),
+            @ApiResponse(responseCode = "200", description = "Usuario desactivado correctamente"),
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
@@ -97,10 +100,60 @@ public class UsuarioController {
 
         try {
             usuarioService.deleteById(id);
-            respuesta.put("meensaje", "Usuario elimnado con ÉXITO");
+
+            respuesta.put("meensaje", "Usuario desactivado con ÉXITO");
         } catch (Exception e) {
-            respuesta.put("mensaje", "Error al borrar el usuario " + id);
+            respuesta.put("mensaje", "Error al desactivar el usuario " + id);
             respuesta.put("error", e.getMessage());
+
+            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(respuesta, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Activa un usuario desactivado")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuario activado correctamente"),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @PutMapping("/usuarios/{id}/activar")
+    public ResponseEntity<Map<String, Object>> activarUsuario(@PathVariable Integer id) {
+        Map<String, Object> respuesta = new HashMap<>();
+
+        try {
+            usuarioService.activateById(id);
+
+            respuesta.put("mensaje", "Usuario activado con ÉXITO");
+        } catch (Exception e) {
+            respuesta.put("mensaje", "Error al activar el usuario " + id);
+            respuesta.put("error", e.getMessage());
+
+            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(respuesta, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Elimina permanentemente un usuario de la base de datos")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuario eliminado permanentemente"),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @DeleteMapping("/usuarios/{id}/permanente")
+    public ResponseEntity<Map<String, Object>> eliminarPermanente(@PathVariable Integer id) {
+        Map<String, Object> respuesta = new HashMap<>();
+
+        try {
+            usuarioService.permanentDeleteById(id);
+
+            respuesta.put("mensaje", "Usuario eliminado PERMANENTEMENTE con ÉXITO");
+        } catch (Exception e) {
+            respuesta.put("mensaje", "Error al eliminar permanentemente el usuario " + id);
+            respuesta.put("error", e.getMessage());
+
             return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -117,6 +170,7 @@ public class UsuarioController {
     @GetMapping("/usuarios/username/{username}")
     public ResponseEntity<UsuarioDTO> obtenerUsuarioPorUsername(@PathVariable String username) {
         UsuarioDTO usuario = usuarioService.findByUsername(username);
+
         return ResponseEntity.ok(usuario);
     }
 
@@ -130,6 +184,7 @@ public class UsuarioController {
     @GetMapping("/usuarios/email/{email}")
     public ResponseEntity<UsuarioDTO> obtenerUsuarioPorEmail(@PathVariable String email) {
         UsuarioDTO usuario = usuarioService.findByEmail(email);
+
         return ResponseEntity.ok(usuario);
     }
 
@@ -140,6 +195,7 @@ public class UsuarioController {
     @GetMapping("/usuarios/exists/username/{username}")
     public ResponseEntity<Map<String, Object>> existeUsername(@PathVariable String username) {
         Map<String, Object> respuesta = new HashMap<>();
+
         Boolean exists = usuarioService.existsByUsername(username);
 
         respuesta.put("exists", exists);
@@ -155,6 +211,7 @@ public class UsuarioController {
     @GetMapping("/usuarios/exists/email/{email}")
     public ResponseEntity<Map<String, Object>> existeEmail(@PathVariable String email) {
         Map<String, Object> respuesta = new HashMap<>();
+
         Boolean exists = usuarioService.existsByEmail(email);
 
         respuesta.put("exists", exists);
@@ -171,6 +228,7 @@ public class UsuarioController {
     @GetMapping("/usuarios/activos")
     public ResponseEntity<List<UsuarioDTO>> obtenerUsuariosActivos() {
         List<UsuarioDTO> usuarios = usuarioService.findActivos();
+
         return ResponseEntity.ok(usuarios);
     }
 }

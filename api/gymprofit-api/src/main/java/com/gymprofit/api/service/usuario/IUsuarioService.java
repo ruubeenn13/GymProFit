@@ -14,6 +14,8 @@ public interface IUsuarioService {
     UsuarioDTO save(UsuarioCreateDTO usuarioCreateDTO);
 
     void deleteById(Integer id);
+    void activateById(Integer id);
+    void permanentDeleteById(Integer id);
 
     UsuarioDTO modify(UsuarioUpdateDTO usuarioUpdateDTO);
     UsuarioDTO findByUsername(String username);

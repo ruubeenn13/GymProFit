@@ -1,10 +1,10 @@
 package com.gymprofit.api.enums;
 
 public enum TipoComida {
-    Desayuno,
-    Almuerzo,
-    Comida,
-    Merienda,
-    Cena,
-    Snack
+    DESAYUNO,
+    ALMUERZO,
+    COMIDA,
+    MERIENDA,
+    CENA,
+    SNACK
 }
