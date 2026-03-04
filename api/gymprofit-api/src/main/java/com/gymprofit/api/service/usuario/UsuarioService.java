@@ -28,15 +28,19 @@ public class UsuarioService implements IUsuarioService {
     @Override
     public List<UsuarioDTO> findAll() {
         logger.info("Buscando todos los usuarios");
+
         List<Usuario> usuarios = (List<Usuario>) usuarioRepository.findAll();
+
         return usuarioMapper.toDTOList(usuarios);
     }
 
     @Override
     public UsuarioDTO findById(Integer id) {
         logger.info("Buscando usuario por id: {}", id);
+
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + id + " no existe"));
+
         return usuarioMapper.toDTO(usuario);
     }
 
@@ -80,6 +84,41 @@ public class UsuarioService implements IUsuarioService {
             logger.info("Usuario con id {} desactivado correctamente", id);
         } catch (Exception e) {
             throw new DeleteEntityException(Usuario.class.getSimpleName(), id, e);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void activateById(Integer id) {
+        logger.info("Activando usuario con id: {}", id);
+
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + id + " no existe"));
+
+        try {
+            usuario.setActivo(true);
+            usuarioRepository.save(usuario);
+
+            logger.info("Usuario con id {} activado correctamente", id);
+        } catch (Exception ex) {
+            throw new UpdateEntityException(Usuario.class.getSimpleName(), id, ex);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void permanentDeleteById(Integer id) {
+        logger.info("Eliminando permanentemente usuario con id: {}", id);
+
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + id + " no existe"));
+
+        try {
+            usuarioRepository.delete(usuario);
+
+            logger.info("Usuario con id {} eliminado permanentemente", id);
+        } catch (Exception ex) {
+            throw new DeleteEntityException(Usuario.class.getSimpleName(), id, ex);
         }
     }
 
@@ -139,7 +178,9 @@ public class UsuarioService implements IUsuarioService {
     @Override
     public List<UsuarioDTO> findActivos() {
         logger.info("Buscando usuarios activos");
+
         List<Usuario> usuarios = usuarioRepository.findByActivoTrue();
+
         return usuarioMapper.toDTOList(usuarios);
     }
 }
