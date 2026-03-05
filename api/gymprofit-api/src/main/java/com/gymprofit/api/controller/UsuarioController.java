@@ -3,6 +3,7 @@ package com.gymprofit.api.controller;
 import com.gymprofit.api.dto.entity.usuario.UsuarioCreateDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioUpdateDTO;
+import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.usuario.IUsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -223,11 +224,17 @@ public class UsuarioController {
     @Operation(summary = "Obtiene todos los usuarios activos")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de usuarios activos",
-                    content = @Content(schema = @Schema(implementation = UsuarioDTO.class)))
+                    content = @Content(schema = @Schema(implementation = UsuarioDTO.class))),
+            @ApiResponse(responseCode = "404", description = "No se encontraron usuarios activos",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @GetMapping("/usuarios/activos")
     public ResponseEntity<List<UsuarioDTO>> obtenerUsuariosActivos() {
         List<UsuarioDTO> usuarios = usuarioService.findActivos();
+
+        if (usuarios.isEmpty()) {
+            throw new NotFoundEntityException("No se encontraron usuarios activos");
+        }
 
         return ResponseEntity.ok(usuarios);
     }

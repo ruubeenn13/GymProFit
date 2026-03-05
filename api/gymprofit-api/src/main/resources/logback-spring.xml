@@ -17,7 +17,11 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_FILE}_%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory>
+            <totalSizeCap>0</totalSizeCap>
         </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>0</maxFileSize>
+        </triggeringPolicy>
     </appender>
 
     <logger name="com.gymprofit.api" level="DEBUG" additivity="false">

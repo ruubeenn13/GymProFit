@@ -2,6 +2,7 @@ package com.gymprofit.api.controller;
 
 import com.gymprofit.api.dto.entity.ejercicio.EjercicioCreateDTO;
 import com.gymprofit.api.dto.entity.ejercicio.EjercicioDTO;
+import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.ejercicio.IEjercicioService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -157,11 +158,17 @@ public class EjercicioController {
     @Operation(summary = "Busca ejercicios por grupo muscular")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ejercicios encontrados",
-                    content = @Content(schema = @Schema(implementation = EjercicioDTO.class)))
+                    content = @Content(schema = @Schema(implementation = EjercicioDTO.class))),
+            @ApiResponse(responseCode = "404", description = "No se encontraron ejercicios para este grupo muscular",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @GetMapping("/ejercicios/grupo/{grupoMuscular}")
     public ResponseEntity<List<EjercicioDTO>> obtenerEjerciciosPorGrupo(@PathVariable String grupoMuscular) {
         List<EjercicioDTO> ejercicios = ejercicioService.findByGrupoMuscular(grupoMuscular);
+
+        if (ejercicios.isEmpty()) {
+            throw new NotFoundEntityException("No se encontraron ejercicios para el grupo muscular " + grupoMuscular);
+        }
 
         return ResponseEntity.ok(ejercicios);
     }
@@ -169,11 +176,17 @@ public class EjercicioController {
     @Operation(summary = "Busca ejercicios por dificultad")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ejercicios encontrados",
-                    content = @Content(schema = @Schema(implementation = EjercicioDTO.class)))
+                    content = @Content(schema = @Schema(implementation = EjercicioDTO.class))),
+            @ApiResponse(responseCode = "404", description = "No se encontraron ejercicios para esta dificultad",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @GetMapping("/ejercicios/dificultad/{dificultad}")
     public ResponseEntity<List<EjercicioDTO>> obtenerEjerciciosPorDificultad(@PathVariable String dificultad) {
         List<EjercicioDTO> ejercicios = ejercicioService.findByDificultad(dificultad);
+
+        if (ejercicios.isEmpty()) {
+            throw new NotFoundEntityException("No se encontraron ejercicios para la dificultad " + dificultad);
+        }
 
         return ResponseEntity.ok(ejercicios);
     }
@@ -181,23 +194,35 @@ public class EjercicioController {
     @Operation(summary = "Busca ejercicios por nombre")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ejercicios encontrados",
-                    content = @Content(schema = @Schema(implementation = EjercicioDTO.class)))
+                    content = @Content(schema = @Schema(implementation = EjercicioDTO.class))),
+            @ApiResponse(responseCode = "404", description = "No se encontraron ejercicios con ese nombre",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @GetMapping("/ejercicios/nombre/{nombre}")
     public ResponseEntity<List<EjercicioDTO>> obtenerEjerciciosPorNombre(@PathVariable String nombre) {
         List<EjercicioDTO> ejercicios = ejercicioService.findByNombre(nombre);
+
+        if (ejercicios.isEmpty()) {
+            throw new NotFoundEntityException("No se encontraron ejercicios con el nombre: " + nombre);
+        }
 
         return ResponseEntity.ok(ejercicios);
     }
 
     @Operation(summary = "Obtiene todos los ejercicios activos")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Listado de ejercicios",
-                    content = @Content(schema = @Schema(implementation = EjercicioDTO.class)))
+            @ApiResponse(responseCode = "200", description = "Listado de ejercicios activos",
+                    content = @Content(schema = @Schema(implementation = EjercicioDTO.class))),
+            @ApiResponse(responseCode = "404", description = "No se encontraron ejercicios activos",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @GetMapping("/ejercicios/activos")
     public ResponseEntity<List<EjercicioDTO>> obtenerEjerciciosActivos() {
         List<EjercicioDTO> ejercicios = ejercicioService.findActivos();
+
+        if (ejercicios.isEmpty()) {
+            throw new NotFoundEntityException("No se encontraron ejercicios activos");
+        }
 
         return ResponseEntity.ok(ejercicios);
     }
