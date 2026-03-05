@@ -72,7 +72,7 @@ public class UsuarioService implements IUsuarioService {
     @Transactional
     @Override
     public void deleteById(Integer id) {
-        logger.info("Intento de eliminr un usuario con id: {}", id);
+        logger.info("Intento de eliminar un usuario con id: {}", id);
 
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + id + " no existe"));

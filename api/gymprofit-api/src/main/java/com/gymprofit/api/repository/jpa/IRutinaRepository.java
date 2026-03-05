@@ -25,6 +25,8 @@ public interface IRutinaRepository extends CrudRepository<Rutina, Integer> {
 
     List<Rutina> findByActivaTrue();
 
+    List<Rutina> findByNombreContainingIgnoreCase(String nombre);
+
     List<Rutina> findByUsuarioIdAndActivaTrue(Integer usuarioId);
 
     @Query("SELECT r " +
