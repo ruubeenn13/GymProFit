@@ -2,6 +2,7 @@ package com.gymprofit.api.controller;
 
 import com.gymprofit.api.dto.entity.rutina.RutinaCreateDTO;
 import com.gymprofit.api.dto.entity.rutina.RutinaDTO;
+import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.rutina.IRutinaService;
@@ -189,6 +190,10 @@ public class RutinaController {
     })
     @GetMapping("/rutinas/nivel/{nivel}")
     public ResponseEntity<List<RutinaDTO>> obtenerRutinasPorNivel(@PathVariable String nivel) {
+        if (nivel == null || nivel.trim().isEmpty()) {
+            throw new InvalidDataException("El nivel no puede estar vacío");
+        }
+
         List<RutinaDTO> rutinas = rutinaService.findByNivel(nivel);
 
         if (rutinas.isEmpty()) {
@@ -207,6 +212,10 @@ public class RutinaController {
     })
     @GetMapping("/rutinas/nombre/{nombre}")
     public ResponseEntity<List<RutinaDTO>> obtenerRutinasPorNombre(@PathVariable String nombre) {
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new InvalidDataException("El nombre no puede estar vacío");
+        }
+
         List<RutinaDTO> rutinas = rutinaService.findByNombre(nombre);
 
         if (rutinas.isEmpty()) {
@@ -279,6 +288,10 @@ public class RutinaController {
     })
     @GetMapping("/rutinas/predefinidas/nivel/{nivel}")
     public ResponseEntity<List<RutinaDTO>> obtenerRutinasPredefinidasPorNivel(@PathVariable String nivel) {
+        if (nivel == null || nivel.trim().isEmpty()) {
+            throw new InvalidDataException("El nivel no puede estar vacío");
+        }
+
         List<RutinaDTO> rutinas = rutinaService.findPredefinidasByNivel(nivel);
 
         if (rutinas.isEmpty()) {

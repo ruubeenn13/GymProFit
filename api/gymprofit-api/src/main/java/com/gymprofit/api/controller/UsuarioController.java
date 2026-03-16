@@ -3,6 +3,7 @@ package com.gymprofit.api.controller;
 import com.gymprofit.api.dto.entity.usuario.UsuarioCreateDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioUpdateDTO;
+import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.usuario.IUsuarioService;
@@ -170,6 +171,10 @@ public class UsuarioController {
     })
     @GetMapping("/usuarios/username/{username}")
     public ResponseEntity<UsuarioDTO> obtenerUsuarioPorUsername(@PathVariable String username) {
+        if (username == null || username.trim().isEmpty()) {
+            throw new InvalidDataException("El username no puede estar vacío");
+        }
+
         UsuarioDTO usuario = usuarioService.findByUsername(username);
 
         return ResponseEntity.ok(usuario);
@@ -184,6 +189,10 @@ public class UsuarioController {
     })
     @GetMapping("/usuarios/email/{email}")
     public ResponseEntity<UsuarioDTO> obtenerUsuarioPorEmail(@PathVariable String email) {
+        if (email == null || email.trim().isEmpty()) {
+            throw new InvalidDataException("El email no puede estar vacío");
+        }
+
         UsuarioDTO usuario = usuarioService.findByEmail(email);
 
         return ResponseEntity.ok(usuario);
