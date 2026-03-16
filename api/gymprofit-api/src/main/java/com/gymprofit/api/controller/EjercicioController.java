@@ -2,6 +2,7 @@ package com.gymprofit.api.controller;
 
 import com.gymprofit.api.dto.entity.ejercicio.EjercicioCreateDTO;
 import com.gymprofit.api.dto.entity.ejercicio.EjercicioDTO;
+import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.ejercicio.IEjercicioService;
@@ -164,6 +165,10 @@ public class EjercicioController {
     })
     @GetMapping("/ejercicios/grupo/{grupoMuscular}")
     public ResponseEntity<List<EjercicioDTO>> obtenerEjerciciosPorGrupo(@PathVariable String grupoMuscular) {
+        if (grupoMuscular == null || grupoMuscular.trim().isEmpty()) {
+            throw new InvalidDataException("El grupo muscular no puede estar vacío");
+        }
+
         List<EjercicioDTO> ejercicios = ejercicioService.findByGrupoMuscular(grupoMuscular);
 
         if (ejercicios.isEmpty()) {
@@ -182,6 +187,10 @@ public class EjercicioController {
     })
     @GetMapping("/ejercicios/dificultad/{dificultad}")
     public ResponseEntity<List<EjercicioDTO>> obtenerEjerciciosPorDificultad(@PathVariable String dificultad) {
+        if (dificultad == null || dificultad.trim().isEmpty()) {
+            throw new InvalidDataException("La dificultad no puede estar vacía");
+        }
+
         List<EjercicioDTO> ejercicios = ejercicioService.findByDificultad(dificultad);
 
         if (ejercicios.isEmpty()) {
@@ -200,6 +209,10 @@ public class EjercicioController {
     })
     @GetMapping("/ejercicios/nombre/{nombre}")
     public ResponseEntity<List<EjercicioDTO>> obtenerEjerciciosPorNombre(@PathVariable String nombre) {
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new InvalidDataException("El nombre no puede estar vacío");
+        }
+
         List<EjercicioDTO> ejercicios = ejercicioService.findByNombre(nombre);
 
         if (ejercicios.isEmpty()) {

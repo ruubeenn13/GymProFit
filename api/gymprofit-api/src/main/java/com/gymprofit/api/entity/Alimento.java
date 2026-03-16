@@ -30,7 +30,7 @@ public class Alimento {
     private Integer calorias;
 
     @Column(precision = 5, scale = 2)
-    private Integer proteinas;
+    private BigDecimal proteinas;
 
     @Column(precision = 5, scale = 2)
     private BigDecimal carbohidratos;

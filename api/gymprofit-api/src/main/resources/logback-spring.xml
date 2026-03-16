@@ -1,44 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
+    <!-- Definir la propiedad para el directorio de logs -->
     <property name="LOG_FILE" value="logs/gymprofit"/>
 
+    <!-- Appender para consola -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) %cyan([%thread]) %yellow(%logger{36}) - %msg%n</pattern>
         </encoder>
     </appender>
 
+    <!-- Appender para archivo con rolling diario -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_FILE}.log</file>
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- Los archivos antiguos se renombran con la fecha -->
             <fileNamePattern>${LOG_FILE}_%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- Mantener logs de los últimos 30 días -->
             <maxHistory>30</maxHistory>
-            <totalSizeCap>0</totalSizeCap>
         </rollingPolicy>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <maxFileSize>0</maxFileSize>
-        </triggeringPolicy>
     </appender>
 
+    <!-- Logger para la aplicación GymProFit -->
     <logger name="com.gymprofit.api" level="DEBUG" additivity="false">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
     </logger>
 
+    <!-- Logger para Spring Framework -->
     <logger name="org.springframework" level="INFO" additivity="false">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
     </logger>
 
+    <!-- Logger para Hibernate -->
     <logger name="org.hibernate" level="WARN" additivity="false">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
     </logger>
 
+    <!-- Logger ROOT -->
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
