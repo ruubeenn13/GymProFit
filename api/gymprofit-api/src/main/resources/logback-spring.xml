@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <!-- Definir la propiedad para el directorio de logs -->
+    <!-- Definir la propiedad para el archivo de logs -->
     <property name="LOG_FILE" value="logs/gymprofit"/>
 
     <!-- Appender para consola -->
@@ -13,15 +13,23 @@
 
     <!-- Appender para archivo con rolling diario -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- Archivo activo actual -->
         <file>${LOG_FILE}.log</file>
+
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n</pattern>
         </encoder>
+
+        <!-- Política de rolling: cambiar de archivo cada día a medianoche -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- Los archivos antiguos se renombran con la fecha -->
+            <!-- Patrón para archivos archivados: gymprofit_YYYY-MM-DD.log -->
             <fileNamePattern>${LOG_FILE}_%d{yyyy-MM-dd}.log</fileNamePattern>
+
             <!-- Mantener logs de los últimos 30 días -->
             <maxHistory>30</maxHistory>
+
+            <!-- Limpiar archivos antiguos al inicio -->
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
         </rollingPolicy>
     </appender>
 
