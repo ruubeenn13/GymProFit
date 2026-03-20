@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
@@ -12,5 +13,5 @@ import java.io.Serializable;
 public class AlimentoComidaCreateDTO implements Serializable {
     private Integer comidaId;
     private Integer alimentoId;
-    private Integer cantidadGramos;
+    private BigDecimal cantidadGramos;
 }
