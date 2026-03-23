@@ -1,700 +1,1147 @@
-2026-03-20 15:28:52.171 INFO  [restartedMain] c.g.api.GymProFitApiApplication - Starting GymProFitApiApplication using Java 23.0.2 with PID 24928 (C:\Users\ruben\Desktop\tfg\api\gymprofit-api\target\classes started by ruben in C:\Users\ruben\Desktop\tfg\api\gymprofit-api)
-2026-03-20 15:28:52.172 DEBUG [restartedMain] c.g.api.GymProFitApiApplication - Running with Spring Boot v3.5.7, Spring v6.2.12
-2026-03-20 15:28:52.173 INFO  [restartedMain] c.g.api.GymProFitApiApplication - The following 1 profile is active: "dev"
-2026-03-20 15:28:52.220 INFO  [restartedMain] o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
-2026-03-20 15:28:52.221 INFO  [restartedMain] o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
-2026-03-20 15:28:53.169 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-03-20 15:28:53.312 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 134 ms. Found 13 JPA repository interfaces.
-2026-03-20 15:28:53.905 INFO  [restartedMain] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
-2026-03-20 15:28:53.916 INFO  [restartedMain] o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
-2026-03-20 15:28:53.918 INFO  [restartedMain] o.a.catalina.core.StandardService - Starting service [Tomcat]
-2026-03-20 15:28:53.918 INFO  [restartedMain] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.48]
-2026-03-20 15:28:53.995 INFO  [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2026-03-20 15:28:53.997 INFO  [restartedMain] o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1773 ms
-2026-03-20 15:28:54.249 INFO  [restartedMain] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-2026-03-20 15:28:54.370 INFO  [restartedMain] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.mariadb.jdbc.Connection@688c6aa0
-2026-03-20 15:28:54.370 INFO  [restartedMain] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
-2026-03-20 15:28:54.384 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - 1 SQL migrations were detected but not run because they did not follow the filename convention.
-2026-03-20 15:28:54.384 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
-2026-03-20 15:28:54.394 WARN  [restartedMain] o.m.jdbc.message.server.ErrorPacket - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
-2026-03-20 15:28:54.414 INFO  [restartedMain] org.flywaydb.core.FlywayExecutor - Database: jdbc:mariadb://localhost:3308/gymprofit_db?user=root&password=********&useUnicode=true&characterEncoding=UTF-8 (MariaDB 11.8)
-2026-03-20 15:28:54.421 WARN  [restartedMain] o.f.c.i.database.base.Database - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
-2026-03-20 15:28:54.461 INFO  [restartedMain] o.f.c.i.s.JdbcTableSchemaHistory - Repair of failed migration in Schema History table `gymprofit_db`.`flyway_schema_history` not necessary. No failed migration detected.
-2026-03-20 15:28:54.466 INFO  [restartedMain] o.f.core.internal.command.DbRepair - Successfully repaired schema history table `gymprofit_db`.`flyway_schema_history` (execution time 00:00.033s).
-2026-03-20 15:28:54.473 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - 1 SQL migrations were detected but not run because they did not follow the filename convention.
-2026-03-20 15:28:54.473 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
-2026-03-20 15:28:54.473 WARN  [restartedMain] o.m.jdbc.message.server.ErrorPacket - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
-2026-03-20 15:28:54.479 WARN  [restartedMain] o.f.c.i.database.base.Database - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
-2026-03-20 15:28:54.484 INFO  [restartedMain] o.f.core.internal.command.DbValidate - Successfully validated 0 migrations (execution time 00:00.002s)
-2026-03-20 15:28:54.484 WARN  [restartedMain] o.f.core.internal.command.DbValidate - No migrations found. Are your locations set up correctly?
-2026-03-20 15:28:54.491 INFO  [restartedMain] o.f.core.internal.command.DbMigrate - Current version of schema `gymprofit_db`: << Empty Schema >>
-2026-03-20 15:28:54.494 INFO  [restartedMain] o.f.core.internal.command.DbMigrate - Schema `gymprofit_db` is up to date. No migration necessary.
-2026-03-20 15:28:54.499 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - 1 SQL migrations were detected but not run because they did not follow the filename convention.
-2026-03-20 15:28:54.499 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
-2026-03-20 15:28:54.499 WARN  [restartedMain] o.m.jdbc.message.server.ErrorPacket - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
-2026-03-20 15:28:54.504 WARN  [restartedMain] o.f.c.i.database.base.Database - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
-2026-03-20 15:28:54.507 INFO  [restartedMain] o.f.core.internal.command.DbValidate - Successfully validated 0 migrations (execution time 00:00.002s)
-2026-03-20 15:28:54.507 WARN  [restartedMain] o.f.core.internal.command.DbValidate - No migrations found. Are your locations set up correctly?
-2026-03-20 15:28:54.512 INFO  [restartedMain] o.f.core.internal.command.DbMigrate - Current version of schema `gymprofit_db`: << Empty Schema >>
-2026-03-20 15:28:54.512 INFO  [restartedMain] o.f.core.internal.command.DbMigrate - Schema `gymprofit_db` is up to date. No migration necessary.
-2026-03-20 15:28:54.995 INFO  [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-03-20 15:28:55.045 WARN  [restartedMain] org.hibernate.orm.deprecation - HHH90000025: MariaDBDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-03-20 15:28:56.096 INFO  [restartedMain] o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-03-20 15:28:56.546 INFO  [restartedMain] o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
-2026-03-20 15:28:57.165 WARN  [restartedMain] o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-03-20 15:28:57.549 DEBUG [restartedMain] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 77 mappings in 'requestMappingHandlerMapping'
-2026-03-20 15:28:57.655 DEBUG [restartedMain] o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**, /swagger-ui/**, /swagger-ui/*swagger-initializer.js, /webjars/*swagger-ui/**, /webjars/*swagger-ui/*swagger-initializer.js, /webjars/*swagger-ui/5.31.0/*swagger-initializer.js] in 'resourceHandlerMapping'
-2026-03-20 15:28:57.715 WARN  [restartedMain] o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+2026-03-23 12:11:21.928 INFO  [restartedMain] c.g.api.GymProFitApiApplication - Starting GymProFitApiApplication using Java 23.0.2 with PID 33152 (C:\Users\ruben\Desktop\tfg\api\gymprofit-api\target\classes started by ruben in C:\Users\ruben\Desktop\tfg\api\gymprofit-api)
+2026-03-23 12:11:21.931 DEBUG [restartedMain] c.g.api.GymProFitApiApplication - Running with Spring Boot v3.5.7, Spring v6.2.12
+2026-03-23 12:11:21.931 INFO  [restartedMain] c.g.api.GymProFitApiApplication - The following 1 profile is active: "dev"
+2026-03-23 12:11:21.973 INFO  [restartedMain] o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-03-23 12:11:21.973 INFO  [restartedMain] o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-03-23 12:11:23.656 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-23 12:11:23.785 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 121 ms. Found 13 JPA repository interfaces.
+2026-03-23 12:11:24.336 INFO  [restartedMain] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-03-23 12:11:24.347 INFO  [restartedMain] o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-23 12:11:24.349 INFO  [restartedMain] o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-23 12:11:24.349 INFO  [restartedMain] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.48]
+2026-03-23 12:11:24.415 INFO  [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-23 12:11:24.415 INFO  [restartedMain] o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2441 ms
+2026-03-23 12:11:24.612 INFO  [restartedMain] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-23 12:11:24.672 INFO  [restartedMain] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.mariadb.jdbc.Connection@1b44f861
+2026-03-23 12:11:24.673 INFO  [restartedMain] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-23 12:11:24.685 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - 1 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-03-23 12:11:24.685 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-03-23 12:11:24.692 WARN  [restartedMain] o.m.jdbc.message.server.ErrorPacket - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-03-23 12:11:24.713 INFO  [restartedMain] org.flywaydb.core.FlywayExecutor - Database: jdbc:mariadb://localhost:3308/gymprofit_db?user=root&password=********&useUnicode=true&characterEncoding=UTF-8 (MariaDB 11.8)
+2026-03-23 12:11:24.717 WARN  [restartedMain] o.f.c.i.database.base.Database - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-03-23 12:11:24.735 INFO  [restartedMain] o.f.c.i.s.JdbcTableSchemaHistory - Repair of failed migration in Schema History table `gymprofit_db`.`flyway_schema_history` not necessary. No failed migration detected.
+2026-03-23 12:11:24.739 INFO  [restartedMain] o.f.core.internal.command.DbRepair - Successfully repaired schema history table `gymprofit_db`.`flyway_schema_history` (execution time 00:00.011s).
+2026-03-23 12:11:24.745 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - 1 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-03-23 12:11:24.745 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-03-23 12:11:24.745 WARN  [restartedMain] o.m.jdbc.message.server.ErrorPacket - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-03-23 12:11:24.750 WARN  [restartedMain] o.f.c.i.database.base.Database - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-03-23 12:11:24.754 INFO  [restartedMain] o.f.core.internal.command.DbValidate - Successfully validated 0 migrations (execution time 00:00.001s)
+2026-03-23 12:11:24.754 WARN  [restartedMain] o.f.core.internal.command.DbValidate - No migrations found. Are your locations set up correctly?
+2026-03-23 12:11:24.758 INFO  [restartedMain] o.f.core.internal.command.DbMigrate - Current version of schema `gymprofit_db`: << Empty Schema >>
+2026-03-23 12:11:24.761 INFO  [restartedMain] o.f.core.internal.command.DbMigrate - Schema `gymprofit_db` is up to date. No migration necessary.
+2026-03-23 12:11:24.766 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - 1 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-03-23 12:11:24.766 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-03-23 12:11:24.766 WARN  [restartedMain] o.m.jdbc.message.server.ErrorPacket - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-03-23 12:11:24.770 WARN  [restartedMain] o.f.c.i.database.base.Database - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-03-23 12:11:24.774 INFO  [restartedMain] o.f.core.internal.command.DbValidate - Successfully validated 0 migrations (execution time 00:00.001s)
+2026-03-23 12:11:24.774 WARN  [restartedMain] o.f.core.internal.command.DbValidate - No migrations found. Are your locations set up correctly?
+2026-03-23 12:11:24.775 INFO  [restartedMain] o.f.core.internal.command.DbMigrate - Current version of schema `gymprofit_db`: << Empty Schema >>
+2026-03-23 12:11:24.776 INFO  [restartedMain] o.f.core.internal.command.DbMigrate - Schema `gymprofit_db` is up to date. No migration necessary.
+2026-03-23 12:11:25.209 INFO  [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-23 12:11:25.254 WARN  [restartedMain] org.hibernate.orm.deprecation - HHH90000025: MariaDBDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-23 12:11:26.122 INFO  [restartedMain] o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-23 12:11:26.501 INFO  [restartedMain] o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-03-23 12:11:27.039 WARN  [restartedMain] o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-23 12:11:27.351 DEBUG [restartedMain] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 96 mappings in 'requestMappingHandlerMapping'
+2026-03-23 12:11:27.440 DEBUG [restartedMain] o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**, /swagger-ui/**, /swagger-ui/*swagger-initializer.js, /webjars/*swagger-ui/**, /webjars/*swagger-ui/*swagger-initializer.js, /webjars/*swagger-ui/5.31.0/*swagger-initializer.js] in 'resourceHandlerMapping'
+2026-03-23 12:11:27.482 WARN  [restartedMain] o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
 
-Using generated security password: bb4b232a-408b-4364-a9af-11a4d46034aa
+Using generated security password: 3408c37b-9ba7-4ea8-a166-31b9ec4996bd
 
 This generated password is for development use only. Your security configuration must be updated before running your application in production.
 
-2026-03-20 15:28:57.729 INFO  [restartedMain] o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
-2026-03-20 15:28:57.922 DEBUG [restartedMain] o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
-2026-03-20 15:28:57.967 DEBUG [restartedMain] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 3 @ExceptionHandler, 1 ResponseBodyAdvice
-2026-03-20 15:28:57.987 DEBUG [restartedMain] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 3 @ExceptionHandler, 0 ResponseBodyAdvice
-2026-03-20 15:28:59.161 INFO  [restartedMain] o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
-2026-03-20 15:28:59.214 INFO  [restartedMain] o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
-2026-03-20 15:28:59.233 INFO  [restartedMain] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
-2026-03-20 15:28:59.240 INFO  [restartedMain] c.g.api.GymProFitApiApplication - Started GymProFitApiApplication in 7.633 seconds (process running for 8.696)
-2026-03-20 15:28:59.243 WARN  [restartedMain] o.s.c.events.SpringDocAppInitializer - SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
-2026-03-20 15:28:59.243 WARN  [restartedMain] o.s.c.events.SpringDocAppInitializer - SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
-2026-03-20 15:28:59.516 INFO  [http-nio-8080-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-03-20 15:28:59.516 INFO  [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
-2026-03-20 15:28:59.516 DEBUG [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
-2026-03-20 15:28:59.516 DEBUG [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
-2026-03-20 15:28:59.516 DEBUG [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet - Detected FixedThemeResolver
-2026-03-20 15:28:59.518 DEBUG [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@4bba901b
-2026-03-20 15:28:59.519 DEBUG [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@5e7288fc
-2026-03-20 15:28:59.519 DEBUG [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
-2026-03-20 15:28:59.519 INFO  [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet - Completed initialization in 3 ms
-2026-03-20 15:28:59.555 DEBUG [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/index.html", parameters={}
-2026-03-20 15:28:59.560 DEBUG [http-nio-8080-exec-2] o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
-2026-03-20 15:28:59.583 DEBUG [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet - Completed 200 OK
-2026-03-20 15:28:59.609 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/swagger-ui.css", parameters={}
-2026-03-20 15:28:59.609 DEBUG [http-nio-8080-exec-4] o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/swagger-ui-bundle.js", parameters={}
-2026-03-20 15:28:59.610 DEBUG [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/index.css", parameters={}
-2026-03-20 15:28:59.610 DEBUG [http-nio-8080-exec-1] o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
-2026-03-20 15:28:59.610 DEBUG [http-nio-8080-exec-3] o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
-2026-03-20 15:28:59.610 DEBUG [http-nio-8080-exec-4] o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
-2026-03-20 15:28:59.614 DEBUG [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet - Completed 200 OK
-2026-03-20 15:28:59.616 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Completed 200 OK
-2026-03-20 15:28:59.627 DEBUG [http-nio-8080-exec-4] o.s.web.servlet.DispatcherServlet - Completed 200 OK
-2026-03-20 15:28:59.627 DEBUG [http-nio-8080-exec-5] o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/swagger-ui-standalone-preset.js", parameters={}
-2026-03-20 15:28:59.627 DEBUG [http-nio-8080-exec-6] o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/swagger-initializer.js", parameters={}
-2026-03-20 15:28:59.628 DEBUG [http-nio-8080-exec-6] o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
-2026-03-20 15:28:59.628 DEBUG [http-nio-8080-exec-5] o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
-2026-03-20 15:28:59.634 DEBUG [http-nio-8080-exec-5] o.s.web.servlet.DispatcherServlet - Completed 200 OK
-2026-03-20 15:28:59.645 DEBUG [http-nio-8080-exec-6] o.s.web.servlet.DispatcherServlet - Completed 200 OK
-2026-03-20 15:28:59.764 DEBUG [http-nio-8080-exec-7] o.s.web.servlet.DispatcherServlet - GET "/v3/api-docs/swagger-config", parameters={}
-2026-03-20 15:28:59.764 DEBUG [http-nio-8080-exec-8] o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/favicon-32x32.png", parameters={}
-2026-03-20 15:28:59.764 DEBUG [http-nio-8080-exec-7] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springdoc.webmvc.ui.SwaggerConfigResource#openapiJson(HttpServletRequest)
-2026-03-20 15:28:59.764 DEBUG [http-nio-8080-exec-8] o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
-2026-03-20 15:28:59.769 DEBUG [http-nio-8080-exec-8] o.s.web.servlet.DispatcherServlet - Completed 200 OK
-2026-03-20 15:28:59.783 DEBUG [http-nio-8080-exec-7] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Using 'application/json', given [*/*] and supported [application/json]
-2026-03-20 15:28:59.787 DEBUG [http-nio-8080-exec-7] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Writing [{configUrl=/v3/api-docs/swagger-config, oauth2RedirectUrl=http://localhost:8080/swagger-ui/oauth2-re (truncated)...]
-2026-03-20 15:28:59.792 DEBUG [http-nio-8080-exec-7] o.s.web.servlet.DispatcherServlet - Completed 200 OK
-2026-03-20 15:28:59.823 DEBUG [http-nio-8080-exec-9] o.s.web.servlet.DispatcherServlet - GET "/v3/api-docs", parameters={}
-2026-03-20 15:28:59.823 DEBUG [http-nio-8080-exec-9] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springdoc.webmvc.api.OpenApiWebMvcResource#openapiJson(HttpServletRequest, String, Locale)
-2026-03-20 15:29:00.573 INFO  [http-nio-8080-exec-9] o.s.api.AbstractOpenApiResource - Init duration for springdoc-openapi is: 740 ms
-2026-03-20 15:29:00.588 DEBUG [http-nio-8080-exec-9] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Using 'application/json', given [application/json, */*] and supported [application/json]
-2026-03-20 15:29:00.593 DEBUG [http-nio-8080-exec-9] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Writing [{123, 34, 111, 112, 101, 110, 97, 112, 105, 34, 58, 34, 51, 46, 49, 46, 48, 34, 44, 34, 105, 110, 10 (truncated)...]
-2026-03-20 15:29:00.594 DEBUG [http-nio-8080-exec-9] o.s.web.servlet.DispatcherServlet - Completed 200 OK
-2026-03-20 15:29:39.234 DEBUG [http-nio-8080-exec-10] o.s.web.servlet.DispatcherServlet - POST "/api/alimentos-comida", parameters={}
-2026-03-20 15:29:39.235 DEBUG [http-nio-8080-exec-10] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.AlimentoComidaController#guardarAlimentoComida(AlimentoComidaCreateDTO)
-2026-03-20 15:29:39.244 DEBUG [http-nio-8080-exec-10] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [AlimentoComidaCreateDTO(comidaId=1, alimentoId=1, cantidadGramos=200)]
-2026-03-20 15:29:39.253 INFO  [http-nio-8080-exec-10] c.g.a.s.a.AlimentoComidaService - Creando nuevo alimento-comida para comida id: 1 y alimento id: 1
-2026-03-20 15:29:39.284 DEBUG [http-nio-8080-exec-10] org.hibernate.SQL - 
+2026-03-23 12:11:27.488 INFO  [restartedMain] o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-03-23 12:11:27.636 DEBUG [restartedMain] o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2026-03-23 12:11:27.677 DEBUG [restartedMain] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 3 @ExceptionHandler, 1 ResponseBodyAdvice
+2026-03-23 12:11:27.694 DEBUG [restartedMain] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 3 @ExceptionHandler, 0 ResponseBodyAdvice
+2026-03-23 12:11:28.467 INFO  [restartedMain] o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-23 12:11:28.510 INFO  [restartedMain] o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-23 12:11:28.523 INFO  [restartedMain] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-03-23 12:11:28.530 INFO  [restartedMain] c.g.api.GymProFitApiApplication - Started GymProFitApiApplication in 7.068 seconds (process running for 7.999)
+2026-03-23 12:11:28.532 WARN  [restartedMain] o.s.c.events.SpringDocAppInitializer - SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+2026-03-23 12:11:28.532 WARN  [restartedMain] o.s.c.events.SpringDocAppInitializer - SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+2026-03-23 12:11:38.570 INFO  [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-23 12:11:38.570 INFO  [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-03-23 12:11:38.570 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2026-03-23 12:11:38.571 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2026-03-23 12:11:38.573 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2026-03-23 12:11:38.577 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@2dd222c9
+2026-03-23 12:11:38.579 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@469ec60d
+2026-03-23 12:11:38.580 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2026-03-23 12:11:38.581 INFO  [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Completed initialization in 10 ms
+2026-03-23 12:11:38.749 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/index.html", parameters={}
+2026-03-23 12:11:38.761 DEBUG [http-nio-8080-exec-1] o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
+2026-03-23 12:11:38.823 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:11:38.886 DEBUG [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/swagger-ui.css", parameters={}
+2026-03-23 12:11:38.890 DEBUG [http-nio-8080-exec-2] o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
+2026-03-23 12:11:38.890 DEBUG [http-nio-8080-exec-5] o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/swagger-ui-bundle.js", parameters={}
+2026-03-23 12:11:38.890 DEBUG [http-nio-8080-exec-4] o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/index.css", parameters={}
+2026-03-23 12:11:38.890 DEBUG [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/swagger-ui-standalone-preset.js", parameters={}
+2026-03-23 12:11:38.892 DEBUG [http-nio-8080-exec-3] o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
+2026-03-23 12:11:38.892 DEBUG [http-nio-8080-exec-6] o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/swagger-initializer.js", parameters={}
+2026-03-23 12:11:38.892 DEBUG [http-nio-8080-exec-4] o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
+2026-03-23 12:11:38.893 DEBUG [http-nio-8080-exec-6] o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
+2026-03-23 12:11:38.905 DEBUG [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:11:38.905 DEBUG [http-nio-8080-exec-5] o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
+2026-03-23 12:11:38.911 DEBUG [http-nio-8080-exec-4] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:11:38.917 DEBUG [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:11:39.024 DEBUG [http-nio-8080-exec-6] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:11:39.050 DEBUG [http-nio-8080-exec-5] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:11:39.289 DEBUG [http-nio-8080-exec-7] o.s.web.servlet.DispatcherServlet - GET "/v3/api-docs/swagger-config", parameters={}
+2026-03-23 12:11:39.289 DEBUG [http-nio-8080-exec-7] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springdoc.webmvc.ui.SwaggerConfigResource#openapiJson(HttpServletRequest)
+2026-03-23 12:11:39.290 DEBUG [http-nio-8080-exec-8] o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/favicon-32x32.png", parameters={}
+2026-03-23 12:11:39.290 DEBUG [http-nio-8080-exec-8] o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
+2026-03-23 12:11:39.296 DEBUG [http-nio-8080-exec-8] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:11:39.318 DEBUG [http-nio-8080-exec-7] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Using 'application/json', given [*/*] and supported [application/json]
+2026-03-23 12:11:39.323 DEBUG [http-nio-8080-exec-7] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Writing [{configUrl=/v3/api-docs/swagger-config, oauth2RedirectUrl=http://localhost:8080/swagger-ui/oauth2-re (truncated)...]
+2026-03-23 12:11:39.334 DEBUG [http-nio-8080-exec-7] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:11:39.400 DEBUG [http-nio-8080-exec-9] o.s.web.servlet.DispatcherServlet - GET "/v3/api-docs", parameters={}
+2026-03-23 12:11:39.400 DEBUG [http-nio-8080-exec-9] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springdoc.webmvc.api.OpenApiWebMvcResource#openapiJson(HttpServletRequest, String, Locale)
+2026-03-23 12:11:40.515 INFO  [http-nio-8080-exec-9] o.s.api.AbstractOpenApiResource - Init duration for springdoc-openapi is: 1103 ms
+2026-03-23 12:11:40.534 DEBUG [http-nio-8080-exec-9] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Using 'application/json', given [application/json, */*] and supported [application/json]
+2026-03-23 12:11:40.542 DEBUG [http-nio-8080-exec-9] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Writing [{123, 34, 111, 112, 101, 110, 97, 112, 105, 34, 58, 34, 51, 46, 49, 46, 48, 34, 44, 34, 105, 110, 10 (truncated)...]
+2026-03-23 12:11:40.544 DEBUG [http-nio-8080-exec-9] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:11:58.429 DEBUG [http-nio-8080-exec-10] o.s.web.servlet.DispatcherServlet - GET "/api/rutinas", parameters={}
+2026-03-23 12:11:58.429 DEBUG [http-nio-8080-exec-10] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.RutinaController#findAll()
+2026-03-23 12:11:58.429 INFO  [http-nio-8080-exec-10] c.g.api.service.rutina.RutinaService - Buscando todas las rutinas
+2026-03-23 12:11:58.495 DEBUG [http-nio-8080-exec-10] org.hibernate.SQL - 
     select
-        c1_0.id,
-        c1_0.fecha,
-        c1_0.notas,
-        c1_0.tipo_comida,
-        c1_0.total_calorias,
-        c1_0.total_carbohidratos,
-        c1_0.total_grasas,
-        c1_0.total_proteinas,
-        c1_0.usuario_id 
+        r1_0.id,
+        r1_0.activa,
+        r1_0.categoria,
+        r1_0.descripcion,
+        r1_0.dias_semana,
+        r1_0.duracion_minutos,
+        r1_0.es_predefinida,
+        r1_0.fecha_creacion,
+        r1_0.nivel,
+        r1_0.nombre,
+        r1_0.usuario_id 
     from
-        comidas c1_0 
-    where
-        c1_0.id=?
-2026-03-20 15:29:39.310 DEBUG [http-nio-8080-exec-10] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Using @ExceptionHandler com.gymprofit.api.exceptions.ControllerExceptionHandler#handleNotFoundEntityException(NotFoundEntityException)
-2026-03-20 15:29:39.312 DEBUG [http-nio-8080-exec-10] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json]
-2026-03-20 15:29:39.313 DEBUG [http-nio-8080-exec-10] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [Response(code=404, message=La comida con id 1 no existe, cause=null)]
-2026-03-20 15:29:39.315 WARN  [http-nio-8080-exec-10] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [com.gymprofit.api.exceptions.NotFoundEntityException: La comida con id 1 no existe]
-2026-03-20 15:29:39.315 DEBUG [http-nio-8080-exec-10] o.s.web.servlet.DispatcherServlet - Completed 404 NOT_FOUND
-2026-03-20 15:29:47.875 DEBUG [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet - POST "/api/alimentos-comida", parameters={}
-2026-03-20 15:29:47.875 DEBUG [http-nio-8080-exec-2] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.AlimentoComidaController#guardarAlimentoComida(AlimentoComidaCreateDTO)
-2026-03-20 15:29:47.875 DEBUG [http-nio-8080-exec-2] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [AlimentoComidaCreateDTO(comidaId=2, alimentoId=1, cantidadGramos=200)]
-2026-03-20 15:29:47.875 INFO  [http-nio-8080-exec-2] c.g.a.s.a.AlimentoComidaService - Creando nuevo alimento-comida para comida id: 1 y alimento id: 2
-2026-03-20 15:29:47.877 DEBUG [http-nio-8080-exec-2] org.hibernate.SQL - 
+        rutinas r1_0
+2026-03-23 12:11:58.529 DEBUG [http-nio-8080-exec-10] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json, application/yaml]
+2026-03-23 12:11:58.530 DEBUG [http-nio-8080-exec-10] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [[RutinaDTO(id=1, usuarioId=4, nombre=Rutina Fullbody 3 días, descripcion=Rutina completa para trabaj (truncated)...]
+2026-03-23 12:11:58.533 DEBUG [http-nio-8080-exec-10] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:12:54.806 DEBUG [http-nio-8080-exec-6] o.s.web.servlet.DispatcherServlet - POST "/api/rutinas", parameters={}
+2026-03-23 12:12:54.807 DEBUG [http-nio-8080-exec-6] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.RutinaController#guardarRutina(RutinaCreateDTO)
+2026-03-23 12:12:54.815 DEBUG [http-nio-8080-exec-6] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [RutinaCreateDTO(usuarioId=4, nombre=Rutina Fullbody 7 días, descripcion=Rutina completa para trabaja (truncated)...]
+2026-03-23 12:12:54.827 INFO  [http-nio-8080-exec-6] c.g.api.service.rutina.RutinaService - Creando nueva rutina: Rutina Fullbody 7 días
+2026-03-23 12:12:54.835 DEBUG [http-nio-8080-exec-6] org.hibernate.SQL - 
     select
-        c1_0.id,
-        c1_0.fecha,
-        c1_0.notas,
-        c1_0.tipo_comida,
-        c1_0.total_calorias,
-        c1_0.total_carbohidratos,
-        c1_0.total_grasas,
-        c1_0.total_proteinas,
-        c1_0.usuario_id 
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username 
     from
-        comidas c1_0 
+        usuarios u1_0 
     where
-        c1_0.id=?
-2026-03-20 15:29:47.894 DEBUG [http-nio-8080-exec-2] org.hibernate.SQL - 
-    select
-        a1_0.id,
-        a1_0.activo,
-        a1_0.calorias,
-        a1_0.carbohidratos,
-        a1_0.categoria,
-        a1_0.descripcion,
-        a1_0.fibra,
-        a1_0.grasas,
-        a1_0.nombre,
-        a1_0.porcion_gramos,
-        a1_0.proteinas 
-    from
-        alimentos a1_0 
-    where
-        a1_0.id=?
-2026-03-20 15:29:47.943 DEBUG [http-nio-8080-exec-2] org.hibernate.SQL - 
-    select
-        ac1_0.id 
-    from
-        alimentos_comida ac1_0 
-    left join
-        comidas c1_0 
-            on c1_0.id=ac1_0.comida_id 
-    left join
-        alimentos a1_0 
-            on a1_0.id=ac1_0.alimento_id 
-    where
-        c1_0.id=? 
-        and a1_0.id=? 
-    limit
-        ?
-2026-03-20 15:29:47.967 DEBUG [http-nio-8080-exec-2] org.hibernate.SQL - 
+        u1_0.id=?
+2026-03-23 12:12:54.856 DEBUG [http-nio-8080-exec-6] org.hibernate.SQL - 
     insert 
     into
-        alimentos_comida
-        (alimento_id, calorias_totales, cantidad_gramos, comida_id) 
+        rutinas
+        (activa, categoria, descripcion, dias_semana, duracion_minutos, es_predefinida, fecha_creacion, nivel, nombre, usuario_id) 
     values
-        (?, ?, ?, ?)
-2026-03-20 15:29:47.991 DEBUG [http-nio-8080-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json, application/yaml]
-2026-03-20 15:29:47.991 DEBUG [http-nio-8080-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [AlimentoComidaDTO(id=1, comidaId=2, alimentoId=1, cantidadGramos=200, caloriasTotales=330)]
-2026-03-20 15:29:47.993 DEBUG [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet - Completed 200 OK
-2026-03-20 15:30:14.506 DEBUG [http-nio-8080-exec-5] o.s.web.servlet.DispatcherServlet - POST "/api/alimentos-comida", parameters={}
-2026-03-20 15:30:14.506 DEBUG [http-nio-8080-exec-5] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.AlimentoComidaController#guardarAlimentoComida(AlimentoComidaCreateDTO)
-2026-03-20 15:30:14.507 DEBUG [http-nio-8080-exec-5] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [AlimentoComidaCreateDTO(comidaId=2, alimentoId=2, cantidadGramos=150)]
-2026-03-20 15:30:14.508 INFO  [http-nio-8080-exec-5] c.g.a.s.a.AlimentoComidaService - Creando nuevo alimento-comida para comida id: 2 y alimento id: 2
-2026-03-20 15:30:14.508 DEBUG [http-nio-8080-exec-5] org.hibernate.SQL - 
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2026-03-23 12:12:54.881 DEBUG [http-nio-8080-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json, application/yaml]
+2026-03-23 12:12:54.881 DEBUG [http-nio-8080-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [RutinaDTO(id=4, usuarioId=4, nombre=Rutina Fullbody 7 días, descripcion=Rutina completa para trabaja (truncated)...]
+2026-03-23 12:12:54.882 DEBUG [http-nio-8080-exec-6] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:13:02.112 DEBUG [http-nio-8080-exec-5] o.s.web.servlet.DispatcherServlet - POST "/api/rutinas", parameters={}
+2026-03-23 12:13:02.113 DEBUG [http-nio-8080-exec-5] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.RutinaController#guardarRutina(RutinaCreateDTO)
+2026-03-23 12:13:02.114 DEBUG [http-nio-8080-exec-5] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [RutinaCreateDTO(usuarioId=1, nombre=Rutina Fullbody 7 días, descripcion=Rutina completa para trabaja (truncated)...]
+2026-03-23 12:13:02.114 INFO  [http-nio-8080-exec-5] c.g.api.service.rutina.RutinaService - Creando nueva rutina: Rutina Fullbody 7 días
+2026-03-23 12:13:02.115 DEBUG [http-nio-8080-exec-5] org.hibernate.SQL - 
     select
-        c1_0.id,
-        c1_0.fecha,
-        c1_0.notas,
-        c1_0.tipo_comida,
-        c1_0.total_calorias,
-        c1_0.total_carbohidratos,
-        c1_0.total_grasas,
-        c1_0.total_proteinas,
-        c1_0.usuario_id 
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username 
     from
-        comidas c1_0 
+        usuarios u1_0 
     where
-        c1_0.id=?
-2026-03-20 15:30:14.510 DEBUG [http-nio-8080-exec-5] org.hibernate.SQL - 
-    select
-        a1_0.id,
-        a1_0.activo,
-        a1_0.calorias,
-        a1_0.carbohidratos,
-        a1_0.categoria,
-        a1_0.descripcion,
-        a1_0.fibra,
-        a1_0.grasas,
-        a1_0.nombre,
-        a1_0.porcion_gramos,
-        a1_0.proteinas 
-    from
-        alimentos a1_0 
-    where
-        a1_0.id=?
-2026-03-20 15:30:14.513 DEBUG [http-nio-8080-exec-5] org.hibernate.SQL - 
-    select
-        ac1_0.id 
-    from
-        alimentos_comida ac1_0 
-    left join
-        comidas c1_0 
-            on c1_0.id=ac1_0.comida_id 
-    left join
-        alimentos a1_0 
-            on a1_0.id=ac1_0.alimento_id 
-    where
-        c1_0.id=? 
-        and a1_0.id=? 
-    limit
-        ?
-2026-03-20 15:30:14.514 DEBUG [http-nio-8080-exec-5] org.hibernate.SQL - 
+        u1_0.id=?
+2026-03-23 12:13:02.118 DEBUG [http-nio-8080-exec-5] org.hibernate.SQL - 
     insert 
     into
-        alimentos_comida
-        (alimento_id, calorias_totales, cantidad_gramos, comida_id) 
+        rutinas
+        (activa, categoria, descripcion, dias_semana, duracion_minutos, es_predefinida, fecha_creacion, nivel, nombre, usuario_id) 
     values
-        (?, ?, ?, ?)
-2026-03-20 15:30:14.516 DEBUG [http-nio-8080-exec-5] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json, application/yaml]
-2026-03-20 15:30:14.516 DEBUG [http-nio-8080-exec-5] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [AlimentoComidaDTO(id=2, comidaId=2, alimentoId=2, cantidadGramos=150, caloriasTotales=167)]
-2026-03-20 15:30:14.516 DEBUG [http-nio-8080-exec-5] o.s.web.servlet.DispatcherServlet - Completed 200 OK
-2026-03-20 15:30:22.125 DEBUG [http-nio-8080-exec-6] o.s.web.servlet.DispatcherServlet - POST "/api/alimentos-comida", parameters={}
-2026-03-20 15:30:22.126 DEBUG [http-nio-8080-exec-6] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.AlimentoComidaController#guardarAlimentoComida(AlimentoComidaCreateDTO)
-2026-03-20 15:30:22.126 DEBUG [http-nio-8080-exec-6] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [AlimentoComidaCreateDTO(comidaId=2, alimentoId=3, cantidadGramos=50)]
-2026-03-20 15:30:22.126 INFO  [http-nio-8080-exec-6] c.g.a.s.a.AlimentoComidaService - Creando nuevo alimento-comida para comida id: 3 y alimento id: 2
-2026-03-20 15:30:22.128 DEBUG [http-nio-8080-exec-6] org.hibernate.SQL - 
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2026-03-23 12:13:02.120 DEBUG [http-nio-8080-exec-5] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json, application/yaml]
+2026-03-23 12:13:02.120 DEBUG [http-nio-8080-exec-5] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [RutinaDTO(id=5, usuarioId=1, nombre=Rutina Fullbody 7 días, descripcion=Rutina completa para trabaja (truncated)...]
+2026-03-23 12:13:02.121 DEBUG [http-nio-8080-exec-5] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:13:34.916 DEBUG [http-nio-8080-exec-8] o.s.web.servlet.DispatcherServlet - POST "/api/sesiones", parameters={}
+2026-03-23 12:13:34.917 DEBUG [http-nio-8080-exec-8] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.SesionEntrenamientoController#guardarSesion(SesionEntrenamientoCreateDTO)
+2026-03-23 12:13:34.920 DEBUG [http-nio-8080-exec-8] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [SesionEntrenamientoCreateDTO(usuarioId=1, rutinaId=5, fechaInicio=2026-03-18T09:00)]
+2026-03-23 12:13:34.921 INFO  [http-nio-8080-exec-8] c.g.a.s.s.SesionEntrenamientoService - Creando nueva sesión de entrenamiento para usuario id: 1
+2026-03-23 12:13:34.924 DEBUG [http-nio-8080-exec-8] org.hibernate.SQL - 
     select
-        c1_0.id,
-        c1_0.fecha,
-        c1_0.notas,
-        c1_0.tipo_comida,
-        c1_0.total_calorias,
-        c1_0.total_carbohidratos,
-        c1_0.total_grasas,
-        c1_0.total_proteinas,
-        c1_0.usuario_id 
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username 
     from
-        comidas c1_0 
+        usuarios u1_0 
     where
-        c1_0.id=?
-2026-03-20 15:30:22.131 DEBUG [http-nio-8080-exec-6] org.hibernate.SQL - 
+        u1_0.id=?
+2026-03-23 12:13:34.927 DEBUG [http-nio-8080-exec-8] org.hibernate.SQL - 
     select
-        a1_0.id,
-        a1_0.activo,
-        a1_0.calorias,
-        a1_0.carbohidratos,
-        a1_0.categoria,
-        a1_0.descripcion,
-        a1_0.fibra,
-        a1_0.grasas,
-        a1_0.nombre,
-        a1_0.porcion_gramos,
-        a1_0.proteinas 
+        r1_0.id,
+        r1_0.activa,
+        r1_0.categoria,
+        r1_0.descripcion,
+        r1_0.dias_semana,
+        r1_0.duracion_minutos,
+        r1_0.es_predefinida,
+        r1_0.fecha_creacion,
+        r1_0.nivel,
+        r1_0.nombre,
+        r1_0.usuario_id 
     from
-        alimentos a1_0 
+        rutinas r1_0 
     where
-        a1_0.id=?
-2026-03-20 15:30:22.134 DEBUG [http-nio-8080-exec-6] org.hibernate.SQL - 
-    select
-        ac1_0.id 
-    from
-        alimentos_comida ac1_0 
-    left join
-        comidas c1_0 
-            on c1_0.id=ac1_0.comida_id 
-    left join
-        alimentos a1_0 
-            on a1_0.id=ac1_0.alimento_id 
-    where
-        c1_0.id=? 
-        and a1_0.id=? 
-    limit
-        ?
-2026-03-20 15:30:22.135 DEBUG [http-nio-8080-exec-6] org.hibernate.SQL - 
+        r1_0.id=?
+2026-03-23 12:13:34.929 DEBUG [http-nio-8080-exec-8] org.hibernate.SQL - 
     insert 
     into
-        alimentos_comida
-        (alimento_id, calorias_totales, cantidad_gramos, comida_id) 
+        sesiones_entrenamiento
+        (calorias_quemadas, completada, duracion_minutos, fecha_fin, fecha_inicio, notas, rutina_id, usuario_id) 
     values
-        (?, ?, ?, ?)
-2026-03-20 15:30:22.137 DEBUG [http-nio-8080-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json, application/yaml]
-2026-03-20 15:30:22.137 DEBUG [http-nio-8080-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [AlimentoComidaDTO(id=3, comidaId=2, alimentoId=3, cantidadGramos=50, caloriasTotales=80)]
-2026-03-20 15:30:22.137 DEBUG [http-nio-8080-exec-6] o.s.web.servlet.DispatcherServlet - Completed 200 OK
-2026-03-20 15:31:23.477 DEBUG [http-nio-8080-exec-7] o.s.web.servlet.DispatcherServlet - GET "/api/alimentos-comida/2", parameters={}
-2026-03-20 15:31:23.477 DEBUG [http-nio-8080-exec-7] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.AlimentoComidaController#obtenerAlimentoComida(Integer)
-2026-03-20 15:31:23.479 INFO  [http-nio-8080-exec-7] c.g.a.s.a.AlimentoComidaService - Buscando alimento-comida por id: 2
-2026-03-20 15:31:23.480 DEBUG [http-nio-8080-exec-7] org.hibernate.SQL - 
+        (?, ?, ?, ?, ?, ?, ?, ?)
+2026-03-23 12:13:34.931 WARN  [http-nio-8080-exec-8] o.m.jdbc.message.server.ErrorPacket - Error: 1048-23000: Column 'fecha_fin' cannot be null
+2026-03-23 12:13:34.931 WARN  [http-nio-8080-exec-8] o.h.e.jdbc.spi.SqlExceptionHelper - SQL Error: 1048, SQLState: 23000
+2026-03-23 12:13:34.931 ERROR [http-nio-8080-exec-8] o.h.e.jdbc.spi.SqlExceptionHelper - (conn=6) Column 'fecha_fin' cannot be null
+2026-03-23 12:13:34.942 DEBUG [http-nio-8080-exec-8] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Using @ExceptionHandler com.gymprofit.api.exceptions.ControllerExceptionHandler#handleCreateEntityException(CreateEntityException)
+2026-03-23 12:13:34.943 ERROR [http-nio-8080-exec-8] c.g.a.e.ControllerExceptionHandler - Error al crear SesionEntrenamiento: SesionEntrenamientoCreateDTO(usuarioId=1, rutinaId=5, fechaInicio=2026-03-18T09:00)
+com.gymprofit.api.exceptions.CreateEntityException: Error al crear SesionEntrenamiento: SesionEntrenamientoCreateDTO(usuarioId=1, rutinaId=5, fechaInicio=2026-03-18T09:00)
+	at com.gymprofit.api.service.sesionentrenamiento.SesionEntrenamientoService.save(SesionEntrenamientoService.java:86)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:724)
+	at com.gymprofit.api.service.sesionentrenamiento.SesionEntrenamientoService$$SpringCGLIB$$0.save(<generated>)
+	at com.gymprofit.api.controller.SesionEntrenamientoController.guardarSesion(SesionEntrenamientoController.java:74)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:258)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:191)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:991)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:896)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108)
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:365)
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:101)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:125)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:119)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:131)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:85)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.ServletRequestPathFilter.doFilter(ServletRequestPathFilter.java:52)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74)
+	at org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebSecurityConfiguration.java:319)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.servlet.handler.HandlerMappingIntrospector.lambda$createCacheFilter$4(HandlerMappingIntrospector.java:267)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74)
+	at org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebMvcSecurityConfiguration.java:240)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:362)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:278)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:88)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:342)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:399)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1774)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:973)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:1575)
+Caused by: org.springframework.dao.DataIntegrityViolationException: could not execute statement [(conn=6) Column 'fecha_fin' cannot be null] [insert into sesiones_entrenamiento (calorias_quemadas,completada,duracion_minutos,fecha_fin,fecha_inicio,notas,rutina_id,usuario_id) values (?,?,?,?,?,?,?,?)]; SQL [insert into sesiones_entrenamiento (calorias_quemadas,completada,duracion_minutos,fecha_fin,fecha_inicio,notas,rutina_id,usuario_id) values (?,?,?,?,?,?,?,?)]; constraint [null]
+	at org.springframework.orm.jpa.vendor.HibernateJpaDialect.convertHibernateAccessException(HibernateJpaDialect.java:294)
+	at org.springframework.orm.jpa.vendor.HibernateJpaDialect.convertHibernateAccessException(HibernateJpaDialect.java:256)
+	at org.springframework.orm.jpa.vendor.HibernateJpaDialect.translateExceptionIfPossible(HibernateJpaDialect.java:241)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.translateExceptionIfPossible(AbstractEntityManagerFactoryBean.java:560)
+	at org.springframework.dao.support.ChainedPersistenceExceptionTranslator.translateExceptionIfPossible(ChainedPersistenceExceptionTranslator.java:61)
+	at org.springframework.dao.support.DataAccessUtils.translateIfNecessary(DataAccessUtils.java:343)
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:160)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.data.jpa.repository.support.CrudMethodMetadataPostProcessor$CrudMethodMetadataPopulatingMethodInterceptor.invoke(CrudMethodMetadataPostProcessor.java:165)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:223)
+	at jdk.proxy4/jdk.proxy4.$Proxy167.save(Unknown Source)
+	at com.gymprofit.api.service.sesionentrenamiento.SesionEntrenamientoService.save(SesionEntrenamientoService.java:80)
+	... 107 common frames omitted
+Caused by: org.hibernate.exception.ConstraintViolationException: could not execute statement [(conn=6) Column 'fecha_fin' cannot be null] [insert into sesiones_entrenamiento (calorias_quemadas,completada,duracion_minutos,fecha_fin,fecha_inicio,notas,rutina_id,usuario_id) values (?,?,?,?,?,?,?,?)]
+	at org.hibernate.exception.internal.SQLExceptionTypeDelegate.convert(SQLExceptionTypeDelegate.java:62)
+	at org.hibernate.exception.internal.StandardSQLExceptionConverter.convert(StandardSQLExceptionConverter.java:58)
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:108)
+	at org.hibernate.engine.jdbc.internal.ResultSetReturnImpl.executeUpdate(ResultSetReturnImpl.java:197)
+	at org.hibernate.id.insert.GetGeneratedKeysDelegate.performMutation(GetGeneratedKeysDelegate.java:116)
+	at org.hibernate.engine.jdbc.mutation.internal.MutationExecutorSingleNonBatched.performNonBatchedOperations(MutationExecutorSingleNonBatched.java:47)
+	at org.hibernate.engine.jdbc.mutation.internal.AbstractMutationExecutor.execute(AbstractMutationExecutor.java:55)
+	at org.hibernate.persister.entity.mutation.InsertCoordinatorStandard.doStaticInserts(InsertCoordinatorStandard.java:194)
+	at org.hibernate.persister.entity.mutation.InsertCoordinatorStandard.coordinateInsert(InsertCoordinatorStandard.java:132)
+	at org.hibernate.persister.entity.mutation.InsertCoordinatorStandard.insert(InsertCoordinatorStandard.java:95)
+	at org.hibernate.action.internal.EntityIdentityInsertAction.execute(EntityIdentityInsertAction.java:85)
+	at org.hibernate.engine.spi.ActionQueue.execute(ActionQueue.java:682)
+	at org.hibernate.engine.spi.ActionQueue.addResolvedEntityInsertAction(ActionQueue.java:293)
+	at org.hibernate.engine.spi.ActionQueue.addInsertAction(ActionQueue.java:274)
+	at org.hibernate.engine.spi.ActionQueue.addAction(ActionQueue.java:324)
+	at org.hibernate.event.internal.AbstractSaveEventListener.addInsertAction(AbstractSaveEventListener.java:394)
+	at org.hibernate.event.internal.AbstractSaveEventListener.performSaveOrReplicate(AbstractSaveEventListener.java:308)
+	at org.hibernate.event.internal.AbstractSaveEventListener.performSave(AbstractSaveEventListener.java:224)
+	at org.hibernate.event.internal.AbstractSaveEventListener.saveWithGeneratedId(AbstractSaveEventListener.java:136)
+	at org.hibernate.event.internal.DefaultPersistEventListener.entityIsTransient(DefaultPersistEventListener.java:177)
+	at org.hibernate.event.internal.DefaultPersistEventListener.persist(DefaultPersistEventListener.java:95)
+	at org.hibernate.event.internal.DefaultPersistEventListener.onPersist(DefaultPersistEventListener.java:79)
+	at org.hibernate.event.internal.DefaultPersistEventListener.onPersist(DefaultPersistEventListener.java:55)
+	at org.hibernate.event.service.internal.EventListenerGroupImpl.fireEventOnEachListener(EventListenerGroupImpl.java:127)
+	at org.hibernate.internal.SessionImpl.firePersist(SessionImpl.java:761)
+	at org.hibernate.internal.SessionImpl.persist(SessionImpl.java:745)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.orm.jpa.ExtendedEntityManagerCreator$ExtendedEntityManagerInvocationHandler.invoke(ExtendedEntityManagerCreator.java:364)
+	at jdk.proxy4/jdk.proxy4.$Proxy156.persist(Unknown Source)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.orm.jpa.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler.invoke(SharedEntityManagerCreator.java:320)
+	at jdk.proxy4/jdk.proxy4.$Proxy156.persist(Unknown Source)
+	at org.springframework.data.jpa.repository.support.SimpleJpaRepository.save(SimpleJpaRepository.java:654)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360)
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker$RepositoryFragmentMethodInvoker.lambda$new$0(RepositoryMethodInvoker.java:277)
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.doInvoke(RepositoryMethodInvoker.java:170)
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.invoke(RepositoryMethodInvoker.java:158)
+	at org.springframework.data.repository.core.support.RepositoryComposition$RepositoryFragments.invoke(RepositoryComposition.java:515)
+	at org.springframework.data.repository.core.support.RepositoryComposition.invoke(RepositoryComposition.java:284)
+	at org.springframework.data.repository.core.support.RepositoryFactorySupport$ImplementationMethodExecutionInterceptor.invoke(RepositoryFactorySupport.java:734)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.doInvoke(QueryExecutorMethodInterceptor.java:174)
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.invoke(QueryExecutorMethodInterceptor.java:149)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:380)
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:138)
+	... 113 common frames omitted
+Caused by: java.sql.SQLIntegrityConstraintViolationException: (conn=6) Column 'fecha_fin' cannot be null
+	at org.mariadb.jdbc.export.ExceptionFactory.createException(ExceptionFactory.java:301)
+	at org.mariadb.jdbc.export.ExceptionFactory.create(ExceptionFactory.java:386)
+	at org.mariadb.jdbc.message.ClientMessage.readPacket(ClientMessage.java:187)
+	at org.mariadb.jdbc.client.impl.StandardClient.readPacket(StandardClient.java:1376)
+	at org.mariadb.jdbc.client.impl.StandardClient.readResults(StandardClient.java:1315)
+	at org.mariadb.jdbc.client.impl.StandardClient.readResponse(StandardClient.java:1234)
+	at org.mariadb.jdbc.client.impl.StandardClient.execute(StandardClient.java:1158)
+	at org.mariadb.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:91)
+	at org.mariadb.jdbc.ClientPreparedStatement.executeLargeUpdate(ClientPreparedStatement.java:345)
+	at org.mariadb.jdbc.ClientPreparedStatement.executeUpdate(ClientPreparedStatement.java:322)
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeUpdate(ProxyPreparedStatement.java:61)
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeUpdate(HikariProxyPreparedStatement.java)
+	at org.hibernate.engine.jdbc.internal.ResultSetReturnImpl.executeUpdate(ResultSetReturnImpl.java:194)
+	... 161 common frames omitted
+2026-03-23 12:13:34.947 DEBUG [http-nio-8080-exec-8] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json]
+2026-03-23 12:13:34.948 DEBUG [http-nio-8080-exec-8] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [Response(code=500, message=Error al crear SesionEntrenamiento: SesionEntrenamientoCreateDTO(usuarioI (truncated)...]
+2026-03-23 12:13:34.949 WARN  [http-nio-8080-exec-8] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [com.gymprofit.api.exceptions.CreateEntityException: Error al crear SesionEntrenamiento: SesionEntrenamientoCreateDTO(usuarioId=1, rutinaId=5, fechaInicio=2026-03-18T09:00)]
+2026-03-23 12:13:34.949 DEBUG [http-nio-8080-exec-8] o.s.web.servlet.DispatcherServlet - Completed 500 INTERNAL_SERVER_ERROR
+2026-03-23 12:13:42.823 DEBUG [http-nio-8080-exec-7] o.s.web.servlet.DispatcherServlet - POST "/api/sesiones", parameters={}
+2026-03-23 12:13:42.823 DEBUG [http-nio-8080-exec-7] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.SesionEntrenamientoController#guardarSesion(SesionEntrenamientoCreateDTO)
+2026-03-23 12:13:42.824 DEBUG [http-nio-8080-exec-7] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [SesionEntrenamientoCreateDTO(usuarioId=1, rutinaId=1, fechaInicio=2026-03-18T09:00)]
+2026-03-23 12:13:42.824 INFO  [http-nio-8080-exec-7] c.g.a.s.s.SesionEntrenamientoService - Creando nueva sesión de entrenamiento para usuario id: 1
+2026-03-23 12:13:42.825 DEBUG [http-nio-8080-exec-7] org.hibernate.SQL - 
     select
-        ac1_0.id,
-        ac1_0.alimento_id,
-        ac1_0.calorias_totales,
-        ac1_0.cantidad_gramos,
-        ac1_0.comida_id 
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username 
     from
-        alimentos_comida ac1_0 
+        usuarios u1_0 
     where
-        ac1_0.id=?
-2026-03-20 15:31:23.482 DEBUG [http-nio-8080-exec-7] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json, application/yaml]
-2026-03-20 15:31:23.482 DEBUG [http-nio-8080-exec-7] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [AlimentoComidaDTO(id=2, comidaId=2, alimentoId=2, cantidadGramos=150.00, caloriasTotales=167)]
-2026-03-20 15:31:23.482 DEBUG [http-nio-8080-exec-7] o.s.web.servlet.DispatcherServlet - Completed 200 OK
-2026-03-20 15:31:37.306 DEBUG [http-nio-8080-exec-9] o.s.web.servlet.DispatcherServlet - GET "/api/alimentos-comida/comida/2", parameters={}
-2026-03-20 15:31:37.306 DEBUG [http-nio-8080-exec-9] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.AlimentoComidaController#obtenerAlimentosPorComida(Integer)
-2026-03-20 15:31:37.307 INFO  [http-nio-8080-exec-9] c.g.a.s.a.AlimentoComidaService - Buscando alimentos de la comida id: 2
-2026-03-20 15:31:37.315 DEBUG [http-nio-8080-exec-9] org.hibernate.SQL - 
+        u1_0.id=?
+2026-03-23 12:13:42.827 DEBUG [http-nio-8080-exec-7] org.hibernate.SQL - 
     select
-        ac1_0.id,
-        ac1_0.alimento_id,
-        ac1_0.calorias_totales,
-        ac1_0.cantidad_gramos,
-        ac1_0.comida_id 
+        r1_0.id,
+        r1_0.activa,
+        r1_0.categoria,
+        r1_0.descripcion,
+        r1_0.dias_semana,
+        r1_0.duracion_minutos,
+        r1_0.es_predefinida,
+        r1_0.fecha_creacion,
+        r1_0.nivel,
+        r1_0.nombre,
+        r1_0.usuario_id 
     from
-        alimentos_comida ac1_0 
-    left join
-        comidas c1_0 
-            on c1_0.id=ac1_0.comida_id 
+        rutinas r1_0 
     where
-        c1_0.id=?
-2026-03-20 15:31:37.319 DEBUG [http-nio-8080-exec-9] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json, application/yaml]
-2026-03-20 15:31:37.319 DEBUG [http-nio-8080-exec-9] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [[AlimentoComidaDTO(id=1, comidaId=2, alimentoId=1, cantidadGramos=200.00, caloriasTotales=330), Alim (truncated)...]
-2026-03-20 15:31:37.320 DEBUG [http-nio-8080-exec-9] o.s.web.servlet.DispatcherServlet - Completed 200 OK
-2026-03-20 15:32:02.849 DEBUG [http-nio-8080-exec-10] o.s.web.servlet.DispatcherServlet - GET "/api/alimentos-comida/alimento/1", parameters={}
-2026-03-20 15:32:02.849 DEBUG [http-nio-8080-exec-10] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.AlimentoComidaController#obtenerComidasPorAlimento(Integer)
-2026-03-20 15:32:02.850 INFO  [http-nio-8080-exec-10] c.g.a.s.a.AlimentoComidaService - Buscando comidas que contienen el alimento id: 1
-2026-03-20 15:32:02.852 DEBUG [http-nio-8080-exec-10] org.hibernate.SQL - 
+        r1_0.id=?
+2026-03-23 12:13:42.829 DEBUG [http-nio-8080-exec-7] org.hibernate.SQL - 
+    insert 
+    into
+        sesiones_entrenamiento
+        (calorias_quemadas, completada, duracion_minutos, fecha_fin, fecha_inicio, notas, rutina_id, usuario_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+2026-03-23 12:13:42.829 WARN  [http-nio-8080-exec-7] o.m.jdbc.message.server.ErrorPacket - Error: 1048-23000: Column 'fecha_fin' cannot be null
+2026-03-23 12:13:42.829 WARN  [http-nio-8080-exec-7] o.h.e.jdbc.spi.SqlExceptionHelper - SQL Error: 1048, SQLState: 23000
+2026-03-23 12:13:42.829 ERROR [http-nio-8080-exec-7] o.h.e.jdbc.spi.SqlExceptionHelper - (conn=6) Column 'fecha_fin' cannot be null
+2026-03-23 12:13:42.830 DEBUG [http-nio-8080-exec-7] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Using @ExceptionHandler com.gymprofit.api.exceptions.ControllerExceptionHandler#handleCreateEntityException(CreateEntityException)
+2026-03-23 12:13:42.830 ERROR [http-nio-8080-exec-7] c.g.a.e.ControllerExceptionHandler - Error al crear SesionEntrenamiento: SesionEntrenamientoCreateDTO(usuarioId=1, rutinaId=1, fechaInicio=2026-03-18T09:00)
+com.gymprofit.api.exceptions.CreateEntityException: Error al crear SesionEntrenamiento: SesionEntrenamientoCreateDTO(usuarioId=1, rutinaId=1, fechaInicio=2026-03-18T09:00)
+	at com.gymprofit.api.service.sesionentrenamiento.SesionEntrenamientoService.save(SesionEntrenamientoService.java:86)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:724)
+	at com.gymprofit.api.service.sesionentrenamiento.SesionEntrenamientoService$$SpringCGLIB$$0.save(<generated>)
+	at com.gymprofit.api.controller.SesionEntrenamientoController.guardarSesion(SesionEntrenamientoController.java:74)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:258)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:191)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:991)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:896)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108)
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:365)
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:101)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:125)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:119)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:131)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:85)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.ServletRequestPathFilter.doFilter(ServletRequestPathFilter.java:52)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74)
+	at org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebSecurityConfiguration.java:319)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.servlet.handler.HandlerMappingIntrospector.lambda$createCacheFilter$4(HandlerMappingIntrospector.java:267)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74)
+	at org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebMvcSecurityConfiguration.java:240)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:362)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:278)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:88)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:342)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:399)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1774)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:973)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:1575)
+Caused by: org.springframework.dao.DataIntegrityViolationException: could not execute statement [(conn=6) Column 'fecha_fin' cannot be null] [insert into sesiones_entrenamiento (calorias_quemadas,completada,duracion_minutos,fecha_fin,fecha_inicio,notas,rutina_id,usuario_id) values (?,?,?,?,?,?,?,?)]; SQL [insert into sesiones_entrenamiento (calorias_quemadas,completada,duracion_minutos,fecha_fin,fecha_inicio,notas,rutina_id,usuario_id) values (?,?,?,?,?,?,?,?)]; constraint [null]
+	at org.springframework.orm.jpa.vendor.HibernateJpaDialect.convertHibernateAccessException(HibernateJpaDialect.java:294)
+	at org.springframework.orm.jpa.vendor.HibernateJpaDialect.convertHibernateAccessException(HibernateJpaDialect.java:256)
+	at org.springframework.orm.jpa.vendor.HibernateJpaDialect.translateExceptionIfPossible(HibernateJpaDialect.java:241)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.translateExceptionIfPossible(AbstractEntityManagerFactoryBean.java:560)
+	at org.springframework.dao.support.ChainedPersistenceExceptionTranslator.translateExceptionIfPossible(ChainedPersistenceExceptionTranslator.java:61)
+	at org.springframework.dao.support.DataAccessUtils.translateIfNecessary(DataAccessUtils.java:343)
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:160)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.data.jpa.repository.support.CrudMethodMetadataPostProcessor$CrudMethodMetadataPopulatingMethodInterceptor.invoke(CrudMethodMetadataPostProcessor.java:165)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:223)
+	at jdk.proxy4/jdk.proxy4.$Proxy167.save(Unknown Source)
+	at com.gymprofit.api.service.sesionentrenamiento.SesionEntrenamientoService.save(SesionEntrenamientoService.java:80)
+	... 107 common frames omitted
+Caused by: org.hibernate.exception.ConstraintViolationException: could not execute statement [(conn=6) Column 'fecha_fin' cannot be null] [insert into sesiones_entrenamiento (calorias_quemadas,completada,duracion_minutos,fecha_fin,fecha_inicio,notas,rutina_id,usuario_id) values (?,?,?,?,?,?,?,?)]
+	at org.hibernate.exception.internal.SQLExceptionTypeDelegate.convert(SQLExceptionTypeDelegate.java:62)
+	at org.hibernate.exception.internal.StandardSQLExceptionConverter.convert(StandardSQLExceptionConverter.java:58)
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:108)
+	at org.hibernate.engine.jdbc.internal.ResultSetReturnImpl.executeUpdate(ResultSetReturnImpl.java:197)
+	at org.hibernate.id.insert.GetGeneratedKeysDelegate.performMutation(GetGeneratedKeysDelegate.java:116)
+	at org.hibernate.engine.jdbc.mutation.internal.MutationExecutorSingleNonBatched.performNonBatchedOperations(MutationExecutorSingleNonBatched.java:47)
+	at org.hibernate.engine.jdbc.mutation.internal.AbstractMutationExecutor.execute(AbstractMutationExecutor.java:55)
+	at org.hibernate.persister.entity.mutation.InsertCoordinatorStandard.doStaticInserts(InsertCoordinatorStandard.java:194)
+	at org.hibernate.persister.entity.mutation.InsertCoordinatorStandard.coordinateInsert(InsertCoordinatorStandard.java:132)
+	at org.hibernate.persister.entity.mutation.InsertCoordinatorStandard.insert(InsertCoordinatorStandard.java:95)
+	at org.hibernate.action.internal.EntityIdentityInsertAction.execute(EntityIdentityInsertAction.java:85)
+	at org.hibernate.engine.spi.ActionQueue.execute(ActionQueue.java:682)
+	at org.hibernate.engine.spi.ActionQueue.addResolvedEntityInsertAction(ActionQueue.java:293)
+	at org.hibernate.engine.spi.ActionQueue.addInsertAction(ActionQueue.java:274)
+	at org.hibernate.engine.spi.ActionQueue.addAction(ActionQueue.java:324)
+	at org.hibernate.event.internal.AbstractSaveEventListener.addInsertAction(AbstractSaveEventListener.java:394)
+	at org.hibernate.event.internal.AbstractSaveEventListener.performSaveOrReplicate(AbstractSaveEventListener.java:308)
+	at org.hibernate.event.internal.AbstractSaveEventListener.performSave(AbstractSaveEventListener.java:224)
+	at org.hibernate.event.internal.AbstractSaveEventListener.saveWithGeneratedId(AbstractSaveEventListener.java:136)
+	at org.hibernate.event.internal.DefaultPersistEventListener.entityIsTransient(DefaultPersistEventListener.java:177)
+	at org.hibernate.event.internal.DefaultPersistEventListener.persist(DefaultPersistEventListener.java:95)
+	at org.hibernate.event.internal.DefaultPersistEventListener.onPersist(DefaultPersistEventListener.java:79)
+	at org.hibernate.event.internal.DefaultPersistEventListener.onPersist(DefaultPersistEventListener.java:55)
+	at org.hibernate.event.service.internal.EventListenerGroupImpl.fireEventOnEachListener(EventListenerGroupImpl.java:127)
+	at org.hibernate.internal.SessionImpl.firePersist(SessionImpl.java:761)
+	at org.hibernate.internal.SessionImpl.persist(SessionImpl.java:745)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.orm.jpa.ExtendedEntityManagerCreator$ExtendedEntityManagerInvocationHandler.invoke(ExtendedEntityManagerCreator.java:364)
+	at jdk.proxy4/jdk.proxy4.$Proxy156.persist(Unknown Source)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.orm.jpa.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler.invoke(SharedEntityManagerCreator.java:320)
+	at jdk.proxy4/jdk.proxy4.$Proxy156.persist(Unknown Source)
+	at org.springframework.data.jpa.repository.support.SimpleJpaRepository.save(SimpleJpaRepository.java:654)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360)
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker$RepositoryFragmentMethodInvoker.lambda$new$0(RepositoryMethodInvoker.java:277)
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.doInvoke(RepositoryMethodInvoker.java:170)
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.invoke(RepositoryMethodInvoker.java:158)
+	at org.springframework.data.repository.core.support.RepositoryComposition$RepositoryFragments.invoke(RepositoryComposition.java:515)
+	at org.springframework.data.repository.core.support.RepositoryComposition.invoke(RepositoryComposition.java:284)
+	at org.springframework.data.repository.core.support.RepositoryFactorySupport$ImplementationMethodExecutionInterceptor.invoke(RepositoryFactorySupport.java:734)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.doInvoke(QueryExecutorMethodInterceptor.java:174)
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.invoke(QueryExecutorMethodInterceptor.java:149)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:380)
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:138)
+	... 113 common frames omitted
+Caused by: java.sql.SQLIntegrityConstraintViolationException: (conn=6) Column 'fecha_fin' cannot be null
+	at org.mariadb.jdbc.export.ExceptionFactory.createException(ExceptionFactory.java:301)
+	at org.mariadb.jdbc.export.ExceptionFactory.create(ExceptionFactory.java:386)
+	at org.mariadb.jdbc.message.ClientMessage.readPacket(ClientMessage.java:187)
+	at org.mariadb.jdbc.client.impl.StandardClient.readPacket(StandardClient.java:1376)
+	at org.mariadb.jdbc.client.impl.StandardClient.readResults(StandardClient.java:1315)
+	at org.mariadb.jdbc.client.impl.StandardClient.readResponse(StandardClient.java:1234)
+	at org.mariadb.jdbc.client.impl.StandardClient.execute(StandardClient.java:1158)
+	at org.mariadb.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:91)
+	at org.mariadb.jdbc.ClientPreparedStatement.executeLargeUpdate(ClientPreparedStatement.java:345)
+	at org.mariadb.jdbc.ClientPreparedStatement.executeUpdate(ClientPreparedStatement.java:322)
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeUpdate(ProxyPreparedStatement.java:61)
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeUpdate(HikariProxyPreparedStatement.java)
+	at org.hibernate.engine.jdbc.internal.ResultSetReturnImpl.executeUpdate(ResultSetReturnImpl.java:194)
+	... 161 common frames omitted
+2026-03-23 12:13:42.831 DEBUG [http-nio-8080-exec-7] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json]
+2026-03-23 12:13:42.831 DEBUG [http-nio-8080-exec-7] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [Response(code=500, message=Error al crear SesionEntrenamiento: SesionEntrenamientoCreateDTO(usuarioI (truncated)...]
+2026-03-23 12:13:42.832 WARN  [http-nio-8080-exec-7] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [com.gymprofit.api.exceptions.CreateEntityException: Error al crear SesionEntrenamiento: SesionEntrenamientoCreateDTO(usuarioId=1, rutinaId=1, fechaInicio=2026-03-18T09:00)]
+2026-03-23 12:13:42.832 DEBUG [http-nio-8080-exec-7] o.s.web.servlet.DispatcherServlet - Completed 500 INTERNAL_SERVER_ERROR
+2026-03-23 12:14:35.093 INFO  [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-03-23 12:14:35.096 INFO  [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-03-23 12:14:35.101 INFO  [SpringApplicationShutdownHook] o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-23 12:14:35.102 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-23 12:14:35.105 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-23 12:15:25.841 INFO  [restartedMain] c.g.api.GymProFitApiApplication - Starting GymProFitApiApplication using Java 23.0.2 with PID 34616 (C:\Users\ruben\Desktop\tfg\api\gymprofit-api\target\classes started by ruben in C:\Users\ruben\Desktop\tfg\api\gymprofit-api)
+2026-03-23 12:15:25.842 DEBUG [restartedMain] c.g.api.GymProFitApiApplication - Running with Spring Boot v3.5.7, Spring v6.2.12
+2026-03-23 12:15:25.842 INFO  [restartedMain] c.g.api.GymProFitApiApplication - The following 1 profile is active: "dev"
+2026-03-23 12:15:25.882 INFO  [restartedMain] o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-03-23 12:15:25.882 INFO  [restartedMain] o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-03-23 12:15:26.679 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-23 12:15:26.805 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 119 ms. Found 13 JPA repository interfaces.
+2026-03-23 12:15:27.331 INFO  [restartedMain] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-03-23 12:15:27.342 INFO  [restartedMain] o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-23 12:15:27.342 INFO  [restartedMain] o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-23 12:15:27.342 INFO  [restartedMain] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.48]
+2026-03-23 12:15:27.405 INFO  [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-23 12:15:27.405 INFO  [restartedMain] o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1523 ms
+2026-03-23 12:15:27.595 INFO  [restartedMain] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-23 12:15:27.654 INFO  [restartedMain] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.mariadb.jdbc.Connection@1c7669be
+2026-03-23 12:15:27.655 INFO  [restartedMain] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-23 12:15:27.665 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - 1 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-03-23 12:15:27.667 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-03-23 12:15:27.672 WARN  [restartedMain] o.m.jdbc.message.server.ErrorPacket - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-03-23 12:15:27.689 INFO  [restartedMain] org.flywaydb.core.FlywayExecutor - Database: jdbc:mariadb://localhost:3308/gymprofit_db?user=root&password=********&useUnicode=true&characterEncoding=UTF-8 (MariaDB 11.8)
+2026-03-23 12:15:27.692 WARN  [restartedMain] o.f.c.i.database.base.Database - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-03-23 12:15:27.707 INFO  [restartedMain] o.f.c.i.s.JdbcTableSchemaHistory - Repair of failed migration in Schema History table `gymprofit_db`.`flyway_schema_history` not necessary. No failed migration detected.
+2026-03-23 12:15:27.712 INFO  [restartedMain] o.f.core.internal.command.DbRepair - Successfully repaired schema history table `gymprofit_db`.`flyway_schema_history` (execution time 00:00.010s).
+2026-03-23 12:15:27.718 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - 1 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-03-23 12:15:27.718 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-03-23 12:15:27.718 WARN  [restartedMain] o.m.jdbc.message.server.ErrorPacket - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-03-23 12:15:27.722 WARN  [restartedMain] o.f.c.i.database.base.Database - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-03-23 12:15:27.727 INFO  [restartedMain] o.f.core.internal.command.DbValidate - Successfully validated 0 migrations (execution time 00:00.001s)
+2026-03-23 12:15:27.727 WARN  [restartedMain] o.f.core.internal.command.DbValidate - No migrations found. Are your locations set up correctly?
+2026-03-23 12:15:27.732 INFO  [restartedMain] o.f.core.internal.command.DbMigrate - Current version of schema `gymprofit_db`: << Empty Schema >>
+2026-03-23 12:15:27.734 INFO  [restartedMain] o.f.core.internal.command.DbMigrate - Schema `gymprofit_db` is up to date. No migration necessary.
+2026-03-23 12:15:27.739 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - 1 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-03-23 12:15:27.739 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-03-23 12:15:27.739 WARN  [restartedMain] o.m.jdbc.message.server.ErrorPacket - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-03-23 12:15:27.743 WARN  [restartedMain] o.f.c.i.database.base.Database - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-03-23 12:15:27.749 INFO  [restartedMain] o.f.core.internal.command.DbValidate - Successfully validated 0 migrations (execution time 00:00.005s)
+2026-03-23 12:15:27.749 WARN  [restartedMain] o.f.core.internal.command.DbValidate - No migrations found. Are your locations set up correctly?
+2026-03-23 12:15:27.752 INFO  [restartedMain] o.f.core.internal.command.DbMigrate - Current version of schema `gymprofit_db`: << Empty Schema >>
+2026-03-23 12:15:27.752 INFO  [restartedMain] o.f.core.internal.command.DbMigrate - Schema `gymprofit_db` is up to date. No migration necessary.
+2026-03-23 12:15:28.140 INFO  [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-23 12:15:28.179 WARN  [restartedMain] org.hibernate.orm.deprecation - HHH90000025: MariaDBDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-23 12:15:28.999 INFO  [restartedMain] o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-23 12:15:29.352 INFO  [restartedMain] o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-03-23 12:15:29.859 WARN  [restartedMain] o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-23 12:15:30.167 DEBUG [restartedMain] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 96 mappings in 'requestMappingHandlerMapping'
+2026-03-23 12:15:30.265 DEBUG [restartedMain] o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**, /swagger-ui/**, /swagger-ui/*swagger-initializer.js, /webjars/*swagger-ui/**, /webjars/*swagger-ui/*swagger-initializer.js, /webjars/*swagger-ui/5.31.0/*swagger-initializer.js] in 'resourceHandlerMapping'
+2026-03-23 12:15:30.311 WARN  [restartedMain] o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: c61d65a7-7b7e-44c6-bc0d-2bc355e390a3
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-03-23 12:15:30.317 INFO  [restartedMain] o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-03-23 12:15:30.472 DEBUG [restartedMain] o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2026-03-23 12:15:30.508 DEBUG [restartedMain] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 3 @ExceptionHandler, 1 ResponseBodyAdvice
+2026-03-23 12:15:30.527 DEBUG [restartedMain] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 3 @ExceptionHandler, 0 ResponseBodyAdvice
+2026-03-23 12:15:31.324 INFO  [restartedMain] o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-23 12:15:31.374 INFO  [restartedMain] o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-23 12:15:31.389 INFO  [restartedMain] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-03-23 12:15:31.396 INFO  [restartedMain] c.g.api.GymProFitApiApplication - Started GymProFitApiApplication in 5.977 seconds (process running for 6.633)
+2026-03-23 12:15:31.399 WARN  [restartedMain] o.s.c.events.SpringDocAppInitializer - SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+2026-03-23 12:15:31.399 WARN  [restartedMain] o.s.c.events.SpringDocAppInitializer - SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+2026-03-23 12:16:03.085 INFO  [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-23 12:16:03.086 INFO  [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-03-23 12:16:03.086 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2026-03-23 12:16:03.086 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2026-03-23 12:16:03.086 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2026-03-23 12:16:03.087 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@26b9519
+2026-03-23 12:16:03.087 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@7c800221
+2026-03-23 12:16:03.087 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2026-03-23 12:16:03.087 INFO  [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2026-03-23 12:16:03.127 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - POST "/api/sesiones", parameters={}
+2026-03-23 12:16:03.128 DEBUG [http-nio-8080-exec-1] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.SesionEntrenamientoController#guardarSesion(SesionEntrenamientoCreateDTO)
+2026-03-23 12:16:03.157 DEBUG [http-nio-8080-exec-1] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [SesionEntrenamientoCreateDTO(usuarioId=1, rutinaId=1, fechaInicio=2026-03-18T09:00)]
+2026-03-23 12:16:03.168 INFO  [http-nio-8080-exec-1] c.g.a.s.s.SesionEntrenamientoService - Creando nueva sesión de entrenamiento para usuario id: 1
+2026-03-23 12:16:03.199 DEBUG [http-nio-8080-exec-1] org.hibernate.SQL - 
     select
-        ac1_0.id,
-        ac1_0.alimento_id,
-        ac1_0.calorias_totales,
-        ac1_0.cantidad_gramos,
-        ac1_0.comida_id 
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username 
     from
-        alimentos_comida ac1_0 
-    left join
-        alimentos a1_0 
-            on a1_0.id=ac1_0.alimento_id 
+        usuarios u1_0 
     where
-        a1_0.id=?
-2026-03-20 15:32:02.853 DEBUG [http-nio-8080-exec-10] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json, application/yaml]
-2026-03-20 15:32:02.855 DEBUG [http-nio-8080-exec-10] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [[AlimentoComidaDTO(id=1, comidaId=2, alimentoId=1, cantidadGramos=200.00, caloriasTotales=330)]]
-2026-03-20 15:32:02.855 DEBUG [http-nio-8080-exec-10] o.s.web.servlet.DispatcherServlet - Completed 200 OK
-2026-03-20 15:32:23.049 DEBUG [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet - GET "/api/alimentos-comida/comida/2/alimento/1", parameters={}
-2026-03-20 15:32:23.050 DEBUG [http-nio-8080-exec-2] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.AlimentoComidaController#obtenerRelacionComidaAlimento(Integer, Integer)
-2026-03-20 15:32:23.051 INFO  [http-nio-8080-exec-2] c.g.a.s.a.AlimentoComidaService - Buscando relación entre comida 2 y alimento 1
-2026-03-20 15:32:23.053 DEBUG [http-nio-8080-exec-2] org.hibernate.SQL - 
+        u1_0.id=?
+2026-03-23 12:16:03.225 DEBUG [http-nio-8080-exec-1] org.hibernate.SQL - 
     select
-        ac1_0.id,
-        ac1_0.alimento_id,
-        ac1_0.calorias_totales,
-        ac1_0.cantidad_gramos,
-        ac1_0.comida_id 
+        r1_0.id,
+        r1_0.activa,
+        r1_0.categoria,
+        r1_0.descripcion,
+        r1_0.dias_semana,
+        r1_0.duracion_minutos,
+        r1_0.es_predefinida,
+        r1_0.fecha_creacion,
+        r1_0.nivel,
+        r1_0.nombre,
+        r1_0.usuario_id 
     from
-        alimentos_comida ac1_0 
-    left join
-        comidas c1_0 
-            on c1_0.id=ac1_0.comida_id 
-    left join
-        alimentos a1_0 
-            on a1_0.id=ac1_0.alimento_id 
+        rutinas r1_0 
     where
-        c1_0.id=? 
-        and a1_0.id=?
-2026-03-20 15:32:23.055 DEBUG [http-nio-8080-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json, application/yaml]
-2026-03-20 15:32:23.055 DEBUG [http-nio-8080-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [AlimentoComidaDTO(id=1, comidaId=2, alimentoId=1, cantidadGramos=200.00, caloriasTotales=330)]
-2026-03-20 15:32:23.056 DEBUG [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet - Completed 200 OK
-2026-03-20 15:32:42.549 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - GET "/api/alimentos-comida/count/comida/2", parameters={}
-2026-03-20 15:32:42.549 DEBUG [http-nio-8080-exec-1] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.AlimentoComidaController#contarAlimentosPorComida(Integer)
-2026-03-20 15:32:42.550 INFO  [http-nio-8080-exec-1] c.g.a.s.a.AlimentoComidaService - Contando alimentos de la comida id: 2
-2026-03-20 15:32:42.555 DEBUG [http-nio-8080-exec-1] org.hibernate.SQL - 
+        r1_0.id=?
+2026-03-23 12:16:03.252 DEBUG [http-nio-8080-exec-1] org.hibernate.SQL - 
+    insert 
+    into
+        sesiones_entrenamiento
+        (calorias_quemadas, completada, duracion_minutos, fecha_fin, fecha_inicio, notas, rutina_id, usuario_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+2026-03-23 12:16:03.280 DEBUG [http-nio-8080-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json, application/yaml]
+2026-03-23 12:16:03.283 DEBUG [http-nio-8080-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [SesionEntrenamientoDTO(id=1, usuarioId=1, rutinaId=1, fechaInicio=2026-03-18T09:00, fechaFin=null, d (truncated)...]
+2026-03-23 12:16:03.294 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:17:02.913 INFO  [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-03-23 12:17:02.917 INFO  [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-03-23 12:17:02.921 INFO  [SpringApplicationShutdownHook] o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-23 12:17:02.924 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-23 12:17:02.926 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-23 12:17:14.411 INFO  [restartedMain] c.g.api.GymProFitApiApplication - Starting GymProFitApiApplication using Java 23.0.2 with PID 33464 (C:\Users\ruben\Desktop\tfg\api\gymprofit-api\target\classes started by ruben in C:\Users\ruben\Desktop\tfg\api\gymprofit-api)
+2026-03-23 12:17:14.412 DEBUG [restartedMain] c.g.api.GymProFitApiApplication - Running with Spring Boot v3.5.7, Spring v6.2.12
+2026-03-23 12:17:14.412 INFO  [restartedMain] c.g.api.GymProFitApiApplication - The following 1 profile is active: "dev"
+2026-03-23 12:17:14.457 INFO  [restartedMain] o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-03-23 12:17:14.457 INFO  [restartedMain] o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-03-23 12:17:15.249 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-23 12:17:15.374 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 118 ms. Found 13 JPA repository interfaces.
+2026-03-23 12:17:15.857 INFO  [restartedMain] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-03-23 12:17:15.870 INFO  [restartedMain] o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-23 12:17:15.870 INFO  [restartedMain] o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-23 12:17:15.872 INFO  [restartedMain] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.48]
+2026-03-23 12:17:15.931 INFO  [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-23 12:17:15.931 INFO  [restartedMain] o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1474 ms
+2026-03-23 12:17:16.138 INFO  [restartedMain] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-23 12:17:16.200 INFO  [restartedMain] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.mariadb.jdbc.Connection@37a90ed
+2026-03-23 12:17:16.201 INFO  [restartedMain] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-23 12:17:16.211 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - 1 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-03-23 12:17:16.213 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-03-23 12:17:16.219 WARN  [restartedMain] o.m.jdbc.message.server.ErrorPacket - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-03-23 12:17:16.237 INFO  [restartedMain] org.flywaydb.core.FlywayExecutor - Database: jdbc:mariadb://localhost:3308/gymprofit_db?user=root&password=********&useUnicode=true&characterEncoding=UTF-8 (MariaDB 11.8)
+2026-03-23 12:17:16.241 WARN  [restartedMain] o.f.c.i.database.base.Database - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-03-23 12:17:16.258 INFO  [restartedMain] o.f.c.i.s.JdbcTableSchemaHistory - Repair of failed migration in Schema History table `gymprofit_db`.`flyway_schema_history` not necessary. No failed migration detected.
+2026-03-23 12:17:16.262 INFO  [restartedMain] o.f.core.internal.command.DbRepair - Successfully repaired schema history table `gymprofit_db`.`flyway_schema_history` (execution time 00:00.011s).
+2026-03-23 12:17:16.267 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - 1 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-03-23 12:17:16.267 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-03-23 12:17:16.267 WARN  [restartedMain] o.m.jdbc.message.server.ErrorPacket - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-03-23 12:17:16.272 WARN  [restartedMain] o.f.c.i.database.base.Database - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-03-23 12:17:16.275 INFO  [restartedMain] o.f.core.internal.command.DbValidate - Successfully validated 0 migrations (execution time 00:00.001s)
+2026-03-23 12:17:16.275 WARN  [restartedMain] o.f.core.internal.command.DbValidate - No migrations found. Are your locations set up correctly?
+2026-03-23 12:17:16.280 INFO  [restartedMain] o.f.core.internal.command.DbMigrate - Current version of schema `gymprofit_db`: << Empty Schema >>
+2026-03-23 12:17:16.283 INFO  [restartedMain] o.f.core.internal.command.DbMigrate - Schema `gymprofit_db` is up to date. No migration necessary.
+2026-03-23 12:17:16.286 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - 1 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-03-23 12:17:16.286 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-03-23 12:17:16.286 WARN  [restartedMain] o.m.jdbc.message.server.ErrorPacket - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-03-23 12:17:16.292 WARN  [restartedMain] o.f.c.i.database.base.Database - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-03-23 12:17:16.295 INFO  [restartedMain] o.f.core.internal.command.DbValidate - Successfully validated 0 migrations (execution time 00:00.001s)
+2026-03-23 12:17:16.295 WARN  [restartedMain] o.f.core.internal.command.DbValidate - No migrations found. Are your locations set up correctly?
+2026-03-23 12:17:16.298 INFO  [restartedMain] o.f.core.internal.command.DbMigrate - Current version of schema `gymprofit_db`: << Empty Schema >>
+2026-03-23 12:17:16.298 INFO  [restartedMain] o.f.core.internal.command.DbMigrate - Schema `gymprofit_db` is up to date. No migration necessary.
+2026-03-23 12:17:16.660 INFO  [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-23 12:17:16.701 WARN  [restartedMain] org.hibernate.orm.deprecation - HHH90000025: MariaDBDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-23 12:17:17.563 INFO  [restartedMain] o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-23 12:17:18.045 INFO  [restartedMain] o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-03-23 12:17:18.596 WARN  [restartedMain] o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-23 12:17:18.921 DEBUG [restartedMain] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 96 mappings in 'requestMappingHandlerMapping'
+2026-03-23 12:17:19.023 DEBUG [restartedMain] o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**, /swagger-ui/**, /swagger-ui/*swagger-initializer.js, /webjars/*swagger-ui/**, /webjars/*swagger-ui/*swagger-initializer.js, /webjars/*swagger-ui/5.31.0/*swagger-initializer.js] in 'resourceHandlerMapping'
+2026-03-23 12:17:19.070 WARN  [restartedMain] o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 0fb32a26-5c8a-40b5-b3d6-8b1a68db7b36
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-03-23 12:17:19.078 INFO  [restartedMain] o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-03-23 12:17:19.252 DEBUG [restartedMain] o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2026-03-23 12:17:19.297 DEBUG [restartedMain] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 3 @ExceptionHandler, 1 ResponseBodyAdvice
+2026-03-23 12:17:19.320 DEBUG [restartedMain] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 3 @ExceptionHandler, 0 ResponseBodyAdvice
+2026-03-23 12:17:20.102 INFO  [restartedMain] o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-23 12:17:20.148 INFO  [restartedMain] o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-23 12:17:20.162 INFO  [restartedMain] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-03-23 12:17:20.169 INFO  [restartedMain] c.g.api.GymProFitApiApplication - Started GymProFitApiApplication in 6.197 seconds (process running for 6.815)
+2026-03-23 12:17:20.171 WARN  [restartedMain] o.s.c.events.SpringDocAppInitializer - SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+2026-03-23 12:17:20.171 WARN  [restartedMain] o.s.c.events.SpringDocAppInitializer - SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+2026-03-23 12:17:33.956 INFO  [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-23 12:17:33.958 INFO  [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-03-23 12:17:33.958 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2026-03-23 12:17:33.958 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2026-03-23 12:17:33.958 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2026-03-23 12:17:33.960 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@56016791
+2026-03-23 12:17:33.960 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@19e96076
+2026-03-23 12:17:33.960 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2026-03-23 12:17:33.960 INFO  [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2026-03-23 12:17:33.999 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/index.html", parameters={}
+2026-03-23 12:17:34.002 DEBUG [http-nio-8080-exec-1] o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
+2026-03-23 12:17:34.029 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:17:34.050 DEBUG [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/swagger-ui.css", parameters={}
+2026-03-23 12:17:34.052 DEBUG [http-nio-8080-exec-2] o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
+2026-03-23 12:17:34.052 DEBUG [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/index.css", parameters={}
+2026-03-23 12:17:34.052 DEBUG [http-nio-8080-exec-4] o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/swagger-ui-bundle.js", parameters={}
+2026-03-23 12:17:34.052 DEBUG [http-nio-8080-exec-3] o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
+2026-03-23 12:17:34.052 DEBUG [http-nio-8080-exec-4] o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
+2026-03-23 12:17:34.055 DEBUG [http-nio-8080-exec-6] o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/swagger-initializer.js", parameters={}
+2026-03-23 12:17:34.055 DEBUG [http-nio-8080-exec-5] o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/swagger-ui-standalone-preset.js", parameters={}
+2026-03-23 12:17:34.055 DEBUG [http-nio-8080-exec-6] o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
+2026-03-23 12:17:34.055 DEBUG [http-nio-8080-exec-5] o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
+2026-03-23 12:17:34.055 DEBUG [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:17:34.055 DEBUG [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:17:34.060 DEBUG [http-nio-8080-exec-5] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:17:34.065 DEBUG [http-nio-8080-exec-4] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:17:34.072 DEBUG [http-nio-8080-exec-6] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:17:34.199 DEBUG [http-nio-8080-exec-7] o.s.web.servlet.DispatcherServlet - GET "/v3/api-docs/swagger-config", parameters={}
+2026-03-23 12:17:34.199 DEBUG [http-nio-8080-exec-7] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springdoc.webmvc.ui.SwaggerConfigResource#openapiJson(HttpServletRequest)
+2026-03-23 12:17:34.214 DEBUG [http-nio-8080-exec-8] o.s.web.servlet.DispatcherServlet - GET "/swagger-ui/favicon-32x32.png", parameters={}
+2026-03-23 12:17:34.215 DEBUG [http-nio-8080-exec-8] o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
+2026-03-23 12:17:34.218 DEBUG [http-nio-8080-exec-8] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:17:34.221 DEBUG [http-nio-8080-exec-7] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Using 'application/json', given [*/*] and supported [application/json]
+2026-03-23 12:17:34.224 DEBUG [http-nio-8080-exec-7] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Writing [{configUrl=/v3/api-docs/swagger-config, oauth2RedirectUrl=http://localhost:8080/swagger-ui/oauth2-re (truncated)...]
+2026-03-23 12:17:34.231 DEBUG [http-nio-8080-exec-7] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:17:34.282 DEBUG [http-nio-8080-exec-9] o.s.web.servlet.DispatcherServlet - GET "/v3/api-docs", parameters={}
+2026-03-23 12:17:34.283 DEBUG [http-nio-8080-exec-9] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springdoc.webmvc.api.OpenApiWebMvcResource#openapiJson(HttpServletRequest, String, Locale)
+2026-03-23 12:17:35.207 INFO  [http-nio-8080-exec-9] o.s.api.AbstractOpenApiResource - Init duration for springdoc-openapi is: 913 ms
+2026-03-23 12:17:35.226 DEBUG [http-nio-8080-exec-9] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Using 'application/json', given [application/json, */*] and supported [application/json]
+2026-03-23 12:17:35.234 DEBUG [http-nio-8080-exec-9] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Writing [{123, 34, 111, 112, 101, 110, 97, 112, 105, 34, 58, 34, 51, 46, 49, 46, 48, 34, 44, 34, 105, 110, 10 (truncated)...]
+2026-03-23 12:17:35.236 DEBUG [http-nio-8080-exec-9] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:17:50.852 DEBUG [http-nio-8080-exec-10] o.s.web.servlet.DispatcherServlet - PUT "/api/sesiones/1/completar?caloriasQuemadas=350&notas=Buen%20entrenamiento", parameters={masked}
+2026-03-23 12:17:50.853 DEBUG [http-nio-8080-exec-10] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.SesionEntrenamientoController#completarSesion(Integer, Integer, String)
+2026-03-23 12:17:50.863 INFO  [http-nio-8080-exec-10] c.g.a.s.s.SesionEntrenamientoService - Completando sesión de entrenamiento con id: 1
+2026-03-23 12:17:50.892 DEBUG [http-nio-8080-exec-10] org.hibernate.SQL - 
     select
-        count(ac1_0.id) 
+        se1_0.id,
+        se1_0.calorias_quemadas,
+        se1_0.completada,
+        se1_0.duracion_minutos,
+        se1_0.fecha_fin,
+        se1_0.fecha_inicio,
+        se1_0.notas,
+        se1_0.rutina_id,
+        se1_0.usuario_id 
     from
-        alimentos_comida ac1_0 
-    left join
-        comidas c1_0 
-            on c1_0.id=ac1_0.comida_id 
+        sesiones_entrenamiento se1_0 
     where
-        c1_0.id=?
-2026-03-20 15:32:42.557 DEBUG [http-nio-8080-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json, application/yaml]
-2026-03-20 15:32:42.558 DEBUG [http-nio-8080-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{count=3, comidaId=3}]
-2026-03-20 15:32:42.559 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Completed 200 OK
-2026-03-20 15:32:50.920 DEBUG [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet - GET "/api/alimentos-comida/count/comida/1", parameters={}
-2026-03-20 15:32:50.920 DEBUG [http-nio-8080-exec-3] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.AlimentoComidaController#contarAlimentosPorComida(Integer)
-2026-03-20 15:32:50.921 INFO  [http-nio-8080-exec-3] c.g.a.s.a.AlimentoComidaService - Contando alimentos de la comida id: 1
-2026-03-20 15:32:50.923 DEBUG [http-nio-8080-exec-3] org.hibernate.SQL - 
-    select
-        count(ac1_0.id) 
-    from
-        alimentos_comida ac1_0 
-    left join
-        comidas c1_0 
-            on c1_0.id=ac1_0.comida_id 
-    where
-        c1_0.id=?
-2026-03-20 15:32:50.924 DEBUG [http-nio-8080-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json, application/yaml]
-2026-03-20 15:32:50.924 DEBUG [http-nio-8080-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{count=0, comidaId=0}]
-2026-03-20 15:32:50.925 DEBUG [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet - Completed 200 OK
-2026-03-20 15:32:53.695 DEBUG [http-nio-8080-exec-4] o.s.web.servlet.DispatcherServlet - GET "/api/alimentos-comida/count/comida/3", parameters={}
-2026-03-20 15:32:53.695 DEBUG [http-nio-8080-exec-4] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.AlimentoComidaController#contarAlimentosPorComida(Integer)
-2026-03-20 15:32:53.695 INFO  [http-nio-8080-exec-4] c.g.a.s.a.AlimentoComidaService - Contando alimentos de la comida id: 3
-2026-03-20 15:32:53.698 DEBUG [http-nio-8080-exec-4] org.hibernate.SQL - 
-    select
-        count(ac1_0.id) 
-    from
-        alimentos_comida ac1_0 
-    left join
-        comidas c1_0 
-            on c1_0.id=ac1_0.comida_id 
-    where
-        c1_0.id=?
-2026-03-20 15:32:53.700 DEBUG [http-nio-8080-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json, application/yaml]
-2026-03-20 15:32:53.700 DEBUG [http-nio-8080-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{count=0, comidaId=0}]
-2026-03-20 15:32:53.700 DEBUG [http-nio-8080-exec-4] o.s.web.servlet.DispatcherServlet - Completed 200 OK
-2026-03-20 15:33:10.395 DEBUG [http-nio-8080-exec-5] o.s.web.servlet.DispatcherServlet - PUT "/api/alimentos-comida", parameters={}
-2026-03-20 15:33:10.395 DEBUG [http-nio-8080-exec-5] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.AlimentoComidaController#modificarAlimentoComida(AlimentoComidaDTO)
-2026-03-20 15:33:10.399 DEBUG [http-nio-8080-exec-5] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [AlimentoComidaDTO(id=1, comidaId=2, alimentoId=1, cantidadGramos=250, caloriasTotales=330)]
-2026-03-20 15:33:10.400 INFO  [http-nio-8080-exec-5] c.g.a.s.a.AlimentoComidaService - Modificando alimento-comida con id: 1
-2026-03-20 15:33:10.402 DEBUG [http-nio-8080-exec-5] org.hibernate.SQL - 
-    select
-        ac1_0.id,
-        ac1_0.alimento_id,
-        ac1_0.calorias_totales,
-        ac1_0.cantidad_gramos,
-        ac1_0.comida_id 
-    from
-        alimentos_comida ac1_0 
-    where
-        ac1_0.id=?
-2026-03-20 15:33:10.404 DEBUG [http-nio-8080-exec-5] org.hibernate.SQL - 
-    select
-        c1_0.id,
-        c1_0.fecha,
-        c1_0.notas,
-        c1_0.tipo_comida,
-        c1_0.total_calorias,
-        c1_0.total_carbohidratos,
-        c1_0.total_grasas,
-        c1_0.total_proteinas,
-        c1_0.usuario_id 
-    from
-        comidas c1_0 
-    where
-        c1_0.id=?
-2026-03-20 15:33:10.406 DEBUG [http-nio-8080-exec-5] org.hibernate.SQL - 
-    select
-        a1_0.id,
-        a1_0.activo,
-        a1_0.calorias,
-        a1_0.carbohidratos,
-        a1_0.categoria,
-        a1_0.descripcion,
-        a1_0.fibra,
-        a1_0.grasas,
-        a1_0.nombre,
-        a1_0.porcion_gramos,
-        a1_0.proteinas 
-    from
-        alimentos a1_0 
-    where
-        a1_0.id=?
-2026-03-20 15:33:10.415 DEBUG [http-nio-8080-exec-5] org.hibernate.SQL - 
+        se1_0.id=?
+2026-03-23 12:17:50.924 INFO  [http-nio-8080-exec-10] c.g.a.s.s.SesionEntrenamientoService - Sesión com.gymprofit.api.entity.SesionEntrenamiento@212d045c completada
+2026-03-23 12:17:50.942 DEBUG [http-nio-8080-exec-10] org.hibernate.SQL - 
     update
-        alimentos_comida 
+        sesiones_entrenamiento 
     set
-        alimento_id=?,
-        calorias_totales=?,
-        cantidad_gramos=?,
-        comida_id=? 
+        calorias_quemadas=?,
+        completada=?,
+        duracion_minutos=?,
+        fecha_fin=?,
+        fecha_inicio=?,
+        notas=?,
+        rutina_id=?,
+        usuario_id=? 
     where
         id=?
-2026-03-20 15:33:10.419 DEBUG [http-nio-8080-exec-5] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json, application/yaml]
-2026-03-20 15:33:10.419 DEBUG [http-nio-8080-exec-5] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [AlimentoComidaDTO(id=1, comidaId=2, alimentoId=1, cantidadGramos=250, caloriasTotales=413)]
-2026-03-20 15:33:10.420 DEBUG [http-nio-8080-exec-5] o.s.web.servlet.DispatcherServlet - Completed 200 OK
-2026-03-20 15:33:21.806 DEBUG [http-nio-8080-exec-6] o.s.web.servlet.DispatcherServlet - DELETE "/api/alimentos-comida/1", parameters={}
-2026-03-20 15:33:21.806 DEBUG [http-nio-8080-exec-6] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.AlimentoComidaController#borrarAlimentoComida(Integer)
-2026-03-20 15:33:21.807 INFO  [http-nio-8080-exec-6] c.g.a.s.a.AlimentoComidaService - Eliminando alimnto-comida con id: 1
-2026-03-20 15:33:21.808 DEBUG [http-nio-8080-exec-6] org.hibernate.SQL - 
+2026-03-23 12:17:50.950 DEBUG [http-nio-8080-exec-10] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json, application/yaml]
+2026-03-23 12:17:50.951 DEBUG [http-nio-8080-exec-10] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [SesionEntrenamientoDTO(id=1, usuarioId=1, rutinaId=1, fechaInicio=2026-03-18T09:00, fechaFin=2026-03 (truncated)...]
+2026-03-23 12:17:50.953 DEBUG [http-nio-8080-exec-10] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:18:06.549 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - GET "/api/sesiones/completadas", parameters={}
+2026-03-23 12:18:06.549 DEBUG [http-nio-8080-exec-1] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.SesionEntrenamientoController#obtenerSesionesCompletadas()
+2026-03-23 12:18:06.549 INFO  [http-nio-8080-exec-1] c.g.a.s.s.SesionEntrenamientoService - Buscando sesiones de entrenamiento completadas
+2026-03-23 12:18:06.585 DEBUG [http-nio-8080-exec-1] org.hibernate.SQL - 
     select
-        ac1_0.id,
-        ac1_0.alimento_id,
-        ac1_0.calorias_totales,
-        ac1_0.cantidad_gramos,
-        ac1_0.comida_id 
+        se1_0.id,
+        se1_0.calorias_quemadas,
+        se1_0.completada,
+        se1_0.duracion_minutos,
+        se1_0.fecha_fin,
+        se1_0.fecha_inicio,
+        se1_0.notas,
+        se1_0.rutina_id,
+        se1_0.usuario_id 
     from
-        alimentos_comida ac1_0 
+        sesiones_entrenamiento se1_0 
     where
-        ac1_0.id=?
-2026-03-20 15:33:21.811 INFO  [http-nio-8080-exec-6] c.g.a.s.a.AlimentoComidaService - Alimento-comida con id 1 eliminado correctamente
-2026-03-20 15:33:21.813 DEBUG [http-nio-8080-exec-6] org.hibernate.SQL - 
-    delete 
-    from
-        alimentos_comida 
-    where
-        id=?
-2026-03-20 15:33:21.817 DEBUG [http-nio-8080-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json, application/yaml]
-2026-03-20 15:33:21.817 DEBUG [http-nio-8080-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{mensaje=Relación alimento-comida eliminada con ÉXITO}]
-2026-03-20 15:33:21.819 DEBUG [http-nio-8080-exec-6] o.s.web.servlet.DispatcherServlet - Completed 200 OK
-2026-03-20 15:33:28.122 DEBUG [http-nio-8080-exec-8] o.s.web.servlet.DispatcherServlet - DELETE "/api/alimentos-comida/comida/2", parameters={}
-2026-03-20 15:33:28.123 DEBUG [http-nio-8080-exec-8] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.AlimentoComidaController#eliminarTodosPorComida(Integer)
-2026-03-20 15:33:28.126 INFO  [http-nio-8080-exec-8] c.g.a.s.a.AlimentoComidaService - Eliminando todos los alimentos de la comida id: 2
-2026-03-20 15:33:28.128 DEBUG [http-nio-8080-exec-8] org.hibernate.SQL - 
+        se1_0.completada
+2026-03-23 12:18:06.590 DEBUG [http-nio-8080-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json, application/yaml]
+2026-03-23 12:18:06.590 DEBUG [http-nio-8080-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [[SesionEntrenamientoDTO(id=1, usuarioId=1, rutinaId=1, fechaInicio=2026-03-18T09:00, fechaFin=2026-0 (truncated)...]
+2026-03-23 12:18:06.590 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:18:21.522 DEBUG [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet - GET "/api/sesiones/usuario/1/pendientes", parameters={}
+2026-03-23 12:18:21.522 DEBUG [http-nio-8080-exec-3] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.SesionEntrenamientoController#obtenerSesionesPendientesPorUsuario(Integer)
+2026-03-23 12:18:21.522 INFO  [http-nio-8080-exec-3] c.g.a.s.s.SesionEntrenamientoService - Buscando sesiones pendientes del usuario id: 1
+2026-03-23 12:18:21.536 DEBUG [http-nio-8080-exec-3] org.hibernate.SQL - 
     select
-        ac1_0.id,
-        ac1_0.alimento_id,
-        ac1_0.calorias_totales,
-        ac1_0.cantidad_gramos,
-        ac1_0.comida_id 
+        se1_0.id,
+        se1_0.calorias_quemadas,
+        se1_0.completada,
+        se1_0.duracion_minutos,
+        se1_0.fecha_fin,
+        se1_0.fecha_inicio,
+        se1_0.notas,
+        se1_0.rutina_id,
+        se1_0.usuario_id 
     from
-        alimentos_comida ac1_0 
+        sesiones_entrenamiento se1_0 
     left join
-        comidas c1_0 
-            on c1_0.id=ac1_0.comida_id 
+        usuarios u1_0 
+            on u1_0.id=se1_0.usuario_id 
     where
-        c1_0.id=?
-2026-03-20 15:33:28.130 INFO  [http-nio-8080-exec-8] c.g.a.s.a.AlimentoComidaService - Alimentos de la comida 2 eliminados correctamente
-2026-03-20 15:33:28.130 DEBUG [http-nio-8080-exec-8] org.hibernate.SQL - 
-    delete 
+        u1_0.id=? 
+        and not(se1_0.completada)
+2026-03-23 12:18:21.540 DEBUG [http-nio-8080-exec-3] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Using @ExceptionHandler com.gymprofit.api.exceptions.ControllerExceptionHandler#handleNotFoundEntityException(NotFoundEntityException)
+2026-03-23 12:18:21.541 DEBUG [http-nio-8080-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json]
+2026-03-23 12:18:21.544 DEBUG [http-nio-8080-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [Response(code=404, message=No se encontraron sesiones pendientes para el usuario 1, cause=null)]
+2026-03-23 12:18:21.545 WARN  [http-nio-8080-exec-3] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [com.gymprofit.api.exceptions.NotFoundEntityException: No se encontraron sesiones pendientes para el usuario 1]
+2026-03-23 12:18:21.545 DEBUG [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet - Completed 404 NOT_FOUND
+2026-03-23 12:18:46.789 DEBUG [http-nio-8080-exec-8] o.s.web.servlet.DispatcherServlet - GET "/api/sesiones/fecha/2026-03-18", parameters={}
+2026-03-23 12:18:46.789 DEBUG [http-nio-8080-exec-8] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.SesionEntrenamientoController#obtenerSesionesPorFecha(LocalDate)
+2026-03-23 12:18:46.792 INFO  [http-nio-8080-exec-8] c.g.a.s.s.SesionEntrenamientoService - Buscando sesiones en la fecha 2026-03-18
+2026-03-23 12:18:46.796 DEBUG [http-nio-8080-exec-8] org.hibernate.SQL - 
+    select
+        se1_0.id,
+        se1_0.calorias_quemadas,
+        se1_0.completada,
+        se1_0.duracion_minutos,
+        se1_0.fecha_fin,
+        se1_0.fecha_inicio,
+        se1_0.notas,
+        se1_0.rutina_id,
+        se1_0.usuario_id 
     from
-        alimentos_comida 
+        sesiones_entrenamiento se1_0 
+    where
+        se1_0.fecha_inicio between ? and ?
+2026-03-23 12:18:46.799 DEBUG [http-nio-8080-exec-8] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json, application/yaml]
+2026-03-23 12:18:46.799 DEBUG [http-nio-8080-exec-8] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [[SesionEntrenamientoDTO(id=1, usuarioId=1, rutinaId=1, fechaInicio=2026-03-18T09:00, fechaFin=2026-0 (truncated)...]
+2026-03-23 12:18:46.801 DEBUG [http-nio-8080-exec-8] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:18:56.231 DEBUG [http-nio-8080-exec-7] o.s.web.servlet.DispatcherServlet - GET "/api/sesiones/count/usuario/1", parameters={}
+2026-03-23 12:18:56.233 DEBUG [http-nio-8080-exec-7] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.SesionEntrenamientoController#contarSesionesPorUsuario(Integer)
+2026-03-23 12:18:56.233 INFO  [http-nio-8080-exec-7] c.g.a.s.s.SesionEntrenamientoService - Contando sesiones del usuario id: 1
+2026-03-23 12:18:56.238 DEBUG [http-nio-8080-exec-7] org.hibernate.SQL - 
+    select
+        count(se1_0.id) 
+    from
+        sesiones_entrenamiento se1_0 
+    left join
+        usuarios u1_0 
+            on u1_0.id=se1_0.usuario_id 
+    where
+        u1_0.id=?
+2026-03-23 12:18:56.240 DEBUG [http-nio-8080-exec-7] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json, application/yaml]
+2026-03-23 12:18:56.240 DEBUG [http-nio-8080-exec-7] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{count=1, usuarioId=1}]
+2026-03-23 12:18:56.240 DEBUG [http-nio-8080-exec-7] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:19:01.105 DEBUG [http-nio-8080-exec-9] o.s.web.servlet.DispatcherServlet - GET "/api/sesiones/count/rutina/1", parameters={}
+2026-03-23 12:19:01.105 DEBUG [http-nio-8080-exec-9] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.SesionEntrenamientoController#contarSesionesCompletadasPorUsuario(Integer)
+2026-03-23 12:19:01.105 INFO  [http-nio-8080-exec-9] c.g.a.s.s.SesionEntrenamientoService - Contando sesiones de la rutina id: 1
+2026-03-23 12:19:01.107 DEBUG [http-nio-8080-exec-9] org.hibernate.SQL - 
+    select
+        count(se1_0.id) 
+    from
+        sesiones_entrenamiento se1_0 
+    left join
+        rutinas r1_0 
+            on r1_0.id=se1_0.rutina_id 
+    where
+        r1_0.id=?
+2026-03-23 12:19:01.108 DEBUG [http-nio-8080-exec-9] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json, application/yaml]
+2026-03-23 12:19:01.108 DEBUG [http-nio-8080-exec-9] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{count=1, rutinaId=1}]
+2026-03-23 12:19:01.108 DEBUG [http-nio-8080-exec-9] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:19:04.310 DEBUG [http-nio-8080-exec-10] o.s.web.servlet.DispatcherServlet - GET "/api/sesiones/count/rutina/2", parameters={}
+2026-03-23 12:19:04.311 DEBUG [http-nio-8080-exec-10] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.SesionEntrenamientoController#contarSesionesCompletadasPorUsuario(Integer)
+2026-03-23 12:19:04.312 INFO  [http-nio-8080-exec-10] c.g.a.s.s.SesionEntrenamientoService - Contando sesiones de la rutina id: 2
+2026-03-23 12:19:04.314 DEBUG [http-nio-8080-exec-10] org.hibernate.SQL - 
+    select
+        count(se1_0.id) 
+    from
+        sesiones_entrenamiento se1_0 
+    left join
+        rutinas r1_0 
+            on r1_0.id=se1_0.rutina_id 
+    where
+        r1_0.id=?
+2026-03-23 12:19:04.317 DEBUG [http-nio-8080-exec-10] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json, application/yaml]
+2026-03-23 12:19:04.317 DEBUG [http-nio-8080-exec-10] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{count=0, rutinaId=2}]
+2026-03-23 12:19:04.317 DEBUG [http-nio-8080-exec-10] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:19:19.749 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - PUT "/api/sesiones", parameters={}
+2026-03-23 12:19:19.749 DEBUG [http-nio-8080-exec-1] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.SesionEntrenamientoController#modificarSesion(SesionEntrenamientoDTO)
+2026-03-23 12:19:19.755 DEBUG [http-nio-8080-exec-1] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [SesionEntrenamientoDTO(id=2, usuarioId=1, rutinaId=null, fechaInicio=2026-03-18T11:00, fechaFin=2026 (truncated)...]
+2026-03-23 12:19:19.763 INFO  [http-nio-8080-exec-1] c.g.a.s.s.SesionEntrenamientoService - Modificando sesión de entrenamiento con id: 2
+2026-03-23 12:19:19.765 DEBUG [http-nio-8080-exec-1] org.hibernate.SQL - 
+    select
+        se1_0.id,
+        se1_0.calorias_quemadas,
+        se1_0.completada,
+        se1_0.duracion_minutos,
+        se1_0.fecha_fin,
+        se1_0.fecha_inicio,
+        se1_0.notas,
+        se1_0.rutina_id,
+        se1_0.usuario_id 
+    from
+        sesiones_entrenamiento se1_0 
+    where
+        se1_0.id=?
+2026-03-23 12:19:19.767 DEBUG [http-nio-8080-exec-1] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Using @ExceptionHandler com.gymprofit.api.exceptions.ControllerExceptionHandler#handleNotFoundEntityException(NotFoundEntityException)
+2026-03-23 12:19:19.767 DEBUG [http-nio-8080-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json]
+2026-03-23 12:19:19.767 DEBUG [http-nio-8080-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [Response(code=404, message=La sesión de entrenamiento con id 2 no existe, cause=null)]
+2026-03-23 12:19:19.768 WARN  [http-nio-8080-exec-1] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [com.gymprofit.api.exceptions.NotFoundEntityException: La sesión de entrenamiento con id 2 no existe]
+2026-03-23 12:19:19.768 DEBUG [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Completed 404 NOT_FOUND
+2026-03-23 12:19:26.119 DEBUG [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet - PUT "/api/sesiones", parameters={}
+2026-03-23 12:19:26.119 DEBUG [http-nio-8080-exec-3] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.gymprofit.api.controller.SesionEntrenamientoController#modificarSesion(SesionEntrenamientoDTO)
+2026-03-23 12:19:26.120 DEBUG [http-nio-8080-exec-3] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [SesionEntrenamientoDTO(id=1, usuarioId=1, rutinaId=null, fechaInicio=2026-03-18T11:00, fechaFin=2026 (truncated)...]
+2026-03-23 12:19:26.120 INFO  [http-nio-8080-exec-3] c.g.a.s.s.SesionEntrenamientoService - Modificando sesión de entrenamiento con id: 1
+2026-03-23 12:19:26.121 DEBUG [http-nio-8080-exec-3] org.hibernate.SQL - 
+    select
+        se1_0.id,
+        se1_0.calorias_quemadas,
+        se1_0.completada,
+        se1_0.duracion_minutos,
+        se1_0.fecha_fin,
+        se1_0.fecha_inicio,
+        se1_0.notas,
+        se1_0.rutina_id,
+        se1_0.usuario_id 
+    from
+        sesiones_entrenamiento se1_0 
+    where
+        se1_0.id=?
+2026-03-23 12:19:26.123 DEBUG [http-nio-8080-exec-3] org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username 
+    from
+        usuarios u1_0 
+    where
+        u1_0.id=?
+2026-03-23 12:19:26.128 DEBUG [http-nio-8080-exec-3] org.hibernate.SQL - 
+    update
+        sesiones_entrenamiento 
+    set
+        calorias_quemadas=?,
+        completada=?,
+        duracion_minutos=?,
+        fecha_fin=?,
+        fecha_inicio=?,
+        notas=?,
+        rutina_id=?,
+        usuario_id=? 
     where
         id=?
-2026-03-20 15:33:28.131 DEBUG [http-nio-8080-exec-8] org.hibernate.SQL - 
-    delete 
-    from
-        alimentos_comida 
-    where
-        id=?
-2026-03-20 15:33:28.132 DEBUG [http-nio-8080-exec-8] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json, application/yaml]
-2026-03-20 15:33:28.133 DEBUG [http-nio-8080-exec-8] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{mensaje=Todos los alimeentos de la commida eliminados con ÉXITO}]
-2026-03-20 15:33:28.134 DEBUG [http-nio-8080-exec-8] o.s.web.servlet.DispatcherServlet - Completed 200 OK
-2026-03-20 15:34:05.026 INFO  [File Watcher] o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (0 additions, 1 deletion, 0 modifications)
-2026-03-20 15:34:05.029 INFO  [Thread-5] o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
-2026-03-20 15:34:05.030 INFO  [tomcat-shutdown] o.a.coyote.http11.Http11NioProtocol - Pausing ProtocolHandler ["http-nio-8080"]
-2026-03-20 15:34:05.290 INFO  [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
-2026-03-20 15:34:05.290 INFO  [Thread-5] o.a.coyote.http11.Http11NioProtocol - Stopping ProtocolHandler ["http-nio-8080"]
-2026-03-20 15:34:05.294 INFO  [Thread-5] o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-2026-03-20 15:34:05.297 INFO  [Thread-5] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
-2026-03-20 15:34:05.299 INFO  [Thread-5] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
-2026-03-20 15:34:05.406 INFO  [restartedMain] c.g.api.GymProFitApiApplication - Starting GymProFitApiApplication using Java 23.0.2 with PID 24928 (C:\Users\ruben\Desktop\tfg\api\gymprofit-api\target\classes started by ruben in C:\Users\ruben\Desktop\tfg\api\gymprofit-api)
-2026-03-20 15:34:05.406 DEBUG [restartedMain] c.g.api.GymProFitApiApplication - Running with Spring Boot v3.5.7, Spring v6.2.12
-2026-03-20 15:34:05.406 INFO  [restartedMain] c.g.api.GymProFitApiApplication - The following 1 profile is active: "dev"
-2026-03-20 15:34:05.791 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-03-20 15:34:05.914 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 121 ms. Found 13 JPA repository interfaces.
-2026-03-20 15:34:06.088 INFO  [restartedMain] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
-2026-03-20 15:34:06.089 INFO  [restartedMain] o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
-2026-03-20 15:34:06.090 INFO  [restartedMain] o.a.catalina.core.StandardService - Starting service [Tomcat]
-2026-03-20 15:34:06.090 INFO  [restartedMain] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.48]
-2026-03-20 15:34:06.145 INFO  [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2026-03-20 15:34:06.145 INFO  [restartedMain] o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 737 ms
-2026-03-20 15:34:06.209 INFO  [restartedMain] com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting...
-2026-03-20 15:34:06.214 INFO  [restartedMain] com.zaxxer.hikari.pool.HikariPool - HikariPool-2 - Added connection org.mariadb.jdbc.Connection@344dba07
-2026-03-20 15:34:06.215 INFO  [restartedMain] com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed.
-2026-03-20 15:34:06.215 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - 1 SQL migrations were detected but not run because they did not follow the filename convention.
-2026-03-20 15:34:06.215 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
-2026-03-20 15:34:06.215 WARN  [restartedMain] o.m.jdbc.message.server.ErrorPacket - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
-2026-03-20 15:34:06.220 INFO  [restartedMain] org.flywaydb.core.FlywayExecutor - Database: jdbc:mariadb://localhost:3308/gymprofit_db?user=root&password=********&useUnicode=true&characterEncoding=UTF-8 (MariaDB 11.8)
-2026-03-20 15:34:06.223 WARN  [restartedMain] o.f.c.i.database.base.Database - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
-2026-03-20 15:34:06.227 INFO  [restartedMain] o.f.c.i.s.JdbcTableSchemaHistory - Repair of failed migration in Schema History table `gymprofit_db`.`flyway_schema_history` not necessary. No failed migration detected.
-2026-03-20 15:34:06.229 INFO  [restartedMain] o.f.core.internal.command.DbRepair - Successfully repaired schema history table `gymprofit_db`.`flyway_schema_history` (execution time 00:00.004s).
-2026-03-20 15:34:06.232 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - 1 SQL migrations were detected but not run because they did not follow the filename convention.
-2026-03-20 15:34:06.232 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
-2026-03-20 15:34:06.232 WARN  [restartedMain] o.m.jdbc.message.server.ErrorPacket - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
-2026-03-20 15:34:06.239 WARN  [restartedMain] o.f.c.i.database.base.Database - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
-2026-03-20 15:34:06.243 INFO  [restartedMain] o.f.core.internal.command.DbValidate - Successfully validated 0 migrations (execution time 00:00.001s)
-2026-03-20 15:34:06.243 WARN  [restartedMain] o.f.core.internal.command.DbValidate - No migrations found. Are your locations set up correctly?
-2026-03-20 15:34:06.246 INFO  [restartedMain] o.f.core.internal.command.DbMigrate - Current version of schema `gymprofit_db`: << Empty Schema >>
-2026-03-20 15:34:06.247 INFO  [restartedMain] o.f.core.internal.command.DbMigrate - Schema `gymprofit_db` is up to date. No migration necessary.
-2026-03-20 15:34:06.252 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - 1 SQL migrations were detected but not run because they did not follow the filename convention.
-2026-03-20 15:34:06.252 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
-2026-03-20 15:34:06.252 WARN  [restartedMain] o.m.jdbc.message.server.ErrorPacket - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
-2026-03-20 15:34:06.259 WARN  [restartedMain] o.f.c.i.database.base.Database - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
-2026-03-20 15:34:06.265 INFO  [restartedMain] o.f.core.internal.command.DbValidate - Successfully validated 0 migrations (execution time 00:00.002s)
-2026-03-20 15:34:06.265 WARN  [restartedMain] o.f.core.internal.command.DbValidate - No migrations found. Are your locations set up correctly?
-2026-03-20 15:34:06.269 INFO  [restartedMain] o.f.core.internal.command.DbMigrate - Current version of schema `gymprofit_db`: << Empty Schema >>
-2026-03-20 15:34:06.270 INFO  [restartedMain] o.f.core.internal.command.DbMigrate - Schema `gymprofit_db` is up to date. No migration necessary.
-2026-03-20 15:34:06.358 INFO  [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-03-20 15:34:06.360 WARN  [restartedMain] org.hibernate.orm.deprecation - HHH90000025: MariaDBDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-03-20 15:34:06.537 INFO  [restartedMain] o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-03-20 15:34:06.742 WARN  [restartedMain] o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-03-20 15:34:06.972 DEBUG [restartedMain] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 77 mappings in 'requestMappingHandlerMapping'
-2026-03-20 15:34:07.022 DEBUG [restartedMain] o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**, /swagger-ui/**, /swagger-ui/*swagger-initializer.js, /webjars/*swagger-ui/**, /webjars/*swagger-ui/*swagger-initializer.js, /webjars/*swagger-ui/5.31.0/*swagger-initializer.js] in 'resourceHandlerMapping'
-2026-03-20 15:34:07.049 WARN  [restartedMain] o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
-
-Using generated security password: 0a3d49ae-6d1e-4e0e-a8d6-ebf781815fd9
-
-This generated password is for development use only. Your security configuration must be updated before running your application in production.
-
-2026-03-20 15:34:07.050 INFO  [restartedMain] o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
-2026-03-20 15:34:07.119 DEBUG [restartedMain] o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
-2026-03-20 15:34:07.131 DEBUG [restartedMain] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 3 @ExceptionHandler, 1 ResponseBodyAdvice
-2026-03-20 15:34:07.144 DEBUG [restartedMain] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 3 @ExceptionHandler, 0 ResponseBodyAdvice
-2026-03-20 15:34:07.506 INFO  [restartedMain] o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
-2026-03-20 15:34:07.542 INFO  [restartedMain] o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
-2026-03-20 15:34:07.546 INFO  [restartedMain] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
-2026-03-20 15:34:07.548 INFO  [restartedMain] c.g.api.GymProFitApiApplication - Started GymProFitApiApplication in 2.19 seconds (process running for 317.004)
-2026-03-20 15:34:07.549 WARN  [restartedMain] o.s.c.events.SpringDocAppInitializer - SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
-2026-03-20 15:34:07.549 WARN  [restartedMain] o.s.c.events.SpringDocAppInitializer - SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
-2026-03-20 15:34:07.550 INFO  [restartedMain] o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
-2026-03-20 15:34:09.101 INFO  [File Watcher] o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (1 addition, 0 deletions, 0 modifications)
-2026-03-20 15:34:09.101 INFO  [Thread-7] o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
-2026-03-20 15:34:09.103 INFO  [tomcat-shutdown] o.a.coyote.http11.Http11NioProtocol - Pausing ProtocolHandler ["http-nio-8080"]
-2026-03-20 15:34:09.104 INFO  [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
-2026-03-20 15:34:09.104 INFO  [Thread-7] o.a.coyote.http11.Http11NioProtocol - Stopping ProtocolHandler ["http-nio-8080"]
-2026-03-20 15:34:09.106 INFO  [Thread-7] o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-2026-03-20 15:34:09.107 INFO  [Thread-7] com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated...
-2026-03-20 15:34:09.107 INFO  [Thread-7] com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed.
-2026-03-20 15:34:09.179 INFO  [restartedMain] c.g.api.GymProFitApiApplication - Starting GymProFitApiApplication using Java 23.0.2 with PID 24928 (C:\Users\ruben\Desktop\tfg\api\gymprofit-api\target\classes started by ruben in C:\Users\ruben\Desktop\tfg\api\gymprofit-api)
-2026-03-20 15:34:09.180 DEBUG [restartedMain] c.g.api.GymProFitApiApplication - Running with Spring Boot v3.5.7, Spring v6.2.12
-2026-03-20 15:34:09.180 INFO  [restartedMain] c.g.api.GymProFitApiApplication - The following 1 profile is active: "dev"
-2026-03-20 15:34:09.462 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-03-20 15:34:09.547 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 83 ms. Found 13 JPA repository interfaces.
-2026-03-20 15:34:09.649 INFO  [restartedMain] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
-2026-03-20 15:34:09.649 INFO  [restartedMain] o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
-2026-03-20 15:34:09.649 INFO  [restartedMain] o.a.catalina.core.StandardService - Starting service [Tomcat]
-2026-03-20 15:34:09.649 INFO  [restartedMain] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.48]
-2026-03-20 15:34:09.691 INFO  [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2026-03-20 15:34:09.691 INFO  [restartedMain] o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 511 ms
-2026-03-20 15:34:09.733 INFO  [restartedMain] com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Starting...
-2026-03-20 15:34:09.735 INFO  [restartedMain] com.zaxxer.hikari.pool.HikariPool - HikariPool-3 - Added connection org.mariadb.jdbc.Connection@4911ec9b
-2026-03-20 15:34:09.735 INFO  [restartedMain] com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Start completed.
-2026-03-20 15:34:09.735 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - 1 SQL migrations were detected but not run because they did not follow the filename convention.
-2026-03-20 15:34:09.735 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
-2026-03-20 15:34:09.736 WARN  [restartedMain] o.m.jdbc.message.server.ErrorPacket - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
-2026-03-20 15:34:09.740 INFO  [restartedMain] org.flywaydb.core.FlywayExecutor - Database: jdbc:mariadb://localhost:3308/gymprofit_db?user=root&password=********&useUnicode=true&characterEncoding=UTF-8 (MariaDB 11.8)
-2026-03-20 15:34:09.741 WARN  [restartedMain] o.f.c.i.database.base.Database - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
-2026-03-20 15:34:09.744 INFO  [restartedMain] o.f.c.i.s.JdbcTableSchemaHistory - Repair of failed migration in Schema History table `gymprofit_db`.`flyway_schema_history` not necessary. No failed migration detected.
-2026-03-20 15:34:09.744 INFO  [restartedMain] o.f.core.internal.command.DbRepair - Successfully repaired schema history table `gymprofit_db`.`flyway_schema_history` (execution time 00:00.002s).
-2026-03-20 15:34:09.748 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - 1 SQL migrations were detected but not run because they did not follow the filename convention.
-2026-03-20 15:34:09.748 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
-2026-03-20 15:34:09.748 WARN  [restartedMain] o.m.jdbc.message.server.ErrorPacket - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
-2026-03-20 15:34:09.751 WARN  [restartedMain] o.f.c.i.database.base.Database - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
-2026-03-20 15:34:09.754 INFO  [restartedMain] o.f.core.internal.command.DbValidate - Successfully validated 0 migrations (execution time 00:00.001s)
-2026-03-20 15:34:09.754 WARN  [restartedMain] o.f.core.internal.command.DbValidate - No migrations found. Are your locations set up correctly?
-2026-03-20 15:34:09.756 INFO  [restartedMain] o.f.core.internal.command.DbMigrate - Current version of schema `gymprofit_db`: << Empty Schema >>
-2026-03-20 15:34:09.756 INFO  [restartedMain] o.f.core.internal.command.DbMigrate - Schema `gymprofit_db` is up to date. No migration necessary.
-2026-03-20 15:34:09.758 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - 1 SQL migrations were detected but not run because they did not follow the filename convention.
-2026-03-20 15:34:09.758 INFO  [restartedMain] o.f.c.i.r.ResourceNameValidator - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
-2026-03-20 15:34:09.758 WARN  [restartedMain] o.m.jdbc.message.server.ErrorPacket - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
-2026-03-20 15:34:09.762 WARN  [restartedMain] o.f.c.i.database.base.Database - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
-2026-03-20 15:34:09.764 INFO  [restartedMain] o.f.core.internal.command.DbValidate - Successfully validated 0 migrations (execution time 00:00.001s)
-2026-03-20 15:34:09.764 WARN  [restartedMain] o.f.core.internal.command.DbValidate - No migrations found. Are your locations set up correctly?
-2026-03-20 15:34:09.767 INFO  [restartedMain] o.f.core.internal.command.DbMigrate - Current version of schema `gymprofit_db`: << Empty Schema >>
-2026-03-20 15:34:09.767 INFO  [restartedMain] o.f.core.internal.command.DbMigrate - Schema `gymprofit_db` is up to date. No migration necessary.
-2026-03-20 15:34:09.807 INFO  [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-03-20 15:34:09.807 WARN  [restartedMain] org.hibernate.orm.deprecation - HHH90000025: MariaDBDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-03-20 15:34:09.934 INFO  [restartedMain] o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-03-20 15:34:10.121 WARN  [restartedMain] o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-03-20 15:34:10.295 DEBUG [restartedMain] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 77 mappings in 'requestMappingHandlerMapping'
-2026-03-20 15:34:10.331 DEBUG [restartedMain] o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**, /swagger-ui/**, /swagger-ui/*swagger-initializer.js, /webjars/*swagger-ui/**, /webjars/*swagger-ui/*swagger-initializer.js, /webjars/*swagger-ui/5.31.0/*swagger-initializer.js] in 'resourceHandlerMapping'
-2026-03-20 15:34:10.349 WARN  [restartedMain] o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
-
-Using generated security password: fc93e2d3-adb4-44c5-8aea-10d836b65dcc
-
-This generated password is for development use only. Your security configuration must be updated before running your application in production.
-
-2026-03-20 15:34:10.349 INFO  [restartedMain] o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
-2026-03-20 15:34:10.398 DEBUG [restartedMain] o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
-2026-03-20 15:34:10.409 DEBUG [restartedMain] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 3 @ExceptionHandler, 1 ResponseBodyAdvice
-2026-03-20 15:34:10.417 DEBUG [restartedMain] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 3 @ExceptionHandler, 0 ResponseBodyAdvice
-2026-03-20 15:34:10.691 INFO  [restartedMain] o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
-2026-03-20 15:34:10.724 INFO  [restartedMain] o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
-2026-03-20 15:34:10.727 INFO  [restartedMain] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
-2026-03-20 15:34:10.729 INFO  [restartedMain] c.g.api.GymProFitApiApplication - Started GymProFitApiApplication in 1.58 seconds (process running for 320.185)
-2026-03-20 15:34:10.729 WARN  [restartedMain] o.s.c.events.SpringDocAppInitializer - SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
-2026-03-20 15:34:10.729 WARN  [restartedMain] o.s.c.events.SpringDocAppInitializer - SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
-2026-03-20 15:34:10.729 INFO  [restartedMain] o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
-2026-03-20 15:34:34.491 INFO  [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
-2026-03-20 15:34:34.493 INFO  [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
-2026-03-20 15:34:34.495 INFO  [SpringApplicationShutdownHook] o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-2026-03-20 15:34:34.495 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Shutdown initiated...
-2026-03-20 15:34:34.496 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Shutdown completed.
+2026-03-23 12:19:26.131 DEBUG [http-nio-8080-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json, application/yaml]
+2026-03-23 12:19:26.131 DEBUG [http-nio-8080-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [SesionEntrenamientoDTO(id=1, usuarioId=1, rutinaId=null, fechaInicio=2026-03-18T11:00, fechaFin=2026 (truncated)...]
+2026-03-23 12:19:26.132 DEBUG [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2026-03-23 12:19:36.752 INFO  [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-03-23 12:19:36.755 INFO  [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-03-23 12:19:36.761 INFO  [SpringApplicationShutdownHook] o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-23 12:19:36.764 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-23 12:19:36.765 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

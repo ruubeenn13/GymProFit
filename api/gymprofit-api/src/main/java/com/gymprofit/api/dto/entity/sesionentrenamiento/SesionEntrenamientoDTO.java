@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class SesionEntrenamientoDTO implements Serializable {
     private Integer id;
-    private String usuarioId;
-    private String rutinaId;
+    private Integer usuarioId;
+    private Integer rutinaId;
     private LocalDateTime fechaInicio;
     private LocalDateTime fechaFin;
     private Integer duracionMinutos;
