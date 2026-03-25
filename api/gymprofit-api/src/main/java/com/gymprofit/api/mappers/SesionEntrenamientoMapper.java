@@ -20,10 +20,5 @@ public interface SesionEntrenamientoMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "usuario", ignore = true)
     @Mapping(target = "rutina", ignore = true)
-    @Mapping(target = "fechaFin", ignore = true)
-    @Mapping(target = "duracionMinutos", ignore = true)
-    @Mapping(target = "caloriasQuemadas", ignore = true)
-    @Mapping(target = "notas", ignore = true)
-    @Mapping(target = "completada", ignore = true)
     SesionEntrenamiento toEntity(SesionEntrenamientoCreateDTO sesionEntrenamientoCreateDTO);
 }

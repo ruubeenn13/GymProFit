@@ -14,4 +14,9 @@ public class SesionEntrenamientoCreateDTO implements Serializable {
     private Integer usuarioId;
     private Integer rutinaId;
     private LocalDateTime fechaInicio;
+    private LocalDateTime fechaFin;
+    private Integer duracionMinutos;
+    private Integer caloriasQuemadas;
+    private String notas;
+    private Boolean completada;
 }

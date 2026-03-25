@@ -22,7 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -122,7 +121,7 @@ public class ComidaController {
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
 
-    @Operation(summary = "Busca comidas por ususario ID")
+    @Operation(summary = "Busca comidas por usuario ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Comidas encontradas",
                     content = @Content(schema = @Schema(implementation = ComidaDTO.class))),

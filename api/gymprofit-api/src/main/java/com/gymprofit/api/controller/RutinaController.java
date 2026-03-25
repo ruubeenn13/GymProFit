@@ -54,7 +54,7 @@ public class RutinaController {
             @ApiResponse(responseCode = "404", description = "Rutina no encontrada",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
-    @GetMapping("rutinas/{id}")
+    @GetMapping("/rutinas/{id}")
     public ResponseEntity<RutinaDTO> obtenerRutina(@PathVariable Integer id) {
         RutinaDTO rutina = rutinaService.findById(id);
 

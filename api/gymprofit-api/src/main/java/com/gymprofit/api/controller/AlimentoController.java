@@ -54,7 +54,7 @@ public class AlimentoController {
             @ApiResponse(responseCode = "404", description = "Alimento no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
-    @GetMapping("/alimntos/{id}")
+    @GetMapping("/alimentos/{id}")
     public ResponseEntity<AlimentoDTO> obtenerAlimento(@PathVariable Integer id) {
         AlimentoDTO alimento = alimentoService.findById(id);
 
@@ -277,7 +277,7 @@ public class AlimentoController {
             @ApiResponse(responseCode = "400", description = "Categoría vacía",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
-    @GetMapping("/alimentos/count/catgoria/{categoria}")
+    @GetMapping("/alimentos/count/categoria/{categoria}")
     public ResponseEntity<Map<String, Object>> contarAlimentosPorCategoria(@PathVariable String categoria) {
         if (categoria == null || categoria.trim().isEmpty()) {
             throw new InvalidDataException("La categoría no puede estar vacía");
