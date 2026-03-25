@@ -21,7 +21,7 @@ public class MedicionCorporal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column
+    @Column(nullable = false)
     private LocalDateTime fecha;
 
     @Column(nullable = false, precision = 5, scale = 2)

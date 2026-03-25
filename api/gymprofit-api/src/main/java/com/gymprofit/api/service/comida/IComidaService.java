@@ -22,4 +22,8 @@ public interface IComidaService {
     List<ComidaDTO> findByFecha(LocalDate fecha);
     List<ComidaDTO> findByUsuarioIdAndFecha(Integer usuarioId, LocalDate fecha);
     List<ComidaDTO> findByUsuarioIdAndTipoComida(Integer usuarioId, String tipoComida);
+
+    Long countByUsuarioId(Integer usuarioId);
+    Long countByTipoComida(String tipoComida);
+    Long countByUsuarioIdAndTipoComida(Integer usuarioId, String tipoComida);
 }

@@ -22,4 +22,7 @@ public interface IAlimentoService {
     List<AlimentoDTO> findByCategoria(String categoria);
     List<AlimentoDTO> findActivos();
     List<AlimentoDTO> findByCaloriasBetween(Integer min, Integer max);
+
+    Long countActivos();
+    Long countByCategoria(String categoria);
 }

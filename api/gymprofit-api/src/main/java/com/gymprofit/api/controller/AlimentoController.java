@@ -2,7 +2,6 @@ package com.gymprofit.api.controller;
 
 import com.gymprofit.api.dto.entity.alimento.AlimentoCreateDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoDTO;
-import com.gymprofit.api.entity.Alimento;
 import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
@@ -255,6 +254,43 @@ public class AlimentoController {
         }
 
         return ResponseEntity.ok(alimentos);
+    }
+
+    @Operation(summary = "Cuenta los alimentos activos")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cantidad de alimentos")
+    })
+    @GetMapping("/alimentos/count/activos")
+    public ResponseEntity<Map<String, Object>> contarAlimentosActivos() {
+        Map<String, Object> respuesta = new HashMap<>();
+
+        Long count = alimentoService.countActivos();
+
+        respuesta.put("count", count);
+
+        return ResponseEntity.ok(respuesta);
+    }
+
+    @Operation(summary = "Cuenta los alimentos por categoría")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cantidad de alimentos"),
+            @ApiResponse(responseCode = "400", description = "Categoría vacía",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @GetMapping("/alimentos/count/catgoria/{categoria}")
+    public ResponseEntity<Map<String, Object>> contarAlimentosPorCategoria(@PathVariable String categoria) {
+        if (categoria == null || categoria.trim().isEmpty()) {
+            throw new InvalidDataException("La categoría no puede estar vacía");
+        }
+
+        Map<String, Object> respuesta = new HashMap<>();
+
+        Long count = alimentoService.countByCategoria(categoria);
+
+        respuesta.put("count", count);
+        respuesta.put("categoria", categoria);
+
+        return ResponseEntity.ok(respuesta);
     }
 
 }
