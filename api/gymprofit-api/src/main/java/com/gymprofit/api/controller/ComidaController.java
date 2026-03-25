@@ -234,6 +234,64 @@ public class ComidaController {
         return ResponseEntity.ok(comidas);
     }
 
+    @Operation(summary = "Cuenta las comidas de un usuario")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cantidad de comidas del usuario")
+    })
+    @GetMapping("/comidas/count/usuario/{usuarioId}")
+    public ResponseEntity<Map<String, Object>> contarComidasPorUsuario(@PathVariable Integer usuarioId) {
+        Map<String, Object> respuesta = new HashMap<>();
+
+        Long count = comidaService.countByUsuarioId(usuarioId);
+
+        respuesta.put("count", count);
+        respuesta.put("usuarioId", usuarioId);
+
+        return ResponseEntity.ok(respuesta);
+    }
+
+    @Operation(summary = "Cuenta las comidas por tipo")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cantidad de comidas por tipo"),
+            @ApiResponse(responseCode = "400", description = "Tipo de comida inválido",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @GetMapping("/comidas/count/tipo/{tipoComida}")
+    public ResponseEntity<Map<String, Object>> contarComidasPorTipo(@PathVariable String tipoComida) {
+        validarTipoComida(tipoComida);
+
+        Map<String, Object> respuesta = new HashMap<>();
+
+        Long count = comidaService.countByTipoComida(tipoComida);
+
+        respuesta.put("count", count);
+        respuesta.put("tipoComida", tipoComida.toUpperCase());
+
+        return ResponseEntity.ok(respuesta);
+    }
+
+    @Operation(summary = "Cuenta las comidas de un usuario por tipo")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cantidad de comidas del usuario por tipo"),
+            @ApiResponse(responseCode = "400", description = "Tipo de comida inválido",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @GetMapping("/comidas/count/usuario/{usuarioId}/tipo/{tipoComida}")
+    public ResponseEntity<Map<String, Object>> contarComidasPorUsuarioYTipo(@PathVariable Integer usuarioId,
+                                                                            @PathVariable String tipoComida) {
+        validarTipoComida(tipoComida);
+
+        Map<String, Object> respuesta = new HashMap<>();
+
+        Long count = comidaService.countByUsuarioIdAndTipoComida(usuarioId, tipoComida);
+
+        respuesta.put("count", count);
+        respuesta.put("usuarioId", usuarioId);
+        respuesta.put("tipoComida", tipoComida);
+
+        return ResponseEntity.ok(respuesta);
+    }
+
     private void validarTipoComida(String tipoComida) {
         try {
             TipoComida.valueOf(tipoComida.toUpperCase());

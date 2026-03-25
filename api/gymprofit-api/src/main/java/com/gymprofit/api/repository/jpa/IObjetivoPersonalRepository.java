@@ -18,4 +18,12 @@ public interface IObjetivoPersonalRepository extends CrudRepository<ObjetivoPers
     List<ObjetivoPersonal> findByUsuarioIdAndCompletadoTrue(Integer usuarioId);
 
     List<ObjetivoPersonal> findByTipoObjetivo(String tipoObjetivo);
+
+    Long countByUsuarioId(Integer usuarioId);
+
+    Long countByUsuarioIdAndCompletadoTrue(Integer usuarioId);
+
+    Long countByUsuarioIdAndCompletadoFalse(Integer usuarioId);
+
+    List<ObjetivoPersonal> findByUsuarioIdOrderByFechaInicioDesc(Integer usuarioId);
 }

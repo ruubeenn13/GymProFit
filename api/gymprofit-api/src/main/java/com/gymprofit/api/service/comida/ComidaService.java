@@ -176,4 +176,29 @@ public class ComidaService implements IComidaService {
 
         return comidaMapper.toDTOList(comidas);
     }
+
+    @Override
+    public Long countByUsuarioId(Integer usuarioId) {
+        logger.info("Contando comidas del usuario: {}", usuarioId);
+
+        return comidaRepository.countByUsuarioId(usuarioId);
+    }
+
+    @Override
+    public Long countByTipoComida(String tipoComida) {
+        logger.info("Contando comidas por tipo: {}", tipoComida);
+
+        TipoComida tipo = TipoComida.valueOf(tipoComida.toUpperCase());
+
+        return comidaRepository.countByTipoComida(tipo);
+    }
+
+    @Override
+    public Long countByUsuarioIdAndTipoComida(Integer usuarioId, String tipoComida) {
+        logger.info("Contando commidas del usuario {} por tipo {}", usuarioId, tipoComida);
+
+        TipoComida tipo = TipoComida.valueOf(tipoComida.toUpperCase());
+
+        return comidaRepository.countByUsuarioIdAndTipoComida(usuarioId, tipo);
+    }
 }

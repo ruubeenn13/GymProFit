@@ -18,4 +18,8 @@ public interface IAlimentoRepository extends CrudRepository<Alimento, Integer> {
     List<Alimento> findByNombreContainingIgnoreCase(String nombre);
 
     List<Alimento> findByCaloriasBetween(Integer min, Integer max);
+
+    Long countByActivoTrue();
+
+    Long countByCategoria(String categoria);
 }

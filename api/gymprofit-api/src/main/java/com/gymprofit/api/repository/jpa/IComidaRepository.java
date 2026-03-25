@@ -22,4 +22,10 @@ public interface IComidaRepository extends CrudRepository<Comida, Integer> {
     List<Comida> findByUsuarioIdAndFechaBetween(Integer usuarioId, LocalDateTime inicio, LocalDateTime fin);
 
     List<Comida> findByUsuarioIdAndTipoComida(Integer usuarioId, TipoComida tipoComida);
+
+    Long countByUsuarioId(Integer usuarioId);
+
+    Long countByTipoComida(TipoComida tipoComida);
+
+    Long countByUsuarioIdAndTipoComida(Integer usuarioId, TipoComida tipoComida);
 }

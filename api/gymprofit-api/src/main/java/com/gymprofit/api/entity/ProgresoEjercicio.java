@@ -27,8 +27,8 @@ public class ProgresoEjercicio {
     @Column(name = "mejor_peso", precision = 5, scale = 2)
     private BigDecimal mejorPeso;
 
-    @Column(name = "mejor_repeticiones", precision = 5, scale = 2)
-    private BigDecimal mejorRepeticiones;
+    @Column(name = "mejor_repeticiones")
+    private Integer mejorRepeticiones;
 
     @Column(name = "mejor_tiempo_segundos")
     private Integer mejorTiempoSegundos;

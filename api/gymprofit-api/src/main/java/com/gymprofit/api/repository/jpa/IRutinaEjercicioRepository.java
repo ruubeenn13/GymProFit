@@ -6,6 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Hidden
 @Repository
@@ -16,4 +17,16 @@ public interface IRutinaEjercicioRepository extends CrudRepository<RutinaEjercic
     List<RutinaEjercicio> findByEjercicioId(Integer ejercicioId);
 
     List<RutinaEjercicio> findByRutinaIdOrderByOrdenAsc(Integer rutinaId);
+
+    Optional<RutinaEjercicio> findByRutinaIdAndEjercicioId(Integer rutinaId, Integer ejercicioId);
+
+    Long countByRutinaId(Integer rutinaId);
+
+    Long countByEjercicioId(Integer ejercicioId);
+
+    void deleteByRutinaId(Integer rutinaId);
+
+    void deleteByRutinaIdAndEjercicioId(Integer rutinaId, Integer ejercicioId);
+
+    boolean existsByRutinaIdAndEjercicioId(Integer rutinaId, Integer ejercicioId);
 }

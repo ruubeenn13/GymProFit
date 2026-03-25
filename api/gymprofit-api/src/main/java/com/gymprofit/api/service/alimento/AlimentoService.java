@@ -142,28 +142,50 @@ public class AlimentoService implements IAlimentoService {
     @Override
     public List<AlimentoDTO> findByNombre(String nombre) {
         logger.info("Buscando alimentos por nombre: {}", nombre);
+
         List<Alimento> alimentos = alimentoRepository.findByNombreContainingIgnoreCase(nombre);
+
         return alimentoMapper.toDTOList(alimentos);
     }
 
     @Override
     public List<AlimentoDTO> findByCategoria(String categoria) {
         logger.info("Buscando alimentos por categoria: {}", categoria);
+
         List<Alimento> alimentos = alimentoRepository.findByCategoria(categoria);
+
         return alimentoMapper.toDTOList(alimentos);
     }
 
     @Override
     public List<AlimentoDTO> findActivos() {
         logger.info("Buscando alimentos activos");
+
         List<Alimento> alimentos = alimentoRepository.findByActivoTrue();
+
         return alimentoMapper.toDTOList(alimentos);
     }
 
     @Override
     public List<AlimentoDTO> findByCaloriasBetween(Integer min, Integer max) {
         logger.info("Buscando alimentos con calorias entre {} y {}", min, max);
+
         List<Alimento> alimentos = alimentoRepository.findByCaloriasBetween(min, max);
+
         return alimentoMapper.toDTOList(alimentos);
+    }
+
+    @Override
+    public Long countActivos() {
+        logger.info("Contando alimentos activos");
+
+        return alimentoRepository.countByActivoTrue();
+    }
+
+    @Override
+    public Long countByCategoria(String categoria) {
+        logger.info("Contando alimmentos por categoría: {}", categoria);
+
+        return alimentoRepository.countByCategoria(categoria);
     }
 }
