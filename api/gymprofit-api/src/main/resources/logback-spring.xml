@@ -13,8 +13,12 @@
 
     <!-- Appender para archivo con rolling diario -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!-- Archivo activo actual -->
+        <!-- Archivo activo actual, siempre gymprofit.log -->
         <file>${LOG_FILE}.log</file>
+
+        <!-- Prudent mode: permite que múltiples instancias escriban en el mismo fichero
+             y añade al contenido existente en vez de sobreescribirlo al arrancar -->
+        <prudent>true</prudent>
 
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n</pattern>

@@ -34,7 +34,7 @@ public class AlimentoComidaController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de relaciones",
                     content = @Content(schema = @Schema(implementation = AlimentoComidaDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se han encontrao relaciones",
+            @ApiResponse(responseCode = "404", description = "No se han encontrado relaciones",
                     content = @Content(schema = @Schema(implementation = Response.class))),
             @ApiResponse(responseCode = "500", description = "Error al obtener las relaciones",
                     content = @Content(schema = @Schema(implementation = Response.class)))
@@ -78,7 +78,7 @@ public class AlimentoComidaController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Relación modificada correctamente",
                     content = @Content(schema = @Schema(implementation = AlimentoComidaDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Relación no encontada",
+            @ApiResponse(responseCode = "404", description = "Relación no encontrada",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @PutMapping("/alimentos-comida")
@@ -176,7 +176,7 @@ public class AlimentoComidaController {
         try {
             alimentoComidaService.deleteByComidaId(comidaId);
 
-            respuesta.put("mensaje", "Todos los alimentos de la commida eliminados con ÉXITO");
+            respuesta.put("mensaje", "Todos los alimentos de la comida eliminados con ÉXITO");
         } catch (Exception e) {
             respuesta.put("mensaje", "Error al eliminar los alimentos de la comida " + comidaId);
             respuesta.put("error", e.getMessage());
@@ -248,7 +248,7 @@ public class AlimentoComidaController {
 
     @Operation(summary = "Cuenta en cuántas comidas se usa un alimento")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Cantiad de comidas")
+            @ApiResponse(responseCode = "200", description = "Cantidad de comidas")
     })
     @GetMapping("/alimentos-comida/count/alimento/{alimentoId}")
     public ResponseEntity<Map<String, Object>> contarComidasPorAlimento(@PathVariable Integer alimentoId) {

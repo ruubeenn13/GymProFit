@@ -90,7 +90,7 @@ public class SesionEntrenamientoController {
         return ResponseEntity.ok(sesion);
     }
 
-    @Operation(summary = "Elimmina una sesión de entrenamiento")
+    @Operation(summary = "Elimina una sesión de entrenamiento")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sesión eliminada correctamente"),
             @ApiResponse(responseCode = "404", description = "Sesión no encontrada",
@@ -196,7 +196,7 @@ public class SesionEntrenamientoController {
         List<SesionEntrenamientoDTO> sesiones = sesionEntrenamientoService.findPendientes();
 
         if (sesiones.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron seisons pendientes");
+            throw new NotFoundEntityException("No se encontraron sesiones pendientes");
         }
 
         return ResponseEntity.ok(sesiones);
@@ -275,7 +275,7 @@ public class SesionEntrenamientoController {
         return ResponseEntity.ok(sesiones);
     }
 
-    @Operation(summary = "Obtiene sesiones de un usuario co una rutina específica")
+    @Operation(summary = "Obtiene sesiones de un usuario con una rutina específica")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sesiones encontradas",
                     content = @Content(schema = @Schema(implementation = SesionEntrenamientoDTO.class))),
@@ -351,7 +351,7 @@ public class SesionEntrenamientoController {
             @ApiResponse(responseCode = "404", description = "No se encontraron sesiones",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
-    @GetMapping("/sesiones/usuario/{usuarioId}/completadas/ordeenadas")
+    @GetMapping("/sesiones/usuario/{usuarioId}/completadas/ordenadas")
     public ResponseEntity<List<SesionEntrenamientoDTO>> obtenerSesionesCompletadasOrdenadasPorUsuario(@PathVariable Integer usuarioId) {
         List<SesionEntrenamientoDTO> sesiones = sesionEntrenamientoService.findCompletadasByUsuario(usuarioId);
 

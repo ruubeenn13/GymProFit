@@ -103,7 +103,7 @@ public class UsuarioController {
         try {
             usuarioService.deleteById(id);
 
-            respuesta.put("meensaje", "Usuario desactivado con ÉXITO");
+            respuesta.put("mensaje", "Usuario desactivado con ÉXITO");
         } catch (Exception e) {
             respuesta.put("mensaje", "Error al desactivar el usuario " + id);
             respuesta.put("error", e.getMessage());
