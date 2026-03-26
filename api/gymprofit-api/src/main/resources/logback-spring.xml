@@ -13,11 +13,10 @@
 
     <!-- Appender para archivo con rolling diario -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!-- Archivo activo actual, siempre gymprofit.log -->
+        <!-- Archivo activo siempre gymprofit.log -->
         <file>${LOG_FILE}.log</file>
 
-        <!-- Prudent mode: permite que múltiples instancias escriban en el mismo fichero
-             y añade al contenido existente en vez de sobreescribirlo al arrancar -->
+        <!-- Añade al fichero existente en vez de sobreescribirlo al arrancar -->
         <prudent>true</prudent>
 
         <encoder>
@@ -26,14 +25,11 @@
 
         <!-- Política de rolling: cambiar de archivo cada día a medianoche -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- Patrón para archivos archivados: gymprofit_YYYY-MM-DD.log -->
+            <!-- Al rotar, el fichero del día anterior se archiva con su fecha -->
             <fileNamePattern>${LOG_FILE}_%d{yyyy-MM-dd}.log</fileNamePattern>
 
             <!-- Mantener logs de los últimos 30 días -->
             <maxHistory>30</maxHistory>
-
-            <!-- Limpiar archivos antiguos al inicio -->
-            <cleanHistoryOnStart>true</cleanHistoryOnStart>
         </rollingPolicy>
     </appender>
 
