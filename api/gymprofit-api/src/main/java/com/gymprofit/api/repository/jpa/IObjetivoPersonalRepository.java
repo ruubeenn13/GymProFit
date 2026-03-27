@@ -1,6 +1,7 @@
 package com.gymprofit.api.repository.jpa;
 
 import com.gymprofit.api.entity.ObjetivoPersonal;
+import com.gymprofit.api.enums.TipoObjetivo;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -17,7 +18,7 @@ public interface IObjetivoPersonalRepository extends CrudRepository<ObjetivoPers
 
     List<ObjetivoPersonal> findByUsuarioIdAndCompletadoTrue(Integer usuarioId);
 
-    List<ObjetivoPersonal> findByTipoObjetivo(String tipoObjetivo);
+    List<ObjetivoPersonal> findByTipoObjetivo(TipoObjetivo tipoObjetivo);
 
     Long countByUsuarioId(Integer usuarioId);
 

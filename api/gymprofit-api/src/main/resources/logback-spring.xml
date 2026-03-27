@@ -1,60 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <!-- Definir la propiedad para el archivo de logs -->
-    <property name="LOG_FILE" value="logs/gymprofit"/>
+    <property name="LOG_DIR" value="logs"/>
+    <property name="LOG_NAME" value="gymprofit"/>
 
-    <!-- Appender para consola -->
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) %cyan([%thread]) %yellow(%logger{36}) - %msg%n</pattern>
-        </encoder>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %white(%d{ISO8601}) %highlight(%-5level) [%blue(%t)] %-60.60yellow(%C{20}): %msg%n%throwable
+            </Pattern>
+        </layout>
     </appender>
 
-    <!-- Appender para archivo con rolling diario -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!-- Archivo activo siempre gymprofit.log -->
-        <file>${LOG_FILE}.log</file>
-
-        <!-- Añade al fichero existente en vez de sobreescribirlo al arrancar -->
-        <prudent>true</prudent>
-
+        <file>${LOG_DIR}/${LOG_NAME}.log</file>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n</pattern>
         </encoder>
-
-        <!-- Política de rolling: cambiar de archivo cada día a medianoche -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- Al rotar, el fichero del día anterior se archiva con su fecha -->
-            <fileNamePattern>${LOG_FILE}_%d{yyyy-MM-dd}.log</fileNamePattern>
-
-            <!-- Mantener logs de los últimos 30 días -->
+            <fileNamePattern>${LOG_DIR}/${LOG_NAME}_%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
     </appender>
 
-    <!-- Logger para la aplicación GymProFit -->
     <logger name="com.gymprofit.api" level="DEBUG" additivity="false">
-        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="Console"/>
         <appender-ref ref="FILE"/>
     </logger>
 
-    <!-- Logger para Spring Framework -->
     <logger name="org.springframework" level="INFO" additivity="false">
-        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="Console"/>
         <appender-ref ref="FILE"/>
     </logger>
 
-    <!-- Logger para Hibernate -->
     <logger name="org.hibernate" level="WARN" additivity="false">
-        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="Console"/>
         <appender-ref ref="FILE"/>
     </logger>
 
-    <!-- Logger ROOT -->
     <root level="INFO">
-        <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
+        <appender-ref ref="Console"/>
     </root>
 
 </configuration>
