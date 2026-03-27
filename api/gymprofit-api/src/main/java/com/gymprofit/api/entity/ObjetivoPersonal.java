@@ -1,5 +1,6 @@
 package com.gymprofit.api.entity;
 
+import com.gymprofit.api.enums.TipoObjetivo;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,8 +23,9 @@ public class ObjetivoPersonal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "tipo_objetivo", nullable = false, length = 50)
-    private String tipoObjetivo;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_objetivo", nullable = false)
+    private TipoObjetivo tipoObjetivo;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String descripcion;

@@ -1,5 +1,6 @@
 package com.gymprofit.api.dto.entity.objetivopersonal;
 
+import com.gymprofit.api.enums.TipoObjetivo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class ObjetivoPersonalCreateDTO implements Serializable {
     private Integer usuarioId;
-    private String tipoObjetivo;
+    private TipoObjetivo tipoObjetivo;
     private String descripcion;
     private BigDecimal valorActual;
     private BigDecimal valorObjetivo;
