@@ -51,6 +51,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         return ejercicioRealizadoMapper.toDTO(ejercicioRealizado);
     }
 
+    @Transactional
     @Override
     public EjercicioRealizadoDTO save(EjercicioRealizadoCreateDTO ejercicioRealizadoCreateDTO) {
         logger.info("Creando nuevo ejercicio realizado para sesión id: {}", ejercicioRealizadoCreateDTO.getSesionId());

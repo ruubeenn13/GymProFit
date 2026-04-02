@@ -38,11 +38,11 @@ public class RutinaEjercicio {
     @Column(columnDefinition = "TEXT")
     private String notas;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "rutina_id", nullable = false)
     private Rutina rutina;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ejercicio_id", nullable = false)
     private Ejercicio ejercicio;
 }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Hidden
 @Repository
@@ -19,6 +20,14 @@ public interface IMedicionCorporalRepository extends CrudRepository<MedicionCorp
     List<MedicionCorporal> findByUsuarioIdOrderByFechaDesc(Integer usuarioId);
 
     List<MedicionCorporal> findByUsuarioIdAndFechaBetween(Integer usuarioId, LocalDateTime inicio, LocalDateTime fin);
+
+    Optional<MedicionCorporal> findFirstByUsuarioIdOrderByFechaDesc(Integer usuarioId);
+
+    Long countByUsuarioId(Integer usuarioId);
+
+    void deleteByUsuarioId(Integer usuarioId);
+
+    boolean existsByUsuarioId(Integer usuarioId);
 
     @Query("SELECT m " +
             "FROM MedicionCorporal m " +

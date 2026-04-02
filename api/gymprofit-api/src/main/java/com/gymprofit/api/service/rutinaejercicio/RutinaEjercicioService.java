@@ -50,6 +50,7 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
         return rutinaEjercicioMapper.toDTO(rutinaEjercicio);
     }
 
+    @Transactional
     @Override
     public RutinaEjercicioDTO save(RutinaEjercicioCreateDTO createDTO) {
         logger.info("Añadiendo ejercicio id: {} a rutina id: {}", createDTO.getEjercicioId(), createDTO.getRutinaId());

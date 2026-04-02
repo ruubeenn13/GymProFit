@@ -6,6 +6,7 @@
 
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
+    <!-- Appender de consola -->
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
             <Pattern>
@@ -14,32 +15,37 @@
         </layout>
     </appender>
 
+    <!-- Appender de fichero con rolling diario -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_DIR}/${LOG_NAME}.log</file>
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- El fichero activo y el archivado usan la misma fecha del día actual -->
             <fileNamePattern>${LOG_DIR}/${LOG_NAME}_%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
     </appender>
 
+    <!-- Logger para la aplicación GymProFit -->
     <logger name="com.gymprofit.api" level="DEBUG" additivity="false">
         <appender-ref ref="Console"/>
         <appender-ref ref="FILE"/>
     </logger>
 
+    <!-- Logger para Spring Framework -->
     <logger name="org.springframework" level="INFO" additivity="false">
         <appender-ref ref="Console"/>
         <appender-ref ref="FILE"/>
     </logger>
 
+    <!-- Logger para Hibernate -->
     <logger name="org.hibernate" level="WARN" additivity="false">
         <appender-ref ref="Console"/>
         <appender-ref ref="FILE"/>
     </logger>
 
+    <!-- ROOT -->
     <root level="INFO">
         <appender-ref ref="FILE"/>
         <appender-ref ref="Console"/>

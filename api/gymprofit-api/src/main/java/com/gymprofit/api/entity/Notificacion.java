@@ -40,7 +40,7 @@ public class Notificacion {
     @Column(columnDefinition = "TINYINT(1) DEFAULT 0")
     private Boolean leida;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 }

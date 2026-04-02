@@ -15,8 +15,8 @@ public class MedicionCorporalDTO implements Serializable {
     private Integer id;
     private Integer usuarioId;
     private LocalDateTime fecha;
-    private Double peso;
-    private Double altura;
+    private BigDecimal peso;
+    private BigDecimal altura;
     private BigDecimal imc;
     private BigDecimal grasaCorporal;
     private BigDecimal masaMuscular;

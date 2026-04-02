@@ -26,11 +26,11 @@ public class AlimentoComida {
     @Column(name = "calorias_totales")
     private Integer caloriasTotales;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "comida_id", nullable = false)
     private Comida comida;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "alimento_id", nullable = false)
     private Alimento alimento;
 }
