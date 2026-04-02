@@ -36,7 +36,7 @@ public class ProgresoEjercicio {
     @Column(columnDefinition = "TEXT")
     private String notas;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
