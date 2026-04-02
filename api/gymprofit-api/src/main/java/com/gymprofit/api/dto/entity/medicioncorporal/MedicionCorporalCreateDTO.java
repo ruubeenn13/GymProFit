@@ -12,8 +12,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class MedicionCorporalCreateDTO implements Serializable {
     private Integer usuarioId;
-    private Double peso;
-    private Double altura;
+    private BigDecimal peso;
+    private BigDecimal altura;
     private BigDecimal grasaCorporal;
     private BigDecimal masaMuscular;
     private BigDecimal cintura;

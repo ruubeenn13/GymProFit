@@ -49,7 +49,7 @@ public class Rutina {
     @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
     private Boolean activa;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 }

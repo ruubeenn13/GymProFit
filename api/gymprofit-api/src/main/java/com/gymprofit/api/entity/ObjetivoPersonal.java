@@ -51,7 +51,7 @@ public class ObjetivoPersonal {
     @Column(name = "fecha_completado")
     private LocalDateTime fechaCompletado;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 }

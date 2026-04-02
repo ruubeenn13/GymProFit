@@ -49,6 +49,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         return objetivoPersonalMapper.toDTO(objetivoPersonal);
     }
 
+    @Transactional
     @Override
     public ObjetivoPersonalDTO save(ObjetivoPersonalCreateDTO objetivoPersonalCreateDTO) {
         logger.info("Creando un nuevo objetivo personal para usuario id: {}", objetivoPersonalCreateDTO.getUsuarioId());

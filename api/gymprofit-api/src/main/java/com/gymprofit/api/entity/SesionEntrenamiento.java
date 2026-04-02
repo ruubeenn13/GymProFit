@@ -42,7 +42,7 @@ public class SesionEntrenamiento {
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "rutina_id")
     private Rutina rutina;
 }
