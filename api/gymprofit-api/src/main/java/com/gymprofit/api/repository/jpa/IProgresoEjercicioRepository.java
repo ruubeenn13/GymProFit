@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Hidden
 @Repository
@@ -18,6 +19,20 @@ public interface IProgresoEjercicioRepository extends CrudRepository<ProgresoEje
     List<ProgresoEjercicio> findByEjercicioId(Integer ejercicioId);
 
     List<ProgresoEjercicio> findByUsuarioIdAndEjercicioId(Integer usuarioId, Integer ejercicioId);
+
+    List<ProgresoEjercicio> findByUsuarioIdOrderByFechaDesc(Integer usuarioId);
+
+    Optional<ProgresoEjercicio> findFirstByUsuarioIdAndEjercicioIdOrderByFechaDesc(Integer usuarioId, Integer ejercicioId);
+
+    Long countByUsuarioId(Integer usarioId);
+
+    Long countByEjercicioId(Integer ejercicioId);
+
+    void deleteByUsuarioId(Integer usuarioId);
+
+    void deleteByUsuarioIdAndEjercicioId(Integer usuarioId, Integer ejercicioId);
+
+    boolean existsByUsuarioIdAndEjercicioId(Integer usuarioId, Integer ejercicioId);
 
     @Query("SELECT p " +
             "FROM ProgresoEjercicio p " +
