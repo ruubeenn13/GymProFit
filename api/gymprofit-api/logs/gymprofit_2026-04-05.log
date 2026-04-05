@@ -556,3 +556,1143 @@ This generated password is for development use only. Your security configuration
 2026-04-05 18:11:34.089 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean.destroy - Closing JPA EntityManagerFactory for persistence unit 'default'
 2026-04-05 18:11:34.097 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource.close - HikariPool-1 - Shutdown initiated...
 2026-04-05 18:11:34.101 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource.close - HikariPool-1 - Shutdown completed.
+2026-04-05 18:43:48.156 [restartedMain] INFO  c.g.api.GymProFitApiApplication.logStarting - Starting GymProFitApiApplication using Java 21.0.10 with PID 16196 (C:\Users\ruben\Desktop\TFG\TFG-GymProFit\api\gymprofit-api\target\classes started by ruben in C:\Users\ruben\Desktop\TFG\TFG-GymProFit\api\gymprofit-api)
+2026-04-05 18:43:48.158 [restartedMain] DEBUG c.g.api.GymProFitApiApplication.logStarting - Running with Spring Boot v3.5.7, Spring v6.2.12
+2026-04-05 18:43:48.159 [restartedMain] INFO  c.g.api.GymProFitApiApplication.logStartupProfileInfo - The following 1 profile is active: "dev"
+2026-04-05 18:43:48.189 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor.log - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-04-05 18:43:48.189 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor.log - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-04-05 18:43:48.720 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate.registerRepositoriesIn - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-05 18:43:48.771 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate.registerRepositoriesIn - Finished Spring Data repository scanning in 45 ms. Found 13 JPA repository interfaces.
+2026-04-05 18:43:49.114 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer.initialize - Tomcat initialized with port 8080 (http)
+2026-04-05 18:43:49.123 [restartedMain] INFO  o.a.catalina.core.StandardService.log - Starting service [Tomcat]
+2026-04-05 18:43:49.124 [restartedMain] INFO  o.a.catalina.core.StandardEngine.log - Starting Servlet engine: [Apache Tomcat/10.1.48]
+2026-04-05 18:43:49.154 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/].log - Initializing Spring embedded WebApplicationContext
+2026-04-05 18:43:49.155 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext.prepareWebApplicationContext - Root WebApplicationContext: initialization completed in 965 ms
+2026-04-05 18:43:49.318 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource.getConnection - HikariPool-1 - Starting...
+2026-04-05 18:43:49.366 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool.checkFailFast - HikariPool-1 - Added connection org.mariadb.jdbc.Connection@5c5999b4
+2026-04-05 18:43:49.367 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource.getConnection - HikariPool-1 - Start completed.
+2026-04-05 18:43:49.378 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - 4 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-04-05 18:43:49.378 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-04-05 18:43:49.384 [restartedMain] WARN  o.m.jdbc.message.server.ErrorPacket.warn - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-04-05 18:43:49.400 [restartedMain] INFO  org.flywaydb.core.FlywayExecutor.info - Database: jdbc:mariadb://localhost:3308/gymprofit_db?user=root&password=********&useUnicode=true&characterEncoding=UTF-8 (MariaDB 11.8)
+2026-04-05 18:43:49.405 [restartedMain] WARN  o.f.c.i.database.base.Database.warn - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-04-05 18:43:49.420 [restartedMain] INFO  o.f.c.i.s.JdbcTableSchemaHistory.info - Repair of failed migration in Schema History table `gymprofit_db`.`flyway_schema_history` not necessary. No failed migration detected.
+2026-04-05 18:43:49.423 [restartedMain] INFO  o.f.core.internal.command.DbRepair.info - Successfully repaired schema history table `gymprofit_db`.`flyway_schema_history` (execution time 00:00.009s).
+2026-04-05 18:43:49.427 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - 4 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-04-05 18:43:49.427 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-04-05 18:43:49.427 [restartedMain] WARN  o.m.jdbc.message.server.ErrorPacket.warn - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-04-05 18:43:49.432 [restartedMain] WARN  o.f.c.i.database.base.Database.warn - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-04-05 18:43:49.436 [restartedMain] INFO  o.f.core.internal.command.DbValidate.info - Successfully validated 0 migrations (execution time 00:00.001s)
+2026-04-05 18:43:49.436 [restartedMain] WARN  o.f.core.internal.command.DbValidate.warn - No migrations found. Are your locations set up correctly?
+2026-04-05 18:43:49.441 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Current version of schema `gymprofit_db`: << Empty Schema >>
+2026-04-05 18:43:49.443 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Schema `gymprofit_db` is up to date. No migration necessary.
+2026-04-05 18:43:49.446 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - 4 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-04-05 18:43:49.446 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-04-05 18:43:49.446 [restartedMain] WARN  o.m.jdbc.message.server.ErrorPacket.warn - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-04-05 18:43:49.450 [restartedMain] WARN  o.f.c.i.database.base.Database.warn - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-04-05 18:43:49.453 [restartedMain] INFO  o.f.core.internal.command.DbValidate.info - Successfully validated 0 migrations (execution time 00:00.001s)
+2026-04-05 18:43:49.453 [restartedMain] WARN  o.f.core.internal.command.DbValidate.warn - No migrations found. Are your locations set up correctly?
+2026-04-05 18:43:49.455 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Current version of schema `gymprofit_db`: << Empty Schema >>
+2026-04-05 18:43:49.455 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Schema `gymprofit_db` is up to date. No migration necessary.
+2026-04-05 18:43:49.682 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo.addTransformer - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-04-05 18:43:49.713 [restartedMain] WARN  org.hibernate.orm.deprecation.constructDialect - HHH90000025: MariaDBDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-05 18:43:50.248 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists alimentos_comida 
+       drop 
+       foreign key if exists FK4g2fw285q9elq67v47ye0jghe
+2026-04-05 18:43:50.257 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists alimentos_comida 
+       drop 
+       foreign key if exists FKpxtmrj0f1ocy0rcfc48w4849s
+2026-04-05 18:43:50.261 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists comidas 
+       drop 
+       foreign key if exists FKpn7rte27roxfdqb38ap36jtkh
+2026-04-05 18:43:50.265 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists ejercicios_realizados 
+       drop 
+       foreign key if exists FK5ri4v954n7dwcm3a943ch53yf
+2026-04-05 18:43:50.270 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists ejercicios_realizados 
+       drop 
+       foreign key if exists FKk3c9suy4axwb6mw4oy3t7kw45
+2026-04-05 18:43:50.275 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists mediciones_corporales 
+       drop 
+       foreign key if exists FK1uuuj1swyjkh9lgan1lw5ncyv
+2026-04-05 18:43:50.279 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists notificaciones 
+       drop 
+       foreign key if exists FK1mxbjb81ft61gwlh0kabubndc
+2026-04-05 18:43:50.283 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists objetivos_personales 
+       drop 
+       foreign key if exists FKg9e3d4c68goofd9e5xbfc66l8
+2026-04-05 18:43:50.288 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists progreso_ejercicios 
+       drop 
+       foreign key if exists FK2slhpmomfa7gx82tt66hgh4be
+2026-04-05 18:43:50.291 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists progreso_ejercicios 
+       drop 
+       foreign key if exists FKp7cesbr76vla56n88vuvju2ly
+2026-04-05 18:43:50.295 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists rutina_ejercicio 
+       drop 
+       foreign key if exists FKjifrnehk8lar7a4s57euo5wx1
+2026-04-05 18:43:50.299 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists rutina_ejercicio 
+       drop 
+       foreign key if exists FK4qt2p6qfayv2ovh32devhdehm
+2026-04-05 18:43:50.303 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists rutinas 
+       drop 
+       foreign key if exists FKe3swm1g2oigxudqi4ilyfh8e0
+2026-04-05 18:43:50.308 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists sesiones_entrenamiento 
+       drop 
+       foreign key if exists FK8lvel89yi3ceflns2l7v2cnsv
+2026-04-05 18:43:50.312 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists sesiones_entrenamiento 
+       drop 
+       foreign key if exists FKekdrrtbhrlr5ijb5dpm8kdfpp
+2026-04-05 18:43:50.317 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists alimentos
+2026-04-05 18:43:50.320 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists alimentos_comida
+2026-04-05 18:43:50.322 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists comidas
+2026-04-05 18:43:50.325 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists ejercicios
+2026-04-05 18:43:50.327 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists ejercicios_realizados
+2026-04-05 18:43:50.330 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists mediciones_corporales
+2026-04-05 18:43:50.332 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists notificaciones
+2026-04-05 18:43:50.334 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists objetivos_personales
+2026-04-05 18:43:50.337 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists progreso_ejercicios
+2026-04-05 18:43:50.339 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists roles
+2026-04-05 18:43:50.343 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists rutina_ejercicio
+2026-04-05 18:43:50.345 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists rutinas
+2026-04-05 18:43:50.348 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists sesiones_entrenamiento
+2026-04-05 18:43:50.351 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists usuarios
+2026-04-05 18:43:50.357 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table alimentos (
+        activo TINYINT(1) DEFAULT 1,
+        calorias integer not null,
+        carbohidratos decimal(5,2),
+        fibra decimal(5,2),
+        grasas decimal(5,2),
+        id integer not null auto_increment,
+        porcion_gramos integer,
+        proteinas decimal(5,2),
+        categoria varchar(50),
+        nombre varchar(100) not null,
+        descripcion TEXT,
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:43:50.361 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table alimentos_comida (
+        alimento_id integer not null,
+        calorias_totales integer,
+        cantidad_gramos decimal(6,2) not null,
+        comida_id integer not null,
+        id integer not null auto_increment,
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:43:50.364 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table comidas (
+        id integer not null auto_increment,
+        total_calorias integer,
+        total_carbohidratos decimal(5,2),
+        total_grasas decimal(5,2),
+        total_proteinas decimal(5,2),
+        usuario_id integer not null,
+        fecha datetime(6),
+        notas TEXT,
+        tipo_comida enum ('ALMUERZO','CENA','COMIDA','DESAYUNO','MERIENDA','SNACK') not null,
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:43:50.367 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table ejercicios (
+        activo TINYINT(1) DEFAULT 1,
+        calorias_quemadas integer,
+        id integer not null auto_increment,
+        nombre varchar(100) not null,
+        descripcion TEXT,
+        equipo_necesario varchar(255),
+        imagen_url varchar(255),
+        instrucciones TEXT,
+        dificultad enum ('AVANZADO','INTERMEDIO','PRINCIPIANTE') not null,
+        grupo_muscular enum ('ABOMEN','BRAZOS','CARDIO','ESPALDA','FULLBODY','HOMBROS','PECHO','PIERNAS') not null,
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:43:50.370 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table ejercicios_realizados (
+        ejercicio_id integer not null,
+        id integer not null auto_increment,
+        peso_usado decimal(5,2),
+        repeticiones_rutinas integer,
+        series_completadas integer,
+        sesion_id integer not null,
+        tiempo_segundos integer,
+        notas TEXT,
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:43:50.372 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table mediciones_corporales (
+        altura decimal(3,2),
+        brazos decimal(5,2),
+        cintura decimal(5,2),
+        grasa_corporal decimal(4,2),
+        id integer not null auto_increment,
+        imc decimal(4,2),
+        masa_muscular decimal(4,2),
+        pecho decimal(5,2),
+        peso decimal(5,2) not null,
+        piernas decimal(5,2),
+        usuario_id integer not null,
+        fecha datetime(6) not null,
+        notas TEXT,
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:43:50.375 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table notificaciones (
+        id integer not null auto_increment,
+        leida TINYINT(1) DEFAULT 0,
+        usuario_id integer not null,
+        fecha_creacion datetime(6),
+        fecha_programada datetime(6),
+        titulo varchar(100) not null,
+        mensaje TEXT not null,
+        tipo enum ('LOGRO','OBJETIVO','RECORDATORIO','SISTEMA') not null,
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:43:50.378 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table objetivos_personales (
+        completado TINYINT(1) DEFAULT 0,
+        fecha_inicio date not null,
+        fecha_limite date,
+        id integer not null auto_increment,
+        usuario_id integer not null,
+        valor_actual decimal(10,2),
+        valor_objetivo decimal(10,2) not null,
+        fecha_completado datetime(6),
+        unidad varchar(20),
+        descripcion TEXT not null,
+        tipo_objetivo enum ('AUMENTAR_CALORIAS','COMPLETAR_RETO','GANAR_MASA_MUSCULAR','MANTENER_PESO','MEJORAR_FLEXIBILIDAD','MEJORAR_FUERZA','MEJORAR_MOVILIDAD','MEJORAR_RESISTENCIA','MEJORAR_VELOCIDAD','OTRO','PERDER_PESO','REDUCIR_GRASA_CORPORAL') not null,
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:43:50.380 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table progreso_ejercicios (
+        ejercicio_id integer not null,
+        id integer not null auto_increment,
+        mejor_peso decimal(5,2),
+        mejor_repeticiones integer,
+        mejor_tiempo_segundos integer,
+        usuario_id integer not null,
+        fecha datetime(6),
+        notas TEXT,
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:43:50.384 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table roles (
+        id integer not null auto_increment,
+        nombre enum ('ADMIN','GUEST','USER') not null,
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:43:50.386 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table rutina_ejercicio (
+        ejercicio_id integer not null,
+        id integer not null auto_increment,
+        orden INT DEFAULT 1 not null,
+        peso_recomendado decimal(5,2),
+        repeticiones INT DEFAULT 10 not null,
+        rutina_id integer not null,
+        series INT DEFAULT 3 not null,
+        tiempo_descanso integer,
+        notas TEXT,
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:43:50.389 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table rutinas (
+        activa TINYINT(1) DEFAULT 1,
+        duracion_minutos integer,
+        es_predefinida TINYINT(1) DEFAULT 0,
+        id integer not null auto_increment,
+        usuario_id integer,
+        fecha_creacion datetime(6),
+        categoria varchar(50),
+        dias_semana varchar(100),
+        nombre varchar(100) not null,
+        descripcion TEXT,
+        nivel enum ('AVANZADO','EXPERTO','INTERMEDIO','PRINCIPIANTE') not null,
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:43:50.392 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table sesiones_entrenamiento (
+        calorias_quemadas integer,
+        completada TINYINT(1) DEFAULT 0,
+        duracion_minutos integer,
+        id integer not null auto_increment,
+        rutina_id integer,
+        usuario_id integer not null,
+        fecha_fin datetime(6) not null,
+        fecha_inicio datetime(6) not null,
+        notas TEXT,
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:43:50.395 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table usuarios (
+        activo TINYINT(1) DEFAULT 1,
+        altura decimal(3,2),
+        edad integer,
+        id integer not null auto_increment,
+        peso decimal(5,2),
+        fecha_registro datetime(6),
+        username varchar(50) not null,
+        email varchar(100) not null,
+        objetivo varchar(100),
+        password varchar(255) not null,
+        nivel_experiencia enum ('AVANZADO','EXPERTO','INTERMEDIO','PRINCIPIANTE'),
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:43:50.398 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists roles 
+       add constraint UKldv0v52e0udsh2h1rs0r0gw1n unique (nombre)
+2026-04-05 18:43:50.403 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists usuarios 
+       add constraint UKm2dvbwfge291euvmk6vkkocao unique (username)
+2026-04-05 18:43:50.409 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists usuarios 
+       add constraint UKkfsp0s1tflm1cwlj8idhqsad0 unique (email)
+2026-04-05 18:43:50.414 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists alimentos_comida 
+       add constraint FK4g2fw285q9elq67v47ye0jghe 
+       foreign key (alimento_id) 
+       references alimentos (id)
+2026-04-05 18:43:50.422 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists alimentos_comida 
+       add constraint FKpxtmrj0f1ocy0rcfc48w4849s 
+       foreign key (comida_id) 
+       references comidas (id)
+2026-04-05 18:43:50.430 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists comidas 
+       add constraint FKpn7rte27roxfdqb38ap36jtkh 
+       foreign key (usuario_id) 
+       references usuarios (id)
+2026-04-05 18:43:50.437 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists ejercicios_realizados 
+       add constraint FK5ri4v954n7dwcm3a943ch53yf 
+       foreign key (ejercicio_id) 
+       references ejercicios (id)
+2026-04-05 18:43:50.444 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists ejercicios_realizados 
+       add constraint FKk3c9suy4axwb6mw4oy3t7kw45 
+       foreign key (sesion_id) 
+       references sesiones_entrenamiento (id)
+2026-04-05 18:43:50.454 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists mediciones_corporales 
+       add constraint FK1uuuj1swyjkh9lgan1lw5ncyv 
+       foreign key (usuario_id) 
+       references usuarios (id)
+2026-04-05 18:43:50.466 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists notificaciones 
+       add constraint FK1mxbjb81ft61gwlh0kabubndc 
+       foreign key (usuario_id) 
+       references usuarios (id)
+2026-04-05 18:43:50.478 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists objetivos_personales 
+       add constraint FKg9e3d4c68goofd9e5xbfc66l8 
+       foreign key (usuario_id) 
+       references usuarios (id)
+2026-04-05 18:43:50.489 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists progreso_ejercicios 
+       add constraint FK2slhpmomfa7gx82tt66hgh4be 
+       foreign key (ejercicio_id) 
+       references ejercicios (id)
+2026-04-05 18:43:50.501 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists progreso_ejercicios 
+       add constraint FKp7cesbr76vla56n88vuvju2ly 
+       foreign key (usuario_id) 
+       references usuarios (id)
+2026-04-05 18:43:50.512 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists rutina_ejercicio 
+       add constraint FKjifrnehk8lar7a4s57euo5wx1 
+       foreign key (ejercicio_id) 
+       references ejercicios (id)
+2026-04-05 18:43:50.524 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists rutina_ejercicio 
+       add constraint FK4qt2p6qfayv2ovh32devhdehm 
+       foreign key (rutina_id) 
+       references rutinas (id)
+2026-04-05 18:43:50.535 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists rutinas 
+       add constraint FKe3swm1g2oigxudqi4ilyfh8e0 
+       foreign key (usuario_id) 
+       references usuarios (id)
+2026-04-05 18:43:50.546 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists sesiones_entrenamiento 
+       add constraint FK8lvel89yi3ceflns2l7v2cnsv 
+       foreign key (rutina_id) 
+       references rutinas (id)
+2026-04-05 18:43:50.556 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists sesiones_entrenamiento 
+       add constraint FKekdrrtbhrlr5ijb5dpm8kdfpp 
+       foreign key (usuario_id) 
+       references usuarios (id)
+2026-04-05 18:43:50.570 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean.buildNativeEntityManagerFactory - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-05 18:43:50.830 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory.<clinit> - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-04-05 18:43:51.252 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration.openEntityManagerInViewInterceptor - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-04-05 18:43:51.433 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.handlerMethodsInitialized - 182 mappings in 'requestMappingHandlerMapping'
+2026-04-05 18:43:51.503 [restartedMain] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping.logMappings - Patterns [/webjars/**, /**, /swagger-ui/**, /swagger-ui/*swagger-initializer.js, /webjars/*swagger-ui/**, /webjars/*swagger-ui/*swagger-initializer.js, /webjars/*swagger-ui/5.31.0/*swagger-initializer.js] in 'resourceHandlerMapping'
+2026-04-05 18:43:51.539 [restartedMain] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration.getOrDeducePassword - 
+
+Using generated security password: 2b4f5b38-8d55-4fd5-a439-3199c44ef7d3
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-04-05 18:43:51.543 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer.configure - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-04-05 18:43:51.643 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter.initControllerAdviceCache - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2026-04-05 18:43:51.670 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.initExceptionHandlerAdviceCache - ControllerAdvice beans: 3 @ExceptionHandler, 1 ResponseBodyAdvice
+2026-04-05 18:43:51.684 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.initExceptionHandlerAdviceCache - ControllerAdvice beans: 3 @ExceptionHandler, 0 ResponseBodyAdvice
+2026-04-05 18:43:52.197 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer.startServer - LiveReload server is running on port 35729
+2026-04-05 18:43:52.240 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer.start - Tomcat started on port 8080 (http) with context path '/'
+2026-04-05 18:43:52.246 [restartedMain] INFO  c.g.api.GymProFitApiApplication.logStarted - Started GymProFitApiApplication in 4.415 seconds (process running for 4.861)
+2026-04-05 18:43:52.248 [restartedMain] WARN  o.s.c.events.SpringDocAppInitializer.init - SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+2026-04-05 18:43:52.248 [restartedMain] WARN  o.s.c.events.SpringDocAppInitializer.init - SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+2026-04-05 18:43:56.284 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown.shutDownGracefully - Commencing graceful shutdown. Waiting for active requests to complete
+2026-04-05 18:43:56.289 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown.doShutdown - Graceful shutdown complete
+2026-04-05 18:43:56.294 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean.destroy - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-04-05 18:43:56.296 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource.close - HikariPool-1 - Shutdown initiated...
+2026-04-05 18:43:56.298 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource.close - HikariPool-1 - Shutdown completed.
+2026-04-05 18:45:05.143 [restartedMain] INFO  c.g.api.GymProFitApiApplication.logStarting - Starting GymProFitApiApplication using Java 21.0.10 with PID 5076 (C:\Users\ruben\Desktop\TFG\TFG-GymProFit\api\gymprofit-api\target\classes started by ruben in C:\Users\ruben\Desktop\TFG\TFG-GymProFit\api\gymprofit-api)
+2026-04-05 18:45:05.145 [restartedMain] DEBUG c.g.api.GymProFitApiApplication.logStarting - Running with Spring Boot v3.5.7, Spring v6.2.12
+2026-04-05 18:45:05.145 [restartedMain] INFO  c.g.api.GymProFitApiApplication.logStartupProfileInfo - The following 1 profile is active: "dev"
+2026-04-05 18:45:05.174 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor.log - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-04-05 18:45:05.174 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor.log - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-04-05 18:45:05.692 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate.registerRepositoriesIn - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-05 18:45:05.743 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate.registerRepositoriesIn - Finished Spring Data repository scanning in 45 ms. Found 13 JPA repository interfaces.
+2026-04-05 18:45:06.085 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer.initialize - Tomcat initialized with port 8080 (http)
+2026-04-05 18:45:06.094 [restartedMain] INFO  o.a.catalina.core.StandardService.log - Starting service [Tomcat]
+2026-04-05 18:45:06.094 [restartedMain] INFO  o.a.catalina.core.StandardEngine.log - Starting Servlet engine: [Apache Tomcat/10.1.48]
+2026-04-05 18:45:06.119 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/].log - Initializing Spring embedded WebApplicationContext
+2026-04-05 18:45:06.120 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext.prepareWebApplicationContext - Root WebApplicationContext: initialization completed in 945 ms
+2026-04-05 18:45:06.277 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource.getConnection - HikariPool-1 - Starting...
+2026-04-05 18:45:06.324 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool.checkFailFast - HikariPool-1 - Added connection org.mariadb.jdbc.Connection@2fdf7de4
+2026-04-05 18:45:06.326 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource.getConnection - HikariPool-1 - Start completed.
+2026-04-05 18:45:06.335 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - 4 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-04-05 18:45:06.335 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-04-05 18:45:06.341 [restartedMain] WARN  o.m.jdbc.message.server.ErrorPacket.warn - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-04-05 18:45:06.355 [restartedMain] INFO  org.flywaydb.core.FlywayExecutor.info - Database: jdbc:mariadb://localhost:3308/gymprofit_db?user=root&password=********&useUnicode=true&characterEncoding=UTF-8 (MariaDB 11.8)
+2026-04-05 18:45:06.360 [restartedMain] WARN  o.f.c.i.database.base.Database.warn - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-04-05 18:45:06.374 [restartedMain] INFO  o.f.c.i.s.JdbcTableSchemaHistory.info - Repair of failed migration in Schema History table `gymprofit_db`.`flyway_schema_history` not necessary. No failed migration detected.
+2026-04-05 18:45:06.378 [restartedMain] INFO  o.f.core.internal.command.DbRepair.info - Successfully repaired schema history table `gymprofit_db`.`flyway_schema_history` (execution time 00:00.009s).
+2026-04-05 18:45:06.382 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - 4 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-04-05 18:45:06.382 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-04-05 18:45:06.383 [restartedMain] WARN  o.m.jdbc.message.server.ErrorPacket.warn - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-04-05 18:45:06.388 [restartedMain] WARN  o.f.c.i.database.base.Database.warn - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-04-05 18:45:06.392 [restartedMain] INFO  o.f.core.internal.command.DbValidate.info - Successfully validated 0 migrations (execution time 00:00.001s)
+2026-04-05 18:45:06.392 [restartedMain] WARN  o.f.core.internal.command.DbValidate.warn - No migrations found. Are your locations set up correctly?
+2026-04-05 18:45:06.397 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Current version of schema `gymprofit_db`: << Empty Schema >>
+2026-04-05 18:45:06.400 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Schema `gymprofit_db` is up to date. No migration necessary.
+2026-04-05 18:45:06.403 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - 4 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-04-05 18:45:06.403 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-04-05 18:45:06.403 [restartedMain] WARN  o.m.jdbc.message.server.ErrorPacket.warn - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-04-05 18:45:06.407 [restartedMain] WARN  o.f.c.i.database.base.Database.warn - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-04-05 18:45:06.410 [restartedMain] INFO  o.f.core.internal.command.DbValidate.info - Successfully validated 0 migrations (execution time 00:00.001s)
+2026-04-05 18:45:06.410 [restartedMain] WARN  o.f.core.internal.command.DbValidate.warn - No migrations found. Are your locations set up correctly?
+2026-04-05 18:45:06.412 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Current version of schema `gymprofit_db`: << Empty Schema >>
+2026-04-05 18:45:06.412 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Schema `gymprofit_db` is up to date. No migration necessary.
+2026-04-05 18:45:06.637 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo.addTransformer - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-04-05 18:45:06.662 [restartedMain] WARN  org.hibernate.orm.deprecation.constructDialect - HHH90000025: MariaDBDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-05 18:45:07.203 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists alimentos_comida 
+       drop 
+       foreign key if exists FK4g2fw285q9elq67v47ye0jghe
+2026-04-05 18:45:07.211 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists alimentos_comida 
+       drop 
+       foreign key if exists FKpxtmrj0f1ocy0rcfc48w4849s
+2026-04-05 18:45:07.216 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists comidas 
+       drop 
+       foreign key if exists FKpn7rte27roxfdqb38ap36jtkh
+2026-04-05 18:45:07.220 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists ejercicios_realizados 
+       drop 
+       foreign key if exists FK5ri4v954n7dwcm3a943ch53yf
+2026-04-05 18:45:07.225 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists ejercicios_realizados 
+       drop 
+       foreign key if exists FKk3c9suy4axwb6mw4oy3t7kw45
+2026-04-05 18:45:07.230 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists mediciones_corporales 
+       drop 
+       foreign key if exists FK1uuuj1swyjkh9lgan1lw5ncyv
+2026-04-05 18:45:07.234 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists notificaciones 
+       drop 
+       foreign key if exists FK1mxbjb81ft61gwlh0kabubndc
+2026-04-05 18:45:07.239 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists objetivos_personales 
+       drop 
+       foreign key if exists FKg9e3d4c68goofd9e5xbfc66l8
+2026-04-05 18:45:07.244 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists progreso_ejercicios 
+       drop 
+       foreign key if exists FK2slhpmomfa7gx82tt66hgh4be
+2026-04-05 18:45:07.249 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists progreso_ejercicios 
+       drop 
+       foreign key if exists FKp7cesbr76vla56n88vuvju2ly
+2026-04-05 18:45:07.253 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists rutina_ejercicio 
+       drop 
+       foreign key if exists FKjifrnehk8lar7a4s57euo5wx1
+2026-04-05 18:45:07.259 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists rutina_ejercicio 
+       drop 
+       foreign key if exists FK4qt2p6qfayv2ovh32devhdehm
+2026-04-05 18:45:07.263 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists rutinas 
+       drop 
+       foreign key if exists FKe3swm1g2oigxudqi4ilyfh8e0
+2026-04-05 18:45:07.268 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists sesiones_entrenamiento 
+       drop 
+       foreign key if exists FK8lvel89yi3ceflns2l7v2cnsv
+2026-04-05 18:45:07.273 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists sesiones_entrenamiento 
+       drop 
+       foreign key if exists FKekdrrtbhrlr5ijb5dpm8kdfpp
+2026-04-05 18:45:07.277 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists alimentos
+2026-04-05 18:45:07.280 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists alimentos_comida
+2026-04-05 18:45:07.283 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists comidas
+2026-04-05 18:45:07.286 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists ejercicios
+2026-04-05 18:45:07.288 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists ejercicios_realizados
+2026-04-05 18:45:07.290 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists mediciones_corporales
+2026-04-05 18:45:07.293 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists notificaciones
+2026-04-05 18:45:07.296 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists objetivos_personales
+2026-04-05 18:45:07.298 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists progreso_ejercicios
+2026-04-05 18:45:07.301 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists roles
+2026-04-05 18:45:07.304 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists rutina_ejercicio
+2026-04-05 18:45:07.306 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists rutinas
+2026-04-05 18:45:07.309 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists sesiones_entrenamiento
+2026-04-05 18:45:07.312 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    drop table if exists usuarios
+2026-04-05 18:45:07.318 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table alimentos (
+        activo TINYINT(1) DEFAULT 1,
+        calorias integer not null,
+        carbohidratos decimal(5,2),
+        fibra decimal(5,2),
+        grasas decimal(5,2),
+        id integer not null auto_increment,
+        porcion_gramos integer,
+        proteinas decimal(5,2),
+        categoria varchar(50),
+        nombre varchar(100) not null,
+        descripcion TEXT,
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:45:07.321 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table alimentos_comida (
+        alimento_id integer not null,
+        calorias_totales integer,
+        cantidad_gramos decimal(6,2) not null,
+        comida_id integer not null,
+        id integer not null auto_increment,
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:45:07.325 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table comidas (
+        id integer not null auto_increment,
+        total_calorias integer,
+        total_carbohidratos decimal(5,2),
+        total_grasas decimal(5,2),
+        total_proteinas decimal(5,2),
+        usuario_id integer not null,
+        fecha datetime(6),
+        notas TEXT,
+        tipo_comida enum ('ALMUERZO','CENA','COMIDA','DESAYUNO','MERIENDA','SNACK') not null,
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:45:07.328 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table ejercicios (
+        activo TINYINT(1) DEFAULT 1,
+        calorias_quemadas integer,
+        id integer not null auto_increment,
+        nombre varchar(100) not null,
+        descripcion TEXT,
+        equipo_necesario varchar(255),
+        imagen_url varchar(255),
+        instrucciones TEXT,
+        dificultad enum ('AVANZADO','INTERMEDIO','PRINCIPIANTE') not null,
+        grupo_muscular enum ('ABOMEN','BRAZOS','CARDIO','ESPALDA','FULLBODY','HOMBROS','PECHO','PIERNAS') not null,
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:45:07.331 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table ejercicios_realizados (
+        ejercicio_id integer not null,
+        id integer not null auto_increment,
+        peso_usado decimal(5,2),
+        repeticiones_rutinas integer,
+        series_completadas integer,
+        sesion_id integer not null,
+        tiempo_segundos integer,
+        notas TEXT,
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:45:07.333 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table mediciones_corporales (
+        altura decimal(3,2),
+        brazos decimal(5,2),
+        cintura decimal(5,2),
+        grasa_corporal decimal(4,2),
+        id integer not null auto_increment,
+        imc decimal(4,2),
+        masa_muscular decimal(4,2),
+        pecho decimal(5,2),
+        peso decimal(5,2) not null,
+        piernas decimal(5,2),
+        usuario_id integer not null,
+        fecha datetime(6) not null,
+        notas TEXT,
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:45:07.337 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table notificaciones (
+        id integer not null auto_increment,
+        leida TINYINT(1) DEFAULT 0,
+        usuario_id integer not null,
+        fecha_creacion datetime(6),
+        fecha_programada datetime(6),
+        titulo varchar(100) not null,
+        mensaje TEXT not null,
+        tipo enum ('LOGRO','OBJETIVO','RECORDATORIO','SISTEMA') not null,
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:45:07.339 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table objetivos_personales (
+        completado TINYINT(1) DEFAULT 0,
+        fecha_inicio date not null,
+        fecha_limite date,
+        id integer not null auto_increment,
+        usuario_id integer not null,
+        valor_actual decimal(10,2),
+        valor_objetivo decimal(10,2) not null,
+        fecha_completado datetime(6),
+        unidad varchar(20),
+        descripcion TEXT not null,
+        tipo_objetivo enum ('AUMENTAR_CALORIAS','COMPLETAR_RETO','GANAR_MASA_MUSCULAR','MANTENER_PESO','MEJORAR_FLEXIBILIDAD','MEJORAR_FUERZA','MEJORAR_MOVILIDAD','MEJORAR_RESISTENCIA','MEJORAR_VELOCIDAD','OTRO','PERDER_PESO','REDUCIR_GRASA_CORPORAL') not null,
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:45:07.342 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table progreso_ejercicios (
+        ejercicio_id integer not null,
+        id integer not null auto_increment,
+        mejor_peso decimal(5,2),
+        mejor_repeticiones integer,
+        mejor_tiempo_segundos integer,
+        usuario_id integer not null,
+        fecha datetime(6),
+        notas TEXT,
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:45:07.346 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table roles (
+        id integer not null auto_increment,
+        nombre enum ('ADMIN','GUEST','USER') not null,
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:45:07.348 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table rutina_ejercicio (
+        ejercicio_id integer not null,
+        id integer not null auto_increment,
+        orden INT DEFAULT 1 not null,
+        peso_recomendado decimal(5,2),
+        repeticiones INT DEFAULT 10 not null,
+        rutina_id integer not null,
+        series INT DEFAULT 3 not null,
+        tiempo_descanso integer,
+        notas TEXT,
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:45:07.352 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table rutinas (
+        activa TINYINT(1) DEFAULT 1,
+        duracion_minutos integer,
+        es_predefinida TINYINT(1) DEFAULT 0,
+        id integer not null auto_increment,
+        usuario_id integer,
+        fecha_creacion datetime(6),
+        categoria varchar(50),
+        dias_semana varchar(100),
+        nombre varchar(100) not null,
+        descripcion TEXT,
+        nivel enum ('AVANZADO','EXPERTO','INTERMEDIO','PRINCIPIANTE') not null,
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:45:07.355 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table sesiones_entrenamiento (
+        calorias_quemadas integer,
+        completada TINYINT(1) DEFAULT 0,
+        duracion_minutos integer,
+        id integer not null auto_increment,
+        rutina_id integer,
+        usuario_id integer not null,
+        fecha_fin datetime(6) not null,
+        fecha_inicio datetime(6) not null,
+        notas TEXT,
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:45:07.358 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table usuarios (
+        activo TINYINT(1) DEFAULT 1,
+        altura decimal(3,2),
+        edad integer,
+        id integer not null auto_increment,
+        peso decimal(5,2),
+        fecha_registro datetime(6),
+        username varchar(50) not null,
+        email varchar(100) not null,
+        objetivo varchar(100),
+        password varchar(255) not null,
+        nivel_experiencia enum ('AVANZADO','EXPERTO','INTERMEDIO','PRINCIPIANTE'),
+        primary key (id)
+    ) engine=InnoDB
+2026-04-05 18:45:07.362 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists roles 
+       add constraint UKldv0v52e0udsh2h1rs0r0gw1n unique (nombre)
+2026-04-05 18:45:07.368 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists usuarios 
+       add constraint UKm2dvbwfge291euvmk6vkkocao unique (username)
+2026-04-05 18:45:07.373 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists usuarios 
+       add constraint UKkfsp0s1tflm1cwlj8idhqsad0 unique (email)
+2026-04-05 18:45:07.378 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists alimentos_comida 
+       add constraint FK4g2fw285q9elq67v47ye0jghe 
+       foreign key (alimento_id) 
+       references alimentos (id)
+2026-04-05 18:45:07.387 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists alimentos_comida 
+       add constraint FKpxtmrj0f1ocy0rcfc48w4849s 
+       foreign key (comida_id) 
+       references comidas (id)
+2026-04-05 18:45:07.396 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists comidas 
+       add constraint FKpn7rte27roxfdqb38ap36jtkh 
+       foreign key (usuario_id) 
+       references usuarios (id)
+2026-04-05 18:45:07.404 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists ejercicios_realizados 
+       add constraint FK5ri4v954n7dwcm3a943ch53yf 
+       foreign key (ejercicio_id) 
+       references ejercicios (id)
+2026-04-05 18:45:07.413 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists ejercicios_realizados 
+       add constraint FKk3c9suy4axwb6mw4oy3t7kw45 
+       foreign key (sesion_id) 
+       references sesiones_entrenamiento (id)
+2026-04-05 18:45:07.424 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists mediciones_corporales 
+       add constraint FK1uuuj1swyjkh9lgan1lw5ncyv 
+       foreign key (usuario_id) 
+       references usuarios (id)
+2026-04-05 18:45:07.434 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists notificaciones 
+       add constraint FK1mxbjb81ft61gwlh0kabubndc 
+       foreign key (usuario_id) 
+       references usuarios (id)
+2026-04-05 18:45:07.445 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists objetivos_personales 
+       add constraint FKg9e3d4c68goofd9e5xbfc66l8 
+       foreign key (usuario_id) 
+       references usuarios (id)
+2026-04-05 18:45:07.456 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists progreso_ejercicios 
+       add constraint FK2slhpmomfa7gx82tt66hgh4be 
+       foreign key (ejercicio_id) 
+       references ejercicios (id)
+2026-04-05 18:45:07.467 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists progreso_ejercicios 
+       add constraint FKp7cesbr76vla56n88vuvju2ly 
+       foreign key (usuario_id) 
+       references usuarios (id)
+2026-04-05 18:45:07.478 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists rutina_ejercicio 
+       add constraint FKjifrnehk8lar7a4s57euo5wx1 
+       foreign key (ejercicio_id) 
+       references ejercicios (id)
+2026-04-05 18:45:07.489 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists rutina_ejercicio 
+       add constraint FK4qt2p6qfayv2ovh32devhdehm 
+       foreign key (rutina_id) 
+       references rutinas (id)
+2026-04-05 18:45:07.500 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists rutinas 
+       add constraint FKe3swm1g2oigxudqi4ilyfh8e0 
+       foreign key (usuario_id) 
+       references usuarios (id)
+2026-04-05 18:45:07.510 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists sesiones_entrenamiento 
+       add constraint FK8lvel89yi3ceflns2l7v2cnsv 
+       foreign key (rutina_id) 
+       references rutinas (id)
+2026-04-05 18:45:07.521 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists sesiones_entrenamiento 
+       add constraint FKekdrrtbhrlr5ijb5dpm8kdfpp 
+       foreign key (usuario_id) 
+       references usuarios (id)
+2026-04-05 18:45:07.532 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean.buildNativeEntityManagerFactory - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-05 18:45:07.797 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory.<clinit> - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-04-05 18:45:08.239 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration.openEntityManagerInViewInterceptor - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-04-05 18:45:08.410 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.handlerMethodsInitialized - 182 mappings in 'requestMappingHandlerMapping'
+2026-04-05 18:45:08.479 [restartedMain] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping.logMappings - Patterns [/webjars/**, /**, /swagger-ui/**, /swagger-ui/*swagger-initializer.js, /webjars/*swagger-ui/**, /webjars/*swagger-ui/*swagger-initializer.js, /webjars/*swagger-ui/5.31.0/*swagger-initializer.js] in 'resourceHandlerMapping'
+2026-04-05 18:45:08.517 [restartedMain] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration.getOrDeducePassword - 
+
+Using generated security password: dfd07abf-a580-4275-bd89-397e050d20a1
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-04-05 18:45:08.521 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer.configure - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-04-05 18:45:08.631 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter.initControllerAdviceCache - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2026-04-05 18:45:08.657 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.initExceptionHandlerAdviceCache - ControllerAdvice beans: 3 @ExceptionHandler, 1 ResponseBodyAdvice
+2026-04-05 18:45:08.671 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.initExceptionHandlerAdviceCache - ControllerAdvice beans: 3 @ExceptionHandler, 0 ResponseBodyAdvice
+2026-04-05 18:45:09.185 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer.startServer - LiveReload server is running on port 35729
+2026-04-05 18:45:09.230 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer.start - Tomcat started on port 8080 (http) with context path '/'
+2026-04-05 18:45:09.236 [restartedMain] INFO  c.g.api.GymProFitApiApplication.logStarted - Started GymProFitApiApplication in 4.427 seconds (process running for 4.923)
+2026-04-05 18:45:09.238 [restartedMain] WARN  o.s.c.events.SpringDocAppInitializer.init - SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+2026-04-05 18:45:09.238 [restartedMain] WARN  o.s.c.events.SpringDocAppInitializer.init - SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+2026-04-05 18:45:15.239 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown.shutDownGracefully - Commencing graceful shutdown. Waiting for active requests to complete
+2026-04-05 18:45:15.244 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown.doShutdown - Graceful shutdown complete
+2026-04-05 18:45:15.249 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean.destroy - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-04-05 18:45:15.251 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource.close - HikariPool-1 - Shutdown initiated...
+2026-04-05 18:45:15.253 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource.close - HikariPool-1 - Shutdown completed.
+2026-04-05 18:45:37.871 [restartedMain] INFO  c.g.api.GymProFitApiApplication.logStarting - Starting GymProFitApiApplication using Java 21.0.10 with PID 16300 (C:\Users\ruben\Desktop\TFG\TFG-GymProFit\api\gymprofit-api\target\classes started by ruben in C:\Users\ruben\Desktop\TFG\TFG-GymProFit\api\gymprofit-api)
+2026-04-05 18:45:37.872 [restartedMain] DEBUG c.g.api.GymProFitApiApplication.logStarting - Running with Spring Boot v3.5.7, Spring v6.2.12
+2026-04-05 18:45:37.873 [restartedMain] INFO  c.g.api.GymProFitApiApplication.logStartupProfileInfo - The following 1 profile is active: "dev"
+2026-04-05 18:45:37.902 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor.log - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-04-05 18:45:37.903 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor.log - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-04-05 18:45:38.490 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate.registerRepositoriesIn - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-05 18:45:38.544 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate.registerRepositoriesIn - Finished Spring Data repository scanning in 49 ms. Found 13 JPA repository interfaces.
+2026-04-05 18:45:38.949 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer.initialize - Tomcat initialized with port 8080 (http)
+2026-04-05 18:45:38.958 [restartedMain] INFO  o.a.catalina.core.StandardService.log - Starting service [Tomcat]
+2026-04-05 18:45:38.959 [restartedMain] INFO  o.a.catalina.core.StandardEngine.log - Starting Servlet engine: [Apache Tomcat/10.1.48]
+2026-04-05 18:45:38.987 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/].log - Initializing Spring embedded WebApplicationContext
+2026-04-05 18:45:38.989 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext.prepareWebApplicationContext - Root WebApplicationContext: initialization completed in 1085 ms
+2026-04-05 18:45:39.148 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource.getConnection - HikariPool-1 - Starting...
+2026-04-05 18:45:39.197 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool.checkFailFast - HikariPool-1 - Added connection org.mariadb.jdbc.Connection@3086e492
+2026-04-05 18:45:39.199 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource.getConnection - HikariPool-1 - Start completed.
+2026-04-05 18:45:39.208 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - 4 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-04-05 18:45:39.208 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-04-05 18:45:39.215 [restartedMain] WARN  o.m.jdbc.message.server.ErrorPacket.warn - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-04-05 18:45:39.233 [restartedMain] INFO  org.flywaydb.core.FlywayExecutor.info - Database: jdbc:mariadb://localhost:3308/gymprofit_db?user=root&password=********&useUnicode=true&characterEncoding=UTF-8 (MariaDB 11.8)
+2026-04-05 18:45:39.238 [restartedMain] WARN  o.f.c.i.database.base.Database.warn - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-04-05 18:45:39.256 [restartedMain] INFO  o.f.c.i.s.JdbcTableSchemaHistory.info - Repair of failed migration in Schema History table `gymprofit_db`.`flyway_schema_history` not necessary. No failed migration detected.
+2026-04-05 18:45:39.262 [restartedMain] INFO  o.f.core.internal.command.DbRepair.info - Successfully repaired schema history table `gymprofit_db`.`flyway_schema_history` (execution time 00:00.013s).
+2026-04-05 18:45:39.268 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - 4 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-04-05 18:45:39.268 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-04-05 18:45:39.268 [restartedMain] WARN  o.m.jdbc.message.server.ErrorPacket.warn - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-04-05 18:45:39.274 [restartedMain] WARN  o.f.c.i.database.base.Database.warn - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-04-05 18:45:39.279 [restartedMain] INFO  o.f.core.internal.command.DbValidate.info - Successfully validated 0 migrations (execution time 00:00.002s)
+2026-04-05 18:45:39.280 [restartedMain] WARN  o.f.core.internal.command.DbValidate.warn - No migrations found. Are your locations set up correctly?
+2026-04-05 18:45:39.288 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Current version of schema `gymprofit_db`: << Empty Schema >>
+2026-04-05 18:45:39.291 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Schema `gymprofit_db` is up to date. No migration necessary.
+2026-04-05 18:45:39.295 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - 4 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-04-05 18:45:39.296 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-04-05 18:45:39.296 [restartedMain] WARN  o.m.jdbc.message.server.ErrorPacket.warn - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-04-05 18:45:39.301 [restartedMain] WARN  o.f.c.i.database.base.Database.warn - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-04-05 18:45:39.306 [restartedMain] INFO  o.f.core.internal.command.DbValidate.info - Successfully validated 0 migrations (execution time 00:00.002s)
+2026-04-05 18:45:39.307 [restartedMain] WARN  o.f.core.internal.command.DbValidate.warn - No migrations found. Are your locations set up correctly?
+2026-04-05 18:45:39.310 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Current version of schema `gymprofit_db`: << Empty Schema >>
+2026-04-05 18:45:39.311 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Schema `gymprofit_db` is up to date. No migration necessary.
+2026-04-05 18:45:39.557 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo.addTransformer - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-04-05 18:45:39.584 [restartedMain] WARN  org.hibernate.orm.deprecation.constructDialect - HHH90000025: MariaDBDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-05 18:45:40.232 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean.buildNativeEntityManagerFactory - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-05 18:45:40.473 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory.<clinit> - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-04-05 18:45:40.957 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration.openEntityManagerInViewInterceptor - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-04-05 18:45:41.166 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.handlerMethodsInitialized - 182 mappings in 'requestMappingHandlerMapping'
+2026-04-05 18:45:41.243 [restartedMain] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping.logMappings - Patterns [/webjars/**, /**, /swagger-ui/**, /swagger-ui/*swagger-initializer.js, /webjars/*swagger-ui/**, /webjars/*swagger-ui/*swagger-initializer.js, /webjars/*swagger-ui/5.31.0/*swagger-initializer.js] in 'resourceHandlerMapping'
+2026-04-05 18:45:41.280 [restartedMain] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration.getOrDeducePassword - 
+
+Using generated security password: de339762-98cf-4557-9f7a-b0bdb299a239
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-04-05 18:45:41.284 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer.configure - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-04-05 18:45:41.393 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter.initControllerAdviceCache - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2026-04-05 18:45:41.436 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.initExceptionHandlerAdviceCache - ControllerAdvice beans: 3 @ExceptionHandler, 1 ResponseBodyAdvice
+2026-04-05 18:45:41.462 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.initExceptionHandlerAdviceCache - ControllerAdvice beans: 3 @ExceptionHandler, 0 ResponseBodyAdvice
+2026-04-05 18:45:41.986 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer.startServer - LiveReload server is running on port 35729
+2026-04-05 18:45:42.031 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer.start - Tomcat started on port 8080 (http) with context path '/'
+2026-04-05 18:45:42.037 [restartedMain] INFO  c.g.api.GymProFitApiApplication.logStarted - Started GymProFitApiApplication in 4.585 seconds (process running for 4.99)
+2026-04-05 18:45:42.038 [restartedMain] WARN  o.s.c.events.SpringDocAppInitializer.init - SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+2026-04-05 18:45:42.038 [restartedMain] WARN  o.s.c.events.SpringDocAppInitializer.init - SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+2026-04-05 18:45:59.323 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown.shutDownGracefully - Commencing graceful shutdown. Waiting for active requests to complete
+2026-04-05 18:45:59.328 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown.doShutdown - Graceful shutdown complete
+2026-04-05 18:45:59.333 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean.destroy - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-04-05 18:45:59.335 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource.close - HikariPool-1 - Shutdown initiated...
+2026-04-05 18:45:59.337 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource.close - HikariPool-1 - Shutdown completed.
+2026-04-05 18:54:06.689 [restartedMain] INFO  c.g.api.GymProFitApiApplication.logStarting - Starting GymProFitApiApplication using Java 21.0.10 with PID 13732 (C:\Users\ruben\Desktop\TFG\TFG-GymProFit\api\gymprofit-api\target\classes started by ruben in C:\Users\ruben\Desktop\TFG\TFG-GymProFit\api\gymprofit-api)
+2026-04-05 18:54:06.690 [restartedMain] DEBUG c.g.api.GymProFitApiApplication.logStarting - Running with Spring Boot v3.5.7, Spring v6.2.12
+2026-04-05 18:54:06.691 [restartedMain] INFO  c.g.api.GymProFitApiApplication.logStartupProfileInfo - The following 1 profile is active: "dev"
+2026-04-05 18:54:06.725 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor.log - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-04-05 18:54:06.725 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor.log - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-04-05 18:54:07.317 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate.registerRepositoriesIn - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-05 18:54:07.387 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate.registerRepositoriesIn - Finished Spring Data repository scanning in 62 ms. Found 13 JPA repository interfaces.
+2026-04-05 18:54:07.760 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer.initialize - Tomcat initialized with port 8080 (http)
+2026-04-05 18:54:07.768 [restartedMain] INFO  o.a.catalina.core.StandardService.log - Starting service [Tomcat]
+2026-04-05 18:54:07.768 [restartedMain] INFO  o.a.catalina.core.StandardEngine.log - Starting Servlet engine: [Apache Tomcat/10.1.48]
+2026-04-05 18:54:07.794 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/].log - Initializing Spring embedded WebApplicationContext
+2026-04-05 18:54:07.795 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext.prepareWebApplicationContext - Root WebApplicationContext: initialization completed in 1068 ms
+2026-04-05 18:54:07.950 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource.getConnection - HikariPool-1 - Starting...
+2026-04-05 18:54:07.996 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool.checkFailFast - HikariPool-1 - Added connection org.mariadb.jdbc.Connection@3acde0b9
+2026-04-05 18:54:07.998 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource.getConnection - HikariPool-1 - Start completed.
+2026-04-05 18:54:08.006 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - 4 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-04-05 18:54:08.006 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-04-05 18:54:08.012 [restartedMain] WARN  o.m.jdbc.message.server.ErrorPacket.warn - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-04-05 18:54:08.027 [restartedMain] INFO  org.flywaydb.core.FlywayExecutor.info - Database: jdbc:mariadb://localhost:3308/gymprofit_db?user=root&password=********&useUnicode=true&characterEncoding=UTF-8 (MariaDB 11.8)
+2026-04-05 18:54:08.032 [restartedMain] WARN  o.f.c.i.database.base.Database.warn - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-04-05 18:54:08.046 [restartedMain] INFO  o.f.c.i.s.JdbcTableSchemaHistory.info - Repair of failed migration in Schema History table `gymprofit_db`.`flyway_schema_history` not necessary. No failed migration detected.
+2026-04-05 18:54:08.049 [restartedMain] INFO  o.f.core.internal.command.DbRepair.info - Successfully repaired schema history table `gymprofit_db`.`flyway_schema_history` (execution time 00:00.008s).
+2026-04-05 18:54:08.053 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - 4 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-04-05 18:54:08.053 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-04-05 18:54:08.053 [restartedMain] WARN  o.m.jdbc.message.server.ErrorPacket.warn - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-04-05 18:54:08.057 [restartedMain] WARN  o.f.c.i.database.base.Database.warn - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-04-05 18:54:08.061 [restartedMain] INFO  o.f.core.internal.command.DbValidate.info - Successfully validated 0 migrations (execution time 00:00.001s)
+2026-04-05 18:54:08.062 [restartedMain] WARN  o.f.core.internal.command.DbValidate.warn - No migrations found. Are your locations set up correctly?
+2026-04-05 18:54:08.066 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Current version of schema `gymprofit_db`: << Empty Schema >>
+2026-04-05 18:54:08.068 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Schema `gymprofit_db` is up to date. No migration necessary.
+2026-04-05 18:54:08.070 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - 4 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-04-05 18:54:08.071 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-04-05 18:54:08.071 [restartedMain] WARN  o.m.jdbc.message.server.ErrorPacket.warn - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-04-05 18:54:08.074 [restartedMain] WARN  o.f.c.i.database.base.Database.warn - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-04-05 18:54:08.077 [restartedMain] INFO  o.f.core.internal.command.DbValidate.info - Successfully validated 0 migrations (execution time 00:00.001s)
+2026-04-05 18:54:08.077 [restartedMain] WARN  o.f.core.internal.command.DbValidate.warn - No migrations found. Are your locations set up correctly?
+2026-04-05 18:54:08.079 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Current version of schema `gymprofit_db`: << Empty Schema >>
+2026-04-05 18:54:08.079 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Schema `gymprofit_db` is up to date. No migration necessary.
+2026-04-05 18:54:08.314 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo.addTransformer - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-04-05 18:54:08.341 [restartedMain] WARN  org.hibernate.orm.deprecation.constructDialect - HHH90000025: MariaDBDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-05 18:54:08.974 [restartedMain] ERROR o.s.o.j.LocalContainerEntityManagerFactoryBean.buildNativeEntityManagerFactory - Failed to initialize JPA EntityManagerFactory: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is org.hibernate.tool.schema.spi.SchemaManagementException: Schema-validation: missing table [usuario_roles]
+2026-04-05 18:54:08.975 [restartedMain] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext.refresh - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is org.hibernate.tool.schema.spi.SchemaManagementException: Schema-validation: missing table [usuario_roles]
+2026-04-05 18:54:08.977 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource.close - HikariPool-1 - Shutdown initiated...
+2026-04-05 18:54:08.979 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource.close - HikariPool-1 - Shutdown completed.
+2026-04-05 18:54:08.980 [restartedMain] INFO  o.a.catalina.core.StandardService.log - Stopping service [Tomcat]
+2026-04-05 18:54:08.987 [restartedMain] INFO  o.s.b.a.l.ConditionEvaluationReportLogger.logMessage - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-04-05 18:54:08.999 [restartedMain] ERROR o.s.boot.SpringApplication.reportFailure - Application run failed
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is org.hibernate.tool.schema.spi.SchemaManagementException: Schema-validation: missing table [usuario_roles]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1826)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:607)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:207)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:973)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at com.gymprofit.api.GymProFitApiApplication.main(GymProFitApiApplication.java:10)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50)
+Caused by: jakarta.persistence.PersistenceException: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is org.hibernate.tool.schema.spi.SchemaManagementException: Schema-validation: missing table [usuario_roles]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:431)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:400)
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:366)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1873)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1822)
+	... 18 common frames omitted
+Caused by: org.hibernate.tool.schema.spi.SchemaManagementException: Schema-validation: missing table [usuario_roles]
+	at org.hibernate.tool.schema.internal.AbstractSchemaValidator.validateTable(AbstractSchemaValidator.java:136)
+	at org.hibernate.tool.schema.internal.GroupedSchemaValidatorImpl.validateTables(GroupedSchemaValidatorImpl.java:46)
+	at org.hibernate.tool.schema.internal.AbstractSchemaValidator.performValidation(AbstractSchemaValidator.java:99)
+	at org.hibernate.tool.schema.internal.AbstractSchemaValidator.doValidation(AbstractSchemaValidator.java:77)
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.performDatabaseAction(SchemaManagementToolCoordinator.java:289)
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.lambda$process$5(SchemaManagementToolCoordinator.java:144)
+	at java.base/java.util.HashMap.forEach(HashMap.java:1429)
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.process(SchemaManagementToolCoordinator.java:141)
+	at org.hibernate.boot.internal.SessionFactoryObserverForSchemaExport.sessionFactoryCreated(SessionFactoryObserverForSchemaExport.java:37)
+	at org.hibernate.internal.SessionFactoryObserverChain.sessionFactoryCreated(SessionFactoryObserverChain.java:35)
+	at org.hibernate.internal.SessionFactoryImpl.<init>(SessionFactoryImpl.java:324)
+	at org.hibernate.boot.internal.SessionFactoryBuilderImpl.build(SessionFactoryBuilderImpl.java:463)
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1517)
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:66)
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:390)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:419)
+	... 22 common frames omitted
+2026-04-05 18:56:49.259 [restartedMain] INFO  c.g.api.GymProFitApiApplication.logStarting - Starting GymProFitApiApplication using Java 21.0.10 with PID 20932 (C:\Users\ruben\Desktop\TFG\TFG-GymProFit\api\gymprofit-api\target\classes started by ruben in C:\Users\ruben\Desktop\TFG\TFG-GymProFit\api\gymprofit-api)
+2026-04-05 18:56:49.261 [restartedMain] DEBUG c.g.api.GymProFitApiApplication.logStarting - Running with Spring Boot v3.5.7, Spring v6.2.12
+2026-04-05 18:56:49.261 [restartedMain] INFO  c.g.api.GymProFitApiApplication.logStartupProfileInfo - The following 1 profile is active: "dev"
+2026-04-05 18:56:49.299 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor.log - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-04-05 18:56:49.299 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor.log - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-04-05 18:56:49.846 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate.registerRepositoriesIn - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-05 18:56:49.900 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate.registerRepositoriesIn - Finished Spring Data repository scanning in 48 ms. Found 13 JPA repository interfaces.
+2026-04-05 18:56:50.276 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer.initialize - Tomcat initialized with port 8080 (http)
+2026-04-05 18:56:50.285 [restartedMain] INFO  o.a.catalina.core.StandardService.log - Starting service [Tomcat]
+2026-04-05 18:56:50.285 [restartedMain] INFO  o.a.catalina.core.StandardEngine.log - Starting Servlet engine: [Apache Tomcat/10.1.48]
+2026-04-05 18:56:50.311 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/].log - Initializing Spring embedded WebApplicationContext
+2026-04-05 18:56:50.312 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext.prepareWebApplicationContext - Root WebApplicationContext: initialization completed in 1013 ms
+2026-04-05 18:56:50.453 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource.getConnection - HikariPool-1 - Starting...
+2026-04-05 18:56:50.501 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool.checkFailFast - HikariPool-1 - Added connection org.mariadb.jdbc.Connection@71132075
+2026-04-05 18:56:50.502 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource.getConnection - HikariPool-1 - Start completed.
+2026-04-05 18:56:50.511 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - 4 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-04-05 18:56:50.512 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-04-05 18:56:50.517 [restartedMain] WARN  o.m.jdbc.message.server.ErrorPacket.warn - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-04-05 18:56:50.532 [restartedMain] INFO  org.flywaydb.core.FlywayExecutor.info - Database: jdbc:mariadb://localhost:3308/gymprofit_db?user=root&password=********&useUnicode=true&characterEncoding=UTF-8 (MariaDB 11.8)
+2026-04-05 18:56:50.536 [restartedMain] WARN  o.f.c.i.database.base.Database.warn - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-04-05 18:56:50.555 [restartedMain] INFO  o.f.c.i.s.JdbcTableSchemaHistory.info - Repair of failed migration in Schema History table `gymprofit_db`.`flyway_schema_history` not necessary. No failed migration detected.
+2026-04-05 18:56:50.559 [restartedMain] INFO  o.f.core.internal.command.DbRepair.info - Successfully repaired schema history table `gymprofit_db`.`flyway_schema_history` (execution time 00:00.014s).
+2026-04-05 18:56:50.563 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - 4 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-04-05 18:56:50.563 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-04-05 18:56:50.564 [restartedMain] WARN  o.m.jdbc.message.server.ErrorPacket.warn - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-04-05 18:56:50.568 [restartedMain] WARN  o.f.c.i.database.base.Database.warn - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-04-05 18:56:50.572 [restartedMain] INFO  o.f.core.internal.command.DbValidate.info - Successfully validated 0 migrations (execution time 00:00.001s)
+2026-04-05 18:56:50.572 [restartedMain] WARN  o.f.core.internal.command.DbValidate.warn - No migrations found. Are your locations set up correctly?
+2026-04-05 18:56:50.576 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Current version of schema `gymprofit_db`: << Empty Schema >>
+2026-04-05 18:56:50.579 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Schema `gymprofit_db` is up to date. No migration necessary.
+2026-04-05 18:56:50.582 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - 4 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-04-05 18:56:50.582 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-04-05 18:56:50.582 [restartedMain] WARN  o.m.jdbc.message.server.ErrorPacket.warn - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-04-05 18:56:50.586 [restartedMain] WARN  o.f.c.i.database.base.Database.warn - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-04-05 18:56:50.588 [restartedMain] INFO  o.f.core.internal.command.DbValidate.info - Successfully validated 0 migrations (execution time 00:00.001s)
+2026-04-05 18:56:50.588 [restartedMain] WARN  o.f.core.internal.command.DbValidate.warn - No migrations found. Are your locations set up correctly?
+2026-04-05 18:56:50.590 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Current version of schema `gymprofit_db`: << Empty Schema >>
+2026-04-05 18:56:50.591 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Schema `gymprofit_db` is up to date. No migration necessary.
+2026-04-05 18:56:50.817 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo.addTransformer - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-04-05 18:56:50.846 [restartedMain] WARN  org.hibernate.orm.deprecation.constructDialect - HHH90000025: MariaDBDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-05 18:56:51.475 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    create table usuario_roles (
+        usuario_id integer not null,
+        role_id integer not null
+    ) engine=InnoDB
+2026-04-05 18:56:51.495 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists usuario_roles 
+       add constraint FKtk4qndf0xt1ijkk4a7wj5vnwb 
+       foreign key (role_id) 
+       references roles (id)
+2026-04-05 18:56:51.503 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    alter table if exists usuario_roles 
+       add constraint FKuu9tea04xb29m2km5lwe46ua 
+       foreign key (usuario_id) 
+       references usuarios (id)
+2026-04-05 18:56:51.512 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean.buildNativeEntityManagerFactory - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-05 18:56:51.785 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory.<clinit> - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-04-05 18:56:52.269 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration.openEntityManagerInViewInterceptor - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-04-05 18:56:52.465 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.handlerMethodsInitialized - 182 mappings in 'requestMappingHandlerMapping'
+2026-04-05 18:56:52.594 [restartedMain] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping.logMappings - Patterns [/webjars/**, /**, /swagger-ui/**, /swagger-ui/*swagger-initializer.js, /webjars/*swagger-ui/**, /webjars/*swagger-ui/*swagger-initializer.js, /webjars/*swagger-ui/5.31.0/*swagger-initializer.js] in 'resourceHandlerMapping'
+2026-04-05 18:56:52.655 [restartedMain] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration.getOrDeducePassword - 
+
+Using generated security password: 52339ab3-56d7-48d3-ad18-2daed1bdc445
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-04-05 18:56:52.661 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer.configure - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-04-05 18:56:52.775 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter.initControllerAdviceCache - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2026-04-05 18:56:52.809 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.initExceptionHandlerAdviceCache - ControllerAdvice beans: 3 @ExceptionHandler, 1 ResponseBodyAdvice
+2026-04-05 18:56:52.831 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.initExceptionHandlerAdviceCache - ControllerAdvice beans: 3 @ExceptionHandler, 0 ResponseBodyAdvice
+2026-04-05 18:56:53.426 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer.startServer - LiveReload server is running on port 35729
+2026-04-05 18:56:53.471 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer.start - Tomcat started on port 8080 (http) with context path '/'
+2026-04-05 18:56:53.477 [restartedMain] INFO  c.g.api.GymProFitApiApplication.logStarted - Started GymProFitApiApplication in 4.602 seconds (process running for 5.038)
+2026-04-05 18:56:53.479 [restartedMain] WARN  o.s.c.events.SpringDocAppInitializer.init - SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+2026-04-05 18:56:53.479 [restartedMain] WARN  o.s.c.events.SpringDocAppInitializer.init - SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+2026-04-05 18:57:16.962 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown.shutDownGracefully - Commencing graceful shutdown. Waiting for active requests to complete
+2026-04-05 18:57:16.966 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown.doShutdown - Graceful shutdown complete
+2026-04-05 18:57:16.971 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean.destroy - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-04-05 18:57:16.974 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource.close - HikariPool-1 - Shutdown initiated...
+2026-04-05 18:57:16.975 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource.close - HikariPool-1 - Shutdown completed.
+2026-04-05 18:57:38.000 [restartedMain] INFO  c.g.api.GymProFitApiApplication.logStarting - Starting GymProFitApiApplication using Java 21.0.10 with PID 11256 (C:\Users\ruben\Desktop\TFG\TFG-GymProFit\api\gymprofit-api\target\classes started by ruben in C:\Users\ruben\Desktop\TFG\TFG-GymProFit\api\gymprofit-api)
+2026-04-05 18:57:38.002 [restartedMain] DEBUG c.g.api.GymProFitApiApplication.logStarting - Running with Spring Boot v3.5.7, Spring v6.2.12
+2026-04-05 18:57:38.003 [restartedMain] INFO  c.g.api.GymProFitApiApplication.logStartupProfileInfo - The following 1 profile is active: "dev"
+2026-04-05 18:57:38.041 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor.log - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-04-05 18:57:38.041 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor.log - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-04-05 18:57:38.629 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate.registerRepositoriesIn - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-05 18:57:38.685 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate.registerRepositoriesIn - Finished Spring Data repository scanning in 51 ms. Found 13 JPA repository interfaces.
+2026-04-05 18:57:39.052 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer.initialize - Tomcat initialized with port 8080 (http)
+2026-04-05 18:57:39.060 [restartedMain] INFO  o.a.catalina.core.StandardService.log - Starting service [Tomcat]
+2026-04-05 18:57:39.061 [restartedMain] INFO  o.a.catalina.core.StandardEngine.log - Starting Servlet engine: [Apache Tomcat/10.1.48]
+2026-04-05 18:57:39.093 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/].log - Initializing Spring embedded WebApplicationContext
+2026-04-05 18:57:39.094 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext.prepareWebApplicationContext - Root WebApplicationContext: initialization completed in 1053 ms
+2026-04-05 18:57:39.246 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource.getConnection - HikariPool-1 - Starting...
+2026-04-05 18:57:39.295 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool.checkFailFast - HikariPool-1 - Added connection org.mariadb.jdbc.Connection@82b620d
+2026-04-05 18:57:39.296 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource.getConnection - HikariPool-1 - Start completed.
+2026-04-05 18:57:39.305 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - 4 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-04-05 18:57:39.305 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-04-05 18:57:39.311 [restartedMain] WARN  o.m.jdbc.message.server.ErrorPacket.warn - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-04-05 18:57:39.327 [restartedMain] INFO  org.flywaydb.core.FlywayExecutor.info - Database: jdbc:mariadb://localhost:3308/gymprofit_db?user=root&password=********&useUnicode=true&characterEncoding=UTF-8 (MariaDB 11.8)
+2026-04-05 18:57:39.331 [restartedMain] WARN  o.f.c.i.database.base.Database.warn - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-04-05 18:57:39.344 [restartedMain] INFO  o.f.c.i.s.JdbcTableSchemaHistory.info - Repair of failed migration in Schema History table `gymprofit_db`.`flyway_schema_history` not necessary. No failed migration detected.
+2026-04-05 18:57:39.348 [restartedMain] INFO  o.f.core.internal.command.DbRepair.info - Successfully repaired schema history table `gymprofit_db`.`flyway_schema_history` (execution time 00:00.008s).
+2026-04-05 18:57:39.351 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - 4 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-04-05 18:57:39.351 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-04-05 18:57:39.352 [restartedMain] WARN  o.m.jdbc.message.server.ErrorPacket.warn - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-04-05 18:57:39.356 [restartedMain] WARN  o.f.c.i.database.base.Database.warn - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-04-05 18:57:39.360 [restartedMain] INFO  o.f.core.internal.command.DbValidate.info - Successfully validated 0 migrations (execution time 00:00.001s)
+2026-04-05 18:57:39.360 [restartedMain] WARN  o.f.core.internal.command.DbValidate.warn - No migrations found. Are your locations set up correctly?
+2026-04-05 18:57:39.364 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Current version of schema `gymprofit_db`: << Empty Schema >>
+2026-04-05 18:57:39.366 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Schema `gymprofit_db` is up to date. No migration necessary.
+2026-04-05 18:57:39.369 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - 4 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-04-05 18:57:39.369 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-04-05 18:57:39.369 [restartedMain] WARN  o.m.jdbc.message.server.ErrorPacket.warn - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-04-05 18:57:39.373 [restartedMain] WARN  o.f.c.i.database.base.Database.warn - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-04-05 18:57:39.376 [restartedMain] INFO  o.f.core.internal.command.DbValidate.info - Successfully validated 0 migrations (execution time 00:00.001s)
+2026-04-05 18:57:39.376 [restartedMain] WARN  o.f.core.internal.command.DbValidate.warn - No migrations found. Are your locations set up correctly?
+2026-04-05 18:57:39.378 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Current version of schema `gymprofit_db`: << Empty Schema >>
+2026-04-05 18:57:39.378 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Schema `gymprofit_db` is up to date. No migration necessary.
+2026-04-05 18:57:39.614 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo.addTransformer - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-04-05 18:57:39.640 [restartedMain] WARN  org.hibernate.orm.deprecation.constructDialect - HHH90000025: MariaDBDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-05 18:57:40.268 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean.buildNativeEntityManagerFactory - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-05 18:57:40.539 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory.<clinit> - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-04-05 18:57:41.010 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration.openEntityManagerInViewInterceptor - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-04-05 18:57:41.179 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.handlerMethodsInitialized - 182 mappings in 'requestMappingHandlerMapping'
+2026-04-05 18:57:41.254 [restartedMain] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping.logMappings - Patterns [/webjars/**, /**, /swagger-ui/**, /swagger-ui/*swagger-initializer.js, /webjars/*swagger-ui/**, /webjars/*swagger-ui/*swagger-initializer.js, /webjars/*swagger-ui/5.31.0/*swagger-initializer.js] in 'resourceHandlerMapping'
+2026-04-05 18:57:41.291 [restartedMain] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration.getOrDeducePassword - 
+
+Using generated security password: 39aabef7-d31c-4b33-b67e-4b9dafb1989d
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-04-05 18:57:41.296 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer.configure - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-04-05 18:57:41.392 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter.initControllerAdviceCache - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2026-04-05 18:57:41.421 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.initExceptionHandlerAdviceCache - ControllerAdvice beans: 3 @ExceptionHandler, 1 ResponseBodyAdvice
+2026-04-05 18:57:41.436 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.initExceptionHandlerAdviceCache - ControllerAdvice beans: 3 @ExceptionHandler, 0 ResponseBodyAdvice
+2026-04-05 18:57:41.986 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer.startServer - LiveReload server is running on port 35729
+2026-04-05 18:57:42.035 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer.start - Tomcat started on port 8080 (http) with context path '/'
+2026-04-05 18:57:42.041 [restartedMain] INFO  c.g.api.GymProFitApiApplication.logStarted - Started GymProFitApiApplication in 4.43 seconds (process running for 4.857)
+2026-04-05 18:57:42.043 [restartedMain] WARN  o.s.c.events.SpringDocAppInitializer.init - SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+2026-04-05 18:57:42.043 [restartedMain] WARN  o.s.c.events.SpringDocAppInitializer.init - SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+2026-04-05 18:57:46.861 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown.shutDownGracefully - Commencing graceful shutdown. Waiting for active requests to complete
+2026-04-05 18:57:46.866 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown.doShutdown - Graceful shutdown complete
+2026-04-05 18:57:46.871 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean.destroy - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-04-05 18:57:46.873 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource.close - HikariPool-1 - Shutdown initiated...
+2026-04-05 18:57:46.875 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource.close - HikariPool-1 - Shutdown completed.
