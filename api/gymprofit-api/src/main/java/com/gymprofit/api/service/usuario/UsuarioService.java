@@ -11,6 +11,8 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,6 +26,12 @@ public class UsuarioService implements IUsuarioService {
     private final UsuarioMapper usuarioMapper;
     private final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
 
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
+    }
 
     @Override
     public List<UsuarioDTO> findAll() {
@@ -143,24 +151,19 @@ public class UsuarioService implements IUsuarioService {
     @Override
     public UsuarioDTO findByUsername(String username) {
         logger.info("Buscando usuario por username: {}", username);
-        Usuario usuario = usuarioRepository.findByUsername(username);
 
-        if (usuario == null) {
-            throw new NotFoundEntityException("El usuario con username '" + username + "' no existe");
-        }
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundEntityException("El usuario con username '" + username + "' no existe"));
 
         return usuarioMapper.toDTO(usuario);
-
     }
 
     @Override
     public UsuarioDTO findByEmail(String email) {
         logger.info("Buscando un usuario por email: {}", email);
-        Usuario usuario = usuarioRepository.findByEmail(email);
 
-        if (usuario == null) {
-            throw new NotFoundEntityException("El usuario con email '" + email + "' no existe");
-        }
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundEntityException("El usuario con email '" + email + "' no existe"));
 
         return usuarioMapper.toDTO(usuario);
     }

@@ -1696,3 +1696,255 @@ This generated password is for development use only. Your security configuration
 2026-04-05 18:57:46.871 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean.destroy - Closing JPA EntityManagerFactory for persistence unit 'default'
 2026-04-05 18:57:46.873 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource.close - HikariPool-1 - Shutdown initiated...
 2026-04-05 18:57:46.875 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource.close - HikariPool-1 - Shutdown completed.
+2026-04-05 20:21:08.444 [restartedMain] INFO  c.g.api.GymProFitApiApplication.logStarting - Starting GymProFitApiApplication using Java 21.0.10 with PID 20044 (C:\Users\ruben\Desktop\TFG\TFG-GymProFit\api\gymprofit-api\target\classes started by ruben in C:\Users\ruben\Desktop\TFG\TFG-GymProFit\api\gymprofit-api)
+2026-04-05 20:21:08.446 [restartedMain] DEBUG c.g.api.GymProFitApiApplication.logStarting - Running with Spring Boot v3.5.7, Spring v6.2.12
+2026-04-05 20:21:08.446 [restartedMain] INFO  c.g.api.GymProFitApiApplication.logStartupProfileInfo - The following 1 profile is active: "dev"
+2026-04-05 20:21:08.482 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor.log - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-04-05 20:21:08.482 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor.log - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-04-05 20:21:09.381 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate.registerRepositoriesIn - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-05 20:21:09.485 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate.registerRepositoriesIn - Finished Spring Data repository scanning in 95 ms. Found 14 JPA repository interfaces.
+2026-04-05 20:21:10.089 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer.initialize - Tomcat initialized with port 8080 (http)
+2026-04-05 20:21:10.102 [restartedMain] INFO  o.a.catalina.core.StandardService.log - Starting service [Tomcat]
+2026-04-05 20:21:10.104 [restartedMain] INFO  o.a.catalina.core.StandardEngine.log - Starting Servlet engine: [Apache Tomcat/10.1.48]
+2026-04-05 20:21:10.149 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/].log - Initializing Spring embedded WebApplicationContext
+2026-04-05 20:21:10.150 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext.prepareWebApplicationContext - Root WebApplicationContext: initialization completed in 1667 ms
+2026-04-05 20:21:10.276 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration.openEntityManagerInViewInterceptor - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-04-05 20:21:10.431 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource.getConnection - HikariPool-1 - Starting...
+2026-04-05 20:21:10.493 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool.checkFailFast - HikariPool-1 - Added connection org.mariadb.jdbc.Connection@27fb75ff
+2026-04-05 20:21:10.495 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource.getConnection - HikariPool-1 - Start completed.
+2026-04-05 20:21:10.508 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - 4 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-04-05 20:21:10.508 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-04-05 20:21:10.516 [restartedMain] WARN  o.m.jdbc.message.server.ErrorPacket.warn - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-04-05 20:21:10.544 [restartedMain] INFO  org.flywaydb.core.FlywayExecutor.info - Database: jdbc:mariadb://localhost:3308/gymprofit_db?user=root&password=********&useUnicode=true&characterEncoding=UTF-8 (MariaDB 11.8)
+2026-04-05 20:21:10.550 [restartedMain] WARN  o.f.c.i.database.base.Database.warn - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-04-05 20:21:10.571 [restartedMain] INFO  o.f.c.i.s.JdbcTableSchemaHistory.info - Repair of failed migration in Schema History table `gymprofit_db`.`flyway_schema_history` not necessary. No failed migration detected.
+2026-04-05 20:21:10.576 [restartedMain] INFO  o.f.core.internal.command.DbRepair.info - Successfully repaired schema history table `gymprofit_db`.`flyway_schema_history` (execution time 00:00.015s).
+2026-04-05 20:21:10.584 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - 4 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-04-05 20:21:10.584 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-04-05 20:21:10.584 [restartedMain] WARN  o.m.jdbc.message.server.ErrorPacket.warn - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-04-05 20:21:10.598 [restartedMain] WARN  o.f.c.i.database.base.Database.warn - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-04-05 20:21:10.607 [restartedMain] INFO  o.f.core.internal.command.DbValidate.info - Successfully validated 0 migrations (execution time 00:00.003s)
+2026-04-05 20:21:10.608 [restartedMain] WARN  o.f.core.internal.command.DbValidate.warn - No migrations found. Are your locations set up correctly?
+2026-04-05 20:21:10.617 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Current version of schema `gymprofit_db`: << Empty Schema >>
+2026-04-05 20:21:10.620 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Schema `gymprofit_db` is up to date. No migration necessary.
+2026-04-05 20:21:10.625 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - 4 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-04-05 20:21:10.625 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-04-05 20:21:10.626 [restartedMain] WARN  o.m.jdbc.message.server.ErrorPacket.warn - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-04-05 20:21:10.632 [restartedMain] WARN  o.f.c.i.database.base.Database.warn - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-04-05 20:21:10.638 [restartedMain] INFO  o.f.core.internal.command.DbValidate.info - Successfully validated 0 migrations (execution time 00:00.003s)
+2026-04-05 20:21:10.638 [restartedMain] WARN  o.f.core.internal.command.DbValidate.warn - No migrations found. Are your locations set up correctly?
+2026-04-05 20:21:10.646 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Current version of schema `gymprofit_db`: << Empty Schema >>
+2026-04-05 20:21:10.649 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Schema `gymprofit_db` is up to date. No migration necessary.
+2026-04-05 20:21:11.028 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo.addTransformer - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-04-05 20:21:11.077 [restartedMain] WARN  org.hibernate.orm.deprecation.constructDialect - HHH90000025: MariaDBDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-05 20:21:12.081 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean.buildNativeEntityManagerFactory - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-05 20:21:12.459 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory.<clinit> - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-04-05 20:21:13.116 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.initExceptionHandlerAdviceCache - ControllerAdvice beans: 3 @ExceptionHandler, 1 ResponseBodyAdvice
+2026-04-05 20:21:13.150 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.initExceptionHandlerAdviceCache - ControllerAdvice beans: 3 @ExceptionHandler, 0 ResponseBodyAdvice
+2026-04-05 20:21:13.207 [restartedMain] DEBUG c.g.a.c.s.JwtAuthenticationFilter.init - Filter 'jwtAuthenticationFilter' configured for use
+2026-04-05 20:21:13.300 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer.configure - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2026-04-05 20:21:13.301 [restartedMain] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer.configure - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2026-04-05 20:21:13.546 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.handlerMethodsInitialized - 184 mappings in 'requestMappingHandlerMapping'
+2026-04-05 20:21:13.582 [restartedMain] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping.logMappings - Patterns [/webjars/**, /**, /swagger-ui/**, /swagger-ui/*swagger-initializer.js, /webjars/*swagger-ui/**, /webjars/*swagger-ui/*swagger-initializer.js, /webjars/*swagger-ui/5.31.0/*swagger-initializer.js] in 'resourceHandlerMapping'
+2026-04-05 20:21:13.848 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter.initControllerAdviceCache - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2026-04-05 20:21:14.596 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer.startServer - LiveReload server is running on port 35729
+2026-04-05 20:21:14.665 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer.start - Tomcat started on port 8080 (http) with context path '/'
+2026-04-05 20:21:14.673 [restartedMain] INFO  c.g.api.GymProFitApiApplication.logStarted - Started GymProFitApiApplication in 6.668 seconds (process running for 7.22)
+2026-04-05 20:21:14.676 [restartedMain] WARN  o.s.c.events.SpringDocAppInitializer.init - SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+2026-04-05 20:21:14.676 [restartedMain] WARN  o.s.c.events.SpringDocAppInitializer.init - SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+2026-04-05 20:21:23.821 [http-nio-8080-exec-3] INFO  o.a.c.c.C.[Tomcat].[localhost].[/].log - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-04-05 20:21:23.822 [http-nio-8080-exec-3] INFO  o.s.web.servlet.DispatcherServlet.initServletBean - Initializing Servlet 'dispatcherServlet'
+2026-04-05 20:21:23.823 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet.initMultipartResolver - Detected StandardServletMultipartResolver
+2026-04-05 20:21:23.823 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet.initLocaleResolver - Detected AcceptHeaderLocaleResolver
+2026-04-05 20:21:23.823 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet.initThemeResolver - Detected FixedThemeResolver
+2026-04-05 20:21:23.827 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet.initRequestToViewNameTranslator - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@7bfe5923
+2026-04-05 20:21:23.828 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet.initFlashMapManager - Detected org.springframework.web.servlet.support.SessionFlashMapManager@71890141
+2026-04-05 20:21:23.830 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet.initServletBean - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2026-04-05 20:21:23.831 [http-nio-8080-exec-3] INFO  o.s.web.servlet.DispatcherServlet.initServletBean - Completed initialization in 9 ms
+2026-04-05 20:21:23.912 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/swagger-ui/index.html", parameters={}
+2026-04-05 20:21:23.921 [http-nio-8080-exec-3] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping.getHandler - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
+2026-04-05 20:21:23.976 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-04-05 20:21:24.047 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/swagger-ui/index.css", parameters={}
+2026-04-05 20:21:24.047 [http-nio-8080-exec-5] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/swagger-ui/swagger-ui-bundle.js", parameters={}
+2026-04-05 20:21:24.047 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/swagger-ui/swagger-ui.css", parameters={}
+2026-04-05 20:21:24.048 [http-nio-8080-exec-6] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/swagger-ui/swagger-initializer.js", parameters={}
+2026-04-05 20:21:24.048 [http-nio-8080-exec-4] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/swagger-ui/swagger-ui-standalone-preset.js", parameters={}
+2026-04-05 20:21:24.050 [http-nio-8080-exec-6] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping.getHandler - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
+2026-04-05 20:21:24.050 [http-nio-8080-exec-5] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping.getHandler - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
+2026-04-05 20:21:24.050 [http-nio-8080-exec-4] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping.getHandler - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
+2026-04-05 20:21:24.050 [http-nio-8080-exec-1] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping.getHandler - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
+2026-04-05 20:21:24.052 [http-nio-8080-exec-2] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping.getHandler - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
+2026-04-05 20:21:24.063 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-04-05 20:21:24.069 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-04-05 20:21:24.070 [http-nio-8080-exec-4] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-04-05 20:21:24.100 [http-nio-8080-exec-6] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-04-05 20:21:24.100 [http-nio-8080-exec-5] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-04-05 20:21:24.410 [http-nio-8080-exec-7] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/v3/api-docs/swagger-config", parameters={}
+2026-04-05 20:21:24.414 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.getHandler - Mapped to org.springdoc.webmvc.ui.SwaggerConfigResource#openapiJson(HttpServletRequest)
+2026-04-05 20:21:24.453 [http-nio-8080-exec-8] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/swagger-ui/favicon-32x32.png", parameters={}
+2026-04-05 20:21:24.459 [http-nio-8080-exec-8] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping.getHandler - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/swagger-ui/5.31.0/]]
+2026-04-05 20:21:24.472 [http-nio-8080-exec-8] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-04-05 20:21:24.487 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor.writeWithMessageConverters - Using 'application/json', given [*/*] and supported [application/json]
+2026-04-05 20:21:24.499 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor.traceDebug - Writing [{configUrl=/v3/api-docs/swagger-config, oauth2RedirectUrl=http://localhost:8080/swagger-ui/oauth2-re (truncated)...]
+2026-04-05 20:21:24.512 [http-nio-8080-exec-7] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-04-05 20:21:24.532 [http-nio-8080-exec-9] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/v3/api-docs", parameters={}
+2026-04-05 20:21:24.532 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.getHandler - Mapped to org.springdoc.webmvc.api.OpenApiWebMvcResource#openapiJson(HttpServletRequest, String, Locale)
+2026-04-05 20:21:27.076 [http-nio-8080-exec-9] INFO  o.s.api.AbstractOpenApiResource.getOpenApi - Init duration for springdoc-openapi is: 2522 ms
+2026-04-05 20:21:27.139 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor.writeWithMessageConverters - Using 'application/json', given [application/json, */*] and supported [application/json]
+2026-04-05 20:21:27.152 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor.traceDebug - Writing [{123, 34, 111, 112, 101, 110, 97, 112, 105, 34, 58, 34, 51, 46, 49, 46, 48, 34, 44, 34, 105, 110, 10 (truncated)...]
+2026-04-05 20:21:27.159 [http-nio-8080-exec-9] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-04-05 20:21:54.376 [http-nio-8080-exec-10] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - POST "/auth/register", parameters={}
+2026-04-05 20:21:54.376 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.getHandler - Mapped to com.gymprofit.api.controller.AuthController#register(RegisterDTO)
+2026-04-05 20:21:54.393 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor.traceDebug - Read "application/json;charset=UTF-8" to [RegisterDTO(username=admin, password=admin123, email=admin@gymprofit.com, peso=null, altura=null, ed (truncated)...]
+2026-04-05 20:21:54.427 [http-nio-8080-exec-10] INFO  c.g.api.service.auth.AuthService.register - Registrando nuevo usuario: admin
+2026-04-05 20:21:54.570 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id 
+    from
+        usuarios u1_0 
+    where
+        u1_0.username=? 
+    limit
+        ?
+2026-04-05 20:21:54.600 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id 
+    from
+        usuarios u1_0 
+    where
+        u1_0.email=? 
+    limit
+        ?
+2026-04-05 20:21:54.630 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.id,
+        r1_0.nombre 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2026-04-05 20:21:54.892 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL.logStatement - 
+    insert 
+    into
+        usuarios
+        (activo, altura, edad, email, fecha_registro, nivel_experiencia, objetivo, password, peso, username) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2026-04-05 20:21:54.927 [http-nio-8080-exec-10] INFO  c.g.api.service.auth.AuthService.register - Usuario 'admin' registrado correctamente con roles: ADMIN
+2026-04-05 20:21:54.954 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL.logStatement - 
+    insert 
+    into
+        usuario_roles
+        (usuario_id, role_id) 
+    values
+        (?, ?)
+2026-04-05 20:21:54.980 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.writeWithMessageConverters - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json, application/yaml]
+2026-04-05 20:21:54.980 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.traceDebug - Writing [{mensaje=Usuario registrado correctamente}]
+2026-04-05 20:21:54.992 [http-nio-8080-exec-10] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 201 CREATED
+2026-04-05 20:22:08.839 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - POST "/auth/register", parameters={}
+2026-04-05 20:22:08.839 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.getHandler - Mapped to com.gymprofit.api.controller.AuthController#register(RegisterDTO)
+2026-04-05 20:22:08.844 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor.traceDebug - Read "application/json;charset=UTF-8" to [RegisterDTO(username=testuser, password=user123, email=user@gymprofit.com, peso=null, altura=null, e (truncated)...]
+2026-04-05 20:22:08.848 [http-nio-8080-exec-3] INFO  c.g.api.service.auth.AuthService.register - Registrando nuevo usuario: testuser
+2026-04-05 20:22:08.852 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id 
+    from
+        usuarios u1_0 
+    where
+        u1_0.username=? 
+    limit
+        ?
+2026-04-05 20:22:08.868 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id 
+    from
+        usuarios u1_0 
+    where
+        u1_0.email=? 
+    limit
+        ?
+2026-04-05 20:22:08.871 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.id,
+        r1_0.nombre 
+    from
+        roles r1_0 
+    where
+        r1_0.id=?
+2026-04-05 20:22:09.003 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL.logStatement - 
+    insert 
+    into
+        usuarios
+        (activo, altura, edad, email, fecha_registro, nivel_experiencia, objetivo, password, peso, username) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2026-04-05 20:22:09.008 [http-nio-8080-exec-3] INFO  c.g.api.service.auth.AuthService.register - Usuario 'testuser' registrado correctamente con roles: USER
+2026-04-05 20:22:09.008 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL.logStatement - 
+    insert 
+    into
+        usuario_roles
+        (usuario_id, role_id) 
+    values
+        (?, ?)
+2026-04-05 20:22:09.020 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.writeWithMessageConverters - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json, application/yaml]
+2026-04-05 20:22:09.020 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.traceDebug - Writing [{mensaje=Usuario registrado correctamente}]
+2026-04-05 20:22:09.024 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 201 CREATED
+2026-04-05 20:22:19.188 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - POST "/auth/login", parameters={}
+2026-04-05 20:22:19.190 [http-nio-8080-exec-2] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.getHandler - Mapped to com.gymprofit.api.controller.AuthController#login(LoginDTO)
+2026-04-05 20:22:19.194 [http-nio-8080-exec-2] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor.traceDebug - Read "application/json;charset=UTF-8" to [LoginDTO(username=admin, password=admin123)]
+2026-04-05 20:22:19.198 [http-nio-8080-exec-2] INFO  c.g.api.service.auth.AuthService.login - Iniciando sesión para usuario: admin
+2026-04-05 20:22:19.425 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username 
+    from
+        usuarios u1_0 
+    where
+        u1_0.username=?
+2026-04-05 20:22:19.453 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuario_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        r1_0.usuario_id=?
+2026-04-05 20:22:19.971 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username 
+    from
+        usuarios u1_0 
+    where
+        u1_0.username=?
+2026-04-05 20:22:19.976 [http-nio-8080-exec-2] INFO  c.g.api.service.auth.AuthService.login - Login exitoso para usuario: admin
+2026-04-05 20:22:19.981 [http-nio-8080-exec-2] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.writeWithMessageConverters - Using 'application/hal+json', given [application/hal+json] and supported [application/json, application/*+json, application/yaml]
+2026-04-05 20:22:19.983 [http-nio-8080-exec-2] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.traceDebug - Writing [TokenDTO(token=eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc3NTQxMzMzOSwiZXhwIjoxNzc1NDk5NzM5 (truncated)...]
+2026-04-05 20:22:19.985 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-04-05 20:22:57.848 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown.shutDownGracefully - Commencing graceful shutdown. Waiting for active requests to complete
+2026-04-05 20:22:57.854 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown.doShutdown - Graceful shutdown complete
+2026-04-05 20:22:57.863 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean.destroy - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-04-05 20:22:57.866 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource.close - HikariPool-1 - Shutdown initiated...
+2026-04-05 20:22:57.868 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource.close - HikariPool-1 - Shutdown completed.

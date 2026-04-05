@@ -6,20 +6,19 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Hidden
 @Repository
 public interface IUsuarioRepository extends CrudRepository<Usuario, Integer> {
 
-    Usuario findByUsername(String username);
+    Optional<Usuario> findByUsername(String username);
 
-    Usuario findByEmail(String email);
+    Optional<Usuario> findByEmail(String email);
 
     Boolean existsByUsername(String username);
 
     Boolean existsByEmail(String email);
 
     List<Usuario> findByActivoTrue();
-
-    Usuario getUsuarioByUsername(String username);
 }
