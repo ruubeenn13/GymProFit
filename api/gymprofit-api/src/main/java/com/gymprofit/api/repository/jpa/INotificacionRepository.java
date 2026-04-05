@@ -16,7 +16,17 @@ public interface INotificacionRepository extends CrudRepository<Notificacion, In
 
     List<Notificacion> findByUsuarioIdAndLeidaFalse(Integer usuarioId);
 
+    List<Notificacion> findByUsuarioIdAndLeidaTrue(Integer usuarioId);
+
     List<Notificacion> findByUsuarioIdAndTipo(Integer usuarioId, TipoNotificacion tipo);
 
     List<Notificacion> findByUsuarioIdOrderByFechaCreacionDesc(Integer usuarioId);
+
+    Long countByUsuarioId(Integer usuarioId);
+
+    Long countByUsuarioIdAndLeidaFalse(Integer usuarioId);
+
+    void deleteByUsuarioId(Integer usuarioId);
+
+    boolean existsByUsuarioIdAndLeidaFalse(Integer usuarioId);
 }
