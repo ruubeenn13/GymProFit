@@ -199,7 +199,7 @@ public class RutinaEjercicioController {
         return ResponseEntity.ok(respuesta);
     }
 
-    @Operation(summary = "Cuenta las rutinas que contnenen un ejercicio")
+    @Operation(summary = "Cuenta las rutinas que contienen un ejercicio")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Total de rutinas con el ejercicio")
     })

@@ -53,7 +53,7 @@ public class ObjetivoPersonalController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Objetivo personal encontrado",
                     content = @Content(schema = @Schema(implementation = ObjetivoPersonalDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
+            @ApiResponse(responseCode = "404", description = "Objetivo personal no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @GetMapping("/objetivos-personales/{id}")
@@ -152,7 +152,7 @@ public class ObjetivoPersonalController {
         return ResponseEntity.ok(objetivosPersonales);
     }
 
-    @Operation(summary = "Obtiene los objetivos pentientes de un usuario")
+    @Operation(summary = "Obtiene los objetivos pendientes de un usuario")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Objetivos pendientes encontrados",
                     content = @Content(schema = @Schema(implementation = ObjetivoPersonalDTO.class))),

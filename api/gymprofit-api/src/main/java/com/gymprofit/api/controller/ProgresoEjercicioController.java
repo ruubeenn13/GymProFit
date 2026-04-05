@@ -30,7 +30,7 @@ public class ProgresoEjercicioController {
 
     private final IProgresoEjercicioService progresoEjercicioService;
 
-    @Operation(summary = "Obtiene todos los ejercicios")
+    @Operation(summary = "Obtiene todos los progresos de ejercicios")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de progresos",
                     content = @Content(schema = @Schema(implementation = ProgresoEjercicioDTO.class))),
@@ -66,7 +66,7 @@ public class ProgresoEjercicioController {
                     content = @Content(schema = @Schema(implementation = ProgresoEjercicioDTO.class))),
             @ApiResponse(responseCode = "404", description = "Usuario o ejercicio no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class))),
-            @ApiResponse(responseCode = "500", description = "Datos inválidos",
+            @ApiResponse(responseCode = "400", description = "Datos inválidos",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @PostMapping("/progreso-ejercicios")

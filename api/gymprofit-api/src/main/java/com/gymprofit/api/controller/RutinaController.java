@@ -47,7 +47,7 @@ public class RutinaController {
         return ResponseEntity.ok(rutinas);
     }
 
-    @Operation(summary = "Otiene una rutina por ID")
+    @Operation(summary = "Obtiene una rutina por ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Rutina encontrada",
                     content = @Content(schema = @Schema(implementation = RutinaDTO.class))),

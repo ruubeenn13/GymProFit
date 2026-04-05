@@ -201,7 +201,7 @@ public class NotificacionController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Notificación marcada como leída",
                     content = @Content(schema = @Schema(implementation = NotificacionDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Nofiticación no encontrada",
+            @ApiResponse(responseCode = "404", description = "Notificación no encontrada",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @PutMapping("/notificaciones/{id}/leer")

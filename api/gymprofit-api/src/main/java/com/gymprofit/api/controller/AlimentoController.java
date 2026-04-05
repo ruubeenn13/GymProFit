@@ -37,7 +37,7 @@ public class AlimentoController {
                     content = @Content(schema = @Schema(implementation = AlimentoDTO.class))),
             @ApiResponse(responseCode = "404", description = "Alimentos no encontrados",
                     content = @Content(schema = @Schema(implementation = Response.class))),
-            @ApiResponse(responseCode = "500", description = "Error al obtener los alimetnos",
+            @ApiResponse(responseCode = "500", description = "Error al obtener los alimentos",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @GetMapping("/alimentos")
@@ -97,20 +97,20 @@ public class AlimentoController {
     })
     @DeleteMapping("/alimentos/{id}")
     public ResponseEntity<Map<String, Object>> borrarAlimentos(@PathVariable Integer id) {
-        Map<String, Object> respusta = new HashMap<>();
+        Map<String, Object> respuesta = new HashMap<>();
 
         try {
             alimentoService.deleteById(id);
 
-            respusta.put("mensaje", "Alimento desactivado con ÉXITO");
+            respuesta.put("mensaje", "Alimento desactivado con ÉXITO");
         } catch (Exception e) {
-            respusta.put("mensaje", "Error al borrar el alimento " + id);
-            respusta.put("error", e.getMessage());
+            respuesta.put("mensaje", "Error al borrar el alimento " + id);
+            respuesta.put("error", e.getMessage());
 
-            return new ResponseEntity<>(respusta, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return new ResponseEntity<>(respusta, HttpStatus.OK);
+        return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
 
     @Operation(summary = "Activa un alimento desactivado")
