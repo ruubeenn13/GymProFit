@@ -36,7 +36,7 @@ public class SesionEntrenamientoController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de sesiones",
                     content = @Content(schema = @Schema(implementation = SesionEntrenamientoDTO.class))),
-            @ApiResponse(responseCode = "400", description = "No se encontraron sesiones",
+            @ApiResponse(responseCode = "404", description = "No se encontraron sesiones",
                     content = @Content(schema = @Schema(implementation = Response.class))),
             @ApiResponse(responseCode = "500", description = "Error al obtener las sesiones",
                     content = @Content(schema = @Schema(implementation = Response.class)))

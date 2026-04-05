@@ -51,7 +51,7 @@ public class EjercicioController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ejercicio encontrado",
                     content = @Content(schema = @Schema(implementation = EjercicioDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Ejercicio no encontrado",
+            @ApiResponse(responseCode = "404", description = "Ejercicio no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @GetMapping("/ejercicios/{id}")

@@ -103,7 +103,7 @@ public class MedicionCorporalController {
         try {
             medicionCorporalService.deleteById(id);
 
-            respuesta.put("mensaje", "Medición corporal eliminada con éxito " + id);
+            respuesta.put("mensaje", "Medición corporal eliminada con ÉXITO " + id);
         } catch (Exception e) {
             respuesta.put("mensjae", "Error al eliminar la medición corporal con id: " + id);
             respuesta.put("error", e.getMessage());
@@ -114,7 +114,7 @@ public class MedicionCorporalController {
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
 
-    @Operation(summary = "Obtien todas las mediciones corporales de un usuario")
+    @Operation(summary = "Obtiene todas las mediciones corporales de un usuario")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Mediciones encontradas",
                     content = @Content(schema = @Schema(implementation = MedicionCorporalDTO.class))),
@@ -170,7 +170,7 @@ public class MedicionCorporalController {
         return ResponseEntity.ok(medicionesCorporales);
     }
 
-    @Operation(summary = "Obtiene las últimas mediciones de un usuaripo ordenadas por fecha")
+    @Operation(summary = "Obtiene las últimas mediciones de un usuario ordenadas por fecha")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Últimas mediciones encontradas",
                     content = @Content(schema = @Schema(implementation = MedicionCorporalDTO.class))),
