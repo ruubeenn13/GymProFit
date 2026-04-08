@@ -18,7 +18,7 @@ import java.util.List;
 @RequestMapping("/api")
 @AllArgsConstructor
 @Tag(name = "Usuario JOOQ Controlador", description = "Consultas avanzadas de usuarios con JOOQ")
-public class UsuarioJooqControler {
+public class UsuarioJooqController {
 
     private final IUsuarioJooqRepository usuarioJooqRepository;
 

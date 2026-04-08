@@ -53,7 +53,7 @@ public class EjercicioJooqController {
         return ResponseEntity.ok(ejercicioJooqRepository.findByGrupoMuscularAndDificultad(grupoMuscular, dificultad));
     }
 
-    @Operation(summary = "Busca ejercicios por rango de calorías qwuemadas con JOOQ")
+    @Operation(summary = "Busca ejercicios por rango de calorías quemadas con JOOQ")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ejercicios encontrados")
     })
