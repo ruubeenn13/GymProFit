@@ -90,12 +90,18 @@ public class SecurityConfig {
                                 .requestMatchers("/auth/**").permitAll()
 
                                 // Swagger público
-                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                                .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/webjars/**").permitAll()
 
                                 // GUEST: solo GET en endpoints públicos
                                 .requestMatchers(HttpMethod.GET, "/api/ejercicios/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.GET, "/api/rutinas/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.GET, "/api/alimentos/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
+
+                                // JOOQ ejercicios - accesibles por todos los roles
+                                .requestMatchers(HttpMethod.GET, "/api/jooq/ejercicios/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
+
+                                // JOOQ usuarios - solo ADMIN
+                                .requestMatchers("/api/jooq/usuarios/**").hasRole(RoleType.ADMIN.name())
 
                                 // USER: gestión de sus propios datos
                                 .requestMatchers("/api/sesiones/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
@@ -116,6 +122,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.PUT, "/api/rutinas/**").hasRole(RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.DELETE, "/api/rutinas/**").hasRole(RoleType.ADMIN.name())
                                 .requestMatchers("/api/usuarios/**").hasRole(RoleType.ADMIN.name())
+
                                 .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider());
