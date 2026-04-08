@@ -1,0 +1,181 @@
+package com.gymprofit.api.controller;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gymprofit.api.dto.entity.rutina.RutinaCreateDTO;
+import com.gymprofit.api.dto.entity.rutina.RutinaDTO;
+import com.gymprofit.api.exceptions.NotFoundEntityException;
+import com.gymprofit.api.service.rutina.IRutinaService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@DisplayName("Tests de integración del RutinaController")
+class RutinaControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockitoBean
+    private IRutinaService rutinaService;
+
+    private RutinaDTO rutinaDTO;
+    private RutinaCreateDTO rutinaCreateDTO;
+
+    @BeforeEach
+    void setUp() {
+        rutinaDTO = new RutinaDTO();
+        rutinaDTO.setId(1);
+        rutinaDTO.setNombre("Rutina Pecho");
+        rutinaDTO.setNivel("INTERMEDIO");
+        rutinaDTO.setActiva(true);
+
+        rutinaCreateDTO = new RutinaCreateDTO();
+        rutinaCreateDTO.setUsuarioId(1);
+        rutinaCreateDTO.setNombre("Rutina Pecho");
+        rutinaCreateDTO.setNivel("INTERMEDIO");
+    }
+
+    @Test
+    @DisplayName("GET /api/rutinas con rol GUEST devuelve 200 y lista")
+    @WithMockUser(roles = "GUEST")
+    void findAll_con_rol_guest_devuelve_200() throws Exception {
+        when(rutinaService.findAll()).thenReturn(List.of(rutinaDTO));
+
+        mockMvc.perform(get("/api/rutinas"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].nombre").value("Rutina Pecho"))
+                .andExpect(jsonPath("$[0].nivel").value("INTERMEDIO"));
+
+        verify(rutinaService).findAll();
+    }
+
+    @Test
+    @DisplayName("GET /api/rutinas sin autenticación devuelve 500")
+    void findAll_sin_autenticacion_devuelve_500() throws Exception {
+        mockMvc.perform(get("/api/rutinas"))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    @DisplayName("GET /api/rutinas/{id} con rol USER devuelve 200")
+    @WithMockUser(roles = "USER")
+    void findById_existente_devuelve_200() throws Exception {
+        when(rutinaService.findById(1)).thenReturn(rutinaDTO);
+
+        mockMvc.perform(get("/api/rutinas/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.nombre").value("Rutina Pecho"));
+
+        verify(rutinaService).findById(1);
+    }
+
+    @Test
+    @DisplayName("GET /api/rutinas/{id} inexistente devuelve 404")
+    @WithMockUser(roles = "USER")
+    void findById_inexistente_devuelve_404() throws Exception {
+        when(rutinaService.findById(99))
+                .thenThrow(new NotFoundEntityException("La rutina con id 99 no existe"));
+
+        mockMvc.perform(get("/api/rutinas/99"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("POST /api/rutinas con rol ADMIN devuelve 200")
+    @WithMockUser(roles = "ADMIN")
+    void save_con_rol_admin_devuelve_200() throws Exception {
+        when(rutinaService.save(any(RutinaCreateDTO.class))).thenReturn(rutinaDTO);
+
+        mockMvc.perform(post("/api/rutinas")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(rutinaCreateDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nombre").value("Rutina Pecho"));
+
+        verify(rutinaService).save(any(RutinaCreateDTO.class));
+    }
+
+    @Test
+    @DisplayName("POST /api/rutinas con rol USER devuelve 403")
+    @WithMockUser(roles = "USER")
+    void save_con_rol_user_devuelve_403() throws Exception {
+        mockMvc.perform(post("/api/rutinas")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(rutinaCreateDTO)))
+                .andExpect(status().isForbidden());
+
+        verify(rutinaService, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("DELETE /api/rutinas/{id} con rol ADMIN devuelve 200")
+    @WithMockUser(roles = "ADMIN")
+    void deleteById_con_rol_admin_devuelve_200() throws Exception {
+        doNothing().when(rutinaService).deleteById(1);
+
+        mockMvc.perform(delete("/api/rutinas/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.mensaje").value("Rutina desactivada con ÉXITO"));
+
+        verify(rutinaService).deleteById(1);
+    }
+
+    @Test
+    @DisplayName("GET /api/rutinas/activas con rol GUEST devuelve 200")
+    @WithMockUser(roles = "GUEST")
+    void findActivas_con_rol_guest_devuelve_200() throws Exception {
+        when(rutinaService.findActivas()).thenReturn(List.of(rutinaDTO));
+
+        mockMvc.perform(get("/api/rutinas/activas"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].activa").value(true));
+
+        verify(rutinaService).findActivas();
+    }
+
+    @Test
+    @DisplayName("GET /api/rutinas/predefinidas con rol GUEST devuelve 200")
+    @WithMockUser(roles = "GUEST")
+    void findPredefinidas_con_rol_guest_devuelve_200() throws Exception {
+        when(rutinaService.findPredefinidas()).thenReturn(List.of(rutinaDTO));
+
+        mockMvc.perform(get("/api/rutinas/predefinidas"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].nombre").value("Rutina Pecho"));
+
+        verify(rutinaService).findPredefinidas();
+    }
+
+    @Test
+    @DisplayName("GET /api/rutinas/nivel/{nivel} con rol GUEST devuelve 200")
+    @WithMockUser(roles = "GUEST")
+    void findByNivel_devuelve_200() throws Exception {
+        when(rutinaService.findByNivel("INTERMEDIO")).thenReturn(List.of(rutinaDTO));
+
+        mockMvc.perform(get("/api/rutinas/nivel/INTERMEDIO"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].nivel").value("INTERMEDIO"));
+
+        verify(rutinaService).findByNivel("INTERMEDIO");
+    }
+}
