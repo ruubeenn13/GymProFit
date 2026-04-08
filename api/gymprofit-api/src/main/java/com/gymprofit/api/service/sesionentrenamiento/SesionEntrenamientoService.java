@@ -45,7 +45,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
     @Override
     public SesionEntrenamientoDTO findById(Integer id) {
-        logger.info("Buscando sesión de eentrenamiento por id: {}", id);
+        logger.info("Buscando sesión de entrenamiento por id: {}", id);
 
         SesionEntrenamiento sesion = sesionEntrenamientoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("La sesión de entrenamiento con id " + id + " no existe"));
@@ -129,7 +129,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
     @Transactional
     @Override
     public void deleteById(Integer id) {
-        logger.info("Eliminando sesión de entreamiento con id: {}", id);
+        logger.info("Eliminando sesión de entrenamiento con id: {}", id);
 
         SesionEntrenamiento sesion = sesionEntrenamientoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("La sesión de entrenamiento con id " + id + " no existe"));
