@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Tests del SesionEntrenamientoService")
-public class SesionEntrenamientoServiceTest {
+class SesionEntrenamientoServiceTest {
 
     @Mock
     private ISesionEntrenamientoRepository sesionEntrenamientoRepository;
