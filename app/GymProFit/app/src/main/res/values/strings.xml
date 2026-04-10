@@ -38,6 +38,13 @@
     <string name="home_minutos">Minutos</string>
     <string name="home_acciones_rapidas">Acciones rápidas</string>
     <string name="home_iniciar_entrenamiento">Iniciar entrenamiento</string>
+    <string name="home_saludo">Buenos días,</string>
+    <string name="home_buenos_dias">Buenos días,</string>
+    <string name="home_buenas_tardes">Buenas tardes,</string>
+    <string name="home_buenas_noches">Buenas noches,</string>
+    <string name="home_esta_semana">esta semana</string>
+    <string name="home_ver_rutinas">Ver mis rutinas</string>
+    <string name="home_registrar_comida">Registrar comida</string>
 
     <!-- RUTINAS -->
     <string name="rutinas_mis_rutinas">Mis rutinas</string>
@@ -56,6 +63,11 @@
     <string name="ejercicios_press_banca_desc">Pectoral, Tríceps</string>
     <string name="ejercicios_dominadas">Dominadas</string>
     <string name="ejercicios_dominadas_desc">Dorsales, Bíceps</string>
+    <string name="ejercicios_todos">Todos</string>
+    <string name="ejercicios_piernas">Piernas</string>
+    <string name="ejercicios_brazos">Brazos</string>
+    <string name="ejercicios_hombros">Hombros</string>
+    <string name="ejercicios_core">Core</string>
 
     <!-- NUTRICIÓN -->
     <string name="nutricion_seguimiento">Seguimiento nutricional</string>
@@ -84,4 +96,5 @@
     <string name="comidas_hoy">Comidas de hoy</string>
     <string name="usuario_ejemplo">Usuario</string>
     <string name="email_ejemplo">usuario@email.com</string>
+
 </resources>

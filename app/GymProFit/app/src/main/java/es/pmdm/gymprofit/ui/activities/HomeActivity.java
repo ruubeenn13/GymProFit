@@ -4,9 +4,16 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.card.MaterialCardView;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
@@ -26,6 +33,51 @@ public class HomeActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_home);
 
+        configurarCabecera();
+        configurarAccionesRapidas();
+        configurarNavegacion();
+    }
+
+    private void configurarCabecera() {
+        TextView tvSaludo = findViewById(R.id.tvSaludo);
+        TextView tvFecha = findViewById(R.id.tvFecha);
+
+        int hora = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+
+        if (hora < 12) {
+            tvSaludo.setText(R.string.home_buenos_dias);
+        } else if (hora < 20) {
+            tvSaludo.setText(R.string.home_buenas_tardes);
+        } else {
+            tvSaludo.setText(R.string.home_buenas_noches);
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE, d 'de' MMMM", new Locale("es", "ES"));
+        tvFecha.setText(sdf.format(new Date()));
+    }
+
+    private void configurarAccionesRapidas() {
+        MaterialCardView cardIniciarEntrenamiento = findViewById(R.id.cardIniciarEntrenamiento);
+        MaterialCardView cardVerRutinas = findViewById(R.id.cardVerRutinas);
+        MaterialCardView cardRegistrarComida = findViewById(R.id.cardRegistrarComida);
+
+        cardIniciarEntrenamiento.setOnClickListener(v -> {
+            startActivity(new Intent(this, EjerciciosActivity.class));
+            overridePendingTransition(0, 0);
+        });
+
+        cardVerRutinas.setOnClickListener(v -> {
+            startActivity(new Intent(this, RutinasActivity.class));
+            overridePendingTransition(0, 0);
+        });
+
+        cardRegistrarComida.setOnClickListener(v -> {
+            startActivity(new Intent(this, NutricionActivity.class));
+            overridePendingTransition(0, 0);
+        });
+    }
+
+    private void configurarNavegacion() {
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setSelectedItemId(R.id.nav_home);
 
@@ -65,7 +117,6 @@ public class HomeActivity extends AppCompatActivity {
         if (!savedLanguage.isEmpty()) {
             Locale locale = new Locale(savedLanguage);
             Locale.setDefault(locale);
-
             Resources resources = getResources();
             Configuration config = resources.getConfiguration();
             config.setLocale(locale);

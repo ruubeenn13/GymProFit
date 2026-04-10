@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary_light">#6200EE</color>
+    <color name="primary_light">#E8710A</color>
     <color name="on_primary_light">#FFFFFF</color>
     <color name="surface_light">#FFFFFF</color>
-    <color name="on_surface_light">#000000</color>
-    <color name="background_light">#FAFAFA</color>
+    <color name="on_surface_light">#1A1A1A</color>
+    <color name="background_light">#F5F5F5</color>
+    <color name="primary_container_light">#FFE0C2</color>
+    <color name="on_primary_container_light">#2D1600</color>
 
     <color name="primary_dark">#CBA135</color>
     <color name="on_primary_dark">#1E1E1E</color>
@@ -14,13 +16,20 @@
 
     <color name="golden">#CBA135</color>
     <color name="golden_light">#D4AF37</color>
+    <color name="orange_primary">#E8710A</color>
+    <color name="orange_dark">#FF8C2A</color>
+
     <color name="text_primary_dark">#E8E8E8</color>
     <color name="text_secondary_dark">#B0B0B0</color>
 
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
 
-    <color name="on_surface">#000000</color>
+    <color name="on_surface">#1A1A1A</color>
     <color name="primaryContainer_dark">#2A2A2A</color>
     <color name="onPrimaryContainer_dark">#E8E8E8</color>
+
+    <color name="surface_card">#FFFFFF</color>
+    <color name="surface_card_2">#F5F5F5</color>
+    <color name="text_secondary">#6B6B6B</color>
 </resources>

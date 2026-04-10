@@ -1,12 +1,12 @@
 <resources>
     <style name="Theme.GymProFit" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">#6200EE</item>
+        <item name="colorPrimary">#E8710A</item>
         <item name="colorOnPrimary">#FFFFFF</item>
-        <item name="colorPrimaryContainer">#BB86FC</item>
-        <item name="colorOnPrimaryContainer">#000000</item>
+        <item name="colorPrimaryContainer">#FFE0C2</item>
+        <item name="colorOnPrimaryContainer">#2D1600</item>
         <item name="colorSurface">#FFFFFF</item>
-        <item name="colorOnSurface">#000000</item>
-        <item name="android:colorBackground">#FAFAFA</item>
-        <item name="android:textColorPrimary">#000000</item>
+        <item name="colorOnSurface">#1A1A1A</item>
+        <item name="android:colorBackground">#F5F5F5</item>
+        <item name="android:textColorPrimary">#1A1A1A</item>
     </style>
 </resources>

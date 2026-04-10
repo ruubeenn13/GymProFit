@@ -38,6 +38,13 @@
     <string name="home_minutos">Minutes</string>
     <string name="home_acciones_rapidas">Quick actions</string>
     <string name="home_iniciar_entrenamiento">Start workout</string>
+    <string name="home_saludo">Good morning,</string>
+    <string name="home_buenos_dias">Good morning,</string>
+    <string name="home_buenas_tardes">Good afternoon,</string>
+    <string name="home_buenas_noches">Good evening,</string>
+    <string name="home_esta_semana">this week</string>
+    <string name="home_ver_rutinas">View my routines</string>
+    <string name="home_registrar_comida">Log a meal</string>
 
     <!-- ROUTINES -->
     <string name="rutinas_mis_rutinas">My routines</string>
@@ -48,14 +55,19 @@
     <string name="rutinas_crear_nueva">Create new routine</string>
 
     <!-- EXERCISES -->
-    <string name="ejercicios_catalogo">Exercise catalog</string>
-    <string name="ejercicios_buscar">Search exercise</string>
-    <string name="ejercicios_pecho">Chest</string>
-    <string name="ejercicios_espalda">Back</string>
     <string name="ejercicios_press_banca">Bench press</string>
     <string name="ejercicios_press_banca_desc">Pectoral, Triceps</string>
     <string name="ejercicios_dominadas">Pull-ups</string>
     <string name="ejercicios_dominadas_desc">Lats, Biceps</string>
+    <string name="ejercicios_catalogo">Exercise catalog</string>
+    <string name="ejercicios_buscar">Search exercise</string>
+    <string name="ejercicios_todos">All</string>
+    <string name="ejercicios_pecho">Chest</string>
+    <string name="ejercicios_espalda">Back</string>
+    <string name="ejercicios_piernas">Legs</string>
+    <string name="ejercicios_brazos">Arms</string>
+    <string name="ejercicios_hombros">Shoulders</string>
+    <string name="ejercicios_core">Core</string>
 
     <!-- NUTRITION -->
     <string name="nutricion_seguimiento">Nutritional tracking</string>
