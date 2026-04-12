@@ -16,6 +16,7 @@ import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.utils.PreferencesManager;
+import es.pmdm.gymprofit.utils.UIHelper;
 
 public class CrearRutinaActivity extends AppCompatActivity {
 
@@ -40,9 +41,7 @@ public class CrearRutinaActivity extends AppCompatActivity {
 
     private void configurarToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
-
         setSupportActionBar(toolbar);
-
         toolbar.setNavigationOnClickListener(v -> finish());
     }
 
@@ -58,9 +57,7 @@ public class CrearRutinaActivity extends AppCompatActivity {
 
     private void configurarBotonGuardar() {
         btnGuardar.setOnClickListener(v -> {
-            if (!validarCampos()) {
-                return;
-            }
+            if (!validarCampos()) return;
 
             Intent resultado = new Intent();
             resultado.putExtra("nombre", etNombre.getText().toString().trim());
@@ -68,7 +65,9 @@ public class CrearRutinaActivity extends AppCompatActivity {
             resultado.putExtra("nivel", obtenerNivelSeleccionado());
             resultado.putExtra("duracion", Integer.parseInt(etDuracion.getText().toString().trim()));
             resultado.putExtra("calorias", Integer.parseInt(etCalorias.getText().toString().trim()));
-            resultado.putExtra("numEjercicio", Integer.parseInt(etNumEjercicios.getText().toString().trim()));
+            resultado.putExtra("numEjercicios", Integer.parseInt(etNumEjercicios.getText().toString().trim()));
+
+            UIHelper.mostrarToastExito(this, getString(R.string.rutinas_guardada_exito));
 
             setResult(RESULT_OK, resultado);
             finish();
@@ -77,54 +76,48 @@ public class CrearRutinaActivity extends AppCompatActivity {
 
     private boolean validarCampos() {
         if (etNombre.getText().toString().trim().isEmpty()) {
-            etNombre.setError(getString(R.string.error_campo_requerido));
+            UIHelper.mostrarToastError(this, getString(R.string.error_campo_requerido));
+            etNombre.requestFocus();
             return false;
         }
         if (etDescripcion.getText().toString().trim().isEmpty()) {
-            etDescripcion.setError(getString(R.string.error_campo_requerido));
+            UIHelper.mostrarToastError(this, getString(R.string.error_campo_requerido));
+            etDescripcion.requestFocus();
             return false;
         }
         if (etDuracion.getText().toString().trim().isEmpty()) {
-            etDuracion.setError(getString(R.string.error_campo_requerido));
+            UIHelper.mostrarToastError(this, getString(R.string.error_campo_requerido));
+            etDuracion.requestFocus();
             return false;
         }
         if (etCalorias.getText().toString().trim().isEmpty()) {
-            etCalorias.setError(getString(R.string.error_campo_requerido));
+            UIHelper.mostrarToastError(this, getString(R.string.error_campo_requerido));
+            etCalorias.requestFocus();
             return false;
         }
         if (etNumEjercicios.getText().toString().trim().isEmpty()) {
-            etNumEjercicios.setError(getString(R.string.error_campo_requerido));
+            UIHelper.mostrarToastError(this, getString(R.string.error_campo_requerido));
+            etNumEjercicios.requestFocus();
             return false;
         }
-
         return true;
     }
 
     private String obtenerNivelSeleccionado() {
         int checkedId = chipGroupNivel.getCheckedChipId();
-
-        if (checkedId == R.id.chipIntermedio) {
-            return "Intermedio";
-        }
-        if (checkedId == R.id.chipAvanzado) {
-            return "Avanzado";
-        }
-
+        if (checkedId == R.id.chipIntermedio) return "Intermedio";
+        if (checkedId == R.id.chipAvanzado) return "Avanzado";
         return "Principiante";
     }
 
     private void aplicarIdiomaGuardado(PreferencesManager prefsManager) {
         String savedLanguage = prefsManager.getLanguage();
-
         if (!savedLanguage.isEmpty()) {
             Locale locale = new Locale(savedLanguage);
             Locale.setDefault(locale);
-
             Resources resources = getResources();
-
             Configuration config = resources.getConfiguration();
             config.setLocale(locale);
-
             resources.updateConfiguration(config, resources.getDisplayMetrics());
         }
     }

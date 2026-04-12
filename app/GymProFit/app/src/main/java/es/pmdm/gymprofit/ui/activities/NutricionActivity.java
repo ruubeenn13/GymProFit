@@ -4,17 +4,22 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.widget.ProgressBar;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.utils.PreferencesManager;
+import es.pmdm.gymprofit.utils.UIHelper;
 
 public class NutricionActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
+    private ProgressBar progressCalorias;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,12 +31,42 @@ public class NutricionActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_nutricion);
 
+        inicializarVistas();
+        configurarProgreso();
+        configurarCardsComida();
+        configurarNavegacion();
+    }
+
+    private void inicializarVistas() {
+        progressCalorias = findViewById(R.id.progressCalorias);
+    }
+
+    private void configurarProgreso() {
+        int caloriasActuales = 0;
+        int caloriasObjetivo = 2000;
+        int progreso = (int) ((caloriasActuales / (float) caloriasObjetivo) * 100);
+        progressCalorias.setProgress(progreso);
+    }
+
+    private void configurarCardsComida() {
+        String proximamente = getString(R.string.nutricion_proximamente);
+        findViewById(R.id.cardDesayuno).setOnClickListener(v ->
+                UIHelper.mostrarToastInfo(this, proximamente)
+        );
+        findViewById(R.id.cardComida).setOnClickListener(v ->
+                UIHelper.mostrarToastInfo(this, proximamente)
+        );
+        findViewById(R.id.cardCena).setOnClickListener(v ->
+                UIHelper.mostrarToastInfo(this, proximamente)
+        );
+    }
+
+    private void configurarNavegacion() {
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setSelectedItemId(R.id.nav_nutricion);
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
-
             if (itemId == R.id.nav_home) {
                 startActivity(new Intent(this, HomeActivity.class));
                 overridePendingTransition(0, 0);
@@ -55,7 +90,6 @@ public class NutricionActivity extends AppCompatActivity {
                 finish();
                 return true;
             }
-
             return false;
         });
     }
@@ -65,7 +99,6 @@ public class NutricionActivity extends AppCompatActivity {
         if (!savedLanguage.isEmpty()) {
             Locale locale = new Locale(savedLanguage);
             Locale.setDefault(locale);
-
             Resources resources = getResources();
             Configuration config = resources.getConfiguration();
             config.setLocale(locale);

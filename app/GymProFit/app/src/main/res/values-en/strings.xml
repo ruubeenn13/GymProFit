@@ -85,13 +85,14 @@
     <string name="nutricion_seguimiento">Nutritional tracking</string>
     <string name="nutricion_calorias_hoy">Today\'s calories</string>
     <string name="nutricion_objetivo">Daily goal</string>
-    <string name="nutricion_proteinas">Protein</string>
+    <string name="nutricion_proteinas">Proteins</string>
     <string name="nutricion_carbohidratos">Carbs</string>
-    <string name="nutricion_grasas">Fat</string>
+    <string name="nutricion_grasas">Fats</string>
     <string name="nutricion_desayuno">Breakfast</string>
     <string name="nutricion_comida">Lunch</string>
     <string name="nutricion_cena">Dinner</string>
     <string name="nutricion_agregar">Add meal</string>
+    <string name="nutricion_proximamente">Feature coming soon</string>
 
     <!-- PROFILE -->
     <string name="perfil_mi_perfil">My profile</string>
@@ -108,4 +109,10 @@
     <string name="comidas_hoy">Today\'s meals</string>
     <string name="usuario_ejemplo">User</string>
     <string name="email_ejemplo">user@email.com</string>
+
+    <!-- DIALOGS -->
+    <string name="dialog_cancelar">Cancel</string>
+    <string name="dialog_confirmar">Confirm</string>
+    <string name="dialog_cerrar_sesion_mensaje">Are you sure you want to log out?</string>
+    <string name="rutinas_guardada_exito">Routine saved successfully</string>
 </resources>
