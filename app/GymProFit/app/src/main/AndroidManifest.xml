@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GymProFit">
         <activity
+            android:name=".ui.activities.CrearRutinaActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.activities.PerfilActivity"
             android:exported="false" />
         <activity
