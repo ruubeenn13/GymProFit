@@ -53,6 +53,18 @@
     <string name="rutinas_fuerza">Rutina de Fuerza</string>
     <string name="rutinas_fuerza_desc">8 ejercicios · 60 minutos</string>
     <string name="rutinas_crear_nueva">Crear nueva rutina</string>
+    <string name="rutinas_todos">Todos</string>
+    <string name="rutinas_principiante">Principiantes</string>
+    <string name="rutinas_intermedio">Intermedio</string>
+    <string name="rutinas_avanzado">Avanzado</string>
+    <string name="rutinas_nombre">Nombre de la rutina</string>
+    <string name="rutinas_descripcion">Descripción</string>
+    <string name="rutinas_nivel_label">Nivel</string>
+    <string name="rutinas_duracion">Duración</string>
+    <string name="rutinas_calorias_aprox">Calorías aproximadas</string>
+    <string name="rutinas_num_ejercicios">Número de ejercicios</string>
+    <string name="rutinas_guardar">Guardar rutina</string>
+    <string name="error_campo_requerido">Este campo es obligatorio</string>
 
     <!-- EJERCICIOS -->
     <string name="ejercicios_catalogo">Catálogo de ejercicios</string>

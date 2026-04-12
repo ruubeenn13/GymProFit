@@ -53,6 +53,18 @@
     <string name="rutinas_fuerza">Strength Routine</string>
     <string name="rutinas_fuerza_desc">8 exercises · 60 minutes</string>
     <string name="rutinas_crear_nueva">Create new routine</string>
+    <string name="rutinas_todos">All</string>
+    <string name="rutinas_principiante">Beginner</string>
+    <string name="rutinas_intermedio">Intermediate</string>
+    <string name="rutinas_avanzado">Advanced</string>
+    <string name="rutinas_nombre">Routine name</string>
+    <string name="rutinas_descripcion">Description</string>
+    <string name="rutinas_nivel_label">Level</string>
+    <string name="rutinas_duracion">Duration</string>
+    <string name="rutinas_calorias_aprox">Approximate calories</string>
+    <string name="rutinas_num_ejercicios">Number of exercises</string>
+    <string name="rutinas_guardar">Save routine</string>
+    <string name="error_campo_requerido">This field is required</string>
 
     <!-- EXERCISES -->
     <string name="ejercicios_press_banca">Bench press</string>

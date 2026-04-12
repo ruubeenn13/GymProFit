@@ -1,121 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="?attr/colorSurface">
+    android:background="?attr/android:colorBackground">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/rutinas_mis_rutinas"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="?attr/colorOnSurface" />
-
-            <com.google.android.material.card.MaterialCardView
+            <!-- Cabecera con título -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp">
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:paddingBottom="12dp"
+                android:background="?attr/colorSurface">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
+                    android:text="@string/rutinas_mis_rutinas"
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorOnSurface" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/rutinas_full_body"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="?attr/colorOnSurface" />
+            </LinearLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/rutinas_full_body_desc"
-                        android:textSize="14sp"
-                        android:textColor="?attr/colorOnSurface"
-                        android:alpha="0.7" />
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
+            <!-- Chips de filtro por nivel -->
+            <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp">
+                android:background="?attr/colorSurface"
+                android:scrollbars="none"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="12dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroupNivel"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
+                    app:singleSelection="true"
+                    app:selectionRequired="true">
 
-                    <TextView
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipTodos"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/rutinas_fuerza"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="?attr/colorOnSurface" />
+                        android:text="@string/rutinas_todos"
+                        android:checked="true"
+                        style="@style/Widget.Material3.Chip.Filter" />
 
-                    <TextView
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipPrincipiante"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/rutinas_fuerza_desc"
-                        android:textSize="14sp"
-                        android:textColor="?attr/colorOnSurface"
-                        android:alpha="0.7" />
+                        android:text="@string/rutinas_principiante"
+                        style="@style/Widget.Material3.Chip.Filter" />
 
-                </LinearLayout>
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipIntermedio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/rutinas_intermedio"
+                        style="@style/Widget.Material3.Chip.Filter" />
 
-            </com.google.android.material.card.MaterialCardView>
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipAvanzado"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/rutinas_avanzado"
+                        style="@style/Widget.Material3.Chip.Filter" />
 
-            <com.google.android.material.button.MaterialButton
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                </com.google.android.material.chip.ChipGroup>
+
+            </HorizontalScrollView>
+
+            <!-- RecyclerView con lista de rutinas -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvRutinas"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="24dp"
-                android:text="@string/rutinas_crear_nueva"
-                android:textSize="16sp"
-                app:cornerRadius="12dp"
-                app:icon="@drawable/ic_rutinas"
-                app:iconGravity="start" />
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:padding="16dp"
+                android:clipToPadding="false" />
 
         </LinearLayout>
 
-    </ScrollView>
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigationView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorSurface"
+            app:menu="@menu/bottom_nav_menu"
+            app:labelVisibilityMode="labeled"
+            app:itemIconTint="@color/bottom_nav_color"
+            app:itemTextColor="@color/bottom_nav_color" />
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigationView"
-        android:layout_width="match_parent"
+    </LinearLayout>
+
+    <!-- FAB para crear nueva rutina, posicionado sobre el BottomNav -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabCrearRutina"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="?attr/colorSurface"
-        app:menu="@menu/bottom_nav_menu"
-        app:labelVisibilityMode="labeled"
-        app:itemIconTint="@color/bottom_nav_color"
-        app:itemTextColor="@color/bottom_nav_color" />
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="120dp"
+        android:src="@drawable/ic_add"
+        android:contentDescription="@string/rutinas_crear_nueva"
+        app:layout_anchor="@id/bottomNavigationView"
+        app:layout_anchorGravity="top|end"
+        app:fabSize="normal" />
 
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
