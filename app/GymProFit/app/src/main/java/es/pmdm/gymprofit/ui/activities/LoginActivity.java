@@ -1,18 +1,29 @@
 package es.pmdm.gymprofit.ui.activities;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.util.TypedValue;
+import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+
+import com.google.android.material.button.MaterialButton;
 
 import java.util.Locale;
 
@@ -104,18 +115,52 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void mostrarDialogoIdioma() {
-        String[] idiomas = {
-                getString(R.string.idioma_espanol),
-                getString(R.string.idioma_ingles)
-        };
+        Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_idioma);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.cambiar_idioma);
-        builder.setItems(idiomas, (dialog, which) -> {
-            String languageCode = (which == 0) ? "es" : "en";
-            cambiarIdioma(languageCode);
+        if(dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setDimAmount(0.5f);
+        }
+
+        LinearLayout root = dialog.findViewById(R.id.dialogRoot);
+
+        TypedValue typedValue = new TypedValue();
+
+        getTheme().resolveAttribute(com.google.android.material.R.attr.colorSurface, typedValue, true);
+
+        GradientDrawable fondo = new GradientDrawable();
+        fondo.setShape(GradientDrawable.RECTANGLE);
+        fondo.setCornerRadius(20 * getResources().getDisplayMetrics().density);
+        fondo.setColor(typedValue.data);
+        root.setBackground(fondo);
+
+        String idiomaActual = prefsManager.getLanguage();
+
+        ImageView ivCheckEspanol = dialog.findViewById(R.id.ivCheckEspanol);
+        ImageView ivCheckIngles = dialog.findViewById(R.id.ivCheckIngles);
+
+        if ("es".equals(idiomaActual) || idiomaActual.isEmpty()) {
+            ivCheckEspanol.setVisibility(View.VISIBLE);
+        } else if ("en".equals(idiomaActual) || idiomaActual.isEmpty()) {
+            ivCheckIngles.setVisibility(View.VISIBLE);
+        }
+
+        dialog.findViewById(R.id.optionEspanol).setOnClickListener(v -> {
+            cambiarIdioma("es");
+            dialog.dismiss();
         });
-        builder.show();
+
+        dialog.findViewById(R.id.optionIngles).setOnClickListener(v -> {
+            cambiarIdioma("en");
+            dialog.dismiss();
+        });
+
+        MaterialButton btnCerrar = dialog.findViewById(R.id.btnCerrarIdioma);
+        btnCerrar.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
     }
 
     private void cambiarIdioma(String languageCode) {

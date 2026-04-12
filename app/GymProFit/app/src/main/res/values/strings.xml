@@ -92,6 +92,7 @@
     <string name="nutricion_comida">Comida</string>
     <string name="nutricion_cena">Cena</string>
     <string name="nutricion_agregar">Agregar comida</string>
+    <string name="nutricion_proximamente">Función disponible próximamente</string>
 
     <!-- PERFIL -->
     <string name="perfil_mi_perfil">Mi perfil</string>
@@ -109,4 +110,9 @@
     <string name="usuario_ejemplo">Usuario</string>
     <string name="email_ejemplo">usuario@email.com</string>
 
+    <!-- DIALOGOS -->
+    <string name="dialog_cancelar">Cancelar</string>
+    <string name="dialog_confirmar">Confirmar</string>
+    <string name="dialog_cerrar_sesion_mensaje">¿Estás seguro de que quieres cerrar sesión?</string>
+    <string name="rutinas_guardada_exito">Rutina guardada correctamente</string>
 </resources>

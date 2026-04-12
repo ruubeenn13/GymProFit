@@ -5,14 +5,16 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.Button;
-import androidx.appcompat.app.AlertDialog;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.utils.PreferencesManager;
+import es.pmdm.gymprofit.utils.UIHelper;
 
 public class PerfilActivity extends AppCompatActivity {
 
@@ -30,14 +32,35 @@ public class PerfilActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_perfil);
 
+        inicializarVistas();
+        configurarNavegacion();
+    }
+
+    private void inicializarVistas() {
+        btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
+
+        btnCerrarSesion.setOnClickListener(v ->
+                UIHelper.mostrarDialogoConIcono(
+                        this,
+                        getString(R.string.perfil_cerrar_sesion),
+                        getString(R.string.dialog_cerrar_sesion_mensaje),
+                        R.drawable.ic_perfil,
+                        () -> {
+                            Intent intent = new Intent(this, LoginActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            finish();
+                        }
+                )
+        );
+    }
+
+    private void configurarNavegacion() {
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setSelectedItemId(R.id.nav_perfil);
 
-        btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
-
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
-
             if (itemId == R.id.nav_home) {
                 startActivity(new Intent(this, HomeActivity.class));
                 overridePendingTransition(0, 0);
@@ -61,25 +84,8 @@ public class PerfilActivity extends AppCompatActivity {
             } else if (itemId == R.id.nav_perfil) {
                 return true;
             }
-
             return false;
         });
-
-        btnCerrarSesion.setOnClickListener(v -> mostrarDialogoCerrarSesion());
-    }
-
-    private void mostrarDialogoCerrarSesion() {
-        new AlertDialog.Builder(this)
-                .setTitle("Cerrar sesión")
-                .setMessage("¿Estás seguro de que quieres cerrar sesión?")
-                .setPositiveButton("Sí", (dialog, which) -> {
-                    Intent intent = new Intent(this, LoginActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                    finish();
-                })
-                .setNegativeButton("No", null)
-                .show();
     }
 
     private void aplicarIdiomaGuardado() {
@@ -87,7 +93,6 @@ public class PerfilActivity extends AppCompatActivity {
         if (!savedLanguage.isEmpty()) {
             Locale locale = new Locale(savedLanguage);
             Locale.setDefault(locale);
-
             Resources resources = getResources();
             Configuration config = resources.getConfiguration();
             config.setLocale(locale);
