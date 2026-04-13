@@ -103,6 +103,14 @@
     <string name="perfil_tema">Tema de la aplicación</string>
     <string name="perfil_idioma">Idioma</string>
     <string name="perfil_cerrar_sesion">Cerrar sesión</string>
+    <string name="perfil_nivel">Nivel de experiencia</string>
+    <string name="perfil_peso">Peso</string>
+    <string name="perfil_altura">Altura</string>
+    <string name="perfil_edad">Edad</string>
+    <string name="perfil_objetivo">Objetivo</string>
+    <string name="perfil_editar">Editar información</string>
+    <string name="perfil_editar_proximamente">Edición disponible próximamente</string>
+    <string name="perfil_sin_datos">Sin datos</string>
 
     <!-- GENERAL -->
     <string name="sin_registrar">Sin registrar</string>

@@ -103,6 +103,14 @@
     <string name="perfil_tema">App theme</string>
     <string name="perfil_idioma">Language</string>
     <string name="perfil_cerrar_sesion">Log out</string>
+    <string name="perfil_nivel">Experience level</string>
+    <string name="perfil_peso">Weight</string>
+    <string name="perfil_altura">Height</string>
+    <string name="perfil_edad">Age</string>
+    <string name="perfil_objetivo">Goal</string>
+    <string name="perfil_editar">Edit information</string>
+    <string name="perfil_editar_proximamente">Editing coming soon</string>
+    <string name="perfil_sin_datos">No data</string>
 
     <!-- GENERAL -->
     <string name="sin_registrar">Not registered</string>
