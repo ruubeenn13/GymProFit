@@ -9,6 +9,7 @@ public class PreferencesManager {
     private static final String PREF_NAME = "GymProFitPrefs";
     private static final String KEY_THEME = "theme_mode";
     private static final String KEY_LANGUAGE = "app_language";
+    private static final String KEY_TOKEN = "auth_token";
 
     private SharedPreferences prefs;
     private SharedPreferences.Editor editor;
@@ -38,5 +39,24 @@ public class PreferencesManager {
 
     public String getLanguage() {
         return prefs.getString(KEY_LANGUAGE, "");
+    }
+
+    public void saveToken(String token) {
+        editor.putString(KEY_TOKEN, token);
+        editor.apply();
+    }
+
+    public String getToken() {
+        return prefs.getString(KEY_LANGUAGE, null);
+    }
+
+    public Boolean haySesion() {
+        String token = getToken();
+        return token != null && token.isEmpty();
+    }
+
+    public void cerrarSesion() {
+        editor.remove(KEY_TOKEN);
+        editor.apply();
     }
 }
