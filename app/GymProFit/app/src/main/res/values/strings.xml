@@ -123,4 +123,23 @@
     <string name="dialog_confirmar">Confirmar</string>
     <string name="dialog_cerrar_sesion_mensaje">¿Estás seguro de que quieres cerrar sesión?</string>
     <string name="rutinas_guardada_exito">Rutina guardada correctamente</string>
+
+    <!-- ONBOARDING -->
+    <string name="onboarding_saltar">Saltar</string>
+    <string name="onboarding_empezar">Empezar</string>
+    <string name="onboarding_siguiente">Siguiente</string>
+    <string name="onboarding_anterior">Anterior</string>
+    <string name="onboarding_finalizar">Finalizar</string>
+    <string name="onboarding_bienvenida_titulo">¡Bienvenido a</string>
+    <string name="onboarding_bienvenida_desc">Vamos a personalizar tu experiencia para ayudarte a alcanzar tus objetivos fitness.</string>
+    <string name="onboarding_datos_titulo">Cuéntanos sobre ti</string>
+    <string name="onboarding_datos_desc">Estos datos nos ayudan a personalizar tu experiencia.</string>
+    <string name="onboarding_medidas_titulo">Tus medidas</string>
+    <string name="onboarding_medidas_desc">Usaremos esto para calcular tus necesidades calóricas.</string>
+    <string name="onboarding_objetivo_titulo">Tu objetivo</string>
+    <string name="onboarding_objetivo_desc">¿Cuál es tu nivel y qué quieres conseguir?</string>
+    <string name="onboarding_objetivo_helper">Ej: Perder 5kg, ganar masa muscular...</string>
+    <string name="onboarding_anos">años</string>
+    <string name="onboarding_guardado_exito">¡Perfil guardado correctamente!</string>
+    <string name="onboarding_guardado_local">Datos guardados localmente</string>
 </resources>

@@ -123,4 +123,23 @@
     <string name="dialog_confirmar">Confirm</string>
     <string name="dialog_cerrar_sesion_mensaje">Are you sure you want to log out?</string>
     <string name="rutinas_guardada_exito">Routine saved successfully</string>
+
+    <!-- ONBOARDING -->
+    <string name="onboarding_saltar">Skip</string>
+    <string name="onboarding_empezar">Get started</string>
+    <string name="onboarding_siguiente">Next</string>
+    <string name="onboarding_anterior">Back</string>
+    <string name="onboarding_finalizar">Finish</string>
+    <string name="onboarding_bienvenida_titulo">Welcome to</string>
+    <string name="onboarding_bienvenida_desc">Let\'s personalize your experience to help you reach your fitness goals.</string>
+    <string name="onboarding_datos_titulo">Tell us about you</string>
+    <string name="onboarding_datos_desc">This helps us personalize your experience.</string>
+    <string name="onboarding_medidas_titulo">Your measurements</string>
+    <string name="onboarding_medidas_desc">We\'ll use this to calculate your caloric needs.</string>
+    <string name="onboarding_objetivo_titulo">Your goal</string>
+    <string name="onboarding_objetivo_desc">What\'s your level and what do you want to achieve?</string>
+    <string name="onboarding_objetivo_helper">E.g: Lose 5kg, gain muscle mass...</string>
+    <string name="onboarding_anos">years</string>
+    <string name="onboarding_guardado_exito">Profile saved successfully!</string>
+    <string name="onboarding_guardado_local">Data saved locally</string>
 </resources>
