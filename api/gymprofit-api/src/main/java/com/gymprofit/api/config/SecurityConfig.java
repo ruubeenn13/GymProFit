@@ -58,20 +58,17 @@ public class SecurityConfig {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(usuarioService);
         authProvider.setPasswordEncoder(passwordEncoder());
-
         return authProvider;
     }
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
         configuration.setAllowedOrigins(List.of("*"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-
         return source;
     }
 
@@ -87,41 +84,50 @@ public class SecurityConfig {
                         auth.dispatcherTypeMatchers(FORWARD, ERROR).permitAll()
 
                                 // Endpoints públicos de autenticación
+                                // Sin /api/ porque Spring Security evalúa sin el context-path
                                 .requestMatchers("/auth/**").permitAll()
 
                                 // Swagger público
                                 .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/webjars/**").permitAll()
 
                                 // GUEST: solo GET en endpoints públicos
-                                .requestMatchers(HttpMethod.GET, "/api/ejercicios/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
-                                .requestMatchers(HttpMethod.GET, "/api/rutinas/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
-                                .requestMatchers(HttpMethod.GET, "/api/alimentos/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
+                                .requestMatchers(HttpMethod.GET, "/ejercicios/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
+                                .requestMatchers(HttpMethod.GET, "/rutinas/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
+                                .requestMatchers(HttpMethod.GET, "/alimentos/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
 
                                 // JOOQ ejercicios - accesibles por todos los roles
-                                .requestMatchers(HttpMethod.GET, "/api/jooq/ejercicios/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
+                                .requestMatchers(HttpMethod.GET, "/jooq/ejercicios/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
 
                                 // JOOQ usuarios - solo ADMIN
-                                .requestMatchers("/api/jooq/usuarios/**").hasRole(RoleType.ADMIN.name())
+                                .requestMatchers("/jooq/usuarios/**").hasRole(RoleType.ADMIN.name())
+
+                                // USER: puede consultar y actualizar su propio perfil
+                                // IMPORTANTE: estas reglas van ANTES de la regla general de /usuarios/**
+                                .requestMatchers(HttpMethod.GET, "/usuarios/username/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+                                .requestMatchers(HttpMethod.GET, "/usuarios/{id}").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+                                .requestMatchers(HttpMethod.PUT, "/usuarios/{id}").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
 
                                 // USER: gestión de sus propios datos
-                                .requestMatchers("/api/sesiones/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
-                                .requestMatchers("/api/ejercicios-realizados/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
-                                .requestMatchers("/api/mediciones-corporales/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
-                                .requestMatchers("/api/objetivos-personales/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
-                                .requestMatchers("/api/progreso-ejercicios/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
-                                .requestMatchers("/api/notificaciones/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
-                                .requestMatchers("/api/comidas/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
-                                .requestMatchers("/api/alimentos-comida/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
-                                .requestMatchers("/api/rutinas-ejercicios/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+                                .requestMatchers("/sesiones/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+                                .requestMatchers("/ejercicios-realizados/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+                                .requestMatchers("/mediciones-corporales/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+                                .requestMatchers("/objetivos-personales/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+                                .requestMatchers("/progreso-ejercicios/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+                                .requestMatchers("/notificaciones/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+                                .requestMatchers("/comidas/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+                                .requestMatchers("/alimentos-comida/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+                                .requestMatchers("/rutinas-ejercicios/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
 
-                                // ADMIN: gestión completa
-                                .requestMatchers(HttpMethod.POST, "/api/ejercicios/**").hasRole(RoleType.ADMIN.name())
-                                .requestMatchers(HttpMethod.PUT, "/api/ejercicios/**").hasRole(RoleType.ADMIN.name())
-                                .requestMatchers(HttpMethod.DELETE, "/api/ejercicios/**").hasRole(RoleType.ADMIN.name())
-                                .requestMatchers(HttpMethod.POST, "/api/rutinas/**").hasRole(RoleType.ADMIN.name())
-                                .requestMatchers(HttpMethod.PUT, "/api/rutinas/**").hasRole(RoleType.ADMIN.name())
-                                .requestMatchers(HttpMethod.DELETE, "/api/rutinas/**").hasRole(RoleType.ADMIN.name())
-                                .requestMatchers("/api/usuarios/**").hasRole(RoleType.ADMIN.name())
+                                // ADMIN: gestión completa de ejercicios y rutinas
+                                .requestMatchers(HttpMethod.POST, "/ejercicios/**").hasRole(RoleType.ADMIN.name())
+                                .requestMatchers(HttpMethod.PUT, "/ejercicios/**").hasRole(RoleType.ADMIN.name())
+                                .requestMatchers(HttpMethod.DELETE, "/ejercicios/**").hasRole(RoleType.ADMIN.name())
+                                .requestMatchers(HttpMethod.POST, "/rutinas/**").hasRole(RoleType.ADMIN.name())
+                                .requestMatchers(HttpMethod.PUT, "/rutinas/**").hasRole(RoleType.ADMIN.name())
+                                .requestMatchers(HttpMethod.DELETE, "/rutinas/**").hasRole(RoleType.ADMIN.name())
+
+                                // ADMIN: gestión completa de usuarios
+                                .requestMatchers("/usuarios/**").hasRole(RoleType.ADMIN.name())
 
                                 .anyRequest().authenticated()
                 )
