@@ -13,6 +13,19 @@
     <string name="login_no_cuenta">Don\'t have an account? Sign up</string>
     <string name="error_campos_vacios">Please fill in all fields</string>
     <string name="registro_proximamente">Registration coming soon</string>
+    <string name="registro_titulo">Create account</string>
+    <string name="registro_crear_cuenta">Create account</string>
+    <string name="registro_exito">Account created successfully!</string>
+    <string name="registro_error">Error creating account</string>
+    <string name="login_error_credenciales">Wrong username or password</string>
+    <string name="error_conexion">Connection error</string>
+    <string name="registro_subtitulo">Create your account and start your journey</string>
+    <string name="registro_confirmar_password">Confirm password</string>
+    <string name="registro_ya_cuenta">Already have an account? Log in</string>
+    <string name="registro_email_invalido">Enter a valid email</string>
+    <string name="registro_password_corta">Password must be at least 6 characters</string>
+    <string name="registro_passwords_no_coinciden">Passwords do not match</string>
+
 
     <!-- THEME -->
     <string name="cambiar_tema">Change theme</string>
@@ -130,16 +143,54 @@
     <string name="onboarding_siguiente">Next</string>
     <string name="onboarding_anterior">Back</string>
     <string name="onboarding_finalizar">Finish</string>
+    <string name="onboarding_comenzar">Start now!</string>
     <string name="onboarding_bienvenida_titulo">Welcome to</string>
     <string name="onboarding_bienvenida_desc">Let\'s personalize your experience to help you reach your fitness goals.</string>
     <string name="onboarding_datos_titulo">Tell us about you</string>
-    <string name="onboarding_datos_desc">This helps us personalize your experience.</string>
+    <string name="onboarding_datos_desc">This data helps us personalize your experience.</string>
     <string name="onboarding_medidas_titulo">Your measurements</string>
     <string name="onboarding_medidas_desc">We\'ll use this to calculate your caloric needs.</string>
     <string name="onboarding_objetivo_titulo">Your goal</string>
-    <string name="onboarding_objetivo_desc">What\'s your level and what do you want to achieve?</string>
-    <string name="onboarding_objetivo_helper">E.g: Lose 5kg, gain muscle mass...</string>
+    <string name="onboarding_objetivo_desc">Choose the goal that best suits you.</string>
+    <string name="onboarding_resumen_titulo">Your personalized plan</string>
+    <string name="onboarding_resumen_desc">Based on your data we have calculated what you need each day.</string>
+    <string name="onboarding_resumen_objetivo">Your goal</string>
+    <string name="onboarding_resumen_kcal_dia">kcal / day</string>
+    <string name="onboarding_resumen_agua">Recommended water per day</string>
     <string name="onboarding_anos">years</string>
+    <string name="onboarding_sexo">Sex</string>
+    <string name="onboarding_hombre">Male</string>
+    <string name="onboarding_mujer">Female</string>
+    <string name="onboarding_actividad_label">Physical activity level</string>
+    <string name="onboarding_sedentario">Sedentary</string>
+    <string name="onboarding_ligero">Light</string>
+    <string name="onboarding_moderado">Moderate</string>
+    <string name="onboarding_activo">Active</string>
+    <string name="onboarding_selecciona_objetivo">Please select a goal</string>
     <string name="onboarding_guardado_exito">Profile saved successfully!</string>
     <string name="onboarding_guardado_local">Data saved locally</string>
+    <string name="onboarding_resumen_meta">Your daily nutritional goal</string>
+    <string name="nutricion_carbohidratos_corto">Carbs</string>
+
+    <!-- OBJETIVOS -->
+    <string name="objetivo_perder_peso">Lose weight</string>
+    <string name="objetivo_perder_peso_desc">Controlled caloric deficit</string>
+    <string name="objetivo_ganar_musculo">Gain muscle</string>
+    <string name="objetivo_ganar_musculo_desc">Caloric surplus + high protein</string>
+    <string name="objetivo_mantener">Maintain weight</string>
+    <string name="objetivo_mantener_desc">Maintenance calories</string>
+    <string name="objetivo_resistencia">Improve endurance</string>
+    <string name="objetivo_resistencia_desc">More carbs for energy</string>
+    <string name="objetivo_fuerza">Gain strength</string>
+    <string name="objetivo_fuerza_desc">High protein + moderate surplus</string>
+    <string name="objetivo_reducir_grasa">Reduce body fat</string>
+    <string name="objetivo_reducir_grasa_desc">Body definition</string>
+    <string name="objetivo_flexibilidad">Improve flexibility</string>
+    <string name="objetivo_flexibilidad_desc">Greater range of motion</string>
+    <string name="objetivo_velocidad">Improve speed</string>
+    <string name="objetivo_velocidad_desc">Performance and explosiveness</string>
+    <string name="objetivo_aumentar_calorias">Increase calories</string>
+    <string name="objetivo_aumentar_calorias_desc">Healthy weight gain</string>
+    <string name="objetivo_movilidad">Improve mobility</string>
+    <string name="objetivo_movilidad_desc">Joints and functional movement</string>
 </resources>
