@@ -2,6 +2,7 @@ package com.gymprofit.api.controller;
 
 import com.gymprofit.api.dto.entity.alimentocomida.AlimentoComidaCreateDTO;
 import com.gymprofit.api.dto.entity.alimentocomida.AlimentoComidaDTO;
+import com.gymprofit.api.dto.entity.alimentocomida.AlimentoComidaPatchDTO;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.alimentocomida.IAlimentoComidaService;
@@ -260,5 +261,17 @@ public class AlimentoComidaController {
         respuesta.put("alimentoId", alimentoId);
 
         return ResponseEntity.ok(respuesta);
+    }
+
+    @Operation(summary = "Actualiza parcialmente una relación alimento-comida")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Relación actualizada",
+                    content = @Content(schema = @Schema(implementation = AlimentoComidaDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Relación no encontrada",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @PatchMapping("/alimentos-comida/{id}")
+    public ResponseEntity<AlimentoComidaDTO> patchAlimentoComida(@PathVariable Integer id, @RequestBody AlimentoComidaPatchDTO patchDTO) {
+        return ResponseEntity.ok(alimentoComidaService.patch(id, patchDTO));
     }
 }

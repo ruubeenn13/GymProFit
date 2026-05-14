@@ -25,4 +25,6 @@ public interface IRutinaService {
     List<RutinaDTO> findPredefinidas();
     List<RutinaDTO> findByUsuarioIdAndActivas(Integer usuarioId);
     List<RutinaDTO> findPredefinidasByNivel(String nivel);
+
+    RutinaDTO patch(Integer id, com.gymprofit.api.dto.entity.rutina.RutinaPatchDTO patchDTO);
 }

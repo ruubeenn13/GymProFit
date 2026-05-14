@@ -2,6 +2,7 @@ package com.gymprofit.api.controller;
 
 import com.gymprofit.api.dto.entity.usuario.UsuarioCreateDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioDTO;
+import com.gymprofit.api.dto.entity.usuario.UsuarioPatchDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioUpdateDTO;
 import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
@@ -246,5 +247,17 @@ public class UsuarioController {
         }
 
         return ResponseEntity.ok(usuarios);
+    }
+
+    @Operation(summary = "Actualiza parcialmente un usuario")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuario actualizado",
+                    content = @Content(schema = @Schema(implementation = UsuarioDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @PatchMapping("/usuarios/{id}")
+    public ResponseEntity<UsuarioDTO> patchUsuario(@PathVariable Integer id, @RequestBody UsuarioPatchDTO patchDTO) {
+        return ResponseEntity.ok(usuarioService.patch(id, patchDTO));
     }
 }

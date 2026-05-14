@@ -2,6 +2,7 @@ package com.gymprofit.api.service.ejercicio;
 
 import com.gymprofit.api.dto.entity.ejercicio.EjercicioCreateDTO;
 import com.gymprofit.api.dto.entity.ejercicio.EjercicioDTO;
+import com.gymprofit.api.dto.entity.ejercicio.EjercicioPatchDTO;
 import com.gymprofit.api.entity.Ejercicio;
 import com.gymprofit.api.enums.Dificultad;
 import com.gymprofit.api.enums.GrupoMuscular;
@@ -176,5 +177,32 @@ public class EjercicioService implements IEjercicioService {
         List<Ejercicio> ejercicios = ejercicioRepository.findByActivoTrue();
 
         return ejercicioMapper.toDTOList(ejercicios);
+    }
+
+    @Transactional
+    @Override
+    public EjercicioDTO patch(Integer id, EjercicioPatchDTO patchDTO) {
+        logger.info("Aplicando patch a ejercicio con id: {}", id);
+
+        Ejercicio ejercicio = ejercicioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundEntityException("El ejercicio con id " + id + " no existe"));
+
+        try {
+            if (patchDTO.getNombre() != null) ejercicio.setNombre(patchDTO.getNombre());
+            if (patchDTO.getDescripcion() != null) ejercicio.setDescripcion(patchDTO.getDescripcion());
+            if (patchDTO.getGrupoMuscular() != null)
+                ejercicio.setGrupoMuscular(GrupoMuscular.valueOf(patchDTO.getGrupoMuscular().toUpperCase()));
+            if (patchDTO.getDificultad() != null)
+                ejercicio.setDificultad(Dificultad.valueOf(patchDTO.getDificultad().toUpperCase()));
+            if (patchDTO.getImagenUrl() != null) ejercicio.setImagenUrl(patchDTO.getImagenUrl());
+            if (patchDTO.getInstrucciones() != null) ejercicio.setInstrucciones(patchDTO.getInstrucciones());
+            if (patchDTO.getCaloriasQuemadas() != null) ejercicio.setCaloriasQuemadas(patchDTO.getCaloriasQuemadas());
+            if (patchDTO.getEquipoNecesario() != null) ejercicio.setEquipoNecesario(patchDTO.getEquipoNecesario());
+            if (patchDTO.getActivo() != null) ejercicio.setActivo(patchDTO.getActivo());
+
+            return ejercicioMapper.toDTO(ejercicioRepository.save(ejercicio));
+        } catch (Exception e) {
+            throw new UpdateEntityException(Ejercicio.class.getSimpleName(), id, e);
+        }
     }
 }

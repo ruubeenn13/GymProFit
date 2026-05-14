@@ -2,6 +2,7 @@ package com.gymprofit.api.controller;
 
 import com.gymprofit.api.dto.entity.alimento.AlimentoCreateDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoDTO;
+import com.gymprofit.api.dto.entity.alimento.AlimentoPatchDTO;
 import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
@@ -293,4 +294,15 @@ public class AlimentoController {
         return ResponseEntity.ok(respuesta);
     }
 
+    @Operation(summary = "Actualiza parcialmente un alimento")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Alimento actualizado",
+                    content = @Content(schema = @Schema(implementation = AlimentoDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Alimento no encontrado",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @PatchMapping("/alimentos/{id}")
+    public ResponseEntity<AlimentoDTO> patchAlimento(@PathVariable Integer id, @RequestBody AlimentoPatchDTO patchDTO) {
+        return ResponseEntity.ok(alimentoService.patch(id, patchDTO));
+    }
 }

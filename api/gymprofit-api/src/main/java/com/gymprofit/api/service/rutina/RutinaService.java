@@ -212,6 +212,33 @@ public class RutinaService implements IRutinaService {
         return rutinaMapper.toDTOList(rutinaRepository.getRutinasPredefinidas(Nivel.valueOf(nivel.toUpperCase())));
     }
 
+    @Transactional
+    @Override
+    public RutinaDTO patch(Integer id, com.gymprofit.api.dto.entity.rutina.RutinaPatchDTO patchDTO) {
+        logger.info("Aplicando patch a rutina con id: {}", id);
+
+        Rutina rutina = rutinaRepository.findById(id)
+                .orElseThrow(() -> new NotFoundEntityException("La rutina con id " + id + " no existe"));
+
+        checkOwnership(rutina);
+
+        try {
+            if (patchDTO.getNombre() != null) rutina.setNombre(patchDTO.getNombre());
+            if (patchDTO.getDescripcion() != null) rutina.setDescripcion(patchDTO.getDescripcion());
+            if (patchDTO.getDuracionMinutos() != null) rutina.setDuracionMinutos(patchDTO.getDuracionMinutos());
+            if (patchDTO.getNivel() != null) rutina.setNivel(Nivel.valueOf(patchDTO.getNivel().toUpperCase()));
+            if (patchDTO.getCategoria() != null) rutina.setCategoria(patchDTO.getCategoria());
+            if (patchDTO.getDiasSemana() != null) rutina.setDiasSemana(patchDTO.getDiasSemana());
+            if (patchDTO.getActiva() != null) rutina.setActiva(patchDTO.getActiva());
+
+            return rutinaMapper.toDTO(rutinaRepository.save(rutina));
+        } catch (UnauthorizedException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new UpdateEntityException(Rutina.class.getSimpleName(), id, e);
+        }
+    }
+
     /**
      * Verifica que el usuario autenticado tenga permisos sobre la rutina.
      * ADMIN puede operar sobre cualquier rutina.

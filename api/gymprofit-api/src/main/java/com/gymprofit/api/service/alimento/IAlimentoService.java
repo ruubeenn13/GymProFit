@@ -25,4 +25,6 @@ public interface IAlimentoService {
 
     Long countActivos();
     Long countByCategoria(String categoria);
+
+    AlimentoDTO patch(Integer id, com.gymprofit.api.dto.entity.alimento.AlimentoPatchDTO patchDTO);
 }

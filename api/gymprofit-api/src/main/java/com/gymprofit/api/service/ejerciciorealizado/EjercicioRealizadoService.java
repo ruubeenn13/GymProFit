@@ -2,6 +2,7 @@ package com.gymprofit.api.service.ejerciciorealizado;
 
 import com.gymprofit.api.dto.entity.ejerciciorealizado.EjercicioRealizadoCreateDTO;
 import com.gymprofit.api.dto.entity.ejerciciorealizado.EjercicioRealizadoDTO;
+import com.gymprofit.api.dto.entity.ejerciciorealizado.EjercicioRealizadoPatchDTO;
 import com.gymprofit.api.entity.Ejercicio;
 import com.gymprofit.api.entity.EjercicioRealizado;
 import com.gymprofit.api.entity.SesionEntrenamiento;
@@ -188,5 +189,26 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         logger.info("Verificando si existe ejercicio realizado para sesión id: {} y ejercicio id: {}", sesionId, ejercicioId);
 
         return ejercicioRealizadoRepository.existsBySesionIdAndEjercicioId(sesionId, ejercicioId);
+    }
+
+    @Transactional
+    @Override
+    public EjercicioRealizadoDTO patch(Integer id, EjercicioRealizadoPatchDTO patchDTO) {
+        logger.info("Aplicando patch a ejercicio realizado con id: {}", id);
+
+        EjercicioRealizado ejercicioRealizado = ejercicioRealizadoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundEntityException("El ejercicio realizado con id " + id + " no existe"));
+
+        try {
+            if (patchDTO.getSeriesCompletadas() != null) ejercicioRealizado.setSeriesCompletadas(patchDTO.getSeriesCompletadas());
+            if (patchDTO.getRepeticionesReales() != null) ejercicioRealizado.setRepeticionesReales(patchDTO.getRepeticionesReales());
+            if (patchDTO.getPesoUsado() != null) ejercicioRealizado.setPesoUsado(patchDTO.getPesoUsado());
+            if (patchDTO.getTiempoSegundos() != null) ejercicioRealizado.setTiempoSegundos(patchDTO.getTiempoSegundos());
+            if (patchDTO.getNotas() != null) ejercicioRealizado.setNotas(patchDTO.getNotas());
+
+            return ejercicioRealizadoMapper.toDTO(ejercicioRealizadoRepository.save(ejercicioRealizado));
+        } catch (Exception e) {
+            throw new UpdateEntityException(EjercicioRealizado.class.getSimpleName(), id, e);
+        }
     }
 }

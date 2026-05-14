@@ -2,6 +2,7 @@ package com.gymprofit.api.service.rutinaejercicio;
 
 import com.gymprofit.api.dto.entity.rutinaejercicio.RutinaEjercicioCreateDTO;
 import com.gymprofit.api.dto.entity.rutinaejercicio.RutinaEjercicioDTO;
+import com.gymprofit.api.dto.entity.rutinaejercicio.RutinaEjercicioPatchDTO;
 import com.gymprofit.api.entity.Ejercicio;
 import com.gymprofit.api.entity.Rutina;
 import com.gymprofit.api.entity.RutinaEjercicio;
@@ -201,5 +202,27 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
         logger.info("Verificando si existe ejercicio id: {} en rutina id: {}", ejercicioId, rutinaId);
 
         return rutinaEjercicioRepository.existsByRutinaIdAndEjercicioId(rutinaId, ejercicioId);
+    }
+
+    @Transactional
+    @Override
+    public RutinaEjercicioDTO patch(Integer id, RutinaEjercicioPatchDTO patchDTO) {
+        logger.info("Aplicando patch a ejercicio de rutina con id: {}", id);
+
+        RutinaEjercicio re = rutinaEjercicioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundEntityException("El ejercicio de rutina con id " + id + " no existe"));
+
+        try {
+            if (patchDTO.getSeries() != null) re.setSeries(patchDTO.getSeries());
+            if (patchDTO.getRepeticiones() != null) re.setRepeticiones(patchDTO.getRepeticiones());
+            if (patchDTO.getPesoRecomendado() != null) re.setPesoRecomendado(patchDTO.getPesoRecomendado());
+            if (patchDTO.getTiempoDescanso() != null) re.setTiempoDescanso(patchDTO.getTiempoDescanso());
+            if (patchDTO.getOrden() != null) re.setOrden(patchDTO.getOrden());
+            if (patchDTO.getNotas() != null) re.setNotas(patchDTO.getNotas());
+
+            return rutinaEjercicioMapper.toDTO(rutinaEjercicioRepository.save(re));
+        } catch (Exception e) {
+            throw new UpdateEntityException(RutinaEjercicio.class.getSimpleName(), id, e);
+        }
     }
 }

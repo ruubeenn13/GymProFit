@@ -3,6 +3,7 @@ package com.gymprofit.api.controller;
 import com.gymprofit.api.dto.entity.alimento.AlimentoDTO;
 import com.gymprofit.api.dto.entity.comida.ComidaCreateDTO;
 import com.gymprofit.api.dto.entity.comida.ComidaDTO;
+import com.gymprofit.api.dto.entity.comida.ComidaPatchDTO;
 import com.gymprofit.api.enums.TipoComida;
 import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
@@ -289,6 +290,18 @@ public class ComidaController {
         respuesta.put("tipoComida", tipoComida);
 
         return ResponseEntity.ok(respuesta);
+    }
+
+    @Operation(summary = "Actualiza parcialmente una comida")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Comida actualizada",
+                    content = @Content(schema = @Schema(implementation = ComidaDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Comida no encontrada",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @PatchMapping("/comidas/{id}")
+    public ResponseEntity<ComidaDTO> patchComida(@PathVariable Integer id, @RequestBody ComidaPatchDTO patchDTO) {
+        return ResponseEntity.ok(comidaService.patch(id, patchDTO));
     }
 
     private void validarTipoComida(String tipoComida) {

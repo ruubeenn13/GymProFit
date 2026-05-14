@@ -2,6 +2,7 @@ package com.gymprofit.api.service.ejerciciorealizado;
 
 import com.gymprofit.api.dto.entity.ejerciciorealizado.EjercicioRealizadoCreateDTO;
 import com.gymprofit.api.dto.entity.ejerciciorealizado.EjercicioRealizadoDTO;
+import com.gymprofit.api.dto.entity.ejerciciorealizado.EjercicioRealizadoPatchDTO;
 
 import java.util.List;
 
@@ -26,4 +27,6 @@ public interface IEjercicioRealizadoService {
     void deleteBySesionIdAndEjercicioId(Integer sesionId, Integer ejercicioId);
 
     boolean existsBySesionIdAndEjercicioId(Integer sesionId, Integer ejercicioId);
+
+    EjercicioRealizadoDTO patch(Integer id, EjercicioRealizadoPatchDTO patchDTO);
 }

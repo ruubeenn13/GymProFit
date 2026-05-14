@@ -2,6 +2,7 @@ package com.gymprofit.api.controller;
 
 import com.gymprofit.api.dto.entity.medicioncorporal.MedicionCorporalCreateDTO;
 import com.gymprofit.api.dto.entity.medicioncorporal.MedicionCorporalDTO;
+import com.gymprofit.api.dto.entity.medicioncorporal.MedicionCorporalPatchDTO;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.medicioncorporal.IMedicionCorporalService;
@@ -186,5 +187,17 @@ public class MedicionCorporalController {
         }
 
         return ResponseEntity.ok(medicionesCorporales);
+    }
+
+    @Operation(summary = "Actualiza parcialmente una medición corporal")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Medición corporal actualizada",
+                    content = @Content(schema = @Schema(implementation = MedicionCorporalDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Medición corporal no encontrada",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @PatchMapping("/mediciones-corporales/{id}")
+    public ResponseEntity<MedicionCorporalDTO> patchMedicionCorporal(@PathVariable Integer id, @RequestBody MedicionCorporalPatchDTO patchDTO) {
+        return ResponseEntity.ok(medicionCorporalService.patch(id, patchDTO));
     }
 }

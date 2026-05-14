@@ -2,6 +2,7 @@ package com.gymprofit.api.service.objetivopersonal;
 
 import com.gymprofit.api.dto.entity.objetivopersonal.ObjetivoPersonalCreateDTO;
 import com.gymprofit.api.dto.entity.objetivopersonal.ObjetivoPersonalDTO;
+import com.gymprofit.api.dto.entity.objetivopersonal.ObjetivoPersonalPatchDTO;
 import com.gymprofit.api.dto.entity.objetivopersonal.ObjetivoPersonalUpdateDTO;
 import com.gymprofit.api.entity.ObjetivoPersonal;
 import com.gymprofit.api.entity.Usuario;
@@ -197,5 +198,26 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         logger.info("Contando objetivos pendientes del usuario id: {}", usuarioId);
 
         return objetivoPersonalRepository.countByUsuarioIdAndCompletadoFalse(usuarioId);
+    }
+
+    @Transactional
+    @Override
+    public ObjetivoPersonalDTO patch(Integer id, ObjetivoPersonalPatchDTO patchDTO) {
+        logger.info("Aplicando patch a objetivo personal con id: {}", id);
+
+        ObjetivoPersonal objetivo = objetivoPersonalRepository.findById(id)
+                .orElseThrow(() -> new NotFoundEntityException("El objetivo personal con id " + id + " no existe"));
+
+        try {
+            if (patchDTO.getDescripcion() != null) objetivo.setDescripcion(patchDTO.getDescripcion());
+            if (patchDTO.getValorActual() != null) objetivo.setValorActual(patchDTO.getValorActual());
+            if (patchDTO.getValorObjetivo() != null) objetivo.setValorObjetivo(patchDTO.getValorObjetivo());
+            if (patchDTO.getUnidad() != null) objetivo.setUnidad(patchDTO.getUnidad());
+            if (patchDTO.getFechaLimite() != null) objetivo.setFechaLimite(patchDTO.getFechaLimite());
+
+            return objetivoPersonalMapper.toDTO(objetivoPersonalRepository.save(objetivo));
+        } catch (Exception e) {
+            throw new UpdateEntityException(ObjetivoPersonal.class.getSimpleName(), id, e);
+        }
     }
 }

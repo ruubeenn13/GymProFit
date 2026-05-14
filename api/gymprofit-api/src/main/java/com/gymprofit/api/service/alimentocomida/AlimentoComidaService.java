@@ -2,6 +2,7 @@ package com.gymprofit.api.service.alimentocomida;
 
 import com.gymprofit.api.dto.entity.alimentocomida.AlimentoComidaCreateDTO;
 import com.gymprofit.api.dto.entity.alimentocomida.AlimentoComidaDTO;
+import com.gymprofit.api.dto.entity.alimentocomida.AlimentoComidaPatchDTO;
 import com.gymprofit.api.entity.Alimento;
 import com.gymprofit.api.entity.AlimentoComida;
 import com.gymprofit.api.entity.Comida;
@@ -206,6 +207,28 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         logger.info("Contando comidas que contienen el alimento id: {}", alimentoId);
 
         return alimentoComidaRepository.countByAlimentoId(alimentoId);
+    }
+
+    @Transactional
+    @Override
+    public AlimentoComidaDTO patch(Integer id, AlimentoComidaPatchDTO patchDTO) {
+        logger.info("Aplicando patch a alimento-comida con id: {}", id);
+
+        AlimentoComida alimentoComida = alimentoComidaRepository.findById(id)
+                .orElseThrow(() -> new NotFoundEntityException("El alimento-comida con id " + id + " no existe"));
+
+        try {
+            if (patchDTO.getCantidadGramos() != null) {
+                alimentoComida.setCantidadGramos(patchDTO.getCantidadGramos());
+                alimentoComida.setCaloriasTotales(calcularCalorias(alimentoComida.getAlimento(), patchDTO.getCantidadGramos()));
+            } else if (patchDTO.getCaloriasTotales() != null) {
+                alimentoComida.setCaloriasTotales(patchDTO.getCaloriasTotales());
+            }
+
+            return alimentoComidaMapper.toDTO(alimentoComidaRepository.save(alimentoComida));
+        } catch (Exception e) {
+            throw new UpdateEntityException(AlimentoComida.class.getSimpleName(), id, e);
+        }
     }
 
     private Integer calcularCalorias(Alimento alimento, BigDecimal cantidadGramos) {

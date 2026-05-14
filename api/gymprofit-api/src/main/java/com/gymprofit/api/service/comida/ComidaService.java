@@ -2,6 +2,7 @@ package com.gymprofit.api.service.comida;
 
 import com.gymprofit.api.dto.entity.comida.ComidaCreateDTO;
 import com.gymprofit.api.dto.entity.comida.ComidaDTO;
+import com.gymprofit.api.dto.entity.comida.ComidaPatchDTO;
 import com.gymprofit.api.entity.Comida;
 import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.enums.TipoComida;
@@ -200,5 +201,29 @@ public class ComidaService implements IComidaService {
         TipoComida tipo = TipoComida.valueOf(tipoComida.toUpperCase());
 
         return comidaRepository.countByUsuarioIdAndTipoComida(usuarioId, tipo);
+    }
+
+    @Transactional
+    @Override
+    public ComidaDTO patch(Integer id, ComidaPatchDTO patchDTO) {
+        logger.info("Aplicando patch a comida con id: {}", id);
+
+        Comida comida = comidaRepository.findById(id)
+                .orElseThrow(() -> new NotFoundEntityException("La comida con id " + id + " no existe"));
+
+        try {
+            if (patchDTO.getFecha() != null) comida.setFecha(patchDTO.getFecha());
+            if (patchDTO.getTipoComida() != null)
+                comida.setTipoComida(TipoComida.valueOf(patchDTO.getTipoComida().toUpperCase()));
+            if (patchDTO.getTotalCalorias() != null) comida.setTotalCalorias(patchDTO.getTotalCalorias());
+            if (patchDTO.getTotalProteinas() != null) comida.setTotalProteinas(patchDTO.getTotalProteinas());
+            if (patchDTO.getTotalCarbohidratos() != null) comida.setTotalCarbohidratos(patchDTO.getTotalCarbohidratos());
+            if (patchDTO.getTotalGrasas() != null) comida.setTotalGrasas(patchDTO.getTotalGrasas());
+            if (patchDTO.getNotas() != null) comida.setNotas(patchDTO.getNotas());
+
+            return comidaMapper.toDTO(comidaRepository.save(comida));
+        } catch (Exception e) {
+            throw new UpdateEntityException(Comida.class.getSimpleName(), id, e);
+        }
     }
 }

@@ -26,4 +26,6 @@ public interface IComidaService {
     Long countByUsuarioId(Integer usuarioId);
     Long countByTipoComida(String tipoComida);
     Long countByUsuarioIdAndTipoComida(Integer usuarioId, String tipoComida);
+
+    ComidaDTO patch(Integer id, com.gymprofit.api.dto.entity.comida.ComidaPatchDTO patchDTO);
 }

@@ -2,6 +2,7 @@ package com.gymprofit.api.controller;
 
 import com.gymprofit.api.dto.entity.rutinaejercicio.RutinaEjercicioCreateDTO;
 import com.gymprofit.api.dto.entity.rutinaejercicio.RutinaEjercicioDTO;
+import com.gymprofit.api.dto.entity.rutinaejercicio.RutinaEjercicioPatchDTO;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.rutinaejercicio.IRutinaEjercicioService;
@@ -280,5 +281,17 @@ public class RutinaEjercicioController {
         }
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Actualiza parcialmente un ejercicio de una rutina")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ejercicio de rutina actualizado",
+                    content = @Content(schema = @Schema(implementation = RutinaEjercicioDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Ejercicio de rutina no encontrado",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @PatchMapping("/rutinas-ejercicios/{id}")
+    public ResponseEntity<RutinaEjercicioDTO> patchRutinaEjercicio(@PathVariable Integer id, @RequestBody RutinaEjercicioPatchDTO patchDTO) {
+        return ResponseEntity.ok(rutinaEjercicioService.patch(id, patchDTO));
     }
 }

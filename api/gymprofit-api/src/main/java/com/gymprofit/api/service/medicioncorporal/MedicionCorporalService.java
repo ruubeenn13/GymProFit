@@ -2,6 +2,7 @@ package com.gymprofit.api.service.medicioncorporal;
 
 import com.gymprofit.api.dto.entity.medicioncorporal.MedicionCorporalCreateDTO;
 import com.gymprofit.api.dto.entity.medicioncorporal.MedicionCorporalDTO;
+import com.gymprofit.api.dto.entity.medicioncorporal.MedicionCorporalPatchDTO;
 import com.gymprofit.api.entity.MedicionCorporal;
 import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.exceptions.CreateEntityException;
@@ -174,5 +175,42 @@ public class MedicionCorporalService implements IMedicionCorporalService {
         List<MedicionCorporal> lista = medicionCorporalRepository.getUltimasMediciones(usuarioId);
 
         return medicionCorporalMapper.toDTOList(lista);
+    }
+
+    @Transactional
+    @Override
+    public MedicionCorporalDTO patch(Integer id, MedicionCorporalPatchDTO patchDTO) {
+        logger.info("Aplicando patch a medición corporal con id: {}", id);
+
+        MedicionCorporal medicion = medicionCorporalRepository.findById(id)
+                .orElseThrow(() -> new NotFoundEntityException("La medición corporal con id " + id + " no existe"));
+
+        try {
+            if (patchDTO.getFecha() != null) medicion.setFecha(patchDTO.getFecha());
+            if (patchDTO.getPeso() != null) medicion.setPeso(patchDTO.getPeso());
+            if (patchDTO.getAltura() != null) medicion.setAltura(patchDTO.getAltura());
+            if (patchDTO.getGrasaCorporal() != null) medicion.setGrasaCorporal(patchDTO.getGrasaCorporal());
+            if (patchDTO.getMasaMuscular() != null) medicion.setMasaMuscular(patchDTO.getMasaMuscular());
+            if (patchDTO.getCintura() != null) medicion.setCintura(patchDTO.getCintura());
+            if (patchDTO.getPecho() != null) medicion.setPecho(patchDTO.getPecho());
+            if (patchDTO.getBrazos() != null) medicion.setBrazos(patchDTO.getBrazos());
+            if (patchDTO.getPiernas() != null) medicion.setPiernas(patchDTO.getPiernas());
+            if (patchDTO.getNotas() != null) medicion.setNotas(patchDTO.getNotas());
+
+            // Recalcular IMC si se actualizó peso o altura
+            if (patchDTO.getPeso() != null || patchDTO.getAltura() != null) {
+                BigDecimal p = medicion.getPeso();
+                BigDecimal a = medicion.getAltura();
+                if (p != null && a != null && a.compareTo(BigDecimal.ZERO) > 0) {
+                    medicion.setImc(p.divide(a.multiply(a), 2, RoundingMode.HALF_UP));
+                }
+            } else if (patchDTO.getImc() != null) {
+                medicion.setImc(patchDTO.getImc());
+            }
+
+            return medicionCorporalMapper.toDTO(medicionCorporalRepository.save(medicion));
+        } catch (Exception e) {
+            throw new UpdateEntityException(MedicionCorporal.class.getSimpleName(), id, e);
+        }
     }
 }

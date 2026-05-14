@@ -2,6 +2,7 @@ package com.gymprofit.api.service.alimento;
 
 import com.gymprofit.api.dto.entity.alimento.AlimentoCreateDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoDTO;
+import com.gymprofit.api.dto.entity.alimento.AlimentoPatchDTO;
 import com.gymprofit.api.entity.Alimento;
 import com.gymprofit.api.exceptions.CreateEntityException;
 import com.gymprofit.api.exceptions.DeleteEntityException;
@@ -187,5 +188,31 @@ public class AlimentoService implements IAlimentoService {
         logger.info("Contando alimmentos por categoría: {}", categoria);
 
         return alimentoRepository.countByCategoria(categoria);
+    }
+
+    @Transactional
+    @Override
+    public AlimentoDTO patch(Integer id, AlimentoPatchDTO patchDTO) {
+        logger.info("Aplicando patch a alimento con id: {}", id);
+
+        Alimento alimento = alimentoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundEntityException("El alimento con id " + id + " no existe"));
+
+        try {
+            if (patchDTO.getNombre() != null) alimento.setNombre(patchDTO.getNombre());
+            if (patchDTO.getCategoria() != null) alimento.setCategoria(patchDTO.getCategoria());
+            if (patchDTO.getCalorias() != null) alimento.setCalorias(patchDTO.getCalorias());
+            if (patchDTO.getProteinas() != null) alimento.setProteinas(patchDTO.getProteinas());
+            if (patchDTO.getCarbohidratos() != null) alimento.setCarbohidratos(patchDTO.getCarbohidratos());
+            if (patchDTO.getGrasas() != null) alimento.setGrasas(patchDTO.getGrasas());
+            if (patchDTO.getFibra() != null) alimento.setFibra(patchDTO.getFibra());
+            if (patchDTO.getPorcionGramos() != null) alimento.setPorcionGramos(patchDTO.getPorcionGramos());
+            if (patchDTO.getDescripcion() != null) alimento.setDescripcion(patchDTO.getDescripcion());
+            if (patchDTO.getActivo() != null) alimento.setActivo(patchDTO.getActivo());
+
+            return alimentoMapper.toDTO(alimentoRepository.save(alimento));
+        } catch (Exception e) {
+            throw new UpdateEntityException(Alimento.class.getSimpleName(), id, e);
+        }
     }
 }

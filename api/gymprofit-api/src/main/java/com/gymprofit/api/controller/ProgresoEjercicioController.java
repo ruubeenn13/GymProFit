@@ -2,6 +2,7 @@ package com.gymprofit.api.controller;
 
 import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioCreateDTO;
 import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioDTO;
+import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioPatchDTO;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.progresoejercicio.IProgresoEjercicioService;
@@ -315,5 +316,17 @@ public class ProgresoEjercicioController {
             return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Actualiza parcialmente un progreso de ejercicio")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Progreso actualizado",
+                    content = @Content(schema = @Schema(implementation = ProgresoEjercicioDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Progreso no encontrado",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @PatchMapping("/progreso-ejercicios/{id}")
+    public ResponseEntity<ProgresoEjercicioDTO> patchProgresoEjercicio(@PathVariable Integer id, @RequestBody ProgresoEjercicioPatchDTO patchDTO) {
+        return ResponseEntity.ok(progresoEjercicioService.patch(id, patchDTO));
     }
 }

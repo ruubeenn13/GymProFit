@@ -2,6 +2,7 @@ package com.gymprofit.api.controller;
 
 import com.gymprofit.api.dto.entity.objetivopersonal.ObjetivoPersonalCreateDTO;
 import com.gymprofit.api.dto.entity.objetivopersonal.ObjetivoPersonalDTO;
+import com.gymprofit.api.dto.entity.objetivopersonal.ObjetivoPersonalPatchDTO;
 import com.gymprofit.api.dto.entity.objetivopersonal.ObjetivoPersonalUpdateDTO;
 import com.gymprofit.api.enums.TipoObjetivo;
 import com.gymprofit.api.exceptions.InvalidDataException;
@@ -280,5 +281,17 @@ public class ObjetivoPersonalController {
         respuesta.put("count", count);
 
         return ResponseEntity.ok(respuesta);
+    }
+
+    @Operation(summary = "Actualiza parcialmente un objetivo personal")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Objetivo personal actualizado",
+                    content = @Content(schema = @Schema(implementation = ObjetivoPersonalDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Objetivo personal no encontrado",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @PatchMapping("/objetivos-personales/{id}")
+    public ResponseEntity<ObjetivoPersonalDTO> patchObjetivoPersonal(@PathVariable Integer id, @RequestBody ObjetivoPersonalPatchDTO patchDTO) {
+        return ResponseEntity.ok(objetivoPersonalService.patch(id, patchDTO));
     }
 }

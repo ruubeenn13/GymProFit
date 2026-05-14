@@ -29,4 +29,6 @@ public interface INotificacionService {
     Long countNoLeidasByUsuarioId(Integer usuarioId);
 
     boolean existenNoLeidasByUsuarioId(Integer usuarioId);
+
+    NotificacionDTO patch(Integer id, com.gymprofit.api.dto.entity.notificacion.NotificacionPatchDTO patchDTO);
 }
