@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import com.gymprofit.api.enums.TipoObjetivo;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
@@ -19,6 +21,6 @@ public class RegisterDTO implements Serializable {
     private BigDecimal altura;
     private Integer edad;
     private String nivelExperiencia;
-    private String objetivo;
+    private TipoObjetivo objetivo;
     private List<Integer> roles;
 }

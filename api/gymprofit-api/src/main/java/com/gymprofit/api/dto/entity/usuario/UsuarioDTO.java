@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import com.gymprofit.api.enums.TipoObjetivo;
+
 import java.io.Serializable;
 
 @Data
@@ -17,7 +19,7 @@ public class UsuarioDTO implements Serializable {
     private Double altura;
     private Integer edad;
     private String nivelExperiencia;
-    private String objetivo;
+    private TipoObjetivo objetivo;
     private String fechaRegistro;
     private Boolean activo;
 }
