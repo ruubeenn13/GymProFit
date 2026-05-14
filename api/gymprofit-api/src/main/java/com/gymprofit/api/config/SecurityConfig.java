@@ -118,13 +118,15 @@ public class SecurityConfig {
                                 .requestMatchers("/alimentos-comida/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers("/rutinas-ejercicios/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
 
-                                // ADMIN: gestión completa de ejercicios y rutinas
+                                // USER: puede gestionar sus propias rutinas (validación de propiedad en RutinaService)
+                                .requestMatchers(HttpMethod.POST, "/rutinas/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+                                .requestMatchers(HttpMethod.PUT, "/rutinas/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+                                .requestMatchers(HttpMethod.DELETE, "/rutinas/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+
+                                // ADMIN: gestión completa de ejercicios
                                 .requestMatchers(HttpMethod.POST, "/ejercicios/**").hasRole(RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.PUT, "/ejercicios/**").hasRole(RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.DELETE, "/ejercicios/**").hasRole(RoleType.ADMIN.name())
-                                .requestMatchers(HttpMethod.POST, "/rutinas/**").hasRole(RoleType.ADMIN.name())
-                                .requestMatchers(HttpMethod.PUT, "/rutinas/**").hasRole(RoleType.ADMIN.name())
-                                .requestMatchers(HttpMethod.DELETE, "/rutinas/**").hasRole(RoleType.ADMIN.name())
 
                                 // ADMIN: gestión completa de usuarios
                                 .requestMatchers("/usuarios/**").hasRole(RoleType.ADMIN.name())
