@@ -1,6 +1,7 @@
 package com.gymprofit.api.entity;
 
 import com.gymprofit.api.enums.NivelExperiencia;
+import com.gymprofit.api.enums.TipoObjetivo;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -49,8 +50,9 @@ public class Usuario implements UserDetails {
     @Column(name = "nivel_experiencia")
     private NivelExperiencia nivelExperiencia;
 
-    @Column(length = 100)
-    private String objetivo;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 50)
+    private TipoObjetivo objetivo;
 
     @Column(name = "fecha_registro")
     private LocalDateTime fechaRegistro;
