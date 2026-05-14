@@ -15,7 +15,7 @@ import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("")
 @AllArgsConstructor
 @Tag(name = "Ejercicio JOOQ Controlador", description = "Consultas avanzadas de ejercicios con JOOQ")
 public class EjercicioJooqController {

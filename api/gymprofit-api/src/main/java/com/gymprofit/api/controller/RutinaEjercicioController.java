@@ -24,7 +24,7 @@ import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("")
 @AllArgsConstructor
 @Tag(name = "RutinaEjercicio Controlador", description = "Gestión de los ejercicios asociados a rutinas")
 public class RutinaEjercicioController {

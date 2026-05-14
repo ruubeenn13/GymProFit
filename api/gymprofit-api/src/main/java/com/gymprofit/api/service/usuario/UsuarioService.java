@@ -197,13 +197,21 @@ public class UsuarioService implements IUsuarioService {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + id + " no existe"));
 
+        NivelExperiencia nivel = null;
+        if (patchDTO.getNivelExperiencia() != null && !patchDTO.getNivelExperiencia().isBlank()) {
+            try {
+                nivel = NivelExperiencia.valueOf(patchDTO.getNivelExperiencia().toUpperCase());
+            } catch (IllegalArgumentException ex) {
+                throw new InvalidDataException("Nivel de experiencia inválido: " + patchDTO.getNivelExperiencia());
+            }
+        }
+
         try {
             if (patchDTO.getEmail() != null) usuario.setEmail(patchDTO.getEmail());
             if (patchDTO.getPeso() != null) usuario.setPeso(patchDTO.getPeso());
             if (patchDTO.getAltura() != null) usuario.setAltura(patchDTO.getAltura());
             if (patchDTO.getEdad() != null) usuario.setEdad(patchDTO.getEdad());
-            if (patchDTO.getNivelExperiencia() != null)
-                usuario.setNivelExperiencia(NivelExperiencia.valueOf(patchDTO.getNivelExperiencia().toUpperCase()));
+            if (nivel != null) usuario.setNivelExperiencia(nivel);
             if (patchDTO.getObjetivo() != null) usuario.setObjetivo(patchDTO.getObjetivo());
             if (patchDTO.getActivo() != null) usuario.setActivo(patchDTO.getActivo());
 

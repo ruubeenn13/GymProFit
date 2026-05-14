@@ -76,17 +76,9 @@ public class AuthService implements IAuthService {
             throw new DuplicateEntityException("El email '" + registerDTO.getEmail() + "' ya está en uso");
         }
 
-        List<Role> roles;
-        if (registerDTO.getRoles() == null || registerDTO.getRoles().isEmpty()) {
-            Role userRole = roleRepository.findByNombre(RoleType.USER)
-                    .orElseThrow(() -> new NotFoundEntityException("Rol USER no encontrado"));
-            roles = List.of(userRole);
-        } else {
-            roles = registerDTO.getRoles().stream()
-                    .map(roleId -> roleRepository.findById(roleId)
-                            .orElseThrow(() -> new NotFoundEntityException("Rol con id " + roleId + " no encontrado")))
-                    .collect(Collectors.toList());
-        }
+        Role userRole = roleRepository.findByNombre(RoleType.USER)
+                .orElseThrow(() -> new NotFoundEntityException("Rol USER no encontrado"));
+        List<Role> roles = List.of(userRole);
 
         NivelExperiencia nivelExperiencia = null;
         if (registerDTO.getNivelExperiencia() != null && !registerDTO.getNivelExperiencia().isEmpty()) {

@@ -15,7 +15,7 @@ import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("")
 @AllArgsConstructor
 @Tag(name = "Usuario JOOQ Controlador", description = "Consultas avanzadas de usuarios con JOOQ")
 public class UsuarioJooqController {

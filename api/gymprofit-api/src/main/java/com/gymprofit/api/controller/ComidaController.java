@@ -29,7 +29,7 @@ import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("")
 @AllArgsConstructor
 @Tag(name = "Comida Controlador", description = "Gestión de las comidas")
 public class ComidaController {

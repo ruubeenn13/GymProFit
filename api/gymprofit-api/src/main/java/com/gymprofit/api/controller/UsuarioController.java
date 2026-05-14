@@ -26,7 +26,7 @@ import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("")
 @AllArgsConstructor
 @Tag(name = "Usuario Controlador", description = "Gestión de los usuarios")
 public class UsuarioController {
