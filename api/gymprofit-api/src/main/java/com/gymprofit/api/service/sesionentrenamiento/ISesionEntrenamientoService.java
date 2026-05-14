@@ -35,4 +35,6 @@ public interface ISesionEntrenamientoService {
 
     List<SesionEntrenamientoDTO> findByUsuarioIdOrderByFecha(Integer usuarioId);
     List<SesionEntrenamientoDTO> findCompletadasByUsuario(Integer usuarioId);
+
+    SesionEntrenamientoDTO patch(Integer id, com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoPatchDTO patchDTO);
 }

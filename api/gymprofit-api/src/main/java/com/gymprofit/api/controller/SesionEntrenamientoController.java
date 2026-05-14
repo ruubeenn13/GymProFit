@@ -2,6 +2,7 @@ package com.gymprofit.api.controller;
 
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoCreateDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoDTO;
+import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoPatchDTO;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.sesionentrenamiento.ISesionEntrenamientoService;
@@ -360,5 +361,17 @@ public class SesionEntrenamientoController {
         }
 
         return ResponseEntity.ok(sesiones);
+    }
+
+    @Operation(summary = "Actualiza parcialmente una sesión de entrenamiento")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Sesión actualizada",
+                    content = @Content(schema = @Schema(implementation = SesionEntrenamientoDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Sesión no encontrada",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @PatchMapping("/sesiones/{id}")
+    public ResponseEntity<SesionEntrenamientoDTO> patchSesion(@PathVariable Integer id, @RequestBody SesionEntrenamientoPatchDTO patchDTO) {
+        return ResponseEntity.ok(sesionEntrenamientoService.patch(id, patchDTO));
     }
 }

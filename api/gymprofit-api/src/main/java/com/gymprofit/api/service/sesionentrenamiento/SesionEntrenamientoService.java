@@ -2,6 +2,7 @@ package com.gymprofit.api.service.sesionentrenamiento;
 
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoCreateDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoDTO;
+import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoPatchDTO;
 import com.gymprofit.api.entity.Rutina;
 import com.gymprofit.api.entity.SesionEntrenamiento;
 import com.gymprofit.api.entity.Usuario;
@@ -297,5 +298,27 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         List<SesionEntrenamiento> sesiones = sesionEntrenamientoRepository.getSesionesCompletadasByUsuario(usuarioId);
 
         return sesionEntrenamientoMapper.toDTOList(sesiones);
+    }
+
+    @Transactional
+    @Override
+    public SesionEntrenamientoDTO patch(Integer id, SesionEntrenamientoPatchDTO patchDTO) {
+        logger.info("Aplicando patch a sesión de entrenamiento con id: {}", id);
+
+        SesionEntrenamiento sesion = sesionEntrenamientoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundEntityException("La sesión de entrenamiento con id " + id + " no existe"));
+
+        try {
+            if (patchDTO.getFechaInicio() != null) sesion.setFechaInicio(patchDTO.getFechaInicio());
+            if (patchDTO.getFechaFin() != null) sesion.setFechaFin(patchDTO.getFechaFin());
+            if (patchDTO.getDuracionMinutos() != null) sesion.setDuracionMinutos(patchDTO.getDuracionMinutos());
+            if (patchDTO.getCaloriasQuemadas() != null) sesion.setCaloriasQuemadas(patchDTO.getCaloriasQuemadas());
+            if (patchDTO.getNotas() != null) sesion.setNotas(patchDTO.getNotas());
+            if (patchDTO.getCompletada() != null) sesion.setCompletada(patchDTO.getCompletada());
+
+            return sesionEntrenamientoMapper.toDTO(sesionEntrenamientoRepository.save(sesion));
+        } catch (Exception e) {
+            throw new UpdateEntityException(SesionEntrenamiento.class.getSimpleName(), id, e);
+        }
     }
 }

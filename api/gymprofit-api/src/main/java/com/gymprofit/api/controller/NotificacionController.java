@@ -2,6 +2,7 @@ package com.gymprofit.api.controller;
 
 import com.gymprofit.api.dto.entity.notificacion.NotificacionCreateDTO;
 import com.gymprofit.api.dto.entity.notificacion.NotificacionDTO;
+import com.gymprofit.api.dto.entity.notificacion.NotificacionPatchDTO;
 import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
@@ -303,5 +304,17 @@ public class NotificacionController {
         respuesta.put("tieneNoLeidas", existe);
 
         return ResponseEntity.ok(respuesta);
+    }
+
+    @Operation(summary = "Actualiza parcialmente una notificación")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Notificación actualizada",
+                    content = @Content(schema = @Schema(implementation = NotificacionDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Notificación no encontrada",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @PatchMapping("/notificaciones/{id}")
+    public ResponseEntity<NotificacionDTO> patchNotificacion(@PathVariable Integer id, @RequestBody NotificacionPatchDTO patchDTO) {
+        return ResponseEntity.ok(notificacionService.patch(id, patchDTO));
     }
 }

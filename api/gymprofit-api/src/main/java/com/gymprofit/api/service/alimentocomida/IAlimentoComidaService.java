@@ -2,6 +2,7 @@ package com.gymprofit.api.service.alimentocomida;
 
 import com.gymprofit.api.dto.entity.alimentocomida.AlimentoComidaCreateDTO;
 import com.gymprofit.api.dto.entity.alimentocomida.AlimentoComidaDTO;
+import com.gymprofit.api.dto.entity.alimentocomida.AlimentoComidaPatchDTO;
 
 import java.util.List;
 
@@ -26,4 +27,6 @@ public interface IAlimentoComidaService {
 
     Long countByComidaId(Integer comidaId);
     Long countByAlimentoId(Integer alimentoId);
+
+    AlimentoComidaDTO patch(Integer id, AlimentoComidaPatchDTO patchDTO);
 }

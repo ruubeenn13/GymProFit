@@ -2,6 +2,7 @@ package com.gymprofit.api.controller;
 
 import com.gymprofit.api.dto.entity.rutina.RutinaCreateDTO;
 import com.gymprofit.api.dto.entity.rutina.RutinaDTO;
+import com.gymprofit.api.dto.entity.rutina.RutinaPatchDTO;
 import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
@@ -299,5 +300,17 @@ public class RutinaController {
         }
 
         return ResponseEntity.ok(rutinas);
+    }
+
+    @Operation(summary = "Actualiza parcialmente una rutina")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Rutina actualizada",
+                    content = @Content(schema = @Schema(implementation = RutinaDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Rutina no encontrada",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @PatchMapping("/rutinas/{id}")
+    public ResponseEntity<RutinaDTO> patchRutina(@PathVariable Integer id, @RequestBody RutinaPatchDTO patchDTO) {
+        return ResponseEntity.ok(rutinaService.patch(id, patchDTO));
     }
 }

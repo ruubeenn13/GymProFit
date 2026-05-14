@@ -32,4 +32,6 @@ public interface IUsuarioService extends UserDetailsService {
     Boolean existsByEmail(String email);
 
     List<UsuarioDTO> findActivos();
+
+    UsuarioDTO patch(Integer id, com.gymprofit.api.dto.entity.usuario.UsuarioPatchDTO patchDTO);
 }

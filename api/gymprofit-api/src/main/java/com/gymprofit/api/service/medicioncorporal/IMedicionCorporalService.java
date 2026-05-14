@@ -20,4 +20,6 @@ public interface IMedicionCorporalService {
     List<MedicionCorporalDTO> findByUsuarioIdOrdenadas(Integer usuarioId);
     List<MedicionCorporalDTO> findByUsuarioIdAndFechaBetween(Integer usuarioId, LocalDateTime inicio, LocalDateTime fin);
     List<MedicionCorporalDTO> getUltimasMediciones(Integer usuarioId);
+
+    MedicionCorporalDTO patch(Integer id, com.gymprofit.api.dto.entity.medicioncorporal.MedicionCorporalPatchDTO patchDTO);
 }

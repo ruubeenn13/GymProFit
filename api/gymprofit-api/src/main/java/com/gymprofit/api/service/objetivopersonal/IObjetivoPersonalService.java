@@ -27,4 +27,6 @@ public interface IObjetivoPersonalService {
     Long countByUsuarioId(Integer usuarioId);
     Long countCompletadosByUsuarioId(Integer usuarioId);
     Long countPendientesByUsuarioId(Integer usuarioId);
+
+    ObjetivoPersonalDTO patch(Integer id, com.gymprofit.api.dto.entity.objetivopersonal.ObjetivoPersonalPatchDTO patchDTO);
 }

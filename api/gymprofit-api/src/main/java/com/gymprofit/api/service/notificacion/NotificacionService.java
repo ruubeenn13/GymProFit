@@ -2,6 +2,7 @@ package com.gymprofit.api.service.notificacion;
 
 import com.gymprofit.api.dto.entity.notificacion.NotificacionCreateDTO;
 import com.gymprofit.api.dto.entity.notificacion.NotificacionDTO;
+import com.gymprofit.api.dto.entity.notificacion.NotificacionPatchDTO;
 import com.gymprofit.api.entity.Notificacion;
 import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.enums.TipoNotificacion;
@@ -215,5 +216,27 @@ public class NotificacionService implements INotificacionService {
         logger.info("Verificando si existen notificaciones no leídas del usuario id: {}", usuarioId);
 
         return notificacionRepository.existsByUsuarioIdAndLeidaFalse(usuarioId);
+    }
+
+    @Transactional
+    @Override
+    public NotificacionDTO patch(Integer id, NotificacionPatchDTO patchDTO) {
+        logger.info("Aplicando patch a notificación con id: {}", id);
+
+        Notificacion notificacion = notificacionRepository.findById(id)
+                .orElseThrow(() -> new NotFoundEntityException("La notificación con id " + id + " no existe"));
+
+        try {
+            if (patchDTO.getTitulo() != null) notificacion.setTitulo(patchDTO.getTitulo());
+            if (patchDTO.getMensaje() != null) notificacion.setMensaje(patchDTO.getMensaje());
+            if (patchDTO.getTipo() != null)
+                notificacion.setTipo(TipoNotificacion.valueOf(patchDTO.getTipo().toUpperCase()));
+            if (patchDTO.getFechaProgramada() != null) notificacion.setFechaProgramada(patchDTO.getFechaProgramada());
+            if (patchDTO.getLeida() != null) notificacion.setLeida(patchDTO.getLeida());
+
+            return notificacionMapper.toDTO(notificacionRepository.save(notificacion));
+        } catch (Exception e) {
+            throw new UpdateEntityException(Notificacion.class.getSimpleName(), id, e);
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.gymprofit.api.service.progresoejercicio;
 
 import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioCreateDTO;
 import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioDTO;
+import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioPatchDTO;
 
 import java.util.List;
 
@@ -30,4 +31,6 @@ public interface IProgresoEjercicioService {
     void deleteByUsuarioIdAndEjercicioId(Integer usuarioId, Integer ejercicioId);
 
     boolean existsByUsuarioIdAndEjercicioId(Integer usuarioId, Integer ejercicioId);
+
+    ProgresoEjercicioDTO patch(Integer id, ProgresoEjercicioPatchDTO patchDTO);
 }

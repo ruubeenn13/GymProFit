@@ -22,4 +22,6 @@ public interface IEjercicioService {
     List<EjercicioDTO> findByDificultad(String dificultad);
     List<EjercicioDTO> findByNombre(String nombre);
     List<EjercicioDTO> findActivos();
+
+    EjercicioDTO patch(Integer id, com.gymprofit.api.dto.entity.ejercicio.EjercicioPatchDTO patchDTO);
 }

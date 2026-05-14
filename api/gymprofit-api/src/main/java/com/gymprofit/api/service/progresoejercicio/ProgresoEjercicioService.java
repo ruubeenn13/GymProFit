@@ -2,6 +2,7 @@ package com.gymprofit.api.service.progresoejercicio;
 
 import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioCreateDTO;
 import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioDTO;
+import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioPatchDTO;
 import com.gymprofit.api.entity.Ejercicio;
 import com.gymprofit.api.entity.ProgresoEjercicio;
 import com.gymprofit.api.entity.Usuario;
@@ -218,5 +219,26 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
         logger.info("Verificando si existe progreso del usuario id: {} en ejercicio id: {}", usuarioId, ejercicioId);
 
         return progresoEjercicioRepository.existsByUsuarioIdAndEjercicioId(usuarioId, ejercicioId);
+    }
+
+    @Transactional
+    @Override
+    public ProgresoEjercicioDTO patch(Integer id, ProgresoEjercicioPatchDTO patchDTO) {
+        logger.info("Aplicando patch a progreso de ejercicio con id: {}", id);
+
+        ProgresoEjercicio progreso = progresoEjercicioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundEntityException("El progreso de ejercicio con id " + id + " no existe"));
+
+        try {
+            if (patchDTO.getFecha() != null) progreso.setFecha(patchDTO.getFecha());
+            if (patchDTO.getMejorPeso() != null) progreso.setMejorPeso(patchDTO.getMejorPeso());
+            if (patchDTO.getMejorRepeticiones() != null) progreso.setMejorRepeticiones(patchDTO.getMejorRepeticiones());
+            if (patchDTO.getMejorTiempoSegundos() != null) progreso.setMejorTiempoSegundos(patchDTO.getMejorTiempoSegundos());
+            if (patchDTO.getNotas() != null) progreso.setNotas(patchDTO.getNotas());
+
+            return progresoEjercicioMapper.toDTO(progresoEjercicioRepository.save(progreso));
+        } catch (Exception e) {
+            throw new UpdateEntityException(ProgresoEjercicio.class.getSimpleName(), id, e);
+        }
     }
 }

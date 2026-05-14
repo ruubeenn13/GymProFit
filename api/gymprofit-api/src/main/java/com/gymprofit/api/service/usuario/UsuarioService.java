@@ -2,7 +2,9 @@ package com.gymprofit.api.service.usuario;
 
 import com.gymprofit.api.dto.entity.usuario.UsuarioCreateDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioDTO;
+import com.gymprofit.api.dto.entity.usuario.UsuarioPatchDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioUpdateDTO;
+import com.gymprofit.api.enums.NivelExperiencia;
 import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.exceptions.*;
 import com.gymprofit.api.mappers.UsuarioMapper;
@@ -185,5 +187,29 @@ public class UsuarioService implements IUsuarioService {
         List<Usuario> usuarios = usuarioRepository.findByActivoTrue();
 
         return usuarioMapper.toDTOList(usuarios);
+    }
+
+    @Transactional
+    @Override
+    public UsuarioDTO patch(Integer id, UsuarioPatchDTO patchDTO) {
+        logger.info("Aplicando patch a usuario con id: {}", id);
+
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + id + " no existe"));
+
+        try {
+            if (patchDTO.getEmail() != null) usuario.setEmail(patchDTO.getEmail());
+            if (patchDTO.getPeso() != null) usuario.setPeso(patchDTO.getPeso());
+            if (patchDTO.getAltura() != null) usuario.setAltura(patchDTO.getAltura());
+            if (patchDTO.getEdad() != null) usuario.setEdad(patchDTO.getEdad());
+            if (patchDTO.getNivelExperiencia() != null)
+                usuario.setNivelExperiencia(NivelExperiencia.valueOf(patchDTO.getNivelExperiencia().toUpperCase()));
+            if (patchDTO.getObjetivo() != null) usuario.setObjetivo(patchDTO.getObjetivo());
+            if (patchDTO.getActivo() != null) usuario.setActivo(patchDTO.getActivo());
+
+            return usuarioMapper.toDTO(usuarioRepository.save(usuario));
+        } catch (Exception e) {
+            throw new UpdateEntityException(Usuario.class.getSimpleName(), id, e);
+        }
     }
 }

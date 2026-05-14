@@ -28,4 +28,6 @@ public interface IRutinaEjercicioService {
     void deleteByRutinaIdAndEjercicioId(Integer rutinaId, Integer ejercicioId);
 
     boolean existsByRutinaIdAndEjercicioId(Integer rutinaId, Integer ejercicioId);
+
+    RutinaEjercicioDTO patch(Integer id, com.gymprofit.api.dto.entity.rutinaejercicio.RutinaEjercicioPatchDTO patchDTO);
 }
