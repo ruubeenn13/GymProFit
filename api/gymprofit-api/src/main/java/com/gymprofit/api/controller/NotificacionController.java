@@ -25,7 +25,7 @@ import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("")
 @AllArgsConstructor
 @Tag(name = "Notificación Controlador", description = "Gestión de las notificaciones de los usuarios")
 public class NotificacionController {

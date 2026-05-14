@@ -27,7 +27,7 @@ import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("")
 @AllArgsConstructor
 @Tag(name = "ObjetivoPersonal Controlador", description = "Gestión de los objetivos personales de los usuarios")
 public class ObjetivoPersonalController {

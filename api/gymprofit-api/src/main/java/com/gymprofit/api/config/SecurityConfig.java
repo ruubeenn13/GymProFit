@@ -106,6 +106,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/usuarios/username/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.GET, "/usuarios/{id}").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.PUT, "/usuarios/{id}").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+                                .requestMatchers(HttpMethod.PATCH, "/usuarios/{id}").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
 
                                 // USER: gestión de sus propios datos
                                 .requestMatchers("/sesiones/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
