@@ -14,6 +14,7 @@ import com.gymprofit.api.mappers.SesionEntrenamientoMapper;
 import com.gymprofit.api.repository.jpa.IRutinaRepository;
 import com.gymprofit.api.repository.jpa.ISesionEntrenamientoRepository;
 import com.gymprofit.api.repository.jpa.IUsuarioRepository;
+import com.gymprofit.api.service.logro.ILogroService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
     private final IUsuarioRepository usuarioRepository;
     private final IRutinaRepository rutinaRepository;
     private final SesionEntrenamientoMapper sesionEntrenamientoMapper;
+    private final ILogroService logroService;
     private final Logger logger = LoggerFactory.getLogger(SesionEntrenamientoService.class);
 
 
@@ -167,6 +169,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
             SesionEntrenamiento sesionCompletada = sesionEntrenamientoRepository.save(sesion);
 
             logger.info("Sesión {} completada", sesionCompletada);
+
+            logroService.evaluarLogros(sesionCompletada.getUsuario().getId());
 
             return sesionEntrenamientoMapper.toDTO(sesionCompletada);
         } catch (Exception e) {

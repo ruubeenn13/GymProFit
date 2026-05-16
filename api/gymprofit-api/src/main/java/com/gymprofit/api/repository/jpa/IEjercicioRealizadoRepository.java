@@ -23,6 +23,8 @@ public interface IEjercicioRealizadoRepository extends CrudRepository<EjercicioR
 
     Long countByEjercicioId(Integer ejercicioId);
 
+    Long countBySesionUsuarioId(Integer usuarioId);
+
     void deleteBySesionId(Integer sesionId);
 
     void deleteBySesionIdAndEjercicioId(Integer sesionId, Integer ejercicioId);

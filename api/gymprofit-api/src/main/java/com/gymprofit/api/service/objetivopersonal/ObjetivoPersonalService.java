@@ -11,6 +11,7 @@ import com.gymprofit.api.exceptions.*;
 import com.gymprofit.api.mappers.ObjetivoPersonalMapper;
 import com.gymprofit.api.repository.jpa.IObjetivoPersonalRepository;
 import com.gymprofit.api.repository.jpa.IUsuarioRepository;
+import com.gymprofit.api.service.logro.ILogroService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
     private final IObjetivoPersonalRepository objetivoPersonalRepository;
     private final IUsuarioRepository usuarioRepository;
     private final ObjetivoPersonalMapper objetivoPersonalMapper;
+    private final ILogroService logroService;
     private final Logger logger = LoggerFactory.getLogger(ObjetivoPersonalService.class);
 
 
@@ -175,6 +177,8 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         objetivoPersonal.setFechaCompletado(LocalDateTime.now());
 
         ObjetivoPersonal objetivoActualizado = objetivoPersonalRepository.save(objetivoPersonal);
+
+        logroService.evaluarLogros(objetivoActualizado.getUsuario().getId());
 
         return objetivoPersonalMapper.toDTO(objetivoActualizado);
     }
