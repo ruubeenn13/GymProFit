@@ -52,6 +52,7 @@ class RutinaControllerTest {
         rutinaCreateDTO.setUsuarioId(1);
         rutinaCreateDTO.setNombre("Rutina Pecho");
         rutinaCreateDTO.setNivel("INTERMEDIO");
+        rutinaCreateDTO.setEsPredefinida(false);
     }
 
     @Test
@@ -60,7 +61,7 @@ class RutinaControllerTest {
     void findAll_con_rol_guest_devuelve_200() throws Exception {
         when(rutinaService.findAll()).thenReturn(List.of(rutinaDTO));
 
-        mockMvc.perform(get("/api/rutinas"))
+        mockMvc.perform(get("/rutinas"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].nombre").value("Rutina Pecho"))
                 .andExpect(jsonPath("$[0].nivel").value("INTERMEDIO"));
@@ -71,7 +72,7 @@ class RutinaControllerTest {
     @Test
     @DisplayName("GET /api/rutinas sin autenticación devuelve 500")
     void findAll_sin_autenticacion_devuelve_500() throws Exception {
-        mockMvc.perform(get("/api/rutinas"))
+        mockMvc.perform(get("/rutinas"))
                 .andExpect(status().isInternalServerError());
     }
 
@@ -81,7 +82,7 @@ class RutinaControllerTest {
     void findById_existente_devuelve_200() throws Exception {
         when(rutinaService.findById(1)).thenReturn(rutinaDTO);
 
-        mockMvc.perform(get("/api/rutinas/1"))
+        mockMvc.perform(get("/rutinas/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.nombre").value("Rutina Pecho"));
@@ -96,7 +97,7 @@ class RutinaControllerTest {
         when(rutinaService.findById(99))
                 .thenThrow(new NotFoundEntityException("La rutina con id 99 no existe"));
 
-        mockMvc.perform(get("/api/rutinas/99"))
+        mockMvc.perform(get("/rutinas/99"))
                 .andExpect(status().isNotFound());
     }
 
@@ -106,7 +107,7 @@ class RutinaControllerTest {
     void save_con_rol_admin_devuelve_200() throws Exception {
         when(rutinaService.save(any(RutinaCreateDTO.class))).thenReturn(rutinaDTO);
 
-        mockMvc.perform(post("/api/rutinas")
+        mockMvc.perform(post("/rutinas")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(rutinaCreateDTO)))
                 .andExpect(status().isOk())
@@ -116,15 +117,18 @@ class RutinaControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/rutinas con rol USER devuelve 403")
+    @DisplayName("POST /rutinas con rol USER devuelve 200 (validación de propiedad en el service)")
     @WithMockUser(roles = "USER")
-    void save_con_rol_user_devuelve_403() throws Exception {
-        mockMvc.perform(post("/api/rutinas")
+    void save_con_rol_user_devuelve_200() throws Exception {
+        when(rutinaService.save(any(RutinaCreateDTO.class))).thenReturn(rutinaDTO);
+
+        mockMvc.perform(post("/rutinas")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(rutinaCreateDTO)))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nombre").value("Rutina Pecho"));
 
-        verify(rutinaService, never()).save(any());
+        verify(rutinaService).save(any(RutinaCreateDTO.class));
     }
 
     @Test
@@ -133,7 +137,7 @@ class RutinaControllerTest {
     void deleteById_con_rol_admin_devuelve_200() throws Exception {
         doNothing().when(rutinaService).deleteById(1);
 
-        mockMvc.perform(delete("/api/rutinas/1"))
+        mockMvc.perform(delete("/rutinas/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.mensaje").value("Rutina desactivada con ÉXITO"));
 
@@ -146,7 +150,7 @@ class RutinaControllerTest {
     void findActivas_con_rol_guest_devuelve_200() throws Exception {
         when(rutinaService.findActivas()).thenReturn(List.of(rutinaDTO));
 
-        mockMvc.perform(get("/api/rutinas/activas"))
+        mockMvc.perform(get("/rutinas/activas"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].activa").value(true));
 
@@ -159,7 +163,7 @@ class RutinaControllerTest {
     void findPredefinidas_con_rol_guest_devuelve_200() throws Exception {
         when(rutinaService.findPredefinidas()).thenReturn(List.of(rutinaDTO));
 
-        mockMvc.perform(get("/api/rutinas/predefinidas"))
+        mockMvc.perform(get("/rutinas/predefinidas"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].nombre").value("Rutina Pecho"));
 
@@ -172,7 +176,7 @@ class RutinaControllerTest {
     void findByNivel_devuelve_200() throws Exception {
         when(rutinaService.findByNivel("INTERMEDIO")).thenReturn(List.of(rutinaDTO));
 
-        mockMvc.perform(get("/api/rutinas/nivel/INTERMEDIO"))
+        mockMvc.perform(get("/rutinas/nivel/INTERMEDIO"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].nivel").value("INTERMEDIO"));
 
