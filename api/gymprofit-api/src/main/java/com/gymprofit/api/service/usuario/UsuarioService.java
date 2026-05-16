@@ -2,6 +2,7 @@ package com.gymprofit.api.service.usuario;
 
 import com.gymprofit.api.dto.entity.usuario.UsuarioCreateDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioDTO;
+import com.gymprofit.api.dto.entity.usuario.UsuarioEstadisticasDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioPatchDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioUpdateDTO;
 import com.gymprofit.api.enums.NivelExperiencia;
@@ -26,6 +27,7 @@ public class UsuarioService implements IUsuarioService {
 
     private final IUsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper;
+    private final com.gymprofit.api.repository.jooq.usuario.IUsuarioJooqRepository usuarioJooqRepository;
     private final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
 
 
@@ -219,5 +221,13 @@ public class UsuarioService implements IUsuarioService {
         } catch (Exception e) {
             throw new UpdateEntityException(Usuario.class.getSimpleName(), id, e);
         }
+    }
+
+    @Override
+    public UsuarioEstadisticasDTO getEstadisticas(Integer usuarioId) {
+        if (!usuarioRepository.existsById(usuarioId)) {
+            throw new NotFoundEntityException("Usuario con id " + usuarioId + " no encontrado");
+        }
+        return usuarioJooqRepository.getEstadisticas(usuarioId);
     }
 }

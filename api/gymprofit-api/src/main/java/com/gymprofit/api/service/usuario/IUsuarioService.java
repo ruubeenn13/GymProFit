@@ -2,6 +2,7 @@ package com.gymprofit.api.service.usuario;
 
 import com.gymprofit.api.dto.entity.usuario.UsuarioCreateDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioDTO;
+import com.gymprofit.api.dto.entity.usuario.UsuarioEstadisticasDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioUpdateDTO;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -34,4 +35,6 @@ public interface IUsuarioService extends UserDetailsService {
     List<UsuarioDTO> findActivos();
 
     UsuarioDTO patch(Integer id, com.gymprofit.api.dto.entity.usuario.UsuarioPatchDTO patchDTO);
+
+    UsuarioEstadisticasDTO getEstadisticas(Integer usuarioId);
 }
