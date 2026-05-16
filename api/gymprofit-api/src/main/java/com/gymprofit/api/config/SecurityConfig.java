@@ -124,6 +124,13 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.PUT, "/rutinas/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.DELETE, "/rutinas/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
 
+                                // GUEST/USER/ADMIN: consulta de logros
+                                .requestMatchers(HttpMethod.GET, "/logros/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
+
+                                // ADMIN: gestión de logros
+                                .requestMatchers(HttpMethod.POST, "/logros/**").hasRole(RoleType.ADMIN.name())
+                                .requestMatchers(HttpMethod.PUT, "/logros/**").hasRole(RoleType.ADMIN.name())
+
                                 // ADMIN: gestión completa de ejercicios
                                 .requestMatchers(HttpMethod.POST, "/ejercicios/**").hasRole(RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.PUT, "/ejercicios/**").hasRole(RoleType.ADMIN.name())
