@@ -24,6 +24,7 @@ public class PreferencesManager {
     private static final String KEY_GRASAS = "grasas_diarias";
     private static final String KEY_AGUA = "agua_diaria";
     private static final String KEY_ONBOARDING = "onboarding_completado";
+    private static final String KEY_ROL = "usuario_rol";
 
     private SharedPreferences prefs;
     private SharedPreferences.Editor editor;
@@ -87,4 +88,8 @@ public class PreferencesManager {
 
     public void setOnboardingCompletado(boolean v) { editor.putBoolean(KEY_ONBOARDING, v); editor.apply(); }
     public boolean isOnboardingCompletado() { return prefs.getBoolean(KEY_ONBOARDING, false); }
+
+    public void saveRol(String rol) { editor.putString(KEY_ROL, rol); editor.apply(); }
+    public String getRol() { return prefs.getString(KEY_ROL, "ROLE_USER"); }
+    public boolean isAdmin() { return "ROLE_ADMIN".equals(getRol()); }
 }

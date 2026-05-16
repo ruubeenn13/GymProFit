@@ -12,9 +12,14 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.textfield.TextInputEditText;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.network.API;
+import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
@@ -23,12 +28,13 @@ public class CrearRutinaActivity extends AppCompatActivity {
     private TextInputEditText etNombre, etDescripcion, etDuracion, etCalorias, etNumEjercicios;
     private ChipGroup chipGroupNivel;
     private MaterialButton btnGuardar;
+    private PreferencesManager prefsManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        PreferencesManager prefsManager = new PreferencesManager(this);
+        prefsManager = new PreferencesManager(this);
         prefsManager.applyTheme();
         aplicarIdiomaGuardado(prefsManager);
 
@@ -58,20 +64,40 @@ public class CrearRutinaActivity extends AppCompatActivity {
     private void configurarBotonGuardar() {
         btnGuardar.setOnClickListener(v -> {
             if (!validarCampos()) return;
-
-            Intent resultado = new Intent();
-            resultado.putExtra("nombre", etNombre.getText().toString().trim());
-            resultado.putExtra("descripcion", etDescripcion.getText().toString().trim());
-            resultado.putExtra("nivel", obtenerNivelSeleccionado());
-            resultado.putExtra("duracion", Integer.parseInt(etDuracion.getText().toString().trim()));
-            resultado.putExtra("calorias", Integer.parseInt(etCalorias.getText().toString().trim()));
-            resultado.putExtra("numEjercicios", Integer.parseInt(etNumEjercicios.getText().toString().trim()));
-
-            UIHelper.mostrarToastExito(this, getString(R.string.rutinas_guardada_exito));
-
-            setResult(RESULT_OK, resultado);
-            finish();
+            guardarRutina();
         });
+    }
+
+    private void guardarRutina() {
+        try {
+            JSONObject body = new JSONObject();
+            body.put("nombre", etNombre.getText().toString().trim());
+            body.put("descripcion", etDescripcion.getText().toString().trim());
+            body.put("nivel", obtenerNivelSeleccionado());
+            body.put("duracionMinutos", Integer.parseInt(etDuracion.getText().toString().trim()));
+            body.put("caloriasAproximadas", Integer.parseInt(etCalorias.getText().toString().trim()));
+            body.put("numEjercicios", Integer.parseInt(etNumEjercicios.getText().toString().trim()));
+            body.put("usuarioId", prefsManager.getUsuarioId());
+            body.put("esPredefinida", false);
+
+            API.crearRutina(body, new UtilREST.OnResponseListener() {
+                @Override
+                public void onSuccess(String response, int statusCode) {
+                    UIHelper.mostrarToastExito(CrearRutinaActivity.this,
+                            getString(R.string.rutinas_guardada_exito));
+                    setResult(RESULT_OK);
+                    finish();
+                }
+
+                @Override
+                public void onError(String message, int statusCode) {
+                    UIHelper.mostrarToastError(CrearRutinaActivity.this,
+                            getString(R.string.error_conexion));
+                }
+            });
+        } catch (JSONException e) {
+            UIHelper.mostrarToastError(this, getString(R.string.error_conexion));
+        }
     }
 
     private boolean validarCampos() {

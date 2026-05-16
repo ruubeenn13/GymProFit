@@ -50,10 +50,12 @@ public class RutinaAdapter extends RecyclerView.Adapter<RutinaAdapter.ViewHolder
         return rutinasFiltradas.size();
     }
 
-    public void addRutina(Rutina rutina) {
-        rutinas.add(rutina);
-        rutinasFiltradas.add(rutina);
-        notifyItemInserted(rutinasFiltradas.size() - 1);
+    public void setRutinas(List<Rutina> nuevas) {
+        rutinas.clear();
+        rutinas.addAll(nuevas);
+        rutinasFiltradas.clear();
+        rutinasFiltradas.addAll(nuevas);
+        notifyDataSetChanged();
     }
 
     public void filtrarPorNivel(String nivel) {
