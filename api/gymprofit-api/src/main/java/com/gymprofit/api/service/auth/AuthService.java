@@ -7,7 +7,6 @@ import com.gymprofit.api.dto.auth.TokenDTO;
 import com.gymprofit.api.entity.Role;
 import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.enums.NivelExperiencia;
-import com.gymprofit.api.enums.RoleType;
 import com.gymprofit.api.exceptions.DuplicateEntityException;
 import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
@@ -27,6 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.gymprofit.api.enums.RoleType.USER;
 
 @Service
 @AllArgsConstructor
@@ -76,9 +77,14 @@ public class AuthService implements IAuthService {
             throw new DuplicateEntityException("El email '" + registerDTO.getEmail() + "' ya está en uso");
         }
 
-        Role userRole = roleRepository.findByNombre(RoleType.USER)
-                .orElseThrow(() -> new NotFoundEntityException("Rol USER no encontrado"));
-        List<Role> roles = List.of(userRole);
+        List<Integer> roleIds = (registerDTO.getRoles() == null || registerDTO.getRoles().isEmpty())
+                ? List.of(USER.getValue())
+                : registerDTO.getRoles();
+
+        List<Role> roles = roleRepository.findByNombreIn(roleIds);
+        if (roles.isEmpty()) {
+            throw new NotFoundEntityException("Roles especificados no encontrados");
+        }
 
         NivelExperiencia nivelExperiencia = null;
         if (registerDTO.getNivelExperiencia() != null && !registerDTO.getNivelExperiencia().isEmpty()) {
@@ -106,5 +112,25 @@ public class AuthService implements IAuthService {
 
         logger.info("Usuario '{}' registrado correctamente con roles: {}", registerDTO.getUsername(),
                 roles.stream().map(r -> r.getNombre().name()).collect(Collectors.joining(", ")));
+    }
+
+    @Override
+    public TokenDTO loginAsGuest() {
+        Usuario guest = usuarioRepository.findByUsername("guest")
+                .orElseThrow(() -> new NotFoundEntityException("Usuario guest no encontrado"));
+
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                guest, null, guest.getAuthorities()
+        );
+
+        String token = jwtTokenProvider.generateToken(auth);
+
+        List<String> roles = guest.getRoles().stream()
+                .map(role -> role.getNombre().name())
+                .collect(Collectors.toList());
+
+        logger.info("Acceso como invitado concedido");
+
+        return new TokenDTO(token, guest.getUsername(), roles);
     }
 }

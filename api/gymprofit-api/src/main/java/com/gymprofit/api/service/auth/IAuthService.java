@@ -9,4 +9,6 @@ public interface IAuthService {
     TokenDTO login(LoginDTO loginDTO);
 
     void register(RegisterDTO registerDTO);
+
+    TokenDTO loginAsGuest();
 }

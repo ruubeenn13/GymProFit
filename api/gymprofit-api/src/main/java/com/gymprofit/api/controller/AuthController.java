@@ -59,4 +59,12 @@ public class AuthController {
 
         return new ResponseEntity<>(respuesta, HttpStatus.CREATED);
     }
+
+    @Operation(summary = "Accede como invitado sin necesidad de registro")
+    @ApiResponse(responseCode = "200", description = "Token JWT con rol GUEST",
+            content = @Content(schema = @Schema(implementation = TokenDTO.class)))
+    @PostMapping("/guest")
+    public ResponseEntity<TokenDTO> guest() {
+        return ResponseEntity.ok(authService.loginAsGuest());
+    }
 }
