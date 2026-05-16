@@ -15,12 +15,17 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.textfield.TextInputEditText;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
+import es.pmdm.gymprofit.network.API;
+import es.pmdm.gymprofit.network.UtilJSONParser;
+import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.adapters.EjercicioAdapter;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 
@@ -47,6 +52,7 @@ public class EjerciciosActivity extends AppCompatActivity {
         configurarBuscador();
         configurarChips();
         configurarNavegacion();
+        cargarEjercicios();
     }
 
     private void inicializarVistas() {
@@ -56,79 +62,60 @@ public class EjerciciosActivity extends AppCompatActivity {
     }
 
     private void configurarRecyclerView() {
-        List<Ejercicio> ejercicios = obtenerEjercicios();
-        adapter = new EjercicioAdapter(ejercicios);
+        adapter = new EjercicioAdapter(new ArrayList<>());
         rvEjercicios.setLayoutManager(new LinearLayoutManager(this));
         rvEjercicios.setAdapter(adapter);
     }
 
+    private void cargarEjercicios() {
+        API.getEjerciciosActivos(new UtilREST.OnResponseListener() {
+            @Override
+            public void onSuccess(String response, int statusCode) {
+                try {
+                    List<Ejercicio> lista = UtilJSONParser.parseEjercicioList(response);
+                    adapter.setEjercicios(lista);
+                } catch (JSONException e) {
+                    android.util.Log.e("EjerciciosActivity", "Error parseando ejercicios", e);
+                }
+            }
+
+            @Override
+            public void onError(String message, int statusCode) {
+                android.util.Log.e("EjerciciosActivity", "Error cargando ejercicios: " + message);
+            }
+        });
+    }
+
     private void configurarBuscador() {
         etBuscar.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void afterTextChanged(Editable s) {}
 
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                adapter.filtrarPorTexto(charSequence.toString());
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter.filtrarPorTexto(s.toString());
             }
         });
     }
 
     private void configurarChips() {
         chipGroupFiltros.setOnCheckedStateChangeListener((group, checkedIds) -> {
-            if (checkedIds.isEmpty()) {
-                return;
-            }
+            if (checkedIds.isEmpty()) return;
 
             int id = checkedIds.get(0);
             String grupo;
 
-            if (id == R.id.chipTodos) {
-                grupo = "Todos";
-            } else if (id == R.id.chipPecho) {
-                grupo = "Pecho";
-            } else if (id == R.id.chipEspalda) {
-                grupo = "Espalda";
-            } else if (id == R.id.chipPiernas) {
-                grupo = "Piernas";
-            } else if (id == R.id.chipBrazos) {
-                grupo = "Brazos";
-            } else if (id == R.id.chipHombros) {
-                grupo = "Hombros";
-            } else if (id == R.id.chipCore) {
-                grupo = "Core";
-            } else {
-                grupo = "Todos";
-            }
+            if (id == R.id.chipTodos)        grupo = "Todos";
+            else if (id == R.id.chipPecho)   grupo = "Pecho";
+            else if (id == R.id.chipEspalda) grupo = "Espalda";
+            else if (id == R.id.chipPiernas) grupo = "Piernas";
+            else if (id == R.id.chipBrazos)  grupo = "Brazos";
+            else if (id == R.id.chipHombros) grupo = "Hombros";
+            else if (id == R.id.chipCore)    grupo = "Core";
+            else                             grupo = "Todos";
+
             adapter.filtrarPorGrupo(grupo);
         });
-    }
-
-    private List<Ejercicio> obtenerEjercicios() {
-        List<Ejercicio> lista = new ArrayList<>();
-        lista.add(new Ejercicio("Press de Banca", "Pecho", "Intermedio", "Pectoral · Tríceps", 300, R.drawable.ic_ejercicios));
-        lista.add(new Ejercicio("Fondos en Paralelas", "Pecho", "Avanzado", "Pectoral · Tríceps · Hombros", 280, R.drawable.ic_ejercicios));
-        lista.add(new Ejercicio("Aperturas con Mancuernas", "Pecho", "Principiante", "Pectoral", 200, R.drawable.ic_ejercicios));
-        lista.add(new Ejercicio("Dominadas", "Espalda", "Avanzado", "Dorsales · Bíceps", 350, R.drawable.ic_ejercicios));
-        lista.add(new Ejercicio("Remo con Barra", "Espalda", "Intermedio", "Dorsales · Romboides", 320, R.drawable.ic_ejercicios));
-        lista.add(new Ejercicio("Jalón al Pecho", "Espalda", "Principiante", "Dorsales · Bíceps", 270, R.drawable.ic_ejercicios));
-        lista.add(new Ejercicio("Sentadilla", "Piernas", "Intermedio", "Cuádriceps · Glúteos", 400, R.drawable.ic_ejercicios));
-        lista.add(new Ejercicio("Peso Muerto", "Piernas", "Avanzado", "Isquiotibiales · Glúteos", 450, R.drawable.ic_ejercicios));
-        lista.add(new Ejercicio("Prensa de Piernas", "Piernas", "Principiante", "Cuádriceps · Isquiotibiales", 350, R.drawable.ic_ejercicios));
-        lista.add(new Ejercicio("Curl de Bíceps", "Brazos", "Principiante", "Bíceps", 150, R.drawable.ic_ejercicios));
-        lista.add(new Ejercicio("Extensión de Tríceps", "Brazos", "Principiante", "Tríceps", 140, R.drawable.ic_ejercicios));
-        lista.add(new Ejercicio("Press Militar", "Hombros", "Intermedio", "Deltoides · Tríceps", 260, R.drawable.ic_ejercicios));
-        lista.add(new Ejercicio("Elevaciones Laterales", "Hombros", "Principiante", "Deltoides", 180, R.drawable.ic_ejercicios));
-        lista.add(new Ejercicio("Plancha", "Core", "Principiante", "Abdominales · Lumbar", 120, R.drawable.ic_ejercicios));
-        lista.add(new Ejercicio("Crunch Abdominal", "Core", "Principiante", "Abdominales", 100, R.drawable.ic_ejercicios));
-        return lista;
     }
 
     private void configurarNavegacion() {
@@ -137,7 +124,6 @@ public class EjerciciosActivity extends AppCompatActivity {
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
-
             if (itemId == R.id.nav_home) {
                 startActivity(new Intent(this, HomeActivity.class));
                 overridePendingTransition(0, 0);
@@ -161,7 +147,6 @@ public class EjerciciosActivity extends AppCompatActivity {
                 finish();
                 return true;
             }
-
             return false;
         });
     }

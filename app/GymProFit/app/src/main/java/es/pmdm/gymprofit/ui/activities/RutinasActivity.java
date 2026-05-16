@@ -15,12 +15,17 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.rutina.Rutina;
+import es.pmdm.gymprofit.network.API;
+import es.pmdm.gymprofit.network.UtilJSONParser;
+import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.adapters.RutinaAdapter;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 
@@ -31,6 +36,7 @@ public class RutinasActivity extends AppCompatActivity {
     private RutinaAdapter adapter;
     private ChipGroup chipGroupNivel;
     private FloatingActionButton fabCrearRutina;
+    private PreferencesManager prefsManager;
 
     private ActivityResultLauncher<Intent> crearRutinaLauncher;
 
@@ -38,7 +44,7 @@ public class RutinasActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        PreferencesManager prefsManager = new PreferencesManager(this);
+        prefsManager = new PreferencesManager(this);
         prefsManager.applyTheme();
         aplicarIdiomaGuardado(prefsManager);
 
@@ -50,24 +56,15 @@ public class RutinasActivity extends AppCompatActivity {
         configurarChips();
         configurarFab();
         configurarNavegacion();
+        cargarRutinas();
     }
 
     private void registrarLauncher() {
         crearRutinaLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                        Intent data = result.getData();
-
-                        Rutina nuevaRutina = new Rutina(
-                                data.getStringExtra("nombre"),
-                                data.getStringExtra("nivel"),
-                                data.getStringExtra("descripcion"),
-                                data.getIntExtra("numEjercicios", 0),
-                                data.getIntExtra("duracion", 0),
-                                data.getIntExtra("calorias", 0)
-                        );
-                        adapter.addRutina(nuevaRutina);
+                    if (result.getResultCode() == RESULT_OK) {
+                        cargarRutinas();
                     }
                 }
         );
@@ -80,67 +77,73 @@ public class RutinasActivity extends AppCompatActivity {
     }
 
     private void configurarRecyclerView() {
-        List<Rutina> rutinas = obtenerRutinas();
-        adapter = new RutinaAdapter(rutinas);
+        adapter = new RutinaAdapter(new ArrayList<>());
         rvRutinas.setLayoutManager(new LinearLayoutManager(this));
         rvRutinas.setAdapter(adapter);
     }
 
+    private void cargarRutinas() {
+        int usuarioId = prefsManager.getUsuarioId();
+
+        API.getRutinasPredefinidas(new UtilREST.OnResponseListener() {
+            @Override
+            public void onSuccess(String response, int statusCode) {
+                try {
+                    List<Rutina> predefinidas = UtilJSONParser.parseRutinaList(response);
+                    List<Rutina> todas = new ArrayList<>(predefinidas);
+
+                    if (usuarioId != -1) {
+                        API.getRutinasDeUsuario(usuarioId, new UtilREST.OnResponseListener() {
+                            @Override
+                            public void onSuccess(String response2, int statusCode2) {
+                                try {
+                                    todas.addAll(UtilJSONParser.parseRutinaList(response2));
+                                } catch (JSONException e) {
+                                    android.util.Log.e("RutinasActivity", "Error parseando rutinas usuario", e);
+                                }
+                                adapter.setRutinas(todas);
+                            }
+
+                            @Override
+                            public void onError(String message, int statusCode2) {
+                                adapter.setRutinas(todas);
+                            }
+                        });
+                    } else {
+                        adapter.setRutinas(todas);
+                    }
+                } catch (JSONException e) {
+                    android.util.Log.e("RutinasActivity", "Error parseando rutinas predefinidas", e);
+                }
+            }
+
+            @Override
+            public void onError(String message, int statusCode) {
+                android.util.Log.e("RutinasActivity", "Error cargando rutinas: " + message);
+            }
+        });
+    }
+
     private void configurarChips() {
         chipGroupNivel.setOnCheckedStateChangeListener(((chipGroup, list) -> {
-            if (list.isEmpty()) {
-                return;
-            }
+            if (list.isEmpty()) return;
 
             int id = list.get(0);
             String nivel;
 
-            if (id == R.id.chipTodos) {
-                nivel = "Todos";
-            } else if (id == R.id.chipPrincipiante) {
-                nivel = "Principiante";
-            } else if (id == R.id.chipIntermedio) {
-                nivel = "Intermedio";
-            } else if (id == R.id.chipAvanzado) {
-                nivel = "Avanzado";
-            } else {
-                nivel = "Todos";
-            }
+            if (id == R.id.chipTodos)              nivel = "Todos";
+            else if (id == R.id.chipPrincipiante)  nivel = "Principiante";
+            else if (id == R.id.chipIntermedio)    nivel = "Intermedio";
+            else if (id == R.id.chipAvanzado)      nivel = "Avanzado";
+            else                                   nivel = "Todos";
 
             adapter.filtrarPorNivel(nivel);
         }));
     }
 
     private void configurarFab() {
-        fabCrearRutina.setOnClickListener(v -> {
-            crearRutinaLauncher.launch(new Intent(this, CrearRutinaActivity.class));
-        });
-    }
-
-    private List<Rutina> obtenerRutinas() {
-        List<Rutina> lista = new ArrayList<>();
-        lista.add(new Rutina("Full Body", "Principiante", "Trabaja todo el cuerpo en una sesión", 5, 45, 350));
-        lista.add(new Rutina("Cardio y Resistencia", "Principiante", "Mejora tu resistencia cardiovascular", 6, 40, 400));
-        lista.add(new Rutina("Fuerza Upper Body", "Intermedio", "Pecho, espalda y brazos", 8, 60, 500));
-        lista.add(new Rutina("Piernas y Glúteos", "Intermedio", "Cuádriceps, isquiotibiales y glúteos", 7, 55, 480));
-        lista.add(new Rutina("Push Pull Legs", "Avanzado", "División clásica de empuje, tirón y piernas", 10, 75, 600));
-        lista.add(new Rutina("HIIT Intenso", "Avanzado", "Alta intensidad por intervalos", 8, 35, 550));
-        lista.add(new Rutina("Core y Movilidad", "Principiante", "Abdominales, lumbar y flexibilidad", 6, 30, 200));
-        lista.add(new Rutina("Fuerza y Potencia", "Avanzado", "Movimientos compuestos pesados", 9, 70, 650));
-        return lista;
-    }
-
-    private void aplicarIdiomaGuardado(PreferencesManager prefsManager) {
-        String savedLanguage = prefsManager.getLanguage();
-        if (!savedLanguage.isEmpty()) {
-            Locale locale = new Locale(savedLanguage);
-            Locale.setDefault(locale);
-
-            Resources resources = getResources();
-            Configuration config = resources.getConfiguration();
-            config.setLocale(locale);
-            resources.updateConfiguration(config, resources.getDisplayMetrics());
-        }
+        fabCrearRutina.setOnClickListener(v ->
+                crearRutinaLauncher.launch(new Intent(this, CrearRutinaActivity.class)));
     }
 
     private void configurarNavegacion() {
@@ -172,8 +175,19 @@ public class RutinasActivity extends AppCompatActivity {
                 finish();
                 return true;
             }
-
             return false;
         });
+    }
+
+    private void aplicarIdiomaGuardado(PreferencesManager prefsManager) {
+        String savedLanguage = prefsManager.getLanguage();
+        if (!savedLanguage.isEmpty()) {
+            Locale locale = new Locale(savedLanguage);
+            Locale.setDefault(locale);
+            Resources resources = getResources();
+            Configuration config = resources.getConfiguration();
+            config.setLocale(locale);
+            resources.updateConfiguration(config, resources.getDisplayMetrics());
+        }
     }
 }

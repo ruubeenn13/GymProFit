@@ -132,6 +132,15 @@ public class Onboarding4Activity extends AppCompatActivity {
 
     private void condigurarCards() {
         cardPerderPeso.setOnClickListener(v -> seleccionarObjetivo(cardPerderPeso, ivCheckPerderPeso, CalculadoraNutricional.OBJETIVO_PERDER_PESO));
+        cardGanarMusculo.setOnClickListener(v -> seleccionarObjetivo(cardGanarMusculo, ivCheckGanarMusculo, CalculadoraNutricional.OBJETIVO_GANAR_MASA_MUSCULAR));
+        cardMantener.setOnClickListener(v -> seleccionarObjetivo(cardMantener, ivCheckMantener, CalculadoraNutricional.OBJETIVO_MANTENER_PESO));
+        cardResistencia.setOnClickListener(v -> seleccionarObjetivo(cardResistencia, ivCheckResistencia, CalculadoraNutricional.OBJETIVO_MEJORAR_RESISTENCIA));
+        cardFuerza.setOnClickListener(v -> seleccionarObjetivo(cardFuerza, ivCheckFuerza, CalculadoraNutricional.OBJETIVO_MEJORAR_FUERZA));
+        cardReducirGrasa.setOnClickListener(v -> seleccionarObjetivo(cardReducirGrasa, ivCheckReducirGrasa, CalculadoraNutricional.OBJETIVO_REDUCIR_GRASA));
+        cardFlexibilidad.setOnClickListener(v -> seleccionarObjetivo(cardFlexibilidad, ivCheckFlexibilidad, CalculadoraNutricional.OBJETIVO_MEJORAR_FLEXIBILIDAD));
+        cardVelocidad.setOnClickListener(v -> seleccionarObjetivo(cardVelocidad, ivCheckVelocidad, CalculadoraNutricional.OBJETIVO_MEJORAR_VELOCIDAD));
+        cardAumentarCalorias.setOnClickListener(v -> seleccionarObjetivo(cardAumentarCalorias, ivCheckAumentarCalorias, CalculadoraNutricional.OBJETIVO_AUMENTAR_CALORIAS));
+        cardMovilidad.setOnClickListener(v -> seleccionarObjetivo(cardMovilidad, ivCheckMovilidad, CalculadoraNutricional.OBJETIVO_MEJORAR_MOVILIDAD));
     }
 
     private void seleccionarObjetivo(MaterialCardView cardSeleccionada,

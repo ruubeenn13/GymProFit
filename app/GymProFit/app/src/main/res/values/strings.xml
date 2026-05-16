@@ -54,6 +54,7 @@
     <string name="home_buenos_dias">Buenos días,</string>
     <string name="home_buenas_tardes">Buenas tardes,</string>
     <string name="home_buenas_noches">Buenas noches,</string>
+    <string name="home_usuario_defecto">Usuario</string>
     <string name="home_esta_semana">esta semana</string>
     <string name="home_ver_rutinas">Ver mis rutinas</string>
     <string name="home_registrar_comida">Registrar comida</string>
@@ -123,6 +124,9 @@
     <string name="perfil_editar">Editar información</string>
     <string name="perfil_editar_proximamente">Edición disponible próximamente</string>
     <string name="perfil_sin_datos">Sin datos</string>
+    <string name="perfil_anos">%d años</string>
+    <string name="perfil_kg">%s kg</string>
+    <string name="perfil_cm">%d cm</string>
 
     <!-- GENERAL -->
     <string name="sin_registrar">Sin registrar</string>

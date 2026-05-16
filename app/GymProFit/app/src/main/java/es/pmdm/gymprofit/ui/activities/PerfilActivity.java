@@ -23,6 +23,10 @@ import com.google.android.material.button.MaterialButton;
 import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.model.usuario.Usuario;
+import es.pmdm.gymprofit.network.API;
+import es.pmdm.gymprofit.network.UtilJSONParser;
+import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
@@ -31,6 +35,9 @@ public class PerfilActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
     private PreferencesManager prefsManager;
     private TextView tvTemaActual, tvIdiomaActual;
+    private TextView tvNombreUsuario, tvEmailUsuario;
+    private TextView tvInfoNombre, tvInfoEmail;
+    private TextView tvInfoNivel, tvInfoPeso, tvInfoAltura, tvInfoEdad, tvInfoObjetivo;
     private ImageView ivIconoTema;
 
     @Override
@@ -54,15 +61,58 @@ public class PerfilActivity extends AppCompatActivity {
         tvTemaActual = findViewById(R.id.tvTemaActual);
         tvIdiomaActual = findViewById(R.id.tvIdiomaActual);
         ivIconoTema = findViewById(R.id.ivIconoTema);
+        tvNombreUsuario = findViewById(R.id.tvNombreUsuario);
+        tvEmailUsuario = findViewById(R.id.tvEmailUsuario);
+        tvInfoNombre = findViewById(R.id.tvInfoNombre);
+        tvInfoEmail = findViewById(R.id.tvInfoEmail);
+        tvInfoNivel = findViewById(R.id.tvInfoNivel);
+        tvInfoPeso = findViewById(R.id.tvInfoPeso);
+        tvInfoAltura = findViewById(R.id.tvInfoAltura);
+        tvInfoEdad = findViewById(R.id.tvInfoEdad);
+        tvInfoObjetivo = findViewById(R.id.tvInfoObjetivo);
     }
 
     private void configurarDatosUsuario() {
         String sinDatos = getString(R.string.perfil_sin_datos);
-        ((TextView) findViewById(R.id.tvInfoNivel)).setText(sinDatos);
-        ((TextView) findViewById(R.id.tvInfoPeso)).setText(sinDatos);
-        ((TextView) findViewById(R.id.tvInfoAltura)).setText(sinDatos);
-        ((TextView) findViewById(R.id.tvInfoEdad)).setText(sinDatos);
-        ((TextView) findViewById(R.id.tvInfoObjetivo)).setText(sinDatos);
+        tvInfoNivel.setText(sinDatos);
+        tvInfoPeso.setText(sinDatos);
+        tvInfoAltura.setText(sinDatos);
+        tvInfoEdad.setText(sinDatos);
+        tvInfoObjetivo.setText(sinDatos);
+
+        int usuarioId = prefsManager.getUsuarioId();
+        if (usuarioId == -1) return;
+
+        API.getUsuarioPorId(usuarioId, new UtilREST.OnResponseListener() {
+            @Override
+            public void onSuccess(String response, int statusCode) {
+                try {
+                    Usuario u = UtilJSONParser.parseUsuario(response);
+                    if (u == null) return;
+
+                    runOnUiThread(() -> {
+                        tvNombreUsuario.setText(u.getUsername());
+                        tvEmailUsuario.setText(val(u.getEmail(), sinDatos));
+                        tvInfoNombre.setText(u.getUsername());
+                        tvInfoEmail.setText(val(u.getEmail(), sinDatos));
+                        tvInfoNivel.setText(val(u.getNivelExperiencia(), sinDatos));
+                        tvInfoPeso.setText(val(u.getPeso(), null) != null
+                                ? getString(R.string.perfil_kg, u.getPeso()) : sinDatos);
+                        tvInfoAltura.setText(u.getAltura() > 0
+                                ? getString(R.string.perfil_cm, (int) u.getAltura()) : sinDatos);
+                        tvInfoEdad.setText(u.getEdad() > 0
+                                ? getString(R.string.perfil_anos, u.getEdad()) : sinDatos);
+                        tvInfoObjetivo.setText(val(u.getObjetivo(), sinDatos) != null
+                                ? mapearObjetivo(u.getObjetivo()) : sinDatos);
+                    });
+                } catch (Exception ignored) {}
+            }
+
+            @Override
+            public void onError(String message, int statusCode) {
+                // mantiene sinDatos
+            }
+        });
     }
 
     private void configurarConfiguracion() {
@@ -100,6 +150,8 @@ public class PerfilActivity extends AppCompatActivity {
                         getString(R.string.dialog_cerrar_sesion_mensaje),
                         R.drawable.ic_logout,
                         () -> {
+                            UtilREST.clearToken();
+                            prefsManager.cerrarSesion();
                             Intent intent = new Intent(this, LoginActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
@@ -191,6 +243,27 @@ public class PerfilActivity extends AppCompatActivity {
             }
             return false;
         });
+    }
+
+    private String val(String s, String fallback) {
+        return (s != null && !s.isEmpty() && !"null".equals(s)) ? s : fallback;
+    }
+
+    private String mapearObjetivo(String objetivo) {
+        if (objetivo == null) return getString(R.string.perfil_sin_datos);
+        switch (objetivo) {
+            case "PERDER_PESO":             return getString(R.string.objetivo_perder_peso);
+            case "GANAR_MASA_MUSCULAR":     return getString(R.string.objetivo_ganar_musculo);
+            case "MANTENER_PESO":           return getString(R.string.objetivo_mantener);
+            case "MEJORAR_RESISTENCIA":     return getString(R.string.objetivo_resistencia);
+            case "MEJORAR_FUERZA":          return getString(R.string.objetivo_fuerza);
+            case "REDUCIR_GRASA_CORPORAL":  return getString(R.string.objetivo_reducir_grasa);
+            case "MEJORAR_FLEXIBILIDAD":    return getString(R.string.objetivo_flexibilidad);
+            case "MEJORAR_VELOCIDAD":       return getString(R.string.objetivo_velocidad);
+            case "AUMENTAR_CALORIAS":       return getString(R.string.objetivo_aumentar_calorias);
+            case "MEJORAR_MOVILIDAD":       return getString(R.string.objetivo_movilidad);
+            default:                        return objetivo;
+        }
     }
 
     private void aplicarIdiomaGuardado() {

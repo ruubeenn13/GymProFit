@@ -11,6 +11,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import androidx.appcompat.app.AppCompatActivity;
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import java.util.Locale;
 
@@ -49,6 +50,9 @@ public class SplashActivity extends AppCompatActivity {
     private void verificarSesion() {
         new Handler().post(() -> {
             boolean tieneSesion = prefsManager.haySesion();
+            if (tieneSesion) {
+                UtilREST.setToken(prefsManager.getToken());
+            }
 
             long tiempoTranscurrido = System.currentTimeMillis() - tiempoInicio;
             long tiempoRestante = Math.max(0, SPLASH_MIN_DURATION - tiempoTranscurrido);

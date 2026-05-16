@@ -40,7 +40,7 @@ public class EjercicioAdapter extends RecyclerView.Adapter<EjercicioAdapter.View
         Ejercicio ejercicio = ejerciciosFiltrados.get(position);
         holder.tvNombre.setText(ejercicio.getNombre());
         holder.tvDescripcion.setText(ejercicio.getDescripcion());
-        holder.ivIcono.setImageResource(ejercicio.getIconoRes());
+        holder.ivIcono.setImageResource(R.drawable.ic_ejercicios);
         holder.chipDificultad.setText(ejercicio.getDificultad());
         holder.chipCalorias.setText(ejercicio.getCalorias() + " kcal");
     }
@@ -48,6 +48,14 @@ public class EjercicioAdapter extends RecyclerView.Adapter<EjercicioAdapter.View
     @Override
     public int getItemCount() {
         return ejerciciosFiltrados.size();
+    }
+
+    public void setEjercicios(List<Ejercicio> nuevos) {
+        ejercicios.clear();
+        ejercicios.addAll(nuevos);
+        ejerciciosFiltrados.clear();
+        ejerciciosFiltrados.addAll(nuevos);
+        notifyDataSetChanged();
     }
 
     public void filtrarPorTexto(String texto) {

@@ -55,6 +55,7 @@
     <string name="home_buenos_dias">Good morning,</string>
     <string name="home_buenas_tardes">Good afternoon,</string>
     <string name="home_buenas_noches">Good evening,</string>
+    <string name="home_usuario_defecto">User</string>
     <string name="home_esta_semana">this week</string>
     <string name="home_ver_rutinas">View my routines</string>
     <string name="home_registrar_comida">Log a meal</string>
@@ -124,6 +125,9 @@
     <string name="perfil_editar">Edit information</string>
     <string name="perfil_editar_proximamente">Editing coming soon</string>
     <string name="perfil_sin_datos">No data</string>
+    <string name="perfil_anos">%d years</string>
+    <string name="perfil_kg">%s kg</string>
+    <string name="perfil_cm">%d cm</string>
 
     <!-- GENERAL -->
     <string name="sin_registrar">Not registered</string>

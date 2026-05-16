@@ -33,17 +33,17 @@ public class HomeActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_home);
 
-        configurarCabecera();
+        configurarCabecera(prefsManager);
         configurarAccionesRapidas();
         configurarNavegacion();
     }
 
-    private void configurarCabecera() {
-        TextView tvSaludo = findViewById(R.id.tvSaludo);
-        TextView tvFecha = findViewById(R.id.tvFecha);
+    private void configurarCabecera(PreferencesManager prefsManager) {
+        TextView tvSaludo  = findViewById(R.id.tvSaludo);
+        TextView tvUsuario = findViewById(R.id.tvUsuario);
+        TextView tvFecha   = findViewById(R.id.tvFecha);
 
         int hora = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-
         if (hora < 12) {
             tvSaludo.setText(R.string.home_buenos_dias);
         } else if (hora < 20) {
@@ -52,7 +52,14 @@ public class HomeActivity extends AppCompatActivity {
             tvSaludo.setText(R.string.home_buenas_noches);
         }
 
-        SimpleDateFormat sdf = new SimpleDateFormat("EEEE, d 'de' MMMM", new Locale("es", "ES"));
+        String username = prefsManager.getUsername();
+        tvUsuario.setText(username.isEmpty() ? getString(R.string.home_usuario_defecto) : username);
+
+        Locale locale = Locale.getDefault();
+        String pattern = "en".equals(locale.getLanguage())
+                ? "EEEE, MMMM d"
+                : "EEEE, d 'de' MMMM";
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern, locale);
         tvFecha.setText(sdf.format(new Date()));
     }
 
