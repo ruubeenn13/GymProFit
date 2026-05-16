@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,7 +55,7 @@ public class LogroController {
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @PostMapping
-    public ResponseEntity<LogroDTO> save(@RequestBody LogroCreateDTO createDTO) {
+    public ResponseEntity<LogroDTO> save(@Valid @RequestBody LogroCreateDTO createDTO) {
         return new ResponseEntity<>(logroService.save(createDTO), HttpStatus.CREATED);
     }
 
@@ -66,7 +67,7 @@ public class LogroController {
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @PutMapping("/{id}")
-    public ResponseEntity<LogroDTO> update(@PathVariable Integer id, @RequestBody LogroCreateDTO updateDTO) {
+    public ResponseEntity<LogroDTO> update(@PathVariable Integer id, @Valid @RequestBody LogroCreateDTO updateDTO) {
         return ResponseEntity.ok(logroService.update(id, updateDTO));
     }
 }
