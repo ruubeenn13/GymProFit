@@ -115,7 +115,7 @@ class AuthServiceTest {
     void register_correcto_guarda_usuario() {
         when(usuarioRepository.existsByUsername("newuser")).thenReturn(false);
         when(usuarioRepository.existsByEmail("newuser@gymprofit.com")).thenReturn(false);
-        when(roleRepository.findByNombre(RoleType.USER)).thenReturn(Optional.of(roleUser));
+        when(roleRepository.findByNombreIn(List.of(RoleType.USER.getValue()))).thenReturn(List.of(roleUser));
         when(passwordEncoder.encode("password123")).thenReturn("encodedPassword");
 
         assertDoesNotThrow(() -> authService.register(registerDTO));
