@@ -1,16 +1,19 @@
 package com.gymprofit.api.repository.jooq.usuario;
 
+import com.gymprofit.api.dto.admin.AdminEstadisticasDTO;
+import com.gymprofit.api.dto.admin.AdminUsuarioDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioEstadisticasDTO;
 import com.gymprofit.api.dto.jooq.UsuarioJooqDTO;
+import com.gymprofit.api.jooq.enums.RolesNombre;
 import com.gymprofit.api.jooq.enums.UsuariosNivelExperiencia;
 import lombok.RequiredArgsConstructor;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
-import org.jooq.Record1;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -253,6 +256,98 @@ public class UsuarioJooqRepository implements IUsuarioJooqRepository {
                 peso,
                 imc,
                 objetivosCompletados
+        );
+    }
+
+    @Override
+    public List<AdminUsuarioDTO> getUsuariosAdmin(Boolean activo, String rol, String username, int page, int size) {
+        var conditions = new ArrayList<Condition>();
+
+        if (activo != null) {
+            conditions.add(USUARIOS.ACTIVO.eq(activo ? (byte) 1 : (byte) 0));
+        }
+        if (username != null && !username.isBlank()) {
+            conditions.add(USUARIOS.USERNAME.containsIgnoreCase(username));
+        }
+        if (rol != null && !rol.isBlank()) {
+            conditions.add(ROLES.NOMBRE.eq(RolesNombre.valueOf(rol.toUpperCase())));
+        }
+
+        return dsl
+                .select(
+                        USUARIOS.ID,
+                        USUARIOS.USERNAME,
+                        USUARIOS.EMAIL,
+                        USUARIOS.PESO,
+                        USUARIOS.ALTURA,
+                        USUARIOS.EDAD,
+                        USUARIOS.NIVEL_EXPERIENCIA,
+                        USUARIOS.OBJETIVO,
+                        USUARIOS.ACTIVO,
+                        USUARIOS.FECHA_REGISTRO,
+                        ROLES.NOMBRE.as("rol")
+                )
+                .from(USUARIOS)
+                .leftJoin(USUARIO_ROLES).on(USUARIO_ROLES.USUARIO_ID.eq(USUARIOS.ID))
+                .leftJoin(ROLES).on(ROLES.ID.eq(USUARIO_ROLES.ROLE_ID))
+                .where(conditions)
+                .orderBy(USUARIOS.USERNAME.asc())
+                .limit(size)
+                .offset((long) page * size)
+                .fetchInto(AdminUsuarioDTO.class);
+    }
+
+    @Override
+    public AdminEstadisticasDTO getEstadisticasGlobales() {
+        LocalDateTime inicioHoy = LocalDate.now().atStartOfDay();
+        LocalDateTime finHoy = LocalDate.now().atTime(23, 59, 59);
+
+        Long totalUsuarios = dsl
+                .selectCount()
+                .from(USUARIOS)
+                .fetchOne(0, Long.class);
+
+        Long usuariosActivos = dsl
+                .selectCount()
+                .from(USUARIOS)
+                .where(USUARIOS.ACTIVO.eq((byte) 1))
+                .fetchOne(0, Long.class);
+
+        Long totalSesiones = dsl
+                .selectCount()
+                .from(SESIONES_ENTRENAMIENTO)
+                .fetchOne(0, Long.class);
+
+        Long sesionesHoy = dsl
+                .selectCount()
+                .from(SESIONES_ENTRENAMIENTO)
+                .where(SESIONES_ENTRENAMIENTO.FECHA_INICIO.between(inicioHoy, finHoy))
+                .fetchOne(0, Long.class);
+
+        Long totalEjercicios = dsl
+                .selectCount()
+                .from(EJERCICIOS_REALIZADOS)
+                .fetchOne(0, Long.class);
+
+        Long totalObjetivos = dsl
+                .selectCount()
+                .from(OBJETIVOS_PERSONALES)
+                .where(OBJETIVOS_PERSONALES.COMPLETADO.eq((byte) 1))
+                .fetchOne(0, Long.class);
+
+        Long totalLogros = dsl
+                .selectCount()
+                .from(table("usuario_logros"))
+                .fetchOne(0, Long.class);
+
+        return new AdminEstadisticasDTO(
+                totalUsuarios,
+                usuariosActivos,
+                totalSesiones,
+                sesionesHoy,
+                totalEjercicios,
+                totalObjetivos,
+                totalLogros
         );
     }
 

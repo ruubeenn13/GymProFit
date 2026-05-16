@@ -1,5 +1,7 @@
 package com.gymprofit.api.repository.jooq.usuario;
 
+import com.gymprofit.api.dto.admin.AdminEstadisticasDTO;
+import com.gymprofit.api.dto.admin.AdminUsuarioDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioEstadisticasDTO;
 import com.gymprofit.api.dto.jooq.UsuarioJooqDTO;
 
@@ -18,4 +20,8 @@ public interface IUsuarioJooqRepository {
     List<UsuarioJooqDTO> busquedaAvanzada(String username, String nivelExperiencia, Integer edadMax);
 
     UsuarioEstadisticasDTO getEstadisticas(Integer usuarioId);
+
+    List<AdminUsuarioDTO> getUsuariosAdmin(Boolean activo, String rol, String username, int page, int size);
+
+    AdminEstadisticasDTO getEstadisticasGlobales();
 }

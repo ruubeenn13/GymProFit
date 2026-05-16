@@ -1,5 +1,7 @@
 package com.gymprofit.api.service.usuario;
 
+import com.gymprofit.api.dto.admin.AdminEstadisticasDTO;
+import com.gymprofit.api.dto.admin.AdminUsuarioDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioCreateDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioEstadisticasDTO;
@@ -229,5 +231,17 @@ public class UsuarioService implements IUsuarioService {
             throw new NotFoundEntityException("Usuario con id " + usuarioId + " no encontrado");
         }
         return usuarioJooqRepository.getEstadisticas(usuarioId);
+    }
+
+    @Override
+    public List<AdminUsuarioDTO> getUsuariosAdmin(Boolean activo, String rol, String username, int page, int size) {
+        logger.info("Admin: listando usuarios con filtros activo={}, rol={}, username={}, page={}, size={}", activo, rol, username, page, size);
+        return usuarioJooqRepository.getUsuariosAdmin(activo, rol, username, page, size);
+    }
+
+    @Override
+    public AdminEstadisticasDTO getEstadisticasGlobales() {
+        logger.info("Admin: obteniendo estadísticas globales");
+        return usuarioJooqRepository.getEstadisticasGlobales();
     }
 }

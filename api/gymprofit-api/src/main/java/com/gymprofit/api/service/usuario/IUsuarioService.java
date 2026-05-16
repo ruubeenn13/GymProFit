@@ -1,5 +1,7 @@
 package com.gymprofit.api.service.usuario;
 
+import com.gymprofit.api.dto.admin.AdminEstadisticasDTO;
+import com.gymprofit.api.dto.admin.AdminUsuarioDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioCreateDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioEstadisticasDTO;
@@ -37,4 +39,8 @@ public interface IUsuarioService extends UserDetailsService {
     UsuarioDTO patch(Integer id, com.gymprofit.api.dto.entity.usuario.UsuarioPatchDTO patchDTO);
 
     UsuarioEstadisticasDTO getEstadisticas(Integer usuarioId);
+
+    List<AdminUsuarioDTO> getUsuariosAdmin(Boolean activo, String rol, String username, int page, int size);
+
+    AdminEstadisticasDTO getEstadisticasGlobales();
 }

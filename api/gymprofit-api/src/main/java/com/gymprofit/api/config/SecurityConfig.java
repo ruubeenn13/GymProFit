@@ -139,6 +139,9 @@ public class SecurityConfig {
                                 // ADMIN: gestión completa de usuarios
                                 .requestMatchers("/usuarios/**").hasRole(RoleType.ADMIN.name())
 
+                                // ADMIN: panel de administración
+                                .requestMatchers("/admin/**").hasRole(RoleType.ADMIN.name())
+
                                 .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider());
