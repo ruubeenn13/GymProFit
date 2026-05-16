@@ -52,7 +52,7 @@ class EjercicioControllerTest {
         ejercicioCreateDTO = new EjercicioCreateDTO();
         ejercicioCreateDTO.setNombre("Press de Banca");
         ejercicioCreateDTO.setGrupoMuscular("PECHO");
-        ejercicioCreateDTO.setDescripcion("INTERMEDIO");
+        ejercicioCreateDTO.setDificultad("INTERMEDIO");
     }
 
     @Test
@@ -61,7 +61,7 @@ class EjercicioControllerTest {
     void findAll_con_rol_guest_devuelve_200() throws Exception {
         when(ejercicioService.findAll()).thenReturn(List.of(ejercicioDTO));
 
-        mockMvc.perform(get("/api/ejercicios"))
+        mockMvc.perform(get("/ejercicios"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].nombre").value("Press de Banca"))
                 .andExpect(jsonPath("$[0].grupoMuscular").value("PECHO"));
@@ -72,7 +72,7 @@ class EjercicioControllerTest {
     @Test
     @DisplayName("GET /api/ejercicios sin autenticación devuelve 500")
     void findAll_sin_autenticacion_devuelve_500() throws Exception {
-        mockMvc.perform(get("/api/ejercicios"))
+        mockMvc.perform(get("/ejercicios"))
                 .andExpect(status().isInternalServerError());
     }
 
@@ -82,7 +82,7 @@ class EjercicioControllerTest {
     void findById_existente_devuelve_200() throws Exception {
         when(ejercicioService.findById(1)).thenReturn(ejercicioDTO);
 
-        mockMvc.perform(get("/api/ejercicios/1"))
+        mockMvc.perform(get("/ejercicios/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.nombre").value("Press de Banca"));
@@ -97,7 +97,7 @@ class EjercicioControllerTest {
         when(ejercicioService.findById(99))
                 .thenThrow(new NotFoundEntityException("El ejercicio con id 99 no existe"));
 
-        mockMvc.perform(get("/api/ejercicios/99"))
+        mockMvc.perform(get("/ejercicios/99"))
                 .andExpect(status().isNotFound());
     }
 
@@ -107,7 +107,7 @@ class EjercicioControllerTest {
     void save_con_rol_admin_devuelve_200() throws Exception {
         when(ejercicioService.save(any(EjercicioCreateDTO.class))).thenReturn(ejercicioDTO);
 
-        mockMvc.perform(post("/api/ejercicios")
+        mockMvc.perform(post("/ejercicios")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(ejercicioCreateDTO)))
                 .andExpect(status().isOk())
@@ -120,7 +120,7 @@ class EjercicioControllerTest {
     @DisplayName("POST /api/ejercicios con rol USER devuelve 403")
     @WithMockUser(roles = "USER")
     void save_con_rol_user_devuelve_403() throws Exception {
-        mockMvc.perform(post("/api/ejercicios")
+        mockMvc.perform(post("/ejercicios")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(ejercicioCreateDTO)))
                 .andExpect(status().isForbidden());
@@ -134,7 +134,7 @@ class EjercicioControllerTest {
     void deleteById_con_rol_admin_devuelve_200() throws Exception {
         doNothing().when(ejercicioService).deleteById(1);
 
-        mockMvc.perform(delete("/api/ejercicios/1"))
+        mockMvc.perform(delete("/ejercicios/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.mensaje").value("Ejercicio desactivado con ÉXITO"));
 
@@ -147,7 +147,7 @@ class EjercicioControllerTest {
     void findActivos_devuelve_200() throws Exception {
         when(ejercicioService.findActivos()).thenReturn(List.of(ejercicioDTO));
 
-        mockMvc.perform(get("/api/ejercicios/activos"))
+        mockMvc.perform(get("/ejercicios/activos"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].activo").value(true));
 

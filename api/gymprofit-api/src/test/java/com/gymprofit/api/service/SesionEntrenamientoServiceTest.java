@@ -10,6 +10,7 @@ import com.gymprofit.api.mappers.SesionEntrenamientoMapper;
 import com.gymprofit.api.repository.jpa.IRutinaRepository;
 import com.gymprofit.api.repository.jpa.ISesionEntrenamientoRepository;
 import com.gymprofit.api.repository.jpa.IUsuarioRepository;
+import com.gymprofit.api.service.logro.ILogroService;
 import com.gymprofit.api.service.sesionentrenamiento.SesionEntrenamientoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -42,6 +43,9 @@ class SesionEntrenamientoServiceTest {
 
     @Mock
     private SesionEntrenamientoMapper sesionEntrenamientoMapper;
+
+    @Mock
+    private ILogroService logroService;
 
     @InjectMocks
     private SesionEntrenamientoService sesionEntrenamientoService;

@@ -2,14 +2,17 @@ package com.gymprofit.api.service;
 
 import com.gymprofit.api.dto.entity.rutina.RutinaCreateDTO;
 import com.gymprofit.api.dto.entity.rutina.RutinaDTO;
+import com.gymprofit.api.entity.Role;
 import com.gymprofit.api.entity.Rutina;
 import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.enums.Nivel;
+import com.gymprofit.api.enums.RoleType;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.mappers.RutinaMapper;
 import com.gymprofit.api.repository.jpa.IRutinaRepository;
 import com.gymprofit.api.repository.jpa.IUsuarioRepository;
 import com.gymprofit.api.service.rutina.RutinaService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +20,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,6 +57,11 @@ class RutinaServiceTest {
         usuario = new Usuario();
         usuario.setId(1);
         usuario.setUsername("testuser");
+        usuario.setRoles(List.of(new Role(1, RoleType.USER)));
+
+        UsernamePasswordAuthenticationToken auth =
+                new UsernamePasswordAuthenticationToken(usuario, null, Collections.emptyList());
+        SecurityContextHolder.getContext().setAuthentication(auth);
 
         rutina = new Rutina();
         rutina.setId(1);
@@ -69,6 +80,12 @@ class RutinaServiceTest {
         rutinaCreateDTO.setUsuarioId(1);
         rutinaCreateDTO.setNombre("Rutina Pecho");
         rutinaCreateDTO.setNivel("INTERMEDIO");
+        rutinaCreateDTO.setEsPredefinida(false);
+    }
+
+    @AfterEach
+    void tearDown() {
+        SecurityContextHolder.clearContext();
     }
 
     @Test
@@ -123,6 +140,7 @@ class RutinaServiceTest {
     @Test
     @DisplayName("save con usuario inexistente lanza NotFoundEntityException")
     void save_usuario_inexistente_lanza_excepcion() {
+        when(rutinaMapper.toEntity(rutinaCreateDTO)).thenReturn(rutina);
         when(usuarioRepository.findById(1)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundEntityException.class, () -> rutinaService.save(rutinaCreateDTO));
