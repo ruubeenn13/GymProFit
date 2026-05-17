@@ -15,6 +15,24 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GymProFit">
         <activity
+            android:name=".ui.activities.AdminActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activities.LogrosActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activities.RegistrarMedicionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activities.MedicionesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activities.RegistrarSesionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activities.SesionesActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.activities.RegistroActivity"
             android:exported="false" />
         <activity

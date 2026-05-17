@@ -166,6 +166,20 @@ public class API {
         UtilREST.request(BASE + "objetivos/" + id, "DELETE", null, l);
     }
 
+    // ── MEDICIONES CORPORALES ─────────────────────────────────────────────────
+
+    public static void getMedicionesDeUsuario(int usuarioId, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "mediciones-corporales/usuario/" + usuarioId + "/ordenadas", "GET", null, l);
+    }
+
+    public static void crearMedicion(JSONObject body, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "mediciones-corporales", "POST", body.toString(), l);
+    }
+
+    public static void eliminarMedicion(int id, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "mediciones-corporales/" + id, "DELETE", null, l);
+    }
+
     // ── ADMIN ─────────────────────────────────────────────────────────────────
 
     public static void getAdminUsuarios(UtilREST.OnResponseListener l) {

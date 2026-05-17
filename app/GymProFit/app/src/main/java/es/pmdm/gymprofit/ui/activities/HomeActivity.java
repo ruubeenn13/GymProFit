@@ -69,7 +69,7 @@ public class HomeActivity extends AppCompatActivity {
         MaterialCardView cardRegistrarComida = findViewById(R.id.cardRegistrarComida);
 
         cardIniciarEntrenamiento.setOnClickListener(v -> {
-            startActivity(new Intent(this, EjerciciosActivity.class));
+            startActivity(new Intent(this, SesionesActivity.class));
             overridePendingTransition(0, 0);
         });
 

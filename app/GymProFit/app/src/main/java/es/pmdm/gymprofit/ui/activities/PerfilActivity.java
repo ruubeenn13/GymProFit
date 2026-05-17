@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
@@ -24,6 +25,10 @@ import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.usuario.Usuario;
+import es.pmdm.gymprofit.ui.activities.AdminActivity;
+import es.pmdm.gymprofit.ui.activities.LogrosActivity;
+import es.pmdm.gymprofit.ui.activities.MedicionesActivity;
+import es.pmdm.gymprofit.ui.activities.SesionesActivity;
 import es.pmdm.gymprofit.network.API;
 import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
@@ -110,7 +115,14 @@ public class PerfilActivity extends AppCompatActivity {
 
             @Override
             public void onError(String message, int statusCode) {
-                // mantiene sinDatos
+                Log.e("GymProFit", "getUsuarioPorId error status=" + statusCode + " msg=" + message);
+                runOnUiThread(() -> {
+                    String username = prefsManager.getUsername();
+                    if (username != null && !username.isEmpty()) {
+                        tvNombreUsuario.setText(username);
+                        tvInfoNombre.setText(username);
+                    }
+                });
             }
         });
     }
@@ -142,6 +154,24 @@ public class PerfilActivity extends AppCompatActivity {
         findViewById(R.id.btnEditarPerfil).setOnClickListener(v ->
                 UIHelper.mostrarToastInfo(this, getString(R.string.perfil_editar_proximamente))
         );
+
+        findViewById(R.id.itemSesiones).setOnClickListener(v ->
+                startActivity(new Intent(this, SesionesActivity.class)));
+
+        findViewById(R.id.itemMediciones).setOnClickListener(v ->
+                startActivity(new Intent(this, MedicionesActivity.class)));
+
+        findViewById(R.id.itemLogros).setOnClickListener(v ->
+                startActivity(new Intent(this, LogrosActivity.class)));
+
+        View itemAdmin = findViewById(R.id.itemAdmin);
+        if (prefsManager.isAdmin()) {
+            itemAdmin.setVisibility(View.VISIBLE);
+            itemAdmin.setOnClickListener(v ->
+                    startActivity(new Intent(this, AdminActivity.class)));
+        } else {
+            itemAdmin.setVisibility(View.GONE);
+        }
 
         findViewById(R.id.btnCerrarSesion).setOnClickListener(v ->
                 UIHelper.mostrarDialogoConIcono(
