@@ -114,6 +114,12 @@ public class LoginActivity extends AppCompatActivity {
                     Usuario u = UtilJSONParser.parseUsuario(response);
                     prefsManager.saveUsuarioId(u.getId());
                     prefsManager.saveRol(u.getRol());
+
+                    boolean yaCompleto = "ROLE_ADMIN".equals(u.getRol())
+                            || (u.getNivelExperiencia() != null && !u.getNivelExperiencia().isEmpty());
+                    if (yaCompleto) {
+                        prefsManager.setOnboardingCompletado(true);
+                    }
                 } catch (JSONException e) {
                     // continúa sin guardar id/rol
                 }

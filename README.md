@@ -8,7 +8,6 @@
 ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
 ![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white)
-![Retrofit](https://img.shields.io/badge/Retrofit-48B983?style=for-the-badge&logo=square&logoColor=white)
 
 *Trabajo de Fin de Grado — CFGS Desarrollo de Aplicaciones Multimedia (2º DAM)*
 *Autor: Rubén Juan Candela*
@@ -27,12 +26,13 @@
 - [Tecnologías](#-tecnologías)
 - [Requisitos previos](#-requisitos-previos)
 - [Instalación y configuración](#-instalación-y-configuración)
+- [Changelog](#-changelog)
 
 ---
 
 ## 📱 Descripción general
 
-**GymProFit** es un proyecto full-stack compuesto por una aplicación Android nativa y una API REST propia. Permite a los usuarios registrarse, gestionar sus rutinas de entrenamiento, consultar un catálogo de ejercicios y calcular sus necesidades nutricionales personalizadas según su perfil físico (peso, altura, edad, nivel de experiencia y objetivo).
+**GymProFit** es un proyecto full-stack compuesto por una aplicación Android nativa y una API REST propia. Permite a los usuarios registrarse, gestionar sus rutinas de entrenamiento, registrar sesiones, consultar un catálogo de ejercicios, hacer seguimiento de mediciones corporales, ver sus logros desbloqueados y calcular sus necesidades nutricionales personalizadas según su perfil físico.
 
 El sistema distingue tres roles de usuario: **GUEST**, **USER** y **ADMIN**, con permisos diferenciados para cada operación de la API.
 
@@ -51,22 +51,26 @@ TFG-GymProFit/
 
 ## 📱 App Android (`app/GymProFit`)
 
-Aplicación Android nativa desarrollada en Java con Android Studio. Consume la API REST mediante Retrofit y almacena el token JWT en SharedPreferences.
+Aplicación Android nativa desarrollada en Java con Android Studio. Consume la API REST mediante `HttpURLConnection` + `AsyncTask` + `org.json` (arquitectura 4 capas UD06) y almacena el token JWT en SharedPreferences vía `PreferencesManager`.
 
 ### Flujo de navegación
 
 ```
 SplashActivity
      ↓
-Onboarding (1 → 2 → 3 → 4 → Resumen)
-     ↓
 LoginActivity ←→ RegistroActivity
+     ↓ (primer acceso)
+Onboarding (1 → 2 → 3 → 4 → Resumen)
      ↓
 HomeActivity (navegación inferior)
   ├── EjerciciosActivity
-  ├── RutinasActivity
+  ├── RutinasActivity → CrearRutinaActivity
   ├── NutricionActivity
   └── PerfilActivity
+        ├── SesionesActivity → RegistrarSesionActivity
+        ├── MedicionesActivity → RegistrarMedicionActivity
+        ├── LogrosActivity
+        └── AdminActivity  (solo ROLE_ADMIN)
 ```
 
 ---
@@ -79,348 +83,236 @@ HomeActivity (navegación inferior)
 
 #### 🧩 `model/`
 
-Entidades de dominio locales de la app, independientes de la API.
+POJOs puros sin dependencias de red ni de Android.
 
 | Clase | Descripción |
 |---|---|
-| `ejercicio/Ejercicio.java` | Modelo local de ejercicio con nombre, grupo muscular, dificultad, descripción, calorías e icono de recurso |
-| `rutina/Rutina.java` | Modelo local de rutina con nombre, nivel, descripción, número de ejercicios, duración y calorías aproximadas |
-
-> Estas clases son independientes de los DTOs de red — sirven para representar datos en la UI sin depender de la estructura de la API.
+| `usuario/Usuario.java` | Perfil completo: id, username, email, peso, altura, edad, nivelExperiencia, objetivo, activo, rol |
+| `ejercicio/Ejercicio.java` | Ejercicio con nombre, grupo muscular, dificultad, descripción, calorías e icono |
+| `rutina/Rutina.java` | Rutina con nombre, nivel, descripción, duración y calorías |
+| `sesion/SesionEntrenamiento.java` | Sesión con fechaInicio, fechaFin, duracionMinutos, caloriasQuemadas, notas, completada |
+| `logro/Logro.java` | Logro con id, nombre, descripción, icono y tipo |
+| `objetivo/ObjetivoPersonal.java` | Objetivo personal con progreso y fechas |
+| `medicion/MedicionCorporal.java` | Medición corporal con peso, altura, IMC, grasa, músculo, perímetros |
 
 ---
 
 #### 🌐 `network/`
 
-Toda la comunicación HTTP con la API REST.
+Arquitectura 4 capas obligatoria (UD06).
 
-**`ApiClient.java`** — Cliente HTTP singleton construido con OkHttp + Retrofit. Lee la `BASE_URL` desde `BuildConfig` (inyectada en tiempo de compilación desde `local.properties`). Gestiona el token JWT: al hacer login se almacena con `setToken()` y se inyecta automáticamente en la cabecera `Authorization: Bearer <token>` de cada petición. Al cerrar sesión se limpia con `clearToken()`. Incluye un interceptor de logging para depuración.
+**`UtilREST.java`** — Capa 2. `HttpURLConnection` + `AsyncTask` (deprecado pero requerido por el temario). Gestiona el token JWT estático (`setToken` / `clearToken` / `getToken`). Inyecta `Authorization: Bearer <token>` en cada petición. PATCH forzado vía reflexión Java. Loggea cada petición con `Log.d("GymProFit", método + url + statusCode)`.
 
-**`ApiService.java`** — Interfaz Retrofit que declara todos los endpoints de la API:
+**`UtilJSONParser.java`** — Capa 3. Parseo con `org.json`. Incluye el helper `parseFecha()` que maneja tanto el formato array de Jackson `[2024,5,17,10,30,0]` como string ISO `"2024-05-17T10:30:00"`. Métodos: `parseToken`, `parseTokenUsername`, `parseUsuario`, `parseUsuarioList`, `parseEjercicio`, `parseEjercicioList`, `parseRutina`, `parseRutinaList`, `parseSesion`, `parseSesionList`, `parseLogro`, `parseLogroList`, `parseLogrosDesbloqueados`, `parseMedicion`, `parseMedicionList`, `parseObjetivo`, `parseObjetivoList`.
+
+**`API.java`** — Capa 4. Fachada estática con todos los endpoints agrupados por sección: AUTH, USUARIOS, EJERCICIOS, RUTINAS, SESIONES, LOGROS, OBJETIVOS, MEDICIONES, ADMIN.
 
 | Método | Endpoint | Descripción |
 |---|---|---|
-| `POST` | `auth/login` | Inicio de sesión, devuelve JWT |
-| `POST` | `auth/register` | Registro de nuevo usuario |
-| `GET` | `usuarios/username/{username}` | Obtener usuario por nombre |
-| `GET` | `usuarios/{id}` | Obtener usuario por ID |
-| `PUT` | `usuarios/{id}` | Actualizar datos del usuario |
-| `GET` | `ejercicios` | Listar todos los ejercicios |
-| `GET` | `ejercicios/activos` | Listar ejercicios activos |
-| `GET` | `ejercicios/grupo/{grupoMuscular}` | Filtrar por grupo muscular |
-| `GET` | `ejercicios/nombre/{nombre}` | Buscar por nombre |
-| `GET` | `ejercicios/{id}` | Obtener ejercicio por ID |
-| `GET` | `rutinas/predefinidas` | Rutinas predefinidas del sistema |
-| `GET` | `rutinas/predefinidas/nivel/{nivel}` | Rutinas predefinidas por nivel |
-| `GET` | `rutinas/usuario/{usuarioId}` | Rutinas del usuario |
-| `GET` | `rutinas/nivel/{nivel}` | Rutinas por nivel |
-| `POST` | `rutinas` | Crear nueva rutina |
-| `PUT` | `rutinas/{id}` | Modificar rutina |
-| `DELETE` | `rutinas/{id}` | Eliminar rutina |
-
-**`dto/`** — Objetos de transferencia de datos que mapean las respuestas JSON de la API:
-
-| DTO | Campos principales |
-|---|---|
-| `LoginDTO` | `username`, `password` |
-| `RegisterDTO` | `username`, `password`, `email`, `roles` |
-| `TokenDTO` | `token`, `username`, `roles` — respuesta del login |
-| `UsuarioDTO` | `id`, `username`, `email`, `peso`, `altura`, `edad`, `nivelExperiencia`, `objetivo`, `fechaRegistro`, `activo` |
-| `EjercicioDTO` | `id`, `nombre`, `descripcion`, `grupoMuscular`, `dificultad`, `imagenUrl`, `instrucciones`, `caloriasQuemadas`, `equipoNecesario`, `activo` |
-| `RutinaDTO` | `id`, `usuarioId`, `nombre`, `descripcion`, `duracionMinutos`, `nivel`, `esPredefinida`, `categoria`, `diasSemana`, `fechaCreacion`, `activa` |
-| `RutinaCreateDTO` | `usuarioId`, `nombre`, `descripcion`, `duracionMinutos`, `nivel` — para crear rutinas nuevas |
+| `login` | `POST auth/login` | Inicio de sesión |
+| `register` | `POST auth/register` | Registro |
+| `getUsuarioPorUsername` | `GET usuarios/username/{u}` | Perfil por username |
+| `getUsuarioPorId` | `GET usuarios/{id}` | Perfil por ID |
+| `actualizarUsuario` | `PUT usuarios` | Actualizar perfil (id en body) |
+| `getRutinasDeUsuario` | `GET rutinas/usuario/{id}` | Rutinas del usuario |
+| `crearRutina` | `POST rutinas` | Nueva rutina |
+| `eliminarRutina` | `DELETE rutinas/{id}` | Eliminar rutina |
+| `getEjercicios` | `GET ejercicios` | Catálogo completo |
+| `getSesionesByUsuario` | `GET sesiones/usuario/{id}` | Sesiones del usuario |
+| `crearSesion` | `POST sesiones` | Nueva sesión |
+| `eliminarSesion` | `DELETE sesiones/{id}` | Eliminar sesión |
+| `getLogros` | `GET logros` | Todos los logros |
+| `getLogrosDeUsuario` | `GET logros/usuario/{id}` | Logros desbloqueados |
+| `getMedicionesDeUsuario` | `GET mediciones-corporales/usuario/{id}/ordenadas` | Historial de mediciones |
+| `crearMedicion` | `POST mediciones-corporales` | Nueva medición |
+| `eliminarMedicion` | `DELETE mediciones-corporales/{id}` | Eliminar medición |
+| `getAdminEstadisticas` | `GET admin/estadisticas-globales` | Stats globales (ADMIN) |
+| `getAdminUsuarios` | `GET admin/usuarios` | Lista usuarios (ADMIN) |
 
 ---
 
 #### 🖼️ `ui/activities/`
 
-Pantallas de la aplicación. Cada Activity gestiona directamente sus llamadas a la API usando `ApiClient.getApiService()`.
-
 | Activity | Descripción |
 |---|---|
-| `SplashActivity` | Pantalla de carga inicial. Comprueba si hay sesión activa en SharedPreferences para redirigir al Home o al Login |
-| `Onboarding1Activity` | Primera pantalla de bienvenida — presentación de la app |
-| `Onboarding2Activity` | Segunda pantalla — selección de objetivo (perder peso, ganar músculo, etc.) |
-| `Onboarding3Activity` | Tercera pantalla — nivel de experiencia del usuario |
-| `Onboarding4Activity` | Cuarta pantalla — datos físicos (peso, altura, edad) |
-| `OnboardingResumenActivity` | Resumen del perfil configurado durante el onboarding. Realiza el registro en la API |
-| `LoginActivity` | Inicio de sesión con username y contraseña. Llama a `auth/login`, guarda el JWT y navega al Home |
-| `RegistroActivity` | Registro de nuevo usuario. Llama a `auth/register` con validación de campos |
-| `HomeActivity` | Pantalla principal con navegación inferior (Bottom Navigation). Muestra resumen del perfil del usuario |
-| `EjerciciosActivity` | Catálogo de ejercicios con RecyclerView. Permite filtrar por grupo muscular y buscar por nombre |
-| `RutinasActivity` | Listado de rutinas del usuario y rutinas predefinidas. Permite eliminar rutinas propias |
-| `CrearRutinaActivity` | Formulario para crear una nueva rutina personalizada |
-| `NutricionActivity` | Calculadora nutricional. Calcula calorías diarias, macronutrientes y recomendaciones según el perfil del usuario |
-| `PerfilActivity` | Visualización y edición del perfil: username, email, peso, altura, edad, nivel y objetivo. Incluye opción de cambiar idioma y cerrar sesión |
+| `SplashActivity` | Carga inicial. Restaura token JWT desde SharedPreferences y redirige a Home o Login |
+| `LoginActivity` | Inicio de sesión. Guarda token, id, username y rol. Detecta si onboarding ya fue completado basándose en datos del usuario en BD |
+| `RegistroActivity` | Registro de nuevo usuario |
+| `Onboarding1–4Activity` | Flujo de configuración inicial (objetivo, nivel, datos físicos) |
+| `OnboardingResumenActivity` | Resumen y guardado. Llama a `PUT /usuarios` con todos los datos |
+| `HomeActivity` | Pantalla principal con BottomNav y card "Iniciar entrenamiento" → SesionesActivity |
+| `EjerciciosActivity` | Catálogo con filtro por grupo muscular y búsqueda |
+| `RutinasActivity` | Listado de rutinas del usuario y predefinidas. Permite eliminar |
+| `CrearRutinaActivity` | Formulario para crear rutina personalizada |
+| `NutricionActivity` | Calculadora nutricional (calorías, macros, agua) |
+| `PerfilActivity` | Perfil con datos reales de la API. Sección "Mis actividades" + configuración (tema, idioma) + cerrar sesión |
+| `SesionesActivity` | Historial de sesiones con opción de eliminar. Lanza RegistrarSesionActivity con ActivityResultLauncher |
+| `RegistrarSesionActivity` | Formulario para registrar sesión (spinner de rutinas, duración, calorías, notas) |
+| `MedicionesActivity` | Historial de mediciones corporales con opción de eliminar |
+| `RegistrarMedicionActivity` | Formulario para añadir medición (peso obligatorio, resto opcionales) |
+| `LogrosActivity` | Lista todos los logros. Desbloqueados primero, alpha 0.5 para los bloqueados. Dos llamadas paralelas con AtomicInteger |
+| `AdminActivity` | Panel de administración: estadísticas globales + lista de usuarios (solo ROLE_ADMIN) |
 
-**`ui/adapters/`** — Adaptadores RecyclerView:
+**`ui/adapters/`**
 
 | Adapter | Descripción |
 |---|---|
-| `EjercicioAdapter.java` | Muestra cada ejercicio en una tarjeta con nombre, grupo muscular, dificultad y calorías |
-| `RutinaAdapter.java` | Muestra cada rutina con nombre, nivel, duración y opción de eliminar |
+| `EjercicioAdapter` | Tarjeta de ejercicio con nombre, grupo muscular y calorías |
+| `RutinaAdapter` | Rutina con nombre, nivel, duración y botón eliminar |
+| `SesionAdapter` | Sesión con fecha, rutina asociada, duración y calorías |
+| `MedicionAdapter` | Medición con peso, IMC y extras (grasa, músculo) |
+| `LogroAdapter` | Logro con icono emoji, nombre, descripción y check si desbloqueado |
+| `AdminUsuarioAdapter` | Usuario con username, email y chip de rol |
 
 ---
 
 #### 🛠️ `utils/`
 
-Clases de utilidad reutilizables desde cualquier Activity.
-
 | Clase | Descripción |
 |---|---|
-| `PreferencesManager.java` | Gestión centralizada de SharedPreferences. Guarda y recupera el token JWT, el ID de usuario, username, email, nivel, objetivo y datos físicos. Proporciona métodos para comprobar si hay sesión activa y para limpiarla al cerrar sesión |
-| `CalculadoraNutricional.java` | Lógica de cálculo nutricional personalizada. Calcula el metabolismo basal (BMR) usando la fórmula de Harris-Benedict, aplica el factor de actividad según el nivel de experiencia del usuario y distribuye los macronutrientes (proteínas, carbohidratos, grasas) según el objetivo del usuario |
-| `ResultadoNutricional.java` | Modelo de datos que encapsula el resultado del cálculo nutricional: calorías totales, proteínas, carbohidratos y grasas en gramos |
-| `UIHelper.java` | Métodos helper para la interfaz: mostrar toasts personalizados, diálogos de confirmación y otros elementos visuales reutilizables |
+| `PreferencesManager` | SharedPreferences centralizado. Campos: token, usuarioId, username, rol, nivel, objetivo, sexo, actividad, calorías/macros/agua, onboarding, tema, idioma. `cerrarSesion()` limpia token + id + username + onboarding |
+| `CalculadoraNutricional` | BMR con Harris-Benedict, factor de actividad y distribución de macros según objetivo |
+| `ResultadoNutricional` | Modelo con calorías totales, proteínas, carbohidratos y grasas |
+| `UIHelper` | Toasts personalizados (éxito, error, info) y diálogos de confirmación con icono |
 
 ---
 
-#### 🎨 `res/`
+#### ⚙️ Configuración
 
-Recursos de la aplicación.
+**`build.gradle`** — Lee `BASE_URL` desde `local.properties` e inyecta en `BuildConfig`. No hay dependencias Retrofit/OkHttp/Gson — solo `org.json` nativo de Android.
 
-| Carpeta | Contenido |
-|---|---|
-| `layout/` | Layouts XML de cada Activity y elementos adicionales: `activity_login.xml`, `activity_home.xml`, `activity_ejercicios.xml`, `activity_rutinas.xml`, `activity_crear_rutina.xml`, `activity_nutricion.xml`, `activity_perfil.xml`, `activity_registro.xml`, `activity_splash.xml`, `activity_onboarding1-4.xml`, `activity_onboarding_resumen.xml`, `item_ejercicio.xml`, `item_rutina.xml`, `dialog_custom.xml`, `dialog_idioma.xml`, `toast_custom.xml` |
-| `drawable/` | 25+ iconos SVG vectoriales: navegación (`ic_home`, `ic_rutinas`, `ic_ejercicios`, `ic_nutricion`, `ic_perfil`), perfil (`ic_peso`, `ic_altura`, `ic_edad`, `ic_objetivo`, `ic_nivel`, `ic_email`), acciones (`ic_edit`, `ic_add`, `ic_search`, `ic_logout`, `ic_lock`, `ic_arrow_back`, `ic_check`, `ic_error`, `ic_info`, `ic_chevron_right`), decoración (`ic_sun`, `ic_moon`, `ic_language`, `ic_logo_gym`, `ic_calorias`, `ic_tiempo`), fondos (`bg_dialog.xml`, `bg_toast.xml`, `progress_bar_calorias.xml`) |
-| `menu/` | `bottom_nav_menu.xml` — menú de navegación inferior con 4 destinos: Home, Ejercicios, Rutinas, Nutrición |
-| `values/` | `strings.xml` (español), `colors.xml`, `themes.xml` |
-| `values-en/` | `strings.xml` traducidos al inglés (internacionalización) |
-| `values-night/` | `colors.xml` y `themes.xml` para el modo oscuro |
-| `mipmap-*/` | Icono de la app en todas las densidades (mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi) |
-| `color/` | `bottom_nav_color.xml` — selector de color para los ítems de la navegación inferior (activo/inactivo) |
-| `xml/` | `backup_rules.xml` y `data_extraction_rules.xml` |
+**`AndroidManifest.xml`** — Declara todas las Activities y el permiso `INTERNET`.
 
----
-
-#### ⚙️ Configuración del módulo `app/`
-
-**`build.gradle`** — Lee `BASE_URL` desde `local.properties` y la inyecta en `BuildConfig` para no hardcodear la URL en el código. Incluye la configuración de firma (`signingConfigs`) para generar APKs de release. Dependencias: Retrofit 2, OkHttp Logging Interceptor, Gson, Material Design, AppCompat y ConstraintLayout.
-
-**`AndroidManifest.xml`** — Declara todas las Activities, permisos de internet y la configuración de seguridad de red.
-
-**`local.properties`** *(no versionado)* — Contiene `sdk.dir` y `BASE_URL`. No se sube al repositorio por seguridad.
+**`local.properties`** *(no versionado)* — Contiene `sdk.dir` y `BASE_URL=http://10.0.2.2:8080/api/`.
 
 ---
 
 ## 🌐 API REST (`api/gymprofit-api`)
 
-Backend desarrollado con Spring Boot 3, Java 21, MariaDB, Flyway para migraciones, jOOQ para consultas avanzadas, MapStruct para mapeo de DTOs, Spring Security con JWT y documentación automática con Swagger/OpenAPI.
+Backend desarrollado con Spring Boot 3, Java 21, MariaDB, Flyway para migraciones, jOOQ para consultas avanzadas, MapStruct para mapeo de DTOs, Spring Security con JWT y Swagger/OpenAPI.
 
-### Arquitectura de la API
+### Arquitectura
 
 ```
 Controller → Service → Repository (JPA / jOOQ) → MariaDB
 ```
 
-Cada entidad sigue el patrón interfaz + implementación tanto en servicios como en repositorios.
-
 ---
 
 ### 📁 Estructura de la API
 
-#### `src/main/java/com/gymprofit/api/`
-
----
-
-#### ⚙️ `config/`
-
-Configuración central de la aplicación.
+#### `config/`
 
 | Clase | Descripción |
 |---|---|
-| `SecurityConfig.java` | Configuración de Spring Security. Define CORS abierto, sesiones stateless y reglas de autorización por rol: `/auth/**` y Swagger son públicos; GET de ejercicios, rutinas y alimentos son accesibles para GUEST+; escritura (POST/PUT/DELETE) en ejercicios y rutinas requiere ADMIN; gestión del perfil propio requiere USER o ADMIN |
-| `FlywayConfig.java` | Configuración de Flyway para la gestión de migraciones de base de datos |
-| `JooqConfig.java` | Configuración de jOOQ para consultas SQL tipadas y avanzadas |
-| `SwaggerConfig.java` | Configuración de SpringDoc OpenAPI. Documentación interactiva disponible en `/swagger-ui.html` |
-| `security/JwtTokenProvider.java` | Genera y valida tokens JWT. Configurable mediante `jwt.secret` y `jwt.expiration` |
-| `security/JwtAuthenticationFilter.java` | Filtro que intercepta cada petición, extrae el token JWT de la cabecera `Authorization`, lo valida y establece el contexto de seguridad |
-| `security/JwtEntryPoint.java` | Responde con 401 cuando una petición no autenticada accede a un recurso protegido |
-| `security/JwtAccessDenied.java` | Responde con 403 cuando un usuario autenticado no tiene permisos suficientes |
+| `SecurityConfig` | CORS abierto, sesiones stateless, reglas por rol. `/auth/**` y Swagger públicos |
+| `FlywayConfig` | Migraciones de base de datos |
+| `JooqConfig` | Consultas SQL tipadas |
+| `SwaggerConfig` | OpenAPI en `/swagger-ui.html` |
+| `security/JwtTokenProvider` | Genera y valida JWT. Configurable con `jwt.secret` y `jwt.expiration` |
+| `security/JwtAuthenticationFilter` | Extrae y valida JWT en cada petición |
 
 ---
 
-#### 🎮 `controller/`
-
-Controladores REST. Todos están documentados con anotaciones Swagger (`@Tag`, `@Operation`, `@ApiResponse`).
+#### `controller/`
 
 | Controlador | Ruta base | Descripción |
 |---|---|---|
-| `AuthController` | `/auth` | Login (`POST /login`) y registro (`POST /register`). Endpoints públicos sin autenticación |
-| `UsuarioController` | `/api/usuarios` | CRUD completo. Búsqueda por username y email. Activación/desactivación. Verificación de existencia de username y email. Solo ADMIN puede listar todos los usuarios |
-| `EjercicioController` | `/api/ejercicios` | CRUD completo. Filtros por grupo muscular, dificultad y nombre. Activación/desactivación y eliminación permanente. Escritura solo para ADMIN |
-| `RutinaController` | `/api/rutinas` | CRUD de rutinas. Filtros por usuario, nivel, nombre y estado (activas/predefinidas). Activación/desactivación y eliminación permanente |
-| `RutinaEjercicioController` | `/api/rutinas-ejercicios` | Gestión de la relación entre rutinas y ejercicios (qué ejercicios contiene cada rutina, con series, reps y orden) |
-| `SesionEntrenamientoController` | `/api/sesiones` | Registro de sesiones de entrenamiento completadas por el usuario |
-| `EjercicioRealizadoController` | `/api/ejercicios-realizados` | Registro de ejercicios realizados dentro de una sesión (series, repeticiones, peso, tiempo, notas) |
-| `ProgresoEjercicioController` | `/api/progreso-ejercicios` | Seguimiento del progreso por ejercicio: mejor peso, mejor tiempo, número de repeticiones |
-| `MedicionCorporalController` | `/api/mediciones-corporales` | Registro de mediciones corporales: peso, altura, IMC, grasa corporal, masa muscular, perímetros |
-| `ObjetivoPersonalController` | `/api/objetivos-personales` | Gestión de objetivos personales con seguimiento de progreso y fecha límite |
-| `AlimentoController` | `/api/alimentos` | CRUD del catálogo de alimentos con información nutricional completa |
-| `ComidaController` | `/api/comidas` | Registro de comidas diarias por usuario (desayuno, almuerzo, comida, merienda, cena, snack) |
-| `AlimentoComidaController` | `/api/alimentos-comida` | Relación entre alimentos y comidas con cantidad en gramos y calorías totales |
-| `NotificacionController` | `/api/notificaciones` | Gestión de notificaciones del sistema (recordatorios, logros, objetivos, sistema) |
-| `EjercicioJooqController` | `/api/jooq/ejercicios` | Consultas avanzadas de ejercicios usando jOOQ (accesible por GUEST, USER y ADMIN) |
-| `UsuarioJooqController` | `/api/jooq/usuarios` | Consultas avanzadas de usuarios usando jOOQ (solo ADMIN) |
+| `AuthController` | `/auth` | Login y registro. Endpoints públicos |
+| `UsuarioController` | `/usuarios` | CRUD completo. Solo ADMIN lista todos |
+| `EjercicioController` | `/ejercicios` | CRUD. Filtros por grupo, dificultad y nombre. Escritura solo ADMIN |
+| `RutinaController` | `/rutinas` | CRUD rutinas. Predefinidas y de usuario |
+| `RutinaEjercicioController` | `/rutinas-ejercicios` | Relación rutina↔ejercicio |
+| `SesionEntrenamientoController` | `/sesiones` | Registro de sesiones completadas |
+| `EjercicioRealizadoController` | `/ejercicios-realizados` | Detalle ejercicios por sesión |
+| `ProgresoEjercicioController` | `/progreso-ejercicios` | Mejor marca por ejercicio |
+| `MedicionCorporalController` | `/mediciones-corporales` | Mediciones corporales. `GET /usuario/{id}/ordenadas` para historial |
+| `ObjetivoPersonalController` | `/objetivos-personales` | Objetivos con progreso |
+| `AlimentoController` | `/alimentos` | Catálogo nutricional |
+| `ComidaController` | `/comidas` | Comidas diarias |
+| `AlimentoComidaController` | `/alimentos-comida` | Alimentos por comida |
+| `NotificacionController` | `/notificaciones` | Notificaciones del sistema |
+| `LogroController` | `/logros` | Catálogo de logros y logros por usuario |
+| `AdminController` | `/admin` | `GET /estadisticas-globales` y `GET /usuarios` (solo ADMIN) |
+| `EjercicioJooqController` | `/jooq/ejercicios` | Consultas avanzadas jOOQ |
+| `UsuarioJooqController` | `/jooq/usuarios` | Consultas avanzadas jOOQ (solo ADMIN) |
 
 ---
 
-#### 📦 `dto/`
+#### `entity/`
 
-Objetos de transferencia de datos organizados por función.
-
-**`auth/`** — DTOs de autenticación: `LoginDTO` (username + password), `RegisterDTO` (username + password + email), `TokenDTO` (token JWT + username + roles).
-
-**`entity/`** — DTOs de entidades. Cada entidad tiene su propio paquete con variantes `DTO` (lectura), `CreateDTO` (creación) y en algunos casos `UpdateDTO` (actualización parcial):
-
-`alimento`, `alimentocomida`, `comida`, `ejercicio`, `ejerciciorealizado`, `medicioncorporal`, `notificacion`, `objetivopersonal`, `progresoejercicio`, `rutina`, `rutinaejercicio`, `sesionentrenamiento`, `usuario`.
-
-**`jooq/`** — DTOs específicos para las consultas jOOQ: `EjercicioJooqDTO` y `UsuarioJooqDTO` con campos optimizados para esas consultas.
-
----
-
-#### 🗃️ `entity/`
-
-Entidades JPA que mapean directamente con las tablas de la base de datos.
-
-| Entidad | Tabla | Descripción |
-|---|---|---|
-| `Usuario` | `usuarios` | Usuario con datos de perfil, credenciales e implementación de `UserDetails` para Spring Security |
-| `Role` | `roles` | Rol del sistema (ADMIN, USER, GUEST) |
-| `Ejercicio` | `ejercicios` | Ejercicio del catálogo con grupo muscular, dificultad, instrucciones y calorías quemadas |
-| `Rutina` | `rutinas` | Rutina de entrenamiento con flag `esPredefinida` para distinguir las del sistema de las del usuario |
-| `RutinaEjercicio` | `rutina_ejercicios` | Relación muchos a muchos entre rutinas y ejercicios con series, repeticiones, peso recomendado y orden |
-| `SesionEntrenamiento` | `sesiones_entrenamiento` | Sesión completada con fecha, duración real y calorías quemadas |
-| `EjercicioRealizado` | `ejercicios_realizados` | Registro detallado de un ejercicio en una sesión (series, reps, peso, tiempo, notas) |
-| `ProgresoEjercicio` | `progreso_ejercicios` | Mejor marca histórica del usuario en cada ejercicio |
-| `MedicionCorporal` | `mediciones_corporales` | Medición con IMC, grasa corporal, masa muscular y perímetros corporales |
-| `ObjetivoPersonal` | `objetivos_personales` | Objetivo con valor actual, valor meta, unidad, fechas de inicio/límite y estado de completado |
-| `Alimento` | `alimentos` | Alimento del catálogo con macronutrientes (calorías, proteínas, carbohidratos, grasas, fibra) por porción |
-| `Comida` | `comidas` | Registro de comida diaria con totales nutricionales calculados |
-| `AlimentoComida` | `alimentos_comida` | Alimento dentro de una comida con cantidad en gramos y calorías totales |
-| `Notificacion` | `notificaciones` | Notificación con tipo, título, mensaje, fecha programada y estado de lectura |
-
----
-
-#### 🔢 `enums/`
-
-Enumeraciones que tipifican los valores posibles de los campos.
-
-| Enum | Valores |
+| Entidad | Tabla |
 |---|---|
-| `GrupoMuscular` | `PECHO`, `ESPALDA`, `PIERNAS`, `HOMBROS`, `BRAZOS`, `ABDOMEN`, `CARDIO`, `FULLBODY` |
-| `Dificultad` | `PRINCIPIANTE`, `INTERMEDIO`, `AVANZADO` |
-| `Nivel` | `PRINCIPIANTE`, `INTERMEDIO`, `AVANZADO`, `EXPERTO` |
-| `NivelExperiencia` | `PRINCIPIANTE`, `INTERMEDIO`, `AVANZADO`, `EXPERTO` |
-| `TipoComida` | `DESAYUNO`, `ALMUERZO`, `COMIDA`, `MERIENDA`, `CENA`, `SNACK` |
-| `TipoNotificacion` | `RECORDATORIO`, `LOGRO`, `OBJETIVO`, `SISTEMA` |
-| `TipoObjetivo` | `PERDER_PESO`, `GANAR_MASA_MUSCULAR`, `MEJORAR_RESISTENCIA`, `MEJORAR_FLEXIBILIDAD`, `MEJORAR_FUERZA`, `MANTENER_PESO`, `REDUCIR_GRASA_CORPORAL`, `MEJORAR_VELOCIDAD`, `AUMENTAR_CALORIAS`, `MEJORAR_MOVILIDAD`, `COMPLETAR_RETO`, `OTRO` |
-| `RoleType` | `ADMIN`, `USER`, `GUEST` |
+| `Usuario` | `usuarios` — implementa `UserDetails`. `isEnabled()` devuelve `activo != null && activo` |
+| `Role` | `roles` — ADMIN, USER, GUEST |
+| `Ejercicio` | `ejercicios` |
+| `Rutina` | `rutinas` |
+| `RutinaEjercicio` | `rutina_ejercicios` |
+| `SesionEntrenamiento` | `sesiones_entrenamiento` |
+| `EjercicioRealizado` | `ejercicios_realizados` |
+| `ProgresoEjercicio` | `progreso_ejercicios` |
+| `MedicionCorporal` | `mediciones_corporales` |
+| `ObjetivoPersonal` | `objetivos_personales` |
+| `Alimento` | `alimentos` |
+| `Comida` | `comidas` |
+| `AlimentoComida` | `alimentos_comida` |
+| `Notificacion` | `notificaciones` |
+| `Logro` | `logros` |
+| `UsuarioLogro` | `usuario_logros` |
 
 ---
 
-#### 🔧 `exceptions/`
+#### `enums/`
 
-Sistema de manejo de excepciones centralizado.
-
-**`ControllerExceptionHandler.java`** — Manejador global (`@RestControllerAdvice`). Captura todas las excepciones personalizadas y devuelve respuestas JSON estructuradas con el código HTTP apropiado.
-
-| Excepción | HTTP | Descripción |
-|---|---|---|
-| `NotFoundEntityException` | 404 | Entidad no encontrada en la base de datos |
-| `DuplicateEntityException` | 409 | Entidad duplicada (username o email ya existe) |
-| `InvalidCredentialsException` | 401 | Credenciales incorrectas en el login |
-| `InvalidDataException` | 400 | Datos de entrada inválidos o vacíos |
-| `UnauthorizedException` | 403 | Sin permisos para la operación |
-| `CreateEntityException` | 500 | Error al crear la entidad |
-| `UpdateEntityException` | 500 | Error al actualizar la entidad |
-| `DeleteEntityException` | 500 | Error al eliminar la entidad |
-| `ObjetivoAlreadyCompletedException` | 400 | El objetivo ya estaba marcado como completado |
-| `SesionNotCompletedException` | 400 | La sesión de entrenamiento no está completada |
-| `ErrorGenericoException` | 500 | Error genérico del servidor |
+`GrupoMuscular`, `Dificultad`, `NivelExperiencia`, `TipoComida`, `TipoNotificacion`, `TipoObjetivo`, `RoleType`.
 
 ---
 
-#### 🗺️ `mappers/`
+#### `exceptions/`
 
-Interfaces MapStruct para la conversión automática entre entidades JPA y DTOs. MapStruct genera las implementaciones en tiempo de compilación, eliminando código boilerplate de conversión manual.
-
-Mappers disponibles: `AlimentoMapper`, `AlimentoComidaMapper`, `ComidaMapper`, `EjercicioMapper`, `EjercicioRealizadoMapper`, `MedicionCorporalMapper`, `NotificacionMapper`, `ObjetivoPersonalMapper`, `ProgresoEjercicioMapper`, `RutinaMapper`, `RutinaEjercicioMapper`, `SesionEntrenamientoMapper`, `UsuarioMapper`.
+`ControllerExceptionHandler` (`@RestControllerAdvice`). Excepciones: `NotFoundEntityException` (404), `DuplicateEntityException` (409), `InvalidCredentialsException` (401), `InvalidDataException` (400), `UnauthorizedException` (403), `CreateEntityException` / `UpdateEntityException` / `DeleteEntityException` (500).
 
 ---
 
-#### 🗄️ `repository/`
-
-Capa de acceso a datos con dos tecnologías diferenciadas según la complejidad de la consulta.
-
-**`jpa/`** — Repositorios Spring Data JPA (interfaces que extienden `JpaRepository`). Para operaciones CRUD estándar y consultas derivadas del nombre del método: `IEjercicioRepository`, `IRutinaRepository`, `IUsuarioRepository`, `IRoleRepository`, `ISesionEntrenamientoRepository`, `IEjercicioRealizadoRepository`, `IProgresoEjercicioRepository`, `IMedicionCorporalRepository`, `IObjetivoPersonalRepository`, `IAlimentoRepository`, `IComidaRepository`, `IAlimentoComidaRepository`, `INotificacionRepository`.
-
-**`jooq/`** — Repositorios jOOQ para consultas SQL complejas y tipadas, generadas automáticamente a partir del esquema de base de datos. Se usan cuando JPA no puede expresar la consulta de forma eficiente: `EjercicioJooqRepository` / `IEjercicioJooqRepository` y `UsuarioJooqRepository` / `IUsuarioJooqRepository`.
-
----
-
-#### 🔬 `service/`
-
-Capa de lógica de negocio. Cada servicio implementa su interfaz correspondiente. Los servicios gestionan la validación de datos, el mapeo DTO↔entidad mediante MapStruct, el llamado al repositorio y el lanzamiento de excepciones personalizadas.
-
-Servicios: `AuthService` (login y registro con BCrypt), `UsuarioService` (CRUD + `UserDetailsService` para Spring Security), `EjercicioService`, `RutinaService`, `RutinaEjercicioService`, `SesionEntrenamientoService`, `EjercicioRealizadoService`, `ProgresoEjercicioService`, `MedicionCorporalService`, `ObjetivoPersonalService`, `AlimentoService`, `ComidaService`, `AlimentoComidaService`, `NotificacionService`.
-
----
-
-#### 📝 `src/main/resources/`
+#### `src/main/resources/`
 
 | Archivo | Descripción |
 |---|---|
-| `application.properties` | Configuración principal. Activa el perfil `dev` por defecto, expone la API en el puerto 8080 con context-path `/api`, configura Flyway y Swagger |
-| `application-dev.properties` | Configuración del entorno de desarrollo (conexión a BD local, nivel de logging DEBUG) |
-| `application-prod.properties` | Configuración del entorno de producción |
-| `application-example.properties` | Plantilla de configuración para nuevos desarrolladores con todos los parámetros necesarios y valores de ejemplo |
-| `logback-spring.xml` | Configuración de logging. Genera archivos de log diarios en `logs/` con el patrón `gymprofit_YYYY-MM-DD.log` |
+| `application.properties` | Puerto 8080, context-path `/api`, perfil `dev` por defecto |
+| `application-dev.properties` | BD local, logging DEBUG |
+| `application-prod.properties` | Entorno de producción |
+| `application-example.properties` | Plantilla para nuevos desarrolladores |
+| `logback-spring.xml` | Logs diarios en `logs/gymprofit_YYYY-MM-DD.log` |
 
-**`db/migration/`** — Migraciones Flyway versionadas en orden cronológico:
-
-| Migración | Descripción |
-|---|---|
-| `202603022100__GymProFitDB_MigracionInicial.sql` | Creación de las 13 tablas principales del sistema |
-| `202603231235__Cambios_Entidades.sql` | Ajustes en la estructura de entidades existentes |
-| `202603251830__Fix_mejor_repeticiones_tipo.sql` | Corrección del tipo de dato de repeticiones en la tabla de progreso |
-| `202604051853__Add_Auth_Roles.sql` | Añade las tablas `roles` y `usuario_roles` para el sistema de autenticación por roles |
+> **Nota:** Los archivos de migración Flyway en `db/migration/` no tienen prefijo `V` → Flyway **no los ejecuta automáticamente**. Cualquier cambio de esquema se aplica con SQL directo en MariaDB.
 
 ---
 
-#### 🧪 `src/test/`
+#### `src/test/`
 
-Suite de tests con JUnit 5, Mockito y Spring Security Test.
-
-**Tests de controladores** (`controller/`): `AuthControllerTest`, `EjercicioControllerTest`, `RutinaControllerTest`.
-
-**Tests de servicios** (`service/`): `AuthServiceTest`, `EjercicioServiceTest`, `RutinaServiceTest`, `SesionEntrenamientoServiceTest`, `UsuarioServiceTest`.
+132 tests. Controladores: `AuthControllerTest`, `EjercicioControllerTest`, `RutinaControllerTest`. Servicios: `AuthServiceTest`, `EjercicioServiceTest`, `RutinaServiceTest`, `SesionEntrenamientoServiceTest`, `UsuarioServiceTest`.
 
 ---
 
 ## 🗄️ Base de datos (`db/`)
 
-**`schema.sql`** — Script SQL completo para la creación inicial de la base de datos `GymProFitDB` en MariaDB/MySQL. Define todas las tablas del sistema con sus relaciones, índices y restricciones de integridad referencial.
-
-### Esquema de tablas
+MariaDB en `localhost:3308`, base de datos `gymprofit_db`.
 
 | Tabla | Descripción |
 |---|---|
-| `usuarios` | Usuarios con datos de perfil (peso, altura, edad, nivel, objetivo), credenciales e índices en `username` y `email` |
-| `roles` | Roles del sistema: ADMIN, USER, GUEST |
-| `usuario_roles` | Tabla de unión muchos a muchos entre usuarios y roles |
-| `ejercicios` | Catálogo de ejercicios con grupo muscular (enum), dificultad (enum), instrucciones, calorías e índices |
-| `rutinas` | Rutinas con flag `es_predefinida` para distinguir las del sistema de las creadas por usuarios |
-| `rutina_ejercicios` | Relación ejercicios-rutinas con series, repeticiones, peso recomendado, tiempo de descanso y orden |
-| `sesiones_entrenamiento` | Sesiones completadas con fecha de inicio/fin, duración real y calorías quemadas |
-| `ejercicios_realizados` | Detalle de cada ejercicio en una sesión: series, repeticiones, peso, tiempo y notas |
-| `progreso_ejercicios` | Mejor marca histórica del usuario en cada ejercicio (mejor peso, mejor tiempo, mejor repeticiones) |
-| `mediciones_corporales` | Evolución de medidas: peso, altura, IMC, grasa corporal, masa muscular y perímetros (cintura, pecho, brazos, piernas) |
-| `objetivos_personales` | Objetivos con valor actual, valor meta, unidad, fechas de inicio/límite y timestamp de completado |
-| `alimentos` | Catálogo nutricional: calorías, proteínas, carbohidratos, grasas y fibra por porción en gramos |
-| `comidas` | Registros de comidas diarias por usuario con totales nutricionales calculados |
-| `alimentos_comida` | Alimentos incluidos en cada comida con cantidad en gramos y calorías calculadas |
-| `notificaciones` | Notificaciones con tipo (enum), título, mensaje, fecha de creación, fecha programada y estado de lectura |
+| `usuarios` | Perfil completo. `activo TINYINT(1)` — debe ser 1 para poder hacer login |
+| `roles` / `usuario_roles` | Sistema de roles ADMIN, USER, GUEST |
+| `ejercicios` | Catálogo con grupo muscular y dificultad como enum |
+| `rutinas` | Flag `es_predefinida` para distinguir rutinas del sistema |
+| `rutina_ejercicios` | Series, reps, peso recomendado y orden |
+| `sesiones_entrenamiento` | fechaInicio, fechaFin, duracion, calorias |
+| `ejercicios_realizados` | Detalle por sesión |
+| `progreso_ejercicios` | Mejor marca histórica por ejercicio |
+| `mediciones_corporales` | Peso, altura, IMC, grasa, músculo, perímetros |
+| `objetivos_personales` | Valor actual vs meta, fechas y estado |
+| `alimentos` / `comidas` / `alimentos_comida` | Módulo nutricional |
+| `notificaciones` | Recordatorios y logros |
+| `logros` / `usuario_logros` | Sistema de logros con evaluación automática |
 
 ---
 
@@ -431,13 +323,12 @@ Suite de tests con JUnit 5, Mockito y Spring Security Test.
 | Tecnología | Uso |
 |---|---|
 | Java 11 | Lenguaje principal |
-| Android SDK 36 (min 24) | Plataforma objetivo |
-| Retrofit 2 | Cliente HTTP para la API REST |
-| OkHttp + Logging Interceptor | Gestión de peticiones y logs de red |
-| Gson | Serialización/deserialización JSON |
+| Android SDK 36 (minSdk 24) | Plataforma objetivo |
+| HttpURLConnection + AsyncTask | Cliente HTTP (UD06) |
+| org.json | Parseo JSON nativo |
 | Material Design 3 | Componentes visuales y temas |
 | SharedPreferences | Persistencia local del token JWT y datos de sesión |
-| Gradle 8.13 | Sistema de construcción |
+| Gradle 8.13 | Build system |
 
 ### API REST
 
@@ -445,17 +336,17 @@ Suite de tests con JUnit 5, Mockito y Spring Security Test.
 |---|---|---|
 | Java | 21 | Lenguaje principal |
 | Spring Boot | 3.5.7 | Framework web |
-| Spring Security | — | Autenticación JWT y autorización por roles |
-| Spring Data JPA | — | Acceso a datos ORM |
-| jOOQ | 3.19 | Consultas SQL avanzadas y tipadas |
-| Flyway | 11.15 | Migraciones de base de datos versionadas |
-| MapStruct | 1.6.3 | Mapeo automático DTO↔entidad |
-| Lombok | 1.18.38 | Reducción de código boilerplate |
-| JJWT | 0.13.0 | Generación y validación de tokens JWT |
-| SpringDoc OpenAPI | 2.8.15 | Documentación Swagger automática |
+| Spring Security | — | JWT y autorización por roles |
+| Spring Data JPA | — | ORM y CRUD estándar |
+| jOOQ | 3.19 | Consultas SQL complejas y tipadas |
+| Flyway | 11.15 | Migraciones versionadas |
+| MapStruct | 1.6.3 | Mapeo DTO↔entidad |
+| Lombok | 1.18.38 | Reducción de boilerplate |
+| JJWT | 0.13.0 | Generación y validación JWT |
+| SpringDoc OpenAPI | 2.8.15 | Documentación Swagger |
 | MariaDB | — | Base de datos relacional |
-| JUnit 5 + Mockito | — | Testing unitario e integración |
-| Maven | — | Gestión de dependencias y build |
+| JUnit 5 + Mockito | — | Tests unitarios e integración |
+| Maven | — | Gestión de dependencias |
 
 ---
 
@@ -463,8 +354,8 @@ Suite de tests con JUnit 5, Mockito y Spring Security Test.
 
 - **Android Studio** Hedgehog o superior
 - **JDK 21** para la API y **JDK 11** para la app Android
-- **MariaDB** 10.6+ o MySQL 8+
-- **Maven** 3.8+ (o usar el wrapper `./mvnw` incluido en la API)
+- **MariaDB** 10.6+ (`localhost:3308`)
+- **Maven** 3.8+ (o usar `./mvnw`)
 
 ---
 
@@ -480,10 +371,13 @@ cd TFG-GymProFit
 ### 2. Configurar la base de datos
 
 ```sql
-mysql -u root -p < db/schema.sql
+-- Crear la base de datos
+CREATE DATABASE gymprofit_db CHARACTER SET utf8mb4;
+-- Ejecutar el schema inicial
+mysql -u root -p gymprofit_db < db/schema.sql
+-- Activar usuarios del seed si fuera necesario
+UPDATE usuarios SET activo = 1 WHERE activo IS NULL;
 ```
-
-O deja que Flyway cree las tablas automáticamente al arrancar la API (recomendado).
 
 ### 3. Configurar la API
 
@@ -492,7 +386,7 @@ cd api/gymprofit-api/src/main/resources
 cp application-example.properties application-dev.properties
 ```
 
-Edita `application-dev.properties` con tus credenciales de base de datos y tu clave JWT secreta.
+Edita `application-dev.properties` con tus credenciales de BD y clave JWT.
 
 ### 4. Arrancar la API
 
@@ -501,29 +395,219 @@ cd api/gymprofit-api
 ./mvnw spring-boot:run
 ```
 
-La API estará disponible en `http://localhost:8080/api`.
-La documentación Swagger en `http://localhost:8080/api/swagger-ui.html`.
+API disponible en `http://localhost:8080/api`. Swagger en `http://localhost:8080/api/swagger-ui.html`.
 
 ### 5. Configurar la App Android
 
-Crea el archivo `local.properties` en `app/GymProFit/` (si no existe ya):
+Crea `app/GymProFit/local.properties`:
 
 ```properties
 sdk.dir=C\:\\Users\\TuUsuario\\AppData\\Local\\Android\\Sdk
 BASE_URL=http://10.0.2.2:8080/api/
 ```
 
-> `10.0.2.2` es la IP que el emulador de Android usa para acceder a `localhost` de tu máquina. Si usas un dispositivo físico, usa la IP local de tu PC en la red.
+> `10.0.2.2` es la IP del emulador para `localhost`. Con dispositivo físico, usar la IP local de la máquina.
 
 ### 6. Ejecutar la App
 
-Abre el proyecto `app/GymProFit` en Android Studio, sincroniza Gradle (**File → Sync Project with Gradle Files**) y ejecuta en un emulador o dispositivo físico.
+Abre `app/GymProFit` en Android Studio, sincroniza Gradle y ejecuta en emulador o dispositivo.
+
+---
+
+## 📝 Changelog
+
+### 2026-05-17
+
+| Hash | Descripción |
+|---|---|
+| *(pendiente)* | fix: saltar onboarding en login si usuario ya tiene datos; activar usuarios con activo=NULL; añadir logging a UtilREST y PerfilActivity |
+
+### 2026-05-16
+
+| Hash | Descripción |
+|---|---|
+| `0e26f83` | **feat:** Migrar capa de red de Retrofit a arquitectura 4 capas (UD06) — `UtilREST` + `UtilJSONParser` + `API.java`. Añadir pantallas Sesiones, Mediciones, Logros y Admin. Eliminar Retrofit/OkHttp/Gson |
+| `00c1be2` | **fix:** Corregir tipo de columna `altura` en tabla `usuarios`: `DECIMAL(3,2)` → `DECIMAL(5,2)` para admitir valores en cm (ej: 178.00) |
+| `a63a6b7` | **feat:** Añadir script SQL de datos de ejemplo (`seed_datos_ejemplo.sql`) |
+| `a429207` | **test:** Añadir suite completa de 132 tests y corregir tests existentes |
+| `0a063fa` | **feat:** Añadir Bean Validation (`@NotNull`, `@NotBlank`, `@Size`, etc.) a todos los DTOs de entrada |
+| `74db20a` | **feat:** Endpoints admin con filtros dinámicos jOOQ (`GET /admin/usuarios`) y estadísticas globales (`GET /admin/estadisticas-globales`) |
+| `23e1f7b` | **feat:** Implementar sistema de logros con evaluación automática tras cada sesión. Entidades `Logro` y `UsuarioLogro`, `LogroService` con listeners de dominio |
+| `70d4103` | **feat:** Endpoint `GET /usuarios/{id}/estadisticas` con jOOQ (sesiones totales, calorías, duración media) |
+| `1bd3495` | **feat:** Implementar sistema de roles (ADMIN, USER, GUEST) con `DataInitializer` y `SecurityConfig` siguiendo el patrón de clase |
+
+### 2026-05-14
+
+| Hash | Descripción |
+|---|---|
+| `791f863` | **fix:** Corregir routing con Spring Data REST, validación de enums en PATCH y contexto de seguridad |
+| `d1d5cb3` | **feat:** Añadir endpoints PATCH a los 13 controladores de entidades con DTOs específicos |
+| `4fd168e` | **feat:** Migrar campo `objetivo` de `String` a enum `TipoObjetivo`. Fix permisos de rutinas en SecurityConfig |
+| `347fa86` | **feat:** Migrar campo `objetivo` de `Usuario` a `TipoObjetivo` enum (entidad + DTOs + mapper) |
+
+### 2026-05-05
+
+| Hash | Descripción |
+|---|---|
+| `eec1f48` | **docs:** Crear README.md inicial del proyecto |
+| `75b5f52` | **feat:** Añadir pantallas de onboarding (4 pasos + resumen), pantalla de registro, signing config y .gitignore |
+| `449287b` | **feat:** Añadir `application-example.properties` como plantilla de configuración |
+| `f6ec758` | **fix:** Corregir ruta de Swagger UI con context-path `/api` y permitir acceso público en Security/JWT |
+
+### 2026-04-13
+
+| Hash | Descripción |
+|---|---|
+| `ae17963` | **feat:** Conectar la API al proyecto Android con Retrofit + interceptor JWT |
+| `3ce0427` | **feat:** Rediseñar `SplashActivity` con verificación de sesión y animación de fade-in |
+| `03f38d2` | **feat:** Rediseñar `PerfilActivity` con datos del usuario, items clickables y sección de configuración |
+
+### 2026-04-12
+
+| Hash | Descripción |
+|---|---|
+| `1c7afae` | **feat:** Mejorar `NutricionActivity`, añadir `UIHelper` con toasts y diálogos personalizados |
+| `5cf1545` | **feat:** Añadir `RutinasActivity` con RecyclerView y `CrearRutinaActivity` |
+
+### 2026-04-10
+
+| Hash | Descripción |
+|---|---|
+| `4cdd493` | **feat:** Mejorar diseño visual general y añadir `EjerciciosActivity` con filtros |
+
+### 2026-04-08
+
+| Hash | Descripción |
+|---|---|
+| `820cba0` | **fix:** Corregir typos en controllers jOOQ |
+| `d9e6c09` | **feat:** Implementar jOOQ con consultas avanzadas para ejercicios y usuarios |
+| `dd9c3d8` | **test:** Tests de integración de `RutinaController` |
+| `c396aaf` | **test:** Tests de integración de `EjercicioController` |
+| `9b8d789` | **test:** Tests de integración de `AuthController` |
+| `654e31f` | **fix:** Corregir `SesionEntrenamientoServiceTest` |
+| `b93b588` | **fix:** Corregir typos en `SesionEntrenamientoService` |
+| `e7ff1f4` | **test:** Tests unitarios de `SesionEntrenamientoService` |
+
+### 2026-04-06
+
+| Hash | Descripción |
+|---|---|
+| `70bfbf9` | **test:** Tests unitarios de `RutinaService` |
+| `5144b09` | **test:** Tests unitarios de `EjercicioService` |
+| `37706ea` | **test:** Tests unitarios de `UsuarioService` |
+| `6ca99c2` | **test:** Tests unitarios de `AuthService` |
+
+### 2026-04-05
+
+| Hash | Descripción |
+|---|---|
+| `2235570` | **feat:** Implementar autenticación JWT con roles y filtro de seguridad |
+| `7e8eaa3` | **feat:** Añadir entidad `Role` y adaptar `Usuario` para implementar `UserDetails` |
+| `fbb333e` | **fix:** Corrección de typos y errores en controllers |
+| `a249ec9` | **feat:** Módulo `Notificacion` completo (entidad, DTO, repositorio, servicio, controller) |
+
+### 2026-04-02
+
+| Hash | Descripción |
+|---|---|
+| `7bce1ce` | **feat/fix:** Módulo `ProgresoEjercicio` completo + fix mapper `MedicionCorporal` |
+| `d802eee` | **feat/fix:** Módulo `MedicionCorporal` completo + fix `FetchType` en relaciones JPA + fix logs |
+
+### 2026-03-27
+
+| Hash | Descripción |
+|---|---|
+| `4bac430` | **feat/fix:** Módulo `ObjetivoPersonal` completo + enum `TipoObjetivo` + fix configuración Logback |
+
+### 2026-03-26
+
+| Hash | Descripción |
+|---|---|
+| `1a9ad13` | **feat/fix:** Módulo `RutinaEjercicio` completo + fix logs |
+
+### 2026-03-25
+
+| Hash | Descripción |
+|---|---|
+| `5fea0f7` | **feat/fix:** Módulo `EjercicioRealizado` completo + correcciones generales |
+| `5c87db8` | **feat:** Ampliar módulos `Alimento` y `Comida` con métodos count y estadísticas |
+
+### 2026-03-23
+
+| Hash | Descripción |
+|---|---|
+| `0d024b5` | **feat:** Implementar módulo `SesionEntrenamiento` completo con CRUD y validaciones |
+
+### 2026-03-20
+
+| Hash | Descripción |
+|---|---|
+| `19f97e9` | **feat:** Implementar módulo `AlimentoComida` completo con CRUD y validaciones |
+
+### 2026-03-18
+
+| Hash | Descripción |
+|---|---|
+| `2a467c6` | **feat:** Implementar módulo `Comida` completo con CRUD y validaciones |
+
+### 2026-03-16
+
+| Hash | Descripción |
+|---|---|
+| `ff36ed2` | **feat:** Implementar módulo `Alimento` completo con CRUD y validaciones |
+
+### 2026-03-05
+
+| Hash | Descripción |
+|---|---|
+| `f926ac2` | **feat:** Implementar módulo `Rutina` completo con CRUD y validaciones |
+
+### 2026-03-04
+
+| Hash | Descripción |
+|---|---|
+| `0995235` | **feat:** Configurar sistema de logs con Logback |
+| `ea2e8f9` | **feat:** Módulo `Ejercicio` completo y funcional |
+
+### 2026-03-03
+
+| Hash | Descripción |
+|---|---|
+| `be19780` | **feat:** Implementar módulo `Usuario` completo con excepciones personalizadas |
+| `c38fb5f` | **feat:** Crear DTOs para transferencia de datos de todas las entidades |
+
+### 2026-03-02
+
+| Hash | Descripción |
+|---|---|
+| `2b8fbb8` | **feat:** Crear repositorios JPA para las 13 entidades |
+
+### 2026-02-27
+
+| Hash | Descripción |
+|---|---|
+| `63902b7` | **feat:** Configuración inicial del proyecto Spring Boot y modelo de datos completo |
+| `069c2b4` | **feat:** Commit inicial — proyecto Spring Boot generado |
+
+### 2026-02-20
+
+| Hash | Descripción |
+|---|---|
+| `5db17ef` | **feat:** Implementar navegación completa y sistema de preferencias (Android) |
+
+### 2026-02-19
+
+| Hash | Descripción |
+|---|---|
+| `aae7262` | **feat:** Implementar Splash, Login y selector de tema/idioma (Android) |
+| `a964ee5` | **feat:** Commit inicial de la app Android |
+| `6c76145` | **feat:** Estructura inicial del TFG: carpetas db, api y app |
 
 ---
 
 <div align="center">
 
-Desarrollado con ❤️ por **Rubén Juan Candela**
+Desarrollado por **Rubén Juan Candela**
 CFGS Desarrollo de Aplicaciones Multimedia · 2º DAM · 2026
 
 </div>

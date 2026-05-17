@@ -1,6 +1,7 @@
 package es.pmdm.gymprofit.network;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -73,6 +74,7 @@ public class UtilREST {
                 }
 
                 int status = conn.getResponseCode();
+                Log.d("GymProFit", method + " " + url + " → " + status);
                 InputStream is = status >= 400 ? conn.getErrorStream() : conn.getInputStream();
                 StringBuilder sb = new StringBuilder();
                 if (is != null) {
@@ -84,6 +86,7 @@ public class UtilREST {
                 return new Object[]{sb.toString(), status, null};
 
             } catch (Exception e) {
+                Log.e("GymProFit", method + " " + url + " exception: " + e.getMessage());
                 return new Object[]{null, -1, e.getMessage()};
             } finally {
                 if (conn != null) conn.disconnect();
