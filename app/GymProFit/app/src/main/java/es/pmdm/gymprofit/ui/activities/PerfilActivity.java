@@ -15,6 +15,8 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
@@ -39,6 +41,7 @@ public class PerfilActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
     private PreferencesManager prefsManager;
+    private ActivityResultLauncher<Intent> editarPerfilLauncher;
     private TextView tvTemaActual, tvIdiomaActual;
     private TextView tvNombreUsuario, tvEmailUsuario;
     private TextView tvInfoNombre, tvInfoEmail;
@@ -52,6 +55,15 @@ public class PerfilActivity extends AppCompatActivity {
         prefsManager = new PreferencesManager(this);
         prefsManager.applyTheme();
         aplicarIdiomaGuardado();
+
+        editarPerfilLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        configurarDatosUsuario();
+                    }
+                }
+        );
 
         setContentView(R.layout.activity_perfil);
 
@@ -100,7 +112,8 @@ public class PerfilActivity extends AppCompatActivity {
                         tvEmailUsuario.setText(val(u.getEmail(), sinDatos));
                         tvInfoNombre.setText(u.getUsername());
                         tvInfoEmail.setText(val(u.getEmail(), sinDatos));
-                        tvInfoNivel.setText(val(u.getNivelExperiencia(), sinDatos));
+                        tvInfoNivel.setText(val(u.getNivelExperiencia(), null) != null
+                                ? mapearNivel(u.getNivelExperiencia()) : sinDatos);
                         tvInfoPeso.setText(val(u.getPeso(), null) != null
                                 ? getString(R.string.perfil_kg, u.getPeso()) : sinDatos);
                         tvInfoAltura.setText(u.getAltura() > 0
@@ -152,7 +165,7 @@ public class PerfilActivity extends AppCompatActivity {
 
     private void configurarBotones() {
         findViewById(R.id.btnEditarPerfil).setOnClickListener(v ->
-                UIHelper.mostrarToastInfo(this, getString(R.string.perfil_editar_proximamente))
+                editarPerfilLauncher.launch(new Intent(this, EditarPerfilActivity.class))
         );
 
         findViewById(R.id.itemSesiones).setOnClickListener(v ->
@@ -277,6 +290,16 @@ public class PerfilActivity extends AppCompatActivity {
 
     private String val(String s, String fallback) {
         return (s != null && !s.isEmpty() && !"null".equals(s)) ? s : fallback;
+    }
+
+    private String mapearNivel(String nivel) {
+        if (nivel == null) return getString(R.string.perfil_sin_datos);
+        switch (nivel) {
+            case "PRINCIPIANTE": return getString(R.string.nivel_principiante);
+            case "INTERMEDIO":   return getString(R.string.nivel_intermedio);
+            case "AVANZADO":     return getString(R.string.nivel_avanzado);
+            default:             return nivel;
+        }
     }
 
     private String mapearObjetivo(String objetivo) {

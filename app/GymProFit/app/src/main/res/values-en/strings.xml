@@ -124,7 +124,7 @@
     <string name="perfil_objetivo">Goal</string>
     <string name="perfil_editar">Edit information</string>
     <string name="perfil_editar_proximamente">Editing coming soon</string>
-    <string name="perfil_sin_datos">No data</string>
+    <string name="perfil_sin_datos">Not registered</string>
     <string name="perfil_anos">%d years</string>
     <string name="perfil_kg">%s kg</string>
     <string name="perfil_cm">%d cm</string>
@@ -251,4 +251,14 @@
     <string name="perfil_ver_mediciones">My measurements</string>
     <string name="perfil_ver_logros">My achievements</string>
     <string name="perfil_panel_admin">Admin panel</string>
+
+    <!-- Edit profile -->
+    <string name="editar_perfil_titulo">Edit profile</string>
+    <string name="editar_perfil_guardar">Save changes</string>
+    <string name="editar_perfil_guardado">Profile updated successfully</string>
+    <string name="editar_perfil_error">Error saving changes</string>
+    <string name="editar_perfil_email_requerido">Email is required</string>
+    <string name="nivel_principiante">Beginner</string>
+    <string name="nivel_intermedio">Intermediate</string>
+    <string name="nivel_avanzado">Advanced</string>
 </resources>

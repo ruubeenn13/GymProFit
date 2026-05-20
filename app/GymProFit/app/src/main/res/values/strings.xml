@@ -123,7 +123,7 @@
     <string name="perfil_objetivo">Objetivo</string>
     <string name="perfil_editar">Editar información</string>
     <string name="perfil_editar_proximamente">Edición disponible próximamente</string>
-    <string name="perfil_sin_datos">Sin datos</string>
+    <string name="perfil_sin_datos">No registrado</string>
     <string name="perfil_anos">%d años</string>
     <string name="perfil_kg">%s kg</string>
     <string name="perfil_cm">%d cm</string>
@@ -250,4 +250,14 @@
     <string name="objetivo_aumentar_calorias_desc">Ganancia de peso saludable</string>
     <string name="objetivo_movilidad">Mejorar movilidad</string>
     <string name="objetivo_movilidad_desc">Articulaciones y movimiento funcional</string>
+
+    <!-- Editar perfil -->
+    <string name="editar_perfil_titulo">Editar perfil</string>
+    <string name="editar_perfil_guardar">Guardar cambios</string>
+    <string name="editar_perfil_guardado">Perfil actualizado correctamente</string>
+    <string name="editar_perfil_error">Error al guardar los cambios</string>
+    <string name="editar_perfil_email_requerido">El email es obligatorio</string>
+    <string name="nivel_principiante">Principiante</string>
+    <string name="nivel_intermedio">Intermedio</string>
+    <string name="nivel_avanzado">Avanzado</string>
 </resources>
