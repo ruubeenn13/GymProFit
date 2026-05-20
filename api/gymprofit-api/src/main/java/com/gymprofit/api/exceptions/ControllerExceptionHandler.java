@@ -1,5 +1,6 @@
 package com.gymprofit.api.exceptions;
 
+import io.jsonwebtoken.JwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -166,6 +167,16 @@ public class ControllerExceptionHandler {
         return new ResponseEntity<>(
                 Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage(), cause),
                 HttpStatus.INTERNAL_SERVER_ERROR
+        );
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<Response> handleJwtException(JwtException ex) {
+        logger.warn(ex.getMessage());
+        return new ResponseEntity<>(
+                Response.generalError(HttpStatus.UNAUTHORIZED.value(), "Token inválido o expirado"),
+                HttpStatus.UNAUTHORIZED
         );
     }
 
