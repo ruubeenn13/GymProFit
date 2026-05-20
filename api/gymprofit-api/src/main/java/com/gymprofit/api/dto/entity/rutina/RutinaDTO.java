@@ -22,4 +22,6 @@ public class RutinaDTO implements Serializable {
     private String diasSemana;
     private LocalDateTime fechaCreacion;
     private Boolean activa;
+    private Integer numEjercicios;
+    private Integer caloriasAproximadas;
 }

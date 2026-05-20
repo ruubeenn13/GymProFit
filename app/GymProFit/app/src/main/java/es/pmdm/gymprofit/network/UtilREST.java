@@ -19,11 +19,18 @@ public class UtilREST {
         void onError(String message, int statusCode);
     }
 
+    public interface OnUnauthorizedListener {
+        void onTokenExpired();
+    }
+
     private static String token = null;
+    private static OnUnauthorizedListener unauthorizedListener = null;
 
     public static void setToken(String t) { token = t; }
     public static void clearToken() { token = null; }
     public static String getToken() { return token; }
+
+    public static void setOnUnauthorizedListener(OnUnauthorizedListener l) { unauthorizedListener = l; }
 
     public static void request(String url, String method, String body, OnResponseListener listener) {
         new RequestTask(url, method, body, listener).execute();
@@ -101,6 +108,10 @@ public class UtilREST {
 
             if (error != null) {
                 listener.onError(error, -1);
+            } else if (status == 401) {
+                clearToken();
+                if (unauthorizedListener != null) unauthorizedListener.onTokenExpired();
+                else listener.onError("Sesión expirada", 401);
             } else if (status >= 200 && status < 300) {
                 listener.onSuccess(response != null ? response : "", status);
             } else {

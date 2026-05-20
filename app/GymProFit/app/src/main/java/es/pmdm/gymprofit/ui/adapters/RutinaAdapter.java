@@ -60,11 +60,11 @@ public class RutinaAdapter extends RecyclerView.Adapter<RutinaAdapter.ViewHolder
 
     public void filtrarPorNivel(String nivel) {
         rutinasFiltradas.clear();
-        if (nivel.equals("Todos")) {
+        if (nivel.equalsIgnoreCase("Todos")) {
             rutinasFiltradas.addAll(rutinas);
         } else {
             for (Rutina r : rutinas) {
-                if (r.getNivel().equals(nivel)) {
+                if (r.getNivel().equalsIgnoreCase(nivel)) {
                     rutinasFiltradas.add(r);
                 }
             }

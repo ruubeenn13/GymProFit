@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 
 public class HomeActivity extends AppCompatActivity {
@@ -30,6 +31,13 @@ public class HomeActivity extends AppCompatActivity {
         PreferencesManager prefsManager = new PreferencesManager(this);
         prefsManager.applyTheme();
         aplicarIdiomaGuardado(prefsManager);
+
+        UtilREST.setOnUnauthorizedListener(() -> {
+            prefsManager.cerrarSesion();
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        });
 
         setContentView(R.layout.activity_home);
 

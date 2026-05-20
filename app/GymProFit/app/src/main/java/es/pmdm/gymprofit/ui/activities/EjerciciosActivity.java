@@ -111,7 +111,7 @@ public class EjerciciosActivity extends AppCompatActivity {
             else if (id == R.id.chipPiernas) grupo = "Piernas";
             else if (id == R.id.chipBrazos)  grupo = "Brazos";
             else if (id == R.id.chipHombros) grupo = "Hombros";
-            else if (id == R.id.chipCore)    grupo = "Core";
+            else if (id == R.id.chipCore)    grupo = "ABOMEN";
             else                             grupo = "Todos";
 
             adapter.filtrarPorGrupo(grupo);
