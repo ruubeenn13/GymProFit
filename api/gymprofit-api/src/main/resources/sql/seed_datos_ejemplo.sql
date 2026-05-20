@@ -84,10 +84,14 @@ INSERT INTO usuario_roles (usuario_id, role_id) VALUES
 
 -- ── RUTINAS ───────────────────────────────────────────────────────────────────
 INSERT INTO rutinas (id, nombre, descripcion, duracion_minutos, nivel, es_predefinida, categoria, dias_semana, fecha_creacion, activa, usuario_id) VALUES
-(1, 'Pecho y Tríceps', 'Rutina clásica de empuje para pecho y tríceps',   60, 'INTERMEDIO',   1, 'Fuerza',  'LUNES,JUEVES',            '2025-01-01 00:00:00', 1, NULL),
-(2, 'Full Body',       'Entrenamiento de cuerpo completo equilibrado',     50, 'PRINCIPIANTE', 1, 'General', 'MARTES,VIERNES',          '2025-01-01 00:00:00', 1, NULL),
-(3, 'Fuerza Pesada',   'Rutina personalizada de fuerza con cargas altas',  75, 'AVANZADO',     0, 'Fuerza',  'LUNES,MIERCOLES,VIERNES', '2025-02-10 00:00:00', 1, 3),
-(4, 'Cardio y Core',   'Cardio combinado con trabajo de core',             45, 'PRINCIPIANTE', 0, 'Cardio',  'MARTES,JUEVES,SABADO',    '2025-02-15 00:00:00', 1, 2);
+(1, 'Pecho y Tríceps',    'Rutina clásica de empuje para pecho y tríceps',       60, 'INTERMEDIO',   1, 'Fuerza',  'LUNES,JUEVES',            '2025-01-01 00:00:00', 1, NULL),
+(2, 'Full Body',          'Entrenamiento de cuerpo completo equilibrado',       50, 'PRINCIPIANTE', 1, 'General', 'MARTES,VIERNES',          '2025-01-01 00:00:00', 1, NULL),
+(3, 'Fuerza Pesada',      'Rutina personalizada de fuerza con cargas altas',    75, 'AVANZADO',     0, 'Fuerza',  'LUNES,MIERCOLES,VIERNES', '2025-02-10 00:00:00', 1, 3),
+(4, 'Cardio y Core',      'Cardio combinado con trabajo de core',               45, 'PRINCIPIANTE', 0, 'Cardio',  'MARTES,JUEVES,SABADO',    '2025-02-15 00:00:00', 1, 2),
+(5, 'Movilidad Activa',   'Cardio suave y ejercicios de peso corporal para empezar', 35, 'PRINCIPIANTE', 1, 'Cardio',  'LUNES,MIERCOLES,VIERNES', '2025-01-01 00:00:00', 1, NULL),
+(6, 'Espalda y Bíceps',   'Trabajo de tirón con énfasis en espalda y bíceps',  55, 'INTERMEDIO',   1, 'Fuerza',  'MARTES,VIERNES',          '2025-01-01 00:00:00', 1, NULL),
+(7, 'Powerlifting Base',  'Los tres levantamientos básicos con cargas máximas', 90, 'AVANZADO',     1, 'Fuerza',  'LUNES,MIERCOLES,VIERNES', '2025-01-01 00:00:00', 1, NULL),
+(8, 'HIIT Avanzado',      'Alta intensidad con mínimo descanso entre series',   60, 'AVANZADO',     1, 'Cardio',  'MARTES,JUEVES,SABADO',    '2025-01-01 00:00:00', 1, NULL);
 
 -- ── RUTINA_EJERCICIO ──────────────────────────────────────────────────────────
 INSERT INTO rutina_ejercicio (id, series, repeticiones, peso_recomendado, tiempo_descanso, orden, rutina_id, ejercicio_id) VALUES
@@ -104,7 +108,24 @@ INSERT INTO rutina_ejercicio (id, series, repeticiones, peso_recomendado, tiempo
 (8,  4,  8,  90.00,  90, 3, 3, 1),
 -- Rutina 4: Cardio y Core
 (9,  1, 30,  NULL, 30, 1, 4, 9),
-(10, 4, 60,  NULL, 30, 2, 4, 8);
+(10, 4, 60,  NULL, 30, 2, 4, 8),
+-- Rutina 5: Movilidad Activa (PRINCIPIANTE predefinida)
+(11, 3, 45,  NULL, 30, 1, 5, 9),
+(12, 4, 30,  NULL, 30, 2, 5, 8),
+(13, 3, 15,  NULL, 45, 3, 5, 10),
+-- Rutina 6: Espalda y Bíceps (INTERMEDIO predefinida)
+(14, 4,  8, 70.00, 90, 1, 6, 3),
+(15, 4,  8,  NULL, 75, 2, 6, 4),
+(16, 3, 12, 15.00, 60, 3, 6, 6),
+-- Rutina 7: Powerlifting Base (AVANZADO predefinida)
+(17, 5,  5, 140.00, 180, 1, 7, 3),
+(18, 5,  5, 110.00, 180, 2, 7, 2),
+(19, 4,  5, 100.00, 180, 3, 7, 1),
+-- Rutina 8: HIIT Avanzado (AVANZADO predefinida)
+(20, 5, 15,  NULL, 30, 1, 8, 10),
+(21, 4,  8,  NULL, 45, 2, 8, 4),
+(22, 4, 12, 60.00, 60, 3, 8, 5),
+(23, 4, 60,  NULL, 20, 4, 8, 8);
 
 -- ── SESIONES_ENTRENAMIENTO ────────────────────────────────────────────────────
 INSERT INTO sesiones_entrenamiento (id, fecha_inicio, fecha_fin, duracion_minutos, calorias_quemadas, notas, completada, usuario_id, rutina_id) VALUES

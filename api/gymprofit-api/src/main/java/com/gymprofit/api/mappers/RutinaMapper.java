@@ -21,5 +21,7 @@ public interface RutinaMapper {
     @Mapping(target = "usuario", ignore = true)
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "activa", ignore = true)
+    @Mapping(target = "numEjercicios", ignore = true)
+    @Mapping(target = "caloriasAproximadas", ignore = true)
     Rutina toEntity(RutinaCreateDTO rutinaCreateDTO);
 }

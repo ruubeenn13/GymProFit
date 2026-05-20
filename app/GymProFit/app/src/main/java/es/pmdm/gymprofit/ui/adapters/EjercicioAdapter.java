@@ -76,11 +76,11 @@ public class EjercicioAdapter extends RecyclerView.Adapter<EjercicioAdapter.View
 
     public void filtrarPorGrupo(String grupo) {
         ejerciciosFiltrados.clear();
-        if (grupo.equals("Todos")) {
+        if (grupo.equalsIgnoreCase("Todos")) {
             ejerciciosFiltrados.addAll(ejercicios);
         } else {
             for (Ejercicio e : ejercicios) {
-                if (e.getGrupoMuscular().equals(grupo)) {
+                if (e.getGrupoMuscular().equalsIgnoreCase(grupo)) {
                     ejerciciosFiltrados.add(e);
                 }
             }
