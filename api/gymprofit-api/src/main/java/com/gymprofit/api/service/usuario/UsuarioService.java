@@ -212,9 +212,9 @@ public class UsuarioService implements IUsuarioService {
 
         try {
             if (patchDTO.getEmail() != null) usuario.setEmail(patchDTO.getEmail());
-            if (patchDTO.getPeso() != null) usuario.setPeso(patchDTO.getPeso());
-            if (patchDTO.getAltura() != null) usuario.setAltura(patchDTO.getAltura());
-            if (patchDTO.getEdad() != null) usuario.setEdad(patchDTO.getEdad());
+            usuario.setPeso(patchDTO.getPeso());
+            usuario.setAltura(patchDTO.getAltura());
+            usuario.setEdad(patchDTO.getEdad());
             if (nivel != null) usuario.setNivelExperiencia(nivel);
             if (patchDTO.getObjetivo() != null) usuario.setObjetivo(patchDTO.getObjetivo());
             if (patchDTO.getActivo() != null) usuario.setActivo(patchDTO.getActivo());

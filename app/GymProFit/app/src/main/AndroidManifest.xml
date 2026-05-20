@@ -18,6 +18,9 @@
             android:name=".ui.activities.AdminActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.activities.EditarPerfilActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.activities.LogrosActivity"
             android:exported="false" />
         <activity

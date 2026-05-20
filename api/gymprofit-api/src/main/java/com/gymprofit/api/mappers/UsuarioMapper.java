@@ -25,5 +25,6 @@ public interface UsuarioMapper {
     @Mapping(target = "username", ignore = true)
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "fechaRegistro", ignore = true)
+    @Mapping(target = "activo", ignore = true)
     void updateEntityFromDTO(UsuarioUpdateDTO usuarioUpdateDTO, @MappingTarget Usuario usuario);
 }
