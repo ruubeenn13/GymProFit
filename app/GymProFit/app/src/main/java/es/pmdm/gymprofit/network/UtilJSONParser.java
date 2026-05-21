@@ -17,6 +17,7 @@ import es.pmdm.gymprofit.model.objetivo.ObjetivoPersonal;
 import es.pmdm.gymprofit.model.rutina.Rutina;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
 import es.pmdm.gymprofit.model.usuario.Usuario;
+import es.pmdm.gymprofit.model.usuario.UsuarioEstadisticas;
 
 public class UtilJSONParser {
 
@@ -229,6 +230,21 @@ public class UtilJSONParser {
             list.add(parseObjetivo(arr.getJSONObject(i).toString()));
         }
         return list;
+    }
+
+    // ESTADISTICAS
+
+    public static UsuarioEstadisticas parseEstadisticas(String json) throws JSONException {
+        JSONObject obj = new JSONObject(json);
+        UsuarioEstadisticas e = new UsuarioEstadisticas();
+        e.setTotalSesiones(obj.optInt("totalSesiones", 0));
+        e.setSesionesCompletadas(obj.optInt("sesionesCompletadas", 0));
+        e.setTotalMinutosEntrenados(obj.optInt("totalMinutosEntrenados", 0));
+        e.setTotalCaloriasQuemadas(obj.optInt("totalCaloriasQuemadas", 0));
+        e.setEjercicioMasFrecuente(obj.optString("ejercicioMasFrecuente", ""));
+        e.setRachaActualDias(obj.optInt("rachaActualDias", 0));
+        e.setMejorRachaDias(obj.optInt("mejorRachaDias", 0));
+        return e;
     }
 
     /**

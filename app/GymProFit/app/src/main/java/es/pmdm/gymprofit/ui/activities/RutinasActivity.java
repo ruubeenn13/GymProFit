@@ -39,6 +39,7 @@ public class RutinasActivity extends AppCompatActivity {
     private PreferencesManager prefsManager;
 
     private ActivityResultLauncher<Intent> crearRutinaLauncher;
+    private ActivityResultLauncher<Intent> detalleLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,11 +64,13 @@ public class RutinasActivity extends AppCompatActivity {
         crearRutinaLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    if (result.getResultCode() == RESULT_OK) {
-                        cargarRutinas();
-                    }
-                }
-        );
+                    if (result.getResultCode() == RESULT_OK) cargarRutinas();
+                });
+        detalleLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) cargarRutinas();
+                });
     }
 
     private void inicializarVistas() {
@@ -77,9 +80,23 @@ public class RutinasActivity extends AppCompatActivity {
     }
 
     private void configurarRecyclerView() {
-        adapter = new RutinaAdapter(new ArrayList<>());
+        adapter = new RutinaAdapter(new ArrayList<>(), this::abrirDetalle);
         rvRutinas.setLayoutManager(new LinearLayoutManager(this));
         rvRutinas.setAdapter(adapter);
+    }
+
+    private void abrirDetalle(Rutina rutina) {
+        Intent intent = new Intent(this, DetalleRutinaActivity.class);
+        intent.putExtra("rutinaId",     rutina.getId());
+        intent.putExtra("nombre",       rutina.getNombre());
+        intent.putExtra("descripcion",  rutina.getDescripcion());
+        intent.putExtra("nivel",        rutina.getNivel());
+        intent.putExtra("duracion",     rutina.getDuracionMinutos());
+        intent.putExtra("calorias",     rutina.getCaloriasAproximadas());
+        intent.putExtra("numEjercicios", rutina.getNumEjercicios());
+        intent.putExtra("predefinida",  rutina.isPredefinida());
+        intent.putExtra("usuarioId",    rutina.getUsuarioId());
+        detalleLauncher.launch(intent);
     }
 
     private void cargarRutinas() {

@@ -22,17 +22,25 @@ public class SesionAdapter extends RecyclerView.Adapter<SesionAdapter.ViewHolder
         void onDelete(SesionEntrenamiento sesion);
     }
 
+    public interface OnClickListener {
+        void onClick(SesionEntrenamiento sesion);
+    }
+
     private final List<SesionEntrenamiento> items;
     private final Map<Integer, String> rutinaNombres;
     private final OnDeleteListener deleteListener;
+    private final OnClickListener clickListener;
     private final Context context;
 
     public SesionAdapter(Context context, List<SesionEntrenamiento> items,
-                         Map<Integer, String> rutinaNombres, OnDeleteListener deleteListener) {
+                         Map<Integer, String> rutinaNombres,
+                         OnDeleteListener deleteListener,
+                         OnClickListener clickListener) {
         this.context = context;
         this.items = items;
         this.rutinaNombres = rutinaNombres;
         this.deleteListener = deleteListener;
+        this.clickListener = clickListener;
     }
 
     @NonNull
@@ -57,6 +65,9 @@ public class SesionAdapter extends RecyclerView.Adapter<SesionAdapter.ViewHolder
         h.tvCalorias.setText(context.getString(R.string.sesiones_kcal, s.getCaloriasQuemadas()));
 
         h.btnEliminar.setOnClickListener(v -> deleteListener.onDelete(s));
+        if (clickListener != null) {
+            h.itemView.setOnClickListener(v -> clickListener.onClick(s));
+        }
     }
 
     @Override

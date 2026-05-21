@@ -96,6 +96,18 @@ public class API {
         UtilREST.request(BASE + "rutinas/nivel/" + encode(nivel), "GET", null, l);
     }
 
+    public static void getRutinaPorId(int id, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "rutinas/" + id, "GET", null, l);
+    }
+
+    public static void getRutinaEjerciciosPorRutina(int rutinaId, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "rutinas-ejercicios/rutina/" + rutinaId, "GET", null, l);
+    }
+
+    public static void eliminarEjercicioDeRutina(int rutinaId, int ejercicioId, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "rutinas-ejercicios/rutina/" + rutinaId + "/ejercicio/" + ejercicioId, "DELETE", null, l);
+    }
+
     public static void crearRutina(JSONObject body, UtilREST.OnResponseListener l) {
         UtilREST.request(BASE + "rutinas", "POST", body.toString(), l);
     }
@@ -110,6 +122,10 @@ public class API {
 
     public static void eliminarRutina(int id, UtilREST.OnResponseListener l) {
         UtilREST.request(BASE + "rutinas/" + id, "DELETE", null, l);
+    }
+
+    public static void addEjercicioARutina(JSONObject body, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "rutinas-ejercicios", "POST", body.toString(), l);
     }
 
     // ── SESIONES ──────────────────────────────────────────────────────────────

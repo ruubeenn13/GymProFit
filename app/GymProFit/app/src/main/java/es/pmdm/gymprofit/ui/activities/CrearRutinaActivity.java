@@ -5,146 +5,97 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.textfield.TextInputEditText;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
-import es.pmdm.gymprofit.network.API;
-import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
 public class CrearRutinaActivity extends AppCompatActivity {
 
-    private TextInputEditText etNombre, etDescripcion, etDuracion, etCalorias, etNumEjercicios;
+    private TextInputEditText etNombre, etDescripcion, etDuracion;
     private ChipGroup chipGroupNivel;
-    private MaterialButton btnGuardar;
     private PreferencesManager prefsManager;
+
+    private ActivityResultLauncher<Intent> anadirLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         prefsManager = new PreferencesManager(this);
         prefsManager.applyTheme();
-        aplicarIdiomaGuardado(prefsManager);
-
+        aplicarIdiomaGuardado();
         setContentView(R.layout.activity_crear_rutina);
 
-        configurarToolbar();
-        inicializarVistas();
-        configurarBotonGuardar();
-    }
-
-    private void configurarToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(v -> finish());
-    }
 
-    private void inicializarVistas() {
-        etNombre = findViewById(R.id.etNombre);
-        etDescripcion = findViewById(R.id.etDescripcion);
-        etDuracion = findViewById(R.id.etDuracion);
-        etCalorias = findViewById(R.id.etCalorias);
-        etNumEjercicios = findViewById(R.id.etNumEjercicios);
+        etNombre       = findViewById(R.id.etNombre);
+        etDescripcion  = findViewById(R.id.etDescripcion);
+        etDuracion     = findViewById(R.id.etDuracion);
         chipGroupNivel = findViewById(R.id.chipGroupNivel);
-        btnGuardar = findViewById(R.id.btnGuardar);
+
+        anadirLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        setResult(RESULT_OK);
+                        finish();
+                    } else if (result.getResultCode() == android.app.Activity.RESULT_FIRST_USER) {
+                        finish();
+                    }
+                });
+
+        findViewById(R.id.btnSiguiente).setOnClickListener(v -> siguiente());
     }
 
-    private void configurarBotonGuardar() {
-        btnGuardar.setOnClickListener(v -> {
-            if (!validarCampos()) return;
-            guardarRutina();
-        });
+    private void siguiente() {
+        String nombre = etNombre.getText().toString().trim();
+        String desc   = etDescripcion.getText().toString().trim();
+        String dur    = etDuracion.getText().toString().trim();
+
+        if (nombre.isEmpty()) { error(etNombre); return; }
+        if (desc.isEmpty())   { error(etDescripcion); return; }
+        if (dur.isEmpty())    { error(etDuracion); return; }
+
+        Intent intent = new Intent(this, AnadirEjerciciosActivity.class);
+        intent.putExtra("nombre", nombre);
+        intent.putExtra("descripcion", desc);
+        intent.putExtra("nivel", obtenerNivel());
+        intent.putExtra("duracion", Integer.parseInt(dur));
+        anadirLauncher.launch(intent);
     }
 
-    private void guardarRutina() {
-        try {
-            JSONObject body = new JSONObject();
-            body.put("nombre", etNombre.getText().toString().trim());
-            body.put("descripcion", etDescripcion.getText().toString().trim());
-            body.put("nivel", obtenerNivelSeleccionado());
-            body.put("duracionMinutos", Integer.parseInt(etDuracion.getText().toString().trim()));
-            body.put("caloriasAproximadas", Integer.parseInt(etCalorias.getText().toString().trim()));
-            body.put("numEjercicios", Integer.parseInt(etNumEjercicios.getText().toString().trim()));
-            body.put("usuarioId", prefsManager.getUsuarioId());
-            body.put("esPredefinida", false);
-
-            API.crearRutina(body, new UtilREST.OnResponseListener() {
-                @Override
-                public void onSuccess(String response, int statusCode) {
-                    UIHelper.mostrarToastExito(CrearRutinaActivity.this,
-                            getString(R.string.rutinas_guardada_exito));
-                    setResult(RESULT_OK);
-                    finish();
-                }
-
-                @Override
-                public void onError(String message, int statusCode) {
-                    UIHelper.mostrarToastError(CrearRutinaActivity.this,
-                            getString(R.string.error_conexion));
-                }
-            });
-        } catch (JSONException e) {
-            UIHelper.mostrarToastError(this, getString(R.string.error_conexion));
-        }
+    private void error(TextInputEditText campo) {
+        UIHelper.mostrarToastError(this, getString(R.string.error_campo_requerido));
+        campo.requestFocus();
     }
 
-    private boolean validarCampos() {
-        if (etNombre.getText().toString().trim().isEmpty()) {
-            UIHelper.mostrarToastError(this, getString(R.string.error_campo_requerido));
-            etNombre.requestFocus();
-            return false;
-        }
-        if (etDescripcion.getText().toString().trim().isEmpty()) {
-            UIHelper.mostrarToastError(this, getString(R.string.error_campo_requerido));
-            etDescripcion.requestFocus();
-            return false;
-        }
-        if (etDuracion.getText().toString().trim().isEmpty()) {
-            UIHelper.mostrarToastError(this, getString(R.string.error_campo_requerido));
-            etDuracion.requestFocus();
-            return false;
-        }
-        if (etCalorias.getText().toString().trim().isEmpty()) {
-            UIHelper.mostrarToastError(this, getString(R.string.error_campo_requerido));
-            etCalorias.requestFocus();
-            return false;
-        }
-        if (etNumEjercicios.getText().toString().trim().isEmpty()) {
-            UIHelper.mostrarToastError(this, getString(R.string.error_campo_requerido));
-            etNumEjercicios.requestFocus();
-            return false;
-        }
-        return true;
+    private String obtenerNivel() {
+        int id = chipGroupNivel.getCheckedChipId();
+        if (id == R.id.chipIntermedio) return "INTERMEDIO";
+        if (id == R.id.chipAvanzado)   return "AVANZADO";
+        return "PRINCIPIANTE";
     }
 
-    private String obtenerNivelSeleccionado() {
-        int checkedId = chipGroupNivel.getCheckedChipId();
-        if (checkedId == R.id.chipIntermedio) return "Intermedio";
-        if (checkedId == R.id.chipAvanzado) return "Avanzado";
-        return "Principiante";
-    }
-
-    private void aplicarIdiomaGuardado(PreferencesManager prefsManager) {
-        String savedLanguage = prefsManager.getLanguage();
-        if (!savedLanguage.isEmpty()) {
-            Locale locale = new Locale(savedLanguage);
+    private void aplicarIdiomaGuardado() {
+        String lang = prefsManager.getLanguage();
+        if (!lang.isEmpty()) {
+            Locale locale = new Locale(lang);
             Locale.setDefault(locale);
-            Resources resources = getResources();
-            Configuration config = resources.getConfiguration();
-            config.setLocale(locale);
-            resources.updateConfiguration(config, resources.getDisplayMetrics());
+            Resources res = getResources();
+            Configuration cfg = res.getConfiguration();
+            cfg.setLocale(locale);
+            res.updateConfiguration(cfg, res.getDisplayMetrics());
         }
     }
 }

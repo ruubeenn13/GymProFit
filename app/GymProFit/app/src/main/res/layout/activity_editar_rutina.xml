@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- NUEVO FICHERO - Formulario para crear una nueva rutina -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -13,11 +12,11 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorSurface"
-        app:title="@string/rutinas_crear_nueva"
+        app:title="@string/editar_rutina_titulo"
         app:titleTextColor="?attr/colorOnSurface"
         app:navigationIcon="@drawable/ic_arrow_back" />
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -40,7 +39,7 @@
                 app:boxCornerRadiusBottomEnd="12dp">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etNombre"
+                    android:id="@+id/etNombreEditar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textCapSentences"
@@ -60,7 +59,7 @@
                 app:boxCornerRadiusBottomEnd="12dp">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etDescripcion"
+                    android:id="@+id/etDescripcionEditar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textCapSentences|textMultiLine"
@@ -79,29 +78,28 @@
                 android:alpha="0.7" />
 
             <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chipGroupNivel"
+                android:id="@+id/chipGroupNivelEditar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:singleSelection="true"
                 app:selectionRequired="true">
 
                 <com.google.android.material.chip.Chip
-                    android:id="@+id/chipPrincipiante"
+                    android:id="@+id/chipEditarPrincipiante"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/rutinas_principiante"
-                    android:checked="true"
                     style="@style/Widget.Material3.Chip.Filter" />
 
                 <com.google.android.material.chip.Chip
-                    android:id="@+id/chipIntermedio"
+                    android:id="@+id/chipEditarIntermedio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/rutinas_intermedio"
                     style="@style/Widget.Material3.Chip.Filter" />
 
                 <com.google.android.material.chip.Chip
-                    android:id="@+id/chipAvanzado"
+                    android:id="@+id/chipEditarAvanzado"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/rutinas_avanzado"
@@ -122,7 +120,7 @@
                 app:suffixText="min">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etDuracion"
+                    android:id="@+id/etDuracionEditar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number"
@@ -130,17 +128,50 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSiguiente"
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="32dp"
-                android:text="@string/crear_rutina_siguiente"
+                android:layout_height="1dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="16dp"
+                android:background="?attr/colorOutlineVariant" />
+
+            <TextView
+                android:id="@+id/tvEjerciciosTituloEditar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:textSize="16sp"
-                app:cornerRadius="12dp" />
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurface" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvEjerciciosEditar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAnadirEjercicioEditar"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="12dp"
+                android:text="@string/editar_rutina_anadir_ejercicio"
+                app:cornerRadius="12dp"
+                app:icon="@drawable/ic_add"
+                app:iconGravity="textStart"
+                style="@style/Widget.Material3.Button.OutlinedButton" />
 
         </LinearLayout>
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnGuardarEditar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_margin="16dp"
+        android:text="@string/editar_rutina_guardar"
+        android:textSize="16sp"
+        app:cornerRadius="12dp" />
 
 </LinearLayout>

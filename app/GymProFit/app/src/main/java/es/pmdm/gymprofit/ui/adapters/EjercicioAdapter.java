@@ -19,12 +19,22 @@ import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
 
 public class EjercicioAdapter extends RecyclerView.Adapter<EjercicioAdapter.ViewHolder> {
 
+    public interface OnClickListener {
+        void onClick(Ejercicio ejercicio);
+    }
+
     private List<Ejercicio> ejercicios;
     private List<Ejercicio> ejerciciosFiltrados;
+    private final OnClickListener clickListener;
 
     public EjercicioAdapter(List<Ejercicio> ejercicios) {
+        this(ejercicios, null);
+    }
+
+    public EjercicioAdapter(List<Ejercicio> ejercicios, OnClickListener clickListener) {
         this.ejercicios = ejercicios;
         this.ejerciciosFiltrados = new ArrayList<>(ejercicios);
+        this.clickListener = clickListener;
     }
 
     @NonNull
@@ -43,6 +53,9 @@ public class EjercicioAdapter extends RecyclerView.Adapter<EjercicioAdapter.View
         holder.ivIcono.setImageResource(R.drawable.ic_ejercicios);
         holder.chipDificultad.setText(ejercicio.getDificultad());
         holder.chipCalorias.setText(ejercicio.getCalorias() + " kcal");
+        if (clickListener != null) {
+            holder.itemView.setOnClickListener(v -> clickListener.onClick(ejercicio));
+        }
     }
 
     @Override
@@ -84,6 +97,33 @@ public class EjercicioAdapter extends RecyclerView.Adapter<EjercicioAdapter.View
                     ejerciciosFiltrados.add(e);
                 }
             }
+        }
+        notifyDataSetChanged();
+    }
+
+    public void filtrarPorDificultad(String dificultad) {
+        ejerciciosFiltrados.clear();
+        if (dificultad.equalsIgnoreCase("Todos")) {
+            ejerciciosFiltrados.addAll(ejercicios);
+        } else {
+            for (Ejercicio e : ejercicios) {
+                if (e.getDificultad().equalsIgnoreCase(dificultad)) {
+                    ejerciciosFiltrados.add(e);
+                }
+            }
+        }
+        notifyDataSetChanged();
+    }
+
+    public void filtrarCombinado(String texto, String dificultad) {
+        ejerciciosFiltrados.clear();
+        for (Ejercicio e : ejercicios) {
+            boolean coincideTexto = texto.isEmpty()
+                    || e.getNombre().toLowerCase().contains(texto.toLowerCase())
+                    || e.getDescripcion().toLowerCase().contains(texto.toLowerCase());
+            boolean coincideDificultad = dificultad.equalsIgnoreCase("Todos")
+                    || e.getDificultad().equalsIgnoreCase(dificultad);
+            if (coincideTexto && coincideDificultad) ejerciciosFiltrados.add(e);
         }
         notifyDataSetChanged();
     }

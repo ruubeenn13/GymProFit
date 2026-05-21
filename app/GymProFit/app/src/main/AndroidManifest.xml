@@ -33,6 +33,9 @@
             android:name=".ui.activities.RegistrarSesionActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.activities.ResumenSesionActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.activities.SesionesActivity"
             android:exported="false" />
         <activity
@@ -52,6 +55,18 @@
             android:exported="false" />
         <activity
             android:name=".ui.activities.Onboarding1Activity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activities.EditarRutinaActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activities.DetalleRutinaActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activities.ResumenCrearRutinaActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activities.AnadirEjerciciosActivity"
             android:exported="false" />
         <activity
             android:name=".ui.activities.CrearRutinaActivity"

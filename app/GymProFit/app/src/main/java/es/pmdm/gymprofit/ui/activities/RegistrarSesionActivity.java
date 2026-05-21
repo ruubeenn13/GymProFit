@@ -1,5 +1,6 @@
 package es.pmdm.gymprofit.ui.activities;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.rutina.Rutina;
@@ -60,21 +62,39 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         rutinaOpciones.clear();
         rutinaOpciones.add(getString(R.string.sesiones_sin_rutina));
 
-        API.getRutinasDeUsuario(usuarioId, new UtilREST.OnResponseListener() {
-            @Override
-            public void onSuccess(String response, int statusCode) {
-                try {
-                    List<Rutina> lista = UtilJSONParser.parseRutinaList(response);
-                    rutinas.addAll(lista);
-                    for (Rutina r : lista) rutinaOpciones.add(r.getNombre());
-                } catch (JSONException ignored) {}
-                runOnUiThread(() -> actualizarSpinner());
+        final List<Rutina> predefinidas = new ArrayList<>();
+        AtomicInteger pendientes = new AtomicInteger(2);
+
+        API.getRutinasPredefinidas(new UtilREST.OnResponseListener() {
+            @Override public void onSuccess(String response, int statusCode) {
+                try { predefinidas.addAll(UtilJSONParser.parseRutinaList(response)); }
+                catch (JSONException ignored) {}
+                if (pendientes.decrementAndGet() == 0) combinarYMostrar(predefinidas);
             }
-            @Override
-            public void onError(String message, int statusCode) {
-                runOnUiThread(() -> actualizarSpinner());
+            @Override public void onError(String message, int statusCode) {
+                if (pendientes.decrementAndGet() == 0) combinarYMostrar(predefinidas);
             }
         });
+
+        API.getRutinasDeUsuario(usuarioId, new UtilREST.OnResponseListener() {
+            @Override public void onSuccess(String response, int statusCode) {
+                try { rutinas.addAll(UtilJSONParser.parseRutinaList(response)); }
+                catch (JSONException ignored) {}
+                if (pendientes.decrementAndGet() == 0) combinarYMostrar(predefinidas);
+            }
+            @Override public void onError(String message, int statusCode) {
+                if (pendientes.decrementAndGet() == 0) combinarYMostrar(predefinidas);
+            }
+        });
+    }
+
+    private void combinarYMostrar(List<Rutina> predefinidas) {
+        List<Rutina> todas = new ArrayList<>(predefinidas);
+        todas.addAll(rutinas);
+        rutinas.clear();
+        rutinas.addAll(todas);
+        for (Rutina r : todas) rutinaOpciones.add(r.getNombre());
+        runOnUiThread(this::actualizarSpinner);
     }
 
     private void actualizarSpinner() {
@@ -118,7 +138,27 @@ public class RegistrarSesionActivity extends AppCompatActivity {
                     runOnUiThread(() -> {
                         UIHelper.mostrarToastExito(RegistrarSesionActivity.this,
                                 getString(R.string.sesiones_exito));
+
+                        int sesionIdGuardada = -1;
+                        try { sesionIdGuardada = new JSONObject(response).optInt("id", -1); }
+                        catch (JSONException ignored) {}
+
+                        String nombreRutina = "";
+                        int pos = spRutina.getSelectedItemPosition();
+                        if (pos > 0 && pos <= rutinas.size()) {
+                            nombreRutina = rutinas.get(pos - 1).getNombre();
+                        }
+
                         setResult(RESULT_OK);
+
+                        if (sesionIdGuardada != -1) {
+                            Intent intent = new Intent(RegistrarSesionActivity.this,
+                                    ResumenSesionActivity.class);
+                            intent.putExtra("sesionId", sesionIdGuardada);
+                            intent.putExtra("rutinaNombre", nombreRutina);
+                            startActivity(intent);
+                        }
+
                         finish();
                     });
                 }

@@ -260,4 +260,54 @@
     <string name="nivel_principiante">Principiante</string>
     <string name="nivel_intermedio">Intermedio</string>
     <string name="nivel_avanzado">Avanzado</string>
+
+    <!-- Resumen sesión -->
+    <string name="resumen_titulo">Resumen de sesión</string>
+    <string name="resumen_seccion_sesion">Sesión</string>
+    <string name="resumen_seccion_stats">Mis estadísticas</string>
+    <string name="resumen_seccion_logros">Logros desbloqueados</string>
+    <string name="resumen_completada">✓ Completada</string>
+    <string name="resumen_sin_logros">Sin logros desbloqueados aún</string>
+    <string name="resumen_stat_sesiones">Total sesiones</string>
+    <string name="resumen_stat_completadas">Completadas</string>
+    <string name="resumen_stat_minutos">Minutos entrenados</string>
+    <string name="resumen_stat_calorias">Calorías quemadas</string>
+    <string name="resumen_stat_racha">Racha actual (días)</string>
+    <string name="resumen_stat_mejor_racha">Mejor racha (días)</string>
+    <string name="resumen_fecha">Fecha</string>
+    <string name="resumen_duracion">Duración</string>
+    <string name="resumen_calorias">Calorías</string>
+    <string name="resumen_rutina">Rutina</string>
+    <string name="resumen_notas">Notas</string>
+
+    <!-- Crear rutina — ejercicios -->
+    <string name="crear_rutina_ejercicios">Ejercicios</string>
+    <string name="crear_rutina_buscar_ejercicio">Buscar ejercicio...</string>
+    <string name="crear_rutina_ejercicios_anadidos">Ejercicios añadidos</string>
+    <string name="crear_rutina_series">Series</string>
+    <string name="crear_rutina_repeticiones">Repeticiones</string>
+    <string name="crear_rutina_ejercicio_duplicado">Ejercicio ya añadido</string>
+    <string name="crear_rutina_dificultad_todos">Todos</string>
+    <string name="crear_rutina_siguiente">Siguiente</string>
+    <string name="anadir_ejercicios_titulo">Añadir ejercicios</string>
+    <string name="anadir_ejercicios_anadidos_fmt">Añadidos: %d</string>
+    <string name="anadir_ejercicios_continuar_fmt">Continuar (%d)</string>
+    <string name="resumen_crear_rutina_titulo">Resumen</string>
+    <string name="resumen_crear_rutina_ejercicios_fmt">Ejercicios (%d)</string>
+    <string name="resumen_crear_rutina_cancelar">Cancelar</string>
+    <string name="resumen_crear_rutina_confirmar_titulo">Eliminar ejercicio</string>
+    <string name="resumen_crear_rutina_confirmar_msg">¿Quieres eliminar este ejercicio de la rutina?</string>
+
+    <!-- Detalle rutina -->
+    <string name="detalle_rutina_titulo">Detalle de rutina</string>
+    <string name="detalle_rutina_ejercicios_fmt">Ejercicios (%d)</string>
+    <string name="detalle_rutina_editar">Editar rutina</string>
+
+    <!-- Editar rutina -->
+    <string name="editar_rutina_titulo">Editar rutina</string>
+    <string name="editar_rutina_guardar">Guardar cambios</string>
+    <string name="editar_rutina_guardado">Rutina actualizada</string>
+    <string name="editar_rutina_anadir_ejercicio">Añadir ejercicio</string>
+    <string name="editar_rutina_eliminar_ejercicio">¿Eliminar este ejercicio de la rutina?</string>
+    <string name="editar_rutina_ejercicios_fmt">Ejercicios (%d)</string>
 </resources>
