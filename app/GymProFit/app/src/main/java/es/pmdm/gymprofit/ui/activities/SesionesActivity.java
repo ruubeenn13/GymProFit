@@ -119,12 +119,22 @@ public class SesionesActivity extends AppCompatActivity {
         tvVacio.setVisibility(View.GONE);
         rvSesiones.setVisibility(View.VISIBLE);
 
-        adapter = new SesionAdapter(this, sesiones, rutinaNombres, sesion ->
-                UIHelper.mostrarDialogoConIcono(this,
+        adapter = new SesionAdapter(
+                this,
+                sesiones,
+                rutinaNombres,
+                sesion -> UIHelper.mostrarDialogoConIcono(this,
                         getString(R.string.sesiones_eliminar),
                         getString(R.string.sesiones_confirmar_eliminar),
                         R.drawable.ic_error,
-                        () -> eliminarSesion(sesion)));
+                        () -> eliminarSesion(sesion)),
+                sesion -> {
+                    Intent intent = new Intent(this, ResumenSesionActivity.class);
+                    intent.putExtra("sesionId", sesion.getId());
+                    String nombre = rutinaNombres.get(sesion.getRutinaId());
+                    intent.putExtra("rutinaNombre", nombre != null ? nombre : "");
+                    startActivity(intent);
+                });
         rvSesiones.setAdapter(adapter);
     }
 

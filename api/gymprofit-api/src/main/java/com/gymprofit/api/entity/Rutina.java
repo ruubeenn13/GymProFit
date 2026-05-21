@@ -56,6 +56,6 @@ public class Rutina {
     @org.hibernate.annotations.Formula("(SELECT COUNT(*) FROM rutina_ejercicio re WHERE re.rutina_id = id)")
     private Integer numEjercicios;
 
-    @org.hibernate.annotations.Formula("(SELECT COALESCE(SUM(e.calorias_quemadas), 0) FROM rutina_ejercicio re JOIN ejercicios e ON e.id = re.ejercicio_id WHERE re.rutina_id = id)")
+    @org.hibernate.annotations.Formula("(SELECT COALESCE(SUM(re.series * re.repeticiones * e.calorias_quemadas), 0) FROM rutina_ejercicio re JOIN ejercicios e ON e.id = re.ejercicio_id WHERE re.rutina_id = id)")
     private Integer caloriasAproximadas;
 }

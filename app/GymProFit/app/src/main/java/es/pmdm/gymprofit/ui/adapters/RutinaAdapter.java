@@ -18,12 +18,22 @@ import es.pmdm.gymprofit.model.rutina.Rutina;
 
 public class RutinaAdapter extends RecyclerView.Adapter<RutinaAdapter.ViewHolder> {
 
+    public interface OnClickListener {
+        void onClick(Rutina rutina);
+    }
+
     private List<Rutina> rutinas;
     private List<Rutina> rutinasFiltradas;
+    private final OnClickListener clickListener;
 
     public RutinaAdapter(List<Rutina> rutinas) {
+        this(rutinas, null);
+    }
+
+    public RutinaAdapter(List<Rutina> rutinas, OnClickListener listener) {
         this.rutinas = rutinas;
         this.rutinasFiltradas = new ArrayList<>(rutinas);
+        this.clickListener = listener;
     }
 
     @NonNull
@@ -43,6 +53,9 @@ public class RutinaAdapter extends RecyclerView.Adapter<RutinaAdapter.ViewHolder
         holder.tvNumEjercicios.setText(rutina.getNumEjercicios() + " ejercicios");
         holder.tvDuracion.setText(rutina.getDuracionMinutos() + " min");
         holder.tvCalorias.setText("~" + rutina.getCaloriasAproximadas() + " kcal");
+        if (clickListener != null) {
+            holder.itemView.setOnClickListener(v -> clickListener.onClick(rutina));
+        }
     }
 
     @Override

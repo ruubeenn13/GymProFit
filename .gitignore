@@ -1,0 +1,18 @@
+# Artefactos comprimidos
+*.zip
+
+# Logs
+logs/
+*.log
+
+# Documentación local / notas
+docs/
+TODO.md
+
+# IDE
+.idea/
+*.iml
+
+# SO
+.DS_Store
+Thumbs.db
