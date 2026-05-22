@@ -27,6 +27,7 @@ import es.pmdm.gymprofit.model.rutina.EjercicioSeleccionado;
 import es.pmdm.gymprofit.network.API;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.adapters.EjercicioSeleccionadoAdapter;
+import es.pmdm.gymprofit.utils.NotificationHelper;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
@@ -106,7 +107,7 @@ public class ResumenCrearRutinaActivity extends AppCompatActivity {
                         this,
                         getString(R.string.resumen_crear_rutina_confirmar_titulo),
                         getString(R.string.resumen_crear_rutina_confirmar_msg),
-                        R.drawable.ic_error,
+                        R.drawable.ic_delete,
                         () -> {
                             ejercicios.remove(item);
                             adapter.notifyDataSetChanged();
@@ -200,6 +201,7 @@ public class ResumenCrearRutinaActivity extends AppCompatActivity {
     }
 
     private void finalizar() {
+        NotificationHelper.notificarRutinaCreada(this, nombre);
         UIHelper.mostrarToastExito(this, getString(R.string.rutinas_guardada_exito));
         setResult(RESULT_OK);
         finish();

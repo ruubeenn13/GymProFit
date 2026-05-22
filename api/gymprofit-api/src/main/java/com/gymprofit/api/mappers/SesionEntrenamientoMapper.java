@@ -13,6 +13,7 @@ public interface SesionEntrenamientoMapper {
 
     @Mapping(target = "usuarioId", source = "usuario.id")
     @Mapping(target = "rutinaId", source = "rutina.id")
+    @Mapping(target = "nuevosLogros", ignore = true)
     SesionEntrenamientoDTO toDTO(SesionEntrenamiento sesionEntrenamiento);
 
     List<SesionEntrenamientoDTO> toDTOList(List<SesionEntrenamiento> sesionesEntrenamiento);

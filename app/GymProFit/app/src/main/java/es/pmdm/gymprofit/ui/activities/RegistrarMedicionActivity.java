@@ -17,6 +17,7 @@ import java.util.Locale;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.network.API;
 import es.pmdm.gymprofit.network.UtilREST;
+import es.pmdm.gymprofit.utils.NotificationHelper;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
@@ -75,6 +76,7 @@ public class RegistrarMedicionActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(String response, int statusCode) {
                     runOnUiThread(() -> {
+                        NotificationHelper.notificarMedicionGuardada(RegistrarMedicionActivity.this);
                         UIHelper.mostrarToastExito(RegistrarMedicionActivity.this,
                                 getString(R.string.mediciones_exito));
                         setResult(RESULT_OK);

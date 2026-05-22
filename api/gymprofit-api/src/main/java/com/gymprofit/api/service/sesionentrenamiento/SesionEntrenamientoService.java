@@ -78,11 +78,24 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
                 sesion.setFechaInicio(LocalDateTime.now());
             }
 
-            sesion.setCompletada(false);
+            if (sesion.getFechaFin() == null) {
+                int minutos = sesionEntrenamientoCreateDTO.getDuracionMinutos() != null
+                        ? sesionEntrenamientoCreateDTO.getDuracionMinutos() : 0;
+                sesion.setFechaFin(sesion.getFechaInicio().plusMinutes(minutos));
+            }
+
+            if (sesionEntrenamientoCreateDTO.getCompletada() != null) {
+                sesion.setCompletada(sesionEntrenamientoCreateDTO.getCompletada());
+            }
 
             SesionEntrenamiento sesionGuardada = sesionEntrenamientoRepository.save(sesion);
 
-            return sesionEntrenamientoMapper.toDTO(sesionGuardada);
+            SesionEntrenamientoDTO dto = sesionEntrenamientoMapper.toDTO(sesionGuardada);
+            if (Boolean.TRUE.equals(sesionGuardada.getCompletada())) {
+                List<String> nuevos = logroService.evaluarLogros(sesionGuardada.getUsuario().getId());
+                if (!nuevos.isEmpty()) dto.setNuevosLogros(nuevos);
+            }
+            return dto;
         } catch (NotFoundEntityException e) {
             throw e;
         } catch (Exception e) {
@@ -170,9 +183,10 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
             logger.info("Sesión {} completada", sesionCompletada);
 
-            logroService.evaluarLogros(sesionCompletada.getUsuario().getId());
-
-            return sesionEntrenamientoMapper.toDTO(sesionCompletada);
+            List<String> nuevos = logroService.evaluarLogros(sesionCompletada.getUsuario().getId());
+            SesionEntrenamientoDTO dto = sesionEntrenamientoMapper.toDTO(sesionCompletada);
+            if (!nuevos.isEmpty()) dto.setNuevosLogros(nuevos);
+            return dto;
         } catch (Exception e) {
             throw new UpdateEntityException(SesionEntrenamiento.class.getSimpleName(), id, e);
         }

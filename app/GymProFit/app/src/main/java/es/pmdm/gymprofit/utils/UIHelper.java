@@ -99,6 +99,11 @@ public class UIHelper {
         });
 
         dialog.show();
+
+        if (dialog.getWindow() != null) {
+            int ancho = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.90);
+            dialog.getWindow().setLayout(ancho, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
     }
 
     private static int dpToPx(Context context, int dp) {

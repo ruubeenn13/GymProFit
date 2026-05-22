@@ -63,11 +63,13 @@ LoginActivity ←→ RegistroActivity
 Onboarding (1 → 2 → 3 → 4 → Resumen)
      ↓
 HomeActivity (navegación inferior)
-  ├── EjerciciosActivity
-  ├── RutinasActivity → CrearRutinaActivity
+  ├── EjerciciosActivity → (DetalleEjercicioActivity — pendiente)
+  ├── RutinasActivity
+  │     ├── CrearRutinaActivity → AnadirEjerciciosActivity → ResumenCrearRutinaActivity
+  │     └── DetalleRutinaActivity → EditarRutinaActivity
   ├── NutricionActivity
-  └── PerfilActivity
-        ├── SesionesActivity → RegistrarSesionActivity
+  └── PerfilActivity → EditarPerfilActivity
+        ├── SesionesActivity → RegistrarSesionActivity → ResumenSesionActivity
         ├── MedicionesActivity → RegistrarMedicionActivity
         ├── LogrosActivity
         └── AdminActivity  (solo ROLE_ADMIN)
@@ -136,21 +138,27 @@ Arquitectura 4 capas obligatoria (UD06).
 | Activity | Descripción |
 |---|---|
 | `SplashActivity` | Carga inicial. Restaura token JWT desde SharedPreferences y redirige a Home o Login |
-| `LoginActivity` | Inicio de sesión. Guarda token, id, username y rol. Detecta si onboarding ya fue completado basándose en datos del usuario en BD |
+| `LoginActivity` | Inicio de sesión. Guarda token, id, username y rol. Detecta si onboarding ya fue completado |
 | `RegistroActivity` | Registro de nuevo usuario |
 | `Onboarding1–4Activity` | Flujo de configuración inicial (objetivo, nivel, datos físicos) |
 | `OnboardingResumenActivity` | Resumen y guardado. Llama a `PUT /usuarios` con todos los datos |
-| `HomeActivity` | Pantalla principal con BottomNav y card "Iniciar entrenamiento" → SesionesActivity |
+| `HomeActivity` | Pantalla principal con BottomNav. Registra `OnUnauthorizedListener` → redirige a Login si JWT expira |
 | `EjerciciosActivity` | Catálogo con filtro por grupo muscular y búsqueda |
-| `RutinasActivity` | Listado de rutinas del usuario y predefinidas. Permite eliminar |
-| `CrearRutinaActivity` | Formulario para crear rutina personalizada |
+| `RutinasActivity` | Listado de rutinas del usuario y predefinidas. Filtro por nivel |
+| `CrearRutinaActivity` | Paso 1/3 crear rutina: nombre, descripción, nivel, duración |
+| `AnadirEjerciciosActivity` | Paso 2/3: buscador + filtro dificultad, selección con series/reps via dialog |
+| `ResumenCrearRutinaActivity` | Paso 3/3: revisión antes de guardar. POST /rutinas + POST /rutinas-ejercicios × N |
+| `DetalleRutinaActivity` | Vista readonly de rutina. Botón editar visible solo si es propia |
+| `EditarRutinaActivity` | PATCH nombre/desc/nivel/duración + añadir/eliminar ejercicios |
 | `NutricionActivity` | Calculadora nutricional (calorías, macros, agua) |
-| `PerfilActivity` | Perfil con datos reales de la API. Sección "Mis actividades" + configuración (tema, idioma) + cerrar sesión |
-| `SesionesActivity` | Historial de sesiones con opción de eliminar. Lanza RegistrarSesionActivity con ActivityResultLauncher |
-| `RegistrarSesionActivity` | Formulario para registrar sesión (spinner de rutinas, duración, calorías, notas) |
+| `PerfilActivity` | Perfil con datos reales de la API. Config tema/idioma + cerrar sesión |
+| `EditarPerfilActivity` | Editar email, peso, altura, edad, nivel, objetivo. PATCH /usuarios/{id} |
+| `SesionesActivity` | Historial de sesiones con opción de eliminar |
+| `RegistrarSesionActivity` | Formulario para registrar sesión: rutina (spinner), duración, calorías calculadas automáticamente, notas, valoración (RatingBar 1-5) |
+| `ResumenSesionActivity` | Detalle de sesión completada + estadísticas del usuario + logros desbloqueados |
 | `MedicionesActivity` | Historial de mediciones corporales con opción de eliminar |
 | `RegistrarMedicionActivity` | Formulario para añadir medición (peso obligatorio, resto opcionales) |
-| `LogrosActivity` | Lista todos los logros. Desbloqueados primero, alpha 0.5 para los bloqueados. Dos llamadas paralelas con AtomicInteger |
+| `LogrosActivity` | Lista todos los logros. Desbloqueados resaltados. Dos llamadas paralelas con AtomicInteger |
 | `AdminActivity` | Panel de administración: estadísticas globales + lista de usuarios (solo ROLE_ADMIN) |
 
 **`ui/adapters/`**
@@ -171,9 +179,10 @@ Arquitectura 4 capas obligatoria (UD06).
 | Clase | Descripción |
 |---|---|
 | `PreferencesManager` | SharedPreferences centralizado. Campos: token, usuarioId, username, rol, nivel, objetivo, sexo, actividad, calorías/macros/agua, onboarding, tema, idioma. `cerrarSesion()` limpia token + id + username + onboarding |
-| `CalculadoraNutricional` | BMR con Harris-Benedict, factor de actividad y distribución de macros según objetivo |
+| `CalculadoraNutricional` | BMR con Mifflin-St Jeor, factor de actividad y distribución de macros según objetivo |
 | `ResultadoNutricional` | Modelo con calorías totales, proteínas, carbohidratos y grasas |
-| `UIHelper` | Toasts personalizados (éxito, error, info) y diálogos de confirmación con icono |
+| `UIHelper` | Toasts personalizados (éxito, error, info) y diálogos de confirmación con icono. Ancho diálogo = 90% pantalla |
+| `NotificationHelper` | Notificaciones con 4 canales: sesión completada, medición guardada, rutina creada, logro desbloqueado (InboxStyle expandible) |
 
 ---
 
@@ -416,11 +425,29 @@ Abre `app/GymProFit` en Android Studio, sincroniza Gradle y ejecuta en emulador 
 
 ## 📝 Changelog
 
+### 2026-05-22
+
+| Hash | Descripción |
+|---|---|
+| *(pendiente)* | feat: notificaciones (4 canales), cálculo automático calorías sesión, fix logros duplicados, ic_delete, btnGuardar fijo al fondo |
+| *(pendiente)* | feat(android): ResumenSesionActivity; fix logros: evaluarLogros retorna nuevos logros; RatingBar valoración; calorías calculadas desde ejercicios |
+| *(pendiente)* | fix: fecha_fin NOT NULL en SesionEntrenamientoService; completada leída del DTO; evaluarLogros en save() |
+
+### 2026-05-21
+
+| Hash | Descripción |
+|---|---|
+| `3555fe5` | feat(android): flujo crear rutina (3 pasos), detalle y edición de rutina |
+| `a92cefb` | feat: añadir EditarPerfilActivity con PATCH /usuarios/{id}; fix mapper y service |
+| `b436ff9` | fix: corregir filtros de ejercicios y rutinas; ampliar seed con rutinas por nivel |
+| `94110ce` | fix(security): devolver 401 en JWT expirado/inválido en lugar de 500 |
+| `7f2ce1d` | feat: añadir pantallas Sesiones, Mediciones, Logros y Admin; fix onboarding repetido en login |
+
 ### 2026-05-17
 
 | Hash | Descripción |
 |---|---|
-| *(pendiente)* | fix: saltar onboarding en login si usuario ya tiene datos; activar usuarios con activo=NULL; añadir logging a UtilREST y PerfilActivity |
+| *(archivado)* | fix: saltar onboarding en login si usuario ya tiene datos; activar usuarios con activo=NULL; añadir logging a UtilREST y PerfilActivity |
 
 ### 2026-05-16
 
