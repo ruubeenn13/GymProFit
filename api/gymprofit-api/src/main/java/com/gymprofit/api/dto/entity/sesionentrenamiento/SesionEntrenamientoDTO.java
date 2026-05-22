@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -20,4 +22,7 @@ public class SesionEntrenamientoDTO implements Serializable {
     private Integer caloriasQuemadas;
     private String notas;
     private Boolean completada;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<String> nuevosLogros;
 }

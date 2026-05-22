@@ -16,5 +16,5 @@ public interface ILogroService {
 
     LogroDTO update(Integer id, LogroCreateDTO updateDTO);
 
-    void evaluarLogros(Integer usuarioId);
+    List<String> evaluarLogros(Integer usuarioId);
 }

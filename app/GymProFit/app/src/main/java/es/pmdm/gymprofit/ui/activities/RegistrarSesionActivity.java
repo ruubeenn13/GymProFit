@@ -4,13 +4,18 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.RatingBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,9 +37,13 @@ import es.pmdm.gymprofit.utils.UIHelper;
 public class RegistrarSesionActivity extends AppCompatActivity {
 
     private Spinner spRutina;
-    private TextInputEditText etDuracion, etCalorias, etNotas;
+    private TextInputEditText etDuracion, etNotas;
+    private TextView tvCaloriasCalculadas;
+    private View cardCalorias;
+    private RatingBar ratingBar;
     private PreferencesManager prefsManager;
 
+    private int caloriasCalculadas = 0;
     private final List<Rutina> rutinas = new ArrayList<>();
     private final List<String> rutinaOpciones = new ArrayList<>();
 
@@ -46,10 +55,12 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         aplicarIdioma();
         setContentView(R.layout.activity_registrar_sesion);
 
-        spRutina   = findViewById(R.id.spRutina);
-        etDuracion = findViewById(R.id.etDuracion);
-        etCalorias = findViewById(R.id.etCalorias);
-        etNotas    = findViewById(R.id.etNotas);
+        spRutina             = findViewById(R.id.spRutina);
+        etDuracion           = findViewById(R.id.etDuracion);
+        etNotas              = findViewById(R.id.etNotas);
+        tvCaloriasCalculadas = findViewById(R.id.tvCaloriasCalculadas);
+        cardCalorias         = findViewById(R.id.cardCalorias);
+        ratingBar            = findViewById(R.id.ratingBar);
 
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
         findViewById(R.id.btnGuardar).setOnClickListener(v -> guardarSesion());
@@ -102,6 +113,48 @@ public class RegistrarSesionActivity extends AppCompatActivity {
                 android.R.layout.simple_spinner_item, rutinaOpciones);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spRutina.setAdapter(spinnerAdapter);
+        spRutina.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position > 0 && position <= rutinas.size()) {
+                    calcularCaloriasRutina(rutinas.get(position - 1).getId());
+                } else {
+                    caloriasCalculadas = 0;
+                    cardCalorias.setVisibility(View.GONE);
+                }
+            }
+            @Override public void onNothingSelected(AdapterView<?> parent) {}
+        });
+    }
+
+    private void calcularCaloriasRutina(int rutinaId) {
+        API.getRutinaEjerciciosPorRutina(rutinaId, new UtilREST.OnResponseListener() {
+            @Override
+            public void onSuccess(String response, int statusCode) {
+                try {
+                    JSONArray arr = new JSONArray(response);
+                    int total = 0;
+                    for (int i = 0; i < arr.length(); i++) {
+                        JSONObject obj = arr.getJSONObject(i);
+                        int calorias = obj.optInt("caloriasEjercicio", 0);
+                        int series   = obj.optInt("series", 0);
+                        int reps     = obj.optInt("repeticiones", 0);
+                        total += calorias * series * reps;
+                    }
+                    final int kcal = total;
+                    runOnUiThread(() -> {
+                        caloriasCalculadas = kcal;
+                        if (kcal > 0) {
+                            tvCaloriasCalculadas.setText(getString(R.string.sesiones_kcal, kcal));
+                            cardCalorias.setVisibility(View.VISIBLE);
+                        } else {
+                            cardCalorias.setVisibility(View.GONE);
+                        }
+                    });
+                } catch (JSONException ignored) {}
+            }
+            @Override public void onError(String message, int statusCode) {}
+        });
     }
 
     private void guardarSesion() {
@@ -124,11 +177,13 @@ public class RegistrarSesionActivity extends AppCompatActivity {
             body.put("fechaInicio", now);
             body.put("duracionMinutos", Integer.parseInt(durStr));
 
-            String calStr = etCalorias.getText() != null ? etCalorias.getText().toString().trim() : "";
-            if (!calStr.isEmpty()) body.put("caloriasQuemadas", Integer.parseInt(calStr));
+            if (caloriasCalculadas > 0) body.put("caloriasQuemadas", caloriasCalculadas);
 
-            String notas = etNotas.getText() != null ? etNotas.getText().toString().trim() : "";
-            if (!notas.isEmpty()) body.put("notas", notas);
+            int estrellas = (int) ratingBar.getRating();
+            String valoracion = getString(R.string.sesiones_valoracion_fmt, estrellas);
+            String notasUsuario = etNotas.getText() != null ? etNotas.getText().toString().trim() : "";
+            String notasFinal = notasUsuario.isEmpty() ? valoracion : valoracion + "\n" + notasUsuario;
+            body.put("notas", notasFinal);
 
             body.put("completada", true);
 
@@ -140,8 +195,17 @@ public class RegistrarSesionActivity extends AppCompatActivity {
                                 getString(R.string.sesiones_exito));
 
                         int sesionIdGuardada = -1;
-                        try { sesionIdGuardada = new JSONObject(response).optInt("id", -1); }
-                        catch (JSONException ignored) {}
+                        ArrayList<String> nuevosLogros = new ArrayList<>();
+                        try {
+                            JSONObject json = new JSONObject(response);
+                            sesionIdGuardada = json.optInt("id", -1);
+                            JSONArray logrosArr = json.optJSONArray("nuevosLogros");
+                            if (logrosArr != null) {
+                                for (int i = 0; i < logrosArr.length(); i++) {
+                                    nuevosLogros.add(logrosArr.getString(i));
+                                }
+                            }
+                        } catch (JSONException ignored) {}
 
                         String nombreRutina = "";
                         int pos = spRutina.getSelectedItemPosition();
@@ -156,6 +220,7 @@ public class RegistrarSesionActivity extends AppCompatActivity {
                                     ResumenSesionActivity.class);
                             intent.putExtra("sesionId", sesionIdGuardada);
                             intent.putExtra("rutinaNombre", nombreRutina);
+                            intent.putStringArrayListExtra("nuevosLogros", nuevosLogros);
                             startActivity(intent);
                         }
 

@@ -28,6 +28,7 @@ import es.pmdm.gymprofit.network.API;
 import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.adapters.LogroAdapter;
+import es.pmdm.gymprofit.utils.NotificationHelper;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 
 public class ResumenSesionActivity extends AppCompatActivity {
@@ -46,6 +47,8 @@ public class ResumenSesionActivity extends AppCompatActivity {
     private UsuarioEstadisticas estadisticas;
     private List<Logro> todosLogros = new ArrayList<>();
     private Set<Integer> desbloqueados = new HashSet<>();
+    private ArrayList<String> nuevosLogros = new ArrayList<>();
+    private boolean fromRegistrar = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +62,11 @@ public class ResumenSesionActivity extends AppCompatActivity {
         if (sesionId == -1) { finish(); return; }
 
         String rutinaNombre = getIntent().getStringExtra("rutinaNombre");
+        ArrayList<String> extras = getIntent().getStringArrayListExtra("nuevosLogros");
+        if (extras != null) {
+            nuevosLogros = extras;
+            fromRegistrar = true;
+        }
 
         inicializarVistas(rutinaNombre);
 
@@ -171,6 +179,14 @@ public class ResumenSesionActivity extends AppCompatActivity {
         List<Logro> filtrados = new ArrayList<>();
         for (Logro l : todosLogros) {
             if (desbloqueados.contains(l.getId())) filtrados.add(l);
+        }
+
+        if (fromRegistrar && sesion != null) {
+            NotificationHelper.notificarSesionCompletada(this,
+                    sesion.getDuracionMinutos(), sesion.getCaloriasQuemadas());
+            if (!nuevosLogros.isEmpty()) {
+                NotificationHelper.notificarLogrosDesbloqueados(this, nuevosLogros);
+            }
         }
 
         if (filtrados.isEmpty()) {

@@ -104,7 +104,7 @@ public class MedicionesActivity extends AppCompatActivity {
                 UIHelper.mostrarDialogoConIcono(this,
                         getString(R.string.mediciones_eliminar),
                         getString(R.string.mediciones_confirmar_eliminar),
-                        R.drawable.ic_error,
+                        R.drawable.ic_delete,
                         () -> eliminarMedicion(medicion)));
         rvMediciones.setAdapter(adapter);
     }

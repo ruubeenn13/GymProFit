@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -82,7 +83,7 @@ public class LogroService implements ILogroService {
 
     @Override
     @Transactional
-    public void evaluarLogros(Integer usuarioId) {
+    public List<String> evaluarLogros(Integer usuarioId) {
         Set<Integer> logroIds = new HashSet<>(usuarioLogroRepository.findLogroIdsByUsuarioId(usuarioId));
         List<Logro> todos = (List<Logro>) logroRepository.findAll();
 
@@ -93,16 +94,18 @@ public class LogroService implements ILogroService {
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new NotFoundEntityException("Usuario con id " + usuarioId + " no encontrado"));
 
+        List<String> nuevos = new ArrayList<>();
+
         for (Logro logro : todos) {
             if (logroIds.contains(logro.getId())) continue;
 
             boolean cumple = switch (logro.getTipo()) {
-                case PRIMERA_SESION   -> sesionesCompletadas >= 1;
-                case CONSTANCIA       -> sesionesCompletadas >= 7;
-                case DEDICADO         -> sesionesCompletadas >= 30;
-                case CENTENARIO       -> ejerciciosRealizados >= 100;
+                case PRIMERA_SESION    -> sesionesCompletadas >= 1;
+                case CONSTANCIA        -> sesionesCompletadas >= 7;
+                case DEDICADO          -> sesionesCompletadas >= 30;
+                case CENTENARIO        -> ejerciciosRealizados >= 100;
                 case OBJETIVO_CUMPLIDO -> objetivosCompletados >= 1;
-                case MAQUINA          -> objetivosCompletados >= 10;
+                case MAQUINA           -> objetivosCompletados >= 10;
             };
 
             if (cumple) {
@@ -111,9 +114,12 @@ public class LogroService implements ILogroService {
                 usuarioLogro.setLogro(logro);
                 usuarioLogro.setFechaObtenido(LocalDateTime.now());
                 usuarioLogroRepository.save(usuarioLogro);
+                nuevos.add(logro.getNombre());
                 logger.info("Logro '{}' otorgado al usuario {}", logro.getNombre(), usuarioId);
             }
         }
+
+        return nuevos;
     }
 
     private TipoLogro parseTipo(String tipo) {

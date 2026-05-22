@@ -13,6 +13,7 @@ public interface RutinaEjercicioMapper {
 
     @Mapping(target = "rutinaId", source = "rutina.id")
     @Mapping(target = "ejercicioId", source = "ejercicio.id")
+    @Mapping(target = "caloriasEjercicio", source = "ejercicio.caloriasQuemadas")
     RutinaEjercicioDTO toDTO(RutinaEjercicio rutinaEjercicio);
 
     List<RutinaEjercicioDTO> toDTOList(List<RutinaEjercicio> rutinaEjercicios);

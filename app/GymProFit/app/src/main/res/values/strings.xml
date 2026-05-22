@@ -190,6 +190,9 @@
     <string name="sesiones_eliminar">Eliminar sesión</string>
     <string name="sesiones_confirmar_eliminar">¿Eliminar esta sesión?</string>
     <string name="sesiones_sin_rutina">Sin rutina asociada</string>
+    <string name="sesiones_calorias_estimadas">Calorías estimadas</string>
+    <string name="sesiones_valoracion">Valoración de la sesión</string>
+    <string name="sesiones_valoracion_fmt">⭐ %d/5</string>
 
     <!-- MEDICIONES -->
     <string name="mediciones_titulo">Mediciones corporales</string>
@@ -302,6 +305,20 @@
     <string name="detalle_rutina_titulo">Detalle de rutina</string>
     <string name="detalle_rutina_ejercicios_fmt">Ejercicios (%d)</string>
     <string name="detalle_rutina_editar">Editar rutina</string>
+
+    <!-- NOTIFICACIONES -->
+    <string name="notif_canal_sesiones">Sesiones</string>
+    <string name="notif_canal_mediciones">Mediciones</string>
+    <string name="notif_canal_rutinas">Rutinas</string>
+    <string name="notif_canal_logros">Logros</string>
+    <string name="notif_sesion_titulo">¡Sesión completada!</string>
+    <string name="notif_sesion_texto">%1$d min · %2$d kcal quemadas</string>
+    <string name="notif_medicion_titulo">Medición registrada</string>
+    <string name="notif_medicion_texto">Tu medición corporal ha sido guardada</string>
+    <string name="notif_rutina_titulo">¡Rutina creada!</string>
+    <string name="notif_rutina_texto">%s está lista para usar</string>
+    <string name="notif_logros_titulo">¡Nuevo logro desbloqueado!</string>
+    <string name="notif_logros_texto">Has conseguido %d logro(s)</string>
 
     <!-- Editar rutina -->
     <string name="editar_rutina_titulo">Editar rutina</string>

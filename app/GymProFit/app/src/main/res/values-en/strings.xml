@@ -213,6 +213,9 @@
     <string name="sesiones_eliminar">Delete session</string>
     <string name="sesiones_confirmar_eliminar">Delete this session?</string>
     <string name="sesiones_sin_rutina">No routine linked</string>
+    <string name="sesiones_calorias_estimadas">Estimated calories</string>
+    <string name="sesiones_valoracion">Session rating</string>
+    <string name="sesiones_valoracion_fmt">⭐ %d/5</string>
 
     <!-- MEASUREMENTS -->
     <string name="mediciones_titulo">Body measurements</string>
@@ -303,6 +306,20 @@
     <string name="detalle_rutina_titulo">Routine detail</string>
     <string name="detalle_rutina_ejercicios_fmt">Exercises (%d)</string>
     <string name="detalle_rutina_editar">Edit routine</string>
+
+    <!-- NOTIFICATIONS -->
+    <string name="notif_canal_sesiones">Sessions</string>
+    <string name="notif_canal_mediciones">Measurements</string>
+    <string name="notif_canal_rutinas">Routines</string>
+    <string name="notif_canal_logros">Achievements</string>
+    <string name="notif_sesion_titulo">Session completed!</string>
+    <string name="notif_sesion_texto">%1$d min · %2$d kcal burned</string>
+    <string name="notif_medicion_titulo">Measurement saved</string>
+    <string name="notif_medicion_texto">Your body measurement has been recorded</string>
+    <string name="notif_rutina_titulo">Routine created!</string>
+    <string name="notif_rutina_texto">%s is ready to use</string>
+    <string name="notif_logros_titulo">New achievement unlocked!</string>
+    <string name="notif_logros_texto">You earned %d achievement(s)</string>
 
     <!-- Edit routine -->
     <string name="editar_rutina_titulo">Edit routine</string>
