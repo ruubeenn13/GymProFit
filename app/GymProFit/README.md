@@ -142,9 +142,9 @@ HomeActivity (navegación inferior)
 | `RegistroActivity` | POST /auth/register |
 | `Onboarding1–4Activity` | Configuración inicial: objetivo, nivel, datos físicos |
 | `OnboardingResumenActivity` | Cálculo nutricional + PUT /usuarios |
-| `HomeActivity` | Saludo contextual, fecha locale-aware. Detecta JWT expirado (401) → redirige a Login |
+| `HomeActivity` | Saludo contextual, fecha locale-aware. Estadísticas reales de la semana actual (entrenamientos, calorías, minutos) cargadas desde API. Detecta JWT expirado (401) → redirige a Login |
 | `EjerciciosActivity` | Catálogo con buscador y filtro por grupo muscular |
-| `RutinasActivity` | Listado rutinas del usuario + predefinidas. Filtro por nivel |
+| `RutinasActivity` | Listado rutinas del usuario + predefinidas. Filtro por nivel. Long-press contextual: admin en predefinidas (Editar→`EditarRutinaAdminActivity` + Desactivar/Activar) o en propias (Editar + Eliminar); usuario solo en propias (Editar + Eliminar) |
 | `CrearRutinaActivity` | Paso 1/3: nombre, descripción, nivel, duración |
 | `AnadirEjerciciosActivity` | Paso 2/3: buscador + filtro dificultad, selección con series/reps |
 | `ResumenCrearRutinaActivity` | Paso 3/3: revisión + POST /rutinas + POST /rutinas-ejercicios × N |
@@ -154,15 +154,17 @@ HomeActivity (navegación inferior)
 | `PerfilActivity` | Datos reales de la API + resumen de última medición corporal (peso/altura). Hereda de `BaseActivity` |
 | `EditarPerfilActivity` | PATCH /usuarios/{id}. Campos vacíos → null en BD |
 | `SesionesActivity` | Historial de sesiones, eliminar |
-| `RegistrarSesionActivity` | Crear sesión: spinner rutinas, calorías calculadas automáticamente, RatingBar 1-5 |
+| `RegistrarSesionActivity` | Crear sesión: spinner rutinas, calorías calculadas, cards de ejercicios con campo de peso por ejercicio (RecyclerView+`EjercicioPesoAdapter`), RatingBar 1-5 |
 | `ResumenSesionActivity` | Detalle sesión + 6 stats de usuario + logros desbloqueados |
 | `MedicionesActivity` | Vista detallada de la última medición corporal (peso, altura, grasa, músculo, perímetros). FAB para registrar nueva |
 | `RegistrarMedicionActivity` | POST /mediciones-corporales |
 | `LogrosActivity` | Todos los logros con desbloqueados resaltados |
 | `AdminActivity` | Panel admin: estadísticas globales (6 KPIs) + acceso a gestión de usuarios, rutinas y ejercicios (solo ROLE_ADMIN) |
 | `AdminUsuariosActivity` | Gestión de usuarios: buscar por username, filtrar por estado/rol, toggle activo/inactivo, cambiar rol (solo ROLE_ADMIN) |
-| `AdminRutinasActivity` | Gestión de rutinas predefinidas: buscar, filtrar por nivel/estado, toggle activa, editar nombre y descripción (solo ROLE_ADMIN) |
-| `AdminEjerciciosActivity` | Gestión del catálogo de ejercicios: buscar, filtrar por estado, toggle activo, editar nombre y descripción (solo ROLE_ADMIN) |
+| `AdminRutinasActivity` | Gestión de rutinas predefinidas: buscar, filtrar por nivel/estado, toggle activa, editar todos los campos vía `EditarRutinaAdminActivity` (solo ROLE_ADMIN) |
+| `AdminEjerciciosActivity` | Gestión del catálogo de ejercicios: buscar, filtrar por estado, toggle activo, editar todos los campos vía `EditarEjercicioAdminActivity` (solo ROLE_ADMIN) |
+| `EditarRutinaAdminActivity` | Edición completa de rutina predefinida: nombre, descripción, nivel (Spinner), duración, calorías, categoría, días semana. PATCH /rutinas/{id} (solo ROLE_ADMIN) |
+| `EditarEjercicioAdminActivity` | Edición completa de ejercicio: nombre, descripción, grupo muscular (Spinner), dificultad (Spinner), calorías, equipo necesario, instrucciones. PATCH /ejercicios/{id} (solo ROLE_ADMIN) |
 | `DetalleEjercicioActivity` | Detalle de ejercicio: reproducción automática de vídeo local (`res/raw/video_<id>.mp4`), stats (músculo, nivel, calorías, equipamiento), descripción e instrucciones |
 
 ---
@@ -238,6 +240,7 @@ GET    sesiones/usuario/{usuarioId}
 GET    sesiones/{id}
 POST   sesiones
 DELETE sesiones/{id}
+POST   ejercicios-realizados
 GET    mediciones-corporales/usuario/{id}/ordenadas
 POST   mediciones-corporales
 DELETE mediciones-corporales/{id}
@@ -290,6 +293,12 @@ implementation libs.constraintlayout
 ---
 
 ## Changelog
+
+### 2026-05-25 — Pesos por serie, stats home, admin edición completa, menú long-press
+- **Pesos por serie en RegistrarSesion**: al seleccionar rutina aparece card con `EjercicioPesoAdapter` (RecyclerView+TextWatcher); al finalizar sesión hace `POST /ejercicios-realizados` por cada ejercicio con `pesoUsado` opcional
+- **Stats reales en Home**: `onResume` llama a `GET /sesiones/usuario/{id}`, filtra por semana actual (lunes–domingo) y muestra entrenamientos, calorías y minutos reales. Card principal cambiado de `colorPrimary` a `colorPrimaryContainer`
+- **Admin edición completa**: `EditarRutinaAdminActivity` (nivel Spinner + duración/calorías/categoría/diasSemana) y `EditarEjercicioAdminActivity` (grupoMuscular+dificultad Spinners + calorías/equipo/instrucciones) reemplazan los diálogos parciales previos
+- **Long-press menú corregido**: `RutinaAdapter.setUserContext(isAdmin, userId)` habilita long-press para admin en cualquier rutina o para el propietario en las suyas; menú contextual diferenciado: predefinidas → Editar+Desactivar/Activar, propias → Editar+Eliminar; `ic_visibility_off.xml` nuevo drawable
 
 ### 2026-05-25 — DetalleEjercicioActivity + rediseño lista ejercicios en rutinas
 - **DetalleEjercicioActivity**: nueva pantalla con vídeo autoplay (`VideoView` + `MediaController` + `setOnPreparedListener`), stats card (músculo/nivel/calorías/equipamiento), descripción e instrucciones. Vídeos en `res/raw/video_<id>.mp4`

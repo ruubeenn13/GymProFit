@@ -21,4 +21,5 @@ public class RutinaEjercicioDTO implements Serializable {
     private Integer orden;
     private String notas;
     private Integer caloriasEjercicio;
+    private String nombreEjercicio;
 }

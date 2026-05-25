@@ -144,6 +144,8 @@
     <string name="rutinas_confirmar_eliminar">Delete this routine? This action cannot be undone.</string>
     <string name="rutinas_eliminada_exito">Routine deleted</string>
     <string name="rutinas_editar">Edit</string>
+    <string name="rutinas_desactivar">Deactivate</string>
+    <string name="rutinas_activar">Activate</string>
 
     <!-- ONBOARDING -->
     <string name="onboarding_saltar">Skip</string>
@@ -220,6 +222,8 @@
     <string name="sesiones_calorias_estimadas">Estimated calories</string>
     <string name="sesiones_valoracion">Session rating</string>
     <string name="sesiones_valoracion_fmt">⭐ %d/5</string>
+    <string name="sesiones_ejercicios_sesion">Session exercises</string>
+    <string name="sesiones_peso_hint">Weight (kg)</string>
 
     <!-- MEASUREMENTS -->
     <string name="mediciones_titulo">Body measurements</string>
@@ -293,12 +297,20 @@
     <string name="admin_toggle_ejercicio_desactivar">Deactivate this exercise?</string>
     <string name="admin_editar_rutina_titulo">Edit routine</string>
     <string name="admin_editar_ejercicio_titulo">Edit exercise</string>
-    <string name="admin_campo_nombre">Name</string>
+    <string name="admin_campo_nombre">Name *</string>
     <string name="admin_campo_descripcion">Description</string>
     <string name="admin_campo_nivel">Level</string>
     <string name="admin_campo_grupo">Muscle group</string>
     <string name="admin_campo_dificultad">Difficulty</string>
+    <string name="admin_campo_duracion">Duration (min)</string>
+    <string name="admin_campo_calorias_rutina">Approximate calories</string>
+    <string name="admin_campo_categoria">Category</string>
+    <string name="admin_campo_dias_semana">Weekdays (e.g. M,T,W,T,F)</string>
+    <string name="admin_campo_calorias_ejercicio">Calories burned</string>
+    <string name="admin_campo_equipo">Required equipment</string>
+    <string name="admin_campo_instrucciones">Instructions</string>
     <string name="admin_guardar">Save</string>
+    <string name="admin_nombre_requerido">Name is required</string>
     <string name="admin_exito_toggle_usuario">User status updated</string>
     <string name="admin_exito_cambiar_rol">Role updated</string>
     <string name="admin_exito_toggle_rutina">Routine status updated</string>

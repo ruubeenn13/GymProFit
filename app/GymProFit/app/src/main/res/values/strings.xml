@@ -143,6 +143,8 @@
     <string name="rutinas_confirmar_eliminar">¿Eliminar esta rutina? Esta acción no se puede deshacer.</string>
     <string name="rutinas_eliminada_exito">Rutina eliminada</string>
     <string name="rutinas_editar">Editar</string>
+    <string name="rutinas_desactivar">Desactivar</string>
+    <string name="rutinas_activar">Activar</string>
 
     <!-- ONBOARDING -->
     <string name="onboarding_saltar">Saltar</string>
@@ -197,6 +199,8 @@
     <string name="sesiones_calorias_estimadas">Calorías estimadas</string>
     <string name="sesiones_valoracion">Valoración de la sesión</string>
     <string name="sesiones_valoracion_fmt">⭐ %d/5</string>
+    <string name="sesiones_ejercicios_sesion">Ejercicios de la sesión</string>
+    <string name="sesiones_peso_hint">Peso (kg)</string>
 
     <!-- MEDICIONES -->
     <string name="mediciones_titulo">Mediciones corporales</string>
@@ -270,12 +274,20 @@
     <string name="admin_toggle_ejercicio_desactivar">¿Desactivar este ejercicio?</string>
     <string name="admin_editar_rutina_titulo">Editar rutina</string>
     <string name="admin_editar_ejercicio_titulo">Editar ejercicio</string>
-    <string name="admin_campo_nombre">Nombre</string>
+    <string name="admin_campo_nombre">Nombre *</string>
     <string name="admin_campo_descripcion">Descripción</string>
     <string name="admin_campo_nivel">Nivel</string>
     <string name="admin_campo_grupo">Grupo muscular</string>
     <string name="admin_campo_dificultad">Dificultad</string>
+    <string name="admin_campo_duracion">Duración (min)</string>
+    <string name="admin_campo_calorias_rutina">Calorías aproximadas</string>
+    <string name="admin_campo_categoria">Categoría</string>
+    <string name="admin_campo_dias_semana">Días semana (ej: L,M,X,J,V)</string>
+    <string name="admin_campo_calorias_ejercicio">Calorías quemadas</string>
+    <string name="admin_campo_equipo">Equipamiento necesario</string>
+    <string name="admin_campo_instrucciones">Instrucciones</string>
     <string name="admin_guardar">Guardar</string>
+    <string name="admin_nombre_requerido">El nombre es obligatorio</string>
     <string name="admin_exito_toggle_usuario">Estado del usuario actualizado</string>
     <string name="admin_exito_cambiar_rol">Rol actualizado</string>
     <string name="admin_exito_toggle_rutina">Estado de la rutina actualizado</string>

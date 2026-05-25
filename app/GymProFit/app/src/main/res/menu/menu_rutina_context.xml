@@ -7,6 +7,11 @@
         android:icon="@drawable/ic_edit" />
 
     <item
+        android:id="@+id/menuDesactivar"
+        android:title="@string/rutinas_desactivar"
+        android:icon="@drawable/ic_visibility_off" />
+
+    <item
         android:id="@+id/menuEliminar"
         android:title="@string/rutinas_eliminar"
         android:icon="@drawable/ic_delete" />

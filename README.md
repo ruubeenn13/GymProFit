@@ -139,8 +139,9 @@ Arquitectura 4 capas obligatoria (UD06).
 | `adminBuscarEjercicios` | `GET admin/ejercicios/busqueda` | Buscar ejercicios con filtros (ADMIN) |
 | `adminActivarRutina` / `adminDesactivarRutina` | `PUT/DELETE rutinas/{id}/activar` | Toggle activa rutina (ADMIN) |
 | `adminActivarEjercicio` / `adminDesactivarEjercicio` | `PUT/DELETE ejercicios/{id}/activar` | Toggle activo ejercicio (ADMIN) |
-| `adminEditarRutina` | `PATCH rutinas/{id}` | Editar nombre/descripción rutina (ADMIN) |
-| `adminEditarEjercicio` | `PATCH ejercicios/{id}` | Editar nombre/descripción ejercicio (ADMIN) |
+| `adminEditarRutina` | `PATCH rutinas/{id}` | Editar todos los campos de rutina predefinida (ADMIN) |
+| `adminEditarEjercicio` | `PATCH ejercicios/{id}` | Editar todos los campos de ejercicio (ADMIN) |
+| `crearEjercicioRealizado` | `POST ejercicios-realizados` | Registrar ejercicio realizado en sesión |
 
 ---
 
@@ -153,7 +154,7 @@ Arquitectura 4 capas obligatoria (UD06).
 | `RegistroActivity` | Registro de nuevo usuario |
 | `Onboarding1–4Activity` | Flujo de configuración inicial (objetivo, nivel, datos físicos) |
 | `OnboardingResumenActivity` | Resumen y guardado. Llama a `PUT /usuarios` con todos los datos |
-| `HomeActivity` | Pantalla principal con BottomNav. Registra `OnUnauthorizedListener` → redirige a Login si JWT expira |
+| `HomeActivity` | Pantalla principal con BottomNav. Estadísticas reales de la semana (entrenamientos, calorías, minutos) cargadas en `onResume`. Detecta JWT expirado → redirige a Login |
 | `EjerciciosActivity` | Catálogo con filtro por grupo muscular y búsqueda |
 | `RutinasActivity` | Listado de rutinas del usuario y predefinidas. Filtro por nivel |
 | `CrearRutinaActivity` | Paso 1/3 crear rutina: nombre, descripción, nivel, duración |
@@ -165,15 +166,17 @@ Arquitectura 4 capas obligatoria (UD06).
 | `PerfilActivity` | Perfil con datos reales de la API. Config tema/idioma + cerrar sesión |
 | `EditarPerfilActivity` | Editar email, peso, altura, edad, nivel, objetivo. PATCH /usuarios/{id} |
 | `SesionesActivity` | Historial de sesiones con opción de eliminar |
-| `RegistrarSesionActivity` | Formulario para registrar sesión: rutina (spinner), duración, calorías calculadas automáticamente, notas, valoración (RatingBar 1-5) |
+| `RegistrarSesionActivity` | Formulario para registrar sesión: rutina (spinner), calorías calculadas, cards de ejercicios con peso por ejercicio (`EjercicioPesoAdapter`), notas, valoración (RatingBar 1-5). POST /ejercicios-realizados por cada ejercicio al finalizar |
 | `ResumenSesionActivity` | Detalle de sesión completada + estadísticas del usuario + logros desbloqueados |
 | `MedicionesActivity` | Historial de mediciones corporales con opción de eliminar |
 | `RegistrarMedicionActivity` | Formulario para añadir medición (peso obligatorio, resto opcionales) |
 | `LogrosActivity` | Lista todos los logros. Desbloqueados resaltados. Dos llamadas paralelas con AtomicInteger |
 | `AdminActivity` | Panel admin: 6 KPIs globales + acceso a gestión de usuarios, rutinas predefinidas y ejercicios (solo ROLE_ADMIN) |
 | `AdminUsuariosActivity` | Lista usuarios con búsqueda, filtros estado/rol, toggle activo/inactivo y cambio de rol |
-| `AdminRutinasActivity` | Lista rutinas predefinidas con filtros nivel/estado, toggle activa y edición de nombre/descripción |
-| `AdminEjerciciosActivity` | Lista catálogo de ejercicios con filtro estado, toggle activo y edición de nombre/descripción |
+| `AdminRutinasActivity` | Lista rutinas predefinidas con filtros nivel/estado, toggle activa y edición completa vía `EditarRutinaAdminActivity` |
+| `AdminEjerciciosActivity` | Lista catálogo de ejercicios con filtro estado, toggle activo y edición completa vía `EditarEjercicioAdminActivity` |
+| `EditarRutinaAdminActivity` | Edición completa de rutina predefinida: nombre, descripción, nivel, duración, calorías, categoría, días semana |
+| `EditarEjercicioAdminActivity` | Edición completa de ejercicio: nombre, descripción, grupo muscular, dificultad, calorías, equipo, instrucciones |
 
 **`ui/adapters/`**
 
@@ -445,8 +448,11 @@ Abre `app/GymProFit` en Android Studio, sincroniza Gradle y ejecuta en emulador 
 
 | Hash | Descripción |
 |---|---|
-| *(pendiente)* | feat(android): DetalleEjercicioActivity con vídeo local (VideoView+autoplay), stats card, instrucciones; rediseño item_ejercicio_seleccionado como card; fix optString→safeStr en UtilJSONParser; migración instrucciones press banca |
-| *(pendiente)* | feat(admin): panel admin completo — AdminUsuariosActivity, AdminRutinasActivity, AdminEjerciciosActivity, nuevos adapters, fix rol desde TokenDTO, fix jOOQ ROLE_ prefix, dark mode chips |
+| `1e4fb60` | feat(admin): panel de administración completo en Android y fixes de API |
+| `bf49bbe` | fix(android): cargar solo rutinas activas del usuario tras eliminar |
+| `961f804` | feat(android): logo PNG dark/light en splash/login/registro, fix BottomNav sin animación, fix diálogo idioma login |
+| `e2d8c0c` | feat(android): BaseActivity con menú tema/idioma, fix altura mediciones, mejoras UI |
+| *(actual)* | feat(android): pesos por serie en RegistrarSesion, stats reales en Home, admin edición completa, menú long-press contextual rutinas |
 
 ### 2026-05-22
 

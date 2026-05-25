@@ -204,7 +204,14 @@ La respuesta de `POST /sesiones` incluye el campo `nuevosLogros: ["Nombre logro"
 |---|---|---|---|
 | GET | `/mediciones-corporales/usuario/{id}/ordenadas` | USER+ | Historial del usuario |
 | POST | `/mediciones-corporales` | USER+ | Registrar medición |
+| PATCH | `/mediciones-corporales/{id}` | USER+ | Actualización parcial de un campo |
 | DELETE | `/mediciones-corporales/{id}` | USER+ | Eliminar |
+
+### EJERCICIOS REALIZADOS — `/ejercicios-realizados`
+
+| Método | URL | Auth | Descripción |
+|---|---|---|---|
+| POST | `/ejercicios-realizados` | USER+ | Registrar ejercicio realizado en una sesión (sesionId, ejercicioId, seriesCompletadas, repeticionesReales, pesoUsado opcional) |
 
 ### OBJETIVOS — `/objetivos-personales`
 

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="niveles">
+        <item>PRINCIPIANTE</item>
+        <item>INTERMEDIO</item>
+        <item>AVANZADO</item>
+    </string-array>
+
+    <string-array name="grupos_musculares">
+        <item>PECHO</item>
+        <item>ESPALDA</item>
+        <item>PIERNAS</item>
+        <item>HOMBROS</item>
+        <item>BRAZOS</item>
+        <item>ABDOMEN</item>
+        <item>CARDIO</item>
+        <item>FULLBODY</item>
+    </string-array>
+</resources>

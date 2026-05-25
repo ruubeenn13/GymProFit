@@ -96,7 +96,7 @@
                     android:layout_height="wrap_content"
                     app:cardCornerRadius="16dp"
                     app:cardElevation="0dp"
-                    app:cardBackgroundColor="?attr/colorPrimary">
+                    app:cardBackgroundColor="?attr/colorPrimaryContainer">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -115,24 +115,25 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/home_entrenamientos"
                                 android:textSize="13sp"
-                                android:textColor="?attr/colorOnPrimary"
+                                android:textColor="?attr/colorOnPrimaryContainer"
                                 android:alpha="0.8" />
 
                             <TextView
+                                android:id="@+id/tvConteoEntrenamientos"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="6dp"
-                                android:text="0"
+                                android:text="—"
                                 android:textSize="44sp"
                                 android:textStyle="bold"
-                                android:textColor="?attr/colorOnPrimary" />
+                                android:textColor="?attr/colorOnPrimaryContainer" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/home_esta_semana"
                                 android:textSize="12sp"
-                                android:textColor="?attr/colorOnPrimary"
+                                android:textColor="?attr/colorOnPrimaryContainer"
                                 android:alpha="0.7" />
 
                         </LinearLayout>
@@ -142,7 +143,7 @@
                             android:layout_height="56dp"
                             android:layout_gravity="center_vertical"
                             android:src="@drawable/ic_ejercicios"
-                            android:alpha="0.4"
+                            android:alpha="0.35"
                             android:contentDescription="@string/home_entrenamientos" />
 
                     </LinearLayout>
@@ -178,10 +179,11 @@
                                 android:contentDescription="@string/home_calorias" />
 
                             <TextView
+                                android:id="@+id/tvConteoCaloriasHome"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
-                                android:text="0"
+                                android:text="—"
                                 android:textSize="24sp"
                                 android:textStyle="bold"
                                 android:textColor="?attr/colorOnSurface" />
@@ -222,10 +224,11 @@
                                 android:contentDescription="@string/home_minutos" />
 
                             <TextView
+                                android:id="@+id/tvConteoMinutosHome"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
-                                android:text="0"
+                                android:text="—"
                                 android:textSize="24sp"
                                 android:textStyle="bold"
                                 android:textColor="?attr/colorOnSurface" />
