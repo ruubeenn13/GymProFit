@@ -387,6 +387,17 @@
     <string name="notif_logros_titulo">New achievement unlocked!</string>
     <string name="notif_logros_texto">You earned %d achievement(s)</string>
 
+    <!-- Exercise detail -->
+    <string name="detalle_ejercicio_titulo">Exercise</string>
+    <string name="detalle_ejercicio_descripcion">Description</string>
+    <string name="detalle_ejercicio_instrucciones">Instructions</string>
+    <string name="detalle_ejercicio_demostracion">Demo</string>
+    <string name="detalle_ejercicio_video_pronto">Video coming soon</string>
+    <string name="detalle_ejercicio_musculo">Muscle</string>
+    <string name="detalle_ejercicio_nivel">Level</string>
+    <string name="detalle_ejercicio_calorias">Calories</string>
+    <string name="detalle_ejercicio_equipamiento">Equipment</string>
+
     <!-- Edit routine -->
     <string name="editar_rutina_titulo">Edit routine</string>
     <string name="editar_rutina_guardar">Save changes</string>

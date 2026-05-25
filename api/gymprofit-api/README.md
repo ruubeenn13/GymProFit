@@ -284,6 +284,7 @@ Migraciones aplicadas:
 202605161102__Seed_Roles.sql
 202605161135__Logros.sql
 202605251000__Fix_altura_mediciones_corporales.sql   ← DECIMAL(3,2)→DECIMAL(5,2) en altura
+202605251830__Add_instrucciones_press_banca.sql      ← UPDATE ejercicios SET instrucciones WHERE id=1
 ```
 
 ---

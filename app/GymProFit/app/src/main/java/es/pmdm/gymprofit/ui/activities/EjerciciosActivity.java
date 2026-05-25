@@ -24,6 +24,7 @@ import es.pmdm.gymprofit.network.API;
 import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.adapters.EjercicioAdapter;
+import es.pmdm.gymprofit.utils.EjercicioNavHelper;
 public class EjerciciosActivity extends BaseActivity {
 
     private BottomNavigationView bottomNavigationView;
@@ -53,7 +54,8 @@ public class EjerciciosActivity extends BaseActivity {
     }
 
     private void configurarRecyclerView() {
-        adapter = new EjercicioAdapter(new ArrayList<>());
+        adapter = new EjercicioAdapter(new ArrayList<>(),
+                e -> EjercicioNavHelper.abrir(this, e));
         rvEjercicios.setLayoutManager(new LinearLayoutManager(this));
         rvEjercicios.setAdapter(adapter);
     }

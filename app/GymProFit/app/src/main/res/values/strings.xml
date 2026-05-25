@@ -386,6 +386,17 @@
     <string name="notif_logros_titulo">¡Nuevo logro desbloqueado!</string>
     <string name="notif_logros_texto">Has conseguido %d logro(s)</string>
 
+    <!-- Detalle ejercicio -->
+    <string name="detalle_ejercicio_titulo">Ejercicio</string>
+    <string name="detalle_ejercicio_descripcion">Descripción</string>
+    <string name="detalle_ejercicio_instrucciones">Instrucciones</string>
+    <string name="detalle_ejercicio_demostracion">Demostración</string>
+    <string name="detalle_ejercicio_video_pronto">Vídeo próximamente</string>
+    <string name="detalle_ejercicio_musculo">Músculo</string>
+    <string name="detalle_ejercicio_nivel">Nivel</string>
+    <string name="detalle_ejercicio_calorias">Calorías</string>
+    <string name="detalle_ejercicio_equipamiento">Equipamiento</string>
+
     <!-- Editar rutina -->
     <string name="editar_rutina_titulo">Editar rutina</string>
     <string name="editar_rutina_guardar">Guardar cambios</string>
