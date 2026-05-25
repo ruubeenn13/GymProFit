@@ -73,6 +73,9 @@
             android:name=".ui.activities.DetalleRutinaActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.activities.DetalleEjercicioActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.activities.ResumenCrearRutinaActivity"
             android:exported="false" />
         <activity

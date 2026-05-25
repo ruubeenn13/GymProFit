@@ -1,0 +1,122 @@
+package es.pmdm.gymprofit.ui.activities;
+
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.net.Uri;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.MediaController;
+import android.widget.TextView;
+import android.widget.VideoView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import java.util.Locale;
+
+import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.utils.PreferencesManager;
+
+public class DetalleEjercicioActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        PreferencesManager prefs = new PreferencesManager(this);
+        prefs.applyTheme();
+        aplicarIdioma(prefs);
+        setContentView(R.layout.activity_detalle_ejercicio);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(v -> finish());
+
+        int id               = getIntent().getIntExtra("id", -1);
+        String nombre        = getIntent().getStringExtra("nombre");
+        String descripcion   = getIntent().getStringExtra("descripcion");
+        String instrucciones = getIntent().getStringExtra("instrucciones");
+        String grupoMuscular = getIntent().getStringExtra("grupoMuscular");
+        String dificultad    = getIntent().getStringExtra("dificultad");
+        int calorias         = getIntent().getIntExtra("calorias", 0);
+        String equipo        = getIntent().getStringExtra("equipoNecesario");
+
+        poblarVistas(nombre, descripcion, instrucciones, grupoMuscular, dificultad, calorias, equipo);
+        configurarVideo(id);
+    }
+
+    private void poblarVistas(String nombre, String descripcion, String instrucciones,
+                              String grupoMuscular, String dificultad, int calorias, String equipo) {
+        ((TextView) findViewById(R.id.tvNombreDetalle)).setText(nombre != null ? nombre : "");
+
+        ((TextView) findViewById(R.id.tvStatMusculo)).setText(
+                !isEmpty(grupoMuscular) ? capitalizar(grupoMuscular) : "—");
+        ((TextView) findViewById(R.id.tvStatNivel)).setText(
+                !isEmpty(dificultad) ? capitalizar(dificultad) : "—");
+        ((TextView) findViewById(R.id.tvStatCalorias)).setText(
+                calorias > 0 ? calorias + " kcal" : "—");
+
+        if (!isEmpty(equipo)) {
+            ((TextView) findViewById(R.id.tvStatEquipamiento)).setText(equipo);
+        } else {
+            findViewById(R.id.rowEquipamiento).setVisibility(View.GONE);
+        }
+
+        TextView tvDesc = findViewById(R.id.tvDescripcion);
+        if (!isEmpty(descripcion)) {
+            tvDesc.setText(descripcion);
+        } else {
+            findViewById(R.id.cardDescripcion).setVisibility(View.GONE);
+        }
+
+        TextView tvInstr = findViewById(R.id.tvInstrucciones);
+        if (!isEmpty(instrucciones)) {
+            tvInstr.setText(instrucciones);
+        } else {
+            findViewById(R.id.cardInstrucciones).setVisibility(View.GONE);
+        }
+    }
+
+    private void configurarVideo(int ejercicioId) {
+        if (ejercicioId <= 0) return;
+        int resId = getResources().getIdentifier("video_" + ejercicioId, "raw", getPackageName());
+        if (resId == 0) return;
+
+        View placeholder = findViewById(R.id.layoutVideoPlaceholder);
+        VideoView videoView = findViewById(R.id.videoView);
+
+        placeholder.setVisibility(View.GONE);
+        videoView.setVisibility(View.VISIBLE);
+        videoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + resId));
+
+        MediaController mc = new MediaController(this);
+        mc.setAnchorView(videoView);
+        videoView.setMediaController(mc);
+
+        videoView.setOnPreparedListener(mp -> {
+            mp.setLooping(true);
+            mp.start();
+        });
+        videoView.requestFocus();
+    }
+
+    private static String capitalizar(String s) {
+        if (s == null || s.isEmpty()) return s;
+        return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
+    }
+
+    private static boolean isEmpty(String s) {
+        return s == null || s.trim().isEmpty();
+    }
+
+    private void aplicarIdioma(PreferencesManager prefs) {
+        String lang = prefs.getLanguage();
+        if (lang != null && !lang.isEmpty()) {
+            Locale locale = new Locale(lang);
+            Locale.setDefault(locale);
+            Resources res = getResources();
+            Configuration cfg = res.getConfiguration();
+            cfg.setLocale(locale);
+            res.updateConfiguration(cfg, res.getDisplayMetrics());
+        }
+    }
+}

@@ -35,6 +35,7 @@ import es.pmdm.gymprofit.network.API;
 import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.adapters.EjercicioSeleccionadoAdapter;
+import es.pmdm.gymprofit.utils.EjercicioNavHelper;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 
 public class DetalleRutinaActivity extends AppCompatActivity {
@@ -100,7 +101,8 @@ public class DetalleRutinaActivity extends AppCompatActivity {
         tvEjerciciosTitulo = findViewById(R.id.tvEjerciciosTituloDetalle);
         RecyclerView rv = findViewById(R.id.rvEjerciciosDetalle);
         rv.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new EjercicioSeleccionadoAdapter(ejercicios);
+        adapter = new EjercicioSeleccionadoAdapter(ejercicios, null,
+                sel -> EjercicioNavHelper.abrir(this, sel));
         rv.setAdapter(adapter);
         actualizarTitulo();
     }

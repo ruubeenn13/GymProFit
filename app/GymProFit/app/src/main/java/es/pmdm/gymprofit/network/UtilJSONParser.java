@@ -21,6 +21,12 @@ import es.pmdm.gymprofit.model.usuario.UsuarioEstadisticas;
 
 public class UtilJSONParser {
 
+    /** optString seguro: devuelve "" cuando el valor JSON es null (evita la cadena "null"). */
+    private static String safeStr(JSONObject obj, String key) {
+        if (obj.isNull(key)) return "";
+        return obj.optString(key, "");
+    }
+
     // AUTH
 
     public static String parseToken(String json) throws JSONException {
@@ -46,16 +52,16 @@ public class UtilJSONParser {
         JSONObject obj = new JSONObject(json);
         Usuario u = new Usuario();
         u.setId(obj.optInt("id", -1));
-        u.setUsername(obj.optString("username", ""));
-        u.setEmail(obj.optString("email", ""));
-        u.setPeso(obj.optString("peso", ""));
+        u.setUsername(safeStr(obj, "username"));
+        u.setEmail(safeStr(obj, "email"));
+        u.setPeso(safeStr(obj, "peso"));
         u.setAltura(obj.optDouble("altura", 0));
         u.setEdad(obj.optInt("edad", 0));
-        u.setNivelExperiencia(obj.optString("nivelExperiencia", ""));
-        u.setObjetivo(obj.optString("objetivo", ""));
+        u.setNivelExperiencia(safeStr(obj, "nivelExperiencia"));
+        u.setObjetivo(safeStr(obj, "objetivo"));
         u.setFechaRegistro(parseFecha(obj, "fechaRegistro"));
         u.setActivo(obj.optBoolean("activo", true));
-        u.setRol(obj.optString("rol", "ROLE_USER"));
+        u.setRol(safeStr(obj, "rol"));
         return u;
     }
 
@@ -74,14 +80,14 @@ public class UtilJSONParser {
         JSONObject obj = new JSONObject(json);
         Ejercicio e = new Ejercicio();
         e.setId(obj.optInt("id", -1));
-        e.setNombre(obj.optString("nombre", ""));
-        e.setDescripcion(obj.optString("descripcion", ""));
-        e.setGrupoMuscular(obj.optString("grupoMuscular", ""));
-        e.setDificultad(obj.optString("dificultad", ""));
-        e.setImagenUrl(obj.optString("imagenUrl", ""));
-        e.setInstrucciones(obj.optString("instrucciones", ""));
+        e.setNombre(safeStr(obj, "nombre"));
+        e.setDescripcion(safeStr(obj, "descripcion"));
+        e.setGrupoMuscular(safeStr(obj, "grupoMuscular"));
+        e.setDificultad(safeStr(obj, "dificultad"));
+        e.setImagenUrl(safeStr(obj, "imagenUrl"));
+        e.setInstrucciones(safeStr(obj, "instrucciones"));
         e.setCalorias(obj.optInt("caloriasQuemadas", 0));
-        e.setEquipoNecesario(obj.optString("equipoNecesario", ""));
+        e.setEquipoNecesario(safeStr(obj, "equipoNecesario"));
         e.setActivo(obj.optBoolean("activo", true));
         return e;
     }
@@ -101,16 +107,16 @@ public class UtilJSONParser {
         JSONObject obj = new JSONObject(json);
         Rutina r = new Rutina();
         r.setId(obj.optInt("id", -1));
-        r.setNombre(obj.optString("nombre", ""));
-        r.setDescripcion(obj.optString("descripcion", ""));
-        r.setNivel(obj.optString("nivel", ""));
+        r.setNombre(safeStr(obj, "nombre"));
+        r.setDescripcion(safeStr(obj, "descripcion"));
+        r.setNivel(safeStr(obj, "nivel"));
         r.setDuracionMinutos(obj.optInt("duracionMinutos", 0));
         r.setCaloriasAproximadas(obj.optInt("caloriasAproximadas", 0));
         r.setNumEjercicios(obj.optInt("numEjercicios", 0));
         r.setPredefinida(obj.optBoolean("esPredefinida", false));
         r.setUsuarioId(obj.optInt("usuarioId", -1));
-        r.setCategoria(obj.optString("categoria", ""));
-        r.setDiasSemana(obj.optString("diasSemana", ""));
+        r.setCategoria(safeStr(obj, "categoria"));
+        r.setDiasSemana(safeStr(obj, "diasSemana"));
         r.setFechaCreacion(parseFecha(obj, "fechaCreacion"));
         r.setActiva(obj.optBoolean("activa", true));
         return r;
@@ -137,7 +143,7 @@ public class UtilJSONParser {
         s.setFechaFin(parseFecha(obj, "fechaFin"));
         s.setDuracionMinutos(obj.optInt("duracionMinutos", 0));
         s.setCaloriasQuemadas(obj.optInt("caloriasQuemadas", 0));
-        s.setNotas(obj.optString("notas", ""));
+        s.setNotas(safeStr(obj, "notas"));
         s.setCompletada(obj.optBoolean("completada", false));
         return s;
     }
@@ -157,10 +163,10 @@ public class UtilJSONParser {
         JSONObject obj = new JSONObject(json);
         Logro l = new Logro();
         l.setId(obj.optInt("id", -1));
-        l.setNombre(obj.optString("nombre", ""));
-        l.setDescripcion(obj.optString("descripcion", ""));
-        l.setIcono(obj.optString("icono", ""));
-        l.setCriterio(obj.optString("criterio", ""));
+        l.setNombre(safeStr(obj, "nombre"));
+        l.setDescripcion(safeStr(obj, "descripcion"));
+        l.setIcono(safeStr(obj, "icono"));
+        l.setCriterio(safeStr(obj, "criterio"));
         l.setValorObjetivo(obj.optInt("valorObjetivo", 0));
         return l;
     }
@@ -202,7 +208,7 @@ public class UtilJSONParser {
         m.setPecho(obj.optDouble("pecho", 0));
         m.setBrazos(obj.optDouble("brazos", 0));
         m.setPiernas(obj.optDouble("piernas", 0));
-        m.setNotas(obj.optString("notas", ""));
+        m.setNotas(safeStr(obj, "notas"));
         return m;
     }
 
@@ -222,8 +228,8 @@ public class UtilJSONParser {
         ObjetivoPersonal o = new ObjetivoPersonal();
         o.setId(obj.optInt("id", -1));
         o.setUsuarioId(obj.optInt("usuarioId", -1));
-        o.setTipo(obj.optString("tipo", ""));
-        o.setDescripcion(obj.optString("descripcion", ""));
+        o.setTipo(safeStr(obj, "tipo"));
+        o.setDescripcion(safeStr(obj, "descripcion"));
         o.setValorObjetivo(obj.optDouble("valorObjetivo", 0));
         o.setValorActual(obj.optDouble("valorActual", 0));
         o.setFechaInicio(parseFecha(obj, "fechaInicio"));
@@ -250,7 +256,7 @@ public class UtilJSONParser {
         e.setSesionesCompletadas(obj.optInt("sesionesCompletadas", 0));
         e.setTotalMinutosEntrenados(obj.optInt("totalMinutosEntrenados", 0));
         e.setTotalCaloriasQuemadas(obj.optInt("totalCaloriasQuemadas", 0));
-        e.setEjercicioMasFrecuente(obj.optString("ejercicioMasFrecuente", ""));
+        e.setEjercicioMasFrecuente(safeStr(obj, "ejercicioMasFrecuente"));
         e.setRachaActualDias(obj.optInt("rachaActualDias", 0));
         e.setMejorRachaDias(obj.optInt("mejorRachaDias", 0));
         return e;

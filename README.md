@@ -63,7 +63,7 @@ LoginActivity ←→ RegistroActivity
 Onboarding (1 → 2 → 3 → 4 → Resumen)
      ↓
 HomeActivity (navegación inferior)
-  ├── EjerciciosActivity → (DetalleEjercicioActivity — pendiente)
+  ├── EjerciciosActivity → DetalleEjercicioActivity (vídeo + instrucciones)
   ├── RutinasActivity
   │     ├── CrearRutinaActivity → AnadirEjerciciosActivity → ResumenCrearRutinaActivity
   │     └── DetalleRutinaActivity → EditarRutinaActivity
@@ -445,6 +445,7 @@ Abre `app/GymProFit` en Android Studio, sincroniza Gradle y ejecuta en emulador 
 
 | Hash | Descripción |
 |---|---|
+| *(pendiente)* | feat(android): DetalleEjercicioActivity con vídeo local (VideoView+autoplay), stats card, instrucciones; rediseño item_ejercicio_seleccionado como card; fix optString→safeStr en UtilJSONParser; migración instrucciones press banca |
 | *(pendiente)* | feat(admin): panel admin completo — AdminUsuariosActivity, AdminRutinasActivity, AdminEjerciciosActivity, nuevos adapters, fix rol desde TokenDTO, fix jOOQ ROLE_ prefix, dark mode chips |
 
 ### 2026-05-22

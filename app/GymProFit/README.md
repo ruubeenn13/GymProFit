@@ -99,6 +99,7 @@ es.pmdm.gymprofit/
 │   └── adapters/              # RecyclerView.Adapter por cada lista
 └── utils/
     ├── PreferencesManager.java
+    ├── EjercicioNavHelper.java    # Construye y lanza el Intent a DetalleEjercicioActivity
     ├── CalculadoraNutricional.java
     ├── ResultadoNutricional.java
     ├── UIHelper.java
@@ -117,10 +118,11 @@ LoginActivity ←→ RegistroActivity
 Onboarding (1 → 2 → 3 → 4 → Resumen)
      ↓
 HomeActivity (navegación inferior)
-  ├── EjerciciosActivity
+  ├── EjerciciosActivity → DetalleEjercicioActivity (vídeo + instrucciones)
   ├── RutinasActivity
   │     ├── CrearRutinaActivity → AnadirEjerciciosActivity → ResumenCrearRutinaActivity
   │     └── DetalleRutinaActivity → EditarRutinaActivity
+  │           └── (click ejercicio) → DetalleEjercicioActivity
   ├── NutricionActivity
   └── PerfilActivity → EditarPerfilActivity
         ├── SesionesActivity → RegistrarSesionActivity → ResumenSesionActivity
@@ -161,6 +163,7 @@ HomeActivity (navegación inferior)
 | `AdminUsuariosActivity` | Gestión de usuarios: buscar por username, filtrar por estado/rol, toggle activo/inactivo, cambiar rol (solo ROLE_ADMIN) |
 | `AdminRutinasActivity` | Gestión de rutinas predefinidas: buscar, filtrar por nivel/estado, toggle activa, editar nombre y descripción (solo ROLE_ADMIN) |
 | `AdminEjerciciosActivity` | Gestión del catálogo de ejercicios: buscar, filtrar por estado, toggle activo, editar nombre y descripción (solo ROLE_ADMIN) |
+| `DetalleEjercicioActivity` | Detalle de ejercicio: reproducción automática de vídeo local (`res/raw/video_<id>.mp4`), stats (músculo, nivel, calorías, equipamiento), descripción e instrucciones |
 
 ---
 
@@ -263,7 +266,7 @@ PUT    ejercicios/{id}/activar
 | `AsyncTask` deprecado | El profesor lo exige (UD06). No sustituir |
 | Token se pierde al matar el proceso | `SplashActivity` lo restaura con `UtilREST.setToken(token)` |
 | PATCH no soportado nativamente en Android | Workaround con reflexión Java en `UtilREST` |
-| `optString()` devuelve `"null"` literal cuando el campo JSON es null | Filtrar siempre: `!"null".equals(s)` |
+| `optString()` devuelve `"null"` literal cuando el campo JSON es null | Resuelto en origen: `UtilJSONParser.safeStr()` usa `isNull()` antes de `optString()`. No filtrar en UI |
 | `peso` debe enviarse como Double, no String | `Double.parseDouble(str.replace(",", "."))` |
 | Tema/idioma deben aplicarse antes de `setContentView` | Orden en `onCreate`: `applyTheme()` → `aplicarIdioma()` → `setContentView()`. `BaseActivity` lo gestiona; las subclases solo llaman `super.onCreate()` primero |
 | Filtros de enum en adapters usan `equalsIgnoreCase` | La API devuelve enums en UPPERCASE |
@@ -287,6 +290,13 @@ implementation libs.constraintlayout
 ---
 
 ## Changelog
+
+### 2026-05-25 — DetalleEjercicioActivity + rediseño lista ejercicios en rutinas
+- **DetalleEjercicioActivity**: nueva pantalla con vídeo autoplay (`VideoView` + `MediaController` + `setOnPreparedListener`), stats card (músculo/nivel/calorías/equipamiento), descripción e instrucciones. Vídeos en `res/raw/video_<id>.mp4`
+- **EjercicioNavHelper**: utilidad compartida que construye el Intent con todos los extras del ejercicio; usada desde `EjerciciosActivity` y `DetalleRutinaActivity`
+- **item_ejercicio_seleccionado**: rediseñado como `MaterialCardView` idéntico a `item_ejercicio`, con chip `X × Y series/reps`, chips de dificultad y calorías, chevron o botón eliminar según contexto
+- **EjercicioSeleccionadoAdapter**: 3 constructores para mantener compatibilidad; nuevo `clickListener` para abrir `DetalleEjercicioActivity` desde `DetalleRutinaActivity`
+- **Fix `UtilJSONParser`**: `safeStr()` con `isNull()` elimina el bug de `optString()` devolviendo `"null"` literal para todos los modelos
 
 ### 2026-05-25 — Panel admin completo
 - **AdminUsuariosActivity**: búsqueda por username, filtros activo/inactivo/rol, toggle activo con diálogo de confirmación, cambio de rol con RadioGroup — `MaterialAlertDialogBuilder`
