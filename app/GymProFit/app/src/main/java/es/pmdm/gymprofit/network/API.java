@@ -89,7 +89,7 @@ public class API {
     }
 
     public static void getRutinasDeUsuario(int usuarioId, UtilREST.OnResponseListener l) {
-        UtilREST.request(BASE + "rutinas/usuario/" + usuarioId, "GET", null, l);
+        UtilREST.request(BASE + "rutinas/usuario/" + usuarioId + "/activas", "GET", null, l);
     }
 
     public static void getRutinasPorNivel(String nivel, UtilREST.OnResponseListener l) {
