@@ -1,54 +1,46 @@
 package es.pmdm.gymprofit.ui.activities;
 
-import android.content.res.Configuration;
-import android.content.res.Resources;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import es.pmdm.gymprofit.R;
-import es.pmdm.gymprofit.model.usuario.Usuario;
 import es.pmdm.gymprofit.network.API;
-import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
-import es.pmdm.gymprofit.ui.adapters.AdminUsuarioAdapter;
-import es.pmdm.gymprofit.utils.PreferencesManager;
 
-public class AdminActivity extends AppCompatActivity {
+public class AdminActivity extends BaseActivity {
 
-    private TextView tvTotalUsuarios, tvUsuariosActivos, tvTotalSesiones, tvSesionesHoy;
-    private RecyclerView rvUsuarios;
-    private PreferencesManager prefsManager;
+    private TextView tvTotalUsuarios, tvUsuariosActivos, tvTotalSesiones,
+            tvSesionesHoy, tvRutinasPredefinidas, tvEjerciciosActivos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        prefsManager = new PreferencesManager(this);
-        prefsManager.applyTheme();
-        aplicarIdioma();
         setContentView(R.layout.activity_admin);
 
-        tvTotalUsuarios   = findViewById(R.id.tvTotalUsuarios);
-        tvUsuariosActivos = findViewById(R.id.tvUsuariosActivos);
-        tvTotalSesiones   = findViewById(R.id.tvTotalSesiones);
-        tvSesionesHoy     = findViewById(R.id.tvSesionesHoy);
-        rvUsuarios        = findViewById(R.id.rvUsuarios);
+        tvTotalUsuarios       = findViewById(R.id.tvTotalUsuarios);
+        tvUsuariosActivos     = findViewById(R.id.tvUsuariosActivos);
+        tvTotalSesiones       = findViewById(R.id.tvTotalSesiones);
+        tvSesionesHoy         = findViewById(R.id.tvSesionesHoy);
+        tvRutinasPredefinidas = findViewById(R.id.tvRutinasPredefinidas);
+        tvEjerciciosActivos   = findViewById(R.id.tvEjerciciosActivos);
 
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
-        rvUsuarios.setLayoutManager(new LinearLayoutManager(this));
+        setupMenuButton();
+
+        findViewById(R.id.cardGestionarUsuarios).setOnClickListener(v ->
+                startActivity(new Intent(this, AdminUsuariosActivity.class)));
+
+        findViewById(R.id.cardGestionarRutinas).setOnClickListener(v ->
+                startActivity(new Intent(this, AdminRutinasActivity.class)));
+
+        findViewById(R.id.cardGestionarEjercicios).setOnClickListener(v ->
+                startActivity(new Intent(this, AdminEjerciciosActivity.class)));
 
         cargarEstadisticas();
-        cargarUsuarios();
     }
 
     private void cargarEstadisticas() {
@@ -62,41 +54,14 @@ public class AdminActivity extends AppCompatActivity {
                         tvUsuariosActivos.setText(String.valueOf(obj.optLong("usuariosActivos", 0)));
                         tvTotalSesiones.setText(String.valueOf(obj.optLong("totalSesiones", 0)));
                         tvSesionesHoy.setText(String.valueOf(obj.optLong("sesionesHoy", 0)));
+                        tvRutinasPredefinidas.setText(String.valueOf(obj.optLong("rutinasPredefinidas", 0)));
+                        tvEjerciciosActivos.setText(String.valueOf(obj.optLong("ejerciciosActivos", 0)));
                     });
                 } catch (JSONException ignored) {}
             }
+
             @Override
             public void onError(String message, int statusCode) {}
         });
-    }
-
-    private void cargarUsuarios() {
-        API.getAdminUsuarios(new UtilREST.OnResponseListener() {
-            @Override
-            public void onSuccess(String response, int statusCode) {
-                try {
-                    List<Usuario> lista = UtilJSONParser.parseUsuarioList(response);
-                    runOnUiThread(() -> rvUsuarios.setAdapter(new AdminUsuarioAdapter(lista)));
-                } catch (JSONException ignored) {
-                    runOnUiThread(() -> rvUsuarios.setAdapter(new AdminUsuarioAdapter(new ArrayList<>())));
-                }
-            }
-            @Override
-            public void onError(String message, int statusCode) {
-                runOnUiThread(() -> rvUsuarios.setAdapter(new AdminUsuarioAdapter(new ArrayList<>())));
-            }
-        });
-    }
-
-    private void aplicarIdioma() {
-        String lang = prefsManager.getLanguage();
-        if (!lang.isEmpty()) {
-            Locale locale = new Locale(lang);
-            Locale.setDefault(locale);
-            Resources res = getResources();
-            Configuration cfg = res.getConfiguration();
-            cfg.setLocale(locale);
-            res.updateConfiguration(cfg, res.getDisplayMetrics());
-        }
     }
 }

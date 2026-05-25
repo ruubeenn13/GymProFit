@@ -206,8 +206,66 @@ public class API {
         UtilREST.request(BASE + "admin/usuarios", "GET", null, l);
     }
 
+    public static void getAdminUsuariosFiltrados(Boolean activo, String rol, String username, int page, int size, UtilREST.OnResponseListener l) {
+        StringBuilder url = new StringBuilder(BASE + "admin/usuarios?page=" + page + "&size=" + size);
+        if (activo != null) url.append("&activo=").append(activo);
+        if (rol != null && !rol.isEmpty()) url.append("&rol=").append(encode(rol));
+        if (username != null && !username.isEmpty()) url.append("&username=").append(encode(username));
+        UtilREST.request(url.toString(), "GET", null, l);
+    }
+
+    public static void adminToggleActivoUsuario(int id, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "admin/usuarios/" + id + "/toggle-activo", "PATCH", null, l);
+    }
+
+    public static void adminCambiarRolUsuario(int id, String nuevoRol, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "admin/usuarios/" + id + "/rol?nuevoRol=" + encode(nuevoRol), "PATCH", null, l);
+    }
+
     public static void getAdminEstadisticas(UtilREST.OnResponseListener l) {
         UtilREST.request(BASE + "admin/estadisticas-globales", "GET", null, l);
+    }
+
+    public static void adminBuscarRutinasPredefinidas(String nombre, String nivel, String categoria, Boolean activa, UtilREST.OnResponseListener l) {
+        StringBuilder url = new StringBuilder(BASE + "admin/rutinas/predefinidas/busqueda?");
+        if (nombre != null && !nombre.isEmpty()) url.append("nombre=").append(encode(nombre)).append("&");
+        if (nivel != null && !nivel.isEmpty()) url.append("nivel=").append(encode(nivel)).append("&");
+        if (categoria != null && !categoria.isEmpty()) url.append("categoria=").append(encode(categoria)).append("&");
+        if (activa != null) url.append("activa=").append(activa);
+        UtilREST.request(url.toString(), "GET", null, l);
+    }
+
+    public static void adminBuscarEjercicios(String nombre, String grupoMuscular, String dificultad, Boolean activo, UtilREST.OnResponseListener l) {
+        StringBuilder url = new StringBuilder(BASE + "admin/ejercicios/busqueda?");
+        if (nombre != null && !nombre.isEmpty()) url.append("nombre=").append(encode(nombre)).append("&");
+        if (grupoMuscular != null && !grupoMuscular.isEmpty()) url.append("grupoMuscular=").append(encode(grupoMuscular)).append("&");
+        if (dificultad != null && !dificultad.isEmpty()) url.append("dificultad=").append(encode(dificultad)).append("&");
+        if (activo != null) url.append("activo=").append(activo);
+        UtilREST.request(url.toString(), "GET", null, l);
+    }
+
+    public static void adminActivarRutina(int id, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "rutinas/" + id + "/activar", "PUT", null, l);
+    }
+
+    public static void adminDesactivarRutina(int id, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "rutinas/" + id, "DELETE", null, l);
+    }
+
+    public static void adminActivarEjercicio(int id, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "ejercicios/" + id + "/activar", "PUT", null, l);
+    }
+
+    public static void adminDesactivarEjercicio(int id, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "ejercicios/" + id, "DELETE", null, l);
+    }
+
+    public static void adminEditarRutina(int id, JSONObject body, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "rutinas/" + id, "PATCH", body.toString(), l);
+    }
+
+    public static void adminEditarEjercicio(int id, JSONObject body, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "ejercicios/" + id, "PATCH", body.toString(), l);
     }
 
     // ── UTIL ──────────────────────────────────────────────────────────────────

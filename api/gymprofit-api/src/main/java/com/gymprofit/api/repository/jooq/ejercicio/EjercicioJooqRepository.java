@@ -104,13 +104,30 @@ public class EjercicioJooqRepository implements IEjercicioJooqRepository {
                 .where(conditions)
                 .orderBy(EJERCICIOS.NOMBRE.asc())
                 .fetchInto(EjercicioJooqDTO.class);
+    }
 
-        // SQL generado (ejemplo con todos los filtros):
-        // SELECT * FROM ejercicios
-        // WHERE nombre LIKE '%nombre%'
-        //   AND grupo_muscular = 'grupoMuscular'
-        //   AND dificultad = 'dificultad'
-        //   AND calorias_quemadas <= caloriasMax
-        // ORDER BY nombre ASC
+    @Override
+    public List<EjercicioJooqDTO> busquedaAdmin(String nombre, String grupoMuscular, String dificultad, Boolean activo) {
+        var conditions = new ArrayList<Condition>();
+
+        if (nombre != null && !nombre.isBlank()) {
+            conditions.add(EJERCICIOS.NOMBRE.containsIgnoreCase(nombre));
+        }
+        if (grupoMuscular != null && !grupoMuscular.isBlank()) {
+            conditions.add(EJERCICIOS.GRUPO_MUSCULAR.eq(EjerciciosGrupoMuscular.valueOf(grupoMuscular.toUpperCase())));
+        }
+        if (dificultad != null && !dificultad.isBlank()) {
+            conditions.add(EJERCICIOS.DIFICULTAD.eq(EjerciciosDificultad.valueOf(dificultad.toUpperCase())));
+        }
+        if (activo != null) {
+            conditions.add(EJERCICIOS.ACTIVO.eq(activo ? (byte) 1 : (byte) 0));
+        }
+
+        return dsl
+                .select()
+                .from(EJERCICIOS)
+                .where(conditions)
+                .orderBy(EJERCICIOS.NOMBRE.asc())
+                .fetchInto(EjercicioJooqDTO.class);
     }
 }

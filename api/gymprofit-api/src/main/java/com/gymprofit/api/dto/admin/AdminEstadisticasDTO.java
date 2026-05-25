@@ -17,4 +17,6 @@ public class AdminEstadisticasDTO implements Serializable {
     private Long totalEjerciciosRealizados;
     private Long totalObjetivosCompletados;
     private Long totalLogrosOtorgados;
+    private Long rutinasPredefinidas;
+    private Long ejerciciosActivos;
 }

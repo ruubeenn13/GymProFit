@@ -19,6 +19,15 @@
             android:name=".ui.activities.AdminActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.activities.AdminUsuariosActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activities.AdminRutinasActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activities.AdminEjerciciosActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.activities.EditarPerfilActivity"
             android:exported="false" />
         <activity

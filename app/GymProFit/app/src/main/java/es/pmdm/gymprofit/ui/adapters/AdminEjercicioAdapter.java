@@ -17,19 +17,19 @@ import com.google.android.material.chip.Chip;
 import java.util.List;
 
 import es.pmdm.gymprofit.R;
-import es.pmdm.gymprofit.model.usuario.Usuario;
+import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
 
-public class AdminUsuarioAdapter extends RecyclerView.Adapter<AdminUsuarioAdapter.ViewHolder> {
+public class AdminEjercicioAdapter extends RecyclerView.Adapter<AdminEjercicioAdapter.ViewHolder> {
 
     public interface OnAccionListener {
-        void onToggleActivo(Usuario usuario, int position);
-        void onCambiarRol(Usuario usuario, int position);
+        void onToggleActivo(Ejercicio ejercicio, int position);
+        void onEditar(Ejercicio ejercicio, int position);
     }
 
-    private final List<Usuario> items;
+    private final List<Ejercicio> items;
     private final OnAccionListener listener;
 
-    public AdminUsuarioAdapter(List<Usuario> items, OnAccionListener listener) {
+    public AdminEjercicioAdapter(List<Ejercicio> items, OnAccionListener listener) {
         this.items = items;
         this.listener = listener;
     }
@@ -38,22 +38,26 @@ public class AdminUsuarioAdapter extends RecyclerView.Adapter<AdminUsuarioAdapte
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_admin_usuario_v2, parent, false);
+                .inflate(R.layout.item_admin_ejercicio, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder h, int position) {
-        Usuario u = items.get(position);
+        Ejercicio e = items.get(position);
         Context ctx = h.itemView.getContext();
 
-        h.tvUsername.setText(u.getUsername());
-        h.tvEmail.setText(u.getEmail().isEmpty() ? "—" : u.getEmail());
+        h.tvNombre.setText(e.getNombre());
+        String desc = e.getDescripcion();
+        h.tvDescripcion.setText((desc != null && !desc.isEmpty()) ? desc : "—");
 
-        String rol = u.getRol() != null ? u.getRol().replace("ROLE_", "") : "USER";
-        h.chipRol.setText(rol);
+        String grupo = e.getGrupoMuscular();
+        h.chipGrupo.setText((grupo != null && !grupo.isEmpty()) ? grupo : "—");
 
-        if (u.isActivo()) {
+        String dif = e.getDificultad();
+        h.chipDificultad.setText((dif != null && !dif.isEmpty()) ? dif : "—");
+
+        if (e.isActivo()) {
             h.chipEstado.setText(ctx.getString(R.string.admin_estado_activo));
             h.chipEstado.setChipBackgroundColorResource(R.color.green_chip);
             h.chipEstado.setTextColor(ContextCompat.getColor(ctx, R.color.green_chip_text));
@@ -65,18 +69,18 @@ public class AdminUsuarioAdapter extends RecyclerView.Adapter<AdminUsuarioAdapte
 
         h.btnAcciones.setOnClickListener(v -> {
             PopupMenu popup = new PopupMenu(ctx, v);
-            popup.getMenu().add(0, 1, 0, u.isActivo()
+            popup.getMenu().add(0, 1, 0, ctx.getString(R.string.admin_editar_ejercicio_titulo));
+            popup.getMenu().add(0, 2, 0, e.isActivo()
                     ? ctx.getString(R.string.admin_desactivar)
                     : ctx.getString(R.string.admin_activar));
-            popup.getMenu().add(0, 2, 0, ctx.getString(R.string.admin_cambiar_rol_titulo));
 
             popup.setOnMenuItemClickListener(item -> {
                 int pos = h.getAdapterPosition();
                 if (pos == RecyclerView.NO_ID) return false;
                 if (item.getItemId() == 1) {
-                    listener.onToggleActivo(items.get(pos), pos);
+                    listener.onEditar(items.get(pos), pos);
                 } else if (item.getItemId() == 2) {
-                    listener.onCambiarRol(items.get(pos), pos);
+                    listener.onToggleActivo(items.get(pos), pos);
                 }
                 return true;
             });
@@ -87,23 +91,24 @@ public class AdminUsuarioAdapter extends RecyclerView.Adapter<AdminUsuarioAdapte
     @Override
     public int getItemCount() { return items.size(); }
 
-    public void actualizarItem(int position, Usuario usuario) {
-        items.set(position, usuario);
+    public void actualizarItem(int position, Ejercicio ejercicio) {
+        items.set(position, ejercicio);
         notifyItemChanged(position);
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvUsername, tvEmail;
-        Chip chipRol, chipEstado;
+        TextView tvNombre, tvDescripcion;
+        Chip chipGrupo, chipDificultad, chipEstado;
         ImageView btnAcciones;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvUsername  = itemView.findViewById(R.id.tvUsernameAdmin);
-            tvEmail     = itemView.findViewById(R.id.tvEmailAdmin);
-            chipRol     = itemView.findViewById(R.id.chipRolAdmin);
-            chipEstado  = itemView.findViewById(R.id.chipEstadoAdmin);
-            btnAcciones = itemView.findViewById(R.id.btnAccionesUsuario);
+            tvNombre      = itemView.findViewById(R.id.tvNombreEjercicio);
+            tvDescripcion = itemView.findViewById(R.id.tvDescripcionEjercicio);
+            chipGrupo     = itemView.findViewById(R.id.chipGrupoEjercicio);
+            chipDificultad= itemView.findViewById(R.id.chipDificultadEjercicio);
+            chipEstado    = itemView.findViewById(R.id.chipEstadoEjercicio);
+            btnAcciones   = itemView.findViewById(R.id.btnAccionesEjercicio);
         }
     }
 }

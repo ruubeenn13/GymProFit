@@ -31,6 +31,15 @@ public class UtilJSONParser {
         return new JSONObject(json).optString("username", "");
     }
 
+    public static String parseTokenRol(String json) throws JSONException {
+        JSONArray roles = new JSONObject(json).optJSONArray("roles");
+        if (roles != null && roles.length() > 0) {
+            String r = roles.optString(0, "USER");
+            return r.startsWith("ROLE_") ? r : "ROLE_" + r;
+        }
+        return "ROLE_USER";
+    }
+
     // USUARIO
 
     public static Usuario parseUsuario(String json) throws JSONException {

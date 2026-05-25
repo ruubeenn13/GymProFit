@@ -219,8 +219,12 @@ La respuesta de `POST /sesiones` incluye el campo `nuevosLogros: ["Nombre logro"
 
 | Método | URL | Auth | Descripción |
 |---|---|---|---|
-| GET | `/admin/usuarios` | ADMIN | Usuarios con filtros dinámicos (jOOQ) |
-| GET | `/admin/estadisticas-globales` | ADMIN | Estadísticas globales (jOOQ) |
+| GET | `/admin/usuarios?activo=&rol=&username=&page=&size=` | ADMIN | Usuarios con filtros dinámicos (jOOQ). `rol` acepta `USER`, `ADMIN` o con prefijo `ROLE_` |
+| GET | `/admin/estadisticas-globales` | ADMIN | Estadísticas globales: totalUsuarios, usuariosActivos, totalSesiones, sesionesHoy, rutinasPredefinidas, ejerciciosActivos |
+| PATCH | `/admin/usuarios/{id}/toggle-activo` | ADMIN | Activar/desactivar usuario |
+| PATCH | `/admin/usuarios/{id}/rol?nuevoRol=` | ADMIN | Cambiar rol del usuario (`ROLE_USER` o `ROLE_ADMIN`) |
+| GET | `/admin/rutinas/predefinidas/busqueda?nombre=&nivel=&categoria=&activa=` | ADMIN | Buscar rutinas predefinidas con filtros dinámicos (jOOQ) |
+| GET | `/admin/ejercicios/busqueda?nombre=&grupoMuscular=&dificultad=&activo=` | ADMIN | Buscar ejercicios del catálogo con filtros dinámicos (jOOQ) |
 
 ---
 
@@ -234,6 +238,8 @@ La respuesta de `POST /sesiones` incluye el campo `nuevosLogros: ["Nombre logro"
 | CRUD sesiones, mediciones, objetivos | ❌ | ✅ | ✅ |
 | GET/PATCH propio usuario | ❌ | ✅ | ✅ |
 | /admin/**, /usuarios (todos) | ❌ | ❌ | ✅ |
+| PATCH /rutinas/{id}, DELETE /rutinas/{id} | ❌ | ✅ (propias) | ✅ |
+| PUT /ejercicios/{id}/activar, PATCH /ejercicios/{id} | ❌ | ❌ | ✅ |
 
 **JWT:** Header `Authorization: Bearer <token>`. Expiración: 7 días. `401` en token expirado/inválido, `403` en rol insuficiente.
 

@@ -43,4 +43,8 @@ public interface IUsuarioService extends UserDetailsService {
     List<AdminUsuarioDTO> getUsuariosAdmin(Boolean activo, String rol, String username, int page, int size);
 
     AdminEstadisticasDTO getEstadisticasGlobales();
+
+    void toggleActivo(Integer id);
+
+    void cambiarRol(Integer id, String nuevoRol);
 }
