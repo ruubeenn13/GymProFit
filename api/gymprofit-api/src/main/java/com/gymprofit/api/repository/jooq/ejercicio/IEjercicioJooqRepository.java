@@ -15,4 +15,6 @@ public interface IEjercicioJooqRepository {
     List<EjercicioJooqDTO> findByCaloriasQuemadasBetween(Integer min, Integer max);
 
     List<EjercicioJooqDTO> busquedaAvanzada(String nombre, String grupoMuscular, String dificultad, Integer caloriasMax);
+
+    List<EjercicioJooqDTO> busquedaAdmin(String nombre, String grupoMuscular, String dificultad, Boolean activo);
 }

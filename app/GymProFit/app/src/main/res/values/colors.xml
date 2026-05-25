@@ -32,4 +32,9 @@
     <color name="surface_card">#FFFFFF</color>
     <color name="surface_card_2">#F5F5F5</color>
     <color name="text_secondary">#6B6B6B</color>
+
+    <color name="green_chip">#E8F5E9</color>
+    <color name="green_chip_text">#2E7D32</color>
+    <color name="red_chip">#FFEBEE</color>
+    <color name="red_chip_text">#C62828</color>
 </resources>

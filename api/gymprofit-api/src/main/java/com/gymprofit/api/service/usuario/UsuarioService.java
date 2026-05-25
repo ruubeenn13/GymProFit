@@ -7,10 +7,13 @@ import com.gymprofit.api.dto.entity.usuario.UsuarioDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioEstadisticasDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioPatchDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioUpdateDTO;
+import com.gymprofit.api.entity.Role;
 import com.gymprofit.api.enums.NivelExperiencia;
+import com.gymprofit.api.enums.RoleType;
 import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.exceptions.*;
 import com.gymprofit.api.mappers.UsuarioMapper;
+import com.gymprofit.api.repository.jpa.IRoleRepository;
 import com.gymprofit.api.repository.jpa.IUsuarioRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -28,6 +31,7 @@ import java.util.List;
 public class UsuarioService implements IUsuarioService {
 
     private final IUsuarioRepository usuarioRepository;
+    private final IRoleRepository roleRepository;
     private final UsuarioMapper usuarioMapper;
     private final com.gymprofit.api.repository.jooq.usuario.IUsuarioJooqRepository usuarioJooqRepository;
     private final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
@@ -243,5 +247,49 @@ public class UsuarioService implements IUsuarioService {
     public AdminEstadisticasDTO getEstadisticasGlobales() {
         logger.info("Admin: obteniendo estadísticas globales");
         return usuarioJooqRepository.getEstadisticasGlobales();
+    }
+
+    @Transactional
+    @Override
+    public void toggleActivo(Integer id) {
+        logger.info("Admin: toggle activo usuario id={}", id);
+
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + id + " no existe"));
+
+        try {
+            usuario.setActivo(!Boolean.TRUE.equals(usuario.getActivo()));
+            usuarioRepository.save(usuario);
+            logger.info("Admin: usuario id={} activo={}", id, usuario.getActivo());
+        } catch (Exception e) {
+            throw new UpdateEntityException(Usuario.class.getSimpleName(), id, e);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void cambiarRol(Integer id, String nuevoRol) {
+        logger.info("Admin: cambiando rol usuario id={} a {}", id, nuevoRol);
+
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + id + " no existe"));
+
+        RoleType roleType;
+        try {
+            roleType = RoleType.valueOf(nuevoRol.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new InvalidDataException("Rol inválido: " + nuevoRol + ". Valores válidos: ADMIN, USER, GUEST");
+        }
+
+        Role role = roleRepository.findByNombre(roleType)
+                .orElseThrow(() -> new NotFoundEntityException("Rol " + nuevoRol + " no encontrado en BD"));
+
+        try {
+            usuario.setRoles(List.of(role));
+            usuarioRepository.save(usuario);
+            logger.info("Admin: usuario id={} rol cambiado a {}", id, roleType);
+        } catch (Exception e) {
+            throw new UpdateEntityException(Usuario.class.getSimpleName(), id, e);
+        }
     }
 }

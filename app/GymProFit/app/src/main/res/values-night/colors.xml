@@ -5,5 +5,10 @@
     <color name="onPrimaryContainer_dark">#D4D4D4</color>
     <color name="surface_card">#1F1F1F</color>
     <color name="surface_card_2">#252525</color>
-    <color name="text_secondary">#6B6B6B</color>
+    <color name="text_secondary">#9E9E9E</color>
+
+    <color name="green_chip">#1B5E20</color>
+    <color name="green_chip_text">#A5D6A7</color>
+    <color name="red_chip">#7F0000</color>
+    <color name="red_chip_text">#EF9A9A</color>
 </resources>

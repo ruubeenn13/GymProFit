@@ -73,6 +73,9 @@ HomeActivity (navegación inferior)
         ├── MedicionesActivity → RegistrarMedicionActivity
         ├── LogrosActivity
         └── AdminActivity  (solo ROLE_ADMIN)
+              ├── AdminUsuariosActivity
+              ├── AdminRutinasActivity
+              └── AdminEjerciciosActivity
 ```
 
 ---
@@ -105,7 +108,7 @@ Arquitectura 4 capas obligatoria (UD06).
 
 **`UtilREST.java`** — Capa 2. `HttpURLConnection` + `AsyncTask` (deprecado pero requerido por el temario). Gestiona el token JWT estático (`setToken` / `clearToken` / `getToken`). Inyecta `Authorization: Bearer <token>` en cada petición. PATCH forzado vía reflexión Java. Loggea cada petición con `Log.d("GymProFit", método + url + statusCode)`.
 
-**`UtilJSONParser.java`** — Capa 3. Parseo con `org.json`. Incluye el helper `parseFecha()` que maneja tanto el formato array de Jackson `[2024,5,17,10,30,0]` como string ISO `"2024-05-17T10:30:00"`. Métodos: `parseToken`, `parseTokenUsername`, `parseUsuario`, `parseUsuarioList`, `parseEjercicio`, `parseEjercicioList`, `parseRutina`, `parseRutinaList`, `parseSesion`, `parseSesionList`, `parseLogro`, `parseLogroList`, `parseLogrosDesbloqueados`, `parseMedicion`, `parseMedicionList`, `parseObjetivo`, `parseObjetivoList`.
+**`UtilJSONParser.java`** — Capa 3. Parseo con `org.json`. Incluye el helper `parseFecha()` que maneja tanto el formato array de Jackson `[2024,5,17,10,30,0]` como string ISO `"2024-05-17T10:30:00"`. Métodos: `parseToken`, `parseTokenUsername`, `parseTokenRol` (extrae `roles[0]` del `TokenDTO` y normaliza a `ROLE_X`), `parseUsuario`, `parseUsuarioList`, `parseEjercicio`, `parseEjercicioList`, `parseRutina`, `parseRutinaList`, `parseSesion`, `parseSesionList`, `parseLogro`, `parseLogroList`, `parseLogrosDesbloqueados`, `parseMedicion`, `parseMedicionList`, `parseObjetivo`, `parseObjetivoList`.
 
 **`API.java`** — Capa 4. Fachada estática con todos los endpoints agrupados por sección: AUTH, USUARIOS, EJERCICIOS, RUTINAS, SESIONES, LOGROS, OBJETIVOS, MEDICIONES, ADMIN.
 
@@ -128,8 +131,16 @@ Arquitectura 4 capas obligatoria (UD06).
 | `getMedicionesDeUsuario` | `GET mediciones-corporales/usuario/{id}/ordenadas` | Historial de mediciones |
 | `crearMedicion` | `POST mediciones-corporales` | Nueva medición |
 | `eliminarMedicion` | `DELETE mediciones-corporales/{id}` | Eliminar medición |
-| `getAdminEstadisticas` | `GET admin/estadisticas-globales` | Stats globales (ADMIN) |
-| `getAdminUsuarios` | `GET admin/usuarios` | Lista usuarios (ADMIN) |
+| `getAdminEstadisticas` | `GET admin/estadisticas-globales` | 6 KPIs globales (ADMIN) |
+| `getAdminUsuariosFiltrados` | `GET admin/usuarios?page&size&activo&rol&username` | Lista usuarios con filtros (ADMIN) |
+| `adminToggleActivoUsuario` | `PATCH admin/usuarios/{id}/toggle-activo` | Activar/desactivar usuario (ADMIN) |
+| `adminCambiarRolUsuario` | `PATCH admin/usuarios/{id}/rol?nuevoRol=` | Cambiar rol (ADMIN) |
+| `adminBuscarRutinasPredefinidas` | `GET admin/rutinas/predefinidas/busqueda` | Buscar rutinas predefinidas con filtros (ADMIN) |
+| `adminBuscarEjercicios` | `GET admin/ejercicios/busqueda` | Buscar ejercicios con filtros (ADMIN) |
+| `adminActivarRutina` / `adminDesactivarRutina` | `PUT/DELETE rutinas/{id}/activar` | Toggle activa rutina (ADMIN) |
+| `adminActivarEjercicio` / `adminDesactivarEjercicio` | `PUT/DELETE ejercicios/{id}/activar` | Toggle activo ejercicio (ADMIN) |
+| `adminEditarRutina` | `PATCH rutinas/{id}` | Editar nombre/descripción rutina (ADMIN) |
+| `adminEditarEjercicio` | `PATCH ejercicios/{id}` | Editar nombre/descripción ejercicio (ADMIN) |
 
 ---
 
@@ -159,7 +170,10 @@ Arquitectura 4 capas obligatoria (UD06).
 | `MedicionesActivity` | Historial de mediciones corporales con opción de eliminar |
 | `RegistrarMedicionActivity` | Formulario para añadir medición (peso obligatorio, resto opcionales) |
 | `LogrosActivity` | Lista todos los logros. Desbloqueados resaltados. Dos llamadas paralelas con AtomicInteger |
-| `AdminActivity` | Panel de administración: estadísticas globales + lista de usuarios (solo ROLE_ADMIN) |
+| `AdminActivity` | Panel admin: 6 KPIs globales + acceso a gestión de usuarios, rutinas predefinidas y ejercicios (solo ROLE_ADMIN) |
+| `AdminUsuariosActivity` | Lista usuarios con búsqueda, filtros estado/rol, toggle activo/inactivo y cambio de rol |
+| `AdminRutinasActivity` | Lista rutinas predefinidas con filtros nivel/estado, toggle activa y edición de nombre/descripción |
+| `AdminEjerciciosActivity` | Lista catálogo de ejercicios con filtro estado, toggle activo y edición de nombre/descripción |
 
 **`ui/adapters/`**
 
@@ -170,7 +184,9 @@ Arquitectura 4 capas obligatoria (UD06).
 | `SesionAdapter` | Sesión con fecha, rutina asociada, duración y calorías |
 | `MedicionAdapter` | Medición con peso, IMC y extras (grasa, músculo) |
 | `LogroAdapter` | Logro con icono emoji, nombre, descripción y check si desbloqueado |
-| `AdminUsuarioAdapter` | Usuario con username, email y chip de rol |
+| `AdminUsuarioAdapter` | Usuario con username, email, chip de rol y chip activo/inactivo (verde/rojo adaptativo al tema). PopupMenu: toggle activo + cambiar rol |
+| `AdminRutinaAdapter` | Rutina predefinida con nombre, descripción, chip nivel, chip activo/inactivo y contador de ejercicios. PopupMenu: toggle activa + editar |
+| `AdminEjercicioAdapter` | Ejercicio con nombre, descripción, chip grupo, chip dificultad y chip activo/inactivo. PopupMenu: toggle activo + editar |
 
 ---
 
@@ -242,7 +258,7 @@ Controller → Service → Repository (JPA / jOOQ) → MariaDB
 | `AlimentoComidaController` | `/alimentos-comida` | Alimentos por comida |
 | `NotificacionController` | `/notificaciones` | Notificaciones del sistema |
 | `LogroController` | `/logros` | Catálogo de logros y logros por usuario |
-| `AdminController` | `/admin` | `GET /estadisticas-globales` y `GET /usuarios` (solo ADMIN) |
+| `AdminController` | `/admin` | Estadísticas globales (6 KPIs), lista usuarios con filtros jOOQ, toggle activo, cambiar rol, búsqueda rutinas predefinidas y ejercicios con filtros dinámicos |
 | `EjercicioJooqController` | `/jooq/ejercicios` | Consultas avanzadas jOOQ |
 | `UsuarioJooqController` | `/jooq/usuarios` | Consultas avanzadas jOOQ (solo ADMIN) |
 
@@ -424,6 +440,12 @@ Abre `app/GymProFit` en Android Studio, sincroniza Gradle y ejecuta en emulador 
 ---
 
 ## 📝 Changelog
+
+### 2026-05-25
+
+| Hash | Descripción |
+|---|---|
+| *(pendiente)* | feat(admin): panel admin completo — AdminUsuariosActivity, AdminRutinasActivity, AdminEjerciciosActivity, nuevos adapters, fix rol desde TokenDTO, fix jOOQ ROLE_ prefix, dark mode chips |
 
 ### 2026-05-22
 

@@ -270,7 +270,8 @@ public class UsuarioJooqRepository implements IUsuarioJooqRepository {
             conditions.add(USUARIOS.USERNAME.containsIgnoreCase(username));
         }
         if (rol != null && !rol.isBlank()) {
-            conditions.add(ROLES.NOMBRE.eq(RolesNombre.valueOf(rol.toUpperCase())));
+            String rolNombre = rol.toUpperCase().replace("ROLE_", "");
+            conditions.add(ROLES.NOMBRE.eq(RolesNombre.valueOf(rolNombre)));
         }
 
         return dsl
@@ -340,6 +341,18 @@ public class UsuarioJooqRepository implements IUsuarioJooqRepository {
                 .from(table("usuario_logros"))
                 .fetchOne(0, Long.class);
 
+        Long rutinasPredefinidas = dsl
+                .selectCount()
+                .from(RUTINAS)
+                .where(RUTINAS.ES_PREDEFINIDA.eq((byte) 1))
+                .fetchOne(0, Long.class);
+
+        Long ejerciciosActivos = dsl
+                .selectCount()
+                .from(EJERCICIOS)
+                .where(EJERCICIOS.ACTIVO.eq((byte) 1))
+                .fetchOne(0, Long.class);
+
         return new AdminEstadisticasDTO(
                 totalUsuarios,
                 usuariosActivos,
@@ -347,7 +360,9 @@ public class UsuarioJooqRepository implements IUsuarioJooqRepository {
                 sesionesHoy,
                 totalEjercicios,
                 totalObjetivos,
-                totalLogros
+                totalLogros,
+                rutinasPredefinidas,
+                ejerciciosActivos
         );
     }
 

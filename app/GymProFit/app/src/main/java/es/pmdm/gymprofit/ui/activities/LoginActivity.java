@@ -88,10 +88,12 @@ public class LoginActivity extends AppCompatActivity {
                 try {
                     String token = UtilJSONParser.parseToken(response);
                     String user  = UtilJSONParser.parseTokenUsername(response);
+                    String rol   = UtilJSONParser.parseTokenRol(response);
 
                     UtilREST.setToken(token);
                     prefsManager.saveToken(token);
                     prefsManager.saveUsername(user);
+                    prefsManager.saveRol(rol);
 
                     obtenerUsuario(user);
                 } catch (JSONException e) {
@@ -113,9 +115,8 @@ public class LoginActivity extends AppCompatActivity {
                 try {
                     Usuario u = UtilJSONParser.parseUsuario(response);
                     prefsManager.saveUsuarioId(u.getId());
-                    prefsManager.saveRol(u.getRol());
 
-                    boolean yaCompleto = "ROLE_ADMIN".equals(u.getRol())
+                    boolean yaCompleto = prefsManager.isAdmin()
                             || (u.getNivelExperiencia() != null && !u.getNivelExperiencia().isEmpty());
                     if (yaCompleto) {
                         prefsManager.setOnboardingCompletado(true);

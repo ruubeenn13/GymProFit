@@ -157,7 +157,10 @@ HomeActivity (navegación inferior)
 | `MedicionesActivity` | Vista detallada de la última medición corporal (peso, altura, grasa, músculo, perímetros). FAB para registrar nueva |
 | `RegistrarMedicionActivity` | POST /mediciones-corporales |
 | `LogrosActivity` | Todos los logros con desbloqueados resaltados |
-| `AdminActivity` | Estadísticas globales + lista usuarios (solo ROLE_ADMIN) |
+| `AdminActivity` | Panel admin: estadísticas globales (6 KPIs) + acceso a gestión de usuarios, rutinas y ejercicios (solo ROLE_ADMIN) |
+| `AdminUsuariosActivity` | Gestión de usuarios: buscar por username, filtrar por estado/rol, toggle activo/inactivo, cambiar rol (solo ROLE_ADMIN) |
+| `AdminRutinasActivity` | Gestión de rutinas predefinidas: buscar, filtrar por nivel/estado, toggle activa, editar nombre y descripción (solo ROLE_ADMIN) |
+| `AdminEjerciciosActivity` | Gestión del catálogo de ejercicios: buscar, filtrar por estado, toggle activo, editar nombre y descripción (solo ROLE_ADMIN) |
 
 ---
 
@@ -237,8 +240,18 @@ POST   mediciones-corporales
 DELETE mediciones-corporales/{id}
 GET    logros
 GET    logros/usuario/{usuarioId}
-GET    admin/usuarios
+GET    admin/usuarios?page=&size=&activo=&rol=&username=
 GET    admin/estadisticas-globales
+PATCH  admin/usuarios/{id}/toggle-activo
+PATCH  admin/usuarios/{id}/rol?nuevoRol=
+GET    admin/rutinas/predefinidas/busqueda?nombre=&nivel=&categoria=&activa=
+GET    admin/ejercicios/busqueda?nombre=&grupoMuscular=&dificultad=&activo=
+PATCH  rutinas/{id}
+DELETE rutinas/{id}          (desactivar)
+PUT    rutinas/{id}/activar
+PATCH  ejercicios/{id}
+DELETE ejercicios/{id}       (desactivar)
+PUT    ejercicios/{id}/activar
 ```
 
 ---
@@ -275,7 +288,15 @@ implementation libs.constraintlayout
 
 ## Changelog
 
-### 2026-05-25
+### 2026-05-25 — Panel admin completo
+- **AdminUsuariosActivity**: búsqueda por username, filtros activo/inactivo/rol, toggle activo con diálogo de confirmación, cambio de rol con RadioGroup — `MaterialAlertDialogBuilder`
+- **AdminRutinasActivity**: filtros nivel/activa, búsqueda por nombre, toggle activa, diálogo editar nombre/descripción
+- **AdminEjerciciosActivity**: filtros activo, búsqueda por nombre, toggle activo, diálogo editar
+- **AdminRutinaAdapter / AdminEjercicioAdapter**: chips activo/inactivo con colores adaptativos, PopupMenu contextual
+- **Fix login**: rol guardado desde `TokenDTO.roles[]` (via `parseTokenRol`) en lugar de `UsuarioDTO` que no devuelve el campo rol — `obtenerUsuario` ya no sobrescribe el rol guardado
+- **UI dark mode**: `values-night/colors.xml` con colores de chip (#1B5E20/#7F0000 + texto adaptativo), `colorOnSurfaceVariant` en textos secundarios, stroke 1dp en cards, `MaterialAlertDialogBuilder` en todos los diálogos admin
+
+### 2026-05-25 — Mejoras visuales anteriores
 - **Logo PNG con soporte dark/light**: reemplazado `ic_logo_gym` por `drawable/logo.png` + `drawable-night/logo.png` en `SplashActivity`, `LoginActivity` y `RegistroActivity`
 - **Fix transición BottomNav**: `overridePendingTransition(0,0)` aplicado antes y después de `finish()` en los 5 activities principales para suprimir completamente la animación al cambiar de pestaña
 - **Fix flash entre activities**: `android:windowBackground` explícito en `themes.xml` y `values-night/themes.xml` para evitar destello del fondo del sistema durante la transición
