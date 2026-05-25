@@ -1,10 +1,7 @@
 package es.pmdm.gymprofit.ui.activities;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.SearchView;
@@ -14,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.chip.ChipGroup;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +56,12 @@ public class AdminRutinasActivity extends BaseActivity {
 
         configurarChips();
         configurarBusqueda();
+        cargar();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         cargar();
     }
 
@@ -149,42 +151,15 @@ public class AdminRutinasActivity extends BaseActivity {
     }
 
     private void mostrarDialogoEditar(Rutina r, int pos) {
-        View v = LayoutInflater.from(this).inflate(R.layout.dialog_editar_rutina, null);
-        EditText etNombre = v.findViewById(R.id.etNombreRutina);
-        EditText etDescripcion = v.findViewById(R.id.etDescripcionRutina);
-
-        etNombre.setText(r.getNombre());
-        etDescripcion.setText(r.getDescripcion());
-
-        new MaterialAlertDialogBuilder(this)
-                .setTitle(getString(R.string.admin_editar_rutina_titulo))
-                .setView(v)
-                .setPositiveButton(getString(R.string.admin_guardar), (d, w) -> {
-                    String nombre = etNombre.getText().toString().trim();
-                    String desc = etDescripcion.getText().toString().trim();
-                    if (nombre.isEmpty()) return;
-                    try {
-                        JSONObject body = new JSONObject();
-                        body.put("nombre", nombre);
-                        body.put("descripcion", desc);
-                        API.adminEditarRutina(r.getId(), body, new UtilREST.OnResponseListener() {
-                            @Override
-                            public void onSuccess(String response, int statusCode) {
-                                r.setNombre(nombre);
-                                r.setDescripcion(desc);
-                                adapter.actualizarItem(pos, r);
-                                Toast.makeText(AdminRutinasActivity.this,
-                                        getString(R.string.admin_exito_editar_rutina), Toast.LENGTH_SHORT).show();
-                            }
-                            @Override
-                            public void onError(String message, int statusCode) {
-                                Toast.makeText(AdminRutinasActivity.this,
-                                        getString(R.string.admin_error_generico), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    } catch (JSONException ignored) {}
-                })
-                .setNegativeButton(android.R.string.cancel, null)
-                .show();
+        Intent intent = new Intent(this, EditarRutinaAdminActivity.class);
+        intent.putExtra("id", r.getId());
+        intent.putExtra("nombre", r.getNombre());
+        intent.putExtra("descripcion", r.getDescripcion());
+        intent.putExtra("nivel", r.getNivel());
+        intent.putExtra("duracionMinutos", r.getDuracionMinutos());
+        intent.putExtra("caloriasAproximadas", r.getCaloriasAproximadas());
+        intent.putExtra("categoria", r.getCategoria());
+        intent.putExtra("diasSemana", r.getDiasSemana());
+        startActivity(intent);
     }
 }

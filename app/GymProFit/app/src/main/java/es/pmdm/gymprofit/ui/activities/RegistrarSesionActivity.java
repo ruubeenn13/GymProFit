@@ -12,6 +12,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -31,6 +33,7 @@ import es.pmdm.gymprofit.model.rutina.Rutina;
 import es.pmdm.gymprofit.network.API;
 import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
+import es.pmdm.gymprofit.ui.adapters.EjercicioPesoAdapter;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
@@ -39,13 +42,15 @@ public class RegistrarSesionActivity extends AppCompatActivity {
     private Spinner spRutina;
     private TextInputEditText etDuracion, etNotas;
     private TextView tvCaloriasCalculadas;
-    private View cardCalorias;
+    private View cardCalorias, cardEjercicios;
     private RatingBar ratingBar;
     private PreferencesManager prefsManager;
 
     private int caloriasCalculadas = 0;
     private final List<Rutina> rutinas = new ArrayList<>();
     private final List<String> rutinaOpciones = new ArrayList<>();
+    private final List<EjercicioPesoAdapter.Item> ejercicioItems = new ArrayList<>();
+    private EjercicioPesoAdapter ejercicioPesoAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +65,14 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         etNotas              = findViewById(R.id.etNotas);
         tvCaloriasCalculadas = findViewById(R.id.tvCaloriasCalculadas);
         cardCalorias         = findViewById(R.id.cardCalorias);
+        cardEjercicios       = findViewById(R.id.cardEjercicios);
         ratingBar            = findViewById(R.id.ratingBar);
+
+        RecyclerView rvEjercicios = findViewById(R.id.rvEjercicios);
+        ejercicioPesoAdapter = new EjercicioPesoAdapter(ejercicioItems);
+        rvEjercicios.setLayoutManager(new LinearLayoutManager(this));
+        rvEjercicios.setNestedScrollingEnabled(false);
+        rvEjercicios.setAdapter(ejercicioPesoAdapter);
 
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
         findViewById(R.id.btnGuardar).setOnClickListener(v -> guardarSesion());
@@ -121,6 +133,9 @@ public class RegistrarSesionActivity extends AppCompatActivity {
                 } else {
                     caloriasCalculadas = 0;
                     cardCalorias.setVisibility(View.GONE);
+                    ejercicioItems.clear();
+                    ejercicioPesoAdapter.notifyDataSetChanged();
+                    cardEjercicios.setVisibility(View.GONE);
                 }
             }
             @Override public void onNothingSelected(AdapterView<?> parent) {}
@@ -134,12 +149,18 @@ public class RegistrarSesionActivity extends AppCompatActivity {
                 try {
                     JSONArray arr = new JSONArray(response);
                     int total = 0;
+                    List<EjercicioPesoAdapter.Item> nuevosItems = new ArrayList<>();
                     for (int i = 0; i < arr.length(); i++) {
                         JSONObject obj = arr.getJSONObject(i);
-                        int calorias = obj.optInt("caloriasEjercicio", 0);
-                        int series   = obj.optInt("series", 0);
-                        int reps     = obj.optInt("repeticiones", 0);
+                        int calorias    = obj.optInt("caloriasEjercicio", 0);
+                        int series      = obj.optInt("series", 0);
+                        int reps        = obj.optInt("repeticiones", 0);
+                        int ejercicioId = obj.optInt("ejercicioId", -1);
+                        String nombre   = obj.optString("nombreEjercicio", "Ejercicio " + (i + 1));
                         total += calorias * series * reps;
+                        if (ejercicioId != -1) {
+                            nuevosItems.add(new EjercicioPesoAdapter.Item(ejercicioId, nombre, series, reps));
+                        }
                     }
                     final int kcal = total;
                     runOnUiThread(() -> {
@@ -150,6 +171,10 @@ public class RegistrarSesionActivity extends AppCompatActivity {
                         } else {
                             cardCalorias.setVisibility(View.GONE);
                         }
+                        ejercicioItems.clear();
+                        ejercicioItems.addAll(nuevosItems);
+                        ejercicioPesoAdapter.notifyDataSetChanged();
+                        cardEjercicios.setVisibility(nuevosItems.isEmpty() ? View.GONE : View.VISIBLE);
                     });
                 } catch (JSONException ignored) {}
             }
@@ -216,6 +241,7 @@ public class RegistrarSesionActivity extends AppCompatActivity {
                         setResult(RESULT_OK);
 
                         if (sesionIdGuardada != -1) {
+                            registrarEjerciciosRealizados(sesionIdGuardada);
                             Intent intent = new Intent(RegistrarSesionActivity.this,
                                     ResumenSesionActivity.class);
                             intent.putExtra("sesionId", sesionIdGuardada);
@@ -236,6 +262,25 @@ public class RegistrarSesionActivity extends AppCompatActivity {
 
         } catch (JSONException | NumberFormatException e) {
             UIHelper.mostrarToastError(this, getString(R.string.error_conexion));
+        }
+    }
+
+    private void registrarEjerciciosRealizados(int sesionId) {
+        for (EjercicioPesoAdapter.Item item : ejercicioItems) {
+            try {
+                JSONObject body = new JSONObject();
+                body.put("sesionId", sesionId);
+                body.put("ejercicioId", item.ejercicioId);
+                body.put("seriesCompletadas", item.series);
+                body.put("repeticionesReales", item.repeticiones);
+                if (!item.peso.isEmpty()) {
+                    body.put("pesoUsado", Double.parseDouble(item.peso.replace(",", ".")));
+                }
+                API.crearEjercicioRealizado(body, new UtilREST.OnResponseListener() {
+                    @Override public void onSuccess(String r, int s) {}
+                    @Override public void onError(String m, int s) {}
+                });
+            } catch (JSONException | NumberFormatException ignored) {}
         }
     }
 

@@ -154,6 +154,12 @@ public class API {
         UtilREST.request(BASE + "sesiones/" + id, "DELETE", null, l);
     }
 
+    // ── EJERCICIOS REALIZADOS ─────────────────────────────────────────────────
+
+    public static void crearEjercicioRealizado(JSONObject body, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "ejercicios-realizados", "POST", body.toString(), l);
+    }
+
     // ── LOGROS ────────────────────────────────────────────────────────────────
 
     public static void getLogros(UtilREST.OnResponseListener l) {

@@ -1,10 +1,7 @@
 package es.pmdm.gymprofit.ui.activities;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.SearchView;
@@ -14,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.chip.ChipGroup;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +55,12 @@ public class AdminEjerciciosActivity extends BaseActivity {
 
         configurarChips();
         configurarBusqueda();
+        cargar();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         cargar();
     }
 
@@ -136,42 +138,15 @@ public class AdminEjerciciosActivity extends BaseActivity {
     }
 
     private void mostrarDialogoEditar(Ejercicio e, int pos) {
-        View v = LayoutInflater.from(this).inflate(R.layout.dialog_editar_ejercicio, null);
-        EditText etNombre = v.findViewById(R.id.etNombreEjercicio);
-        EditText etDescripcion = v.findViewById(R.id.etDescripcionEjercicio);
-
-        etNombre.setText(e.getNombre());
-        etDescripcion.setText(e.getDescripcion());
-
-        new MaterialAlertDialogBuilder(this)
-                .setTitle(getString(R.string.admin_editar_ejercicio_titulo))
-                .setView(v)
-                .setPositiveButton(getString(R.string.admin_guardar), (d, w) -> {
-                    String nombre = etNombre.getText().toString().trim();
-                    String desc = etDescripcion.getText().toString().trim();
-                    if (nombre.isEmpty()) return;
-                    try {
-                        JSONObject body = new JSONObject();
-                        body.put("nombre", nombre);
-                        body.put("descripcion", desc);
-                        API.adminEditarEjercicio(e.getId(), body, new UtilREST.OnResponseListener() {
-                            @Override
-                            public void onSuccess(String response, int statusCode) {
-                                e.setNombre(nombre);
-                                e.setDescripcion(desc);
-                                adapter.actualizarItem(pos, e);
-                                Toast.makeText(AdminEjerciciosActivity.this,
-                                        getString(R.string.admin_exito_editar_ejercicio), Toast.LENGTH_SHORT).show();
-                            }
-                            @Override
-                            public void onError(String message, int statusCode) {
-                                Toast.makeText(AdminEjerciciosActivity.this,
-                                        getString(R.string.admin_error_generico), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    } catch (JSONException ignored) {}
-                })
-                .setNegativeButton(android.R.string.cancel, null)
-                .show();
+        Intent intent = new Intent(this, EditarEjercicioAdminActivity.class);
+        intent.putExtra("id", e.getId());
+        intent.putExtra("nombre", e.getNombre());
+        intent.putExtra("descripcion", e.getDescripcion());
+        intent.putExtra("grupoMuscular", e.getGrupoMuscular());
+        intent.putExtra("dificultad", e.getDificultad());
+        intent.putExtra("calorias", e.getCalorias());
+        intent.putExtra("equipoNecesario", e.getEquipoNecesario());
+        intent.putExtra("instrucciones", e.getInstrucciones());
+        startActivity(intent);
     }
 }

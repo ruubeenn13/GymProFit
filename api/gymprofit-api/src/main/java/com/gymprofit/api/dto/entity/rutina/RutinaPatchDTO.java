@@ -13,6 +13,7 @@ public class RutinaPatchDTO implements Serializable {
     private String nombre;
     private String descripcion;
     private Integer duracionMinutos;
+    private Integer caloriasAproximadas;
     private String nivel;
     private String categoria;
     private String diasSemana;

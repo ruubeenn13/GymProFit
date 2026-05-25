@@ -31,6 +31,8 @@ public class RutinaAdapter extends RecyclerView.Adapter<RutinaAdapter.ViewHolder
     private List<Rutina> rutinasFiltradas;
     private final OnClickListener clickListener;
     private OnLongClickListener longClickListener;
+    private boolean isAdmin = false;
+    private int currentUserId = -1;
 
     public RutinaAdapter(List<Rutina> rutinas) {
         this(rutinas, null);
@@ -44,6 +46,11 @@ public class RutinaAdapter extends RecyclerView.Adapter<RutinaAdapter.ViewHolder
 
     public void setOnLongClickListener(OnLongClickListener listener) {
         this.longClickListener = listener;
+    }
+
+    public void setUserContext(boolean isAdmin, int currentUserId) {
+        this.isAdmin = isAdmin;
+        this.currentUserId = currentUserId;
     }
 
     @NonNull
@@ -66,7 +73,9 @@ public class RutinaAdapter extends RecyclerView.Adapter<RutinaAdapter.ViewHolder
         if (clickListener != null) {
             holder.itemView.setOnClickListener(v -> clickListener.onClick(rutina));
         }
-        if (longClickListener != null && !rutina.isPredefinida()) {
+        boolean puedeEditar = longClickListener != null &&
+                (isAdmin || (!rutina.isPredefinida() && rutina.getUsuarioId() == currentUserId));
+        if (puedeEditar) {
             holder.itemView.setOnLongClickListener(v -> {
                 longClickListener.onLongClick(rutina, v);
                 return true;

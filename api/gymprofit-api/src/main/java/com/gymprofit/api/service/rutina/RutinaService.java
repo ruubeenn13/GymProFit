@@ -226,6 +226,7 @@ public class RutinaService implements IRutinaService {
             if (patchDTO.getNombre() != null) rutina.setNombre(patchDTO.getNombre());
             if (patchDTO.getDescripcion() != null) rutina.setDescripcion(patchDTO.getDescripcion());
             if (patchDTO.getDuracionMinutos() != null) rutina.setDuracionMinutos(patchDTO.getDuracionMinutos());
+            if (patchDTO.getCaloriasAproximadas() != null) rutina.setCaloriasAproximadas(patchDTO.getCaloriasAproximadas());
             if (patchDTO.getNivel() != null) rutina.setNivel(Nivel.valueOf(patchDTO.getNivel().toUpperCase()));
             if (patchDTO.getCategoria() != null) rutina.setCategoria(patchDTO.getCategoria());
             if (patchDTO.getDiasSemana() != null) rutina.setDiasSemana(patchDTO.getDiasSemana());
