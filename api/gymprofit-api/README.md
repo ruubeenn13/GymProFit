@@ -277,6 +277,7 @@ Migraciones aplicadas:
 202605141912__Migrate_Objetivo_To_Enum.sql
 202605161102__Seed_Roles.sql
 202605161135__Logros.sql
+202605251000__Fix_altura_mediciones_corporales.sql   ← DECIMAL(3,2)→DECIMAL(5,2) en altura
 ```
 
 ---

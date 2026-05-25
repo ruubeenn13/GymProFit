@@ -113,7 +113,7 @@
     <string name="perfil_nombre">Nombre</string>
     <string name="perfil_email">Email</string>
     <string name="perfil_configuracion">Configuración</string>
-    <string name="perfil_tema">Tema de la aplicación</string>
+    <string name="perfil_tema">Tema</string>
     <string name="perfil_idioma">Idioma</string>
     <string name="perfil_cerrar_sesion">Cerrar sesión</string>
     <string name="perfil_nivel">Nivel de experiencia</string>
@@ -139,6 +139,10 @@
     <string name="dialog_confirmar">Confirmar</string>
     <string name="dialog_cerrar_sesion_mensaje">¿Estás seguro de que quieres cerrar sesión?</string>
     <string name="rutinas_guardada_exito">Rutina guardada correctamente</string>
+    <string name="rutinas_eliminar">Eliminar rutina</string>
+    <string name="rutinas_confirmar_eliminar">¿Eliminar esta rutina? Esta acción no se puede deshacer.</string>
+    <string name="rutinas_eliminada_exito">Rutina eliminada</string>
+    <string name="rutinas_editar">Editar</string>
 
     <!-- ONBOARDING -->
     <string name="onboarding_saltar">Saltar</string>
@@ -209,8 +213,22 @@
     <string name="mediciones_notas">Notas (opcional)</string>
     <string name="mediciones_guardar">Guardar medición</string>
     <string name="mediciones_exito">Medición registrada correctamente</string>
+    <string name="mediciones_editar">Editar medición</string>
+    <string name="mediciones_editar_guardar">Actualizar medición</string>
+    <string name="mediciones_editar_exito">Medición actualizada correctamente</string>
     <string name="mediciones_eliminar">Eliminar medición</string>
     <string name="mediciones_confirmar_eliminar">¿Eliminar esta medición?</string>
+    <string name="medicion_anadir">Añadir</string>
+    <string name="medicion_guardar">Guardar</string>
+    <string name="medicion_fecha_ultima">Última medición: %s</string>
+    <string name="medicion_sin_datos_subtitulo">Pulsa + para añadir tu primera medición</string>
+    <string name="medicion_label_grasa">Grasa corporal</string>
+    <string name="medicion_label_musculo">Masa muscular</string>
+    <string name="medicion_label_cintura">Cintura</string>
+    <string name="medicion_label_pecho">Pecho</string>
+    <string name="medicion_label_brazos">Brazos</string>
+    <string name="medicion_label_piernas">Piernas</string>
+    <string name="medicion_label_notas">Notas</string>
 
     <!-- LOGROS -->
     <string name="logros_titulo">Mis logros</string>

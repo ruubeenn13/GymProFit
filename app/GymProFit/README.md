@@ -93,7 +93,9 @@ es.pmdm.gymprofit/
 │   ├── UtilJSONParser.java    # Parser JSON
 │   └── API.java               # Fachada de endpoints
 ├── ui/
-│   ├── activities/            # Una Activity por pantalla
+│   ├── activities/
+│   │   ├── BaseActivity.java  # Clase base: menú opciones (tema, idioma, logout) vía dialogs
+│   │   └── ...                # Una Activity concreta por pantalla
 │   └── adapters/              # RecyclerView.Adapter por cada lista
 └── utils/
     ├── PreferencesManager.java
@@ -147,12 +149,12 @@ HomeActivity (navegación inferior)
 | `DetalleRutinaActivity` | Vista readonly. Botón editar visible solo si es rutina propia |
 | `EditarRutinaActivity` | PATCH nombre/desc/nivel/duración + añadir/eliminar ejercicios |
 | `NutricionActivity` | Calculadora macros y agua (resultado del onboarding) |
-| `PerfilActivity` | Datos reales de la API, cambio tema/idioma, logout |
+| `PerfilActivity` | Datos reales de la API + resumen de última medición corporal (peso/altura). Hereda de `BaseActivity` |
 | `EditarPerfilActivity` | PATCH /usuarios/{id}. Campos vacíos → null en BD |
 | `SesionesActivity` | Historial de sesiones, eliminar |
 | `RegistrarSesionActivity` | Crear sesión: spinner rutinas, calorías calculadas automáticamente, RatingBar 1-5 |
 | `ResumenSesionActivity` | Detalle sesión + 6 stats de usuario + logros desbloqueados |
-| `MedicionesActivity` | Historial mediciones corporales, eliminar |
+| `MedicionesActivity` | Vista detallada de la última medición corporal (peso, altura, grasa, músculo, perímetros). FAB para registrar nueva |
 | `RegistrarMedicionActivity` | POST /mediciones-corporales |
 | `LogrosActivity` | Todos los logros con desbloqueados resaltados |
 | `AdminActivity` | Estadísticas globales + lista usuarios (solo ROLE_ADMIN) |
@@ -250,7 +252,7 @@ GET    admin/estadisticas-globales
 | PATCH no soportado nativamente en Android | Workaround con reflexión Java en `UtilREST` |
 | `optString()` devuelve `"null"` literal cuando el campo JSON es null | Filtrar siempre: `!"null".equals(s)` |
 | `peso` debe enviarse como Double, no String | `Double.parseDouble(str.replace(",", "."))` |
-| Tema/idioma deben aplicarse antes de `setContentView` | Orden en `onCreate`: `applyTheme()` → `aplicarIdioma()` → `setContentView()` |
+| Tema/idioma deben aplicarse antes de `setContentView` | Orden en `onCreate`: `applyTheme()` → `aplicarIdioma()` → `setContentView()`. `BaseActivity` lo gestiona; las subclases solo llaman `super.onCreate()` primero |
 | Filtros de enum en adapters usan `equalsIgnoreCase` | La API devuelve enums en UPPERCASE |
 | `fecha_fin` NOT NULL en sesiones | La API calcula `fechaInicio + duracionMinutos` si no se envía |
 

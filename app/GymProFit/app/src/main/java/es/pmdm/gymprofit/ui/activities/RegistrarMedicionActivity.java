@@ -1,11 +1,14 @@
 package es.pmdm.gymprofit.ui.activities;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONException;
@@ -26,6 +29,7 @@ public class RegistrarMedicionActivity extends AppCompatActivity {
     private TextInputEditText etPeso, etAltura, etGrasa, etMusculo;
     private TextInputEditText etCintura, etPecho, etBrazos, etPiernas, etNotas;
     private PreferencesManager prefsManager;
+    private int medicionId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +49,34 @@ public class RegistrarMedicionActivity extends AppCompatActivity {
         etPiernas = findViewById(R.id.etPiernas);
         etNotas   = findViewById(R.id.etNotas);
 
+        Intent intent = getIntent();
+        medicionId = intent.getIntExtra("medicion_id", -1);
+
+        if (medicionId != -1) {
+            ((TextView) findViewById(R.id.tvTituloMedicion)).setText(R.string.mediciones_editar);
+            ((MaterialButton) findViewById(R.id.btnGuardar)).setText(R.string.mediciones_editar_guardar);
+            precargarCampos(intent);
+        }
+
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
         findViewById(R.id.btnGuardar).setOnClickListener(v -> guardarMedicion());
+    }
+
+    private void precargarCampos(Intent intent) {
+        setDecimal(etPeso,    intent.getDoubleExtra("peso", 0));
+        setDecimal(etAltura,  intent.getDoubleExtra("altura", 0));
+        setDecimal(etGrasa,   intent.getDoubleExtra("grasa", 0));
+        setDecimal(etMusculo, intent.getDoubleExtra("musculo", 0));
+        setDecimal(etCintura, intent.getDoubleExtra("cintura", 0));
+        setDecimal(etPecho,   intent.getDoubleExtra("pecho", 0));
+        setDecimal(etBrazos,  intent.getDoubleExtra("brazos", 0));
+        setDecimal(etPiernas, intent.getDoubleExtra("piernas", 0));
+        String notas = intent.getStringExtra("notas");
+        if (notas != null && !notas.isEmpty()) etNotas.setText(notas);
+    }
+
+    private void setDecimal(TextInputEditText et, double value) {
+        if (value > 0) et.setText(String.format(Locale.getDefault(), "%.2f", value));
     }
 
     private void guardarMedicion() {
@@ -58,10 +88,9 @@ public class RegistrarMedicionActivity extends AppCompatActivity {
 
         try {
             JSONObject body = new JSONObject();
-            body.put("usuarioId", prefsManager.getUsuarioId());
             body.put("peso", new BigDecimal(pesoStr));
 
-            putDecimal(body, "altura",       etAltura);
+            putDecimal(body, "altura",        etAltura);
             putDecimal(body, "grasaCorporal", etGrasa);
             putDecimal(body, "masaMuscular",  etMusculo);
             putDecimal(body, "cintura",       etCintura);
@@ -72,23 +101,43 @@ public class RegistrarMedicionActivity extends AppCompatActivity {
             String notas = etNotas.getText() != null ? etNotas.getText().toString().trim() : "";
             if (!notas.isEmpty()) body.put("notas", notas);
 
-            API.crearMedicion(body, new UtilREST.OnResponseListener() {
-                @Override
-                public void onSuccess(String response, int statusCode) {
-                    runOnUiThread(() -> {
-                        NotificationHelper.notificarMedicionGuardada(RegistrarMedicionActivity.this);
-                        UIHelper.mostrarToastExito(RegistrarMedicionActivity.this,
-                                getString(R.string.mediciones_exito));
-                        setResult(RESULT_OK);
-                        finish();
-                    });
-                }
-                @Override
-                public void onError(String message, int statusCode) {
-                    runOnUiThread(() -> UIHelper.mostrarToastError(
-                            RegistrarMedicionActivity.this, getString(R.string.error_conexion)));
-                }
-            });
+            if (medicionId != -1) {
+                API.patchMedicion(medicionId, body, new UtilREST.OnResponseListener() {
+                    @Override
+                    public void onSuccess(String response, int statusCode) {
+                        runOnUiThread(() -> {
+                            UIHelper.mostrarToastExito(RegistrarMedicionActivity.this,
+                                    getString(R.string.mediciones_editar_exito));
+                            setResult(RESULT_OK);
+                            finish();
+                        });
+                    }
+                    @Override
+                    public void onError(String message, int statusCode) {
+                        runOnUiThread(() -> UIHelper.mostrarToastError(
+                                RegistrarMedicionActivity.this, getString(R.string.error_conexion)));
+                    }
+                });
+            } else {
+                body.put("usuarioId", prefsManager.getUsuarioId());
+                API.crearMedicion(body, new UtilREST.OnResponseListener() {
+                    @Override
+                    public void onSuccess(String response, int statusCode) {
+                        runOnUiThread(() -> {
+                            NotificationHelper.notificarMedicionGuardada(RegistrarMedicionActivity.this);
+                            UIHelper.mostrarToastExito(RegistrarMedicionActivity.this,
+                                    getString(R.string.mediciones_exito));
+                            setResult(RESULT_OK);
+                            finish();
+                        });
+                    }
+                    @Override
+                    public void onError(String message, int statusCode) {
+                        runOnUiThread(() -> UIHelper.mostrarToastError(
+                                RegistrarMedicionActivity.this, getString(R.string.error_conexion)));
+                    }
+                });
+            }
 
         } catch (JSONException | NumberFormatException e) {
             UIHelper.mostrarToastError(this, getString(R.string.error_conexion));

@@ -1,5 +1,6 @@
 package es.pmdm.gymprofit.ui.adapters;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +23,14 @@ public class RutinaAdapter extends RecyclerView.Adapter<RutinaAdapter.ViewHolder
         void onClick(Rutina rutina);
     }
 
+    public interface OnLongClickListener {
+        void onLongClick(Rutina rutina, View anchorView);
+    }
+
     private List<Rutina> rutinas;
     private List<Rutina> rutinasFiltradas;
     private final OnClickListener clickListener;
+    private OnLongClickListener longClickListener;
 
     public RutinaAdapter(List<Rutina> rutinas) {
         this(rutinas, null);
@@ -34,6 +40,10 @@ public class RutinaAdapter extends RecyclerView.Adapter<RutinaAdapter.ViewHolder
         this.rutinas = rutinas;
         this.rutinasFiltradas = new ArrayList<>(rutinas);
         this.clickListener = listener;
+    }
+
+    public void setOnLongClickListener(OnLongClickListener listener) {
+        this.longClickListener = listener;
     }
 
     @NonNull
@@ -55,6 +65,14 @@ public class RutinaAdapter extends RecyclerView.Adapter<RutinaAdapter.ViewHolder
         holder.tvCalorias.setText("~" + rutina.getCaloriasAproximadas() + " kcal");
         if (clickListener != null) {
             holder.itemView.setOnClickListener(v -> clickListener.onClick(rutina));
+        }
+        if (longClickListener != null && !rutina.isPredefinida()) {
+            holder.itemView.setOnLongClickListener(v -> {
+                longClickListener.onLongClick(rutina, v);
+                return true;
+            });
+        } else {
+            holder.itemView.setOnLongClickListener(null);
         }
     }
 

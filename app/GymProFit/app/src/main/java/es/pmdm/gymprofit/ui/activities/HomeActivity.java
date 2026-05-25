@@ -3,13 +3,9 @@ package es.pmdm.gymprofit.ui.activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.TextView;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.card.MaterialCardView;
@@ -20,31 +16,17 @@ import java.util.Date;
 import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
-import es.pmdm.gymprofit.network.UtilREST;
-import es.pmdm.gymprofit.utils.PreferencesManager;
-
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends BaseActivity {
 
     private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        PreferencesManager prefsManager = new PreferencesManager(this);
-        prefsManager.applyTheme();
-        aplicarIdiomaGuardado(prefsManager);
-
-        UtilREST.setOnUnauthorizedListener(() -> {
-            prefsManager.cerrarSesion();
-            Intent intent = new Intent(this, LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        });
-
         setContentView(R.layout.activity_home);
 
-        configurarCabecera(prefsManager);
+        setupMenuButton();
+        configurarCabecera();
         configurarAccionesRapidas();
         configurarNavegacion();
 
@@ -55,7 +37,7 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    private void configurarCabecera(PreferencesManager prefsManager) {
+    private void configurarCabecera() {
         TextView tvSaludo  = findViewById(R.id.tvSaludo);
         TextView tvUsuario = findViewById(R.id.tvUsuario);
         TextView tvFecha   = findViewById(R.id.tvFecha);
@@ -136,15 +118,4 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    private void aplicarIdiomaGuardado(PreferencesManager prefsManager) {
-        String savedLanguage = prefsManager.getLanguage();
-        if (!savedLanguage.isEmpty()) {
-            Locale locale = new Locale(savedLanguage);
-            Locale.setDefault(locale);
-            Resources resources = getResources();
-            Configuration config = resources.getConfiguration();
-            config.setLocale(locale);
-            resources.updateConfiguration(config, resources.getDisplayMetrics());
-        }
-    }
 }

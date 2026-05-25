@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_tema"
+        android:icon="@drawable/ic_palette"
+        android:title="@string/perfil_tema" />
+    <item
+        android:id="@+id/menu_idioma"
+        android:icon="@drawable/ic_language"
+        android:title="@string/perfil_idioma" />
+    <item
+        android:id="@+id/menu_cerrar_sesion"
+        android:icon="@drawable/ic_logout"
+        android:title="@string/perfil_cerrar_sesion" />
+</menu>
