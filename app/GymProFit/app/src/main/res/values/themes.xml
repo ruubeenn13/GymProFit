@@ -7,6 +7,15 @@
         <item name="colorSurface">#FFFFFF</item>
         <item name="colorOnSurface">#1A1A1A</item>
         <item name="android:colorBackground">#F5F5F5</item>
+        <item name="android:windowBackground">#F5F5F5</item>
         <item name="android:textColorPrimary">#1A1A1A</item>
+        <item name="bottomNavigationStyle">@style/Widget.GymProFit.BottomNavigationView</item>
+    </style>
+
+    <style name="Widget.GymProFit.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
+        <item name="itemActiveIndicatorStyle">@null</item>
+        <item name="itemIconSize">27dp</item>
+        <item name="itemPaddingTop">6dp</item>
+        <item name="itemPaddingBottom">6dp</item>
     </style>
 </resources>

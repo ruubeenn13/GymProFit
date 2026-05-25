@@ -273,6 +273,17 @@ implementation libs.constraintlayout
 
 ---
 
+## Changelog
+
+### 2026-05-25
+- **Logo PNG con soporte dark/light**: reemplazado `ic_logo_gym` por `drawable/logo.png` + `drawable-night/logo.png` en `SplashActivity`, `LoginActivity` y `RegistroActivity`
+- **Fix transición BottomNav**: `overridePendingTransition(0,0)` aplicado antes y después de `finish()` en los 5 activities principales para suprimir completamente la animación al cambiar de pestaña
+- **Fix flash entre activities**: `android:windowBackground` explícito en `themes.xml` y `values-night/themes.xml` para evitar destello del fondo del sistema durante la transición
+- **Fix ancho diálogo idioma en Login**: el diálogo de selección de idioma en `LoginActivity` ahora usa el 88% del ancho de pantalla, igual que los del resto de la app
+- **BottomNav sin animación de indicador**: estilo global `Widget.GymProFit.BottomNavigationView` en el tema que elimina el pill animado (`itemActiveIndicatorStyle=@null`), aumenta el icono a 27dp y reduce el padding vertical a 6dp
+
+---
+
 <div align="center">
 
 Desarrollado por **Rubén Juan Candela** · CFGS 2º DAM · 2026
