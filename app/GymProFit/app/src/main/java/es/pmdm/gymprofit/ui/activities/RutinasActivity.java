@@ -1,13 +1,12 @@
 package es.pmdm.gymprofit.ui.activities;
 
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +16,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -27,30 +28,26 @@ import es.pmdm.gymprofit.network.API;
 import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.adapters.RutinaAdapter;
-import es.pmdm.gymprofit.utils.PreferencesManager;
+import es.pmdm.gymprofit.utils.UIHelper;
 
-public class RutinasActivity extends AppCompatActivity {
+public class RutinasActivity extends BaseActivity {
 
     private BottomNavigationView bottomNavigationView;
     private RecyclerView rvRutinas;
     private RutinaAdapter adapter;
     private ChipGroup chipGroupNivel;
     private FloatingActionButton fabCrearRutina;
-    private PreferencesManager prefsManager;
 
     private ActivityResultLauncher<Intent> crearRutinaLauncher;
     private ActivityResultLauncher<Intent> detalleLauncher;
+    private ActivityResultLauncher<Intent> editarLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        prefsManager = new PreferencesManager(this);
-        prefsManager.applyTheme();
-        aplicarIdiomaGuardado(prefsManager);
-
         setContentView(R.layout.activity_rutinas);
 
+        setupMenuButton();
         registrarLauncher();
         inicializarVistas();
         configurarRecyclerView();
@@ -71,6 +68,11 @@ public class RutinasActivity extends AppCompatActivity {
                 result -> {
                     if (result.getResultCode() == RESULT_OK) cargarRutinas();
                 });
+        editarLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) cargarRutinas();
+                });
     }
 
     private void inicializarVistas() {
@@ -81,6 +83,7 @@ public class RutinasActivity extends AppCompatActivity {
 
     private void configurarRecyclerView() {
         adapter = new RutinaAdapter(new ArrayList<>(), this::abrirDetalle);
+        adapter.setOnLongClickListener(this::mostrarMenuContextual);
         rvRutinas.setLayoutManager(new LinearLayoutManager(this));
         rvRutinas.setAdapter(adapter);
     }
@@ -141,6 +144,63 @@ public class RutinasActivity extends AppCompatActivity {
         });
     }
 
+    private void mostrarMenuContextual(Rutina rutina, android.view.View anchorView) {
+        PopupMenu popup = new PopupMenu(this, anchorView);
+        popup.inflate(R.menu.menu_rutina_context);
+
+        // forzar iconos en PopupMenu
+        try {
+            Field field = popup.getClass().getDeclaredField("mPopup");
+            field.setAccessible(true);
+            Object helper = field.get(popup);
+            Method method = helper.getClass().getDeclaredMethod("setForceShowIcon", boolean.class);
+            method.invoke(helper, true);
+        } catch (Exception ignored) {}
+
+        popup.setOnMenuItemClickListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.menuEditar) {
+                Intent intent = new Intent(this, EditarRutinaActivity.class);
+                intent.putExtra("rutinaId",    rutina.getId());
+                intent.putExtra("nombre",      rutina.getNombre());
+                intent.putExtra("descripcion", rutina.getDescripcion());
+                intent.putExtra("nivel",       rutina.getNivel());
+                intent.putExtra("duracion",    rutina.getDuracionMinutos());
+                editarLauncher.launch(intent);
+                return true;
+            } else if (id == R.id.menuEliminar) {
+                UIHelper.mostrarDialogoConIcono(this,
+                        getString(R.string.rutinas_eliminar),
+                        getString(R.string.rutinas_confirmar_eliminar),
+                        R.drawable.ic_delete,
+                        () -> eliminarRutina(rutina));
+                return true;
+            }
+            return false;
+        });
+
+        popup.show();
+    }
+
+    private void eliminarRutina(Rutina rutina) {
+        API.eliminarRutina(rutina.getId(), new UtilREST.OnResponseListener() {
+            @Override
+            public void onSuccess(String response, int statusCode) {
+                runOnUiThread(() -> {
+                    UIHelper.mostrarToastExito(RutinasActivity.this,
+                            getString(R.string.rutinas_eliminada_exito));
+                    cargarRutinas();
+                });
+            }
+
+            @Override
+            public void onError(String message, int statusCode) {
+                runOnUiThread(() -> UIHelper.mostrarToastError(
+                        RutinasActivity.this, getString(R.string.error_conexion)));
+            }
+        });
+    }
+
     private void configurarChips() {
         chipGroupNivel.setOnCheckedStateChangeListener(((chipGroup, list) -> {
             if (list.isEmpty()) return;
@@ -196,15 +256,4 @@ public class RutinasActivity extends AppCompatActivity {
         });
     }
 
-    private void aplicarIdiomaGuardado(PreferencesManager prefsManager) {
-        String savedLanguage = prefsManager.getLanguage();
-        if (!savedLanguage.isEmpty()) {
-            Locale locale = new Locale(savedLanguage);
-            Locale.setDefault(locale);
-            Resources resources = getResources();
-            Configuration config = resources.getConfiguration();
-            config.setLocale(locale);
-            resources.updateConfiguration(config, resources.getDisplayMetrics());
-        }
-    }
 }

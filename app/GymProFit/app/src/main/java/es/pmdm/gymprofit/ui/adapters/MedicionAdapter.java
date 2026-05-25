@@ -23,14 +23,20 @@ public class MedicionAdapter extends RecyclerView.Adapter<MedicionAdapter.ViewHo
         void onDelete(MedicionCorporal medicion);
     }
 
+    public interface OnEditListener {
+        void onEdit(MedicionCorporal medicion);
+    }
+
     private final List<MedicionCorporal> items;
     private final OnDeleteListener deleteListener;
+    private final OnEditListener editListener;
     private final Context context;
 
-    public MedicionAdapter(Context context, List<MedicionCorporal> items, OnDeleteListener deleteListener) {
+    public MedicionAdapter(Context context, List<MedicionCorporal> items, OnDeleteListener deleteListener, OnEditListener editListener) {
         this.context = context;
         this.items = items;
         this.deleteListener = deleteListener;
+        this.editListener = editListener;
     }
 
     @NonNull
@@ -66,6 +72,7 @@ public class MedicionAdapter extends RecyclerView.Adapter<MedicionAdapter.ViewHo
             h.llExtras.setVisibility(View.GONE);
         }
 
+        h.btnEditar.setOnClickListener(v -> editListener.onEdit(m));
         h.btnEliminar.setOnClickListener(v -> deleteListener.onDelete(m));
     }
 
@@ -74,18 +81,19 @@ public class MedicionAdapter extends RecyclerView.Adapter<MedicionAdapter.ViewHo
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvFecha, tvPeso, tvImc, tvGrasa, tvMusculo;
-        ImageView btnEliminar;
+        ImageView btnEditar, btnEliminar;
         LinearLayout llExtras;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvFecha    = itemView.findViewById(R.id.tvFechaMedicion);
-            tvPeso     = itemView.findViewById(R.id.tvPesoMedicion);
-            tvImc      = itemView.findViewById(R.id.tvImcMedicion);
-            tvGrasa    = itemView.findViewById(R.id.tvGrasaMedicion);
-            tvMusculo  = itemView.findViewById(R.id.tvMusculoMedicion);
+            tvFecha     = itemView.findViewById(R.id.tvFechaMedicion);
+            tvPeso      = itemView.findViewById(R.id.tvPesoMedicion);
+            tvImc       = itemView.findViewById(R.id.tvImcMedicion);
+            tvGrasa     = itemView.findViewById(R.id.tvGrasaMedicion);
+            tvMusculo   = itemView.findViewById(R.id.tvMusculoMedicion);
+            btnEditar   = itemView.findViewById(R.id.btnEditarMedicion);
             btnEliminar = itemView.findViewById(R.id.btnEliminarMedicion);
-            llExtras   = itemView.findViewById(R.id.llExtras);
+            llExtras    = itemView.findViewById(R.id.llExtras);
         }
     }
 }

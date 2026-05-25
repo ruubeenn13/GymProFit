@@ -1,13 +1,10 @@
 package es.pmdm.gymprofit.ui.activities;
 
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,9 +24,7 @@ import es.pmdm.gymprofit.network.API;
 import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.adapters.EjercicioAdapter;
-import es.pmdm.gymprofit.utils.PreferencesManager;
-
-public class EjerciciosActivity extends AppCompatActivity {
+public class EjerciciosActivity extends BaseActivity {
 
     private BottomNavigationView bottomNavigationView;
     private RecyclerView rvEjercicios;
@@ -40,13 +35,9 @@ public class EjerciciosActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        PreferencesManager prefsManager = new PreferencesManager(this);
-        prefsManager.applyTheme();
-        aplicarIdiomaGuardado(prefsManager);
-
         setContentView(R.layout.activity_ejercicios);
 
+        setupMenuButton();
         inicializarVistas();
         configurarRecyclerView();
         configurarBuscador();
@@ -151,15 +142,4 @@ public class EjerciciosActivity extends AppCompatActivity {
         });
     }
 
-    private void aplicarIdiomaGuardado(PreferencesManager prefsManager) {
-        String savedLanguage = prefsManager.getLanguage();
-        if (!savedLanguage.isEmpty()) {
-            Locale locale = new Locale(savedLanguage);
-            Locale.setDefault(locale);
-            Resources resources = getResources();
-            Configuration config = resources.getConfiguration();
-            config.setLocale(locale);
-            resources.updateConfiguration(config, resources.getDisplayMetrics());
-        }
-    }
 }

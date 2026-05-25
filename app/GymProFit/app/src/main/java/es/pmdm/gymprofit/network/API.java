@@ -192,6 +192,10 @@ public class API {
         UtilREST.request(BASE + "mediciones-corporales", "POST", body.toString(), l);
     }
 
+    public static void patchMedicion(int id, JSONObject body, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "mediciones-corporales/" + id, "PATCH", body.toString(), l);
+    }
+
     public static void eliminarMedicion(int id, UtilREST.OnResponseListener l) {
         UtilREST.request(BASE + "mediciones-corporales/" + id, "DELETE", null, l);
     }

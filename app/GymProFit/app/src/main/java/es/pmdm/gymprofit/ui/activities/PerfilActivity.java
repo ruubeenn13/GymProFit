@@ -1,60 +1,44 @@
 package es.pmdm.gymprofit.ui.activities;
 
-import android.app.Dialog;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
-import android.view.Window;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import org.json.JSONException;
+
+import java.util.List;
+
+import es.pmdm.gymprofit.model.medicion.MedicionCorporal;
+import es.pmdm.gymprofit.network.UtilJSONParser;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.button.MaterialButton;
-
-import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.usuario.Usuario;
-import es.pmdm.gymprofit.ui.activities.AdminActivity;
-import es.pmdm.gymprofit.ui.activities.LogrosActivity;
-import es.pmdm.gymprofit.ui.activities.MedicionesActivity;
-import es.pmdm.gymprofit.ui.activities.SesionesActivity;
 import es.pmdm.gymprofit.network.API;
-import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
-import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
-public class PerfilActivity extends AppCompatActivity {
+public class PerfilActivity extends BaseActivity {
 
     private BottomNavigationView bottomNavigationView;
-    private PreferencesManager prefsManager;
     private ActivityResultLauncher<Intent> editarPerfilLauncher;
-    private TextView tvTemaActual, tvIdiomaActual;
+    private ActivityResultLauncher<Intent> medicionesLauncher;
     private TextView tvNombreUsuario, tvEmailUsuario;
     private TextView tvInfoNombre, tvInfoEmail;
     private TextView tvInfoNivel, tvInfoPeso, tvInfoAltura, tvInfoEdad, tvInfoObjetivo;
-    private ImageView ivIconoTema;
+    private TextView tvPesoMedicion, tvAlturaMedicion;
+    private LinearLayout llMedicionesResumen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        prefsManager = new PreferencesManager(this);
-        prefsManager.applyTheme();
-        aplicarIdiomaGuardado();
 
         editarPerfilLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -65,19 +49,26 @@ public class PerfilActivity extends AppCompatActivity {
                 }
         );
 
+        medicionesLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        int uid = prefsManager.getUsuarioId();
+                        if (uid != -1) cargarUltimaMedicion(uid);
+                    }
+                }
+        );
+
         setContentView(R.layout.activity_perfil);
 
+        setupMenuButton();
         inicializarVistas();
         configurarDatosUsuario();
-        configurarConfiguracion();
         configurarBotones();
         configurarNavegacion();
     }
 
     private void inicializarVistas() {
-        tvTemaActual = findViewById(R.id.tvTemaActual);
-        tvIdiomaActual = findViewById(R.id.tvIdiomaActual);
-        ivIconoTema = findViewById(R.id.ivIconoTema);
         tvNombreUsuario = findViewById(R.id.tvNombreUsuario);
         tvEmailUsuario = findViewById(R.id.tvEmailUsuario);
         tvInfoNombre = findViewById(R.id.tvInfoNombre);
@@ -87,6 +78,9 @@ public class PerfilActivity extends AppCompatActivity {
         tvInfoAltura = findViewById(R.id.tvInfoAltura);
         tvInfoEdad = findViewById(R.id.tvInfoEdad);
         tvInfoObjetivo = findViewById(R.id.tvInfoObjetivo);
+        tvPesoMedicion = findViewById(R.id.tvPesoMedicion);
+        tvAlturaMedicion = findViewById(R.id.tvAlturaMedicion);
+        llMedicionesResumen = findViewById(R.id.llMedicionesResumen);
     }
 
     private void configurarDatosUsuario() {
@@ -99,6 +93,8 @@ public class PerfilActivity extends AppCompatActivity {
 
         int usuarioId = prefsManager.getUsuarioId();
         if (usuarioId == -1) return;
+
+        cargarUltimaMedicion(usuarioId);
 
         API.getUsuarioPorId(usuarioId, new UtilREST.OnResponseListener() {
             @Override
@@ -140,27 +136,31 @@ public class PerfilActivity extends AppCompatActivity {
         });
     }
 
-    private void configurarConfiguracion() {
-        int temaActual = prefsManager.getTheme();
-        if (temaActual == AppCompatDelegate.MODE_NIGHT_YES) {
-            tvTemaActual.setText(R.string.tema_oscuro);
-            ivIconoTema.setImageResource(R.drawable.ic_moon);
-        } else {
-            tvTemaActual.setText(R.string.tema_claro);
-            ivIconoTema.setImageResource(R.drawable.ic_sun);
-        }
+    private void cargarUltimaMedicion(int usuarioId) {
+        API.getMedicionesDeUsuario(usuarioId, new UtilREST.OnResponseListener() {
+            @Override
+            public void onSuccess(String response, int statusCode) {
+                try {
+                    List<MedicionCorporal> lista = UtilJSONParser.parseMedicionList(response);
+                    if (lista == null || lista.isEmpty()) return;
+                    MedicionCorporal ultima = lista.get(0);
+                    runOnUiThread(() -> {
+                        boolean tienePeso = ultima.getPeso() > 0;
+                        boolean tieneAltura = ultima.getAltura() > 0;
+                        if (tienePeso || tieneAltura) {
+                            llMedicionesResumen.setVisibility(View.VISIBLE);
+                            tvPesoMedicion.setText(tienePeso
+                                    ? getString(R.string.perfil_kg, String.format(java.util.Locale.getDefault(), "%.1f", ultima.getPeso())) : "");
+                            tvAlturaMedicion.setText(tieneAltura
+                                    ? getString(R.string.perfil_cm, (int) ultima.getAltura()) : "");
+                        }
+                    });
+                } catch (JSONException ignored) {}
+            }
 
-        String idioma = prefsManager.getLanguage();
-        tvIdiomaActual.setText("es".equals(idioma) || idioma.isEmpty() ? getString(R.string.idioma_espanol) : getString(R.string.idioma_ingles));
-
-        findViewById(R.id.itemTema).setOnClickListener(v -> {
-            int currentMode = prefsManager.getTheme();
-            int newMode = (currentMode == AppCompatDelegate.MODE_NIGHT_YES) ? AppCompatDelegate.MODE_NIGHT_NO : AppCompatDelegate.MODE_NIGHT_YES;
-            prefsManager.saveTheme(newMode);
-            recreate();
+            @Override
+            public void onError(String message, int statusCode) {}
         });
-
-        findViewById(R.id.itemIdioma).setOnClickListener(v -> mostrarDialogoIdioma());
     }
 
     private void configurarBotones() {
@@ -172,7 +172,7 @@ public class PerfilActivity extends AppCompatActivity {
                 startActivity(new Intent(this, SesionesActivity.class)));
 
         findViewById(R.id.itemMediciones).setOnClickListener(v ->
-                startActivity(new Intent(this, MedicionesActivity.class)));
+                medicionesLauncher.launch(new Intent(this, MedicionesActivity.class)));
 
         findViewById(R.id.itemLogros).setOnClickListener(v ->
                 startActivity(new Intent(this, LogrosActivity.class)));
@@ -186,73 +186,6 @@ public class PerfilActivity extends AppCompatActivity {
             itemAdmin.setVisibility(View.GONE);
         }
 
-        findViewById(R.id.btnCerrarSesion).setOnClickListener(v ->
-                UIHelper.mostrarDialogoConIcono(
-                        this,
-                        getString(R.string.perfil_cerrar_sesion),
-                        getString(R.string.dialog_cerrar_sesion_mensaje),
-                        R.drawable.ic_logout,
-                        () -> {
-                            UtilREST.clearToken();
-                            prefsManager.cerrarSesion();
-                            Intent intent = new Intent(this, LoginActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);
-                            finish();
-                        }
-                )
-        );
-    }
-
-    private void mostrarDialogoIdioma() {
-        Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_idioma);
-
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            dialog.getWindow().setDimAmount(0.5f);
-        }
-
-        android.widget.LinearLayout root = dialog.findViewById(R.id.dialogRoot);
-
-        TypedValue typedValue = new TypedValue();
-
-        getTheme().resolveAttribute(android.R.attr.colorBackground, typedValue, true);
-
-        GradientDrawable fondo = new GradientDrawable();
-        fondo.setShape(GradientDrawable.RECTANGLE);
-        fondo.setCornerRadius(20 * getResources().getDisplayMetrics().density);
-        fondo.setColor(typedValue.data);
-
-        root.setBackground(fondo);
-
-        String idiomaActual = prefsManager.getLanguage();
-        ImageView ivCheckEspanol = dialog.findViewById(R.id.ivCheckEspanol);
-        ImageView ivCheckIngles = dialog.findViewById(R.id.ivCheckIngles);
-
-        if ("es".equals(idiomaActual) || idiomaActual.isEmpty()) {
-            ivCheckEspanol.setVisibility(View.VISIBLE);
-        } else {
-            ivCheckIngles.setVisibility(View.VISIBLE);
-        }
-
-        dialog.findViewById(R.id.optionEspanol).setOnClickListener(v -> {
-            prefsManager.saveLanguage("es");
-            dialog.dismiss();
-            recreate();
-        });
-
-        dialog.findViewById(R.id.optionIngles).setOnClickListener(v -> {
-            prefsManager.saveLanguage("en");
-            dialog.dismiss();
-            recreate();
-        });
-
-        ((MaterialButton) dialog.findViewById(R.id.btnCerrarIdioma))
-                .setOnClickListener(v -> dialog.dismiss());
-
-        dialog.show();
     }
 
     private void configurarNavegacion() {
@@ -319,15 +252,4 @@ public class PerfilActivity extends AppCompatActivity {
         }
     }
 
-    private void aplicarIdiomaGuardado() {
-        String savedLanguage = prefsManager.getLanguage();
-        if (!savedLanguage.isEmpty()) {
-            Locale locale = new Locale(savedLanguage);
-            Locale.setDefault(locale);
-            Resources resources = getResources();
-            Configuration config = resources.getConfiguration();
-            config.setLocale(locale);
-            resources.updateConfiguration(config, resources.getDisplayMetrics());
-        }
-    }
 }

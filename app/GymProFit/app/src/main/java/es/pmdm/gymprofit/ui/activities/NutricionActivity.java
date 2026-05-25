@@ -1,22 +1,17 @@
 package es.pmdm.gymprofit.ui.activities;
 
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.ProgressBar;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
-import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
-public class NutricionActivity extends AppCompatActivity {
+public class NutricionActivity extends BaseActivity {
 
     private BottomNavigationView bottomNavigationView;
     private ProgressBar progressCalorias;
@@ -24,13 +19,9 @@ public class NutricionActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        PreferencesManager prefsManager = new PreferencesManager(this);
-        prefsManager.applyTheme();
-        aplicarIdiomaGuardado(prefsManager);
-
         setContentView(R.layout.activity_nutricion);
 
+        setupMenuButton();
         inicializarVistas();
         configurarProgreso();
         configurarCardsComida();
@@ -94,15 +85,4 @@ public class NutricionActivity extends AppCompatActivity {
         });
     }
 
-    private void aplicarIdiomaGuardado(PreferencesManager prefsManager) {
-        String savedLanguage = prefsManager.getLanguage();
-        if (!savedLanguage.isEmpty()) {
-            Locale locale = new Locale(savedLanguage);
-            Locale.setDefault(locale);
-            Resources resources = getResources();
-            Configuration config = resources.getConfiguration();
-            config.setLocale(locale);
-            resources.updateConfiguration(config, resources.getDisplayMetrics());
-        }
-    }
 }

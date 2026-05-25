@@ -114,7 +114,7 @@
     <string name="perfil_nombre">Name</string>
     <string name="perfil_email">Email</string>
     <string name="perfil_configuracion">Settings</string>
-    <string name="perfil_tema">App theme</string>
+    <string name="perfil_tema">Theme</string>
     <string name="perfil_idioma">Language</string>
     <string name="perfil_cerrar_sesion">Log out</string>
     <string name="perfil_nivel">Experience level</string>
@@ -140,6 +140,10 @@
     <string name="dialog_confirmar">Confirm</string>
     <string name="dialog_cerrar_sesion_mensaje">Are you sure you want to log out?</string>
     <string name="rutinas_guardada_exito">Routine saved successfully</string>
+    <string name="rutinas_eliminar">Delete routine</string>
+    <string name="rutinas_confirmar_eliminar">Delete this routine? This action cannot be undone.</string>
+    <string name="rutinas_eliminada_exito">Routine deleted</string>
+    <string name="rutinas_editar">Edit</string>
 
     <!-- ONBOARDING -->
     <string name="onboarding_saltar">Skip</string>
@@ -232,8 +236,22 @@
     <string name="mediciones_notas">Notes (optional)</string>
     <string name="mediciones_guardar">Save measurement</string>
     <string name="mediciones_exito">Measurement saved successfully</string>
+    <string name="mediciones_editar">Edit measurement</string>
+    <string name="mediciones_editar_guardar">Update measurement</string>
+    <string name="mediciones_editar_exito">Measurement updated successfully</string>
     <string name="mediciones_eliminar">Delete measurement</string>
     <string name="mediciones_confirmar_eliminar">Delete this measurement?</string>
+    <string name="medicion_anadir">Add</string>
+    <string name="medicion_guardar">Save</string>
+    <string name="medicion_fecha_ultima">Last measurement: %s</string>
+    <string name="medicion_sin_datos_subtitulo">Tap + to add your first measurement</string>
+    <string name="medicion_label_grasa">Body fat</string>
+    <string name="medicion_label_musculo">Muscle mass</string>
+    <string name="medicion_label_cintura">Waist</string>
+    <string name="medicion_label_pecho">Chest</string>
+    <string name="medicion_label_brazos">Arms</string>
+    <string name="medicion_label_piernas">Legs</string>
+    <string name="medicion_label_notas">Notes</string>
 
     <!-- ACHIEVEMENTS -->
     <string name="logros_titulo">My achievements</string>

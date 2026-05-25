@@ -21,18 +21,33 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp"
+                android:orientation="horizontal"
+                android:paddingTop="20dp"
+                android:paddingStart="20dp"
+                android:paddingEnd="4dp"
                 android:paddingBottom="12dp"
+                android:gravity="center_vertical"
                 android:background="?attr/colorSurface">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="@string/perfil_mi_perfil"
                     android:textSize="26sp"
                     android:textStyle="bold"
                     android:textColor="?attr/colorOnSurface" />
+
+                <ImageView
+                    android:id="@+id/btnMenuOpciones"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_more_vert"
+                    android:padding="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="@null" />
 
             </LinearLayout>
 
@@ -246,7 +261,8 @@
                             android:orientation="horizontal"
                             android:gravity="center_vertical"
                             android:paddingStart="16dp"
-                            android:paddingEnd="16dp">
+                            android:paddingEnd="16dp"
+                            android:visibility="gone">
 
                             <ImageView
                                 android:layout_width="20dp"
@@ -276,9 +292,6 @@
 
                         </LinearLayout>
 
-                        <View android:layout_width="match_parent" android:layout_height="1dp"
-                            android:layout_marginStart="16dp" android:background="?attr/colorOutlineVariant" />
-
                         <!-- Altura -->
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -286,7 +299,8 @@
                             android:orientation="horizontal"
                             android:gravity="center_vertical"
                             android:paddingStart="16dp"
-                            android:paddingEnd="16dp">
+                            android:paddingEnd="16dp"
+                            android:visibility="gone">
 
                             <ImageView
                                 android:layout_width="20dp"
@@ -315,9 +329,6 @@
                                 android:textColor="?attr/colorOnSurface" />
 
                         </LinearLayout>
-
-                        <View android:layout_width="match_parent" android:layout_height="1dp"
-                            android:layout_marginStart="16dp" android:background="?attr/colorOutlineVariant" />
 
                         <!-- Edad -->
                         <LinearLayout
@@ -481,11 +492,14 @@
                         <LinearLayout
                             android:id="@+id/itemMediciones"
                             android:layout_width="match_parent"
-                            android:layout_height="56dp"
+                            android:layout_height="wrap_content"
                             android:orientation="horizontal"
                             android:gravity="center_vertical"
                             android:paddingStart="16dp"
                             android:paddingEnd="16dp"
+                            android:paddingTop="12dp"
+                            android:paddingBottom="12dp"
+                            android:minHeight="56dp"
                             android:background="?attr/selectableItemBackground"
                             android:clickable="true"
                             android:focusable="true">
@@ -497,14 +511,48 @@
                                 android:alpha="0.6"
                                 android:contentDescription="@null" />
 
-                            <TextView
+                            <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:layout_marginStart="14dp"
-                                android:text="@string/perfil_ver_mediciones"
-                                android:textSize="16sp"
-                                android:textColor="?attr/colorOnSurface" />
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/perfil_ver_mediciones"
+                                    android:textSize="16sp"
+                                    android:textColor="?attr/colorOnSurface" />
+
+                                <LinearLayout
+                                    android:id="@+id/llMedicionesResumen"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:layout_marginTop="2dp"
+                                    android:visibility="gone">
+
+                                    <TextView
+                                        android:id="@+id/tvPesoMedicion"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:textSize="13sp"
+                                        android:textColor="?attr/colorOnSurface"
+                                        android:alpha="0.6" />
+
+                                    <TextView
+                                        android:id="@+id/tvAlturaMedicion"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="12dp"
+                                        android:textSize="13sp"
+                                        android:textColor="?attr/colorOnSurface"
+                                        android:alpha="0.6" />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
 
                             <ImageView
                                 android:layout_width="16dp"
@@ -602,131 +650,6 @@
 
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Sección: Configuración -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="28dp"
-                    android:layout_marginBottom="12dp"
-                    android:text="@string/perfil_configuracion"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="?attr/colorOnSurface" />
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="0dp"
-                    app:cardBackgroundColor="?attr/colorSurface">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="4dp">
-
-                        <!-- Item Tema -->
-                        <LinearLayout
-                            android:id="@+id/itemTema"
-                            android:layout_width="match_parent"
-                            android:layout_height="56dp"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="16dp"
-                            android:background="?attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:focusable="true">
-
-                            <ImageView
-                                android:id="@+id/ivIconoTema"
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:src="@drawable/ic_moon"
-                                android:alpha="0.6"
-                                android:contentDescription="@null" />
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:layout_marginStart="14dp"
-                                android:text="@string/perfil_tema"
-                                android:textSize="16sp"
-                                android:textColor="?attr/colorOnSurface" />
-
-                            <TextView
-                                android:id="@+id/tvTemaActual"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textSize="13sp"
-                                android:textColor="?attr/colorOnSurface"
-                                android:alpha="0.5" />
-
-                        </LinearLayout>
-
-                        <View android:layout_width="match_parent" android:layout_height="1dp"
-                            android:layout_marginStart="16dp" android:background="?attr/colorOutlineVariant" />
-
-                        <!-- Item Idioma -->
-                        <LinearLayout
-                            android:id="@+id/itemIdioma"
-                            android:layout_width="match_parent"
-                            android:layout_height="56dp"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="16dp"
-                            android:background="?attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:focusable="true">
-
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:src="@drawable/ic_language"
-                                android:alpha="0.6"
-                                android:contentDescription="@null" />
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:layout_marginStart="14dp"
-                                android:text="@string/perfil_idioma"
-                                android:textSize="16sp"
-                                android:textColor="?attr/colorOnSurface" />
-
-                            <TextView
-                                android:id="@+id/tvIdiomaActual"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textSize="13sp"
-                                android:textColor="?attr/colorOnSurface"
-                                android:alpha="0.5" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Botón cerrar sesión -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnCerrarSesion"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="@string/perfil_cerrar_sesion"
-                    android:textColor="?attr/colorError"
-                    app:cornerRadius="12dp"
-                    app:strokeColor="?attr/colorError"
-                    app:icon="@drawable/ic_logout"
-                    app:iconGravity="start"
-                    app:iconTint="?attr/colorError" />
 
             </LinearLayout>
 

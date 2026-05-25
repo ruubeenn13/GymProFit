@@ -56,10 +56,22 @@
                 android:layout_marginEnd="8dp" />
 
             <ImageView
+                android:id="@+id/btnEditarMedicion"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_edit"
+                android:padding="6dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:alpha="0.5"
+                android:contentDescription="@null" />
+
+            <ImageView
                 android:id="@+id/btnEliminarMedicion"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:src="@drawable/ic_error"
+                android:src="@drawable/ic_delete"
                 android:padding="6dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
