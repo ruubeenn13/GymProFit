@@ -119,11 +119,13 @@ public class EjerciciosActivity extends BaseActivity {
                 startActivity(new Intent(this, HomeActivity.class));
                 overridePendingTransition(0, 0);
                 finish();
+                overridePendingTransition(0, 0);
                 return true;
             } else if (itemId == R.id.nav_rutinas) {
                 startActivity(new Intent(this, RutinasActivity.class));
                 overridePendingTransition(0, 0);
                 finish();
+                overridePendingTransition(0, 0);
                 return true;
             } else if (itemId == R.id.nav_ejercicios) {
                 return true;
@@ -131,11 +133,13 @@ public class EjerciciosActivity extends BaseActivity {
                 startActivity(new Intent(this, NutricionActivity.class));
                 overridePendingTransition(0, 0);
                 finish();
+                overridePendingTransition(0, 0);
                 return true;
             } else if (itemId == R.id.nav_perfil) {
                 startActivity(new Intent(this, PerfilActivity.class));
                 overridePendingTransition(0, 0);
                 finish();
+                overridePendingTransition(0, 0);
                 return true;
             }
             return false;

@@ -96,21 +96,25 @@ public class HomeActivity extends BaseActivity {
                 startActivity(new Intent(this, RutinasActivity.class));
                 overridePendingTransition(0, 0);
                 finish();
+                overridePendingTransition(0, 0);
                 return true;
             } else if (itemId == R.id.nav_ejercicios) {
                 startActivity(new Intent(this, EjerciciosActivity.class));
                 overridePendingTransition(0, 0);
                 finish();
+                overridePendingTransition(0, 0);
                 return true;
             } else if (itemId == R.id.nav_nutricion) {
                 startActivity(new Intent(this, NutricionActivity.class));
                 overridePendingTransition(0, 0);
                 finish();
+                overridePendingTransition(0, 0);
                 return true;
             } else if (itemId == R.id.nav_perfil) {
                 startActivity(new Intent(this, PerfilActivity.class));
                 overridePendingTransition(0, 0);
                 finish();
+                overridePendingTransition(0, 0);
                 return true;
             }
 

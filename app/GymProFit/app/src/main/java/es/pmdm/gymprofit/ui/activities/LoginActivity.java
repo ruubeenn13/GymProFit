@@ -204,6 +204,10 @@ public class LoginActivity extends AppCompatActivity {
                 .setOnClickListener(v -> dialog.dismiss());
 
         dialog.show();
+        if (dialog.getWindow() != null) {
+            int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.88);
+            dialog.getWindow().setLayout(width, android.view.WindowManager.LayoutParams.WRAP_CONTENT);
+        }
     }
 
     private void cambiarIdioma(String languageCode) {
