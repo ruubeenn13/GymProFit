@@ -447,6 +447,42 @@
     <string name="editar_rutina_eliminar_ejercicio">¿Eliminar este ejercicio de la rutina?</string>
     <string name="editar_rutina_ejercicios_fmt">Ejercicios (%d)</string>
 
+    <!-- ACERCA DE -->
+    <string name="acerca_btn">Sobre GymProFit</string>
+    <string name="acerca_app_titulo">Sobre la aplicación</string>
+    <string name="acerca_app_descripcion">GymProFit es una aplicación móvil de fitness personal diseñada para centralizar el seguimiento de tu vida deportiva. Desde la creación de rutinas personalizadas hasta el control nutricional diario, pasando por el registro de mediciones corporales y el historial completo de sesiones de entrenamiento, todo en un solo lugar.\n\nDesarrollada como Trabajo Final de Ciclo del CFGS DAM, con una API REST en Spring Boot, base de datos MariaDB y cliente Android nativo en Java. Autenticación JWT, documentación Swagger, migraciones con Flyway y consultas avanzadas con jOOQ.</string>
+    <string name="acerca_funcionalidades">Funcionalidades</string>
+    <string name="acerca_feat_1">Rutinas de entrenamiento personalizadas por grupos musculares y nivel de dificultad</string>
+    <string name="acerca_feat_2">Registro de sesiones de entrenamiento con valoración, notas y progreso de ejercicios</string>
+    <string name="acerca_feat_3">Seguimiento nutricional diario por comidas con cálculo automático de macros y calorías</string>
+    <string name="acerca_feat_4">Historial de mediciones corporales (peso, grasa, músculo, perímetros)</string>
+    <string name="acerca_feat_5">Sistema de logros desbloqueables y estadísticas personales de entrenamiento</string>
+    <string name="acerca_feat_6">Panel de administración para gestión de usuarios, rutinas, ejercicios y alimentos</string>
+    <string name="acerca_tecnologia">Tecnología</string>
+    <string name="acerca_tech_valor">Spring Boot 3 · MariaDB · Android Java · JWT Auth · Flyway · Swagger · jOOQ · MapStruct</string>
+    <string name="acerca_autor_titulo">Desarrollador</string>
+    <string name="acerca_autor_nombre">Rubén Juan Candela</string>
+    <string name="acerca_autor_rol">Desarrollador · 2ºDAM</string>
+    <string name="acerca_autor_centro">IES Macià Abela, Crevillente</string>
+    <string name="acerca_autor_bio">Estudiante de 2ºDAM con experiencia práctica en desarrollo full-stack y sistemas de redes. Apasionado por construir software que resuelve problemas reales, desde el diseño del modelo de datos hasta el despliegue. Alto ownership y capacidad para adueñarme de problemas ambiguos de principio a fin, iterando rápido sin sacrificar calidad.</string>
+    <string name="acerca_formacion">Formación</string>
+    <string name="acerca_form1_titulo">CFGS — Desarrollo de Aplicaciones Multiplataforma</string>
+    <string name="acerca_form1_lugar">IES Macià Abela, Crevillente · 2024–2026 (en curso)</string>
+    <string name="acerca_form2_titulo">CFGM — Sistemas Microinformáticos y Redes</string>
+    <string name="acerca_form2_lugar">IES Macià Abela, Crevillente · 2022–2024</string>
+    <string name="acerca_experiencia">Experiencia</string>
+    <string name="acerca_exp1_titulo">Desarrollador Full Stack · FCT 2026</string>
+    <string name="acerca_exp1_lugar">Grupo Enercoop, Crevillente · 400 horas</string>
+    <string name="acerca_exp1_desc">Sistema de gestión de turnos presenciales desde cero: React + FastAPI + PostgreSQL (Supabase). Arquitectura multirol, WebSockets en tiempo real, módulo de estadísticas y sistema multiidioma.</string>
+    <string name="acerca_exp2_titulo">Desarrollador Web · FCT 2025</string>
+    <string name="acerca_exp2_lugar">La Marmita Para Llevar, Crevillente · 100 horas</string>
+    <string name="acerca_exp2_desc">Diseño, desarrollo y despliegue completo de web corporativa con HTML, CSS y JavaScript.</string>
+    <string name="acerca_exp3_titulo">Técnico de Sistemas/Redes · FCT 2024</string>
+    <string name="acerca_exp3_lugar">Crevinet, Crevillente · 300 horas</string>
+    <string name="acerca_exp3_desc">Instalación de infraestructura de fibra óptica FTTH y apoyo en mantenimiento y despliegue de red en entornos técnicos reales.</string>
+    <string name="acerca_autor_email_label">rubenjuancandela06@gmail.com</string>
+    <string name="acerca_autor_stack_label">Java · Spring Boot · Android · React · Python · PostgreSQL · MariaDB</string>
+
     <!-- ANADIR ALIMENTO -->
     <string name="anadir_alimento_titulo">Añadir alimento</string>
     <string name="anadir_alimento_buscar_hint">Buscar alimento…</string>

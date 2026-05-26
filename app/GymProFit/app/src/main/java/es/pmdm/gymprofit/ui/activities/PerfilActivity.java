@@ -306,6 +306,9 @@ public class PerfilActivity extends BaseActivity {
         findViewById(R.id.itemLogros).setOnClickListener(v ->
                 startActivity(new Intent(this, LogrosActivity.class)));
 
+        findViewById(R.id.btnAcercaDe).setOnClickListener(v ->
+                startActivity(new Intent(this, AcercaDeActivity.class)));
+
         View itemAdmin = findViewById(R.id.itemAdmin);
         if (prefsManager.isAdmin()) {
             itemAdmin.setVisibility(View.VISIBLE);

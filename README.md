@@ -72,6 +72,7 @@ HomeActivity (navegación inferior)
         ├── SesionesActivity → RegistrarSesionActivity → ResumenSesionActivity
         ├── MedicionesActivity → RegistrarMedicionActivity
         ├── LogrosActivity
+        ├── AcercaDeActivity
         └── AdminActivity  (solo ROLE_ADMIN)
               ├── AdminUsuariosActivity
               ├── AdminRutinasActivity
@@ -167,7 +168,8 @@ Arquitectura 4 capas obligatoria (UD06).
 | `AnadirAlimentoActivity` | Buscar alimento, seleccionar gramos, preview macros en tiempo real, añadir a comida |
 | `CrearAlimentoActivity` | Crear alimento propio con macros por 100g |
 | `AdminAlimentosActivity` | Gestión admin de alimentos: toggle activo, editar (solo ROLE_ADMIN) |
-| `PerfilActivity` | Perfil con datos reales de la API. Config tema/idioma + cerrar sesión |
+| `PerfilActivity` | Perfil con datos reales de la API. Config tema/idioma + cerrar sesión. Botón "Sobre GymProFit" al pie |
+| `AcercaDeActivity` | Pantalla "Acerca de": logo adaptativo claro/oscuro, info extendida de la app (descripción, 6 features, tech stack) e info del desarrollador (bio, formación, 3 FCTs, email clickable) |
 | `EditarPerfilActivity` | Editar email, peso, altura, edad, nivel, objetivo. PATCH /usuarios/{id} |
 | `SesionesActivity` | Historial de sesiones con opción de eliminar |
 | `RegistrarSesionActivity` | Formulario para registrar sesión: rutina (spinner), calorías calculadas, cards de ejercicios con peso por ejercicio (`EjercicioPesoAdapter`), notas, valoración (RatingBar 1-5). POST /ejercicios-realizados por cada ejercicio al finalizar |
@@ -455,7 +457,8 @@ Abre `app/GymProFit` en Android Studio, sincroniza Gradle y ejecuta en emulador 
 
 | Hash | Descripción |
 |---|---|
-| *(sin commitear)* | feat(android+api): nutrición completa — NutricionActivity macros dinámicos, ComidaActivity log diario, AnadirAlimentoActivity, CrearAlimentoActivity, AdminAlimentosActivity, BottomSheet menus (UIHelper.mostrarBottomMenu reemplaza todos los PopupMenu), API: AlimentoComidaDTO enriquecido con macros totales, admin alimentos jOOQ |
+| *(sin commitear)* | feat(android): AcercaDeActivity — pantalla "Acerca de" con logo adaptativo tema, info extendida app y desarrollador, email clickable |
+| `49f8c68` | feat(android+api): nutrición completa — NutricionActivity macros dinámicos, ComidaActivity log diario, AnadirAlimentoActivity, CrearAlimentoActivity, AdminAlimentosActivity, BottomSheet menus (UIHelper.mostrarBottomMenu reemplaza todos los PopupMenu), API: AlimentoComidaDTO enriquecido con macros totales, admin alimentos jOOQ |
 | `0dc0fb6` | feat(android): ComidaActivity, AlimentoComidaAdapter y layouts nutrición |
 | `e65a817` | feat(android): parsers JSON para Alimento, Comida y AlimentoComida |
 | `05691d7` | feat(android): modelos Alimento/Comida/AlimentoComida y 13 métodos API nutrición |

@@ -129,6 +129,7 @@ HomeActivity (navegación inferior)
         ├── SesionesActivity → RegistrarSesionActivity → ResumenSesionActivity
         ├── MedicionesActivity → RegistrarMedicionActivity
         ├── LogrosActivity
+        ├── AcercaDeActivity
         └── AdminActivity  (solo ROLE_ADMIN)
               └── AdminAlimentosActivity
 ```
@@ -157,7 +158,8 @@ HomeActivity (navegación inferior)
 | `AnadirAlimentoActivity` | SearchView local sobre alimentos activos; click → dialog gramos + preview macros en tiempo real → POST /alimentos-comida (crea comida primero si no existe); long-press en alimento propio → BottomSheet editar/eliminar; botón "Crear alimento" |
 | `CrearAlimentoActivity` | Formulario alimento propio (nombre, categoría Spinner, calorías, proteínas, carbos, grasas). POST /alimentos con usuarioId. setResult al caller |
 | `AdminAlimentosActivity` | Gestión admin de alimentos: búsqueda, filtros categoría/estado, toggle activo, editar via dialog. Acceso desde AdminActivity (solo ROLE_ADMIN) |
-| `PerfilActivity` | Datos reales de la API + resumen de última medición corporal (peso/altura). Hereda de `BaseActivity` |
+| `PerfilActivity` | Datos reales de la API + resumen de última medición corporal (peso/altura). Hereda de `BaseActivity`. Botón "Sobre GymProFit" al pie |
+| `AcercaDeActivity` | Pantalla "Acerca de": logo adaptativo claro/oscuro (`@drawable/logo` + `drawable-night/`), info extendida de la app (descripción, 6 features, tech stack) e info del desarrollador (bio, formación, 3 FCTs, email clickable `ACTION_SENDTO`). Extiende `AppCompatActivity`, aplica tema/idioma manualmente |
 | `EditarPerfilActivity` | PATCH /usuarios/{id}. Campos vacíos → null en BD |
 | `SesionesActivity` | Historial de sesiones, eliminar |
 | `RegistrarSesionActivity` | Crear sesión: spinner rutinas, calorías calculadas, cards de ejercicios con campo de peso por ejercicio (RecyclerView+`EjercicioPesoAdapter`), RatingBar 1-5 |
@@ -303,6 +305,10 @@ implementation libs.constraintlayout
 ---
 
 ## Changelog
+
+### 2026-05-26 — AcercaDeActivity
+
+- **AcercaDeActivity**: nueva pantalla accesible desde `PerfilActivity` (botón "Sobre GymProFit" al pie). Header con `@drawable/logo` adaptativo claro/oscuro (via `drawable-night/`). Card app: descripción extendida del proyecto, 6 funcionalidades con `ic_check`, tech stack. Card desarrollador: nombre, rol, centro, bio, formación (2 entradas), 3 FCTs, email clickable (`ACTION_SENDTO`), stack técnico. Strings bilingüe ES+EN (~30 entradas). Cumple requisito módulo Multimedia: "Pantalla de información sobre la aplicación".
 
 ### 2026-05-26 — Nutrición completa, BottomSheet menus, admin alimentos
 - **NutricionActivity rediseño**: objetivos calculados en `onResume` con datos frescos del perfil (`CalculadoraNutricional`). Barras de progreso consumido vs objetivo: si se supera cualquier macro → `colorError` (rojo estilo Fitia). 5 cards de comida (DESAYUNO, ALMUERZO, COMIDA, MERIENDA, CENA) → `ComidaActivity`

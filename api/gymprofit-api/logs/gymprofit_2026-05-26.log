@@ -27302,3 +27302,829 @@ jOOQ tip of the day: A Field<Boolean> can be turned into a Condition using DSL.c
 2026-05-26 12:47:03.452 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean.destroy - Closing JPA EntityManagerFactory for persistence unit 'default'
 2026-05-26 12:47:03.455 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource.close - HikariPool-1 - Shutdown initiated...
 2026-05-26 12:47:03.456 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource.close - HikariPool-1 - Shutdown completed.
+2026-05-26 16:58:57.879 [restartedMain] INFO  c.g.api.GymProFitApiApplication.logStarting - Starting GymProFitApiApplication using Java 21.0.10 with PID 26320 (C:\Users\ruben\Desktop\TFG\TFG-GymProFit\api\gymprofit-api\target\classes started by ruben in C:\Users\ruben\Desktop\TFG\TFG-GymProFit\api\gymprofit-api)
+2026-05-26 16:58:57.883 [restartedMain] DEBUG c.g.api.GymProFitApiApplication.logStarting - Running with Spring Boot v3.5.7, Spring v6.2.12
+2026-05-26 16:58:57.889 [restartedMain] INFO  c.g.api.GymProFitApiApplication.logStartupProfileInfo - The following 1 profile is active: "dev"
+2026-05-26 16:58:57.978 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor.log - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-05-26 16:58:57.979 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor.log - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-05-26 16:58:59.704 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate.registerRepositoriesIn - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-26 16:58:59.905 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate.registerRepositoriesIn - Finished Spring Data repository scanning in 187 ms. Found 16 JPA repository interfaces.
+2026-05-26 16:59:00.798 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer.initialize - Tomcat initialized with port 8080 (http)
+2026-05-26 16:59:00.818 [restartedMain] INFO  o.a.catalina.core.StandardService.log - Starting service [Tomcat]
+2026-05-26 16:59:00.818 [restartedMain] INFO  o.a.catalina.core.StandardEngine.log - Starting Servlet engine: [Apache Tomcat/10.1.48]
+2026-05-26 16:59:00.893 [restartedMain] INFO  o.a.c.c.C.[.[localhost].[/api].log - Initializing Spring embedded WebApplicationContext
+2026-05-26 16:59:00.893 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext.prepareWebApplicationContext - Root WebApplicationContext: initialization completed in 2913 ms
+2026-05-26 16:59:01.088 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration.openEntityManagerInViewInterceptor - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-26 16:59:01.373 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource.getConnection - HikariPool-1 - Starting...
+2026-05-26 16:59:01.526 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool.checkFailFast - HikariPool-1 - Added connection org.mariadb.jdbc.Connection@7f834e17
+2026-05-26 16:59:01.528 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource.getConnection - HikariPool-1 - Start completed.
+2026-05-26 16:59:01.548 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - 10 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-05-26 16:59:01.549 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-05-26 16:59:01.561 [restartedMain] WARN  o.m.jdbc.message.server.ErrorPacket.warn - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-05-26 16:59:01.584 [restartedMain] INFO  org.flywaydb.core.FlywayExecutor.info - Database: jdbc:mariadb://localhost:3308/gymprofit_db?user=root&password=********&useUnicode=true&characterEncoding=UTF-8 (MariaDB 11.8)
+2026-05-26 16:59:01.599 [restartedMain] WARN  o.f.c.i.database.base.Database.warn - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-05-26 16:59:01.650 [restartedMain] INFO  o.f.c.i.s.JdbcTableSchemaHistory.info - Repair of failed migration in Schema History table `gymprofit_db`.`flyway_schema_history` not necessary. No failed migration detected.
+2026-05-26 16:59:01.673 [restartedMain] INFO  o.f.core.internal.command.DbRepair.info - Successfully repaired schema history table `gymprofit_db`.`flyway_schema_history` (execution time 00:00.053s).
+2026-05-26 16:59:01.684 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - 10 SQL migrations were detected but not run because they did not follow the filename convention.
+2026-05-26 16:59:01.685 [restartedMain] INFO  o.f.c.i.r.ResourceNameValidator.info - Set 'validateMigrationNaming' to true to fail fast and see a list of the invalid file names.
+2026-05-26 16:59:01.686 [restartedMain] WARN  o.m.jdbc.message.server.ErrorPacket.warn - Error: 1193-HY000: Unknown system variable 'WSREP_ON'
+2026-05-26 16:59:01.694 [restartedMain] WARN  o.f.c.i.database.base.Database.warn - Using MariaDB 11.8 which is newer than the version Flyway has been verified with. The latest verified version of MariaDB is 11.7.
+2026-05-26 16:59:01.712 [restartedMain] INFO  o.f.core.internal.command.DbValidate.info - Successfully validated 3 migrations (execution time 00:00.010s)
+2026-05-26 16:59:01.730 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Current version of schema `gymprofit_db`: 202605262000
+2026-05-26 16:59:01.738 [restartedMain] INFO  o.f.core.internal.command.DbMigrate.info - Schema `gymprofit_db` is up to date. No migration necessary.
+2026-05-26 16:59:02.745 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo.addTransformer - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-26 16:59:02.856 [restartedMain] WARN  org.hibernate.orm.deprecation.constructDialect - HHH90000025: MariaDBDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-26 16:59:05.066 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean.buildNativeEntityManagerFactory - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-26 16:59:05.937 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory.<clinit> - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-05-26 16:59:07.525 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.initExceptionHandlerAdviceCache - ControllerAdvice beans: 3 @ExceptionHandler, 1 ResponseBodyAdvice
+2026-05-26 16:59:07.618 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.initExceptionHandlerAdviceCache - ControllerAdvice beans: 3 @ExceptionHandler, 0 ResponseBodyAdvice
+2026-05-26 16:59:08.816 [restartedMain] DEBUG c.g.a.c.s.JwtAuthenticationFilter.init - Filter 'jwtAuthenticationFilter' configured for use
+2026-05-26 16:59:09.047 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer.configure - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2026-05-26 16:59:09.049 [restartedMain] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer.configure - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2026-05-26 16:59:09.628 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.handlerMethodsInitialized - 224 mappings in 'requestMappingHandlerMapping'
+2026-05-26 16:59:09.711 [restartedMain] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping.logMappings - Patterns [/webjars/**, /**, /swagger-ui/**, /swagger-ui/*swagger-initializer.js, /webjars/*swagger-ui/**, /webjars/*swagger-ui/*swagger-initializer.js, /webjars/*swagger-ui/5.31.0/*swagger-initializer.js] in 'resourceHandlerMapping'
+2026-05-26 16:59:10.265 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter.initControllerAdviceCache - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2026-05-26 16:59:10.825 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer.startServer - LiveReload server is running on port 35729
+2026-05-26 16:59:10.996 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer.start - Tomcat started on port 8080 (http) with context path '/api'
+2026-05-26 16:59:11.015 [restartedMain] INFO  c.g.api.GymProFitApiApplication.logStarted - Started GymProFitApiApplication in 14.056 seconds (process running for 15.128)
+2026-05-26 16:59:11.162 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id 
+    from
+        usuarios u1_0 
+    where
+        u1_0.username=? 
+    limit
+        ?
+2026-05-26 16:59:11.189 [restartedMain] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id 
+    from
+        usuarios u1_0 
+    where
+        u1_0.username=? 
+    limit
+        ?
+2026-05-26 16:59:11.194 [restartedMain] WARN  o.s.c.events.SpringDocAppInitializer.init - SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+2026-05-26 16:59:11.194 [restartedMain] WARN  o.s.c.events.SpringDocAppInitializer.init - SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+2026-05-26 16:59:11.610 [http-nio-8080-exec-2] INFO  o.a.c.c.C.[.[localhost].[/api].log - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-26 16:59:11.610 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet.initServletBean - Initializing Servlet 'dispatcherServlet'
+2026-05-26 16:59:11.611 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet.initMultipartResolver - Detected StandardServletMultipartResolver
+2026-05-26 16:59:11.611 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet.initLocaleResolver - Detected AcceptHeaderLocaleResolver
+2026-05-26 16:59:11.611 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet.initThemeResolver - Detected FixedThemeResolver
+2026-05-26 16:59:11.613 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet.initRequestToViewNameTranslator - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@3cf6c9f4
+2026-05-26 16:59:11.615 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet.initFlashMapManager - Detected org.springframework.web.servlet.support.SessionFlashMapManager@4192f37a
+2026-05-26 16:59:11.615 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet.initServletBean - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2026-05-26 16:59:11.615 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet.initServletBean - Completed initialization in 5 ms
+2026-05-26 16:59:12.032 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username 
+    from
+        usuarios u1_0 
+    where
+        u1_0.username=?
+2026-05-26 16:59:12.108 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuario_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        r1_0.usuario_id=?
+2026-05-26 16:59:12.141 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/api/sesiones/usuario/4", parameters={}
+2026-05-26 16:59:12.149 [http-nio-8080-exec-2] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.getHandler - Mapped to com.gymprofit.api.controller.SesionEntrenamientoController#obtenerSesionesPorUsuario(Integer)
+2026-05-26 16:59:12.182 [http-nio-8080-exec-2] INFO  c.g.a.s.s.SesionEntrenamientoService.findByUsuarioId - Buscando sesiones de entrenamiento por usuario id: 4
+2026-05-26 16:59:12.188 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        se1_0.id,
+        se1_0.calorias_quemadas,
+        se1_0.completada,
+        se1_0.duracion_minutos,
+        se1_0.fecha_fin,
+        se1_0.fecha_inicio,
+        se1_0.notas,
+        se1_0.rutina_id,
+        se1_0.usuario_id 
+    from
+        sesiones_entrenamiento se1_0 
+    left join
+        usuarios u1_0 
+            on u1_0.id=se1_0.usuario_id 
+    where
+        u1_0.id=?
+2026-05-26 16:59:12.207 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.id,
+        r1_0.activa,
+        (SELECT
+            COALESCE(SUM(re.series * re.repeticiones * e.calorias_quemadas), 0) 
+        FROM
+            rutina_ejercicio re 
+        JOIN
+            ejercicios e 
+                ON e.id = re.ejercicio_id 
+        WHERE
+            re.rutina_id = r1_0.id),
+        r1_0.categoria,
+        r1_0.descripcion,
+        r1_0.dias_semana,
+        r1_0.duracion_minutos,
+        r1_0.es_predefinida,
+        r1_0.fecha_creacion,
+        r1_0.nivel,
+        r1_0.nombre,
+        (SELECT
+            COUNT(*) 
+        FROM
+            rutina_ejercicio re 
+        WHERE
+            re.rutina_id = r1_0.id),
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username,
+        r2_0.usuario_id,
+        r2_1.id,
+        r2_1.nombre 
+    from
+        rutinas r1_0 
+    left join
+        usuarios u1_0 
+            on u1_0.id=r1_0.usuario_id 
+    left join
+        usuario_roles r2_0 
+            on u1_0.id=r2_0.usuario_id 
+    left join
+        roles r2_1 
+            on r2_1.id=r2_0.role_id 
+    where
+        r1_0.id=?
+2026-05-26 16:59:12.217 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.id,
+        r1_0.activa,
+        (SELECT
+            COALESCE(SUM(re.series * re.repeticiones * e.calorias_quemadas), 0) 
+        FROM
+            rutina_ejercicio re 
+        JOIN
+            ejercicios e 
+                ON e.id = re.ejercicio_id 
+        WHERE
+            re.rutina_id = r1_0.id),
+        r1_0.categoria,
+        r1_0.descripcion,
+        r1_0.dias_semana,
+        r1_0.duracion_minutos,
+        r1_0.es_predefinida,
+        r1_0.fecha_creacion,
+        r1_0.nivel,
+        r1_0.nombre,
+        (SELECT
+            COUNT(*) 
+        FROM
+            rutina_ejercicio re 
+        WHERE
+            re.rutina_id = r1_0.id),
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username,
+        r2_0.usuario_id,
+        r2_1.id,
+        r2_1.nombre 
+    from
+        rutinas r1_0 
+    left join
+        usuarios u1_0 
+            on u1_0.id=r1_0.usuario_id 
+    left join
+        usuario_roles r2_0 
+            on u1_0.id=r2_0.usuario_id 
+    left join
+        roles r2_1 
+            on r2_1.id=r2_0.role_id 
+    where
+        r1_0.id=?
+2026-05-26 16:59:12.246 [http-nio-8080-exec-2] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.writeWithMessageConverters - Using 'application/json', given [application/json] and supported [application/json, application/*+json, application/yaml]
+2026-05-26 16:59:12.252 [http-nio-8080-exec-2] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.traceDebug - Writing [[SesionEntrenamientoDTO(id=14, usuarioId=4, rutinaId=9, fechaInicio=2026-05-22T11:37:55, fechaFin=20 (truncated)...]
+2026-05-26 16:59:12.283 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-05-26 16:59:18.553 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username 
+    from
+        usuarios u1_0 
+    where
+        u1_0.username=?
+2026-05-26 16:59:18.557 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuario_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        r1_0.usuario_id=?
+2026-05-26 16:59:18.562 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/api/mediciones-corporales/usuario/4/ordenadas", parameters={}
+2026-05-26 16:59:18.563 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.getHandler - Mapped to com.gymprofit.api.controller.MedicionCorporalController#obtenerMedicionPorUsuarioOrdenadas(Integer)
+2026-05-26 16:59:18.565 [http-nio-8080-exec-1] INFO  c.g.a.s.m.MedicionCorporalService.findByUsuarioIdOrdenadas - Buscando mediciones corporales del usuario id: 4 ordenadas por fecha
+2026-05-26 16:59:18.570 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        mc1_0.id,
+        mc1_0.altura,
+        mc1_0.brazos,
+        mc1_0.cintura,
+        mc1_0.fecha,
+        mc1_0.grasa_corporal,
+        mc1_0.imc,
+        mc1_0.masa_muscular,
+        mc1_0.notas,
+        mc1_0.pecho,
+        mc1_0.peso,
+        mc1_0.piernas,
+        mc1_0.usuario_id 
+    from
+        mediciones_corporales mc1_0 
+    left join
+        usuarios u1_0 
+            on u1_0.id=mc1_0.usuario_id 
+    where
+        u1_0.id=? 
+    order by
+        mc1_0.fecha desc
+2026-05-26 16:59:18.573 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username,
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuarios u1_0 
+    left join
+        usuario_roles r1_0 
+            on u1_0.id=r1_0.usuario_id 
+    left join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        u1_0.id=?
+2026-05-26 16:59:18.578 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.writeWithMessageConverters - Using 'application/json', given [application/json] and supported [application/json, application/*+json, application/yaml]
+2026-05-26 16:59:18.580 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.traceDebug - Writing [[MedicionCorporalDTO(id=8, usuarioId=4, fecha=2026-05-25T09:31:34.812423, peso=92.00, altura=185.00, (truncated)...]
+2026-05-26 16:59:18.587 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-05-26 16:59:18.607 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username 
+    from
+        usuarios u1_0 
+    where
+        u1_0.username=?
+2026-05-26 16:59:18.610 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuario_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        r1_0.usuario_id=?
+2026-05-26 16:59:18.614 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/api/usuarios/4/foto", parameters={}
+2026-05-26 16:59:18.616 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.getHandler - Mapped to com.gymprofit.api.controller.UsuarioController#getFotoPerfil(Integer)
+2026-05-26 16:59:18.637 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username,
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuarios u1_0 
+    left join
+        usuario_roles r1_0 
+            on u1_0.id=r1_0.usuario_id 
+    left join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        u1_0.id=?
+2026-05-26 16:59:18.644 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.writeWithMessageConverters - Found 'Content-Type:image/jpeg' in response
+2026-05-26 16:59:18.656 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.traceDebug - Writing [{-1, -40, -1, -31, 1, -81, 69, 120, 105, 102, 0, 0, 77, 77, 0, 42, 0, 0, 0, 8, 0, 7, 1, 16, 0, 2, 0, (truncated)...]
+2026-05-26 16:59:18.660 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-05-26 16:59:18.767 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username 
+    from
+        usuarios u1_0 
+    where
+        u1_0.username=?
+2026-05-26 16:59:18.771 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuario_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        r1_0.usuario_id=?
+2026-05-26 16:59:18.778 [http-nio-8080-exec-4] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/api/usuarios/4", parameters={}
+2026-05-26 16:59:18.779 [http-nio-8080-exec-4] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.getHandler - Mapped to com.gymprofit.api.controller.UsuarioController#obtenerUsuario(Integer)
+2026-05-26 16:59:18.781 [http-nio-8080-exec-4] INFO  c.g.a.service.usuario.UsuarioService.findById - Buscando usuario por id: 4
+2026-05-26 16:59:18.783 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username,
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuarios u1_0 
+    left join
+        usuario_roles r1_0 
+            on u1_0.id=r1_0.usuario_id 
+    left join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        u1_0.id=?
+2026-05-26 16:59:18.811 [http-nio-8080-exec-4] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.writeWithMessageConverters - Using 'application/json', given [application/json] and supported [application/json, application/*+json, application/yaml]
+2026-05-26 16:59:18.814 [http-nio-8080-exec-4] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.traceDebug - Writing [UsuarioDTO(id=4, username=admin, email=admin@gymprofit.com, peso=90.00, altura=185.0, edad=19, nivel (truncated)...]
+2026-05-26 16:59:18.817 [http-nio-8080-exec-4] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-05-26 17:06:34.668 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username 
+    from
+        usuarios u1_0 
+    where
+        u1_0.username=?
+2026-05-26 17:06:34.673 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuario_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        r1_0.usuario_id=?
+2026-05-26 17:06:34.678 [http-nio-8080-exec-6] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/api/sesiones/usuario/4", parameters={}
+2026-05-26 17:06:34.679 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.getHandler - Mapped to com.gymprofit.api.controller.SesionEntrenamientoController#obtenerSesionesPorUsuario(Integer)
+2026-05-26 17:06:34.683 [http-nio-8080-exec-6] INFO  c.g.a.s.s.SesionEntrenamientoService.findByUsuarioId - Buscando sesiones de entrenamiento por usuario id: 4
+2026-05-26 17:06:34.686 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        se1_0.id,
+        se1_0.calorias_quemadas,
+        se1_0.completada,
+        se1_0.duracion_minutos,
+        se1_0.fecha_fin,
+        se1_0.fecha_inicio,
+        se1_0.notas,
+        se1_0.rutina_id,
+        se1_0.usuario_id 
+    from
+        sesiones_entrenamiento se1_0 
+    left join
+        usuarios u1_0 
+            on u1_0.id=se1_0.usuario_id 
+    where
+        u1_0.id=?
+2026-05-26 17:06:34.688 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.id,
+        r1_0.activa,
+        (SELECT
+            COALESCE(SUM(re.series * re.repeticiones * e.calorias_quemadas), 0) 
+        FROM
+            rutina_ejercicio re 
+        JOIN
+            ejercicios e 
+                ON e.id = re.ejercicio_id 
+        WHERE
+            re.rutina_id = r1_0.id),
+        r1_0.categoria,
+        r1_0.descripcion,
+        r1_0.dias_semana,
+        r1_0.duracion_minutos,
+        r1_0.es_predefinida,
+        r1_0.fecha_creacion,
+        r1_0.nivel,
+        r1_0.nombre,
+        (SELECT
+            COUNT(*) 
+        FROM
+            rutina_ejercicio re 
+        WHERE
+            re.rutina_id = r1_0.id),
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username,
+        r2_0.usuario_id,
+        r2_1.id,
+        r2_1.nombre 
+    from
+        rutinas r1_0 
+    left join
+        usuarios u1_0 
+            on u1_0.id=r1_0.usuario_id 
+    left join
+        usuario_roles r2_0 
+            on u1_0.id=r2_0.usuario_id 
+    left join
+        roles r2_1 
+            on r2_1.id=r2_0.role_id 
+    where
+        r1_0.id=?
+2026-05-26 17:06:34.692 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.id,
+        r1_0.activa,
+        (SELECT
+            COALESCE(SUM(re.series * re.repeticiones * e.calorias_quemadas), 0) 
+        FROM
+            rutina_ejercicio re 
+        JOIN
+            ejercicios e 
+                ON e.id = re.ejercicio_id 
+        WHERE
+            re.rutina_id = r1_0.id),
+        r1_0.categoria,
+        r1_0.descripcion,
+        r1_0.dias_semana,
+        r1_0.duracion_minutos,
+        r1_0.es_predefinida,
+        r1_0.fecha_creacion,
+        r1_0.nivel,
+        r1_0.nombre,
+        (SELECT
+            COUNT(*) 
+        FROM
+            rutina_ejercicio re 
+        WHERE
+            re.rutina_id = r1_0.id),
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username,
+        r2_0.usuario_id,
+        r2_1.id,
+        r2_1.nombre 
+    from
+        rutinas r1_0 
+    left join
+        usuarios u1_0 
+            on u1_0.id=r1_0.usuario_id 
+    left join
+        usuario_roles r2_0 
+            on u1_0.id=r2_0.usuario_id 
+    left join
+        roles r2_1 
+            on r2_1.id=r2_0.role_id 
+    where
+        r1_0.id=?
+2026-05-26 17:06:34.696 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.writeWithMessageConverters - Using 'application/json', given [application/json] and supported [application/json, application/*+json, application/yaml]
+2026-05-26 17:06:34.696 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.traceDebug - Writing [[SesionEntrenamientoDTO(id=14, usuarioId=4, rutinaId=9, fechaInicio=2026-05-22T11:37:55, fechaFin=20 (truncated)...]
+2026-05-26 17:06:34.700 [http-nio-8080-exec-6] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-05-26 17:06:36.928 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username 
+    from
+        usuarios u1_0 
+    where
+        u1_0.username=?
+2026-05-26 17:06:36.931 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuario_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        r1_0.usuario_id=?
+2026-05-26 17:06:36.935 [http-nio-8080-exec-7] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/api/mediciones-corporales/usuario/4/ordenadas", parameters={}
+2026-05-26 17:06:36.935 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.getHandler - Mapped to com.gymprofit.api.controller.MedicionCorporalController#obtenerMedicionPorUsuarioOrdenadas(Integer)
+2026-05-26 17:06:36.936 [http-nio-8080-exec-7] INFO  c.g.a.s.m.MedicionCorporalService.findByUsuarioIdOrdenadas - Buscando mediciones corporales del usuario id: 4 ordenadas por fecha
+2026-05-26 17:06:36.939 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        mc1_0.id,
+        mc1_0.altura,
+        mc1_0.brazos,
+        mc1_0.cintura,
+        mc1_0.fecha,
+        mc1_0.grasa_corporal,
+        mc1_0.imc,
+        mc1_0.masa_muscular,
+        mc1_0.notas,
+        mc1_0.pecho,
+        mc1_0.peso,
+        mc1_0.piernas,
+        mc1_0.usuario_id 
+    from
+        mediciones_corporales mc1_0 
+    left join
+        usuarios u1_0 
+            on u1_0.id=mc1_0.usuario_id 
+    where
+        u1_0.id=? 
+    order by
+        mc1_0.fecha desc
+2026-05-26 17:06:36.942 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username,
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuarios u1_0 
+    left join
+        usuario_roles r1_0 
+            on u1_0.id=r1_0.usuario_id 
+    left join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        u1_0.id=?
+2026-05-26 17:06:36.945 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.writeWithMessageConverters - Using 'application/json', given [application/json] and supported [application/json, application/*+json, application/yaml]
+2026-05-26 17:06:36.945 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.traceDebug - Writing [[MedicionCorporalDTO(id=8, usuarioId=4, fecha=2026-05-25T09:31:34.812423, peso=92.00, altura=185.00, (truncated)...]
+2026-05-26 17:06:36.947 [http-nio-8080-exec-7] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-05-26 17:06:36.955 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username 
+    from
+        usuarios u1_0 
+    where
+        u1_0.username=?
+2026-05-26 17:06:36.958 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuario_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        r1_0.usuario_id=?
+2026-05-26 17:06:36.962 [http-nio-8080-exec-8] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/api/usuarios/4/foto", parameters={}
+2026-05-26 17:06:36.963 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.getHandler - Mapped to com.gymprofit.api.controller.UsuarioController#getFotoPerfil(Integer)
+2026-05-26 17:06:36.965 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username,
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuarios u1_0 
+    left join
+        usuario_roles r1_0 
+            on u1_0.id=r1_0.usuario_id 
+    left join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        u1_0.id=?
+2026-05-26 17:06:36.968 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.writeWithMessageConverters - Found 'Content-Type:image/jpeg' in response
+2026-05-26 17:06:36.972 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.traceDebug - Writing [{-1, -40, -1, -31, 1, -81, 69, 120, 105, 102, 0, 0, 77, 77, 0, 42, 0, 0, 0, 8, 0, 7, 1, 16, 0, 2, 0, (truncated)...]
+2026-05-26 17:06:36.974 [http-nio-8080-exec-8] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-05-26 17:06:37.006 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username 
+    from
+        usuarios u1_0 
+    where
+        u1_0.username=?
+2026-05-26 17:06:37.008 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuario_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        r1_0.usuario_id=?
+2026-05-26 17:06:37.012 [http-nio-8080-exec-9] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/api/usuarios/4", parameters={}
+2026-05-26 17:06:37.014 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.getHandler - Mapped to com.gymprofit.api.controller.UsuarioController#obtenerUsuario(Integer)
+2026-05-26 17:06:37.015 [http-nio-8080-exec-9] INFO  c.g.a.service.usuario.UsuarioService.findById - Buscando usuario por id: 4
+2026-05-26 17:06:37.016 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username,
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuarios u1_0 
+    left join
+        usuario_roles r1_0 
+            on u1_0.id=r1_0.usuario_id 
+    left join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        u1_0.id=?
+2026-05-26 17:06:37.019 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.writeWithMessageConverters - Using 'application/json', given [application/json] and supported [application/json, application/*+json, application/yaml]
+2026-05-26 17:06:37.019 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.traceDebug - Writing [UsuarioDTO(id=4, username=admin, email=admin@gymprofit.com, peso=90.00, altura=185.0, edad=19, nivel (truncated)...]
+2026-05-26 17:06:37.020 [http-nio-8080-exec-9] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK

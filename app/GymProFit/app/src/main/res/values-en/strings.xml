@@ -448,6 +448,42 @@
     <string name="editar_rutina_eliminar_ejercicio">Remove this exercise from the routine?</string>
     <string name="editar_rutina_ejercicios_fmt">Exercises (%d)</string>
 
+    <!-- ABOUT -->
+    <string name="acerca_btn">About GymProFit</string>
+    <string name="acerca_app_titulo">About the app</string>
+    <string name="acerca_app_descripcion">GymProFit is a personal fitness mobile app designed to centralise your sports life tracking. From creating custom workout routines to daily nutrition tracking, body measurement logs and full workout session history — all in one place.\n\nBuilt as a Final Cycle Project for CFGS DAM, with a Spring Boot REST API, MariaDB database and a native Android Java client. JWT authentication, Swagger docs, Flyway migrations and advanced queries with jOOQ.</string>
+    <string name="acerca_funcionalidades">Features</string>
+    <string name="acerca_feat_1">Custom workout routines by muscle group and difficulty level</string>
+    <string name="acerca_feat_2">Workout session logging with rating, notes and exercise progress</string>
+    <string name="acerca_feat_3">Daily nutrition tracking per meal with automatic macro and calorie calculation</string>
+    <string name="acerca_feat_4">Body measurement history (weight, fat, muscle, circumferences)</string>
+    <string name="acerca_feat_5">Unlockable achievement system and personal training statistics</string>
+    <string name="acerca_feat_6">Admin panel for managing users, routines, exercises and food items</string>
+    <string name="acerca_tecnologia">Technology</string>
+    <string name="acerca_tech_valor">Spring Boot 3 · MariaDB · Android Java · JWT Auth · Flyway · Swagger · jOOQ · MapStruct</string>
+    <string name="acerca_autor_titulo">Developer</string>
+    <string name="acerca_autor_nombre">Rubén Juan Candela</string>
+    <string name="acerca_autor_rol">Developer · 2nd year DAM</string>
+    <string name="acerca_autor_centro">IES Macià Abela, Crevillente</string>
+    <string name="acerca_autor_bio">2nd year DAM student with hands-on experience in full-stack development and network systems. Passionate about building software that solves real problems, from data model design to deployment. High ownership and ability to take on ambiguous problems from start to finish, iterating fast without sacrificing quality.</string>
+    <string name="acerca_formacion">Education</string>
+    <string name="acerca_form1_titulo">CFGS — Multiplatform Application Development</string>
+    <string name="acerca_form1_lugar">IES Macià Abela, Crevillente · 2024–2026 (in progress)</string>
+    <string name="acerca_form2_titulo">CFGM — IT Systems and Networks</string>
+    <string name="acerca_form2_lugar">IES Macià Abela, Crevillente · 2022–2024</string>
+    <string name="acerca_experiencia">Experience</string>
+    <string name="acerca_exp1_titulo">Full Stack Developer · FCT 2026</string>
+    <string name="acerca_exp1_lugar">Grupo Enercoop, Crevillente · 400 hours</string>
+    <string name="acerca_exp1_desc">Queue management system from scratch: React + FastAPI + PostgreSQL (Supabase). Multi-role architecture, real-time WebSockets, statistics module and multilingual support.</string>
+    <string name="acerca_exp2_titulo">Web Developer · FCT 2025</string>
+    <string name="acerca_exp2_lugar">La Marmita Para Llevar, Crevillente · 100 hours</string>
+    <string name="acerca_exp2_desc">Full design, development and deployment of a corporate website using HTML, CSS and JavaScript.</string>
+    <string name="acerca_exp3_titulo">Systems/Network Technician · FCT 2024</string>
+    <string name="acerca_exp3_lugar">Crevinet, Crevillente · 300 hours</string>
+    <string name="acerca_exp3_desc">FTTH fibre optic infrastructure installation and network maintenance support in real technical environments.</string>
+    <string name="acerca_autor_email_label">rubenjuancandela06@gmail.com</string>
+    <string name="acerca_autor_stack_label">Java · Spring Boot · Android · React · Python · PostgreSQL · MariaDB</string>
+
     <!-- ANADIR ALIMENTO -->
     <string name="anadir_alimento_titulo">Add food</string>
     <string name="anadir_alimento_buscar_hint">Search food…</string>
