@@ -104,10 +104,15 @@
     <string name="nutricion_carbohidratos">Carbs</string>
     <string name="nutricion_grasas">Fats</string>
     <string name="nutricion_desayuno">Breakfast</string>
+    <string name="nutricion_almuerzo">Mid-morning</string>
     <string name="nutricion_comida">Lunch</string>
+    <string name="nutricion_merienda">Snack</string>
     <string name="nutricion_cena">Dinner</string>
     <string name="nutricion_agregar">Add meal</string>
     <string name="nutricion_proximamente">Feature coming soon</string>
+    <string name="comida_eliminar_titulo">Confirm deletion</string>
+    <string name="comida_eliminar_confirmar">Remove food from meal</string>
+    <string name="comida_sin_alimentos">No foods logged</string>
 
     <!-- PROFILE -->
     <string name="perfil_mi_perfil">My profile</string>
