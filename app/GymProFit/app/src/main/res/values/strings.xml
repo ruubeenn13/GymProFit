@@ -103,10 +103,15 @@
     <string name="nutricion_carbohidratos">Carbohidratos</string>
     <string name="nutricion_grasas">Grasas</string>
     <string name="nutricion_desayuno">Desayuno</string>
+    <string name="nutricion_almuerzo">Almuerzo</string>
     <string name="nutricion_comida">Comida</string>
+    <string name="nutricion_merienda">Merienda</string>
     <string name="nutricion_cena">Cena</string>
     <string name="nutricion_agregar">Agregar comida</string>
     <string name="nutricion_proximamente">Función disponible próximamente</string>
+    <string name="comida_eliminar_titulo">Confirmar eliminación</string>
+    <string name="comida_eliminar_confirmar">Eliminar alimento de la comida</string>
+    <string name="comida_sin_alimentos">Sin alimentos registrados</string>
 
     <!-- PERFIL -->
     <string name="perfil_mi_perfil">Mi perfil</string>
