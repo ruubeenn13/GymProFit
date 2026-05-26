@@ -3,8 +3,10 @@ package com.gymprofit.api.config;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.pattern.ValidatePattern;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.flyway.FlywayMigrationInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.env.Environment;
 
 import javax.sql.DataSource;
@@ -16,7 +18,7 @@ public class FlywayConfig {
     @Autowired
     private Environment environment;
 
-    @Bean(initMethod = "migrate")
+    @Bean
     public Flyway flyway(DataSource dataSource) {
         Flyway flyway = Flyway.configure()
                 .dataSource(dataSource)
@@ -34,6 +36,11 @@ public class FlywayConfig {
         flyway.migrate();
 
         return flyway;
+    }
+
+    @Bean
+    public FlywayMigrationInitializer flywayInitializer(Flyway flyway) {
+        return new FlywayMigrationInitializer(flyway, f -> {});
     }
 
     private boolean isDevProfile() {

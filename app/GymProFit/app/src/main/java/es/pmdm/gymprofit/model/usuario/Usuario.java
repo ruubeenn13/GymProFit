@@ -13,6 +13,7 @@ public class Usuario {
     private String fechaRegistro;
     private boolean activo;
     private String rol;
+    private String fotoPerfil;
 
     public Usuario() {}
 
@@ -48,4 +49,7 @@ public class Usuario {
 
     public String getRol() { return rol; }
     public void setRol(String rol) { this.rol = rol; }
+
+    public String getFotoPerfil() { return fotoPerfil; }
+    public void setFotoPerfil(String fotoPerfil) { this.fotoPerfil = fotoPerfil; }
 }

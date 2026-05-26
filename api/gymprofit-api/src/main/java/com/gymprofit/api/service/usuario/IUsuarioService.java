@@ -47,4 +47,8 @@ public interface IUsuarioService extends UserDetailsService {
     void toggleActivo(Integer id);
 
     void cambiarRol(Integer id, String nuevoRol);
+
+    UsuarioDTO uploadFotoPerfil(Integer id, org.springframework.web.multipart.MultipartFile file);
+
+    byte[] getFotoPerfil(Integer id);
 }

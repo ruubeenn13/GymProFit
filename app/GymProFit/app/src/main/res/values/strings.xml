@@ -309,6 +309,13 @@
     <string name="perfil_ver_mediciones">Mis mediciones</string>
     <string name="perfil_ver_logros">Mis logros</string>
     <string name="perfil_panel_admin">Panel de administración</string>
+    <string name="perfil_cambiar_foto">Cambiar foto de perfil</string>
+    <string name="perfil_foto_galeria">Elegir de galería</string>
+    <string name="perfil_foto_camara">Tomar foto</string>
+    <string name="perfil_foto_subiendo">Subiendo foto…</string>
+    <string name="perfil_foto_ok">Foto actualizada</string>
+    <string name="perfil_foto_error">Error al subir la foto</string>
+    <string name="perfil_permiso_camara">Se necesita permiso de cámara para tomar fotos</string>
 
     <!-- OBJETIVOS -->
     <string name="objetivo_perder_peso">Perder peso</string>

@@ -14,8 +14,8 @@
 
     <style name="Widget.GymProFit.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
         <item name="itemActiveIndicatorStyle">@null</item>
-        <item name="itemIconSize">27dp</item>
-        <item name="itemPaddingTop">6dp</item>
-        <item name="itemPaddingBottom">6dp</item>
+        <item name="itemIconSize">24dp</item>
+        <item name="itemPaddingTop">4dp</item>
+        <item name="itemPaddingBottom">2dp</item>
     </style>
 </resources>

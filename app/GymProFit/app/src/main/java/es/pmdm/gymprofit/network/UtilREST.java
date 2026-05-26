@@ -1,5 +1,7 @@
 package es.pmdm.gymprofit.network;
 
+import android.content.Context;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -34,6 +36,10 @@ public class UtilREST {
 
     public static void request(String url, String method, String body, OnResponseListener listener) {
         new RequestTask(url, method, body, listener).execute();
+    }
+
+    public static void uploadMultipart(Context context, String url, Uri fileUri, String fieldName, OnResponseListener listener) {
+        new MultipartTask(context, url, fileUri, fieldName, listener).execute();
     }
 
     @SuppressWarnings("deprecation")
@@ -94,6 +100,96 @@ public class UtilREST {
 
             } catch (Exception e) {
                 Log.e("GymProFit", method + " " + url + " exception: " + e.getMessage());
+                return new Object[]{null, -1, e.getMessage()};
+            } finally {
+                if (conn != null) conn.disconnect();
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Object[] result) {
+            String response = (String) result[0];
+            int status = (int) result[1];
+            String error = (String) result[2];
+
+            if (error != null) {
+                listener.onError(error, -1);
+            } else if (status == 401) {
+                clearToken();
+                if (unauthorizedListener != null) unauthorizedListener.onTokenExpired();
+                else listener.onError("Sesión expirada", 401);
+            } else if (status >= 200 && status < 300) {
+                listener.onSuccess(response != null ? response : "", status);
+            } else {
+                listener.onError(response != null ? response : "Error " + status, status);
+            }
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private static class MultipartTask extends AsyncTask<Void, Void, Object[]> {
+
+        private final Context context;
+        private final String url, fieldName;
+        private final Uri fileUri;
+        private final OnResponseListener listener;
+
+        MultipartTask(Context ctx, String url, Uri fileUri, String fieldName, OnResponseListener listener) {
+            this.context = ctx.getApplicationContext();
+            this.url = url;
+            this.fileUri = fileUri;
+            this.fieldName = fieldName;
+            this.listener = listener;
+        }
+
+        @Override
+        protected Object[] doInBackground(Void... voids) {
+            HttpURLConnection conn = null;
+            String boundary = "GymProFitBoundary" + System.currentTimeMillis();
+            try {
+                conn = (HttpURLConnection) new URL(url).openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+                conn.setRequestProperty("Accept", "application/json");
+                if (token != null && !token.isEmpty()) {
+                    conn.setRequestProperty("Authorization", "Bearer " + token);
+                }
+                conn.setConnectTimeout(30000);
+                conn.setReadTimeout(30000);
+                conn.setDoOutput(true);
+
+                OutputStream os = conn.getOutputStream();
+
+                String partHeader = "--" + boundary + "\r\n"
+                        + "Content-Disposition: form-data; name=\"" + fieldName + "\"; filename=\"foto.jpg\"\r\n"
+                        + "Content-Type: image/jpeg\r\n\r\n";
+                os.write(partHeader.getBytes(StandardCharsets.UTF_8));
+
+                InputStream is = context.getContentResolver().openInputStream(fileUri);
+                if (is != null) {
+                    byte[] buf = new byte[4096];
+                    int n;
+                    while ((n = is.read(buf)) != -1) os.write(buf, 0, n);
+                    is.close();
+                }
+
+                os.write(("\r\n--" + boundary + "--\r\n").getBytes(StandardCharsets.UTF_8));
+                os.flush();
+                os.close();
+
+                int status = conn.getResponseCode();
+                Log.d("GymProFit", "MULTIPART POST " + url + " → " + status);
+                InputStream resp = status >= 400 ? conn.getErrorStream() : conn.getInputStream();
+                StringBuilder sb = new StringBuilder();
+                if (resp != null) {
+                    BufferedReader br = new BufferedReader(new InputStreamReader(resp, StandardCharsets.UTF_8));
+                    String line;
+                    while ((line = br.readLine()) != null) sb.append(line);
+                    br.close();
+                }
+                return new Object[]{sb.toString(), status, null};
+            } catch (Exception e) {
+                Log.e("GymProFit", "MULTIPART POST " + url + " exception: " + e.getMessage());
                 return new Object[]{null, -1, e.getMessage()};
             } finally {
                 if (conn != null) conn.disconnect();

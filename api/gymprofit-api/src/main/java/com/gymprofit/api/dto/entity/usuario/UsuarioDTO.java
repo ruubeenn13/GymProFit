@@ -22,4 +22,5 @@ public class UsuarioDTO implements Serializable {
     private TipoObjetivo objetivo;
     private String fechaRegistro;
     private Boolean activo;
+    private String fotoPerfil;
 }

@@ -1,5 +1,8 @@
 package es.pmdm.gymprofit.network;
 
+import android.content.Context;
+import android.net.Uri;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -50,6 +53,10 @@ public class API {
 
     public static void patchUsuario(int id, JSONObject body, UtilREST.OnResponseListener l) {
         UtilREST.request(BASE + "usuarios/" + id, "PATCH", body.toString(), l);
+    }
+
+    public static void uploadFotoPerfil(Context ctx, int userId, Uri imageUri, UtilREST.OnResponseListener l) {
+        UtilREST.uploadMultipart(ctx, BASE + "usuarios/" + userId + "/foto", imageUri, "foto", l);
     }
 
     public static void getEstadisticasUsuario(int id, UtilREST.OnResponseListener l) {

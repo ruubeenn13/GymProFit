@@ -16,18 +16,24 @@ import com.gymprofit.api.mappers.UsuarioMapper;
 import com.gymprofit.api.repository.jpa.IRoleRepository;
 import com.gymprofit.api.repository.jpa.IUsuarioRepository;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UsuarioService implements IUsuarioService {
 
     private final IUsuarioRepository usuarioRepository;
@@ -35,6 +41,9 @@ public class UsuarioService implements IUsuarioService {
     private final UsuarioMapper usuarioMapper;
     private final com.gymprofit.api.repository.jooq.usuario.IUsuarioJooqRepository usuarioJooqRepository;
     private final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
+
+    @Value("${app.upload.dir:./uploads/fotos-perfil}")
+    private String uploadDir;
 
 
     @Override
@@ -263,6 +272,45 @@ public class UsuarioService implements IUsuarioService {
             logger.info("Admin: usuario id={} activo={}", id, usuario.getActivo());
         } catch (Exception e) {
             throw new UpdateEntityException(Usuario.class.getSimpleName(), id, e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public UsuarioDTO uploadFotoPerfil(Integer id, MultipartFile file) {
+        logger.info("Subiendo foto de perfil para usuario id={}", id);
+
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundEntityException("Usuario con id " + id + " no encontrado"));
+
+        try {
+            Path dir = Paths.get(uploadDir);
+            if (!Files.exists(dir)) Files.createDirectories(dir);
+
+            String filename = id + ".jpg";
+            Files.write(dir.resolve(filename), file.getBytes());
+            usuario.setFotoPerfil(filename);
+            usuarioRepository.save(usuario);
+        } catch (IOException e) {
+            throw new RuntimeException("Error al guardar la foto de perfil: " + e.getMessage());
+        }
+
+        return usuarioMapper.toDTO(usuario);
+    }
+
+    @Override
+    public byte[] getFotoPerfil(Integer id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundEntityException("Usuario con id " + id + " no encontrado"));
+
+        if (usuario.getFotoPerfil() == null) {
+            throw new NotFoundEntityException("El usuario " + id + " no tiene foto de perfil");
+        }
+
+        try {
+            return Files.readAllBytes(Paths.get(uploadDir).resolve(usuario.getFotoPerfil()));
+        } catch (IOException e) {
+            throw new NotFoundEntityException("Foto de perfil no encontrada para usuario " + id);
         }
     }
 
