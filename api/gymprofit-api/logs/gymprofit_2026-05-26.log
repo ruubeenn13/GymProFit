@@ -28128,3 +28128,1004 @@ jOOQ tip of the day: A Field<Boolean> can be turned into a Condition using DSL.c
 2026-05-26 17:06:37.019 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.writeWithMessageConverters - Using 'application/json', given [application/json] and supported [application/json, application/*+json, application/yaml]
 2026-05-26 17:06:37.019 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.traceDebug - Writing [UsuarioDTO(id=4, username=admin, email=admin@gymprofit.com, peso=90.00, altura=185.0, edad=19, nivel (truncated)...]
 2026-05-26 17:06:37.020 [http-nio-8080-exec-9] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-05-26 17:14:24.010 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username 
+    from
+        usuarios u1_0 
+    where
+        u1_0.username=?
+2026-05-26 17:14:24.013 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuario_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        r1_0.usuario_id=?
+2026-05-26 17:14:24.016 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/api/sesiones/usuario/4", parameters={}
+2026-05-26 17:14:24.017 [http-nio-8080-exec-2] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.getHandler - Mapped to com.gymprofit.api.controller.SesionEntrenamientoController#obtenerSesionesPorUsuario(Integer)
+2026-05-26 17:14:24.024 [http-nio-8080-exec-2] INFO  c.g.a.s.s.SesionEntrenamientoService.findByUsuarioId - Buscando sesiones de entrenamiento por usuario id: 4
+2026-05-26 17:14:24.027 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        se1_0.id,
+        se1_0.calorias_quemadas,
+        se1_0.completada,
+        se1_0.duracion_minutos,
+        se1_0.fecha_fin,
+        se1_0.fecha_inicio,
+        se1_0.notas,
+        se1_0.rutina_id,
+        se1_0.usuario_id 
+    from
+        sesiones_entrenamiento se1_0 
+    left join
+        usuarios u1_0 
+            on u1_0.id=se1_0.usuario_id 
+    where
+        u1_0.id=?
+2026-05-26 17:14:24.030 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.id,
+        r1_0.activa,
+        (SELECT
+            COALESCE(SUM(re.series * re.repeticiones * e.calorias_quemadas), 0) 
+        FROM
+            rutina_ejercicio re 
+        JOIN
+            ejercicios e 
+                ON e.id = re.ejercicio_id 
+        WHERE
+            re.rutina_id = r1_0.id),
+        r1_0.categoria,
+        r1_0.descripcion,
+        r1_0.dias_semana,
+        r1_0.duracion_minutos,
+        r1_0.es_predefinida,
+        r1_0.fecha_creacion,
+        r1_0.nivel,
+        r1_0.nombre,
+        (SELECT
+            COUNT(*) 
+        FROM
+            rutina_ejercicio re 
+        WHERE
+            re.rutina_id = r1_0.id),
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username,
+        r2_0.usuario_id,
+        r2_1.id,
+        r2_1.nombre 
+    from
+        rutinas r1_0 
+    left join
+        usuarios u1_0 
+            on u1_0.id=r1_0.usuario_id 
+    left join
+        usuario_roles r2_0 
+            on u1_0.id=r2_0.usuario_id 
+    left join
+        roles r2_1 
+            on r2_1.id=r2_0.role_id 
+    where
+        r1_0.id=?
+2026-05-26 17:14:24.033 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.id,
+        r1_0.activa,
+        (SELECT
+            COALESCE(SUM(re.series * re.repeticiones * e.calorias_quemadas), 0) 
+        FROM
+            rutina_ejercicio re 
+        JOIN
+            ejercicios e 
+                ON e.id = re.ejercicio_id 
+        WHERE
+            re.rutina_id = r1_0.id),
+        r1_0.categoria,
+        r1_0.descripcion,
+        r1_0.dias_semana,
+        r1_0.duracion_minutos,
+        r1_0.es_predefinida,
+        r1_0.fecha_creacion,
+        r1_0.nivel,
+        r1_0.nombre,
+        (SELECT
+            COUNT(*) 
+        FROM
+            rutina_ejercicio re 
+        WHERE
+            re.rutina_id = r1_0.id),
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username,
+        r2_0.usuario_id,
+        r2_1.id,
+        r2_1.nombre 
+    from
+        rutinas r1_0 
+    left join
+        usuarios u1_0 
+            on u1_0.id=r1_0.usuario_id 
+    left join
+        usuario_roles r2_0 
+            on u1_0.id=r2_0.usuario_id 
+    left join
+        roles r2_1 
+            on r2_1.id=r2_0.role_id 
+    where
+        r1_0.id=?
+2026-05-26 17:14:24.036 [http-nio-8080-exec-2] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.writeWithMessageConverters - Using 'application/json', given [application/json] and supported [application/json, application/*+json, application/yaml]
+2026-05-26 17:14:24.037 [http-nio-8080-exec-2] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.traceDebug - Writing [[SesionEntrenamientoDTO(id=14, usuarioId=4, rutinaId=9, fechaInicio=2026-05-22T11:37:55, fechaFin=20 (truncated)...]
+2026-05-26 17:14:24.043 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-05-26 17:14:30.105 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username 
+    from
+        usuarios u1_0 
+    where
+        u1_0.username=?
+2026-05-26 17:14:30.108 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuario_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        r1_0.usuario_id=?
+2026-05-26 17:14:30.114 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/api/mediciones-corporales/usuario/4/ordenadas", parameters={}
+2026-05-26 17:14:30.116 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.getHandler - Mapped to com.gymprofit.api.controller.MedicionCorporalController#obtenerMedicionPorUsuarioOrdenadas(Integer)
+2026-05-26 17:14:30.117 [http-nio-8080-exec-1] INFO  c.g.a.s.m.MedicionCorporalService.findByUsuarioIdOrdenadas - Buscando mediciones corporales del usuario id: 4 ordenadas por fecha
+2026-05-26 17:14:30.119 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        mc1_0.id,
+        mc1_0.altura,
+        mc1_0.brazos,
+        mc1_0.cintura,
+        mc1_0.fecha,
+        mc1_0.grasa_corporal,
+        mc1_0.imc,
+        mc1_0.masa_muscular,
+        mc1_0.notas,
+        mc1_0.pecho,
+        mc1_0.peso,
+        mc1_0.piernas,
+        mc1_0.usuario_id 
+    from
+        mediciones_corporales mc1_0 
+    left join
+        usuarios u1_0 
+            on u1_0.id=mc1_0.usuario_id 
+    where
+        u1_0.id=? 
+    order by
+        mc1_0.fecha desc
+2026-05-26 17:14:30.122 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username,
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuarios u1_0 
+    left join
+        usuario_roles r1_0 
+            on u1_0.id=r1_0.usuario_id 
+    left join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        u1_0.id=?
+2026-05-26 17:14:30.126 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.writeWithMessageConverters - Using 'application/json', given [application/json] and supported [application/json, application/*+json, application/yaml]
+2026-05-26 17:14:30.127 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.traceDebug - Writing [[MedicionCorporalDTO(id=8, usuarioId=4, fecha=2026-05-25T09:31:34.812423, peso=92.00, altura=185.00, (truncated)...]
+2026-05-26 17:14:30.128 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-05-26 17:14:30.138 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username 
+    from
+        usuarios u1_0 
+    where
+        u1_0.username=?
+2026-05-26 17:14:30.143 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuario_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        r1_0.usuario_id=?
+2026-05-26 17:14:30.147 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/api/usuarios/4/foto", parameters={}
+2026-05-26 17:14:30.148 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.getHandler - Mapped to com.gymprofit.api.controller.UsuarioController#getFotoPerfil(Integer)
+2026-05-26 17:14:30.150 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username,
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuarios u1_0 
+    left join
+        usuario_roles r1_0 
+            on u1_0.id=r1_0.usuario_id 
+    left join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        u1_0.id=?
+2026-05-26 17:14:30.155 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.writeWithMessageConverters - Found 'Content-Type:image/jpeg' in response
+2026-05-26 17:14:30.166 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.traceDebug - Writing [{-1, -40, -1, -31, 1, -81, 69, 120, 105, 102, 0, 0, 77, 77, 0, 42, 0, 0, 0, 8, 0, 7, 1, 16, 0, 2, 0, (truncated)...]
+2026-05-26 17:14:30.174 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-05-26 17:14:30.230 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username 
+    from
+        usuarios u1_0 
+    where
+        u1_0.username=?
+2026-05-26 17:14:30.234 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuario_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        r1_0.usuario_id=?
+2026-05-26 17:14:30.241 [http-nio-8080-exec-4] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/api/usuarios/4", parameters={}
+2026-05-26 17:14:30.256 [http-nio-8080-exec-4] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.getHandler - Mapped to com.gymprofit.api.controller.UsuarioController#obtenerUsuario(Integer)
+2026-05-26 17:14:30.261 [http-nio-8080-exec-4] INFO  c.g.a.service.usuario.UsuarioService.findById - Buscando usuario por id: 4
+2026-05-26 17:14:30.263 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username,
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuarios u1_0 
+    left join
+        usuario_roles r1_0 
+            on u1_0.id=r1_0.usuario_id 
+    left join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        u1_0.id=?
+2026-05-26 17:14:30.267 [http-nio-8080-exec-4] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.writeWithMessageConverters - Using 'application/json', given [application/json] and supported [application/json, application/*+json, application/yaml]
+2026-05-26 17:14:30.268 [http-nio-8080-exec-4] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.traceDebug - Writing [UsuarioDTO(id=4, username=admin, email=admin@gymprofit.com, peso=90.00, altura=185.0, edad=19, nivel (truncated)...]
+2026-05-26 17:14:30.270 [http-nio-8080-exec-4] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-05-26 17:17:06.101 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username 
+    from
+        usuarios u1_0 
+    where
+        u1_0.username=?
+2026-05-26 17:17:06.107 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuario_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        r1_0.usuario_id=?
+2026-05-26 17:17:06.111 [http-nio-8080-exec-6] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/api/comidas/usuario/4/fecha/2026-05-26", parameters={}
+2026-05-26 17:17:06.112 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.getHandler - Mapped to com.gymprofit.api.controller.ComidaController#obtenerComidasPorUsuarioYFecha(Integer, LocalDate)
+2026-05-26 17:17:06.137 [http-nio-8080-exec-6] INFO  c.g.api.service.comida.ComidaService.findByUsuarioIdAndFecha - Buscando comidas por usuario 4 y fecha 2026-05-26
+2026-05-26 17:17:06.154 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        c1_0.id,
+        c1_0.fecha,
+        c1_0.notas,
+        c1_0.tipo_comida,
+        c1_0.total_calorias,
+        c1_0.total_carbohidratos,
+        c1_0.total_grasas,
+        c1_0.total_proteinas,
+        c1_0.usuario_id 
+    from
+        comidas c1_0 
+    left join
+        usuarios u1_0 
+            on u1_0.id=c1_0.usuario_id 
+    where
+        u1_0.id=? 
+        and c1_0.fecha between ? and ?
+2026-05-26 17:17:06.162 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username,
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuarios u1_0 
+    left join
+        usuario_roles r1_0 
+            on u1_0.id=r1_0.usuario_id 
+    left join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        u1_0.id=?
+2026-05-26 17:17:06.166 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.writeWithMessageConverters - Using 'application/json', given [application/json] and supported [application/json, application/*+json, application/yaml]
+2026-05-26 17:17:06.170 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.traceDebug - Writing [[ComidaDTO(id=8, usuarioId=4, fecha=2026-05-26T00:00, tipoComida=DESAYUNO, totalCalorias=0, totalPro (truncated)...]
+2026-05-26 17:17:06.174 [http-nio-8080-exec-6] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-05-26 17:17:07.240 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username 
+    from
+        usuarios u1_0 
+    where
+        u1_0.username=?
+2026-05-26 17:17:07.244 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuario_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        r1_0.usuario_id=?
+2026-05-26 17:17:07.247 [http-nio-8080-exec-7] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/api/rutinas/predefinidas", parameters={}
+2026-05-26 17:17:07.247 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.getHandler - Mapped to com.gymprofit.api.controller.RutinaController#obtenerRutinasPredefinidas()
+2026-05-26 17:17:07.250 [http-nio-8080-exec-7] INFO  c.g.api.service.rutina.RutinaService.findPredefinidas - Buscando rutinas predefinidas
+2026-05-26 17:17:07.256 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.id,
+        r1_0.activa,
+        (SELECT
+            COALESCE(SUM(re.series * re.repeticiones * e.calorias_quemadas), 0) 
+        FROM
+            rutina_ejercicio re 
+        JOIN
+            ejercicios e 
+                ON e.id = re.ejercicio_id 
+        WHERE
+            re.rutina_id = r1_0.id),
+        r1_0.categoria,
+        r1_0.descripcion,
+        r1_0.dias_semana,
+        r1_0.duracion_minutos,
+        r1_0.es_predefinida,
+        r1_0.fecha_creacion,
+        r1_0.nivel,
+        r1_0.nombre,
+        (SELECT
+            COUNT(*) 
+        FROM
+            rutina_ejercicio re 
+        WHERE
+            re.rutina_id = r1_0.id),
+        r1_0.usuario_id 
+    from
+        rutinas r1_0 
+    where
+        r1_0.es_predefinida
+2026-05-26 17:17:07.276 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.writeWithMessageConverters - Using 'application/json', given [application/json] and supported [application/json, application/*+json, application/yaml]
+2026-05-26 17:17:07.279 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.traceDebug - Writing [[RutinaDTO(id=1, usuarioId=null, nombre=Pecho y Tríceps, descripcion=Rutina clásica de empuje para p (truncated)...]
+2026-05-26 17:17:07.285 [http-nio-8080-exec-7] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-05-26 17:17:07.392 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username 
+    from
+        usuarios u1_0 
+    where
+        u1_0.username=?
+2026-05-26 17:17:07.394 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuario_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        r1_0.usuario_id=?
+2026-05-26 17:17:07.398 [http-nio-8080-exec-8] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/api/rutinas/usuario/4/activas", parameters={}
+2026-05-26 17:17:07.399 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.getHandler - Mapped to com.gymprofit.api.controller.RutinaController#obtenerRutinasActivasPorUsuario(Integer)
+2026-05-26 17:17:07.400 [http-nio-8080-exec-8] INFO  c.g.api.service.rutina.RutinaService.findByUsuarioIdAndActivas - Buscando rutinas activas del usuario id: 4
+2026-05-26 17:17:07.404 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.id,
+        r1_0.activa,
+        (SELECT
+            COALESCE(SUM(re.series * re.repeticiones * e.calorias_quemadas), 0) 
+        FROM
+            rutina_ejercicio re 
+        JOIN
+            ejercicios e 
+                ON e.id = re.ejercicio_id 
+        WHERE
+            re.rutina_id = r1_0.id),
+        r1_0.categoria,
+        r1_0.descripcion,
+        r1_0.dias_semana,
+        r1_0.duracion_minutos,
+        r1_0.es_predefinida,
+        r1_0.fecha_creacion,
+        r1_0.nivel,
+        r1_0.nombre,
+        (SELECT
+            COUNT(*) 
+        FROM
+            rutina_ejercicio re 
+        WHERE
+            re.rutina_id = r1_0.id),
+        r1_0.usuario_id 
+    from
+        rutinas r1_0 
+    left join
+        usuarios u1_0 
+            on u1_0.id=r1_0.usuario_id 
+    where
+        u1_0.id=? 
+        and r1_0.activa
+2026-05-26 17:17:07.409 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username,
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuarios u1_0 
+    left join
+        usuario_roles r1_0 
+            on u1_0.id=r1_0.usuario_id 
+    left join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        u1_0.id=?
+2026-05-26 17:17:07.414 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.writeWithMessageConverters - Using 'application/json', given [application/json] and supported [application/json, application/*+json, application/yaml]
+2026-05-26 17:17:07.414 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.traceDebug - Writing [[RutinaDTO(id=11, usuarioId=4, nombre=PPL, descripcion=Push Pull Legs, duracionMinutos=60, nivel=AVA (truncated)...]
+2026-05-26 17:17:07.417 [http-nio-8080-exec-8] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-05-26 17:17:21.927 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username 
+    from
+        usuarios u1_0 
+    where
+        u1_0.username=?
+2026-05-26 17:17:21.935 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuario_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        r1_0.usuario_id=?
+2026-05-26 17:17:21.939 [http-nio-8080-exec-10] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/api/sesiones/usuario/4", parameters={}
+2026-05-26 17:17:21.940 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.getHandler - Mapped to com.gymprofit.api.controller.SesionEntrenamientoController#obtenerSesionesPorUsuario(Integer)
+2026-05-26 17:17:21.942 [http-nio-8080-exec-10] INFO  c.g.a.s.s.SesionEntrenamientoService.findByUsuarioId - Buscando sesiones de entrenamiento por usuario id: 4
+2026-05-26 17:17:21.946 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        se1_0.id,
+        se1_0.calorias_quemadas,
+        se1_0.completada,
+        se1_0.duracion_minutos,
+        se1_0.fecha_fin,
+        se1_0.fecha_inicio,
+        se1_0.notas,
+        se1_0.rutina_id,
+        se1_0.usuario_id 
+    from
+        sesiones_entrenamiento se1_0 
+    left join
+        usuarios u1_0 
+            on u1_0.id=se1_0.usuario_id 
+    where
+        u1_0.id=?
+2026-05-26 17:17:21.947 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.id,
+        r1_0.activa,
+        (SELECT
+            COALESCE(SUM(re.series * re.repeticiones * e.calorias_quemadas), 0) 
+        FROM
+            rutina_ejercicio re 
+        JOIN
+            ejercicios e 
+                ON e.id = re.ejercicio_id 
+        WHERE
+            re.rutina_id = r1_0.id),
+        r1_0.categoria,
+        r1_0.descripcion,
+        r1_0.dias_semana,
+        r1_0.duracion_minutos,
+        r1_0.es_predefinida,
+        r1_0.fecha_creacion,
+        r1_0.nivel,
+        r1_0.nombre,
+        (SELECT
+            COUNT(*) 
+        FROM
+            rutina_ejercicio re 
+        WHERE
+            re.rutina_id = r1_0.id),
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username,
+        r2_0.usuario_id,
+        r2_1.id,
+        r2_1.nombre 
+    from
+        rutinas r1_0 
+    left join
+        usuarios u1_0 
+            on u1_0.id=r1_0.usuario_id 
+    left join
+        usuario_roles r2_0 
+            on u1_0.id=r2_0.usuario_id 
+    left join
+        roles r2_1 
+            on r2_1.id=r2_0.role_id 
+    where
+        r1_0.id=?
+2026-05-26 17:17:21.950 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.id,
+        r1_0.activa,
+        (SELECT
+            COALESCE(SUM(re.series * re.repeticiones * e.calorias_quemadas), 0) 
+        FROM
+            rutina_ejercicio re 
+        JOIN
+            ejercicios e 
+                ON e.id = re.ejercicio_id 
+        WHERE
+            re.rutina_id = r1_0.id),
+        r1_0.categoria,
+        r1_0.descripcion,
+        r1_0.dias_semana,
+        r1_0.duracion_minutos,
+        r1_0.es_predefinida,
+        r1_0.fecha_creacion,
+        r1_0.nivel,
+        r1_0.nombre,
+        (SELECT
+            COUNT(*) 
+        FROM
+            rutina_ejercicio re 
+        WHERE
+            re.rutina_id = r1_0.id),
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username,
+        r2_0.usuario_id,
+        r2_1.id,
+        r2_1.nombre 
+    from
+        rutinas r1_0 
+    left join
+        usuarios u1_0 
+            on u1_0.id=r1_0.usuario_id 
+    left join
+        usuario_roles r2_0 
+            on u1_0.id=r2_0.usuario_id 
+    left join
+        roles r2_1 
+            on r2_1.id=r2_0.role_id 
+    where
+        r1_0.id=?
+2026-05-26 17:17:21.954 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.writeWithMessageConverters - Using 'application/json', given [application/json] and supported [application/json, application/*+json, application/yaml]
+2026-05-26 17:17:21.954 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.traceDebug - Writing [[SesionEntrenamientoDTO(id=14, usuarioId=4, rutinaId=9, fechaInicio=2026-05-22T11:37:55, fechaFin=20 (truncated)...]
+2026-05-26 17:17:21.956 [http-nio-8080-exec-10] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-05-26 17:17:23.504 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username 
+    from
+        usuarios u1_0 
+    where
+        u1_0.username=?
+2026-05-26 17:17:23.507 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuario_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        r1_0.usuario_id=?
+2026-05-26 17:17:23.511 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/api/mediciones-corporales/usuario/4/ordenadas", parameters={}
+2026-05-26 17:17:23.512 [http-nio-8080-exec-2] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.getHandler - Mapped to com.gymprofit.api.controller.MedicionCorporalController#obtenerMedicionPorUsuarioOrdenadas(Integer)
+2026-05-26 17:17:23.513 [http-nio-8080-exec-2] INFO  c.g.a.s.m.MedicionCorporalService.findByUsuarioIdOrdenadas - Buscando mediciones corporales del usuario id: 4 ordenadas por fecha
+2026-05-26 17:17:23.515 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        mc1_0.id,
+        mc1_0.altura,
+        mc1_0.brazos,
+        mc1_0.cintura,
+        mc1_0.fecha,
+        mc1_0.grasa_corporal,
+        mc1_0.imc,
+        mc1_0.masa_muscular,
+        mc1_0.notas,
+        mc1_0.pecho,
+        mc1_0.peso,
+        mc1_0.piernas,
+        mc1_0.usuario_id 
+    from
+        mediciones_corporales mc1_0 
+    left join
+        usuarios u1_0 
+            on u1_0.id=mc1_0.usuario_id 
+    where
+        u1_0.id=? 
+    order by
+        mc1_0.fecha desc
+2026-05-26 17:17:23.516 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username,
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuarios u1_0 
+    left join
+        usuario_roles r1_0 
+            on u1_0.id=r1_0.usuario_id 
+    left join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        u1_0.id=?
+2026-05-26 17:17:23.518 [http-nio-8080-exec-2] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.writeWithMessageConverters - Using 'application/json', given [application/json] and supported [application/json, application/*+json, application/yaml]
+2026-05-26 17:17:23.518 [http-nio-8080-exec-2] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.traceDebug - Writing [[MedicionCorporalDTO(id=8, usuarioId=4, fecha=2026-05-25T09:31:34.812423, peso=92.00, altura=185.00, (truncated)...]
+2026-05-26 17:17:23.523 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-05-26 17:17:23.533 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username 
+    from
+        usuarios u1_0 
+    where
+        u1_0.username=?
+2026-05-26 17:17:23.536 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuario_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        r1_0.usuario_id=?
+2026-05-26 17:17:23.539 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/api/usuarios/4/foto", parameters={}
+2026-05-26 17:17:23.540 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.getHandler - Mapped to com.gymprofit.api.controller.UsuarioController#getFotoPerfil(Integer)
+2026-05-26 17:17:23.543 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username,
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuarios u1_0 
+    left join
+        usuario_roles r1_0 
+            on u1_0.id=r1_0.usuario_id 
+    left join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        u1_0.id=?
+2026-05-26 17:17:23.546 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.writeWithMessageConverters - Found 'Content-Type:image/jpeg' in response
+2026-05-26 17:17:23.551 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.traceDebug - Writing [{-1, -40, -1, -31, 1, -81, 69, 120, 105, 102, 0, 0, 77, 77, 0, 42, 0, 0, 0, 8, 0, 7, 1, 16, 0, 2, 0, (truncated)...]
+2026-05-26 17:17:23.552 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-05-26 17:17:23.587 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username 
+    from
+        usuarios u1_0 
+    where
+        u1_0.username=?
+2026-05-26 17:17:23.589 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuario_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        r1_0.usuario_id=?
+2026-05-26 17:17:23.593 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet.traceDebug - GET "/api/usuarios/4", parameters={}
+2026-05-26 17:17:23.593 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping.getHandler - Mapped to com.gymprofit.api.controller.UsuarioController#obtenerUsuario(Integer)
+2026-05-26 17:17:23.594 [http-nio-8080-exec-3] INFO  c.g.a.service.usuario.UsuarioService.findById - Buscando usuario por id: 4
+2026-05-26 17:17:23.594 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL.logStatement - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.altura,
+        u1_0.edad,
+        u1_0.email,
+        u1_0.fecha_registro,
+        u1_0.foto_perfil,
+        u1_0.nivel_experiencia,
+        u1_0.objetivo,
+        u1_0.password,
+        u1_0.peso,
+        u1_0.username,
+        r1_0.usuario_id,
+        r1_1.id,
+        r1_1.nombre 
+    from
+        usuarios u1_0 
+    left join
+        usuario_roles r1_0 
+            on u1_0.id=r1_0.usuario_id 
+    left join
+        roles r1_1 
+            on r1_1.id=r1_0.role_id 
+    where
+        u1_0.id=?
+2026-05-26 17:17:23.597 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.writeWithMessageConverters - Using 'application/json', given [application/json] and supported [application/json, application/*+json, application/yaml]
+2026-05-26 17:17:23.598 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.traceDebug - Writing [UsuarioDTO(id=4, username=admin, email=admin@gymprofit.com, peso=90.00, altura=185.0, edad=19, nivel (truncated)...]
+2026-05-26 17:17:23.598 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK

@@ -481,6 +481,12 @@
     <string name="acerca_exp3_lugar">Crevinet, Crevillente · 300 horas</string>
     <string name="acerca_exp3_desc">Instalación de infraestructura de fibra óptica FTTH y apoyo en mantenimiento y despliegue de red en entornos técnicos reales.</string>
     <string name="acerca_autor_email_label">rubenjuancandela06@gmail.com</string>
+    <string name="acerca_web_label">gymprofit.infinityfree.me</string>
+    <string name="acerca_dial_label">+34 600 000 000</string>
+    <string name="acerca_compartir_label">Compartir app</string>
+    <string name="acerca_compartir_titulo">Compartir GymProFit</string>
+    <string name="acerca_compartir_texto">Descarga GymProFit: https://gymprofit.infinityfree.me/login</string>
+    <string name="permiso_contactos_denegado">Permiso de contactos denegado</string>
     <string name="acerca_autor_stack_label">Java · Spring Boot · Android · React · Python · PostgreSQL · MariaDB</string>
 
     <!-- ANADIR ALIMENTO -->

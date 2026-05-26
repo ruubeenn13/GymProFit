@@ -169,7 +169,7 @@ Arquitectura 4 capas obligatoria (UD06).
 | `CrearAlimentoActivity` | Crear alimento propio con macros por 100g |
 | `AdminAlimentosActivity` | Gestión admin de alimentos: toggle activo, editar (solo ROLE_ADMIN) |
 | `PerfilActivity` | Perfil con datos reales de la API. Config tema/idioma + cerrar sesión. Botón "Sobre GymProFit" al pie |
-| `AcercaDeActivity` | Pantalla "Acerca de": logo adaptativo claro/oscuro, info extendida de la app (descripción, 6 features, tech stack) e info del desarrollador (bio, formación, 3 FCTs, email clickable) |
+| `AcercaDeActivity` | Pantalla "Acerca de": logo adaptativo claro/oscuro, info extendida de la app (descripción, 6 features, tech stack) e info del desarrollador (bio, formación, 3 FCTs, email clickable). Botón "Compartir": pide permiso `READ_CONTACTS` en runtime, abre selector de contactos y lanza SMS pre-rellenado con el enlace de la app |
 | `EditarPerfilActivity` | Editar email, peso, altura, edad, nivel, objetivo. PATCH /usuarios/{id} |
 | `SesionesActivity` | Historial de sesiones con opción de eliminar |
 | `RegistrarSesionActivity` | Formulario para registrar sesión: rutina (spinner), calorías calculadas, cards de ejercicios con peso por ejercicio (`EjercicioPesoAdapter`), notas, valoración (RatingBar 1-5). POST /ejercicios-realizados por cada ejercicio al finalizar |
@@ -218,7 +218,7 @@ Arquitectura 4 capas obligatoria (UD06).
 
 **`build.gradle`** — Lee `BASE_URL` desde `local.properties` e inyecta en `BuildConfig`. No hay dependencias Retrofit/OkHttp/Gson — solo `org.json` nativo de Android.
 
-**`AndroidManifest.xml`** — Declara todas las Activities y el permiso `INTERNET`.
+**`AndroidManifest.xml`** — Declara todas las Activities y los permisos `INTERNET`, `POST_NOTIFICATIONS`, `CAMERA`, `READ_MEDIA_IMAGES`, `READ_EXTERNAL_STORAGE` (≤API 32), `READ_CONTACTS`.
 
 **`local.properties`** *(no versionado)* — Contiene `sdk.dir` y `BASE_URL=http://10.0.2.2:8080/api/`.
 
@@ -457,7 +457,8 @@ Abre `app/GymProFit` en Android Studio, sincroniza Gradle y ejecuta en emulador 
 
 | Hash | Descripción |
 |---|---|
-| *(sin commitear)* | feat(android): AcercaDeActivity — pantalla "Acerca de" con logo adaptativo tema, info extendida app y desarrollador, email clickable |
+| `2153cdf` | feat(android): compartir app vía SMS — permiso `READ_CONTACTS` en runtime, selector de contactos, SMS pre-rellenado con link de la app |
+| `c502be0` | feat(android): AcercaDeActivity — pantalla "Acerca de" con logo adaptativo tema, info extendida app y desarrollador, email clickable |
 | `49f8c68` | feat(android+api): nutrición completa — NutricionActivity macros dinámicos, ComidaActivity log diario, AnadirAlimentoActivity, CrearAlimentoActivity, AdminAlimentosActivity, BottomSheet menus (UIHelper.mostrarBottomMenu reemplaza todos los PopupMenu), API: AlimentoComidaDTO enriquecido con macros totales, admin alimentos jOOQ |
 | `0dc0fb6` | feat(android): ComidaActivity, AlimentoComidaAdapter y layouts nutrición |
 | `e65a817` | feat(android): parsers JSON para Alimento, Comida y AlimentoComida |

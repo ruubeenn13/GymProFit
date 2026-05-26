@@ -159,7 +159,7 @@ HomeActivity (navegación inferior)
 | `CrearAlimentoActivity` | Formulario alimento propio (nombre, categoría Spinner, calorías, proteínas, carbos, grasas). POST /alimentos con usuarioId. setResult al caller |
 | `AdminAlimentosActivity` | Gestión admin de alimentos: búsqueda, filtros categoría/estado, toggle activo, editar via dialog. Acceso desde AdminActivity (solo ROLE_ADMIN) |
 | `PerfilActivity` | Datos reales de la API + resumen de última medición corporal (peso/altura). Hereda de `BaseActivity`. Botón "Sobre GymProFit" al pie |
-| `AcercaDeActivity` | Pantalla "Acerca de": logo adaptativo claro/oscuro (`@drawable/logo` + `drawable-night/`), info extendida de la app (descripción, 6 features, tech stack) e info del desarrollador (bio, formación, 3 FCTs, email clickable `ACTION_SENDTO`). Extiende `AppCompatActivity`, aplica tema/idioma manualmente |
+| `AcercaDeActivity` | Pantalla "Acerca de": logo adaptativo claro/oscuro (`@drawable/logo` + `drawable-night/`), info extendida de la app (descripción, 6 features, tech stack) e info del desarrollador (bio, formación, 3 FCTs, email clickable `ACTION_SENDTO`). Botón "Compartir": pide permiso `READ_CONTACTS` en runtime vía `ActivityResultLauncher`; si se concede abre selector de contactos (`ACTION_PICK Phone.CONTENT_URI`); extrae número via `ContentResolver` y lanza `ACTION_SENDTO smsto:` con el texto pre-rellenado. Extiende `AppCompatActivity`, aplica tema/idioma manualmente |
 | `EditarPerfilActivity` | PATCH /usuarios/{id}. Campos vacíos → null en BD |
 | `SesionesActivity` | Historial de sesiones, eliminar |
 | `RegistrarSesionActivity` | Crear sesión: spinner rutinas, calorías calculadas, cards de ejercicios con campo de peso por ejercicio (RecyclerView+`EjercicioPesoAdapter`), RatingBar 1-5 |
@@ -305,6 +305,10 @@ implementation libs.constraintlayout
 ---
 
 ## Changelog
+
+### 2026-05-26 — Compartir vía SMS con selector de contactos
+
+- **AcercaDeActivity — compartir**: botón "Compartir app" reemplaza `ACTION_SEND` genérico. Flujo: pide permiso `READ_CONTACTS` en runtime (`ActivityResultLauncher<String>`); si denegado muestra Toast; si concedido abre selector de contactos (`ACTION_PICK` sobre `Phone.CONTENT_URI`); al seleccionar extrae número via `ContentResolver.query`; lanza `ACTION_SENDTO smsto:<numero>` con texto pre-rellenado (`acerca_compartir_texto`). `AndroidManifest`: añadido `uses-permission READ_CONTACTS`.
 
 ### 2026-05-26 — AcercaDeActivity
 
