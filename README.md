@@ -444,15 +444,24 @@ Abre `app/GymProFit` en Android Studio, sincroniza Gradle y ejecuta en emulador 
 
 ## 📝 Changelog
 
+### 2026-05-26
+
+| Hash | Descripción |
+|---|---|
+| *(actual)* | feat(android): menú "Contáctanos", rediseño card entrenamientos, fix bottom nav |
+| `43bd0d2` | feat: añadir archivos restantes del anterior commit |
+| `13ef397` | feat(android+api): foto de perfil (galería+cámara, FileProvider, multipart), fix BottomNav dark mode |
+
 ### 2026-05-25
 
 | Hash | Descripción |
 |---|---|
+| `28341e8` | feat(android): pesos por serie en RegistrarSesion, stats reales en Home, admin edición completa, menú long-press contextual rutinas |
+| `2e9b741` | feat(android): DetalleEjercicioActivity con vídeo local y stats card |
 | `1e4fb60` | feat(admin): panel de administración completo en Android y fixes de API |
 | `bf49bbe` | fix(android): cargar solo rutinas activas del usuario tras eliminar |
 | `961f804` | feat(android): logo PNG dark/light en splash/login/registro, fix BottomNav sin animación, fix diálogo idioma login |
 | `e2d8c0c` | feat(android): BaseActivity con menú tema/idioma, fix altura mediciones, mejoras UI |
-| *(actual)* | feat(android): pesos por serie en RegistrarSesion, stats reales en Home, admin edición completa, menú long-press contextual rutinas |
 
 ### 2026-05-22
 

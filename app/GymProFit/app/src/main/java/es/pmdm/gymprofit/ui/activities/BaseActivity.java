@@ -3,6 +3,7 @@ package es.pmdm.gymprofit.ui.activities;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -74,6 +75,9 @@ public abstract class BaseActivity extends AppCompatActivity {
                 return true;
             } else if (id == R.id.menu_idioma) {
                 mostrarDialogoIdioma();
+                return true;
+            } else if (id == R.id.menu_contactanos) {
+                abrirEmailContacto();
                 return true;
             } else if (id == R.id.menu_cerrar_sesion) {
                 confirmarCerrarSesion();
@@ -176,6 +180,15 @@ public abstract class BaseActivity extends AppCompatActivity {
             int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.88);
             dialog.getWindow().setLayout(width, android.view.WindowManager.LayoutParams.WRAP_CONTENT);
         }
+    }
+
+    private void abrirEmailContacto() {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:"));
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"rubenjuancandela06@gmail.com"});
+        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_contacto_asunto));
+        intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.email_contacto_cuerpo));
+        startActivity(Intent.createChooser(intent, getString(R.string.menu_contactanos)));
     }
 
     private void confirmarCerrarSesion() {

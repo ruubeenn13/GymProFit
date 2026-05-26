@@ -94,7 +94,7 @@ es.pmdm.gymprofit/
 │   └── API.java               # Fachada de endpoints
 ├── ui/
 │   ├── activities/
-│   │   ├── BaseActivity.java  # Clase base: menú opciones (tema, idioma, logout) vía dialogs
+│   │   ├── BaseActivity.java  # Clase base: menú opciones (tema, idioma, contáctanos, logout) vía dialogs
 │   │   └── ...                # Una Activity concreta por pantalla
 │   └── adapters/              # RecyclerView.Adapter por cada lista
 └── utils/
@@ -293,6 +293,15 @@ implementation libs.constraintlayout
 ---
 
 ## Changelog
+
+### 2026-05-26 — Foto de perfil, fix BottomNav dark mode
+- **Foto de perfil en PerfilActivity**: avatar clickable (`FrameLayout` 72dp + `ShapeableImageView` 64dp circular + badge edición). Launchers: galería (`GetContent`, sin permisos) + cámara (`TakePicture`, solicita `CAMERA`). `FileProvider` en manifest para URI de cámara. `UtilREST.uploadMultipart()` + `API.uploadFotoPerfil()` — `POST /usuarios/{id}/foto`. Carga foto en `onResume` con `GET /usuarios/{id}/foto`
+- **Fix BottomNav dark mode**: `values-night/themes.xml` no tenía `bottomNavigationStyle` → iconos perdían estilo en modo oscuro. Añadido al tema night
+
+### 2026-05-26 — Contáctanos, rediseño card entrenamientos, fix bottom nav
+- **Contáctanos en menú**: `BaseActivity` añade ítem `menu_contactanos` (ic_email) en el popup de opciones. Click abre `Intent.createChooser` con `ACTION_SENDTO` + `mailto:` → email chooser precargado con destinatario, asunto y cuerpo fijos. Strings bilingües (ES/EN) en `menu_contactanos`, `email_contacto_asunto`, `email_contacto_cuerpo`
+- **Card entrenamientos Home**: fondo cambiado a `colorSurface`, número `colorPrimary` 44sp bold, icono `ic_ejercicios` 32dp dentro de `FrameLayout` 60dp circular (`bg_circle.xml` + `backgroundTint="?attr/colorPrimary"` + `app:tint="?attr/colorOnPrimary"`). Label unificado: `home_entrenamientos_semana` ("Entrenamientos esta semana") en una sola línea encima del número
+- **Bottom nav**: `design_bottom_navigation_height=56dp` (nuevo `dimens.xml`) + `android:minHeight=56dp` en estilo + `itemPaddingTop=10dp` / `itemPaddingBottom=6dp` → acerca iconos a labels (~4dp gap)
 
 ### 2026-05-25 — Pesos por serie, stats home, admin edición completa, menú long-press
 - **Pesos por serie en RegistrarSesion**: al seleccionar rutina aparece card con `EjercicioPesoAdapter` (RecyclerView+TextWatcher); al finalizar sesión hace `POST /ejercicios-realizados` por cada ejercicio con `pesoUsado` opcional

@@ -56,6 +56,7 @@
     <string name="home_buenas_noches">Buenas noches,</string>
     <string name="home_usuario_defecto">Usuario</string>
     <string name="home_esta_semana">esta semana</string>
+    <string name="home_entrenamientos_semana">Entrenamientos esta semana</string>
     <string name="home_ver_rutinas">Ver mis rutinas</string>
     <string name="home_registrar_comida">Registrar comida</string>
 
@@ -115,6 +116,9 @@
     <string name="perfil_configuracion">Configuración</string>
     <string name="perfil_tema">Tema</string>
     <string name="perfil_idioma">Idioma</string>
+    <string name="menu_contactanos">Contáctanos</string>
+    <string name="email_contacto_asunto">Consulta / Sugerencia — GymProFit</string>
+    <string name="email_contacto_cuerpo">Hola equipo de GymProFit,\n\nEscribo para:\n\n[Describe tu consulta o sugerencia aquí]\n\nGracias.</string>
     <string name="perfil_cerrar_sesion">Cerrar sesión</string>
     <string name="perfil_nivel">Nivel de experiencia</string>
     <string name="perfil_peso">Peso</string>
