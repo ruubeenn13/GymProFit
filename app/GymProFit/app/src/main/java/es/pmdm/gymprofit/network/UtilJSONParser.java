@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import es.pmdm.gymprofit.model.alimento.Alimento;
+import es.pmdm.gymprofit.model.comida.AlimentoComida;
+import es.pmdm.gymprofit.model.comida.Comida;
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
 import es.pmdm.gymprofit.model.logro.Logro;
 import es.pmdm.gymprofit.model.medicion.MedicionCorporal;
@@ -261,6 +264,80 @@ public class UtilJSONParser {
         e.setRachaActualDias(obj.optInt("rachaActualDias", 0));
         e.setMejorRachaDias(obj.optInt("mejorRachaDias", 0));
         return e;
+    }
+
+    // ALIMENTO
+
+    public static Alimento parseAlimento(JSONObject obj) throws JSONException {
+        Alimento a = new Alimento();
+        a.setId(obj.optInt("id", -1));
+        a.setNombre(safeStr(obj, "nombre"));
+        a.setCategoria(safeStr(obj, "categoria"));
+        a.setCalorias(obj.optInt("calorias", 0));
+        a.setProteinas(obj.optDouble("proteinas", 0));
+        a.setCarbohidratos(obj.optDouble("carbohidratos", 0));
+        a.setGrasas(obj.optDouble("grasas", 0));
+        a.setUsuarioId(obj.isNull("usuarioId") ? null : obj.getInt("usuarioId"));
+        return a;
+    }
+
+    public static List<Alimento> parseListaAlimentos(String json) throws JSONException {
+        JSONArray arr = new JSONArray(json);
+        List<Alimento> list = new ArrayList<>();
+        for (int i = 0; i < arr.length(); i++) {
+            list.add(parseAlimento(arr.getJSONObject(i)));
+        }
+        return list;
+    }
+
+    // COMIDA
+
+    public static Comida parseComida(JSONObject obj) throws JSONException {
+        Comida c = new Comida();
+        c.setId(obj.optInt("id", -1));
+        c.setTipoComida(safeStr(obj, "tipoComida"));
+        c.setFecha(parseFecha(obj, "fecha"));
+        c.setTotalCalorias(obj.optInt("totalCalorias", 0));
+        c.setTotalProteinas(obj.optDouble("totalProteinas", 0));
+        c.setTotalCarbohidratos(obj.optDouble("totalCarbohidratos", 0));
+        c.setTotalGrasas(obj.optDouble("totalGrasas", 0));
+        c.setUsuarioId(obj.optInt("usuarioId", -1));
+        return c;
+    }
+
+    public static List<Comida> parseListaComidas(String json) throws JSONException {
+        JSONArray arr = new JSONArray(json);
+        List<Comida> list = new ArrayList<>();
+        for (int i = 0; i < arr.length(); i++) {
+            list.add(parseComida(arr.getJSONObject(i)));
+        }
+        return list;
+    }
+
+    // ALIMENTO COMIDA
+
+    public static AlimentoComida parseAlimentoComida(JSONObject obj) throws JSONException {
+        AlimentoComida ac = new AlimentoComida();
+        ac.setId(obj.optInt("id", -1));
+        ac.setComidaId(obj.optInt("comidaId", -1));
+        ac.setAlimentoId(obj.optInt("alimentoId", -1));
+        ac.setNombreAlimento(safeStr(obj, "nombreAlimento"));
+        ac.setCategoriaAlimento(safeStr(obj, "categoriaAlimento"));
+        ac.setCantidadGramos(obj.optDouble("cantidadGramos", 0));
+        ac.setCaloriasTotales(obj.optInt("caloriasTotales", 0));
+        ac.setProteinasTotales(obj.optDouble("proteinasTotales", 0));
+        ac.setCarbohidratosTotales(obj.optDouble("carbohidratosTotales", 0));
+        ac.setGrasasTotales(obj.optDouble("grasasTotales", 0));
+        return ac;
+    }
+
+    public static List<AlimentoComida> parseListaAlimentosComida(String json) throws JSONException {
+        JSONArray arr = new JSONArray(json);
+        List<AlimentoComida> list = new ArrayList<>();
+        for (int i = 0; i < arr.length(); i++) {
+            list.add(parseAlimentoComida(arr.getJSONObject(i)));
+        }
+        return list;
     }
 
     /**
