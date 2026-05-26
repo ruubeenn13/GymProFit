@@ -75,6 +75,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
             alimentoComida.setCaloriasTotales(caloriasTotales);
 
             AlimentoComida alimentoComidaGuardado = alimentoComidaRepository.save(alimentoComida);
+            recalcularTotalesComida(comida);
 
             return alimentoComidaMapper.toDTO(alimentoComidaGuardado);
         } catch (NotFoundEntityException | DuplicateEntityException e) {
@@ -106,6 +107,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
             alimentoComida.setCaloriasTotales(caloriasTotales);
 
             AlimentoComida alimentoComidaActualizado = alimentoComidaRepository.save(alimentoComida);
+            recalcularTotalesComida(comida);
 
             return alimentoComidaMapper.toDTO(alimentoComidaActualizado);
         } catch (NotFoundEntityException e) {
@@ -123,8 +125,10 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         AlimentoComida alimentoComida = alimentoComidaRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("El alimento-comida con id " + id + " no existe"));
 
+        Comida comida = alimentoComida.getComida();
         try {
             alimentoComidaRepository.delete(alimentoComida);
+            recalcularTotalesComida(comida);
 
             logger.info("Alimento-comida con id {} eliminado correctamente", id);
         } catch (Exception e) {
@@ -225,23 +229,47 @@ public class AlimentoComidaService implements IAlimentoComidaService {
                 alimentoComida.setCaloriasTotales(patchDTO.getCaloriasTotales());
             }
 
-            return alimentoComidaMapper.toDTO(alimentoComidaRepository.save(alimentoComida));
+            AlimentoComida saved = alimentoComidaRepository.save(alimentoComida);
+            recalcularTotalesComida(saved.getComida());
+            return alimentoComidaMapper.toDTO(saved);
         } catch (Exception e) {
             throw new UpdateEntityException(AlimentoComida.class.getSimpleName(), id, e);
         }
     }
 
     private Integer calcularCalorias(Alimento alimento, BigDecimal cantidadGramos) {
-        if (alimento.getCalorias() == null || alimento.getPorcionGramos() == null || cantidadGramos == null) {
+        if (alimento.getCalorias() == null || cantidadGramos == null) {
             return 0;
         }
+        return (int) Math.round((alimento.getCalorias() * cantidadGramos.doubleValue()) / 100.0);
+    }
 
-        double calorias = alimento.getCalorias();
-        double porcion = alimento.getPorcionGramos();
-        double cantidad = cantidadGramos.doubleValue();
+    private void recalcularTotalesComida(Comida comida) {
+        List<AlimentoComida> items = alimentoComidaRepository.findByComidaId(comida.getId());
+        int totalCal = 0;
+        BigDecimal totalProt = BigDecimal.ZERO;
+        BigDecimal totalCarb = BigDecimal.ZERO;
+        BigDecimal totalGras = BigDecimal.ZERO;
 
-        double caloriasTotales = (calorias * cantidad) / porcion;
+        for (AlimentoComida item : items) {
+            if (item.getCaloriasTotales() != null) totalCal += item.getCaloriasTotales();
+            Alimento a = item.getAlimento();
+            if (a != null && item.getCantidadGramos() != null) {
+                BigDecimal cantidad = item.getCantidadGramos();
+                BigDecimal cien = BigDecimal.valueOf(100);
+                if (a.getProteinas() != null)
+                    totalProt = totalProt.add(a.getProteinas().multiply(cantidad).divide(cien, 2, java.math.RoundingMode.HALF_UP));
+                if (a.getCarbohidratos() != null)
+                    totalCarb = totalCarb.add(a.getCarbohidratos().multiply(cantidad).divide(cien, 2, java.math.RoundingMode.HALF_UP));
+                if (a.getGrasas() != null)
+                    totalGras = totalGras.add(a.getGrasas().multiply(cantidad).divide(cien, 2, java.math.RoundingMode.HALF_UP));
+            }
+        }
 
-        return (int) Math.round(caloriasTotales);
+        comida.setTotalCalorias(totalCal);
+        comida.setTotalProteinas(totalProt);
+        comida.setTotalCarbohidratos(totalCarb);
+        comida.setTotalGrasas(totalGras);
+        comidaRepository.save(comida);
     }
 }

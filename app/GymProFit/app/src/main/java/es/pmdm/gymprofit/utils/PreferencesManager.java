@@ -25,6 +25,9 @@ public class PreferencesManager {
     private static final String KEY_AGUA = "agua_diaria";
     private static final String KEY_ONBOARDING = "onboarding_completado";
     private static final String KEY_ROL = "usuario_rol";
+    private static final String KEY_PESO   = "usuario_peso";
+    private static final String KEY_ALTURA = "usuario_altura";
+    private static final String KEY_EDAD   = "usuario_edad";
 
     private SharedPreferences prefs;
     private SharedPreferences.Editor editor;
@@ -92,4 +95,13 @@ public class PreferencesManager {
     public void saveRol(String rol) { editor.putString(KEY_ROL, rol); editor.apply(); }
     public String getRol() { return prefs.getString(KEY_ROL, "ROLE_USER"); }
     public boolean isAdmin() { return "ROLE_ADMIN".equals(getRol()); }
+
+    public void savePeso(double peso)     { editor.putFloat(KEY_PESO, (float) peso); editor.apply(); }
+    public double getPeso()               { return prefs.getFloat(KEY_PESO, 70.0f); }
+
+    public void saveAltura(double altura) { editor.putFloat(KEY_ALTURA, (float) altura); editor.apply(); }
+    public double getAltura()             { return prefs.getFloat(KEY_ALTURA, 170.0f); }
+
+    public void saveEdad(int edad)        { editor.putInt(KEY_EDAD, edad); editor.apply(); }
+    public int getEdad()                  { return prefs.getInt(KEY_EDAD, 25); }
 }

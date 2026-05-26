@@ -104,10 +104,18 @@
     <string name="nutricion_carbohidratos">Carbs</string>
     <string name="nutricion_grasas">Fats</string>
     <string name="nutricion_desayuno">Breakfast</string>
+    <string name="nutricion_almuerzo">Mid-morning</string>
     <string name="nutricion_comida">Lunch</string>
+    <string name="nutricion_merienda">Snack</string>
     <string name="nutricion_cena">Dinner</string>
     <string name="nutricion_agregar">Add meal</string>
     <string name="nutricion_proximamente">Feature coming soon</string>
+    <string name="comida_eliminar_titulo">Confirm deletion</string>
+    <string name="comida_eliminar_confirmar">Remove food from meal</string>
+    <string name="comida_sin_alimentos">No foods logged</string>
+    <string name="comida_editar_cantidad">Edit quantity</string>
+    <string name="comida_desactivar_alimento">Deactivate food</string>
+    <string name="comida_eliminar_de_comida">Remove</string>
 
     <!-- PROFILE -->
     <string name="perfil_mi_perfil">My profile</string>
@@ -329,6 +337,17 @@
     <string name="admin_desactivar">Deactivate</string>
     <string name="admin_estado_activo">Active</string>
     <string name="admin_estado_inactivo">Inactive</string>
+    <string name="admin_gestionar_alimentos">Food management</string>
+    <string name="admin_alimentos_titulo">Food management</string>
+    <string name="admin_alimentos_buscar_hint">Search food…</string>
+    <string name="admin_alimentos_filtro_categoria">Category</string>
+    <string name="admin_exito_toggle_alimento">Status updated</string>
+    <string name="admin_editar_alimento_titulo">Edit food</string>
+    <string name="admin_alimentos_campo_nombre">Name</string>
+    <string name="admin_alimentos_campo_calorias">Calories / 100 g</string>
+    <string name="admin_alimentos_campo_proteinas">Protein (g)</string>
+    <string name="admin_alimentos_campo_carbohidratos">Carbohydrates (g)</string>
+    <string name="admin_alimentos_campo_grasas">Fat (g)</string>
 
     <!-- PROFILE — activities -->
     <string name="perfil_mis_actividades">My activities</string>
@@ -428,4 +447,30 @@
     <string name="editar_rutina_anadir_ejercicio">Add exercise</string>
     <string name="editar_rutina_eliminar_ejercicio">Remove this exercise from the routine?</string>
     <string name="editar_rutina_ejercicios_fmt">Exercises (%d)</string>
+
+    <!-- ANADIR ALIMENTO -->
+    <string name="anadir_alimento_titulo">Add food</string>
+    <string name="anadir_alimento_buscar_hint">Search food…</string>
+    <string name="anadir_alimento_crear">Create food</string>
+    <string name="anadir_alimento_gramos_hint">Amount (g)</string>
+    <string name="anadir_alimento_preview">%1$d kcal | %2$.1fg prot | %3$.1fg carbs | %4$.1fg fat</string>
+    <string name="btn_anadir">Add</string>
+    <string name="btn_volver">Back</string>
+
+    <!-- CREAR ALIMENTO -->
+    <string name="crear_alimento_titulo">Create food</string>
+    <string name="crear_alimento_nombre_hint">Food name</string>
+    <string name="crear_alimento_calorias_hint">Calories (per 100g)</string>
+    <string name="crear_alimento_calorias_hint_ml">Calories (per 100ml)</string>
+    <string name="crear_alimento_proteinas_hint">Protein (g, optional)</string>
+    <string name="crear_alimento_carbos_hint">Carbohydrates (g, optional)</string>
+    <string name="crear_alimento_grasas_hint">Fat (g, optional)</string>
+    <string name="crear_alimento_guardar">Save food</string>
+    <string name="crear_alimento_nombre_requerido">Name is required</string>
+    <string name="crear_alimento_calorias_requeridas">Calories are required</string>
+    <string name="crear_alimento_categoria_label">Category</string>
+    <string name="alimento_editar">Edit food</string>
+    <string name="alimento_eliminar">Delete food</string>
+    <string name="alimento_eliminar_confirmar">Delete this food from your list? It will be deactivated.</string>
+    <string name="alimento_desactivar_confirmar">Deactivate this food? It will no longer appear in searches.</string>
 </resources>

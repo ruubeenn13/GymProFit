@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -125,7 +126,7 @@ public class AlimentoController {
         Map<String, Object> respuesta = new HashMap<>();
 
         try {
-            alimentoService.deleteById(id);
+            alimentoService.activateById(id);
 
             respuesta.put("mensaje", "Alimento activado con ÉXITO");
         } catch (Exception e) {
@@ -182,6 +183,19 @@ public class AlimentoController {
         }
 
         return ResponseEntity.ok(alimentos);
+    }
+
+    public static final List<String> CATEGORIAS = Arrays.asList(
+            "Carnes y aves", "Pescado y marisco", "Huevos", "Lácteos", "Legumbres",
+            "Cereales y pan", "Frutas", "Verduras", "Frutos secos", "Aceites y grasas",
+            "Bebidas", "Suplementos", "Snacks", "Otro"
+    );
+
+    @Operation(summary = "Devuelve la lista canónica de categorías de alimentos")
+    @ApiResponse(responseCode = "200", description = "Lista de categorías")
+    @GetMapping("/alimentos/categorias")
+    public ResponseEntity<List<String>> obtenerCategorias() {
+        return ResponseEntity.ok(CATEGORIAS);
     }
 
     @Operation(summary = "Busca alimentos por categoría")
@@ -292,6 +306,16 @@ public class AlimentoController {
         respuesta.put("categoria", categoria);
 
         return ResponseEntity.ok(respuesta);
+    }
+
+    @Operation(summary = "Obtiene los alimentos de un usuario")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Alimentos del usuario",
+                    content = @Content(schema = @Schema(implementation = AlimentoDTO.class)))
+    })
+    @GetMapping("/alimentos/usuario/{usuarioId}")
+    public ResponseEntity<List<AlimentoDTO>> obtenerAlimentosPorUsuario(@PathVariable Integer usuarioId) {
+        return ResponseEntity.ok(alimentoService.findByUsuarioId(usuarioId));
     }
 
     @Operation(summary = "Actualiza parcialmente un alimento")

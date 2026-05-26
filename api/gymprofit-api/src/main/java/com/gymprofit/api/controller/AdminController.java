@@ -3,8 +3,10 @@ package com.gymprofit.api.controller;
 import com.gymprofit.api.dto.admin.AdminEstadisticasDTO;
 import com.gymprofit.api.dto.admin.AdminRutinaDTO;
 import com.gymprofit.api.dto.admin.AdminUsuarioDTO;
+import com.gymprofit.api.dto.jooq.AlimentoJooqDTO;
 import com.gymprofit.api.dto.jooq.EjercicioJooqDTO;
 import com.gymprofit.api.exceptions.Response;
+import com.gymprofit.api.repository.jooq.alimento.IAlimentoJooqRepository;
 import com.gymprofit.api.repository.jooq.ejercicio.IEjercicioJooqRepository;
 import com.gymprofit.api.repository.jooq.rutina.IAdminRutinaJooqRepository;
 import com.gymprofit.api.service.usuario.IUsuarioService;
@@ -31,6 +33,7 @@ public class AdminController {
     private final IUsuarioService usuarioService;
     private final IAdminRutinaJooqRepository adminRutinaJooqRepository;
     private final IEjercicioJooqRepository ejercicioJooqRepository;
+    private final IAlimentoJooqRepository alimentoJooqRepository;
 
     // ─── Usuarios ────────────────────────────────────────────────────────────
 
@@ -110,6 +113,21 @@ public class AdminController {
 
         return ResponseEntity.ok(
                 ejercicioJooqRepository.busquedaAdmin(nombre, grupoMuscular, dificultad, activo));
+    }
+
+    // ─── Alimentos ────────────────────────────────────────────────────────────
+
+    @Operation(summary = "Búsqueda de alimentos con filtros incluyendo inactivos (ADMIN)")
+    @ApiResponse(responseCode = "200", description = "Alimentos encontrados",
+            content = @Content(schema = @Schema(implementation = AlimentoJooqDTO.class)))
+    @GetMapping("/alimentos/busqueda")
+    public ResponseEntity<List<AlimentoJooqDTO>> buscarAlimentosAdmin(
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) String categoria,
+            @RequestParam(required = false) Boolean activo) {
+
+        return ResponseEntity.ok(
+                alimentoJooqRepository.busquedaAdmin(nombre, categoria, activo));
     }
 
     // ─── Estadísticas ─────────────────────────────────────────────────────────

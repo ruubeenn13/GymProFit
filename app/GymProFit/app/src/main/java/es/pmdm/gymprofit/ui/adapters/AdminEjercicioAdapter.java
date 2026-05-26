@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,10 +13,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.Chip;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
+import es.pmdm.gymprofit.utils.UIHelper;
 
 public class AdminEjercicioAdapter extends RecyclerView.Adapter<AdminEjercicioAdapter.ViewHolder> {
 
@@ -68,23 +69,18 @@ public class AdminEjercicioAdapter extends RecyclerView.Adapter<AdminEjercicioAd
         }
 
         h.btnAcciones.setOnClickListener(v -> {
-            PopupMenu popup = new PopupMenu(ctx, v);
-            popup.getMenu().add(0, 1, 0, ctx.getString(R.string.admin_editar_ejercicio_titulo));
-            popup.getMenu().add(0, 2, 0, e.isActivo()
-                    ? ctx.getString(R.string.admin_desactivar)
-                    : ctx.getString(R.string.admin_activar));
-
-            popup.setOnMenuItemClickListener(item -> {
-                int pos = h.getAdapterPosition();
-                if (pos == RecyclerView.NO_ID) return false;
-                if (item.getItemId() == 1) {
-                    listener.onEditar(items.get(pos), pos);
-                } else if (item.getItemId() == 2) {
-                    listener.onToggleActivo(items.get(pos), pos);
-                }
-                return true;
-            });
-            popup.show();
+            int pos = h.getAdapterPosition();
+            if (pos == RecyclerView.NO_POSITION) return;
+            Ejercicio current = items.get(pos);
+            List<UIHelper.MenuAction> actions = new ArrayList<>();
+            actions.add(new UIHelper.MenuAction(R.drawable.ic_edit,
+                    ctx.getString(R.string.admin_editar_ejercicio_titulo),
+                    () -> listener.onEditar(current, pos)));
+            actions.add(new UIHelper.MenuAction(
+                    current.isActivo() ? R.drawable.ic_visibility_off : R.drawable.ic_check,
+                    current.isActivo() ? ctx.getString(R.string.admin_desactivar) : ctx.getString(R.string.admin_activar),
+                    () -> listener.onToggleActivo(current, pos)));
+            UIHelper.mostrarBottomMenu(ctx, null, actions);
         });
     }
 

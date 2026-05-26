@@ -53,6 +53,9 @@ public class OnboardingResumenActivity extends AppCompatActivity {
         String objetivo  = extras.getString("objetivo", CalculadoraNutricional.OBJETIVO_MANTENER_PESO);
 
         double peso = Double.parseDouble(pesoStr.replace(",", "."));
+        prefs.savePeso(peso);
+        prefs.saveAltura(altura);
+        prefs.saveEdad(edad);
         boolean esHombre = "HOMBRE".equals(sexo);
 
         ResultadoNutricional resultado = CalculadoraNutricional.calcular(

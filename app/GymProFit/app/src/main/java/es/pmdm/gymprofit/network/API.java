@@ -281,6 +281,76 @@ public class API {
         UtilREST.request(BASE + "ejercicios/" + id, "PATCH", body.toString(), l);
     }
 
+    // ── NUTRICION ─────────────────────────────────────────────────────────────
+
+    public static void getAlimentosActivos(UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "alimentos/activos", "GET", null, l);
+    }
+
+    public static void buscarAlimentosPorNombre(String nombre, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "alimentos/nombre/" + encode(nombre), "GET", null, l);
+    }
+
+    public static void getAlimentosDeUsuario(int usuarioId, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "alimentos/usuario/" + usuarioId, "GET", null, l);
+    }
+
+    public static void getCategorias(UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "alimentos/categorias", "GET", null, l);
+    }
+
+    public static void crearAlimento(JSONObject body, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "alimentos", "POST", body.toString(), l);
+    }
+
+    public static void getComidasDeUsuarioFecha(int usuarioId, String fecha, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "comidas/usuario/" + usuarioId + "/fecha/" + encode(fecha), "GET", null, l);
+    }
+
+    public static void crearComida(JSONObject body, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "comidas", "POST", body.toString(), l);
+    }
+
+    public static void eliminarComida(int id, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "comidas/" + id, "DELETE", null, l);
+    }
+
+    public static void getAlimentosDeComida(int comidaId, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "alimentos-comida/comida/" + comidaId, "GET", null, l);
+    }
+
+    public static void anadirAlimentoAComida(JSONObject body, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "alimentos-comida", "POST", body.toString(), l);
+    }
+
+    public static void eliminarAlimentoDeComida(int id, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "alimentos-comida/" + id, "DELETE", null, l);
+    }
+
+    public static void patchAlimentoComida(int id, JSONObject body, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "alimentos-comida/" + id, "PATCH", body.toString(), l);
+    }
+
+    public static void adminBuscarAlimentos(String nombre, String categoria, Boolean activo, UtilREST.OnResponseListener l) {
+        StringBuilder url = new StringBuilder(BASE + "admin/alimentos/busqueda?");
+        if (nombre != null && !nombre.isEmpty()) url.append("nombre=").append(encode(nombre)).append("&");
+        if (categoria != null && !categoria.isEmpty()) url.append("categoria=").append(encode(categoria)).append("&");
+        if (activo != null) url.append("activo=").append(activo);
+        UtilREST.request(url.toString(), "GET", null, l);
+    }
+
+    public static void adminToggleActivoAlimento(int id, boolean activar, UtilREST.OnResponseListener l) {
+        if (activar) {
+            UtilREST.request(BASE + "alimentos/" + id + "/activar", "PUT", null, l);
+        } else {
+            UtilREST.request(BASE + "alimentos/" + id, "DELETE", null, l);
+        }
+    }
+
+    public static void adminPatchAlimento(int id, JSONObject body, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "alimentos/" + id, "PATCH", body.toString(), l);
+    }
+
     // ── UTIL ──────────────────────────────────────────────────────────────────
 
     private static String encode(String value) {

@@ -11,11 +11,13 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface AlimentoMapper {
 
+    @Mapping(source = "usuario.id", target = "usuarioId")
     AlimentoDTO toDTO(Alimento alimento);
 
     List<AlimentoDTO> toDTOList(List<Alimento> alimentos);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "activo", ignore = true)
+    @Mapping(target = "usuario", ignore = true)
     Alimento toEntity(AlimentoCreateDTO alimentoCreateDTO);
 }

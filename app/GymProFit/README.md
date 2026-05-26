@@ -87,7 +87,8 @@ es.pmdm.gymprofit/
 │   ├── sesion/        # SesionEntrenamiento.java
 │   ├── logro/         # Logro.java, UsuarioLogro.java
 │   ├── medicion/      # MedicionCorporal.java
-│   └── objetivo/      # ObjetivoPersonal.java
+│   ├── objetivo/      # ObjetivoPersonal.java
+│   └── alimento/      # Alimento.java, Comida.java, AlimentoComida.java
 ├── network/
 │   ├── UtilREST.java          # Motor HTTP
 │   ├── UtilJSONParser.java    # Parser JSON
@@ -123,12 +124,13 @@ HomeActivity (navegación inferior)
   │     ├── CrearRutinaActivity → AnadirEjerciciosActivity → ResumenCrearRutinaActivity
   │     └── DetalleRutinaActivity → EditarRutinaActivity
   │           └── (click ejercicio) → DetalleEjercicioActivity
-  ├── NutricionActivity
+  ├── NutricionActivity → ComidaActivity → AnadirAlimentoActivity → CrearAlimentoActivity
   └── PerfilActivity → EditarPerfilActivity
         ├── SesionesActivity → RegistrarSesionActivity → ResumenSesionActivity
         ├── MedicionesActivity → RegistrarMedicionActivity
         ├── LogrosActivity
         └── AdminActivity  (solo ROLE_ADMIN)
+              └── AdminAlimentosActivity
 ```
 
 ---
@@ -150,7 +152,11 @@ HomeActivity (navegación inferior)
 | `ResumenCrearRutinaActivity` | Paso 3/3: revisión + POST /rutinas + POST /rutinas-ejercicios × N |
 | `DetalleRutinaActivity` | Vista readonly. Botón editar visible solo si es rutina propia |
 | `EditarRutinaActivity` | PATCH nombre/desc/nivel/duración + añadir/eliminar ejercicios |
-| `NutricionActivity` | Calculadora macros y agua (resultado del onboarding) |
+| `NutricionActivity` | Rediseñada: objetivos dinámicos en `onResume` (CalculadoraNutricional con datos frescos del perfil), barras de progreso consumido vs objetivo (rojo si supera), 5 cards de comida (DESAYUNO..CENA) → ComidaActivity |
+| `ComidaActivity` | Log diario de una comida: header con totales (calorías/macros), RecyclerView AlimentoComidaAdapter, FAB → AnadirAlimentoActivity, long-press → BottomSheet contextual (editar cantidad / desactivar / eliminar) |
+| `AnadirAlimentoActivity` | SearchView local sobre alimentos activos; click → dialog gramos + preview macros en tiempo real → POST /alimentos-comida (crea comida primero si no existe); long-press en alimento propio → BottomSheet editar/eliminar; botón "Crear alimento" |
+| `CrearAlimentoActivity` | Formulario alimento propio (nombre, categoría Spinner, calorías, proteínas, carbos, grasas). POST /alimentos con usuarioId. setResult al caller |
+| `AdminAlimentosActivity` | Gestión admin de alimentos: búsqueda, filtros categoría/estado, toggle activo, editar via dialog. Acceso desde AdminActivity (solo ROLE_ADMIN) |
 | `PerfilActivity` | Datos reales de la API + resumen de última medición corporal (peso/altura). Hereda de `BaseActivity` |
 | `EditarPerfilActivity` | PATCH /usuarios/{id}. Campos vacíos → null en BD |
 | `SesionesActivity` | Historial de sesiones, eliminar |
@@ -195,9 +201,13 @@ UIHelper.mostrarToastError(ctx, msg)
 UIHelper.mostrarToastInfo(ctx, msg)
 UIHelper.mostrarDialogo(ctx, titulo, msg, runnable)
 UIHelper.mostrarDialogoConIcono(ctx, titulo, msg, R.drawable.ic_delete, runnable)
+// BottomSheetDialog estilizado (reemplaza PopupMenu):
+UIHelper.mostrarBottomMenu(ctx, titulo_nullable, List<UIHelper.MenuAction>)
+// MenuAction(iconRes, label, destructive, action) — destructive=true → colorError
 ```
 
 Diálogos: ancho = 90% de la pantalla. Icono papelera: `@drawable/ic_delete` (color `?attr/colorError`).
+`mostrarBottomMenu`: Material 3 BottomSheetDialog con iconos tintados; items con `destructive=true` usan `colorError`.
 
 ### `NotificationHelper`
 
@@ -293,6 +303,16 @@ implementation libs.constraintlayout
 ---
 
 ## Changelog
+
+### 2026-05-26 — Nutrición completa, BottomSheet menus, admin alimentos
+- **NutricionActivity rediseño**: objetivos calculados en `onResume` con datos frescos del perfil (`CalculadoraNutricional`). Barras de progreso consumido vs objetivo: si se supera cualquier macro → `colorError` (rojo estilo Fitia). 5 cards de comida (DESAYUNO, ALMUERZO, COMIDA, MERIENDA, CENA) → `ComidaActivity`
+- **ComidaActivity**: log diario de una comida. Header con totales calorías/macros. RecyclerView `AlimentoComidaAdapter`. FAB → `AnadirAlimentoActivity`. Long-press → BottomSheet contextual (editar cantidad / desactivar admin / eliminar)
+- **AnadirAlimentoActivity**: SearchView local sobre alimentos activos. Click → dialog gramos + preview macros en tiempo real → `POST /alimentos-comida` (crea comida antes si no existe para ese tipo+día). Long-press en alimento propio → BottomSheet editar/eliminar/desactivar. Botón "Crear alimento" → `CrearAlimentoActivity`
+- **CrearAlimentoActivity**: formulario alimento propio (nombre, categoría Spinner, calorías, proteínas, carbos, grasas). `POST /alimentos` con `usuarioId`. `setResult(RESULT_OK)` al caller
+- **AdminAlimentosActivity**: lista alimentos activos+inactivos. SearchView + filtros categoría/estado. BottomSheet: toggle activo + editar (dialog). Acceso desde `AdminActivity` (nuevo botón)
+- **BottomSheetDialog menus**: `UIHelper.MenuAction` + `UIHelper.mostrarBottomMenu()` — elimina todos los `PopupMenu` del proyecto. 8 archivos afectados: `BaseActivity`, `AnadirAlimentoActivity`, `ComidaActivity`, `RutinasActivity`, `AdminAlimentoAdapter`, `AdminUsuarioAdapter`, `AdminRutinaAdapter`, `AdminEjercicioAdapter`
+- **API.java**: 13 nuevos métodos para nutrición (alimentos, comidas, alimentos-comida)
+- **UtilJSONParser.java**: parsers para Alimento, Comida, AlimentoComida
 
 ### 2026-05-26 — Foto de perfil, fix BottomNav dark mode
 - **Foto de perfil en PerfilActivity**: avatar clickable (`FrameLayout` 72dp + `ShapeableImageView` 64dp circular + badge edición). Launchers: galería (`GetContent`, sin permisos) + cámara (`TakePicture`, solicita `CAMERA`). `FileProvider` en manifest para URI de cámara. `UtilREST.uploadMultipart()` + `API.uploadFotoPerfil()` — `POST /usuarios/{id}/foto`. Carga foto en `onResume` con `GET /usuarios/{id}/foto`

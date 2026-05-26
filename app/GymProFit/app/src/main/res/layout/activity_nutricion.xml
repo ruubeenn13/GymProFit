@@ -108,6 +108,7 @@
                                         android:textColor="?attr/colorOnPrimary" />
 
                                     <TextView
+                                        android:id="@+id/tvCaloriasObjetivo"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginStart="6dp"
@@ -186,6 +187,7 @@
                                 android:alpha="0.6" />
 
                             <TextView
+                                android:id="@+id/tvProteinasActuales"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
@@ -195,6 +197,7 @@
                                 android:textColor="?attr/colorOnSurface" />
 
                             <ProgressBar
+                                android:id="@+id/progressProteinas"
                                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                                 android:layout_width="match_parent"
                                 android:layout_height="4dp"
@@ -232,6 +235,7 @@
                                 android:alpha="0.6" />
 
                             <TextView
+                                android:id="@+id/tvCarbosActuales"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
@@ -241,6 +245,7 @@
                                 android:textColor="?attr/colorOnSurface" />
 
                             <ProgressBar
+                                android:id="@+id/progressCarbos"
                                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                                 android:layout_width="match_parent"
                                 android:layout_height="4dp"
@@ -277,6 +282,7 @@
                                 android:alpha="0.6" />
 
                             <TextView
+                                android:id="@+id/tvGrasasActuales"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
@@ -286,6 +292,7 @@
                                 android:textColor="?attr/colorOnSurface" />
 
                             <ProgressBar
+                                android:id="@+id/progressGrasas"
                                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                                 android:layout_width="match_parent"
                                 android:layout_height="4dp"
@@ -344,6 +351,63 @@
                                 android:textColor="?attr/colorOnSurface" />
 
                             <TextView
+                                android:id="@+id/tvSubDesayuno"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="3dp"
+                                android:text="@string/sin_registrar"
+                                android:textSize="13sp"
+                                android:textColor="?attr/colorOnSurface"
+                                android:alpha="0.5" />
+
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_add"
+                            android:contentDescription="@string/nutricion_agregar" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Card Almuerzo -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardAlmuerzo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="?attr/colorSurface">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="16dp"
+                        android:gravity="center_vertical">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/nutricion_almuerzo"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:textColor="?attr/colorOnSurface" />
+
+                            <TextView
+                                android:id="@+id/tvSubAlmuerzo"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="3dp"
@@ -399,6 +463,63 @@
                                 android:textColor="?attr/colorOnSurface" />
 
                             <TextView
+                                android:id="@+id/tvSubComida"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="3dp"
+                                android:text="@string/sin_registrar"
+                                android:textSize="13sp"
+                                android:textColor="?attr/colorOnSurface"
+                                android:alpha="0.5" />
+
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_add"
+                            android:contentDescription="@string/nutricion_agregar" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Card Merienda -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardMerienda"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="?attr/colorSurface">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="16dp"
+                        android:gravity="center_vertical">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/nutricion_merienda"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:textColor="?attr/colorOnSurface" />
+
+                            <TextView
+                                android:id="@+id/tvSubMerienda"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="3dp"
@@ -454,6 +575,7 @@
                                 android:textColor="?attr/colorOnSurface" />
 
                             <TextView
+                                android:id="@+id/tvSubCena"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="3dp"

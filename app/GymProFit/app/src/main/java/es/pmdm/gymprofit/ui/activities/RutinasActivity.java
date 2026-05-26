@@ -2,12 +2,10 @@ package es.pmdm.gymprofit.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,8 +15,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -147,72 +143,48 @@ public class RutinasActivity extends BaseActivity {
     }
 
     private void mostrarMenuContextual(Rutina rutina, View anchorView) {
-        PopupMenu popup = new PopupMenu(this, anchorView);
-        popup.inflate(R.menu.menu_rutina_context);
+        List<UIHelper.MenuAction> actions = new ArrayList<>();
 
-        MenuItem itemDesactivar = popup.getMenu().findItem(R.id.menuDesactivar);
-        MenuItem itemEliminar   = popup.getMenu().findItem(R.id.menuEliminar);
+        actions.add(new UIHelper.MenuAction(R.drawable.ic_edit, getString(R.string.rutinas_editar), () -> {
+            if (rutina.isPredefinida()) {
+                Intent intent = new Intent(this, EditarRutinaAdminActivity.class);
+                intent.putExtra("id",                  rutina.getId());
+                intent.putExtra("nombre",              rutina.getNombre());
+                intent.putExtra("descripcion",         rutina.getDescripcion());
+                intent.putExtra("nivel",               rutina.getNivel());
+                intent.putExtra("duracionMinutos",     rutina.getDuracionMinutos());
+                intent.putExtra("caloriasAproximadas", rutina.getCaloriasAproximadas());
+                intent.putExtra("categoria",           rutina.getCategoria());
+                intent.putExtra("diasSemana",          rutina.getDiasSemana());
+                editarLauncher.launch(intent);
+            } else {
+                Intent intent = new Intent(this, EditarRutinaActivity.class);
+                intent.putExtra("rutinaId",    rutina.getId());
+                intent.putExtra("nombre",      rutina.getNombre());
+                intent.putExtra("descripcion", rutina.getDescripcion());
+                intent.putExtra("nivel",       rutina.getNivel());
+                intent.putExtra("duracion",    rutina.getDuracionMinutos());
+                editarLauncher.launch(intent);
+            }
+        }));
 
         if (rutina.isPredefinida()) {
-            itemEliminar.setVisible(false);
-            if (rutina.isActiva()) {
-                itemDesactivar.setTitle(getString(R.string.rutinas_desactivar));
-                itemDesactivar.setIcon(R.drawable.ic_visibility_off);
-            } else {
-                itemDesactivar.setTitle(getString(R.string.rutinas_activar));
-                itemDesactivar.setIcon(R.drawable.ic_check);
-            }
+            int iconToggle = rutina.isActiva() ? R.drawable.ic_visibility_off : R.drawable.ic_check;
+            String labelToggle = rutina.isActiva()
+                    ? getString(R.string.rutinas_desactivar)
+                    : getString(R.string.rutinas_activar);
+            actions.add(new UIHelper.MenuAction(iconToggle, labelToggle,
+                    () -> toggleActivaRutinaPredefinida(rutina)));
         } else {
-            itemDesactivar.setVisible(false);
+            actions.add(new UIHelper.MenuAction(R.drawable.ic_delete, getString(R.string.rutinas_eliminar), true,
+                    () -> UIHelper.mostrarDialogoConIcono(this,
+                            getString(R.string.rutinas_eliminar),
+                            getString(R.string.rutinas_confirmar_eliminar),
+                            R.drawable.ic_delete,
+                            () -> eliminarRutina(rutina))));
         }
 
-        try {
-            Field field = popup.getClass().getDeclaredField("mPopup");
-            field.setAccessible(true);
-            Object helper = field.get(popup);
-            Method method = helper.getClass().getDeclaredMethod("setForceShowIcon", boolean.class);
-            method.invoke(helper, true);
-        } catch (Exception ignored) {}
-
-        popup.setOnMenuItemClickListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.menuEditar) {
-                if (rutina.isPredefinida()) {
-                    Intent intent = new Intent(this, EditarRutinaAdminActivity.class);
-                    intent.putExtra("id",                  rutina.getId());
-                    intent.putExtra("nombre",              rutina.getNombre());
-                    intent.putExtra("descripcion",         rutina.getDescripcion());
-                    intent.putExtra("nivel",               rutina.getNivel());
-                    intent.putExtra("duracionMinutos",     rutina.getDuracionMinutos());
-                    intent.putExtra("caloriasAproximadas", rutina.getCaloriasAproximadas());
-                    intent.putExtra("categoria",           rutina.getCategoria());
-                    intent.putExtra("diasSemana",          rutina.getDiasSemana());
-                    editarLauncher.launch(intent);
-                } else {
-                    Intent intent = new Intent(this, EditarRutinaActivity.class);
-                    intent.putExtra("rutinaId",    rutina.getId());
-                    intent.putExtra("nombre",      rutina.getNombre());
-                    intent.putExtra("descripcion", rutina.getDescripcion());
-                    intent.putExtra("nivel",       rutina.getNivel());
-                    intent.putExtra("duracion",    rutina.getDuracionMinutos());
-                    editarLauncher.launch(intent);
-                }
-                return true;
-            } else if (id == R.id.menuDesactivar) {
-                toggleActivaRutinaPredefinida(rutina);
-                return true;
-            } else if (id == R.id.menuEliminar) {
-                UIHelper.mostrarDialogoConIcono(this,
-                        getString(R.string.rutinas_eliminar),
-                        getString(R.string.rutinas_confirmar_eliminar),
-                        R.drawable.ic_delete,
-                        () -> eliminarRutina(rutina));
-                return true;
-            }
-            return false;
-        });
-
-        popup.show();
+        UIHelper.mostrarBottomMenu(this, rutina.getNombre(), actions);
     }
 
     private void toggleActivaRutinaPredefinida(Rutina rutina) {
