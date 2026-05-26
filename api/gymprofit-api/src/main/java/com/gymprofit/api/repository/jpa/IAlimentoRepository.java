@@ -24,4 +24,6 @@ public interface IAlimentoRepository extends CrudRepository<Alimento, Integer> {
     Long countByActivoTrue();
 
     Long countByCategoria(String categoria);
+
+    List<Alimento> findByUsuarioId(Integer usuarioId);
 }

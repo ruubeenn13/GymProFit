@@ -4,12 +4,14 @@ import com.gymprofit.api.dto.entity.alimento.AlimentoCreateDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoPatchDTO;
 import com.gymprofit.api.entity.Alimento;
+import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.exceptions.CreateEntityException;
 import com.gymprofit.api.exceptions.DeleteEntityException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.UpdateEntityException;
 import com.gymprofit.api.mappers.AlimentoMapper;
 import com.gymprofit.api.repository.jpa.IAlimentoRepository;
+import com.gymprofit.api.repository.jpa.IUsuarioRepository;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +26,7 @@ public class AlimentoService implements IAlimentoService {
 
     private final IAlimentoRepository alimentoRepository;
     private final AlimentoMapper alimentoMapper;
+    private final IUsuarioRepository usuarioRepository;
     private final Logger logger = LoggerFactory.getLogger(AlimentoService.class);
 
     @Override
@@ -52,6 +55,12 @@ public class AlimentoService implements IAlimentoService {
         try {
             Alimento alimento = alimentoMapper.toEntity(alimentoCreateDTO);
             alimento.setActivo(true);
+
+            if (alimentoCreateDTO.getUsuarioId() != null) {
+                Usuario usuario = usuarioRepository.findById(alimentoCreateDTO.getUsuarioId())
+                        .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + alimentoCreateDTO.getUsuarioId() + " no existe"));
+                alimento.setUsuario(usuario);
+            }
 
             Alimento alimentoGuardado = alimentoRepository.save(alimento);
 
@@ -188,6 +197,15 @@ public class AlimentoService implements IAlimentoService {
         logger.info("Contando alimmentos por categoría: {}", categoria);
 
         return alimentoRepository.countByCategoria(categoria);
+    }
+
+    @Override
+    public List<AlimentoDTO> findByUsuarioId(Integer usuarioId) {
+        logger.info("Buscando alimentos del usuario con id: {}", usuarioId);
+
+        List<Alimento> alimentos = alimentoRepository.findByUsuarioId(usuarioId);
+
+        return alimentoMapper.toDTOList(alimentos);
     }
 
     @Transactional

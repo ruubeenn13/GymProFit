@@ -42,4 +42,5 @@ public class AlimentoCreateDTO implements Serializable {
     private Integer porcionGramos;
 
     private String descripcion;
+    private Integer usuarioId;
 }

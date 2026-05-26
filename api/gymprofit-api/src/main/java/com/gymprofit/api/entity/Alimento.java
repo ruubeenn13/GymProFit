@@ -49,4 +49,8 @@ public class Alimento {
 
     @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
     private Boolean activo;
+
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
 }
