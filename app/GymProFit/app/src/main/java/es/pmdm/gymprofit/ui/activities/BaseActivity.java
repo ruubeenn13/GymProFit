@@ -13,10 +13,12 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.android.material.button.MaterialButton;
 
@@ -53,39 +55,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     private void mostrarMenuOpciones(View anchor) {
-        PopupMenu popup = new PopupMenu(this, anchor);
-        popup.getMenuInflater().inflate(R.menu.menu_opciones, popup.getMenu());
-        try {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                popup.setForceShowIcon(true);
-            } else {
-                java.lang.reflect.Field mPopup = PopupMenu.class.getDeclaredField("mPopup");
-                mPopup.setAccessible(true);
-                Object helper = mPopup.get(popup);
-                java.lang.reflect.Method setForceShowIcon =
-                        helper.getClass().getMethod("setForceShowIcon", boolean.class);
-                setForceShowIcon.invoke(helper, true);
-            }
-        } catch (Exception ignored) {}
-
-        popup.setOnMenuItemClickListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.menu_tema) {
-                mostrarDialogoTema();
-                return true;
-            } else if (id == R.id.menu_idioma) {
-                mostrarDialogoIdioma();
-                return true;
-            } else if (id == R.id.menu_contactanos) {
-                abrirEmailContacto();
-                return true;
-            } else if (id == R.id.menu_cerrar_sesion) {
-                confirmarCerrarSesion();
-                return true;
-            }
-            return false;
-        });
-        popup.show();
+        List<UIHelper.MenuAction> actions = new ArrayList<>();
+        actions.add(new UIHelper.MenuAction(R.drawable.ic_palette,  getString(R.string.perfil_tema),         this::mostrarDialogoTema));
+        actions.add(new UIHelper.MenuAction(R.drawable.ic_language, getString(R.string.perfil_idioma),       this::mostrarDialogoIdioma));
+        actions.add(new UIHelper.MenuAction(R.drawable.ic_email,    getString(R.string.menu_contactanos),    this::abrirEmailContacto));
+        actions.add(new UIHelper.MenuAction(R.drawable.ic_logout,   getString(R.string.perfil_cerrar_sesion), true, this::confirmarCerrarSesion));
+        UIHelper.mostrarBottomMenu(this, null, actions);
     }
 
     private void mostrarDialogoTema() {

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menuEditarAlimento"
+        android:title="@string/alimento_editar"
+        android:icon="@drawable/ic_edit" />
+
+    <item
+        android:id="@+id/menuDesactivarAlimento"
+        android:title="@string/comida_desactivar_alimento"
+        android:icon="@drawable/ic_visibility_off" />
+
+    <item
+        android:id="@+id/menuEliminarAlimento"
+        android:title="@string/alimento_eliminar"
+        android:icon="@drawable/ic_delete" />
+
+</menu>

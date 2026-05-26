@@ -12,6 +12,7 @@ public class AlimentoComida {
     private double proteinasTotales;
     private double carbohidratosTotales;
     private double grasasTotales;
+    private Integer usuarioIdAlimento;
 
     public AlimentoComida() {}
 
@@ -44,4 +45,7 @@ public class AlimentoComida {
 
     public double getGrasasTotales() { return grasasTotales; }
     public void setGrasasTotales(double grasasTotales) { this.grasasTotales = grasasTotales; }
+
+    public Integer getUsuarioIdAlimento() { return usuarioIdAlimento; }
+    public void setUsuarioIdAlimento(Integer usuarioIdAlimento) { this.usuarioIdAlimento = usuarioIdAlimento; }
 }

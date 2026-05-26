@@ -2,19 +2,24 @@ package es.pmdm.gymprofit.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
+import es.pmdm.gymprofit.utils.UIHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -110,7 +115,7 @@ public class ComidaActivity extends BaseActivity {
     }
 
     private void configurarRecyclerView() {
-        adapter = new AlimentoComidaAdapter(listaAlimentos, item -> mostrarDialogoEliminar(item));
+        adapter = new AlimentoComidaAdapter(listaAlimentos, this::mostrarMenuContextual);
         rvAlimentosComida.setLayoutManager(new LinearLayoutManager(this));
         rvAlimentosComida.setAdapter(adapter);
     }
@@ -157,7 +162,15 @@ public class ComidaActivity extends BaseActivity {
 
             @Override
             public void onError(String message, int statusCode) {
-                Log.e(TAG, "Error cargando alimentos: " + message);
+                if (statusCode == 404) {
+                    runOnUiThread(() -> {
+                        listaAlimentos.clear();
+                        adapter.notifyDataSetChanged();
+                        actualizarTotales();
+                    });
+                } else {
+                    Log.e(TAG, "Error cargando alimentos: " + message);
+                }
             }
         });
     }
@@ -182,13 +195,102 @@ public class ComidaActivity extends BaseActivity {
         }
     }
 
-    private void mostrarDialogoEliminar(AlimentoComida item) {
+    private void mostrarMenuContextual(AlimentoComida item, View anchorView) {
+        boolean esAdmin = "ROLE_ADMIN".equals(prefsManager.getRol());
+        boolean esPredefinido = item.getUsuarioIdAlimento() == null;
+
+        List<UIHelper.MenuAction> actions = new ArrayList<>();
+        actions.add(new UIHelper.MenuAction(R.drawable.ic_edit, getString(R.string.comida_editar_cantidad),
+                () -> mostrarDialogoEditarCantidad(item)));
+        if (esAdmin && esPredefinido) {
+            actions.add(new UIHelper.MenuAction(R.drawable.ic_visibility_off, getString(R.string.comida_desactivar_alimento),
+                    () -> UIHelper.mostrarDialogoConIcono(ComidaActivity.this,
+                            getString(R.string.comida_desactivar_alimento),
+                            getString(R.string.alimento_desactivar_confirmar),
+                            R.drawable.ic_visibility_off,
+                            () -> desactivarAlimento(item))));
+        }
+        actions.add(new UIHelper.MenuAction(R.drawable.ic_delete, getString(R.string.comida_eliminar_de_comida), true,
+                () -> UIHelper.mostrarDialogoConIcono(ComidaActivity.this,
+                        getString(R.string.comida_eliminar_titulo),
+                        getString(R.string.comida_eliminar_confirmar),
+                        R.drawable.ic_delete,
+                        () -> eliminarAlimento(item))));
+        UIHelper.mostrarBottomMenu(this, item.getNombreAlimento(), actions);
+    }
+
+    private void mostrarDialogoEditarCantidad(AlimentoComida item) {
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_gramos, null);
+        EditText etGramos = dialogView.findViewById(R.id.etGramos);
+        TextView tvPreview = dialogView.findViewById(R.id.tvPreviewMacros);
+
+        etGramos.setText(String.format(Locale.getDefault(), "%.0f", item.getCantidadGramos()));
+
+        etGramos.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                try {
+                    double g = Double.parseDouble(s.toString());
+                    // Las calorías almacenadas son por 100 g
+                    int kcal = item.getCaloriasTotales() > 0
+                            ? (int) Math.round((item.getCaloriasTotales() / item.getCantidadGramos()) * g)
+                            : 0;
+                    tvPreview.setText(String.format(Locale.getDefault(),
+                            "%d kcal | %.1fg prot | %.1fg carbos | %.1fg grasas",
+                            kcal,
+                            (item.getProteinasTotales() / item.getCantidadGramos()) * g,
+                            (item.getCarbohidratosTotales() / item.getCantidadGramos()) * g,
+                            (item.getGrasasTotales() / item.getCantidadGramos()) * g));
+                } catch (NumberFormatException ignored) {
+                    tvPreview.setText("");
+                }
+            }
+        });
+
         new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.comida_eliminar_titulo))
-                .setMessage(getString(R.string.comida_eliminar_confirmar))
-                .setPositiveButton(getString(R.string.dialog_confirmar), (d, w) -> eliminarAlimento(item))
+                .setTitle(getString(R.string.comida_editar_cantidad))
+                .setView(dialogView)
+                .setPositiveButton(getString(R.string.dialog_confirmar), (d, w) -> {
+                    String texto = etGramos.getText().toString().trim();
+                    if (texto.isEmpty()) return;
+                    try {
+                        double nuevosGramos = Double.parseDouble(texto);
+                        if (nuevosGramos <= 0) return;
+                        JSONObject body = new JSONObject();
+                        body.put("cantidadGramos", nuevosGramos);
+                        API.patchAlimentoComida(item.getId(), body, new UtilREST.OnResponseListener() {
+                            @Override
+                            public void onSuccess(String response, int statusCode) {
+                                runOnUiThread(() -> cargarAlimentos());
+                            }
+                            @Override
+                            public void onError(String message, int statusCode) {
+                                runOnUiThread(() -> UIHelper.mostrarToastError(
+                                        ComidaActivity.this, getString(R.string.error_conexion)));
+                            }
+                        });
+                    } catch (NumberFormatException | JSONException e) {
+                        Log.e(TAG, "Error editando cantidad: " + e.getMessage());
+                    }
+                })
                 .setNegativeButton(getString(R.string.dialog_cancelar), null)
                 .show();
+    }
+
+    private void desactivarAlimento(AlimentoComida item) {
+        API.adminToggleActivoAlimento(item.getAlimentoId(), false, new UtilREST.OnResponseListener() {
+            @Override
+            public void onSuccess(String response, int statusCode) {
+                runOnUiThread(() -> cargarAlimentos());
+            }
+            @Override
+            public void onError(String message, int statusCode) {
+                runOnUiThread(() -> UIHelper.mostrarToastError(
+                        ComidaActivity.this, getString(R.string.error_conexion)));
+            }
+        });
     }
 
     private void eliminarAlimento(AlimentoComida item) {
@@ -197,7 +299,6 @@ public class ComidaActivity extends BaseActivity {
             public void onSuccess(String response, int statusCode) {
                 runOnUiThread(() -> cargarAlimentos());
             }
-
             @Override
             public void onError(String message, int statusCode) {
                 runOnUiThread(() -> UIHelper.mostrarToastError(

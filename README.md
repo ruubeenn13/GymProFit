@@ -162,7 +162,11 @@ Arquitectura 4 capas obligatoria (UD06).
 | `ResumenCrearRutinaActivity` | Paso 3/3: revisión antes de guardar. POST /rutinas + POST /rutinas-ejercicios × N |
 | `DetalleRutinaActivity` | Vista readonly de rutina. Botón editar visible solo si es propia |
 | `EditarRutinaActivity` | PATCH nombre/desc/nivel/duración + añadir/eliminar ejercicios |
-| `NutricionActivity` | Calculadora nutricional (calorías, macros, agua) |
+| `NutricionActivity` | Objetivos dinámicos (CalculadoraNutricional en onResume), barras de progreso consumido vs objetivo (rojo si supera), 5 cards de comida → ComidaActivity |
+| `ComidaActivity` | Log diario de una comida: lista alimentos registrados, totales, FAB añadir |
+| `AnadirAlimentoActivity` | Buscar alimento, seleccionar gramos, preview macros en tiempo real, añadir a comida |
+| `CrearAlimentoActivity` | Crear alimento propio con macros por 100g |
+| `AdminAlimentosActivity` | Gestión admin de alimentos: toggle activo, editar (solo ROLE_ADMIN) |
 | `PerfilActivity` | Perfil con datos reales de la API. Config tema/idioma + cerrar sesión |
 | `EditarPerfilActivity` | Editar email, peso, altura, edad, nivel, objetivo. PATCH /usuarios/{id} |
 | `SesionesActivity` | Historial de sesiones con opción de eliminar |
@@ -187,9 +191,12 @@ Arquitectura 4 capas obligatoria (UD06).
 | `SesionAdapter` | Sesión con fecha, rutina asociada, duración y calorías |
 | `MedicionAdapter` | Medición con peso, IMC y extras (grasa, músculo) |
 | `LogroAdapter` | Logro con icono emoji, nombre, descripción y check si desbloqueado |
-| `AdminUsuarioAdapter` | Usuario con username, email, chip de rol y chip activo/inactivo (verde/rojo adaptativo al tema). PopupMenu: toggle activo + cambiar rol |
-| `AdminRutinaAdapter` | Rutina predefinida con nombre, descripción, chip nivel, chip activo/inactivo y contador de ejercicios. PopupMenu: toggle activa + editar |
-| `AdminEjercicioAdapter` | Ejercicio con nombre, descripción, chip grupo, chip dificultad y chip activo/inactivo. PopupMenu: toggle activo + editar |
+| `AdminUsuarioAdapter` | Usuario con username, email, chip rol y chip activo/inactivo. BottomSheet: toggle activo + cambiar rol |
+| `AdminRutinaAdapter` | Rutina predefinida con nombre, nivel, estado y contador de ejercicios. BottomSheet: toggle activa + editar |
+| `AdminEjercicioAdapter` | Ejercicio con nombre, grupo, dificultad y chip activo/inactivo. BottomSheet: toggle activo + editar |
+| `AdminAlimentoAdapter` | Alimento con nombre, categoría, calorías, chip activo/inactivo. BottomSheet: toggle activo + editar |
+| `AlimentoAdapter` | Ítem en buscador de AnadirAlimentoActivity: nombre, categoría, macros por 100g |
+| `AlimentoComidaAdapter` | Ítem en ComidaActivity: nombre, gramos, calorías totales, macros |
 
 ---
 
@@ -448,7 +455,13 @@ Abre `app/GymProFit` en Android Studio, sincroniza Gradle y ejecuta en emulador 
 
 | Hash | Descripción |
 |---|---|
-| *(actual)* | feat(android): menú "Contáctanos", rediseño card entrenamientos, fix bottom nav |
+| *(sin commitear)* | feat(android+api): nutrición completa — NutricionActivity macros dinámicos, ComidaActivity log diario, AnadirAlimentoActivity, CrearAlimentoActivity, AdminAlimentosActivity, BottomSheet menus (UIHelper.mostrarBottomMenu reemplaza todos los PopupMenu), API: AlimentoComidaDTO enriquecido con macros totales, admin alimentos jOOQ |
+| `0dc0fb6` | feat(android): ComidaActivity, AlimentoComidaAdapter y layouts nutrición |
+| `e65a817` | feat(android): parsers JSON para Alimento, Comida y AlimentoComida |
+| `05691d7` | feat(android): modelos Alimento/Comida/AlimentoComida y 13 métodos API nutrición |
+| `b0536c5` | feat(android): guardar peso/altura/edad en prefs y recalcular macros al editar perfil |
+| `067f401` | feat(api): jOOQ búsqueda admin alimentos, fix activarAlimento, permisos alimentos |
+| *(anterior)* | feat(android): menú "Contáctanos", rediseño card entrenamientos, fix bottom nav |
 | `43bd0d2` | feat: añadir archivos restantes del anterior commit |
 | `13ef397` | feat(android+api): foto de perfil (galería+cámara, FileProvider, multipart), fix BottomNav dark mode |
 

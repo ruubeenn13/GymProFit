@@ -111,6 +111,10 @@
         <activity
             android:name=".ui.activities.LoginActivity"
             android:exported="false" />
+        <activity android:name=".ui.activities.ComidaActivity" android:exported="false" />
+        <activity android:name=".ui.activities.AnadirAlimentoActivity" android:exported="false" />
+        <activity android:name=".ui.activities.CrearAlimentoActivity" android:exported="false" />
+        <activity android:name=".ui.activities.AdminAlimentosActivity" android:exported="false" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
