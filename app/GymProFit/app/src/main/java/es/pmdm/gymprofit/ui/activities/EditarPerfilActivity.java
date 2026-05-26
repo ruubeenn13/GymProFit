@@ -20,7 +20,9 @@ import es.pmdm.gymprofit.model.usuario.Usuario;
 import es.pmdm.gymprofit.network.API;
 import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
+import es.pmdm.gymprofit.utils.CalculadoraNutricional;
 import es.pmdm.gymprofit.utils.PreferencesManager;
+import es.pmdm.gymprofit.utils.ResultadoNutricional;
 import es.pmdm.gymprofit.utils.UIHelper;
 
 public class EditarPerfilActivity extends AppCompatActivity {
@@ -166,6 +168,22 @@ public class EditarPerfilActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(String response, int statusCode) {
                     runOnUiThread(() -> {
+                        // Guardar datos de perfil en prefs para recálculo de macros
+                        if (!pesoStr.isEmpty()) prefsManager.savePeso(Double.parseDouble(pesoStr.replace(",", ".")));
+                        if (!alturaStr.isEmpty()) prefsManager.saveAltura(Double.parseDouble(alturaStr));
+                        if (!edadStr.isEmpty()) prefsManager.saveEdad(Integer.parseInt(edadStr));
+                        String objetivoSeleccionado = OBJETIVOS[spObjetivo.getSelectedItemPosition()];
+                        prefsManager.saveObjetivo(objetivoSeleccionado);
+
+                        // Recalcular macros con los nuevos datos
+                        double peso = prefsManager.getPeso();
+                        double altura = prefsManager.getAltura();
+                        int edad = prefsManager.getEdad();
+                        boolean esHombre = "HOMBRE".equals(prefsManager.getSexo());
+                        String actividad = prefsManager.getActividad();
+                        ResultadoNutricional r = CalculadoraNutricional.calcular(peso, altura, edad, esHombre, actividad, objetivoSeleccionado);
+                        prefsManager.saveResultadoNutricional(r.calorias, r.proteinas, r.carbohidratos, r.grasas, r.agua);
+
                         UIHelper.mostrarToastExito(EditarPerfilActivity.this,
                                 getString(R.string.editar_perfil_guardado));
                         setResult(RESULT_OK);
