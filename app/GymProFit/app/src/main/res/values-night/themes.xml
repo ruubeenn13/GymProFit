@@ -9,5 +9,6 @@
         <item name="android:colorBackground">#141414</item>
         <item name="android:windowBackground">#141414</item>
         <item name="android:textColorPrimary">#D4D4D4</item>
+        <item name="bottomNavigationStyle">@style/Widget.GymProFit.BottomNavigationView</item>
     </style>
 </resources>

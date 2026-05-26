@@ -18,8 +18,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -260,6 +262,30 @@ public class UsuarioController {
     @PatchMapping("/usuarios/{id}")
     public ResponseEntity<UsuarioDTO> patchUsuario(@PathVariable Integer id, @RequestBody UsuarioPatchDTO patchDTO) {
         return ResponseEntity.ok(usuarioService.patch(id, patchDTO));
+    }
+
+    @Operation(summary = "Sube la foto de perfil de un usuario")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Foto subida correctamente"),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @PostMapping(value = "/usuarios/{id}/foto", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<UsuarioDTO> subirFotoPerfil(@PathVariable Integer id,
+                                                      @RequestParam("foto") MultipartFile foto) {
+        return ResponseEntity.ok(usuarioService.uploadFotoPerfil(id, foto));
+    }
+
+    @Operation(summary = "Obtiene la foto de perfil de un usuario")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Foto encontrada"),
+            @ApiResponse(responseCode = "404", description = "Foto no encontrada",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @GetMapping("/usuarios/{id}/foto")
+    public ResponseEntity<byte[]> getFotoPerfil(@PathVariable Integer id) {
+        byte[] bytes = usuarioService.getFotoPerfil(id);
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(bytes);
     }
 
     @Operation(summary = "Obtiene las estadísticas de entrenamiento de un usuario")

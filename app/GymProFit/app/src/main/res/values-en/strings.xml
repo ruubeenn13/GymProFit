@@ -332,6 +332,13 @@
     <string name="perfil_ver_mediciones">My measurements</string>
     <string name="perfil_ver_logros">My achievements</string>
     <string name="perfil_panel_admin">Admin panel</string>
+    <string name="perfil_cambiar_foto">Change profile picture</string>
+    <string name="perfil_foto_galeria">Choose from gallery</string>
+    <string name="perfil_foto_camara">Take a photo</string>
+    <string name="perfil_foto_subiendo">Uploading photo…</string>
+    <string name="perfil_foto_ok">Photo updated</string>
+    <string name="perfil_foto_error">Error uploading photo</string>
+    <string name="perfil_permiso_camara">Camera permission is required to take photos</string>
 
     <!-- Edit profile -->
     <string name="editar_perfil_titulo">Edit profile</string>

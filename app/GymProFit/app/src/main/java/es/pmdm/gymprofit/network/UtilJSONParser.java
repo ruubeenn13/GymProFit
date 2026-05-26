@@ -62,6 +62,7 @@ public class UtilJSONParser {
         u.setFechaRegistro(parseFecha(obj, "fechaRegistro"));
         u.setActivo(obj.optBoolean("activo", true));
         u.setRol(safeStr(obj, "rol"));
+        u.setFotoPerfil(safeStr(obj, "fotoPerfil"));
         return u;
     }
 

@@ -1,40 +1,59 @@
 package es.pmdm.gymprofit.ui.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import org.json.JSONException;
-
-import java.util.List;
-
-import es.pmdm.gymprofit.model.medicion.MedicionCorporal;
-import es.pmdm.gymprofit.network.UtilJSONParser;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.json.JSONException;
+
+import java.io.File;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.List;
+
+import es.pmdm.gymprofit.BuildConfig;
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.model.medicion.MedicionCorporal;
 import es.pmdm.gymprofit.model.usuario.Usuario;
 import es.pmdm.gymprofit.network.API;
+import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
-import es.pmdm.gymprofit.utils.UIHelper;
 
 public class PerfilActivity extends BaseActivity {
 
     private BottomNavigationView bottomNavigationView;
     private ActivityResultLauncher<Intent> editarPerfilLauncher;
     private ActivityResultLauncher<Intent> medicionesLauncher;
+    private ActivityResultLauncher<String> galleryLauncher;
+    private ActivityResultLauncher<Uri> cameraLauncher;
+    private ActivityResultLauncher<String> cameraPermLauncher;
+    private Uri cameraUri;
     private TextView tvNombreUsuario, tvEmailUsuario;
     private TextView tvInfoNombre, tvInfoEmail;
     private TextView tvInfoNivel, tvInfoPeso, tvInfoAltura, tvInfoEdad, tvInfoObjetivo;
     private TextView tvPesoMedicion, tvAlturaMedicion;
     private LinearLayout llMedicionesResumen;
+    private ImageView ivAvatar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +75,24 @@ public class PerfilActivity extends BaseActivity {
                         int uid = prefsManager.getUsuarioId();
                         if (uid != -1) cargarUltimaMedicion(uid);
                     }
+                }
+        );
+
+        galleryLauncher = registerForActivityResult(
+                new ActivityResultContracts.GetContent(),
+                uri -> { if (uri != null) subirFoto(uri); }
+        );
+
+        cameraLauncher = registerForActivityResult(
+                new ActivityResultContracts.TakePicture(),
+                ok -> { if (ok && cameraUri != null) subirFoto(cameraUri); }
+        );
+
+        cameraPermLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                granted -> {
+                    if (granted) lanzarCamara();
+                    else Toast.makeText(this, R.string.perfil_permiso_camara, Toast.LENGTH_SHORT).show();
                 }
         );
 
@@ -81,6 +118,9 @@ public class PerfilActivity extends BaseActivity {
         tvPesoMedicion = findViewById(R.id.tvPesoMedicion);
         tvAlturaMedicion = findViewById(R.id.tvAlturaMedicion);
         llMedicionesResumen = findViewById(R.id.llMedicionesResumen);
+        ivAvatar = findViewById(R.id.ivAvatar);
+        ivAvatar.getParent().requestChildFocus(ivAvatar, ivAvatar);
+        ((View) ivAvatar.getParent()).setOnClickListener(v -> mostrarDialogoFoto());
     }
 
     private void configurarDatosUsuario() {
@@ -95,6 +135,7 @@ public class PerfilActivity extends BaseActivity {
         if (usuarioId == -1) return;
 
         cargarUltimaMedicion(usuarioId);
+        cargarFotoPerfil(usuarioId);
 
         API.getUsuarioPorId(usuarioId, new UtilREST.OnResponseListener() {
             @Override
@@ -134,6 +175,94 @@ public class PerfilActivity extends BaseActivity {
                 });
             }
         });
+    }
+
+    private void mostrarDialogoFoto() {
+        String[] opciones = {
+            getString(R.string.perfil_foto_galeria),
+            getString(R.string.perfil_foto_camara)
+        };
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.perfil_cambiar_foto)
+                .setItems(opciones, (d, which) -> {
+                    if (which == 0) galleryLauncher.launch("image/*");
+                    else pedirPermisoCamara();
+                })
+                .show();
+    }
+
+    private void pedirPermisoCamara() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED) {
+            lanzarCamara();
+        } else {
+            cameraPermLauncher.launch(Manifest.permission.CAMERA);
+        }
+    }
+
+    private void lanzarCamara() {
+        File foto = new File(getCacheDir(), "perfil_temp.jpg");
+        cameraUri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", foto);
+        cameraLauncher.launch(cameraUri);
+    }
+
+    private void subirFoto(Uri uri) {
+        int uid = prefsManager.getUsuarioId();
+        if (uid == -1) return;
+
+        Toast.makeText(this, R.string.perfil_foto_subiendo, Toast.LENGTH_SHORT).show();
+
+        API.uploadFotoPerfil(this, uid, uri, new UtilREST.OnResponseListener() {
+            @Override
+            public void onSuccess(String response, int statusCode) {
+                runOnUiThread(() -> {
+                    Toast.makeText(PerfilActivity.this, R.string.perfil_foto_ok, Toast.LENGTH_SHORT).show();
+                    ivAvatar.setImageURI(null);
+                    ivAvatar.setImageURI(uri);
+                });
+            }
+
+            @Override
+            public void onError(String message, int statusCode) {
+                runOnUiThread(() ->
+                    Toast.makeText(PerfilActivity.this, R.string.perfil_foto_error, Toast.LENGTH_SHORT).show()
+                );
+            }
+        });
+    }
+
+    @SuppressWarnings("deprecation")
+    private void cargarFotoPerfil(int userId) {
+        new AsyncTask<Void, Void, Bitmap>() {
+            @Override
+            protected Bitmap doInBackground(Void... v) {
+                HttpURLConnection conn = null;
+                try {
+                    URL url = new URL(BuildConfig.BASE_URL + "usuarios/" + userId + "/foto");
+                    conn = (HttpURLConnection) url.openConnection();
+                    conn.setRequestMethod("GET");
+                    String tok = UtilREST.getToken();
+                    if (tok != null) conn.setRequestProperty("Authorization", "Bearer " + tok);
+                    conn.setConnectTimeout(10000);
+                    conn.setReadTimeout(10000);
+                    if (conn.getResponseCode() == 200) {
+                        InputStream is = conn.getInputStream();
+                        Bitmap bmp = BitmapFactory.decodeStream(is);
+                        is.close();
+                        return bmp;
+                    }
+                } catch (Exception ignored) {
+                } finally {
+                    if (conn != null) conn.disconnect();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap bmp) {
+                if (bmp != null) ivAvatar.setImageBitmap(bmp);
+            }
+        }.execute();
     }
 
     private void cargarUltimaMedicion(int usuarioId) {

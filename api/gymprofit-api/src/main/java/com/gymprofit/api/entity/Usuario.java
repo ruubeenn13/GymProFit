@@ -60,6 +60,9 @@ public class Usuario implements UserDetails {
     @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
     private Boolean activo;
 
+    @Column(name = "foto_perfil")
+    private String fotoPerfil;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinTable(
             name = "usuario_roles",
