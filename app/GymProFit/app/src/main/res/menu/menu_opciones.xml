@@ -9,6 +9,10 @@
         android:icon="@drawable/ic_language"
         android:title="@string/perfil_idioma" />
     <item
+        android:id="@+id/menu_contactanos"
+        android:icon="@drawable/ic_email"
+        android:title="@string/menu_contactanos" />
+    <item
         android:id="@+id/menu_cerrar_sesion"
         android:icon="@drawable/ic_logout"
         android:title="@string/perfil_cerrar_sesion" />

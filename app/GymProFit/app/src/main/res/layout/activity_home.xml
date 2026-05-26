@@ -96,7 +96,7 @@
                     android:layout_height="wrap_content"
                     app:cardCornerRadius="16dp"
                     app:cardElevation="0dp"
-                    app:cardBackgroundColor="?attr/colorPrimaryContainer">
+                    app:cardBackgroundColor="?attr/colorSurface">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -113,10 +113,10 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/home_entrenamientos"
+                                android:text="@string/home_entrenamientos_semana"
                                 android:textSize="13sp"
-                                android:textColor="?attr/colorOnPrimaryContainer"
-                                android:alpha="0.8" />
+                                android:textColor="?attr/colorOnSurface"
+                                android:alpha="0.6" />
 
                             <TextView
                                 android:id="@+id/tvConteoEntrenamientos"
@@ -126,25 +126,26 @@
                                 android:text="—"
                                 android:textSize="44sp"
                                 android:textStyle="bold"
-                                android:textColor="?attr/colorOnPrimaryContainer" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/home_esta_semana"
-                                android:textSize="12sp"
-                                android:textColor="?attr/colorOnPrimaryContainer"
-                                android:alpha="0.7" />
+                                android:textColor="?attr/colorPrimary" />
 
                         </LinearLayout>
 
-                        <ImageView
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
+                        <FrameLayout
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
                             android:layout_gravity="center_vertical"
-                            android:src="@drawable/ic_ejercicios"
-                            android:alpha="0.35"
-                            android:contentDescription="@string/home_entrenamientos" />
+                            android:background="@drawable/bg_circle"
+                            android:backgroundTint="?attr/colorPrimary">
+
+                            <ImageView
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_ejercicios"
+                                app:tint="?attr/colorOnPrimary"
+                                android:contentDescription="@string/home_entrenamientos" />
+
+                        </FrameLayout>
 
                     </LinearLayout>
 

@@ -15,7 +15,8 @@
     <style name="Widget.GymProFit.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
         <item name="itemActiveIndicatorStyle">@null</item>
         <item name="itemIconSize">24dp</item>
-        <item name="itemPaddingTop">4dp</item>
-        <item name="itemPaddingBottom">2dp</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="itemPaddingTop">10dp</item>
+        <item name="itemPaddingBottom">6dp</item>
     </style>
 </resources>

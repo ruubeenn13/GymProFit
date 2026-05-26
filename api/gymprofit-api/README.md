@@ -142,6 +142,8 @@ Todos van bajo el context-path `/api`. Los `@RequestMapping` de los controllers 
 | GET | `/usuarios` | ADMIN | Todos los usuarios |
 | DELETE | `/usuarios/{id}` | ADMIN | Soft delete |
 | DELETE | `/usuarios/{id}/permanente` | ADMIN | Eliminar permanentemente |
+| POST | `/usuarios/{id}/foto` | USER/ADMIN | Subir foto de perfil (multipart/form-data, campo `foto`). Guarda en `./uploads/fotos-perfil/{id}.jpg` |
+| GET | `/usuarios/{id}/foto` | USER/ADMIN | Obtener foto de perfil (bytes JPEG). 404 si no existe |
 
 ### EJERCICIOS — `/ejercicios`
 
@@ -292,6 +294,7 @@ Migraciones aplicadas:
 202605161135__Logros.sql
 202605251000__Fix_altura_mediciones_corporales.sql   ← DECIMAL(3,2)→DECIMAL(5,2) en altura
 202605251830__Add_instrucciones_press_banca.sql      ← UPDATE ejercicios SET instrucciones WHERE id=1
+V202605261000__Add_foto_perfil_usuarios.sql          ← columna foto_perfil VARCHAR(255) en usuarios (prefijo V → Flyway la ejecuta)
 ```
 
 ---
@@ -324,6 +327,13 @@ service/:    AuthServiceTest, EjercicioServiceTest, RutinaServiceTest,
 | `Dificultad` | `PRINCIPIANTE`, `INTERMEDIO`, `AVANZADO` |
 | `TipoObjetivo` | `PERDER_PESO`, `GANAR_MASA_MUSCULAR`, `MANTENER_PESO`, `MEJORAR_RESISTENCIA`, `MEJORAR_FUERZA`, `REDUCIR_GRASA_CORPORAL`, `MEJORAR_FLEXIBILIDAD`, `MEJORAR_VELOCIDAD`, `AUMENTAR_CALORIAS`, `MEJORAR_MOVILIDAD`, `COMPLETAR_RETO`, `OTRO` |
 | `TipoLogro` | `PRIMERA_SESION`, `CONSTANCIA`, `DEDICADO`, `CENTENARIO`, `OBJETIVO_CUMPLIDO`, `MAQUINA` |
+
+---
+
+## Changelog
+
+### 2026-05-26
+- **Foto de perfil**: `POST /usuarios/{id}/foto` (multipart) + `GET /usuarios/{id}/foto` (bytes JPEG). Archivos en `./uploads/fotos-perfil/{id}.jpg`. Columna `foto_perfil VARCHAR(255)` en `usuarios` vía migración `V202605261000__Add_foto_perfil_usuarios.sql`. `FlywayConfig` añade `FlywayMigrationInitializer` para garantizar que Flyway corre antes que Hibernate
 
 ---
 
