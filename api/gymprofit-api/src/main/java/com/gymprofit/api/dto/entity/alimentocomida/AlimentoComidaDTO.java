@@ -18,6 +18,7 @@ public class AlimentoComidaDTO implements Serializable {
     private Integer caloriasTotales;
     private String nombreAlimento;
     private String categoriaAlimento;
+    private Integer usuarioIdAlimento;
     private BigDecimal proteinasTotales;
     private BigDecimal carbohidratosTotales;
     private BigDecimal grasasTotales;

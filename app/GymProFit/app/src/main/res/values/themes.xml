@@ -10,6 +10,13 @@
         <item name="android:windowBackground">#F5F5F5</item>
         <item name="android:textColorPrimary">#1A1A1A</item>
         <item name="bottomNavigationStyle">@style/Widget.GymProFit.BottomNavigationView</item>
+        <item name="popupMenuStyle">@style/Widget.GymProFit.PopupMenu</item>
+        <item name="android:popupMenuStyle">@style/Widget.GymProFit.PopupMenu</item>
+    </style>
+
+    <style name="Widget.GymProFit.PopupMenu" parent="Widget.Material3.PopupMenu">
+        <item name="android:dropDownWidth">260dp</item>
+        <item name="android:popupElevation">12dp</item>
     </style>
 
     <style name="Widget.GymProFit.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">

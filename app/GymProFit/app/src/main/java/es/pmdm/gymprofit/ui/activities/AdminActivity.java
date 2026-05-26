@@ -40,6 +40,9 @@ public class AdminActivity extends BaseActivity {
         findViewById(R.id.cardGestionarEjercicios).setOnClickListener(v ->
                 startActivity(new Intent(this, AdminEjerciciosActivity.class)));
 
+        findViewById(R.id.cardGestionarAlimentos).setOnClickListener(v ->
+                startActivity(new Intent(this, AdminAlimentosActivity.class)));
+
         cargarEstadisticas();
     }
 

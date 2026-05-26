@@ -16,4 +16,21 @@
         <item>CARDIO</item>
         <item>FULLBODY</item>
     </string-array>
+
+    <string-array name="categorias_alimento">
+        <item>Carnes y aves</item>
+        <item>Pescado y marisco</item>
+        <item>Huevos</item>
+        <item>Lácteos</item>
+        <item>Legumbres</item>
+        <item>Cereales y pan</item>
+        <item>Frutas</item>
+        <item>Verduras</item>
+        <item>Frutos secos</item>
+        <item>Aceites y grasas</item>
+        <item>Bebidas</item>
+        <item>Suplementos</item>
+        <item>Snacks</item>
+        <item>Otro</item>
+    </string-array>
 </resources>

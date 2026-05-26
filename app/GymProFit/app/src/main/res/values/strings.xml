@@ -112,6 +112,9 @@
     <string name="comida_eliminar_titulo">Confirmar eliminación</string>
     <string name="comida_eliminar_confirmar">Eliminar alimento de la comida</string>
     <string name="comida_sin_alimentos">Sin alimentos registrados</string>
+    <string name="comida_editar_cantidad">Editar cantidad</string>
+    <string name="comida_desactivar_alimento">Desactivar alimento</string>
+    <string name="comida_eliminar_de_comida">Eliminar</string>
 
     <!-- PERFIL -->
     <string name="perfil_mi_perfil">Mi perfil</string>
@@ -311,6 +314,17 @@
     <string name="admin_desactivar">Desactivar</string>
     <string name="admin_estado_activo">Activo</string>
     <string name="admin_estado_inactivo">Inactivo</string>
+    <string name="admin_gestionar_alimentos">Gestión de alimentos</string>
+    <string name="admin_alimentos_titulo">Gestión de alimentos</string>
+    <string name="admin_alimentos_buscar_hint">Buscar alimento…</string>
+    <string name="admin_alimentos_filtro_categoria">Categoría</string>
+    <string name="admin_exito_toggle_alimento">Estado actualizado</string>
+    <string name="admin_editar_alimento_titulo">Editar alimento</string>
+    <string name="admin_alimentos_campo_nombre">Nombre</string>
+    <string name="admin_alimentos_campo_calorias">Calorías / 100 g</string>
+    <string name="admin_alimentos_campo_proteinas">Proteínas (g)</string>
+    <string name="admin_alimentos_campo_carbohidratos">Carbohidratos (g)</string>
+    <string name="admin_alimentos_campo_grasas">Grasas (g)</string>
 
     <!-- PERFIL — actividades -->
     <string name="perfil_mis_actividades">Mis actividades</string>
@@ -432,4 +446,30 @@
     <string name="editar_rutina_anadir_ejercicio">Añadir ejercicio</string>
     <string name="editar_rutina_eliminar_ejercicio">¿Eliminar este ejercicio de la rutina?</string>
     <string name="editar_rutina_ejercicios_fmt">Ejercicios (%d)</string>
+
+    <!-- ANADIR ALIMENTO -->
+    <string name="anadir_alimento_titulo">Añadir alimento</string>
+    <string name="anadir_alimento_buscar_hint">Buscar alimento…</string>
+    <string name="anadir_alimento_crear">Crear alimento</string>
+    <string name="anadir_alimento_gramos_hint">Cantidad (g)</string>
+    <string name="anadir_alimento_preview">%1$d kcal | %2$.1fg prot | %3$.1fg carbos | %4$.1fg grasas</string>
+    <string name="btn_anadir">Añadir</string>
+    <string name="btn_volver">Volver</string>
+
+    <!-- CREAR ALIMENTO -->
+    <string name="crear_alimento_titulo">Crear alimento</string>
+    <string name="crear_alimento_nombre_hint">Nombre del alimento</string>
+    <string name="crear_alimento_calorias_hint">Calorías (por 100g)</string>
+    <string name="crear_alimento_calorias_hint_ml">Calorías (por 100ml)</string>
+    <string name="crear_alimento_proteinas_hint">Proteínas (g, opcional)</string>
+    <string name="crear_alimento_carbos_hint">Carbohidratos (g, opcional)</string>
+    <string name="crear_alimento_grasas_hint">Grasas (g, opcional)</string>
+    <string name="crear_alimento_guardar">Guardar alimento</string>
+    <string name="crear_alimento_nombre_requerido">El nombre es obligatorio</string>
+    <string name="crear_alimento_calorias_requeridas">Las calorías son obligatorias</string>
+    <string name="crear_alimento_categoria_label">Categoría</string>
+    <string name="alimento_editar">Editar alimento</string>
+    <string name="alimento_eliminar">Eliminar alimento</string>
+    <string name="alimento_eliminar_confirmar">¿Eliminar este alimento de tu lista? Esta acción lo desactivará.</string>
+    <string name="alimento_desactivar_confirmar">¿Desactivar este alimento? Dejará de aparecer en las búsquedas.</string>
 </resources>

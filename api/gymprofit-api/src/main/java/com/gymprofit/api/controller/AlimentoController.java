@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -182,6 +183,19 @@ public class AlimentoController {
         }
 
         return ResponseEntity.ok(alimentos);
+    }
+
+    public static final List<String> CATEGORIAS = Arrays.asList(
+            "Carnes y aves", "Pescado y marisco", "Huevos", "Lácteos", "Legumbres",
+            "Cereales y pan", "Frutas", "Verduras", "Frutos secos", "Aceites y grasas",
+            "Bebidas", "Suplementos", "Snacks", "Otro"
+    );
+
+    @Operation(summary = "Devuelve la lista canónica de categorías de alimentos")
+    @ApiResponse(responseCode = "200", description = "Lista de categorías")
+    @GetMapping("/alimentos/categorias")
+    public ResponseEntity<List<String>> obtenerCategorias() {
+        return ResponseEntity.ok(CATEGORIAS);
     }
 
     @Operation(summary = "Busca alimentos por categoría")

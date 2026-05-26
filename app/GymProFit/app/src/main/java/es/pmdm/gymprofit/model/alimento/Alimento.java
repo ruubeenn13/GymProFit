@@ -10,6 +10,7 @@ public class Alimento {
     private double carbohidratos;
     private double grasas;
     private Integer usuarioId;
+    private boolean activo;
 
     public Alimento() {}
 
@@ -36,4 +37,7 @@ public class Alimento {
 
     public Integer getUsuarioId() { return usuarioId; }
     public void setUsuarioId(Integer usuarioId) { this.usuarioId = usuarioId; }
+
+    public boolean isActivo() { return activo; }
+    public void setActivo(boolean activo) { this.activo = activo; }
 }

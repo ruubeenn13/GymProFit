@@ -1,23 +1,27 @@
 package es.pmdm.gymprofit.utils;
 
-// MODIFICADO - bg_dialog eliminado, el fondo del diálogo se aplica por código
-// para evitar el crash con ?attr en drawables
+// bg_dialog eliminado; fondo del diálogo aplicado por código para evitar crash con ?attr en drawables
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
+
+import java.util.List;
 
 import es.pmdm.gymprofit.R;
 
@@ -104,6 +108,123 @@ public class UIHelper {
             int ancho = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.90);
             dialog.getWindow().setLayout(ancho, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
         }
+    }
+
+    /**
+     * Prepara un Dialog con el layout indicado, fondo redondeado colorSurface y sin título de sistema.
+     * El caller configura los botones y llama a dialog.show() + ajustarAnchoDialogo().
+     */
+    public static Dialog prepararDialogoFormulario(Context context, View dialogView) {
+        Dialog dialog = new Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(dialogView);
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setDimAmount(0.5f);
+        }
+
+        LinearLayout root = dialogView.findViewById(R.id.dialogRoot);
+        if (root != null) {
+            TypedValue tv = new TypedValue();
+            context.getTheme().resolveAttribute(
+                    com.google.android.material.R.attr.colorSurface, tv, true);
+            GradientDrawable fondo = new GradientDrawable();
+            fondo.setShape(GradientDrawable.RECTANGLE);
+            fondo.setCornerRadius(dpToPx(context, 20));
+            fondo.setColor(tv.data);
+            root.setBackground(fondo);
+        }
+
+        return dialog;
+    }
+
+    /** Muestra el dialog y ajusta su ancho al 90% de la pantalla. */
+    public static void mostrarDialogoFormulario(Context context, Dialog dialog) {
+        dialog.show();
+        if (dialog.getWindow() != null) {
+            int ancho = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.90);
+            dialog.getWindow().setLayout(ancho, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+    }
+
+    // MENÚ BOTTOM SHEET
+
+    public static final class MenuAction {
+        public final int iconRes;
+        public final String label;
+        public final boolean destructive;
+        public final Runnable action;
+
+        public MenuAction(int iconRes, String label, boolean destructive, Runnable action) {
+            this.iconRes = iconRes;
+            this.label = label;
+            this.destructive = destructive;
+            this.action = action;
+        }
+
+        public MenuAction(int iconRes, String label, Runnable action) {
+            this(iconRes, label, false, action);
+        }
+
+        public MenuAction(String label, Runnable action) {
+            this(-1, label, false, action);
+        }
+    }
+
+    /**
+     * Muestra un BottomSheetDialog con los items indicados. Reemplaza PopupMenu.
+     * @param title Título opcional (null para omitir).
+     * @param actions Lista de acciones a mostrar.
+     */
+    public static void mostrarBottomMenu(Context context, String title, List<MenuAction> actions) {
+        BottomSheetDialog dialog = new BottomSheetDialog(context);
+        View root = LayoutInflater.from(context).inflate(R.layout.dialog_bottom_menu, null);
+
+        TextView tvTitle = root.findViewById(R.id.tvMenuTitle);
+        View divider = root.findViewById(R.id.dividerMenuTitle);
+        LinearLayout llItems = root.findViewById(R.id.llMenuItems);
+
+        if (title != null && !title.isEmpty()) {
+            tvTitle.setText(title);
+            tvTitle.setVisibility(View.VISIBLE);
+            divider.setVisibility(View.VISIBLE);
+        }
+
+        TypedValue tv = new TypedValue();
+        context.getTheme().resolveAttribute(com.google.android.material.R.attr.colorOnSurface, tv, true);
+        int colorNormal = tv.data;
+
+        tv = new TypedValue();
+        context.getTheme().resolveAttribute(com.google.android.material.R.attr.colorError, tv, true);
+        int colorDestructive = tv.data;
+
+        for (MenuAction a : actions) {
+            View row = LayoutInflater.from(context).inflate(R.layout.item_menu_bottom, llItems, false);
+            ImageView icon = row.findViewById(R.id.ivMenuItemIcon);
+            TextView label = row.findViewById(R.id.tvMenuItemLabel);
+
+            int textColor = a.destructive ? colorDestructive : colorNormal;
+            label.setText(a.label);
+            label.setTextColor(textColor);
+
+            if (a.iconRes != -1) {
+                icon.setImageResource(a.iconRes);
+                icon.setColorFilter(textColor, PorterDuff.Mode.SRC_IN);
+            } else {
+                icon.setVisibility(View.GONE);
+            }
+
+            row.setOnClickListener(v -> {
+                dialog.dismiss();
+                if (a.action != null) a.action.run();
+            });
+
+            llItems.addView(row);
+        }
+
+        dialog.setContentView(root);
+        dialog.show();
     }
 
     private static int dpToPx(Context context, int dp) {

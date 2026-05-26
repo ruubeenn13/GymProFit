@@ -234,6 +234,7 @@ La respuesta de `POST /sesiones` incluye el campo `nuevosLogros: ["Nombre logro"
 | PATCH | `/admin/usuarios/{id}/rol?nuevoRol=` | ADMIN | Cambiar rol del usuario (`ROLE_USER` o `ROLE_ADMIN`) |
 | GET | `/admin/rutinas/predefinidas/busqueda?nombre=&nivel=&categoria=&activa=` | ADMIN | Buscar rutinas predefinidas con filtros dinámicos (jOOQ) |
 | GET | `/admin/ejercicios/busqueda?nombre=&grupoMuscular=&dificultad=&activo=` | ADMIN | Buscar ejercicios del catálogo con filtros dinámicos (jOOQ) |
+| GET | `/admin/alimentos/busqueda?nombre=&categoria=&activo=` | ADMIN | Buscar alimentos con filtros dinámicos (jOOQ) |
 
 ---
 
@@ -333,6 +334,7 @@ service/:    AuthServiceTest, EjercicioServiceTest, RutinaServiceTest,
 ## Changelog
 
 ### 2026-05-26
+- **Nutrición — AlimentoComidaDTO enriquecido**: añadidos `nombreAlimento`, `categoriaAlimento`, `proteinasTotales`, `carbohidratosTotales`, `grasasTotales` calculados en mapper (macro × cantidadGramos / 100). Fix `AlimentoComidaService`. Fix `activarAlimento()` (bug llamaba `deleteById`). `GET /admin/alimentos/busqueda?nombre=&categoria=&activo=` con filtros dinámicos jOOQ. Migración `V202605262000__Update_categorias_alimentos.sql`
 - **Foto de perfil**: `POST /usuarios/{id}/foto` (multipart) + `GET /usuarios/{id}/foto` (bytes JPEG). Archivos en `./uploads/fotos-perfil/{id}.jpg`. Columna `foto_perfil VARCHAR(255)` en `usuarios` vía migración `V202605261000__Add_foto_perfil_usuarios.sql`. `FlywayConfig` añade `FlywayMigrationInitializer` para garantizar que Flyway corre antes que Hibernate
 
 ---

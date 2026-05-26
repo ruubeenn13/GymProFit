@@ -278,6 +278,7 @@ public class UtilJSONParser {
         a.setCarbohidratos(obj.optDouble("carbohidratos", 0));
         a.setGrasas(obj.optDouble("grasas", 0));
         a.setUsuarioId(obj.isNull("usuarioId") ? null : obj.getInt("usuarioId"));
+        a.setActivo(obj.optBoolean("activo", true));
         return a;
     }
 
@@ -328,6 +329,7 @@ public class UtilJSONParser {
         ac.setProteinasTotales(obj.optDouble("proteinasTotales", 0));
         ac.setCarbohidratosTotales(obj.optDouble("carbohidratosTotales", 0));
         ac.setGrasasTotales(obj.optDouble("grasasTotales", 0));
+        ac.setUsuarioIdAlimento(obj.isNull("usuarioIdAlimento") ? null : obj.getInt("usuarioIdAlimento"));
         return ac;
     }
 

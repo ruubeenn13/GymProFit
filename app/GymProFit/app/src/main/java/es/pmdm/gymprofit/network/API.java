@@ -295,6 +295,10 @@ public class API {
         UtilREST.request(BASE + "alimentos/usuario/" + usuarioId, "GET", null, l);
     }
 
+    public static void getCategorias(UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "alimentos/categorias", "GET", null, l);
+    }
+
     public static void crearAlimento(JSONObject body, UtilREST.OnResponseListener l) {
         UtilREST.request(BASE + "alimentos", "POST", body.toString(), l);
     }
@@ -321,6 +325,10 @@ public class API {
 
     public static void eliminarAlimentoDeComida(int id, UtilREST.OnResponseListener l) {
         UtilREST.request(BASE + "alimentos-comida/" + id, "DELETE", null, l);
+    }
+
+    public static void patchAlimentoComida(int id, JSONObject body, UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "alimentos-comida/" + id, "PATCH", body.toString(), l);
     }
 
     public static void adminBuscarAlimentos(String nombre, String categoria, Boolean activo, UtilREST.OnResponseListener l) {

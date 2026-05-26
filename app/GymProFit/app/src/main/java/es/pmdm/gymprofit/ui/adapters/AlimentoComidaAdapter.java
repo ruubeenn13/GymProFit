@@ -21,7 +21,7 @@ public class AlimentoComidaAdapter extends RecyclerView.Adapter<AlimentoComidaAd
 
     /** Callback para long-press sobre un ítem. */
     public interface OnItemLongClickListener {
-        void onItemLongClick(AlimentoComida item);
+        void onItemLongClick(AlimentoComida item, View anchorView);
     }
 
     private final List<AlimentoComida> items;
@@ -47,7 +47,7 @@ public class AlimentoComidaAdapter extends RecyclerView.Adapter<AlimentoComidaAd
         h.tvCantidadGramos.setText(String.format(Locale.getDefault(), "%.0f g", item.getCantidadGramos()));
         h.tvCaloriasItem.setText(String.format(Locale.getDefault(), "%d kcal", item.getCaloriasTotales()));
         h.itemView.setOnLongClickListener(v -> {
-            if (longClickListener != null) longClickListener.onItemLongClick(item);
+            if (longClickListener != null) longClickListener.onItemLongClick(item, v);
             return true;
         });
     }
