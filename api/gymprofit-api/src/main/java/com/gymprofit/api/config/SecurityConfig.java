@@ -93,6 +93,10 @@ public class SecurityConfig {
                                 // GUEST: solo GET en endpoints públicos
                                 .requestMatchers(HttpMethod.GET, "/ejercicios/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.GET, "/rutinas/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
+                                .requestMatchers(HttpMethod.POST, "/alimentos/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+                                .requestMatchers(HttpMethod.DELETE, "/alimentos/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+                                .requestMatchers(HttpMethod.PATCH, "/alimentos/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+                                .requestMatchers(HttpMethod.PUT, "/alimentos/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.GET, "/alimentos/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
 
                                 // JOOQ ejercicios - accesibles por todos los roles

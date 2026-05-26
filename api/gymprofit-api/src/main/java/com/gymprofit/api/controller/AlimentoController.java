@@ -125,7 +125,7 @@ public class AlimentoController {
         Map<String, Object> respuesta = new HashMap<>();
 
         try {
-            alimentoService.deleteById(id);
+            alimentoService.activateById(id);
 
             respuesta.put("mensaje", "Alimento activado con ÉXITO");
         } catch (Exception e) {
@@ -292,6 +292,16 @@ public class AlimentoController {
         respuesta.put("categoria", categoria);
 
         return ResponseEntity.ok(respuesta);
+    }
+
+    @Operation(summary = "Obtiene los alimentos de un usuario")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Alimentos del usuario",
+                    content = @Content(schema = @Schema(implementation = AlimentoDTO.class)))
+    })
+    @GetMapping("/alimentos/usuario/{usuarioId}")
+    public ResponseEntity<List<AlimentoDTO>> obtenerAlimentosPorUsuario(@PathVariable Integer usuarioId) {
+        return ResponseEntity.ok(alimentoService.findByUsuarioId(usuarioId));
     }
 
     @Operation(summary = "Actualiza parcialmente un alimento")
