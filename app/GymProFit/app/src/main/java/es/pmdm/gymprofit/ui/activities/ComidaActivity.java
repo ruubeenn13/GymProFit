@@ -216,7 +216,7 @@ public class ComidaActivity extends BaseActivity {
                         getString(R.string.comida_eliminar_confirmar),
                         R.drawable.ic_delete,
                         () -> eliminarAlimento(item))));
-        UIHelper.mostrarBottomMenu(this, item.getNombreAlimento(), actions);
+        UIHelper.mostrarMenuAnclado(this, anchorView, item.getNombreAlimento(), actions);
     }
 
     private void mostrarDialogoEditarCantidad(AlimentoComida item) {

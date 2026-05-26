@@ -154,8 +154,8 @@ HomeActivity (navegación inferior)
 | `DetalleRutinaActivity` | Vista readonly. Botón editar visible solo si es rutina propia |
 | `EditarRutinaActivity` | PATCH nombre/desc/nivel/duración + añadir/eliminar ejercicios |
 | `NutricionActivity` | Rediseñada: objetivos dinámicos en `onResume` (CalculadoraNutricional con datos frescos del perfil), barras de progreso consumido vs objetivo (rojo si supera), 5 cards de comida (DESAYUNO..CENA) → ComidaActivity |
-| `ComidaActivity` | Log diario de una comida: header con totales (calorías/macros), RecyclerView AlimentoComidaAdapter, FAB → AnadirAlimentoActivity, long-press → BottomSheet contextual (editar cantidad / desactivar / eliminar) |
-| `AnadirAlimentoActivity` | SearchView local sobre alimentos activos; click → dialog gramos + preview macros en tiempo real → POST /alimentos-comida (crea comida primero si no existe); long-press en alimento propio → BottomSheet editar/eliminar; botón "Crear alimento" |
+| `ComidaActivity` | Log diario de una comida: header con totales (calorías/macros), RecyclerView AlimentoComidaAdapter, FAB → AnadirAlimentoActivity, long-press → popup contextual anclado (editar cantidad / desactivar / eliminar) |
+| `AnadirAlimentoActivity` | SearchView local sobre alimentos activos; click → dialog gramos + preview macros en tiempo real → POST /alimentos-comida (crea comida primero si no existe); long-press en alimento propio → popup contextual anclado (editar/eliminar); botón "Crear alimento" |
 | `CrearAlimentoActivity` | Formulario alimento propio (nombre, categoría Spinner, calorías, proteínas, carbos, grasas). POST /alimentos con usuarioId. setResult al caller |
 | `AdminAlimentosActivity` | Gestión admin de alimentos: búsqueda, filtros categoría/estado, toggle activo, editar via dialog. Acceso desde AdminActivity (solo ROLE_ADMIN) |
 | `PerfilActivity` | Datos reales de la API + resumen de última medición corporal (peso/altura). Hereda de `BaseActivity`. Botón "Sobre GymProFit" al pie |
@@ -203,13 +203,13 @@ UIHelper.mostrarToastError(ctx, msg)
 UIHelper.mostrarToastInfo(ctx, msg)
 UIHelper.mostrarDialogo(ctx, titulo, msg, runnable)
 UIHelper.mostrarDialogoConIcono(ctx, titulo, msg, R.drawable.ic_delete, runnable)
-// BottomSheetDialog estilizado (reemplaza PopupMenu):
-UIHelper.mostrarBottomMenu(ctx, titulo_nullable, List<UIHelper.MenuAction>)
-// MenuAction(iconRes, label, destructive, action) — destructive=true → colorError
+// PopupWindow anclado al elemento que lo dispara:
+UIHelper.mostrarMenuAnclado(ctx, anchorView, titulo_nullable, List<UIHelper.MenuAction>)
+// MenuAction(iconRes, label, destructive, action) — destructive=true → colorError + separador
 ```
 
 Diálogos: ancho = 90% de la pantalla. Icono papelera: `@drawable/ic_delete` (color `?attr/colorError`).
-`mostrarBottomMenu`: Material 3 BottomSheetDialog con iconos tintados; items con `destructive=true` usan `colorError`.
+`mostrarMenuAnclado`: PopupWindow con fondo redondeado `colorSurface` (12dp), elevación 8dp, alineado al borde derecho del anchor. Items destructivos precedidos de separador y en `colorError`.
 
 ### `NotificationHelper`
 
@@ -320,7 +320,7 @@ implementation libs.constraintlayout
 - **AnadirAlimentoActivity**: SearchView local sobre alimentos activos. Click → dialog gramos + preview macros en tiempo real → `POST /alimentos-comida` (crea comida antes si no existe para ese tipo+día). Long-press en alimento propio → BottomSheet editar/eliminar/desactivar. Botón "Crear alimento" → `CrearAlimentoActivity`
 - **CrearAlimentoActivity**: formulario alimento propio (nombre, categoría Spinner, calorías, proteínas, carbos, grasas). `POST /alimentos` con `usuarioId`. `setResult(RESULT_OK)` al caller
 - **AdminAlimentosActivity**: lista alimentos activos+inactivos. SearchView + filtros categoría/estado. BottomSheet: toggle activo + editar (dialog). Acceso desde `AdminActivity` (nuevo botón)
-- **BottomSheetDialog menus**: `UIHelper.MenuAction` + `UIHelper.mostrarBottomMenu()` — elimina todos los `PopupMenu` del proyecto. 8 archivos afectados: `BaseActivity`, `AnadirAlimentoActivity`, `ComidaActivity`, `RutinasActivity`, `AdminAlimentoAdapter`, `AdminUsuarioAdapter`, `AdminRutinaAdapter`, `AdminEjercicioAdapter`
+- **BottomSheet menus → PopupWindow anclado**: `UIHelper.mostrarMenuAnclado(ctx, anchorView, title, actions)` — los menús contextuales salen anclados al elemento que los dispara (3 puntitos y long-press). PopupWindow con fondo redondeado `colorSurface` 12dp, elevación 8dp, alineado derecha. 8 archivos afectados: `BaseActivity`, `AnadirAlimentoActivity`, `ComidaActivity`, `RutinasActivity`, `AdminAlimentoAdapter`, `AdminUsuarioAdapter`, `AdminRutinaAdapter`, `AdminEjercicioAdapter`
 - **API.java**: 13 nuevos métodos para nutrición (alimentos, comidas, alimentos-comida)
 - **UtilJSONParser.java**: parsers para Alimento, Comida, AlimentoComida
 

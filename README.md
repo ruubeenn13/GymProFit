@@ -193,10 +193,10 @@ Arquitectura 4 capas obligatoria (UD06).
 | `SesionAdapter` | Sesión con fecha, rutina asociada, duración y calorías |
 | `MedicionAdapter` | Medición con peso, IMC y extras (grasa, músculo) |
 | `LogroAdapter` | Logro con icono emoji, nombre, descripción y check si desbloqueado |
-| `AdminUsuarioAdapter` | Usuario con username, email, chip rol y chip activo/inactivo. BottomSheet: toggle activo + cambiar rol |
-| `AdminRutinaAdapter` | Rutina predefinida con nombre, nivel, estado y contador de ejercicios. BottomSheet: toggle activa + editar |
-| `AdminEjercicioAdapter` | Ejercicio con nombre, grupo, dificultad y chip activo/inactivo. BottomSheet: toggle activo + editar |
-| `AdminAlimentoAdapter` | Alimento con nombre, categoría, calorías, chip activo/inactivo. BottomSheet: toggle activo + editar |
+| `AdminUsuarioAdapter` | Usuario con username, email, chip rol y chip activo/inactivo. Popup contextual: toggle activo + cambiar rol |
+| `AdminRutinaAdapter` | Rutina predefinida con nombre, nivel, estado y contador de ejercicios. Popup contextual: toggle activa + editar |
+| `AdminEjercicioAdapter` | Ejercicio con nombre, grupo, dificultad y chip activo/inactivo. Popup contextual: toggle activo + editar |
+| `AdminAlimentoAdapter` | Alimento con nombre, categoría, calorías, chip activo/inactivo. Popup contextual: toggle activo + editar |
 | `AlimentoAdapter` | Ítem en buscador de AnadirAlimentoActivity: nombre, categoría, macros por 100g |
 | `AlimentoComidaAdapter` | Ítem en ComidaActivity: nombre, gramos, calorías totales, macros |
 

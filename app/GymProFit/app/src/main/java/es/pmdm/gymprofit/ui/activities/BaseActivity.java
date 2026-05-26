@@ -60,7 +60,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         actions.add(new UIHelper.MenuAction(R.drawable.ic_language, getString(R.string.perfil_idioma),       this::mostrarDialogoIdioma));
         actions.add(new UIHelper.MenuAction(R.drawable.ic_email,    getString(R.string.menu_contactanos),    this::abrirEmailContacto));
         actions.add(new UIHelper.MenuAction(R.drawable.ic_logout,   getString(R.string.perfil_cerrar_sesion), true, this::confirmarCerrarSesion));
-        UIHelper.mostrarBottomMenu(this, null, actions);
+        UIHelper.mostrarMenuAnclado(this, anchor, null, actions);
     }
 
     private void mostrarDialogoTema() {

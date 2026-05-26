@@ -184,7 +184,7 @@ public class RutinasActivity extends BaseActivity {
                             () -> eliminarRutina(rutina))));
         }
 
-        UIHelper.mostrarBottomMenu(this, rutina.getNombre(), actions);
+        UIHelper.mostrarMenuAnclado(this, anchorView, rutina.getNombre(), actions);
     }
 
     private void toggleActivaRutinaPredefinida(Rutina rutina) {

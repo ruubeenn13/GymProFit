@@ -76,7 +76,7 @@ public class AdminRutinaAdapter extends RecyclerView.Adapter<AdminRutinaAdapter.
                     current.isActiva() ? R.drawable.ic_visibility_off : R.drawable.ic_check,
                     current.isActiva() ? ctx.getString(R.string.admin_desactivar) : ctx.getString(R.string.admin_activar),
                     () -> listener.onToggleActiva(current, pos)));
-            UIHelper.mostrarBottomMenu(ctx, null, actions);
+            UIHelper.mostrarMenuAnclado(ctx, v, null, actions);
         });
     }
 

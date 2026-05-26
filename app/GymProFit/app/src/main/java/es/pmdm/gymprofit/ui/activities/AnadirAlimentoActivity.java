@@ -137,7 +137,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
                         getString(R.string.alimento_eliminar_confirmar),
                         R.drawable.ic_delete,
                         () -> eliminarAlimento(alimento))));
-        UIHelper.mostrarBottomMenu(this, alimento.getNombre(), actions);
+        UIHelper.mostrarMenuAnclado(this, anchorView, alimento.getNombre(), actions);
     }
 
     private void mostrarDialogoEditarAlimento(Alimento alimento) {

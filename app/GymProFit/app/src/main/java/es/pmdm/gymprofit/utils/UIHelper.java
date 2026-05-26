@@ -18,7 +18,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.bottomsheet.BottomSheetDialog;
+import android.widget.PopupWindow;
+
 import com.google.android.material.button.MaterialButton;
 
 import java.util.List;
@@ -148,7 +149,7 @@ public class UIHelper {
         }
     }
 
-    // MENÚ BOTTOM SHEET
+    // MENÚ ANCLADO
 
     public static final class MenuAction {
         public final int iconRes;
@@ -173,12 +174,14 @@ public class UIHelper {
     }
 
     /**
-     * Muestra un BottomSheetDialog con los items indicados. Reemplaza PopupMenu.
-     * @param title Título opcional (null para omitir).
+     * Muestra un PopupWindow anclado al view indicado, alineado a su borde derecho.
+     * Aparece debajo del anchor; si no hay espacio, PopupWindow lo invierte automáticamente.
+     *
+     * @param anchor Vista que dispara el menú (botón 3 puntitos o itemView del long-press).
+     * @param title  Título opcional (null para omitir).
      * @param actions Lista de acciones a mostrar.
      */
-    public static void mostrarBottomMenu(Context context, String title, List<MenuAction> actions) {
-        BottomSheetDialog dialog = new BottomSheetDialog(context);
+    public static void mostrarMenuAnclado(Context context, View anchor, String title, List<MenuAction> actions) {
         View root = LayoutInflater.from(context).inflate(R.layout.dialog_bottom_menu, null);
 
         TextView tvTitle = root.findViewById(R.id.tvMenuTitle);
@@ -194,12 +197,29 @@ public class UIHelper {
         TypedValue tv = new TypedValue();
         context.getTheme().resolveAttribute(com.google.android.material.R.attr.colorOnSurface, tv, true);
         int colorNormal = tv.data;
-
         tv = new TypedValue();
         context.getTheme().resolveAttribute(com.google.android.material.R.attr.colorError, tv, true);
         int colorDestructive = tv.data;
+        tv = new TypedValue();
+        context.getTheme().resolveAttribute(com.google.android.material.R.attr.colorOutlineVariant, tv, true);
+        int colorDivider = tv.data;
 
+        final PopupWindow[] popupRef = new PopupWindow[1];
+
+        boolean separadorAnadido = false;
         for (MenuAction a : actions) {
+            if (a.destructive && !separadorAnadido) {
+                View sep = new View(context);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(context, 1));
+                lp.setMargins(dpToPx(context, 16), dpToPx(context, 4),
+                        dpToPx(context, 16), dpToPx(context, 4));
+                sep.setLayoutParams(lp);
+                sep.setBackgroundColor(colorDivider);
+                llItems.addView(sep);
+                separadorAnadido = true;
+            }
+
             View row = LayoutInflater.from(context).inflate(R.layout.item_menu_bottom, llItems, false);
             ImageView icon = row.findViewById(R.id.ivMenuItemIcon);
             TextView label = row.findViewById(R.id.tvMenuItemLabel);
@@ -216,15 +236,43 @@ public class UIHelper {
             }
 
             row.setOnClickListener(v -> {
-                dialog.dismiss();
+                if (popupRef[0] != null) popupRef[0].dismiss();
                 if (a.action != null) a.action.run();
             });
 
             llItems.addView(row);
         }
 
-        dialog.setContentView(root);
-        dialog.show();
+        tv = new TypedValue();
+        context.getTheme().resolveAttribute(com.google.android.material.R.attr.colorSurface, tv, true);
+        GradientDrawable bg = new GradientDrawable();
+        bg.setShape(GradientDrawable.RECTANGLE);
+        bg.setCornerRadius(dpToPx(context, 12));
+        bg.setColor(tv.data);
+        root.setBackground(bg);
+
+        root.measure(
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        int screenWidth = context.getResources().getDisplayMetrics().widthPixels;
+        int popupWidth = Math.min(
+                Math.max(root.getMeasuredWidth(), dpToPx(context, 180)),
+                (int) (screenWidth * 0.9));
+
+        PopupWindow popup = new PopupWindow(
+                root, popupWidth, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        popup.setElevation(dpToPx(context, 8));
+        popup.setOutsideTouchable(true);
+        popup.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        popup.setAnimationStyle(androidx.appcompat.R.style.Animation_AppCompat_DropDownUp);
+        popupRef[0] = popup;
+
+        int[] anchorLoc = new int[2];
+        anchor.getLocationOnScreen(anchorLoc);
+        int xOffset = anchor.getWidth() - popupWidth;
+        // Clamp so popup never goes off-screen left
+        if (anchorLoc[0] + xOffset < 0) xOffset = -anchorLoc[0];
+        popup.showAsDropDown(anchor, xOffset, 0);
     }
 
     private static int dpToPx(Context context, int dp) {

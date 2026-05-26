@@ -80,7 +80,7 @@ public class AdminEjercicioAdapter extends RecyclerView.Adapter<AdminEjercicioAd
                     current.isActivo() ? R.drawable.ic_visibility_off : R.drawable.ic_check,
                     current.isActivo() ? ctx.getString(R.string.admin_desactivar) : ctx.getString(R.string.admin_activar),
                     () -> listener.onToggleActivo(current, pos)));
-            UIHelper.mostrarBottomMenu(ctx, null, actions);
+            UIHelper.mostrarMenuAnclado(ctx, v, null, actions);
         });
     }
 

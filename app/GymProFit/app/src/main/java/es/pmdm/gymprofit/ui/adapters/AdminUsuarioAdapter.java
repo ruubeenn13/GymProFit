@@ -76,7 +76,7 @@ public class AdminUsuarioAdapter extends RecyclerView.Adapter<AdminUsuarioAdapte
             actions.add(new UIHelper.MenuAction(R.drawable.ic_perfil,
                     ctx.getString(R.string.admin_cambiar_rol_titulo),
                     () -> listener.onCambiarRol(current, pos)));
-            UIHelper.mostrarBottomMenu(ctx, null, actions);
+            UIHelper.mostrarMenuAnclado(ctx, v, null, actions);
         });
     }
 
