@@ -29539,3 +29539,8 @@ jOOQ tip of the day: A Field<Boolean> can be turned into a Condition using DSL.c
 2026-05-26 17:47:08.080 [http-nio-8080-exec-2] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.writeWithMessageConverters - Using 'application/json', given [application/json] and supported [application/json, application/*+json, application/yaml]
 2026-05-26 17:47:08.081 [http-nio-8080-exec-2] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor.traceDebug - Writing [[RutinaDTO(id=11, usuarioId=4, nombre=PPL, descripcion=Push Pull Legs, duracionMinutos=60, nivel=AVA (truncated)...]
 2026-05-26 17:47:08.083 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet.logResult - Completed 200 OK
+2026-05-26 17:49:22.529 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown.shutDownGracefully - Commencing graceful shutdown. Waiting for active requests to complete
+2026-05-26 17:49:22.542 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown.doShutdown - Graceful shutdown complete
+2026-05-26 17:49:22.555 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean.destroy - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-05-26 17:49:22.560 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource.close - HikariPool-1 - Shutdown initiated...
+2026-05-26 17:49:22.564 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource.close - HikariPool-1 - Shutdown completed.

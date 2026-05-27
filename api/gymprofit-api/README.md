@@ -52,7 +52,7 @@ CREATE DATABASE gymprofit_db CHARACTER SET utf8mb4;
 Aplicar el schema inicial (los scripts Flyway deben ejecutarse manualmente — ver nota abajo):
 
 ```powershell
-$sql = Get-Content "src\main\resources\db\migration\202603022100__GymProFitDB_MigracionInicial.sql" -Raw
+$sql = Get-Content "src\main\resources\db\migration\V202603022100__GymProFitDB_MigracionInicial.sql" -Raw
 & "C:\Program Files\MariaDB 11.8\bin\mysql.exe" -h 127.0.0.1 -P 3308 -u root -p gymprofit_db -e $sql
 ```
 
@@ -286,15 +286,15 @@ MariaDB en `localhost:3308`, BD `gymprofit_db`.
 
 Migraciones aplicadas:
 ```
-202603022100__GymProFitDB_MigracionInicial.sql
-202603231235__Cambios_Entidades.sql
-202603251830__Fix_mejor_repeticiones_tipo.sql
-202604051853__Add_Auth_Roles.sql
-202605141912__Migrate_Objetivo_To_Enum.sql
-202605161102__Seed_Roles.sql
-202605161135__Logros.sql
-202605251000__Fix_altura_mediciones_corporales.sql   ← DECIMAL(3,2)→DECIMAL(5,2) en altura
-202605251830__Add_instrucciones_press_banca.sql      ← UPDATE ejercicios SET instrucciones WHERE id=1
+V202603022100__GymProFitDB_MigracionInicial.sql
+V202603231235__Cambios_Entidades.sql
+V202603251830__Fix_mejor_repeticiones_tipo.sql
+V202604051853__Add_Auth_Roles.sql
+V202605141912__Migrate_Objetivo_To_Enum.sql
+V202605161102__Seed_Roles.sql
+V202605161135__Logros.sql
+V202605251000__Fix_altura_mediciones_corporales.sql   ← DECIMAL(3,2)→DECIMAL(5,2) en altura
+V202605251830__Add_instrucciones_press_banca.sql      ← UPDATE ejercicios SET instrucciones WHERE id=1
 V202605261000__Add_foto_perfil_usuarios.sql          ← columna foto_perfil VARCHAR(255) en usuarios (prefijo V → Flyway la ejecuta)
 ```
 
