@@ -152,6 +152,7 @@ public class RegistroActivity extends AppCompatActivity {
     private void irAlOnboarding() {
         Intent intent = new Intent(this, Onboarding1Activity.class);
         intent.putExtra("username", prefsManager.getUsername());
+        intent.putExtra("email", etRegEmail.getText().toString().trim());
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
