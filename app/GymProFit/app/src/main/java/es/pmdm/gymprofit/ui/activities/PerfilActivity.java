@@ -120,7 +120,10 @@ public class PerfilActivity extends BaseActivity {
         llMedicionesResumen = findViewById(R.id.llMedicionesResumen);
         ivAvatar = findViewById(R.id.ivAvatar);
         ivAvatar.getParent().requestChildFocus(ivAvatar, ivAvatar);
-        ((View) ivAvatar.getParent()).setOnClickListener(v -> mostrarDialogoFoto());
+        ((View) ivAvatar.getParent()).setOnClickListener(v -> {
+            if (!verificarAccesoRegistrado()) return;
+            mostrarDialogoFoto();
+        });
     }
 
     private void configurarDatosUsuario() {
@@ -293,15 +296,20 @@ public class PerfilActivity extends BaseActivity {
     }
 
     private void configurarBotones() {
-        findViewById(R.id.btnEditarPerfil).setOnClickListener(v ->
-                editarPerfilLauncher.launch(new Intent(this, EditarPerfilActivity.class))
-        );
+        findViewById(R.id.btnEditarPerfil).setOnClickListener(v -> {
+            if (!verificarAccesoRegistrado()) return;
+            editarPerfilLauncher.launch(new Intent(this, EditarPerfilActivity.class));
+        });
 
-        findViewById(R.id.itemSesiones).setOnClickListener(v ->
-                startActivity(new Intent(this, SesionesActivity.class)));
+        findViewById(R.id.itemSesiones).setOnClickListener(v -> {
+            if (!verificarAccesoRegistrado()) return;
+            startActivity(new Intent(this, SesionesActivity.class));
+        });
 
-        findViewById(R.id.itemMediciones).setOnClickListener(v ->
-                medicionesLauncher.launch(new Intent(this, MedicionesActivity.class)));
+        findViewById(R.id.itemMediciones).setOnClickListener(v -> {
+            if (!verificarAccesoRegistrado()) return;
+            medicionesLauncher.launch(new Intent(this, MedicionesActivity.class));
+        });
 
         findViewById(R.id.itemLogros).setOnClickListener(v ->
                 startActivity(new Intent(this, LogrosActivity.class)));

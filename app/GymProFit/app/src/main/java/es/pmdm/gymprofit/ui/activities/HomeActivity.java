@@ -139,6 +139,7 @@ public class HomeActivity extends BaseActivity {
         MaterialCardView cardRegistrarComida = findViewById(R.id.cardRegistrarComida);
 
         cardIniciarEntrenamiento.setOnClickListener(v -> {
+            if (!verificarAccesoRegistrado()) return;
             startActivity(new Intent(this, SesionesActivity.class));
             overridePendingTransition(0, 0);
         });
@@ -149,6 +150,7 @@ public class HomeActivity extends BaseActivity {
         });
 
         cardRegistrarComida.setOnClickListener(v -> {
+            if (!verificarAccesoRegistrado()) return;
             startActivity(new Intent(this, NutricionActivity.class));
             overridePendingTransition(0, 0);
         });

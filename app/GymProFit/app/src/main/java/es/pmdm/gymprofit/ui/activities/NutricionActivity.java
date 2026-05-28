@@ -238,6 +238,7 @@ public class NutricionActivity extends BaseActivity {
      */
     private void setupCardComida(int cardId, String tipo, String fecha) {
         findViewById(cardId).setOnClickListener(v -> {
+            if (!verificarAccesoRegistrado()) return;
             Intent intent = new Intent(this, ComidaActivity.class);
             intent.putExtra("tipoComida", tipo);
             Comida c = comidasHoy.get(tipo);

@@ -11,6 +11,10 @@
     <string name="login_password">Contraseña</string>
     <string name="login_entrar">Entrar</string>
     <string name="login_no_cuenta">¿No tienes cuenta? Regístrate</string>
+    <string name="login_entrar_invitado">Entrar como invitado</string>
+    <string name="login_o">o</string>
+    <string name="login_error_invitado">No se pudo entrar como invitado</string>
+    <string name="error_solo_usuarios_registrados">Debes crear una cuenta para acceder a esta funcionalidad</string>
     <string name="error_campos_vacios">Por favor, completa todos los campos</string>
     <string name="registro_proximamente">Registro disponible próximamente</string>
     <string name="registro_titulo">Crear cuenta</string>

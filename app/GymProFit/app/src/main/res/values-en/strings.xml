@@ -11,6 +11,10 @@
     <string name="login_password">Password</string>
     <string name="login_entrar">Log In</string>
     <string name="login_no_cuenta">Don\'t have an account? Sign up</string>
+    <string name="login_entrar_invitado">Continue as guest</string>
+    <string name="login_o">or</string>
+    <string name="login_error_invitado">Could not enter as guest</string>
+    <string name="error_solo_usuarios_registrados">You need an account to access this feature</string>
     <string name="error_campos_vacios">Please fill in all fields</string>
     <string name="registro_proximamente">Registration coming soon</string>
     <string name="registro_titulo">Create account</string>

@@ -74,11 +74,43 @@ public class LoginActivity extends AppCompatActivity {
             hacerLogin(usuario, password);
         });
 
+        findViewById(R.id.btnEntrarInvitado).setOnClickListener(v -> hacerLoginInvitado());
+
         findViewById(R.id.tvNoTienesCuenta).setOnClickListener(v ->
                 startActivity(new Intent(this, RegistroActivity.class)));
 
         btnCambiarTema.setOnClickListener(v -> cambiarTema());
         btnCambiarIdioma.setOnClickListener(v -> mostrarDialogoIdioma());
+    }
+
+    private void hacerLoginInvitado() {
+        API.loginAsGuest(new UtilREST.OnResponseListener() {
+            @Override
+            public void onSuccess(String response, int statusCode) {
+                try {
+                    String token = UtilJSONParser.parseToken(response);
+                    String user  = UtilJSONParser.parseTokenUsername(response);
+                    String rol   = UtilJSONParser.parseTokenRol(response);
+
+                    UtilREST.setToken(token);
+                    prefsManager.saveToken(token);
+                    prefsManager.saveUsername(user);
+                    prefsManager.saveRol(rol);
+                    prefsManager.setOnboardingCompletado(true);
+
+                    startActivity(new Intent(LoginActivity.this, HomeActivity.class)
+                            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                    finish();
+                } catch (JSONException e) {
+                    UIHelper.mostrarToastError(LoginActivity.this, getString(R.string.login_error_invitado));
+                }
+            }
+
+            @Override
+            public void onError(String message, int statusCode) {
+                UIHelper.mostrarToastError(LoginActivity.this, getString(R.string.login_error_invitado));
+            }
+        });
     }
 
     private void hacerLogin(String username, String password) {

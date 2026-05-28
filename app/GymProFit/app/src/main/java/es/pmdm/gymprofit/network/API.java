@@ -37,6 +37,10 @@ public class API {
         }
     }
 
+    public static void loginAsGuest(UtilREST.OnResponseListener l) {
+        UtilREST.request(BASE + "auth/guest", "POST", null, l);
+    }
+
     // ── USUARIOS ──────────────────────────────────────────────────────────────
 
     public static void getUsuarioPorUsername(String username, UtilREST.OnResponseListener l) {

@@ -49,6 +49,18 @@ public abstract class BaseActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Muestra toast de "solo usuarios registrados" si el usuario es invitado.
+     * @return {@code true} si puede continuar, {@code false} si es guest.
+     */
+    protected boolean verificarAccesoRegistrado() {
+        if (prefsManager.isGuest()) {
+            UIHelper.mostrarToastError(this, getString(R.string.error_solo_usuarios_registrados));
+            return false;
+        }
+        return true;
+    }
+
     protected void setupMenuButton() {
         View btn = findViewById(R.id.btnMenuOpciones);
         if (btn != null) btn.setOnClickListener(this::mostrarMenuOpciones);

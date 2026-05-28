@@ -143,6 +143,8 @@ public class RutinasActivity extends BaseActivity {
     }
 
     private void mostrarMenuContextual(Rutina rutina, View anchorView) {
+        if (!verificarAccesoRegistrado()) return;
+
         List<UIHelper.MenuAction> actions = new ArrayList<>();
 
         actions.add(new UIHelper.MenuAction(R.drawable.ic_edit, getString(R.string.rutinas_editar), () -> {
@@ -247,8 +249,10 @@ public class RutinasActivity extends BaseActivity {
     }
 
     private void configurarFab() {
-        fabCrearRutina.setOnClickListener(v ->
-                crearRutinaLauncher.launch(new Intent(this, CrearRutinaActivity.class)));
+        fabCrearRutina.setOnClickListener(v -> {
+            if (!verificarAccesoRegistrado()) return;
+            crearRutinaLauncher.launch(new Intent(this, CrearRutinaActivity.class));
+        });
     }
 
     private void configurarNavegacion() {
