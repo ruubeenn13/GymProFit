@@ -192,6 +192,9 @@
     <string name="onboarding_moderado">Moderado</string>
     <string name="onboarding_activo">Activo</string>
     <string name="onboarding_selecciona_objetivo">Selecciona un objetivo</string>
+    <string name="onboarding_nivel_titulo">Tu nivel de experiencia</string>
+    <string name="onboarding_nivel_desc">Esto nos ayuda a personalizar tus rutinas y recomendaciones.</string>
+    <string name="onboarding_selecciona_nivel">Selecciona tu nivel de experiencia</string>
     <string name="onboarding_guardado_exito">¡Perfil guardado correctamente!</string>
     <string name="onboarding_guardado_local">Datos guardados localmente</string>
     <string name="onboarding_resumen_meta">Tu objetivo nutricional diario</string>
@@ -373,8 +376,13 @@
     <string name="editar_perfil_error">Error al guardar los cambios</string>
     <string name="editar_perfil_email_requerido">El email es obligatorio</string>
     <string name="nivel_principiante">Principiante</string>
+    <string name="nivel_principiante_desc">Comienzo mi aventura en el fitness</string>
     <string name="nivel_intermedio">Intermedio</string>
+    <string name="nivel_intermedio_desc">Entreno regularmente con cierta experiencia</string>
     <string name="nivel_avanzado">Avanzado</string>
+    <string name="nivel_avanzado_desc">Entreno con alta intensidad y muy buenos resultados</string>
+    <string name="nivel_experto">Experto</string>
+    <string name="nivel_experto_desc">Rendimiento de élite y amplia trayectoria deportiva</string>
 
     <!-- Resumen sesión -->
     <string name="resumen_titulo">Resumen de sesión</string>

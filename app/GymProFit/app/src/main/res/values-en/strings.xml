@@ -193,6 +193,9 @@
     <string name="onboarding_moderado">Moderate</string>
     <string name="onboarding_activo">Active</string>
     <string name="onboarding_selecciona_objetivo">Please select a goal</string>
+    <string name="onboarding_nivel_titulo">Your experience level</string>
+    <string name="onboarding_nivel_desc">This helps us personalize your routines and recommendations.</string>
+    <string name="onboarding_selecciona_nivel">Please select your experience level</string>
     <string name="onboarding_guardado_exito">Profile saved successfully!</string>
     <string name="onboarding_guardado_local">Data saved locally</string>
     <string name="onboarding_resumen_meta">Your daily nutritional goal</string>
@@ -374,8 +377,13 @@
     <string name="editar_perfil_error">Error saving changes</string>
     <string name="editar_perfil_email_requerido">Email is required</string>
     <string name="nivel_principiante">Beginner</string>
+    <string name="nivel_principiante_desc">Starting my fitness journey</string>
     <string name="nivel_intermedio">Intermediate</string>
+    <string name="nivel_intermedio_desc">I train regularly with some experience</string>
     <string name="nivel_avanzado">Advanced</string>
+    <string name="nivel_avanzado_desc">I train with high intensity and great results</string>
+    <string name="nivel_experto">Expert</string>
+    <string name="nivel_experto_desc">Elite performance with an extensive sports background</string>
 
     <!-- Session summary -->
     <string name="resumen_titulo">Session Summary</string>

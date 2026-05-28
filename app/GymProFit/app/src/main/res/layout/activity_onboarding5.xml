@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?attr/android:colorBackground">
+
+    <TextView
+        android:id="@+id/tvSaltar5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_margin="16dp"
+        android:text="@string/onboarding_saltar"
+        android:textSize="14sp"
+        android:textColor="?attr/colorPrimary"
+        android:padding="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackgroundBorderless" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/onboarding_nivel_titulo"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurface" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:layout_marginBottom="20dp"
+                android:text="@string/onboarding_nivel_desc"
+                android:textSize="14sp"
+                android:textColor="?attr/colorOnSurface"
+                android:alpha="0.6" />
+
+            <!-- PRINCIPIANTE -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardPrincipiante"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="?attr/colorSurface"
+                app:strokeWidth="2dp"
+                app:strokeColor="?attr/colorOutlineVariant">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
+                    <TextView android:layout_width="36dp" android:layout_height="36dp"
+                        android:text="🌱" android:textSize="24sp" android:gravity="center" android:layout_marginEnd="14dp" />
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="@string/nivel_principiante" android:textSize="14sp"
+                            android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp" android:text="@string/nivel_principiante_desc"
+                            android:textSize="12sp" android:textColor="?attr/colorOnSurface" android:alpha="0.6" />
+                    </LinearLayout>
+                    <ImageView android:id="@+id/ivCheckPrincipiante" android:layout_width="20dp"
+                        android:layout_height="20dp" android:src="@drawable/ic_check"
+                        android:visibility="gone" android:contentDescription="@null" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- INTERMEDIO -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardIntermedio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="?attr/colorSurface"
+                app:strokeWidth="2dp"
+                app:strokeColor="?attr/colorOutlineVariant">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
+                    <TextView android:layout_width="36dp" android:layout_height="36dp"
+                        android:text="💪" android:textSize="24sp" android:gravity="center" android:layout_marginEnd="14dp" />
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="@string/nivel_intermedio" android:textSize="14sp"
+                            android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp" android:text="@string/nivel_intermedio_desc"
+                            android:textSize="12sp" android:textColor="?attr/colorOnSurface" android:alpha="0.6" />
+                    </LinearLayout>
+                    <ImageView android:id="@+id/ivCheckIntermedio" android:layout_width="20dp"
+                        android:layout_height="20dp" android:src="@drawable/ic_check"
+                        android:visibility="gone" android:contentDescription="@null" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- AVANZADO -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardAvanzado"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="?attr/colorSurface"
+                app:strokeWidth="2dp"
+                app:strokeColor="?attr/colorOutlineVariant">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
+                    <TextView android:layout_width="36dp" android:layout_height="36dp"
+                        android:text="🏆" android:textSize="24sp" android:gravity="center" android:layout_marginEnd="14dp" />
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="@string/nivel_avanzado" android:textSize="14sp"
+                            android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp" android:text="@string/nivel_avanzado_desc"
+                            android:textSize="12sp" android:textColor="?attr/colorOnSurface" android:alpha="0.6" />
+                    </LinearLayout>
+                    <ImageView android:id="@+id/ivCheckAvanzado" android:layout_width="20dp"
+                        android:layout_height="20dp" android:src="@drawable/ic_check"
+                        android:visibility="gone" android:contentDescription="@null" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- EXPERTO -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardExperto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="?attr/colorSurface"
+                app:strokeWidth="2dp"
+                app:strokeColor="?attr/colorOutlineVariant">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
+                    <TextView android:layout_width="36dp" android:layout_height="36dp"
+                        android:text="⚡" android:textSize="24sp" android:gravity="center" android:layout_marginEnd="14dp" />
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="@string/nivel_experto" android:textSize="14sp"
+                            android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp" android:text="@string/nivel_experto_desc"
+                            android:textSize="12sp" android:textColor="?attr/colorOnSurface" android:alpha="0.6" />
+                    </LinearLayout>
+                    <ImageView android:id="@+id/ivCheckExperto" android:layout_width="20dp"
+                        android:layout_height="20dp" android:src="@drawable/ic_check"
+                        android:visibility="gone" android:contentDescription="@null" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Indicador paso 5/5 -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="center" android:layout_marginBottom="16dp">
+            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorOnSurface" android:alpha="0.2" android:layout_marginEnd="5dp" />
+            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorOnSurface" android:alpha="0.2" android:layout_marginEnd="5dp" />
+            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorOnSurface" android:alpha="0.2" android:layout_marginEnd="5dp" />
+            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorOnSurface" android:alpha="0.2" android:layout_marginEnd="5dp" />
+            <View android:layout_width="32dp" android:layout_height="4dp" android:background="?attr/colorPrimary" />
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAnterior5"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp" android:layout_height="52dp" android:layout_weight="1"
+                android:layout_marginEnd="8dp" android:text="@string/onboarding_anterior" app:cornerRadius="12dp" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSiguiente5"
+                android:layout_width="0dp" android:layout_height="52dp" android:layout_weight="1"
+                android:layout_marginStart="8dp" android:text="@string/onboarding_siguiente" app:cornerRadius="12dp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

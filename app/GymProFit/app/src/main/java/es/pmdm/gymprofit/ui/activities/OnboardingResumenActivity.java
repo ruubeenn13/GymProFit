@@ -51,11 +51,13 @@ public class OnboardingResumenActivity extends AppCompatActivity {
         String sexo    = extras.getString("sexo", "HOMBRE");
         String actividad = extras.getString("actividad", CalculadoraNutricional.ACTIVIDAD_MODERADO);
         String objetivo  = extras.getString("objetivo", CalculadoraNutricional.OBJETIVO_MANTENER_PESO);
+        String nivel     = extras.getString("nivel", "");
 
         double peso = Double.parseDouble(pesoStr.replace(",", "."));
         prefs.savePeso(peso);
         prefs.saveAltura(altura);
         prefs.saveEdad(edad);
+        if (!nivel.isEmpty()) prefs.saveNivel(nivel);
         boolean esHombre = "HOMBRE".equals(sexo);
 
         ResultadoNutricional resultado = CalculadoraNutricional.calcular(
@@ -97,14 +99,13 @@ public class OnboardingResumenActivity extends AppCompatActivity {
         int usuarioId = prefs.getUsuarioId();
 
         if (usuarioId == -1 || extras == null) {
-            prefs.setOnboardingCompletado(true);
+            marcarOnboardingCompletado(prefs);
             irAlHome();
             return;
         }
 
         try {
             JSONObject body = new JSONObject();
-            body.put("id", usuarioId);
 
             String emailStr = extras.getString("email", "");
             if (!emailStr.isEmpty()) body.put("email", emailStr);
@@ -125,12 +126,12 @@ public class OnboardingResumenActivity extends AppCompatActivity {
 
             body.put("objetivo", prefs.getObjetivo());
 
-            API.actualizarUsuario(usuarioId, body, new UtilREST.OnResponseListener() {
+            API.patchUsuario(usuarioId, body, new UtilREST.OnResponseListener() {
                 @Override
                 public void onSuccess(String response, int statusCode) {
                     UIHelper.mostrarToastExito(OnboardingResumenActivity.this,
                             getString(R.string.onboarding_guardado_exito));
-                    prefs.setOnboardingCompletado(true);
+                    marcarOnboardingCompletado(prefs);
                     irAlHome();
                 }
 
@@ -138,14 +139,19 @@ public class OnboardingResumenActivity extends AppCompatActivity {
                 public void onError(String message, int statusCode) {
                     UIHelper.mostrarToastInfo(OnboardingResumenActivity.this,
                             getString(R.string.onboarding_guardado_local));
-                    prefs.setOnboardingCompletado(true);
+                    marcarOnboardingCompletado(prefs);
                     irAlHome();
                 }
             });
         } catch (JSONException e) {
-            prefs.setOnboardingCompletado(true);
+            marcarOnboardingCompletado(prefs);
             irAlHome();
         }
+    }
+
+    private void marcarOnboardingCompletado(PreferencesManager prefs) {
+        prefs.setOnboardingCompletado(true);
+        prefs.setOnboardingCompletadoParaUsuario(prefs.getUsername());
     }
 
     private void irAlHome() {

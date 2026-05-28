@@ -137,7 +137,7 @@ Todos van bajo el context-path `/api`. Los `@RequestMapping` de los controllers 
 | GET | `/usuarios/{id}` | USER/ADMIN | Usuario por ID |
 | GET | `/usuarios/username/{u}` | USER/ADMIN | Usuario por username |
 | GET | `/usuarios/{id}/estadisticas` | USER/ADMIN | Estadísticas jOOQ |
-| PUT | `/usuarios` | USER/ADMIN | Actualizar completo (id en body) |
+| PUT | `/usuarios` | ADMIN | Actualizar completo (id en body) — SecurityConfig: solo ADMIN vía catch-all `/usuarios/**` |
 | PATCH | `/usuarios/{id}` | USER/ADMIN | Actualización parcial |
 | GET | `/usuarios` | ADMIN | Todos los usuarios |
 | DELETE | `/usuarios/{id}` | ADMIN | Soft delete |
@@ -332,6 +332,9 @@ service/:    AuthServiceTest, EjercicioServiceTest, RutinaServiceTest,
 ---
 
 ## Changelog
+
+### 2026-05-28
+- **Fix SecurityConfig documentado**: `PUT /usuarios` solo accesible para ADMIN (catch-all `/usuarios/**`). `PATCH /usuarios/{id}` es el endpoint correcto para USER. Android actualizado: `OnboardingResumenActivity` y `EditarPerfilActivity` usan `PATCH /usuarios/{id}`
 
 ### 2026-05-26
 - **Nutrición — AlimentoComidaDTO enriquecido**: añadidos `nombreAlimento`, `categoriaAlimento`, `proteinasTotales`, `carbohidratosTotales`, `grasasTotales` calculados en mapper (macro × cantidadGramos / 100). Fix `AlimentoComidaService`. Fix `activarAlimento()` (bug llamaba `deleteById`). `GET /admin/alimentos/busqueda?nombre=&categoria=&activo=` con filtros dinámicos jOOQ. Migración `V202605262000__Update_categorias_alimentos.sql`

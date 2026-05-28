@@ -60,7 +60,7 @@ SplashActivity
      ↓
 LoginActivity ←→ RegistroActivity
      ↓ (primer acceso)
-Onboarding (1 → 2 → 3 → 4 → Resumen)
+Onboarding (1 → 2 → 3 → 4 → 5 → Resumen)
      ↓
 HomeActivity (navegación inferior)
   ├── EjerciciosActivity → DetalleEjercicioActivity (vídeo + instrucciones)
@@ -119,7 +119,8 @@ Arquitectura 4 capas obligatoria (UD06).
 | `register` | `POST auth/register` | Registro |
 | `getUsuarioPorUsername` | `GET usuarios/username/{u}` | Perfil por username |
 | `getUsuarioPorId` | `GET usuarios/{id}` | Perfil por ID |
-| `actualizarUsuario` | `PUT usuarios` | Actualizar perfil (id en body) |
+| `actualizarUsuario` | `PUT usuarios` | Actualizar perfil completo (id en body) — solo para ADMIN |
+| `patchUsuario` | `PATCH usuarios/{id}` | Actualización parcial — usado en onboarding y edición de perfil |
 | `getRutinasDeUsuario` | `GET rutinas/usuario/{id}` | Rutinas del usuario |
 | `crearRutina` | `POST rutinas` | Nueva rutina |
 | `eliminarRutina` | `DELETE rutinas/{id}` | Eliminar rutina |
@@ -153,8 +154,9 @@ Arquitectura 4 capas obligatoria (UD06).
 | `SplashActivity` | Carga inicial. Restaura token JWT desde SharedPreferences y redirige a Home o Login |
 | `LoginActivity` | Inicio de sesión. Guarda token, id, username y rol. Detecta si onboarding ya fue completado |
 | `RegistroActivity` | Registro de nuevo usuario |
-| `Onboarding1–4Activity` | Flujo de configuración inicial (objetivo, nivel, datos físicos) |
-| `OnboardingResumenActivity` | Resumen y guardado. Llama a `PUT /usuarios` con todos los datos |
+| `Onboarding1–4Activity` | Flujo de configuración inicial (datos físicos, actividad, objetivo) |
+| `Onboarding5Activity` | Selección de nivel de experiencia: PRINCIPIANTE, INTERMEDIO, AVANZADO, EXPERTO |
+| `OnboardingResumenActivity` | Resumen nutricional y guardado. `PATCH /usuarios/{id}` con todos los datos del onboarding |
 | `HomeActivity` | Pantalla principal con BottomNav. Estadísticas reales de la semana (entrenamientos, calorías, minutos) cargadas en `onResume`. Detecta JWT expirado → redirige a Login |
 | `EjerciciosActivity` | Catálogo con filtro por grupo muscular y búsqueda |
 | `RutinasActivity` | Listado de rutinas del usuario y predefinidas. Filtro por nivel |
@@ -206,7 +208,7 @@ Arquitectura 4 capas obligatoria (UD06).
 
 | Clase | Descripción |
 |---|---|
-| `PreferencesManager` | SharedPreferences centralizado. Campos: token, usuarioId, username, rol, nivel, objetivo, sexo, actividad, calorías/macros/agua, onboarding, tema, idioma. `cerrarSesion()` limpia token + id + username + onboarding |
+| `PreferencesManager` | SharedPreferences centralizado. Campos: token, usuarioId, username, rol, nivel, objetivo, sexo, actividad, calorías/macros/agua, onboarding, tema, idioma. `cerrarSesion()` limpia token + id + username. `KEY_ONBOARDING` persiste entre sesiones; tracking adicional por usuario via `onboarding_done_<username>` |
 | `CalculadoraNutricional` | BMR con Mifflin-St Jeor, factor de actividad y distribución de macros según objetivo |
 | `ResultadoNutricional` | Modelo con calorías totales, proteínas, carbohidratos y grasas |
 | `UIHelper` | Toasts personalizados (éxito, error, info) y diálogos de confirmación con icono. Ancho diálogo = 90% pantalla |
@@ -452,6 +454,12 @@ Abre `app/GymProFit` en Android Studio, sincroniza Gradle y ejecuta en emulador 
 ---
 
 ## 📝 Changelog
+
+### 2026-05-28
+
+| Hash | Descripción |
+|---|---|
+| *(pendiente)* | feat(android): Onboarding5Activity para nivel de experiencia, fix persistencia onboarding, fix PUT→PATCH en OnboardingResumen, EXPERTO en spinner EditarPerfil |
 
 ### 2026-05-26
 

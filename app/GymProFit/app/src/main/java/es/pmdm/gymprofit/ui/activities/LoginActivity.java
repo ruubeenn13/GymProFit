@@ -149,9 +149,11 @@ public class LoginActivity extends AppCompatActivity {
                     prefsManager.saveUsuarioId(u.getId());
 
                     boolean yaCompleto = prefsManager.isAdmin()
-                            || (u.getNivelExperiencia() != null && !u.getNivelExperiencia().isEmpty());
+                            || (u.getNivelExperiencia() != null && !u.getNivelExperiencia().isEmpty())
+                            || prefsManager.isOnboardingCompletadoParaUsuario(username);
                     if (yaCompleto) {
                         prefsManager.setOnboardingCompletado(true);
+                        prefsManager.setOnboardingCompletadoParaUsuario(username);
                     }
                 } catch (JSONException e) {
                     // continúa sin guardar id/rol
@@ -161,6 +163,9 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onError(String message, int statusCode) {
+                if (prefsManager.isOnboardingCompletadoParaUsuario(username)) {
+                    prefsManager.setOnboardingCompletado(true);
+                }
                 navegarTrasLogin();
             }
         });

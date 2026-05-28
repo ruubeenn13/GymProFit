@@ -52,7 +52,6 @@ public class PreferencesManager {
         editor.remove(KEY_TOKEN);
         editor.remove(KEY_USUARIO_ID);
         editor.remove(KEY_USERNAME);
-        editor.remove(KEY_ONBOARDING);
         editor.apply();
     }
 
@@ -91,6 +90,15 @@ public class PreferencesManager {
 
     public void setOnboardingCompletado(boolean v) { editor.putBoolean(KEY_ONBOARDING, v); editor.apply(); }
     public boolean isOnboardingCompletado() { return prefs.getBoolean(KEY_ONBOARDING, false); }
+
+    public void setOnboardingCompletadoParaUsuario(String username) {
+        editor.putBoolean("onboarding_done_" + username, true);
+        editor.apply();
+    }
+    public boolean isOnboardingCompletadoParaUsuario(String username) {
+        if (username == null || username.isEmpty()) return false;
+        return prefs.getBoolean("onboarding_done_" + username, false);
+    }
 
     public void saveRol(String rol) { editor.putString(KEY_ROL, rol); editor.apply(); }
     public String getRol() { return prefs.getString(KEY_ROL, "ROLE_USER"); }

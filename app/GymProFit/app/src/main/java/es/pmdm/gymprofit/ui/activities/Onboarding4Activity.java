@@ -65,7 +65,7 @@ public class Onboarding4Activity extends AppCompatActivity {
                 return;
             }
 
-            Intent intent = new Intent(this, OnboardingResumenActivity.class);
+            Intent intent = new Intent(this, Onboarding5Activity.class);
 
             if (extras != null) {
                 intent.putExtras(extras);

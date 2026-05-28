@@ -68,6 +68,9 @@
             android:name=".ui.activities.Onboarding4Activity"
             android:exported="false" />
         <activity
+            android:name=".ui.activities.Onboarding5Activity"
+            android:exported="false" />
+        <activity
             android:name=".ui.activities.Onboarding3Activity"
             android:exported="false" />
         <activity

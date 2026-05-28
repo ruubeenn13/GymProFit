@@ -116,7 +116,7 @@ SplashActivity
      ↓
 LoginActivity ←→ RegistroActivity
      ↓ (primer acceso)
-Onboarding (1 → 2 → 3 → 4 → Resumen)
+Onboarding (1 → 2 → 3 → 4 → 5 → Resumen)
      ↓
 HomeActivity (navegación inferior)
   ├── EjerciciosActivity → DetalleEjercicioActivity (vídeo + instrucciones)
@@ -143,8 +143,9 @@ HomeActivity (navegación inferior)
 | `SplashActivity` | Launcher. Restaura token JWT → Home o Login |
 | `LoginActivity` | POST /auth/login. Guarda token, id, username, rol |
 | `RegistroActivity` | POST /auth/register |
-| `Onboarding1–4Activity` | Configuración inicial: objetivo, nivel, datos físicos |
-| `OnboardingResumenActivity` | Cálculo nutricional + PUT /usuarios |
+| `Onboarding1–4Activity` | Configuración inicial: datos personales, medidas, actividad, objetivo |
+| `Onboarding5Activity` | Selección de nivel de experiencia (PRINCIPIANTE / INTERMEDIO / AVANZADO / EXPERTO) con cards seleccionables |
+| `OnboardingResumenActivity` | Cálculo nutricional + `PATCH /usuarios/{id}` con todos los datos del onboarding |
 | `HomeActivity` | Saludo contextual, fecha locale-aware. Estadísticas reales de la semana actual (entrenamientos, calorías, minutos) cargadas desde API. Detecta JWT expirado (401) → redirige a Login |
 | `EjerciciosActivity` | Catálogo con buscador y filtro por grupo muscular |
 | `RutinasActivity` | Listado rutinas del usuario + predefinidas. Filtro por nivel. Long-press contextual: admin en predefinidas (Editar→`EditarRutinaAdminActivity` + Desactivar/Activar) o en propias (Editar + Eliminar); usuario solo en propias (Editar + Eliminar) |
@@ -160,7 +161,7 @@ HomeActivity (navegación inferior)
 | `AdminAlimentosActivity` | Gestión admin de alimentos: búsqueda, filtros categoría/estado, toggle activo, editar via dialog. Acceso desde AdminActivity (solo ROLE_ADMIN) |
 | `PerfilActivity` | Datos reales de la API + resumen de última medición corporal (peso/altura). Hereda de `BaseActivity`. Botón "Sobre GymProFit" al pie |
 | `AcercaDeActivity` | Pantalla "Acerca de": logo adaptativo claro/oscuro (`@drawable/logo` + `drawable-night/`), info extendida de la app (descripción, 6 features, tech stack) e info del desarrollador (bio, formación, 3 FCTs, email clickable `ACTION_SENDTO`). Botón "Compartir": pide permiso `READ_CONTACTS` en runtime vía `ActivityResultLauncher`; si se concede abre selector de contactos (`ACTION_PICK Phone.CONTENT_URI`); extrae número via `ContentResolver` y lanza `ACTION_SENDTO smsto:` con el texto pre-rellenado. Extiende `AppCompatActivity`, aplica tema/idioma manualmente |
-| `EditarPerfilActivity` | PATCH /usuarios/{id}. Campos vacíos → null en BD |
+| `EditarPerfilActivity` | `PATCH /usuarios/{id}`. Spinner nivel con 4 opciones (PRINCIPIANTE–EXPERTO). `saveNivel()` en `onSuccess`. Campos vacíos → null en BD |
 | `SesionesActivity` | Historial de sesiones, eliminar |
 | `RegistrarSesionActivity` | Crear sesión: spinner rutinas, calorías calculadas, cards de ejercicios con campo de peso por ejercicio (RecyclerView+`EjercicioPesoAdapter`), RatingBar 1-5 |
 | `ResumenSesionActivity` | Detalle sesión + 6 stats de usuario + logros desbloqueados |
@@ -189,10 +190,12 @@ prefs.getUsuarioId()          // int id del usuario logado
 prefs.getUsername()           // String username
 prefs.getRol()                // "ROLE_USER" / "ROLE_ADMIN" / "ROLE_GUEST"
 prefs.isAdmin()               // true si rol == "ROLE_ADMIN"
-prefs.isOnboardingCompletado()
+prefs.isOnboardingCompletado()                         // KEY_ONBOARDING — NO se borra en cerrarSesion()
+prefs.isOnboardingCompletadoParaUsuario(username)      // clave por usuario: onboarding_done_<username>
+prefs.setOnboardingCompletadoParaUsuario(username)
 prefs.haySesion()             // true si hay token no vacío
 prefs.applyTheme()            // aplicar antes de setContentView en todo onCreate
-prefs.cerrarSesion()          // limpia token + id + username (no elimina tema ni idioma)
+prefs.cerrarSesion()          // limpia token + id + username (no elimina onboarding, tema ni idioma)
 ```
 
 ### `UIHelper`
@@ -305,6 +308,13 @@ implementation libs.constraintlayout
 ---
 
 ## Changelog
+
+### 2026-05-28 — Onboarding nivel experiencia, fix persistencia, fix PUT→PATCH
+
+- **Onboarding5Activity**: nueva pantalla entre paso 4 (objetivo) y el resumen. 4 cards con emoji (🌱 Principiante, 💪 Intermedio, 🏆 Avanzado, ⚡ Experto). Selección obligatoria. Pasa extra `"nivel"` a `OnboardingResumenActivity`. Strings bilingüe ES+EN. Registrada en `AndroidManifest`
+- **Fix persistencia onboarding**: `cerrarSesion()` ya no elimina `KEY_ONBOARDING` → el flag sobrevive al logout. `PreferencesManager` añade `setOnboardingCompletadoParaUsuario` / `isOnboardingCompletadoParaUsuario` (clave `onboarding_done_<username>`). `LoginActivity.obtenerUsuario` comprueba la clave por usuario además de `nivelExperiencia` del API
+- **Fix OnboardingResumenActivity**: usaba `API.actualizarUsuario` (`PUT /usuarios` → SecurityConfig sólo lo permite para ADMIN → 403 para ROLE_USER); cambiado a `API.patchUsuario` (`PATCH /usuarios/{id}`). Eliminado `body.put("id", ...)` innecesario para PATCH. Añadido `prefs.saveNivel(nivel)` en `calcularYMostrar`
+- **EditarPerfilActivity**: añadido `"EXPERTO"` a `NIVELES[]` y `getString(R.string.nivel_experto)` a `nivelesDisplay[]`. Añadido `prefsManager.saveNivel(...)` en `onSuccess` para mantener prefs sincronizadas
 
 ### 2026-05-26 — Compartir vía SMS con selector de contactos
 

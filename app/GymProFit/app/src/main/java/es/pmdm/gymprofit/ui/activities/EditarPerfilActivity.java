@@ -32,7 +32,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
     private Spinner spNivel, spObjetivo;
 
     private static final String[] NIVELES = {
-            "PRINCIPIANTE", "INTERMEDIO", "AVANZADO"
+            "PRINCIPIANTE", "INTERMEDIO", "AVANZADO", "EXPERTO"
     };
     private static final String[] OBJETIVOS = {
             "PERDER_PESO", "GANAR_MASA_MUSCULAR", "MANTENER_PESO",
@@ -67,7 +67,8 @@ public class EditarPerfilActivity extends AppCompatActivity {
         String[] nivelesDisplay = {
                 getString(R.string.nivel_principiante),
                 getString(R.string.nivel_intermedio),
-                getString(R.string.nivel_avanzado)
+                getString(R.string.nivel_avanzado),
+                getString(R.string.nivel_experto)
         };
         ArrayAdapter<String> adapterNivel = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_item, nivelesDisplay);
@@ -174,6 +175,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
                         if (!edadStr.isEmpty()) prefsManager.saveEdad(Integer.parseInt(edadStr));
                         String objetivoSeleccionado = OBJETIVOS[spObjetivo.getSelectedItemPosition()];
                         prefsManager.saveObjetivo(objetivoSeleccionado);
+                        prefsManager.saveNivel(NIVELES[spNivel.getSelectedItemPosition()]);
 
                         // Recalcular macros con los nuevos datos
                         double peso = prefsManager.getPeso();
