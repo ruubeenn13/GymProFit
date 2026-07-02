@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  dimens.xml — dimensiones personalizadas que sobrescriben valores por defecto de Material.
+-->
 <resources>
     <!-- Reduce bottom nav height so icon and label are closer together (M3 default is 80dp) -->
     <dimen name="design_bottom_navigation_height">56dp</dimen>

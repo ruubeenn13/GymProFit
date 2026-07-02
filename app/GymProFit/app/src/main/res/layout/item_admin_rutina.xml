@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_admin_rutina — Item de RecyclerView para la lista de rutinas en el panel de administración
+  Muestra nombre, descripción, chips de nivel/estado, número de ejercicios y un botón de acciones.
+-->
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -17,6 +21,7 @@
         android:orientation="vertical"
         android:padding="14dp">
 
+        <!-- Fila 1: nombre + descripción + botón acciones -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -62,6 +67,7 @@
 
         </LinearLayout>
 
+        <!-- Fila 2: chips de nivel/estado y contador de ejercicios -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -1,3 +1,7 @@
+<!--
+  ic_flag_en — icono de la bandera del Reino Unido (Union Jack).
+  Se usa como selector de idioma inglés en los ajustes de la app.
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="22dp"
     android:height="15dp"

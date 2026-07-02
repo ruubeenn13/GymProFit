@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_crear_alimento — formulario para crear un alimento personalizado.
+  Recoge nombre, categoría, calorías y macronutrientes por 100g/unidad.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"

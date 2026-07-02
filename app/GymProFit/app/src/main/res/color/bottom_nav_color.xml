@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  bottom_nav_color.xml — Selector de color para los iconos/texto del BottomNavigationView
+  Define el color cuando el ítem está seleccionado y el color por defecto.
+-->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Ítem seleccionado -->
     <item android:state_checked="true" android:color="#C9963A" />
+    <!-- Ítem no seleccionado -->
     <item android:color="#888888" />
 </selector>

@@ -1,3 +1,7 @@
+<!--
+  ic_flag_es — Bandera de España en miniatura.
+  Icono usado como indicador visual del idioma español (selector de idioma).
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="22dp"
     android:height="15dp"

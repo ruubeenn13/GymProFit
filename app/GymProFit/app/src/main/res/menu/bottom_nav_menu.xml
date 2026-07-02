@@ -1,26 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  bottom_nav_menu — menú de navegación inferior (BottomNavigationView) de la app.
+  Define los 5 destinos principales: inicio, rutinas, ejercicios, nutrición y perfil.
+-->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Inicio / dashboard -->
     <item
         android:id="@+id/nav_home"
         android:icon="@drawable/ic_home"
         android:title="@string/nav_home" />
 
+    <!-- Listado de rutinas -->
     <item
         android:id="@+id/nav_rutinas"
         android:icon="@drawable/ic_rutinas"
         android:title="@string/nav_rutinas" />
 
+    <!-- Catálogo de ejercicios -->
     <item
         android:id="@+id/nav_ejercicios"
         android:icon="@drawable/ic_ejercicios"
         android:title="@string/nav_ejercicios" />
 
+    <!-- Sección de nutrición -->
     <item
         android:id="@+id/nav_nutricion"
         android:icon="@drawable/ic_nutricion"
         android:title="@string/nav_nutricion" />
 
+    <!-- Perfil del usuario -->
     <item
         android:id="@+id/nav_perfil"
         android:icon="@drawable/ic_perfil"

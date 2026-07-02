@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_ejercicio_seleccionado — item de RecyclerView para un ejercicio añadido a una rutina.
+  Muestra nombre, chips (dificultad/calorías/series-reps) y botón de eliminar, usado al construir una rutina.
+-->
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -12,6 +16,7 @@
     app:cardElevation="0dp"
     app:cardBackgroundColor="?attr/colorSurface">
 
+    <!-- Fila principal: icono + info + botones -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,6 +24,7 @@
         android:padding="16dp"
         android:gravity="center_vertical">
 
+        <!-- Icono del ejercicio -->
         <ImageView
             android:id="@+id/ivIconoEjercicio"
             android:layout_width="48dp"
@@ -53,6 +59,7 @@
                 android:ellipsize="end"
                 android:visibility="gone" />
 
+            <!-- Chips de dificultad, calorías y series/reps configuradas -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -98,6 +105,7 @@
 
         </LinearLayout>
 
+        <!-- Botón para quitar el ejercicio de la selección -->
         <ImageView
             android:id="@+id/btnEliminarSeleccionado"
             android:layout_width="36dp"
@@ -112,6 +120,7 @@
             android:visibility="gone"
             android:contentDescription="@null" />
 
+        <!-- Chevron indicador de navegación al detalle -->
         <ImageView
             android:id="@+id/ivChevron"
             android:layout_width="20dp"

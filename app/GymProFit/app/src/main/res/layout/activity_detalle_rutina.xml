@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_detalle_rutina — ficha detallada de una rutina.
+  Muestra nombre, descripción, nivel/duración/calorías, listado de ejercicios
+  y (si aplica) botón de edición para el propietario/admin.
+-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -7,6 +12,7 @@
     android:orientation="vertical"
     android:background="?attr/android:colorBackground">
 
+    <!-- Toolbar con navegación hacia atrás -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -28,6 +34,7 @@
             android:orientation="vertical"
             android:padding="20dp">
 
+            <!-- Card resumen: nombre, descripción, nivel, duración y calorías -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -144,6 +151,7 @@
                 android:textStyle="bold"
                 android:textColor="?attr/colorOnSurface" />
 
+            <!-- Listado de ejercicios de la rutina -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvEjerciciosDetalle"
                 android:layout_width="match_parent"
@@ -154,6 +162,7 @@
 
     </androidx.core.widget.NestedScrollView>
 
+    <!-- Botón editar rutina: visible solo para el propietario/admin -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnEditarRutina"
         android:layout_width="match_parent"

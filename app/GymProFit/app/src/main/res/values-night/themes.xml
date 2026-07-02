@@ -1,4 +1,9 @@
 <resources>
+    <!--
+      themes.xml (values-night) — Tema principal de la app en modo oscuro.
+      Sobrescribe los colores base para la variante nocturna del tema DayNight.
+    -->
+    <!-- Tema base en modo oscuro: fondo negro/gris y acento dorado -->
     <style name="Theme.GymProFit" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">#C9963A</item>
         <item name="colorOnPrimary">#1E1E1E</item>
@@ -14,6 +19,7 @@
         <item name="android:popupMenuStyle">@style/Widget.GymProFit.PopupMenu</item>
     </style>
 
+    <!-- Estilo del menú emergente (popup) para modo oscuro -->
     <style name="Widget.GymProFit.PopupMenu" parent="Widget.Material3.PopupMenu">
         <item name="android:dropDownWidth">260dp</item>
         <item name="android:popupElevation">12dp</item>

@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  menu_rutina_context — menú contextual sobre una rutina de entrenamiento.
+  Permite editarla, desactivarla o eliminarla.
+-->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Editar la rutina seleccionada -->
     <item
         android:id="@+id/menuEditar"
         android:title="@string/rutinas_editar"
         android:icon="@drawable/ic_edit" />
 
+    <!-- Desactivar la rutina sin eliminarla -->
     <item
         android:id="@+id/menuDesactivar"
         android:title="@string/rutinas_desactivar"
         android:icon="@drawable/ic_visibility_off" />
 
+    <!-- Eliminar la rutina definitivamente -->
     <item
         android:id="@+id/menuEliminar"
         android:title="@string/rutinas_eliminar"

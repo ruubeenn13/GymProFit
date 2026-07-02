@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- NUEVO FICHERO - Formulario para crear una nueva rutina -->
+<!--
+  activity_crear_rutina — primer paso del asistente de creación de rutinas.
+  Recoge nombre, descripción, nivel de dificultad y duración estimada antes
+  de pasar a la selección de ejercicios.
+-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -8,6 +13,7 @@
     android:orientation="vertical"
     android:background="?attr/android:colorBackground">
 
+    <!-- Toolbar con navegación hacia atrás -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -29,6 +35,7 @@
             android:orientation="vertical"
             android:padding="20dp">
 
+            <!-- Nombre de la rutina -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -48,6 +55,7 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Descripción de la rutina -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -78,6 +86,7 @@
                 android:textColor="?attr/colorOnSurface"
                 android:alpha="0.7" />
 
+            <!-- Selector de nivel de dificultad -->
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipGroupNivel"
                 android:layout_width="wrap_content"
@@ -109,6 +118,7 @@
 
             </com.google.android.material.chip.ChipGroup>
 
+            <!-- Duración estimada en minutos -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -130,6 +140,7 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Continúa al siguiente paso: selección de ejercicios -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSiguiente"
                 android:layout_width="match_parent"

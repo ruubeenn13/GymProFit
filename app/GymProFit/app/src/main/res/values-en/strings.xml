@@ -1,4 +1,8 @@
 <resources>
+    <!--
+      strings.xml (values-en) — Traducción al inglés de todos los textos de la app.
+      Debe mantener las mismas claves que values/strings.xml (idioma por defecto ES).
+    -->
     <!-- SPLASH ACTIVITY -->
     <string name="app_name">GymProFit</string>
     <string name="splash_subtitle">Your fitness companion</string>

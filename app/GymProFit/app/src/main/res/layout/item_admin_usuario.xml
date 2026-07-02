@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_admin_usuario — Item de RecyclerView para la lista de usuarios en el panel de administración
+  Muestra avatar, nombre de usuario, email y un chip con el rol.
+-->
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"

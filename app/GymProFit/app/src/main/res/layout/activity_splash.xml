@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_splash — Pantalla de splash inicial de la app.
+  Muestra el logo, el nombre de la app y un indicador de progreso mientras se
+  determina la sesión/estado de onboarding del usuario.
+-->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"

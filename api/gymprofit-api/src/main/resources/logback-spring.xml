@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  logback-spring.xml — Configuración de logging de la API Spring Boot.
+  Define appenders de consola y fichero (con rotación diaria) y niveles por paquete.
+-->
 <configuration>
 
+    <!-- Directorio y nombre base de los ficheros de log -->
     <property name="LOG_DIR" value="/home/ubuntu/logs"/>
     <property name="LOG_NAME" value="gymprofit"/>
+
+    <!-- Configuración por defecto de Spring Boot (patrones y conversores estándar) -->
 
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 

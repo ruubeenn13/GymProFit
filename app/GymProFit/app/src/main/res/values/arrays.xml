@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  arrays.xml — arrays de valores fijos usados en spinners y filtros.
+  Niveles de dificultad, grupos musculares y categorías de alimentos (deben coincidir con los enums del backend).
+-->
 <resources>
+    <!-- Niveles de dificultad de rutinas/ejercicios -->
     <string-array name="niveles">
         <item>PRINCIPIANTE</item>
         <item>INTERMEDIO</item>
         <item>AVANZADO</item>
     </string-array>
 
+    <!-- Grupos musculares para filtrar ejercicios -->
     <string-array name="grupos_musculares">
         <item>PECHO</item>
         <item>ESPALDA</item>
@@ -17,6 +23,7 @@
         <item>FULLBODY</item>
     </string-array>
 
+    <!-- Categorías de alimentos para el catálogo de nutrición -->
     <string-array name="categorias_alimento">
         <item>Carnes y aves</item>
         <item>Pescado y marisco</item>

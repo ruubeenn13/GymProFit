@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_admin_rutinas — pantalla de administración de rutinas.
+  Lista todas las rutinas del sistema con búsqueda y filtros por estado/nivel,
+  destinada al rol ADMIN.
+-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -65,6 +70,7 @@
         app:searchIcon="@drawable/ic_search" />
 
     <!-- Filtros -->
+    <!-- Estado y nivel de dificultad de las rutinas -->
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -128,12 +134,14 @@
         </com.google.android.material.chip.ChipGroup>
     </HorizontalScrollView>
 
+    <!-- Separador visual bajo los filtros -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="?attr/colorOutline"
         android:alpha="0.12" />
 
+    <!-- Listado de rutinas -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvRutinas"
         android:layout_width="match_parent"

@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  menu_alimento_comida_context — menú contextual de un alimento dentro de una comida.
+  Permite editar la cantidad, desactivar el alimento o eliminarlo de la comida registrada.
+-->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Editar la cantidad (gramos) del alimento en esta comida -->
     <item
         android:id="@+id/menuEditarCantidad"
         android:title="@string/comida_editar_cantidad"
         android:icon="@drawable/ic_edit" />
 
+    <!-- Desactivar el alimento para que deje de aparecer en las búsquedas -->
     <item
         android:id="@+id/menuDesactivarAlimento"
         android:title="@string/comida_desactivar_alimento"
         android:icon="@drawable/ic_visibility_off" />
 
+    <!-- Eliminar el alimento únicamente de esta comida -->
     <item
         android:id="@+id/menuEliminarDeComida"
         android:title="@string/comida_eliminar_de_comida"

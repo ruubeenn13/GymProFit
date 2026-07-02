@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_ejercicios.xml — Catálogo de ejercicios disponibles en la app.
+  Buscador, filtros por grupo muscular (chips) y listado en RecyclerView,
+  con barra de navegación inferior.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -12,6 +17,7 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
+        <!-- Cabecera con título, menú de opciones y buscador -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -74,6 +80,7 @@
 
         </LinearLayout>
 
+        <!-- Chips de filtrado por grupo muscular -->
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -144,6 +151,7 @@
 
         </HorizontalScrollView>
 
+        <!-- Listado de ejercicios del catálogo -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvEjercicios"
             android:layout_width="match_parent"
@@ -154,6 +162,7 @@
 
     </LinearLayout>
 
+    <!-- Barra de navegación inferior -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"

@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_editar_rutina.xml — Pantalla de edición de una rutina existente (usuario).
+  Formulario con nombre, descripción, nivel, duración y lista de ejercicios editable.
+-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -7,6 +11,7 @@
     android:orientation="vertical"
     android:background="?attr/android:colorBackground">
 
+    <!-- Barra superior con navegación hacia atrás y título -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -28,6 +33,7 @@
             android:orientation="vertical"
             android:padding="20dp">
 
+            <!-- Campo de nombre de la rutina -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -47,6 +53,7 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Campo de descripción de la rutina -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -67,6 +74,7 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Etiqueta y selector de nivel de la rutina -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -107,6 +115,7 @@
 
             </com.google.android.material.chip.ChipGroup>
 
+            <!-- Campo de duración estimada de la rutina -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -135,6 +144,7 @@
                 android:layout_marginBottom="16dp"
                 android:background="?attr/colorOutlineVariant" />
 
+            <!-- Título y lista de ejercicios de la rutina, con opción de añadir más -->
             <TextView
                 android:id="@+id/tvEjerciciosTituloEditar"
                 android:layout_width="wrap_content"
@@ -165,6 +175,7 @@
 
     </androidx.core.widget.NestedScrollView>
 
+    <!-- Botón de guardado de la rutina editada -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnGuardarEditar"
         android:layout_width="match_parent"

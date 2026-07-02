@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_ejercicio — item de RecyclerView para un ejercicio del catálogo.
+  Muestra icono, nombre, descripción y chips de dificultad/calorías, usado en el listado de ejercicios.
+-->
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -12,6 +16,7 @@
     app:cardElevation="0dp"
     app:cardBackgroundColor="?attr/colorSurface">
 
+    <!-- Fila principal: icono + info + chevron -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,6 +24,7 @@
         android:padding="16dp"
         android:gravity="center_vertical">
 
+        <!-- Icono del ejercicio -->
         <ImageView
             android:id="@+id/ivIconoEjercicio"
             android:layout_width="48dp"
@@ -50,6 +56,7 @@
                 android:textColor="?attr/colorOnSurface"
                 android:alpha="0.6" />
 
+            <!-- Chips de dificultad y calorías -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -81,6 +88,7 @@
 
         </LinearLayout>
 
+        <!-- Chevron indicador de navegación al detalle -->
         <ImageView
             android:layout_width="20dp"
             android:layout_height="20dp"

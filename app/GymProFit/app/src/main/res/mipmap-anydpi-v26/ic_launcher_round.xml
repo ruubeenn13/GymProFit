@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ic_launcher_round — icono adaptativo del lanzador de la app (variante recortada en círculo).
+  Combina fondo, primer plano y versión monocromo para Android 8.0+ (API 26+).
+-->
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
     <background android:drawable="@drawable/ic_launcher_background" />
     <foreground android:drawable="@drawable/ic_launcher_foreground" />

@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_admin — Panel de administración.
+  Muestra estadísticas globales de la app (usuarios, sesiones, rutinas, ejercicios) y accesos a las secciones de gestión (usuarios, rutinas, ejercicios, alimentos).
+-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"

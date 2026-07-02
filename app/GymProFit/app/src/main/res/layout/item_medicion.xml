@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_medicion — item de RecyclerView para una medición corporal registrada.
+  Muestra fecha, peso, IMC y datos extra (grasa/músculo), con botones de editar/eliminar, usado en el historial de mediciones.
+-->
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -15,6 +19,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!-- Fila principal: fecha/IMC, peso destacado y botones de acción -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -81,6 +86,7 @@
 
         </LinearLayout>
 
+        <!-- Datos extra opcionales: grasa corporal y masa muscular -->
         <LinearLayout
             android:id="@+id/llExtras"
             android:layout_width="match_parent"

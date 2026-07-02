@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- NUEVO FICHERO - Onboarding paso 1: Bienvenida -->
+<!--
+  activity_onboarding1.xml — Paso 1 de 5 del asistente de onboarding.
+  Pantalla de bienvenida con logo, saludo personalizado, indicador de progreso
+  y botón para empezar; incluye opción de saltar el onboarding.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -7,6 +12,7 @@
     android:orientation="vertical"
     android:background="?attr/android:colorBackground">
 
+    <!-- Botón para saltar el onboarding -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -21,6 +27,7 @@
         android:focusable="true"
         android:background="?attr/selectableItemBackgroundBorderless" />
 
+    <!-- Contenido central: logo, título de bienvenida y descripción -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -68,6 +75,7 @@
 
     </LinearLayout>
 
+    <!-- Pie: indicador de progreso (paso 1 de 4) y botón de continuar -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_registrar_medicion.xml — Formulario para registrar una medición corporal.
+  Campos: peso (requerido), altura, grasa corporal, masa muscular, cintura,
+  pecho, brazos, piernas y notas. Botón de guardado al final.
+-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -252,6 +257,7 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Botón para guardar la medición -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnGuardar"
                 android:layout_width="match_parent"

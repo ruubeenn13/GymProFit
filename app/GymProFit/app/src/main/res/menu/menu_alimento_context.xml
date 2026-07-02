@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  menu_alimento_context — menú contextual sobre un alimento del catálogo.
+  Permite editarlo, desactivarlo o eliminarlo.
+-->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Editar los datos del alimento (nombre, macros, categoría) -->
     <item
         android:id="@+id/menuEditarAlimento"
         android:title="@string/alimento_editar"
         android:icon="@drawable/ic_edit" />
 
+    <!-- Desactivar el alimento del catálogo -->
     <item
         android:id="@+id/menuDesactivarAlimento"
         android:title="@string/comida_desactivar_alimento"
         android:icon="@drawable/ic_visibility_off" />
 
+    <!-- Eliminar el alimento definitivamente -->
     <item
         android:id="@+id/menuEliminarAlimento"
         android:title="@string/alimento_eliminar"

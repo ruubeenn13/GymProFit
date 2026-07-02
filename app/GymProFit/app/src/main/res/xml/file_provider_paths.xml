@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  file_provider_paths.xml — Rutas expuestas por el FileProvider de la app.
+  Permite compartir de forma segura fotos tomadas con la cámara (perfil de usuario).
+-->
 <paths>
+    <!-- Directorio de caché donde se guardan las fotos temporales de la cámara -->
     <cache-path name="camera_photos" path="." />
 </paths>

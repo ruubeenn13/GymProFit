@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  dialog_editar_alimento — Diálogo para editar los datos de un alimento (uso administrador).
+  Contiene campos de nombre, calorías y macronutrientes (proteínas, carbohidratos, grasas).
+-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -8,6 +12,7 @@
     android:orientation="vertical"
     android:padding="24dp">
 
+    <!-- Icono de edición -->
     <ImageView
         android:id="@+id/ivDialogIcono"
         android:layout_width="44dp"
@@ -16,6 +21,7 @@
         android:src="@drawable/ic_edit"
         android:contentDescription="@null" />
 
+    <!-- Título del diálogo -->
     <TextView
         android:id="@+id/tvDialogTitulo"
         android:layout_width="wrap_content"
@@ -34,6 +40,7 @@
         android:background="?attr/colorOutline"
         android:alpha="0.2" />
 
+    <!-- Formulario de edición con scroll para los campos del alimento -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -44,6 +51,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!-- Nombre del alimento -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -57,6 +65,7 @@
                     android:inputType="textCapSentences" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Calorías por 100g -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -70,6 +79,7 @@
                     android:inputType="number" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Proteínas por 100g -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -83,6 +93,7 @@
                     android:inputType="numberDecimal" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Carbohidratos por 100g -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -96,6 +107,7 @@
                     android:inputType="numberDecimal" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Grasas por 100g -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -111,6 +123,7 @@
         </LinearLayout>
     </ScrollView>
 
+    <!-- Botón de confirmación -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDialogConfirmar"
         android:layout_width="match_parent"
@@ -119,6 +132,7 @@
         android:text="@string/dialog_confirmar"
         app:cornerRadius="12dp" />
 
+    <!-- Botón de cancelación -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDialogCancelar"
         style="@style/Widget.Material3.Button.OutlinedButton"

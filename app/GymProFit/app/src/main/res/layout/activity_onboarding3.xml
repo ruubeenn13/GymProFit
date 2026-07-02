@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- MODIFICADO - Añadido ChipGroup de nivel de actividad física -->
+<!--
+  activity_onboarding3.xml — Onboarding paso 3/5: medidas corporales y actividad.
+  Formulario con peso, altura y selección del nivel de actividad física (chips).
+  Incluye indicador de progreso y navegación anterior/siguiente.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -7,6 +12,7 @@
     android:orientation="vertical"
     android:background="?attr/android:colorBackground">
 
+    <!-- Enlace para saltar el paso -->
     <TextView
         android:id="@+id/tvSaltar3"
         android:layout_width="wrap_content"
@@ -197,6 +203,7 @@
             <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorOnSurface" android:alpha="0.2" />
         </LinearLayout>
 
+        <!-- Botones de navegación anterior/siguiente -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  AndroidManifest.xml — Manifiesto de la aplicación GymProFit
+  Declara permisos, el FileProvider, todas las Activities de la app
+  y la Activity de arranque (SplashActivity) con su intent-filter LAUNCHER.
+-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Permisos requeridos: red, notificaciones, cámara/galería (foto de perfil) y contactos -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -19,6 +25,7 @@
         android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.GymProFit">
+        <!-- Activities de administración (gestión de usuarios, rutinas, ejercicios, alimentos) -->
         <activity
             android:name=".ui.activities.AdminActivity"
             android:exported="false" />
@@ -37,6 +44,7 @@
         <activity
             android:name=".ui.activities.EditarEjercicioAdminActivity"
             android:exported="false" />
+        <!-- Perfil, logros y mediciones corporales -->
         <activity
             android:name=".ui.activities.EditarPerfilActivity"
             android:exported="false" />
@@ -49,6 +57,7 @@
         <activity
             android:name=".ui.activities.MedicionesActivity"
             android:exported="false" />
+        <!-- Sesiones de entrenamiento -->
         <activity
             android:name=".ui.activities.RegistrarSesionActivity"
             android:exported="false" />
@@ -58,6 +67,7 @@
         <activity
             android:name=".ui.activities.SesionesActivity"
             android:exported="false" />
+        <!-- Registro de usuario y flujo de onboarding (pasos 1 a 5 + resumen) -->
         <activity
             android:name=".ui.activities.RegistroActivity"
             android:exported="false" />
@@ -79,6 +89,7 @@
         <activity
             android:name=".ui.activities.Onboarding1Activity"
             android:exported="false" />
+        <!-- Rutinas: edición, detalle, creación y gestión de ejercicios asociados -->
         <activity
             android:name=".ui.activities.EditarRutinaActivity"
             android:exported="false" />
@@ -97,6 +108,7 @@
         <activity
             android:name=".ui.activities.CrearRutinaActivity"
             android:exported="false" />
+        <!-- Pantallas principales de navegación (perfil, nutrición, ejercicios, rutinas, home, login) -->
         <activity
             android:name=".ui.activities.PerfilActivity"
             android:exported="false" />
@@ -115,11 +127,14 @@
         <activity
             android:name=".ui.activities.LoginActivity"
             android:exported="false" />
+        <!-- Nutrición: comidas y alimentos (registro, alta y administración) -->
         <activity android:name=".ui.activities.ComidaActivity" android:exported="false" />
         <activity android:name=".ui.activities.AnadirAlimentoActivity" android:exported="false" />
         <activity android:name=".ui.activities.CrearAlimentoActivity" android:exported="false" />
         <activity android:name=".ui.activities.AdminAlimentosActivity" android:exported="false" />
         <activity android:name=".ui.activities.AcercaDeActivity" android:exported="false" />
+
+        <!-- FileProvider para compartir/capturar la foto de perfil con la cámara -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -130,6 +145,7 @@
                 android:resource="@xml/file_provider_paths" />
         </provider>
 
+        <!-- Activity de arranque (launcher), decide a qué pantalla redirigir según sesión -->
         <activity
             android:name=".ui.activities.SplashActivity"
             android:exported="true">

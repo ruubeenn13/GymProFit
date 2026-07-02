@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_mediciones.xml — Pantalla de mediciones corporales del usuario.
+  Muestra la última medición (peso, altura, grasa, músculo, perímetros, notas) en
+  filas pulsables, un estado vacío si no hay datos, y un FAB para registrar una nueva.
+-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -507,6 +512,7 @@
 
         </ScrollView>
 
+        <!-- FAB para registrar una nueva medición -->
         <!-- FAB -->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabRegistrar"

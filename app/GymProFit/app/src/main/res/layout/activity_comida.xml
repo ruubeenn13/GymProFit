@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_comida — detalle de una comida del registro nutricional.
+  Muestra los totales de macros/calorías de la comida y el listado de
+  alimentos añadidos, con FAB para añadir más alimentos.
+-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -41,6 +46,7 @@
     </LinearLayout>
 
     <!-- Card totales -->
+    <!-- Calorías y macros acumulados de la comida -->
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_admin_ejercicios — Gestión de ejercicios (admin).
+  Lista los ejercicios del sistema con búsqueda y filtro por estado activo/inactivo.
+-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"

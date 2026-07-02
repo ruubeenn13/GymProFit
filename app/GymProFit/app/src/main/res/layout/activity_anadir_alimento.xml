@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_anadir_alimento — buscador de alimentos para añadir a una comida.
+  Muestra un campo de búsqueda, acceso a crear alimento propio y el listado
+  filtrado de resultados.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -6,6 +11,7 @@
     android:background="?attr/android:colorBackground">
 
     <!-- Toolbar -->
+    <!-- Volver, título y acceso a crear alimento nuevo -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -46,6 +52,7 @@
     </LinearLayout>
 
     <!-- Search -->
+    <!-- Campo de búsqueda de alimentos -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -63,6 +70,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- RecyclerView -->
+    <!-- Resultados de la búsqueda de alimentos -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvAlimentos"
         android:layout_width="match_parent"

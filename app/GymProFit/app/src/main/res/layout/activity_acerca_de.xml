@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_acerca_de — Pantalla "Acerca de".
+  Muestra información de la app, el desarrollador (formación, experiencia) y enlaces de contacto (email, web, teléfono, compartir).
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"

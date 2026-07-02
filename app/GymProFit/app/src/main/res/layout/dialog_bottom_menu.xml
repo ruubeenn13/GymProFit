@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  dialog_bottom_menu — Contenedor genérico para un BottomSheet de menú de opciones.
+  Incluye título opcional con separador y un contenedor donde se insertan
+  dinámicamente los ítems del menú.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -6,6 +11,7 @@
     android:paddingTop="4dp"
     android:paddingBottom="4dp">
 
+    <!-- Título del menú (oculto si no se establece) -->
     <TextView
         android:id="@+id/tvMenuTitle"
         android:layout_width="match_parent"
@@ -23,6 +29,7 @@
         android:ellipsize="end"
         android:visibility="gone" />
 
+    <!-- Separador bajo el título -->
     <View
         android:id="@+id/dividerMenuTitle"
         android:layout_width="match_parent"
@@ -30,6 +37,7 @@
         android:background="?attr/colorOutlineVariant"
         android:visibility="gone" />
 
+    <!-- Contenedor donde se añaden los ítems del menú programáticamente -->
     <LinearLayout
         android:id="@+id/llMenuItems"
         android:layout_width="match_parent"

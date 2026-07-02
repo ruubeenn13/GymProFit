@@ -1,3 +1,7 @@
+<!--
+  ic_info — Icono de información (letra "i" en círculo).
+  Usado para enlaces o botones que muestran información adicional (p. ej. Acerca de).
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"

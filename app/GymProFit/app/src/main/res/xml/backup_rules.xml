@@ -5,6 +5,10 @@
    Note: This file is ignored for devices older than API 31
    See https://developer.android.com/about/versions/12/backup-restore
 -->
+<!--
+  backup_rules.xml — Reglas de copia de seguridad para Android < 12 (Auto Backup).
+  Sin includes/excludes activos: usa el comportamiento por defecto.
+-->
 <full-backup-content>
     <!--
    <include domain="sharedpref" path="."/>

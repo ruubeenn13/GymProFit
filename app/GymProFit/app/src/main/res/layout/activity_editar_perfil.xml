@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_editar_perfil.xml — Pantalla de edición del perfil del usuario.
+  Formulario con email, peso, altura, edad, nivel de experiencia y objetivo fitness,
+  con botón de guardado que envía los cambios a la API.
+-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -131,6 +136,7 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Selector de nivel de experiencia -->
             <!-- Nivel de experiencia -->
             <TextView
                 android:layout_width="wrap_content"
@@ -160,6 +166,7 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Selector de objetivo fitness -->
             <!-- Objetivo fitness -->
             <TextView
                 android:layout_width="wrap_content"
@@ -189,6 +196,7 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Botón de guardado de cambios -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnGuardar"
                 android:layout_width="match_parent"

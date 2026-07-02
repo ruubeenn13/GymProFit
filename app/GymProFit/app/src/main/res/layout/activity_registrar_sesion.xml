@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_registrar_sesion.xml — Formulario para registrar una sesión de entrenamiento.
+  Selección de rutina, duración, cálculo automático de calorías estimadas,
+  lista de ejercicios de la rutina con peso, notas y valoración con estrellas.
+-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -245,6 +250,7 @@
 
     </androidx.core.widget.NestedScrollView>
 
+    <!-- Botón fijo para guardar la sesión -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnGuardar"
         android:layout_width="match_parent"

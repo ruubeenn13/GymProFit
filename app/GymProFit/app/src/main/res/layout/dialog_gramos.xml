@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  dialog_gramos — Diálogo para introducir la cantidad en gramos de un alimento
+  y previsualizar sus macronutrientes calculados en tiempo real.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp">
 
+    <!-- Campo de entrada de gramos -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,6 +26,7 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- Previsualización de macros calculados para la cantidad introducida -->
     <TextView
         android:id="@+id/tvPreviewMacros"
         android:layout_width="match_parent"

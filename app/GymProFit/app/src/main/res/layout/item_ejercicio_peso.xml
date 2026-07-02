@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_ejercicio_peso — item de RecyclerView para registrar el peso usado en un ejercicio.
+  Muestra nombre y series/reps del ejercicio junto a un campo editable de peso, usado al registrar una sesión.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -10,6 +14,7 @@
     android:paddingTop="10dp"
     android:paddingBottom="10dp">
 
+    <!-- Nombre del ejercicio y detalle series/reps -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -35,6 +40,7 @@
 
     </LinearLayout>
 
+    <!-- Campo de entrada del peso utilizado (kg) -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="112dp"
         android:layout_height="wrap_content"

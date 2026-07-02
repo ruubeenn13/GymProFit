@@ -1,3 +1,7 @@
+<!--
+  ic_edit — icono de lápiz para acciones de edición.
+  Se usa en botones para modificar datos de perfil, rutinas u otros registros.
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp" android:height="24dp"
     android:viewportWidth="24" android:viewportHeight="24">

@@ -459,6 +459,7 @@ Abre `app/GymProFit` en Android Studio, sincroniza Gradle y ejecuta en emulador 
 
 | Hash | Descripción |
 |---|---|
+| *(pendiente)* | docs(comentarios): documentados 125 XML de Android (layouts, values, menu, drawable, mipmap, manifest) + logback con cabecera y comentarios de sección, sin tocar contenido |
 | *(pendiente)* | docs(comentarios): documentados los 280 archivos .java (API + Android) con cabecera de bloque por archivo + comentarios inline por método/campo, sin tocar código |
 | *(pendiente)* | fix(security): auditoría Fase 1 — cierre de escalada ADMIN (C1) e IDOR sistémico (C2) vía SecurityUtils, no fuga de causa en errores, 401 en credenciales, null-check en UsuarioService.patch |
 

@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  dialog_series_reps — Diálogo para introducir series y repeticiones de un ejercicio
+  Contiene dos campos numéricos (series y repeticiones) usados al crear/editar una rutina.
+-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -7,6 +11,7 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <!-- Campo para el número de series -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -27,6 +32,7 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- Campo para el número de repeticiones -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

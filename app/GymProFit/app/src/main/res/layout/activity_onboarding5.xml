@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_onboarding5.xml — Onboarding paso 5/5: selección de nivel de experiencia.
+  Lista de cards seleccionables (principiante, intermedio, avanzado, experto) con
+  emoji, título, descripción y check visual al marcarse. Progreso + navegación.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -6,6 +11,7 @@
     android:orientation="vertical"
     android:background="?attr/android:colorBackground">
 
+    <!-- Enlace para saltar el paso -->
     <TextView
         android:id="@+id/tvSaltar5"
         android:layout_width="wrap_content"
@@ -197,6 +203,7 @@
             <View android:layout_width="32dp" android:layout_height="4dp" android:background="?attr/colorPrimary" />
         </LinearLayout>
 
+        <!-- Botones de navegación anterior/siguiente -->
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAnterior5"

@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_menu_bottom — item de fila para un menú desplegable/bottom sheet genérico.
+  Muestra un icono y una etiqueta de texto, reutilizado en menús contextuales de la app.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="56dp"
@@ -8,12 +12,14 @@
     android:paddingEnd="20dp"
     android:background="?attr/selectableItemBackground">
 
+    <!-- Icono de la opción de menú -->
     <ImageView
         android:id="@+id/ivMenuItemIcon"
         android:layout_width="22dp"
         android:layout_height="22dp"
         android:layout_marginEnd="18dp" />
 
+    <!-- Etiqueta de texto de la opción de menú -->
     <TextView
         android:id="@+id/tvMenuItemLabel"
         android:layout_width="0dp"

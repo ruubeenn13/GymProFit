@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_admin_alimentos — Gestión de alimentos (admin).
+  Lista los alimentos del sistema con búsqueda, filtro por categoría y por estado activo/inactivo.
+-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"

@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- NUEVO FICHERO - Layout del diálogo de selección de idioma -->
+<!--
+  dialog_idioma — Diálogo para elegir el idioma de la app (español/inglés)
+  Muestra título, dos opciones con bandera y check de selección, y un botón para cerrar.
+-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/dialogRoot"
@@ -8,6 +12,7 @@
     android:orientation="vertical"
     android:padding="24dp">
 
+    <!-- Título del diálogo -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -102,6 +107,7 @@
 
     </LinearLayout>
 
+    <!-- Botón para cerrar el diálogo sin aplicar cambios -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnCerrarIdioma"
         style="@style/Widget.Material3.Button.OutlinedButton"

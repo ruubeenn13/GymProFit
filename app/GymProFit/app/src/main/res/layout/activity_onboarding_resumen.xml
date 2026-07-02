@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_onboarding_resumen.xml — Resumen final del onboarding.
+  Muestra el objetivo elegido, calorías diarias calculadas, distribución de
+  macros (proteínas/carbos/grasas) y objetivo de agua antes de comenzar a usar la app.
+-->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -279,6 +284,7 @@
             <View android:layout_width="32dp" android:layout_height="4dp" android:background="?attr/colorPrimary" />
         </LinearLayout>
 
+        <!-- Botón final para completar el onboarding y entrar a la app -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnComenzar"
             android:layout_width="match_parent"

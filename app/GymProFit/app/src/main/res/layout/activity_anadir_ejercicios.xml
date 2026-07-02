@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_anadir_ejercicios — buscador de ejercicios para añadir a una rutina.
+  Permite buscar por texto, filtrar por dificultad y confirmar la selección
+  con el botón continuar.
+-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -7,6 +12,7 @@
     android:orientation="vertical"
     android:background="?attr/android:colorBackground">
 
+    <!-- Toolbar con navegación hacia atrás -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -46,6 +52,7 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Filtro de dificultad del ejercicio -->
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -96,6 +103,7 @@
 
         </HorizontalScrollView>
 
+        <!-- Resultados de la búsqueda de ejercicios -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvEjerciciosBusqueda"
             android:layout_width="match_parent"

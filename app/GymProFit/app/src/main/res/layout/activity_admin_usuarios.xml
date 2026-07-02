@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_admin_usuarios — pantalla de administración de usuarios.
+  Lista todos los usuarios del sistema con búsqueda y filtros por estado/rol,
+  destinada al rol ADMIN.
+-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -121,12 +126,14 @@
         </com.google.android.material.chip.ChipGroup>
     </HorizontalScrollView>
 
+    <!-- Separador visual bajo los filtros -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="?attr/colorOutline"
         android:alpha="0.12" />
 
+    <!-- Listado de usuarios -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvUsuarios"
         android:layout_width="match_parent"

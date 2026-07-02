@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_editar_rutina_admin.xml — Pantalla de edición de rutina en modo administrador.
+  Formulario completo (nombre, descripción, nivel, duración, calorías, categoría, días)
+  para modificar cualquier rutina del catálogo desde el rol ADMIN.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -92,6 +97,7 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Selector de nivel de la rutina -->
             <!-- Nivel -->
             <TextView
                 android:layout_width="wrap_content"
@@ -206,6 +212,7 @@
 
     </androidx.core.widget.NestedScrollView>
 
+    <!-- Botón de guardado de la rutina -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnGuardar"
         android:layout_width="match_parent"

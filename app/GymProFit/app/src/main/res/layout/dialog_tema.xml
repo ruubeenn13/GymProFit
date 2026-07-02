@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  dialog_tema — Diálogo para elegir el tema visual de la app (claro/oscuro)
+  Muestra título, dos opciones con icono y check de selección, y un botón para cerrar.
+-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -8,6 +12,7 @@
     android:orientation="vertical"
     android:padding="24dp">
 
+    <!-- Título del diálogo -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -100,6 +105,7 @@
 
     </LinearLayout>
 
+    <!-- Botón para cerrar el diálogo sin aplicar cambios -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnCerrarTema"
         style="@style/Widget.Material3.Button.OutlinedButton"

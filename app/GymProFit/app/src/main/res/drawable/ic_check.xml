@@ -1,3 +1,7 @@
+<!--
+  ic_check — icono de check/marca de verificación.
+  Se usa para indicar selección o confirmación en listas y estados completados.
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"

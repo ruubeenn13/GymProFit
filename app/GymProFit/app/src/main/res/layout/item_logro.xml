@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_logro — item de RecyclerView para un logro/achievement del usuario.
+  Muestra icono/emoji, nombre, descripción y marca de desbloqueado, usado en la pantalla de logros.
+-->
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"

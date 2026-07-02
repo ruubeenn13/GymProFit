@@ -1,3 +1,7 @@
+<!--
+  ic_peso — Icono vectorial de "peso" (báscula).
+  Usado en la sección de mediciones corporales / control de peso.
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp" android:height="24dp"
     android:viewportWidth="24" android:viewportHeight="24">

@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_rutinas — Listado de rutinas de entrenamiento del usuario.
+  Incluye cabecera con menú de opciones, chips de filtro por nivel, RecyclerView de rutinas,
+  barra de navegación inferior y FAB para crear una nueva rutina.
+-->
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"

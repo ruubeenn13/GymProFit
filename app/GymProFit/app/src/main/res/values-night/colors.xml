@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  colors.xml (values-night) — Paleta de colores para el tema oscuro.
+  Colores de superficie, texto y chips de estado usados solo en modo noche.
+-->
 <resources>
+    <!-- Colores de superficie y texto en modo oscuro -->
     <color name="on_surface">#D4D4D4</color>
     <color name="primaryContainer_dark">#1F1F1F</color>
     <color name="onPrimaryContainer_dark">#D4D4D4</color>
@@ -7,6 +12,7 @@
     <color name="surface_card_2">#252525</color>
     <color name="text_secondary">#9E9E9E</color>
 
+    <!-- Chips de estado (verde=activo/positivo, rojo=inactivo/negativo) -->
     <color name="green_chip">#1B5E20</color>
     <color name="green_chip_text">#A5D6A7</color>
     <color name="red_chip">#7F0000</color>

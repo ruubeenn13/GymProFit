@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_resumen_crear_rutina.xml — Resumen final antes de guardar una rutina creada.
+  Muestra nombre, descripción y detalles de la rutina, la lista de ejercicios
+  añadidos y botones para cancelar o confirmar el guardado.
+-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -7,6 +12,7 @@
     android:orientation="vertical"
     android:background="?attr/android:colorBackground">
 
+    <!-- Toolbar con título y botón de navegación atrás -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"

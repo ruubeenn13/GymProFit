@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  dialog_custom — Diálogo genérico de confirmación/alerta con icono, título y mensaje.
+  Reutilizable para mostrar mensajes de confirmación con botones de confirmar y cancelar.
+-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/dialogRoot"
@@ -7,6 +11,7 @@
     android:orientation="vertical"
     android:padding="24dp">
 
+    <!-- Icono opcional del diálogo -->
     <ImageView
         android:id="@+id/ivDialogIcono"
         android:layout_width="40dp"
@@ -16,6 +21,7 @@
         android:contentDescription="@null"
         android:visibility="gone" />
 
+    <!-- Título del diálogo -->
     <TextView
         android:id="@+id/tvDialogTitulo"
         android:layout_width="wrap_content"
@@ -26,6 +32,7 @@
         android:textStyle="bold"
         android:textColor="?attr/colorOnSurface" />
 
+    <!-- Mensaje descriptivo del diálogo -->
     <TextView
         android:id="@+id/tvDialogMensaje"
         android:layout_width="wrap_content"
@@ -37,6 +44,7 @@
         android:alpha="0.7"
         android:gravity="center" />
 
+    <!-- Botón de confirmación -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDialogConfirmar"
         android:layout_width="match_parent"
@@ -46,6 +54,7 @@
         app:cornerRadius="12dp"
         xmlns:app="http://schemas.android.com/apk/res-auto" />
 
+    <!-- Botón de cancelación -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDialogCancelar"
         style="@style/Widget.Material3.Button.OutlinedButton"

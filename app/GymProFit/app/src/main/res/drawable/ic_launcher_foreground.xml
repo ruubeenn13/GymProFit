@@ -1,3 +1,8 @@
+<!--
+  ic_launcher_foreground — Capa de primer plano del icono adaptativo de la app.
+  Silueta estilizada (mancuerna/figura) con sombra en gradiente, usada junto a
+  ic_launcher_background para componer el icono de lanzador adaptativo de Android.
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"

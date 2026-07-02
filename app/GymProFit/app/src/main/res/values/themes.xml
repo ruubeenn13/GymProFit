@@ -1,4 +1,9 @@
 <resources>
+    <!--
+      themes.xml — Tema principal de la app en modo claro (variante DayNight).
+      Define colores base Material3 y estilos de widgets (BottomNav, PopupMenu).
+    -->
+    <!-- Tema base de la aplicación, sin ActionBar, con paleta naranja de marca -->
     <style name="Theme.GymProFit" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">#E8710A</item>
         <item name="colorOnPrimary">#FFFFFF</item>
@@ -14,11 +19,13 @@
         <item name="android:popupMenuStyle">@style/Widget.GymProFit.PopupMenu</item>
     </style>
 
+    <!-- Estilo del menú emergente (popup) usado en toolbars y menús contextuales -->
     <style name="Widget.GymProFit.PopupMenu" parent="Widget.Material3.PopupMenu">
         <item name="android:dropDownWidth">260dp</item>
         <item name="android:popupElevation">12dp</item>
     </style>
 
+    <!-- Estilo de la barra de navegación inferior (BottomNavigationView) -->
     <style name="Widget.GymProFit.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
         <item name="itemActiveIndicatorStyle">@null</item>
         <item name="itemIconSize">24dp</item>

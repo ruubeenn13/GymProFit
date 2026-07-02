@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- NUEVO FICHERO - Layout de cada card de rutina en el RecyclerView -->
+<!--
+  item_rutina — item de RecyclerView para una rutina de entrenamiento.
+  Muestra nombre, descripción, chip de nivel y resumen (nº ejercicios, duración, calorías), usado en el listado de rutinas.
+-->
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -19,6 +23,7 @@
         android:orientation="vertical"
         android:padding="18dp">
 
+        <!-- Fila principal: nombre/descripción y chip de nivel -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -69,6 +74,7 @@
             android:layout_marginBottom="12dp"
             android:background="?attr/colorOutlineVariant" />
 
+        <!-- Fila resumen: nº ejercicios, duración y calorías -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

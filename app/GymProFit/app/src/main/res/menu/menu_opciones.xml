@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  menu_opciones — menú de opciones general (accesible desde la pantalla de perfil).
+  Agrupa acciones de configuración: tema, idioma, contacto y cierre de sesión.
+-->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Cambiar entre tema claro/oscuro -->
     <item
         android:id="@+id/menu_tema"
         android:icon="@drawable/ic_palette"
         android:title="@string/perfil_tema" />
+    <!-- Cambiar idioma de la app -->
     <item
         android:id="@+id/menu_idioma"
         android:icon="@drawable/ic_language"
         android:title="@string/perfil_idioma" />
+    <!-- Enviar email de contacto/soporte -->
     <item
         android:id="@+id/menu_contactanos"
         android:icon="@drawable/ic_email"
         android:title="@string/menu_contactanos" />
+    <!-- Cerrar sesión del usuario actual -->
     <item
         android:id="@+id/menu_cerrar_sesion"
         android:icon="@drawable/ic_logout"

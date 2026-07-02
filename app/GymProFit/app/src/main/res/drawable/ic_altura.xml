@@ -1,3 +1,7 @@
+<!--
+  ic_altura.xml — Icono de altura
+  Vector que representa una flecha vertical, usado para el campo/dato de altura del usuario.
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp" android:height="24dp"
     android:viewportWidth="24" android:viewportHeight="24">

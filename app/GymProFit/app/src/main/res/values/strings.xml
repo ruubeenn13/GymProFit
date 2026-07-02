@@ -1,4 +1,8 @@
 <resources>
+    <!--
+      strings.xml — cadenas de texto en español de toda la app, organizadas por pantalla/módulo.
+      Cada bloque corresponde a una Activity o sección funcional (login, rutinas, nutrición, admin, etc.).
+    -->
     <!-- SPLASH ACTIVITY -->
     <string name="app_name">GymProFit</string>
     <string name="splash_subtitle">Tu compañero de fitness</string>

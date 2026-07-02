@@ -3,7 +3,12 @@
    See https://developer.android.com/about/versions/12/backup-restore#xml-changes
    for details.
 -->
+<!--
+  data_extraction_rules.xml — Reglas de extracción de datos para Android 12+
+  (copia en la nube y transferencia entre dispositivos). Sin restricciones activas.
+-->
 <data-extraction-rules>
+    <!-- Copia de seguridad en la nube (Auto Backup) -->
     <cloud-backup>
         <!-- TODO: Use <include> and <exclude> to control what is backed up.
         <include .../>

@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_editar_ejercicio_admin — formulario de administración para editar
+  un ejercicio existente (nombre, descripción, grupo muscular, dificultad,
+  calorías, equipamiento e instrucciones).
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -218,6 +223,7 @@
 
     </androidx.core.widget.NestedScrollView>
 
+    <!-- Botón guardar cambios -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnGuardar"
         android:layout_width="match_parent"
