@@ -1,30 +1,48 @@
 # Dependabot — actualizaciones automáticas de dependencias (incluye avisos de seguridad).
 # GitHub abre PRs cuando hay versiones nuevas o vulnerabilidades conocidas en las dependencias.
 # Docs: https://docs.github.com/code-security/dependabot/dependabot-version-updates
+#
+# NOTA: los "Dependabot alerts" y las "Dependabot security updates" (PRs automáticos ante CVEs)
+# se activan en Settings → Code security del repositorio, NO en este archivo.
 version: 2
 updates:
-  # API Spring Boot (Maven)
+  # ── API Spring Boot (Maven) ────────────────────────────────────────────────
   - package-ecosystem: "maven"
     directory: "/api/gymprofit-api"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
+    labels: ["dependencies", "backend"]
     commit-message:
       prefix: "chore(deps)"
+    # Agrupa los minor/patch en un solo PR (menos ruido); los major van sueltos.
+    groups:
+      maven-minor-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
 
-  # App Android (Gradle)
+  # ── App Android (Gradle) ───────────────────────────────────────────────────
   - package-ecosystem: "gradle"
     directory: "/app/GymProFit"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
+    labels: ["dependencies", "android"]
     commit-message:
       prefix: "chore(deps)"
+    groups:
+      gradle-minor-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
 
-  # Workflows de GitHub Actions
+  # ── Workflows de GitHub Actions ────────────────────────────────────────────
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
+    labels: ["dependencies", "ci"]
     commit-message:
       prefix: "chore(ci)"
+    groups:
+      actions-all:
+        patterns: ["*"]
