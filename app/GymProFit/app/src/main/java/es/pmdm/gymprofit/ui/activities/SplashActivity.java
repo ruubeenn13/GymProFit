@@ -59,9 +59,16 @@ public class SplashActivity extends AppCompatActivity {
     // y navega a Home/Login tras esperar el tiempo mínimo restante de la splash.
     private void verificarSesion() {
         new Handler().post(() -> {
+            // Registra el persistidor: cuando UtilREST renueve el token con el refresh,
+            // guarda los nuevos tokens en preferencias (instancia propia → sin compartir editor
+            // con la UI, ya que el refresh ocurre en un hilo de red).
+            UtilREST.setTokenPersister((nuevoToken, nuevoRefresh) ->
+                    new PreferencesManager(getApplicationContext()).saveSesion(nuevoToken, nuevoRefresh));
+
             boolean tieneSesion = prefsManager.haySesion();
             if (tieneSesion) {
                 UtilREST.setToken(prefsManager.getToken());
+                UtilREST.setRefreshToken(prefsManager.getRefreshToken());
             }
 
             long tiempoTranscurrido = System.currentTimeMillis() - tiempoInicio;

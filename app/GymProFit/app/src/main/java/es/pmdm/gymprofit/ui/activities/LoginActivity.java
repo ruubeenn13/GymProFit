@@ -100,12 +100,14 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String response, int statusCode) {
                 try {
-                    String token = UtilJSONParser.parseToken(response);
-                    String user  = UtilJSONParser.parseTokenUsername(response);
-                    String rol   = UtilJSONParser.parseTokenRol(response);
+                    String token   = UtilJSONParser.parseToken(response);
+                    String refresh = UtilJSONParser.parseRefreshToken(response);
+                    String user    = UtilJSONParser.parseTokenUsername(response);
+                    String rol     = UtilJSONParser.parseTokenRol(response);
 
                     UtilREST.setToken(token);
-                    prefsManager.saveToken(token);
+                    UtilREST.setRefreshToken(refresh);
+                    prefsManager.saveSesion(token, refresh);
                     prefsManager.saveUsername(user);
                     prefsManager.saveRol(rol);
                     prefsManager.setOnboardingCompletado(true);
@@ -132,12 +134,14 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String response, int statusCode) {
                 try {
-                    String token = UtilJSONParser.parseToken(response);
-                    String user  = UtilJSONParser.parseTokenUsername(response);
-                    String rol   = UtilJSONParser.parseTokenRol(response);
+                    String token   = UtilJSONParser.parseToken(response);
+                    String refresh = UtilJSONParser.parseRefreshToken(response);
+                    String user    = UtilJSONParser.parseTokenUsername(response);
+                    String rol     = UtilJSONParser.parseTokenRol(response);
 
                     UtilREST.setToken(token);
-                    prefsManager.saveToken(token);
+                    UtilREST.setRefreshToken(refresh);
+                    prefsManager.saveSesion(token, refresh);
                     prefsManager.saveUsername(user);
                     prefsManager.saveRol(rol);
 

@@ -44,6 +44,11 @@ public class UtilJSONParser {
         return new JSONObject(json).optString("token", "");
     }
 
+    // Extrae el refresh token opaco de la respuesta de login/refresh
+    public static String parseRefreshToken(String json) throws JSONException {
+        return new JSONObject(json).optString("refreshToken", "");
+    }
+
     // Extrae el username incluido en la respuesta de login
     public static String parseTokenUsername(String json) throws JSONException {
         return new JSONObject(json).optString("username", "");

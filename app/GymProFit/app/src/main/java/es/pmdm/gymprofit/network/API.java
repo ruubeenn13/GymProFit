@@ -52,6 +52,17 @@ public class API {
         UtilREST.request(BASE + "auth/guest", "POST", null, l);
     }
 
+    // Cierra sesión en el servidor revocando el refresh token indicado (best-effort en logout)
+    public static void logout(String refreshToken, UtilREST.OnResponseListener l) {
+        try {
+            JSONObject body = new JSONObject();
+            body.put("refreshToken", refreshToken);
+            UtilREST.request(BASE + "auth/logout", "POST", body.toString(), l);
+        } catch (JSONException e) {
+            l.onError(e.getMessage(), -1);
+        }
+    }
+
     // ── USUARIOS ──────────────────────────────────────────────────────────────
 
     // Busca un usuario por su username

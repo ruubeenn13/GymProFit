@@ -25,6 +25,7 @@ import com.google.android.material.button.MaterialButton;
 import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.network.API;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
@@ -198,6 +199,14 @@ public abstract class BaseActivity extends AppCompatActivity {
                 getString(R.string.dialog_cerrar_sesion_mensaje),
                 R.drawable.ic_logout,
                 () -> {
+                    // Revoca el refresh token en el servidor (best-effort) antes de limpiar la sesión local.
+                    String refresh = prefsManager.getRefreshToken();
+                    if (refresh != null && !refresh.isEmpty()) {
+                        API.logout(refresh, new UtilREST.OnResponseListener() {
+                            @Override public void onSuccess(String response, int statusCode) { }
+                            @Override public void onError(String message, int statusCode) { }
+                        });
+                    }
                     UtilREST.clearToken();
                     prefsManager.cerrarSesion();
                     Intent intent = new Intent(this, LoginActivity.class);

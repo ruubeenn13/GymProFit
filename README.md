@@ -459,6 +459,7 @@ Abre `app/GymProFit` en Android Studio, sincroniza Gradle y ejecuta en emulador 
 
 | Hash | Descripción |
 |---|---|
+| *(pendiente)* | feat(android): integración de refresh token — guarda access+refresh, renueva el access de forma transparente en un 401 y reintenta la petición, y revoca el refresh en el logout. APK compila |
 | *(pendiente)* | feat(api): refresh tokens (access JWT corto de 30 min + refresh opaco persistido de 30 días, con rotación y revocación). Nuevos `POST /auth/refresh` y `POST /auth/logout`; login/guest devuelven `refreshToken`. Verificado end-to-end |
 | *(pendiente)* | perf(api): relaciones `@ManyToOne` a LAZY (14) + `@Transactional(readOnly=true)` a nivel de service para el mapeo seguro; roles de Usuario se mantienen EAGER por seguridad (Spring Security) |
 | *(pendiente)* | chore(api): silenciar warnings de MapStruct con `@Mapping(ignore)` explícitos |

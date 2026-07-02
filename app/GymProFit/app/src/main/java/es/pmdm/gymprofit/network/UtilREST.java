@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -13,6 +15,8 @@ import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+
+import es.pmdm.gymprofit.BuildConfig;
 
 // ============================================================
 // UtilREST — cliente HTTP de bajo nivel para hablar con la API GymProFit
@@ -29,21 +33,105 @@ public class UtilREST {
         void onError(String message, int statusCode);
     }
 
-    // Callback invocado cuando la API responde 401 (token JWT expirado o inválido)
+    // Callback invocado cuando la API responde 401 y NO se ha podido renovar la sesión
+    // con el refresh token (refresh ausente, expirado o revocado): hay que volver a login.
     public interface OnUnauthorizedListener {
         void onTokenExpired();
     }
 
-    // Token JWT actual, compartido en memoria por toda la app
+    // Callback para persistir los tokens renovados (p. ej. en PreferencesManager),
+    // de modo que la sesión renovada sobreviva a reinicios de la app.
+    public interface TokenPersister {
+        void persist(String token, String refreshToken);
+    }
+
+    // Access token JWT actual (de vida corta), compartido en memoria por toda la app
     private static String token = null;
+    // Refresh token opaco (de vida larga) para renovar el access token sin re-login
+    private static String refreshToken = null;
     private static OnUnauthorizedListener unauthorizedListener = null;
+    private static TokenPersister tokenPersister = null;
 
     public static void setToken(String t) { token = t; }
-    public static void clearToken() { token = null; }
+    // Limpia AMBOS tokens (logout / sesión no recuperable)
+    public static void clearToken() { token = null; refreshToken = null; }
     public static String getToken() { return token; }
 
-    // Registra el listener global que se dispara al recibir un 401
+    public static void setRefreshToken(String t) { refreshToken = t; }
+    public static String getRefreshToken() { return refreshToken; }
+
+    // Registra el listener global que se dispara al recibir un 401 no recuperable
     public static void setOnUnauthorizedListener(OnUnauthorizedListener l) { unauthorizedListener = l; }
+
+    // Registra el persistidor de tokens renovados (se llama tras un refresh exitoso)
+    public static void setTokenPersister(TokenPersister p) { tokenPersister = p; }
+
+    // Indica si una URL es de autenticación (login/register/guest/refresh/logout):
+    // sobre ellas NO se intenta refrescar (evita recursión al renovar).
+    private static boolean esEndpointAuth(String url) {
+        return url != null && url.contains("/auth/");
+    }
+
+    // Intenta renovar el access token usando el refresh token guardado.
+    // Síncrono y synchronized para que varias peticiones que fallan con 401 a la vez
+    // no disparen múltiples refresh en paralelo. Si otro hilo ya renovó (el token en
+    // memoria cambió respecto al que usó la petición fallida), no vuelve a llamar a la API.
+    // Devuelve true si al terminar hay un access token válido nuevo.
+    private static synchronized boolean intentarRefrescar(String tokenUsadoEnFallo) {
+        // Otro hilo ya renovó mientras esperábamos el lock.
+        if (token != null && !token.equals(tokenUsadoEnFallo)) return true;
+
+        String currentRefresh = refreshToken;
+        if (currentRefresh == null || currentRefresh.isEmpty()) return false;
+
+        HttpURLConnection conn = null;
+        try {
+            conn = (HttpURLConnection) new URL(BuildConfig.BASE_URL + "auth/refresh").openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Accept", "application/json");
+            conn.setConnectTimeout(15000);
+            conn.setReadTimeout(15000);
+            conn.setDoOutput(true);
+
+            JSONObject reqBody = new JSONObject();
+            reqBody.put("refreshToken", currentRefresh);
+            OutputStream os = conn.getOutputStream();
+            os.write(reqBody.toString().getBytes(StandardCharsets.UTF_8));
+            os.flush();
+            os.close();
+
+            int status = conn.getResponseCode();
+            if (status < 200 || status >= 300) {
+                Log.d("GymProFit", "Refresh fallido → " + status);
+                return false;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+            String line;
+            while ((line = br.readLine()) != null) sb.append(line);
+            br.close();
+
+            JSONObject resp = new JSONObject(sb.toString());
+            String nuevoToken = resp.optString("token", "");
+            String nuevoRefresh = resp.optString("refreshToken", "");
+
+            if (nuevoToken.isEmpty() || nuevoRefresh.isEmpty()) return false;
+
+            token = nuevoToken;
+            refreshToken = nuevoRefresh;
+            if (tokenPersister != null) tokenPersister.persist(nuevoToken, nuevoRefresh);
+
+            Log.d("GymProFit", "Access token renovado vía refresh");
+            return true;
+        } catch (Exception e) {
+            Log.e("GymProFit", "Refresh exception: " + e.getMessage());
+            return false;
+        } finally {
+            if (conn != null) conn.disconnect();
+        }
+    }
 
     // Lanza una petición HTTP asíncrona (GET/POST/PUT/PATCH/DELETE) con cuerpo JSON opcional
     public static void request(String url, String method, String body, OnResponseListener listener) {
@@ -69,9 +157,22 @@ public class UtilREST {
             this.listener = listener;
         }
 
-        // Abre la conexión, envía el body si lo hay y lee la respuesta (o el error) como texto
+        // Ejecuta la petición y, si devuelve 401, intenta renovar el access token con el
+        // refresh token y reintenta UNA vez con el token nuevo (salvo en endpoints /auth/).
         @Override
         protected Object[] doInBackground(Void... voids) {
+            String tokenUsado = token;
+            Object[] resultado = hacerPeticion();
+
+            int status = (int) resultado[1];
+            if (status == 401 && !esEndpointAuth(url) && intentarRefrescar(tokenUsado)) {
+                resultado = hacerPeticion();
+            }
+            return resultado;
+        }
+
+        // Abre la conexión, envía el body si lo hay y lee la respuesta (o el error) como texto
+        private Object[] hacerPeticion() {
             HttpURLConnection conn = null;
             try {
                 conn = (HttpURLConnection) new URL(url).openConnection();
@@ -159,9 +260,21 @@ public class UtilREST {
             this.listener = listener;
         }
 
-        // Construye manualmente el cuerpo multipart (boundary + cabeceras + bytes del archivo) y lo envía
+        // Ejecuta la subida y, si devuelve 401, renueva el token y reintenta una vez.
         @Override
         protected Object[] doInBackground(Void... voids) {
+            String tokenUsado = token;
+            Object[] resultado = hacerPeticion();
+
+            int status = (int) resultado[1];
+            if (status == 401 && !esEndpointAuth(url) && intentarRefrescar(tokenUsado)) {
+                resultado = hacerPeticion();
+            }
+            return resultado;
+        }
+
+        // Construye manualmente el cuerpo multipart (boundary + cabeceras + bytes del archivo) y lo envía
+        private Object[] hacerPeticion() {
             HttpURLConnection conn = null;
             String boundary = "GymProFitBoundary" + System.currentTimeMillis();
             try {

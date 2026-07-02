@@ -125,11 +125,13 @@ public class RegistroActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String response, int statusCode) {
                 try {
-                    String token = UtilJSONParser.parseToken(response);
-                    String user  = UtilJSONParser.parseTokenUsername(response);
+                    String token   = UtilJSONParser.parseToken(response);
+                    String refresh = UtilJSONParser.parseRefreshToken(response);
+                    String user    = UtilJSONParser.parseTokenUsername(response);
 
                     UtilREST.setToken(token);
-                    prefsManager.saveToken(token);
+                    UtilREST.setRefreshToken(refresh);
+                    prefsManager.saveSesion(token, refresh);
                     prefsManager.saveUsername(user);
 
                     obtenerUsuario(user);

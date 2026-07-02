@@ -19,6 +19,7 @@ public class PreferencesManager {
     private static final String KEY_THEME = "theme_mode";
     private static final String KEY_LANGUAGE = "app_language";
     private static final String KEY_TOKEN = "auth_token";
+    private static final String KEY_REFRESH_TOKEN = "refresh_token";
     private static final String KEY_USUARIO_ID = "usuario_id";
     private static final String KEY_USERNAME = "username";
     private static final String KEY_NIVEL = "nivel_experiencia";
@@ -56,10 +57,22 @@ public class PreferencesManager {
     public String getToken() { return prefs.getString(KEY_TOKEN, null); }
     public Boolean haySesion() { String t = getToken(); return t != null && !t.isEmpty(); }
 
-    // Borra los datos de sesión (token, id y username) pero conserva las preferencias
-    // de onboarding, tema e idioma.
+    // Refresh token opaco: permite renovar el access token sin volver a introducir credenciales.
+    public void saveRefreshToken(String refreshToken) { editor.putString(KEY_REFRESH_TOKEN, refreshToken); editor.apply(); }
+    public String getRefreshToken() { return prefs.getString(KEY_REFRESH_TOKEN, null); }
+
+    // Guarda de una vez ambos tokens de la sesión (access + refresh).
+    public void saveSesion(String token, String refreshToken) {
+        editor.putString(KEY_TOKEN, token);
+        editor.putString(KEY_REFRESH_TOKEN, refreshToken);
+        editor.apply();
+    }
+
+    // Borra los datos de sesión (access token, refresh token, id y username) pero conserva
+    // las preferencias de onboarding, tema e idioma.
     public void cerrarSesion() {
         editor.remove(KEY_TOKEN);
+        editor.remove(KEY_REFRESH_TOKEN);
         editor.remove(KEY_USUARIO_ID);
         editor.remove(KEY_USERNAME);
         editor.apply();
