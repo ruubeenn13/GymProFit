@@ -80,7 +80,7 @@ class AuthControllerTest {
         registerDTO.setPassword("password123");
         registerDTO.setEmail("newuser@gymprofit.com");
 
-        tokenDTO = new TokenDTO("jwt-token-mock", "admin", List.of("ADMIN"));
+        tokenDTO = new TokenDTO("jwt-token-mock", "refresh-token-mock", "admin", List.of("ADMIN"));
     }
 
     @Test
@@ -97,10 +97,42 @@ class AuthControllerTest {
                 .andExpect(status().isOk())
                 // Verificamos que el JSON devuelto contiene el token
                 .andExpect(jsonPath("$.token").value("jwt-token-mock"))
+                // Verificamos que también devuelve el refresh token
+                .andExpect(jsonPath("$.refreshToken").value("refresh-token-mock"))
                 // Verificamos que el JSON devuelto contiene el username
                 .andExpect(jsonPath("$.username").value("admin"));
 
         verify(authService).login(any(LoginDTO.class));
+    }
+
+    @Test
+    @DisplayName("POST /auth/refresh con refresh token válido devuelve 200 y nuevos tokens")
+    void refresh_correcto_devuelve_200_y_tokens() throws Exception {
+        // El service devuelve un TokenDTO con access nuevo y refresh rotado
+        when(authService.refresh(any(String.class))).thenReturn(tokenDTO);
+
+        mockMvc.perform(post("/auth/refresh")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"refreshToken\":\"refresh-token-mock\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").value("jwt-token-mock"))
+                .andExpect(jsonPath("$.refreshToken").value("refresh-token-mock"));
+
+        verify(authService).refresh(any(String.class));
+    }
+
+    @Test
+    @DisplayName("POST /auth/logout devuelve 200 y revoca el refresh token")
+    void logout_devuelve_200() throws Exception {
+        doNothing().when(authService).logout(any(String.class));
+
+        mockMvc.perform(post("/auth/logout")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"refreshToken\":\"refresh-token-mock\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.mensaje").value("Sesión cerrada correctamente"));
+
+        verify(authService).logout(any(String.class));
     }
 
     @Test

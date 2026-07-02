@@ -35,8 +35,11 @@ public class JwtTokenProvider {
 
     // Genera un JWT firmado a partir de la autenticación actual (subject = username, con fecha de emisión y expiración).
     public String generateToken(Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        return generateToken((UserDetails) authentication.getPrincipal());
+    }
 
+    // Genera un JWT firmado directamente desde un UserDetails (usado al renovar el access token en /auth/refresh, donde no hay Authentication).
+    public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date())

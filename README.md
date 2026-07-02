@@ -459,6 +459,7 @@ Abre `app/GymProFit` en Android Studio, sincroniza Gradle y ejecuta en emulador 
 
 | Hash | Descripción |
 |---|---|
+| *(pendiente)* | feat(api): refresh tokens (access JWT corto de 30 min + refresh opaco persistido de 30 días, con rotación y revocación). Nuevos `POST /auth/refresh` y `POST /auth/logout`; login/guest devuelven `refreshToken`. Verificado end-to-end |
 | *(pendiente)* | perf(api): relaciones `@ManyToOne` a LAZY (14) + `@Transactional(readOnly=true)` a nivel de service para el mapeo seguro; roles de Usuario se mantienen EAGER por seguridad (Spring Security) |
 | *(pendiente)* | chore(api): silenciar warnings de MapStruct con `@Mapping(ignore)` explícitos |
 | *(pendiente)* | fix(api): bugs menores — `/notificaciones/ordenadas` ahora ordena, count de alimentos-comida en clave correcta, mensaje de tipo de objetivo con concatenación real, ruta `/progreso-ejercicios` coherente, `@Schema` de comidas corregido |

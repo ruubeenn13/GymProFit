@@ -1,6 +1,7 @@
 package com.gymprofit.api.controller;
 
 import com.gymprofit.api.dto.auth.LoginDTO;
+import com.gymprofit.api.dto.auth.RefreshRequestDTO;
 import com.gymprofit.api.dto.auth.RegisterDTO;
 import com.gymprofit.api.dto.auth.TokenDTO;
 import com.gymprofit.api.exceptions.Response;
@@ -72,5 +73,29 @@ public class AuthController {
     @PostMapping("/guest")
     public ResponseEntity<TokenDTO> guest() {
         return ResponseEntity.ok(authService.loginAsGuest());
+    }
+
+    @Operation(summary = "Renueva el access token a partir de un refresh token válido")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Nuevo access token y refresh token (rotado)",
+                    content = @Content(schema = @Schema(implementation = TokenDTO.class))),
+            @ApiResponse(responseCode = "401", description = "Refresh token inválido, expirado o revocado",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @PostMapping("/refresh")
+    public ResponseEntity<TokenDTO> refresh(@Valid @RequestBody RefreshRequestDTO refreshRequestDTO) {
+        return ResponseEntity.ok(authService.refresh(refreshRequestDTO.getRefreshToken()));
+    }
+
+    @Operation(summary = "Cierra sesión revocando el refresh token")
+    @ApiResponse(responseCode = "200", description = "Sesión cerrada correctamente")
+    @PostMapping("/logout")
+    public ResponseEntity<Map<String, Object>> logout(@Valid @RequestBody RefreshRequestDTO refreshRequestDTO) {
+        authService.logout(refreshRequestDTO.getRefreshToken());
+
+        Map<String, Object> respuesta = new HashMap<>();
+        respuesta.put("mensaje", "Sesión cerrada correctamente");
+
+        return ResponseEntity.ok(respuesta);
     }
 }

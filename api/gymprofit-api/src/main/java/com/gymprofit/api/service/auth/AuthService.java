@@ -4,6 +4,7 @@ import com.gymprofit.api.config.security.JwtTokenProvider;
 import com.gymprofit.api.dto.auth.LoginDTO;
 import com.gymprofit.api.dto.auth.RegisterDTO;
 import com.gymprofit.api.dto.auth.TokenDTO;
+import com.gymprofit.api.entity.RefreshToken;
 import com.gymprofit.api.entity.Role;
 import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.enums.NivelExperiencia;
@@ -44,6 +45,7 @@ public class AuthService implements IAuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenService refreshTokenService;
     private final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
     // Autentica usuario/contraseña con el AuthenticationManager, establece el
@@ -67,9 +69,12 @@ public class AuthService implements IAuthService {
                 .map(role -> role.getNombre().name())
                 .collect(Collectors.toList());
 
+        // Emite un refresh token opaco para renovar el access token sin re-login.
+        RefreshToken refreshToken = refreshTokenService.crear(usuario);
+
         logger.info("Login exitoso para usuario: {}", loginDTO.getUsername());
 
-        return new TokenDTO(token, usuario.getUsername(), roles);
+        return new TokenDTO(token, refreshToken.getToken(), usuario.getUsername(), roles);
     }
 
     // Registra un nuevo usuario público: valida unicidad de username/email,
@@ -139,8 +144,41 @@ public class AuthService implements IAuthService {
                 .map(role -> role.getNombre().name())
                 .collect(Collectors.toList());
 
+        // El invitado también recibe refresh token para renovar su sesión.
+        RefreshToken refreshToken = refreshTokenService.crear(guest);
+
         logger.info("Acceso como invitado concedido");
 
-        return new TokenDTO(token, guest.getUsername(), roles);
+        return new TokenDTO(token, refreshToken.getToken(), guest.getUsername(), roles);
+    }
+
+    // Renueva el access token a partir de un refresh token válido: valida el
+    // refresh, rota (revoca el usado y emite uno nuevo) y devuelve un nuevo
+    // access token JWT junto con el nuevo refresh token. Transaccional para que
+    // el acceso al usuario (LAZY) y la rotación ocurran en la misma sesión.
+    @Transactional
+    @Override
+    public TokenDTO refresh(String refreshTokenValue) {
+        RefreshToken actual = refreshTokenService.validar(refreshTokenValue);
+        Usuario usuario = actual.getUsuario();
+
+        String nuevoAccessToken = jwtTokenProvider.generateToken(usuario);
+        RefreshToken nuevoRefresh = refreshTokenService.rotar(actual);
+
+        List<String> roles = usuario.getRoles().stream()
+                .map(role -> role.getNombre().name())
+                .collect(Collectors.toList());
+
+        logger.info("Access token renovado para usuario: {}", usuario.getUsername());
+
+        return new TokenDTO(nuevoAccessToken, nuevoRefresh.getToken(), usuario.getUsername(), roles);
+    }
+
+    // Cierra sesión revocando el refresh token indicado (idempotente).
+    @Transactional
+    @Override
+    public void logout(String refreshTokenValue) {
+        refreshTokenService.revocarPorToken(refreshTokenValue);
+        logger.info("Sesión cerrada: refresh token revocado");
     }
 }

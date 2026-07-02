@@ -19,4 +19,10 @@ public interface IAuthService {
 
     // Genera un token JWT para el usuario invitado predefinido "guest".
     TokenDTO loginAsGuest();
+
+    // Renueva el access token a partir de un refresh token válido (con rotación).
+    TokenDTO refresh(String refreshTokenValue);
+
+    // Cierra sesión revocando el refresh token indicado.
+    void logout(String refreshTokenValue);
 }

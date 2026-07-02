@@ -4,6 +4,7 @@ import com.gymprofit.api.config.security.JwtTokenProvider;
 import com.gymprofit.api.dto.auth.LoginDTO;
 import com.gymprofit.api.dto.auth.RegisterDTO;
 import com.gymprofit.api.dto.auth.TokenDTO;
+import com.gymprofit.api.entity.RefreshToken;
 import com.gymprofit.api.entity.Role;
 import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.enums.RoleType;
@@ -12,6 +13,7 @@ import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.repository.jpa.IRoleRepository;
 import com.gymprofit.api.repository.jpa.IUsuarioRepository;
 import com.gymprofit.api.service.auth.AuthService;
+import com.gymprofit.api.service.auth.RefreshTokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -55,6 +57,9 @@ class AuthServiceTest {
     @Mock
     private JwtTokenProvider jwtTokenProvider;
 
+    @Mock
+    private RefreshTokenService refreshTokenService;
+
     @InjectMocks
     private AuthService authService;
 
@@ -90,14 +95,19 @@ class AuthServiceTest {
     void login_correcto_devuelve_token() {
         Authentication auth = mock(Authentication.class);
 
+        RefreshToken refreshTokenMock = new RefreshToken();
+        refreshTokenMock.setToken("refresh-token-mock");
+
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(auth);
         when(jwtTokenProvider.generateToken(auth)).thenReturn("jwt-token-mock");
         when(usuarioRepository.findByUsername("testuser")).thenReturn(Optional.of(usuario));
+        when(refreshTokenService.crear(usuario)).thenReturn(refreshTokenMock);
 
         TokenDTO result = authService.login(loginDTO);
 
         assertNotNull(result);
         assertEquals("jwt-token-mock", result.getToken());
+        assertEquals("refresh-token-mock", result.getRefreshToken());
         assertEquals("testuser", result.getUsername());
         assertEquals(List.of("USER"), result.getRoles());
 
@@ -153,5 +163,42 @@ class AuthServiceTest {
         assertThrows(DuplicateEntityException.class, () -> authService.register(registerDTO));
 
         verify(usuarioRepository, never()).save(any());
+    }
+
+    // Comprueba que refresh valida el token, rota y devuelve nuevo access + refresh
+    @Test
+    @DisplayName("Refresh correcto devuelve nuevo access token y refresh rotado")
+    void refresh_correcto_devuelve_nuevos_tokens() {
+        RefreshToken actual = new RefreshToken();
+        actual.setToken("refresh-viejo");
+        actual.setUsuario(usuario);
+
+        RefreshToken rotado = new RefreshToken();
+        rotado.setToken("refresh-nuevo");
+        rotado.setUsuario(usuario);
+
+        when(refreshTokenService.validar("refresh-viejo")).thenReturn(actual);
+        when(jwtTokenProvider.generateToken(usuario)).thenReturn("nuevo-access");
+        when(refreshTokenService.rotar(actual)).thenReturn(rotado);
+
+        TokenDTO result = authService.refresh("refresh-viejo");
+
+        assertNotNull(result);
+        assertEquals("nuevo-access", result.getToken());
+        assertEquals("refresh-nuevo", result.getRefreshToken());
+        assertEquals("testuser", result.getUsername());
+        assertEquals(List.of("USER"), result.getRoles());
+
+        verify(refreshTokenService).validar("refresh-viejo");
+        verify(refreshTokenService).rotar(actual);
+    }
+
+    // Comprueba que logout delega en el service para revocar el refresh token
+    @Test
+    @DisplayName("Logout revoca el refresh token indicado")
+    void logout_revoca_refresh_token() {
+        authService.logout("refresh-a-revocar");
+
+        verify(refreshTokenService).revocarPorToken("refresh-a-revocar");
     }
 }
