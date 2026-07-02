@@ -10,10 +10,8 @@
 <data-extraction-rules>
     <!-- Copia de seguridad en la nube (Auto Backup) -->
     <cloud-backup>
-        <!-- TODO: Use <include> and <exclude> to control what is backed up.
-        <include .../>
-        <exclude .../>
-        -->
+        <!-- Excluye el almacén cifrado de tokens (clave en Keystore, no restaurable). -->
+        <exclude domain="sharedpref" path="gymprofit_secure_prefs.xml"/>
     </cloud-backup>
     <!--
     <device-transfer>

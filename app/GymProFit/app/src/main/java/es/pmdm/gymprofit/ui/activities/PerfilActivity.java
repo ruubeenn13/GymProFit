@@ -285,7 +285,10 @@ public class PerfilActivity extends BaseActivity {
 
             @Override
             protected void onPostExecute(Bitmap bmp) {
-                if (bmp != null) ivAvatar.setImageBitmap(bmp);
+                // Evita tocar la vista si la Activity ya fue destruida/cerrada (previene leak/crash).
+                if (bmp != null && !isDestroyed() && !isFinishing()) {
+                    ivAvatar.setImageBitmap(bmp);
+                }
             }
         }.execute();
     }

@@ -10,8 +10,8 @@
   Sin includes/excludes activos: usa el comportamiento por defecto.
 -->
 <full-backup-content>
-    <!--
-   <include domain="sharedpref" path="."/>
-   <exclude domain="sharedpref" path="device.xml"/>
--->
+    <!-- Excluye el almacén cifrado de tokens: su clave vive en el Android Keystore
+         (no se respalda), así que restaurar el archivo cifrado sería inútil y no debe
+         viajar en la copia de seguridad. -->
+    <exclude domain="sharedpref" path="gymprofit_secure_prefs.xml"/>
 </full-backup-content>

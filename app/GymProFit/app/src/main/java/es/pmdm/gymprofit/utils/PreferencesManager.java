@@ -4,7 +4,10 @@ package es.pmdm.gymprofit.utils;
 // objetivo, calorías, macros y agua calculados en el onboarding
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKey;
 
 // ============================================================
 // PreferencesManager — encapsula el acceso a SharedPreferences de la app.
@@ -16,6 +19,8 @@ public class PreferencesManager {
 
     // Nombre del archivo de SharedPreferences y claves usadas para cada dato guardado.
     private static final String PREF_NAME = "GymProFitPrefs";
+    // Archivo SEPARADO y CIFRADO (EncryptedSharedPreferences) solo para los tokens sensibles.
+    private static final String SECURE_PREF_NAME = "gymprofit_secure_prefs";
     private static final String KEY_THEME = "theme_mode";
     private static final String KEY_LANGUAGE = "app_language";
     private static final String KEY_TOKEN = "auth_token";
@@ -39,11 +44,47 @@ public class PreferencesManager {
 
     private SharedPreferences prefs;
     private SharedPreferences.Editor editor;
+    // Preferencias cifradas donde se guardan token y refresh token (nunca en claro).
+    private SharedPreferences securePrefs;
 
-    // Constructor: abre el archivo de preferencias y prepara el editor reutilizable.
+    // Constructor: abre las preferencias normales (tema, idioma, datos no sensibles)
+    // y el almacén cifrado para los tokens.
     public PreferencesManager(Context context) {
         prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         editor = prefs.edit();
+        securePrefs = crearSecurePrefs(context);
+    }
+
+    // Crea el almacén cifrado (EncryptedSharedPreferences). Si el almacén está corrupto
+    // (p. ej. la clave del Keystore cambió tras un restore), lo borra y lo recrea: se pierde
+    // la sesión (el usuario deberá volver a iniciar sesión) pero se evita un crash.
+    private SharedPreferences crearSecurePrefs(Context context) {
+        try {
+            return abrirCifrado(context);
+        } catch (Exception e) {
+            Log.w("GymProFit", "Almacén cifrado corrupto, recreando: " + e.getMessage());
+            context.deleteSharedPreferences(SECURE_PREF_NAME);
+            try {
+                return abrirCifrado(context);
+            } catch (Exception ex) {
+                // Fallback extremo: usar las preferencias normales para no dejar la app inutilizable.
+                Log.e("GymProFit", "No se pudo crear el almacén cifrado: " + ex.getMessage());
+                return prefs;
+            }
+        }
+    }
+
+    // Construye el MasterKey (AES256-GCM, respaldado por el Android Keystore) y el archivo cifrado.
+    private SharedPreferences abrirCifrado(Context context) throws Exception {
+        MasterKey masterKey = new MasterKey.Builder(context)
+                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                .build();
+        return EncryptedSharedPreferences.create(
+                context,
+                SECURE_PREF_NAME,
+                masterKey,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM);
     }
 
     public void saveTheme(int themeMode) { editor.putInt(KEY_THEME, themeMode); editor.apply(); }
@@ -53,26 +94,27 @@ public class PreferencesManager {
     public void saveLanguage(String code) { editor.putString(KEY_LANGUAGE, code); editor.apply(); }
     public String getLanguage() { return prefs.getString(KEY_LANGUAGE, ""); }
 
-    public void saveToken(String token) { editor.putString(KEY_TOKEN, token); editor.apply(); }
-    public String getToken() { return prefs.getString(KEY_TOKEN, null); }
+    // Token y refresh se guardan/leen SIEMPRE del almacén cifrado (securePrefs), nunca en claro.
+    public void saveToken(String token) { securePrefs.edit().putString(KEY_TOKEN, token).apply(); }
+    public String getToken() { return securePrefs.getString(KEY_TOKEN, null); }
     public Boolean haySesion() { String t = getToken(); return t != null && !t.isEmpty(); }
 
     // Refresh token opaco: permite renovar el access token sin volver a introducir credenciales.
-    public void saveRefreshToken(String refreshToken) { editor.putString(KEY_REFRESH_TOKEN, refreshToken); editor.apply(); }
-    public String getRefreshToken() { return prefs.getString(KEY_REFRESH_TOKEN, null); }
+    public void saveRefreshToken(String refreshToken) { securePrefs.edit().putString(KEY_REFRESH_TOKEN, refreshToken).apply(); }
+    public String getRefreshToken() { return securePrefs.getString(KEY_REFRESH_TOKEN, null); }
 
-    // Guarda de una vez ambos tokens de la sesión (access + refresh).
+    // Guarda de una vez ambos tokens de la sesión (access + refresh) en el almacén cifrado.
     public void saveSesion(String token, String refreshToken) {
-        editor.putString(KEY_TOKEN, token);
-        editor.putString(KEY_REFRESH_TOKEN, refreshToken);
-        editor.apply();
+        securePrefs.edit()
+                .putString(KEY_TOKEN, token)
+                .putString(KEY_REFRESH_TOKEN, refreshToken)
+                .apply();
     }
 
-    // Borra los datos de sesión (access token, refresh token, id y username) pero conserva
+    // Borra los datos de sesión (tokens cifrados, id y username) pero conserva
     // las preferencias de onboarding, tema e idioma.
     public void cerrarSesion() {
-        editor.remove(KEY_TOKEN);
-        editor.remove(KEY_REFRESH_TOKEN);
+        securePrefs.edit().remove(KEY_TOKEN).remove(KEY_REFRESH_TOKEN).apply();
         editor.remove(KEY_USUARIO_ID);
         editor.remove(KEY_USERNAME);
         editor.apply();
