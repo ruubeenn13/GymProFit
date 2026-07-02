@@ -6,7 +6,8 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
-| *(pendiente)* | feat(android): endurecer seguridad (auditoría Fase 3) — token/refresh cifrados con `EncryptedSharedPreferences`, `network-security-config` que prohíbe HTTP en claro salvo hosts de desarrollo, exclusión del almacén cifrado del backup, y fix del leak de Activity en la descarga de avatar. Verificado en emulador |
+| *(pendiente)* | chore(security): sueltos de la auditoría — CORS con lista blanca configurable (fuera el wildcard `*` y los 16 `@CrossOrigin("*")`), `jwt.secret` por variable de entorno (`${JWT_SECRET}` en prod, literal en dev), y compilador Maven a Java 21 (coherente con `java.version`) |
+| `506480e` | feat(android): endurecer seguridad (auditoría Fase 3) — token/refresh cifrados con `EncryptedSharedPreferences`, `network-security-config` que prohíbe HTTP en claro salvo hosts de desarrollo, exclusión del almacén cifrado del backup, y fix del leak de Activity en la descarga de avatar. Verificado en emulador |
 | `407891e` | feat(android): integración de refresh token — guarda access+refresh, renueva el access de forma transparente en un 401 y reintenta la petición, y revoca el refresh en el logout. APK compila |
 | `5627814` | feat(api): refresh tokens (access JWT corto de 30 min + refresh opaco persistido de 30 días, con rotación y revocación). Nuevos `POST /auth/refresh` y `POST /auth/logout`; login/guest devuelven `refreshToken`. Verificado end-to-end |
 | `08f2d6f` | perf(api): relaciones `@ManyToOne` a LAZY (14) + `@Transactional(readOnly=true)` a nivel de service para el mapeo seguro; roles de Usuario se mantienen EAGER por seguridad (Spring Security) |

@@ -19,7 +19,6 @@ import java.util.List;
 // (en vez de JPA) para consultas dinámicas/complejas sobre usuarios:
 // filtros por nivel, edad y búsqueda combinada.
 // ============================================================
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")
 @AllArgsConstructor

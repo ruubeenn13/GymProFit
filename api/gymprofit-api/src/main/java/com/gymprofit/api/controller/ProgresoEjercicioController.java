@@ -28,7 +28,6 @@ import java.util.Map;
 // etc.) que un usuario acumula por ejercicio a lo largo del tiempo, con
 // consultas históricas, últimos valores y contadores.
 // ============================================================
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")
 @AllArgsConstructor

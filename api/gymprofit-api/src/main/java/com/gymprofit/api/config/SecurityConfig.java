@@ -23,6 +23,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -49,6 +50,11 @@ public class SecurityConfig {
     private final JwtEntryPoint jwtEntryPoint;
     private final JwtAccessDenied jwtAccessDenied;
 
+    // Orígenes permitidos por CORS (lista blanca, separada por comas), configurable por entorno.
+    // Por defecto solo orígenes de desarrollo local; en producción se define el dominio web real.
+    @Value("${app.cors.allowed-origins:http://localhost:5173,http://localhost:3000,http://localhost:8080}")
+    private String allowedOrigins;
+
     // Bean del codificador de contraseñas usado al registrar y autenticar usuarios.
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -70,11 +76,12 @@ public class SecurityConfig {
         return authProvider;
     }
 
-    // Configuración CORS: permite cualquier origen y los métodos/cabeceras necesarios para el cliente Android/React.
+    // Configuración CORS: lista blanca de orígenes (no wildcard) y los métodos/cabeceras necesarios.
+    // El cliente Android nativo no usa CORS (es cosa de navegadores); esto protege a un futuro frontend web.
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*"));
+        configuration.setAllowedOrigins(List.of(allowedOrigins.split("\\s*,\\s*")));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

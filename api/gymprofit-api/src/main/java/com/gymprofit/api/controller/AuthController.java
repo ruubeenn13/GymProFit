@@ -27,7 +27,6 @@ import java.util.Map;
 // por defecto) y acceso como invitado (rol GUEST) sin necesidad de
 // credenciales, para la app GymProFit.
 // ============================================================
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/auth")
 @AllArgsConstructor

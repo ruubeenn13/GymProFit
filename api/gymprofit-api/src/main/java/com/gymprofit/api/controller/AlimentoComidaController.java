@@ -28,7 +28,6 @@ import java.util.Map;
 // asociados), incluyendo consultas por comida/alimento, conteos,
 // verificación de existencia y borrado en cascada de una comida.
 // ============================================================
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")
 @AllArgsConstructor

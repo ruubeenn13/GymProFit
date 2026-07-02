@@ -29,7 +29,6 @@ import java.util.Map;
 // su marcado como leídas/no leídas, conteos y consultas filtradas por
 // usuario y tipo.
 // ============================================================
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")
 @AllArgsConstructor

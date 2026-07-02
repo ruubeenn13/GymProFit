@@ -29,7 +29,6 @@ import java.util.Map;
 // app), su activación/desactivación (borrado lógico) y eliminación
 // permanente, con búsquedas por usuario, nivel y nombre.
 // ============================================================
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")
 @AllArgsConstructor

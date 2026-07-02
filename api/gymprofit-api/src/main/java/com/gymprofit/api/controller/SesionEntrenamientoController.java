@@ -30,7 +30,6 @@ import java.util.Map;
 // estado completada/pendiente) sobre las sesiones registradas por los
 // usuarios al entrenar en GymProFit.
 // ============================================================
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")
 @AllArgsConstructor

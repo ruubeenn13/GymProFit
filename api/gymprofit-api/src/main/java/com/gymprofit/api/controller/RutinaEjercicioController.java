@@ -28,7 +28,6 @@ import java.util.Map;
 // rutina (orden, conteos, existencia). Es la tabla intermedia entre
 // Rutina y Ejercicio dentro de GymProFit.
 // ============================================================
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")
 @AllArgsConstructor

@@ -30,7 +30,6 @@ import java.util.Map;
 // registran para hacer seguimiento de su evolución física, con consultas
 // por usuario, rango de fechas y últimas mediciones.
 // ============================================================
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")
 @AllArgsConstructor

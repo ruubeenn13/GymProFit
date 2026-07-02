@@ -33,7 +33,6 @@ import java.util.Map;
 // username/email, foto de perfil y estadísticas de entrenamiento de
 // los usuarios registrados en GymProFit.
 // ============================================================
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")
 @AllArgsConstructor

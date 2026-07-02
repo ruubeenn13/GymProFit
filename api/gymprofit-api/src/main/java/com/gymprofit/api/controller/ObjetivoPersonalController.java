@@ -31,7 +31,6 @@ import java.util.Map;
 // ganar masa muscular, etc.), su progreso, estado de completado y
 // consultas filtradas por usuario, tipo o estado.
 // ============================================================
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")
 @AllArgsConstructor

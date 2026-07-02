@@ -30,7 +30,6 @@ import java.util.Map;
 // y borrado permanente de alimentos, así como búsquedas por nombre,
 // categoría, calorías, usuario y los conteos usados en nutrición.
 // ============================================================
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")
 @AllArgsConstructor

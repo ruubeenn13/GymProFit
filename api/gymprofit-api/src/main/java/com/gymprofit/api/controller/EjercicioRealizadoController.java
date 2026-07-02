@@ -28,7 +28,6 @@ import java.util.Map;
 // sesión de entrenamiento (series, repeticiones, etc.), incluyendo consultas
 // por sesión/ejercicio, conteos y comprobaciones de existencia.
 // ============================================================
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")
 @AllArgsConstructor

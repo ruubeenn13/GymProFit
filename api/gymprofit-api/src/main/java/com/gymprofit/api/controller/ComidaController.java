@@ -32,7 +32,6 @@ import java.util.Map;
 // a un usuario (con su tipo: DESAYUNO, ALMUERZO, COMIDA, MERIENDA,
 // CENA o SNACK), y ofrece búsquedas por fecha, tipo y usuario.
 // ============================================================
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")
 @AllArgsConstructor

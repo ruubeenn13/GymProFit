@@ -19,7 +19,6 @@ import java.util.List;
 // filtros y búsquedas dinámicas de ejercicios (grupo muscular, dificultad,
 // calorías, texto libre). Accesible para GUEST, USER y ADMIN.
 // ============================================================
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")
 @AllArgsConstructor
