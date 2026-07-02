@@ -98,16 +98,9 @@ public class NotificacionController {
     public ResponseEntity<Map<String, Object>> borrarNotificacion(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        try {
-            notificacionService.deleteById(id);
+        notificacionService.deleteById(id);
 
-            respuesta.put("mensaje", "Notificación eliminada con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al eliminar la notificación");
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Notificación eliminada con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
@@ -237,16 +230,9 @@ public class NotificacionController {
     public ResponseEntity<Map<String, Object>> marcarTodasComoLeidas(@PathVariable Integer usuarioId) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        try {
-            notificacionService.marcarTodasComoLeidas(usuarioId);
+        notificacionService.marcarTodasComoLeidas(usuarioId);
 
-            respuesta.put("mensaje", "Todas las notificaciones del usuario " + usuarioId + " marcadas como leídas con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al marcar las notificaciones como leídas");
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Todas las notificaciones del usuario " + usuarioId + " marcadas como leídas con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
@@ -262,16 +248,9 @@ public class NotificacionController {
     public ResponseEntity<Map<String, Object>> borrarNotificacionesUsuario(@PathVariable Integer usuarioId) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        try {
-            notificacionService.deleteByUsuarioId(usuarioId);
+        notificacionService.deleteByUsuarioId(usuarioId);
 
-            respuesta.put("mensaje", "Notificaciones del usuario " + usuarioId + " eliminadas con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al eliminar las notificaciones del usuario " + usuarioId);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Notificaciones del usuario " + usuarioId + " eliminadas con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }

@@ -104,18 +104,10 @@ public class EjercicioController {
     })
     @DeleteMapping("/ejercicios/{id}")
     public ResponseEntity<Map<String, Object>> borrarEjercicio(@PathVariable Integer id) {
+        ejercicioService.deleteById(id);
+
         Map<String, Object> respuesta = new HashMap<>();
-
-        try {
-            ejercicioService.deleteById(id);
-
-            respuesta.put("mensaje", "Ejercicio desactivado con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al desactivar el ejercicio " + id);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Ejercicio desactivado con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
@@ -123,18 +115,10 @@ public class EjercicioController {
     @Operation(summary = "Activa un ejercicio desactivado")
     @PutMapping("/ejercicios/{id}/activar")
     public ResponseEntity<Map<String, Object>> activarEjercicio(@PathVariable Integer id) {
+        ejercicioService.activateById(id);
+
         Map<String, Object> respuesta = new HashMap<>();
-
-        try {
-            ejercicioService.activateById(id);
-
-            respuesta.put("mensaje", "Ejercicio activado con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al activar el ejercicio " + id);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Ejercicio activado con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
@@ -147,18 +131,10 @@ public class EjercicioController {
     })
     @DeleteMapping("/ejercicios/{id}/permanente")
     public ResponseEntity<Map<String, Object>> eliminarPermanente(@PathVariable Integer id) {
+        ejercicioService.permanentDeleteById(id);
+
         Map<String, Object> respuesta = new HashMap<>();
-
-        try {
-            ejercicioService.permanentDeleteById(id);
-
-            respuesta.put("mensaje", "Ejercicio eliminado PERMANENTEMENTE con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al eliminar permanentemente el ejercicio " + id);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Ejercicio eliminado PERMANENTEMENTE con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }

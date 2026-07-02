@@ -112,16 +112,9 @@ public class MedicionCorporalController {
     public ResponseEntity<Map<String, Object>> borrarMedicionCorporal(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        try {
-            medicionCorporalService.deleteById(id);
+        medicionCorporalService.deleteById(id);
 
-            respuesta.put("mensaje", "Medición corporal eliminada con ÉXITO " + id);
-        } catch (Exception e) {
-            respuesta.put("mensjae", "Error al eliminar la medición corporal con id: " + id);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Medición corporal eliminada con ÉXITO " + id);
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }

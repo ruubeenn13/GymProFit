@@ -113,16 +113,9 @@ public class SesionEntrenamientoController {
     public ResponseEntity<Map<String, Object>> borrarSesion(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        try {
-            sesionEntrenamientoService.deleteById(id);
+        sesionEntrenamientoService.deleteById(id);
 
-            respuesta.put("mensaje", "Sesión de entrenamiento eliminada con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al borrar la sesión " + id);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Sesión de entrenamiento eliminada con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }

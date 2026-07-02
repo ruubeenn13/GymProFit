@@ -110,16 +110,9 @@ public class EjercicioRealizadoController {
     public ResponseEntity<Map<String, Object>> borrarEjercicioRealizado(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        try {
-            ejercicioRealizadoService.deleteById(id);
+        ejercicioRealizadoService.deleteById(id);
 
-            respuesta.put("mensaje", "Ejercicio realizado eliminado con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al eliminar el ejercicio realizado " + id);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Ejercicio realizado eliminado con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
@@ -254,16 +247,9 @@ public class EjercicioRealizadoController {
     public ResponseEntity<Map<String, Object>> borrarPorSesion(@PathVariable Integer sesionId) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        try {
-            ejercicioRealizadoService.deleteBySesionId(sesionId);
+        ejercicioRealizadoService.deleteBySesionId(sesionId);
 
-            respuesta.put("mensaje", "Ejercicios realizados de la sesión " + sesionId + " eliminados con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al eliminar los ejercicios realizados de la sesión " + sesionId);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Ejercicios realizados de la sesión " + sesionId + " eliminados con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
@@ -282,16 +268,9 @@ public class EjercicioRealizadoController {
                                                                          @PathVariable Integer ejercicioId) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        try {
-            ejercicioRealizadoService.deleteBySesionIdAndEjercicioId(sesionId, ejercicioId);
+        ejercicioRealizadoService.deleteBySesionIdAndEjercicioId(sesionId, ejercicioId);
 
-            respuesta.put("mensaje", "Ejercicios realizados de la sesión " + sesionId + " y ejercicio " + ejercicioId + " eliminados con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al eliminar los ejercicios realizados de la sesión "+ sesionId + " y ejercicio " + ejercicioId);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Ejercicios realizados de la sesión " + sesionId + " y ejercicio " + ejercicioId + " eliminados con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }

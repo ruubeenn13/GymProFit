@@ -105,16 +105,9 @@ public class AlimentoComidaController {
     public ResponseEntity<Map<String, Object>> borrarAlimentoComida(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        try {
-            alimentoComidaService.deleteById(id);
+        alimentoComidaService.deleteById(id);
 
-            respuesta.put("mensaje", "Relación alimento-comida eliminada con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al borrar la relación " + id);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Relación alimento-comida eliminada con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
@@ -180,16 +173,9 @@ public class AlimentoComidaController {
     public ResponseEntity<Map<String, Object>> eliminarTodosPorComida(@PathVariable Integer comidaId) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        try {
-            alimentoComidaService.deleteByComidaId(comidaId);
+        alimentoComidaService.deleteByComidaId(comidaId);
 
-            respuesta.put("mensaje", "Todos los alimentos de la comida eliminados con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al eliminar los alimentos de la comida " + comidaId);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Todos los alimentos de la comida eliminados con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
@@ -205,16 +191,9 @@ public class AlimentoComidaController {
                                                                         @PathVariable Integer alimentoId) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        try {
-            alimentoComidaService.deleteByComidaIdAndAlimentoId(comidaId, alimentoId);
+        alimentoComidaService.deleteByComidaIdAndAlimentoId(comidaId, alimentoId);
 
-            respuesta.put("mensaje", "Alimento eliminado de la comida con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al eliminar el alimento " + alimentoId + " de la comida " + comidaId);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Alimento eliminado de la comida con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }

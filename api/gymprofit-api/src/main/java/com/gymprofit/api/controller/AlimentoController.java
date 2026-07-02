@@ -107,16 +107,9 @@ public class AlimentoController {
     public ResponseEntity<Map<String, Object>> borrarAlimentos(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        try {
-            alimentoService.deleteById(id);
+        alimentoService.deleteById(id);
 
-            respuesta.put("mensaje", "Alimento desactivado con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al borrar el alimento " + id);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Alimento desactivado con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
@@ -131,16 +124,9 @@ public class AlimentoController {
     public ResponseEntity<Map<String, Object>> activarAlimento(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        try {
-            alimentoService.activateById(id);
+        alimentoService.activateById(id);
 
-            respuesta.put("mensaje", "Alimento activado con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al activar el alimento " + id);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Alimento activado con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
@@ -155,16 +141,9 @@ public class AlimentoController {
     public ResponseEntity<Map<String, Object>> eliminarPermanentemente(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        try {
-            alimentoService.permanentDeleteById(id);
+        alimentoService.permanentDeleteById(id);
 
-            respuesta.put("mensaje", "Alimento eliminado permanentemente");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al eliminar permanentemente el alimento");
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Alimento eliminado permanentemente");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }

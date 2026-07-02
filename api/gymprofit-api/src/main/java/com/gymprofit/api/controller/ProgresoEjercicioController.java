@@ -109,18 +109,10 @@ public class ProgresoEjercicioController {
     // Elimina un progreso de ejercicio por ID
     @DeleteMapping("/progreso-ejercicios/{id}")
     public ResponseEntity<Map<String, Object>> borrarProgresoEjercicio(@PathVariable Integer id) {
+        progresoEjercicioService.deleteById(id);
+
         Map<String, Object> respuesta = new HashMap<>();
-
-        try {
-            progresoEjercicioService.deleteById(id);
-
-            respuesta.put("mensaje", "Progreso de ejercicio eliminado con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al eliminar el progreso con id " + id);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Progreso de ejercicio eliminado con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
@@ -300,18 +292,11 @@ public class ProgresoEjercicioController {
     // Elimina todos los progresos de un usuario
     @DeleteMapping("/progreso-ejercicios/usuario/{usuarioId}")
     public ResponseEntity<Map<String, Object>> deleteByUsuarioId(@PathVariable Integer usuarioId) {
+        progresoEjercicioService.deleteByUsuarioId(usuarioId);
+
         Map<String, Object> respuesta = new HashMap<>();
+        respuesta.put("mensaje", "Progresos del usuario " + usuarioId + " eliminados con ÉXITO");
 
-        try {
-            progresoEjercicioService.deleteByUsuarioId(usuarioId);
-
-            respuesta.put("mensaje", "Progresos del usuario " + usuarioId + " eliminados con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al eliminar los progresos del usuario " + usuarioId);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
 
@@ -325,18 +310,11 @@ public class ProgresoEjercicioController {
     @DeleteMapping("/progreso-ejercicios/usuario/{usuarioId}/ejercicio/{ejercicioId}")
     public ResponseEntity<Map<String, Object>> deleteByUsuarioIdAndEjercicioId(@PathVariable Integer usuarioId,
                                                                                @PathVariable Integer ejercicioId) {
+        progresoEjercicioService.deleteByUsuarioIdAndEjercicioId(usuarioId, ejercicioId);
+
         Map<String, Object> respuesta = new HashMap<>();
+        respuesta.put("mensaje", "Progresos del usuario " + usuarioId + " en ejercicio " + ejercicioId + " eliminados con ÉXITO");
 
-        try {
-            progresoEjercicioService.deleteByUsuarioIdAndEjercicioId(usuarioId, ejercicioId);
-
-            respuesta.put("mensaje", "Progresos del usuario " + usuarioId + " en ejercicio " + ejercicioId + " eliminados con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al eliminar los progresos del usuario " + usuarioId + " en ejercicio " + ejercicioId);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
 

@@ -114,16 +114,9 @@ public class ObjetivoPersonalController {
     public ResponseEntity<Map<String, Object>> borrarObjetivoPersonal(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        try {
-            objetivoPersonalService.deleteById(id);
+        objetivoPersonalService.deleteById(id);
 
-            respuesta.put("mensaje", "Objetivo personal eliminado con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al eliminar el objetivo personal con id " + id);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Objetivo personal eliminado con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }

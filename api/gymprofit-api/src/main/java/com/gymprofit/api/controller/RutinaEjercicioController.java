@@ -113,16 +113,9 @@ public class RutinaEjercicioController {
     public ResponseEntity<Map<String, Object>> borrarRutinaEjercicio(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        try {
-            rutinaEjercicioService.deleteById(id);
+        rutinaEjercicioService.deleteById(id);
 
-            respuesta.put("mensaje", "Ejercicio de la rutina eliminado con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al eliminar el ejercicio de la rutina con id " + id);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Ejercicio de la rutina eliminado con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
@@ -264,16 +257,9 @@ public class RutinaEjercicioController {
     public ResponseEntity<Map<String, Object>> borrarPorRutina(@PathVariable Integer rutinaId) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        try {
-            rutinaEjercicioService.deleteByRutinaId(rutinaId);
+        rutinaEjercicioService.deleteByRutinaId(rutinaId);
 
-            respuesta.put("mensaje", "Ejercicios de la rutina " + rutinaId + " eliminados con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al eliminar los ejercicios de la rutina " + rutinaId);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Ejercicios de la rutina " + rutinaId + " eliminados con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
@@ -290,16 +276,9 @@ public class RutinaEjercicioController {
                                                                          @PathVariable Integer ejercicioId) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        try {
-            rutinaEjercicioService.deleteByRutinaIdAndEjercicioId(rutinaId, ejercicioId);
+        rutinaEjercicioService.deleteByRutinaIdAndEjercicioId(rutinaId, ejercicioId);
 
-            respuesta.put("mensaje", "Ejercicio " + ejercicioId + " eliminado de la rutina " + rutinaId + " con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al eliminar el ejercicio " + ejercicioId + " de la rutina " + rutinaId);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Ejercicio " + ejercicioId + " eliminado de la rutina " + rutinaId + " con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }

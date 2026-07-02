@@ -112,16 +112,9 @@ public class RutinaController {
     public ResponseEntity<Map<String, Object>> borrarRutina(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        try {
-            rutinaService.deleteById(id);
+        rutinaService.deleteById(id);
 
-            respuesta.put("mensaje", "Rutina desactivada con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al desactivar la rutina " + id);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Rutina desactivada con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
@@ -138,16 +131,9 @@ public class RutinaController {
     public ResponseEntity<Map<String, Object>> activarRutina(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        try {
-            rutinaService.activateById(id);
+        rutinaService.activateById(id);
 
-            respuesta.put("mensaje", "Rutina activada con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al activar la rutina " + id);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Rutina activada con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
@@ -163,16 +149,9 @@ public class RutinaController {
     public ResponseEntity<Map<String, Object>> eliminarPermanente(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        try {
-            rutinaService.permanentDeleteById(id);
+        rutinaService.permanentDeleteById(id);
 
-            respuesta.put("mensaje", "Rutina eliminada PERMANENTEMENTE con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al eliminar permanentemente la rutina " + id);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Rutina eliminada PERMANENTEMENTE con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }

@@ -114,16 +114,9 @@ public class ComidaController {
     public ResponseEntity<Map<String, Object>> borrarComida(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        try {
-            comidaService.deleteById(id);
+        comidaService.deleteById(id);
 
-            respuesta.put("mensaje", "Comida eliminada con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al borrar la comida " + id);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Comida eliminada con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }

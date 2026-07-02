@@ -116,16 +116,9 @@ public class UsuarioController {
     public ResponseEntity<Map<String, Object>> borrarUsuario(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        try {
-            usuarioService.deleteById(id);
+        usuarioService.deleteById(id);
 
-            respuesta.put("mensaje", "Usuario desactivado con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al desactivar el usuario " + id);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Usuario desactivado con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
@@ -141,16 +134,9 @@ public class UsuarioController {
     public ResponseEntity<Map<String, Object>> activarUsuario(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        try {
-            usuarioService.activateById(id);
+        usuarioService.activateById(id);
 
-            respuesta.put("mensaje", "Usuario activado con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al activar el usuario " + id);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Usuario activado con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
@@ -166,16 +152,9 @@ public class UsuarioController {
     public ResponseEntity<Map<String, Object>> eliminarPermanente(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        try {
-            usuarioService.permanentDeleteById(id);
+        usuarioService.permanentDeleteById(id);
 
-            respuesta.put("mensaje", "Usuario eliminado PERMANENTEMENTE con ÉXITO");
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al eliminar permanentemente el usuario " + id);
-            respuesta.put("error", e.getMessage());
-
-            return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        respuesta.put("mensaje", "Usuario eliminado PERMANENTEMENTE con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
