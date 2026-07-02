@@ -42,6 +42,18 @@ Con eso funciona sin AWS.
 ### Requisito: MariaDB local en 3308
 El puerto es 3308 (no el 3306 por defecto). Asegúrate de que tu instancia local escucha ahí, o ajusta la URL en `application-dev.properties`.
 
+### Compilar / regenerar jOOQ (sin secretos en el pom)
+Desde la entrega, `pom.xml` está **versionado y sin credenciales AWS**. La conexión del codegen de jOOQ sale de propiedades Maven con **default local** (no secreto):
+```
+jooq.db.url=jdbc:mariadb://localhost:3308/gymprofit_db · jooq.db.user=root · jooq.db.password=12345
+jooq.codegen.skip=true   (por defecto NO regenera; usa target/generated-sources/jooq)
+```
+- **Compilar** (normal, no regenera jOOQ): `mvn compile` (con JDK 17+). No requiere BD.
+- **Regenerar clases jOOQ** contra la BD local: `mvn org.jooq:jooq-codegen-maven:generate -Djooq.codegen.skip=false` (MariaDB en 3308 encendida).
+- **Regenerar contra AWS u otra BD** sin tocar el pom: añadir `-Djooq.db.url=... -Djooq.db.user=... -Djooq.db.password=...` (o definir esas props en un perfil de `~/.m2/settings.xml`).
+
+> Nota: `application-dev.properties` / `application-prod.properties` siguen fuera de git (contienen `jwt.secret` y credenciales de BD).
+
 ---
 
 ## Android

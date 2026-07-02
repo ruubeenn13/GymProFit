@@ -19,8 +19,8 @@
 	</licenses>
 	<developers>
 		<developer>
-			<name>Tu Nombre</name>
-			<email>tu@email.com</email>
+			<name>Ruben Juan Candela</name>
+			<email>rubenjuancandela06@gmail.com</email>
 		</developer>
 	</developers>
 	<scm>
@@ -31,6 +31,15 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
+		<!-- Conexión que usa el codegen de jOOQ. Por defecto apunta a la BD de desarrollo LOCAL
+		     (no es un secreto). Para regenerar contra otra BD (p. ej. AWS) sobreescribir sin tocar
+		     el pom: mvn ... -Djooq.db.url=... -Djooq.db.user=... -Djooq.db.password=...
+		     o definir estas propiedades en un perfil de ~/.m2/settings.xml. -->
+		<jooq.db.url>jdbc:mariadb://localhost:3308/gymprofit_db</jooq.db.url>
+		<jooq.db.user>root</jooq.db.user>
+		<jooq.db.password>12345</jooq.db.password>
+		<!-- Por defecto NO se regenera jOOQ; poner a false para forzar el codegen. -->
+		<jooq.codegen.skip>true</jooq.codegen.skip>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -173,19 +182,16 @@
 				</executions>
 
 				<configuration>
-					<skip>false</skip>
+					<!-- skip=true: normalmente NO se regeneran las clases jOOQ (se usan las de
+					     target/generated-sources/jooq). Para regenerar: mvn org.jooq:jooq-codegen-maven:generate
+					     -Djooq.codegen.skip=false (requiere BD accesible en ${jooq.db.url}). -->
+					<skip>${jooq.codegen.skip}</skip>
 					<jdbc>
 						<driver>org.mariadb.jdbc.Driver</driver>
-						<!-- LOCAL -->
-						<!--
-						<url>jdbc:mariadb://localhost:3308/gymprofit_db</url>
-						<user>root</user>
-						<password>YOUR_LOCAL_PASSWORD</password>
-						-->
-						<!-- PRODUCCION -->
-						<url>jdbc:mariadb://YOUR_DB_HOST:3306/gymprofit_db</url>
-						<user>YOUR_DB_USER</user>
-						<password>YOUR_DB_PASSWORD</password>
+						<!-- Credenciales tomadas de propiedades Maven (default local, override para AWS). -->
+						<url>${jooq.db.url}</url>
+						<user>${jooq.db.user}</user>
+						<password>${jooq.db.password}</password>
 					</jdbc>
 
 					<generator>

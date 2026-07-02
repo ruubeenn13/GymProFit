@@ -146,9 +146,9 @@ Causa raíz: **ningún controller consulta el principal autenticado; el `userId`
 1. ✅ C1: quitar `roles` de `RegisterDTO`, forzar USER.
 2. ✅ C2: helper de ownership (`SecurityUtils`) + derivar userId del JWT en los 12 services; `findAll` → solo ADMIN.
 3. ✅ Dejar de devolver `ex.getCause()` en errores; handler 401 (`AuthenticationException`) para credenciales.
-4. ◑ `git rm --cached` de `uploads/` + `.idea` hecho; **pendiente** `dataSources.xml` + secretos del pom fuera + versionar pom.
+4. ✅ `git rm --cached` de `uploads/` + `.idea` + `dataSources.xml`; secretos AWS fuera del pom (credenciales del codegen jOOQ → propiedades Maven `${jooq.db.*}` con default local + override `-D`/settings.xml); `pom.xml` re-versionado y `pom.example.xml` eliminado (redundante).
 
-> **Estado 2026-07-02:** ítems 1-3 + bug `UsuarioService.patch` (null-check) aplicados en commit de seguridad. Falta cerrar el ítem 4 (git-hygiene/pom). Fases 2-4 sin empezar.
+> **Estado 2026-07-02:** **Fase 1 COMPLETA** (ítems 1-4 + bug `UsuarioService.patch`). Compila con JDK 21. Fases 2-4 sin empezar.
 
 **Fase 2 — Robustez backend:**
 5. Bug `UsuarioService.patch` (null-check peso/altura/edad).
