@@ -150,18 +150,34 @@ Causa raíz: **ningún controller consulta el principal autenticado; el `userId`
 
 > **Estado 2026-07-02:** **Fase 1 COMPLETA** (ítems 1-4 + bug `UsuarioService.patch`). Compila con JDK 21. Fases 2-4 sin empezar.
 
-**Fase 2 — Robustez backend:**
-5. Bug `UsuarioService.patch` (null-check peso/altura/edad).
-6. Migrar repos a `JpaRepository` + `Pageable` (arregla paginación y casts).
-7. Relaciones `LAZY`.
-8. Quitar try/catch+Map de controllers (delegar en `@ControllerAdvice`).
-9. Secreto JWT por entorno + refresh token.
+**Fase 2 — Robustez backend:** ✅ COMPLETA
+5. ✅ Bug `UsuarioService.patch` (null-check peso/altura/edad).
+6. ◑ Migrar repos a `JpaRepository` (hecho, quita casts) + `Pageable` (**NO expuesto en endpoints**: rompería Android; pendiente como paso aditivo si se quiere paginación).
+7. ✅ Relaciones `LAZY` + `@Transactional(readOnly=true)` a nivel de service (roles de Usuario se quedan EAGER por Spring Security).
+8. ✅ Quitar try/catch+Map de controllers (delegan en `@ControllerAdvice`).
+9. ✅ Secreto JWT por entorno + **refresh token** (opaco, persistido, rotado/revocable; API+Android verificado end-to-end).
+   + Extras Fase 2: warnings MapStruct silenciados, bugs 🟢, CORS whitelist, Java 21, deps vulnerables subidas + OWASP + Dependabot (auto-merge).
 
 **Fase 3 — Android:**
-10. Cifrar token + quitar cleartext + backup del token.
-11. Migrar red a Retrofit+OkHttp+Gson (fix leak PerfilActivity de paso).
+10. ✅ Cifrar token (`EncryptedSharedPreferences`) + quitar cleartext (`network-security-config`) + excluir el almacén del backup + fix leak `PerfilActivity`.
+11. ◑ Migrar red a Retrofit+OkHttp+Gson: **ETAPA 1 (motor) HECHA** — `ApiClient` (Retrofit+OkHttp) + `Authenticator` de refresh; `UtilREST` delega manteniendo la fachada; fuera AsyncTask. **PENDIENTE etapa 2 (tipada):** Gson + modelos, eliminar `UtilJSONParser`, Activities a `Callback<T>`.
 
-**Fase 4 — Lanzamiento:**
-12. ~~Docker Compose (API+MariaDB)~~ **descartado (sin servidor propio con Docker).** En su lugar: despliegue **PaaS** (API en Koyeb/Render free) + **BD MySQL gestionada gratis (Aiven for MySQL)** + CI (GitHub Actions build+test) + Actuator. Detalle y comparativa en `documentacion/DESPLIEGUE.md`.
+**Fase 4 — Lanzamiento:** ⬜ SIN EMPEZAR
+12. ~~Docker Compose~~ **descartado.** Despliegue **PaaS** (Koyeb/Render free) + **Aiven for MySQL** (gratis) + **CI (GitHub Actions build+test)** + **Actuator**. Ver `documentacion/DESPLIEGUE.md`.
 13. Tests de nutrición/mediciones. `minifyEnabled true`.
 14. HTTPS + dominio (URL pública de la PaaS).
+
+---
+
+## 6. Estado fin de jornada 2026-07-02 · PENDIENTE para mañana
+
+**Hecho hoy:** Fase 1 ✅ · Fase 2 ✅ · Fase 3 (seguridad ✅ + Retrofit motor ✅) · sueltos MEDIO ✅ · deps/Dependabot/OWASP ✅. Todo en `origin/main`, 136 tests verdes, verificado en emulador.
+
+**Pendiente (orden sugerido para mañana):**
+1. **CI — GitHub Actions** (`.github/workflows/ci.yml`): build + tests en cada push/PR. Es lo que le falta al auto-merge de Dependabot para ser seguro (hoy fusiona patch/minor sin validar). Recordatorio: "Allow auto-merge" ya activado en el repo.
+2. **Retrofit etapa 2 (tipada)** — Gson + modelos, eliminar `UtilJSONParser`, migrar las 31 Activities a `Callback<T>`. Bloque grande y arriesgado; verificar pantalla a pantalla en emulador.
+3. **Fase 4 resto:** Actuator (`/actuator/health`) + tests de nutrición/mediciones + `minifyEnabled true` + despliegue PaaS (Aiven MySQL + Koyeb/Render) + HTTPS.
+
+**Sueltos NO abordados (decisión tomada):** enumeración en `register` (se deja por UX) y MapStruct `@MappingTarget` en modify/patch (skip: riesgo>valor).
+
+**Recordatorios de entorno:** compilar API con `JAVA_HOME=C:\Users\ruben\.jdks\ms-21.0.10` y `./mvnw -o compile/test` (offline OK; OWASP en perfil `security-scan`). BD local MariaDB en `localhost:3308`. Android: `./gradlew :app:assembleDebug`, emulador AVD `Medium_Phone_API_36.1`, `BASE_URL=10.0.2.2:8080`. En dev el `jwt.secret` debe ser LITERAL (no `${JWT_SECRET:...}`).
