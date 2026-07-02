@@ -3,6 +3,7 @@ package com.gymprofit.api.service.alimento;
 import com.gymprofit.api.dto.entity.alimento.AlimentoCreateDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoPatchDTO;
+import com.gymprofit.api.dto.jooq.AlimentoJooqDTO;
 import com.gymprofit.api.entity.Alimento;
 import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.exceptions.CreateEntityException;
@@ -10,6 +11,7 @@ import com.gymprofit.api.exceptions.DeleteEntityException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.UpdateEntityException;
 import com.gymprofit.api.mappers.AlimentoMapper;
+import com.gymprofit.api.repository.jooq.alimento.IAlimentoJooqRepository;
 import com.gymprofit.api.repository.jpa.IAlimentoRepository;
 import com.gymprofit.api.repository.jpa.IUsuarioRepository;
 import lombok.AllArgsConstructor;
@@ -32,6 +34,7 @@ import java.util.List;
 public class AlimentoService implements IAlimentoService {
 
     private final IAlimentoRepository alimentoRepository;
+    private final IAlimentoJooqRepository alimentoJooqRepository;
     private final AlimentoMapper alimentoMapper;
     private final IUsuarioRepository usuarioRepository;
     private final Logger logger = LoggerFactory.getLogger(AlimentoService.class);
@@ -257,5 +260,14 @@ public class AlimentoService implements IAlimentoService {
         } catch (Exception e) {
             throw new UpdateEntityException(Alimento.class.getSimpleName(), id, e);
         }
+    }
+
+    // Búsqueda de alimentos para el panel admin (incluye inactivos) mediante jOOQ.
+    @Override
+    @Transactional(readOnly = true)
+    public List<AlimentoJooqDTO> busquedaAdmin(String nombre, String categoria, Boolean activo) {
+        logger.info("Búsqueda admin de alimentos");
+
+        return alimentoJooqRepository.busquedaAdmin(nombre, categoria, activo);
     }
 }

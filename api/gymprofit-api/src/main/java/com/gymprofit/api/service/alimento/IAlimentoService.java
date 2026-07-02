@@ -2,6 +2,7 @@ package com.gymprofit.api.service.alimento;
 
 import com.gymprofit.api.dto.entity.alimento.AlimentoCreateDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoDTO;
+import com.gymprofit.api.dto.jooq.AlimentoJooqDTO;
 
 import java.util.List;
 
@@ -49,4 +50,7 @@ public interface IAlimentoService {
 
     // Aplica una actualización parcial (PATCH) sobre un alimento.
     AlimentoDTO patch(Integer id, com.gymprofit.api.dto.entity.alimento.AlimentoPatchDTO patchDTO);
+
+    // Búsqueda de alimentos para el panel admin (incluye inactivos) mediante jOOQ.
+    List<AlimentoJooqDTO> busquedaAdmin(String nombre, String categoria, Boolean activo);
 }

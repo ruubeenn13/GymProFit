@@ -1,5 +1,6 @@
 package com.gymprofit.api.service.rutina;
 
+import com.gymprofit.api.dto.admin.AdminRutinaDTO;
 import com.gymprofit.api.dto.entity.rutina.RutinaCreateDTO;
 import com.gymprofit.api.dto.entity.rutina.RutinaDTO;
 
@@ -36,4 +37,7 @@ public interface IRutinaService {
     List<RutinaDTO> findPredefinidasByNivel(String nivel);
 
     RutinaDTO patch(Integer id, com.gymprofit.api.dto.entity.rutina.RutinaPatchDTO patchDTO);
+
+    // Búsqueda de rutinas predefinidas para el panel admin (incluye inactivas) mediante jOOQ.
+    List<AdminRutinaDTO> busquedaRutinasPredefinidas(String nombre, String nivel, String categoria, Boolean activa);
 }

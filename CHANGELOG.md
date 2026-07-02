@@ -6,6 +6,7 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| *(pendiente)* | refactor(api): más sueltos de la auditoría — `IllegalArgumentException` (enum inválido en filtros) ahora devuelve 400 en vez de 500; `AdminController` ya no llama a repos jOOQ directamente (pasa por los services de dominio); Swagger deshabilitado en producción (springdoc off) |
 | *(pendiente)* | ci(dependabot): auto-merge de PRs de Dependabot (aprobar + auto-merge squash de patch/minor; los major quedan a revisión manual) |
 | *(pendiente)* | chore(security): añadir OWASP `dependency-check-maven` (escaneo de CVEs bajo demanda, `failBuildOnCVSS=8`) y mejorar `dependabot.yml` (grouped updates minor/patch + labels) |
 | `4429b89` | chore(deps): subir dependencias vulnerables — `spring-boot-starter-parent` 3.5.7→3.5.16 (parchea transitivas: jackson, logback, tomcat…), lombok 1.18.38→1.18.46, y quitar el override de `spring-boot-starter-validation` (hereda del parent). Añadido `.github/dependabot.yml` para actualizaciones automáticas. 136 tests verdes |

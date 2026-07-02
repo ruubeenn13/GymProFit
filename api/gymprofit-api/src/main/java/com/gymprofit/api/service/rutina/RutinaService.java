@@ -1,5 +1,6 @@
 package com.gymprofit.api.service.rutina;
 
+import com.gymprofit.api.dto.admin.AdminRutinaDTO;
 import com.gymprofit.api.dto.entity.rutina.RutinaCreateDTO;
 import com.gymprofit.api.dto.entity.rutina.RutinaDTO;
 import com.gymprofit.api.entity.Rutina;
@@ -8,6 +9,7 @@ import com.gymprofit.api.enums.Nivel;
 import com.gymprofit.api.enums.RoleType;
 import com.gymprofit.api.exceptions.*;
 import com.gymprofit.api.mappers.RutinaMapper;
+import com.gymprofit.api.repository.jooq.rutina.IAdminRutinaJooqRepository;
 import com.gymprofit.api.repository.jpa.IRutinaRepository;
 import com.gymprofit.api.repository.jpa.IUsuarioRepository;
 import lombok.AllArgsConstructor;
@@ -33,6 +35,7 @@ public class RutinaService implements IRutinaService {
 
     private final IRutinaRepository rutinaRepository;
     private final IUsuarioRepository usuarioRepository;
+    private final IAdminRutinaJooqRepository adminRutinaJooqRepository;
     private final RutinaMapper rutinaMapper;
     private final Logger logger = LoggerFactory.getLogger(RutinaService.class);
 
@@ -285,6 +288,15 @@ public class RutinaService implements IRutinaService {
         } catch (Exception e) {
             throw new UpdateEntityException(Rutina.class.getSimpleName(), id, e);
         }
+    }
+
+    // Búsqueda de rutinas predefinidas para el panel admin (incluye inactivas) mediante jOOQ.
+    @Override
+    @Transactional(readOnly = true)
+    public List<AdminRutinaDTO> busquedaRutinasPredefinidas(String nombre, String nivel, String categoria, Boolean activa) {
+        logger.info("Búsqueda admin de rutinas predefinidas");
+
+        return adminRutinaJooqRepository.busquedaRutinasPredefinidas(nombre, nivel, categoria, activa);
     }
 
     /**

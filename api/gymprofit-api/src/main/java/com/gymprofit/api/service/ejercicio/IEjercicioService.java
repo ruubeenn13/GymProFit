@@ -2,6 +2,7 @@ package com.gymprofit.api.service.ejercicio;
 
 import com.gymprofit.api.dto.entity.ejercicio.EjercicioCreateDTO;
 import com.gymprofit.api.dto.entity.ejercicio.EjercicioDTO;
+import com.gymprofit.api.dto.jooq.EjercicioJooqDTO;
 
 import java.util.List;
 
@@ -42,4 +43,7 @@ public interface IEjercicioService {
 
     // Actualiza parcialmente un ejercicio (solo los campos no nulos del DTO).
     EjercicioDTO patch(Integer id, com.gymprofit.api.dto.entity.ejercicio.EjercicioPatchDTO patchDTO);
+
+    // Búsqueda de ejercicios para el panel admin (incluye inactivos) mediante jOOQ.
+    List<EjercicioJooqDTO> busquedaAdmin(String nombre, String grupoMuscular, String dificultad, Boolean activo);
 }

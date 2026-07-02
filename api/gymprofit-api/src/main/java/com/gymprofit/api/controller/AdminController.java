@@ -6,9 +6,9 @@ import com.gymprofit.api.dto.admin.AdminUsuarioDTO;
 import com.gymprofit.api.dto.jooq.AlimentoJooqDTO;
 import com.gymprofit.api.dto.jooq.EjercicioJooqDTO;
 import com.gymprofit.api.exceptions.Response;
-import com.gymprofit.api.repository.jooq.alimento.IAlimentoJooqRepository;
-import com.gymprofit.api.repository.jooq.ejercicio.IEjercicioJooqRepository;
-import com.gymprofit.api.repository.jooq.rutina.IAdminRutinaJooqRepository;
+import com.gymprofit.api.service.alimento.IAlimentoService;
+import com.gymprofit.api.service.ejercicio.IEjercicioService;
+import com.gymprofit.api.service.rutina.IRutinaService;
 import com.gymprofit.api.service.usuario.IUsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -37,9 +37,9 @@ import java.util.Map;
 public class AdminController {
 
     private final IUsuarioService usuarioService;
-    private final IAdminRutinaJooqRepository adminRutinaJooqRepository;
-    private final IEjercicioJooqRepository ejercicioJooqRepository;
-    private final IAlimentoJooqRepository alimentoJooqRepository;
+    private final IRutinaService rutinaService;
+    private final IEjercicioService ejercicioService;
+    private final IAlimentoService alimentoService;
 
     // ─── Usuarios ────────────────────────────────────────────────────────────
 
@@ -102,7 +102,7 @@ public class AdminController {
             @RequestParam(required = false) Boolean activa) {
 
         return ResponseEntity.ok(
-                adminRutinaJooqRepository.busquedaRutinasPredefinidas(nombre, nivel, categoria, activa));
+                rutinaService.busquedaRutinasPredefinidas(nombre, nivel, categoria, activa));
     }
 
     // ─── Ejercicios ───────────────────────────────────────────────────────────
@@ -118,7 +118,7 @@ public class AdminController {
             @RequestParam(required = false) Boolean activo) {
 
         return ResponseEntity.ok(
-                ejercicioJooqRepository.busquedaAdmin(nombre, grupoMuscular, dificultad, activo));
+                ejercicioService.busquedaAdmin(nombre, grupoMuscular, dificultad, activo));
     }
 
     // ─── Alimentos ────────────────────────────────────────────────────────────
@@ -133,7 +133,7 @@ public class AdminController {
             @RequestParam(required = false) Boolean activo) {
 
         return ResponseEntity.ok(
-                alimentoJooqRepository.busquedaAdmin(nombre, categoria, activo));
+                alimentoService.busquedaAdmin(nombre, categoria, activo));
     }
 
     // ─── Estadísticas ─────────────────────────────────────────────────────────

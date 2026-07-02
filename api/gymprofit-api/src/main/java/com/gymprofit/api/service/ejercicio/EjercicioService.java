@@ -3,6 +3,7 @@ package com.gymprofit.api.service.ejercicio;
 import com.gymprofit.api.dto.entity.ejercicio.EjercicioCreateDTO;
 import com.gymprofit.api.dto.entity.ejercicio.EjercicioDTO;
 import com.gymprofit.api.dto.entity.ejercicio.EjercicioPatchDTO;
+import com.gymprofit.api.dto.jooq.EjercicioJooqDTO;
 import com.gymprofit.api.entity.Ejercicio;
 import com.gymprofit.api.enums.Dificultad;
 import com.gymprofit.api.enums.GrupoMuscular;
@@ -11,6 +12,7 @@ import com.gymprofit.api.exceptions.DeleteEntityException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.UpdateEntityException;
 import com.gymprofit.api.mappers.EjercicioMapper;
+import com.gymprofit.api.repository.jooq.ejercicio.IEjercicioJooqRepository;
 import com.gymprofit.api.repository.jpa.IEjercicioRepository;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -32,6 +34,7 @@ import java.util.List;
 public class EjercicioService implements IEjercicioService {
 
     private final IEjercicioRepository ejercicioRepository;
+    private final IEjercicioJooqRepository ejercicioJooqRepository;
     private final EjercicioMapper ejercicioMapper;
     private final Logger logger = LoggerFactory.getLogger(EjercicioService.class);
 
@@ -225,5 +228,14 @@ public class EjercicioService implements IEjercicioService {
         } catch (Exception e) {
             throw new UpdateEntityException(Ejercicio.class.getSimpleName(), id, e);
         }
+    }
+
+    // Búsqueda de ejercicios para el panel admin (incluye inactivos) mediante jOOQ.
+    @Override
+    @Transactional(readOnly = true)
+    public List<EjercicioJooqDTO> busquedaAdmin(String nombre, String grupoMuscular, String dificultad, Boolean activo) {
+        logger.info("Búsqueda admin de ejercicios");
+
+        return ejercicioJooqRepository.busquedaAdmin(nombre, grupoMuscular, dificultad, activo);
     }
 }

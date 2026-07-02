@@ -172,16 +172,16 @@ public class ControllerExceptionHandler {
         );
     }
 
-    // Argumento ilegal no controlado explícitamente en el flujo de negocio.
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    // Argumento ilegal (p. ej. un valor de enum inválido en un filtro): es un error del
+    // CLIENTE, no del servidor → 400 Bad Request (antes devolvía 500 erróneamente).
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Response> handleIllegalArgumentException(IllegalArgumentException ex) {
-        // La causa (SQL/Hibernate) se registra en el log, NUNCA se devuelve al cliente.
-        logger.error(ex.getMessage(), ex);
+        logger.warn("Argumento inválido en la petición: {}", ex.getMessage());
 
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage()),
-                HttpStatus.INTERNAL_SERVER_ERROR
+                Response.generalError(HttpStatus.BAD_REQUEST.value(), "Parámetro con valor inválido"),
+                HttpStatus.BAD_REQUEST
         );
     }
 
