@@ -1,5 +1,7 @@
 package com.gymprofit.api.controller;
 
+import com.gymprofit.api.dto.common.CountDTO;
+import com.gymprofit.api.dto.common.ExistsDTO;
 import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioCreateDTO;
 import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioDTO;
 import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioPatchDTO;
@@ -235,15 +237,10 @@ public class ProgresoEjercicioController {
     })
     // Cuenta el total de progresos registrados por un usuario
     @GetMapping("/progreso-ejercicios/count/usuario/{usuarioId}")
-    public ResponseEntity<Map<String, Object>> countByUsuarioId(@PathVariable Integer usuarioId) {
-        Map<String, Object> respuesta = new HashMap<>();
-
+    public ResponseEntity<CountDTO> countByUsuarioId(@PathVariable Integer usuarioId) {
         Long count = progresoEjercicioService.countByUsuarioId(usuarioId);
 
-        respuesta.put("usuarioId", usuarioId);
-        respuesta.put("count", count);
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(new CountDTO(count));
     }
 
     @Operation(summary = "Cuenta los progresos de un ejercicio")
@@ -252,15 +249,10 @@ public class ProgresoEjercicioController {
     })
     // Cuenta el total de progresos registrados de un ejercicio
     @GetMapping("/progreso-ejercicios/count/ejercicio/{ejercicioId}")
-    public ResponseEntity<Map<String, Object>> countByEjercicioId(@PathVariable Integer ejercicioId) {
-        Map<String, Object> respuesta = new HashMap<>();
-
+    public ResponseEntity<CountDTO> countByEjercicioId(@PathVariable Integer ejercicioId) {
         Long count = progresoEjercicioService.countByEjercicioId(ejercicioId);
 
-        respuesta.put("ejercicioId", ejercicioId);
-        respuesta.put("count", count);
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(new CountDTO(count));
     }
 
     @Operation(summary = "Verifica si existe progreso de un usuario en un ejercicio")
@@ -269,17 +261,11 @@ public class ProgresoEjercicioController {
     })
     // Comprueba si existe progreso registrado de un usuario en un ejercicio
     @GetMapping("/progreso-ejercicios/exists/usuario/{usuarioId}/ejercicio/{ejercicioId}")
-    public ResponseEntity<Map<String, Object>> existsByUsuarioIdAndEjercicioId(@PathVariable Integer usuarioId,
-                                                                               @PathVariable Integer ejercicioId) {
-        Map<String, Object> respuesta = new HashMap<>();
-
+    public ResponseEntity<ExistsDTO> existsByUsuarioIdAndEjercicioId(@PathVariable Integer usuarioId,
+                                                                     @PathVariable Integer ejercicioId) {
         boolean existe = progresoEjercicioService.existsByUsuarioIdAndEjercicioId(usuarioId, ejercicioId);
 
-        respuesta.put("usuarioId", usuarioId);
-        respuesta.put("ejercicioId", ejercicioId);
-        respuesta.put("existe", existe);
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(new ExistsDTO(existe));
     }
 
     @Operation(summary = "Elimina todos los progresos de un usuario")

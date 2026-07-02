@@ -1,5 +1,7 @@
 package com.gymprofit.api.controller;
 
+import com.gymprofit.api.dto.common.CountDTO;
+import com.gymprofit.api.dto.common.ExistsDTO;
 import com.gymprofit.api.dto.entity.alimentocomida.AlimentoComidaCreateDTO;
 import com.gymprofit.api.dto.entity.alimentocomida.AlimentoComidaDTO;
 import com.gymprofit.api.dto.entity.alimentocomida.AlimentoComidaPatchDTO;
@@ -202,17 +204,11 @@ public class AlimentoComidaController {
             @ApiResponse(responseCode = "200", description = "Resultado de la verificación")
     })
     @GetMapping("/alimentos-comida/exists/comida/{comidaId}/alimento/{alimentoId}")
-    public ResponseEntity<Map<String, Object>> existeRelacion(@PathVariable Integer comidaId,
-                                                              @PathVariable Integer alimentoId) {
-        Map<String, Object> respuesta = new HashMap<>();
-
+    public ResponseEntity<ExistsDTO> existeRelacion(@PathVariable Integer comidaId,
+                                                    @PathVariable Integer alimentoId) {
         boolean exists = alimentoComidaService.existsByComidaIdAndAlimentoId(comidaId, alimentoId);
 
-        respuesta.put("exists", exists);
-        respuesta.put("comidaId", comidaId);
-        respuesta.put("alimentoId", alimentoId);
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(new ExistsDTO(exists));
     }
 
     @Operation(summary = "Cuenta cuántos alimentos tiene una comida")
@@ -220,15 +216,10 @@ public class AlimentoComidaController {
             @ApiResponse(responseCode = "200", description = "Cantidad de alimentos")
     })
     @GetMapping("/alimentos-comida/count/comida/{comidaId}")
-    public ResponseEntity<Map<String, Object>> contarAlimentosPorComida(@PathVariable Integer comidaId) {
-        Map<String, Object> respuesta = new HashMap<>();
-
+    public ResponseEntity<CountDTO> contarAlimentosPorComida(@PathVariable Integer comidaId) {
         Long count = alimentoComidaService.countByComidaId(comidaId);
 
-        respuesta.put("count", count);
-        respuesta.put("comidaId", comidaId);
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(new CountDTO(count));
     }
 
     @Operation(summary = "Cuenta en cuántas comidas se usa un alimento")
@@ -236,15 +227,10 @@ public class AlimentoComidaController {
             @ApiResponse(responseCode = "200", description = "Cantidad de comidas")
     })
     @GetMapping("/alimentos-comida/count/alimento/{alimentoId}")
-    public ResponseEntity<Map<String, Object>> contarComidasPorAlimento(@PathVariable Integer alimentoId) {
-        Map<String, Object> respuesta = new HashMap<>();
-
+    public ResponseEntity<CountDTO> contarComidasPorAlimento(@PathVariable Integer alimentoId) {
         Long count = alimentoComidaService.countByAlimentoId(alimentoId);
 
-        respuesta.put("count", count);
-        respuesta.put("alimentoId", alimentoId);
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(new CountDTO(count));
     }
 
     @Operation(summary = "Actualiza parcialmente una relación alimento-comida")

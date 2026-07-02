@@ -1,5 +1,6 @@
 package com.gymprofit.api.controller;
 
+import com.gymprofit.api.dto.common.CountDTO;
 import com.gymprofit.api.dto.entity.objetivopersonal.ObjetivoPersonalCreateDTO;
 import com.gymprofit.api.dto.entity.objetivopersonal.ObjetivoPersonalDTO;
 import com.gymprofit.api.dto.entity.objetivopersonal.ObjetivoPersonalPatchDTO;
@@ -251,15 +252,10 @@ public class ObjetivoPersonalController {
     })
     // Cuenta el total de objetivos de un usuario
     @GetMapping("/objetivos-personales/count/usuario/{usuarioId}")
-    public ResponseEntity<Map<String, Object>> contarObjetivosPersonales(@PathVariable Integer usuarioId) {
-        Map<String, Object> respuesta = new HashMap<>();
-
+    public ResponseEntity<CountDTO> contarObjetivosPersonales(@PathVariable Integer usuarioId) {
         Long count = objetivoPersonalService.countByUsuarioId(usuarioId);
 
-        respuesta.put("usuarioId", usuarioId);
-        respuesta.put("count", count);
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(new CountDTO(count));
     }
 
     @Operation(summary = "Cuenta los objetivos personales completados del usuario")
@@ -268,15 +264,10 @@ public class ObjetivoPersonalController {
     })
     // Cuenta los objetivos completados de un usuario
     @GetMapping("/objetivos-personales/count/usuario/{usuarioId}/completados")
-    public ResponseEntity<Map<String, Object>> contarObjetivosCompletados(@PathVariable Integer usuarioId) {
-        Map<String, Object> respuesta = new HashMap<>();
-
+    public ResponseEntity<CountDTO> contarObjetivosCompletados(@PathVariable Integer usuarioId) {
         Long count = objetivoPersonalService.countCompletadosByUsuarioId(usuarioId);
 
-        respuesta.put("usuarioId", usuarioId);
-        respuesta.put("count", count);
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(new CountDTO(count));
     }
 
     @Operation(summary = "Cuenta los objetivos personales pendientes del usuario")
@@ -285,15 +276,10 @@ public class ObjetivoPersonalController {
     })
     // Cuenta los objetivos pendientes de un usuario
     @GetMapping("/objetivos-personales/count/usuario/{usuarioId}/pendientes")
-    public ResponseEntity<Map<String, Object>> contarObjetivosPendientes(@PathVariable Integer usuarioId) {
-        Map<String, Object> respuesta = new HashMap<>();
-
+    public ResponseEntity<CountDTO> contarObjetivosPendientes(@PathVariable Integer usuarioId) {
         Long count = objetivoPersonalService.countPendientesByUsuarioId(usuarioId);
 
-        respuesta.put("usuarioId", usuarioId);
-        respuesta.put("count", count);
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(new CountDTO(count));
     }
 
     @Operation(summary = "Actualiza parcialmente un objetivo personal")

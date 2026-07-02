@@ -1,5 +1,7 @@
 package com.gymprofit.api.controller;
 
+import com.gymprofit.api.dto.common.CountDTO;
+import com.gymprofit.api.dto.common.ExistsDTO;
 import com.gymprofit.api.dto.entity.ejerciciorealizado.EjercicioRealizadoCreateDTO;
 import com.gymprofit.api.dto.entity.ejerciciorealizado.EjercicioRealizadoDTO;
 import com.gymprofit.api.dto.entity.ejerciciorealizado.EjercicioRealizadoPatchDTO;
@@ -182,15 +184,10 @@ public class EjercicioRealizadoController {
     })
     // Cuenta cuántos ejercicios se han realizado en una sesión
     @GetMapping("/ejercicios-realizados/count/sesion/{sesionId}")
-    public ResponseEntity<Map<String, Object>> contarSesiones(@PathVariable Integer sesionId) {
-        Map<String, Object> respuesta = new HashMap<>();
-
+    public ResponseEntity<CountDTO> contarSesiones(@PathVariable Integer sesionId) {
         Long count = ejercicioRealizadoService.countBySesionId(sesionId);
 
-        respuesta.put("sesionId", sesionId);
-        respuesta.put("count", count);
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(new CountDTO(count));
     }
 
     @Operation(summary = "Cuenta los ejercicios realizados de un ejercicio")
@@ -201,15 +198,10 @@ public class EjercicioRealizadoController {
     })
     // Cuenta cuántas veces se ha realizado un ejercicio concreto
     @GetMapping("/ejercicios-realizados/count/ejercicio/{ejercicioId}")
-    public ResponseEntity<Map<String, Object>> contarEjercicios(@PathVariable Integer ejercicioId) {
-        Map<String, Object> respuesta = new HashMap<>();
-
+    public ResponseEntity<CountDTO> contarEjercicios(@PathVariable Integer ejercicioId) {
         Long count = ejercicioRealizadoService.countByEjercicioId(ejercicioId);
 
-        respuesta.put("ejercicioId", ejercicioId);
-        respuesta.put("count", count);
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(new CountDTO(count));
     }
 
     @Operation(summary = "Verifica si existe un ejercicio realizado para una sesión y un ejercicio concretos")
@@ -220,17 +212,11 @@ public class EjercicioRealizadoController {
     })
     // Comprueba si existe un registro para la combinación sesión-ejercicio dada
     @GetMapping("/ejercicios-realizados/exists/sesion/{sesionId}/ejercicio/{ejercicioId}")
-    public ResponseEntity<Map<String, Object>> existsBySesionAndEjercicio(@PathVariable Integer sesionId,
-                                                                          @PathVariable Integer ejercicioId) {
-        Map<String, Object> respuesta = new HashMap<>();
-
+    public ResponseEntity<ExistsDTO> existsBySesionAndEjercicio(@PathVariable Integer sesionId,
+                                                                @PathVariable Integer ejercicioId) {
         boolean existe = ejercicioRealizadoService.existsBySesionIdAndEjercicioId(sesionId, ejercicioId);
 
-        respuesta.put("sesionId", sesionId);
-        respuesta.put("ejercicioId", ejercicioId);
-        respuesta.put("existe", existe);
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(new ExistsDTO(existe));
     }
 
     @Operation(summary = "Elimina todos los ejercicios realizados de una sesión")

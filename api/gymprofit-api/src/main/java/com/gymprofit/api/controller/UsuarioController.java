@@ -1,5 +1,6 @@
 package com.gymprofit.api.controller;
 
+import com.gymprofit.api.dto.common.ExistsDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioCreateDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioEstadisticasDTO;
@@ -202,15 +203,10 @@ public class UsuarioController {
     })
     // Comprueba si un username ya está en uso (validación previa al registro)
     @GetMapping("/usuarios/exists/username/{username}")
-    public ResponseEntity<Map<String, Object>> existeUsername(@PathVariable String username) {
-        Map<String, Object> respuesta = new HashMap<>();
-
+    public ResponseEntity<ExistsDTO> existeUsername(@PathVariable String username) {
         Boolean exists = usuarioService.existsByUsername(username);
 
-        respuesta.put("exists", exists);
-        respuesta.put("username", username);
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(new ExistsDTO(exists));
     }
 
     @Operation(summary = "Verifica si existe un email")
@@ -219,15 +215,10 @@ public class UsuarioController {
     })
     // Comprueba si un email ya está en uso (validación previa al registro)
     @GetMapping("/usuarios/exists/email/{email}")
-    public ResponseEntity<Map<String, Object>> existeEmail(@PathVariable String email) {
-        Map<String, Object> respuesta = new HashMap<>();
-
+    public ResponseEntity<ExistsDTO> existeEmail(@PathVariable String email) {
         Boolean exists = usuarioService.existsByEmail(email);
 
-        respuesta.put("exists", exists);
-        respuesta.put("email", email);
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(new ExistsDTO(exists));
     }
 
     @Operation(summary = "Obtiene todos los usuarios activos")

@@ -6,6 +6,7 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| *(pendiente)* | refactor(api): respuestas de conteo/existencia con DTOs tipados — nuevos `CountDTO`/`ExistsDTO` sustituyen los `Map<String,Object>` crudos en 23 endpoints (contrato Swagger claro). Android no consume estos endpoints |
 | *(pendiente)* | refactor(api): más sueltos de la auditoría — `IllegalArgumentException` (enum inválido en filtros) ahora devuelve 400 en vez de 500; `AdminController` ya no llama a repos jOOQ directamente (pasa por los services de dominio); Swagger deshabilitado en producción (springdoc off) |
 | *(pendiente)* | ci(dependabot): auto-merge de PRs de Dependabot (aprobar + auto-merge squash de patch/minor; los major quedan a revisión manual) |
 | *(pendiente)* | chore(security): añadir OWASP `dependency-check-maven` (escaneo de CVEs bajo demanda, `failBuildOnCVSS=8`) y mejorar `dependabot.yml` (grouped updates minor/patch + labels) |

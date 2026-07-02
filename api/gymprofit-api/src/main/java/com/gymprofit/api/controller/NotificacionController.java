@@ -1,5 +1,7 @@
 package com.gymprofit.api.controller;
 
+import com.gymprofit.api.dto.common.CountDTO;
+import com.gymprofit.api.dto.common.ExistsDTO;
 import com.gymprofit.api.dto.entity.notificacion.NotificacionCreateDTO;
 import com.gymprofit.api.dto.entity.notificacion.NotificacionDTO;
 import com.gymprofit.api.dto.entity.notificacion.NotificacionPatchDTO;
@@ -260,15 +262,10 @@ public class NotificacionController {
     })
     // Cuenta el total de notificaciones de un usuario
     @GetMapping("/notificaciones/count/usuario/{usuarioId}")
-    public ResponseEntity<Map<String, Object>> contarNotificacionesUsuario(@PathVariable Integer usuarioId) {
-        Map<String, Object> respuesta = new HashMap<>();
-
+    public ResponseEntity<CountDTO> contarNotificacionesUsuario(@PathVariable Integer usuarioId) {
         Long count = notificacionService.countByUsuarioId(usuarioId);
 
-        respuesta.put("usuarioId", usuarioId);
-        respuesta.put("total", count);
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(new CountDTO(count));
     }
 
     @Operation(summary = "Cuenta las notificaciones no leídas de un usuario")
@@ -277,15 +274,10 @@ public class NotificacionController {
     })
     // Cuenta las notificaciones no leídas de un usuario
     @GetMapping("/notificaciones/count/usuario/{usuarioId}/no-leidas")
-    public ResponseEntity<Map<String, Object>> contarNotificacionesNoLeidasUsuario(@PathVariable Integer usuarioId) {
-        Map<String, Object> respuesta = new HashMap<>();
-
+    public ResponseEntity<CountDTO> contarNotificacionesNoLeidasUsuario(@PathVariable Integer usuarioId) {
         Long count = notificacionService.countNoLeidasByUsuarioId(usuarioId);
 
-        respuesta.put("usuarioId", usuarioId);
-        respuesta.put("total", count);
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(new CountDTO(count));
     }
 
     @Operation(summary = "Verifica si un usuario tiene notificaciones no leídas")
@@ -294,15 +286,10 @@ public class NotificacionController {
     })
     // Comprueba si un usuario tiene alguna notificación pendiente de leer
     @GetMapping("/notificaciones/exists/usuario/{usuarioId}/no-leidas")
-    public ResponseEntity<Map<String, Object>> existenNotificacionesNoLeidas(@PathVariable Integer usuarioId) {
-        Map<String, Object> respuesta = new HashMap<>();
-
+    public ResponseEntity<ExistsDTO> existenNotificacionesNoLeidas(@PathVariable Integer usuarioId) {
         boolean existe = notificacionService.existenNoLeidasByUsuarioId(usuarioId);
 
-        respuesta.put("usuarioId", usuarioId);
-        respuesta.put("tieneNoLeidas", existe);
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(new ExistsDTO(existe));
     }
 
     @Operation(summary = "Actualiza parcialmente una notificación")

@@ -1,5 +1,6 @@
 package com.gymprofit.api.controller;
 
+import com.gymprofit.api.dto.common.CountDTO;
 import com.gymprofit.api.dto.entity.comida.ComidaCreateDTO;
 import com.gymprofit.api.dto.entity.comida.ComidaDTO;
 import com.gymprofit.api.dto.entity.comida.ComidaPatchDTO;
@@ -236,15 +237,10 @@ public class ComidaController {
             @ApiResponse(responseCode = "200", description = "Cantidad de comidas del usuario")
     })
     @GetMapping("/comidas/count/usuario/{usuarioId}")
-    public ResponseEntity<Map<String, Object>> contarComidasPorUsuario(@PathVariable Integer usuarioId) {
-        Map<String, Object> respuesta = new HashMap<>();
-
+    public ResponseEntity<CountDTO> contarComidasPorUsuario(@PathVariable Integer usuarioId) {
         Long count = comidaService.countByUsuarioId(usuarioId);
 
-        respuesta.put("count", count);
-        respuesta.put("usuarioId", usuarioId);
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(new CountDTO(count));
     }
 
     @Operation(summary = "Cuenta las comidas por tipo")
@@ -254,17 +250,12 @@ public class ComidaController {
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @GetMapping("/comidas/count/tipo/{tipoComida}")
-    public ResponseEntity<Map<String, Object>> contarComidasPorTipo(@PathVariable String tipoComida) {
+    public ResponseEntity<CountDTO> contarComidasPorTipo(@PathVariable String tipoComida) {
         validarTipoComida(tipoComida);
-
-        Map<String, Object> respuesta = new HashMap<>();
 
         Long count = comidaService.countByTipoComida(tipoComida);
 
-        respuesta.put("count", count);
-        respuesta.put("tipoComida", tipoComida.toUpperCase());
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(new CountDTO(count));
     }
 
     @Operation(summary = "Cuenta las comidas de un usuario por tipo")
@@ -274,19 +265,13 @@ public class ComidaController {
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @GetMapping("/comidas/count/usuario/{usuarioId}/tipo/{tipoComida}")
-    public ResponseEntity<Map<String, Object>> contarComidasPorUsuarioYTipo(@PathVariable Integer usuarioId,
-                                                                            @PathVariable String tipoComida) {
+    public ResponseEntity<CountDTO> contarComidasPorUsuarioYTipo(@PathVariable Integer usuarioId,
+                                                                 @PathVariable String tipoComida) {
         validarTipoComida(tipoComida);
-
-        Map<String, Object> respuesta = new HashMap<>();
 
         Long count = comidaService.countByUsuarioIdAndTipoComida(usuarioId, tipoComida);
 
-        respuesta.put("count", count);
-        respuesta.put("usuarioId", usuarioId);
-        respuesta.put("tipoComida", tipoComida);
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(new CountDTO(count));
     }
 
     @Operation(summary = "Actualiza parcialmente una comida")

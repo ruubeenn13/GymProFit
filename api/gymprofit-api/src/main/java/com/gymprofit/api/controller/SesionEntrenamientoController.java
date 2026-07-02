@@ -1,5 +1,6 @@
 package com.gymprofit.api.controller;
 
+import com.gymprofit.api.dto.common.CountDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoCreateDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoPatchDTO;
@@ -315,15 +316,10 @@ public class SesionEntrenamientoController {
     })
     // Cuenta el total de sesiones de un usuario
     @GetMapping("/sesiones/count/usuario/{usuarioId}")
-    public ResponseEntity<Map<String, Object>> contarSesionesPorUsuario(@PathVariable Integer usuarioId) {
-        Map<String, Object> respuesta = new HashMap<>();
-
+    public ResponseEntity<CountDTO> contarSesionesPorUsuario(@PathVariable Integer usuarioId) {
         Long count = sesionEntrenamientoService.countByUsuarioId(usuarioId);
 
-        respuesta.put("count", count);
-        respuesta.put("usuarioId", usuarioId);
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(new CountDTO(count));
     }
 
     @Operation(summary = "Cuenta las sesiones de una rutina")
@@ -332,15 +328,10 @@ public class SesionEntrenamientoController {
     })
     // Cuenta el total de sesiones asociadas a una rutina
     @GetMapping("/sesiones/count/rutina/{rutinaId}")
-    public ResponseEntity<Map<String, Object>> contarSesionesCompletadasPorUsuario(@PathVariable Integer rutinaId) {
-        Map<String, Object> respuesta = new HashMap<>();
-
+    public ResponseEntity<CountDTO> contarSesionesCompletadasPorUsuario(@PathVariable Integer rutinaId) {
         Long count = sesionEntrenamientoService.countByRutinaId(rutinaId);
 
-        respuesta.put("count", count);
-        respuesta.put("rutinaId", rutinaId);
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(new CountDTO(count));
     }
 
     @Operation(summary = "Obtiene sesiones de un usuario ordenadas por fecha")

@@ -1,5 +1,7 @@
 package com.gymprofit.api.controller;
 
+import com.gymprofit.api.dto.common.CountDTO;
+import com.gymprofit.api.dto.common.ExistsDTO;
 import com.gymprofit.api.dto.entity.rutinaejercicio.RutinaEjercicioCreateDTO;
 import com.gymprofit.api.dto.entity.rutinaejercicio.RutinaEjercicioDTO;
 import com.gymprofit.api.dto.entity.rutinaejercicio.RutinaEjercicioPatchDTO;
@@ -198,15 +200,10 @@ public class RutinaEjercicioController {
     })
     // Cuenta cuántos ejercicios tiene asignados una rutina
     @GetMapping("/rutinas-ejercicios/count/rutina/{rutinaId}")
-    public ResponseEntity<Map<String, Object>> contarEjerciciosRutina(@PathVariable Integer rutinaId) {
-        Map<String, Object> respuesta = new HashMap<>();
-
+    public ResponseEntity<CountDTO> contarEjerciciosRutina(@PathVariable Integer rutinaId) {
         Long count = rutinaEjercicioService.countByRutinaId(rutinaId);
 
-        respuesta.put("rutinaId", rutinaId);
-        respuesta.put("count", count);
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(new CountDTO(count));
     }
 
     @Operation(summary = "Cuenta las rutinas que contienen un ejercicio")
@@ -215,15 +212,10 @@ public class RutinaEjercicioController {
     })
     // Cuenta en cuántas rutinas aparece un ejercicio
     @GetMapping("/rutinas-ejercicios/count/ejercicio/{ejercicioId}")
-    public ResponseEntity<Map<String, Object>> contarRutinasEjercicios(@PathVariable Integer ejercicioId) {
-        Map<String, Object> respuesta = new HashMap<>();
-
+    public ResponseEntity<CountDTO> contarRutinasEjercicios(@PathVariable Integer ejercicioId) {
         Long count = rutinaEjercicioService.countByEjercicioId(ejercicioId);
 
-        respuesta.put("ejercicioId", ejercicioId);
-        respuesta.put("count", count);
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(new CountDTO(count));
     }
 
     @Operation(summary = "Verifica si un ejercicio existe en una rutina")
@@ -232,17 +224,11 @@ public class RutinaEjercicioController {
     })
     @GetMapping("/rutinas-ejercicios/exists/rutina/{rutinaId}/ejercicio/{ejercicioId}")
     // Comprueba si existe la relación entre una rutina y un ejercicio
-    public ResponseEntity<Map<String, Object>> existsByRutinaIdAndEjercicioId(@PathVariable Integer rutinaId,
-                                                                              @PathVariable Integer ejercicioId) {
-        Map<String, Object> respuesta = new HashMap<>();
-
+    public ResponseEntity<ExistsDTO> existsByRutinaIdAndEjercicioId(@PathVariable Integer rutinaId,
+                                                                    @PathVariable Integer ejercicioId) {
         boolean existe = rutinaEjercicioService.existsByRutinaIdAndEjercicioId(rutinaId, ejercicioId);
 
-        respuesta.put("rutinaId", rutinaId);
-        respuesta.put("ejercicioId", ejercicioId);
-        respuesta.put("existe", existe);
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(new ExistsDTO(existe));
     }
 
     @Operation(summary = "Elimina los ejercicios de una rutina")

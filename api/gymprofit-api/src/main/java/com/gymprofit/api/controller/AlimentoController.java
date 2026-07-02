@@ -1,5 +1,6 @@
 package com.gymprofit.api.controller;
 
+import com.gymprofit.api.dto.common.CountDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoCreateDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoPatchDTO;
@@ -261,14 +262,10 @@ public class AlimentoController {
             @ApiResponse(responseCode = "200", description = "Cantidad de alimentos")
     })
     @GetMapping("/alimentos/count/activos")
-    public ResponseEntity<Map<String, Object>> contarAlimentosActivos() {
-        Map<String, Object> respuesta = new HashMap<>();
-
+    public ResponseEntity<CountDTO> contarAlimentosActivos() {
         Long count = alimentoService.countActivos();
 
-        respuesta.put("count", count);
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(new CountDTO(count));
     }
 
     @Operation(summary = "Cuenta los alimentos por categoría")
@@ -278,19 +275,14 @@ public class AlimentoController {
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @GetMapping("/alimentos/count/categoria/{categoria}")
-    public ResponseEntity<Map<String, Object>> contarAlimentosPorCategoria(@PathVariable String categoria) {
+    public ResponseEntity<CountDTO> contarAlimentosPorCategoria(@PathVariable String categoria) {
         if (categoria == null || categoria.trim().isEmpty()) {
             throw new InvalidDataException("La categoría no puede estar vacía");
         }
 
-        Map<String, Object> respuesta = new HashMap<>();
-
         Long count = alimentoService.countByCategoria(categoria);
 
-        respuesta.put("count", count);
-        respuesta.put("categoria", categoria);
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(new CountDTO(count));
     }
 
     @Operation(summary = "Obtiene los alimentos de un usuario")
