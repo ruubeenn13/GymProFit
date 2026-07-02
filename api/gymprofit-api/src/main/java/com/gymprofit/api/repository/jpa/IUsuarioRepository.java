@@ -2,7 +2,7 @@ package com.gymprofit.api.repository.jpa;
 
 import com.gymprofit.api.entity.Usuario;
 import io.swagger.v3.oas.annotations.Hidden;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
@@ -17,7 +17,7 @@ import java.util.Optional;
 @Hidden
 @Repository
 @RepositoryRestResource(exported = false)
-public interface IUsuarioRepository extends CrudRepository<Usuario, Integer> {
+public interface IUsuarioRepository extends JpaRepository<Usuario, Integer> {
 
     // Busca un usuario por su nombre de usuario (login).
     Optional<Usuario> findByUsername(String username);

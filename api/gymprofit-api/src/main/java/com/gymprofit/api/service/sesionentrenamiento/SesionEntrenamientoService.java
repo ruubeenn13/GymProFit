@@ -53,7 +53,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
         logger.info("Buscando todas las sesiones de entrenaminento");
 
-        List<SesionEntrenamiento> sesiones = (List<SesionEntrenamiento>) sesionEntrenamientoRepository.findAll();
+        List<SesionEntrenamiento> sesiones = sesionEntrenamientoRepository.findAll();
 
         return sesionEntrenamientoMapper.toDTOList(sesiones);
     }

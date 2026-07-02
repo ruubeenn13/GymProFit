@@ -85,7 +85,7 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
 
         securityUtils.requireAdmin();
 
-        List<RutinaEjercicio> lista = (List<RutinaEjercicio>) rutinaEjercicioRepository.findAll();
+        List<RutinaEjercicio> lista = rutinaEjercicioRepository.findAll();
 
         return rutinaEjercicioMapper.toDTOList(lista);
     }

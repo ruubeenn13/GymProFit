@@ -2,7 +2,7 @@ package com.gymprofit.api.repository.jpa;
 
 import com.gymprofit.api.entity.RutinaEjercicio;
 import io.swagger.v3.oas.annotations.Hidden;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
@@ -17,7 +17,7 @@ import java.util.Optional;
 @Hidden
 @Repository
 @RepositoryRestResource(exported = false)
-public interface IRutinaEjercicioRepository extends CrudRepository<RutinaEjercicio, Integer> {
+public interface IRutinaEjercicioRepository extends JpaRepository<RutinaEjercicio, Integer> {
 
     // Ejercicios asociados a una rutina.
     List<RutinaEjercicio> findByRutinaId(Integer rutinaId);

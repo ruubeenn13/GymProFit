@@ -3,7 +3,7 @@ package com.gymprofit.api.repository.jpa;
 import com.gymprofit.api.entity.SesionEntrenamiento;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
@@ -19,7 +19,7 @@ import java.util.List;
 @Hidden
 @Repository
 @RepositoryRestResource(exported = false)
-public interface ISesionEntrenamientoRepository extends CrudRepository<SesionEntrenamiento, Integer> {
+public interface ISesionEntrenamientoRepository extends JpaRepository<SesionEntrenamiento, Integer> {
 
     // Sesiones de un usuario.
     List<SesionEntrenamiento> findByUsuarioId(Integer usuarioId);

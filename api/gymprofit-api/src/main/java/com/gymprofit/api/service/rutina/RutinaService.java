@@ -55,7 +55,7 @@ public class RutinaService implements IRutinaService {
             throw new UnauthorizedException("Solo ADMIN puede listar todas las rutinas");
         }
 
-        return rutinaMapper.toDTOList((List<Rutina>) rutinaRepository.findAll());
+        return rutinaMapper.toDTOList(rutinaRepository.findAll());
     }
 
     // Busca una rutina por id, verificando que el usuario puede visualizarla.

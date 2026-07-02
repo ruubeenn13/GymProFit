@@ -48,7 +48,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
 
         securityUtils.requireAdmin();
 
-        List<EjercicioRealizado> ejerciciosRealizados = (List<EjercicioRealizado>) ejercicioRealizadoRepository.findAll();
+        List<EjercicioRealizado> ejerciciosRealizados = ejercicioRealizadoRepository.findAll();
 
         return ejercicioRealizadoMapper.toDTOList(ejerciciosRealizados);
     }

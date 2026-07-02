@@ -51,7 +51,7 @@ public class LogroService implements ILogroService {
     // Devuelve el catálogo completo de logros disponibles.
     @Override
     public List<LogroDTO> findAll() {
-        return logroMapper.toDTOList((List<Logro>) logroRepository.findAll());
+        return logroMapper.toDTOList(logroRepository.findAll());
     }
 
     // Devuelve los logros obtenidos por un usuario, validando que exista.
@@ -98,7 +98,7 @@ public class LogroService implements ILogroService {
     public List<String> evaluarLogros(Integer usuarioId) {
         // Logros ya obtenidos, para no volver a evaluarlos.
         Set<Integer> logroIds = new HashSet<>(usuarioLogroRepository.findLogroIdsByUsuarioId(usuarioId));
-        List<Logro> todos = (List<Logro>) logroRepository.findAll();
+        List<Logro> todos = logroRepository.findAll();
 
         long sesionesCompletadas  = sesionRepository.countByUsuarioIdAndCompletadaTrue(usuarioId);
         long ejerciciosRealizados = ejercicioRealizadoRepository.countBySesionUsuarioId(usuarioId);

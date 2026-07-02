@@ -44,7 +44,7 @@ public class NotificacionService implements INotificacionService {
 
         securityUtils.requireAdmin();
 
-        List<Notificacion> notificaciones = (List<Notificacion>) notificacionRepository.findAll();
+        List<Notificacion> notificaciones = notificacionRepository.findAll();
 
         return notificacionMapper.toDTOList(notificaciones);
     }

@@ -68,7 +68,7 @@ public class UsuarioService implements IUsuarioService {
     public List<UsuarioDTO> findAll() {
         logger.info("Buscando todos los usuarios");
 
-        List<Usuario> usuarios = (List<Usuario>) usuarioRepository.findAll();
+        List<Usuario> usuarios = usuarioRepository.findAll();
 
         return usuarioMapper.toDTOList(usuarios);
     }

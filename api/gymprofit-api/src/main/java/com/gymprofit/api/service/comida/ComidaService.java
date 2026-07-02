@@ -47,7 +47,7 @@ public class ComidaService implements IComidaService {
 
         securityUtils.requireAdmin();
 
-        List<Comida> comidas = (List<Comida>) comidaRepository.findAll();
+        List<Comida> comidas = comidaRepository.findAll();
 
         return comidaMapper.toDTOList(comidas);
     }

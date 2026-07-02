@@ -459,6 +459,8 @@ Abre `app/GymProFit` en Android Studio, sincroniza Gradle y ejecuta en emulador 
 
 | Hash | Descripción |
 |---|---|
+| *(pendiente)* | refactor(api): migrar los 16 repositorios de `CrudRepository` a `JpaRepository` y eliminar los 15 casts `(List<X>)` en los services (auditoría Fase 2, base para paginación) |
+| *(pendiente)* | chore(security): externalizar credenciales del pom (jOOQ codegen → propiedades Maven) y re-versionar `pom.xml` (auditoría Fase 1, ítem 4) |
 | *(pendiente)* | docs(comentarios): documentados 125 XML de Android (layouts, values, menu, drawable, mipmap, manifest) + logback con cabecera y comentarios de sección, sin tocar contenido |
 | *(pendiente)* | docs(comentarios): documentados los 280 archivos .java (API + Android) con cabecera de bloque por archivo + comentarios inline por método/campo, sin tocar código |
 | *(pendiente)* | fix(security): auditoría Fase 1 — cierre de escalada ADMIN (C1) e IDOR sistémico (C2) vía SecurityUtils, no fuga de causa en errores, 401 en credenciales, null-check en UsuarioService.patch |

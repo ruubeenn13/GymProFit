@@ -39,7 +39,7 @@ public class EjercicioService implements IEjercicioService {
     public List<EjercicioDTO> findAll() {
         logger.info("Buscando todos los ejercicios");
 
-        List<Ejercicio> ejercicios = (List<Ejercicio>) ejercicioRepository.findAll();
+        List<Ejercicio> ejercicios = ejercicioRepository.findAll();
 
         return ejercicioMapper.toDTOList(ejercicios);
     }

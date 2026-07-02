@@ -48,7 +48,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
         logger.info("Buscando todos los progresos de ejercicios");
         securityUtils.requireAdmin();
 
-        List<ProgresoEjercicio> progresoEjercicios = (List<ProgresoEjercicio>) progresoEjercicioRepository.findAll();
+        List<ProgresoEjercicio> progresoEjercicios = progresoEjercicioRepository.findAll();
 
         return progresoEjercicioMapper.toDTOList(progresoEjercicios);
     }

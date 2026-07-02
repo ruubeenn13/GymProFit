@@ -48,7 +48,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
 
         logger.info("Buscando todos los objetivos personales");
 
-        List<ObjetivoPersonal> objetivosPersonales = (List<ObjetivoPersonal>) objetivoPersonalRepository.findAll();
+        List<ObjetivoPersonal> objetivosPersonales = objetivoPersonalRepository.findAll();
 
         return objetivoPersonalMapper.toDTOList(objetivosPersonales);
     }

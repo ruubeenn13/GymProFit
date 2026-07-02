@@ -47,7 +47,7 @@ public class MedicionCorporalService implements IMedicionCorporalService {
 
         securityUtils.requireAdmin();
 
-        List<MedicionCorporal> lista = (List<MedicionCorporal>) medicionCorporalRepository.findAll();
+        List<MedicionCorporal> lista = medicionCorporalRepository.findAll();
 
         return medicionCorporalMapper.toDTOList(lista);
     }

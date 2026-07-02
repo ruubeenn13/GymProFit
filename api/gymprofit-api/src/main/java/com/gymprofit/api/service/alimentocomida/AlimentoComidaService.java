@@ -45,7 +45,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         logger.info("Buscando todos los alimentos-comidas");
         securityUtils.requireAdmin();
 
-        List<AlimentoComida> alimentosComida = (List<AlimentoComida>) alimentoComidaRepository.findAll();
+        List<AlimentoComida> alimentosComida = alimentoComidaRepository.findAll();
 
         return alimentoComidaMapper.toDTOList(alimentosComida);
     }

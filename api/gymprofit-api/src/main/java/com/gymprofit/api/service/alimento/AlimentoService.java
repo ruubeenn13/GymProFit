@@ -40,7 +40,7 @@ public class AlimentoService implements IAlimentoService {
     public List<AlimentoDTO> findAll() {
         logger.info("Buscando todos los alimentos");
 
-        List<Alimento> alimentos = (List<Alimento>) alimentoRepository.findAll();
+        List<Alimento> alimentos = alimentoRepository.findAll();
 
         return alimentoMapper.toDTOList(alimentos);
     }
