@@ -134,7 +134,7 @@ public class NotificacionController {
     // Lista las notificaciones de un usuario ordenadas por fecha
     @GetMapping("/notificaciones/usuario/{usuarioId}/ordenadas")
     public ResponseEntity<List<NotificacionDTO>> obtenerNotificacionPorUsuarioOrdenadas(@PathVariable Integer usuarioId) {
-        List<NotificacionDTO> notificaciones = notificacionService.findByUsuarioId(usuarioId);
+        List<NotificacionDTO> notificaciones = notificacionService.findByUsuarioIdOrdenadas(usuarioId);
 
         if (notificaciones.isEmpty()) {
             throw new NotFoundEntityException("No se encontraron notificaciones para el usuario con id " + usuarioId);

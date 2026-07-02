@@ -215,7 +215,7 @@ public class ObjetivoPersonalController {
             // Comprueba que el tipo recibido exista en el enum antes de consultar
             TipoObjetivo.valueOf(tipoObjetivo.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new InvalidDataException("Tipo de objetivo inválido: \" + tipoObjetivo + \". Valores válidos: PERDER_PESO, GANAR_MASA_MUSCULAR, " +
+            throw new InvalidDataException("Tipo de objetivo inválido: " + tipoObjetivo + ". Valores válidos: PERDER_PESO, GANAR_MASA_MUSCULAR, " +
                     "MEJORAR_RESISTENCIA, MEJORAR_FLEXIBILIDAD, MEJORAR_FUERZA, MANTENER_PESO, REDUCIR_GRASA_CORPORAL, MEJORAR_VELOCIDAD, " +
                     "AUMENTAR_CALORIAS, REDUCIR_CALORIAS, MEJORAR_MOVILIDAD, COMPLETAR_RETO, OTRO");
         }

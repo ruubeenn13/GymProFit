@@ -459,6 +459,7 @@ Abre `app/GymProFit` en Android Studio, sincroniza Gradle y ejecuta en emulador 
 
 | Hash | Descripción |
 |---|---|
+| *(pendiente)* | fix(api): bugs menores — `/notificaciones/ordenadas` ahora ordena, count de alimentos-comida en clave correcta, mensaje de tipo de objetivo con concatenación real, ruta `/progreso-ejercicios` coherente, `@Schema` de comidas corregido |
 | *(pendiente)* | fix(api): quitar `try/catch(Exception)+Map` de los 13 controllers (31 bloques) — las excepciones propagan al `@ControllerAdvice` y devuelven el código correcto (404/400/403) en vez de 500 |
 | *(pendiente)* | test(api): mockear `SecurityUtils` en tests de service (arreglo tras Fase 1 C2); suite 132/132 verde |
 | *(pendiente)* | refactor(api): migrar los 16 repositorios de `CrudRepository` a `JpaRepository` y eliminar los 15 casts `(List<X>)` en los services (auditoría Fase 2, base para paginación) |

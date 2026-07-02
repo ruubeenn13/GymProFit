@@ -202,7 +202,7 @@ public class ProgresoEjercicioController {
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Devuelve el historial de progreso de un usuario en un ejercicio, ordenado por fecha
-    @GetMapping("/progreso-ejercicio/usuario/{usuarioId}/ejercicio/{ejercicioId}/historial")
+    @GetMapping("/progreso-ejercicios/usuario/{usuarioId}/ejercicio/{ejercicioId}/historial")
     public ResponseEntity<List<ProgresoEjercicioDTO>> obtenerProgresoPorUsuarioYEjercicioOrdenado(@PathVariable Integer usuarioId,
                                                                                                   @PathVariable Integer ejercicioId) {
         List<ProgresoEjercicioDTO> progresoEjercicioDTOS = progresoEjercicioService.getProgresoByUsuarioAndEjercicio(usuarioId, ejercicioId);

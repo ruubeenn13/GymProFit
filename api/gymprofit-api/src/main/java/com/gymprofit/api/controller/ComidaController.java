@@ -1,6 +1,5 @@
 package com.gymprofit.api.controller;
 
-import com.gymprofit.api.dto.entity.alimento.AlimentoDTO;
 import com.gymprofit.api.dto.entity.comida.ComidaCreateDTO;
 import com.gymprofit.api.dto.entity.comida.ComidaDTO;
 import com.gymprofit.api.dto.entity.comida.ComidaPatchDTO;
@@ -45,7 +44,7 @@ public class ComidaController {
     @Operation(summary = "Obtiene todas las comidas")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de comidas",
-                    content = @Content(schema = @Schema(implementation = AlimentoDTO.class))),
+                    content = @Content(schema = @Schema(implementation = ComidaDTO.class))),
             @ApiResponse(responseCode = "404", description = "Comidas no encontradas",
                     content = @Content(schema = @Schema(implementation = Response.class))),
             @ApiResponse(responseCode = "500", description = "Error al obtener las comidas",

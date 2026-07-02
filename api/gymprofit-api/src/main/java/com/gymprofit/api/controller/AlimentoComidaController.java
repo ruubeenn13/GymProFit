@@ -227,7 +227,7 @@ public class AlimentoComidaController {
         Long count = alimentoComidaService.countByComidaId(comidaId);
 
         respuesta.put("count", count);
-        respuesta.put("comidaId", count);
+        respuesta.put("comidaId", comidaId);
 
         return ResponseEntity.ok(respuesta);
     }
