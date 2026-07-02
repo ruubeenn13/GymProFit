@@ -36,6 +36,7 @@ import java.util.Set;
 // ============================================================
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class LogroService implements ILogroService {
 
     private final ILogroRepository logroRepository;

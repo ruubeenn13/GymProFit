@@ -33,7 +33,7 @@ public class UsuarioLogro {
     private Usuario usuario;
 
     // Logro obtenido por el usuario.
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "logro_id", nullable = false)
     private Logro logro;
 

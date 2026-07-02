@@ -29,6 +29,7 @@ import java.util.List;
 // ============================================================
 @Service
 @AllArgsConstructor
+@Transactional(readOnly = true)
 public class AlimentoComidaService implements IAlimentoComidaService {
 
     private final IAlimentoComidaRepository alimentoComidaRepository;
@@ -68,6 +69,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
     // combinación comida+alimento, calcula las calorías de la línea y
     // recalcula los totales nutricionales de la comida.
     @Override
+    @Transactional
     public AlimentoComidaDTO save(AlimentoComidaCreateDTO alimentoComidaCreateDTO) {
         logger.info("Creando nuevo alimento-comida para comida id: {} y alimento id: {}", alimentoComidaCreateDTO.getAlimentoId(), alimentoComidaCreateDTO.getComidaId());
 
@@ -107,6 +109,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
     // Modifica una relación existente (comida, alimento y cantidad) y
     // recalcula sus calorías y los totales de la comida.
     @Override
+    @Transactional
     public AlimentoComidaDTO modify(AlimentoComidaDTO alimentoComidaDTO) {
         logger.info("Modificando alimento-comida con id: {}", alimentoComidaDTO.getId());
 

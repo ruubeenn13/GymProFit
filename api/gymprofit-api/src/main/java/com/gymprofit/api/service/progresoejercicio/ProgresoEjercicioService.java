@@ -32,6 +32,7 @@ import java.util.List;
 // ============================================================
 @Service
 @AllArgsConstructor
+@Transactional(readOnly = true)
 public class ProgresoEjercicioService implements IProgresoEjercicioService{
 
     private final IProgresoEjercicioRepository progresoEjercicioRepository;
@@ -101,6 +102,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
 
     // Actualiza los valores de mejor marca (peso, repeticiones, tiempo) y notas de un progreso existente.
     @Override
+    @Transactional
     public ProgresoEjercicioDTO modify(ProgresoEjercicioDTO progresoEjercicioDTO) {
         logger.info("Modificando progreso de ejercicio con id: {}", progresoEjercicioDTO.getId());
 

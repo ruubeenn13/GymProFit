@@ -32,6 +32,7 @@ import java.util.List;
 // ============================================================
 @Service
 @AllArgsConstructor
+@Transactional(readOnly = true)
 public class MedicionCorporalService implements IMedicionCorporalService {
 
     private final IMedicionCorporalRepository medicionCorporalRepository;
@@ -108,6 +109,7 @@ public class MedicionCorporalService implements IMedicionCorporalService {
 
     // Actualiza todos los campos de una medición corporal, recalculando el IMC si procede.
     @Override
+    @Transactional
     public MedicionCorporalDTO modify(MedicionCorporalDTO dto) {
         logger.info("Modificando medición corporal con id: {}", dto.getId());
 

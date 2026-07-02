@@ -82,6 +82,9 @@ public class Usuario implements UserDetails {
     private String fotoPerfil;
 
     // Roles asignados al usuario (relación N:M vía tabla usuario_roles).
+    // EAGER a propósito: Spring Security accede a getAuthorities()/roles del principal
+    // fuera de transacción (filtro JWT y checks de autorización); en LAZY lanzaría
+    // LazyInitializationException y rompería login/seguridad.
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinTable(
             name = "usuario_roles",

@@ -52,12 +52,12 @@ public class RutinaEjercicio {
     private String notas;
 
     // Rutina a la que pertenece este ejercicio.
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rutina_id", nullable = false)
     private Rutina rutina;
 
     // Ejercicio asociado.
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ejercicio_id", nullable = false)
     private Ejercicio ejercicio;
 }

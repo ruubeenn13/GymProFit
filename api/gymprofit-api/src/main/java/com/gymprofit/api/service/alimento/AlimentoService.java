@@ -28,6 +28,7 @@ import java.util.List;
 // ============================================================
 @Service
 @AllArgsConstructor
+@Transactional(readOnly = true)
 public class AlimentoService implements IAlimentoService {
 
     private final IAlimentoRepository alimentoRepository;
@@ -59,6 +60,7 @@ public class AlimentoService implements IAlimentoService {
     // Crea un alimento nuevo, activo por defecto; si trae usuarioId lo asocia
     // al usuario creador (alimento personalizado, no global).
     @Override
+    @Transactional
     public AlimentoDTO save(AlimentoCreateDTO alimentoCreateDTO) {
         logger.info("Creando nuevo alimento: {}", alimentoCreateDTO.getNombre());
 
@@ -138,6 +140,7 @@ public class AlimentoService implements IAlimentoService {
 
     // Sustituye todos los campos editables del alimento por los del DTO recibido.
     @Override
+    @Transactional
     public AlimentoDTO modify(AlimentoDTO alimentoDTO) {
         logger.info("Modificando alimento con id: {}", alimentoDTO.getId());
 

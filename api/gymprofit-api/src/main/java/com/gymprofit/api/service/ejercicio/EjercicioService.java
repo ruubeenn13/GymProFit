@@ -28,6 +28,7 @@ import java.util.List;
 // ============================================================
 @Service
 @AllArgsConstructor
+@Transactional(readOnly = true)
 public class EjercicioService implements IEjercicioService {
 
     private final IEjercicioRepository ejercicioRepository;
@@ -57,6 +58,7 @@ public class EjercicioService implements IEjercicioService {
 
     // Crea un nuevo ejercicio, activándolo por defecto.
     @Override
+    @Transactional
     public EjercicioDTO save(EjercicioCreateDTO ejercicioCreateDTO) {
         logger.info("Creando nuevo ejercicio {}", ejercicioCreateDTO.getNombre());
 
@@ -127,6 +129,7 @@ public class EjercicioService implements IEjercicioService {
 
     // Modifica un ejercicio existente con todos sus campos.
     @Override
+    @Transactional
     public EjercicioDTO modify(EjercicioDTO ejercicioDTO) {
         logger.info("Modificando ejercicio con id: {}", ejercicioDTO.getId());
 

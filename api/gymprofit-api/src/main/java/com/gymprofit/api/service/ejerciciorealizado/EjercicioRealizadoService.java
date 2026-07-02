@@ -31,6 +31,7 @@ import java.util.List;
 // ============================================================
 @Service
 @AllArgsConstructor
+@Transactional(readOnly = true)
 public class EjercicioRealizadoService implements IEjercicioRealizadoService{
 
     private final IEjercicioRealizadoRepository ejercicioRealizadoRepository;
@@ -95,6 +96,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
 
     // Actualiza los datos de series, repeticiones, peso, tiempo y notas de un ejercicio realizado.
     @Override
+    @Transactional
     public EjercicioRealizadoDTO modify(EjercicioRealizadoDTO ejercicioRealizadoDTO) {
         logger.info("Modificando ejercicio realizado con id: {}", ejercicioRealizadoDTO.getId());
 

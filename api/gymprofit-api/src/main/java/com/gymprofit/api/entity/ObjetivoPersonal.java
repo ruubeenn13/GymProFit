@@ -68,7 +68,7 @@ public class ObjetivoPersonal {
     private LocalDateTime fechaCompletado;
 
     // Usuario propietario del objetivo.
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 }

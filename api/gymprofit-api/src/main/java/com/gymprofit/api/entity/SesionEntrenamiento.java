@@ -57,7 +57,7 @@ public class SesionEntrenamiento {
     private Usuario usuario;
 
     // Rutina seguida en esta sesión (opcional, puede ser entrenamiento libre).
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rutina_id")
     private Rutina rutina;
 }

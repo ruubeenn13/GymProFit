@@ -34,6 +34,7 @@ import java.util.List;
 // ============================================================
 @Service
 @AllArgsConstructor
+@Transactional(readOnly = true)
 public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
     private final ISesionEntrenamientoRepository sesionEntrenamientoRepository;
@@ -74,6 +75,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
     // Crea una nueva sesión de entrenamiento. Si no es ADMIN, se fuerza el usuario propietario
     // al usuario autenticado (evita crear sesiones a nombre de otro usuario).
     @Override
+    @Transactional
     public SesionEntrenamientoDTO save(SesionEntrenamientoCreateDTO sesionEntrenamientoCreateDTO) {
         if (!securityUtils.isAdmin()) {
             sesionEntrenamientoCreateDTO.setUsuarioId(securityUtils.getCurrentUserId());
@@ -129,6 +131,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
     // Sustituye los datos de una sesión existente (fechas, calorías, notas, rutina asociada...).
     @Override
+    @Transactional
     public SesionEntrenamientoDTO modify(SesionEntrenamientoDTO sesionEntrenamientoDTO) {
         logger.info("Modificando sesión de entrenamiento con id: {}", sesionEntrenamientoDTO.getId());
 

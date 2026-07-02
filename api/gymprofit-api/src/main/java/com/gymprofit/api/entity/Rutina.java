@@ -67,7 +67,7 @@ public class Rutina {
     private Boolean activa;
 
     // Usuario propietario de la rutina (null si es predefinida del sistema).
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 

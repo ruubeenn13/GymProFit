@@ -459,6 +459,8 @@ Abre `app/GymProFit` en Android Studio, sincroniza Gradle y ejecuta en emulador 
 
 | Hash | Descripción |
 |---|---|
+| *(pendiente)* | perf(api): relaciones `@ManyToOne` a LAZY (14) + `@Transactional(readOnly=true)` a nivel de service para el mapeo seguro; roles de Usuario se mantienen EAGER por seguridad (Spring Security) |
+| *(pendiente)* | chore(api): silenciar warnings de MapStruct con `@Mapping(ignore)` explícitos |
 | *(pendiente)* | fix(api): bugs menores — `/notificaciones/ordenadas` ahora ordena, count de alimentos-comida en clave correcta, mensaje de tipo de objetivo con concatenación real, ruta `/progreso-ejercicios` coherente, `@Schema` de comidas corregido |
 | *(pendiente)* | fix(api): quitar `try/catch(Exception)+Map` de los 13 controllers (31 bloques) — las excepciones propagan al `@ControllerAdvice` y devuelven el código correcto (404/400/403) en vez de 500 |
 | *(pendiente)* | test(api): mockear `SecurityUtils` en tests de service (arreglo tras Fase 1 C2); suite 132/132 verde |

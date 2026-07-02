@@ -41,6 +41,7 @@ import java.util.List;
 // ============================================================
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UsuarioService implements IUsuarioService {
 
     private final IUsuarioRepository usuarioRepository;
@@ -88,6 +89,7 @@ public class UsuarioService implements IUsuarioService {
 
     // Crea un nuevo usuario, validando que username y email no estén ya en uso.
     @Override
+    @Transactional
     public UsuarioDTO save(UsuarioCreateDTO usuarioCreateDTO) {
         logger.info("Intento de crear un usuario");
 
@@ -170,6 +172,7 @@ public class UsuarioService implements IUsuarioService {
 
     // Sustituye los datos de un usuario existente usando el mapper (updateEntityFromDTO).
     @Override
+    @Transactional
     public UsuarioDTO modify(UsuarioUpdateDTO usuarioUpdateDTO) {
         logger.info("Intento de modificar usuario con id: {}", usuarioUpdateDTO.getId());
 

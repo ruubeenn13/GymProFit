@@ -31,6 +31,7 @@ import java.util.List;
 // ============================================================
 @Service
 @AllArgsConstructor
+@Transactional(readOnly = true)
 public class RutinaEjercicioService implements IRutinaEjercicioService {
 
     private final IRutinaEjercicioRepository rutinaEjercicioRepository;
@@ -136,6 +137,7 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
 
     // Sustituye todos los campos editables de un ejercicio de rutina (series, reps, peso, orden...).
     @Override
+    @Transactional
     public RutinaEjercicioDTO modify(RutinaEjercicioDTO dto) {
         logger.info("Modificando ejercicio de rutina con id: {}", dto.getId());
 

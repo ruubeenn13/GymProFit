@@ -31,6 +31,7 @@ import java.util.List;
 // ============================================================
 @Service
 @AllArgsConstructor
+@Transactional(readOnly = true)
 public class ObjetivoPersonalService implements IObjetivoPersonalService{
 
     private final IObjetivoPersonalRepository objetivoPersonalRepository;
@@ -98,6 +99,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
 
     // Actualiza el valor objetivo y el estado de completado de un objetivo existente.
     @Override
+    @Transactional
     public ObjetivoPersonalDTO update(ObjetivoPersonalUpdateDTO objetivoPersonalUpdateDTO) {
         logger.info("Actualizando el objetivo personal con id: {}", objetivoPersonalUpdateDTO.getId());
 
@@ -202,6 +204,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
 
     // Marca el objetivo como completado, registra la fecha y evalúa logros del usuario.
     @Override
+    @Transactional
     public ObjetivoPersonalDTO completar(Integer id) {
         logger.info("Completando objetivo personal con id: {}", id);
 

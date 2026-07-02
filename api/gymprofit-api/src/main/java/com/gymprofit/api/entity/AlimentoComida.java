@@ -36,12 +36,12 @@ public class AlimentoComida {
     private Integer caloriasTotales;
 
     // Comida a la que pertenece esta línea.
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comida_id", nullable = false)
     private Comida comida;
 
     // Alimento de referencia consumido.
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "alimento_id", nullable = false)
     private Alimento alimento;
 }

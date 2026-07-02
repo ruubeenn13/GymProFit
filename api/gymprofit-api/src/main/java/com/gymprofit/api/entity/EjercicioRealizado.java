@@ -53,7 +53,7 @@ public class EjercicioRealizado {
     private SesionEntrenamiento sesion;
 
     // Ejercicio del catálogo realizado.
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ejercicio_id", nullable = false)
     private Ejercicio ejercicio;
 }

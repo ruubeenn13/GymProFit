@@ -28,6 +28,7 @@ import java.util.List;
 // ============================================================
 @Service
 @AllArgsConstructor
+@Transactional(readOnly = true)
 public class RutinaService implements IRutinaService {
 
     private final IRutinaRepository rutinaRepository;
@@ -75,6 +76,7 @@ public class RutinaService implements IRutinaService {
 
     // Crea una rutina nueva; valida permisos según sea predefinida o propia del usuario.
     @Override
+    @Transactional
     public RutinaDTO save(RutinaCreateDTO rutinaCreateDTO) {
         logger.info("Creando nueva rutina: {}", rutinaCreateDTO.getNombre());
 
@@ -172,6 +174,7 @@ public class RutinaService implements IRutinaService {
 
     // Actualiza los datos completos de una rutina existente, comprobando la propiedad.
     @Override
+    @Transactional
     public RutinaDTO modify(RutinaDTO rutinaDTO) {
         logger.info("Modificando rutina con id: {}", rutinaDTO.getId());
 

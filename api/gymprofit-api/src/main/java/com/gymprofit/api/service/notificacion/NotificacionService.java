@@ -28,6 +28,7 @@ import java.util.List;
 // ============================================================
 @Service
 @AllArgsConstructor
+@Transactional(readOnly = true)
 public class NotificacionService implements INotificacionService {
 
     private final INotificacionRepository notificacionRepository;

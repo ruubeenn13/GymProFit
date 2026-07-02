@@ -32,6 +32,7 @@ import java.util.List;
 // ============================================================
 @Service
 @AllArgsConstructor
+@Transactional(readOnly = true)
 public class ComidaService implements IComidaService {
 
     private final IComidaRepository comidaRepository;
@@ -69,6 +70,7 @@ public class ComidaService implements IComidaService {
     // Crea una nueva comida. Si el solicitante no es ADMIN, fuerza el
     // usuarioId al usuario autenticado (evita crear comidas para terceros).
     @Override
+    @Transactional
     public ComidaDTO save(ComidaCreateDTO comidaCreateDTO) {
         logger.info("Creando nueva comida de tipo: {}", comidaCreateDTO.getTipoComida());
 
@@ -101,6 +103,7 @@ public class ComidaService implements IComidaService {
 
     // Modifica una comida existente (verifica propiedad antes de actualizar).
     @Override
+    @Transactional
     public ComidaDTO modify(ComidaDTO comidaDTO) {
         logger.info("Modificando comida con id: {}", comidaDTO.getId());
 

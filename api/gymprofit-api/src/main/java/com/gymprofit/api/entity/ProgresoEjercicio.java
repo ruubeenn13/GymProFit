@@ -49,12 +49,12 @@ public class ProgresoEjercicio {
     private String notas;
 
     // Usuario que ha conseguido esta marca.
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
     // Ejercicio al que corresponde el progreso.
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ejercicio_id", nullable = false)
     private Ejercicio ejercicio;
 }
