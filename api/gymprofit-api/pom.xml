@@ -238,21 +238,37 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- OWASP Dependency-Check: escanea CVEs en las dependencias.
-			     NO se ata a ninguna fase (para no descargar la BD NVD en cada build).
-			     Ejecutar bajo demanda: mvn org.owasp:dependency-check-maven:check
-			     (informe en target/dependency-check-report.html). Recomendado una NVD API key
-			     para acelerar: -DnvdApiKey=XXXX. failBuildOnCVSS=8 falla si hay CVE alta/critica. -->
-			<plugin>
-				<groupId>org.owasp</groupId>
-				<artifactId>dependency-check-maven</artifactId>
-				<version>12.2.2</version>
-				<configuration>
-					<failBuildOnCVSS>8</failBuildOnCVSS>
-					<skipProvidedScope>true</skipProvidedScope>
-					<skipTestScope>true</skipTestScope>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<!-- Perfil BAJO DEMANDA para escanear CVEs con OWASP Dependency-Check.
+		     Aislado en un perfil para no romper los builds normales/offline (el plugin
+		     y su BD NVD solo se resuelven al activarlo). Ejecutar:
+		       mvn -Psecurity-scan verify    (o: mvn org.owasp:dependency-check-maven:check)
+		     Recomendado una NVD API key: -DnvdApiKey=XXXX. failBuildOnCVSS=8 falla en CVE alta/critica. -->
+		<profile>
+			<id>security-scan</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.owasp</groupId>
+						<artifactId>dependency-check-maven</artifactId>
+						<version>12.2.2</version>
+						<configuration>
+							<failBuildOnCVSS>8</failBuildOnCVSS>
+							<skipProvidedScope>true</skipProvidedScope>
+							<skipTestScope>true</skipTestScope>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>check</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
