@@ -27,5 +27,10 @@ public interface ComidaMapper {
     // gestionados por el service (id y usuario).
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "usuario", ignore = true)
+    // Los totales de macros son campos calculados de la entidad, no vienen del DTO de creación.
+    @Mapping(target = "totalCalorias", ignore = true)
+    @Mapping(target = "totalProteinas", ignore = true)
+    @Mapping(target = "totalCarbohidratos", ignore = true)
+    @Mapping(target = "totalGrasas", ignore = true)
     Comida toEntity(ComidaCreateDTO comidaCreateDTO);
 }

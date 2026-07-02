@@ -30,6 +30,10 @@ public interface UsuarioMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "fechaRegistro", ignore = true)
     @Mapping(target = "activo", ignore = true)
+    // fotoPerfil y roles los asigna el servicio; authorities es derivado de roles (UserDetails).
+    @Mapping(target = "fotoPerfil", ignore = true)
+    @Mapping(target = "roles", ignore = true)
+    @Mapping(target = "authorities", ignore = true)
     Usuario toEntity(UsuarioCreateDTO usuarioCreateDTO);
 
     // Actualiza en el sitio (@MappingTarget) los campos editables de una
@@ -39,5 +43,9 @@ public interface UsuarioMapper {
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "fechaRegistro", ignore = true)
     @Mapping(target = "activo", ignore = true)
+    // fotoPerfil y roles no se editan en un update de perfil; authorities es derivado (UserDetails).
+    @Mapping(target = "fotoPerfil", ignore = true)
+    @Mapping(target = "roles", ignore = true)
+    @Mapping(target = "authorities", ignore = true)
     void updateEntityFromDTO(UsuarioUpdateDTO usuarioUpdateDTO, @MappingTarget Usuario usuario);
 }
