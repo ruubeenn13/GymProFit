@@ -24,6 +24,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+// ============================================================
+// ComidaService — servicio de comidas del diario nutricional
+// Gestiona el CRUD de comidas (desayuno, comida, cena...) registradas por
+// cada usuario, aplicando control de propiedad (ownership) y agregando los
+// totales nutricionales calculados a partir de sus alimentos asociados.
+// ============================================================
 @Service
 @AllArgsConstructor
 public class ComidaService implements IComidaService {
@@ -34,6 +40,7 @@ public class ComidaService implements IComidaService {
     private final SecurityUtils securityUtils;
     private final Logger logger = LoggerFactory.getLogger(ComidaService.class);
 
+    // Devuelve todas las comidas (requiere rol ADMIN).
     @Override
     public List<ComidaDTO> findAll() {
         logger.info("Buscando todas las comidas");
@@ -45,6 +52,8 @@ public class ComidaService implements IComidaService {
         return comidaMapper.toDTOList(comidas);
     }
 
+    // Busca una comida por id y verifica que el usuario autenticado es su
+    // propietario (o ADMIN).
     @Override
     public ComidaDTO findById(Integer id) {
         logger.info("Buscando comida por id: {}", id);
@@ -57,6 +66,8 @@ public class ComidaService implements IComidaService {
         return comidaMapper.toDTO(comida);
     }
 
+    // Crea una nueva comida. Si el solicitante no es ADMIN, fuerza el
+    // usuarioId al usuario autenticado (evita crear comidas para terceros).
     @Override
     public ComidaDTO save(ComidaCreateDTO comidaCreateDTO) {
         logger.info("Creando nueva comida de tipo: {}", comidaCreateDTO.getTipoComida());
@@ -88,6 +99,7 @@ public class ComidaService implements IComidaService {
         }
     }
 
+    // Modifica una comida existente (verifica propiedad antes de actualizar).
     @Override
     public ComidaDTO modify(ComidaDTO comidaDTO) {
         logger.info("Modificando comida con id: {}", comidaDTO.getId());
@@ -116,6 +128,7 @@ public class ComidaService implements IComidaService {
         }
     }
 
+    // Elimina una comida (verifica propiedad antes de borrar).
     @Transactional
     @Override
     public void deleteById(Integer id) {
@@ -135,6 +148,7 @@ public class ComidaService implements IComidaService {
         }
     }
 
+    // Busca todas las comidas de un usuario (verifica propiedad).
     @Override
     public List<ComidaDTO> findByUsuarioId(Integer usuarioId) {
         logger.info("Buscando comidas por usuario id: {}", usuarioId);
@@ -146,6 +160,7 @@ public class ComidaService implements IComidaService {
         return comidaMapper.toDTOList(comidas);
     }
 
+    // Busca comidas por tipo entre todos los usuarios (requiere ADMIN).
     @Override
     public List<ComidaDTO> findByTipoComida(String tipoComida) {
         logger.info("Buscando comidas por tipo: {}", tipoComida);
@@ -158,6 +173,8 @@ public class ComidaService implements IComidaService {
         return comidaMapper.toDTOList(comidas);
     }
 
+    // Busca comidas registradas en una fecha concreta entre todos los
+    // usuarios (requiere ADMIN); construye el rango [00:00, 23:59:59].
     @Override
     public List<ComidaDTO> findByFecha(LocalDate fecha) {
         logger.info("Buscando comidas por fecha: {}", fecha);
@@ -171,6 +188,7 @@ public class ComidaService implements IComidaService {
         return comidaMapper.toDTOList(comidas);
     }
 
+    // Busca las comidas de un usuario en una fecha concreta (verifica propiedad).
     @Override
     public List<ComidaDTO> findByUsuarioIdAndFecha(Integer usuarioId, LocalDate fecha) {
         logger.info("Buscando comidas por usuario {} y fecha {}", usuarioId, fecha);
@@ -185,6 +203,7 @@ public class ComidaService implements IComidaService {
     }
 
 
+    // Busca las comidas de un usuario filtradas por tipo (verifica propiedad).
     @Override
     public List<ComidaDTO> findByUsuarioIdAndTipoComida(Integer usuarioId, String tipoComida) {
         logger.info("Buscando comidas por usuario {} y tipo {}", usuarioId, tipoComida);
@@ -198,6 +217,7 @@ public class ComidaService implements IComidaService {
         return comidaMapper.toDTOList(comidas);
     }
 
+    // Cuenta las comidas de un usuario (verifica propiedad).
     @Override
     public Long countByUsuarioId(Integer usuarioId) {
         logger.info("Contando comidas del usuario: {}", usuarioId);
@@ -207,6 +227,7 @@ public class ComidaService implements IComidaService {
         return comidaRepository.countByUsuarioId(usuarioId);
     }
 
+    // Cuenta las comidas por tipo entre todos los usuarios (requiere ADMIN).
     @Override
     public Long countByTipoComida(String tipoComida) {
         logger.info("Contando comidas por tipo: {}", tipoComida);
@@ -218,6 +239,7 @@ public class ComidaService implements IComidaService {
         return comidaRepository.countByTipoComida(tipo);
     }
 
+    // Cuenta las comidas de un usuario filtradas por tipo (verifica propiedad).
     @Override
     public Long countByUsuarioIdAndTipoComida(Integer usuarioId, String tipoComida) {
         logger.info("Contando commidas del usuario {} por tipo {}", usuarioId, tipoComida);
@@ -229,6 +251,7 @@ public class ComidaService implements IComidaService {
         return comidaRepository.countByUsuarioIdAndTipoComida(usuarioId, tipo);
     }
 
+    // Aplica una actualización parcial sobre una comida (solo los campos no nulos).
     @Transactional
     @Override
     public ComidaDTO patch(Integer id, ComidaPatchDTO patchDTO) {

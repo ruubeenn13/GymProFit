@@ -10,6 +10,11 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+// ============================================================
+// ObjetivoPersonalDTO — representación completa de un objetivo personal.
+// Incluye progreso (valor actual vs objetivo), fechas de inicio/límite y
+// estado de completado, tal como se persiste y devuelve al cliente.
+// ============================================================
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

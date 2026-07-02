@@ -14,6 +14,12 @@ import java.util.Locale;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.comida.AlimentoComida;
 
+// ============================================================
+// AlimentoComidaAdapter — adapter de RecyclerView para los ítems de una comida.
+// Muestra cada alimento añadido a una comida concreta (nombre, gramos y
+// calorías totales del ítem) y permite eliminarlo/editarlo vía long-click,
+// dentro del flujo de registro de comidas del módulo de nutrición.
+// ============================================================
 /**
  * Adapter para mostrar los alimentos de una comida en un RecyclerView.
  */
@@ -27,11 +33,13 @@ public class AlimentoComidaAdapter extends RecyclerView.Adapter<AlimentoComidaAd
     private final List<AlimentoComida> items;
     private final OnItemLongClickListener longClickListener;
 
+    // Constructor: recibe los ítems de la comida y el listener de long-click.
     public AlimentoComidaAdapter(List<AlimentoComida> items, OnItemLongClickListener listener) {
         this.items = items;
         this.longClickListener = listener;
     }
 
+    // Infla el layout de un ítem alimento-comida y crea su ViewHolder.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -40,6 +48,7 @@ public class AlimentoComidaAdapter extends RecyclerView.Adapter<AlimentoComidaAd
         return new ViewHolder(view);
     }
 
+    // Rellena nombre, gramos y calorías del ítem, y engancha el long-click.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder h, int position) {
         AlimentoComida item = items.get(position);
@@ -57,6 +66,7 @@ public class AlimentoComidaAdapter extends RecyclerView.Adapter<AlimentoComidaAd
         return items.size();
     }
 
+    // ViewHolder con las referencias a las vistas de cada ítem de comida.
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvNombreAlimento, tvCantidadGramos, tvCaloriasItem;
 

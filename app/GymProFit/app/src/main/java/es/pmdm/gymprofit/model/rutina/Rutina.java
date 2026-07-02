@@ -1,23 +1,43 @@
 package es.pmdm.gymprofit.model.rutina;
 
+// ============================================================
+// Rutina — modelo de datos de una rutina de entrenamiento.
+// Puede ser predefinida (catálogo de la app) o creada por el usuario;
+// agrupa metadatos como nivel, duración y calorías aproximadas usados
+// en las pantallas de listado y detalle de rutinas.
+// ============================================================
 public class Rutina {
 
+    // Identificador único de la rutina.
     private int id;
+    // Nombre de la rutina.
     private String nombre;
+    // Nivel de dificultad (principiante, intermedio, avanzado...).
     private String nivel;
+    // Descripción de la rutina.
     private String descripcion;
+    // Número de ejercicios que componen la rutina.
     private int numEjercicios;
+    // Duración estimada de la rutina en minutos.
     private int duracionMinutos;
+    // Calorías aproximadas que se queman al completarla.
     private int caloriasAproximadas;
+    // Indica si es una rutina predefinida del sistema (no creada por el usuario).
     private boolean predefinida;
+    // Id del usuario propietario, si la rutina es personalizada.
     private int usuarioId;
+    // Categoría de la rutina (fuerza, cardio, etc.).
     private String categoria;
+    // Días de la semana en los que se realiza la rutina.
     private String diasSemana;
+    // Fecha de creación de la rutina.
     private String fechaCreacion;
+    // Indica si la rutina está activa/en uso.
     private boolean activa;
 
     public Rutina() {}
 
+    // Constructor con los datos básicos para crear una rutina nueva.
     public Rutina(String nombre, String nivel, String descripcion,
                   int numEjercicios, int duracionMinutos, int caloriasAproximadas) {
         this.nombre = nombre;

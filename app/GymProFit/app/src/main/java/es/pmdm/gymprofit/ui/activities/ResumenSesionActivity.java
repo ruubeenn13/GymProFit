@@ -31,6 +31,12 @@ import es.pmdm.gymprofit.ui.adapters.LogroAdapter;
 import es.pmdm.gymprofit.utils.NotificationHelper;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 
+// ============================================================
+// ResumenSesionActivity — pantalla de resumen tras registrar/consultar una sesión.
+// Muestra los datos de la sesión de entrenamiento, las estadísticas globales del
+// usuario y los logros desbloqueados, combinando 4 llamadas asíncronas a la API
+// que se sincronizan mediante un contador atómico antes de pintar la UI.
+// ============================================================
 public class ResumenSesionActivity extends AppCompatActivity {
 
     private TextView tvFecha, tvDuracion, tvCalorias, tvRutina, tvNotas, tvCompletada;
@@ -41,6 +47,7 @@ public class ResumenSesionActivity extends AppCompatActivity {
     private TextView tvLogrosVacio;
 
     private PreferencesManager prefsManager;
+    // Contador de llamadas asíncronas pendientes (sesión, estadísticas, logros totales y desbloqueados)
     private final AtomicInteger pendientes = new AtomicInteger(4);
 
     private SesionEntrenamiento sesion;
@@ -48,8 +55,11 @@ public class ResumenSesionActivity extends AppCompatActivity {
     private List<Logro> todosLogros = new ArrayList<>();
     private Set<Integer> desbloqueados = new HashSet<>();
     private ArrayList<String> nuevosLogros = new ArrayList<>();
+    // Indica si se llegó desde el registro de una sesión (para lanzar notificaciones)
     private boolean fromRegistrar = false;
 
+    // Inicializa la actividad: aplica tema/idioma, recupera extras del intent
+    // y dispara las 4 cargas asíncronas necesarias para el resumen.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +87,7 @@ public class ResumenSesionActivity extends AppCompatActivity {
         cargarLogrosDesbloqueados(usuarioId);
     }
 
+    // Vincula las vistas del layout y muestra el nombre de la rutina asociada (si existe).
     private void inicializarVistas(String rutinaNombre) {
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
 
@@ -106,6 +117,7 @@ public class ResumenSesionActivity extends AppCompatActivity {
         }
     }
 
+    // Obtiene los datos de la sesión de entrenamiento por su id.
     private void cargarSesion(int sesionId) {
         API.getSesionPorId(sesionId, new UtilREST.OnResponseListener() {
             @Override public void onSuccess(String response, int statusCode) {
@@ -116,6 +128,7 @@ public class ResumenSesionActivity extends AppCompatActivity {
         });
     }
 
+    // Obtiene las estadísticas globales de entrenamiento del usuario.
     private void cargarEstadisticas(int usuarioId) {
         API.getEstadisticasUsuario(usuarioId, new UtilREST.OnResponseListener() {
             @Override public void onSuccess(String response, int statusCode) {
@@ -126,6 +139,7 @@ public class ResumenSesionActivity extends AppCompatActivity {
         });
     }
 
+    // Obtiene el catálogo completo de logros disponibles en la app.
     private void cargarTodosLogros() {
         API.getLogros(new UtilREST.OnResponseListener() {
             @Override public void onSuccess(String response, int statusCode) {
@@ -136,6 +150,7 @@ public class ResumenSesionActivity extends AppCompatActivity {
         });
     }
 
+    // Obtiene el conjunto de ids de logros ya desbloqueados por el usuario.
     private void cargarLogrosDesbloqueados(int usuarioId) {
         API.getLogrosDeUsuario(usuarioId, new UtilREST.OnResponseListener() {
             @Override public void onSuccess(String response, int statusCode) {
@@ -149,12 +164,16 @@ public class ResumenSesionActivity extends AppCompatActivity {
         });
     }
 
+    // Decrementa el contador de llamadas pendientes; cuando llegan todas a 0
+    // pinta el contenido en el hilo de UI.
     private void comprobarYMostrar() {
         if (pendientes.decrementAndGet() == 0) {
             runOnUiThread(this::mostrarContenido);
         }
     }
 
+    // Rellena la UI con los datos de la sesión, las estadísticas y los logros
+    // desbloqueados; si viene de registrar la sesión, dispara notificaciones locales.
     private void mostrarContenido() {
         if (sesion != null) {
             tvFecha.setText(sesion.getFechaInicio().isEmpty() ? "—" : sesion.getFechaInicio());
@@ -199,6 +218,7 @@ public class ResumenSesionActivity extends AppCompatActivity {
         }
     }
 
+    // Aplica el idioma guardado en preferencias a la configuración de recursos.
     private void aplicarIdioma() {
         String lang = prefsManager.getLanguage();
         if (!lang.isEmpty()) {

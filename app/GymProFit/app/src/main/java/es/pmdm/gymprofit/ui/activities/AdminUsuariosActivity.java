@@ -24,16 +24,26 @@ import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.adapters.AdminUsuarioAdapter;
 
+// ============================================================
+// AdminUsuariosActivity — pantalla de administración de usuarios
+// Permite al rol ADMIN listar, filtrar por estado/rol/username, activar o
+// desactivar cuentas y cambiar el rol (USER/ADMIN) de cualquier usuario.
+// ============================================================
 public class AdminUsuariosActivity extends BaseActivity {
 
     private RecyclerView rv;
     private AdminUsuarioAdapter adapter;
+    // Lista de usuarios actualmente mostrada en el RecyclerView
     private final List<Usuario> lista = new ArrayList<>();
 
+    // Filtro por estado activo/inactivo (null = sin filtrar)
     private Boolean filtroActivo = null;
+    // Filtro por rol (ROLE_USER / ROLE_ADMIN, null = sin filtrar)
     private String filtroRol = null;
+    // Filtro por username introducido en el buscador (null = sin filtrar)
     private String filtroUsername = null;
 
+    // Configura RecyclerView, chips de filtro, buscador y carga inicial de datos
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +71,7 @@ public class AdminUsuariosActivity extends BaseActivity {
         cargar();
     }
 
+    // Configura los chips de filtro por estado (activo/inactivo) y por rol; excluyentes entre sí
     private void configurarChips() {
         ChipGroup cg = findViewById(R.id.chipGroupEstado);
         cg.setOnCheckedStateChangeListener((group, checkedIds) -> {
@@ -84,6 +95,7 @@ public class AdminUsuariosActivity extends BaseActivity {
         });
     }
 
+    // Configura el buscador por username; filtra en cada cambio de texto
     private void configurarBusqueda() {
         SearchView sv = findViewById(R.id.searchView);
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -102,6 +114,7 @@ public class AdminUsuariosActivity extends BaseActivity {
         });
     }
 
+    // Llama al endpoint admin de usuarios filtrados (primera página, hasta 100 resultados)
     private void cargar() {
         API.getAdminUsuariosFiltrados(filtroActivo, filtroRol, filtroUsername, 0, 100,
                 new UtilREST.OnResponseListener() {
@@ -119,6 +132,7 @@ public class AdminUsuariosActivity extends BaseActivity {
                 });
     }
 
+    // Muestra un diálogo de confirmación para activar/desactivar la cuenta del usuario
     private void mostrarDialogoToggle(Usuario u, int pos) {
         String msg = u.isActivo()
                 ? getString(R.string.admin_desactivar) + " " + u.getUsername() + "?"
@@ -145,6 +159,7 @@ public class AdminUsuariosActivity extends BaseActivity {
                 .show();
     }
 
+    // Muestra un diálogo con RadioGroup (USER/ADMIN) para cambiar el rol del usuario seleccionado
     private void mostrarDialogoCambiarRol(Usuario u, int pos) {
         RadioGroup rg = new RadioGroup(this);
         rg.setOrientation(RadioGroup.VERTICAL);

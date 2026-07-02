@@ -16,8 +16,15 @@ import java.util.List;
 
 import es.pmdm.gymprofit.R;
 
+// ============================================================
+// EjercicioPesoAdapter — adapter de RecyclerView para registrar peso por ejercicio.
+// Cada fila muestra un ejercicio de la sesión (nombre, series x repeticiones)
+// junto a un campo editable donde el usuario introduce el peso usado; el
+// texto tecleado se guarda directamente en el Item mediante un TextWatcher.
+// ============================================================
 public class EjercicioPesoAdapter extends RecyclerView.Adapter<EjercicioPesoAdapter.ViewHolder> {
 
+    // Modelo local de fila: datos del ejercicio y el peso introducido por el usuario.
     public static class Item {
         public final int ejercicioId;
         public final String nombre;
@@ -35,10 +42,12 @@ public class EjercicioPesoAdapter extends RecyclerView.Adapter<EjercicioPesoAdap
 
     private final List<Item> items;
 
+    // Constructor: recibe la lista de ítems (ejercicio + peso) a mostrar.
     public EjercicioPesoAdapter(List<Item> items) {
         this.items = items;
     }
 
+    // Infla el layout de un ítem ejercicio-peso y crea su ViewHolder.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -47,6 +56,8 @@ public class EjercicioPesoAdapter extends RecyclerView.Adapter<EjercicioPesoAdap
         return new ViewHolder(v);
     }
 
+    // Rellena nombre y series/repeticiones, y reengancha el TextWatcher del peso
+    // evitando duplicar listeners al reciclarse la vista.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Item item = items.get(position);
@@ -66,8 +77,10 @@ public class EjercicioPesoAdapter extends RecyclerView.Adapter<EjercicioPesoAdap
     @Override
     public int getItemCount() { return items.size(); }
 
+    // Devuelve la lista de ítems con los pesos introducidos por el usuario.
     public List<Item> getItems() { return items; }
 
+    // ViewHolder con las referencias a las vistas de cada fila y su TextWatcher activo.
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvNombre, tvSeriesReps;
         TextInputEditText etPeso;

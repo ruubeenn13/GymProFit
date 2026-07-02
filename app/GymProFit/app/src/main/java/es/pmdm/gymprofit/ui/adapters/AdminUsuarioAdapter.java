@@ -20,8 +20,14 @@ import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.usuario.Usuario;
 import es.pmdm.gymprofit.utils.UIHelper;
 
+// ============================================================
+// AdminUsuarioAdapter — adapter del listado de usuarios en el panel de administración.
+// Pinta cada usuario con su rol y estado (activo/inactivo), y expone un menú
+// de acciones para activar/desactivar la cuenta o cambiar su rol.
+// ============================================================
 public class AdminUsuarioAdapter extends RecyclerView.Adapter<AdminUsuarioAdapter.ViewHolder> {
 
+    // Callback hacia la Activity/Fragment para las acciones del menú contextual.
     public interface OnAccionListener {
         void onToggleActivo(Usuario usuario, int position);
         void onCambiarRol(Usuario usuario, int position);
@@ -43,6 +49,8 @@ public class AdminUsuarioAdapter extends RecyclerView.Adapter<AdminUsuarioAdapte
         return new ViewHolder(view);
     }
 
+    // Enlaza los datos del usuario con las vistas y configura el chip de estado
+    // y el menú de acciones (activar-desactivar / cambiar rol).
     @Override
     public void onBindViewHolder(@NonNull ViewHolder h, int position) {
         Usuario u = items.get(position);
@@ -83,11 +91,13 @@ public class AdminUsuarioAdapter extends RecyclerView.Adapter<AdminUsuarioAdapte
     @Override
     public int getItemCount() { return items.size(); }
 
+    // Actualiza un ítem concreto tras editar/cambiar estado y notifica el cambio.
     public void actualizarItem(int position, Usuario usuario) {
         items.set(position, usuario);
         notifyItemChanged(position);
     }
 
+    // Referencias a las vistas de cada item del listado de usuarios.
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvUsername, tvEmail;
         Chip chipRol, chipEstado;

@@ -20,6 +20,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
+// ============================================================
+// AuthController — endpoints públicos de autenticación
+// Expone login (genera JWT), registro de nuevos usuarios (rol USER
+// por defecto) y acceso como invitado (rol GUEST) sin necesidad de
+// credenciales, para la app GymProFit.
+// ============================================================
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/auth")

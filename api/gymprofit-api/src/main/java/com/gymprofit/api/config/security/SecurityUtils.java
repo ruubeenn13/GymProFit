@@ -18,6 +18,11 @@ import org.springframework.stereotype.Component;
  * Regla general de la API: el {@code usuarioId} de un recurso se deriva SIEMPRE del token.
  * Un {@code USER} solo puede acceder a sus propios recursos; un {@code ADMIN} puede a todos.
  */
+// ============================================================
+// SecurityUtils — utilidades de autorización a nivel de objeto (ownership)
+// Centraliza el acceso al usuario autenticado y las comprobaciones de
+// propiedad de recursos, evitando confiar en datos enviados por el cliente.
+// ============================================================
 @Component
 public class SecurityUtils {
 

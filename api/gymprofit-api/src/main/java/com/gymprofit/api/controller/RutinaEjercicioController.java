@@ -22,6 +22,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// ============================================================
+// RutinaEjercicioController — controlador REST de la relación rutina-ejercicio
+// Expone endpoints CRUD y de consulta para los ejercicios que componen cada
+// rutina (orden, conteos, existencia). Es la tabla intermedia entre
+// Rutina y Ejercicio dentro de GymProFit.
+// ============================================================
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")
@@ -29,6 +35,7 @@ import java.util.Map;
 @Tag(name = "RutinaEjercicio Controlador", description = "Gestión de los ejercicios asociados a rutinas")
 public class RutinaEjercicioController {
 
+    // Servicio con la lógica de negocio de rutina-ejercicio
     private final IRutinaEjercicioService rutinaEjercicioService;
 
     @Operation(summary = "Obtiene todos los ejercicios de las rutinas")
@@ -40,6 +47,7 @@ public class RutinaEjercicioController {
             @ApiResponse(responseCode = "500", description = "Error al obtener los ejercicios de las rutinas",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Devuelve todas las relaciones rutina-ejercicio existentes
     @GetMapping("/rutinas-ejercicios")
     public ResponseEntity<List<RutinaEjercicioDTO>> findAll() {
         List<RutinaEjercicioDTO> rutinasEjercicios = rutinaEjercicioService.findAll();
@@ -54,6 +62,7 @@ public class RutinaEjercicioController {
             @ApiResponse(responseCode = "404", description = "Ejercicio de rutina no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Busca una relación rutina-ejercicio por su ID
     @GetMapping("/rutinas-ejercicios/{id}")
     public ResponseEntity<RutinaEjercicioDTO> obtenerRutinaEjercicio(@PathVariable Integer id) {
         RutinaEjercicioDTO rutinaEjercicioDTO = rutinaEjercicioService.findById(id);
@@ -70,6 +79,7 @@ public class RutinaEjercicioController {
             @ApiResponse(responseCode = "404", description = "Rutina o ejercicio no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Crea una nueva asociación entre una rutina y un ejercicio
     @PostMapping("/rutinas-ejercicios")
     public ResponseEntity<RutinaEjercicioDTO> guardarRutinaEjercicio(@Valid @RequestBody RutinaEjercicioCreateDTO rutinaEjercicioCreateDTO) {
         RutinaEjercicioDTO rutinaEjercicioDTO = rutinaEjercicioService.save(rutinaEjercicioCreateDTO);
@@ -84,6 +94,7 @@ public class RutinaEjercicioController {
             @ApiResponse(responseCode = "404", description = "Ejercicio de rutina no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Actualiza por completo una relación rutina-ejercicio existente
     @PutMapping("/rutinas-ejercicios")
     public ResponseEntity<RutinaEjercicioDTO> modificarRutinaEjercicio(@Valid @RequestBody RutinaEjercicioDTO rutinaEjercicioDTO) {
         RutinaEjercicioDTO actualizado = rutinaEjercicioService.modify(rutinaEjercicioDTO);
@@ -97,6 +108,7 @@ public class RutinaEjercicioController {
             @ApiResponse(responseCode = "404", description = "Ejercicio de la rutina no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Elimina un ejercicio de una rutina por su ID de relación
     @DeleteMapping("/rutinas-ejercicios/{id}")
     public ResponseEntity<Map<String, Object>> borrarRutinaEjercicio(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -122,6 +134,7 @@ public class RutinaEjercicioController {
             @ApiResponse(responseCode = "404", description = "No se encontraron ejercicios para esta rutina",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista los ejercicios pertenecientes a una rutina concreta
     @GetMapping("/rutinas-ejercicios/rutina/{rutinaId}")
     public ResponseEntity<List<RutinaEjercicioDTO>> obtenerPorRutina(@PathVariable Integer rutinaId) {
         List<RutinaEjercicioDTO> ejerciciosRutinas = rutinaEjercicioService.findByRutinaId(rutinaId);
@@ -140,6 +153,7 @@ public class RutinaEjercicioController {
             @ApiResponse(responseCode = "404", description = "No se encontraron ejercicios para esta rutina",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista los ejercicios de una rutina respetando el orden de ejecución
     @GetMapping("/rutinas-ejercicios/rutina/{rutinaId}/ordenados")
     public ResponseEntity<List<RutinaEjercicioDTO>> obtenerPorRutinaOrdenado(@PathVariable Integer rutinaId) {
         List<RutinaEjercicioDTO> ejerciciosRutinas = rutinaEjercicioService.findByRutinaIdOrdenado(rutinaId);
@@ -158,6 +172,7 @@ public class RutinaEjercicioController {
             @ApiResponse(responseCode = "404", description = "No se encontraron rutinas con este ejercicio",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista las rutinas en las que aparece un ejercicio dado
     @GetMapping("/rutinas-ejercicios/ejercicio/{ejercicioId}")
     public ResponseEntity<List<RutinaEjercicioDTO>> obtenerPorEjercicio(@PathVariable Integer ejercicioId) {
         List<RutinaEjercicioDTO> ejerciciosRutinas = rutinaEjercicioService.findByEjercicioId(ejercicioId);
@@ -177,6 +192,7 @@ public class RutinaEjercicioController {
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @GetMapping("/rutinas-ejercicios/rutina/{rutinaId}/ejercicio/{ejercicioId}")
+    // Busca la relación concreta entre una rutina y un ejercicio determinados
     public ResponseEntity<RutinaEjercicioDTO> obtenerPorRutinaYEjercicio(@PathVariable Integer rutinaId,
                                                                          @PathVariable Integer ejercicioId) {
         RutinaEjercicioDTO rutinaEjercicioDTO = rutinaEjercicioService.findByRutinaIdAndEjercicioId(rutinaId, ejercicioId);
@@ -188,6 +204,7 @@ public class RutinaEjercicioController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Total de ejercicios en la rutina")
     })
+    // Cuenta cuántos ejercicios tiene asignados una rutina
     @GetMapping("/rutinas-ejercicios/count/rutina/{rutinaId}")
     public ResponseEntity<Map<String, Object>> contarEjerciciosRutina(@PathVariable Integer rutinaId) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -204,6 +221,7 @@ public class RutinaEjercicioController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Total de rutinas con el ejercicio")
     })
+    // Cuenta en cuántas rutinas aparece un ejercicio
     @GetMapping("/rutinas-ejercicios/count/ejercicio/{ejercicioId}")
     public ResponseEntity<Map<String, Object>> contarRutinasEjercicios(@PathVariable Integer ejercicioId) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -221,6 +239,7 @@ public class RutinaEjercicioController {
             @ApiResponse(responseCode = "200", description = "Resultado de la verificación")
     })
     @GetMapping("/rutinas-ejercicios/exists/rutina/{rutinaId}/ejercicio/{ejercicioId}")
+    // Comprueba si existe la relación entre una rutina y un ejercicio
     public ResponseEntity<Map<String, Object>> existsByRutinaIdAndEjercicioId(@PathVariable Integer rutinaId,
                                                                               @PathVariable Integer ejercicioId) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -240,6 +259,7 @@ public class RutinaEjercicioController {
             @ApiResponse(responseCode = "500", description = "Error al eliminar los ejercicios de la rutina",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Elimina todos los ejercicios asociados a una rutina (limpieza masiva)
     @DeleteMapping("/rutinas-ejercicios/rutina/{rutinaId}")
     public ResponseEntity<Map<String, Object>> borrarPorRutina(@PathVariable Integer rutinaId) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -265,6 +285,7 @@ public class RutinaEjercicioController {
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @DeleteMapping("/rutinas-ejercicios/rutina/{rutinaId}/ejercicio/{ejercicioId}")
+    // Elimina un ejercicio concreto de una rutina concreta
     public ResponseEntity<Map<String, Object>> borrarPorRutinaYEjercicio(@PathVariable Integer rutinaId,
                                                                          @PathVariable Integer ejercicioId) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -290,6 +311,7 @@ public class RutinaEjercicioController {
             @ApiResponse(responseCode = "404", description = "Ejercicio de rutina no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Actualización parcial de campos de una relación rutina-ejercicio
     @PatchMapping("/rutinas-ejercicios/{id}")
     public ResponseEntity<RutinaEjercicioDTO> patchRutinaEjercicio(@PathVariable Integer id, @RequestBody RutinaEjercicioPatchDTO patchDTO) {
         return ResponseEntity.ok(rutinaEjercicioService.patch(id, patchDTO));

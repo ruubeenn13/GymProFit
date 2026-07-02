@@ -21,6 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 
+// ============================================================
+// AlimentoComidaService — servicio de la relación alimento-comida
+// Gestiona las líneas que asocian un alimento a una comida con una cantidad
+// en gramos, calculando calorías por línea y recalculando los totales
+// (calorías, proteínas, carbohidratos, grasas) de la comida asociada.
+// ============================================================
 @Service
 @AllArgsConstructor
 public class AlimentoComidaService implements IAlimentoComidaService {
@@ -33,6 +39,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
     private final Logger logger = LoggerFactory.getLogger(AlimentoComidaService.class);
 
 
+    // Devuelve todas las relaciones alimento-comida (requiere rol ADMIN).
     @Override
     public List<AlimentoComidaDTO> findAll() {
         logger.info("Buscando todos los alimentos-comidas");
@@ -43,6 +50,8 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         return alimentoComidaMapper.toDTOList(alimentosComida);
     }
 
+    // Busca una relación por id y verifica que el usuario autenticado es
+    // propietario de la comida asociada (o ADMIN).
     @Override
     public AlimentoComidaDTO findById(Integer id) {
         logger.info("Buscando alimento-comida por id: {}", id);
@@ -55,6 +64,9 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         return alimentoComidaMapper.toDTO(alimentoComida);
     }
 
+    // Crea una nueva relación alimento-comida: valida que no exista ya la
+    // combinación comida+alimento, calcula las calorías de la línea y
+    // recalcula los totales nutricionales de la comida.
     @Override
     public AlimentoComidaDTO save(AlimentoComidaCreateDTO alimentoComidaCreateDTO) {
         logger.info("Creando nuevo alimento-comida para comida id: {} y alimento id: {}", alimentoComidaCreateDTO.getAlimentoId(), alimentoComidaCreateDTO.getComidaId());
@@ -92,6 +104,8 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         }
     }
 
+    // Modifica una relación existente (comida, alimento y cantidad) y
+    // recalcula sus calorías y los totales de la comida.
     @Override
     public AlimentoComidaDTO modify(AlimentoComidaDTO alimentoComidaDTO) {
         logger.info("Modificando alimento-comida con id: {}", alimentoComidaDTO.getId());
@@ -128,6 +142,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         }
     }
 
+    // Elimina una relación y recalcula los totales nutricionales de la comida.
     @Transactional
     @Override
     public void deleteById(Integer id) {
@@ -148,6 +163,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         }
     }
 
+    // Busca todos los alimentos de una comida (verifica propiedad de la comida).
     @Override
     public List<AlimentoComidaDTO> findByComidaId(Integer comidaId) {
         logger.info("Buscando alimentos de la comida id: {}", comidaId);
@@ -158,6 +174,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         return alimentoComidaMapper.toDTOList(alimentosComida);
     }
 
+    // Busca todas las comidas que contienen un alimento (requiere ADMIN).
     @Override
     public List<AlimentoComidaDTO> findByAlimentoId(Integer alimentoId) {
         logger.info("Buscando comidas que contienen el alimento id: {}", alimentoId);
@@ -168,6 +185,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         return alimentoComidaMapper.toDTOList(alimentosComida);
     }
 
+    // Busca la relación entre una comida y un alimento concretos.
     @Override
     public AlimentoComidaDTO findByComidaIdAndAlimentoId(Integer comidaId, Integer alimentoId) {
         logger.info("Buscando relación entre comida {} y alimento {}", comidaId, alimentoId);
@@ -179,6 +197,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         return alimentoComidaMapper.toDTO(alimentoComida);
     }
 
+    // Elimina todos los alimentos asociados a una comida (p.ej. al borrar la comida).
     @Transactional
     @Override
     public void deleteByComidaId(Integer comidaId) {
@@ -194,6 +213,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         }
     }
 
+    // Elimina la relación entre una comida y un alimento concretos.
     @Transactional
     @Override
     public void deleteByComidaIdAndAlimentoId(Integer comidaId, Integer alimentoId) {
@@ -209,6 +229,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         }
     }
 
+    // Comprueba si ya existe relación entre una comida y un alimento.
     @Override
     public boolean existsByComidaIdAndAlimentoId(Integer comidaId, Integer alimentoId) {
         logger.info("Verificando si existe la relación entre la comida {} y el alimento {}", comidaId, alimentoId);
@@ -217,6 +238,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         return alimentoComidaRepository.existsByComidaIdAndAlimentoId(comidaId, alimentoId);
     }
 
+    // Cuenta los alimentos asociados a una comida.
     @Override
     public Long countByComidaId(Integer comidaId) {
         logger.info("Contando alimentos de la comida id: {}", comidaId);
@@ -225,6 +247,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         return alimentoComidaRepository.countByComidaId(comidaId);
     }
 
+    // Cuenta las comidas que contienen un alimento (requiere ADMIN).
     @Override
     public Long countByAlimentoId(Integer alimentoId) {
         logger.info("Contando comidas que contienen el alimento id: {}", alimentoId);
@@ -233,6 +256,8 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         return alimentoComidaRepository.countByAlimentoId(alimentoId);
     }
 
+    // Aplica una actualización parcial: si cambia la cantidad recalcula las
+    // calorías; si viene calorías directamente, las respeta. Recalcula totales.
     @Transactional
     @Override
     public AlimentoComidaDTO patch(Integer id, AlimentoComidaPatchDTO patchDTO) {
@@ -273,6 +298,8 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         securityUtils.checkOwnership(comida.getUsuario().getId());
     }
 
+    // Calcula las calorías de la línea proporcionalmente a la cantidad en
+    // gramos, tomando como base las calorías del alimento por cada 100g.
     private Integer calcularCalorias(Alimento alimento, BigDecimal cantidadGramos) {
         if (alimento.getCalorias() == null || cantidadGramos == null) {
             return 0;
@@ -280,6 +307,9 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         return (int) Math.round((alimento.getCalorias() * cantidadGramos.doubleValue()) / 100.0);
     }
 
+    // Recorre todas las líneas alimento-comida de una comida y recalcula
+    // sus totales de calorías, proteínas, carbohidratos y grasas, guardando
+    // la comida actualizada.
     private void recalcularTotalesComida(Comida comida) {
         List<AlimentoComida> items = alimentoComidaRepository.findByComidaId(comida.getId());
         int totalCal = 0;

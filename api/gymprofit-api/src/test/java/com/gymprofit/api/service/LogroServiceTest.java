@@ -30,11 +30,18 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+// ============================================================
+// LogroServiceTest — pruebas unitarias del LogroService
+// Verifica altas, actualizaciones y consultas de logros/desbloqueos
+// usando Mockito para simular los repositorios sin tocar la BD real.
+// ============================================================
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Tests del LogroService")
 class LogroServiceTest {
 
+    // Repositorio de logros simulado
     @Mock private ILogroRepository logroRepository;
+    // Relación usuario-logro (logros desbloqueados por usuario)
     @Mock private IUsuarioLogroRepository usuarioLogroRepository;
     @Mock private IUsuarioRepository usuarioRepository;
     @Mock private ISesionEntrenamientoRepository sesionRepository;
@@ -42,6 +49,7 @@ class LogroServiceTest {
     @Mock private IObjetivoPersonalRepository objetivoPersonalRepository;
     @Mock private LogroMapper logroMapper;
 
+    // Servicio real bajo prueba, con los mocks de arriba inyectados
     @InjectMocks
     private LogroService logroService;
 
@@ -49,6 +57,7 @@ class LogroServiceTest {
     private LogroDTO logroDTO;
     private LogroCreateDTO logroCreateDTO;
 
+    // Inicializa entidad, DTO y DTO de creación de prueba antes de cada test
     @BeforeEach
     void setUp() {
         logro = new Logro();
@@ -68,6 +77,7 @@ class LogroServiceTest {
         logroCreateDTO.setTipo("PRIMERA_SESION");
     }
 
+    // Comprueba que findAll delega en el repositorio y mapea el resultado
     @Test
     @DisplayName("findAll devuelve lista de logros")
     void findAll_devuelve_lista() {
@@ -81,6 +91,7 @@ class LogroServiceTest {
         verify(logroRepository).findAll();
     }
 
+    // Comprueba que se listan los logros desbloqueados por un usuario existente
     @Test
     @DisplayName("findByUsuarioId devuelve logros del usuario")
     void findByUsuarioId_devuelve_lista() {
@@ -94,6 +105,7 @@ class LogroServiceTest {
         verify(usuarioLogroRepository).findByUsuarioId(1);
     }
 
+    // Comprueba que se lanza excepción si el usuario no existe
     @Test
     @DisplayName("findByUsuarioId con usuario inexistente lanza NotFoundEntityException")
     void findByUsuarioId_inexistente_lanza_excepcion() {
@@ -102,6 +114,7 @@ class LogroServiceTest {
         assertThrows(NotFoundEntityException.class, () -> logroService.findByUsuarioId(99));
     }
 
+    // Comprueba que save persiste el logro y devuelve el DTO resultante
     @Test
     @DisplayName("save crea logro correctamente")
     void save_crea_logro() {
@@ -115,6 +128,7 @@ class LogroServiceTest {
         verify(logroRepository).save(any());
     }
 
+    // Comprueba que un tipo de logro no reconocido en el enum lanza excepción
     @Test
     @DisplayName("save con tipo inválido lanza InvalidDataException")
     void save_tipo_invalido_lanza_excepcion() {
@@ -124,6 +138,7 @@ class LogroServiceTest {
         verify(logroRepository, never()).save(any());
     }
 
+    // Comprueba que update modifica un logro existente y lo guarda
     @Test
     @DisplayName("update logro existente actualiza correctamente")
     void update_existente_actualiza() {
@@ -137,6 +152,7 @@ class LogroServiceTest {
         verify(logroRepository).save(any());
     }
 
+    // Comprueba que actualizar un logro inexistente lanza excepción y no guarda
     @Test
     @DisplayName("update logro inexistente lanza NotFoundEntityException")
     void update_inexistente_lanza_excepcion() {

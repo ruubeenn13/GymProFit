@@ -8,6 +8,12 @@ import com.gymprofit.api.enums.TipoObjetivo;
 
 import java.io.Serializable;
 
+// ============================================================
+// UsuarioDTO — DTO de salida con los datos públicos de un usuario
+// Representa la información de un usuario tal como se expone en las
+// respuestas de la API (sin password ni datos sensibles), usada para
+// listados, perfil y detalle de usuario en la app Android.
+// ============================================================
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

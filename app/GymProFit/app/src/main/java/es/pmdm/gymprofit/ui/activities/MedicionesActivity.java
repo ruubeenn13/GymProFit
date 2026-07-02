@@ -34,6 +34,12 @@ import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
+// ============================================================
+// MedicionesActivity — pantalla de mediciones corporales del usuario.
+// Muestra la última medición registrada (peso, altura, grasa, músculo,
+// perímetros...) y permite editar cada campo individualmente o crear una
+// medición inicial a partir de los datos del perfil dentro de GymProFit.
+// ============================================================
 public class MedicionesActivity extends AppCompatActivity {
 
     private View tvVacio;
@@ -46,6 +52,8 @@ public class MedicionesActivity extends AppCompatActivity {
 
     private ActivityResultLauncher<Intent> nuevaLauncher;
 
+    // Aplica tema/idioma, referencia las vistas, registra el launcher para
+    // el registro de nuevas mediciones y carga la última medición existente.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +92,8 @@ public class MedicionesActivity extends AppCompatActivity {
         cargarMedicion();
     }
 
+    // Configura los listeners de cada fila (peso, altura, grasa, etc.) para
+    // abrir el diálogo de edición del campo correspondiente al pulsarla.
     private void configurarFilas() {
         findViewById(R.id.rowPeso).setOnClickListener(v ->
                 editarCampoNumerico("peso", getString(R.string.perfil_peso),
@@ -123,6 +133,8 @@ public class MedicionesActivity extends AppCompatActivity {
                                 ? ultimaMedicion.getNotas() : ""));
     }
 
+    // Obtiene la lista de mediciones del usuario y muestra la más reciente;
+    // si no hay ninguna, intenta crear una a partir de los datos del perfil.
     private void cargarMedicion() {
         int usuarioId = prefsManager.getUsuarioId();
         if (usuarioId == -1) return;
@@ -150,6 +162,8 @@ public class MedicionesActivity extends AppCompatActivity {
         });
     }
 
+    // Si el usuario no tiene mediciones, crea una inicial usando el peso/altura
+    // guardados en su perfil (si existen); si no, muestra el estado vacío.
     private void intentarCrearDesdePerfil(int usuarioId) {
         API.getUsuarioPorId(usuarioId, new UtilREST.OnResponseListener() {
             @Override
@@ -190,11 +204,14 @@ public class MedicionesActivity extends AppCompatActivity {
         });
     }
 
+    // Oculta el scroll de datos y muestra el mensaje de "sin mediciones".
     private void mostrarVacio() {
         scrollMediciones.setVisibility(View.GONE);
         tvVacio.setVisibility(View.VISIBLE);
     }
 
+    // Rellena todos los TextView con los valores de la última medición,
+    // mostrando el texto "añadir" en los campos aún no registrados.
     private void mostrarMedicion() {
         tvVacio.setVisibility(View.GONE);
         scrollMediciones.setVisibility(View.VISIBLE);
@@ -225,6 +242,8 @@ public class MedicionesActivity extends AppCompatActivity {
                 ? ultimaMedicion.getNotas() : anadir);
     }
 
+    // Muestra un diálogo con un campo numérico decimal para editar el valor
+    // de un campo de medición y enviarlo por PATCH al guardar.
     private void editarCampoNumerico(String campo, String label, double valorActual) {
         if (ultimaMedicion == null) return;
 
@@ -258,6 +277,8 @@ public class MedicionesActivity extends AppCompatActivity {
                 .show();
     }
 
+    // Muestra un diálogo con un campo de texto multilínea para editar el
+    // valor de un campo de medición (p.ej. notas) y enviarlo por PATCH.
     private void editarCampoTexto(String campo, String label, String valorActual) {
         if (ultimaMedicion == null) return;
 
@@ -283,6 +304,8 @@ public class MedicionesActivity extends AppCompatActivity {
                 .show();
     }
 
+    // Construye el JSON con el campo modificado y lo envía como PATCH parcial
+    // a la medición actual; recarga los datos al finalizar con éxito.
     private void patchCampo(String campo, String valorStr, boolean esTexto) {
         try {
             JSONObject body = new JSONObject();
@@ -312,6 +335,7 @@ public class MedicionesActivity extends AppCompatActivity {
         }
     }
 
+    // Aplica el idioma guardado en preferencias a la configuración de recursos.
     private void aplicarIdioma() {
         String lang = prefsManager.getLanguage();
         if (!lang.isEmpty()) {

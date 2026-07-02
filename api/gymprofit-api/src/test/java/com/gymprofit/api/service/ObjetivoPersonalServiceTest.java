@@ -28,6 +28,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+// ============================================================
+// ObjetivoPersonalServiceTest — pruebas unitarias del ObjetivoPersonalService
+// Verifica CRUD y el flujo de completar objetivos (incluyendo el
+// disparo de evaluación de logros al completar), con repositorios simulados.
+// ============================================================
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Tests del ObjetivoPersonalService")
 class ObjetivoPersonalServiceTest {
@@ -35,6 +40,7 @@ class ObjetivoPersonalServiceTest {
     @Mock private IObjetivoPersonalRepository objetivoPersonalRepository;
     @Mock private IUsuarioRepository usuarioRepository;
     @Mock private ObjetivoPersonalMapper objetivoPersonalMapper;
+    // Servicio de logros simulado, para verificar que se evalúan logros al completar objetivo
     @Mock private ILogroService logroService;
 
     @InjectMocks
@@ -45,6 +51,7 @@ class ObjetivoPersonalServiceTest {
     private ObjetivoPersonalCreateDTO createDTO;
     private Usuario usuario;
 
+    // Prepara entidad, DTO y DTO de creación de prueba antes de cada test
     @BeforeEach
     void setUp() {
         usuario = new Usuario();
@@ -69,6 +76,7 @@ class ObjetivoPersonalServiceTest {
         createDTO.setTipoObjetivo(TipoObjetivo.PERDER_PESO);
     }
 
+    // Comprueba que findAll devuelve todos los objetivos mapeados a DTO
     @Test
     @DisplayName("findAll devuelve lista de objetivos")
     void findAll_devuelve_lista() {
@@ -81,6 +89,7 @@ class ObjetivoPersonalServiceTest {
         assertEquals(1, result.size());
     }
 
+    // Comprueba que findById devuelve el DTO correcto cuando el objetivo existe
     @Test
     @DisplayName("findById existente devuelve DTO")
     void findById_existente_devuelve_dto() {
@@ -93,6 +102,7 @@ class ObjetivoPersonalServiceTest {
         assertEquals(1, result.getId());
     }
 
+    // Comprueba que findById lanza excepción si el objetivo no existe
     @Test
     @DisplayName("findById inexistente lanza NotFoundEntityException")
     void findById_inexistente_lanza_excepcion() {
@@ -101,6 +111,7 @@ class ObjetivoPersonalServiceTest {
         assertThrows(NotFoundEntityException.class, () -> objetivoPersonalService.findById(99));
     }
 
+    // Comprueba que al crear un objetivo se guarda con completado=false por defecto
     @Test
     @DisplayName("save correcto guarda el objetivo con completado=false")
     void save_correcto_guarda_objetivo() {
@@ -117,6 +128,7 @@ class ObjetivoPersonalServiceTest {
         verify(objetivoPersonalRepository).save(any());
     }
 
+    // Comprueba que no se puede crear un objetivo para un usuario inexistente
     @Test
     @DisplayName("save con usuario inexistente lanza NotFoundEntityException")
     void save_usuario_inexistente_lanza_excepcion() {
@@ -126,6 +138,7 @@ class ObjetivoPersonalServiceTest {
         verify(objetivoPersonalRepository, never()).save(any());
     }
 
+    // Comprueba que deleteById elimina físicamente el objetivo existente
     @Test
     @DisplayName("deleteById elimina el objetivo correctamente")
     void deleteById_elimina_objetivo() {
@@ -135,6 +148,7 @@ class ObjetivoPersonalServiceTest {
         verify(objetivoPersonalRepository).delete(objetivo);
     }
 
+    // Comprueba que deleteById lanza excepción si el objetivo no existe
     @Test
     @DisplayName("deleteById inexistente lanza NotFoundEntityException")
     void deleteById_inexistente_lanza_excepcion() {
@@ -143,6 +157,8 @@ class ObjetivoPersonalServiceTest {
         assertThrows(NotFoundEntityException.class, () -> objetivoPersonalService.deleteById(99));
     }
 
+    // Comprueba que completar marca el objetivo, fija fecha de completado
+    // y dispara la evaluación de logros del usuario
     @Test
     @DisplayName("completar marca el objetivo como completado")
     void completar_marca_completado() {
@@ -158,6 +174,7 @@ class ObjetivoPersonalServiceTest {
         verify(logroService).evaluarLogros(1);
     }
 
+    // Comprueba que no se puede completar dos veces el mismo objetivo
     @Test
     @DisplayName("completar objetivo ya completado lanza ObjetivoAlreadyCompletedException")
     void completar_ya_completado_lanza_excepcion() {
@@ -167,6 +184,7 @@ class ObjetivoPersonalServiceTest {
         assertThrows(ObjetivoAlreadyCompletedException.class, () -> objetivoPersonalService.completar(1));
     }
 
+    // Comprueba que se listan los objetivos asociados a un usuario concreto
     @Test
     @DisplayName("findByUsuarioId devuelve objetivos del usuario")
     void findByUsuarioId_devuelve_lista() {
@@ -179,6 +197,7 @@ class ObjetivoPersonalServiceTest {
         assertEquals(1, result.size());
     }
 
+    // Comprueba que countByUsuarioId devuelve el número total de objetivos del usuario
     @Test
     @DisplayName("countByUsuarioId devuelve el total")
     void countByUsuarioId_devuelve_total() {

@@ -17,13 +17,21 @@ import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
 import es.pmdm.gymprofit.model.rutina.EjercicioSeleccionado;
 
+// ============================================================
+// EjercicioSeleccionadoAdapter — adapter de RecyclerView para ejercicios elegidos en una rutina.
+// Muestra cada EjercicioSeleccionado (datos del Ejercicio base + series/repeticiones
+// asignadas) al crear o editar una rutina, con botón de eliminar en modo edición
+// o chevron de navegación en modo solo lectura, según qué listeners se registren.
+// ============================================================
 public class EjercicioSeleccionadoAdapter
         extends RecyclerView.Adapter<EjercicioSeleccionadoAdapter.ViewHolder> {
 
+    // Callback invocado al pulsar el botón de eliminar de un ítem.
     public interface OnDeleteListener {
         void onDelete(EjercicioSeleccionado item);
     }
 
+    // Callback invocado al pulsar (click simple) un ítem de la lista.
     public interface OnEjercicioClickListener {
         void onClick(EjercicioSeleccionado item);
     }
@@ -32,6 +40,7 @@ public class EjercicioSeleccionadoAdapter
     private final OnDeleteListener deleteListener;
     private final OnEjercicioClickListener clickListener;
 
+    // Constructor principal: permite combinar borrado y click sobre el ítem.
     public EjercicioSeleccionadoAdapter(List<EjercicioSeleccionado> items,
                                         OnDeleteListener deleteListener,
                                         OnEjercicioClickListener clickListener) {
@@ -40,15 +49,18 @@ public class EjercicioSeleccionadoAdapter
         this.clickListener = clickListener;
     }
 
+    // Constructor con solo borrado (sin click sobre el ítem).
     public EjercicioSeleccionadoAdapter(List<EjercicioSeleccionado> items,
                                         OnDeleteListener deleteListener) {
         this(items, deleteListener, null);
     }
 
+    // Constructor de solo lectura (sin borrado ni click).
     public EjercicioSeleccionadoAdapter(List<EjercicioSeleccionado> items) {
         this(items, null, null);
     }
 
+    // Infla el layout de un ítem seleccionado y crea su ViewHolder.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -57,6 +69,8 @@ public class EjercicioSeleccionadoAdapter
         return new ViewHolder(view);
     }
 
+    // Rellena nombre, descripción, dificultad, calorías y series/repeticiones,
+    // mostrando u ocultando cada chip según haya o no dato disponible.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder h, int position) {
         EjercicioSeleccionado item = items.get(position);
@@ -109,6 +123,7 @@ public class EjercicioSeleccionadoAdapter
     @Override
     public int getItemCount() { return items.size(); }
 
+    // ViewHolder con las referencias a las vistas de cada fila de ejercicio seleccionado.
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvNombre, tvDescripcion;
         Chip chipDificultad, chipCalorias, chipSeriesReps;

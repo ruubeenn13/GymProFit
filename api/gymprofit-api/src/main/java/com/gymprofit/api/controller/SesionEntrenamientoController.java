@@ -24,6 +24,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// ============================================================
+// SesionEntrenamientoController — controlador REST de sesiones de entrenamiento
+// Expone endpoints CRUD y consultas filtradas (por usuario, rutina, fecha,
+// estado completada/pendiente) sobre las sesiones registradas por los
+// usuarios al entrenar en GymProFit.
+// ============================================================
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")
@@ -31,6 +37,7 @@ import java.util.Map;
 @Tag(name = "SesionEntrenamiento Controlador", description = "Gestión de las sesiones de entrenamiento")
 public class SesionEntrenamientoController {
 
+    // Servicio con la lógica de negocio de sesiones de entrenamiento
     private final ISesionEntrenamientoService sesionEntrenamientoService;
 
     @Operation(summary = "Obtiene todas las sesiones de entrenamiento")
@@ -42,6 +49,7 @@ public class SesionEntrenamientoController {
             @ApiResponse(responseCode = "500", description = "Error al obtener las sesiones",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Devuelve todas las sesiones de entrenamiento registradas
     @GetMapping("/sesiones")
     public ResponseEntity<List<SesionEntrenamientoDTO>> findAll() {
         List<SesionEntrenamientoDTO> sesiones = sesionEntrenamientoService.findAll();
@@ -56,6 +64,7 @@ public class SesionEntrenamientoController {
             @ApiResponse(responseCode = "404", description = "Sesión no encontrada",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Busca una sesión de entrenamiento por su ID
     @GetMapping("/sesiones/{id}")
     public ResponseEntity<SesionEntrenamientoDTO> obtenerSesion(@PathVariable Integer id) {
         SesionEntrenamientoDTO sesion = sesionEntrenamientoService.findById(id);
@@ -70,6 +79,7 @@ public class SesionEntrenamientoController {
             @ApiResponse(responseCode = "400", description = "Datos inválidos",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Crea una nueva sesión de entrenamiento (normalmente al iniciar un entrenamiento)
     @PostMapping("/sesiones")
     public ResponseEntity<SesionEntrenamientoDTO> guardarSesion(@Valid @RequestBody SesionEntrenamientoCreateDTO sesionEntrenamientoCreateDTO) {
         SesionEntrenamientoDTO sesion = sesionEntrenamientoService.save(sesionEntrenamientoCreateDTO);
@@ -84,6 +94,7 @@ public class SesionEntrenamientoController {
             @ApiResponse(responseCode = "404", description = "Sesión no encontrada",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Actualiza por completo una sesión de entrenamiento existente
     @PutMapping("/sesiones")
     public ResponseEntity<SesionEntrenamientoDTO> modificarSesion(@Valid @RequestBody SesionEntrenamientoDTO sesionEntrenamientoDTO) {
         SesionEntrenamientoDTO sesion = sesionEntrenamientoService.modify(sesionEntrenamientoDTO);
@@ -97,6 +108,7 @@ public class SesionEntrenamientoController {
             @ApiResponse(responseCode = "404", description = "Sesión no encontrada",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Elimina una sesión de entrenamiento por su ID
     @DeleteMapping("/sesiones/{id}")
     public ResponseEntity<Map<String, Object>> borrarSesion(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -122,6 +134,7 @@ public class SesionEntrenamientoController {
             @ApiResponse(responseCode = "404", description = "Sesión no encontrada",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Marca una sesión como completada, registrando calorías quemadas y notas opcionales
     @PutMapping("/sesiones/{id}/completar")
     public ResponseEntity<SesionEntrenamientoDTO> completarSesion(@PathVariable Integer id,
                                                                   @RequestParam(required = false) Integer caloriasQuemadas,
@@ -138,6 +151,7 @@ public class SesionEntrenamientoController {
             @ApiResponse(responseCode = "404", description = "No se encontraron sesiones",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista todas las sesiones de un usuario concreto
     @GetMapping("/sesiones/usuario/{usuarioId}")
     public ResponseEntity<List<SesionEntrenamientoDTO>> obtenerSesionesPorUsuario(@PathVariable Integer usuarioId) {
         List<SesionEntrenamientoDTO> sesiones = sesionEntrenamientoService.findByUsuarioId(usuarioId);
@@ -156,6 +170,7 @@ public class SesionEntrenamientoController {
             @ApiResponse(responseCode = "404", description = "No se encontraron sesiones",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista todas las sesiones realizadas con una rutina concreta
     @GetMapping("/sesiones/rutina/{rutinaId}")
     public ResponseEntity<List<SesionEntrenamientoDTO>> obtenerSesionesPorRutina(@PathVariable Integer rutinaId) {
         List<SesionEntrenamientoDTO> sesiones = sesionEntrenamientoService.findByRutinaId(rutinaId);
@@ -174,6 +189,7 @@ public class SesionEntrenamientoController {
             @ApiResponse(responseCode = "404", description = "No se encontraron sesiones",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista todas las sesiones marcadas como completadas
     @GetMapping("/sesiones/completadas")
     public ResponseEntity<List<SesionEntrenamientoDTO>> obtenerSesionesCompletadas() {
         List<SesionEntrenamientoDTO> sesiones = sesionEntrenamientoService.findCompletadas();
@@ -192,6 +208,7 @@ public class SesionEntrenamientoController {
             @ApiResponse(responseCode = "404", description = "No se encontraron sesiones",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista todas las sesiones aún no completadas
     @GetMapping("/sesiones/pendientes")
     public ResponseEntity<List<SesionEntrenamientoDTO>> obtenerSesionesPendientes() {
         List<SesionEntrenamientoDTO> sesiones = sesionEntrenamientoService.findPendientes();
@@ -210,6 +227,7 @@ public class SesionEntrenamientoController {
             @ApiResponse(responseCode = "404", description = "No se encontraron sesiones",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista las sesiones completadas de un usuario concreto
     @GetMapping("/sesiones/usuario/{usuarioId}/completadas")
     public ResponseEntity<List<SesionEntrenamientoDTO>> obtenerSesionesCompletadasPorUsuario(@PathVariable Integer usuarioId) {
         List<SesionEntrenamientoDTO> sesiones = sesionEntrenamientoService.findByUsuarioIdAndCompletadas(usuarioId);
@@ -228,6 +246,7 @@ public class SesionEntrenamientoController {
             @ApiResponse(responseCode = "404", description = "No se encontraron sesiones",
                     content = @Content(schema = @Schema(implementation = SesionEntrenamientoDTO.class)))
     })
+    // Lista las sesiones pendientes de un usuario concreto
     @GetMapping("/sesiones/usuario/{usuarioId}/pendientes")
     public ResponseEntity<List<SesionEntrenamientoDTO>> obtenerSesionesPendientesPorUsuario(@PathVariable Integer usuarioId) {
         List<SesionEntrenamientoDTO> sesiones = sesionEntrenamientoService.findByUsuarioIdAndPendientes(usuarioId);
@@ -247,6 +266,7 @@ public class SesionEntrenamientoController {
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @GetMapping("/sesiones/usuario/{usuarioId}/fecha/{fecha}")
+    // Lista las sesiones de un usuario realizadas en una fecha concreta
     public ResponseEntity<List<SesionEntrenamientoDTO>> obtenerSesionesPorUsuarioYFecha(@PathVariable Integer usuarioId,
                                                                                         @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
         List<SesionEntrenamientoDTO> sesiones = sesionEntrenamientoService.findByUsuarioIdAndFecha(usuarioId, fecha);
@@ -266,6 +286,7 @@ public class SesionEntrenamientoController {
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @GetMapping("/sesiones/fecha/{fecha}")
+    // Lista todas las sesiones realizadas en una fecha concreta (cualquier usuario)
     public ResponseEntity<List<SesionEntrenamientoDTO>> obtenerSesionesPorFecha(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
         List<SesionEntrenamientoDTO> sesiones = sesionEntrenamientoService.findByFecha(fecha);
 
@@ -284,6 +305,7 @@ public class SesionEntrenamientoController {
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @GetMapping("/sesiones/usuario/{usuarioId}/rutina/{rutinaId}")
+    // Lista las sesiones de un usuario asociadas a una rutina concreta
     public ResponseEntity<List<SesionEntrenamientoDTO>> obtenerSesionesPorUsuarioYRutina(@PathVariable Integer usuarioId,
                                                                                          @PathVariable Integer rutinaId) {
         List<SesionEntrenamientoDTO> sesiones = sesionEntrenamientoService.findByUsuarioIdAndRutinaId(usuarioId, rutinaId);
@@ -299,6 +321,7 @@ public class SesionEntrenamientoController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Cantidad de sesiones")
     })
+    // Cuenta el total de sesiones de un usuario
     @GetMapping("/sesiones/count/usuario/{usuarioId}")
     public ResponseEntity<Map<String, Object>> contarSesionesPorUsuario(@PathVariable Integer usuarioId) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -315,6 +338,7 @@ public class SesionEntrenamientoController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Cantidad de sesiones")
     })
+    // Cuenta el total de sesiones asociadas a una rutina
     @GetMapping("/sesiones/count/rutina/{rutinaId}")
     public ResponseEntity<Map<String, Object>> contarSesionesCompletadasPorUsuario(@PathVariable Integer rutinaId) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -334,6 +358,7 @@ public class SesionEntrenamientoController {
             @ApiResponse(responseCode = "404", description = "No se encontraron sesiones",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista las sesiones de un usuario ordenadas cronológicamente por fecha
     @GetMapping("/sesiones/usuario/{usuarioId}/ordenadas")
     public ResponseEntity<List<SesionEntrenamientoDTO>> obtenerSesionesOrdenadasPorUsuario(@PathVariable Integer usuarioId) {
         List<SesionEntrenamientoDTO> sesiones = sesionEntrenamientoService.findByUsuarioIdOrderByFecha(usuarioId);
@@ -352,6 +377,7 @@ public class SesionEntrenamientoController {
             @ApiResponse(responseCode = "404", description = "No se encontraron sesiones",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista las sesiones completadas de un usuario ordenadas por fecha
     @GetMapping("/sesiones/usuario/{usuarioId}/completadas/ordenadas")
     public ResponseEntity<List<SesionEntrenamientoDTO>> obtenerSesionesCompletadasOrdenadasPorUsuario(@PathVariable Integer usuarioId) {
         List<SesionEntrenamientoDTO> sesiones = sesionEntrenamientoService.findCompletadasByUsuario(usuarioId);
@@ -370,6 +396,7 @@ public class SesionEntrenamientoController {
             @ApiResponse(responseCode = "404", description = "Sesión no encontrada",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Actualización parcial de campos de una sesión de entrenamiento
     @PatchMapping("/sesiones/{id}")
     public ResponseEntity<SesionEntrenamientoDTO> patchSesion(@PathVariable Integer id, @RequestBody SesionEntrenamientoPatchDTO patchDTO) {
         return ResponseEntity.ok(sesionEntrenamientoService.patch(id, patchDTO));

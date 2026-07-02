@@ -22,8 +22,16 @@ import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
 import es.pmdm.gymprofit.utils.UIHelper;
 
+// ============================================================
+// OnboardingResumenActivity — Paso final del onboarding: resumen y guardado de datos.
+// Calcula las métricas nutricionales a partir de los datos recogidos en los pasos
+// previos, las muestra al usuario y, al pulsar "Comenzar", las persiste en
+// preferencias locales y las envía a la API (PATCH /usuarios/{id}) antes de ir al Home.
+// ============================================================
 public class OnboardingResumenActivity extends AppCompatActivity {
 
+    // Inicializa la pantalla, calcula y muestra el resumen nutricional, y
+    // configura el botón "Comenzar" para guardar los datos y navegar al Home.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +50,9 @@ public class OnboardingResumenActivity extends AppCompatActivity {
                 guardarEnApiYContinuar(extras, prefs));
     }
 
+    // Lee los datos del onboarding recibidos por extras, calcula el resultado
+    // nutricional (calorías, macros, agua), lo guarda en preferencias y lo
+    // muestra en las vistas del resumen.
     private void calcularYMostrar(Bundle extras, PreferencesManager prefs) {
         if (extras == null) return;
 
@@ -79,6 +90,7 @@ public class OnboardingResumenActivity extends AppCompatActivity {
         ((ProgressBar) findViewById(R.id.progressResumen)).setProgress(100);
     }
 
+    // Traduce el valor del enum de objetivo (API) a su texto localizado.
     private String obtenerNombreObjetivo(String objetivo) {
         switch (objetivo) {
             case CalculadoraNutricional.OBJETIVO_PERDER_PESO:             return getString(R.string.objetivo_perder_peso);
@@ -95,6 +107,9 @@ public class OnboardingResumenActivity extends AppCompatActivity {
         }
     }
 
+    // Envía los datos del onboarding a la API mediante PATCH /usuarios/{id}.
+    // Si no hay usuario logueado o faltan datos, o si la llamada falla, se
+    // guarda igualmente el progreso localmente y se continúa al Home.
     private void guardarEnApiYContinuar(Bundle extras, PreferencesManager prefs) {
         int usuarioId = prefs.getUsuarioId();
 
@@ -149,17 +164,22 @@ public class OnboardingResumenActivity extends AppCompatActivity {
         }
     }
 
+    // Marca el onboarding como completado, tanto de forma global como para el
+    // usuario actual (para no repetirlo tras cerrar sesión y volver a entrar).
     private void marcarOnboardingCompletado(PreferencesManager prefs) {
         prefs.setOnboardingCompletado(true);
         prefs.setOnboardingCompletadoParaUsuario(prefs.getUsername());
     }
 
+    // Navega al Home limpiando el back stack para evitar volver al onboarding.
     private void irAlHome() {
         startActivity(new Intent(this, HomeActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         finish();
     }
 
+    // Aplica el idioma guardado en preferencias a la configuración de recursos
+    // de la Activity antes de inflar el layout.
     private void aplicarIdioma(PreferencesManager prefs) {
         String lang = prefs.getLanguage();
         if (!lang.isEmpty()) {

@@ -28,6 +28,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+// ============================================================
+// SesionEntrenamientoServiceTest — pruebas unitarias del SesionEntrenamientoService
+// Verifica CRUD de sesiones de entrenamiento y el flujo de completar
+// una sesión (calorías, notas, fecha fin) con repositorios simulados.
+// ============================================================
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Tests del SesionEntrenamientoService")
 class SesionEntrenamientoServiceTest {
@@ -56,6 +61,7 @@ class SesionEntrenamientoServiceTest {
     private Usuario usuario;
     private Rutina rutina;
 
+    // Prepara usuario, rutina, sesión y DTOs de prueba antes de cada test
     @BeforeEach
     void setUp() {
         usuario = new Usuario();
@@ -85,6 +91,7 @@ class SesionEntrenamientoServiceTest {
         sesionEntrenamientoCreateDTO.setFechaInicio(LocalDateTime.now());
     }
 
+    // Comprueba que findAll devuelve todas las sesiones mapeadas a DTO
     @Test
     @DisplayName("findAll devuelve lista de sesiones")
     void findAll_devuelve_lista() {
@@ -98,6 +105,7 @@ class SesionEntrenamientoServiceTest {
         verify(sesionEntrenamientoRepository).findAll();
     }
 
+    // Comprueba que findById devuelve la sesión correcta cuando existe
     @Test
     @DisplayName("findById con id existente devuelve SesionEntrenamientoDTO")
     void findById_existente_devuelve_dto() {
@@ -110,6 +118,7 @@ class SesionEntrenamientoServiceTest {
         assertEquals(1, result.getId());
     }
 
+    // Comprueba que findById lanza excepción si la sesión no existe
     @Test
     @DisplayName("findById con id inexistente lanza NotFoundEntityException")
     void findById_inexistente_lanza_excepcion() {
@@ -118,6 +127,7 @@ class SesionEntrenamientoServiceTest {
         assertThrows(NotFoundEntityException.class, () -> sesionEntrenamientoService.findById(99));
     }
 
+    // Comprueba que al crear una sesión se guarda con completada=false por defecto
     @Test
     @DisplayName("save correcto guarda la sesión con completada=false")
     void save_correcto_guarda_sesion() {
@@ -134,6 +144,7 @@ class SesionEntrenamientoServiceTest {
         verify(sesionEntrenamientoRepository).save(any());
     }
 
+    // Comprueba que no se puede crear una sesión para un usuario inexistente
     @Test
     @DisplayName("save con usuario inexistente lanza NotFoundEntityException")
     void save_usuario_inexistente_lanza_excepcion() {
@@ -144,6 +155,7 @@ class SesionEntrenamientoServiceTest {
         verify(sesionEntrenamientoRepository, never()).save(any());
     }
 
+    // Comprueba que deleteById elimina físicamente la sesión existente
     @Test
     @DisplayName("deleteById elimina la sesión correctamente")
     void deleteById_elimina_sesion() {
@@ -154,6 +166,7 @@ class SesionEntrenamientoServiceTest {
         verify(sesionEntrenamientoRepository).delete(sesionEntrenamiento);
     }
 
+    // Comprueba que deleteById lanza excepción si la sesión no existe
     @Test
     @DisplayName("deleteById con id inexistente lanza NotFoundEntityException")
     void deleteById_inexistente_lanza_excepcion() {
@@ -162,6 +175,7 @@ class SesionEntrenamientoServiceTest {
         assertThrows(NotFoundEntityException.class, () -> sesionEntrenamientoService.deleteById(99));
     }
 
+    // Comprueba que completarSesion marca completada, fija fecha fin, calorías y notas
     @Test
     @DisplayName("completarSesion marca la sesión como completada")
     void completarSesion_marca_completada() {
@@ -177,6 +191,7 @@ class SesionEntrenamientoServiceTest {
         assertEquals("Sesión completada", sesionEntrenamiento.getNotas());
     }
 
+    // Comprueba que completarSesion lanza excepción si la sesión no existe
     @Test
     @DisplayName("completarSesion con id inexistente lanza NotFoundEntityException")
     void completarSesion_inexistente_lanza_excepcion() {
@@ -185,6 +200,7 @@ class SesionEntrenamientoServiceTest {
         assertThrows(NotFoundEntityException.class, () -> sesionEntrenamientoService.completarSesion(99, null, null));
     }
 
+    // Comprueba que se listan las sesiones asociadas a un usuario concreto
     @Test
     @DisplayName("findByUsuarioId devuelve sesiones del usuario")
     void findByUsuarioId_devuelve_lista() {
@@ -197,6 +213,7 @@ class SesionEntrenamientoServiceTest {
         assertEquals(1, result.size());
     }
 
+    // Comprueba que se filtran solo las sesiones marcadas como completadas
     @Test
     @DisplayName("findCompletadas devuelve solo sesiones completadas")
     void findCompletadas_devuelve_completadas() {
@@ -210,6 +227,7 @@ class SesionEntrenamientoServiceTest {
         verify(sesionEntrenamientoRepository).findByCompletadaTrue();
     }
 
+    // Comprueba que se filtran solo las sesiones aún no completadas
     @Test
     @DisplayName("findPendientes devuelve solo sesiones pendientes")
     void findPendientes_devuelve_pendientes() {
@@ -223,6 +241,7 @@ class SesionEntrenamientoServiceTest {
         verify(sesionEntrenamientoRepository).findByCompletadaFalse();
     }
 
+    // Comprueba que countByUsuarioId devuelve el número total de sesiones del usuario
     @Test
     @DisplayName("countByUsuarioId devuelve el total de sesiones del usuario")
     void countByUsuarioId_devuelve_total() {

@@ -23,6 +23,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// ============================================================
+// RutinaController — controlador REST de rutinas de entrenamiento
+// Gestiona el CRUD de rutinas (propias de un usuario o predefinidas por la
+// app), su activación/desactivación (borrado lógico) y eliminación
+// permanente, con búsquedas por usuario, nivel y nombre.
+// ============================================================
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")
@@ -32,6 +38,7 @@ public class RutinaController {
 
     private final IRutinaService rutinaService;
 
+    // Devuelve todas las rutinas registradas
     @Operation(summary = "Obtiene todas las rutinas")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de rutinas",
@@ -55,6 +62,7 @@ public class RutinaController {
             @ApiResponse(responseCode = "404", description = "Rutina no encontrada",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Busca una rutina por su ID
     @GetMapping("/rutinas/{id}")
     public ResponseEntity<RutinaDTO> obtenerRutina(@PathVariable Integer id) {
         RutinaDTO rutina = rutinaService.findById(id);
@@ -69,6 +77,7 @@ public class RutinaController {
             @ApiResponse(responseCode = "400", description = "Datos inválidos",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Crea una nueva rutina
     @PostMapping("/rutinas")
     public ResponseEntity<RutinaDTO> guardarRutina(@Valid @RequestBody RutinaCreateDTO rutinaCreateDTO) {
         RutinaDTO rutina = rutinaService.save(rutinaCreateDTO);
@@ -83,6 +92,7 @@ public class RutinaController {
             @ApiResponse(responseCode = "404", description = "Rutina no encontrada",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Actualiza completamente una rutina existente
     @PutMapping("/rutinas")
     public ResponseEntity<RutinaDTO> modificarRutina(@Valid @RequestBody RutinaDTO rutinaDTO) {
         RutinaDTO rutina = rutinaService.modify(rutinaDTO);
@@ -97,6 +107,7 @@ public class RutinaController {
             @ApiResponse(responseCode = "404", description = "Rutina no encontrada",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Desactiva una rutina (borrado lógico, no elimina el registro)
     @DeleteMapping("/rutinas/{id}")
     public ResponseEntity<Map<String, Object>> borrarRutina(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -122,6 +133,7 @@ public class RutinaController {
             @ApiResponse(responseCode = "404", description = "Rutina no encontrada",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Reactiva una rutina previamente desactivada
     @PutMapping("/rutinas/{id}/activar")
     public ResponseEntity<Map<String, Object>> activarRutina(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -146,6 +158,7 @@ public class RutinaController {
             @ApiResponse(responseCode = "404", description = "Rutina no encontrada",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Elimina definitivamente una rutina de la base de datos (borrado físico)
     @DeleteMapping("/rutinas/{id}/permanente")
     public ResponseEntity<Map<String, Object>> eliminarPermanente(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -171,6 +184,7 @@ public class RutinaController {
             @ApiResponse(responseCode = "404", description = "No se encontraron rutinas para este usuario",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista todas las rutinas de un usuario
     @GetMapping("/rutinas/usuario/{usuarioId}")
     public ResponseEntity<List<RutinaDTO>> obtenerRutinasPorUsuario(@PathVariable Integer usuarioId) {
         List<RutinaDTO> rutinas = rutinaService.findByUsuarioId(usuarioId);
@@ -189,6 +203,7 @@ public class RutinaController {
             @ApiResponse(responseCode = "404", description = "No se encontraron rutinas para este nivel",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Filtra rutinas por nivel de dificultad
     @GetMapping("/rutinas/nivel/{nivel}")
     public ResponseEntity<List<RutinaDTO>> obtenerRutinasPorNivel(@PathVariable String nivel) {
         if (nivel == null || nivel.trim().isEmpty()) {
@@ -211,6 +226,7 @@ public class RutinaController {
             @ApiResponse(responseCode = "404", description = "No se encontraron rutinas con ese nombre",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Busca rutinas cuyo nombre coincida con el indicado
     @GetMapping("/rutinas/nombre/{nombre}")
     public ResponseEntity<List<RutinaDTO>> obtenerRutinasPorNombre(@PathVariable String nombre) {
         if (nombre == null || nombre.trim().isEmpty()) {
@@ -233,6 +249,7 @@ public class RutinaController {
             @ApiResponse(responseCode = "404", description = "No se encontraron rutinas activas",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Devuelve todas las rutinas activas (no desactivadas)
     @GetMapping("/rutinas/activas")
     public ResponseEntity<List<RutinaDTO>> obtenerRutinasActivas() {
         List<RutinaDTO> rutinas = rutinaService.findActivas();
@@ -251,6 +268,7 @@ public class RutinaController {
             @ApiResponse(responseCode = "404", description = "No se encontraron rutinas predefinidas",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Devuelve las rutinas predefinidas de la aplicación (no creadas por usuarios)
     @GetMapping("/rutinas/predefinidas")
     public ResponseEntity<List<RutinaDTO>> obtenerRutinasPredefinidas() {
         List<RutinaDTO> rutinas = rutinaService.findPredefinidas();
@@ -269,6 +287,7 @@ public class RutinaController {
             @ApiResponse(responseCode = "404", description = "No se encontraron rutinas activas para este usuario",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista las rutinas activas de un usuario concreto
     @GetMapping("/rutinas/usuario/{usuarioId}/activas")
     public ResponseEntity<List<RutinaDTO>> obtenerRutinasActivasPorUsuario(@PathVariable Integer usuarioId) {
         List<RutinaDTO> rutinas = rutinaService.findByUsuarioIdAndActivas(usuarioId);
@@ -287,6 +306,7 @@ public class RutinaController {
             @ApiResponse(responseCode = "404", description = "No se encontraron rutinas predefinidas para este nivel",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Filtra las rutinas predefinidas por nivel de dificultad
     @GetMapping("/rutinas/predefinidas/nivel/{nivel}")
     public ResponseEntity<List<RutinaDTO>> obtenerRutinasPredefinidasPorNivel(@PathVariable String nivel) {
         if (nivel == null || nivel.trim().isEmpty()) {
@@ -309,6 +329,7 @@ public class RutinaController {
             @ApiResponse(responseCode = "404", description = "Rutina no encontrada",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Actualiza parcialmente campos de una rutina (PATCH)
     @PatchMapping("/rutinas/{id}")
     public ResponseEntity<RutinaDTO> patchRutina(@PathVariable Integer id, @RequestBody RutinaPatchDTO patchDTO) {
         return ResponseEntity.ok(rutinaService.patch(id, patchDTO));

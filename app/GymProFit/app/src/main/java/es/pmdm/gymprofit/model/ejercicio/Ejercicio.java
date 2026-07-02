@@ -1,16 +1,32 @@
 package es.pmdm.gymprofit.model.ejercicio;
 
+// ============================================================
+// Ejercicio — modelo de datos de un ejercicio del catálogo de la app.
+// Contiene la información descriptiva (grupo muscular, dificultad,
+// instrucciones, imagen, etc.) que se muestra en el listado y detalle
+// de ejercicios, y que se usa al construir rutinas.
+// ============================================================
 public class Ejercicio {
 
+    // Identificador único del ejercicio.
     private int id;
+    // Nombre del ejercicio.
     private String nombre;
+    // Grupo muscular principal que trabaja el ejercicio.
     private String grupoMuscular;
+    // Nivel de dificultad (principiante, intermedio, avanzado...).
     private String dificultad;
+    // Descripción general del ejercicio.
     private String descripcion;
+    // Instrucciones paso a paso para realizarlo.
     private String instrucciones;
+    // URL de la imagen ilustrativa del ejercicio.
     private String imagenUrl;
+    // Equipo/material necesario para realizarlo.
     private String equipoNecesario;
+    // Calorías aproximadas quemadas por el ejercicio.
     private int calorias;
+    // Indica si el ejercicio está activo/visible en el catálogo.
     private boolean activo;
 
     public Ejercicio() {}

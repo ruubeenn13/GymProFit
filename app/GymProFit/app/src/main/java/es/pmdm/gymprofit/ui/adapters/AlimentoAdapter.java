@@ -13,15 +13,23 @@ import java.util.List;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.alimento.Alimento;
 
+// ============================================================
+// AlimentoAdapter — adapter de RecyclerView para el catálogo de alimentos.
+// Pinta nombre, categoría y calorías por 100g de cada Alimento, gestiona
+// el click simple (selección) y el long-click (menú contextual) sobre
+// cada fila de la lista de alimentos del sistema de nutrición.
+// ============================================================
 /**
  * Adapter para mostrar una lista de {@link Alimento} en un RecyclerView.
  */
 public class AlimentoAdapter extends RecyclerView.Adapter<AlimentoAdapter.ViewHolder> {
 
+    // Callback invocado al pulsar (click simple) un alimento de la lista.
     public interface OnItemClickListener {
         void onItemClick(Alimento alimento);
     }
 
+    // Callback invocado al mantener pulsado (long-click) un alimento.
     public interface OnItemLongClickListener {
         void onItemLongClick(Alimento alimento, View anchorView);
     }
@@ -30,15 +38,18 @@ public class AlimentoAdapter extends RecyclerView.Adapter<AlimentoAdapter.ViewHo
     private final OnItemClickListener listener;
     private OnItemLongClickListener longClickListener;
 
+    // Constructor: recibe la lista de alimentos y el listener de click.
     public AlimentoAdapter(List<Alimento> lista, OnItemClickListener listener) {
         this.lista = lista;
         this.listener = listener;
     }
 
+    // Permite registrar el listener de long-click desde fuera del adapter.
     public void setOnItemLongClickListener(OnItemLongClickListener l) {
         this.longClickListener = l;
     }
 
+    // Infla el layout de un ítem de alimento y crea su ViewHolder.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -47,6 +58,7 @@ public class AlimentoAdapter extends RecyclerView.Adapter<AlimentoAdapter.ViewHo
         return new ViewHolder(view);
     }
 
+    // Rellena las vistas de una fila con los datos del alimento y engancha los listeners.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Alimento alimento = lista.get(position);
@@ -68,6 +80,7 @@ public class AlimentoAdapter extends RecyclerView.Adapter<AlimentoAdapter.ViewHo
         return lista.size();
     }
 
+    // ViewHolder con las referencias a las vistas de cada fila de alimento.
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvNombreAlimento;
         TextView tvCategoriaAlimento;

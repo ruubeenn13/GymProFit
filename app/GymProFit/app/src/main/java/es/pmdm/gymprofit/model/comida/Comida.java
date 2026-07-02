@@ -1,14 +1,28 @@
 package es.pmdm.gymprofit.model.comida;
 
+// ============================================================
+// Comida — modelo de datos de una comida registrada por el usuario.
+// Representa un registro (desayuno, almuerzo, cena, etc.) con los totales
+// nutricionales agregados de los alimentos que la componen. Se usa para
+// mapear las respuestas JSON del endpoint de comidas de la API.
+// ============================================================
 public class Comida {
 
+    // Identificador único de la comida en la BD.
     private int id;
+    // Tipo de comida (desayuno, almuerzo, cena, snack, etc.).
     private String tipoComida;
+    // Fecha en la que se registró la comida.
     private String fecha;
+    // Suma de calorías de todos los alimentos que forman la comida.
     private int totalCalorias;
+    // Suma de proteínas (g) de la comida.
     private double totalProteinas;
+    // Suma de carbohidratos (g) de la comida.
     private double totalCarbohidratos;
+    // Suma de grasas (g) de la comida.
     private double totalGrasas;
+    // Id del usuario propietario de la comida.
     private int usuarioId;
 
     public Comida() {}

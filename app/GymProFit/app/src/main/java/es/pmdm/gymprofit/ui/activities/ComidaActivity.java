@@ -35,6 +35,11 @@ import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.adapters.AlimentoComidaAdapter;
 import es.pmdm.gymprofit.utils.UIHelper;
 
+// ============================================================
+// ComidaActivity — log de alimentos de una comida del día
+// Muestra los alimentos añadidos, sus totales de macros/calorías y permite
+// editar cantidad, desactivar (admin) o eliminar cada alimento del listado.
+// ============================================================
 /**
  * Muestra el log de alimentos de una comida del día (desayuno, almuerzo, comida, merienda, cena).
  * Recibe extras: tipoComida (String), comidaId (int, -1 si no existe), fecha (String YYYY-MM-DD).
@@ -53,6 +58,7 @@ public class ComidaActivity extends BaseActivity {
     private List<AlimentoComida> listaAlimentos = new ArrayList<>();
     private AlimentoComidaAdapter adapter;
 
+    // Launcher hacia AnadirAlimentoActivity; recoge el comidaId (si se creó la comida) y recarga
     private ActivityResultLauncher<Intent> anadirLauncher;
 
     /** Mapa de tipo de comida (enum string) a string resource id. */
@@ -65,6 +71,7 @@ public class ComidaActivity extends BaseActivity {
         TIPO_LABELS.put("CENA",      R.string.nutricion_cena);
     }
 
+    // Lee los extras de la comida, infla vistas y configura toolbar, lista, FAB y launcher
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,6 +88,7 @@ public class ComidaActivity extends BaseActivity {
         configurarLauncher();
     }
 
+    // Recarga los alimentos al volver a la pantalla si la comida ya existe
     @Override
     protected void onResume() {
         super.onResume();
@@ -89,6 +97,7 @@ public class ComidaActivity extends BaseActivity {
         }
     }
 
+    // Enlaza las referencias de vista de los totales y del RecyclerView
     private void inicializarVistas() {
         tvTotalCalorias  = findViewById(R.id.tvTotalCalorias);
         tvTotalProteinas = findViewById(R.id.tvTotalProteinas);
@@ -97,6 +106,7 @@ public class ComidaActivity extends BaseActivity {
         rvAlimentosComida = findViewById(R.id.rvAlimentosComida);
     }
 
+    // Configura el botón de volver y el título de la toolbar según el tipo de comida
     private void configurarToolbar() {
         findViewById(R.id.btnBack).setOnClickListener(v -> {
             setResult(RESULT_OK);
@@ -114,12 +124,14 @@ public class ComidaActivity extends BaseActivity {
         }
     }
 
+    // Inicializa el adapter y el layout manager del RecyclerView de alimentos
     private void configurarRecyclerView() {
         adapter = new AlimentoComidaAdapter(listaAlimentos, this::mostrarMenuContextual);
         rvAlimentosComida.setLayoutManager(new LinearLayoutManager(this));
         rvAlimentosComida.setAdapter(adapter);
     }
 
+    // Configura el FAB para lanzar AnadirAlimentoActivity con los datos de la comida actual
     private void configurarFab() {
         FloatingActionButton fab = findViewById(R.id.fabAnadir);
         fab.setOnClickListener(v -> {
@@ -131,6 +143,7 @@ public class ComidaActivity extends BaseActivity {
         });
     }
 
+    // Registra el ActivityResultLauncher que recoge el comidaId devuelto y recarga la lista
     private void configurarLauncher() {
         anadirLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -143,6 +156,7 @@ public class ComidaActivity extends BaseActivity {
                 });
     }
 
+    // Carga los alimentos de la comida actual desde la API; en 404 muestra lista vacía
     private void cargarAlimentos() {
         API.getAlimentosDeComida(comidaId, new UtilREST.OnResponseListener() {
             @Override
@@ -175,6 +189,7 @@ public class ComidaActivity extends BaseActivity {
         });
     }
 
+    // Recalcula y muestra los totales de calorías y macros sumando todos los alimentos de la lista
     private void actualizarTotales() {
         int totalCal = 0;
         double totalProt = 0, totalCarb = 0, totalGras = 0;
@@ -195,6 +210,7 @@ public class ComidaActivity extends BaseActivity {
         }
     }
 
+    // Construye el menú contextual (editar cantidad/desactivar/eliminar) según rol y origen del alimento
     private void mostrarMenuContextual(AlimentoComida item, View anchorView) {
         boolean esAdmin = "ROLE_ADMIN".equals(prefsManager.getRol());
         boolean esPredefinido = item.getUsuarioIdAlimento() == null;
@@ -219,6 +235,7 @@ public class ComidaActivity extends BaseActivity {
         UIHelper.mostrarMenuAnclado(this, anchorView, item.getNombreAlimento(), actions);
     }
 
+    // Muestra un diálogo para modificar los gramos del alimento, recalculando el preview de macros
     private void mostrarDialogoEditarCantidad(AlimentoComida item) {
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_gramos, null);
         EditText etGramos = dialogView.findViewById(R.id.etGramos);
@@ -279,6 +296,7 @@ public class ComidaActivity extends BaseActivity {
                 .show();
     }
 
+    // Desactiva el alimento predefinido asociado a este registro (solo admin)
     private void desactivarAlimento(AlimentoComida item) {
         API.adminToggleActivoAlimento(item.getAlimentoId(), false, new UtilREST.OnResponseListener() {
             @Override
@@ -293,6 +311,7 @@ public class ComidaActivity extends BaseActivity {
         });
     }
 
+    // Elimina el registro de alimento-comida (quita el alimento de esta comida)
     private void eliminarAlimento(AlimentoComida item) {
         API.eliminarAlimentoDeComida(item.getId(), new UtilREST.OnResponseListener() {
             @Override

@@ -22,6 +22,13 @@ import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
 import es.pmdm.gymprofit.model.usuario.Usuario;
 import es.pmdm.gymprofit.model.usuario.UsuarioEstadisticas;
 
+// ============================================================
+// UtilJSONParser — utilidades estáticas para parsear las respuestas JSON de la API
+// Convierte los JSONObject/JSONArray devueltos por UtilREST en los modelos
+// de dominio de la app (Usuario, Ejercicio, Rutina, Sesion, Logro,
+// Medicion, Objetivo, Alimento, Comida, etc.), aplicando valores por
+// defecto seguros y normalizando fechas.
+// ============================================================
 public class UtilJSONParser {
 
     /** optString seguro: devuelve "" cuando el valor JSON es null (evita la cadena "null"). */
@@ -32,14 +39,17 @@ public class UtilJSONParser {
 
     // AUTH
 
+    // Extrae el token JWT de la respuesta de login
     public static String parseToken(String json) throws JSONException {
         return new JSONObject(json).optString("token", "");
     }
 
+    // Extrae el username incluido en la respuesta de login
     public static String parseTokenUsername(String json) throws JSONException {
         return new JSONObject(json).optString("username", "");
     }
 
+    // Extrae el primer rol de la respuesta de login, normalizado con prefijo "ROLE_"
     public static String parseTokenRol(String json) throws JSONException {
         JSONArray roles = new JSONObject(json).optJSONArray("roles");
         if (roles != null && roles.length() > 0) {
@@ -51,6 +61,7 @@ public class UtilJSONParser {
 
     // USUARIO
 
+    // Parsea un JSON de usuario a objeto Usuario
     public static Usuario parseUsuario(String json) throws JSONException {
         JSONObject obj = new JSONObject(json);
         Usuario u = new Usuario();
@@ -69,6 +80,7 @@ public class UtilJSONParser {
         return u;
     }
 
+    // Parsea un JSON array de usuarios a lista de Usuario
     public static List<Usuario> parseUsuarioList(String json) throws JSONException {
         JSONArray arr = new JSONArray(json);
         List<Usuario> list = new ArrayList<>();
@@ -80,6 +92,7 @@ public class UtilJSONParser {
 
     // EJERCICIO
 
+    // Parsea un JSON de ejercicio a objeto Ejercicio
     public static Ejercicio parseEjercicio(String json) throws JSONException {
         JSONObject obj = new JSONObject(json);
         Ejercicio e = new Ejercicio();
@@ -96,6 +109,7 @@ public class UtilJSONParser {
         return e;
     }
 
+    // Parsea un JSON array de ejercicios a lista de Ejercicio
     public static List<Ejercicio> parseEjercicioList(String json) throws JSONException {
         JSONArray arr = new JSONArray(json);
         List<Ejercicio> list = new ArrayList<>();
@@ -107,6 +121,7 @@ public class UtilJSONParser {
 
     // RUTINA
 
+    // Parsea un JSON de rutina a objeto Rutina
     public static Rutina parseRutina(String json) throws JSONException {
         JSONObject obj = new JSONObject(json);
         Rutina r = new Rutina();
@@ -126,6 +141,7 @@ public class UtilJSONParser {
         return r;
     }
 
+    // Parsea un JSON array de rutinas a lista de Rutina
     public static List<Rutina> parseRutinaList(String json) throws JSONException {
         JSONArray arr = new JSONArray(json);
         List<Rutina> list = new ArrayList<>();
@@ -137,6 +153,7 @@ public class UtilJSONParser {
 
     // SESION
 
+    // Parsea un JSON de sesión de entrenamiento a objeto SesionEntrenamiento
     public static SesionEntrenamiento parseSesion(String json) throws JSONException {
         JSONObject obj = new JSONObject(json);
         SesionEntrenamiento s = new SesionEntrenamiento();
@@ -152,6 +169,7 @@ public class UtilJSONParser {
         return s;
     }
 
+    // Parsea un JSON array de sesiones a lista de SesionEntrenamiento
     public static List<SesionEntrenamiento> parseSesionList(String json) throws JSONException {
         JSONArray arr = new JSONArray(json);
         List<SesionEntrenamiento> list = new ArrayList<>();
@@ -163,6 +181,7 @@ public class UtilJSONParser {
 
     // LOGRO
 
+    // Parsea un JSON de logro a objeto Logro
     public static Logro parseLogro(String json) throws JSONException {
         JSONObject obj = new JSONObject(json);
         Logro l = new Logro();
@@ -175,6 +194,7 @@ public class UtilJSONParser {
         return l;
     }
 
+    // Parsea un JSON array de logros a lista de Logro
     public static List<Logro> parseLogroList(String json) throws JSONException {
         JSONArray arr = new JSONArray(json);
         List<Logro> list = new ArrayList<>();
@@ -197,6 +217,7 @@ public class UtilJSONParser {
 
     // MEDICION CORPORAL
 
+    // Parsea un JSON de medición corporal a objeto MedicionCorporal
     public static MedicionCorporal parseMedicion(String json) throws JSONException {
         JSONObject obj = new JSONObject(json);
         MedicionCorporal m = new MedicionCorporal();
@@ -216,6 +237,7 @@ public class UtilJSONParser {
         return m;
     }
 
+    // Parsea un JSON array de mediciones a lista de MedicionCorporal
     public static List<MedicionCorporal> parseMedicionList(String json) throws JSONException {
         JSONArray arr = new JSONArray(json);
         List<MedicionCorporal> list = new ArrayList<>();
@@ -227,6 +249,7 @@ public class UtilJSONParser {
 
     // OBJETIVO PERSONAL
 
+    // Parsea un JSON de objetivo personal a objeto ObjetivoPersonal
     public static ObjetivoPersonal parseObjetivo(String json) throws JSONException {
         JSONObject obj = new JSONObject(json);
         ObjetivoPersonal o = new ObjetivoPersonal();
@@ -242,6 +265,7 @@ public class UtilJSONParser {
         return o;
     }
 
+    // Parsea un JSON array de objetivos a lista de ObjetivoPersonal
     public static List<ObjetivoPersonal> parseObjetivoList(String json) throws JSONException {
         JSONArray arr = new JSONArray(json);
         List<ObjetivoPersonal> list = new ArrayList<>();
@@ -253,6 +277,7 @@ public class UtilJSONParser {
 
     // ESTADISTICAS
 
+    // Parsea un JSON de estadísticas agregadas a objeto UsuarioEstadisticas
     public static UsuarioEstadisticas parseEstadisticas(String json) throws JSONException {
         JSONObject obj = new JSONObject(json);
         UsuarioEstadisticas e = new UsuarioEstadisticas();
@@ -268,6 +293,7 @@ public class UtilJSONParser {
 
     // ALIMENTO
 
+    // Parsea un JSONObject de alimento a objeto Alimento (usuarioId null si es del catálogo global)
     public static Alimento parseAlimento(JSONObject obj) throws JSONException {
         Alimento a = new Alimento();
         a.setId(obj.optInt("id", -1));
@@ -282,6 +308,7 @@ public class UtilJSONParser {
         return a;
     }
 
+    // Parsea un JSON array de alimentos a lista de Alimento
     public static List<Alimento> parseListaAlimentos(String json) throws JSONException {
         JSONArray arr = new JSONArray(json);
         List<Alimento> list = new ArrayList<>();
@@ -293,6 +320,7 @@ public class UtilJSONParser {
 
     // COMIDA
 
+    // Parsea un JSONObject de comida a objeto Comida
     public static Comida parseComida(JSONObject obj) throws JSONException {
         Comida c = new Comida();
         c.setId(obj.optInt("id", -1));
@@ -306,6 +334,7 @@ public class UtilJSONParser {
         return c;
     }
 
+    // Parsea un JSON array de comidas a lista de Comida
     public static List<Comida> parseListaComidas(String json) throws JSONException {
         JSONArray arr = new JSONArray(json);
         List<Comida> list = new ArrayList<>();
@@ -317,6 +346,7 @@ public class UtilJSONParser {
 
     // ALIMENTO COMIDA
 
+    // Parsea un JSONObject de la relación alimento-comida (con totales calculados) a objeto AlimentoComida
     public static AlimentoComida parseAlimentoComida(JSONObject obj) throws JSONException {
         AlimentoComida ac = new AlimentoComida();
         ac.setId(obj.optInt("id", -1));
@@ -333,6 +363,7 @@ public class UtilJSONParser {
         return ac;
     }
 
+    // Parsea un JSON array de relaciones alimento-comida a lista de AlimentoComida
     public static List<AlimentoComida> parseListaAlimentosComida(String json) throws JSONException {
         JSONArray arr = new JSONArray(json);
         List<AlimentoComida> list = new ArrayList<>();

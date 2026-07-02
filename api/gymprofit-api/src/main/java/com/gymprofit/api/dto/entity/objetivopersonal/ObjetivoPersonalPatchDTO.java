@@ -8,6 +8,11 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+// ============================================================
+// ObjetivoPersonalPatchDTO — actualización parcial (PATCH) de un objetivo.
+// Permite modificar descripción, valores de progreso/meta, unidad o fecha
+// límite sin necesidad de reenviar el objetivo completo.
+// ============================================================
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

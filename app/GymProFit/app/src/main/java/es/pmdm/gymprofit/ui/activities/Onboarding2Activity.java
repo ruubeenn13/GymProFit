@@ -16,11 +16,18 @@ import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
+// ============================================================
+// Onboarding2Activity — segundo paso del asistente de onboarding.
+// Recoge nombre, email, edad y sexo del usuario, precargando los
+// valores recibidos del paso anterior, y avanza al siguiente paso.
+// ============================================================
 public class Onboarding2Activity extends AppCompatActivity {
 
     private TextInputEditText etNombre, etEmail, etEdad;
     private ChipGroup chipGroupSexo;
 
+    // Aplica tema/idioma, infla el layout, precarga los datos recibidos
+    // y configura los botones de siguiente/anterior/saltar.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,12 +85,14 @@ public class Onboarding2Activity extends AppCompatActivity {
         findViewById(R.id.tvSaltar2).setOnClickListener(v -> saltarAlHome());
     }
 
+    // Salta el onboarding y navega directo a HomeActivity, limpiando el back stack.
     private void saltarAlHome() {
         startActivity(new Intent(this, HomeActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         finish();
     }
 
+    // Aplica el idioma guardado en preferencias a la configuración de recursos.
     private void aplicarIdioma(PreferencesManager prefs) {
         String lang = prefs.getLanguage();
 

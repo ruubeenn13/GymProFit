@@ -23,6 +23,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// ============================================================
+// EjercicioController — CRUD y consultas del catálogo de ejercicios
+// Gestiona alta, modificación, desactivación/activación (borrado lógico)
+// y borrado permanente de ejercicios, así como búsquedas por grupo
+// muscular, dificultad y nombre para el catálogo de GymProFit.
+// ============================================================
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")

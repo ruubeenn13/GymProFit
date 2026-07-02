@@ -29,10 +29,17 @@ import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
+// ============================================================
+// BaseActivity — clase base para todas las Activities de GymProFit
+// Centraliza tema claro/oscuro, idioma, menú de opciones (tema/idioma/
+// contacto/cerrar sesión) y el logout automático ante 401 no autorizado.
+// ============================================================
 public abstract class BaseActivity extends AppCompatActivity {
 
     protected PreferencesManager prefsManager;
 
+    // Aplica tema e idioma guardados antes de crear la vista y registra el listener de 401
+    // que fuerza logout y redirige a LoginActivity cuando el token expira o es inválido.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         prefsManager = new PreferencesManager(this);
@@ -61,11 +68,13 @@ public abstract class BaseActivity extends AppCompatActivity {
         return true;
     }
 
+    // Vincula el botón de menú de opciones (si existe en el layout) al menú anclado con las opciones comunes
     protected void setupMenuButton() {
         View btn = findViewById(R.id.btnMenuOpciones);
         if (btn != null) btn.setOnClickListener(this::mostrarMenuOpciones);
     }
 
+    // Construye y muestra el menú anclado con las opciones: tema, idioma, contacto y cerrar sesión
     private void mostrarMenuOpciones(View anchor) {
         List<UIHelper.MenuAction> actions = new ArrayList<>();
         actions.add(new UIHelper.MenuAction(R.drawable.ic_palette,  getString(R.string.perfil_tema),         this::mostrarDialogoTema));
@@ -75,6 +84,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         UIHelper.mostrarMenuAnclado(this, anchor, null, actions);
     }
 
+    // Muestra un diálogo custom para elegir tema claro/oscuro; guarda la preferencia y recrea la activity
     private void mostrarDialogoTema() {
         Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -122,6 +132,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    // Muestra un diálogo custom para elegir idioma español/inglés; guarda la preferencia y recrea la activity
     private void mostrarDialogoIdioma() {
         Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -169,6 +180,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    // Abre un cliente de correo con destinatario, asunto y cuerpo predefinidos para contactar con soporte
     private void abrirEmailContacto() {
         Intent intent = new Intent(Intent.ACTION_SENDTO);
         intent.setData(Uri.parse("mailto:"));
@@ -178,6 +190,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         startActivity(Intent.createChooser(intent, getString(R.string.menu_contactanos)));
     }
 
+    // Muestra un diálogo de confirmación y, al aceptar, limpia token/sesión y redirige a LoginActivity
     private void confirmarCerrarSesion() {
         UIHelper.mostrarDialogoConIcono(
                 this,
@@ -194,6 +207,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 });
     }
 
+    // Aplica el idioma guardado en preferencias a la configuración de recursos antes de renderizar
     private void aplicarIdioma() {
         String lang = prefsManager.getLanguage();
         if (!lang.isEmpty()) {

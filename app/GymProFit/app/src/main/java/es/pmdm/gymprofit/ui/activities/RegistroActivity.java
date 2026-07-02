@@ -21,11 +21,19 @@ import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
+// ============================================================
+// RegistroActivity — Pantalla de registro de un nuevo usuario.
+// Valida los campos del formulario, crea la cuenta en la API, hace login
+// automático con las credenciales introducidas y encadena hasta el onboarding
+// (o al login si algún paso intermedio falla).
+// ============================================================
 public class RegistroActivity extends AppCompatActivity {
 
     private TextInputEditText etRegUsername, etRegEmail, etRegPassword, etRegConfirmarPassword;
     private PreferencesManager prefsManager;
 
+    // Inicializa la pantalla: aplica tema/idioma, monta vistas y configura
+    // los listeners de los botones.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +48,7 @@ public class RegistroActivity extends AppCompatActivity {
         configurarEventos();
     }
 
+    // Enlaza los campos del formulario de registro con sus vistas del layout.
     private void inicializarVistas() {
         etRegUsername = findViewById(R.id.etRegUsername);
         etRegEmail = findViewById(R.id.etRegEmail);
@@ -47,6 +56,8 @@ public class RegistroActivity extends AppCompatActivity {
         etRegConfirmarPassword = findViewById(R.id.etRegConfirmarPassword);
     }
 
+    // Configura los botones: volver al login y crear cuenta (con validación
+    // previa de los campos).
     private void configurarEventos() {
         findViewById(R.id.btnVolverLogin).setOnClickListener(v -> finish());
         findViewById(R.id.tvYaTengoCuenta).setOnClickListener(v -> finish());
@@ -56,6 +67,8 @@ public class RegistroActivity extends AppCompatActivity {
         });
     }
 
+    // Valida que los campos no estén vacíos, que el email tenga formato
+    // válido, que la contraseña tenga longitud mínima y que ambas coincidan.
     private boolean validarCampos() {
         String username = etRegUsername.getText().toString().trim();
         String email = etRegEmail.getText().toString().trim();
@@ -84,6 +97,8 @@ public class RegistroActivity extends AppCompatActivity {
         return true;
     }
 
+    // Llama a la API para crear la cuenta; si tiene éxito, encadena el login
+    // automático con las mismas credenciales.
     private void registrar() {
         String username = etRegUsername.getText().toString().trim();
         String email    = etRegEmail.getText().toString().trim();
@@ -103,6 +118,8 @@ public class RegistroActivity extends AppCompatActivity {
         });
     }
 
+    // Hace login con las credenciales recién registradas, guarda el token y
+    // el username en preferencias y continúa obteniendo los datos del usuario.
     private void hacerLoginAutomatico(String username, String password) {
         API.login(username, password, new UtilREST.OnResponseListener() {
             @Override
@@ -128,6 +145,8 @@ public class RegistroActivity extends AppCompatActivity {
         });
     }
 
+    // Recupera el usuario recién creado por username para guardar su id y rol
+    // en preferencias, y a continuación navega al onboarding.
     private void obtenerUsuario(String username) {
         API.getUsuarioPorUsername(username, new UtilREST.OnResponseListener() {
             @Override
@@ -149,6 +168,8 @@ public class RegistroActivity extends AppCompatActivity {
         });
     }
 
+    // Navega al primer paso del onboarding, pasando username y email,
+    // limpiando el back stack.
     private void irAlOnboarding() {
         Intent intent = new Intent(this, Onboarding1Activity.class);
         intent.putExtra("username", prefsManager.getUsername());
@@ -158,12 +179,16 @@ public class RegistroActivity extends AppCompatActivity {
         finish();
     }
 
+    // Navega a la pantalla de login limpiando el back stack (usado como
+    // fallback si el login automático o la obtención del usuario fallan).
     private void irAlLogin() {
         startActivity(new Intent(this, LoginActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         finish();
     }
 
+    // Aplica el idioma guardado en preferencias a la configuración de recursos
+    // de la Activity antes de inflar el layout.
     private void aplicarIdioma() {
         String lang = prefsManager.getLanguage();
         if (!lang.isEmpty()) {

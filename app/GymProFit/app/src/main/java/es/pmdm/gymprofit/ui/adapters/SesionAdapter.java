@@ -16,12 +16,19 @@ import java.util.Map;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
 
+// ============================================================
+// SesionAdapter — adaptador RecyclerView para el listado de sesiones de entrenamiento.
+// Muestra fecha, rutina asociada, duración y calorías quemadas de cada sesión.
+// Notifica clicks de eliminación y de selección de item mediante listeners.
+// ============================================================
 public class SesionAdapter extends RecyclerView.Adapter<SesionAdapter.ViewHolder> {
 
+    // Callback invocado al pulsar el icono de eliminar una sesión.
     public interface OnDeleteListener {
         void onDelete(SesionEntrenamiento sesion);
     }
 
+    // Callback invocado al pulsar sobre el item completo de la sesión.
     public interface OnClickListener {
         void onClick(SesionEntrenamiento sesion);
     }
@@ -32,6 +39,8 @@ public class SesionAdapter extends RecyclerView.Adapter<SesionAdapter.ViewHolder
     private final OnClickListener clickListener;
     private final Context context;
 
+    // Constructor: recibe la lista de sesiones, el mapa de nombres de rutina (id -> nombre)
+    // y los listeners de eliminación/click.
     public SesionAdapter(Context context, List<SesionEntrenamiento> items,
                          Map<Integer, String> rutinaNombres,
                          OnDeleteListener deleteListener,
@@ -43,6 +52,7 @@ public class SesionAdapter extends RecyclerView.Adapter<SesionAdapter.ViewHolder
         this.clickListener = clickListener;
     }
 
+    // Infla el layout item_sesion y crea el ViewHolder correspondiente.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -51,6 +61,7 @@ public class SesionAdapter extends RecyclerView.Adapter<SesionAdapter.ViewHolder
         return new ViewHolder(view);
     }
 
+    // Vincula los datos de la sesión en la posición dada con las vistas del item.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder h, int position) {
         SesionEntrenamiento s = items.get(position);
@@ -73,6 +84,7 @@ public class SesionAdapter extends RecyclerView.Adapter<SesionAdapter.ViewHolder
     @Override
     public int getItemCount() { return items.size(); }
 
+    // Contiene las referencias a las vistas de un item de sesión.
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvFecha, tvRutina, tvDuracion, tvCalorias;
         ImageView btnEliminar;

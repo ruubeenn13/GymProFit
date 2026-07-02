@@ -24,6 +24,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// ============================================================
+// MedicionCorporalController — controlador REST de mediciones corporales
+// Gestiona el CRUD de mediciones (peso, altura, IMC, etc.) que los usuarios
+// registran para hacer seguimiento de su evolución física, con consultas
+// por usuario, rango de fechas y últimas mediciones.
+// ============================================================
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")
@@ -33,6 +39,7 @@ public class MedicionCorporalController {
 
     private final IMedicionCorporalService medicionCorporalService;
 
+    // Devuelve todas las mediciones corporales registradas
     @Operation(summary = "Obtiene todas las mediciones corporales")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de mediciones corporales",
@@ -56,6 +63,7 @@ public class MedicionCorporalController {
             @ApiResponse(responseCode = "404", description = "Medición corporal no encontrada",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Busca una medición corporal por su ID
     @GetMapping("/mediciones-corporales/{id}")
     public ResponseEntity<MedicionCorporalDTO> obtenerMedicionCorporal(@PathVariable Integer id) {
         MedicionCorporalDTO medicionCorporalDTO = medicionCorporalService.findById(id);
@@ -72,12 +80,14 @@ public class MedicionCorporalController {
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Crea una medición corporal nueva (el servicio calcula el IMC si hay peso y altura)
     @PostMapping("/mediciones-corporales")
     public ResponseEntity<MedicionCorporalDTO> guardarMedicionCorporal(@Valid @RequestBody MedicionCorporalCreateDTO medicionCorporalCreateDTO) {
         MedicionCorporalDTO medicionCorporalDTO = medicionCorporalService.save(medicionCorporalCreateDTO);
 
         return ResponseEntity.ok(medicionCorporalDTO);
     }
+    // Actualiza completamente una medición corporal existente
     @Operation(summary = "Modifica una medición corporal existente")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Medición corporal modificada correctamente"),
@@ -97,6 +107,7 @@ public class MedicionCorporalController {
             @ApiResponse(responseCode = "404", description = "Medición corporal no encontrada",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Elimina una medición corporal por ID
     @DeleteMapping("/mediciones-corporales/{id}")
     public ResponseEntity<Map<String, Object>> borrarMedicionCorporal(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -122,6 +133,7 @@ public class MedicionCorporalController {
             @ApiResponse(responseCode = "404", description = "No se encontraron mediciones para este usuario",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista todas las mediciones corporales de un usuario
     @GetMapping("/mediciones-corporales/usuario/{usuarioId}")
     public ResponseEntity<List<MedicionCorporalDTO>> obtenerMedicionPorUsuario(@PathVariable Integer usuarioId) {
         List<MedicionCorporalDTO> medicionesCorporales = medicionCorporalService.findByUsuarioId(usuarioId);
@@ -140,6 +152,7 @@ public class MedicionCorporalController {
             @ApiResponse(responseCode = "404", description = "No se encontraron mediciones para este usuario",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista las mediciones de un usuario ordenadas de más reciente a más antigua
     @GetMapping("/mediciones-corporales/usuario/{usuarioId}/ordenadas")
     public ResponseEntity<List<MedicionCorporalDTO>> obtenerMedicionPorUsuarioOrdenadas(@PathVariable Integer usuarioId) {
         List<MedicionCorporalDTO> medicionesCorporales = medicionCorporalService.findByUsuarioIdOrdenadas(usuarioId);
@@ -158,6 +171,7 @@ public class MedicionCorporalController {
             @ApiResponse(responseCode = "404", description = "No se encontraron mediciones en ese rango de fechas",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Filtra las mediciones de un usuario dentro de un rango de fechas
     @GetMapping("/mediciones-corporales/usuario/{usuarioId}/rango")
     public ResponseEntity<List<MedicionCorporalDTO>> obtenerMedicionesPorUsuarioYFecha(@PathVariable Integer usuarioId,
                                                                                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)LocalDateTime inicio,
@@ -178,6 +192,7 @@ public class MedicionCorporalController {
             @ApiResponse(responseCode = "404", description = "No se encontraron mediciones para este usuario",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Obtiene las mediciones más recientes de un usuario
     @GetMapping("/mediciones-corporales/usuario/{usuarioId}/ultimas")
     public ResponseEntity<List<MedicionCorporalDTO>> obtenerUltimasMediciones (@PathVariable Integer usuarioId) {
         List<MedicionCorporalDTO> medicionesCorporales = medicionCorporalService.getUltimasMediciones(usuarioId);
@@ -196,6 +211,7 @@ public class MedicionCorporalController {
             @ApiResponse(responseCode = "404", description = "Medición corporal no encontrada",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Actualiza parcialmente campos de una medición corporal (PATCH)
     @PatchMapping("/mediciones-corporales/{id}")
     public ResponseEntity<MedicionCorporalDTO> patchMedicionCorporal(@PathVariable Integer id, @RequestBody MedicionCorporalPatchDTO patchDTO) {
         return ResponseEntity.ok(medicionCorporalService.patch(id, patchDTO));

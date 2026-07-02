@@ -6,8 +6,15 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import androidx.appcompat.app.AppCompatDelegate;
 
+// ============================================================
+// PreferencesManager — encapsula el acceso a SharedPreferences de la app.
+// Centraliza persistencia de tema, idioma, sesión (token/usuario), datos de
+// onboarding (nivel, objetivo, sexo, actividad), resultados nutricionales y
+// datos físicos del usuario, evitando el acceso directo desde las Activities.
+// ============================================================
 public class PreferencesManager {
 
+    // Nombre del archivo de SharedPreferences y claves usadas para cada dato guardado.
     private static final String PREF_NAME = "GymProFitPrefs";
     private static final String KEY_THEME = "theme_mode";
     private static final String KEY_LANGUAGE = "app_language";
@@ -32,6 +39,7 @@ public class PreferencesManager {
     private SharedPreferences prefs;
     private SharedPreferences.Editor editor;
 
+    // Constructor: abre el archivo de preferencias y prepara el editor reutilizable.
     public PreferencesManager(Context context) {
         prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         editor = prefs.edit();
@@ -48,6 +56,8 @@ public class PreferencesManager {
     public String getToken() { return prefs.getString(KEY_TOKEN, null); }
     public Boolean haySesion() { String t = getToken(); return t != null && !t.isEmpty(); }
 
+    // Borra los datos de sesión (token, id y username) pero conserva las preferencias
+    // de onboarding, tema e idioma.
     public void cerrarSesion() {
         editor.remove(KEY_TOKEN);
         editor.remove(KEY_USUARIO_ID);
@@ -73,6 +83,7 @@ public class PreferencesManager {
     public void saveActividad(String actividad) { editor.putString(KEY_ACTIVIDAD, actividad); editor.apply(); }
     public String getActividad() { return prefs.getString(KEY_ACTIVIDAD, "MODERADO"); }
 
+    // Guarda de una sola vez el resultado nutricional calculado en el onboarding.
     public void saveResultadoNutricional(int calorias, int proteinas, int carbos, int grasas, double agua) {
         editor.putInt(KEY_CALORIAS, calorias);
         editor.putInt(KEY_PROTEINAS, proteinas);
@@ -91,10 +102,12 @@ public class PreferencesManager {
     public void setOnboardingCompletado(boolean v) { editor.putBoolean(KEY_ONBOARDING, v); editor.apply(); }
     public boolean isOnboardingCompletado() { return prefs.getBoolean(KEY_ONBOARDING, false); }
 
+    // Marca el onboarding como completado para un usuario concreto (clave dinámica por username).
     public void setOnboardingCompletadoParaUsuario(String username) {
         editor.putBoolean("onboarding_done_" + username, true);
         editor.apply();
     }
+    // Comprueba si el usuario indicado ya completó el onboarding.
     public boolean isOnboardingCompletadoParaUsuario(String username) {
         if (username == null || username.isEmpty()) return false;
         return prefs.getBoolean("onboarding_done_" + username, false);

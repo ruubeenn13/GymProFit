@@ -25,6 +25,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+// ============================================================
+// EjercicioServiceTest — tests unitarios del EjercicioService
+// Verifica el CRUD de ejercicios, activación/desactivación lógica,
+// borrado permanente y las búsquedas por grupo muscular/dificultad/nombre.
+// ============================================================
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Tests del EjercicioService")
 class EjercicioServiceTest {
@@ -42,6 +47,7 @@ class EjercicioServiceTest {
     private EjercicioDTO ejercicioDTO;
     private EjercicioCreateDTO ejercicioCreateDTO;
 
+    // Inicializa entidad y DTOs de ejercicio de prueba
     @BeforeEach
     void setup() {
         ejercicio = new Ejercicio();
@@ -63,6 +69,7 @@ class EjercicioServiceTest {
         ejercicioCreateDTO.setDescripcion("INTERMEDIO");
     }
 
+    // Comprueba que findAll mapea y devuelve todos los ejercicios del repositorio
     @Test
     @DisplayName("findAll devuelve lista de ejercicios")
     void findAll_devuelve_lista() {
@@ -76,6 +83,7 @@ class EjercicioServiceTest {
         verify(ejercicioRepository).findAll();
     }
 
+    // Comprueba que findById devuelve el DTO correspondiente cuando el ejercicio existe
     @Test
     @DisplayName("findById con id existente devuelve EjercicioDTO")
     void findById_existente_devuelve_dto() {
@@ -89,6 +97,7 @@ class EjercicioServiceTest {
         assertEquals("Press de Banca", result.getNombre());
     }
 
+    // Comprueba que findById lanza NotFoundEntityException si el ejercicio no existe
     @Test
     @DisplayName("findById don id inexistente lanza NotFoundEntityException")
     void findById_inexistente_lanza_excepcion() {
@@ -97,6 +106,7 @@ class EjercicioServiceTest {
         assertThrows(NotFoundEntityException.class, () -> ejercicioService.findById(99));
     }
 
+    // Comprueba que save persiste el ejercicio marcándolo como activo
     @Test
     @DisplayName("save correcto guarda el ejercicio con activo=true")
     void save_correcto_guarda_ejercicio() {
@@ -111,6 +121,7 @@ class EjercicioServiceTest {
         verify(ejercicioRepository).save(any());
     }
 
+    // Comprueba que deleteById realiza un borrado lógico (desactiva el ejercicio)
     @Test
     @DisplayName("deleteById desactiva el ejercicio correctamente")
     void deleteById_desactiva_ejercicio() {
@@ -122,6 +133,7 @@ class EjercicioServiceTest {
         verify(ejercicioRepository).save(ejercicio);
     }
 
+    // Comprueba que deleteById lanza NotFoundEntityException si el ejercicio no existe
     @Test
     @DisplayName("deleteById con id inexistente lanza NotFoundEntityException")
     void deleteById_inexistente_lanza_excepcion() {
@@ -130,6 +142,7 @@ class EjercicioServiceTest {
         assertThrows(NotFoundEntityException.class, () -> ejercicioService.deleteById(99));
     }
 
+    // Comprueba que activateById reactiva un ejercicio previamente desactivado
     @Test
     @DisplayName("activateById activa el ejercicio correctamente")
     void activateById_activa_ejercicio() {
@@ -142,6 +155,7 @@ class EjercicioServiceTest {
         verify(ejercicioRepository).save(ejercicio);
     }
 
+    // Comprueba que permanentDeleteById borra el ejercicio de forma física (no lógica)
     @Test
     @DisplayName("permanentDeleteById elimina el ejercicio permanentemente")
     void permanentDeleteById_elimina_ejercicio() {
@@ -152,6 +166,7 @@ class EjercicioServiceTest {
         verify(ejercicioRepository).delete(ejercicio);
     }
 
+    // Comprueba que se pueden filtrar ejercicios por grupo muscular
     @Test
     @DisplayName("findByGrupoMuscular devuelve ejercicios del grupo indicado")
     void findByGrupoMuscular_devuelve_lista() {
@@ -164,6 +179,7 @@ class EjercicioServiceTest {
         assertEquals(1, result.size());
     }
 
+    // Comprueba que se pueden filtrar ejercicios por nivel de dificultad
     @Test
     @DisplayName("findByDificultad devuelve ejercicios de la dificultad indicada")
     void findByDificultad_devuelve_lista() {
@@ -176,6 +192,7 @@ class EjercicioServiceTest {
         assertEquals(1, result.size());
     }
 
+    // Comprueba que se pueden buscar ejercicios por coincidencia parcial en el nombre
     @Test
     @DisplayName("findByNombre devuelve ejercicios que contienen el nombre")
     void findByNombre_devuelve_lista() {
@@ -188,6 +205,7 @@ class EjercicioServiceTest {
         assertEquals(1, result.size());
     }
 
+    // Comprueba que findActivos devuelve únicamente los ejercicios con activo=true
     @Test
     @DisplayName("findActivos devuelve solo ejercicios activos")
     void findActivos_devuelve_activos() {

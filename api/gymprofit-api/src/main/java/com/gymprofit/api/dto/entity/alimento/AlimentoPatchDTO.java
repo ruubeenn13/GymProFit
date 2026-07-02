@@ -7,6 +7,11 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+// ============================================================
+// AlimentoPatchDTO — datos de entrada para actualización parcial de un alimento
+// Todos los campos son opcionales (PATCH): solo se modifican los que
+// llegan informados en la petición, dejando el resto sin cambios.
+// ============================================================
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

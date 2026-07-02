@@ -22,6 +22,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// ============================================================
+// AlimentoComidaController — CRUD de la relación N:M alimento-comida
+// Gestiona la asociación entre alimentos y comidas (cantidad, macros
+// asociados), incluyendo consultas por comida/alimento, conteos,
+// verificación de existencia y borrado en cascada de una comida.
+// ============================================================
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")

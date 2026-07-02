@@ -455,6 +455,13 @@ Abre `app/GymProFit` en Android Studio, sincroniza Gradle y ejecuta en emulador 
 
 ## 📝 Changelog
 
+### 2026-07-02
+
+| Hash | Descripción |
+|---|---|
+| *(pendiente)* | docs(comentarios): documentados los 280 archivos .java (API + Android) con cabecera de bloque por archivo + comentarios inline por método/campo, sin tocar código |
+| *(pendiente)* | fix(security): auditoría Fase 1 — cierre de escalada ADMIN (C1) e IDOR sistémico (C2) vía SecurityUtils, no fuga de causa en errores, 401 en credenciales, null-check en UsuarioService.patch |
+
 ### 2026-05-28
 
 | Hash | Descripción |

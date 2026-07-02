@@ -20,6 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+// ============================================================
+// AlimentoService — lógica de negocio de los alimentos del sistema
+// Implementa el CRUD y las búsquedas/filtros de los alimentos usados en el
+// módulo de nutrición de GymProFit (creación, baja lógica, activación,
+// borrado permanente, patch parcial y consultas por nombre/categoría/calorías).
+// ============================================================
 @Service
 @AllArgsConstructor
 public class AlimentoService implements IAlimentoService {
@@ -29,6 +35,7 @@ public class AlimentoService implements IAlimentoService {
     private final IUsuarioRepository usuarioRepository;
     private final Logger logger = LoggerFactory.getLogger(AlimentoService.class);
 
+    // Devuelve todos los alimentos existentes (activos e inactivos).
     @Override
     public List<AlimentoDTO> findAll() {
         logger.info("Buscando todos los alimentos");
@@ -38,6 +45,7 @@ public class AlimentoService implements IAlimentoService {
         return alimentoMapper.toDTOList(alimentos);
     }
 
+    // Busca un alimento por id o lanza NotFoundEntityException si no existe.
     @Override
     public AlimentoDTO findById(Integer id) {
         logger.info("Buscando alimento por id: {}", id);
@@ -48,6 +56,8 @@ public class AlimentoService implements IAlimentoService {
         return alimentoMapper.toDTO(alimento);
     }
 
+    // Crea un alimento nuevo, activo por defecto; si trae usuarioId lo asocia
+    // al usuario creador (alimento personalizado, no global).
     @Override
     public AlimentoDTO save(AlimentoCreateDTO alimentoCreateDTO) {
         logger.info("Creando nuevo alimento: {}", alimentoCreateDTO.getNombre());
@@ -70,6 +80,7 @@ public class AlimentoService implements IAlimentoService {
         }
     }
 
+    // Baja lógica: desactiva el alimento (activo = false) sin borrarlo de la BD.
     @Transactional
     @Override
     public void deleteById(Integer id) {
@@ -88,6 +99,7 @@ public class AlimentoService implements IAlimentoService {
         }
     }
 
+    // Reactiva un alimento previamente desactivado.
     @Transactional
     @Override
     public void activateById(Integer id) {
@@ -106,6 +118,7 @@ public class AlimentoService implements IAlimentoService {
         }
     }
 
+    // Borrado físico definitivo del alimento en la base de datos.
     @Transactional
     @Override
     public void permanentDeleteById(Integer id) {
@@ -123,6 +136,7 @@ public class AlimentoService implements IAlimentoService {
         }
     }
 
+    // Sustituye todos los campos editables del alimento por los del DTO recibido.
     @Override
     public AlimentoDTO modify(AlimentoDTO alimentoDTO) {
         logger.info("Modificando alimento con id: {}", alimentoDTO.getId());
@@ -149,6 +163,7 @@ public class AlimentoService implements IAlimentoService {
         }
     }
 
+    // Búsqueda de alimentos cuyo nombre contiene el texto dado.
     @Override
     public List<AlimentoDTO> findByNombre(String nombre) {
         logger.info("Buscando alimentos por nombre: {}", nombre);
@@ -158,6 +173,7 @@ public class AlimentoService implements IAlimentoService {
         return alimentoMapper.toDTOList(alimentos);
     }
 
+    // Alimentos filtrados por categoría exacta.
     @Override
     public List<AlimentoDTO> findByCategoria(String categoria) {
         logger.info("Buscando alimentos por categoria: {}", categoria);
@@ -167,6 +183,7 @@ public class AlimentoService implements IAlimentoService {
         return alimentoMapper.toDTOList(alimentos);
     }
 
+    // Devuelve únicamente los alimentos activos.
     @Override
     public List<AlimentoDTO> findActivos() {
         logger.info("Buscando alimentos activos");
@@ -176,6 +193,7 @@ public class AlimentoService implements IAlimentoService {
         return alimentoMapper.toDTOList(alimentos);
     }
 
+    // Alimentos cuyas calorías están dentro del rango [min, max].
     @Override
     public List<AlimentoDTO> findByCaloriasBetween(Integer min, Integer max) {
         logger.info("Buscando alimentos con calorias entre {} y {}", min, max);
@@ -185,6 +203,7 @@ public class AlimentoService implements IAlimentoService {
         return alimentoMapper.toDTOList(alimentos);
     }
 
+    // Número total de alimentos activos.
     @Override
     public Long countActivos() {
         logger.info("Contando alimentos activos");
@@ -192,6 +211,7 @@ public class AlimentoService implements IAlimentoService {
         return alimentoRepository.countByActivoTrue();
     }
 
+    // Número de alimentos que pertenecen a una categoría.
     @Override
     public Long countByCategoria(String categoria) {
         logger.info("Contando alimmentos por categoría: {}", categoria);
@@ -199,6 +219,7 @@ public class AlimentoService implements IAlimentoService {
         return alimentoRepository.countByCategoria(categoria);
     }
 
+    // Alimentos personalizados creados por un usuario concreto.
     @Override
     public List<AlimentoDTO> findByUsuarioId(Integer usuarioId) {
         logger.info("Buscando alimentos del usuario con id: {}", usuarioId);
@@ -208,6 +229,7 @@ public class AlimentoService implements IAlimentoService {
         return alimentoMapper.toDTOList(alimentos);
     }
 
+    // Actualización parcial: solo modifica los campos no nulos del patchDTO.
     @Transactional
     @Override
     public AlimentoDTO patch(Integer id, AlimentoPatchDTO patchDTO) {

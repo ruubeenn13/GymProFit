@@ -6,6 +6,12 @@ import com.gymprofit.api.dto.entity.objetivopersonal.ObjetivoPersonalUpdateDTO;
 
 import java.util.List;
 
+// ============================================================
+// IObjetivoPersonalService — contrato del servicio de objetivos personales
+// Define las operaciones CRUD y de consulta sobre los objetivos que los
+// usuarios se marcan (peso, repeticiones, etc.), incluyendo completado
+// y contadores de progreso.
+// ============================================================
 public interface IObjetivoPersonalService {
 
     List<ObjetivoPersonalDTO> findAll();
@@ -22,6 +28,7 @@ public interface IObjetivoPersonalService {
     List<ObjetivoPersonalDTO> findCompletadosByUsuarioId(Integer usuarioId);
     List<ObjetivoPersonalDTO> findByTipoObjetivo(String tipoObjetivo);
 
+    // Marca un objetivo como completado y dispara la evaluación de logros del usuario.
     ObjetivoPersonalDTO completar(Integer id);
 
     Long countByUsuarioId(Integer usuarioId);

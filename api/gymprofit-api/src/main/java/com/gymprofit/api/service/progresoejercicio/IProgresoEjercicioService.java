@@ -6,6 +6,11 @@ import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioPatchDTO;
 
 import java.util.List;
 
+// ============================================================
+// IProgresoEjercicioService — contrato del servicio de progreso en ejercicios
+// Define las operaciones para registrar y consultar el mejor peso,
+// repeticiones o tiempo alcanzado por un usuario en cada ejercicio.
+// ============================================================
 public interface IProgresoEjercicioService {
 
     List<ProgresoEjercicioDTO> findAll();

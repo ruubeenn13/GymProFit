@@ -1,5 +1,10 @@
 package com.gymprofit.api.enums;
 
+// ============================================================
+// TipoObjetivo — tipos de objetivos personales que puede fijarse un usuario.
+// Clasifica la finalidad de un ObjetivoPersonal (perder peso, ganar
+// masa muscular, mejorar resistencia, etc.) dentro de GymProFit.
+// ============================================================
 public enum TipoObjetivo {
     PERDER_PESO,
     GANAR_MASA_MUSCULAR,
@@ -12,5 +17,6 @@ public enum TipoObjetivo {
     AUMENTAR_CALORIAS,
     MEJORAR_MOVILIDAD,
     COMPLETAR_RETO,
+    // Objetivo personalizado no cubierto por las categorías anteriores.
     OTRO
 }

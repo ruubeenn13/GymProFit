@@ -13,13 +13,21 @@ import java.util.List;
 
 import static com.gymprofit.api.jooq.Tables.EJERCICIOS;
 
+// ============================================================
+// EjercicioJooqRepository — implementación jOOQ de consultas sobre ejercicios
+// Ejecuta las consultas SQL tipadas (vía DSLContext) sobre la tabla
+// ejercicios: listados, filtros por grupo muscular/dificultad/calorías
+// y búsquedas dinámicas para catálogo de usuario y panel admin.
+// ============================================================
 @Repository
 @RequiredArgsConstructor
 public class EjercicioJooqRepository implements IEjercicioJooqRepository {
 
+    // Contexto DSL de jOOQ inyectado, punto de entrada para construir consultas SQL tipadas.
     private final DSLContext dsl;
 
 
+    // Devuelve todos los ejercicios sin filtrar.
     @Override
     public List<EjercicioJooqDTO> findAll() {
         return dsl
@@ -31,6 +39,7 @@ public class EjercicioJooqRepository implements IEjercicioJooqRepository {
         // SELECT * FROM ejercicios
     }
 
+    // Devuelve solo los ejercicios activos, ordenados por nombre.
     @Override
     public List<EjercicioJooqDTO> findActivos() {
         return dsl
@@ -43,6 +52,7 @@ public class EjercicioJooqRepository implements IEjercicioJooqRepository {
         // SELECT * FROM ejercicios WHERE activo = 1
     }
 
+    // Filtra ejercicios por grupo muscular y dificultad exactos.
     @Override
     public List<EjercicioJooqDTO> findByGrupoMuscularAndDificultad(String grupoMuscular, String dificultad) {
         return dsl
@@ -59,6 +69,7 @@ public class EjercicioJooqRepository implements IEjercicioJooqRepository {
         // WHERE grupo_muscular = 'grupoMuscular' AND dificultad = 'dificultad'
     }
 
+    // Filtra ejercicios cuyo gasto calórico está entre min y max, ordenados ascendentemente.
     @Override
     public List<EjercicioJooqDTO> findByCaloriasQuemadasBetween(Integer min, Integer max) {
         return dsl
@@ -74,6 +85,7 @@ public class EjercicioJooqRepository implements IEjercicioJooqRepository {
         // ORDER BY calorias_quemadas ASC
     }
 
+    // Búsqueda combinada con filtros opcionales (nombre, grupo muscular, dificultad, calorías máx.) para catálogo.
     @Override
     public List<EjercicioJooqDTO> busquedaAvanzada(String nombre, String grupoMuscular, String dificultad, Integer caloriasMax) {
         var conditions = new ArrayList<Condition>();
@@ -106,6 +118,7 @@ public class EjercicioJooqRepository implements IEjercicioJooqRepository {
                 .fetchInto(EjercicioJooqDTO.class);
     }
 
+    // Búsqueda combinada con filtros opcionales (incluye estado activo) para el panel admin.
     @Override
     public List<EjercicioJooqDTO> busquedaAdmin(String nombre, String grupoMuscular, String dificultad, Boolean activo) {
         var conditions = new ArrayList<Condition>();

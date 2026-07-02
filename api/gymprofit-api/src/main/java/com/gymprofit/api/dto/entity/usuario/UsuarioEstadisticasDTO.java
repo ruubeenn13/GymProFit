@@ -7,6 +7,12 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+// ============================================================
+// UsuarioEstadisticasDTO — DTO con estadísticas agregadas de un usuario
+// Agrupa métricas calculadas (sesiones, minutos, calorías, rachas, IMC...)
+// para mostrar el resumen de progreso del usuario en la app Android,
+// típicamente obtenidas mediante consultas jOOQ agregadas.
+// ============================================================
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

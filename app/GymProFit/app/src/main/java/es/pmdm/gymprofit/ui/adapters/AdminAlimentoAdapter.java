@@ -20,8 +20,14 @@ import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.alimento.Alimento;
 import es.pmdm.gymprofit.utils.UIHelper;
 
+// ============================================================
+// AdminAlimentoAdapter — adapter del listado de alimentos en el panel de administración.
+// Pinta cada alimento con su categoría, calorías y estado (activo/inactivo),
+// y expone un menú de acciones para editar o activar/desactivar el alimento.
+// ============================================================
 public class AdminAlimentoAdapter extends RecyclerView.Adapter<AdminAlimentoAdapter.ViewHolder> {
 
+    // Callback hacia la Activity/Fragment para las acciones del menú contextual.
     public interface OnAccionListener {
         void onToggleActivo(Alimento alimento, int position);
         void onEditar(Alimento alimento, int position);
@@ -43,6 +49,8 @@ public class AdminAlimentoAdapter extends RecyclerView.Adapter<AdminAlimentoAdap
         return new ViewHolder(view);
     }
 
+    // Enlaza los datos del alimento con las vistas y configura el chip de estado
+    // y el menú de acciones (editar / activar-desactivar).
     @Override
     public void onBindViewHolder(@NonNull ViewHolder h, int position) {
         Alimento a = items.get(position);
@@ -92,6 +100,7 @@ public class AdminAlimentoAdapter extends RecyclerView.Adapter<AdminAlimentoAdap
         notifyItemChanged(position);
     }
 
+    // Referencias a las vistas de cada item del listado de alimentos.
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvNombre, tvCategoria, tvCalorias;
         Chip chipEstado;

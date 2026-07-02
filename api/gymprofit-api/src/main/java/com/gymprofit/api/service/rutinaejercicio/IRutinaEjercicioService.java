@@ -5,6 +5,12 @@ import com.gymprofit.api.dto.entity.rutinaejercicio.RutinaEjercicioDTO;
 
 import java.util.List;
 
+// ============================================================
+// IRutinaEjercicioService — contrato del servicio de la relación rutina-ejercicio
+// Define las operaciones CRUD sobre los ejercicios que componen cada
+// rutina (orden, series, repeticiones), permitiendo consultarlos por
+// rutina o por ejercicio.
+// ============================================================
 public interface IRutinaEjercicioService {
 
     List<RutinaEjercicioDTO> findAll();

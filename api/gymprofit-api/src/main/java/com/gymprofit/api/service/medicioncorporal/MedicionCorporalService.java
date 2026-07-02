@@ -24,6 +24,12 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 
+// ============================================================
+// MedicionCorporalService — implementación del servicio de mediciones corporales
+// Gestiona el CRUD de mediciones corporales del usuario, calculando el IMC
+// automáticamente a partir de peso y altura, y aplicando control de propiedad
+// (checkOwnership) para que cada usuario solo vea/modifique sus propios datos.
+// ============================================================
 @Service
 @AllArgsConstructor
 public class MedicionCorporalService implements IMedicionCorporalService {
@@ -34,6 +40,7 @@ public class MedicionCorporalService implements IMedicionCorporalService {
     private final SecurityUtils securityUtils;
     private final Logger logger = LoggerFactory.getLogger(MedicionCorporalService.class);
 
+    // Devuelve todas las mediciones corporales; requiere rol ADMIN.
     @Override
     public List<MedicionCorporalDTO> findAll() {
         logger.info("Buscando todas las mediciones corporales");
@@ -45,6 +52,7 @@ public class MedicionCorporalService implements IMedicionCorporalService {
         return medicionCorporalMapper.toDTOList(lista);
     }
 
+    // Busca una medición corporal por id, comprobando que pertenece al usuario autenticado.
     @Override
     public MedicionCorporalDTO findById(Integer id) {
         logger.info("Buscando medicion corporal por id: {}", id);
@@ -57,6 +65,7 @@ public class MedicionCorporalService implements IMedicionCorporalService {
         return medicionCorporalMapper.toDTO(medicion);
     }
 
+    // Crea una nueva medición corporal; si no es admin, fuerza el usuarioId al usuario autenticado.
     @Transactional
     @Override
     public MedicionCorporalDTO save(MedicionCorporalCreateDTO createDTO) {
@@ -97,6 +106,7 @@ public class MedicionCorporalService implements IMedicionCorporalService {
         }
     }
 
+    // Actualiza todos los campos de una medición corporal, recalculando el IMC si procede.
     @Override
     public MedicionCorporalDTO modify(MedicionCorporalDTO dto) {
         logger.info("Modificando medición corporal con id: {}", dto.getId());
@@ -135,6 +145,7 @@ public class MedicionCorporalService implements IMedicionCorporalService {
         }
     }
 
+    // Elimina una medición corporal, comprobando su propiedad.
     @Transactional
     @Override
     public void deleteById(Integer id) {
@@ -155,6 +166,7 @@ public class MedicionCorporalService implements IMedicionCorporalService {
         }
     }
 
+    // Lista las mediciones corporales de un usuario, comprobando su propiedad.
     @Override
     public List<MedicionCorporalDTO> findByUsuarioId(Integer usuarioId) {
         logger.info("Buscando mediciones corporales del usuario id: {}", usuarioId);
@@ -166,6 +178,7 @@ public class MedicionCorporalService implements IMedicionCorporalService {
         return medicionCorporalMapper.toDTOList(lista);
     }
 
+    // Lista las mediciones corporales de un usuario ordenadas por fecha descendente.
     @Override
     public List<MedicionCorporalDTO> findByUsuarioIdOrdenadas(Integer usuarioId) {
         logger.info("Buscando mediciones corporales del usuario id: {} ordenadas por fecha", usuarioId);
@@ -177,6 +190,7 @@ public class MedicionCorporalService implements IMedicionCorporalService {
         return medicionCorporalMapper.toDTOList(lista);
     }
 
+    // Lista las mediciones corporales de un usuario dentro de un rango de fechas.
     @Override
     public List<MedicionCorporalDTO> findByUsuarioIdAndFechaBetween(Integer usuarioId, LocalDateTime inicio, LocalDateTime fin) {
         logger.info("Buscando mediciones corporales del usuario id: {} entre {} y {}", usuarioId, inicio, fin);
@@ -188,6 +202,7 @@ public class MedicionCorporalService implements IMedicionCorporalService {
         return medicionCorporalMapper.toDTOList(lista);
     }
 
+    // Devuelve las mediciones más recientes del usuario.
     @Override
     public List<MedicionCorporalDTO> getUltimasMediciones(Integer usuarioId) {
         logger.info("Obteniendo últimas mediciones del usuario id: {}", usuarioId);
@@ -199,6 +214,7 @@ public class MedicionCorporalService implements IMedicionCorporalService {
         return medicionCorporalMapper.toDTOList(lista);
     }
 
+    // Actualiza parcialmente una medición corporal (solo campos no nulos), recalculando el IMC si aplica.
     @Transactional
     @Override
     public MedicionCorporalDTO patch(Integer id, MedicionCorporalPatchDTO patchDTO) {

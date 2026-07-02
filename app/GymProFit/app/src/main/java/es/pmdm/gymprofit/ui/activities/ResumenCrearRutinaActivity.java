@@ -31,6 +31,12 @@ import es.pmdm.gymprofit.utils.NotificationHelper;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
+// ============================================================
+// ResumenCrearRutinaActivity — Paso final de creación de rutina: resumen y guardado.
+// Muestra los datos generales de la rutina (nombre, descripción, nivel, duración)
+// y la lista de ejercicios seleccionados con sus calorías estimadas, y al confirmar
+// crea la rutina y sus ejercicios asociados en la API.
+// ============================================================
 public class ResumenCrearRutinaActivity extends AppCompatActivity {
 
     private final List<EjercicioSeleccionado> ejercicios = new ArrayList<>();
@@ -41,6 +47,8 @@ public class ResumenCrearRutinaActivity extends AppCompatActivity {
     private String nombre, descripcion, nivel;
     private int duracion;
 
+    // Inicializa la pantalla: recupera los datos de la rutina desde el
+    // intent, monta el RecyclerView de ejercicios y configura los botones.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,11 +74,15 @@ public class ResumenCrearRutinaActivity extends AppCompatActivity {
         findViewById(R.id.btnGuardar).setOnClickListener(v -> guardarRutina());
     }
 
+    // Al pulsar atrás, devuelve la lista actual de ejercicios seleccionados
+    // a la pantalla anterior en lugar de descartarlos.
     @Override
     public void onBackPressed() {
         handleBack();
     }
 
+    // Devuelve como resultado (RESULT_CANCELED) la lista de ejercicios
+    // serializada, para no perder la selección al volver atrás.
     private void handleBack() {
         Intent result = new Intent();
         result.putExtra("ejerciciosJson", serializarEjercicios());
@@ -78,17 +90,23 @@ public class ResumenCrearRutinaActivity extends AppCompatActivity {
         finish();
     }
 
+    // Cancela por completo la creación de la rutina (resultado distinto al
+    // de "volver atrás" para descartar todo el proceso).
     private void cancelar() {
         setResult(Activity.RESULT_FIRST_USER);
         finish();
     }
 
+    // Muestra el nombre y descripción de la rutina y actualiza el texto de
+    // detalles (nivel, duración, kcal totales).
     private void poblarInfoRutina() {
         ((TextView) findViewById(R.id.tvNombreRutina)).setText(nombre);
         ((TextView) findViewById(R.id.tvDescripcionRutina)).setText(descripcion);
         actualizarDetalles();
     }
 
+    // Calcula las kcal totales de la rutina (suma de series x repeticiones x
+    // calorías de cada ejercicio) y actualiza el texto de detalles.
     private void actualizarDetalles() {
         int kcalTotal = 0;
         for (EjercicioSeleccionado sel : ejercicios)
@@ -97,6 +115,8 @@ public class ResumenCrearRutinaActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.tvDetallesRutina)).setText(detalles);
     }
 
+    // Configura el RecyclerView de ejercicios seleccionados con un adapter
+    // que permite eliminar un ejercicio previa confirmación por diálogo.
     private void configurarRecycler() {
         tvEjerciciosTitulo = findViewById(R.id.tvEjerciciosTitulo);
         RecyclerView rv = findViewById(R.id.rvEjercicios);
@@ -117,6 +137,8 @@ public class ResumenCrearRutinaActivity extends AppCompatActivity {
         rv.setAdapter(adapter);
     }
 
+    // Deserializa la lista de ejercicios recibida por intent (JSON) y la
+    // carga en el RecyclerView.
     private void cargarEjerciciosDesdeExtras() {
         String json = getIntent().getStringExtra("ejerciciosJson");
         if (json == null) { actualizarTituloEjercicios(); return; }
@@ -135,11 +157,14 @@ public class ResumenCrearRutinaActivity extends AppCompatActivity {
         actualizarTituloEjercicios();
     }
 
+    // Actualiza el título con el número de ejercicios seleccionados.
     private void actualizarTituloEjercicios() {
         tvEjerciciosTitulo.setText(String.format(
                 getString(R.string.resumen_crear_rutina_ejercicios_fmt), ejercicios.size()));
     }
 
+    // Crea la rutina en la API con los datos generales; si tiene ejercicios,
+    // encadena la creación de cada relación rutina-ejercicio.
     private void guardarRutina() {
         try {
             JSONObject body = new JSONObject();
@@ -173,6 +198,8 @@ public class ResumenCrearRutinaActivity extends AppCompatActivity {
         }
     }
 
+    // Añade cada ejercicio seleccionado a la rutina creada, respetando su
+    // orden, y finaliza cuando todas las llamadas a la API han terminado.
     private void addEjercicios(int rutinaId) {
         List<EjercicioSeleccionado> copia = new ArrayList<>(ejercicios);
         AtomicInteger pendientes = new AtomicInteger(copia.size());
@@ -200,6 +227,8 @@ public class ResumenCrearRutinaActivity extends AppCompatActivity {
         }
     }
 
+    // Notifica la creación de la rutina, muestra confirmación al usuario y
+    // cierra la pantalla devolviendo RESULT_OK.
     private void finalizar() {
         NotificationHelper.notificarRutinaCreada(this, nombre);
         UIHelper.mostrarToastExito(this, getString(R.string.rutinas_guardada_exito));
@@ -207,6 +236,8 @@ public class ResumenCrearRutinaActivity extends AppCompatActivity {
         finish();
     }
 
+    // Serializa la lista de ejercicios seleccionados a JSON para poder
+    // devolverla como resultado al volver atrás.
     private String serializarEjercicios() {
         JSONArray arr = new JSONArray();
         try {
@@ -223,6 +254,8 @@ public class ResumenCrearRutinaActivity extends AppCompatActivity {
         return arr.toString();
     }
 
+    // Aplica el idioma guardado en preferencias a la configuración de recursos
+    // de la Activity antes de inflar el layout.
     private void aplicarIdioma() {
         String lang = prefsManager.getLanguage();
         if (!lang.isEmpty()) {

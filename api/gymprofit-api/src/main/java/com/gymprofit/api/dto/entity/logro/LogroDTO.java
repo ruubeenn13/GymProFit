@@ -7,6 +7,11 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+// ============================================================
+// LogroDTO — DTO de salida con la información completa de un logro
+// Representa un logro tal como se devuelve al cliente, incluyendo
+// su identificador y tipo (enum TipoLogro).
+// ============================================================
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

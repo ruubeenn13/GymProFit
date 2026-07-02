@@ -36,20 +36,31 @@ import es.pmdm.gymprofit.ui.adapters.AlimentoAdapter;
 import es.pmdm.gymprofit.utils.UIHelper;
 
 
+// ============================================================
+// AnadirAlimentoActivity — buscador y selector de alimentos para una comida
+// Permite listar/filtrar alimentos, crear uno nuevo, editar/eliminar los
+// propios (o desactivar predefinidos si es admin) y añadirlos con gramos.
+// ============================================================
 /**
  * Permite al usuario buscar un alimento y añadirlo a una comida del día.
  * Long-press sobre alimento propio muestra menú para editar o eliminar.
  */
 public class AnadirAlimentoActivity extends BaseActivity {
 
+    // Tipo de comida al que se añadirá el alimento (DESAYUNO, ALMUERZO, ...)
     private String tipoComida;
+    // Id de la comida existente, o -1 si aún no se ha creado
     private int comidaId;
+    // Fecha (YYYY-MM-DD) de la comida
     private String fecha;
 
+    // Lista completa de alimentos cargados desde la API
     private final List<Alimento> listaAlimentosFull = new ArrayList<>();
+    // Lista filtrada según el texto de búsqueda, mostrada en el RecyclerView
     private final List<Alimento> listaAlimentosFiltrada = new ArrayList<>();
     private AlimentoAdapter adapter;
 
+    // Launcher para lanzar CrearAlimentoActivity y recargar la lista si se creó uno nuevo
     private ActivityResultLauncher<Intent> crearAlimentoLauncher;
 
     @Override
@@ -116,6 +127,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
         cargarAlimentos();
     }
 
+    // Construye el menú contextual (editar/desactivar/eliminar) según el rol y si es propio o predefinido
     private void mostrarMenuContextualAlimento(Alimento alimento, View anchorView) {
         boolean esAdmin = "ROLE_ADMIN".equals(prefsManager.getRol());
         boolean esPredefinido = alimento.getUsuarioId() == null;
@@ -140,6 +152,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
         UIHelper.mostrarMenuAnclado(this, anchorView, alimento.getNombre(), actions);
     }
 
+    // Muestra un diálogo con formulario para editar nombre/macros del alimento vía PATCH
     private void mostrarDialogoEditarAlimento(Alimento alimento) {
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_editar_alimento, null);
         ((TextView) dialogView.findViewById(R.id.tvDialogTitulo)).setText(getString(R.string.alimento_editar));
@@ -189,6 +202,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
         UIHelper.mostrarDialogoFormulario(this, dialog);
     }
 
+    // Desactiva un alimento predefinido (solo admin), sin borrarlo de la BD
     private void desactivarAlimento(Alimento alimento) {
         API.adminToggleActivoAlimento(alimento.getId(), false, new UtilREST.OnResponseListener() {
             @Override
@@ -203,6 +217,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
         });
     }
 
+    // Elimina (lógicamente, desactivando) un alimento propio del usuario
     private void eliminarAlimento(Alimento alimento) {
         API.adminToggleActivoAlimento(alimento.getId(), false, new UtilREST.OnResponseListener() {
             @Override
@@ -217,6 +232,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
         });
     }
 
+    // Carga todos los alimentos activos desde la API y actualiza ambas listas (full y filtrada)
     private void cargarAlimentos() {
         API.getAlimentosActivos(new UtilREST.OnResponseListener() {
             @Override
@@ -244,6 +260,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
         });
     }
 
+    // Muestra un diálogo para introducir los gramos a añadir, con preview de macros en tiempo real
     private void mostrarDialogoGramos(Alimento alimento) {
         android.view.View dialogView = getLayoutInflater().inflate(R.layout.dialog_gramos, null);
         EditText etGramos = dialogView.findViewById(R.id.etGramos);
@@ -298,6 +315,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
                 .show();
     }
 
+    // Añade el alimento a la comida; si la comida aún no existe (comidaId == -1) la crea primero
     private void anadirAlimento(Alimento alimento, double gramos) {
         if (comidaId == -1) {
             try {
@@ -330,6 +348,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
         }
     }
 
+    // Envía la petición que asocia el alimento (con sus gramos) a la comida y cierra la pantalla al éxito
     private void postAlimentoComida(Alimento alimento, double gramos) {
         try {
             JSONObject body = new JSONObject();
@@ -357,6 +376,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
         }
     }
 
+    // Parsea el contenido de un campo a double, devolviendo 0.0 si está vacío o no es válido
     private double parseDoubleOrZero(TextInputEditText field) {
         if (field.getText() == null) return 0.0;
         String raw = field.getText().toString().trim();

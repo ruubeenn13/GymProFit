@@ -15,16 +15,24 @@ import java.util.Set;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.logro.Logro;
 
+// ============================================================
+// LogroAdapter — adapter de RecyclerView para el listado de logros del usuario.
+// Muestra todos los Logro disponibles con su icono, nombre y descripción,
+// atenuando visualmente (alpha + sin check) los que aún no están en el
+// conjunto de IDs desbloqueados por el usuario en la app de gamificación.
+// ============================================================
 public class LogroAdapter extends RecyclerView.Adapter<LogroAdapter.ViewHolder> {
 
     private final List<Logro> items;
     private final Set<Integer> desbloqueados;
 
+    // Constructor: recibe todos los logros y el conjunto de IDs desbloqueados.
     public LogroAdapter(List<Logro> items, Set<Integer> desbloqueados) {
         this.items = items;
         this.desbloqueados = desbloqueados;
     }
 
+    // Infla el layout de un ítem de logro y crea su ViewHolder.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -33,6 +41,8 @@ public class LogroAdapter extends RecyclerView.Adapter<LogroAdapter.ViewHolder> 
         return new ViewHolder(view);
     }
 
+    // Rellena icono, nombre y descripción, y aplica el estado visual
+    // (desbloqueado/bloqueado) según pertenezca o no al set de desbloqueados.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder h, int position) {
         Logro logro = items.get(position);
@@ -56,6 +66,7 @@ public class LogroAdapter extends RecyclerView.Adapter<LogroAdapter.ViewHolder> 
     @Override
     public int getItemCount() { return items.size(); }
 
+    // ViewHolder con las referencias a las vistas de cada fila de logro.
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvIcono, tvNombre, tvDesc;
         ImageView ivCheck;

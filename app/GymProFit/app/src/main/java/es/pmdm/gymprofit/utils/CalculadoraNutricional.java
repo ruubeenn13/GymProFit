@@ -3,8 +3,14 @@ package es.pmdm.gymprofit.utils;
 // MODIFICADO - Constantes de objetivo actualizadas para coincidir con el enum
 // TipoObjetivo de la API. Añadidos: REDUCIR_GRASA_CORPORAL, MEJORAR_FLEXIBILIDAD,
 // MEJORAR_VELOCIDAD, AUMENTAR_CALORIAS, MEJORAR_MOVILIDAD
+// ============================================================
+// CalculadoraNutricional — utilidad estática para calcular objetivos nutricionales diarios.
+// Aplica la fórmula de Mifflin-St Jeor para el TMB, un factor de actividad física
+// para el TDEE, y reparte las calorías en macros según el objetivo del usuario.
+// ============================================================
 public class CalculadoraNutricional {
 
+    // Niveles de actividad física soportados (deben coincidir con los usados por la API).
     public static final String ACTIVIDAD_SEDENTARIO = "SEDENTARIO";
     public static final String ACTIVIDAD_LIGERO     = "LIGERO";
     public static final String ACTIVIDAD_MODERADO   = "MODERADO";
@@ -29,6 +35,7 @@ public class CalculadoraNutricional {
         return esHombre ? base + 5 : base - 161;
     }
 
+    // Devuelve el multiplicador de actividad física para pasar de TMB a TDEE.
     private static double factorActividad(String actividad) {
         switch (actividad) {
             case ACTIVIDAD_SEDENTARIO: return 1.2;
@@ -38,6 +45,8 @@ public class CalculadoraNutricional {
         }
     }
 
+    // Calcula calorías diarias y reparto de macros (proteínas/carbos/grasas) más el
+    // agua recomendada, según los datos físicos del usuario, su actividad y su objetivo.
     public static ResultadoNutricional calcular(double pesoKg, double alturaCm, int edad, boolean esHombre, String actividad, String objetivo) {
         double tmb  = calcularTMB(pesoKg, alturaCm, edad, esHombre);
         double tdee = tmb * factorActividad(actividad);

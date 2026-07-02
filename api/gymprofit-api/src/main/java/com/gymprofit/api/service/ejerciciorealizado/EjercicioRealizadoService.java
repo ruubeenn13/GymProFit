@@ -23,6 +23,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+// ============================================================
+// EjercicioRealizadoService — implementación del registro de ejercicios realizados
+// Gestiona la persistencia de los ejercicios efectivamente ejecutados en
+// cada sesión de entrenamiento, validando la propiedad de la sesión
+// (checkOwnership) para que cada usuario solo acceda a sus propios datos.
+// ============================================================
 @Service
 @AllArgsConstructor
 public class EjercicioRealizadoService implements IEjercicioRealizadoService{
@@ -35,6 +41,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
     private final Logger logger = LoggerFactory.getLogger(EjercicioRealizadoService.class);
 
 
+    // Devuelve todos los ejercicios realizados; requiere rol ADMIN.
     @Override
     public List<EjercicioRealizadoDTO> findAll() {
         logger.info("Buscando todos los ejercicios realizados");
@@ -46,6 +53,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         return ejercicioRealizadoMapper.toDTOList(ejerciciosRealizados);
     }
 
+    // Busca un ejercicio realizado por id, comprobando que pertenece al usuario autenticado.
     @Override
     public EjercicioRealizadoDTO findById(Integer id) {
         logger.info("Buscando ejercicio realizado por id: {}", id);
@@ -58,6 +66,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         return ejercicioRealizadoMapper.toDTO(ejercicioRealizado);
     }
 
+    // Crea un ejercicio realizado, validando que la sesión y el ejercicio existen y pertenecen al usuario.
     @Transactional
     @Override
     public EjercicioRealizadoDTO save(EjercicioRealizadoCreateDTO ejercicioRealizadoCreateDTO) {
@@ -84,6 +93,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         }
     }
 
+    // Actualiza los datos de series, repeticiones, peso, tiempo y notas de un ejercicio realizado.
     @Override
     public EjercicioRealizadoDTO modify(EjercicioRealizadoDTO ejercicioRealizadoDTO) {
         logger.info("Modificando ejercicio realizado con id: {}", ejercicioRealizadoDTO.getId());
@@ -108,6 +118,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         }
     }
 
+    // Elimina un ejercicio realizado, comprobando la propiedad de la sesión asociada.
     @Transactional
     @Override
     public void deleteById(Integer id) {
@@ -127,6 +138,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         }
     }
 
+    // Lista los ejercicios realizados de una sesión, tras validar la propiedad de la sesión.
     @Override
     public List<EjercicioRealizadoDTO> findBySesionId(Integer sesionId) {
         logger.info("Buscando ejercicios realizados por sesión id: {}", sesionId);
@@ -141,6 +153,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         return ejercicioRealizadoMapper.toDTOList(ejerciciosRealizados);
     }
 
+    // Lista todos los registros de un ejercicio concreto (sin filtrar por propietario).
     @Override
     public List<EjercicioRealizadoDTO> findByEjercicioId(Integer ejercicioId) {
         logger.info("Buscando ejercicios realizados por ejercicio di: {}", ejercicioId);
@@ -150,6 +163,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         return ejercicioRealizadoMapper.toDTOList(ejerciciosRealizados);
     }
 
+    // Lista los registros de un ejercicio dentro de una sesión, comprobando la propiedad de la sesión.
     @Override
     public List<EjercicioRealizadoDTO> findBySesionIdAndEjercicioId(Integer sesionId, Integer ejercicioId) {
         logger.info("Buscando ejercicios realizados por sesión id: {} y ejercicio id: {}", sesionId, ejercicioId);
@@ -164,6 +178,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         return ejercicioRealizadoMapper.toDTOList(ejerciciosRealizados);
     }
 
+    // Cuenta los ejercicios realizados en una sesión.
     @Override
     public Long countBySesionId(Integer sesionId) {
         logger.info("Contando ejercicios realizados por sesión id: {}", sesionId);
@@ -171,6 +186,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         return ejercicioRealizadoRepository.countBySesionId(sesionId);
     }
 
+    // Cuenta cuántas veces se ha registrado un ejercicio concreto.
     @Override
     public Long countByEjercicioId(Integer ejercicioId) {
         logger.info("Contando ejercicios realizados por ejercicio id: {}", ejercicioId);
@@ -178,6 +194,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         return ejercicioRealizadoRepository.countByEjercicioId(ejercicioId);
     }
 
+    // Elimina todos los ejercicios realizados de una sesión, comprobando su propiedad.
     @Transactional
     @Override
     public void deleteBySesionId(Integer sesionId) {
@@ -197,6 +214,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         }
     }
 
+    // Elimina los registros de un ejercicio concreto dentro de una sesión, comprobando su propiedad.
     @Transactional
     @Override
     public void deleteBySesionIdAndEjercicioId(Integer sesionId, Integer ejercicioId) {
@@ -216,6 +234,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         }
     }
 
+    // Comprueba si existe un registro de ese ejercicio en esa sesión.
     @Override
     public boolean existsBySesionIdAndEjercicioId(Integer sesionId, Integer ejercicioId) {
         logger.info("Verificando si existe ejercicio realizado para sesión id: {} y ejercicio id: {}", sesionId, ejercicioId);
@@ -223,6 +242,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         return ejercicioRealizadoRepository.existsBySesionIdAndEjercicioId(sesionId, ejercicioId);
     }
 
+    // Actualiza parcialmente un ejercicio realizado (solo los campos no nulos del patch).
     @Transactional
     @Override
     public EjercicioRealizadoDTO patch(Integer id, EjercicioRealizadoPatchDTO patchDTO) {

@@ -25,6 +25,12 @@ import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.adapters.EjercicioAdapter;
 import es.pmdm.gymprofit.utils.EjercicioNavHelper;
+// ============================================================
+// EjerciciosActivity — pantalla del catálogo de ejercicios.
+// Lista los ejercicios activos con buscador por texto y filtro por
+// grupo muscular mediante chips, y navega al detalle de cada ejercicio.
+// Incluye la barra de navegación inferior de la app.
+// ============================================================
 public class EjerciciosActivity extends BaseActivity {
 
     private BottomNavigationView bottomNavigationView;
@@ -47,12 +53,14 @@ public class EjerciciosActivity extends BaseActivity {
         cargarEjercicios();
     }
 
+    // Enlaza las referencias a las vistas del layout.
     private void inicializarVistas() {
         rvEjercicios = findViewById(R.id.rvEjercicios);
         etBuscar = findViewById(R.id.etBuscar);
         chipGroupFiltros = findViewById(R.id.chipGroupFiltros);
     }
 
+    // Configura el RecyclerView del catálogo con navegación al detalle al pulsar.
     private void configurarRecyclerView() {
         adapter = new EjercicioAdapter(new ArrayList<>(),
                 e -> EjercicioNavHelper.abrir(this, e));
@@ -60,6 +68,7 @@ public class EjerciciosActivity extends BaseActivity {
         rvEjercicios.setAdapter(adapter);
     }
 
+    // Obtiene de la API la lista de ejercicios activos y la carga en el adapter.
     private void cargarEjercicios() {
         API.getEjerciciosActivos(new UtilREST.OnResponseListener() {
             @Override
@@ -79,6 +88,7 @@ public class EjerciciosActivity extends BaseActivity {
         });
     }
 
+    // Filtra la lista del adapter en tiempo real según el texto de búsqueda.
     private void configurarBuscador() {
         etBuscar.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -91,6 +101,7 @@ public class EjerciciosActivity extends BaseActivity {
         });
     }
 
+    // Filtra la lista del adapter según el chip de grupo muscular seleccionado.
     private void configurarChips() {
         chipGroupFiltros.setOnCheckedStateChangeListener((group, checkedIds) -> {
             if (checkedIds.isEmpty()) return;
@@ -111,6 +122,8 @@ public class EjerciciosActivity extends BaseActivity {
         });
     }
 
+    // Configura la barra de navegación inferior para moverse entre las
+    // secciones principales de la app sin animación de transición.
     private void configurarNavegacion() {
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setSelectedItemId(R.id.nav_ejercicios);

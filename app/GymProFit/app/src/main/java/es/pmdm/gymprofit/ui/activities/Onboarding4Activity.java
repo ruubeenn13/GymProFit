@@ -23,6 +23,12 @@ import es.pmdm.gymprofit.utils.CalculadoraNutricional;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
+// ============================================================
+// Onboarding4Activity — Paso 4 del onboarding: selección del objetivo del usuario.
+// Muestra tarjetas seleccionables con los distintos objetivos disponibles (perder
+// peso, ganar músculo, mejorar resistencia, etc.) y pasa el valor elegido al
+// siguiente paso del onboarding (Onboarding5Activity) junto con los datos previos.
+// ============================================================
 public class Onboarding4Activity extends AppCompatActivity {
 
     // Objetivo seleccionado - valor exacto del enum TipoObjetivo de la API
@@ -43,6 +49,8 @@ public class Onboarding4Activity extends AppCompatActivity {
     private int colorBordeNormal;
     private int colorBordeSeleccionado;
 
+    // Inicializa la pantalla: aplica tema/idioma, resuelve colores, monta vistas y
+    // configura los listeners de navegación (siguiente, anterior y saltar).
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +88,8 @@ public class Onboarding4Activity extends AppCompatActivity {
         findViewById(R.id.tvSaltar4).setOnClickListener(v -> saltarAlHome());
     }
 
+    // Enlaza las cards y los iconos de check con sus vistas del layout y arma los
+    // arrays auxiliares usados para limpiar la selección al elegir un nuevo objetivo.
     private void inicializarVistas() {
         cardPerderPeso = findViewById(R.id.cardPerderPeso);
         cardGanarMusculo = findViewById(R.id.cardGanarMusculo);
@@ -114,6 +124,8 @@ public class Onboarding4Activity extends AppCompatActivity {
         };
     }
 
+    // Resuelve del tema actual los colores de borde normal y de borde seleccionado
+    // para las cards de objetivos.
     private void resolverColores() {
         TypedValue typedValue = new TypedValue();
 
@@ -130,6 +142,8 @@ public class Onboarding4Activity extends AppCompatActivity {
         colorBordeSeleccionado = typedValue.data;
     }
 
+    // Asocia cada card con su objetivo correspondiente (valores del enum
+    // TipoObjetivo de la API definidos en CalculadoraNutricional).
     private void condigurarCards() {
         cardPerderPeso.setOnClickListener(v -> seleccionarObjetivo(cardPerderPeso, ivCheckPerderPeso, CalculadoraNutricional.OBJETIVO_PERDER_PESO));
         cardGanarMusculo.setOnClickListener(v -> seleccionarObjetivo(cardGanarMusculo, ivCheckGanarMusculo, CalculadoraNutricional.OBJETIVO_GANAR_MASA_MUSCULAR));
@@ -143,6 +157,8 @@ public class Onboarding4Activity extends AppCompatActivity {
         cardMovilidad.setOnClickListener(v -> seleccionarObjetivo(cardMovilidad, ivCheckMovilidad, CalculadoraNutricional.OBJETIVO_MEJORAR_MOVILIDAD));
     }
 
+    // Marca la card elegida como seleccionada (borde y check visibles) y limpia
+    // el estado visual del resto de cards.
     private void seleccionarObjetivo(MaterialCardView cardSeleccionada,
                                      ImageView checkSeleccionado, String objetivo) {
         objetivoSeleccionado = objetivo;
@@ -160,6 +176,8 @@ public class Onboarding4Activity extends AppCompatActivity {
         checkSeleccionado.setVisibility(View.VISIBLE);
     }
 
+    // Permite saltar el onboarding e ir directamente al Home, limpiando el
+    // back stack.
     private void saltarAlHome() {
         startActivity(new Intent(this, HomeActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
@@ -167,6 +185,8 @@ public class Onboarding4Activity extends AppCompatActivity {
         finish();
     }
 
+    // Aplica el idioma guardado en preferencias a la configuración de recursos
+    // de la Activity antes de inflar el layout.
     private void aplicarIdioma(PreferencesManager prefs) {
         String lang = prefs.getLanguage();
 

@@ -15,13 +15,20 @@ import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import java.util.Locale;
 
+// ============================================================
+// SplashActivity — pantalla de arranque de la aplicación.
+// Muestra una animación de entrada mientras comprueba si hay sesión guardada,
+// y tras un tiempo mínimo visible redirige a Home (si hay sesión) o a Login.
+// ============================================================
 public class SplashActivity extends AppCompatActivity {
 
+    // Duración mínima (ms) que se muestra la splash aunque la comprobación de sesión sea instantánea
     private static final int SPLASH_MIN_DURATION = 1500;
 
     private PreferencesManager prefsManager;
     private long tiempoInicio;
 
+    // Aplica el idioma guardado, infla el layout y lanza la animación y la comprobación de sesión.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +44,7 @@ public class SplashActivity extends AppCompatActivity {
         verificarSesion();
     }
 
+    // Aplica un fade-in al contenido de la splash.
     private void animarContenido() {
         View contenido = findViewById(R.id.layoutContenido);
 
@@ -47,6 +55,8 @@ public class SplashActivity extends AppCompatActivity {
         fadeIn.start();
     }
 
+    // Comprueba si hay sesión guardada, configura el token REST si corresponde
+    // y navega a Home/Login tras esperar el tiempo mínimo restante de la splash.
     private void verificarSesion() {
         new Handler().post(() -> {
             boolean tieneSesion = prefsManager.haySesion();
@@ -73,6 +83,7 @@ public class SplashActivity extends AppCompatActivity {
         });
     }
 
+    // Aplica el idioma guardado en preferencias a la configuración de recursos.
     private void aplicarIdiomaGuardado() {
         String savedLanguage = prefsManager.getLanguage();
         if (!savedLanguage.isEmpty()) {

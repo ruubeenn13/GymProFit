@@ -20,13 +20,21 @@ import java.util.List;
 import static com.gymprofit.api.jooq.Tables.*;
 import static org.jooq.impl.DSL.*;
 
+// ============================================================
+// UsuarioJooqRepository — implementación jOOQ de consultas sobre usuarios
+// Ejecuta consultas SQL tipadas sobre la tabla usuarios: listados, filtros
+// dinámicos, cálculo de estadísticas individuales (rachas, calorías, etc.)
+// y estadísticas globales agregadas para el panel admin.
+// ============================================================
 @Repository
 @RequiredArgsConstructor
 public class UsuarioJooqRepository implements IUsuarioJooqRepository {
 
+    // Contexto DSL de jOOQ inyectado, punto de entrada para construir consultas SQL tipadas.
     private final DSLContext dsl;
 
 
+    // Devuelve todos los usuarios con sus datos básicos.
     @Override
     public List<UsuarioJooqDTO> findAll() {
         return dsl
@@ -50,6 +58,7 @@ public class UsuarioJooqRepository implements IUsuarioJooqRepository {
         // FROM usuarios
     }
 
+    // Devuelve solo los usuarios activos, ordenados por username.
     @Override
     public List<UsuarioJooqDTO> findActivos() {
         return dsl
@@ -73,6 +82,7 @@ public class UsuarioJooqRepository implements IUsuarioJooqRepository {
         // ORDER BY username ASC
     }
 
+    // Filtra usuarios por su nivel de experiencia.
     @Override
     public List<UsuarioJooqDTO> findByNivelExperiencia(String nivelExperiencia) {
         return dsl
@@ -95,6 +105,7 @@ public class UsuarioJooqRepository implements IUsuarioJooqRepository {
         // WHERE nivel_experiencia = 'nivelExperiencia'
     }
 
+    // Filtra usuarios cuya edad está entre edadMin y edadMax, ordenados por edad.
     @Override
     public List<UsuarioJooqDTO> findByEdadBetween(Integer edadMin, Integer edadMax) {
         return dsl
@@ -118,6 +129,7 @@ public class UsuarioJooqRepository implements IUsuarioJooqRepository {
         // ORDER BY edad ASC
     }
 
+    // Búsqueda combinada con filtros opcionales por username, nivel de experiencia y edad máxima.
     @Override
     public List<UsuarioJooqDTO> busquedaAvanzada(String username, String nivelExperiencia, Integer edadMax) {
         var conditions = new ArrayList<Condition>();
@@ -161,6 +173,8 @@ public class UsuarioJooqRepository implements IUsuarioJooqRepository {
         // ORDER BY username ASC
     }
 
+    // Calcula estadísticas agregadas de un usuario: sesiones, minutos, calorías,
+    // ejercicio más frecuente, rachas de entrenamiento, última medición e IMC, y objetivos completados.
     @Override
     public UsuarioEstadisticasDTO getEstadisticas(Integer usuarioId) {
 
@@ -259,6 +273,7 @@ public class UsuarioJooqRepository implements IUsuarioJooqRepository {
         );
     }
 
+    // Lista paginada de usuarios para el panel admin, con filtros por activo/username/rol y join a roles.
     @Override
     public List<AdminUsuarioDTO> getUsuariosAdmin(Boolean activo, String rol, String username, int page, int size) {
         var conditions = new ArrayList<Condition>();
@@ -298,6 +313,8 @@ public class UsuarioJooqRepository implements IUsuarioJooqRepository {
                 .fetchInto(AdminUsuarioDTO.class);
     }
 
+    // Calcula estadísticas globales de la plataforma para el dashboard admin
+    // (totales y activos de usuarios, sesiones, ejercicios, objetivos, logros y rutinas).
     @Override
     public AdminEstadisticasDTO getEstadisticasGlobales() {
         LocalDateTime inicioHoy = LocalDate.now().atStartOfDay();
@@ -366,6 +383,7 @@ public class UsuarioJooqRepository implements IUsuarioJooqRepository {
         );
     }
 
+    // Calcula la racha de días consecutivos con sesión completada hasta hoy/ayer.
     private int calcularRachaActual(List<LocalDate> fechas) {
         if (fechas.isEmpty()) return 0;
 
@@ -386,6 +404,7 @@ public class UsuarioJooqRepository implements IUsuarioJooqRepository {
         return racha;
     }
 
+    // Calcula la racha más larga de días consecutivos con sesión completada en todo el historial.
     private int calcularMejorRacha(List<LocalDate> fechas) {
         if (fechas.isEmpty()) return 0;
 

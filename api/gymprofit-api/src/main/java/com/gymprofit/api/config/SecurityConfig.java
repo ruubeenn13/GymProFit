@@ -32,6 +32,12 @@ import java.util.List;
 import static jakarta.servlet.DispatcherType.ERROR;
 import static jakarta.servlet.DispatcherType.FORWARD;
 
+// ============================================================
+// SecurityConfig — configuración central de Spring Security de la API
+// Define el filtro de seguridad (JWT stateless, sin sesiones), CORS,
+// el proveedor de autenticación y las reglas de autorización por rol
+// (GUEST/USER/ADMIN) para cada endpoint de GymProFit.
+// ============================================================
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -43,16 +49,19 @@ public class SecurityConfig {
     private final JwtEntryPoint jwtEntryPoint;
     private final JwtAccessDenied jwtAccessDenied;
 
+    // Bean del codificador de contraseñas usado al registrar y autenticar usuarios.
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // Expone el AuthenticationManager de Spring Security para usarlo en el login (AuthService).
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
+    // Proveedor de autenticación DAO: usa IUsuarioService para cargar el usuario y el encoder para comparar contraseñas.
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -61,6 +70,7 @@ public class SecurityConfig {
         return authProvider;
     }
 
+    // Configuración CORS: permite cualquier origen y los métodos/cabeceras necesarios para el cliente Android/React.
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -72,6 +82,9 @@ public class SecurityConfig {
         return source;
     }
 
+    // Cadena de filtros HTTP: desactiva CSRF (API stateless con JWT), configura manejo de
+    // excepciones de autenticación/autorización, sesiones sin estado y las reglas de acceso
+    // por endpoint y rol; añade el filtro JWT antes del filtro estándar de usuario/contraseña.
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(Customizer.withDefaults())

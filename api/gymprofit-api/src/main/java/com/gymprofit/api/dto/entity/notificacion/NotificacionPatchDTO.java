@@ -7,6 +7,11 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+// ============================================================
+// NotificacionPatchDTO — actualización parcial (PATCH) de una notificación.
+// Todos los campos son opcionales: solo se modifican los que llegan no nulos,
+// permitiendo por ejemplo marcar como leída sin tocar el resto de datos.
+// ============================================================
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

@@ -8,6 +8,12 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+// ============================================================
+// AdminUsuarioDTO — vista de usuario para el panel de administración
+// Representación de un usuario con sus datos físicos y de cuenta
+// (rol, estado, fecha de registro) pensada para los listados y
+// operaciones del panel de administración de GymProFit.
+// ============================================================
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,7 +26,9 @@ public class AdminUsuarioDTO implements Serializable {
     private Integer edad;
     private String nivelExperiencia;
     private String objetivo;
+    // Estado activo/inactivo del usuario (0/1)
     private Byte activo;
     private LocalDateTime fechaRegistro;
+    // Rol del usuario (USER, ADMIN, GUEST, etc.)
     private String rol;
 }

@@ -35,6 +35,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @MockitoBean reemplaza el IAuthService real con un mock para no tocar la BD.
  */
+// ============================================================
+// AuthControllerTest — tests de integración de los endpoints de autenticación.
+// Verifica login/register (éxito, credenciales/registro inválido, sin body)
+// simulando el IAuthService con Mockito.
+// ============================================================
 @SpringBootTest
 @AutoConfigureMockMvc
 @DisplayName("Tests de integración del AuthController")
@@ -65,6 +70,7 @@ class AuthControllerTest {
     private RegisterDTO registerDTO;
     private TokenDTO tokenDTO;
 
+    // Prepara los DTOs de ejemplo usados en los tests.
     @BeforeEach
     void setUp() {
         loginDTO = new LoginDTO("admin", "admin123");
@@ -130,6 +136,7 @@ class AuthControllerTest {
         verify(authService).register(any(RegisterDTO.class));
     }
 
+    // Petición sin body debe fallar con error de deserialización (500).
     @Test
     @DisplayName("POST /auth/login sin body devuelve 500")
     void login_sin_body_devuelve_500() throws Exception {

@@ -13,8 +13,15 @@ import java.util.Locale;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 
+// ============================================================
+// Onboarding1Activity — primer paso del asistente de onboarding.
+// Muestra la pantalla de bienvenida personalizada con el nombre de
+// usuario y permite avanzar al siguiente paso o saltar directo a Home.
+// ============================================================
 public class Onboarding1Activity extends AppCompatActivity {
 
+    // Aplica tema/idioma, infla el layout, muestra el saludo personalizado
+    // y configura los botones de avanzar y saltar el onboarding.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,12 +51,14 @@ public class Onboarding1Activity extends AppCompatActivity {
         findViewById(R.id.tvSaltar1).setOnClickListener(v -> saltarAlHome());
     }
 
+    // Salta el onboarding y navega directo a HomeActivity, limpiando el back stack.
     private void saltarAlHome() {
         startActivity(new Intent(this, HomeActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         finish();
     }
 
+    // Aplica el idioma guardado en preferencias a la configuración de recursos.
     private void aplicarIdioma(PreferencesManager prefs) {
         String lang = prefs.getLanguage();
 

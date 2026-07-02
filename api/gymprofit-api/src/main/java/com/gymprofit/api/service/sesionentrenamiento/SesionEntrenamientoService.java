@@ -26,6 +26,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+// ============================================================
+// SesionEntrenamientoService — implementa la gestión de sesiones de entrenamiento.
+// Controla el ciclo de vida de una sesión (crear, modificar, completar, borrar),
+// aplica comprobaciones de propiedad por usuario y dispara la evaluación de logros
+// cuando una sesión se marca como completada.
+// ============================================================
 @Service
 @AllArgsConstructor
 public class SesionEntrenamientoService implements ISesionEntrenamientoService{
@@ -36,9 +42,11 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
     private final SesionEntrenamientoMapper sesionEntrenamientoMapper;
     private final ILogroService logroService;
     private final SecurityUtils securityUtils;
+    // Logger para trazar las operaciones del servicio.
     private final Logger logger = LoggerFactory.getLogger(SesionEntrenamientoService.class);
 
 
+    // Lista todas las sesiones de entrenamiento (solo ADMIN).
     @Override
     public List<SesionEntrenamientoDTO> findAll() {
         securityUtils.requireAdmin();
@@ -50,6 +58,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         return sesionEntrenamientoMapper.toDTOList(sesiones);
     }
 
+    // Busca una sesión por id, comprobando que el solicitante sea el dueño (o ADMIN).
     @Override
     public SesionEntrenamientoDTO findById(Integer id) {
         logger.info("Buscando sesión de entrenamiento por id: {}", id);
@@ -62,6 +71,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         return sesionEntrenamientoMapper.toDTO(sesion);
     }
 
+    // Crea una nueva sesión de entrenamiento. Si no es ADMIN, se fuerza el usuario propietario
+    // al usuario autenticado (evita crear sesiones a nombre de otro usuario).
     @Override
     public SesionEntrenamientoDTO save(SesionEntrenamientoCreateDTO sesionEntrenamientoCreateDTO) {
         if (!securityUtils.isAdmin()) {
@@ -84,10 +95,12 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
                 sesion.setRutina(rutina);
             }
 
+            // Si no se indica fecha de inicio, se toma el momento actual.
             if (sesion.getFechaInicio() == null) {
                 sesion.setFechaInicio(LocalDateTime.now());
             }
 
+            // Si no se indica fecha de fin, se calcula a partir de la duración estimada.
             if (sesion.getFechaFin() == null) {
                 int minutos = sesionEntrenamientoCreateDTO.getDuracionMinutos() != null
                         ? sesionEntrenamientoCreateDTO.getDuracionMinutos() : 0;
@@ -101,6 +114,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
             SesionEntrenamiento sesionGuardada = sesionEntrenamientoRepository.save(sesion);
 
             SesionEntrenamientoDTO dto = sesionEntrenamientoMapper.toDTO(sesionGuardada);
+            // Si la sesión se crea ya completada, se evalúan posibles logros nuevos del usuario.
             if (Boolean.TRUE.equals(sesionGuardada.getCompletada())) {
                 List<String> nuevos = logroService.evaluarLogros(sesionGuardada.getUsuario().getId());
                 if (!nuevos.isEmpty()) dto.setNuevosLogros(nuevos);
@@ -113,6 +127,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         }
     }
 
+    // Sustituye los datos de una sesión existente (fechas, calorías, notas, rutina asociada...).
     @Override
     public SesionEntrenamientoDTO modify(SesionEntrenamientoDTO sesionEntrenamientoDTO) {
         logger.info("Modificando sesión de entrenamiento con id: {}", sesionEntrenamientoDTO.getId());
@@ -151,6 +166,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         }
     }
 
+    // Elimina definitivamente una sesión de entrenamiento.
     @Transactional
     @Override
     public void deleteById(Integer id) {
@@ -170,6 +186,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         }
     }
 
+    // Marca la sesión como completada, fija la fecha de fin al momento actual,
+    // guarda calorías/notas opcionales y evalúa si el usuario desbloquea nuevos logros.
     @Transactional
     @Override
     public SesionEntrenamientoDTO completarSesion(Integer id, Integer caloriasQuemadas, String notas) {
@@ -205,6 +223,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         }
     }
 
+    // Lista las sesiones de un usuario concreto (requiere ser el propio usuario o ADMIN).
     @Override
     public List<SesionEntrenamientoDTO> findByUsuarioId(Integer usuarioId) {
         securityUtils.checkOwnership(usuarioId);
@@ -216,6 +235,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         return sesionEntrenamientoMapper.toDTOList(sesiones);
     }
 
+    // Lista las sesiones asociadas a una rutina (solo ADMIN).
     @Override
     public List<SesionEntrenamientoDTO> findByRutinaId(Integer rutinaId) {
         securityUtils.requireAdmin();
@@ -227,6 +247,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         return sesionEntrenamientoMapper.toDTOList(sesiones);
     }
 
+    // Lista todas las sesiones completadas del sistema (solo ADMIN).
     @Override
     public List<SesionEntrenamientoDTO> findCompletadas() {
         securityUtils.requireAdmin();
@@ -238,6 +259,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         return sesionEntrenamientoMapper.toDTOList(sesiones);
     }
 
+    // Lista todas las sesiones pendientes del sistema (solo ADMIN).
     @Override
     public List<SesionEntrenamientoDTO> findPendientes() {
         securityUtils.requireAdmin();
@@ -249,6 +271,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         return sesionEntrenamientoMapper.toDTOList(sesiones);
     }
 
+    // Lista las sesiones completadas de un usuario.
     @Override
     public List<SesionEntrenamientoDTO> findByUsuarioIdAndCompletadas(Integer usuarioId) {
         securityUtils.checkOwnership(usuarioId);
@@ -260,6 +283,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         return sesionEntrenamientoMapper.toDTOList(sesiones);
     }
 
+    // Lista las sesiones pendientes de un usuario.
     @Override
     public List<SesionEntrenamientoDTO> findByUsuarioIdAndPendientes(Integer usuarioId) {
         securityUtils.checkOwnership(usuarioId);
@@ -271,12 +295,14 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         return sesionEntrenamientoMapper.toDTOList(sesiones);
     }
 
+    // Lista las sesiones de un usuario dentro de una fecha concreta (día completo 00:00-23:59).
     @Override
     public List<SesionEntrenamientoDTO> findByUsuarioIdAndFecha(Integer usuarioId, LocalDate fecha) {
         securityUtils.checkOwnership(usuarioId);
 
         logger.info("Buscando sesiones del usuario {} en la fecha {}", usuarioId, fecha);
 
+        // Se construye el rango horario del día completo para la consulta.
         LocalDateTime inicio = LocalDateTime.of(fecha.getYear(), fecha.getMonth(), fecha.getDayOfMonth(), 0, 0, 0);
         LocalDateTime fin = LocalDateTime.of(fecha.getYear(), fecha.getMonth(), fecha.getDayOfMonth(), 23, 59, 59);
 
@@ -285,6 +311,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         return sesionEntrenamientoMapper.toDTOList(sesiones);
     }
 
+    // Lista las sesiones de todos los usuarios en una fecha concreta (solo ADMIN).
     @Override
     public List<SesionEntrenamientoDTO> findByFecha(LocalDate fecha) {
         securityUtils.requireAdmin();
@@ -299,6 +326,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         return sesionEntrenamientoMapper.toDTOList(sesiones);
     }
 
+    // Lista las sesiones de un usuario asociadas a una rutina concreta.
     @Override
     public List<SesionEntrenamientoDTO> findByUsuarioIdAndRutinaId(Integer usuarioId, Integer rutinaId) {
         securityUtils.checkOwnership(usuarioId);
@@ -310,6 +338,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         return sesionEntrenamientoMapper.toDTOList(sesiones);
     }
 
+    // Cuenta las sesiones totales de un usuario.
     @Override
     public Long countByUsuarioId(Integer usuarioId) {
         securityUtils.checkOwnership(usuarioId);
@@ -319,6 +348,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         return sesionEntrenamientoRepository.countByUsuarioId(usuarioId);
     }
 
+    // Cuenta las sesiones completadas de un usuario.
     @Override
     public Long countCompletadasByUsuario(Integer usuarioId) {
         securityUtils.checkOwnership(usuarioId);
@@ -328,6 +358,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         return sesionEntrenamientoRepository.countByUsuarioIdAndCompletadaTrue(usuarioId);
     }
 
+    // Cuenta las sesiones asociadas a una rutina (solo ADMIN).
     @Override
     public Long countByRutinaId(Integer rutinaId) {
         securityUtils.requireAdmin();
@@ -337,6 +368,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         return sesionEntrenamientoRepository.countByRutinaId(rutinaId);
     }
 
+    // Lista las sesiones de un usuario ordenadas por fecha.
     @Override
     public List<SesionEntrenamientoDTO> findByUsuarioIdOrderByFecha(Integer usuarioId) {
         securityUtils.checkOwnership(usuarioId);
@@ -348,6 +380,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         return sesionEntrenamientoMapper.toDTOList(sesiones);
     }
 
+    // Lista las sesiones completadas de un usuario ordenadas por fecha.
     @Override
     public List<SesionEntrenamientoDTO> findCompletadasByUsuario(Integer usuarioId) {
         securityUtils.checkOwnership(usuarioId);
@@ -359,6 +392,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         return sesionEntrenamientoMapper.toDTOList(sesiones);
     }
 
+    // Actualiza parcialmente una sesión de entrenamiento con los campos no nulos del patch.
     @Transactional
     @Override
     public SesionEntrenamientoDTO patch(Integer id, SesionEntrenamientoPatchDTO patchDTO) {

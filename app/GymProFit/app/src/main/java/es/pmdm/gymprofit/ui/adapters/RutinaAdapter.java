@@ -17,12 +17,20 @@ import java.util.List;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.rutina.Rutina;
 
+// ============================================================
+// RutinaAdapter — adapter de RecyclerView para el listado de rutinas de entrenamiento.
+// Muestra nombre, descripción, nivel, nº de ejercicios, duración y calorías
+// de cada Rutina, y mantiene una lista filtrada por nivel; el long-click de
+// edición/borrado solo se habilita si el usuario es admin o dueño de la rutina.
+// ============================================================
 public class RutinaAdapter extends RecyclerView.Adapter<RutinaAdapter.ViewHolder> {
 
+    // Callback invocado al pulsar (click simple) una rutina de la lista.
     public interface OnClickListener {
         void onClick(Rutina rutina);
     }
 
+    // Callback invocado al mantener pulsada una rutina editable.
     public interface OnLongClickListener {
         void onLongClick(Rutina rutina, View anchorView);
     }
@@ -34,25 +42,31 @@ public class RutinaAdapter extends RecyclerView.Adapter<RutinaAdapter.ViewHolder
     private boolean isAdmin = false;
     private int currentUserId = -1;
 
+    // Constructor sin listener de click.
     public RutinaAdapter(List<Rutina> rutinas) {
         this(rutinas, null);
     }
 
+    // Constructor principal: guarda la lista completa y una copia filtrada inicial.
     public RutinaAdapter(List<Rutina> rutinas, OnClickListener listener) {
         this.rutinas = rutinas;
         this.rutinasFiltradas = new ArrayList<>(rutinas);
         this.clickListener = listener;
     }
 
+    // Registra el listener de long-click (edición/borrado) desde fuera del adapter.
     public void setOnLongClickListener(OnLongClickListener listener) {
         this.longClickListener = listener;
     }
 
+    // Define el contexto de permisos (si es admin y el id del usuario actual)
+    // usado para decidir qué rutinas se pueden editar/borrar.
     public void setUserContext(boolean isAdmin, int currentUserId) {
         this.isAdmin = isAdmin;
         this.currentUserId = currentUserId;
     }
 
+    // Infla el layout de un ítem de rutina y crea su ViewHolder.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -61,6 +75,8 @@ public class RutinaAdapter extends RecyclerView.Adapter<RutinaAdapter.ViewHolder
         return new ViewHolder(view);
     }
 
+    // Rellena las vistas de una fila con los datos de la rutina y habilita
+    // el long-click solo si el usuario tiene permiso para editarla/borrarla.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Rutina rutina = rutinasFiltradas.get(position);
@@ -90,6 +106,7 @@ public class RutinaAdapter extends RecyclerView.Adapter<RutinaAdapter.ViewHolder
         return rutinasFiltradas.size();
     }
 
+    // Reemplaza la lista completa de rutinas y resetea el filtro aplicado.
     public void setRutinas(List<Rutina> nuevas) {
         rutinas.clear();
         rutinas.addAll(nuevas);
@@ -98,6 +115,7 @@ public class RutinaAdapter extends RecyclerView.Adapter<RutinaAdapter.ViewHolder
         notifyDataSetChanged();
     }
 
+    // Filtra por nivel de dificultad ("Todos" muestra la lista completa).
     public void filtrarPorNivel(String nivel) {
         rutinasFiltradas.clear();
         if (nivel.equalsIgnoreCase("Todos")) {
@@ -112,6 +130,7 @@ public class RutinaAdapter extends RecyclerView.Adapter<RutinaAdapter.ViewHolder
         notifyDataSetChanged();
     }
 
+    // ViewHolder con las referencias a las vistas de cada fila de rutina.
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvNombre, tvDescripcion, tvNumEjercicios, tvDuracion, tvCalorias;
         Chip chipNivel;

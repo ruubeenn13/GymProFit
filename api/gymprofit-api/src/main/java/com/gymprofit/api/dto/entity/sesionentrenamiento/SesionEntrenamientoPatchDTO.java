@@ -7,6 +7,12 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+// ============================================================
+// SesionEntrenamientoPatchDTO — DTO para actualización parcial (PATCH) de una sesión
+// Contiene únicamente los campos modificables de una sesión de entrenamiento
+// ya existente. Los campos null indican que no se deben actualizar,
+// permitiendo actualizaciones parciales desde la app Android.
+// ============================================================
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

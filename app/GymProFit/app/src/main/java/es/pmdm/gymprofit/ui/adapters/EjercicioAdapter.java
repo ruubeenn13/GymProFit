@@ -17,8 +17,15 @@ import java.util.List;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
 
+// ============================================================
+// EjercicioAdapter — adapter de RecyclerView para el catálogo de ejercicios.
+// Muestra nombre, descripción, dificultad y calorías de cada Ejercicio, y
+// mantiene una lista filtrada independiente de la original para soportar
+// búsqueda por texto, filtro por grupo muscular y por dificultad a la vez.
+// ============================================================
 public class EjercicioAdapter extends RecyclerView.Adapter<EjercicioAdapter.ViewHolder> {
 
+    // Callback invocado al pulsar un ejercicio de la lista.
     public interface OnClickListener {
         void onClick(Ejercicio ejercicio);
     }
@@ -27,16 +34,19 @@ public class EjercicioAdapter extends RecyclerView.Adapter<EjercicioAdapter.View
     private List<Ejercicio> ejerciciosFiltrados;
     private final OnClickListener clickListener;
 
+    // Constructor sin listener de click.
     public EjercicioAdapter(List<Ejercicio> ejercicios) {
         this(ejercicios, null);
     }
 
+    // Constructor principal: guarda la lista completa y una copia filtrada inicial.
     public EjercicioAdapter(List<Ejercicio> ejercicios, OnClickListener clickListener) {
         this.ejercicios = ejercicios;
         this.ejerciciosFiltrados = new ArrayList<>(ejercicios);
         this.clickListener = clickListener;
     }
 
+    // Infla el layout de un ítem de ejercicio y crea su ViewHolder.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -45,6 +55,7 @@ public class EjercicioAdapter extends RecyclerView.Adapter<EjercicioAdapter.View
         return new ViewHolder(view);
     }
 
+    // Rellena las vistas de una fila con los datos del ejercicio filtrado.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Ejercicio ejercicio = ejerciciosFiltrados.get(position);
@@ -63,6 +74,7 @@ public class EjercicioAdapter extends RecyclerView.Adapter<EjercicioAdapter.View
         return ejerciciosFiltrados.size();
     }
 
+    // Reemplaza la lista completa de ejercicios y resetea el filtro aplicado.
     public void setEjercicios(List<Ejercicio> nuevos) {
         ejercicios.clear();
         ejercicios.addAll(nuevos);
@@ -71,6 +83,7 @@ public class EjercicioAdapter extends RecyclerView.Adapter<EjercicioAdapter.View
         notifyDataSetChanged();
     }
 
+    // Filtra por coincidencia de texto en nombre o descripción.
     public void filtrarPorTexto(String texto) {
         ejerciciosFiltrados.clear();
         if (texto.isEmpty()) {
@@ -87,6 +100,7 @@ public class EjercicioAdapter extends RecyclerView.Adapter<EjercicioAdapter.View
         notifyDataSetChanged();
     }
 
+    // Filtra por grupo muscular ("Todos" muestra la lista completa).
     public void filtrarPorGrupo(String grupo) {
         ejerciciosFiltrados.clear();
         if (grupo.equalsIgnoreCase("Todos")) {
@@ -101,6 +115,7 @@ public class EjercicioAdapter extends RecyclerView.Adapter<EjercicioAdapter.View
         notifyDataSetChanged();
     }
 
+    // Filtra por nivel de dificultad ("Todos" muestra la lista completa).
     public void filtrarPorDificultad(String dificultad) {
         ejerciciosFiltrados.clear();
         if (dificultad.equalsIgnoreCase("Todos")) {
@@ -115,6 +130,7 @@ public class EjercicioAdapter extends RecyclerView.Adapter<EjercicioAdapter.View
         notifyDataSetChanged();
     }
 
+    // Aplica simultáneamente el filtro de texto y el de dificultad.
     public void filtrarCombinado(String texto, String dificultad) {
         ejerciciosFiltrados.clear();
         for (Ejercicio e : ejercicios) {
@@ -128,6 +144,7 @@ public class EjercicioAdapter extends RecyclerView.Adapter<EjercicioAdapter.View
         notifyDataSetChanged();
     }
 
+    // ViewHolder con las referencias a las vistas de cada fila de ejercicio.
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivIcono;
         TextView tvNombre, tvDescripcion;

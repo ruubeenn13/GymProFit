@@ -20,6 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+// ============================================================
+// NotificacionService — implementación del servicio de notificaciones
+// Gestiona el CRUD de notificaciones de usuario (recordatorios, logros,
+// objetivos, sistema), marcado de leídas y comprobaciones de propiedad
+// mediante SecurityUtils para que cada usuario solo acceda a las suyas.
+// ============================================================
 @Service
 @AllArgsConstructor
 public class NotificacionService implements INotificacionService {
@@ -31,6 +37,7 @@ public class NotificacionService implements INotificacionService {
     private final Logger logger = LoggerFactory.getLogger(NotificacionService.class);
 
 
+    // Devuelve todas las notificaciones del sistema. Solo ADMIN.
     @Override
     public List<NotificacionDTO> findAll() {
         logger.info("Buscando todas las notificaciones");
@@ -42,6 +49,7 @@ public class NotificacionService implements INotificacionService {
         return notificacionMapper.toDTOList(notificaciones);
     }
 
+    // Busca una notificación por id, verificando que pertenece al usuario autenticado.
     @Override
     public NotificacionDTO findById(Integer id) {
         logger.info("Buscando notificacion por id: {}", id);
@@ -54,6 +62,7 @@ public class NotificacionService implements INotificacionService {
         return notificacionMapper.toDTO(notificacion);
     }
 
+    // Crea una notificación nueva; valida el tipo y fuerza el usuario propietario si no es ADMIN.
     @Transactional
     @Override
     public NotificacionDTO save(NotificacionCreateDTO notificacionCreateDTO) {
@@ -95,6 +104,7 @@ public class NotificacionService implements INotificacionService {
         }
     }
 
+    // Elimina definitivamente una notificación tras comprobar la propiedad.
     @Transactional
     @Override
     public void deleteById(Integer id) {
@@ -114,6 +124,7 @@ public class NotificacionService implements INotificacionService {
         }
     }
 
+    // Lista todas las notificaciones de un usuario concreto.
     @Override
     public List<NotificacionDTO> findByUsuarioId(Integer usuarioId) {
         logger.info("Buscando notificaciones del usuario id: {}", usuarioId);
@@ -125,6 +136,7 @@ public class NotificacionService implements INotificacionService {
         return notificacionMapper.toDTOList(notificaciones);
     }
 
+    // Lista las notificaciones de un usuario ordenadas por fecha de creación descendente.
     @Override
     public List<NotificacionDTO> findByUsuarioIdOrdenadas(Integer usuarioId) {
         logger.info("Buscando notificaciones del usuario id: {} ordenadas por fecha", usuarioId);
@@ -136,6 +148,7 @@ public class NotificacionService implements INotificacionService {
         return notificacionMapper.toDTOList(notificaciones);
     }
 
+    // Lista solo las notificaciones no leídas de un usuario.
     @Override
     public List<NotificacionDTO> findNoLeidasByUsuarioId(Integer usuarioId) {
         logger.info("Buscando notifiacaciones no leídas del usuario id: {}", usuarioId);
@@ -147,6 +160,7 @@ public class NotificacionService implements INotificacionService {
         return notificacionMapper.toDTOList(notificaciones);
     }
 
+    // Lista solo las notificaciones ya leídas de un usuario.
     @Override
     public List<NotificacionDTO> findLeidasByUsuarioId(Integer usuarioId) {
         logger.info("Buscando notificaciones leídas del usuario id: {}", usuarioId);
@@ -158,6 +172,7 @@ public class NotificacionService implements INotificacionService {
         return notificacionMapper.toDTOList(notificaciones);
     }
 
+    // Lista las notificaciones de un usuario filtradas por tipo (RECORDATORIO, LOGRO, OBJETIVO, SISTEMA).
     @Override
     public List<NotificacionDTO> findByUsuarioIdAndTipo(Integer usuarioId, String tipo) {
         logger.info("Buscando notifiacaiones del usuario id: {} de tipo: {}", usuarioId, tipo);
@@ -177,6 +192,7 @@ public class NotificacionService implements INotificacionService {
         return notificacionMapper.toDTOList(notificaciones);
     }
 
+    // Marca una notificación concreta como leída.
     @Transactional
     @Override
     public NotificacionDTO marcarComoLeida(Integer id) {
@@ -194,6 +210,7 @@ public class NotificacionService implements INotificacionService {
         return notificacionMapper.toDTO(notificacionGuardada);
     }
 
+    // Marca como leídas todas las notificaciones pendientes de un usuario.
     @Transactional
     @Override
     public void marcarTodasComoLeidas(Integer usuarioId) {
@@ -208,6 +225,7 @@ public class NotificacionService implements INotificacionService {
         notificacionRepository.saveAll(noLeidas);
     }
 
+    // Elimina todas las notificaciones asociadas a un usuario (p.ej. al borrar la cuenta).
     @Transactional
     @Override
     public void deleteByUsuarioId(Integer usuarioId) {
@@ -222,6 +240,7 @@ public class NotificacionService implements INotificacionService {
         }
     }
 
+    // Cuenta el total de notificaciones de un usuario.
     @Override
     public Long countByUsuarioId(Integer usuarioId) {
         logger.info("Contando notificaciones del usuario id: {}", usuarioId);
@@ -231,6 +250,7 @@ public class NotificacionService implements INotificacionService {
         return notificacionRepository.countByUsuarioId(usuarioId);
     }
 
+    // Cuenta las notificaciones no leídas de un usuario (para badge de la app).
     @Override
     public Long countNoLeidasByUsuarioId(Integer usuarioId) {
         logger.info("Contando notifiacaiones no leídas del usuario id: {}", usuarioId);
@@ -240,6 +260,7 @@ public class NotificacionService implements INotificacionService {
         return notificacionRepository.countByUsuarioIdAndLeidaFalse(usuarioId);
     }
 
+    // Indica si el usuario tiene alguna notificación pendiente de leer.
     @Override
     public boolean existenNoLeidasByUsuarioId(Integer usuarioId) {
         logger.info("Verificando si existen notificaciones no leídas del usuario id: {}", usuarioId);
@@ -249,6 +270,7 @@ public class NotificacionService implements INotificacionService {
         return notificacionRepository.existsByUsuarioIdAndLeidaFalse(usuarioId);
     }
 
+    // Actualiza parcialmente una notificación (solo los campos no nulos del patchDTO).
     @Transactional
     @Override
     public NotificacionDTO patch(Integer id, NotificacionPatchDTO patchDTO) {

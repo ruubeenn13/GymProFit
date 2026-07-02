@@ -31,6 +31,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+// ============================================================
+// RutinaServiceTest — pruebas unitarias del RutinaService
+// Verifica CRUD de rutinas de entrenamiento, activación/desactivación
+// y filtrado por nivel, usuario o estado, simulando el contexto de seguridad.
+// ============================================================
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Tests del RutinaService")
 class RutinaServiceTest {
@@ -52,6 +57,7 @@ class RutinaServiceTest {
     private RutinaCreateDTO rutinaCreateDTO;
     private Usuario usuario;
 
+    // Prepara datos de prueba y simula un usuario autenticado en el contexto de seguridad
     @BeforeEach
     void setup() {
         usuario = new Usuario();
@@ -59,6 +65,7 @@ class RutinaServiceTest {
         usuario.setUsername("testuser");
         usuario.setRoles(List.of(new Role(1, RoleType.USER)));
 
+        // Inyectamos el usuario autenticado en el SecurityContext, ya que el service lo consulta
         UsernamePasswordAuthenticationToken auth =
                 new UsernamePasswordAuthenticationToken(usuario, null, Collections.emptyList());
         SecurityContextHolder.getContext().setAuthentication(auth);
@@ -83,11 +90,13 @@ class RutinaServiceTest {
         rutinaCreateDTO.setEsPredefinida(false);
     }
 
+    // Limpia el contexto de seguridad tras cada test para no contaminar otros tests
     @AfterEach
     void tearDown() {
         SecurityContextHolder.clearContext();
     }
 
+    // Comprueba que findAll devuelve todas las rutinas mapeadas a DTO
     @Test
     @DisplayName("findAll devuelve lista de rutinas")
     void findAll_devuelve_lista() {
@@ -101,6 +110,7 @@ class RutinaServiceTest {
         verify(rutinaRepository).findAll();
     }
 
+    // Comprueba que findById devuelve la rutina correcta cuando existe
     @Test
     @DisplayName("findById con id existente devuelve RutinaDTO")
     void findById_existente_devuelve_dto() {
@@ -114,6 +124,7 @@ class RutinaServiceTest {
         assertEquals("Rutina Pecho", result.getNombre());
     }
 
+    // Comprueba que findById lanza excepción si la rutina no existe
     @Test
     @DisplayName("findById con id inexistente lanza NotFoundEntityException")
     void findByID_inexistente_lanza_excepcion() {
@@ -122,6 +133,7 @@ class RutinaServiceTest {
         assertThrows(NotFoundEntityException.class, () -> rutinaService.findById(99));
     }
 
+    // Comprueba que al crear una rutina se guarda con activa=true por defecto
     @Test
     @DisplayName("save correcto guarda la rutina con activa=true")
     void save_correcto_guarda_rutina() {
@@ -137,6 +149,7 @@ class RutinaServiceTest {
         verify(rutinaRepository).save(any());
     }
 
+    // Comprueba que no se puede crear una rutina para un usuario inexistente
     @Test
     @DisplayName("save con usuario inexistente lanza NotFoundEntityException")
     void save_usuario_inexistente_lanza_excepcion() {
@@ -148,6 +161,7 @@ class RutinaServiceTest {
         verify(rutinaRepository, never()).save(any());
     }
 
+    // Comprueba que deleteById es un borrado lógico (desactiva en vez de eliminar)
     @Test
     @DisplayName("deleteById desactiva la rutina correctamente")
     void deleteById_desactiva_rutina() {
@@ -158,6 +172,7 @@ class RutinaServiceTest {
         verify(rutinaRepository).save(rutina);
     }
 
+    // Comprueba que deleteById lanza excepción si la rutina no existe
     @Test
     @DisplayName("deleteById con id inexistente lanza NotFounEntityException")
     void deleteById_inexistente_lanza_excepcion() {
@@ -166,6 +181,7 @@ class RutinaServiceTest {
         assertThrows(NotFoundEntityException.class, () -> rutinaService.deleteById(99));
     }
 
+    // Comprueba que activateById reactiva una rutina previamente desactivada
     @Test
     @DisplayName("activateById activa la rutina correctamente")
     void activateById_activa_rutina() {
@@ -178,6 +194,7 @@ class RutinaServiceTest {
         verify(rutinaRepository).save(rutina);
     }
 
+    // Comprueba que permanentDeleteById elimina físicamente la rutina de la BD
     @Test
     @DisplayName("permanentDeleteById elimina la rutina permanentemente")
     void permanentDeleteById_elimina_rutina() {
@@ -188,6 +205,7 @@ class RutinaServiceTest {
         verify(rutinaRepository).delete(rutina);
     }
 
+    // Comprueba que se listan las rutinas asociadas a un usuario concreto
     @Test
     @DisplayName("findByUsuarioId devuelve rutinas del usuario")
     void findByUsuarioId_devuelve_lista() {
@@ -200,6 +218,7 @@ class RutinaServiceTest {
         assertEquals(1, result.size());
     }
 
+    // Comprueba que se filtran las rutinas por nivel de dificultad
     @Test
     @DisplayName("findByNivel devuelve rutinas del nivel indicado")
     void findByNivel_devuelve_lista() {
@@ -212,6 +231,7 @@ class RutinaServiceTest {
         assertEquals(1, result.size());
     }
 
+    // Comprueba que se filtran solo las rutinas activas
     @Test
     @DisplayName("findActivas devuelve solo rutinas activas")
     void findActivas_devuelve_activas() {
@@ -225,6 +245,7 @@ class RutinaServiceTest {
         verify(rutinaRepository).findByActivaTrue();
     }
 
+    // Comprueba que se filtran solo las rutinas predefinidas del sistema
     @Test
     @DisplayName("findPredefinidas devuelve solo rutinas predefinidas")
     void findPredefinidas_devuelve_predefinidas() {

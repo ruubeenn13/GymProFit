@@ -28,6 +28,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+// ============================================================
+// LogroService — implementación del sistema de logros/achievements
+// Gestiona el catálogo de logros y evalúa el progreso de cada usuario
+// (sesiones completadas, ejercicios realizados, objetivos cumplidos)
+// para otorgar automáticamente los logros correspondientes.
+// ============================================================
 @Service
 @RequiredArgsConstructor
 public class LogroService implements ILogroService {
@@ -42,11 +48,13 @@ public class LogroService implements ILogroService {
 
     private static final Logger logger = LoggerFactory.getLogger(LogroService.class);
 
+    // Devuelve el catálogo completo de logros disponibles.
     @Override
     public List<LogroDTO> findAll() {
         return logroMapper.toDTOList((List<Logro>) logroRepository.findAll());
     }
 
+    // Devuelve los logros obtenidos por un usuario, validando que exista.
     @Override
     public List<UsuarioLogroDTO> findByUsuarioId(Integer usuarioId) {
         if (!usuarioRepository.existsById(usuarioId)) {
@@ -55,6 +63,7 @@ public class LogroService implements ILogroService {
         return logroMapper.toUsuarioLogroDTOList(usuarioLogroRepository.findByUsuarioId(usuarioId));
     }
 
+    // Crea un nuevo logro en el catálogo, validando el tipo enviado.
     @Override
     @Transactional
     public LogroDTO save(LogroCreateDTO createDTO) {
@@ -68,6 +77,7 @@ public class LogroService implements ILogroService {
         return logroMapper.toDTO(logroRepository.save(logro));
     }
 
+    // Actualiza los campos no nulos de un logro existente del catálogo.
     @Override
     @Transactional
     public LogroDTO update(Integer id, LogroCreateDTO updateDTO) {
@@ -81,9 +91,12 @@ public class LogroService implements ILogroService {
         return logroMapper.toDTO(logroRepository.save(logro));
     }
 
+    // Evalúa el progreso del usuario (sesiones, ejercicios, objetivos) y otorga los logros
+    // pendientes que cumpla, devolviendo los nombres de los logros nuevos concedidos.
     @Override
     @Transactional
     public List<String> evaluarLogros(Integer usuarioId) {
+        // Logros ya obtenidos, para no volver a evaluarlos.
         Set<Integer> logroIds = new HashSet<>(usuarioLogroRepository.findLogroIdsByUsuarioId(usuarioId));
         List<Logro> todos = (List<Logro>) logroRepository.findAll();
 
@@ -99,6 +112,7 @@ public class LogroService implements ILogroService {
         for (Logro logro : todos) {
             if (logroIds.contains(logro.getId())) continue;
 
+            // Condición de desbloqueo específica según el tipo de logro.
             boolean cumple = switch (logro.getTipo()) {
                 case PRIMERA_SESION    -> sesionesCompletadas >= 1;
                 case CONSTANCIA        -> sesionesCompletadas >= 7;
@@ -122,6 +136,7 @@ public class LogroService implements ILogroService {
         return nuevos;
     }
 
+    // Convierte el string recibido en el enum TipoLogro, lanzando excepción si no es válido.
     private TipoLogro parseTipo(String tipo) {
         try {
             return TipoLogro.valueOf(tipo.toUpperCase());

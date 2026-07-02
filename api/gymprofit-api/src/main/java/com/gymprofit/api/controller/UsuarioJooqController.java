@@ -13,6 +13,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// ============================================================
+// UsuarioJooqController — controlador REST de consultas avanzadas con JOOQ
+// Expone endpoints de solo lectura, restringidos a ADMIN, que usan JOOQ
+// (en vez de JPA) para consultas dinámicas/complejas sobre usuarios:
+// filtros por nivel, edad y búsqueda combinada.
+// ============================================================
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")
@@ -20,8 +26,10 @@ import java.util.List;
 @Tag(name = "Usuario JOOQ Controlador", description = "Consultas avanzadas de usuarios con JOOQ")
 public class UsuarioJooqController {
 
+    // Repositorio JOOQ con las consultas dinámicas sobre usuarios
     private final IUsuarioJooqRepository usuarioJooqRepository;
 
+    // Devuelve todos los usuarios mediante JOOQ (solo ADMIN)
     @Operation(summary = "Obtiene todos los usuarios con JOOQ")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de usuarios")
@@ -32,6 +40,7 @@ public class UsuarioJooqController {
         return ResponseEntity.ok(usuarioJooqRepository.findAll());
     }
 
+    // Devuelve los usuarios activos mediante JOOQ (solo ADMIN)
     @Operation(summary = "Obtiene los usuarios activos con JOOQ")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de usuarios activos")
@@ -42,6 +51,7 @@ public class UsuarioJooqController {
         return ResponseEntity.ok(usuarioJooqRepository.findActivos());
     }
 
+    // Filtra usuarios por nivel de experiencia mediante JOOQ (solo ADMIN)
     @Operation(summary = "Busca usuarios por nivel de experiencia con JOOQ")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuarios encontrados")
@@ -52,6 +62,7 @@ public class UsuarioJooqController {
         return ResponseEntity.ok(usuarioJooqRepository.findByNivelExperiencia(nivelExperiencia));
     }
 
+    // Filtra usuarios por rango de edad mediante JOOQ (solo ADMIN)
     @Operation(summary = "Busca usuarios por rango de edado con JOOQ")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuarios encontrados")
@@ -63,6 +74,7 @@ public class UsuarioJooqController {
         return ResponseEntity.ok(usuarioJooqRepository.findByEdadBetween(edadMin, edadMax));
     }
 
+    // Búsqueda combinada dinámica (username/nivel/edad máx) mediante JOOQ (solo ADMIN)
     @Operation(summary = "Búsqueda avanzada dinámica de usuarios con JOOQ")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuarios encontrados")

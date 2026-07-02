@@ -19,6 +19,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// ============================================================
+// LogroController — controlador REST del sistema de logros (achievements)
+// Permite consultar el catálogo de logros disponibles, ver los logros
+// obtenidos por un usuario concreto, y crear/actualizar logros (ADMIN).
+// ============================================================
 @RestController
 @RequestMapping("/logros")
 @RequiredArgsConstructor
@@ -27,6 +32,7 @@ public class LogroController {
 
     private final ILogroService logroService;
 
+    // Devuelve el catálogo completo de logros disponibles
     @Operation(summary = "Obtiene todos los logros disponibles")
     @ApiResponse(responseCode = "200", description = "Listado de logros",
             content = @Content(schema = @Schema(implementation = LogroDTO.class)))
@@ -42,6 +48,7 @@ public class LogroController {
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Devuelve los logros que ha conseguido un usuario concreto
     @GetMapping("/usuario/{usuarioId}")
     public ResponseEntity<List<UsuarioLogroDTO>> findByUsuarioId(@PathVariable Integer usuarioId) {
         return ResponseEntity.ok(logroService.findByUsuarioId(usuarioId));
@@ -54,6 +61,7 @@ public class LogroController {
             @ApiResponse(responseCode = "400", description = "Datos inválidos",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Crea un nuevo logro en el catálogo (solo ADMIN)
     @PostMapping
     public ResponseEntity<LogroDTO> save(@Valid @RequestBody LogroCreateDTO createDTO) {
         return new ResponseEntity<>(logroService.save(createDTO), HttpStatus.CREATED);
@@ -66,6 +74,7 @@ public class LogroController {
             @ApiResponse(responseCode = "404", description = "Logro no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Actualiza un logro existente del catálogo (solo ADMIN)
     @PutMapping("/{id}")
     public ResponseEntity<LogroDTO> update(@PathVariable Integer id, @Valid @RequestBody LogroCreateDTO updateDTO) {
         return ResponseEntity.ok(logroService.update(id, updateDTO));

@@ -10,13 +10,20 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+// ============================================================
+// IUsuarioLogroRepository — repositorio JPA de logros obtenidos por usuario
+// Gestiona la tabla intermedia que registra qué logros/insignias ha
+// desbloqueado cada usuario. No exportado como recurso REST.
+// ============================================================
 @Hidden
 @Repository
 @RepositoryRestResource(exported = false)
 public interface IUsuarioLogroRepository extends CrudRepository<UsuarioLogro, Integer> {
 
+    // Logros obtenidos por un usuario.
     List<UsuarioLogro> findByUsuarioId(Integer usuarioId);
 
+    // Consulta JPQL: ids de los logros obtenidos por un usuario.
     @Query("SELECT ul.logro.id FROM UsuarioLogro ul WHERE ul.usuario.id = :usuarioId")
     List<Integer> findLogroIdsByUsuarioId(@Param("usuarioId") Integer usuarioId);
 }

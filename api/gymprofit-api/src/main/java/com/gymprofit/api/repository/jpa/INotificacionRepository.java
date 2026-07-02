@@ -9,26 +9,39 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+// ============================================================
+// INotificacionRepository — repositorio JPA de la entidad Notificacion
+// Acceso a datos de las notificaciones enviadas a los usuarios (leídas/no leídas, por tipo).
+// ============================================================
 @Hidden
 @Repository
 @RepositoryRestResource(exported = false)
 public interface INotificacionRepository extends CrudRepository<Notificacion, Integer> {
 
+    // Busca todas las notificaciones de un usuario.
     List<Notificacion> findByUsuarioId(Integer usuarioId);
 
+    // Busca las notificaciones no leídas de un usuario.
     List<Notificacion> findByUsuarioIdAndLeidaFalse(Integer usuarioId);
 
+    // Busca las notificaciones ya leídas de un usuario.
     List<Notificacion> findByUsuarioIdAndLeidaTrue(Integer usuarioId);
 
+    // Busca las notificaciones de un usuario filtradas por tipo.
     List<Notificacion> findByUsuarioIdAndTipo(Integer usuarioId, TipoNotificacion tipo);
 
+    // Busca las notificaciones de un usuario ordenadas de más reciente a más antigua.
     List<Notificacion> findByUsuarioIdOrderByFechaCreacionDesc(Integer usuarioId);
 
+    // Cuenta el número total de notificaciones de un usuario.
     Long countByUsuarioId(Integer usuarioId);
 
+    // Cuenta el número de notificaciones no leídas de un usuario.
     Long countByUsuarioIdAndLeidaFalse(Integer usuarioId);
 
+    // Elimina todas las notificaciones de un usuario.
     void deleteByUsuarioId(Integer usuarioId);
 
+    // Comprueba si un usuario tiene alguna notificación sin leer.
     boolean existsByUsuarioIdAndLeidaFalse(Integer usuarioId);
 }

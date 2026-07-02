@@ -8,6 +8,12 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+// ============================================================
+// UsuarioPatchDTO — DTO para actualización parcial (PATCH) de un usuario
+// Contiene solo los campos modificables del perfil de usuario; los
+// campos null se ignoran en el service y no sobrescriben el valor actual.
+// Usado por ejemplo en el flujo de onboarding de la app Android.
+// ============================================================
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

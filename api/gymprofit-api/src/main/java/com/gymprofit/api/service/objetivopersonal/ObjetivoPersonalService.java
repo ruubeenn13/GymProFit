@@ -23,6 +23,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+// ============================================================
+// ObjetivoPersonalService — implementación del servicio de objetivos personales
+// Gestiona la creación, actualización, completado y consulta de objetivos
+// (peso, repeticiones, etc.) de cada usuario, comprobando propiedad y
+// disparando la evaluación de logros al completarse un objetivo.
+// ============================================================
 @Service
 @AllArgsConstructor
 public class ObjetivoPersonalService implements IObjetivoPersonalService{
@@ -35,6 +41,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
     private final Logger logger = LoggerFactory.getLogger(ObjetivoPersonalService.class);
 
 
+    // Devuelve todos los objetivos personales del sistema. Solo ADMIN.
     @Override
     public List<ObjetivoPersonalDTO> findAll() {
         securityUtils.requireAdmin();
@@ -46,6 +53,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         return objetivoPersonalMapper.toDTOList(objetivosPersonales);
     }
 
+    // Busca un objetivo personal por id, verificando la propiedad del usuario.
     @Override
     public ObjetivoPersonalDTO findById(Integer id) {
         logger.info("Buscando objetivo personal por id: {}", id);
@@ -58,6 +66,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         return objetivoPersonalMapper.toDTO(objetivoPersonal);
     }
 
+    // Crea un objetivo personal nuevo, con fecha de inicio actual y sin completar.
     @Transactional
     @Override
     public ObjetivoPersonalDTO save(ObjetivoPersonalCreateDTO objetivoPersonalCreateDTO) {
@@ -87,6 +96,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         }
     }
 
+    // Actualiza el valor objetivo y el estado de completado de un objetivo existente.
     @Override
     public ObjetivoPersonalDTO update(ObjetivoPersonalUpdateDTO objetivoPersonalUpdateDTO) {
         logger.info("Actualizando el objetivo personal con id: {}", objetivoPersonalUpdateDTO.getId());
@@ -108,6 +118,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         }
     }
 
+    // Elimina definitivamente un objetivo personal tras comprobar la propiedad.
     @Transactional
     @Override
     public void deleteById(Integer id) {
@@ -127,6 +138,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         }
     }
 
+    // Lista todos los objetivos personales de un usuario.
     @Override
     public List<ObjetivoPersonalDTO> findByUsuarioId(Integer usuarioId) {
         securityUtils.checkOwnership(usuarioId);
@@ -138,6 +150,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         return objetivoPersonalMapper.toDTOList(objetivosPersonales);
     }
 
+    // Lista los objetivos de un usuario ordenados por fecha de inicio descendente.
     @Override
     public List<ObjetivoPersonalDTO> findByUsuarioIdOrdenados(Integer usuarioId) {
         securityUtils.checkOwnership(usuarioId);
@@ -149,6 +162,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         return objetivoPersonalMapper.toDTOList(objetivosPersonales);
     }
 
+    // Lista solo los objetivos pendientes (no completados) de un usuario.
     @Override
     public List<ObjetivoPersonalDTO> findPendientesByUsuarioId(Integer usuarioId) {
         securityUtils.checkOwnership(usuarioId);
@@ -160,6 +174,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         return objetivoPersonalMapper.toDTOList(objetivosPersonales);
     }
 
+    // Lista solo los objetivos ya completados de un usuario.
     @Override
     public List<ObjetivoPersonalDTO> findCompletadosByUsuarioId(Integer usuarioId) {
         securityUtils.checkOwnership(usuarioId);
@@ -171,6 +186,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         return objetivoPersonalMapper.toDTOList(objetivosPersonales);
     }
 
+    // Lista objetivos por tipo (p.ej. PESO, REPETICIONES) en todo el sistema. Solo ADMIN.
     @Override
     public List<ObjetivoPersonalDTO> findByTipoObjetivo(String tipoObjetivo) {
         securityUtils.requireAdmin();
@@ -184,6 +200,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         return objetivoPersonalMapper.toDTOList(objetivosPersonales);
     }
 
+    // Marca el objetivo como completado, registra la fecha y evalúa logros del usuario.
     @Override
     public ObjetivoPersonalDTO completar(Integer id) {
         logger.info("Completando objetivo personal con id: {}", id);
@@ -207,6 +224,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         return objetivoPersonalMapper.toDTO(objetivoActualizado);
     }
 
+    // Cuenta el total de objetivos personales de un usuario.
     @Override
     public Long countByUsuarioId(Integer usuarioId) {
         securityUtils.checkOwnership(usuarioId);
@@ -216,6 +234,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         return objetivoPersonalRepository.countByUsuarioId(usuarioId);
     }
 
+    // Cuenta los objetivos completados de un usuario.
     @Override
     public Long countCompletadosByUsuarioId(Integer usuarioId) {
         securityUtils.checkOwnership(usuarioId);
@@ -225,6 +244,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         return objetivoPersonalRepository.countByUsuarioIdAndCompletadoTrue(usuarioId);
     }
 
+    // Cuenta los objetivos pendientes (no completados) de un usuario.
     @Override
     public Long countPendientesByUsuarioId(Integer usuarioId) {
         securityUtils.checkOwnership(usuarioId);
@@ -234,6 +254,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         return objetivoPersonalRepository.countByUsuarioIdAndCompletadoFalse(usuarioId);
     }
 
+    // Actualiza parcialmente un objetivo personal (solo los campos no nulos del patchDTO).
     @Transactional
     @Override
     public ObjetivoPersonalDTO patch(Integer id, ObjetivoPersonalPatchDTO patchDTO) {

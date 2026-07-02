@@ -29,11 +29,19 @@ import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.adapters.AdminAlimentoAdapter;
 
+// ============================================================
+// AdminAlimentosActivity — gestión CRUD de alimentos desde el panel de administración
+// Permite buscar/filtrar alimentos por nombre, categoría y estado activo,
+// activarlos/desactivarlos (borrado lógico) y editar sus valores
+// nutricionales mediante un diálogo. Solo accesible para rol ADMIN.
+// ============================================================
 public class AdminAlimentosActivity extends BaseActivity {
 
+    // Lista de alimentos mostrada en el RecyclerView y su adaptador
     private final List<Alimento> lista = new ArrayList<>();
     private AdminAlimentoAdapter adapter;
 
+    // Filtros activos de la búsqueda (null = sin filtrar por ese campo)
     private String filtroNombre = null;
     private String filtroCategoria = null;
     private Boolean filtroActivo = null;
@@ -66,12 +74,14 @@ public class AdminAlimentosActivity extends BaseActivity {
         cargar();
     }
 
+    // Recarga la lista al volver a esta pantalla (por si se editó desde otro sitio)
     @Override
     protected void onResume() {
         super.onResume();
         cargar();
     }
 
+    // Configura el SearchView para filtrar por nombre en tiempo real
     private void configurarBusqueda() {
         SearchView sv = findViewById(R.id.searchView);
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -90,6 +100,7 @@ public class AdminAlimentosActivity extends BaseActivity {
         });
     }
 
+    // Configura el spinner de categorías: carga las categorías desde la API (con fallback local)
     private void configurarSpinner() {
         Spinner sp = findViewById(R.id.spCategoria);
         List<String> categorias = new ArrayList<>();
@@ -130,6 +141,7 @@ public class AdminAlimentosActivity extends BaseActivity {
         });
     }
 
+    // Fallback: rellena el spinner con las categorías definidas localmente en strings/arrays si falla la API
     private void usarCategoriasLocales(List<String> categorias, ArrayAdapter<String> adapter) {
         runOnUiThread(() -> {
             for (String c : getResources().getStringArray(R.array.categorias_alimento)) {
@@ -139,6 +151,7 @@ public class AdminAlimentosActivity extends BaseActivity {
         });
     }
 
+    // Configura los chips de filtro rápido (todos / activos / inactivos)
     private void configurarChips() {
         ChipGroup cg = findViewById(R.id.chipGroupFiltros);
         cg.setOnCheckedStateChangeListener((group, checkedIds) -> {
@@ -155,6 +168,7 @@ public class AdminAlimentosActivity extends BaseActivity {
         });
     }
 
+    // Consulta a la API los alimentos aplicando los filtros actuales y refresca el RecyclerView
     private void cargar() {
         API.adminBuscarAlimentos(filtroNombre, filtroCategoria, filtroActivo,
                 new UtilREST.OnResponseListener() {
@@ -174,6 +188,7 @@ public class AdminAlimentosActivity extends BaseActivity {
                 });
     }
 
+    // Activa o desactiva un alimento y actualiza el item en la lista sin recargar todo
     private void toggleActivo(Alimento a, int pos) {
         API.adminToggleActivoAlimento(a.getId(), !a.isActivo(),
                 new UtilREST.OnResponseListener() {
@@ -192,6 +207,7 @@ public class AdminAlimentosActivity extends BaseActivity {
                 });
     }
 
+    // Muestra un diálogo para editar los valores nutricionales del alimento y envía un PATCH parcial
     private void mostrarDialogoEditar(Alimento a, int pos) {
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_editar_alimento, null);
         ((android.widget.TextView) dialogView.findViewById(R.id.tvDialogTitulo))

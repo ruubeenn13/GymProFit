@@ -31,6 +31,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+// ============================================================
+// AuthServiceTest — tests unitarios del AuthService
+// Comprueba login (generación de token JWT) y registro de
+// usuarios, incluyendo los casos de duplicado y no encontrado.
+// ============================================================
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Tests del AuthService")
 class AuthServiceTest {
@@ -58,6 +63,7 @@ class AuthServiceTest {
     private LoginDTO loginDTO;
     private RegisterDTO registerDTO;
 
+    // Inicializa usuario, rol y DTOs de login/registro de prueba
     @BeforeEach
     void setUp() {
         roleUser = new Role(1, RoleType.USER);
@@ -78,6 +84,7 @@ class AuthServiceTest {
         registerDTO.setEmail("newuser@gymprofit.com");
     }
 
+    // Comprueba que un login válido genera un TokenDTO con el JWT y los roles del usuario
     @Test
     @DisplayName("Login correcto devuelve TokenDTO con token y roles")
     void login_correcto_devuelve_token() {
@@ -98,6 +105,7 @@ class AuthServiceTest {
         verify(jwtTokenProvider).generateToken(auth);
     }
 
+    // Comprueba que hacer login con un usuario no persistido lanza NotFoundEntityException
     @Test
     @DisplayName("Login con usuario inexistente lanza NotFoundEntityException")
     void login_usuario_inexistente_lanza_excepcion() {
@@ -110,6 +118,7 @@ class AuthServiceTest {
         assertThrows(NotFoundEntityException.class, () -> authService.login(loginDTO));
     }
 
+    // Comprueba que el registro correcto persiste el usuario con el rol USER por defecto
     @Test
     @DisplayName("Register correcto guarda el usuario con rol USER por defecto")
     void register_correcto_guarda_usuario() {
@@ -123,6 +132,7 @@ class AuthServiceTest {
         verify(usuarioRepository).save(any(Usuario.class));
     }
 
+    // Comprueba que registrar con un username ya existente lanza DuplicateEntityException
     @Test
     @DisplayName("Register con username duplicado lanza DuplicateEntityException")
     void register_username_duplicado_lanza_excepcion() {
@@ -133,6 +143,7 @@ class AuthServiceTest {
         verify(usuarioRepository, never()).save(any());
     }
 
+    // Comprueba que registrar con un email ya existente lanza DuplicateEntityException
     @Test
     @DisplayName("Register con email duplicado lanza DuplicateEntityException")
     void register_email_duplicado_lanza_excepcion() {

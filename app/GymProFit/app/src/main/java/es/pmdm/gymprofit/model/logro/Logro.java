@@ -1,12 +1,23 @@
 package es.pmdm.gymprofit.model.logro;
 
+// ============================================================
+// Logro — modelo de datos de un logro/insignia del sistema de gamificación.
+// Define el criterio y el valor objetivo que el usuario debe alcanzar
+// para desbloquear el logro dentro de GymProFit.
+// ============================================================
 public class Logro {
 
+    // Identificador único del logro.
     private int id;
+    // Nombre del logro.
     private String nombre;
+    // Descripción del logro.
     private String descripcion;
+    // Icono asociado al logro (nombre/recurso o URL).
     private String icono;
+    // Criterio o tipo de métrica que evalúa el logro.
     private String criterio;
+    // Valor que debe alcanzar el criterio para completar el logro.
     private int valorObjetivo;
 
     public Logro() {}

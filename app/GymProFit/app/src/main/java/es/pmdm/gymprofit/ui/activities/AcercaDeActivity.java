@@ -22,9 +22,17 @@ import java.util.Locale;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 
+// ============================================================
+// AcercaDeActivity — pantalla "Acerca de" con datos de contacto y enlaces externos
+// Permite contactar por email, abrir la web, marcar un teléfono o compartir
+// la app por SMS eligiendo un contacto (requiere permiso READ_CONTACTS).
+// No usa API, solo Intents del sistema.
+// ============================================================
 public class AcercaDeActivity extends AppCompatActivity {
 
+    // Launcher para solicitar el permiso de lectura de contactos
     private ActivityResultLauncher<String> permisosContactosLauncher;
+    // Launcher que recibe el contacto elegido en el selector del sistema
     private ActivityResultLauncher<Intent> seleccionContactoLauncher;
 
     @Override
@@ -63,6 +71,7 @@ public class AcercaDeActivity extends AppCompatActivity {
         findViewById(R.id.llAcercaCompartir).setOnClickListener(v -> compartirViaSms());
     }
 
+    // Comparte la app por SMS: si ya hay permiso de contactos abre el selector, si no lo solicita
     private void compartirViaSms() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -72,11 +81,13 @@ public class AcercaDeActivity extends AppCompatActivity {
         }
     }
 
+    // Abre el selector de contactos del sistema para elegir el destinatario del SMS
     private void abrirSelectorContacto() {
         Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
         seleccionContactoLauncher.launch(intent);
     }
 
+    // Consulta el ContentResolver para extraer el número de teléfono del contacto seleccionado
     private String obtenerNumero(Uri contactUri) {
         if (contactUri == null) return null;
         try (Cursor cursor = getContentResolver().query(contactUri,
@@ -88,12 +99,14 @@ public class AcercaDeActivity extends AppCompatActivity {
         return null;
     }
 
+    // Abre la app de SMS con el número y el texto de compartir precargados
     private void enviarSms(String numero) {
         Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + numero));
         intent.putExtra("sms_body", getString(R.string.acerca_compartir_texto));
         startActivity(intent);
     }
 
+    // Abre un cliente de correo con el email de contacto y asunto precargados
     private void abrirEmail() {
         Intent intent = new Intent(Intent.ACTION_SENDTO);
         intent.setData(Uri.parse("mailto:"));
@@ -102,16 +115,19 @@ public class AcercaDeActivity extends AppCompatActivity {
         startActivity(Intent.createChooser(intent, getString(R.string.menu_contactanos)));
     }
 
+    // Abre la web oficial de GymProFit en el navegador
     private void abrirWeb() {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://gymprofit.infinityfree.me/login"));
         startActivity(intent);
     }
 
+    // Abre el marcador telefónico con el número de contacto precargado
     private void abrirDial() {
         Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:+34600000000"));
         startActivity(intent);
     }
 
+    // Aplica el idioma guardado en preferencias a la configuración de recursos, antes de setContentView
     private void aplicarIdioma(PreferencesManager prefs) {
         String lang = prefs.getLanguage();
         if (lang != null && !lang.isEmpty()) {

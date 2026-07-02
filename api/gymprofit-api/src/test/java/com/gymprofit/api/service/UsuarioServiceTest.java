@@ -34,6 +34,11 @@ import static org.mockito.Mockito.*;
  *     - Mockito: nos permite crear "mocks" (objetos falsos) que simulan el
  *     comportamiento del repository y el mapper sin tocar la BD real
  */
+// ============================================================
+// UsuarioServiceTest — pruebas unitarias del UsuarioService
+// Verifica CRUD de usuarios, validación de duplicados (username/email)
+// y activación/desactivación, usando mocks del repositorio y del mapper.
+// ============================================================
 @ExtendWith(MockitoExtension.class) // Le decimos a JUnit que use Mockito
 @DisplayName("Tests del UsuarioService") // Nombre que aparece en el panel de resultados
 class UsuarioServiceTest {

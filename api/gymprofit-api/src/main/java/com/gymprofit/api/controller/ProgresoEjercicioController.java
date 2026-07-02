@@ -22,6 +22,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// ============================================================
+// ProgresoEjercicioController — controlador REST de progreso en ejercicios
+// Gestiona el CRUD de los registros de progreso (peso levantado, repeticiones,
+// etc.) que un usuario acumula por ejercicio a lo largo del tiempo, con
+// consultas históricas, últimos valores y contadores.
+// ============================================================
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")
@@ -31,6 +37,7 @@ public class ProgresoEjercicioController {
 
     private final IProgresoEjercicioService progresoEjercicioService;
 
+    // Devuelve todos los progresos de ejercicios registrados
     @Operation(summary = "Obtiene todos los progresos de ejercicios")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de progresos",
@@ -54,6 +61,7 @@ public class ProgresoEjercicioController {
             @ApiResponse(responseCode = "404", description = "Progreso no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Busca un progreso de ejercicio por su ID
     @GetMapping("/progreso-ejercicios/{id}")
     public ResponseEntity<ProgresoEjercicioDTO> obtenerProgresoEjercicio(@PathVariable Integer id) {
         ProgresoEjercicioDTO progresoEjercicioDTO = progresoEjercicioService.findById(id);
@@ -70,6 +78,7 @@ public class ProgresoEjercicioController {
             @ApiResponse(responseCode = "400", description = "Datos inválidos",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Registra un nuevo progreso de ejercicio para un usuario
     @PostMapping("/progreso-ejercicios")
     public ResponseEntity<ProgresoEjercicioDTO> guardarProgresoEjercicio(@Valid @RequestBody ProgresoEjercicioCreateDTO progresoEjercicioCreateDTO) {
         ProgresoEjercicioDTO progresoEjercicioDTO = progresoEjercicioService.save(progresoEjercicioCreateDTO);
@@ -84,6 +93,7 @@ public class ProgresoEjercicioController {
             @ApiResponse(responseCode = "404", description = "Progreso no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Actualiza completamente un progreso de ejercicio existente
     @PutMapping("/progreso-ejercicios")
     public ResponseEntity<ProgresoEjercicioDTO> modificarProgresoEjercicio(@Valid @RequestBody ProgresoEjercicioDTO progresoEjercicioDTO) {
         ProgresoEjercicioDTO progresoModificado = progresoEjercicioService.modify(progresoEjercicioDTO);
@@ -96,6 +106,7 @@ public class ProgresoEjercicioController {
             @ApiResponse(responseCode = "200", description = "Progreso eliminado correctamente"),
             @ApiResponse(responseCode = "404", description = "Progreso no encontrado")
     })
+    // Elimina un progreso de ejercicio por ID
     @DeleteMapping("/progreso-ejercicios/{id}")
     public ResponseEntity<Map<String, Object>> borrarProgresoEjercicio(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -121,6 +132,7 @@ public class ProgresoEjercicioController {
             @ApiResponse(responseCode = "404", description = "No se encontraron progresos para este usuario",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista todos los progresos registrados por un usuario
     @GetMapping("/progreso-ejercicios/usuario/{usuarioId}")
     public ResponseEntity<List<ProgresoEjercicioDTO>> obtenerProgresoPorUsuario(@PathVariable Integer usuarioId) {
         List<ProgresoEjercicioDTO> progresoEjercicioDTOS = progresoEjercicioService.findByUsuarioId(usuarioId);
@@ -139,6 +151,7 @@ public class ProgresoEjercicioController {
             @ApiResponse(responseCode = "404", description = "No se encontraron progresos para este ejercicio",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista los progresos registrados para un ejercicio concreto
     @GetMapping("/progreso-ejercicios/ejercicio/{ejercicioId}")
     public ResponseEntity<List<ProgresoEjercicioDTO>> obtenerProgresoPorEjercicio(@PathVariable Integer ejercicioId) {
         List<ProgresoEjercicioDTO> progresoEjercicioDTOS = progresoEjercicioService.findByEjercicioId(ejercicioId);
@@ -157,6 +170,7 @@ public class ProgresoEjercicioController {
             @ApiResponse(responseCode = "404", description = "No se encontraron progresos para este usuario",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista los progresos de un usuario ordenados de más reciente a más antiguo
     @GetMapping("/progreso-ejercicios/usuario/{usuarioId}/ordenados")
     public ResponseEntity<List<ProgresoEjercicioDTO>> obtenerProgresoPorUsuarioOrdenado(@PathVariable Integer usuarioId) {
         List<ProgresoEjercicioDTO> progresoEjercicioDTOS = progresoEjercicioService.findByUsuarioIdOrdenado(usuarioId);
@@ -175,6 +189,7 @@ public class ProgresoEjercicioController {
             @ApiResponse(responseCode = "404", description = "No se encontraron progresos",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista el progreso de un usuario en un ejercicio concreto
     @GetMapping("/progreso-ejercicios/usuario/{usuarioId}/ejercicio/{ejercicioId}")
     public ResponseEntity<List<ProgresoEjercicioDTO>> obtenerProgresoPorUsuarioYEjercicio(@PathVariable Integer usuarioId,
                                                                                           @PathVariable Integer ejercicioId) {
@@ -194,6 +209,7 @@ public class ProgresoEjercicioController {
             @ApiResponse(responseCode = "404", description = "No se encontró progreso",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Devuelve el historial de progreso de un usuario en un ejercicio, ordenado por fecha
     @GetMapping("/progreso-ejercicio/usuario/{usuarioId}/ejercicio/{ejercicioId}/historial")
     public ResponseEntity<List<ProgresoEjercicioDTO>> obtenerProgresoPorUsuarioYEjercicioOrdenado(@PathVariable Integer usuarioId,
                                                                                                   @PathVariable Integer ejercicioId) {
@@ -213,6 +229,7 @@ public class ProgresoEjercicioController {
             @ApiResponse(responseCode = "404", description = "No se encontró progreso",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Devuelve el último progreso registrado de un usuario en un ejercicio
     @GetMapping("/progreso-ejercicios/usuario/{usuarioId}/ejercicio/{ejercicioId}/ultimo")
     public ResponseEntity<ProgresoEjercicioDTO> getUltimoProgreso(@PathVariable Integer usuarioId,
                                                                   @PathVariable Integer ejercicioId) {
@@ -225,6 +242,7 @@ public class ProgresoEjercicioController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Total de progresos del usuario")
     })
+    // Cuenta el total de progresos registrados por un usuario
     @GetMapping("/progreso-ejercicios/count/usuario/{usuarioId}")
     public ResponseEntity<Map<String, Object>> countByUsuarioId(@PathVariable Integer usuarioId) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -241,6 +259,7 @@ public class ProgresoEjercicioController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Total de progresos del ejercicio")
     })
+    // Cuenta el total de progresos registrados de un ejercicio
     @GetMapping("/progreso-ejercicios/count/ejercicio/{ejercicioId}")
     public ResponseEntity<Map<String, Object>> countByEjercicioId(@PathVariable Integer ejercicioId) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -257,6 +276,7 @@ public class ProgresoEjercicioController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Resultado de la verificación")
     })
+    // Comprueba si existe progreso registrado de un usuario en un ejercicio
     @GetMapping("/progreso-ejercicios/exists/usuario/{usuarioId}/ejercicio/{ejercicioId}")
     public ResponseEntity<Map<String, Object>> existsByUsuarioIdAndEjercicioId(@PathVariable Integer usuarioId,
                                                                                @PathVariable Integer ejercicioId) {
@@ -277,6 +297,7 @@ public class ProgresoEjercicioController {
             @ApiResponse(responseCode = "500", description = "Error al eliminar los progresos",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Elimina todos los progresos de un usuario
     @DeleteMapping("/progreso-ejercicios/usuario/{usuarioId}")
     public ResponseEntity<Map<String, Object>> deleteByUsuarioId(@PathVariable Integer usuarioId) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -300,6 +321,7 @@ public class ProgresoEjercicioController {
             @ApiResponse(responseCode = "500", description = "Error al eliminar los progresos",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Elimina los progresos de un usuario en un ejercicio concreto
     @DeleteMapping("/progreso-ejercicios/usuario/{usuarioId}/ejercicio/{ejercicioId}")
     public ResponseEntity<Map<String, Object>> deleteByUsuarioIdAndEjercicioId(@PathVariable Integer usuarioId,
                                                                                @PathVariable Integer ejercicioId) {
@@ -325,6 +347,7 @@ public class ProgresoEjercicioController {
             @ApiResponse(responseCode = "404", description = "Progreso no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Actualiza parcialmente campos de un progreso de ejercicio (PATCH)
     @PatchMapping("/progreso-ejercicios/{id}")
     public ResponseEntity<ProgresoEjercicioDTO> patchProgresoEjercicio(@PathVariable Integer id, @RequestBody ProgresoEjercicioPatchDTO patchDTO) {
         return ResponseEntity.ok(progresoEjercicioService.patch(id, patchDTO));

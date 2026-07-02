@@ -24,6 +24,11 @@ import es.pmdm.gymprofit.network.API;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.utils.UIHelper;
 
+// ============================================================
+// CrearAlimentoActivity — formulario de creación de alimento personalizado
+// Permite al usuario dar de alta un alimento propio con macros y categoría,
+// usada desde AnadirAlimentoActivity para ampliar el catálogo disponible.
+// ============================================================
 /**
  * Formulario para crear un nuevo alimento personalizado.
  * Carga las categorías desde la API. Devuelve RESULT_OK al caller si se guarda.
@@ -38,9 +43,11 @@ public class CrearAlimentoActivity extends BaseActivity {
     private TextInputEditText etCarbohidratos;
     private TextInputEditText etGrasas;
 
+    // Categorías disponibles para el spinner, obtenidas de la API (con fallback local)
     private final List<String> categorias = new ArrayList<>();
     private ArrayAdapter<String> categoriaAdapter;
 
+    // Enlaza las vistas, configura el spinner de categorías y los listeners de guardado/volver
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +85,7 @@ public class CrearAlimentoActivity extends BaseActivity {
         cargarCategorias();
     }
 
+    // Obtiene la lista de categorías de la API; si falla, usa el fallback local (usarCategoriasLocales)
     private void cargarCategorias() {
         API.getCategorias(new UtilREST.OnResponseListener() {
             @Override
@@ -104,6 +112,7 @@ public class CrearAlimentoActivity extends BaseActivity {
         });
     }
 
+    // Fallback: carga las categorías desde el array de recursos local si la API no responde
     private void usarCategoriasLocales() {
         runOnUiThread(() -> {
             categorias.clear();
@@ -177,6 +186,7 @@ public class CrearAlimentoActivity extends BaseActivity {
         }
     }
 
+    // Parsea el contenido de un campo a double, devolviendo 0.0 si está vacío o no es válido
     private double parseDoubleOrZero(TextInputEditText field) {
         if (field.getText() == null) return 0.0;
         String raw = field.getText().toString().trim();

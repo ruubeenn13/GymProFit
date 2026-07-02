@@ -13,12 +13,19 @@ import java.util.List;
 import static com.gymprofit.api.jooq.Tables.RUTINA_EJERCICIO;
 import static com.gymprofit.api.jooq.Tables.RUTINAS;
 
+// ============================================================
+// AdminRutinaJooqRepository — implementación jOOQ de consultas sobre rutinas predefinidas
+// Ejecuta la búsqueda con filtros dinámicos sobre rutinas marcadas como
+// predefinidas, incluyendo un subselect con el número de ejercicios de cada una.
+// ============================================================
 @Repository
 @RequiredArgsConstructor
 public class AdminRutinaJooqRepository implements IAdminRutinaJooqRepository {
 
+    // Contexto DSL de jOOQ inyectado, punto de entrada para construir consultas SQL tipadas.
     private final DSLContext dsl;
 
+    // Busca rutinas predefinidas aplicando filtros opcionales de nombre, nivel, categoría y estado activo.
     @Override
     public List<AdminRutinaDTO> busquedaRutinasPredefinidas(String nombre, String nivel, String categoria, Boolean activa) {
         var conditions = new ArrayList<Condition>();
@@ -49,6 +56,7 @@ public class AdminRutinaJooqRepository implements IAdminRutinaJooqRepository {
                         RUTINAS.ACTIVA,
                         RUTINAS.ES_PREDEFINIDA,
                         RUTINAS.FECHA_CREACION,
+                        // Subselect: cuenta los ejercicios asociados a cada rutina
                         dsl.selectCount()
                                 .from(RUTINA_EJERCICIO)
                                 .where(RUTINA_EJERCICIO.RUTINA_ID.eq(RUTINAS.ID))

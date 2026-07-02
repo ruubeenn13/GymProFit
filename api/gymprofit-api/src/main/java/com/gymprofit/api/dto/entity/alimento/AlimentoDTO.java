@@ -7,6 +7,11 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+// ============================================================
+// AlimentoDTO — representación completa de un alimento para lectura
+// Se usa como respuesta en las operaciones de consulta del catálogo
+// de alimentos, incluyendo su información nutricional y de propiedad.
+// ============================================================
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,6 +26,8 @@ public class AlimentoDTO implements Serializable {
     private BigDecimal fibra;
     private Integer porcionGramos;
     private String descripcion;
+    // Indica si el alimento está activo (visible/usable) o dado de baja lógica
     private Boolean activo;
+    // Id del usuario propietario si es un alimento personalizado (null si es global)
     private Integer usuarioId;
 }

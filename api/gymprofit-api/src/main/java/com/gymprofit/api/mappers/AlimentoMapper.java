@@ -8,14 +8,24 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
+// ============================================================
+// AlimentoMapper — conversión entre Alimento y sus DTOs
+// Mapper MapStruct que traduce la entidad Alimento (catálogo de
+// alimentos, base para el sistema de nutrición) a DTOs de lectura
+// y creación.
+// ============================================================
 @Mapper(componentModel = "spring")
 public interface AlimentoMapper {
 
+    // Convierte la entidad a DTO, exponiendo solo el id del usuario propietario.
     @Mapping(source = "usuario.id", target = "usuarioId")
     AlimentoDTO toDTO(Alimento alimento);
 
+    // Convierte una lista de entidades a su correspondiente lista de DTOs.
     List<AlimentoDTO> toDTOList(List<Alimento> alimentos);
 
+    // Crea la entidad a partir del DTO de creación, ignorando campos
+    // gestionados por el service (id, estado activo y usuario).
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "activo", ignore = true)
     @Mapping(target = "usuario", ignore = true)

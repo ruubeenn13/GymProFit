@@ -23,6 +23,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// ============================================================
+// NotificacionController — controlador REST de notificaciones de usuario
+// Gestiona el CRUD de notificaciones (RECORDATORIO, LOGRO, OBJETIVO, SISTEMA),
+// su marcado como leídas/no leídas, conteos y consultas filtradas por
+// usuario y tipo.
+// ============================================================
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")
@@ -32,6 +38,7 @@ public class NotificacionController {
 
     private final INotificacionService notificacionService;
 
+    // Devuelve todas las notificaciones registradas
     @Operation(summary = "Obtiene todas las notificaciones")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de notificaciones",
@@ -55,6 +62,7 @@ public class NotificacionController {
             @ApiResponse(responseCode = "404", description = "Notificación no encontrada",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Busca una notificación por su ID
     @GetMapping("/notificaciones/{id}")
     public ResponseEntity<NotificacionDTO> obtenerNotificacion(@PathVariable Integer id) {
         NotificacionDTO notificacion = notificacionService.findById(id);
@@ -71,6 +79,7 @@ public class NotificacionController {
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Crea una nueva notificación para un usuario
     @PostMapping("/notificaciones")
     public ResponseEntity<NotificacionDTO> save(@Valid @RequestBody NotificacionCreateDTO notificacionCreateDTO) {
         NotificacionDTO notificacion = notificacionService.save(notificacionCreateDTO);
@@ -84,6 +93,7 @@ public class NotificacionController {
             @ApiResponse(responseCode = "404", description = "Notificación no encontrada",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Elimina una notificación por ID
     @DeleteMapping("/notificaciones/{id}")
     public ResponseEntity<Map<String, Object>> borrarNotificacion(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -109,6 +119,7 @@ public class NotificacionController {
             @ApiResponse(responseCode = "404", description = "No se encontraron notificaciones para este usuario",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista todas las notificaciones de un usuario
     @GetMapping("/notificaciones/usuario/{usuarioId}")
     public ResponseEntity<List<NotificacionDTO>> obtenerNotificacionPorUsuario(@PathVariable Integer usuarioId) {
         List<NotificacionDTO> notificaciones = notificacionService.findByUsuarioId(usuarioId);
@@ -127,6 +138,7 @@ public class NotificacionController {
             @ApiResponse(responseCode = "404", description = "No se encontraron notificaciones",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista las notificaciones de un usuario ordenadas por fecha
     @GetMapping("/notificaciones/usuario/{usuarioId}/ordenadas")
     public ResponseEntity<List<NotificacionDTO>> obtenerNotificacionPorUsuarioOrdenadas(@PathVariable Integer usuarioId) {
         List<NotificacionDTO> notificaciones = notificacionService.findByUsuarioId(usuarioId);
@@ -145,6 +157,7 @@ public class NotificacionController {
             @ApiResponse(responseCode = "404", description = "No se encontraron notificaciones no leídas",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista las notificaciones no leídas de un usuario
     @GetMapping("/notificaciones/usuario/{usuarioId}/no-leidas")
     public ResponseEntity<List<NotificacionDTO>> obtenerNoLeidasPorUsuario(@PathVariable Integer usuarioId) {
         List<NotificacionDTO> notificaciones = notificacionService.findNoLeidasByUsuarioId(usuarioId);
@@ -163,6 +176,7 @@ public class NotificacionController {
             @ApiResponse(responseCode = "404", description = "No se encontraron notificaciones leídas",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista las notificaciones ya leídas de un usuario
     @GetMapping("/notificaciones/usuario/{usuarioId}/leidas")
     public ResponseEntity<List<NotificacionDTO>> obtenerLeidasPorUsuario(@PathVariable Integer usuarioId) {
         List<NotificacionDTO> notificaciones = notificacionService.findLeidasByUsuarioId(usuarioId);
@@ -182,6 +196,7 @@ public class NotificacionController {
                     content = @Content(schema = @Schema(implementation = Response.class))),
             @ApiResponse(responseCode = "404", description = "No se encontraron notificaciones de ese tipo")
     })
+    // Filtra las notificaciones de un usuario por tipo, validando que el tipo no esté vacío
     @GetMapping("/notificaciones/usuario/{usuarioId}/tipo/{tipo}")
     public ResponseEntity<List<NotificacionDTO>> obtenerNotificacionPorUsuarioYTipo(@PathVariable Integer usuarioId,
                                                                                     @PathVariable String tipo) {
@@ -205,6 +220,7 @@ public class NotificacionController {
             @ApiResponse(responseCode = "404", description = "Notificación no encontrada",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Marca una notificación concreta como leída
     @PutMapping("/notificaciones/{id}/leer")
     public ResponseEntity<NotificacionDTO> marcarComoLeida(@PathVariable Integer id) {
         NotificacionDTO notificacionDTO = notificacionService.marcarComoLeida(id);
@@ -216,6 +232,7 @@ public class NotificacionController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Todas las notificaciones marcadas como leídas")
     })
+    // Marca todas las notificaciones de un usuario como leídas
     @PutMapping("/notificaciones/usuario/{usuarioId}/leer-todas")
     public ResponseEntity<Map<String, Object>> marcarTodasComoLeidas(@PathVariable Integer usuarioId) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -240,6 +257,7 @@ public class NotificacionController {
             @ApiResponse(responseCode = "500", description = "Error al eliminar las notificaciones",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Elimina todas las notificaciones de un usuario
     @DeleteMapping("/notificaciones/usuario/{usuarioId}")
     public ResponseEntity<Map<String, Object>> borrarNotificacionesUsuario(@PathVariable Integer usuarioId) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -262,6 +280,7 @@ public class NotificacionController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Total de notificaciones del usuario")
     })
+    // Cuenta el total de notificaciones de un usuario
     @GetMapping("/notificaciones/count/usuario/{usuarioId}")
     public ResponseEntity<Map<String, Object>> contarNotificacionesUsuario(@PathVariable Integer usuarioId) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -278,6 +297,7 @@ public class NotificacionController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Total de notificaciones no leídas")
     })
+    // Cuenta las notificaciones no leídas de un usuario
     @GetMapping("/notificaciones/count/usuario/{usuarioId}/no-leidas")
     public ResponseEntity<Map<String, Object>> contarNotificacionesNoLeidasUsuario(@PathVariable Integer usuarioId) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -294,6 +314,7 @@ public class NotificacionController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Total de notificaciones no leídas")
     })
+    // Comprueba si un usuario tiene alguna notificación pendiente de leer
     @GetMapping("/notificaciones/exists/usuario/{usuarioId}/no-leidas")
     public ResponseEntity<Map<String, Object>> existenNotificacionesNoLeidas(@PathVariable Integer usuarioId) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -313,6 +334,7 @@ public class NotificacionController {
             @ApiResponse(responseCode = "404", description = "Notificación no encontrada",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Actualiza parcialmente campos de una notificación (PATCH)
     @PatchMapping("/notificaciones/{id}")
     public ResponseEntity<NotificacionDTO> patchNotificacion(@PathVariable Integer id, @RequestBody NotificacionPatchDTO patchDTO) {
         return ResponseEntity.ok(notificacionService.patch(id, patchDTO));

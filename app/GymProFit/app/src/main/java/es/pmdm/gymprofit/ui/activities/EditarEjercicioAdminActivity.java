@@ -14,12 +14,19 @@ import es.pmdm.gymprofit.network.API;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.utils.UIHelper;
 
+// ============================================================
+// EditarEjercicioAdminActivity — pantalla de administración para
+// editar un ejercicio existente del catálogo.
+// Precarga los campos con los datos recibidos por Intent y envía el
+// formulario editado a la API (solo accesible por rol ADMIN).
+// ============================================================
 public class EditarEjercicioAdminActivity extends BaseActivity {
 
     private int ejercicioId;
     private TextInputEditText etNombre, etDescripcion, etCalorias, etEquipo, etInstrucciones;
     private Spinner spGrupoMuscular, spDificultad;
 
+    // Opciones fijas para los spinners de grupo muscular y dificultad.
     private static final String[] GRUPOS = {
             "PECHO", "ESPALDA", "PIERNAS", "HOMBROS", "BRAZOS", "ABDOMEN", "CARDIO", "FULLBODY"
     };
@@ -73,6 +80,8 @@ public class EditarEjercicioAdminActivity extends BaseActivity {
         }
     }
 
+    // Valida el nombre, construye el JSON con los campos editados
+    // (los opcionales vacíos se envían como null) y llama a la API de admin.
     private void guardar() {
         String nombre = etNombre.getText() != null ? etNombre.getText().toString().trim() : "";
         if (nombre.isEmpty()) {

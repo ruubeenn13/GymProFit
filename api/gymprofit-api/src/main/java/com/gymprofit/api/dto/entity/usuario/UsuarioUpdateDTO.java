@@ -9,10 +9,17 @@ import com.gymprofit.api.enums.TipoObjetivo;
 
 import java.io.Serializable;
 
+// ============================================================
+// UsuarioUpdateDTO — DTO de entrada para la actualización completa de un usuario
+// Requiere el id del usuario a actualizar y permite modificar sus datos
+// de perfil (email, peso, altura, edad, nivel, objetivo y estado activo).
+// Pensado para el flujo de actualización completa (rol ADMIN).
+// ============================================================
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class UsuarioUpdateDTO implements Serializable {
+    // Identificador del usuario a actualizar; obligatorio.
     @NotNull
     private Integer id;
 

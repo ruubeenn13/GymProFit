@@ -24,6 +24,11 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+// ============================================================
+// SesionEntrenamientoControllerTest — tests de integración del endpoint /sesiones
+// Comprueba autenticación, CRUD y el flujo de completar una
+// sesión de entrenamiento (calorías quemadas y notas).
+// ============================================================
 @SpringBootTest
 @AutoConfigureMockMvc
 @DisplayName("Tests de integración del SesionEntrenamientoController")
@@ -32,11 +37,13 @@ class SesionEntrenamientoControllerTest {
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
 
+    // Mock del servicio de sesiones de entrenamiento
     @MockitoBean private ISesionEntrenamientoService sesionService;
 
     private SesionEntrenamientoDTO sesionDTO;
     private SesionEntrenamientoCreateDTO createDTO;
 
+    // Inicializa los DTOs de prueba usados en los distintos tests
     @BeforeEach
     void setUp() {
         sesionDTO = new SesionEntrenamientoDTO();
@@ -50,6 +57,7 @@ class SesionEntrenamientoControllerTest {
         createDTO.setFechaInicio(LocalDateTime.now());
     }
 
+    // Comprueba que un USER puede listar todas las sesiones de entrenamiento
     @Test
     @DisplayName("GET /sesiones con rol USER devuelve 200")
     @WithMockUser(roles = "USER")
@@ -63,6 +71,7 @@ class SesionEntrenamientoControllerTest {
         verify(sesionService).findAll();
     }
 
+    // Comprueba que listar sesiones sin autenticación devuelve un error 5xx
     @Test
     @DisplayName("GET /sesiones sin autenticación devuelve error")
     void findAll_sin_autenticacion_devuelve_error() throws Exception {
@@ -70,6 +79,7 @@ class SesionEntrenamientoControllerTest {
                 .andExpect(status().is5xxServerError());
     }
 
+    // Comprueba que un USER puede consultar una sesión existente por id
     @Test
     @DisplayName("GET /sesiones/{id} con rol USER devuelve 200")
     @WithMockUser(roles = "USER")
@@ -81,6 +91,7 @@ class SesionEntrenamientoControllerTest {
                 .andExpect(jsonPath("$.id").value(1));
     }
 
+    // Comprueba que consultar una sesión inexistente devuelve 404
     @Test
     @DisplayName("GET /sesiones/{id} inexistente devuelve 404")
     @WithMockUser(roles = "USER")
@@ -92,6 +103,7 @@ class SesionEntrenamientoControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    // Comprueba que un USER puede crear una nueva sesión de entrenamiento
     @Test
     @DisplayName("POST /sesiones con rol USER devuelve 200")
     @WithMockUser(roles = "USER")
@@ -107,6 +119,7 @@ class SesionEntrenamientoControllerTest {
         verify(sesionService).save(any(SesionEntrenamientoCreateDTO.class));
     }
 
+    // Comprueba que un USER puede eliminar una sesión de entrenamiento existente
     @Test
     @DisplayName("DELETE /sesiones/{id} con rol USER devuelve 200")
     @WithMockUser(roles = "USER")
@@ -118,6 +131,7 @@ class SesionEntrenamientoControllerTest {
                 .andExpect(jsonPath("$.mensaje").value("Sesión de entrenamiento eliminada con ÉXITO"));
     }
 
+    // Comprueba que se pueden listar las sesiones de un usuario concreto
     @Test
     @DisplayName("GET /sesiones/usuario/{id} con rol USER devuelve 200")
     @WithMockUser(roles = "USER")
@@ -129,6 +143,7 @@ class SesionEntrenamientoControllerTest {
                 .andExpect(jsonPath("$[0].usuarioId").value(1));
     }
 
+    // Comprueba que se puede completar una sesión indicando calorías quemadas y notas
     @Test
     @DisplayName("PUT /sesiones/{id}/completar con rol USER devuelve 200")
     @WithMockUser(roles = "USER")

@@ -17,6 +17,12 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 
+// ============================================================
+// JwtAuthenticationFilter — filtro de autenticación JWT por petición
+// Se ejecuta una vez por cada petición HTTP: extrae el token del header
+// Authorization, valida el usuario y, si es correcto, establece la
+// autenticación en el SecurityContext para que Spring Security la use.
+// ============================================================
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -26,6 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final IUsuarioService usuarioService;
 
 
+    // Intercepta la petición: valida el JWT (si existe) y autentica al usuario en el contexto de seguridad.
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -59,6 +66,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
+    // Obtiene el token JWT del header Authorization, quitando el prefijo "Bearer ".
     private String getTokenFromRequest(HttpServletRequest request) {
         final String authHeader = request.getHeader(JwtTokenProvider.TOKEN_HEADER);
 

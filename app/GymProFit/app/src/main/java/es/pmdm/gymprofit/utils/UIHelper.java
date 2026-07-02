@@ -26,22 +26,32 @@ import java.util.List;
 
 import es.pmdm.gymprofit.R;
 
+// ============================================================
+// UIHelper — utilidades estáticas de UI compartidas por toda la app.
+// Ofrece toasts personalizados con icono, diálogos de confirmación con fondo
+// redondeado y un menú anclado (popup) tipo "acciones", evitando duplicar
+// este código de bajo nivel en cada Activity.
+// ============================================================
 public class UIHelper {
 
     // TOASTS
 
+    // Muestra un toast personalizado con icono informativo.
     public static void mostrarToastInfo(Context context, String mensaje) {
         mostrarToast(context, mensaje, R.drawable.ic_info);
     }
 
+    // Muestra un toast personalizado con icono de éxito.
     public static void mostrarToastExito(Context context, String mensaje) {
         mostrarToast(context, mensaje, R.drawable.ic_check);
     }
 
+    // Muestra un toast personalizado con icono de error.
     public static void mostrarToastError(Context context, String mensaje) {
         mostrarToast(context, mensaje, R.drawable.ic_error);
     }
 
+    // Infla el layout toast_custom, rellena icono/mensaje y lo muestra en pantalla.
     private static void mostrarToast(Context context, String mensaje, int iconoRes) {
         View view = LayoutInflater.from(context).inflate(R.layout.toast_custom, null);
         ImageView ivIcono = view.findViewById(R.id.ivToastIcono);
@@ -58,10 +68,13 @@ public class UIHelper {
 
     // DIÁLOGOS
 
+    // Muestra un diálogo de confirmación simple (sin icono) con botones cancelar/confirmar.
     public static void mostrarDialogo(Context context, String titulo, String mensaje, Runnable onConfirmar) {
         mostrarDialogoConIcono(context, titulo, mensaje, -1, onConfirmar);
     }
 
+    // Muestra un diálogo de confirmación con icono opcional, fondo redondeado (colorSurface)
+    // y ancho ajustado al 90% de la pantalla. Ejecuta onConfirmar solo si se pulsa confirmar.
     public static void mostrarDialogoConIcono(Context context, String titulo, String mensaje, int iconoRes, Runnable onConfirmar) {
         Dialog dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -275,6 +288,7 @@ public class UIHelper {
         popup.showAsDropDown(anchor, xOffset, 0);
     }
 
+    // Convierte dp a píxeles según la densidad de pantalla del contexto.
     private static int dpToPx(Context context, int dp) {
         return (int) (dp * context.getResources().getDisplayMetrics().density);
     }

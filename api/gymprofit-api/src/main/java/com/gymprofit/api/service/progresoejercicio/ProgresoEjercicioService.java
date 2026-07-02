@@ -24,6 +24,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+// ============================================================
+// ProgresoEjercicioService — implementación del servicio de progreso en ejercicios
+// Gestiona el registro y consulta del progreso (mejor peso, repeticiones,
+// tiempo) de cada usuario por ejercicio, con comprobaciones de propiedad
+// mediante SecurityUtils.
+// ============================================================
 @Service
 @AllArgsConstructor
 public class ProgresoEjercicioService implements IProgresoEjercicioService{
@@ -36,6 +42,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
     private final Logger logger = LoggerFactory.getLogger(ProgresoEjercicioService.class);
 
 
+    // Devuelve todos los progresos de ejercicio del sistema. Solo ADMIN.
     @Override
     public List<ProgresoEjercicioDTO> findAll() {
         logger.info("Buscando todos los progresos de ejercicios");
@@ -46,6 +53,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
         return progresoEjercicioMapper.toDTOList(progresoEjercicios);
     }
 
+    // Busca un progreso de ejercicio por id, verificando la propiedad del usuario.
     @Override
     public ProgresoEjercicioDTO findById(Integer id) {
         logger.info("Buscando progreso de ejercicio por id: {}", id);
@@ -58,6 +66,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
         return progresoEjercicioMapper.toDTO(progresoEjercicio);
     }
 
+    // Crea un nuevo registro de progreso, resolviendo usuario y ejercicio y fijando la fecha actual.
     @Transactional
     @Override
     public ProgresoEjercicioDTO save(ProgresoEjercicioCreateDTO progresoEjercicioCreateDTO) {
@@ -90,6 +99,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
         }
     }
 
+    // Actualiza los valores de mejor marca (peso, repeticiones, tiempo) y notas de un progreso existente.
     @Override
     public ProgresoEjercicioDTO modify(ProgresoEjercicioDTO progresoEjercicioDTO) {
         logger.info("Modificando progreso de ejercicio con id: {}", progresoEjercicioDTO.getId());
@@ -113,6 +123,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
         }
     }
 
+    // Elimina definitivamente un registro de progreso tras comprobar la propiedad.
     @Transactional
     @Override
     public void deleteById(Integer id) {
@@ -132,6 +143,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
         }
     }
 
+    // Lista todos los progresos registrados de un usuario.
     @Override
     public List<ProgresoEjercicioDTO> findByUsuarioId(Integer usuarioId) {
         logger.info("Buscando progresos del usuario id: {}", usuarioId);
@@ -142,6 +154,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
         return progresoEjercicioMapper.toDTOList(progresoEjercicios);
     }
 
+    // Lista todos los progresos registrados para un ejercicio concreto (todos los usuarios).
     @Override
     public List<ProgresoEjercicioDTO> findByEjercicioId(Integer ejercicioId) {
         logger.info("Buscando progresos del ejercicio id: {}", ejercicioId);
@@ -151,6 +164,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
         return progresoEjercicioMapper.toDTOList(progresoEjercicios);
     }
 
+    // Lista los progresos de un usuario para un ejercicio concreto.
     @Override
     public List<ProgresoEjercicioDTO> findByUsuarioIdAndEjercicioId(Integer usuarioId, Integer ejercicioId) {
         logger.info("Buscando progresos del usuario id: {} y ejercicio id: {}", usuarioId, ejercicioId);
@@ -161,6 +175,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
         return progresoEjercicioMapper.toDTOList(progresoEjercicios);
     }
 
+    // Lista los progresos de un usuario ordenados por fecha descendente.
     @Override
     public List<ProgresoEjercicioDTO> findByUsuarioIdOrdenado(Integer usuarioId) {
         logger.info("Buscando progresos del usuario id: {} ordenados por fecha", usuarioId);
@@ -171,6 +186,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
         return progresoEjercicioMapper.toDTOList(progresoEjercicios);
     }
 
+    // Obtiene el histórico de progreso de un usuario en un ejercicio mediante consulta específica del repositorio.
     @Override
     public List<ProgresoEjercicioDTO> getProgresoByUsuarioAndEjercicio(Integer usuarioId, Integer ejercicioId) {
         logger.info("Buscando progreso del usuario id: {} en ejercicio id: {}", usuarioId, ejercicioId);
@@ -181,6 +197,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
         return progresoEjercicioMapper.toDTOList(progresoEjercicios);
     }
 
+    // Obtiene el registro de progreso más reciente de un usuario en un ejercicio.
     @Override
     public ProgresoEjercicioDTO getUltimoProgresoByUsuarioAndEjercicio(Integer usuarioId, Integer ejercicioId) {
         logger.info("Buscando último progreso del usuario id: {} en ejercicio id: {}", usuarioId, ejercicioId);
@@ -192,6 +209,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
         return progresoEjercicioMapper.toDTO(progreso);
     }
 
+    // Cuenta el total de progresos registrados de un usuario.
     @Override
     public Long countByUsuarioId(Integer usuarioId) {
         logger.info("Contando progresos del usuario id: {}", usuarioId);
@@ -200,6 +218,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
         return progresoEjercicioRepository.countByUsuarioId(usuarioId);
     }
 
+    // Cuenta el total de progresos registrados para un ejercicio (público, sin restricción de propiedad).
     @Override
     public Long countByEjercicioId(Integer ejercicioId) {
         logger.info("Contando progresos del ejercicio id: {}", ejercicioId);
@@ -207,6 +226,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
         return progresoEjercicioRepository.countByEjercicioId(ejercicioId);
     }
 
+    // Elimina todos los progresos de un usuario (p.ej. al borrar la cuenta).
     @Transactional
     @Override
     public void deleteByUsuarioId(Integer usuarioId) {
@@ -220,6 +240,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
         }
     }
 
+    // Elimina los progresos de un usuario para un ejercicio concreto.
     @Transactional
     @Override
     public void deleteByUsuarioIdAndEjercicioId(Integer usuarioId, Integer ejercicioId) {
@@ -233,6 +254,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
         }
     }
 
+    // Indica si un usuario tiene algún progreso registrado para un ejercicio concreto.
     @Override
     public boolean existsByUsuarioIdAndEjercicioId(Integer usuarioId, Integer ejercicioId) {
         logger.info("Verificando si existe progreso del usuario id: {} en ejercicio id: {}", usuarioId, ejercicioId);
@@ -241,6 +263,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
         return progresoEjercicioRepository.existsByUsuarioIdAndEjercicioId(usuarioId, ejercicioId);
     }
 
+    // Actualiza parcialmente un progreso de ejercicio (solo los campos no nulos del patchDTO).
     @Transactional
     @Override
     public ProgresoEjercicioDTO patch(Integer id, ProgresoEjercicioPatchDTO patchDTO) {

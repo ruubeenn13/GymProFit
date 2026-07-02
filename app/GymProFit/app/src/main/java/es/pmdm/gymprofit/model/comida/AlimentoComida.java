@@ -1,5 +1,11 @@
 package es.pmdm.gymprofit.model.comida;
 
+// ============================================================
+// AlimentoComida — modelo POJO de la relación alimento-comida
+// Representa un alimento concreto añadido a una comida, con la
+// cantidad en gramos y los totales nutricionales ya calculados
+// para esa cantidad (calorías y macros totales de la porción).
+// ============================================================
 public class AlimentoComida {
 
     private int id;
@@ -12,6 +18,7 @@ public class AlimentoComida {
     private double proteinasTotales;
     private double carbohidratosTotales;
     private double grasasTotales;
+    // Id del usuario propietario del alimento si es personalizado; null si es del catálogo global
     private Integer usuarioIdAlimento;
 
     public AlimentoComida() {}

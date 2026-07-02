@@ -32,6 +32,11 @@ import es.pmdm.gymprofit.ui.adapters.SesionAdapter;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
+// ============================================================
+// SesionesActivity — historial de sesiones de entrenamiento del usuario.
+// Lista las sesiones registradas mostrando el nombre de la rutina asociada,
+// permite registrar nuevas sesiones, eliminarlas y navegar al resumen de cada una.
+// ============================================================
 public class SesionesActivity extends AppCompatActivity {
 
     private RecyclerView rvSesiones;
@@ -44,6 +49,7 @@ public class SesionesActivity extends AppCompatActivity {
 
     private ActivityResultLauncher<Intent> registrarLauncher;
 
+    // Inicializa vistas, tema/idioma, el launcher de registro de sesión y carga los datos.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +76,8 @@ public class SesionesActivity extends AppCompatActivity {
         cargarDatos();
     }
 
+    // Punto de entrada de la carga: primero resuelve el mapa id→nombre de rutina
+    // y después las sesiones del usuario.
     private void cargarDatos() {
         int usuarioId = prefsManager.getUsuarioId();
         if (usuarioId == -1) return;
@@ -89,6 +97,7 @@ public class SesionesActivity extends AppCompatActivity {
         });
     }
 
+    // Obtiene las sesiones de entrenamiento del usuario y las muestra en el hilo de UI.
     private void cargarSesiones(int usuarioId) {
         API.getSesionesDeUsuario(usuarioId, new UtilREST.OnResponseListener() {
             @Override
@@ -107,6 +116,8 @@ public class SesionesActivity extends AppCompatActivity {
         });
     }
 
+    // Actualiza la lista interna y configura el adapter con los callbacks de
+    // eliminar sesión (con confirmación) y abrir su resumen.
     private void mostrar(List<SesionEntrenamiento> lista) {
         sesiones.clear();
         sesiones.addAll(lista);
@@ -138,6 +149,7 @@ public class SesionesActivity extends AppCompatActivity {
         rvSesiones.setAdapter(adapter);
     }
 
+    // Elimina una sesión de entrenamiento y recarga el historial.
     private void eliminarSesion(SesionEntrenamiento sesion) {
         API.eliminarSesion(sesion.getId(), new UtilREST.OnResponseListener() {
             @Override
@@ -152,6 +164,7 @@ public class SesionesActivity extends AppCompatActivity {
         });
     }
 
+    // Aplica el idioma guardado en preferencias a la configuración de recursos.
     private void aplicarIdioma() {
         String lang = prefsManager.getLanguage();
         if (!lang.isEmpty()) {

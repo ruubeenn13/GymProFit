@@ -20,8 +20,14 @@ import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
 import es.pmdm.gymprofit.utils.UIHelper;
 
+// ============================================================
+// AdminEjercicioAdapter — adapter del listado de ejercicios en el panel de administración.
+// Pinta cada ejercicio con su grupo muscular, dificultad y estado (activo/inactivo),
+// y expone un menú de acciones para editar o activar/desactivar el ejercicio.
+// ============================================================
 public class AdminEjercicioAdapter extends RecyclerView.Adapter<AdminEjercicioAdapter.ViewHolder> {
 
+    // Callback hacia la Activity/Fragment para las acciones del menú contextual.
     public interface OnAccionListener {
         void onToggleActivo(Ejercicio ejercicio, int position);
         void onEditar(Ejercicio ejercicio, int position);
@@ -43,6 +49,8 @@ public class AdminEjercicioAdapter extends RecyclerView.Adapter<AdminEjercicioAd
         return new ViewHolder(view);
     }
 
+    // Enlaza los datos del ejercicio con las vistas y configura el chip de estado
+    // y el menú de acciones (editar / activar-desactivar).
     @Override
     public void onBindViewHolder(@NonNull ViewHolder h, int position) {
         Ejercicio e = items.get(position);
@@ -87,11 +95,13 @@ public class AdminEjercicioAdapter extends RecyclerView.Adapter<AdminEjercicioAd
     @Override
     public int getItemCount() { return items.size(); }
 
+    // Actualiza un ítem concreto tras editar/cambiar estado y notifica el cambio.
     public void actualizarItem(int position, Ejercicio ejercicio) {
         items.set(position, ejercicio);
         notifyItemChanged(position);
     }
 
+    // Referencias a las vistas de cada item del listado de ejercicios.
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvNombre, tvDescripcion;
         Chip chipGrupo, chipDificultad, chipEstado;

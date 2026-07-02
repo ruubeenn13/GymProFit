@@ -29,6 +29,12 @@ import java.util.stream.Collectors;
 
 import static com.gymprofit.api.enums.RoleType.USER;
 
+// ============================================================
+// AuthService — servicio de autenticación de usuarios
+// Implementa login (delega en AuthenticationManager de Spring Security),
+// registro público (siempre asigna rol USER, nunca lo toma del cliente) y
+// acceso como invitado. Genera los tokens JWT usando JwtTokenProvider.
+// ============================================================
 @Service
 @AllArgsConstructor
 public class AuthService implements IAuthService {
@@ -40,6 +46,8 @@ public class AuthService implements IAuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
+    // Autentica usuario/contraseña con el AuthenticationManager, establece el
+    // contexto de seguridad y genera el token JWT con los roles del usuario.
     @Override
     public TokenDTO login(LoginDTO loginDTO) {
         logger.info("Iniciando sesión para usuario: {}", loginDTO.getUsername());
@@ -64,6 +72,8 @@ public class AuthService implements IAuthService {
         return new TokenDTO(token, usuario.getUsername(), roles);
     }
 
+    // Registra un nuevo usuario público: valida unicidad de username/email,
+    // codifica la contraseña, asigna siempre el rol USER y guarda el usuario.
     @Transactional
     @Override
     public void register(RegisterDTO registerDTO) {
@@ -112,6 +122,8 @@ public class AuthService implements IAuthService {
                 roles.stream().map(r -> r.getNombre().name()).collect(Collectors.joining(", ")));
     }
 
+    // Genera un token JWT para el usuario invitado predefinido "guest" sin
+    // necesidad de credenciales, usando directamente sus authorities.
     @Override
     public TokenDTO loginAsGuest() {
         Usuario guest = usuarioRepository.findByUsername("guest")

@@ -25,6 +25,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// ============================================================
+// ObjetivoPersonalController — controlador REST de objetivos personales
+// Gestiona el CRUD de los objetivos que se marca cada usuario (perder peso,
+// ganar masa muscular, etc.), su progreso, estado de completado y
+// consultas filtradas por usuario, tipo o estado.
+// ============================================================
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")
@@ -34,6 +40,7 @@ public class ObjetivoPersonalController {
 
     private final IObjetivoPersonalService objetivoPersonalService;
 
+    // Devuelve todos los objetivos personales registrados
     @Operation(summary = "Obtiene todos los objetivos personales")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de los objetivos personales",
@@ -57,6 +64,7 @@ public class ObjetivoPersonalController {
             @ApiResponse(responseCode = "404", description = "Objetivo personal no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Busca un objetivo personal por su ID
     @GetMapping("/objetivos-personales/{id}")
     public ResponseEntity<ObjetivoPersonalDTO> obtenerObjetivoPersonal(@PathVariable Integer id) {
         ObjetivoPersonalDTO objetivoPersonalDTO = objetivoPersonalService.findById(id);
@@ -72,6 +80,7 @@ public class ObjetivoPersonalController {
                     content = @Content(schema = @Schema(implementation = Response.class))),
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     })
+    // Crea un objetivo personal nuevo asociado a un usuario
     @PostMapping("/objetivos-personales")
     public ResponseEntity<ObjetivoPersonalDTO> guardarObjetivoPersonal(@Valid @RequestBody ObjetivoPersonalCreateDTO objetivoPersonalCreateDTO) {
         ObjetivoPersonalDTO objetivoPersonalDTO = objetivoPersonalService.save(objetivoPersonalCreateDTO);
@@ -86,6 +95,7 @@ public class ObjetivoPersonalController {
             @ApiResponse(responseCode = "404", description = "Objetivo personal no encontrado",
                     content = @Content(schema = @Schema(implementation = ObjetivoPersonalDTO.class)))
     })
+    // Actualiza el valor objetivo o el estado de completado de un objetivo existente
     @PutMapping("/objetivos-personales")
     public ResponseEntity<ObjetivoPersonalDTO> actualizarObjetivoPersonal(@Valid @RequestBody ObjetivoPersonalUpdateDTO objetivoPersonalUpdateDTO) {
         ObjetivoPersonalDTO objetivoPersonalDTO = objetivoPersonalService.update(objetivoPersonalUpdateDTO);
@@ -99,6 +109,7 @@ public class ObjetivoPersonalController {
             @ApiResponse(responseCode = "404", description = "Objetivo personal no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Elimina un objetivo personal por ID
     @DeleteMapping("/objetivos-personales/{id}")
     public ResponseEntity<Map<String, Object>> borrarObjetivoPersonal(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -124,6 +135,7 @@ public class ObjetivoPersonalController {
             @ApiResponse(responseCode = "404", description = "No se encontraron objetivos para este usuario",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista todos los objetivos personales de un usuario
     @GetMapping("/objetivos-personales/usuario/{usuarioId}")
     public ResponseEntity<List<ObjetivoPersonalDTO>> obtenerPorUsuario(@PathVariable Integer usuarioId) {
         List<ObjetivoPersonalDTO> objetivosPersonales = objetivoPersonalService.findByUsuarioId(usuarioId);
@@ -142,6 +154,7 @@ public class ObjetivoPersonalController {
             @ApiResponse(responseCode = "404", description = "No se encontraron objetivos para este usuario",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista los objetivos de un usuario ordenados por fecha de inicio
     @GetMapping("/objetivos-personales/usuario/{usuarioId}/ordenados")
     public ResponseEntity<List<ObjetivoPersonalDTO>> obtenerPorUsuarioOrdenados(@PathVariable Integer usuarioId) {
         List<ObjetivoPersonalDTO> objetivosPersonales = objetivoPersonalService.findByUsuarioIdOrdenados(usuarioId);
@@ -160,6 +173,7 @@ public class ObjetivoPersonalController {
             @ApiResponse(responseCode = "404", description = "No se encontraron objetivos pendientes",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista los objetivos pendientes (no completados) de un usuario
     @GetMapping("/objetivos-personales/usuario/{usuarioId}/pendientes")
     public ResponseEntity<List<ObjetivoPersonalDTO>> obtenerPendientesPorUsuario(@PathVariable Integer usuarioId) {
         List<ObjetivoPersonalDTO> objetivosPersonales = objetivoPersonalService.findPendientesByUsuarioId(usuarioId);
@@ -178,6 +192,7 @@ public class ObjetivoPersonalController {
             @ApiResponse(responseCode = "404", description = "No se encontraron objetivos completados",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista los objetivos completados de un usuario
     @GetMapping("/objetivos-personales/usuario/{usuarioId}/completados")
     public ResponseEntity<List<ObjetivoPersonalDTO>> obtenerCompletadosPorUsuario(@PathVariable Integer usuarioId) {
         List<ObjetivoPersonalDTO> objetivosPersonales = objetivoPersonalService.findCompletadosByUsuarioId(usuarioId);
@@ -196,6 +211,7 @@ public class ObjetivoPersonalController {
             @ApiResponse(responseCode = "404", description = "No se encontraron objetivos para este tipo",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Filtra objetivos por tipo, validando que sea un valor válido del enum TipoObjetivo
     @GetMapping("/objetivos-personales/tipo/{tipoObjetivo}")
     public ResponseEntity<List<ObjetivoPersonalDTO>> obtenerPorTipoObjetivo(@PathVariable String tipoObjetivo) {
         if (tipoObjetivo == null || tipoObjetivo.trim().isEmpty()) {
@@ -203,6 +219,7 @@ public class ObjetivoPersonalController {
         }
 
         try {
+            // Comprueba que el tipo recibido exista en el enum antes de consultar
             TipoObjetivo.valueOf(tipoObjetivo.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new InvalidDataException("Tipo de objetivo inválido: \" + tipoObjetivo + \". Valores válidos: PERDER_PESO, GANAR_MASA_MUSCULAR, " +
@@ -228,6 +245,7 @@ public class ObjetivoPersonalController {
             @ApiResponse(responseCode = "404", description = "Objetivo personal no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Marca un objetivo personal como completado
     @PutMapping("/objetivos-personales/{id}/completar")
     public ResponseEntity<ObjetivoPersonalDTO> completar(@PathVariable Integer id) {
         ObjetivoPersonalDTO objetivoPersonalDTO = objetivoPersonalService.completar(id);
@@ -239,6 +257,7 @@ public class ObjetivoPersonalController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Total de objetivos del usuario")
     })
+    // Cuenta el total de objetivos de un usuario
     @GetMapping("/objetivos-personales/count/usuario/{usuarioId}")
     public ResponseEntity<Map<String, Object>> contarObjetivosPersonales(@PathVariable Integer usuarioId) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -255,6 +274,7 @@ public class ObjetivoPersonalController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Total de objetivos completados del usuario")
     })
+    // Cuenta los objetivos completados de un usuario
     @GetMapping("/objetivos-personales/count/usuario/{usuarioId}/completados")
     public ResponseEntity<Map<String, Object>> contarObjetivosCompletados(@PathVariable Integer usuarioId) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -271,6 +291,7 @@ public class ObjetivoPersonalController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Total de objetivos pendientes del usuario")
     })
+    // Cuenta los objetivos pendientes de un usuario
     @GetMapping("/objetivos-personales/count/usuario/{usuarioId}/pendientes")
     public ResponseEntity<Map<String, Object>> contarObjetivosPendientes(@PathVariable Integer usuarioId) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -290,6 +311,7 @@ public class ObjetivoPersonalController {
             @ApiResponse(responseCode = "404", description = "Objetivo personal no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Actualiza parcialmente campos de un objetivo personal (PATCH)
     @PatchMapping("/objetivos-personales/{id}")
     public ResponseEntity<ObjetivoPersonalDTO> patchObjetivoPersonal(@PathVariable Integer id, @RequestBody ObjetivoPersonalPatchDTO patchDTO) {
         return ResponseEntity.ok(objetivoPersonalService.patch(id, patchDTO));

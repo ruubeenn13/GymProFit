@@ -37,6 +37,12 @@ import es.pmdm.gymprofit.ui.adapters.EjercicioPesoAdapter;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
+// ============================================================
+// RegistrarSesionActivity — Formulario para registrar una sesión de entrenamiento.
+// Permite elegir una rutina (propia o predefinida), calcula automáticamente las
+// calorías estimadas y los ejercicios/pesos asociados, y guarda la sesión junto
+// con los ejercicios realizados en la API, navegando después al resumen.
+// ============================================================
 public class RegistrarSesionActivity extends AppCompatActivity {
 
     private Spinner spRutina;
@@ -52,6 +58,8 @@ public class RegistrarSesionActivity extends AppCompatActivity {
     private final List<EjercicioPesoAdapter.Item> ejercicioItems = new ArrayList<>();
     private EjercicioPesoAdapter ejercicioPesoAdapter;
 
+    // Inicializa la pantalla: monta vistas, configura el RecyclerView de
+    // ejercicios/pesos y carga las rutinas disponibles para el spinner.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +88,8 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         cargarRutinas();
     }
 
+    // Carga en paralelo las rutinas predefinidas y las del usuario; cuando
+    // ambas llamadas terminan, combina los resultados y actualiza el spinner.
     private void cargarRutinas() {
         int usuarioId = prefsManager.getUsuarioId();
         rutinaOpciones.clear();
@@ -111,6 +121,8 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         });
     }
 
+    // Une rutinas predefinidas y del usuario en una única lista y refresca
+    // el spinner en el hilo principal.
     private void combinarYMostrar(List<Rutina> predefinidas) {
         List<Rutina> todas = new ArrayList<>(predefinidas);
         todas.addAll(rutinas);
@@ -120,6 +132,8 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         runOnUiThread(this::actualizarSpinner);
     }
 
+    // Rellena el spinner de rutinas y, al seleccionar una, calcula sus
+    // calorías estimadas; si se selecciona "sin rutina", limpia los cálculos.
     private void actualizarSpinner() {
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, rutinaOpciones);
@@ -142,6 +156,9 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         });
     }
 
+    // Obtiene los ejercicios de la rutina seleccionada, calcula las calorías
+    // totales (calorías x series x repeticiones) y arma la lista de
+    // ejercicios/pesos que se mostrará en el RecyclerView.
     private void calcularCaloriasRutina(int rutinaId) {
         API.getRutinaEjerciciosPorRutina(rutinaId, new UtilREST.OnResponseListener() {
             @Override
@@ -182,6 +199,10 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         });
     }
 
+    // Valida la duración (obligatoria), construye el JSON de la sesión
+    // (rutina, fecha, duración, calorías, valoración y notas) y la envía a
+    // la API; si se crea correctamente, registra los ejercicios realizados
+    // y navega al resumen de la sesión.
     private void guardarSesion() {
         String durStr = etDuracion.getText() != null ? etDuracion.getText().toString().trim() : "";
         if (durStr.isEmpty()) {
@@ -265,6 +286,8 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         }
     }
 
+    // Envía a la API un registro de ejercicio realizado por cada ítem de la
+    // lista (series, repeticiones y peso usado), asociado a la sesión creada.
     private void registrarEjerciciosRealizados(int sesionId) {
         for (EjercicioPesoAdapter.Item item : ejercicioItems) {
             try {
@@ -284,6 +307,8 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         }
     }
 
+    // Aplica el idioma guardado en preferencias a la configuración de recursos
+    // de la Activity antes de inflar el layout.
     private void aplicarIdioma() {
         String lang = prefsManager.getLanguage();
         if (!lang.isEmpty()) {

@@ -20,8 +20,14 @@ import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.rutina.Rutina;
 import es.pmdm.gymprofit.utils.UIHelper;
 
+// ============================================================
+// AdminRutinaAdapter — adapter del listado de rutinas en el panel de administración.
+// Pinta cada rutina con su nivel, número de ejercicios y estado (activa/inactiva),
+// y expone un menú de acciones para editar o activar/desactivar la rutina.
+// ============================================================
 public class AdminRutinaAdapter extends RecyclerView.Adapter<AdminRutinaAdapter.ViewHolder> {
 
+    // Callback hacia la Activity/Fragment para las acciones del menú contextual.
     public interface OnAccionListener {
         void onToggleActiva(Rutina rutina, int position);
         void onEditar(Rutina rutina, int position);
@@ -43,6 +49,8 @@ public class AdminRutinaAdapter extends RecyclerView.Adapter<AdminRutinaAdapter.
         return new ViewHolder(view);
     }
 
+    // Enlaza los datos de la rutina con las vistas y configura el chip de estado
+    // y el menú de acciones (editar / activar-desactivar).
     @Override
     public void onBindViewHolder(@NonNull ViewHolder h, int position) {
         Rutina r = items.get(position);
@@ -83,11 +91,13 @@ public class AdminRutinaAdapter extends RecyclerView.Adapter<AdminRutinaAdapter.
     @Override
     public int getItemCount() { return items.size(); }
 
+    // Actualiza un ítem concreto tras editar/cambiar estado y notifica el cambio.
     public void actualizarItem(int position, Rutina rutina) {
         items.set(position, rutina);
         notifyItemChanged(position);
     }
 
+    // Referencias a las vistas de cada item del listado de rutinas.
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvNombre, tvDescripcion, tvNumEjercicios;
         Chip chipNivel, chipEstado;

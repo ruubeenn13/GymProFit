@@ -1,5 +1,11 @@
 package es.pmdm.gymprofit.model.usuario;
 
+// ============================================================
+// UsuarioEstadisticas — modelo de datos con las estadísticas de entrenamiento de un usuario
+// Agrupa métricas agregadas calculadas por la API (sesiones totales y
+// completadas, minutos entrenados, calorías, racha de días y ejercicio
+// favorito) para mostrarlas en pantallas de progreso/perfil.
+// ============================================================
 public class UsuarioEstadisticas {
 
     private int totalSesiones;
@@ -10,6 +16,7 @@ public class UsuarioEstadisticas {
     private int rachaActualDias;
     private int mejorRachaDias;
 
+    // Constructor vacío requerido para deserialización JSON (Gson/Retrofit)
     public UsuarioEstadisticas() {}
 
     public int getTotalSesiones() { return totalSesiones; }

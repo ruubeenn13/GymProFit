@@ -24,6 +24,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// ============================================================
+// AdminController — endpoints del panel de administración (ADMIN)
+// Expone operaciones de gestión de usuarios, rutinas predefinidas,
+// ejercicios y alimentos (búsquedas incluyendo inactivos) y las
+// estadísticas globales de la aplicación GymProFit.
+// ============================================================
 @RestController
 @RequestMapping("/admin")
 @RequiredArgsConstructor

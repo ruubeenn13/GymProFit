@@ -20,6 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+// ============================================================
+// RutinaService — implementación del servicio de rutinas de entrenamiento
+// Gestiona el CRUD de rutinas, distinguiendo entre predefinidas (visibles
+// para todos, solo editables por ADMIN) y propias de cada usuario, con
+// comprobaciones de visibilidad y propiedad basadas en el usuario autenticado.
+// ============================================================
 @Service
 @AllArgsConstructor
 public class RutinaService implements IRutinaService {
@@ -29,15 +35,18 @@ public class RutinaService implements IRutinaService {
     private final RutinaMapper rutinaMapper;
     private final Logger logger = LoggerFactory.getLogger(RutinaService.class);
 
+    // Obtiene el usuario autenticado desde el contexto de seguridad de Spring.
     private Usuario getCurrentUser() {
         return (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
+    // Comprueba si el usuario dado tiene el rol ADMIN.
     private boolean isAdmin(Usuario usuario) {
         return usuario.getRoles().stream()
                 .anyMatch(role -> role.getNombre() == RoleType.ADMIN);
     }
 
+    // Devuelve todas las rutinas del sistema. Solo ADMIN.
     @Override
     public List<RutinaDTO> findAll() {
         logger.info("Buscando todas las rutinas");
@@ -49,6 +58,7 @@ public class RutinaService implements IRutinaService {
         return rutinaMapper.toDTOList((List<Rutina>) rutinaRepository.findAll());
     }
 
+    // Busca una rutina por id, verificando que el usuario puede visualizarla.
     @Override
     public RutinaDTO findById(Integer id) {
         logger.info("Buscando rutina por id: {}", id);
@@ -63,6 +73,7 @@ public class RutinaService implements IRutinaService {
         return rutinaMapper.toDTO(rutina);
     }
 
+    // Crea una rutina nueva; valida permisos según sea predefinida o propia del usuario.
     @Override
     public RutinaDTO save(RutinaCreateDTO rutinaCreateDTO) {
         logger.info("Creando nueva rutina: {}", rutinaCreateDTO.getNombre());
@@ -100,6 +111,7 @@ public class RutinaService implements IRutinaService {
         }
     }
 
+    // Baja lógica de la rutina (activa=false) tras comprobar la propiedad.
     @Transactional
     @Override
     public void deleteById(Integer id) {
@@ -119,6 +131,7 @@ public class RutinaService implements IRutinaService {
         }
     }
 
+    // Reactiva una rutina previamente desactivada, comprobando la propiedad.
     @Transactional
     @Override
     public void activateById(Integer id) {
@@ -138,6 +151,7 @@ public class RutinaService implements IRutinaService {
         }
     }
 
+    // Elimina definitivamente la rutina de la base de datos, comprobando la propiedad.
     @Transactional
     @Override
     public void permanentDeleteById(Integer id) {
@@ -156,6 +170,7 @@ public class RutinaService implements IRutinaService {
         }
     }
 
+    // Actualiza los datos completos de una rutina existente, comprobando la propiedad.
     @Override
     public RutinaDTO modify(RutinaDTO rutinaDTO) {
         logger.info("Modificando rutina con id: {}", rutinaDTO.getId());
@@ -179,6 +194,7 @@ public class RutinaService implements IRutinaService {
         }
     }
 
+    // Lista las rutinas propias de un usuario. Solo el propio usuario o ADMIN pueden consultarlas.
     @Override
     public List<RutinaDTO> findByUsuarioId(Integer usuarioId) {
         logger.info("Buscando rutinas por el usuario con id: {}", usuarioId);
@@ -191,30 +207,35 @@ public class RutinaService implements IRutinaService {
         return rutinaMapper.toDTOList(rutinaRepository.findByUsuarioId(usuarioId));
     }
 
+    // Lista rutinas por nivel, filtrando solo las visibles para el usuario autenticado.
     @Override
     public List<RutinaDTO> findByNivel(String nivel) {
         logger.info("Buscando rutinas por nivel: {}", nivel);
         return rutinaMapper.toDTOList(filterViewable(rutinaRepository.findByNivel(Nivel.valueOf(nivel.toUpperCase()))));
     }
 
+    // Busca rutinas por nombre (contiene, sin distinguir mayúsculas), filtrando las visibles.
     @Override
     public List<RutinaDTO> findByNombre(String nombre) {
         logger.info("Buscando rutinas por nombre: {}", nombre);
         return rutinaMapper.toDTOList(filterViewable(rutinaRepository.findByNombreContainingIgnoreCase(nombre)));
     }
 
+    // Lista las rutinas activas visibles para el usuario autenticado.
     @Override
     public List<RutinaDTO> findActivas() {
         logger.info("Buscando rutinas activas");
         return rutinaMapper.toDTOList(filterViewable(rutinaRepository.findByActivaTrue()));
     }
 
+    // Lista todas las rutinas predefinidas (compartidas por todos los usuarios).
     @Override
     public List<RutinaDTO> findPredefinidas() {
         logger.info("Buscando rutinas predefinidas");
         return rutinaMapper.toDTOList(rutinaRepository.findByEsPredefinidaTrue());
     }
 
+    // Lista las rutinas activas propias de un usuario. Solo el propio usuario o ADMIN.
     @Override
     public List<RutinaDTO> findByUsuarioIdAndActivas(Integer usuarioId) {
         logger.info("Buscando rutinas activas del usuario id: {}", usuarioId);
@@ -227,12 +248,14 @@ public class RutinaService implements IRutinaService {
         return rutinaMapper.toDTOList(rutinaRepository.findByUsuarioIdAndActivaTrue(usuarioId));
     }
 
+    // Lista las rutinas predefinidas filtradas por nivel de dificultad.
     @Override
     public List<RutinaDTO> findPredefinidasByNivel(String nivel) {
         logger.info("Buscando rutinas predefinidas por nivel: {}", nivel);
         return rutinaMapper.toDTOList(rutinaRepository.getRutinasPredefinidas(Nivel.valueOf(nivel.toUpperCase())));
     }
 
+    // Actualiza parcialmente una rutina (solo los campos no nulos del patchDTO), comprobando la propiedad.
     @Transactional
     @Override
     public RutinaDTO patch(Integer id, com.gymprofit.api.dto.entity.rutina.RutinaPatchDTO patchDTO) {
@@ -284,6 +307,8 @@ public class RutinaService implements IRutinaService {
         return rutinas.stream().filter(this::canView).toList();
     }
 
+    // Verifica que el usuario autenticado pueda modificar/eliminar la rutina: ADMIN siempre,
+    // o el propio dueño si la rutina no es predefinida; lanza UnauthorizedException si no.
     private void checkOwnership(Rutina rutina) {
         Usuario currentUser = getCurrentUser();
         if (isAdmin(currentUser)) return;

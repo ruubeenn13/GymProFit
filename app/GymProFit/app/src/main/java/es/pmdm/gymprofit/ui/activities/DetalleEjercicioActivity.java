@@ -17,6 +17,12 @@ import java.util.Locale;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 
+// ============================================================
+// DetalleEjercicioActivity — pantalla de detalle de un ejercicio.
+// Muestra nombre, descripción, instrucciones, estadísticas (músculo,
+// nivel, calorías, equipo) y, si existe, el vídeo demostrativo del
+// ejercicio recibido por extras del Intent.
+// ============================================================
 public class DetalleEjercicioActivity extends AppCompatActivity {
 
     @Override
@@ -44,6 +50,8 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         configurarVideo(id);
     }
 
+    // Rellena las vistas de la pantalla con los datos del ejercicio,
+    // ocultando las secciones (equipamiento/descripción/instrucciones) vacías.
     private void poblarVistas(String nombre, String descripcion, String instrucciones,
                               String grupoMuscular, String dificultad, int calorias, String equipo) {
         ((TextView) findViewById(R.id.tvNombreDetalle)).setText(nombre != null ? nombre : "");
@@ -76,8 +84,11 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         }
     }
 
+    // Busca un vídeo local (res/raw/video_<id>) para el ejercicio y, si
+    // existe, lo reproduce en bucle sustituyendo al placeholder.
     private void configurarVideo(int ejercicioId) {
         if (ejercicioId <= 0) return;
+        // Resuelve dinámicamente el recurso raw según el id del ejercicio.
         int resId = getResources().getIdentifier("video_" + ejercicioId, "raw", getPackageName());
         if (resId == 0) return;
 
@@ -99,6 +110,7 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         videoView.requestFocus();
     }
 
+    // Pone en mayúscula la primera letra y el resto en minúsculas.
     private static String capitalizar(String s) {
         if (s == null || s.isEmpty()) return s;
         return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
@@ -108,6 +120,7 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         return s == null || s.trim().isEmpty();
     }
 
+    // Aplica el idioma guardado en preferencias a la configuración de recursos.
     private void aplicarIdioma(PreferencesManager prefs) {
         String lang = prefs.getLanguage();
         if (lang != null && !lang.isEmpty()) {

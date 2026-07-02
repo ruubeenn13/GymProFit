@@ -1,7 +1,14 @@
 package es.pmdm.gymprofit.model.usuario;
 
+// ============================================================
+// Usuario — modelo de datos que representa un usuario de la app
+// Contiene los datos de perfil devueltos/enviados por la API (identidad,
+// datos físicos, nivel, objetivo, rol y foto de perfil). Se usa para
+// deserializar respuestas JSON de la API y para mostrar/editar el perfil.
+// ============================================================
 public class Usuario {
 
+    // Identificador único del usuario en la base de datos
     private int id;
     private String username;
     private String email;
@@ -15,6 +22,7 @@ public class Usuario {
     private String rol;
     private String fotoPerfil;
 
+    // Constructor vacío requerido para deserialización JSON (Gson/Retrofit)
     public Usuario() {}
 
     public int getId() { return id; }

@@ -20,18 +20,26 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+// ============================================================
+// AdminControllerTest — tests de integración de los endpoints administrativos.
+// Verifica que /admin/usuarios y /admin/estadisticas-globales solo sean accesibles
+// con rol ADMIN y comprueba el correcto filtrado/paginación de usuarios.
+// ============================================================
 @SpringBootTest
 @AutoConfigureMockMvc
 @DisplayName("Tests de integración del AdminController")
 class AdminControllerTest {
 
+    // Simula peticiones HTTP contra los endpoints del controller.
     @Autowired private MockMvc mockMvc;
 
+    // Mock del service para no depender de la BD real.
     @MockitoBean private IUsuarioService usuarioService;
 
     private AdminUsuarioDTO adminUsuarioDTO;
     private AdminEstadisticasDTO estadisticasDTO;
 
+    // Prepara los DTOs de ejemplo usados en los tests.
     @BeforeEach
     void setUp() {
         adminUsuarioDTO = new AdminUsuarioDTO();
@@ -50,6 +58,7 @@ class AdminControllerTest {
         estadisticasDTO.setTotalLogrosOtorgados(300L);
     }
 
+    // Con rol ADMIN, el listado de usuarios debe responder 200 con los datos del service.
     @Test
     @DisplayName("GET /admin/usuarios con rol ADMIN devuelve 200")
     @WithMockUser(roles = "ADMIN")
@@ -65,6 +74,7 @@ class AdminControllerTest {
         verify(usuarioService).getUsuariosAdmin(null, null, null, 0, 20);
     }
 
+    // Un usuario sin rol ADMIN no puede acceder al listado administrativo.
     @Test
     @DisplayName("GET /admin/usuarios con rol USER devuelve 403")
     @WithMockUser(roles = "USER")
@@ -75,6 +85,7 @@ class AdminControllerTest {
         verify(usuarioService, never()).getUsuariosAdmin(any(), any(), any(), anyInt(), anyInt());
     }
 
+    // Sin autenticación no debe poder acceder al endpoint administrativo.
     @Test
     @DisplayName("GET /admin/usuarios sin autenticación devuelve error")
     void getUsuarios_sin_autenticacion_devuelve_error() throws Exception {
@@ -82,6 +93,7 @@ class AdminControllerTest {
                 .andExpect(status().is5xxServerError());
     }
 
+    // Con rol ADMIN, las estadísticas globales deben devolverse correctamente.
     @Test
     @DisplayName("GET /admin/estadisticas-globales con rol ADMIN devuelve 200")
     @WithMockUser(roles = "ADMIN")
@@ -97,6 +109,7 @@ class AdminControllerTest {
         verify(usuarioService).getEstadisticasGlobales();
     }
 
+    // Un usuario sin rol ADMIN no puede acceder a las estadísticas globales.
     @Test
     @DisplayName("GET /admin/estadisticas-globales con rol USER devuelve 403")
     @WithMockUser(roles = "USER")
@@ -105,6 +118,7 @@ class AdminControllerTest {
                 .andExpect(status().isForbidden());
     }
 
+    // Comprueba que los parámetros de filtro (activo, rol, username, size) se propagan al service.
     @Test
     @DisplayName("GET /admin/usuarios con filtros devuelve resultado filtrado")
     @WithMockUser(roles = "ADMIN")

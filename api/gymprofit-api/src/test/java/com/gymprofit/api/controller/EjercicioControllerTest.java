@@ -23,23 +23,32 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+// ============================================================
+// EjercicioControllerTest — tests de integración del catálogo de ejercicios.
+// Verifica los permisos por rol (GUEST/USER/ADMIN) sobre listar, consultar,
+// crear y eliminar ejercicios, simulando el IEjercicioService.
+// ============================================================
 @SpringBootTest
 @AutoConfigureMockMvc
 @DisplayName("Tests de integración del EjercicioController")
 class EjercicioControllerTest {
 
+    // Simula peticiones HTTP contra los endpoints del controller.
     @Autowired
     private MockMvc mockMvc;
 
+    // Convierte objetos Java a JSON para el body de las peticiones.
     @Autowired
     private ObjectMapper objectMapper;
 
+    // Mock del service para no depender de la BD real.
     @MockitoBean
     private IEjercicioService ejercicioService;
 
     private EjercicioDTO ejercicioDTO;
     private EjercicioCreateDTO ejercicioCreateDTO;
 
+    // Prepara los DTOs de ejemplo usados en los tests.
     @BeforeEach
     void setup() {
         ejercicioDTO = new EjercicioDTO();
@@ -55,6 +64,7 @@ class EjercicioControllerTest {
         ejercicioCreateDTO.setDificultad("INTERMEDIO");
     }
 
+    // Un GUEST puede ver el catálogo de ejercicios (lectura pública para autenticados).
     @Test
     @DisplayName("GET /api/ejercicios con rol GUEST devuelve 200 y lista")
     @WithMockUser(roles = "GUEST")
@@ -69,6 +79,7 @@ class EjercicioControllerTest {
         verify(ejercicioService).findAll();
     }
 
+    // Sin autenticación el endpoint no debe ser accesible.
     @Test
     @DisplayName("GET /api/ejercicios sin autenticación devuelve 500")
     void findAll_sin_autenticacion_devuelve_500() throws Exception {
@@ -76,6 +87,7 @@ class EjercicioControllerTest {
                 .andExpect(status().isInternalServerError());
     }
 
+    // Un USER puede consultar el detalle de un ejercicio existente.
     @Test
     @DisplayName("GET /api/ejercicios/{id} con rol USER devuelve 200")
     @WithMockUser(roles = "USER")
@@ -90,6 +102,7 @@ class EjercicioControllerTest {
         verify(ejercicioService).findById(1);
     }
 
+    // Un id inexistente debe traducirse a 404 vía NotFoundEntityException.
     @Test
     @DisplayName("GET /api/ejercicios/{id} inexistente devuelve 404")
     @WithMockUser(roles = "USER")
@@ -101,6 +114,7 @@ class EjercicioControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    // Solo ADMIN puede crear ejercicios en el catálogo.
     @Test
     @DisplayName("POST /api/ejercicios con rol ADMIN devuelve 200")
     @WithMockUser(roles = "ADMIN")
@@ -116,6 +130,7 @@ class EjercicioControllerTest {
         verify(ejercicioService).save(any(EjercicioCreateDTO.class));
     }
 
+    // Un USER no tiene permiso para crear ejercicios.
     @Test
     @DisplayName("POST /api/ejercicios con rol USER devuelve 403")
     @WithMockUser(roles = "USER")
@@ -128,6 +143,7 @@ class EjercicioControllerTest {
         verify(ejercicioService, never()).save(any());
     }
 
+    // Solo ADMIN puede desactivar (borrar lógicamente) un ejercicio.
     @Test
     @DisplayName("DELETE /api/ejercicios/{id} con rol ADMIN devuelve 200")
     @WithMockUser(roles = "ADMIN")
@@ -141,6 +157,7 @@ class EjercicioControllerTest {
         verify(ejercicioService).deleteById(1);
     }
 
+    // Lista solo los ejercicios activos, accesible también para GUEST.
     @Test
     @DisplayName("GET /api/ejercicios/activos con rol GUEST devuelve 200")
     @WithMockUser(roles = "GUEST")

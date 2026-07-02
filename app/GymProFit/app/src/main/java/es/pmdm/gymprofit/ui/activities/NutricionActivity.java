@@ -45,6 +45,8 @@ public class NutricionActivity extends BaseActivity {
 
     private ActivityResultLauncher<Intent> comidaLauncher;
 
+    // Infla el layout, referencia vistas, registra el launcher de ComidaActivity
+    // y configura las cards de comida y la navegación inferior.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +68,8 @@ public class NutricionActivity extends BaseActivity {
         configurarNavegacion();
     }
 
+    // Recalcula los objetivos nutricionales y recarga las comidas de hoy
+    // cada vez que la Activity vuelve a primer plano.
     @Override
     protected void onResume() {
         super.onResume();
@@ -75,6 +79,7 @@ public class NutricionActivity extends BaseActivity {
 
     // ── Vistas ───────────────────────────────────────────────────────────────
 
+    // Referencia las barras de progreso y los TextView de calorías/macros/subtítulos.
     private void inicializarVistas() {
         progressCalorias   = findViewById(R.id.progressCalorias);
         progressProteinas  = findViewById(R.id.progressProteinas);
@@ -250,6 +255,8 @@ public class NutricionActivity extends BaseActivity {
 
     // ── Navegación ────────────────────────────────────────────────────────────
 
+    // Configura la barra de navegación inferior, marcando "Nutrición" como
+    // seleccionado y redirigiendo a la Activity correspondiente.
     private void configurarNavegacion() {
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setSelectedItemId(R.id.nav_nutricion);

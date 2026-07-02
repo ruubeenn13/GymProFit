@@ -24,6 +24,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+// ============================================================
+// RutinaEjercicioService — gestiona la relación entre rutinas y ejercicios (series, reps, orden...).
+// Implementa el CRUD de la tabla intermedia RutinaEjercicio, aplicando las reglas de
+// propiedad/lectura de la rutina asociada (predefinida vs propia del usuario).
+// ============================================================
 @Service
 @AllArgsConstructor
 public class RutinaEjercicioService implements IRutinaEjercicioService {
@@ -33,6 +38,7 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
     private final IEjercicioRepository ejercicioRepository;
     private final RutinaEjercicioMapper rutinaEjercicioMapper;
     private final SecurityUtils securityUtils;
+    // Logger para trazar las operaciones del servicio.
     private final Logger logger = LoggerFactory.getLogger(RutinaEjercicioService.class);
 
     /**
@@ -72,6 +78,7 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
         }
     }
 
+    // Lista todos los registros rutina-ejercicio del sistema (solo ADMIN).
     @Override
     public List<RutinaEjercicioDTO> findAll() {
         logger.info("Buscando todos los ejercicios de rutinas");
@@ -83,6 +90,7 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
         return rutinaEjercicioMapper.toDTOList(lista);
     }
 
+    // Busca un ejercicio de rutina por su id, comprobando permisos de lectura sobre la rutina.
     @Override
     public RutinaEjercicioDTO findById(Integer id) {
         logger.info("Buscando ejercicio de rutina por id: {}", id);
@@ -95,6 +103,8 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
         return rutinaEjercicioMapper.toDTO(rutinaEjercicio);
     }
 
+    // Añade un ejercicio a una rutina existente, validando que rutina y ejercicio existan
+    // y que el usuario tenga permiso para modificar la rutina.
     @Transactional
     @Override
     public RutinaEjercicioDTO save(RutinaEjercicioCreateDTO createDTO) {
@@ -124,6 +134,7 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
         }
     }
 
+    // Sustituye todos los campos editables de un ejercicio de rutina (series, reps, peso, orden...).
     @Override
     public RutinaEjercicioDTO modify(RutinaEjercicioDTO dto) {
         logger.info("Modificando ejercicio de rutina con id: {}", dto.getId());
@@ -149,6 +160,7 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
         }
     }
 
+    // Elimina un ejercicio concreto de una rutina.
     @Transactional
     @Override
     public void deleteById(Integer id) {
@@ -168,6 +180,7 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
         }
     }
 
+    // Lista los ejercicios de una rutina concreta, comprobando permiso de lectura.
     @Override
     public List<RutinaEjercicioDTO> findByRutinaId(Integer rutinaId) {
         logger.info("Buscando ejercicios de rutina id: {}", rutinaId);
@@ -182,6 +195,7 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
         return rutinaEjercicioMapper.toDTOList(lista);
     }
 
+    // Lista las relaciones rutina-ejercicio que contienen un ejercicio dado.
     @Override
     public List<RutinaEjercicioDTO> findByEjercicioId(Integer ejercicioId) {
         logger.info("Buscando rutinas que contienen el ejercicio id: {}", ejercicioId);
@@ -191,6 +205,7 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
         return rutinaEjercicioMapper.toDTOList(lista);
     }
 
+    // Lista los ejercicios de una rutina ordenados por el campo "orden" (secuencia de la sesión).
     @Override
     public List<RutinaEjercicioDTO> findByRutinaIdOrdenado(Integer rutinaId) {
         logger.info("Buscando ejercicios de rutina id: {} ordenados por posición", rutinaId);
@@ -200,6 +215,7 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
         return rutinaEjercicioMapper.toDTOList(lista);
     }
 
+    // Busca la relación rutina-ejercicio concreta dado el par rutina/ejercicio.
     @Override
     public RutinaEjercicioDTO findByRutinaIdAndEjercicioId(Integer rutinaId, Integer ejercicioId) {
         logger.info("Buscando ejercicio id: {} en rutina id: {}", ejercicioId, rutinaId);
@@ -210,6 +226,7 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
         return rutinaEjercicioMapper.toDTO(rutinaEjercicio);
     }
 
+    // Cuenta cuántos ejercicios tiene una rutina.
     @Override
     public Long countByRutinaId(Integer rutinaId) {
         logger.info("Contando ejercicios de rutina id: {}", rutinaId);
@@ -217,6 +234,7 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
         return rutinaEjercicioRepository.countByRutinaId(rutinaId);
     }
 
+    // Cuenta en cuántas rutinas aparece un ejercicio.
     @Override
     public Long countByEjercicioId(Integer ejercicioId) {
         logger.info("Contando rutinas que contienen el ejercicio id: {}", ejercicioId);
@@ -224,6 +242,7 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
         return rutinaEjercicioRepository.countByEjercicioId(ejercicioId);
     }
 
+    // Elimina todos los ejercicios asociados a una rutina (p.ej. al borrar la rutina completa).
     @Transactional
     @Override
     public void deleteByRutinaId(Integer rutinaId) {
@@ -243,6 +262,7 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
         }
     }
 
+    // Elimina un ejercicio concreto de una rutina identificando ambos por su id.
     @Transactional
     @Override
     public void deleteByRutinaIdAndEjercicioId(Integer rutinaId, Integer ejercicioId) {
@@ -257,6 +277,7 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
         }
     }
 
+    // Comprueba si un ejercicio ya está añadido a una rutina (evita duplicados).
     @Override
     public boolean existsByRutinaIdAndEjercicioId(Integer rutinaId, Integer ejercicioId) {
         logger.info("Verificando si existe ejercicio id: {} en rutina id: {}", ejercicioId, rutinaId);
@@ -264,6 +285,7 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
         return rutinaEjercicioRepository.existsByRutinaIdAndEjercicioId(rutinaId, ejercicioId);
     }
 
+    // Actualiza parcialmente un ejercicio de rutina: solo se modifican los campos no nulos del patch.
     @Transactional
     @Override
     public RutinaEjercicioDTO patch(Integer id, RutinaEjercicioPatchDTO patchDTO) {

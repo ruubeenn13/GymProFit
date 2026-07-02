@@ -8,6 +8,11 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+// ============================================================
+// ProgresoEjercicioDTO — representación completa del progreso de un usuario
+// en un ejercicio: fecha del registro y mejores marcas alcanzadas (peso,
+// repeticiones, tiempo), tal como se devuelve al cliente.
+// ============================================================
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

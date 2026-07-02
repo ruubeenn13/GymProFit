@@ -24,13 +24,22 @@ import es.pmdm.gymprofit.utils.NotificationHelper;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
+// ============================================================
+// RegistrarMedicionActivity — Formulario de alta/edición de una medición corporal.
+// Permite introducir peso, altura, grasa corporal, masa muscular y perímetros
+// (cintura, pecho, brazos, piernas), y los envía a la API creando una medición
+// nueva (POST) o actualizando una existente (PATCH) si se recibe un "medicion_id".
+// ============================================================
 public class RegistrarMedicionActivity extends AppCompatActivity {
 
     private TextInputEditText etPeso, etAltura, etGrasa, etMusculo;
     private TextInputEditText etCintura, etPecho, etBrazos, etPiernas, etNotas;
     private PreferencesManager prefsManager;
+    // Id de la medición a editar, o -1 si se está creando una nueva
     private int medicionId = -1;
 
+    // Inicializa la pantalla; si se recibe un "medicion_id" en el intent,
+    // cambia el título a modo edición y precarga los campos con sus valores.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +71,8 @@ public class RegistrarMedicionActivity extends AppCompatActivity {
         findViewById(R.id.btnGuardar).setOnClickListener(v -> guardarMedicion());
     }
 
+    // Rellena los campos del formulario con los valores recibidos por intent
+    // (usado en modo edición de una medición existente).
     private void precargarCampos(Intent intent) {
         setDecimal(etPeso,    intent.getDoubleExtra("peso", 0));
         setDecimal(etAltura,  intent.getDoubleExtra("altura", 0));
@@ -75,10 +86,13 @@ public class RegistrarMedicionActivity extends AppCompatActivity {
         if (notas != null && !notas.isEmpty()) etNotas.setText(notas);
     }
 
+    // Establece el texto de un campo decimal solo si el valor es positivo.
     private void setDecimal(TextInputEditText et, double value) {
         if (value > 0) et.setText(String.format(Locale.getDefault(), "%.2f", value));
     }
 
+    // Valida el peso (obligatorio), construye el JSON con los campos rellenados
+    // y llama a la API para crear o actualizar la medición según medicionId.
     private void guardarMedicion() {
         String pesoStr = etPeso.getText() != null ? etPeso.getText().toString().trim() : "";
         if (pesoStr.isEmpty()) {
@@ -144,12 +158,15 @@ public class RegistrarMedicionActivity extends AppCompatActivity {
         }
     }
 
+    // Añade al JSON el valor decimal del campo indicado, solo si no está vacío.
     private void putDecimal(JSONObject body, String key, TextInputEditText et) throws JSONException {
         if (et.getText() == null) return;
         String val = et.getText().toString().trim();
         if (!val.isEmpty()) body.put(key, new BigDecimal(val));
     }
 
+    // Aplica el idioma guardado en preferencias a la configuración de recursos
+    // de la Activity antes de inflar el layout.
     private void aplicarIdioma() {
         String lang = prefsManager.getLanguage();
         if (!lang.isEmpty()) {

@@ -27,6 +27,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// ============================================================
+// UsuarioController — controlador REST de gestión de usuarios
+// Expone endpoints CRUD, activación/desactivación, búsquedas por
+// username/email, foto de perfil y estadísticas de entrenamiento de
+// los usuarios registrados en GymProFit.
+// ============================================================
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")
@@ -34,6 +40,7 @@ import java.util.Map;
 @Tag(name = "Usuario Controlador", description = "Gestión de los usuarios")
 public class UsuarioController {
 
+    // Servicio con la lógica de negocio de usuarios
     private final IUsuarioService usuarioService;
 
     @Operation(summary = "Obtiene todos los usuarios")
@@ -45,6 +52,7 @@ public class UsuarioController {
             @ApiResponse(responseCode = "500", description = "Error al obtener los usuarios",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Devuelve todos los usuarios registrados
     @GetMapping("/usuarios")
     public ResponseEntity<List<UsuarioDTO>> findAll() {
         List<UsuarioDTO> usuarios = usuarioService.findAll();
@@ -59,6 +67,7 @@ public class UsuarioController {
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Busca un usuario por su ID
     @GetMapping("/usuarios/{id}")
     public ResponseEntity<UsuarioDTO> obtenerUsuario(@PathVariable Integer id) {
         UsuarioDTO usuario = usuarioService.findById(id);
@@ -73,6 +82,7 @@ public class UsuarioController {
             @ApiResponse(responseCode = "400", description = "Datos inválidos o usuario duplicado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Crea un nuevo usuario (alta administrativa, distinta del registro público)
     @PostMapping("/usuarios")
     public ResponseEntity<UsuarioDTO> guardarUsuario(@Valid @RequestBody UsuarioCreateDTO usuarioCreateDTO) {
         UsuarioDTO usuario = usuarioService.save(usuarioCreateDTO);
@@ -87,6 +97,7 @@ public class UsuarioController {
             @ApiResponse(responseCode = "400", description = "Usuario no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Actualiza por completo los datos de un usuario existente
     @PutMapping("/usuarios")
     public ResponseEntity<UsuarioDTO> modificarUsuario(@Valid @RequestBody UsuarioUpdateDTO usuarioUpdateDTO) {
         UsuarioDTO usuario = usuarioService.modify(usuarioUpdateDTO);
@@ -100,6 +111,7 @@ public class UsuarioController {
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Desactiva (baja lógica) un usuario sin eliminarlo de la base de datos
     @DeleteMapping("/usuarios/{id}")
     public ResponseEntity<Map<String, Object>> borrarUsuario(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -124,6 +136,7 @@ public class UsuarioController {
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Reactiva un usuario previamente desactivado
     @PutMapping("/usuarios/{id}/activar")
     public ResponseEntity<Map<String, Object>> activarUsuario(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -148,6 +161,7 @@ public class UsuarioController {
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Borra definitivamente un usuario y sus datos asociados (irreversible)
     @DeleteMapping("/usuarios/{id}/permanente")
     public ResponseEntity<Map<String, Object>> eliminarPermanente(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -173,6 +187,7 @@ public class UsuarioController {
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Busca un usuario por su nombre de usuario, validando que no esté vacío
     @GetMapping("/usuarios/username/{username}")
     public ResponseEntity<UsuarioDTO> obtenerUsuarioPorUsername(@PathVariable String username) {
         if (username == null || username.trim().isEmpty()) {
@@ -191,6 +206,7 @@ public class UsuarioController {
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Busca un usuario por su email, validando que no esté vacío
     @GetMapping("/usuarios/email/{email}")
     public ResponseEntity<UsuarioDTO> obtenerUsuarioPorEmail(@PathVariable String email) {
         if (email == null || email.trim().isEmpty()) {
@@ -206,6 +222,7 @@ public class UsuarioController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Resultado de la verificación")
     })
+    // Comprueba si un username ya está en uso (validación previa al registro)
     @GetMapping("/usuarios/exists/username/{username}")
     public ResponseEntity<Map<String, Object>> existeUsername(@PathVariable String username) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -222,6 +239,7 @@ public class UsuarioController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Resultado de la verificación")
     })
+    // Comprueba si un email ya está en uso (validación previa al registro)
     @GetMapping("/usuarios/exists/email/{email}")
     public ResponseEntity<Map<String, Object>> existeEmail(@PathVariable String email) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -241,6 +259,7 @@ public class UsuarioController {
             @ApiResponse(responseCode = "404", description = "No se encontraron usuarios activos",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Devuelve únicamente los usuarios activos (no dados de baja)
     @GetMapping("/usuarios/activos")
     public ResponseEntity<List<UsuarioDTO>> obtenerUsuariosActivos() {
         List<UsuarioDTO> usuarios = usuarioService.findActivos();
@@ -259,6 +278,7 @@ public class UsuarioController {
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Actualización parcial de campos de un usuario (usado, entre otros, por el onboarding)
     @PatchMapping("/usuarios/{id}")
     public ResponseEntity<UsuarioDTO> patchUsuario(@PathVariable Integer id, @RequestBody UsuarioPatchDTO patchDTO) {
         return ResponseEntity.ok(usuarioService.patch(id, patchDTO));
@@ -271,6 +291,7 @@ public class UsuarioController {
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @PostMapping(value = "/usuarios/{id}/foto", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    // Sube o reemplaza la foto de perfil del usuario (multipart/form-data)
     public ResponseEntity<UsuarioDTO> subirFotoPerfil(@PathVariable Integer id,
                                                       @RequestParam("foto") MultipartFile foto) {
         return ResponseEntity.ok(usuarioService.uploadFotoPerfil(id, foto));
@@ -282,6 +303,7 @@ public class UsuarioController {
             @ApiResponse(responseCode = "404", description = "Foto no encontrada",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Devuelve la foto de perfil del usuario como imagen JPEG
     @GetMapping("/usuarios/{id}/foto")
     public ResponseEntity<byte[]> getFotoPerfil(@PathVariable Integer id) {
         byte[] bytes = usuarioService.getFotoPerfil(id);
@@ -295,6 +317,7 @@ public class UsuarioController {
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Calcula y devuelve estadísticas agregadas de entrenamiento del usuario
     @GetMapping("/usuarios/{id}/estadisticas")
     public ResponseEntity<UsuarioEstadisticasDTO> getEstadisticas(@PathVariable Integer id) {
         return ResponseEntity.ok(usuarioService.getEstadisticas(id));

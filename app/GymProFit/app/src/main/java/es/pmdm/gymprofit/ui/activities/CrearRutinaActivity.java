@@ -19,12 +19,21 @@ import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
+// ============================================================
+// CrearRutinaActivity — pantalla del paso 1 para crear una rutina.
+// Recoge nombre, descripción, duración y nivel de la nueva rutina
+// y lanza AnadirEjerciciosActivity para completar el proceso, propagando
+// el resultado (OK/cancelado) hacia la Activity que la invocó.
+// ============================================================
 public class CrearRutinaActivity extends AppCompatActivity {
 
+    // Campos de texto del formulario de creación.
     private TextInputEditText etNombre, etDescripcion, etDuracion;
+    // Selector de nivel (principiante/intermedio/avanzado).
     private ChipGroup chipGroupNivel;
     private PreferencesManager prefsManager;
 
+    // Lanzador para recibir el resultado de AnadirEjerciciosActivity.
     private ActivityResultLauncher<Intent> anadirLauncher;
 
     @Override
@@ -48,9 +57,11 @@ public class CrearRutinaActivity extends AppCompatActivity {
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
+                        // Rutina creada con éxito: propaga el OK hacia arriba.
                         setResult(RESULT_OK);
                         finish();
                     } else if (result.getResultCode() == android.app.Activity.RESULT_FIRST_USER) {
+                        // Cancelación especial: cierra sin propagar OK.
                         finish();
                     }
                 });
@@ -58,6 +69,8 @@ public class CrearRutinaActivity extends AppCompatActivity {
         findViewById(R.id.btnSiguiente).setOnClickListener(v -> siguiente());
     }
 
+    // Valida los campos del formulario y, si son correctos, navega al paso
+    // de añadir ejercicios pasando los datos básicos de la rutina.
     private void siguiente() {
         String nombre = etNombre.getText().toString().trim();
         String desc   = etDescripcion.getText().toString().trim();
@@ -75,11 +88,13 @@ public class CrearRutinaActivity extends AppCompatActivity {
         anadirLauncher.launch(intent);
     }
 
+    // Muestra un toast de error y pone el foco en el campo inválido.
     private void error(TextInputEditText campo) {
         UIHelper.mostrarToastError(this, getString(R.string.error_campo_requerido));
         campo.requestFocus();
     }
 
+    // Traduce el chip de nivel seleccionado a su valor de texto para la API.
     private String obtenerNivel() {
         int id = chipGroupNivel.getCheckedChipId();
         if (id == R.id.chipIntermedio) return "INTERMEDIO";
@@ -87,6 +102,7 @@ public class CrearRutinaActivity extends AppCompatActivity {
         return "PRINCIPIANTE";
     }
 
+    // Aplica el idioma guardado en preferencias a la configuración de recursos.
     private void aplicarIdiomaGuardado() {
         String lang = prefsManager.getLanguage();
         if (!lang.isEmpty()) {

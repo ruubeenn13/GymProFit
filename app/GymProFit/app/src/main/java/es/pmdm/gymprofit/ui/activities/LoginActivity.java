@@ -33,12 +33,19 @@ import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
+// ============================================================
+// LoginActivity — pantalla de inicio de sesión de GymProFit.
+// Permite autenticarse con usuario/contraseña, entrar como invitado,
+// ir al registro y cambiar tema/idioma antes de acceder a la app.
+// ============================================================
 public class LoginActivity extends AppCompatActivity {
 
     private EditText etUsuario, etPassword;
     private ImageButton btnCambiarTema, btnCambiarIdioma;
     private PreferencesManager prefsManager;
 
+    // Aplica tema e idioma guardados antes de inflar el layout y configura
+    // vistas, eventos e icono de tema.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +61,7 @@ public class LoginActivity extends AppCompatActivity {
         actualizarIconoTema();
     }
 
+    // Referencia los campos de texto y botones de tema/idioma del layout.
     private void inicializarVistas() {
         etUsuario = findViewById(R.id.etUsuario);
         etPassword = findViewById(R.id.etPassword);
@@ -61,6 +69,8 @@ public class LoginActivity extends AppCompatActivity {
         btnCambiarIdioma = findViewById(R.id.btnCambiarIdioma);
     }
 
+    // Configura los listeners de login, login como invitado, ir a registro
+    // y cambio de tema/idioma.
     private void configurarEventos() {
         findViewById(R.id.btnEntrar).setOnClickListener(v -> {
             String usuario  = etUsuario.getText().toString().trim();
@@ -83,6 +93,8 @@ public class LoginActivity extends AppCompatActivity {
         btnCambiarIdioma.setOnClickListener(v -> mostrarDialogoIdioma());
     }
 
+    // Realiza login como invitado (rol GUEST): guarda token/rol y marca
+    // el onboarding como completado, navegando directo a HomeActivity.
     private void hacerLoginInvitado() {
         API.loginAsGuest(new UtilREST.OnResponseListener() {
             @Override
@@ -113,6 +125,8 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    // Realiza el login normal con credenciales, guarda token/usuario/rol
+    // y continúa obteniendo los datos completos del usuario.
     private void hacerLogin(String username, String password) {
         API.login(username, password, new UtilREST.OnResponseListener() {
             @Override
@@ -140,6 +154,8 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    // Obtiene el usuario por username para guardar su id y determinar si ya
+    // completó el onboarding (admin, nivel de experiencia definido o flag local).
     private void obtenerUsuario(String username) {
         API.getUsuarioPorUsername(username, new UtilREST.OnResponseListener() {
             @Override
@@ -171,6 +187,8 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    // Navega a HomeActivity si el onboarding ya está completo, o al primer
+    // paso del onboarding en caso contrario.
     private void navegarTrasLogin() {
         if (prefsManager.isOnboardingCompletado()) {
             startActivity(new Intent(this, HomeActivity.class)
@@ -183,6 +201,7 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
+    // Alterna entre tema claro y oscuro, guarda la preferencia y recrea la Activity.
     private void cambiarTema() {
         int currentMode = prefsManager.getTheme();
         int newMode = (currentMode == AppCompatDelegate.MODE_NIGHT_YES)
@@ -192,6 +211,7 @@ public class LoginActivity extends AppCompatActivity {
         recreate();
     }
 
+    // Actualiza el icono del botón de tema (sol/luna) según el modo actual.
     private void actualizarIconoTema() {
         int currentMode = prefsManager.getTheme();
         btnCambiarTema.setImageResource(
@@ -200,6 +220,8 @@ public class LoginActivity extends AppCompatActivity {
                         : R.drawable.ic_moon);
     }
 
+    // Muestra un diálogo personalizado para seleccionar el idioma (español/inglés),
+    // marcando el check del idioma actualmente activo.
     private void mostrarDialogoIdioma() {
         Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -248,11 +270,14 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    // Guarda el idioma seleccionado y recrea la Activity para aplicarlo.
     private void cambiarIdioma(String languageCode) {
         prefsManager.saveLanguage(languageCode);
         recreate();
     }
 
+    // Aplica el idioma guardado en preferencias a la configuración de recursos,
+    // si existe uno guardado previamente.
     private void aplicarIdiomaGuardado() {
         String savedLanguage = prefsManager.getLanguage();
         if (!savedLanguage.isEmpty()) {

@@ -11,8 +11,15 @@ import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.network.API;
 import es.pmdm.gymprofit.network.UtilREST;
 
+// ============================================================
+// AdminActivity — panel principal de administración (rol ADMIN)
+// Muestra estadísticas globales de la app (usuarios, sesiones, rutinas,
+// ejercicios) y sirve como menú de navegación hacia las pantallas de
+// gestión de usuarios, rutinas, ejercicios y alimentos.
+// ============================================================
 public class AdminActivity extends BaseActivity {
 
+    // TextViews donde se pintan las estadísticas globales devueltas por la API
     private TextView tvTotalUsuarios, tvUsuariosActivos, tvTotalSesiones,
             tvSesionesHoy, tvRutinasPredefinidas, tvEjerciciosActivos;
 
@@ -46,6 +53,7 @@ public class AdminActivity extends BaseActivity {
         cargarEstadisticas();
     }
 
+    // Solicita a la API las estadísticas globales y actualiza los TextViews en el hilo UI
     private void cargarEstadisticas() {
         API.getAdminEstadisticas(new UtilREST.OnResponseListener() {
             @Override

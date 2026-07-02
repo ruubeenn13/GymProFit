@@ -13,6 +13,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// ============================================================
+// EjercicioJooqController — controlador REST de consultas avanzadas de ejercicios
+// Expone endpoints de solo lectura que usan JOOQ (en vez de JPA) para
+// filtros y búsquedas dinámicas de ejercicios (grupo muscular, dificultad,
+// calorías, texto libre). Accesible para GUEST, USER y ADMIN.
+// ============================================================
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")
@@ -20,8 +26,10 @@ import java.util.List;
 @Tag(name = "Ejercicio JOOQ Controlador", description = "Consultas avanzadas de ejercicios con JOOQ")
 public class EjercicioJooqController {
 
+    // Repositorio JOOQ para consultas complejas sobre la tabla de ejercicios
     private final IEjercicioJooqRepository ejercicioJooqRepository;
 
+    // Devuelve el listado completo de ejercicios
     @Operation(summary = "Obtiene todos los ejercicios con JOOQ")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de ejercicios")
@@ -36,6 +44,7 @@ public class EjercicioJooqController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de ejercicios activos")
     })
+    // Devuelve solo los ejercicios marcados como activos
     @GetMapping("/jooq/ejercicios/activos")
     @PreAuthorize("hasAnyRole('GUEST', 'USER', 'ADMIN')")
     public ResponseEntity<List<EjercicioJooqDTO>> findActivos() {
@@ -46,6 +55,7 @@ public class EjercicioJooqController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ejercicios encontrados")
     })
+    // Filtra ejercicios combinando grupo muscular y nivel de dificultad
     @GetMapping("/jooq/ejercicios/filtro/{grupoMuscular}/{dificultad}")
     @PreAuthorize("hasAnyRole('GUEST', 'USER', 'ADMIN')")
     public ResponseEntity<List<EjercicioJooqDTO>> findByGrupoMuscularAndDificultad(@PathVariable String grupoMuscular,
@@ -57,6 +67,7 @@ public class EjercicioJooqController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ejercicios encontrados")
     })
+    // Filtra ejercicios cuyas calorías quemadas estén entre min y max
     @GetMapping("/jooq/ejercicios/calorias")
     @PreAuthorize("hasAnyRole('GUEST', 'USER', 'ADMIN')")
     public ResponseEntity<List<EjercicioJooqDTO>> findByCaloriasQuemadasBetween(@RequestParam Integer min,
@@ -68,6 +79,7 @@ public class EjercicioJooqController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ejercicios encontrados")
     })
+    // Búsqueda combinada con filtros opcionales (nombre, grupo, dificultad, calorías máx)
     @GetMapping("/jooq/ejercicios/busqueda")
     @PreAuthorize("hasAnyRole('GUEST', 'USER', 'ADMIN')")
     public ResponseEntity<List<EjercicioJooqDTO>> busquedaAvanzada(@RequestParam(required = false) String nombre,

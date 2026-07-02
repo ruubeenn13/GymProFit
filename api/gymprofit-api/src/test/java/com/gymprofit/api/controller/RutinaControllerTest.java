@@ -23,6 +23,11 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+// ============================================================
+// RutinaControllerTest — tests de integración del endpoint /rutinas
+// Verifica roles permitidos, filtros (activas/predefinidas/nivel)
+// y respuestas HTTP de las operaciones CRUD sobre rutinas.
+// ============================================================
 @SpringBootTest
 @AutoConfigureMockMvc
 @DisplayName("Tests de integración del RutinaController")
@@ -34,12 +39,14 @@ class RutinaControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    // Mock del servicio de rutinas
     @MockitoBean
     private IRutinaService rutinaService;
 
     private RutinaDTO rutinaDTO;
     private RutinaCreateDTO rutinaCreateDTO;
 
+    // Inicializa los DTOs de prueba usados en los distintos tests
     @BeforeEach
     void setUp() {
         rutinaDTO = new RutinaDTO();
@@ -55,6 +62,7 @@ class RutinaControllerTest {
         rutinaCreateDTO.setEsPredefinida(false);
     }
 
+    // Comprueba que un GUEST puede listar todas las rutinas
     @Test
     @DisplayName("GET /api/rutinas con rol GUEST devuelve 200 y lista")
     @WithMockUser(roles = "GUEST")
@@ -69,6 +77,7 @@ class RutinaControllerTest {
         verify(rutinaService).findAll();
     }
 
+    // Comprueba que listar rutinas sin autenticación devuelve error 500
     @Test
     @DisplayName("GET /api/rutinas sin autenticación devuelve 500")
     void findAll_sin_autenticacion_devuelve_500() throws Exception {
@@ -76,6 +85,7 @@ class RutinaControllerTest {
                 .andExpect(status().isInternalServerError());
     }
 
+    // Comprueba que un USER puede consultar una rutina existente por id
     @Test
     @DisplayName("GET /api/rutinas/{id} con rol USER devuelve 200")
     @WithMockUser(roles = "USER")
@@ -90,6 +100,7 @@ class RutinaControllerTest {
         verify(rutinaService).findById(1);
     }
 
+    // Comprueba que consultar una rutina inexistente devuelve 404
     @Test
     @DisplayName("GET /api/rutinas/{id} inexistente devuelve 404")
     @WithMockUser(roles = "USER")
@@ -101,6 +112,7 @@ class RutinaControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    // Comprueba que un ADMIN puede crear una nueva rutina
     @Test
     @DisplayName("POST /api/rutinas con rol ADMIN devuelve 200")
     @WithMockUser(roles = "ADMIN")
@@ -116,6 +128,7 @@ class RutinaControllerTest {
         verify(rutinaService).save(any(RutinaCreateDTO.class));
     }
 
+    // Comprueba que un USER también puede crear rutinas; la validación de propiedad se hace en el service
     @Test
     @DisplayName("POST /rutinas con rol USER devuelve 200 (validación de propiedad en el service)")
     @WithMockUser(roles = "USER")
@@ -131,6 +144,7 @@ class RutinaControllerTest {
         verify(rutinaService).save(any(RutinaCreateDTO.class));
     }
 
+    // Comprueba que un ADMIN puede desactivar (eliminar lógicamente) una rutina
     @Test
     @DisplayName("DELETE /api/rutinas/{id} con rol ADMIN devuelve 200")
     @WithMockUser(roles = "ADMIN")
@@ -144,6 +158,7 @@ class RutinaControllerTest {
         verify(rutinaService).deleteById(1);
     }
 
+    // Comprueba que se pueden listar solo las rutinas activas
     @Test
     @DisplayName("GET /api/rutinas/activas con rol GUEST devuelve 200")
     @WithMockUser(roles = "GUEST")
@@ -157,6 +172,7 @@ class RutinaControllerTest {
         verify(rutinaService).findActivas();
     }
 
+    // Comprueba que se pueden listar las rutinas predefinidas del sistema
     @Test
     @DisplayName("GET /api/rutinas/predefinidas con rol GUEST devuelve 200")
     @WithMockUser(roles = "GUEST")
@@ -170,6 +186,7 @@ class RutinaControllerTest {
         verify(rutinaService).findPredefinidas();
     }
 
+    // Comprueba que se pueden filtrar rutinas por nivel de dificultad
     @Test
     @DisplayName("GET /api/rutinas/nivel/{nivel} con rol GUEST devuelve 200")
     @WithMockUser(roles = "GUEST")

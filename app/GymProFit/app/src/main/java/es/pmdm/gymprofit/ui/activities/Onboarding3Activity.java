@@ -16,11 +16,18 @@ import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
+// ============================================================
+// Onboarding3Activity — tercer paso del asistente de onboarding.
+// Recoge peso, altura y nivel de actividad física del usuario y
+// avanza al siguiente paso arrastrando los datos ya introducidos.
+// ============================================================
 public class Onboarding3Activity extends AppCompatActivity {
 
     private TextInputEditText etPeso, etAltura;
     private ChipGroup chipGroupActividad;
 
+    // Aplica tema/idioma, infla el layout y configura los botones de
+    // siguiente/anterior/saltar, validando peso y altura antes de avanzar.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +80,7 @@ public class Onboarding3Activity extends AppCompatActivity {
         findViewById(R.id.tvSaltar3).setOnClickListener(v -> saltarAlHome());
     }
 
+    // Salta el onboarding y navega directo a HomeActivity, limpiando el back stack.
     private void saltarAlHome() {
         startActivity(new Intent(this, HomeActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
@@ -80,6 +88,7 @@ public class Onboarding3Activity extends AppCompatActivity {
         finish();
     }
 
+    // Aplica el idioma guardado en preferencias a la configuración de recursos.
     private void aplicarIdioma(PreferencesManager prefs) {
         String lang = prefs.getLanguage();
 

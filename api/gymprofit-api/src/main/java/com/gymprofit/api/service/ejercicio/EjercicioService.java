@@ -20,6 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+// ============================================================
+// EjercicioService — servicio del catálogo de ejercicios
+// Gestiona el CRUD del catálogo global de ejercicios (nombre, grupo
+// muscular, dificultad, instrucciones, etc.) usado para componer rutinas.
+// No aplica control de propiedad porque el catálogo es compartido.
+// ============================================================
 @Service
 @AllArgsConstructor
 public class EjercicioService implements IEjercicioService {
@@ -28,6 +34,7 @@ public class EjercicioService implements IEjercicioService {
     private final EjercicioMapper ejercicioMapper;
     private final Logger logger = LoggerFactory.getLogger(EjercicioService.class);
 
+    // Devuelve todos los ejercicios del catálogo.
     @Override
     public List<EjercicioDTO> findAll() {
         logger.info("Buscando todos los ejercicios");
@@ -37,6 +44,7 @@ public class EjercicioService implements IEjercicioService {
         return ejercicioMapper.toDTOList(ejercicios);
     }
 
+    // Busca un ejercicio por su id.
     @Override
     public EjercicioDTO findById(Integer id) {
         logger.info("Buscando ejercicio por id: {}", id);
@@ -47,6 +55,7 @@ public class EjercicioService implements IEjercicioService {
         return ejercicioMapper.toDTO(ejercicio);
     }
 
+    // Crea un nuevo ejercicio, activándolo por defecto.
     @Override
     public EjercicioDTO save(EjercicioCreateDTO ejercicioCreateDTO) {
         logger.info("Creando nuevo ejercicio {}", ejercicioCreateDTO.getNombre());
@@ -63,6 +72,7 @@ public class EjercicioService implements IEjercicioService {
         }
     }
 
+    // Borrado lógico: desactiva el ejercicio en lugar de eliminarlo.
     @Transactional
     @Override
     public void deleteById(Integer id) {
@@ -82,6 +92,7 @@ public class EjercicioService implements IEjercicioService {
         }
     }
 
+    // Reactiva un ejercicio previamente desactivado.
     @Transactional
     @Override
     public void activateById(Integer id) {
@@ -96,6 +107,7 @@ public class EjercicioService implements IEjercicioService {
         logger.info("Ejercicio con id {} activado correctamente", id);
     }
 
+    // Elimina definitivamente el ejercicio de la base de datos.
     @Transactional
     @Override
     public void permanentDeleteById(Integer id) {
@@ -113,6 +125,7 @@ public class EjercicioService implements IEjercicioService {
         }
     }
 
+    // Modifica un ejercicio existente con todos sus campos.
     @Override
     public EjercicioDTO modify(EjercicioDTO ejercicioDTO) {
         logger.info("Modificando ejercicio con id: {}", ejercicioDTO.getId());
@@ -139,6 +152,7 @@ public class EjercicioService implements IEjercicioService {
         }
     }
 
+    // Busca ejercicios por grupo muscular.
     @Override
     public List<EjercicioDTO> findByGrupoMuscular(String grupoMuscular) {
         logger.info("Buscando ejercicios por grupo muscular: {}", grupoMuscular);
@@ -150,6 +164,7 @@ public class EjercicioService implements IEjercicioService {
         return ejercicioMapper.toDTOList(ejercicios);
     }
 
+    // Busca ejercicios por nivel de dificultad.
     @Override
     public List<EjercicioDTO> findByDificultad(String dificultad) {
         logger.info("Buscando ejercicios por dificultad: {}", dificultad);
@@ -161,6 +176,7 @@ public class EjercicioService implements IEjercicioService {
         return ejercicioMapper.toDTOList(ejercicios);
     }
 
+    // Busca ejercicios cuyo nombre contenga el texto indicado (ignora mayúsculas).
     @Override
     public List<EjercicioDTO> findByNombre(String nombre) {
         logger.info("Buscando ejercicios por nombre: {}", nombre);
@@ -170,6 +186,7 @@ public class EjercicioService implements IEjercicioService {
         return ejercicioMapper.toDTOList(ejercicios);
     }
 
+    // Devuelve solo los ejercicios activos.
     @Override
     public List<EjercicioDTO> findActivos() {
         logger.info("Buscando ejercicios activos");
@@ -179,6 +196,7 @@ public class EjercicioService implements IEjercicioService {
         return ejercicioMapper.toDTOList(ejercicios);
     }
 
+    // Aplica una actualización parcial sobre un ejercicio (solo campos no nulos).
     @Transactional
     @Override
     public EjercicioDTO patch(Integer id, EjercicioPatchDTO patchDTO) {

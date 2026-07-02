@@ -24,6 +24,11 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+// ============================================================
+// ObjetivoPersonalControllerTest — tests de integración del endpoint /objetivos-personales
+// Comprueba autenticación/autorización y códigos HTTP de las
+// operaciones CRUD y de completado de objetivos personales.
+// ============================================================
 @SpringBootTest
 @AutoConfigureMockMvc
 @DisplayName("Tests de integración del ObjetivoPersonalController")
@@ -32,11 +37,13 @@ class ObjetivoPersonalControllerTest {
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
 
+    // Mock del servicio de objetivos personales
     @MockitoBean private IObjetivoPersonalService objetivoService;
 
     private ObjetivoPersonalDTO objetivoDTO;
     private ObjetivoPersonalCreateDTO createDTO;
 
+    // Inicializa los DTOs de prueba usados en los distintos tests
     @BeforeEach
     void setUp() {
         objetivoDTO = new ObjetivoPersonalDTO();
@@ -50,6 +57,7 @@ class ObjetivoPersonalControllerTest {
         createDTO.setTipoObjetivo(TipoObjetivo.PERDER_PESO);
     }
 
+    // Comprueba que un USER puede listar todos los objetivos personales
     @Test
     @DisplayName("GET /objetivos-personales con rol USER devuelve 200")
     @WithMockUser(roles = "USER")
@@ -63,6 +71,7 @@ class ObjetivoPersonalControllerTest {
         verify(objetivoService).findAll();
     }
 
+    // Comprueba que un USER puede consultar un objetivo personal existente por id
     @Test
     @DisplayName("GET /objetivos-personales/{id} con rol USER devuelve 200")
     @WithMockUser(roles = "USER")
@@ -74,6 +83,7 @@ class ObjetivoPersonalControllerTest {
                 .andExpect(jsonPath("$.id").value(1));
     }
 
+    // Comprueba que consultar un objetivo personal inexistente devuelve 404
     @Test
     @DisplayName("GET /objetivos-personales/{id} inexistente devuelve 404")
     @WithMockUser(roles = "USER")
@@ -85,6 +95,7 @@ class ObjetivoPersonalControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    // Comprueba que un USER puede crear un nuevo objetivo personal
     @Test
     @DisplayName("POST /objetivos-personales con rol USER devuelve 200")
     @WithMockUser(roles = "USER")
@@ -100,6 +111,7 @@ class ObjetivoPersonalControllerTest {
         verify(objetivoService).save(any(ObjetivoPersonalCreateDTO.class));
     }
 
+    // Comprueba que crear un objetivo sin autenticación devuelve un error 5xx
     @Test
     @DisplayName("POST /objetivos-personales sin autenticación devuelve error")
     void save_sin_autenticacion_devuelve_error() throws Exception {
@@ -109,6 +121,7 @@ class ObjetivoPersonalControllerTest {
                 .andExpect(status().is5xxServerError());
     }
 
+    // Comprueba que un USER puede eliminar un objetivo personal existente
     @Test
     @DisplayName("DELETE /objetivos-personales/{id} con rol USER devuelve 200")
     @WithMockUser(roles = "USER")
@@ -120,6 +133,7 @@ class ObjetivoPersonalControllerTest {
                 .andExpect(jsonPath("$.mensaje").value("Objetivo personal eliminado con ÉXITO"));
     }
 
+    // Comprueba que marcar un objetivo personal como completado devuelve 200
     @Test
     @DisplayName("PUT /objetivos-personales/{id}/completar con rol USER devuelve 200")
     @WithMockUser(roles = "USER")
@@ -132,6 +146,7 @@ class ObjetivoPersonalControllerTest {
                 .andExpect(jsonPath("$.completado").value(true));
     }
 
+    // Comprueba que se pueden listar los objetivos personales de un usuario concreto
     @Test
     @DisplayName("GET /objetivos-personales/usuario/{id} con rol USER devuelve 200")
     @WithMockUser(roles = "USER")

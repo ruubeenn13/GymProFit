@@ -22,6 +22,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// ============================================================
+// EjercicioRealizadoController — controlador REST de ejercicios realizados
+// Gestiona el CRUD de los ejercicios efectivamente ejecutados dentro de una
+// sesión de entrenamiento (series, repeticiones, etc.), incluyendo consultas
+// por sesión/ejercicio, conteos y comprobaciones de existencia.
+// ============================================================
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")
@@ -31,6 +37,7 @@ public class EjercicioRealizadoController {
 
     private final IEjercicioRealizadoService ejercicioRealizadoService;
 
+    // Devuelve todos los ejercicios realizados registrados
     @Operation(summary = "Obtiene todos los ejercicios realizados")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de ejercicios realizados",
@@ -54,6 +61,7 @@ public class EjercicioRealizadoController {
             @ApiResponse(responseCode = "404", description = "Ejercicio realizado no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Busca un ejercicio realizado por su ID
     @GetMapping("/ejercicios-realizados/{id}")
     public ResponseEntity<EjercicioRealizadoDTO> obtenerEjercicioRealizado(@PathVariable Integer id) {
         EjercicioRealizadoDTO ejercicioRealizado = ejercicioRealizadoService.findById(id);
@@ -68,6 +76,7 @@ public class EjercicioRealizadoController {
             @ApiResponse(responseCode = "400", description = "Datos inválidos",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Registra un nuevo ejercicio realizado dentro de una sesión
     @PostMapping("/ejercicios-realizados")
     public ResponseEntity<EjercicioRealizadoDTO> guardarEjercicioRealizado(@Valid @RequestBody EjercicioRealizadoCreateDTO ejercicioRealizadoCreateDTO) {
         EjercicioRealizadoDTO ejercicioRealizado = ejercicioRealizadoService.save(ejercicioRealizadoCreateDTO);
@@ -82,6 +91,7 @@ public class EjercicioRealizadoController {
             @ApiResponse(responseCode = "404", description = "Ejercicio realizado no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Actualiza completamente un ejercicio realizado existente
     @PutMapping("/ejercicios-realizados")
     public ResponseEntity<EjercicioRealizadoDTO> modificarEjercicioRealizado(@Valid @RequestBody EjercicioRealizadoDTO ejercicioRealizadoDTO) {
         EjercicioRealizadoDTO ejercicioRealizado = ejercicioRealizadoService.modify(ejercicioRealizadoDTO);
@@ -95,6 +105,7 @@ public class EjercicioRealizadoController {
             @ApiResponse(responseCode = "404", description = "Ejercicio realizado no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Elimina un ejercicio realizado por ID, capturando errores en la respuesta
     @DeleteMapping("/ejercicios-realizados/{id}")
     public ResponseEntity<Map<String, Object>> borrarEjercicioRealizado(@PathVariable Integer id) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -120,6 +131,7 @@ public class EjercicioRealizadoController {
             @ApiResponse(responseCode = "404", description = "No se encontraron ejercicios realizados para esa sesión",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista los ejercicios realizados de una sesión concreta
     @GetMapping("/ejercicios-realizados/sesion/{sesionId}")
     public ResponseEntity<List<EjercicioRealizadoDTO>> obtenerPorSesion(@PathVariable Integer sesionId) {
         List<EjercicioRealizadoDTO> ejerciciosRealizados = ejercicioRealizadoService.findBySesionId(sesionId);
@@ -138,6 +150,7 @@ public class EjercicioRealizadoController {
             @ApiResponse(responseCode = "404", description = "No se encontraron ejercicios realizados para ese ejercicio",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista todas las ejecuciones registradas de un ejercicio concreto
     @GetMapping("/ejercicios-realizados/ejercicio/{ejercicioId}")
     public ResponseEntity<List<EjercicioRealizadoDTO>> obtenerPorEjercicio(@PathVariable Integer ejercicioId) {
         List<EjercicioRealizadoDTO> ejerciciosRealizados = ejercicioRealizadoService.findByEjercicioId(ejercicioId);
@@ -156,6 +169,7 @@ public class EjercicioRealizadoController {
             @ApiResponse(responseCode = "404", description = "No se encontraron ejercicios realizados para esa sesión y ejercicio",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Lista las ejecuciones de un ejercicio concreto dentro de una sesión concreta
     @GetMapping("/ejercicios-realizados/sesion/{sesionId}/ejercicio/{ejercicioId}")
     public ResponseEntity<List<EjercicioRealizadoDTO>> obtenerPorSesionYEjercicio(@PathVariable Integer sesionId,
                                                                                   @PathVariable Integer ejercicioId) {
@@ -174,6 +188,7 @@ public class EjercicioRealizadoController {
             @ApiResponse(responseCode = "500", description = "Error al contar los ejercicios realizados",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Cuenta cuántos ejercicios se han realizado en una sesión
     @GetMapping("/ejercicios-realizados/count/sesion/{sesionId}")
     public ResponseEntity<Map<String, Object>> contarSesiones(@PathVariable Integer sesionId) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -192,6 +207,7 @@ public class EjercicioRealizadoController {
             @ApiResponse(responseCode = "500", description = "Error al contar los ejercicios realizados",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Cuenta cuántas veces se ha realizado un ejercicio concreto
     @GetMapping("/ejercicios-realizados/count/ejercicio/{ejercicioId}")
     public ResponseEntity<Map<String, Object>> contarEjercicios(@PathVariable Integer ejercicioId) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -210,6 +226,7 @@ public class EjercicioRealizadoController {
             @ApiResponse(responseCode = "500", description = "Error al verificar la existencia",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Comprueba si existe un registro para la combinación sesión-ejercicio dada
     @GetMapping("/ejercicios-realizados/exists/sesion/{sesionId}/ejercicio/{ejercicioId}")
     public ResponseEntity<Map<String, Object>> existsBySesionAndEjercicio(@PathVariable Integer sesionId,
                                                                           @PathVariable Integer ejercicioId) {
@@ -232,6 +249,7 @@ public class EjercicioRealizadoController {
             @ApiResponse(responseCode = "500", description = "Error al eliminar los ejercicios realizados",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Elimina todos los ejercicios realizados asociados a una sesión
     @DeleteMapping("/ejercicios-realizados/sesion/{sesionId}")
     public ResponseEntity<Map<String, Object>> borrarPorSesion(@PathVariable Integer sesionId) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -258,6 +276,7 @@ public class EjercicioRealizadoController {
             @ApiResponse(responseCode = "500", description = "Error al eliminar los ejercicios realizados",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Elimina los registros de un ejercicio concreto dentro de una sesión concreta
     @DeleteMapping("/ejercicios-realizados/sesion/{sesionId}/ejercicio/{ejercicioId}")
     public ResponseEntity<Map<String, Object>> borrarPorSesionYEjercicio(@PathVariable Integer sesionId,
                                                                          @PathVariable Integer ejercicioId) {
@@ -284,6 +303,7 @@ public class EjercicioRealizadoController {
             @ApiResponse(responseCode = "404", description = "Ejercicio realizado no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
+    // Actualiza parcialmente campos de un ejercicio realizado (PATCH)
     @PatchMapping("/ejercicios-realizados/{id}")
     public ResponseEntity<EjercicioRealizadoDTO> patchEjercicioRealizado(@PathVariable Integer id, @RequestBody EjercicioRealizadoPatchDTO patchDTO) {
         return ResponseEntity.ok(ejercicioRealizadoService.patch(id, patchDTO));

@@ -7,10 +7,17 @@ import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
 import es.pmdm.gymprofit.model.rutina.EjercicioSeleccionado;
 import es.pmdm.gymprofit.ui.activities.DetalleEjercicioActivity;
 
+// ============================================================
+// EjercicioNavHelper — utilidad estática para navegar al detalle de un ejercicio.
+// Centraliza la construcción del Intent hacia DetalleEjercicioActivity con todos
+// los extras necesarios, evitando duplicar ese código en varias Activities.
+// ============================================================
 public final class EjercicioNavHelper {
 
+    // Clase de utilidad: constructor privado, no instanciable.
     private EjercicioNavHelper() {}
 
+    // Abre DetalleEjercicioActivity pasando los datos del ejercicio como extras del Intent.
     public static void abrir(Context context, Ejercicio e) {
         Intent intent = new Intent(context, DetalleEjercicioActivity.class);
         intent.putExtra("id",              e.getId());
@@ -24,6 +31,7 @@ public final class EjercicioNavHelper {
         context.startActivity(intent);
     }
 
+    // Sobrecarga que extrae el Ejercicio de un EjercicioSeleccionado (usado en rutinas).
     public static void abrir(Context context, EjercicioSeleccionado sel) {
         abrir(context, sel.getEjercicio());
     }

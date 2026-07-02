@@ -27,6 +27,12 @@ import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.adapters.RutinaAdapter;
 import es.pmdm.gymprofit.utils.UIHelper;
 
+// ============================================================
+// RutinasActivity — listado de rutinas (predefinidas + del usuario) con filtros y CRUD.
+// Muestra las rutinas predefinidas del sistema junto a las creadas por el usuario,
+// permite filtrarlas por nivel, crear nuevas, editarlas/eliminarlas mediante un
+// menú contextual y navegar al detalle de cada una. Incluye la barra de navegación inferior.
+// ============================================================
 public class RutinasActivity extends BaseActivity {
 
     private BottomNavigationView bottomNavigationView;
@@ -39,6 +45,7 @@ public class RutinasActivity extends BaseActivity {
     private ActivityResultLauncher<Intent> detalleLauncher;
     private ActivityResultLauncher<Intent> editarLauncher;
 
+    // Configura vistas, adapters, filtros, FAB, navegación y lanza la carga inicial de rutinas.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +61,8 @@ public class RutinasActivity extends BaseActivity {
         cargarRutinas();
     }
 
+    // Registra los ActivityResultLauncher para crear, ver detalle y editar rutinas;
+    // en cualquier caso de éxito recarga el listado.
     private void registrarLauncher() {
         crearRutinaLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -72,12 +81,15 @@ public class RutinasActivity extends BaseActivity {
                 });
     }
 
+    // Vincula las vistas principales del layout.
     private void inicializarVistas() {
         rvRutinas = findViewById(R.id.rvRutinas);
         chipGroupNivel = findViewById(R.id.chipGroupNivel);
         fabCrearRutina = findViewById(R.id.fabCrearRutina);
     }
 
+    // Configura el RecyclerView con su adapter, listeners de click/long-click
+    // y el contexto de usuario (admin/id) para el menú contextual.
     private void configurarRecyclerView() {
         adapter = new RutinaAdapter(new ArrayList<>(), this::abrirDetalle);
         adapter.setOnLongClickListener(this::mostrarMenuContextual);
@@ -86,6 +98,7 @@ public class RutinasActivity extends BaseActivity {
         rvRutinas.setAdapter(adapter);
     }
 
+    // Abre la pantalla de detalle de una rutina pasando sus datos por extras.
     private void abrirDetalle(Rutina rutina) {
         Intent intent = new Intent(this, DetalleRutinaActivity.class);
         intent.putExtra("rutinaId",     rutina.getId());
@@ -100,6 +113,8 @@ public class RutinasActivity extends BaseActivity {
         detalleLauncher.launch(intent);
     }
 
+    // Carga las rutinas predefinidas y, si hay usuario logueado, añade también
+    // las rutinas propias del usuario, combinando ambas listas en el adapter.
     private void cargarRutinas() {
         int usuarioId = prefsManager.getUsuarioId();
 
@@ -142,6 +157,8 @@ public class RutinasActivity extends BaseActivity {
         });
     }
 
+    // Construye y muestra el menú contextual (editar, activar/desactivar o eliminar)
+    // según si la rutina es predefinida (solo admin) o propia del usuario.
     private void mostrarMenuContextual(Rutina rutina, View anchorView) {
         if (!verificarAccesoRegistrado()) return;
 
@@ -189,6 +206,7 @@ public class RutinasActivity extends BaseActivity {
         UIHelper.mostrarMenuAnclado(this, anchorView, rutina.getNombre(), actions);
     }
 
+    // Activa o desactiva una rutina predefinida (solo admin) y recarga el listado.
     private void toggleActivaRutinaPredefinida(Rutina rutina) {
         UtilREST.OnResponseListener cb = new UtilREST.OnResponseListener() {
             @Override
@@ -212,6 +230,7 @@ public class RutinasActivity extends BaseActivity {
         }
     }
 
+    // Elimina una rutina propia del usuario y recarga el listado.
     private void eliminarRutina(Rutina rutina) {
         API.eliminarRutina(rutina.getId(), new UtilREST.OnResponseListener() {
             @Override
@@ -231,6 +250,7 @@ public class RutinasActivity extends BaseActivity {
         });
     }
 
+    // Filtra el listado de rutinas por nivel según el chip seleccionado.
     private void configurarChips() {
         chipGroupNivel.setOnCheckedStateChangeListener(((chipGroup, list) -> {
             if (list.isEmpty()) return;
@@ -248,6 +268,7 @@ public class RutinasActivity extends BaseActivity {
         }));
     }
 
+    // Configura el FAB para crear una nueva rutina (requiere usuario registrado).
     private void configurarFab() {
         fabCrearRutina.setOnClickListener(v -> {
             if (!verificarAccesoRegistrado()) return;
@@ -255,6 +276,7 @@ public class RutinasActivity extends BaseActivity {
         });
     }
 
+    // Configura la barra de navegación inferior y la redirección entre pantallas principales.
     private void configurarNavegacion() {
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setSelectedItemId(R.id.nav_rutinas);

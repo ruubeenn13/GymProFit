@@ -17,12 +17,20 @@ import java.util.Locale;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.medicion.MedicionCorporal;
 
+// ============================================================
+// MedicionAdapter — adapter de RecyclerView para el historial de mediciones corporales.
+// Muestra fecha, peso, IMC y (si están disponibles) grasa corporal/masa muscular
+// de cada MedicionCorporal, ocultando las secciones sin dato, y expone acciones
+// de editar/eliminar para el seguimiento de progreso físico del usuario.
+// ============================================================
 public class MedicionAdapter extends RecyclerView.Adapter<MedicionAdapter.ViewHolder> {
 
+    // Callback invocado al pulsar el botón de eliminar una medición.
     public interface OnDeleteListener {
         void onDelete(MedicionCorporal medicion);
     }
 
+    // Callback invocado al pulsar el botón de editar una medición.
     public interface OnEditListener {
         void onEdit(MedicionCorporal medicion);
     }
@@ -32,6 +40,7 @@ public class MedicionAdapter extends RecyclerView.Adapter<MedicionAdapter.ViewHo
     private final OnEditListener editListener;
     private final Context context;
 
+    // Constructor: recibe contexto, lista de mediciones y listeners de edición/borrado.
     public MedicionAdapter(Context context, List<MedicionCorporal> items, OnDeleteListener deleteListener, OnEditListener editListener) {
         this.context = context;
         this.items = items;
@@ -39,6 +48,7 @@ public class MedicionAdapter extends RecyclerView.Adapter<MedicionAdapter.ViewHo
         this.editListener = editListener;
     }
 
+    // Infla el layout de un ítem de medición y crea su ViewHolder.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -47,6 +57,8 @@ public class MedicionAdapter extends RecyclerView.Adapter<MedicionAdapter.ViewHo
         return new ViewHolder(view);
     }
 
+    // Rellena fecha, peso, IMC y datos extra (grasa/músculo) mostrando solo
+    // las secciones con información disponible, y engancha editar/eliminar.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder h, int position) {
         MedicionCorporal m = items.get(position);
@@ -79,6 +91,7 @@ public class MedicionAdapter extends RecyclerView.Adapter<MedicionAdapter.ViewHo
     @Override
     public int getItemCount() { return items.size(); }
 
+    // ViewHolder con las referencias a las vistas de cada fila de medición.
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvFecha, tvPeso, tvImc, tvGrasa, tvMusculo;
         ImageView btnEditar, btnEliminar;

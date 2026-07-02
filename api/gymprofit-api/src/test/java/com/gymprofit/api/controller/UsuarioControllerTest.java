@@ -19,6 +19,11 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+// ============================================================
+// UsuarioControllerTest — tests de integración del endpoint /usuarios
+// Verifica que las operaciones de gestión de usuarios (listar,
+// buscar, eliminar) respetan las restricciones de rol ADMIN/USER.
+// ============================================================
 @SpringBootTest
 @AutoConfigureMockMvc
 @DisplayName("Tests de integración del UsuarioController")
@@ -26,10 +31,12 @@ class UsuarioControllerTest {
 
     @Autowired private MockMvc mockMvc;
 
+    // Mock del servicio de usuarios
     @MockitoBean private IUsuarioService usuarioService;
 
     private UsuarioDTO usuarioDTO;
 
+    // Inicializa el DTO de usuario de prueba
     @BeforeEach
     void setUp() {
         usuarioDTO = new UsuarioDTO();
@@ -39,6 +46,7 @@ class UsuarioControllerTest {
         usuarioDTO.setActivo(true);
     }
 
+    // Comprueba que un ADMIN puede listar todos los usuarios
     @Test
     @DisplayName("GET /usuarios con rol ADMIN devuelve 200")
     @WithMockUser(roles = "ADMIN")
@@ -52,6 +60,7 @@ class UsuarioControllerTest {
         verify(usuarioService).findAll();
     }
 
+    // Comprueba que un USER no tiene permiso para listar todos los usuarios (solo ADMIN)
     @Test
     @DisplayName("GET /usuarios con rol USER devuelve 403")
     @WithMockUser(roles = "USER")
@@ -62,6 +71,7 @@ class UsuarioControllerTest {
         verify(usuarioService, never()).findAll();
     }
 
+    // Comprueba que un USER puede consultar un usuario existente por id
     @Test
     @DisplayName("GET /usuarios/{id} con rol USER devuelve 200")
     @WithMockUser(roles = "USER")
@@ -74,6 +84,7 @@ class UsuarioControllerTest {
                 .andExpect(jsonPath("$.username").value("testuser"));
     }
 
+    // Comprueba que consultar un usuario inexistente devuelve 404
     @Test
     @DisplayName("GET /usuarios/{id} inexistente devuelve 404")
     @WithMockUser(roles = "ADMIN")
@@ -85,6 +96,7 @@ class UsuarioControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    // Comprueba que se puede buscar un usuario por su username
     @Test
     @DisplayName("GET /usuarios/username/{username} con rol USER devuelve 200")
     @WithMockUser(roles = "USER")
@@ -96,6 +108,7 @@ class UsuarioControllerTest {
                 .andExpect(jsonPath("$.username").value("testuser"));
     }
 
+    // Comprueba que un ADMIN puede desactivar un usuario existente
     @Test
     @DisplayName("DELETE /usuarios/{id} con rol ADMIN devuelve 200")
     @WithMockUser(roles = "ADMIN")
@@ -107,6 +120,7 @@ class UsuarioControllerTest {
                 .andExpect(jsonPath("$.mensaje").value("Usuario desactivado con ÉXITO"));
     }
 
+    // Comprueba que un USER no tiene permiso para eliminar usuarios (solo ADMIN)
     @Test
     @DisplayName("DELETE /usuarios/{id} con rol USER devuelve 403")
     @WithMockUser(roles = "USER")

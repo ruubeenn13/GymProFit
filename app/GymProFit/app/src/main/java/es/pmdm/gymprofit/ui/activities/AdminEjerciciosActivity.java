@@ -22,15 +22,24 @@ import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.adapters.AdminEjercicioAdapter;
 
+// ============================================================
+// AdminEjerciciosActivity — pantalla de administración de ejercicios
+// Permite al rol ADMIN listar, filtrar por estado/nombre, activar/desactivar
+// y editar ejercicios del catálogo. Usa endpoints admin de la API GymProFit.
+// ============================================================
 public class AdminEjerciciosActivity extends BaseActivity {
 
     private RecyclerView rv;
     private AdminEjercicioAdapter adapter;
+    // Lista de ejercicios actualmente mostrada en el RecyclerView
     private final List<Ejercicio> lista = new ArrayList<>();
 
+    // Filtro por estado activo/inactivo (null = sin filtrar)
     private Boolean filtroActivo = null;
+    // Filtro por nombre introducido en el buscador (null = sin filtrar)
     private String filtroNombre = null;
 
+    // Configura RecyclerView, chips de filtro, buscador y carga inicial de datos
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,12 +67,14 @@ public class AdminEjerciciosActivity extends BaseActivity {
         cargar();
     }
 
+    // Recarga la lista al volver a la pantalla (por si hubo cambios en la edición)
     @Override
     protected void onResume() {
         super.onResume();
         cargar();
     }
 
+    // Configura los chips de filtro (Todos/Activos/Inactivos) y recarga al cambiar selección
     private void configurarChips() {
         ChipGroup cg = findViewById(R.id.chipGroupFiltros);
         cg.setOnCheckedStateChangeListener((group, checkedIds) -> {
@@ -80,6 +91,7 @@ public class AdminEjerciciosActivity extends BaseActivity {
         });
     }
 
+    // Configura el buscador por nombre; filtra en cada cambio de texto
     private void configurarBusqueda() {
         SearchView sv = findViewById(R.id.searchView);
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -98,6 +110,7 @@ public class AdminEjerciciosActivity extends BaseActivity {
         });
     }
 
+    // Llama al endpoint admin de búsqueda de ejercicios con los filtros actuales y refresca la lista
     private void cargar() {
         API.adminBuscarEjercicios(filtroNombre, null, null, filtroActivo,
                 new UtilREST.OnResponseListener() {
@@ -115,6 +128,7 @@ public class AdminEjerciciosActivity extends BaseActivity {
                 });
     }
 
+    // Activa o desactiva un ejercicio según su estado actual y actualiza el item en la lista
     private void toggleActivo(Ejercicio e, int pos) {
         UtilREST.OnResponseListener cb = new UtilREST.OnResponseListener() {
             @Override
@@ -137,6 +151,7 @@ public class AdminEjerciciosActivity extends BaseActivity {
         }
     }
 
+    // Abre la actividad de edición de ejercicio pasando sus datos actuales como extras
     private void mostrarDialogoEditar(Ejercicio e, int pos) {
         Intent intent = new Intent(this, EditarEjercicioAdminActivity.class);
         intent.putExtra("id", e.getId());

@@ -12,13 +12,20 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+// ============================================================
+// IRoleRepository — repositorio JPA de roles de usuario
+// Acceso a los roles del sistema (ADMIN, USER, GUEST, etc.) usados en
+// autenticación y control de acceso. No exportado como recurso REST.
+// ============================================================
 @Hidden
 @Repository
 @RepositoryRestResource(exported = false)
 public interface IRoleRepository extends CrudRepository<Role, Integer> {
 
+    // Consulta nativa: obtiene los roles cuyo id está en la lista dada.
     @Query(value = "SELECT * FROM roles WHERE id IN :ids", nativeQuery = true)
     List<Role> findByNombreIn(@Param("ids") List<Integer> ids);
 
+    // Busca un rol por su nombre (enum RoleType).
     Optional<Role> findByNombre(RoleType nombre);
 }

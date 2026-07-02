@@ -25,6 +25,11 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+// ============================================================
+// LogroControllerTest — tests de integración del endpoint /logros
+// Verifica permisos por rol (GUEST/USER/ADMIN) y respuestas HTTP
+// de las operaciones CRUD sobre logros mockeando ILogroService.
+// ============================================================
 @SpringBootTest
 @AutoConfigureMockMvc
 @DisplayName("Tests de integración del LogroController")
@@ -33,11 +38,13 @@ class LogroControllerTest {
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
 
+    // Mock del servicio de logros inyectado en el contexto de test
     @MockitoBean private ILogroService logroService;
 
     private LogroDTO logroDTO;
     private LogroCreateDTO logroCreateDTO;
 
+    // Inicializa los DTOs de prueba usados en los distintos tests
     @BeforeEach
     void setUp() {
         logroDTO = new LogroDTO();
@@ -51,6 +58,7 @@ class LogroControllerTest {
         logroCreateDTO.setTipo("PRIMERA_SESION");
     }
 
+    // Comprueba que un usuario GUEST puede listar todos los logros
     @Test
     @DisplayName("GET /logros con rol GUEST devuelve 200")
     @WithMockUser(roles = "GUEST")
@@ -64,6 +72,7 @@ class LogroControllerTest {
         verify(logroService).findAll();
     }
 
+    // Comprueba que un USER puede consultar los logros de un usuario existente
     @Test
     @DisplayName("GET /logros/usuario/{id} con rol USER devuelve 200")
     @WithMockUser(roles = "USER")
@@ -76,6 +85,7 @@ class LogroControllerTest {
         verify(logroService).findByUsuarioId(1);
     }
 
+    // Comprueba que consultar logros de un usuario inexistente devuelve 404
     @Test
     @DisplayName("GET /logros/usuario/{id} inexistente devuelve 404")
     @WithMockUser(roles = "USER")
@@ -87,6 +97,7 @@ class LogroControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    // Comprueba que un ADMIN puede crear un nuevo logro
     @Test
     @DisplayName("POST /logros con rol ADMIN devuelve 201")
     @WithMockUser(roles = "ADMIN")
@@ -102,6 +113,7 @@ class LogroControllerTest {
         verify(logroService).save(any(LogroCreateDTO.class));
     }
 
+    // Comprueba que un USER no tiene permiso para crear logros (solo ADMIN)
     @Test
     @DisplayName("POST /logros con rol USER devuelve 403")
     @WithMockUser(roles = "USER")
@@ -114,6 +126,7 @@ class LogroControllerTest {
         verify(logroService, never()).save(any());
     }
 
+    // Comprueba que un ADMIN puede actualizar un logro existente
     @Test
     @DisplayName("PUT /logros/{id} con rol ADMIN devuelve 200")
     @WithMockUser(roles = "ADMIN")
@@ -129,6 +142,7 @@ class LogroControllerTest {
         verify(logroService).update(eq(1), any(LogroCreateDTO.class));
     }
 
+    // Comprueba que actualizar un logro inexistente devuelve 404
     @Test
     @DisplayName("PUT /logros/{id} inexistente devuelve 404")
     @WithMockUser(roles = "ADMIN")

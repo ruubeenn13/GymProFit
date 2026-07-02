@@ -1,15 +1,30 @@
 package es.pmdm.gymprofit.model.sesion;
 
+// ============================================================
+// SesionEntrenamiento — modelo de datos de una sesión de entrenamiento.
+// Registra la ejecución concreta de una rutina por parte de un usuario
+// (inicio, fin, duración, calorías quemadas) para el historial y las
+// estadísticas de entrenamiento de GymProFit.
+// ============================================================
 public class SesionEntrenamiento {
 
+    // Identificador único de la sesión.
     private int id;
+    // Id del usuario que realizó la sesión.
     private int usuarioId;
+    // Id de la rutina asociada a la sesión.
     private int rutinaId;
+    // Fecha/hora de inicio de la sesión.
     private String fechaInicio;
+    // Fecha/hora de fin de la sesión.
     private String fechaFin;
+    // Duración total de la sesión en minutos.
     private int duracionMinutos;
+    // Calorías quemadas durante la sesión.
     private int caloriasQuemadas;
+    // Notas u observaciones de la sesión.
     private String notas;
+    // Indica si la sesión se completó.
     private boolean completada;
 
     public SesionEntrenamiento() {}

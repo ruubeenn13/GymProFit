@@ -17,6 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+// ============================================================
+// DataInitializer — inicializador de datos semilla al arrancar la app
+// Crea los usuarios base (admin y guest) si no existen todavía en BD.
+// Se ejecuta automáticamente al arrancar Spring Boot (CommandLineRunner),
+// excepto en el perfil "test" para no interferir con los tests.
+// ============================================================
 @Component
 @Profile("!test")
 @RequiredArgsConstructor
@@ -28,6 +34,7 @@ public class DataInitializer implements CommandLineRunner {
 
     private static final Logger logger = LoggerFactory.getLogger(DataInitializer.class);
 
+    // Punto de entrada ejecutado tras el arranque del contexto Spring: crea usuarios semilla.
     @Override
     @Transactional
     public void run(String... args) {
@@ -35,6 +42,7 @@ public class DataInitializer implements CommandLineRunner {
         crearUsuarioSiNoExiste("guest", "guest@gymprofit.com", "guest", RoleType.GUEST);
     }
 
+    // Crea un usuario con el rol indicado si no existe ya un usuario con ese username.
     private void crearUsuarioSiNoExiste(String username, String email, String password, RoleType roleType) {
         if (usuarioRepository.existsByUsername(username)) {
             return;

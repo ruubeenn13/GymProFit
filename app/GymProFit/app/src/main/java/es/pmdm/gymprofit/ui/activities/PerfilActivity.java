@@ -39,6 +39,12 @@ import es.pmdm.gymprofit.network.API;
 import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
 
+// ============================================================
+// PerfilActivity — Pantalla de perfil del usuario.
+// Muestra los datos personales y nutricionales del usuario, la última medición
+// corporal registrada y la foto de perfil (con opción de cambiarla desde galería
+// o cámara). Da acceso a sesiones, mediciones, logros, ajustes de admin y "Acerca de".
+// ============================================================
 public class PerfilActivity extends BaseActivity {
 
     private BottomNavigationView bottomNavigationView;
@@ -55,6 +61,8 @@ public class PerfilActivity extends BaseActivity {
     private LinearLayout llMedicionesResumen;
     private ImageView ivAvatar;
 
+    // Inicializa launchers para editar perfil, ver mediciones, elegir foto de
+    // galería/cámara y pedir permiso de cámara; luego monta la pantalla.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +113,8 @@ public class PerfilActivity extends BaseActivity {
         configurarNavegacion();
     }
 
+    // Enlaza las vistas del layout y configura el click sobre el avatar para
+    // abrir el diálogo de cambio de foto (requiere acceso registrado).
     private void inicializarVistas() {
         tvNombreUsuario = findViewById(R.id.tvNombreUsuario);
         tvEmailUsuario = findViewById(R.id.tvEmailUsuario);
@@ -126,6 +136,8 @@ public class PerfilActivity extends BaseActivity {
         });
     }
 
+    // Carga y muestra los datos del usuario actual: última medición, foto de
+    // perfil y datos personales/nutricionales obtenidos de la API.
     private void configurarDatosUsuario() {
         String sinDatos = getString(R.string.perfil_sin_datos);
         tvInfoNivel.setText(sinDatos);
@@ -180,6 +192,8 @@ public class PerfilActivity extends BaseActivity {
         });
     }
 
+    // Muestra un diálogo para elegir el origen de la nueva foto de perfil
+    // (galería o cámara).
     private void mostrarDialogoFoto() {
         String[] opciones = {
             getString(R.string.perfil_foto_galeria),
@@ -194,6 +208,8 @@ public class PerfilActivity extends BaseActivity {
                 .show();
     }
 
+    // Solicita el permiso de cámara si no se tiene concedido, o lanza la
+    // cámara directamente si ya está concedido.
     private void pedirPermisoCamara() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -203,12 +219,16 @@ public class PerfilActivity extends BaseActivity {
         }
     }
 
+    // Crea un archivo temporal y lanza la cámara para capturar la foto de
+    // perfil en él, usando un FileProvider.
     private void lanzarCamara() {
         File foto = new File(getCacheDir(), "perfil_temp.jpg");
         cameraUri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", foto);
         cameraLauncher.launch(cameraUri);
     }
 
+    // Sube la foto seleccionada/capturada a la API y actualiza el avatar
+    // mostrado tras un envío correcto.
     private void subirFoto(Uri uri) {
         int uid = prefsManager.getUsuarioId();
         if (uid == -1) return;
@@ -234,6 +254,8 @@ public class PerfilActivity extends BaseActivity {
         });
     }
 
+    // Descarga en background la foto de perfil del usuario desde la API
+    // (endpoint /usuarios/{id}/foto) y la muestra en el avatar.
     @SuppressWarnings("deprecation")
     private void cargarFotoPerfil(int userId) {
         new AsyncTask<Void, Void, Bitmap>() {
@@ -268,6 +290,8 @@ public class PerfilActivity extends BaseActivity {
         }.execute();
     }
 
+    // Obtiene la lista de mediciones del usuario y muestra el peso/altura de
+    // la más reciente en el resumen de mediciones.
     private void cargarUltimaMedicion(int usuarioId) {
         API.getMedicionesDeUsuario(usuarioId, new UtilREST.OnResponseListener() {
             @Override
@@ -295,6 +319,8 @@ public class PerfilActivity extends BaseActivity {
         });
     }
 
+    // Configura los listeners de los accesos del perfil: editar perfil,
+    // sesiones, mediciones, logros, acerca de, y panel de admin si procede.
     private void configurarBotones() {
         findViewById(R.id.btnEditarPerfil).setOnClickListener(v -> {
             if (!verificarAccesoRegistrado()) return;
@@ -328,6 +354,8 @@ public class PerfilActivity extends BaseActivity {
 
     }
 
+    // Configura la BottomNavigationView y la navegación entre las secciones
+    // principales de la app, marcando "Perfil" como seleccionado.
     private void configurarNavegacion() {
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setSelectedItemId(R.id.nav_perfil);
@@ -365,10 +393,12 @@ public class PerfilActivity extends BaseActivity {
         });
     }
 
+    // Devuelve el valor si es válido (no nulo/vacío/"null"), o el fallback.
     private String val(String s, String fallback) {
         return (s != null && !s.isEmpty() && !"null".equals(s)) ? s : fallback;
     }
 
+    // Traduce el valor del nivel de experiencia (API) a su texto localizado.
     private String mapearNivel(String nivel) {
         if (nivel == null) return getString(R.string.perfil_sin_datos);
         switch (nivel) {
@@ -379,6 +409,7 @@ public class PerfilActivity extends BaseActivity {
         }
     }
 
+    // Traduce el valor del enum de objetivo (API) a su texto localizado.
     private String mapearObjetivo(String objetivo) {
         if (objetivo == null) return getString(R.string.perfil_sin_datos);
         switch (objetivo) {

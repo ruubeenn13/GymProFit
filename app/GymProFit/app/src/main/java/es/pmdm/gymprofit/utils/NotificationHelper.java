@@ -18,8 +18,14 @@ import es.pmdm.gymprofit.ui.activities.MedicionesActivity;
 import es.pmdm.gymprofit.ui.activities.RutinasActivity;
 import es.pmdm.gymprofit.ui.activities.SesionesActivity;
 
+// ============================================================
+// NotificationHelper — utilidad estática para generar y enviar notificaciones locales.
+// Crea canales de notificación (API 26+) y construye notificaciones para sesiones,
+// mediciones, rutinas y logros, cada una con su PendingIntent a la pantalla asociada.
+// ============================================================
 public class NotificationHelper {
 
+    // IDs de los distintos canales de notificación de la app.
     private static final String CANAL_SESIONES   = "1";
     private static final String CANAL_MEDICIONES  = "2";
     private static final String CANAL_RUTINAS     = "3";
@@ -100,6 +106,7 @@ public class NotificationHelper {
         enviar(ctx, CANAL_LOGROS, ctx.getString(R.string.notif_canal_logros), 4, builder);
     }
 
+    // Crea (si es necesario) el canal de notificación y muestra la notificación construida.
     private static void enviar(Context ctx, String canalId, String canalNombre,
                                 int notifId, NotificationCompat.Builder builder) {
         // 2.- Añadir el canal al sistema de notificaciones

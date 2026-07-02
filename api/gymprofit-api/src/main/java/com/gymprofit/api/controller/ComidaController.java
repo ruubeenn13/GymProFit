@@ -27,6 +27,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// ============================================================
+// ComidaController — CRUD y consultas de las comidas registradas
+// Gestiona la creación, modificación y borrado de comidas asociadas
+// a un usuario (con su tipo: DESAYUNO, ALMUERZO, COMIDA, MERIENDA,
+// CENA o SNACK), y ofrece búsquedas por fecha, tipo y usuario.
+// ============================================================
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")
@@ -304,6 +310,7 @@ public class ComidaController {
         return ResponseEntity.ok(comidaService.patch(id, patchDTO));
     }
 
+    // Valida que el tipo de comida recibido coincida con un valor del enum TipoComida.
     private void validarTipoComida(String tipoComida) {
         try {
             TipoComida.valueOf(tipoComida.toUpperCase());

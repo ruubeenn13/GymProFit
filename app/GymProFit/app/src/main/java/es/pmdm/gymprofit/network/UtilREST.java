@@ -14,17 +14,27 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
+// ============================================================
+// UtilREST — cliente HTTP de bajo nivel para hablar con la API GymProFit
+// Gestiona el token JWT en memoria, ejecuta peticiones REST (incluido
+// PATCH vía reflexión) y subidas multipart en AsyncTask, y notifica al
+// llamador mediante OnResponseListener. También detecta el 401 (token
+// expirado) y avisa a través de OnUnauthorizedListener.
+// ============================================================
 public class UtilREST {
 
+    // Callback de resultado de una petición: éxito con cuerpo de respuesta, o error con mensaje
     public interface OnResponseListener {
         void onSuccess(String response, int statusCode);
         void onError(String message, int statusCode);
     }
 
+    // Callback invocado cuando la API responde 401 (token JWT expirado o inválido)
     public interface OnUnauthorizedListener {
         void onTokenExpired();
     }
 
+    // Token JWT actual, compartido en memoria por toda la app
     private static String token = null;
     private static OnUnauthorizedListener unauthorizedListener = null;
 
@@ -32,16 +42,20 @@ public class UtilREST {
     public static void clearToken() { token = null; }
     public static String getToken() { return token; }
 
+    // Registra el listener global que se dispara al recibir un 401
     public static void setOnUnauthorizedListener(OnUnauthorizedListener l) { unauthorizedListener = l; }
 
+    // Lanza una petición HTTP asíncrona (GET/POST/PUT/PATCH/DELETE) con cuerpo JSON opcional
     public static void request(String url, String method, String body, OnResponseListener listener) {
         new RequestTask(url, method, body, listener).execute();
     }
 
+    // Lanza una subida de archivo asíncrona como multipart/form-data (p.ej. foto de perfil)
     public static void uploadMultipart(Context context, String url, Uri fileUri, String fieldName, OnResponseListener listener) {
         new MultipartTask(context, url, fileUri, fieldName, listener).execute();
     }
 
+    // Tarea en background que ejecuta una petición HTTP genérica con HttpURLConnection
     @SuppressWarnings("deprecation")
     private static class RequestTask extends AsyncTask<Void, Void, Object[]> {
 
@@ -55,6 +69,7 @@ public class UtilREST {
             this.listener = listener;
         }
 
+        // Abre la conexión, envía el body si lo hay y lee la respuesta (o el error) como texto
         @Override
         protected Object[] doInBackground(Void... voids) {
             HttpURLConnection conn = null;
@@ -106,6 +121,7 @@ public class UtilREST {
             }
         }
 
+        // Interpreta el resultado en el hilo principal: excepción, 401, éxito o error HTTP
         @Override
         protected void onPostExecute(Object[] result) {
             String response = (String) result[0];
@@ -126,6 +142,7 @@ public class UtilREST {
         }
     }
 
+    // Tarea en background que sube un archivo (imagen) como multipart/form-data
     @SuppressWarnings("deprecation")
     private static class MultipartTask extends AsyncTask<Void, Void, Object[]> {
 
@@ -142,6 +159,7 @@ public class UtilREST {
             this.listener = listener;
         }
 
+        // Construye manualmente el cuerpo multipart (boundary + cabeceras + bytes del archivo) y lo envía
         @Override
         protected Object[] doInBackground(Void... voids) {
             HttpURLConnection conn = null;
@@ -196,6 +214,7 @@ public class UtilREST {
             }
         }
 
+        // Interpreta el resultado en el hilo principal: excepción, 401, éxito o error HTTP
         @Override
         protected void onPostExecute(Object[] result) {
             String response = (String) result[0];

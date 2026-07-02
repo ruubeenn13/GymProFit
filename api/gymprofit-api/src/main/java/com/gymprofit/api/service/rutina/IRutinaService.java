@@ -5,6 +5,12 @@ import com.gymprofit.api.dto.entity.rutina.RutinaDTO;
 
 import java.util.List;
 
+// ============================================================
+// IRutinaService — contrato del servicio de rutinas de entrenamiento
+// Define las operaciones CRUD y de consulta sobre rutinas, tanto
+// predefinidas (creadas por ADMIN, visibles para todos) como propias
+// de cada usuario, incluyendo activación/desactivación.
+// ============================================================
 public interface IRutinaService {
 
     List<RutinaDTO> findAll();
@@ -12,8 +18,11 @@ public interface IRutinaService {
     RutinaDTO findById(Integer id);
     RutinaDTO save(RutinaCreateDTO rutinaCreateDTO);
 
+    // Baja lógica: desactiva la rutina (activa=false).
     void deleteById(Integer id);
+    // Reactiva una rutina previamente desactivada.
     void activateById(Integer id);
+    // Elimina la rutina de forma permanente en base de datos.
     void permanentDeleteById(Integer id);
 
     RutinaDTO modify(RutinaDTO rutinaDTO);

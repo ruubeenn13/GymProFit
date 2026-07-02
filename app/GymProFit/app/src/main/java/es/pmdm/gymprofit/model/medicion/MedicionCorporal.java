@@ -1,19 +1,37 @@
 package es.pmdm.gymprofit.model.medicion;
 
+// ============================================================
+// MedicionCorporal — modelo de datos de una medición corporal del usuario.
+// Registra peso, altura y perímetros corporales en una fecha concreta,
+// usados para el seguimiento de progreso físico dentro de GymProFit.
+// ============================================================
 public class MedicionCorporal {
 
+    // Identificador único de la medición.
     private int id;
+    // Id del usuario al que pertenece la medición.
     private int usuarioId;
+    // Fecha en la que se realizó la medición.
     private String fecha;
+    // Peso corporal (kg).
     private double peso;
+    // Altura (cm).
     private double altura;
+    // Índice de masa corporal calculado.
     private double imc;
+    // Porcentaje de grasa corporal.
     private double grasaCorporal;
+    // Porcentaje/masa de masa muscular.
     private double masaMuscular;
+    // Perímetro de cintura (cm).
     private double cintura;
+    // Perímetro de pecho (cm).
     private double pecho;
+    // Perímetro de brazos (cm).
     private double brazos;
+    // Perímetro de piernas (cm).
     private double piernas;
+    // Notas u observaciones adicionales de la medición.
     private String notas;
 
     public MedicionCorporal() {}

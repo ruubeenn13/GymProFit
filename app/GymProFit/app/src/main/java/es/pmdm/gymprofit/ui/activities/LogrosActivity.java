@@ -26,6 +26,11 @@ import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.adapters.LogroAdapter;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 
+// ============================================================
+// LogrosActivity — pantalla de logros/achievements del usuario.
+// Muestra el catálogo completo de logros y marca visualmente cuáles
+// están desbloqueados para el usuario actual dentro de GymProFit.
+// ============================================================
 public class LogrosActivity extends AppCompatActivity {
 
     private RecyclerView rvLogros;
@@ -34,8 +39,11 @@ public class LogrosActivity extends AppCompatActivity {
 
     private List<Logro> todosLogros = new ArrayList<>();
     private Set<Integer> desbloqueados = new HashSet<>();
+    // Contador de llamadas asíncronas pendientes (catálogo + desbloqueados) antes de renderizar
     private final AtomicInteger llamadasPendientes = new AtomicInteger(2);
 
+    // Aplica tema/idioma, infla el layout y lanza en paralelo la carga del
+    // catálogo de logros y de los logros desbloqueados por el usuario.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +62,7 @@ public class LogrosActivity extends AppCompatActivity {
         cargarLogrosDesbloqueados();
     }
 
+    // Carga el catálogo completo de logros disponibles en la app.
     private void cargarTodosLogros() {
         API.getLogros(new UtilREST.OnResponseListener() {
             @Override
@@ -76,6 +85,7 @@ public class LogrosActivity extends AppCompatActivity {
         });
     }
 
+    // Carga el conjunto de ids de logros que el usuario actual ya ha desbloqueado.
     private void cargarLogrosDesbloqueados() {
         int usuarioId = prefsManager.getUsuarioId();
         API.getLogrosDeUsuario(usuarioId, new UtilREST.OnResponseListener() {
@@ -101,6 +111,8 @@ public class LogrosActivity extends AppCompatActivity {
         });
     }
 
+    // Ordena los logros (desbloqueados primero) y los muestra en el RecyclerView,
+    // o el estado vacío si no hay logros en el catálogo.
     private void mostrar() {
         if (todosLogros.isEmpty()) {
             rvLogros.setVisibility(View.GONE);
@@ -120,6 +132,7 @@ public class LogrosActivity extends AppCompatActivity {
         rvLogros.setAdapter(new LogroAdapter(ordenados, desbloqueados));
     }
 
+    // Aplica el idioma guardado en preferencias a la configuración de recursos.
     private void aplicarIdioma() {
         String lang = prefsManager.getLanguage();
         if (!lang.isEmpty()) {

@@ -6,18 +6,33 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+// ============================================================
+// EjercicioDTO — representación completa de un ejercicio del catálogo
+// Se devuelve al consultar el catálogo de ejercicios disponibles para
+// componer rutinas y registrar entrenamientos.
+// ============================================================
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class EjercicioDTO implements Serializable {
+    // Identificador del ejercicio
     private Integer id;
+    // Nombre del ejercicio
     private String nombre;
+    // Descripción libre
     private String descripcion;
+    // Grupo muscular principal trabajado
     private String grupoMuscular;
+    // Nivel de dificultad
     private String dificultad;
+    // URL de la imagen ilustrativa
     private String imagenUrl;
+    // Instrucciones de ejecución
     private String instrucciones;
+    // Calorías aproximadas quemadas
     private Integer caloriasQuemadas;
+    // Equipo/material necesario
     private String equipoNecesario;
+    // Indica si el ejercicio está activo (visible/usable) o dado de baja lógica
     private Boolean activo;
 }

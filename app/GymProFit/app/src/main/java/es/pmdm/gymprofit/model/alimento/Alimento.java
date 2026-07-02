@@ -1,5 +1,11 @@
 package es.pmdm.gymprofit.model.alimento;
 
+// ============================================================
+// Alimento — modelo POJO de un alimento de la base de datos nutricional
+// Representa un alimento con su información nutricional por porción
+// (calorías, macros) para el sistema de seguimiento tipo MyFitnessPal.
+// Se usa como modelo de datos en las respuestas Retrofit de la API.
+// ============================================================
 public class Alimento {
 
     private int id;
@@ -9,7 +15,9 @@ public class Alimento {
     private double proteinas;
     private double carbohidratos;
     private double grasas;
+    // Id del usuario propietario si es un alimento personalizado; null si es del catálogo global
     private Integer usuarioId;
+    // Indica si el alimento está activo (borrado lógico)
     private boolean activo;
 
     public Alimento() {}

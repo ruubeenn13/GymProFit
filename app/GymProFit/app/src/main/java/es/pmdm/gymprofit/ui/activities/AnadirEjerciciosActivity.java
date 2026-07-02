@@ -39,6 +39,11 @@ import es.pmdm.gymprofit.ui.adapters.EjercicioAdapter;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
+// ============================================================
+// AnadirEjerciciosActivity — buscador y selector de ejercicios para una rutina
+// Permite buscar/filtrar ejercicios por dificultad, elegir series/repeticiones
+// y continuar hacia el resumen de creación (o devolver resultado en editMode).
+// ============================================================
 public class AnadirEjerciciosActivity extends AppCompatActivity {
 
     private TextInputEditText etBuscar;
@@ -47,15 +52,19 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
     private MaterialButton btnContinuar;
     private PreferencesManager prefsManager;
 
+    // Ejercicios elegidos por el usuario junto con sus series/repeticiones
     private final List<EjercicioSeleccionado> ejerciciosSeleccionados = new ArrayList<>();
     private EjercicioAdapter ejercicioAdapter;
 
     private String dificultadActual = "Todos";
     private String textoActual = "";
+    // Indica si se llegó desde la edición de una rutina existente (afecta al resultado devuelto)
     private boolean editMode = false;
 
+    // Launcher hacia ResumenCrearRutinaActivity; propaga el resultado o sincroniza la lista al volver
     private ActivityResultLauncher<Intent> resumenLauncher;
 
+    // Aplica tema/idioma, infla el layout y configura toolbar, búsqueda y launcher de resultado
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,6 +109,7 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
         btnContinuar.setOnClickListener(v -> abrirResumen());
     }
 
+    // Configura el buscador por texto y los chips de dificultad; ambos filtran combinadamente el adapter
     private void configurarBusqueda() {
         etBuscar.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -121,6 +131,7 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
         });
     }
 
+    // Carga los ejercicios activos desde la API y crea el adapter del RecyclerView de búsqueda
     private void cargarEjercicios() {
         API.getEjerciciosActivos(new UtilREST.OnResponseListener() {
             @Override public void onSuccess(String response, int statusCode) {
@@ -140,6 +151,7 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
         });
     }
 
+    // Muestra un diálogo para introducir series/repeticiones al seleccionar un ejercicio (evita duplicados)
     private void mostrarDialogSeriesReps(Ejercicio ejercicio) {
         for (EjercicioSeleccionado sel : ejerciciosSeleccionados) {
             if (sel.getEjercicio().getId() == ejercicio.getId()) {
@@ -167,6 +179,7 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
                 .show();
     }
 
+    // Devuelve el resultado directamente si está en editMode, o navega al resumen de creación de rutina
     private void abrirResumen() {
         if (editMode) {
             Intent result = new Intent();
@@ -184,6 +197,7 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
         resumenLauncher.launch(intent);
     }
 
+    // Serializa la lista de ejercicios seleccionados a JSON para pasarla entre activities
     private String serializarEjercicios() {
         JSONArray arr = new JSONArray();
         try {
@@ -200,6 +214,7 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
         return arr.toString();
     }
 
+    // Reconstruye la lista de ejercicios seleccionados a partir del JSON recibido al volver del resumen
     private void sincronizarDesdeJson(String json) {
         try {
             ejerciciosSeleccionados.clear();
@@ -216,12 +231,14 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
         } catch (JSONException ignored) {}
     }
 
+    // Actualiza el texto del botón "Continuar" mostrando el número de ejercicios seleccionados
     private void actualizarBoton() {
         btnContinuar.setText(String.format(
                 getString(R.string.anadir_ejercicios_continuar_fmt),
                 ejerciciosSeleccionados.size()));
     }
 
+    // Aplica el idioma guardado en preferencias a la configuración de recursos antes de renderizar
     private void aplicarIdioma() {
         String lang = prefsManager.getLanguage();
         if (!lang.isEmpty()) {

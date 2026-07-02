@@ -22,16 +22,26 @@ import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.adapters.AdminRutinaAdapter;
 
+// ============================================================
+// AdminRutinasActivity — pantalla de administración de rutinas predefinidas
+// Permite al rol ADMIN listar, filtrar por estado/nivel/nombre, activar/
+// desactivar y editar rutinas predefinidas del catálogo de GymProFit.
+// ============================================================
 public class AdminRutinasActivity extends BaseActivity {
 
     private RecyclerView rv;
     private AdminRutinaAdapter adapter;
+    // Lista de rutinas actualmente mostrada en el RecyclerView
     private final List<Rutina> lista = new ArrayList<>();
 
+    // Filtro por estado activa/inactiva (null = sin filtrar)
     private Boolean filtroActiva = null;
+    // Filtro por nivel de dificultad (null = sin filtrar)
     private String filtroNivel = null;
+    // Filtro por nombre introducido en el buscador (null = sin filtrar)
     private String filtroNombre = null;
 
+    // Configura RecyclerView, chips de filtro, buscador y carga inicial de datos
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,12 +69,14 @@ public class AdminRutinasActivity extends BaseActivity {
         cargar();
     }
 
+    // Recarga la lista al volver a la pantalla (por si hubo cambios en la edición)
     @Override
     protected void onResume() {
         super.onResume();
         cargar();
     }
 
+    // Configura los chips de filtro por estado y por nivel; ambos son excluyentes entre sí
     private void configurarChips() {
         ChipGroup cg = findViewById(R.id.chipGroupFiltros);
         cg.setOnCheckedStateChangeListener((group, checkedIds) -> {
@@ -93,6 +105,7 @@ public class AdminRutinasActivity extends BaseActivity {
         });
     }
 
+    // Configura el buscador por nombre; filtra en cada cambio de texto
     private void configurarBusqueda() {
         SearchView sv = findViewById(R.id.searchView);
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -111,6 +124,7 @@ public class AdminRutinasActivity extends BaseActivity {
         });
     }
 
+    // Llama al endpoint admin de búsqueda de rutinas predefinidas con los filtros actuales
     private void cargar() {
         API.adminBuscarRutinasPredefinidas(filtroNombre, filtroNivel, null, filtroActiva,
                 new UtilREST.OnResponseListener() {
@@ -128,6 +142,7 @@ public class AdminRutinasActivity extends BaseActivity {
                 });
     }
 
+    // Activa o desactiva una rutina según su estado actual y actualiza el item en la lista
     private void toggleActiva(Rutina r, int pos) {
         UtilREST.OnResponseListener cb = new UtilREST.OnResponseListener() {
             @Override
@@ -150,6 +165,7 @@ public class AdminRutinasActivity extends BaseActivity {
         }
     }
 
+    // Abre la actividad de edición de rutina pasando sus datos actuales como extras
     private void mostrarDialogoEditar(Rutina r, int pos) {
         Intent intent = new Intent(this, EditarRutinaAdminActivity.class);
         intent.putExtra("id", r.getId());

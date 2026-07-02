@@ -17,11 +17,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+// ============================================================
+// ControllerExceptionHandler — manejador global de excepciones de la API.
+// Centraliza la traducción de cada excepción custom (y algunas de
+// Spring/JWT) a una respuesta HTTP homogénea (Response) con el código
+// de estado correcto, evitando filtrar detalles internos al cliente.
+// ============================================================
 @ControllerAdvice
 public class ControllerExceptionHandler {
 
+    // Logger para registrar la causa real de los errores internos.
     private final Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
+    // Errores de validación de @Valid en DTOs: junta todos los mensajes de campo en un solo string.
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Response> handleValidationArgumentsErrors(MethodArgumentNotValidException ex) {
@@ -55,6 +63,7 @@ public class ControllerExceptionHandler {
         );
     }
 
+    // Fallo al actualizar una entidad.
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(UpdateEntityException.class)
     public ResponseEntity<Response> handleUpdateEntityException(UpdateEntityException ex) {
@@ -67,6 +76,7 @@ public class ControllerExceptionHandler {
         );
     }
 
+    // Fallo al eliminar una entidad.
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(DeleteEntityException.class)
     public ResponseEntity<Response> handleDeleteEntityException(DeleteEntityException ex) {
@@ -79,6 +89,7 @@ public class ControllerExceptionHandler {
         );
     }
 
+    // Entidad no encontrada por id: 404, mensaje directo al cliente.
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundEntityException.class)
     public ResponseEntity<Response> handleNotFoundEntityException(NotFoundEntityException ex) {
@@ -88,6 +99,7 @@ public class ControllerExceptionHandler {
         );
     }
 
+    // Registro duplicado (violación de unicidad): 400.
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(DuplicateEntityException.class)
     public ResponseEntity<Response> handleDuplicateEntityException(DuplicateEntityException ex) {
@@ -97,6 +109,7 @@ public class ControllerExceptionHandler {
         );
     }
 
+    // Datos de entrada inválidos a nivel de negocio: 400.
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidDataException.class)
     public ResponseEntity<Response> handleInvalidDataException(InvalidDataException ex) {
@@ -106,6 +119,7 @@ public class ControllerExceptionHandler {
         );
     }
 
+    // Credenciales inválidas (lógica propia de negocio): 401.
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<Response> handleInvalidCredentialsException(InvalidCredentialsException ex) {
@@ -115,6 +129,7 @@ public class ControllerExceptionHandler {
         );
     }
 
+    // Acceso no autorizado a un recurso propio del dominio: 403.
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<Response> handleUnauthorizedException(UnauthorizedException ex) {
@@ -124,6 +139,7 @@ public class ControllerExceptionHandler {
         );
     }
 
+    // Operación sobre una sesión de entrenamiento no completada: 400.
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(SesionNotCompletedException.class)
     public ResponseEntity<Response> handleSesionNotCompletedException(SesionNotCompletedException ex) {
@@ -133,6 +149,7 @@ public class ControllerExceptionHandler {
         );
     }
 
+    // Objetivo personal ya marcado como completado: 400.
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ObjetivoAlreadyCompletedException.class)
     public ResponseEntity<Response> handleObjetivoAlreadyCompletedException(ObjetivoAlreadyCompletedException ex) {
@@ -142,6 +159,7 @@ public class ControllerExceptionHandler {
         );
     }
 
+    // Error genérico de negocio no cubierto por las excepciones anteriores.
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(ErrorGenericoException.class)
     public ResponseEntity<Response> handleErrorGenericoException(ErrorGenericoException ex) {
@@ -154,6 +172,7 @@ public class ControllerExceptionHandler {
         );
     }
 
+    // Argumento ilegal no controlado explícitamente en el flujo de negocio.
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Response> handleIllegalArgumentException(IllegalArgumentException ex) {
@@ -166,6 +185,7 @@ public class ControllerExceptionHandler {
         );
     }
 
+    // Token JWT inválido, malformado o expirado: 401 con mensaje genérico.
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(JwtException.class)
     public ResponseEntity<Response> handleJwtException(JwtException ex) {
@@ -176,6 +196,7 @@ public class ControllerExceptionHandler {
         );
     }
 
+    // Acceso denegado por Spring Security (ej. falta de rol/permiso): 403.
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Response> handleAccessDeniedException(AccessDeniedException ex) {
@@ -186,6 +207,7 @@ public class ControllerExceptionHandler {
         );
     }
 
+    // Fallback genérico: cualquier excepción no controlada explícitamente arriba.
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Response> handleException(Exception ex) {

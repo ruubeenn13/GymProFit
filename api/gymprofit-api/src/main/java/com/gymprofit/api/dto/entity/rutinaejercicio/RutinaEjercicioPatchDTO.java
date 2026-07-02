@@ -7,6 +7,11 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+// ============================================================
+// RutinaEjercicioPatchDTO — DTO para actualización parcial (PATCH) de un ejercicio de rutina
+// Todos los campos son opcionales; solo se actualizan los que llegan no nulos.
+// Usado en el endpoint PATCH de rutina-ejercicio.
+// ============================================================
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

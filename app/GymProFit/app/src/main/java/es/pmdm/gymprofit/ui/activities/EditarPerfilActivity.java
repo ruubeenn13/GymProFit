@@ -25,15 +25,23 @@ import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
 import es.pmdm.gymprofit.utils.UIHelper;
 
+// ============================================================
+// EditarPerfilActivity — pantalla para editar el perfil del usuario.
+// Permite modificar email, peso, altura, edad, nivel de experiencia y
+// objetivo, guarda los cambios vía PATCH y recalcula las macros
+// nutricionales locales con los nuevos datos.
+// ============================================================
 public class EditarPerfilActivity extends AppCompatActivity {
 
     private PreferencesManager prefsManager;
     private TextInputEditText etEmail, etPeso, etAltura, etEdad;
     private Spinner spNivel, spObjetivo;
 
+    // Valores enviados a la API para nivel de experiencia.
     private static final String[] NIVELES = {
             "PRINCIPIANTE", "INTERMEDIO", "AVANZADO", "EXPERTO"
     };
+    // Valores enviados a la API para el objetivo del usuario.
     private static final String[] OBJETIVOS = {
             "PERDER_PESO", "GANAR_MASA_MUSCULAR", "MANTENER_PESO",
             "MEJORAR_RESISTENCIA", "MEJORAR_FUERZA", "REDUCIR_GRASA_CORPORAL",
@@ -54,6 +62,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
         configurarBotones();
     }
 
+    // Enlaza las referencias a las vistas del layout.
     private void inicializarVistas() {
         etEmail    = findViewById(R.id.etEmail);
         etPeso     = findViewById(R.id.etPeso);
@@ -63,6 +72,8 @@ public class EditarPerfilActivity extends AppCompatActivity {
         spObjetivo = findViewById(R.id.spObjetivo);
     }
 
+    // Configura los spinners de nivel y objetivo con textos localizados
+    // (los valores reales enviados a la API son NIVELES/OBJETIVOS).
     private void configurarSpinners() {
         String[] nivelesDisplay = {
                 getString(R.string.nivel_principiante),
@@ -93,6 +104,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
         spObjetivo.setAdapter(adapterObjetivo);
     }
 
+    // Obtiene los datos del usuario actual desde la API y rellena el formulario.
     private void cargarDatosUsuario() {
         int id = prefsManager.getUsuarioId();
         if (id == -1) return;
@@ -123,6 +135,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
         });
     }
 
+    // Selecciona en el spinner la posición cuyo valor coincide con el actual del usuario.
     private void seleccionarSpinner(Spinner spinner, String[] valores, String valorActual) {
         if (valorActual == null || valorActual.isEmpty()) return;
         for (int i = 0; i < valores.length; i++) {
@@ -138,6 +151,9 @@ public class EditarPerfilActivity extends AppCompatActivity {
         findViewById(R.id.btnGuardar).setOnClickListener(v -> guardarCambios());
     }
 
+    // Valida el email, construye el PATCH con los campos editados, y al
+    // tener éxito actualiza las preferencias locales y recalcula las
+    // macros nutricionales con los nuevos datos del usuario.
     private void guardarCambios() {
         String email = etEmail.getText() != null ? etEmail.getText().toString().trim() : "";
         if (email.isEmpty()) {
@@ -205,6 +221,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
         }
     }
 
+    // Aplica el idioma guardado en preferencias a la configuración de recursos.
     private void aplicarIdioma() {
         String lang = prefsManager.getLanguage();
         if (!lang.isEmpty()) {

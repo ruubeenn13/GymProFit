@@ -37,6 +37,12 @@ import es.pmdm.gymprofit.ui.adapters.EjercicioSeleccionadoAdapter;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
+// ============================================================
+// EditarRutinaActivity — pantalla para editar una rutina propia del usuario.
+// Permite modificar los datos generales de la rutina y gestionar su
+// lista de ejercicios (añadir vía AnadirEjerciciosActivity y eliminar
+// mediante confirmación), sincronizando los cambios con la API.
+// ============================================================
 public class EditarRutinaActivity extends AppCompatActivity {
 
     private TextInputEditText etNombre, etDescripcion, etDuracion;
@@ -48,6 +54,7 @@ public class EditarRutinaActivity extends AppCompatActivity {
     private final List<EjercicioSeleccionado> ejercicios = new ArrayList<>();
     private int rutinaId;
 
+    // Lanzador para recibir los ejercicios añadidos desde AnadirEjerciciosActivity.
     private ActivityResultLauncher<Intent> anadirLauncher;
 
     @Override
@@ -78,6 +85,7 @@ public class EditarRutinaActivity extends AppCompatActivity {
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        // Recibe el JSON de ejercicios seleccionados en modo edición.
                         String json = result.getData().getStringExtra("ejerciciosJson");
                         if (json != null) añadirEjerciciosNuevos(json);
                     }
@@ -90,6 +98,7 @@ public class EditarRutinaActivity extends AppCompatActivity {
         findViewById(R.id.btnGuardarEditar).setOnClickListener(v -> guardarCambios());
     }
 
+    // Marca el chip de nivel correspondiente al valor recibido por Intent.
     private void preseleccionarNivel(String nivel) {
         if ("INTERMEDIO".equals(nivel))
             chipGroupNivel.check(R.id.chipEditarIntermedio);
@@ -99,6 +108,7 @@ public class EditarRutinaActivity extends AppCompatActivity {
             chipGroupNivel.check(R.id.chipEditarPrincipiante);
     }
 
+    // Traduce el chip de nivel seleccionado a su valor de texto para la API.
     private String obtenerNivel() {
         int id = chipGroupNivel.getCheckedChipId();
         if (id == R.id.chipEditarIntermedio) return "INTERMEDIO";
@@ -106,6 +116,8 @@ public class EditarRutinaActivity extends AppCompatActivity {
         return "PRINCIPIANTE";
     }
 
+    // Configura el RecyclerView de ejercicios en modo edición, mostrando
+    // confirmación antes de eliminar cada ejercicio.
     private void configurarRecycler() {
         tvEjerciciosTitulo = findViewById(R.id.tvEjerciciosTituloEditar);
         RecyclerView rv = findViewById(R.id.rvEjerciciosEditar);
@@ -121,6 +133,8 @@ public class EditarRutinaActivity extends AppCompatActivity {
         actualizarTitulo();
     }
 
+    // Lanza en paralelo dos llamadas (catálogo de ejercicios activos y
+    // relaciones rutina-ejercicio) y combina resultados cuando ambas terminan.
     private void cargarEjercicios() {
         final Map<Integer, Ejercicio> ejercicioMap = new HashMap<>();
         final List<JSONObject> relacionesRaw = new ArrayList<>();
@@ -158,6 +172,8 @@ public class EditarRutinaActivity extends AppCompatActivity {
         });
     }
 
+    // Une cada relación rutina-ejercicio con su Ejercicio del catálogo
+    // (o crea uno mínimo con el id si no se encontró) y refresca el adapter.
     private void combinarYMostrar(Map<Integer, Ejercicio> map, List<JSONObject> relaciones) {
         ejercicios.clear();
         for (JSONObject obj : relaciones) {
@@ -178,6 +194,8 @@ public class EditarRutinaActivity extends AppCompatActivity {
         actualizarTitulo();
     }
 
+    // Elimina la relación rutina-ejercicio en la API y, si tiene éxito,
+    // lo quita también de la lista local y refresca el adapter.
     private void eliminarEjercicio(EjercicioSeleccionado item) {
         API.eliminarEjercicioDeRutina(rutinaId, item.getEjercicio().getId(),
                 new UtilREST.OnResponseListener() {
@@ -195,12 +213,16 @@ public class EditarRutinaActivity extends AppCompatActivity {
                 });
     }
 
+    // Abre AnadirEjerciciosActivity en modo edición para seleccionar
+    // ejercicios adicionales a añadir a la rutina.
     private void abrirAnadir() {
         Intent intent = new Intent(this, AnadirEjerciciosActivity.class);
         intent.putExtra("editMode", true);
         anadirLauncher.launch(intent);
     }
 
+    // Añade a la lista local (evitando duplicados) los ejercicios recibidos
+    // y los persiste en la API uno a uno mediante addEjercicioARutina.
     private void añadirEjerciciosNuevos(String json) {
         try {
             JSONArray arr = new JSONArray(json);
@@ -241,6 +263,8 @@ public class EditarRutinaActivity extends AppCompatActivity {
         } catch (JSONException ignored) {}
     }
 
+    // Valida los campos generales de la rutina y envía el PATCH con los
+    // datos actualizados (nombre, descripción, nivel y duración).
     private void guardarCambios() {
         String nom = etNombre.getText() != null ? etNombre.getText().toString().trim() : "";
         String desc = etDescripcion.getText() != null ? etDescripcion.getText().toString().trim() : "";
@@ -276,11 +300,13 @@ public class EditarRutinaActivity extends AppCompatActivity {
         }
     }
 
+    // Actualiza el título de la sección con el número de ejercicios cargados.
     private void actualizarTitulo() {
         tvEjerciciosTitulo.setText(String.format(
                 getString(R.string.editar_rutina_ejercicios_fmt), ejercicios.size()));
     }
 
+    // Aplica el idioma guardado en preferencias a la configuración de recursos.
     private void aplicarIdioma() {
         String lang = prefsManager.getLanguage();
         if (!lang.isEmpty()) {

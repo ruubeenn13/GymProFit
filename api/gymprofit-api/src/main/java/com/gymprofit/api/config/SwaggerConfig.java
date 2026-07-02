@@ -8,6 +8,12 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.context.annotation.Configuration;
 
+// ============================================================
+// SwaggerConfig — configuración de la documentación OpenAPI/Swagger
+// Define los metadatos generales de la API (título, versión, descripción)
+// y el esquema de seguridad Bearer JWT que Swagger UI usa para autenticar
+// las peticiones de prueba contra los endpoints de GymProFit.
+// ============================================================
 @Configuration
 @OpenAPIDefinition(
         info = @Info(

@@ -38,6 +38,13 @@ import es.pmdm.gymprofit.ui.adapters.EjercicioSeleccionadoAdapter;
 import es.pmdm.gymprofit.utils.EjercicioNavHelper;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 
+// ============================================================
+// DetalleRutinaActivity — pantalla de detalle de una rutina.
+// Muestra la información general de la rutina (nombre, descripción,
+// nivel, duración, calorías) y la lista de ejercicios que la componen,
+// combinando el catálogo de ejercicios con las relaciones rutina-ejercicio
+// obtenidas de la API. Permite editar la rutina si es propia del usuario.
+// ============================================================
 public class DetalleRutinaActivity extends AppCompatActivity {
 
     private final List<EjercicioSeleccionado> ejercicios = new ArrayList<>();
@@ -51,6 +58,7 @@ public class DetalleRutinaActivity extends AppCompatActivity {
     private boolean predefinida;
     private int rutinaUsuarioId;
 
+    // Lanzador para recibir el resultado de EditarRutinaActivity.
     private ActivityResultLauncher<Intent> editarLauncher;
 
     @Override
@@ -78,6 +86,7 @@ public class DetalleRutinaActivity extends AppCompatActivity {
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
+                        // Si se editó la rutina, propaga el OK y cierra el detalle.
                         setResult(RESULT_OK);
                         finish();
                     }
@@ -89,6 +98,7 @@ public class DetalleRutinaActivity extends AppCompatActivity {
         cargarEjercicios();
     }
 
+    // Rellena las vistas de cabecera con la info general de la rutina.
     private void poblarInfoRutina() {
         ((TextView) findViewById(R.id.tvNombreDetalle)).setText(nombre);
         ((TextView) findViewById(R.id.tvDescripcionDetalle)).setText(descripcion);
@@ -97,6 +107,8 @@ public class DetalleRutinaActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.tvCaloriasDetalle)).setText("~" + calorias + " kcal");
     }
 
+    // Configura el RecyclerView de ejercicios de la rutina (solo lectura,
+    // navegando al detalle del ejercicio al pulsar sobre uno).
     private void configurarRecycler() {
         tvEjerciciosTitulo = findViewById(R.id.tvEjerciciosTituloDetalle);
         RecyclerView rv = findViewById(R.id.rvEjerciciosDetalle);
@@ -107,6 +119,8 @@ public class DetalleRutinaActivity extends AppCompatActivity {
         actualizarTitulo();
     }
 
+    // Muestra el botón de editar solo si la rutina no es predefinida
+    // y pertenece al usuario actualmente autenticado.
     private void configurarBotonEditar() {
         MaterialButton btnEditar = findViewById(R.id.btnEditarRutina);
         boolean esPropia = !predefinida && rutinaUsuarioId == prefsManager.getUsuarioId();
@@ -116,6 +130,7 @@ public class DetalleRutinaActivity extends AppCompatActivity {
         }
     }
 
+    // Abre EditarRutinaActivity pasando los datos actuales de la rutina.
     private void abrirEditar() {
         Intent intent = new Intent(this, EditarRutinaActivity.class);
         intent.putExtra("rutinaId",    rutinaId);
@@ -126,6 +141,8 @@ public class DetalleRutinaActivity extends AppCompatActivity {
         editarLauncher.launch(intent);
     }
 
+    // Lanza en paralelo dos llamadas (catálogo de ejercicios activos y
+    // relaciones rutina-ejercicio) y combina resultados cuando ambas terminan.
     private void cargarEjercicios() {
         final Map<Integer, Ejercicio> ejercicioMap = new HashMap<>();
         final List<JSONObject> relacionesRaw = new ArrayList<>();
@@ -164,6 +181,8 @@ public class DetalleRutinaActivity extends AppCompatActivity {
         });
     }
 
+    // Une cada relación rutina-ejercicio con su Ejercicio del catálogo
+    // (o crea uno mínimo con el id si no se encontró) y refresca el adapter.
     private void combinarYMostrar(Map<Integer, Ejercicio> map, List<JSONObject> relaciones) {
         ejercicios.clear();
         for (JSONObject obj : relaciones) {
@@ -184,11 +203,13 @@ public class DetalleRutinaActivity extends AppCompatActivity {
         actualizarTitulo();
     }
 
+    // Actualiza el título de la sección con el número de ejercicios cargados.
     private void actualizarTitulo() {
         tvEjerciciosTitulo.setText(String.format(
                 getString(R.string.detalle_rutina_ejercicios_fmt), ejercicios.size()));
     }
 
+    // Aplica el idioma guardado en preferencias a la configuración de recursos.
     private void aplicarIdioma() {
         String lang = prefsManager.getLanguage();
         if (!lang.isEmpty()) {

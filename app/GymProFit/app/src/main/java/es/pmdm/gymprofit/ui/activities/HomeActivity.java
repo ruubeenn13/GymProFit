@@ -25,11 +25,19 @@ import es.pmdm.gymprofit.network.API;
 import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
 
+// ============================================================
+// HomeActivity — pantalla principal tras el login.
+// Muestra la cabecera con saludo/fecha, las estadísticas semanales de
+// entrenamiento (sesiones, calorías, minutos), las acciones rápidas y
+// la navegación inferior de la app GymProFit.
+// ============================================================
 public class HomeActivity extends BaseActivity {
 
     private BottomNavigationView bottomNavigationView;
     private TextView tvConteoEntrenamientos, tvConteoCaloriasHome, tvConteoMinutosHome;
 
+    // Infla el layout, referencia las vistas de estadísticas y configura
+    // cabecera, accesos rápidos, navegación inferior y permiso de notificaciones.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,12 +59,15 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
+    // Recarga las estadísticas semanales cada vez que la Activity vuelve a primer plano.
     @Override
     protected void onResume() {
         super.onResume();
         cargarEstadisticasSemana();
     }
 
+    // Obtiene las sesiones del usuario y calcula el total de entrenamientos,
+    // calorías y minutos realizados desde el lunes de la semana actual.
     private void cargarEstadisticasSemana() {
         int usuarioId = prefsManager.getUsuarioId();
         if (usuarioId == -1) return;
@@ -67,6 +78,7 @@ public class HomeActivity extends BaseActivity {
                 try {
                     List<SesionEntrenamiento> sesiones = UtilJSONParser.parseSesionList(response);
 
+                    // Calcula la fecha de inicio de la semana actual (lunes a las 00:00)
                     Calendar cal = Calendar.getInstance();
                     cal.set(Calendar.HOUR_OF_DAY, 0);
                     cal.set(Calendar.MINUTE, 0);
@@ -108,6 +120,7 @@ public class HomeActivity extends BaseActivity {
         });
     }
 
+    // Configura el saludo según la hora del día, el nombre de usuario y la fecha actual.
     private void configurarCabecera() {
         TextView tvSaludo  = findViewById(R.id.tvSaludo);
         TextView tvUsuario = findViewById(R.id.tvUsuario);
@@ -133,6 +146,8 @@ public class HomeActivity extends BaseActivity {
         tvFecha.setText(sdf.format(new Date()));
     }
 
+    // Configura los listeners de las tarjetas de acceso rápido (iniciar entrenamiento,
+    // ver rutinas, registrar comida), comprobando acceso registrado cuando aplica.
     private void configurarAccionesRapidas() {
         MaterialCardView cardIniciarEntrenamiento = findViewById(R.id.cardIniciarEntrenamiento);
         MaterialCardView cardVerRutinas = findViewById(R.id.cardVerRutinas);
@@ -156,6 +171,8 @@ public class HomeActivity extends BaseActivity {
         });
     }
 
+    // Configura la barra de navegación inferior, marcando "Home" como seleccionado
+    // y redirigiendo a la Activity correspondiente al pulsar cada ítem.
     private void configurarNavegacion() {
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setSelectedItemId(R.id.nav_home);

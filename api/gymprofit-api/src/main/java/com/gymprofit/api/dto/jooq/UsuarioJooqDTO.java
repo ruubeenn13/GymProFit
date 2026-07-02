@@ -7,6 +7,12 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+// ============================================================
+// UsuarioJooqDTO — proyección plana de Usuario para consultas jOOQ
+// DTO usado en consultas complejas/joins con jOOQ donde no se necesita
+// la entidad JPA completa. Sus campos (enums como String) reflejan
+// directamente las columnas seleccionadas en la query.
+// ============================================================
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

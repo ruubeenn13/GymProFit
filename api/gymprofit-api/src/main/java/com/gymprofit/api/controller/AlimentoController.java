@@ -24,6 +24,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// ============================================================
+// AlimentoController — CRUD y consultas del catálogo de alimentos
+// Gestiona alta, modificación, activación/desactivación (borrado lógico)
+// y borrado permanente de alimentos, así como búsquedas por nombre,
+// categoría, calorías, usuario y los conteos usados en nutrición.
+// ============================================================
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("")
@@ -185,6 +191,7 @@ public class AlimentoController {
         return ResponseEntity.ok(alimentos);
     }
 
+    // Lista canónica y fija de categorías válidas para clasificar un alimento.
     public static final List<String> CATEGORIAS = Arrays.asList(
             "Carnes y aves", "Pescado y marisco", "Huevos", "Lácteos", "Legumbres",
             "Cereales y pan", "Frutas", "Verduras", "Frutos secos", "Aceites y grasas",

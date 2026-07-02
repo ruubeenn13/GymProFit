@@ -12,40 +12,56 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+// ============================================================
+// Ejercicio — catálogo de ejercicios disponibles en la app
+// Define un ejercicio físico (nombre, grupo muscular, dificultad,
+// instrucciones...) que puede añadirse a rutinas (RutinaEjercicio) y
+// registrarse como realizado en una sesión (EjercicioRealizado).
+// ============================================================
 @Entity
 @Table(name = "ejercicios")
 public class Ejercicio {
 
+    // Identificador autogenerado del ejercicio.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    // Nombre del ejercicio.
     @Column(nullable = false, length = 100)
     private String nombre;
 
+    // Descripción general del ejercicio.
     @Column(columnDefinition = "TEXT")
     private String descripcion;
 
+    // Grupo muscular principal trabajado.
     @Enumerated(EnumType.STRING)
     @Column(name = "grupo_muscular", nullable = false)
     private GrupoMuscular grupoMuscular;
 
+    // Nivel de dificultad del ejercicio.
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Dificultad dificultad;
 
+    // URL de la imagen ilustrativa del ejercicio.
     @Column(name = "imagen_url")
     private String imagenUrl;
 
+    // Instrucciones detalladas de ejecución.
     @Column(columnDefinition = "TEXT")
     private String instrucciones;
 
+    // Calorías estimadas quemadas al realizar el ejercicio.
     @Column(name = "calorias_quemadas")
     private Integer caloriasQuemadas;
 
+    // Equipo/material necesario para realizarlo.
     @Column(name = "equipo_necesario")
     private String equipoNecesario;
 
+    // Indica si el ejercicio está activo/visible (borrado lógico).
     @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
     private Boolean activo;
 }
