@@ -1,0 +1,39 @@
+# Auto-merge de los PRs de Dependabot.
+# Aprueba automáticamente y activa el auto-merge (squash) SOLO para actualizaciones
+# patch y minor (bajo riesgo). Las major se dejan para revisión manual.
+#
+# REQUISITO (una vez, en el repo): Settings → General → Pull Requests → marcar
+# "Allow auto-merge". Sin eso, el paso de auto-merge fallará.
+name: Dependabot auto-merge
+
+on: pull_request_target
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    # Solo actúa sobre PRs abiertos por Dependabot.
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    steps:
+      # Extrae metadatos del PR (tipo de actualización: patch/minor/major).
+      - name: Obtener metadatos de Dependabot
+        id: meta
+        uses: dependabot/fetch-metadata@v2
+
+      # Aprueba el PR automáticamente.
+      - name: Aprobar PR
+        run: gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Activa el auto-merge (squash) solo si es patch o minor.
+      - name: Activar auto-merge (patch/minor)
+        if: ${{ steps.meta.outputs.update-type == 'version-update:semver-patch' || steps.meta.outputs.update-type == 'version-update:semver-minor' }}
+        run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

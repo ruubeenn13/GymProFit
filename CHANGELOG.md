@@ -6,6 +6,7 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| *(pendiente)* | ci(dependabot): auto-merge de PRs de Dependabot (aprobar + auto-merge squash de patch/minor; los major quedan a revisión manual) |
 | *(pendiente)* | chore(security): añadir OWASP `dependency-check-maven` (escaneo de CVEs bajo demanda, `failBuildOnCVSS=8`) y mejorar `dependabot.yml` (grouped updates minor/patch + labels) |
 | `4429b89` | chore(deps): subir dependencias vulnerables — `spring-boot-starter-parent` 3.5.7→3.5.16 (parchea transitivas: jackson, logback, tomcat…), lombok 1.18.38→1.18.46, y quitar el override de `spring-boot-starter-validation` (hereda del parent). Añadido `.github/dependabot.yml` para actualizaciones automáticas. 136 tests verdes |
 | *(pendiente)* | chore(security): sueltos de la auditoría — CORS con lista blanca configurable (fuera el wildcard `*` y los 16 `@CrossOrigin("*")`), `jwt.secret` por variable de entorno (`${JWT_SECRET}` en prod, literal en dev), y compilador Maven a Java 21 (coherente con `java.version`) |
