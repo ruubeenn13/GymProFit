@@ -9,7 +9,6 @@ import com.gymprofit.api.enums.TipoObjetivo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -39,5 +38,4 @@ public class RegisterDTO implements Serializable {
 
     private String nivelExperiencia;
     private TipoObjetivo objetivo;
-    private List<Integer> roles;
 }

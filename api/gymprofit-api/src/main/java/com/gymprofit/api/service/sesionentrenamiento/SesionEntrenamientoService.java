@@ -3,6 +3,7 @@ package com.gymprofit.api.service.sesionentrenamiento;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoCreateDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoPatchDTO;
+import com.gymprofit.api.config.security.SecurityUtils;
 import com.gymprofit.api.entity.Rutina;
 import com.gymprofit.api.entity.SesionEntrenamiento;
 import com.gymprofit.api.entity.Usuario;
@@ -34,11 +35,14 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
     private final IRutinaRepository rutinaRepository;
     private final SesionEntrenamientoMapper sesionEntrenamientoMapper;
     private final ILogroService logroService;
+    private final SecurityUtils securityUtils;
     private final Logger logger = LoggerFactory.getLogger(SesionEntrenamientoService.class);
 
 
     @Override
     public List<SesionEntrenamientoDTO> findAll() {
+        securityUtils.requireAdmin();
+
         logger.info("Buscando todas las sesiones de entrenaminento");
 
         List<SesionEntrenamiento> sesiones = (List<SesionEntrenamiento>) sesionEntrenamientoRepository.findAll();
@@ -53,11 +57,17 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         SesionEntrenamiento sesion = sesionEntrenamientoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("La sesión de entrenamiento con id " + id + " no existe"));
 
+        securityUtils.checkOwnership(sesion.getUsuario().getId());
+
         return sesionEntrenamientoMapper.toDTO(sesion);
     }
 
     @Override
     public SesionEntrenamientoDTO save(SesionEntrenamientoCreateDTO sesionEntrenamientoCreateDTO) {
+        if (!securityUtils.isAdmin()) {
+            sesionEntrenamientoCreateDTO.setUsuarioId(securityUtils.getCurrentUserId());
+        }
+
         logger.info("Creando nueva sesión de entrenamiento para usuario id: {}", sesionEntrenamientoCreateDTO.getUsuarioId());
 
         try {
@@ -110,11 +120,10 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         SesionEntrenamiento sesion = sesionEntrenamientoRepository.findById(sesionEntrenamientoDTO.getId())
                 .orElseThrow(() -> new NotFoundEntityException("La sesión de entrenamiento con id " + sesionEntrenamientoDTO.getId() + " no existe"));
 
-        try {
-            Usuario usuario = usuarioRepository.findById(sesionEntrenamientoDTO.getUsuarioId())
-                    .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + sesionEntrenamientoDTO + " no existe"));
+        securityUtils.checkOwnership(sesion.getUsuario().getId());
 
-            sesion.setUsuario(usuario);
+        try {
+            // El propietario nunca se reasigna desde el body: se mantiene el usuario original de la sesión.
 
             if (sesionEntrenamientoDTO.getRutinaId() != null) {
                 Rutina rutina = rutinaRepository.findById(sesionEntrenamientoDTO.getRutinaId())
@@ -150,6 +159,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         SesionEntrenamiento sesion = sesionEntrenamientoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("La sesión de entrenamiento con id " + id + " no existe"));
 
+        securityUtils.checkOwnership(sesion.getUsuario().getId());
+
         try {
             sesionEntrenamientoRepository.delete(sesion);
 
@@ -166,6 +177,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
         SesionEntrenamiento sesion = sesionEntrenamientoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("La sesión de entrenamiento con id " + id + " no existe"));
+
+        securityUtils.checkOwnership(sesion.getUsuario().getId());
 
         try {
             sesion.setFechaFin(LocalDateTime.now());
@@ -194,6 +207,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
     @Override
     public List<SesionEntrenamientoDTO> findByUsuarioId(Integer usuarioId) {
+        securityUtils.checkOwnership(usuarioId);
+
         logger.info("Buscando sesiones de entrenamiento por usuario id: {}", usuarioId);
 
         List<SesionEntrenamiento> sesiones = sesionEntrenamientoRepository.findByUsuarioId(usuarioId);
@@ -203,6 +218,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
     @Override
     public List<SesionEntrenamientoDTO> findByRutinaId(Integer rutinaId) {
+        securityUtils.requireAdmin();
+
         logger.info("Buscando sesiones de entrenamiento por rutina id: {}", rutinaId);
 
         List<SesionEntrenamiento> sesiones = sesionEntrenamientoRepository.findByRutinaId(rutinaId);
@@ -212,6 +229,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
     @Override
     public List<SesionEntrenamientoDTO> findCompletadas() {
+        securityUtils.requireAdmin();
+
         logger.info("Buscando sesiones de entrenamiento completadas");
 
         List<SesionEntrenamiento> sesiones = sesionEntrenamientoRepository.findByCompletadaTrue();
@@ -221,6 +240,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
     @Override
     public List<SesionEntrenamientoDTO> findPendientes() {
+        securityUtils.requireAdmin();
+
         logger.info("Buscando sesiones de entrenamiento pendientes");
 
         List<SesionEntrenamiento> sesiones = sesionEntrenamientoRepository.findByCompletadaFalse();
@@ -230,6 +251,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
     @Override
     public List<SesionEntrenamientoDTO> findByUsuarioIdAndCompletadas(Integer usuarioId) {
+        securityUtils.checkOwnership(usuarioId);
+
         logger.info("Buscando sesiones completadas del usuario id: {}", usuarioId);
 
         List<SesionEntrenamiento> sesiones = sesionEntrenamientoRepository.findByUsuarioIdAndCompletadaTrue(usuarioId);
@@ -239,6 +262,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
     @Override
     public List<SesionEntrenamientoDTO> findByUsuarioIdAndPendientes(Integer usuarioId) {
+        securityUtils.checkOwnership(usuarioId);
+
         logger.info("Buscando sesiones pendientes del usuario id: {}", usuarioId);
 
         List<SesionEntrenamiento> sesiones = sesionEntrenamientoRepository.findByUsuarioIdAndCompletadaFalse(usuarioId);
@@ -248,6 +273,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
     @Override
     public List<SesionEntrenamientoDTO> findByUsuarioIdAndFecha(Integer usuarioId, LocalDate fecha) {
+        securityUtils.checkOwnership(usuarioId);
+
         logger.info("Buscando sesiones del usuario {} en la fecha {}", usuarioId, fecha);
 
         LocalDateTime inicio = LocalDateTime.of(fecha.getYear(), fecha.getMonth(), fecha.getDayOfMonth(), 0, 0, 0);
@@ -260,6 +287,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
     @Override
     public List<SesionEntrenamientoDTO> findByFecha(LocalDate fecha) {
+        securityUtils.requireAdmin();
+
         logger.info("Buscando sesiones en la fecha {}", fecha);
 
         LocalDateTime inicio = LocalDateTime.of(fecha.getYear(), fecha.getMonth(), fecha.getDayOfMonth(), 0, 0, 0);
@@ -272,6 +301,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
     @Override
     public List<SesionEntrenamientoDTO> findByUsuarioIdAndRutinaId(Integer usuarioId, Integer rutinaId) {
+        securityUtils.checkOwnership(usuarioId);
+
         logger.info("Buscando sesiones del usuario {} con rutina {}", usuarioId, rutinaId);
 
         List<SesionEntrenamiento> sesiones = sesionEntrenamientoRepository.findByUsuarioIdAndRutinaId(usuarioId, rutinaId);
@@ -281,6 +312,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
     @Override
     public Long countByUsuarioId(Integer usuarioId) {
+        securityUtils.checkOwnership(usuarioId);
+
         logger.info("Contando sesiones del usuario id: {}", usuarioId);
 
         return sesionEntrenamientoRepository.countByUsuarioId(usuarioId);
@@ -288,6 +321,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
     @Override
     public Long countCompletadasByUsuario(Integer usuarioId) {
+        securityUtils.checkOwnership(usuarioId);
+
         logger.info("Contando sesiones completadas del usuario id: {}", usuarioId);
 
         return sesionEntrenamientoRepository.countByUsuarioIdAndCompletadaTrue(usuarioId);
@@ -295,6 +330,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
     @Override
     public Long countByRutinaId(Integer rutinaId) {
+        securityUtils.requireAdmin();
+
         logger.info("Contando sesiones de la rutina id: {}", rutinaId);
 
         return sesionEntrenamientoRepository.countByRutinaId(rutinaId);
@@ -302,6 +339,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
     @Override
     public List<SesionEntrenamientoDTO> findByUsuarioIdOrderByFecha(Integer usuarioId) {
+        securityUtils.checkOwnership(usuarioId);
+
         logger.info("Buscando sesiones del usuario {} ordenadas por fecha", usuarioId);
 
         List<SesionEntrenamiento> sesiones = sesionEntrenamientoRepository.getSesionesByUsuarioOrderByFecha(usuarioId);
@@ -311,6 +350,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
     @Override
     public List<SesionEntrenamientoDTO> findCompletadasByUsuario(Integer usuarioId) {
+        securityUtils.checkOwnership(usuarioId);
+
         logger.info("Buscando sesiones completadas del usuario {} ordenadas por fecha", usuarioId);
 
         List<SesionEntrenamiento> sesiones = sesionEntrenamientoRepository.getSesionesCompletadasByUsuario(usuarioId);
@@ -325,6 +366,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
         SesionEntrenamiento sesion = sesionEntrenamientoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("La sesión de entrenamiento con id " + id + " no existe"));
+
+        securityUtils.checkOwnership(sesion.getUsuario().getId());
 
         try {
             if (patchDTO.getFechaInicio() != null) sesion.setFechaInicio(patchDTO.getFechaInicio());

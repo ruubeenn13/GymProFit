@@ -3,6 +3,7 @@ package com.gymprofit.api.service.progresoejercicio;
 import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioCreateDTO;
 import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioDTO;
 import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioPatchDTO;
+import com.gymprofit.api.config.security.SecurityUtils;
 import com.gymprofit.api.entity.Ejercicio;
 import com.gymprofit.api.entity.ProgresoEjercicio;
 import com.gymprofit.api.entity.Usuario;
@@ -31,12 +32,14 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
     private final IUsuarioRepository usuarioRepository;
     private final IEjercicioRepository ejercicioRepository;
     private final ProgresoEjercicioMapper progresoEjercicioMapper;
+    private final SecurityUtils securityUtils;
     private final Logger logger = LoggerFactory.getLogger(ProgresoEjercicioService.class);
 
 
     @Override
     public List<ProgresoEjercicioDTO> findAll() {
         logger.info("Buscando todos los progresos de ejercicios");
+        securityUtils.requireAdmin();
 
         List<ProgresoEjercicio> progresoEjercicios = (List<ProgresoEjercicio>) progresoEjercicioRepository.findAll();
 
@@ -50,6 +53,8 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
         ProgresoEjercicio progresoEjercicio = progresoEjercicioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("El progreso de ejercicio con id " + id + " no existe"));
 
+        securityUtils.checkOwnership(progresoEjercicio.getUsuario().getId());
+
         return progresoEjercicioMapper.toDTO(progresoEjercicio);
     }
 
@@ -57,6 +62,8 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
     @Override
     public ProgresoEjercicioDTO save(ProgresoEjercicioCreateDTO progresoEjercicioCreateDTO) {
         logger.info("Creando nuevo progreso de ejercicio para usuario id: {} y ejercicio id: {}", progresoEjercicioCreateDTO.getUsuarioId(), progresoEjercicioCreateDTO.getEjercicioId());
+
+        if (!securityUtils.isAdmin()) progresoEjercicioCreateDTO.setUsuarioId(securityUtils.getCurrentUserId());
 
         Usuario usuario = usuarioRepository.findById(progresoEjercicioCreateDTO.getUsuarioId())
                 .orElseThrow(() -> new NotFoundEntityException("El usuario con id: " + progresoEjercicioCreateDTO.getUsuarioId() + " no existe"));
@@ -90,6 +97,8 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
         ProgresoEjercicio progresoEjercicio = progresoEjercicioRepository.findById(progresoEjercicioDTO.getId())
                 .orElseThrow(() -> new NotFoundEntityException("El progreso de ejercicio con id " + progresoEjercicioDTO.getId() + " no existe"));
 
+        securityUtils.checkOwnership(progresoEjercicio.getUsuario().getId());
+
         try {
             progresoEjercicio.setMejorPeso(progresoEjercicioDTO.getMejorPeso());
             progresoEjercicio.setMejorRepeticiones(progresoEjercicioDTO.getMejorRepeticiones());
@@ -112,6 +121,8 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
         ProgresoEjercicio progresoEjercicio = progresoEjercicioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("El progreso de ejercicio con id " + id + " no existe"));
 
+        securityUtils.checkOwnership(progresoEjercicio.getUsuario().getId());
+
         try {
             progresoEjercicioRepository.delete(progresoEjercicio);
 
@@ -124,6 +135,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
     @Override
     public List<ProgresoEjercicioDTO> findByUsuarioId(Integer usuarioId) {
         logger.info("Buscando progresos del usuario id: {}", usuarioId);
+        securityUtils.checkOwnership(usuarioId);
 
         List<ProgresoEjercicio> progresoEjercicios = progresoEjercicioRepository.findByUsuarioId(usuarioId);
 
@@ -142,6 +154,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
     @Override
     public List<ProgresoEjercicioDTO> findByUsuarioIdAndEjercicioId(Integer usuarioId, Integer ejercicioId) {
         logger.info("Buscando progresos del usuario id: {} y ejercicio id: {}", usuarioId, ejercicioId);
+        securityUtils.checkOwnership(usuarioId);
 
         List<ProgresoEjercicio> progresoEjercicios = progresoEjercicioRepository.findByUsuarioIdAndEjercicioId(usuarioId, ejercicioId);
 
@@ -151,6 +164,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
     @Override
     public List<ProgresoEjercicioDTO> findByUsuarioIdOrdenado(Integer usuarioId) {
         logger.info("Buscando progresos del usuario id: {} ordenados por fecha", usuarioId);
+        securityUtils.checkOwnership(usuarioId);
 
         List<ProgresoEjercicio> progresoEjercicios = progresoEjercicioRepository.findByUsuarioIdOrderByFechaDesc(usuarioId);
 
@@ -160,6 +174,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
     @Override
     public List<ProgresoEjercicioDTO> getProgresoByUsuarioAndEjercicio(Integer usuarioId, Integer ejercicioId) {
         logger.info("Buscando progreso del usuario id: {} en ejercicio id: {}", usuarioId, ejercicioId);
+        securityUtils.checkOwnership(usuarioId);
 
         List<ProgresoEjercicio> progresoEjercicios = progresoEjercicioRepository.getProgresoByUsuarioAndEjercicio(usuarioId, ejercicioId);
 
@@ -169,6 +184,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
     @Override
     public ProgresoEjercicioDTO getUltimoProgresoByUsuarioAndEjercicio(Integer usuarioId, Integer ejercicioId) {
         logger.info("Buscando último progreso del usuario id: {} en ejercicio id: {}", usuarioId, ejercicioId);
+        securityUtils.checkOwnership(usuarioId);
 
         ProgresoEjercicio progreso = progresoEjercicioRepository.findFirstByUsuarioIdAndEjercicioIdOrderByFechaDesc(usuarioId, ejercicioId)
                 .orElseThrow(() -> new NotFoundEntityException("No existe progreso para el usuario " + usuarioId + " en el ejercicio " + ejercicioId));
@@ -179,6 +195,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
     @Override
     public Long countByUsuarioId(Integer usuarioId) {
         logger.info("Contando progresos del usuario id: {}", usuarioId);
+        securityUtils.checkOwnership(usuarioId);
 
         return progresoEjercicioRepository.countByUsuarioId(usuarioId);
     }
@@ -194,6 +211,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
     @Override
     public void deleteByUsuarioId(Integer usuarioId) {
         logger.info("Eliminando progresos del usuario id: {}", usuarioId);
+        securityUtils.checkOwnership(usuarioId);
 
         try {
             progresoEjercicioRepository.deleteByUsuarioId(usuarioId);
@@ -206,6 +224,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
     @Override
     public void deleteByUsuarioIdAndEjercicioId(Integer usuarioId, Integer ejercicioId) {
         logger.info("Eliminando progresos del usuario id: {} en ejercicio id: {}", usuarioId, ejercicioId);
+        securityUtils.checkOwnership(usuarioId);
 
         try {
             progresoEjercicioRepository.deleteByUsuarioIdAndEjercicioId(usuarioId, ejercicioId);
@@ -217,6 +236,7 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
     @Override
     public boolean existsByUsuarioIdAndEjercicioId(Integer usuarioId, Integer ejercicioId) {
         logger.info("Verificando si existe progreso del usuario id: {} en ejercicio id: {}", usuarioId, ejercicioId);
+        securityUtils.checkOwnership(usuarioId);
 
         return progresoEjercicioRepository.existsByUsuarioIdAndEjercicioId(usuarioId, ejercicioId);
     }
@@ -228,6 +248,8 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
 
         ProgresoEjercicio progreso = progresoEjercicioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("El progreso de ejercicio con id " + id + " no existe"));
+
+        securityUtils.checkOwnership(progreso.getUsuario().getId());
 
         try {
             if (patchDTO.getFecha() != null) progreso.setFecha(patchDTO.getFecha());

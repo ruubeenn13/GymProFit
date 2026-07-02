@@ -6,6 +6,7 @@ import com.gymprofit.api.dto.entity.alimentocomida.AlimentoComidaPatchDTO;
 import com.gymprofit.api.entity.Alimento;
 import com.gymprofit.api.entity.AlimentoComida;
 import com.gymprofit.api.entity.Comida;
+import com.gymprofit.api.config.security.SecurityUtils;
 import com.gymprofit.api.exceptions.*;
 import com.gymprofit.api.mappers.AlimentoComidaMapper;
 import com.gymprofit.api.repository.jpa.IAlimentoComidaRepository;
@@ -28,12 +29,14 @@ public class AlimentoComidaService implements IAlimentoComidaService {
     private final IComidaRepository comidaRepository;
     private final IAlimentoRepository alimentoRepository;
     private final AlimentoComidaMapper alimentoComidaMapper;
+    private final SecurityUtils securityUtils;
     private final Logger logger = LoggerFactory.getLogger(AlimentoComidaService.class);
 
 
     @Override
     public List<AlimentoComidaDTO> findAll() {
         logger.info("Buscando todos los alimentos-comidas");
+        securityUtils.requireAdmin();
 
         List<AlimentoComida> alimentosComida = (List<AlimentoComida>) alimentoComidaRepository.findAll();
 
@@ -47,6 +50,8 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         AlimentoComida alimentoComida = alimentoComidaRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("El alimento-comida con id " + id + " no existe"));
 
+        securityUtils.checkOwnership(alimentoComida.getComida().getUsuario().getId());
+
         return alimentoComidaMapper.toDTO(alimentoComida);
     }
 
@@ -57,6 +62,8 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         try {
             Comida comida = comidaRepository.findById(alimentoComidaCreateDTO.getComidaId())
                     .orElseThrow(() -> new NotFoundEntityException("La comida con id " + alimentoComidaCreateDTO.getComidaId() + " no existe"));
+
+            securityUtils.checkOwnership(comida.getUsuario().getId());
 
             Alimento alimento = alimentoRepository.findById(alimentoComidaCreateDTO.getAlimentoId())
                     .orElseThrow(() -> new NotFoundEntityException("El alimento con id " + alimentoComidaCreateDTO.getAlimentoId() + " no existe"));
@@ -78,7 +85,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
             recalcularTotalesComida(comida);
 
             return alimentoComidaMapper.toDTO(alimentoComidaGuardado);
-        } catch (NotFoundEntityException | DuplicateEntityException e) {
+        } catch (NotFoundEntityException | DuplicateEntityException | UnauthorizedException e) {
             throw e;
         } catch (Exception e) {
             throw new CreateEntityException(AlimentoComida.class.getSimpleName(), alimentoComidaCreateDTO, e);
@@ -92,9 +99,13 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         AlimentoComida alimentoComida = alimentoComidaRepository.findById(alimentoComidaDTO.getId())
                 .orElseThrow(() -> new NotFoundEntityException("El alimento-comida con id " + alimentoComidaDTO.getId() + " no existe"));
 
+        securityUtils.checkOwnership(alimentoComida.getComida().getUsuario().getId());
+
         try {
             Comida comida = comidaRepository.findById(alimentoComidaDTO.getComidaId())
                     .orElseThrow(() -> new NotFoundEntityException("La comida con id " + alimentoComidaDTO.getComidaId() + " no existe"));
+
+            securityUtils.checkOwnership(comida.getUsuario().getId());
 
             Alimento alimento = alimentoRepository.findById(alimentoComidaDTO.getAlimentoId())
                     .orElseThrow(() -> new NotFoundEntityException("El alimento con id " + alimentoComidaDTO.getAlimentoId() + " no existe"));
@@ -110,7 +121,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
             recalcularTotalesComida(comida);
 
             return alimentoComidaMapper.toDTO(alimentoComidaActualizado);
-        } catch (NotFoundEntityException e) {
+        } catch (NotFoundEntityException | UnauthorizedException e) {
             throw e;
         } catch (Exception e) {
             throw new UpdateEntityException(AlimentoComida.class.getSimpleName(), alimentoComidaDTO, e);
@@ -126,6 +137,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
                 .orElseThrow(() -> new NotFoundEntityException("El alimento-comida con id " + id + " no existe"));
 
         Comida comida = alimentoComida.getComida();
+        securityUtils.checkOwnership(comida.getUsuario().getId());
         try {
             alimentoComidaRepository.delete(alimentoComida);
             recalcularTotalesComida(comida);
@@ -139,6 +151,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
     @Override
     public List<AlimentoComidaDTO> findByComidaId(Integer comidaId) {
         logger.info("Buscando alimentos de la comida id: {}", comidaId);
+        checkComidaOwnership(comidaId);
 
         List<AlimentoComida> alimentosComida = alimentoComidaRepository.findByComidaId(comidaId);
 
@@ -148,6 +161,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
     @Override
     public List<AlimentoComidaDTO> findByAlimentoId(Integer alimentoId) {
         logger.info("Buscando comidas que contienen el alimento id: {}", alimentoId);
+        securityUtils.requireAdmin();
 
         List<AlimentoComida> alimentosComida = alimentoComidaRepository.findByAlimentoId(alimentoId);
 
@@ -157,6 +171,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
     @Override
     public AlimentoComidaDTO findByComidaIdAndAlimentoId(Integer comidaId, Integer alimentoId) {
         logger.info("Buscando relación entre comida {} y alimento {}", comidaId, alimentoId);
+        checkComidaOwnership(comidaId);
 
         AlimentoComida alimentoComida = alimentoComidaRepository.findByComidaIdAndAlimentoId(comidaId, alimentoId)
                 .orElseThrow(() -> new NotFoundEntityException("No existe relación entre la comida " + comidaId + " y el alimento " + alimentoId));
@@ -168,6 +183,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
     @Override
     public void deleteByComidaId(Integer comidaId) {
         logger.info("Eliminando todos los alimentos de la comida id: {}", comidaId);
+        checkComidaOwnership(comidaId);
 
         try {
             alimentoComidaRepository.deleteByComidaId(comidaId);
@@ -182,6 +198,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
     @Override
     public void deleteByComidaIdAndAlimentoId(Integer comidaId, Integer alimentoId) {
         logger.info("Eliminando alimento {} de la comida {}", alimentoId, comidaId);
+        checkComidaOwnership(comidaId);
 
         try {
             alimentoComidaRepository.deleteByComidaIdAndAlimentoId(comidaId, alimentoId);
@@ -195,6 +212,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
     @Override
     public boolean existsByComidaIdAndAlimentoId(Integer comidaId, Integer alimentoId) {
         logger.info("Verificando si existe la relación entre la comida {} y el alimento {}", comidaId, alimentoId);
+        checkComidaOwnership(comidaId);
 
         return alimentoComidaRepository.existsByComidaIdAndAlimentoId(comidaId, alimentoId);
     }
@@ -202,6 +220,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
     @Override
     public Long countByComidaId(Integer comidaId) {
         logger.info("Contando alimentos de la comida id: {}", comidaId);
+        checkComidaOwnership(comidaId);
 
         return alimentoComidaRepository.countByComidaId(comidaId);
     }
@@ -209,6 +228,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
     @Override
     public Long countByAlimentoId(Integer alimentoId) {
         logger.info("Contando comidas que contienen el alimento id: {}", alimentoId);
+        securityUtils.requireAdmin();
 
         return alimentoComidaRepository.countByAlimentoId(alimentoId);
     }
@@ -220,6 +240,8 @@ public class AlimentoComidaService implements IAlimentoComidaService {
 
         AlimentoComida alimentoComida = alimentoComidaRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("El alimento-comida con id " + id + " no existe"));
+
+        securityUtils.checkOwnership(alimentoComida.getComida().getUsuario().getId());
 
         try {
             if (patchDTO.getCantidadGramos() != null) {
@@ -235,6 +257,20 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         } catch (Exception e) {
             throw new UpdateEntityException(AlimentoComida.class.getSimpleName(), id, e);
         }
+    }
+
+    /**
+     * Carga la comida indicada y verifica que el usuario autenticado es su propietario (o ADMIN).
+     * Propiedad indirecta: el recurso alimento-comida hereda el owner de su comida.
+     *
+     * @param comidaId id de la comida a la que pertenece(rá) la línea.
+     * @throws NotFoundEntityException si la comida no existe.
+     * @throws com.gymprofit.api.exceptions.UnauthorizedException (→ 403) si no es propietario ni ADMIN.
+     */
+    private void checkComidaOwnership(Integer comidaId) {
+        Comida comida = comidaRepository.findById(comidaId)
+                .orElseThrow(() -> new NotFoundEntityException("La comida con id " + comidaId + " no existe"));
+        securityUtils.checkOwnership(comida.getUsuario().getId());
     }
 
     private Integer calcularCalorias(Alimento alimento, BigDecimal cantidadGramos) {

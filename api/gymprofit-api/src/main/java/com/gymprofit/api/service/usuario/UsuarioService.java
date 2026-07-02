@@ -1,5 +1,6 @@
 package com.gymprofit.api.service.usuario;
 
+import com.gymprofit.api.config.security.SecurityUtils;
 import com.gymprofit.api.dto.admin.AdminEstadisticasDTO;
 import com.gymprofit.api.dto.admin.AdminUsuarioDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioCreateDTO;
@@ -15,7 +16,6 @@ import com.gymprofit.api.exceptions.*;
 import com.gymprofit.api.mappers.UsuarioMapper;
 import com.gymprofit.api.repository.jpa.IRoleRepository;
 import com.gymprofit.api.repository.jpa.IUsuarioRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -40,6 +41,7 @@ public class UsuarioService implements IUsuarioService {
     private final IRoleRepository roleRepository;
     private final UsuarioMapper usuarioMapper;
     private final com.gymprofit.api.repository.jooq.usuario.IUsuarioJooqRepository usuarioJooqRepository;
+    private final SecurityUtils securityUtils;
     private final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
 
     @Value("${app.upload.dir:./uploads/fotos-perfil}")
@@ -64,6 +66,8 @@ public class UsuarioService implements IUsuarioService {
     @Override
     public UsuarioDTO findById(Integer id) {
         logger.info("Buscando usuario por id: {}", id);
+
+        securityUtils.checkOwnership(id);
 
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + id + " no existe"));
@@ -174,6 +178,8 @@ public class UsuarioService implements IUsuarioService {
         Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundEntityException("El usuario con username '" + username + "' no existe"));
 
+        securityUtils.checkOwnership(usuario.getId());
+
         return usuarioMapper.toDTO(usuario);
     }
 
@@ -211,6 +217,8 @@ public class UsuarioService implements IUsuarioService {
     public UsuarioDTO patch(Integer id, UsuarioPatchDTO patchDTO) {
         logger.info("Aplicando patch a usuario con id: {}", id);
 
+        securityUtils.checkOwnership(id);
+
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + id + " no existe"));
 
@@ -225,9 +233,9 @@ public class UsuarioService implements IUsuarioService {
 
         try {
             if (patchDTO.getEmail() != null) usuario.setEmail(patchDTO.getEmail());
-            usuario.setPeso(patchDTO.getPeso());
-            usuario.setAltura(patchDTO.getAltura());
-            usuario.setEdad(patchDTO.getEdad());
+            if (patchDTO.getPeso() != null) usuario.setPeso(patchDTO.getPeso());
+            if (patchDTO.getAltura() != null) usuario.setAltura(patchDTO.getAltura());
+            if (patchDTO.getEdad() != null) usuario.setEdad(patchDTO.getEdad());
             if (nivel != null) usuario.setNivelExperiencia(nivel);
             if (patchDTO.getObjetivo() != null) usuario.setObjetivo(patchDTO.getObjetivo());
             if (patchDTO.getActivo() != null) usuario.setActivo(patchDTO.getActivo());
@@ -240,6 +248,8 @@ public class UsuarioService implements IUsuarioService {
 
     @Override
     public UsuarioEstadisticasDTO getEstadisticas(Integer usuarioId) {
+        securityUtils.checkOwnership(usuarioId);
+
         if (!usuarioRepository.existsById(usuarioId)) {
             throw new NotFoundEntityException("Usuario con id " + usuarioId + " no encontrado");
         }
@@ -279,6 +289,8 @@ public class UsuarioService implements IUsuarioService {
     @Transactional
     public UsuarioDTO uploadFotoPerfil(Integer id, MultipartFile file) {
         logger.info("Subiendo foto de perfil para usuario id={}", id);
+
+        securityUtils.checkOwnership(id);
 
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("Usuario con id " + id + " no encontrado"));

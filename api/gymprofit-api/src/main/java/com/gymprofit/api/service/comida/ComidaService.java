@@ -3,6 +3,7 @@ package com.gymprofit.api.service.comida;
 import com.gymprofit.api.dto.entity.comida.ComidaCreateDTO;
 import com.gymprofit.api.dto.entity.comida.ComidaDTO;
 import com.gymprofit.api.dto.entity.comida.ComidaPatchDTO;
+import com.gymprofit.api.config.security.SecurityUtils;
 import com.gymprofit.api.entity.Comida;
 import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.enums.TipoComida;
@@ -30,11 +31,14 @@ public class ComidaService implements IComidaService {
     private final IComidaRepository comidaRepository;
     private final IUsuarioRepository usuarioRepository;
     private final ComidaMapper comidaMapper;
+    private final SecurityUtils securityUtils;
     private final Logger logger = LoggerFactory.getLogger(ComidaService.class);
 
     @Override
     public List<ComidaDTO> findAll() {
         logger.info("Buscando todas las comidas");
+
+        securityUtils.requireAdmin();
 
         List<Comida> comidas = (List<Comida>) comidaRepository.findAll();
 
@@ -48,12 +52,18 @@ public class ComidaService implements IComidaService {
         Comida comida = comidaRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("La comida con id " + id + " no existe"));
 
+        securityUtils.checkOwnership(comida.getUsuario().getId());
+
         return comidaMapper.toDTO(comida);
     }
 
     @Override
     public ComidaDTO save(ComidaCreateDTO comidaCreateDTO) {
         logger.info("Creando nueva comida de tipo: {}", comidaCreateDTO.getTipoComida());
+
+        if (!securityUtils.isAdmin()) {
+            comidaCreateDTO.setUsuarioId(securityUtils.getCurrentUserId());
+        }
 
         try {
             Usuario usuario = usuarioRepository.findById(comidaCreateDTO.getUsuarioId())
@@ -85,11 +95,9 @@ public class ComidaService implements IComidaService {
         Comida comida = comidaRepository.findById(comidaDTO.getId())
                 .orElseThrow(() -> new NotFoundEntityException("La comida con id " + comidaDTO.getId() + " no existe"));
 
-        try {
-            Usuario usuario = usuarioRepository.findById(comidaDTO.getUsuarioId())
-                    .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + comidaDTO.getUsuarioId() + " no existe"));
+        securityUtils.checkOwnership(comida.getUsuario().getId());
 
-            comida.setUsuario(usuario);
+        try {
             comida.setFecha(comidaDTO.getFecha());
             comida.setTipoComida(TipoComida.valueOf(comidaDTO.getTipoComida().toUpperCase()));
             comida.setTotalCalorias(comidaDTO.getTotalCalorias());
@@ -116,6 +124,8 @@ public class ComidaService implements IComidaService {
         Comida comida = comidaRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("La comida con id " + id + " no existe"));
 
+        securityUtils.checkOwnership(comida.getUsuario().getId());
+
         try {
             comidaRepository.delete(comida);
 
@@ -129,6 +139,8 @@ public class ComidaService implements IComidaService {
     public List<ComidaDTO> findByUsuarioId(Integer usuarioId) {
         logger.info("Buscando comidas por usuario id: {}", usuarioId);
 
+        securityUtils.checkOwnership(usuarioId);
+
         List<Comida> comidas = comidaRepository.findByUsuarioId(usuarioId);
 
         return comidaMapper.toDTOList(comidas);
@@ -137,6 +149,8 @@ public class ComidaService implements IComidaService {
     @Override
     public List<ComidaDTO> findByTipoComida(String tipoComida) {
         logger.info("Buscando comidas por tipo: {}", tipoComida);
+
+        securityUtils.requireAdmin();
 
         TipoComida tipo = TipoComida.valueOf(tipoComida.toUpperCase());
         List<Comida> comidas = comidaRepository.findByTipoComida(tipo);
@@ -148,6 +162,8 @@ public class ComidaService implements IComidaService {
     public List<ComidaDTO> findByFecha(LocalDate fecha) {
         logger.info("Buscando comidas por fecha: {}", fecha);
 
+        securityUtils.requireAdmin();
+
         LocalDateTime inicio = fecha.atStartOfDay();
         LocalDateTime fin = fecha.atTime(23, 59, 59);
 
@@ -158,6 +174,8 @@ public class ComidaService implements IComidaService {
     @Override
     public List<ComidaDTO> findByUsuarioIdAndFecha(Integer usuarioId, LocalDate fecha) {
         logger.info("Buscando comidas por usuario {} y fecha {}", usuarioId, fecha);
+
+        securityUtils.checkOwnership(usuarioId);
 
         LocalDateTime inicio = fecha.atStartOfDay();
         LocalDateTime fin = fecha.atTime(23, 59, 59);
@@ -171,6 +189,8 @@ public class ComidaService implements IComidaService {
     public List<ComidaDTO> findByUsuarioIdAndTipoComida(Integer usuarioId, String tipoComida) {
         logger.info("Buscando comidas por usuario {} y tipo {}", usuarioId, tipoComida);
 
+        securityUtils.checkOwnership(usuarioId);
+
         TipoComida tipo = TipoComida.valueOf(tipoComida.toUpperCase());
 
         List<Comida> comidas = comidaRepository.findByUsuarioIdAndTipoComida(usuarioId, tipo);
@@ -182,12 +202,16 @@ public class ComidaService implements IComidaService {
     public Long countByUsuarioId(Integer usuarioId) {
         logger.info("Contando comidas del usuario: {}", usuarioId);
 
+        securityUtils.checkOwnership(usuarioId);
+
         return comidaRepository.countByUsuarioId(usuarioId);
     }
 
     @Override
     public Long countByTipoComida(String tipoComida) {
         logger.info("Contando comidas por tipo: {}", tipoComida);
+
+        securityUtils.requireAdmin();
 
         TipoComida tipo = TipoComida.valueOf(tipoComida.toUpperCase());
 
@@ -197,6 +221,8 @@ public class ComidaService implements IComidaService {
     @Override
     public Long countByUsuarioIdAndTipoComida(Integer usuarioId, String tipoComida) {
         logger.info("Contando commidas del usuario {} por tipo {}", usuarioId, tipoComida);
+
+        securityUtils.checkOwnership(usuarioId);
 
         TipoComida tipo = TipoComida.valueOf(tipoComida.toUpperCase());
 
@@ -210,6 +236,8 @@ public class ComidaService implements IComidaService {
 
         Comida comida = comidaRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("La comida con id " + id + " no existe"));
+
+        securityUtils.checkOwnership(comida.getUsuario().getId());
 
         try {
             if (patchDTO.getFecha() != null) comida.setFecha(patchDTO.getFecha());

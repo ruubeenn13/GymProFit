@@ -4,6 +4,7 @@ import com.gymprofit.api.dto.entity.objetivopersonal.ObjetivoPersonalCreateDTO;
 import com.gymprofit.api.dto.entity.objetivopersonal.ObjetivoPersonalDTO;
 import com.gymprofit.api.dto.entity.objetivopersonal.ObjetivoPersonalPatchDTO;
 import com.gymprofit.api.dto.entity.objetivopersonal.ObjetivoPersonalUpdateDTO;
+import com.gymprofit.api.config.security.SecurityUtils;
 import com.gymprofit.api.entity.ObjetivoPersonal;
 import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.enums.TipoObjetivo;
@@ -30,11 +31,14 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
     private final IUsuarioRepository usuarioRepository;
     private final ObjetivoPersonalMapper objetivoPersonalMapper;
     private final ILogroService logroService;
+    private final SecurityUtils securityUtils;
     private final Logger logger = LoggerFactory.getLogger(ObjetivoPersonalService.class);
 
 
     @Override
     public List<ObjetivoPersonalDTO> findAll() {
+        securityUtils.requireAdmin();
+
         logger.info("Buscando todos los objetivos personales");
 
         List<ObjetivoPersonal> objetivosPersonales = (List<ObjetivoPersonal>) objetivoPersonalRepository.findAll();
@@ -49,12 +53,16 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         ObjetivoPersonal objetivoPersonal = objetivoPersonalRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("El objetivo personal con id " + id + " no existe"));
 
+        securityUtils.checkOwnership(objetivoPersonal.getUsuario().getId());
+
         return objetivoPersonalMapper.toDTO(objetivoPersonal);
     }
 
     @Transactional
     @Override
     public ObjetivoPersonalDTO save(ObjetivoPersonalCreateDTO objetivoPersonalCreateDTO) {
+        if (!securityUtils.isAdmin()) objetivoPersonalCreateDTO.setUsuarioId(securityUtils.getCurrentUserId());
+
         logger.info("Creando un nuevo objetivo personal para usuario id: {}", objetivoPersonalCreateDTO.getUsuarioId());
 
         Usuario usuario = usuarioRepository.findById(objetivoPersonalCreateDTO.getUsuarioId())
@@ -86,6 +94,8 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         ObjetivoPersonal objetivoPersonal = objetivoPersonalRepository.findById(objetivoPersonalUpdateDTO.getId())
                 .orElseThrow(() -> new NotFoundEntityException("El objetivo personal con id " + objetivoPersonalUpdateDTO.getId() + " no existe"));
 
+        securityUtils.checkOwnership(objetivoPersonal.getUsuario().getId());
+
         try {
             objetivoPersonal.setValorObjetivo(objetivoPersonalUpdateDTO.getValorObjetivo());
             objetivoPersonal.setCompletado(objetivoPersonalUpdateDTO.isCompletado());
@@ -106,6 +116,8 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         ObjetivoPersonal objetivoPersonal = objetivoPersonalRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("El objetivo personal con id " + id + " no existe"));
 
+        securityUtils.checkOwnership(objetivoPersonal.getUsuario().getId());
+
         try {
             objetivoPersonalRepository.delete(objetivoPersonal);
 
@@ -117,6 +129,8 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
 
     @Override
     public List<ObjetivoPersonalDTO> findByUsuarioId(Integer usuarioId) {
+        securityUtils.checkOwnership(usuarioId);
+
         logger.info("Buscando objetivos personales del usuario id: {}", usuarioId);
 
         List<ObjetivoPersonal> objetivosPersonales = objetivoPersonalRepository.findByUsuarioId(usuarioId);
@@ -126,6 +140,8 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
 
     @Override
     public List<ObjetivoPersonalDTO> findByUsuarioIdOrdenados(Integer usuarioId) {
+        securityUtils.checkOwnership(usuarioId);
+
         logger.info("Buscando objetivos personales del usuario id: {} ordenados por fecha", usuarioId);
 
         List<ObjetivoPersonal> objetivosPersonales = objetivoPersonalRepository.findByUsuarioIdOrderByFechaInicioDesc(usuarioId);
@@ -135,6 +151,8 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
 
     @Override
     public List<ObjetivoPersonalDTO> findPendientesByUsuarioId(Integer usuarioId) {
+        securityUtils.checkOwnership(usuarioId);
+
         logger.info("Buscando objetivos personales pendientes del usuario id: {}", usuarioId);
 
         List<ObjetivoPersonal> objetivosPersonales = objetivoPersonalRepository.findByUsuarioIdAndCompletadoFalse(usuarioId);
@@ -144,6 +162,8 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
 
     @Override
     public List<ObjetivoPersonalDTO> findCompletadosByUsuarioId(Integer usuarioId) {
+        securityUtils.checkOwnership(usuarioId);
+
         logger.info("Buscando objetivos personales completados del usuario id: {}", usuarioId);
 
         List<ObjetivoPersonal> objetivosPersonales = objetivoPersonalRepository.findByUsuarioIdAndCompletadoTrue(usuarioId);
@@ -153,6 +173,8 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
 
     @Override
     public List<ObjetivoPersonalDTO> findByTipoObjetivo(String tipoObjetivo) {
+        securityUtils.requireAdmin();
+
         logger.info("Buscando objetivos por tipo: {}", tipoObjetivo);
 
         TipoObjetivo tipo = TipoObjetivo.valueOf(tipoObjetivo.toUpperCase());
@@ -168,6 +190,8 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
 
         ObjetivoPersonal objetivoPersonal = objetivoPersonalRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("El objetivo personal con id " + id + " no existe"));
+
+        securityUtils.checkOwnership(objetivoPersonal.getUsuario().getId());
 
         if (objetivoPersonal.getCompletado()) {
             throw new ObjetivoAlreadyCompletedException("El objetivo personal con id " + id + " ya está completado");
@@ -185,6 +209,8 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
 
     @Override
     public Long countByUsuarioId(Integer usuarioId) {
+        securityUtils.checkOwnership(usuarioId);
+
         logger.info("Contando objetivos del usuario id: {}", usuarioId);
 
         return objetivoPersonalRepository.countByUsuarioId(usuarioId);
@@ -192,6 +218,8 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
 
     @Override
     public Long countCompletadosByUsuarioId(Integer usuarioId) {
+        securityUtils.checkOwnership(usuarioId);
+
         logger.info("Contando objetivos completados del usuario id: {}", usuarioId);
 
         return objetivoPersonalRepository.countByUsuarioIdAndCompletadoTrue(usuarioId);
@@ -199,6 +227,8 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
 
     @Override
     public Long countPendientesByUsuarioId(Integer usuarioId) {
+        securityUtils.checkOwnership(usuarioId);
+
         logger.info("Contando objetivos pendientes del usuario id: {}", usuarioId);
 
         return objetivoPersonalRepository.countByUsuarioIdAndCompletadoFalse(usuarioId);
@@ -211,6 +241,8 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
 
         ObjetivoPersonal objetivo = objetivoPersonalRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("El objetivo personal con id " + id + " no existe"));
+
+        securityUtils.checkOwnership(objetivo.getUsuario().getId());
 
         try {
             if (patchDTO.getDescripcion() != null) objetivo.setDescripcion(patchDTO.getDescripcion());

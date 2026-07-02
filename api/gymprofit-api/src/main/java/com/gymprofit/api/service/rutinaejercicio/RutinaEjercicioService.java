@@ -1,5 +1,6 @@
 package com.gymprofit.api.service.rutinaejercicio;
 
+import com.gymprofit.api.config.security.SecurityUtils;
 import com.gymprofit.api.dto.entity.rutinaejercicio.RutinaEjercicioCreateDTO;
 import com.gymprofit.api.dto.entity.rutinaejercicio.RutinaEjercicioDTO;
 import com.gymprofit.api.dto.entity.rutinaejercicio.RutinaEjercicioPatchDTO;
@@ -9,6 +10,7 @@ import com.gymprofit.api.entity.RutinaEjercicio;
 import com.gymprofit.api.exceptions.CreateEntityException;
 import com.gymprofit.api.exceptions.DeleteEntityException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
+import com.gymprofit.api.exceptions.UnauthorizedException;
 import com.gymprofit.api.exceptions.UpdateEntityException;
 import com.gymprofit.api.mappers.RutinaEjercicioMapper;
 import com.gymprofit.api.repository.jpa.IEjercicioRepository;
@@ -30,11 +32,51 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
     private final IRutinaRepository rutinaRepository;
     private final IEjercicioRepository ejercicioRepository;
     private final RutinaEjercicioMapper rutinaEjercicioMapper;
+    private final SecurityUtils securityUtils;
     private final Logger logger = LoggerFactory.getLogger(RutinaEjercicioService.class);
+
+    /**
+     * Verifica que el usuario autenticado pueda MODIFICAR los ejercicios de una rutina.
+     * ADMIN puede operar sobre cualquier rutina.
+     * Las rutinas predefinidas solo las modifica ADMIN.
+     * Las rutinas propias solo las modifica su dueño (o ADMIN).
+     *
+     * @throws UnauthorizedException (→ 403) si no cumple la regla.
+     */
+    private void checkRutinaOwnership(Rutina rutina) {
+        if (securityUtils.isAdmin()) return;
+
+        if (Boolean.TRUE.equals(rutina.getEsPredefinida())) {
+            throw new UnauthorizedException("Solo ADMIN puede modificar ejercicios de rutinas predefinidas");
+        }
+        if (rutina.getUsuario() == null
+                || !securityUtils.getCurrentUserId().equals(rutina.getUsuario().getId())) {
+            throw new UnauthorizedException();
+        }
+    }
+
+    /**
+     * Verifica que el usuario autenticado pueda LEER los ejercicios de una rutina.
+     * Las rutinas predefinidas son públicas: cualquier usuario autenticado puede leerlas.
+     * Las rutinas propias solo las lee su dueño (o ADMIN).
+     *
+     * @throws UnauthorizedException (→ 403) si no cumple la regla.
+     */
+    private void checkRutinaReadAccess(Rutina rutina) {
+        if (securityUtils.isAdmin()) return;
+        if (Boolean.TRUE.equals(rutina.getEsPredefinida())) return;
+
+        if (rutina.getUsuario() == null
+                || !securityUtils.getCurrentUserId().equals(rutina.getUsuario().getId())) {
+            throw new UnauthorizedException();
+        }
+    }
 
     @Override
     public List<RutinaEjercicioDTO> findAll() {
         logger.info("Buscando todos los ejercicios de rutinas");
+
+        securityUtils.requireAdmin();
 
         List<RutinaEjercicio> lista = (List<RutinaEjercicio>) rutinaEjercicioRepository.findAll();
 
@@ -48,6 +90,8 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
         RutinaEjercicio rutinaEjercicio = rutinaEjercicioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("El ejercicio de rutina con id " + id + " no existe"));
 
+        checkRutinaReadAccess(rutinaEjercicio.getRutina());
+
         return rutinaEjercicioMapper.toDTO(rutinaEjercicio);
     }
 
@@ -58,6 +102,8 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
 
         Rutina rutina = rutinaRepository.findById(createDTO.getRutinaId())
                 .orElseThrow(() -> new NotFoundEntityException("La rutina con id " + createDTO.getRutinaId() + " no existe"));
+
+        checkRutinaOwnership(rutina);
 
         Ejercicio ejercicio = ejercicioRepository.findById(createDTO.getEjercicioId())
                 .orElseThrow(() -> new NotFoundEntityException("El ejercicio con id " + createDTO.getEjercicioId() + " no existe"));
@@ -85,6 +131,8 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
         RutinaEjercicio rutinaEjercicio = rutinaEjercicioRepository.findById(dto.getId())
                 .orElseThrow(() -> new NotFoundEntityException("El ejercicio de rutina con id " + dto.getId() + " no existe"));
 
+        checkRutinaOwnership(rutinaEjercicio.getRutina());
+
         try {
             rutinaEjercicio.setSeries(dto.getSeries());
             rutinaEjercicio.setRepeticiones(dto.getRepeticiones());
@@ -109,6 +157,8 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
         RutinaEjercicio rutinaEjercicio = rutinaEjercicioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("El ejercicio de rutina con id " + id + " no existe"));
 
+        checkRutinaOwnership(rutinaEjercicio.getRutina());
+
         try {
             rutinaEjercicioRepository.delete(rutinaEjercicio);
 
@@ -121,6 +171,11 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
     @Override
     public List<RutinaEjercicioDTO> findByRutinaId(Integer rutinaId) {
         logger.info("Buscando ejercicios de rutina id: {}", rutinaId);
+
+        Rutina rutina = rutinaRepository.findById(rutinaId)
+                .orElseThrow(() -> new NotFoundEntityException("La rutina con id " + rutinaId + " no existe"));
+
+        checkRutinaReadAccess(rutina);
 
         List<RutinaEjercicio> lista = rutinaEjercicioRepository.findByRutinaId(rutinaId);
 
@@ -174,6 +229,11 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
     public void deleteByRutinaId(Integer rutinaId) {
         logger.info("Eliminando todos los ejercicios de rutina id: {}", rutinaId);
 
+        Rutina rutina = rutinaRepository.findById(rutinaId)
+                .orElseThrow(() -> new NotFoundEntityException("La rutina con id " + rutinaId + " no existe"));
+
+        checkRutinaOwnership(rutina);
+
         try {
             rutinaEjercicioRepository.deleteByRutinaId(rutinaId);
 
@@ -211,6 +271,8 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
 
         RutinaEjercicio re = rutinaEjercicioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("El ejercicio de rutina con id " + id + " no existe"));
+
+        checkRutinaOwnership(re.getRutina());
 
         try {
             if (patchDTO.getSeries() != null) re.setSeries(patchDTO.getSeries());

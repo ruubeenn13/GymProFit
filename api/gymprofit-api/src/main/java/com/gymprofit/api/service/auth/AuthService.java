@@ -77,13 +77,11 @@ public class AuthService implements IAuthService {
             throw new DuplicateEntityException("El email '" + registerDTO.getEmail() + "' ya está en uso");
         }
 
-        List<Integer> roleIds = (registerDTO.getRoles() == null || registerDTO.getRoles().isEmpty())
-                ? List.of(USER.getValue())
-                : registerDTO.getRoles();
-
-        List<Role> roles = roleRepository.findByNombreIn(roleIds);
+        // Seguridad: el rol NUNCA se toma del cliente. El registro público crea siempre USER.
+        // Los cambios de rol se hacen solo desde el panel admin (PATCH /admin/usuarios/{id}/rol).
+        List<Role> roles = roleRepository.findByNombreIn(List.of(USER.getValue()));
         if (roles.isEmpty()) {
-            throw new NotFoundEntityException("Roles especificados no encontrados");
+            throw new NotFoundEntityException("Rol USER no encontrado; verificar seed de roles");
         }
 
         NivelExperiencia nivelExperiencia = null;

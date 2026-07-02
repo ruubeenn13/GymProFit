@@ -41,6 +41,11 @@ public class RutinaService implements IRutinaService {
     @Override
     public List<RutinaDTO> findAll() {
         logger.info("Buscando todas las rutinas");
+
+        if (!isAdmin(getCurrentUser())) {
+            throw new UnauthorizedException("Solo ADMIN puede listar todas las rutinas");
+        }
+
         return rutinaMapper.toDTOList((List<Rutina>) rutinaRepository.findAll());
     }
 
@@ -50,6 +55,10 @@ public class RutinaService implements IRutinaService {
 
         Rutina rutina = rutinaRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("La rutina con id " + id + " no existe"));
+
+        if (!canView(rutina)) {
+            throw new UnauthorizedException("No tienes acceso a esta rutina");
+        }
 
         return rutinaMapper.toDTO(rutina);
     }
@@ -173,25 +182,31 @@ public class RutinaService implements IRutinaService {
     @Override
     public List<RutinaDTO> findByUsuarioId(Integer usuarioId) {
         logger.info("Buscando rutinas por el usuario con id: {}", usuarioId);
+
+        Usuario currentUser = getCurrentUser();
+        if (!isAdmin(currentUser) && !currentUser.getId().equals(usuarioId)) {
+            throw new UnauthorizedException("No tienes acceso a las rutinas de otro usuario");
+        }
+
         return rutinaMapper.toDTOList(rutinaRepository.findByUsuarioId(usuarioId));
     }
 
     @Override
     public List<RutinaDTO> findByNivel(String nivel) {
         logger.info("Buscando rutinas por nivel: {}", nivel);
-        return rutinaMapper.toDTOList(rutinaRepository.findByNivel(Nivel.valueOf(nivel.toUpperCase())));
+        return rutinaMapper.toDTOList(filterViewable(rutinaRepository.findByNivel(Nivel.valueOf(nivel.toUpperCase()))));
     }
 
     @Override
     public List<RutinaDTO> findByNombre(String nombre) {
         logger.info("Buscando rutinas por nombre: {}", nombre);
-        return rutinaMapper.toDTOList(rutinaRepository.findByNombreContainingIgnoreCase(nombre));
+        return rutinaMapper.toDTOList(filterViewable(rutinaRepository.findByNombreContainingIgnoreCase(nombre)));
     }
 
     @Override
     public List<RutinaDTO> findActivas() {
         logger.info("Buscando rutinas activas");
-        return rutinaMapper.toDTOList(rutinaRepository.findByActivaTrue());
+        return rutinaMapper.toDTOList(filterViewable(rutinaRepository.findByActivaTrue()));
     }
 
     @Override
@@ -203,6 +218,12 @@ public class RutinaService implements IRutinaService {
     @Override
     public List<RutinaDTO> findByUsuarioIdAndActivas(Integer usuarioId) {
         logger.info("Buscando rutinas activas del usuario id: {}", usuarioId);
+
+        Usuario currentUser = getCurrentUser();
+        if (!isAdmin(currentUser) && !currentUser.getId().equals(usuarioId)) {
+            throw new UnauthorizedException("No tienes acceso a las rutinas de otro usuario");
+        }
+
         return rutinaMapper.toDTOList(rutinaRepository.findByUsuarioIdAndActivaTrue(usuarioId));
     }
 
@@ -245,6 +266,24 @@ public class RutinaService implements IRutinaService {
      * ADMIN puede operar sobre cualquier rutina.
      * USER solo puede operar sobre sus propias rutinas (esPredefinida=false, usuario=suyo).
      */
+    /**
+     * Indica si el usuario autenticado puede visualizar la rutina.
+     * Son visibles las rutinas predefinidas (compartidas), las propias y todas para ADMIN.
+     */
+    private boolean canView(Rutina rutina) {
+        Usuario currentUser = getCurrentUser();
+        if (isAdmin(currentUser)) return true;
+        if (Boolean.TRUE.equals(rutina.getEsPredefinida())) return true;
+        return rutina.getUsuario() != null && currentUser.getId().equals(rutina.getUsuario().getId());
+    }
+
+    /**
+     * Filtra una lista de rutinas dejando solo las visibles para el usuario autenticado.
+     */
+    private List<Rutina> filterViewable(List<Rutina> rutinas) {
+        return rutinas.stream().filter(this::canView).toList();
+    }
+
     private void checkOwnership(Rutina rutina) {
         Usuario currentUser = getCurrentUser();
         if (isAdmin(currentUser)) return;

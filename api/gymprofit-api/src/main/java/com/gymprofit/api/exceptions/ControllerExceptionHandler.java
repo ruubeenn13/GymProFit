@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -45,12 +46,11 @@ public class ControllerExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(CreateEntityException.class)
     public ResponseEntity<Response> handleCreateEntityException(CreateEntityException ex) {
+        // La causa (SQL/Hibernate) se registra en el log, NUNCA se devuelve al cliente.
         logger.error(ex.getMessage(), ex);
 
-        String cause = ex.getCause() != null ? ex.getCause().getMessage() : null;
-
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage(), cause),
+                Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage()),
                 HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
@@ -58,12 +58,11 @@ public class ControllerExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(UpdateEntityException.class)
     public ResponseEntity<Response> handleUpdateEntityException(UpdateEntityException ex) {
+        // La causa (SQL/Hibernate) se registra en el log, NUNCA se devuelve al cliente.
         logger.error(ex.getMessage(), ex);
 
-        String cause = ex.getCause() != null ? ex.getCause().getMessage() : null;
-
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage(), cause),
+                Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage()),
                 HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
@@ -71,12 +70,11 @@ public class ControllerExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(DeleteEntityException.class)
     public ResponseEntity<Response> handleDeleteEntityException(DeleteEntityException ex) {
+        // La causa (SQL/Hibernate) se registra en el log, NUNCA se devuelve al cliente.
         logger.error(ex.getMessage(), ex);
 
-        String cause = ex.getCause() != null ? ex.getCause().getMessage() : null;
-
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage(), cause),
+                Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage()),
                 HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
@@ -147,12 +145,11 @@ public class ControllerExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(ErrorGenericoException.class)
     public ResponseEntity<Response> handleErrorGenericoException(ErrorGenericoException ex) {
+        // La causa (SQL/Hibernate) se registra en el log, NUNCA se devuelve al cliente.
         logger.error(ex.getMessage(), ex);
 
-        String cause = ex.getCause() != null ? ex.getCause().getMessage() : null;
-
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage(), cause),
+                Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage()),
                 HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
@@ -160,12 +157,11 @@ public class ControllerExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Response> handleIllegalArgumentException(IllegalArgumentException ex) {
+        // La causa (SQL/Hibernate) se registra en el log, NUNCA se devuelve al cliente.
         logger.error(ex.getMessage(), ex);
 
-        String cause = ex.getCause() != null ? ex.getCause().getMessage() : null;
-
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage(), cause),
+                Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage()),
                 HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
@@ -195,11 +191,24 @@ public class ControllerExceptionHandler {
     public ResponseEntity<Response> handleException(Exception ex) {
         logger.error(ex.getMessage(), ex);
 
-        String cause = ex.getCause() != null ? ex.getCause().getMessage() : null;
-
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error interno del servidor", cause),
+                Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error interno del servidor"),
                 HttpStatus.INTERNAL_SERVER_ERROR
+        );
+    }
+
+    /**
+     * Credenciales inválidas en login (BadCredentialsException y cualquier AuthenticationException
+     * que Spring Security lance en authenticationManager.authenticate). Devuelve 401 genérico
+     * en vez del 500 que caería en handleException, y sin revelar si el usuario existe.
+     */
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<Response> handleAuthenticationException(AuthenticationException ex) {
+        logger.warn("Fallo de autenticación: {}", ex.getMessage());
+        return new ResponseEntity<>(
+                Response.generalError(HttpStatus.UNAUTHORIZED.value(), "Credenciales inválidas"),
+                HttpStatus.UNAUTHORIZED
         );
     }
 }
