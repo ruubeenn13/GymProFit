@@ -162,6 +162,6 @@ Causa raíz: **ningún controller consulta el principal autenticado; el `userId`
 11. Migrar red a Retrofit+OkHttp+Gson (fix leak PerfilActivity de paso).
 
 **Fase 4 — Lanzamiento:**
-12. Docker Compose (API+MariaDB) + CI (build+test) + Actuator.
+12. ~~Docker Compose (API+MariaDB)~~ **descartado (sin servidor propio con Docker).** En su lugar: despliegue **PaaS** (API en Koyeb/Render free) + **BD MySQL gestionada gratis (Aiven for MySQL)** + CI (GitHub Actions build+test) + Actuator. Detalle y comparativa en `documentacion/DESPLIEGUE.md`.
 13. Tests de nutrición/mediciones. `minifyEnabled true`.
-14. HTTPS + dominio.
+14. HTTPS + dominio (URL pública de la PaaS).
