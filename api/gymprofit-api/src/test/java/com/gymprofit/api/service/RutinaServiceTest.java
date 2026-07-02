@@ -100,6 +100,10 @@ class RutinaServiceTest {
     @Test
     @DisplayName("findAll devuelve lista de rutinas")
     void findAll_devuelve_lista() {
+        // findAll solo lo puede usar un ADMIN: autenticamos al usuario con rol ADMIN para este caso.
+        usuario.setRoles(List.of(new Role(1, RoleType.ADMIN)));
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(usuario, null, Collections.emptyList()));
         when(rutinaRepository.findAll()).thenReturn(List.of(rutina));
         when(rutinaMapper.toDTOList(any())).thenReturn(List.of(rutinaDTO));
 

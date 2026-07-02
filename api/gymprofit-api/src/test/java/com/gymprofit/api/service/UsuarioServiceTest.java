@@ -1,5 +1,6 @@
 package com.gymprofit.api.service;
 
+import com.gymprofit.api.config.security.SecurityUtils;
 import com.gymprofit.api.dto.entity.usuario.UsuarioCreateDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioDTO;
 import com.gymprofit.api.entity.Usuario;
@@ -58,6 +59,13 @@ class UsuarioServiceTest {
      */
     @Mock
     private UsuarioMapper usuarioMapper;
+
+    /**
+     * @Mock de SecurityUtils. En las lecturas/borrados el service llama a
+     * checkOwnership(id), que con el mock queda como no-op (método void).
+     */
+    @Mock
+    private SecurityUtils securityUtils;
 
     /**
      * @InjectMocks crea el UsuarioService REAL pero inyectándole

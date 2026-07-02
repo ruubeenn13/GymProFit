@@ -1,5 +1,6 @@
 package com.gymprofit.api.service;
 
+import com.gymprofit.api.config.security.SecurityUtils;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoCreateDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoDTO;
 import com.gymprofit.api.entity.Rutina;
@@ -51,6 +52,10 @@ class SesionEntrenamientoServiceTest {
 
     @Mock
     private ILogroService logroService;
+
+    // Mock de SecurityUtils: checkOwnership/requireAdmin quedan como no-op en las lecturas
+    @Mock
+    private SecurityUtils securityUtils;
 
     @InjectMocks
     private SesionEntrenamientoService sesionEntrenamientoService;
@@ -131,6 +136,8 @@ class SesionEntrenamientoServiceTest {
     @Test
     @DisplayName("save correcto guarda la sesión con completada=false")
     void save_correcto_guarda_sesion() {
+        // Como ADMIN, el service respeta el usuarioId del DTO (1) sin sobrescribirlo
+        when(securityUtils.isAdmin()).thenReturn(true);
         when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuario));
         when(rutinaRepository.findById(1)).thenReturn(Optional.of(rutina));
         when(sesionEntrenamientoMapper.toEntity(sesionEntrenamientoCreateDTO)).thenReturn(sesionEntrenamiento);
@@ -148,6 +155,8 @@ class SesionEntrenamientoServiceTest {
     @Test
     @DisplayName("save con usuario inexistente lanza NotFoundEntityException")
     void save_usuario_inexistente_lanza_excepcion() {
+        // Como ADMIN, el service busca el usuarioId del DTO (1) que no existe
+        when(securityUtils.isAdmin()).thenReturn(true);
         when(usuarioRepository.findById(1)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundEntityException.class, () -> sesionEntrenamientoService.save(sesionEntrenamientoCreateDTO));
