@@ -1,0 +1,32 @@
+# ============================================================
+# keep-alive — evita que el servicio de Render (free) se duerma.
+# Render free hace spin-down tras ~15 min sin tráfico (cold start ~40s al
+# despertar). Este cron hace un GET al health cada ~10 min para mantenerlo vivo.
+# Coste: un servicio despierto 24/7 ≈ 730 h/mes, dentro de las ~750 h gratis.
+# NOTA: el scheduler de GitHub Actions es "best effort" y puede retrasarse en
+# repos poco activos; para 100% fiabilidad, un pinger dedicado (UptimeRobot,
+# cron-job.org) es mejor. Se puede lanzar a mano con "Run workflow".
+# ============================================================
+name: keep-alive
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'   # cada 10 minutos
+  workflow_dispatch:          # permite ejecutarlo manualmente
+
+# Evita solapar pings si uno tarda (cold start).
+concurrency:
+  group: keep-alive
+  cancel-in-progress: false
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      # GET al health. --max-time 120 cubre el cold start (~40s) sin colgarse;
+      # aunque el curl agotara el tiempo, la petición ya despierta el servicio.
+      # '|| true' para que un fallo puntual de red no marque el run en rojo.
+      - name: Ping /actuator/health
+        run: |
+          curl -sS --max-time 120 -o /dev/null -w "HTTP %{http_code} en %{time_total}s\n" \
+            https://gymprofit-api.onrender.com/api/actuator/health || true
