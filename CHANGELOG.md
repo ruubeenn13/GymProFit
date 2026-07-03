@@ -6,6 +6,7 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `6d70516` | refactor(android): Retrofit etapa 2 F4 — dominio Rutinas + rutinas-ejercicios tipado (`RutinaApi`, POJO `RutinaEjercicio`, `@SerializedName("esPredefinida")`); callback-hell de 2 niveles aplanado |
 | `83f1548` | refactor(android): Retrofit etapa 2 F3 — dominio Sesiones tipado (`SesionApi`) + `utils/FechaUtils` (el formateo de fechas pasa a la vista; arregla la regresión de fecha ISO cruda en Mediciones/Sesiones) |
 | `957f9a5` | refactor(android): Retrofit etapa 2 F2 — dominios Logros y Ejercicios tipados (`LogroApi`/`EjercicioApi`, POJO `UsuarioLogro`, `@SerializedName("caloriasQuemadas")`) |
 | `593d260` | refactor(android): Retrofit etapa 2 F0+F1 — infra tipada con Gson (`ApiClient.service()`, `ApiCallback<T>`, cuerpos parciales `Map`) + piloto Mediciones migrado |
