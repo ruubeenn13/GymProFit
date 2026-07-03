@@ -6,6 +6,7 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `e3b1980` | refactor(android): Retrofit etapa 2 F7.5 — dominio Usuario/Perfil tipado (`UsuarioApi`: getPorId/estadisticas/patch/subirFoto @Multipart); Perfil/EditarPerfil/Onboarding + restos de usuario en Mediciones/ResumenSesión. Validado contra API real |
 | `10702d3` | refactor(android): Retrofit etapa 2 F7 — Auth tipado (`AuthApi`/`UsuarioApi`, POJO `TokenResponse` con `rolPrincipal()`); login/registro/logout migrados manteniendo el guardado de sesión idéntico (UtilREST + prefs). Validado contra API real |
 | `a6f079a` | ci: no disparar CI en commits solo-documentación (`paths-ignore` en push) — evita runs "canceled" cuando el commit de changelog seguía al de código |
 | `a4c9b89` | refactor(android): Retrofit etapa 2 F6 — dominio Admin tipado (`AdminApi`, 7 pantallas); paginación (lista plana), búsquedas jOOQ, POJO `EstadisticasGlobales`, `BooleanNumericAdapter` para `activo` Byte→boolean. Validado contra API real como ADMIN |
