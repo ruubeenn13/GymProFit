@@ -72,8 +72,12 @@ public class ApiClient {
         logging.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BASIC : HttpLoggingInterceptor.Level.NONE);
 
         OkHttpClient client = new OkHttpClient.Builder()
+                // connect corto: falla rápido si el server está caído de verdad.
                 .connectTimeout(15, TimeUnit.SECONDS)
-                .readTimeout(15, TimeUnit.SECONDS)
+                // read/call largos: Render (free) hace cold-start ~40s al despertar;
+                // la 1ª petición tras dormir debe esperar la respuesta, no dar SocketTimeout.
+                .readTimeout(60, TimeUnit.SECONDS)
+                .callTimeout(60, TimeUnit.SECONDS)
                 .addInterceptor(new AuthInterceptor())
                 .addInterceptor(logging)
                 .authenticator(new TokenAuthenticator())
@@ -144,7 +148,9 @@ public class ApiClient {
     private static String renovar(String refreshToken) {
         OkHttpClient plano = new OkHttpClient.Builder()
                 .connectTimeout(15, TimeUnit.SECONDS)
-                .readTimeout(15, TimeUnit.SECONDS)
+                // Mismo margen para el cold-start de Render en el refresh.
+                .readTimeout(60, TimeUnit.SECONDS)
+                .callTimeout(60, TimeUnit.SECONDS)
                 .build();
         try {
             JSONObject cuerpo = new JSONObject();

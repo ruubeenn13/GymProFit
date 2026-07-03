@@ -1,21 +1,17 @@
 package es.pmdm.gymprofit.ui.activities;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 
 import java.util.Locale;
 
@@ -25,13 +21,12 @@ import es.pmdm.gymprofit.utils.PreferencesManager;
 // ============================================================
 // AcercaDeActivity — pantalla "Acerca de" con datos de contacto y enlaces externos
 // Permite contactar por email, abrir la web, marcar un teléfono o compartir
-// la app por SMS eligiendo un contacto (requiere permiso READ_CONTACTS).
+// la app por SMS eligiendo un contacto. El selector del sistema (ACTION_PICK)
+// concede acceso temporal a la URI elegida, así que NO requiere READ_CONTACTS.
 // No usa API, solo Intents del sistema.
 // ============================================================
 public class AcercaDeActivity extends AppCompatActivity {
 
-    // Launcher para solicitar el permiso de lectura de contactos
-    private ActivityResultLauncher<String> permisosContactosLauncher;
     // Launcher que recibe el contacto elegido en el selector del sistema
     private ActivityResultLauncher<Intent> seleccionContactoLauncher;
 
@@ -42,14 +37,6 @@ public class AcercaDeActivity extends AppCompatActivity {
         aplicarIdioma(prefs);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_acerca_de);
-
-        permisosContactosLauncher = registerForActivityResult(
-            new ActivityResultContracts.RequestPermission(),
-            granted -> {
-                if (granted) abrirSelectorContacto();
-                else Toast.makeText(this, getString(R.string.permiso_contactos_denegado), Toast.LENGTH_SHORT).show();
-            }
-        );
 
         seleccionContactoLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -71,14 +58,10 @@ public class AcercaDeActivity extends AppCompatActivity {
         findViewById(R.id.llAcercaCompartir).setOnClickListener(v -> compartirViaSms());
     }
 
-    // Comparte la app por SMS: si ya hay permiso de contactos abre el selector, si no lo solicita
+    // Comparte la app por SMS: abre el selector de contactos del sistema. El picker
+    // concede acceso temporal a la URI elegida, así que no hace falta READ_CONTACTS.
     private void compartirViaSms() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
-                == PackageManager.PERMISSION_GRANTED) {
-            abrirSelectorContacto();
-        } else {
-            permisosContactosLauncher.launch(Manifest.permission.READ_CONTACTS);
-        }
+        abrirSelectorContacto();
     }
 
     // Abre el selector de contactos del sistema para elegir el destinatario del SMS
