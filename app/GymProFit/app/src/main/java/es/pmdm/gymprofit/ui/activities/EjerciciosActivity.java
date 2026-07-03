@@ -12,17 +12,14 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.textfield.TextInputEditText;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
-import es.pmdm.gymprofit.network.API;
-import es.pmdm.gymprofit.network.UtilJSONParser;
-import es.pmdm.gymprofit.network.UtilREST;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.EjercicioApi;
 import es.pmdm.gymprofit.ui.adapters.EjercicioAdapter;
 import es.pmdm.gymprofit.utils.EjercicioNavHelper;
 // ============================================================
@@ -38,6 +35,9 @@ public class EjerciciosActivity extends BaseActivity {
     private EjercicioAdapter adapter;
     private TextInputEditText etBuscar;
     private ChipGroup chipGroupFiltros;
+
+    // Interfaz Retrofit tipada del dominio ejercicios (cacheada por ApiClient).
+    private final EjercicioApi api = ApiClient.service(EjercicioApi.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,19 +70,14 @@ public class EjerciciosActivity extends BaseActivity {
 
     // Obtiene de la API la lista de ejercicios activos y la carga en el adapter.
     private void cargarEjercicios() {
-        API.getEjerciciosActivos(new UtilREST.OnResponseListener() {
+        api.getActivos().enqueue(new ApiCallback<List<Ejercicio>>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
-                try {
-                    List<Ejercicio> lista = UtilJSONParser.parseEjercicioList(response);
-                    adapter.setEjercicios(lista);
-                } catch (JSONException e) {
-                    android.util.Log.e("EjerciciosActivity", "Error parseando ejercicios", e);
-                }
+            public void onOk(List<Ejercicio> lista) {
+                adapter.setEjercicios(lista != null ? lista : new ArrayList<>());
             }
 
             @Override
-            public void onError(String message, int statusCode) {
+            public void onFail(int code, String message) {
                 android.util.Log.e("EjerciciosActivity", "Error cargando ejercicios: " + message);
             }
         });

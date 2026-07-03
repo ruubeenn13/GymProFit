@@ -9,8 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -20,9 +18,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.logro.Logro;
-import es.pmdm.gymprofit.network.API;
-import es.pmdm.gymprofit.network.UtilJSONParser;
-import es.pmdm.gymprofit.network.UtilREST;
+import es.pmdm.gymprofit.model.logro.UsuarioLogro;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.LogroApi;
 import es.pmdm.gymprofit.ui.adapters.LogroAdapter;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 
@@ -41,6 +40,9 @@ public class LogrosActivity extends AppCompatActivity {
     private Set<Integer> desbloqueados = new HashSet<>();
     // Contador de llamadas asíncronas pendientes (catálogo + desbloqueados) antes de renderizar
     private final AtomicInteger llamadasPendientes = new AtomicInteger(2);
+
+    // Interfaz Retrofit tipada del dominio logros (cacheada por ApiClient).
+    private final LogroApi api = ApiClient.service(LogroApi.class);
 
     // Aplica tema/idioma, infla el layout y lanza en paralelo la carga del
     // catálogo de logros y de los logros desbloqueados por el usuario.
@@ -64,23 +66,15 @@ public class LogrosActivity extends AppCompatActivity {
 
     // Carga el catálogo completo de logros disponibles en la app.
     private void cargarTodosLogros() {
-        API.getLogros(new UtilREST.OnResponseListener() {
+        api.getLogros().enqueue(new ApiCallback<List<Logro>>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
-                try {
-                    todosLogros = UtilJSONParser.parseLogroList(response);
-                } catch (JSONException ignored) {
-                    todosLogros = new ArrayList<>();
-                }
-                if (llamadasPendientes.decrementAndGet() == 0) {
-                    runOnUiThread(() -> mostrar());
-                }
+            public void onOk(List<Logro> lista) {
+                todosLogros = lista != null ? lista : new ArrayList<>();
+                if (llamadasPendientes.decrementAndGet() == 0) mostrar();
             }
             @Override
-            public void onError(String message, int statusCode) {
-                if (llamadasPendientes.decrementAndGet() == 0) {
-                    runOnUiThread(() -> mostrar());
-                }
+            public void onFail(int code, String message) {
+                if (llamadasPendientes.decrementAndGet() == 0) mostrar();
             }
         });
     }
@@ -88,25 +82,22 @@ public class LogrosActivity extends AppCompatActivity {
     // Carga el conjunto de ids de logros que el usuario actual ya ha desbloqueado.
     private void cargarLogrosDesbloqueados() {
         int usuarioId = prefsManager.getUsuarioId();
-        API.getLogrosDeUsuario(usuarioId, new UtilREST.OnResponseListener() {
+        api.getLogrosDeUsuario(usuarioId).enqueue(new ApiCallback<List<UsuarioLogro>>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
-                try {
-                    desbloqueados = UtilJSONParser.parseLogrosDesbloqueados(response);
-                } catch (JSONException ignored) {
-                    desbloqueados = new HashSet<>();
+            public void onOk(List<UsuarioLogro> lista) {
+                // Se extrae solo el logroId de cada relación para marcar el catálogo.
+                Set<Integer> ids = new HashSet<>();
+                if (lista != null) {
+                    for (UsuarioLogro ul : lista) ids.add(ul.getLogroId());
                 }
-                if (llamadasPendientes.decrementAndGet() == 0) {
-                    runOnUiThread(() -> mostrar());
-                }
+                desbloqueados = ids;
+                if (llamadasPendientes.decrementAndGet() == 0) mostrar();
             }
             @Override
-            public void onError(String message, int statusCode) {
+            public void onFail(int code, String message) {
                 // 404 = ningún logro desbloqueado
                 desbloqueados = new HashSet<>();
-                if (llamadasPendientes.decrementAndGet() == 0) {
-                    runOnUiThread(() -> mostrar());
-                }
+                if (llamadasPendientes.decrementAndGet() == 0) mostrar();
             }
         });
     }

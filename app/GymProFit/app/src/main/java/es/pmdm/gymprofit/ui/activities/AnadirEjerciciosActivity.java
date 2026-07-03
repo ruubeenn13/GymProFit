@@ -32,9 +32,9 @@ import java.util.Locale;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
 import es.pmdm.gymprofit.model.rutina.EjercicioSeleccionado;
-import es.pmdm.gymprofit.network.API;
-import es.pmdm.gymprofit.network.UtilJSONParser;
-import es.pmdm.gymprofit.network.UtilREST;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.EjercicioApi;
 import es.pmdm.gymprofit.ui.adapters.EjercicioAdapter;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
@@ -63,6 +63,9 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
 
     // Launcher hacia ResumenCrearRutinaActivity; propaga el resultado o sincroniza la lista al volver
     private ActivityResultLauncher<Intent> resumenLauncher;
+
+    // Interfaz Retrofit tipada del dominio ejercicios (cacheada por ApiClient).
+    private final EjercicioApi api = ApiClient.service(EjercicioApi.class);
 
     // Aplica tema/idioma, infla el layout y configura toolbar, búsqueda y launcher de resultado
     @Override
@@ -133,20 +136,15 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
 
     // Carga los ejercicios activos desde la API y crea el adapter del RecyclerView de búsqueda
     private void cargarEjercicios() {
-        API.getEjerciciosActivos(new UtilREST.OnResponseListener() {
-            @Override public void onSuccess(String response, int statusCode) {
-                try {
-                    List<Ejercicio> lista = UtilJSONParser.parseEjercicioList(response);
-                    runOnUiThread(() -> {
-                        ejercicioAdapter = new EjercicioAdapter(lista,
-                                e -> mostrarDialogSeriesReps(e));
-                        rvBusqueda.setAdapter(ejercicioAdapter);
-                    });
-                } catch (JSONException ignored) {}
+        api.getActivos().enqueue(new ApiCallback<List<Ejercicio>>() {
+            @Override public void onOk(List<Ejercicio> lista) {
+                ejercicioAdapter = new EjercicioAdapter(lista != null ? lista : new ArrayList<>(),
+                        e -> mostrarDialogSeriesReps(e));
+                rvBusqueda.setAdapter(ejercicioAdapter);
             }
-            @Override public void onError(String message, int statusCode) {
-                runOnUiThread(() -> UIHelper.mostrarToastError(AnadirEjerciciosActivity.this,
-                        getString(R.string.error_conexion)));
+            @Override public void onFail(int code, String message) {
+                UIHelper.mostrarToastError(AnadirEjerciciosActivity.this,
+                        getString(R.string.error_conexion));
             }
         });
     }

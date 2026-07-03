@@ -1,5 +1,7 @@
 package es.pmdm.gymprofit.model.ejercicio;
 
+import com.google.gson.annotations.SerializedName;
+
 // ============================================================
 // Ejercicio — modelo de datos de un ejercicio del catálogo de la app.
 // Contiene la información descriptiva (grupo muscular, dificultad,
@@ -25,6 +27,8 @@ public class Ejercicio {
     // Equipo/material necesario para realizarlo.
     private String equipoNecesario;
     // Calorías aproximadas quemadas por el ejercicio.
+    // La API devuelve esta métrica como "caloriasQuemadas"; se mapea al campo local "calorias".
+    @SerializedName("caloriasQuemadas")
     private int calorias;
     // Indica si el ejercicio está activo/visible en el catálogo.
     private boolean activo;
