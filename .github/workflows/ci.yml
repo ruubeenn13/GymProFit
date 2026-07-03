@@ -8,6 +8,13 @@ name: CI
 on:
   push:
     branches: [ main ]
+    # Los commits solo-documentación (p. ej. actualizar CHANGELOG con el hash) NO
+    # disparan CI: así el run del commit de código anterior no queda "cancelado"
+    # por el push del changelog. En los PR NO se ignora nada (el gate de Dependabot
+    # siempre corre).
+    paths-ignore:
+      - '**/*.md'
+      - 'documentacion/**'
   pull_request:
 
 # Cancela ejecuciones antiguas de la misma rama/PR si llega un push nuevo
