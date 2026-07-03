@@ -174,7 +174,7 @@ Causa raíz: **ningún controller consulta el principal autenticado; el `userId`
 **Hecho hoy:** Fase 1 ✅ · Fase 2 ✅ · Fase 3 (seguridad ✅ + Retrofit motor ✅) · sueltos MEDIO ✅ · deps/Dependabot/OWASP ✅. Todo en `origin/main`, 136 tests verdes, verificado en emulador.
 
 **Pendiente (orden sugerido para mañana):**
-1. **CI — GitHub Actions** (`.github/workflows/ci.yml`): build + tests en cada push/PR. Es lo que le falta al auto-merge de Dependabot para ser seguro (hoy fusiona patch/minor sin validar). Recordatorio: "Allow auto-merge" ya activado en el repo.
+1. **CI — GitHub Actions** (`.github/workflows/ci.yml`): ✅ CREADO. Build + tests (`mvnw verify`, JDK 21) en cada push a `main`/PR, con MariaDB 11 efímera (service container) y datasource sobrescrito por env (perfil `dev`, jwt.secret literal intacto). Job `api-build-test`. `mvnw` invocado con `sh` (el fichero está en modo 644, no ejecutable). **PENDIENTE (manual en web, una vez):** Ruleset en `main` → *Require a pull request* (0 approvals) + *Require status checks* = `api-build-test` + añadir el usuario a **bypass list** (para seguir pusheando directo). Sin eso el auto-merge de Dependabot no queda gateado.
 2. **Retrofit etapa 2 (tipada)** — Gson + modelos, eliminar `UtilJSONParser`, migrar las 31 Activities a `Callback<T>`. Bloque grande y arriesgado; verificar pantalla a pantalla en emulador.
 3. **Fase 4 resto:** Actuator (`/actuator/health`) + tests de nutrición/mediciones + `minifyEnabled true` + despliegue PaaS (Aiven MySQL + Koyeb/Render) + HTTPS.
 

@@ -1,0 +1,67 @@
+# ============================================================
+# CI — Build + Tests de la API (Spring Boot)
+# Se ejecuta en cada push a main y en cada pull request.
+# Es el gate que valida el auto-merge de Dependabot antes de fusionar.
+# ============================================================
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+# Cancela ejecuciones antiguas de la misma rama/PR si llega un push nuevo
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  api-build-test:
+    name: api-build-test
+    runs-on: ubuntu-latest
+
+    # Todos los pasos Maven corren dentro del módulo de la API
+    defaults:
+      run:
+        working-directory: api/gymprofit-api
+
+    # ----------------------------------------------------------
+    # Service container: MariaDB efímera para los @SpringBootTest.
+    # Flyway crea el esquema y Hibernate (ddl-auto=validate) lo valida.
+    # ----------------------------------------------------------
+    services:
+      mariadb:
+        image: mariadb:11
+        env:
+          MARIADB_ROOT_PASSWORD: "12345"
+          MARIADB_DATABASE: gymprofit_db
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      # 1) Clona el repo
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2) JDK 21 (Temurin) + cache de dependencias Maven
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      # 3) Build + tests.
+      #    Se sobrescribe SOLO el datasource (host/puerto de la VM);
+      #    el resto del perfil dev (jwt.secret literal, Flyway) se mantiene.
+      - name: Build & test
+        env:
+          SPRING_DATASOURCE_URL: "jdbc:mariadb://127.0.0.1:3306/gymprofit_db?useUnicode=true&characterEncoding=UTF-8"
+          SPRING_DATASOURCE_USERNAME: root
+          SPRING_DATASOURCE_PASSWORD: "12345"
+        run: sh ./mvnw -B verify
