@@ -6,12 +6,13 @@ import android.widget.Spinner;
 
 import com.google.android.material.textfield.TextInputEditText;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.HashMap;
+import java.util.Map;
 
 import es.pmdm.gymprofit.R;
-import es.pmdm.gymprofit.network.API;
-import es.pmdm.gymprofit.network.UtilREST;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.EjercicioApi;
 import es.pmdm.gymprofit.utils.UIHelper;
 
 // ============================================================
@@ -31,6 +32,9 @@ public class EditarEjercicioAdminActivity extends BaseActivity {
             "PECHO", "ESPALDA", "PIERNAS", "HOMBROS", "BRAZOS", "ABDOMEN", "CARDIO", "FULLBODY"
     };
     private static final String[] DIFICULTADES = {"PRINCIPIANTE", "INTERMEDIO", "AVANZADO"};
+
+    // Interfaz Retrofit tipada del dominio ejercicios (CRUD admin, etapa 2)
+    private final EjercicioApi ejercicioApi = ApiClient.service(EjercicioApi.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,11 +94,13 @@ public class EditarEjercicioAdminActivity extends BaseActivity {
         }
 
         try {
-            JSONObject body = new JSONObject();
+            // Cuerpo de edición parcial; los opcionales vacíos se envían como null
+            // (Gson con serializeNulls los serializa, equivalente al antiguo JSONObject.NULL).
+            Map<String, Object> body = new HashMap<>();
             body.put("nombre", nombre);
 
             String desc = etDescripcion.getText() != null ? etDescripcion.getText().toString().trim() : "";
-            body.put("descripcion", desc.isEmpty() ? JSONObject.NULL : desc);
+            body.put("descripcion", desc.isEmpty() ? null : desc);
 
             body.put("grupoMuscular", GRUPOS[spGrupoMuscular.getSelectedItemPosition()]);
             body.put("dificultad", DIFICULTADES[spDificultad.getSelectedItemPosition()]);
@@ -103,28 +109,26 @@ public class EditarEjercicioAdminActivity extends BaseActivity {
             if (!calStr.isEmpty()) body.put("caloriasQuemadas", Integer.parseInt(calStr));
 
             String equipo = etEquipo.getText() != null ? etEquipo.getText().toString().trim() : "";
-            body.put("equipoNecesario", equipo.isEmpty() ? JSONObject.NULL : equipo);
+            body.put("equipoNecesario", equipo.isEmpty() ? null : equipo);
 
             String instr = etInstrucciones.getText() != null ? etInstrucciones.getText().toString().trim() : "";
-            body.put("instrucciones", instr.isEmpty() ? JSONObject.NULL : instr);
+            body.put("instrucciones", instr.isEmpty() ? null : instr);
 
-            API.adminEditarEjercicio(ejercicioId, body, new UtilREST.OnResponseListener() {
+            ejercicioApi.patch(ejercicioId, body).enqueue(new ApiCallback<Void>() {
                 @Override
-                public void onSuccess(String response, int statusCode) {
-                    runOnUiThread(() -> {
-                        UIHelper.mostrarToastExito(EditarEjercicioAdminActivity.this,
-                                getString(R.string.admin_exito_editar_ejercicio));
-                        setResult(RESULT_OK);
-                        finish();
-                    });
+                public void onOk(Void b) {
+                    UIHelper.mostrarToastExito(EditarEjercicioAdminActivity.this,
+                            getString(R.string.admin_exito_editar_ejercicio));
+                    setResult(RESULT_OK);
+                    finish();
                 }
                 @Override
-                public void onError(String message, int statusCode) {
-                    runOnUiThread(() -> UIHelper.mostrarToastError(EditarEjercicioAdminActivity.this,
-                            getString(R.string.admin_error_generico)));
+                public void onFail(int code, String message) {
+                    UIHelper.mostrarToastError(EditarEjercicioAdminActivity.this,
+                            getString(R.string.admin_error_generico));
                 }
             });
-        } catch (JSONException | NumberFormatException e) {
+        } catch (NumberFormatException e) {
             UIHelper.mostrarToastError(this, getString(R.string.admin_error_generico));
         }
     }

@@ -10,16 +10,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.ChipGroup;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.rutina.Rutina;
-import es.pmdm.gymprofit.network.API;
-import es.pmdm.gymprofit.network.UtilJSONParser;
-import es.pmdm.gymprofit.network.UtilREST;
+import es.pmdm.gymprofit.network.AdminApi;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.RutinaApi;
 import es.pmdm.gymprofit.ui.adapters.AdminRutinaAdapter;
 
 // ============================================================
@@ -40,6 +39,10 @@ public class AdminRutinasActivity extends BaseActivity {
     private String filtroNivel = null;
     // Filtro por nombre introducido en el buscador (null = sin filtrar)
     private String filtroNombre = null;
+
+    // Interfaces Retrofit tipadas: búsqueda admin y CRUD del dominio rutinas (etapa 2)
+    private final AdminApi adminApi = ApiClient.service(AdminApi.class);
+    private final RutinaApi rutinaApi = ApiClient.service(RutinaApi.class);
 
     // Configura RecyclerView, chips de filtro, buscador y carga inicial de datos
     @Override
@@ -126,42 +129,37 @@ public class AdminRutinasActivity extends BaseActivity {
 
     // Llama al endpoint admin de búsqueda de rutinas predefinidas con los filtros actuales
     private void cargar() {
-        API.adminBuscarRutinasPredefinidas(filtroNombre, filtroNivel, null, filtroActiva,
-                new UtilREST.OnResponseListener() {
+        adminApi.buscarRutinasPredefinidas(filtroNombre, filtroNivel, null, filtroActiva)
+                .enqueue(new ApiCallback<List<Rutina>>() {
                     @Override
-                    public void onSuccess(String response, int statusCode) {
-                        try {
-                            List<Rutina> nuevas = UtilJSONParser.parseRutinaList(response);
-                            lista.clear();
-                            lista.addAll(nuevas);
-                            adapter.notifyDataSetChanged();
-                        } catch (JSONException ignored) {}
+                    public void onOk(List<Rutina> nuevas) {
+                        lista.clear();
+                        if (nuevas != null) lista.addAll(nuevas);
+                        adapter.notifyDataSetChanged();
                     }
-                    @Override
-                    public void onError(String message, int statusCode) {}
                 });
     }
 
     // Activa o desactiva una rutina según su estado actual y actualiza el item en la lista
     private void toggleActiva(Rutina r, int pos) {
-        UtilREST.OnResponseListener cb = new UtilREST.OnResponseListener() {
+        ApiCallback<Void> cb = new ApiCallback<Void>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
+            public void onOk(Void body) {
                 r.setActiva(!r.isActiva());
                 adapter.actualizarItem(pos, r);
                 Toast.makeText(AdminRutinasActivity.this,
                         getString(R.string.admin_exito_toggle_rutina), Toast.LENGTH_SHORT).show();
             }
             @Override
-            public void onError(String message, int statusCode) {
+            public void onFail(int code, String message) {
                 Toast.makeText(AdminRutinasActivity.this,
                         getString(R.string.admin_error_generico), Toast.LENGTH_SHORT).show();
             }
         };
         if (r.isActiva()) {
-            API.adminDesactivarRutina(r.getId(), cb);
+            rutinaApi.eliminar(r.getId()).enqueue(cb);
         } else {
-            API.adminActivarRutina(r.getId(), cb);
+            rutinaApi.activar(r.getId()).enqueue(cb);
         }
     }
 

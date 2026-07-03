@@ -6,12 +6,13 @@ import android.widget.Spinner;
 
 import com.google.android.material.textfield.TextInputEditText;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.HashMap;
+import java.util.Map;
 
 import es.pmdm.gymprofit.R;
-import es.pmdm.gymprofit.network.API;
-import es.pmdm.gymprofit.network.UtilREST;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.RutinaApi;
 import es.pmdm.gymprofit.utils.UIHelper;
 
 // ============================================================
@@ -27,6 +28,9 @@ public class EditarRutinaAdminActivity extends BaseActivity {
     private Spinner spNivel;
 
     private static final String[] NIVELES = {"PRINCIPIANTE", "INTERMEDIO", "AVANZADO"};
+
+    // Interfaz Retrofit tipada del dominio rutinas (CRUD admin, etapa 2)
+    private final RutinaApi rutinaApi = ApiClient.service(RutinaApi.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,11 +84,13 @@ public class EditarRutinaAdminActivity extends BaseActivity {
         }
 
         try {
-            JSONObject body = new JSONObject();
+            // Cuerpo de edición parcial; la descripción vacía se envía como null
+            // (Gson con serializeNulls), el resto de opcionales vacíos se omiten.
+            Map<String, Object> body = new HashMap<>();
             body.put("nombre", nombre);
 
             String desc = etDescripcion.getText() != null ? etDescripcion.getText().toString().trim() : "";
-            body.put("descripcion", desc.isEmpty() ? JSONObject.NULL : desc);
+            body.put("descripcion", desc.isEmpty() ? null : desc);
 
             body.put("nivel", NIVELES[spNivel.getSelectedItemPosition()]);
 
@@ -100,23 +106,21 @@ public class EditarRutinaAdminActivity extends BaseActivity {
             String dias = etDiasSemana.getText() != null ? etDiasSemana.getText().toString().trim() : "";
             if (!dias.isEmpty()) body.put("diasSemana", dias);
 
-            API.adminEditarRutina(rutinaId, body, new UtilREST.OnResponseListener() {
+            rutinaApi.patch(rutinaId, body).enqueue(new ApiCallback<Void>() {
                 @Override
-                public void onSuccess(String response, int statusCode) {
-                    runOnUiThread(() -> {
-                        UIHelper.mostrarToastExito(EditarRutinaAdminActivity.this,
-                                getString(R.string.admin_exito_editar_rutina));
-                        setResult(RESULT_OK);
-                        finish();
-                    });
+                public void onOk(Void b) {
+                    UIHelper.mostrarToastExito(EditarRutinaAdminActivity.this,
+                            getString(R.string.admin_exito_editar_rutina));
+                    setResult(RESULT_OK);
+                    finish();
                 }
                 @Override
-                public void onError(String message, int statusCode) {
-                    runOnUiThread(() -> UIHelper.mostrarToastError(EditarRutinaAdminActivity.this,
-                            getString(R.string.admin_error_generico)));
+                public void onFail(int code, String message) {
+                    UIHelper.mostrarToastError(EditarRutinaAdminActivity.this,
+                            getString(R.string.admin_error_generico));
                 }
             });
-        } catch (JSONException | NumberFormatException e) {
+        } catch (NumberFormatException e) {
             UIHelper.mostrarToastError(this, getString(R.string.admin_error_generico));
         }
     }

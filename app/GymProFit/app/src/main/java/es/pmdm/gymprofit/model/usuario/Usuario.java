@@ -1,5 +1,9 @@
 package es.pmdm.gymprofit.model.usuario;
 
+import com.google.gson.annotations.JsonAdapter;
+
+import es.pmdm.gymprofit.network.BooleanNumericAdapter;
+
 // ============================================================
 // Usuario — modelo de datos que representa un usuario de la app
 // Contiene los datos de perfil devueltos/enviados por la API (identidad,
@@ -18,6 +22,8 @@ public class Usuario {
     private String nivelExperiencia;
     private String objetivo;
     private String fechaRegistro;
+    // El listado admin (AdminUsuarioDTO) envía "activo" como Byte 0/1; el adaptador lo tolera.
+    @JsonAdapter(BooleanNumericAdapter.class)
     private boolean activo;
     private String rol;
     private String fotoPerfil;

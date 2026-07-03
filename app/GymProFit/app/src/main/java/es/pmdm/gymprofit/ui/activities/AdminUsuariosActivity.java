@@ -12,16 +12,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.ChipGroup;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.usuario.Usuario;
-import es.pmdm.gymprofit.network.API;
-import es.pmdm.gymprofit.network.UtilJSONParser;
-import es.pmdm.gymprofit.network.UtilREST;
+import es.pmdm.gymprofit.network.AdminApi;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.ui.adapters.AdminUsuarioAdapter;
 
 // ============================================================
@@ -35,6 +33,9 @@ public class AdminUsuariosActivity extends BaseActivity {
     private AdminUsuarioAdapter adapter;
     // Lista de usuarios actualmente mostrada en el RecyclerView
     private final List<Usuario> lista = new ArrayList<>();
+
+    // Interfaz Retrofit tipada del panel de administración (etapa 2)
+    private final AdminApi api = ApiClient.service(AdminApi.class);
 
     // Filtro por estado activo/inactivo (null = sin filtrar)
     private Boolean filtroActivo = null;
@@ -116,19 +117,14 @@ public class AdminUsuariosActivity extends BaseActivity {
 
     // Llama al endpoint admin de usuarios filtrados (primera página, hasta 100 resultados)
     private void cargar() {
-        API.getAdminUsuariosFiltrados(filtroActivo, filtroRol, filtroUsername, 0, 100,
-                new UtilREST.OnResponseListener() {
+        api.getUsuarios(filtroActivo, filtroRol, filtroUsername, 0, 100)
+                .enqueue(new ApiCallback<List<Usuario>>() {
                     @Override
-                    public void onSuccess(String response, int statusCode) {
-                        try {
-                            List<Usuario> nuevos = UtilJSONParser.parseUsuarioList(response);
-                            lista.clear();
-                            lista.addAll(nuevos);
-                            adapter.notifyDataSetChanged();
-                        } catch (JSONException ignored) {}
+                    public void onOk(List<Usuario> nuevos) {
+                        lista.clear();
+                        if (nuevos != null) lista.addAll(nuevos);
+                        adapter.notifyDataSetChanged();
                     }
-                    @Override
-                    public void onError(String message, int statusCode) {}
                 });
     }
 
@@ -141,16 +137,16 @@ public class AdminUsuariosActivity extends BaseActivity {
                 .setTitle(getString(R.string.admin_toggle_activo_titulo))
                 .setMessage(msg)
                 .setPositiveButton(android.R.string.ok, (d, w) ->
-                        API.adminToggleActivoUsuario(u.getId(), new UtilREST.OnResponseListener() {
+                        api.toggleActivoUsuario(u.getId()).enqueue(new ApiCallback<Void>() {
                             @Override
-                            public void onSuccess(String response, int statusCode) {
+                            public void onOk(Void body) {
                                 u.setActivo(!u.isActivo());
                                 adapter.actualizarItem(pos, u);
                                 Toast.makeText(AdminUsuariosActivity.this,
                                         getString(R.string.admin_exito_toggle_usuario), Toast.LENGTH_SHORT).show();
                             }
                             @Override
-                            public void onError(String message, int statusCode) {
+                            public void onFail(int code, String message) {
                                 Toast.makeText(AdminUsuariosActivity.this,
                                         getString(R.string.admin_error_generico), Toast.LENGTH_SHORT).show();
                             }
@@ -185,16 +181,16 @@ public class AdminUsuariosActivity extends BaseActivity {
                 .setView(rg)
                 .setPositiveButton(getString(R.string.admin_guardar), (d, w) -> {
                     String nuevoRol = rg.getCheckedRadioButtonId() == 2 ? "ROLE_ADMIN" : "ROLE_USER";
-                    API.adminCambiarRolUsuario(u.getId(), nuevoRol, new UtilREST.OnResponseListener() {
+                    api.cambiarRol(u.getId(), nuevoRol).enqueue(new ApiCallback<Void>() {
                         @Override
-                        public void onSuccess(String response, int statusCode) {
+                        public void onOk(Void body) {
                             u.setRol(nuevoRol);
                             adapter.actualizarItem(pos, u);
                             Toast.makeText(AdminUsuariosActivity.this,
                                     getString(R.string.admin_exito_cambiar_rol), Toast.LENGTH_SHORT).show();
                         }
                         @Override
-                        public void onError(String message, int statusCode) {
+                        public void onFail(int code, String message) {
                             Toast.makeText(AdminUsuariosActivity.this,
                                     getString(R.string.admin_error_generico), Toast.LENGTH_SHORT).show();
                         }

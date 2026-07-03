@@ -16,17 +16,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.ChipGroup;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.alimento.Alimento;
-import es.pmdm.gymprofit.network.API;
-import es.pmdm.gymprofit.network.UtilJSONParser;
-import es.pmdm.gymprofit.network.UtilREST;
+import es.pmdm.gymprofit.network.AdminApi;
+import es.pmdm.gymprofit.network.AlimentoApi;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.ui.adapters.AdminAlimentoAdapter;
 
 // ============================================================
@@ -45,6 +46,10 @@ public class AdminAlimentosActivity extends BaseActivity {
     private String filtroNombre = null;
     private String filtroCategoria = null;
     private Boolean filtroActivo = null;
+
+    // Interfaces Retrofit tipadas: búsqueda admin y CRUD del dominio alimentos (etapa 2)
+    private final AdminApi adminApi = ApiClient.service(AdminApi.class);
+    private final AlimentoApi alimentoApi = ApiClient.service(AlimentoApi.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,23 +124,18 @@ public class AdminAlimentosActivity extends BaseActivity {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        API.getCategorias(new UtilREST.OnResponseListener() {
+        alimentoApi.getCategorias().enqueue(new ApiCallback<List<String>>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
-                try {
-                    org.json.JSONArray arr = new org.json.JSONArray(response);
-                    runOnUiThread(() -> {
-                        for (int i = 0; i < arr.length(); i++) {
-                            try { categorias.add(arr.getString(i)); } catch (org.json.JSONException ignored) {}
-                        }
-                        adapterSp.notifyDataSetChanged();
-                    });
-                } catch (org.json.JSONException ignored) {
+            public void onOk(List<String> cats) {
+                if (cats == null || cats.isEmpty()) {
                     usarCategoriasLocales(categorias, adapterSp);
+                    return;
                 }
+                categorias.addAll(cats);
+                adapterSp.notifyDataSetChanged();
             }
             @Override
-            public void onError(String message, int statusCode) {
+            public void onFail(int code, String message) {
                 usarCategoriasLocales(categorias, adapterSp);
             }
         });
@@ -143,12 +143,10 @@ public class AdminAlimentosActivity extends BaseActivity {
 
     // Fallback: rellena el spinner con las categorías definidas localmente en strings/arrays si falla la API
     private void usarCategoriasLocales(List<String> categorias, ArrayAdapter<String> adapter) {
-        runOnUiThread(() -> {
-            for (String c : getResources().getStringArray(R.array.categorias_alimento)) {
-                categorias.add(c);
-            }
-            adapter.notifyDataSetChanged();
-        });
+        for (String c : getResources().getStringArray(R.array.categorias_alimento)) {
+            categorias.add(c);
+        }
+        adapter.notifyDataSetChanged();
     }
 
     // Configura los chips de filtro rápido (todos / activos / inactivos)
@@ -170,41 +168,39 @@ public class AdminAlimentosActivity extends BaseActivity {
 
     // Consulta a la API los alimentos aplicando los filtros actuales y refresca el RecyclerView
     private void cargar() {
-        API.adminBuscarAlimentos(filtroNombre, filtroCategoria, filtroActivo,
-                new UtilREST.OnResponseListener() {
+        adminApi.buscarAlimentos(filtroNombre, filtroCategoria, filtroActivo)
+                .enqueue(new ApiCallback<List<Alimento>>() {
                     @Override
-                    public void onSuccess(String response, int statusCode) {
-                        try {
-                            List<Alimento> nuevos = UtilJSONParser.parseListaAlimentos(response);
-                            runOnUiThread(() -> {
-                                lista.clear();
-                                lista.addAll(nuevos);
-                                adapter.notifyDataSetChanged();
-                            });
-                        } catch (JSONException ignored) {}
+                    public void onOk(List<Alimento> nuevos) {
+                        lista.clear();
+                        if (nuevos != null) lista.addAll(nuevos);
+                        adapter.notifyDataSetChanged();
                     }
-                    @Override
-                    public void onError(String message, int statusCode) {}
                 });
     }
 
     // Activa o desactiva un alimento y actualiza el item en la lista sin recargar todo
     private void toggleActivo(Alimento a, int pos) {
-        API.adminToggleActivoAlimento(a.getId(), !a.isActivo(),
-                new UtilREST.OnResponseListener() {
-                    @Override
-                    public void onSuccess(String response, int statusCode) {
-                        a.setActivo(!a.isActivo());
-                        adapter.actualizarItem(pos, a);
-                        Toast.makeText(AdminAlimentosActivity.this,
-                                getString(R.string.admin_exito_toggle_alimento), Toast.LENGTH_SHORT).show();
-                    }
-                    @Override
-                    public void onError(String message, int statusCode) {
-                        Toast.makeText(AdminAlimentosActivity.this,
-                                getString(R.string.admin_error_generico), Toast.LENGTH_SHORT).show();
-                    }
-                });
+        ApiCallback<Void> cb = new ApiCallback<Void>() {
+            @Override
+            public void onOk(Void body) {
+                a.setActivo(!a.isActivo());
+                adapter.actualizarItem(pos, a);
+                Toast.makeText(AdminAlimentosActivity.this,
+                        getString(R.string.admin_exito_toggle_alimento), Toast.LENGTH_SHORT).show();
+            }
+            @Override
+            public void onFail(int code, String message) {
+                Toast.makeText(AdminAlimentosActivity.this,
+                        getString(R.string.admin_error_generico), Toast.LENGTH_SHORT).show();
+            }
+        };
+        // Reactivar (PUT activar) o borrado lógico (DELETE) según el nuevo estado deseado.
+        if (a.isActivo()) {
+            alimentoApi.eliminar(a.getId()).enqueue(cb);
+        } else {
+            alimentoApi.activar(a.getId()).enqueue(cb);
+        }
     }
 
     // Muestra un diálogo para editar los valores nutricionales del alimento y envía un PATCH parcial
@@ -230,31 +226,32 @@ public class AdminAlimentosActivity extends BaseActivity {
 
         dialogView.findViewById(R.id.btnDialogConfirmar).setOnClickListener(v -> {
             try {
-                JSONObject patch = new JSONObject();
+                // Cuerpo de edición parcial: solo se incluyen los campos rellenados (decimales como BigDecimal).
+                Map<String, Object> patch = new HashMap<>();
                 String nombre = etNombre.getText().toString().trim();
                 if (!nombre.isEmpty()) patch.put("nombre", nombre);
                 String calStr = etCalorias.getText().toString().trim();
                 if (!calStr.isEmpty()) patch.put("calorias", Integer.parseInt(calStr));
                 String protStr = etProteinas.getText().toString().trim();
-                if (!protStr.isEmpty()) patch.put("proteinas", Double.parseDouble(protStr));
+                if (!protStr.isEmpty()) patch.put("proteinas", new BigDecimal(protStr));
                 String carbStr = etCarbohidratos.getText().toString().trim();
-                if (!carbStr.isEmpty()) patch.put("carbohidratos", Double.parseDouble(carbStr));
+                if (!carbStr.isEmpty()) patch.put("carbohidratos", new BigDecimal(carbStr));
                 String grasStr = etGrasas.getText().toString().trim();
-                if (!grasStr.isEmpty()) patch.put("grasas", Double.parseDouble(grasStr));
+                if (!grasStr.isEmpty()) patch.put("grasas", new BigDecimal(grasStr));
 
                 dialog.dismiss();
-                API.adminPatchAlimento(a.getId(), patch, new UtilREST.OnResponseListener() {
+                alimentoApi.patch(a.getId(), patch).enqueue(new ApiCallback<Void>() {
                     @Override
-                    public void onSuccess(String response, int statusCode) {
+                    public void onOk(Void body) {
                         cargar();
                     }
                     @Override
-                    public void onError(String message, int statusCode) {
+                    public void onFail(int code, String message) {
                         Toast.makeText(AdminAlimentosActivity.this,
                                 getString(R.string.admin_error_generico), Toast.LENGTH_SHORT).show();
                     }
                 });
-            } catch (JSONException ignored) {}
+            } catch (NumberFormatException ignored) {}
         });
         dialogView.findViewById(R.id.btnDialogCancelar).setOnClickListener(v -> dialog.dismiss());
 

@@ -1,6 +1,9 @@
 package es.pmdm.gymprofit.model.ejercicio;
 
+import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
+
+import es.pmdm.gymprofit.network.BooleanNumericAdapter;
 
 // ============================================================
 // Ejercicio — modelo de datos de un ejercicio del catálogo de la app.
@@ -31,6 +34,8 @@ public class Ejercicio {
     @SerializedName("caloriasQuemadas")
     private int calorias;
     // Indica si el ejercicio está activo/visible en el catálogo.
+    // La búsqueda admin (EjercicioJooqDTO) envía "activo" como Byte 0/1; el adaptador lo tolera.
+    @JsonAdapter(BooleanNumericAdapter.class)
     private boolean activo;
 
     public Ejercicio() {}

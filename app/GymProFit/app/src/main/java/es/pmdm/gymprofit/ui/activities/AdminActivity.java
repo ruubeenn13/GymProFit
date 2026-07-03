@@ -4,12 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import es.pmdm.gymprofit.R;
-import es.pmdm.gymprofit.network.API;
-import es.pmdm.gymprofit.network.UtilREST;
+import es.pmdm.gymprofit.model.admin.EstadisticasGlobales;
+import es.pmdm.gymprofit.network.AdminApi;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
 
 // ============================================================
 // AdminActivity — panel principal de administración (rol ADMIN)
@@ -22,6 +21,9 @@ public class AdminActivity extends BaseActivity {
     // TextViews donde se pintan las estadísticas globales devueltas por la API
     private TextView tvTotalUsuarios, tvUsuariosActivos, tvTotalSesiones,
             tvSesionesHoy, tvRutinasPredefinidas, tvEjerciciosActivos;
+
+    // Interfaz Retrofit tipada del panel de administración (etapa 2)
+    private final AdminApi api = ApiClient.service(AdminApi.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,26 +55,19 @@ public class AdminActivity extends BaseActivity {
         cargarEstadisticas();
     }
 
-    // Solicita a la API las estadísticas globales y actualiza los TextViews en el hilo UI
+    // Solicita a la API las estadísticas globales y actualiza los TextViews (callback ya en hilo UI)
     private void cargarEstadisticas() {
-        API.getAdminEstadisticas(new UtilREST.OnResponseListener() {
+        api.getEstadisticas().enqueue(new ApiCallback<EstadisticasGlobales>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
-                try {
-                    JSONObject obj = new JSONObject(response);
-                    runOnUiThread(() -> {
-                        tvTotalUsuarios.setText(String.valueOf(obj.optLong("totalUsuarios", 0)));
-                        tvUsuariosActivos.setText(String.valueOf(obj.optLong("usuariosActivos", 0)));
-                        tvTotalSesiones.setText(String.valueOf(obj.optLong("totalSesiones", 0)));
-                        tvSesionesHoy.setText(String.valueOf(obj.optLong("sesionesHoy", 0)));
-                        tvRutinasPredefinidas.setText(String.valueOf(obj.optLong("rutinasPredefinidas", 0)));
-                        tvEjerciciosActivos.setText(String.valueOf(obj.optLong("ejerciciosActivos", 0)));
-                    });
-                } catch (JSONException ignored) {}
+            public void onOk(EstadisticasGlobales e) {
+                if (e == null) return;
+                tvTotalUsuarios.setText(String.valueOf(e.getTotalUsuarios()));
+                tvUsuariosActivos.setText(String.valueOf(e.getUsuariosActivos()));
+                tvTotalSesiones.setText(String.valueOf(e.getTotalSesiones()));
+                tvSesionesHoy.setText(String.valueOf(e.getSesionesHoy()));
+                tvRutinasPredefinidas.setText(String.valueOf(e.getRutinasPredefinidas()));
+                tvEjerciciosActivos.setText(String.valueOf(e.getEjerciciosActivos()));
             }
-
-            @Override
-            public void onError(String message, int statusCode) {}
         });
     }
 }

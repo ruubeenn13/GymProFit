@@ -10,16 +10,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.ChipGroup;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
-import es.pmdm.gymprofit.network.API;
-import es.pmdm.gymprofit.network.UtilJSONParser;
-import es.pmdm.gymprofit.network.UtilREST;
+import es.pmdm.gymprofit.network.AdminApi;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.EjercicioApi;
 import es.pmdm.gymprofit.ui.adapters.AdminEjercicioAdapter;
 
 // ============================================================
@@ -38,6 +37,10 @@ public class AdminEjerciciosActivity extends BaseActivity {
     private Boolean filtroActivo = null;
     // Filtro por nombre introducido en el buscador (null = sin filtrar)
     private String filtroNombre = null;
+
+    // Interfaces Retrofit tipadas: búsqueda admin y CRUD del dominio ejercicios (etapa 2)
+    private final AdminApi adminApi = ApiClient.service(AdminApi.class);
+    private final EjercicioApi ejercicioApi = ApiClient.service(EjercicioApi.class);
 
     // Configura RecyclerView, chips de filtro, buscador y carga inicial de datos
     @Override
@@ -112,42 +115,37 @@ public class AdminEjerciciosActivity extends BaseActivity {
 
     // Llama al endpoint admin de búsqueda de ejercicios con los filtros actuales y refresca la lista
     private void cargar() {
-        API.adminBuscarEjercicios(filtroNombre, null, null, filtroActivo,
-                new UtilREST.OnResponseListener() {
+        adminApi.buscarEjercicios(filtroNombre, null, null, filtroActivo)
+                .enqueue(new ApiCallback<List<Ejercicio>>() {
                     @Override
-                    public void onSuccess(String response, int statusCode) {
-                        try {
-                            List<Ejercicio> nuevos = UtilJSONParser.parseEjercicioList(response);
-                            lista.clear();
-                            lista.addAll(nuevos);
-                            adapter.notifyDataSetChanged();
-                        } catch (JSONException ignored) {}
+                    public void onOk(List<Ejercicio> nuevos) {
+                        lista.clear();
+                        if (nuevos != null) lista.addAll(nuevos);
+                        adapter.notifyDataSetChanged();
                     }
-                    @Override
-                    public void onError(String message, int statusCode) {}
                 });
     }
 
     // Activa o desactiva un ejercicio según su estado actual y actualiza el item en la lista
     private void toggleActivo(Ejercicio e, int pos) {
-        UtilREST.OnResponseListener cb = new UtilREST.OnResponseListener() {
+        ApiCallback<Void> cb = new ApiCallback<Void>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
+            public void onOk(Void body) {
                 e.setActivo(!e.isActivo());
                 adapter.actualizarItem(pos, e);
                 Toast.makeText(AdminEjerciciosActivity.this,
                         getString(R.string.admin_exito_toggle_ejercicio), Toast.LENGTH_SHORT).show();
             }
             @Override
-            public void onError(String message, int statusCode) {
+            public void onFail(int code, String message) {
                 Toast.makeText(AdminEjerciciosActivity.this,
                         getString(R.string.admin_error_generico), Toast.LENGTH_SHORT).show();
             }
         };
         if (e.isActivo()) {
-            API.adminDesactivarEjercicio(e.getId(), cb);
+            ejercicioApi.eliminar(e.getId()).enqueue(cb);
         } else {
-            API.adminActivarEjercicio(e.getId(), cb);
+            ejercicioApi.activar(e.getId()).enqueue(cb);
         }
     }
 

@@ -1,5 +1,9 @@
 package es.pmdm.gymprofit.model.alimento;
 
+import com.google.gson.annotations.JsonAdapter;
+
+import es.pmdm.gymprofit.network.BooleanNumericAdapter;
+
 // ============================================================
 // Alimento — modelo POJO de un alimento de la base de datos nutricional
 // Representa un alimento con su información nutricional por porción
@@ -18,6 +22,8 @@ public class Alimento {
     // Id del usuario propietario si es un alimento personalizado; null si es del catálogo global
     private Integer usuarioId;
     // Indica si el alimento está activo (borrado lógico)
+    // La búsqueda admin (AlimentoJooqDTO) envía "activo" como Byte 0/1; el adaptador lo tolera.
+    @JsonAdapter(BooleanNumericAdapter.class)
     private boolean activo;
 
     public Alimento() {}
