@@ -6,6 +6,8 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `4d76c00` | refactor(android): Retrofit etapa 2 **F8b limpieza final** — borrados `API.java` y `UtilJSONParser` (~375 líneas de parseo manual), `UtilREST` reducido a solo tokens, `RawApi` fuera de `ApiClient`. **Migración a Retrofit tipado COMPLETA** (toda la red por interfaces por dominio + Gson) |
+| `886f01a` | refactor(android): Retrofit etapa 2 F8a — barrido de 9 llamadas cross-domain residuales a las interfaces tipadas (Sesiones→Rutinas/Logros, Perfil→Medición, Detalle/EditarRutina→Ejercicios) |
 | `e3b1980` | refactor(android): Retrofit etapa 2 F7.5 — dominio Usuario/Perfil tipado (`UsuarioApi`: getPorId/estadisticas/patch/subirFoto @Multipart); Perfil/EditarPerfil/Onboarding + restos de usuario en Mediciones/ResumenSesión. Validado contra API real |
 | `10702d3` | refactor(android): Retrofit etapa 2 F7 — Auth tipado (`AuthApi`/`UsuarioApi`, POJO `TokenResponse` con `rolPrincipal()`); login/registro/logout migrados manteniendo el guardado de sesión idéntico (UtilREST + prefs). Validado contra API real |
 | `a6f079a` | ci: no disparar CI en commits solo-documentación (`paths-ignore` en push) — evita runs "canceled" cuando el commit de changelog seguía al de código |
