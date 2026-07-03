@@ -6,6 +6,7 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `0c881d6` | ci: keep-alive — cron cada 10 min que pinguea `/api/actuator/health` para que Render (free) no se duerma (~730h/mes < 750h gratis) |
 | `4d76c00` | refactor(android): Retrofit etapa 2 **F8b limpieza final** — borrados `API.java` y `UtilJSONParser` (~375 líneas de parseo manual), `UtilREST` reducido a solo tokens, `RawApi` fuera de `ApiClient`. **Migración a Retrofit tipado COMPLETA** (toda la red por interfaces por dominio + Gson) |
 | `886f01a` | refactor(android): Retrofit etapa 2 F8a — barrido de 9 llamadas cross-domain residuales a las interfaces tipadas (Sesiones→Rutinas/Logros, Perfil→Medición, Detalle/EditarRutina→Ejercicios) |
 | `e3b1980` | refactor(android): Retrofit etapa 2 F7.5 — dominio Usuario/Perfil tipado (`UsuarioApi`: getPorId/estadisticas/patch/subirFoto @Multipart); Perfil/EditarPerfil/Onboarding + restos de usuario en Mediciones/ResumenSesión. Validado contra API real |
