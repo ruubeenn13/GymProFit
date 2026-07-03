@@ -69,6 +69,14 @@ public class UtilREST {
     // Registra el persistidor de tokens renovados (se llama tras un refresh exitoso).
     public static void setTokenPersister(TokenPersister p) { tokenPersister = p; }
 
+    // Maneja un 401 no recuperable (el TokenAuthenticator ya intentó renovar y no pudo):
+    // limpia la sesión y avisa vía OnUnauthorizedListener para volver a login. Lo usan
+    // tanto la fachada String (callbackHacia) como el ApiCallback tipado de la etapa 2.
+    static void notifyUnauthorized() {
+        clearToken();
+        if (unauthorizedListener != null) unauthorizedListener.onTokenExpired();
+    }
+
     // Llamado por ApiClient.TokenAuthenticator tras renovar el token: actualiza el estado
     // en memoria y lo persiste para que sobreviva a reinicios.
     static void onTokensRefreshed(String nuevoToken, String nuevoRefresh) {

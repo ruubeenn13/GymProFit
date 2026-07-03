@@ -11,15 +11,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import es.pmdm.gymprofit.R;
-import es.pmdm.gymprofit.network.API;
-import es.pmdm.gymprofit.network.UtilREST;
+import es.pmdm.gymprofit.model.medicion.MedicionCorporal;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.MedicionApi;
 import es.pmdm.gymprofit.utils.NotificationHelper;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
@@ -37,6 +38,8 @@ public class RegistrarMedicionActivity extends AppCompatActivity {
     private PreferencesManager prefsManager;
     // Id de la medición a editar, o -1 si se está creando una nueva
     private int medicionId = -1;
+    // Interfaz Retrofit tipada del dominio mediciones (etapa 2)
+    private final MedicionApi medicionApi = ApiClient.service(MedicionApi.class);
 
     // Inicializa la pantalla; si se recibe un "medicion_id" en el intent,
     // cambia el título a modo edición y precarga los campos con sus valores.
@@ -91,8 +94,8 @@ public class RegistrarMedicionActivity extends AppCompatActivity {
         if (value > 0) et.setText(String.format(Locale.getDefault(), "%.2f", value));
     }
 
-    // Valida el peso (obligatorio), construye el JSON con los campos rellenados
-    // y llama a la API para crear o actualizar la medición según medicionId.
+    // Valida el peso (obligatorio), construye el cuerpo con los campos rellenados
+    // y llama a la API tipada para crear o actualizar la medición según medicionId.
     private void guardarMedicion() {
         String pesoStr = etPeso.getText() != null ? etPeso.getText().toString().trim() : "";
         if (pesoStr.isEmpty()) {
@@ -101,7 +104,8 @@ public class RegistrarMedicionActivity extends AppCompatActivity {
         }
 
         try {
-            JSONObject body = new JSONObject();
+            // Cuerpo parcial: solo los campos rellenados (Map → Gson mantiene la semántica parcial).
+            Map<String, Object> body = new HashMap<>();
             body.put("peso", new BigDecimal(pesoStr));
 
             putDecimal(body, "altura",        etAltura);
@@ -116,50 +120,48 @@ public class RegistrarMedicionActivity extends AppCompatActivity {
             if (!notas.isEmpty()) body.put("notas", notas);
 
             if (medicionId != -1) {
-                API.patchMedicion(medicionId, body, new UtilREST.OnResponseListener() {
+                // Edición: PATCH parcial de la medición existente.
+                medicionApi.patch(medicionId, body).enqueue(new ApiCallback<MedicionCorporal>() {
                     @Override
-                    public void onSuccess(String response, int statusCode) {
-                        runOnUiThread(() -> {
-                            UIHelper.mostrarToastExito(RegistrarMedicionActivity.this,
-                                    getString(R.string.mediciones_editar_exito));
-                            setResult(RESULT_OK);
-                            finish();
-                        });
+                    public void onOk(MedicionCorporal m) {
+                        UIHelper.mostrarToastExito(RegistrarMedicionActivity.this,
+                                getString(R.string.mediciones_editar_exito));
+                        setResult(RESULT_OK);
+                        finish();
                     }
                     @Override
-                    public void onError(String message, int statusCode) {
-                        runOnUiThread(() -> UIHelper.mostrarToastError(
-                                RegistrarMedicionActivity.this, getString(R.string.error_conexion)));
+                    public void onFail(int code, String message) {
+                        UIHelper.mostrarToastError(RegistrarMedicionActivity.this,
+                                getString(R.string.error_conexion));
                     }
                 });
             } else {
+                // Alta: crea una medición nueva para el usuario actual.
                 body.put("usuarioId", prefsManager.getUsuarioId());
-                API.crearMedicion(body, new UtilREST.OnResponseListener() {
+                medicionApi.crear(body).enqueue(new ApiCallback<MedicionCorporal>() {
                     @Override
-                    public void onSuccess(String response, int statusCode) {
-                        runOnUiThread(() -> {
-                            NotificationHelper.notificarMedicionGuardada(RegistrarMedicionActivity.this);
-                            UIHelper.mostrarToastExito(RegistrarMedicionActivity.this,
-                                    getString(R.string.mediciones_exito));
-                            setResult(RESULT_OK);
-                            finish();
-                        });
+                    public void onOk(MedicionCorporal m) {
+                        NotificationHelper.notificarMedicionGuardada(RegistrarMedicionActivity.this);
+                        UIHelper.mostrarToastExito(RegistrarMedicionActivity.this,
+                                getString(R.string.mediciones_exito));
+                        setResult(RESULT_OK);
+                        finish();
                     }
                     @Override
-                    public void onError(String message, int statusCode) {
-                        runOnUiThread(() -> UIHelper.mostrarToastError(
-                                RegistrarMedicionActivity.this, getString(R.string.error_conexion)));
+                    public void onFail(int code, String message) {
+                        UIHelper.mostrarToastError(RegistrarMedicionActivity.this,
+                                getString(R.string.error_conexion));
                     }
                 });
             }
 
-        } catch (JSONException | NumberFormatException e) {
+        } catch (NumberFormatException e) {
             UIHelper.mostrarToastError(this, getString(R.string.error_conexion));
         }
     }
 
-    // Añade al JSON el valor decimal del campo indicado, solo si no está vacío.
-    private void putDecimal(JSONObject body, String key, TextInputEditText et) throws JSONException {
+    // Añade al cuerpo el valor decimal del campo indicado, solo si no está vacío.
+    private void putDecimal(Map<String, Object> body, String key, TextInputEditText et) {
         if (et.getText() == null) return;
         String val = et.getText().toString().trim();
         if (!val.isEmpty()) body.put(key, new BigDecimal(val));

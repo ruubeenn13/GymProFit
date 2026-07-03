@@ -18,17 +18,19 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.medicion.MedicionCorporal;
 import es.pmdm.gymprofit.model.usuario.Usuario;
 import es.pmdm.gymprofit.network.API;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.MedicionApi;
 import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.utils.PreferencesManager;
@@ -49,6 +51,8 @@ public class MedicionesActivity extends AppCompatActivity {
     private TextView tvCinturaVal, tvPechoVal, tvBrazosVal, tvPiernasVal, tvNotasVal;
     private PreferencesManager prefsManager;
     private MedicionCorporal ultimaMedicion;
+    // Interfaz Retrofit tipada del dominio mediciones (etapa 2)
+    private final MedicionApi medicionApi = ApiClient.service(MedicionApi.class);
 
     private ActivityResultLauncher<Intent> nuevaLauncher;
 
@@ -139,24 +143,21 @@ public class MedicionesActivity extends AppCompatActivity {
         int usuarioId = prefsManager.getUsuarioId();
         if (usuarioId == -1) return;
 
-        API.getMedicionesDeUsuario(usuarioId, new UtilREST.OnResponseListener() {
+        // Respuesta ya deserializada a POJOs por Gson (sin UtilJSONParser).
+        medicionApi.getOrdenadas(usuarioId).enqueue(new ApiCallback<List<MedicionCorporal>>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
-                try {
-                    List<MedicionCorporal> lista = UtilJSONParser.parseMedicionList(response);
-                    if (lista == null || lista.isEmpty()) {
-                        intentarCrearDesdePerfil(usuarioId);
-                    } else {
-                        ultimaMedicion = lista.get(0);
-                        runOnUiThread(() -> mostrarMedicion());
-                    }
-                } catch (JSONException e) {
-                    runOnUiThread(() -> mostrarVacio());
+            public void onOk(List<MedicionCorporal> lista) {
+                if (lista == null || lista.isEmpty()) {
+                    intentarCrearDesdePerfil(usuarioId);
+                } else {
+                    ultimaMedicion = lista.get(0);
+                    mostrarMedicion();
                 }
             }
 
             @Override
-            public void onError(String message, int statusCode) {
+            public void onFail(int code, String message) {
+                // Sin mediciones o error de lectura: intenta sembrar una desde el perfil.
                 intentarCrearDesdePerfil(usuarioId);
             }
         });
@@ -172,28 +173,28 @@ public class MedicionesActivity extends AppCompatActivity {
                     Usuario u = UtilJSONParser.parseUsuario(response);
                     String pesoStr = (u != null && u.getPeso() != null) ? u.getPeso().trim() : "";
                     if (!pesoStr.isEmpty() && !pesoStr.equals("null")) {
-                        JSONObject body = new JSONObject();
+                        Map<String, Object> body = new HashMap<>();
                         body.put("usuarioId", usuarioId);
                         body.put("peso", new BigDecimal(pesoStr));
                         if (u.getAltura() > 0) body.put("altura", u.getAltura());
 
-                        API.crearMedicion(body, new UtilREST.OnResponseListener() {
+                        medicionApi.crear(body).enqueue(new ApiCallback<MedicionCorporal>() {
                             @Override
-                            public void onSuccess(String r, int s) {
+                            public void onOk(MedicionCorporal m) {
                                 cargarMedicion();
                             }
 
                             @Override
-                            public void onError(String msg, int s) {
+                            public void onFail(int code, String msg) {
                                 Log.e("MedicionesActivity", "Error al crear medición desde perfil: " + msg);
-                                runOnUiThread(() -> mostrarVacio());
+                                mostrarVacio();
                             }
                         });
                     } else {
-                        runOnUiThread(() -> mostrarVacio());
+                        mostrarVacio();
                     }
                 } catch (Exception e) {
-                    runOnUiThread(() -> mostrarVacio());
+                    mostrarVacio();
                 }
             }
 
@@ -308,29 +309,29 @@ public class MedicionesActivity extends AppCompatActivity {
     // a la medición actual; recarga los datos al finalizar con éxito.
     private void patchCampo(String campo, String valorStr, boolean esTexto) {
         try {
-            JSONObject body = new JSONObject();
+            // Cuerpo con un solo campo. En texto vacío se envía null explícito (Gson lo
+            // serializa por serializeNulls) para BORRAR el campo, como el antiguo JSONObject.NULL.
+            Map<String, Object> body = new HashMap<>();
             if (esTexto) {
-                body.put(campo, valorStr.isEmpty() ? JSONObject.NULL : valorStr);
+                body.put(campo, valorStr.isEmpty() ? null : valorStr);
             } else {
                 body.put(campo, new BigDecimal(valorStr));
             }
 
-            API.patchMedicion(ultimaMedicion.getId(), body, new UtilREST.OnResponseListener() {
+            medicionApi.patch(ultimaMedicion.getId(), body).enqueue(new ApiCallback<MedicionCorporal>() {
                 @Override
-                public void onSuccess(String response, int statusCode) {
-                    runOnUiThread(() -> {
-                        setResult(RESULT_OK);
-                        cargarMedicion();
-                    });
+                public void onOk(MedicionCorporal m) {
+                    setResult(RESULT_OK);
+                    cargarMedicion();
                 }
 
                 @Override
-                public void onError(String message, int statusCode) {
-                    runOnUiThread(() -> UIHelper.mostrarToastError(
-                            MedicionesActivity.this, getString(R.string.error_conexion)));
+                public void onFail(int code, String message) {
+                    UIHelper.mostrarToastError(
+                            MedicionesActivity.this, getString(R.string.error_conexion));
                 }
             });
-        } catch (JSONException | NumberFormatException e) {
+        } catch (NumberFormatException e) {
             UIHelper.mostrarToastError(this, getString(R.string.error_conexion));
         }
     }

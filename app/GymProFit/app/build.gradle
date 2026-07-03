@@ -73,6 +73,9 @@ dependencies {
     implementation libs.security.crypto
     // Red: Retrofit + OkHttp (motor HTTP, interceptor de token y Authenticator de refresh)
     implementation libs.retrofit.core
+    // Converter Gson: deserializa las respuestas JSON a POJOs tipados (etapa 2)
+    implementation libs.retrofit.gson
+    implementation libs.gson
     implementation libs.okhttp.core
     implementation libs.okhttp.logging
     testImplementation libs.junit

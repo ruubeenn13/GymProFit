@@ -19,8 +19,15 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okhttp3.Route;
 import okhttp3.logging.HttpLoggingInterceptor;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import retrofit2.Call;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
@@ -48,7 +55,9 @@ public class ApiClient {
     // Tipo de contenido JSON para los cuerpos de las peticiones.
     static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
-    private static RawApi rawApi;
+    // Retrofit compartido y caché de servicios (RawApi + interfaces tipadas por dominio).
+    private static Retrofit retrofit;
+    private static final Map<Class<?>, Object> SERVICIOS = new ConcurrentHashMap<>();
 
     // Interfaz Retrofit genérica: la URL completa se pasa por @Url y se devuelve el cuerpo sin parsear.
     public interface RawApi {
@@ -72,16 +81,32 @@ public class ApiClient {
         Call<ResponseBody> upload(@Url String url, @Part MultipartBody.Part part);
     }
 
-    // Devuelve el servicio Retrofit (perezoso y compartido).
-    public static synchronized RawApi api() {
-        if (rawApi == null) {
-            rawApi = crear();
-        }
-        return rawApi;
+    // Devuelve el servicio Retrofit crudo (la fachada basada en String de UtilREST).
+    public static RawApi api() {
+        return service(RawApi.class);
     }
 
-    // Construye el OkHttpClient (interceptor + authenticator + timeouts) y el Retrofit.
-    private static RawApi crear() {
+    // Devuelve (y cachea) una interfaz de servicio Retrofit tipada por dominio (p. ej. MedicionApi).
+    @SuppressWarnings("unchecked")
+    public static <T> T service(Class<T> clazz) {
+        Object s = SERVICIOS.get(clazz);
+        if (s == null) {
+            s = retrofit().create(clazz);
+            SERVICIOS.put(clazz, s);
+        }
+        return (T) s;
+    }
+
+    // Retrofit perezoso y compartido (mismo OkHttpClient + Gson para todos los servicios).
+    private static synchronized Retrofit retrofit() {
+        if (retrofit == null) {
+            retrofit = crear();
+        }
+        return retrofit;
+    }
+
+    // Construye el OkHttpClient (interceptor + authenticator + timeouts) y el Retrofit con Gson.
+    private static Retrofit crear() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         // Solo loguea en debug; en release no expone URLs/cabeceras.
         logging.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BASIC : HttpLoggingInterceptor.Level.NONE);
@@ -94,13 +119,18 @@ public class ApiClient {
                 .authenticator(new TokenAuthenticator())
                 .build();
 
-        Retrofit retrofit = new Retrofit.Builder()
-                // baseUrl es obligatorio, pero cada petición usa la URL absoluta que llega por @Url.
+        // Gson: las interfaces tipadas por dominio deserializan JSON→POJO con este converter.
+        // RawApi sigue funcionando con ResponseBody crudo (el converter no le afecta).
+        // serializeNulls: permite enviar {"campo": null} en cuerpos Map para BORRAR un
+        // campo en un PATCH (equivalente al antiguo JSONObject.NULL). Omitir la clave = sin cambio.
+        Gson gson = new GsonBuilder().serializeNulls().create();
+
+        return new Retrofit.Builder()
+                // baseUrl para paths relativos de las interfaces tipadas; RawApi usa @Url absoluta.
                 .baseUrl(BuildConfig.BASE_URL)
                 .client(client)
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
-
-        return retrofit.create(RawApi.class);
     }
 
     // Añade el token Bearer a las peticiones autenticadas (todas menos las de /auth/).

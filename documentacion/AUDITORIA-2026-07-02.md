@@ -160,7 +160,7 @@ Causa raíz: **ningún controller consulta el principal autenticado; el `userId`
 
 **Fase 3 — Android:**
 10. ✅ Cifrar token (`EncryptedSharedPreferences`) + quitar cleartext (`network-security-config`) + excluir el almacén del backup + fix leak `PerfilActivity`.
-11. ◑ Migrar red a Retrofit+OkHttp+Gson: **ETAPA 1 (motor) HECHA** — `ApiClient` (Retrofit+OkHttp) + `Authenticator` de refresh; `UtilREST` delega manteniendo la fachada; fuera AsyncTask. **PENDIENTE etapa 2 (tipada):** Gson + modelos, eliminar `UtilJSONParser`, Activities a `Callback<T>`.
+11. ◑ Migrar red a Retrofit+OkHttp+Gson: **ETAPA 1 (motor) HECHA**. **ETAPA 2 (tipada) EN CURSO** — F0 infra ✅ (`GsonConverterFactory` en `ApiClient`, `ApiClient.service(Class)` para interfaces tipadas por dominio, `ApiCallback<T>` que mata boilerplate + centraliza 401, `serializeNulls` para PATCH parcial). F1 piloto **Mediciones** ✅ (`MedicionApi` tipada, 2 Activities migradas, validado contra API real: compila + Gson deserializa bien, fecha ISO). Resto por fases: Logros/Home/Ejercicios → Objetivos/Sesiones → Rutinas → Nutrición → Admin → Auth → limpieza (`UtilJSONParser`/`API.java`). Ver [[project_retrofit_etapa2]].
 
 **Fase 4 — Lanzamiento:** ◑ EN CURSO
 12. ~~Docker Compose~~ **descartado.** ✅ **CI (GitHub Actions build+test)** hecho. Pendiente: despliegue **PaaS** (Koyeb/Render free) + **Aiven for MySQL** (gratis) + **Actuator**. Ver `documentacion/DESPLIEGUE.md`.
