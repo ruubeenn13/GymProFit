@@ -56,12 +56,12 @@ jobs:
           java-version: "21"
           cache: maven
 
-      # 3) Build + tests.
-      #    Se sobrescribe SOLO el datasource (host/puerto de la VM);
-      #    el resto del perfil dev (jwt.secret literal, Flyway) se mantiene.
+      # 3) Build + tests con el perfil 'ci' (application-ci.properties: datasource
+      #    a la MariaDB efímera + secreto JWT no productivo). El perfil dev/prod
+      #    NO se versiona, por eso se usa uno propio para CI.
+      #    jOOQ compila desde las fuentes versionadas (src/generated/jooq); no
+      #    se regenera (skip=true), así no hace falta BD en fase de compilación.
       - name: Build & test
         env:
-          SPRING_DATASOURCE_URL: "jdbc:mariadb://127.0.0.1:3306/gymprofit_db?useUnicode=true&characterEncoding=UTF-8"
-          SPRING_DATASOURCE_USERNAME: root
-          SPRING_DATASOURCE_PASSWORD: "12345"
+          SPRING_PROFILES_ACTIVE: ci
         run: sh ./mvnw -B verify

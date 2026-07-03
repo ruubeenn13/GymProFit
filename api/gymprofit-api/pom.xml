@@ -215,7 +215,9 @@
 
 						<target>
 							<packageName>com.gymprofit.api.jooq</packageName>
-							<directory>target/generated-sources/jooq</directory>
+							<!-- Fuentes generadas VERSIONADAS (no en target/): así CI y cualquier
+							     clone compilan offline sin BD. Regenerar con skip=false sobrescribe aquí. -->
+							<directory>src/generated/jooq</directory>
 						</target>
 					</generator>
 				</configuration>
@@ -232,7 +234,7 @@
 						</goals>
 						<configuration>
 							<sources>
-								<source>target/generated-sources/jooq</source>
+								<source>src/generated/jooq</source>
 							</sources>
 						</configuration>
 					</execution>
