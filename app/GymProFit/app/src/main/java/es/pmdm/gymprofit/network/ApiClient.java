@@ -80,13 +80,12 @@ public class ApiClient {
                 .build();
 
         // Gson: las interfaces tipadas por dominio deserializan JSON→POJO con este converter.
-        // RawApi sigue funcionando con ResponseBody crudo (el converter no le afecta).
         // serializeNulls: permite enviar {"campo": null} en cuerpos Map para BORRAR un
         // campo en un PATCH (equivalente al antiguo JSONObject.NULL). Omitir la clave = sin cambio.
         Gson gson = new GsonBuilder().serializeNulls().create();
 
         return new Retrofit.Builder()
-                // baseUrl para paths relativos de las interfaces tipadas; RawApi usa @Url absoluta.
+                // baseUrl para los paths relativos de las interfaces tipadas por dominio.
                 .baseUrl(BuildConfig.BASE_URL)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create(gson))
