@@ -1,5 +1,7 @@
 package es.pmdm.gymprofit.model.rutina;
 
+import com.google.gson.annotations.SerializedName;
+
 // ============================================================
 // Rutina — modelo de datos de una rutina de entrenamiento.
 // Puede ser predefinida (catálogo de la app) o creada por el usuario;
@@ -23,6 +25,8 @@ public class Rutina {
     // Calorías aproximadas que se queman al completarla.
     private int caloriasAproximadas;
     // Indica si es una rutina predefinida del sistema (no creada por el usuario).
+    // En el JSON de la API la clave es "esPredefinida" (mapeo Gson vía @SerializedName).
+    @SerializedName("esPredefinida")
     private boolean predefinida;
     // Id del usuario propietario, si la rutina es personalizada.
     private int usuarioId;

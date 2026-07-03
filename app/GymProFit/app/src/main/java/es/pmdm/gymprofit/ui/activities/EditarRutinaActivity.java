@@ -30,7 +30,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
 import es.pmdm.gymprofit.model.rutina.EjercicioSeleccionado;
+import es.pmdm.gymprofit.model.rutina.RutinaEjercicio;
 import es.pmdm.gymprofit.network.API;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.RutinaApi;
 import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.adapters.EjercicioSeleccionadoAdapter;
@@ -50,6 +54,9 @@ public class EditarRutinaActivity extends AppCompatActivity {
     private TextView tvEjerciciosTitulo;
     private EjercicioSeleccionadoAdapter adapter;
     private PreferencesManager prefsManager;
+
+    // Interfaz Retrofit tipada del dominio rutinas (etapa 2)
+    private final RutinaApi rutinaApi = ApiClient.service(RutinaApi.class);
 
     private final List<EjercicioSeleccionado> ejercicios = new ArrayList<>();
     private int rutinaId;
@@ -137,9 +144,10 @@ public class EditarRutinaActivity extends AppCompatActivity {
     // relaciones rutina-ejercicio) y combina resultados cuando ambas terminan.
     private void cargarEjercicios() {
         final Map<Integer, Ejercicio> ejercicioMap = new HashMap<>();
-        final List<JSONObject> relacionesRaw = new ArrayList<>();
+        final List<RutinaEjercicio> relaciones = new ArrayList<>();
         AtomicInteger pendientes = new AtomicInteger(2);
 
+        // Catálogo de ejercicios (dominio ejercicios: se mantiene la capa vieja).
         API.getEjerciciosActivos(new UtilREST.OnResponseListener() {
             @Override public void onSuccess(String response, int statusCode) {
                 try {
@@ -147,48 +155,43 @@ public class EditarRutinaActivity extends AppCompatActivity {
                         ejercicioMap.put(e.getId(), e);
                 } catch (JSONException ignored) {}
                 if (pendientes.decrementAndGet() == 0)
-                    runOnUiThread(() -> combinarYMostrar(ejercicioMap, relacionesRaw));
+                    runOnUiThread(() -> combinarYMostrar(ejercicioMap, relaciones));
             }
             @Override public void onError(String message, int statusCode) {
                 if (pendientes.decrementAndGet() == 0)
-                    runOnUiThread(() -> combinarYMostrar(ejercicioMap, relacionesRaw));
+                    runOnUiThread(() -> combinarYMostrar(ejercicioMap, relaciones));
             }
         });
 
-        API.getRutinaEjerciciosPorRutina(rutinaId, new UtilREST.OnResponseListener() {
-            @Override public void onSuccess(String response, int statusCode) {
-                try {
-                    JSONArray arr = new JSONArray(response);
-                    for (int i = 0; i < arr.length(); i++)
-                        relacionesRaw.add(arr.getJSONObject(i));
-                } catch (JSONException ignored) {}
+        // Relaciones rutina-ejercicio (ya deserializadas por Gson).
+        rutinaApi.getEjerciciosDeRutina(rutinaId).enqueue(new ApiCallback<List<RutinaEjercicio>>() {
+            @Override public void onOk(List<RutinaEjercicio> lista) {
+                if (lista != null) relaciones.addAll(lista);
                 if (pendientes.decrementAndGet() == 0)
-                    runOnUiThread(() -> combinarYMostrar(ejercicioMap, relacionesRaw));
+                    combinarYMostrar(ejercicioMap, relaciones);
             }
-            @Override public void onError(String message, int statusCode) {
+            @Override public void onFail(int code, String message) {
                 if (pendientes.decrementAndGet() == 0)
-                    runOnUiThread(() -> combinarYMostrar(ejercicioMap, relacionesRaw));
+                    combinarYMostrar(ejercicioMap, relaciones);
             }
         });
     }
 
     // Une cada relación rutina-ejercicio con su Ejercicio del catálogo
     // (o crea uno mínimo con el id si no se encontró) y refresca el adapter.
-    private void combinarYMostrar(Map<Integer, Ejercicio> map, List<JSONObject> relaciones) {
+    private void combinarYMostrar(Map<Integer, Ejercicio> map, List<RutinaEjercicio> relaciones) {
         ejercicios.clear();
-        for (JSONObject obj : relaciones) {
-            try {
-                int ejercicioId = obj.getInt("ejercicioId");
-                int series      = obj.optInt("series", 3);
-                int reps        = obj.optInt("repeticiones", 10);
-                Ejercicio e = map.get(ejercicioId);
-                if (e == null) {
-                    e = new Ejercicio();
-                    e.setId(ejercicioId);
-                    e.setNombre("Ejercicio " + ejercicioId);
-                }
-                ejercicios.add(new EjercicioSeleccionado(e, series, reps));
-            } catch (JSONException ignored) {}
+        for (RutinaEjercicio rel : relaciones) {
+            int ejercicioId = rel.getEjercicioId();
+            int series      = rel.getSeries() > 0 ? rel.getSeries() : 3;
+            int reps        = rel.getRepeticiones() > 0 ? rel.getRepeticiones() : 10;
+            Ejercicio e = map.get(ejercicioId);
+            if (e == null) {
+                e = new Ejercicio();
+                e.setId(ejercicioId);
+                e.setNombre("Ejercicio " + ejercicioId);
+            }
+            ejercicios.add(new EjercicioSeleccionado(e, series, reps));
         }
         adapter.notifyDataSetChanged();
         actualizarTitulo();
@@ -197,18 +200,16 @@ public class EditarRutinaActivity extends AppCompatActivity {
     // Elimina la relación rutina-ejercicio en la API y, si tiene éxito,
     // lo quita también de la lista local y refresca el adapter.
     private void eliminarEjercicio(EjercicioSeleccionado item) {
-        API.eliminarEjercicioDeRutina(rutinaId, item.getEjercicio().getId(),
-                new UtilREST.OnResponseListener() {
-                    @Override public void onSuccess(String r, int s) {
-                        runOnUiThread(() -> {
-                            ejercicios.remove(item);
-                            adapter.notifyDataSetChanged();
-                            actualizarTitulo();
-                        });
+        rutinaApi.eliminarEjercicio(rutinaId, item.getEjercicio().getId())
+                .enqueue(new ApiCallback<Void>() {
+                    @Override public void onOk(Void body) {
+                        ejercicios.remove(item);
+                        adapter.notifyDataSetChanged();
+                        actualizarTitulo();
                     }
-                    @Override public void onError(String m, int s) {
-                        runOnUiThread(() -> UIHelper.mostrarToastError(EditarRutinaActivity.this,
-                                getString(R.string.error_conexion)));
+                    @Override public void onFail(int code, String message) {
+                        UIHelper.mostrarToastError(EditarRutinaActivity.this,
+                                getString(R.string.error_conexion));
                     }
                 });
     }
@@ -242,21 +243,19 @@ public class EditarRutinaActivity extends AppCompatActivity {
                 ejercicios.add(new EjercicioSeleccionado(e,
                         obj.optInt("series", 3), obj.optInt("repeticiones", 10)));
 
-                try {
-                    JSONObject body = new JSONObject();
-                    body.put("rutinaId",     rutinaId);
-                    body.put("ejercicioId",  ejercicioId);
-                    body.put("series",       obj.optInt("series", 3));
-                    body.put("repeticiones", obj.optInt("repeticiones", 10));
-                    body.put("orden",        ejercicios.size());
-                    API.addEjercicioARutina(body, new UtilREST.OnResponseListener() {
-                        @Override public void onSuccess(String r, int s) {}
-                        @Override public void onError(String m, int s) {
-                            runOnUiThread(() -> UIHelper.mostrarToastError(
-                                    EditarRutinaActivity.this, getString(R.string.error_conexion)));
-                        }
-                    });
-                } catch (JSONException ignored) {}
+                Map<String, Object> body = new HashMap<>();
+                body.put("rutinaId",     rutinaId);
+                body.put("ejercicioId",  ejercicioId);
+                body.put("series",       obj.optInt("series", 3));
+                body.put("repeticiones", obj.optInt("repeticiones", 10));
+                body.put("orden",        ejercicios.size());
+                rutinaApi.addEjercicio(body).enqueue(new ApiCallback<Void>() {
+                    @Override public void onOk(Void b) {}
+                    @Override public void onFail(int code, String message) {
+                        UIHelper.mostrarToastError(
+                                EditarRutinaActivity.this, getString(R.string.error_conexion));
+                    }
+                });
             }
             adapter.notifyDataSetChanged();
             actualizarTitulo();
@@ -274,30 +273,24 @@ public class EditarRutinaActivity extends AppCompatActivity {
         if (desc.isEmpty()) { UIHelper.mostrarToastError(this, getString(R.string.error_campo_requerido)); etDescripcion.requestFocus(); return; }
         if (dur.isEmpty())  { UIHelper.mostrarToastError(this, getString(R.string.error_campo_requerido)); etDuracion.requestFocus(); return; }
 
-        try {
-            JSONObject body = new JSONObject();
-            body.put("nombre",          nom);
-            body.put("descripcion",     desc);
-            body.put("nivel",           obtenerNivel());
-            body.put("duracionMinutos", Integer.parseInt(dur));
+        Map<String, Object> body = new HashMap<>();
+        body.put("nombre",          nom);
+        body.put("descripcion",     desc);
+        body.put("nivel",           obtenerNivel());
+        body.put("duracionMinutos", Integer.parseInt(dur));
 
-            API.patchRutina(rutinaId, body, new UtilREST.OnResponseListener() {
-                @Override public void onSuccess(String response, int statusCode) {
-                    runOnUiThread(() -> {
-                        UIHelper.mostrarToastExito(EditarRutinaActivity.this,
-                                getString(R.string.editar_rutina_guardado));
-                        setResult(RESULT_OK);
-                        finish();
-                    });
-                }
-                @Override public void onError(String message, int statusCode) {
-                    runOnUiThread(() -> UIHelper.mostrarToastError(EditarRutinaActivity.this,
-                            getString(R.string.error_conexion)));
-                }
-            });
-        } catch (JSONException e) {
-            UIHelper.mostrarToastError(this, getString(R.string.error_conexion));
-        }
+        rutinaApi.patch(rutinaId, body).enqueue(new ApiCallback<Void>() {
+            @Override public void onOk(Void b) {
+                UIHelper.mostrarToastExito(EditarRutinaActivity.this,
+                        getString(R.string.editar_rutina_guardado));
+                setResult(RESULT_OK);
+                finish();
+            }
+            @Override public void onFail(int code, String message) {
+                UIHelper.mostrarToastError(EditarRutinaActivity.this,
+                        getString(R.string.error_conexion));
+            }
+        });
     }
 
     // Actualiza el título de la sección con el número de ejercicios cargados.

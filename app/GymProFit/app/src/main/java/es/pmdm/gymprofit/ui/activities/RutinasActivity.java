@@ -13,17 +13,15 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.rutina.Rutina;
-import es.pmdm.gymprofit.network.API;
-import es.pmdm.gymprofit.network.UtilJSONParser;
-import es.pmdm.gymprofit.network.UtilREST;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.RutinaApi;
 import es.pmdm.gymprofit.ui.adapters.RutinaAdapter;
 import es.pmdm.gymprofit.utils.UIHelper;
 
@@ -40,6 +38,9 @@ public class RutinasActivity extends BaseActivity {
     private RutinaAdapter adapter;
     private ChipGroup chipGroupNivel;
     private FloatingActionButton fabCrearRutina;
+
+    // Interfaz Retrofit tipada del dominio rutinas (etapa 2)
+    private final RutinaApi rutinaApi = ApiClient.service(RutinaApi.class);
 
     private ActivityResultLauncher<Intent> crearRutinaLauncher;
     private ActivityResultLauncher<Intent> detalleLauncher;
@@ -118,40 +119,32 @@ public class RutinasActivity extends BaseActivity {
     private void cargarRutinas() {
         int usuarioId = prefsManager.getUsuarioId();
 
-        API.getRutinasPredefinidas(new UtilREST.OnResponseListener() {
+        // Rutinas predefinidas (ya deserializadas por Gson).
+        rutinaApi.getPredefinidas().enqueue(new ApiCallback<List<Rutina>>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
-                try {
-                    List<Rutina> predefinidas = UtilJSONParser.parseRutinaList(response);
-                    List<Rutina> todas = new ArrayList<>(predefinidas);
+            public void onOk(List<Rutina> predefinidas) {
+                List<Rutina> todas = new ArrayList<>(predefinidas != null ? predefinidas : new ArrayList<>());
 
-                    if (usuarioId != -1) {
-                        API.getRutinasDeUsuario(usuarioId, new UtilREST.OnResponseListener() {
-                            @Override
-                            public void onSuccess(String response2, int statusCode2) {
-                                try {
-                                    todas.addAll(UtilJSONParser.parseRutinaList(response2));
-                                } catch (JSONException e) {
-                                    android.util.Log.e("RutinasActivity", "Error parseando rutinas usuario", e);
-                                }
-                                adapter.setRutinas(todas);
-                            }
-
-                            @Override
-                            public void onError(String message, int statusCode2) {
-                                adapter.setRutinas(todas);
-                            }
-                        });
-                    } else {
-                        adapter.setRutinas(todas);
-                    }
-                } catch (JSONException e) {
-                    android.util.Log.e("RutinasActivity", "Error parseando rutinas predefinidas", e);
+                if (usuarioId != -1) {
+                    // Añade las rutinas propias del usuario a las predefinidas.
+                    rutinaApi.getDeUsuarioActivas(usuarioId).enqueue(new ApiCallback<List<Rutina>>() {
+                        @Override
+                        public void onOk(List<Rutina> propias) {
+                            if (propias != null) todas.addAll(propias);
+                            adapter.setRutinas(todas);
+                        }
+                        @Override
+                        public void onFail(int code, String message) {
+                            adapter.setRutinas(todas);
+                        }
+                    });
+                } else {
+                    adapter.setRutinas(todas);
                 }
             }
 
             @Override
-            public void onError(String message, int statusCode) {
+            public void onFail(int code, String message) {
                 android.util.Log.e("RutinasActivity", "Error cargando rutinas: " + message);
             }
         });
@@ -208,44 +201,40 @@ public class RutinasActivity extends BaseActivity {
 
     // Activa o desactiva una rutina predefinida (solo admin) y recarga el listado.
     private void toggleActivaRutinaPredefinida(Rutina rutina) {
-        UtilREST.OnResponseListener cb = new UtilREST.OnResponseListener() {
+        ApiCallback<Void> cb = new ApiCallback<Void>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
-                runOnUiThread(() -> {
-                    UIHelper.mostrarToastExito(RutinasActivity.this,
-                            getString(R.string.admin_exito_toggle_rutina));
-                    cargarRutinas();
-                });
+            public void onOk(Void body) {
+                UIHelper.mostrarToastExito(RutinasActivity.this,
+                        getString(R.string.admin_exito_toggle_rutina));
+                cargarRutinas();
             }
             @Override
-            public void onError(String message, int statusCode) {
-                runOnUiThread(() -> UIHelper.mostrarToastError(
-                        RutinasActivity.this, getString(R.string.error_conexion)));
+            public void onFail(int code, String message) {
+                UIHelper.mostrarToastError(
+                        RutinasActivity.this, getString(R.string.error_conexion));
             }
         };
+        // Desactivar = DELETE rutinas/{id}; activar = PUT rutinas/{id}/activar.
         if (rutina.isActiva()) {
-            API.adminDesactivarRutina(rutina.getId(), cb);
+            rutinaApi.eliminar(rutina.getId()).enqueue(cb);
         } else {
-            API.adminActivarRutina(rutina.getId(), cb);
+            rutinaApi.activar(rutina.getId()).enqueue(cb);
         }
     }
 
     // Elimina una rutina propia del usuario y recarga el listado.
     private void eliminarRutina(Rutina rutina) {
-        API.eliminarRutina(rutina.getId(), new UtilREST.OnResponseListener() {
+        rutinaApi.eliminar(rutina.getId()).enqueue(new ApiCallback<Void>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
-                runOnUiThread(() -> {
-                    UIHelper.mostrarToastExito(RutinasActivity.this,
-                            getString(R.string.rutinas_eliminada_exito));
-                    cargarRutinas();
-                });
+            public void onOk(Void body) {
+                UIHelper.mostrarToastExito(RutinasActivity.this,
+                        getString(R.string.rutinas_eliminada_exito));
+                cargarRutinas();
             }
-
             @Override
-            public void onError(String message, int statusCode) {
-                runOnUiThread(() -> UIHelper.mostrarToastError(
-                        RutinasActivity.this, getString(R.string.error_conexion)));
+            public void onFail(int code, String message) {
+                UIHelper.mostrarToastError(
+                        RutinasActivity.this, getString(R.string.error_conexion));
             }
         });
     }

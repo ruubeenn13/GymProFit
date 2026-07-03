@@ -17,15 +17,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
 import es.pmdm.gymprofit.model.rutina.EjercicioSeleccionado;
-import es.pmdm.gymprofit.network.API;
-import es.pmdm.gymprofit.network.UtilREST;
+import es.pmdm.gymprofit.model.rutina.Rutina;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.RutinaApi;
 import es.pmdm.gymprofit.ui.adapters.EjercicioSeleccionadoAdapter;
 import es.pmdm.gymprofit.utils.NotificationHelper;
 import es.pmdm.gymprofit.utils.PreferencesManager;
@@ -43,6 +47,9 @@ public class ResumenCrearRutinaActivity extends AppCompatActivity {
     private EjercicioSeleccionadoAdapter adapter;
     private TextView tvEjerciciosTitulo;
     private PreferencesManager prefsManager;
+
+    // Interfaz Retrofit tipada del dominio rutinas (etapa 2)
+    private final RutinaApi rutinaApi = ApiClient.service(RutinaApi.class);
 
     private String nombre, descripcion, nivel;
     private int duracion;
@@ -166,36 +173,28 @@ public class ResumenCrearRutinaActivity extends AppCompatActivity {
     // Crea la rutina en la API con los datos generales; si tiene ejercicios,
     // encadena la creación de cada relación rutina-ejercicio.
     private void guardarRutina() {
-        try {
-            JSONObject body = new JSONObject();
-            body.put("nombre", nombre);
-            body.put("descripcion", descripcion);
-            body.put("nivel", nivel);
-            body.put("duracionMinutos", duracion);
-            body.put("usuarioId", prefsManager.getUsuarioId());
-            body.put("esPredefinida", false);
+        Map<String, Object> body = new HashMap<>();
+        body.put("nombre", nombre);
+        body.put("descripcion", descripcion);
+        body.put("nivel", nivel);
+        body.put("duracionMinutos", duracion);
+        body.put("usuarioId", prefsManager.getUsuarioId());
+        body.put("esPredefinida", false);
 
-            API.crearRutina(body, new UtilREST.OnResponseListener() {
-                @Override public void onSuccess(String response, int statusCode) {
-                    try {
-                        int rutinaId = new JSONObject(response).optInt("id", -1);
-                        if (rutinaId != -1 && !ejercicios.isEmpty()) {
-                            addEjercicios(rutinaId);
-                        } else {
-                            runOnUiThread(() -> finalizar());
-                        }
-                    } catch (JSONException e) {
-                        runOnUiThread(() -> finalizar());
-                    }
+        rutinaApi.crear(body).enqueue(new ApiCallback<Rutina>() {
+            @Override public void onOk(Rutina rutina) {
+                int rutinaId = rutina != null ? rutina.getId() : -1;
+                if (rutinaId != -1 && !ejercicios.isEmpty()) {
+                    addEjercicios(rutinaId);
+                } else {
+                    finalizar();
                 }
-                @Override public void onError(String message, int statusCode) {
-                    runOnUiThread(() -> UIHelper.mostrarToastError(ResumenCrearRutinaActivity.this,
-                            getString(R.string.error_conexion)));
-                }
-            });
-        } catch (JSONException e) {
-            UIHelper.mostrarToastError(this, getString(R.string.error_conexion));
-        }
+            }
+            @Override public void onFail(int code, String message) {
+                UIHelper.mostrarToastError(ResumenCrearRutinaActivity.this,
+                        getString(R.string.error_conexion));
+            }
+        });
     }
 
     // Añade cada ejercicio seleccionado a la rutina creada, respetando su
@@ -206,24 +205,20 @@ public class ResumenCrearRutinaActivity extends AppCompatActivity {
         for (int i = 0; i < copia.size(); i++) {
             EjercicioSeleccionado sel = copia.get(i);
             int orden = i + 1;
-            try {
-                JSONObject body = new JSONObject();
-                body.put("rutinaId",     rutinaId);
-                body.put("ejercicioId",  sel.getEjercicio().getId());
-                body.put("series",       sel.getSeries());
-                body.put("repeticiones", sel.getRepeticiones());
-                body.put("orden",        orden);
-                API.addEjercicioARutina(body, new UtilREST.OnResponseListener() {
-                    @Override public void onSuccess(String r, int s) {
-                        if (pendientes.decrementAndGet() == 0) runOnUiThread(() -> finalizar());
-                    }
-                    @Override public void onError(String m, int s) {
-                        if (pendientes.decrementAndGet() == 0) runOnUiThread(() -> finalizar());
-                    }
-                });
-            } catch (JSONException e) {
-                if (pendientes.decrementAndGet() == 0) runOnUiThread(() -> finalizar());
-            }
+            Map<String, Object> body = new HashMap<>();
+            body.put("rutinaId",     rutinaId);
+            body.put("ejercicioId",  sel.getEjercicio().getId());
+            body.put("series",       sel.getSeries());
+            body.put("repeticiones", sel.getRepeticiones());
+            body.put("orden",        orden);
+            rutinaApi.addEjercicio(body).enqueue(new ApiCallback<Void>() {
+                @Override public void onOk(Void b) {
+                    if (pendientes.decrementAndGet() == 0) finalizar();
+                }
+                @Override public void onFail(int code, String message) {
+                    if (pendientes.decrementAndGet() == 0) finalizar();
+                }
+            });
         }
     }
 

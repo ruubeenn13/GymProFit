@@ -17,9 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +29,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
 import es.pmdm.gymprofit.model.rutina.EjercicioSeleccionado;
+import es.pmdm.gymprofit.model.rutina.RutinaEjercicio;
 import es.pmdm.gymprofit.network.API;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.RutinaApi;
 import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.adapters.EjercicioSeleccionadoAdapter;
@@ -51,6 +53,9 @@ public class DetalleRutinaActivity extends AppCompatActivity {
     private EjercicioSeleccionadoAdapter adapter;
     private TextView tvEjerciciosTitulo;
     private PreferencesManager prefsManager;
+
+    // Interfaz Retrofit tipada del dominio rutinas (etapa 2)
+    private final RutinaApi rutinaApi = ApiClient.service(RutinaApi.class);
 
     private int rutinaId;
     private String nombre, descripcion, nivel;
@@ -145,9 +150,10 @@ public class DetalleRutinaActivity extends AppCompatActivity {
     // relaciones rutina-ejercicio) y combina resultados cuando ambas terminan.
     private void cargarEjercicios() {
         final Map<Integer, Ejercicio> ejercicioMap = new HashMap<>();
-        final List<JSONObject> relacionesRaw = new ArrayList<>();
+        final List<RutinaEjercicio> relaciones = new ArrayList<>();
         AtomicInteger pendientes = new AtomicInteger(2);
 
+        // Catálogo de ejercicios (dominio ejercicios: se mantiene la capa vieja).
         API.getEjerciciosActivos(new UtilREST.OnResponseListener() {
             @Override public void onSuccess(String response, int statusCode) {
                 try {
@@ -155,49 +161,44 @@ public class DetalleRutinaActivity extends AppCompatActivity {
                         ejercicioMap.put(e.getId(), e);
                 } catch (JSONException ignored) {}
                 if (pendientes.decrementAndGet() == 0)
-                    runOnUiThread(() -> combinarYMostrar(ejercicioMap, relacionesRaw));
+                    runOnUiThread(() -> combinarYMostrar(ejercicioMap, relaciones));
             }
             @Override public void onError(String message, int statusCode) {
                 if (pendientes.decrementAndGet() == 0)
-                    runOnUiThread(() -> combinarYMostrar(ejercicioMap, relacionesRaw));
+                    runOnUiThread(() -> combinarYMostrar(ejercicioMap, relaciones));
             }
         });
 
-        API.getRutinaEjerciciosPorRutina(rutinaId, new UtilREST.OnResponseListener() {
-            @Override public void onSuccess(String response, int statusCode) {
-                try {
-                    JSONArray arr = new JSONArray(response);
-                    for (int i = 0; i < arr.length(); i++)
-                        relacionesRaw.add(arr.getJSONObject(i));
-                } catch (JSONException ignored) {}
+        // Relaciones rutina-ejercicio (ya deserializadas por Gson).
+        rutinaApi.getEjerciciosDeRutina(rutinaId).enqueue(new ApiCallback<List<RutinaEjercicio>>() {
+            @Override public void onOk(List<RutinaEjercicio> lista) {
+                if (lista != null) relaciones.addAll(lista);
                 if (pendientes.decrementAndGet() == 0)
-                    runOnUiThread(() -> combinarYMostrar(ejercicioMap, relacionesRaw));
+                    combinarYMostrar(ejercicioMap, relaciones);
             }
-            @Override public void onError(String message, int statusCode) {
+            @Override public void onFail(int code, String message) {
                 // 404 = sin ejercicios
                 if (pendientes.decrementAndGet() == 0)
-                    runOnUiThread(() -> combinarYMostrar(ejercicioMap, relacionesRaw));
+                    combinarYMostrar(ejercicioMap, relaciones);
             }
         });
     }
 
     // Une cada relación rutina-ejercicio con su Ejercicio del catálogo
     // (o crea uno mínimo con el id si no se encontró) y refresca el adapter.
-    private void combinarYMostrar(Map<Integer, Ejercicio> map, List<JSONObject> relaciones) {
+    private void combinarYMostrar(Map<Integer, Ejercicio> map, List<RutinaEjercicio> relaciones) {
         ejercicios.clear();
-        for (JSONObject obj : relaciones) {
-            try {
-                int ejercicioId = obj.getInt("ejercicioId");
-                int series      = obj.optInt("series", 3);
-                int reps        = obj.optInt("repeticiones", 10);
-                Ejercicio e = map.get(ejercicioId);
-                if (e == null) {
-                    e = new Ejercicio();
-                    e.setId(ejercicioId);
-                    e.setNombre("Ejercicio " + ejercicioId);
-                }
-                ejercicios.add(new EjercicioSeleccionado(e, series, reps));
-            } catch (JSONException ignored) {}
+        for (RutinaEjercicio rel : relaciones) {
+            int ejercicioId = rel.getEjercicioId();
+            int series      = rel.getSeries() > 0 ? rel.getSeries() : 3;
+            int reps        = rel.getRepeticiones() > 0 ? rel.getRepeticiones() : 10;
+            Ejercicio e = map.get(ejercicioId);
+            if (e == null) {
+                e = new Ejercicio();
+                e.setId(ejercicioId);
+                e.setNombre("Ejercicio " + ejercicioId);
+            }
+            ejercicios.add(new EjercicioSeleccionado(e, series, reps));
         }
         adapter.notifyDataSetChanged();
         actualizarTitulo();
