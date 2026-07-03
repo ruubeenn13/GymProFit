@@ -64,4 +64,7 @@ jobs:
       - name: Build & test
         env:
           SPRING_PROFILES_ACTIVE: ci
+          # El logback escribe en /home/ubuntu/logs por defecto (ruta del server);
+          # en el runner se redirige a un dir escribible del temporal.
+          LOG_DIR: ${{ runner.temp }}/gymprofit-logs
         run: sh ./mvnw -B verify

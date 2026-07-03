@@ -5,8 +5,10 @@
 -->
 <configuration>
 
-    <!-- Directorio y nombre base de los ficheros de log -->
-    <property name="LOG_DIR" value="/home/ubuntu/logs"/>
+    <!-- Directorio y nombre base de los ficheros de log.
+         LOG_DIR es overridable por variable de entorno/propiedad (para CI u otros
+         entornos donde /home/ubuntu/logs no existe); si no se define, usa el default. -->
+    <property name="LOG_DIR" value="${LOG_DIR:-/home/ubuntu/logs}"/>
     <property name="LOG_NAME" value="gymprofit"/>
 
     <!-- Configuración por defecto de Spring Boot (patrones y conversores estándar) -->
