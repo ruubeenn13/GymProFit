@@ -28,6 +28,18 @@ El proyecto usa **MySQL/MariaDB**; las PaaS gratuitas (Render, Koyeb) **no ofrec
 
 > Limitación común del compute gratis: **cold start** (~1 min) tras inactividad. Aceptable para un TFG/demo; para producción real se pasaría a un plan de pago o VM.
 
+## Estado 2026-07-03 — preparación de código HECHA
+
+Compute elegido: **Render** (más simple para empezar; auto-deploy desde Git, soporta monorepo con Root Directory y Docker). BD: **Aiven for MySQL** (ya con cuenta).
+
+Artefactos añadidos al repo (verificados en local: 136 tests verdes + `/api/actuator/health` → `200 {"status":"UP"}`):
+- **Actuator**: `spring-boot-starter-actuator`; en `application.properties` solo `health` expuesto, `show-details=never`; `/actuator/health` público en `SecurityConfig`.
+- **`application-prod.properties` versionado y 12-factor**: datasource + `JWT_SECRET` por variables de entorno (cero secretos en git); `server.port=${PORT:8080}`; dialecto Hibernate autodetectado (MySQL de Aiven); Swagger off. Se quitó del `.gitignore` (dev sigue ignorado).
+- **`Dockerfile`** multi-stage (JDK21 build → JRE21 run), `LOG_DIR=/tmp/logs`, `SPRING_PROFILES_ACTIVE=prod`, arranca por `$PORT`. `.dockerignore` incluido.
+- **`render.yaml`** (Blueprint en raíz): servicio web docker, `rootDir: api/gymprofit-api`, `healthCheckPath: /api/actuator/health`, env vars de secretos marcadas `sync:false`.
+
+Pendiente (clics de cuenta, con guía): crear MySQL en Aiven → copiar credenciales → conectar repo en Render (Blueprint) → pegar env vars → verificar health público → apuntar Android `BASE_URL`.
+
 ## Pasos de migración pendientes (cuando se despliegue)
 
 1. **BD**: crear instancia Aiven for MySQL; volcar el esquema con Flyway (las migraciones `V*.sql` corren solas al arrancar).

@@ -107,6 +107,10 @@ public class SecurityConfig {
                                 // Sin /api/ porque Spring Security evalúa sin el context-path
                                 .requestMatchers("/auth/**").permitAll()
 
+                                // Health-check público para la PaaS (Render/Koyeb).
+                                // Sin context-path porque Spring Security evalúa sin /api.
+                                .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
+
                                 // Swagger público
                                 .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/webjars/**").permitAll()
 

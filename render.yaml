@@ -1,0 +1,28 @@
+# ============================================================
+# Render Blueprint — despliegue de la API GymProFit.
+# Render lee este fichero en la raíz del repo (New > Blueprint) y crea el
+# servicio web ya configurado. Los secretos (BD Aiven, JWT) se rellenan una
+# vez en el dashboard (marcados sync:false, no se versionan).
+# ============================================================
+services:
+  - type: web
+    name: gymprofit-api
+    runtime: docker
+    plan: free
+    region: frankfurt                      # más cerca de España; cambia si prefieres
+    rootDir: api/gymprofit-api             # monorepo: construye desde el módulo de la API
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/actuator/health  # context-path /api + actuator health
+    autoDeploy: true                       # redepliega en cada push a la rama conectada
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      # --- Secretos: se rellenan en el dashboard de Render (no en git) ---
+      - key: SPRING_DATASOURCE_URL         # jdbc:mariadb://<host-aiven>:<puerto>/<db>?sslMode=REQUIRE
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME    # usuario de Aiven (avnadmin)
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD    # password de Aiven
+        sync: false
+      - key: JWT_SECRET                    # secreto aleatorio propio de producción (Base64)
+        sync: false
