@@ -1,5 +1,7 @@
 package es.pmdm.gymprofit.model.sesion;
 
+import java.util.List;
+
 // ============================================================
 // SesionEntrenamiento — modelo de datos de una sesión de entrenamiento.
 // Registra la ejecución concreta de una rutina por parte de un usuario
@@ -26,6 +28,9 @@ public class SesionEntrenamiento {
     private String notas;
     // Indica si la sesión se completó.
     private boolean completada;
+    // Logros nuevos desbloqueados al crear la sesión (solo lo emite el POST de
+    // creación; en las lecturas viene null). La clave JSON coincide con el campo.
+    private List<String> nuevosLogros;
 
     public SesionEntrenamiento() {}
 
@@ -55,4 +60,7 @@ public class SesionEntrenamiento {
 
     public boolean isCompletada() { return completada; }
     public void setCompletada(boolean completada) { this.completada = completada; }
+
+    public List<String> getNuevosLogros() { return nuevosLogros; }
+    public void setNuevosLogros(List<String> nuevosLogros) { this.nuevosLogros = nuevosLogros; }
 }

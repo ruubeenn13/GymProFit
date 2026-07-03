@@ -16,6 +16,7 @@ import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.medicion.MedicionCorporal;
+import es.pmdm.gymprofit.utils.FechaUtils;
 
 // ============================================================
 // MedicionAdapter — adapter de RecyclerView para el historial de mediciones corporales.
@@ -63,7 +64,7 @@ public class MedicionAdapter extends RecyclerView.Adapter<MedicionAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder h, int position) {
         MedicionCorporal m = items.get(position);
 
-        h.tvFecha.setText(m.getFecha().isEmpty() ? "—" : m.getFecha());
+        h.tvFecha.setText(m.getFecha().isEmpty() ? "—" : FechaUtils.formatearFechaHora(m.getFecha()));
         h.tvPeso.setText(String.format(Locale.getDefault(), "%.1f kg", m.getPeso()));
 
         if (m.getImc() > 0) {

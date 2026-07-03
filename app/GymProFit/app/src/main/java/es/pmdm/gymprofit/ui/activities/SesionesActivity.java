@@ -26,6 +26,9 @@ import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.rutina.Rutina;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
 import es.pmdm.gymprofit.network.API;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.adapters.SesionAdapter;
@@ -43,6 +46,8 @@ public class SesionesActivity extends AppCompatActivity {
     private View tvVacio;
     private SesionAdapter adapter;
     private PreferencesManager prefsManager;
+    // Interfaz Retrofit tipada del dominio sesiones (etapa 2)
+    private final SesionApi sesionApi = ApiClient.service(SesionApi.class);
 
     private final List<SesionEntrenamiento> sesiones = new ArrayList<>();
     private final Map<Integer, String> rutinaNombres = new HashMap<>();
@@ -97,21 +102,16 @@ public class SesionesActivity extends AppCompatActivity {
         });
     }
 
-    // Obtiene las sesiones de entrenamiento del usuario y las muestra en el hilo de UI.
+    // Obtiene las sesiones de entrenamiento del usuario (ya deserializadas por Gson) y las muestra.
     private void cargarSesiones(int usuarioId) {
-        API.getSesionesDeUsuario(usuarioId, new UtilREST.OnResponseListener() {
+        sesionApi.getDeUsuario(usuarioId).enqueue(new ApiCallback<List<SesionEntrenamiento>>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
-                try {
-                    List<SesionEntrenamiento> lista = UtilJSONParser.parseSesionList(response);
-                    runOnUiThread(() -> mostrar(lista));
-                } catch (JSONException e) {
-                    runOnUiThread(() -> mostrar(new ArrayList<>()));
-                }
+            public void onOk(List<SesionEntrenamiento> lista) {
+                mostrar(lista != null ? lista : new ArrayList<>());
             }
             @Override
-            public void onError(String message, int statusCode) {
-                runOnUiThread(() -> mostrar(new ArrayList<>()));
+            public void onFail(int code, String message) {
+                mostrar(new ArrayList<>());
             }
         });
     }
@@ -151,15 +151,15 @@ public class SesionesActivity extends AppCompatActivity {
 
     // Elimina una sesión de entrenamiento y recarga el historial.
     private void eliminarSesion(SesionEntrenamiento sesion) {
-        API.eliminarSesion(sesion.getId(), new UtilREST.OnResponseListener() {
+        sesionApi.eliminar(sesion.getId()).enqueue(new ApiCallback<Void>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
-                runOnUiThread(() -> cargarDatos());
+            public void onOk(Void body) {
+                cargarDatos();
             }
             @Override
-            public void onError(String message, int statusCode) {
-                runOnUiThread(() -> UIHelper.mostrarToastError(
-                        SesionesActivity.this, getString(R.string.error_conexion)));
+            public void onFail(int code, String message) {
+                UIHelper.mostrarToastError(
+                        SesionesActivity.this, getString(R.string.error_conexion));
             }
         });
     }

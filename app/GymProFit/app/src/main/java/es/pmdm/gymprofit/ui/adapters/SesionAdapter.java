@@ -15,6 +15,7 @@ import java.util.Map;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
+import es.pmdm.gymprofit.utils.FechaUtils;
 
 // ============================================================
 // SesionAdapter — adaptador RecyclerView para el listado de sesiones de entrenamiento.
@@ -66,7 +67,7 @@ public class SesionAdapter extends RecyclerView.Adapter<SesionAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder h, int position) {
         SesionEntrenamiento s = items.get(position);
 
-        h.tvFecha.setText(s.getFechaInicio().isEmpty() ? "—" : s.getFechaInicio());
+        h.tvFecha.setText(s.getFechaInicio().isEmpty() ? "—" : FechaUtils.formatearFechaHora(s.getFechaInicio()));
 
         String rutinaNombre = rutinaNombres.get(s.getRutinaId());
         h.tvRutina.setText(rutinaNombre != null ? rutinaNombre

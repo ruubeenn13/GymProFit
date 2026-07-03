@@ -21,16 +21,23 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.rutina.Rutina;
+import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
 import es.pmdm.gymprofit.network.API;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.adapters.EjercicioPesoAdapter;
@@ -51,6 +58,8 @@ public class RegistrarSesionActivity extends AppCompatActivity {
     private View cardCalorias, cardEjercicios;
     private RatingBar ratingBar;
     private PreferencesManager prefsManager;
+    // Interfaz Retrofit tipada del dominio sesiones (etapa 2)
+    private final SesionApi sesionApi = ApiClient.service(SesionApi.class);
 
     private int caloriasCalculadas = 0;
     private final List<Rutina> rutinas = new ArrayList<>();
@@ -211,7 +220,8 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         }
 
         try {
-            JSONObject body = new JSONObject();
+            // Cuerpo de creación como Map<String,Object> (Gson lo serializa a JSON).
+            Map<String, Object> body = new HashMap<>();
             body.put("usuarioId", prefsManager.getUsuarioId());
 
             int posicion = spRutina.getSelectedItemPosition();
@@ -233,55 +243,47 @@ public class RegistrarSesionActivity extends AppCompatActivity {
 
             body.put("completada", true);
 
-            API.crearSesion(body, new UtilREST.OnResponseListener() {
+            // La respuesta ya viene deserializada: id de la sesión + logros nuevos.
+            sesionApi.crear(body).enqueue(new ApiCallback<SesionEntrenamiento>() {
                 @Override
-                public void onSuccess(String response, int statusCode) {
-                    runOnUiThread(() -> {
-                        UIHelper.mostrarToastExito(RegistrarSesionActivity.this,
-                                getString(R.string.sesiones_exito));
+                public void onOk(SesionEntrenamiento sesionCreada) {
+                    UIHelper.mostrarToastExito(RegistrarSesionActivity.this,
+                            getString(R.string.sesiones_exito));
 
-                        int sesionIdGuardada = -1;
-                        ArrayList<String> nuevosLogros = new ArrayList<>();
-                        try {
-                            JSONObject json = new JSONObject(response);
-                            sesionIdGuardada = json.optInt("id", -1);
-                            JSONArray logrosArr = json.optJSONArray("nuevosLogros");
-                            if (logrosArr != null) {
-                                for (int i = 0; i < logrosArr.length(); i++) {
-                                    nuevosLogros.add(logrosArr.getString(i));
-                                }
-                            }
-                        } catch (JSONException ignored) {}
+                    int sesionIdGuardada = sesionCreada != null ? sesionCreada.getId() : -1;
+                    ArrayList<String> nuevosLogros = new ArrayList<>();
+                    if (sesionCreada != null && sesionCreada.getNuevosLogros() != null) {
+                        nuevosLogros.addAll(sesionCreada.getNuevosLogros());
+                    }
 
-                        String nombreRutina = "";
-                        int pos = spRutina.getSelectedItemPosition();
-                        if (pos > 0 && pos <= rutinas.size()) {
-                            nombreRutina = rutinas.get(pos - 1).getNombre();
-                        }
+                    String nombreRutina = "";
+                    int pos = spRutina.getSelectedItemPosition();
+                    if (pos > 0 && pos <= rutinas.size()) {
+                        nombreRutina = rutinas.get(pos - 1).getNombre();
+                    }
 
-                        setResult(RESULT_OK);
+                    setResult(RESULT_OK);
 
-                        if (sesionIdGuardada != -1) {
-                            registrarEjerciciosRealizados(sesionIdGuardada);
-                            Intent intent = new Intent(RegistrarSesionActivity.this,
-                                    ResumenSesionActivity.class);
-                            intent.putExtra("sesionId", sesionIdGuardada);
-                            intent.putExtra("rutinaNombre", nombreRutina);
-                            intent.putStringArrayListExtra("nuevosLogros", nuevosLogros);
-                            startActivity(intent);
-                        }
+                    if (sesionIdGuardada != -1) {
+                        registrarEjerciciosRealizados(sesionIdGuardada);
+                        Intent intent = new Intent(RegistrarSesionActivity.this,
+                                ResumenSesionActivity.class);
+                        intent.putExtra("sesionId", sesionIdGuardada);
+                        intent.putExtra("rutinaNombre", nombreRutina);
+                        intent.putStringArrayListExtra("nuevosLogros", nuevosLogros);
+                        startActivity(intent);
+                    }
 
-                        finish();
-                    });
+                    finish();
                 }
                 @Override
-                public void onError(String message, int statusCode) {
-                    runOnUiThread(() -> UIHelper.mostrarToastError(
-                            RegistrarSesionActivity.this, getString(R.string.error_conexion)));
+                public void onFail(int code, String message) {
+                    UIHelper.mostrarToastError(
+                            RegistrarSesionActivity.this, getString(R.string.error_conexion));
                 }
             });
 
-        } catch (JSONException | NumberFormatException e) {
+        } catch (NumberFormatException e) {
             UIHelper.mostrarToastError(this, getString(R.string.error_conexion));
         }
     }
@@ -291,19 +293,20 @@ public class RegistrarSesionActivity extends AppCompatActivity {
     private void registrarEjerciciosRealizados(int sesionId) {
         for (EjercicioPesoAdapter.Item item : ejercicioItems) {
             try {
-                JSONObject body = new JSONObject();
+                Map<String, Object> body = new HashMap<>();
                 body.put("sesionId", sesionId);
                 body.put("ejercicioId", item.ejercicioId);
                 body.put("seriesCompletadas", item.series);
                 body.put("repeticionesReales", item.repeticiones);
                 if (!item.peso.isEmpty()) {
-                    body.put("pesoUsado", Double.parseDouble(item.peso.replace(",", ".")));
+                    // Peso como BigDecimal para conservar la precisión decimal.
+                    body.put("pesoUsado", new BigDecimal(item.peso.replace(",", ".")));
                 }
-                API.crearEjercicioRealizado(body, new UtilREST.OnResponseListener() {
-                    @Override public void onSuccess(String r, int s) {}
-                    @Override public void onError(String m, int s) {}
+                sesionApi.crearEjercicioRealizado(body).enqueue(new ApiCallback<Void>() {
+                    @Override public void onOk(Void b) {}
+                    @Override public void onFail(int c, String m) {}
                 });
-            } catch (JSONException | NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {}
         }
     }
 

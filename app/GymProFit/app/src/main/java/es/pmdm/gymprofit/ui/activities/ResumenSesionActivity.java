@@ -25,9 +25,13 @@ import es.pmdm.gymprofit.model.logro.Logro;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
 import es.pmdm.gymprofit.model.usuario.UsuarioEstadisticas;
 import es.pmdm.gymprofit.network.API;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.adapters.LogroAdapter;
+import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.NotificationHelper;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 
@@ -47,6 +51,8 @@ public class ResumenSesionActivity extends AppCompatActivity {
     private TextView tvLogrosVacio;
 
     private PreferencesManager prefsManager;
+    // Interfaz Retrofit tipada del dominio sesiones (etapa 2)
+    private final SesionApi sesionApi = ApiClient.service(SesionApi.class);
     // Contador de llamadas asíncronas pendientes (sesión, estadísticas, logros totales y desbloqueados)
     private final AtomicInteger pendientes = new AtomicInteger(4);
 
@@ -117,14 +123,14 @@ public class ResumenSesionActivity extends AppCompatActivity {
         }
     }
 
-    // Obtiene los datos de la sesión de entrenamiento por su id.
+    // Obtiene los datos de la sesión de entrenamiento por su id (ya deserializados por Gson).
     private void cargarSesion(int sesionId) {
-        API.getSesionPorId(sesionId, new UtilREST.OnResponseListener() {
-            @Override public void onSuccess(String response, int statusCode) {
-                try { sesion = UtilJSONParser.parseSesion(response); } catch (JSONException ignored) {}
+        sesionApi.getPorId(sesionId).enqueue(new ApiCallback<SesionEntrenamiento>() {
+            @Override public void onOk(SesionEntrenamiento body) {
+                sesion = body;
                 comprobarYMostrar();
             }
-            @Override public void onError(String message, int statusCode) { comprobarYMostrar(); }
+            @Override public void onFail(int code, String message) { comprobarYMostrar(); }
         });
     }
 
@@ -176,7 +182,7 @@ public class ResumenSesionActivity extends AppCompatActivity {
     // desbloqueados; si viene de registrar la sesión, dispara notificaciones locales.
     private void mostrarContenido() {
         if (sesion != null) {
-            tvFecha.setText(sesion.getFechaInicio().isEmpty() ? "—" : sesion.getFechaInicio());
+            tvFecha.setText(sesion.getFechaInicio().isEmpty() ? "—" : FechaUtils.formatearFechaHora(sesion.getFechaInicio()));
             tvDuracion.setText(getString(R.string.sesiones_min, sesion.getDuracionMinutos()));
             tvCalorias.setText(getString(R.string.sesiones_kcal, sesion.getCaloriasQuemadas()));
             if (!sesion.getNotas().isEmpty()) {

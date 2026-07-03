@@ -33,6 +33,7 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.MedicionApi;
 import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
+import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
@@ -220,7 +221,8 @@ public class MedicionesActivity extends AppCompatActivity {
         String anadir = getString(R.string.medicion_anadir);
 
         if (ultimaMedicion.getFecha() != null && !ultimaMedicion.getFecha().isEmpty()) {
-            tvFechaUltima.setText(getString(R.string.medicion_fecha_ultima, ultimaMedicion.getFecha()));
+            tvFechaUltima.setText(getString(R.string.medicion_fecha_ultima,
+                    FechaUtils.formatearFechaHora(ultimaMedicion.getFecha())));
         }
 
         tvPesoVal.setText(ultimaMedicion.getPeso() > 0

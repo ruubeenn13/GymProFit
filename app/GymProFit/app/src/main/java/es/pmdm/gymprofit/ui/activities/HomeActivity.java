@@ -10,8 +10,6 @@ import android.widget.TextView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.card.MaterialCardView;
 
-import org.json.JSONException;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -21,9 +19,9 @@ import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
-import es.pmdm.gymprofit.network.API;
-import es.pmdm.gymprofit.network.UtilJSONParser;
-import es.pmdm.gymprofit.network.UtilREST;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.SesionApi;
 
 // ============================================================
 // HomeActivity — pantalla principal tras el login.
@@ -35,6 +33,8 @@ public class HomeActivity extends BaseActivity {
 
     private BottomNavigationView bottomNavigationView;
     private TextView tvConteoEntrenamientos, tvConteoCaloriasHome, tvConteoMinutosHome;
+    // Interfaz Retrofit tipada del dominio sesiones (etapa 2)
+    private final SesionApi sesionApi = ApiClient.service(SesionApi.class);
 
     // Infla el layout, referencia las vistas de estadísticas y configura
     // cabecera, accesos rápidos, navegación inferior y permiso de notificaciones.
@@ -72,25 +72,24 @@ public class HomeActivity extends BaseActivity {
         int usuarioId = prefsManager.getUsuarioId();
         if (usuarioId == -1) return;
 
-        API.getSesionesDeUsuario(usuarioId, new UtilREST.OnResponseListener() {
+        sesionApi.getDeUsuario(usuarioId).enqueue(new ApiCallback<List<SesionEntrenamiento>>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
-                try {
-                    List<SesionEntrenamiento> sesiones = UtilJSONParser.parseSesionList(response);
+            public void onOk(List<SesionEntrenamiento> sesiones) {
+                // Calcula la fecha de inicio de la semana actual (lunes a las 00:00)
+                Calendar cal = Calendar.getInstance();
+                cal.set(Calendar.HOUR_OF_DAY, 0);
+                cal.set(Calendar.MINUTE, 0);
+                cal.set(Calendar.SECOND, 0);
+                cal.set(Calendar.MILLISECOND, 0);
+                int dow = cal.get(Calendar.DAY_OF_WEEK);
+                int offset = (dow == Calendar.SUNDAY) ? 6 : dow - Calendar.MONDAY;
+                cal.add(Calendar.DAY_OF_MONTH, -offset);
+                Date semanaInicio = cal.getTime();
 
-                    // Calcula la fecha de inicio de la semana actual (lunes a las 00:00)
-                    Calendar cal = Calendar.getInstance();
-                    cal.set(Calendar.HOUR_OF_DAY, 0);
-                    cal.set(Calendar.MINUTE, 0);
-                    cal.set(Calendar.SECOND, 0);
-                    cal.set(Calendar.MILLISECOND, 0);
-                    int dow = cal.get(Calendar.DAY_OF_WEEK);
-                    int offset = (dow == Calendar.SUNDAY) ? 6 : dow - Calendar.MONDAY;
-                    cal.add(Calendar.DAY_OF_MONTH, -offset);
-                    Date semanaInicio = cal.getTime();
-
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.US);
-                    int count = 0, calorias = 0, minutos = 0;
+                // La API emite la fecha en ISO-8601 (yyyy-MM-dd'T'HH:mm:ss) al mapearse directa al POJO.
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+                int count = 0, calorias = 0, minutos = 0;
+                if (sesiones != null) {
                     for (SesionEntrenamiento s : sesiones) {
                         try {
                             Date fecha = sdf.parse(s.getFechaInicio());
@@ -101,21 +100,16 @@ public class HomeActivity extends BaseActivity {
                             }
                         } catch (ParseException ignored) {}
                     }
+                }
 
-                    final int fc = count, fcal = calorias, fmin = minutos;
-                    runOnUiThread(() -> {
-                        tvConteoEntrenamientos.setText(String.valueOf(fc));
-                        tvConteoCaloriasHome.setText(String.valueOf(fcal));
-                        tvConteoMinutosHome.setText(String.valueOf(fmin));
-                    });
-                } catch (JSONException ignored) {}
+                tvConteoEntrenamientos.setText(String.valueOf(count));
+                tvConteoCaloriasHome.setText(String.valueOf(calorias));
+                tvConteoMinutosHome.setText(String.valueOf(minutos));
             }
-            @Override public void onError(String message, int statusCode) {
-                runOnUiThread(() -> {
-                    tvConteoEntrenamientos.setText("—");
-                    tvConteoCaloriasHome.setText("—");
-                    tvConteoMinutosHome.setText("—");
-                });
+            @Override public void onFail(int code, String message) {
+                tvConteoEntrenamientos.setText("—");
+                tvConteoCaloriasHome.setText("—");
+                tvConteoMinutosHome.setText("—");
             }
         });
     }
