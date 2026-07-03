@@ -23,8 +23,6 @@ import androidx.core.content.FileProvider;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import org.json.JSONException;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -36,11 +34,10 @@ import es.pmdm.gymprofit.BuildConfig;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.medicion.MedicionCorporal;
 import es.pmdm.gymprofit.model.usuario.Usuario;
-import es.pmdm.gymprofit.network.API;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.MedicionApi;
 import es.pmdm.gymprofit.network.UsuarioApi;
-import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -69,6 +66,8 @@ public class PerfilActivity extends BaseActivity {
     private ImageView ivAvatar;
     // Interfaz Retrofit tipada del dominio usuarios (etapa 2)
     private final UsuarioApi usuarioApi = ApiClient.service(UsuarioApi.class);
+    // Interfaz Retrofit tipada del dominio mediciones corporales (etapa 2)
+    private final MedicionApi medicionApi = ApiClient.service(MedicionApi.class);
 
     // Inicializa launchers para editar perfil, ver mediciones, elegir foto de
     // galería/cámara y pedir permiso de cámara; luego monta la pantalla.
@@ -316,29 +315,25 @@ public class PerfilActivity extends BaseActivity {
     // Obtiene la lista de mediciones del usuario y muestra el peso/altura de
     // la más reciente en el resumen de mediciones.
     private void cargarUltimaMedicion(int usuarioId) {
-        API.getMedicionesDeUsuario(usuarioId, new UtilREST.OnResponseListener() {
+        // Mediciones ordenadas (más reciente primero), ya deserializadas por Gson.
+        medicionApi.getOrdenadas(usuarioId).enqueue(new ApiCallback<List<MedicionCorporal>>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
-                try {
-                    List<MedicionCorporal> lista = UtilJSONParser.parseMedicionList(response);
-                    if (lista == null || lista.isEmpty()) return;
-                    MedicionCorporal ultima = lista.get(0);
-                    runOnUiThread(() -> {
-                        boolean tienePeso = ultima.getPeso() > 0;
-                        boolean tieneAltura = ultima.getAltura() > 0;
-                        if (tienePeso || tieneAltura) {
-                            llMedicionesResumen.setVisibility(View.VISIBLE);
-                            tvPesoMedicion.setText(tienePeso
-                                    ? getString(R.string.perfil_kg, String.format(java.util.Locale.getDefault(), "%.1f", ultima.getPeso())) : "");
-                            tvAlturaMedicion.setText(tieneAltura
-                                    ? getString(R.string.perfil_cm, (int) ultima.getAltura()) : "");
-                        }
-                    });
-                } catch (JSONException ignored) {}
+            public void onOk(List<MedicionCorporal> lista) {
+                if (lista == null || lista.isEmpty()) return;
+                MedicionCorporal ultima = lista.get(0);
+                boolean tienePeso = ultima.getPeso() > 0;
+                boolean tieneAltura = ultima.getAltura() > 0;
+                if (tienePeso || tieneAltura) {
+                    llMedicionesResumen.setVisibility(View.VISIBLE);
+                    tvPesoMedicion.setText(tienePeso
+                            ? getString(R.string.perfil_kg, String.format(java.util.Locale.getDefault(), "%.1f", ultima.getPeso())) : "");
+                    tvAlturaMedicion.setText(tieneAltura
+                            ? getString(R.string.perfil_cm, (int) ultima.getAltura()) : "");
+                }
             }
 
             @Override
-            public void onError(String message, int statusCode) {}
+            public void onFail(int code, String message) {}
         });
     }
 

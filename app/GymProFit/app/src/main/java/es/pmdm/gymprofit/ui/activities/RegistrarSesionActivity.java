@@ -17,10 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.textfield.TextInputEditText;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,13 +29,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.rutina.Rutina;
+import es.pmdm.gymprofit.model.rutina.RutinaEjercicio;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
-import es.pmdm.gymprofit.network.API;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.RutinaApi;
 import es.pmdm.gymprofit.network.SesionApi;
-import es.pmdm.gymprofit.network.UtilJSONParser;
-import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.adapters.EjercicioPesoAdapter;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
@@ -60,6 +55,8 @@ public class RegistrarSesionActivity extends AppCompatActivity {
     private PreferencesManager prefsManager;
     // Interfaz Retrofit tipada del dominio sesiones (etapa 2)
     private final SesionApi sesionApi = ApiClient.service(SesionApi.class);
+    // Interfaz Retrofit tipada del dominio rutinas (etapa 2)
+    private final RutinaApi rutinaApi = ApiClient.service(RutinaApi.class);
 
     private int caloriasCalculadas = 0;
     private final List<Rutina> rutinas = new ArrayList<>();
@@ -107,24 +104,24 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         final List<Rutina> predefinidas = new ArrayList<>();
         AtomicInteger pendientes = new AtomicInteger(2);
 
-        API.getRutinasPredefinidas(new UtilREST.OnResponseListener() {
-            @Override public void onSuccess(String response, int statusCode) {
-                try { predefinidas.addAll(UtilJSONParser.parseRutinaList(response)); }
-                catch (JSONException ignored) {}
+        // Rutinas predefinidas del sistema (ya deserializadas por Gson).
+        rutinaApi.getPredefinidas().enqueue(new ApiCallback<List<Rutina>>() {
+            @Override public void onOk(List<Rutina> lista) {
+                if (lista != null) predefinidas.addAll(lista);
                 if (pendientes.decrementAndGet() == 0) combinarYMostrar(predefinidas);
             }
-            @Override public void onError(String message, int statusCode) {
+            @Override public void onFail(int code, String message) {
                 if (pendientes.decrementAndGet() == 0) combinarYMostrar(predefinidas);
             }
         });
 
-        API.getRutinasDeUsuario(usuarioId, new UtilREST.OnResponseListener() {
-            @Override public void onSuccess(String response, int statusCode) {
-                try { rutinas.addAll(UtilJSONParser.parseRutinaList(response)); }
-                catch (JSONException ignored) {}
+        // Rutinas activas del usuario (ya deserializadas por Gson).
+        rutinaApi.getDeUsuarioActivas(usuarioId).enqueue(new ApiCallback<List<Rutina>>() {
+            @Override public void onOk(List<Rutina> lista) {
+                if (lista != null) rutinas.addAll(lista);
                 if (pendientes.decrementAndGet() == 0) combinarYMostrar(predefinidas);
             }
-            @Override public void onError(String message, int statusCode) {
+            @Override public void onFail(int code, String message) {
                 if (pendientes.decrementAndGet() == 0) combinarYMostrar(predefinidas);
             }
         });
@@ -138,7 +135,7 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         rutinas.clear();
         rutinas.addAll(todas);
         for (Rutina r : todas) rutinaOpciones.add(r.getNombre());
-        runOnUiThread(this::actualizarSpinner);
+        actualizarSpinner();
     }
 
     // Rellena el spinner de rutinas y, al seleccionar una, calcula sus
@@ -169,42 +166,42 @@ public class RegistrarSesionActivity extends AppCompatActivity {
     // totales (calorías x series x repeticiones) y arma la lista de
     // ejercicios/pesos que se mostrará en el RecyclerView.
     private void calcularCaloriasRutina(int rutinaId) {
-        API.getRutinaEjerciciosPorRutina(rutinaId, new UtilREST.OnResponseListener() {
+        // Relaciones rutina-ejercicio (ya deserializadas por Gson): incluyen calorías
+        // y nombre enriquecidos desde el catálogo, igual que devolvía el JSON antiguo.
+        rutinaApi.getEjerciciosDeRutina(rutinaId).enqueue(new ApiCallback<List<RutinaEjercicio>>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
-                try {
-                    JSONArray arr = new JSONArray(response);
-                    int total = 0;
-                    List<EjercicioPesoAdapter.Item> nuevosItems = new ArrayList<>();
-                    for (int i = 0; i < arr.length(); i++) {
-                        JSONObject obj = arr.getJSONObject(i);
-                        int calorias    = obj.optInt("caloriasEjercicio", 0);
-                        int series      = obj.optInt("series", 0);
-                        int reps        = obj.optInt("repeticiones", 0);
-                        int ejercicioId = obj.optInt("ejercicioId", -1);
-                        String nombre   = obj.optString("nombreEjercicio", "Ejercicio " + (i + 1));
+            public void onOk(List<RutinaEjercicio> lista) {
+                int total = 0;
+                List<EjercicioPesoAdapter.Item> nuevosItems = new ArrayList<>();
+                if (lista != null) {
+                    int i = 0;
+                    for (RutinaEjercicio re : lista) {
+                        i++;
+                        int calorias    = re.getCaloriasEjercicio();
+                        int series      = re.getSeries();
+                        int reps        = re.getRepeticiones();
+                        int ejercicioId = re.getEjercicioId();
+                        String nombre   = (re.getNombreEjercicio() != null && !re.getNombreEjercicio().isEmpty())
+                                ? re.getNombreEjercicio() : "Ejercicio " + i;
                         total += calorias * series * reps;
                         if (ejercicioId != -1) {
                             nuevosItems.add(new EjercicioPesoAdapter.Item(ejercicioId, nombre, series, reps));
                         }
                     }
-                    final int kcal = total;
-                    runOnUiThread(() -> {
-                        caloriasCalculadas = kcal;
-                        if (kcal > 0) {
-                            tvCaloriasCalculadas.setText(getString(R.string.sesiones_kcal, kcal));
-                            cardCalorias.setVisibility(View.VISIBLE);
-                        } else {
-                            cardCalorias.setVisibility(View.GONE);
-                        }
-                        ejercicioItems.clear();
-                        ejercicioItems.addAll(nuevosItems);
-                        ejercicioPesoAdapter.notifyDataSetChanged();
-                        cardEjercicios.setVisibility(nuevosItems.isEmpty() ? View.GONE : View.VISIBLE);
-                    });
-                } catch (JSONException ignored) {}
+                }
+                caloriasCalculadas = total;
+                if (total > 0) {
+                    tvCaloriasCalculadas.setText(getString(R.string.sesiones_kcal, total));
+                    cardCalorias.setVisibility(View.VISIBLE);
+                } else {
+                    cardCalorias.setVisibility(View.GONE);
+                }
+                ejercicioItems.clear();
+                ejercicioItems.addAll(nuevosItems);
+                ejercicioPesoAdapter.notifyDataSetChanged();
+                cardEjercicios.setVisibility(nuevosItems.isEmpty() ? View.GONE : View.VISIBLE);
             }
-            @Override public void onError(String message, int statusCode) {}
+            @Override public void onFail(int code, String message) {}
         });
     }
 

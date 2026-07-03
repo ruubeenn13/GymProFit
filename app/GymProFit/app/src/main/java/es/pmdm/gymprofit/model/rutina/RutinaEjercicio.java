@@ -21,6 +21,10 @@ public class RutinaEjercicio {
     private int repeticiones;
     // Posición del ejercicio dentro de la rutina.
     private int orden;
+    // Calorías estimadas del ejercicio (dato enriquecido desde el catálogo por la API).
+    private int caloriasEjercicio;
+    // Nombre del ejercicio (dato enriquecido desde el catálogo por la API).
+    private String nombreEjercicio;
 
     public RutinaEjercicio() {}
 
@@ -41,4 +45,10 @@ public class RutinaEjercicio {
 
     public int getOrden() { return orden; }
     public void setOrden(int orden) { this.orden = orden; }
+
+    public int getCaloriasEjercicio() { return caloriasEjercicio; }
+    public void setCaloriasEjercicio(int caloriasEjercicio) { this.caloriasEjercicio = caloriasEjercicio; }
+
+    public String getNombreEjercicio() { return nombreEjercicio; }
+    public void setNombreEjercicio(String nombreEjercicio) { this.nombreEjercicio = nombreEjercicio; }
 }

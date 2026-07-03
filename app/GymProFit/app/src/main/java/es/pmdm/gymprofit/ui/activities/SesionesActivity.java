@@ -14,8 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,12 +23,10 @@ import java.util.Map;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.rutina.Rutina;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
-import es.pmdm.gymprofit.network.API;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.RutinaApi;
 import es.pmdm.gymprofit.network.SesionApi;
-import es.pmdm.gymprofit.network.UtilJSONParser;
-import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.adapters.SesionAdapter;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
@@ -48,6 +44,8 @@ public class SesionesActivity extends AppCompatActivity {
     private PreferencesManager prefsManager;
     // Interfaz Retrofit tipada del dominio sesiones (etapa 2)
     private final SesionApi sesionApi = ApiClient.service(SesionApi.class);
+    // Interfaz Retrofit tipada del dominio rutinas (etapa 2)
+    private final RutinaApi rutinaApi = ApiClient.service(RutinaApi.class);
 
     private final List<SesionEntrenamiento> sesiones = new ArrayList<>();
     private final Map<Integer, String> rutinaNombres = new HashMap<>();
@@ -87,18 +85,17 @@ public class SesionesActivity extends AppCompatActivity {
         int usuarioId = prefsManager.getUsuarioId();
         if (usuarioId == -1) return;
 
-        // Carga rutinas del usuario para mapear id→nombre
-        API.getRutinasDeUsuario(usuarioId, new UtilREST.OnResponseListener() {
+        // Carga rutinas activas del usuario para mapear id→nombre (ya deserializadas por Gson)
+        rutinaApi.getDeUsuarioActivas(usuarioId).enqueue(new ApiCallback<List<Rutina>>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
-                try {
-                    List<Rutina> rutinas = UtilJSONParser.parseRutinaList(response);
+            public void onOk(List<Rutina> rutinas) {
+                if (rutinas != null) {
                     for (Rutina r : rutinas) rutinaNombres.put(r.getId(), r.getNombre());
-                } catch (JSONException ignored) {}
+                }
                 cargarSesiones(usuarioId);
             }
             @Override
-            public void onError(String message, int statusCode) { cargarSesiones(usuarioId); }
+            public void onFail(int code, String message) { cargarSesiones(usuarioId); }
         });
     }
 

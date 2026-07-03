@@ -31,12 +31,10 @@ import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
 import es.pmdm.gymprofit.model.rutina.EjercicioSeleccionado;
 import es.pmdm.gymprofit.model.rutina.RutinaEjercicio;
-import es.pmdm.gymprofit.network.API;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.EjercicioApi;
 import es.pmdm.gymprofit.network.RutinaApi;
-import es.pmdm.gymprofit.network.UtilJSONParser;
-import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.adapters.EjercicioSeleccionadoAdapter;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
@@ -57,6 +55,8 @@ public class EditarRutinaActivity extends AppCompatActivity {
 
     // Interfaz Retrofit tipada del dominio rutinas (etapa 2)
     private final RutinaApi rutinaApi = ApiClient.service(RutinaApi.class);
+    // Interfaz Retrofit tipada del dominio ejercicios (etapa 2)
+    private final EjercicioApi ejercicioApi = ApiClient.service(EjercicioApi.class);
 
     private final List<EjercicioSeleccionado> ejercicios = new ArrayList<>();
     private int rutinaId;
@@ -147,19 +147,18 @@ public class EditarRutinaActivity extends AppCompatActivity {
         final List<RutinaEjercicio> relaciones = new ArrayList<>();
         AtomicInteger pendientes = new AtomicInteger(2);
 
-        // Catálogo de ejercicios (dominio ejercicios: se mantiene la capa vieja).
-        API.getEjerciciosActivos(new UtilREST.OnResponseListener() {
-            @Override public void onSuccess(String response, int statusCode) {
-                try {
-                    for (Ejercicio e : UtilJSONParser.parseEjercicioList(response))
-                        ejercicioMap.put(e.getId(), e);
-                } catch (JSONException ignored) {}
+        // Catálogo de ejercicios activos (ya deserializados por Gson).
+        ejercicioApi.getActivos().enqueue(new ApiCallback<List<Ejercicio>>() {
+            @Override public void onOk(List<Ejercicio> lista) {
+                if (lista != null) {
+                    for (Ejercicio e : lista) ejercicioMap.put(e.getId(), e);
+                }
                 if (pendientes.decrementAndGet() == 0)
-                    runOnUiThread(() -> combinarYMostrar(ejercicioMap, relaciones));
+                    combinarYMostrar(ejercicioMap, relaciones);
             }
-            @Override public void onError(String message, int statusCode) {
+            @Override public void onFail(int code, String message) {
                 if (pendientes.decrementAndGet() == 0)
-                    runOnUiThread(() -> combinarYMostrar(ejercicioMap, relaciones));
+                    combinarYMostrar(ejercicioMap, relaciones);
             }
         });
 

@@ -11,8 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.widget.TextView;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -22,15 +20,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.logro.Logro;
+import es.pmdm.gymprofit.model.logro.UsuarioLogro;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
 import es.pmdm.gymprofit.model.usuario.UsuarioEstadisticas;
-import es.pmdm.gymprofit.network.API;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.LogroApi;
 import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.network.UsuarioApi;
-import es.pmdm.gymprofit.network.UtilJSONParser;
-import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.adapters.LogroAdapter;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.NotificationHelper;
@@ -56,6 +53,8 @@ public class ResumenSesionActivity extends AppCompatActivity {
     private final SesionApi sesionApi = ApiClient.service(SesionApi.class);
     // Interfaz Retrofit tipada del dominio usuarios (etapa 2)
     private final UsuarioApi usuarioApi = ApiClient.service(UsuarioApi.class);
+    // Interfaz Retrofit tipada del dominio logros (etapa 2)
+    private final LogroApi logroApi = ApiClient.service(LogroApi.class);
     // Contador de llamadas asíncronas pendientes (sesión, estadísticas, logros totales y desbloqueados)
     private final AtomicInteger pendientes = new AtomicInteger(4);
 
@@ -148,25 +147,30 @@ public class ResumenSesionActivity extends AppCompatActivity {
         });
     }
 
-    // Obtiene el catálogo completo de logros disponibles en la app.
+    // Obtiene el catálogo completo de logros disponibles en la app (ya deserializado por Gson).
     private void cargarTodosLogros() {
-        API.getLogros(new UtilREST.OnResponseListener() {
-            @Override public void onSuccess(String response, int statusCode) {
-                try { todosLogros = UtilJSONParser.parseLogroList(response); } catch (JSONException ignored) {}
+        logroApi.getLogros().enqueue(new ApiCallback<List<Logro>>() {
+            @Override public void onOk(List<Logro> lista) {
+                if (lista != null) todosLogros = lista;
                 comprobarYMostrar();
             }
-            @Override public void onError(String message, int statusCode) { comprobarYMostrar(); }
+            @Override public void onFail(int code, String message) { comprobarYMostrar(); }
         });
     }
 
-    // Obtiene el conjunto de ids de logros ya desbloqueados por el usuario.
+    // Obtiene el conjunto de ids de logros ya desbloqueados por el usuario
+    // (extrae el logroId de cada relación UsuarioLogro, igual que LogrosActivity).
     private void cargarLogrosDesbloqueados(int usuarioId) {
-        API.getLogrosDeUsuario(usuarioId, new UtilREST.OnResponseListener() {
-            @Override public void onSuccess(String response, int statusCode) {
-                try { desbloqueados = UtilJSONParser.parseLogrosDesbloqueados(response); } catch (JSONException ignored) {}
+        logroApi.getLogrosDeUsuario(usuarioId).enqueue(new ApiCallback<List<UsuarioLogro>>() {
+            @Override public void onOk(List<UsuarioLogro> lista) {
+                Set<Integer> ids = new HashSet<>();
+                if (lista != null) {
+                    for (UsuarioLogro ul : lista) ids.add(ul.getLogroId());
+                }
+                desbloqueados = ids;
                 comprobarYMostrar();
             }
-            @Override public void onError(String message, int statusCode) {
+            @Override public void onFail(int code, String message) {
                 desbloqueados = new HashSet<>();
                 comprobarYMostrar();
             }
@@ -174,10 +178,10 @@ public class ResumenSesionActivity extends AppCompatActivity {
     }
 
     // Decrementa el contador de llamadas pendientes; cuando llegan todas a 0
-    // pinta el contenido en el hilo de UI.
+    // pinta el contenido (los callbacks Retrofit ya entregan en el hilo de UI).
     private void comprobarYMostrar() {
         if (pendientes.decrementAndGet() == 0) {
-            runOnUiThread(this::mostrarContenido);
+            mostrarContenido();
         }
     }
 
