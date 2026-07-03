@@ -2,6 +2,23 @@
 
 Historial de cambios del proyecto (API Spring Boot + app Android). Ver también el [README](README.md).
 
+### 2026-07-03
+
+| Hash | Descripción |
+|---|---|
+| `83f1548` | refactor(android): Retrofit etapa 2 F3 — dominio Sesiones tipado (`SesionApi`) + `utils/FechaUtils` (el formateo de fechas pasa a la vista; arregla la regresión de fecha ISO cruda en Mediciones/Sesiones) |
+| `957f9a5` | refactor(android): Retrofit etapa 2 F2 — dominios Logros y Ejercicios tipados (`LogroApi`/`EjercicioApi`, POJO `UsuarioLogro`, `@SerializedName("caloriasQuemadas")`) |
+| `593d260` | refactor(android): Retrofit etapa 2 F0+F1 — infra tipada con Gson (`ApiClient.service()`, `ApiCallback<T>`, cuerpos parciales `Map`) + piloto Mediciones migrado |
+| `0020301` | test(api): +56 tests unitarios de nutrición y mediciones (Alimento/AlimentoComida/MedicionCorporal/Comida); suite 192/192 verde |
+| `2c9a09f` | feat(android): `BASE_URL` por buildType — debug→API local (`10.0.2.2:8080`), release→Render (prod) |
+| `eae7647` | docs: **API en producción** — desplegada y verificada en `https://gymprofit-api.onrender.com` |
+| `a7742b0` | fix(db): PK compuesta en `usuario_roles` (Aiven MySQL exige PK) + CA de Aiven empaquetado para TLS `verify-full` |
+| `1ca2e7c` | feat(deploy): Actuator (`/actuator/health`) + `application-prod.properties` 12-factor (env vars) + Dockerfile multi-stage + `render.yaml` (Render + Aiven MySQL) |
+| `861d4f4` | fix(db): `alimentos.proteinas` INT→DECIMAL(5,2) — drift esquema↔entidad que tumbaba Flyway en una BD construida desde cero (CI/Aiven) |
+| `df9ec8c` | ci: `LOG_DIR` de logback overridable (la ruta del server AWS no existe en el runner) |
+| `b086813` | ci: fuentes jOOQ versionadas en `src/generated/jooq` + perfil `ci` (un clone/CI compilan offline sin BD) |
+| `5f7fada` | ci: workflow de GitHub Actions (build+test de la API con MariaDB efímera) — gate del auto-merge de Dependabot vía ruleset |
+
 ### 2026-07-02
 
 | Hash | Descripción |
