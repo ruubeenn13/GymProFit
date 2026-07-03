@@ -168,13 +168,13 @@ class AuthControllerTest {
         verify(authService).register(any(RegisterDTO.class));
     }
 
-    // Petición sin body debe fallar con error de deserialización (500).
+    // Petición sin body (cuerpo ilegible) debe devolver 400, no 500:
+    // el @ExceptionHandler de HttpMessageNotReadableException lo traduce a BAD_REQUEST.
     @Test
-    @DisplayName("POST /auth/login sin body devuelve 500")
-    void login_sin_body_devuelve_500() throws Exception {
-        // Enviamos una petición sin body para verificar que la API responde con error
+    @DisplayName("POST /auth/login sin body devuelve 400")
+    void login_sin_body_devuelve_400() throws Exception {
         mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isBadRequest());
     }
 }

@@ -39,24 +39,40 @@
     <!-- Logger para la aplicación GymProFit -->
     <logger name="com.gymprofit.api" level="DEBUG" additivity="false">
         <appender-ref ref="Console"/>
-        <appender-ref ref="FILE"/>
+        <!-- En prod (FS efímero de la PaaS) NO se escribe a fichero: la plataforma
+             captura stdout. El appender FILE solo se usa fuera de prod. -->
+        <springProfile name="!prod">
+            <appender-ref ref="FILE"/>
+        </springProfile>
     </logger>
 
     <!-- Logger para Spring Framework -->
     <logger name="org.springframework" level="INFO" additivity="false">
         <appender-ref ref="Console"/>
-        <appender-ref ref="FILE"/>
+        <!-- En prod (FS efímero de la PaaS) NO se escribe a fichero: la plataforma
+             captura stdout. El appender FILE solo se usa fuera de prod. -->
+        <springProfile name="!prod">
+            <appender-ref ref="FILE"/>
+        </springProfile>
     </logger>
 
     <!-- Logger para Hibernate -->
     <logger name="org.hibernate" level="WARN" additivity="false">
         <appender-ref ref="Console"/>
-        <appender-ref ref="FILE"/>
+        <!-- En prod (FS efímero de la PaaS) NO se escribe a fichero: la plataforma
+             captura stdout. El appender FILE solo se usa fuera de prod. -->
+        <springProfile name="!prod">
+            <appender-ref ref="FILE"/>
+        </springProfile>
     </logger>
 
     <!-- ROOT -->
     <root level="INFO">
-        <appender-ref ref="FILE"/>
+        <!-- En prod (FS efímero de la PaaS) NO se escribe a fichero: la plataforma
+             captura stdout. El appender FILE solo se usa fuera de prod. -->
+        <springProfile name="!prod">
+            <appender-ref ref="FILE"/>
+        </springProfile>
         <appender-ref ref="Console"/>
     </root>
 

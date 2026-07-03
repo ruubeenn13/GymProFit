@@ -7,11 +7,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -47,6 +50,39 @@ public class ControllerExceptionHandler {
 
         return new ResponseEntity<>(
                 Response.validationError(mapAsString),
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
+    // Cuerpo JSON ausente, mal formado o ilegible (tipo incompatible en un campo, etc.) → 400 (no 500).
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Response> handleNotReadable(HttpMessageNotReadableException ex) {
+        logger.warn("Cuerpo de la petición ilegible: {}", ex.getMessage());
+        return new ResponseEntity<>(
+                Response.validationError("Cuerpo de la petición ausente o mal formado"),
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
+    // Tipo inválido en un path variable o parámetro (p. ej. GET /comidas/abc con id numérico) → 400 (no 500).
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<Response> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        logger.warn("Parámetro con tipo inválido: {}", ex.getMessage());
+        return new ResponseEntity<>(
+                Response.validationError("Parámetro inválido: " + ex.getName()),
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
+    // Falta un parámetro de query obligatorio (@RequestParam sin defaultValue) → 400 (no 500).
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<Response> handleMissingParam(MissingServletRequestParameterException ex) {
+        logger.warn("Falta parámetro obligatorio: {}", ex.getMessage());
+        return new ResponseEntity<>(
+                Response.validationError("Falta el parámetro obligatorio: " + ex.getParameterName()),
                 HttpStatus.BAD_REQUEST
         );
     }
