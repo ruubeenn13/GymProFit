@@ -8,7 +8,10 @@ CREATE TABLE roles
 CREATE TABLE usuario_roles
 (
     role_id    INT NOT NULL,
-    usuario_id INT NOT NULL
+    usuario_id INT NOT NULL,
+    -- PK compuesta: MySQL/Aiven (sql_require_primary_key=ON) rechaza tablas sin PK.
+    -- Además evita filas duplicadas usuario-rol.
+    CONSTRAINT pk_usuario_roles PRIMARY KEY (usuario_id, role_id)
 );
 
 ALTER TABLE roles

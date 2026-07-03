@@ -18,7 +18,11 @@ services:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
       # --- Secretos: se rellenan en el dashboard de Render (no en git) ---
-      - key: SPRING_DATASOURCE_URL         # jdbc:mariadb://<host-aiven>:<puerto>/<db>?sslMode=REQUIRE
+      # SPRING_DATASOURCE_URL: TLS verificado (verify-full) con el CA de Aiven
+      # empaquetado en el jar (classpath:aiven-ca.pem). createDatabaseIfNotExist
+      # crea gymprofit_db en el primer arranque. Formato:
+      #   jdbc:mariadb://<host-aiven>:<puerto>/gymprofit_db?createDatabaseIfNotExist=true&sslMode=verify-full&serverSslCert=classpath:aiven-ca.pem&useUnicode=true&characterEncoding=UTF-8
+      - key: SPRING_DATASOURCE_URL
         sync: false
       - key: SPRING_DATASOURCE_USERNAME    # usuario de Aiven (avnadmin)
         sync: false
