@@ -164,7 +164,7 @@ Causa raíz: **ningún controller consulta el principal autenticado; el `userId`
 
 **Fase 4 — Lanzamiento:** ◑ EN CURSO
 12. ~~Docker Compose~~ **descartado.** ✅ **CI (GitHub Actions build+test)** hecho. Pendiente: despliegue **PaaS** (Koyeb/Render free) + **Aiven for MySQL** (gratis) + **Actuator**. Ver `documentacion/DESPLIEGUE.md`.
-13. Tests de nutrición/mediciones. `minifyEnabled true`.
+13. ✅ Tests de nutrición/mediciones (Alimento, AlimentoComida, MedicionCorporal, Comida — 56 tests Mockito, suite total 192 verde). `minifyEnabled true` ⬜ (aplazado a post-Retrofit: ProGuard choca con parseo por reflexión/red actual).
 14. HTTPS + dominio (URL pública de la PaaS).
 
 ---
