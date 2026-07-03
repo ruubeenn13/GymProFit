@@ -28,7 +28,11 @@ El proyecto usa **MySQL/MariaDB**; las PaaS gratuitas (Render, Koyeb) **no ofrec
 
 > Limitación común del compute gratis: **cold start** (~1 min) tras inactividad. Aceptable para un TFG/demo; para producción real se pasaría a un plan de pago o VM.
 
-## Estado 2026-07-03 — preparación de código HECHA
+## Estado 2026-07-03 — DESPLEGADO Y LIVE ✅
+
+API pública: **https://gymprofit-api.onrender.com** (Render Web Service, Docker, Frankfurt, Free) → Aiven MySQL (TLS verify-full). Verificado en producción: `/api/actuator/health` 200 UP, register 201 + login 200 con JWT. Auto-deploy desde `main`. Swagger OFF en prod (a propósito; verlo en local en `http://localhost:8080/api/swagger-ui.html`). Free duerme a ~15 min → cold start ~30-40s la 1ª request. Pendiente: `BASE_URL` de Android a la URL de Render para builds de release.
+
+## Preparación de código (detalle)
 
 Compute elegido: **Render** (más simple para empezar; auto-deploy desde Git, soporta monorepo con Root Directory y Docker). BD: **Aiven for MySQL** (ya con cuenta).
 
