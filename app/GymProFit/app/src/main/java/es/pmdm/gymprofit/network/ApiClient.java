@@ -11,12 +11,10 @@ import es.pmdm.gymprofit.BuildConfig;
 import okhttp3.Authenticator;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 import okhttp3.Route;
 import okhttp3.logging.HttpLoggingInterceptor;
 import java.util.Map;
@@ -25,18 +23,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.Body;
-import retrofit2.http.DELETE;
-import retrofit2.http.GET;
-import retrofit2.http.Multipart;
-import retrofit2.http.PATCH;
-import retrofit2.http.POST;
-import retrofit2.http.PUT;
-import retrofit2.http.Part;
-import retrofit2.http.Url;
 
 // ============================================================
 // ApiClient — motor HTTP de la app (Retrofit + OkHttp), singleton.
@@ -46,45 +34,17 @@ import retrofit2.http.Url;
 //  - TokenAuthenticator: ante un 401, renueva el access token con el refresh
 //    (POST /auth/refresh) y OkHttp reintenta la petición automáticamente. Si
 //    la renovación falla, el 401 propaga y la app cierra sesión.
-// Expone RawApi, una interfaz Retrofit genérica por URL (@Url) que devuelve el
-// cuerpo crudo (ResponseBody); así UtilREST mantiene su fachada basada en String
-// sin tocar API.java ni las Activities.
+// Expone interfaces Retrofit tipadas por dominio vía service(Class), que
+// deserializan JSON→POJO con Gson (etapa 2).
 // ============================================================
 public class ApiClient {
 
-    // Tipo de contenido JSON para los cuerpos de las peticiones.
+    // Tipo de contenido JSON para el cuerpo de la petición de refresh.
     static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
-    // Retrofit compartido y caché de servicios (RawApi + interfaces tipadas por dominio).
+    // Retrofit compartido y caché de servicios (interfaces tipadas por dominio).
     private static Retrofit retrofit;
     private static final Map<Class<?>, Object> SERVICIOS = new ConcurrentHashMap<>();
-
-    // Interfaz Retrofit genérica: la URL completa se pasa por @Url y se devuelve el cuerpo sin parsear.
-    public interface RawApi {
-        @GET
-        Call<ResponseBody> get(@Url String url);
-
-        @POST
-        Call<ResponseBody> post(@Url String url, @Body RequestBody body);
-
-        @PUT
-        Call<ResponseBody> put(@Url String url, @Body RequestBody body);
-
-        @PATCH
-        Call<ResponseBody> patch(@Url String url, @Body RequestBody body);
-
-        @DELETE
-        Call<ResponseBody> delete(@Url String url);
-
-        @Multipart
-        @POST
-        Call<ResponseBody> upload(@Url String url, @Part MultipartBody.Part part);
-    }
-
-    // Devuelve el servicio Retrofit crudo (la fachada basada en String de UtilREST).
-    public static RawApi api() {
-        return service(RawApi.class);
-    }
 
     // Devuelve (y cachea) una interfaz de servicio Retrofit tipada por dominio (p. ej. MedicionApi).
     @SuppressWarnings("unchecked")
