@@ -12,16 +12,17 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import es.pmdm.gymprofit.R;
-import es.pmdm.gymprofit.network.API;
-import es.pmdm.gymprofit.network.UtilREST;
+import es.pmdm.gymprofit.network.AlimentoApi;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.model.alimento.Alimento;
 import es.pmdm.gymprofit.utils.UIHelper;
 
 // ============================================================
@@ -46,6 +47,9 @@ public class CrearAlimentoActivity extends BaseActivity {
     // Categorías disponibles para el spinner, obtenidas de la API (con fallback local)
     private final List<String> categorias = new ArrayList<>();
     private ArrayAdapter<String> categoriaAdapter;
+
+    // Servicio Retrofit tipado del dominio alimentos (etapa 2).
+    private final AlimentoApi alimentoApi = ApiClient.service(AlimentoApi.class);
 
     // Enlaza las vistas, configura el spinner de categorías y los listeners de guardado/volver
     @Override
@@ -87,26 +91,19 @@ public class CrearAlimentoActivity extends BaseActivity {
 
     // Obtiene la lista de categorías de la API; si falla, usa el fallback local (usarCategoriasLocales)
     private void cargarCategorias() {
-        API.getCategorias(new UtilREST.OnResponseListener() {
+        alimentoApi.getCategorias().enqueue(new ApiCallback<List<String>>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
-                try {
-                    JSONArray arr = new JSONArray(response);
-                    List<String> lista = new ArrayList<>();
-                    for (int i = 0; i < arr.length(); i++) {
-                        lista.add(arr.getString(i));
-                    }
-                    runOnUiThread(() -> {
-                        categorias.clear();
-                        categorias.addAll(lista);
-                        categoriaAdapter.notifyDataSetChanged();
-                    });
-                } catch (JSONException e) {
+            public void onOk(List<String> lista) {
+                if (lista == null) {
                     usarCategoriasLocales();
+                    return;
                 }
+                categorias.clear();
+                categorias.addAll(lista);
+                categoriaAdapter.notifyDataSetChanged();
             }
             @Override
-            public void onError(String message, int statusCode) {
+            public void onFail(int code, String message) {
                 usarCategoriasLocales();
             }
         });
@@ -124,7 +121,7 @@ public class CrearAlimentoActivity extends BaseActivity {
     }
 
     /**
-     * Valida campos, construye JSON y llama a API.crearAlimento.
+     * Valida campos, construye el cuerpo y llama a alimentoApi.crear.
      */
     private void guardarAlimento() {
         String nombre = etNombre.getText() != null
@@ -156,34 +153,28 @@ public class CrearAlimentoActivity extends BaseActivity {
         double carbohidratos = parseDoubleOrZero(etCarbohidratos);
         double grasas        = parseDoubleOrZero(etGrasas);
 
-        try {
-            JSONObject body = new JSONObject();
-            body.put("nombre", nombre);
-            body.put("categoria", spCategoria.getSelectedItem().toString());
-            body.put("calorias", calorias);
-            body.put("proteinas", proteinas);
-            body.put("carbohidratos", carbohidratos);
-            body.put("grasas", grasas);
-            body.put("usuarioId", prefsManager.getUsuarioId());
+        // Cuerpo parcial: BigDecimal en los macros decimales, enteros/strings tal cual.
+        Map<String, Object> body = new HashMap<>();
+        body.put("nombre", nombre);
+        body.put("categoria", spCategoria.getSelectedItem().toString());
+        body.put("calorias", calorias);
+        body.put("proteinas", BigDecimal.valueOf(proteinas));
+        body.put("carbohidratos", BigDecimal.valueOf(carbohidratos));
+        body.put("grasas", BigDecimal.valueOf(grasas));
+        body.put("usuarioId", prefsManager.getUsuarioId());
 
-            API.crearAlimento(body, new UtilREST.OnResponseListener() {
-                @Override
-                public void onSuccess(String response, int statusCode) {
-                    runOnUiThread(() -> {
-                        setResult(RESULT_OK);
-                        finish();
-                    });
-                }
-                @Override
-                public void onError(String message, int statusCode) {
-                    runOnUiThread(() ->
-                            UIHelper.mostrarToastError(CrearAlimentoActivity.this,
-                                    getString(R.string.error_conexion)));
-                }
-            });
-        } catch (JSONException e) {
-            UIHelper.mostrarToastError(this, getString(R.string.error_conexion));
-        }
+        alimentoApi.crear(body).enqueue(new ApiCallback<Alimento>() {
+            @Override
+            public void onOk(Alimento creado) {
+                setResult(RESULT_OK);
+                finish();
+            }
+            @Override
+            public void onFail(int code, String message) {
+                UIHelper.mostrarToastError(CrearAlimentoActivity.this,
+                        getString(R.string.error_conexion));
+            }
+        });
     }
 
     // Parsea el contenido de un campo a double, devolviendo 0.0 si está vacío o no es válido

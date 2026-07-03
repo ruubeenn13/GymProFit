@@ -18,9 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,9 +27,10 @@ import java.util.Map;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.comida.AlimentoComida;
-import es.pmdm.gymprofit.network.API;
-import es.pmdm.gymprofit.network.UtilJSONParser;
-import es.pmdm.gymprofit.network.UtilREST;
+import es.pmdm.gymprofit.network.AlimentoApi;
+import es.pmdm.gymprofit.network.AlimentoComidaApi;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.ui.adapters.AlimentoComidaAdapter;
 import es.pmdm.gymprofit.utils.UIHelper;
 
@@ -57,6 +56,10 @@ public class ComidaActivity extends BaseActivity {
 
     private List<AlimentoComida> listaAlimentos = new ArrayList<>();
     private AlimentoComidaAdapter adapter;
+
+    // Servicios Retrofit tipados de los dominios alimentos-comida y alimentos (etapa 2).
+    private final AlimentoComidaApi alimentoComidaApi = ApiClient.service(AlimentoComidaApi.class);
+    private final AlimentoApi alimentoApi = ApiClient.service(AlimentoApi.class);
 
     // Launcher hacia AnadirAlimentoActivity; recoge el comidaId (si se creó la comida) y recarga
     private ActivityResultLauncher<Intent> anadirLauncher;
@@ -158,30 +161,22 @@ public class ComidaActivity extends BaseActivity {
 
     // Carga los alimentos de la comida actual desde la API; en 404 muestra lista vacía
     private void cargarAlimentos() {
-        API.getAlimentosDeComida(comidaId, new UtilREST.OnResponseListener() {
+        alimentoComidaApi.getDeComida(comidaId).enqueue(new ApiCallback<List<AlimentoComida>>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
-                try {
-                    List<AlimentoComida> lista = UtilJSONParser.parseListaAlimentosComida(response);
-                    runOnUiThread(() -> {
-                        listaAlimentos.clear();
-                        if (lista != null) listaAlimentos.addAll(lista);
-                        adapter.notifyDataSetChanged();
-                        actualizarTotales();
-                    });
-                } catch (JSONException e) {
-                    Log.e(TAG, "Error parseando alimentos: " + e.getMessage());
-                }
+            public void onOk(List<AlimentoComida> lista) {
+                listaAlimentos.clear();
+                if (lista != null) listaAlimentos.addAll(lista);
+                adapter.notifyDataSetChanged();
+                actualizarTotales();
             }
 
             @Override
-            public void onError(String message, int statusCode) {
-                if (statusCode == 404) {
-                    runOnUiThread(() -> {
-                        listaAlimentos.clear();
-                        adapter.notifyDataSetChanged();
-                        actualizarTotales();
-                    });
+            public void onFail(int code, String message) {
+                // 404 = la comida no tiene alimentos → lista vacía; otros errores solo se loguean
+                if (code == 404) {
+                    listaAlimentos.clear();
+                    adapter.notifyDataSetChanged();
+                    actualizarTotales();
                 } else {
                     Log.e(TAG, "Error cargando alimentos: " + message);
                 }
@@ -275,20 +270,21 @@ public class ComidaActivity extends BaseActivity {
                     try {
                         double nuevosGramos = Double.parseDouble(texto);
                         if (nuevosGramos <= 0) return;
-                        JSONObject body = new JSONObject();
-                        body.put("cantidadGramos", nuevosGramos);
-                        API.patchAlimentoComida(item.getId(), body, new UtilREST.OnResponseListener() {
+                        // Cuerpo parcial: cantidadGramos como BigDecimal (decimal).
+                        Map<String, Object> body = new HashMap<>();
+                        body.put("cantidadGramos", BigDecimal.valueOf(nuevosGramos));
+                        alimentoComidaApi.patch(item.getId(), body).enqueue(new ApiCallback<Void>() {
                             @Override
-                            public void onSuccess(String response, int statusCode) {
-                                runOnUiThread(() -> cargarAlimentos());
+                            public void onOk(Void ignored) {
+                                cargarAlimentos();
                             }
                             @Override
-                            public void onError(String message, int statusCode) {
-                                runOnUiThread(() -> UIHelper.mostrarToastError(
-                                        ComidaActivity.this, getString(R.string.error_conexion)));
+                            public void onFail(int code, String message) {
+                                UIHelper.mostrarToastError(
+                                        ComidaActivity.this, getString(R.string.error_conexion));
                             }
                         });
-                    } catch (NumberFormatException | JSONException e) {
+                    } catch (NumberFormatException e) {
                         Log.e(TAG, "Error editando cantidad: " + e.getMessage());
                     }
                 })
@@ -298,30 +294,31 @@ public class ComidaActivity extends BaseActivity {
 
     // Desactiva el alimento predefinido asociado a este registro (solo admin)
     private void desactivarAlimento(AlimentoComida item) {
-        API.adminToggleActivoAlimento(item.getAlimentoId(), false, new UtilREST.OnResponseListener() {
+        // Desactiva (borrado lógico) el alimento predefinido subyacente → DELETE alimentos/{id}.
+        alimentoApi.eliminar(item.getAlimentoId()).enqueue(new ApiCallback<Void>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
-                runOnUiThread(() -> cargarAlimentos());
+            public void onOk(Void ignored) {
+                cargarAlimentos();
             }
             @Override
-            public void onError(String message, int statusCode) {
-                runOnUiThread(() -> UIHelper.mostrarToastError(
-                        ComidaActivity.this, getString(R.string.error_conexion)));
+            public void onFail(int code, String message) {
+                UIHelper.mostrarToastError(
+                        ComidaActivity.this, getString(R.string.error_conexion));
             }
         });
     }
 
     // Elimina el registro de alimento-comida (quita el alimento de esta comida)
     private void eliminarAlimento(AlimentoComida item) {
-        API.eliminarAlimentoDeComida(item.getId(), new UtilREST.OnResponseListener() {
+        alimentoComidaApi.eliminar(item.getId()).enqueue(new ApiCallback<Void>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
-                runOnUiThread(() -> cargarAlimentos());
+            public void onOk(Void ignored) {
+                cargarAlimentos();
             }
             @Override
-            public void onError(String message, int statusCode) {
-                runOnUiThread(() -> UIHelper.mostrarToastError(
-                        ComidaActivity.this, getString(R.string.error_conexion)));
+            public void onFail(int code, String message) {
+                UIHelper.mostrarToastError(
+                        ComidaActivity.this, getString(R.string.error_conexion));
             }
         });
     }

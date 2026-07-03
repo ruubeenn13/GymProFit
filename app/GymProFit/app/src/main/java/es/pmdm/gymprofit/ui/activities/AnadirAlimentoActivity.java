@@ -20,18 +20,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.alimento.Alimento;
-import es.pmdm.gymprofit.network.API;
-import es.pmdm.gymprofit.network.UtilJSONParser;
-import es.pmdm.gymprofit.network.UtilREST;
+import es.pmdm.gymprofit.model.comida.Comida;
+import es.pmdm.gymprofit.network.AlimentoApi;
+import es.pmdm.gymprofit.network.AlimentoComidaApi;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.ComidaApi;
 import es.pmdm.gymprofit.ui.adapters.AlimentoAdapter;
 import es.pmdm.gymprofit.utils.UIHelper;
 
@@ -62,6 +65,11 @@ public class AnadirAlimentoActivity extends BaseActivity {
 
     // Launcher para lanzar CrearAlimentoActivity y recargar la lista si se creó uno nuevo
     private ActivityResultLauncher<Intent> crearAlimentoLauncher;
+
+    // Servicios Retrofit tipados de los dominios alimentos, comidas y alimentos-comida (etapa 2).
+    private final AlimentoApi alimentoApi = ApiClient.service(AlimentoApi.class);
+    private final ComidaApi comidaApi = ApiClient.service(ComidaApi.class);
+    private final AlimentoComidaApi alimentoComidaApi = ApiClient.service(AlimentoComidaApi.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,27 +181,28 @@ public class AnadirAlimentoActivity extends BaseActivity {
 
         dialogView.findViewById(R.id.btnDialogConfirmar).setOnClickListener(v -> {
             try {
-                JSONObject body = new JSONObject();
+                // Cuerpo parcial: BigDecimal en los macros decimales; nombre/calorías solo si vienen.
+                Map<String, Object> body = new HashMap<>();
                 String nombre = etNombre.getText() != null ? etNombre.getText().toString().trim() : "";
                 if (!nombre.isEmpty()) body.put("nombre", nombre);
                 String calStr = etCalorias.getText() != null ? etCalorias.getText().toString().trim() : "";
                 if (!calStr.isEmpty()) body.put("calorias", Integer.parseInt(calStr));
-                body.put("proteinas",     parseDoubleOrZero(etProteinas));
-                body.put("carbohidratos", parseDoubleOrZero(etCarbos));
-                body.put("grasas",        parseDoubleOrZero(etGrasas));
+                body.put("proteinas",     BigDecimal.valueOf(parseDoubleOrZero(etProteinas)));
+                body.put("carbohidratos", BigDecimal.valueOf(parseDoubleOrZero(etCarbos)));
+                body.put("grasas",        BigDecimal.valueOf(parseDoubleOrZero(etGrasas)));
                 dialog.dismiss();
-                API.adminPatchAlimento(alimento.getId(), body, new UtilREST.OnResponseListener() {
+                alimentoApi.patch(alimento.getId(), body).enqueue(new ApiCallback<Void>() {
                     @Override
-                    public void onSuccess(String response, int statusCode) {
-                        runOnUiThread(() -> cargarAlimentos());
+                    public void onOk(Void ignored) {
+                        cargarAlimentos();
                     }
                     @Override
-                    public void onError(String message, int statusCode) {
-                        runOnUiThread(() -> UIHelper.mostrarToastError(
-                                AnadirAlimentoActivity.this, getString(R.string.error_conexion)));
+                    public void onFail(int code, String message) {
+                        UIHelper.mostrarToastError(
+                                AnadirAlimentoActivity.this, getString(R.string.error_conexion));
                     }
                 });
-            } catch (JSONException | NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 UIHelper.mostrarToastError(this, getString(R.string.error_conexion));
             }
         });
@@ -204,58 +213,49 @@ public class AnadirAlimentoActivity extends BaseActivity {
 
     // Desactiva un alimento predefinido (solo admin), sin borrarlo de la BD
     private void desactivarAlimento(Alimento alimento) {
-        API.adminToggleActivoAlimento(alimento.getId(), false, new UtilREST.OnResponseListener() {
+        alimentoApi.eliminar(alimento.getId()).enqueue(new ApiCallback<Void>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
-                runOnUiThread(() -> cargarAlimentos());
+            public void onOk(Void ignored) {
+                cargarAlimentos();
             }
             @Override
-            public void onError(String message, int statusCode) {
-                runOnUiThread(() -> UIHelper.mostrarToastError(
-                        AnadirAlimentoActivity.this, getString(R.string.error_conexion)));
+            public void onFail(int code, String message) {
+                UIHelper.mostrarToastError(
+                        AnadirAlimentoActivity.this, getString(R.string.error_conexion));
             }
         });
     }
 
     // Elimina (lógicamente, desactivando) un alimento propio del usuario
     private void eliminarAlimento(Alimento alimento) {
-        API.adminToggleActivoAlimento(alimento.getId(), false, new UtilREST.OnResponseListener() {
+        alimentoApi.eliminar(alimento.getId()).enqueue(new ApiCallback<Void>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
-                runOnUiThread(() -> cargarAlimentos());
+            public void onOk(Void ignored) {
+                cargarAlimentos();
             }
             @Override
-            public void onError(String message, int statusCode) {
-                runOnUiThread(() -> UIHelper.mostrarToastError(
-                        AnadirAlimentoActivity.this, getString(R.string.error_conexion)));
+            public void onFail(int code, String message) {
+                UIHelper.mostrarToastError(
+                        AnadirAlimentoActivity.this, getString(R.string.error_conexion));
             }
         });
     }
 
     // Carga todos los alimentos activos desde la API y actualiza ambas listas (full y filtrada)
     private void cargarAlimentos() {
-        API.getAlimentosActivos(new UtilREST.OnResponseListener() {
+        alimentoApi.getActivos().enqueue(new ApiCallback<List<Alimento>>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
-                try {
-                    List<Alimento> alimentos = UtilJSONParser.parseListaAlimentos(response);
-                    runOnUiThread(() -> {
-                        listaAlimentosFull.clear();
-                        listaAlimentosFull.addAll(alimentos);
-                        listaAlimentosFiltrada.clear();
-                        listaAlimentosFiltrada.addAll(listaAlimentosFull);
-                        adapter.notifyDataSetChanged();
-                    });
-                } catch (JSONException e) {
-                    runOnUiThread(() ->
-                            Toast.makeText(AnadirAlimentoActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show());
-                }
+            public void onOk(List<Alimento> alimentos) {
+                listaAlimentosFull.clear();
+                if (alimentos != null) listaAlimentosFull.addAll(alimentos);
+                listaAlimentosFiltrada.clear();
+                listaAlimentosFiltrada.addAll(listaAlimentosFull);
+                adapter.notifyDataSetChanged();
             }
 
             @Override
-            public void onError(String message, int statusCode) {
-                runOnUiThread(() ->
-                        Toast.makeText(AnadirAlimentoActivity.this, message, Toast.LENGTH_SHORT).show());
+            public void onFail(int code, String message) {
+                Toast.makeText(AnadirAlimentoActivity.this, message, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -318,31 +318,27 @@ public class AnadirAlimentoActivity extends BaseActivity {
     // Añade el alimento a la comida; si la comida aún no existe (comidaId == -1) la crea primero
     private void anadirAlimento(Alimento alimento, double gramos) {
         if (comidaId == -1) {
-            try {
-                JSONObject body = new JSONObject();
-                body.put("usuarioId", prefsManager.getUsuarioId());
-                body.put("tipoComida", tipoComida);
-                body.put("fecha", fecha + "T00:00:00");
-                API.crearComida(body, new UtilREST.OnResponseListener() {
-                    @Override
-                    public void onSuccess(String response, int statusCode) {
-                        try {
-                            comidaId = new JSONObject(response).getInt("id");
-                            postAlimentoComida(alimento, gramos);
-                        } catch (JSONException e) {
-                            runOnUiThread(() ->
-                                    Toast.makeText(AnadirAlimentoActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show());
-                        }
+            // Cuerpo de creación: la fecha del path es yyyy-MM-dd; aquí se envía como ISO con hora 00:00:00.
+            Map<String, Object> body = new HashMap<>();
+            body.put("usuarioId", prefsManager.getUsuarioId());
+            body.put("tipoComida", tipoComida);
+            body.put("fecha", fecha + "T00:00:00");
+            comidaApi.crear(body).enqueue(new ApiCallback<Comida>() {
+                @Override
+                public void onOk(Comida creada) {
+                    if (creada == null) {
+                        Toast.makeText(AnadirAlimentoActivity.this,
+                                getString(R.string.error_conexion), Toast.LENGTH_SHORT).show();
+                        return;
                     }
-                    @Override
-                    public void onError(String message, int statusCode) {
-                        runOnUiThread(() ->
-                                Toast.makeText(AnadirAlimentoActivity.this, message, Toast.LENGTH_SHORT).show());
-                    }
-                });
-            } catch (JSONException e) {
-                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+                    comidaId = creada.getId();
+                    postAlimentoComida(alimento, gramos);
+                }
+                @Override
+                public void onFail(int code, String message) {
+                    Toast.makeText(AnadirAlimentoActivity.this, message, Toast.LENGTH_SHORT).show();
+                }
+            });
         } else {
             postAlimentoComida(alimento, gramos);
         }
@@ -350,30 +346,24 @@ public class AnadirAlimentoActivity extends BaseActivity {
 
     // Envía la petición que asocia el alimento (con sus gramos) a la comida y cierra la pantalla al éxito
     private void postAlimentoComida(Alimento alimento, double gramos) {
-        try {
-            JSONObject body = new JSONObject();
-            body.put("comidaId", comidaId);
-            body.put("alimentoId", alimento.getId());
-            body.put("cantidadGramos", gramos);
-            API.anadirAlimentoAComida(body, new UtilREST.OnResponseListener() {
-                @Override
-                public void onSuccess(String response, int statusCode) {
-                    runOnUiThread(() -> {
-                        Intent result = new Intent();
-                        result.putExtra("comidaId", comidaId);
-                        setResult(RESULT_OK, result);
-                        finish();
-                    });
-                }
-                @Override
-                public void onError(String message, int statusCode) {
-                    runOnUiThread(() ->
-                            Toast.makeText(AnadirAlimentoActivity.this, message, Toast.LENGTH_SHORT).show());
-                }
-            });
-        } catch (JSONException e) {
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+        // Cuerpo parcial: cantidadGramos como BigDecimal (decimal).
+        Map<String, Object> body = new HashMap<>();
+        body.put("comidaId", comidaId);
+        body.put("alimentoId", alimento.getId());
+        body.put("cantidadGramos", BigDecimal.valueOf(gramos));
+        alimentoComidaApi.anadir(body).enqueue(new ApiCallback<Void>() {
+            @Override
+            public void onOk(Void ignored) {
+                Intent result = new Intent();
+                result.putExtra("comidaId", comidaId);
+                setResult(RESULT_OK, result);
+                finish();
+            }
+            @Override
+            public void onFail(int code, String message) {
+                Toast.makeText(AnadirAlimentoActivity.this, message, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     // Parsea el contenido de un campo a double, devolviendo 0.0 si está vacío o no es válido

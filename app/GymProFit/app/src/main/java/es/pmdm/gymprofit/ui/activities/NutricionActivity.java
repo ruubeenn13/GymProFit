@@ -11,8 +11,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import org.json.JSONException;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,9 +20,9 @@ import java.util.Map;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.comida.Comida;
-import es.pmdm.gymprofit.network.API;
-import es.pmdm.gymprofit.network.UtilJSONParser;
-import es.pmdm.gymprofit.network.UtilREST;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.ComidaApi;
 import es.pmdm.gymprofit.utils.CalculadoraNutricional;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
 
@@ -42,6 +40,9 @@ public class NutricionActivity extends BaseActivity {
 
     private int objetivoCalorias = 2000, objetivoProteinas = 150, objetivoCarbos = 250, objetivoGrasas = 65;
     private final Map<String, Comida> comidasHoy = new HashMap<>();
+
+    // Servicio Retrofit tipado del dominio comidas (etapa 2).
+    private final ComidaApi comidaApi = ApiClient.service(ComidaApi.class);
 
     private ActivityResultLauncher<Intent> comidaLauncher;
 
@@ -129,32 +130,23 @@ public class NutricionActivity extends BaseActivity {
         int usuarioId = prefsManager.getUsuarioId();
         final String hoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
-        API.getComidasDeUsuarioFecha(usuarioId, hoy, new UtilREST.OnResponseListener() {
+        comidaApi.getDeUsuarioFecha(usuarioId, hoy).enqueue(new ApiCallback<List<Comida>>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
-                try {
-                    List<Comida> lista = UtilJSONParser.parseListaComidas(response);
-                    runOnUiThread(() -> {
-                        comidasHoy.clear();
-                        if (lista != null) {
-                            for (Comida c : lista) {
-                                comidasHoy.put(c.getTipoComida(), c);
-                            }
-                        }
-                        actualizarUI(hoy);
-                    });
-                } catch (JSONException e) {
-                    runOnUiThread(() -> actualizarUI(hoy));
+            public void onOk(List<Comida> lista) {
+                comidasHoy.clear();
+                if (lista != null) {
+                    for (Comida c : lista) {
+                        comidasHoy.put(c.getTipoComida(), c);
+                    }
                 }
+                actualizarUI(hoy);
             }
 
             @Override
-            public void onError(String message, int statusCode) {
+            public void onFail(int code, String message) {
                 // 404 = no hay comidas hoy → estado vacío
-                runOnUiThread(() -> {
-                    comidasHoy.clear();
-                    actualizarUI(hoy);
-                });
+                comidasHoy.clear();
+                actualizarUI(hoy);
             }
         });
     }
