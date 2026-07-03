@@ -18,14 +18,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.android.material.button.MaterialButton;
 
 import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
-import es.pmdm.gymprofit.network.API;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.AuthApi;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
@@ -38,6 +42,8 @@ import es.pmdm.gymprofit.utils.UIHelper;
 public abstract class BaseActivity extends AppCompatActivity {
 
     protected PreferencesManager prefsManager;
+    // Interfaz Retrofit tipada de auth (etapa 2), usada para revocar el refresh en el logout
+    private final AuthApi authApi = ApiClient.service(AuthApi.class);
 
     // Aplica tema e idioma guardados antes de crear la vista y registra el listener de 401
     // que fuerza logout y redirige a LoginActivity cuando el token expira o es inválido.
@@ -202,9 +208,11 @@ public abstract class BaseActivity extends AppCompatActivity {
                     // Revoca el refresh token en el servidor (best-effort) antes de limpiar la sesión local.
                     String refresh = prefsManager.getRefreshToken();
                     if (refresh != null && !refresh.isEmpty()) {
-                        API.logout(refresh, new UtilREST.OnResponseListener() {
-                            @Override public void onSuccess(String response, int statusCode) { }
-                            @Override public void onError(String message, int statusCode) { }
+                        Map<String, Object> body = new HashMap<>();
+                        body.put("refreshToken", refresh);
+                        authApi.logout(body).enqueue(new ApiCallback<Void>() {
+                            @Override public void onOk(Void ignored) { }
+                            @Override public void onFail(int code, String message) { }
                         });
                     }
                     UtilREST.clearToken();

@@ -9,14 +9,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
 
-import org.json.JSONException;
-
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.model.auth.TokenResponse;
 import es.pmdm.gymprofit.model.usuario.Usuario;
-import es.pmdm.gymprofit.network.API;
-import es.pmdm.gymprofit.network.UtilJSONParser;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.AuthApi;
+import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
@@ -31,6 +34,9 @@ public class RegistroActivity extends AppCompatActivity {
 
     private TextInputEditText etRegUsername, etRegEmail, etRegPassword, etRegConfirmarPassword;
     private PreferencesManager prefsManager;
+    // Interfaces Retrofit tipadas de auth y usuarios (etapa 2)
+    private final AuthApi authApi = ApiClient.service(AuthApi.class);
+    private final UsuarioApi usuarioApi = ApiClient.service(UsuarioApi.class);
 
     // Inicializa la pantalla: aplica tema/idioma, monta vistas y configura
     // los listeners de los botones.
@@ -104,15 +110,20 @@ public class RegistroActivity extends AppCompatActivity {
         String email    = etRegEmail.getText().toString().trim();
         String password = etRegPassword.getText().toString().trim();
 
-        API.register(username, password, email, new UtilREST.OnResponseListener() {
+        Map<String, Object> body = new HashMap<>();
+        body.put("username", username);
+        body.put("password", password);
+        body.put("email", email);
+
+        authApi.register(body).enqueue(new ApiCallback<Void>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
+            public void onOk(Void ignored) {
                 UIHelper.mostrarToastExito(RegistroActivity.this, getString(R.string.registro_exito));
                 hacerLoginAutomatico(username, password);
             }
 
             @Override
-            public void onError(String message, int statusCode) {
+            public void onFail(int code, String message) {
                 UIHelper.mostrarToastError(RegistroActivity.this, getString(R.string.registro_error));
             }
         });
@@ -121,27 +132,33 @@ public class RegistroActivity extends AppCompatActivity {
     // Hace login con las credenciales recién registradas, guarda el token y
     // el username en preferencias y continúa obteniendo los datos del usuario.
     private void hacerLoginAutomatico(String username, String password) {
-        API.login(username, password, new UtilREST.OnResponseListener() {
+        Map<String, Object> body = new HashMap<>();
+        body.put("username", username);
+        body.put("password", password);
+
+        authApi.login(body).enqueue(new ApiCallback<TokenResponse>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
-                try {
-                    String token   = UtilJSONParser.parseToken(response);
-                    String refresh = UtilJSONParser.parseRefreshToken(response);
-                    String user    = UtilJSONParser.parseTokenUsername(response);
-
-                    UtilREST.setToken(token);
-                    UtilREST.setRefreshToken(refresh);
-                    prefsManager.saveSesion(token, refresh);
-                    prefsManager.saveUsername(user);
-
-                    obtenerUsuario(user);
-                } catch (JSONException e) {
+            public void onOk(TokenResponse resp) {
+                if (resp == null) {
                     irAlLogin();
+                    return;
                 }
+                String token   = resp.getToken();
+                String refresh = resp.getRefreshToken();
+                String user    = resp.getUsername();
+
+                // Guardado de tokens idéntico al flujo original (UtilREST + prefs);
+                // aquí NO se guarda el rol (se obtiene luego del perfil de usuario).
+                UtilREST.setToken(token);
+                UtilREST.setRefreshToken(refresh);
+                prefsManager.saveSesion(token, refresh);
+                prefsManager.saveUsername(user);
+
+                obtenerUsuario(user);
             }
 
             @Override
-            public void onError(String message, int statusCode) {
+            public void onFail(int code, String message) {
                 irAlLogin();
             }
         });
@@ -150,21 +167,18 @@ public class RegistroActivity extends AppCompatActivity {
     // Recupera el usuario recién creado por username para guardar su id y rol
     // en preferencias, y a continuación navega al onboarding.
     private void obtenerUsuario(String username) {
-        API.getUsuarioPorUsername(username, new UtilREST.OnResponseListener() {
+        usuarioApi.getPorUsername(username).enqueue(new ApiCallback<Usuario>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
-                try {
-                    Usuario u = UtilJSONParser.parseUsuario(response);
+            public void onOk(Usuario u) {
+                if (u != null) {
                     prefsManager.saveUsuarioId(u.getId());
                     prefsManager.saveRol(u.getRol());
-                } catch (JSONException e) {
-                    // continúa sin id/rol
                 }
                 irAlOnboarding();
             }
 
             @Override
-            public void onError(String message, int statusCode) {
+            public void onFail(int code, String message) {
                 irAlOnboarding();
             }
         });
