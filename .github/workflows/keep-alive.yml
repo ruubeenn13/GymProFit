@@ -28,5 +28,5 @@ jobs:
       # '|| true' para que un fallo puntual de red no marque el run en rojo.
       - name: Ping /actuator/health
         run: |
-          curl -sS --max-time 120 -o /dev/null -w "HTTP %{http_code} en %{time_total}s\n" \
+          curl -sS --max-time 180 -o /dev/null -w "HTTP %{http_code} en %{time_total}s\n" \
             https://gymprofit-api.onrender.com/api/actuator/health || true
