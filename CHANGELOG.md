@@ -6,6 +6,7 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `a6f079a` | ci: no disparar CI en commits solo-documentación (`paths-ignore` en push) — evita runs "canceled" cuando el commit de changelog seguía al de código |
 | `a4c9b89` | refactor(android): Retrofit etapa 2 F6 — dominio Admin tipado (`AdminApi`, 7 pantallas); paginación (lista plana), búsquedas jOOQ, POJO `EstadisticasGlobales`, `BooleanNumericAdapter` para `activo` Byte→boolean. Validado contra API real como ADMIN |
 | `07a1dde` | refactor(android): Retrofit etapa 2 F5 — dominio Nutrición tipado (`AlimentoApi`/`ComidaApi`/`AlimentoComidaApi`); comidas + alimentos + alimentos-comida, sin `@SerializedName` (claves JSON = campos POJO) |
 | `6d70516` | refactor(android): Retrofit etapa 2 F4 — dominio Rutinas + rutinas-ejercicios tipado (`RutinaApi`, POJO `RutinaEjercicio`, `@SerializedName("esPredefinida")`); callback-hell de 2 niveles aplanado |
