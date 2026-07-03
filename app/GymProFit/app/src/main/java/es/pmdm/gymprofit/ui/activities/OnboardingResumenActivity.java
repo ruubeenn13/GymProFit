@@ -9,14 +9,15 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import es.pmdm.gymprofit.R;
-import es.pmdm.gymprofit.network.API;
-import es.pmdm.gymprofit.network.UtilREST;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.utils.CalculadoraNutricional;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
@@ -29,6 +30,9 @@ import es.pmdm.gymprofit.utils.UIHelper;
 // preferencias locales y las envía a la API (PATCH /usuarios/{id}) antes de ir al Home.
 // ============================================================
 public class OnboardingResumenActivity extends AppCompatActivity {
+
+    // Interfaz Retrofit tipada del dominio usuarios (etapa 2)
+    private final UsuarioApi usuarioApi = ApiClient.service(UsuarioApi.class);
 
     // Inicializa la pantalla, calcula y muestra el resumen nutricional, y
     // configura el botón "Comenzar" para guardar los datos y navegar al Home.
@@ -120,18 +124,19 @@ public class OnboardingResumenActivity extends AppCompatActivity {
         }
 
         try {
-            JSONObject body = new JSONObject();
+            // Cuerpo de escritura como Map; los decimales viajan como BigDecimal.
+            Map<String, Object> body = new HashMap<>();
 
             String emailStr = extras.getString("email", "");
             if (!emailStr.isEmpty()) body.put("email", emailStr);
 
             String pesoStr = extras.getString("peso", "");
             if (!pesoStr.isEmpty()) {
-                body.put("peso", Double.parseDouble(pesoStr.replace(",", ".")));
+                body.put("peso", new BigDecimal(pesoStr.replace(",", ".")));
             }
 
             double altura = extras.getDouble("altura", 0);
-            if (altura > 0) body.put("altura", altura);
+            if (altura > 0) body.put("altura", BigDecimal.valueOf(altura));
 
             int edad = extras.getInt("edad", 0);
             if (edad > 0) body.put("edad", edad);
@@ -141,9 +146,9 @@ public class OnboardingResumenActivity extends AppCompatActivity {
 
             body.put("objetivo", prefs.getObjetivo());
 
-            API.patchUsuario(usuarioId, body, new UtilREST.OnResponseListener() {
+            usuarioApi.patch(usuarioId, body).enqueue(new ApiCallback<Void>() {
                 @Override
-                public void onSuccess(String response, int statusCode) {
+                public void onOk(Void response) {
                     UIHelper.mostrarToastExito(OnboardingResumenActivity.this,
                             getString(R.string.onboarding_guardado_exito));
                     marcarOnboardingCompletado(prefs);
@@ -151,14 +156,14 @@ public class OnboardingResumenActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onError(String message, int statusCode) {
+                public void onFail(int code, String message) {
                     UIHelper.mostrarToastInfo(OnboardingResumenActivity.this,
                             getString(R.string.onboarding_guardado_local));
                     marcarOnboardingCompletado(prefs);
                     irAlHome();
                 }
             });
-        } catch (JSONException e) {
+        } catch (NumberFormatException e) {
             marcarOnboardingCompletado(prefs);
             irAlHome();
         }

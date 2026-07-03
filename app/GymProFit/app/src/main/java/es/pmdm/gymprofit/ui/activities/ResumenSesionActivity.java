@@ -28,6 +28,7 @@ import es.pmdm.gymprofit.network.API;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.SesionApi;
+import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.adapters.LogroAdapter;
@@ -53,6 +54,8 @@ public class ResumenSesionActivity extends AppCompatActivity {
     private PreferencesManager prefsManager;
     // Interfaz Retrofit tipada del dominio sesiones (etapa 2)
     private final SesionApi sesionApi = ApiClient.service(SesionApi.class);
+    // Interfaz Retrofit tipada del dominio usuarios (etapa 2)
+    private final UsuarioApi usuarioApi = ApiClient.service(UsuarioApi.class);
     // Contador de llamadas asíncronas pendientes (sesión, estadísticas, logros totales y desbloqueados)
     private final AtomicInteger pendientes = new AtomicInteger(4);
 
@@ -134,14 +137,14 @@ public class ResumenSesionActivity extends AppCompatActivity {
         });
     }
 
-    // Obtiene las estadísticas globales de entrenamiento del usuario.
+    // Obtiene las estadísticas globales de entrenamiento del usuario (ya deserializadas por Gson).
     private void cargarEstadisticas(int usuarioId) {
-        API.getEstadisticasUsuario(usuarioId, new UtilREST.OnResponseListener() {
-            @Override public void onSuccess(String response, int statusCode) {
-                try { estadisticas = UtilJSONParser.parseEstadisticas(response); } catch (JSONException ignored) {}
+        usuarioApi.getEstadisticas(usuarioId).enqueue(new ApiCallback<UsuarioEstadisticas>() {
+            @Override public void onOk(UsuarioEstadisticas body) {
+                estadisticas = body;
                 comprobarYMostrar();
             }
-            @Override public void onError(String message, int statusCode) { comprobarYMostrar(); }
+            @Override public void onFail(int code, String message) { comprobarYMostrar(); }
         });
     }
 

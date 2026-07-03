@@ -25,6 +25,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.json.JSONException;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -36,8 +37,14 @@ import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.medicion.MedicionCorporal;
 import es.pmdm.gymprofit.model.usuario.Usuario;
 import es.pmdm.gymprofit.network.API;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.network.UtilJSONParser;
 import es.pmdm.gymprofit.network.UtilREST;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 // ============================================================
 // PerfilActivity — Pantalla de perfil del usuario.
@@ -60,6 +67,8 @@ public class PerfilActivity extends BaseActivity {
     private TextView tvPesoMedicion, tvAlturaMedicion;
     private LinearLayout llMedicionesResumen;
     private ImageView ivAvatar;
+    // Interfaz Retrofit tipada del dominio usuarios (etapa 2)
+    private final UsuarioApi usuarioApi = ApiClient.service(UsuarioApi.class);
 
     // Inicializa launchers para editar perfil, ver mediciones, elegir foto de
     // galería/cámara y pedir permiso de cámara; luego monta la pantalla.
@@ -152,42 +161,35 @@ public class PerfilActivity extends BaseActivity {
         cargarUltimaMedicion(usuarioId);
         cargarFotoPerfil(usuarioId);
 
-        API.getUsuarioPorId(usuarioId, new UtilREST.OnResponseListener() {
+        // Perfil ya deserializado a Usuario por Gson (sin UtilJSONParser); ApiCallback entrega en hilo UI.
+        usuarioApi.getPorId(usuarioId).enqueue(new ApiCallback<Usuario>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
-                try {
-                    Usuario u = UtilJSONParser.parseUsuario(response);
-                    if (u == null) return;
-
-                    runOnUiThread(() -> {
-                        tvNombreUsuario.setText(u.getUsername());
-                        tvEmailUsuario.setText(val(u.getEmail(), sinDatos));
-                        tvInfoNombre.setText(u.getUsername());
-                        tvInfoEmail.setText(val(u.getEmail(), sinDatos));
-                        tvInfoNivel.setText(val(u.getNivelExperiencia(), null) != null
-                                ? mapearNivel(u.getNivelExperiencia()) : sinDatos);
-                        tvInfoPeso.setText(val(u.getPeso(), null) != null
-                                ? getString(R.string.perfil_kg, u.getPeso()) : sinDatos);
-                        tvInfoAltura.setText(u.getAltura() > 0
-                                ? getString(R.string.perfil_cm, (int) u.getAltura()) : sinDatos);
-                        tvInfoEdad.setText(u.getEdad() > 0
-                                ? getString(R.string.perfil_anos, u.getEdad()) : sinDatos);
-                        tvInfoObjetivo.setText(val(u.getObjetivo(), sinDatos) != null
-                                ? mapearObjetivo(u.getObjetivo()) : sinDatos);
-                    });
-                } catch (Exception ignored) {}
+            public void onOk(Usuario u) {
+                if (u == null) return;
+                tvNombreUsuario.setText(u.getUsername());
+                tvEmailUsuario.setText(val(u.getEmail(), sinDatos));
+                tvInfoNombre.setText(u.getUsername());
+                tvInfoEmail.setText(val(u.getEmail(), sinDatos));
+                tvInfoNivel.setText(val(u.getNivelExperiencia(), null) != null
+                        ? mapearNivel(u.getNivelExperiencia()) : sinDatos);
+                tvInfoPeso.setText(val(u.getPeso(), null) != null
+                        ? getString(R.string.perfil_kg, u.getPeso()) : sinDatos);
+                tvInfoAltura.setText(u.getAltura() > 0
+                        ? getString(R.string.perfil_cm, (int) u.getAltura()) : sinDatos);
+                tvInfoEdad.setText(u.getEdad() > 0
+                        ? getString(R.string.perfil_anos, u.getEdad()) : sinDatos);
+                tvInfoObjetivo.setText(val(u.getObjetivo(), sinDatos) != null
+                        ? mapearObjetivo(u.getObjetivo()) : sinDatos);
             }
 
             @Override
-            public void onError(String message, int statusCode) {
-                Log.e("GymProFit", "getUsuarioPorId error status=" + statusCode + " msg=" + message);
-                runOnUiThread(() -> {
-                    String username = prefsManager.getUsername();
-                    if (username != null && !username.isEmpty()) {
-                        tvNombreUsuario.setText(username);
-                        tvInfoNombre.setText(username);
-                    }
-                });
+            public void onFail(int code, String message) {
+                Log.e("GymProFit", "getUsuarioPorId error status=" + code + " msg=" + message);
+                String username = prefsManager.getUsername();
+                if (username != null && !username.isEmpty()) {
+                    tvNombreUsuario.setText(username);
+                    tvInfoNombre.setText(username);
+                }
             }
         });
     }
@@ -235,23 +237,41 @@ public class PerfilActivity extends BaseActivity {
 
         Toast.makeText(this, R.string.perfil_foto_subiendo, Toast.LENGTH_SHORT).show();
 
-        API.uploadFotoPerfil(this, uid, uri, new UtilREST.OnResponseListener() {
-            @Override
-            public void onSuccess(String response, int statusCode) {
-                runOnUiThread(() -> {
-                    Toast.makeText(PerfilActivity.this, R.string.perfil_foto_ok, Toast.LENGTH_SHORT).show();
-                    ivAvatar.setImageURI(null);
-                    ivAvatar.setImageURI(uri);
-                });
-            }
+        // Lee el archivo en un hilo aparte (no bloquea la UI), construye el MultipartBody.Part
+        // igual que hacía UtilREST.uploadMultipart (bytes del Uri, image/jpeg, campo "foto") y lo
+        // sube vía UsuarioApi (etapa 2). ApiCallback entrega su respuesta en el hilo principal.
+        new Thread(() -> {
+            try (InputStream is = getContentResolver().openInputStream(uri)) {
+                if (is == null) {
+                    runOnUiThread(() ->
+                            Toast.makeText(PerfilActivity.this, R.string.perfil_foto_error, Toast.LENGTH_SHORT).show());
+                    return;
+                }
+                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                byte[] chunk = new byte[8192];
+                int n;
+                while ((n = is.read(chunk)) != -1) buffer.write(chunk, 0, n);
+                RequestBody fileBody = RequestBody.create(MediaType.parse("image/jpeg"), buffer.toByteArray());
+                MultipartBody.Part part = MultipartBody.Part.createFormData("foto", "foto.jpg", fileBody);
 
-            @Override
-            public void onError(String message, int statusCode) {
+                usuarioApi.subirFoto(uid, part).enqueue(new ApiCallback<Void>() {
+                    @Override
+                    public void onOk(Void body) {
+                        Toast.makeText(PerfilActivity.this, R.string.perfil_foto_ok, Toast.LENGTH_SHORT).show();
+                        ivAvatar.setImageURI(null);
+                        ivAvatar.setImageURI(uri);
+                    }
+
+                    @Override
+                    public void onFail(int code, String message) {
+                        Toast.makeText(PerfilActivity.this, R.string.perfil_foto_error, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } catch (Exception e) {
                 runOnUiThread(() ->
-                    Toast.makeText(PerfilActivity.this, R.string.perfil_foto_error, Toast.LENGTH_SHORT).show()
-                );
+                        Toast.makeText(PerfilActivity.this, R.string.perfil_foto_error, Toast.LENGTH_SHORT).show());
             }
-        });
+        }).start();
     }
 
     // Descarga en background la foto de perfil del usuario desde la API

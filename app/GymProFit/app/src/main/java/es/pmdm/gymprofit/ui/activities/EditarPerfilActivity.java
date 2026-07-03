@@ -10,16 +10,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.usuario.Usuario;
-import es.pmdm.gymprofit.network.API;
-import es.pmdm.gymprofit.network.UtilJSONParser;
-import es.pmdm.gymprofit.network.UtilREST;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.utils.CalculadoraNutricional;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
@@ -36,6 +36,8 @@ public class EditarPerfilActivity extends AppCompatActivity {
     private PreferencesManager prefsManager;
     private TextInputEditText etEmail, etPeso, etAltura, etEdad;
     private Spinner spNivel, spObjetivo;
+    // Interfaz Retrofit tipada del dominio usuarios (etapa 2)
+    private final UsuarioApi usuarioApi = ApiClient.service(UsuarioApi.class);
 
     // Valores enviados a la API para nivel de experiencia.
     private static final String[] NIVELES = {
@@ -109,29 +111,25 @@ public class EditarPerfilActivity extends AppCompatActivity {
         int id = prefsManager.getUsuarioId();
         if (id == -1) return;
 
-        API.getUsuarioPorId(id, new UtilREST.OnResponseListener() {
+        // Perfil ya deserializado a Usuario por Gson; ApiCallback entrega en hilo UI.
+        usuarioApi.getPorId(id).enqueue(new ApiCallback<Usuario>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
-                try {
-                    Usuario u = UtilJSONParser.parseUsuario(response);
-                    if (u == null) return;
-                    runOnUiThread(() -> {
-                        if (u.getEmail() != null && !u.getEmail().isEmpty())
-                            etEmail.setText(u.getEmail());
-                        if (u.getPeso() != null && !u.getPeso().isEmpty())
-                            etPeso.setText(u.getPeso());
-                        if (u.getAltura() > 0)
-                            etAltura.setText(String.valueOf((int) u.getAltura()));
-                        if (u.getEdad() > 0)
-                            etEdad.setText(String.valueOf(u.getEdad()));
-                        seleccionarSpinner(spNivel, NIVELES, u.getNivelExperiencia());
-                        seleccionarSpinner(spObjetivo, OBJETIVOS, u.getObjetivo());
-                    });
-                } catch (Exception ignored) {}
+            public void onOk(Usuario u) {
+                if (u == null) return;
+                if (u.getEmail() != null && !u.getEmail().isEmpty())
+                    etEmail.setText(u.getEmail());
+                if (u.getPeso() != null && !u.getPeso().isEmpty())
+                    etPeso.setText(u.getPeso());
+                if (u.getAltura() > 0)
+                    etAltura.setText(String.valueOf((int) u.getAltura()));
+                if (u.getEdad() > 0)
+                    etEdad.setText(String.valueOf(u.getEdad()));
+                seleccionarSpinner(spNivel, NIVELES, u.getNivelExperiencia());
+                seleccionarSpinner(spObjetivo, OBJETIVOS, u.getObjetivo());
             }
 
             @Override
-            public void onError(String message, int statusCode) {}
+            public void onFail(int code, String message) {}
         });
     }
 
@@ -163,60 +161,59 @@ public class EditarPerfilActivity extends AppCompatActivity {
 
         int id = prefsManager.getUsuarioId();
         try {
-            JSONObject body = new JSONObject();
+            // Cuerpo de escritura como Map: los decimales viajan como BigDecimal y un
+            // valor null BORRA el campo (Gson con serializeNulls, equivalente al antiguo JSONObject.NULL).
+            Map<String, Object> body = new HashMap<>();
             body.put("email", email);
 
             String pesoStr = etPeso.getText() != null ? etPeso.getText().toString().trim() : "";
-            body.put("peso", pesoStr.isEmpty() ? JSONObject.NULL
-                    : Double.parseDouble(pesoStr.replace(",", ".")));
+            body.put("peso", pesoStr.isEmpty() ? null
+                    : new BigDecimal(pesoStr.replace(",", ".")));
 
             String alturaStr = etAltura.getText() != null ? etAltura.getText().toString().trim() : "";
-            body.put("altura", alturaStr.isEmpty() ? JSONObject.NULL
-                    : Double.parseDouble(alturaStr));
+            body.put("altura", alturaStr.isEmpty() ? null
+                    : new BigDecimal(alturaStr));
 
             String edadStr = etEdad.getText() != null ? etEdad.getText().toString().trim() : "";
-            body.put("edad", edadStr.isEmpty() ? JSONObject.NULL
+            body.put("edad", edadStr.isEmpty() ? null
                     : Integer.parseInt(edadStr));
 
             body.put("nivelExperiencia", NIVELES[spNivel.getSelectedItemPosition()]);
             body.put("objetivo", OBJETIVOS[spObjetivo.getSelectedItemPosition()]);
 
-            API.patchUsuario(id, body, new UtilREST.OnResponseListener() {
+            usuarioApi.patch(id, body).enqueue(new ApiCallback<Void>() {
                 @Override
-                public void onSuccess(String response, int statusCode) {
-                    runOnUiThread(() -> {
-                        // Guardar datos de perfil en prefs para recálculo de macros
-                        if (!pesoStr.isEmpty()) prefsManager.savePeso(Double.parseDouble(pesoStr.replace(",", ".")));
-                        if (!alturaStr.isEmpty()) prefsManager.saveAltura(Double.parseDouble(alturaStr));
-                        if (!edadStr.isEmpty()) prefsManager.saveEdad(Integer.parseInt(edadStr));
-                        String objetivoSeleccionado = OBJETIVOS[spObjetivo.getSelectedItemPosition()];
-                        prefsManager.saveObjetivo(objetivoSeleccionado);
-                        prefsManager.saveNivel(NIVELES[spNivel.getSelectedItemPosition()]);
+                public void onOk(Void response) {
+                    // Guardar datos de perfil en prefs para recálculo de macros
+                    if (!pesoStr.isEmpty()) prefsManager.savePeso(Double.parseDouble(pesoStr.replace(",", ".")));
+                    if (!alturaStr.isEmpty()) prefsManager.saveAltura(Double.parseDouble(alturaStr));
+                    if (!edadStr.isEmpty()) prefsManager.saveEdad(Integer.parseInt(edadStr));
+                    String objetivoSeleccionado = OBJETIVOS[spObjetivo.getSelectedItemPosition()];
+                    prefsManager.saveObjetivo(objetivoSeleccionado);
+                    prefsManager.saveNivel(NIVELES[spNivel.getSelectedItemPosition()]);
 
-                        // Recalcular macros con los nuevos datos
-                        double peso = prefsManager.getPeso();
-                        double altura = prefsManager.getAltura();
-                        int edad = prefsManager.getEdad();
-                        boolean esHombre = "HOMBRE".equals(prefsManager.getSexo());
-                        String actividad = prefsManager.getActividad();
-                        ResultadoNutricional r = CalculadoraNutricional.calcular(peso, altura, edad, esHombre, actividad, objetivoSeleccionado);
-                        prefsManager.saveResultadoNutricional(r.calorias, r.proteinas, r.carbohidratos, r.grasas, r.agua);
+                    // Recalcular macros con los nuevos datos
+                    double peso = prefsManager.getPeso();
+                    double altura = prefsManager.getAltura();
+                    int edad = prefsManager.getEdad();
+                    boolean esHombre = "HOMBRE".equals(prefsManager.getSexo());
+                    String actividad = prefsManager.getActividad();
+                    ResultadoNutricional r = CalculadoraNutricional.calcular(peso, altura, edad, esHombre, actividad, objetivoSeleccionado);
+                    prefsManager.saveResultadoNutricional(r.calorias, r.proteinas, r.carbohidratos, r.grasas, r.agua);
 
-                        UIHelper.mostrarToastExito(EditarPerfilActivity.this,
-                                getString(R.string.editar_perfil_guardado));
-                        setResult(RESULT_OK);
-                        finish();
-                    });
+                    UIHelper.mostrarToastExito(EditarPerfilActivity.this,
+                            getString(R.string.editar_perfil_guardado));
+                    setResult(RESULT_OK);
+                    finish();
                 }
 
                 @Override
-                public void onError(String message, int statusCode) {
-                    runOnUiThread(() ->
-                            UIHelper.mostrarToastError(EditarPerfilActivity.this,
-                                    getString(R.string.editar_perfil_error)));
+                public void onFail(int code, String message) {
+                    UIHelper.mostrarToastError(EditarPerfilActivity.this,
+                            getString(R.string.editar_perfil_error));
                 }
             });
-        } catch (JSONException e) {
+        } catch (NumberFormatException e) {
             UIHelper.mostrarToastError(this, getString(R.string.editar_perfil_error));
         }
     }

@@ -27,12 +27,10 @@ import java.util.Map;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.medicion.MedicionCorporal;
 import es.pmdm.gymprofit.model.usuario.Usuario;
-import es.pmdm.gymprofit.network.API;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.MedicionApi;
-import es.pmdm.gymprofit.network.UtilJSONParser;
-import es.pmdm.gymprofit.network.UtilREST;
+import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
@@ -54,6 +52,8 @@ public class MedicionesActivity extends AppCompatActivity {
     private MedicionCorporal ultimaMedicion;
     // Interfaz Retrofit tipada del dominio mediciones (etapa 2)
     private final MedicionApi medicionApi = ApiClient.service(MedicionApi.class);
+    // Interfaz Retrofit tipada del dominio usuarios (etapa 2)
+    private final UsuarioApi usuarioApi = ApiClient.service(UsuarioApi.class);
 
     private ActivityResultLauncher<Intent> nuevaLauncher;
 
@@ -167,11 +167,11 @@ public class MedicionesActivity extends AppCompatActivity {
     // Si el usuario no tiene mediciones, crea una inicial usando el peso/altura
     // guardados en su perfil (si existen); si no, muestra el estado vacío.
     private void intentarCrearDesdePerfil(int usuarioId) {
-        API.getUsuarioPorId(usuarioId, new UtilREST.OnResponseListener() {
+        // Perfil ya deserializado a Usuario por Gson (sin UtilJSONParser); ApiCallback entrega en hilo UI.
+        usuarioApi.getPorId(usuarioId).enqueue(new ApiCallback<Usuario>() {
             @Override
-            public void onSuccess(String response, int statusCode) {
+            public void onOk(Usuario u) {
                 try {
-                    Usuario u = UtilJSONParser.parseUsuario(response);
                     String pesoStr = (u != null && u.getPeso() != null) ? u.getPeso().trim() : "";
                     if (!pesoStr.isEmpty() && !pesoStr.equals("null")) {
                         Map<String, Object> body = new HashMap<>();
@@ -200,8 +200,8 @@ public class MedicionesActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onError(String message, int statusCode) {
-                runOnUiThread(() -> mostrarVacio());
+            public void onFail(int code, String message) {
+                mostrarVacio();
             }
         });
     }
