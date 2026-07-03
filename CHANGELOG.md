@@ -6,6 +6,8 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `e14ecdb` | fix(android): pulido #1/#4 — cold-start de Render (readTimeout 60s + callTimeout 60s, evita SocketTimeout en la 1ª petición tras dormir) + quitado permiso `READ_CONTACTS` (el picker del sistema no lo requiere) |
+| `2ceaa70` | fix(api): pulido #2/#3 — 400 (no 500) en requests mal formadas (3 `@ExceptionHandler`) + logs solo a consola en perfil prod (FS efímero) |
 | `0c881d6` | ci: keep-alive — cron cada 10 min que pinguea `/api/actuator/health` para que Render (free) no se duerma (~730h/mes < 750h gratis) |
 | `4d76c00` | refactor(android): Retrofit etapa 2 **F8b limpieza final** — borrados `API.java` y `UtilJSONParser` (~375 líneas de parseo manual), `UtilREST` reducido a solo tokens, `RawApi` fuera de `ApiClient`. **Migración a Retrofit tipado COMPLETA** (toda la red por interfaces por dominio + Gson) |
 | `886f01a` | refactor(android): Retrofit etapa 2 F8a — barrido de 9 llamadas cross-domain residuales a las interfaces tipadas (Sesiones→Rutinas/Logros, Perfil→Medición, Detalle/EditarRutina→Ejercicios) |
