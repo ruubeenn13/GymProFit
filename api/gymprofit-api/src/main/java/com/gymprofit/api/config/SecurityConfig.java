@@ -1,6 +1,7 @@
 package com.gymprofit.api.config;
 
 import com.gymprofit.api.config.security.JwtAccessDenied;
+import com.gymprofit.api.config.security.AuthRateLimitFilter;
 import com.gymprofit.api.config.security.JwtAuthenticationFilter;
 import com.gymprofit.api.config.security.JwtEntryPoint;
 import com.gymprofit.api.enums.RoleType;
@@ -49,6 +50,8 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtEntryPoint jwtEntryPoint;
     private final JwtAccessDenied jwtAccessDenied;
+    // Limitador de peticiones para /auth/** (anti brute-force/spam), se ejecuta antes del filtro JWT.
+    private final AuthRateLimitFilter authRateLimitFilter;
 
     // Orígenes permitidos por CORS (lista blanca, separada por comas), configurable por entorno.
     // Por defecto solo orígenes de desarrollo local; en producción se define el dominio web real.
@@ -178,6 +181,8 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider());
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        // El limitador va antes del filtro JWT: frena el spam/fuerza bruta en /auth/** antes de tocar auth.
+        http.addFilterBefore(authRateLimitFilter, JwtAuthenticationFilter.class);
 
         return http.build();
     }

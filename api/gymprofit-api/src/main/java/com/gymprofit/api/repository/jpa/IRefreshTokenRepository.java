@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 // ============================================================
@@ -28,4 +29,10 @@ public interface IRefreshTokenRepository extends JpaRepository<RefreshToken, Int
     @Modifying
     @Query("UPDATE RefreshToken r SET r.revocado = true WHERE r.usuario.id = :usuarioId AND r.revocado = false")
     void revocarTodosDeUsuario(@Param("usuarioId") Integer usuarioId);
+
+    // Borra los refresh tokens ya inútiles (revocados o expirados). Lo llama la tarea
+    // programada de limpieza para que la tabla no crezca sin límite. Devuelve el nº borrado.
+    @Modifying
+    @Query("DELETE FROM RefreshToken r WHERE r.revocado = true OR r.fechaExpiracion < :ahora")
+    int borrarRevocadosOExpirados(@Param("ahora") LocalDateTime ahora);
 }
