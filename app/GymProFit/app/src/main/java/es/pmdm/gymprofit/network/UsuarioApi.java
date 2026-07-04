@@ -5,6 +5,7 @@ import java.util.Map;
 import es.pmdm.gymprofit.model.usuario.Usuario;
 import es.pmdm.gymprofit.model.usuario.UsuarioEstadisticas;
 import okhttp3.MultipartBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -50,4 +51,11 @@ public interface UsuarioApi {
     @Multipart
     @POST("usuarios/{id}/foto")
     Call<Void> subirFoto(@Path("id") int id, @Part MultipartBody.Part foto);
+
+    // Descarga la foto de perfil como bytes crudos (image/jpeg). Sin @Streaming:
+    // Retrofit bufferiza el cuerpo en memoria, así que decodificar el Bitmap en el
+    // callback (hilo principal) no bloquea con I/O de red. Sustituye la última ruta
+    // con AsyncTask + HttpURLConnection que quedaba fuera de Retrofit.
+    @GET("usuarios/{id}/foto")
+    Call<ResponseBody> descargarFoto(@Path("id") int id);
 }

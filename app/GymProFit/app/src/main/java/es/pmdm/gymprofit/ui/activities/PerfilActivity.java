@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -26,11 +25,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.List;
 
-import es.pmdm.gymprofit.BuildConfig;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.medicion.MedicionCorporal;
 import es.pmdm.gymprofit.model.usuario.Usuario;
@@ -38,10 +34,10 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.MedicionApi;
 import es.pmdm.gymprofit.network.UsuarioApi;
-import es.pmdm.gymprofit.network.UtilREST;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 
 // ============================================================
 // PerfilActivity — Pantalla de perfil del usuario.
@@ -273,43 +269,27 @@ public class PerfilActivity extends BaseActivity {
         }).start();
     }
 
-    // Descarga en background la foto de perfil del usuario desde la API
-    // (endpoint /usuarios/{id}/foto) y la muestra en el avatar.
-    @SuppressWarnings("deprecation")
+    // Descarga la foto de perfil del usuario vía Retrofit (endpoint /usuarios/{id}/foto)
+    // y la muestra en el avatar. El token lo inyecta el interceptor de ApiClient. El
+    // cuerpo llega bufferizado en memoria, así que decodificar el Bitmap en el callback
+    // (hilo principal) no bloquea con I/O de red. Si no hay foto o falla, se deja el
+    // avatar por defecto (silencioso).
     private void cargarFotoPerfil(int userId) {
-        new AsyncTask<Void, Void, Bitmap>() {
+        usuarioApi.descargarFoto(userId).enqueue(new ApiCallback<ResponseBody>() {
             @Override
-            protected Bitmap doInBackground(Void... v) {
-                HttpURLConnection conn = null;
-                try {
-                    URL url = new URL(BuildConfig.BASE_URL + "usuarios/" + userId + "/foto");
-                    conn = (HttpURLConnection) url.openConnection();
-                    conn.setRequestMethod("GET");
-                    String tok = UtilREST.getToken();
-                    if (tok != null) conn.setRequestProperty("Authorization", "Bearer " + tok);
-                    conn.setConnectTimeout(10000);
-                    conn.setReadTimeout(10000);
-                    if (conn.getResponseCode() == 200) {
-                        InputStream is = conn.getInputStream();
-                        Bitmap bmp = BitmapFactory.decodeStream(is);
-                        is.close();
-                        return bmp;
-                    }
-                } catch (Exception ignored) {
-                } finally {
-                    if (conn != null) conn.disconnect();
-                }
-                return null;
+            public void onOk(ResponseBody body) {
+                // Evita tocar la vista si la Activity ya fue destruida/cerrada (previene leak/crash).
+                if (body == null || isDestroyed() || isFinishing()) return;
+                // Decodifica los bytes (ya en memoria) a Bitmap y lo pinta en el avatar.
+                Bitmap bmp = BitmapFactory.decodeStream(body.byteStream());
+                if (bmp != null) ivAvatar.setImageBitmap(bmp);
             }
 
             @Override
-            protected void onPostExecute(Bitmap bmp) {
-                // Evita tocar la vista si la Activity ya fue destruida/cerrada (previene leak/crash).
-                if (bmp != null && !isDestroyed() && !isFinishing()) {
-                    ivAvatar.setImageBitmap(bmp);
-                }
+            public void onFail(int code, String message) {
+                // Silencioso: sin foto o error de red → se mantiene el avatar por defecto.
             }
-        }.execute();
+        });
     }
 
     // Obtiene la lista de mediciones del usuario y muestra el peso/altura de
