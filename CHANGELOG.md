@@ -6,6 +6,7 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `a64fc0d` | docs: plan turnkey de UX feedback carga/errores Android (`PLAN-UX-FEEDBACK.md`) — backlog #5, a ejecutar la siguiente sesión (helpers `LoadingDialog`/`UiFeedback`, empty states, sin tocar 30 layouts) |
 | `d2742ff` | refactor(android): **cierra Retrofit etapa 2** — última ruta con AsyncTask+HttpURLConnection migrada a interfaz tipada (`UsuarioApi.descargarFoto` → `Call<ResponseBody>`, foto de perfil por `enqueue`+`ApiCallback`, token por interceptor). Toda la red de la app pasa ya por Retrofit tipado |
 | `2c1f502` | feat(api): pulido #5/#6 — `AuthRateLimitFilter` (ventana fija por IP, 15 req/60s sobre `/auth/login\|register\|guest\|refresh`, 429 + `Retry-After`, `X-Forwarded-For` de Render, antes del filtro JWT; off en ci/dev para no romper los `@SpringBootTest`) + `RefreshTokenCleanupTask` (`@Scheduled` diario 04:00 que purga refresh tokens revocados/expirados; nueva query + `@EnableScheduling`) |
 | `d68df98` | test(api): `AuthRateLimitFilter` — 3 tests aislados (sin BD): 15 pasan y la 16ª → 429, `enabled=false` no limita, IPs con contadores independientes. Verificación runtime del rate-limit |
