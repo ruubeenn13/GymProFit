@@ -2,6 +2,13 @@
 
 Historial de cambios del proyecto (API Spring Boot + app Android). Ver también el [README](README.md).
 
+### 2026-07-04
+
+| Hash | Descripción |
+|---|---|
+| `2c1f502` | feat(api): pulido #5/#6 — `AuthRateLimitFilter` (ventana fija por IP, 15 req/60s sobre `/auth/login\|register\|guest\|refresh`, 429 + `Retry-After`, `X-Forwarded-For` de Render, antes del filtro JWT; off en ci/dev para no romper los `@SpringBootTest`) + `RefreshTokenCleanupTask` (`@Scheduled` diario 04:00 que purga refresh tokens revocados/expirados; nueva query + `@EnableScheduling`) |
+| `2315130` | chore(android): scaffolding Firebase (FCM push) sin implementar — plugin `google-services` + `firebase-bom` 34.15.0 + `firebase-analytics` (`google-services.json` gitignored) + `PLAN-FIREBASE-PUSH.md` (plan end-to-end; bloqueante = service-account key) |
+
 ### 2026-07-03
 
 | Hash | Descripción |
