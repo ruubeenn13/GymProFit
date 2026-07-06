@@ -35,6 +35,7 @@ public class NotificacionService implements INotificacionService {
     private final IUsuarioRepository usuarioRepository;
     private final NotificacionMapper notificacionMapper;
     private final SecurityUtils securityUtils;
+    private final PushNotificationService pushNotificationService;
     private final Logger logger = LoggerFactory.getLogger(NotificacionService.class);
 
 
@@ -96,6 +97,14 @@ public class NotificacionService implements INotificacionService {
 
             Notificacion notificacionRecargada = notificacionRepository.findById(notificacionGuardada.getId())
                     .orElseThrow(() -> new NotFoundEntityException("Error al recuperar la notificación guardada"));
+
+            // Envío push inmediato si no es programada (las programadas las manda el job @Scheduled).
+            // enviarA es tolerante a fallos: si el push falla o está desactivado, la notificación
+            // in-app ya está guardada y no se ve afectada.
+            if (notificacionCreateDTO.getFechaProgramada() == null) {
+                pushNotificationService.enviarA(usuario.getId(),
+                        notificacionRecargada.getTitulo(), notificacionRecargada.getMensaje());
+            }
 
             return notificacionMapper.toDTO(notificacionRecargada);
         } catch (NotFoundEntityException | InvalidDataException e) {

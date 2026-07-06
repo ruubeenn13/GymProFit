@@ -1,7 +1,19 @@
 # Plan — Notificaciones Push (Firebase Cloud Messaging)
 
-Estado: **PENDIENTE** (planificado 2026-07-03, implementar en siguiente sesión).
+Estado: **BACKEND ✅ HECHO (2026-07-06)** · Android PENDIENTE.
 Alcance decidido: **end-to-end completo** (Android recibe/muestra + backend envía push real vía Firebase Admin SDK).
+
+## ✅ BACKEND HECHO (2026-07-06)
+Service-account key aportada por el usuario (gitignoreada, raíz del repo). Implementado:
+migración `V202607061200__Add_device_tokens.sql` + entidad `DeviceToken` + `DeviceTokenCreateDTO`
++ `IDeviceTokenRepository` + `IDeviceTokenService`/`DeviceTokenService` (upsert idempotente por token,
+usuario del JWT) + `DeviceTokenController` (`POST`/`DELETE /notificaciones/token`) + `config/FirebaseConfig`
+(init graceful: sin credencial → push desactivado, NO rompe CI; carga por env `FIREBASE_CREDENTIALS_JSON`
+prod / `FIREBASE_CREDENTIALS_PATH` local) + `PushNotificationService` (envío FCM, borra tokens muertos,
+tolerante a fallos) + enganche en `NotificacionService.save` (push inmediato si no es programada).
+Suite 224/224 verde. Verificado en runtime: backend arranca con la key real → "push ACTIVADAS".
+**Falta Android + verificación end-to-end (recibir push en el emulador).** El job @Scheduled para
+notificaciones programadas queda como follow-up (ahora solo envío inmediato).
 
 ## Config Firebase (ya hecho / verificado)
 - Proyecto: `GymProFit` · ID `gymprofit-app` · nº `416139974211`.
