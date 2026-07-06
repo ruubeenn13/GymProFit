@@ -36,6 +36,10 @@
     <string name="feedback_error_generico">Something went wrong, please try again</string>
     <string name="feedback_lista_vacia">Nothing here yet</string>
 
+    <!-- NOTIFICACIONES PUSH (FCM) -->
+    <string name="notif_canal_push">Notifications</string>
+    <string name="notif_push_titulo_defecto">GymProFit</string>
+
     <string name="registro_subtitulo">Create your account and start your journey</string>
     <string name="registro_confirmar_password">Confirm password</string>
     <string name="registro_ya_cuenta">Already have an account? Log in</string>

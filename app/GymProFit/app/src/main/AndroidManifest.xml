@@ -15,6 +15,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
 
     <application
+        android:name=".GymProFitApp"
         android:allowBackup="true"
         android:networkSecurityConfig="@xml/network_security_config"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -24,6 +25,20 @@
         android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.GymProFit">
+
+        <!-- Servicio FCM: recibe las notificaciones push y las rotaciones de token -->
+        <service
+            android:name=".services.GymFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <!-- Canal usado por FCM cuando la app está en background (Android pinta la notificación solo) -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="5" />
+
         <!-- Activities de administración (gestión de usuarios, rutinas, ejercicios, alimentos) -->
         <activity
             android:name=".ui.activities.AdminActivity"

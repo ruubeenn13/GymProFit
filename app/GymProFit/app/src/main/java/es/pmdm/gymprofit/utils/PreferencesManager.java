@@ -123,6 +123,11 @@ public class PreferencesManager {
     public void saveUsuarioId(int id) { editor.putInt(KEY_USUARIO_ID, id); editor.apply(); }
     public int getUsuarioId() { return prefs.getInt(KEY_USUARIO_ID, -1); }
 
+    // Último token FCM enviado al backend (evita re-registrar si no cambió).
+    public void saveFcmTokenEnviado(String token) { editor.putString("fcm_token_enviado", token); editor.apply(); }
+    public String getFcmTokenEnviado() { return prefs.getString("fcm_token_enviado", ""); }
+    public void clearFcmTokenEnviado() { editor.remove("fcm_token_enviado"); editor.apply(); }
+
     public void saveUsername(String username) { editor.putString(KEY_USERNAME, username); editor.apply(); }
     public String getUsername() { return prefs.getString(KEY_USERNAME, ""); }
 

@@ -32,6 +32,7 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.AuthApi;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.utils.PreferencesManager;
+import es.pmdm.gymprofit.utils.PushTokenManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
 // ============================================================
@@ -205,6 +206,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                 getString(R.string.dialog_cerrar_sesion_mensaje),
                 R.drawable.ic_logout,
                 () -> {
+                    // Da de baja el token FCM del dispositivo (best-effort, mientras el JWT sigue vivo).
+                    PushTokenManager.eliminar(this);
                     // Revoca el refresh token en el servidor (best-effort) antes de limpiar la sesión local.
                     String refresh = prefsManager.getRefreshToken();
                     if (refresh != null && !refresh.isEmpty()) {

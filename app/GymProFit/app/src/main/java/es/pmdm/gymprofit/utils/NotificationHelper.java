@@ -13,6 +13,7 @@ import androidx.core.app.NotificationCompat;
 import java.util.List;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.ui.activities.HomeActivity;
 import es.pmdm.gymprofit.ui.activities.LogrosActivity;
 import es.pmdm.gymprofit.ui.activities.MedicionesActivity;
 import es.pmdm.gymprofit.ui.activities.RutinasActivity;
@@ -30,6 +31,7 @@ public class NotificationHelper {
     private static final String CANAL_MEDICIONES  = "2";
     private static final String CANAL_RUTINAS     = "3";
     private static final String CANAL_LOGROS      = "4";
+    private static final String CANAL_PUSH        = "5";
 
     /** Notificación simple al completar una sesión de entrenamiento. */
     public static void notificarSesionCompletada(Context ctx, int duracion, int calorias) {
@@ -104,6 +106,27 @@ public class NotificationHelper {
         builder.setContentIntent(pending);
 
         enviar(ctx, CANAL_LOGROS, ctx.getString(R.string.notif_canal_logros), 4, builder);
+    }
+
+    /** Notificación push recibida por FCM con la app en primer plano (título/cuerpo del servidor). */
+    public static void notificarPush(Context ctx, String titulo, String cuerpo) {
+        // 1.- Crear la notificación con el contenido que envía el backend
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(ctx, CANAL_PUSH);
+        builder.setSmallIcon(android.R.drawable.ic_dialog_info);
+        builder.setContentTitle(titulo != null && !titulo.isEmpty()
+                ? titulo : ctx.getString(R.string.notif_push_titulo_defecto));
+        builder.setContentText(cuerpo != null ? cuerpo : "");
+        builder.setPriority(NotificationCompat.PRIORITY_MAX);
+        builder.setAutoCancel(true);
+
+        // Al pulsarla se abre la pantalla principal.
+        Intent intent = new Intent(ctx, HomeActivity.class);
+        PendingIntent pending = PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        builder.setContentIntent(pending);
+
+        // ID de notificación único por mensaje para que las push no se pisen entre sí.
+        int notifId = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
+        enviar(ctx, CANAL_PUSH, ctx.getString(R.string.notif_canal_push), notifId, builder);
     }
 
     // Crea (si es necesario) el canal de notificación y muestra la notificación construida.

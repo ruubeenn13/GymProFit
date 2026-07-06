@@ -34,6 +34,7 @@ import es.pmdm.gymprofit.network.AuthApi;
 import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.utils.PreferencesManager;
+import es.pmdm.gymprofit.utils.PushTokenManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
 // ============================================================
@@ -179,6 +180,9 @@ public class LoginActivity extends AppCompatActivity {
             public void onOk(Usuario u) {
                 if (u != null) {
                     prefsManager.saveUsuarioId(u.getId());
+
+                    // Registra el token FCM del dispositivo para recibir push (best-effort).
+                    PushTokenManager.registrar(LoginActivity.this);
 
                     boolean yaCompleto = prefsManager.isAdmin()
                             || (u.getNivelExperiencia() != null && !u.getNivelExperiencia().isEmpty())
