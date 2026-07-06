@@ -1,8 +1,14 @@
 package com.gymprofit.api.integration;
 
+import com.gymprofit.api.entity.Alimento;
+import com.gymprofit.api.entity.Ejercicio;
 import com.gymprofit.api.entity.Role;
 import com.gymprofit.api.entity.Usuario;
+import com.gymprofit.api.enums.Dificultad;
+import com.gymprofit.api.enums.GrupoMuscular;
 import com.gymprofit.api.enums.RoleType;
+import com.gymprofit.api.repository.jpa.IAlimentoRepository;
+import com.gymprofit.api.repository.jpa.IEjercicioRepository;
 import com.gymprofit.api.repository.jpa.IRoleRepository;
 import com.gymprofit.api.repository.jpa.IUsuarioRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -56,6 +62,12 @@ public abstract class AbstractOwnershipTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private IEjercicioRepository ejercicioRepository;
+
+    @Autowired
+    private IAlimentoRepository alimentoRepository;
+
     // Entidades sembradas, disponibles para las subclases.
     protected Usuario owner;
     protected Usuario attacker;
@@ -80,6 +92,28 @@ public abstract class AbstractOwnershipTest {
         u.setActivo(true);
         u.setRoles(roles);
         return usuarioRepository.save(u);
+    }
+
+    // Crea un ejercicio del catálogo global. En CI la BD efímera solo trae el seed de
+    // Flyway (roles + guest), NO el catálogo, así que hay que sembrarlo aquí (no valía
+    // asumir que existía). Enums por values()[0] para no depender de constantes concretas.
+    protected Ejercicio crearEjercicioCatalogo() {
+        Ejercicio e = new Ejercicio();
+        e.setNombre("Ejercicio IDOR test");
+        e.setGrupoMuscular(GrupoMuscular.values()[0]);
+        e.setDificultad(Dificultad.values()[0]);
+        e.setCaloriasQuemadas(10);
+        e.setActivo(true);
+        return ejercicioRepository.save(e);
+    }
+
+    // Crea un alimento del catálogo global (mismo motivo: CI no lo trae sembrado).
+    protected Alimento crearAlimentoCatalogo() {
+        Alimento a = new Alimento();
+        a.setNombre("Alimento IDOR test");
+        a.setCalorias(100);
+        a.setActivo(true);
+        return alimentoRepository.save(a);
     }
 
     // Ejecuta un bloque con el SecurityContext fijado a un usuario, para sembrar

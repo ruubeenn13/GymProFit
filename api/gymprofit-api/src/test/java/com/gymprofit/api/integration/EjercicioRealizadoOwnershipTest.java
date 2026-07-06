@@ -48,7 +48,8 @@ class EjercicioRealizadoOwnershipTest extends AbstractOwnershipTest {
     @BeforeEach
     void seedEjercicioRealizado() {
         // Coge un ejercicio ya existente del catálogo (sembrado por Flyway), no lo crea.
-        Integer ejercicioId = ejercicioRepository.findAll().get(0).getId();
+        // Siembra el ejercicio del catálogo (CI no lo trae por Flyway).
+        Integer ejercicioId = crearEjercicioCatalogo().getId();
 
         runAs(owner, () -> {
             // 1) Sesion del owner (solo usuarioId es @NotNull; el resto opcional).

@@ -57,7 +57,8 @@ class AlimentoComidaOwnershipTest extends AbstractOwnershipTest {
             comidaIdOwner = comidaService.save(comidaDTO).getId();
 
             // 2) Alimento del catálogo global (findAll → primer elemento).
-            Integer alimentoId = alimentoRepository.findAll().get(0).getId();
+            // Siembra el alimento del catálogo (CI no lo trae por Flyway).
+            Integer alimentoId = crearAlimentoCatalogo().getId();
 
             // 3) Relación alimento-comida sobre la comida del owner.
             AlimentoComidaCreateDTO acDTO = new AlimentoComidaCreateDTO();

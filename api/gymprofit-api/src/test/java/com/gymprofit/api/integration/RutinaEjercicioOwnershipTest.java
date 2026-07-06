@@ -59,7 +59,8 @@ class RutinaEjercicioOwnershipTest extends AbstractOwnershipTest {
             rutinaIdOwner = rutinaService.save(rutinaDTO).getId();
 
             // 2) Ejercicio del catálogo global (findAll → primer elemento).
-            Integer ejercicioId = ejercicioRepository.findAll().get(0).getId();
+            // Siembra el ejercicio del catálogo (CI no lo trae por Flyway).
+            Integer ejercicioId = crearEjercicioCatalogo().getId();
 
             // 3) Relación rutina-ejercicio sobre la rutina del owner.
             RutinaEjercicioCreateDTO reDTO = new RutinaEjercicioCreateDTO();
