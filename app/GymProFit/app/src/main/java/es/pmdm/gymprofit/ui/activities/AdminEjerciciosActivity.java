@@ -20,6 +20,8 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.EjercicioApi;
 import es.pmdm.gymprofit.ui.adapters.AdminEjercicioAdapter;
+import es.pmdm.gymprofit.utils.LoadingDialog;
+import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
 // AdminEjerciciosActivity — pantalla de administración de ejercicios
@@ -115,13 +117,23 @@ public class AdminEjerciciosActivity extends BaseActivity {
 
     // Llama al endpoint admin de búsqueda de ejercicios con los filtros actuales y refresca la lista
     private void cargar() {
+        // Spinner de carga: la lista queda en blanco mientras llega la respuesta
+        LoadingDialog.show(this);
         adminApi.buscarEjercicios(filtroNombre, null, null, filtroActivo)
                 .enqueue(new ApiCallback<List<Ejercicio>>() {
                     @Override
                     public void onOk(List<Ejercicio> nuevos) {
+                        // Oculta el spinner al completar la carga
+                        LoadingDialog.hide(AdminEjerciciosActivity.this);
                         lista.clear();
                         if (nuevos != null) lista.addAll(nuevos);
                         adapter.notifyDataSetChanged();
+                    }
+                    @Override
+                    public void onFail(int code, String message) {
+                        // Oculta el spinner y mapea el error de carga
+                        LoadingDialog.hide(AdminEjerciciosActivity.this);
+                        UiFeedback.toastError(AdminEjerciciosActivity.this, code, message);
                     }
                 });
     }
@@ -131,6 +143,8 @@ public class AdminEjerciciosActivity extends BaseActivity {
         ApiCallback<Void> cb = new ApiCallback<Void>() {
             @Override
             public void onOk(Void body) {
+                // Oculta el spinner y mantiene el feedback de éxito existente
+                LoadingDialog.hide(AdminEjerciciosActivity.this);
                 e.setActivo(!e.isActivo());
                 adapter.actualizarItem(pos, e);
                 Toast.makeText(AdminEjerciciosActivity.this,
@@ -138,10 +152,13 @@ public class AdminEjerciciosActivity extends BaseActivity {
             }
             @Override
             public void onFail(int code, String message) {
-                Toast.makeText(AdminEjerciciosActivity.this,
-                        getString(R.string.admin_error_generico), Toast.LENGTH_SHORT).show();
+                // Oculta el spinner y mapea el error de escritura
+                LoadingDialog.hide(AdminEjerciciosActivity.this);
+                UiFeedback.toastError(AdminEjerciciosActivity.this, code, message);
             }
         };
+        // Spinner mientras se activa/desactiva el ejercicio
+        LoadingDialog.show(this);
         if (e.isActivo()) {
             ejercicioApi.eliminar(e.getId()).enqueue(cb);
         } else {

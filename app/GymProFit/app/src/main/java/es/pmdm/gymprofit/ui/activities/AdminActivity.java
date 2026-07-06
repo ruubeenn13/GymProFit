@@ -9,6 +9,8 @@ import es.pmdm.gymprofit.model.admin.EstadisticasGlobales;
 import es.pmdm.gymprofit.network.AdminApi;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.utils.LoadingDialog;
+import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
 // AdminActivity — panel principal de administración (rol ADMIN)
@@ -57,9 +59,13 @@ public class AdminActivity extends BaseActivity {
 
     // Solicita a la API las estadísticas globales y actualiza los TextViews (callback ya en hilo UI)
     private void cargarEstadisticas() {
+        // Muestra el overlay de carga mientras se piden las estadísticas
+        LoadingDialog.show(this);
         api.getEstadisticas().enqueue(new ApiCallback<EstadisticasGlobales>() {
             @Override
             public void onOk(EstadisticasGlobales e) {
+                // Oculta el overlay al terminar la carga con éxito
+                LoadingDialog.hide(AdminActivity.this);
                 if (e == null) return;
                 tvTotalUsuarios.setText(String.valueOf(e.getTotalUsuarios()));
                 tvUsuariosActivos.setText(String.valueOf(e.getUsuariosActivos()));
@@ -67,6 +73,12 @@ public class AdminActivity extends BaseActivity {
                 tvSesionesHoy.setText(String.valueOf(e.getSesionesHoy()));
                 tvRutinasPredefinidas.setText(String.valueOf(e.getRutinasPredefinidas()));
                 tvEjerciciosActivos.setText(String.valueOf(e.getEjerciciosActivos()));
+            }
+            @Override
+            public void onFail(int code, String message) {
+                // Oculta el overlay y muestra el error mapeado al fallar la carga
+                LoadingDialog.hide(AdminActivity.this);
+                UiFeedback.toastError(AdminActivity.this, code, message);
             }
         });
     }

@@ -29,6 +29,8 @@ import es.pmdm.gymprofit.network.AlimentoApi;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.ui.adapters.AdminAlimentoAdapter;
+import es.pmdm.gymprofit.utils.LoadingDialog;
+import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
 // AdminAlimentosActivity — gestión CRUD de alimentos desde el panel de administración
@@ -168,13 +170,23 @@ public class AdminAlimentosActivity extends BaseActivity {
 
     // Consulta a la API los alimentos aplicando los filtros actuales y refresca el RecyclerView
     private void cargar() {
+        // Spinner de carga: la lista queda en blanco mientras llega la respuesta
+        LoadingDialog.show(this);
         adminApi.buscarAlimentos(filtroNombre, filtroCategoria, filtroActivo)
                 .enqueue(new ApiCallback<List<Alimento>>() {
                     @Override
                     public void onOk(List<Alimento> nuevos) {
+                        // Oculta el spinner al completar la carga
+                        LoadingDialog.hide(AdminAlimentosActivity.this);
                         lista.clear();
                         if (nuevos != null) lista.addAll(nuevos);
                         adapter.notifyDataSetChanged();
+                    }
+                    @Override
+                    public void onFail(int code, String message) {
+                        // Oculta el spinner y mapea el error de carga
+                        LoadingDialog.hide(AdminAlimentosActivity.this);
+                        UiFeedback.toastError(AdminAlimentosActivity.this, code, message);
                     }
                 });
     }
@@ -184,6 +196,8 @@ public class AdminAlimentosActivity extends BaseActivity {
         ApiCallback<Void> cb = new ApiCallback<Void>() {
             @Override
             public void onOk(Void body) {
+                // Oculta el spinner y mantiene el feedback de éxito existente
+                LoadingDialog.hide(AdminAlimentosActivity.this);
                 a.setActivo(!a.isActivo());
                 adapter.actualizarItem(pos, a);
                 Toast.makeText(AdminAlimentosActivity.this,
@@ -191,10 +205,13 @@ public class AdminAlimentosActivity extends BaseActivity {
             }
             @Override
             public void onFail(int code, String message) {
-                Toast.makeText(AdminAlimentosActivity.this,
-                        getString(R.string.admin_error_generico), Toast.LENGTH_SHORT).show();
+                // Oculta el spinner y mapea el error de escritura
+                LoadingDialog.hide(AdminAlimentosActivity.this);
+                UiFeedback.toastError(AdminAlimentosActivity.this, code, message);
             }
         };
+        // Spinner mientras se activa/desactiva el alimento
+        LoadingDialog.show(this);
         // Reactivar (PUT activar) o borrado lógico (DELETE) según el nuevo estado deseado.
         if (a.isActivo()) {
             alimentoApi.eliminar(a.getId()).enqueue(cb);
@@ -240,15 +257,20 @@ public class AdminAlimentosActivity extends BaseActivity {
                 if (!grasStr.isEmpty()) patch.put("grasas", new BigDecimal(grasStr));
 
                 dialog.dismiss();
+                // Spinner mientras se envía la edición parcial del alimento
+                LoadingDialog.show(AdminAlimentosActivity.this);
                 alimentoApi.patch(a.getId(), patch).enqueue(new ApiCallback<Void>() {
                     @Override
                     public void onOk(Void body) {
+                        // Oculta el spinner y recarga la lista (cargar() vuelve a mostrar su propio spinner)
+                        LoadingDialog.hide(AdminAlimentosActivity.this);
                         cargar();
                     }
                     @Override
                     public void onFail(int code, String message) {
-                        Toast.makeText(AdminAlimentosActivity.this,
-                                getString(R.string.admin_error_generico), Toast.LENGTH_SHORT).show();
+                        // Oculta el spinner y mapea el error de escritura
+                        LoadingDialog.hide(AdminAlimentosActivity.this);
+                        UiFeedback.toastError(AdminAlimentosActivity.this, code, message);
                     }
                 });
             } catch (NumberFormatException ignored) {}

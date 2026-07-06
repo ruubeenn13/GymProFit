@@ -20,6 +20,8 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.RutinaApi;
 import es.pmdm.gymprofit.ui.adapters.AdminRutinaAdapter;
+import es.pmdm.gymprofit.utils.LoadingDialog;
+import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
 // AdminRutinasActivity — pantalla de administración de rutinas predefinidas
@@ -129,13 +131,23 @@ public class AdminRutinasActivity extends BaseActivity {
 
     // Llama al endpoint admin de búsqueda de rutinas predefinidas con los filtros actuales
     private void cargar() {
+        // Spinner de carga: la lista queda en blanco mientras llega la respuesta
+        LoadingDialog.show(this);
         adminApi.buscarRutinasPredefinidas(filtroNombre, filtroNivel, null, filtroActiva)
                 .enqueue(new ApiCallback<List<Rutina>>() {
                     @Override
                     public void onOk(List<Rutina> nuevas) {
+                        // Oculta el spinner al completar la carga
+                        LoadingDialog.hide(AdminRutinasActivity.this);
                         lista.clear();
                         if (nuevas != null) lista.addAll(nuevas);
                         adapter.notifyDataSetChanged();
+                    }
+                    @Override
+                    public void onFail(int code, String message) {
+                        // Oculta el spinner y mapea el error de carga
+                        LoadingDialog.hide(AdminRutinasActivity.this);
+                        UiFeedback.toastError(AdminRutinasActivity.this, code, message);
                     }
                 });
     }
@@ -145,6 +157,8 @@ public class AdminRutinasActivity extends BaseActivity {
         ApiCallback<Void> cb = new ApiCallback<Void>() {
             @Override
             public void onOk(Void body) {
+                // Oculta el spinner y mantiene el feedback de éxito existente
+                LoadingDialog.hide(AdminRutinasActivity.this);
                 r.setActiva(!r.isActiva());
                 adapter.actualizarItem(pos, r);
                 Toast.makeText(AdminRutinasActivity.this,
@@ -152,10 +166,13 @@ public class AdminRutinasActivity extends BaseActivity {
             }
             @Override
             public void onFail(int code, String message) {
-                Toast.makeText(AdminRutinasActivity.this,
-                        getString(R.string.admin_error_generico), Toast.LENGTH_SHORT).show();
+                // Oculta el spinner y mapea el error de escritura
+                LoadingDialog.hide(AdminRutinasActivity.this);
+                UiFeedback.toastError(AdminRutinasActivity.this, code, message);
             }
         };
+        // Spinner mientras se activa/desactiva la rutina
+        LoadingDialog.show(this);
         if (r.isActiva()) {
             rutinaApi.eliminar(r.getId()).enqueue(cb);
         } else {

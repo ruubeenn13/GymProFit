@@ -13,6 +13,8 @@ import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.RutinaApi;
+import es.pmdm.gymprofit.utils.LoadingDialog;
+import es.pmdm.gymprofit.utils.UiFeedback;
 import es.pmdm.gymprofit.utils.UIHelper;
 
 // ============================================================
@@ -106,9 +108,14 @@ public class EditarRutinaAdminActivity extends BaseActivity {
             String dias = etDiasSemana.getText() != null ? etDiasSemana.getText().toString().trim() : "";
             if (!dias.isEmpty()) body.put("diasSemana", dias);
 
+            // Muestra el overlay de carga tras el parseo numérico para no
+            // dejarlo colgado si Integer.parseInt lanza NumberFormatException.
+            LoadingDialog.show(this);
             rutinaApi.patch(rutinaId, body).enqueue(new ApiCallback<Void>() {
                 @Override
                 public void onOk(Void b) {
+                    // Oculta el overlay antes de mostrar el éxito y cerrar
+                    LoadingDialog.hide(EditarRutinaAdminActivity.this);
                     UIHelper.mostrarToastExito(EditarRutinaAdminActivity.this,
                             getString(R.string.admin_exito_editar_rutina));
                     setResult(RESULT_OK);
@@ -116,8 +123,9 @@ public class EditarRutinaAdminActivity extends BaseActivity {
                 }
                 @Override
                 public void onFail(int code, String message) {
-                    UIHelper.mostrarToastError(EditarRutinaAdminActivity.this,
-                            getString(R.string.admin_error_generico));
+                    // Oculta el overlay y mapea el error según el código HTTP
+                    LoadingDialog.hide(EditarRutinaAdminActivity.this);
+                    UiFeedback.toastError(EditarRutinaAdminActivity.this, code, message);
                 }
             });
         } catch (NumberFormatException e) {

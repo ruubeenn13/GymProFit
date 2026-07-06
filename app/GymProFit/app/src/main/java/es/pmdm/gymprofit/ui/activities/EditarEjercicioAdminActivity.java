@@ -13,6 +13,8 @@ import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.EjercicioApi;
+import es.pmdm.gymprofit.utils.LoadingDialog;
+import es.pmdm.gymprofit.utils.UiFeedback;
 import es.pmdm.gymprofit.utils.UIHelper;
 
 // ============================================================
@@ -114,9 +116,14 @@ public class EditarEjercicioAdminActivity extends BaseActivity {
             String instr = etInstrucciones.getText() != null ? etInstrucciones.getText().toString().trim() : "";
             body.put("instrucciones", instr.isEmpty() ? null : instr);
 
+            // Muestra el overlay de carga tras el parseo numérico para no
+            // dejarlo colgado si Integer.parseInt lanza NumberFormatException.
+            LoadingDialog.show(this);
             ejercicioApi.patch(ejercicioId, body).enqueue(new ApiCallback<Void>() {
                 @Override
                 public void onOk(Void b) {
+                    // Oculta el overlay antes de mostrar el éxito y cerrar
+                    LoadingDialog.hide(EditarEjercicioAdminActivity.this);
                     UIHelper.mostrarToastExito(EditarEjercicioAdminActivity.this,
                             getString(R.string.admin_exito_editar_ejercicio));
                     setResult(RESULT_OK);
@@ -124,8 +131,9 @@ public class EditarEjercicioAdminActivity extends BaseActivity {
                 }
                 @Override
                 public void onFail(int code, String message) {
-                    UIHelper.mostrarToastError(EditarEjercicioAdminActivity.this,
-                            getString(R.string.admin_error_generico));
+                    // Oculta el overlay y mapea el error según el código HTTP
+                    LoadingDialog.hide(EditarEjercicioAdminActivity.this);
+                    UiFeedback.toastError(EditarEjercicioAdminActivity.this, code, message);
                 }
             });
         } catch (NumberFormatException e) {

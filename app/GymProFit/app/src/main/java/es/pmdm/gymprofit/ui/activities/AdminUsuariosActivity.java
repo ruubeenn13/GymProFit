@@ -21,6 +21,8 @@ import es.pmdm.gymprofit.network.AdminApi;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.ui.adapters.AdminUsuarioAdapter;
+import es.pmdm.gymprofit.utils.LoadingDialog;
+import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
 // AdminUsuariosActivity — pantalla de administración de usuarios
@@ -117,13 +119,23 @@ public class AdminUsuariosActivity extends BaseActivity {
 
     // Llama al endpoint admin de usuarios filtrados (primera página, hasta 100 resultados)
     private void cargar() {
+        // Muestra el overlay de carga mientras se piden los usuarios filtrados
+        LoadingDialog.show(this);
         api.getUsuarios(filtroActivo, filtroRol, filtroUsername, 0, 100)
                 .enqueue(new ApiCallback<List<Usuario>>() {
                     @Override
                     public void onOk(List<Usuario> nuevos) {
+                        // Oculta el overlay al terminar la carga con éxito
+                        LoadingDialog.hide(AdminUsuariosActivity.this);
                         lista.clear();
                         if (nuevos != null) lista.addAll(nuevos);
                         adapter.notifyDataSetChanged();
+                    }
+                    @Override
+                    public void onFail(int code, String message) {
+                        // Oculta el overlay y muestra el error mapeado al fallar la carga
+                        LoadingDialog.hide(AdminUsuariosActivity.this);
+                        UiFeedback.toastError(AdminUsuariosActivity.this, code, message);
                     }
                 });
     }
@@ -136,10 +148,14 @@ public class AdminUsuariosActivity extends BaseActivity {
         new MaterialAlertDialogBuilder(this)
                 .setTitle(getString(R.string.admin_toggle_activo_titulo))
                 .setMessage(msg)
-                .setPositiveButton(android.R.string.ok, (d, w) ->
+                .setPositiveButton(android.R.string.ok, (d, w) -> {
+                        // Muestra el overlay de carga durante el cambio de estado
+                        LoadingDialog.show(this);
                         api.toggleActivoUsuario(u.getId()).enqueue(new ApiCallback<Void>() {
                             @Override
                             public void onOk(Void body) {
+                                // Oculta el overlay antes de aplicar el resultado con éxito
+                                LoadingDialog.hide(AdminUsuariosActivity.this);
                                 u.setActivo(!u.isActivo());
                                 adapter.actualizarItem(pos, u);
                                 Toast.makeText(AdminUsuariosActivity.this,
@@ -147,10 +163,12 @@ public class AdminUsuariosActivity extends BaseActivity {
                             }
                             @Override
                             public void onFail(int code, String message) {
-                                Toast.makeText(AdminUsuariosActivity.this,
-                                        getString(R.string.admin_error_generico), Toast.LENGTH_SHORT).show();
+                                // Oculta el overlay y muestra el error mapeado
+                                LoadingDialog.hide(AdminUsuariosActivity.this);
+                                UiFeedback.toastError(AdminUsuariosActivity.this, code, message);
                             }
-                        }))
+                        });
+                })
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
     }
@@ -181,9 +199,13 @@ public class AdminUsuariosActivity extends BaseActivity {
                 .setView(rg)
                 .setPositiveButton(getString(R.string.admin_guardar), (d, w) -> {
                     String nuevoRol = rg.getCheckedRadioButtonId() == 2 ? "ROLE_ADMIN" : "ROLE_USER";
+                    // Muestra el overlay de carga durante el cambio de rol
+                    LoadingDialog.show(this);
                     api.cambiarRol(u.getId(), nuevoRol).enqueue(new ApiCallback<Void>() {
                         @Override
                         public void onOk(Void body) {
+                            // Oculta el overlay antes de aplicar el resultado con éxito
+                            LoadingDialog.hide(AdminUsuariosActivity.this);
                             u.setRol(nuevoRol);
                             adapter.actualizarItem(pos, u);
                             Toast.makeText(AdminUsuariosActivity.this,
@@ -191,8 +213,9 @@ public class AdminUsuariosActivity extends BaseActivity {
                         }
                         @Override
                         public void onFail(int code, String message) {
-                            Toast.makeText(AdminUsuariosActivity.this,
-                                    getString(R.string.admin_error_generico), Toast.LENGTH_SHORT).show();
+                            // Oculta el overlay y muestra el error mapeado
+                            LoadingDialog.hide(AdminUsuariosActivity.this);
+                            UiFeedback.toastError(AdminUsuariosActivity.this, code, message);
                         }
                     });
                 })
