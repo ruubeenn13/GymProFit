@@ -249,7 +249,8 @@ public class PerfilActivity extends BaseActivity {
                 byte[] chunk = new byte[8192];
                 int n;
                 while ((n = is.read(chunk)) != -1) buffer.write(chunk, 0, n);
-                RequestBody fileBody = RequestBody.create(MediaType.parse("image/jpeg"), buffer.toByteArray());
+                // OkHttp 4.x: orden (contenido, tipo); la forma (tipo, contenido) está deprecada.
+                RequestBody fileBody = RequestBody.create(buffer.toByteArray(), MediaType.parse("image/jpeg"));
                 MultipartBody.Part part = MultipartBody.Part.createFormData("foto", "foto.jpg", fileBody);
 
                 usuarioApi.subirFoto(uid, part).enqueue(new ApiCallback<Void>() {

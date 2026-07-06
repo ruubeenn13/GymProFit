@@ -163,7 +163,8 @@ public class ApiClient {
             cuerpo.put("refreshToken", refreshToken);
             Request req = new Request.Builder()
                     .url(BuildConfig.BASE_URL + "auth/refresh")
-                    .post(RequestBody.create(JSON, cuerpo.toString()))
+                    // OkHttp 4.x: orden (contenido, tipo); la forma (tipo, contenido) está deprecada.
+                    .post(RequestBody.create(cuerpo.toString(), JSON))
                     .build();
 
             try (Response resp = plano.newCall(req).execute()) {
