@@ -48,7 +48,8 @@ android {
         }
         release {
             signingConfig signingConfigs.release
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             // Producción: API pública en Render (HTTPS). Sobrescribe el BASE_URL del defaultConfig.
             buildConfigField "String", "BASE_URL", "\"https://gymprofit-api.onrender.com/api/\""
