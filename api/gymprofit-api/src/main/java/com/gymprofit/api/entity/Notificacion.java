@@ -53,6 +53,10 @@ public class Notificacion {
     @Column(columnDefinition = "TINYINT(1) DEFAULT 0")
     private Boolean leida;
 
+    // Control del envío push: false = pendiente de enviar por el job programado.
+    @Column(name = "push_enviada", columnDefinition = "TINYINT(1) DEFAULT 1")
+    private Boolean pushEnviada;
+
     // Usuario destinatario de la notificación.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)

@@ -92,6 +92,8 @@ public class NotificacionService implements INotificacionService {
             notificacion.setTipo(tipoNotificacion);
             notificacion.setFechaCreacion(LocalDateTime.now());
             notificacion.setLeida(false);
+            // Programada → push pendiente (la enviará el job); inmediata → se envía aquí abajo.
+            notificacion.setPushEnviada(notificacionCreateDTO.getFechaProgramada() == null);
 
             Notificacion notificacionGuardada = notificacionRepository.save(notificacion);
 
