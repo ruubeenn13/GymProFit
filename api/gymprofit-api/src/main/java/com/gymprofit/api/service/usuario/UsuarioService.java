@@ -8,6 +8,7 @@ import com.gymprofit.api.dto.entity.usuario.UsuarioDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioEstadisticasDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioPatchDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioUpdateDTO;
+import com.gymprofit.api.entity.FotoPerfil;
 import com.gymprofit.api.entity.Role;
 import com.gymprofit.api.enums.NivelExperiencia;
 import com.gymprofit.api.enums.RoleType;
@@ -19,7 +20,6 @@ import com.gymprofit.api.repository.jpa.IUsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -27,16 +27,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 
 // ============================================================
 // UsuarioService — implementa la gestión de usuarios de GymProFit.
 // Cubre el CRUD de usuarios, la carga de credenciales para Spring Security
-// (loadUserByUsername), la subida/lectura de foto de perfil en disco y las
+// (loadUserByUsername), la subida/lectura de foto de perfil en BD (BLOB) y las
 // operaciones administrativas (estadísticas globales, activar/desactivar, cambiar rol).
 // ============================================================
 @Service
@@ -49,12 +46,13 @@ public class UsuarioService implements IUsuarioService {
     private final UsuarioMapper usuarioMapper;
     private final com.gymprofit.api.repository.jooq.usuario.IUsuarioJooqRepository usuarioJooqRepository;
     private final SecurityUtils securityUtils;
+    // Fotos de perfil persistidas en BD (BLOB): el FS de Render es efímero.
+    private final com.gymprofit.api.repository.jpa.IFotoPerfilRepository fotoPerfilRepository;
     // Logger para trazar las operaciones del servicio.
     private final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
 
-    // Directorio donde se guardan las fotos de perfil (configurable por properties).
-    @Value("${app.upload.dir:./uploads/fotos-perfil}")
-    private String uploadDir;
+    // Tamaño máximo de la foto de perfil (5 MB): evita meter binarios enormes en la BD.
+    private static final long MAX_FOTO_BYTES = 5 * 1024 * 1024;
 
 
     // Carga el usuario por username para el proceso de autenticación de Spring Security.
@@ -314,7 +312,9 @@ public class UsuarioService implements IUsuarioService {
         }
     }
 
-    // Guarda la foto de perfil recibida en disco (nombre = id.jpg) y actualiza la referencia en BD.
+    // Guarda la foto de perfil en BD (BLOB, tabla fotos_perfil) y marca la referencia en el
+    // usuario. Antes se guardaba en disco, pero el filesystem de Render es EFÍMERO y las
+    // fotos se perdían en cada redeploy.
     @Override
     @Transactional
     public UsuarioDTO uploadFotoPerfil(Integer id, MultipartFile file) {
@@ -325,14 +325,25 @@ public class UsuarioService implements IUsuarioService {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("Usuario con id " + id + " no encontrado"));
 
-        try {
-            Path dir = Paths.get(uploadDir);
-            // Se crea el directorio de subida si todavía no existe.
-            if (!Files.exists(dir)) Files.createDirectories(dir);
+        // Validaciones básicas del binario antes de persistirlo.
+        if (file == null || file.isEmpty()) {
+            throw new InvalidDataException("La foto de perfil está vacía");
+        }
+        if (file.getSize() > MAX_FOTO_BYTES) {
+            throw new InvalidDataException("La foto de perfil supera el tamaño máximo de 5 MB");
+        }
 
-            String filename = id + ".jpg";
-            Files.write(dir.resolve(filename), file.getBytes());
-            usuario.setFotoPerfil(filename);
+        try {
+            // Upsert por usuario (PK = usuario_id): reutiliza la fila si ya tenía foto.
+            FotoPerfil foto = fotoPerfilRepository.findById(id).orElseGet(FotoPerfil::new);
+            foto.setUsuarioId(id);
+            foto.setDatos(file.getBytes());
+            foto.setContentType(file.getContentType() != null ? file.getContentType() : "image/jpeg");
+            foto.setFechaActualizacion(LocalDateTime.now());
+            fotoPerfilRepository.save(foto);
+
+            // La columna legacy foto_perfil queda como marcador de "tiene foto".
+            usuario.setFotoPerfil(id + ".jpg");
             usuarioRepository.save(usuario);
         } catch (IOException e) {
             throw new RuntimeException("Error al guardar la foto de perfil: " + e.getMessage());
@@ -341,21 +352,12 @@ public class UsuarioService implements IUsuarioService {
         return usuarioMapper.toDTO(usuario);
     }
 
-    // Lee del disco los bytes de la foto de perfil de un usuario.
+    // Devuelve los bytes de la foto de perfil desde la BD.
     @Override
     public byte[] getFotoPerfil(Integer id) {
-        Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("Usuario con id " + id + " no encontrado"));
-
-        if (usuario.getFotoPerfil() == null) {
-            throw new NotFoundEntityException("El usuario " + id + " no tiene foto de perfil");
-        }
-
-        try {
-            return Files.readAllBytes(Paths.get(uploadDir).resolve(usuario.getFotoPerfil()));
-        } catch (IOException e) {
-            throw new NotFoundEntityException("Foto de perfil no encontrada para usuario " + id);
-        }
+        return fotoPerfilRepository.findById(id)
+                .map(FotoPerfil::getDatos)
+                .orElseThrow(() -> new NotFoundEntityException("El usuario " + id + " no tiene foto de perfil"));
     }
 
     // Cambia el rol de un usuario (uso administrativo), validando que el rol exista.
