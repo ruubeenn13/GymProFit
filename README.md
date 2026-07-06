@@ -26,15 +26,18 @@
 - [Tecnologías](#-tecnologías)
 - [Requisitos previos](#-requisitos-previos)
 - [Instalación y configuración](#-instalación-y-configuración)
+- [Despliegue en producción](#-despliegue-en-producción)
 - [Changelog](CHANGELOG.md)
 
 ---
 
 ## 📱 Descripción general
 
-**GymProFit** es un proyecto full-stack compuesto por una aplicación Android nativa y una API REST propia. Permite a los usuarios registrarse, gestionar sus rutinas de entrenamiento, registrar sesiones, consultar un catálogo de ejercicios, hacer seguimiento de mediciones corporales, ver sus logros desbloqueados y calcular sus necesidades nutricionales personalizadas según su perfil físico.
+**GymProFit** es un proyecto full-stack compuesto por una aplicación Android nativa y una API REST propia. Permite a los usuarios registrarse, gestionar sus rutinas de entrenamiento, registrar sesiones, consultar un catálogo de ejercicios, hacer seguimiento de mediciones corporales, ver sus logros desbloqueados, llevar un registro nutricional diario y calcular sus necesidades nutricionales personalizadas según su perfil físico.
 
-El sistema distingue tres roles de usuario: **GUEST**, **USER** y **ADMIN**, con permisos diferenciados para cada operación de la API.
+Incluye además **notificaciones push** (Firebase Cloud Messaging) con 11 recordatorios automáticos programados en el servidor, soporte **multiidioma completo (ES/EN)** — interfaz, push y catálogo de la BD — y autenticación con **refresh token** (renovación de sesión transparente). La API está **desplegada en producción** en Render + Aiven MySQL (ver [Despliegue en producción](#-despliegue-en-producción)).
+
+El sistema distingue tres roles de usuario: **GUEST**, **USER** y **ADMIN**, con permisos diferenciados para cada operación de la API, comprobación de *ownership* en los recursos de usuario y rate-limiting en los endpoints de autenticación.
 
 ---
 
@@ -42,16 +45,17 @@ El sistema distingue tres roles de usuario: **GUEST**, **USER** y **ADMIN**, con
 
 ```
 TFG-GymProFit/
-├── 📂 app/          # Aplicación Android (Android Studio - Java)
-├── 📂 api/          # API REST backend (Spring Boot - Java)
-└── 📂 db/           # Script SQL de creación de la base de datos
+├── 📂 app/            # Aplicación Android (Android Studio - Java)
+├── 📂 api/            # API REST backend (Spring Boot - Java)
+├── 📂 db/             # Script SQL de referencia (el esquema real lo crean las migraciones Flyway)
+└── 📂 documentacion/  # Guías: despliegue, entorno de desarrollo, notificaciones, auditoría y planes
 ```
 
 ---
 
 ## 📱 App Android (`app/GymProFit`)
 
-Aplicación Android nativa desarrollada en Java con Android Studio. Consume la API REST mediante `HttpURLConnection` + `AsyncTask` + `org.json` (arquitectura 4 capas UD06) y almacena el token JWT en SharedPreferences vía `PreferencesManager`.
+Aplicación Android nativa desarrollada en Java con Android Studio. Consume la API REST mediante **Retrofit2 + OkHttp3 + Gson** con interfaces tipadas por dominio, guarda los tokens (access + refresh) cifrados en `EncryptedSharedPreferences` vía `PreferencesManager` y recibe **notificaciones push** de Firebase Cloud Messaging. Interfaz completa en **español e inglés**.
 
 ### Flujo de navegación
 
@@ -67,7 +71,7 @@ HomeActivity (navegación inferior)
   ├── RutinasActivity
   │     ├── CrearRutinaActivity → AnadirEjerciciosActivity → ResumenCrearRutinaActivity
   │     └── DetalleRutinaActivity → EditarRutinaActivity
-  ├── NutricionActivity
+  ├── NutricionActivity → ComidaActivity → AnadirAlimentoActivity / CrearAlimentoActivity
   └── PerfilActivity → EditarPerfilActivity
         ├── SesionesActivity → RegistrarSesionActivity → ResumenSesionActivity
         ├── MedicionesActivity → RegistrarMedicionActivity
@@ -76,7 +80,8 @@ HomeActivity (navegación inferior)
         └── AdminActivity  (solo ROLE_ADMIN)
               ├── AdminUsuariosActivity
               ├── AdminRutinasActivity
-              └── AdminEjerciciosActivity
+              ├── AdminEjerciciosActivity
+              └── AdminAlimentosActivity
 ```
 
 ---
@@ -105,45 +110,17 @@ POJOs puros sin dependencias de red ni de Android.
 
 #### 🌐 `network/`
 
-Arquitectura 4 capas obligatoria (UD06).
+Capa de red basada en **Retrofit2 + OkHttp3 + Gson**, con una interfaz tipada por dominio.
 
-**`UtilREST.java`** — Capa 2. `HttpURLConnection` + `AsyncTask` (deprecado pero requerido por el temario). Gestiona el token JWT estático (`setToken` / `clearToken` / `getToken`). Inyecta `Authorization: Bearer <token>` en cada petición. PATCH forzado vía reflexión Java. Loggea cada petición con `Log.d("GymProFit", método + url + statusCode)`.
+**`ApiClient.java`** — Singleton que construye el `Retrofit` (con la `BASE_URL` de `BuildConfig`) y cachea las interfaces vía `service(Clase.class)`. Su `OkHttpClient` lleva tres piezas: `AuthInterceptor` (inyecta `Authorization: Bearer <access>` en cada petición), `TokenAuthenticator` (ante un **401** renueva el access token con el refresh token y reintenta la petición de forma transparente) y el header `Accept-Language` con el idioma de la app (para recibir el catálogo localizado).
 
-**`UtilJSONParser.java`** — Capa 3. Parseo con `org.json`. Incluye el helper `parseFecha()` que maneja tanto el formato array de Jackson `[2024,5,17,10,30,0]` como string ISO `"2024-05-17T10:30:00"`. Métodos: `parseToken`, `parseTokenUsername`, `parseTokenRol` (extrae `roles[0]` del `TokenDTO` y normaliza a `ROLE_X`), `parseUsuario`, `parseUsuarioList`, `parseEjercicio`, `parseEjercicioList`, `parseRutina`, `parseRutinaList`, `parseSesion`, `parseSesionList`, `parseLogro`, `parseLogroList`, `parseLogrosDesbloqueados`, `parseMedicion`, `parseMedicionList`, `parseObjetivo`, `parseObjetivoList`.
+**Interfaces por dominio** — `AuthApi`, `UsuarioApi`, `RutinaApi`, `SesionApi`, `EjercicioApi`, `LogroApi`, `MedicionApi`, `ObjetivoApi`, `AlimentoApi`, `ComidaApi`, `AlimentoComidaApi`, `AdminApi` y `DeviceTokenApi`. Cada una declara sus endpoints con anotaciones Retrofit (`@GET`, `@POST`, `@PATCH`, `@Multipart`…) y trabaja directamente con los POJOs de `model/` (de)serializados por Gson. El contrato completo de endpoints está documentado en **Swagger** (`/api/swagger-ui.html`).
 
-**`API.java`** — Capa 4. Fachada estática con todos los endpoints agrupados por sección: AUTH, USUARIOS, EJERCICIOS, RUTINAS, SESIONES, LOGROS, OBJETIVOS, MEDICIONES, ADMIN.
+**`ApiCallback<T>` / `UiApiCallback<T>`** — Callback común sobre `enqueue` que unifica `onSuccess(T)` / `onError(code, msg)`. La variante `UiApiCallback` además oculta automáticamente el `LoadingDialog` y muestra el error con `UiFeedback`.
 
-| Método | Endpoint | Descripción |
-|---|---|---|
-| `login` | `POST auth/login` | Inicio de sesión |
-| `register` | `POST auth/register` | Registro |
-| `getUsuarioPorUsername` | `GET usuarios/username/{u}` | Perfil por username |
-| `getUsuarioPorId` | `GET usuarios/{id}` | Perfil por ID |
-| `actualizarUsuario` | `PUT usuarios` | Actualizar perfil completo (id en body) — solo para ADMIN |
-| `patchUsuario` | `PATCH usuarios/{id}` | Actualización parcial — usado en onboarding y edición de perfil |
-| `getRutinasDeUsuario` | `GET rutinas/usuario/{id}` | Rutinas del usuario |
-| `crearRutina` | `POST rutinas` | Nueva rutina |
-| `eliminarRutina` | `DELETE rutinas/{id}` | Eliminar rutina |
-| `getEjercicios` | `GET ejercicios` | Catálogo completo |
-| `getSesionesByUsuario` | `GET sesiones/usuario/{id}` | Sesiones del usuario |
-| `crearSesion` | `POST sesiones` | Nueva sesión |
-| `eliminarSesion` | `DELETE sesiones/{id}` | Eliminar sesión |
-| `getLogros` | `GET logros` | Todos los logros |
-| `getLogrosDeUsuario` | `GET logros/usuario/{id}` | Logros desbloqueados |
-| `getMedicionesDeUsuario` | `GET mediciones-corporales/usuario/{id}/ordenadas` | Historial de mediciones |
-| `crearMedicion` | `POST mediciones-corporales` | Nueva medición |
-| `eliminarMedicion` | `DELETE mediciones-corporales/{id}` | Eliminar medición |
-| `getAdminEstadisticas` | `GET admin/estadisticas-globales` | 6 KPIs globales (ADMIN) |
-| `getAdminUsuariosFiltrados` | `GET admin/usuarios?page&size&activo&rol&username` | Lista usuarios con filtros (ADMIN) |
-| `adminToggleActivoUsuario` | `PATCH admin/usuarios/{id}/toggle-activo` | Activar/desactivar usuario (ADMIN) |
-| `adminCambiarRolUsuario` | `PATCH admin/usuarios/{id}/rol?nuevoRol=` | Cambiar rol (ADMIN) |
-| `adminBuscarRutinasPredefinidas` | `GET admin/rutinas/predefinidas/busqueda` | Buscar rutinas predefinidas con filtros (ADMIN) |
-| `adminBuscarEjercicios` | `GET admin/ejercicios/busqueda` | Buscar ejercicios con filtros (ADMIN) |
-| `adminActivarRutina` / `adminDesactivarRutina` | `PUT/DELETE rutinas/{id}/activar` | Toggle activa rutina (ADMIN) |
-| `adminActivarEjercicio` / `adminDesactivarEjercicio` | `PUT/DELETE ejercicios/{id}/activar` | Toggle activo ejercicio (ADMIN) |
-| `adminEditarRutina` | `PATCH rutinas/{id}` | Editar todos los campos de rutina predefinida (ADMIN) |
-| `adminEditarEjercicio` | `PATCH ejercicios/{id}` | Editar todos los campos de ejercicio (ADMIN) |
-| `crearEjercicioRealizado` | `POST ejercicios-realizados` | Registrar ejercicio realizado en sesión |
+**`BooleanNumericAdapter`** — TypeAdapter de Gson para los campos `activo` que la API devuelve como `0/1`.
+
+**`UtilREST.java`** — Reducido a la gestión de tokens de sesión (`setToken` / `getToken` / `clearToken`, access + refresh); la persistencia cifrada vive en `PreferencesManager`.
 
 ---
 
@@ -151,8 +128,8 @@ Arquitectura 4 capas obligatoria (UD06).
 
 | Activity | Descripción |
 |---|---|
-| `SplashActivity` | Carga inicial. Restaura token JWT desde SharedPreferences y redirige a Home o Login |
-| `LoginActivity` | Inicio de sesión. Guarda token, id, username y rol. Detecta si onboarding ya fue completado |
+| `SplashActivity` | Carga inicial. Restaura la sesión (tokens cifrados en `EncryptedSharedPreferences`) y redirige a Home o Login |
+| `LoginActivity` | Inicio de sesión. Guarda access + refresh token, id, username y rol; registra el token FCM del dispositivo. Detecta si onboarding ya fue completado |
 | `RegistroActivity` | Registro de nuevo usuario |
 | `Onboarding1–4Activity` | Flujo de configuración inicial (datos físicos, actividad, objetivo) |
 | `Onboarding5Activity` | Selección de nivel de experiencia: PRINCIPIANTE, INTERMEDIO, AVANZADO, EXPERTO |
@@ -171,7 +148,7 @@ Arquitectura 4 capas obligatoria (UD06).
 | `CrearAlimentoActivity` | Crear alimento propio con macros por 100g |
 | `AdminAlimentosActivity` | Gestión admin de alimentos: toggle activo, editar (solo ROLE_ADMIN) |
 | `PerfilActivity` | Perfil con datos reales de la API. Config tema/idioma + cerrar sesión. Botón "Sobre GymProFit" al pie |
-| `AcercaDeActivity` | Pantalla "Acerca de": logo adaptativo claro/oscuro, info extendida de la app (descripción, 6 features, tech stack) e info del desarrollador (bio, formación, 3 FCTs, email clickable). Botón "Compartir": pide permiso `READ_CONTACTS` en runtime, abre selector de contactos y lanza SMS pre-rellenado con el enlace de la app |
+| `AcercaDeActivity` | Pantalla "Acerca de": logo adaptativo claro/oscuro, info extendida de la app (descripción, 6 features, tech stack) e info del desarrollador (bio, formación, 3 FCTs, email clickable). Botón "Compartir": abre el selector de compartir del sistema con el enlace de la app (sin permisos adicionales) |
 | `EditarPerfilActivity` | Editar email, peso, altura, edad, nivel, objetivo. PATCH /usuarios/{id} |
 | `SesionesActivity` | Historial de sesiones con opción de eliminar |
 | `RegistrarSesionActivity` | Formulario para registrar sesión: rutina (spinner), calorías calculadas, cards de ejercicios con peso por ejercicio (`EjercicioPesoAdapter`), notas, valoración (RatingBar 1-5). POST /ejercicios-realizados por cada ejercicio al finalizar |
@@ -208,27 +185,46 @@ Arquitectura 4 capas obligatoria (UD06).
 
 | Clase | Descripción |
 |---|---|
-| `PreferencesManager` | SharedPreferences centralizado. Campos: token, usuarioId, username, rol, nivel, objetivo, sexo, actividad, calorías/macros/agua, onboarding, tema, idioma. `cerrarSesion()` limpia token + id + username. `KEY_ONBOARDING` persiste entre sesiones; tracking adicional por usuario via `onboarding_done_<username>` |
+| `PreferencesManager` | Preferencias centralizadas. Los **tokens (access + refresh)** y la caché del **token FCM enviado** van cifrados en `EncryptedSharedPreferences`; el resto (usuarioId, username, rol, nivel, objetivo, sexo, actividad, calorías/macros/agua, onboarding, tema, idioma) en SharedPreferences normales. `cerrarSesion()` limpia tokens + id + username. `KEY_ONBOARDING` persiste entre sesiones; tracking adicional por usuario via `onboarding_done_<username>` |
 | `CalculadoraNutricional` | BMR con Mifflin-St Jeor, factor de actividad y distribución de macros según objetivo |
 | `ResultadoNutricional` | Modelo con calorías totales, proteínas, carbohidratos y grasas |
-| `UIHelper` | Toasts personalizados (éxito, error, info) y diálogos de confirmación con icono. Ancho diálogo = 90% pantalla |
-| `NotificationHelper` | Notificaciones con 4 canales: sesión completada, medición guardada, rutina creada, logro desbloqueado (InboxStyle expandible) |
+| `UIHelper` | Toasts personalizados (éxito, error, info), diálogos de confirmación con icono y traducción de enums (nivel, grupo muscular). Ancho diálogo = 90% pantalla |
+| `NotificationHelper` | Notificaciones locales con 5 canales: sesión completada, medición guardada, rutina creada, logro desbloqueado y push FCM (`notificarPush`) |
+| `LoadingDialog` | Spinner modal reutilizable (overlay) para cargas y submits, sin tocar los layouts |
+| `UiFeedback` | Mapea errores HTTP a toasts localizados: `-1` → cold-start, `≥500` → servidor, `404` → estado vacío benigno (sin toast) |
+| `PushTokenManager` | Registro del token FCM tras el login (con caché, incluye idioma), baja en logout y re-sync al cambiar idioma |
+| `FechaUtils` | Formateo de fechas ISO para la vista (Sesiones, Mediciones) |
+| `EjercicioNavHelper` | Centraliza el Intent hacia `DetalleEjercicioActivity` con todos sus extras |
+
+---
+
+#### 🔔 Notificaciones push (FCM)
+
+| Clase | Descripción |
+|---|---|
+| `GymProFitApp` (Application) | Pre-crea el canal de notificaciones push al arrancar (necesario para que Android pinte las push en background) |
+| `services/GymFirebaseMessagingService` | `onNewToken` → re-registra el token rotado por Firebase; `onMessageReceived` → muestra la push en foreground vía `NotificationHelper.notificarPush` |
+| `network/DeviceTokenApi` | `POST`/`DELETE /notificaciones/token` (registro y baja del dispositivo) |
+
+Detalle end-to-end del sistema (backend + Android) en [documentacion/NOTIFICACIONES.md](documentacion/NOTIFICACIONES.md).
 
 ---
 
 #### ⚙️ Configuración
 
-**`build.gradle`** — Lee `BASE_URL` desde `local.properties` e inyecta en `BuildConfig`. No hay dependencias Retrofit/OkHttp/Gson — solo `org.json` nativo de Android.
+**`build.gradle`** — `BASE_URL` por **buildType**: `debug` la lee de `local.properties` (API local) y `release` apunta a producción (Render) con **minify + shrinkResources (R8)** y reglas ProGuard para Gson/Retrofit (APK ~5 MB). Dependencias principales: Retrofit2, OkHttp3, Gson, Firebase BoM (Messaging + Analytics) y security-crypto.
 
-**`AndroidManifest.xml`** — Declara todas las Activities y los permisos `INTERNET`, `POST_NOTIFICATIONS`, `CAMERA`, `READ_MEDIA_IMAGES`, `READ_EXTERNAL_STORAGE` (≤API 32), `READ_CONTACTS`.
+**`AndroidManifest.xml`** — Declara `GymProFitApp` como Application, todas las Activities, el servicio FCM y los permisos `INTERNET`, `POST_NOTIFICATIONS`, `CAMERA`, `READ_MEDIA_IMAGES`, `READ_EXTERNAL_STORAGE` (≤API 32).
 
-**`local.properties`** *(no versionado)* — Contiene `sdk.dir` y `BASE_URL=http://10.0.2.2:8080/api/`.
+**`local.properties`** *(no versionado)* — Contiene `sdk.dir` y `BASE_URL=http://10.0.2.2:8080/api/` (solo aplica al buildType `debug`).
+
+**`google-services.json`** *(no versionado)* — Configuración del proyecto Firebase para FCM.
 
 ---
 
 ## 🌐 API REST (`api/gymprofit-api`)
 
-Backend desarrollado con Spring Boot 3, Java 21, MariaDB, Flyway para migraciones, jOOQ para consultas avanzadas, MapStruct para mapeo de DTOs, Spring Security con JWT y Swagger/OpenAPI.
+Backend desarrollado con Spring Boot 3, Java 21, MariaDB (MySQL gestionado en producción), Flyway para migraciones, jOOQ para consultas avanzadas, MapStruct para mapeo de DTOs, Spring Security con JWT + refresh tokens, Firebase Admin SDK para notificaciones push y Swagger/OpenAPI.
 
 ### Arquitectura
 
@@ -244,12 +240,15 @@ Controller → Service → Repository (JPA / jOOQ) → MariaDB
 
 | Clase | Descripción |
 |---|---|
-| `SecurityConfig` | CORS abierto, sesiones stateless, reglas por rol. `/auth/**` y Swagger públicos |
+| `SecurityConfig` | CORS con lista blanca configurable, sesiones stateless, reglas por rol. `/auth/**` y Swagger públicos (Swagger deshabilitado en prod) |
+| `FirebaseConfig` | Inicializa el Firebase Admin SDK una sola vez. Init *graceful*: sin credencial → push desactivadas y la API arranca igual (no rompe CI) |
 | `FlywayConfig` | Migraciones de base de datos |
 | `JooqConfig` | Consultas SQL tipadas |
 | `SwaggerConfig` | OpenAPI en `/swagger-ui.html` |
-| `security/JwtTokenProvider` | Genera y valida JWT. Configurable con `jwt.secret` y `jwt.expiration` |
+| `security/JwtTokenProvider` | Genera y valida el access JWT (30 min). Configurable con `jwt.secret` y `jwt.expiration` |
 | `security/JwtAuthenticationFilter` | Extrae y valida JWT en cada petición |
+| `security/AuthRateLimitFilter` | Rate-limiting por IP en `/auth/**` (ventana fija 15 req/60s → 429 + `Retry-After`) |
+| `security/SecurityUtils` | Comprobación de *ownership* (`checkOwnership`): un USER solo accede a sus propios recursos (protección anti-IDOR) |
 
 ---
 
@@ -257,7 +256,7 @@ Controller → Service → Repository (JPA / jOOQ) → MariaDB
 
 | Controlador | Ruta base | Descripción |
 |---|---|---|
-| `AuthController` | `/auth` | Login y registro. Endpoints públicos |
+| `AuthController` | `/auth` | Login, registro, guest, **refresh** y logout. Access JWT de 30 min + refresh opaco rotado/revocable |
 | `UsuarioController` | `/usuarios` | CRUD completo. Solo ADMIN lista todos |
 | `EjercicioController` | `/ejercicios` | CRUD. Filtros por grupo, dificultad y nombre. Escritura solo ADMIN |
 | `RutinaController` | `/rutinas` | CRUD rutinas. Predefinidas y de usuario |
@@ -270,7 +269,8 @@ Controller → Service → Repository (JPA / jOOQ) → MariaDB
 | `AlimentoController` | `/alimentos` | Catálogo nutricional |
 | `ComidaController` | `/comidas` | Comidas diarias |
 | `AlimentoComidaController` | `/alimentos-comida` | Alimentos por comida |
-| `NotificacionController` | `/notificaciones` | Notificaciones del sistema |
+| `NotificacionController` | `/notificaciones` | Notificaciones in-app: inmediata → push al momento; programada → la envía el job al vencer |
+| `DeviceTokenController` | `/notificaciones/token` | Registro/baja del token FCM del dispositivo (upsert idempotente, usuario del JWT, guarda el idioma) |
 | `LogroController` | `/logros` | Catálogo de logros y logros por usuario |
 | `AdminController` | `/admin` | Estadísticas globales (6 KPIs), lista usuarios con filtros jOOQ, toggle activo, cambiar rol, búsqueda rutinas predefinidas y ejercicios con filtros dinámicos |
 | `EjercicioJooqController` | `/jooq/ejercicios` | Consultas avanzadas jOOQ |
@@ -298,6 +298,8 @@ Controller → Service → Repository (JPA / jOOQ) → MariaDB
 | `Notificacion` | `notificaciones` |
 | `Logro` | `logros` |
 | `UsuarioLogro` | `usuario_logros` |
+| `RefreshToken` | `refresh_tokens` — refresh opacos con rotación y revocación (purga diaria con `RefreshTokenCleanupTask`) |
+| `DeviceToken` | `device_tokens` — tokens FCM por dispositivo + idioma para push localizadas |
 
 ---
 
@@ -313,29 +315,37 @@ Controller → Service → Repository (JPA / jOOQ) → MariaDB
 
 ---
 
+#### 🔔 Notificaciones push (FCM)
+
+`PushNotificationService` envía las push a todos los dispositivos del usuario vía **Firebase Admin SDK** (tolerante a fallos, borra tokens muertos). Dos jobs `@Scheduled` completan el sistema: `NotificacionProgramadaTask` (cada 60 s envía las notificaciones programadas vencidas) y `RecordatorioNotificacionesTask`, con **11 recordatorios automáticos** (5 comidas, entrenar, inactividad, resumen semanal, logro próximo, medición mensual y objetivo por vencer — cron `Europe/Madrid`, solo usuarios con dispositivo registrado, anti-spam por título). Los textos se resuelven con `MessageSource` según `device_tokens.idioma` (push localizadas ES/EN). Detalle completo en [documentacion/NOTIFICACIONES.md](documentacion/NOTIFICACIONES.md).
+
+---
+
 #### `src/main/resources/`
 
 | Archivo | Descripción |
 |---|---|
 | `application.properties` | Puerto 8080, context-path `/api`, perfil `dev` por defecto |
 | `application-dev.properties` | BD local, logging DEBUG |
-| `application-prod.properties` | Entorno de producción |
+| `application-prod.properties` | Producción 12-factor: todo por variables de entorno (BD, JWT, Firebase, CORS) |
+| `application-ci.properties` | Perfil para GitHub Actions (MariaDB efímera, rate-limit off) |
 | `application-example.properties` | Plantilla para nuevos desarrolladores |
-| `logback-spring.xml` | Logs diarios en `logs/gymprofit_YYYY-MM-DD.log` |
+| `messages.properties` / `messages_en.properties` | Textos de las notificaciones push (ES/EN) resueltos con `MessageSource` |
+| `logback-spring.xml` | Logs diarios en `logs/gymprofit_YYYY-MM-DD.log` en dev; solo consola en prod (FS efímero) |
 
-> **Nota:** Los archivos de migración Flyway en `db/migration/` no tienen prefijo `V` → Flyway **no los ejecuta automáticamente**. Cualquier cambio de esquema se aplica con SQL directo en MariaDB.
+> **Nota:** Las migraciones Flyway de `db/migration/` tienen prefijo `V` y **se ejecutan automáticamente al arrancar** la API (`ddl-auto=validate`): el esquema se crea y versiona solo, sin tocar la BD a mano.
 
 ---
 
 #### `src/test/`
 
-132 tests. Controladores: `AuthControllerTest`, `EjercicioControllerTest`, `RutinaControllerTest`. Servicios: `AuthServiceTest`, `EjercicioServiceTest`, `RutinaServiceTest`, `SesionEntrenamientoServiceTest`, `UsuarioServiceTest`.
+**230 tests**: unitarios de services (Mockito), de controllers con MockMvc y de integración end-to-end. Incluyen los tests de **ownership/IDOR** (`AbstractOwnershipTest`: `@SpringBootTest` sin mocks con usuarios reales owner/attacker — recurso ajeno → 403, propio → 200; 7 dominios), rate-limit (`AuthRateLimitFilterTest`), recordatorios push (`RecordatorioNotificacionesTaskTest`) y catálogo multiidioma (`CatalogoI18nTest`).
 
 ---
 
 ## 🗄️ Base de datos (`db/`)
 
-MariaDB en `localhost:3308`, base de datos `gymprofit_db`.
+MariaDB en `localhost:3308` en desarrollo (base de datos `gymprofit_db`); **MySQL gestionado (Aiven)** en producción. El esquema lo crean y versionan las migraciones **Flyway** al arrancar la API; `db/schema.sql` queda como referencia.
 
 | Tabla | Descripción |
 |---|---|
@@ -350,8 +360,12 @@ MariaDB en `localhost:3308`, base de datos `gymprofit_db`.
 | `mediciones_corporales` | Peso, altura, IMC, grasa, músculo, perímetros |
 | `objetivos_personales` | Valor actual vs meta, fechas y estado |
 | `alimentos` / `comidas` / `alimentos_comida` | Módulo nutricional |
-| `notificaciones` | Recordatorios y logros |
+| `notificaciones` | Recordatorios y logros (con `push_enviada` para las programadas) |
 | `logros` / `usuario_logros` | Sistema de logros con evaluación automática |
+| `refresh_tokens` | Refresh tokens opacos con rotación y revocación |
+| `device_tokens` | Tokens FCM por dispositivo + idioma para push localizadas |
+
+> El catálogo (ejercicios, alimentos, logros, rutinas predefinidas) tiene columnas `*_en` para el multiidioma, resueltas en la API según el header `Accept-Language` (fallback a ES).
 
 ---
 
@@ -363,28 +377,29 @@ MariaDB en `localhost:3308`, base de datos `gymprofit_db`.
 |---|---|
 | Java 11 | Lenguaje principal |
 | Android SDK 36 (minSdk 24) | Plataforma objetivo |
-| HttpURLConnection + AsyncTask | Cliente HTTP (UD06) |
-| org.json | Parseo JSON nativo |
+| Retrofit2 + OkHttp3 + Gson | Cliente HTTP tipado (interceptor de token + authenticator de refresh) |
+| Firebase (BoM 34.15.0) | Cloud Messaging (push) + Analytics |
 | Material Design 3 | Componentes visuales y temas |
-| SharedPreferences | Persistencia local del token JWT y datos de sesión |
-| Gradle 8.13 | Build system |
+| EncryptedSharedPreferences (security-crypto) | Persistencia cifrada de tokens y datos de sesión |
+| Gradle 8.13 | Build system (minify/R8 en release) |
 
 ### API REST
 
 | Tecnología | Versión | Uso |
 |---|---|---|
 | Java | 21 | Lenguaje principal |
-| Spring Boot | 3.5.7 | Framework web |
-| Spring Security | — | JWT y autorización por roles |
+| Spring Boot | 3.5.16 | Framework web |
+| Spring Security | — | JWT + refresh tokens, roles, rate-limiting |
 | Spring Data JPA | — | ORM y CRUD estándar |
 | jOOQ | 3.19 | Consultas SQL complejas y tipadas |
-| Flyway | 11.15 | Migraciones versionadas |
-| MapStruct | 1.6.3 | Mapeo DTO↔entidad |
-| Lombok | 1.18.38 | Reducción de boilerplate |
+| Flyway | 11.15 | Migraciones versionadas (automáticas al arrancar) |
+| MapStruct | 1.6.3 | Mapeo DTO↔entidad (+ resolución i18n del catálogo) |
+| Lombok | — | Reducción de boilerplate |
 | JJWT | 0.13.0 | Generación y validación JWT |
+| Firebase Admin SDK | 9.8.0 | Envío de notificaciones push (FCM) |
 | SpringDoc OpenAPI | 2.8.15 | Documentación Swagger |
-| MariaDB | — | Base de datos relacional |
-| JUnit 5 + Mockito | — | Tests unitarios e integración |
+| MariaDB / MySQL | — | Base de datos relacional (MariaDB en dev, Aiven MySQL en prod) |
+| JUnit 5 + Mockito | — | Tests unitarios e integración (230) |
 | Maven | — | Gestión de dependencias |
 
 ---
@@ -409,14 +424,13 @@ cd TFG-GymProFit
 
 ### 2. Configurar la base de datos
 
+Basta con crear la base de datos vacía — **las migraciones Flyway crean el esquema completo automáticamente al arrancar la API**:
+
 ```sql
--- Crear la base de datos
 CREATE DATABASE gymprofit_db CHARACTER SET utf8mb4;
--- Ejecutar el schema inicial
-mysql -u root -p gymprofit_db < db/schema.sql
--- Activar usuarios del seed si fuera necesario
-UPDATE usuarios SET activo = 1 WHERE activo IS NULL;
 ```
+
+> `db/schema.sql` se mantiene solo como referencia del esquema.
 
 ### 3. Configurar la API
 
@@ -426,6 +440,8 @@ cp application-example.properties application-dev.properties
 ```
 
 Edita `application-dev.properties` con tus credenciales de BD y clave JWT.
+
+> **Opcional (push):** para probar las notificaciones push en dev, define la variable de entorno `FIREBASE_CREDENTIALS_PATH` apuntando al JSON de la service account de Firebase (no versionado). Sin ella la API arranca igual, con las push desactivadas.
 
 ### 4. Arrancar la API
 
@@ -445,11 +461,25 @@ sdk.dir=C\:\\Users\\TuUsuario\\AppData\\Local\\Android\\Sdk
 BASE_URL=http://10.0.2.2:8080/api/
 ```
 
-> `10.0.2.2` es la IP del emulador para `localhost`. Con dispositivo físico, usar la IP local de la máquina.
+> `10.0.2.2` es la IP del emulador para `localhost`. Con dispositivo físico, usar la IP local de la máquina. `BASE_URL` solo aplica al buildType `debug`; `release` apunta directamente a producción.
 
 ### 6. Ejecutar la App
 
 Abre `app/GymProFit` en Android Studio, sincroniza Gradle y ejecuta en emulador o dispositivo.
+
+---
+
+## ☁️ Despliegue en producción
+
+| Componente | Dónde |
+|---|---|
+| API | **Render** (Docker multi-stage, free tier) — `https://gymprofit-api.onrender.com/api` |
+| Base de datos | **Aiven for MySQL** (always-free, TLS `verify-full` con CA) |
+| App Android | buildTypes: `debug` → API local, `release` → producción con minify/R8 (APK ~5 MB) |
+| CI | **GitHub Actions**: build + 230 tests contra MariaDB efímera en cada push/PR |
+| Keep-alive | Cron cada 10 min a `/actuator/health` para que el free tier de Render no se duerma |
+
+Guía completa paso a paso en [documentacion/DESPLIEGUE.md](documentacion/DESPLIEGUE.md).
 
 ---
 
