@@ -43,4 +43,8 @@ public interface IComidaRepository extends JpaRepository<Comida, Integer> {
 
     // Cuenta el número de comidas de un usuario para un tipo concreto.
     Long countByUsuarioIdAndTipoComida(Integer usuarioId, TipoComida tipoComida);
+
+    // Comprueba si el usuario registró una comida de un tipo dentro de un rango de fechas
+    // (lo usan los recordatorios de comida: "¿ya registró la cena de hoy?").
+    boolean existsByUsuarioIdAndTipoComidaAndFechaBetween(Integer usuarioId, TipoComida tipoComida, LocalDateTime inicio, LocalDateTime fin);
 }

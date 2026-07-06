@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 // ============================================================
@@ -42,4 +43,8 @@ public interface IObjetivoPersonalRepository extends JpaRepository<ObjetivoPerso
 
     // Busca los objetivos de un usuario ordenados por fecha de inicio, de más reciente a más antigua.
     List<ObjetivoPersonal> findByUsuarioIdOrderByFechaInicioDesc(Integer usuarioId);
+
+    // Objetivos pendientes del usuario cuya fecha límite cae dentro de un rango
+    // (recordatorio "tu objetivo está cerca de vencer": hoy → hoy+3 días).
+    List<ObjetivoPersonal> findByUsuarioIdAndCompletadoFalseAndFechaLimiteBetween(Integer usuarioId, LocalDate desde, LocalDate hasta);
 }

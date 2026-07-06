@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 // ============================================================
 // ISesionEntrenamientoRepository — repositorio JPA de sesiones de entrenamiento
@@ -56,6 +57,13 @@ public interface ISesionEntrenamientoRepository extends JpaRepository<SesionEntr
 
     // Número de sesiones asociadas a una rutina.
     Long countByRutinaId(Integer rutinaId);
+
+    // Comprueba si el usuario tiene alguna sesión iniciada dentro de un rango
+    // (recordatorios: "¿entrenó hoy?" / "¿ha estado activo los últimos días?").
+    boolean existsByUsuarioIdAndFechaInicioBetween(Integer usuarioId, LocalDateTime inicio, LocalDateTime fin);
+
+    // Última sesión del usuario (la más reciente por fecha de inicio), para detectar inactividad.
+    Optional<SesionEntrenamiento> findTopByUsuarioIdOrderByFechaInicioDesc(Integer usuarioId);
 
     // Consulta JPQL: sesiones de un usuario ordenadas de más reciente a más antigua.
     @Query("SELECT s " +

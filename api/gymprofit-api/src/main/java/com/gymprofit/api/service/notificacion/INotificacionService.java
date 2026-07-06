@@ -2,6 +2,7 @@ package com.gymprofit.api.service.notificacion;
 
 import com.gymprofit.api.dto.entity.notificacion.NotificacionCreateDTO;
 import com.gymprofit.api.dto.entity.notificacion.NotificacionDTO;
+import com.gymprofit.api.enums.TipoNotificacion;
 
 import java.util.List;
 
@@ -20,6 +21,10 @@ public interface INotificacionService {
     NotificacionDTO findById(Integer id);
     // Crea una nueva notificación para un usuario.
     NotificacionDTO save(NotificacionCreateDTO notificacionCreateDTO);
+
+    // Crea una notificación generada por el sistema (jobs @Scheduled) SIN SecurityContext
+    // y le envía la push inmediatamente. Uso interno, nunca expuesto en controllers.
+    void crearSistema(Integer usuarioId, String titulo, String mensaje, TipoNotificacion tipo);
 
     // Elimina una notificación por su id.
     void deleteById(Integer id);

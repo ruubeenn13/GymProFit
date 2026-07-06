@@ -32,4 +32,10 @@ public interface IDeviceTokenRepository extends JpaRepository<DeviceToken, Integ
     @Modifying
     @Query("DELETE FROM DeviceToken d WHERE d.token = :token")
     void deleteByToken(@Param("token") String token);
+
+    // Ids de usuario distintos con al menos un dispositivo registrado: los recordatorios
+    // programados solo se generan para ellos (evita crear notificaciones para cuentas
+    // muertas que nunca podrían recibir la push).
+    @Query("SELECT DISTINCT d.usuario.id FROM DeviceToken d")
+    List<Integer> findDistinctUsuarioIds();
 }

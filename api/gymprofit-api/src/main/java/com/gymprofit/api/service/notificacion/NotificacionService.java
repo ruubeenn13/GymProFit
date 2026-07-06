@@ -116,6 +116,36 @@ public class NotificacionService implements INotificacionService {
         }
     }
 
+    // Crea una notificación generada internamente por el sistema (jobs @Scheduled como
+    // RecordatorioNotificacionesTask). Existe porque save() usa SecurityUtils y los jobs
+    // programados NO tienen SecurityContext (reventaría al resolver el usuario autenticado):
+    // aquí el usuario destino llega explícito y no se hace ninguna comprobación de seguridad.
+    // Persiste la notificación in-app y envía la push en el momento (pushEnviada=true,
+    // sin fechaProgramada: no debe procesarla el job de programadas).
+    @Transactional
+    @Override
+    public void crearSistema(Integer usuarioId, String titulo, String mensaje, TipoNotificacion tipo) {
+        logger.info("Creando notificación de sistema '{}' para usuario id: {}", titulo, usuarioId);
+
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + usuarioId + " no existe"));
+
+        Notificacion notificacion = new Notificacion();
+        notificacion.setUsuario(usuario);
+        notificacion.setTitulo(titulo);
+        notificacion.setMensaje(mensaje);
+        notificacion.setTipo(tipo);
+        notificacion.setFechaCreacion(LocalDateTime.now());
+        notificacion.setLeida(false);
+        notificacion.setPushEnviada(true);
+
+        notificacionRepository.save(notificacion);
+
+        // enviarA es tolerante a fallos y no-op sin Firebase: la notificación in-app
+        // queda guardada aunque el push no llegue.
+        pushNotificationService.enviarA(usuarioId, titulo, mensaje);
+    }
+
     // Elimina definitivamente una notificación tras comprobar la propiedad.
     @Transactional
     @Override

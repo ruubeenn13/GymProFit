@@ -48,4 +48,8 @@ public interface INotificacionRepository extends JpaRepository<Notificacion, Int
 
     // Notificaciones programadas vencidas y con push aún pendiente (las procesa el job).
     List<Notificacion> findByPushEnviadaFalseAndFechaProgramadaLessThanEqual(LocalDateTime ahora);
+
+    // Anti-spam de los recordatorios recurrentes: comprueba si ya se envió al usuario
+    // una notificación con el mismo título desde una fecha dada (el título actúa de clave).
+    boolean existsByUsuarioIdAndTituloAndFechaCreacionAfter(Integer usuarioId, String titulo, LocalDateTime desde);
 }
