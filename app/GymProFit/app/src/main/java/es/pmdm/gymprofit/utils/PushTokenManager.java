@@ -47,6 +47,10 @@ public final class PushTokenManager {
             Map<String, Object> body = new HashMap<>();
             body.put("token", token);
             body.put("plataforma", "ANDROID");
+            // Idioma de la app: el backend localiza las push con él ("es" si no hay preferencia).
+            String idioma = prefs.getLanguage();
+            body.put("idioma", idioma == null || idioma.isEmpty()
+                    ? java.util.Locale.getDefault().getLanguage() : idioma);
 
             api.registrar(body).enqueue(new ApiCallback<Void>() {
                 @Override

@@ -40,6 +40,11 @@ public class DeviceToken {
     @Column(nullable = false, length = 20)
     private String plataforma;
 
+    // Idioma del usuario en este dispositivo (código ISO de 2 letras, p.ej. "es", "en").
+    // Se usa para resolver el idioma de las notificaciones push generadas por el servidor.
+    @Column(nullable = false, length = 5)
+    private String idioma;
+
     // Momento del primer registro del token.
     @Column(name = "fecha_registro", nullable = false)
     private LocalDateTime fechaRegistro;

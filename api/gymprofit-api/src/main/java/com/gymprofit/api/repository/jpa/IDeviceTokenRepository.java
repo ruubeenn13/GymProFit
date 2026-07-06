@@ -33,6 +33,11 @@ public interface IDeviceTokenRepository extends JpaRepository<DeviceToken, Integ
     @Query("DELETE FROM DeviceToken d WHERE d.token = :token")
     void deleteByToken(@Param("token") String token);
 
+    // Token más reciente de un usuario (por fecha de actualización): se usa para
+    // resolver el idioma actual del usuario en las notificaciones programadas
+    // (el dispositivo usado más recientemente marca el idioma vigente).
+    Optional<DeviceToken> findTopByUsuarioIdOrderByFechaActualizacionDesc(Integer usuarioId);
+
     // Ids de usuario distintos con al menos un dispositivo registrado: los recordatorios
     // programados solo se generan para ellos (evita crear notificaciones para cuentas
     // muertas que nunca podrían recibir la push).

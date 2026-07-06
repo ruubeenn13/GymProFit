@@ -171,11 +171,13 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         dialog.findViewById(R.id.optionEspanol).setOnClickListener(v -> {
             prefsManager.saveLanguage("es");
+            resincronizarIdiomaPush();
             dialog.dismiss();
             recreate();
         });
         dialog.findViewById(R.id.optionIngles).setOnClickListener(v -> {
             prefsManager.saveLanguage("en");
+            resincronizarIdiomaPush();
             dialog.dismiss();
             recreate();
         });
@@ -196,6 +198,14 @@ public abstract class BaseActivity extends AppCompatActivity {
         intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_contacto_asunto));
         intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.email_contacto_cuerpo));
         startActivity(Intent.createChooser(intent, getString(R.string.menu_contactanos)));
+    }
+
+    // Re-registra el token FCM tras cambiar el idioma: el backend guarda el idioma junto
+    // al token para localizar las push, así que hay que re-enviarlo. Se invalida la caché
+    // (si no, PushTokenManager saltaría el POST al no haber cambiado el token).
+    private void resincronizarIdiomaPush() {
+        prefsManager.clearFcmTokenEnviado();
+        PushTokenManager.registrar(this);
     }
 
     // Muestra un diálogo de confirmación y, al aceptar, limpia token/sesión y redirige a LoginActivity

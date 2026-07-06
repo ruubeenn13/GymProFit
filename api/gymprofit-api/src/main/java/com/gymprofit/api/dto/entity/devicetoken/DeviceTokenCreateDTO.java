@@ -22,4 +22,8 @@ public class DeviceTokenCreateDTO implements Serializable {
 
     // Plataforma del dispositivo (opcional; por defecto ANDROID).
     private String plataforma;
+
+    // Idioma del usuario en el dispositivo (opcional; p.ej. "es", "en" o "en-US").
+    // Si no se envía, el service asume español ("es").
+    private String idioma;
 }

@@ -46,6 +46,10 @@ public class DeviceTokenService implements IDeviceTokenService {
         String plataforma = (dto.getPlataforma() == null || dto.getPlataforma().isBlank())
                 ? "ANDROID" : dto.getPlataforma().toUpperCase();
 
+        // Idioma normalizado: por defecto "es"; si viene una etiqueta tipo "en-US"
+        // se conserva solo el código de idioma de 2 letras en minúsculas ("en").
+        String idioma = normalizarIdioma(dto.getIdioma());
+
         LocalDateTime ahora = LocalDateTime.now();
 
         // Reutiliza la fila si el token ya existe (reasigna dueño); si no, crea una nueva.
@@ -58,9 +62,22 @@ public class DeviceTokenService implements IDeviceTokenService {
                 });
         deviceToken.setUsuario(usuario);
         deviceToken.setPlataforma(plataforma);
+        // El idioma se refresca también al reasignar un token existente (cambio de
+        // usuario o de idioma en el mismo dispositivo).
+        deviceToken.setIdioma(idioma);
         deviceToken.setFechaActualizacion(ahora);
 
         deviceTokenRepository.save(deviceToken);
+    }
+
+    // Normaliza el idioma recibido del cliente: null/vacío → "es" (default);
+    // en otro caso, minúsculas y solo el código de 2 letras (p.ej. "en-US" → "en").
+    private String normalizarIdioma(String idioma) {
+        if (idioma == null || idioma.isBlank()) return "es";
+        String normalizado = idioma.trim().toLowerCase();
+        // Recorta etiquetas BCP-47 tipo "en-us" o "en_us" al código base de 2 letras.
+        if (normalizado.length() > 2) normalizado = normalizado.substring(0, 2);
+        return normalizado;
     }
 
     // Borra el token en el logout, solo si es del usuario autenticado (evita borrar ajenos).

@@ -14,6 +14,7 @@ import com.gymprofit.api.repository.jpa.ISesionEntrenamientoRepository;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +22,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 // ============================================================
@@ -35,6 +37,12 @@ import java.util.Optional;
 //     en los recordatorios que podrían repetirse varios días seguidos.
 //   - Todos los cron van con zone Europe/Madrid (el servidor de prod corre en UTC).
 //   - Cada job envuelve su cuerpo en try/catch: un fallo no debe matar el scheduler.
+// Internacionalización: los textos viven en messages.properties (ES, default) y
+// messages_en.properties (EN); cada generador resuelve título/mensaje con el
+// MessageSource en el idioma del dispositivo más reciente del usuario (localeDe).
+// EDGE CASE anti-spam aceptado: el anti-spam compara el título RESUELTO en el
+// idioma actual del usuario; si el usuario cambia de idioma entre dos ejecuciones,
+// el título anterior estaba en otro idioma y puede recibir un duplicado puntual.
 // Métodos públicos para poder invocarlos directamente desde los tests de integración.
 // ============================================================
 @Component
@@ -44,30 +52,35 @@ public class RecordatorioNotificacionesTask {
     // ---- Zona horaria común de todos los cron (prod corre en UTC). ----
     private static final String ZONA = "Europe/Madrid";
 
-    // ---- Textos de las notificaciones (título = clave del anti-spam, mensaje corto y motivacional). ----
+    // ---- Idioma por defecto de las notificaciones (usuarios sin idioma resoluble). ----
+    private static final String IDIOMA_DEFAULT = "es";
+
+    // ---- Claves i18n de las notificaciones (título = clave del anti-spam una vez resuelto). ----
     // Recordatorios de comidas (uno por franja horaria).
-    public static final String TITULO_DESAYUNO = "¿Ya has desayunado?";
-    static final String MSG_DESAYUNO = "Empieza el día con energía: registra tu desayuno en GymProFit.";
-    public static final String TITULO_ALMUERZO = "Hora del almuerzo";
-    static final String MSG_ALMUERZO = "Un pequeño empujón a media mañana. ¡Registra tu almuerzo!";
-    public static final String TITULO_COMIDA = "¿Qué hay para comer?";
-    static final String MSG_COMIDA = "No olvides registrar tu comida para llevar tus macros al día.";
-    public static final String TITULO_MERIENDA = "Hora de la merienda";
-    static final String MSG_MERIENDA = "Una merienda a tiempo mantiene tus objetivos en marcha. ¡Regístrala!";
-    public static final String TITULO_CENA = "No olvides registrar tu cena";
-    static final String MSG_CENA = "Cierra el día completando tu registro de comidas. ¡Buen trabajo hoy!";
+    public static final String KEY_DESAYUNO_TITULO = "notif.desayuno.titulo";
+    public static final String KEY_DESAYUNO_MENSAJE = "notif.desayuno.mensaje";
+    public static final String KEY_ALMUERZO_TITULO = "notif.almuerzo.titulo";
+    public static final String KEY_ALMUERZO_MENSAJE = "notif.almuerzo.mensaje";
+    public static final String KEY_COMIDA_TITULO = "notif.comida.titulo";
+    public static final String KEY_COMIDA_MENSAJE = "notif.comida.mensaje";
+    public static final String KEY_MERIENDA_TITULO = "notif.merienda.titulo";
+    public static final String KEY_MERIENDA_MENSAJE = "notif.merienda.mensaje";
+    public static final String KEY_CENA_TITULO = "notif.cena.titulo";
+    public static final String KEY_CENA_MENSAJE = "notif.cena.mensaje";
     // Entrenamiento y actividad.
-    public static final String TITULO_ENTRENAR = "¡Hora de entrenar!";
-    static final String MSG_ENTRENAR = "Hoy todavía no has entrenado. ¡Dale caña y mantén la racha!";
-    public static final String TITULO_INACTIVIDAD = "Te echamos de menos";
-    static final String MSG_INACTIVIDAD = "Hace días que no entrenas. Una sesión corta hoy es mejor que ninguna. ¡Vuelve!";
-    public static final String TITULO_RESUMEN = "Tu resumen semanal";
+    public static final String KEY_ENTRENAR_TITULO = "notif.entrenar.titulo";
+    public static final String KEY_ENTRENAR_MENSAJE = "notif.entrenar.mensaje";
+    public static final String KEY_INACTIVIDAD_TITULO = "notif.inactividad.titulo";
+    public static final String KEY_INACTIVIDAD_MENSAJE = "notif.inactividad.mensaje";
+    public static final String KEY_RESUMEN_TITULO = "notif.resumen.titulo";
+    public static final String KEY_RESUMEN_MENSAJE = "notif.resumen.mensaje";
     // Logros y progreso.
-    public static final String TITULO_LOGRO_PROXIMO = "¡Estás a una sesión de un logro!";
-    static final String MSG_LOGRO_PROXIMO = "Solo te falta una sesión para desbloquear un nuevo logro. ¡A por ella!";
-    public static final String TITULO_MEDICION = "¿Cómo va tu progreso?";
-    static final String MSG_MEDICION = "Hace más de un mes de tu última medición. Registra tu peso y comprueba tu evolución.";
-    public static final String TITULO_OBJETIVO = "Tu objetivo está cerca de vencer";
+    public static final String KEY_LOGRO_TITULO = "notif.logro.titulo";
+    public static final String KEY_LOGRO_MENSAJE = "notif.logro.mensaje";
+    public static final String KEY_MEDICION_TITULO = "notif.medicion.titulo";
+    public static final String KEY_MEDICION_MENSAJE = "notif.medicion.mensaje";
+    public static final String KEY_OBJETIVO_TITULO = "notif.objetivo.titulo";
+    public static final String KEY_OBJETIVO_MENSAJE = "notif.objetivo.mensaje";
 
     private final IDeviceTokenRepository deviceTokenRepository;
     private final INotificacionRepository notificacionRepository;
@@ -76,7 +89,22 @@ public class RecordatorioNotificacionesTask {
     private final IMedicionCorporalRepository medicionCorporalRepository;
     private final IObjetivoPersonalRepository objetivoPersonalRepository;
     private final INotificacionService notificacionService;
+    private final MessageSource messageSource;
     private final Logger logger = LoggerFactory.getLogger(RecordatorioNotificacionesTask.class);
+
+    // ============================================================
+    // Helpers i18n
+    // ============================================================
+
+    // Resuelve el Locale actual del usuario: idioma del dispositivo con la fecha de
+    // actualización más reciente (el último usado marca el idioma vigente). Si el
+    // usuario no tiene tokens (no debería pasar: los generadores iteran usuarios CON
+    // token), se cae al idioma por defecto "es".
+    private Locale localeDe(Integer usuarioId) {
+        return deviceTokenRepository.findTopByUsuarioIdOrderByFechaActualizacionDesc(usuarioId)
+                .map(dt -> new Locale(dt.getIdioma()))
+                .orElse(new Locale(IDIOMA_DEFAULT));
+    }
 
     // ============================================================
     // 1-5. Recordatorios de comidas (uno por franja horaria)
@@ -85,37 +113,38 @@ public class RecordatorioNotificacionesTask {
     // 8:00 — recordatorio de desayuno.
     @Scheduled(cron = "0 0 8 * * *", zone = ZONA)
     public void recordatorioDesayuno() {
-        recordatorioComida(TipoComida.DESAYUNO, TITULO_DESAYUNO, MSG_DESAYUNO);
+        recordatorioComida(TipoComida.DESAYUNO, KEY_DESAYUNO_TITULO, KEY_DESAYUNO_MENSAJE);
     }
 
     // 11:00 — recordatorio de almuerzo.
     @Scheduled(cron = "0 0 11 * * *", zone = ZONA)
     public void recordatorioAlmuerzo() {
-        recordatorioComida(TipoComida.ALMUERZO, TITULO_ALMUERZO, MSG_ALMUERZO);
+        recordatorioComida(TipoComida.ALMUERZO, KEY_ALMUERZO_TITULO, KEY_ALMUERZO_MENSAJE);
     }
 
     // 14:00 — recordatorio de comida.
     @Scheduled(cron = "0 0 14 * * *", zone = ZONA)
     public void recordatorioComidaPrincipal() {
-        recordatorioComida(TipoComida.COMIDA, TITULO_COMIDA, MSG_COMIDA);
+        recordatorioComida(TipoComida.COMIDA, KEY_COMIDA_TITULO, KEY_COMIDA_MENSAJE);
     }
 
     // 17:00 — recordatorio de merienda.
     @Scheduled(cron = "0 0 17 * * *", zone = ZONA)
     public void recordatorioMerienda() {
-        recordatorioComida(TipoComida.MERIENDA, TITULO_MERIENDA, MSG_MERIENDA);
+        recordatorioComida(TipoComida.MERIENDA, KEY_MERIENDA_TITULO, KEY_MERIENDA_MENSAJE);
     }
 
     // 21:00 — recordatorio de cena.
     @Scheduled(cron = "0 0 21 * * *", zone = ZONA)
     public void recordatorioCena() {
-        recordatorioComida(TipoComida.CENA, TITULO_CENA, MSG_CENA);
+        recordatorioComida(TipoComida.CENA, KEY_CENA_TITULO, KEY_CENA_MENSAJE);
     }
 
     // Lógica común de los recordatorios de comida: notifica a cada usuario con dispositivo
-    // que aún NO ha registrado hoy una comida de ese tipo. Sin anti-spam extra: cada cron
-    // corre 1 vez/día, así que como mucho se genera una notificación diaria por franja.
-    public void recordatorioComida(TipoComida tipo, String titulo, String mensaje) {
+    // que aún NO ha registrado hoy una comida de ese tipo, con el texto resuelto en su
+    // idioma. Sin anti-spam extra: cada cron corre 1 vez/día, así que como mucho se
+    // genera una notificación diaria por franja.
+    public void recordatorioComida(TipoComida tipo, String claveTitulo, String claveMensaje) {
         try {
             LocalDateTime inicioDia = LocalDate.now().atStartOfDay();
             LocalDateTime finDia = inicioDia.plusDays(1).minusSeconds(1);
@@ -123,6 +152,10 @@ public class RecordatorioNotificacionesTask {
             for (Integer usuarioId : deviceTokenRepository.findDistinctUsuarioIds()) {
                 // Condición: no existe comida de ese tipo registrada hoy.
                 if (!comidaRepository.existsByUsuarioIdAndTipoComidaAndFechaBetween(usuarioId, tipo, inicioDia, finDia)) {
+                    // Título y mensaje en el idioma actual del usuario.
+                    Locale locale = localeDe(usuarioId);
+                    String titulo = messageSource.getMessage(claveTitulo, null, locale);
+                    String mensaje = messageSource.getMessage(claveMensaje, null, locale);
                     notificacionService.crearSistema(usuarioId, titulo, mensaje, TipoNotificacion.RECORDATORIO);
                 }
             }
@@ -154,7 +187,11 @@ public class RecordatorioNotificacionesTask {
                 boolean activo = sesionEntrenamientoRepository
                         .existsByUsuarioIdAndFechaInicioBetween(usuarioId, ahora.minusDays(3), ahora);
                 if (activo) {
-                    notificacionService.crearSistema(usuarioId, TITULO_ENTRENAR, MSG_ENTRENAR, TipoNotificacion.RECORDATORIO);
+                    // Textos resueltos en el idioma actual del usuario.
+                    Locale locale = localeDe(usuarioId);
+                    String titulo = messageSource.getMessage(KEY_ENTRENAR_TITULO, null, locale);
+                    String mensaje = messageSource.getMessage(KEY_ENTRENAR_MENSAJE, null, locale);
+                    notificacionService.crearSistema(usuarioId, titulo, mensaje, TipoNotificacion.RECORDATORIO);
                 }
             }
         } catch (Exception e) {
@@ -168,6 +205,8 @@ public class RecordatorioNotificacionesTask {
 
     // 12:00 — anima a volver a quien lleva ≥3 días sin entrenar (o nunca ha entrenado).
     // Anti-spam de 4 días: no se re-envía si ya se mandó este mismo aviso recientemente.
+    // El anti-spam compara el título resuelto en el idioma ACTUAL del usuario (ver
+    // edge case documentado en la cabecera de la clase).
     @Scheduled(cron = "0 0 12 * * *", zone = ZONA)
     public void recordatorioInactividad() {
         try {
@@ -181,11 +220,16 @@ public class RecordatorioNotificacionesTask {
                         || ultima.get().getFechaInicio().isBefore(ahora.minusDays(3));
                 if (!inactivo) continue;
 
+                // Textos resueltos en el idioma actual del usuario.
+                Locale locale = localeDe(usuarioId);
+                String titulo = messageSource.getMessage(KEY_INACTIVIDAD_TITULO, null, locale);
+                String mensaje = messageSource.getMessage(KEY_INACTIVIDAD_MENSAJE, null, locale);
+
                 // Anti-spam: como mucho un aviso de inactividad cada 4 días.
                 if (notificacionRepository.existsByUsuarioIdAndTituloAndFechaCreacionAfter(
-                        usuarioId, TITULO_INACTIVIDAD, ahora.minusDays(4))) continue;
+                        usuarioId, titulo, ahora.minusDays(4))) continue;
 
-                notificacionService.crearSistema(usuarioId, TITULO_INACTIVIDAD, MSG_INACTIVIDAD, TipoNotificacion.RECORDATORIO);
+                notificacionService.crearSistema(usuarioId, titulo, mensaje, TipoNotificacion.RECORDATORIO);
             }
         } catch (Exception e) {
             logger.warn("Fallo en recordatorio de inactividad: {}", e.getMessage());
@@ -216,10 +260,13 @@ public class RecordatorioNotificacionesTask {
                 int kcal = sesiones.stream()
                         .mapToInt(s -> s.getCaloriasQuemadas() == null ? 0 : s.getCaloriasQuemadas()).sum();
 
-                String mensaje = "Esta semana: " + sesiones.size() + " sesión(es), "
-                        + minutos + " min de entrenamiento y " + kcal + " kcal quemadas. ¡Sigue así!";
+                // Mensaje con placeholders MessageFormat: {0} sesiones, {1} minutos, {2} kcal.
+                Locale locale = localeDe(usuarioId);
+                String titulo = messageSource.getMessage(KEY_RESUMEN_TITULO, null, locale);
+                String mensaje = messageSource.getMessage(KEY_RESUMEN_MENSAJE,
+                        new Object[]{sesiones.size(), minutos, kcal}, locale);
 
-                notificacionService.crearSistema(usuarioId, TITULO_RESUMEN, mensaje, TipoNotificacion.SISTEMA);
+                notificacionService.crearSistema(usuarioId, titulo, mensaje, TipoNotificacion.SISTEMA);
             }
         } catch (Exception e) {
             logger.warn("Fallo en resumen semanal: {}", e.getMessage());
@@ -247,11 +294,16 @@ public class RecordatorioNotificacionesTask {
                 // A una sesión de CONSTANCIA (7) o de DEDICADO (30).
                 if (completadas != 6 && completadas != 29) continue;
 
+                // Textos resueltos en el idioma actual del usuario.
+                Locale locale = localeDe(usuarioId);
+                String titulo = messageSource.getMessage(KEY_LOGRO_TITULO, null, locale);
+                String mensaje = messageSource.getMessage(KEY_LOGRO_MENSAJE, null, locale);
+
                 // Anti-spam: máximo un aviso de logro próximo por semana.
                 if (notificacionRepository.existsByUsuarioIdAndTituloAndFechaCreacionAfter(
-                        usuarioId, TITULO_LOGRO_PROXIMO, ahora.minusDays(7))) continue;
+                        usuarioId, titulo, ahora.minusDays(7))) continue;
 
-                notificacionService.crearSistema(usuarioId, TITULO_LOGRO_PROXIMO, MSG_LOGRO_PROXIMO, TipoNotificacion.LOGRO);
+                notificacionService.crearSistema(usuarioId, titulo, mensaje, TipoNotificacion.LOGRO);
             }
         } catch (Exception e) {
             logger.warn("Fallo en aviso de logro próximo: {}", e.getMessage());
@@ -275,11 +327,16 @@ public class RecordatorioNotificacionesTask {
                         medicionCorporalRepository.findFirstByUsuarioIdOrderByFechaDesc(usuarioId);
                 if (ultima.isEmpty() || !ultima.get().getFecha().isBefore(ahora.minusDays(30))) continue;
 
+                // Textos resueltos en el idioma actual del usuario.
+                Locale locale = localeDe(usuarioId);
+                String titulo = messageSource.getMessage(KEY_MEDICION_TITULO, null, locale);
+                String mensaje = messageSource.getMessage(KEY_MEDICION_MENSAJE, null, locale);
+
                 // Anti-spam: como mucho un aviso cada 30 días.
                 if (notificacionRepository.existsByUsuarioIdAndTituloAndFechaCreacionAfter(
-                        usuarioId, TITULO_MEDICION, ahora.minusDays(30))) continue;
+                        usuarioId, titulo, ahora.minusDays(30))) continue;
 
-                notificacionService.crearSistema(usuarioId, TITULO_MEDICION, MSG_MEDICION, TipoNotificacion.RECORDATORIO);
+                notificacionService.crearSistema(usuarioId, titulo, mensaje, TipoNotificacion.RECORDATORIO);
             }
         } catch (Exception e) {
             logger.warn("Fallo en recordatorio de medición mensual: {}", e.getMessage());
@@ -304,15 +361,20 @@ public class RecordatorioNotificacionesTask {
                         .findByUsuarioIdAndCompletadoFalseAndFechaLimiteBetween(usuarioId, hoy, hoy.plusDays(3));
                 if (proximos.isEmpty()) continue;
 
+                // Título fijo en el idioma del usuario (clave del anti-spam).
+                Locale locale = localeDe(usuarioId);
+                String titulo = messageSource.getMessage(KEY_OBJETIVO_TITULO, null, locale);
+
                 // Anti-spam: máximo un aviso de vencimiento cada 3 días por usuario.
                 if (notificacionRepository.existsByUsuarioIdAndTituloAndFechaCreacionAfter(
-                        usuarioId, TITULO_OBJETIVO, ahora.minusDays(3))) continue;
+                        usuarioId, titulo, ahora.minusDays(3))) continue;
 
-                // El "nombre" del objetivo es su descripción (la entidad no tiene campo título).
-                String mensaje = "\"" + proximos.get(0).getDescripcion()
-                        + "\" vence en pocos días. ¡Último empujón, tú puedes!";
+                // El "nombre" del objetivo es su descripción (la entidad no tiene campo título);
+                // va como {0} del mensaje MessageFormat.
+                String mensaje = messageSource.getMessage(KEY_OBJETIVO_MENSAJE,
+                        new Object[]{proximos.get(0).getDescripcion()}, locale);
 
-                notificacionService.crearSistema(usuarioId, TITULO_OBJETIVO, mensaje, TipoNotificacion.OBJETIVO);
+                notificacionService.crearSistema(usuarioId, titulo, mensaje, TipoNotificacion.OBJETIVO);
             }
         } catch (Exception e) {
             logger.warn("Fallo en recordatorio de objetivo próximo a vencer: {}", e.getMessage());
