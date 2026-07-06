@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
 }
 
 android {
@@ -88,4 +89,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     // Cloud Messaging: recepción de notificaciones push (versión fijada por el BOM)
     implementation 'com.google.firebase:firebase-messaging'
+    // Crashlytics: reporte automático de crashes en producción (versión por el BOM)
+    implementation 'com.google.firebase:firebase-crashlytics'
 }
