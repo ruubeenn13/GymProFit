@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,6 +24,8 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.EjercicioApi;
 import es.pmdm.gymprofit.ui.adapters.EjercicioAdapter;
 import es.pmdm.gymprofit.utils.EjercicioNavHelper;
+import es.pmdm.gymprofit.utils.LoadingDialog;
+import es.pmdm.gymprofit.utils.UiFeedback;
 // ============================================================
 // EjerciciosActivity — pantalla del catálogo de ejercicios.
 // Lista los ejercicios activos con buscador por texto y filtro por
@@ -35,6 +39,7 @@ public class EjerciciosActivity extends BaseActivity {
     private EjercicioAdapter adapter;
     private TextInputEditText etBuscar;
     private ChipGroup chipGroupFiltros;
+    private TextView tvEmpty;
 
     // Interfaz Retrofit tipada del dominio ejercicios (cacheada por ApiClient).
     private final EjercicioApi api = ApiClient.service(EjercicioApi.class);
@@ -58,6 +63,7 @@ public class EjerciciosActivity extends BaseActivity {
         rvEjercicios = findViewById(R.id.rvEjercicios);
         etBuscar = findViewById(R.id.etBuscar);
         chipGroupFiltros = findViewById(R.id.chipGroupFiltros);
+        tvEmpty = findViewById(R.id.tvEmpty);
     }
 
     // Configura el RecyclerView del catálogo con navegación al detalle al pulsar.
@@ -70,17 +76,31 @@ public class EjerciciosActivity extends BaseActivity {
 
     // Obtiene de la API la lista de ejercicios activos y la carga en el adapter.
     private void cargarEjercicios() {
+        // Spinner durante la carga (catálogo en blanco hasta responder).
+        LoadingDialog.show(this);
         api.getActivos().enqueue(new ApiCallback<List<Ejercicio>>() {
             @Override
             public void onOk(List<Ejercicio> lista) {
+                LoadingDialog.hide(EjerciciosActivity.this);
                 adapter.setEjercicios(lista != null ? lista : new ArrayList<>());
+                actualizarEstadoVacio();
             }
 
             @Override
             public void onFail(int code, String message) {
-                android.util.Log.e("EjerciciosActivity", "Error cargando ejercicios: " + message);
+                // 404 = sin ejercicios (vacío benigno); -1/500 → toast.
+                LoadingDialog.hide(EjerciciosActivity.this);
+                UiFeedback.toastError(EjerciciosActivity.this, code, message);
+                actualizarEstadoVacio();
             }
         });
+    }
+
+    // Muestra u oculta el mensaje "no hay nada aún" según los ítems visibles del adapter.
+    private void actualizarEstadoVacio() {
+        boolean vacio = adapter.getItemCount() == 0;
+        tvEmpty.setVisibility(vacio ? View.VISIBLE : View.GONE);
+        rvEjercicios.setVisibility(vacio ? View.GONE : View.VISIBLE);
     }
 
     // Filtra la lista del adapter en tiempo real según el texto de búsqueda.
@@ -92,6 +112,7 @@ public class EjerciciosActivity extends BaseActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 adapter.filtrarPorTexto(s.toString());
+                actualizarEstadoVacio();
             }
         });
     }
@@ -114,6 +135,7 @@ public class EjerciciosActivity extends BaseActivity {
             else                             grupo = "Todos";
 
             adapter.filtrarPorGrupo(grupo);
+            actualizarEstadoVacio();
         });
     }
 

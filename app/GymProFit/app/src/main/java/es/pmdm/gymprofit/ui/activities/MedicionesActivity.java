@@ -32,8 +32,10 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.MedicionApi;
 import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.utils.FechaUtils;
+import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
+import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
 // MedicionesActivity — pantalla de mediciones corporales del usuario.
@@ -144,6 +146,9 @@ public class MedicionesActivity extends AppCompatActivity {
         int usuarioId = prefsManager.getUsuarioId();
         if (usuarioId == -1) return;
 
+        // Spinner durante la carga (pantalla en blanco hasta responder).
+        LoadingDialog.show(this);
+
         // Respuesta ya deserializada a POJOs por Gson (sin UtilJSONParser).
         medicionApi.getOrdenadas(usuarioId).enqueue(new ApiCallback<List<MedicionCorporal>>() {
             @Override
@@ -158,7 +163,9 @@ public class MedicionesActivity extends AppCompatActivity {
 
             @Override
             public void onFail(int code, String message) {
-                // Sin mediciones o error de lectura: intenta sembrar una desde el perfil.
+                // 404 = sin mediciones (vacío benigno) → intenta sembrar desde el perfil.
+                // -1/500 = error real de lectura → toast (UiFeedback silencia el 404).
+                UiFeedback.toastError(MedicionesActivity.this, code, message);
                 intentarCrearDesdePerfil(usuarioId);
             }
         });
@@ -208,6 +215,7 @@ public class MedicionesActivity extends AppCompatActivity {
 
     // Oculta el scroll de datos y muestra el mensaje de "sin mediciones".
     private void mostrarVacio() {
+        LoadingDialog.hide(this);
         scrollMediciones.setVisibility(View.GONE);
         tvVacio.setVisibility(View.VISIBLE);
     }
@@ -215,6 +223,7 @@ public class MedicionesActivity extends AppCompatActivity {
     // Rellena todos los TextView con los valores de la última medición,
     // mostrando el texto "añadir" en los campos aún no registrados.
     private void mostrarMedicion() {
+        LoadingDialog.hide(this);
         tvVacio.setVisibility(View.GONE);
         scrollMediciones.setVisibility(View.VISIBLE);
 

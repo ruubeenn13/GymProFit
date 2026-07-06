@@ -28,8 +28,10 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.RutinaApi;
 import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.ui.adapters.SesionAdapter;
+import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
+import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
 // SesionesActivity — historial de sesiones de entrenamiento del usuario.
@@ -85,6 +87,9 @@ public class SesionesActivity extends AppCompatActivity {
         int usuarioId = prefsManager.getUsuarioId();
         if (usuarioId == -1) return;
 
+        // Spinner durante la carga (la lista estaría en blanco hasta responder).
+        LoadingDialog.show(this);
+
         // Carga rutinas activas del usuario para mapear id→nombre (ya deserializadas por Gson)
         rutinaApi.getDeUsuarioActivas(usuarioId).enqueue(new ApiCallback<List<Rutina>>() {
             @Override
@@ -108,6 +113,8 @@ public class SesionesActivity extends AppCompatActivity {
             }
             @Override
             public void onFail(int code, String message) {
+                // 404 = sin sesiones (vacío benigno, UiFeedback lo silencia); -1/500 → toast.
+                UiFeedback.toastError(SesionesActivity.this, code, message);
                 mostrar(new ArrayList<>());
             }
         });
@@ -116,6 +123,8 @@ public class SesionesActivity extends AppCompatActivity {
     // Actualiza la lista interna y configura el adapter con los callbacks de
     // eliminar sesión (con confirmación) y abrir su resumen.
     private void mostrar(List<SesionEntrenamiento> lista) {
+        // Punto terminal de la carga → oculta el spinner.
+        LoadingDialog.hide(this);
         sesiones.clear();
         sesiones.addAll(lista);
 

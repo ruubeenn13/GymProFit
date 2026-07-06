@@ -23,7 +23,9 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.LogroApi;
 import es.pmdm.gymprofit.ui.adapters.LogroAdapter;
+import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PreferencesManager;
+import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
 // LogrosActivity — pantalla de logros/achievements del usuario.
@@ -60,6 +62,8 @@ public class LogrosActivity extends AppCompatActivity {
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
         rvLogros.setLayoutManager(new LinearLayoutManager(this));
 
+        // Spinner mientras se resuelven en paralelo catálogo + desbloqueados.
+        LoadingDialog.show(this);
         cargarTodosLogros();
         cargarLogrosDesbloqueados();
     }
@@ -74,6 +78,8 @@ public class LogrosActivity extends AppCompatActivity {
             }
             @Override
             public void onFail(int code, String message) {
+                // Fallo del catálogo (no del progreso): avisa (404 silenciado por UiFeedback).
+                UiFeedback.toastError(LogrosActivity.this, code, message);
                 if (llamadasPendientes.decrementAndGet() == 0) mostrar();
             }
         });
@@ -105,6 +111,8 @@ public class LogrosActivity extends AppCompatActivity {
     // Ordena los logros (desbloqueados primero) y los muestra en el RecyclerView,
     // o el estado vacío si no hay logros en el catálogo.
     private void mostrar() {
+        // Ambas llamadas resueltas → oculta el spinner.
+        LoadingDialog.hide(this);
         if (todosLogros.isEmpty()) {
             rvLogros.setVisibility(View.GONE);
             tvVacio.setVisibility(View.VISIBLE);
