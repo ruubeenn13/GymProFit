@@ -19,6 +19,10 @@ import es.pmdm.gymprofit.utils.PushTokenManager;
 public class GymFirebaseMessagingService extends FirebaseMessagingService {
 
     // Firebase generó/rotó el token del dispositivo: re-registrarlo en el backend.
+    // onNewToken(String) figura como deprecado desde firebase-messaging 25.1.0 (migración
+    // a Firebase Installations), pero es el callback funcional y verificado; se difiere la
+    // migración y se suprime el aviso conscientemente.
+    @SuppressWarnings("deprecation")
     @Override
     public void onNewToken(@NonNull String token) {
         PushTokenManager.registrar(this);

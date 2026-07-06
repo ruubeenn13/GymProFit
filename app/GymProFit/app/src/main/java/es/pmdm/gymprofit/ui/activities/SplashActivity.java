@@ -2,10 +2,9 @@ package es.pmdm.gymprofit.ui.activities;
 
 import android.animation.ObjectAnimator;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
@@ -13,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.utils.PreferencesManager;
-import java.util.Locale;
 
 // ============================================================
 // SplashActivity — pantalla de arranque de la aplicación.
@@ -34,7 +32,6 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         prefsManager = new PreferencesManager(this);
-        aplicarIdiomaGuardado();
 
         setContentView(R.layout.activity_splash);
 
@@ -58,7 +55,8 @@ public class SplashActivity extends AppCompatActivity {
     // Comprueba si hay sesión guardada, configura el token REST si corresponde
     // y navega a Home/Login tras esperar el tiempo mínimo restante de la splash.
     private void verificarSesion() {
-        new Handler().post(() -> {
+        // Handler ligado explícitamente al hilo principal (constructor sin Looper está deprecado)
+        new Handler(Looper.getMainLooper()).post(() -> {
             // Registra el persistidor: cuando UtilREST renueve el token con el refresh,
             // guarda los nuevos tokens en preferencias (instancia propia → sin compartir editor
             // con la UI, ya que el refresh ocurre en un hilo de red).
@@ -74,7 +72,7 @@ public class SplashActivity extends AppCompatActivity {
             long tiempoTranscurrido = System.currentTimeMillis() - tiempoInicio;
             long tiempoRestante = Math.max(0, SPLASH_MIN_DURATION - tiempoTranscurrido);
 
-            new Handler().postDelayed(() -> {
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 Intent intent;
 
                 if (tieneSesion) {
@@ -88,19 +86,5 @@ public class SplashActivity extends AppCompatActivity {
                 finish();
             }, tiempoRestante);
         });
-    }
-
-    // Aplica el idioma guardado en preferencias a la configuración de recursos.
-    private void aplicarIdiomaGuardado() {
-        String savedLanguage = prefsManager.getLanguage();
-        if (!savedLanguage.isEmpty()) {
-            Locale locale = new Locale(savedLanguage);
-            Locale.setDefault(locale);
-
-            Resources resources = getResources();
-            Configuration config = resources.getConfiguration();
-            config.setLocale(locale);
-            resources.updateConfiguration(config, resources.getDisplayMetrics());
-        }
     }
 }

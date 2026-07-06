@@ -52,6 +52,10 @@ public class UIHelper {
     }
 
     // Infla el layout toast_custom, rellena icono/mensaje y lo muestra en pantalla.
+    // setView está deprecado (API 30) pero NO tiene reemplazo para toasts con vista
+    // personalizada (icono + texto): Google eliminó los custom toasts solo para apps en
+    // background; en foreground siguen siendo válidos. Se mantiene deliberadamente.
+    @SuppressWarnings("deprecation")
     private static void mostrarToast(Context context, String mensaje, int iconoRes) {
         View view = LayoutInflater.from(context).inflate(R.layout.toast_custom, null);
         ImageView ivIcono = view.findViewById(R.id.ivToastIcono);

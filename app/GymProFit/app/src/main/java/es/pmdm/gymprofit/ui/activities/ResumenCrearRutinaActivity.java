@@ -2,8 +2,6 @@ package es.pmdm.gymprofit.ui.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -19,7 +17,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -61,7 +58,6 @@ public class ResumenCrearRutinaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         prefsManager = new PreferencesManager(this);
         prefsManager.applyTheme();
-        aplicarIdioma();
         setContentView(R.layout.activity_resumen_crear_rutina);
 
         nombre      = getIntent().getStringExtra("nombre");
@@ -83,6 +79,9 @@ public class ResumenCrearRutinaActivity extends AppCompatActivity {
 
     // Al pulsar atrás, devuelve la lista actual de ejercicios seleccionados
     // a la pantalla anterior en lugar de descartarlos.
+    // Se mantiene el override de onBackPressed() (deprecado) por simplicidad,
+    // en lugar de migrar a OnBackPressedCallback/OnBackPressedDispatcher.
+    @SuppressWarnings("deprecation")
     @Override
     public void onBackPressed() {
         handleBack();
@@ -247,19 +246,5 @@ public class ResumenCrearRutinaActivity extends AppCompatActivity {
             }
         } catch (JSONException ignored) {}
         return arr.toString();
-    }
-
-    // Aplica el idioma guardado en preferencias a la configuración de recursos
-    // de la Activity antes de inflar el layout.
-    private void aplicarIdioma() {
-        String lang = prefsManager.getLanguage();
-        if (!lang.isEmpty()) {
-            Locale locale = new Locale(lang);
-            Locale.setDefault(locale);
-            Resources res = getResources();
-            Configuration cfg = res.getConfiguration();
-            cfg.setLocale(locale);
-            res.updateConfiguration(cfg, res.getDisplayMetrics());
-        }
     }
 }

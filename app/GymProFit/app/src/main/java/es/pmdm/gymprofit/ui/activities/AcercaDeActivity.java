@@ -1,8 +1,6 @@
 package es.pmdm.gymprofit.ui.activities;
 
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,8 +10,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
-import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.utils.PreferencesManager;
@@ -34,7 +30,6 @@ public class AcercaDeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         PreferencesManager prefs = new PreferencesManager(this);
         prefs.applyTheme();
-        aplicarIdioma(prefs);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_acerca_de);
 
@@ -108,18 +103,5 @@ public class AcercaDeActivity extends AppCompatActivity {
     private void abrirDial() {
         Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:+34600000000"));
         startActivity(intent);
-    }
-
-    // Aplica el idioma guardado en preferencias a la configuración de recursos, antes de setContentView
-    private void aplicarIdioma(PreferencesManager prefs) {
-        String lang = prefs.getLanguage();
-        if (lang != null && !lang.isEmpty()) {
-            Locale locale = new Locale(lang);
-            Locale.setDefault(locale);
-            Resources res = getResources();
-            Configuration cfg = res.getConfiguration();
-            cfg.setLocale(locale);
-            res.updateConfiguration(cfg, res.getDisplayMetrics());
-        }
     }
 }

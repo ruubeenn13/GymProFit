@@ -1,16 +1,12 @@
 package es.pmdm.gymprofit.ui.activities;
 
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.textfield.TextInputEditText;
-
-import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.utils.PreferencesManager;
@@ -34,7 +30,6 @@ public class Onboarding3Activity extends AppCompatActivity {
 
         PreferencesManager prefs = new PreferencesManager(this);
         prefs.applyTheme();
-        aplicarIdioma(prefs);
 
         setContentView(R.layout.activity_onboarding3);
 
@@ -86,22 +81,5 @@ public class Onboarding3Activity extends AppCompatActivity {
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
         finish();
-    }
-
-    // Aplica el idioma guardado en preferencias a la configuración de recursos.
-    private void aplicarIdioma(PreferencesManager prefs) {
-        String lang = prefs.getLanguage();
-
-        if (!lang.isEmpty()) {
-            Locale locale = new Locale(lang);
-            Locale.setDefault(locale);
-
-            Resources resources = getResources();
-
-            Configuration configuration = resources.getConfiguration();
-            configuration.setLocale(locale);
-
-            resources.updateConfiguration(configuration, resources.getDisplayMetrics());
-        }
     }
 }

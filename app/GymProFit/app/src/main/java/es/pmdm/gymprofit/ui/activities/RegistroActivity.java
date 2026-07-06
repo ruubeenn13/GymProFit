@@ -1,8 +1,6 @@
 package es.pmdm.gymprofit.ui.activities;
 
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import es.pmdm.gymprofit.R;
@@ -46,7 +43,6 @@ public class RegistroActivity extends AppCompatActivity {
 
         prefsManager = new PreferencesManager(this);
         prefsManager.applyTheme();
-        aplicarIdioma();
 
         setContentView(R.layout.activity_registro);
 
@@ -201,19 +197,5 @@ public class RegistroActivity extends AppCompatActivity {
         startActivity(new Intent(this, LoginActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         finish();
-    }
-
-    // Aplica el idioma guardado en preferencias a la configuración de recursos
-    // de la Activity antes de inflar el layout.
-    private void aplicarIdioma() {
-        String lang = prefsManager.getLanguage();
-        if (!lang.isEmpty()) {
-            Locale locale = new Locale(lang);
-            Locale.setDefault(locale);
-            Resources r = getResources();
-            Configuration c = r.getConfiguration();
-            c.setLocale(locale);
-            r.updateConfiguration(c, r.getDisplayMetrics());
-        }
     }
 }

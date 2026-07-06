@@ -1,8 +1,6 @@
 package es.pmdm.gymprofit.ui.activities;
 
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -23,7 +21,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -71,7 +68,6 @@ public class EditarRutinaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         prefsManager = new PreferencesManager(this);
         prefsManager.applyTheme();
-        aplicarIdioma();
         setContentView(R.layout.activity_editar_rutina);
 
         rutinaId = getIntent().getIntExtra("rutinaId", -1);
@@ -308,18 +304,5 @@ public class EditarRutinaActivity extends AppCompatActivity {
     private void actualizarTitulo() {
         tvEjerciciosTitulo.setText(String.format(
                 getString(R.string.editar_rutina_ejercicios_fmt), ejercicios.size()));
-    }
-
-    // Aplica el idioma guardado en preferencias a la configuración de recursos.
-    private void aplicarIdioma() {
-        String lang = prefsManager.getLanguage();
-        if (!lang.isEmpty()) {
-            Locale locale = new Locale(lang);
-            Locale.setDefault(locale);
-            Resources res = getResources();
-            Configuration cfg = res.getConfiguration();
-            cfg.setLocale(locale);
-            res.updateConfiguration(cfg, res.getDisplayMetrics());
-        }
     }
 }

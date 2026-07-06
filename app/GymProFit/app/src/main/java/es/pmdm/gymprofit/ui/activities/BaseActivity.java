@@ -2,9 +2,7 @@ package es.pmdm.gymprofit.ui.activities;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.net.Uri;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
@@ -24,7 +22,6 @@ import java.util.Map;
 
 import com.google.android.material.button.MaterialButton;
 
-import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.network.ApiCallback;
@@ -52,7 +49,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         prefsManager = new PreferencesManager(this);
         prefsManager.applyTheme();
-        aplicarIdioma();
+        // El idioma lo aplica AndroidX (AppCompatDelegate) globalmente; ver GymProFitApp.
         super.onCreate(savedInstanceState);
 
         UtilREST.setOnUnauthorizedListener(() -> {
@@ -170,16 +167,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
 
         dialog.findViewById(R.id.optionEspanol).setOnClickListener(v -> {
-            prefsManager.saveLanguage("es");
-            resincronizarIdiomaPush();
             dialog.dismiss();
-            recreate();
+            cambiarIdioma("es");
         });
         dialog.findViewById(R.id.optionIngles).setOnClickListener(v -> {
-            prefsManager.saveLanguage("en");
-            resincronizarIdiomaPush();
             dialog.dismiss();
-            recreate();
+            cambiarIdioma("en");
         });
         ((MaterialButton) dialog.findViewById(R.id.btnCerrarIdioma))
                 .setOnClickListener(v -> dialog.dismiss());
@@ -237,16 +230,13 @@ public abstract class BaseActivity extends AppCompatActivity {
                 });
     }
 
-    // Aplica el idioma guardado en preferencias a la configuración de recursos antes de renderizar
-    private void aplicarIdioma() {
-        String lang = prefsManager.getLanguage();
-        if (!lang.isEmpty()) {
-            Locale locale = new Locale(lang);
-            Locale.setDefault(locale);
-            Resources res = getResources();
-            Configuration cfg = res.getConfiguration();
-            cfg.setLocale(locale);
-            res.updateConfiguration(cfg, res.getDisplayMetrics());
-        }
+    // Cambia el idioma de la app vía AndroidX per-app locales: guarda la preferencia,
+    // re-sincroniza el idioma del token push y aplica el locale (AndroidX recrea las
+    // Activities automáticamente, por eso no hace falta recreate()).
+    protected void cambiarIdioma(String lang) {
+        prefsManager.saveLanguage(lang);
+        resincronizarIdiomaPush();
+        androidx.appcompat.app.AppCompatDelegate.setApplicationLocales(
+                androidx.core.os.LocaleListCompat.forLanguageTags(lang));
     }
 }

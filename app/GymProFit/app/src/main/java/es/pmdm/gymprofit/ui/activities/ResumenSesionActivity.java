@@ -1,7 +1,5 @@
 package es.pmdm.gymprofit.ui.activities;
 
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
 
@@ -14,7 +12,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -73,7 +70,6 @@ public class ResumenSesionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         prefsManager = new PreferencesManager(this);
         prefsManager.applyTheme();
-        aplicarIdioma();
         setContentView(R.layout.activity_resumen_sesion);
 
         int sesionId = getIntent().getIntExtra("sesionId", -1);
@@ -228,19 +224,6 @@ public class ResumenSesionActivity extends AppCompatActivity {
             tvLogrosVacio.setVisibility(View.GONE);
             rvLogros.setVisibility(View.VISIBLE);
             rvLogros.setAdapter(new LogroAdapter(filtrados, desbloqueados));
-        }
-    }
-
-    // Aplica el idioma guardado en preferencias a la configuración de recursos.
-    private void aplicarIdioma() {
-        String lang = prefsManager.getLanguage();
-        if (!lang.isEmpty()) {
-            Locale locale = new Locale(lang);
-            Locale.setDefault(locale);
-            Resources res = getResources();
-            Configuration cfg = res.getConfiguration();
-            cfg.setLocale(locale);
-            res.updateConfiguration(cfg, res.getDisplayMetrics());
         }
     }
 }

@@ -1,7 +1,5 @@
 package es.pmdm.gymprofit.ui.activities;
 
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -12,7 +10,6 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import es.pmdm.gymprofit.R;
@@ -57,7 +54,6 @@ public class EditarPerfilActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         prefsManager = new PreferencesManager(this);
         prefsManager.applyTheme();
-        aplicarIdioma();
         setContentView(R.layout.activity_editar_perfil);
 
         inicializarVistas();
@@ -222,19 +218,6 @@ public class EditarPerfilActivity extends AppCompatActivity {
             });
         } catch (NumberFormatException e) {
             UIHelper.mostrarToastError(this, getString(R.string.editar_perfil_error));
-        }
-    }
-
-    // Aplica el idioma guardado en preferencias a la configuración de recursos.
-    private void aplicarIdioma() {
-        String lang = prefsManager.getLanguage();
-        if (!lang.isEmpty()) {
-            Locale locale = new Locale(lang);
-            Locale.setDefault(locale);
-            Resources resources = getResources();
-            Configuration config = resources.getConfiguration();
-            config.setLocale(locale);
-            resources.updateConfiguration(config, resources.getDisplayMetrics());
         }
     }
 }

@@ -1,8 +1,6 @@
 package es.pmdm.gymprofit.ui.activities;
 
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -12,8 +10,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.textfield.TextInputEditText;
-
-import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.utils.PreferencesManager;
@@ -41,7 +37,6 @@ public class CrearRutinaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         prefsManager = new PreferencesManager(this);
         prefsManager.applyTheme();
-        aplicarIdiomaGuardado();
         setContentView(R.layout.activity_crear_rutina);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -100,18 +95,5 @@ public class CrearRutinaActivity extends AppCompatActivity {
         if (id == R.id.chipIntermedio) return "INTERMEDIO";
         if (id == R.id.chipAvanzado)   return "AVANZADO";
         return "PRINCIPIANTE";
-    }
-
-    // Aplica el idioma guardado en preferencias a la configuración de recursos.
-    private void aplicarIdiomaGuardado() {
-        String lang = prefsManager.getLanguage();
-        if (!lang.isEmpty()) {
-            Locale locale = new Locale(lang);
-            Locale.setDefault(locale);
-            Resources res = getResources();
-            Configuration cfg = res.getConfiguration();
-            cfg.setLocale(locale);
-            res.updateConfiguration(cfg, res.getDisplayMetrics());
-        }
     }
 }

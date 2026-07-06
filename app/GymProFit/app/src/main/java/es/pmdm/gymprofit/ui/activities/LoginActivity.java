@@ -2,8 +2,6 @@ package es.pmdm.gymprofit.ui.activities;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
@@ -22,7 +20,6 @@ import androidx.appcompat.app.AppCompatDelegate;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import es.pmdm.gymprofit.R;
@@ -59,7 +56,6 @@ public class LoginActivity extends AppCompatActivity {
 
         prefsManager = new PreferencesManager(this);
         prefsManager.applyTheme();
-        aplicarIdiomaGuardado();
 
         setContentView(R.layout.activity_login);
 
@@ -288,23 +284,10 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    // Guarda el idioma seleccionado y recrea la Activity para aplicarlo.
+    // Guarda el idioma y lo aplica vía AndroidX per-app locales (recrea la Activity solo).
     private void cambiarIdioma(String languageCode) {
         prefsManager.saveLanguage(languageCode);
-        recreate();
-    }
-
-    // Aplica el idioma guardado en preferencias a la configuración de recursos,
-    // si existe uno guardado previamente.
-    private void aplicarIdiomaGuardado() {
-        String savedLanguage = prefsManager.getLanguage();
-        if (!savedLanguage.isEmpty()) {
-            Locale locale = new Locale(savedLanguage);
-            Locale.setDefault(locale);
-            Resources resources = getResources();
-            Configuration config = resources.getConfiguration();
-            config.setLocale(locale);
-            resources.updateConfiguration(config, resources.getDisplayMetrics());
-        }
+        androidx.appcompat.app.AppCompatDelegate.setApplicationLocales(
+                androidx.core.os.LocaleListCompat.forLanguageTags(languageCode));
     }
 }

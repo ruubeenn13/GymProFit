@@ -1,8 +1,6 @@
 package es.pmdm.gymprofit.ui.activities;
 
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -50,7 +48,6 @@ public class RegistrarMedicionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         prefsManager = new PreferencesManager(this);
         prefsManager.applyTheme();
-        aplicarIdioma();
         setContentView(R.layout.activity_registrar_medicion);
 
         etPeso    = findViewById(R.id.etPeso);
@@ -177,19 +174,5 @@ public class RegistrarMedicionActivity extends AppCompatActivity {
         if (et.getText() == null) return;
         String val = et.getText().toString().trim();
         if (!val.isEmpty()) body.put(key, new BigDecimal(val));
-    }
-
-    // Aplica el idioma guardado en preferencias a la configuración de recursos
-    // de la Activity antes de inflar el layout.
-    private void aplicarIdioma() {
-        String lang = prefsManager.getLanguage();
-        if (!lang.isEmpty()) {
-            Locale locale = new Locale(lang);
-            Locale.setDefault(locale);
-            Resources res = getResources();
-            Configuration cfg = res.getConfiguration();
-            cfg.setLocale(locale);
-            res.updateConfiguration(cfg, res.getDisplayMetrics());
-        }
     }
 }

@@ -300,29 +300,29 @@ public class RutinasActivity extends BaseActivity {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_home) {
                 startActivity(new Intent(this, HomeActivity.class));
-                overridePendingTransition(0, 0);
+                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
                 finish();
-                overridePendingTransition(0, 0);
+                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
                 return true;
             } else if (itemId == R.id.nav_rutinas) {
                 return true;
             } else if (itemId == R.id.nav_ejercicios) {
                 startActivity(new Intent(this, EjerciciosActivity.class));
-                overridePendingTransition(0, 0);
+                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
                 finish();
-                overridePendingTransition(0, 0);
+                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
                 return true;
             } else if (itemId == R.id.nav_nutricion) {
                 startActivity(new Intent(this, NutricionActivity.class));
-                overridePendingTransition(0, 0);
+                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
                 finish();
-                overridePendingTransition(0, 0);
+                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
                 return true;
             } else if (itemId == R.id.nav_perfil) {
                 startActivity(new Intent(this, PerfilActivity.class));
-                overridePendingTransition(0, 0);
+                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
                 finish();
-                overridePendingTransition(0, 0);
+                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
                 return true;
             }
             return false;

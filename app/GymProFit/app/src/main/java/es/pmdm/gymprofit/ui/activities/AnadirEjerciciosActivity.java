@@ -2,8 +2,6 @@ package es.pmdm.gymprofit.ui.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -27,7 +25,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
@@ -75,7 +72,6 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         prefsManager = new PreferencesManager(this);
         prefsManager.applyTheme();
-        aplicarIdioma();
         setContentView(R.layout.activity_anadir_ejercicios);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -241,18 +237,5 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
         btnContinuar.setText(String.format(
                 getString(R.string.anadir_ejercicios_continuar_fmt),
                 ejerciciosSeleccionados.size()));
-    }
-
-    // Aplica el idioma guardado en preferencias a la configuración de recursos antes de renderizar
-    private void aplicarIdioma() {
-        String lang = prefsManager.getLanguage();
-        if (!lang.isEmpty()) {
-            Locale locale = new Locale(lang);
-            Locale.setDefault(locale);
-            Resources res = getResources();
-            Configuration cfg = res.getConfiguration();
-            cfg.setLocale(locale);
-            res.updateConfiguration(cfg, res.getDisplayMetrics());
-        }
     }
 }

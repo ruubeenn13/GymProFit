@@ -28,6 +28,10 @@ public final class PushTokenManager {
     private static final DeviceTokenApi api = ApiClient.service(DeviceTokenApi.class);
 
     // Obtiene el token FCM y lo registra en el backend si es nuevo o cambió.
+    // getToken() figura como deprecado desde firebase-messaging 25.1.0 (migración a
+    // Firebase Installations ID), pero sigue siendo la vía funcional y verificada; la
+    // migración no es trivial y se difiere. Se suprime el aviso conscientemente.
+    @SuppressWarnings("deprecation")
     public static void registrar(Context context) {
         PreferencesManager prefs = new PreferencesManager(context.getApplicationContext());
 

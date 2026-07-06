@@ -1,8 +1,6 @@
 package es.pmdm.gymprofit.ui.activities;
 
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -11,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import es.pmdm.gymprofit.R;
@@ -42,7 +39,6 @@ public class OnboardingResumenActivity extends AppCompatActivity {
 
         PreferencesManager prefs = new PreferencesManager(this);
         prefs.applyTheme();
-        aplicarIdioma(prefs);
 
         setContentView(R.layout.activity_onboarding_resumen);
 
@@ -181,19 +177,5 @@ public class OnboardingResumenActivity extends AppCompatActivity {
         startActivity(new Intent(this, HomeActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         finish();
-    }
-
-    // Aplica el idioma guardado en preferencias a la configuración de recursos
-    // de la Activity antes de inflar el layout.
-    private void aplicarIdioma(PreferencesManager prefs) {
-        String lang = prefs.getLanguage();
-        if (!lang.isEmpty()) {
-            Locale locale = new Locale(lang);
-            Locale.setDefault(locale);
-            Resources resources = getResources();
-            Configuration configuration = resources.getConfiguration();
-            configuration.setLocale(locale);
-            resources.updateConfiguration(configuration, resources.getDisplayMetrics());
-        }
     }
 }

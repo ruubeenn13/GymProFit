@@ -1,7 +1,5 @@
 package es.pmdm.gymprofit.ui.activities;
 
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -11,8 +9,6 @@ import android.widget.VideoView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
-import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.utils.PreferencesManager;
@@ -30,7 +26,6 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         PreferencesManager prefs = new PreferencesManager(this);
         prefs.applyTheme();
-        aplicarIdioma(prefs);
         setContentView(R.layout.activity_detalle_ejercicio);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -111,26 +106,7 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         videoView.requestFocus();
     }
 
-    // Pone en mayúscula la primera letra y el resto en minúsculas.
-    private static String capitalizar(String s) {
-        if (s == null || s.isEmpty()) return s;
-        return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
-    }
-
     private static boolean isEmpty(String s) {
         return s == null || s.trim().isEmpty();
-    }
-
-    // Aplica el idioma guardado en preferencias a la configuración de recursos.
-    private void aplicarIdioma(PreferencesManager prefs) {
-        String lang = prefs.getLanguage();
-        if (lang != null && !lang.isEmpty()) {
-            Locale locale = new Locale(lang);
-            Locale.setDefault(locale);
-            Resources res = getResources();
-            Configuration cfg = res.getConfiguration();
-            cfg.setLocale(locale);
-            res.updateConfiguration(cfg, res.getDisplayMetrics());
-        }
     }
 }
