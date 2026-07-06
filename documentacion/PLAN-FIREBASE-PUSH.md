@@ -1,6 +1,6 @@
 # Plan — Notificaciones Push (Firebase Cloud Messaging)
 
-Estado: **BACKEND ✅ HECHO (2026-07-06)** · Android PENDIENTE.
+Estado: **✅ COMPLETO END-TO-END (2026-07-06)** — verificado en emulador: push real recibida.
 Alcance decidido: **end-to-end completo** (Android recibe/muestra + backend envía push real vía Firebase Admin SDK).
 
 ## ✅ BACKEND HECHO (2026-07-06)
