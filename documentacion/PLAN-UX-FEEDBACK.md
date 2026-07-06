@@ -1,7 +1,7 @@
 # PLAN — Feedback de carga y errores en Android (backlog #5)
 
 **Prioridad:** 🔴 la más alta del backlog de pulido (por delante de #9 tests IDOR y #8 minify).
-**Estado:** PLANIFICADO, nada implementado. Se ejecuta en la siguiente sesión.
+**Estado:** ✅ **COMPLETADO (2026-07-06)** — implementado en 4 batches (commits `b77551f`, `701666f`, `19049ef`, `53a492f`, `f047612`) y verificado end-to-end en emulador. ~25 Activities cubiertas (lectura, escritura, detalle y admin). Cambio sobre el plan: `UiFeedback` también silencia **404** (la API devuelve 404 en colecciones vacías, no 200+[]; se descubrió probando en emulador).
 **Fecha plan:** 2026-07-04.
 
 ## Problema

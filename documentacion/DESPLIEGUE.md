@@ -44,6 +44,12 @@ Artefactos añadidos al repo (verificados en local: 136 tests verdes + `/api/act
 
 Pendiente (clics de cuenta, con guía): crear MySQL en Aiven → copiar credenciales → conectar repo en Render (Blueprint) → pegar env vars → verificar health público → apuntar Android `BASE_URL`.
 
+## Actualización 2026-07-06 — Firebase push + memoria JVM
+
+- **Env var nueva en Render: `FIREBASE_CREDENTIALS_JSON`** = contenido completo del JSON de la service-account key de Firebase (Consola → Cuentas de servicio → Generar clave privada). Es un SECRETO: nunca en git (gitignoreado `*firebase-adminsdk*.json`). Sin ella la API arranca igual con el push desactivado (`FirebaseConfig` es graceful — clave para CI). En local se usa `FIREBASE_CREDENTIALS_PATH` (ruta al fichero). Verificación: el log de arranque debe decir `Firebase Admin SDK inicializado: notificaciones push ACTIVADAS`.
+- **Heap JVM**: el `Dockerfile` arranca con `-XX:MaxRAMPercentage=60.0`. En la instancia free de Render (512 MB) el default de la JVM (~25% ≈ 128 MB) se quedó corto al añadir `firebase-admin` (grpc/netty): el primer deploy agotó el timeout del health check ("no open ports detected") con arranques de ~180 s. Con el 60% (~300 MB) el arranque tiene margen.
+- **Zona horaria**: los recordatorios push usan `zone="Europe/Madrid"` en los `@Scheduled` (el contenedor corre en UTC). Ver `documentacion/NOTIFICACIONES.md`.
+
 ## Pasos de migración pendientes (cuando se despliegue)
 
 1. **BD**: crear instancia Aiven for MySQL; volcar el esquema con Flyway (las migraciones `V*.sql` corren solas al arrancar).

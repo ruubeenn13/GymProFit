@@ -10,6 +10,7 @@
 1. **MariaDB** corriendo en `localhost:3308`, base de datos `gymprofit_db` (usuario `root`, pass `12345`).
 2. **API**: arrancar `GymProFitApiApplication`. Perfil `dev` ya activo por defecto → escucha en `http://localhost:8080/api`.
 3. **Android**: emulador. `BASE_URL=http://10.0.2.2:8080/api/` (ya configurado en `local.properties`). Run.
+4. **(Opcional) Push FCM en dev**: exportar `FIREBASE_CREDENTIALS_PATH` con la ruta al JSON de la service-account key (raíz del repo, gitignoreado) antes de arrancar la API. Sin la variable, la API arranca igual con el push desactivado. Ver `documentacion/NOTIFICACIONES.md`.
 
 Con eso funciona sin AWS.
 
