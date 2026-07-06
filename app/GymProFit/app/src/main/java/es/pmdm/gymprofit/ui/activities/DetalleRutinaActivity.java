@@ -34,7 +34,9 @@ import es.pmdm.gymprofit.network.EjercicioApi;
 import es.pmdm.gymprofit.network.RutinaApi;
 import es.pmdm.gymprofit.ui.adapters.EjercicioSeleccionadoAdapter;
 import es.pmdm.gymprofit.utils.EjercicioNavHelper;
+import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PreferencesManager;
+import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
 // DetalleRutinaActivity — pantalla de detalle de una rutina.
@@ -151,6 +153,9 @@ public class DetalleRutinaActivity extends AppCompatActivity {
         final List<RutinaEjercicio> relaciones = new ArrayList<>();
         AtomicInteger pendientes = new AtomicInteger(2);
 
+        // Spinner de carga durante las dos peticiones (la lista estaría en blanco mientras carga).
+        LoadingDialog.show(this);
+
         // Catálogo de ejercicios activos (ya deserializados por Gson).
         ejercicioApi.getActivos().enqueue(new ApiCallback<List<Ejercicio>>() {
             @Override public void onOk(List<Ejercicio> lista) {
@@ -161,6 +166,8 @@ public class DetalleRutinaActivity extends AppCompatActivity {
                     combinarYMostrar(ejercicioMap, relaciones);
             }
             @Override public void onFail(int code, String message) {
+                // Catálogo es la carga esencial: mapea su error a feedback (evita doble toast).
+                UiFeedback.toastError(DetalleRutinaActivity.this, code, message);
                 if (pendientes.decrementAndGet() == 0)
                     combinarYMostrar(ejercicioMap, relaciones);
             }
@@ -184,6 +191,8 @@ public class DetalleRutinaActivity extends AppCompatActivity {
     // Une cada relación rutina-ejercicio con su Ejercicio del catálogo
     // (o crea uno mínimo con el id si no se encontró) y refresca el adapter.
     private void combinarYMostrar(Map<Integer, Ejercicio> map, List<RutinaEjercicio> relaciones) {
+        // Punto terminal real de la carga (ambas peticiones han terminado): oculta el spinner.
+        LoadingDialog.hide(this);
         ejercicios.clear();
         for (RutinaEjercicio rel : relaciones) {
             int ejercicioId = rel.getEjercicioId();

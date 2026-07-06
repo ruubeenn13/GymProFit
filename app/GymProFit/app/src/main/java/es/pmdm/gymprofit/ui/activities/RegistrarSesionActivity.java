@@ -36,8 +36,10 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.RutinaApi;
 import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.ui.adapters.EjercicioPesoAdapter;
+import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
+import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
 // RegistrarSesionActivity — Formulario para registrar una sesión de entrenamiento.
@@ -240,10 +242,14 @@ public class RegistrarSesionActivity extends AppCompatActivity {
 
             body.put("completada", true);
 
+            // Muestra el spinner modal mientras se envía la sesión a la API.
+            LoadingDialog.show(this);
             // La respuesta ya viene deserializada: id de la sesión + logros nuevos.
             sesionApi.crear(body).enqueue(new ApiCallback<SesionEntrenamiento>() {
                 @Override
                 public void onOk(SesionEntrenamiento sesionCreada) {
+                    // Oculta el spinner al completarse el guardado correctamente.
+                    LoadingDialog.hide(RegistrarSesionActivity.this);
                     UIHelper.mostrarToastExito(RegistrarSesionActivity.this,
                             getString(R.string.sesiones_exito));
 
@@ -275,8 +281,9 @@ public class RegistrarSesionActivity extends AppCompatActivity {
                 }
                 @Override
                 public void onFail(int code, String message) {
-                    UIHelper.mostrarToastError(
-                            RegistrarSesionActivity.this, getString(R.string.error_conexion));
+                    // Oculta el spinner y muestra el toast de error mapeado según el código.
+                    LoadingDialog.hide(RegistrarSesionActivity.this);
+                    UiFeedback.toastError(RegistrarSesionActivity.this, code, message);
                 }
             });
 

@@ -32,7 +32,9 @@ import es.pmdm.gymprofit.network.AlimentoComidaApi;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.ui.adapters.AlimentoComidaAdapter;
+import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.UIHelper;
+import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
 // ComidaActivity — log de alimentos de una comida del día
@@ -161,9 +163,13 @@ public class ComidaActivity extends BaseActivity {
 
     // Carga los alimentos de la comida actual desde la API; en 404 muestra lista vacía
     private void cargarAlimentos() {
+        // Spinner de carga durante la petición (la lista estaría en blanco mientras carga).
+        LoadingDialog.show(this);
         alimentoComidaApi.getDeComida(comidaId).enqueue(new ApiCallback<List<AlimentoComida>>() {
             @Override
             public void onOk(List<AlimentoComida> lista) {
+                // Punto terminal de la carga: oculta el spinner.
+                LoadingDialog.hide(ComidaActivity.this);
                 listaAlimentos.clear();
                 if (lista != null) listaAlimentos.addAll(lista);
                 adapter.notifyDataSetChanged();
@@ -172,13 +178,16 @@ public class ComidaActivity extends BaseActivity {
 
             @Override
             public void onFail(int code, String message) {
-                // 404 = la comida no tiene alimentos → lista vacía; otros errores solo se loguean
+                // Punto terminal de la carga: oculta el spinner.
+                LoadingDialog.hide(ComidaActivity.this);
+                // 404 = la comida no tiene alimentos → lista vacía; otros errores se mapean a feedback.
                 if (code == 404) {
                     listaAlimentos.clear();
                     adapter.notifyDataSetChanged();
                     actualizarTotales();
                 } else {
-                    Log.e(TAG, "Error cargando alimentos: " + message);
+                    // Mapea el error de carga a un toast según el código (cold-start/servidor/genérico).
+                    UiFeedback.toastError(ComidaActivity.this, code, message);
                 }
             }
         });
@@ -273,15 +282,20 @@ public class ComidaActivity extends BaseActivity {
                         // Cuerpo parcial: cantidadGramos como BigDecimal (decimal).
                         Map<String, Object> body = new HashMap<>();
                         body.put("cantidadGramos", BigDecimal.valueOf(nuevosGramos));
+                        // Spinner durante el guardado de la nueva cantidad.
+                        LoadingDialog.show(this);
                         alimentoComidaApi.patch(item.getId(), body).enqueue(new ApiCallback<Void>() {
                             @Override
                             public void onOk(Void ignored) {
+                                // Oculta el spinner del guardado (cargarAlimentos gestiona el suyo).
+                                LoadingDialog.hide(ComidaActivity.this);
                                 cargarAlimentos();
                             }
                             @Override
                             public void onFail(int code, String message) {
-                                UIHelper.mostrarToastError(
-                                        ComidaActivity.this, getString(R.string.error_conexion));
+                                // Oculta el spinner y mapea el error de guardado a feedback.
+                                LoadingDialog.hide(ComidaActivity.this);
+                                UiFeedback.toastError(ComidaActivity.this, code, message);
                             }
                         });
                     } catch (NumberFormatException e) {
@@ -295,30 +309,40 @@ public class ComidaActivity extends BaseActivity {
     // Desactiva el alimento predefinido asociado a este registro (solo admin)
     private void desactivarAlimento(AlimentoComida item) {
         // Desactiva (borrado lógico) el alimento predefinido subyacente → DELETE alimentos/{id}.
+        // Spinner durante la desactivación.
+        LoadingDialog.show(this);
         alimentoApi.eliminar(item.getAlimentoId()).enqueue(new ApiCallback<Void>() {
             @Override
             public void onOk(Void ignored) {
+                // Oculta el spinner de la desactivación (cargarAlimentos gestiona el suyo).
+                LoadingDialog.hide(ComidaActivity.this);
                 cargarAlimentos();
             }
             @Override
             public void onFail(int code, String message) {
-                UIHelper.mostrarToastError(
-                        ComidaActivity.this, getString(R.string.error_conexion));
+                // Oculta el spinner y mapea el error a feedback.
+                LoadingDialog.hide(ComidaActivity.this);
+                UiFeedback.toastError(ComidaActivity.this, code, message);
             }
         });
     }
 
     // Elimina el registro de alimento-comida (quita el alimento de esta comida)
     private void eliminarAlimento(AlimentoComida item) {
+        // Spinner durante la eliminación.
+        LoadingDialog.show(this);
         alimentoComidaApi.eliminar(item.getId()).enqueue(new ApiCallback<Void>() {
             @Override
             public void onOk(Void ignored) {
+                // Oculta el spinner de la eliminación (cargarAlimentos gestiona el suyo).
+                LoadingDialog.hide(ComidaActivity.this);
                 cargarAlimentos();
             }
             @Override
             public void onFail(int code, String message) {
-                UIHelper.mostrarToastError(
-                        ComidaActivity.this, getString(R.string.error_conexion));
+                // Oculta el spinner y mapea el error a feedback.
+                LoadingDialog.hide(ComidaActivity.this);
+                UiFeedback.toastError(ComidaActivity.this, code, message);
             }
         });
     }

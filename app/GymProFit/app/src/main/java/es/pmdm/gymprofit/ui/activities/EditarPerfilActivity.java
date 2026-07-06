@@ -21,9 +21,11 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.utils.CalculadoraNutricional;
+import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
 import es.pmdm.gymprofit.utils.UIHelper;
+import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
 // EditarPerfilActivity — pantalla para editar el perfil del usuario.
@@ -181,9 +183,13 @@ public class EditarPerfilActivity extends AppCompatActivity {
             body.put("nivelExperiencia", NIVELES[spNivel.getSelectedItemPosition()]);
             body.put("objetivo", OBJETIVOS[spObjetivo.getSelectedItemPosition()]);
 
+            // Muestra el overlay de carga mientras se guarda el perfil
+            LoadingDialog.show(this);
             usuarioApi.patch(id, body).enqueue(new ApiCallback<Void>() {
                 @Override
                 public void onOk(Void response) {
+                    // Oculta el overlay al guardar con exito
+                    LoadingDialog.hide(EditarPerfilActivity.this);
                     // Guardar datos de perfil en prefs para recálculo de macros
                     if (!pesoStr.isEmpty()) prefsManager.savePeso(Double.parseDouble(pesoStr.replace(",", ".")));
                     if (!alturaStr.isEmpty()) prefsManager.saveAltura(Double.parseDouble(alturaStr));
@@ -209,8 +215,9 @@ public class EditarPerfilActivity extends AppCompatActivity {
 
                 @Override
                 public void onFail(int code, String message) {
-                    UIHelper.mostrarToastError(EditarPerfilActivity.this,
-                            getString(R.string.editar_perfil_error));
+                    // Oculta el overlay y mapea el error de red segun el codigo
+                    LoadingDialog.hide(EditarPerfilActivity.this);
+                    UiFeedback.toastError(EditarPerfilActivity.this, code, message);
                 }
             });
         } catch (NumberFormatException e) {

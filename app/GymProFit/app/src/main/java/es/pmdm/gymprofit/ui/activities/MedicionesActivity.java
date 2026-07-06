@@ -329,17 +329,21 @@ public class MedicionesActivity extends AppCompatActivity {
                 body.put(campo, new BigDecimal(valorStr));
             }
 
+            // Spinner durante el guardado del campo editado.
+            LoadingDialog.show(this);
             medicionApi.patch(ultimaMedicion.getId(), body).enqueue(new ApiCallback<MedicionCorporal>() {
                 @Override
                 public void onOk(MedicionCorporal m) {
+                    // El spinner sigue: cargarMedicion recarga y lo oculta en su punto terminal.
                     setResult(RESULT_OK);
                     cargarMedicion();
                 }
 
                 @Override
                 public void onFail(int code, String message) {
-                    UIHelper.mostrarToastError(
-                            MedicionesActivity.this, getString(R.string.error_conexion));
+                    // Oculta el spinner y muestra el error mapeado (cold-start incluido).
+                    LoadingDialog.hide(MedicionesActivity.this);
+                    UiFeedback.toastError(MedicionesActivity.this, code, message);
                 }
             });
         } catch (NumberFormatException e) {

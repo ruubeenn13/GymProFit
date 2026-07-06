@@ -36,8 +36,10 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.EjercicioApi;
 import es.pmdm.gymprofit.ui.adapters.EjercicioAdapter;
+import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
+import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
 // AnadirEjerciciosActivity — buscador y selector de ejercicios para una rutina
@@ -136,15 +138,20 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
 
     // Carga los ejercicios activos desde la API y crea el adapter del RecyclerView de búsqueda
     private void cargarEjercicios() {
+        // Muestra el spinner modal mientras se carga el catálogo (la lista aparece vacía si no)
+        LoadingDialog.show(this);
         api.getActivos().enqueue(new ApiCallback<List<Ejercicio>>() {
             @Override public void onOk(List<Ejercicio> lista) {
+                // Oculta el spinner una vez recibido el catálogo
+                LoadingDialog.hide(AnadirEjerciciosActivity.this);
                 ejercicioAdapter = new EjercicioAdapter(lista != null ? lista : new ArrayList<>(),
                         e -> mostrarDialogSeriesReps(e));
                 rvBusqueda.setAdapter(ejercicioAdapter);
             }
             @Override public void onFail(int code, String message) {
-                UIHelper.mostrarToastError(AnadirEjerciciosActivity.this,
-                        getString(R.string.error_conexion));
+                // Oculta el spinner y mapea el código de error a un mensaje de usuario
+                LoadingDialog.hide(AnadirEjerciciosActivity.this);
+                UiFeedback.toastError(AnadirEjerciciosActivity.this, code, message);
             }
         });
     }

@@ -23,7 +23,9 @@ import es.pmdm.gymprofit.network.AlimentoApi;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.model.alimento.Alimento;
+import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.UIHelper;
+import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
 // CrearAlimentoActivity — formulario de creación de alimento personalizado
@@ -163,16 +165,21 @@ public class CrearAlimentoActivity extends BaseActivity {
         body.put("grasas", BigDecimal.valueOf(grasas));
         body.put("usuarioId", prefsManager.getUsuarioId());
 
+        // Muestra el spinner modal mientras se guarda el alimento en el servidor
+        LoadingDialog.show(this);
         alimentoApi.crear(body).enqueue(new ApiCallback<Alimento>() {
             @Override
             public void onOk(Alimento creado) {
+                // Oculta el spinner al recibir respuesta correcta
+                LoadingDialog.hide(CrearAlimentoActivity.this);
                 setResult(RESULT_OK);
                 finish();
             }
             @Override
             public void onFail(int code, String message) {
-                UIHelper.mostrarToastError(CrearAlimentoActivity.this,
-                        getString(R.string.error_conexion));
+                // Oculta el spinner y mapea el código de error a un mensaje de usuario
+                LoadingDialog.hide(CrearAlimentoActivity.this);
+                UiFeedback.toastError(CrearAlimentoActivity.this, code, message);
             }
         });
     }

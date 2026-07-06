@@ -21,9 +21,11 @@ import es.pmdm.gymprofit.model.medicion.MedicionCorporal;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.MedicionApi;
+import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.NotificationHelper;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
+import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
 // RegistrarMedicionActivity — Formulario de alta/edición de una medición corporal.
@@ -120,10 +122,14 @@ public class RegistrarMedicionActivity extends AppCompatActivity {
             if (!notas.isEmpty()) body.put("notas", notas);
 
             if (medicionId != -1) {
+                // Muestra el spinner modal mientras se actualiza la medición.
+                LoadingDialog.show(this);
                 // Edición: PATCH parcial de la medición existente.
                 medicionApi.patch(medicionId, body).enqueue(new ApiCallback<MedicionCorporal>() {
                     @Override
                     public void onOk(MedicionCorporal m) {
+                        // Oculta el spinner al completarse la edición correctamente.
+                        LoadingDialog.hide(RegistrarMedicionActivity.this);
                         UIHelper.mostrarToastExito(RegistrarMedicionActivity.this,
                                 getString(R.string.mediciones_editar_exito));
                         setResult(RESULT_OK);
@@ -131,16 +137,21 @@ public class RegistrarMedicionActivity extends AppCompatActivity {
                     }
                     @Override
                     public void onFail(int code, String message) {
-                        UIHelper.mostrarToastError(RegistrarMedicionActivity.this,
-                                getString(R.string.error_conexion));
+                        // Oculta el spinner y muestra el toast de error mapeado según el código.
+                        LoadingDialog.hide(RegistrarMedicionActivity.this);
+                        UiFeedback.toastError(RegistrarMedicionActivity.this, code, message);
                     }
                 });
             } else {
                 // Alta: crea una medición nueva para el usuario actual.
                 body.put("usuarioId", prefsManager.getUsuarioId());
+                // Muestra el spinner modal mientras se crea la medición.
+                LoadingDialog.show(this);
                 medicionApi.crear(body).enqueue(new ApiCallback<MedicionCorporal>() {
                     @Override
                     public void onOk(MedicionCorporal m) {
+                        // Oculta el spinner al completarse el alta correctamente.
+                        LoadingDialog.hide(RegistrarMedicionActivity.this);
                         NotificationHelper.notificarMedicionGuardada(RegistrarMedicionActivity.this);
                         UIHelper.mostrarToastExito(RegistrarMedicionActivity.this,
                                 getString(R.string.mediciones_exito));
@@ -149,8 +160,9 @@ public class RegistrarMedicionActivity extends AppCompatActivity {
                     }
                     @Override
                     public void onFail(int code, String message) {
-                        UIHelper.mostrarToastError(RegistrarMedicionActivity.this,
-                                getString(R.string.error_conexion));
+                        // Oculta el spinner y muestra el toast de error mapeado según el código.
+                        LoadingDialog.hide(RegistrarMedicionActivity.this);
+                        UiFeedback.toastError(RegistrarMedicionActivity.this, code, message);
                     }
                 });
             }

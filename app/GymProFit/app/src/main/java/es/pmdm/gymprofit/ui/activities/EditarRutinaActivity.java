@@ -36,8 +36,10 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.EjercicioApi;
 import es.pmdm.gymprofit.network.RutinaApi;
 import es.pmdm.gymprofit.ui.adapters.EjercicioSeleccionadoAdapter;
+import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
+import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
 // EditarRutinaActivity — pantalla para editar una rutina propia del usuario.
@@ -199,16 +201,21 @@ public class EditarRutinaActivity extends AppCompatActivity {
     // Elimina la relación rutina-ejercicio en la API y, si tiene éxito,
     // lo quita también de la lista local y refresca el adapter.
     private void eliminarEjercicio(EjercicioSeleccionado item) {
+        // Muestra el overlay de carga durante el borrado del ejercicio
+        LoadingDialog.show(this);
         rutinaApi.eliminarEjercicio(rutinaId, item.getEjercicio().getId())
                 .enqueue(new ApiCallback<Void>() {
                     @Override public void onOk(Void body) {
+                        // Oculta el overlay al completar el borrado con éxito
+                        LoadingDialog.hide(EditarRutinaActivity.this);
                         ejercicios.remove(item);
                         adapter.notifyDataSetChanged();
                         actualizarTitulo();
                     }
                     @Override public void onFail(int code, String message) {
-                        UIHelper.mostrarToastError(EditarRutinaActivity.this,
-                                getString(R.string.error_conexion));
+                        // Oculta el overlay y mapea el error de red segun el codigo
+                        LoadingDialog.hide(EditarRutinaActivity.this);
+                        UiFeedback.toastError(EditarRutinaActivity.this, code, message);
                     }
                 });
     }
@@ -251,8 +258,8 @@ public class EditarRutinaActivity extends AppCompatActivity {
                 rutinaApi.addEjercicio(body).enqueue(new ApiCallback<Void>() {
                     @Override public void onOk(Void b) {}
                     @Override public void onFail(int code, String message) {
-                        UIHelper.mostrarToastError(
-                                EditarRutinaActivity.this, getString(R.string.error_conexion));
+                        // Mapea el error de red del alta de ejercicio segun el codigo
+                        UiFeedback.toastError(EditarRutinaActivity.this, code, message);
                     }
                 });
             }
@@ -278,16 +285,21 @@ public class EditarRutinaActivity extends AppCompatActivity {
         body.put("nivel",           obtenerNivel());
         body.put("duracionMinutos", Integer.parseInt(dur));
 
+        // Muestra el overlay de carga mientras se guarda la rutina
+        LoadingDialog.show(this);
         rutinaApi.patch(rutinaId, body).enqueue(new ApiCallback<Void>() {
             @Override public void onOk(Void b) {
+                // Oculta el overlay al guardar con exito
+                LoadingDialog.hide(EditarRutinaActivity.this);
                 UIHelper.mostrarToastExito(EditarRutinaActivity.this,
                         getString(R.string.editar_rutina_guardado));
                 setResult(RESULT_OK);
                 finish();
             }
             @Override public void onFail(int code, String message) {
-                UIHelper.mostrarToastError(EditarRutinaActivity.this,
-                        getString(R.string.error_conexion));
+                // Oculta el overlay y mapea el error de red segun el codigo
+                LoadingDialog.hide(EditarRutinaActivity.this);
+                UiFeedback.toastError(EditarRutinaActivity.this, code, message);
             }
         });
     }

@@ -36,7 +36,9 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.ComidaApi;
 import es.pmdm.gymprofit.ui.adapters.AlimentoAdapter;
+import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.UIHelper;
+import es.pmdm.gymprofit.utils.UiFeedback;
 
 
 // ============================================================
@@ -191,15 +193,20 @@ public class AnadirAlimentoActivity extends BaseActivity {
                 body.put("carbohidratos", BigDecimal.valueOf(parseDoubleOrZero(etCarbos)));
                 body.put("grasas",        BigDecimal.valueOf(parseDoubleOrZero(etGrasas)));
                 dialog.dismiss();
+                // Muestra el spinner modal mientras se guarda la edición del alimento
+                LoadingDialog.show(this);
                 alimentoApi.patch(alimento.getId(), body).enqueue(new ApiCallback<Void>() {
                     @Override
                     public void onOk(Void ignored) {
+                        // Oculta el spinner al confirmarse la edición
+                        LoadingDialog.hide(AnadirAlimentoActivity.this);
                         cargarAlimentos();
                     }
                     @Override
                     public void onFail(int code, String message) {
-                        UIHelper.mostrarToastError(
-                                AnadirAlimentoActivity.this, getString(R.string.error_conexion));
+                        // Oculta el spinner y mapea el código de error a un mensaje de usuario
+                        LoadingDialog.hide(AnadirAlimentoActivity.this);
+                        UiFeedback.toastError(AnadirAlimentoActivity.this, code, message);
                     }
                 });
             } catch (NumberFormatException e) {
@@ -213,39 +220,53 @@ public class AnadirAlimentoActivity extends BaseActivity {
 
     // Desactiva un alimento predefinido (solo admin), sin borrarlo de la BD
     private void desactivarAlimento(Alimento alimento) {
+        // Muestra el spinner modal mientras se desactiva el alimento predefinido
+        LoadingDialog.show(this);
         alimentoApi.eliminar(alimento.getId()).enqueue(new ApiCallback<Void>() {
             @Override
             public void onOk(Void ignored) {
+                // Oculta el spinner al confirmarse la desactivación
+                LoadingDialog.hide(AnadirAlimentoActivity.this);
                 cargarAlimentos();
             }
             @Override
             public void onFail(int code, String message) {
-                UIHelper.mostrarToastError(
-                        AnadirAlimentoActivity.this, getString(R.string.error_conexion));
+                // Oculta el spinner y mapea el código de error a un mensaje de usuario
+                LoadingDialog.hide(AnadirAlimentoActivity.this);
+                UiFeedback.toastError(AnadirAlimentoActivity.this, code, message);
             }
         });
     }
 
     // Elimina (lógicamente, desactivando) un alimento propio del usuario
     private void eliminarAlimento(Alimento alimento) {
+        // Muestra el spinner modal mientras se elimina el alimento propio
+        LoadingDialog.show(this);
         alimentoApi.eliminar(alimento.getId()).enqueue(new ApiCallback<Void>() {
             @Override
             public void onOk(Void ignored) {
+                // Oculta el spinner al confirmarse la eliminación
+                LoadingDialog.hide(AnadirAlimentoActivity.this);
                 cargarAlimentos();
             }
             @Override
             public void onFail(int code, String message) {
-                UIHelper.mostrarToastError(
-                        AnadirAlimentoActivity.this, getString(R.string.error_conexion));
+                // Oculta el spinner y mapea el código de error a un mensaje de usuario
+                LoadingDialog.hide(AnadirAlimentoActivity.this);
+                UiFeedback.toastError(AnadirAlimentoActivity.this, code, message);
             }
         });
     }
 
     // Carga todos los alimentos activos desde la API y actualiza ambas listas (full y filtrada)
     private void cargarAlimentos() {
+        // Muestra el spinner modal mientras se carga el catálogo (la lista aparece vacía si no)
+        LoadingDialog.show(this);
         alimentoApi.getActivos().enqueue(new ApiCallback<List<Alimento>>() {
             @Override
             public void onOk(List<Alimento> alimentos) {
+                // Oculta el spinner una vez recibido el catálogo
+                LoadingDialog.hide(AnadirAlimentoActivity.this);
                 listaAlimentosFull.clear();
                 if (alimentos != null) listaAlimentosFull.addAll(alimentos);
                 listaAlimentosFiltrada.clear();
@@ -255,7 +276,9 @@ public class AnadirAlimentoActivity extends BaseActivity {
 
             @Override
             public void onFail(int code, String message) {
-                Toast.makeText(AnadirAlimentoActivity.this, message, Toast.LENGTH_SHORT).show();
+                // Oculta el spinner y mapea el código de error a un mensaje de usuario
+                LoadingDialog.hide(AnadirAlimentoActivity.this);
+                UiFeedback.toastError(AnadirAlimentoActivity.this, code, message);
             }
         });
     }
@@ -323,20 +346,27 @@ public class AnadirAlimentoActivity extends BaseActivity {
             body.put("usuarioId", prefsManager.getUsuarioId());
             body.put("tipoComida", tipoComida);
             body.put("fecha", fecha + "T00:00:00");
+            // Muestra el spinner modal mientras se crea la comida contenedora
+            LoadingDialog.show(this);
             comidaApi.crear(body).enqueue(new ApiCallback<Comida>() {
                 @Override
                 public void onOk(Comida creada) {
                     if (creada == null) {
+                        // Oculta el spinner si la respuesta viene vacía
+                        LoadingDialog.hide(AnadirAlimentoActivity.this);
                         Toast.makeText(AnadirAlimentoActivity.this,
                                 getString(R.string.error_conexion), Toast.LENGTH_SHORT).show();
                         return;
                     }
+                    // El spinner permanece: postAlimentoComida encadena la segunda llamada
                     comidaId = creada.getId();
                     postAlimentoComida(alimento, gramos);
                 }
                 @Override
                 public void onFail(int code, String message) {
-                    Toast.makeText(AnadirAlimentoActivity.this, message, Toast.LENGTH_SHORT).show();
+                    // Oculta el spinner y mapea el código de error a un mensaje de usuario
+                    LoadingDialog.hide(AnadirAlimentoActivity.this);
+                    UiFeedback.toastError(AnadirAlimentoActivity.this, code, message);
                 }
             });
         } else {
@@ -351,9 +381,13 @@ public class AnadirAlimentoActivity extends BaseActivity {
         body.put("comidaId", comidaId);
         body.put("alimentoId", alimento.getId());
         body.put("cantidadGramos", BigDecimal.valueOf(gramos));
+        // Muestra el spinner modal mientras se asocia el alimento a la comida
+        LoadingDialog.show(this);
         alimentoComidaApi.anadir(body).enqueue(new ApiCallback<Void>() {
             @Override
             public void onOk(Void ignored) {
+                // Oculta el spinner al confirmarse el añadido
+                LoadingDialog.hide(AnadirAlimentoActivity.this);
                 Intent result = new Intent();
                 result.putExtra("comidaId", comidaId);
                 setResult(RESULT_OK, result);
@@ -361,7 +395,9 @@ public class AnadirAlimentoActivity extends BaseActivity {
             }
             @Override
             public void onFail(int code, String message) {
-                Toast.makeText(AnadirAlimentoActivity.this, message, Toast.LENGTH_SHORT).show();
+                // Oculta el spinner y mapea el código de error a un mensaje de usuario
+                LoadingDialog.hide(AnadirAlimentoActivity.this);
+                UiFeedback.toastError(AnadirAlimentoActivity.this, code, message);
             }
         });
     }
