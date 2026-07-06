@@ -16,3 +16,10 @@ TODO.md
 # SO
 .DS_Store
 Thumbs.db
+
+# Firebase — SECRETOS, NUNCA commitear
+# Service-account key (Admin SDK, envío de push desde el backend)
+*firebase-adminsdk*.json
+serviceAccountKey.json
+# google-services.json (config cliente Android)
+google-services.json
