@@ -62,7 +62,7 @@ public class EjercicioAdapter extends RecyclerView.Adapter<EjercicioAdapter.View
         holder.tvNombre.setText(ejercicio.getNombre());
         holder.tvDescripcion.setText(ejercicio.getDescripcion());
         holder.ivIcono.setImageResource(R.drawable.ic_ejercicios);
-        holder.chipDificultad.setText(ejercicio.getDificultad());
+        holder.chipDificultad.setText(es.pmdm.gymprofit.utils.UIHelper.traducirNivel(holder.itemView.getContext(), ejercicio.getDificultad())); // enum traducido
         holder.chipCalorias.setText(ejercicio.getCalorias() + " kcal");
         if (clickListener != null) {
             holder.itemView.setOnClickListener(v -> clickListener.onClick(ejercicio));

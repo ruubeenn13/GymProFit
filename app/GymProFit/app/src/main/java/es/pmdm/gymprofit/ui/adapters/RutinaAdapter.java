@@ -82,7 +82,7 @@ public class RutinaAdapter extends RecyclerView.Adapter<RutinaAdapter.ViewHolder
         Rutina rutina = rutinasFiltradas.get(position);
         holder.tvNombre.setText(rutina.getNombre());
         holder.tvDescripcion.setText(rutina.getDescripcion());
-        holder.chipNivel.setText(rutina.getNivel());
+        holder.chipNivel.setText(es.pmdm.gymprofit.utils.UIHelper.traducirNivel(holder.itemView.getContext(), rutina.getNivel())); // enum traducido
         holder.tvNumEjercicios.setText(rutina.getNumEjercicios() + " ejercicios");
         holder.tvDuracion.setText(rutina.getDuracionMinutos() + " min");
         holder.tvCalorias.setText("~" + rutina.getCaloriasAproximadas() + " kcal");

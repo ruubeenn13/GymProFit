@@ -292,4 +292,34 @@ public class UIHelper {
     private static int dpToPx(Context context, int dp) {
         return (int) (dp * context.getResources().getDisplayMetrics().density);
     }
+
+    // TRADUCCIÓN DE ENUMS DE LA API (la API envía códigos crudos en mayúsculas;
+    // el texto visible debe salir siempre localizado desde strings.xml)
+
+    /** Traduce el nivel/dificultad (PRINCIPIANTE/INTERMEDIO/AVANZADO) al idioma de la app. */
+    public static String traducirNivel(Context context, String nivel) {
+        if (nivel == null) return "—";
+        switch (nivel.toUpperCase()) {
+            case "PRINCIPIANTE": return context.getString(R.string.nivel_principiante);
+            case "INTERMEDIO":   return context.getString(R.string.nivel_intermedio);
+            case "AVANZADO":     return context.getString(R.string.nivel_avanzado);
+            default:             return nivel;
+        }
+    }
+
+    /** Traduce el grupo muscular (PECHO/ESPALDA/.../FULLBODY) al idioma de la app. */
+    public static String traducirGrupoMuscular(Context context, String grupo) {
+        if (grupo == null) return "—";
+        switch (grupo.toUpperCase()) {
+            case "PECHO":    return context.getString(R.string.grupo_pecho);
+            case "ESPALDA":  return context.getString(R.string.grupo_espalda);
+            case "PIERNAS":  return context.getString(R.string.grupo_piernas);
+            case "HOMBROS":  return context.getString(R.string.grupo_hombros);
+            case "BRAZOS":   return context.getString(R.string.grupo_brazos);
+            case "ABOMEN":   return context.getString(R.string.grupo_abdomen); // así viene en la API
+            case "CARDIO":   return context.getString(R.string.grupo_cardio);
+            case "FULLBODY": return context.getString(R.string.grupo_fullbody);
+            default:         return grupo;
+        }
+    }
 }

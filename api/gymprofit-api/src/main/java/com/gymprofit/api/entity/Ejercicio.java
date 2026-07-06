@@ -64,4 +64,20 @@ public class Ejercicio {
     // Indica si el ejercicio está activo/visible (borrado lógico).
     @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
     private Boolean activo;
+
+    // Traducción EN del nombre (null = sin traducción, se sirve el ES).
+    @Column(name = "nombre_en", length = 100)
+    private String nombreEn;
+
+    // Traducción EN de la descripción.
+    @Column(name = "descripcion_en", columnDefinition = "TEXT")
+    private String descripcionEn;
+
+    // Traducción EN de las instrucciones de ejecución.
+    @Column(name = "instrucciones_en", columnDefinition = "TEXT")
+    private String instruccionesEn;
+
+    // Traducción EN del equipo necesario.
+    @Column(name = "equipo_necesario_en")
+    private String equipoNecesarioEn;
 }

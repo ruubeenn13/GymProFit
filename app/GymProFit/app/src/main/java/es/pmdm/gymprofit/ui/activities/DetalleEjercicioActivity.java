@@ -56,10 +56,11 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
                               String grupoMuscular, String dificultad, int calorias, String equipo) {
         ((TextView) findViewById(R.id.tvNombreDetalle)).setText(nombre != null ? nombre : "");
 
+        // Grupo y nivel traducidos al idioma de la app (la API envía los enums crudos).
         ((TextView) findViewById(R.id.tvStatMusculo)).setText(
-                !isEmpty(grupoMuscular) ? capitalizar(grupoMuscular) : "—");
+                !isEmpty(grupoMuscular) ? es.pmdm.gymprofit.utils.UIHelper.traducirGrupoMuscular(this, grupoMuscular) : "—");
         ((TextView) findViewById(R.id.tvStatNivel)).setText(
-                !isEmpty(dificultad) ? capitalizar(dificultad) : "—");
+                !isEmpty(dificultad) ? es.pmdm.gymprofit.utils.UIHelper.traducirNivel(this, dificultad) : "—");
         ((TextView) findViewById(R.id.tvStatCalorias)).setText(
                 calorias > 0 ? calorias + " kcal" : "—");
 

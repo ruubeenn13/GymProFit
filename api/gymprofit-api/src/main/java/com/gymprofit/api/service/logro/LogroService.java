@@ -19,6 +19,7 @@ import com.gymprofit.api.repository.jpa.IUsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -110,6 +111,10 @@ public class LogroService implements ILogroService {
 
         List<String> nuevos = new ArrayList<>();
 
+        // Idioma del request (Accept-Language → LocaleContextHolder): si es inglés,
+        // los nombres de los logros nuevos se devuelven en EN cuando hay traducción.
+        boolean idiomaEn = "en".equals(LocaleContextHolder.getLocale().getLanguage());
+
         for (Logro logro : todos) {
             if (logroIds.contains(logro.getId())) continue;
 
@@ -129,7 +134,11 @@ public class LogroService implements ILogroService {
                 usuarioLogro.setLogro(logro);
                 usuarioLogro.setFechaObtenido(LocalDateTime.now());
                 usuarioLogroRepository.save(usuarioLogro);
-                nuevos.add(logro.getNombre());
+                // Nombre localizado: EN si el request es inglés y existe traducción; ES en caso contrario.
+                String nombreLocalizado = (idiomaEn && logro.getNombreEn() != null && !logro.getNombreEn().isBlank())
+                        ? logro.getNombreEn()
+                        : logro.getNombre();
+                nuevos.add(nombreLocalizado);
                 logger.info("Logro '{}' otorgado al usuario {}", logro.getNombre(), usuarioId);
             }
         }

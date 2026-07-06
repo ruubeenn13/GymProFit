@@ -3,8 +3,11 @@ package com.gymprofit.api.mappers;
 import com.gymprofit.api.dto.entity.alimento.AlimentoCreateDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoDTO;
 import com.gymprofit.api.entity.Alimento;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.List;
 
@@ -30,4 +33,21 @@ public interface AlimentoMapper {
     @Mapping(target = "activo", ignore = true)
     @Mapping(target = "usuario", ignore = true)
     Alimento toEntity(AlimentoCreateDTO alimentoCreateDTO);
+
+    // Tras el mapeo base, localiza los textos del DTO: si el idioma del request
+    // (Accept-Language → LocaleContextHolder) es inglés y la entidad tiene
+    // traducción EN, la sobreescribe en el DTO; si no, se mantiene el ES (fallback).
+    // MapStruct invoca este método automáticamente al final de toDTO/toDTOList.
+    @AfterMapping
+    default void localizarTextos(Alimento alimento, @MappingTarget AlimentoDTO dto) {
+        // Solo se traduce si el request llegó en inglés.
+        if (!"en".equals(LocaleContextHolder.getLocale().getLanguage())) return;
+
+        if (alimento.getNombreEn() != null && !alimento.getNombreEn().isBlank())
+            dto.setNombre(alimento.getNombreEn());
+        if (alimento.getCategoriaEn() != null && !alimento.getCategoriaEn().isBlank())
+            dto.setCategoria(alimento.getCategoriaEn());
+        if (alimento.getDescripcionEn() != null && !alimento.getDescripcionEn().isBlank())
+            dto.setDescripcion(alimento.getDescripcionEn());
+    }
 }

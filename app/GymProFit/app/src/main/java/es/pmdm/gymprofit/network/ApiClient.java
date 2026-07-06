@@ -79,6 +79,12 @@ public class ApiClient {
                 .readTimeout(60, TimeUnit.SECONDS)
                 .callTimeout(60, TimeUnit.SECONDS)
                 .addInterceptor(new AuthInterceptor())
+                // Accept-Language: el backend localiza con él los textos del catálogo
+                // (ejercicios, logros...). Locale.getDefault() ya refleja el idioma elegido
+                // en la app (aplicarIdioma hace Locale.setDefault al arrancar cada pantalla).
+                .addInterceptor(chain -> chain.proceed(chain.request().newBuilder()
+                        .header("Accept-Language", java.util.Locale.getDefault().getLanguage())
+                        .build()))
                 .addInterceptor(logging)
                 .authenticator(new TokenAuthenticator())
                 .build();

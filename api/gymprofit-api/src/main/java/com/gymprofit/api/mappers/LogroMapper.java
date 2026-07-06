@@ -4,8 +4,11 @@ import com.gymprofit.api.dto.entity.logro.LogroDTO;
 import com.gymprofit.api.dto.entity.logro.UsuarioLogroDTO;
 import com.gymprofit.api.entity.Logro;
 import com.gymprofit.api.entity.UsuarioLogro;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.List;
 
@@ -34,4 +37,34 @@ public interface LogroMapper {
 
     // Convierte una lista de relaciones usuario-logro a su lista de DTOs.
     List<UsuarioLogroDTO> toUsuarioLogroDTOList(List<UsuarioLogro> usuarioLogros);
+
+    // Tras el mapeo base, localiza los textos del DTO de catálogo: si el idioma
+    // del request (Accept-Language → LocaleContextHolder) es inglés y el logro
+    // tiene traducción EN, la sobreescribe; si no, se mantiene el ES (fallback).
+    // MapStruct invoca este método automáticamente al final de toDTO/toDTOList.
+    @AfterMapping
+    default void localizarTextos(Logro logro, @MappingTarget LogroDTO dto) {
+        // Solo se traduce si el request llegó en inglés.
+        if (!"en".equals(LocaleContextHolder.getLocale().getLanguage())) return;
+
+        if (logro.getNombreEn() != null && !logro.getNombreEn().isBlank())
+            dto.setNombre(logro.getNombreEn());
+        if (logro.getDescripcionEn() != null && !logro.getDescripcionEn().isBlank())
+            dto.setDescripcion(logro.getDescripcionEn());
+    }
+
+    // Misma localización para el DTO aplanado usuario-logro (logros obtenidos):
+    // sobreescribe logroNombre/logroDescripcion con la versión EN si existe.
+    @AfterMapping
+    default void localizarTextos(UsuarioLogro usuarioLogro, @MappingTarget UsuarioLogroDTO dto) {
+        // Solo se traduce si el request llegó en inglés y hay logro asociado.
+        if (!"en".equals(LocaleContextHolder.getLocale().getLanguage())) return;
+        Logro logro = usuarioLogro.getLogro();
+        if (logro == null) return;
+
+        if (logro.getNombreEn() != null && !logro.getNombreEn().isBlank())
+            dto.setLogroNombre(logro.getNombreEn());
+        if (logro.getDescripcionEn() != null && !logro.getDescripcionEn().isBlank())
+            dto.setLogroDescripcion(logro.getDescripcionEn());
+    }
 }

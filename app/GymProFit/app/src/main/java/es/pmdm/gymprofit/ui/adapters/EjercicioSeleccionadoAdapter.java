@@ -88,7 +88,7 @@ public class EjercicioSeleccionadoAdapter
 
         String dif = e.getDificultad();
         if (dif != null && !dif.trim().isEmpty()) {
-            h.chipDificultad.setText(dif);
+            h.chipDificultad.setText(es.pmdm.gymprofit.utils.UIHelper.traducirNivel(h.itemView.getContext(), dif)); // enum traducido
             h.chipDificultad.setVisibility(View.VISIBLE);
         } else {
             h.chipDificultad.setVisibility(View.GONE);

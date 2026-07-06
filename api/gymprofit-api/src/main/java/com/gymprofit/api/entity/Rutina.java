@@ -71,6 +71,18 @@ public class Rutina {
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
+    // Traducción EN del nombre (null = sin traducción, se sirve el ES; solo rutinas predefinidas).
+    @Column(name = "nombre_en", length = 100)
+    private String nombreEn;
+
+    // Traducción EN de la descripción.
+    @Column(name = "descripcion_en", columnDefinition = "TEXT")
+    private String descripcionEn;
+
+    // Traducción EN de la categoría.
+    @Column(name = "categoria_en", length = 50)
+    private String categoriaEn;
+
     // Campo calculado (no persistido): número de ejercicios asociados a la rutina.
     @org.hibernate.annotations.Formula("(SELECT COUNT(*) FROM rutina_ejercicio re WHERE re.rutina_id = id)")
     private Integer numEjercicios;

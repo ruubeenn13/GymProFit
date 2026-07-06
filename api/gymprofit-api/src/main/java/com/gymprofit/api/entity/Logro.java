@@ -38,4 +38,12 @@ public class Logro {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     private TipoLogro tipo;
+
+    // Traducción EN del nombre (null = sin traducción, se sirve el ES).
+    @Column(name = "nombre_en", length = 100)
+    private String nombreEn;
+
+    // Traducción EN de la descripción.
+    @Column(name = "descripcion_en", columnDefinition = "TEXT")
+    private String descripcionEn;
 }

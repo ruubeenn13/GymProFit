@@ -3,8 +3,11 @@ package com.gymprofit.api.mappers;
 import com.gymprofit.api.dto.entity.rutina.RutinaCreateDTO;
 import com.gymprofit.api.dto.entity.rutina.RutinaDTO;
 import com.gymprofit.api.entity.Rutina;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.List;
 
@@ -34,4 +37,22 @@ public interface RutinaMapper {
     @Mapping(target = "numEjercicios", ignore = true)
     @Mapping(target = "caloriasAproximadas", ignore = true)
     Rutina toEntity(RutinaCreateDTO rutinaCreateDTO);
+
+    // Tras el mapeo base, localiza los textos del DTO: si el idioma del request
+    // (Accept-Language → LocaleContextHolder) es inglés y la rutina tiene
+    // traducción EN (solo las predefinidas del catálogo la tienen), la
+    // sobreescribe; si no, se mantiene el ES (fallback).
+    // MapStruct invoca este método automáticamente al final de toDTO/toDTOList.
+    @AfterMapping
+    default void localizarTextos(Rutina rutina, @MappingTarget RutinaDTO dto) {
+        // Solo se traduce si el request llegó en inglés.
+        if (!"en".equals(LocaleContextHolder.getLocale().getLanguage())) return;
+
+        if (rutina.getNombreEn() != null && !rutina.getNombreEn().isBlank())
+            dto.setNombre(rutina.getNombreEn());
+        if (rutina.getDescripcionEn() != null && !rutina.getDescripcionEn().isBlank())
+            dto.setDescripcion(rutina.getDescripcionEn());
+        if (rutina.getCategoriaEn() != null && !rutina.getCategoriaEn().isBlank())
+            dto.setCategoria(rutina.getCategoriaEn());
+    }
 }

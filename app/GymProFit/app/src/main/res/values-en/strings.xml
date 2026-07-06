@@ -40,6 +40,16 @@
     <string name="notif_canal_push">Notifications</string>
     <string name="notif_push_titulo_defecto">GymProFit</string>
 
+    <!-- GRUPOS MUSCULARES (traducción de los enums de la API) -->
+    <string name="grupo_pecho">Chest</string>
+    <string name="grupo_espalda">Back</string>
+    <string name="grupo_piernas">Legs</string>
+    <string name="grupo_hombros">Shoulders</string>
+    <string name="grupo_brazos">Arms</string>
+    <string name="grupo_abdomen">Core</string>
+    <string name="grupo_cardio">Cardio</string>
+    <string name="grupo_fullbody">Full body</string>
+
     <string name="registro_subtitulo">Create your account and start your journey</string>
     <string name="registro_confirmar_password">Confirm password</string>
     <string name="registro_ya_cuenta">Already have an account? Log in</string>

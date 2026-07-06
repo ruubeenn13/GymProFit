@@ -61,10 +61,10 @@ public class AdminEjercicioAdapter extends RecyclerView.Adapter<AdminEjercicioAd
         h.tvDescripcion.setText((desc != null && !desc.isEmpty()) ? desc : "—");
 
         String grupo = e.getGrupoMuscular();
-        h.chipGrupo.setText((grupo != null && !grupo.isEmpty()) ? grupo : "—");
+        h.chipGrupo.setText((grupo != null && !grupo.isEmpty()) ? es.pmdm.gymprofit.utils.UIHelper.traducirGrupoMuscular(ctx, grupo) : "—"); // enum traducido
 
         String dif = e.getDificultad();
-        h.chipDificultad.setText((dif != null && !dif.isEmpty()) ? dif : "—");
+        h.chipDificultad.setText((dif != null && !dif.isEmpty()) ? es.pmdm.gymprofit.utils.UIHelper.traducirNivel(ctx, dif) : "—"); // enum traducido
 
         if (e.isActivo()) {
             h.chipEstado.setText(ctx.getString(R.string.admin_estado_activo));
