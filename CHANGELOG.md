@@ -2,6 +2,12 @@
 
 Historial de cambios del proyecto (API Spring Boot + app Android). Ver también el [README](README.md).
 
+### 2026-07-06
+
+| Hash | Descripción |
+|---|---|
+| `b77551f` | feat(android): **pulido #5 batch 1** — feedback carga/errores. Helpers reutilizables `utils/LoadingDialog` (spinner modal overlay, `dialog_loading.xml`, sin tocar 30 layouts), `utils/UiFeedback.toastError(code,msg)` (mapea -1→cold-start/500→servidor/resto→genérico, strings ES+en), `network/UiApiCallback<T> extends ApiCallback` (auto hide+toast). Pantallas: Home (fallback "—"+toast), Rutinas (spinner+empty state `tvEmpty`+toast), Perfil (toast en fetch principal), Nutrición (404 vacío legítimo vs error real). Compila verde. Pendiente batch 2 + verificación emulador |
+
 ### 2026-07-04
 
 | Hash | Descripción |
