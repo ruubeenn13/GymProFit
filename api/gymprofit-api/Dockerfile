@@ -35,4 +35,7 @@ COPY --from=build /build/target/*.jar app.jar
 # Puerto informativo (la PaaS enruta por $PORT; server.port=${PORT:8080})
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# MaxRAMPercentage=60: en la instancia de 512MB de Render el default de la JVM (~25%,
+# ~128MB de heap) se queda corto desde que firebase-admin (grpc/netty) engordó el
+# arranque — el primer deploy con él llegó a agotar el timeout del health check.
+ENTRYPOINT ["java", "-XX:MaxRAMPercentage=60.0", "-jar", "app.jar"]
