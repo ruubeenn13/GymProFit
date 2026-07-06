@@ -106,14 +106,33 @@
 
             </HorizontalScrollView>
 
-            <!-- RecyclerView con lista de rutinas -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvRutinas"
+            <!-- RecyclerView con lista de rutinas + estado vacío superpuesto -->
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                android:padding="16dp"
-                android:clipToPadding="false" />
+                android:layout_weight="1">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvRutinas"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="16dp"
+                    android:clipToPadding="false" />
+
+                <!-- Mensaje "no hay nada aún"; oculto por defecto, lo gestiona la Activity -->
+                <TextView
+                    android:id="@+id/tvEmpty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:padding="24dp"
+                    android:gravity="center"
+                    android:text="@string/feedback_lista_vacia"
+                    android:textSize="16sp"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:visibility="gone" />
+
+            </FrameLayout>
 
         </LinearLayout>
 

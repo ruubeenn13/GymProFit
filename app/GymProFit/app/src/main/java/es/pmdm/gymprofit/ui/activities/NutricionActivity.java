@@ -25,6 +25,7 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.ComidaApi;
 import es.pmdm.gymprofit.utils.CalculadoraNutricional;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
+import es.pmdm.gymprofit.utils.UiFeedback;
 
 /**
  * Pantalla principal de seguimiento nutricional.
@@ -144,9 +145,13 @@ public class NutricionActivity extends BaseActivity {
 
             @Override
             public void onFail(int code, String message) {
-                // 404 = no hay comidas hoy → estado vacío
+                // 404 = no hay comidas hoy → estado vacío legítimo (silencioso).
+                // Cualquier otro código (cold-start -1, 500…) sí es error real → toast.
                 comidasHoy.clear();
                 actualizarUI(hoy);
+                if (code != 404) {
+                    UiFeedback.toastError(NutricionActivity.this, code, message);
+                }
             }
         });
     }

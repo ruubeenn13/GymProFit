@@ -3,6 +3,7 @@ package es.pmdm.gymprofit.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -23,7 +24,9 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.RutinaApi;
 import es.pmdm.gymprofit.ui.adapters.RutinaAdapter;
+import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.UIHelper;
+import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
 // RutinasActivity — listado de rutinas (predefinidas + del usuario) con filtros y CRUD.
@@ -38,6 +41,7 @@ public class RutinasActivity extends BaseActivity {
     private RutinaAdapter adapter;
     private ChipGroup chipGroupNivel;
     private FloatingActionButton fabCrearRutina;
+    private TextView tvEmpty;
 
     // Interfaz Retrofit tipada del dominio rutinas (etapa 2)
     private final RutinaApi rutinaApi = ApiClient.service(RutinaApi.class);
@@ -87,6 +91,7 @@ public class RutinasActivity extends BaseActivity {
         rvRutinas = findViewById(R.id.rvRutinas);
         chipGroupNivel = findViewById(R.id.chipGroupNivel);
         fabCrearRutina = findViewById(R.id.fabCrearRutina);
+        tvEmpty = findViewById(R.id.tvEmpty);
     }
 
     // Configura el RecyclerView con su adapter, listeners de click/long-click
@@ -119,6 +124,9 @@ public class RutinasActivity extends BaseActivity {
     private void cargarRutinas() {
         int usuarioId = prefsManager.getUsuarioId();
 
+        // Spinner de carga durante el cold-start / la petición (la pantalla estaría en blanco).
+        LoadingDialog.show(this);
+
         // Rutinas predefinidas (ya deserializadas por Gson).
         rutinaApi.getPredefinidas().enqueue(new ApiCallback<List<Rutina>>() {
             @Override
@@ -131,23 +139,40 @@ public class RutinasActivity extends BaseActivity {
                         @Override
                         public void onOk(List<Rutina> propias) {
                             if (propias != null) todas.addAll(propias);
+                            LoadingDialog.hide(RutinasActivity.this);
                             adapter.setRutinas(todas);
+                            actualizarEstadoVacio();
                         }
                         @Override
                         public void onFail(int code, String message) {
+                            // Fallo solo en las propias: se muestran igualmente las predefinidas.
+                            LoadingDialog.hide(RutinasActivity.this);
                             adapter.setRutinas(todas);
+                            actualizarEstadoVacio();
                         }
                     });
                 } else {
+                    LoadingDialog.hide(RutinasActivity.this);
                     adapter.setRutinas(todas);
+                    actualizarEstadoVacio();
                 }
             }
 
             @Override
             public void onFail(int code, String message) {
-                android.util.Log.e("RutinasActivity", "Error cargando rutinas: " + message);
+                // Fallo total (incluye cold-start): oculta spinner, avisa y muestra estado vacío.
+                LoadingDialog.hide(RutinasActivity.this);
+                UiFeedback.toastError(RutinasActivity.this, code, message);
+                actualizarEstadoVacio();
             }
         });
+    }
+
+    // Muestra u oculta el mensaje "no hay nada aún" según los ítems visibles del adapter.
+    private void actualizarEstadoVacio() {
+        boolean vacio = adapter.getItemCount() == 0;
+        tvEmpty.setVisibility(vacio ? View.VISIBLE : View.GONE);
+        rvRutinas.setVisibility(vacio ? View.GONE : View.VISIBLE);
     }
 
     // Construye y muestra el menú contextual (editar, activar/desactivar o eliminar)
@@ -254,6 +279,7 @@ public class RutinasActivity extends BaseActivity {
             else                                   nivel = "Todos";
 
             adapter.filtrarPorNivel(nivel);
+            actualizarEstadoVacio();
         }));
     }
 

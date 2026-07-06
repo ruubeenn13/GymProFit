@@ -27,6 +27,15 @@
     <string name="registro_error">Error al crear la cuenta</string>
     <string name="login_error_credenciales">Usuario o contraseña incorrectos</string>
     <string name="error_conexion">Error de conexión con el servidor</string>
+
+    <!-- FEEDBACK CARGA/ERRORES (helpers LoadingDialog + UiFeedback) -->
+    <string name="feedback_cargando">Cargando…</string>
+    <string name="feedback_cargando_servidor">Activando el servidor, puede tardar unos segundos…</string>
+    <string name="feedback_error_cold_start">Activando el servidor, reinténtalo en unos segundos</string>
+    <string name="feedback_error_servidor">Error del servidor, inténtalo más tarde</string>
+    <string name="feedback_error_generico">Algo salió mal, inténtalo de nuevo</string>
+    <string name="feedback_lista_vacia">No hay nada aún</string>
+
     <string name="registro_subtitulo">Crea tu cuenta y empieza tu camino</string>
     <string name="registro_confirmar_password">Confirmar contraseña</string>
     <string name="registro_ya_cuenta">¿Ya tienes cuenta? Inicia sesión</string>

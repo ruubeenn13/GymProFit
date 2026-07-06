@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  dialog_loading — Overlay modal de carga reutilizable.
+  Spinner indeterminado centrado + mensaje. El fondo redondeado (colorSurface)
+  lo aplica LoadingDialog por código, igual que el resto de diálogos (UIHelper),
+  para evitar crashes de ?attr en drawables. No se hardcodea ningún texto: el
+  mensaje se inyecta desde LoadingDialog (feedback_cargando / feedback_cargando_servidor).
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialogRoot"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:paddingHorizontal="32dp"
+    android:paddingVertical="28dp">
+
+    <!-- Spinner indeterminado con el dorado corporativo (#C9963A) -->
+    <ProgressBar
+        android:id="@+id/pbLoading"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:indeterminate="true"
+        android:indeterminateTint="#C9963A" />
+
+    <!-- Mensaje de carga; el texto lo fija LoadingDialog según el contexto -->
+    <TextView
+        android:id="@+id/tvLoadingMensaje"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:gravity="center"
+        android:textSize="15sp"
+        android:textColor="?attr/colorOnSurface" />
+
+</LinearLayout>

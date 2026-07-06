@@ -19,9 +19,9 @@ import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
-import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.SesionApi;
+import es.pmdm.gymprofit.network.UiApiCallback;
 
 // ============================================================
 // HomeActivity — pantalla principal tras el login.
@@ -72,9 +72,11 @@ public class HomeActivity extends BaseActivity {
         int usuarioId = prefsManager.getUsuarioId();
         if (usuarioId == -1) return;
 
-        sesionApi.getDeUsuario(usuarioId).enqueue(new ApiCallback<List<SesionEntrenamiento>>() {
+        // autoLoading=false: Home no queda en blanco (saludo/accesos visibles);
+        // basta el toast de error automático (cold-start incluido) + fallback "—".
+        sesionApi.getDeUsuario(usuarioId).enqueue(new UiApiCallback<List<SesionEntrenamiento>>(this, false) {
             @Override
-            public void onOk(List<SesionEntrenamiento> sesiones) {
+            public void onData(List<SesionEntrenamiento> sesiones) {
                 // Calcula la fecha de inicio de la semana actual (lunes a las 00:00)
                 Calendar cal = Calendar.getInstance();
                 cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -107,9 +109,11 @@ public class HomeActivity extends BaseActivity {
                 tvConteoMinutosHome.setText(String.valueOf(minutos));
             }
             @Override public void onFail(int code, String message) {
+                // Fallback visual "—" en las tarjetas + toast de error estándar (super).
                 tvConteoEntrenamientos.setText("—");
                 tvConteoCaloriasHome.setText("—");
                 tvConteoMinutosHome.setText("—");
+                super.onFail(code, message);
             }
         });
     }

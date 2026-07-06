@@ -34,6 +34,7 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.MedicionApi;
 import es.pmdm.gymprofit.network.UsuarioApi;
+import es.pmdm.gymprofit.utils.UiFeedback;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -180,11 +181,13 @@ public class PerfilActivity extends BaseActivity {
             @Override
             public void onFail(int code, String message) {
                 Log.e("GymProFit", "getUsuarioPorId error status=" + code + " msg=" + message);
+                // Fallback al username cacheado + toast de error (avisa del cold-start).
                 String username = prefsManager.getUsername();
                 if (username != null && !username.isEmpty()) {
                     tvNombreUsuario.setText(username);
                     tvInfoNombre.setText(username);
                 }
+                UiFeedback.toastError(PerfilActivity.this, code, message);
             }
         });
     }
