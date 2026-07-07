@@ -44,7 +44,7 @@ El sistema distingue tres roles de usuario: **GUEST**, **USER** y **ADMIN**, con
 ## 🗂️ Estructura del repositorio
 
 ```
-TFG-GymProFit/
+GymProFit/
 ├── 📂 app/            # Aplicación Android (Android Studio - Java)
 ├── 📂 api/            # API REST backend (Spring Boot - Java)
 ├── 📂 db/             # Script SQL de referencia (el esquema real lo crean las migraciones Flyway)
@@ -418,8 +418,8 @@ MariaDB en `localhost:3308` en desarrollo (base de datos `gymprofit_db`); **MySQ
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/ruubeenn13/TFG-GymProFit.git
-cd TFG-GymProFit
+git clone https://github.com/ruubeenn13/GymProFit.git
+cd GymProFit
 ```
 
 ### 2. Configurar la base de datos
