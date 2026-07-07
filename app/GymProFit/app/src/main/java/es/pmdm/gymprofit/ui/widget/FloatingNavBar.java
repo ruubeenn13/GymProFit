@@ -69,24 +69,25 @@ public class FloatingNavBar extends FrameLayout {
         textoActivo   = attr(com.google.android.material.R.attr.colorOnSurface);
         textoInactivo = conAlfa(textoActivo, 0xB8);
 
-        // ── TODA la barra: vidrio naranja VIVO y reflectante (brillo blanco
-        //    superior potente + naranja translúcido; casi refleja) ──
+        // ── TODA la barra: vidrio naranja MUY TRANSLÚCIDO (deja ver el fondo),
+        //    con brillo blanco superior de reflejo. Color saturado pero con
+        //    poco alfa = efecto liquid glass ──
         GradientDrawable bg = new GradientDrawable(
                 GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[]{ conAlfa(0xFFFFFF, 0x3A), conAlfa(colorMarca, 0x4D), conAlfa(colorMarca, 0x63) });
+                new int[]{ conAlfa(0xFFFFFF, 0x22), conAlfa(colorMarca, 0x24), conAlfa(colorMarca, 0x30) });
         bg.setCornerRadius(dp(32));
-        bg.setStroke((int) dp(1), conAlfa(0xFFFFFF, 0x55));
+        bg.setStroke((int) dp(1), conAlfa(0xFFFFFF, 0x3E));
         setBackground(bg);
         setElevation(dp(10));
 
-        // ── Gota de vidrio (destino activo): naranja más vivo y brillante que la
-        //    barra, con reflejo blanco superior, para destacar sobre ella ──
+        // ── Gota de vidrio (destino activo): también translúcida, un punto más
+        //    densa que la barra → vidrio sobre vidrio (liquid glass entre ambos) ──
         burbuja = new View(getContext());
         GradientDrawable glass = new GradientDrawable(
                 GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[]{ conAlfa(0xFFFFFF, 0x59), conAlfa(colorMarca, 0x9E), conAlfa(colorMarca, 0xC8) });
+                new int[]{ conAlfa(0xFFFFFF, 0x3C), conAlfa(colorMarca, 0x59), conAlfa(colorMarca, 0x76) });
         glass.setCornerRadius(dp(28));
-        glass.setStroke((int) dp(1), conAlfa(0xFFFFFF, 0x80));
+        glass.setStroke((int) dp(1), conAlfa(0xFFFFFF, 0x66));
         burbuja.setBackground(glass);
         addView(burbuja, new LayoutParams((int) dp(64), (int) dp(58), Gravity.CENTER_VERTICAL));
 
@@ -188,9 +189,15 @@ public class FloatingNavBar extends FrameLayout {
                 int destino = indiceEnCentro(objetivoGravedad(e.getX()));
                 boolean cambia = destino != activo;
                 activo = destino;
-                snapBurbuja(activo);
                 resaltar(activo);
-                if (cambia && listener != null) listener.onSelected(activo);
+                if (cambia && listener != null) {
+                    // Navegamos: NO animamos la gota aquí (esta pantalla se va);
+                    // la burbuja "viaja" ya en la pantalla destino (setActiveFrom),
+                    // evitando que el recorrido se pare y reinicie.
+                    listener.onSelected(activo);
+                } else {
+                    snapBurbuja(activo); // misma opción: asienta con rebote
+                }
                 return true;
         }
         return super.onTouchEvent(e);
@@ -219,10 +226,11 @@ public class FloatingNavBar extends FrameLayout {
         int w = ((LayoutParams) burbuja.getLayoutParams()).width;
         burbuja.setTranslationX(clampF(actualCentro - w / 2f, 0, getWidth() - w));
 
-        // Deformación gooey: se estira en X y aplana en Y según cuánto se retrasa
-        float estira = clampF(1f + Math.abs(retraso) / dp(90f), 1f, 1.38f);
-        burbuja.setScaleX(1.06f * estira);
-        burbuja.setScaleY(1.06f / estira);
+        // Deformación gooey MUY SUTIL (apenas se ovala): estira poco en X según
+        // cuánto se retrasa del objetivo.
+        float estira = clampF(1f + Math.abs(retraso) / dp(170f), 1f, 1.13f);
+        burbuja.setScaleX(1.04f * estira);
+        burbuja.setScaleY(1.04f / estira);
 
         resaltar(indiceEnCentro(actualCentro));
     }
