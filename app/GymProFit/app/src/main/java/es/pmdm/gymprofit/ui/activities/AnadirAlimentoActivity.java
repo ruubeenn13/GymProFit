@@ -105,8 +105,10 @@ public class AnadirAlimentoActivity extends BaseActivity {
         RecyclerView rvAlimentos = findViewById(R.id.rvAlimentos);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         rvAlimentos.setLayoutManager(layoutManager);
-        adapter = new AlimentoAdapter(listaAlimentos, this::mostrarDialogoGramos);
+        adapter = new AlimentoAdapter(listaAlimentos, this::onAlimentoSeleccionado);
         adapter.setOnItemLongClickListener((alimento, anchor) -> {
+            // Los resultados externos (OFF, sin id local) no se pueden editar/borrar
+            if (alimento.esExterno()) return;
             boolean esAdmin = "ROLE_ADMIN".equals(prefsManager.getRol());
             boolean esPropio = alimento.getUsuarioId() != null
                     && alimento.getUsuarioId() == prefsManager.getUsuarioId();
@@ -324,6 +326,39 @@ public class AnadirAlimentoActivity extends BaseActivity {
     protected void onDestroy() {
         if (debounceRunnable != null) debounceHandler.removeCallbacks(debounceRunnable);
         super.onDestroy();
+    }
+
+    // Gestiona la selección de un alimento: los locales van directos al diálogo
+    // de gramos; los externos (OFF, id 0) se importan primero a la BD local
+    // para tener id referenciable desde la comida.
+    private void onAlimentoSeleccionado(Alimento alimento) {
+        if (!alimento.esExterno()) {
+            mostrarDialogoGramos(alimento);
+            return;
+        }
+        if (alimento.getBarcode() == null) return; // externo sin barcode: no importable
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("barcode", alimento.getBarcode());
+        // Spinner mientras se materializa el producto OFF en el catálogo local
+        LoadingDialog.show(this);
+        alimentoApi.importar(body).enqueue(new ApiCallback<Alimento>() {
+            @Override
+            public void onOk(Alimento importado) {
+                LoadingDialog.hide(AnadirAlimentoActivity.this);
+                if (importado == null) {
+                    UiFeedback.toastError(AnadirAlimentoActivity.this, -1, null);
+                    return;
+                }
+                mostrarDialogoGramos(importado);
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                LoadingDialog.hide(AnadirAlimentoActivity.this);
+                UiFeedback.toastError(AnadirAlimentoActivity.this, code, message);
+            }
+        });
     }
 
     // Muestra un diálogo para introducir los gramos a añadir, con preview de macros en tiempo real

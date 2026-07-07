@@ -30,4 +30,9 @@ public class AlimentoDTO implements Serializable {
     private Boolean activo;
     // Id del usuario propietario si es un alimento personalizado (null si es global)
     private Integer usuarioId;
+    // Código de barras (Open Food Facts); en resultados de búsqueda externa el
+    // id viene null y este campo permite importar el producto a la BD local
+    private String barcode;
+    // Marca/fabricante del producto (Open Food Facts)
+    private String marca;
 }

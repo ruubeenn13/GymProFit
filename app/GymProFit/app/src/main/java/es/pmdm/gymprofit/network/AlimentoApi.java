@@ -57,6 +57,12 @@ public interface AlimentoApi {
     @POST("alimentos")
     Call<Alimento> crear(@Body Map<String, Object> body);
 
+    // Importa (o recupera) un producto de Open Food Facts al catálogo local.
+    // body: {"barcode": "..."} — se llama al seleccionar un resultado externo
+    // (id 0) para materializarlo con id local antes de añadirlo a una comida.
+    @POST("alimentos/importar")
+    Call<Alimento> importar(@Body Map<String, Object> body);
+
     // Reactiva un alimento previamente desactivado.
     @PUT("alimentos/{id}/activar")
     Call<Void> activar(@Path("id") int id);

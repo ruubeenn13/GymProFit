@@ -5,6 +5,7 @@ import com.gymprofit.api.dto.common.PageDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoCreateDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoPatchDTO;
+import com.gymprofit.api.dto.entity.alimento.ImportarAlimentoDTO;
 import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
@@ -240,6 +241,23 @@ public class AlimentoController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         return ResponseEntity.ok(alimentoService.buscarCatalogo(q, categoria, page, size));
+    }
+
+    @Operation(summary = "Importa un producto de Open Food Facts al catálogo local",
+            description = "Materializa en la BD local (por código de barras) un producto elegido en la " +
+                    "búsqueda externa, para poder referenciarlo desde comidas. Idempotente: si ya está " +
+                    "importado devuelve el existente (y lo reactiva si estaba desactivado).")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Alimento importado (o ya existente)",
+                    content = @Content(schema = @Schema(implementation = AlimentoDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Barcode inexistente en Open Food Facts",
+                    content = @Content(schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "502", description = "Open Food Facts no disponible",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @PostMapping("/alimentos/importar")
+    public ResponseEntity<AlimentoDTO> importarAlimento(@Valid @RequestBody ImportarAlimentoDTO body) {
+        return ResponseEntity.ok(alimentoService.importarPorBarcode(body.getBarcode()));
     }
 
     @Operation(summary = "Busca alimentos por rango de calorías")

@@ -55,7 +55,10 @@ public interface IAlimentoService {
     // Búsqueda de alimentos para el panel admin (incluye inactivos) mediante jOOQ.
     List<AlimentoJooqDTO> busquedaAdmin(String nombre, String categoria, Boolean activo);
 
-    // Búsqueda paginada del catálogo visible para el usuario autenticado
-    // (globales + propios, solo activos) con filtro por texto y categoría.
+    // Búsqueda paginada del catálogo: sin texto → local (propios+importados);
+    // con texto → Open Food Facts en vivo + propios del usuario delante.
     PageDTO<AlimentoDTO> buscarCatalogo(String q, String categoria, int page, int size);
+
+    // Importa (o recupera) un producto de Open Food Facts a la BD local por barcode.
+    AlimentoDTO importarPorBarcode(String barcode);
 }

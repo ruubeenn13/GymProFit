@@ -63,7 +63,10 @@ public class AlimentoAdapter extends RecyclerView.Adapter<AlimentoAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Alimento alimento = lista.get(position);
         holder.tvNombreAlimento.setText(alimento.getNombre());
-        holder.tvCategoriaAlimento.setText(alimento.getCategoria());
+        // Productos de Open Food Facts: se muestra la marca; locales: la categoría
+        String subtitulo = alimento.getMarca() != null && !alimento.getMarca().isEmpty()
+                ? alimento.getMarca() : alimento.getCategoria();
+        holder.tvCategoriaAlimento.setText(subtitulo);
         holder.tvCaloriasPor100.setText(alimento.getCalorias() + " kcal/100g");
         holder.itemView.setOnClickListener(v -> listener.onItemClick(alimento));
         holder.itemView.setOnLongClickListener(v -> {

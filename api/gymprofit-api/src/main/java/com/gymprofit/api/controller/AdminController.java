@@ -8,6 +8,7 @@ import com.gymprofit.api.dto.jooq.EjercicioJooqDTO;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.alimento.IAlimentoService;
 import com.gymprofit.api.service.ejercicio.IEjercicioService;
+import com.gymprofit.api.service.externo.WgerImportService;
 import com.gymprofit.api.service.rutina.IRutinaService;
 import com.gymprofit.api.service.usuario.IUsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,6 +41,23 @@ public class AdminController {
     private final IRutinaService rutinaService;
     private final IEjercicioService ejercicioService;
     private final IAlimentoService alimentoService;
+    private final WgerImportService wgerImportService;
+
+    // ─── Catálogo externo ────────────────────────────────────────────────────
+
+    @Operation(summary = "Importa el catálogo de ejercicios desde wger (ADMIN)",
+            description = "Descarga los ~800 ejercicios de la API pública de wger e importa a la BD local " +
+                    "los que tienen traducción ES+EN (~640). Upsert idempotente por wger_id: relanzar " +
+                    "actualiza los existentes sin duplicar. Tarda ~10-30s (9 páginas remotas).")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Resumen del import (nuevos/actualizados/omitidos)"),
+            @ApiResponse(responseCode = "502", description = "wger no disponible",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @PostMapping("/catalogo/importar-ejercicios")
+    public ResponseEntity<WgerImportService.ImportResumen> importarEjercicios() {
+        return ResponseEntity.ok(wgerImportService.importarCatalogo());
+    }
 
     // ─── Usuarios ────────────────────────────────────────────────────────────
 

@@ -320,7 +320,8 @@ public class UIHelper {
             case "PIERNAS":  return context.getString(R.string.grupo_piernas);
             case "HOMBROS":  return context.getString(R.string.grupo_hombros);
             case "BRAZOS":   return context.getString(R.string.grupo_brazos);
-            case "ABOMEN":   return context.getString(R.string.grupo_abdomen); // así viene en la API
+            case "ABDOMEN":  return context.getString(R.string.grupo_abdomen);
+            case "ABOMEN":   return context.getString(R.string.grupo_abdomen); // typo histórico de la API (pre-fix)
             case "CARDIO":   return context.getString(R.string.grupo_cardio);
             case "FULLBODY": return context.getString(R.string.grupo_fullbody);
             default:         return grupo;

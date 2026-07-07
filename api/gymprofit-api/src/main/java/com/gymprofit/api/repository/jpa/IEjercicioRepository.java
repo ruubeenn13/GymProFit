@@ -24,6 +24,9 @@ import java.util.List;
 @RepositoryRestResource(exported = false)
 public interface IEjercicioRepository extends JpaRepository<Ejercicio, Integer> {
 
+    // Busca un ejercicio por su id en wger (clave de upsert del import externo).
+    java.util.Optional<Ejercicio> findByWgerId(Integer wgerId);
+
     // Busca ejercicios que trabajen un grupo muscular concreto.
     List<Ejercicio> findByGrupoMuscular(GrupoMuscular grupoMuscular);
 

@@ -11,7 +11,7 @@ public enum GrupoMuscular {
     PIERNAS,
     HOMBROS,
     BRAZOS,
-    ABOMEN,
+    ABDOMEN,
     CARDIO,
     FULLBODY
 }

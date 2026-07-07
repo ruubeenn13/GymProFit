@@ -15,7 +15,7 @@ import org.jooq.Schema;
 @SuppressWarnings({ "all", "unchecked", "rawtypes", "this-escape" })
 public enum EjerciciosGrupoMuscular implements EnumType {
 
-    ABOMEN("ABOMEN"),
+    ABDOMEN("ABDOMEN"),
 
     BRAZOS("BRAZOS"),
 

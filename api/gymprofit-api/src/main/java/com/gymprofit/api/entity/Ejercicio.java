@@ -65,6 +65,11 @@ public class Ejercicio {
     @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
     private Boolean activo;
 
+    // Id del ejercicio en la API de wger (null = creado a mano). Clave de
+    // upsert idempotente del import del catálogo (índice único).
+    @Column(name = "wger_id", unique = true)
+    private Integer wgerId;
+
     // Traducción EN del nombre (null = sin traducción, se sirve el ES).
     @Column(name = "nombre_en", length = 100)
     private String nombreEn;

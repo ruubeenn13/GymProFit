@@ -155,6 +155,16 @@ public class ControllerExceptionHandler {
         );
     }
 
+    // Fallo de una API externa (Open Food Facts / wger): 502 Bad Gateway.
+    @ResponseStatus(HttpStatus.BAD_GATEWAY)
+    @ExceptionHandler(ExternalServiceException.class)
+    public ResponseEntity<Response> handleExternalServiceException(ExternalServiceException ex) {
+        return new ResponseEntity<>(
+                Response.generalError(HttpStatus.BAD_GATEWAY.value(), ex.getMessage()),
+                HttpStatus.BAD_GATEWAY
+        );
+    }
+
     // Credenciales inválidas (lógica propia de negocio): 401.
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidCredentialsException.class)

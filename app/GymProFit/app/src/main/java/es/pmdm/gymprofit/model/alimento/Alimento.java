@@ -21,6 +21,11 @@ public class Alimento {
     private double grasas;
     // Id del usuario propietario si es un alimento personalizado; null si es del catálogo global
     private Integer usuarioId;
+    // Código de barras (Open Food Facts). En resultados de búsqueda externa el
+    // id llega null (Gson lo deja a 0) y este campo permite importar el producto
+    private String barcode;
+    // Marca/fabricante del producto (Open Food Facts)
+    private String marca;
     // Indica si el alimento está activo (borrado lógico)
     // La búsqueda admin (AlimentoJooqDTO) envía "activo" como Byte 0/1; el adaptador lo tolera.
     @JsonAdapter(BooleanNumericAdapter.class)
@@ -51,6 +56,16 @@ public class Alimento {
 
     public Integer getUsuarioId() { return usuarioId; }
     public void setUsuarioId(Integer usuarioId) { this.usuarioId = usuarioId; }
+
+    public String getBarcode() { return barcode; }
+    public void setBarcode(String barcode) { this.barcode = barcode; }
+
+    public String getMarca() { return marca; }
+    public void setMarca(String marca) { this.marca = marca; }
+
+    // true si es un resultado de la búsqueda externa (OFF) aún sin importar
+    // a la BD local (la API envía id null → Gson lo deserializa como 0)
+    public boolean esExterno() { return id == 0; }
 
     public boolean isActivo() { return activo; }
     public void setActivo(boolean activo) { this.activo = activo; }

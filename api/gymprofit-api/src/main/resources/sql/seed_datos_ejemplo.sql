@@ -51,7 +51,7 @@ INSERT INTO ejercicios (id, nombre, descripcion, grupo_muscular, dificultad, cal
 (5,  'Press militar',     'Press de hombros con barra en pie',               'HOMBROS',  'INTERMEDIO',    7, 'Barra',           1),
 (6,  'Curl de bíceps',    'Flexión de codo con mancuernas',                  'BRAZOS',   'PRINCIPIANTE',  4, 'Mancuernas',      1),
 (7,  'Tríceps en polea',  'Extensión de codo en polea alta',                 'BRAZOS',   'PRINCIPIANTE',  4, 'Polea',           1),
-(8,  'Plancha',           'Ejercicio isométrico de core',                    'ABOMEN',   'PRINCIPIANTE',  3, 'Sin equipo',      1),
+(8,  'Plancha',           'Ejercicio isométrico de core',                    'ABDOMEN',   'PRINCIPIANTE',  3, 'Sin equipo',      1),
 (9,  'Carrera en cinta',  'Cardio en cinta a ritmo moderado',                'CARDIO',   'PRINCIPIANTE', 10, 'Cinta de correr', 1),
 (10, 'Burpees',           'Ejercicio de cuerpo completo de alta intensidad', 'FULLBODY', 'INTERMEDIO',   15, 'Sin equipo',      1);
 
