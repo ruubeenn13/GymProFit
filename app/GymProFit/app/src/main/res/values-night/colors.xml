@@ -22,6 +22,10 @@
     <color name="gp_on_surface">#F2F2F3</color>
     <color name="gp_text_secondary">#9EA0A8</color>
 
+    <!-- ── Cuerpo anatómico (mapa muscular estilo Symmetry) ──────────────── -->
+    <color name="body_silhouette">#3A3B42</color>
+    <color name="body_highlight">#FF6A00</color>
+
     <!-- ── Estados ───────────────────────────────────────────────────────── -->
     <color name="gp_success">#4ADE80</color>
     <color name="gp_success_container">#143323</color>

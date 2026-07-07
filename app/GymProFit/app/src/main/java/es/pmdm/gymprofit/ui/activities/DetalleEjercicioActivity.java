@@ -46,13 +46,14 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         String descripcion   = getIntent().getStringExtra("descripcion");
         String instrucciones = getIntent().getStringExtra("instrucciones");
         String grupoMuscular = getIntent().getStringExtra("grupoMuscular");
+        String musculoPrim   = getIntent().getStringExtra("musculoPrimario");
         String dificultad    = getIntent().getStringExtra("dificultad");
         int calorias         = getIntent().getIntExtra("calorias", 0);
         String equipo        = getIntent().getStringExtra("equipoNecesario");
         String imagenUrl     = getIntent().getStringExtra("imagenUrl");
         String imagenUrl2    = getIntent().getStringExtra("imagenUrl2");
 
-        poblarVistas(nombre, descripcion, instrucciones, grupoMuscular, dificultad, calorias, equipo);
+        poblarVistas(nombre, descripcion, instrucciones, grupoMuscular, musculoPrim, dificultad, calorias, equipo);
         configurarDemostracion(imagenUrl, imagenUrl2);
     }
 
@@ -99,12 +100,17 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
     // Rellena las vistas de la pantalla con los datos del ejercicio,
     // ocultando las secciones (equipamiento/descripción/instrucciones) vacías.
     private void poblarVistas(String nombre, String descripcion, String instrucciones,
-                              String grupoMuscular, String dificultad, int calorias, String equipo) {
+                              String grupoMuscular, String musculoPrimario, String dificultad,
+                              int calorias, String equipo) {
         ((TextView) findViewById(R.id.tvNombreDetalle)).setText(nombre != null ? nombre : "");
 
-        // Grupo y nivel traducidos al idioma de la app (la API envía los enums crudos).
-        ((TextView) findViewById(R.id.tvStatMusculo)).setText(
-                !isEmpty(grupoMuscular) ? es.pmdm.gymprofit.utils.UIHelper.traducirGrupoMuscular(this, grupoMuscular) : "—");
+        // Músculo: el primario preciso (ej. "Aductores") si la API lo trae;
+        // si no, el grupo grueso traducido como fallback.
+        String musculo = !isEmpty(musculoPrimario)
+                ? musculoPrimario
+                : (!isEmpty(grupoMuscular)
+                        ? es.pmdm.gymprofit.utils.UIHelper.traducirGrupoMuscular(this, grupoMuscular) : "—");
+        ((TextView) findViewById(R.id.tvStatMusculo)).setText(musculo);
         ((TextView) findViewById(R.id.tvStatNivel)).setText(
                 !isEmpty(dificultad) ? es.pmdm.gymprofit.utils.UIHelper.traducirNivel(this, dificultad) : "—");
         ((TextView) findViewById(R.id.tvStatCalorias)).setText(

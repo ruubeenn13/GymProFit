@@ -311,6 +311,46 @@ public class UIHelper {
         }
     }
 
+    /**
+     * Cuerpo humano (estilo Symmetry) con la zona trabajada marcada en naranja.
+     * Prioriza el músculo primario preciso (ej. "Aductores"); si no lo hay, cae
+     * al grupo muscular grueso. Devuelve el drawable de silueta correspondiente.
+     */
+    public static int cuerpoMuscular(String musculoPrimario, String grupo) {
+        if (musculoPrimario != null) {
+            switch (musculoPrimario.trim().toLowerCase()) {
+                case "abdominales":                 return R.drawable.ic_body_abs;
+                case "aductores":                   return R.drawable.ic_body_adductors;
+                case "abductores":                  return R.drawable.ic_body_gluteal;
+                case "bíceps": case "biceps":        return R.drawable.ic_body_biceps;
+                case "gemelos":                     return R.drawable.ic_body_calves;
+                case "pecho":                       return R.drawable.ic_body_chest;
+                case "antebrazos":                  return R.drawable.ic_body_forearm;
+                case "glúteos": case "gluteos":      return R.drawable.ic_body_gluteal;
+                case "isquiotibiales":              return R.drawable.ic_body_hamstring;
+                case "dorsales": case "espalda media": return R.drawable.ic_body_upperback;
+                case "lumbares":                    return R.drawable.ic_body_lowerback;
+                case "cuello":                      return R.drawable.ic_body_neck;
+                case "cuádriceps": case "cuadriceps": return R.drawable.ic_body_quadriceps;
+                case "hombros":                     return R.drawable.ic_body_deltoids;
+                case "trapecios":                   return R.drawable.ic_body_trapezius;
+                case "tríceps": case "triceps":     return R.drawable.ic_body_triceps;
+            }
+        }
+        // Fallback por grupo grueso (ejercicios wger sin músculo primario)
+        if (grupo != null) {
+            switch (grupo.toUpperCase()) {
+                case "PECHO":    return R.drawable.ic_body_chest;
+                case "ESPALDA":  return R.drawable.ic_body_upperback;
+                case "PIERNAS":  return R.drawable.ic_body_quadriceps;
+                case "HOMBROS":  return R.drawable.ic_body_deltoids;
+                case "BRAZOS":   return R.drawable.ic_body_biceps;
+                case "ABDOMEN": case "ABOMEN": return R.drawable.ic_body_abs;
+            }
+        }
+        return R.drawable.ic_body_full; // cardio / fullbody / desconocido
+    }
+
     /** Traduce el grupo muscular (PECHO/ESPALDA/.../FULLBODY) al idioma de la app. */
     public static String traducirGrupoMuscular(Context context, String grupo) {
         if (grupo == null) return "—";

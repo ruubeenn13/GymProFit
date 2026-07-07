@@ -21,8 +21,10 @@ public class EjercicioDTO implements Serializable {
     private String nombre;
     // Descripción libre
     private String descripcion;
-    // Grupo muscular principal trabajado
+    // Grupo muscular principal trabajado (grupo grueso, para el chip de filtro)
     private String grupoMuscular;
+    // Músculo primario preciso (ej. "Aductores"); se muestra en el detalle
+    private String musculoPrimario;
     // Nivel de dificultad
     private String dificultad;
     // URL de la imagen ilustrativa (fotograma 1)

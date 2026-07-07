@@ -60,12 +60,9 @@ public class EjercicioAdapter extends RecyclerView.Adapter<EjercicioAdapter.View
         Ejercicio ejercicio = ejercicios.get(position);
         holder.tvNombre.setText(ejercicio.getNombre());
         holder.tvDescripcion.setText(ejercicio.getDescripcion());
-        // Imagen del ejercicio (wger) con Glide; sin URL → icono genérico
-        com.bumptech.glide.Glide.with(holder.itemView.getContext())
-                .load(ejercicio.getImagenUrl())
-                .placeholder(R.drawable.ic_ejercicios)
-                .error(R.drawable.ic_ejercicios)
-                .into(holder.ivIcono);
+        // Cuerpo con la zona trabajada marcada (la demostración está en el detalle)
+        holder.ivIcono.setImageResource(es.pmdm.gymprofit.utils.UIHelper.cuerpoMuscular(
+                ejercicio.getMusculoPrimario(), ejercicio.getGrupoMuscular()));
         holder.chipDificultad.setText(es.pmdm.gymprofit.utils.UIHelper.traducirNivel(holder.itemView.getContext(), ejercicio.getDificultad())); // enum traducido
         holder.chipCalorias.setText(ejercicio.getCalorias() + " kcal");
         if (clickListener != null) {

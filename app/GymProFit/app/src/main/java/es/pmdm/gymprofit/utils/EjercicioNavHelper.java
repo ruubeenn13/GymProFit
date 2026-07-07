@@ -25,6 +25,7 @@ public final class EjercicioNavHelper {
         intent.putExtra("descripcion",     e.getDescripcion());
         intent.putExtra("instrucciones",   e.getInstrucciones());
         intent.putExtra("grupoMuscular",   e.getGrupoMuscular());
+        intent.putExtra("musculoPrimario", e.getMusculoPrimario());
         intent.putExtra("dificultad",      e.getDificultad());
         intent.putExtra("calorias",        e.getCalorias());
         intent.putExtra("equipoNecesario", e.getEquipoNecesario());

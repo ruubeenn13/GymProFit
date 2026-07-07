@@ -50,5 +50,7 @@ public interface EjercicioMapper {
             dto.setInstrucciones(ejercicio.getInstruccionesEn());
         if (ejercicio.getEquipoNecesarioEn() != null && !ejercicio.getEquipoNecesarioEn().isBlank())
             dto.setEquipoNecesario(ejercicio.getEquipoNecesarioEn());
+        if (ejercicio.getMusculoPrimarioEn() != null && !ejercicio.getMusculoPrimarioEn().isBlank())
+            dto.setMusculoPrimario(ejercicio.getMusculoPrimarioEn());
     }
 }

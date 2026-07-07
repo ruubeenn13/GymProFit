@@ -17,8 +17,10 @@ public class Ejercicio {
     private int id;
     // Nombre del ejercicio.
     private String nombre;
-    // Grupo muscular principal que trabaja el ejercicio.
+    // Grupo muscular principal que trabaja el ejercicio (grupo grueso, filtro).
     private String grupoMuscular;
+    // Músculo primario preciso (ej. "Aductores"); se muestra en el detalle.
+    private String musculoPrimario;
     // Nivel de dificultad (principiante, intermedio, avanzado...).
     private String dificultad;
     // Descripción general del ejercicio.
@@ -50,6 +52,9 @@ public class Ejercicio {
 
     public String getGrupoMuscular() { return grupoMuscular; }
     public void setGrupoMuscular(String grupoMuscular) { this.grupoMuscular = grupoMuscular; }
+
+    public String getMusculoPrimario() { return musculoPrimario; }
+    public void setMusculoPrimario(String musculoPrimario) { this.musculoPrimario = musculoPrimario; }
 
     public String getDificultad() { return dificultad; }
     public void setDificultad(String dificultad) { this.dificultad = dificultad; }

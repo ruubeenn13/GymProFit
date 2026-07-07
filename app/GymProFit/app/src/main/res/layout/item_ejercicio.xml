@@ -24,14 +24,14 @@
         android:padding="16dp"
         android:gravity="center_vertical">
 
-        <!-- Imagen del ejercicio (wger via Glide; fallback al icono genérico) -->
-        <com.google.android.material.imageview.ShapeableImageView
+        <!-- Cuerpo humano con la zona trabajada marcada en naranja (estilo
+             Symmetry). La demostración/animación real se ve al abrir el detalle. -->
+        <ImageView
             android:id="@+id/ivIconoEjercicio"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_ejercicios"
-            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"
+            android:layout_width="46dp"
+            android:layout_height="62dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_body_full"
             android:contentDescription="@null" />
 
         <LinearLayout

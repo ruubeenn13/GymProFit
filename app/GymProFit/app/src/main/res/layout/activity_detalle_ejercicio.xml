@@ -66,20 +66,21 @@
                 android:textColor="?attr/colorOnSurface"
                 android:alpha="0.5" />
 
-            <!-- Card vídeo: ocupa todo el card → esquinas clipean correctamente -->
+            <!-- Card demostración: fondo blanco (las demos de wger/FED lo tienen)
+                 y la imagen se muestra COMPLETA (fitCenter), nunca recortada. -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
-                android:layout_height="210dp"
+                android:layout_height="260dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="#000000"
+                app:cardBackgroundColor="#FFFFFF"
                 app:cardUseCompatPadding="false"
                 app:cardPreventCornerOverlap="false">
 
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="#000000">
+                    android:background="#FFFFFF">
 
                     <LinearLayout
                         android:id="@+id/layoutVideoPlaceholder"
@@ -92,7 +93,7 @@
                             android:layout_width="56dp"
                             android:layout_height="56dp"
                             android:src="@drawable/ic_ejercicios"
-                            android:tint="#55FFFFFF"
+                            android:tint="#33000000"
                             android:contentDescription="@null" />
 
                         <TextView
@@ -101,19 +102,20 @@
                             android:layout_marginTop="10dp"
                             android:text="@string/detalle_ejercicio_video_pronto"
                             android:textSize="13sp"
-                            android:textColor="#77FFFFFF" />
+                            android:textColor="#66000000" />
 
                     </LinearLayout>
 
-                    <!-- Imagen del ejercicio (wger via Glide); visible si hay URL y no hay vídeo local -->
+                    <!-- Demostración del ejercicio (Glide, 2 fotogramas animados);
+                         fitCenter = se ve el monigote completo, sin cortar. -->
                     <ImageView
                         android:id="@+id/ivImagenDetalle"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
+                        android:scaleType="fitCenter"
+                        android:padding="6dp"
                         android:visibility="gone"
                         android:contentDescription="@null" />
-
 
                 </FrameLayout>
 

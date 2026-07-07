@@ -35,10 +35,19 @@ public class Ejercicio {
     @Column(columnDefinition = "TEXT")
     private String descripcion;
 
-    // Grupo muscular principal trabajado.
+    // Grupo muscular principal trabajado (enum grueso, para el chip de filtro).
     @Enumerated(EnumType.STRING)
     @Column(name = "grupo_muscular", nullable = false)
     private GrupoMuscular grupoMuscular;
+
+    // Músculo primario REAL y preciso (free-exercise-db), ej. "Aductores",
+    // "Cuádriceps". Se muestra en el detalle; null = solo se conoce el grupo.
+    @Column(name = "musculo_primario", length = 60)
+    private String musculoPrimario;
+
+    // Traducción EN del músculo primario.
+    @Column(name = "musculo_primario_en", length = 60)
+    private String musculoPrimarioEn;
 
     // Nivel de dificultad del ejercicio.
     @Enumerated(EnumType.STRING)

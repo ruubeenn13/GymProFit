@@ -84,6 +84,75 @@ public class WgerImportService {
             GrupoMuscular.FULLBODY, 9, GrupoMuscular.PECHO, 6, GrupoMuscular.HOMBROS, 6,
             GrupoMuscular.BRAZOS, 5, GrupoMuscular.ABDOMEN, 5);
 
+    // ── free-exercise-db → catálogo propio (fuente PRECISA cuando hay match) ──
+    // Músculo primario FED → nombre ES mostrado en el detalle
+    private static final Map<String, String> MUSCULO_ES = new HashMap<>();
+    // Músculo primario FED → nombre EN mostrado en el detalle
+    private static final Map<String, String> MUSCULO_EN = new HashMap<>();
+    // Músculo primario FED → grupo grueso (para el chip de filtro)
+    private static final Map<String, GrupoMuscular> MUSCULO_GRUPO = new HashMap<>();
+    static {
+        reg("abdominals", "Abdominales", "Abs", GrupoMuscular.ABDOMEN);
+        reg("abductors", "Abductores", "Abductors", GrupoMuscular.PIERNAS);
+        reg("adductors", "Aductores", "Adductors", GrupoMuscular.PIERNAS);
+        reg("biceps", "Bíceps", "Biceps", GrupoMuscular.BRAZOS);
+        reg("calves", "Gemelos", "Calves", GrupoMuscular.PIERNAS);
+        reg("chest", "Pecho", "Chest", GrupoMuscular.PECHO);
+        reg("forearms", "Antebrazos", "Forearms", GrupoMuscular.BRAZOS);
+        reg("glutes", "Glúteos", "Glutes", GrupoMuscular.PIERNAS);
+        reg("hamstrings", "Isquiotibiales", "Hamstrings", GrupoMuscular.PIERNAS);
+        reg("lats", "Dorsales", "Lats", GrupoMuscular.ESPALDA);
+        reg("lower back", "Lumbares", "Lower back", GrupoMuscular.ESPALDA);
+        reg("middle back", "Espalda media", "Middle back", GrupoMuscular.ESPALDA);
+        reg("neck", "Cuello", "Neck", GrupoMuscular.HOMBROS);
+        reg("quadriceps", "Cuádriceps", "Quadriceps", GrupoMuscular.PIERNAS);
+        reg("shoulders", "Hombros", "Shoulders", GrupoMuscular.HOMBROS);
+        reg("traps", "Trapecios", "Traps", GrupoMuscular.ESPALDA);
+        reg("triceps", "Tríceps", "Triceps", GrupoMuscular.BRAZOS);
+    }
+    private static void reg(String fed, String es, String en, GrupoMuscular grupo) {
+        MUSCULO_ES.put(fed, es);
+        MUSCULO_EN.put(fed, en);
+        MUSCULO_GRUPO.put(fed, grupo);
+    }
+
+    // Músculo de wger (por id) → clave FED, para reutilizar MUSCULO_ES/EN/GRUPO.
+    // Es el fallback de precisión cuando el ejercicio no matchea free-exercise-db.
+    private static final Map<Integer, String> WGER_MUSCULO = new HashMap<>();
+    static {
+        WGER_MUSCULO.put(2, "shoulders");   // Anterior deltoid
+        WGER_MUSCULO.put(1, "biceps");      // Biceps brachii
+        WGER_MUSCULO.put(11, "hamstrings"); // Biceps femoris
+        WGER_MUSCULO.put(13, "biceps");     // Brachialis → brazo
+        WGER_MUSCULO.put(7, "calves");      // Gastrocnemius
+        WGER_MUSCULO.put(8, "glutes");      // Gluteus maximus
+        WGER_MUSCULO.put(12, "lats");       // Latissimus dorsi
+        WGER_MUSCULO.put(14, "abdominals"); // Obliquus externus
+        WGER_MUSCULO.put(4, "chest");       // Pectoralis major
+        WGER_MUSCULO.put(10, "quadriceps"); // Quadriceps femoris
+        WGER_MUSCULO.put(6, "abdominals");  // Rectus abdominis
+        WGER_MUSCULO.put(3, "chest");       // Serratus anterior → pecho aprox
+        WGER_MUSCULO.put(15, "calves");     // Soleus
+        WGER_MUSCULO.put(9, "traps");       // Trapezius
+        WGER_MUSCULO.put(5, "triceps");     // Triceps brachii
+    }
+
+    // Equipo FED → texto ES / EN (más limpio que el de wger)
+    private static final Map<String, String[]> EQUIPO_FED = new HashMap<>();
+    static {
+        EQUIPO_FED.put("body only", new String[]{"Sin equipo", "Bodyweight"});
+        EQUIPO_FED.put("machine", new String[]{"Máquina", "Machine"});
+        EQUIPO_FED.put("dumbbell", new String[]{"Mancuernas", "Dumbbell"});
+        EQUIPO_FED.put("barbell", new String[]{"Barra", "Barbell"});
+        EQUIPO_FED.put("cable", new String[]{"Polea", "Cable"});
+        EQUIPO_FED.put("kettlebells", new String[]{"Kettlebell", "Kettlebell"});
+        EQUIPO_FED.put("bands", new String[]{"Banda elástica", "Resistance band"});
+        EQUIPO_FED.put("medicine ball", new String[]{"Balón medicinal", "Medicine ball"});
+        EQUIPO_FED.put("exercise ball", new String[]{"Fitball", "Exercise ball"});
+        EQUIPO_FED.put("e-z curl bar", new String[]{"Barra Z", "EZ-bar"});
+        EQUIPO_FED.put("foam roll", new String[]{"Rodillo de espuma", "Foam roller"});
+    }
+
     private final IEjercicioRepository ejercicioRepository;
     private final ObjectMapper objectMapper;
     private final RestClient restClient;
@@ -93,8 +162,9 @@ public class WgerImportService {
     public record ImportResumen(int nuevos, int actualizados, int omitidos, int desactivados) {}
 
     // Ejercicio de free-exercise-db relevante para el cruce: 2 fotogramas,
-    // nivel real e instrucciones EN paso a paso.
-    private record FedEjercicio(String imagen1, String imagen2, String nivel, String instrucciones) {}
+    // nivel/músculo/equipo REALES e instrucciones EN paso a paso.
+    private record FedEjercicio(String imagen1, String imagen2, String nivel,
+                                String instrucciones, String musculo, String equipo) {}
 
     // Entrada del índice difuso: tokens del nombre FED + su ejercicio.
     private record FedTokens(Set<String> tokens, FedEjercicio ejercicio) {}
@@ -172,8 +242,12 @@ public class WgerImportService {
 
                 String img1 = FED_IMG_BASE + imagenes.get(0).asText();
                 String img2 = imagenes.size() > 1 ? FED_IMG_BASE + imagenes.get(1).asText() : null;
+                // Primer músculo primario (el más representativo)
+                JsonNode musculos = e.path("primaryMuscles");
+                String musculo = musculos.isArray() && !musculos.isEmpty() ? musculos.get(0).asText() : null;
                 FedEjercicio fed = new FedEjercicio(img1, img2,
-                        e.path("level").asText(""), instruccionesFed(e));
+                        e.path("level").asText(""), instruccionesFed(e),
+                        musculo, e.path("equipment").asText(null));
 
                 String nombre = e.path("name").asText("");
                 exacto.put(claveExacta(nombre), fed);
@@ -275,8 +349,17 @@ public class WgerImportService {
         String imagenWger = imagenPrincipal(ejercicioWger);
         if (fed == null && imagenWger == null) return Optional.empty();
 
-        GrupoMuscular grupo = CATEGORIA_GRUPO.getOrDefault(
-                ejercicioWger.path("category").path("name").asText(""), GrupoMuscular.FULLBODY);
+        // Músculo primario PRECISO por prioridad: (1) free-exercise-db si hay
+        // match, (2) el primer músculo de wger (más fino que la categoría),
+        // (3) null. El grupo grueso (chip) se deriva del músculo cuando existe.
+        String musculoKey = fed != null ? fed.musculo() : null;
+        if (musculoKey == null) musculoKey = musculoPrimarioWger(ejercicioWger);
+        String musculoEs = musculoKey != null ? MUSCULO_ES.get(musculoKey) : null;
+        String musculoEn = musculoKey != null ? MUSCULO_EN.get(musculoKey) : null;
+        GrupoMuscular grupo = (musculoKey != null && MUSCULO_GRUPO.containsKey(musculoKey))
+                ? MUSCULO_GRUPO.get(musculoKey)
+                : CATEGORIA_GRUPO.getOrDefault(
+                        ejercicioWger.path("category").path("name").asText(""), GrupoMuscular.FULLBODY);
 
         Ejercicio e = new Ejercicio();
         e.setWgerId(ejercicioWger.path("id").asInt());
@@ -292,17 +375,30 @@ public class WgerImportService {
         e.setInstrucciones(null);
         e.setInstruccionesEn(fed != null ? fed.instrucciones() : null);
         e.setGrupoMuscular(grupo);
+        e.setMusculoPrimario(musculoEs);
+        e.setMusculoPrimarioEn(musculoEn);
         e.setDificultad(fed != null && !fed.nivel().isBlank()
                 ? nivelFed(fed.nivel())
                 : estimarDificultad(ejercicioWger, grupo));
         e.setCaloriasQuemadas(KCAL_GRUPO.getOrDefault(grupo, 6));
-        e.setEquipoNecesario(equipo(ejercicioWger, true));
-        e.setEquipoNecesarioEn(equipo(ejercicioWger, false));
+        // Equipo PRECISO de FED si el mapeo lo cubre; si no, el de wger.
+        String[] equipoFed = fed != null && fed.equipo() != null ? EQUIPO_FED.get(fed.equipo()) : null;
+        e.setEquipoNecesario(equipoFed != null ? equipoFed[0] : equipo(ejercicioWger, true));
+        e.setEquipoNecesarioEn(equipoFed != null ? equipoFed[1] : equipo(ejercicioWger, false));
         // Preferencia: fotogramas FED (animables); si no, imagen estática wger
         e.setImagenUrl(fed != null ? fed.imagen1() : imagenWger);
         e.setImagenUrl2(fed != null ? fed.imagen2() : null);
         e.setActivo(true);
         return Optional.of(e);
+    }
+
+    // Primer músculo declarado por wger → clave FED (o null si wger no lo trae).
+    private String musculoPrimarioWger(JsonNode ejercicioWger) {
+        for (JsonNode m : ejercicioWger.path("muscles")) {
+            String key = WGER_MUSCULO.get(m.path("id").asInt());
+            if (key != null) return key;
+        }
+        return null;
     }
 
     // Nivel real de free-exercise-db → enum Dificultad propio.
@@ -370,6 +466,8 @@ public class WgerImportService {
         destino.setInstrucciones(origen.getInstrucciones());
         destino.setInstruccionesEn(origen.getInstruccionesEn());
         destino.setGrupoMuscular(origen.getGrupoMuscular());
+        destino.setMusculoPrimario(origen.getMusculoPrimario());
+        destino.setMusculoPrimarioEn(origen.getMusculoPrimarioEn());
         destino.setDificultad(origen.getDificultad());
         destino.setCaloriasQuemadas(origen.getCaloriasQuemadas());
         destino.setEquipoNecesario(origen.getEquipoNecesario());
