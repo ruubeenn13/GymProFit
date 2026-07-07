@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.widget.ImageViewCompat;
 
@@ -104,14 +105,15 @@ public class FloatingNavBar extends FrameLayout {
         textoActivo   = colorMarca;                 // el destino activo va en NARANJA (como Fitia en amarillo)
         textoInactivo = conAlfa(onSurface, 0xC2);
 
-        // Barra: vidrio naranja muy translúcido con reflejo blanco superior
+        // Barra: VIDRIO transparente con un TOQUE NARANJA CLARO (estética de la
+        // app) y brillo blanco superior + borde luminoso. Deja ver el fondo.
         GradientDrawable bg = new GradientDrawable(
                 GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[]{ conAlfa(0xFFFFFF, 0x1E), conAlfa(colorMarca, 0x22), conAlfa(colorMarca, 0x2E) });
+                new int[]{ conAlfa(0xFFFFFF, 0x16), conAlfa(colorMarca, 0x22), conAlfa(colorMarca, 0x30) });
         bg.setCornerRadius(dp(32));
-        bg.setStroke((int) dp(1), conAlfa(0xFFFFFF, 0x38));
+        bg.setStroke((int) dp(1), conAlfa(colorMarca, 0x40));
         setBackground(bg);
-        setElevation(dp(10));
+        setElevation(dp(8));
 
         // ¿Soporta la lente de vidrio? (RuntimeShader es API 33+)
         usarLente = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU;
@@ -190,7 +192,8 @@ public class FloatingNavBar extends FrameLayout {
             viaje.addUpdateListener(a -> {
                 float prev = actualCentro;
                 actualCentro = (float) a.getAnimatedValue();
-                estiramiento = clampF(1f + Math.abs(actualCentro - prev) / dp(26f), 1f, 1.13f);
+                // Deformación durante el viaje (moderada, en el sentido del avance)
+                estiramiento = clampF(1f + Math.abs(actualCentro - prev) / dp(22f), 1f, 1.22f);
                 render();
             });
             viaje.addListener(new android.animation.AnimatorListenerAdapter() {
@@ -264,19 +267,26 @@ public class FloatingNavBar extends FrameLayout {
     // Dibuja la lente/gota en su posición y deformación actuales.
     private void render() {
         if (getWidth() == 0 || actualCentro < 0) return;
-        if (usarLente && lente != null) {
-            float rx = (getWidth() / (float) N) * 0.60f * estiramiento;
-            float ry = getHeight() * 0.40f / estiramiento;
-            float cx = clampF(actualCentro, rx, getWidth() - rx);
-            lente.setFloatUniform("uCenter", cx, getHeight() / 2f);
-            lente.setFloatUniform("uRadius", rx, ry);
-            setRenderEffect(RenderEffect.createRuntimeShaderEffect(lente, "content"));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && lente != null) {
+            aplicarLente();
         } else {
             int w = ((LayoutParams) burbuja.getLayoutParams()).width;
             burbuja.setTranslationX(clampF(actualCentro - w / 2f, 0, getWidth() - w));
             burbuja.setScaleX(estiramiento);
             burbuja.setScaleY(1f / estiramiento);
         }
+    }
+
+    // Actualiza la lente de vidrio (radios casi iguales = BURBUJA redonda, no
+    // óvalo) y la aplica como RenderEffect. Solo API 33+.
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private void aplicarLente() {
+        float rx = getHeight() * 0.46f * estiramiento;   // ~ radio de burbuja
+        float ry = getHeight() * 0.44f / estiramiento;
+        float cx = clampF(actualCentro, rx, getWidth() - rx);
+        lente.setFloatUniform("uCenter", cx, getHeight() / 2f);
+        lente.setFloatUniform("uRadius", rx, ry);
+        setRenderEffect(RenderEffect.createRuntimeShaderEffect(lente, "content"));
     }
 
     private float objetivoGravedad(float x) {
@@ -295,17 +305,28 @@ public class FloatingNavBar extends FrameLayout {
 
     private float centro(int i) { return (getWidth() / (float) N) * i + (getWidth() / (float) N) / 2f; }
 
-    // Asienta la lente en la celda i con rebote elástico recuperando su forma.
+    // Al LLEGAR a la celda i: la lente entra con rebote de posición (overshoot)
+    // y hace un efecto JELLY (se aplasta y estira oscilando hasta calmarse).
     private void rebotar(int i) {
         if (getWidth() == 0) { colocar(i); render(); return; }
-        float destino = centro(i);
-        ValueAnimator a = ValueAnimator.ofFloat(actualCentro, destino);
-        a.setDuration(340);
-        a.setInterpolator(new OvershootInterpolator(2.2f));
+        final float inicio = actualCentro;
+        final float destino = centro(i);
+        final float estiraInicial = estiramiento;
+        final OvershootInterpolator pos = new OvershootInterpolator(2.2f);
+        ValueAnimator a = ValueAnimator.ofFloat(0f, 1f);
+        a.setDuration(520);
         a.addUpdateListener(v -> {
-            actualCentro = (float) v.getAnimatedValue();
-            estiramiento += (1f - estiramiento) * 0.25f;
+            float t = (float) v.getAnimatedValue();
+            actualCentro = inicio + (destino - inicio) * pos.getInterpolation(t);
+            // Wobble jelly: oscila alrededor de 1 y se amortigua (gota de agua)
+            float wobble = 0.20f * (float) Math.sin(t * Math.PI * 2.3) * (1f - t);
+            estiramiento = (1f + wobble) + (estiraInicial - 1f) * Math.max(0f, 1f - t * 3f);
             render();
+        });
+        a.addListener(new android.animation.AnimatorListenerAdapter() {
+            @Override public void onAnimationEnd(android.animation.Animator an) {
+                estiramiento = 1f; render();
+            }
         });
         a.start();
     }
