@@ -39,9 +39,7 @@
             android:layout_weight="1"
             android:layout_marginStart="8dp"
             android:text="@string/editar_perfil_titulo"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:textColor="?attr/colorOnSurface" />
+            android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
 
     </LinearLayout>
 
@@ -143,17 +141,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="6dp"
                 android:text="@string/perfil_nivel"
-                android:textSize="14sp"
-                android:textColor="?attr/colorOnSurface"
-                android:alpha="0.7" />
+                android:textSize="12sp"
+                android:textAllCaps="true"
+                android:letterSpacing="0.12"
+                android:textColor="?attr/colorOnSurfaceVariant" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="14dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/colorSurface"
                 app:strokeWidth="1dp"
                 app:strokeColor="?attr/colorOutline">
 
@@ -173,17 +169,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="6dp"
                 android:text="@string/perfil_objetivo"
-                android:textSize="14sp"
-                android:textColor="?attr/colorOnSurface"
-                android:alpha="0.7" />
+                android:textSize="12sp"
+                android:textAllCaps="true"
+                android:letterSpacing="0.12"
+                android:textColor="?attr/colorOnSurfaceVariant" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/colorSurface"
                 app:strokeWidth="1dp"
                 app:strokeColor="?attr/colorOutline">
 

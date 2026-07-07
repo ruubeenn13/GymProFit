@@ -39,9 +39,7 @@
             android:layout_weight="1"
             android:layout_marginStart="8dp"
             android:text="@string/sesiones_registrar"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:textColor="?attr/colorOnSurface" />
+            android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
 
     </LinearLayout>
 
@@ -61,18 +59,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/sesiones_rutina"
-                android:textSize="14sp"
-                android:textColor="?attr/colorOnSurface"
-                android:alpha="0.7"
+                android:textSize="13sp"
+                android:textAllCaps="true"
+                android:letterSpacing="0.12"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:layout_marginBottom="6dp" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/colorSurface">
+                android:layout_marginBottom="16dp">
 
                 <Spinner
                     android:id="@+id/spRutina"
@@ -109,10 +105,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:visibility="gone"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/colorSurface">
+                android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -135,15 +128,16 @@
                         android:layout_marginStart="10dp"
                         android:text="@string/sesiones_calorias_estimadas"
                         android:textSize="14sp"
-                        android:textColor="?attr/colorOnSurface"
-                        android:alpha="0.7" />
+                        android:textColor="?attr/colorOnSurfaceVariant" />
 
                     <TextView
                         android:id="@+id/tvCaloriasCalculadas"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
+                        android:fontFamily="@font/barlow_condensed"
+                        android:textFontWeight="700"
+                        android:includeFontPadding="false"
+                        android:textSize="28sp"
                         android:textColor="?attr/colorPrimary" />
 
                 </LinearLayout>
@@ -156,10 +150,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:visibility="gone"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/colorSurface">
+                android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -172,9 +163,7 @@
                         android:padding="16dp"
                         android:paddingBottom="8dp"
                         android:text="@string/sesiones_ejercicios_sesion"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:textColor="?attr/colorOnSurface" />
+                        android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rvEjercicios"
@@ -213,10 +202,7 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/colorSurface">
+                android:layout_marginBottom="24dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -228,9 +214,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/sesiones_valoracion"
-                        android:textSize="14sp"
-                        android:textColor="?attr/colorOnSurface"
-                        android:alpha="0.7"
+                        android:textSize="13sp"
+                        android:textAllCaps="true"
+                        android:letterSpacing="0.12"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:layout_marginBottom="8dp" />
 
                     <RatingBar

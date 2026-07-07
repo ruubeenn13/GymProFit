@@ -37,10 +37,7 @@
             <!-- Card resumen: nombre, descripción, nivel, duración y calorías -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/colorSurface">
+                android:layout_height="wrap_content">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -52,9 +49,7 @@
                         android:id="@+id/tvNombreDetalle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:textColor="?attr/colorOnSurface" />
+                        android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
 
                     <TextView
                         android:id="@+id/tvDescripcionDetalle"
@@ -62,8 +57,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:textSize="14sp"
-                        android:textColor="?attr/colorOnSurface"
-                        android:alpha="0.7" />
+                        android:textColor="?attr/colorOnSurfaceVariant" />
 
                     <View
                         android:layout_width="match_parent"
@@ -108,8 +102,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="6dp"
                             android:textSize="13sp"
-                            android:textColor="?attr/colorOnSurface"
-                            android:alpha="0.7" />
+                            android:textColor="?attr/colorOnSurfaceVariant" />
 
                         <View
                             android:layout_width="1dp"
@@ -132,8 +125,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="6dp"
                             android:textSize="13sp"
-                            android:textColor="?attr/colorOnSurface"
-                            android:alpha="0.7" />
+                            android:textColor="?attr/colorOnSurfaceVariant" />
 
                     </LinearLayout>
 
@@ -147,9 +139,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="8dp"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="?attr/colorOnSurface" />
+                android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
 
             <!-- Listado de ejercicios de la rutina -->
             <androidx.recyclerview.widget.RecyclerView

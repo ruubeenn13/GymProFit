@@ -28,9 +28,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/onboarding_resumen_titulo"
-                android:textSize="26sp"
-                android:textStyle="bold"
-                android:textColor="?attr/colorOnSurface" />
+                android:textAppearance="@style/TextAppearance.GymProFit.Display" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -39,17 +37,13 @@
                 android:layout_marginBottom="24dp"
                 android:text="@string/onboarding_resumen_desc"
                 android:textSize="14sp"
-                android:textColor="?attr/colorOnSurface"
-                android:alpha="0.6" />
+                android:textColor="?attr/colorOnSurfaceVariant" />
 
             <!-- Card principal: objetivo + calorías -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/colorSurface">
+                android:layout_marginBottom="12dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -76,17 +70,16 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/onboarding_resumen_objetivo"
                                 android:textSize="12sp"
-                                android:textColor="?attr/colorOnSurface"
-                                android:alpha="0.6" />
+                                android:textAllCaps="true"
+                                android:letterSpacing="0.12"
+                                android:textColor="?attr/colorOnSurfaceVariant" />
 
                             <TextView
                                 android:id="@+id/tvResumenObjetivo"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:textSize="16sp"
-                                android:textStyle="bold"
-                                android:textColor="?attr/colorOnSurface" />
+                                android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
 
                         </LinearLayout>
 
@@ -113,7 +106,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="52sp"
-                            android:textStyle="bold"
+                            android:fontFamily="@font/barlow_condensed"
+                            android:textFontWeight="700"
+                            android:includeFontPadding="false"
                             android:textColor="?attr/colorOnSurface"
                             android:lineSpacingMultiplier="1" />
 
@@ -124,8 +119,7 @@
                             android:layout_marginBottom="10dp"
                             android:text="@string/onboarding_resumen_kcal_dia"
                             android:textSize="14sp"
-                            android:textColor="?attr/colorOnSurface"
-                            android:alpha="0.6" />
+                            android:textColor="?attr/colorOnSurfaceVariant" />
 
                     </LinearLayout>
 
@@ -145,8 +139,7 @@
                         android:layout_marginTop="6dp"
                         android:text="@string/onboarding_resumen_meta"
                         android:textSize="11sp"
-                        android:textColor="?attr/colorOnSurface"
-                        android:alpha="0.5" />
+                        android:textColor="?attr/colorOnSurfaceVariant" />
 
                 </LinearLayout>
 
@@ -164,23 +157,24 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginEnd="6dp"
-                    app:cardCornerRadius="14dp"
-                    app:cardElevation="0dp"
-                    app:cardBackgroundColor="?attr/colorSurface">
+                    android:layout_marginEnd="6dp">
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:orientation="vertical" android:padding="14dp" android:gravity="center">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="@string/nutricion_proteinas" android:textSize="11sp"
-                            android:textColor="?attr/colorOnSurface" android:alpha="0.6"
+                            android:text="@string/nutricion_proteinas" android:textSize="12sp"
+                            android:textAllCaps="true" android:letterSpacing="0.12"
+                            android:textColor="?attr/colorOnSurfaceVariant"
                             android:layout_marginBottom="6dp" />
                         <TextView android:id="@+id/tvResumenProteinas"
                             android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:textSize="22sp" android:textStyle="bold"
+                            android:textSize="32sp" android:fontFamily="@font/barlow_condensed"
+                            android:textFontWeight="700" android:includeFontPadding="false"
                             android:textColor="?attr/colorOnSurface" android:layout_marginBottom="6dp" />
                         <ProgressBar
                             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                             android:layout_width="match_parent" android:layout_height="3dp"
+                            android:progressTint="?attr/colorPrimary"
+                            android:progressBackgroundTint="?attr/colorSurfaceVariant"
                             android:progress="0" android:max="100" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -191,23 +185,24 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="6dp"
-                    android:layout_marginEnd="6dp"
-                    app:cardCornerRadius="14dp"
-                    app:cardElevation="0dp"
-                    app:cardBackgroundColor="?attr/colorSurface">
+                    android:layout_marginEnd="6dp">
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:orientation="vertical" android:padding="14dp" android:gravity="center">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="@string/nutricion_carbohidratos_corto" android:textSize="11sp"
-                            android:textColor="?attr/colorOnSurface" android:alpha="0.6"
+                            android:text="@string/nutricion_carbohidratos_corto" android:textSize="12sp"
+                            android:textAllCaps="true" android:letterSpacing="0.12"
+                            android:textColor="?attr/colorOnSurfaceVariant"
                             android:layout_marginBottom="6dp" />
                         <TextView android:id="@+id/tvResumenCarbos"
                             android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:textSize="22sp" android:textStyle="bold"
+                            android:textSize="32sp" android:fontFamily="@font/barlow_condensed"
+                            android:textFontWeight="700" android:includeFontPadding="false"
                             android:textColor="?attr/colorOnSurface" android:layout_marginBottom="6dp" />
                         <ProgressBar
                             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                             android:layout_width="match_parent" android:layout_height="3dp"
+                            android:progressTint="?attr/colorPrimary"
+                            android:progressBackgroundTint="?attr/colorSurfaceVariant"
                             android:progress="0" android:max="100" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -217,23 +212,24 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginStart="6dp"
-                    app:cardCornerRadius="14dp"
-                    app:cardElevation="0dp"
-                    app:cardBackgroundColor="?attr/colorSurface">
+                    android:layout_marginStart="6dp">
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:orientation="vertical" android:padding="14dp" android:gravity="center">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="@string/nutricion_grasas" android:textSize="11sp"
-                            android:textColor="?attr/colorOnSurface" android:alpha="0.6"
+                            android:text="@string/nutricion_grasas" android:textSize="12sp"
+                            android:textAllCaps="true" android:letterSpacing="0.12"
+                            android:textColor="?attr/colorOnSurfaceVariant"
                             android:layout_marginBottom="6dp" />
                         <TextView android:id="@+id/tvResumenGrasas"
                             android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:textSize="22sp" android:textStyle="bold"
+                            android:textSize="32sp" android:fontFamily="@font/barlow_condensed"
+                            android:textFontWeight="700" android:includeFontPadding="false"
                             android:textColor="?attr/colorOnSurface" android:layout_marginBottom="6dp" />
                         <ProgressBar
                             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                             android:layout_width="match_parent" android:layout_height="3dp"
+                            android:progressTint="?attr/colorPrimary"
+                            android:progressBackgroundTint="?attr/colorSurfaceVariant"
                             android:progress="0" android:max="100" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -243,10 +239,7 @@
             <!-- Card agua horizontal -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/colorSurface">
+                android:layout_height="wrap_content">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="horizontal" android:padding="16dp" android:gravity="center_vertical">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -255,11 +248,13 @@
                         android:layout_weight="1" android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:text="@string/onboarding_resumen_agua" android:textSize="12sp"
-                            android:textColor="?attr/colorOnSurface" android:alpha="0.6" />
+                            android:textAllCaps="true" android:letterSpacing="0.12"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
                         <TextView android:id="@+id/tvResumenAgua"
                             android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp" android:textSize="20sp"
-                            android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
+                            android:layout_marginTop="2dp" android:textSize="32sp"
+                            android:fontFamily="@font/barlow_condensed" android:textFontWeight="700"
+                            android:includeFontPadding="false" android:textColor="?attr/colorOnSurface" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -277,10 +272,10 @@
         <!-- Indicador paso 5/5 -->
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
             android:orientation="horizontal" android:gravity="center" android:layout_marginBottom="16dp">
-            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorOnSurface" android:alpha="0.2" android:layout_marginEnd="5dp" />
-            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorOnSurface" android:alpha="0.2" android:layout_marginEnd="5dp" />
-            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorOnSurface" android:alpha="0.2" android:layout_marginEnd="5dp" />
-            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorOnSurface" android:alpha="0.2" android:layout_marginEnd="5dp" />
+            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorSurfaceVariant" android:layout_marginEnd="5dp" />
+            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorSurfaceVariant" android:layout_marginEnd="5dp" />
+            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorSurfaceVariant" android:layout_marginEnd="5dp" />
+            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorSurfaceVariant" android:layout_marginEnd="5dp" />
             <View android:layout_width="32dp" android:layout_height="4dp" android:background="?attr/colorPrimary" />
         </LinearLayout>
 

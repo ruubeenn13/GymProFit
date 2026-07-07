@@ -42,9 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/onboarding_medidas_titulo"
-                android:textSize="26sp"
-                android:textStyle="bold"
-                android:textColor="?attr/colorOnSurface" />
+                android:textAppearance="@style/TextAppearance.GymProFit.Display" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -53,8 +51,7 @@
                 android:layout_marginBottom="32dp"
                 android:text="@string/onboarding_medidas_desc"
                 android:textSize="14sp"
-                android:textColor="?attr/colorOnSurface"
-                android:alpha="0.6" />
+                android:textColor="?attr/colorOnSurfaceVariant" />
 
             <!-- Peso - manteniendo el paddingStart/End del usuario -->
             <com.google.android.material.textfield.TextInputLayout
@@ -112,9 +109,10 @@
                 android:layout_marginTop="28dp"
                 android:layout_marginBottom="10dp"
                 android:text="@string/onboarding_actividad_label"
-                android:textSize="14sp"
-                android:textColor="?attr/colorOnSurface"
-                android:alpha="0.7" />
+                android:textSize="12sp"
+                android:textAllCaps="true"
+                android:letterSpacing="0.12"
+                android:textColor="?attr/colorOnSurfaceVariant" />
 
             <!-- ChipGroup en scroll horizontal para que quepan todos en una línea -->
             <HorizontalScrollView
@@ -196,11 +194,11 @@
             android:orientation="horizontal"
             android:gravity="center"
             android:layout_marginBottom="16dp">
-            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorOnSurface" android:alpha="0.2" android:layout_marginEnd="5dp" />
-            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorOnSurface" android:alpha="0.2" android:layout_marginEnd="5dp" />
+            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorSurfaceVariant" android:layout_marginEnd="5dp" />
+            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorSurfaceVariant" android:layout_marginEnd="5dp" />
             <View android:layout_width="32dp" android:layout_height="4dp" android:background="?attr/colorPrimary" android:layout_marginEnd="5dp" />
-            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorOnSurface" android:alpha="0.2" android:layout_marginEnd="5dp" />
-            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorOnSurface" android:alpha="0.2" />
+            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorSurfaceVariant" android:layout_marginEnd="5dp" />
+            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorSurfaceVariant" />
         </LinearLayout>
 
         <!-- Botones de navegación anterior/siguiente -->

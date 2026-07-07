@@ -73,8 +73,7 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/mediciones_sin_mediciones"
                 android:textSize="16sp"
-                android:textColor="?attr/colorOnSurface"
-                android:alpha="0.6"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:gravity="center" />
 
             <TextView
@@ -83,8 +82,7 @@
                 android:layout_marginTop="8dp"
                 android:text="@string/medicion_sin_datos_subtitulo"
                 android:textSize="13sp"
-                android:textColor="?attr/colorOnSurface"
-                android:alpha="0.4"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:gravity="center" />
 
         </LinearLayout>
@@ -109,15 +107,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
                     android:textSize="13sp"
-                    android:textColor="?attr/colorOnSurface"
-                    android:alpha="0.5" />
+                    android:textColor="?attr/colorOnSurfaceVariant" />
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="0dp"
-                    app:cardBackgroundColor="?attr/colorSurface">
+                    android:layout_height="wrap_content">
 
                     <LinearLayout
                         android:layout_width="match_parent"

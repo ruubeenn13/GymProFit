@@ -38,9 +38,7 @@
             android:layout_weight="1"
             android:layout_marginStart="8dp"
             android:text="@string/admin_titulo"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="?attr/colorOnSurface" />
+            android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
 
         <ImageView
             android:id="@+id/btnMenuOpciones"
@@ -71,9 +69,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/admin_estadisticas"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="?attr/colorOnSurface"
+                android:textAppearance="@style/TextAppearance.GymProFit.Headline"
                 android:layout_marginBottom="12dp" />
 
             <!-- Fila 1: total usuarios + activos -->
@@ -88,8 +84,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginEnd="6dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="0dp"
+                    app:cardCornerRadius="22dp"
+                    app:strokeWidth="0dp"
                     app:cardBackgroundColor="?attr/colorPrimary">
 
                     <LinearLayout
@@ -104,15 +100,19 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="—"
-                            android:textSize="28sp"
-                            android:textStyle="bold"
+                            android:fontFamily="@font/barlow_condensed"
+                            android:textFontWeight="700"
+                            android:includeFontPadding="false"
+                            android:textSize="34sp"
                             android:textColor="?attr/colorOnPrimary" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/admin_total_usuarios"
-                            android:textSize="11sp"
+                            android:textSize="12sp"
+                            android:textAllCaps="true"
+                            android:letterSpacing="0.12"
                             android:textColor="?attr/colorOnPrimary"
                             android:alpha="0.8" />
 
@@ -123,10 +123,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginStart="6dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="0dp"
-                    app:cardBackgroundColor="?attr/colorSurface">
+                    android:layout_marginStart="6dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -140,17 +137,20 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="—"
-                            android:textSize="28sp"
-                            android:textStyle="bold"
+                            android:fontFamily="@font/barlow_condensed"
+                            android:textFontWeight="700"
+                            android:includeFontPadding="false"
+                            android:textSize="34sp"
                             android:textColor="?attr/colorOnSurface" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/admin_usuarios_activos"
-                            android:textSize="11sp"
-                            android:textColor="?attr/colorOnSurface"
-                            android:alpha="0.6" />
+                            android:textSize="12sp"
+                            android:textAllCaps="true"
+                            android:letterSpacing="0.12"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
 
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -168,10 +168,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginEnd="6dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="0dp"
-                    app:cardBackgroundColor="?attr/colorSurface">
+                    android:layout_marginEnd="6dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -185,17 +182,20 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="—"
-                            android:textSize="28sp"
-                            android:textStyle="bold"
+                            android:fontFamily="@font/barlow_condensed"
+                            android:textFontWeight="700"
+                            android:includeFontPadding="false"
+                            android:textSize="34sp"
                             android:textColor="?attr/colorOnSurface" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/admin_total_sesiones"
-                            android:textSize="11sp"
-                            android:textColor="?attr/colorOnSurface"
-                            android:alpha="0.6" />
+                            android:textSize="12sp"
+                            android:textAllCaps="true"
+                            android:letterSpacing="0.12"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
 
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -204,10 +204,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginStart="6dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="0dp"
-                    app:cardBackgroundColor="?attr/colorSurface">
+                    android:layout_marginStart="6dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -221,17 +218,20 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="—"
-                            android:textSize="28sp"
-                            android:textStyle="bold"
+                            android:fontFamily="@font/barlow_condensed"
+                            android:textFontWeight="700"
+                            android:includeFontPadding="false"
+                            android:textSize="34sp"
                             android:textColor="?attr/colorOnSurface" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/admin_sesiones_hoy"
-                            android:textSize="11sp"
-                            android:textColor="?attr/colorOnSurface"
-                            android:alpha="0.6" />
+                            android:textSize="12sp"
+                            android:textAllCaps="true"
+                            android:letterSpacing="0.12"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
 
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -249,10 +249,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginEnd="6dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="0dp"
-                    app:cardBackgroundColor="?attr/colorSurface">
+                    android:layout_marginEnd="6dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -266,17 +263,20 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="—"
-                            android:textSize="28sp"
-                            android:textStyle="bold"
+                            android:fontFamily="@font/barlow_condensed"
+                            android:textFontWeight="700"
+                            android:includeFontPadding="false"
+                            android:textSize="34sp"
                             android:textColor="?attr/colorOnSurface" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/admin_rutinas_predefinidas"
-                            android:textSize="11sp"
-                            android:textColor="?attr/colorOnSurface"
-                            android:alpha="0.6" />
+                            android:textSize="12sp"
+                            android:textAllCaps="true"
+                            android:letterSpacing="0.12"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
 
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -285,10 +285,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginStart="6dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="0dp"
-                    app:cardBackgroundColor="?attr/colorSurface">
+                    android:layout_marginStart="6dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -302,17 +299,20 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="—"
-                            android:textSize="28sp"
-                            android:textStyle="bold"
+                            android:fontFamily="@font/barlow_condensed"
+                            android:textFontWeight="700"
+                            android:includeFontPadding="false"
+                            android:textSize="34sp"
                             android:textColor="?attr/colorOnSurface" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/admin_ejercicios_activos"
-                            android:textSize="11sp"
-                            android:textColor="?attr/colorOnSurface"
-                            android:alpha="0.6" />
+                            android:textSize="12sp"
+                            android:textAllCaps="true"
+                            android:letterSpacing="0.12"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
 
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -324,9 +324,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/admin_secciones"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="?attr/colorOnSurface"
+                android:textAppearance="@style/TextAppearance.GymProFit.Headline"
                 android:layout_marginBottom="12dp" />
 
             <!-- Card usuarios -->
@@ -336,10 +334,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:clickable="true"
-                android:focusable="true"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/colorSurface">
+                android:focusable="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -382,10 +377,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:clickable="true"
-                android:focusable="true"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/colorSurface">
+                android:focusable="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -428,10 +420,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:clickable="true"
-                android:focusable="true"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/colorSurface">
+                android:focusable="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -474,10 +463,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:clickable="true"
-                android:focusable="true"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/colorSurface">
+                android:focusable="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"

@@ -38,9 +38,7 @@
             android:layout_weight="1"
             android:layout_marginStart="8dp"
             android:text="@string/admin_alimentos_titulo"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="?attr/colorOnSurface" />
+            android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
 
         <ImageView
             android:id="@+id/btnMenuOpciones"

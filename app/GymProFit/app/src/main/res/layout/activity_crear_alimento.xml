@@ -35,9 +35,7 @@
             android:layout_weight="1"
             android:layout_marginStart="8dp"
             android:text="@string/crear_alimento_titulo"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:textColor="?attr/colorOnSurface" />
+            android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
 
     </LinearLayout>
 
@@ -75,7 +73,9 @@
                 android:layout_height="wrap_content"
                 android:text="@string/crear_alimento_categoria_label"
                 android:textSize="13sp"
-                android:alpha="0.7"
+                android:textAllCaps="true"
+                android:letterSpacing="0.12"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:layout_marginBottom="4dp" />
 
             <!-- Categoría spinner -->

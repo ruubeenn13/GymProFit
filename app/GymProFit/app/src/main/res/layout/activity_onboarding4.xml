@@ -43,9 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/onboarding_objetivo_titulo"
-                android:textSize="26sp"
-                android:textStyle="bold"
-                android:textColor="?attr/colorOnSurface" />
+                android:textAppearance="@style/TextAppearance.GymProFit.Display" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -54,8 +52,7 @@
                 android:layout_marginBottom="20dp"
                 android:text="@string/onboarding_objetivo_desc"
                 android:textSize="14sp"
-                android:textColor="?attr/colorOnSurface"
-                android:alpha="0.6" />
+                android:textColor="?attr/colorOnSurfaceVariant" />
 
             <!-- PERDER_PESO -->
             <com.google.android.material.card.MaterialCardView
@@ -66,9 +63,6 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/colorSurface"
                 app:strokeWidth="2dp"
                 app:strokeColor="?attr/colorOutlineVariant">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -81,7 +75,7 @@
                             android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="2dp" android:text="@string/objetivo_perder_peso_desc"
-                            android:textSize="12sp" android:textColor="?attr/colorOnSurface" android:alpha="0.6" />
+                            android:textSize="12sp" android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
                     <ImageView android:id="@+id/ivCheckPerderPeso" android:layout_width="20dp"
                         android:layout_height="20dp" android:src="@drawable/ic_check"
@@ -98,9 +92,6 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/colorSurface"
                 app:strokeWidth="2dp"
                 app:strokeColor="?attr/colorOutlineVariant">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -113,7 +104,7 @@
                             android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="2dp" android:text="@string/objetivo_ganar_musculo_desc"
-                            android:textSize="12sp" android:textColor="?attr/colorOnSurface" android:alpha="0.6" />
+                            android:textSize="12sp" android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
                     <ImageView android:id="@+id/ivCheckGanarMusculo" android:layout_width="20dp"
                         android:layout_height="20dp" android:src="@drawable/ic_check"
@@ -130,9 +121,6 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/colorSurface"
                 app:strokeWidth="2dp"
                 app:strokeColor="?attr/colorOutlineVariant">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -145,7 +133,7 @@
                             android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="2dp" android:text="@string/objetivo_mantener_desc"
-                            android:textSize="12sp" android:textColor="?attr/colorOnSurface" android:alpha="0.6" />
+                            android:textSize="12sp" android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
                     <ImageView android:id="@+id/ivCheckMantener" android:layout_width="20dp"
                         android:layout_height="20dp" android:src="@drawable/ic_check"
@@ -162,9 +150,6 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/colorSurface"
                 app:strokeWidth="2dp"
                 app:strokeColor="?attr/colorOutlineVariant">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -177,7 +162,7 @@
                             android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="2dp" android:text="@string/objetivo_resistencia_desc"
-                            android:textSize="12sp" android:textColor="?attr/colorOnSurface" android:alpha="0.6" />
+                            android:textSize="12sp" android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
                     <ImageView android:id="@+id/ivCheckResistencia" android:layout_width="20dp"
                         android:layout_height="20dp" android:src="@drawable/ic_check"
@@ -194,9 +179,6 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/colorSurface"
                 app:strokeWidth="2dp"
                 app:strokeColor="?attr/colorOutlineVariant">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -209,7 +191,7 @@
                             android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="2dp" android:text="@string/objetivo_fuerza_desc"
-                            android:textSize="12sp" android:textColor="?attr/colorOnSurface" android:alpha="0.6" />
+                            android:textSize="12sp" android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
                     <ImageView android:id="@+id/ivCheckFuerza" android:layout_width="20dp"
                         android:layout_height="20dp" android:src="@drawable/ic_check"
@@ -226,9 +208,6 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/colorSurface"
                 app:strokeWidth="2dp"
                 app:strokeColor="?attr/colorOutlineVariant">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -241,7 +220,7 @@
                             android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="2dp" android:text="@string/objetivo_reducir_grasa_desc"
-                            android:textSize="12sp" android:textColor="?attr/colorOnSurface" android:alpha="0.6" />
+                            android:textSize="12sp" android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
                     <ImageView android:id="@+id/ivCheckReducirGrasa" android:layout_width="20dp"
                         android:layout_height="20dp" android:src="@drawable/ic_check"
@@ -258,9 +237,6 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/colorSurface"
                 app:strokeWidth="2dp"
                 app:strokeColor="?attr/colorOutlineVariant">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -273,7 +249,7 @@
                             android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="2dp" android:text="@string/objetivo_flexibilidad_desc"
-                            android:textSize="12sp" android:textColor="?attr/colorOnSurface" android:alpha="0.6" />
+                            android:textSize="12sp" android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
                     <ImageView android:id="@+id/ivCheckFlexibilidad" android:layout_width="20dp"
                         android:layout_height="20dp" android:src="@drawable/ic_check"
@@ -290,9 +266,6 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/colorSurface"
                 app:strokeWidth="2dp"
                 app:strokeColor="?attr/colorOutlineVariant">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -305,7 +278,7 @@
                             android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="2dp" android:text="@string/objetivo_velocidad_desc"
-                            android:textSize="12sp" android:textColor="?attr/colorOnSurface" android:alpha="0.6" />
+                            android:textSize="12sp" android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
                     <ImageView android:id="@+id/ivCheckVelocidad" android:layout_width="20dp"
                         android:layout_height="20dp" android:src="@drawable/ic_check"
@@ -322,9 +295,6 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/colorSurface"
                 app:strokeWidth="2dp"
                 app:strokeColor="?attr/colorOutlineVariant">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -337,7 +307,7 @@
                             android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="2dp" android:text="@string/objetivo_aumentar_calorias_desc"
-                            android:textSize="12sp" android:textColor="?attr/colorOnSurface" android:alpha="0.6" />
+                            android:textSize="12sp" android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
                     <ImageView android:id="@+id/ivCheckAumentarCalorias" android:layout_width="20dp"
                         android:layout_height="20dp" android:src="@drawable/ic_check"
@@ -354,9 +324,6 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/colorSurface"
                 app:strokeWidth="2dp"
                 app:strokeColor="?attr/colorOutlineVariant">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -369,7 +336,7 @@
                             android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="2dp" android:text="@string/objetivo_movilidad_desc"
-                            android:textSize="12sp" android:textColor="?attr/colorOnSurface" android:alpha="0.6" />
+                            android:textSize="12sp" android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
                     <ImageView android:id="@+id/ivCheckMovilidad" android:layout_width="20dp"
                         android:layout_height="20dp" android:src="@drawable/ic_check"
@@ -390,11 +357,11 @@
         <!-- Indicador paso 4/5 -->
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
             android:orientation="horizontal" android:gravity="center" android:layout_marginBottom="16dp">
-            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorOnSurface" android:alpha="0.2" android:layout_marginEnd="5dp" />
-            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorOnSurface" android:alpha="0.2" android:layout_marginEnd="5dp" />
-            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorOnSurface" android:alpha="0.2" android:layout_marginEnd="5dp" />
+            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorSurfaceVariant" android:layout_marginEnd="5dp" />
+            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorSurfaceVariant" android:layout_marginEnd="5dp" />
+            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorSurfaceVariant" android:layout_marginEnd="5dp" />
             <View android:layout_width="32dp" android:layout_height="4dp" android:background="?attr/colorPrimary" android:layout_marginEnd="5dp" />
-            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorOnSurface" android:alpha="0.2" />
+            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorSurfaceVariant" />
         </LinearLayout>
 
         <!-- Botones de navegación anterior/siguiente -->

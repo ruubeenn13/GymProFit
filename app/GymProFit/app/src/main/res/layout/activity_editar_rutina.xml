@@ -81,9 +81,10 @@
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="10dp"
                 android:text="@string/rutinas_nivel_label"
-                android:textSize="14sp"
-                android:textColor="?attr/colorOnSurface"
-                android:alpha="0.7" />
+                android:textSize="12sp"
+                android:textAllCaps="true"
+                android:letterSpacing="0.12"
+                android:textColor="?attr/colorOnSurfaceVariant" />
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipGroupNivelEditar"
@@ -150,9 +151,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="?attr/colorOnSurface" />
+                android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvEjerciciosEditar"

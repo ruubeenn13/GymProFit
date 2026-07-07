@@ -39,9 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginStart="8dp"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:textColor="?attr/colorOnSurface" />
+            android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
 
     </LinearLayout>
 
@@ -50,10 +48,7 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="12dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="0dp"
-        app:cardBackgroundColor="?attr/colorSurface">
+        android:layout_margin="12dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -66,8 +61,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0 kcal"
-                android:textSize="20sp"
-                android:textStyle="bold"
+                android:fontFamily="@font/barlow_condensed"
+                android:textFontWeight="700"
+                android:includeFontPadding="false"
+                android:textSize="30sp"
                 android:textColor="?attr/colorPrimary" />
 
             <LinearLayout
@@ -83,8 +80,7 @@
                     android:layout_weight="1"
                     android:text="0g prot"
                     android:textSize="13sp"
-                    android:textColor="?attr/colorOnSurface"
-                    android:alpha="0.75" />
+                    android:textColor="?attr/colorOnSurfaceVariant" />
 
                 <TextView
                     android:id="@+id/tvTotalCarbos"
@@ -93,8 +89,7 @@
                     android:layout_weight="1"
                     android:text="0g carbos"
                     android:textSize="13sp"
-                    android:textColor="?attr/colorOnSurface"
-                    android:alpha="0.75"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:gravity="center" />
 
                 <TextView
@@ -104,8 +99,7 @@
                     android:layout_weight="1"
                     android:text="0g grasas"
                     android:textSize="13sp"
-                    android:textColor="?attr/colorOnSurface"
-                    android:alpha="0.75"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:gravity="end" />
 
             </LinearLayout>
@@ -128,8 +122,7 @@
             android:layout_gravity="center"
             android:text="@string/comida_sin_alimentos"
             android:textSize="15sp"
-            android:textColor="?attr/colorOnSurface"
-            android:alpha="0.5"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:gravity="center"
             android:padding="24dp"
             android:visibility="gone" />

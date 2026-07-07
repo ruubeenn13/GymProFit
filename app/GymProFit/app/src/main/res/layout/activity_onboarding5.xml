@@ -41,9 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/onboarding_nivel_titulo"
-                android:textSize="26sp"
-                android:textStyle="bold"
-                android:textColor="?attr/colorOnSurface" />
+                android:textAppearance="@style/TextAppearance.GymProFit.Display" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -52,8 +50,7 @@
                 android:layout_marginBottom="20dp"
                 android:text="@string/onboarding_nivel_desc"
                 android:textSize="14sp"
-                android:textColor="?attr/colorOnSurface"
-                android:alpha="0.6" />
+                android:textColor="?attr/colorOnSurfaceVariant" />
 
             <!-- PRINCIPIANTE -->
             <com.google.android.material.card.MaterialCardView
@@ -64,9 +61,6 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/colorSurface"
                 app:strokeWidth="2dp"
                 app:strokeColor="?attr/colorOutlineVariant">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -79,7 +73,7 @@
                             android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="2dp" android:text="@string/nivel_principiante_desc"
-                            android:textSize="12sp" android:textColor="?attr/colorOnSurface" android:alpha="0.6" />
+                            android:textSize="12sp" android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
                     <ImageView android:id="@+id/ivCheckPrincipiante" android:layout_width="20dp"
                         android:layout_height="20dp" android:src="@drawable/ic_check"
@@ -96,9 +90,6 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/colorSurface"
                 app:strokeWidth="2dp"
                 app:strokeColor="?attr/colorOutlineVariant">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -111,7 +102,7 @@
                             android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="2dp" android:text="@string/nivel_intermedio_desc"
-                            android:textSize="12sp" android:textColor="?attr/colorOnSurface" android:alpha="0.6" />
+                            android:textSize="12sp" android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
                     <ImageView android:id="@+id/ivCheckIntermedio" android:layout_width="20dp"
                         android:layout_height="20dp" android:src="@drawable/ic_check"
@@ -128,9 +119,6 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/colorSurface"
                 app:strokeWidth="2dp"
                 app:strokeColor="?attr/colorOutlineVariant">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -143,7 +131,7 @@
                             android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="2dp" android:text="@string/nivel_avanzado_desc"
-                            android:textSize="12sp" android:textColor="?attr/colorOnSurface" android:alpha="0.6" />
+                            android:textSize="12sp" android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
                     <ImageView android:id="@+id/ivCheckAvanzado" android:layout_width="20dp"
                         android:layout_height="20dp" android:src="@drawable/ic_check"
@@ -160,9 +148,6 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/colorSurface"
                 app:strokeWidth="2dp"
                 app:strokeColor="?attr/colorOutlineVariant">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -175,7 +160,7 @@
                             android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="2dp" android:text="@string/nivel_experto_desc"
-                            android:textSize="12sp" android:textColor="?attr/colorOnSurface" android:alpha="0.6" />
+                            android:textSize="12sp" android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
                     <ImageView android:id="@+id/ivCheckExperto" android:layout_width="20dp"
                         android:layout_height="20dp" android:src="@drawable/ic_check"
@@ -196,10 +181,10 @@
         <!-- Indicador paso 5/5 -->
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
             android:orientation="horizontal" android:gravity="center" android:layout_marginBottom="16dp">
-            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorOnSurface" android:alpha="0.2" android:layout_marginEnd="5dp" />
-            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorOnSurface" android:alpha="0.2" android:layout_marginEnd="5dp" />
-            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorOnSurface" android:alpha="0.2" android:layout_marginEnd="5dp" />
-            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorOnSurface" android:alpha="0.2" android:layout_marginEnd="5dp" />
+            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorSurfaceVariant" android:layout_marginEnd="5dp" />
+            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorSurfaceVariant" android:layout_marginEnd="5dp" />
+            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorSurfaceVariant" android:layout_marginEnd="5dp" />
+            <View android:layout_width="8dp" android:layout_height="4dp" android:background="?attr/colorSurfaceVariant" android:layout_marginEnd="5dp" />
             <View android:layout_width="32dp" android:layout_height="4dp" android:background="?attr/colorPrimary" />
         </LinearLayout>
 
