@@ -37,9 +37,8 @@
             android:layout_weight="1"
             android:layout_marginStart="8dp"
             android:text="@string/logros_titulo"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="?attr/colorOnSurface" />
+            android:textAppearance="@style/TextAppearance.GymProFit.Headline"
+            android:textSize="24sp" />
 
     </LinearLayout>
 

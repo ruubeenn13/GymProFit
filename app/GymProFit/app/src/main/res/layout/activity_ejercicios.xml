@@ -38,9 +38,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/ejercicios_catalogo"
-                    android:textSize="26sp"
-                    android:textStyle="bold"
-                    android:textColor="?attr/colorOnSurface" />
+                    android:textAppearance="@style/TextAppearance.GymProFit.Display" />
 
                 <ImageView
                     android:id="@+id/btnMenuOpciones"
