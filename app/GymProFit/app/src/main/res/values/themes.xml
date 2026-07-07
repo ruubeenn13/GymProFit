@@ -142,6 +142,61 @@
         <item name="backgroundTint">@color/gp_surface_2</item>
     </style>
 
+    <!-- ── Fila de comida (Nutrición): tile + textos + botón añadir ────────── -->
+    <style name="GymProFit.MealRow" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:padding">14dp</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="GymProFit.MealIconTile" parent="">
+        <item name="android:layout_width">44dp</item>
+        <item name="android:layout_height">44dp</item>
+        <item name="android:background">@drawable/bg_accion_tile</item>
+    </style>
+
+    <style name="GymProFit.MealIcon" parent="">
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="tint">?attr/colorPrimary</item>
+        <item name="android:contentDescription">@null</item>
+    </style>
+
+    <style name="GymProFit.MealText" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="GymProFit.MealTitle" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="GymProFit.MealSub" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">3dp</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <style name="GymProFit.MealAdd" parent="">
+        <item name="android:layout_width">30dp</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:src">@drawable/ic_add</item>
+        <item name="tint">?attr/colorPrimary</item>
+        <item name="android:contentDescription">@string/nutricion_agregar</item>
+    </style>
+
     <!-- Estilo del menú emergente (popup) usado en toolbars y menús contextuales -->
     <style name="Widget.GymProFit.PopupMenu" parent="Widget.Material3.PopupMenu">
         <item name="android:dropDownWidth">260dp</item>

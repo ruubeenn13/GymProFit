@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  activity_nutricion.xml — Pantalla de seguimiento nutricional diario (tipo MyFitnessPal).
-  Muestra calorías y macros (proteínas, carbohidratos, grasas) consumidos frente al
-  objetivo, y las comidas del día (desayuno, almuerzo, comida, merienda, cena) como
-  accesos para registrar alimentos, con navegación inferior.
+  activity_nutricion.xml — seguimiento nutricional diario (estilo atlético).
+  Calorías del día como número XXL (Barlow Condensed) sobre naranja con
+  barra de progreso, macros con cifras grandes y barras tintadas, y las
+  5 comidas del día como accesos para registrar. Navegación inferior.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -16,7 +16,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -28,21 +29,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingTop="20dp"
+                android:paddingTop="22dp"
                 android:paddingStart="20dp"
-                android:paddingEnd="4dp"
-                android:paddingBottom="12dp"
-                android:gravity="center_vertical"
-                android:background="?attr/colorSurface">
+                android:paddingEnd="6dp"
+                android:paddingBottom="6dp"
+                android:gravity="center_vertical">
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/nutricion_seguimiento"
-                    android:textSize="26sp"
-                    android:textStyle="bold"
-                    android:textColor="?attr/colorOnSurface" />
+                    android:textAppearance="@style/TextAppearance.GymProFit.Display" />
 
                 <ImageView
                     android:id="@+id/btnMenuOpciones"
@@ -50,6 +48,7 @@
                     android:layout_height="40dp"
                     android:src="@drawable/ic_more_vert"
                     android:padding="8dp"
+                    app:tint="?attr/colorOnSurface"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:focusable="true"
@@ -61,89 +60,72 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="16dp">
 
-                <!-- Card principal de calorías con colorPrimary -->
+                <!-- ── CALORÍAS DEL DÍA: número XXL sobre naranja ── -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="16dp"
+                    app:cardCornerRadius="22dp"
                     app:cardElevation="0dp"
+                    app:strokeWidth="0dp"
                     app:cardBackgroundColor="?attr/colorPrimary">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="20dp">
+                        android:padding="22dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/nutricion_calorias_hoy"
+                            android:textAllCaps="true"
+                            android:textSize="13sp"
+                            android:letterSpacing="0.12"
+                            android:textColor="?attr/colorOnPrimary"
+                            android:alpha="0.85" />
 
                         <LinearLayout
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
-                            android:gravity="center_vertical">
+                            android:gravity="bottom">
 
-                            <LinearLayout
-                                android:layout_width="0dp"
+                            <TextView
+                                android:id="@+id/tvCaloriasActuales"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
+                                android:text="0"
+                                android:fontFamily="@font/barlow_condensed"
+                                android:textFontWeight="700"
+                                android:textSize="60sp"
+                                android:includeFontPadding="false"
+                                android:textColor="?attr/colorOnPrimary" />
 
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/nutricion_calorias_hoy"
-                                    android:textSize="13sp"
-                                    android:textColor="?attr/colorOnPrimary"
-                                    android:alpha="0.8" />
-
-                                <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="horizontal"
-                                    android:gravity="bottom"
-                                    android:layout_marginTop="4dp">
-
-                                    <TextView
-                                        android:id="@+id/tvCaloriasActuales"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="0"
-                                        android:textSize="42sp"
-                                        android:textStyle="bold"
-                                        android:textColor="?attr/colorOnPrimary" />
-
-                                    <TextView
-                                        android:id="@+id/tvCaloriasObjetivo"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginStart="6dp"
-                                        android:layout_marginBottom="8dp"
-                                        android:text="/ 2000 kcal"
-                                        android:textSize="14sp"
-                                        android:textColor="?attr/colorOnPrimary"
-                                        android:alpha="0.7" />
-
-                                </LinearLayout>
-
-                            </LinearLayout>
-
-                            <ImageView
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
-                                android:src="@drawable/ic_nutricion"
-                                android:alpha="0.4"
-                                android:contentDescription="@null" />
+                            <TextView
+                                android:id="@+id/tvCaloriasObjetivo"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginBottom="12dp"
+                                android:text="/ 2000 kcal"
+                                android:textSize="15sp"
+                                android:textColor="?attr/colorOnPrimary"
+                                android:alpha="0.85" />
 
                         </LinearLayout>
 
-                        <!-- Barra de progreso de calorías -->
                         <ProgressBar
                             android:id="@+id/progressCalorias"
                             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                             android:layout_width="match_parent"
-                            android:layout_height="8dp"
-                            android:layout_marginTop="14dp"
+                            android:layout_height="10dp"
+                            android:layout_marginTop="10dp"
                             android:progress="0"
                             android:max="100"
                             android:progressDrawable="@drawable/progress_bar_calorias" />
@@ -151,46 +133,43 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
+                            android:layout_marginTop="8dp"
                             android:text="@string/nutricion_objetivo"
-                            android:textSize="11sp"
+                            android:textSize="12sp"
                             android:textColor="?attr/colorOnPrimary"
-                            android:alpha="0.6" />
+                            android:alpha="0.7" />
 
                     </LinearLayout>
 
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Cards de macros: Proteínas, Carbohidratos, Grasas -->
+                <!-- ── MACROS: proteínas / carbos / grasas ── -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:baselineAligned="false">
 
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:layout_marginEnd="6dp"
-                        app:cardCornerRadius="14dp"
-                        app:cardElevation="0dp"
-                        app:cardBackgroundColor="?attr/colorSurface">
+                        android:layout_marginEnd="5dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:padding="12dp"
-                            android:gravity="center">
+                            android:padding="14dp"
+                            android:gravity="center_horizontal">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/nutricion_proteinas"
                                 android:textSize="11sp"
-                                android:textColor="?attr/colorOnSurface"
-                                android:alpha="0.6" />
+                                android:textColor="?attr/colorOnSurfaceVariant" />
 
                             <TextView
                                 android:id="@+id/tvProteinasActuales"
@@ -198,18 +177,22 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
                                 android:text="0g"
-                                android:textSize="20sp"
-                                android:textStyle="bold"
+                                android:fontFamily="@font/barlow_condensed"
+                                android:textFontWeight="700"
+                                android:textSize="26sp"
+                                android:includeFontPadding="false"
                                 android:textColor="?attr/colorOnSurface" />
 
                             <ProgressBar
                                 android:id="@+id/progressProteinas"
                                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                                 android:layout_width="match_parent"
-                                android:layout_height="4dp"
-                                android:layout_marginTop="6dp"
+                                android:layout_height="5dp"
+                                android:layout_marginTop="8dp"
                                 android:progress="0"
-                                android:max="100" />
+                                android:max="100"
+                                android:progressTint="?attr/colorPrimary"
+                                android:progressBackgroundTint="?attr/colorSurfaceVariant" />
 
                         </LinearLayout>
 
@@ -219,26 +202,22 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:layout_marginStart="6dp"
-                        android:layout_marginEnd="6dp"
-                        app:cardCornerRadius="14dp"
-                        app:cardElevation="0dp"
-                        app:cardBackgroundColor="?attr/colorSurface">
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:padding="12dp"
-                            android:gravity="center">
+                            android:padding="14dp"
+                            android:gravity="center_horizontal">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/nutricion_carbohidratos"
                                 android:textSize="11sp"
-                                android:textColor="?attr/colorOnSurface"
-                                android:alpha="0.6" />
+                                android:textColor="?attr/colorOnSurfaceVariant" />
 
                             <TextView
                                 android:id="@+id/tvCarbosActuales"
@@ -246,18 +225,22 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
                                 android:text="0g"
-                                android:textSize="20sp"
-                                android:textStyle="bold"
+                                android:fontFamily="@font/barlow_condensed"
+                                android:textFontWeight="700"
+                                android:textSize="26sp"
+                                android:includeFontPadding="false"
                                 android:textColor="?attr/colorOnSurface" />
 
                             <ProgressBar
                                 android:id="@+id/progressCarbos"
                                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                                 android:layout_width="match_parent"
-                                android:layout_height="4dp"
-                                android:layout_marginTop="6dp"
+                                android:layout_height="5dp"
+                                android:layout_marginTop="8dp"
                                 android:progress="0"
-                                android:max="100" />
+                                android:max="100"
+                                android:progressTint="?attr/colorPrimary"
+                                android:progressBackgroundTint="?attr/colorSurfaceVariant" />
 
                         </LinearLayout>
 
@@ -267,25 +250,21 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:layout_marginStart="6dp"
-                        app:cardCornerRadius="14dp"
-                        app:cardElevation="0dp"
-                        app:cardBackgroundColor="?attr/colorSurface">
+                        android:layout_marginStart="5dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:padding="12dp"
-                            android:gravity="center">
+                            android:padding="14dp"
+                            android:gravity="center_horizontal">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/nutricion_grasas"
                                 android:textSize="11sp"
-                                android:textColor="?attr/colorOnSurface"
-                                android:alpha="0.6" />
+                                android:textColor="?attr/colorOnSurfaceVariant" />
 
                             <TextView
                                 android:id="@+id/tvGrasasActuales"
@@ -293,18 +272,22 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
                                 android:text="0g"
-                                android:textSize="20sp"
-                                android:textStyle="bold"
+                                android:fontFamily="@font/barlow_condensed"
+                                android:textFontWeight="700"
+                                android:textSize="26sp"
+                                android:includeFontPadding="false"
                                 android:textColor="?attr/colorOnSurface" />
 
                             <ProgressBar
                                 android:id="@+id/progressGrasas"
                                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                                 android:layout_width="match_parent"
-                                android:layout_height="4dp"
-                                android:layout_marginTop="6dp"
+                                android:layout_height="5dp"
+                                android:layout_marginTop="8dp"
                                 android:progress="0"
-                                android:max="100" />
+                                android:max="100"
+                                android:progressTint="?attr/colorPrimary"
+                                android:progressBackgroundTint="?attr/colorSurfaceVariant" />
 
                         </LinearLayout>
 
@@ -312,73 +295,40 @@
 
                 </LinearLayout>
 
-                <!-- Sección comidas de hoy -->
+                <!-- ── COMIDAS DE HOY ── -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="28dp"
+                    android:layout_marginTop="26dp"
                     android:layout_marginBottom="12dp"
                     android:text="@string/comidas_hoy"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="?attr/colorOnSurface" />
+                    android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
 
-                <!-- Card Desayuno -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardDesayuno"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground"
-                    app:cardCornerRadius="14dp"
-                    app:cardElevation="0dp"
-                    app:cardBackgroundColor="?attr/colorSurface">
+                    android:foreground="?attr/selectableItemBackground">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp"
-                        android:gravity="center_vertical">
+                    <LinearLayout style="@style/GymProFit.MealRow">
 
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
+                        <FrameLayout style="@style/GymProFit.MealIconTile">
+                            <ImageView style="@style/GymProFit.MealIcon" android:src="@drawable/ic_nutricion" />
+                        </FrameLayout>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/nutricion_desayuno"
-                                android:textSize="16sp"
-                                android:textStyle="bold"
-                                android:textColor="?attr/colorOnSurface" />
-
-                            <TextView
-                                android:id="@+id/tvSubDesayuno"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="3dp"
-                                android:text="@string/sin_registrar"
-                                android:textSize="13sp"
-                                android:textColor="?attr/colorOnSurface"
-                                android:alpha="0.5" />
-
+                        <LinearLayout style="@style/GymProFit.MealText">
+                            <TextView style="@style/GymProFit.MealTitle" android:text="@string/nutricion_desayuno" />
+                            <TextView android:id="@+id/tvSubDesayuno" style="@style/GymProFit.MealSub" android:text="@string/sin_registrar" />
                         </LinearLayout>
 
-                        <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:src="@drawable/ic_add"
-                            android:contentDescription="@string/nutricion_agregar" />
+                        <ImageView style="@style/GymProFit.MealAdd" />
 
                     </LinearLayout>
 
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Card Almuerzo -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardAlmuerzo"
                     android:layout_width="match_parent"
@@ -386,55 +336,25 @@
                     android:layout_marginTop="10dp"
                     android:clickable="true"
                     android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground"
-                    app:cardCornerRadius="14dp"
-                    app:cardElevation="0dp"
-                    app:cardBackgroundColor="?attr/colorSurface">
+                    android:foreground="?attr/selectableItemBackground">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp"
-                        android:gravity="center_vertical">
+                    <LinearLayout style="@style/GymProFit.MealRow">
 
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
+                        <FrameLayout style="@style/GymProFit.MealIconTile">
+                            <ImageView style="@style/GymProFit.MealIcon" android:src="@drawable/ic_nutricion" />
+                        </FrameLayout>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/nutricion_almuerzo"
-                                android:textSize="16sp"
-                                android:textStyle="bold"
-                                android:textColor="?attr/colorOnSurface" />
-
-                            <TextView
-                                android:id="@+id/tvSubAlmuerzo"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="3dp"
-                                android:text="@string/sin_registrar"
-                                android:textSize="13sp"
-                                android:textColor="?attr/colorOnSurface"
-                                android:alpha="0.5" />
-
+                        <LinearLayout style="@style/GymProFit.MealText">
+                            <TextView style="@style/GymProFit.MealTitle" android:text="@string/nutricion_almuerzo" />
+                            <TextView android:id="@+id/tvSubAlmuerzo" style="@style/GymProFit.MealSub" android:text="@string/sin_registrar" />
                         </LinearLayout>
 
-                        <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:src="@drawable/ic_add"
-                            android:contentDescription="@string/nutricion_agregar" />
+                        <ImageView style="@style/GymProFit.MealAdd" />
 
                     </LinearLayout>
 
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Card Comida -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardComida"
                     android:layout_width="match_parent"
@@ -442,55 +362,25 @@
                     android:layout_marginTop="10dp"
                     android:clickable="true"
                     android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground"
-                    app:cardCornerRadius="14dp"
-                    app:cardElevation="0dp"
-                    app:cardBackgroundColor="?attr/colorSurface">
+                    android:foreground="?attr/selectableItemBackground">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp"
-                        android:gravity="center_vertical">
+                    <LinearLayout style="@style/GymProFit.MealRow">
 
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
+                        <FrameLayout style="@style/GymProFit.MealIconTile">
+                            <ImageView style="@style/GymProFit.MealIcon" android:src="@drawable/ic_nutricion" />
+                        </FrameLayout>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/nutricion_comida"
-                                android:textSize="16sp"
-                                android:textStyle="bold"
-                                android:textColor="?attr/colorOnSurface" />
-
-                            <TextView
-                                android:id="@+id/tvSubComida"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="3dp"
-                                android:text="@string/sin_registrar"
-                                android:textSize="13sp"
-                                android:textColor="?attr/colorOnSurface"
-                                android:alpha="0.5" />
-
+                        <LinearLayout style="@style/GymProFit.MealText">
+                            <TextView style="@style/GymProFit.MealTitle" android:text="@string/nutricion_comida" />
+                            <TextView android:id="@+id/tvSubComida" style="@style/GymProFit.MealSub" android:text="@string/sin_registrar" />
                         </LinearLayout>
 
-                        <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:src="@drawable/ic_add"
-                            android:contentDescription="@string/nutricion_agregar" />
+                        <ImageView style="@style/GymProFit.MealAdd" />
 
                     </LinearLayout>
 
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Card Merienda -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardMerienda"
                     android:layout_width="match_parent"
@@ -498,55 +388,25 @@
                     android:layout_marginTop="10dp"
                     android:clickable="true"
                     android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground"
-                    app:cardCornerRadius="14dp"
-                    app:cardElevation="0dp"
-                    app:cardBackgroundColor="?attr/colorSurface">
+                    android:foreground="?attr/selectableItemBackground">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp"
-                        android:gravity="center_vertical">
+                    <LinearLayout style="@style/GymProFit.MealRow">
 
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
+                        <FrameLayout style="@style/GymProFit.MealIconTile">
+                            <ImageView style="@style/GymProFit.MealIcon" android:src="@drawable/ic_nutricion" />
+                        </FrameLayout>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/nutricion_merienda"
-                                android:textSize="16sp"
-                                android:textStyle="bold"
-                                android:textColor="?attr/colorOnSurface" />
-
-                            <TextView
-                                android:id="@+id/tvSubMerienda"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="3dp"
-                                android:text="@string/sin_registrar"
-                                android:textSize="13sp"
-                                android:textColor="?attr/colorOnSurface"
-                                android:alpha="0.5" />
-
+                        <LinearLayout style="@style/GymProFit.MealText">
+                            <TextView style="@style/GymProFit.MealTitle" android:text="@string/nutricion_merienda" />
+                            <TextView android:id="@+id/tvSubMerienda" style="@style/GymProFit.MealSub" android:text="@string/sin_registrar" />
                         </LinearLayout>
 
-                        <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:src="@drawable/ic_add"
-                            android:contentDescription="@string/nutricion_agregar" />
+                        <ImageView style="@style/GymProFit.MealAdd" />
 
                     </LinearLayout>
 
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Card Cena -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardCena"
                     android:layout_width="match_parent"
@@ -554,49 +414,20 @@
                     android:layout_marginTop="10dp"
                     android:clickable="true"
                     android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground"
-                    app:cardCornerRadius="14dp"
-                    app:cardElevation="0dp"
-                    app:cardBackgroundColor="?attr/colorSurface">
+                    android:foreground="?attr/selectableItemBackground">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp"
-                        android:gravity="center_vertical">
+                    <LinearLayout style="@style/GymProFit.MealRow">
 
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
+                        <FrameLayout style="@style/GymProFit.MealIconTile">
+                            <ImageView style="@style/GymProFit.MealIcon" android:src="@drawable/ic_nutricion" />
+                        </FrameLayout>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/nutricion_cena"
-                                android:textSize="16sp"
-                                android:textStyle="bold"
-                                android:textColor="?attr/colorOnSurface" />
-
-                            <TextView
-                                android:id="@+id/tvSubCena"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="3dp"
-                                android:text="@string/sin_registrar"
-                                android:textSize="13sp"
-                                android:textColor="?attr/colorOnSurface"
-                                android:alpha="0.5" />
-
+                        <LinearLayout style="@style/GymProFit.MealText">
+                            <TextView style="@style/GymProFit.MealTitle" android:text="@string/nutricion_cena" />
+                            <TextView android:id="@+id/tvSubCena" style="@style/GymProFit.MealSub" android:text="@string/sin_registrar" />
                         </LinearLayout>
 
-                        <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:src="@drawable/ic_add"
-                            android:contentDescription="@string/nutricion_agregar" />
+                        <ImageView style="@style/GymProFit.MealAdd" />
 
                     </LinearLayout>
 
@@ -613,10 +444,7 @@
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorSurface"
         app:menu="@menu/bottom_nav_menu"
-        app:labelVisibilityMode="labeled"
-        app:itemIconTint="@color/bottom_nav_color"
-        app:itemTextColor="@color/bottom_nav_color" />
+        app:labelVisibilityMode="labeled" />
 
 </LinearLayout>
