@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Texto de chip: acento naranja al seleccionar, texto normal en reposo -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true" android:color="@color/gp_on_primary_container" />
+    <item android:color="@color/gp_on_surface" />
+</selector>

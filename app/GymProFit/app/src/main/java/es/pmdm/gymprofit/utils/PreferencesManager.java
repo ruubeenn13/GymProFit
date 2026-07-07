@@ -88,7 +88,8 @@ public class PreferencesManager {
     }
 
     public void saveTheme(int themeMode) { editor.putInt(KEY_THEME, themeMode); editor.apply(); }
-    public int getTheme() { return prefs.getInt(KEY_THEME, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM); }
+    // Oscuro por defecto (rediseño atlético); el usuario puede forzar claro desde el menú.
+    public int getTheme() { return prefs.getInt(KEY_THEME, AppCompatDelegate.MODE_NIGHT_YES); }
     public void applyTheme() { AppCompatDelegate.setDefaultNightMode(getTheme()); }
 
     public void saveLanguage(String code) { editor.putString(KEY_LANGUAGE, code); editor.apply(); }

@@ -1,52 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  colors.xml — paleta de colores de la app (tema claro y oscuro).
-  Incluye colores base Material, acentos de marca (dorado/naranja) y chips de estado.
+  colors.xml — paleta "atlética" de GymProFit (valores del MODO CLARO;
+  values-night los sobrescribe para el modo oscuro, que es el por defecto).
+  Naranja de marca como acento de energía, dorado del logo para racha/logros,
+  neutros limpios. Los nombres son semánticos: los layouts no deben
+  hardcodear hex, siempre @color/... o ?attr/...
 -->
 <resources>
-    <!-- Colores del tema claro -->
-    <color name="primary_light">#E8710A</color>
-    <color name="on_primary_light">#FFFFFF</color>
-    <color name="surface_light">#FFFFFF</color>
-    <color name="on_surface_light">#1A1A1A</color>
-    <color name="background_light">#F5F5F5</color>
-    <color name="primary_container_light">#FFE0C2</color>
-    <color name="on_primary_container_light">#2D1600</color>
+    <!-- ── Marca ─────────────────────────────────────────────────────────── -->
+    <!-- Naranja principal (más profundo en claro para contraste sobre blanco) -->
+    <color name="gp_primary">#F25C00</color>
+    <color name="gp_on_primary">#FFFFFF</color>
+    <color name="gp_primary_container">#FFE3CE</color>
+    <color name="gp_on_primary_container">#571E00</color>
+    <!-- Dorado del logo: reservado a racha y logros -->
+    <color name="gp_gold">#B58A2A</color>
 
-    <!-- Colores del tema oscuro -->
-    <color name="primary_dark">#CBA135</color>
-    <color name="on_primary_dark">#1E1E1E</color>
-    <color name="surface_dark">#1E1E1E</color>
-    <color name="on_surface_dark">#E8E8E8</color>
-    <color name="background_dark">#121212</color>
+    <!-- ── Superficies ───────────────────────────────────────────────────── -->
+    <color name="gp_background">#F7F7F5</color>
+    <color name="gp_surface">#FFFFFF</color>
+    <color name="gp_surface_2">#EFEFEC</color>
+    <color name="gp_stroke">#E4E4E1</color>
 
-    <!-- Colores de marca (acentos dorado/naranja) -->
-    <color name="golden">#CBA135</color>
-    <color name="golden_light">#D4AF37</color>
-    <color name="orange_primary">#E8710A</color>
-    <color name="orange_dark">#FF8C2A</color>
+    <!-- ── Texto ─────────────────────────────────────────────────────────── -->
+    <color name="gp_on_surface">#17181C</color>
+    <color name="gp_text_secondary">#6A6C72</color>
 
-    <!-- Colores de texto para tema oscuro -->
-    <color name="text_primary_dark">#E8E8E8</color>
-    <color name="text_secondary_dark">#B0B0B0</color>
+    <!-- ── Estados ───────────────────────────────────────────────────────── -->
+    <color name="gp_success">#1E8E4A</color>
+    <color name="gp_success_container">#DFF4E7</color>
+    <color name="gp_error">#C62828</color>
+    <color name="gp_error_container">#FDE9E9</color>
 
-    <!-- Colores base -->
+    <!-- ── Alias legados (layouts existentes; apuntan a la paleta nueva) ──── -->
+    <color name="primary_light">@color/gp_primary</color>
+    <color name="on_primary_light">@color/gp_on_primary</color>
+    <color name="surface_light">@color/gp_surface</color>
+    <color name="on_surface_light">@color/gp_on_surface</color>
+    <color name="background_light">@color/gp_background</color>
+    <color name="primary_container_light">@color/gp_primary_container</color>
+    <color name="on_primary_container_light">@color/gp_on_primary_container</color>
+
+    <color name="primary_dark">#FF6A00</color>
+    <color name="on_primary_dark">#FFFFFF</color>
+    <color name="surface_dark">#1A1B1F</color>
+    <color name="on_surface_dark">#F2F2F3</color>
+    <color name="background_dark">#101114</color>
+
+    <color name="golden">@color/gp_gold</color>
+    <color name="golden_light">@color/gp_gold</color>
+    <color name="orange_primary">@color/gp_primary</color>
+    <color name="orange_dark">#FF8A3D</color>
+
+    <color name="text_primary_dark">#F2F2F3</color>
+    <color name="text_secondary_dark">#9EA0A8</color>
+
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
 
-    <!-- Colores adicionales de superficie/contenedor -->
-    <color name="on_surface">#1A1A1A</color>
-    <color name="primaryContainer_dark">#2A2A2A</color>
-    <color name="onPrimaryContainer_dark">#E8E8E8</color>
+    <color name="on_surface">@color/gp_on_surface</color>
+    <color name="primaryContainer_dark">#24252B</color>
+    <color name="onPrimaryContainer_dark">#F2F2F3</color>
 
-    <!-- Colores de tarjetas/cards -->
-    <color name="surface_card">#FFFFFF</color>
-    <color name="surface_card_2">#F5F5F5</color>
-    <color name="text_secondary">#6B6B6B</color>
+    <color name="surface_card">@color/gp_surface</color>
+    <color name="surface_card_2">@color/gp_surface_2</color>
+    <color name="text_secondary">@color/gp_text_secondary</color>
 
-    <!-- Colores de chips de estado (positivo/negativo) -->
-    <color name="green_chip">#E8F5E9</color>
-    <color name="green_chip_text">#2E7D32</color>
-    <color name="red_chip">#FFEBEE</color>
-    <color name="red_chip_text">#C62828</color>
+    <color name="green_chip">@color/gp_success_container</color>
+    <color name="green_chip_text">@color/gp_success</color>
+    <color name="red_chip">@color/gp_error_container</color>
+    <color name="red_chip_text">@color/gp_error</color>
 </resources>

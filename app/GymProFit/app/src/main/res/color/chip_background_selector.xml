@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fondo de chip: naranja container al seleccionar, superficie 2 en reposo -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true" android:color="@color/gp_primary_container" />
+    <item android:color="@color/gp_surface_2" />
+</selector>

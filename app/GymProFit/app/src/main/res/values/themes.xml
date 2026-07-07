@@ -1,36 +1,151 @@
 <resources>
     <!--
-      themes.xml — Tema principal de la app en modo claro (variante DayNight).
-      Define colores base Material3 y estilos de widgets (BottomNav, PopupMenu).
+      themes.xml — tema "atlético" de GymProFit (variante CLARA del DayNight;
+      values-night define la oscura, que es la por defecto).
+      Además de los colores M3, fija ESTILOS GLOBALES de widget (cards,
+      botones, chips, bottom nav, dialogs) para que todas las pantallas
+      hereden el rediseño sin tocar cada layout.
     -->
-    <!-- Tema base de la aplicación, sin ActionBar, con paleta naranja de marca -->
     <style name="Theme.GymProFit" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">#E8710A</item>
-        <item name="colorOnPrimary">#FFFFFF</item>
-        <item name="colorPrimaryContainer">#FFE0C2</item>
-        <item name="colorOnPrimaryContainer">#2D1600</item>
-        <item name="colorSurface">#FFFFFF</item>
-        <item name="colorOnSurface">#1A1A1A</item>
-        <item name="android:colorBackground">#F5F5F5</item>
-        <item name="android:windowBackground">#F5F5F5</item>
-        <item name="android:textColorPrimary">#1A1A1A</item>
+        <!-- Paleta M3 mapeada a los tokens gp_* -->
+        <item name="colorPrimary">@color/gp_primary</item>
+        <item name="colorOnPrimary">@color/gp_on_primary</item>
+        <item name="colorPrimaryContainer">@color/gp_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/gp_on_primary_container</item>
+        <item name="colorSecondary">@color/gp_gold</item>
+        <item name="colorSurface">@color/gp_surface</item>
+        <item name="colorOnSurface">@color/gp_on_surface</item>
+        <item name="colorSurfaceVariant">@color/gp_surface_2</item>
+        <item name="colorOnSurfaceVariant">@color/gp_text_secondary</item>
+        <item name="colorOutline">@color/gp_stroke</item>
+        <item name="colorOutlineVariant">@color/gp_stroke</item>
+        <item name="colorError">@color/gp_error</item>
+        <item name="android:colorBackground">@color/gp_background</item>
+        <item name="android:windowBackground">@color/gp_background</item>
+        <item name="android:textColorPrimary">@color/gp_on_surface</item>
+        <item name="android:textColorSecondary">@color/gp_text_secondary</item>
+
+        <!-- Barras del sistema integradas con el fondo -->
+        <item name="android:statusBarColor">@color/gp_background</item>
+        <item name="android:navigationBarColor">@color/gp_background</item>
+        <item name="android:windowLightStatusBar">true</item>
+
+        <!-- Estilos globales de widget (el rediseño entero cuelga de aquí) -->
+        <item name="materialCardViewStyle">@style/Widget.GymProFit.Card</item>
+        <item name="materialButtonStyle">@style/Widget.GymProFit.Button</item>
+        <item name="chipStyle">@style/Widget.GymProFit.Chip</item>
         <item name="bottomNavigationStyle">@style/Widget.GymProFit.BottomNavigationView</item>
+        <item name="floatingActionButtonStyle">@style/Widget.GymProFit.Fab</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.GymProFit.Dialog</item>
         <item name="popupMenuStyle">@style/Widget.GymProFit.PopupMenu</item>
         <item name="android:popupMenuStyle">@style/Widget.GymProFit.PopupMenu</item>
+        <item name="snackbarStyle">@style/Widget.GymProFit.Snackbar</item>
+    </style>
+
+    <!-- ── Tipografía display (Barlow Condensed): números y títulos ───────── -->
+    <!-- Cifra XXL de stats (kcal de hoy, peso...) -->
+    <style name="TextAppearance.GymProFit.Number" parent="TextAppearance.Material3.DisplayMedium">
+        <item name="fontFamily">@font/barlow_condensed</item>
+        <item name="android:textFontWeight">700</item>
+        <item name="android:textSize">52sp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <!-- Título grande de pantalla -->
+    <style name="TextAppearance.GymProFit.Display" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="fontFamily">@font/barlow_condensed</item>
+        <item name="android:textFontWeight">700</item>
+        <item name="android:textSize">34sp</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <!-- Titular de sección/card -->
+    <style name="TextAppearance.GymProFit.Headline" parent="TextAppearance.Material3.TitleLarge">
+        <item name="fontFamily">@font/barlow_condensed</item>
+        <item name="android:textFontWeight">600</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <!-- Etiqueta/eyebrow en mayúsculas sobre una stat -->
+    <style name="TextAppearance.GymProFit.Label" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.12</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <!-- ── Cards: planas, radio 18dp y borde sutil (sin sombras grises) ───── -->
+    <style name="Widget.GymProFit.Card" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardBackgroundColor">?attr/colorSurface</item>
+        <item name="cardCornerRadius">18dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="strokeColor">@color/gp_stroke</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="rippleColor">@color/gp_primary_container</item>
+    </style>
+
+    <!-- ── Botón principal: sólido naranja, contundente ────────────────────── -->
+    <style name="Widget.GymProFit.Button" parent="Widget.Material3.Button">
+        <item name="cornerRadius">14dp</item>
+        <item name="android:minHeight">52dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <!-- ── Chips: superficie secundaria; seleccionado = naranja container ──── -->
+    <style name="Widget.GymProFit.Chip" parent="Widget.Material3.Chip.Filter">
+        <item name="chipBackgroundColor">@color/chip_background_selector</item>
+        <item name="android:textColor">@color/chip_text_selector</item>
+        <item name="chipStrokeColor">@color/gp_stroke</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="chipCornerRadius">12dp</item>
+        <item name="checkedIconTint">?attr/colorPrimary</item>
+    </style>
+
+    <!-- ── Bottom nav: fondo de superficie + pill naranja en el activo ─────── -->
+    <style name="Widget.GymProFit.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
+        <item name="android:background">?attr/colorSurface</item>
+        <item name="itemIconTint">@color/bottom_nav_item_selector</item>
+        <item name="itemTextColor">@color/bottom_nav_item_selector</item>
+        <item name="itemActiveIndicatorStyle">@style/Widget.GymProFit.BottomNav.Indicator</item>
+        <item name="itemIconSize">24dp</item>
+        <item name="android:minHeight">60dp</item>
+        <item name="itemPaddingTop">10dp</item>
+        <item name="itemPaddingBottom">8dp</item>
+    </style>
+
+    <!-- Pill del ítem activo del bottom nav -->
+    <style name="Widget.GymProFit.BottomNav.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/gp_primary_container</item>
+    </style>
+
+    <!-- ── FAB: naranja sólido ─────────────────────────────────────────────── -->
+    <style name="Widget.GymProFit.Fab" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="backgroundTint">?attr/colorPrimary</item>
+        <item name="tint">?attr/colorOnPrimary</item>
+    </style>
+
+    <!-- ── Dialogs M3 con esquinas y superficie de la app ──────────────────── -->
+    <style name="ThemeOverlay.GymProFit.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorSurface">@color/gp_surface</item>
+        <item name="dialogCornerRadius">22dp</item>
+    </style>
+
+    <!-- ── Snackbar sobre superficie secundaria ────────────────────────────── -->
+    <style name="Widget.GymProFit.Snackbar" parent="Widget.Material3.Snackbar">
+        <item name="backgroundTint">@color/gp_surface_2</item>
     </style>
 
     <!-- Estilo del menú emergente (popup) usado en toolbars y menús contextuales -->
     <style name="Widget.GymProFit.PopupMenu" parent="Widget.Material3.PopupMenu">
         <item name="android:dropDownWidth">260dp</item>
         <item name="android:popupElevation">12dp</item>
-    </style>
-
-    <!-- Estilo de la barra de navegación inferior (BottomNavigationView) -->
-    <style name="Widget.GymProFit.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
-        <item name="itemActiveIndicatorStyle">@null</item>
-        <item name="itemIconSize">24dp</item>
-        <item name="android:minHeight">56dp</item>
-        <item name="itemPaddingTop">10dp</item>
-        <item name="itemPaddingBottom">6dp</item>
+        <item name="android:popupBackground">@drawable/bg_popup_menu</item>
     </style>
 </resources>

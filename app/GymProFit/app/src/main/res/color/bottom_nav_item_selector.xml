@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ítems del bottom nav: naranja el activo, texto secundario el resto -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true" android:color="@color/gp_primary" />
+    <item android:color="@color/gp_text_secondary" />
+</selector>

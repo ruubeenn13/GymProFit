@@ -1,27 +1,41 @@
 <resources>
     <!--
-      themes.xml (values-night) — Tema principal de la app en modo oscuro.
-      Sobrescribe los colores base para la variante nocturna del tema DayNight.
+      themes.xml (values-night) — variante OSCURA (por defecto) del tema atlético.
+      Toda la paleta vive en tokens @color/gp_* que ya cambian por qualifier
+      (values-night/colors.xml); aquí solo se ajusta lo que no es un color
+      con qualifier: los iconos de las barras del sistema.
     -->
-    <!-- Tema base en modo oscuro: fondo negro/gris y acento dorado -->
     <style name="Theme.GymProFit" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">#C9963A</item>
-        <item name="colorOnPrimary">#1E1E1E</item>
-        <item name="colorPrimaryContainer">#2C2C2C</item>
-        <item name="colorOnPrimaryContainer">#D4D4D4</item>
-        <item name="colorSurface">#1F1F1F</item>
-        <item name="colorOnSurface">#D4D4D4</item>
-        <item name="android:colorBackground">#141414</item>
-        <item name="android:windowBackground">#141414</item>
-        <item name="android:textColorPrimary">#D4D4D4</item>
+        <item name="colorPrimary">@color/gp_primary</item>
+        <item name="colorOnPrimary">@color/gp_on_primary</item>
+        <item name="colorPrimaryContainer">@color/gp_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/gp_on_primary_container</item>
+        <item name="colorSecondary">@color/gp_gold</item>
+        <item name="colorSurface">@color/gp_surface</item>
+        <item name="colorOnSurface">@color/gp_on_surface</item>
+        <item name="colorSurfaceVariant">@color/gp_surface_2</item>
+        <item name="colorOnSurfaceVariant">@color/gp_text_secondary</item>
+        <item name="colorOutline">@color/gp_stroke</item>
+        <item name="colorOutlineVariant">@color/gp_stroke</item>
+        <item name="colorError">@color/gp_error</item>
+        <item name="android:colorBackground">@color/gp_background</item>
+        <item name="android:windowBackground">@color/gp_background</item>
+        <item name="android:textColorPrimary">@color/gp_on_surface</item>
+        <item name="android:textColorSecondary">@color/gp_text_secondary</item>
+
+        <!-- Iconos de estado claros sobre el fondo carbón -->
+        <item name="android:statusBarColor">@color/gp_background</item>
+        <item name="android:navigationBarColor">@color/gp_background</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <item name="materialCardViewStyle">@style/Widget.GymProFit.Card</item>
+        <item name="materialButtonStyle">@style/Widget.GymProFit.Button</item>
+        <item name="chipStyle">@style/Widget.GymProFit.Chip</item>
         <item name="bottomNavigationStyle">@style/Widget.GymProFit.BottomNavigationView</item>
+        <item name="floatingActionButtonStyle">@style/Widget.GymProFit.Fab</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.GymProFit.Dialog</item>
         <item name="popupMenuStyle">@style/Widget.GymProFit.PopupMenu</item>
         <item name="android:popupMenuStyle">@style/Widget.GymProFit.PopupMenu</item>
-    </style>
-
-    <!-- Estilo del menú emergente (popup) para modo oscuro -->
-    <style name="Widget.GymProFit.PopupMenu" parent="Widget.Material3.PopupMenu">
-        <item name="android:dropDownWidth">260dp</item>
-        <item name="android:popupElevation">12dp</item>
+        <item name="snackbarStyle">@style/Widget.GymProFit.Snackbar</item>
     </style>
 </resources>

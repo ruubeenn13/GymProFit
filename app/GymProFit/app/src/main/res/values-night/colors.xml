@@ -1,20 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  colors.xml (values-night) — Paleta de colores para el tema oscuro.
-  Colores de superficie, texto y chips de estado usados solo en modo noche.
+  colors.xml (values-night) — paleta "atlética oscura" (modo POR DEFECTO).
+  Carbón profundo + naranja de marca vivo como energía. Sobrescribe los
+  tokens semánticos de values/colors.xml.
 -->
 <resources>
-    <!-- Colores de superficie y texto en modo oscuro -->
-    <color name="on_surface">#D4D4D4</color>
-    <color name="primaryContainer_dark">#1F1F1F</color>
-    <color name="onPrimaryContainer_dark">#D4D4D4</color>
-    <color name="surface_card">#1F1F1F</color>
-    <color name="surface_card_2">#252525</color>
-    <color name="text_secondary">#9E9E9E</color>
+    <!-- ── Marca ─────────────────────────────────────────────────────────── -->
+    <color name="gp_primary">#FF6A00</color>
+    <color name="gp_on_primary">#FFFFFF</color>
+    <color name="gp_primary_container">#3A2110</color>
+    <color name="gp_on_primary_container">#FFB27A</color>
+    <color name="gp_gold">#E8B84B</color>
 
-    <!-- Chips de estado (verde=activo/positivo, rojo=inactivo/negativo) -->
-    <color name="green_chip">#1B5E20</color>
-    <color name="green_chip_text">#A5D6A7</color>
-    <color name="red_chip">#7F0000</color>
-    <color name="red_chip_text">#EF9A9A</color>
+    <!-- ── Superficies ───────────────────────────────────────────────────── -->
+    <color name="gp_background">#101114</color>
+    <color name="gp_surface">#1A1B1F</color>
+    <color name="gp_surface_2">#24252B</color>
+    <color name="gp_stroke">#2C2D33</color>
+
+    <!-- ── Texto ─────────────────────────────────────────────────────────── -->
+    <color name="gp_on_surface">#F2F2F3</color>
+    <color name="gp_text_secondary">#9EA0A8</color>
+
+    <!-- ── Estados ───────────────────────────────────────────────────────── -->
+    <color name="gp_success">#4ADE80</color>
+    <color name="gp_success_container">#143323</color>
+    <color name="gp_error">#F87171</color>
+    <color name="gp_error_container">#3A1414</color>
+
+    <!-- ── Alias legados usados por layouts existentes ───────────────────── -->
+    <color name="on_surface">@color/gp_on_surface</color>
+    <color name="primaryContainer_dark">#24252B</color>
+    <color name="onPrimaryContainer_dark">#F2F2F3</color>
+    <color name="surface_card">@color/gp_surface</color>
+    <color name="surface_card_2">@color/gp_surface_2</color>
+    <color name="text_secondary">@color/gp_text_secondary</color>
+
+    <color name="green_chip">@color/gp_success_container</color>
+    <color name="green_chip_text">@color/gp_success</color>
+    <color name="red_chip">@color/gp_error_container</color>
+    <color name="red_chip_text">@color/gp_error</color>
 </resources>
