@@ -1,14 +1,16 @@
 package es.pmdm.gymprofit.ui.activities;
 
-import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
-import android.widget.MediaController;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.VideoView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import com.bumptech.glide.Glide;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.utils.PreferencesManager;
@@ -16,10 +18,18 @@ import es.pmdm.gymprofit.utils.PreferencesManager;
 // ============================================================
 // DetalleEjercicioActivity — pantalla de detalle de un ejercicio.
 // Muestra nombre, descripción, instrucciones, estadísticas (músculo,
-// nivel, calorías, equipo) y, si existe, el vídeo demostrativo del
-// ejercicio recibido por extras del Intent.
+// nivel, calorías, equipo) y la demostración visual: si el ejercicio
+// trae 2 fotogramas (free-exercise-db) se alternan en bucle, animando
+// al "monigote" haciendo el ejercicio.
 // ============================================================
 public class DetalleEjercicioActivity extends AppCompatActivity {
+
+    // Milisegundos entre fotogramas de la demostración animada
+    private static final long FRAME_MS = 700;
+
+    // Alternador de fotogramas de la demostración
+    private final Handler frameHandler = new Handler(Looper.getMainLooper());
+    private Runnable frameRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +42,6 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(v -> finish());
 
-        int id               = getIntent().getIntExtra("id", -1);
         String nombre        = getIntent().getStringExtra("nombre");
         String descripcion   = getIntent().getStringExtra("descripcion");
         String instrucciones = getIntent().getStringExtra("instrucciones");
@@ -41,23 +50,50 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         int calorias         = getIntent().getIntExtra("calorias", 0);
         String equipo        = getIntent().getStringExtra("equipoNecesario");
         String imagenUrl     = getIntent().getStringExtra("imagenUrl");
+        String imagenUrl2    = getIntent().getStringExtra("imagenUrl2");
 
         poblarVistas(nombre, descripcion, instrucciones, grupoMuscular, dificultad, calorias, equipo);
-        configurarImagen(imagenUrl);
-        configurarVideo(id); // el vídeo local (si existe) pisa a la imagen
+        configurarDemostracion(imagenUrl, imagenUrl2);
     }
 
-    // Carga la imagen del ejercicio (wger) en la cabecera sustituyendo al
-    // placeholder; sin URL se mantiene el placeholder genérico.
-    private void configurarImagen(String imagenUrl) {
-        if (isEmpty(imagenUrl)) return;
+    // Muestra la demostración del ejercicio en la cabecera: con 2 fotogramas
+    // se alternan en bucle (animación del monigote); con 1, imagen estática;
+    // sin URL se mantiene el placeholder genérico.
+    private void configurarDemostracion(String url1, String url2) {
+        if (isEmpty(url1)) return;
+
         View placeholder = findViewById(R.id.layoutVideoPlaceholder);
-        android.widget.ImageView ivImagen = findViewById(R.id.ivImagenDetalle);
+        ImageView ivImagen = findViewById(R.id.ivImagenDetalle);
         ivImagen.setVisibility(View.VISIBLE);
-        com.bumptech.glide.Glide.with(this)
-                .load(imagenUrl)
-                .into(ivImagen);
         placeholder.setVisibility(View.GONE);
+        Glide.with(this).load(url1).into(ivImagen);
+
+        if (isEmpty(url2)) return;
+
+        // Precarga el fotograma 2 y arranca la alternancia en bucle
+        Glide.with(this).load(url2).preload();
+        frameRunnable = new Runnable() {
+            private boolean mostrarSegundo = true;
+
+            @Override
+            public void run() {
+                // placeholder(drawable actual) evita el parpadeo entre fotogramas
+                Glide.with(DetalleEjercicioActivity.this)
+                        .load(mostrarSegundo ? url2 : url1)
+                        .placeholder(ivImagen.getDrawable())
+                        .into(ivImagen);
+                mostrarSegundo = !mostrarSegundo;
+                frameHandler.postDelayed(this, FRAME_MS);
+            }
+        };
+        frameHandler.postDelayed(frameRunnable, FRAME_MS);
+    }
+
+    // Detiene la animación de fotogramas al salir de la pantalla.
+    @Override
+    protected void onDestroy() {
+        if (frameRunnable != null) frameHandler.removeCallbacks(frameRunnable);
+        super.onDestroy();
     }
 
     // Rellena las vistas de la pantalla con los datos del ejercicio,
@@ -93,32 +129,6 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         } else {
             findViewById(R.id.cardInstrucciones).setVisibility(View.GONE);
         }
-    }
-
-    // Busca un vídeo local (res/raw/video_<id>) para el ejercicio y, si
-    // existe, lo reproduce en bucle sustituyendo al placeholder.
-    private void configurarVideo(int ejercicioId) {
-        if (ejercicioId <= 0) return;
-        // Resuelve dinámicamente el recurso raw según el id del ejercicio.
-        int resId = getResources().getIdentifier("video_" + ejercicioId, "raw", getPackageName());
-        if (resId == 0) return;
-
-        View placeholder = findViewById(R.id.layoutVideoPlaceholder);
-        VideoView videoView = findViewById(R.id.videoView);
-
-        placeholder.setVisibility(View.GONE);
-        videoView.setVisibility(View.VISIBLE);
-        videoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + resId));
-
-        MediaController mc = new MediaController(this);
-        mc.setAnchorView(videoView);
-        videoView.setMediaController(mc);
-
-        videoView.setOnPreparedListener(mp -> {
-            mp.setLooping(true);
-            mp.start();
-        });
-        videoView.requestFocus();
     }
 
     private static boolean isEmpty(String s) {

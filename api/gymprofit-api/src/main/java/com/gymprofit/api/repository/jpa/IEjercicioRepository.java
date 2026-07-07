@@ -27,6 +27,13 @@ public interface IEjercicioRepository extends JpaRepository<Ejercicio, Integer> 
     // Busca un ejercicio por su id en wger (clave de upsert del import externo).
     java.util.Optional<Ejercicio> findByWgerId(Integer wgerId);
 
+    // Desactiva los ejercicios importados de wger que ya no cumplen los
+    // criterios del import (p. ej. se quedaron sin demostración visual).
+    @org.springframework.data.jpa.repository.Modifying
+    @Query("UPDATE Ejercicio e SET e.activo = false " +
+            "WHERE e.wgerId IS NOT NULL AND e.wgerId NOT IN :vistos")
+    int desactivarWgerNoVistos(@Param("vistos") java.util.Collection<Integer> vistos);
+
     // Busca ejercicios que trabajen un grupo muscular concreto.
     List<Ejercicio> findByGrupoMuscular(GrupoMuscular grupoMuscular);
 

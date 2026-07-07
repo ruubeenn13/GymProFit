@@ -29,6 +29,7 @@ public final class EjercicioNavHelper {
         intent.putExtra("calorias",        e.getCalorias());
         intent.putExtra("equipoNecesario", e.getEquipoNecesario());
         intent.putExtra("imagenUrl",       e.getImagenUrl());
+        intent.putExtra("imagenUrl2",      e.getImagenUrl2());
         context.startActivity(intent);
     }
 

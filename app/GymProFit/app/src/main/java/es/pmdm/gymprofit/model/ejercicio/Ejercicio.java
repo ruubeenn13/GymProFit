@@ -25,8 +25,10 @@ public class Ejercicio {
     private String descripcion;
     // Instrucciones paso a paso para realizarlo.
     private String instrucciones;
-    // URL de la imagen ilustrativa del ejercicio.
+    // URL de la imagen ilustrativa del ejercicio (fotograma 1).
     private String imagenUrl;
+    // Fotograma 2 de la demostración (se alterna con imagenUrl para animarla).
+    private String imagenUrl2;
     // Equipo/material necesario para realizarlo.
     private String equipoNecesario;
     // Calorías aproximadas quemadas por el ejercicio.
@@ -60,6 +62,9 @@ public class Ejercicio {
 
     public String getImagenUrl() { return imagenUrl; }
     public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
+
+    public String getImagenUrl2() { return imagenUrl2; }
+    public void setImagenUrl2(String imagenUrl2) { this.imagenUrl2 = imagenUrl2; }
 
     public String getEquipoNecesario() { return equipoNecesario; }
     public void setEquipoNecesario(String equipoNecesario) { this.equipoNecesario = equipoNecesario; }

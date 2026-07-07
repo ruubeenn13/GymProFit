@@ -14,9 +14,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 // ============================================================
 // WgerImportService — import del catálogo de ejercicios desde wger
@@ -36,6 +40,13 @@ public class WgerImportService {
     // Ids de idioma en wger (endpoint /api/v2/language/): 2 = en, 4 = es
     private static final int LANG_EN = 2;
     private static final int LANG_ES = 4;
+
+    // free-exercise-db: ~870 ejercicios con demostración de 2 fotogramas
+    // ("monigote") e instrucciones paso a paso. Se cruza por nombre EN.
+    private static final String FED_JSON_URL =
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/dist/exercises.json";
+    private static final String FED_IMG_BASE =
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/";
 
     // Categoría wger → enum GrupoMuscular propio
     private static final Map<String, GrupoMuscular> CATEGORIA_GRUPO = new HashMap<>();
@@ -79,7 +90,14 @@ public class WgerImportService {
     private final Logger logger = LoggerFactory.getLogger(WgerImportService.class);
 
     // Resumen del import devuelto al panel admin.
-    public record ImportResumen(int nuevos, int actualizados, int omitidos) {}
+    public record ImportResumen(int nuevos, int actualizados, int omitidos, int desactivados) {}
+
+    // Ejercicio de free-exercise-db relevante para el cruce: 2 fotogramas,
+    // nivel real e instrucciones EN paso a paso.
+    private record FedEjercicio(String imagen1, String imagen2, String nivel, String instrucciones) {}
+
+    // Entrada del índice difuso: tokens del nombre FED + su ejercicio.
+    private record FedTokens(Set<String> tokens, FedEjercicio ejercicio) {}
 
     public WgerImportService(IEjercicioRepository ejercicioRepository, ObjectMapper objectMapper) {
         this.ejercicioRepository = ejercicioRepository;
@@ -91,25 +109,34 @@ public class WgerImportService {
         this.restClient = RestClient.builder().requestFactory(factory).build();
     }
 
-    // Recorre todo el catálogo de wger paginado y hace upsert por wger_id de
-    // los ejercicios con traducción ES+EN. Omite los que no son bilingües.
+    // Recorre todo el catálogo de wger paginado y hace upsert por wger_id.
+    // Criterios de entrada al catálogo: traducción ES+EN Y demostración
+    // visual (fotogramas de free-exercise-db cruzados por nombre EN, o al
+    // menos imagen de wger). Los importados que dejen de cumplirlos se
+    // desactivan al final.
     @Transactional
     public ImportResumen importarCatalogo() {
-        logger.info("Iniciando import del catálogo de ejercicios desde wger");
+        logger.info("Iniciando import del catálogo de ejercicios (wger + free-exercise-db)");
+
+        Map<String, FedEjercicio> fedExacto = new HashMap<>();
+        List<FedTokens> fedIndice = new ArrayList<>();
+        cargarFreeExerciseDb(fedExacto, fedIndice);
 
         int nuevos = 0, actualizados = 0, omitidos = 0;
+        Set<Integer> vistos = new HashSet<>();
         int offset = 0;
         boolean hayMas = true;
 
         while (hayMas) {
             JsonNode pagina = descargarPagina(offset);
             for (JsonNode ejercicioWger : pagina.path("results")) {
-                Optional<Ejercicio> mapeado = mapear(ejercicioWger);
+                Optional<Ejercicio> mapeado = mapear(ejercicioWger, fedExacto, fedIndice);
                 if (mapeado.isEmpty()) {
                     omitidos++;
                     continue;
                 }
                 Ejercicio nuevo = mapeado.get();
+                vistos.add(nuevo.getWgerId());
                 Optional<Ejercicio> existente = ejercicioRepository.findByWgerId(nuevo.getWgerId());
                 if (existente.isPresent()) {
                     copiarCampos(nuevo, existente.get());
@@ -124,9 +151,96 @@ public class WgerImportService {
             offset += PAGE_SIZE;
         }
 
-        logger.info("Import wger completado: {} nuevos, {} actualizados, {} omitidos",
-                nuevos, actualizados, omitidos);
-        return new ImportResumen(nuevos, actualizados, omitidos);
+        // Importados en ejecuciones previas que ya no cumplen los criterios
+        int desactivados = vistos.isEmpty() ? 0 : ejercicioRepository.desactivarWgerNoVistos(vistos);
+
+        logger.info("Import completado: {} nuevos, {} actualizados, {} omitidos, {} desactivados",
+                nuevos, actualizados, omitidos, desactivados);
+        return new ImportResumen(nuevos, actualizados, omitidos, desactivados);
+    }
+
+    // Descarga free-exercise-db y construye el índice de cruce por nombre EN:
+    // clave exacta normalizada + índice de tokens para el match difuso.
+    private void cargarFreeExerciseDb(Map<String, FedEjercicio> exacto, List<FedTokens> indice) {
+        try {
+            String body = restClient.get().uri(java.net.URI.create(FED_JSON_URL))
+                    .retrieve().body(String.class);
+            JsonNode raiz = objectMapper.readTree(body);
+            for (JsonNode e : raiz) {
+                JsonNode imagenes = e.path("images");
+                if (!imagenes.isArray() || imagenes.isEmpty()) continue;
+
+                String img1 = FED_IMG_BASE + imagenes.get(0).asText();
+                String img2 = imagenes.size() > 1 ? FED_IMG_BASE + imagenes.get(1).asText() : null;
+                FedEjercicio fed = new FedEjercicio(img1, img2,
+                        e.path("level").asText(""), instruccionesFed(e));
+
+                String nombre = e.path("name").asText("");
+                exacto.put(claveExacta(nombre), fed);
+                Set<String> tokens = tokens(nombre);
+                if (!tokens.isEmpty()) indice.add(new FedTokens(tokens, fed));
+            }
+            logger.info("free-exercise-db cargado: {} ejercicios con demostración", exacto.size());
+        } catch (Exception ex) {
+            throw new ExternalServiceException("free-exercise-db no disponible: " + ex.getMessage(), ex);
+        }
+    }
+
+    // Instrucciones EN de FED como pasos numerados "1. ...\n2. ..."
+    private String instruccionesFed(JsonNode e) {
+        StringBuilder sb = new StringBuilder();
+        int paso = 1;
+        for (JsonNode inst : e.path("instructions")) {
+            String texto = inst.asText("").trim();
+            if (texto.isEmpty()) continue;
+            if (sb.length() > 0) sb.append('\n');
+            sb.append(paso++).append(". ").append(texto);
+        }
+        return sb.length() == 0 ? null : sb.toString();
+    }
+
+    // Busca la demostración FED para un nombre EN de wger: primero clave
+    // exacta normalizada, después match difuso por solapamiento de tokens
+    // (Jaccard >= 0.75 con al menos 2 tokens comunes).
+    private FedEjercicio buscarFed(String nombreEn, Map<String, FedEjercicio> exacto, List<FedTokens> indice) {
+        FedEjercicio porClave = exacto.get(claveExacta(nombreEn));
+        if (porClave != null) return porClave;
+
+        Set<String> tokens = tokens(nombreEn);
+        if (tokens.size() < 2) return null;
+        for (FedTokens candidato : indice) {
+            Set<String> interseccion = new HashSet<>(tokens);
+            interseccion.retainAll(candidato.tokens());
+            if (interseccion.size() < 2) continue;
+            Set<String> union = new HashSet<>(tokens);
+            union.addAll(candidato.tokens());
+            if ((double) interseccion.size() / union.size() >= 0.75) return candidato.ejercicio();
+        }
+        return null;
+    }
+
+    // Clave de match exacto: minúsculas, sin paréntesis ni signos, sin plural final.
+    private String claveExacta(String nombre) {
+        String s = nombre.toLowerCase()
+                .replaceAll("\\(.*?\\)", "")
+                .replaceAll("[^a-z0-9]", "");
+        return s.endsWith("s") ? s.substring(0, s.length() - 1) : s;
+    }
+
+    // Tokens significativos del nombre para el match difuso (sin stopwords
+    // ni posiciones genéricas, singularizados).
+    private Set<String> tokens(String nombre) {
+        Set<String> stop = Set.of("the", "a", "an", "with", "on", "in", "of", "and", "to",
+                "bench", "standing", "seated", "lying");
+        Set<String> resultado = new HashSet<>();
+        String limpio = nombre.toLowerCase()
+                .replaceAll("\\(.*?\\)", "")
+                .replaceAll("[^a-z0-9 ]", " ");
+        for (String palabra : limpio.split("\\s+")) {
+            if (palabra.length() < 2 || stop.contains(palabra)) continue;
+            resultado.add(palabra.endsWith("s") ? palabra.substring(0, palabra.length() - 1) : palabra);
+        }
+        return resultado;
     }
 
     // Descarga una página del endpoint exerciseinfo; fallo → 502.
@@ -142,8 +256,12 @@ public class WgerImportService {
     }
 
     // Convierte un exerciseinfo de wger en una entidad Ejercicio local.
-    // Devuelve vacío si falta la traducción ES o EN (no bilingüe → se omite).
-    private Optional<Ejercicio> mapear(JsonNode ejercicioWger) {
+    // Devuelve vacío (omitido) si falta la traducción ES o EN, o si el
+    // ejercicio se queda SIN demostración visual (ni FED ni imagen wger):
+    // el catálogo solo contiene ejercicios con demostración.
+    private Optional<Ejercicio> mapear(JsonNode ejercicioWger,
+                                       Map<String, FedEjercicio> fedExacto,
+                                       List<FedTokens> fedIndice) {
         JsonNode es = traduccion(ejercicioWger, LANG_ES);
         JsonNode en = traduccion(ejercicioWger, LANG_EN);
         if (es == null || en == null) return Optional.empty();
@@ -152,6 +270,11 @@ public class WgerImportService {
         String nombreEn = en.path("name").asText("").trim();
         if (nombreEs.isEmpty() || nombreEn.isEmpty()) return Optional.empty();
 
+        // Demostración visual: FED (2 fotogramas animables) o imagen wger
+        FedEjercicio fed = buscarFed(nombreEn, fedExacto, fedIndice);
+        String imagenWger = imagenPrincipal(ejercicioWger);
+        if (fed == null && imagenWger == null) return Optional.empty();
+
         GrupoMuscular grupo = CATEGORIA_GRUPO.getOrDefault(
                 ejercicioWger.path("category").path("name").asText(""), GrupoMuscular.FULLBODY);
 
@@ -159,22 +282,36 @@ public class WgerImportService {
         e.setWgerId(ejercicioWger.path("id").asInt());
         e.setNombre(truncar(nombreEs, 100));
         e.setNombreEn(truncar(nombreEn, 100));
-        // wger trae una única descripción HTML por idioma → texto plano; se usa
-        // como descripción e instrucciones (no distingue ambos conceptos)
+        // Descripción = texto de wger (ES/EN). Instrucciones: SOLO si aportan
+        // contenido distinto (pasos numerados de FED, en EN); nunca se duplica
+        // la descripción como antes.
         String descEs = htmlATexto(es.path("description").asText(""));
         String descEn = htmlATexto(en.path("description").asText(""));
         e.setDescripcion(descEs.isBlank() ? null : descEs);
         e.setDescripcionEn(descEn.isBlank() ? null : descEn);
-        e.setInstrucciones(descEs.isBlank() ? null : descEs);
-        e.setInstruccionesEn(descEn.isBlank() ? null : descEn);
+        e.setInstrucciones(null);
+        e.setInstruccionesEn(fed != null ? fed.instrucciones() : null);
         e.setGrupoMuscular(grupo);
-        e.setDificultad(estimarDificultad(ejercicioWger, grupo));
+        e.setDificultad(fed != null && !fed.nivel().isBlank()
+                ? nivelFed(fed.nivel())
+                : estimarDificultad(ejercicioWger, grupo));
         e.setCaloriasQuemadas(KCAL_GRUPO.getOrDefault(grupo, 6));
         e.setEquipoNecesario(equipo(ejercicioWger, true));
         e.setEquipoNecesarioEn(equipo(ejercicioWger, false));
-        e.setImagenUrl(imagenPrincipal(ejercicioWger));
+        // Preferencia: fotogramas FED (animables); si no, imagen estática wger
+        e.setImagenUrl(fed != null ? fed.imagen1() : imagenWger);
+        e.setImagenUrl2(fed != null ? fed.imagen2() : null);
         e.setActivo(true);
         return Optional.of(e);
+    }
+
+    // Nivel real de free-exercise-db → enum Dificultad propio.
+    private Dificultad nivelFed(String nivel) {
+        return switch (nivel) {
+            case "beginner" -> Dificultad.PRINCIPIANTE;
+            case "expert" -> Dificultad.AVANZADO;
+            default -> Dificultad.INTERMEDIO;
+        };
     }
 
     // Traducción de un idioma concreto dentro del array translations de wger.
@@ -238,6 +375,7 @@ public class WgerImportService {
         destino.setEquipoNecesario(origen.getEquipoNecesario());
         destino.setEquipoNecesarioEn(origen.getEquipoNecesarioEn());
         destino.setImagenUrl(origen.getImagenUrl());
+        destino.setImagenUrl2(origen.getImagenUrl2());
         destino.setActivo(true);
     }
 

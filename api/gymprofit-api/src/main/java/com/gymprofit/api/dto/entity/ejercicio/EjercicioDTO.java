@@ -25,8 +25,10 @@ public class EjercicioDTO implements Serializable {
     private String grupoMuscular;
     // Nivel de dificultad
     private String dificultad;
-    // URL de la imagen ilustrativa
+    // URL de la imagen ilustrativa (fotograma 1)
     private String imagenUrl;
+    // Fotograma 2 de la demostración (la app alterna ambos para animarla)
+    private String imagenUrl2;
     // Instrucciones de ejecución
     private String instrucciones;
     // Calorías aproximadas quemadas

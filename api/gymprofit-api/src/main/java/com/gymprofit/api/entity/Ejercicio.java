@@ -45,9 +45,14 @@ public class Ejercicio {
     @Column(nullable = false)
     private Dificultad dificultad;
 
-    // URL de la imagen ilustrativa del ejercicio.
+    // URL de la imagen ilustrativa del ejercicio (fotograma 1).
     @Column(name = "imagen_url")
     private String imagenUrl;
+
+    // Fotograma 2 de la demostración (free-exercise-db); la app alterna
+    // ambos para animar el ejercicio. NULL = solo imagen estática.
+    @Column(name = "imagen_url_2")
+    private String imagenUrl2;
 
     // Instrucciones detalladas de ejecución.
     @Column(columnDefinition = "TEXT")
