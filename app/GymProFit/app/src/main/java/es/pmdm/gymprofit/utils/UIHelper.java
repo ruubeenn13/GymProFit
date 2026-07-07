@@ -51,12 +51,40 @@ public class UIHelper {
         mostrarToast(context, mensaje, R.drawable.ic_error);
     }
 
-    // Infla el layout toast_custom, rellena icono/mensaje y lo muestra en pantalla.
-    // setView está deprecado (API 30) pero NO tiene reemplazo para toasts con vista
-    // personalizada (icono + texto): Google eliminó los custom toasts solo para apps en
-    // background; en foreground siguen siendo válidos. Se mantiene deliberadamente.
-    @SuppressWarnings("deprecation")
+    // Rediseño: los avisos se muestran como Snackbar Material (fondo de
+    // superficie 2 del tema, icono a la izquierda, anclado SOBRE el bottom
+    // nav si la pantalla lo tiene). Si el contexto no es una Activity
+    // (p. ej. ApplicationContext) se cae al toast personalizado clásico.
     private static void mostrarToast(Context context, String mensaje, int iconoRes) {
+        if (context instanceof android.app.Activity) {
+            View root = ((android.app.Activity) context).findViewById(android.R.id.content);
+            if (root != null) {
+                com.google.android.material.snackbar.Snackbar sb =
+                        com.google.android.material.snackbar.Snackbar.make(
+                                root, mensaje, com.google.android.material.snackbar.Snackbar.LENGTH_SHORT);
+                // Icono + color de texto legible sobre la superficie del tema
+                TextView tv = sb.getView().findViewById(com.google.android.material.R.id.snackbar_text);
+                if (tv != null) {
+                    tv.setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.gp_on_surface));
+                    tv.setCompoundDrawablesRelativeWithIntrinsicBounds(iconoRes, 0, 0, 0);
+                    tv.setCompoundDrawablePadding((int) (12 * context.getResources().getDisplayMetrics().density));
+                    tv.setGravity(Gravity.CENTER_VERTICAL);
+                }
+                // Si la pantalla tiene bottom nav, el aviso aparece por encima
+                View bottomNav = root.findViewById(R.id.bottomNavigationView);
+                if (bottomNav != null) sb.setAnchorView(bottomNav);
+                sb.show();
+                return;
+            }
+        }
+        mostrarToastClasico(context, mensaje, iconoRes);
+    }
+
+    // Toast personalizado clásico (fallback sin Activity). setView está deprecado
+    // (API 30) pero NO tiene reemplazo para toasts con vista personalizada; Google
+    // los eliminó solo para apps en background. Se mantiene deliberadamente.
+    @SuppressWarnings("deprecation")
+    private static void mostrarToastClasico(Context context, String mensaje, int iconoRes) {
         View view = LayoutInflater.from(context).inflate(R.layout.toast_custom, null);
         ImageView ivIcono = view.findViewById(R.id.ivToastIcono);
         TextView tvMensaje = view.findViewById(R.id.tvToastMensaje);
