@@ -19,9 +19,12 @@ import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
+import es.pmdm.gymprofit.model.usuario.UsuarioEstadisticas;
+import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.network.UiApiCallback;
+import es.pmdm.gymprofit.network.UsuarioApi;
 
 // ============================================================
 // HomeActivity — pantalla principal tras el login.
@@ -33,8 +36,10 @@ public class HomeActivity extends BaseActivity {
 
     private BottomNavigationView bottomNavigationView;
     private TextView tvConteoEntrenamientos, tvConteoCaloriasHome, tvConteoMinutosHome;
-    // Interfaz Retrofit tipada del dominio sesiones (etapa 2)
+    private TextView tvRachaNumero, tvRachaUnidad, tvRachaMejor;
+    // Interfaces Retrofit tipadas (etapa 2)
     private final SesionApi sesionApi = ApiClient.service(SesionApi.class);
+    private final UsuarioApi usuarioApi = ApiClient.service(UsuarioApi.class);
 
     // Infla el layout, referencia las vistas de estadísticas y configura
     // cabecera, accesos rápidos, navegación inferior y permiso de notificaciones.
@@ -46,6 +51,9 @@ public class HomeActivity extends BaseActivity {
         tvConteoEntrenamientos = findViewById(R.id.tvConteoEntrenamientos);
         tvConteoCaloriasHome   = findViewById(R.id.tvConteoCaloriasHome);
         tvConteoMinutosHome    = findViewById(R.id.tvConteoMinutosHome);
+        tvRachaNumero = findViewById(R.id.tvRachaNumero);
+        tvRachaUnidad = findViewById(R.id.tvRachaUnidad);
+        tvRachaMejor  = findViewById(R.id.tvRachaMejor);
 
         setupMenuButton();
         configurarCabecera();
@@ -64,6 +72,37 @@ public class HomeActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         cargarEstadisticasSemana();
+        cargarRacha();
+    }
+
+    // Carga la racha de días del usuario (estadísticas agregadas) y la muestra
+    // como protagonista de la cabecera. Sin racha → 0 + mensaje motivador.
+    private void cargarRacha() {
+        int usuarioId = prefsManager.getUsuarioId();
+        if (usuarioId == -1) return;
+
+        usuarioApi.getEstadisticas(usuarioId).enqueue(new ApiCallback<UsuarioEstadisticas>() {
+            @Override
+            public void onOk(UsuarioEstadisticas e) {
+                if (e == null) return;
+                int dias = e.getRachaActualDias();
+                tvRachaNumero.setText(String.valueOf(dias));
+                tvRachaUnidad.setText(getString(dias == 1 ? R.string.home_racha_dia_unidad
+                        : R.string.home_racha_dias_unidad));
+                if (dias == 0) {
+                    tvRachaMejor.setText(getString(R.string.home_racha_vacia));
+                } else {
+                    tvRachaMejor.setText(getString(R.string.home_racha_mejor, e.getMejorRachaDias()));
+                }
+            }
+            @Override
+            public void onFail(int code, String message) {
+                // 404 = usuario sin datos aún (racha 0); no molestar con toast.
+                tvRachaNumero.setText("0");
+                tvRachaUnidad.setText(getString(R.string.home_racha_dias_unidad));
+                tvRachaMejor.setText(getString(R.string.home_racha_vacia));
+            }
+        });
     }
 
     // Obtiene las sesiones del usuario y calcula el total de entrenamientos,

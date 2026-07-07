@@ -91,6 +91,13 @@
     <string name="home_entrenamientos_semana">Workouts this week</string>
     <string name="home_ver_rutinas">View my routines</string>
     <string name="home_registrar_comida">Log a meal</string>
+    <string name="home_racha">Streak</string>
+    <string name="home_racha_dias_unidad">days</string>
+    <string name="home_racha_dia_unidad">day</string>
+    <string name="home_racha_mejor">Best streak: %d</string>
+    <string name="home_racha_vacia">Train today and start your streak!</string>
+    <string name="home_semana_titulo">This week</string>
+    <string name="home_entrenos">Workouts</string>
 
     <!-- ROUTINES -->
     <string name="rutinas_mis_rutinas">My routines</string>

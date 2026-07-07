@@ -90,6 +90,13 @@
     <string name="home_entrenamientos_semana">Entrenamientos esta semana</string>
     <string name="home_ver_rutinas">Ver mis rutinas</string>
     <string name="home_registrar_comida">Registrar comida</string>
+    <string name="home_racha">Racha</string>
+    <string name="home_racha_dias_unidad">días</string>
+    <string name="home_racha_dia_unidad">día</string>
+    <string name="home_racha_mejor">Mejor racha: %d</string>
+    <string name="home_racha_vacia">¡Entrena hoy y empieza tu racha!</string>
+    <string name="home_semana_titulo">Esta semana</string>
+    <string name="home_entrenos">Entrenos</string>
 
     <!-- RUTINAS -->
     <string name="rutinas_mis_rutinas">Mis rutinas</string>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Tile redondeado (naranja suave) de fondo del icono en las acciones rápidas. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="?attr/colorPrimaryContainer" />
+    <corners android:radius="13dp" />
+</shape>

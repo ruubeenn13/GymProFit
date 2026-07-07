@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  activity_home.xml — Pantalla principal (dashboard) del usuario tras iniciar sesión.
-  Muestra saludo, resumen semanal de entrenamientos/calorías/minutos y accesos rápidos
-  a iniciar entrenamiento, ver rutinas y registrar comida, con navegación inferior.
+  activity_home.xml — dashboard atlético del usuario tras iniciar sesión.
+  Cabecera con saludo/nombre (display Barlow Condensed), RACHA protagonista
+  (número XXL sobre naranja), resumen semanal con cifras grandes y accesos
+  rápidos. Navegación inferior al pie.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -15,24 +16,24 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Cabecera con saludo, nombre de usuario, fecha y menú de opciones -->
+            <!-- Cabecera: saludo + nombre (display) + fecha + menú -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingTop="20dp"
+                android:paddingTop="22dp"
                 android:paddingStart="20dp"
-                android:paddingEnd="4dp"
-                android:paddingBottom="12dp"
-                android:gravity="center_vertical"
-                android:background="?attr/colorSurface">
+                android:paddingEnd="6dp"
+                android:paddingBottom="10dp"
+                android:gravity="center_vertical">
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -46,24 +47,20 @@
                         android:layout_height="wrap_content"
                         android:text="@string/home_saludo"
                         android:textSize="14sp"
-                        android:textColor="?attr/colorOnSurface"
-                        android:alpha="0.6" />
+                        android:textColor="?attr/colorOnSurfaceVariant" />
 
                     <TextView
                         android:id="@+id/tvUsuario"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
                         android:text="@string/usuario_ejemplo"
-                        android:textSize="26sp"
-                        android:textStyle="bold"
-                        android:textColor="?attr/colorOnSurface" />
+                        android:textAppearance="@style/TextAppearance.GymProFit.Display" />
 
                     <TextView
                         android:id="@+id/tvFecha"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginTop="2dp"
                         android:textSize="13sp"
                         android:textColor="?attr/colorPrimary" />
 
@@ -75,6 +72,7 @@
                     android:layout_height="40dp"
                     android:src="@drawable/ic_more_vert"
                     android:padding="8dp"
+                    app:tint="?attr/colorOnSurface"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:focusable="true"
@@ -86,30 +84,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="16dp">
 
-                <!-- Tarjeta resumen: entrenamientos, calorías y minutos de la semana -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
-                    android:text="@string/home_resumen"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="?attr/colorOnSurface" />
-
+                <!-- ── RACHA (protagonista): número XXL sobre naranja ── -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="16dp"
+                    app:cardBackgroundColor="?attr/colorPrimary"
+                    app:cardCornerRadius="22dp"
                     app:cardElevation="0dp"
-                    app:cardBackgroundColor="?attr/colorSurface">
+                    app:strokeWidth="0dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:padding="20dp">
+                        android:padding="22dp"
+                        android:gravity="center_vertical">
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -120,37 +114,66 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/home_entrenamientos_semana"
+                                android:text="@string/home_racha"
+                                android:textAllCaps="true"
                                 android:textSize="13sp"
-                                android:textColor="?attr/colorOnSurface"
-                                android:alpha="0.6" />
+                                android:letterSpacing="0.12"
+                                android:textColor="?attr/colorOnPrimary"
+                                android:alpha="0.85" />
 
-                            <TextView
-                                android:id="@+id/tvConteoEntrenamientos"
+                            <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="6dp"
-                                android:text="—"
-                                android:textSize="44sp"
-                                android:textStyle="bold"
-                                android:textColor="?attr/colorPrimary" />
+                                android:orientation="horizontal"
+                                android:gravity="bottom">
+
+                                <TextView
+                                    android:id="@+id/tvRachaNumero"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="—"
+                                    android:fontFamily="@font/barlow_condensed"
+                                    android:textFontWeight="700"
+                                    android:textSize="64sp"
+                                    android:includeFontPadding="false"
+                                    android:textColor="?attr/colorOnPrimary" />
+
+                                <TextView
+                                    android:id="@+id/tvRachaUnidad"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_marginBottom="12dp"
+                                    android:text="@string/home_minutos"
+                                    android:textSize="16sp"
+                                    android:textColor="?attr/colorOnPrimary"
+                                    android:alpha="0.9" />
+
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/tvRachaMejor"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="13sp"
+                                android:textColor="?attr/colorOnPrimary"
+                                android:alpha="0.85" />
 
                         </LinearLayout>
 
                         <FrameLayout
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            android:layout_gravity="center_vertical"
+                            android:layout_width="76dp"
+                            android:layout_height="76dp"
                             android:background="@drawable/bg_circle"
-                            android:backgroundTint="?attr/colorPrimary">
+                            android:backgroundTint="#33FFFFFF">
 
                             <ImageView
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
                                 android:layout_gravity="center"
-                                android:src="@drawable/ic_ejercicios"
+                                android:src="@drawable/ic_calorias"
                                 app:tint="?attr/colorOnPrimary"
-                                android:contentDescription="@string/home_entrenamientos" />
+                                android:contentDescription="@string/home_racha" />
 
                         </FrameLayout>
 
@@ -158,52 +181,59 @@
 
                 </com.google.android.material.card.MaterialCardView>
 
+                <!-- ── ESTA SEMANA: 3 cifras grandes ── -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="26dp"
+                    android:layout_marginBottom="12dp"
+                    android:text="@string/home_semana_titulo"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:baselineAligned="false">
 
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:layout_marginEnd="6dp"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="0dp"
-                        app:cardBackgroundColor="?attr/colorSurface">
+                        android:layout_marginEnd="5dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
                             android:padding="16dp"
-                            android:gravity="center">
+                            android:gravity="center_horizontal">
 
                             <ImageView
-                                android:layout_width="28dp"
-                                android:layout_height="28dp"
-                                android:src="@drawable/ic_calorias"
-                                android:contentDescription="@string/home_calorias" />
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_ejercicios"
+                                app:tint="?attr/colorPrimary"
+                                android:contentDescription="@null" />
 
                             <TextView
-                                android:id="@+id/tvConteoCaloriasHome"
+                                android:id="@+id/tvConteoEntrenamientos"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
+                                android:layout_marginTop="6dp"
                                 android:text="—"
-                                android:textSize="24sp"
-                                android:textStyle="bold"
+                                android:fontFamily="@font/barlow_condensed"
+                                android:textFontWeight="700"
+                                android:textSize="34sp"
+                                android:includeFontPadding="false"
                                 android:textColor="?attr/colorOnSurface" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="@string/home_calorias"
+                                android:text="@string/home_entrenos"
                                 android:textSize="11sp"
-                                android:textColor="?attr/colorOnSurface"
-                                android:alpha="0.6" />
+                                android:textColor="?attr/colorOnSurfaceVariant" />
 
                         </LinearLayout>
 
@@ -213,42 +243,84 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:layout_marginStart="6dp"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="0dp"
-                        app:cardBackgroundColor="?attr/colorSurface">
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
                             android:padding="16dp"
-                            android:gravity="center">
+                            android:gravity="center_horizontal">
 
                             <ImageView
-                                android:layout_width="28dp"
-                                android:layout_height="28dp"
-                                android:src="@drawable/ic_tiempo"
-                                android:contentDescription="@string/home_minutos" />
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_calorias"
+                                app:tint="?attr/colorPrimary"
+                                android:contentDescription="@null" />
 
                             <TextView
-                                android:id="@+id/tvConteoMinutosHome"
+                                android:id="@+id/tvConteoCaloriasHome"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
+                                android:layout_marginTop="6dp"
                                 android:text="—"
-                                android:textSize="24sp"
-                                android:textStyle="bold"
+                                android:fontFamily="@font/barlow_condensed"
+                                android:textFontWeight="700"
+                                android:textSize="34sp"
+                                android:includeFontPadding="false"
                                 android:textColor="?attr/colorOnSurface" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
+                                android:text="@string/home_calorias"
+                                android:textSize="11sp"
+                                android:textColor="?attr/colorOnSurfaceVariant" />
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="5dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp"
+                            android:gravity="center_horizontal">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_tiempo"
+                                app:tint="?attr/colorPrimary"
+                                android:contentDescription="@null" />
+
+                            <TextView
+                                android:id="@+id/tvConteoMinutosHome"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:text="—"
+                                android:fontFamily="@font/barlow_condensed"
+                                android:textFontWeight="700"
+                                android:textSize="34sp"
+                                android:includeFontPadding="false"
+                                android:textColor="?attr/colorOnSurface" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
                                 android:text="@string/home_minutos"
                                 android:textSize="11sp"
-                                android:textColor="?attr/colorOnSurface"
-                                android:alpha="0.6" />
+                                android:textColor="?attr/colorOnSurfaceVariant" />
 
                         </LinearLayout>
 
@@ -256,24 +328,19 @@
 
                 </LinearLayout>
 
-                <!-- Sección de accesos rápidos: entrenamiento, rutinas, comida -->
+                <!-- ── ACCIONES RÁPIDAS ── -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="28dp"
+                    android:layout_marginTop="26dp"
                     android:layout_marginBottom="12dp"
                     android:text="@string/home_acciones_rapidas"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="?attr/colorOnSurface" />
+                    android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardIniciarEntrenamiento"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="0dp"
-                    app:cardBackgroundColor="?attr/colorSurface"
                     android:foreground="?attr/selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true">
@@ -282,14 +349,23 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:padding="18dp"
+                        android:padding="14dp"
                         android:gravity="center_vertical">
 
-                        <ImageView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:src="@drawable/ic_ejercicios"
-                            android:contentDescription="@string/home_iniciar_entrenamiento" />
+                        <FrameLayout
+                            android:layout_width="44dp"
+                            android:layout_height="44dp"
+                            android:background="@drawable/bg_accion_tile">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_ejercicios"
+                                app:tint="?attr/colorPrimary"
+                                android:contentDescription="@null" />
+
+                        </FrameLayout>
 
                         <TextView
                             android:layout_width="0dp"
@@ -305,6 +381,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@drawable/ic_chevron_right"
+                            app:tint="?attr/colorPrimary"
                             android:contentDescription="@null" />
 
                     </LinearLayout>
@@ -316,9 +393,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="0dp"
-                    app:cardBackgroundColor="?attr/colorSurface"
                     android:foreground="?attr/selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true">
@@ -327,14 +401,23 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:padding="18dp"
+                        android:padding="14dp"
                         android:gravity="center_vertical">
 
-                        <ImageView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:src="@drawable/ic_rutinas"
-                            android:contentDescription="@string/nav_rutinas" />
+                        <FrameLayout
+                            android:layout_width="44dp"
+                            android:layout_height="44dp"
+                            android:background="@drawable/bg_accion_tile">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_rutinas"
+                                app:tint="?attr/colorPrimary"
+                                android:contentDescription="@null" />
+
+                        </FrameLayout>
 
                         <TextView
                             android:layout_width="0dp"
@@ -350,6 +433,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@drawable/ic_chevron_right"
+                            app:tint="?attr/colorPrimary"
                             android:contentDescription="@null" />
 
                     </LinearLayout>
@@ -361,9 +445,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="0dp"
-                    app:cardBackgroundColor="?attr/colorSurface"
                     android:foreground="?attr/selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true">
@@ -372,14 +453,23 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:padding="18dp"
+                        android:padding="14dp"
                         android:gravity="center_vertical">
 
-                        <ImageView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:src="@drawable/ic_nutricion"
-                            android:contentDescription="@string/nav_nutricion" />
+                        <FrameLayout
+                            android:layout_width="44dp"
+                            android:layout_height="44dp"
+                            android:background="@drawable/bg_accion_tile">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_nutricion"
+                                app:tint="?attr/colorPrimary"
+                                android:contentDescription="@null" />
+
+                        </FrameLayout>
 
                         <TextView
                             android:layout_width="0dp"
@@ -395,6 +485,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@drawable/ic_chevron_right"
+                            app:tint="?attr/colorPrimary"
                             android:contentDescription="@null" />
 
                     </LinearLayout>
@@ -412,10 +503,7 @@
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorSurface"
         app:menu="@menu/bottom_nav_menu"
-        app:labelVisibilityMode="labeled"
-        app:itemIconTint="@color/bottom_nav_color"
-        app:itemTextColor="@color/bottom_nav_color" />
+        app:labelVisibilityMode="labeled" />
 
 </LinearLayout>
