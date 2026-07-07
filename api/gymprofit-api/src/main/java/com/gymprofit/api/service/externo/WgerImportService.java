@@ -477,19 +477,29 @@ public class WgerImportService {
         destino.setActivo(true);
     }
 
-    // Pasa el HTML de wger (<p>, <li>, &nbsp;...) a texto plano legible.
+    // Pasa el HTML de wger a texto plano legible. Clave: los saltos de línea
+    // CRUDOS dentro de un párrafo (wraps del editor, ej. "Este\nes un...") se
+    // colapsan a un espacio; solo se conserva salto de párrafo real en los
+    // límites de bloque (</p>, <br>, <li>). Así el texto fluye y envuelve
+    // natural en la pantalla en vez de cortarse a media frase.
     private String htmlATexto(String html) {
         if (html == null) return "";
-        return html
-                .replaceAll("(?i)</p>|<br ?/?>", "\n")
-                .replaceAll("(?i)<li>", "\n- ")
+        // Los limites de bloque reales se marcan con el centinela |BR| antes de
+        // limpiar; el resto de espacios en blanco (incluidos los saltos crudos
+        // del editor) se colapsan a un espacio, y luego |BR| vuelve a ser salto.
+        String txt = html
+                .replaceAll("(?i)</p>|<br ?/?>|</li>", "|BR|")
+                .replaceAll("(?i)<li>", "|BR|- ")
                 .replaceAll("<[^>]+>", "")
                 .replace("&nbsp;", " ")
                 .replace("&amp;", "&")
                 .replace("&quot;", "\"")
-                .replace("&#39;", "'")
+                .replace("&#39;", "'");
+        txt = txt.replaceAll("\\s+", " ");
+        txt = txt.replaceAll("(?: ?\\|BR\\| ?)+", "\n")
                 .replaceAll("\n{3,}", "\n\n")
                 .trim();
+        return txt.replaceAll("^\n+|\n+$", "").trim();
     }
 
     // Recorta un texto a la longitud máxima de su columna.
