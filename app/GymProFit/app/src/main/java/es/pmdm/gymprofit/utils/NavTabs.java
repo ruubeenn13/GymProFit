@@ -42,10 +42,9 @@ public final class NavTabs {
         Intent intent = new Intent(from, destino);
         intent.putExtra(EXTRA_FROM, actual); // la barra destino hará viajar la burbuja desde aquí
         from.startActivity(intent);
-        AnimUtils.sinAnimacion(from);
+        AnimUtils.transicionTab(from); // fundido entre pestañas
         // Home es la raíz: no se cierra al salir de ella para conservar el back;
         // el resto de destinos sí se cierran (navegación lateral entre iguales).
         if (actual != HOME) from.finish();
-        AnimUtils.sinAnimacion(from);
     }
 }

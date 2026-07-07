@@ -67,24 +67,26 @@ public class FloatingNavBar extends FrameLayout {
     private void init() {
         colorMarca    = attr(com.google.android.material.R.attr.colorPrimary);
         textoActivo   = attr(com.google.android.material.R.attr.colorOnSurface);
-        textoInactivo = conAlfa(textoActivo, 0x8C);
+        textoInactivo = conAlfa(textoActivo, 0xB8);
 
-        // ── TODA la barra: vidrio naranja translúcido (deja ver el fondo) ──
+        // ── TODA la barra: vidrio naranja VIVO y reflectante (brillo blanco
+        //    superior potente + naranja translúcido; casi refleja) ──
         GradientDrawable bg = new GradientDrawable(
                 GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[]{ conAlfa(0xFFFFFF, 0x12), conAlfa(colorMarca, 0x26), conAlfa(colorMarca, 0x33) });
+                new int[]{ conAlfa(0xFFFFFF, 0x3A), conAlfa(colorMarca, 0x4D), conAlfa(colorMarca, 0x63) });
         bg.setCornerRadius(dp(32));
-        bg.setStroke((int) dp(1), conAlfa(colorMarca, 0x55));
+        bg.setStroke((int) dp(1), conAlfa(0xFFFFFF, 0x55));
         setBackground(bg);
         setElevation(dp(10));
 
-        // ── Gota de vidrio (destino activo): naranja más brillante y transparente
+        // ── Gota de vidrio (destino activo): naranja más vivo y brillante que la
+        //    barra, con reflejo blanco superior, para destacar sobre ella ──
         burbuja = new View(getContext());
         GradientDrawable glass = new GradientDrawable(
                 GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[]{ conAlfa(0xFFFFFF, 0x33), conAlfa(colorMarca, 0x59), conAlfa(colorMarca, 0x80) });
+                new int[]{ conAlfa(0xFFFFFF, 0x59), conAlfa(colorMarca, 0x9E), conAlfa(colorMarca, 0xC8) });
         glass.setCornerRadius(dp(28));
-        glass.setStroke((int) dp(1), conAlfa(0xFFFFFF, 0x59));
+        glass.setStroke((int) dp(1), conAlfa(0xFFFFFF, 0x80));
         burbuja.setBackground(glass);
         addView(burbuja, new LayoutParams((int) dp(64), (int) dp(58), Gravity.CENTER_VERTICAL));
 
@@ -108,7 +110,8 @@ public class FloatingNavBar extends FrameLayout {
 
             TextView label = new TextView(getContext());
             label.setText(LABELS[i]);
-            label.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11);
+            label.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13.5f);
+            label.setLetterSpacing(0.02f);
             label.setPadding(0, (int) dp(3), 0, 0);
             label.setSingleLine(true);
             label.setIncludeFontPadding(false);
@@ -180,7 +183,9 @@ public class FloatingNavBar extends FrameLayout {
             case MotionEvent.ACTION_CANCEL:
                 arrastrando = false;
                 pararTicker();
-                int destino = indiceEnCentro(actualCentro);
+                // El destino es la opción bajo el DEDO al soltar (no la posición
+                // de la gota, que en un toque aún no ha terminado de viajar).
+                int destino = indiceEnCentro(objetivoGravedad(e.getX()));
                 boolean cambia = destino != activo;
                 activo = destino;
                 snapBurbuja(activo);
