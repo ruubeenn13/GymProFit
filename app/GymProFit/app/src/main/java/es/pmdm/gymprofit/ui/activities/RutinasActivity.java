@@ -10,7 +10,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -35,8 +34,6 @@ import es.pmdm.gymprofit.utils.UiFeedback;
 // menú contextual y navegar al detalle de cada una. Incluye la barra de navegación inferior.
 // ============================================================
 public class RutinasActivity extends BaseActivity {
-
-    private BottomNavigationView bottomNavigationView;
     private RecyclerView rvRutinas;
     private RutinaAdapter adapter;
     private ChipGroup chipGroupNivel;
@@ -293,40 +290,12 @@ public class RutinasActivity extends BaseActivity {
 
     // Configura la barra de navegación inferior y la redirección entre pantallas principales.
     private void configurarNavegacion() {
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setSelectedItemId(R.id.nav_rutinas);
-
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.nav_home) {
-                startActivity(new Intent(this, HomeActivity.class));
-                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
-                finish();
-                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
-                return true;
-            } else if (itemId == R.id.nav_rutinas) {
-                return true;
-            } else if (itemId == R.id.nav_ejercicios) {
-                startActivity(new Intent(this, EjerciciosActivity.class));
-                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
-                finish();
-                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
-                return true;
-            } else if (itemId == R.id.nav_nutricion) {
-                startActivity(new Intent(this, NutricionActivity.class));
-                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
-                finish();
-                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
-                return true;
-            } else if (itemId == R.id.nav_perfil) {
-                startActivity(new Intent(this, PerfilActivity.class));
-                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
-                finish();
-                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
-                return true;
-            }
-            return false;
-        });
+        es.pmdm.gymprofit.ui.widget.FloatingNavBar nav = findViewById(R.id.floatingNav);
+        // La burbuja viaja desde el destino anterior (si venimos de otra pestana).
+        int desde = getIntent().getIntExtra(es.pmdm.gymprofit.utils.NavTabs.EXTRA_FROM, es.pmdm.gymprofit.utils.NavTabs.RUTINAS);
+        nav.setActiveFrom(desde, es.pmdm.gymprofit.utils.NavTabs.RUTINAS);
+        nav.setOnTabSelectedListener(index ->
+                es.pmdm.gymprofit.utils.NavTabs.ir(this, index, es.pmdm.gymprofit.utils.NavTabs.RUTINAS));
     }
 
 }

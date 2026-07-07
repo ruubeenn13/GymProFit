@@ -70,9 +70,9 @@ public class UIHelper {
                     tv.setCompoundDrawablePadding((int) (12 * context.getResources().getDisplayMetrics().density));
                     tv.setGravity(Gravity.CENTER_VERTICAL);
                 }
-                // Si la pantalla tiene bottom nav, el aviso aparece por encima
-                View bottomNav = root.findViewById(R.id.bottomNavigationView);
-                if (bottomNav != null) sb.setAnchorView(bottomNav);
+                // Si la pantalla tiene barra de navegación flotante, el aviso aparece por encima
+                View nav = root.findViewById(R.id.floatingNav);
+                if (nav != null) sb.setAnchorView(nav);
                 sb.show();
                 return;
             }

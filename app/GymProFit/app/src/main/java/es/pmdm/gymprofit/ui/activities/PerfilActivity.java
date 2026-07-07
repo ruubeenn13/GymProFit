@@ -20,7 +20,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -47,8 +46,6 @@ import okhttp3.ResponseBody;
 // o cámara). Da acceso a sesiones, mediciones, logros, ajustes de admin y "Acerca de".
 // ============================================================
 public class PerfilActivity extends BaseActivity {
-
-    private BottomNavigationView bottomNavigationView;
     private ActivityResultLauncher<Intent> editarPerfilLauncher;
     private ActivityResultLauncher<Intent> medicionesLauncher;
     private ActivityResultLauncher<String> galleryLauncher;
@@ -359,40 +356,12 @@ public class PerfilActivity extends BaseActivity {
     // Configura la BottomNavigationView y la navegación entre las secciones
     // principales de la app, marcando "Perfil" como seleccionado.
     private void configurarNavegacion() {
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setSelectedItemId(R.id.nav_perfil);
-
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.nav_home) {
-                startActivity(new Intent(this, HomeActivity.class));
-                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
-                finish();
-                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
-                return true;
-            } else if (itemId == R.id.nav_rutinas) {
-                startActivity(new Intent(this, RutinasActivity.class));
-                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
-                finish();
-                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
-                return true;
-            } else if (itemId == R.id.nav_ejercicios) {
-                startActivity(new Intent(this, EjerciciosActivity.class));
-                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
-                finish();
-                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
-                return true;
-            } else if (itemId == R.id.nav_nutricion) {
-                startActivity(new Intent(this, NutricionActivity.class));
-                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
-                finish();
-                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
-                return true;
-            } else if (itemId == R.id.nav_perfil) {
-                return true;
-            }
-            return false;
-        });
+        es.pmdm.gymprofit.ui.widget.FloatingNavBar nav = findViewById(R.id.floatingNav);
+        // La burbuja viaja desde el destino anterior (si venimos de otra pestana).
+        int desde = getIntent().getIntExtra(es.pmdm.gymprofit.utils.NavTabs.EXTRA_FROM, es.pmdm.gymprofit.utils.NavTabs.PERFIL);
+        nav.setActiveFrom(desde, es.pmdm.gymprofit.utils.NavTabs.PERFIL);
+        nav.setOnTabSelectedListener(index ->
+                es.pmdm.gymprofit.utils.NavTabs.ir(this, index, es.pmdm.gymprofit.utils.NavTabs.PERFIL));
     }
 
     // Devuelve el valor si es válido (no nulo/vacío/"null"), o el fallback.

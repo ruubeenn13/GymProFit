@@ -179,15 +179,14 @@
 
     </LinearLayout>
 
-    <!-- Barra de navegación inferior -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigationView"
+    <!-- Barra de navegación inferior flotante (burbuja con arrastre) -->
+    <es.pmdm.gymprofit.ui.widget.FloatingNavBar
+        android:id="@+id/floatingNav"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorSurface"
-        app:menu="@menu/bottom_nav_menu"
-        app:labelVisibilityMode="labeled"
-        app:itemIconTint="@color/bottom_nav_color"
-        app:itemTextColor="@color/bottom_nav_color" />
+        android:layout_height="76dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="12dp" />
 
 </LinearLayout>

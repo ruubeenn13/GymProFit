@@ -9,7 +9,6 @@ import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -32,8 +31,6 @@ import es.pmdm.gymprofit.utils.UiFeedback;
  * Muestra calorías y macros del día, con cards por tipo de comida.
  */
 public class NutricionActivity extends BaseActivity {
-
-    private BottomNavigationView bottomNavigationView;
     private ProgressBar progressCalorias, progressProteinas, progressCarbos, progressGrasas;
     private TextView tvCaloriasActuales, tvCaloriasObjetivo;
     private TextView tvProteinasActuales, tvCarbosActuales, tvGrasasActuales;
@@ -255,39 +252,11 @@ public class NutricionActivity extends BaseActivity {
     // Configura la barra de navegación inferior, marcando "Nutrición" como
     // seleccionado y redirigiendo a la Activity correspondiente.
     private void configurarNavegacion() {
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setSelectedItemId(R.id.nav_nutricion);
-
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.nav_home) {
-                startActivity(new Intent(this, HomeActivity.class));
-                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
-                finish();
-                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
-                return true;
-            } else if (itemId == R.id.nav_rutinas) {
-                startActivity(new Intent(this, RutinasActivity.class));
-                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
-                finish();
-                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
-                return true;
-            } else if (itemId == R.id.nav_ejercicios) {
-                startActivity(new Intent(this, EjerciciosActivity.class));
-                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
-                finish();
-                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
-                return true;
-            } else if (itemId == R.id.nav_nutricion) {
-                return true;
-            } else if (itemId == R.id.nav_perfil) {
-                startActivity(new Intent(this, PerfilActivity.class));
-                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
-                finish();
-                es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
-                return true;
-            }
-            return false;
-        });
+        es.pmdm.gymprofit.ui.widget.FloatingNavBar nav = findViewById(R.id.floatingNav);
+        // La burbuja viaja desde el destino anterior (si venimos de otra pestana).
+        int desde = getIntent().getIntExtra(es.pmdm.gymprofit.utils.NavTabs.EXTRA_FROM, es.pmdm.gymprofit.utils.NavTabs.NUTRICION);
+        nav.setActiveFrom(desde, es.pmdm.gymprofit.utils.NavTabs.NUTRICION);
+        nav.setOnTabSelectedListener(index ->
+                es.pmdm.gymprofit.utils.NavTabs.ir(this, index, es.pmdm.gymprofit.utils.NavTabs.NUTRICION));
     }
 }
