@@ -58,11 +58,25 @@ public class OpenFoodFactsClient {
                 .build();
     }
 
+    // Catálogo inicial sin texto: productos más escaneados de España (browse
+    // por popularidad). Search-a-licious exige sort_by cuando no hay texto.
+    public BusquedaExterna browsePopulares(int page, int size) {
+        String url = String.format(SEARCH_URL,
+                UriUtils.encodeQueryParam("countries_tags:\"en:spain\"", StandardCharsets.UTF_8),
+                page + 1, size) + "&sort_by=-unique_scans_n";
+        return ejecutarBusqueda(url, "(populares)");
+    }
+
     // Busca productos por texto en OFF (página de OFF empieza en 1; la nuestra en 0).
-    // Fallo del proveedor → lista vacía (la búsqueda local sigue funcionando).
     public BusquedaExterna buscar(String q, int page, int size) {
         String url = String.format(SEARCH_URL,
                 UriUtils.encodeQueryParam(q, StandardCharsets.UTF_8), page + 1, size);
+        return ejecutarBusqueda(url, q);
+    }
+
+    // Ejecuta una búsqueda Search-a-licious y normaliza los hits.
+    // Fallo del proveedor → lista vacía (la app sigue funcionando sin catálogo).
+    private BusquedaExterna ejecutarBusqueda(String url, String contexto) {
         try {
             // URI.create evita que RestClient re-encodee la URL ya codificada
             String body = restClient.get().uri(java.net.URI.create(url)).retrieve().body(String.class);
@@ -74,7 +88,7 @@ public class OpenFoodFactsClient {
             }
             return new BusquedaExterna(alimentos, root.path("count").asLong(0));
         } catch (Exception ex) {
-            logger.warn("Open Food Facts no disponible en la búsqueda '{}': {}", q, ex.getMessage());
+            logger.warn("Open Food Facts no disponible en la búsqueda '{}': {}", contexto, ex.getMessage());
             return new BusquedaExterna(List.of(), 0);
         }
     }

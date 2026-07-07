@@ -40,9 +40,24 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         String dificultad    = getIntent().getStringExtra("dificultad");
         int calorias         = getIntent().getIntExtra("calorias", 0);
         String equipo        = getIntent().getStringExtra("equipoNecesario");
+        String imagenUrl     = getIntent().getStringExtra("imagenUrl");
 
         poblarVistas(nombre, descripcion, instrucciones, grupoMuscular, dificultad, calorias, equipo);
-        configurarVideo(id);
+        configurarImagen(imagenUrl);
+        configurarVideo(id); // el vídeo local (si existe) pisa a la imagen
+    }
+
+    // Carga la imagen del ejercicio (wger) en la cabecera sustituyendo al
+    // placeholder; sin URL se mantiene el placeholder genérico.
+    private void configurarImagen(String imagenUrl) {
+        if (isEmpty(imagenUrl)) return;
+        View placeholder = findViewById(R.id.layoutVideoPlaceholder);
+        android.widget.ImageView ivImagen = findViewById(R.id.ivImagenDetalle);
+        ivImagen.setVisibility(View.VISIBLE);
+        com.bumptech.glide.Glide.with(this)
+                .load(imagenUrl)
+                .into(ivImagen);
+        placeholder.setVisibility(View.GONE);
     }
 
     // Rellena las vistas de la pantalla con los datos del ejercicio,

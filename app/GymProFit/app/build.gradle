@@ -74,6 +74,8 @@ dependencies {
     implementation libs.constraintlayout
     // Cifrado del token/refresh en almacenamiento (EncryptedSharedPreferences)
     implementation libs.security.crypto
+    // Carga de imágenes remotas (catálogo de ejercicios wger, futuras fotos)
+    implementation libs.glide
     // Red: Retrofit + OkHttp (motor HTTP, interceptor de token y Authenticator de refresh)
     implementation libs.retrofit.core
     // Converter Gson: deserializa las respuestas JSON a POJOs tipados (etapa 2)

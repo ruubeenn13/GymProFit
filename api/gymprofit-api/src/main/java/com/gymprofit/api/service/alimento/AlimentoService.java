@@ -287,33 +287,31 @@ public class AlimentoService implements IAlimentoService {
     public PageDTO<AlimentoDTO> buscarCatalogo(String q, String categoria, int page, int size) {
         logger.info("Búsqueda paginada de alimentos: q={}, categoria={}, page={}, size={}", q, categoria, page, size);
 
-        // Normalizar filtros: blanco → null (sin filtro)
+        // Normalizar filtros: blanco → null (sin filtro). El filtro por categoría
+        // no aplica al catálogo externo (OFF no usa nuestras categorías canónicas).
         String texto = (q == null || q.isBlank()) ? null : q.trim();
-        String cat = (categoria == null || categoria.isBlank()) ? null : categoria.trim();
         int pagina = Math.max(0, page);
         int tam = Math.min(Math.max(1, size), 100);
 
         Integer usuarioId = securityUtils.getCurrentUserId();
 
-        // Sin texto: solo catálogo local (propios + importados), paginado en BD
-        if (texto == null) {
-            Page<Alimento> resultado = alimentoRepository.buscarCatalogo(
-                    null, cat, usuarioId, PageRequest.of(pagina, tam));
-            return PageDTO.of(resultado, alimentoMapper.toDTOList(resultado.getContent()));
-        }
-
-        // Con texto: Open Food Facts en vivo + propios del usuario delante (página 0)
-        OpenFoodFactsClient.BusquedaExterna externa = openFoodFactsClient.buscar(texto, pagina, tam);
+        // Sin texto → browse por popularidad (más escaneados de España);
+        // con texto → búsqueda por relevancia. En ambos casos, en la página 0
+        // se anteponen los alimentos PROPIOS del usuario que coincidan.
+        OpenFoodFactsClient.BusquedaExterna externa = (texto == null)
+                ? openFoodFactsClient.browsePopulares(pagina, tam)
+                : openFoodFactsClient.buscar(texto, pagina, tam);
 
         List<AlimentoDTO> contenido = new java.util.ArrayList<>();
         if (pagina == 0) {
-            contenido.addAll(alimentoMapper.toDTOList(alimentoRepository.buscarPropios(texto, usuarioId)));
+            contenido.addAll(alimentoMapper.toDTOList(
+                    alimentoRepository.buscarPropios(texto == null ? "" : texto, usuarioId)));
         }
-        // Dedup por barcode: si un producto OFF ya está importado en local se
-        // resuelve al importar (el upsert devuelve la fila existente)
+        // Los productos OFF ya importados llegan como externos (id null); al
+        // seleccionarlos, el upsert de /alimentos/importar devuelve la fila local
         contenido.addAll(externa.alimentos());
 
-        long total = externa.totalElements() + (pagina == 0 ? 0 : 0);
+        long total = externa.totalElements();
         int totalPaginas = (int) Math.ceil((double) Math.max(total, contenido.size()) / tam);
         boolean ultima = (long) (pagina + 1) * tam >= total;
 

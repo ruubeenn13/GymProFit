@@ -105,6 +105,15 @@
 
                     </LinearLayout>
 
+                    <!-- Imagen del ejercicio (wger via Glide); visible si hay URL y no hay vídeo local -->
+                    <ImageView
+                        android:id="@+id/ivImagenDetalle"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone"
+                        android:contentDescription="@null" />
+
                     <VideoView
                         android:id="@+id/videoView"
                         android:layout_width="match_parent"

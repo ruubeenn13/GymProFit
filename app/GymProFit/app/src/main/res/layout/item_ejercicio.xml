@@ -24,12 +24,14 @@
         android:padding="16dp"
         android:gravity="center_vertical">
 
-        <!-- Icono del ejercicio -->
-        <ImageView
+        <!-- Imagen del ejercicio (wger via Glide; fallback al icono genérico) -->
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivIconoEjercicio"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:scaleType="centerCrop"
             android:src="@drawable/ic_ejercicios"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"
             android:contentDescription="@null" />
 
         <LinearLayout
@@ -47,12 +49,16 @@
                 android:textStyle="bold"
                 android:textColor="?attr/colorOnSurface" />
 
+            <!-- Descripción limitada a 2 líneas: las de wger son largas y
+                 reventaban la card; el texto completo se ve en el detalle -->
             <TextView
                 android:id="@+id/tvDescripcionEjercicio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:textSize="13sp"
+                android:maxLines="2"
+                android:ellipsize="end"
                 android:textColor="?attr/colorOnSurface"
                 android:alpha="0.6" />
 
