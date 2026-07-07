@@ -1,5 +1,6 @@
 package com.gymprofit.api.service.ejercicio;
 
+import com.gymprofit.api.dto.common.PageDTO;
 import com.gymprofit.api.dto.entity.ejercicio.EjercicioCreateDTO;
 import com.gymprofit.api.dto.entity.ejercicio.EjercicioDTO;
 import com.gymprofit.api.dto.jooq.EjercicioJooqDTO;
@@ -46,4 +47,8 @@ public interface IEjercicioService {
 
     // Búsqueda de ejercicios para el panel admin (incluye inactivos) mediante jOOQ.
     List<EjercicioJooqDTO> busquedaAdmin(String nombre, String grupoMuscular, String dificultad, Boolean activo);
+
+    // Búsqueda paginada del catálogo de ejercicios activos con filtro por
+    // texto, grupo muscular y dificultad.
+    PageDTO<EjercicioDTO> buscarCatalogo(String q, String grupoMuscular, String dificultad, int page, int size);
 }

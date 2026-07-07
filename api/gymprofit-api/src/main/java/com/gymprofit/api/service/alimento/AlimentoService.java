@@ -1,5 +1,7 @@
 package com.gymprofit.api.service.alimento;
 
+import com.gymprofit.api.config.security.SecurityUtils;
+import com.gymprofit.api.dto.common.PageDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoCreateDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoPatchDTO;
@@ -17,6 +19,8 @@ import com.gymprofit.api.repository.jpa.IUsuarioRepository;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +41,7 @@ public class AlimentoService implements IAlimentoService {
     private final IAlimentoJooqRepository alimentoJooqRepository;
     private final AlimentoMapper alimentoMapper;
     private final IUsuarioRepository usuarioRepository;
+    private final SecurityUtils securityUtils;
     private final Logger logger = LoggerFactory.getLogger(AlimentoService.class);
 
     // Devuelve todos los alimentos existentes (activos e inactivos).
@@ -269,5 +274,24 @@ public class AlimentoService implements IAlimentoService {
         logger.info("Búsqueda admin de alimentos");
 
         return alimentoJooqRepository.busquedaAdmin(nombre, categoria, activo);
+    }
+
+    // Búsqueda paginada del catálogo visible para el usuario autenticado:
+    // alimentos activos globales + los propios. El usuarioId sale SIEMPRE del
+    // token (nunca del cliente) para no exponer alimentos de otros usuarios.
+    @Override
+    public PageDTO<AlimentoDTO> buscarCatalogo(String q, String categoria, int page, int size) {
+        logger.info("Búsqueda paginada de alimentos: q={}, categoria={}, page={}, size={}", q, categoria, page, size);
+
+        // Normalizar filtros: blanco → null (sin filtro)
+        String texto = (q == null || q.isBlank()) ? null : q.trim();
+        String cat = (categoria == null || categoria.isBlank()) ? null : categoria.trim();
+
+        Integer usuarioId = securityUtils.getCurrentUserId();
+
+        Page<Alimento> resultado = alimentoRepository.buscarCatalogo(
+                texto, cat, usuarioId, PageRequest.of(Math.max(0, page), Math.min(Math.max(1, size), 100)));
+
+        return PageDTO.of(resultado, alimentoMapper.toDTOList(resultado.getContent()));
     }
 }

@@ -1,5 +1,6 @@
 package com.gymprofit.api.service.ejercicio;
 
+import com.gymprofit.api.dto.common.PageDTO;
 import com.gymprofit.api.dto.entity.ejercicio.EjercicioCreateDTO;
 import com.gymprofit.api.dto.entity.ejercicio.EjercicioDTO;
 import com.gymprofit.api.dto.entity.ejercicio.EjercicioPatchDTO;
@@ -9,6 +10,7 @@ import com.gymprofit.api.enums.Dificultad;
 import com.gymprofit.api.enums.GrupoMuscular;
 import com.gymprofit.api.exceptions.CreateEntityException;
 import com.gymprofit.api.exceptions.DeleteEntityException;
+import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.UpdateEntityException;
 import com.gymprofit.api.mappers.EjercicioMapper;
@@ -17,6 +19,8 @@ import com.gymprofit.api.repository.jpa.IEjercicioRepository;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -237,5 +241,43 @@ public class EjercicioService implements IEjercicioService {
         logger.info("Búsqueda admin de ejercicios");
 
         return ejercicioJooqRepository.busquedaAdmin(nombre, grupoMuscular, dificultad, activo);
+    }
+
+    // Búsqueda paginada del catálogo de ejercicios activos con filtros
+    // opcionales por texto, grupo muscular y dificultad.
+    @Override
+    public PageDTO<EjercicioDTO> buscarCatalogo(String q, String grupoMuscular, String dificultad, int page, int size) {
+        logger.info("Búsqueda paginada de ejercicios: q={}, grupo={}, dificultad={}, page={}, size={}",
+                q, grupoMuscular, dificultad, page, size);
+
+        // Normalizar filtros: blanco → null (sin filtro); enums inválidos → 400
+        String texto = (q == null || q.isBlank()) ? null : q.trim();
+        GrupoMuscular grupo = parseGrupoMuscular(grupoMuscular);
+        Dificultad dif = parseDificultad(dificultad);
+
+        Page<Ejercicio> resultado = ejercicioRepository.buscarCatalogo(
+                texto, grupo, dif, PageRequest.of(Math.max(0, page), Math.min(Math.max(1, size), 100)));
+
+        return PageDTO.of(resultado, ejercicioMapper.toDTOList(resultado.getContent()));
+    }
+
+    // Convierte el texto recibido en el enum GrupoMuscular; null/blanco = sin filtro.
+    private GrupoMuscular parseGrupoMuscular(String valor) {
+        if (valor == null || valor.isBlank()) return null;
+        try {
+            return GrupoMuscular.valueOf(valor.trim().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new InvalidDataException("Grupo muscular inválido: " + valor);
+        }
+    }
+
+    // Convierte el texto recibido en el enum Dificultad; null/blanco = sin filtro.
+    private Dificultad parseDificultad(String valor) {
+        if (valor == null || valor.isBlank()) return null;
+        try {
+            return Dificultad.valueOf(valor.trim().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new InvalidDataException("Dificultad inválida: " + valor);
+        }
     }
 }

@@ -3,6 +3,7 @@ package es.pmdm.gymprofit.network;
 import java.util.List;
 import java.util.Map;
 
+import es.pmdm.gymprofit.model.PageDTO;
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -11,6 +12,7 @@ import retrofit2.http.GET;
 import retrofit2.http.PATCH;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 // ============================================================
 // EjercicioApi — interfaz Retrofit tipada del dominio "ejercicios" (etapa 2).
@@ -25,6 +27,17 @@ public interface EjercicioApi {
     // Solo los ejercicios activos del catálogo (los que ve el usuario).
     @GET("ejercicios/activos")
     Call<List<Ejercicio>> getActivos();
+
+    // Búsqueda paginada del catálogo de ejercicios activos. q, grupoMuscular
+    // (enum: PECHO, ESPALDA...) y dificultad (PRINCIPIANTE...) opcionales
+    // (null = sin filtro). Devuelve 200 con content=[] si no hay resultados
+    // (nunca 404) — apto para scroll infinito.
+    @GET("ejercicios/buscar")
+    Call<PageDTO<Ejercicio>> buscar(@Query("q") String q,
+                                    @Query("grupoMuscular") String grupoMuscular,
+                                    @Query("dificultad") String dificultad,
+                                    @Query("page") int page,
+                                    @Query("size") int size);
 
     // Edita parcialmente un ejercicio (panel admin). body: nombre, descripcion,
     // grupoMuscular, dificultad, caloriasQuemadas, equipoNecesario, instrucciones...

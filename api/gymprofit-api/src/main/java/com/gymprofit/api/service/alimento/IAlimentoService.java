@@ -1,5 +1,6 @@
 package com.gymprofit.api.service.alimento;
 
+import com.gymprofit.api.dto.common.PageDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoCreateDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoDTO;
 import com.gymprofit.api.dto.jooq.AlimentoJooqDTO;
@@ -53,4 +54,8 @@ public interface IAlimentoService {
 
     // Búsqueda de alimentos para el panel admin (incluye inactivos) mediante jOOQ.
     List<AlimentoJooqDTO> busquedaAdmin(String nombre, String categoria, Boolean activo);
+
+    // Búsqueda paginada del catálogo visible para el usuario autenticado
+    // (globales + propios, solo activos) con filtro por texto y categoría.
+    PageDTO<AlimentoDTO> buscarCatalogo(String q, String categoria, int page, int size);
 }

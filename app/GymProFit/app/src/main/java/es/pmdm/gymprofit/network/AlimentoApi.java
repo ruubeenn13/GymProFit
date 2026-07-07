@@ -3,6 +3,7 @@ package es.pmdm.gymprofit.network;
 import java.util.List;
 import java.util.Map;
 
+import es.pmdm.gymprofit.model.PageDTO;
 import es.pmdm.gymprofit.model.alimento.Alimento;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -12,6 +13,7 @@ import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 // ============================================================
 // AlimentoApi — interfaz Retrofit tipada del dominio "alimentos" (etapa 2).
@@ -28,6 +30,15 @@ public interface AlimentoApi {
     // Catálogo de alimentos activos (globales + propios del usuario).
     @GET("alimentos/activos")
     Call<List<Alimento>> getActivos();
+
+    // Búsqueda paginada del catálogo (globales + propios, solo activos).
+    // q/categoria opcionales (null = sin filtro). Devuelve 200 con content=[]
+    // si no hay resultados (nunca 404) — apto para scroll infinito.
+    @GET("alimentos/buscar")
+    Call<PageDTO<Alimento>> buscar(@Query("q") String q,
+                                   @Query("categoria") String categoria,
+                                   @Query("page") int page,
+                                   @Query("size") int size);
 
     // Busca alimentos cuyo nombre contenga el texto indicado.
     @GET("alimentos/nombre/{nombre}")

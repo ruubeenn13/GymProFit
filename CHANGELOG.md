@@ -2,6 +2,12 @@
 
 Historial de cambios del proyecto (API Spring Boot + app Android). Ver también el [README](README.md).
 
+### 2026-07-07
+
+| Hash | Descripción |
+|---|---|
+| _(pendiente)_ | feat: **búsqueda paginada server-side de catálogos (fase 1.1 del roadmap de lanzamiento)** — prepara la app para catálogos grandes (miles de alimentos/ejercicios) antes de la siembra masiva. API: `GET /alimentos/buscar` (q por nombre ES/EN + categoría; solo activos globales+propios, usuarioId SIEMPRE del token) y `GET /ejercicios/buscar` (q ES/EN + grupoMuscular + dificultad; enums inválidos→400) con `PageDTO<T>` común (content/page/size/totalElements/totalPages/last); página vacía = 200 con `content=[]` (nunca 404). Android: `PaginacionScrollListener` reutilizable (scroll infinito, umbral 5) + debounce 400ms; Ejercicios/AñadirEjercicios/AñadirAlimento migradas de filtro-en-cliente (descargaba TODO el catálogo) a búsqueda en servidor; `EjercicioAdapter` simplificado (fuera 4 métodos de filtrado cliente, entra append de páginas); de paso muere el bug del chip Core que filtraba por "ABOMEN" (typo). **Verificado**: suite API 233/233 + curl (paginación/filtros/400/vacío/i18n EN) + emulador end-to-end (búsqueda "press", chips Chest/Back/Intermediate, empty state, añadir 150g pollo → 248 kcal), sin crashes |
+
 ### 2026-07-06
 
 | Hash | Descripción |

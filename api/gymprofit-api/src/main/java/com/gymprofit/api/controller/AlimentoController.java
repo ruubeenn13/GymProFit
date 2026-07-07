@@ -1,6 +1,7 @@
 package com.gymprofit.api.controller;
 
 import com.gymprofit.api.dto.common.CountDTO;
+import com.gymprofit.api.dto.common.PageDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoCreateDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoPatchDTO;
@@ -222,6 +223,23 @@ public class AlimentoController {
         }
 
         return ResponseEntity.ok(alimentos);
+    }
+
+    @Operation(summary = "Búsqueda paginada del catálogo de alimentos",
+            description = "Devuelve los alimentos activos visibles para el usuario autenticado (globales + propios), " +
+                    "con filtro opcional por texto (nombre ES/EN) y categoría. Diseñado para scroll infinito: " +
+                    "una página vacía devuelve 200 con content=[] (nunca 404).")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Página de alimentos",
+                    content = @Content(schema = @Schema(implementation = PageDTO.class)))
+    })
+    @GetMapping("/alimentos/buscar")
+    public ResponseEntity<PageDTO<AlimentoDTO>> buscarAlimentos(
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) String categoria,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(alimentoService.buscarCatalogo(q, categoria, page, size));
     }
 
     @Operation(summary = "Busca alimentos por rango de calorías")

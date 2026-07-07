@@ -2,6 +2,8 @@ package es.pmdm.gymprofit.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -28,6 +30,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.model.PageDTO;
 import es.pmdm.gymprofit.model.alimento.Alimento;
 import es.pmdm.gymprofit.model.comida.Comida;
 import es.pmdm.gymprofit.network.AlimentoApi;
@@ -37,20 +40,26 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.ComidaApi;
 import es.pmdm.gymprofit.ui.adapters.AlimentoAdapter;
 import es.pmdm.gymprofit.utils.LoadingDialog;
+import es.pmdm.gymprofit.utils.PaginacionScrollListener;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
 
 
 // ============================================================
 // AnadirAlimentoActivity — buscador y selector de alimentos para una comida
-// Permite listar/filtrar alimentos, crear uno nuevo, editar/eliminar los
-// propios (o desactivar predefinidos si es admin) y añadirlos con gramos.
+// Permite buscar alimentos (búsqueda en SERVIDOR, paginada con scroll
+// infinito), crear uno nuevo, editar/eliminar los propios (o desactivar
+// predefinidos si es admin) y añadirlos con gramos.
 // ============================================================
 /**
  * Permite al usuario buscar un alimento y añadirlo a una comida del día.
  * Long-press sobre alimento propio muestra menú para editar o eliminar.
  */
 public class AnadirAlimentoActivity extends BaseActivity {
+
+    // Tamaño de página del catálogo y retardo del debounce del buscador
+    private static final int TAM_PAGINA = 30;
+    private static final long DEBOUNCE_MS = 400;
 
     // Tipo de comida al que se añadirá el alimento (DESAYUNO, ALMUERZO, ...)
     private String tipoComida;
@@ -59,11 +68,19 @@ public class AnadirAlimentoActivity extends BaseActivity {
     // Fecha (YYYY-MM-DD) de la comida
     private String fecha;
 
-    // Lista completa de alimentos cargados desde la API
-    private final List<Alimento> listaAlimentosFull = new ArrayList<>();
-    // Lista filtrada según el texto de búsqueda, mostrada en el RecyclerView
-    private final List<Alimento> listaAlimentosFiltrada = new ArrayList<>();
+    // Lista mostrada en el RecyclerView (se rellena por páginas del servidor)
+    private final List<Alimento> listaAlimentos = new ArrayList<>();
     private AlimentoAdapter adapter;
+
+    // Estado de la búsqueda paginada en servidor
+    private String queryActual = "";
+    private int paginaActual = 0;
+    private boolean cargando = false;
+    private boolean ultimaPagina = false;
+
+    // Debounce del buscador: pospone la petición hasta que el usuario deja de teclear
+    private final Handler debounceHandler = new Handler(Looper.getMainLooper());
+    private Runnable debounceRunnable;
 
     // Launcher para lanzar CrearAlimentoActivity y recargar la lista si se creó uno nuevo
     private ActivityResultLauncher<Intent> crearAlimentoLauncher;
@@ -86,8 +103,9 @@ public class AnadirAlimentoActivity extends BaseActivity {
         btnBack.setOnClickListener(v -> finish());
 
         RecyclerView rvAlimentos = findViewById(R.id.rvAlimentos);
-        rvAlimentos.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new AlimentoAdapter(listaAlimentosFiltrada, this::mostrarDialogoGramos);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        rvAlimentos.setLayoutManager(layoutManager);
+        adapter = new AlimentoAdapter(listaAlimentos, this::mostrarDialogoGramos);
         adapter.setOnItemLongClickListener((alimento, anchor) -> {
             boolean esAdmin = "ROLE_ADMIN".equals(prefsManager.getRol());
             boolean esPropio = alimento.getUsuarioId() != null
@@ -97,26 +115,25 @@ public class AnadirAlimentoActivity extends BaseActivity {
             }
         });
         rvAlimentos.setAdapter(adapter);
+        // Scroll infinito: pide la siguiente página al acercarse al final
+        rvAlimentos.addOnScrollListener(new PaginacionScrollListener(layoutManager) {
+            @Override protected void cargarMas() { cargarPagina(paginaActual + 1); }
+            @Override protected boolean isCargando() { return cargando; }
+            @Override protected boolean esUltimaPagina() { return ultimaPagina; }
+        });
 
         EditText etBuscador = findViewById(R.id.etBuscador);
+        // Buscador con debounce: la búsqueda se resuelve en el servidor
         etBuscador.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void afterTextChanged(Editable s) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String query = s.toString().trim().toLowerCase(Locale.getDefault());
-                listaAlimentosFiltrada.clear();
-                if (query.isEmpty()) {
-                    listaAlimentosFiltrada.addAll(listaAlimentosFull);
-                } else {
-                    for (Alimento a : listaAlimentosFull) {
-                        if (a.getNombre().toLowerCase(Locale.getDefault()).contains(query)) {
-                            listaAlimentosFiltrada.add(a);
-                        }
-                    }
-                }
-                adapter.notifyDataSetChanged();
+                queryActual = s.toString().trim();
+                if (debounceRunnable != null) debounceHandler.removeCallbacks(debounceRunnable);
+                debounceRunnable = () -> cargarAlimentos();
+                debounceHandler.postDelayed(debounceRunnable, DEBOUNCE_MS);
             }
         });
 
@@ -258,29 +275,55 @@ public class AnadirAlimentoActivity extends BaseActivity {
         });
     }
 
-    // Carga todos los alimentos activos desde la API y actualiza ambas listas (full y filtrada)
+    // Reinicia la búsqueda desde la página 0 con el texto actual (también se
+    // usa para recargar tras crear/editar/eliminar un alimento).
     private void cargarAlimentos() {
-        // Muestra el spinner modal mientras se carga el catálogo (la lista aparece vacía si no)
-        LoadingDialog.show(this);
-        alimentoApi.getActivos().enqueue(new ApiCallback<List<Alimento>>() {
-            @Override
-            public void onOk(List<Alimento> alimentos) {
-                // Oculta el spinner una vez recibido el catálogo
-                LoadingDialog.hide(AnadirAlimentoActivity.this);
-                listaAlimentosFull.clear();
-                if (alimentos != null) listaAlimentosFull.addAll(alimentos);
-                listaAlimentosFiltrada.clear();
-                listaAlimentosFiltrada.addAll(listaAlimentosFull);
-                adapter.notifyDataSetChanged();
-            }
+        paginaActual = 0;
+        ultimaPagina = false;
+        cargarPagina(0);
+    }
 
-            @Override
-            public void onFail(int code, String message) {
-                // Oculta el spinner y mapea el código de error a un mensaje de usuario
-                LoadingDialog.hide(AnadirAlimentoActivity.this);
-                UiFeedback.toastError(AnadirAlimentoActivity.this, code, message);
-            }
-        });
+    // Pide una página al servidor; la 0 reemplaza la lista (con spinner),
+    // las siguientes se añaden al final en silencio (scroll infinito).
+    private void cargarPagina(int pagina) {
+        cargando = true;
+        if (pagina == 0) LoadingDialog.show(this);
+        alimentoApi.buscar(queryActual.isEmpty() ? null : queryActual, null, pagina, TAM_PAGINA)
+                .enqueue(new ApiCallback<PageDTO<Alimento>>() {
+                    @Override
+                    public void onOk(PageDTO<Alimento> resultado) {
+                        cargando = false;
+                        if (pagina == 0) LoadingDialog.hide(AnadirAlimentoActivity.this);
+                        if (resultado == null) return;
+                        paginaActual = resultado.getPage();
+                        ultimaPagina = resultado.isLast();
+                        List<Alimento> alimentos = resultado.getContent() != null
+                                ? resultado.getContent() : new ArrayList<>();
+                        if (pagina == 0) {
+                            listaAlimentos.clear();
+                            listaAlimentos.addAll(alimentos);
+                            adapter.notifyDataSetChanged();
+                        } else if (!alimentos.isEmpty()) {
+                            int desde = listaAlimentos.size();
+                            listaAlimentos.addAll(alimentos);
+                            adapter.notifyItemRangeInserted(desde, alimentos.size());
+                        }
+                    }
+
+                    @Override
+                    public void onFail(int code, String message) {
+                        cargando = false;
+                        if (pagina == 0) LoadingDialog.hide(AnadirAlimentoActivity.this);
+                        UiFeedback.toastError(AnadirAlimentoActivity.this, code, message);
+                    }
+                });
+    }
+
+    // Cancela el debounce pendiente al destruir la Activity.
+    @Override
+    protected void onDestroy() {
+        if (debounceRunnable != null) debounceHandler.removeCallbacks(debounceRunnable);
+        super.onDestroy();
     }
 
     // Muestra un diálogo para introducir los gramos a añadir, con preview de macros en tiempo real

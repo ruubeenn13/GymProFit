@@ -3,6 +3,8 @@ package es.pmdm.gymprofit.ui.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.model.PageDTO;
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
 import es.pmdm.gymprofit.model.rutina.EjercicioSeleccionado;
 import es.pmdm.gymprofit.network.ApiCallback;
@@ -34,16 +37,22 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.EjercicioApi;
 import es.pmdm.gymprofit.ui.adapters.EjercicioAdapter;
 import es.pmdm.gymprofit.utils.LoadingDialog;
+import es.pmdm.gymprofit.utils.PaginacionScrollListener;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
 // AnadirEjerciciosActivity — buscador y selector de ejercicios para una rutina
-// Permite buscar/filtrar ejercicios por dificultad, elegir series/repeticiones
-// y continuar hacia el resumen de creación (o devolver resultado en editMode).
+// Permite buscar/filtrar ejercicios por dificultad (búsqueda en SERVIDOR,
+// paginada con scroll infinito), elegir series/repeticiones y continuar
+// hacia el resumen de creación (o devolver resultado en editMode).
 // ============================================================
 public class AnadirEjerciciosActivity extends AppCompatActivity {
+
+    // Tamaño de página del catálogo y retardo del debounce del buscador
+    private static final int TAM_PAGINA = 30;
+    private static final long DEBOUNCE_MS = 400;
 
     private TextInputEditText etBuscar;
     private ChipGroup chipGroupDificultad;
@@ -55,8 +64,17 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
     private final List<EjercicioSeleccionado> ejerciciosSeleccionados = new ArrayList<>();
     private EjercicioAdapter ejercicioAdapter;
 
-    private String dificultadActual = "Todos";
+    // Estado de la búsqueda paginada en servidor
+    private String dificultadActual = null;  // nombre del enum (PRINCIPIANTE...) o null = todas
     private String textoActual = "";
+    private int paginaActual = 0;
+    private boolean cargando = false;
+    private boolean ultimaPagina = false;
+
+    // Debounce del buscador: pospone la petición hasta que el usuario deja de teclear
+    private final Handler debounceHandler = new Handler(Looper.getMainLooper());
+    private Runnable debounceRunnable;
+
     // Indica si se llegó desde la edición de una rutina existente (afecta al resultado devuelto)
     private boolean editMode = false;
 
@@ -85,7 +103,17 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
         rvBusqueda          = findViewById(R.id.rvEjerciciosBusqueda);
         btnContinuar        = findViewById(R.id.btnContinuar);
 
-        rvBusqueda.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        rvBusqueda.setLayoutManager(layoutManager);
+        // Adapter único (la lista se rellena por páginas desde el servidor)
+        ejercicioAdapter = new EjercicioAdapter(new ArrayList<>(), e -> mostrarDialogSeriesReps(e));
+        rvBusqueda.setAdapter(ejercicioAdapter);
+        // Scroll infinito: pide la siguiente página al acercarse al final
+        rvBusqueda.addOnScrollListener(new PaginacionScrollListener(layoutManager) {
+            @Override protected void cargarMas() { cargarPagina(paginaActual + 1); }
+            @Override protected boolean isCargando() { return cargando; }
+            @Override protected boolean esUltimaPagina() { return ultimaPagina; }
+        });
 
         resumenLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -110,14 +138,17 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
         btnContinuar.setOnClickListener(v -> abrirResumen());
     }
 
-    // Configura el buscador por texto y los chips de dificultad; ambos filtran combinadamente el adapter
+    // Configura el buscador por texto (con debounce hacia el servidor) y los
+    // chips de dificultad (filtro también en servidor).
     private void configurarBusqueda() {
         etBuscar.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
             @Override public void afterTextChanged(Editable s) {
-                textoActual = s.toString();
-                if (ejercicioAdapter != null) ejercicioAdapter.filtrarCombinado(textoActual, dificultadActual);
+                textoActual = s.toString().trim();
+                if (debounceRunnable != null) debounceHandler.removeCallbacks(debounceRunnable);
+                debounceRunnable = () -> cargarEjercicios();
+                debounceHandler.postDelayed(debounceRunnable, DEBOUNCE_MS);
             }
         });
 
@@ -127,29 +158,49 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
             if (id == R.id.chipDifPrincipiante)    dificultadActual = "PRINCIPIANTE";
             else if (id == R.id.chipDifIntermedio) dificultadActual = "INTERMEDIO";
             else if (id == R.id.chipDifAvanzado)   dificultadActual = "AVANZADO";
-            else                                   dificultadActual = "Todos";
-            if (ejercicioAdapter != null) ejercicioAdapter.filtrarCombinado(textoActual, dificultadActual);
+            else                                   dificultadActual = null; // Todas
+            cargarEjercicios();
         });
     }
 
-    // Carga los ejercicios activos desde la API y crea el adapter del RecyclerView de búsqueda
+    // Reinicia la búsqueda desde la página 0 con los filtros actuales.
     private void cargarEjercicios() {
-        // Muestra el spinner modal mientras se carga el catálogo (la lista aparece vacía si no)
-        LoadingDialog.show(this);
-        api.getActivos().enqueue(new ApiCallback<List<Ejercicio>>() {
-            @Override public void onOk(List<Ejercicio> lista) {
-                // Oculta el spinner una vez recibido el catálogo
-                LoadingDialog.hide(AnadirEjerciciosActivity.this);
-                ejercicioAdapter = new EjercicioAdapter(lista != null ? lista : new ArrayList<>(),
-                        e -> mostrarDialogSeriesReps(e));
-                rvBusqueda.setAdapter(ejercicioAdapter);
-            }
-            @Override public void onFail(int code, String message) {
-                // Oculta el spinner y mapea el código de error a un mensaje de usuario
-                LoadingDialog.hide(AnadirEjerciciosActivity.this);
-                UiFeedback.toastError(AnadirEjerciciosActivity.this, code, message);
-            }
-        });
+        paginaActual = 0;
+        ultimaPagina = false;
+        cargarPagina(0);
+    }
+
+    // Pide una página al servidor; la 0 reemplaza la lista (con spinner),
+    // las siguientes se añaden al final en silencio (scroll infinito).
+    private void cargarPagina(int pagina) {
+        cargando = true;
+        if (pagina == 0) LoadingDialog.show(this);
+        api.buscar(textoActual.isEmpty() ? null : textoActual, null, dificultadActual, pagina, TAM_PAGINA)
+                .enqueue(new ApiCallback<PageDTO<Ejercicio>>() {
+                    @Override public void onOk(PageDTO<Ejercicio> resultado) {
+                        cargando = false;
+                        if (pagina == 0) LoadingDialog.hide(AnadirEjerciciosActivity.this);
+                        if (resultado == null) return;
+                        paginaActual = resultado.getPage();
+                        ultimaPagina = resultado.isLast();
+                        List<Ejercicio> lista = resultado.getContent() != null
+                                ? resultado.getContent() : new ArrayList<>();
+                        if (pagina == 0) ejercicioAdapter.setEjercicios(lista);
+                        else ejercicioAdapter.addEjercicios(lista);
+                    }
+                    @Override public void onFail(int code, String message) {
+                        cargando = false;
+                        if (pagina == 0) LoadingDialog.hide(AnadirEjerciciosActivity.this);
+                        UiFeedback.toastError(AnadirEjerciciosActivity.this, code, message);
+                    }
+                });
+    }
+
+    // Cancela el debounce pendiente al destruir la Activity.
+    @Override
+    protected void onDestroy() {
+        if (debounceRunnable != null) debounceHandler.removeCallbacks(debounceRunnable);
+        super.onDestroy();
     }
 
     // Muestra un diálogo para introducir series/repeticiones al seleccionar un ejercicio (evita duplicados)

@@ -4,6 +4,8 @@ import com.gymprofit.api.entity.Ejercicio;
 import com.gymprofit.api.enums.Dificultad;
 import com.gymprofit.api.enums.GrupoMuscular;
 import io.swagger.v3.oas.annotations.Hidden;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
@@ -43,4 +45,18 @@ public interface IEjercicioRepository extends JpaRepository<Ejercicio, Integer> 
             "WHERE e.grupoMuscular = :grupo " +
             "AND e.activo = true")
     List<Ejercicio> getEjerciciosActivosPorGrupo(@Param("grupo") GrupoMuscular grupo);
+
+    // Búsqueda paginada del catálogo de ejercicios activos. Filtra opcionalmente
+    // por texto en el nombre (ES o EN, sin mayúsculas), grupo muscular y dificultad.
+    @Query("SELECT e FROM Ejercicio e " +
+            "WHERE e.activo = true " +
+            "AND (:q IS NULL OR LOWER(e.nombre) LIKE LOWER(CONCAT('%', :q, '%')) " +
+            "     OR LOWER(e.nombreEn) LIKE LOWER(CONCAT('%', :q, '%'))) " +
+            "AND (:grupo IS NULL OR e.grupoMuscular = :grupo) " +
+            "AND (:dificultad IS NULL OR e.dificultad = :dificultad) " +
+            "ORDER BY e.nombre")
+    Page<Ejercicio> buscarCatalogo(@Param("q") String q,
+                                   @Param("grupo") GrupoMuscular grupo,
+                                   @Param("dificultad") Dificultad dificultad,
+                                   Pageable pageable);
 }

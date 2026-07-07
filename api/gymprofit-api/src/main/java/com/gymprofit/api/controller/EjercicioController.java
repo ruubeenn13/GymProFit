@@ -1,5 +1,6 @@
 package com.gymprofit.api.controller;
 
+import com.gymprofit.api.dto.common.PageDTO;
 import com.gymprofit.api.dto.entity.ejercicio.EjercicioCreateDTO;
 import com.gymprofit.api.dto.entity.ejercicio.EjercicioDTO;
 import com.gymprofit.api.dto.entity.ejercicio.EjercicioPatchDTO;
@@ -51,6 +52,26 @@ public class EjercicioController {
         List<EjercicioDTO> ejercicios = ejercicioService.findAll();
 
         return ResponseEntity.ok(ejercicios);
+    }
+
+    @Operation(summary = "Búsqueda paginada del catálogo de ejercicios",
+            description = "Devuelve los ejercicios activos con filtro opcional por texto (nombre ES/EN), " +
+                    "grupo muscular y dificultad. Diseñado para scroll infinito: una página vacía " +
+                    "devuelve 200 con content=[] (nunca 404).")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Página de ejercicios",
+                    content = @Content(schema = @Schema(implementation = PageDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Grupo muscular o dificultad inválidos",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @GetMapping("/ejercicios/buscar")
+    public ResponseEntity<PageDTO<EjercicioDTO>> buscarEjercicios(
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) String grupoMuscular,
+            @RequestParam(required = false) String dificultad,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(ejercicioService.buscarCatalogo(q, grupoMuscular, dificultad, page, size));
     }
 
     @Operation(summary = "Obtiene un ejercicio por ID")
