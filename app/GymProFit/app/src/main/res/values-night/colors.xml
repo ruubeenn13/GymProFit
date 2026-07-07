@@ -23,7 +23,9 @@
     <color name="gp_text_secondary">#9EA0A8</color>
 
     <!-- ── Cuerpo anatómico (mapa muscular estilo Symmetry) ──────────────── -->
-    <color name="body_silhouette">#3A3B42</color>
+    <!-- Silueta clara para que el cuerpo destaque sobre el fondo carbón
+         (antes #3A3B42 se camuflaba); el músculo trabajado sigue en naranja -->
+    <color name="body_silhouette">#A6A7AF</color>
     <color name="body_highlight">#FF6A00</color>
 
     <!-- ── Estados ───────────────────────────────────────────────────────── -->
