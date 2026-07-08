@@ -24,15 +24,19 @@ import java.util.List;
 @RepositoryRestResource(exported = false)
 public interface IEjercicioRepository extends JpaRepository<Ejercicio, Integer> {
 
-    // Busca un ejercicio por su id en wger (clave de upsert del import externo).
+    // Busca un ejercicio por su id en wger (clave de upsert del import externo legado).
     java.util.Optional<Ejercicio> findByWgerId(Integer wgerId);
 
-    // Desactiva los ejercicios importados de wger que ya no cumplen los
-    // criterios del import (p. ej. se quedaron sin demostración visual).
+    // Busca un ejercicio por su id de free-exercise-db (clave de upsert del import base).
+    java.util.Optional<Ejercicio> findByFedId(String fedId);
+
+    // Desactiva los ejercicios activos que ya NO están en el import de free-exercise-db
+    // (incluye las filas viejas de wger sin fed_id): el catálogo queda solo con los vistos.
+    @org.springframework.transaction.annotation.Transactional
     @org.springframework.data.jpa.repository.Modifying
     @Query("UPDATE Ejercicio e SET e.activo = false " +
-            "WHERE e.wgerId IS NOT NULL AND e.wgerId NOT IN :vistos")
-    int desactivarWgerNoVistos(@Param("vistos") java.util.Collection<Integer> vistos);
+            "WHERE e.activo = true AND (e.fedId IS NULL OR e.fedId NOT IN :vistos)")
+    int desactivarFedNoVistos(@Param("vistos") java.util.Collection<String> vistos);
 
     // Busca ejercicios que trabajen un grupo muscular concreto.
     List<Ejercicio> findByGrupoMuscular(GrupoMuscular grupoMuscular);

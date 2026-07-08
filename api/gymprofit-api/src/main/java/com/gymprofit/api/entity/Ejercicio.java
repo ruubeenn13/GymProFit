@@ -84,6 +84,10 @@ public class Ejercicio {
     @Column(name = "wger_id", unique = true)
     private Integer wgerId;
 
+    // Identificador estable de free-exercise-db (slug); clave de upsert del catálogo.
+    @Column(name = "fed_id", length = 120, unique = true)
+    private String fedId;
+
     // Traducción EN del nombre (null = sin traducción, se sirve el ES).
     @Column(name = "nombre_en", length = 100)
     private String nombreEn;

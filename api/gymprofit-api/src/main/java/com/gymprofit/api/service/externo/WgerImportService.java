@@ -158,6 +158,14 @@ public class WgerImportService {
     private final RestClient restClient;
     private final Logger logger = LoggerFactory.getLogger(WgerImportService.class);
 
+    // Traducción automática EN→ES (MyMemory) para los ejercicios que wger no cubre,
+    // así TODO el catálogo es bilingüe. Cacheada para no repetir llamadas.
+    // OJO: el "|" de langpair va codificado (%7C); si no, URI.create lo rechaza y toda
+    // traducción lanza excepción → el catálogo quedaría en inglés.
+    private static final String MYMEMORY_URL =
+            "https://api.mymemory.translated.net/get?langpair=en%%7Ces&de=gymprofit.dev@gmail.com&q=%s";
+    private final Map<String, String> cacheTraduccion = new HashMap<>();
+
     // Resumen del import devuelto al panel admin.
     public record ImportResumen(int nuevos, int actualizados, int omitidos, int desactivados) {}
 
@@ -184,80 +192,125 @@ public class WgerImportService {
     // visual (fotogramas de free-exercise-db cruzados por nombre EN, o al
     // menos imagen de wger). Los importados que dejen de cumplirlos se
     // desactivan al final.
-    @Transactional
+    // NO @Transactional aquí: la traducción hace cientos de llamadas HTTP (lentas) y no
+    // debe mantener abierta una transacción/conexión de BD. El guardado va aparte.
     public ImportResumen importarCatalogo() {
-        logger.info("Iniciando import del catálogo de ejercicios (wger + free-exercise-db)");
+        logger.info("Iniciando import del catálogo (free-exercise-db BASE + traducción ES)");
 
-        Map<String, FedEjercicio> fedExacto = new HashMap<>();
-        List<FedTokens> fedIndice = new ArrayList<>();
-        cargarFreeExerciseDb(fedExacto, fedIndice);
+        // Índice ES de wger por nombre EN normalizado (traducción humana donde exista).
+        Map<String, WgerEs> wgerEs = cargarWgerEsIndex();
 
-        int nuevos = 0, actualizados = 0, omitidos = 0;
-        Set<Integer> vistos = new HashSet<>();
-        int offset = 0;
-        boolean hayMas = true;
+        // free-exercise-db = fuente BASE: TODOS sus ejercicios traen 2 fotogramas.
+        JsonNode fed = descargarFed();
 
-        while (hayMas) {
-            JsonNode pagina = descargarPagina(offset);
-            for (JsonNode ejercicioWger : pagina.path("results")) {
-                Optional<Ejercicio> mapeado = mapear(ejercicioWger, fedExacto, fedIndice);
-                if (mapeado.isEmpty()) {
-                    omitidos++;
-                    continue;
-                }
-                Ejercicio nuevo = mapeado.get();
-                vistos.add(nuevo.getWgerId());
-                Optional<Ejercicio> existente = ejercicioRepository.findByWgerId(nuevo.getWgerId());
-                if (existente.isPresent()) {
-                    copiarCampos(nuevo, existente.get());
-                    ejercicioRepository.save(existente.get());
-                    actualizados++;
-                } else {
-                    ejercicioRepository.save(nuevo);
-                    nuevos++;
-                }
-            }
-            hayMas = !pagina.path("next").isNull() && pagina.path("next").isTextual();
-            offset += PAGE_SIZE;
+        // 1) Mapear + TRADUCIR todos (fuera de transacción; lento por MyMemory throttled).
+        List<Ejercicio> mapeados = new ArrayList<>();
+        int omitidos = 0;
+        for (JsonNode nodo : fed) {
+            Optional<Ejercicio> mapeado = mapearFed(nodo, wgerEs);
+            if (mapeado.isPresent()) mapeados.add(mapeado.get());
+            else omitidos++;
         }
 
-        // Importados en ejecuciones previas que ya no cumplen los criterios
-        int desactivados = vistos.isEmpty() ? 0 : ejercicioRepository.desactivarWgerNoVistos(vistos);
+        // 2) Nombres de pantalla ÚNICOS: distintos ejercicios pueden traducirse al mismo
+        //    nombre; se desambigua con un sufijo numérico para que no PAREZCAN duplicados
+        //    (son ejercicios distintos, con su propia demostración y descripción).
+        Map<String, Integer> conteo = new HashMap<>();
+        for (Ejercicio e : mapeados) {
+            String base = e.getNombre();
+            int n = conteo.merge(base.toLowerCase(), 1, Integer::sum);
+            if (n > 1) e.setNombre(truncar(base + " (" + n + ")", 100));
+        }
 
+        // 3) Persistir (transacción corta) y desactivar lo que ya no está.
+        ImportResumen r = persistir(mapeados);
         logger.info("Import completado: {} nuevos, {} actualizados, {} omitidos, {} desactivados",
-                nuevos, actualizados, omitidos, desactivados);
-        return new ImportResumen(nuevos, actualizados, omitidos, desactivados);
+                r.nuevos(), r.actualizados(), omitidos, r.desactivados());
+        return new ImportResumen(r.nuevos(), r.actualizados(), omitidos, r.desactivados());
     }
 
-    // Descarga free-exercise-db y construye el índice de cruce por nombre EN:
-    // clave exacta normalizada + índice de tokens para el match difuso.
-    private void cargarFreeExerciseDb(Map<String, FedEjercicio> exacto, List<FedTokens> indice) {
+    // Guardado (upsert por fed_id) + desactivación de los no vistos. Cada save() es su
+    // propia transacción (Spring Data); la desactivación es @Transactional en el repo.
+    private ImportResumen persistir(List<Ejercicio> mapeados) {
+        int nuevos = 0, actualizados = 0;
+        Set<String> vistos = new HashSet<>();
+        for (Ejercicio nuevo : mapeados) {
+            vistos.add(nuevo.getFedId());
+            Optional<Ejercicio> existente = ejercicioRepository.findByFedId(nuevo.getFedId());
+            if (existente.isPresent()) {
+                copiarCampos(nuevo, existente.get());
+                ejercicioRepository.save(existente.get());
+                actualizados++;
+            } else {
+                ejercicioRepository.save(nuevo);
+                nuevos++;
+            }
+        }
+        int desactivados = vistos.isEmpty() ? 0 : ejercicioRepository.desactivarFedNoVistos(vistos);
+        return new ImportResumen(nuevos, actualizados, 0, desactivados);
+    }
+
+    // Descarga el JSON completo de free-exercise-db (array de ejercicios).
+    private JsonNode descargarFed() {
         try {
             String body = restClient.get().uri(java.net.URI.create(FED_JSON_URL))
                     .retrieve().body(String.class);
-            JsonNode raiz = objectMapper.readTree(body);
-            for (JsonNode e : raiz) {
-                JsonNode imagenes = e.path("images");
-                if (!imagenes.isArray() || imagenes.isEmpty()) continue;
-
-                String img1 = FED_IMG_BASE + imagenes.get(0).asText();
-                String img2 = imagenes.size() > 1 ? FED_IMG_BASE + imagenes.get(1).asText() : null;
-                // Primer músculo primario (el más representativo)
-                JsonNode musculos = e.path("primaryMuscles");
-                String musculo = musculos.isArray() && !musculos.isEmpty() ? musculos.get(0).asText() : null;
-                FedEjercicio fed = new FedEjercicio(img1, img2,
-                        e.path("level").asText(""), instruccionesFed(e),
-                        musculo, e.path("equipment").asText(null));
-
-                String nombre = e.path("name").asText("");
-                exacto.put(claveExacta(nombre), fed);
-                Set<String> tokens = tokens(nombre);
-                if (!tokens.isEmpty()) indice.add(new FedTokens(tokens, fed));
-            }
-            logger.info("free-exercise-db cargado: {} ejercicios con demostración", exacto.size());
+            return objectMapper.readTree(body);
         } catch (Exception ex) {
             throw new ExternalServiceException("free-exercise-db no disponible: " + ex.getMessage(), ex);
         }
+    }
+
+    // Traducción ES de wger (nombre + descripción ES/EN) para enriquecer FED.
+    private record WgerEs(String nombreEs, String descEs, String descEn) {}
+
+    // Descarga wger y construye un índice: nombre EN normalizado → traducción ES/EN.
+    // free-exercise-db es solo inglés; los ejercicios que matchean por nombre muestran
+    // nombre/descripción en español; el resto cae a inglés (fallback). Si wger falla,
+    // se importa igualmente todo el catálogo en inglés (índice vacío).
+    private Map<String, WgerEs> cargarWgerEsIndex() {
+        Map<String, WgerEs> indice = new HashMap<>();
+        try {
+            int offset = 0;
+            boolean hayMas = true;
+            while (hayMas) {
+                JsonNode pagina = descargarPagina(offset);
+                for (JsonNode w : pagina.path("results")) {
+                    JsonNode es = traduccion(w, LANG_ES);
+                    JsonNode en = traduccion(w, LANG_EN);
+                    if (en == null) continue;
+                    String nombreEn = en.path("name").asText("").trim();
+                    if (nombreEn.isEmpty()) continue;
+                    String nombreEs = es != null ? es.path("name").asText("").trim() : "";
+                    String descEs = es != null ? htmlATexto(es.path("description").asText("")) : "";
+                    String descEn = htmlATexto(en.path("description").asText(""));
+                    indice.putIfAbsent(claveEstricta(nombreEn), new WgerEs(
+                            nombreEs.isBlank() ? null : nombreEs,
+                            descEs.isBlank() ? null : descEs,
+                            descEn.isBlank() ? null : descEn));
+                }
+                hayMas = !pagina.path("next").isNull() && pagina.path("next").isTextual();
+                offset += PAGE_SIZE;
+            }
+        } catch (Exception ex) {
+            logger.warn("wger no disponible para traducción ES ({}); catálogo en inglés", ex.getMessage());
+        }
+        logger.info("Índice ES de wger: {} nombres", indice.size());
+        return indice;
+    }
+
+    // Traduce las instrucciones FED al español frase a frase (cada paso <480 → traducible)
+    // y las une numeradas "1. ...\n2. ...". Fallback: la frase en inglés si no traduce.
+    private String traducirPasos(JsonNode nodo) {
+        StringBuilder sb = new StringBuilder();
+        int paso = 1;
+        for (JsonNode inst : nodo.path("instructions")) {
+            String texto = inst.asText("").trim();
+            if (texto.isEmpty()) continue;
+            if (sb.length() > 0) sb.append('\n');
+            sb.append(paso++).append(". ").append(traducir(texto));
+        }
+        return sb.length() == 0 ? null : sb.toString();
     }
 
     // Instrucciones EN de FED como pasos numerados "1. ...\n2. ..."
@@ -329,65 +382,57 @@ public class WgerImportService {
         }
     }
 
-    // Convierte un exerciseinfo de wger en una entidad Ejercicio local.
-    // Devuelve vacío (omitido) si falta la traducción ES o EN, o si el
-    // ejercicio se queda SIN demostración visual (ni FED ni imagen wger):
-    // el catálogo solo contiene ejercicios con demostración.
-    private Optional<Ejercicio> mapear(JsonNode ejercicioWger,
-                                       Map<String, FedEjercicio> fedExacto,
-                                       List<FedTokens> fedIndice) {
-        JsonNode es = traduccion(ejercicioWger, LANG_ES);
-        JsonNode en = traduccion(ejercicioWger, LANG_EN);
-        if (es == null || en == null) return Optional.empty();
+    // Convierte un ejercicio de free-exercise-db en entidad Ejercicio. TODOS traen
+    // 2 fotogramas → todos con demostración. Enriquece nombre/descripción con la
+    // traducción ES de wger si el nombre matchea; si no, queda en inglés (fallback).
+    private Optional<Ejercicio> mapearFed(JsonNode nodo, Map<String, WgerEs> wgerEs) {
+        JsonNode imagenes = nodo.path("images");
+        if (!imagenes.isArray() || imagenes.isEmpty()) return Optional.empty();
 
-        String nombreEs = es.path("name").asText("").trim();
-        String nombreEn = en.path("name").asText("").trim();
-        if (nombreEs.isEmpty() || nombreEn.isEmpty()) return Optional.empty();
+        String fedId = nodo.path("id").asText("");
+        String nombreEn = nodo.path("name").asText("").trim();
+        if (fedId.isEmpty() || nombreEn.isEmpty()) return Optional.empty();
 
-        // Demostración visual: FED (2 fotogramas animables) o imagen wger
-        FedEjercicio fed = buscarFed(nombreEn, fedExacto, fedIndice);
-        String imagenWger = imagenPrincipal(ejercicioWger);
-        if (fed == null && imagenWger == null) return Optional.empty();
+        String img1 = FED_IMG_BASE + imagenes.get(0).asText();
+        String img2 = imagenes.size() > 1 ? FED_IMG_BASE + imagenes.get(1).asText() : null;
 
-        // Músculo primario PRECISO por prioridad: (1) free-exercise-db si hay
-        // match, (2) el primer músculo de wger (más fino que la categoría),
-        // (3) null. El grupo grueso (chip) se deriva del músculo cuando existe.
-        String musculoKey = fed != null ? fed.musculo() : null;
-        if (musculoKey == null) musculoKey = musculoPrimarioWger(ejercicioWger);
+        // Músculo primario → ES/EN + grupo grueso (chip). Fallback por categoría.
+        JsonNode musculos = nodo.path("primaryMuscles");
+        String musculoKey = musculos.isArray() && !musculos.isEmpty() ? musculos.get(0).asText() : null;
         String musculoEs = musculoKey != null ? MUSCULO_ES.get(musculoKey) : null;
         String musculoEn = musculoKey != null ? MUSCULO_EN.get(musculoKey) : null;
         GrupoMuscular grupo = (musculoKey != null && MUSCULO_GRUPO.containsKey(musculoKey))
                 ? MUSCULO_GRUPO.get(musculoKey)
-                : CATEGORIA_GRUPO.getOrDefault(
-                        ejercicioWger.path("category").path("name").asText(""), GrupoMuscular.FULLBODY);
+                : ("cardio".equalsIgnoreCase(nodo.path("category").asText("")) ? GrupoMuscular.CARDIO : GrupoMuscular.FULLBODY);
+
+        // Equipo FED → ES/EN.
+        String[] equipoFed = EQUIPO_FED.get(nodo.path("equipment").asText(null));
+        String fedProse = instruccionesFed(nodo);   // pasos EN numerados (descripción base)
+
+        // BILINGÜE: nombre/descripción ES desde wger si matchea (traducción humana);
+        // si no, se traducen automáticamente (MyMemory, frase a frase); EN = el de FED.
+        WgerEs w = wgerEs.get(claveEstricta(nombreEn));
+        String nombreEs = (w != null && w.nombreEs() != null) ? w.nombreEs() : traducir(nombreEn);
+        String descEs = (w != null && w.descEs() != null) ? w.descEs() : traducirPasos(nodo);
+        String descEn = (w != null && w.descEn() != null) ? w.descEn() : fedProse;
 
         Ejercicio e = new Ejercicio();
-        e.setWgerId(ejercicioWger.path("id").asInt());
+        e.setFedId(truncar(fedId, 120));
         e.setNombre(truncar(nombreEs, 100));
         e.setNombreEn(truncar(nombreEn, 100));
-        // Descripción = texto de wger (ES/EN). Instrucciones: SOLO si aportan
-        // contenido distinto (pasos numerados de FED, en EN); nunca se duplica
-        // la descripción como antes.
-        String descEs = htmlATexto(es.path("description").asText(""));
-        String descEn = htmlATexto(en.path("description").asText(""));
-        e.setDescripcion(descEs.isBlank() ? null : descEs);
-        e.setDescripcionEn(descEn.isBlank() ? null : descEn);
+        e.setDescripcion(descEs);
+        e.setDescripcionEn(descEn);
         e.setInstrucciones(null);
-        e.setInstruccionesEn(fed != null ? fed.instrucciones() : null);
+        e.setInstruccionesEn(null);
         e.setGrupoMuscular(grupo);
         e.setMusculoPrimario(musculoEs);
         e.setMusculoPrimarioEn(musculoEn);
-        e.setDificultad(fed != null && !fed.nivel().isBlank()
-                ? nivelFed(fed.nivel())
-                : estimarDificultad(ejercicioWger, grupo));
+        e.setDificultad(nivelFed(nodo.path("level").asText("")));
         e.setCaloriasQuemadas(KCAL_GRUPO.getOrDefault(grupo, 6));
-        // Equipo PRECISO de FED si el mapeo lo cubre; si no, el de wger.
-        String[] equipoFed = fed != null && fed.equipo() != null ? EQUIPO_FED.get(fed.equipo()) : null;
-        e.setEquipoNecesario(equipoFed != null ? equipoFed[0] : equipo(ejercicioWger, true));
-        e.setEquipoNecesarioEn(equipoFed != null ? equipoFed[1] : equipo(ejercicioWger, false));
-        // Preferencia: fotogramas FED (animables); si no, imagen estática wger
-        e.setImagenUrl(fed != null ? fed.imagen1() : imagenWger);
-        e.setImagenUrl2(fed != null ? fed.imagen2() : null);
+        e.setEquipoNecesario(equipoFed != null ? equipoFed[0] : "Sin equipo");
+        e.setEquipoNecesarioEn(equipoFed != null ? equipoFed[1] : "Bodyweight");
+        e.setImagenUrl(img1);
+        e.setImagenUrl2(img2);
         e.setActivo(true);
         return Optional.of(e);
     }
@@ -505,5 +550,38 @@ public class WgerImportService {
     // Recorta un texto a la longitud máxima de su columna.
     private String truncar(String texto, int max) {
         return texto.length() <= max ? texto : texto.substring(0, max);
+    }
+
+    // Clave de match ESTRICTA (sin quitar plural): minúsculas, sin paréntesis ni signos.
+    // Más precisa que claveExacta → menos falsos positivos en el cruce con wger.
+    private String claveEstricta(String nombre) {
+        return nombre.toLowerCase().replaceAll("\\(.*?\\)", "").replaceAll("[^a-z0-9]", "");
+    }
+
+    // Traduce EN→ES vía MyMemory (gratis). Cacheada. Ante cualquier problema (fallo de
+    // red, cuota, texto demasiado largo) devuelve el original en inglés como fallback.
+    private String traducir(String textoEn) {
+        if (textoEn == null || textoEn.isBlank() || textoEn.length() > 480) return textoEn;
+        String cache = cacheTraduccion.get(textoEn);
+        if (cache != null) return cache;
+
+        String resultado = textoEn;
+        try {
+            // Throttle: MyMemory rate-limitea los bursts (sin esto, todo cae a inglés).
+            Thread.sleep(90);
+            String url = String.format(MYMEMORY_URL,
+                    java.net.URLEncoder.encode(textoEn, java.nio.charset.StandardCharsets.UTF_8));
+            String body = restClient.get().uri(java.net.URI.create(url)).retrieve().body(String.class);
+            JsonNode d = objectMapper.readTree(body);
+            String t = d.path("responseData").path("translatedText").asText("");
+            String up = t.toUpperCase();
+            if (!t.isBlank() && !up.contains("QUOTA") && !up.contains("MYMEMORY WARNING") && !up.contains("INVALID")) {
+                resultado = t;
+            }
+        } catch (Exception ignore) {
+            // fallback: queda el inglés
+        }
+        cacheTraduccion.put(textoEn, resultado);
+        return resultado;
     }
 }
