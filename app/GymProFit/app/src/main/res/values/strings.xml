@@ -300,6 +300,8 @@
     <string name="medicion_registrar_primera">Registrar medición</string>
     <string name="nutricion_estadisticas">Estadísticas</string>
     <string name="nutricion_hoy">Hoy</string>
+    <string name="detalle_progresion_titulo">PROGRESIÓN · PESO MÁX.</string>
+    <string name="detalle_progresion_pr">PR</string>
     <string name="nutricion_estadisticas_titulo">Historial y estadísticas</string>
     <string name="nutricion_estadisticas_sub">Media, adherencia y gráficas</string>
     <string name="stats_periodo_semana">Semana</string>

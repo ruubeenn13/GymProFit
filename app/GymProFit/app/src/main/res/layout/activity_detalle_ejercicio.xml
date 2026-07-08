@@ -302,6 +302,39 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Progresión (peso máximo en el tiempo); oculta si hay <2 registros -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardProgresion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/detalle_progresion_titulo"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Label"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
+
+                    <com.github.mikephil.charting.charts.LineChart
+                        android:id="@+id/chartProgresion"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_marginTop="8dp" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
             <!-- Descripción -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardDescripcion"
