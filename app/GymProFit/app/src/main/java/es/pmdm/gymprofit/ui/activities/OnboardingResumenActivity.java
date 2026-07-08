@@ -28,6 +28,12 @@ import es.pmdm.gymprofit.utils.UIHelper;
 // ============================================================
 public class OnboardingResumenActivity extends AppCompatActivity {
 
+    // Aplica la escala de fuente global de la app (agranda todo el texto uniformemente).
+    @Override
+    protected void attachBaseContext(android.content.Context newBase) {
+        super.attachBaseContext(es.pmdm.gymprofit.utils.ScaleUtils.wrap(newBase));
+    }
+
     // Interfaz Retrofit tipada del dominio usuarios (etapa 2)
     private final UsuarioApi usuarioApi = ApiClient.service(UsuarioApi.class);
 

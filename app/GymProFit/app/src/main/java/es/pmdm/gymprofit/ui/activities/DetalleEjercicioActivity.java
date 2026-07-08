@@ -24,6 +24,12 @@ import es.pmdm.gymprofit.utils.PreferencesManager;
 // ============================================================
 public class DetalleEjercicioActivity extends AppCompatActivity {
 
+    // Aplica la escala de fuente global de la app (agranda todo el texto uniformemente).
+    @Override
+    protected void attachBaseContext(android.content.Context newBase) {
+        super.attachBaseContext(es.pmdm.gymprofit.utils.ScaleUtils.wrap(newBase));
+    }
+
     // Milisegundos entre fotogramas de la demostración animada
     private static final long FRAME_MS = 700;
 

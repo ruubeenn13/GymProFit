@@ -90,52 +90,44 @@
         <item name="fontFamily">@font/barlow_condensed</item>
         <item name="android:fontFamily">@font/barlow_condensed</item>
     </style>
-    <!-- Title/Body/Label suben ~4sp sobre M3: Barlow Condensed es estrecha y se lee más
-         pequeña que Roboto al mismo tamaño; se compensa para un cuerpo de texto grande y legible. -->
+    <!-- Solo cambian la FAMILIA (tamaños M3 originales). El agrandado de TODA la app se
+         hace de forma uniforme con un fontScale global (ScaleUtils), que escala también
+         los textSize hardcodeados de los layouts; así hay un único mando de tamaño. -->
     <style name="Font.GymProFit.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
         <item name="fontFamily">@font/barlow_condensed</item>
         <item name="android:fontFamily">@font/barlow_condensed</item>
-        <item name="android:textSize">26sp</item>
     </style>
     <style name="Font.GymProFit.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
         <item name="fontFamily">@font/barlow_condensed</item>
         <item name="android:fontFamily">@font/barlow_condensed</item>
-        <item name="android:textSize">20sp</item>
     </style>
     <style name="Font.GymProFit.TitleSmall" parent="TextAppearance.Material3.TitleSmall">
         <item name="fontFamily">@font/barlow_condensed</item>
         <item name="android:fontFamily">@font/barlow_condensed</item>
-        <item name="android:textSize">18sp</item>
     </style>
     <style name="Font.GymProFit.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
         <item name="fontFamily">@font/barlow_condensed</item>
         <item name="android:fontFamily">@font/barlow_condensed</item>
-        <item name="android:textSize">20sp</item>
     </style>
     <style name="Font.GymProFit.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
         <item name="fontFamily">@font/barlow_condensed</item>
         <item name="android:fontFamily">@font/barlow_condensed</item>
-        <item name="android:textSize">18sp</item>
     </style>
     <style name="Font.GymProFit.BodySmall" parent="TextAppearance.Material3.BodySmall">
         <item name="fontFamily">@font/barlow_condensed</item>
         <item name="android:fontFamily">@font/barlow_condensed</item>
-        <item name="android:textSize">16sp</item>
     </style>
     <style name="Font.GymProFit.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
         <item name="fontFamily">@font/barlow_condensed</item>
         <item name="android:fontFamily">@font/barlow_condensed</item>
-        <item name="android:textSize">18sp</item>
     </style>
     <style name="Font.GymProFit.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
         <item name="fontFamily">@font/barlow_condensed</item>
         <item name="android:fontFamily">@font/barlow_condensed</item>
-        <item name="android:textSize">15sp</item>
     </style>
     <style name="Font.GymProFit.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
         <item name="fontFamily">@font/barlow_condensed</item>
         <item name="android:fontFamily">@font/barlow_condensed</item>
-        <item name="android:textSize">14sp</item>
     </style>
 
     <!-- ── Tipografía display (Barlow Condensed): números y títulos ───────── -->

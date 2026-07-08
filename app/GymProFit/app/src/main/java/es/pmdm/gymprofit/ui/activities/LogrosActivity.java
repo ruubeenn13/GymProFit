@@ -31,6 +31,12 @@ import es.pmdm.gymprofit.utils.UiFeedback;
 // ============================================================
 public class LogrosActivity extends AppCompatActivity {
 
+    // Aplica la escala de fuente global de la app (agranda todo el texto uniformemente).
+    @Override
+    protected void attachBaseContext(android.content.Context newBase) {
+        super.attachBaseContext(es.pmdm.gymprofit.utils.ScaleUtils.wrap(newBase));
+    }
+
     private RecyclerView rvLogros;
     private View tvVacio;
     private PreferencesManager prefsManager;

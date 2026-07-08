@@ -40,6 +40,12 @@ import es.pmdm.gymprofit.utils.UIHelper;
 // ============================================================
 public class ResumenCrearRutinaActivity extends AppCompatActivity {
 
+    // Aplica la escala de fuente global de la app (agranda todo el texto uniformemente).
+    @Override
+    protected void attachBaseContext(android.content.Context newBase) {
+        super.attachBaseContext(es.pmdm.gymprofit.utils.ScaleUtils.wrap(newBase));
+    }
+
     private final List<EjercicioSeleccionado> ejercicios = new ArrayList<>();
     private EjercicioSeleccionadoAdapter adapter;
     private TextView tvEjerciciosTitulo;

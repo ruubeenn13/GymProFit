@@ -41,6 +41,12 @@ import es.pmdm.gymprofit.utils.UIHelper;
 // ============================================================
 public class LoginActivity extends AppCompatActivity {
 
+    // Aplica la escala de fuente global de la app (agranda todo el texto uniformemente).
+    @Override
+    protected void attachBaseContext(android.content.Context newBase) {
+        super.attachBaseContext(es.pmdm.gymprofit.utils.ScaleUtils.wrap(newBase));
+    }
+
     private EditText etUsuario, etPassword;
     private ImageButton btnCambiarTema, btnCambiarIdioma;
     private PreferencesManager prefsManager;

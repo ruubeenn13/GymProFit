@@ -161,7 +161,8 @@ public class FloatingNavBar extends FrameLayout {
 
             TextView label = new TextView(getContext());
             label.setText(LABELS[i]);
-            label.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13.5f);
+            // dp (no sp): la barra NO se agranda con la escala de fuente global de la app.
+            label.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13.5f);
             label.setLetterSpacing(0.02f);
             label.setPadding(0, (int) dp(3), 0, 0);
             label.setSingleLine(true);

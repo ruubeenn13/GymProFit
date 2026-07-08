@@ -20,6 +20,12 @@ import es.pmdm.gymprofit.utils.PreferencesManager;
 // ============================================================
 public class SplashActivity extends AppCompatActivity {
 
+    // Aplica la escala de fuente global de la app (agranda todo el texto uniformemente).
+    @Override
+    protected void attachBaseContext(android.content.Context newBase) {
+        super.attachBaseContext(es.pmdm.gymprofit.utils.ScaleUtils.wrap(newBase));
+    }
+
     // Duración mínima (ms) que se muestra la splash aunque la comprobación de sesión sea instantánea
     private static final int SPLASH_MIN_DURATION = 1500;
 

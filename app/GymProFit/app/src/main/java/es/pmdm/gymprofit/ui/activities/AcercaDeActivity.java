@@ -23,6 +23,12 @@ import es.pmdm.gymprofit.utils.PreferencesManager;
 // ============================================================
 public class AcercaDeActivity extends AppCompatActivity {
 
+    // Aplica la escala de fuente global de la app (agranda todo el texto uniformemente).
+    @Override
+    protected void attachBaseContext(android.content.Context newBase) {
+        super.attachBaseContext(es.pmdm.gymprofit.utils.ScaleUtils.wrap(newBase));
+    }
+
     // Launcher que recibe el contacto elegido en el selector del sistema
     private ActivityResultLauncher<Intent> seleccionContactoLauncher;
 

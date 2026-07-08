@@ -38,6 +38,12 @@ import es.pmdm.gymprofit.utils.PreferencesManager;
 // ============================================================
 public class ResumenSesionActivity extends AppCompatActivity {
 
+    // Aplica la escala de fuente global de la app (agranda todo el texto uniformemente).
+    @Override
+    protected void attachBaseContext(android.content.Context newBase) {
+        super.attachBaseContext(es.pmdm.gymprofit.utils.ScaleUtils.wrap(newBase));
+    }
+
     private TextView tvFecha, tvDuracion, tvCalorias, tvRutina, tvNotas, tvCompletada;
     private View layoutNotas;
     private TextView tvStatSesiones, tvStatCompletadas, tvStatMinutos, tvStatCalorias;

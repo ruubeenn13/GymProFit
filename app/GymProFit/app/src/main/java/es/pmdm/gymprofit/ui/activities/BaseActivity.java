@@ -1,6 +1,7 @@
 package es.pmdm.gymprofit.ui.activities;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.graphics.Color;
@@ -40,6 +41,13 @@ import es.pmdm.gymprofit.utils.UIHelper;
 public abstract class BaseActivity extends AppCompatActivity {
 
     protected PreferencesManager prefsManager;
+
+    // Aplica la escala de fuente global (agranda todo el texto de la app de forma
+    // uniforme, incluidos los textSize hardcodeados). La nav queda fuera (mide en dp).
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(es.pmdm.gymprofit.utils.ScaleUtils.wrap(newBase));
+    }
     // Interfaz Retrofit tipada de auth (etapa 2), usada para revocar el refresh en el logout
     private final AuthApi authApi = ApiClient.service(AuthApi.class);
 

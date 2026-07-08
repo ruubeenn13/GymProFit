@@ -29,6 +29,12 @@ import es.pmdm.gymprofit.utils.UIHelper;
 // ============================================================
 public class RegistroActivity extends AppCompatActivity {
 
+    // Aplica la escala de fuente global de la app (agranda todo el texto uniformemente).
+    @Override
+    protected void attachBaseContext(android.content.Context newBase) {
+        super.attachBaseContext(es.pmdm.gymprofit.utils.ScaleUtils.wrap(newBase));
+    }
+
     private TextInputEditText etRegUsername, etRegEmail, etRegPassword, etRegConfirmarPassword;
     private PreferencesManager prefsManager;
     // Interfaces Retrofit tipadas de auth y usuarios (etapa 2)

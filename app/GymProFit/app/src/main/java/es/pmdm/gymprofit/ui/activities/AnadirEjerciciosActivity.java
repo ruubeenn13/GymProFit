@@ -50,6 +50,12 @@ import es.pmdm.gymprofit.utils.UiFeedback;
 // ============================================================
 public class AnadirEjerciciosActivity extends AppCompatActivity {
 
+    // Aplica la escala de fuente global de la app (agranda todo el texto uniformemente).
+    @Override
+    protected void attachBaseContext(android.content.Context newBase) {
+        super.attachBaseContext(es.pmdm.gymprofit.utils.ScaleUtils.wrap(newBase));
+    }
+
     // Tamaño de página del catálogo y retardo del debounce del buscador
     private static final int TAM_PAGINA = 30;
     private static final long DEBOUNCE_MS = 400;

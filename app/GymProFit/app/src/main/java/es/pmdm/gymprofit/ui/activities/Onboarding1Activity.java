@@ -16,6 +16,12 @@ import es.pmdm.gymprofit.utils.PreferencesManager;
 // ============================================================
 public class Onboarding1Activity extends AppCompatActivity {
 
+    // Aplica la escala de fuente global de la app (agranda todo el texto uniformemente).
+    @Override
+    protected void attachBaseContext(android.content.Context newBase) {
+        super.attachBaseContext(es.pmdm.gymprofit.utils.ScaleUtils.wrap(newBase));
+    }
+
     // Aplica tema/idioma, infla el layout, muestra el saludo personalizado
     // y configura los botones de avanzar y saltar el onboarding.
     @Override

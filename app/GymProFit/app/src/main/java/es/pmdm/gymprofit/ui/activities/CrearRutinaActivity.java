@@ -23,6 +23,12 @@ import es.pmdm.gymprofit.utils.UIHelper;
 // ============================================================
 public class CrearRutinaActivity extends AppCompatActivity {
 
+    // Aplica la escala de fuente global de la app (agranda todo el texto uniformemente).
+    @Override
+    protected void attachBaseContext(android.content.Context newBase) {
+        super.attachBaseContext(es.pmdm.gymprofit.utils.ScaleUtils.wrap(newBase));
+    }
+
     // Campos de texto del formulario de creación.
     private TextInputEditText etNombre, etDescripcion, etDuracion;
     // Selector de nivel (principiante/intermedio/avanzado).

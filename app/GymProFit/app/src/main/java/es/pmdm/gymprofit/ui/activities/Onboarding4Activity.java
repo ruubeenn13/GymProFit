@@ -27,6 +27,12 @@ import es.pmdm.gymprofit.utils.UIHelper;
 // ============================================================
 public class Onboarding4Activity extends AppCompatActivity {
 
+    // Aplica la escala de fuente global de la app (agranda todo el texto uniformemente).
+    @Override
+    protected void attachBaseContext(android.content.Context newBase) {
+        super.attachBaseContext(es.pmdm.gymprofit.utils.ScaleUtils.wrap(newBase));
+    }
+
     // Objetivo seleccionado - valor exacto del enum TipoObjetivo de la API
     private String objetivoSeleccionado = null;
 

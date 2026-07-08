@@ -33,6 +33,12 @@ import es.pmdm.gymprofit.utils.UiFeedback;
 // ============================================================
 public class RegistrarMedicionActivity extends AppCompatActivity {
 
+    // Aplica la escala de fuente global de la app (agranda todo el texto uniformemente).
+    @Override
+    protected void attachBaseContext(android.content.Context newBase) {
+        super.attachBaseContext(es.pmdm.gymprofit.utils.ScaleUtils.wrap(newBase));
+    }
+
     private TextInputEditText etPeso, etAltura, etGrasa, etMusculo;
     private TextInputEditText etCintura, etPecho, etBrazos, etPiernas, etNotas;
     private PreferencesManager prefsManager;
