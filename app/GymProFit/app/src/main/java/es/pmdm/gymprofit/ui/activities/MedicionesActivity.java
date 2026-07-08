@@ -2,17 +2,14 @@ package es.pmdm.gymprofit.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Log;
+import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.view.HapticFeedbackConstants;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -25,8 +22,6 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -39,6 +34,7 @@ import java.util.Map;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.utils.ChartMarker;
 import es.pmdm.gymprofit.utils.ChartStyler;
+import es.pmdm.gymprofit.utils.InputDialog;
 import es.pmdm.gymprofit.model.medicion.MedicionCorporal;
 import es.pmdm.gymprofit.model.usuario.Usuario;
 import es.pmdm.gymprofit.network.ApiCallback;
@@ -410,66 +406,27 @@ public class MedicionesActivity extends AppCompatActivity {
                 ? ultimaMedicion.getNotas() : anadir);
     }
 
-    // Muestra un diálogo con un campo numérico decimal para editar el valor
-    // de un campo de medición y enviarlo por PATCH al guardar.
+    // Diálogo estilizado (InputDialog) para editar un campo numérico y guardarlo.
     private void editarCampoNumerico(String campo, String label, double valorActual) {
         if (ultimaMedicion == null) return;
 
-        TextInputLayout til = new TextInputLayout(this);
-        TextInputEditText et = new TextInputEditText(this);
-        et.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        if (valorActual > 0) {
-            et.setText(String.format(Locale.getDefault(), "%.2f", valorActual));
-            et.selectAll();
-        }
-        til.setHint(label);
-        til.addView(et);
-
-        int padding = (int) (16 * getResources().getDisplayMetrics().density);
-        til.setPadding(padding, padding / 2, padding, 0);
-
-        new AlertDialog.Builder(this)
-                .setTitle(label)
-                .setView(til)
-                .setPositiveButton(R.string.medicion_guardar, (d, w) -> {
-                    String valor = et.getText() != null ? et.getText().toString().trim() : "";
-                    if (valor.isEmpty()) {
-                        if ("peso".equals(campo)) {
-                            UIHelper.mostrarToastError(this, getString(R.string.error_campo_requerido));
-                        }
-                        return;
-                    }
-                    patchCampo(campo, valor, false);
-                })
-                .setNegativeButton(R.string.dialog_cancelar, null)
-                .show();
+        String inicial = valorActual > 0 ? String.format(Locale.getDefault(), "%.2f", valorActual) : null;
+        InputDialog.numerico(this, label, label, inicial, null, valor -> {
+            if (valor.isEmpty()) {
+                if ("peso".equals(campo)) {
+                    UIHelper.mostrarToastError(this, getString(R.string.error_campo_requerido));
+                }
+                return;
+            }
+            patchCampo(campo, valor, false);
+        });
     }
 
-    // Muestra un diálogo con un campo de texto multilínea para editar el
-    // valor de un campo de medición (p.ej. notas) y enviarlo por PATCH.
+    // Diálogo estilizado (InputDialog) para editar un campo de texto (notas).
     private void editarCampoTexto(String campo, String label, String valorActual) {
         if (ultimaMedicion == null) return;
 
-        TextInputLayout til = new TextInputLayout(this);
-        TextInputEditText et = new TextInputEditText(this);
-        et.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-        if (!valorActual.isEmpty()) et.setText(valorActual);
-
-        til.setHint(label);
-        til.addView(et);
-
-        int padding = (int) (16 * getResources().getDisplayMetrics().density);
-        til.setPadding(padding, padding / 2, padding, 0);
-
-        new AlertDialog.Builder(this)
-                .setTitle(label)
-                .setView(til)
-                .setPositiveButton(R.string.medicion_guardar, (d, w) -> {
-                    String valor = et.getText() != null ? et.getText().toString().trim() : "";
-                    patchCampo(campo, valor, true);
-                })
-                .setNegativeButton(R.string.dialog_cancelar, null)
-                .show();
+        InputDialog.texto(this, label, label, valorActual, valor -> patchCampo(campo, valor, true));
     }
 
     // Construye el JSON con el campo modificado y lo envía como PATCH parcial
