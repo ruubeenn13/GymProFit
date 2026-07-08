@@ -15,7 +15,18 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.LimitLine;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.google.android.material.chip.ChipGroup;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -24,11 +35,14 @@ import java.util.Map;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.comida.Comida;
+import es.pmdm.gymprofit.model.comida.ResumenDiarioNutricion;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.ComidaApi;
 import es.pmdm.gymprofit.ui.activities.ComidaActivity;
 import es.pmdm.gymprofit.utils.CalculadoraNutricional;
+import es.pmdm.gymprofit.utils.ChartMarker;
+import es.pmdm.gymprofit.utils.ChartStyler;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
 import es.pmdm.gymprofit.utils.UiFeedback;
 
@@ -45,6 +59,11 @@ public class NutricionFragment extends BaseFragment {
 
     private int objetivoCalorias = 2000, objetivoProteinas = 150, objetivoCarbos = 250, objetivoGrasas = 65;
     private final Map<String, Comida> comidasHoy = new HashMap<>();
+
+    // Gráfica de histórico de calorías por día (barras).
+    private BarChart chartNutricion;
+    private TextView tvNutricionVacia;
+    private ChipGroup chipsRangoNutri;
 
     private final ComidaApi comidaApi = ApiClient.service(ComidaApi.class);
 
@@ -84,6 +103,7 @@ public class NutricionFragment extends BaseFragment {
         super.onResume();
         recalcularObjetivos();
         cargarComidasHoy();
+        cargarHistorial();
     }
 
     // ── Vistas ───────────────────────────────────────────────────────────────
@@ -103,6 +123,12 @@ public class NutricionFragment extends BaseFragment {
         tvSubComida    = findViewById(R.id.tvSubComida);
         tvSubMerienda  = findViewById(R.id.tvSubMerienda);
         tvSubCena      = findViewById(R.id.tvSubCena);
+
+        chartNutricion    = findViewById(R.id.chartNutricion);
+        tvNutricionVacia  = findViewById(R.id.tvNutricionVacia);
+        chipsRangoNutri   = findViewById(R.id.chipsRangoNutri);
+        // Recarga el histórico al cambiar de rango (7/30 días).
+        chipsRangoNutri.setOnCheckedStateChangeListener((g, ids) -> cargarHistorial());
     }
 
     // ── Objetivos nutricionales ──────────────────────────────────────────────
@@ -213,6 +239,91 @@ public class NutricionFragment extends BaseFragment {
         TypedValue tv = new TypedValue();
         requireContext().getTheme().resolveAttribute(attrResId, tv, true);
         return tv.data;
+    }
+
+    // ── Histórico de calorías (gráfica de barras) ─────────────────────────────
+
+    // Pide el resumen diario de kcal/macros del rango seleccionado (7/30 días) y lo pinta.
+    private void cargarHistorial() {
+        if (chartNutricion == null) return;
+        int usuarioId = prefsManager.getUsuarioId();
+        int dias = (chipsRangoNutri.getCheckedChipId() == R.id.chipNutri7) ? 7 : 30;
+
+        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        Calendar cal = Calendar.getInstance();
+        String fin = f.format(cal.getTime());
+        cal.add(Calendar.DAY_OF_YEAR, -(dias - 1));
+        String inicio = f.format(cal.getTime());
+
+        comidaApi.getResumen(usuarioId, inicio, fin).enqueue(new ApiCallback<List<ResumenDiarioNutricion>>() {
+            @Override
+            public void onOk(List<ResumenDiarioNutricion> lista) {
+                if (!isAdded()) return;
+                pintarHistorial(lista);
+            }
+            @Override
+            public void onFail(int code, String message) {
+                if (!isAdded()) return;
+                pintarHistorial(null);   // sin datos → estado vacío (no molesta con toast)
+            }
+        });
+    }
+
+    // Dibuja las barras de kcal/día con la línea de objetivo y tooltip al tocar.
+    private void pintarHistorial(List<ResumenDiarioNutricion> lista) {
+        if (lista == null || lista.isEmpty()) {
+            chartNutricion.setVisibility(View.GONE);
+            tvNutricionVacia.setVisibility(View.VISIBLE);
+            return;
+        }
+        chartNutricion.setVisibility(View.VISIBLE);
+        tvNutricionVacia.setVisibility(View.GONE);
+
+        List<BarEntry> entradas = new ArrayList<>();
+        final List<String> etiquetas = new ArrayList<>();
+        for (int i = 0; i < lista.size(); i++) {
+            ResumenDiarioNutricion r = lista.get(i);
+            entradas.add(new BarEntry(i, r.getCalorias()));
+            etiquetas.add(fechaCorta(r.getFecha()));
+        }
+
+        ChartStyler.styleBar(chartNutricion, new ValueFormatter() {
+            @Override
+            public String getAxisLabel(float value, AxisBase axis) {
+                int idx = Math.round(value);
+                return (idx >= 0 && idx < etiquetas.size()) ? etiquetas.get(idx) : "";
+            }
+        });
+
+        // Línea de objetivo diario de calorías (referencia).
+        chartNutricion.getAxisLeft().removeAllLimitLines();
+        LimitLine meta = new LimitLine(objetivoCalorias, getString(R.string.nutricion_meta_kcal));
+        meta.setLineColor(getAttrColor(com.google.android.material.R.attr.colorPrimary));
+        meta.setLineWidth(1.4f);
+        meta.enableDashedLine(12f, 8f, 0f);
+        meta.setTextColor(getAttrColor(com.google.android.material.R.attr.colorOnSurfaceVariant));
+        meta.setTextSize(9f);
+        chartNutricion.getAxisLeft().addLimitLine(meta);
+
+        // Tooltip: kcal + fecha del día tocado.
+        chartNutricion.setMarker(new ChartMarker(requireContext(), (e, h) -> {
+            int idx = Math.round(e.getX());
+            String fecha = (idx >= 0 && idx < etiquetas.size()) ? etiquetas.get(idx) : "";
+            return String.format(Locale.getDefault(), "%d kcal\n%s", (int) e.getY(), fecha);
+        }));
+
+        BarDataSet ds = new BarDataSet(entradas, "kcal");
+        ChartStyler.styleBarDataSet(ds, requireContext());
+        BarData data = new BarData(ds);
+        data.setBarWidth(0.6f);
+        chartNutricion.setData(data);
+        chartNutricion.invalidate();
+    }
+
+    // Fecha ISO ("yyyy-MM-dd...") → etiqueta corta "dd/MM" para el eje X.
+    private String fechaCorta(String iso) {
+        if (iso == null || iso.length() < 10) return "";
+        return iso.substring(8, 10) + "/" + iso.substring(5, 7);
     }
 
     // ── Cards de comida ───────────────────────────────────────────────────────

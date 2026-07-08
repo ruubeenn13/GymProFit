@@ -69,6 +69,7 @@ public final class ChartStyler {
         chart.setDrawGridBackground(false);
         chart.setDrawValueAboveBar(true);
         chart.setScaleEnabled(false);
+        chart.setHighlightPerTapEnabled(true);    // tocar una barra la resalta (para el tooltip)
         chart.setExtraBottomOffset(8f);
         chart.setNoDataText("");
         chart.animateY(500);
@@ -103,11 +104,13 @@ public final class ChartStyler {
         Typeface tf = fuente(ctx);
 
         ds.setColor(marca);
-        ds.setDrawValues(true);
+        ds.setDrawValues(false);                   // valores por tooltip, no encima de cada barra (evita ruido)
         ds.setValueTextColor(attr(ctx, com.google.android.material.R.attr.colorOnSurfaceVariant, Color.GRAY));
         ds.setValueTextSize(9f);
         ds.setValueTypeface(tf);
-        ds.setHighlightEnabled(false);
+        ds.setHighlightEnabled(true);
+        ds.setHighLightColor(marca);
+        ds.setHighLightAlpha(80);
     }
 
     // --- helpers privados ---
