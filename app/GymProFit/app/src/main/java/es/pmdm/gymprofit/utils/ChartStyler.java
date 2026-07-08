@@ -9,10 +9,13 @@ import androidx.core.content.res.ResourcesCompat;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import es.pmdm.gymprofit.R;
@@ -111,6 +114,46 @@ public final class ChartStyler {
         ds.setHighlightEnabled(true);
         ds.setHighLightColor(marca);
         ds.setHighLightAlpha(80);
+    }
+
+    // Configura un PieChart como DONUT (agujero central) al estilo de la app.
+    public static void stylePie(PieChart chart) {
+        Context ctx = chart.getContext();
+        int onVariant = attr(ctx, com.google.android.material.R.attr.colorOnSurfaceVariant, Color.GRAY);
+        Typeface tf = fuente(ctx);
+
+        chart.setBackgroundColor(Color.TRANSPARENT);
+        chart.getDescription().setEnabled(false);
+        chart.setDrawHoleEnabled(true);
+        chart.setHoleColor(Color.TRANSPARENT);
+        chart.setHoleRadius(62f);
+        chart.setTransparentCircleRadius(66f);
+        chart.setTransparentCircleColor(Color.TRANSPARENT);
+        chart.setDrawEntryLabels(false);
+        chart.setRotationEnabled(false);
+        chart.setHighlightPerTapEnabled(true);
+        chart.setNoDataText("");
+        chart.setCenterTextColor(onVariant);
+        chart.setCenterTextTypeface(tf);
+        chart.setCenterTextSize(13f);
+        chart.animateY(600);
+
+        Legend l = chart.getLegend();
+        l.setTextColor(onVariant);
+        l.setTypeface(tf);
+        l.setTextSize(12f);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+        l.setWordWrapEnabled(true);
+    }
+
+    // Aplica los colores (uno por porción) y el acabado a una serie de donut.
+    public static void stylePieDataSet(PieDataSet ds, int[] colors) {
+        ds.setColors(colors);
+        ds.setSliceSpace(2.5f);
+        ds.setDrawValues(true);
+        ds.setValueTextColor(Color.WHITE);
+        ds.setValueTextSize(12f);
+        ds.setYValuePosition(PieDataSet.ValuePosition.INSIDE_SLICE);
     }
 
     // --- helpers privados ---

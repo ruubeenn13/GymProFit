@@ -1,16 +1,21 @@
 package es.pmdm.gymprofit.ui.activities;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.google.android.material.chip.ChipGroup;
 
@@ -42,6 +47,13 @@ public class EstadisticasNutricionActivity extends BaseActivity {
     private TextView tvMedia, tvDias, tvObjetivo, tvAdherencia;
     private ChipGroup chipsPeriodo;
     private BarChart chartKcal;
+    private PieChart chartMacros;
+    private TextView tvMacrosVacia;
+
+    // Colores del donut de macros (proteína / carbohidratos / grasa): 3 tonos distintos.
+    private static final int[] MACRO_COLORS = {
+            Color.parseColor("#FF6A00"), Color.parseColor("#2DD4BF"), Color.parseColor("#A78BFA")
+    };
 
     private PreferencesManager prefs;
     private final ComidaApi comidaApi = ApiClient.service(ComidaApi.class);
@@ -69,6 +81,8 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         tvAdherencia = findViewById(R.id.tvKpiAdherenciaValor);
         chipsPeriodo = findViewById(R.id.chipsPeriodo);
         chartKcal    = findViewById(R.id.chartKcal);
+        chartMacros  = findViewById(R.id.chartMacros);
+        tvMacrosVacia = findViewById(R.id.tvMacrosVacia);
         btnNext      = findViewById(R.id.btnNext);
 
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
@@ -142,6 +156,8 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         tvObjetivo.setText(String.valueOf(enObjetivo));
         tvAdherencia.setText(adherencia + "%");
 
+        renderMacros(lista);
+
         if (lista.isEmpty()) {
             chartKcal.setVisibility(View.GONE);
             tvVacia.setVisibility(View.VISIBLE);
@@ -189,6 +205,44 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         data.setBarWidth(0.6f);
         chartKcal.setData(data);
         chartKcal.invalidate();
+    }
+
+    // Donut del reparto de macros (gramos totales de proteína/carbohidratos/grasa del periodo).
+    private void renderMacros(List<ResumenDiarioNutricion> lista) {
+        double prot = 0, carb = 0, grasa = 0;
+        for (ResumenDiarioNutricion r : lista) {
+            prot += r.getProteinas();
+            carb += r.getCarbohidratos();
+            grasa += r.getGrasas();
+        }
+
+        if (prot + carb + grasa <= 0) {
+            chartMacros.setVisibility(View.GONE);
+            tvMacrosVacia.setVisibility(View.VISIBLE);
+            return;
+        }
+        chartMacros.setVisibility(View.VISIBLE);
+        tvMacrosVacia.setVisibility(View.GONE);
+
+        List<PieEntry> entradas = new ArrayList<>();
+        entradas.add(new PieEntry((float) prot, getString(R.string.macro_prot)));
+        entradas.add(new PieEntry((float) carb, getString(R.string.macro_carb)));
+        entradas.add(new PieEntry((float) grasa, getString(R.string.macro_grasa)));
+
+        ChartStyler.stylePie(chartMacros);
+        chartMacros.setCenterText(String.format(Locale.getDefault(), "%.0f g", prot + carb + grasa));
+
+        PieDataSet ds = new PieDataSet(entradas, "");
+        ChartStyler.stylePieDataSet(ds, MACRO_COLORS);
+        PieData data = new PieData(ds);
+        data.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                return String.format(Locale.getDefault(), "%.0f g", value);
+            }
+        });
+        chartMacros.setData(data);
+        chartMacros.invalidate();
     }
 
     // Fecha ISO ("yyyy-MM-dd...") → etiqueta corta "dd/MM".

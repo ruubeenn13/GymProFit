@@ -43,18 +43,6 @@
                     android:textAppearance="@style/TextAppearance.GymProFit.Display" />
 
                 <ImageView
-                    android:id="@+id/btnEstadisticas"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_stats"
-                    android:padding="8dp"
-                    app:tint="?attr/colorOnSurface"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:contentDescription="@string/nutricion_estadisticas" />
-
-                <ImageView
                     android:id="@+id/btnMenuOpciones"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
@@ -306,6 +294,39 @@
                     </com.google.android.material.card.MaterialCardView>
 
                 </LinearLayout>
+
+                <!-- ── ACCESO A ESTADÍSTICAS (visible, estilo fila de comida) ── -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardEstadisticas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+
+                    <LinearLayout style="@style/GymProFit.MealRow">
+
+                        <FrameLayout style="@style/GymProFit.MealIconTile">
+                            <ImageView style="@style/GymProFit.MealIcon" android:src="@drawable/ic_stats" />
+                        </FrameLayout>
+
+                        <LinearLayout style="@style/GymProFit.MealText">
+                            <TextView style="@style/GymProFit.MealTitle" android:text="@string/nutricion_estadisticas_titulo" />
+                            <TextView style="@style/GymProFit.MealSub" android:text="@string/nutricion_estadisticas_sub" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="?attr/colorPrimary"
+                            android:contentDescription="@null" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
 
                 <!-- ── COMIDAS DE HOY ── -->
                 <TextView

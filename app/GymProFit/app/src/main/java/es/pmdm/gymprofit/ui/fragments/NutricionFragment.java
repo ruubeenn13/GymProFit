@@ -77,8 +77,8 @@ public class NutricionFragment extends BaseFragment {
         setupMenuButton();
         inicializarVistas();
         configurarCardsComida();
-        // Icono de cabecera → pantalla de estadísticas de nutrición (histórico, KPIs, gráficas).
-        view.findViewById(R.id.btnEstadisticas).setOnClickListener(v ->
+        // Card visible → pantalla de estadísticas de nutrición (histórico, KPIs, gráficas).
+        view.findViewById(R.id.cardEstadisticas).setOnClickListener(v ->
                 startActivity(new Intent(requireContext(), EstadisticasNutricionActivity.class)));
     }
 
