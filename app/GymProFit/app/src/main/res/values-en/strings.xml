@@ -312,6 +312,7 @@
     <string name="grafica_rango_todo">All</string>
     <string name="grafica_titulo_grasa">BODY FAT TREND</string>
     <string name="grafica_titulo_cintura">WAIST TREND</string>
+    <string name="grafica_sin_datos">No data for this metric yet.\nLog at least 2 to see the trend.</string>
     <string name="medicion_sin_datos_subtitulo">Tap + to add your first measurement</string>
     <string name="medicion_label_grasa">Body fat</string>
     <string name="medicion_label_musculo">Muscle mass</string>

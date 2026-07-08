@@ -70,6 +70,7 @@ public class MedicionesActivity extends AppCompatActivity {
     private MaterialCardView cardGraficaPeso;
     private LineChart chartPeso;
     private TextView tvGraficaTitulo;
+    private TextView tvGraficaVacia;
     private ChipGroup chipsMetrica, chipsRango;
     private List<MedicionCorporal> historial;
     // Métricas representables en la gráfica (solo las que la gente mide de verdad).
@@ -105,6 +106,7 @@ public class MedicionesActivity extends AppCompatActivity {
         tvNotasVal      = findViewById(R.id.tvNotasVal);
         cardGraficaPeso = findViewById(R.id.cardGraficaPeso);
         chartPeso       = findViewById(R.id.chartPeso);
+        tvGraficaVacia  = findViewById(R.id.tvGraficaVacia);
         tvGraficaTitulo = findViewById(R.id.tvGraficaTitulo);
         chipsMetrica    = findViewById(R.id.chipsMetrica);
         chipsRango      = findViewById(R.id.chipsRango);
@@ -270,6 +272,7 @@ public class MedicionesActivity extends AppCompatActivity {
             cardGraficaPeso.setVisibility(View.GONE);
             return;
         }
+        cardGraficaPeso.setVisibility(View.VISIBLE);
 
         // Métrica + unidad según el chip activo.
         final int metrica;
@@ -299,11 +302,16 @@ public class MedicionesActivity extends AppCompatActivity {
 
         tvGraficaTitulo.setText(tituloMetrica(metrica));
 
+        // La card y los chips SIEMPRE se ven (hay histórico); si la métrica elegida no
+        // tiene ≥2 puntos, se muestra el estado vacío dentro del área en vez de la línea
+        // (así el usuario puede volver a otra métrica sin que desaparezca la card).
         if (entradas.size() < 2) {
-            cardGraficaPeso.setVisibility(View.GONE);
+            chartPeso.setVisibility(View.GONE);
+            tvGraficaVacia.setVisibility(View.VISIBLE);
             return;
         }
-        cardGraficaPeso.setVisibility(View.VISIBLE);
+        chartPeso.setVisibility(View.VISIBLE);
+        tvGraficaVacia.setVisibility(View.GONE);
 
         ChartStyler.styleLine(chartPeso, new ValueFormatter() {
             @Override

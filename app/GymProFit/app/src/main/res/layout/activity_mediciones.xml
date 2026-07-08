@@ -165,11 +165,30 @@
 
                         </com.google.android.material.chip.ChipGroup>
 
-                        <com.github.mikephil.charting.charts.LineChart
-                            android:id="@+id/chartPeso"
+                        <!-- Área de gráfica: la línea o, si esa métrica no tiene ≥2 datos,
+                             un mensaje de estado vacío (la card y los chips NO desaparecen). -->
+                        <FrameLayout
                             android:layout_width="match_parent"
                             android:layout_height="180dp"
-                            android:layout_marginTop="8dp" />
+                            android:layout_marginTop="8dp">
+
+                            <com.github.mikephil.charting.charts.LineChart
+                                android:id="@+id/chartPeso"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent" />
+
+                            <TextView
+                                android:id="@+id/tvGraficaVacia"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="@string/grafica_sin_datos"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:textSize="14sp"
+                                android:gravity="center"
+                                android:visibility="gone" />
+
+                        </FrameLayout>
 
                         <!-- Rango temporal de la gráfica -->
                         <com.google.android.material.chip.ChipGroup

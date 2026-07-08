@@ -289,6 +289,7 @@
     <string name="grafica_rango_todo">Todo</string>
     <string name="grafica_titulo_grasa">EVOLUCIÓN DE LA GRASA</string>
     <string name="grafica_titulo_cintura">EVOLUCIÓN DE LA CINTURA</string>
+    <string name="grafica_sin_datos">Aún no hay datos de esta métrica.\nRegistra al menos 2 para ver la evolución.</string>
     <string name="medicion_sin_datos_subtitulo">Pulsa + para añadir tu primera medición</string>
     <string name="medicion_label_grasa">Grasa corporal</string>
     <string name="medicion_label_musculo">Masa muscular</string>
