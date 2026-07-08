@@ -41,6 +41,9 @@
 
         <!-- Activities de administración (gestión de usuarios, rutinas, ejercicios, alimentos) -->
         <activity
+            android:name=".ui.activities.EstadisticasNutricionActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.activities.AdminActivity"
             android:exported="false" />
         <activity

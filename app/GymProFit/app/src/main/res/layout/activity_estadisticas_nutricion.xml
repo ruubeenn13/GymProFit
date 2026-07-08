@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_estadisticas_nutricion.xml — Estadísticas de nutrición.
+  Selector de periodo (semana/mes) con navegación anterior/siguiente, tarjetas KPI
+  (media kcal, días registrados, en objetivo, adherencia) y gráfica de barras de
+  calorías por día. Descarga el diario de Nutrición llevando aquí el histórico.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?attr/android:colorBackground">
+
+    <!-- Cabecera -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:background="?attr/colorSurface">
+
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_arrow_back"
+            android:padding="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="@null" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="@string/nutricion_estadisticas"
+            android:textAppearance="@style/TextAppearance.GymProFit.Headline"
+            android:textSize="24sp" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Selector de periodo -->
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipsPeriodo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleLine="true"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipSemana"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/stats_periodo_semana"
+                    android:checked="true" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipMes"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/stats_periodo_mes" />
+
+            </com.google.android.material.chip.ChipGroup>
+
+            <!-- Navegación de periodo -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="8dp">
+
+                <ImageView
+                    android:id="@+id/btnPrev"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_chevron_right"
+                    android:rotation="180"
+                    android:padding="8dp"
+                    app:tint="?attr/colorPrimary"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="@null" />
+
+                <TextView
+                    android:id="@+id/tvPeriodo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Headline"
+                    android:textSize="18sp" />
+
+                <ImageView
+                    android:id="@+id/btnNext"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_chevron_right"
+                    android:padding="8dp"
+                    app:tint="?attr/colorPrimary"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="@null" />
+
+            </LinearLayout>
+
+            <!-- KPIs 2×2 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="vertical" android:padding="16dp">
+                        <TextView android:id="@+id/tvKpiMediaValor" android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" android:textAppearance="@style/TextAppearance.GymProFit.Number"
+                            android:textSize="32sp" tools:text="1850" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="@string/stats_kpi_media" android:textAppearance="@style/TextAppearance.GymProFit.Label"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <Space android:layout_width="12dp" android:layout_height="1dp" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="vertical" android:padding="16dp">
+                        <TextView android:id="@+id/tvKpiDiasValor" android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" android:textAppearance="@style/TextAppearance.GymProFit.Number"
+                            android:textSize="32sp" tools:text="5" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="@string/stats_kpi_dias" android:textAppearance="@style/TextAppearance.GymProFit.Label"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="vertical" android:padding="16dp">
+                        <TextView android:id="@+id/tvKpiObjetivoValor" android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" android:textAppearance="@style/TextAppearance.GymProFit.Number"
+                            android:textSize="32sp" tools:text="3" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="@string/stats_kpi_objetivo" android:textAppearance="@style/TextAppearance.GymProFit.Label"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <Space android:layout_width="12dp" android:layout_height="1dp" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="vertical" android:padding="16dp">
+                        <TextView android:id="@+id/tvKpiAdherenciaValor" android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" android:textAppearance="@style/TextAppearance.GymProFit.Number"
+                            android:textSize="32sp" tools:text="60%" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="@string/stats_kpi_adherencia" android:textAppearance="@style/TextAppearance.GymProFit.Label"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+            <!-- Gráfica de barras kcal/día -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/nutricion_grafica_kcal"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Label"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_marginTop="8dp">
+
+                        <com.github.mikephil.charting.charts.BarChart
+                            android:id="@+id/chartKcal"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                        <TextView
+                            android:id="@+id/tvVacia"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="@string/nutricion_grafica_vacia"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textSize="14sp"
+                            android:gravity="center"
+                            android:visibility="gone" />
+
+                    </FrameLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

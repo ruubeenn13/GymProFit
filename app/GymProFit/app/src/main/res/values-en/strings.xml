@@ -321,6 +321,13 @@
     <string name="dialogo_nuevo_valor">Enter the new value</string>
     <string name="dialogo_escribe_nota">Write a note</string>
     <string name="medicion_registrar_primera">Log measurement</string>
+    <string name="nutricion_estadisticas">Statistics</string>
+    <string name="stats_periodo_semana">Week</string>
+    <string name="stats_periodo_mes">Month</string>
+    <string name="stats_kpi_media">Avg kcal/day</string>
+    <string name="stats_kpi_dias">Days logged</string>
+    <string name="stats_kpi_objetivo">On target</string>
+    <string name="stats_kpi_adherencia">Adherence</string>
     <string name="medicion_sin_datos_subtitulo">Tap + to add your first measurement</string>
     <string name="medicion_label_grasa">Body fat</string>
     <string name="medicion_label_musculo">Muscle mass</string>

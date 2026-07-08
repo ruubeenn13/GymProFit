@@ -298,6 +298,13 @@
     <string name="dialogo_nuevo_valor">Introduce el nuevo valor</string>
     <string name="dialogo_escribe_nota">Escribe una nota</string>
     <string name="medicion_registrar_primera">Registrar medición</string>
+    <string name="nutricion_estadisticas">Estadísticas</string>
+    <string name="stats_periodo_semana">Semana</string>
+    <string name="stats_periodo_mes">Mes</string>
+    <string name="stats_kpi_media">Media kcal/día</string>
+    <string name="stats_kpi_dias">Días registrados</string>
+    <string name="stats_kpi_objetivo">En objetivo</string>
+    <string name="stats_kpi_adherencia">Adherencia</string>
     <string name="medicion_sin_datos_subtitulo">Pulsa + para añadir tu primera medición</string>
     <string name="medicion_label_grasa">Grasa corporal</string>
     <string name="medicion_label_musculo">Masa muscular</string>
