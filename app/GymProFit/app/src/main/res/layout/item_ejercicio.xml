@@ -62,7 +62,7 @@
                 android:textColor="?attr/colorOnSurface"
                 android:alpha="0.6" />
 
-            <!-- Chips de dificultad y calorías -->
+            <!-- Chips de dificultad y grupo muscular -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -73,8 +73,8 @@
                     android:id="@+id/chipDificultad"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="11sp"
-                    app:chipMinHeight="24dp"
+                    android:textSize="14sp"
+                    app:chipMinHeight="34dp"
                     android:clickable="false"
                     android:focusable="false"
                     style="@style/Widget.Material3.Chip.Assist" />
@@ -84,8 +84,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
-                    android:textSize="11sp"
-                    app:chipMinHeight="24dp"
+                    android:textSize="14sp"
+                    app:chipMinHeight="34dp"
                     android:clickable="false"
                     android:focusable="false"
                     style="@style/Widget.Material3.Chip.Assist" />

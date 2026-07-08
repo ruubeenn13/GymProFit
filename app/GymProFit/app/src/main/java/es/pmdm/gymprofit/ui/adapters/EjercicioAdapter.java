@@ -64,7 +64,8 @@ public class EjercicioAdapter extends RecyclerView.Adapter<EjercicioAdapter.View
         holder.ivIcono.setImageResource(es.pmdm.gymprofit.utils.UIHelper.cuerpoMuscular(
                 ejercicio.getMusculoPrimario(), ejercicio.getGrupoMuscular()));
         holder.chipDificultad.setText(es.pmdm.gymprofit.utils.UIHelper.traducirNivel(holder.itemView.getContext(), ejercicio.getDificultad())); // enum traducido
-        holder.chipCalorias.setText(ejercicio.getCalorias() + " kcal");
+        // Grupo muscular que trabaja (en vez de las calorías).
+        holder.chipCalorias.setText(es.pmdm.gymprofit.utils.UIHelper.traducirGrupoMuscular(holder.itemView.getContext(), ejercicio.getGrupoMuscular()));
         if (clickListener != null) {
             holder.itemView.setOnClickListener(v -> clickListener.onClick(ejercicio));
         }

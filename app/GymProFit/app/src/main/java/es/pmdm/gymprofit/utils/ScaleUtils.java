@@ -19,10 +19,14 @@ public final class ScaleUtils {
     // Factor de agrandado de toda la app (18% más grande).
     public static final float FONT_SCALE = 1.18f;
 
-    // Envuelve un contexto aplicando la escala de fuente global (sobre la del sistema).
+    // Envuelve un contexto aplicando SOLO la escala de fuente (override mínimo).
+    // IMPORTANTE: no se copia toda la Configuration del base; si se copiara, se
+    // CONGELARÍA el modo (claro/oscuro) y el idioma en el momento del wrap, y al
+    // recrear la Activity por cambio de tema/idioma se quedaría "pillado" con el
+    // anterior. Con un override mínimo, uiMode y locale siguen vivos desde el base.
     public static Context wrap(Context base) {
-        Configuration cfg = new Configuration(base.getResources().getConfiguration());
-        cfg.fontScale = cfg.fontScale * FONT_SCALE;
-        return base.createConfigurationContext(cfg);
+        Configuration override = new Configuration();
+        override.fontScale = base.getResources().getConfiguration().fontScale * FONT_SCALE;
+        return base.createConfigurationContext(override);
     }
 }

@@ -9,10 +9,12 @@
 <resources>
     <!-- ── Marca ─────────────────────────────────────────────────────────── -->
     <!-- Naranja principal (más profundo en claro para contraste sobre blanco) -->
-    <color name="gp_primary">#F25C00</color>
+    <!-- Acento del MODO CLARO = teal petróleo (el naranja deslumbra sobre blanco).
+         El modo oscuro mantiene el naranja (values-night). Logo naranja en ambos. -->
+    <color name="gp_primary">#0F766E</color>
     <color name="gp_on_primary">#FFFFFF</color>
-    <color name="gp_primary_container">#FFE3CE</color>
-    <color name="gp_on_primary_container">#571E00</color>
+    <color name="gp_primary_container">#C9E9E4</color>
+    <color name="gp_on_primary_container">#06423C</color>
     <!-- Dorado del logo: reservado a racha y logros -->
     <color name="gp_gold">#B58A2A</color>
 
