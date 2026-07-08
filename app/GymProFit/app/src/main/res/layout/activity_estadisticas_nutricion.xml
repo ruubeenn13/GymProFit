@@ -290,6 +290,64 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Heatmap de adherencia (una celda por día, coloreada según el objetivo) -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/stats_adherencia_titulo"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Label"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
+
+                    <GridLayout
+                        android:id="@+id/gridHeatmap"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:columnCount="7" />
+
+                    <!-- Leyenda -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="12dp">
+
+                        <View android:id="@+id/legNone" android:layout_width="14dp" android:layout_height="14dp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp" android:layout_marginEnd="14dp"
+                            android:text="@string/heatmap_sin_datos" android:textSize="12sp"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
+
+                        <View android:id="@+id/legOff" android:layout_width="14dp" android:layout_height="14dp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp" android:layout_marginEnd="14dp"
+                            android:text="@string/heatmap_fuera" android:textSize="12sp"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
+
+                        <View android:id="@+id/legOn" android:layout_width="14dp" android:layout_height="14dp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:text="@string/heatmap_objetivo" android:textSize="12sp"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
         </LinearLayout>
 
     </ScrollView>

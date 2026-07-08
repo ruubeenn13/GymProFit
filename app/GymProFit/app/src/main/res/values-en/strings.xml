@@ -334,6 +334,10 @@
     <string name="macro_prot">Protein</string>
     <string name="macro_carb">Carbs</string>
     <string name="macro_grasa">Fat</string>
+    <string name="stats_adherencia_titulo">ADHERENCE</string>
+    <string name="heatmap_sin_datos">No data</string>
+    <string name="heatmap_fuera">Off</string>
+    <string name="heatmap_objetivo">On target</string>
     <string name="medicion_sin_datos_subtitulo">Tap + to add your first measurement</string>
     <string name="medicion_label_grasa">Body fat</string>
     <string name="medicion_label_musculo">Muscle mass</string>

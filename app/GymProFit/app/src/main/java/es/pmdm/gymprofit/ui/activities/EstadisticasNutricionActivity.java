@@ -1,8 +1,10 @@
 package es.pmdm.gymprofit.ui.activities;
 
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,8 +24,10 @@ import com.google.android.material.chip.ChipGroup;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.comida.ResumenDiarioNutricion;
@@ -49,11 +53,18 @@ public class EstadisticasNutricionActivity extends BaseActivity {
     private BarChart chartKcal;
     private PieChart chartMacros;
     private TextView tvMacrosVacia;
+    private GridLayout gridHeatmap;
 
     // Colores del donut de macros (proteína / carbohidratos / grasa): 3 tonos distintos.
     private static final int[] MACRO_COLORS = {
             Color.parseColor("#FF6A00"), Color.parseColor("#2DD4BF"), Color.parseColor("#A78BFA")
     };
+    // Heatmap de adherencia: en objetivo (verde) / fuera (ámbar); sin datos = surface del tema.
+    private static final int COLOR_ON  = Color.parseColor("#22C55E");
+    private static final int COLOR_OFF = Color.parseColor("#FFB300");
+
+    // Inicio de la ventana temporal actual (para recorrer día a día en el heatmap).
+    private long windowStartMillis;
 
     private PreferencesManager prefs;
     private final ComidaApi comidaApi = ApiClient.service(ComidaApi.class);
@@ -83,7 +94,14 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         chartKcal    = findViewById(R.id.chartKcal);
         chartMacros  = findViewById(R.id.chartMacros);
         tvMacrosVacia = findViewById(R.id.tvMacrosVacia);
+        gridHeatmap  = findViewById(R.id.gridHeatmap);
         btnNext      = findViewById(R.id.btnNext);
+
+        // Swatches de la leyenda del heatmap.
+        int colorNone = getColorTema(com.google.android.material.R.attr.colorSurfaceVariant);
+        pintarSwatch(R.id.legNone, colorNone);
+        pintarSwatch(R.id.legOff, COLOR_OFF);
+        pintarSwatch(R.id.legOn, COLOR_ON);
 
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
 
@@ -117,6 +135,7 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         cal.add(Calendar.DAY_OF_YEAR, -(lenDias - 1));
         String inicio = iso.format(cal.getTime());
         String inicioCorta = corta.format(cal.getTime());
+        windowStartMillis = cal.getTimeInMillis();
 
         tvPeriodo.setText(inicioCorta + " – " + finCorta);
 
@@ -157,6 +176,7 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         tvAdherencia.setText(adherencia + "%");
 
         renderMacros(lista);
+        construirHeatmap(lista);
 
         if (lista.isEmpty()) {
             chartKcal.setVisibility(View.GONE);
@@ -243,6 +263,61 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         });
         chartMacros.setData(data);
         chartMacros.invalidate();
+    }
+
+    // Construye el heatmap: una celda por día del periodo, coloreada según si ese día
+    // se registró y quedó en objetivo (verde), fuera (ámbar) o sin datos (surface).
+    private void construirHeatmap(List<ResumenDiarioNutricion> lista) {
+        gridHeatmap.removeAllViews();
+
+        Map<String, Integer> porFecha = new HashMap<>();
+        for (ResumenDiarioNutricion r : lista) {
+            if (r.getFecha() != null && r.getFecha().length() >= 10) {
+                porFecha.put(r.getFecha().substring(0, 10), r.getCalorias());
+            }
+        }
+
+        int colorNone = getColorTema(com.google.android.material.R.attr.colorSurfaceVariant);
+        double margen = objetivoKcal * 0.15;
+        int cell = (int) dp(30), margin = (int) dp(3);
+
+        SimpleDateFormat iso = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(windowStartMillis);
+
+        for (int i = 0; i < lenDias; i++) {
+            Integer kcal = porFecha.get(iso.format(cal.getTime()));
+            int color;
+            if (kcal == null) color = colorNone;
+            else if (Math.abs(kcal - objetivoKcal) <= margen) color = COLOR_ON;
+            else color = COLOR_OFF;
+
+            View v = new View(this);
+            GradientDrawable bg = new GradientDrawable();
+            bg.setColor(color);
+            bg.setCornerRadius(dp(6));
+            v.setBackground(bg);
+
+            GridLayout.LayoutParams lp = new GridLayout.LayoutParams();
+            lp.width = cell;
+            lp.height = cell;
+            lp.setMargins(margin, margin, margin, margin);
+            gridHeatmap.addView(v, lp);
+
+            cal.add(Calendar.DAY_OF_YEAR, 1);
+        }
+    }
+
+    // Pinta un cuadradito de la leyenda con el color indicado.
+    private void pintarSwatch(int viewId, int color) {
+        GradientDrawable bg = new GradientDrawable();
+        bg.setColor(color);
+        bg.setCornerRadius(dp(4));
+        findViewById(viewId).setBackground(bg);
+    }
+
+    private float dp(float v) {
+        return v * getResources().getDisplayMetrics().density;
     }
 
     // Fecha ISO ("yyyy-MM-dd...") → etiqueta corta "dd/MM".
