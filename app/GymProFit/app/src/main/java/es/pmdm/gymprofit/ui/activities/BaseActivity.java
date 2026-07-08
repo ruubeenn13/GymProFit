@@ -79,8 +79,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (btn != null) btn.setOnClickListener(this::mostrarMenuOpciones);
     }
 
-    // Construye y muestra el menú anclado con las opciones: tema, idioma, contacto y cerrar sesión
-    private void mostrarMenuOpciones(View anchor) {
+    // Construye y muestra el menú anclado con las opciones: tema, idioma, contacto y cerrar sesión.
+    // Público para que los Fragments de MainActivity puedan delegar aquí su botón de menú.
+    public void mostrarMenuOpciones(View anchor) {
         List<UIHelper.MenuAction> actions = new ArrayList<>();
         actions.add(new UIHelper.MenuAction(R.drawable.ic_palette,  getString(R.string.perfil_tema),         this::mostrarDialogoTema));
         actions.add(new UIHelper.MenuAction(R.drawable.ic_language, getString(R.string.perfil_idioma),       this::mostrarDialogoIdioma));

@@ -1,53 +1,18 @@
 package es.pmdm.gymprofit.utils;
 
-import android.app.Activity;
-import android.content.Intent;
-
-import es.pmdm.gymprofit.ui.activities.EjerciciosActivity;
-import es.pmdm.gymprofit.ui.activities.HomeActivity;
-import es.pmdm.gymprofit.ui.activities.NutricionActivity;
-import es.pmdm.gymprofit.ui.activities.PerfilActivity;
-import es.pmdm.gymprofit.ui.activities.RutinasActivity;
-
 // ============================================================
-// NavTabs — navegación entre los 5 destinos principales (barra flotante).
-// Centraliza el índice→Activity de la FloatingNavBar para que cada pantalla
-// principal solo declare su propio índice y delegue el salto aquí. Mantiene
-// la arquitectura solo-Activities (sin ViewPager) con transición instantánea.
+// NavTabs — índices de las 5 pestañas principales de la app.
+// La navegación principal es MainActivity + ViewPager2 + Fragments: la barra
+// flotante (FloatingNavBar) queda FIJA fuera del pager y su burbuja viaja
+// sincronizada con el scroll del pager. Aquí solo viven los índices de pestaña
+// y la clave del extra para arrancar MainActivity en una pestaña concreta.
 // ============================================================
 public final class NavTabs {
 
     public static final int HOME = 0, RUTINAS = 1, EJERCICIOS = 2, NUTRICION = 3, PERFIL = 4;
 
-    // Índice del destino DESDE el que se navega, para que la barra flotante de
-    // la pantalla destino haga "viajar" su burbuja desde ahí (efecto visual).
-    public static final String EXTRA_FROM = "nav_from_tab";
+    // Pestaña inicial al abrir MainActivity (int con uno de los índices de arriba).
+    public static final String EXTRA_TAB = "nav_tab";
 
     private NavTabs() {}
-
-    // Salta al destino `index` desde `from` (que está en el destino `actual`).
-    // No hace nada si se selecciona el destino en el que ya se está.
-    public static void ir(Activity from, int index, int actual) {
-        if (index == actual) return;
-
-        Class<? extends Activity> destino;
-        switch (index) {
-            case HOME:       destino = HomeActivity.class; break;
-            case RUTINAS:    destino = RutinasActivity.class; break;
-            case EJERCICIOS: destino = EjerciciosActivity.class; break;
-            case NUTRICION:  destino = NutricionActivity.class; break;
-            default:         destino = PerfilActivity.class; break;
-        }
-
-        Intent intent = new Intent(from, destino);
-        intent.putExtra(EXTRA_FROM, actual); // la barra destino hará viajar la burbuja desde aquí
-        from.startActivity(intent);
-        // Swap INSTANTÁNEO de la pantalla: el "viaje" de la burbuja de la barra
-        // flotante ES la transición entre pestañas. Una animación de ventana
-        // (slide/fade) movería toda la barra y pisaría ese viaje.
-        AnimUtils.sinAnimacion(from);
-        // Home es la raíz: no se cierra al salir de ella para conservar el back;
-        // el resto de destinos sí se cierran (navegación lateral entre iguales).
-        if (actual != HOME) from.finish();
-    }
 }

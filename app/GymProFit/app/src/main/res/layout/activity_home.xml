@@ -498,14 +498,4 @@
 
     </ScrollView>
 
-    <!-- Barra de navegación inferior flotante (burbuja con arrastre) -->
-    <es.pmdm.gymprofit.ui.widget.FloatingNavBar
-        android:id="@+id/floatingNav"
-        android:layout_width="match_parent"
-        android:layout_height="76dp"
-        android:layout_marginStart="14dp"
-        android:layout_marginEnd="14dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="12dp" />
-
 </LinearLayout>

@@ -77,7 +77,7 @@ public class Onboarding3Activity extends AppCompatActivity {
 
     // Salta el onboarding y navega directo a HomeActivity, limpiando el back stack.
     private void saltarAlHome() {
-        startActivity(new Intent(this, HomeActivity.class)
+        startActivity(new Intent(this, MainActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
         finish();

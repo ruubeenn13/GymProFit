@@ -1,11 +1,15 @@
-package es.pmdm.gymprofit.ui.activities;
+package es.pmdm.gymprofit.ui.fragments;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.material.card.MaterialCardView;
 
@@ -24,27 +28,30 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.network.UiApiCallback;
 import es.pmdm.gymprofit.network.UsuarioApi;
+import es.pmdm.gymprofit.ui.activities.SesionesActivity;
+import es.pmdm.gymprofit.utils.NavTabs;
 
 // ============================================================
-// HomeActivity — pantalla principal tras el login.
+// HomeFragment — pestaña principal tras el login (pager de MainActivity).
 // Muestra la cabecera con saludo/fecha, las estadísticas semanales de
-// entrenamiento (sesiones, calorías, minutos), las acciones rápidas y
-// la navegación inferior de la app GymProFit.
+// entrenamiento (sesiones, calorías, minutos) y las acciones rápidas.
 // ============================================================
-public class HomeActivity extends BaseActivity {
+public class HomeFragment extends BaseFragment {
     private TextView tvConteoEntrenamientos, tvConteoCaloriasHome, tvConteoMinutosHome;
     private TextView tvRachaNumero, tvRachaUnidad, tvRachaMejor;
-    // Interfaces Retrofit tipadas (etapa 2)
     private final SesionApi sesionApi = ApiClient.service(SesionApi.class);
     private final UsuarioApi usuarioApi = ApiClient.service(UsuarioApi.class);
 
-    // Infla el layout, referencia las vistas de estadísticas y configura
-    // cabecera, accesos rápidos, navegación inferior y permiso de notificaciones.
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.activity_home, container, false);
+    }
 
+    // Referencia las vistas de estadísticas y configura cabecera y accesos rápidos.
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         tvConteoEntrenamientos = findViewById(R.id.tvConteoEntrenamientos);
         tvConteoCaloriasHome   = findViewById(R.id.tvConteoCaloriasHome);
         tvConteoMinutosHome    = findViewById(R.id.tvConteoMinutosHome);
@@ -55,25 +62,17 @@ public class HomeActivity extends BaseActivity {
         setupMenuButton();
         configurarCabecera();
         configurarAccionesRapidas();
-        configurarNavegacion();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 0);
-            }
-        }
     }
 
-    // Recarga las estadísticas semanales cada vez que la Activity vuelve a primer plano.
+    // Recarga las estadísticas semanales cada vez que la pestaña vuelve a primer plano.
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         cargarEstadisticasSemana();
         cargarRacha();
     }
 
-    // Carga la racha de días del usuario (estadísticas agregadas) y la muestra
-    // como protagonista de la cabecera. Sin racha → 0 + mensaje motivador.
+    // Carga la racha de días del usuario y la muestra como protagonista de la cabecera.
     private void cargarRacha() {
         int usuarioId = prefsManager.getUsuarioId();
         if (usuarioId == -1) return;
@@ -81,7 +80,7 @@ public class HomeActivity extends BaseActivity {
         usuarioApi.getEstadisticas(usuarioId).enqueue(new ApiCallback<UsuarioEstadisticas>() {
             @Override
             public void onOk(UsuarioEstadisticas e) {
-                if (e == null) return;
+                if (e == null || !isAdded()) return;
                 int dias = e.getRachaActualDias();
                 tvRachaNumero.setText(String.valueOf(dias));
                 tvRachaUnidad.setText(getString(dias == 1 ? R.string.home_racha_dia_unidad
@@ -94,7 +93,7 @@ public class HomeActivity extends BaseActivity {
             }
             @Override
             public void onFail(int code, String message) {
-                // 404 = usuario sin datos aún (racha 0); no molestar con toast.
+                if (!isAdded()) return;
                 tvRachaNumero.setText("0");
                 tvRachaUnidad.setText(getString(R.string.home_racha_dias_unidad));
                 tvRachaMejor.setText(getString(R.string.home_racha_vacia));
@@ -102,18 +101,15 @@ public class HomeActivity extends BaseActivity {
         });
     }
 
-    // Obtiene las sesiones del usuario y calcula el total de entrenamientos,
-    // calorías y minutos realizados desde el lunes de la semana actual.
+    // Calcula el total de entrenamientos, calorías y minutos de la semana actual.
     private void cargarEstadisticasSemana() {
         int usuarioId = prefsManager.getUsuarioId();
         if (usuarioId == -1) return;
 
-        // autoLoading=false: Home no queda en blanco (saludo/accesos visibles);
-        // basta el toast de error automático (cold-start incluido) + fallback "—".
-        sesionApi.getDeUsuario(usuarioId).enqueue(new UiApiCallback<List<SesionEntrenamiento>>(this, false) {
+        sesionApi.getDeUsuario(usuarioId).enqueue(new UiApiCallback<List<SesionEntrenamiento>>(requireActivity(), false) {
             @Override
             public void onData(List<SesionEntrenamiento> sesiones) {
-                // Calcula la fecha de inicio de la semana actual (lunes a las 00:00)
+                if (!isAdded()) return;
                 Calendar cal = Calendar.getInstance();
                 cal.set(Calendar.HOUR_OF_DAY, 0);
                 cal.set(Calendar.MINUTE, 0);
@@ -124,7 +120,6 @@ public class HomeActivity extends BaseActivity {
                 cal.add(Calendar.DAY_OF_MONTH, -offset);
                 Date semanaInicio = cal.getTime();
 
-                // La API emite la fecha en ISO-8601 (yyyy-MM-dd'T'HH:mm:ss) al mapearse directa al POJO.
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
                 int count = 0, calorias = 0, minutos = 0;
                 if (sesiones != null) {
@@ -145,7 +140,7 @@ public class HomeActivity extends BaseActivity {
                 tvConteoMinutosHome.setText(String.valueOf(minutos));
             }
             @Override public void onFail(int code, String message) {
-                // Fallback visual "—" en las tarjetas + toast de error estándar (super).
+                if (!isAdded()) return;
                 tvConteoEntrenamientos.setText("—");
                 tvConteoCaloriasHome.setText("—");
                 tvConteoMinutosHome.setText("—");
@@ -180,8 +175,7 @@ public class HomeActivity extends BaseActivity {
         tvFecha.setText(sdf.format(new Date()));
     }
 
-    // Configura los listeners de las tarjetas de acceso rápido (iniciar entrenamiento,
-    // ver rutinas, registrar comida), comprobando acceso registrado cuando aplica.
+    // Listeners de las tarjetas de acceso rápido (entrenamiento, rutinas, comida).
     private void configurarAccionesRapidas() {
         MaterialCardView cardIniciarEntrenamiento = findViewById(R.id.cardIniciarEntrenamiento);
         MaterialCardView cardVerRutinas = findViewById(R.id.cardVerRutinas);
@@ -189,31 +183,15 @@ public class HomeActivity extends BaseActivity {
 
         cardIniciarEntrenamiento.setOnClickListener(v -> {
             if (!verificarAccesoRegistrado()) return;
-            startActivity(new Intent(this, SesionesActivity.class));
-            es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
+            startActivity(new Intent(requireContext(), SesionesActivity.class));
         });
 
-        cardVerRutinas.setOnClickListener(v -> {
-            startActivity(new Intent(this, RutinasActivity.class));
-            es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
-        });
+        // Rutinas y Nutrición son pestañas del pager: cambio de pestaña (no Activity).
+        cardVerRutinas.setOnClickListener(v -> irATab(NavTabs.RUTINAS));
 
         cardRegistrarComida.setOnClickListener(v -> {
             if (!verificarAccesoRegistrado()) return;
-            startActivity(new Intent(this, NutricionActivity.class));
-            es.pmdm.gymprofit.utils.AnimUtils.sinAnimacion(this);
+            irATab(NavTabs.NUTRICION);
         });
     }
-
-    // Configura la barra de navegación inferior, marcando "Home" como seleccionado
-    // y redirigiendo a la Activity correspondiente al pulsar cada ítem.
-    private void configurarNavegacion() {
-        es.pmdm.gymprofit.ui.widget.FloatingNavBar nav = findViewById(R.id.floatingNav);
-        // La burbuja viaja desde el destino anterior (si venimos de otra pestana).
-        int desde = getIntent().getIntExtra(es.pmdm.gymprofit.utils.NavTabs.EXTRA_FROM, es.pmdm.gymprofit.utils.NavTabs.HOME);
-        nav.setActiveFrom(desde, es.pmdm.gymprofit.utils.NavTabs.HOME);
-        nav.setOnTabSelectedListener(index ->
-                es.pmdm.gymprofit.utils.NavTabs.ir(this, index, es.pmdm.gymprofit.utils.NavTabs.HOME));
-    }
-
 }

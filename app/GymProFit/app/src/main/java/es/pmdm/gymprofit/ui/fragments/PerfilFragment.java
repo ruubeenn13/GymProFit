@@ -1,6 +1,7 @@
-package es.pmdm.gymprofit.ui.activities;
+package es.pmdm.gymprofit.ui.fragments;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -8,7 +9,9 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -16,10 +19,12 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
-
+import androidx.fragment.app.FragmentActivity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -33,6 +38,12 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.MedicionApi;
 import es.pmdm.gymprofit.network.UsuarioApi;
+import es.pmdm.gymprofit.ui.activities.AcercaDeActivity;
+import es.pmdm.gymprofit.ui.activities.AdminActivity;
+import es.pmdm.gymprofit.ui.activities.EditarPerfilActivity;
+import es.pmdm.gymprofit.ui.activities.LogrosActivity;
+import es.pmdm.gymprofit.ui.activities.MedicionesActivity;
+import es.pmdm.gymprofit.ui.activities.SesionesActivity;
 import es.pmdm.gymprofit.utils.UiFeedback;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -40,12 +51,12 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 
 // ============================================================
-// PerfilActivity — Pantalla de perfil del usuario.
-// Muestra los datos personales y nutricionales del usuario, la última medición
-// corporal registrada y la foto de perfil (con opción de cambiarla desde galería
-// o cámara). Da acceso a sesiones, mediciones, logros, ajustes de admin y "Acerca de".
+// PerfilFragment — pestaña de perfil del usuario.
+// Muestra los datos personales y nutricionales, la última medición corporal y
+// la foto de perfil (con opción de cambiarla desde galería o cámara). Da acceso
+// a sesiones, mediciones, logros, ajustes de admin y "Acerca de".
 // ============================================================
-public class PerfilActivity extends BaseActivity {
+public class PerfilFragment extends BaseFragment {
     private ActivityResultLauncher<Intent> editarPerfilLauncher;
     private ActivityResultLauncher<Intent> medicionesLauncher;
     private ActivityResultLauncher<String> galleryLauncher;
@@ -58,65 +69,62 @@ public class PerfilActivity extends BaseActivity {
     private TextView tvPesoMedicion, tvAlturaMedicion;
     private LinearLayout llMedicionesResumen;
     private ImageView ivAvatar;
-    // Interfaz Retrofit tipada del dominio usuarios (etapa 2)
     private final UsuarioApi usuarioApi = ApiClient.service(UsuarioApi.class);
-    // Interfaz Retrofit tipada del dominio mediciones corporales (etapa 2)
     private final MedicionApi medicionApi = ApiClient.service(MedicionApi.class);
 
-    // Inicializa launchers para editar perfil, ver mediciones, elegir foto de
-    // galería/cámara y pedir permiso de cámara; luego monta la pantalla.
+    // Registra los launchers (editar perfil, mediciones, galería, cámara y
+    // permiso de cámara) antes de que el fragment alcance STARTED.
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         editarPerfilLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    if (result.getResultCode() == RESULT_OK) {
-                        configurarDatosUsuario();
-                    }
-                }
-        );
+                    if (result.getResultCode() == Activity.RESULT_OK) configurarDatosUsuario();
+                });
 
         medicionesLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    if (result.getResultCode() == RESULT_OK) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
                         int uid = prefsManager.getUsuarioId();
                         if (uid != -1) cargarUltimaMedicion(uid);
                     }
-                }
-        );
+                });
 
         galleryLauncher = registerForActivityResult(
                 new ActivityResultContracts.GetContent(),
-                uri -> { if (uri != null) subirFoto(uri); }
-        );
+                uri -> { if (uri != null) subirFoto(uri); });
 
         cameraLauncher = registerForActivityResult(
                 new ActivityResultContracts.TakePicture(),
-                ok -> { if (ok && cameraUri != null) subirFoto(cameraUri); }
-        );
+                ok -> { if (ok && cameraUri != null) subirFoto(cameraUri); });
 
         cameraPermLauncher = registerForActivityResult(
                 new ActivityResultContracts.RequestPermission(),
                 granted -> {
                     if (granted) lanzarCamara();
-                    else Toast.makeText(this, R.string.perfil_permiso_camara, Toast.LENGTH_SHORT).show();
-                }
-        );
+                    else Toast.makeText(requireContext(), R.string.perfil_permiso_camara, Toast.LENGTH_SHORT).show();
+                });
+    }
 
-        setContentView(R.layout.activity_perfil);
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.activity_perfil, container, false);
+    }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         setupMenuButton();
         inicializarVistas();
         configurarDatosUsuario();
         configurarBotones();
-        configurarNavegacion();
     }
 
-    // Enlaza las vistas del layout y configura el click sobre el avatar para
-    // abrir el diálogo de cambio de foto (requiere acceso registrado).
+    // Enlaza las vistas y configura el click sobre el avatar para cambiar la foto.
     private void inicializarVistas() {
         tvNombreUsuario = findViewById(R.id.tvNombreUsuario);
         tvEmailUsuario = findViewById(R.id.tvEmailUsuario);
@@ -131,15 +139,13 @@ public class PerfilActivity extends BaseActivity {
         tvAlturaMedicion = findViewById(R.id.tvAlturaMedicion);
         llMedicionesResumen = findViewById(R.id.llMedicionesResumen);
         ivAvatar = findViewById(R.id.ivAvatar);
-        ivAvatar.getParent().requestChildFocus(ivAvatar, ivAvatar);
         ((View) ivAvatar.getParent()).setOnClickListener(v -> {
             if (!verificarAccesoRegistrado()) return;
             mostrarDialogoFoto();
         });
     }
 
-    // Carga y muestra los datos del usuario actual: última medición, foto de
-    // perfil y datos personales/nutricionales obtenidos de la API.
+    // Carga y muestra los datos del usuario actual (medición, foto y datos).
     private void configurarDatosUsuario() {
         String sinDatos = getString(R.string.perfil_sin_datos);
         tvInfoNivel.setText(sinDatos);
@@ -154,11 +160,10 @@ public class PerfilActivity extends BaseActivity {
         cargarUltimaMedicion(usuarioId);
         cargarFotoPerfil(usuarioId);
 
-        // Perfil ya deserializado a Usuario por Gson (sin UtilJSONParser); ApiCallback entrega en hilo UI.
         usuarioApi.getPorId(usuarioId).enqueue(new ApiCallback<Usuario>() {
             @Override
             public void onOk(Usuario u) {
-                if (u == null) return;
+                if (u == null || !isAdded()) return;
                 tvNombreUsuario.setText(u.getUsername());
                 tvEmailUsuario.setText(val(u.getEmail(), sinDatos));
                 tvInfoNombre.setText(u.getUsername());
@@ -178,25 +183,24 @@ public class PerfilActivity extends BaseActivity {
             @Override
             public void onFail(int code, String message) {
                 Log.e("GymProFit", "getUsuarioPorId error status=" + code + " msg=" + message);
-                // Fallback al username cacheado + toast de error (avisa del cold-start).
+                if (!isAdded()) return;
                 String username = prefsManager.getUsername();
                 if (username != null && !username.isEmpty()) {
                     tvNombreUsuario.setText(username);
                     tvInfoNombre.setText(username);
                 }
-                UiFeedback.toastError(PerfilActivity.this, code, message);
+                UiFeedback.toastError(requireActivity(), code, message);
             }
         });
     }
 
-    // Muestra un diálogo para elegir el origen de la nueva foto de perfil
-    // (galería o cámara).
+    // Diálogo para elegir el origen de la nueva foto (galería o cámara).
     private void mostrarDialogoFoto() {
         String[] opciones = {
             getString(R.string.perfil_foto_galeria),
             getString(R.string.perfil_foto_camara)
         };
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(requireContext())
                 .setTitle(R.string.perfil_cambiar_foto)
                 .setItems(opciones, (d, which) -> {
                     if (which == 0) galleryLauncher.launch("image/*");
@@ -205,10 +209,9 @@ public class PerfilActivity extends BaseActivity {
                 .show();
     }
 
-    // Solicita el permiso de cámara si no se tiene concedido, o lanza la
-    // cámara directamente si ya está concedido.
+    // Pide el permiso de cámara si falta, o lanza la cámara si ya está concedido.
     private void pedirPermisoCamara() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
             lanzarCamara();
         } else {
@@ -216,91 +219,78 @@ public class PerfilActivity extends BaseActivity {
         }
     }
 
-    // Crea un archivo temporal y lanza la cámara para capturar la foto de
-    // perfil en él, usando un FileProvider.
+    // Crea un archivo temporal y lanza la cámara para capturar la foto en él.
     private void lanzarCamara() {
-        File foto = new File(getCacheDir(), "perfil_temp.jpg");
-        cameraUri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", foto);
+        File foto = new File(requireContext().getCacheDir(), "perfil_temp.jpg");
+        cameraUri = FileProvider.getUriForFile(requireContext(),
+                requireContext().getPackageName() + ".fileprovider", foto);
         cameraLauncher.launch(cameraUri);
     }
 
-    // Sube la foto seleccionada/capturada a la API y actualiza el avatar
-    // mostrado tras un envío correcto.
+    // Sube la foto seleccionada/capturada a la API y actualiza el avatar.
     private void subirFoto(Uri uri) {
         int uid = prefsManager.getUsuarioId();
         if (uid == -1) return;
+        final FragmentActivity act = requireActivity();
 
-        Toast.makeText(this, R.string.perfil_foto_subiendo, Toast.LENGTH_SHORT).show();
+        Toast.makeText(act, R.string.perfil_foto_subiendo, Toast.LENGTH_SHORT).show();
 
-        // Lee el archivo en un hilo aparte (no bloquea la UI), construye el MultipartBody.Part
-        // igual que hacía UtilREST.uploadMultipart (bytes del Uri, image/jpeg, campo "foto") y lo
-        // sube vía UsuarioApi (etapa 2). ApiCallback entrega su respuesta en el hilo principal.
         new Thread(() -> {
-            try (InputStream is = getContentResolver().openInputStream(uri)) {
+            try (InputStream is = act.getContentResolver().openInputStream(uri)) {
                 if (is == null) {
-                    runOnUiThread(() ->
-                            Toast.makeText(PerfilActivity.this, R.string.perfil_foto_error, Toast.LENGTH_SHORT).show());
+                    act.runOnUiThread(() ->
+                            Toast.makeText(act, R.string.perfil_foto_error, Toast.LENGTH_SHORT).show());
                     return;
                 }
                 ByteArrayOutputStream buffer = new ByteArrayOutputStream();
                 byte[] chunk = new byte[8192];
                 int n;
                 while ((n = is.read(chunk)) != -1) buffer.write(chunk, 0, n);
-                // OkHttp 4.x: orden (contenido, tipo); la forma (tipo, contenido) está deprecada.
                 RequestBody fileBody = RequestBody.create(buffer.toByteArray(), MediaType.parse("image/jpeg"));
                 MultipartBody.Part part = MultipartBody.Part.createFormData("foto", "foto.jpg", fileBody);
 
                 usuarioApi.subirFoto(uid, part).enqueue(new ApiCallback<Void>() {
                     @Override
                     public void onOk(Void body) {
-                        Toast.makeText(PerfilActivity.this, R.string.perfil_foto_ok, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(act, R.string.perfil_foto_ok, Toast.LENGTH_SHORT).show();
+                        if (!isAdded()) return;
                         ivAvatar.setImageURI(null);
                         ivAvatar.setImageURI(uri);
                     }
 
                     @Override
                     public void onFail(int code, String message) {
-                        Toast.makeText(PerfilActivity.this, R.string.perfil_foto_error, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(act, R.string.perfil_foto_error, Toast.LENGTH_SHORT).show();
                     }
                 });
             } catch (Exception e) {
-                runOnUiThread(() ->
-                        Toast.makeText(PerfilActivity.this, R.string.perfil_foto_error, Toast.LENGTH_SHORT).show());
+                act.runOnUiThread(() ->
+                        Toast.makeText(act, R.string.perfil_foto_error, Toast.LENGTH_SHORT).show());
             }
         }).start();
     }
 
-    // Descarga la foto de perfil del usuario vía Retrofit (endpoint /usuarios/{id}/foto)
-    // y la muestra en el avatar. El token lo inyecta el interceptor de ApiClient. El
-    // cuerpo llega bufferizado en memoria, así que decodificar el Bitmap en el callback
-    // (hilo principal) no bloquea con I/O de red. Si no hay foto o falla, se deja el
-    // avatar por defecto (silencioso).
+    // Descarga y muestra la foto de perfil; silencioso si no hay o falla.
     private void cargarFotoPerfil(int userId) {
         usuarioApi.descargarFoto(userId).enqueue(new ApiCallback<ResponseBody>() {
             @Override
             public void onOk(ResponseBody body) {
-                // Evita tocar la vista si la Activity ya fue destruida/cerrada (previene leak/crash).
-                if (body == null || isDestroyed() || isFinishing()) return;
-                // Decodifica los bytes (ya en memoria) a Bitmap y lo pinta en el avatar.
+                if (body == null || !isAdded()) return;
                 Bitmap bmp = BitmapFactory.decodeStream(body.byteStream());
                 if (bmp != null) ivAvatar.setImageBitmap(bmp);
             }
 
             @Override
-            public void onFail(int code, String message) {
-                // Silencioso: sin foto o error de red → se mantiene el avatar por defecto.
-            }
+            public void onFail(int code, String message) { }
         });
     }
 
-    // Obtiene la lista de mediciones del usuario y muestra el peso/altura de
-    // la más reciente en el resumen de mediciones.
+    // Muestra el peso/altura de la medición más reciente en el resumen.
     private void cargarUltimaMedicion(int usuarioId) {
-        // Mediciones ordenadas (más reciente primero), ya deserializadas por Gson.
         medicionApi.getOrdenadas(usuarioId).enqueue(new ApiCallback<List<MedicionCorporal>>() {
             @Override
             public void onOk(List<MedicionCorporal> lista) {
-                if (lista == null || lista.isEmpty()) return;
+                if (lista == null || lista.isEmpty() || !isAdded()) return;
                 MedicionCorporal ultima = lista.get(0);
                 boolean tienePeso = ultima.getPeso() > 0;
                 boolean tieneAltura = ultima.getAltura() > 0;
@@ -318,50 +308,37 @@ public class PerfilActivity extends BaseActivity {
         });
     }
 
-    // Configura los listeners de los accesos del perfil: editar perfil,
-    // sesiones, mediciones, logros, acerca de, y panel de admin si procede.
+    // Accesos del perfil: editar, sesiones, mediciones, logros, acerca de, admin.
     private void configurarBotones() {
         findViewById(R.id.btnEditarPerfil).setOnClickListener(v -> {
             if (!verificarAccesoRegistrado()) return;
-            editarPerfilLauncher.launch(new Intent(this, EditarPerfilActivity.class));
+            editarPerfilLauncher.launch(new Intent(requireContext(), EditarPerfilActivity.class));
         });
 
         findViewById(R.id.itemSesiones).setOnClickListener(v -> {
             if (!verificarAccesoRegistrado()) return;
-            startActivity(new Intent(this, SesionesActivity.class));
+            startActivity(new Intent(requireContext(), SesionesActivity.class));
         });
 
         findViewById(R.id.itemMediciones).setOnClickListener(v -> {
             if (!verificarAccesoRegistrado()) return;
-            medicionesLauncher.launch(new Intent(this, MedicionesActivity.class));
+            medicionesLauncher.launch(new Intent(requireContext(), MedicionesActivity.class));
         });
 
         findViewById(R.id.itemLogros).setOnClickListener(v ->
-                startActivity(new Intent(this, LogrosActivity.class)));
+                startActivity(new Intent(requireContext(), LogrosActivity.class)));
 
         findViewById(R.id.btnAcercaDe).setOnClickListener(v ->
-                startActivity(new Intent(this, AcercaDeActivity.class)));
+                startActivity(new Intent(requireContext(), AcercaDeActivity.class)));
 
         View itemAdmin = findViewById(R.id.itemAdmin);
         if (prefsManager.isAdmin()) {
             itemAdmin.setVisibility(View.VISIBLE);
             itemAdmin.setOnClickListener(v ->
-                    startActivity(new Intent(this, AdminActivity.class)));
+                    startActivity(new Intent(requireContext(), AdminActivity.class)));
         } else {
             itemAdmin.setVisibility(View.GONE);
         }
-
-    }
-
-    // Configura la BottomNavigationView y la navegación entre las secciones
-    // principales de la app, marcando "Perfil" como seleccionado.
-    private void configurarNavegacion() {
-        es.pmdm.gymprofit.ui.widget.FloatingNavBar nav = findViewById(R.id.floatingNav);
-        // La burbuja viaja desde el destino anterior (si venimos de otra pestana).
-        int desde = getIntent().getIntExtra(es.pmdm.gymprofit.utils.NavTabs.EXTRA_FROM, es.pmdm.gymprofit.utils.NavTabs.PERFIL);
-        nav.setActiveFrom(desde, es.pmdm.gymprofit.utils.NavTabs.PERFIL);
-        nav.setOnTabSelectedListener(index ->
-                es.pmdm.gymprofit.utils.NavTabs.ir(this, index, es.pmdm.gymprofit.utils.NavTabs.PERFIL));
     }
 
     // Devuelve el valor si es válido (no nulo/vacío/"null"), o el fallback.
@@ -369,7 +346,7 @@ public class PerfilActivity extends BaseActivity {
         return (s != null && !s.isEmpty() && !"null".equals(s)) ? s : fallback;
     }
 
-    // Traduce el valor del nivel de experiencia (API) a su texto localizado.
+    // Traduce el nivel de experiencia (API) a su texto localizado.
     private String mapearNivel(String nivel) {
         if (nivel == null) return getString(R.string.perfil_sin_datos);
         switch (nivel) {
@@ -380,7 +357,7 @@ public class PerfilActivity extends BaseActivity {
         }
     }
 
-    // Traduce el valor del enum de objetivo (API) a su texto localizado.
+    // Traduce el enum de objetivo (API) a su texto localizado.
     private String mapearObjetivo(String objetivo) {
         if (objetivo == null) return getString(R.string.perfil_sin_datos);
         switch (objetivo) {
@@ -397,5 +374,4 @@ public class PerfilActivity extends BaseActivity {
             default:                        return objetivo;
         }
     }
-
 }

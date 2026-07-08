@@ -76,7 +76,7 @@ public class SplashActivity extends AppCompatActivity {
                 Intent intent;
 
                 if (tieneSesion) {
-                    intent = new Intent(this, HomeActivity.class);
+                    intent = new Intent(this, MainActivity.class);
                 } else {
                     intent = new Intent(this, LoginActivity.class);
                 }

@@ -1,12 +1,18 @@
-package es.pmdm.gymprofit.ui.activities;
+package es.pmdm.gymprofit.ui.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,75 +21,71 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.rutina.Rutina;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.RutinaApi;
+import es.pmdm.gymprofit.ui.activities.CrearRutinaActivity;
+import es.pmdm.gymprofit.ui.activities.DetalleRutinaActivity;
+import es.pmdm.gymprofit.ui.activities.EditarRutinaActivity;
+import es.pmdm.gymprofit.ui.activities.EditarRutinaAdminActivity;
 import es.pmdm.gymprofit.ui.adapters.RutinaAdapter;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
-// RutinasActivity — listado de rutinas (predefinidas + del usuario) con filtros y CRUD.
-// Muestra las rutinas predefinidas del sistema junto a las creadas por el usuario,
-// permite filtrarlas por nivel, crear nuevas, editarlas/eliminarlas mediante un
-// menú contextual y navegar al detalle de cada una. Incluye la barra de navegación inferior.
+// RutinasFragment — pestaña de listado de rutinas (predefinidas + del usuario)
+// con filtros por nivel y CRUD. Muestra un menú contextual por rutina (editar,
+// activar/desactivar o eliminar) y navega al detalle de cada una.
 // ============================================================
-public class RutinasActivity extends BaseActivity {
+public class RutinasFragment extends BaseFragment {
     private RecyclerView rvRutinas;
     private RutinaAdapter adapter;
     private ChipGroup chipGroupNivel;
     private FloatingActionButton fabCrearRutina;
     private TextView tvEmpty;
 
-    // Interfaz Retrofit tipada del dominio rutinas (etapa 2)
     private final RutinaApi rutinaApi = ApiClient.service(RutinaApi.class);
 
     private ActivityResultLauncher<Intent> crearRutinaLauncher;
     private ActivityResultLauncher<Intent> detalleLauncher;
     private ActivityResultLauncher<Intent> editarLauncher;
 
-    // Configura vistas, adapters, filtros, FAB, navegación y lanza la carga inicial de rutinas.
+    // Registra los launchers antes de que el fragment llegue a STARTED.
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_rutinas);
+        crearRutinaLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> { if (result.getResultCode() == Activity.RESULT_OK) cargarRutinas(); });
+        detalleLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> { if (result.getResultCode() == Activity.RESULT_OK) cargarRutinas(); });
+        editarLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> { if (result.getResultCode() == Activity.RESULT_OK) cargarRutinas(); });
+    }
 
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.activity_rutinas, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         setupMenuButton();
-        registrarLauncher();
         inicializarVistas();
         configurarRecyclerView();
         configurarChips();
         configurarFab();
-        configurarNavegacion();
         cargarRutinas();
     }
 
-    // Registra los ActivityResultLauncher para crear, ver detalle y editar rutinas;
-    // en cualquier caso de éxito recarga el listado.
-    private void registrarLauncher() {
-        crearRutinaLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK) cargarRutinas();
-                });
-        detalleLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK) cargarRutinas();
-                });
-        editarLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK) cargarRutinas();
-                });
-    }
-
-    // Vincula las vistas principales del layout.
     private void inicializarVistas() {
         rvRutinas = findViewById(R.id.rvRutinas);
         chipGroupNivel = findViewById(R.id.chipGroupNivel);
@@ -91,19 +93,17 @@ public class RutinasActivity extends BaseActivity {
         tvEmpty = findViewById(R.id.tvEmpty);
     }
 
-    // Configura el RecyclerView con su adapter, listeners de click/long-click
-    // y el contexto de usuario (admin/id) para el menú contextual.
     private void configurarRecyclerView() {
         adapter = new RutinaAdapter(new ArrayList<>(), this::abrirDetalle);
         adapter.setOnLongClickListener(this::mostrarMenuContextual);
         adapter.setUserContext(prefsManager.isAdmin(), prefsManager.getUsuarioId());
-        rvRutinas.setLayoutManager(new LinearLayoutManager(this));
+        rvRutinas.setLayoutManager(new LinearLayoutManager(requireContext()));
         rvRutinas.setAdapter(adapter);
     }
 
     // Abre la pantalla de detalle de una rutina pasando sus datos por extras.
     private void abrirDetalle(Rutina rutina) {
-        Intent intent = new Intent(this, DetalleRutinaActivity.class);
+        Intent intent = new Intent(requireContext(), DetalleRutinaActivity.class);
         intent.putExtra("rutinaId",     rutina.getId());
         intent.putExtra("nombre",       rutina.getNombre());
         intent.putExtra("descripcion",  rutina.getDescripcion());
@@ -116,40 +116,39 @@ public class RutinasActivity extends BaseActivity {
         detalleLauncher.launch(intent);
     }
 
-    // Carga las rutinas predefinidas y, si hay usuario logueado, añade también
-    // las rutinas propias del usuario, combinando ambas listas en el adapter.
+    // Carga las rutinas predefinidas y, si hay usuario, añade las propias.
     private void cargarRutinas() {
+        final FragmentActivity act = requireActivity();
         int usuarioId = prefsManager.getUsuarioId();
 
-        // Spinner de carga durante el cold-start / la petición (la pantalla estaría en blanco).
-        LoadingDialog.show(this);
+        LoadingDialog.show(act);
 
-        // Rutinas predefinidas (ya deserializadas por Gson).
         rutinaApi.getPredefinidas().enqueue(new ApiCallback<List<Rutina>>() {
             @Override
             public void onOk(List<Rutina> predefinidas) {
                 List<Rutina> todas = new ArrayList<>(predefinidas != null ? predefinidas : new ArrayList<>());
 
                 if (usuarioId != -1) {
-                    // Añade las rutinas propias del usuario a las predefinidas.
                     rutinaApi.getDeUsuarioActivas(usuarioId).enqueue(new ApiCallback<List<Rutina>>() {
                         @Override
                         public void onOk(List<Rutina> propias) {
                             if (propias != null) todas.addAll(propias);
-                            LoadingDialog.hide(RutinasActivity.this);
+                            LoadingDialog.hide(act);
+                            if (!isAdded()) return;
                             adapter.setRutinas(todas);
                             actualizarEstadoVacio();
                         }
                         @Override
                         public void onFail(int code, String message) {
-                            // Fallo solo en las propias: se muestran igualmente las predefinidas.
-                            LoadingDialog.hide(RutinasActivity.this);
+                            LoadingDialog.hide(act);
+                            if (!isAdded()) return;
                             adapter.setRutinas(todas);
                             actualizarEstadoVacio();
                         }
                     });
                 } else {
-                    LoadingDialog.hide(RutinasActivity.this);
+                    LoadingDialog.hide(act);
+                    if (!isAdded()) return;
                     adapter.setRutinas(todas);
                     actualizarEstadoVacio();
                 }
@@ -157,31 +156,31 @@ public class RutinasActivity extends BaseActivity {
 
             @Override
             public void onFail(int code, String message) {
-                // Fallo total (incluye cold-start): oculta spinner, avisa y muestra estado vacío.
-                LoadingDialog.hide(RutinasActivity.this);
-                UiFeedback.toastError(RutinasActivity.this, code, message);
+                LoadingDialog.hide(act);
+                if (!isAdded()) return;
+                UiFeedback.toastError(act, code, message);
                 actualizarEstadoVacio();
             }
         });
     }
 
-    // Muestra u oculta el mensaje "no hay nada aún" según los ítems visibles del adapter.
+    // Muestra u oculta el mensaje "no hay nada aún" según los ítems del adapter.
     private void actualizarEstadoVacio() {
         boolean vacio = adapter.getItemCount() == 0;
         tvEmpty.setVisibility(vacio ? View.VISIBLE : View.GONE);
         rvRutinas.setVisibility(vacio ? View.GONE : View.VISIBLE);
     }
 
-    // Construye y muestra el menú contextual (editar, activar/desactivar o eliminar)
-    // según si la rutina es predefinida (solo admin) o propia del usuario.
+    // Menú contextual por rutina (editar, activar/desactivar o eliminar).
     private void mostrarMenuContextual(Rutina rutina, View anchorView) {
         if (!verificarAccesoRegistrado()) return;
+        final FragmentActivity act = requireActivity();
 
         List<UIHelper.MenuAction> actions = new ArrayList<>();
 
         actions.add(new UIHelper.MenuAction(R.drawable.ic_edit, getString(R.string.rutinas_editar), () -> {
             if (rutina.isPredefinida()) {
-                Intent intent = new Intent(this, EditarRutinaAdminActivity.class);
+                Intent intent = new Intent(requireContext(), EditarRutinaAdminActivity.class);
                 intent.putExtra("id",                  rutina.getId());
                 intent.putExtra("nombre",              rutina.getNombre());
                 intent.putExtra("descripcion",         rutina.getDescripcion());
@@ -192,7 +191,7 @@ public class RutinasActivity extends BaseActivity {
                 intent.putExtra("diasSemana",          rutina.getDiasSemana());
                 editarLauncher.launch(intent);
             } else {
-                Intent intent = new Intent(this, EditarRutinaActivity.class);
+                Intent intent = new Intent(requireContext(), EditarRutinaActivity.class);
                 intent.putExtra("rutinaId",    rutina.getId());
                 intent.putExtra("nombre",      rutina.getNombre());
                 intent.putExtra("descripcion", rutina.getDescripcion());
@@ -211,32 +210,30 @@ public class RutinasActivity extends BaseActivity {
                     () -> toggleActivaRutinaPredefinida(rutina)));
         } else {
             actions.add(new UIHelper.MenuAction(R.drawable.ic_delete, getString(R.string.rutinas_eliminar), true,
-                    () -> UIHelper.mostrarDialogoConIcono(this,
+                    () -> UIHelper.mostrarDialogoConIcono(act,
                             getString(R.string.rutinas_eliminar),
                             getString(R.string.rutinas_confirmar_eliminar),
                             R.drawable.ic_delete,
                             () -> eliminarRutina(rutina))));
         }
 
-        UIHelper.mostrarMenuAnclado(this, anchorView, rutina.getNombre(), actions);
+        UIHelper.mostrarMenuAnclado(act, anchorView, rutina.getNombre(), actions);
     }
 
     // Activa o desactiva una rutina predefinida (solo admin) y recarga el listado.
     private void toggleActivaRutinaPredefinida(Rutina rutina) {
+        final FragmentActivity act = requireActivity();
         ApiCallback<Void> cb = new ApiCallback<Void>() {
             @Override
             public void onOk(Void body) {
-                UIHelper.mostrarToastExito(RutinasActivity.this,
-                        getString(R.string.admin_exito_toggle_rutina));
+                UIHelper.mostrarToastExito(act, getString(R.string.admin_exito_toggle_rutina));
                 cargarRutinas();
             }
             @Override
             public void onFail(int code, String message) {
-                UIHelper.mostrarToastError(
-                        RutinasActivity.this, getString(R.string.error_conexion));
+                UIHelper.mostrarToastError(act, getString(R.string.error_conexion));
             }
         };
-        // Desactivar = DELETE rutinas/{id}; activar = PUT rutinas/{id}/activar.
         if (rutina.isActiva()) {
             rutinaApi.eliminar(rutina.getId()).enqueue(cb);
         } else {
@@ -246,17 +243,16 @@ public class RutinasActivity extends BaseActivity {
 
     // Elimina una rutina propia del usuario y recarga el listado.
     private void eliminarRutina(Rutina rutina) {
+        final FragmentActivity act = requireActivity();
         rutinaApi.eliminar(rutina.getId()).enqueue(new ApiCallback<Void>() {
             @Override
             public void onOk(Void body) {
-                UIHelper.mostrarToastExito(RutinasActivity.this,
-                        getString(R.string.rutinas_eliminada_exito));
+                UIHelper.mostrarToastExito(act, getString(R.string.rutinas_eliminada_exito));
                 cargarRutinas();
             }
             @Override
             public void onFail(int code, String message) {
-                UIHelper.mostrarToastError(
-                        RutinasActivity.this, getString(R.string.error_conexion));
+                UIHelper.mostrarToastError(act, getString(R.string.error_conexion));
             }
         });
     }
@@ -284,18 +280,7 @@ public class RutinasActivity extends BaseActivity {
     private void configurarFab() {
         fabCrearRutina.setOnClickListener(v -> {
             if (!verificarAccesoRegistrado()) return;
-            crearRutinaLauncher.launch(new Intent(this, CrearRutinaActivity.class));
+            crearRutinaLauncher.launch(new Intent(requireContext(), CrearRutinaActivity.class));
         });
     }
-
-    // Configura la barra de navegación inferior y la redirección entre pantallas principales.
-    private void configurarNavegacion() {
-        es.pmdm.gymprofit.ui.widget.FloatingNavBar nav = findViewById(R.id.floatingNav);
-        // La burbuja viaja desde el destino anterior (si venimos de otra pestana).
-        int desde = getIntent().getIntExtra(es.pmdm.gymprofit.utils.NavTabs.EXTRA_FROM, es.pmdm.gymprofit.utils.NavTabs.RUTINAS);
-        nav.setActiveFrom(desde, es.pmdm.gymprofit.utils.NavTabs.RUTINAS);
-        nav.setOnTabSelectedListener(index ->
-                es.pmdm.gymprofit.utils.NavTabs.ir(this, index, es.pmdm.gymprofit.utils.NavTabs.RUTINAS));
-    }
-
 }

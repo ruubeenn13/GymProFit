@@ -122,21 +122,10 @@
         <activity
             android:name=".ui.activities.CrearRutinaActivity"
             android:exported="false" />
-        <!-- Pantallas principales de navegación (perfil, nutrición, ejercicios, rutinas, home, login) -->
+        <!-- Navegación principal por pestañas: 1 Activity + ViewPager2 + 5 Fragments
+             (Home/Rutinas/Ejercicios/Nutrición/Perfil) con la FloatingNavBar fija. -->
         <activity
-            android:name=".ui.activities.PerfilActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.activities.NutricionActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.activities.EjerciciosActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.activities.RutinasActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.activities.HomeActivity"
+            android:name=".ui.activities.MainActivity"
             android:exported="false" />
         <activity
             android:name=".ui.activities.LoginActivity"

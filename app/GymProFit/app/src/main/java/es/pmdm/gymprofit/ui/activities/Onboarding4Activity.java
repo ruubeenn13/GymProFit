@@ -174,7 +174,7 @@ public class Onboarding4Activity extends AppCompatActivity {
     // Permite saltar el onboarding e ir directamente al Home, limpiando el
     // back stack.
     private void saltarAlHome() {
-        startActivity(new Intent(this, HomeActivity.class)
+        startActivity(new Intent(this, MainActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
         finish();

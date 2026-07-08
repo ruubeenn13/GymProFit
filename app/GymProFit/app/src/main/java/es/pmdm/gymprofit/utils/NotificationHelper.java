@@ -13,10 +13,9 @@ import androidx.core.app.NotificationCompat;
 import java.util.List;
 
 import es.pmdm.gymprofit.R;
-import es.pmdm.gymprofit.ui.activities.HomeActivity;
 import es.pmdm.gymprofit.ui.activities.LogrosActivity;
+import es.pmdm.gymprofit.ui.activities.MainActivity;
 import es.pmdm.gymprofit.ui.activities.MedicionesActivity;
-import es.pmdm.gymprofit.ui.activities.RutinasActivity;
 import es.pmdm.gymprofit.ui.activities.SesionesActivity;
 
 // ============================================================
@@ -77,7 +76,8 @@ public class NotificationHelper {
         builder.setPriority(NotificationCompat.PRIORITY_MAX);
         builder.setAutoCancel(true);
 
-        Intent intent = new Intent(ctx, RutinasActivity.class);
+        Intent intent = new Intent(ctx, MainActivity.class);
+        intent.putExtra(NavTabs.EXTRA_TAB, NavTabs.RUTINAS);
         PendingIntent pending = PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_IMMUTABLE);
         builder.setContentIntent(pending);
 
@@ -120,7 +120,7 @@ public class NotificationHelper {
         builder.setAutoCancel(true);
 
         // Al pulsarla se abre la pantalla principal.
-        Intent intent = new Intent(ctx, HomeActivity.class);
+        Intent intent = new Intent(ctx, MainActivity.class);
         PendingIntent pending = PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_IMMUTABLE);
         builder.setContentIntent(pending);
 

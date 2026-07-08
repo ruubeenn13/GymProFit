@@ -134,30 +134,18 @@
 
         </LinearLayout>
 
-    <!-- Barra de navegación inferior flotante (burbuja con arrastre) -->
-    <es.pmdm.gymprofit.ui.widget.FloatingNavBar
-        android:id="@+id/floatingNav"
-        android:layout_width="match_parent"
-        android:layout_height="76dp"
-        android:layout_marginStart="14dp"
-        android:layout_marginEnd="14dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="12dp" />
-
     </LinearLayout>
 
-    <!-- FAB para crear nueva rutina, posicionado sobre el BottomNav -->
+    <!-- FAB para crear nueva rutina (dentro del área del pager, sobre la barra) -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabCrearRutina"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="120dp"
+        android:layout_marginBottom="16dp"
         android:src="@drawable/ic_add"
         android:contentDescription="@string/rutinas_crear_nueva"
-        app:layout_anchor="@id/floatingNav"
-        app:layout_anchorGravity="top|end"
         app:fabSize="normal" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

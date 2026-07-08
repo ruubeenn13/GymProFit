@@ -120,7 +120,7 @@ public class LoginActivity extends AppCompatActivity {
                 prefsManager.saveRol(rol);
                 prefsManager.setOnboardingCompletado(true);
 
-                startActivity(new Intent(LoginActivity.this, HomeActivity.class)
+                startActivity(new Intent(LoginActivity.this, MainActivity.class)
                         .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                 finish();
             }
@@ -205,7 +205,7 @@ public class LoginActivity extends AppCompatActivity {
     // paso del onboarding en caso contrario.
     private void navegarTrasLogin() {
         if (prefsManager.isOnboardingCompletado()) {
-            startActivity(new Intent(this, HomeActivity.class)
+            startActivity(new Intent(this, MainActivity.class)
                     .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         } else {
             Intent intent = new Intent(this, Onboarding1Activity.class);

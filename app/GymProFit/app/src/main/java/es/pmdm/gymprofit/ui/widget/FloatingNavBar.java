@@ -13,6 +13,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -88,6 +89,10 @@ public class FloatingNavBar extends FrameLayout {
 
     private int activo = 0;
     private boolean arrastrando = false;
+    private boolean movido = false;       // true tras superar el touch-slop (arrastre real)
+    private float downX = 0f;             // x del ACTION_DOWN, para distinguir tap de arrastre
+    private float dragAnchorCentro = -1f; // centro de la burbuja al empezar el arrastre (origen real)
+    private int touchSlop;                // umbral en px para considerar arrastre
     private float objetivoCentro = -1f;
     private float actualCentro = -1f;
     private float estiramiento = 1f;      // deformación líquida (1 = redonda)
@@ -100,6 +105,7 @@ public class FloatingNavBar extends FrameLayout {
     public FloatingNavBar(Context c, AttributeSet a) { super(c, a); init(); }
 
     private void init() {
+        touchSlop     = ViewConfiguration.get(getContext()).getScaledTouchSlop();
         colorMarca    = attr(com.google.android.material.R.attr.colorPrimary);
         int onSurface = attr(com.google.android.material.R.attr.colorOnSurface);
         textoActivo   = colorMarca;                 // el destino activo va en NARANJA (como Fitia en amarillo)
@@ -117,7 +123,9 @@ public class FloatingNavBar extends FrameLayout {
 
         // ¿Soporta la lente de vidrio? (RuntimeShader es API 33+)
         usarLente = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU;
-        if (usarLente) {
+        // Guard inline directo (lint no sigue la variable usarLente): construir el
+        // RuntimeShader solo bajo el check literal de SDK_INT que lint reconoce.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             try { lente = new RuntimeShader(AGSL); }
             catch (Throwable t) { usarLente = false; }
         }
@@ -203,6 +211,27 @@ public class FloatingNavBar extends FrameLayout {
         });
     }
 
+    // Sincroniza la burbuja con el scroll del ViewPager2 (viaje CONTINUO durante
+    // el swipe/cambio de pestaña). pos = posición + offset del pager (0 .. N-1).
+    public void followScroll(float pos) {
+        int idx = clamp(Math.round(pos));
+        activo = idx;
+        if (getWidth() == 0) { post(() -> followScroll(pos)); return; }
+        if (viaje != null) viaje.cancel();
+        float celda = getWidth() / (float) N;
+        actualCentro = objetivoCentro = celda * pos + celda / 2f;
+        estiramiento = 1f;
+        render();
+        resaltar(idx);
+    }
+
+    // Asienta la burbuja en la pestaña seleccionada (fin del desplazamiento).
+    public void setActiveIndex(int index) {
+        activo = clamp(index);
+        resaltar(activo);
+        post(() -> { colocar(activo); render(); });
+    }
+
     public void setOnTabSelectedListener(OnTabSelectedListener l) { this.listener = l; }
 
     @Override
@@ -215,26 +244,53 @@ public class FloatingNavBar extends FrameLayout {
     public boolean onTouchEvent(@NonNull MotionEvent e) {
         switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                arrastrando = true;
+                // Un tap NO mueve la burbuja: solo se cancela un viaje en curso y se
+                // registra el punto de inicio. Mover en DOWN provocaba un premovimiento
+                // que, al navegar, followScroll deshacía con un salto atrás (retroceso).
+                downX = e.getX();
+                movido = false;
                 if (viaje != null) viaje.cancel();
-                objetivoCentro = objetivoGravedad(e.getX());
-                iniciarTicker();
                 return true;
             case MotionEvent.ACTION_MOVE:
-                objetivoCentro = objetivoGravedad(e.getX());
+                // Solo se considera arrastre tras superar el touch-slop; el ancla es el
+                // centro REAL de la burbuja en ese instante → arranca EN SU SITIO.
+                if (!movido && Math.abs(e.getX() - downX) > touchSlop) {
+                    movido = true;
+                    arrastrando = true;
+                    dragAnchorCentro = actualCentro;
+                    objetivoCentro = actualCentro;
+                    iniciarTicker();
+                }
+                if (movido) {
+                    // Desplazamiento RELATIVO al punto de agarre: la burbuja sigue al dedo
+                    // desde su origen (no salta a la posición absoluta del dedo), con imán
+                    // a la celda más cercana.
+                    objetivoCentro = objetivoGravedad(dragAnchorCentro + (e.getX() - downX));
+                }
                 return true;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                arrastrando = false;
-                pararTicker();
-                int destino = indiceEnCentro(objetivoGravedad(e.getX()));
-                boolean cambia = destino != activo;
-                activo = destino;
-                resaltar(activo);
-                if (cambia && listener != null) {
-                    listener.onSelected(activo);   // navega; la lente "viaja" en la pantalla destino
+                if (movido) {
+                    // Arrastre real: la burbuja YA está donde el dedo la dejó → solo asienta
+                    // con rebote (no viaja desde el origen) y cambia de pantalla si toca.
+                    arrastrando = false;
+                    pararTicker();
+                    int destino = indiceEnCentro(objetivoCentro);
+                    boolean cambia = destino != activo;
+                    activo = destino;
+                    resaltar(activo);
+                    rebotar(activo);
+                    if (cambia && listener != null) listener.onSelected(activo);
                 } else {
-                    rebotar(activo);               // misma opción: asienta con rebote
+                    // Tap puro: la propia barra conduce el viaje de la burbuja desde la
+                    // pestaña actual hasta el destino (setActiveFrom, arranca en el origen);
+                    // el listener solo cambia la pantalla al instante.
+                    int destino = indiceEnCentro(e.getX());
+                    if (destino != activo) {
+                        int from = activo;
+                        setActiveFrom(from, destino);
+                        if (listener != null) listener.onSelected(destino);
+                    }
                 }
                 return true;
         }

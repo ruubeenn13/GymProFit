@@ -174,7 +174,7 @@ public class OnboardingResumenActivity extends AppCompatActivity {
 
     // Navega al Home limpiando el back stack para evitar volver al onboarding.
     private void irAlHome() {
-        startActivity(new Intent(this, HomeActivity.class)
+        startActivity(new Intent(this, MainActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         finish();
     }

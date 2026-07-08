@@ -1,14 +1,19 @@
-package es.pmdm.gymprofit.ui.activities;
+package es.pmdm.gymprofit.ui.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.util.TypedValue;
 import android.os.Bundle;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,15 +27,17 @@ import es.pmdm.gymprofit.model.comida.Comida;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.ComidaApi;
+import es.pmdm.gymprofit.ui.activities.ComidaActivity;
 import es.pmdm.gymprofit.utils.CalculadoraNutricional;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
 import es.pmdm.gymprofit.utils.UiFeedback;
 
-/**
- * Pantalla principal de seguimiento nutricional.
- * Muestra calorías y macros del día, con cards por tipo de comida.
- */
-public class NutricionActivity extends BaseActivity {
+// ============================================================
+// NutricionFragment — pestaña de seguimiento nutricional.
+// Muestra calorías y macros del día, con cards por tipo de comida que abren
+// ComidaActivity para registrar/editar los alimentos de cada comida.
+// ============================================================
+public class NutricionFragment extends BaseFragment {
     private ProgressBar progressCalorias, progressProteinas, progressCarbos, progressGrasas;
     private TextView tvCaloriasActuales, tvCaloriasObjetivo;
     private TextView tvProteinasActuales, tvCarbosActuales, tvGrasasActuales;
@@ -39,38 +46,41 @@ public class NutricionActivity extends BaseActivity {
     private int objetivoCalorias = 2000, objetivoProteinas = 150, objetivoCarbos = 250, objetivoGrasas = 65;
     private final Map<String, Comida> comidasHoy = new HashMap<>();
 
-    // Servicio Retrofit tipado del dominio comidas (etapa 2).
     private final ComidaApi comidaApi = ApiClient.service(ComidaApi.class);
 
     private ActivityResultLauncher<Intent> comidaLauncher;
 
-    // Infla el layout, referencia vistas, registra el launcher de ComidaActivity
-    // y configura las cards de comida y la navegación inferior.
+    // Registra el launcher de ComidaActivity antes de STARTED.
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_nutricion);
-
-        setupMenuButton();
-        inicializarVistas();
-
         comidaLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    if (result.getResultCode() == RESULT_OK) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
                         recalcularObjetivos();
                         cargarComidasHoy();
                     }
                 });
-
-        configurarCardsComida();
-        configurarNavegacion();
     }
 
-    // Recalcula los objetivos nutricionales y recarga las comidas de hoy
-    // cada vez que la Activity vuelve a primer plano.
+    @Nullable
     @Override
-    protected void onResume() {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.activity_nutricion, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setupMenuButton();
+        inicializarVistas();
+        configurarCardsComida();
+    }
+
+    // Recalcula objetivos y recarga las comidas de hoy al volver a primer plano.
+    @Override
+    public void onResume() {
         super.onResume();
         recalcularObjetivos();
         cargarComidasHoy();
@@ -78,7 +88,6 @@ public class NutricionActivity extends BaseActivity {
 
     // ── Vistas ───────────────────────────────────────────────────────────────
 
-    // Referencia las barras de progreso y los TextView de calorías/macros/subtítulos.
     private void inicializarVistas() {
         progressCalorias   = findViewById(R.id.progressCalorias);
         progressProteinas  = findViewById(R.id.progressProteinas);
@@ -98,9 +107,7 @@ public class NutricionActivity extends BaseActivity {
 
     // ── Objetivos nutricionales ──────────────────────────────────────────────
 
-    /**
-     * Recalcula los objetivos nutricionales a partir de los datos del perfil guardados en prefs.
-     */
+    // Recalcula los objetivos nutricionales a partir de los datos del perfil.
     private void recalcularObjetivos() {
         double peso      = prefsManager.getPeso();
         double altura    = prefsManager.getAltura();
@@ -121,9 +128,7 @@ public class NutricionActivity extends BaseActivity {
 
     // ── Carga de comidas ─────────────────────────────────────────────────────
 
-    /**
-     * Obtiene las comidas del día actual desde la API y actualiza la UI.
-     */
+    // Obtiene las comidas del día actual desde la API y actualiza la UI.
     private void cargarComidasHoy() {
         int usuarioId = prefsManager.getUsuarioId();
         final String hoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
@@ -131,6 +136,7 @@ public class NutricionActivity extends BaseActivity {
         comidaApi.getDeUsuarioFecha(usuarioId, hoy).enqueue(new ApiCallback<List<Comida>>() {
             @Override
             public void onOk(List<Comida> lista) {
+                if (!isAdded()) return;
                 comidasHoy.clear();
                 if (lista != null) {
                     for (Comida c : lista) {
@@ -142,12 +148,11 @@ public class NutricionActivity extends BaseActivity {
 
             @Override
             public void onFail(int code, String message) {
-                // 404 = no hay comidas hoy → estado vacío legítimo (silencioso).
-                // Cualquier otro código (cold-start -1, 500…) sí es error real → toast.
+                if (!isAdded()) return;
                 comidasHoy.clear();
                 actualizarUI(hoy);
                 if (code != 404) {
-                    UiFeedback.toastError(NutricionActivity.this, code, message);
+                    UiFeedback.toastError(requireActivity(), code, message);
                 }
             }
         });
@@ -155,11 +160,7 @@ public class NutricionActivity extends BaseActivity {
 
     // ── Actualización de la UI ────────────────────────────────────────────────
 
-    /**
-     * Actualiza totales, barras de progreso, macros y subtítulos de cards.
-     *
-     * @param fecha fecha actual en formato yyyy-MM-dd
-     */
+    // Actualiza totales, barras de progreso, macros y subtítulos de cards.
     private void actualizarUI(String fecha) {
         int totalCal = 0;
         double totalProt = 0, totalCarb = 0, totalGras = 0;
@@ -197,9 +198,7 @@ public class NutricionActivity extends BaseActivity {
         actualizarSubtituloCard("CENA",     tvSubCena,     fecha);
     }
 
-    /**
-     * Actualiza el subtítulo de la card de un tipo de comida.
-     */
+    // Actualiza el subtítulo de la card de un tipo de comida.
     private void actualizarSubtituloCard(String tipo, TextView tvSub, String fecha) {
         Comida c = comidasHoy.get(tipo);
         if (c != null && c.getTotalCalorias() > 0) {
@@ -209,20 +208,16 @@ public class NutricionActivity extends BaseActivity {
         }
     }
 
-    /**
-     * Resuelve un color de atributo del tema actual.
-     */
+    // Resuelve un color de atributo del tema actual.
     private int getAttrColor(int attrResId) {
         TypedValue tv = new TypedValue();
-        getTheme().resolveAttribute(attrResId, tv, true);
+        requireContext().getTheme().resolveAttribute(attrResId, tv, true);
         return tv.data;
     }
 
     // ── Cards de comida ───────────────────────────────────────────────────────
 
-    /**
-     * Configura los listeners de click en cada card de tipo de comida.
-     */
+    // Configura los listeners de click en cada card de tipo de comida.
     private void configurarCardsComida() {
         String hoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         setupCardComida(R.id.cardDesayuno, "DESAYUNO", hoy);
@@ -232,31 +227,17 @@ public class NutricionActivity extends BaseActivity {
         setupCardComida(R.id.cardCena,     "CENA",     hoy);
     }
 
-    /**
-     * Asigna el listener de click a una card de comida y lanza ComidaActivity.
-     */
+    // Asigna el listener de click a una card de comida y lanza ComidaActivity.
     private void setupCardComida(int cardId, String tipo, String fecha) {
-        findViewById(cardId).setOnClickListener(v -> {
+        View card = findViewById(cardId);
+        card.setOnClickListener(v -> {
             if (!verificarAccesoRegistrado()) return;
-            Intent intent = new Intent(this, ComidaActivity.class);
+            Intent intent = new Intent(requireContext(), ComidaActivity.class);
             intent.putExtra("tipoComida", tipo);
             Comida c = comidasHoy.get(tipo);
             intent.putExtra("comidaId", c != null ? c.getId() : -1);
             intent.putExtra("fecha", fecha);
             comidaLauncher.launch(intent);
         });
-    }
-
-    // ── Navegación ────────────────────────────────────────────────────────────
-
-    // Configura la barra de navegación inferior, marcando "Nutrición" como
-    // seleccionado y redirigiendo a la Activity correspondiente.
-    private void configurarNavegacion() {
-        es.pmdm.gymprofit.ui.widget.FloatingNavBar nav = findViewById(R.id.floatingNav);
-        // La burbuja viaja desde el destino anterior (si venimos de otra pestana).
-        int desde = getIntent().getIntExtra(es.pmdm.gymprofit.utils.NavTabs.EXTRA_FROM, es.pmdm.gymprofit.utils.NavTabs.NUTRICION);
-        nav.setActiveFrom(desde, es.pmdm.gymprofit.utils.NavTabs.NUTRICION);
-        nav.setOnTabSelectedListener(index ->
-                es.pmdm.gymprofit.utils.NavTabs.ir(this, index, es.pmdm.gymprofit.utils.NavTabs.NUTRICION));
     }
 }
