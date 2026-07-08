@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  chart_marker.xml — Tooltip (MarkerView) que aparece al tocar un punto/barra de
+  cualquier gráfica. El fondo redondeado con borde naranja se aplica por código
+  en ChartMarker (tema claro/oscuro). Una sola línea de texto (valor + fecha).
+-->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tvMarker"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp"
+    android:gravity="center"
+    android:textSize="12sp"
+    android:textStyle="bold"
+    android:lineSpacingMultiplier="0.95" />

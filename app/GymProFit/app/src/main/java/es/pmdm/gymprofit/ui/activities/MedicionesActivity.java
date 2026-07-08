@@ -12,25 +12,32 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.view.HapticFeedbackConstants;
+
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.utils.ChartMarker;
 import es.pmdm.gymprofit.utils.ChartStyler;
 import es.pmdm.gymprofit.model.medicion.MedicionCorporal;
 import es.pmdm.gymprofit.model.usuario.Usuario;
@@ -55,10 +62,18 @@ public class MedicionesActivity extends AppCompatActivity {
     private View tvVacio;
     private View scrollMediciones;
     private TextView tvFechaUltima;
-    private TextView tvPesoVal, tvAlturaVal, tvGrasaVal, tvMusculoVal;
+    private TextView tvPesoVal, tvGrasaVal, tvMusculoVal;
     private TextView tvCinturaVal, tvPechoVal, tvBrazosVal, tvPiernasVal, tvNotasVal;
+    private TextView tvMasDetalles;
+    private View layoutMasDetalles;
+    private boolean masDetallesAbierto = false;
     private MaterialCardView cardGraficaPeso;
     private LineChart chartPeso;
+    private TextView tvGraficaTitulo;
+    private ChipGroup chipsMetrica, chipsRango;
+    private List<MedicionCorporal> historial;
+    // Métricas representables en la gráfica (solo las que la gente mide de verdad).
+    private static final int MET_PESO = 0, MET_GRASA = 1, MET_CINTURA = 2;
     private PreferencesManager prefsManager;
     private MedicionCorporal ultimaMedicion;
     // Interfaz Retrofit tipada del dominio mediciones (etapa 2)
@@ -81,7 +96,6 @@ public class MedicionesActivity extends AppCompatActivity {
         scrollMediciones = findViewById(R.id.scrollMediciones);
         tvFechaUltima   = findViewById(R.id.tvFechaUltima);
         tvPesoVal       = findViewById(R.id.tvPesoVal);
-        tvAlturaVal     = findViewById(R.id.tvAlturaVal);
         tvGrasaVal      = findViewById(R.id.tvGrasaVal);
         tvMusculoVal    = findViewById(R.id.tvMusculoVal);
         tvCinturaVal    = findViewById(R.id.tvCinturaVal);
@@ -91,6 +105,32 @@ public class MedicionesActivity extends AppCompatActivity {
         tvNotasVal      = findViewById(R.id.tvNotasVal);
         cardGraficaPeso = findViewById(R.id.cardGraficaPeso);
         chartPeso       = findViewById(R.id.chartPeso);
+        tvGraficaTitulo = findViewById(R.id.tvGraficaTitulo);
+        chipsMetrica    = findViewById(R.id.chipsMetrica);
+        chipsRango      = findViewById(R.id.chipsRango);
+        tvMasDetalles   = findViewById(R.id.tvMasDetalles);
+        layoutMasDetalles = findViewById(R.id.layoutMasDetalles);
+
+        // Re-pinta la gráfica al cambiar de métrica (peso/grasa/cintura) o de rango (30/90/todo).
+        chipsMetrica.setOnCheckedStateChangeListener((g, ids) -> pintarGrafica());
+        chipsRango.setOnCheckedStateChangeListener((g, ids) -> pintarGrafica());
+
+        // Feedback háptico sutil al seleccionar un punto (aparece el tooltip).
+        chartPeso.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override public void onValueSelected(Entry e, Highlight h) {
+                chartPeso.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+            }
+            @Override public void onNothingSelected() { }
+        });
+
+        // Toggle de medidas avanzadas (músculo/pecho/brazos/piernas): la mayoría no
+        // las mide, así que van ocultas tras "Más detalles" para no ensuciar la vista.
+        findViewById(R.id.rowMasDetalles).setOnClickListener(v -> {
+            masDetallesAbierto = !masDetallesAbierto;
+            layoutMasDetalles.setVisibility(masDetallesAbierto ? View.VISIBLE : View.GONE);
+            tvMasDetalles.setText(masDetallesAbierto
+                    ? R.string.medicion_menos_detalles : R.string.medicion_mas_detalles);
+        });
 
         nuevaLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -115,10 +155,6 @@ public class MedicionesActivity extends AppCompatActivity {
         findViewById(R.id.rowPeso).setOnClickListener(v ->
                 editarCampoNumerico("peso", getString(R.string.perfil_peso),
                         ultimaMedicion != null ? ultimaMedicion.getPeso() : 0));
-
-        findViewById(R.id.rowAltura).setOnClickListener(v ->
-                editarCampoNumerico("altura", getString(R.string.perfil_altura),
-                        ultimaMedicion != null ? ultimaMedicion.getAltura() : 0));
 
         findViewById(R.id.rowGrasa).setOnClickListener(v ->
                 editarCampoNumerico("grasaCorporal", getString(R.string.medicion_label_grasa),
@@ -167,8 +203,9 @@ public class MedicionesActivity extends AppCompatActivity {
                     intentarCrearDesdePerfil(usuarioId);
                 } else {
                     ultimaMedicion = lista.get(0);
+                    historial = lista;
                     mostrarMedicion();
-                    pintarGraficaPeso(lista);
+                    pintarGrafica();
                 }
             }
 
@@ -224,26 +261,48 @@ public class MedicionesActivity extends AppCompatActivity {
         });
     }
 
-    // Pinta la evolución del peso a partir del histórico de mediciones. La API los
-    // entrega DESC por fecha → se recorren al revés para dibujar de antiguo a reciente.
-    // Solo se muestra la gráfica si hay al menos 2 registros con peso (una línea necesita 2 puntos).
-    private void pintarGraficaPeso(List<MedicionCorporal> lista) {
+    // Pinta la gráfica según la métrica (peso/grasa/cintura) y el rango (30/90/todo)
+    // seleccionados en los chips. La API entrega el histórico DESC por fecha → se
+    // recorre al revés para dibujar de antiguo a reciente. Solo se muestra si quedan
+    // ≥2 puntos con valor (una línea necesita 2). Tooltip al tocar cada punto.
+    private void pintarGrafica() {
+        if (historial == null || historial.isEmpty()) {
+            cardGraficaPeso.setVisibility(View.GONE);
+            return;
+        }
+
+        // Métrica + unidad según el chip activo.
+        final int metrica;
+        final String unidad;
+        if (chipsMetrica.getCheckedChipId() == R.id.chipMetGrasa) { metrica = MET_GRASA; unidad = "%"; }
+        else if (chipsMetrica.getCheckedChipId() == R.id.chipMetCintura) { metrica = MET_CINTURA; unidad = "cm"; }
+        else { metrica = MET_PESO; unidad = "kg"; }
+
+        // Rango: fecha de corte (null = "Todo").
+        String corte = null;
+        if (chipsRango.getCheckedChipId() == R.id.chipRango30) corte = fechaCutoff(30);
+        else if (chipsRango.getCheckedChipId() == R.id.chipRango90) corte = fechaCutoff(90);
+
         List<Entry> entradas = new ArrayList<>();
         final List<String> etiquetas = new ArrayList<>();
-
-        for (int i = lista.size() - 1; i >= 0; i--) {
-            MedicionCorporal m = lista.get(i);
-            if (m.getPeso() > 0) {
-                entradas.add(new Entry(entradas.size(), (float) m.getPeso()));
-                etiquetas.add(fechaCorta(m.getFecha()));
+        for (int i = historial.size() - 1; i >= 0; i--) {
+            MedicionCorporal m = historial.get(i);
+            double v = valorMetrica(m, metrica);
+            if (v <= 0) continue;
+            if (corte != null) {
+                String f = m.getFecha();
+                if (f == null || f.length() < 10 || f.substring(0, 10).compareTo(corte) < 0) continue;
             }
+            entradas.add(new Entry(entradas.size(), (float) v));
+            etiquetas.add(fechaCorta(m.getFecha()));
         }
+
+        tvGraficaTitulo.setText(tituloMetrica(metrica));
 
         if (entradas.size() < 2) {
             cardGraficaPeso.setVisibility(View.GONE);
             return;
         }
-
         cardGraficaPeso.setVisibility(View.VISIBLE);
 
         ChartStyler.styleLine(chartPeso, new ValueFormatter() {
@@ -254,10 +313,42 @@ public class MedicionesActivity extends AppCompatActivity {
             }
         });
 
-        LineDataSet ds = new LineDataSet(entradas, "peso");
+        // Tooltip: valor + unidad + fecha del punto tocado.
+        chartPeso.setMarker(new ChartMarker(this, (e, h) -> {
+            int idx = Math.round(e.getX());
+            String fecha = (idx >= 0 && idx < etiquetas.size()) ? etiquetas.get(idx) : "";
+            return String.format(Locale.getDefault(), "%.1f %s\n%s", e.getY(), unidad, fecha);
+        }));
+
+        LineDataSet ds = new LineDataSet(entradas, "m");
         ChartStyler.styleLineDataSet(ds, this);
         chartPeso.setData(new LineData(ds));
         chartPeso.invalidate();
+    }
+
+    // Valor de la métrica pedida para una medición (0 si no registrada).
+    private double valorMetrica(MedicionCorporal m, int metrica) {
+        switch (metrica) {
+            case MET_GRASA:   return m.getGrasaCorporal();
+            case MET_CINTURA: return m.getCintura();
+            default:          return m.getPeso();
+        }
+    }
+
+    // Título (eyebrow) de la gráfica según la métrica.
+    private String tituloMetrica(int metrica) {
+        switch (metrica) {
+            case MET_GRASA:   return getString(R.string.grafica_titulo_grasa);
+            case MET_CINTURA: return getString(R.string.grafica_titulo_cintura);
+            default:          return getString(R.string.medicion_grafica_peso);
+        }
+    }
+
+    // Fecha de corte "yyyy-MM-dd" = hoy menos N días (para el filtro de rango por comparación de strings ISO).
+    private String fechaCutoff(int dias) {
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DAY_OF_YEAR, -dias);
+        return String.format(Locale.US, "%tF", c);
     }
 
     // Convierte una fecha ISO ("yyyy-MM-ddTHH:mm:ss") a etiqueta corta "dd/MM" para el eje X.
@@ -289,8 +380,6 @@ public class MedicionesActivity extends AppCompatActivity {
 
         tvPesoVal.setText(ultimaMedicion.getPeso() > 0
                 ? String.format(Locale.getDefault(), "%.1f kg", ultimaMedicion.getPeso()) : anadir);
-        tvAlturaVal.setText(ultimaMedicion.getAltura() > 0
-                ? String.format(Locale.getDefault(), "%.0f cm", ultimaMedicion.getAltura()) : anadir);
         tvGrasaVal.setText(ultimaMedicion.getGrasaCorporal() > 0
                 ? String.format(Locale.getDefault(), "%.1f%%", ultimaMedicion.getGrasaCorporal()) : anadir);
         tvMusculoVal.setText(ultimaMedicion.getMasaMuscular() > 0

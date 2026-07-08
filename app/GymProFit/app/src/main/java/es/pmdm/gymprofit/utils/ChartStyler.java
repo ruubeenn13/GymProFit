@@ -41,7 +41,13 @@ public final class ChartStyler {
         chart.getDescription().setEnabled(false);
         chart.getLegend().setEnabled(false);
         chart.setDrawGridBackground(false);
-        chart.setScaleYEnabled(false);            // solo zoom/scroll horizontal
+        // Interactividad: arrastre + zoom SOLO horizontal (el eje Y se autoescala).
+        chart.setDragEnabled(true);
+        chart.setScaleXEnabled(true);
+        chart.setScaleYEnabled(false);
+        chart.setPinchZoom(true);
+        chart.setDoubleTapToZoomEnabled(false);
+        chart.setHighlightPerTapEnabled(true);    // tocar un punto lo resalta (para el tooltip)
         chart.setExtraBottomOffset(8f);
         chart.setNoDataText("");                  // el empty state lo pinta la pantalla
         chart.animateX(500);

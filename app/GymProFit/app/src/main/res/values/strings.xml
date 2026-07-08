@@ -279,6 +279,16 @@
     <string name="medicion_guardar">Guardar</string>
     <string name="medicion_fecha_ultima">Última medición: %s</string>
     <string name="medicion_grafica_peso">EVOLUCIÓN DEL PESO</string>
+    <string name="medicion_mas_detalles">Más detalles ▾</string>
+    <string name="medicion_menos_detalles">Menos detalles ▴</string>
+    <string name="grafica_met_peso">Peso</string>
+    <string name="grafica_met_grasa">Grasa</string>
+    <string name="grafica_met_cintura">Cintura</string>
+    <string name="grafica_rango_30">30 días</string>
+    <string name="grafica_rango_90">90 días</string>
+    <string name="grafica_rango_todo">Todo</string>
+    <string name="grafica_titulo_grasa">EVOLUCIÓN DE LA GRASA</string>
+    <string name="grafica_titulo_cintura">EVOLUCIÓN DE LA CINTURA</string>
     <string name="medicion_sin_datos_subtitulo">Pulsa + para añadir tu primera medición</string>
     <string name="medicion_label_grasa">Grasa corporal</string>
     <string name="medicion_label_musculo">Masa muscular</string>

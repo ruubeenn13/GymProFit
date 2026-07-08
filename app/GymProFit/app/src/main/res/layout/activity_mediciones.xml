@@ -124,17 +124,86 @@
                         android:padding="16dp">
 
                         <TextView
+                            android:id="@+id/tvGraficaTitulo"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/medicion_grafica_peso"
                             android:textAppearance="@style/TextAppearance.GymProFit.Label"
                             android:textColor="?attr/colorOnSurfaceVariant" />
 
+                        <!-- Toggle de métrica: qué medida se representa -->
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/chipsMetrica"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            app:singleLine="true"
+                            app:singleSelection="true"
+                            app:selectionRequired="true">
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipMetPeso"
+                                style="@style/Widget.Material3.Chip.Filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/grafica_met_peso"
+                                android:checked="true" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipMetGrasa"
+                                style="@style/Widget.Material3.Chip.Filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/grafica_met_grasa" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipMetCintura"
+                                style="@style/Widget.Material3.Chip.Filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/grafica_met_cintura" />
+
+                        </com.google.android.material.chip.ChipGroup>
+
                         <com.github.mikephil.charting.charts.LineChart
                             android:id="@+id/chartPeso"
                             android:layout_width="match_parent"
                             android:layout_height="180dp"
                             android:layout_marginTop="8dp" />
+
+                        <!-- Rango temporal de la gráfica -->
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/chipsRango"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            app:singleLine="true"
+                            app:singleSelection="true"
+                            app:selectionRequired="true">
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipRango30"
+                                style="@style/Widget.Material3.Chip.Filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/grafica_rango_30" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipRango90"
+                                style="@style/Widget.Material3.Chip.Filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/grafica_rango_90" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipRangoTodo"
+                                style="@style/Widget.Material3.Chip.Filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/grafica_rango_todo"
+                                android:checked="true" />
+
+                        </com.google.android.material.chip.ChipGroup>
 
                     </LinearLayout>
 
@@ -173,48 +242,6 @@
 
                             <TextView
                                 android:id="@+id/tvPesoVal"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textSize="14sp"
-                                android:textStyle="bold"
-                                android:textColor="?attr/colorPrimary" />
-
-                            <ImageView
-                                android:layout_width="16dp"
-                                android:layout_height="16dp"
-                                android:layout_marginStart="8dp"
-                                android:src="@drawable/ic_chevron_right"
-                                android:alpha="0.4"
-                                android:contentDescription="@null" />
-
-                        </LinearLayout>
-
-                        <View android:layout_width="match_parent" android:layout_height="1dp"
-                            android:layout_marginStart="16dp" android:background="?attr/colorOutlineVariant" />
-
-                        <!-- Altura -->
-                        <LinearLayout
-                            android:id="@+id/rowAltura"
-                            android:layout_width="match_parent"
-                            android:layout_height="56dp"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="16dp"
-                            android:background="?attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:focusable="true">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="@string/perfil_altura"
-                                android:textSize="15sp"
-                                android:textColor="?attr/colorOnSurface" />
-
-                            <TextView
-                                android:id="@+id/tvAlturaVal"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textSize="14sp"
@@ -276,48 +303,6 @@
                         <View android:layout_width="match_parent" android:layout_height="1dp"
                             android:layout_marginStart="16dp" android:background="?attr/colorOutlineVariant" />
 
-                        <!-- Masa muscular -->
-                        <LinearLayout
-                            android:id="@+id/rowMusculo"
-                            android:layout_width="match_parent"
-                            android:layout_height="56dp"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="16dp"
-                            android:background="?attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:focusable="true">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="@string/medicion_label_musculo"
-                                android:textSize="15sp"
-                                android:textColor="?attr/colorOnSurface" />
-
-                            <TextView
-                                android:id="@+id/tvMusculoVal"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textSize="14sp"
-                                android:textStyle="bold"
-                                android:textColor="?attr/colorPrimary" />
-
-                            <ImageView
-                                android:layout_width="16dp"
-                                android:layout_height="16dp"
-                                android:layout_marginStart="8dp"
-                                android:src="@drawable/ic_chevron_right"
-                                android:alpha="0.4"
-                                android:contentDescription="@null" />
-
-                        </LinearLayout>
-
-                        <View android:layout_width="match_parent" android:layout_height="1dp"
-                            android:layout_marginStart="16dp" android:background="?attr/colorOutlineVariant" />
-
                         <!-- Cintura -->
                         <LinearLayout
                             android:id="@+id/rowCintura"
@@ -341,132 +326,6 @@
 
                             <TextView
                                 android:id="@+id/tvCinturaVal"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textSize="14sp"
-                                android:textStyle="bold"
-                                android:textColor="?attr/colorPrimary" />
-
-                            <ImageView
-                                android:layout_width="16dp"
-                                android:layout_height="16dp"
-                                android:layout_marginStart="8dp"
-                                android:src="@drawable/ic_chevron_right"
-                                android:alpha="0.4"
-                                android:contentDescription="@null" />
-
-                        </LinearLayout>
-
-                        <View android:layout_width="match_parent" android:layout_height="1dp"
-                            android:layout_marginStart="16dp" android:background="?attr/colorOutlineVariant" />
-
-                        <!-- Pecho -->
-                        <LinearLayout
-                            android:id="@+id/rowPecho"
-                            android:layout_width="match_parent"
-                            android:layout_height="56dp"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="16dp"
-                            android:background="?attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:focusable="true">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="@string/medicion_label_pecho"
-                                android:textSize="15sp"
-                                android:textColor="?attr/colorOnSurface" />
-
-                            <TextView
-                                android:id="@+id/tvPechoVal"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textSize="14sp"
-                                android:textStyle="bold"
-                                android:textColor="?attr/colorPrimary" />
-
-                            <ImageView
-                                android:layout_width="16dp"
-                                android:layout_height="16dp"
-                                android:layout_marginStart="8dp"
-                                android:src="@drawable/ic_chevron_right"
-                                android:alpha="0.4"
-                                android:contentDescription="@null" />
-
-                        </LinearLayout>
-
-                        <View android:layout_width="match_parent" android:layout_height="1dp"
-                            android:layout_marginStart="16dp" android:background="?attr/colorOutlineVariant" />
-
-                        <!-- Brazos -->
-                        <LinearLayout
-                            android:id="@+id/rowBrazos"
-                            android:layout_width="match_parent"
-                            android:layout_height="56dp"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="16dp"
-                            android:background="?attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:focusable="true">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="@string/medicion_label_brazos"
-                                android:textSize="15sp"
-                                android:textColor="?attr/colorOnSurface" />
-
-                            <TextView
-                                android:id="@+id/tvBrazosVal"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textSize="14sp"
-                                android:textStyle="bold"
-                                android:textColor="?attr/colorPrimary" />
-
-                            <ImageView
-                                android:layout_width="16dp"
-                                android:layout_height="16dp"
-                                android:layout_marginStart="8dp"
-                                android:src="@drawable/ic_chevron_right"
-                                android:alpha="0.4"
-                                android:contentDescription="@null" />
-
-                        </LinearLayout>
-
-                        <View android:layout_width="match_parent" android:layout_height="1dp"
-                            android:layout_marginStart="16dp" android:background="?attr/colorOutlineVariant" />
-
-                        <!-- Piernas -->
-                        <LinearLayout
-                            android:id="@+id/rowPiernas"
-                            android:layout_width="match_parent"
-                            android:layout_height="56dp"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="16dp"
-                            android:background="?attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:focusable="true">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="@string/medicion_label_piernas"
-                                android:textSize="15sp"
-                                android:textColor="?attr/colorOnSurface" />
-
-                            <TextView
-                                android:id="@+id/tvPiernasVal"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textSize="14sp"
@@ -525,6 +384,208 @@
                                 android:src="@drawable/ic_chevron_right"
                                 android:alpha="0.4"
                                 android:contentDescription="@null" />
+
+                        </LinearLayout>
+
+                        <View android:layout_width="match_parent" android:layout_height="1dp"
+                            android:layout_marginStart="16dp" android:background="?attr/colorOutlineVariant" />
+
+                        <!-- Toggle: despliega/oculta las medidas avanzadas (nicho) -->
+                        <LinearLayout
+                            android:id="@+id/rowMasDetalles"
+                            android:layout_width="match_parent"
+                            android:layout_height="52dp"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:paddingStart="16dp"
+                            android:paddingEnd="16dp"
+                            android:background="?attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:focusable="true">
+
+                            <TextView
+                                android:id="@+id/tvMasDetalles"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/medicion_mas_detalles"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="?attr/colorPrimary" />
+
+                        </LinearLayout>
+
+                        <!-- Medidas avanzadas (colapsable, oculto por defecto) -->
+                        <LinearLayout
+                            android:id="@+id/layoutMasDetalles"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:visibility="gone">
+
+                            <!-- Masa muscular -->
+                            <LinearLayout
+                                android:id="@+id/rowMusculo"
+                                android:layout_width="match_parent"
+                                android:layout_height="56dp"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:paddingStart="16dp"
+                                android:paddingEnd="16dp"
+                                android:background="?attr/selectableItemBackground"
+                                android:clickable="true"
+                                android:focusable="true">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="@string/medicion_label_musculo"
+                                    android:textSize="15sp"
+                                    android:textColor="?attr/colorOnSurface" />
+
+                                <TextView
+                                    android:id="@+id/tvMusculoVal"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold"
+                                    android:textColor="?attr/colorPrimary" />
+
+                                <ImageView
+                                    android:layout_width="16dp"
+                                    android:layout_height="16dp"
+                                    android:layout_marginStart="8dp"
+                                    android:src="@drawable/ic_chevron_right"
+                                    android:alpha="0.4"
+                                    android:contentDescription="@null" />
+
+                            </LinearLayout>
+
+                            <View android:layout_width="match_parent" android:layout_height="1dp"
+                                android:layout_marginStart="16dp" android:background="?attr/colorOutlineVariant" />
+
+                            <!-- Pecho -->
+                            <LinearLayout
+                                android:id="@+id/rowPecho"
+                                android:layout_width="match_parent"
+                                android:layout_height="56dp"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:paddingStart="16dp"
+                                android:paddingEnd="16dp"
+                                android:background="?attr/selectableItemBackground"
+                                android:clickable="true"
+                                android:focusable="true">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="@string/medicion_label_pecho"
+                                    android:textSize="15sp"
+                                    android:textColor="?attr/colorOnSurface" />
+
+                                <TextView
+                                    android:id="@+id/tvPechoVal"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold"
+                                    android:textColor="?attr/colorPrimary" />
+
+                                <ImageView
+                                    android:layout_width="16dp"
+                                    android:layout_height="16dp"
+                                    android:layout_marginStart="8dp"
+                                    android:src="@drawable/ic_chevron_right"
+                                    android:alpha="0.4"
+                                    android:contentDescription="@null" />
+
+                            </LinearLayout>
+
+                            <View android:layout_width="match_parent" android:layout_height="1dp"
+                                android:layout_marginStart="16dp" android:background="?attr/colorOutlineVariant" />
+
+                            <!-- Brazos -->
+                            <LinearLayout
+                                android:id="@+id/rowBrazos"
+                                android:layout_width="match_parent"
+                                android:layout_height="56dp"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:paddingStart="16dp"
+                                android:paddingEnd="16dp"
+                                android:background="?attr/selectableItemBackground"
+                                android:clickable="true"
+                                android:focusable="true">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="@string/medicion_label_brazos"
+                                    android:textSize="15sp"
+                                    android:textColor="?attr/colorOnSurface" />
+
+                                <TextView
+                                    android:id="@+id/tvBrazosVal"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold"
+                                    android:textColor="?attr/colorPrimary" />
+
+                                <ImageView
+                                    android:layout_width="16dp"
+                                    android:layout_height="16dp"
+                                    android:layout_marginStart="8dp"
+                                    android:src="@drawable/ic_chevron_right"
+                                    android:alpha="0.4"
+                                    android:contentDescription="@null" />
+
+                            </LinearLayout>
+
+                            <View android:layout_width="match_parent" android:layout_height="1dp"
+                                android:layout_marginStart="16dp" android:background="?attr/colorOutlineVariant" />
+
+                            <!-- Piernas -->
+                            <LinearLayout
+                                android:id="@+id/rowPiernas"
+                                android:layout_width="match_parent"
+                                android:layout_height="56dp"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:paddingStart="16dp"
+                                android:paddingEnd="16dp"
+                                android:background="?attr/selectableItemBackground"
+                                android:clickable="true"
+                                android:focusable="true">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="@string/medicion_label_piernas"
+                                    android:textSize="15sp"
+                                    android:textColor="?attr/colorOnSurface" />
+
+                                <TextView
+                                    android:id="@+id/tvPiernasVal"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold"
+                                    android:textColor="?attr/colorPrimary" />
+
+                                <ImageView
+                                    android:layout_width="16dp"
+                                    android:layout_height="16dp"
+                                    android:layout_marginStart="8dp"
+                                    android:src="@drawable/ic_chevron_right"
+                                    android:alpha="0.4"
+                                    android:contentDescription="@null" />
+
+                            </LinearLayout>
 
                         </LinearLayout>
 
