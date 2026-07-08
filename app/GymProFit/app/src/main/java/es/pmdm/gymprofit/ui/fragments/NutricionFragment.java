@@ -7,6 +7,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -16,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -47,6 +49,11 @@ public class NutricionFragment extends BaseFragment {
     private int objetivoCalorias = 2000, objetivoProteinas = 150, objetivoCarbos = 250, objetivoGrasas = 65;
     private final Map<String, Comida> comidasHoy = new HashMap<>();
 
+    // Día del diario que se está viendo (por defecto hoy; navegable a fechas pasadas).
+    private final Calendar fechaSel = Calendar.getInstance();
+    private TextView tvFechaDia;
+    private ImageView btnDiaNext;
+
     private final ComidaApi comidaApi = ApiClient.service(ComidaApi.class);
 
     private ActivityResultLauncher<Intent> comidaLauncher;
@@ -60,7 +67,7 @@ public class NutricionFragment extends BaseFragment {
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         recalcularObjetivos();
-                        cargarComidasHoy();
+                        cargarComidas();
                     }
                 });
     }
@@ -80,14 +87,50 @@ public class NutricionFragment extends BaseFragment {
         // Card visible → pantalla de estadísticas de nutrición (histórico, KPIs, gráficas).
         view.findViewById(R.id.cardEstadisticas).setOnClickListener(v ->
                 startActivity(new Intent(requireContext(), EstadisticasNutricionActivity.class)));
+
+        // Navegación por días del diario (‹ día anterior / día siguiente ›).
+        tvFechaDia = findViewById(R.id.tvFechaDia);
+        btnDiaNext = findViewById(R.id.btnDiaNext);
+        findViewById(R.id.btnDiaPrev).setOnClickListener(v -> cambiarDia(-1));
+        btnDiaNext.setOnClickListener(v -> cambiarDia(1));
+        actualizarSelectorFecha();
     }
 
-    // Recalcula objetivos y recarga las comidas de hoy al volver a primer plano.
+    // Recalcula objetivos y recarga las comidas del día seleccionado al volver a primer plano.
     @Override
     public void onResume() {
         super.onResume();
         recalcularObjetivos();
-        cargarComidasHoy();
+        cargarComidas();
+    }
+
+    // Cambia el día del diario (sin pasar de hoy) y recarga.
+    private void cambiarDia(int delta) {
+        Calendar hoy = Calendar.getInstance();
+        fechaSel.add(Calendar.DAY_OF_YEAR, delta);
+        if (fechaSel.after(hoy)) fechaSel.setTime(hoy.getTime());
+        actualizarSelectorFecha();
+        cargarComidas();
+    }
+
+    // Actualiza la etiqueta de fecha ("Hoy" o la fecha) y oculta "siguiente" si ya es hoy.
+    private void actualizarSelectorFecha() {
+        if (tvFechaDia == null) return;
+        tvFechaDia.setText(esHoy()
+                ? getString(R.string.nutricion_hoy)
+                : new SimpleDateFormat("EEE d MMM", Locale.getDefault()).format(fechaSel.getTime()));
+        btnDiaNext.setVisibility(esHoy() ? View.INVISIBLE : View.VISIBLE);
+    }
+
+    // ¿El día seleccionado es hoy?
+    private boolean esHoy() {
+        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        return f.format(fechaSel.getTime()).equals(f.format(new Date()));
+    }
+
+    // Fecha seleccionada en formato yyyy-MM-dd (para la API).
+    private String fechaSelStr() {
+        return new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(fechaSel.getTime());
     }
 
     // ── Vistas ───────────────────────────────────────────────────────────────
@@ -132,12 +175,12 @@ public class NutricionFragment extends BaseFragment {
 
     // ── Carga de comidas ─────────────────────────────────────────────────────
 
-    // Obtiene las comidas del día actual desde la API y actualiza la UI.
-    private void cargarComidasHoy() {
+    // Obtiene las comidas del día seleccionado desde la API y actualiza la UI.
+    private void cargarComidas() {
         int usuarioId = prefsManager.getUsuarioId();
-        final String hoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        final String fecha = fechaSelStr();
 
-        comidaApi.getDeUsuarioFecha(usuarioId, hoy).enqueue(new ApiCallback<List<Comida>>() {
+        comidaApi.getDeUsuarioFecha(usuarioId, fecha).enqueue(new ApiCallback<List<Comida>>() {
             @Override
             public void onOk(List<Comida> lista) {
                 if (!isAdded()) return;
@@ -147,14 +190,14 @@ public class NutricionFragment extends BaseFragment {
                         comidasHoy.put(c.getTipoComida(), c);
                     }
                 }
-                actualizarUI(hoy);
+                actualizarUI(fecha);
             }
 
             @Override
             public void onFail(int code, String message) {
                 if (!isAdded()) return;
                 comidasHoy.clear();
-                actualizarUI(hoy);
+                actualizarUI(fecha);
                 if (code != 404) {
                     UiFeedback.toastError(requireActivity(), code, message);
                 }
@@ -223,16 +266,16 @@ public class NutricionFragment extends BaseFragment {
 
     // Configura los listeners de click en cada card de tipo de comida.
     private void configurarCardsComida() {
-        String hoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-        setupCardComida(R.id.cardDesayuno, "DESAYUNO", hoy);
-        setupCardComida(R.id.cardAlmuerzo, "ALMUERZO", hoy);
-        setupCardComida(R.id.cardComida,   "COMIDA",   hoy);
-        setupCardComida(R.id.cardMerienda, "MERIENDA", hoy);
-        setupCardComida(R.id.cardCena,     "CENA",     hoy);
+        setupCardComida(R.id.cardDesayuno, "DESAYUNO");
+        setupCardComida(R.id.cardAlmuerzo, "ALMUERZO");
+        setupCardComida(R.id.cardComida,   "COMIDA");
+        setupCardComida(R.id.cardMerienda, "MERIENDA");
+        setupCardComida(R.id.cardCena,     "CENA");
     }
 
-    // Asigna el listener de click a una card de comida y lanza ComidaActivity.
-    private void setupCardComida(int cardId, String tipo, String fecha) {
+    // Asigna el listener de click a una card de comida y lanza ComidaActivity con el
+    // día ACTUALMENTE seleccionado (se lee al pulsar, no al configurar).
+    private void setupCardComida(int cardId, String tipo) {
         View card = findViewById(cardId);
         card.setOnClickListener(v -> {
             if (!verificarAccesoRegistrado()) return;
@@ -240,7 +283,7 @@ public class NutricionFragment extends BaseFragment {
             intent.putExtra("tipoComida", tipo);
             Comida c = comidasHoy.get(tipo);
             intent.putExtra("comidaId", c != null ? c.getId() : -1);
-            intent.putExtra("fecha", fecha);
+            intent.putExtra("fecha", fechaSelStr());
             comidaLauncher.launch(intent);
         });
     }

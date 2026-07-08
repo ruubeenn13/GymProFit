@@ -322,6 +322,7 @@
     <string name="dialogo_escribe_nota">Write a note</string>
     <string name="medicion_registrar_primera">Log measurement</string>
     <string name="nutricion_estadisticas">Statistics</string>
+    <string name="nutricion_hoy">Today</string>
     <string name="nutricion_estadisticas_titulo">History &amp; statistics</string>
     <string name="nutricion_estadisticas_sub">Average, adherence and charts</string>
     <string name="stats_periodo_semana">Week</string>
