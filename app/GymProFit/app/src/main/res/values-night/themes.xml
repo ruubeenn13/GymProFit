@@ -37,5 +37,25 @@
         <item name="popupMenuStyle">@style/Widget.GymProFit.PopupMenu</item>
         <item name="android:popupMenuStyle">@style/Widget.GymProFit.PopupMenu</item>
         <item name="snackbarStyle">@style/Widget.GymProFit.Snackbar</item>
+
+        <!-- Fuente ÚNICA en toda la app (Barlow Condensed). Estilos Font.GymProFit.*
+             definidos en values/themes.xml (compartidos día/noche). -->
+        <item name="android:fontFamily">@font/barlow_condensed</item>
+        <item name="fontFamily">@font/barlow_condensed</item>
+        <item name="textAppearanceDisplayLarge">@style/Font.GymProFit.DisplayLarge</item>
+        <item name="textAppearanceDisplayMedium">@style/Font.GymProFit.DisplayMedium</item>
+        <item name="textAppearanceDisplaySmall">@style/Font.GymProFit.DisplaySmall</item>
+        <item name="textAppearanceHeadlineLarge">@style/Font.GymProFit.HeadlineLarge</item>
+        <item name="textAppearanceHeadlineMedium">@style/Font.GymProFit.HeadlineMedium</item>
+        <item name="textAppearanceHeadlineSmall">@style/Font.GymProFit.HeadlineSmall</item>
+        <item name="textAppearanceTitleLarge">@style/Font.GymProFit.TitleLarge</item>
+        <item name="textAppearanceTitleMedium">@style/Font.GymProFit.TitleMedium</item>
+        <item name="textAppearanceTitleSmall">@style/Font.GymProFit.TitleSmall</item>
+        <item name="textAppearanceBodyLarge">@style/Font.GymProFit.BodyLarge</item>
+        <item name="textAppearanceBodyMedium">@style/Font.GymProFit.BodyMedium</item>
+        <item name="textAppearanceBodySmall">@style/Font.GymProFit.BodySmall</item>
+        <item name="textAppearanceLabelLarge">@style/Font.GymProFit.LabelLarge</item>
+        <item name="textAppearanceLabelMedium">@style/Font.GymProFit.LabelMedium</item>
+        <item name="textAppearanceLabelSmall">@style/Font.GymProFit.LabelSmall</item>
     </style>
 </resources>
