@@ -7,8 +7,6 @@ import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -21,7 +19,6 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.chip.ChipGroup;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -84,8 +81,6 @@ public class MedicionesActivity extends AppCompatActivity {
     // Interfaz Retrofit tipada del dominio usuarios (etapa 2)
     private final UsuarioApi usuarioApi = ApiClient.service(UsuarioApi.class);
 
-    private ActivityResultLauncher<Intent> nuevaLauncher;
-
     // Aplica tema/idioma, referencia las vistas, registra el launcher para
     // el registro de nuevas mediciones y carga la última medición existente.
     @Override
@@ -136,18 +131,10 @@ public class MedicionesActivity extends AppCompatActivity {
                     ? R.string.medicion_menos_detalles : R.string.medicion_mas_detalles);
         });
 
-        nuevaLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK) {
-                        setResult(RESULT_OK);
-                        cargarMedicion();
-                    }
-                });
-
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
-        ((FloatingActionButton) findViewById(R.id.fabRegistrar)).setOnClickListener(v ->
-                nuevaLauncher.launch(new Intent(this, RegistrarMedicionActivity.class)));
+        // Sin FAB: registrar la primera medición desde el estado vacío; el resto se
+        // edita in-place tocando cada fila (upsert por día al guardar).
+        findViewById(R.id.btnRegistrarPrimera).setOnClickListener(v -> registrarPrimeraMedicion());
 
         configurarFilas();
         cargarMedicion();
@@ -442,38 +429,82 @@ public class MedicionesActivity extends AppCompatActivity {
         }
     }
 
-    // Construye el JSON con el campo modificado y lo envía como PATCH parcial
-    // a la medición actual; recarga los datos al finalizar con éxito.
+    // Guarda el campo editado con UPSERT POR DÍA: si la última medición es de HOY,
+    // hace PATCH sobre ella; si es de otro día, crea una NUEVA medición de hoy clonando
+    // la última + el campo editado (así cada día es un punto nuevo en la gráfica sin FAB).
     private void patchCampo(String campo, String valorStr, boolean esTexto) {
         try {
-            // Cuerpo con un solo campo. En texto vacío se envía null explícito (Gson lo
-            // serializa por serializeNulls) para BORRAR el campo, como el antiguo JSONObject.NULL.
-            Map<String, Object> body = new HashMap<>();
-            if (esTexto) {
-                body.put(campo, valorStr.isEmpty() ? null : valorStr);
-            } else {
-                body.put(campo, new BigDecimal(valorStr));
-            }
+            // Valor del campo (texto vacío → null explícito para borrarlo; Gson serializa nulls).
+            Object valor = esTexto ? (valorStr.isEmpty() ? null : valorStr) : new BigDecimal(valorStr);
 
-            // Spinner durante el guardado del campo editado.
             LoadingDialog.show(this);
-            medicionApi.patch(ultimaMedicion.getId(), body).enqueue(new ApiCallback<MedicionCorporal>() {
-                @Override
-                public void onOk(MedicionCorporal m) {
-                    // El spinner sigue: cargarMedicion recarga y lo oculta en su punto terminal.
-                    setResult(RESULT_OK);
-                    cargarMedicion();
-                }
-
-                @Override
-                public void onFail(int code, String message) {
-                    // Oculta el spinner y muestra el error mapeado (cold-start incluido).
-                    LoadingDialog.hide(MedicionesActivity.this);
-                    UiFeedback.toastError(MedicionesActivity.this, code, message);
-                }
-            });
+            if (esDeHoy(ultimaMedicion)) {
+                Map<String, Object> body = new HashMap<>();
+                body.put(campo, valor);
+                medicionApi.patch(ultimaMedicion.getId(), body).enqueue(recargaCallback());
+            } else {
+                Map<String, Object> body = clonarUltima();
+                body.put(campo, valor);
+                medicionApi.crear(body).enqueue(recargaCallback());
+            }
         } catch (NumberFormatException e) {
             UIHelper.mostrarToastError(this, getString(R.string.error_conexion));
         }
+    }
+
+    // ¿La medición es de hoy? (compara la parte de fecha yyyy-MM-dd con la de hoy).
+    private boolean esDeHoy(MedicionCorporal m) {
+        if (m == null || m.getFecha() == null || m.getFecha().length() < 10) return false;
+        return m.getFecha().substring(0, 10).equals(fechaCutoff(0));
+    }
+
+    // Cuerpo para crear la medición de hoy clonando los valores actuales de la última.
+    private Map<String, Object> clonarUltima() {
+        Map<String, Object> body = new HashMap<>();
+        body.put("usuarioId", prefsManager.getUsuarioId());
+        if (ultimaMedicion.getPeso() > 0)          body.put("peso", BigDecimal.valueOf(ultimaMedicion.getPeso()));
+        if (ultimaMedicion.getAltura() > 0)        body.put("altura", BigDecimal.valueOf(ultimaMedicion.getAltura()));
+        if (ultimaMedicion.getGrasaCorporal() > 0) body.put("grasaCorporal", BigDecimal.valueOf(ultimaMedicion.getGrasaCorporal()));
+        if (ultimaMedicion.getMasaMuscular() > 0)  body.put("masaMuscular", BigDecimal.valueOf(ultimaMedicion.getMasaMuscular()));
+        if (ultimaMedicion.getCintura() > 0)       body.put("cintura", BigDecimal.valueOf(ultimaMedicion.getCintura()));
+        if (ultimaMedicion.getPecho() > 0)         body.put("pecho", BigDecimal.valueOf(ultimaMedicion.getPecho()));
+        if (ultimaMedicion.getBrazos() > 0)        body.put("brazos", BigDecimal.valueOf(ultimaMedicion.getBrazos()));
+        if (ultimaMedicion.getPiernas() > 0)       body.put("piernas", BigDecimal.valueOf(ultimaMedicion.getPiernas()));
+        if (ultimaMedicion.getNotas() != null && !ultimaMedicion.getNotas().isEmpty())
+            body.put("notas", ultimaMedicion.getNotas());
+        return body;
+    }
+
+    // Callback común: recarga la pantalla al terminar (éxito) o muestra el error.
+    private ApiCallback<MedicionCorporal> recargaCallback() {
+        return new ApiCallback<MedicionCorporal>() {
+            @Override
+            public void onOk(MedicionCorporal m) {
+                setResult(RESULT_OK);
+                cargarMedicion();   // recarga y oculta el spinner en su punto terminal
+            }
+            @Override
+            public void onFail(int code, String message) {
+                LoadingDialog.hide(MedicionesActivity.this);
+                UiFeedback.toastError(MedicionesActivity.this, code, message);
+            }
+        };
+    }
+
+    // Abre el diálogo para registrar la PRIMERA medición (peso) cuando no hay ninguna.
+    private void registrarPrimeraMedicion() {
+        InputDialog.numerico(this, getString(R.string.perfil_peso),
+                getString(R.string.dialogo_nuevo_valor), null, "kg", valor -> {
+            if (valor.isEmpty()) return;
+            try {
+                Map<String, Object> body = new HashMap<>();
+                body.put("usuarioId", prefsManager.getUsuarioId());
+                body.put("peso", new BigDecimal(valor));
+                LoadingDialog.show(this);
+                medicionApi.crear(body).enqueue(recargaCallback());
+            } catch (NumberFormatException e) {
+                UIHelper.mostrarToastError(this, getString(R.string.error_conexion));
+            }
+        });
     }
 }
