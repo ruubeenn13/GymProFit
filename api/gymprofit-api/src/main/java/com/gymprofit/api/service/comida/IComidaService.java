@@ -2,6 +2,7 @@ package com.gymprofit.api.service.comida;
 
 import com.gymprofit.api.dto.entity.comida.ComidaCreateDTO;
 import com.gymprofit.api.dto.entity.comida.ComidaDTO;
+import com.gymprofit.api.dto.entity.comida.ResumenDiarioNutricionDTO;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -35,6 +36,8 @@ public interface IComidaService {
     List<ComidaDTO> findByFecha(LocalDate fecha);
     // Busca comidas de un usuario en una fecha concreta.
     List<ComidaDTO> findByUsuarioIdAndFecha(Integer usuarioId, LocalDate fecha);
+    // Resumen nutricional diario (kcal+macros sumados por día) de un usuario en un rango de fechas.
+    List<ResumenDiarioNutricionDTO> obtenerResumenDiario(Integer usuarioId, LocalDate inicio, LocalDate fin);
     // Busca comidas de un usuario filtradas por tipo.
     List<ComidaDTO> findByUsuarioIdAndTipoComida(Integer usuarioId, String tipoComida);
 

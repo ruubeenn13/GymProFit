@@ -4,6 +4,7 @@ import com.gymprofit.api.dto.common.CountDTO;
 import com.gymprofit.api.dto.entity.comida.ComidaCreateDTO;
 import com.gymprofit.api.dto.entity.comida.ComidaDTO;
 import com.gymprofit.api.dto.entity.comida.ComidaPatchDTO;
+import com.gymprofit.api.dto.entity.comida.ResumenDiarioNutricionDTO;
 import com.gymprofit.api.enums.TipoComida;
 import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
@@ -203,6 +204,25 @@ public class ComidaController {
         }
 
         return ResponseEntity.ok(comidas);
+    }
+
+    @Operation(summary = "Resumen nutricional diario de un usuario en un rango de fechas",
+            description = "Devuelve un elemento por día con registros (kcal + macros sumados), ordenado por fecha. Alimenta las gráficas de nutrición. Lista vacía si no hay datos.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Resumen diario (posiblemente vacío)",
+                    content = @Content(schema = @Schema(implementation = ResumenDiarioNutricionDTO.class))),
+            @ApiResponse(responseCode = "403", description = "No es el propietario ni ADMIN",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @GetMapping("/comidas/usuario/{usuarioId}/resumen")
+    public ResponseEntity<List<ResumenDiarioNutricionDTO>> obtenerResumenNutricionalDiario(
+            @PathVariable Integer usuarioId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fin) {
+
+        List<ResumenDiarioNutricionDTO> resumen = comidaService.obtenerResumenDiario(usuarioId, inicio, fin);
+
+        return ResponseEntity.ok(resumen);
     }
 
     @Operation(summary = "Busca comidas de un usuario por tipo")

@@ -3,6 +3,7 @@ package com.gymprofit.api.service.comida;
 import com.gymprofit.api.dto.entity.comida.ComidaCreateDTO;
 import com.gymprofit.api.dto.entity.comida.ComidaDTO;
 import com.gymprofit.api.dto.entity.comida.ComidaPatchDTO;
+import com.gymprofit.api.dto.entity.comida.ResumenDiarioNutricionDTO;
 import com.gymprofit.api.config.security.SecurityUtils;
 import com.gymprofit.api.entity.Comida;
 import com.gymprofit.api.entity.Usuario;
@@ -20,9 +21,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 // ============================================================
 // ComidaService — servicio de comidas del diario nutricional
@@ -205,6 +210,40 @@ public class ComidaService implements IComidaService {
         return comidaMapper.toDTOList(comidas);
     }
 
+
+    // Devuelve el resumen nutricional diario (kcal + macros sumados por día) de un
+    // usuario en el rango [inicio, fin], un elemento por día CON registros, ordenado
+    // ascendente por fecha. Verifica propiedad. Alimenta las gráficas de nutrición.
+    @Override
+    public List<ResumenDiarioNutricionDTO> obtenerResumenDiario(Integer usuarioId, LocalDate inicio, LocalDate fin) {
+        logger.info("Resumen nutricional diario del usuario {} entre {} y {}", usuarioId, inicio, fin);
+
+        securityUtils.checkOwnership(usuarioId);
+
+        LocalDateTime desde = inicio.atStartOfDay();
+        LocalDateTime hasta = fin.atTime(23, 59, 59);
+
+        List<Comida> comidas = comidaRepository.findByUsuarioIdAndFechaBetween(usuarioId, desde, hasta);
+
+        // Agrega en memoria por día (TreeMap → orden ascendente natural de LocalDate).
+        Map<LocalDate, ResumenDiarioNutricionDTO> porDia = new TreeMap<>();
+        for (Comida comida : comidas) {
+            LocalDate dia = comida.getFecha().toLocalDate();
+            ResumenDiarioNutricionDTO resumen = porDia.computeIfAbsent(dia,
+                    d -> new ResumenDiarioNutricionDTO(d, 0, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO));
+
+            resumen.setCalorias(resumen.getCalorias() + nz(comida.getTotalCalorias()));
+            resumen.setProteinas(resumen.getProteinas().add(nz(comida.getTotalProteinas())));
+            resumen.setCarbohidratos(resumen.getCarbohidratos().add(nz(comida.getTotalCarbohidratos())));
+            resumen.setGrasas(resumen.getGrasas().add(nz(comida.getTotalGrasas())));
+        }
+
+        return new ArrayList<>(porDia.values());
+    }
+
+    // Coalesce de nulos a 0 para los totales (una comida sin alimentos podría tenerlos null).
+    private int nz(Integer v) { return v == null ? 0 : v; }
+    private BigDecimal nz(BigDecimal v) { return v == null ? BigDecimal.ZERO : v; }
 
     // Busca las comidas de un usuario filtradas por tipo (verifica propiedad).
     @Override
