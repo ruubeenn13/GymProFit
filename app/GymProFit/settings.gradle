@@ -16,6 +16,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        // JitPack: aloja MPAndroidChart (com.github.PhilJay), no publicado en Maven Central
+        maven { url 'https://jitpack.io' }
     }
 }
 

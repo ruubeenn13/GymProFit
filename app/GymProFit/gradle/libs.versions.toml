@@ -12,6 +12,7 @@ okhttp = "4.12.0"
 gson = "2.10.1"
 securityCrypto = "1.1.0-alpha06"
 glide = "4.16.0"
+mpandroidchart = "v3.1.0"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -28,6 +29,7 @@ okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor",
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+mpandroidchart = { group = "com.github.PhilJay", name = "MPAndroidChart", version.ref = "mpandroidchart" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

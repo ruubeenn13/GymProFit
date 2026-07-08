@@ -12,17 +12,26 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.utils.ChartStyler;
 import es.pmdm.gymprofit.model.medicion.MedicionCorporal;
 import es.pmdm.gymprofit.model.usuario.Usuario;
 import es.pmdm.gymprofit.network.ApiCallback;
@@ -48,6 +57,8 @@ public class MedicionesActivity extends AppCompatActivity {
     private TextView tvFechaUltima;
     private TextView tvPesoVal, tvAlturaVal, tvGrasaVal, tvMusculoVal;
     private TextView tvCinturaVal, tvPechoVal, tvBrazosVal, tvPiernasVal, tvNotasVal;
+    private MaterialCardView cardGraficaPeso;
+    private LineChart chartPeso;
     private PreferencesManager prefsManager;
     private MedicionCorporal ultimaMedicion;
     // Interfaz Retrofit tipada del dominio mediciones (etapa 2)
@@ -78,6 +89,8 @@ public class MedicionesActivity extends AppCompatActivity {
         tvBrazosVal     = findViewById(R.id.tvBrazosVal);
         tvPiernasVal    = findViewById(R.id.tvPiernasVal);
         tvNotasVal      = findViewById(R.id.tvNotasVal);
+        cardGraficaPeso = findViewById(R.id.cardGraficaPeso);
+        chartPeso       = findViewById(R.id.chartPeso);
 
         nuevaLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -155,6 +168,7 @@ public class MedicionesActivity extends AppCompatActivity {
                 } else {
                     ultimaMedicion = lista.get(0);
                     mostrarMedicion();
+                    pintarGraficaPeso(lista);
                 }
             }
 
@@ -208,6 +222,48 @@ public class MedicionesActivity extends AppCompatActivity {
                 mostrarVacio();
             }
         });
+    }
+
+    // Pinta la evolución del peso a partir del histórico de mediciones. La API los
+    // entrega DESC por fecha → se recorren al revés para dibujar de antiguo a reciente.
+    // Solo se muestra la gráfica si hay al menos 2 registros con peso (una línea necesita 2 puntos).
+    private void pintarGraficaPeso(List<MedicionCorporal> lista) {
+        List<Entry> entradas = new ArrayList<>();
+        final List<String> etiquetas = new ArrayList<>();
+
+        for (int i = lista.size() - 1; i >= 0; i--) {
+            MedicionCorporal m = lista.get(i);
+            if (m.getPeso() > 0) {
+                entradas.add(new Entry(entradas.size(), (float) m.getPeso()));
+                etiquetas.add(fechaCorta(m.getFecha()));
+            }
+        }
+
+        if (entradas.size() < 2) {
+            cardGraficaPeso.setVisibility(View.GONE);
+            return;
+        }
+
+        cardGraficaPeso.setVisibility(View.VISIBLE);
+
+        ChartStyler.styleLine(chartPeso, new ValueFormatter() {
+            @Override
+            public String getAxisLabel(float value, AxisBase axis) {
+                int idx = Math.round(value);
+                return (idx >= 0 && idx < etiquetas.size()) ? etiquetas.get(idx) : "";
+            }
+        });
+
+        LineDataSet ds = new LineDataSet(entradas, "peso");
+        ChartStyler.styleLineDataSet(ds, this);
+        chartPeso.setData(new LineData(ds));
+        chartPeso.invalidate();
+    }
+
+    // Convierte una fecha ISO ("yyyy-MM-ddTHH:mm:ss") a etiqueta corta "dd/MM" para el eje X.
+    private String fechaCorta(String iso) {
+        if (iso == null || iso.length() < 10) return "";
+        return iso.substring(8, 10) + "/" + iso.substring(5, 7);
     }
 
     // Oculta el scroll de datos y muestra el mensaje de "sin mediciones".

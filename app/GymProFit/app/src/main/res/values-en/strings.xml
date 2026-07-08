@@ -301,6 +301,7 @@
     <string name="medicion_anadir">Add</string>
     <string name="medicion_guardar">Save</string>
     <string name="medicion_fecha_ultima">Last measurement: %s</string>
+    <string name="medicion_grafica_peso">WEIGHT TREND</string>
     <string name="medicion_sin_datos_subtitulo">Tap + to add your first measurement</string>
     <string name="medicion_label_grasa">Body fat</string>
     <string name="medicion_label_musculo">Muscle mass</string>

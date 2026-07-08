@@ -278,6 +278,7 @@
     <string name="medicion_anadir">Añadir</string>
     <string name="medicion_guardar">Guardar</string>
     <string name="medicion_fecha_ultima">Última medición: %s</string>
+    <string name="medicion_grafica_peso">EVOLUCIÓN DEL PESO</string>
     <string name="medicion_sin_datos_subtitulo">Pulsa + para añadir tu primera medición</string>
     <string name="medicion_label_grasa">Grasa corporal</string>
     <string name="medicion_label_musculo">Masa muscular</string>

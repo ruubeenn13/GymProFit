@@ -79,6 +79,8 @@ dependencies {
     implementation libs.security.crypto
     // Carga de imágenes remotas (catálogo de ejercicios wger, futuras fotos)
     implementation libs.glide
+    // Gráficas (peso corporal, kcal/macros, progresión por ejercicio)
+    implementation libs.mpandroidchart
     // Red: Retrofit + OkHttp (motor HTTP, interceptor de token y Authenticator de refresh)
     implementation libs.retrofit.core
     // Converter Gson: deserializa las respuestas JSON a POJOs tipados (etapa 2)
