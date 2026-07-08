@@ -318,6 +318,8 @@
     <string name="nutricion_grafica_kcal">CALORIES PER DAY</string>
     <string name="nutricion_grafica_vacia">No meals logged yet.\nLog some to see your history.</string>
     <string name="nutricion_meta_kcal">Goal</string>
+    <string name="dialogo_nuevo_valor">Enter the new value</string>
+    <string name="dialogo_escribe_nota">Write a note</string>
     <string name="medicion_sin_datos_subtitulo">Tap + to add your first measurement</string>
     <string name="medicion_label_grasa">Body fat</string>
     <string name="medicion_label_musculo">Muscle mass</string>

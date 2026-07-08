@@ -270,7 +270,7 @@ public class ComidaActivity extends BaseActivity {
             }
         });
 
-        new AlertDialog.Builder(this)
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
                 .setTitle(getString(R.string.comida_editar_cantidad))
                 .setView(dialogView)
                 .setPositiveButton(getString(R.string.dialog_confirmar), (d, w) -> {

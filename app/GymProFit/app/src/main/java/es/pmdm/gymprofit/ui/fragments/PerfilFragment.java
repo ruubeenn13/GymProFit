@@ -200,7 +200,7 @@ public class PerfilFragment extends BaseFragment {
             getString(R.string.perfil_foto_galeria),
             getString(R.string.perfil_foto_camara)
         };
-        new AlertDialog.Builder(requireContext())
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.perfil_cambiar_foto)
                 .setItems(opciones, (d, which) -> {
                     if (which == 0) galleryLauncher.launch("image/*");

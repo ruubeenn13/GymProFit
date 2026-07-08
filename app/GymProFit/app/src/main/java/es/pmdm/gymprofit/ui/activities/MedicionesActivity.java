@@ -407,11 +407,13 @@ public class MedicionesActivity extends AppCompatActivity {
     }
 
     // Diálogo estilizado (InputDialog) para editar un campo numérico y guardarlo.
+    // Título = nombre del campo; label del campo = instrucción (no se duplica el nombre);
+    // la unidad va como sufijo dentro del input.
     private void editarCampoNumerico(String campo, String label, double valorActual) {
         if (ultimaMedicion == null) return;
 
         String inicial = valorActual > 0 ? String.format(Locale.getDefault(), "%.2f", valorActual) : null;
-        InputDialog.numerico(this, label, label, inicial, null, valor -> {
+        InputDialog.numerico(this, label, getString(R.string.dialogo_nuevo_valor), inicial, unidadDe(campo), valor -> {
             if (valor.isEmpty()) {
                 if ("peso".equals(campo)) {
                     UIHelper.mostrarToastError(this, getString(R.string.error_campo_requerido));
@@ -426,7 +428,18 @@ public class MedicionesActivity extends AppCompatActivity {
     private void editarCampoTexto(String campo, String label, String valorActual) {
         if (ultimaMedicion == null) return;
 
-        InputDialog.texto(this, label, label, valorActual, valor -> patchCampo(campo, valor, true));
+        InputDialog.texto(this, label, getString(R.string.dialogo_escribe_nota), valorActual,
+                valor -> patchCampo(campo, valor, true));
+    }
+
+    // Unidad del campo de medición (para el sufijo del input).
+    private String unidadDe(String campo) {
+        switch (campo) {
+            case "grasaCorporal": return "%";
+            case "peso":
+            case "masaMuscular": return "kg";
+            default:              return "cm";   // cintura, pecho, brazos, piernas
+        }
     }
 
     // Construye el JSON con el campo modificado y lo envía como PATCH parcial

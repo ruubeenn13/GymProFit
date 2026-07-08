@@ -295,6 +295,8 @@
     <string name="nutricion_grafica_kcal">CALORÍAS POR DÍA</string>
     <string name="nutricion_grafica_vacia">Aún no has registrado comidas.\nRegistra alguna para ver el historial.</string>
     <string name="nutricion_meta_kcal">Meta</string>
+    <string name="dialogo_nuevo_valor">Introduce el nuevo valor</string>
+    <string name="dialogo_escribe_nota">Escribe una nota</string>
     <string name="medicion_sin_datos_subtitulo">Pulsa + para añadir tu primera medición</string>
     <string name="medicion_label_grasa">Grasa corporal</string>
     <string name="medicion_label_musculo">Masa muscular</string>

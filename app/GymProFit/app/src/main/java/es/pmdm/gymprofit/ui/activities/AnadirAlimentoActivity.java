@@ -391,7 +391,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
             }
         });
 
-        new AlertDialog.Builder(this)
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
                 .setView(dialogView)
                 .setPositiveButton(getString(R.string.btn_anadir), (dialog, which) -> {
                     String raw = etGramos.getText().toString().trim();
