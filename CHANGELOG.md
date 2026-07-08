@@ -129,7 +129,7 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
-| *(pendiente)* | feat(android): Onboarding5Activity para nivel de experiencia, fix persistencia onboarding, fix PUT→PATCH en OnboardingResumen, EXPERTO en spinner EditarPerfil |
+| `857b81e` | feat(android): Onboarding5Activity para nivel de experiencia, fix persistencia onboarding, fix PUT→PATCH en OnboardingResumen, EXPERTO en spinner EditarPerfil |
 
 ### 2026-05-26
 
@@ -162,9 +162,9 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
-| *(pendiente)* | feat: notificaciones (4 canales), cálculo automático calorías sesión, fix logros duplicados, ic_delete, btnGuardar fijo al fondo |
-| *(pendiente)* | feat(android): ResumenSesionActivity; fix logros: evaluarLogros retorna nuevos logros; RatingBar valoración; calorías calculadas desde ejercicios |
-| *(pendiente)* | fix: fecha_fin NOT NULL en SesionEntrenamientoService; completada leída del DTO; evaluarLogros en save() |
+| `6ca53c3` | feat: notificaciones (4 canales), cálculo automático calorías sesión, fix logros duplicados, ic_delete, btnGuardar fijo al fondo |
+| `6ca53c3` | feat(android): ResumenSesionActivity; fix logros: evaluarLogros retorna nuevos logros; RatingBar valoración; calorías calculadas desde ejercicios |
+| `6ca53c3` | fix: fecha_fin NOT NULL en SesionEntrenamientoService; completada leída del DTO; evaluarLogros en save() |
 
 ### 2026-05-21
 
