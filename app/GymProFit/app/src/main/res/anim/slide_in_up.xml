@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Presentación MODAL: la pantalla entra deslizando DESDE ABAJO + fundido.
+     Para tareas de crear/registrar (señala "temporal", como un modal de iOS). -->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:interpolator/decelerate_quad">
+    <translate
+        android:fromYDelta="100%p"
+        android:toYDelta="0"
+        android:duration="200" />
+    <alpha
+        android:fromAlpha="0.7"
+        android:toAlpha="1.0"
+        android:duration="200" />
+</set>

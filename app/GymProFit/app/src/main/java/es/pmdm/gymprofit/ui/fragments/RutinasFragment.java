@@ -13,11 +13,13 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.ConcatAdapter;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.ChipGroup;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import es.pmdm.gymprofit.ui.adapters.NuevaRutinaHeaderAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +47,6 @@ public class RutinasFragment extends BaseFragment {
     private RecyclerView rvRutinas;
     private RutinaAdapter adapter;
     private ChipGroup chipGroupNivel;
-    private FloatingActionButton fabCrearRutina;
     private TextView tvEmpty;
 
     private final RutinaApi rutinaApi = ApiClient.service(RutinaApi.class);
@@ -82,14 +83,12 @@ public class RutinasFragment extends BaseFragment {
         inicializarVistas();
         configurarRecyclerView();
         configurarChips();
-        configurarFab();
         cargarRutinas();
     }
 
     private void inicializarVistas() {
         rvRutinas = findViewById(R.id.rvRutinas);
         chipGroupNivel = findViewById(R.id.chipGroupNivel);
-        fabCrearRutina = findViewById(R.id.fabCrearRutina);
         tvEmpty = findViewById(R.id.tvEmpty);
     }
 
@@ -98,7 +97,18 @@ public class RutinasFragment extends BaseFragment {
         adapter.setOnLongClickListener(this::mostrarMenuContextual);
         adapter.setUserContext(prefsManager.isAdmin(), prefsManager.getUsuarioId());
         rvRutinas.setLayoutManager(new LinearLayoutManager(requireContext()));
-        rvRutinas.setAdapter(adapter);
+        // La tarjeta "+ Nueva rutina" va como primer elemento (header) del listado,
+        // concatenada antes del adapter de rutinas. Sustituye al antiguo FAB (que ahora
+        // quedaría oculto tras la barra de navegación flotante).
+        NuevaRutinaHeaderAdapter header = new NuevaRutinaHeaderAdapter(this::crearRutina);
+        rvRutinas.setAdapter(new ConcatAdapter(header, adapter));
+    }
+
+    // Abre la creación de una nueva rutina (requiere usuario registrado). Lo dispara la
+    // tarjeta "+ Nueva rutina" que encabeza la lista.
+    private void crearRutina() {
+        if (!verificarAccesoRegistrado()) return;
+        crearRutinaLauncher.launch(new Intent(requireContext(), CrearRutinaActivity.class));
     }
 
     // Abre la pantalla de detalle de una rutina pasando sus datos por extras.
@@ -164,11 +174,11 @@ public class RutinasFragment extends BaseFragment {
         });
     }
 
-    // Muestra u oculta el mensaje "no hay nada aún" según los ítems del adapter.
+    // La tarjeta "+ Nueva rutina" (header del ConcatAdapter) hace de CTA/estado vacío,
+    // así que la lista siempre se muestra: no se oculta el RecyclerView ni se usa tvEmpty.
     private void actualizarEstadoVacio() {
-        boolean vacio = adapter.getItemCount() == 0;
-        tvEmpty.setVisibility(vacio ? View.VISIBLE : View.GONE);
-        rvRutinas.setVisibility(vacio ? View.GONE : View.VISIBLE);
+        tvEmpty.setVisibility(View.GONE);
+        rvRutinas.setVisibility(View.VISIBLE);
     }
 
     // Menú contextual por rutina (editar, activar/desactivar o eliminar).
@@ -274,13 +284,5 @@ public class RutinasFragment extends BaseFragment {
             adapter.filtrarPorNivel(nivel);
             actualizarEstadoVacio();
         }));
-    }
-
-    // Configura el FAB para crear una nueva rutina (requiere usuario registrado).
-    private void configurarFab() {
-        fabCrearRutina.setOnClickListener(v -> {
-            if (!verificarAccesoRegistrado()) return;
-            crearRutinaLauncher.launch(new Intent(requireContext(), CrearRutinaActivity.class));
-        });
     }
 }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Salida al ABRIR: la pantalla previa retrocede un poco a la izquierda (parallax). -->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:interpolator/decelerate_quad">
+    <translate
+        android:fromXDelta="0"
+        android:toXDelta="-25%p"
+        android:duration="170" />
+    <alpha
+        android:fromAlpha="1.0"
+        android:toAlpha="0.7"
+        android:duration="170" />
+</set>

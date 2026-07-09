@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   activity_main — Contenedor de la navegación principal por pestañas.
-  ViewPager2 (5 Fragments: Home/Rutinas/Ejercicios/Nutrición/Perfil) que ocupa
-  todo el alto disponible + FloatingNavBar FIJA abajo. La barra no se recrea al
-  cambiar de pestaña, por lo que su burbuja "viaja" de forma continua siguiendo
-  el scroll del pager. Permite además deslizar (swipe) entre pestañas.
+  El ViewPager2 (5 Fragments) ocupa TODA la pantalla y la FloatingNavBar flota
+  ENCIMA, anclada abajo (liquid glass: el contenido scrollea por debajo y se ve
+  difuminado a través del cristal). La barra no se recrea al cambiar de pestaña,
+  por lo que su burbuja "viaja" siguiendo el scroll del pager; además permite
+  deslizar (swipe) entre pestañas. Los fragments reservan padding inferior
+  (BaseFragment) para que su contenido no quede tapado por la barra.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="?attr/android:colorBackground">
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/pager"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="match_parent" />
 
-    <!-- Barra de navegación flotante (burbuja liquid-glass con arrastre) -->
+    <!-- Barra de navegación flotante (liquid glass con backdrop blur + burbuja) -->
     <es.pmdm.gymprofit.ui.widget.FloatingNavBar
         android:id="@+id/floatingNav"
         android:layout_width="match_parent"
-        android:layout_height="76dp"
+        android:layout_height="72dp"
+        android:layout_gravity="bottom"
         android:layout_marginStart="14dp"
         android:layout_marginEnd="14dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="12dp" />
+        android:layout_marginBottom="14dp" />
 
-</LinearLayout>
+</FrameLayout>

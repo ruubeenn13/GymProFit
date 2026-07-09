@@ -58,6 +58,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         prefsManager = new PreferencesManager(this);
         prefsManager.applyTheme();
         // El idioma lo aplica AndroidX (AppCompatDelegate) globalmente; ver GymProFitApp.
+        // La transición de deslizamiento la registra GymProFitApp para TODAS las Activities.
         super.onCreate(savedInstanceState);
 
         UtilREST.setOnUnauthorizedListener(() -> {

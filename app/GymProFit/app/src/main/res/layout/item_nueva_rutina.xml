@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_nueva_rutina — Tarjeta "+ Nueva rutina" que encabeza la lista de rutinas
+  (primer elemento del ConcatAdapter). Borde punteado en color de marca, icono "+"
+  y texto centrados. Al pulsar abre la creación de rutina.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:minHeight="62dp"
+    android:paddingVertical="16dp"
+    android:background="@drawable/bg_nueva_rutina"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground">
+
+    <ImageView
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:src="@drawable/ic_add"
+        android:tint="?attr/colorPrimary"
+        android:contentDescription="@null" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="@string/rutinas_crear_nueva"
+        android:textColor="?attr/colorPrimary"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:letterSpacing="0.01" />
+
+</LinearLayout>

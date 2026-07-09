@@ -29,6 +29,9 @@ import es.pmdm.gymprofit.utils.NavTabs;
 // ============================================================
 public class MainActivity extends BaseActivity {
 
+    // Clave para recordar la pestaña activa al recrearse la Activity (cambio de tema/idioma).
+    private static final String KEY_TAB = "gpf_tab_activa";
+
     private ViewPager2 pager;
     private FloatingNavBar nav;
     // true mientras el usuario ARRASTRA el contenido (swipe manual). Solo entonces la
@@ -52,10 +55,14 @@ public class MainActivity extends BaseActivity {
         // recarga sus datos en onResume al volverse visible.
         pager.setOffscreenPageLimit(4);
 
-        // Barra → pager: al pulsar un destino se cambia de pantalla al INSTANTE (sin
-        // animación de VP2 → sin salto interno ni flash de la pantalla intermedia). El
-        // viaje de la burbuja lo conduce la propia FloatingNavBar (setActiveFrom).
-        nav.setOnTabSelectedListener(index -> pager.setCurrentItem(index, false));
+        // Transición shared-axis entre pestañas: al deslizar/cambiar, las páginas se
+        // atenúan un poco mientras se desplazan (fade + slide), no un corte seco.
+        pager.setPageTransformer((page, pos) ->
+                page.setAlpha(1f - Math.min(1f, Math.abs(pos) * 0.5f)));
+
+        // Barra → pager: al pulsar un destino la página cambia CON animación. El viaje
+        // de la píldora lo conduce la propia FloatingNavBar (setActiveFrom en el tap).
+        nav.setOnTabSelectedListener(this::animarPager);
 
         // Pager → barra: SOLO en el swipe manual la burbuja sigue el scroll (viaje
         // continuo) y se asienta en la pestaña destino cuando el desplazamiento reposa.
@@ -75,21 +82,45 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        // Pestaña inicial (por defecto Home). Sin animación en el arranque.
-        int tab = getIntent().getIntExtra(NavTabs.EXTRA_TAB, NavTabs.HOME);
+        // Pestaña inicial: si venimos de un recreate (p.ej. cambio de tema) se restaura
+        // la que estaba activa; si no, la del intent (por defecto Home). Sin animación.
+        int tabPorDefecto = getIntent().getIntExtra(NavTabs.EXTRA_TAB, NavTabs.HOME);
+        int tab = savedInstanceState != null
+                ? savedInstanceState.getInt(KEY_TAB, tabPorDefecto) : tabPorDefecto;
         pager.setCurrentItem(tab, false);
         nav.setActiveIndex(tab);
 
         pedirPermisoNotificaciones();
     }
 
-    // Cambia de pestaña programáticamente (Home, notificaciones): swap instantáneo de
-    // pantalla + viaje suave de la burbuja desde la pestaña actual hasta el destino.
+    // Recuerda la pestaña activa para restaurarla tras un recreate (cambio de tema/idioma).
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (pager != null) outState.putInt(KEY_TAB, pager.getCurrentItem());
+    }
+
+    // Cambia de pestaña programáticamente (Home, notificaciones): página ANIMADA +
+    // viaje suave de la píldora desde la pestaña actual hasta el destino.
     public void irATab(int index) {
         if (pager == null) return;
         int from = pager.getCurrentItem();
-        pager.setCurrentItem(index, false);
+        animarPager(index);
         nav.setActiveFrom(from, index);
+    }
+
+    // Anima el cambio de página del pager. En saltos largos (>1 pestaña) se salta al
+    // instante hasta el vecino del destino y solo se anima el ÚLTIMO tramo: así hay
+    // deslizamiento visible sin recorrer (ni parpadear) todas las páginas intermedias.
+    private void animarPager(int index) {
+        if (pager == null || index == pager.getCurrentItem()) return;
+        int cur = pager.getCurrentItem();
+        if (Math.abs(index - cur) > 1) {
+            pager.setCurrentItem(index > cur ? index - 1 : index + 1, false);
+            pager.post(() -> pager.setCurrentItem(index, true));
+        } else {
+            pager.setCurrentItem(index, true);
+        }
     }
 
     // Solicita el permiso de notificaciones (Android 13+) una sola vez al entrar.

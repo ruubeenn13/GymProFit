@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fondo de la tarjeta "+ Nueva rutina": relleno transparente y borde PUNTEADO en el
+     color de marca (invita a crear sin competir visualmente con las rutinas reales). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@android:color/transparent" />
+    <corners android:radius="18dp" />
+    <stroke
+        android:width="1.5dp"
+        android:color="?attr/colorPrimary"
+        android:dashWidth="8dp"
+        android:dashGap="5dp" />
+</shape>

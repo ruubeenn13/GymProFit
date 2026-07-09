@@ -59,6 +59,11 @@ Aplicación Android nativa desarrollada en Java con Android Studio. Consume la A
 
 ### Flujo de navegación
 
+La navegación principal es **`MainActivity` + `ViewPager2` + 5 Fragments** con una
+**`FloatingNavBar` fija** (barra "liquid glass" estilo iOS: cápsula translúcida +
+burbuja de cristal que refracta y magnifica el destino activo). Las pantallas de
+detalle/formulario siguen siendo Activities sueltas lanzadas con `startActivity`.
+
 ```
 SplashActivity
      ↓
@@ -66,13 +71,14 @@ LoginActivity ←→ RegistroActivity
      ↓ (primer acceso)
 Onboarding (1 → 2 → 3 → 4 → 5 → Resumen)
      ↓
-HomeActivity (navegación inferior)
-  ├── EjerciciosActivity → DetalleEjercicioActivity (vídeo + instrucciones)
-  ├── RutinasActivity
-  │     ├── CrearRutinaActivity → AnadirEjerciciosActivity → ResumenCrearRutinaActivity
-  │     └── DetalleRutinaActivity → EditarRutinaActivity
-  ├── NutricionActivity → ComidaActivity → AnadirAlimentoActivity / CrearAlimentoActivity
-  └── PerfilActivity → EditarPerfilActivity
+MainActivity — ViewPager2 (5 Fragments) + FloatingNavBar liquid glass fija
+  ├── HomeFragment
+  ├── RutinasFragment → tarjeta "+ Crear rutina" → CrearRutinaActivity → AnadirEjerciciosActivity → ResumenCrearRutinaActivity
+  │        └── DetalleRutinaActivity → EditarRutinaActivity
+  ├── EjerciciosFragment → DetalleEjercicioActivity (demo animada + instrucciones)
+  ├── NutricionFragment → ComidaActivity → AnadirAlimentoActivity / CrearAlimentoActivity
+  │        └── EstadisticasNutricionActivity
+  └── PerfilFragment → EditarPerfilActivity
         ├── SesionesActivity → RegistrarSesionActivity → ResumenSesionActivity
         ├── MedicionesActivity → RegistrarMedicionActivity
         ├── LogrosActivity
@@ -83,6 +89,12 @@ HomeActivity (navegación inferior)
               ├── AdminEjerciciosActivity
               └── AdminAlimentosActivity
 ```
+
+**Transiciones entre pantallas** (registradas globalmente en `GymProFitApp` vía
+`AnimUtils` / `overrideActivityTransition`): **push** lateral para detalle/editar,
+**modal** desde abajo para crear/registrar (`CrearRutina`, `RegistrarSesion`,
+`RegistrarMedicion`, `AnadirEjercicios`) y **shared-axis** (slide + fade) al cambiar
+de pestaña. La pestaña activa se conserva al recrearse la Activity (cambio de tema/idioma).
 
 ---
 

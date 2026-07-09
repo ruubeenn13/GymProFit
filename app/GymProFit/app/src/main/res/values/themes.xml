@@ -30,6 +30,9 @@
         <item name="android:navigationBarColor">@color/gp_background</item>
         <item name="android:windowLightStatusBar">true</item>
 
+        <!-- Transición entre pantallas (deslizamiento lateral, ambos modos) -->
+        <item name="android:windowAnimationStyle">@style/GymProFit.WindowAnimation</item>
+
         <!-- Estilos globales de widget (el rediseño entero cuelga de aquí) -->
         <item name="materialCardViewStyle">@style/Widget.GymProFit.Card</item>
         <item name="materialButtonStyle">@style/Widget.GymProFit.Button</item>
@@ -290,5 +293,14 @@
         <item name="android:dropDownWidth">260dp</item>
         <item name="android:popupElevation">12dp</item>
         <item name="android:popupBackground">@drawable/bg_popup_menu</item>
+    </style>
+
+    <!-- Transición ENTRE PANTALLAS (Activities): deslizamiento lateral con parallax.
+         Colgado del tema (DayNight) → mismo comportamiento en modo claro y oscuro. -->
+    <style name="GymProFit.WindowAnimation" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>
+        <item name="android:activityOpenExitAnimation">@anim/slide_out_left</item>
+        <item name="android:activityCloseEnterAnimation">@anim/slide_in_left</item>
+        <item name="android:activityCloseExitAnimation">@anim/slide_out_right</item>
     </style>
 </resources>
