@@ -74,7 +74,7 @@ dependencies {
     implementation libs.constraintlayout
     // Navegación principal por pestañas: 1 Activity + ViewPager2 + Fragments
     implementation 'androidx.viewpager2:viewpager2:1.1.0'
-    implementation 'androidx.fragment:fragment:1.8.5'
+    implementation 'androidx.fragment:fragment:1.8.9'
     // Cifrado del token/refresh en almacenamiento (EncryptedSharedPreferences)
     implementation libs.security.crypto
     // Carga de imágenes remotas (catálogo de ejercicios wger, futuras fotos)
