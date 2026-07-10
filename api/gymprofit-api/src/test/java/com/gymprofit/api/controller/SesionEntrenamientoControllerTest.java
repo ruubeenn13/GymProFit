@@ -71,12 +71,12 @@ class SesionEntrenamientoControllerTest {
         verify(sesionService).findAll();
     }
 
-    // Comprueba que listar sesiones sin autenticación devuelve un error 5xx
+    // Comprueba que listar sesiones sin autenticación devuelve 401
     @Test
-    @DisplayName("GET /sesiones sin autenticación devuelve error")
-    void findAll_sin_autenticacion_devuelve_error() throws Exception {
+    @DisplayName("GET /sesiones sin autenticación devuelve 401")
+    void findAll_sin_autenticacion_devuelve_401() throws Exception {
         mockMvc.perform(get("/sesiones"))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isUnauthorized());
     }
 
     // Comprueba que un USER puede consultar una sesión existente por id

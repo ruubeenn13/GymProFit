@@ -106,6 +106,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth ->
                         auth.dispatcherTypeMatchers(FORWARD, ERROR).permitAll()
 
+                                // Cambio de contraseña: requiere estar autenticado (va ANTES del permitAll de /auth/**,
+                                // gana el primer match). El resto de /auth/** (login/register/guest/refresh/logout) es público.
+                                .requestMatchers(HttpMethod.POST, "/auth/change-password").authenticated()
+
                                 // Endpoints públicos de autenticación
                                 // Sin /api/ porque Spring Security evalúa sin el context-path
                                 .requestMatchers("/auth/**").permitAll()

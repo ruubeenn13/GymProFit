@@ -71,4 +71,11 @@ public class RefreshTokenService {
             refreshTokenRepository.save(rt);
         });
     }
+
+    // Revoca de golpe todos los refresh tokens activos del usuario. Se usa al cambiar
+    // la contraseña para invalidar cualquier sesión abierta y forzar un nuevo login.
+    @Transactional
+    public void revocarTodosDeUsuario(Usuario usuario) {
+        refreshTokenRepository.revocarTodosDeUsuario(usuario.getId());
+    }
 }

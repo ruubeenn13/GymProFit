@@ -1,5 +1,6 @@
 package com.gymprofit.api.controller;
 
+import com.gymprofit.api.dto.auth.ChangePasswordDTO;
 import com.gymprofit.api.dto.auth.LoginDTO;
 import com.gymprofit.api.dto.auth.RefreshRequestDTO;
 import com.gymprofit.api.dto.auth.RegisterDTO;
@@ -16,6 +17,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -94,6 +96,28 @@ public class AuthController {
 
         Map<String, Object> respuesta = new HashMap<>();
         respuesta.put("mensaje", "Sesión cerrada correctamente");
+
+        return ResponseEntity.ok(respuesta);
+    }
+
+    @Operation(summary = "Cambia la contraseña del usuario autenticado",
+            description = "Requiere estar autenticado (Bearer). Verifica la contraseña actual, guarda la " +
+                    "nueva y revoca todas las sesiones abiertas del usuario, que deberá volver a iniciar sesión.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Contraseña cambiada correctamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos (nueva igual a la actual, formato)",
+                    content = @Content(schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "401", description = "No autenticado o contraseña actual incorrecta",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @PostMapping("/change-password")
+    public ResponseEntity<Map<String, Object>> changePassword(@Valid @RequestBody ChangePasswordDTO changePasswordDTO,
+                                                              Authentication authentication) {
+        // El username se toma del token autenticado, nunca del cuerpo: un usuario solo cambia SU propia contraseña.
+        authService.changePassword(authentication.getName(), changePasswordDTO);
+
+        Map<String, Object> respuesta = new HashMap<>();
+        respuesta.put("mensaje", "Contraseña cambiada correctamente");
 
         return ResponseEntity.ok(respuesta);
     }

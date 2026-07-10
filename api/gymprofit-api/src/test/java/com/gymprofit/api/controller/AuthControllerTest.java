@@ -1,10 +1,13 @@
 package com.gymprofit.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gymprofit.api.dto.auth.ChangePasswordDTO;
 import com.gymprofit.api.dto.auth.LoginDTO;
 import com.gymprofit.api.dto.auth.RegisterDTO;
 import com.gymprofit.api.dto.auth.TokenDTO;
 import com.gymprofit.api.exceptions.DuplicateEntityException;
+import com.gymprofit.api.exceptions.InvalidCredentialsException;
+import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.service.auth.IAuthService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -176,5 +180,65 @@ class AuthControllerTest {
         mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
+    }
+
+    // El username se toma del token autenticado (@WithMockUser), nunca del body.
+    @Test
+    @WithMockUser(username = "admin")
+    @DisplayName("POST /auth/change-password autenticado y correcto devuelve 200")
+    void changePassword_correcto_devuelve_200() throws Exception {
+        doNothing().when(authService).changePassword(any(String.class), any(ChangePasswordDTO.class));
+
+        mockMvc.perform(post("/auth/change-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"currentPassword\":\"Admin1234\",\"newPassword\":\"NuevaPass9\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.mensaje").value("Contraseña cambiada correctamente"));
+
+        verify(authService).changePassword(any(String.class), any(ChangePasswordDTO.class));
+    }
+
+    // Sin token la regla authenticated() de SecurityConfig rechaza con 401 (jwtEntryPoint).
+    @Test
+    @DisplayName("POST /auth/change-password sin autenticar devuelve 401")
+    void changePassword_sin_token_devuelve_401() throws Exception {
+        mockMvc.perform(post("/auth/change-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"currentPassword\":\"Admin1234\",\"newPassword\":\"NuevaPass9\"}"))
+                .andExpect(status().isUnauthorized());
+
+        verify(authService, never()).changePassword(any(String.class), any(ChangePasswordDTO.class));
+    }
+
+    // Contraseña actual incorrecta: el service lanza InvalidCredentialsException → 401.
+    @Test
+    @WithMockUser(username = "admin")
+    @DisplayName("POST /auth/change-password con contraseña actual incorrecta devuelve 401")
+    void changePassword_actual_incorrecta_devuelve_401() throws Exception {
+        doThrow(new InvalidCredentialsException("La contraseña actual no es correcta"))
+                .when(authService).changePassword(any(String.class), any(ChangePasswordDTO.class));
+
+        mockMvc.perform(post("/auth/change-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"currentPassword\":\"malmal1\",\"newPassword\":\"NuevaPass9\"}"))
+                .andExpect(status().isUnauthorized());
+
+        verify(authService).changePassword(any(String.class), any(ChangePasswordDTO.class));
+    }
+
+    // Nueva contraseña igual a la actual: el service lanza InvalidDataException → 400.
+    @Test
+    @WithMockUser(username = "admin")
+    @DisplayName("POST /auth/change-password con nueva igual a la actual devuelve 400")
+    void changePassword_nueva_igual_actual_devuelve_400() throws Exception {
+        doThrow(new InvalidDataException("La nueva contraseña debe ser distinta de la actual"))
+                .when(authService).changePassword(any(String.class), any(ChangePasswordDTO.class));
+
+        mockMvc.perform(post("/auth/change-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"currentPassword\":\"Admin1234\",\"newPassword\":\"Admin1234\"}"))
+                .andExpect(status().isBadRequest());
+
+        verify(authService).changePassword(any(String.class), any(ChangePasswordDTO.class));
     }
 }

@@ -111,14 +111,14 @@ class ObjetivoPersonalControllerTest {
         verify(objetivoService).save(any(ObjetivoPersonalCreateDTO.class));
     }
 
-    // Comprueba que crear un objetivo sin autenticación devuelve un error 5xx
+    // Comprueba que crear un objetivo sin autenticación devuelve 401
     @Test
-    @DisplayName("POST /objetivos-personales sin autenticación devuelve error")
-    void save_sin_autenticacion_devuelve_error() throws Exception {
+    @DisplayName("POST /objetivos-personales sin autenticación devuelve 401")
+    void save_sin_autenticacion_devuelve_401() throws Exception {
         mockMvc.perform(post("/objetivos-personales")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createDTO)))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isUnauthorized());
     }
 
     // Comprueba que un USER puede eliminar un objetivo personal existente

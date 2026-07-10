@@ -1,5 +1,6 @@
 package com.gymprofit.api.service.auth;
 
+import com.gymprofit.api.dto.auth.ChangePasswordDTO;
 import com.gymprofit.api.dto.auth.LoginDTO;
 import com.gymprofit.api.dto.auth.RegisterDTO;
 import com.gymprofit.api.dto.auth.TokenDTO;
@@ -25,4 +26,8 @@ public interface IAuthService {
 
     // Cierra sesión revocando el refresh token indicado.
     void logout(String refreshTokenValue);
+
+    // Cambia la contraseña del usuario autenticado: verifica la actual, guarda la
+    // nueva (hasheada) y revoca todas sus sesiones (refresh tokens) para forzar re-login.
+    void changePassword(String username, ChangePasswordDTO changePasswordDTO);
 }

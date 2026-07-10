@@ -79,12 +79,12 @@ class EjercicioControllerTest {
         verify(ejercicioService).findAll();
     }
 
-    // Sin autenticación el endpoint no debe ser accesible.
+    // Sin autenticación el endpoint no debe ser accesible (401).
     @Test
-    @DisplayName("GET /api/ejercicios sin autenticación devuelve 500")
-    void findAll_sin_autenticacion_devuelve_500() throws Exception {
+    @DisplayName("GET /api/ejercicios sin autenticación devuelve 401")
+    void findAll_sin_autenticacion_devuelve_401() throws Exception {
         mockMvc.perform(get("/ejercicios"))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isUnauthorized());
     }
 
     // Un USER puede consultar el detalle de un ejercicio existente.

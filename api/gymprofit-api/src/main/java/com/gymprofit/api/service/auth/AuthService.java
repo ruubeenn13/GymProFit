@@ -1,6 +1,7 @@
 package com.gymprofit.api.service.auth;
 
 import com.gymprofit.api.config.security.JwtTokenProvider;
+import com.gymprofit.api.dto.auth.ChangePasswordDTO;
 import com.gymprofit.api.dto.auth.LoginDTO;
 import com.gymprofit.api.dto.auth.RegisterDTO;
 import com.gymprofit.api.dto.auth.TokenDTO;
@@ -9,6 +10,7 @@ import com.gymprofit.api.entity.Role;
 import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.enums.NivelExperiencia;
 import com.gymprofit.api.exceptions.DuplicateEntityException;
+import com.gymprofit.api.exceptions.InvalidCredentialsException;
 import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.repository.jpa.IRoleRepository;
@@ -180,5 +182,33 @@ public class AuthService implements IAuthService {
     public void logout(String refreshTokenValue) {
         refreshTokenService.revocarPorToken(refreshTokenValue);
         logger.info("Sesión cerrada: refresh token revocado");
+    }
+
+    // Cambia la contraseña del usuario autenticado. Verifica que la contraseña actual
+    // coincide con el hash almacenado (401 si no), impide reutilizar la misma (400),
+    // guarda la nueva hasheada y revoca todas las sesiones abiertas para forzar re-login.
+    @Transactional
+    @Override
+    public void changePassword(String username, ChangePasswordDTO changePasswordDTO) {
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundEntityException("Usuario no encontrado"));
+
+        // La contraseña actual debe coincidir con la almacenada; si no, 401 (no autorizado a cambiarla).
+        if (!passwordEncoder.matches(changePasswordDTO.getCurrentPassword(), usuario.getPassword())) {
+            throw new InvalidCredentialsException("La contraseña actual no es correcta");
+        }
+
+        // La nueva no puede ser igual a la actual (obliga a un cambio real).
+        if (passwordEncoder.matches(changePasswordDTO.getNewPassword(), usuario.getPassword())) {
+            throw new InvalidDataException("La nueva contraseña debe ser distinta de la actual");
+        }
+
+        usuario.setPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
+        usuarioRepository.save(usuario);
+
+        // Invalida cualquier sesión abierta: tras cambiar la contraseña hay que volver a iniciar sesión.
+        refreshTokenService.revocarTodosDeUsuario(usuario);
+
+        logger.info("Contraseña cambiada para usuario: {}", username);
     }
 }

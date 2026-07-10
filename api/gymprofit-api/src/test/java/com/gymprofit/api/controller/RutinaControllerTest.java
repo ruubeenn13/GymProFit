@@ -77,12 +77,12 @@ class RutinaControllerTest {
         verify(rutinaService).findAll();
     }
 
-    // Comprueba que listar rutinas sin autenticación devuelve error 500
+    // Comprueba que listar rutinas sin autenticación devuelve 401
     @Test
-    @DisplayName("GET /api/rutinas sin autenticación devuelve 500")
-    void findAll_sin_autenticacion_devuelve_500() throws Exception {
+    @DisplayName("GET /api/rutinas sin autenticación devuelve 401")
+    void findAll_sin_autenticacion_devuelve_401() throws Exception {
         mockMvc.perform(get("/rutinas"))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isUnauthorized());
     }
 
     // Comprueba que un USER puede consultar una rutina existente por id

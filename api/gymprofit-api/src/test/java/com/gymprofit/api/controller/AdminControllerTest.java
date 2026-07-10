@@ -85,12 +85,12 @@ class AdminControllerTest {
         verify(usuarioService, never()).getUsuariosAdmin(any(), any(), any(), anyInt(), anyInt());
     }
 
-    // Sin autenticación no debe poder acceder al endpoint administrativo.
+    // Sin autenticación no debe poder acceder al endpoint administrativo (401).
     @Test
-    @DisplayName("GET /admin/usuarios sin autenticación devuelve error")
-    void getUsuarios_sin_autenticacion_devuelve_error() throws Exception {
+    @DisplayName("GET /admin/usuarios sin autenticación devuelve 401")
+    void getUsuarios_sin_autenticacion_devuelve_401() throws Exception {
         mockMvc.perform(get("/admin/usuarios"))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isUnauthorized());
     }
 
     // Con rol ADMIN, las estadísticas globales deben devolverse correctamente.
