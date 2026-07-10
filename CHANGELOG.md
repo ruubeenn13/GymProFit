@@ -2,6 +2,12 @@
 
 Historial de cambios del proyecto (API Spring Boot + app Android). Ver también el [README](README.md).
 
+### 2026-07-10
+
+| Hash | Descripción |
+|---|---|
+| `c438cb2` | feat(api): **endpoint de cambio de contraseña + fix 401 en peticiones no autenticadas** — (1) **`POST /auth/change-password`** (autenticado, Bearer): verifica la contraseña actual contra el hash (401 si no coincide), impide reutilizar la misma (400), guarda la nueva hasheada (BCrypt) y **revoca TODOS los refresh tokens del usuario** para forzar re-login en todos sus dispositivos. El username se toma del token, nunca del body (un usuario solo cambia SU contraseña). Pensado como **base de los futuros flujos de login** que quiere el usuario (2FA, códigos de 6 dígitos por email para confirmar login/cambio de contraseña). Orden Controller→Service: `ChangePasswordDTO` + `IAuthService/AuthService.changePassword` + `RefreshTokenService.revocarTodosDeUsuario` (reusa `IRefreshTokenRepository.revocarTodosDeUsuario`) + regla `authenticated()` en `SecurityConfig` **antes** del `permitAll` de `/auth/**` (gana el primer match). Sin Flyway (la columna password ya existe). (2) **fix(security)**: `JwtEntryPoint` lanzaba `java.nio.file.AccessDeniedException` (checked, fuera del `DispatcherServlet` → no lo cazaba el `@ControllerAdvice`), así que **cualquier petición SIN header `Authorization` a un endpoint protegido devolvía 500 en vez de 401**. Android nunca lo notó (siempre manda token; token expirado → 401 por otra vía del filtro JWT), pero era incorrecto. Ahora el entrypoint escribe un **401 JSON limpio** (mismo shape `Response`). (3) Tests: 4 nuevos en `AuthControllerTest` (200 OK / 401 sin token / 401 actual incorrecta / 400 nueva=actual) + **5 tests `sin_autenticacion` corregidos de 500 → 401** (codificaban el bug del entrypoint). **Suite 237/237 verde** (`JAVA_HOME`=JBR 21 de Android Studio). Pendiente: cambiar la contraseña del admin de prod (seed `admin`/`Admin1234` accesible en Render) |
+
 ### 2026-07-09
 
 | Hash | Descripción |
