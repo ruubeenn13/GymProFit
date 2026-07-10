@@ -333,23 +333,62 @@ public class UsuarioService implements IUsuarioService {
             throw new InvalidDataException("La foto de perfil supera el tamaño máximo de 5 MB");
         }
 
+        // Se leen los bytes una sola vez para poder inspeccionar la cabecera y persistirla.
+        byte[] datos;
         try {
-            // Upsert por usuario (PK = usuario_id): reutiliza la fila si ya tenía foto.
-            FotoPerfil foto = fotoPerfilRepository.findById(id).orElseGet(FotoPerfil::new);
-            foto.setUsuarioId(id);
-            foto.setDatos(file.getBytes());
-            foto.setContentType(file.getContentType() != null ? file.getContentType() : "image/jpeg");
-            foto.setFechaActualizacion(LocalDateTime.now());
-            fotoPerfilRepository.save(foto);
-
-            // La columna legacy foto_perfil queda como marcador de "tiene foto".
-            usuario.setFotoPerfil(id + ".jpg");
-            usuarioRepository.save(usuario);
+            datos = file.getBytes();
         } catch (IOException e) {
-            throw new RuntimeException("Error al guardar la foto de perfil: " + e.getMessage());
+            throw new RuntimeException("Error al leer la foto de perfil: " + e.getMessage());
         }
 
+        // Validación del contenido REAL por magic bytes: no se confía en el content-type
+        // que envía el cliente (se puede falsear para colar un binario que no es imagen).
+        String tipoReal = detectarTipoImagen(datos);
+        if (tipoReal == null) {
+            throw new InvalidDataException("El archivo no es una imagen válida (se admite JPEG, PNG o WEBP)");
+        }
+
+        // Upsert por usuario (PK = usuario_id): reutiliza la fila si ya tenía foto.
+        FotoPerfil foto = fotoPerfilRepository.findById(id).orElseGet(FotoPerfil::new);
+        foto.setUsuarioId(id);
+        foto.setDatos(datos);
+        foto.setContentType(tipoReal);
+        foto.setFechaActualizacion(LocalDateTime.now());
+        fotoPerfilRepository.save(foto);
+
+        // La columna legacy foto_perfil queda como marcador de "tiene foto".
+        usuario.setFotoPerfil(id + ".jpg");
+        usuarioRepository.save(usuario);
+
         return usuarioMapper.toDTO(usuario);
+    }
+
+    // Detecta el tipo real de una imagen por sus bytes de cabecera (magic numbers),
+    // ignorando lo que declare el cliente. Devuelve el MIME si es una imagen soportada
+    // (JPEG/PNG/WEBP) o null si el binario no es ninguna de ellas.
+    private static String detectarTipoImagen(byte[] d) {
+        if (d == null) {
+            return null;
+        }
+        // JPEG: FF D8 FF
+        if (d.length >= 3
+                && (d[0] & 0xFF) == 0xFF && (d[1] & 0xFF) == 0xD8 && (d[2] & 0xFF) == 0xFF) {
+            return "image/jpeg";
+        }
+        // PNG: 89 50 4E 47 0D 0A 1A 0A
+        if (d.length >= 8
+                && (d[0] & 0xFF) == 0x89 && d[1] == 'P' && d[2] == 'N' && d[3] == 'G'
+                && (d[4] & 0xFF) == 0x0D && (d[5] & 0xFF) == 0x0A
+                && (d[6] & 0xFF) == 0x1A && (d[7] & 0xFF) == 0x0A) {
+            return "image/png";
+        }
+        // WEBP: "RIFF" (0-3) .... "WEBP" (8-11)
+        if (d.length >= 12
+                && d[0] == 'R' && d[1] == 'I' && d[2] == 'F' && d[3] == 'F'
+                && d[8] == 'W' && d[9] == 'E' && d[10] == 'B' && d[11] == 'P') {
+            return "image/webp";
+        }
+        return null;
     }
 
     // Devuelve los bytes de la foto de perfil desde la BD.
