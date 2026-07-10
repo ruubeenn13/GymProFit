@@ -81,7 +81,7 @@ class AuthControllerTest {
 
         registerDTO = new RegisterDTO();
         registerDTO.setUsername("newuser");
-        registerDTO.setPassword("password123");
+        registerDTO.setPassword("Passw0rd!");
         registerDTO.setEmail("newuser@gymprofit.com");
 
         tokenDTO = new TokenDTO("jwt-token-mock", "refresh-token-mock", "admin", List.of("ADMIN"));
@@ -191,7 +191,7 @@ class AuthControllerTest {
 
         mockMvc.perform(post("/auth/change-password")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"currentPassword\":\"Admin1234\",\"newPassword\":\"NuevaPass9\"}"))
+                        .content("{\"currentPassword\":\"Admin1234\",\"newPassword\":\"NewPass9!\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.mensaje").value("Contraseña cambiada correctamente"));
 
@@ -204,7 +204,7 @@ class AuthControllerTest {
     void changePassword_sin_token_devuelve_401() throws Exception {
         mockMvc.perform(post("/auth/change-password")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"currentPassword\":\"Admin1234\",\"newPassword\":\"NuevaPass9\"}"))
+                        .content("{\"currentPassword\":\"Admin1234\",\"newPassword\":\"NewPass9!\"}"))
                 .andExpect(status().isUnauthorized());
 
         verify(authService, never()).changePassword(any(String.class), any(ChangePasswordDTO.class));
@@ -220,7 +220,7 @@ class AuthControllerTest {
 
         mockMvc.perform(post("/auth/change-password")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"currentPassword\":\"malmal1\",\"newPassword\":\"NuevaPass9\"}"))
+                        .content("{\"currentPassword\":\"malmal1\",\"newPassword\":\"NewPass9!\"}"))
                 .andExpect(status().isUnauthorized());
 
         verify(authService).changePassword(any(String.class), any(ChangePasswordDTO.class));
@@ -234,11 +234,41 @@ class AuthControllerTest {
         doThrow(new InvalidDataException("La nueva contraseña debe ser distinta de la actual"))
                 .when(authService).changePassword(any(String.class), any(ChangePasswordDTO.class));
 
+        // Nueva válida (cumple la política) pero IGUAL a la actual: pasa @Valid y llega
+        // al service, que la rechaza con 400. Así se prueba la regla del service, no la del DTO.
         mockMvc.perform(post("/auth/change-password")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"currentPassword\":\"Admin1234\",\"newPassword\":\"Admin1234\"}"))
+                        .content("{\"currentPassword\":\"C4ND3l@421\",\"newPassword\":\"C4ND3l@421\"}"))
                 .andExpect(status().isBadRequest());
 
         verify(authService).changePassword(any(String.class), any(ChangePasswordDTO.class));
+    }
+
+    // Política de contraseña: el registro con una débil (sin símbolo/mayúscula) → 400
+    // por @Valid antes de llegar al service.
+    @Test
+    @DisplayName("POST /auth/register con contraseña débil devuelve 400")
+    void register_password_debil_devuelve_400() throws Exception {
+        registerDTO.setPassword("password123"); // sin mayúscula ni símbolo
+
+        mockMvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(registerDTO)))
+                .andExpect(status().isBadRequest());
+
+        verify(authService, never()).register(any(RegisterDTO.class));
+    }
+
+    // Cambio de contraseña con una nueva débil → 400 por @Valid; el service no se invoca.
+    @Test
+    @WithMockUser(username = "admin")
+    @DisplayName("POST /auth/change-password con nueva débil devuelve 400")
+    void changePassword_nueva_debil_devuelve_400() throws Exception {
+        mockMvc.perform(post("/auth/change-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"currentPassword\":\"Admin1234\",\"newPassword\":\"debil123\"}"))
+                .andExpect(status().isBadRequest());
+
+        verify(authService, never()).changePassword(any(String.class), any(ChangePasswordDTO.class));
     }
 }
