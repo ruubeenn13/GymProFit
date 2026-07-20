@@ -2,6 +2,12 @@
 
 Historial de cambios del proyecto (API Spring Boot + app Android). Ver también el [README](README.md).
 
+### 2026-07-20
+
+| Hash | Descripción |
+|---|---|
+| `843babc` | fix(api): **cambiar el rol de un usuario devolvía 500** — `PATCH /admin/usuarios/{id}/rol` fallaba **siempre** en producción con «Error al actualizar Usuario: {id}». Reproducido en local (perfil dev + MariaDB en Docker) y cazado en el stacktrace: `UnsupportedOperationException` en `ImmutableCollections.clear` ← `CollectionType.replaceElements` — `UsuarioService.cambiarRol` hacía `usuario.setRoles(List.of(role))` y el **merge de Hibernate llama a `clear()`** sobre esa colección para reemplazar sus elementos, pero las de `List.of(...)` son **inmutables**. Fix: lista mutable (`new ArrayList<>(List.of(role))`). El registro no se veía afectado porque `AuthService` ya usaba lista mutable; este era el único `List.of`. **Test de regresión** en `UsuarioServiceTest` (captura el `Usuario` guardado, comprueba el rol y que la colección se puede vaciar); verificado que **falla con el código viejo** y pasa con el arreglo. Comprobado end-to-end contra la API local: PATCH → 200 y el rol cambia en `usuario_roles`. Detectado al intentar dar rol ADMIN a la cuenta de servicio del bot de Discord (`gymprobot`, id 4). ⚠️ **Pendientes relacionados**: (a) `GET /admin/usuarios` devuelve **500 en producción** con cualquier filtro pero **funciona en local** → hace falta el log de Render para diagnosticarlo (los datos de prod tienen algo que el mapeo jOOQ no digiere); (b) `GET /rutinas` exige ADMIN por lógica de negocio (`RutinaService:58`) aunque `SecurityConfig` lo permita a USER, así que un cliente con rol USER recibe 403; (c) **no hay ninguna rutina en la BD de producción** (0 filas, 0 predefinidas) |
+
 ### 2026-07-10
 
 | Hash | Descripción |
