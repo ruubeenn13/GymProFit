@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 // ============================================================
@@ -419,7 +420,10 @@ public class UsuarioService implements IUsuarioService {
                 .orElseThrow(() -> new NotFoundEntityException("Rol " + nuevoRol + " no encontrado en BD"));
 
         try {
-            usuario.setRoles(List.of(role));
+            // Lista MUTABLE a propósito: con List.of(...) el merge de Hibernate revienta con
+            // UnsupportedOperationException, porque CollectionType.replaceElements() llama a
+            // clear() sobre la colección que se le pasa y las de List.of son inmutables.
+            usuario.setRoles(new ArrayList<>(List.of(role)));
             usuarioRepository.save(usuario);
             logger.info("Admin: usuario id={} rol cambiado a {}", id, roleType);
         } catch (Exception e) {

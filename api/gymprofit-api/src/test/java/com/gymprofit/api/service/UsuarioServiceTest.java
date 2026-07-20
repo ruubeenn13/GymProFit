@@ -3,20 +3,25 @@ package com.gymprofit.api.service;
 import com.gymprofit.api.config.security.SecurityUtils;
 import com.gymprofit.api.dto.entity.usuario.UsuarioCreateDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioDTO;
+import com.gymprofit.api.entity.Role;
 import com.gymprofit.api.entity.Usuario;
+import com.gymprofit.api.enums.RoleType;
 import com.gymprofit.api.exceptions.DuplicateEntityException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.mappers.UsuarioMapper;
+import com.gymprofit.api.repository.jpa.IRoleRepository;
 import com.gymprofit.api.repository.jpa.IUsuarioRepository;
 import com.gymprofit.api.service.usuario.UsuarioService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,6 +56,10 @@ class UsuarioServiceTest {
      */
     @Mock
     private IUsuarioRepository usuarioRepository;
+
+    /** @Mock del repositorio de roles: lo usa cambiarRol para resolver el rol destino. */
+    @Mock
+    private IRoleRepository roleRepository;
 
     /**
      * @Mock crea un objeto falso del mapper.
@@ -276,5 +285,28 @@ class UsuarioServiceTest {
         assertEquals(1, result.size());
         // Verificamos que se usó el método correcto del repository
         verify(usuarioRepository).findByActivoTrue();
+    }
+
+    @Test
+    @DisplayName("cambiarRol asigna el rol con una lista MUTABLE (si no, Hibernate revienta)")
+    void cambiarRol_usa_lista_mutable() {
+        // Regresión real: con List.of(role) el endpoint devolvía 500 en producción, porque el
+        // merge de Hibernate llama a clear() sobre la colección y las de List.of son inmutables
+        // (UnsupportedOperationException en CollectionType.replaceElements).
+        Role rolAdmin = new Role();
+        rolAdmin.setNombre(RoleType.ADMIN);
+        usuario.setRoles(new ArrayList<>());
+        when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuario));
+        when(roleRepository.findByNombre(RoleType.ADMIN)).thenReturn(Optional.of(rolAdmin));
+
+        usuarioService.cambiarRol(1, "admin");
+
+        ArgumentCaptor<Usuario> captor = ArgumentCaptor.forClass(Usuario.class);
+        verify(usuarioRepository).save(captor.capture());
+        List<Role> roles = captor.getValue().getRoles();
+        assertEquals(1, roles.size());
+        assertEquals(RoleType.ADMIN, roles.get(0).getNombre());
+        // La comprobación que importa: la colección tiene que poder vaciarse.
+        assertDoesNotThrow(roles::clear);
     }
 }
