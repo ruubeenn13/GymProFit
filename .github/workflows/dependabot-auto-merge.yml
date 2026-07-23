@@ -21,7 +21,7 @@ jobs:
       # Extrae metadatos del PR (tipo de actualización: patch/minor/major).
       - name: Obtener metadatos de Dependabot
         id: meta
-        uses: dependabot/fetch-metadata@v2
+        uses: dependabot/fetch-metadata@v3
 
       # Aprueba el PR automáticamente.
       - name: Aprobar PR
