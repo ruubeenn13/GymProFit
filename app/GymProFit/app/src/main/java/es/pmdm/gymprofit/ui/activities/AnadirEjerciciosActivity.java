@@ -41,6 +41,7 @@ import es.pmdm.gymprofit.utils.PaginacionScrollListener;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import es.pmdm.gymprofit.utils.Numeros;
 
 // ============================================================
 // AnadirEjerciciosActivity — buscador y selector de ejercicios para una rutina
@@ -226,10 +227,17 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
                 .setTitle(ejercicio.getNombre())
                 .setView(dialogView)
                 .setPositiveButton(getString(R.string.dialog_confirmar), (dialog, which) -> {
-                    String serStr = etSeries.getText() != null ? etSeries.getText().toString().trim() : "3";
-                    String repStr = etRepeticiones.getText() != null ? etRepeticiones.getText().toString().trim() : "10";
-                    int series = serStr.isEmpty() ? 3 : Integer.parseInt(serStr);
-                    int reps   = repStr.isEmpty()  ? 10 : Integer.parseInt(repStr);
+                    String serStr = etSeries.getText() != null ? etSeries.getText().toString().trim() : "";
+                    String repStr = etRepeticiones.getText() != null ? etRepeticiones.getText().toString().trim() : "";
+
+                    // Campos numéricos sin límite de longitud: un número largo
+                    // desbordaba int y cerraba la app. Fuera de rango o vacío se
+                    // cae al valor por defecto del diálogo (3 series de 10).
+                    Integer series = Numeros.entero(serStr, 1, 10);
+                    Integer reps   = Numeros.entero(repStr, 1, 50);
+                    if (series == null) series = 3;
+                    if (reps == null)   reps = 10;
+
                     ejerciciosSeleccionados.add(new EjercicioSeleccionado(ejercicio, series, reps));
                     actualizarBoton();
                 })

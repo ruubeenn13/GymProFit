@@ -147,6 +147,39 @@ barata, lo caro era el shader.
 aberración cromática. Ninguna app de referencia (Nike Training Club, Strava,
 Hevy) usa lente ni refracción: todas marcan el activo con **color y peso**.
 
+### Objetivos del onboarding: de 10 a 4
+
+Decidido el 18 de septiembre de 2026. Hoy el onboarding ofrece **10 objetivos** y
+el enum de la API tiene **12**, con ramas de cálculo que se solapan (flexibilidad
+y movilidad comparten rama) y dos opciones que el usuario lee como lo mismo
+("perder peso" y "reducir grasa").
+
+Se quedan **cuatro**, los que de verdad cambian el plan de calorías y macros:
+
+| Se muestra | Explicación (en resultado, no en mecanismo) | Se guarda como |
+|---|---|---|
+| Perder grasa | Comerás algo menos de lo que gastas | `PERDER_PESO` |
+| Ganar músculo | Comerás algo más y con más proteína | `GANAR_MASA_MUSCULAR` |
+| Mantenerme | Las mismas calorías que gastas | `MANTENER_PESO` |
+| Ganar fuerza | Más proteína, con una subida moderada | `MEJORAR_FUERZA` |
+
+"Perder peso" y "Reducir grasa" **se fusionan en "Perder grasa"**, que es lo que
+la gente quiere decir, y se guarda como `PERDER_PESO`.
+
+Se retiran de la app **y de la API**: `MEJORAR_RESISTENCIA`,
+`MEJORAR_FLEXIBILIDAD`, `MEJORAR_VELOCIDAD`, `AUMENTAR_CALORIAS`,
+`MEJORAR_MOVILIDAD`, `REDUCIR_GRASA_CORPORAL`, `COMPLETAR_RETO` y `OTRO`. Exige
+migración Flyway que reasigne los valores antiguos antes de estrechar el enum, y
+limpiar la rama correspondiente de `CalculadoraNutricional` en la app.
+
+**Iconos: línea fina monocroma.** Vectores de trazo (estilo Material Symbols
+outlined), 28 dp, trazo 2 dp, **sin emojis**. El color lo pone el tema por tint:
+`?attr/colorOnSurfaceVariant` en reposo y el naranja de marca en el seleccionado,
+así se leen igual en claro y en oscuro. La tarjeta seleccionada se marca además
+con `android:checkable` y su icono de comprobación, que es lo que hace que el
+lector de pantalla anuncie el estado (hoy la selección solo se distingue por el
+color del borde).
+
 ### Naranja unificado en los dos temas
 
 Hoy `gp_primary` es teal `#0F766E` en claro y naranja `#FF6A00` en oscuro

@@ -71,6 +71,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
+            android:maxLength="5"
                     android:paddingStart="40dp"
                     android:paddingEnd="40dp"
                     android:maxLines="1" />
@@ -96,6 +97,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
+            android:maxLength="5"
                     android:paddingStart="40dp"
                     android:paddingEnd="40dp"
                     android:maxLines="1" />

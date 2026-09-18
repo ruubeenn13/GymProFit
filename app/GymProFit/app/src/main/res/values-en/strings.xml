@@ -603,4 +603,13 @@
     <string name="alimento_desactivar_confirmar">Deactivate this food? It will no longer appear in searches.</string>
     <!-- Distintivo de entorno: solo visible en builds de desarrollo. -->
     <string name="entorno_pruebas_distintivo">TEST · LOCAL</string>
+    <!-- Numeric field validation errors (see utils/Numeros). -->
+    <string name="error_numero_invalido">Enter a valid number</string>
+    <string name="error_duracion_invalida">Enter a duration between 5 and 300 minutes</string>
+    <string name="error_series_invalida">Enter between 1 and 10 sets</string>
+    <string name="error_reps_invalida">Enter between 1 and 50 reps</string>
+    <string name="error_peso_invalido">Enter your weight in kilos, between 30 and 300</string>
+    <string name="error_altura_invalida">Enter your height in centimetres, between 100 and 250</string>
+    <string name="error_altura_en_metros">Did you mean %1$d cm? Enter your height in centimetres</string>
+    <string name="error_medida_invalida">Enter a number between %1$s and %2$s</string>
 </resources>

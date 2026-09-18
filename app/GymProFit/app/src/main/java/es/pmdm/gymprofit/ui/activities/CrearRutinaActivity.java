@@ -12,6 +12,7 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.textfield.TextInputEditText;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.utils.Numeros;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
@@ -77,21 +78,29 @@ public class CrearRutinaActivity extends AppCompatActivity {
         String desc   = etDescripcion.getText().toString().trim();
         String dur    = etDuracion.getText().toString().trim();
 
-        if (nombre.isEmpty()) { error(etNombre); return; }
-        if (desc.isEmpty())   { error(etDescripcion); return; }
-        if (dur.isEmpty())    { error(etDuracion); return; }
+        if (nombre.isEmpty()) { error(etNombre, getString(R.string.error_campo_requerido)); return; }
+        if (desc.isEmpty())   { error(etDescripcion, getString(R.string.error_campo_requerido)); return; }
+
+        // La duración se lee con rango: el campo es numérico y sin límite de
+        // longitud, así que un número largo desbordaba int y cerraba la app.
+        Integer duracion = Numeros.entero(dur, 5, 300);
+        if (duracion == null) {
+            error(etDuracion, getString(R.string.error_duracion_invalida));
+            return;
+        }
 
         Intent intent = new Intent(this, AnadirEjerciciosActivity.class);
         intent.putExtra("nombre", nombre);
         intent.putExtra("descripcion", desc);
         intent.putExtra("nivel", obtenerNivel());
-        intent.putExtra("duracion", Integer.parseInt(dur));
+        intent.putExtra("duracion", duracion);
         anadirLauncher.launch(intent);
     }
 
-    // Muestra un toast de error y pone el foco en el campo inválido.
-    private void error(TextInputEditText campo) {
-        UIHelper.mostrarToastError(this, getString(R.string.error_campo_requerido));
+    // Marca el error en el propio campo (no en un toast suelto) y le da el foco,
+    // para que se vea cuál de los tres falla.
+    private void error(TextInputEditText campo, String mensaje) {
+        UIHelper.marcarError(campo, mensaje);
         campo.requestFocus();
     }
 

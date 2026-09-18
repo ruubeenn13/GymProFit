@@ -43,6 +43,7 @@ import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import es.pmdm.gymprofit.utils.Numeros;
 
 // ============================================================
 // MedicionesActivity — pantalla de mediciones corporales del usuario.
@@ -433,23 +434,52 @@ public class MedicionesActivity extends AppCompatActivity {
     // hace PATCH sobre ella; si es de otro día, crea una NUEVA medición de hoy clonando
     // la última + el campo editado (así cada día es un punto nuevo en la gráfica sin FAB).
     private void patchCampo(String campo, String valorStr, boolean esTexto) {
-        try {
-            // Valor del campo (texto vacío → null explícito para borrarlo; Gson serializa nulls).
-            Object valor = esTexto ? (valorStr.isEmpty() ? null : valorStr) : new BigDecimal(valorStr);
+        // Valor del campo (texto vacío → null explícito para borrarlo; Gson serializa nulls).
+        Object valor;
 
-            LoadingDialog.show(this);
-            if (esDeHoy(ultimaMedicion)) {
-                Map<String, Object> body = new HashMap<>();
-                body.put(campo, valor);
-                medicionApi.patch(ultimaMedicion.getId(), body).enqueue(recargaCallback());
-            } else {
-                Map<String, Object> body = clonarUltima();
-                body.put(campo, valor);
-                medicionApi.crear(body).enqueue(recargaCallback());
+        if (esTexto) {
+            valor = valorStr.isEmpty() ? null : valorStr;
+        } else {
+            // El teclado español ofrece coma: "75,5" reventaba el parseo y el
+            // mensaje que salía era "error de conexión", así que el usuario creía
+            // que no tenía internet. Ahora se acepta la coma y, si el número no
+            // es válido, se dice exactamente qué se espera.
+            double[] rango = rangoDe(campo);
+            BigDecimal numero = Numeros.exacto(valorStr, rango[0], rango[1]);
+            if (numero == null) {
+                UIHelper.mostrarToastError(this, getString(R.string.error_medida_invalida,
+                        formatearLimite(rango[0]), formatearLimite(rango[1])));
+                return;
             }
-        } catch (NumberFormatException e) {
-            UIHelper.mostrarToastError(this, getString(R.string.error_conexion));
+            valor = numero;
         }
+
+        LoadingDialog.show(this);
+        if (esDeHoy(ultimaMedicion)) {
+            Map<String, Object> body = new HashMap<>();
+            body.put(campo, valor);
+            medicionApi.patch(ultimaMedicion.getId(), body).enqueue(recargaCallback());
+        } else {
+            Map<String, Object> body = clonarUltima();
+            body.put(campo, valor);
+            medicionApi.crear(body).enqueue(recargaCallback());
+        }
+    }
+
+    // Rango admitido por campo: evita guardar un 750 kg o un 0,1 % de grasa por
+    // un dedo torpe, que además ensucia la escala de la gráfica para siempre.
+    private double[] rangoDe(String campo) {
+        switch (campo) {
+            case "grasaCorporal": return new double[]{1, 70};      // %
+            case "peso":          return new double[]{30, 300};    // kg
+            case "masaMuscular":  return new double[]{10, 150};    // kg
+            default:              return new double[]{10, 250};    // cm: cintura, pecho, brazos, piernas
+        }
+    }
+
+    // Los límites son enteros en la práctica; se muestran sin decimales.
+    private String formatearLimite(double limite) {
+        return String.valueOf((int) limite);
     }
 
     // ¿La medición es de hoy? (compara la parte de fecha yyyy-MM-dd con la de hoy).
@@ -496,15 +526,19 @@ public class MedicionesActivity extends AppCompatActivity {
         InputDialog.numerico(this, getString(R.string.perfil_peso),
                 getString(R.string.dialogo_nuevo_valor), null, "kg", valor -> {
             if (valor.isEmpty()) return;
-            try {
-                Map<String, Object> body = new HashMap<>();
-                body.put("usuarioId", prefsManager.getUsuarioId());
-                body.put("peso", new BigDecimal(valor));
-                LoadingDialog.show(this);
-                medicionApi.crear(body).enqueue(recargaCallback());
-            } catch (NumberFormatException e) {
-                UIHelper.mostrarToastError(this, getString(R.string.error_conexion));
+
+            // Misma lectura tolerante a la coma que en patchCampo.
+            BigDecimal peso = Numeros.exacto(valor, 30, 300);
+            if (peso == null) {
+                UIHelper.mostrarToastError(this, getString(R.string.error_peso_invalido));
+                return;
             }
+
+            Map<String, Object> body = new HashMap<>();
+            body.put("usuarioId", prefsManager.getUsuarioId());
+            body.put("peso", peso);
+            LoadingDialog.show(this);
+            medicionApi.crear(body).enqueue(recargaCallback());
         });
     }
 }

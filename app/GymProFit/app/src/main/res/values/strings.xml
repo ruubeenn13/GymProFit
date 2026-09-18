@@ -602,4 +602,13 @@
     <string name="alimento_desactivar_confirmar">¿Desactivar este alimento? Dejará de aparecer en las búsquedas.</string>
     <!-- Distintivo de entorno: solo visible en builds de desarrollo. -->
     <string name="entorno_pruebas_distintivo">PRUEBAS · LOCAL</string>
+    <!-- Errores de validación de campos numéricos (ver utils/Numeros). -->
+    <string name="error_numero_invalido">Introduce un número válido</string>
+    <string name="error_duracion_invalida">Pon una duración de entre 5 y 300 minutos</string>
+    <string name="error_series_invalida">Pon entre 1 y 10 series</string>
+    <string name="error_reps_invalida">Pon entre 1 y 50 repeticiones</string>
+    <string name="error_peso_invalido">Pon tu peso en kilos, entre 30 y 300</string>
+    <string name="error_altura_invalida">Pon tu altura en centímetros, entre 100 y 250</string>
+    <string name="error_altura_en_metros">¿Querías decir %1$d cm? Escribe la altura en centímetros</string>
+    <string name="error_medida_invalida">Pon un número entre %1$s y %2$s</string>
 </resources>

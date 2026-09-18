@@ -33,6 +33,7 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.EjercicioApi;
 import es.pmdm.gymprofit.network.RutinaApi;
 import es.pmdm.gymprofit.ui.adapters.EjercicioSeleccionadoAdapter;
+import es.pmdm.gymprofit.utils.Numeros;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
@@ -277,15 +278,22 @@ public class EditarRutinaActivity extends AppCompatActivity {
         String desc = etDescripcion.getText() != null ? etDescripcion.getText().toString().trim() : "";
         String dur  = etDuracion.getText() != null ? etDuracion.getText().toString().trim() : "";
 
-        if (nom.isEmpty())  { UIHelper.mostrarToastError(this, getString(R.string.error_campo_requerido)); etNombre.requestFocus(); return; }
-        if (desc.isEmpty()) { UIHelper.mostrarToastError(this, getString(R.string.error_campo_requerido)); etDescripcion.requestFocus(); return; }
-        if (dur.isEmpty())  { UIHelper.mostrarToastError(this, getString(R.string.error_campo_requerido)); etDuracion.requestFocus(); return; }
+        if (nom.isEmpty())  { UIHelper.marcarError(etNombre, getString(R.string.error_campo_requerido)); etNombre.requestFocus(); return; }
+        if (desc.isEmpty()) { UIHelper.marcarError(etDescripcion, getString(R.string.error_campo_requerido)); etDescripcion.requestFocus(); return; }
+
+        // Igual que al crear: sin rango, un número largo desbordaba int al guardar.
+        Integer duracion = Numeros.entero(dur, 5, 300);
+        if (duracion == null) {
+            UIHelper.marcarError(etDuracion, getString(R.string.error_duracion_invalida));
+            etDuracion.requestFocus();
+            return;
+        }
 
         Map<String, Object> body = new HashMap<>();
         body.put("nombre",          nom);
         body.put("descripcion",     desc);
         body.put("nivel",           obtenerNivel());
-        body.put("duracionMinutos", Integer.parseInt(dur));
+        body.put("duracionMinutos", duracion);
 
         // Muestra el overlay de carga mientras se guarda la rutina
         LoadingDialog.show(this);

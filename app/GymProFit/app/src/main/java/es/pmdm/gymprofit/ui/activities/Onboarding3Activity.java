@@ -11,6 +11,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
+import es.pmdm.gymprofit.utils.Numeros;
 
 // ============================================================
 // Onboarding3Activity — tercer paso del asistente de onboarding.
@@ -46,8 +47,30 @@ public class Onboarding3Activity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
 
         findViewById(R.id.btnSiguiente3).setOnClickListener(v -> {
-            if (etPeso.getText().toString().trim().isEmpty() || etAltura.getText().toString().trim().isEmpty()) {
-                UIHelper.mostrarToastError(this, getString(R.string.error_campo_requerido));
+            String pesoTexto   = etPeso.getText().toString().trim();
+            String alturaTexto = etAltura.getText().toString().trim();
+
+            // El peso y la altura deciden el objetivo calórico de toda la app, así
+            // que aquí no vale dar por bueno cualquier texto: el teclado español
+            // ofrece coma (y "1,75" cerraba la app), y una altura en metros da un
+            // metabolismo basal absurdo sin que nada avise.
+            Double peso = Numeros.decimal(pesoTexto, 30, 300);
+            if (peso == null) {
+                UIHelper.marcarError(etPeso, getString(R.string.error_peso_invalido));
+                etPeso.requestFocus();
+                return;
+            }
+
+            Double altura = Numeros.decimal(alturaTexto, 100, 250);
+            if (altura == null) {
+                // Caso típico: escribir la estatura en metros. Se sugiere el valor
+                // en centímetros en vez de soltar un error seco.
+                Double enMetros = Numeros.decimal(alturaTexto, 1, 2.5);
+                String mensaje = (enMetros != null)
+                        ? getString(R.string.error_altura_en_metros, (int) Math.round(enMetros * 100))
+                        : getString(R.string.error_altura_invalida);
+                UIHelper.marcarError(etAltura, mensaje);
+                etAltura.requestFocus();
                 return;
             }
 
@@ -57,8 +80,10 @@ public class Onboarding3Activity extends AppCompatActivity {
                 intent.putExtras(extras);
             }
 
-            intent.putExtra("peso", etPeso.getText().toString().trim());
-            intent.putExtra("altura", Double.parseDouble(etAltura.getText().toString().trim()));
+            // El peso viaja como texto porque el resumen lo vuelve a parsear; se
+            // manda ya normalizado con punto para que no dependa del teclado.
+            intent.putExtra("peso", String.valueOf(peso));
+            intent.putExtra("altura", altura);
 
             int checkedId = chipGroupActividad.getCheckedChipId();
             String actividad;

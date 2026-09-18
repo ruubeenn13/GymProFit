@@ -51,6 +51,54 @@ public class UIHelper {
         mostrarToast(context, mensaje, R.drawable.ic_error);
     }
 
+    // ERRORES DE FORMULARIO
+
+    /**
+     * Marca un campo como erróneo en el propio campo, no en un aviso suelto.
+     *
+     * <p>Un aviso genérico ("completa todos los campos") obliga al usuario a
+     * adivinar cuál de los cuatro falla; el error en el campo se lee donde está
+     * el problema. El mensaje se borra solo en cuanto el usuario escribe, para
+     * que no quede un error viejo sobre un valor ya corregido.
+     *
+     * <p>Si el campo no vive dentro de un {@code TextInputLayout} se cae al aviso
+     * clásico, que sigue siendo mejor que no decir nada.
+     *
+     * @param campo   campo de texto que ha fallado
+     * @param mensaje qué hay que corregir, en lenguaje del usuario
+     */
+    public static void marcarError(android.widget.EditText campo, String mensaje) {
+        com.google.android.material.textfield.TextInputLayout contenedor = contenedorDe(campo);
+
+        if (contenedor == null) {
+            mostrarToastError(campo.getContext(), mensaje);
+            return;
+        }
+
+        contenedor.setError(mensaje);
+        campo.addTextChangedListener(new android.text.TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int i, int c, int a) {}
+            @Override public void onTextChanged(CharSequence s, int i, int c, int a) {}
+            @Override public void afterTextChanged(android.text.Editable s) {
+                contenedor.setError(null);
+                campo.removeTextChangedListener(this);
+            }
+        });
+    }
+
+    // Sube por la jerarquía hasta el TextInputLayout que envuelve al campo.
+    // No siempre es el padre directo: Material intercala un FrameLayout propio.
+    private static com.google.android.material.textfield.TextInputLayout contenedorDe(View campo) {
+        ViewGroup padre = (campo.getParent() instanceof ViewGroup) ? (ViewGroup) campo.getParent() : null;
+        while (padre != null) {
+            if (padre instanceof com.google.android.material.textfield.TextInputLayout) {
+                return (com.google.android.material.textfield.TextInputLayout) padre;
+            }
+            padre = (padre.getParent() instanceof ViewGroup) ? (ViewGroup) padre.getParent() : null;
+        }
+        return null;
+    }
+
     // Rediseño: los avisos se muestran como Snackbar Material (fondo de
     // superficie 2 del tema, icono a la izquierda, anclado SOBRE el bottom
     // nav si la pantalla lo tiene). Si el contexto no es una Activity
