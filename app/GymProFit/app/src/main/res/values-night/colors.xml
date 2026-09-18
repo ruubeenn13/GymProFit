@@ -7,20 +7,33 @@
 <resources>
     <!-- ── Marca ─────────────────────────────────────────────────────────── -->
     <color name="gp_primary">#FF6A00</color>
-    <color name="gp_on_primary">#FFFFFF</color>
+    <!-- Carbón cálido, NO blanco. El blanco sobre este naranja daba 2,87:1:
+         falla AA (4,5:1) y ni siquiera llega al 3:1 de texto grande, en el
+         elemento héroe de la pantalla principal y en todos los botones
+         primarios. Con #1A0E00 sube a 6,61:1. Es además lo que hacen Strava
+         y Hevy: el naranja se ve más caro con texto oscuro encima. -->
+    <color name="gp_on_primary">#1A0E00</color>
     <color name="gp_primary_container">#3A2110</color>
     <color name="gp_on_primary_container">#FFB27A</color>
     <color name="gp_gold">#E8B84B</color>
 
     <!-- ── Superficies ───────────────────────────────────────────────────── -->
-    <color name="gp_background">#101114</color>
-    <color name="gp_surface">#1A1B1F</color>
-    <color name="gp_surface_2">#24252B</color>
-    <color name="gp_stroke">#2C2D33</color>
+    <!-- Mismo problema que en claro, peor: surface estaba a 1,10:1 del fondo y
+         el borde a 1,25:1. En tema oscuro la sombra no se ve, así que el
+         trabajo de separar lo tiene que hacer el BORDE: pasa a 2,06:1 sobre la
+         tarjeta y 2,41:1 sobre el fondo. No llega al 3:1 de WCAG 1.4.11 a
+         propósito — a ese contraste el borde se lee como un wireframe y la
+         norma solo lo exige para identificar un CONTROL, no el canto de un
+         contenedor. -->
+    <color name="gp_background">#0B0C0E</color>
+    <color name="gp_surface">#1B1E24</color>
+    <color name="gp_surface_2">#252A31</color>
+    <color name="gp_stroke">#4A505B</color>
 
     <!-- ── Texto ─────────────────────────────────────────────────────────── -->
     <color name="gp_on_surface">#F2F2F3</color>
-    <color name="gp_text_secondary">#9EA0A8</color>
+    <!-- 7,05:1 sobre la tarjeta. Sustituye a los android:alpha sobre texto. -->
+    <color name="gp_text_secondary">#A1A9B6</color>
 
     <!-- ── Cuerpo anatómico (mapa muscular estilo Symmetry) ──────────────── -->
     <!-- Silueta clara para que el cuerpo destaque sobre el fondo carbón

@@ -169,11 +169,15 @@
         <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
     </style>
 
-    <!-- ── Cards: planas, radio 18dp y borde sutil (sin sombras grises) ───── -->
+    <!-- ── Cards: radio 18dp, borde visible y una pizca de relieve ────────── -->
+    <!-- La elevación sube de 0 a 1dp. Con elevación 0 y un borde a 1,15:1 la
+         tarjeta no existía como objeto visual. En tema claro esta sombra es la
+         que de verdad la despega del fondo; en oscuro no se percibe y el
+         trabajo lo hace el borde, que también se ha subido. -->
     <style name="Widget.GymProFit.Card" parent="Widget.Material3.CardView.Elevated">
         <item name="cardBackgroundColor">?attr/colorSurface</item>
         <item name="cardCornerRadius">18dp</item>
-        <item name="cardElevation">0dp</item>
+        <item name="cardElevation">1dp</item>
         <item name="strokeColor">@color/gp_stroke</item>
         <item name="strokeWidth">1dp</item>
         <item name="rippleColor">@color/gp_primary_container</item>
