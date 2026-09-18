@@ -141,7 +141,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="6dp"
                 android:text="@string/perfil_nivel"
-                android:textSize="12sp"
+                android:textSize="@dimen/text_label"
                 android:textAllCaps="true"
                 android:letterSpacing="0.12"
                 android:textColor="?attr/colorOnSurfaceVariant" />
@@ -169,7 +169,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="6dp"
                 android:text="@string/perfil_objetivo"
-                android:textSize="12sp"
+                android:textSize="@dimen/text_label"
                 android:textAllCaps="true"
                 android:letterSpacing="0.12"
                 android:textColor="?attr/colorOnSurfaceVariant" />

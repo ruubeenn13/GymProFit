@@ -103,14 +103,14 @@
                             android:fontFamily="@font/barlow_condensed"
                             android:textFontWeight="700"
                             android:includeFontPadding="false"
-                            android:textSize="34sp"
+                            android:textSize="@dimen/text_display_large"
                             android:textColor="?attr/colorOnPrimary" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/admin_total_usuarios"
-                            android:textSize="12sp"
+                            android:textSize="@dimen/text_label"
                             android:textAllCaps="true"
                             android:letterSpacing="0.12"
                             android:textColor="?attr/colorOnPrimary"
@@ -140,14 +140,14 @@
                             android:fontFamily="@font/barlow_condensed"
                             android:textFontWeight="700"
                             android:includeFontPadding="false"
-                            android:textSize="34sp"
+                            android:textSize="@dimen/text_display_large"
                             android:textColor="?attr/colorOnSurface" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/admin_usuarios_activos"
-                            android:textSize="12sp"
+                            android:textSize="@dimen/text_label"
                             android:textAllCaps="true"
                             android:letterSpacing="0.12"
                             android:textColor="?attr/colorOnSurfaceVariant" />
@@ -185,14 +185,14 @@
                             android:fontFamily="@font/barlow_condensed"
                             android:textFontWeight="700"
                             android:includeFontPadding="false"
-                            android:textSize="34sp"
+                            android:textSize="@dimen/text_display_large"
                             android:textColor="?attr/colorOnSurface" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/admin_total_sesiones"
-                            android:textSize="12sp"
+                            android:textSize="@dimen/text_label"
                             android:textAllCaps="true"
                             android:letterSpacing="0.12"
                             android:textColor="?attr/colorOnSurfaceVariant" />
@@ -221,14 +221,14 @@
                             android:fontFamily="@font/barlow_condensed"
                             android:textFontWeight="700"
                             android:includeFontPadding="false"
-                            android:textSize="34sp"
+                            android:textSize="@dimen/text_display_large"
                             android:textColor="?attr/colorOnSurface" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/admin_sesiones_hoy"
-                            android:textSize="12sp"
+                            android:textSize="@dimen/text_label"
                             android:textAllCaps="true"
                             android:letterSpacing="0.12"
                             android:textColor="?attr/colorOnSurfaceVariant" />
@@ -266,14 +266,14 @@
                             android:fontFamily="@font/barlow_condensed"
                             android:textFontWeight="700"
                             android:includeFontPadding="false"
-                            android:textSize="34sp"
+                            android:textSize="@dimen/text_display_large"
                             android:textColor="?attr/colorOnSurface" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/admin_rutinas_predefinidas"
-                            android:textSize="12sp"
+                            android:textSize="@dimen/text_label"
                             android:textAllCaps="true"
                             android:letterSpacing="0.12"
                             android:textColor="?attr/colorOnSurfaceVariant" />
@@ -302,14 +302,14 @@
                             android:fontFamily="@font/barlow_condensed"
                             android:textFontWeight="700"
                             android:includeFontPadding="false"
-                            android:textSize="34sp"
+                            android:textSize="@dimen/text_display_large"
                             android:textColor="?attr/colorOnSurface" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/admin_ejercicios_activos"
-                            android:textSize="12sp"
+                            android:textSize="@dimen/text_label"
                             android:textAllCaps="true"
                             android:letterSpacing="0.12"
                             android:textColor="?attr/colorOnSurfaceVariant" />
@@ -356,7 +356,7 @@
                         android:layout_weight="1"
                         android:layout_marginStart="16dp"
                         android:text="@string/admin_gestionar_usuarios"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_subtitle"
                         android:textStyle="bold"
                         android:textColor="?attr/colorOnSurface" />
 
@@ -399,7 +399,7 @@
                         android:layout_weight="1"
                         android:layout_marginStart="16dp"
                         android:text="@string/admin_gestionar_rutinas"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_subtitle"
                         android:textStyle="bold"
                         android:textColor="?attr/colorOnSurface" />
 
@@ -442,7 +442,7 @@
                         android:layout_weight="1"
                         android:layout_marginStart="16dp"
                         android:text="@string/admin_gestionar_ejercicios"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_subtitle"
                         android:textStyle="bold"
                         android:textColor="?attr/colorOnSurface" />
 
@@ -485,7 +485,7 @@
                         android:layout_weight="1"
                         android:layout_marginStart="16dp"
                         android:text="@string/admin_gestionar_alimentos"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_subtitle"
                         android:textStyle="bold"
                         android:textColor="?attr/colorOnSurface" />
 

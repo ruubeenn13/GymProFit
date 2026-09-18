@@ -45,7 +45,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="20dp"
-                    android:textSize="26sp"
+                    android:textSize="@dimen/text_headline"
                     android:textStyle="bold"
                     android:textColor="?attr/colorOnSurface"
                     android:lineSpacingMultiplier="1.1" />
@@ -60,7 +60,7 @@
                 android:layout_marginBottom="6dp"
                 android:paddingStart="4dp"
                 android:text="@string/detalle_ejercicio_demostracion"
-                android:textSize="11sp"
+                android:textSize="@dimen/text_eyebrow"
                 android:textAllCaps="true"
                 android:letterSpacing="0.1"
                 android:textColor="?attr/colorOnSurface"
@@ -149,7 +149,7 @@
                             android:layout_weight="1"
                             android:layout_marginStart="14dp"
                             android:text="@string/detalle_ejercicio_musculo"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_body"
                             android:textColor="?attr/colorOnSurface"
                             android:alpha="0.6" />
 
@@ -157,7 +157,7 @@
                             android:id="@+id/tvStatMusculo"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_body"
                             android:textStyle="bold"
                             android:textColor="?attr/colorOnSurface" />
 
@@ -191,7 +191,7 @@
                             android:layout_weight="1"
                             android:layout_marginStart="14dp"
                             android:text="@string/detalle_ejercicio_nivel"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_body"
                             android:textColor="?attr/colorOnSurface"
                             android:alpha="0.6" />
 
@@ -199,7 +199,7 @@
                             android:id="@+id/tvStatNivel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_body"
                             android:textStyle="bold"
                             android:textColor="?attr/colorOnSurface" />
 
@@ -233,7 +233,7 @@
                             android:layout_weight="1"
                             android:layout_marginStart="14dp"
                             android:text="@string/detalle_ejercicio_calorias"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_body"
                             android:textColor="?attr/colorOnSurface"
                             android:alpha="0.6" />
 
@@ -241,7 +241,7 @@
                             android:id="@+id/tvStatCalorias"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_body"
                             android:textStyle="bold"
                             android:textColor="?attr/colorOnSurface" />
 
@@ -276,7 +276,7 @@
                             android:layout_weight="1"
                             android:layout_marginStart="14dp"
                             android:text="@string/detalle_ejercicio_equipamiento"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_body"
                             android:textColor="?attr/colorOnSurface"
                             android:alpha="0.6" />
 
@@ -284,7 +284,7 @@
                             android:id="@+id/tvStatEquipamiento"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_body"
                             android:textStyle="bold"
                             android:textColor="?attr/colorOnSurface" />
 
@@ -347,7 +347,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/detalle_ejercicio_descripcion"
-                        android:textSize="15sp"
+                        android:textSize="@dimen/text_body"
                         android:textStyle="bold"
                         android:textColor="?attr/colorOnSurface"
                         android:layout_marginBottom="10dp" />
@@ -356,7 +356,7 @@
                         android:id="@+id/tvDescripcion"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_body"
                         android:textColor="?attr/colorOnSurface"
                         android:alpha="0.8"
                         android:lineSpacingMultiplier="1.5" />
@@ -386,7 +386,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/detalle_ejercicio_instrucciones"
-                        android:textSize="15sp"
+                        android:textSize="@dimen/text_body"
                         android:textStyle="bold"
                         android:textColor="?attr/colorOnSurface"
                         android:layout_marginBottom="10dp" />
@@ -395,7 +395,7 @@
                         android:id="@+id/tvInstrucciones"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_body"
                         android:textColor="?attr/colorOnSurface"
                         android:alpha="0.8"
                         android:lineSpacingMultiplier="1.7" />

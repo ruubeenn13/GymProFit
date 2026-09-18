@@ -38,7 +38,7 @@
             android:layout_weight="1"
             android:layout_marginStart="8dp"
             android:text="@string/admin_editar_ejercicio_titulo"
-            android:textSize="22sp"
+            android:textSize="@dimen/text_headline"
             android:textStyle="bold"
             android:textColor="?attr/colorOnSurface" />
 
@@ -102,7 +102,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/admin_campo_grupo"
-                android:textSize="12sp"
+                android:textSize="@dimen/text_label"
                 android:textColor="?attr/colorOnSurface"
                 android:alpha="0.7"
                 android:layout_marginBottom="4dp" />
@@ -132,7 +132,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/admin_campo_dificultad"
-                android:textSize="12sp"
+                android:textSize="@dimen/text_label"
                 android:textColor="?attr/colorOnSurface"
                 android:alpha="0.7"
                 android:layout_marginBottom="4dp" />

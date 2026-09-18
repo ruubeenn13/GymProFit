@@ -31,7 +31,7 @@
         android:text="@string/rutinas_crear_nueva"
         android:textColor="?attr/colorPrimary"
         android:textStyle="bold"
-        android:textSize="16sp"
+        android:textSize="@dimen/text_subtitle"
         android:letterSpacing="0.01" />
 
 </LinearLayout>

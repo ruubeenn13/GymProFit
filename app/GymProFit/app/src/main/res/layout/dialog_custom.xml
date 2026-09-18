@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="8dp"
-        android:textSize="18sp"
+        android:textSize="@dimen/text_title"
         android:textStyle="bold"
         android:textColor="?attr/colorOnSurface" />
 
@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="12dp"
-        android:textSize="14sp"
+        android:textSize="@dimen/text_body"
         android:textColor="?attr/colorOnSurface"
         android:alpha="0.7"
         android:gravity="center" />

@@ -43,7 +43,7 @@
             android:id="@+id/btnCrearAlimento"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="13sp"
+            android:textSize="@dimen/text_caption"
             android:text="@string/anadir_alimento_crear"
             style="@style/Widget.MaterialComponents.Button.TextButton" />
 

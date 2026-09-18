@@ -117,7 +117,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/usuario_ejemplo"
-                                android:textSize="20sp"
+                                android:textSize="@dimen/text_title"
                                 android:textStyle="bold"
                                 android:textColor="?attr/colorOnPrimary" />
 
@@ -127,7 +127,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
                                 android:text="@string/email_ejemplo"
-                                android:textSize="13sp"
+                                android:textSize="@dimen/text_caption"
                                 android:textColor="?attr/colorOnPrimary"
                                 android:alpha="0.8" />
 
@@ -179,7 +179,7 @@
                                 android:layout_weight="1"
                                 android:layout_marginStart="14dp"
                                 android:text="@string/perfil_nombre"
-                                android:textSize="14sp"
+                                android:textSize="@dimen/text_body"
                                 android:textColor="?attr/colorOnSurfaceVariant" />
 
                             <TextView
@@ -187,7 +187,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/usuario_ejemplo"
-                                android:textSize="14sp"
+                                android:textSize="@dimen/text_body"
                                 android:textStyle="bold"
                                 android:textColor="?attr/colorOnSurface" />
 
@@ -218,7 +218,7 @@
                                 android:layout_weight="1"
                                 android:layout_marginStart="14dp"
                                 android:text="@string/perfil_email"
-                                android:textSize="14sp"
+                                android:textSize="@dimen/text_body"
                                 android:textColor="?attr/colorOnSurfaceVariant" />
 
                             <TextView
@@ -226,7 +226,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/email_ejemplo"
-                                android:textSize="14sp"
+                                android:textSize="@dimen/text_body"
                                 android:textStyle="bold"
                                 android:textColor="?attr/colorOnSurface" />
 
@@ -257,7 +257,7 @@
                                 android:layout_weight="1"
                                 android:layout_marginStart="14dp"
                                 android:text="@string/perfil_nivel"
-                                android:textSize="14sp"
+                                android:textSize="@dimen/text_body"
                                 android:textColor="?attr/colorOnSurfaceVariant" />
 
                             <TextView
@@ -265,7 +265,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/perfil_sin_datos"
-                                android:textSize="14sp"
+                                android:textSize="@dimen/text_body"
                                 android:textStyle="bold"
                                 android:textColor="?attr/colorOnSurface" />
 
@@ -297,7 +297,7 @@
                                 android:layout_weight="1"
                                 android:layout_marginStart="14dp"
                                 android:text="@string/perfil_peso"
-                                android:textSize="14sp"
+                                android:textSize="@dimen/text_body"
                                 android:textColor="?attr/colorOnSurfaceVariant" />
 
                             <TextView
@@ -305,7 +305,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/perfil_sin_datos"
-                                android:textSize="14sp"
+                                android:textSize="@dimen/text_body"
                                 android:textStyle="bold"
                                 android:textColor="?attr/colorOnSurface" />
 
@@ -334,7 +334,7 @@
                                 android:layout_weight="1"
                                 android:layout_marginStart="14dp"
                                 android:text="@string/perfil_altura"
-                                android:textSize="14sp"
+                                android:textSize="@dimen/text_body"
                                 android:textColor="?attr/colorOnSurfaceVariant" />
 
                             <TextView
@@ -342,7 +342,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/perfil_sin_datos"
-                                android:textSize="14sp"
+                                android:textSize="@dimen/text_body"
                                 android:textStyle="bold"
                                 android:textColor="?attr/colorOnSurface" />
 
@@ -370,7 +370,7 @@
                                 android:layout_weight="1"
                                 android:layout_marginStart="14dp"
                                 android:text="@string/perfil_edad"
-                                android:textSize="14sp"
+                                android:textSize="@dimen/text_body"
                                 android:textColor="?attr/colorOnSurfaceVariant" />
 
                             <TextView
@@ -378,7 +378,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/perfil_sin_datos"
-                                android:textSize="14sp"
+                                android:textSize="@dimen/text_body"
                                 android:textStyle="bold"
                                 android:textColor="?attr/colorOnSurface" />
 
@@ -409,7 +409,7 @@
                                 android:layout_weight="1"
                                 android:layout_marginStart="14dp"
                                 android:text="@string/perfil_objetivo"
-                                android:textSize="14sp"
+                                android:textSize="@dimen/text_body"
                                 android:textColor="?attr/colorOnSurfaceVariant" />
 
                             <TextView
@@ -417,7 +417,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/perfil_sin_datos"
-                                android:textSize="14sp"
+                                android:textSize="@dimen/text_body"
                                 android:textStyle="bold"
                                 android:textColor="?attr/colorOnSurface" />
 
@@ -485,7 +485,7 @@
                                 android:layout_weight="1"
                                 android:layout_marginStart="14dp"
                                 android:text="@string/perfil_ver_sesiones"
-                                android:textSize="16sp"
+                                android:textSize="@dimen/text_subtitle"
                                 android:textColor="?attr/colorOnSurface" />
 
                             <ImageView
@@ -534,7 +534,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/perfil_ver_mediciones"
-                                    android:textSize="16sp"
+                                    android:textSize="@dimen/text_subtitle"
                                     android:textColor="?attr/colorOnSurface" />
 
                                 <LinearLayout
@@ -549,7 +549,7 @@
                                         android:id="@+id/tvPesoMedicion"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:textSize="13sp"
+                                        android:textSize="@dimen/text_caption"
                                         android:textColor="?attr/colorOnSurfaceVariant" />
 
                                     <TextView
@@ -557,7 +557,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginStart="12dp"
-                                        android:textSize="13sp"
+                                        android:textSize="@dimen/text_caption"
                                         android:textColor="?attr/colorOnSurfaceVariant" />
 
                                 </LinearLayout>
@@ -602,7 +602,7 @@
                                 android:layout_weight="1"
                                 android:layout_marginStart="14dp"
                                 android:text="@string/perfil_ver_logros"
-                                android:textSize="16sp"
+                                android:textSize="@dimen/text_subtitle"
                                 android:textColor="?attr/colorOnSurface" />
 
                             <ImageView
@@ -644,7 +644,7 @@
                                 android:layout_weight="1"
                                 android:layout_marginStart="14dp"
                                 android:text="@string/perfil_panel_admin"
-                                android:textSize="16sp"
+                                android:textSize="@dimen/text_subtitle"
                                 android:textColor="?attr/colorOnSurface" />
 
                             <ImageView

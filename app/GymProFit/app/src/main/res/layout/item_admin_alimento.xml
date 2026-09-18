@@ -33,7 +33,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="15sp"
+                android:textSize="@dimen/text_body"
                 android:textStyle="bold"
                 android:textColor="?attr/colorOnSurface" />
 
@@ -42,7 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="4dp"
-                android:textSize="10sp"
+                android:textSize="@dimen/text_eyebrow"
                 android:clickable="false"
                 android:focusable="false"
                 app:chipMinHeight="24dp"
@@ -74,7 +74,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="12sp"
+                android:textSize="@dimen/text_label"
                 android:alpha="0.6"
                 android:textColor="?attr/colorOnSurfaceVariant" />
 
@@ -82,7 +82,7 @@
                 android:id="@+id/tvCaloriasAlimento"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
+                android:textSize="@dimen/text_label"
                 android:alpha="0.6"
                 android:textColor="?attr/colorOnSurfaceVariant" />
 

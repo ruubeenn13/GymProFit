@@ -58,7 +58,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="@string/splash_version"
-                    android:textSize="14sp"
+                    android:textSize="@dimen/text_body"
                     android:textColor="?attr/colorPrimary" />
 
                 <TextView
@@ -66,7 +66,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="@string/splash_subtitle"
-                    android:textSize="14sp"
+                    android:textSize="@dimen/text_body"
                     android:textColor="?attr/colorOnSurfaceVariant" />
 
             </LinearLayout>
@@ -100,7 +100,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/acerca_app_descripcion"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_body"
                         android:textColor="?attr/colorOnSurfaceVariant"
                         android:lineSpacingMultiplier="1.45" />
 
@@ -115,7 +115,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/acerca_funcionalidades"
-                        android:textSize="13sp"
+                        android:textSize="@dimen/text_caption"
                         android:textAllCaps="true"
                         android:letterSpacing="0.12"
                         android:textColor="?attr/colorOnSurfaceVariant"
@@ -132,7 +132,7 @@
                             android:src="@drawable/ic_check" android:alpha="0.45" android:contentDescription="@null" />
                         <TextView android:layout_width="0dp" android:layout_height="wrap_content"
                             android:layout_weight="1" android:layout_marginStart="10dp"
-                            android:text="@string/acerca_feat_1" android:textSize="13sp"
+                            android:text="@string/acerca_feat_1" android:textSize="@dimen/text_caption"
                             android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
 
@@ -147,7 +147,7 @@
                             android:src="@drawable/ic_check" android:alpha="0.45" android:contentDescription="@null" />
                         <TextView android:layout_width="0dp" android:layout_height="wrap_content"
                             android:layout_weight="1" android:layout_marginStart="10dp"
-                            android:text="@string/acerca_feat_2" android:textSize="13sp"
+                            android:text="@string/acerca_feat_2" android:textSize="@dimen/text_caption"
                             android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
 
@@ -162,7 +162,7 @@
                             android:src="@drawable/ic_check" android:alpha="0.45" android:contentDescription="@null" />
                         <TextView android:layout_width="0dp" android:layout_height="wrap_content"
                             android:layout_weight="1" android:layout_marginStart="10dp"
-                            android:text="@string/acerca_feat_3" android:textSize="13sp"
+                            android:text="@string/acerca_feat_3" android:textSize="@dimen/text_caption"
                             android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
 
@@ -177,7 +177,7 @@
                             android:src="@drawable/ic_check" android:alpha="0.45" android:contentDescription="@null" />
                         <TextView android:layout_width="0dp" android:layout_height="wrap_content"
                             android:layout_weight="1" android:layout_marginStart="10dp"
-                            android:text="@string/acerca_feat_4" android:textSize="13sp"
+                            android:text="@string/acerca_feat_4" android:textSize="@dimen/text_caption"
                             android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
 
@@ -192,7 +192,7 @@
                             android:src="@drawable/ic_check" android:alpha="0.45" android:contentDescription="@null" />
                         <TextView android:layout_width="0dp" android:layout_height="wrap_content"
                             android:layout_weight="1" android:layout_marginStart="10dp"
-                            android:text="@string/acerca_feat_5" android:textSize="13sp"
+                            android:text="@string/acerca_feat_5" android:textSize="@dimen/text_caption"
                             android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
 
@@ -206,7 +206,7 @@
                             android:src="@drawable/ic_check" android:alpha="0.45" android:contentDescription="@null" />
                         <TextView android:layout_width="0dp" android:layout_height="wrap_content"
                             android:layout_weight="1" android:layout_marginStart="10dp"
-                            android:text="@string/acerca_feat_6" android:textSize="13sp"
+                            android:text="@string/acerca_feat_6" android:textSize="@dimen/text_caption"
                             android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
 
@@ -237,7 +237,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:text="@string/acerca_contacto_texto"
-                        android:textSize="13sp"
+                        android:textSize="@dimen/text_caption"
                         android:textColor="?attr/colorOnSurfaceVariant"
                         android:lineSpacingMultiplier="1.35" />
 
@@ -273,7 +273,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
                             android:text="@string/acerca_autor_email_label"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_body"
                             android:textColor="?attr/colorPrimary" />
 
                     </LinearLayout>
@@ -303,7 +303,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
                             android:text="@string/acerca_compartir_label"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_body"
                             android:textColor="?attr/colorPrimary" />
 
                     </LinearLayout>

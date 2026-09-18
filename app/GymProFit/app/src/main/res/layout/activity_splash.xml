@@ -30,7 +30,7 @@
             android:layout_marginTop="20dp"
             android:text="@string/app_name"
             android:textColor="#C9963A"
-            android:textSize="40sp"
+            android:textSize="@dimen/text_display_large"
             android:textStyle="bold"
             android:letterSpacing="0.05" />
 

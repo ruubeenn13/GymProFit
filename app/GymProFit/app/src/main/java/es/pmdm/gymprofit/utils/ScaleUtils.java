@@ -16,8 +16,19 @@ public final class ScaleUtils {
 
     private ScaleUtils() { }
 
-    // Factor de agrandado de toda la app (18% más grande).
-    public static final float FONT_SCALE = 1.18f;
+    // Sin agrandado. Antes valía 1.18f, y era un parche que tapaba que nadie
+    // controlaba los tamaños: agrandaba TODO el texto un 18 por ciento y dejaba
+    // los márgenes donde estaban, así que un título de 34 sp se pintaba a 40
+    // dentro de una tarjeta con el mismo padding. Y se multiplicaba por la escala
+    // que el usuario tuviera en los ajustes del sistema: alguien con 1,3 acababa
+    // en 1,53 y la cifra de 52 sp se iba a 80.
+    //
+    // Ahora los tamaños vienen bien de origen, desde la escala de dimens.xml, ya
+    // rebasados para que lo que se ve en pantalla no cambie.
+    //
+    // La constante se queda en 1.0 en vez de borrarse porque wrap() lo llaman 35
+    // Activities desde su attachBaseContext; se retira cuando se toquen.
+    public static final float FONT_SCALE = 1.0f;
 
     // Envuelve un contexto aplicando SOLO la escala de fuente (override mínimo).
     // IMPORTANTE: no se copia toda la Configuration del base; si se copiara, se

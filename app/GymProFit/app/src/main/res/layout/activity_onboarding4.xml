@@ -28,7 +28,7 @@
         android:layout_gravity="end"
         android:layout_margin="16dp"
         android:text="@string/onboarding_saltar"
-        android:textSize="14sp"
+        android:textSize="@dimen/text_body"
         android:textColor="?attr/colorPrimary"
         android:padding="8dp"
         android:clickable="true"
@@ -58,7 +58,7 @@
                 android:layout_marginTop="6dp"
                 android:layout_marginBottom="20dp"
                 android:text="@string/onboarding_objetivo_desc"
-                android:textSize="14sp"
+                android:textSize="@dimen/text_body"
                 android:textColor="?attr/colorOnSurfaceVariant" />
 
             <!-- PERDER_PESO — tendencia bajando -->
@@ -81,11 +81,11 @@
                         android:layout_marginEnd="16dp" android:contentDescription="@null" />
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="@string/objetivo_perder_peso" android:textSize="15sp"
+                            android:text="@string/objetivo_perder_peso" android:textSize="@dimen/text_body"
                             android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="2dp" android:text="@string/objetivo_perder_peso_desc"
-                            android:textSize="13sp" android:textColor="?attr/colorOnSurfaceVariant" />
+                            android:textSize="@dimen/text_caption" android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
                     <ImageView android:id="@+id/ivCheckPerderPeso" android:layout_width="20dp"
                         android:layout_height="20dp" android:src="@drawable/ic_check"
@@ -113,11 +113,11 @@
                         android:layout_marginEnd="16dp" android:contentDescription="@null" />
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="@string/objetivo_ganar_musculo" android:textSize="15sp"
+                            android:text="@string/objetivo_ganar_musculo" android:textSize="@dimen/text_body"
                             android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="2dp" android:text="@string/objetivo_ganar_musculo_desc"
-                            android:textSize="13sp" android:textColor="?attr/colorOnSurfaceVariant" />
+                            android:textSize="@dimen/text_caption" android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
                     <ImageView android:id="@+id/ivCheckGanarMusculo" android:layout_width="20dp"
                         android:layout_height="20dp" android:src="@drawable/ic_check"
@@ -145,11 +145,11 @@
                         android:layout_marginEnd="16dp" android:contentDescription="@null" />
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="@string/objetivo_mantener" android:textSize="15sp"
+                            android:text="@string/objetivo_mantener" android:textSize="@dimen/text_body"
                             android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="2dp" android:text="@string/objetivo_mantener_desc"
-                            android:textSize="13sp" android:textColor="?attr/colorOnSurfaceVariant" />
+                            android:textSize="@dimen/text_caption" android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
                     <ImageView android:id="@+id/ivCheckMantener" android:layout_width="20dp"
                         android:layout_height="20dp" android:src="@drawable/ic_check"
@@ -177,11 +177,11 @@
                         android:layout_marginEnd="16dp" android:contentDescription="@null" />
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="@string/objetivo_fuerza" android:textSize="15sp"
+                            android:text="@string/objetivo_fuerza" android:textSize="@dimen/text_body"
                             android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="2dp" android:text="@string/objetivo_fuerza_desc"
-                            android:textSize="13sp" android:textColor="?attr/colorOnSurfaceVariant" />
+                            android:textSize="@dimen/text_caption" android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
                     <ImageView android:id="@+id/ivCheckFuerza" android:layout_width="20dp"
                         android:layout_height="20dp" android:src="@drawable/ic_check"

@@ -47,8 +47,14 @@
         <!-- Fuente ÚNICA en toda la app (Barlow Condensed, la de Home/Nutrición).
              fontFamily del tema = catch-all para TextViews; la escala tipográfica M3
              (abajo) fuerza la fuente también en botones, chips, diálogos, inputs... -->
-        <item name="android:fontFamily">@font/barlow_condensed</item>
-        <item name="fontFamily">@font/barlow_condensed</item>
+        <!-- El cuerpo va en la fuente del sistema, NO en Barlow Condensed.
+             Barlow Condensed solo trae 500, 600 y 700: no existe el peso 400, así
+             que poniéndola como familia global TODO el texto de la app salía de
+             medium para arriba y no podía haber contraste de peso — todo gritaba
+             al mismo volumen. Y es una condensada de titular: a 15 sp, leyendo
+             macros, los contraformas se cierran y el texto se ve apretado.
+             La condensada se conserva donde le toca, en los estilos de cifra y
+             titular de más abajo, que la declaran ellos mismos. -->
         <item name="textAppearanceDisplayLarge">@style/Font.GymProFit.DisplayLarge</item>
         <item name="textAppearanceDisplayMedium">@style/Font.GymProFit.DisplayMedium</item>
         <item name="textAppearanceDisplaySmall">@style/Font.GymProFit.DisplaySmall</item>
@@ -138,7 +144,7 @@
     <style name="TextAppearance.GymProFit.Number" parent="TextAppearance.Material3.DisplayMedium">
         <item name="fontFamily">@font/barlow_condensed</item>
         <item name="android:textFontWeight">700</item>
-        <item name="android:textSize">52sp</item>
+        <item name="android:textSize">@dimen/text_number</item>
         <item name="android:letterSpacing">0</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
@@ -147,7 +153,7 @@
     <style name="TextAppearance.GymProFit.Display" parent="TextAppearance.Material3.HeadlineLarge">
         <item name="fontFamily">@font/barlow_condensed</item>
         <item name="android:textFontWeight">700</item>
-        <item name="android:textSize">34sp</item>
+        <item name="android:textSize">@dimen/text_display_large</item>
         <item name="android:letterSpacing">0.01</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
@@ -156,7 +162,7 @@
     <style name="TextAppearance.GymProFit.Headline" parent="TextAppearance.Material3.TitleLarge">
         <item name="fontFamily">@font/barlow_condensed</item>
         <item name="android:textFontWeight">600</item>
-        <item name="android:textSize">22sp</item>
+        <item name="android:textSize">@dimen/text_headline</item>
         <item name="android:letterSpacing">0.01</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
@@ -164,7 +170,7 @@
     <!-- Etiqueta/eyebrow en mayúsculas sobre una stat -->
     <style name="TextAppearance.GymProFit.Label" parent="TextAppearance.Material3.LabelMedium">
         <item name="android:textAllCaps">true</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">@dimen/text_label</item>
         <item name="android:letterSpacing">0.12</item>
         <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
     </style>

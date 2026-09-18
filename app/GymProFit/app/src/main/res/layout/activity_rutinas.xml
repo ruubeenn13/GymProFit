@@ -126,7 +126,7 @@
                     android:padding="24dp"
                     android:gravity="center"
                     android:text="@string/feedback_lista_vacia"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/text_subtitle"
                     android:textColor="?attr/colorOnSurfaceVariant"
                     android:visibility="gone" />
 

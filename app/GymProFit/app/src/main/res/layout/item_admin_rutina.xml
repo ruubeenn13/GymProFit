@@ -38,7 +38,7 @@
                     android:id="@+id/tvNombreRutina"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="15sp"
+                    android:textSize="@dimen/text_body"
                     android:textStyle="bold"
                     android:textColor="?attr/colorOnSurface" />
 
@@ -46,7 +46,7 @@
                     android:id="@+id/tvDescripcionRutina"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="12sp"
+                    android:textSize="@dimen/text_label"
                     android:textColor="?attr/colorOnSurfaceVariant"
                     android:maxLines="2"
                     android:ellipsize="end"
@@ -79,7 +79,7 @@
                 android:id="@+id/chipNivelRutina"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="10sp"
+                android:textSize="@dimen/text_eyebrow"
                 android:clickable="false"
                 android:focusable="false"
                 app:chipMinHeight="24dp"
@@ -92,7 +92,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
-                android:textSize="10sp"
+                android:textSize="@dimen/text_eyebrow"
                 android:clickable="false"
                 android:focusable="false"
                 app:chipMinHeight="24dp"
@@ -104,7 +104,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="8dp"
-                android:textSize="11sp"
+                android:textSize="@dimen/text_eyebrow"
                 android:textColor="?attr/colorOnSurfaceVariant"
                 android:gravity="end" />
 

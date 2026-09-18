@@ -123,7 +123,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp"
-        android:textSize="15sp"
+        android:textSize="@dimen/text_body"
         app:cornerRadius="12dp" />
 
 </LinearLayout>

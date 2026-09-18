@@ -59,7 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/sesiones_rutina"
-                android:textSize="13sp"
+                android:textSize="@dimen/text_caption"
                 android:textAllCaps="true"
                 android:letterSpacing="0.12"
                 android:textColor="?attr/colorOnSurfaceVariant"
@@ -127,7 +127,7 @@
                         android:layout_weight="1"
                         android:layout_marginStart="10dp"
                         android:text="@string/sesiones_calorias_estimadas"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_body"
                         android:textColor="?attr/colorOnSurfaceVariant" />
 
                     <TextView
@@ -137,7 +137,7 @@
                         android:fontFamily="@font/barlow_condensed"
                         android:textFontWeight="700"
                         android:includeFontPadding="false"
-                        android:textSize="28sp"
+                        android:textSize="@dimen/text_display"
                         android:textColor="?attr/colorPrimary" />
 
                 </LinearLayout>
@@ -214,7 +214,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/sesiones_valoracion"
-                        android:textSize="13sp"
+                        android:textSize="@dimen/text_caption"
                         android:textAllCaps="true"
                         android:letterSpacing="0.12"
                         android:textColor="?attr/colorOnSurfaceVariant"

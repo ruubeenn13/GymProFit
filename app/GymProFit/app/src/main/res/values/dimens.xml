@@ -1,8 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  dimens.xml — dimensiones personalizadas que sobrescriben valores por defecto de Material.
+  dimens.xml — la escala tipográfica de GymProFit.
+
+  Antes había 21 tamaños de texto distintos repartidos por los 66 layouts, en 323
+  apariciones escritas a mano: 13, 14, 15, 16, 17 y 18 sp convivían para hacer
+  exactamente el mismo trabajo. Eso no es un sistema, es colocar a ojo, y es una
+  de las cosas que más delatan a una app hecha a trozos.
+
+  Once escalones, y ninguno más. Ningún layout vuelve a escribir un sp a pelo.
+
+  OJO CON LOS NÚMEROS: hasta ahora la app multiplicaba TODO el texto por 1,18 en
+  ScaleUtils. Ese parche se retira, así que estos valores ya vienen rebasados
+  (14sp x 1,18 = 16,5, de ahí que el cuerpo sea 17sp) para que el tamaño que se ve
+  en pantalla no cambie. No son números redondos porque no pueden serlo.
 -->
 <resources>
-    <!-- Reduce bottom nav height so icon and label are closer together (M3 default is 80dp) -->
-    <dimen name="design_bottom_navigation_height">56dp</dimen>
+
+    <!-- ── Escala tipográfica ─────────────────────────────────────────────── -->
+
+    <!-- Etiqueta en mayúsculas sobre una cifra. Sustituye a 10 y 11 sp. -->
+    <dimen name="text_eyebrow">12sp</dimen>
+
+    <!-- Botones, chips y etiquetas de campo. Sustituye a 12 sp. -->
+    <dimen name="text_label">14sp</dimen>
+
+    <!-- Texto secundario: descripciones, metadatos. Sustituye a 13 sp. -->
+    <dimen name="text_caption">15sp</dimen>
+
+    <!-- Cuerpo. Es el tamaño más usado de la app. Sustituye a 14 y 15 sp. -->
+    <dimen name="text_body">17sp</dimen>
+
+    <!-- Título de fila o de tarjeta. Sustituye a 16 y 17 sp. -->
+    <dimen name="text_subtitle">19sp</dimen>
+
+    <!-- Cabecera de sección. Sustituye a 18 y 20 sp. -->
+    <dimen name="text_title">22sp</dimen>
+
+    <!-- Titular de tarjeta grande. Sustituye a 22, 24 y 26 sp. -->
+    <dimen name="text_headline">26sp</dimen>
+
+    <!-- Título de pantalla. Sustituye a 28, 30 y 32 sp. -->
+    <dimen name="text_display">34sp</dimen>
+
+    <!-- Título de pantalla grande. Sustituye a 34 y 40 sp. -->
+    <dimen name="text_display_large">40sp</dimen>
+
+    <!-- Cifra de estadística. Sustituye a 52 y 60 sp. -->
+    <dimen name="text_number">62sp</dimen>
+
+    <!-- La cifra protagonista de una pantalla. Sustituye a 64 sp. -->
+    <dimen name="text_number_hero">76sp</dimen>
+
 </resources>

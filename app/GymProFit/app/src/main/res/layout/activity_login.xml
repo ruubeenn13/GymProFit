@@ -60,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:text="@string/login_titulo"
-                android:textSize="32sp"
+                android:textSize="@dimen/text_display"
                 android:textStyle="bold"
                 android:textColor="?attr/colorOnSurface" />
 
@@ -69,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@string/login_subtitulo"
-                android:textSize="16sp"
+                android:textSize="@dimen/text_subtitle"
                 android:textColor="?attr/colorOnSurface"
                 android:alpha="0.7" />
 
@@ -121,7 +121,7 @@
                 android:layout_height="56dp"
                 android:layout_marginTop="32dp"
                 android:text="@string/login_entrar"
-                android:textSize="16sp"
+                android:textSize="@dimen/text_subtitle"
                 app:cornerRadius="12dp" />
 
             <LinearLayout
@@ -144,7 +144,7 @@
                     android:layout_marginStart="12dp"
                     android:layout_marginEnd="12dp"
                     android:text="@string/login_o"
-                    android:textSize="13sp"
+                    android:textSize="@dimen/text_caption"
                     android:textColor="?attr/colorOnSurface"
                     android:alpha="0.5" />
 
@@ -164,7 +164,7 @@
                 android:layout_height="56dp"
                 android:layout_marginTop="12dp"
                 android:text="@string/login_entrar_invitado"
-                android:textSize="15sp"
+                android:textSize="@dimen/text_body"
                 app:cornerRadius="12dp"
                 app:icon="@drawable/ic_perfil"
                 app:iconGravity="textStart" />
@@ -176,7 +176,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:text="@string/login_no_cuenta"
-                android:textSize="14sp"
+                android:textSize="@dimen/text_body"
                 android:textColor="?attr/colorPrimary" />
 
         </LinearLayout>

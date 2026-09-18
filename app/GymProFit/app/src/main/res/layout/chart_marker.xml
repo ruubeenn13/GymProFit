@@ -13,6 +13,6 @@
     android:paddingTop="6dp"
     android:paddingBottom="6dp"
     android:gravity="center"
-    android:textSize="12sp"
+    android:textSize="@dimen/text_label"
     android:textStyle="bold"
     android:lineSpacingMultiplier="0.95" />

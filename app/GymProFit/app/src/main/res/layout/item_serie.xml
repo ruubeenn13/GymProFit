@@ -25,7 +25,7 @@
         android:layout_height="28dp"
         android:gravity="center"
         android:background="@drawable/bg_circulo_paso"
-        android:textSize="12sp"
+        android:textSize="@dimen/text_label"
         android:textStyle="bold"
         android:textColor="?attr/colorOnSurfaceVariant" />
 
@@ -57,7 +57,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
         android:text="@string/sesiones_serie_por"
-        android:textSize="14sp"
+        android:textSize="@dimen/text_body"
         android:textColor="?attr/colorOnSurfaceVariant" />
 
     <!-- Repeticiones REALES de esta serie: fallar la última es información -->

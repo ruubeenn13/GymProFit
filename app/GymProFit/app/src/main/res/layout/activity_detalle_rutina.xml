@@ -56,7 +56,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_body"
                         android:textColor="?attr/colorOnSurfaceVariant" />
 
                     <View
@@ -101,7 +101,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="6dp"
-                            android:textSize="13sp"
+                            android:textSize="@dimen/text_caption"
                             android:textColor="?attr/colorOnSurfaceVariant" />
 
                         <View
@@ -124,7 +124,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="6dp"
-                            android:textSize="13sp"
+                            android:textSize="@dimen/text_caption"
                             android:textColor="?attr/colorOnSurfaceVariant" />
 
                     </LinearLayout>
@@ -171,7 +171,7 @@
             android:layout_height="56dp"
             android:layout_marginEnd="10dp"
             android:text="@string/detalle_rutina_editar"
-            android:textSize="16sp"
+            android:textSize="@dimen/text_subtitle"
             android:visibility="gone"
             app:cornerRadius="12dp"
             app:icon="@drawable/ic_edit"
@@ -183,7 +183,7 @@
             android:layout_height="56dp"
             android:layout_weight="1"
             android:text="@string/detalle_rutina_entrenar"
-            android:textSize="16sp"
+            android:textSize="@dimen/text_subtitle"
             app:cornerRadius="12dp"
             app:icon="@drawable/ic_ejercicios"
             app:iconGravity="textStart" />

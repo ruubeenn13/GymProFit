@@ -31,7 +31,7 @@
         android:id="@+id/tvPreviewMacros"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="13sp"
+        android:textSize="@dimen/text_caption"
         android:textColor="?attr/colorOnSurface"
         android:alpha="0.75"
         android:gravity="center"

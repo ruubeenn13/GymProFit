@@ -29,7 +29,7 @@
             android:id="@+id/etInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp" />
+            android:textSize="@dimen/text_title" />
 
     </com.google.android.material.textfield.TextInputLayout>
 

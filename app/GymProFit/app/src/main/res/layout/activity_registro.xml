@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:text="@string/registro_titulo"
-                android:textSize="30sp"
+                android:textSize="@dimen/text_display"
                 android:textStyle="bold"
                 android:textColor="?attr/colorOnSurface" />
 
@@ -61,7 +61,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="40dp"
                 android:text="@string/registro_subtitulo"
-                android:textSize="15sp"
+                android:textSize="@dimen/text_body"
                 android:textColor="?attr/colorOnSurface"
                 android:alpha="0.7"
                 android:gravity="center" />
@@ -170,7 +170,7 @@
                 android:layout_height="56dp"
                 android:layout_marginTop="32dp"
                 android:text="@string/registro_crear_cuenta"
-                android:textSize="16sp"
+                android:textSize="@dimen/text_subtitle"
                 app:cornerRadius="12dp" />
 
             <!-- Ya tengo cuenta -->
@@ -181,7 +181,7 @@
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="24dp"
                 android:text="@string/registro_ya_cuenta"
-                android:textSize="14sp"
+                android:textSize="@dimen/text_body"
                 android:textColor="?attr/colorPrimary"
                 android:clickable="true"
                 android:focusable="true"

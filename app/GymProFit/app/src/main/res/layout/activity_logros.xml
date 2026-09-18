@@ -38,7 +38,7 @@
             android:layout_marginStart="8dp"
             android:text="@string/logros_titulo"
             android:textAppearance="@style/TextAppearance.GymProFit.Headline"
-            android:textSize="24sp" />
+            android:textSize="@dimen/text_headline" />
 
     </LinearLayout>
 
@@ -50,7 +50,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="@string/logros_sin_logros"
-        android:textSize="16sp"
+        android:textSize="@dimen/text_subtitle"
         android:textColor="?attr/colorOnSurfaceVariant"
         android:visibility="gone" />
 

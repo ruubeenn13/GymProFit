@@ -84,14 +84,14 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/resumen_fecha"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_body"
                             android:textColor="?attr/colorOnSurfaceVariant" />
                         <TextView
                             android:id="@+id/tvFechaResumen"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="—"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_body"
                             android:textColor="?attr/colorOnSurface" />
                     </LinearLayout>
 
@@ -106,14 +106,14 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/resumen_duracion"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_body"
                             android:textColor="?attr/colorOnSurfaceVariant" />
                         <TextView
                             android:id="@+id/tvDuracionResumen"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="—"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_body"
                             android:textColor="?attr/colorOnSurface" />
                     </LinearLayout>
 
@@ -128,14 +128,14 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/resumen_calorias"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_body"
                             android:textColor="?attr/colorOnSurfaceVariant" />
                         <TextView
                             android:id="@+id/tvCaloriasResumen"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="—"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_body"
                             android:textColor="?attr/colorOnSurface" />
                     </LinearLayout>
 
@@ -150,14 +150,14 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/resumen_rutina"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_body"
                             android:textColor="?attr/colorOnSurfaceVariant" />
                         <TextView
                             android:id="@+id/tvRutinaResumen"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="—"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_body"
                             android:textColor="?attr/colorOnSurface" />
                     </LinearLayout>
 
@@ -174,14 +174,14 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/resumen_notas"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_body"
                             android:textColor="?attr/colorOnSurfaceVariant" />
                         <TextView
                             android:id="@+id/tvNotasResumen"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="—"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_body"
                             android:textColor="?attr/colorOnSurface" />
                     </LinearLayout>
 
@@ -191,7 +191,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/resumen_completada"
-                        android:textSize="12sp"
+                        android:textSize="@dimen/text_label"
                         android:textColor="?attr/colorPrimary"
                         android:textStyle="bold"
                         android:visibility="gone" />
@@ -234,13 +234,13 @@
                             android:fontFamily="@font/barlow_condensed"
                             android:textFontWeight="700"
                             android:includeFontPadding="false"
-                            android:textSize="34sp"
+                            android:textSize="@dimen/text_display_large"
                             android:textColor="?attr/colorOnSurface" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/resumen_stat_sesiones"
-                            android:textSize="11sp"
+                            android:textSize="@dimen/text_eyebrow"
                             android:textAllCaps="true"
                             android:letterSpacing="0.12"
                             android:textColor="?attr/colorOnSurfaceVariant"
@@ -267,13 +267,13 @@
                             android:fontFamily="@font/barlow_condensed"
                             android:textFontWeight="700"
                             android:includeFontPadding="false"
-                            android:textSize="34sp"
+                            android:textSize="@dimen/text_display_large"
                             android:textColor="?attr/colorOnSurface" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/resumen_stat_completadas"
-                            android:textSize="11sp"
+                            android:textSize="@dimen/text_eyebrow"
                             android:textAllCaps="true"
                             android:letterSpacing="0.12"
                             android:textColor="?attr/colorOnSurfaceVariant"
@@ -309,13 +309,13 @@
                             android:fontFamily="@font/barlow_condensed"
                             android:textFontWeight="700"
                             android:includeFontPadding="false"
-                            android:textSize="34sp"
+                            android:textSize="@dimen/text_display_large"
                             android:textColor="?attr/colorOnSurface" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/resumen_stat_minutos"
-                            android:textSize="11sp"
+                            android:textSize="@dimen/text_eyebrow"
                             android:textAllCaps="true"
                             android:letterSpacing="0.12"
                             android:textColor="?attr/colorOnSurfaceVariant"
@@ -342,13 +342,13 @@
                             android:fontFamily="@font/barlow_condensed"
                             android:textFontWeight="700"
                             android:includeFontPadding="false"
-                            android:textSize="34sp"
+                            android:textSize="@dimen/text_display_large"
                             android:textColor="?attr/colorOnSurface" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/resumen_stat_calorias"
-                            android:textSize="11sp"
+                            android:textSize="@dimen/text_eyebrow"
                             android:textAllCaps="true"
                             android:letterSpacing="0.12"
                             android:textColor="?attr/colorOnSurfaceVariant"
@@ -384,13 +384,13 @@
                             android:fontFamily="@font/barlow_condensed"
                             android:textFontWeight="700"
                             android:includeFontPadding="false"
-                            android:textSize="34sp"
+                            android:textSize="@dimen/text_display_large"
                             android:textColor="?attr/colorOnSurface" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/resumen_stat_racha"
-                            android:textSize="11sp"
+                            android:textSize="@dimen/text_eyebrow"
                             android:textAllCaps="true"
                             android:letterSpacing="0.12"
                             android:textColor="?attr/colorOnSurfaceVariant"
@@ -417,13 +417,13 @@
                             android:fontFamily="@font/barlow_condensed"
                             android:textFontWeight="700"
                             android:includeFontPadding="false"
-                            android:textSize="34sp"
+                            android:textSize="@dimen/text_display_large"
                             android:textColor="?attr/colorOnSurface" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/resumen_stat_mejor_racha"
-                            android:textSize="11sp"
+                            android:textSize="@dimen/text_eyebrow"
                             android:textAllCaps="true"
                             android:letterSpacing="0.12"
                             android:textColor="?attr/colorOnSurfaceVariant"
@@ -459,7 +459,7 @@
                         android:padding="16dp"
                         android:gravity="center"
                         android:text="@string/resumen_sin_logros"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_body"
                         android:textColor="?attr/colorOnSurfaceVariant"
                         android:visibility="gone" />
 

@@ -40,7 +40,7 @@
             android:layout_marginStart="8dp"
             android:text="@string/nutricion_estadisticas"
             android:textAppearance="@style/TextAppearance.GymProFit.Headline"
-            android:textSize="24sp" />
+            android:textSize="@dimen/text_headline" />
 
     </LinearLayout>
 
@@ -109,7 +109,7 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:textAppearance="@style/TextAppearance.GymProFit.Headline"
-                    android:textSize="18sp" />
+                    android:textSize="@dimen/text_title" />
 
                 <ImageView
                     android:id="@+id/btnNext"
@@ -138,7 +138,7 @@
                         android:orientation="vertical" android:padding="16dp">
                         <TextView android:id="@+id/tvKpiMediaValor" android:layout_width="wrap_content"
                             android:layout_height="wrap_content" android:textAppearance="@style/TextAppearance.GymProFit.Number"
-                            android:textSize="32sp" tools:text="1850" />
+                            android:textSize="@dimen/text_display" tools:text="1850" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:text="@string/stats_kpi_media" android:textAppearance="@style/TextAppearance.GymProFit.Label"
                             android:textColor="?attr/colorOnSurfaceVariant" />
@@ -153,7 +153,7 @@
                         android:orientation="vertical" android:padding="16dp">
                         <TextView android:id="@+id/tvKpiDiasValor" android:layout_width="wrap_content"
                             android:layout_height="wrap_content" android:textAppearance="@style/TextAppearance.GymProFit.Number"
-                            android:textSize="32sp" tools:text="5" />
+                            android:textSize="@dimen/text_display" tools:text="5" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:text="@string/stats_kpi_dias" android:textAppearance="@style/TextAppearance.GymProFit.Label"
                             android:textColor="?attr/colorOnSurfaceVariant" />
@@ -174,7 +174,7 @@
                         android:orientation="vertical" android:padding="16dp">
                         <TextView android:id="@+id/tvKpiObjetivoValor" android:layout_width="wrap_content"
                             android:layout_height="wrap_content" android:textAppearance="@style/TextAppearance.GymProFit.Number"
-                            android:textSize="32sp" tools:text="3" />
+                            android:textSize="@dimen/text_display" tools:text="3" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:text="@string/stats_kpi_objetivo" android:textAppearance="@style/TextAppearance.GymProFit.Label"
                             android:textColor="?attr/colorOnSurfaceVariant" />
@@ -189,7 +189,7 @@
                         android:orientation="vertical" android:padding="16dp">
                         <TextView android:id="@+id/tvKpiAdherenciaValor" android:layout_width="wrap_content"
                             android:layout_height="wrap_content" android:textAppearance="@style/TextAppearance.GymProFit.Number"
-                            android:textSize="32sp" tools:text="60%" />
+                            android:textSize="@dimen/text_display" tools:text="60%" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:text="@string/stats_kpi_adherencia" android:textAppearance="@style/TextAppearance.GymProFit.Label"
                             android:textColor="?attr/colorOnSurfaceVariant" />
@@ -234,7 +234,7 @@
                             android:layout_gravity="center"
                             android:text="@string/nutricion_grafica_vacia"
                             android:textColor="?attr/colorOnSurfaceVariant"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_body"
                             android:gravity="center"
                             android:visibility="gone" />
 
@@ -280,7 +280,7 @@
                             android:layout_gravity="center"
                             android:text="@string/nutricion_grafica_vacia"
                             android:textColor="?attr/colorOnSurfaceVariant"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_body"
                             android:gravity="center"
                             android:visibility="gone" />
 
@@ -327,19 +327,19 @@
                         <View android:id="@+id/legNone" android:layout_width="14dp" android:layout_height="14dp" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginStart="6dp" android:layout_marginEnd="14dp"
-                            android:text="@string/heatmap_sin_datos" android:textSize="12sp"
+                            android:text="@string/heatmap_sin_datos" android:textSize="@dimen/text_label"
                             android:textColor="?attr/colorOnSurfaceVariant" />
 
                         <View android:id="@+id/legOff" android:layout_width="14dp" android:layout_height="14dp" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginStart="6dp" android:layout_marginEnd="14dp"
-                            android:text="@string/heatmap_fuera" android:textSize="12sp"
+                            android:text="@string/heatmap_fuera" android:textSize="@dimen/text_label"
                             android:textColor="?attr/colorOnSurfaceVariant" />
 
                         <View android:id="@+id/legOn" android:layout_width="14dp" android:layout_height="14dp" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginStart="6dp"
-                            android:text="@string/heatmap_objetivo" android:textSize="12sp"
+                            android:text="@string/heatmap_objetivo" android:textSize="@dimen/text_label"
                             android:textColor="?attr/colorOnSurfaceVariant" />
 
                     </LinearLayout>
