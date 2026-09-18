@@ -1,63 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  item_ejercicio_peso — item de RecyclerView para registrar el peso usado en un ejercicio.
-  Muestra nombre y series/reps del ejercicio junto a un campo editable de peso, usado al registrar una sesión.
+  item_ejercicio_peso — un ejercicio de la sesión, con TODAS sus series.
+
+  Antes esta fila tenía un único campo de peso para el ejercicio entero, así que
+  solo se podía guardar un número: un 4×8 subiendo carga (60, 65, 70, 70) no
+  cabía. Ahora la cabecera lleva el nombre y lo que pedía la rutina, y debajo va
+  una fila por serie (item_serie) que rellena el adapter.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center_vertical"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp">
+    android:orientation="vertical"
+    android:paddingHorizontal="16dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="14dp">
 
-    <!-- Nombre del ejercicio y detalle series/reps -->
+    <!-- Cabecera: nombre del ejercicio y lo que pedía la rutina -->
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/tvNombreEjercicioPeso"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:layout_weight="1"
+            android:textSize="15sp"
             android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:textColor="?attr/colorOnSurface" />
 
         <TextView
             android:id="@+id/tvSeriesRepsPeso"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:textColor="?attr/colorOnSurface"
-            android:alpha="0.55"
-            android:layout_marginTop="2dp" />
+            android:layout_marginStart="10dp"
+            android:textSize="13sp"
+            android:textColor="?attr/colorOnSurfaceVariant" />
 
     </LinearLayout>
 
-    <!-- Campo de entrada del peso utilizado (kg) -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="112dp"
+    <!-- Una fila por serie; las mete el adapter -->
+    <LinearLayout
+        android:id="@+id/contenedorSeries"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/sesiones_peso_hint"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
-        app:boxCornerRadiusTopStart="8dp"
-        app:boxCornerRadiusTopEnd="8dp"
-        app:boxCornerRadiusBottomStart="8dp"
-        app:boxCornerRadiusBottomEnd="8dp">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etPeso"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
-            android:imeOptions="actionNext" />
-
-    </com.google.android.material.textfield.TextInputLayout>
+        android:orientation="vertical"
+        android:layout_marginTop="8dp" />
 
 </LinearLayout>

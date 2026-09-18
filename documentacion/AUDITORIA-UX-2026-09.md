@@ -892,16 +892,44 @@ Ordenadas por lo que ya está medio construido, que es donde el esfuerzo rinde:
 
 ### 9.7 Orden recomendado
 
-1. ~~**Los colores y las superficies.**~~ **HECHO — `346e0dc`.** Ver 9.8.
-2. ~~**Lo que está roto de verdad.**~~ **HECHO — `47add89`.** Ver 9.8.
-3. **El recorrido del producto.** Que "Iniciar entrenamiento" entrene, que desde
-   una rutina se pueda entrenar, y el registro por serie. Los dos primeros son
-   navegación; el tercero cambia el modelo de datos (`EjercicioPesoAdapter.Item`
-   pasa de un `String peso` a una lista de series) y arrastra API.
+1. ~~**Los colores y las superficies.**~~ **HECHO — `346e0dc`.** Ver 9.9.
+2. ~~**Lo que está roto de verdad.**~~ **HECHO — `47add89`.** Ver 9.9.
+3. ~~**El recorrido del producto.**~~ **HECHO — `c2b1707` (navegación) y el
+   registro por serie.** Ver 9.9.
 4. **La escala tipográfica.** Nueve escalones, familia neutra con peso 400 para el
    cuerpo, condensada solo para cifras, y fuera el multiplicador global de 1,18.
 
-### 9.8 Lo ya aplicado
+### 9.8 Decisión: fuera las calorías de los ejercicios
+
+**Tomada por el usuario el 2026-09-18.** Las calorías desaparecen de TODA la app
+salvo en alimentos. Motivo: en un ejercicio nunca es un dato acertado — depende
+del peso corporal, de la intensidad real, del descanso y del metabolismo de cada
+uno, y ninguno de esos datos se mide. En alimentos sí es un dato de catálogo,
+verificable.
+
+Refuerza la decisión lo que encontró el equipo: la cifra que hoy se muestra es
+`calorias * series * reps` (`RegistrarSesionActivity.java:191`), o sea las
+calorías del ejercicio multiplicadas por treinta en un 3×10 — físicamente
+absurdo, y pintada a 28 sp en naranja, en la posición de máxima jerarquía de la
+pantalla.
+
+**Qué hay que quitar** (inventario pendiente de barrer):
+
+- La tarjeta de calorías estimadas de `activity_registrar_sesion.xml` y su
+  cálculo en `RegistrarSesionActivity.calcularCaloriasRutina()`.
+- La columna de calorías de las tarjetas de rutina (`item_rutina.xml`) y del
+  detalle (`activity_detalle_rutina.xml`), del tipo "~464 kcal".
+- El KPI de calorías del Home (`activity_home.xml`), que además está etiquetado
+  solo como "Calorías" cuando son calorías QUEMADAS, y en una app con módulo de
+  nutrición se lee como ingesta.
+- `caloriasQuemadas` en el modelo de sesión y lo que cuelgue de él en la API.
+- El campo de calorías del catálogo de ejercicios, si solo alimenta lo anterior.
+
+**Qué lo sustituye**: volumen levantado (Σ peso × repeticiones), que sí es un
+dato real y es la métrica con la que la competencia compara semana a semana.
+Depende del registro por serie, así que va después de él.
+
+### 9.9 Lo ya aplicado
 
 **`346e0dc` — marca unificada y superficies que se ven.**
 
@@ -937,3 +965,38 @@ y en las cuatro pantallas de administración, que además suman debounce de 350 
 El diálogo de carga **se conserva** en las cargas que no vienen de teclear
 (entrar, volver, cambiar un estado): ahí la espera no es continua y el spinner sí
 informa.
+
+**`c2b1707` — el recorrido reconectado.** "Iniciar entrenamiento" del Home lanza
+el registro de sesión y no el historial; el detalle de rutina gana un botón
+"Entrenar" primario **siempre visible**, también en las predefinidas, que antes
+no tenían ninguna acción; y `RegistrarSesionActivity` acepta el id de la rutina y
+la deja preseleccionada, con sus ejercicios ya cargados.
+
+**Registro por serie.** Es el cambio que sostiene el producto. Antes
+`ejercicios_realizados` guardaba UNA fila por ejercicio con un solo `peso_usado`:
+un 4×8 subiendo carga no se podía registrar, había que elegir un número y mentir,
+y sin dato por serie no existen progresión de carga, récords ni volumen.
+
+Se añade la tabla hija `series_realizadas`
+(`V202609182100__Series_realizadas.sql`) con número, repeticiones, peso y
+completada. Es **aditiva**: las sesiones ya guardadas siguen siendo válidas y
+simplemente no tienen detalle. En la app, `EjercicioPesoAdapter.Item.peso` pasa
+de un `String` a una lista de series, y la fila del ejercicio es una cabecera más
+una línea por serie.
+
+Tres decisiones de modelo que conviene no perder:
+
+- **El resumen se DEDUCE, no se acepta del cliente.** `seriesCompletadas` y
+  `pesoUsado` los calcula el servicio a partir de las series; si llegaran los dos
+  por separado podrían contradecirse y no habría forma de saber cuál es el bueno.
+  Como peso de resumen se toma el máximo, que es el que interesa para un récord.
+- **Las repeticiones se precargan del plan pero son editables.** Fallar la última
+  serie es información, no un error.
+- **Escribir un peso marca la serie como hecha.** Se descubrió verificando en la
+  base de datos: con el check manual, quien rellenara sus cuatro series sin
+  tocarlo guardaba "0 series completadas" y cualquier estadística construida
+  encima habría mentido. El check queda para lo contrario, desmarcar.
+
+Verificado end-to-end contra la API local: cuatro pesos distintos en un mismo
+ejercicio (65, 70, 72,5 kg) llegando a la base de datos con su número de serie, y
+el resumen deducido correctamente.

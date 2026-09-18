@@ -48,6 +48,18 @@ public class EjercicioRealizado {
     private String notas;
 
     // Sesión de entrenamiento a la que pertenece este registro.
+    // Las series concretas de este ejercicio, en orden.
+    //
+    // Es el detalle real del desempeño: antes solo existían `seriesCompletadas`
+    // (un número) y `pesoUsado` (uno solo), así que un 4x8 subiendo carga no se
+    // podía registrar. Esos dos campos se conservan como resumen para no romper
+    // las sesiones ya guardadas, y a partir de ahora los calcula el servicio a
+    // partir de estas series.
+    @OneToMany(mappedBy = "ejercicioRealizado", cascade = CascadeType.ALL,
+               orphanRemoval = true, fetch = FetchType.EAGER)
+    @OrderBy("numero ASC")
+    private java.util.List<SerieRealizada> series = new java.util.ArrayList<>();
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sesion_id", nullable = false)
     private SesionEntrenamiento sesion;

@@ -1,5 +1,6 @@
 package com.gymprofit.api.dto.entity.ejerciciorealizado;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,4 +33,7 @@ public class EjercicioRealizadoDTO implements Serializable {
     private Integer tiempoSegundos;
     // Notas u observaciones
     private String notas;
+
+    @Schema(description = "Las series concretas de este ejercicio, en orden")
+    private java.util.List<com.gymprofit.api.dto.entity.serierealizada.SerieRealizadaDTO> series;
 }

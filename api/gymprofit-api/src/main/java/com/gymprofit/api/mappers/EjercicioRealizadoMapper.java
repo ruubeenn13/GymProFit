@@ -2,7 +2,9 @@ package com.gymprofit.api.mappers;
 
 import com.gymprofit.api.dto.entity.ejerciciorealizado.EjercicioRealizadoCreateDTO;
 import com.gymprofit.api.dto.entity.ejerciciorealizado.EjercicioRealizadoDTO;
+import com.gymprofit.api.dto.entity.serierealizada.SerieRealizadaDTO;
 import com.gymprofit.api.entity.EjercicioRealizado;
+import com.gymprofit.api.entity.SerieRealizada;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -26,8 +28,14 @@ public interface EjercicioRealizadoMapper {
 
     // Crea la entidad a partir del DTO de creación, ignorando campos
     // gestionados por el service (id, sesión y ejercicio).
+    // Las series las monta el service, que además tiene que darles la vuelta
+    // (cada SerieRealizada necesita apuntar a su ejercicio padre).
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "sesion", ignore = true)
     @Mapping(target = "ejercicio", ignore = true)
+    @Mapping(target = "series", ignore = true)
     EjercicioRealizado toEntity(EjercicioRealizadoCreateDTO ejercicioRealizadoCreateDTO);
+
+    // Una serie suelta, para poder devolverla dentro del ejercicio.
+    SerieRealizadaDTO toSerieDTO(SerieRealizada serie);
 }

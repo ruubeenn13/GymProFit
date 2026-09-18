@@ -110,7 +110,11 @@ public class DetalleRutinaActivity extends AppCompatActivity {
     private void poblarInfoRutina() {
         ((TextView) findViewById(R.id.tvNombreDetalle)).setText(nombre);
         ((TextView) findViewById(R.id.tvDescripcionDetalle)).setText(descripcion);
-        ((Chip) findViewById(R.id.chipNivelDetalle)).setText(nivel);
+        // El enum llega en crudo desde la API ("INTERMEDIO"), así que con la app en
+        // inglés salía en español. La lista de rutinas ya lo traducía y esta
+        // pantalla no: mismo dato, dos vocabularios, a un toque de distancia.
+        ((Chip) findViewById(R.id.chipNivelDetalle))
+                .setText(UIHelper.traducirNivel(this, nivel));
         ((TextView) findViewById(R.id.tvDuracionDetalle)).setText(duracion + " min");
         ((TextView) findViewById(R.id.tvCaloriasDetalle)).setText("~" + calorias + " kcal");
     }

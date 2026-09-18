@@ -36,6 +36,7 @@ import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.ui.adapters.EjercicioPesoAdapter;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PreferencesManager;
+import es.pmdm.gymprofit.utils.Numeros;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
 
@@ -326,25 +327,63 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         }
     }
 
-    // Envía a la API un registro de ejercicio realizado por cada ítem de la
-    // lista (series, repeticiones y peso usado), asociado a la sesión creada.
+    /**
+     * Envía a la API un registro por ejercicio, con TODAS sus series dentro.
+     *
+     * <p>Antes se mandaba un único peso por ejercicio, así que un 4×8 subiendo
+     * carga no se podía registrar. Ahora viaja una entrada por serie con su peso
+     * y sus repeticiones reales, y el servidor deduce de ellas el resumen: no se
+     * mandan `seriesCompletadas` ni `pesoUsado` para que los dos no puedan
+     * contradecirse.
+     *
+     * <p>Las series sin peso ni repeticiones se descartan: son las que el usuario
+     * dejó en blanco porque no llegó a hacerlas.
+     */
     private void registrarEjerciciosRealizados(int sesionId) {
         for (EjercicioPesoAdapter.Item item : ejercicioItems) {
-            try {
-                Map<String, Object> body = new HashMap<>();
-                body.put("sesionId", sesionId);
-                body.put("ejercicioId", item.ejercicioId);
-                body.put("seriesCompletadas", item.series);
-                body.put("repeticionesReales", item.repeticiones);
-                if (!item.peso.isEmpty()) {
-                    // Peso como BigDecimal para conservar la precisión decimal.
-                    body.put("pesoUsado", new BigDecimal(item.peso.replace(",", ".")));
-                }
-                sesionApi.crearEjercicioRealizado(body).enqueue(new ApiCallback<Void>() {
-                    @Override public void onOk(Void b) {}
-                    @Override public void onFail(int c, String m) {}
-                });
-            } catch (NumberFormatException ignored) {}
+            List<Map<String, Object>> series = construirSeries(item);
+            if (series.isEmpty()) continue;
+
+            Map<String, Object> body = new HashMap<>();
+            body.put("sesionId", sesionId);
+            body.put("ejercicioId", item.ejercicioId);
+            body.put("repeticionesReales", item.repeticiones);
+            body.put("series", series);
+
+            sesionApi.crearEjercicioRealizado(body).enqueue(new ApiCallback<Void>() {
+                @Override public void onOk(Void b) {}
+                @Override public void onFail(int c, String m) {}
+            });
         }
+    }
+
+    /**
+     * Convierte lo que el usuario tecleó en el cuerpo que espera la API.
+     *
+     * <p>El peso y las repeticiones pasan por {@link Numeros}, que acepta coma o
+     * punto y devuelve null fuera de rango en vez de lanzar: un valor imposible
+     * se descarta, nunca se sustituye por uno inventado.
+     *
+     * @return una entrada por serie con algo que guardar; puede venir vacía.
+     */
+    private List<Map<String, Object>> construirSeries(EjercicioPesoAdapter.Item item) {
+        List<Map<String, Object>> series = new ArrayList<>();
+
+        for (EjercicioPesoAdapter.Serie serie : item.realizadas) {
+            Integer reps = Numeros.entero(serie.repeticiones, 0, 100);
+            BigDecimal peso = Numeros.exacto(serie.peso, 0, 500);
+
+            // Una serie en blanco es una serie que no se hizo.
+            if (reps == null && peso == null) continue;
+
+            Map<String, Object> fila = new HashMap<>();
+            fila.put("numero", serie.numero);
+            fila.put("repeticiones", reps != null ? reps : 0);
+            if (peso != null) fila.put("peso", peso);
+            fila.put("completada", serie.completada);
+            series.add(fila);
+        }
+
+        return series;
     }
 }

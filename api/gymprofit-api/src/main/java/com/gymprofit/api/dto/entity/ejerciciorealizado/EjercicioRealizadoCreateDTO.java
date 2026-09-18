@@ -1,5 +1,6 @@
 package com.gymprofit.api.dto.entity.ejerciciorealizado;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -45,4 +46,10 @@ public class EjercicioRealizadoCreateDTO implements Serializable {
 
     // Notas u observaciones opcionales
     private String notas;
+
+    // El cliente manda las series y el servicio deduce de ellas el resumen
+    // (seriesCompletadas y pesoUsado), para que no puedan contradecirse.
+    @jakarta.validation.Valid
+    @Schema(description = "Series realmente hechas, en orden. Si no se mandan, se guarda solo el resumen")
+    private java.util.List<com.gymprofit.api.dto.entity.serierealizada.SerieRealizadaCreateDTO> series;
 }

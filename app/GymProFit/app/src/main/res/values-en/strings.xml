@@ -271,6 +271,9 @@
     <string name="sesiones_valoracion_fmt">⭐ %d/5</string>
     <string name="sesiones_ejercicios_sesion">Session exercises</string>
     <string name="sesiones_peso_hint">Weight (kg)</string>
+    <string name="sesiones_reps_hint">Reps</string>
+    <string name="sesiones_serie_por">×</string>
+    <string name="sesiones_serie_completada">Mark set as done</string>
 
     <!-- MEASUREMENTS -->
     <string name="mediciones_titulo">Body measurements</string>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_serie — una serie concreta dentro de un ejercicio, al registrar la sesión.
+
+  Cada fila es una serie de verdad: su número, el peso y las repeticiones REALES,
+  y una marca de completada. Antes había un único campo de peso por ejercicio, así
+  que un 4×8 subiendo carga no se podía registrar y había que elegir un número y
+  mentir. Sin dato por serie no hay progresión, ni récords, ni volumen.
+
+  El área táctil de la marca es de 48 dp aunque el icono mida 24: se usa con la
+  mano sudada, entre series.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingVertical="4dp">
+
+    <!-- Número de serie -->
+    <TextView
+        android:id="@+id/tvNumeroSerie"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:gravity="center"
+        android:background="@drawable/bg_circulo_paso"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="?attr/colorOnSurfaceVariant" />
+
+    <!-- Peso de ESTA serie -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="10dp"
+        android:hint="@string/sesiones_peso_hint"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
+        app:boxCornerRadiusTopStart="8dp"
+        app:boxCornerRadiusTopEnd="8dp"
+        app:boxCornerRadiusBottomStart="8dp"
+        app:boxCornerRadiusBottomEnd="8dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etPesoSerie"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:maxLength="6"
+            android:imeOptions="actionNext" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:text="@string/sesiones_serie_por"
+        android:textSize="14sp"
+        android:textColor="?attr/colorOnSurfaceVariant" />
+
+    <!-- Repeticiones REALES de esta serie: fallar la última es información -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.8"
+        android:hint="@string/sesiones_reps_hint"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
+        app:boxCornerRadiusTopStart="8dp"
+        app:boxCornerRadiusTopEnd="8dp"
+        app:boxCornerRadiusBottomStart="8dp"
+        app:boxCornerRadiusBottomEnd="8dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etRepsSerie"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:maxLength="3"
+            android:imeOptions="actionNext" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Marca de completada -->
+    <ImageView
+        android:id="@+id/ivSerieCompletada"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="12dp"
+        android:src="@drawable/ic_check"
+        app:tint="?attr/colorOnSurfaceVariant"
+        android:alpha="0.35"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/sesiones_serie_completada" />
+
+</LinearLayout>

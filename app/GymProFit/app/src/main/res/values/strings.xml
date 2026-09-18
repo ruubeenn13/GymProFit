@@ -260,6 +260,9 @@
     <string name="sesiones_valoracion_fmt">⭐ %d/5</string>
     <string name="sesiones_ejercicios_sesion">Ejercicios de la sesión</string>
     <string name="sesiones_peso_hint">Peso (kg)</string>
+    <string name="sesiones_reps_hint">Reps</string>
+    <string name="sesiones_serie_por">×</string>
+    <string name="sesiones_serie_completada">Marcar serie como completada</string>
 
     <!-- MEDICIONES -->
     <string name="mediciones_titulo">Mediciones corporales</string>

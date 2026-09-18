@@ -4,6 +4,8 @@ import com.gymprofit.api.dto.entity.ejerciciorealizado.EjercicioRealizadoCreateD
 import com.gymprofit.api.dto.entity.ejerciciorealizado.EjercicioRealizadoDTO;
 import com.gymprofit.api.dto.entity.ejerciciorealizado.EjercicioRealizadoPatchDTO;
 import com.gymprofit.api.entity.Ejercicio;
+import com.gymprofit.api.dto.entity.serierealizada.SerieRealizadaCreateDTO;
+import com.gymprofit.api.entity.SerieRealizada;
 import com.gymprofit.api.entity.EjercicioRealizado;
 import com.gymprofit.api.entity.SesionEntrenamiento;
 import com.gymprofit.api.config.security.SecurityUtils;
@@ -21,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 // ============================================================
@@ -86,12 +89,58 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
             ejercicioRealizado.setSesion(sesion);
             ejercicioRealizado.setEjercicio(ejercicio);
 
+            aplicarSeries(ejercicioRealizado, ejercicioRealizadoCreateDTO.getSeries());
+
             EjercicioRealizado ejercicioGuardado = ejercicioRealizadoRepository.save(ejercicioRealizado);
 
             return ejercicioRealizadoMapper.toDTO(ejercicioGuardado);
         } catch (Exception e) {
             throw new CreateEntityException(EjercicioRealizado.class.getSimpleName(), ejercicioRealizadoCreateDTO, e);
         }
+    }
+
+    /**
+     * Cuelga del ejercicio las series que mandó el cliente y deduce de ellas el
+     * resumen.
+     *
+     * <p>El resumen (series completadas y peso usado) NO se acepta del cliente
+     * cuando hay series: si llegaran los dos por separado podrían contradecirse y
+     * no habría forma de saber cuál es el bueno. Como peso de resumen se toma el
+     * más alto de la sesión, que es el que interesa para un récord personal.
+     *
+     * <p>Si no llegan series se respeta lo que mande el cliente: las sesiones
+     * guardadas antes de que existiera esta tabla siguen siendo válidas.
+     *
+     * @param ejercicio el ejercicio al que colgarlas.
+     * @param series    lo que mandó el cliente; puede ser nulo o vacío.
+     */
+    private void aplicarSeries(EjercicioRealizado ejercicio,
+                               List<SerieRealizadaCreateDTO> series) {
+        if (series == null || series.isEmpty()) return;
+
+        BigDecimal pesoMaximo = null;
+        int completadas = 0;
+
+        ejercicio.getSeries().clear();
+
+        for (SerieRealizadaCreateDTO dto : series) {
+            SerieRealizada serie = new SerieRealizada();
+            serie.setNumero(dto.getNumero());
+            serie.setRepeticiones(dto.getRepeticiones());
+            serie.setPeso(dto.getPeso());
+            serie.setCompletada(dto.getCompletada() == null || dto.getCompletada());
+            serie.setEjercicioRealizado(ejercicio);
+            ejercicio.getSeries().add(serie);
+
+            if (Boolean.TRUE.equals(serie.getCompletada())) completadas++;
+            if (dto.getPeso() != null
+                    && (pesoMaximo == null || dto.getPeso().compareTo(pesoMaximo) > 0)) {
+                pesoMaximo = dto.getPeso();
+            }
+        }
+
+        ejercicio.setSeriesCompletadas(completadas);
+        if (pesoMaximo != null) ejercicio.setPesoUsado(pesoMaximo);
     }
 
     // Actualiza los datos de series, repeticiones, peso, tiempo y notas de un ejercicio realizado.
