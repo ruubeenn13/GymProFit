@@ -892,13 +892,48 @@ Ordenadas por lo que ya está medio construido, que es donde el esfuerzo rinde:
 
 ### 9.7 Orden recomendado
 
-1. **Los colores y las superficies.** Separar los niveles de superficie, subir el
-   borde a 3:1, negro cálido sobre el naranja, un solo naranja en los dos temas y
-   elevación 1 dp en la tarjeta. Un archivo y medio, cambia las 40 pantallas y
-   quita el motivo de rechazo de accesibilidad.
-2. **Lo que está roto de verdad.** Los cuatro fallos de 9.5, el `ic_more_vert`
-   invisible y el modal bloqueante del buscador. Son bugs, no gusto.
+1. ~~**Los colores y las superficies.**~~ **HECHO — `346e0dc`.** Ver 9.8.
+2. ~~**Lo que está roto de verdad.**~~ **HECHO — `47add89`.** Ver 9.8.
 3. **El recorrido del producto.** Que "Iniciar entrenamiento" entrene, que desde
-   una rutina se pueda entrenar, y el registro por serie.
+   una rutina se pueda entrenar, y el registro por serie. Los dos primeros son
+   navegación; el tercero cambia el modelo de datos (`EjercicioPesoAdapter.Item`
+   pasa de un `String peso` a una lista de series) y arrastra API.
 4. **La escala tipográfica.** Nueve escalones, familia neutra con peso 400 para el
    cuerpo, condensada solo para cifras, y fuera el multiplicador global de 1,18.
+
+### 9.8 Lo ya aplicado
+
+**`346e0dc` — marca unificada y superficies que se ven.**
+
+| Token | Antes | Ahora |
+|---|---|---|
+| Texto sobre el naranja | 2,87:1 (falla AA) | **6,61:1** — carbón cálido `#1A0E00` |
+| Borde de tarjeta, oscuro | 1,25:1 | **2,06:1** |
+| Borde de tarjeta, claro | 1,15:1 | **1,66:1** + 1 dp de elevación |
+| Acento en tema claro | teal `#0F766E` | naranja `#B83E00` (5,63:1 en los dos papeles) |
+| Gris de texto secundario | — | 6,68:1 claro / 7,05:1 oscuro |
+
+Dos matices que conviene no perder:
+
+- **Los valores que proponía el informe no arreglaban el problema.** Su
+  `gp_surface #16181C` sobre `gp_background #0B0C0E` da **1,10:1**, exactamente
+  lo que ya había. El diagnóstico era correcto y la receta no. Todos los valores
+  aplicados se recalcularon con la fórmula de luminancia relativa de WCAG y los
+  ratios quedan comentados en el propio XML.
+- **El borde no llega al 3:1 de WCAG 1.4.11 a propósito.** A ese contraste cada
+  tarjeta se lee como un wireframe, y la norma exige ese ratio para identificar
+  un *control*, no para el canto de un contenedor.
+
+**`47add89` — seis cosas que estaban rotas.** La barra de calorías blanca sobre
+blanco (se separa en dos drawables: el de sobre-naranja conserva el blanco, el de
+sobre-superficie toma el tema); las tres barras de macros del resumen, que ahora
+tienen `id`, color propio por macro y muestran el reparto real creciendo desde
+cero; el `setStrokeWidth` en píxeles que adelgazaba el borde al seleccionar, en
+los pasos 4 y 5; la proteína, que pasa de marcarse en rojo al superarse a
+marcarse en verde al alcanzarse; los cuatro iconos con el color a fuego; y el
+modal bloqueante del buscador, que desaparece de la ruta de teclear en nutrición
+y en las cuatro pantallas de administración, que además suman debounce de 350 ms.
+
+El diálogo de carga **se conserva** en las cargas que no vienen de teclear
+(entrar, volver, cambiar un estado): ahí la espera no es continua y el spinner sí
+informa.
