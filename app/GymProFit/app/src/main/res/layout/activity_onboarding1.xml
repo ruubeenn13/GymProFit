@@ -1,9 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- NUEVO FICHERO - Onboarding paso 1: Bienvenida -->
 <!--
   activity_onboarding1.xml — Paso 1 de 5 del asistente de onboarding.
-  Pantalla de bienvenida con logo, saludo personalizado, indicador de progreso
-  y botón para empezar; incluye opción de saltar el onboarding.
+
+  Rediseñada según la sección 4.8 de documentacion/AUDITORIA-UX-2026-09.md.
+  Antes era una plantilla centrada: mancuerna de clipart a 120 dp, el saludo
+  genérico a 34 dp y el nombre del usuario a 22 dp (lo impersonal gritaba y lo
+  personal susurraba), y todo flotando en mitad de la pantalla, que además
+  rompía con los pasos 2-5, alineados arriba a la izquierda.
+
+  Ahora:
+  - Composición arriba a la izquierda, como el resto del asistente: al avanzar
+    no salta nada de sitio.
+  - El logo REAL de la marca (@drawable/logo, el mismo de splash, login y
+    registro) como cabecera pequeña, no como protagonista.
+  - El nombre del usuario es el titular. El texto lo pone la Activity con un
+    saludo SIN GÉNERO, en un solo TextView para que el lector de pantalla lo
+    anuncie como una frase y no como dos sueltas.
+  - Expectativa concreta en vez de promesa de plantilla: cuántos pasos son y
+    qué se va a preguntar.
+  - "Saltar" deja de llevar el naranja de acción, que competía con el botón.
+  - Cinco puntos de progreso, que es lo que mide el asistente (antes había 4).
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -12,67 +28,144 @@
     android:orientation="vertical"
     android:background="?attr/android:colorBackground">
 
-    <!-- Botón para saltar el onboarding -->
-    <TextView
-        android:layout_width="wrap_content"
+    <!-- Cabecera: marca a la izquierda, salida a la derecha -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_margin="16dp"
-        android:id="@+id/tvSaltar1"
-        android:text="@string/onboarding_saltar"
-        android:textSize="14sp"
-        android:textColor="?attr/colorPrimary"
-        android:padding="8dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:background="?attr/selectableItemBackgroundBorderless" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="24dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="12dp">
 
-    <!-- Contenido central: logo, título de bienvenida y descripción -->
+        <ImageView
+            android:id="@+id/ivLogoBienvenida"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:src="@drawable/logo"
+            android:contentDescription="@null" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <!-- Área táctil de 48 dp: antes eran ~40 dp, por debajo del mínimo. -->
+        <TextView
+            android:id="@+id/tvSaltar1"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:minWidth="48dp"
+            android:gravity="center"
+            android:paddingHorizontal="12dp"
+            android:text="@string/onboarding_saltar"
+            android:textSize="14sp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless" />
+
+    </LinearLayout>
+
+    <!-- Contenido, alineado arriba a la izquierda -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:gravity="center"
-        android:padding="32dp">
-
-        <ImageView
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:src="@drawable/ic_logo_gym"
-            android:contentDescription="@string/app_name" />
+        android:paddingHorizontal="24dp"
+        android:paddingTop="40dp">
 
         <TextView
+            android:id="@+id/tvAntetitulo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:text="@string/onboarding_bienvenida_titulo"
-            android:textAppearance="@style/TextAppearance.GymProFit.Display"
-            android:gravity="center" />
+            android:text="@string/onboarding_bienvenida_antetitulo"
+            android:textSize="12sp"
+            android:textAllCaps="true"
+            android:letterSpacing="0.14"
+            android:textColor="?attr/colorOnSurfaceVariant" />
 
+        <!-- El saludo COMPLETO, nombre incluido, lo escribe la Activity. -->
         <TextView
             android:id="@+id/tvBienvenidaNombre"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textAppearance="@style/TextAppearance.GymProFit.Headline"
-            android:textColor="?attr/colorPrimary"
-            android:gravity="center" />
+            android:layout_marginTop="10dp"
+            android:textAppearance="@style/TextAppearance.GymProFit.Display" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/tvBienvenidaDesc"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="14dp"
             android:text="@string/onboarding_bienvenida_desc"
             android:textSize="15sp"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:gravity="center"
-            android:lineSpacingMultiplier="1.4" />
+            android:lineSpacingMultiplier="1.35" />
+
+        <!-- Lo que se va a preguntar, para que no haya sorpresas -->
+        <LinearLayout
+            android:id="@+id/layoutPasos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:orientation="vertical">
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:gravity="center_vertical">
+                <TextView android:layout_width="26dp" android:layout_height="26dp"
+                    android:background="@drawable/bg_circulo_paso" android:gravity="center"
+                    android:text="@string/onboarding_bienvenida_num_1" android:textSize="12sp"
+                    android:textStyle="bold" android:textColor="?attr/colorOnSurfaceVariant" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp" android:text="@string/onboarding_bienvenida_paso_datos"
+                    android:textSize="14sp" android:textColor="?attr/colorOnSurface" />
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:orientation="horizontal" android:gravity="center_vertical">
+                <TextView android:layout_width="26dp" android:layout_height="26dp"
+                    android:background="@drawable/bg_circulo_paso" android:gravity="center"
+                    android:text="@string/onboarding_bienvenida_num_2" android:textSize="12sp"
+                    android:textStyle="bold" android:textColor="?attr/colorOnSurfaceVariant" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp" android:text="@string/onboarding_bienvenida_paso_medidas"
+                    android:textSize="14sp" android:textColor="?attr/colorOnSurface" />
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:orientation="horizontal" android:gravity="center_vertical">
+                <TextView android:layout_width="26dp" android:layout_height="26dp"
+                    android:background="@drawable/bg_circulo_paso" android:gravity="center"
+                    android:text="@string/onboarding_bienvenida_num_3" android:textSize="12sp"
+                    android:textStyle="bold" android:textColor="?attr/colorOnSurfaceVariant" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp" android:text="@string/onboarding_bienvenida_paso_objetivo"
+                    android:textSize="14sp" android:textColor="?attr/colorOnSurface" />
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:orientation="horizontal" android:gravity="center_vertical">
+                <TextView android:layout_width="26dp" android:layout_height="26dp"
+                    android:background="@drawable/bg_circulo_paso" android:gravity="center"
+                    android:text="@string/onboarding_bienvenida_num_4" android:textSize="12sp"
+                    android:textStyle="bold" android:textColor="?attr/colorOnSurfaceVariant" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp" android:text="@string/onboarding_bienvenida_paso_nivel"
+                    android:textSize="14sp" android:textColor="?attr/colorOnSurface" />
+            </LinearLayout>
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <!-- Pie: indicador de progreso (paso 1 de 4) y botón de continuar -->
+    <!-- Pie: progreso (paso 1 de 5) y botón de continuar -->
     <LinearLayout
+        android:id="@+id/layoutPieBienvenida"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -86,17 +179,15 @@
             android:layout_marginBottom="16dp">
 
             <View android:layout_width="32dp" android:layout_height="4dp"
-                android:background="?attr/colorPrimary" android:layout_marginEnd="6dp"
-                android:layout_gravity="center_vertical" />
+                android:background="?attr/colorPrimary" android:layout_marginEnd="5dp" />
             <View android:layout_width="8dp" android:layout_height="4dp"
-                android:background="?attr/colorSurfaceVariant"
-                android:layout_marginEnd="6dp" android:layout_gravity="center_vertical" />
+                android:background="?attr/colorSurfaceVariant" android:layout_marginEnd="5dp" />
             <View android:layout_width="8dp" android:layout_height="4dp"
-                android:background="?attr/colorSurfaceVariant"
-                android:layout_marginEnd="6dp" android:layout_gravity="center_vertical" />
+                android:background="?attr/colorSurfaceVariant" android:layout_marginEnd="5dp" />
             <View android:layout_width="8dp" android:layout_height="4dp"
-                android:background="?attr/colorSurfaceVariant"
-                android:layout_gravity="center_vertical" />
+                android:background="?attr/colorSurfaceVariant" android:layout_marginEnd="5dp" />
+            <View android:layout_width="8dp" android:layout_height="4dp"
+                android:background="?attr/colorSurfaceVariant" />
 
         </LinearLayout>
 

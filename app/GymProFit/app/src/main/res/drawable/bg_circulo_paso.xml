@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  bg_circulo_paso — Círculo de fondo para el número de cada paso en la pantalla
+  de bienvenida del onboarding.
+
+  No se reutiliza bg_circle porque aquel tiene el blanco escrito a fuego y aquí
+  hace falta que el círculo siga al tema: sobre fondo oscuro un disco blanco
+  tapa el número.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="?attr/colorSurfaceVariant" />
+</shape>
