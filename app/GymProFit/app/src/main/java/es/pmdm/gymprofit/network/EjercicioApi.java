@@ -28,6 +28,11 @@ public interface EjercicioApi {
     @GET("ejercicios/activos")
     Call<List<Ejercicio>> getActivos();
 
+    // Un ejercicio concreto por id. Lo usa la tarjeta de record de la pantalla de
+    // inicio, que solo conoce el id y necesita el ejercicio entero para abrir su detalle.
+    @GET("ejercicios/{id}")
+    Call<Ejercicio> getPorId(@Path("id") int id);
+
     // Búsqueda paginada del catálogo de ejercicios activos. q, grupoMuscular
     // (enum: PECHO, ESPALDA...) y dificultad (PRINCIPIANTE...) opcionales
     // (null = sin filtro). Devuelve 200 con content=[] si no hay resultados

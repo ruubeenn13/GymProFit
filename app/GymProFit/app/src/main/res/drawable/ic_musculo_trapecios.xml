@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ic_musculo_trapecios — generado a partir de ic_body_trapezius.xml (fase 4, silueta muscular de Home).
+  Solo los paths del musculo, en blanco para tenirlos en runtime. Vista dorsal.
+  NO editar a mano: se regenera con scripts/extraer-musculos.py.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp" android:height="240dp"
+    android:viewportWidth="724" android:viewportHeight="1448">
+  <group android:translateX="-724">
+    <path android:fillColor="#FFFFFFFF" android:pathData="M 1071.06 308.94 c 5.6 4.92 6.96 17.83 7.43 24.88 q 1.5 22.3 .93 44.68 -1.2 46.76 -5.66 94 a .57 .56 3.7 0 1 -.59 .51 q -.68 -.03 -.94 -1.01 -4.29 -15.9 -9.79 -25.19 c -10.24 -17.31 -18.8 -31.84 -25.59 -49.4 -10.19 -26.38 -15.6 -54.28 -26.46 -80.58 q -3.07 -7.43 -7.61 -14.07 -.3 -.43 .2 -.6 12.47 -4.28 25.48 -4.85 c 5.54 -.25 12.15 .86 18.32 1.41 9.7 .87 16.77 3.6 24.28 10.22 z"/>
+    <path android:fillColor="#FFFFFFFF" android:pathData="M 1163.98 302.12 a .43 .43 0 0 1 .22 .65 q -7.08 10.77 -11.41 23.37 c -10.53 30.61 -17.8 62.94 -31.3 91.07 -5.11 10.64 -15.17 25.22 -20.12 36.26 q -4.08 9.08 -6.59 18.83 a .77 .77 0 0 1 -1.51 -.12 q -4.27 -45.15 -5.52 -90.99 c -.56 -20.28 -.74 -39.92 2.75 -60.43 1.04 -6.13 2.77 -9.98 7.85 -13.85 9.8 -7.48 18.02 -7.73 30.1 -9.11 12.02 -1.39 23.92 .4 35.53 4.32 z"/>
+  </group>
+</vector>

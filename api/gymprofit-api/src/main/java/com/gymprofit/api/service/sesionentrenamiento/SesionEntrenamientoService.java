@@ -4,6 +4,8 @@ import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoCreat
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoPatchDTO;
 import com.gymprofit.api.config.security.SecurityUtils;
+import com.gymprofit.api.dto.entity.sesionentrenamiento.VolumenMuscularDTO;
+import com.gymprofit.api.repository.jpa.IEjercicioRealizadoRepository;
 import com.gymprofit.api.entity.Rutina;
 import com.gymprofit.api.entity.SesionEntrenamiento;
 import com.gymprofit.api.entity.Usuario;
@@ -24,7 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 // ============================================================
 // SesionEntrenamientoService — implementa la gestión de sesiones de entrenamiento.
@@ -43,6 +47,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
     private final SesionEntrenamientoMapper sesionEntrenamientoMapper;
     private final ILogroService logroService;
     private final SecurityUtils securityUtils;
+    // Necesario para el volumen por músculo: el dato vive en los ejercicios realizados.
+    private final IEjercicioRealizadoRepository ejercicioRealizadoRepository;
     // Logger para trazar las operaciones del servicio.
     private final Logger logger = LoggerFactory.getLogger(SesionEntrenamientoService.class);
 
@@ -418,5 +424,122 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         } catch (Exception e) {
             throw new UpdateEntityException(SesionEntrenamiento.class.getSimpleName(), id, e);
         }
+    }
+
+    /**
+     * Series por músculo en los últimos días, para la silueta de Home.
+     * <p>
+     * Normaliza los nombres antes de sumar: el catálogo mezcla "Bíceps", "biceps" y
+     * ejercicios importados sin músculo primario, que caen a su grupo grueso. La app
+     * recibe claves ya limpias y no tiene que adivinar nada.
+     *
+     * @param usuarioId dueño de las sesiones (se comprueba la propiedad).
+     * @param dias      ventana hacia atrás, en días.
+     */
+    @Override
+    public List<VolumenMuscularDTO> getVolumenMuscular(Integer usuarioId, int dias) {
+        securityUtils.checkOwnership(usuarioId);
+
+        LocalDateTime desde = LocalDateTime.now().minusDays(Math.max(1, dias));
+        List<Object[]> filas = ejercicioRealizadoRepository.seriesPorMusculoDesde(usuarioId, desde);
+
+        // Dos filas distintas ("Bíceps" y "biceps") pueden caer en el mismo músculo, así
+        // que se acumulan en un mapa en vez de mapearse una a una.
+        Map<String, Integer> acumulado = new LinkedHashMap<>();
+
+        for (Object[] fila : filas) {
+            String musculoPrimario = (String) fila[0];
+            Object grupo = fila[1];
+            int series = fila[2] == null ? 0 : ((Number) fila[2]).intValue();
+            if (series <= 0) continue;
+
+            String clave = normalizarMusculo(musculoPrimario, grupo);
+            if (clave == null) continue;
+
+            acumulado.merge(clave, series, Integer::sum);
+        }
+
+        return acumulado.entrySet().stream()
+                .map(e -> new VolumenMuscularDTO(e.getKey(), e.getValue()))
+                .toList();
+    }
+
+    /**
+     * Reduce el músculo de un ejercicio a una de las claves que la silueta sabe pintar.
+     * <p>
+     * Manda el músculo primario. Cuando falta —pasa en buena parte del catálogo
+     * importado de wger— se cae al grupo grueso y se elige el músculo más
+     * representativo de ese grupo, que es preferible a no pintar nada.
+     *
+     * @return clave normalizada, o {@code null} si no hay nada que pintar (CARDIO).
+     */
+    private String normalizarMusculo(String musculoPrimario, Object grupo) {
+        if (musculoPrimario != null && !musculoPrimario.isBlank()) {
+            String limpio = sinTildes(musculoPrimario.trim().toLowerCase());
+            switch (limpio) {
+                case "abdominales":     return "abdominales";
+                case "aductores":       return "aductores";
+                case "abductores":      return "gluteos";
+                case "biceps":          return "biceps";
+                case "gemelos":         return "gemelos";
+                case "pecho":           return "pecho";
+                case "antebrazos":      return "antebrazos";
+                case "gluteos":         return "gluteos";
+                case "isquiotibiales":  return "isquiotibiales";
+                case "dorsales":
+                case "espalda media":   return "dorsales";
+                case "lumbares":        return "lumbares";
+                case "cuello":          return "cuello";
+                case "cuadriceps":      return "cuadriceps";
+                case "hombros":         return "hombros";
+                case "trapecios":       return "trapecios";
+                case "triceps":         return "triceps";
+                default:                break;   // cae al grupo grueso
+            }
+        }
+
+        if (grupo == null) return null;
+
+        switch (grupo.toString().toUpperCase()) {
+            case "PECHO":    return "pecho";
+            case "ESPALDA":  return "dorsales";
+            case "PIERNAS":  return "cuadriceps";
+            case "HOMBROS":  return "hombros";
+            case "BRAZOS":   return "biceps";
+            case "ABDOMEN":  return "abdominales";
+            case "FULLBODY": return "pecho";
+            // CARDIO no tiene músculo que encender: no se inventa uno.
+            default:         return null;
+        }
+    }
+
+    // Quita las tildes para que "bíceps" y "biceps" sean el mismo músculo.
+    private String sinTildes(String texto) {
+        return java.text.Normalizer.normalize(texto, java.text.Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+    }
+
+    /**
+     * Kilos movidos en una sesión.
+     * <p>
+     * Manda el detalle por serie cuando existe, porque es el dato real: cuatro series
+     * de 60, 65, 70 y 70 kg no son cuatro de 70. Si la sesión es anterior al registro
+     * por serie se cae al resumen por ejercicio, que es lo único que se guardó
+     * entonces y sigue siendo mejor que enseñar un cero.
+     *
+     * @param sesionId sesión a medir (se comprueba la propiedad).
+     */
+    @Override
+    public java.math.BigDecimal getVolumenLevantado(Integer sesionId) {
+        SesionEntrenamiento sesion = sesionEntrenamientoRepository.findById(sesionId)
+                .orElseThrow(() -> new NotFoundEntityException(
+                        "La sesi\u00f3n con id " + sesionId + " no existe"));
+        securityUtils.checkOwnership(sesion.getUsuario().getId());
+
+        java.math.BigDecimal porSeries = ejercicioRealizadoRepository.volumenDeSeries(sesionId);
+        if (porSeries != null && porSeries.signum() > 0) return porSeries;
+
+        java.math.BigDecimal porResumen = ejercicioRealizadoRepository.volumenDeResumen(sesionId);
+        return porResumen == null ? java.math.BigDecimal.ZERO : porResumen;
     }
 }

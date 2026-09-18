@@ -295,11 +295,31 @@ public class UsuarioService implements IUsuarioService {
         return usuarioJooqRepository.getEstadisticasGlobales();
     }
 
+    /**
+     * Impide que un administrador se aplique a sí mismo una operación del panel.
+     * <p>
+     * Desactivarse o bajarse a USER es el único daño irreversible desde la aplicación:
+     * cierra el panel de administración y ya no queda forma de volver a abrirlo sin
+     * tocar la base de datos. La app también lo bloquea, pero esa barrera es cosmética:
+     * la de verdad es esta, porque el cliente no puede saltarse el servidor.
+     *
+     * @param id id del usuario sobre el que se quiere actuar.
+     * @throws InvalidDataException (→ 400) si coincide con el usuario autenticado.
+     */
+    private void rechazarSiEsUnoMismo(Integer id) {
+        if (id != null && id.equals(securityUtils.getCurrentUserId())) {
+            throw new InvalidDataException(
+                    "No puedes aplicar esta operación sobre tu propia cuenta de administrador");
+        }
+    }
+
     // Alterna el estado activo/inactivo de un usuario (uso administrativo).
     @Transactional
     @Override
     public void toggleActivo(Integer id) {
         logger.info("Admin: toggle activo usuario id={}", id);
+
+        rechazarSiEsUnoMismo(id);
 
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + id + " no existe"));
@@ -405,6 +425,8 @@ public class UsuarioService implements IUsuarioService {
     @Override
     public void cambiarRol(Integer id, String nuevoRol) {
         logger.info("Admin: cambiando rol usuario id={} a {}", id, nuevoRol);
+
+        rechazarSiEsUnoMismo(id);
 
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + id + " no existe"));

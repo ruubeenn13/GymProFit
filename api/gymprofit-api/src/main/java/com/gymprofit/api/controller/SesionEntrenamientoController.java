@@ -4,6 +4,7 @@ import com.gymprofit.api.dto.common.CountDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoCreateDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoPatchDTO;
+import com.gymprofit.api.dto.entity.sesionentrenamiento.VolumenMuscularDTO;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.sesionentrenamiento.ISesionEntrenamientoService;
@@ -383,5 +384,44 @@ public class SesionEntrenamientoController {
     @PatchMapping("/sesiones/{id}")
     public ResponseEntity<SesionEntrenamientoDTO> patchSesion(@PathVariable Integer id, @RequestBody SesionEntrenamientoPatchDTO patchDTO) {
         return ResponseEntity.ok(sesionEntrenamientoService.patch(id, patchDTO));
+    }
+
+    @Operation(summary = "Series por músculo del usuario en los últimos días",
+            description = "Alimenta la silueta muscular de la pantalla de inicio: por cada músculo " +
+                    "tocado en sesiones completadas dentro de la ventana, cuántas series ha recibido. " +
+                    "Los músculos sin trabajar no aparecen; la app los pinta en gris.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Volumen por músculo",
+                    content = @Content(schema = @Schema(implementation = VolumenMuscularDTO.class))),
+            @ApiResponse(responseCode = "403", description = "No es tu usuario ni eres ADMIN",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    // Devuelve las series acumuladas por músculo en la ventana indicada (7 días por defecto)
+    @GetMapping("/sesiones/usuario/{usuarioId}/volumen-muscular")
+    public ResponseEntity<List<VolumenMuscularDTO>> obtenerVolumenMuscular(
+            @PathVariable Integer usuarioId,
+            @RequestParam(defaultValue = "7") int dias) {
+
+        // Lista vacía y no 404: un usuario que no ha entrenado nunca no es un error, es
+        // justamente el caso que la silueta en gris está pensada para enseñar.
+        return ResponseEntity.ok(sesionEntrenamientoService.getVolumenMuscular(usuarioId, dias));
+    }
+
+    @Operation(summary = "Kilos movidos en una sesión",
+            description = "Volumen levantado de la sesión, sumando serie a serie cuando hay registro " +
+                    "por serie y cayendo al resumen por ejercicio en las sesiones anteriores. Es el " +
+                    "número grande del resumen tras entrenar.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Kilos movidos"),
+            @ApiResponse(responseCode = "404", description = "Sesión no encontrada",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    // Devuelve los kilos movidos en la sesión indicada
+    @GetMapping("/sesiones/{id}/volumen")
+    public ResponseEntity<Map<String, Object>> obtenerVolumenSesion(@PathVariable Integer id) {
+        Map<String, Object> respuesta = new HashMap<>();
+        respuesta.put("volumenKg", sesionEntrenamientoService.getVolumenLevantado(id));
+
+        return ResponseEntity.ok(respuesta);
     }
 }

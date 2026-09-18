@@ -190,9 +190,13 @@ public class AdminRutinasActivity extends BaseActivity {
                 ? R.string.admin_toggle_rutina_desactivar
                 : R.string.admin_toggle_rutina_activar;
 
+        // El dialogo nombra el elemento: sin el nombre, abrir el menu de la fila
+        // equivocada confirmaba la equivocacion con el mismo texto de siempre.
+        String nombre = r.getNombre() != null ? r.getNombre() : "";
+
         new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.admin_toggle_rutina_titulo)
-                .setMessage(mensaje)
+                .setMessage(getString(mensaje, nombre))
                 .setPositiveButton(android.R.string.ok, (d, w) -> toggleActiva(r, pos))
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();

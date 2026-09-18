@@ -130,6 +130,11 @@
         <activity
             android:name=".ui.activities.LoginActivity"
             android:exported="false" />
+
+        <!-- Recuperación de contraseña olvidada; se abre desde el login -->
+        <activity
+            android:name=".ui.activities.RecuperarPasswordActivity"
+            android:exported="false" />
         <!-- Nutrición: comidas y alimentos (registro, alta y administración) -->
         <activity android:name=".ui.activities.ComidaActivity" android:exported="false" />
         <activity android:name=".ui.activities.AnadirAlimentoActivity" android:exported="false" />

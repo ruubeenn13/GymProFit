@@ -26,6 +26,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.core.view.AccessibilityDelegateCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import androidx.core.widget.ImageViewCompat;
 
 import es.pmdm.gymprofit.R;
@@ -99,6 +102,9 @@ public class FloatingNavBar extends FrameLayout {
 
     private final ImageView[] iconos = new ImageView[N];
     private final TextView[] labels = new TextView[N];
+    // Cada celda es el nodo accesible de su destino: TalkBack la enfoca, la anuncia
+    // con su etiqueta y su posición, y la activa con doble toque.
+    private final LinearLayout[] celdas = new LinearLayout[N];
     private View burbuja;                 // gota de reserva (API < 33)
     private RuntimeShader lente;          // lente de cristal (API 33+)
     private boolean usarLente;
@@ -177,6 +183,7 @@ public class FloatingNavBar extends FrameLayout {
         glass.setStroke((int) dp(1), conAlfa(0xFFFFFF, 0x70));
         burbuja.setBackground(glass);
         burbuja.setVisibility(usarLente ? INVISIBLE : VISIBLE);
+        burbuja.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);   // decorativa
         addView(burbuja, new LayoutParams((int) dp(66), (int) dp(60), Gravity.CENTER_VERTICAL));
 
         // Fila de 5 destinos por encima
@@ -187,15 +194,61 @@ public class FloatingNavBar extends FrameLayout {
         fila.setClipToPadding(false);
         addView(fila, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
+        // La fila se anuncia como una colección de una fila por cinco columnas, para que
+        // TalkBack diga "1 de 5", "2 de 5"… al recorrer los destinos.
+        ViewCompat.setAccessibilityDelegate(fila, new AccessibilityDelegateCompat() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(@NonNull View host,
+                                                          @NonNull AccessibilityNodeInfoCompat info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                info.setCollectionInfo(AccessibilityNodeInfoCompat.CollectionInfoCompat
+                        .obtain(1, N, false,
+                                AccessibilityNodeInfoCompat.CollectionInfoCompat.SELECTION_MODE_SINGLE));
+            }
+        });
+
         for (int i = 0; i < N; i++) {
+            final int idx = i;
+
             LinearLayout celda = new LinearLayout(getContext());
             celda.setOrientation(LinearLayout.VERTICAL);
             celda.setGravity(Gravity.CENTER);
             celda.setLayoutParams(new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1f));
 
+            // ── Accesibilidad ──────────────────────────────────────────────
+            // La barra se dibuja a mano y gestionaba el táctil ella sola, así que para
+            // TalkBack era un bloque mudo sin destinos dentro. Ahora cada celda es
+            // enfocable y pulsable por su cuenta: se anuncia con su etiqueta, con el rol
+            // "pestaña" y con su estado de seleccionada, y el doble toque la activa.
+            // El arrastre de la burbuja sigue funcionando porque la barra intercepta el
+            // gesto en cuanto supera el umbral (ver onInterceptTouchEvent).
+            celda.setClickable(true);
+            celda.setFocusable(true);
+            celda.setContentDescription(getContext().getString(LABELS[i]));
+            celda.setOnClickListener(v -> {
+                if (idx == activo) return;
+                int desde = activo;
+                setActiveFrom(desde, idx);
+                if (listener != null) listener.onSelected(idx);
+            });
+            ViewCompat.setAccessibilityDelegate(celda, new AccessibilityDelegateCompat() {
+                @Override
+                public void onInitializeAccessibilityNodeInfo(@NonNull View host,
+                                                              @NonNull AccessibilityNodeInfoCompat info) {
+                    super.onInitializeAccessibilityNodeInfo(host, info);
+                    info.setRoleDescription(getContext().getString(R.string.nav_rol_pestana));
+                    info.setCollectionItemInfo(AccessibilityNodeInfoCompat.CollectionItemInfoCompat
+                            .obtain(0, 1, idx, 1, false, idx == activo));
+                }
+            });
+            celdas[i] = celda;
+
             ImageView icono = new ImageView(getContext());
             icono.setImageResource(ICONOS[i]);
             icono.setLayoutParams(new LinearLayout.LayoutParams((int) dp(24), (int) dp(24)));
+            // El icono y la etiqueta ya van en la descripción de la celda: si fueran
+            // accesibles por separado, TalkBack leería el destino dos veces.
+            icono.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
             iconos[i] = icono;
             celda.addView(icono);
 
@@ -209,6 +262,7 @@ public class FloatingNavBar extends FrameLayout {
             label.setGravity(Gravity.CENTER);
             android.graphics.Typeface tf = ResourcesCompat.getFont(getContext(), R.font.barlow_condensed);
             label.setTypeface(tf != null ? tf : android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD);
+            label.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
             labels[i] = label;
             celda.addView(label);
 
@@ -286,6 +340,25 @@ public class FloatingNavBar extends FrameLayout {
     // ------------------------------------------------------------------
     // Interacción táctil (arrastre/tap)
     // ------------------------------------------------------------------
+    // Las celdas son pulsables (lo exige TalkBack), así que consumen el ACTION_DOWN y la
+    // barra ya no lo vería. Aquí se vigila el gesto por encima de ellas: mientras sea un
+    // toque, lo resuelve la celda; en cuanto el dedo recorre más que el umbral, la barra
+    // lo roba y pasa a arrastrar la burbuja como antes.
+    @Override
+    public boolean onInterceptTouchEvent(@NonNull MotionEvent e) {
+        switch (e.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN:
+                downX = e.getX();
+                movido = false;
+                if (viaje != null) viaje.cancel();
+                return false;
+            case MotionEvent.ACTION_MOVE:
+                return Math.abs(e.getX() - downX) > touchSlop;
+            default:
+                return false;
+        }
+    }
+
     @Override
     public boolean onTouchEvent(@NonNull MotionEvent e) {
         switch (e.getAction()) {
@@ -442,6 +515,9 @@ public class FloatingNavBar extends FrameLayout {
             ImageViewCompat.setImageTintList(iconos[i], ColorStateList.valueOf(color));
             labels[i].setTextColor(color);
             labels[i].setVisibility(VISIBLE);
+            // El naranja es la única señal de "estás aquí" y un lector de pantalla no lo
+            // ve: marcar la celda como seleccionada es lo que hace que TalkBack lo diga.
+            if (celdas[i] != null) celdas[i].setSelected(i == sel);
         }
     }
 

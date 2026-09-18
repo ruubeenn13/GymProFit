@@ -2,6 +2,7 @@ package com.gymprofit.api.service.progresoejercicio;
 
 import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioCreateDTO;
 import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioDTO;
+import com.gymprofit.api.dto.entity.progresoejercicio.RecordDestacadoDTO;
 import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioPatchDTO;
 import com.gymprofit.api.config.security.SecurityUtils;
 import com.gymprofit.api.entity.Ejercicio;
@@ -18,11 +19,13 @@ import com.gymprofit.api.repository.jpa.IUsuarioRepository;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 // ============================================================
 // ProgresoEjercicioService — implementación del servicio de progreso en ejercicios
@@ -287,5 +290,32 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
         } catch (Exception e) {
             throw new UpdateEntityException(ProgresoEjercicio.class.getSimpleName(), id, e);
         }
+    }
+
+    /**
+     * Mejor levantamiento del usuario, con el nombre del ejercicio resuelto.
+     * <p>
+     * Devuelve vacío en vez de lanzar cuando no hay ningún récord: alguien que aún no
+     * ha levantado peso no es un error, y la pantalla de inicio simplemente esconde
+     * la tarjeta.
+     *
+     * @param usuarioId dueño del progreso (se comprueba la propiedad).
+     */
+    @Override
+    public Optional<RecordDestacadoDTO> getRecordDestacado(Integer usuarioId) {
+        securityUtils.checkOwnership(usuarioId);
+
+        List<Object[]> filas = progresoEjercicioRepository
+                .buscarRecordDestacado(usuarioId, PageRequest.of(0, 1));
+
+        if (filas.isEmpty()) return Optional.empty();
+
+        Object[] fila = filas.get(0);
+        return Optional.of(new RecordDestacadoDTO(
+                (Integer) fila[0],
+                (String) fila[1],
+                (java.math.BigDecimal) fila[2],
+                (Integer) fila[3],
+                (java.time.LocalDateTime) fila[4]));
     }
 }

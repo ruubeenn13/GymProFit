@@ -1020,41 +1020,182 @@ borrarse porque `wrap()` lo llaman 35 Activities desde su `attachBaseContext`.
 
 ---
 
-## 10. Qué queda — estado al cerrar el 2026-09-18
+## 10. Qué queda — estado al cerrar el 2026-09-18 (noche)
 
 **Del contraperitaje del equipo de diseño: NADA. Los cuatro puntos hechos.**
+
+**Los cuatro bloqueantes de publicación: TAMBIÉN HECHOS.** Eran los que impedían
+enseñar la app a alguien y no entraban en ninguna fase, porque salieron del
+contraperitaje. Verificados los cuatro en emulador contra la API local:
+
+1. **El admin ya no puede dejarse fuera del panel.** La barrera de verdad está en
+   el servidor (`UsuarioService.rechazarSiEsUnoMismo`): desactivarte o bajarte a
+   USER devuelve 400, y las mismas operaciones sobre otro usuario siguen en 200.
+   En la app, la fila propia se marca «admin · Tú» y se queda sin menú.
+2. **Existe recuperación de contraseña**, con código de seis dígitos por correo.
+   Ver la sección 11.
+3. **TalkBack anuncia la barra de navegación.** Las cinco celdas son enfocables y
+   pulsables, con etiqueta, rol «pestaña», posición en la colección y estado de
+   seleccionada; comprobado con `uiautomator dump`. El arrastre de la burbuja
+   sigue funcionando porque la barra ahora intercepta el gesto en vez de consumir
+   el `ACTION_DOWN` desde el principio.
+4. **Las confirmaciones de admin nombran el elemento** y dicen la consecuencia:
+   «Deactivate the exercise “3/4 Sit-Up”? It will stop appearing for every user.»
 
 Del plan original de 6 fases (sección 7 del documento):
 
 | Fase | Estado |
 |---|---|
 | 1 Dejar de romperse | **completa** |
-| 2 Que el ciclo funcione | ~40 %. Hecho "entrenar esta rutina" y el registro por serie. **Falta**: precarga del peso anterior, menú de tres puntos visible en rutinas y alimentos propios, errores en el campo en login y registro, aviso de política de contraseña, filtro por músculo al elegir ejercicios |
+| 2 Que el ciclo funcione | ~40 %. Hecho «entrenar esta rutina» y el registro por serie. **Falta**: precarga del peso anterior, menú de tres puntos visible en rutinas y alimentos propios, errores en el campo en login y registro, aviso de política de contraseña, filtro por músculo al elegir ejercicios |
 | 3 Que se vea caro | ~50 %. Hecho color, superficies y tipografía. **Falta**: la barra Ember, la escala de espaciado (19 valores sueltos, base 4) y los cuatro `Spinner` viejos a Material |
-| 4 El gancho comercial | 0 %. Silueta muscular en Home, Home reordenado a "hoy", récord dorado, foto real en el catálogo, resumen con jerarquía de celebración |
+| 4 El gancho comercial | **completa**. Silueta muscular en Home, Home reordenado a «hoy», récord dorado, foto real en el catálogo y resumen con jerarquía de celebración |
 | 5 Que lo entienda cualquiera | 0 %. Raciones, lenguaje de estado en nutrición, fuera la jerga, perfil partido, mediciones con fecha, estados vacíos |
 | 6 Onboarding y tienda | ~30 %. Hecha la bienvenida y los iconos. **Falta**: refundir el asistente, capturas de Play y lo legal |
 
-**Urgente y fuera de toda fase, porque salió del contraperitaje.** Estos cuatro
-son los que impiden enseñar la app a alguien, y por ahí empezaría:
+### Lo siguiente, por orden
 
-1. **El admin puede dejarse fuera del panel para siempre.** Cero referencias a
-   `getUsuarioId()` en las siete pantallas de administración: nada impide
-   desactivarte a ti mismo ni bajarte a USER. Único daño sin arreglo desde la app.
-2. **No existe recuperación de contraseña.** Ni la vista, ni la cadena. Bloqueante
-   para publicar.
-3. **TalkBack no anuncia nada en la barra de navegación.** Cero
-   `setContentDescription` en las cinco celdas. Sale marcado en el informe previo
-   al lanzamiento de Play Store.
-4. **Las confirmaciones de admin no dicen sobre qué actúan.** "¿Desactivar esta
-   rutina?" sin nombre: si abriste el menú de la fila equivocada, el diálogo te
-   confirma la equivocación igual de bien.
+1. **Fase 5** — que lo entienda cualquiera. Es la que queda a cero y la que más
+   separa la app de «funciona» a «se usa sola».
+2. **Lo que falta de la fase 2**, que es poco y barato.
+3. **Fase 3**: la barra Ember y la escala de espaciado.
+4. **Fase 6**: refundir el asistente, las capturas y lo legal, que bloquea publicar.
 
-Y dos más, de menor urgencia:
+### Pendientes sueltos que siguen abiertos
 
-- **Las calorías de los ejercicios** (sección 9.8), aplazado a otra sesión porque
-  toca API.
-- **Cadenas en español con la app en inglés**: "2 ejercicios" en las tarjetas de
-  rutina, "kcal/100g", "ejerc.". Varias hardcodeadas en Java, contra la regla de
+- **Las calorías de los ejercicios** (sección 9.8). El sustituto ya existe: el
+  endpoint `GET /sesiones/{id}/volumen` y el número grande del resumen. Falta
+  barrer los cinco sitios donde todavía se enseñan calorías de ejercicio.
+- **Cadenas en español con la app en inglés**: «2 ejercicios» en las tarjetas de
+  rutina, «kcal/100g», «ejerc.». Varias hardcodeadas en Java, contra la regla de
   multiidioma.
+- **Sembrar el catálogo de producción**: 1171 ejercicios pero **0 rutinas
+  predefinidas y 0 alimentos**. La app desplegada enseña el buscador de alimentos
+  vacío y ninguna rutina de sistema.
+- **Configurar Brevo**: la cadena de correo está hecha y probada, pero sin
+  `MAIL_HOST` definido el código se escribe en el log en vez de enviarse. Ver 11.4.
 
+---
+
+## 11. Recuperación de contraseña (2026-09-18)
+
+Bloqueante número 2 del contraperitaje. Antes de esto, olvidar la contraseña
+significaba perder la cuenta y los entrenamientos con ella: no había ninguna otra
+forma de volver a entrar.
+
+### 11.1 El flujo
+
+Dos pasos en una sola pantalla (`RecuperarPasswordActivity`), con el segundo
+oculto hasta que el primero sale:
+
+1. `POST /auth/forgot-password` con el nombre de usuario **o** el correo. Quien ha
+   olvidado su contraseña no tiene por qué recordar con cuál de los dos se
+   registró, y obligarle a acertar es una barrera gratuita.
+2. `POST /auth/reset-password` con el código de seis dígitos y la contraseña
+   nueva, sujeta a la misma política que el registro. Si aquí fuera más laxa,
+   recuperar la cuenta sería el atajo para saltarse la política.
+
+### 11.2 Las tres reglas que no son opcionales
+
+- **Pedir un código responde siempre lo mismo**, exista la cuenta o no. Si el
+  mensaje cambiara, el endpoint sería un comprobador de quién está registrado.
+  La pantalla tampoco puede decir «ese usuario no existe»: diría lo que el
+  servidor calla a propósito, así que pasa al paso 2 pase lo que pase.
+- **El código se guarda hasheado con BCrypt y caduca a los 15 minutos.** Mientras
+  vive es, de hecho, una contraseña alternativa esperando en una bandeja de
+  entrada. Pedir uno nuevo mata el anterior.
+- **Los intentos se cuentan**: cinco fallos y el código se quema. Seis dígitos sin
+  límite de intentos se agotan a fuerza bruta en un rato. Todos los fallos
+  —cuenta inexistente, código caducado, código equivocado, intentos agotados—
+  devuelven el mismo error, por el mismo motivo.
+
+Canjear el código revoca todas las sesiones abiertas: si alguien había entrado
+con la contraseña vieja, cambiarla tiene que echarle. Ambas rutas están en
+`RUTAS_ESTRICTAS` del limitador por IP, y los códigos usados o caducados se purgan
+en la misma tarea nocturna que los refresh tokens.
+
+### 11.3 El correo
+
+Va por **Brevo vía SMTP**. El código viaja también **en el asunto**
+(`482193 · Tu código de GymProFit`): en un aviso de móvil, un OTP escondido dentro
+del cuerpo obliga a abrir el correo para leer seis dígitos.
+
+El HTML es de estilos en línea y **sin imágenes a propósito**. Gmail descarta los
+fondos con imagen y su proxy no siempre carga las remotas —ya se comprobó al
+diseñar esta familia de correos—, así que el logotipo va como texto: prefiero un
+correo que se ve igual en todas partes a uno que en Gmail llega descabezado.
+Sigue la línea acordada: tarjeta blanca sobre fondo hueso y el código como único
+acento naranja. Solo modo claro.
+
+Un fallo de envío se registra pero **no se propaga**: dejarlo escapar convertiría
+un error de SMTP en un detector de cuentas.
+
+### 11.4 Qué falta para que salga de verdad
+
+Sin `MAIL_HOST` definido, Spring no crea ningún `JavaMailSender` y `EmailService`
+**escribe el código en el log** en vez de fallar. Eso es lo que permite probar el
+flujo entero en local sin cuenta de correo, y es el estado actual.
+
+Para que se envíe de verdad hay que definir en Render:
+
+| Variable | De dónde sale |
+|---|---|
+| `MAIL_HOST` | `smtp-relay.brevo.com` |
+| `MAIL_PORT` | `587` |
+| `MAIL_USERNAME` | Brevo → SMTP & API → SMTP. **No es el correo de la cuenta**, es el «login» que da Brevo |
+| `MAIL_PASSWORD` | la **SMTP key** de esa misma pantalla, no la contraseña de Brevo |
+| `MAIL_FROM` | remitente; sin dominio propio, el compartido de Brevo |
+
+### 11.5 Verificado
+
+End-to-end contra la API local: código equivocado → 400, código bueno → 200,
+reutilizar el mismo código → 400, login con la contraseña nueva → 200. Y el
+recorrido completo en emulador, con el paso 2 apareciendo tras el 1 y la vuelta al
+login al terminar.
+
+---
+
+## 12. La silueta muscular (fase 4, 2026-09-18)
+
+### 12.1 El problema de los assets
+
+Los 16 `ic_body_*.xml` no son 16 dibujos: son **la misma silueta repetida**
+(viewport 724×1448) con los paths de un músculo recoloreados a
+`@color/body_highlight`. Sirven para un icono de 40 dp en una fila de lista, pero
+no se pueden apilar para pintar varios músculos a la vez con intensidades
+distintas, que es lo que pide el gancho.
+
+`scripts/extraer-musculos.py` los descompone: dos cuerpos base
+(`ic_silueta_frontal`, 89 paths; `ic_silueta_dorsal`, 70) y **15 vectores de un
+solo músculo** en blanco, listos para teñir en runtime.
+
+**La trampa, que costó una vuelta**: los ficheros de la vista **dorsal** llevan
+sus paths dentro de un `<group android:translateX="-724">`, porque las coordenadas
+están escritas en la mitad derecha de un lienzo doble. La primera versión del
+script copió los paths sin el grupo y el cuerpo de espaldas se dibujaba fuera del
+viewport: en el emulador salía media tarjeta vacía. El script conserva ahora el
+grupo, y por eso hay que **regenerar con el script y no editar los vectores a
+mano**.
+
+### 12.2 Cómo se pinta
+
+`SiluetaMuscularView` apila la silueta base y, encima, cada músculo trabajado
+teñido del naranja de marca. El alfa sube con las series recibidas, con **suelo en
+0,40** —un músculo tocado una sola vez tiene que distinguirse del gris, o la
+silueta miente por omisión— y **tope a las 12 series**, porque la diferencia entre
+12 y 30 no cabe en un tinte.
+
+### 12.3 El dato
+
+`GET /sesiones/usuario/{id}/volumen-muscular?dias=7` suma `seriesCompletadas` de
+las sesiones completadas y **normaliza el músculo en el servidor**: quita tildes,
+unifica «bíceps» y «biceps», y cae al grupo grueso en las filas importadas de
+wger sin músculo primario. CARDIO no enciende nada, que es lo correcto. Devuelve
+lista vacía y no 404: no haber entrenado nunca no es un error, es **el estado que
+la silueta en gris está pensada para enseñar**.
+
+La frase que la acompaña («4 grupos · te falta pierna») razona **por zonas y no
+por músculos sueltos**: «te falta pierna» es un consejo y «te faltan los
+aductores» es una queja. Las zonas se recorren ordenadas por lo grave que es
+saltarse cada una —nadie abandona por no hacer antebrazo, sí se desequilibra por
+no hacer pierna—.

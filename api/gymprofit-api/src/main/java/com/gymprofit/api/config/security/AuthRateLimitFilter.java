@@ -31,7 +31,10 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
 
     // Rutas sensibles sin autenticación con el cupo ESTRICTO (anti fuerza bruta).
     private static final Set<String> RUTAS_ESTRICTAS = Set.of(
-            "/auth/login", "/auth/register", "/auth/guest", "/auth/refresh", "/auth/change-password");
+            "/auth/login", "/auth/register", "/auth/guest", "/auth/refresh", "/auth/change-password",
+            // Recuperación de contraseña: pedir códigos en cadena es spam a la bandeja de
+            // entrada ajena, y canjearlos en cadena es fuerza bruta sobre seis dígitos.
+            "/auth/forgot-password", "/auth/reset-password");
 
     // Master de activación (existente): desactiva TODO el filtro (dev/tests).
     @Value("${app.auth.rate-limit.enabled:true}")

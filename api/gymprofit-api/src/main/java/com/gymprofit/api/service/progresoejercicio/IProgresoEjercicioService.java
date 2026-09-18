@@ -2,9 +2,11 @@ package com.gymprofit.api.service.progresoejercicio;
 
 import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioCreateDTO;
 import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioDTO;
+import com.gymprofit.api.dto.entity.progresoejercicio.RecordDestacadoDTO;
 import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioPatchDTO;
 
 import java.util.List;
+import java.util.Optional;
 
 // ============================================================
 // IProgresoEjercicioService — contrato del servicio de progreso en ejercicios
@@ -38,4 +40,12 @@ public interface IProgresoEjercicioService {
     boolean existsByUsuarioIdAndEjercicioId(Integer usuarioId, Integer ejercicioId);
 
     ProgresoEjercicioDTO patch(Integer id, ProgresoEjercicioPatchDTO patchDTO);
+
+    /**
+     * Mejor levantamiento del usuario, para enseñarlo en la pantalla de inicio.
+     *
+     * @param usuarioId dueño del progreso.
+     * @return el récord, o vacío si aún no ha levantado nada con peso.
+     */
+    Optional<RecordDestacadoDTO> getRecordDestacado(Integer usuarioId);
 }

@@ -35,9 +35,14 @@ public class AdminUsuarioAdapter extends RecyclerView.Adapter<AdminUsuarioAdapte
 
     private final List<Usuario> items;
     private final OnAccionListener listener;
+    // Id del administrador que está usando el panel. Su propia fila no ofrece acciones:
+    // desactivarse o bajarse a USER es el único daño que no tiene arreglo desde la app,
+    // porque deja el panel cerrado para siempre.
+    private final int usuarioActualId;
 
-    public AdminUsuarioAdapter(List<Usuario> items, OnAccionListener listener) {
+    public AdminUsuarioAdapter(List<Usuario> items, int usuarioActualId, OnAccionListener listener) {
         this.items = items;
+        this.usuarioActualId = usuarioActualId;
         this.listener = listener;
     }
 
@@ -56,8 +61,18 @@ public class AdminUsuarioAdapter extends RecyclerView.Adapter<AdminUsuarioAdapte
         Usuario u = items.get(position);
         Context ctx = h.itemView.getContext();
 
-        h.tvUsername.setText(u.getUsername());
+        // La propia cuenta se marca en el nombre («· Tú») y se queda sin menú de acciones,
+        // que es la forma más corta de explicar por qué no se puede tocar.
+        boolean esCuentaPropia = u.getId() == usuarioActualId;
+
+        h.tvUsername.setText(esCuentaPropia
+                ? u.getUsername() + " · " + ctx.getString(R.string.admin_usuario_eres_tu)
+                : u.getUsername());
         h.tvEmail.setText(u.getEmail().isEmpty() ? "—" : u.getEmail());
+
+        h.btnAcciones.setVisibility(esCuentaPropia ? View.GONE : View.VISIBLE);
+        h.itemView.setContentDescription(esCuentaPropia
+                ? ctx.getString(R.string.admin_usuario_es_tu_cuenta) : null);
 
         String rol = u.getRol() != null ? u.getRol().replace("ROLE_", "") : "USER";
         h.chipRol.setText(rol);

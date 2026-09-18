@@ -1,12 +1,15 @@
 package com.gymprofit.api.controller;
 
 import com.gymprofit.api.dto.auth.ChangePasswordDTO;
+import com.gymprofit.api.dto.auth.ForgotPasswordDTO;
 import com.gymprofit.api.dto.auth.LoginDTO;
 import com.gymprofit.api.dto.auth.RefreshRequestDTO;
 import com.gymprofit.api.dto.auth.RegisterDTO;
+import com.gymprofit.api.dto.auth.ResetPasswordDTO;
 import com.gymprofit.api.dto.auth.TokenDTO;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.auth.IAuthService;
+import com.gymprofit.api.service.auth.IPasswordResetService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -36,6 +39,7 @@ import java.util.Map;
 public class AuthController {
 
     private final IAuthService authService;
+    private final IPasswordResetService passwordResetService;
 
     @Operation(summary = "Inicia sesión y devuelve un token JWT")
     @ApiResponses(value = {
@@ -118,6 +122,41 @@ public class AuthController {
 
         Map<String, Object> respuesta = new HashMap<>();
         respuesta.put("mensaje", "Contraseña cambiada correctamente");
+
+        return ResponseEntity.ok(respuesta);
+    }
+
+    @Operation(summary = "Pide un código para recuperar la contraseña olvidada",
+            description = "Público. Admite el nombre de usuario o el correo. Si la cuenta existe y está " +
+                    "activa, envía a su correo un código de 6 dígitos que caduca en 15 minutos y sirve una " +
+                    "sola vez. La respuesta es SIEMPRE la misma, exista la cuenta o no: así este endpoint no " +
+                    "sirve para averiguar quién está registrado.")
+    @ApiResponse(responseCode = "200", description = "Solicitud recibida (haya cuenta o no)")
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Map<String, Object>> forgotPassword(@Valid @RequestBody ForgotPasswordDTO forgotPasswordDTO) {
+        passwordResetService.solicitarCodigo(forgotPasswordDTO.getIdentificador());
+
+        Map<String, Object> respuesta = new HashMap<>();
+        respuesta.put("mensaje", "Si la cuenta existe, se ha enviado un código a su correo");
+
+        return ResponseEntity.ok(respuesta);
+    }
+
+    @Operation(summary = "Restablece la contraseña con el código recibido por correo",
+            description = "Público. Canjea el código de 6 dígitos por una contraseña nueva, sujeta a la " +
+                    "misma política que el registro, y revoca todas las sesiones abiertas de la cuenta.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Contraseña restablecida correctamente"),
+            @ApiResponse(responseCode = "400", description = "Código inválido o caducado, o contraseña que " +
+                    "no cumple la política",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @PostMapping("/reset-password")
+    public ResponseEntity<Map<String, Object>> resetPassword(@Valid @RequestBody ResetPasswordDTO resetPasswordDTO) {
+        passwordResetService.restablecer(resetPasswordDTO);
+
+        Map<String, Object> respuesta = new HashMap<>();
+        respuesta.put("mensaje", "Contraseña restablecida correctamente");
 
         return ResponseEntity.ok(respuesta);
     }

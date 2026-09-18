@@ -176,9 +176,13 @@ public class AdminEjerciciosActivity extends BaseActivity {
                 ? R.string.admin_toggle_ejercicio_desactivar
                 : R.string.admin_toggle_ejercicio_activar;
 
+        // El dialogo nombra el elemento: sin el nombre, abrir el menu de la fila
+        // equivocada confirmaba la equivocacion con el mismo texto de siempre.
+        String nombre = e.getNombre() != null ? e.getNombre() : "";
+
         new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.admin_toggle_ejercicio_titulo)
-                .setMessage(mensaje)
+                .setMessage(getString(mensaje, nombre))
                 .setPositiveButton(android.R.string.ok, (d, w) -> toggleActivo(e, pos))
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();

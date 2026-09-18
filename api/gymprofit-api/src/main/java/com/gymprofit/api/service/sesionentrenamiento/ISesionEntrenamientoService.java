@@ -3,6 +3,7 @@ package com.gymprofit.api.service.sesionentrenamiento;
 
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoCreateDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoDTO;
+import com.gymprofit.api.dto.entity.sesionentrenamiento.VolumenMuscularDTO;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -63,4 +64,22 @@ public interface ISesionEntrenamientoService {
 
     // Actualiza parcialmente una sesión de entrenamiento con los campos no nulos del patch.
     SesionEntrenamientoDTO patch(Integer id, com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoPatchDTO patchDTO);
+
+    /**
+     * Series por músculo del usuario en los últimos {@code dias} días.
+     * Alimenta la silueta muscular de la pantalla de inicio.
+     *
+     * @param usuarioId dueño de las sesiones.
+     * @param dias      ventana hacia atrás, en días.
+     * @return una entrada por músculo tocado; los no tocados simplemente no salen.
+     */
+    List<VolumenMuscularDTO> getVolumenMuscular(Integer usuarioId, int dias);
+
+    /**
+     * Kilos movidos en una sesión: el número grande del resumen tras entrenar.
+     *
+     * @param sesionId sesión a medir.
+     * @return kilos totales, 0 si la sesión no registró pesos.
+     */
+    java.math.BigDecimal getVolumenLevantado(Integer sesionId);
 }

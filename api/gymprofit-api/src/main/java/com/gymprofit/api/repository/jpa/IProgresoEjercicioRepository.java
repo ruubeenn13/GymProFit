@@ -3,6 +3,7 @@ package com.gymprofit.api.repository.jpa;
 import com.gymprofit.api.entity.ProgresoEjercicio;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
@@ -42,6 +43,24 @@ public interface IProgresoEjercicioRepository extends JpaRepository<ProgresoEjer
 
     // Número de registros de progreso de un ejercicio.
     Long countByEjercicioId(Integer ejercicioId);
+
+    /**
+     * Mejor levantamiento del usuario, con el nombre del ejercicio ya resuelto.
+     * <p>
+     * Ordena por peso y, a igualdad de peso, por fecha descendente: entre dos récords
+     * iguales interesa el reciente, porque el mensaje que se quiere dar es "sigues
+     * ahí", no "una vez lo hiciste".
+     * <p>
+     * Se pide con {@code Pageable} de tamaño 1 en lugar de traerse todo el historial
+     * para quedarse con una fila.
+     *
+     * @return filas {@code [ejercicioId, nombre, peso, repeticiones, fecha]}.
+     */
+    @Query("SELECT e.id, e.nombre, p.mejorPeso, p.mejorRepeticiones, p.fecha " +
+           "FROM ProgresoEjercicio p JOIN p.ejercicio e " +
+           "WHERE p.usuario.id = :usuarioId AND p.mejorPeso IS NOT NULL AND p.mejorPeso > 0 " +
+           "ORDER BY p.mejorPeso DESC, p.fecha DESC")
+    List<Object[]> buscarRecordDestacado(@Param("usuarioId") Integer usuarioId, Pageable pageable);
 
     // Borra todo el progreso registrado de un usuario.
     void deleteByUsuarioId(Integer usuarioId);

@@ -114,12 +114,29 @@
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Salida para quien no recuerda la contraseña. Va pegada al campo,
+                 que es donde uno se da cuenta de que no la sabe. -->
+            <TextView
+                android:id="@+id/tvOlvidastePassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="10dp"
+                android:minHeight="48dp"
+                android:gravity="center_vertical"
+                android:text="@string/login_olvidaste"
+                android:textSize="@dimen/text_label"
+                android:textColor="?attr/colorPrimary"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true" />
+
             <!-- Botón de inicio de sesión -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnEntrar"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="16dp"
                 android:text="@string/login_entrar"
                 android:textSize="@dimen/text_subtitle"
                 app:cornerRadius="12dp" />

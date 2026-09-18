@@ -73,6 +73,7 @@
     <string name="nav_ejercicios">Exercises</string>
     <string name="nav_nutricion">Nutrition</string>
     <string name="nav_perfil">Profile</string>
+    <string name="nav_rol_pestana">tab</string>
 
     <!-- HOME -->
     <string name="home_resumen">Today\'s summary</string>
@@ -363,16 +364,21 @@
     <string name="admin_filtro_avanzado">Advanced</string>
     <string name="admin_toggle_activo_titulo">Change status</string>
     <string name="admin_toggle_activo_msg">Activate or deactivate this user?</string>
+    <string name="admin_toggle_usuario_activar">Activate the account of “%1$s”?</string>
+    <string name="admin_toggle_usuario_desactivar">Deactivate the account of “%1$s”? They will not be able to sign in until you reactivate it.</string>
+    <string name="admin_cambiar_rol_msg">Role of “%1$s”</string>
+    <string name="admin_usuario_eres_tu">You</string>
+    <string name="admin_usuario_es_tu_cuenta">This is your account: you cannot deactivate it or change your own role from here.</string>
     <string name="admin_cambiar_rol_titulo">Change role</string>
     <string name="admin_toggle_rutina_titulo">Change status</string>
-    <string name="admin_toggle_rutina_activar">Activate this routine?</string>
-    <string name="admin_toggle_rutina_desactivar">Deactivate this routine?</string>
+    <string name="admin_toggle_rutina_activar">Activate the routine “%1$s”?</string>
+    <string name="admin_toggle_rutina_desactivar">Deactivate the routine “%1$s”? It will stop appearing for every user.</string>
     <string name="admin_toggle_ejercicio_titulo">Change status</string>
-    <string name="admin_toggle_ejercicio_activar">Activate this exercise?</string>
-    <string name="admin_toggle_ejercicio_desactivar">Deactivate this exercise?</string>
+    <string name="admin_toggle_ejercicio_activar">Activate the exercise “%1$s”?</string>
+    <string name="admin_toggle_ejercicio_desactivar">Deactivate the exercise “%1$s”? It will stop appearing for every user.</string>
     <string name="admin_toggle_alimento_titulo">Change status</string>
-    <string name="admin_toggle_alimento_activar">Activate this food?</string>
-    <string name="admin_toggle_alimento_desactivar">Deactivate this food? It will stop appearing in every user\'s search.</string>
+    <string name="admin_toggle_alimento_activar">Activate the food “%1$s”?</string>
+    <string name="admin_toggle_alimento_desactivar">Deactivate the food “%1$s”? It will stop appearing in every user\'s search.</string>
     <string name="admin_editar_rutina_titulo">Edit routine</string>
     <string name="admin_editar_ejercicio_titulo">Edit exercise</string>
     <string name="admin_campo_nombre">Name *</string>
@@ -570,4 +576,49 @@
     <string name="error_altura_invalida">Enter your height in centimetres, between 100 and 250</string>
     <string name="error_altura_en_metros">Did you mean %1$d cm? Enter your height in centimetres</string>
     <string name="error_medida_invalida">Enter a number between %1$s and %2$s</string>
+
+    <!-- Forgotten password recovery -->
+    <string name="login_olvidaste">Forgot your password?</string>
+    <string name="recuperar_titulo">Recover password</string>
+    <string name="recuperar_paso1_explicacion">Enter your username or email. If the account exists, we will send a 6-digit code.</string>
+    <string name="recuperar_identificador">Username or email</string>
+    <string name="recuperar_enviar_codigo">Send code</string>
+    <string name="recuperar_paso2_explicacion">If there is an account for “%1$s”, the code is already in its inbox. It expires in 15 minutes.</string>
+    <string name="recuperar_codigo">6-digit code</string>
+    <string name="recuperar_password_nueva">New password</string>
+    <string name="password_politica">At least 8 characters, with lowercase, uppercase, digit and symbol.</string>
+    <string name="recuperar_restablecer">Reset password</string>
+    <string name="recuperar_reenviar">Send another code</string>
+    <string name="recuperar_ok">Password changed. You can sign in with the new one.</string>
+    <string name="recuperar_error_identificador">Enter your username or email</string>
+    <string name="recuperar_error_codigo">The code is 6 digits long</string>
+    <string name="recuperar_error_password">At least 8 characters, with lowercase, uppercase, digit and symbol</string>
+
+    <!-- Home muscle silhouette (phase 4) -->
+    <string name="home_cuerpo_eyebrow">THIS WEEK</string>
+    <string name="home_cuerpo_leyenda">The more orange, the more sets it took</string>
+    <string name="home_cuerpo_vacio">Your body is still unlit</string>
+    <plurals name="home_cuerpo_resumen">
+        <item quantity="one">%1$d group · %2$s missing</item>
+        <item quantity="other">%1$d groups · %2$s missing</item>
+    </plurals>
+    <plurals name="home_cuerpo_resumen_completo">
+        <item quantity="one">%1$d group · whole body</item>
+        <item quantity="other">%1$d groups · whole body</item>
+    </plurals>
+    <string name="home_cuerpo_descripcion">Body silhouette with the muscles trained this week highlighted</string>
+    <string name="zona_pierna">legs</string>
+    <string name="zona_espalda">back</string>
+    <string name="zona_pecho">chest</string>
+    <string name="zona_brazos">arms</string>
+    <string name="zona_hombros">shoulders</string>
+    <string name="zona_core">core</string>
+
+    <!-- Home record card (phase 4) -->
+    <string name="home_record_eyebrow">YOUR RECORD</string>
+    <string name="home_record_detalle">%1$s · %2$d reps</string>
+
+    <!-- Post-workout celebration (phase 4) -->
+    <string name="resumen_celebracion_eyebrow">YOU MOVED</string>
+    <string name="resumen_celebracion_unidad">kilos in this session</string>
 </resources>

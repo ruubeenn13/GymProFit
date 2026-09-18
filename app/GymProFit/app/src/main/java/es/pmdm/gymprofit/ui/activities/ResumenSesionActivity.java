@@ -12,6 +12,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -48,6 +50,8 @@ public class ResumenSesionActivity extends AppCompatActivity {
     private View layoutNotas;
     private TextView tvStatSesiones, tvStatCompletadas, tvStatMinutos, tvStatCalorias;
     private TextView tvStatRacha, tvStatMejorRacha;
+    private View layoutCelebracion;
+    private TextView tvVolumenHero;
     private RecyclerView rvLogros;
     private TextView tvLogrosVacio;
 
@@ -91,10 +95,41 @@ public class ResumenSesionActivity extends AppCompatActivity {
         inicializarVistas(rutinaNombre);
 
         int usuarioId = prefsManager.getUsuarioId();
+        cargarVolumen(sesionId);
         cargarSesion(sesionId);
         cargarEstadisticas(usuarioId);
         cargarTodosLogros();
         cargarLogrosDesbloqueados(usuarioId);
+    }
+
+    /**
+     * Carga los kilos movidos en la sesión y los pinta como el número grande.
+     * <p>
+     * Va por su cuenta y no entra en el contador de las otras cuatro llamadas: si el
+     * volumen tarda o falla, el resto del resumen se pinta igual. Cuando no hay pesos
+     * registrados el bloque entero desaparece, porque un cero enorme celebra lo
+     * contrario de lo que se pretende.
+     *
+     * @param sesionId sesión que se acaba de terminar o consultar.
+     */
+    private void cargarVolumen(int sesionId) {
+        sesionApi.getVolumenSesion(sesionId).enqueue(new ApiCallback<Map<String, Double>>() {
+            @Override
+            public void onOk(Map<String, Double> cuerpo) {
+                Double kilos = cuerpo == null ? null : cuerpo.get("volumenKg");
+                if (kilos == null || kilos <= 0) {
+                    layoutCelebracion.setVisibility(View.GONE);
+                    return;
+                }
+                layoutCelebracion.setVisibility(View.VISIBLE);
+                // Sin decimales: a esta escala el gramo no dice nada y estorba al n\u00famero.
+                tvVolumenHero.setText(String.format(Locale.getDefault(), "%,d", Math.round(kilos)));
+            }
+            @Override
+            public void onFail(int code, String message) {
+                layoutCelebracion.setVisibility(View.GONE);
+            }
+        });
     }
 
     // Vincula las vistas del layout y muestra el nombre de la rutina asociada (si existe).
@@ -115,6 +150,9 @@ public class ResumenSesionActivity extends AppCompatActivity {
         tvStatCalorias   = findViewById(R.id.tvStatCalorias);
         tvStatRacha      = findViewById(R.id.tvStatRacha);
         tvStatMejorRacha = findViewById(R.id.tvStatMejorRacha);
+
+        layoutCelebracion = findViewById(R.id.layoutCelebracion);
+        tvVolumenHero     = findViewById(R.id.tvVolumenHero);
 
         rvLogros      = findViewById(R.id.rvLogrosResumen);
         tvLogrosVacio = findViewById(R.id.tvLogrosVacioResumen);

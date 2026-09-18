@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   activity_resumen_sesion — Pantalla de resumen de la sesión de entrenamiento y estadísticas del usuario.
-  Muestra los datos de la sesión completada (fecha, duración, calorías, rutina, notas),
-  un bloque de estadísticas agregadas y la lista de logros conseguidos.
+  Arriba, un único número grande que celebra lo que se acaba de hacer: los kilos
+  movidos. Debajo, el detalle de la sesión (fecha, duración, rutina, notas), el
+  bloque de estadísticas agregadas y los logros conseguidos.
 -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -53,6 +54,52 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp">
+
+            <!-- === CELEBRACIÓN: un solo número grande === -->
+            <!--
+              Va antes que nada y es lo único grande de la pantalla. El resto de cifras
+              siguen ahí abajo, pero como detalle: seis números del mismo tamaño no
+              celebran nada, solo informan.
+            -->
+            <LinearLayout
+                android:id="@+id/layoutCelebracion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:paddingTop="8dp"
+                android:paddingBottom="28dp">
+
+                <TextView
+                    android:id="@+id/tvCelebracionEyebrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/resumen_celebracion_eyebrow"
+                    android:textSize="@dimen/text_eyebrow"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.16"
+                    android:textColor="?attr/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/tvVolumenHero"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textSize="@dimen/text_number"
+                    android:textStyle="bold"
+                    android:includeFontPadding="false"
+                    android:fontFamily="@font/barlow_condensed"
+                    android:textColor="?attr/colorOnSurface" />
+
+                <TextView
+                    android:id="@+id/tvVolumenUnidad"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/resumen_celebracion_unidad"
+                    android:textSize="@dimen/text_subtitle"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+            </LinearLayout>
 
             <!-- === CARD SESIÓN === -->
             <TextView

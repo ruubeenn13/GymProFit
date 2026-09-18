@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ic_musculo_pecho — generado a partir de ic_body_chest.xml (fase 4, silueta muscular de Home).
+  Solo los paths del musculo, en blanco para tenirlos en runtime. Vista frontal.
+  NO editar a mano: se regenera con scripts/extraer-musculos.py.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp" android:height="240dp"
+    android:viewportWidth="724" android:viewportHeight="1448">
+  <path android:fillColor="#FFFFFFFF" android:pathData="M 272.91 422.84 c -18.95 -17.19 -22 -57 -12.64 -78.79 5.57 -12.99 26.54 -24.37 39.97 -25.87 q 20.36 -2.26 37.02 .75 c 9.74 1.76 16.13 15.64 18.41 25.04 3.99 16.48 3.23 31.38 1.67 48.06 q -1.35 14.35 -2.05 16.89 c -6.52 23.5 -38.08 29.23 -58.28 24.53 -9.12 -2.12 -17.24 -4.38 -24.1 -10.61 z"/>
+  <path android:fillColor="#FFFFFFFF" android:pathData="M 416.04 435 c -15.12 .11 -34.46 -6.78 -41.37 -21.48 q -1.88 -3.99 -2.84 -12.18 c -2.89 -24.41 -5.9 -53.65 8.44 -74.79 4.26 -6.26 10.49 -7.93 18.36 -8.56 q 11.66 -.92 23.32 -.35 c 10.58 .53 18.02 2.74 26.62 7.87 12.81 7.65 19.73 14.52 22.67 29.75 4.94 25.57 .24 64.14 -28.21 74.97 q -12.26 4.67 -26.99 4.77 z"/>
+</vector>

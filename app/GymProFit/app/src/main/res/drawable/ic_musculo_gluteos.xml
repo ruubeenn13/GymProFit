@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ic_musculo_gluteos — generado a partir de ic_body_gluteal.xml (fase 4, silueta muscular de Home).
+  Solo los paths del musculo, en blanco para tenirlos en runtime. Vista dorsal.
+  NO editar a mano: se regenera con scripts/extraer-musculos.py.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp" android:height="240dp"
+    android:viewportWidth="724" android:viewportHeight="1448">
+  <group android:translateX="-724">
+    <path android:fillColor="#FFFFFFFF" android:pathData="M 1045.06 626.19 q 1.42 .61 4.11 4.4 .27 .39 -.19 .52 c -14.47 4.12 -26.13 7.4 -38.13 15.77 q -15.37 10.71 -30.53 21.6 a .55 .54 74.9 0 1 -.86 -.5 c 1.19 -13.13 10.35 -35.23 20.46 -45.06 9.14 -8.88 34.99 -1.11 45.14 3.27 z"/>
+    <path android:fillColor="#FFFFFFFF" android:pathData="M 1007.94 762.81 c -16.94 -16.64 -29.37 -37.66 -31.47 -61 -2.06 -22.84 15.63 -34.95 32.18 -45.71 8.2 -5.33 46.51 -27.32 54.37 -17.65 5.92 7.29 13.38 15.84 15.44 25.21 q 3.01 13.63 2.44 27.6 -.94 22.59 -6.27 44.49 c -2.43 9.96 -2.9 17.16 -2.59 26.75 .47 14.83 -18.52 17.18 -29.12 14.07 -6.38 -1.87 -13.79 -4.83 -21.35 -6.25 q -7.39 -1.38 -13.63 -7.51 z"/>
+    <path android:fillColor="#FFFFFFFF" android:pathData="M 1117.94 631.04 q -.13 -.03 -.27 -.06 -.12 -.02 -.06 -.13 2.58 -4.2 7.05 -5.92 12.71 -4.87 26.13 -5.81 c 12.93 -.91 17.1 3.08 23.28 13.06 5.71 9.22 13.32 24.7 13.44 36.06 q .01 .76 -.61 .32 -16.65 -11.74 -33.2 -23.51 c -10.03 -7.14 -23.72 -10.58 -35.76 -14.01 z"/>
+    <path android:fillColor="#FFFFFFFF" android:pathData="M 1124.12 776.61 c -9.28 2.74 -26.75 1.29 -28.86 -10.88 -1.05 -6.03 .27 -14.88 -1.3 -23.27 q -.54 -2.94 -2.15 -9.35 c -3.2 -12.81 -4.02 -23.33 -5.08 -35.27 -1.07 -12.03 -.57 -22 1.64 -33.17 q 1.1 -5.6 4.19 -10.41 8.74 -13.58 11.87 -16.59 c 4.96 -4.77 15.84 .18 21.19 2.11 q 19.7 7.12 40.17 21.43 c 9.59 6.7 19.29 14.31 22.93 25.17 4.81 14.37 -.65 33.88 -7.42 46.87 q -7.79 14.97 -21.39 28.9 -6.74 6.9 -15.26 8.36 c -7.07 1.21 -13.68 4.08 -20.53 6.1 z"/>
+  </group>
+</vector>

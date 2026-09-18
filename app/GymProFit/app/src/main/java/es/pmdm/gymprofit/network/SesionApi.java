@@ -4,12 +4,14 @@ import java.util.List;
 import java.util.Map;
 
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
+import es.pmdm.gymprofit.model.sesion.VolumenMuscular;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 // ============================================================
 // SesionApi — interfaz Retrofit tipada del dominio "sesiones de entrenamiento" (etapa 2).
@@ -44,4 +46,15 @@ public interface SesionApi {
     // peso usado). body: sesionId + datos del ejercicio; la respuesta se ignora.
     @POST("ejercicios-realizados")
     Call<Void> crearEjercicioRealizado(@Body Map<String, Object> body);
+
+    // Series por músculo del usuario en los últimos `dias` días. Alimenta la silueta
+    // de Home: solo vienen los músculos tocados, el resto se pintan en gris.
+    @GET("sesiones/usuario/{usuarioId}/volumen-muscular")
+    Call<List<VolumenMuscular>> getVolumenMuscular(@Path("usuarioId") int usuarioId,
+                                                   @Query("dias") int dias);
+
+    // Kilos movidos en una sesión. Respuesta: {"volumenKg": 4250.00}. Es el número
+    // grande del resumen tras entrenar.
+    @GET("sesiones/{id}/volumen")
+    Call<Map<String, Double>> getVolumenSesion(@Path("id") int id);
 }

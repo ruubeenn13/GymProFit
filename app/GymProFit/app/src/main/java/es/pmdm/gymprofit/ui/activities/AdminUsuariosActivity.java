@@ -46,6 +46,9 @@ public class AdminUsuariosActivity extends BaseActivity {
     // Filtro por username introducido en el buscador (null = sin filtrar)
     private String filtroUsername = null;
 
+    // Id del administrador autenticado, para no dejarle actuar sobre su propia cuenta
+    private int usuarioActualId = -1;
+
     // Configura RecyclerView, chips de filtro, buscador y carga inicial de datos
 
     // Debounce del buscador. Sin él, cada tecla lanzaba una petición: escribir
@@ -72,13 +75,20 @@ public class AdminUsuariosActivity extends BaseActivity {
 
         rv = findViewById(R.id.rvUsuarios);
         rv.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new AdminUsuarioAdapter(lista, new AdminUsuarioAdapter.OnAccionListener() {
+        // El adapter necesita saber quién está mirando para esconder las acciones de su
+        // propia fila; la comprobación se repite aquí por si llega un dato viejo, y otra
+        // vez en la API, que es la única barrera que un cliente no puede saltarse.
+        usuarioActualId = prefsManager.getUsuarioId();
+
+        adapter = new AdminUsuarioAdapter(lista, usuarioActualId, new AdminUsuarioAdapter.OnAccionListener() {
             @Override
             public void onToggleActivo(Usuario u, int pos) {
+                if (esCuentaPropia(u)) return;
                 mostrarDialogoToggle(u, pos);
             }
             @Override
             public void onCambiarRol(Usuario u, int pos) {
+                if (esCuentaPropia(u)) return;
                 mostrarDialogoCambiarRol(u, pos);
             }
         });
@@ -161,11 +171,29 @@ public class AdminUsuariosActivity extends BaseActivity {
                 });
     }
 
+    /**
+     * Comprueba si la fila es la cuenta del propio administrador y, si lo es, lo explica
+     * y corta la acción. El adapter ya esconde el menú en esa fila; esto cubre el caso
+     * de que la lista se haya quedado atrás respecto a la sesión.
+     *
+     * @param u usuario de la fila sobre la que se ha pulsado.
+     * @return {@code true} si es la cuenta propia y no hay que seguir.
+     */
+    private boolean esCuentaPropia(Usuario u) {
+        if (u.getId() != usuarioActualId) return false;
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(getString(R.string.admin_toggle_activo_titulo))
+                .setMessage(getString(R.string.admin_usuario_es_tu_cuenta))
+                .setPositiveButton(android.R.string.ok, null)
+                .show();
+        return true;
+    }
+
     // Muestra un diálogo de confirmación para activar/desactivar la cuenta del usuario
     private void mostrarDialogoToggle(Usuario u, int pos) {
         String msg = u.isActivo()
-                ? getString(R.string.admin_desactivar) + " " + u.getUsername() + "?"
-                : getString(R.string.admin_activar) + " " + u.getUsername() + "?";
+                ? getString(R.string.admin_toggle_usuario_desactivar, u.getUsername())
+                : getString(R.string.admin_toggle_usuario_activar, u.getUsername());
         new MaterialAlertDialogBuilder(this)
                 .setTitle(getString(R.string.admin_toggle_activo_titulo))
                 .setMessage(msg)
@@ -217,6 +245,7 @@ public class AdminUsuariosActivity extends BaseActivity {
 
         new MaterialAlertDialogBuilder(this)
                 .setTitle(getString(R.string.admin_cambiar_rol_titulo))
+                .setMessage(getString(R.string.admin_cambiar_rol_msg, u.getUsername()))
                 .setView(rg)
                 .setPositiveButton(getString(R.string.admin_guardar), (d, w) -> {
                     String nuevoRol = rg.getCheckedRadioButtonId() == 2 ? "ROLE_ADMIN" : "ROLE_USER";

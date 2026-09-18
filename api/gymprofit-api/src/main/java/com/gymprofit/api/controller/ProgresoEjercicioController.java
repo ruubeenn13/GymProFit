@@ -4,6 +4,7 @@ import com.gymprofit.api.dto.common.CountDTO;
 import com.gymprofit.api.dto.common.ExistsDTO;
 import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioCreateDTO;
 import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioDTO;
+import com.gymprofit.api.dto.entity.progresoejercicio.RecordDestacadoDTO;
 import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioPatchDTO;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
@@ -314,5 +315,22 @@ public class ProgresoEjercicioController {
     @PatchMapping("/progreso-ejercicios/{id}")
     public ResponseEntity<ProgresoEjercicioDTO> patchProgresoEjercicio(@PathVariable Integer id, @RequestBody ProgresoEjercicioPatchDTO patchDTO) {
         return ResponseEntity.ok(progresoEjercicioService.patch(id, patchDTO));
+    }
+
+    @Operation(summary = "Mejor levantamiento del usuario",
+            description = "Devuelve el récord de peso del usuario con el nombre del ejercicio ya " +
+                    "resuelto, para la tarjeta de récord de la pantalla de inicio. 204 si todavía no " +
+                    "ha levantado nada con peso.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Récord encontrado",
+                    content = @Content(schema = @Schema(implementation = RecordDestacadoDTO.class))),
+            @ApiResponse(responseCode = "204", description = "El usuario aún no tiene ningún récord")
+    })
+    // Devuelve el mejor levantamiento del usuario, o 204 si todavía no hay ninguno
+    @GetMapping("/progreso-ejercicios/usuario/{usuarioId}/record-destacado")
+    public ResponseEntity<RecordDestacadoDTO> obtenerRecordDestacado(@PathVariable Integer usuarioId) {
+        return progresoEjercicioService.getRecordDestacado(usuarioId)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.noContent().build());
     }
 }

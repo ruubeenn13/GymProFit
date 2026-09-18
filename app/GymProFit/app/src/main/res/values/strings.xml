@@ -72,6 +72,7 @@
     <string name="nav_ejercicios">Ejercicios</string>
     <string name="nav_nutricion">Nutrición</string>
     <string name="nav_perfil">Perfil</string>
+    <string name="nav_rol_pestana">pestaña</string>
 
     <!-- HOME -->
     <string name="home_resumen">Resumen de hoy</string>
@@ -352,16 +353,21 @@
     <string name="admin_filtro_avanzado">Avanzado</string>
     <string name="admin_toggle_activo_titulo">Cambiar estado</string>
     <string name="admin_toggle_activo_msg">¿Activar o desactivar este usuario?</string>
+    <string name="admin_toggle_usuario_activar">¿Activar la cuenta de «%1$s»?</string>
+    <string name="admin_toggle_usuario_desactivar">¿Desactivar la cuenta de «%1$s»? No podrá volver a entrar hasta que la reactives.</string>
+    <string name="admin_cambiar_rol_msg">Rol de «%1$s»</string>
+    <string name="admin_usuario_eres_tu">Tú</string>
+    <string name="admin_usuario_es_tu_cuenta">Es tu cuenta: no puedes desactivarla ni cambiarte el rol desde aqu\'í.</string>
     <string name="admin_cambiar_rol_titulo">Cambiar rol</string>
     <string name="admin_toggle_rutina_titulo">Cambiar estado</string>
-    <string name="admin_toggle_rutina_activar">¿Activar esta rutina?</string>
-    <string name="admin_toggle_rutina_desactivar">¿Desactivar esta rutina?</string>
+    <string name="admin_toggle_rutina_activar">¿Activar la rutina «%1$s»?</string>
+    <string name="admin_toggle_rutina_desactivar">¿Desactivar la rutina «%1$s»? Dejará de aparecer para todos los usuarios.</string>
     <string name="admin_toggle_ejercicio_titulo">Cambiar estado</string>
-    <string name="admin_toggle_ejercicio_activar">¿Activar este ejercicio?</string>
-    <string name="admin_toggle_ejercicio_desactivar">¿Desactivar este ejercicio?</string>
+    <string name="admin_toggle_ejercicio_activar">¿Activar el ejercicio «%1$s»?</string>
+    <string name="admin_toggle_ejercicio_desactivar">¿Desactivar el ejercicio «%1$s»? Dejará de aparecer para todos los usuarios.</string>
     <string name="admin_toggle_alimento_titulo">Cambiar estado</string>
-    <string name="admin_toggle_alimento_activar">¿Activar este alimento?</string>
-    <string name="admin_toggle_alimento_desactivar">¿Desactivar este alimento? Dejará de aparecer en el buscador de todos los usuarios.</string>
+    <string name="admin_toggle_alimento_activar">¿Activar el alimento «%1$s»?</string>
+    <string name="admin_toggle_alimento_desactivar">¿Desactivar el alimento «%1$s»? Dejará de aparecer en el buscador de todos los usuarios.</string>
     <string name="admin_editar_rutina_titulo">Editar rutina</string>
     <string name="admin_editar_ejercicio_titulo">Editar ejercicio</string>
     <string name="admin_campo_nombre">Nombre *</string>
@@ -569,4 +575,49 @@
     <string name="error_altura_invalida">Pon tu altura en centímetros, entre 100 y 250</string>
     <string name="error_altura_en_metros">¿Querías decir %1$d cm? Escribe la altura en centímetros</string>
     <string name="error_medida_invalida">Pon un número entre %1$s y %2$s</string>
+
+    <!-- Recuperacion de contrasena olvidada -->
+    <string name="login_olvidaste">¿Has olvidado tu contraseña?</string>
+    <string name="recuperar_titulo">Recuperar contraseña</string>
+    <string name="recuperar_paso1_explicacion">Escribe tu usuario o tu correo. Si la cuenta existe, te enviamos un código de 6 dígitos.</string>
+    <string name="recuperar_identificador">Usuario o correo</string>
+    <string name="recuperar_enviar_codigo">Enviar código</string>
+    <string name="recuperar_paso2_explicacion">Si hay una cuenta para «%1$s», el código ya está en su correo. Caduca en 15 minutos.</string>
+    <string name="recuperar_codigo">Código de 6 dígitos</string>
+    <string name="recuperar_password_nueva">Contraseña nueva</string>
+    <string name="password_politica">Mínimo 8 caracteres, con minúscula, mayúscula, dígito y símbolo.</string>
+    <string name="recuperar_restablecer">Restablecer contraseña</string>
+    <string name="recuperar_reenviar">Enviar otro código</string>
+    <string name="recuperar_ok">Contraseña cambiada. Ya puedes entrar con la nueva.</string>
+    <string name="recuperar_error_identificador">Escribe tu usuario o tu correo</string>
+    <string name="recuperar_error_codigo">El código son 6 dígitos</string>
+    <string name="recuperar_error_password">Mínimo 8 caracteres, con minúscula, mayúscula, dígito y símbolo</string>
+
+    <!-- Silueta muscular de la pantalla de inicio (fase 4) -->
+    <string name="home_cuerpo_eyebrow">ESTA SEMANA</string>
+    <string name="home_cuerpo_leyenda">Cuanto más naranja, más series ha recibido</string>
+    <string name="home_cuerpo_vacio">Tu cuerpo está por encender</string>
+    <plurals name="home_cuerpo_resumen">
+        <item quantity="one">%1$d grupo · te falta %2$s</item>
+        <item quantity="other">%1$d grupos · te falta %2$s</item>
+    </plurals>
+    <plurals name="home_cuerpo_resumen_completo">
+        <item quantity="one">%1$d grupo · cuerpo completo</item>
+        <item quantity="other">%1$d grupos · cuerpo completo</item>
+    </plurals>
+    <string name="home_cuerpo_descripcion">Silueta del cuerpo con los músculos entrenados esta semana resaltados</string>
+    <string name="zona_pierna">pierna</string>
+    <string name="zona_espalda">espalda</string>
+    <string name="zona_pecho">pecho</string>
+    <string name="zona_brazos">brazos</string>
+    <string name="zona_hombros">hombros</string>
+    <string name="zona_core">abdomen</string>
+
+    <!-- Tarjeta de récord de la pantalla de inicio (fase 4) -->
+    <string name="home_record_eyebrow">TU RÉCORD</string>
+    <string name="home_record_detalle">%1$s · %2$d reps</string>
+
+    <!-- Celebración del resumen tras entrenar (fase 4) -->
+    <string name="resumen_celebracion_eyebrow">HAS MOVIDO</string>
+    <string name="resumen_celebracion_unidad">kilos en esta sesión</string>
 </resources>

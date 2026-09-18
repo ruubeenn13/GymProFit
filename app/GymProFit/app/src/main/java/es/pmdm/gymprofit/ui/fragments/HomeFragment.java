@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,19 +18,28 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
+import es.pmdm.gymprofit.model.progreso.RecordDestacado;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
+import es.pmdm.gymprofit.model.sesion.VolumenMuscular;
 import es.pmdm.gymprofit.model.usuario.UsuarioEstadisticas;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.EjercicioApi;
+import es.pmdm.gymprofit.network.ProgresoEjercicioApi;
 import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.network.UiApiCallback;
 import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.ui.activities.RegistrarSesionActivity;
 import es.pmdm.gymprofit.ui.activities.SesionesActivity;
+import es.pmdm.gymprofit.ui.widget.SiluetaMuscularView;
+import es.pmdm.gymprofit.utils.EjercicioNavHelper;
 import es.pmdm.gymprofit.utils.NavTabs;
 
 // ============================================================
@@ -40,8 +50,14 @@ import es.pmdm.gymprofit.utils.NavTabs;
 public class HomeFragment extends BaseFragment {
     private TextView tvConteoEntrenamientos, tvConteoCaloriasHome, tvConteoMinutosHome;
     private TextView tvRachaNumero, tvRachaUnidad, tvRachaMejor;
+    private SiluetaMuscularView siluetaMuscular;
+    private TextView tvCuerpoResumen;
+    private MaterialCardView cardRecordHome;
+    private TextView tvRecordEjercicio, tvRecordPeso;
     private final SesionApi sesionApi = ApiClient.service(SesionApi.class);
     private final UsuarioApi usuarioApi = ApiClient.service(UsuarioApi.class);
+    private final ProgresoEjercicioApi progresoApi = ApiClient.service(ProgresoEjercicioApi.class);
+    private final EjercicioApi ejercicioApi = ApiClient.service(EjercicioApi.class);
 
     @Nullable
     @Override
@@ -59,6 +75,12 @@ public class HomeFragment extends BaseFragment {
         tvRachaNumero = findViewById(R.id.tvRachaNumero);
         tvRachaUnidad = findViewById(R.id.tvRachaUnidad);
         tvRachaMejor  = findViewById(R.id.tvRachaMejor);
+        siluetaMuscular  = findViewById(R.id.siluetaMuscular);
+        tvCuerpoResumen  = findViewById(R.id.tvCuerpoResumen);
+        siluetaMuscular.setContentDescription(getString(R.string.home_cuerpo_descripcion));
+        cardRecordHome    = findViewById(R.id.cardRecordHome);
+        tvRecordEjercicio = findViewById(R.id.tvRecordEjercicio);
+        tvRecordPeso      = findViewById(R.id.tvRecordPeso);
 
         setupMenuButton();
         configurarCabecera();
@@ -71,6 +93,162 @@ public class HomeFragment extends BaseFragment {
         super.onResume();
         cargarEstadisticasSemana();
         cargarRacha();
+        cargarVolumenMuscular();
+        cargarRecord();
+    }
+
+    /**
+     * Carga las series por músculo de los últimos 7 días y enciende la silueta.
+     * <p>
+     * Si falla, la silueta se queda entera en gris con el mensaje de cuerpo apagado.
+     * No es un caso de error que haya que gritar: para un usuario nuevo el cuerpo
+     * apagado es el estado correcto, y es justo lo que se quiere enseñar.
+     */
+    private void cargarVolumenMuscular() {
+        int usuarioId = prefsManager.getUsuarioId();
+        if (usuarioId == -1) { pintarCuerpo(null); return; }
+
+        sesionApi.getVolumenMuscular(usuarioId, 7).enqueue(new ApiCallback<List<VolumenMuscular>>() {
+            @Override
+            public void onOk(List<VolumenMuscular> volumen) {
+                if (!isAdded()) return;
+                pintarCuerpo(volumen);
+            }
+            @Override
+            public void onFail(int code, String message) {
+                if (!isAdded()) return;
+                pintarCuerpo(null);
+            }
+        });
+    }
+
+    // Vuelca el volumen en la silueta y escribe la frase que la resume.
+    private void pintarCuerpo(@Nullable List<VolumenMuscular> volumen) {
+        Map<String, Integer> porMusculo = new LinkedHashMap<>();
+        if (volumen != null) {
+            for (VolumenMuscular v : volumen) {
+                if (v.getMusculo() != null && v.getSeries() > 0) {
+                    porMusculo.put(v.getMusculo(), v.getSeries());
+                }
+            }
+        }
+
+        siluetaMuscular.setVolumen(porMusculo);
+
+        if (porMusculo.isEmpty()) {
+            tvCuerpoResumen.setText(R.string.home_cuerpo_vacio);
+            return;
+        }
+
+        String zonaOlvidada = zonaSinTrabajar(porMusculo);
+        int grupos = porMusculo.size();
+
+        // Plurales y no `getString`: con un solo grupo la frase decía "1 grupos".
+        tvCuerpoResumen.setText(zonaOlvidada == null
+                ? getResources().getQuantityString(
+                        R.plurals.home_cuerpo_resumen_completo, grupos, grupos)
+                : getResources().getQuantityString(
+                        R.plurals.home_cuerpo_resumen, grupos, grupos, zonaOlvidada));
+    }
+
+    /**
+     * Nombra la zona del cuerpo que se ha quedado sin tocar esta semana.
+     * <p>
+     * Se razona por zonas y no por músculos sueltos porque "te falta pierna" es un
+     * consejo y "te faltan los aductores" es una queja. Si hay varias sin tocar se
+     * nombra la primera de la lista, que va ordenada por lo grave que es saltarse esa
+     * zona: nadie abandona el entrenamiento por no hacer antebrazo, pero sí se
+     * desequilibra por no hacer pierna.
+     *
+     * @return el nombre de la zona, o {@code null} si se han tocado todas.
+     */
+    @Nullable
+    private String zonaSinTrabajar(Map<String, Integer> porMusculo) {
+        String[][] zonas = {
+                { "zona_pierna",  "cuadriceps", "isquiotibiales", "gluteos", "gemelos", "aductores" },
+                { "zona_espalda", "dorsales", "trapecios", "lumbares" },
+                { "zona_pecho",   "pecho" },
+                { "zona_hombros", "hombros" },
+                { "zona_brazos",  "biceps", "triceps", "antebrazos" },
+                { "zona_core",    "abdominales" },
+        };
+
+        for (String[] zona : zonas) {
+            boolean tocada = false;
+            for (int i = 1; i < zona.length; i++) {
+                Integer series = porMusculo.get(zona[i]);
+                if (series != null && series > 0) { tocada = true; break; }
+            }
+            if (!tocada) {
+                int res = getResources().getIdentifier(
+                        zona[0], "string", requireContext().getPackageName());
+                return res == 0 ? null : getString(res);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Carga el mejor levantamiento del usuario y lo enseña en la tarjeta dorada.
+     * <p>
+     * La tarjeta está oculta de partida y solo aparece si hay récord: una tarjeta de
+     * récord vacía le recuerda a quien empieza justo lo que no tiene todavía.
+     */
+    private void cargarRecord() {
+        int usuarioId = prefsManager.getUsuarioId();
+        if (usuarioId == -1) { cardRecordHome.setVisibility(View.GONE); return; }
+
+        progresoApi.getRecordDestacado(usuarioId).enqueue(new ApiCallback<RecordDestacado>() {
+            @Override
+            public void onOk(RecordDestacado record) {
+                if (!isAdded()) return;
+                // 204 sin cuerpo: todavía no hay récord.
+                if (record == null || record.getEjercicioNombre() == null) {
+                    cardRecordHome.setVisibility(View.GONE);
+                    return;
+                }
+                pintarRecord(record);
+            }
+            @Override
+            public void onFail(int code, String message) {
+                if (!isAdded()) return;
+                cardRecordHome.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    // Escribe el récord en la tarjeta y la deja abriendo el detalle de ese ejercicio.
+    private void pintarRecord(RecordDestacado record) {
+        cardRecordHome.setVisibility(View.VISIBLE);
+
+        tvRecordEjercicio.setText(record.getRepeticiones() > 0
+                ? getString(R.string.home_record_detalle,
+                        record.getEjercicioNombre(), record.getRepeticiones())
+                : record.getEjercicioNombre());
+
+        // Sin decimales cuando no aportan: "80 kg" y no "80,0 kg".
+        double peso = record.getPeso();
+        String pesoTexto = peso == Math.floor(peso)
+                ? String.format(Locale.getDefault(), "%d kg", (long) peso)
+                : String.format(Locale.getDefault(), "%.1f kg", peso);
+        tvRecordPeso.setText(pesoTexto);
+
+        // El id no basta para abrir el detalle, que espera el ejercicio entero en
+        // extras; se pide al pulsar y no al cargar, para no gastar una llamada por
+        // cada vez que se entra en la pestaña.
+        cardRecordHome.setOnClickListener(v ->
+                ejercicioApi.getPorId(record.getEjercicioId()).enqueue(new ApiCallback<Ejercicio>() {
+                    @Override
+                    public void onOk(Ejercicio ejercicio) {
+                        if (!isAdded() || ejercicio == null) return;
+                        EjercicioNavHelper.abrir(requireContext(), ejercicio);
+                    }
+                    @Override
+                    public void onFail(int code, String message) {
+                        if (!isAdded()) return;
+                        irATab(NavTabs.EJERCICIOS);   // al menos deja en el catálogo
+                    }
+                }));
     }
 
     // Carga la racha de días del usuario y la muestra como protagonista de la cabecera.

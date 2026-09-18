@@ -42,4 +42,16 @@ public interface AuthApi {
     // body: {refreshToken}. La respuesta ("mensaje") se ignora.
     @POST("auth/logout")
     Call<Void> logout(@Body Map<String, Object> body);
+
+    // Pide un código de 6 dígitos para recuperar la contraseña olvidada.
+    // body: {identificador} (usuario O correo). Responde 200 exista la cuenta o no,
+    // así que el cliente NO puede deducir de aquí si el usuario está registrado.
+    @POST("auth/forgot-password")
+    Call<Void> forgotPassword(@Body Map<String, Object> body);
+
+    // Canjea el código por una contraseña nueva. body: {identificador, codigo, newPassword}.
+    // 400 si el código no sirve o la contraseña no cumple la política.
+    @POST("auth/reset-password")
+    Call<Void> resetPassword(@Body Map<String, Object> body);
+
 }

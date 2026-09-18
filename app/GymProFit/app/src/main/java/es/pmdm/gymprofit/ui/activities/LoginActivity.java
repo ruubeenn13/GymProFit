@@ -81,6 +81,11 @@ public class LoginActivity extends AppCompatActivity {
     // Configura los listeners de login, login como invitado, ir a registro
     // y cambio de tema/idioma.
     private void configurarEventos() {
+        // Salida para quien no recuerda la contraseña. Sin esto, olvidarla significaba
+        // perder la cuenta: no había ninguna otra forma de volver a entrar.
+        findViewById(R.id.tvOlvidastePassword).setOnClickListener(v ->
+                startActivity(new Intent(this, RecuperarPasswordActivity.class)));
+
         findViewById(R.id.btnEntrar).setOnClickListener(v -> {
             String usuario  = etUsuario.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
