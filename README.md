@@ -453,7 +453,10 @@ cd api/gymprofit-api/src/main/resources
 cp application-example.properties application-dev.properties
 ```
 
-Edita `application-dev.properties` con tus credenciales de BD y clave JWT.
+Edita `application-dev.properties` con tus credenciales de BD, la clave JWT y
+`app.seed.admin.password` (la contraseña del usuario `admin`, que ya no está en el código: sin
+esa propiedad no se crea ninguna cuenta de administración). Ver
+[ENTORNO-DESARROLLO.md](documentacion/ENTORNO-DESARROLLO.md).
 
 > **Opcional (push):** para probar las notificaciones push en dev, define la variable de entorno `FIREBASE_CREDENTIALS_PATH` apuntando al JSON de la service account de Firebase (no versionado). Sin ella la API arranca igual, con las push desactivadas.
 

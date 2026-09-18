@@ -13,6 +13,10 @@ TODO.md
 .idea/
 *.iml
 
+# Configuracion local de Claude Code: rutas absolutas de la maquina de desarrollo,
+# no sirve a nadie mas y expone la estructura de un equipo concreto.
+.claude/
+
 # SO
 .DS_Store
 Thumbs.db

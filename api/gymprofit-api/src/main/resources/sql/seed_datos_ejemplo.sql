@@ -1,8 +1,10 @@
 -- =============================================================================
 -- GymProFit — Limpieza + seed de datos de ejemplo
 -- Uso: ejecutar este script completo contra la BD de desarrollo.
--- Después arrancar la API: DataInitializer creará admin (contraseña: Admin1234)
--- y guest (contraseña: guest) automáticamente si no existen.
+-- Después arrancar la API: DataInitializer creará admin y guest si no existen.
+-- La contraseña de admin sale de app.seed.admin.password (en dev, de tu
+-- application-dev.properties); sin ella no se crea ninguna cuenta ADMIN. La de
+-- guest es aleatoria a propósito: el acceso de invitado va por POST /auth/guest.
 -- Los 3 usuarios de ejemplo usan contraseña: Demo1234
 -- =============================================================================
 

@@ -30,3 +30,25 @@ services:
         sync: false
       - key: JWT_SECRET                    # secreto aleatorio propio de producción (Base64)
         sync: false
+      # --- Correo transaccional (Brevo SMTP) ---
+      # OBLIGATORIAS: application-prod.properties las referencia sin valor por defecto,
+      # igual que JWT_SECRET. Si falta cualquiera de las cuatro, el servicio NO arranca.
+      # Es deliberado: sin correo, /auth/forgot-password responde 200 sin enviar nada y
+      # la recuperacion de cuenta falla de forma indistinguible del exito.
+      - key: MAIL_HOST                     # smtp-relay.brevo.com
+        sync: false
+      - key: MAIL_USERNAME                 # el "login" SMTP de Brevo, no el correo de la cuenta
+        sync: false
+      - key: MAIL_PASSWORD                 # la SMTP key de Brevo, no la contrasena de la cuenta
+        sync: false
+      # MAIL_FROM: remitente, formato "Nombre <direccion@dominio>". La direccion TIENE que
+      # estar verificada en Brevo (Senders) o pertenecer a un dominio autenticado; con
+      # cualquier otra, el proveedor rechaza el envio y el fallo no se nota desde la app.
+      - key: MAIL_FROM
+        sync: false
+      # --- Usuario administrador semilla ---
+      # OPCIONAL: sin ella la API arranca, pero NO crea ninguna cuenta con rol ADMIN.
+      # No tiene default a proposito: una contrasena de admin en el repo es una cuenta
+      # de administracion publica.
+      - key: ADMIN_PASSWORD
+        sync: false

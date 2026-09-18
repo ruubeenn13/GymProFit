@@ -14,7 +14,7 @@
 ## TL;DR — arrancar en local
 
 1. **MariaDB** corriendo en `localhost:3308`, base de datos `gymprofit_db` (usuario `root`, pass `12345`).
-2. **API**: arrancar `GymProFitApiApplication`. Perfil `dev` ya activo por defecto → escucha en `http://localhost:8080/api`.
+2. **API**: arrancar `GymProFitApiApplication`. Perfil `dev` ya activo por defecto → escucha en `http://localhost:8080/api`. `application-dev.properties` necesita `app.seed.admin.password` (ver abajo) o no habrá usuario administrador.
 3. **Android**: emulador. `BASE_URL=http://10.0.2.2:8080/api/` (ya configurado en `local.properties`). Run.
 4. **(Opcional) Push FCM en dev**: exportar `FIREBASE_CREDENTIALS_PATH` con la ruta al JSON de la service-account key (raíz del repo, gitignoreado) antes de arrancar la API. Sin la variable, la API arranca igual con el push desactivado. Ver `documentacion/NOTIFICACIONES.md`.
 
@@ -42,7 +42,44 @@ Con eso funciona sin AWS.
   ```properties
   spring.profiles.active=dev
   ```
-- `application-dev.properties` → BD local `localhost:3308`, logs DEBUG, `ddl-auto=validate`.
+- `application-dev.properties` → BD local `localhost:3308`, logs DEBUG, `ddl-auto=validate`, y la contraseña del administrador semilla (ver abajo).
+
+### Requisito: `app.seed.admin.password` en `application-dev.properties`
+La contraseña del usuario `admin` ya **no está en el código**: `DataInitializer` la lee de esa
+propiedad. Si no está definida, o viene vacía, el arranque deja este aviso en el log y
+**no crea ningún usuario con rol ADMIN**, de modo que el panel de administración queda
+inaccesible en desarrollo:
+
+```
+No se crea el usuario 'admin': la propiedad app.seed.admin.password está vacía.
+```
+
+Añade la línea a tu `application-dev.properties` (que está gitignoreado, por eso puede llevar el
+valor literal):
+
+```properties
+app.seed.admin.password=Admin1234
+```
+
+En `prod` esa misma propiedad se mapea a la variable de entorno `ADMIN_PASSWORD` y **sin default**:
+una contraseña de administrador en el repositorio es una cuenta de administración pública. La
+cuenta `guest` no necesita configuración: se crea siempre, con una contraseña aleatoria que se
+descarta, porque `POST /auth/guest` emite el token sin comprobar credenciales.
+
+> Si ya tenías un `admin` en tu BD local, añadir la propiedad no le cambia la contraseña:
+> `DataInitializer` no toca los usuarios que ya existen.
+
+### El correo NO hace falta en dev ni en ci
+En `prod` las cuatro variables de correo son obligatorias y sin ellas la API no arranca, pero en
+dev y ci se pueden dejar sin configurar: sin `JavaMailSender`, `EmailService` entrega el código de
+recuperación en un fichero de **`target/mail-outbox/`** (configurable con `app.mail.outbox.dir`) y
+en el log solo deja la ruta. Así se puede probar el flujo entero de `/auth/forgot-password` sin
+cuenta de correo.
+
+El código **no se escribe en el log en ningún perfil**, ni completo ni a trozos: durante sus 15
+minutos de validez equivale a la contraseña de la cuenta, y un log se agrega, se rota a servicios
+de terceros y se conserva mucho más tiempo que el propio código. El fichero, en cambio, vive en el
+directorio de build y desaparece con un `mvn clean`.
 - `application-prod.properties` → BD AWS. **No hace falta tocarlo**; solo se usa si se arranca con `--spring.profiles.active=prod`.
 - Migraciones Flyway en `src/main/resources/db/migration/` con formato `V<timestamp>__descripcion.sql` (SÍ se usan, versionadas). `ddl-auto=validate`: si el esquema no coincide con las entidades, la app **no arranca** → los cambios de esquema van SIEMPRE por una nueva migración Flyway, nunca a mano.
 

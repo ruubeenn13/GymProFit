@@ -32,13 +32,56 @@ El proyecto usa **MySQL/MariaDB**; las PaaS gratuitas (Render, Koyeb) **no ofrec
 
 API pública: **https://gymprofit-api.onrender.com** (Render Web Service, Docker, Frankfurt, Free) → Aiven MySQL (TLS verify-full). Verificado en producción: `/api/actuator/health` 200 UP, register 201 + login 200 con JWT. Auto-deploy desde `main`. Swagger OFF en prod (a propósito; verlo en local en `http://localhost:8080/api/swagger-ui.html`). Free duerme a ~15 min → cold start ~30-40s la 1ª request. Pendiente: `BASE_URL` de Android a la URL de Render para builds de release.
 
+## Variables de entorno en Render
+
+Estado a 2026-09-19. En el perfil `prod` **ninguna de estas ocho tiene valor por defecto**: el
+placeholder de `application-prod.properties` va pelado (`${VARIABLE}`) a propósito, así que si
+falta cualquiera de ellas el contexto de Spring no levanta y **el servicio no arranca**. Es
+deliberado: una configuración a medias que arranca es peor que un arranque que falla, porque el
+fallo se descubre en producción y en silencio.
+
+| Variable | Grupo | Si falta |
+|---|---|---|
+| `SPRING_DATASOURCE_URL` | Datasource | **No arranca** |
+| `SPRING_DATASOURCE_USERNAME` | Datasource | **No arranca** |
+| `SPRING_DATASOURCE_PASSWORD` | Datasource | **No arranca** |
+| `JWT_SECRET` | Firma de tokens | **No arranca** |
+| `MAIL_HOST` | Correo (Brevo SMTP) | **No arranca** |
+| `MAIL_USERNAME` | Correo (Brevo SMTP) | **No arranca** |
+| `MAIL_PASSWORD` | Correo (Brevo SMTP) | **No arranca** |
+| `MAIL_FROM` | Correo (Brevo SMTP) | **No arranca** |
+| `ADMIN_PASSWORD` | Semilla de administración | Arranca, pero **sin crear cuenta de administración** |
+
+Por grupos:
+
+- **Datasource y `JWT_SECRET`**: sin ellas no hay ni base de datos ni forma de firmar tokens.
+- **Correo**: las cuatro son obligatorias desde que la recuperación de contraseña existe. Antes
+  llevaban default vacío y la consecuencia era peor que no arrancar: Spring no creaba
+  `JavaMailSender`, el código de recuperación acababa escrito en el log y
+  `POST /auth/forgot-password` respondía 200 sin haber enviado nada. La única vía de recuperar
+  una cuenta fallaba de forma indistinguible del éxito.
+- **`ADMIN_PASSWORD`**: es la excepción, la única opcional. Sin ella la API funciona con
+  normalidad pero `DataInitializer` **no crea ninguna cuenta con rol ADMIN** y lo deja anotado en
+  el log de arranque. Es intencionado: una API sin panel de administración sigue sirviendo a sus
+  usuarios, mientras que un ADMIN con contraseña conocida es acceso total al sistema. No tiene
+  valor por defecto porque una contraseña de administrador en el repositorio es una cuenta de
+  administración pública.
+
+> **`MAIL_FROM` no basta con que esté definida.** El formato es `Nombre <direccion@dominio>`, y la
+> dirección **tiene que estar verificada en el proveedor SMTP** (en Brevo: *Senders*) o pertenecer
+> a un dominio autenticado. Con cualquier otra, Brevo rechaza el envío aunque el resto de la
+> configuración sea correcta; el `catch` de `EmailService` no propaga el fallo —para no delatar qué
+> cuentas existen— así que el endpoint seguiría respondiendo 200 y el correo no saldría.
+
+---
+
 ## Preparación de código (detalle)
 
 Compute elegido: **Render** (más simple para empezar; auto-deploy desde Git, soporta monorepo con Root Directory y Docker). BD: **Aiven for MySQL** (ya con cuenta).
 
 Artefactos añadidos al repo (verificados en local: 136 tests verdes + `/api/actuator/health` → `200 {"status":"UP"}`):
 - **Actuator**: `spring-boot-starter-actuator`; en `application.properties` solo `health` expuesto, `show-details=never`; `/actuator/health` público en `SecurityConfig`.
-- **`application-prod.properties` versionado y 12-factor**: datasource + `JWT_SECRET` por variables de entorno (cero secretos en git); `server.port=${PORT:8080}`; dialecto Hibernate autodetectado (MySQL de Aiven); Swagger off. Se quitó del `.gitignore` (dev sigue ignorado).
+- **`application-prod.properties` versionado y 12-factor**: todos los secretos por variables de entorno (cero secretos en git); `server.port=${PORT:8080}`; dialecto Hibernate autodetectado (MySQL de Aiven); Swagger off. Se quitó del `.gitignore` (dev sigue ignorado). Ver abajo la lista completa de variables.
 - **`Dockerfile`** multi-stage (JDK21 build → JRE21 run), `LOG_DIR=/tmp/logs`, `SPRING_PROFILES_ACTIVE=prod`, arranca por `$PORT`. `.dockerignore` incluido.
 - **`render.yaml`** (Blueprint en raíz): servicio web docker, `rootDir: api/gymprofit-api`, `healthCheckPath: /api/actuator/health`, env vars de secretos marcadas `sync:false`.
 
@@ -56,7 +99,7 @@ Pendiente (clics de cuenta, con guía): crear MySQL en Aiven → copiar credenci
 2. **Compatibilidad MySQL vs MariaDB**: el driver `org.mariadb.jdbc` conecta contra MySQL, pero conviene:
    - Revisar el **dialecto de jOOQ** (codegen: `MariaDBDatabase` → `MySQLDatabase` si la BD destino es MySQL).
    - Revisar SQL específico de MariaDB en las migraciones (tipos, `BOOLEAN`/`TINYINT`, etc.).
-3. **Secretos por entorno**: `jwt.secret`, credenciales de BD y `BASE_URL` de Android como **variables de entorno** de la PaaS (no en `application-prod.properties`). Ver también el punto de "secreto JWT distinto por entorno" de la auditoría.
+3. **Secretos por entorno**: todos los secretos y el `BASE_URL` de Android como **variables de entorno** de la PaaS, nunca con valor literal en `application-prod.properties`. La lista vigente está en la sección "Variables de entorno en Render" de este documento.
 4. **Actuator**: añadir `spring-boot-starter-actuator` y exponer `/actuator/health` (la PaaS lo usa como health check).
 5. **CI**: workflow de GitHub Actions que compile y pase los tests; opcionalmente, deploy automático al hacer merge a `main`.
 6. **Android**: apuntar `BASE_URL` (en `local.properties` / `BuildConfig`) a la URL pública de la API con **HTTPS**.

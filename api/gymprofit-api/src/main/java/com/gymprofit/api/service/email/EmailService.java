@@ -1,27 +1,43 @@
 package com.gymprofit.api.service.email;
 
 import com.gymprofit.api.entity.Usuario;
+import jakarta.annotation.PostConstruct;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 // ============================================================
 // EmailService — envío de los correos transaccionales de GymProFit
 // Ahora mismo solo manda uno: el código de recuperación de contraseña.
 //
-// El proveedor es Brevo por SMTP y se configura por variables de entorno. Cuando
-// no hay credenciales —desarrollo, tests, CI— Spring no crea ningún JavaMailSender
-// y el servicio escribe el código en el log en vez de fallar: así el flujo entero
-// se puede probar en local sin cuenta de correo, y la única diferencia con
-// producción es dónde aparece el código.
+// El proveedor es Brevo por SMTP y se configura por variables de entorno.
+//
+// En PROD la configuración de correo es obligatoria y la app no arranca sin ella
+// (verificarConfiguracionDeCorreo). Antes spring.mail.host tenía default vacío también
+// en prod: sin MAIL_HOST la API arrancaba con normalidad, /auth/forgot-password respondía
+// 200 «te hemos enviado un código» y el código acababa escrito en el log en claro. La
+// única vía de recuperar una cuenta fallaba de forma indistinguible del éxito y encima
+// dejaba en los logs algo que durante 15 minutos equivale a la contraseña.
+//
+// Fuera de prod —dev, ci— no hace falta cuenta de correo: sin JavaMailSender el código
+// se entrega en un fichero local (ver entregarSinSmtp), nunca en el log.
 // ============================================================
 @Service
 @RequiredArgsConstructor
@@ -29,13 +45,74 @@ public class EmailService implements IEmailService {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
 
+    // Sello del nombre del fichero de entrega local fuera de prod.
+    private static final DateTimeFormatter SELLO_FICHERO = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss-SSS");
+
     // ObjectProvider y no inyección directa: el bean solo existe si spring.mail.host
-    // está configurado, y la API tiene que arrancar igual cuando no lo está.
+    // está configurado, y fuera de prod la API tiene que arrancar igual cuando no lo está.
     private final ObjectProvider<JavaMailSender> mailSenderProvider;
 
-    // Remitente. Sin dominio propio todavía, va el remitente compartido de Brevo.
+    // Para distinguir prod del resto: en prod no hay modo degradado que valga.
+    private final Environment environment;
+
+    // Remitente. Fuera de prod vale cualquier cosa porque no se envía nada real; en prod
+    // application-prod.properties lo mapea a MAIL_FROM sin default, y tiene que ser una
+    // direccion verificada en Brevo o de un dominio autenticado, o el envío se rechaza.
     @Value("${app.mail.from:GymProFit <no-reply@gymprofit.app>}")
     private String remitente;
+
+    // Se lee la propiedad ya resuelta y no MAIL_HOST directamente: así también se detecta
+    // el caso de una variable definida pero vacía, que el placeholder sin default no ve.
+    @Value("${spring.mail.host:}")
+    private String mailHost;
+
+    // Buzón local de dev/ci. Por defecto dentro del directorio de build, que ya está
+    // fuera del repositorio y se borra con un mvn clean.
+    @Value("${app.mail.outbox.dir:target/mail-outbox}")
+    private String outboxDir;
+
+    /**
+     * Aborta el arranque si el perfil prod está activo y falta configuración de correo.
+     * <p>
+     * Mismo criterio que jwt.secret: un secreto que falta en producción no se suple con un
+     * valor por defecto, se convierte en un fallo de arranque. Aquí además el modo degradado
+     * era peor que no arrancar, porque dejaba los códigos de un solo uso en los logs.
+     * <p>
+     * Se comprueban el servidor y el remitente, y por el mismo motivo: sin servidor no se
+     * envía, y con un remitente que no esté verificado en Brevo el proveedor rechaza el
+     * correo. En los dos casos el catch del envío se traga el fallo y
+     * POST /auth/forgot-password responde 200 igual, así que el único sitio donde eso se
+     * puede detener es el arranque.
+     * <p>
+     * Si las variables no están definidas, application-prod.properties ya no resuelve y el
+     * contexto falla antes de llegar aquí. Este control cubre el otro caso: definidas pero vacías.
+     *
+     * @throws IllegalStateException si el perfil prod está activo sin servidor o sin remitente.
+     */
+    @PostConstruct
+    void verificarConfiguracionDeCorreo() {
+        if (!esProduccion()) {
+            return;
+        }
+
+        List<String> faltan = new ArrayList<>();
+        if (!StringUtils.hasText(mailHost)) {
+            faltan.add("MAIL_HOST");
+        }
+        if (!StringUtils.hasText(remitente)) {
+            faltan.add("MAIL_FROM");
+        }
+
+        if (!faltan.isEmpty()) {
+            throw new IllegalStateException(
+                    "Configuración de correo incompleta con el perfil prod activo, falta: "
+                    + String.join(", ", faltan) + ". En producción el correo es obligatorio "
+                    + "(MAIL_HOST, MAIL_USERNAME, MAIL_PASSWORD y MAIL_FROM, esta última con una "
+                    + "dirección verificada en el proveedor), porque sin él POST /auth/forgot-password "
+                    + "responde 200 sin haber enviado nada y la recuperación de cuenta deja de "
+                    + "funcionar en silencio.");
+        }
+    }
 
     /**
      * Envía por correo el código de recuperación de contraseña.
@@ -57,15 +134,17 @@ public class EmailService implements IEmailService {
 
         JavaMailSender sender = mailSenderProvider.getIfAvailable();
         if (sender == null) {
-            // Sin SMTP configurado. No es un error: es el modo de desarrollo.
-            logger.warn("SMTP no configurado; código de recuperación de '{}' (válido {} min): {}",
-                    usuario.getUsername(), minutosValidez, codigo);
+            entregarSinSmtp(usuario, codigo, minutosValidez);
             return;
         }
 
         try {
             MimeMessage mensaje = sender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mensaje, false, StandardCharsets.UTF_8.name());
+            // multipart = true, obligatorio: setText(texto, html) monta un multipart/alternative
+            // y con el flag a false lanzaba IllegalStateException. Como el catch de abajo se traga
+            // el fallo para no delatar qué cuentas existen, el correo NUNCA salía y el endpoint
+            // respondía 200 igual; solo quedaba una línea de error en el log.
+            MimeMessageHelper helper = new MimeMessageHelper(mensaje, true, StandardCharsets.UTF_8.name());
             helper.setFrom(remitente);
             helper.setTo(usuario.getEmail());
             helper.setSubject(asunto);
@@ -76,6 +155,45 @@ public class EmailService implements IEmailService {
         } catch (Exception e) {
             logger.error("No se pudo enviar el código de recuperación al usuario id={}", usuario.getId(), e);
         }
+    }
+
+    /**
+     * Entrega el código cuando no hay SMTP. Solo puede ocurrir fuera de producción.
+     * <p>
+     * El código completo se escribe en un fichero del buzón local y del log solo sale la ruta.
+     * Es a propósito: durante su validez el código <em>es</em> la contraseña de la cuenta, y el
+     * log es el peor sitio donde dejarlo —se agrega, se rota a un servicio de terceros, se
+     * conserva semanas y lo lee mucha más gente que el disco de la máquina de desarrollo—.
+     * El fichero vive en el directorio de build, se borra con un mvn clean y sirve igual para
+     * probar el flujo entero sin cuenta de correo. Tampoco se registran dígitos sueltos del
+     * código: dos de seis ya reducen el espacio de búsqueda a cien intentos.
+     */
+    private void entregarSinSmtp(Usuario usuario, String codigo, int minutosValidez) {
+        if (esProduccion()) {
+            // Cinturón y tirantes: verificarConfiguracionDeCorreo impide llegar hasta aquí en
+            // prod, pero si alguna vez se llegara, el código NO acaba escrito en ningún sitio.
+            logger.error("SMTP no disponible con el perfil prod activo: no se ha enviado el código de "
+                    + "recuperación al usuario id={}", usuario.getId());
+            return;
+        }
+
+        try {
+            Path buzon = Path.of(outboxDir);
+            Files.createDirectories(buzon);
+            Path fichero = buzon.resolve("codigo-" + usuario.getId() + "-"
+                    + LocalDateTime.now().format(SELLO_FICHERO) + ".txt");
+            Files.writeString(fichero, cuerpoTexto(usuario, codigo, minutosValidez), StandardCharsets.UTF_8);
+            logger.warn("SMTP no configurado; código de recuperación de '{}' (válido {} min) escrito en {}",
+                    usuario.getUsername(), minutosValidez, fichero.toAbsolutePath());
+        } catch (IOException e) {
+            logger.error("SMTP no configurado y tampoco se pudo escribir el código en el buzón local '{}'. "
+                    + "El usuario id={} no ha recibido su código.", outboxDir, usuario.getId(), e);
+        }
+    }
+
+    // El perfil prod es el único sin modo degradado: ahí el correo es infraestructura obligatoria.
+    private boolean esProduccion() {
+        return environment.matchesProfiles("prod");
     }
 
     // Alternativa en texto plano, para clientes que no pintan HTML.
