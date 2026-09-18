@@ -50,9 +50,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
     };
     // Valores enviados a la API para el objetivo del usuario.
     private static final String[] OBJETIVOS = {
-            "PERDER_PESO", "GANAR_MASA_MUSCULAR", "MANTENER_PESO",
-            "MEJORAR_RESISTENCIA", "MEJORAR_FUERZA", "REDUCIR_GRASA_CORPORAL",
-            "MEJORAR_FLEXIBILIDAD", "MEJORAR_VELOCIDAD", "AUMENTAR_CALORIAS", "MEJORAR_MOVILIDAD"
+            "PERDER_PESO", "GANAR_MASA_MUSCULAR", "MANTENER_PESO", "MEJORAR_FUERZA"
     };
 
     @Override
@@ -96,13 +94,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
                 getString(R.string.objetivo_perder_peso),
                 getString(R.string.objetivo_ganar_musculo),
                 getString(R.string.objetivo_mantener),
-                getString(R.string.objetivo_resistencia),
-                getString(R.string.objetivo_fuerza),
-                getString(R.string.objetivo_reducir_grasa),
-                getString(R.string.objetivo_flexibilidad),
-                getString(R.string.objetivo_velocidad),
-                getString(R.string.objetivo_aumentar_calorias),
-                getString(R.string.objetivo_movilidad)
+                getString(R.string.objetivo_fuerza)
         };
         ArrayAdapter<String> adapterObjetivo = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_item, objetivosDisplay);

@@ -102,8 +102,14 @@ public class Onboarding3Activity extends AppCompatActivity {
     private void precargarBorrador() {
         etPeso.setText(prefs.getBorradorPeso());
 
+        // La altura se guarda como decimal pero se teclea en centimetros enteros:
+        // sin esto el campo se repintaba como "175.0" al reanudar el asistente.
         double altura = prefs.getBorradorAltura();
-        if (altura > 0) etAltura.setText(String.valueOf(altura));
+        if (altura > 0) {
+            etAltura.setText(altura == Math.rint(altura)
+                    ? String.valueOf((int) altura)
+                    : String.valueOf(altura));
+        }
 
         switch (prefs.getBorradorActividad()) {
             case "SEDENTARIO": chipGroupActividad.check(R.id.chipSedentario); break;

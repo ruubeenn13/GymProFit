@@ -407,26 +407,14 @@
     <string name="perfil_permiso_camara">Se necesita permiso de cámara para tomar fotos</string>
 
     <!-- OBJETIVOS -->
-    <string name="objetivo_perder_peso">Perder peso</string>
-    <string name="objetivo_perder_peso_desc">Déficit calórico controlado</string>
+    <string name="objetivo_perder_peso">Perder grasa</string>
+    <string name="objetivo_perder_peso_desc">Comerás algo menos de lo que gastas</string>
     <string name="objetivo_ganar_musculo">Ganar músculo</string>
-    <string name="objetivo_ganar_musculo_desc">Superávit calórico + proteína alta</string>
-    <string name="objetivo_mantener">Mantener peso</string>
-    <string name="objetivo_mantener_desc">Calorías de mantenimiento</string>
-    <string name="objetivo_resistencia">Mejorar resistencia</string>
-    <string name="objetivo_resistencia_desc">Más carbohidratos para la energía</string>
+    <string name="objetivo_ganar_musculo_desc">Comerás algo más y con más proteína</string>
+    <string name="objetivo_mantener">Mantenerme</string>
+    <string name="objetivo_mantener_desc">Las mismas calorías que gastas</string>
     <string name="objetivo_fuerza">Ganar fuerza</string>
-    <string name="objetivo_fuerza_desc">Alta proteína + superávit moderado</string>
-    <string name="objetivo_reducir_grasa">Reducir grasa</string>
-    <string name="objetivo_reducir_grasa_desc">Definición corporal</string>
-    <string name="objetivo_flexibilidad">Mejorar flexibilidad</string>
-    <string name="objetivo_flexibilidad_desc">Mayor rango de movimiento</string>
-    <string name="objetivo_velocidad">Mejorar velocidad</string>
-    <string name="objetivo_velocidad_desc">Rendimiento y explosividad</string>
-    <string name="objetivo_aumentar_calorias">Aumentar calorías</string>
-    <string name="objetivo_aumentar_calorias_desc">Ganancia de peso saludable</string>
-    <string name="objetivo_movilidad">Mejorar movilidad</string>
-    <string name="objetivo_movilidad_desc">Articulaciones y movimiento funcional</string>
+    <string name="objetivo_fuerza_desc">Más proteína, con una subida moderada</string>
 
     <!-- Editar perfil -->
     <string name="editar_perfil_titulo">Editar perfil</string>

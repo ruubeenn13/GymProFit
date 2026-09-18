@@ -364,13 +364,8 @@ public class PerfilFragment extends BaseFragment {
             case "PERDER_PESO":             return getString(R.string.objetivo_perder_peso);
             case "GANAR_MASA_MUSCULAR":     return getString(R.string.objetivo_ganar_musculo);
             case "MANTENER_PESO":           return getString(R.string.objetivo_mantener);
-            case "MEJORAR_RESISTENCIA":     return getString(R.string.objetivo_resistencia);
+
             case "MEJORAR_FUERZA":          return getString(R.string.objetivo_fuerza);
-            case "REDUCIR_GRASA_CORPORAL":  return getString(R.string.objetivo_reducir_grasa);
-            case "MEJORAR_FLEXIBILIDAD":    return getString(R.string.objetivo_flexibilidad);
-            case "MEJORAR_VELOCIDAD":       return getString(R.string.objetivo_velocidad);
-            case "AUMENTAR_CALORIAS":       return getString(R.string.objetivo_aumentar_calorias);
-            case "MEJORAR_MOVILIDAD":       return getString(R.string.objetivo_movilidad);
             default:                        return objetivo;
         }
     }

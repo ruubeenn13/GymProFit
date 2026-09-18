@@ -38,12 +38,14 @@ public class Onboarding4Activity extends AppCompatActivity {
     private PreferencesManager prefs;
 
     // Cards
-    private MaterialCardView cardPerderPeso, cardGanarMusculo, cardMantener, cardResistencia, cardFuerza,
-                             cardReducirGrasa, cardFlexibilidad, cardVelocidad, cardAumentarCalorias, cardMovilidad;
+    private MaterialCardView cardPerderPeso, cardGanarMusculo, cardMantener, cardFuerza;
 
     // Checks
-    private ImageView ivCheckPerderPeso, ivCheckGanarMusculo, ivCheckMantener, ivCheckResistencia, ivCheckFuerza,
-                      ivCheckReducirGrasa, ivCheckFlexibilidad, ivCheckVelocidad, ivCheckAumentarCalorias, ivCheckMovilidad;
+    private ImageView ivCheckPerderPeso, ivCheckGanarMusculo, ivCheckMantener, ivCheckFuerza;
+
+    // Iconos de cada objetivo: se tinen de naranja al seleccionar, como el borde.
+    private ImageView ivIconoPerderPeso, ivIconoGanarMusculo, ivIconoMantener, ivIconoFuerza;
+    private ImageView[] todosLosIconos;
 
     // Arrays para limpiar selección fácilmente
     private MaterialCardView[] todasLasCards;
@@ -51,6 +53,9 @@ public class Onboarding4Activity extends AppCompatActivity {
 
     private int colorBordeNormal;
     private int colorBordeSeleccionado;
+    // Gris de reposo del icono. No vale el del borde: colorOutlineVariant sobre
+    // fondo oscuro deja el dibujo casi invisible.
+    private int colorBordeNormalIcono;
 
     // Inicializa la pantalla: aplica tema/idioma, resuelve colores, monta vistas y
     // configura los listeners de navegación (siguiente, anterior y saltar).
@@ -89,33 +94,29 @@ public class Onboarding4Activity extends AppCompatActivity {
         cardPerderPeso = findViewById(R.id.cardPerderPeso);
         cardGanarMusculo = findViewById(R.id.cardGanarMusculo);
         cardMantener = findViewById(R.id.cardMantener);
-        cardResistencia = findViewById(R.id.cardResistencia);
         cardFuerza = findViewById(R.id.cardFuerza);
-        cardReducirGrasa = findViewById(R.id.cardReducirGrasa);
-        cardFlexibilidad = findViewById(R.id.cardFlexibilidad);
-        cardVelocidad = findViewById(R.id.cardVelocidad);
-        cardAumentarCalorias = findViewById(R.id.cardAumentarCalorias);
-        cardMovilidad = findViewById(R.id.cardMovilidad);
 
         ivCheckPerderPeso = findViewById(R.id.ivCheckPerderPeso);
         ivCheckGanarMusculo = findViewById(R.id.ivCheckGanarMusculo);
         ivCheckMantener = findViewById(R.id.ivCheckMantener);
-        ivCheckResistencia = findViewById(R.id.ivCheckResistencia);
         ivCheckFuerza = findViewById(R.id.ivCheckFuerza);
-        ivCheckReducirGrasa = findViewById(R.id.ivCheckReducirGrasa);
-        ivCheckFlexibilidad = findViewById(R.id.ivCheckFlexibilidad);
-        ivCheckVelocidad = findViewById(R.id.ivCheckVelocidad);
-        ivCheckAumentarCalorias = findViewById(R.id.ivCheckAumentarCalorias);
-        ivCheckMovilidad = findViewById(R.id.ivCheckMovilidad);
+
+        ivIconoPerderPeso = findViewById(R.id.ivIconoPerderPeso);
+        ivIconoGanarMusculo = findViewById(R.id.ivIconoGanarMusculo);
+        ivIconoMantener = findViewById(R.id.ivIconoMantener);
+        ivIconoFuerza = findViewById(R.id.ivIconoFuerza);
 
         todasLasCards = new MaterialCardView[]{
-                cardPerderPeso, cardGanarMusculo, cardMantener, cardResistencia, cardFuerza, cardReducirGrasa, cardFlexibilidad, cardVelocidad,
-                cardAumentarCalorias, cardMovilidad
+                cardPerderPeso, cardGanarMusculo, cardMantener, cardFuerza
         };
 
         todosLosChecks = new ImageView[]{
-                ivCheckPerderPeso, ivCheckGanarMusculo, ivCheckMantener, ivCheckResistencia, ivCheckFuerza, ivCheckReducirGrasa,
-                ivCheckFlexibilidad, ivCheckVelocidad, ivCheckAumentarCalorias, ivCheckMovilidad
+                ivCheckPerderPeso, ivCheckGanarMusculo, ivCheckMantener, ivCheckFuerza
+        };
+
+        // Mismo orden que todasLasCards: el icono i pertenece a la tarjeta i.
+        todosLosIconos = new ImageView[]{
+                ivIconoPerderPeso, ivIconoGanarMusculo, ivIconoMantener, ivIconoFuerza
         };
     }
 
@@ -135,6 +136,12 @@ public class Onboarding4Activity extends AppCompatActivity {
         );
 
         colorBordeSeleccionado = typedValue.data;
+
+        getTheme().resolveAttribute(
+                com.google.android.material.R.attr.colorOnSurfaceVariant, typedValue, true
+        );
+
+        colorBordeNormalIcono = typedValue.data;
     }
 
     // Asocia cada card con su objetivo correspondiente (valores del enum
@@ -143,13 +150,7 @@ public class Onboarding4Activity extends AppCompatActivity {
         cardPerderPeso.setOnClickListener(v -> seleccionarObjetivo(cardPerderPeso, ivCheckPerderPeso, CalculadoraNutricional.OBJETIVO_PERDER_PESO));
         cardGanarMusculo.setOnClickListener(v -> seleccionarObjetivo(cardGanarMusculo, ivCheckGanarMusculo, CalculadoraNutricional.OBJETIVO_GANAR_MASA_MUSCULAR));
         cardMantener.setOnClickListener(v -> seleccionarObjetivo(cardMantener, ivCheckMantener, CalculadoraNutricional.OBJETIVO_MANTENER_PESO));
-        cardResistencia.setOnClickListener(v -> seleccionarObjetivo(cardResistencia, ivCheckResistencia, CalculadoraNutricional.OBJETIVO_MEJORAR_RESISTENCIA));
         cardFuerza.setOnClickListener(v -> seleccionarObjetivo(cardFuerza, ivCheckFuerza, CalculadoraNutricional.OBJETIVO_MEJORAR_FUERZA));
-        cardReducirGrasa.setOnClickListener(v -> seleccionarObjetivo(cardReducirGrasa, ivCheckReducirGrasa, CalculadoraNutricional.OBJETIVO_REDUCIR_GRASA));
-        cardFlexibilidad.setOnClickListener(v -> seleccionarObjetivo(cardFlexibilidad, ivCheckFlexibilidad, CalculadoraNutricional.OBJETIVO_MEJORAR_FLEXIBILIDAD));
-        cardVelocidad.setOnClickListener(v -> seleccionarObjetivo(cardVelocidad, ivCheckVelocidad, CalculadoraNutricional.OBJETIVO_MEJORAR_VELOCIDAD));
-        cardAumentarCalorias.setOnClickListener(v -> seleccionarObjetivo(cardAumentarCalorias, ivCheckAumentarCalorias, CalculadoraNutricional.OBJETIVO_AUMENTAR_CALORIAS));
-        cardMovilidad.setOnClickListener(v -> seleccionarObjetivo(cardMovilidad, ivCheckMovilidad, CalculadoraNutricional.OBJETIVO_MEJORAR_MOVILIDAD));
     }
 
     // Marca la card elegida como seleccionada (borde y check visibles) y limpia
@@ -169,9 +170,15 @@ public class Onboarding4Activity extends AppCompatActivity {
         cardSeleccionada.setStrokeColor(colorBordeSeleccionado);
         cardSeleccionada.setStrokeWidth(4);
         checkSeleccionado.setVisibility(View.VISIBLE);
+
+        // El icono de la tarjeta elegida pasa de gris a naranja. Se localiza por
+        // posicion porque los tres arrays van en el mismo orden.
+        for (int i = 0; i < todasLasCards.length; i++) {
+            boolean elegida = todasLasCards[i] == cardSeleccionada;
+            todosLosIconos[i].setColorFilter(elegida ? colorBordeSeleccionado : colorBordeNormalIcono);
+        }
     }
 
-    // Permite saltar el onboarding e ir directamente al Home, limpiando el
     // Vuelve a marcar el objetivo que el usuario ya habia elegido. Pasa por el
     // mismo metodo que el toque real para que el resaltado quede identico.
     private void restaurarSeleccion(String objetivo) {
@@ -183,20 +190,8 @@ public class Onboarding4Activity extends AppCompatActivity {
             seleccionarObjetivo(cardGanarMusculo, ivCheckGanarMusculo, objetivo);
         } else if (objetivo.equals(CalculadoraNutricional.OBJETIVO_MANTENER_PESO)) {
             seleccionarObjetivo(cardMantener, ivCheckMantener, objetivo);
-        } else if (objetivo.equals(CalculadoraNutricional.OBJETIVO_MEJORAR_RESISTENCIA)) {
-            seleccionarObjetivo(cardResistencia, ivCheckResistencia, objetivo);
         } else if (objetivo.equals(CalculadoraNutricional.OBJETIVO_MEJORAR_FUERZA)) {
             seleccionarObjetivo(cardFuerza, ivCheckFuerza, objetivo);
-        } else if (objetivo.equals(CalculadoraNutricional.OBJETIVO_REDUCIR_GRASA)) {
-            seleccionarObjetivo(cardReducirGrasa, ivCheckReducirGrasa, objetivo);
-        } else if (objetivo.equals(CalculadoraNutricional.OBJETIVO_MEJORAR_FLEXIBILIDAD)) {
-            seleccionarObjetivo(cardFlexibilidad, ivCheckFlexibilidad, objetivo);
-        } else if (objetivo.equals(CalculadoraNutricional.OBJETIVO_MEJORAR_VELOCIDAD)) {
-            seleccionarObjetivo(cardVelocidad, ivCheckVelocidad, objetivo);
-        } else if (objetivo.equals(CalculadoraNutricional.OBJETIVO_AUMENTAR_CALORIAS)) {
-            seleccionarObjetivo(cardAumentarCalorias, ivCheckAumentarCalorias, objetivo);
-        } else if (objetivo.equals(CalculadoraNutricional.OBJETIVO_MEJORAR_MOVILIDAD)) {
-            seleccionarObjetivo(cardMovilidad, ivCheckMovilidad, objetivo);
         }
     }
 

@@ -20,13 +20,7 @@ public class CalculadoraNutricional {
     public static final String OBJETIVO_PERDER_PESO          = "PERDER_PESO";
     public static final String OBJETIVO_GANAR_MASA_MUSCULAR  = "GANAR_MASA_MUSCULAR";
     public static final String OBJETIVO_MANTENER_PESO        = "MANTENER_PESO";
-    public static final String OBJETIVO_MEJORAR_RESISTENCIA  = "MEJORAR_RESISTENCIA";
     public static final String OBJETIVO_MEJORAR_FUERZA       = "MEJORAR_FUERZA";
-    public static final String OBJETIVO_REDUCIR_GRASA        = "REDUCIR_GRASA_CORPORAL";
-    public static final String OBJETIVO_MEJORAR_FLEXIBILIDAD = "MEJORAR_FLEXIBILIDAD";
-    public static final String OBJETIVO_MEJORAR_VELOCIDAD    = "MEJORAR_VELOCIDAD";
-    public static final String OBJETIVO_AUMENTAR_CALORIAS    = "AUMENTAR_CALORIAS";
-    public static final String OBJETIVO_MEJORAR_MOVILIDAD    = "MEJORAR_MOVILIDAD";
 
     // Fórmula Mifflin-St Jeor para calcular el TMB (Tasa Metabólica Basal)
     private static double calcularTMB(double pesoKg, double alturaCm, int edad, boolean esHombre) {
@@ -70,53 +64,12 @@ public class CalculadoraNutricional {
                 carbohidratos = (int) ((calorias - proteinas * 4 - grasas * 9) / 4);
                 break;
 
-            case OBJETIVO_MEJORAR_RESISTENCIA:
-                // Mantenimiento con más carbohidratos (55%) para la energía aeróbica
-                calorias      = (int) tdee;
-                proteinas     = (int) (pesoKg * 1.6);
-                carbohidratos = (int) (calorias * 0.55 / 4);
-                grasas        = (int) ((calorias - proteinas * 4 - carbohidratos * 4) / 9);
-                break;
-
             case OBJETIVO_MEJORAR_FUERZA:
                 // Superávit del 10%, proteína muy alta para soportar cargas pesadas
                 calorias      = (int) (tdee * 1.10);
                 proteinas     = (int) (pesoKg * 2.5);
                 grasas        = (int) (calorias * 0.28 / 9);
                 carbohidratos = (int) ((calorias - proteinas * 4 - grasas * 9) / 4);
-                break;
-
-            case OBJETIVO_REDUCIR_GRASA:
-                // Déficit del 18%, proteína muy alta para preservar masa magra en definición
-                calorias      = (int) (tdee * 0.82);
-                proteinas     = (int) (pesoKg * 2.2);
-                grasas        = (int) (calorias * 0.22 / 9);
-                carbohidratos = (int) ((calorias - proteinas * 4 - grasas * 9) / 4);
-                break;
-
-            case OBJETIVO_AUMENTAR_CALORIAS:
-                // Superávit del 20%, distribución equilibrada para ganancia de peso saludable
-                calorias      = (int) (tdee * 1.20);
-                proteinas     = (int) (pesoKg * 1.8);
-                grasas        = (int) (calorias * 0.28 / 9);
-                carbohidratos = (int) ((calorias - proteinas * 4 - grasas * 9) / 4);
-                break;
-
-            case OBJETIVO_MEJORAR_FLEXIBILIDAD:
-            case OBJETIVO_MEJORAR_MOVILIDAD:
-                // Mantenimiento con grasas algo más altas (30%) para la salud articular
-                calorias      = (int) tdee;
-                proteinas     = (int) (pesoKg * 1.6);
-                grasas        = (int) (calorias * 0.30 / 9);
-                carbohidratos = (int) ((calorias - proteinas * 4 - grasas * 9) / 4);
-                break;
-
-            case OBJETIVO_MEJORAR_VELOCIDAD:
-                // Superávit del 5%, carbos altos (55%) para energía explosiva y recuperación
-                calorias      = (int) (tdee * 1.05);
-                proteinas     = (int) (pesoKg * 1.8);
-                carbohidratos = (int) (calorias * 0.55 / 4);
-                grasas        = (int) ((calorias - proteinas * 4 - carbohidratos * 4) / 9);
                 break;
 
             default:

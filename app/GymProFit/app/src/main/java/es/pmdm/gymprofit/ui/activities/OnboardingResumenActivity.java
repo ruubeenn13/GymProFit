@@ -115,13 +115,8 @@ public class OnboardingResumenActivity extends AppCompatActivity {
             case CalculadoraNutricional.OBJETIVO_PERDER_PESO:             return getString(R.string.objetivo_perder_peso);
             case CalculadoraNutricional.OBJETIVO_GANAR_MASA_MUSCULAR:     return getString(R.string.objetivo_ganar_musculo);
             case CalculadoraNutricional.OBJETIVO_MANTENER_PESO:           return getString(R.string.objetivo_mantener);
-            case CalculadoraNutricional.OBJETIVO_MEJORAR_RESISTENCIA:     return getString(R.string.objetivo_resistencia);
+
             case CalculadoraNutricional.OBJETIVO_MEJORAR_FUERZA:          return getString(R.string.objetivo_fuerza);
-            case CalculadoraNutricional.OBJETIVO_REDUCIR_GRASA:           return getString(R.string.objetivo_reducir_grasa);
-            case CalculadoraNutricional.OBJETIVO_MEJORAR_FLEXIBILIDAD:    return getString(R.string.objetivo_flexibilidad);
-            case CalculadoraNutricional.OBJETIVO_MEJORAR_VELOCIDAD:       return getString(R.string.objetivo_velocidad);
-            case CalculadoraNutricional.OBJETIVO_AUMENTAR_CALORIAS:       return getString(R.string.objetivo_aumentar_calorias);
-            case CalculadoraNutricional.OBJETIVO_MEJORAR_MOVILIDAD:       return getString(R.string.objetivo_movilidad);
             default: return objetivo;
         }
     }

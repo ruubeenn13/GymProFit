@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -215,9 +216,10 @@ public class ObjetivoPersonalController {
             // Comprueba que el tipo recibido exista en el enum antes de consultar
             TipoObjetivo.valueOf(tipoObjetivo.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new InvalidDataException("Tipo de objetivo inválido: " + tipoObjetivo + ". Valores válidos: PERDER_PESO, GANAR_MASA_MUSCULAR, " +
-                    "MEJORAR_RESISTENCIA, MEJORAR_FLEXIBILIDAD, MEJORAR_FUERZA, MANTENER_PESO, REDUCIR_GRASA_CORPORAL, MEJORAR_VELOCIDAD, " +
-                    "AUMENTAR_CALORIAS, REDUCIR_CALORIAS, MEJORAR_MOVILIDAD, COMPLETAR_RETO, OTRO");
+            // La lista se construye desde el propio enum: antes estaba escrita a mano
+            // y ya se había desincronizado (mencionaba REDUCIR_CALORIAS, que nunca existió).
+            throw new InvalidDataException("Tipo de objetivo inválido: " + tipoObjetivo
+                    + ". Valores válidos: " + Arrays.toString(TipoObjetivo.values()));
         }
 
         List<ObjetivoPersonalDTO> objetivosPersonales = objetivoPersonalService.findByTipoObjetivo(tipoObjetivo);

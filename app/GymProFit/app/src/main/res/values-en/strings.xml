@@ -233,26 +233,14 @@
     <string name="nutricion_carbohidratos_corto">Carbs</string>
 
     <!-- OBJETIVOS -->
-    <string name="objetivo_perder_peso">Lose weight</string>
-    <string name="objetivo_perder_peso_desc">Controlled caloric deficit</string>
+    <string name="objetivo_perder_peso">Lose fat</string>
+    <string name="objetivo_perder_peso_desc">You\'ll eat a little less than you burn</string>
     <string name="objetivo_ganar_musculo">Gain muscle</string>
-    <string name="objetivo_ganar_musculo_desc">Caloric surplus + high protein</string>
-    <string name="objetivo_mantener">Maintain weight</string>
-    <string name="objetivo_mantener_desc">Maintenance calories</string>
-    <string name="objetivo_resistencia">Improve endurance</string>
-    <string name="objetivo_resistencia_desc">More carbs for energy</string>
+    <string name="objetivo_ganar_musculo_desc">You\'ll eat a little more, with more protein</string>
+    <string name="objetivo_mantener">Maintain</string>
+    <string name="objetivo_mantener_desc">The same calories you burn</string>
     <string name="objetivo_fuerza">Gain strength</string>
-    <string name="objetivo_fuerza_desc">High protein + moderate surplus</string>
-    <string name="objetivo_reducir_grasa">Reduce body fat</string>
-    <string name="objetivo_reducir_grasa_desc">Body definition</string>
-    <string name="objetivo_flexibilidad">Improve flexibility</string>
-    <string name="objetivo_flexibilidad_desc">Greater range of motion</string>
-    <string name="objetivo_velocidad">Improve speed</string>
-    <string name="objetivo_velocidad_desc">Performance and explosiveness</string>
-    <string name="objetivo_aumentar_calorias">Increase calories</string>
-    <string name="objetivo_aumentar_calorias_desc">Healthy weight gain</string>
-    <string name="objetivo_movilidad">Improve mobility</string>
-    <string name="objetivo_movilidad_desc">Joints and functional movement</string>
+    <string name="objetivo_fuerza_desc">More protein, with a moderate increase</string>
 
     <!-- SESSIONS -->
     <string name="sesiones_titulo">My sessions</string>

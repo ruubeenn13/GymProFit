@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- MODIFICADO - 10 objetivos del enum TipoObjetivo en cards horizontales
-     con emoji, título, descripción y check al seleccionar -->
 <!--
-  activity_onboarding4.xml — Onboarding paso 4/5: selección de objetivo personal.
-  Lista de 10 cards seleccionables (uno por cada TipoObjetivo) con emoji,
-  título, descripción y check visual al marcarse. Progreso + navegación.
+  activity_onboarding4.xml — Onboarding paso 4/5: elección de objetivo.
+
+  CUATRO tarjetas, no diez. Los seis objetivos retirados (resistencia,
+  flexibilidad, velocidad, movilidad, reducir grasa y aumentar calorías) no
+  cambiaban el plan nutricional o repetían a otro, así que la pantalla pedía
+  elegir entre diez opciones para llegar a cuatro resultados distintos. La poda
+  del enum en la API va en V202609181900__Poda_objetivos_a_cuatro.sql.
+
+  Los emojis se sustituyen por VectorDrawable de trazo (ic_objetivo_*). Un emoji
+  lo dibuja la fuente del sistema: cambia de un móvil a otro, no se puede teñir
+  y en algunos aparece en color plano sobre el fondo oscuro. El vector toma el
+  color por app:tint, así que el mismo archivo vale para tema claro y oscuro.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -54,7 +61,7 @@
                 android:textSize="14sp"
                 android:textColor="?attr/colorOnSurfaceVariant" />
 
-            <!-- PERDER_PESO -->
+            <!-- PERDER_PESO — tendencia bajando -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardPerderPeso"
                 android:layout_width="match_parent"
@@ -66,16 +73,19 @@
                 app:strokeWidth="2dp"
                 app:strokeColor="?attr/colorOutlineVariant">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
-                    <TextView android:layout_width="36dp" android:layout_height="36dp"
-                        android:text="🔥" android:textSize="24sp" android:gravity="center" android:layout_marginEnd="14dp" />
+                    android:orientation="horizontal" android:padding="16dp" android:gravity="center_vertical">
+                    <ImageView android:id="@+id/ivIconoPerderPeso"
+                        android:layout_width="28dp" android:layout_height="28dp"
+                        android:src="@drawable/ic_objetivo_perder_grasa"
+                        app:tint="?attr/colorOnSurfaceVariant"
+                        android:layout_marginEnd="16dp" android:contentDescription="@null" />
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="@string/objetivo_perder_peso" android:textSize="14sp"
+                            android:text="@string/objetivo_perder_peso" android:textSize="15sp"
                             android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="2dp" android:text="@string/objetivo_perder_peso_desc"
-                            android:textSize="12sp" android:textColor="?attr/colorOnSurfaceVariant" />
+                            android:textSize="13sp" android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
                     <ImageView android:id="@+id/ivCheckPerderPeso" android:layout_width="20dp"
                         android:layout_height="20dp" android:src="@drawable/ic_check"
@@ -83,7 +93,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- GANAR_MASA_MUSCULAR -->
+            <!-- GANAR_MASA_MUSCULAR — tendencia subiendo -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardGanarMusculo"
                 android:layout_width="match_parent"
@@ -95,16 +105,19 @@
                 app:strokeWidth="2dp"
                 app:strokeColor="?attr/colorOutlineVariant">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
-                    <TextView android:layout_width="36dp" android:layout_height="36dp"
-                        android:text="💪" android:textSize="24sp" android:gravity="center" android:layout_marginEnd="14dp" />
+                    android:orientation="horizontal" android:padding="16dp" android:gravity="center_vertical">
+                    <ImageView android:id="@+id/ivIconoGanarMusculo"
+                        android:layout_width="28dp" android:layout_height="28dp"
+                        android:src="@drawable/ic_objetivo_ganar_musculo"
+                        app:tint="?attr/colorOnSurfaceVariant"
+                        android:layout_marginEnd="16dp" android:contentDescription="@null" />
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="@string/objetivo_ganar_musculo" android:textSize="14sp"
+                            android:text="@string/objetivo_ganar_musculo" android:textSize="15sp"
                             android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="2dp" android:text="@string/objetivo_ganar_musculo_desc"
-                            android:textSize="12sp" android:textColor="?attr/colorOnSurfaceVariant" />
+                            android:textSize="13sp" android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
                     <ImageView android:id="@+id/ivCheckGanarMusculo" android:layout_width="20dp"
                         android:layout_height="20dp" android:src="@drawable/ic_check"
@@ -112,7 +125,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- MANTENER_PESO -->
+            <!-- MANTENER_PESO — balanza en equilibrio -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardMantener"
                 android:layout_width="match_parent"
@@ -124,16 +137,19 @@
                 app:strokeWidth="2dp"
                 app:strokeColor="?attr/colorOutlineVariant">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
-                    <TextView android:layout_width="36dp" android:layout_height="36dp"
-                        android:text="⚖️" android:textSize="24sp" android:gravity="center" android:layout_marginEnd="14dp" />
+                    android:orientation="horizontal" android:padding="16dp" android:gravity="center_vertical">
+                    <ImageView android:id="@+id/ivIconoMantener"
+                        android:layout_width="28dp" android:layout_height="28dp"
+                        android:src="@drawable/ic_objetivo_mantener"
+                        app:tint="?attr/colorOnSurfaceVariant"
+                        android:layout_marginEnd="16dp" android:contentDescription="@null" />
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="@string/objetivo_mantener" android:textSize="14sp"
+                            android:text="@string/objetivo_mantener" android:textSize="15sp"
                             android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="2dp" android:text="@string/objetivo_mantener_desc"
-                            android:textSize="12sp" android:textColor="?attr/colorOnSurfaceVariant" />
+                            android:textSize="13sp" android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
                     <ImageView android:id="@+id/ivCheckMantener" android:layout_width="20dp"
                         android:layout_height="20dp" android:src="@drawable/ic_check"
@@ -141,36 +157,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- MEJORAR_RESISTENCIA -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardResistencia"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                app:strokeWidth="2dp"
-                app:strokeColor="?attr/colorOutlineVariant">
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
-                    <TextView android:layout_width="36dp" android:layout_height="36dp"
-                        android:text="🏃" android:textSize="24sp" android:gravity="center" android:layout_marginEnd="14dp" />
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="@string/objetivo_resistencia" android:textSize="14sp"
-                            android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp" android:text="@string/objetivo_resistencia_desc"
-                            android:textSize="12sp" android:textColor="?attr/colorOnSurfaceVariant" />
-                    </LinearLayout>
-                    <ImageView android:id="@+id/ivCheckResistencia" android:layout_width="20dp"
-                        android:layout_height="20dp" android:src="@drawable/ic_check"
-                        android:visibility="gone" android:contentDescription="@null" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- MEJORAR_FUERZA -->
+            <!-- MEJORAR_FUERZA — rayo -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardFuerza"
                 android:layout_width="match_parent"
@@ -182,163 +169,21 @@
                 app:strokeWidth="2dp"
                 app:strokeColor="?attr/colorOutlineVariant">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
-                    <TextView android:layout_width="36dp" android:layout_height="36dp"
-                        android:text="🦾" android:textSize="24sp" android:gravity="center" android:layout_marginEnd="14dp" />
+                    android:orientation="horizontal" android:padding="16dp" android:gravity="center_vertical">
+                    <ImageView android:id="@+id/ivIconoFuerza"
+                        android:layout_width="28dp" android:layout_height="28dp"
+                        android:src="@drawable/ic_objetivo_fuerza"
+                        app:tint="?attr/colorOnSurfaceVariant"
+                        android:layout_marginEnd="16dp" android:contentDescription="@null" />
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="@string/objetivo_fuerza" android:textSize="14sp"
+                            android:text="@string/objetivo_fuerza" android:textSize="15sp"
                             android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="2dp" android:text="@string/objetivo_fuerza_desc"
-                            android:textSize="12sp" android:textColor="?attr/colorOnSurfaceVariant" />
+                            android:textSize="13sp" android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
                     <ImageView android:id="@+id/ivCheckFuerza" android:layout_width="20dp"
-                        android:layout_height="20dp" android:src="@drawable/ic_check"
-                        android:visibility="gone" android:contentDescription="@null" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- REDUCIR_GRASA_CORPORAL -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardReducirGrasa"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                app:strokeWidth="2dp"
-                app:strokeColor="?attr/colorOutlineVariant">
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
-                    <TextView android:layout_width="36dp" android:layout_height="36dp"
-                        android:text="📉" android:textSize="24sp" android:gravity="center" android:layout_marginEnd="14dp" />
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="@string/objetivo_reducir_grasa" android:textSize="14sp"
-                            android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp" android:text="@string/objetivo_reducir_grasa_desc"
-                            android:textSize="12sp" android:textColor="?attr/colorOnSurfaceVariant" />
-                    </LinearLayout>
-                    <ImageView android:id="@+id/ivCheckReducirGrasa" android:layout_width="20dp"
-                        android:layout_height="20dp" android:src="@drawable/ic_check"
-                        android:visibility="gone" android:contentDescription="@null" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- MEJORAR_FLEXIBILIDAD -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardFlexibilidad"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                app:strokeWidth="2dp"
-                app:strokeColor="?attr/colorOutlineVariant">
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
-                    <TextView android:layout_width="36dp" android:layout_height="36dp"
-                        android:text="🧘" android:textSize="24sp" android:gravity="center" android:layout_marginEnd="14dp" />
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="@string/objetivo_flexibilidad" android:textSize="14sp"
-                            android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp" android:text="@string/objetivo_flexibilidad_desc"
-                            android:textSize="12sp" android:textColor="?attr/colorOnSurfaceVariant" />
-                    </LinearLayout>
-                    <ImageView android:id="@+id/ivCheckFlexibilidad" android:layout_width="20dp"
-                        android:layout_height="20dp" android:src="@drawable/ic_check"
-                        android:visibility="gone" android:contentDescription="@null" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- MEJORAR_VELOCIDAD -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardVelocidad"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                app:strokeWidth="2dp"
-                app:strokeColor="?attr/colorOutlineVariant">
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
-                    <TextView android:layout_width="36dp" android:layout_height="36dp"
-                        android:text="⚡" android:textSize="24sp" android:gravity="center" android:layout_marginEnd="14dp" />
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="@string/objetivo_velocidad" android:textSize="14sp"
-                            android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp" android:text="@string/objetivo_velocidad_desc"
-                            android:textSize="12sp" android:textColor="?attr/colorOnSurfaceVariant" />
-                    </LinearLayout>
-                    <ImageView android:id="@+id/ivCheckVelocidad" android:layout_width="20dp"
-                        android:layout_height="20dp" android:src="@drawable/ic_check"
-                        android:visibility="gone" android:contentDescription="@null" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- AUMENTAR_CALORIAS -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardAumentarCalorias"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                app:strokeWidth="2dp"
-                app:strokeColor="?attr/colorOutlineVariant">
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
-                    <TextView android:layout_width="36dp" android:layout_height="36dp"
-                        android:text="🍽️" android:textSize="24sp" android:gravity="center" android:layout_marginEnd="14dp" />
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="@string/objetivo_aumentar_calorias" android:textSize="14sp"
-                            android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp" android:text="@string/objetivo_aumentar_calorias_desc"
-                            android:textSize="12sp" android:textColor="?attr/colorOnSurfaceVariant" />
-                    </LinearLayout>
-                    <ImageView android:id="@+id/ivCheckAumentarCalorias" android:layout_width="20dp"
-                        android:layout_height="20dp" android:src="@drawable/ic_check"
-                        android:visibility="gone" android:contentDescription="@null" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- MEJORAR_MOVILIDAD -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardMovilidad"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                app:strokeWidth="2dp"
-                app:strokeColor="?attr/colorOutlineVariant">
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
-                    <TextView android:layout_width="36dp" android:layout_height="36dp"
-                        android:text="🤸" android:textSize="24sp" android:gravity="center" android:layout_marginEnd="14dp" />
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="@string/objetivo_movilidad" android:textSize="14sp"
-                            android:textStyle="bold" android:textColor="?attr/colorOnSurface" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp" android:text="@string/objetivo_movilidad_desc"
-                            android:textSize="12sp" android:textColor="?attr/colorOnSurfaceVariant" />
-                    </LinearLayout>
-                    <ImageView android:id="@+id/ivCheckMovilidad" android:layout_width="20dp"
                         android:layout_height="20dp" android:src="@drawable/ic_check"
                         android:visibility="gone" android:contentDescription="@null" />
                 </LinearLayout>
