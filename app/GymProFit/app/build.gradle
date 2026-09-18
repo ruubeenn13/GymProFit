@@ -30,7 +30,22 @@ android {
         // BASE_URL por defecto = desarrollo (emulador -> API local). Se puede
         // sobrescribir en local.properties. En release se fuerza la URL de producción
         // (ver buildTypes.release), así el APK real apunta a Render sin tocar nada.
-        buildConfigField "String", "BASE_URL", "\"${localProps['BASE_URL'] ?: 'http://10.0.2.2:8080/api/'}\""
+        def devBaseUrl = localProps['BASE_URL'] ?: 'http://10.0.2.2:8080/api/'
+
+        // Guarda de aislamiento: el build de desarrollo SOLO puede apuntar a la red
+        // local (emulador, localhost o LAN). Si alguien pone en local.properties la
+        // URL de producción, el build falla aquí en vez de escribir en Render sin
+        // que nadie se entere. La URL de producción vive únicamente en
+        // buildTypes.release, que sobrescribe este valor.
+        def hostsLocales = ~/^http:\/\/(10\.0\.2\.2|localhost|127\.0\.0\.1|192\.168\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3})(:\d+)?\/api\/$/
+        if (!(devBaseUrl ==~ hostsLocales)) {
+            throw new GradleException(
+                    "BASE_URL de desarrollo apunta fuera de la red local: '${devBaseUrl}'.\n" +
+                    "El build de desarrollo no puede escribir en producción. Corrige BASE_URL en " +
+                    "local.properties (por ejemplo http://10.0.2.2:8080/api/ para el emulador).")
+        }
+
+        buildConfigField "String", "BASE_URL", "\"${devBaseUrl}\""
     }
 
     signingConfigs {
@@ -44,8 +59,16 @@ android {
 
     buildTypes {
         debug {
-            // Desarrollo: API local (hereda el BASE_URL del defaultConfig).
-            // http en claro permitido solo aquí vía network-security-config.
+            // Desarrollo: API local (hereda el BASE_URL del defaultConfig, ya validado
+            // contra hosts locales). http en claro permitido solo aquí vía
+            // network-security-config.
+            //
+            // Crashlytics desactivado: los fallos de un build de pruebas no deben
+            // mezclarse con los de producción en la consola de Firebase. El plugin
+            // tampoco sube el mapa de ofuscación desde aquí.
+            firebaseCrashlytics {
+                mappingFileUploadEnabled false
+            }
         }
         release {
             signingConfig signingConfigs.release

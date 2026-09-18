@@ -23,3 +23,6 @@ Thumbs.db
 serviceAccountKey.json
 # google-services.json (config cliente Android)
 google-services.json
+
+# Volcados de la base de datos local (entorno de pruebas): datos, no código.
+api/gymprofit-api/sql/snapshots/

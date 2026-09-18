@@ -3,6 +3,12 @@
 > Guía para levantar **todo el proyecto en local**, sin depender del laboratorio AWS.
 > A partir de la entrega del TFG, **el entorno por defecto es `dev` (local)**. AWS queda como opción histórica documentada al final.
 
+> **Aislamiento de producción:** este documento explica cómo levantar cada pieza.
+> Por qué un build de desarrollo **no puede** escribir en producción aunque se
+> quiera (guarda en Gradle, guarda en arranque y distintivo en pantalla), más el
+> usuario de pruebas y el reset de datos, está en
+> [ENTORNO-PRUEBAS.md](ENTORNO-PRUEBAS.md).
+
 ---
 
 ## TL;DR — arrancar en local

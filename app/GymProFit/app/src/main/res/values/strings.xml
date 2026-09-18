@@ -600,4 +600,6 @@
     <string name="alimento_eliminar">Eliminar alimento</string>
     <string name="alimento_eliminar_confirmar">¿Eliminar este alimento de tu lista? Esta acción lo desactivará.</string>
     <string name="alimento_desactivar_confirmar">¿Desactivar este alimento? Dejará de aparecer en las búsquedas.</string>
+    <!-- Distintivo de entorno: solo visible en builds de desarrollo. -->
+    <string name="entorno_pruebas_distintivo">PRUEBAS · LOCAL</string>
 </resources>
