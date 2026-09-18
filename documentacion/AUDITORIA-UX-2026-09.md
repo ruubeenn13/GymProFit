@@ -23,6 +23,7 @@ cualquier pantalla**. Todo el trabajo se hace en el entorno aislado descrito en
 7. [Plan de trabajo en 6 fases](#7-plan-de-trabajo-en-6-fases)
 8. [Ficha de Play Store](#8-ficha-de-play-store)
 9. [Contraperitaje del equipo de diseño](#9-contraperitaje-del-equipo-de-diseño-2026-09-18)
+10. [Qué queda](#10-qué-queda--estado-al-cerrar-el-2026-09-18)
 
 ---
 
@@ -896,8 +897,10 @@ Ordenadas por lo que ya está medio construido, que es donde el esfuerzo rinde:
 2. ~~**Lo que está roto de verdad.**~~ **HECHO — `47add89`.** Ver 9.9.
 3. ~~**El recorrido del producto.**~~ **HECHO — `c2b1707` (navegación) y el
    registro por serie.** Ver 9.9.
-4. **La escala tipográfica.** Nueve escalones, familia neutra con peso 400 para el
-   cuerpo, condensada solo para cifras, y fuera el multiplicador global de 1,18.
+4. ~~**La escala tipográfica.**~~ **HECHO — `ad0eaf0`.** Ver 9.9.
+
+**Los cuatro puntos del contraperitaje están hechos.** El estado de lo que queda,
+en 9.10.
 
 ### 9.8 Decisión: fuera las calorías de los ejercicios
 
@@ -1000,3 +1003,58 @@ Tres decisiones de modelo que conviene no perder:
 Verificado end-to-end contra la API local: cuatro pesos distintos en un mismo
 ejercicio (65, 70, 72,5 kg) llegando a la base de datos con su número de serie, y
 el resumen deducido correctamente.
+
+**`ad0eaf0` — la escala tipográfica.** Veintiún tamaños distintos en 323
+apariciones escritas a mano pasan a **once escalones** en `dimens.xml`; ningún
+layout vuelve a escribir un `sp` a pelo. El cuerpo sale de Barlow Condensed, que
+solo trae 500/600/700 —**no existe el peso 400**—, así que estando como familia
+global todo el texto salía de medium para arriba y no podía haber contraste de
+peso; la condensada se queda en cifras y titulares. Y se retira el multiplicador
+global de 1,18 de `ScaleUtils`, que agrandaba el texto un 18 % sin tocar los
+márgenes y se multiplicaba además por la escala del sistema.
+
+Los once escalones **no son números redondos a propósito**: vienen rebasados
+(14 × 1,18 = 16,5, de ahí que el cuerpo sea 17 sp) para que el tamaño percibido
+no cambie al quitar el multiplicador. La constante se deja en 1.0 en lugar de
+borrarse porque `wrap()` lo llaman 35 Activities desde su `attachBaseContext`.
+
+---
+
+## 10. Qué queda — estado al cerrar el 2026-09-18
+
+**Del contraperitaje del equipo de diseño: NADA. Los cuatro puntos hechos.**
+
+Del plan original de 6 fases (sección 7 del documento):
+
+| Fase | Estado |
+|---|---|
+| 1 Dejar de romperse | **completa** |
+| 2 Que el ciclo funcione | ~40 %. Hecho "entrenar esta rutina" y el registro por serie. **Falta**: precarga del peso anterior, menú de tres puntos visible en rutinas y alimentos propios, errores en el campo en login y registro, aviso de política de contraseña, filtro por músculo al elegir ejercicios |
+| 3 Que se vea caro | ~50 %. Hecho color, superficies y tipografía. **Falta**: la barra Ember, la escala de espaciado (19 valores sueltos, base 4) y los cuatro `Spinner` viejos a Material |
+| 4 El gancho comercial | 0 %. Silueta muscular en Home, Home reordenado a "hoy", récord dorado, foto real en el catálogo, resumen con jerarquía de celebración |
+| 5 Que lo entienda cualquiera | 0 %. Raciones, lenguaje de estado en nutrición, fuera la jerga, perfil partido, mediciones con fecha, estados vacíos |
+| 6 Onboarding y tienda | ~30 %. Hecha la bienvenida y los iconos. **Falta**: refundir el asistente, capturas de Play y lo legal |
+
+**Urgente y fuera de toda fase, porque salió del contraperitaje.** Estos cuatro
+son los que impiden enseñar la app a alguien, y por ahí empezaría:
+
+1. **El admin puede dejarse fuera del panel para siempre.** Cero referencias a
+   `getUsuarioId()` en las siete pantallas de administración: nada impide
+   desactivarte a ti mismo ni bajarte a USER. Único daño sin arreglo desde la app.
+2. **No existe recuperación de contraseña.** Ni la vista, ni la cadena. Bloqueante
+   para publicar.
+3. **TalkBack no anuncia nada en la barra de navegación.** Cero
+   `setContentDescription` en las cinco celdas. Sale marcado en el informe previo
+   al lanzamiento de Play Store.
+4. **Las confirmaciones de admin no dicen sobre qué actúan.** "¿Desactivar esta
+   rutina?" sin nombre: si abriste el menú de la fila equivocada, el diálogo te
+   confirma la equivocación igual de bien.
+
+Y dos más, de menor urgencia:
+
+- **Las calorías de los ejercicios** (sección 9.8), aplazado a otra sesión porque
+  toca API.
+- **Cadenas en español con la app en inglés**: "2 ejercicios" en las tarjetas de
+  rutina, "kcal/100g", "ejerc.". Varias hardcodeadas en Java, contra la regla de
+  multiidioma.
+
