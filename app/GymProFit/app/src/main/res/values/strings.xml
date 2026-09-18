@@ -481,6 +481,7 @@
     <string name="detalle_rutina_titulo">Detalle de rutina</string>
     <string name="detalle_rutina_ejercicios_fmt">Ejercicios (%d)</string>
     <string name="detalle_rutina_editar">Editar rutina</string>
+    <string name="detalle_rutina_entrenar">Entrenar</string>
 
     <!-- NOTIFICACIONES -->
     <string name="notif_canal_sesiones">Sesiones</string>

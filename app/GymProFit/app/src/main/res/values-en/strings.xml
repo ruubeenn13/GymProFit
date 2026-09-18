@@ -482,6 +482,7 @@
     <string name="detalle_rutina_titulo">Routine detail</string>
     <string name="detalle_rutina_ejercicios_fmt">Exercises (%d)</string>
     <string name="detalle_rutina_editar">Edit routine</string>
+    <string name="detalle_rutina_entrenar">Start workout</string>
 
     <!-- NOTIFICATIONS -->
     <string name="notif_canal_sesiones">Sessions</string>

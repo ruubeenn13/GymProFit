@@ -33,6 +33,7 @@ import es.pmdm.gymprofit.ui.adapters.EjercicioSeleccionadoAdapter;
 import es.pmdm.gymprofit.utils.EjercicioNavHelper;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PreferencesManager;
+import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
@@ -126,9 +127,30 @@ public class DetalleRutinaActivity extends AppCompatActivity {
         actualizarTitulo();
     }
 
+    /**
+     * Abre el registro de sesión con esta rutina ya seleccionada.
+     *
+     * <p>Es la acción por la que se entra a esta pantalla: ver una rutina y
+     * hacerla. Hasta ahora ese camino estaba cortado.
+     */
+    private void entrenarEstaRutina() {
+        // Esta Activity extiende AppCompatActivity, no BaseActivity, así que no
+        // hereda verificarAccesoRegistrado(): el guard de invitado se hace aquí.
+        if (prefsManager.isGuest()) {
+            UIHelper.mostrarToastError(this, getString(R.string.error_solo_usuarios_registrados));
+            return;
+        }
+
+        Intent intent = new Intent(this, RegistrarSesionActivity.class);
+        intent.putExtra(RegistrarSesionActivity.EXTRA_RUTINA_ID, rutinaId);
+        startActivity(intent);
+    }
+
     // Muestra el botón de editar solo si la rutina no es predefinida
     // y pertenece al usuario actualmente autenticado.
     private void configurarBotonEditar() {
+        findViewById(R.id.btnEntrenarRutina).setOnClickListener(v -> entrenarEstaRutina());
+
         MaterialButton btnEditar = findViewById(R.id.btnEditarRutina);
         boolean esPropia = !predefinida && rutinaUsuarioId == prefsManager.getUsuarioId();
         if (esPropia) {

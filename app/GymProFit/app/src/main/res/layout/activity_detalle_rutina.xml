@@ -152,17 +152,42 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Botón editar rutina: visible solo para el propietario/admin -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnEditarRutina"
+    <!-- Barra de acciones.
+         "Entrenar" es la acción primaria y está SIEMPRE visible, también en las
+         rutinas predefinidas: antes el único botón era "Editar" y solo aparecía
+         si la rutina era tuya, así que el detalle de una rutina del catálogo no
+         tenía ni una acción — llegabas por el camino natural (ver rutina, hacerla)
+         y no había nada que pulsar. "Editar" baja a secundario. -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_margin="16dp"
-        android:text="@string/detalle_rutina_editar"
-        android:textSize="16sp"
-        android:visibility="gone"
-        app:cornerRadius="12dp"
-        app:icon="@drawable/ic_edit"
-        app:iconGravity="textStart" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEditarRutina"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="56dp"
+            android:layout_marginEnd="10dp"
+            android:text="@string/detalle_rutina_editar"
+            android:textSize="16sp"
+            android:visibility="gone"
+            app:cornerRadius="12dp"
+            app:icon="@drawable/ic_edit"
+            app:iconGravity="textStart" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEntrenarRutina"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:text="@string/detalle_rutina_entrenar"
+            android:textSize="16sp"
+            app:cornerRadius="12dp"
+            app:icon="@drawable/ic_ejercicios"
+            app:iconGravity="textStart" />
+
+    </LinearLayout>
 
 </LinearLayout>

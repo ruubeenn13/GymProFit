@@ -132,6 +132,17 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Id de la rutina con la que se ha entrado, o -1 si se abrió sin rutina.
+     *
+     * <p>Lo manda quien lanza la pantalla desde el detalle de una rutina o desde
+     * el Home. Antes la pantalla solo se abría desde el historial y siempre
+     * arrancaba en "Sin rutina asociada", así que el camino por defecto producía
+     * una sesión sin ejercicios: sin ejercicios no hay progreso y sin progreso la
+     * gráfica del récord no aparece nunca.
+     */
+    public static final String EXTRA_RUTINA_ID = "rutinaId";
+
     // Une rutinas predefinidas y del usuario en una única lista y refresca
     // el spinner en el hilo principal.
     private void combinarYMostrar(List<Rutina> predefinidas) {
@@ -141,6 +152,7 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         rutinas.addAll(todas);
         for (Rutina r : todas) rutinaOpciones.add(r.getNombre());
         actualizarSpinner();
+        preseleccionarRutina();
     }
 
     // Rellena el spinner de rutinas y, al seleccionar una, calcula sus
@@ -165,6 +177,25 @@ public class RegistrarSesionActivity extends AppCompatActivity {
             }
             @Override public void onNothingSelected(AdapterView<?> parent) {}
         });
+    }
+
+    /**
+     * Deja marcada en el selector la rutina con la que se entró, si la hay.
+     *
+     * <p>Se llama después de montar el spinner, porque hasta que no han llegado
+     * las dos listas (predefinidas y propias) no se sabe en qué posición cae.
+     */
+    private void preseleccionarRutina() {
+        int rutinaId = getIntent().getIntExtra(EXTRA_RUTINA_ID, -1);
+        if (rutinaId == -1) return;
+
+        for (int i = 0; i < rutinas.size(); i++) {
+            if (rutinas.get(i).getId() == rutinaId) {
+                // +1 porque la posición 0 del spinner es "Sin rutina asociada".
+                spRutina.setSelection(i + 1);
+                return;
+            }
+        }
     }
 
     // Obtiene los ejercicios de la rutina seleccionada, calcula las calorías

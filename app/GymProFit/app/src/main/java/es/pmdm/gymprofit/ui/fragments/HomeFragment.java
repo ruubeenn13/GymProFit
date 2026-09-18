@@ -28,6 +28,7 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.network.UiApiCallback;
 import es.pmdm.gymprofit.network.UsuarioApi;
+import es.pmdm.gymprofit.ui.activities.RegistrarSesionActivity;
 import es.pmdm.gymprofit.ui.activities.SesionesActivity;
 import es.pmdm.gymprofit.utils.NavTabs;
 
@@ -183,7 +184,11 @@ public class HomeFragment extends BaseFragment {
 
         cardIniciarEntrenamiento.setOnClickListener(v -> {
             if (!verificarAccesoRegistrado()) return;
-            startActivity(new Intent(requireContext(), SesionesActivity.class));
+            // Va a registrar una sesión, NO al historial. Antes abría
+            // SesionesActivity, que es la lista de sesiones pasadas: la acción más
+            // prominente de la pantalla de inicio prometía acción y entregaba un
+            // archivo, y había que buscar el FAB para entrenar de verdad.
+            startActivity(new Intent(requireContext(), RegistrarSesionActivity.class));
         });
 
         // Rutinas y Nutrición son pestañas del pager: cambio de pestaña (no Activity).
