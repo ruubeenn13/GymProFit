@@ -22,6 +22,7 @@ cualquier pantalla**. Todo el trabajo se hace en el entorno aislado descrito en
 6. [Rendimiento y deuda técnica](#6-rendimiento-y-deuda-técnica)
 7. [Plan de trabajo en 6 fases](#7-plan-de-trabajo-en-6-fases)
 8. [Ficha de Play Store](#8-ficha-de-play-store)
+9. [Contraperitaje del equipo de diseño](#9-contraperitaje-del-equipo-de-diseño-2026-09-18)
 
 ---
 
@@ -146,6 +147,29 @@ barata, lo caro era el shader.
 **Se pierde** frente a la barra actual: la magnificación, la refracción y la
 aberración cromática. Ninguna app de referencia (Nike Training Club, Strava,
 Hevy) usa lente ni refracción: todas marcan el activo con **color y peso**.
+
+**AMPLIADO el 2026-09-18 tras la revisión del equipo de diseño.** Dos agentes
+tocaron la barra sin conocer esta decisión y sacaron tres cosas que Ember, tal y
+como está especificado arriba, **no resuelve**. Hay que meterlas en el mismo paso:
+
+1. **TalkBack no anuncia nada.** Cero `setContentDescription` en las cinco celdas
+   (comprobado: `grep -c` devuelve 0), y la barra es un `FrameLayout` que captura
+   el táctil en crudo sin `performClick()`. Sale marcado en el informe previo al
+   lanzamiento de Play Store. Es lo más grave de los tres y no estaba contemplado.
+2. **Las etiquetas no tienen `ellipsize`.** `setSingleLine(true)` sin
+   `setEllipsize` (`FloatingNavBar.java:207`). A 360 dp de ancho la celda mide
+   unos 61 dp y "Ejercicios" entra raspando: se recorta en pantallas estrechas o
+   con la escala de fuente por encima de 1,1.
+3. **El difuminado que promete el comentario no existe.** La cabecera de
+   `activity_main.xml` dice que se ve el contenido de detrás difuminado, pero
+   `content.eval()` solo muestrea la propia vista; la translucidez viene de un
+   `GradientDrawable` con alpha. Se está pagando un shader por frame por un efecto
+   que no ocurre. Al retirar la lente hay que corregir también ese comentario.
+
+Y un dato que refuerza la decisión: la aberración cromática está a `rim * 11.0`
+(`FloatingNavBar.java:76`). A 60 px de diámetro el arcoíris del borde se lee como
+artefacto de compresión, y cae justo sobre el icono y la etiqueta de la pestaña
+**activa** — se está desenfocando lo único que hay que leer.
 
 ### Objetivos del onboarding: de 10 a 4
 
@@ -751,3 +775,130 @@ que en una miniatura de Play a 100 px de ancho se reconoce como forma y no como
 texto. Lo demás —la Barlow Condensed, los números XXL, el récord dorado— sostiene
 ese gesto pero no lo sustituye. Si en la primera captura hay un anillo de
 calorías, somos Fitia en oscuro.
+
+---
+
+## 9. Contraperitaje del equipo de diseño (2026-09-18)
+
+Seis diseñadores senior auditaron la app por zonas —entrada, home y progreso,
+entrenamiento, nutrición, administración y sistema visual— **a ciegas de este
+documento**, para que sus hallazgos no lo repitieran. Acuerdo previo con el
+usuario: donde haya choque, **manda el equipo**.
+
+Versión navegable y filtrable: https://claude.ai/artifact/2F867KuBooDDbDCj6ptsRD
+
+Las citas de archivo y línea son de los agentes. Lo marcado como **verificado**
+se comprobó en el código o recalculando los ratios de contraste con la fórmula de
+luminancia relativa de WCAG.
+
+### 9.1 El diagnóstico cuantificado
+
+Valores distintos usados en los 66 layouts:
+
+| Propiedad | Valores distintos | Usos |
+|---|---|---|
+| Tamaños de texto | **21** | 320 |
+| Espaciados | **19** (13 no múltiplos de 8) | 879 |
+| `alpha` sobre texto | **14** | 101 |
+| Radios de esquina | 11 | 96 |
+| Interletrado | 6 | 34 |
+| Elevaciones | 6 | 26 |
+| Pesos tipográficos disponibles | **3** (500/600/700, **no hay 400**) | — |
+| Selectores de estado | **0** | 0 |
+| Esqueletos de carga | **0** | 0 |
+| Layouts con estado vacío | **5 de 66** | — |
+
+El dato que lo resume: **320 tamaños de texto escritos a mano frente a 61 usos de
+la escala tipográfica del propio tema**. El sistema existe y los layouts lo
+ignoran cinco veces de cada seis.
+
+### 9.2 Mediciones verificadas
+
+| Qué | Medido | Umbral |
+|---|---|---|
+| Tarjeta sobre fondo, tema oscuro | **1,10:1** | — |
+| Tarjeta sobre fondo, tema claro | **1,07:1** | — |
+| Borde de tarjeta, tema oscuro | **1,25:1** | WCAG pide 3:1 |
+| Blanco sobre el naranja de marca | **2,87:1** | AA pide 4,5:1 |
+| El arreglo propuesto (`#1A1005` sobre `#FF6A00`) | **6,53:1** | pasa |
+| Cronómetros en todo el proyecto | **0** | — |
+
+### 9.3 Convergencias ciegas
+
+Tres hallazgos a los que llegaron **dos agentes por separado**, sin verse. Dejan
+de ser opinión:
+
+1. **El botón "Iniciar entrenamiento" del Home abre el historial**
+   (`HomeFragment.java:184-187` → `SesionesActivity`). Verificado.
+2. **El buscador lanza un modal bloqueante en cada tecla**, en nutrición y en
+   administración, en pantallas distintas. Verificado.
+3. **El contraste del naranja y de las superficies**, con los mismos números.
+
+### 9.4 Dónde este documento se corrige
+
+- **El naranja unificado no es una decisión de marca: es un incumplimiento.**
+  La sección 2 lo trata como estética. Son 2,87:1: falla AA y es motivo de
+  rechazo en la revisión de accesibilidad de Play Store. **Sube a bloqueante.**
+- **El orden de las fases cambia.** El color estaba en la fase 3. Pasa a ser lo
+  primero: es un archivo y medio de tokens y cambia las 40 pantallas de golpe.
+- **La deuda técnica cara no es ViewBinding.** La sección 6 aplazó los 491
+  `findViewById`. La deuda que de verdad impide tener un sistema son los 320
+  `textSize` sueltos y la ausencia de un peso 400 en la familia tipográfica.
+- **El modo entreno en vivo no es aplazable.** Estaba aplazado a propósito hasta
+  arreglar el registro. El equipo sostiene que *es* el producto: sin dato por
+  serie no hay progresión, y sin progresión no hay razón para usar la app.
+
+### 9.5 Lo que este documento no vio
+
+- **La jerarquía de superficies.** No aparece en ninguna línea de las ocho
+  secciones anteriores, y es la causa número uno de que la app se vea barata:
+  fondo y superficie a 1,10:1, borde a 1,25:1 y `cardElevation` a 0 dp. Las
+  tarjetas no existen como objeto visual, y toda la app está construida sobre
+  tarjetas.
+- **Cuatro cosas rotas de verdad**, no cuestión de gusto: la barra de progreso
+  del resumen del onboarding es blanca sobre blanco en tema claro
+  (`progress_bar_calorias.xml`, sin variante nocturna); las tres barras de macros
+  de esa misma pantalla **no tienen id** y están fijadas a `progress="0"` para
+  siempre; `setStrokeWidth()` recibe píxeles en vez de dp, así que **seleccionar
+  una tarjeta de objetivo adelgaza su borde**; y la proteína se pinta en rojo al
+  superar el objetivo, cuando la proteína es un suelo y no un techo.
+- **Un admin puede dejarse fuera del panel para siempre.** Cero referencias a
+  `getUsuarioId()` en las siete pantallas de administración: nada impide
+  desactivarte a ti mismo ni bajarte a USER. Con un solo ADMIN solo se recupera
+  entrando por SQL. Es el único daño de la app sin arreglo desde la propia app.
+- **No existe recuperación de contraseña.** Ni la vista, ni la cadena.
+- **`ic_more_vert` es invisible en tema claro en 12 pantallas**: tiene el blanco
+  escrito a fuego y 12 de sus 14 usos no aplican tint.
+- **La tipografía no tiene peso normal.** Barlow Condensed declara 500/600/700 y
+  el tema la pone como familia global, así que todo el texto sale de medium para
+  arriba y no puede existir contraste de peso. Y es una condensada de titular
+  usada a 13 sp para leer macros.
+
+### 9.6 Cosas nuevas propuestas
+
+Ordenadas por lo que ya está medio construido, que es donde el esfuerzo rinde:
+
+| Idea | Estado hoy |
+|---|---|
+| Escáner de código de barras | El endpoint `POST alimentos/importar` con `barcode` ya existe y ya habla con Open Food Facts. Falta solo la cámara |
+| Mapa de calor anual de entrenamientos | El componente está construido para adherencia nutricional |
+| Racha con aviso y día de perdón | La racha se calcula en el backend y el push está montado |
+| Récords personales | La gráfica de progresión ya está dibujada; falta detectar y celebrar |
+| Invertir el embudo (onboarding antes del registro) | El borrador del asistente ya persiste |
+| Recientes, frecuentes y "copiar el día de ayer" | Los datos ya están disponibles |
+| Raciones en lenguaje natural | Exige un campo de ración en el catálogo |
+| Modo entreno en vivo con descanso | Exige cambiar el modelo a `List<Serie>` |
+| Esqueletos de carga y hápticos | Barato, y no existe ninguno |
+
+### 9.7 Orden recomendado
+
+1. **Los colores y las superficies.** Separar los niveles de superficie, subir el
+   borde a 3:1, negro cálido sobre el naranja, un solo naranja en los dos temas y
+   elevación 1 dp en la tarjeta. Un archivo y medio, cambia las 40 pantallas y
+   quita el motivo de rechazo de accesibilidad.
+2. **Lo que está roto de verdad.** Los cuatro fallos de 9.5, el `ic_more_vert`
+   invisible y el modal bloqueante del buscador. Son bugs, no gusto.
+3. **El recorrido del producto.** Que "Iniciar entrenamiento" entrene, que desde
+   una rutina se pueda entrenar, y el registro por serie.
+4. **La escala tipográfica.** Nueve escalones, familia neutra con peso 400 para el
+   cuerpo, condensada solo para cifras, y fuera el multiplicador global de 1,18.
