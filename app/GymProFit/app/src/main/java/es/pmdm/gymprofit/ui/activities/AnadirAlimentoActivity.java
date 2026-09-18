@@ -289,7 +289,11 @@ public class AnadirAlimentoActivity extends BaseActivity {
     // las siguientes se añaden al final en silencio (scroll infinito).
     private void cargarPagina(int pagina) {
         cargando = true;
-        if (pagina == 0) LoadingDialog.show(this);
+        // SIN diálogo de carga. LoadingDialog es setCancelable(false) y atenúa la
+        // pantalla al 50 %, así que con el debounce de 400 ms escribir "pollo" eran
+        // cinco parpadeos de overlay modal sobre el teclado — y saltaba también al
+        // abrir la pantalla, con la búsqueda vacía. La lista anterior se queda
+        // visible mientras llega la respuesta, que es lo que hace cualquier buscador.
         alimentoApi.buscar(queryActual.isEmpty() ? null : queryActual, null, pagina, TAM_PAGINA)
                 .enqueue(new ApiCallback<PageDTO<Alimento>>() {
                     @Override

@@ -47,6 +47,21 @@ public class AdminUsuariosActivity extends BaseActivity {
     private String filtroUsername = null;
 
     // Configura RecyclerView, chips de filtro, buscador y carga inicial de datos
+
+    // Debounce del buscador. Sin él, cada tecla lanzaba una petición: escribir
+    // "sentadilla" eran diez llamadas a Render y diez modales opacos, y además
+    // las respuestas podían llegar desordenadas y dejar en pantalla el resultado
+    // de una búsqueda a medio escribir.
+    private static final long DEBOUNCE_MS = 350;
+    private final android.os.Handler debounceHandler =
+            new android.os.Handler(android.os.Looper.getMainLooper());
+    private Runnable debounceRunnable;
+
+    // Cuando la carga viene de teclear, no se muestra el diálogo modal: la lista
+    // anterior se queda visible. El resto de cargas (entrar, volver, cambiar un
+    // estado) sí lo muestran, porque ahí la espera no es continua.
+    private boolean cargaDesdeBuscador;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,7 +126,10 @@ public class AdminUsuariosActivity extends BaseActivity {
             @Override
             public boolean onQueryTextChange(String q) {
                 filtroUsername = q.trim().isEmpty() ? null : q.trim();
-                cargar();
+                cargaDesdeBuscador = true;
+                if (debounceRunnable != null) debounceHandler.removeCallbacks(debounceRunnable);
+                debounceRunnable = () -> cargar();
+                debounceHandler.postDelayed(debounceRunnable, DEBOUNCE_MS);
                 return true;
             }
         });
@@ -120,13 +138,16 @@ public class AdminUsuariosActivity extends BaseActivity {
     // Llama al endpoint admin de usuarios filtrados (primera página, hasta 100 resultados)
     private void cargar() {
         // Muestra el overlay de carga mientras se piden los usuarios filtrados
-        LoadingDialog.show(this);
+        // Spinner solo cuando la carga no viene de teclear.
+        boolean conDialogo = !cargaDesdeBuscador;
+        cargaDesdeBuscador = false;
+        if (conDialogo) LoadingDialog.show(this);
         api.getUsuarios(filtroActivo, filtroRol, filtroUsername, 0, 100)
                 .enqueue(new ApiCallback<List<Usuario>>() {
                     @Override
                     public void onOk(List<Usuario> nuevos) {
                         // Oculta el overlay al terminar la carga con éxito
-                        LoadingDialog.hide(AdminUsuariosActivity.this);
+                        if (conDialogo) LoadingDialog.hide(AdminUsuariosActivity.this);
                         lista.clear();
                         if (nuevos != null) lista.addAll(nuevos);
                         adapter.notifyDataSetChanged();
@@ -134,7 +155,7 @@ public class AdminUsuariosActivity extends BaseActivity {
                     @Override
                     public void onFail(int code, String message) {
                         // Oculta el overlay y muestra el error mapeado al fallar la carga
-                        LoadingDialog.hide(AdminUsuariosActivity.this);
+                        if (conDialogo) LoadingDialog.hide(AdminUsuariosActivity.this);
                         UiFeedback.toastError(AdminUsuariosActivity.this, code, message);
                     }
                 });

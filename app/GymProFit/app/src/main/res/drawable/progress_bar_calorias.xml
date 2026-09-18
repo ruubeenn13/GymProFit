@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  progress_bar_calorias — Drawable de barra de progreso de calorías.
-  Layer-list para una ProgressBar horizontal: fondo semitransparente y relleno de progreso en blanco.
+  progress_bar_calorias — Barra de calorías para usar SOBRE EL NARANJA de marca.
+
+  El blanco está bien aquí porque el fondo es colorPrimary. Para una barra sobre
+  una superficie normal está progress_bar_on_surface: este mismo drawable se
+  usaba también en el resumen del onboarding, encima de una tarjeta, y en tema
+  claro quedaba blanco sobre blanco — invisible justo en la pantalla que
+  justifica haber contestado cinco veces.
 -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 

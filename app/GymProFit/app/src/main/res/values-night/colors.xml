@@ -41,6 +41,12 @@
     <color name="body_silhouette">#A6A7AF</color>
     <color name="body_highlight">#FF6A00</color>
 
+    <!-- ── Macros ────────────────────────────────────────────────────────── -->
+    <!-- Un color por macro: tres barras del mismo color no codifican nada. -->
+    <color name="gp_macro_proteinas">#6BA6F5</color>
+    <color name="gp_macro_carbos">#E8A94B</color>
+    <color name="gp_macro_grasas">#B295E8</color>
+
     <!-- ── Estados ───────────────────────────────────────────────────────── -->
     <color name="gp_success">#4ADE80</color>
     <color name="gp_success_container">#143323</color>

@@ -1,5 +1,6 @@
 package es.pmdm.gymprofit.ui.activities;
 
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ProgressBar;
@@ -106,7 +107,35 @@ public class OnboardingResumenActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.tvResumenCarbos)).setText(resultado.carbohidratos + "g");
         ((TextView) findViewById(R.id.tvResumenGrasas)).setText(resultado.grasas + "g");
         ((TextView) findViewById(R.id.tvResumenAgua)).setText(resultado.agua + "L");
+
+        // Las tres barras de macros estaban fijadas a 0 y sin id, así que nadie
+        // podía tocarlas: tres rayas grises bajo tres números, para siempre. Una
+        // barra a cero no se lee como decoración, se lee como que no ha cargado.
+        // Ahora muestran qué parte de las calorías del día aporta cada macro
+        // (4 kcal por gramo de proteína y de carbohidrato, 9 por gramo de grasa).
+        pintarMacro(R.id.pbResumenProteinas, resultado.proteinas * 4, resultado.calorias);
+        pintarMacro(R.id.pbResumenCarbos, resultado.carbohidratos * 4, resultado.calorias);
+        pintarMacro(R.id.pbResumenGrasas, resultado.grasas * 9, resultado.calorias);
         ((ProgressBar) findViewById(R.id.progressResumen)).setProgress(100);
+    }
+
+    /**
+     * Pinta la parte de las calorías del día que aporta un macro.
+     *
+     * @param idBarra  la barra a rellenar.
+     * @param kcalMacro calorías que aporta ese macro.
+     * @param kcalTotal calorías del día.
+     */
+    private void pintarMacro(int idBarra, int kcalMacro, int kcalTotal) {
+        ProgressBar barra = findViewById(idBarra);
+        if (barra == null || kcalTotal <= 0) return;
+
+        int porcentaje = Math.max(0, Math.min(100, Math.round(kcalMacro * 100f / kcalTotal)));
+
+        // Crece desde cero al entrar: el reparto se percibe mejor viéndolo llenarse.
+        ObjectAnimator.ofInt(barra, "progress", 0, porcentaje)
+                .setDuration(600L)
+                .start();
     }
 
     // Traduce el valor del enum de objetivo (API) a su texto localizado.

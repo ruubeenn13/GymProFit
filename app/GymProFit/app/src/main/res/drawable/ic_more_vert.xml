@@ -2,6 +2,9 @@
   ic_more_vert — Icono vectorial de "más opciones" (tres puntos verticales).
   Usado para menús contextuales u overflow de acciones en la UI.
 -->
+<!-- El color NO va a fuego: lo pone el tema. Antes era blanco (o negro en
+     ic_close) y la mayoría de los usos no aplicaban tint, así que el icono
+     desaparecía por completo en uno de los dos temas. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
@@ -9,6 +12,6 @@
     android:viewportHeight="24"
     android:tint="?attr/colorOnSurface">
     <path
-        android:fillColor="@android:color/white"
+        android:fillColor="?attr/colorOnSurfaceVariant"
         android:pathData="M12,8c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM12,10c-1.1,0 -2,0.9 -2,2s0.9,2 2,2 2,-0.9 2,-2 -0.9,-2 -2,-2zM12,16c-1.1,0 -2,0.9 -2,2s0.9,2 2,2 2,-0.9 2,-2 -0.9,-2 -2,-2z"/>
 </vector>

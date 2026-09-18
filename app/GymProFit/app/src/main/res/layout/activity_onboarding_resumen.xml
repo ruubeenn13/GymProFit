@@ -131,7 +131,7 @@
                         android:layout_height="6dp"
                         android:progress="0"
                         android:max="100"
-                        android:progressDrawable="@drawable/progress_bar_calorias" />
+                        android:progressDrawable="@drawable/progress_bar_on_surface" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -171,9 +171,10 @@
                             android:textFontWeight="700" android:includeFontPadding="false"
                             android:textColor="?attr/colorOnSurface" android:layout_marginBottom="6dp" />
                         <ProgressBar
+                            android:id="@+id/pbResumenProteinas"
                             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                            android:layout_width="match_parent" android:layout_height="3dp"
-                            android:progressTint="?attr/colorPrimary"
+                            android:layout_width="match_parent" android:layout_height="5dp"
+                            android:progressTint="@color/gp_macro_proteinas"
                             android:progressBackgroundTint="?attr/colorSurfaceVariant"
                             android:progress="0" android:max="100" />
                     </LinearLayout>
@@ -199,9 +200,10 @@
                             android:textFontWeight="700" android:includeFontPadding="false"
                             android:textColor="?attr/colorOnSurface" android:layout_marginBottom="6dp" />
                         <ProgressBar
+                            android:id="@+id/pbResumenCarbos"
                             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                            android:layout_width="match_parent" android:layout_height="3dp"
-                            android:progressTint="?attr/colorPrimary"
+                            android:layout_width="match_parent" android:layout_height="5dp"
+                            android:progressTint="@color/gp_macro_carbos"
                             android:progressBackgroundTint="?attr/colorSurfaceVariant"
                             android:progress="0" android:max="100" />
                     </LinearLayout>
@@ -226,9 +228,10 @@
                             android:textFontWeight="700" android:includeFontPadding="false"
                             android:textColor="?attr/colorOnSurface" android:layout_marginBottom="6dp" />
                         <ProgressBar
+                            android:id="@+id/pbResumenGrasas"
                             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                            android:layout_width="match_parent" android:layout_height="3dp"
-                            android:progressTint="?attr/colorPrimary"
+                            android:layout_width="match_parent" android:layout_height="5dp"
+                            android:progressTint="@color/gp_macro_grasas"
                             android:progressBackgroundTint="?attr/colorSurfaceVariant"
                             android:progress="0" android:max="100" />
                     </LinearLayout>

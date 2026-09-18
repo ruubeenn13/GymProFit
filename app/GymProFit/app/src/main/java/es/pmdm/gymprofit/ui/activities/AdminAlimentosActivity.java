@@ -54,6 +54,21 @@ public class AdminAlimentosActivity extends BaseActivity {
     private final AdminApi adminApi = ApiClient.service(AdminApi.class);
     private final AlimentoApi alimentoApi = ApiClient.service(AlimentoApi.class);
 
+
+    // Debounce del buscador. Sin él, cada tecla lanzaba una petición: escribir
+    // "sentadilla" eran diez llamadas a Render y diez modales opacos, y además
+    // las respuestas podían llegar desordenadas y dejar en pantalla el resultado
+    // de una búsqueda a medio escribir.
+    private static final long DEBOUNCE_MS = 350;
+    private final android.os.Handler debounceHandler =
+            new android.os.Handler(android.os.Looper.getMainLooper());
+    private Runnable debounceRunnable;
+
+    // Cuando la carga viene de teclear, no se muestra el diálogo modal: la lista
+    // anterior se queda visible. El resto de cargas (entrar, volver, cambiar un
+    // estado) sí lo muestran, porque ahí la espera no es continua.
+    private boolean cargaDesdeBuscador;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,7 +117,10 @@ public class AdminAlimentosActivity extends BaseActivity {
             @Override
             public boolean onQueryTextChange(String q) {
                 filtroNombre = q.trim().isEmpty() ? null : q.trim();
-                cargar();
+                cargaDesdeBuscador = true;
+                if (debounceRunnable != null) debounceHandler.removeCallbacks(debounceRunnable);
+                debounceRunnable = () -> cargar();
+                debounceHandler.postDelayed(debounceRunnable, DEBOUNCE_MS);
                 return true;
             }
         });
@@ -171,14 +189,16 @@ public class AdminAlimentosActivity extends BaseActivity {
 
     // Consulta a la API los alimentos aplicando los filtros actuales y refresca el RecyclerView
     private void cargar() {
-        // Spinner de carga: la lista queda en blanco mientras llega la respuesta
-        LoadingDialog.show(this);
+        // Spinner solo cuando la carga no viene de teclear.
+        boolean conDialogo = !cargaDesdeBuscador;
+        cargaDesdeBuscador = false;
+        if (conDialogo) LoadingDialog.show(this);
         adminApi.buscarAlimentos(filtroNombre, filtroCategoria, filtroActivo)
                 .enqueue(new ApiCallback<List<Alimento>>() {
                     @Override
                     public void onOk(List<Alimento> nuevos) {
                         // Oculta el spinner al completar la carga
-                        LoadingDialog.hide(AdminAlimentosActivity.this);
+                        if (conDialogo) LoadingDialog.hide(AdminAlimentosActivity.this);
                         lista.clear();
                         if (nuevos != null) lista.addAll(nuevos);
                         adapter.notifyDataSetChanged();
@@ -186,7 +206,7 @@ public class AdminAlimentosActivity extends BaseActivity {
                     @Override
                     public void onFail(int code, String message) {
                         // Oculta el spinner y mapea el error de carga
-                        LoadingDialog.hide(AdminAlimentosActivity.this);
+                        if (conDialogo) LoadingDialog.hide(AdminAlimentosActivity.this);
                         UiFeedback.toastError(AdminAlimentosActivity.this, code, message);
                     }
                 });

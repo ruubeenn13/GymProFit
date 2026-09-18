@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  progress_bar_on_surface — Barra de progreso para usar SOBRE UNA SUPERFICIE
+  normal (tarjeta o fondo), no sobre el naranja de marca.
+
+  Toma los colores del tema, así que sirve en claro y en oscuro sin duplicar el
+  archivo en drawable-night.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Pista -->
+    <item android:id="@android:id/background">
+        <shape android:shape="rectangle">
+            <corners android:radius="4dp" />
+            <solid android:color="?attr/colorSurfaceVariant" />
+        </shape>
+    </item>
+
+    <!-- Relleno, recortado según el valor actual -->
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape android:shape="rectangle">
+                <corners android:radius="4dp" />
+                <solid android:color="?attr/colorPrimary" />
+            </shape>
+        </clip>
+    </item>
+
+</layer-list>

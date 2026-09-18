@@ -229,8 +229,13 @@ public class NutricionFragment extends BaseFragment {
         int colorNormal = getAttrColor(com.google.android.material.R.attr.colorOnSurface);
         int colorError  = getAttrColor(com.google.android.material.R.attr.colorError);
 
+        // La proteína es un SUELO, no un techo: en déficit y en volumen se busca
+        // llegar. Marcarla en rojo al superarla le decía al usuario que comer
+        // suficiente proteína es un error. Ahora, al llegar, se pone en verde.
+        int colorLogro = androidx.core.content.ContextCompat.getColor(
+                requireContext(), R.color.gp_success);
         tvProteinasActuales.setText(String.format(Locale.getDefault(), "%.0fg", totalProt));
-        tvProteinasActuales.setTextColor(totalProt > objetivoProteinas ? colorError : colorNormal);
+        tvProteinasActuales.setTextColor(totalProt >= objetivoProteinas ? colorLogro : colorNormal);
 
         tvCarbosActuales.setText(String.format(Locale.getDefault(), "%.0fg", totalCarb));
         tvCarbosActuales.setTextColor(totalCarb > objetivoCarbos ? colorError : colorNormal);

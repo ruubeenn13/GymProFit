@@ -38,6 +38,12 @@ public class Onboarding5Activity extends AppCompatActivity {
     private MaterialCardView[] todasLasCards;
     private ImageView[] todosLosChecks;
 
+    // setStrokeWidth() de MaterialCardView recibe PÍXELES, no dp. Poniendo 2 y 4
+    // a pelo, en un móvil a x3 el borde quedaba en 0,67 y 1,33 dp: al seleccionar
+    // una tarjeta el borde de todas ADELGAZABA respecto al 2dp que declara el XML.
+    private int bordeNormalPx;
+    private int bordeElegidoPx;
+
     private int colorBordeNormal;
     private int colorBordeSeleccionado;
 
@@ -92,6 +98,10 @@ public class Onboarding5Activity extends AppCompatActivity {
     // Resuelve del tema actual los colores de borde normal y de borde
     // seleccionado para las cards de nivel.
     private void resolverColores() {
+        float densidad = getResources().getDisplayMetrics().density;
+        bordeNormalPx = Math.round(2 * densidad);
+        bordeElegidoPx = Math.round(3 * densidad);
+
         TypedValue typedValue = new TypedValue();
         getTheme().resolveAttribute(com.google.android.material.R.attr.colorOutlineVariant, typedValue, true);
         colorBordeNormal = typedValue.data;
@@ -114,14 +124,14 @@ public class Onboarding5Activity extends AppCompatActivity {
 
         for (MaterialCardView c : todasLasCards) {
             c.setStrokeColor(colorBordeNormal);
-            c.setStrokeWidth(2);
+            c.setStrokeWidth(bordeNormalPx);
         }
         for (ImageView iv : todosLosChecks) {
             iv.setVisibility(View.GONE);
         }
 
         card.setStrokeColor(colorBordeSeleccionado);
-        card.setStrokeWidth(4);
+        card.setStrokeWidth(bordeElegidoPx);
         check.setVisibility(View.VISIBLE);
     }
 
