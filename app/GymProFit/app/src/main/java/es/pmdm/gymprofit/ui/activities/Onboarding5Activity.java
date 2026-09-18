@@ -30,6 +30,7 @@ public class Onboarding5Activity extends AppCompatActivity {
 
     // Nivel de experiencia seleccionado
     private String nivelSeleccionado = null;
+    private PreferencesManager prefs;
 
     private MaterialCardView cardPrincipiante, cardIntermedio, cardAvanzado, cardExperto;
     private ImageView ivCheckPrincipiante, ivCheckIntermedio, ivCheckAvanzado, ivCheckExperto;
@@ -46,7 +47,7 @@ public class Onboarding5Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        PreferencesManager prefs = new PreferencesManager(this);
+        prefs = new PreferencesManager(this);
         prefs.applyTheme();
 
         setContentView(R.layout.activity_onboarding5);
@@ -55,7 +56,7 @@ public class Onboarding5Activity extends AppCompatActivity {
         inicializarVistas();
         configurarCards();
 
-        Bundle extras = getIntent().getExtras();
+        restaurarSeleccion(prefs.getBorradorNivel());
 
         findViewById(R.id.btnSiguiente5).setOnClickListener(v -> {
             if (nivelSeleccionado == null) {
@@ -63,10 +64,8 @@ public class Onboarding5Activity extends AppCompatActivity {
                 return;
             }
 
-            Intent intent = new Intent(this, OnboardingResumenActivity.class);
-            if (extras != null) intent.putExtras(extras);
-            intent.putExtra("nivel", nivelSeleccionado);
-            startActivity(intent);
+            prefs.guardarBorradorNivel(nivelSeleccionado);
+            startActivity(new Intent(this, OnboardingResumenActivity.class));
         });
 
         findViewById(R.id.btnAnterior5).setOnClickListener(v -> finish());
@@ -127,8 +126,26 @@ public class Onboarding5Activity extends AppCompatActivity {
     }
 
     // Permite saltar el onboarding e ir directamente al Home, limpiando el
-    // back stack.
+    // Vuelve a marcar el nivel ya elegido, por el mismo camino que el toque real.
+    private void restaurarSeleccion(String nivel) {
+        if (nivel == null || nivel.isEmpty()) return;
+
+        switch (nivel) {
+            case "PRINCIPIANTE": seleccionar(cardPrincipiante, ivCheckPrincipiante, nivel); break;
+            case "INTERMEDIO":   seleccionar(cardIntermedio,   ivCheckIntermedio,   nivel); break;
+            case "AVANZADO":     seleccionar(cardAvanzado,     ivCheckAvanzado,     nivel); break;
+            case "EXPERTO":      seleccionar(cardExperto,      ivCheckExperto,      nivel); break;
+            default: break;
+        }
+    }
+
+    // Saltar el onboarding es una DECISION del usuario, no un abandono: se marca
+    // como visto para no volver a pedirselo en cada arranque (el splash lo
+    // reabriria si no) y se tira el borrador, que ya no hay nada que reanudar.
     private void saltarAlHome() {
+        prefs.setOnboardingCompletado(true);
+        prefs.setOnboardingCompletadoParaUsuario(prefs.getUsername());
+        prefs.limpiarBorradorOnboarding();
         startActivity(new Intent(this, MainActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         finish();

@@ -54,8 +54,6 @@ public class AcercaDeActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(v -> finish());
 
         findViewById(R.id.llAcercaEmail).setOnClickListener(v -> abrirEmail());
-        findViewById(R.id.llAcercaWeb).setOnClickListener(v -> abrirWeb());
-        findViewById(R.id.llAcercaDial).setOnClickListener(v -> abrirDial());
         findViewById(R.id.llAcercaCompartir).setOnClickListener(v -> compartirViaSms());
     }
 
@@ -97,17 +95,5 @@ public class AcercaDeActivity extends AppCompatActivity {
         intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"rubenjuancandela06@gmail.com"});
         intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_contacto_asunto));
         startActivity(Intent.createChooser(intent, getString(R.string.menu_contactanos)));
-    }
-
-    // Abre la web oficial de GymProFit en el navegador
-    private void abrirWeb() {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://gymprofit.infinityfree.me/login"));
-        startActivity(intent);
-    }
-
-    // Abre el marcador telefónico con el número de contacto precargado
-    private void abrirDial() {
-        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:+34600000000"));
-        startActivity(intent);
     }
 }

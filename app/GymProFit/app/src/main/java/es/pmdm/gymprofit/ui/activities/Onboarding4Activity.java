@@ -35,6 +35,7 @@ public class Onboarding4Activity extends AppCompatActivity {
 
     // Objetivo seleccionado - valor exacto del enum TipoObjetivo de la API
     private String objetivoSeleccionado = null;
+    private PreferencesManager prefs;
 
     // Cards
     private MaterialCardView cardPerderPeso, cardGanarMusculo, cardMantener, cardResistencia, cardFuerza,
@@ -57,7 +58,7 @@ public class Onboarding4Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        PreferencesManager prefs = new PreferencesManager(this);
+        prefs = new PreferencesManager(this);
         prefs.applyTheme();
 
         setContentView(R.layout.activity_onboarding4);
@@ -66,7 +67,7 @@ public class Onboarding4Activity extends AppCompatActivity {
         inicializarVistas();
         condigurarCards();
 
-        Bundle extras = getIntent().getExtras();
+        restaurarSeleccion(prefs.getBorradorObjetivo());
 
         findViewById(R.id.btnSiguiente4).setOnClickListener(v -> {
             if (objetivoSeleccionado == null) {
@@ -74,15 +75,8 @@ public class Onboarding4Activity extends AppCompatActivity {
                 return;
             }
 
-            Intent intent = new Intent(this, Onboarding5Activity.class);
-
-            if (extras != null) {
-                intent.putExtras(extras);
-            }
-
-            intent.putExtra("objetivo", objetivoSeleccionado);
-
-            startActivity(intent);
+            prefs.guardarBorradorObjetivo(objetivoSeleccionado);
+            startActivity(new Intent(this, Onboarding5Activity.class));
         });
 
         findViewById(R.id.btnAnterior4).setOnClickListener(v -> finish());
@@ -178,11 +172,43 @@ public class Onboarding4Activity extends AppCompatActivity {
     }
 
     // Permite saltar el onboarding e ir directamente al Home, limpiando el
-    // back stack.
+    // Vuelve a marcar el objetivo que el usuario ya habia elegido. Pasa por el
+    // mismo metodo que el toque real para que el resaltado quede identico.
+    private void restaurarSeleccion(String objetivo) {
+        if (objetivo == null || objetivo.isEmpty()) return;
+
+        if (objetivo.equals(CalculadoraNutricional.OBJETIVO_PERDER_PESO)) {
+            seleccionarObjetivo(cardPerderPeso, ivCheckPerderPeso, objetivo);
+        } else if (objetivo.equals(CalculadoraNutricional.OBJETIVO_GANAR_MASA_MUSCULAR)) {
+            seleccionarObjetivo(cardGanarMusculo, ivCheckGanarMusculo, objetivo);
+        } else if (objetivo.equals(CalculadoraNutricional.OBJETIVO_MANTENER_PESO)) {
+            seleccionarObjetivo(cardMantener, ivCheckMantener, objetivo);
+        } else if (objetivo.equals(CalculadoraNutricional.OBJETIVO_MEJORAR_RESISTENCIA)) {
+            seleccionarObjetivo(cardResistencia, ivCheckResistencia, objetivo);
+        } else if (objetivo.equals(CalculadoraNutricional.OBJETIVO_MEJORAR_FUERZA)) {
+            seleccionarObjetivo(cardFuerza, ivCheckFuerza, objetivo);
+        } else if (objetivo.equals(CalculadoraNutricional.OBJETIVO_REDUCIR_GRASA)) {
+            seleccionarObjetivo(cardReducirGrasa, ivCheckReducirGrasa, objetivo);
+        } else if (objetivo.equals(CalculadoraNutricional.OBJETIVO_MEJORAR_FLEXIBILIDAD)) {
+            seleccionarObjetivo(cardFlexibilidad, ivCheckFlexibilidad, objetivo);
+        } else if (objetivo.equals(CalculadoraNutricional.OBJETIVO_MEJORAR_VELOCIDAD)) {
+            seleccionarObjetivo(cardVelocidad, ivCheckVelocidad, objetivo);
+        } else if (objetivo.equals(CalculadoraNutricional.OBJETIVO_AUMENTAR_CALORIAS)) {
+            seleccionarObjetivo(cardAumentarCalorias, ivCheckAumentarCalorias, objetivo);
+        } else if (objetivo.equals(CalculadoraNutricional.OBJETIVO_MEJORAR_MOVILIDAD)) {
+            seleccionarObjetivo(cardMovilidad, ivCheckMovilidad, objetivo);
+        }
+    }
+
+    // Saltar el onboarding es una DECISION del usuario, no un abandono: se marca
+    // como visto para no volver a pedirselo en cada arranque (el splash lo
+    // reabriria si no) y se tira el borrador, que ya no hay nada que reanudar.
     private void saltarAlHome() {
+        prefs.setOnboardingCompletado(true);
+        prefs.setOnboardingCompletadoParaUsuario(prefs.getUsername());
+        prefs.limpiarBorradorOnboarding();
         startActivity(new Intent(this, MainActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-
         finish();
     }
 }

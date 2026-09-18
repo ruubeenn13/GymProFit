@@ -20,7 +20,6 @@
     <string name="login_error_invitado">Could not enter as guest</string>
     <string name="error_solo_usuarios_registrados">You need an account to access this feature</string>
     <string name="error_campos_vacios">Please fill in all fields</string>
-    <string name="registro_proximamente">Registration coming soon</string>
     <string name="registro_titulo">Create account</string>
     <string name="registro_crear_cuenta">Create account</string>
     <string name="registro_exito">Account created successfully!</string>
@@ -147,7 +146,6 @@
     <string name="nutricion_merienda">Snack</string>
     <string name="nutricion_cena">Dinner</string>
     <string name="nutricion_agregar">Add meal</string>
-    <string name="nutricion_proximamente">Feature coming soon</string>
     <string name="comida_eliminar_titulo">Confirm deletion</string>
     <string name="comida_eliminar_confirmar">Remove food from meal</string>
     <string name="comida_sin_alimentos">No foods logged</string>
@@ -173,7 +171,6 @@
     <string name="perfil_edad">Age</string>
     <string name="perfil_objetivo">Goal</string>
     <string name="perfil_editar">Edit information</string>
-    <string name="perfil_editar_proximamente">Editing coming soon</string>
     <string name="perfil_sin_datos">Not registered</string>
     <string name="perfil_anos">%d years</string>
     <string name="perfil_kg">%s kg</string>
@@ -281,21 +278,6 @@
     <!-- MEASUREMENTS -->
     <string name="mediciones_titulo">Body measurements</string>
     <string name="mediciones_sin_mediciones">No measurements recorded</string>
-    <string name="mediciones_registrar">New measurement</string>
-    <string name="mediciones_peso">Weight (kg) *</string>
-    <string name="mediciones_altura">Height (cm)</string>
-    <string name="mediciones_grasa">Body fat (%)</string>
-    <string name="mediciones_musculo">Muscle mass (kg)</string>
-    <string name="mediciones_cintura">Waist (cm)</string>
-    <string name="mediciones_pecho">Chest (cm)</string>
-    <string name="mediciones_brazos">Arms (cm)</string>
-    <string name="mediciones_piernas">Legs (cm)</string>
-    <string name="mediciones_notas">Notes (optional)</string>
-    <string name="mediciones_guardar">Save measurement</string>
-    <string name="mediciones_exito">Measurement saved successfully</string>
-    <string name="mediciones_editar">Edit measurement</string>
-    <string name="mediciones_editar_guardar">Update measurement</string>
-    <string name="mediciones_editar_exito">Measurement updated successfully</string>
     <string name="mediciones_eliminar">Delete measurement</string>
     <string name="mediciones_confirmar_eliminar">Delete this measurement?</string>
     <string name="medicion_anadir">Add</string>
@@ -388,6 +370,9 @@
     <string name="admin_toggle_ejercicio_titulo">Change status</string>
     <string name="admin_toggle_ejercicio_activar">Activate this exercise?</string>
     <string name="admin_toggle_ejercicio_desactivar">Deactivate this exercise?</string>
+    <string name="admin_toggle_alimento_titulo">Change status</string>
+    <string name="admin_toggle_alimento_activar">Activate this food?</string>
+    <string name="admin_toggle_alimento_desactivar">Deactivate this food? It will stop appearing in every user\'s search.</string>
     <string name="admin_editar_rutina_titulo">Edit routine</string>
     <string name="admin_editar_ejercicio_titulo">Edit exercise</string>
     <string name="admin_campo_nombre">Name *</string>
@@ -503,13 +488,10 @@
 
     <!-- NOTIFICATIONS -->
     <string name="notif_canal_sesiones">Sessions</string>
-    <string name="notif_canal_mediciones">Measurements</string>
     <string name="notif_canal_rutinas">Routines</string>
     <string name="notif_canal_logros">Achievements</string>
     <string name="notif_sesion_titulo">Session completed!</string>
     <string name="notif_sesion_texto">%1$d min · %2$d kcal burned</string>
-    <string name="notif_medicion_titulo">Measurement saved</string>
-    <string name="notif_medicion_texto">Your body measurement has been recorded</string>
     <string name="notif_rutina_titulo">Routine created!</string>
     <string name="notif_rutina_texto">%s is ready to use</string>
     <string name="notif_logros_titulo">New achievement unlocked!</string>
@@ -520,7 +502,6 @@
     <string name="detalle_ejercicio_descripcion">Description</string>
     <string name="detalle_ejercicio_instrucciones">Instructions</string>
     <string name="detalle_ejercicio_demostracion">Demo</string>
-    <string name="detalle_ejercicio_video_pronto">Video coming soon</string>
     <string name="detalle_ejercicio_musculo">Muscle</string>
     <string name="detalle_ejercicio_nivel">Level</string>
     <string name="detalle_ejercicio_calorias">Calories</string>
@@ -537,7 +518,7 @@
     <!-- ABOUT -->
     <string name="acerca_btn">About GymProFit</string>
     <string name="acerca_app_titulo">About the app</string>
-    <string name="acerca_app_descripcion">GymProFit is a personal fitness mobile app designed to centralise your sports life tracking. From creating custom workout routines to daily nutrition tracking, body measurement logs and full workout session history — all in one place.\n\nBuilt as a Final Cycle Project for CFGS DAM, with a Spring Boot REST API, MariaDB database and a native Android Java client. JWT authentication, Swagger docs, Flyway migrations and advanced queries with jOOQ.</string>
+    <string name="acerca_app_descripcion">GymProFit brings your whole training routine together in one app: workouts built around you, daily food tracking with calories and macros, body measurements and the full history of your sessions.</string>
     <string name="acerca_funcionalidades">Features</string>
     <string name="acerca_feat_1">Custom workout routines by muscle group and difficulty level</string>
     <string name="acerca_feat_2">Workout session logging with rating, notes and exercise progress</string>
@@ -545,36 +526,11 @@
     <string name="acerca_feat_4">Body measurement history (weight, fat, muscle, circumferences)</string>
     <string name="acerca_feat_5">Unlockable achievement system and personal training statistics</string>
     <string name="acerca_feat_6">Admin panel for managing users, routines, exercises and food items</string>
-    <string name="acerca_tecnologia">Technology</string>
-    <string name="acerca_tech_valor">Spring Boot 3 · MariaDB · Android Java · JWT Auth · Flyway · Swagger · jOOQ · MapStruct</string>
-    <string name="acerca_autor_titulo">Developer</string>
-    <string name="acerca_autor_nombre">Rubén Juan Candela</string>
-    <string name="acerca_autor_rol">Developer · 2nd year DAM</string>
-    <string name="acerca_autor_centro">IES Macià Abela, Crevillente</string>
-    <string name="acerca_autor_bio">2nd year DAM student with hands-on experience in full-stack development and network systems. Passionate about building software that solves real problems, from data model design to deployment. High ownership and ability to take on ambiguous problems from start to finish, iterating fast without sacrificing quality.</string>
-    <string name="acerca_formacion">Education</string>
-    <string name="acerca_form1_titulo">CFGS — Multiplatform Application Development</string>
-    <string name="acerca_form1_lugar">IES Macià Abela, Crevillente · 2024–2026 (in progress)</string>
-    <string name="acerca_form2_titulo">CFGM — IT Systems and Networks</string>
-    <string name="acerca_form2_lugar">IES Macià Abela, Crevillente · 2022–2024</string>
-    <string name="acerca_experiencia">Experience</string>
-    <string name="acerca_exp1_titulo">Full Stack Developer · FCT 2026</string>
-    <string name="acerca_exp1_lugar">Grupo Enercoop, Crevillente · 400 hours</string>
-    <string name="acerca_exp1_desc">Queue management system from scratch: React + FastAPI + PostgreSQL (Supabase). Multi-role architecture, real-time WebSockets, statistics module and multilingual support.</string>
-    <string name="acerca_exp2_titulo">Web Developer · FCT 2025</string>
-    <string name="acerca_exp2_lugar">La Marmita Para Llevar, Crevillente · 100 hours</string>
-    <string name="acerca_exp2_desc">Full design, development and deployment of a corporate website using HTML, CSS and JavaScript.</string>
-    <string name="acerca_exp3_titulo">Systems/Network Technician · FCT 2024</string>
-    <string name="acerca_exp3_lugar">Crevinet, Crevillente · 300 hours</string>
-    <string name="acerca_exp3_desc">FTTH fibre optic infrastructure installation and network maintenance support in real technical environments.</string>
+    <string name="acerca_contacto_titulo">Contact</string>
+    <string name="acerca_contacto_texto">Got a question, spotted a bug or thought of something that would make the app better? Write to us.</string>
     <string name="acerca_autor_email_label">rubenjuancandela06@gmail.com</string>
-    <string name="acerca_web_label">gymprofit.infinityfree.me</string>
-    <string name="acerca_dial_label">+34 600 000 000</string>
     <string name="acerca_compartir_label">Share app</string>
-    <string name="acerca_compartir_titulo">Share GymProFit</string>
-    <string name="acerca_compartir_texto">Download GymProFit: https://gymprofit.infinityfree.me/login</string>
-    <string name="permiso_contactos_denegado">Contacts permission denied</string>
-    <string name="acerca_autor_stack_label">Java · Spring Boot · Android · React · Python · PostgreSQL · MariaDB</string>
+    <string name="acerca_compartir_texto">I recommend GymProFit for keeping track of your workouts and your food.</string>
 
     <!-- ANADIR ALIMENTO -->
     <string name="anadir_alimento_titulo">Add food</string>
@@ -608,6 +564,7 @@
     <string name="error_duracion_invalida">Enter a duration between 5 and 300 minutes</string>
     <string name="error_series_invalida">Enter between 1 and 10 sets</string>
     <string name="error_reps_invalida">Enter between 1 and 50 reps</string>
+    <string name="error_edad_invalida">Enter your age in years, between 10 and 120</string>
     <string name="error_peso_invalido">Enter your weight in kilos, between 30 and 300</string>
     <string name="error_altura_invalida">Enter your height in centimetres, between 100 and 250</string>
     <string name="error_altura_en_metros">Did you mean %1$d cm? Enter your height in centimetres</string>

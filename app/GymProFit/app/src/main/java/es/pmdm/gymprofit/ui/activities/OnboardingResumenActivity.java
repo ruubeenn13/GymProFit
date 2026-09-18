@@ -16,6 +16,7 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.utils.CalculadoraNutricional;
+import es.pmdm.gymprofit.utils.Numeros;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
 import es.pmdm.gymprofit.utils.UIHelper;
@@ -48,29 +49,41 @@ public class OnboardingResumenActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_onboarding_resumen);
 
-        Bundle extras = getIntent().getExtras();
-
-        calcularYMostrar(extras, prefs);
+        calcularYMostrar(prefs);
 
         findViewById(R.id.btnComenzar).setOnClickListener(v ->
-                guardarEnApiYContinuar(extras, prefs));
+                guardarEnApiYContinuar(prefs));
     }
 
-    // Lee los datos del onboarding recibidos por extras, calcula el resultado
-    // nutricional (calorías, macros, agua), lo guarda en preferencias y lo
-    // muestra en las vistas del resumen.
-    private void calcularYMostrar(Bundle extras, PreferencesManager prefs) {
-        if (extras == null) return;
+    /**
+     * Lee lo contestado en el asistente, calcula calorías, macros y agua, lo
+     * guarda como perfil definitivo y lo pinta en el resumen.
+     *
+     * <p>Los datos salen del borrador persistido y no de los extras del Intent:
+     * así el resumen sale bien aunque el sistema haya matado la app a mitad del
+     * asistente y el usuario lo haya retomado desde el principio de la sesión.
+     */
+    private void calcularYMostrar(PreferencesManager prefs) {
+        double altura = prefs.getBorradorAltura();
+        if (altura <= 0) altura = 170;
 
-        String pesoStr = extras.getString("peso", "70");
-        double altura  = extras.getDouble("altura", 170);
-        int edad       = extras.getInt("edad", 25);
-        String sexo    = extras.getString("sexo", "HOMBRE");
-        String actividad = extras.getString("actividad", CalculadoraNutricional.ACTIVIDAD_MODERADO);
-        String objetivo  = extras.getString("objetivo", CalculadoraNutricional.OBJETIVO_MANTENER_PESO);
-        String nivel     = extras.getString("nivel", "");
+        int edad = prefs.getBorradorEdad();
+        if (edad <= 0) edad = 25;
 
-        double peso = Double.parseDouble(pesoStr.replace(",", "."));
+        String sexo = prefs.getBorradorSexo();
+
+        String actividad = prefs.getBorradorActividad();
+        if (actividad.isEmpty()) actividad = CalculadoraNutricional.ACTIVIDAD_MODERADO;
+
+        String objetivo = prefs.getBorradorObjetivo();
+        if (objetivo.isEmpty()) objetivo = CalculadoraNutricional.OBJETIVO_MANTENER_PESO;
+
+        String nivel = prefs.getBorradorNivel();
+
+        // El paso 3 ya valida y normaliza el peso; aquí se vuelve a comprobar por
+        // si el borrador viniese de una versión anterior o quedara a medias.
+        Double pesoLeido = Numeros.decimal(prefs.getBorradorPeso(), 30, 300);
+        double peso = (pesoLeido != null) ? pesoLeido : 70;
         prefs.savePeso(peso);
         prefs.saveAltura(altura);
         prefs.saveEdad(edad);
@@ -116,10 +129,10 @@ public class OnboardingResumenActivity extends AppCompatActivity {
     // Envía los datos del onboarding a la API mediante PATCH /usuarios/{id}.
     // Si no hay usuario logueado o faltan datos, o si la llamada falla, se
     // guarda igualmente el progreso localmente y se continúa al Home.
-    private void guardarEnApiYContinuar(Bundle extras, PreferencesManager prefs) {
+    private void guardarEnApiYContinuar(PreferencesManager prefs) {
         int usuarioId = prefs.getUsuarioId();
 
-        if (usuarioId == -1 || extras == null) {
+        if (usuarioId == -1) {
             marcarOnboardingCompletado(prefs);
             irAlHome();
             return;
@@ -129,21 +142,19 @@ public class OnboardingResumenActivity extends AppCompatActivity {
             // Cuerpo de escritura como Map; los decimales viajan como BigDecimal.
             Map<String, Object> body = new HashMap<>();
 
-            String emailStr = extras.getString("email", "");
+            String emailStr = prefs.getBorradorEmail();
             if (!emailStr.isEmpty()) body.put("email", emailStr);
 
-            String pesoStr = extras.getString("peso", "");
-            if (!pesoStr.isEmpty()) {
-                body.put("peso", new BigDecimal(pesoStr.replace(",", ".")));
-            }
+            BigDecimal pesoExacto = Numeros.exacto(prefs.getBorradorPeso(), 30, 300);
+            if (pesoExacto != null) body.put("peso", pesoExacto);
 
-            double altura = extras.getDouble("altura", 0);
+            double altura = prefs.getBorradorAltura();
             if (altura > 0) body.put("altura", BigDecimal.valueOf(altura));
 
-            int edad = extras.getInt("edad", 0);
+            int edad = prefs.getBorradorEdad();
             if (edad > 0) body.put("edad", edad);
 
-            String nivel = extras.getString("nivel", "");
+            String nivel = prefs.getBorradorNivel();
             if (!nivel.isEmpty()) body.put("nivelExperiencia", nivel);
 
             body.put("objetivo", prefs.getObjetivo());
@@ -172,10 +183,12 @@ public class OnboardingResumenActivity extends AppCompatActivity {
     }
 
     // Marca el onboarding como completado, tanto de forma global como para el
-    // usuario actual (para no repetirlo tras cerrar sesión y volver a entrar).
+    // usuario actual (para no repetirlo tras cerrar sesión y volver a entrar), y
+    // tira el borrador: los datos ya están en el perfil definitivo.
     private void marcarOnboardingCompletado(PreferencesManager prefs) {
         prefs.setOnboardingCompletado(true);
         prefs.setOnboardingCompletadoParaUsuario(prefs.getUsername());
+        prefs.limpiarBorradorOnboarding();
     }
 
     // Navega al Home limpiando el back stack para evitar volver al onboarding.

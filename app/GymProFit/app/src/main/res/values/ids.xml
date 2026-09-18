@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Identificadores que no pertenecen a ningún layout: se usan como clave de
+  View.setTag(int, Object), que exige un id de recurso para no pisar los tags
+  de otras librerías.
+-->
+<resources>
+    <!-- Guarda el padding que traía escrito el layout antes de sumarle los insets
+         del sistema. Ver InsetsUtils. -->
+    <item name="tag_padding_original" type="id"/>
+</resources>

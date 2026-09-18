@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import es.pmdm.gymprofit.utils.AnimUtils;
+import es.pmdm.gymprofit.utils.InsetsUtils;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 
 // ============================================================
@@ -36,7 +37,6 @@ public class GymProFitApp extends Application {
     private static final Set<String> PANTALLAS_MODAL = new HashSet<>(Arrays.asList(
             "CrearRutinaActivity",
             "RegistrarSesionActivity",
-            "RegistrarMedicionActivity",
             "AnadirEjerciciosActivity"));
 
     @Override
@@ -121,9 +121,9 @@ public class GymProFitApp extends Application {
 
         ((android.view.ViewGroup) raiz).addView(distintivo, lp);
 
-        // La app todavía no gestiona insets (está en el plan de trabajo), así que el
-        // distintivo se coloca él mismo bajo la barra de estado en lugar de quedar
-        // tapado por ella.
+        // El distintivo cuelga del decor, no del contenido, así que el padding que
+        // InsetsUtils aplica a la raíz del layout no le afecta: se coloca él mismo
+        // bajo la barra de estado.
         androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(distintivo, (v, insets) -> {
             int arriba = insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.statusBars()).top;
             android.widget.FrameLayout.LayoutParams p =
@@ -142,6 +142,11 @@ public class GymProFitApp extends Application {
     private void registrarTransicionesGlobales() {
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override public void onActivityCreated(@NonNull Activity a, @Nullable Bundle s) {
+                // Insets del sistema: con targetSdk 36 Android dibuja de borde a borde
+                // y hay que apartar el contenido de las barras a mano. Va aquí y no en
+                // BaseActivity porque 23 de las 35 Activities no la extienden.
+                InsetsUtils.aplicar(a);
+
                 if (PANTALLAS_MODAL.contains(a.getClass().getSimpleName())) {
                     AnimUtils.aplicarModal(a);
                 } else {

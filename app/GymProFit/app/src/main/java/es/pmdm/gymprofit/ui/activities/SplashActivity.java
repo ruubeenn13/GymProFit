@@ -79,18 +79,34 @@ public class SplashActivity extends AppCompatActivity {
             long tiempoRestante = Math.max(0, SPLASH_MIN_DURATION - tiempoTranscurrido);
 
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                Intent intent;
-
-                if (tieneSesion) {
-                    intent = new Intent(this, MainActivity.class);
-                } else {
-                    intent = new Intent(this, LoginActivity.class);
-                }
-
-                startActivity(intent);
-
+                startActivity(new Intent(this, siguientePantalla()));
                 finish();
             }, tiempoRestante);
         });
+    }
+
+    /**
+     * Decide a qué pantalla se entra: login, onboarding o la app.
+     *
+     * <p>Antes solo se miraba si había sesión guardada, así que un usuario que
+     * cerraba la app a mitad del onboarding —o que lo abandonaba tras registrarse—
+     * entraba directo a la app sin nivel, objetivo ni calorías calculadas, y no
+     * volvía a ver el asistente nunca: la única vía de entrada al onboarding son
+     * el login y el registro, que ya había pasado. Con el flag comprobado aquí, el
+     * asistente se retoma en el siguiente arranque.
+     *
+     * @return la Activity a la que hay que ir.
+     */
+    private Class<?> siguientePantalla() {
+        if (!prefsManager.haySesion()) return LoginActivity.class;
+
+        // Los invitados no tienen onboarding: entran a mirar la app sin configurar nada.
+        if (prefsManager.isGuest()) return MainActivity.class;
+
+        String usuario = prefsManager.getUsername();
+        boolean completado = usuario != null && !usuario.isEmpty()
+                && prefsManager.isOnboardingCompletadoParaUsuario(usuario);
+
+        return completado ? MainActivity.class : Onboarding1Activity.class;
     }
 }

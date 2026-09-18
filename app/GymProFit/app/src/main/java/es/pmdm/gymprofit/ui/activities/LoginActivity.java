@@ -210,7 +210,10 @@ public class LoginActivity extends AppCompatActivity {
     // Navega a HomeActivity si el onboarding ya está completo, o al primer
     // paso del onboarding en caso contrario.
     private void navegarTrasLogin() {
-        if (prefsManager.isOnboardingCompletado()) {
+        // Se mira el flag POR USUARIO, no el global: en un movil compartido, que
+        // una persona hubiera terminado el asistente le saltaba el onboarding a la
+        // siguiente que iniciara sesion, y entraba sin calorias ni objetivo.
+        if (prefsManager.isOnboardingCompletadoParaUsuario(prefsManager.getUsername())) {
             startActivity(new Intent(this, MainActivity.class)
                     .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         } else {

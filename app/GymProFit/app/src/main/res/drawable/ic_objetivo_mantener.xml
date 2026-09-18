@@ -1,0 +1,20 @@
+<!--
+  ic_objetivo_mantener — Objetivo MANTENER_PESO del onboarding.
+
+  Balanza de dos platos en equilibrio: el travesaño queda horizontal, que es
+  justo lo que significa mantenerse (comes lo mismo que gastas).
+
+  El color NO vive aquí: la tarjeta aplica app:tint con
+  ?attr/colorOnSurfaceVariant en reposo y ?attr/colorPrimary al seleccionar.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="24" android:viewportHeight="24">
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="?attr/colorOnSurfaceVariant"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M12,4 v16 M7,20 h10 M4,8 h16 M4,8 l-2,5 h4 z M20,8 l-2,5 h4 z"/>
+</vector>

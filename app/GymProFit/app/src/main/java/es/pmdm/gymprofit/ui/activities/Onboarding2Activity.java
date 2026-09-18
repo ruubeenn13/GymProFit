@@ -11,6 +11,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
+import es.pmdm.gymprofit.utils.Numeros;
 
 // ============================================================
 // Onboarding2Activity — segundo paso del asistente de onboarding.
@@ -27,6 +28,7 @@ public class Onboarding2Activity extends AppCompatActivity {
 
     private TextInputEditText etNombre, etEmail, etEdad;
     private ChipGroup chipGroupSexo;
+    private PreferencesManager prefs;
 
     // Aplica tema/idioma, infla el layout, precarga los datos recibidos
     // y configura los botones de siguiente/anterior/saltar.
@@ -34,7 +36,7 @@ public class Onboarding2Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        PreferencesManager prefs = new PreferencesManager(this);
+        prefs = new PreferencesManager(this);
         prefs.applyTheme();
 
         setContentView(R.layout.activity_onboarding2);
@@ -44,50 +46,60 @@ public class Onboarding2Activity extends AppCompatActivity {
         etEdad = findViewById(R.id.etEdadOnboarding);
         chipGroupSexo = findViewById(R.id.chipGroupSexo);
 
-        Bundle extras = getIntent().getExtras();
-
-        if (extras != null) {
-            if (extras.getString("username") != null) {
-                etNombre.setText(extras.getString("username"));
-            }
-            if (extras.getString("email") != null) {
-                etEmail.setText(extras.getString("email"));
-            }
-        }
+        precargarBorrador();
 
         findViewById(R.id.btnSiguiente2).setOnClickListener(v -> {
-            if (etNombre.getText().toString().trim().isEmpty()) {
-                UIHelper.mostrarToastError(this, getString(R.string.error_campo_requerido));
+            String nombre = etNombre.getText().toString().trim();
+            if (nombre.isEmpty()) {
+                UIHelper.marcarError(etNombre, getString(R.string.error_campo_requerido));
                 etNombre.requestFocus();
                 return;
             }
 
-            Intent intent = new Intent(this, Onboarding3Activity.class);
-
-            if (extras != null) {
-                intent.putExtras(extras);
-            }
-
-            intent.putExtra("nombre", etNombre.getText().toString().trim());
-            intent.putExtra("email", etEmail.getText().toString().trim());
-
-            String edadStr = etEdad.getText().toString().trim();
-            if (!edadStr.isEmpty()) {
-                intent.putExtra("edad", Integer.parseInt(edadStr));
+            // La edad es opcional, pero si se escribe tiene que ser creible: entra
+            // en el calculo del metabolismo basal. Ademas, un numero larguisimo
+            // reventaba Integer.parseInt y cerraba la app.
+            String edadTexto = etEdad.getText().toString().trim();
+            int edad = 0;
+            if (!edadTexto.isEmpty()) {
+                Integer leida = Numeros.entero(edadTexto, 10, 120);
+                if (leida == null) {
+                    UIHelper.marcarError(etEdad, getString(R.string.error_edad_invalida));
+                    etEdad.requestFocus();
+                    return;
+                }
+                edad = leida;
             }
 
             String sexo = (chipGroupSexo.getCheckedChipId() == R.id.chipMujer) ? "MUJER" : "HOMBRE";
-            intent.putExtra("sexo", sexo);
 
-            startActivity(intent);
+            prefs.guardarBorradorDatos(nombre, etEmail.getText().toString().trim(), edad, sexo);
+            startActivity(new Intent(this, Onboarding3Activity.class));
         });
 
         findViewById(R.id.btnAnterior2).setOnClickListener(v -> finish());
         findViewById(R.id.tvSaltar2).setOnClickListener(v -> saltarAlHome());
     }
 
-    // Salta el onboarding y navega directo a HomeActivity, limpiando el back stack.
+    // Devuelve a los campos lo que el usuario ya habia contestado, venga de la
+    // pantalla de acceso o de una sesion anterior del asistente.
+    private void precargarBorrador() {
+        etNombre.setText(prefs.getBorradorNombre());
+        etEmail.setText(prefs.getBorradorEmail());
+
+        int edad = prefs.getBorradorEdad();
+        if (edad > 0) etEdad.setText(String.valueOf(edad));
+
+        if ("MUJER".equals(prefs.getBorradorSexo())) chipGroupSexo.check(R.id.chipMujer);
+    }
+
+    // Saltar el onboarding es una DECISION del usuario, no un abandono: se marca
+    // como visto para no volver a pedirselo en cada arranque (el splash lo
+    // reabriria si no) y se tira el borrador, que ya no hay nada que reanudar.
     private void saltarAlHome() {
+        prefs.setOnboardingCompletado(true);
+        prefs.setOnboardingCompletadoParaUsuario(prefs.getUsername());
+        prefs.limpiarBorradorOnboarding();
         startActivity(new Intent(this, MainActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         finish();

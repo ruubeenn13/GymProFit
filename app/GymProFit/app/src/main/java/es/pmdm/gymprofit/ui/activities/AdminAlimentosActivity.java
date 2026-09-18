@@ -14,6 +14,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.chip.ChipGroup;
 
 import java.math.BigDecimal;
@@ -66,7 +67,7 @@ public class AdminAlimentosActivity extends BaseActivity {
         adapter = new AdminAlimentoAdapter(lista, new AdminAlimentoAdapter.OnAccionListener() {
             @Override
             public void onToggleActivo(Alimento a, int pos) {
-                toggleActivo(a, pos);
+                confirmarToggle(a, pos);
             }
             @Override
             public void onEditar(Alimento a, int pos) {
@@ -192,6 +193,30 @@ public class AdminAlimentosActivity extends BaseActivity {
     }
 
     // Activa o desactiva un alimento y actualiza el item en la lista sin recargar todo
+    /**
+     * Pide confirmación antes de cambiar el estado de el alimento en el catálogo.
+     *
+     * <p>Es una acción sobre el catálogo GLOBAL: al desactivar, el alimento desaparece
+     * para todos los usuarios de la app, no solo para el administrador que pulsa. El
+     * botón está en la propia fila de la lista, así que un toque accidental al
+     * desplazarse bastaba para retirarlo sin ningún aviso.
+     *
+     * @param a elemento sobre el que se ha pulsado.
+     * @param pos posición en la lista, para refrescar solo esa fila.
+     */
+    private void confirmarToggle(Alimento a, int pos) {
+        int mensaje = a.isActivo()
+                ? R.string.admin_toggle_alimento_desactivar
+                : R.string.admin_toggle_alimento_activar;
+
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.admin_toggle_alimento_titulo)
+                .setMessage(mensaje)
+                .setPositiveButton(android.R.string.ok, (d, w) -> toggleActivo(a, pos))
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
     private void toggleActivo(Alimento a, int pos) {
         ApiCallback<Void> cb = new ApiCallback<Void>() {
             @Override

@@ -20,7 +20,6 @@
     <string name="login_error_invitado">No se pudo entrar como invitado</string>
     <string name="error_solo_usuarios_registrados">Debes crear una cuenta para acceder a esta funcionalidad</string>
     <string name="error_campos_vacios">Por favor, completa todos los campos</string>
-    <string name="registro_proximamente">Registro disponible próximamente</string>
     <string name="registro_titulo">Crear cuenta</string>
     <string name="registro_crear_cuenta">Crear cuenta</string>
     <string name="registro_exito">¡Cuenta creada correctamente!</string>
@@ -146,7 +145,6 @@
     <string name="nutricion_merienda">Merienda</string>
     <string name="nutricion_cena">Cena</string>
     <string name="nutricion_agregar">Agregar comida</string>
-    <string name="nutricion_proximamente">Función disponible próximamente</string>
     <string name="comida_eliminar_titulo">Confirmar eliminación</string>
     <string name="comida_eliminar_confirmar">Eliminar alimento de la comida</string>
     <string name="comida_sin_alimentos">Sin alimentos registrados</string>
@@ -172,7 +170,6 @@
     <string name="perfil_edad">Edad</string>
     <string name="perfil_objetivo">Objetivo</string>
     <string name="perfil_editar">Editar información</string>
-    <string name="perfil_editar_proximamente">Edición disponible próximamente</string>
     <string name="perfil_sin_datos">No registrado</string>
     <string name="perfil_anos">%d años</string>
     <string name="perfil_kg">%s kg</string>
@@ -258,21 +255,6 @@
     <!-- MEDICIONES -->
     <string name="mediciones_titulo">Mediciones corporales</string>
     <string name="mediciones_sin_mediciones">No hay mediciones registradas</string>
-    <string name="mediciones_registrar">Nueva medición</string>
-    <string name="mediciones_peso">Peso (kg) *</string>
-    <string name="mediciones_altura">Altura (cm)</string>
-    <string name="mediciones_grasa">Grasa corporal (%)</string>
-    <string name="mediciones_musculo">Masa muscular (kg)</string>
-    <string name="mediciones_cintura">Cintura (cm)</string>
-    <string name="mediciones_pecho">Pecho (cm)</string>
-    <string name="mediciones_brazos">Brazos (cm)</string>
-    <string name="mediciones_piernas">Piernas (cm)</string>
-    <string name="mediciones_notas">Notas (opcional)</string>
-    <string name="mediciones_guardar">Guardar medición</string>
-    <string name="mediciones_exito">Medición registrada correctamente</string>
-    <string name="mediciones_editar">Editar medición</string>
-    <string name="mediciones_editar_guardar">Actualizar medición</string>
-    <string name="mediciones_editar_exito">Medición actualizada correctamente</string>
     <string name="mediciones_eliminar">Eliminar medición</string>
     <string name="mediciones_confirmar_eliminar">¿Eliminar esta medición?</string>
     <string name="medicion_anadir">Añadir</string>
@@ -365,6 +347,9 @@
     <string name="admin_toggle_ejercicio_titulo">Cambiar estado</string>
     <string name="admin_toggle_ejercicio_activar">¿Activar este ejercicio?</string>
     <string name="admin_toggle_ejercicio_desactivar">¿Desactivar este ejercicio?</string>
+    <string name="admin_toggle_alimento_titulo">Cambiar estado</string>
+    <string name="admin_toggle_alimento_activar">¿Activar este alimento?</string>
+    <string name="admin_toggle_alimento_desactivar">¿Desactivar este alimento? Dejará de aparecer en el buscador de todos los usuarios.</string>
     <string name="admin_editar_rutina_titulo">Editar rutina</string>
     <string name="admin_editar_ejercicio_titulo">Editar ejercicio</string>
     <string name="admin_campo_nombre">Nombre *</string>
@@ -502,13 +487,10 @@
 
     <!-- NOTIFICACIONES -->
     <string name="notif_canal_sesiones">Sesiones</string>
-    <string name="notif_canal_mediciones">Mediciones</string>
     <string name="notif_canal_rutinas">Rutinas</string>
     <string name="notif_canal_logros">Logros</string>
     <string name="notif_sesion_titulo">¡Sesión completada!</string>
     <string name="notif_sesion_texto">%1$d min · %2$d kcal quemadas</string>
-    <string name="notif_medicion_titulo">Medición registrada</string>
-    <string name="notif_medicion_texto">Tu medición corporal ha sido guardada</string>
     <string name="notif_rutina_titulo">¡Rutina creada!</string>
     <string name="notif_rutina_texto">%s está lista para usar</string>
     <string name="notif_logros_titulo">¡Nuevo logro desbloqueado!</string>
@@ -519,7 +501,6 @@
     <string name="detalle_ejercicio_descripcion">Descripción</string>
     <string name="detalle_ejercicio_instrucciones">Instrucciones</string>
     <string name="detalle_ejercicio_demostracion">Demostración</string>
-    <string name="detalle_ejercicio_video_pronto">Vídeo próximamente</string>
     <string name="detalle_ejercicio_musculo">Músculo</string>
     <string name="detalle_ejercicio_nivel">Nivel</string>
     <string name="detalle_ejercicio_calorias">Calorías</string>
@@ -536,7 +517,7 @@
     <!-- ACERCA DE -->
     <string name="acerca_btn">Sobre GymProFit</string>
     <string name="acerca_app_titulo">Sobre la aplicación</string>
-    <string name="acerca_app_descripcion">GymProFit es una aplicación móvil de fitness personal diseñada para centralizar el seguimiento de tu vida deportiva. Desde la creación de rutinas personalizadas hasta el control nutricional diario, pasando por el registro de mediciones corporales y el historial completo de sesiones de entrenamiento, todo en un solo lugar.\n\nDesarrollada como Trabajo Final de Ciclo del CFGS DAM, con una API REST en Spring Boot, base de datos MariaDB y cliente Android nativo en Java. Autenticación JWT, documentación Swagger, migraciones con Flyway y consultas avanzadas con jOOQ.</string>
+    <string name="acerca_app_descripcion">GymProFit reúne en una sola app todo el seguimiento de tu entrenamiento: rutinas hechas a tu medida, control de lo que comes cada día con sus calorías y macros, mediciones corporales y el historial completo de tus sesiones.</string>
     <string name="acerca_funcionalidades">Funcionalidades</string>
     <string name="acerca_feat_1">Rutinas de entrenamiento personalizadas por grupos musculares y nivel de dificultad</string>
     <string name="acerca_feat_2">Registro de sesiones de entrenamiento con valoración, notas y progreso de ejercicios</string>
@@ -544,36 +525,11 @@
     <string name="acerca_feat_4">Historial de mediciones corporales (peso, grasa, músculo, perímetros)</string>
     <string name="acerca_feat_5">Sistema de logros desbloqueables y estadísticas personales de entrenamiento</string>
     <string name="acerca_feat_6">Panel de administración para gestión de usuarios, rutinas, ejercicios y alimentos</string>
-    <string name="acerca_tecnologia">Tecnología</string>
-    <string name="acerca_tech_valor">Spring Boot 3 · MariaDB · Android Java · JWT Auth · Flyway · Swagger · jOOQ · MapStruct</string>
-    <string name="acerca_autor_titulo">Desarrollador</string>
-    <string name="acerca_autor_nombre">Rubén Juan Candela</string>
-    <string name="acerca_autor_rol">Desarrollador · 2ºDAM</string>
-    <string name="acerca_autor_centro">IES Macià Abela, Crevillente</string>
-    <string name="acerca_autor_bio">Estudiante de 2ºDAM con experiencia práctica en desarrollo full-stack y sistemas de redes. Apasionado por construir software que resuelve problemas reales, desde el diseño del modelo de datos hasta el despliegue. Alto ownership y capacidad para adueñarme de problemas ambiguos de principio a fin, iterando rápido sin sacrificar calidad.</string>
-    <string name="acerca_formacion">Formación</string>
-    <string name="acerca_form1_titulo">CFGS — Desarrollo de Aplicaciones Multiplataforma</string>
-    <string name="acerca_form1_lugar">IES Macià Abela, Crevillente · 2024–2026 (en curso)</string>
-    <string name="acerca_form2_titulo">CFGM — Sistemas Microinformáticos y Redes</string>
-    <string name="acerca_form2_lugar">IES Macià Abela, Crevillente · 2022–2024</string>
-    <string name="acerca_experiencia">Experiencia</string>
-    <string name="acerca_exp1_titulo">Desarrollador Full Stack · FCT 2026</string>
-    <string name="acerca_exp1_lugar">Grupo Enercoop, Crevillente · 400 horas</string>
-    <string name="acerca_exp1_desc">Sistema de gestión de turnos presenciales desde cero: React + FastAPI + PostgreSQL (Supabase). Arquitectura multirol, WebSockets en tiempo real, módulo de estadísticas y sistema multiidioma.</string>
-    <string name="acerca_exp2_titulo">Desarrollador Web · FCT 2025</string>
-    <string name="acerca_exp2_lugar">La Marmita Para Llevar, Crevillente · 100 horas</string>
-    <string name="acerca_exp2_desc">Diseño, desarrollo y despliegue completo de web corporativa con HTML, CSS y JavaScript.</string>
-    <string name="acerca_exp3_titulo">Técnico de Sistemas/Redes · FCT 2024</string>
-    <string name="acerca_exp3_lugar">Crevinet, Crevillente · 300 horas</string>
-    <string name="acerca_exp3_desc">Instalación de infraestructura de fibra óptica FTTH y apoyo en mantenimiento y despliegue de red en entornos técnicos reales.</string>
+    <string name="acerca_contacto_titulo">Contacto</string>
+    <string name="acerca_contacto_texto">¿Tienes una duda, has visto un fallo o se te ocurre algo que mejoraría la app? Escríbenos.</string>
     <string name="acerca_autor_email_label">rubenjuancandela06@gmail.com</string>
-    <string name="acerca_web_label">gymprofit.infinityfree.me</string>
-    <string name="acerca_dial_label">+34 600 000 000</string>
     <string name="acerca_compartir_label">Compartir app</string>
-    <string name="acerca_compartir_titulo">Compartir GymProFit</string>
-    <string name="acerca_compartir_texto">Descarga GymProFit: https://gymprofit.infinityfree.me/login</string>
-    <string name="permiso_contactos_denegado">Permiso de contactos denegado</string>
-    <string name="acerca_autor_stack_label">Java · Spring Boot · Android · React · Python · PostgreSQL · MariaDB</string>
+    <string name="acerca_compartir_texto">Te recomiendo GymProFit para llevar tus entrenamientos y tu alimentación.</string>
 
     <!-- ANADIR ALIMENTO -->
     <string name="anadir_alimento_titulo">Añadir alimento</string>
@@ -607,6 +563,7 @@
     <string name="error_duracion_invalida">Pon una duración de entre 5 y 300 minutos</string>
     <string name="error_series_invalida">Pon entre 1 y 10 series</string>
     <string name="error_reps_invalida">Pon entre 1 y 50 repeticiones</string>
+    <string name="error_edad_invalida">Pon tu edad en años, entre 10 y 120</string>
     <string name="error_peso_invalido">Pon tu peso en kilos, entre 30 y 300</string>
     <string name="error_altura_invalida">Pon tu altura en centímetros, entre 100 y 250</string>
     <string name="error_altura_en_metros">¿Querías decir %1$d cm? Escribe la altura en centímetros</string>

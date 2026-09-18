@@ -8,6 +8,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
@@ -60,7 +61,7 @@ public class AdminRutinasActivity extends BaseActivity {
         adapter = new AdminRutinaAdapter(lista, new AdminRutinaAdapter.OnAccionListener() {
             @Override
             public void onToggleActiva(Rutina r, int pos) {
-                toggleActiva(r, pos);
+                confirmarToggle(r, pos);
             }
             @Override
             public void onEditar(Rutina r, int pos) {
@@ -153,6 +154,30 @@ public class AdminRutinasActivity extends BaseActivity {
     }
 
     // Activa o desactiva una rutina según su estado actual y actualiza el item en la lista
+    /**
+     * Pide confirmación antes de cambiar el estado de la rutina en el catálogo.
+     *
+     * <p>Es una acción sobre el catálogo GLOBAL: al desactivar, la rutina desaparece
+     * para todos los usuarios de la app, no solo para el administrador que pulsa. El
+     * botón está en la propia fila de la lista, así que un toque accidental al
+     * desplazarse bastaba para retirarlo sin ningún aviso.
+     *
+     * @param r elemento sobre el que se ha pulsado.
+     * @param pos posición en la lista, para refrescar solo esa fila.
+     */
+    private void confirmarToggle(Rutina r, int pos) {
+        int mensaje = r.isActiva()
+                ? R.string.admin_toggle_rutina_desactivar
+                : R.string.admin_toggle_rutina_activar;
+
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.admin_toggle_rutina_titulo)
+                .setMessage(mensaje)
+                .setPositiveButton(android.R.string.ok, (d, w) -> toggleActiva(r, pos))
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
     private void toggleActiva(Rutina r, int pos) {
         ApiCallback<Void> cb = new ApiCallback<Void>() {
             @Override

@@ -27,7 +27,6 @@ public class NotificationHelper {
 
     // IDs de los distintos canales de notificación de la app.
     private static final String CANAL_SESIONES   = "1";
-    private static final String CANAL_MEDICIONES  = "2";
     private static final String CANAL_RUTINAS     = "3";
     private static final String CANAL_LOGROS      = "4";
     private static final String CANAL_PUSH        = "5";
@@ -47,23 +46,6 @@ public class NotificationHelper {
         builder.setContentIntent(pending);
 
         enviar(ctx, CANAL_SESIONES, ctx.getString(R.string.notif_canal_sesiones), 1, builder);
-    }
-
-    /** Notificación simple al guardar una medición corporal. */
-    public static void notificarMedicionGuardada(Context ctx) {
-        // 1.- Crear la notificación con sus propiedades
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(ctx, CANAL_MEDICIONES);
-        builder.setSmallIcon(android.R.drawable.ic_dialog_info);
-        builder.setContentTitle(ctx.getString(R.string.notif_medicion_titulo));
-        builder.setContentText(ctx.getString(R.string.notif_medicion_texto));
-        builder.setPriority(NotificationCompat.PRIORITY_MAX);
-        builder.setAutoCancel(true);
-
-        Intent intent = new Intent(ctx, MedicionesActivity.class);
-        PendingIntent pending = PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-        builder.setContentIntent(pending);
-
-        enviar(ctx, CANAL_MEDICIONES, ctx.getString(R.string.notif_canal_mediciones), 2, builder);
     }
 
     /** Notificación simple al crear una rutina. */

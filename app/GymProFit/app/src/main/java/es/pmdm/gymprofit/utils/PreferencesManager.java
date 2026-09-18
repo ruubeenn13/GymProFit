@@ -42,6 +42,19 @@ public class PreferencesManager {
     private static final String KEY_ALTURA = "usuario_altura";
     private static final String KEY_EDAD   = "usuario_edad";
 
+    // Borrador del onboarding: lo que el usuario lleva contestado mientras el
+    // asistente sigue a medias. Se borra al terminarlo o al saltarlo, y es
+    // distinto de las claves de arriba, que son ya el perfil definitivo.
+    private static final String KEY_OB_NOMBRE    = "ob_nombre";
+    private static final String KEY_OB_EMAIL     = "ob_email";
+    private static final String KEY_OB_EDAD      = "ob_edad";
+    private static final String KEY_OB_SEXO      = "ob_sexo";
+    private static final String KEY_OB_PESO      = "ob_peso";
+    private static final String KEY_OB_ALTURA    = "ob_altura";
+    private static final String KEY_OB_ACTIVIDAD = "ob_actividad";
+    private static final String KEY_OB_OBJETIVO  = "ob_objetivo";
+    private static final String KEY_OB_NIVEL     = "ob_nivel";
+
     private SharedPreferences prefs;
     private SharedPreferences.Editor editor;
     // Preferencias cifradas donde se guardan token y refresh token (nunca en claro).
@@ -172,6 +185,75 @@ public class PreferencesManager {
     public boolean isOnboardingCompletadoParaUsuario(String username) {
         if (username == null || username.isEmpty()) return false;
         return prefs.getBoolean("onboarding_done_" + username, false);
+    }
+
+    // ------------------------------------------------------------------
+    // Borrador del onboarding
+    //
+    // El asistente tiene seis pantallas y antes cada una arrastraba en los
+    // extras del Intent todo lo contestado hasta entonces. Si el sistema mataba
+    // la app a mitad (una llamada, quedarse sin memoria), esos extras se perdian
+    // y no habia forma de retomarlo: se empezaba de cero. Persistiendo cada paso
+    // al avanzar, el asistente se reanuda con lo ya contestado.
+    // ------------------------------------------------------------------
+
+    /**
+     * Guarda las respuestas del paso de datos personales.
+     *
+     * @param edad en anios, o 0 si el usuario lo dejo en blanco (es opcional).
+     */
+    public void guardarBorradorDatos(String nombre, String email, int edad, String sexo) {
+        editor.putString(KEY_OB_NOMBRE, nombre);
+        editor.putString(KEY_OB_EMAIL, email);
+        editor.putInt(KEY_OB_EDAD, edad);
+        editor.putString(KEY_OB_SEXO, sexo);
+        editor.apply();
+    }
+
+    /**
+     * Guarda las respuestas del paso fisico.
+     *
+     * @param peso ya normalizado con punto decimal, para no depender del teclado.
+     * @param altura en centimetros.
+     */
+    public void guardarBorradorFisico(String peso, double altura, String actividad) {
+        editor.putString(KEY_OB_PESO, peso);
+        editor.putFloat(KEY_OB_ALTURA, (float) altura);
+        editor.putString(KEY_OB_ACTIVIDAD, actividad);
+        editor.apply();
+    }
+
+    /** Guarda el objetivo elegido en el paso de objetivos. */
+    public void guardarBorradorObjetivo(String objetivo) {
+        editor.putString(KEY_OB_OBJETIVO, objetivo);
+        editor.apply();
+    }
+
+    /** Guarda el nivel de experiencia elegido en el ultimo paso. */
+    public void guardarBorradorNivel(String nivel) {
+        editor.putString(KEY_OB_NIVEL, nivel);
+        editor.apply();
+    }
+
+    public String getBorradorNombre()    { return prefs.getString(KEY_OB_NOMBRE, ""); }
+    public String getBorradorEmail()     { return prefs.getString(KEY_OB_EMAIL, ""); }
+    public int    getBorradorEdad()      { return prefs.getInt(KEY_OB_EDAD, 0); }
+    public String getBorradorSexo()      { return prefs.getString(KEY_OB_SEXO, "HOMBRE"); }
+    public String getBorradorPeso()      { return prefs.getString(KEY_OB_PESO, ""); }
+    public double getBorradorAltura()    { return prefs.getFloat(KEY_OB_ALTURA, 0f); }
+    public String getBorradorActividad() { return prefs.getString(KEY_OB_ACTIVIDAD, ""); }
+    public String getBorradorObjetivo()  { return prefs.getString(KEY_OB_OBJETIVO, ""); }
+    public String getBorradorNivel()     { return prefs.getString(KEY_OB_NIVEL, ""); }
+
+    /**
+     * Tira el borrador. Se llama al terminar el asistente y al saltarlo: en
+     * ambos casos deja de haber nada que reanudar.
+     */
+    public void limpiarBorradorOnboarding() {
+        editor.remove(KEY_OB_NOMBRE).remove(KEY_OB_EMAIL).remove(KEY_OB_EDAD)
+              .remove(KEY_OB_SEXO).remove(KEY_OB_PESO).remove(KEY_OB_ALTURA)
+              .remove(KEY_OB_ACTIVIDAD).remove(KEY_OB_OBJETIVO).remove(KEY_OB_NIVEL);
+        editor.apply();
     }
 
     public void saveRol(String rol) { editor.putString(KEY_ROL, rol); editor.apply(); }

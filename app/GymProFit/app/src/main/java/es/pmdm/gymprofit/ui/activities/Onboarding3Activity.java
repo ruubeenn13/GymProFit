@@ -28,6 +28,7 @@ public class Onboarding3Activity extends AppCompatActivity {
 
     private TextInputEditText etPeso, etAltura;
     private ChipGroup chipGroupActividad;
+    private PreferencesManager prefs;
 
     // Aplica tema/idioma, infla el layout y configura los botones de
     // siguiente/anterior/saltar, validando peso y altura antes de avanzar.
@@ -35,7 +36,7 @@ public class Onboarding3Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        PreferencesManager prefs = new PreferencesManager(this);
+        prefs = new PreferencesManager(this);
         prefs.applyTheme();
 
         setContentView(R.layout.activity_onboarding3);
@@ -44,7 +45,7 @@ public class Onboarding3Activity extends AppCompatActivity {
         etAltura = findViewById(R.id.etAlturaOnboarding);
         chipGroupActividad = findViewById(R.id.chipGroupActividad);
 
-        Bundle extras = getIntent().getExtras();
+        precargarBorrador();
 
         findViewById(R.id.btnSiguiente3).setOnClickListener(v -> {
             String pesoTexto   = etPeso.getText().toString().trim();
@@ -74,17 +75,6 @@ public class Onboarding3Activity extends AppCompatActivity {
                 return;
             }
 
-            Intent intent = new Intent(this, Onboarding4Activity.class);
-
-            if (extras != null) {
-                intent.putExtras(extras);
-            }
-
-            // El peso viaja como texto porque el resumen lo vuelve a parsear; se
-            // manda ya normalizado con punto para que no dependa del teclado.
-            intent.putExtra("peso", String.valueOf(peso));
-            intent.putExtra("altura", altura);
-
             int checkedId = chipGroupActividad.getCheckedChipId();
             String actividad;
 
@@ -98,19 +88,40 @@ public class Onboarding3Activity extends AppCompatActivity {
                 actividad = "MODERADO";
             }
 
-            intent.putExtra("actividad", actividad);
-            startActivity(intent);
+            // El peso se guarda como texto ya normalizado con punto, para que no
+            // dependa de si el teclado ofrecio coma.
+            prefs.guardarBorradorFisico(String.valueOf(peso), altura, actividad);
+            startActivity(new Intent(this, Onboarding4Activity.class));
         });
 
         findViewById(R.id.btnAnterior3).setOnClickListener(v -> finish());
         findViewById(R.id.tvSaltar3).setOnClickListener(v -> saltarAlHome());
     }
 
-    // Salta el onboarding y navega directo a HomeActivity, limpiando el back stack.
+    // Devuelve a los campos el peso, la altura y la actividad ya contestados.
+    private void precargarBorrador() {
+        etPeso.setText(prefs.getBorradorPeso());
+
+        double altura = prefs.getBorradorAltura();
+        if (altura > 0) etAltura.setText(String.valueOf(altura));
+
+        switch (prefs.getBorradorActividad()) {
+            case "SEDENTARIO": chipGroupActividad.check(R.id.chipSedentario); break;
+            case "LIGERO":     chipGroupActividad.check(R.id.chipLigero);     break;
+            case "ACTIVO":     chipGroupActividad.check(R.id.chipActivo);     break;
+            default: break;
+        }
+    }
+
+    // Saltar el onboarding es una DECISION del usuario, no un abandono: se marca
+    // como visto para no volver a pedirselo en cada arranque (el splash lo
+    // reabriria si no) y se tira el borrador, que ya no hay nada que reanudar.
     private void saltarAlHome() {
+        prefs.setOnboardingCompletado(true);
+        prefs.setOnboardingCompletadoParaUsuario(prefs.getUsername());
+        prefs.limpiarBorradorOnboarding();
         startActivity(new Intent(this, MainActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-
         finish();
     }
 }

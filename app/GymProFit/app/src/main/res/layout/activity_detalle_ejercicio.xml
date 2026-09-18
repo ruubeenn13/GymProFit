@@ -96,14 +96,6 @@
                             android:tint="#33000000"
                             android:contentDescription="@null" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:text="@string/detalle_ejercicio_video_pronto"
-                            android:textSize="13sp"
-                            android:textColor="#66000000" />
-
                     </LinearLayout>
 
                     <!-- Demostración del ejercicio (Glide, 2 fotogramas animados);
