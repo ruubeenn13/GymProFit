@@ -374,6 +374,103 @@ que puede tener la app: un cuerpo vacío que quiere llenar.
 
 ---
 
+### 4.8 Bienvenida del onboarding: de plantilla centrada a primera impresión
+
+Auditada a fondo el 2026-09-18 (`activity_onboarding1.xml`, 113 líneas). Es la
+primera pantalla que ve el usuario **dentro** del producto, justo después del
+login, y hoy es la más pobre del asistente.
+
+#### Lo que está roto
+
+**La frase no se sostiene.** `onboarding_bienvenida_titulo` es `"¡Bienvenido a"`:
+abre admiración sin cerrarla y termina en preposición. La línea siguiente
+(`tvBienvenidaNombre`) es el nombre de usuario, así que en pantalla se lee
+**"¡Bienvenido a / prueba!"** — da la bienvenida a la persona como si fuera un
+lugar. El texto se escribió para "Bienvenido a **GymProFit**" y la segunda línea
+se reutilizó para el nombre sin tocar la primera. En inglés pasa igual
+(*"Welcome to / prueba!"*). Además "Bienvenido" en masculino excluye a la mitad
+de los usuarios sin necesidad: aquí no hace falta género.
+
+**La marca desaparece justo donde más importa.** Splash, login, registro y
+Acerca De usan `@drawable/logo` (la "G" de GymProFit, con versión en
+`drawable-night/`). Esta pantalla usa `ic_logo_gym`, una mancuerna de clipart
+tintada con `?attr/colorOnSurface`. El usuario acaba de ver el logo dos veces
+seguidas y la primera pantalla de dentro se lo cambia por un icono de stock. El
+comentario de `ic_logo_gym.xml` dice que se usa "en splash, login y Acerca de":
+no es cierto en ninguna de las tres, solo queda aquí y en `activity_perfil.xml`.
+
+**El indicador de progreso miente.** Dibuja cuatro puntos
+(`activity_onboarding1.xml:88-99`); el asistente tiene cinco pasos más el
+resumen, y las pantallas 2-5 dibujan cinco. El comentario del layout dice
+"paso 1 de 4" y la cabecera del mismo archivo dice "Paso 1 de 5".
+
+**Accesibilidad.** El `contentDescription` del logo es `@string/app_name`, así
+que el lector de pantalla lee "GymProFit" **en mitad** del saludo, cuando el
+logo es decorativo y debería ser nulo. "Saltar" mide 14 sp más 8 dp de padding,
+unos 40 dp de alto: por debajo del mínimo de 48 dp. Y saludo y nombre son dos
+`TextView` sueltos, que se anuncian como dos frases inconexas.
+
+#### Lo que falla como diseño
+
+**Jerarquía invertida.** El saludo genérico va a 34 sp en
+`TextAppearance.GymProFit.Display` (peso 700) y el nombre del usuario —lo único
+personal de la pantalla— a 22 sp en `Headline` (peso 600). Lo impersonal grita y
+lo personal susurra.
+
+**El dibujo no aguanta el tamaño.** `ic_logo_gym` es un glifo pensado para 24 dp
+estirado a 120 dp: se le ven los escalones del trazado y las puntas cuadradas. Va
+en diagonal a 45° y no hay ningún otro elemento diagonal en la pantalla, así que
+no rima con nada. Y no lleva color de marca.
+
+**No es aire, es vacío.** El bloque central usa `gravity="center"` dentro de un
+`layout_weight="1"`, así que el contenido flota en mitad de la pantalla con unos
+600 px muertos encima y 400 debajo. Y **rompe con el resto del asistente**, que
+alinea los títulos arriba a la izquierda: al pulsar "Empezar", toda la
+composición salta de sitio.
+
+**"Saltar" compite con el CTA.** Va en `?attr/colorPrimary`, el naranja de
+acción, aislado en la mitad superior vacía: es lo primero que atrae la mirada. Se
+le está dando el color de acción a la salida.
+
+**El texto no reduce fricción.** "Vamos a personalizar tu experiencia para
+ayudarte a alcanzar tus objetivos fitness" es relleno de plantilla: no dice
+cuánto tarda, qué se va a preguntar ni qué se gana. Una pantalla que cuesta un
+toque y no informa no se paga sola.
+
+**Entra de golpe.** El splash tiene un fundido de 800 ms; esta pantalla aparece
+seca.
+
+#### Nuevo diseño (decidido con el usuario el 2026-09-18)
+
+**Alcance: rediseño completo.** Los fallos de jerarquía, composición y color no
+se arreglan sin tocar la estructura.
+
+**Composición** alineada arriba a la izquierda, igual que los pasos 2-5, para que
+al avanzar no salte nada. Se acaba el centrado vertical.
+
+**Marca:** el logo real (`@drawable/logo`), pero como cabecera a 40-48 dp, no
+como protagonista a 120 dp. La mancuerna `ic_logo_gym` se retira de aquí.
+
+**Jerarquía invertida:** el nombre del usuario pasa a ser el titular, a 34 sp
+`Display`, dentro de una fórmula **sin género** ("Hola, *nombre*"), que de paso
+arregla la frase rota. Encima, un antetítulo pequeño en gris.
+
+**Mensaje de expectativa concreta**, no promesa: cuántos pasos, qué se pregunta y
+cuánto tarda. Algo como "Cuatro preguntas y calculamos tus calorías y tus macros.
+Menos de un minuto." Debajo, la lista de lo que se va a pedir (datos, medidas,
+objetivo y nivel) como fila discreta, para que no haya sorpresas.
+
+**"Saltar"** pasa a gris terciario (`?attr/colorOnSurfaceVariant`) y a un área
+táctil de 48 dp. Deja de llevar el color de acción.
+
+**Progreso:** cinco puntos, coherente con el resto del asistente.
+
+**Movimiento:** entrada escalonada corta (logo, titular, texto, botón),
+respetando la preferencia de animaciones reducidas del sistema.
+
+**Accesibilidad:** `contentDescription` nulo en el logo, saludo y nombre en un
+solo nodo de texto, y el titular marcado como encabezado.
+
 ## 5. Hallazgos por zona
 
 97 hallazgos con archivo y línea. Los marcados como CRÍTICO bloquean o confunden
