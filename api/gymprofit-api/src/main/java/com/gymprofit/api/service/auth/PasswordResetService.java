@@ -25,8 +25,14 @@ import java.util.Optional;
 // canjea junto con la contraseña nueva. Entre medias, tres reglas que no son
 // opcionales:
 //
-//  · Pedir un código responde SIEMPRE lo mismo, exista la cuenta o no. Si el
-//    mensaje cambiara, el endpoint sería un comprobador de quién está registrado.
+//  · El CUERPO de la respuesta al pedir un código es siempre el mismo, exista la
+//    cuenta o no. Lo que no es igual es el COSTE: si la cuenta no existe se vuelve
+//    pronto y no se paga ni el hash del código ni el encolado del correo, así que
+//    el tiempo de respuesta sí distingue los dos casos. No se compensa con trabajo
+//    falso, y el motivo está en DEC-028: POST /auth/register ya dice en claro «el
+//    username X ya está en uso» y «el email X ya está en uso», de modo que quemar
+//    CPU en cada intento fallido aquí compraría una propiedad que el registro
+//    regala igualmente.
 //  · El código se guarda hasheado y caduca pronto. Mientras vive es, de hecho, una
 //    contraseña alternativa esperando en una bandeja de entrada.
 //  · Los intentos se cuentan. Seis dígitos sin límite de intentos se agotan a
@@ -57,9 +63,17 @@ public class PasswordResetService implements IPasswordResetService {
     /**
      * Emite un código de recuperación y lo manda al correo de la cuenta.
      * <p>
-     * No devuelve nada ni lanza nada cuando la cuenta no existe o está desactivada:
-     * el controlador responde siempre igual. Es deliberado, para no convertir esto en
-     * una forma de averiguar qué usuarios o correos están dados de alta.
+     * No devuelve nada ni lanza nada cuando la cuenta no existe, está desactivada o no
+     * tiene correo: el controlador responde lo mismo en los cuatro casos. Ese cuerpo
+     * uniforme es deliberado y se mantiene.
+     * <p>
+     * <strong>Lo que ese cuerpo uniforme NO consigue es ocultar qué cuentas existen.</strong>
+     * Las ramas que vuelven pronto se saltan el hash del código y el encolado del correo,
+     * y esa diferencia de tiempo se mide desde fuera. Queda así a propósito: la enumeración
+     * de cuentas ya está abierta por {@code POST /auth/register}, que responde en texto
+     * plano «el username X ya está en uso» y «el email X ya está en uso», y comprar aquí
+     * una propiedad que allí se regala solo costaría CPU en cada intento fallido. Ver
+     * DEC-028 para las condiciones en las que esto se revisa.
      *
      * @param identificador nombre de usuario o correo tecleado por quien pide el código.
      */
@@ -101,6 +115,10 @@ public class PasswordResetService implements IPasswordResetService {
         registro.setIntentos(0);
         codigoRepository.save(registro);
 
+        // Vuelve enseguida: la entrega ocurre en el pool de correo, no en este hilo. El
+        // código se le pasa ya generado y NO se relee de la tabla, porque esta transacción
+        // puede no haber confirmado todavía cuando la tarea arranque. Si el envío falla,
+        // el fallo queda en el log del otro hilo: aquí ya no hay a quién contárselo.
         emailService.enviarCodigoRecuperacion(usuario, codigo, MINUTOS_VALIDEZ);
         logger.info("Código de recuperación emitido para el usuario id={}", usuario.getId());
     }

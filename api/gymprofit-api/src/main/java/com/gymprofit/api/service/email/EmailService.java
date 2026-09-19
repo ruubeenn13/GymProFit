@@ -2,6 +2,7 @@ package com.gymprofit.api.service.email;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gymprofit.api.config.CorreoAsyncConfig;
 import com.gymprofit.api.entity.Usuario;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClient;
@@ -44,6 +46,13 @@ import java.util.regex.Pattern;
 //
 // Fuera de prod —dev, ci— no hace falta cuenta de correo: sin clave de API el código se
 // entrega en un fichero local (ver entregarSinApi), nunca en el log.
+//
+// El envío es ASÍNCRONO, en el pool acotado de CorreoAsyncConfig. Entregar es una llamada
+// HTTP a un tercero y antes se hacía dentro de la petición: con Brevo lento, los hilos de
+// Tomcat se quedaban esperando y en una instancia de 512 MB eso tumba la API entera, no
+// solo el correo. La contrapartida es que ningún fallo de envío puede llegar ya a una
+// respuesta: el log es la única señal, y por eso los errores de aquí son ERROR y llevan
+// el id del usuario afectado.
 // ============================================================
 @Service
 @RequiredArgsConstructor
@@ -136,21 +145,30 @@ public class EmailService implements IEmailService {
     }
 
     /**
-     * Envía por correo el código de recuperación de contraseña.
+     * Envía por correo el código de recuperación de contraseña, fuera del hilo que llama.
      * <p>
      * El código va también en el asunto: en un aviso de móvil, un OTP escondido dentro
      * del cuerpo obliga a abrir el correo para leer seis dígitos.
      * <p>
-     * Un fallo de envío se registra pero no se propaga. El endpoint que llama a esto
-     * responde siempre lo mismo para no revelar qué cuentas existen, así que dejar
-     * escapar la excepción convertiría un error del proveedor en un detector de cuentas.
-     * Lo que sí queda ahora es rastro suficiente para diagnosticarlo —el código de estado
-     * y el cuerpo que devuelva la API—, que con SMTP no teníamos.
+     * Es asíncrono ({@link CorreoAsyncConfig#EXECUTOR}) porque la entrega es una llamada
+     * HTTP a un tercero y antes ocurría dentro de {@code POST /auth/forgot-password}: un
+     * proveedor lento retenía hilos de petición hasta el timeout. El que llama no espera
+     * respuesta ni la tiene: el método devuelve en cuanto la tarea queda encolada.
+     * <p>
+     * <strong>Todo lo que necesita viaja en los parámetros.</strong> El código llega ya
+     * generado y no se relee de la base de datos, porque la tarea puede arrancar antes de
+     * que confirme la transacción que lo guardó y encontraría la tabla sin él. El usuario
+     * llega cargado, y de él solo se leen columnas simples.
+     * <p>
+     * Un fallo de envío se registra pero no se propaga, y ahora además no podría: nadie
+     * espera al otro lado. El ERROR del log es la única señal que queda, así que lleva el
+     * id del usuario y lo que respondiera el proveedor.
      *
-     * @param usuario destinatario del código.
+     * @param usuario destinatario del código, ya cargado.
      * @param codigo  los seis dígitos en claro (lo único que sale del servidor sin hashear).
      * @param minutosValidez minutos que el código seguirá sirviendo.
      */
+    @Async(CorreoAsyncConfig.EXECUTOR)
     @Override
     public void enviarCodigoRecuperacion(Usuario usuario, String codigo, int minutosValidez) {
         if (!StringUtils.hasText(apiKey)) {
@@ -158,14 +176,17 @@ public class EmailService implements IEmailService {
             return;
         }
 
-        MensajeBrevo mensaje = new MensajeBrevo(
-                remitenteDeBrevo(),
-                List.of(new MensajeBrevo.Destinatario(usuario.getEmail(), usuario.getUsername())),
-                codigo + " · Tu código de GymProFit",
-                cuerpoHtml(usuario, codigo, minutosValidez),
-                cuerpoTexto(usuario, codigo, minutosValidez));
-
         try {
+            // Armar el mensaje va DENTRO del try: leer la plantilla o interpretar el
+            // remitente puede fallar, y en un hilo asíncrono una excepción suelta no
+            // llega a ninguna respuesta, se pierde en el executor.
+            MensajeBrevo mensaje = new MensajeBrevo(
+                    remitenteDeBrevo(),
+                    List.of(new MensajeBrevo.Destinatario(usuario.getEmail(), usuario.getUsername())),
+                    codigo + " · Tu código de GymProFit",
+                    cuerpoHtml(usuario, codigo, minutosValidez),
+                    cuerpoTexto(usuario, codigo, minutosValidez));
+
             // onStatus con predicado siempre cierto y manejador vacío desactiva el
             // comportamiento por defecto de RestClient, que lanza en 4xx/5xx. Aquí interesa
             // el cuerpo del error para poder diagnosticarlo, no una excepción.
@@ -187,7 +208,8 @@ public class EmailService implements IEmailService {
                         cuerpoParaElLog(respuesta.getBody(), codigo));
             }
         } catch (Exception e) {
-            // Timeout, DNS, TLS: nada de esto llega al cliente, que sigue recibiendo 200.
+            // Timeout, DNS, TLS, plantilla ilegible: nada de esto llega al cliente, que ya
+            // ha recibido su 200 hace rato. Este ERROR es todo lo que queda para verlo.
             logger.error("No se pudo entregar a Brevo el código de recuperación del usuario id={}",
                     usuario.getId(), e);
         }
