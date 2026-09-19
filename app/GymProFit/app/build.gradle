@@ -15,7 +15,12 @@ android {
     compileSdk 36
 
     defaultConfig {
-        applicationId "es.pmdm.gymprofit"
+        // Identidad de la app en Play y en cada instalación. NO es el paquete Java:
+        // el namespace de arriba sigue siendo es.pmdm.gymprofit y son dos ajustes
+        // independientes desde AGP 7. Tras la primera publicación esto ya no se puede
+        // cambiar nunca —queda en la URL de la ficha y en cada dispositivo—, de ahí
+        // que se fije antes de subir nada (DEC-030).
+        applicationId "com.gymprofit.app"
         minSdk 24
         targetSdk 36
         versionCode 1

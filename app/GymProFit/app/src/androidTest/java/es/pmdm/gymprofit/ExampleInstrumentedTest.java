@@ -22,11 +22,14 @@ import static org.junit.Assert.*;
 // ============================================================
 @RunWith(AndroidJUnit4.class)
 public class ExampleInstrumentedTest {
-    // Verifica que el package name de la app bajo test es el correcto
+    // Verifica que el package name de la app bajo test es el correcto.
+    // OJO: getPackageName() devuelve el applicationId, no el paquete Java. Son cosas
+    // distintas: el applicationId es com.gymprofit.app (DEC-030) y las clases siguen
+    // en es.pmdm.gymprofit, que es el namespace y no se ve desde fuera.
     @Test
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("es.pmdm.gymprofit", appContext.getPackageName());
+        assertEquals("com.gymprofit.app", appContext.getPackageName());
     }
 }
