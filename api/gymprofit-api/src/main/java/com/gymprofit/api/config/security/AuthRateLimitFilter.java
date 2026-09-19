@@ -34,7 +34,10 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
             "/auth/login", "/auth/register", "/auth/guest", "/auth/refresh", "/auth/change-password",
             // Recuperación de contraseña: pedir códigos en cadena es spam a la bandeja de
             // entrada ajena, y canjearlos en cadena es fuerza bruta sobre seis dígitos.
-            "/auth/forgot-password", "/auth/reset-password");
+            "/auth/forgot-password", "/auth/reset-password",
+            // Borrado de cuenta: lleva la contraseña en el cuerpo, así que repetirlo es
+            // probar contraseñas, y lo que hay al otro lado de acertar es irreversible.
+            "/usuarios/me");
 
     // Master de activación (existente): desactiva TODO el filtro (dev/tests).
     @Value("${app.auth.rate-limit.enabled:true}")

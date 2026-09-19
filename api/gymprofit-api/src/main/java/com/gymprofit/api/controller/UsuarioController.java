@@ -9,6 +9,8 @@ import com.gymprofit.api.dto.entity.usuario.UsuarioUpdateDTO;
 import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
+import com.gymprofit.api.dto.usuario.EliminarCuentaDTO;
+import com.gymprofit.api.service.usuario.IBorradoCuentaService;
 import com.gymprofit.api.service.usuario.IUsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -42,6 +44,10 @@ public class UsuarioController {
 
     // Servicio con la lógica de negocio de usuarios
     private final IUsuarioService usuarioService;
+
+    // Borrado de cuenta: servicio aparte porque no es una operación CRUD más, sino una
+    // secuencia ordenada sobre toda la base de datos con su propia reautenticación.
+    private final IBorradoCuentaService borradoCuentaService;
 
     @Operation(summary = "Obtiene todos los usuarios")
     @ApiResponses(value = {
@@ -290,5 +296,26 @@ public class UsuarioController {
     @GetMapping("/usuarios/{id}/estadisticas")
     public ResponseEntity<UsuarioEstadisticasDTO> getEstadisticas(@PathVariable Integer id) {
         return ResponseEntity.ok(usuarioService.getEstadisticas(id));
+    }
+
+    @Operation(summary = "Borra definitivamente la cuenta del usuario autenticado",
+            description = "Irreversible y sin periodo de gracia: borra la cuenta y TODOS sus datos. " +
+                    "Exige la contraseña actual en el cuerpo aunque la petición ya venga autenticada, " +
+                    "porque un token robado no debe bastar para vaciar una cuenta. El usuario que se " +
+                    "borra sale SIEMPRE del token, nunca del cuerpo ni de la ruta.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cuenta borrada"),
+            @ApiResponse(responseCode = "403", description = "La contraseña no es correcta",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @DeleteMapping("/usuarios/me")
+    public ResponseEntity<Map<String, Object>> eliminarCuentaPropia(
+            @Valid @RequestBody EliminarCuentaDTO eliminarCuentaDTO) {
+        borradoCuentaService.eliminarCuentaPropia(eliminarCuentaDTO);
+
+        Map<String, Object> respuesta = new HashMap<>();
+        respuesta.put("mensaje", "Cuenta eliminada correctamente");
+
+        return ResponseEntity.ok(respuesta);
     }
 }

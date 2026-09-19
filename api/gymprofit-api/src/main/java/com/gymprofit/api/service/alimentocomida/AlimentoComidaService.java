@@ -335,6 +335,19 @@ public class AlimentoComidaService implements IAlimentoComidaService {
     // Recorre todas las líneas alimento-comida de una comida y recalcula
     // sus totales de calorías, proteínas, carbohidratos y grasas, guardando
     // la comida actualizada.
+    /**
+     * Recalcula los totales de una comida por su id. Sin comprobación de propiedad: es
+     * interna y no tiene ruta HTTP (ver el contrato).
+     */
+    @Override
+    @Transactional
+    public void recalcularTotales(Integer comidaId) {
+        Comida comida = comidaRepository.findById(comidaId)
+                .orElseThrow(() -> new NotFoundEntityException("La comida con id " + comidaId + " no existe"));
+
+        recalcularTotalesComida(comida);
+    }
+
     private void recalcularTotalesComida(Comida comida) {
         List<AlimentoComida> items = alimentoComidaRepository.findByComidaId(comida.getId());
         int totalCal = 0;

@@ -48,4 +48,19 @@ public interface IAlimentoComidaService {
 
     // Aplica una actualización parcial (PATCH) sobre una relación.
     AlimentoComidaDTO patch(Integer id, AlimentoComidaPatchDTO patchDTO);
+
+    /**
+     * Recalcula y guarda los totales de una comida a partir de sus líneas actuales.
+     * <p>
+     * Los totales viven en columnas de {@code comidas}, no se calculan al leer, así que
+     * quien toque las líneas por fuera de este servicio tiene que llamar aquí o la comida
+     * se queda contando alimentos que ya no están.
+     * <p>
+     * <strong>No comprueba propiedad</strong>: es una operación interna, sin ruta HTTP
+     * propia. La usa el borrado de cuenta, que por definición arregla comidas de otros.
+     * No exponerla en un controlador.
+     *
+     * @param comidaId comida cuyos totales se recalculan.
+     */
+    void recalcularTotales(Integer comidaId);
 }

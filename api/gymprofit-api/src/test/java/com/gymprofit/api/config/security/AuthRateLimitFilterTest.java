@@ -155,6 +155,17 @@ class AuthRateLimitFilterTest {
     }
 
     @Test
+    @DisplayName("el borrado de cuenta está en el cupo estricto, no en el global")
+    void borrado_de_cuenta_va_al_cupo_estricto() throws Exception {
+        // DELETE /usuarios/me lleva la contraseña en el cuerpo, así que repetirlo es probar
+        // contraseñas; y lo que hay al otro lado de acertar no se puede deshacer.
+        AuthRateLimitFilter f = nuevoFiltro(1, 60);
+
+        assertEquals(200, dispararEstricta(f, "/usuarios/me"), "la 1ª pasa");
+        assertEquals(429, dispararEstricta(f, "/usuarios/me"), "la 2ª supera el cupo estricto");
+    }
+
+    @Test
     @DisplayName("no se limitan preflight OPTIONS ni el health-check de la PaaS")
     void excluye_options_y_actuator() {
         AuthRateLimitFilter f = nuevoFiltro(1, 60);

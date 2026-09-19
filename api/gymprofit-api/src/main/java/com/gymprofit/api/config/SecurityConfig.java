@@ -140,6 +140,12 @@ public class SecurityConfig {
                                 // JOOQ usuarios - solo ADMIN
                                 .requestMatchers("/jooq/usuarios/**").hasRole(RoleType.ADMIN.name())
 
+                                // Borrado de la cuenta propia. Va ANTES de /usuarios/{id} porque si no,
+                                // "me" entraría por ahí como si fuera un id. Sin ADMIN a propósito: esto
+                                // borra la cuenta de QUIEN LLAMA, y un admin que quiera borrar a otro tiene
+                                // su ruta del panel. No lo puede pedir un GUEST: no hay cuenta que borrar.
+                                .requestMatchers(HttpMethod.DELETE, "/usuarios/me").hasRole(RoleType.USER.name())
+
                                 // USER: puede consultar y actualizar su propio perfil
                                 // IMPORTANTE: estas reglas van ANTES de la regla general de /usuarios/**
                                 .requestMatchers(HttpMethod.GET, "/usuarios/username/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
