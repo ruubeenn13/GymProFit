@@ -221,7 +221,7 @@ Decisiones tomadas, con su porqué. Sirve para no volver a discutir lo ya discut
 
 **Consecuencias.** Arrancar y fallar es preferible a arrancar y degradarse sin que nadie se entere.
 
-**Contradicciones actuales.** Los usuarios semilla se crean también en producción con contraseña versionada; y `spring.mail.host` tiene valor por defecto vacío en `prod`, lo que hace que la recuperación de contraseña escriba el código en el log en vez de enviarlo. Ambas son deuda a cerrar.
+**Contradicciones actuales.** Ninguna en el código. Las dos que había —usuarios semilla creados en producción con contraseña versionada, y `spring.mail.host` con valor por defecto vacío en `prod`, que hacía que la recuperación de contraseña escribiera el código en el log en vez de enviarlo— se cerraron el 2026-09-19 (`f1a4841`). La contraseña del admin sale de `ADMIN_PASSWORD` y sin ella no se crea ninguna cuenta ADMIN; las variables de correo (`BREVO_API_KEY` y `MAIL_FROM`) van sin default y su ausencia impide arrancar; y el código de recuperación **no se escribe en el log en ningún perfil** —fuera de producción se entrega en `target/mail-outbox`—. Queda una contradicción **fuera del código**: las credenciales del seed antiguo siguen vivas en la base de datos de producción y hay que rotarlas a mano, porque definir `ADMIN_PASSWORD` no cambia la contraseña de un usuario que ya existe.
 
 **Qué la invalidaría.** Nada.
 
@@ -307,7 +307,11 @@ El `applicationId` es `es.pmdm.gymprofit`, donde PMDM es el módulo académico d
 ### DEC-024 · Proveedor de correo transaccional
 **Estado:** PENDIENTE DE CONFIRMAR
 
-La recuperación de contraseña usa Brevo por SMTP, elegido al implementarla. Falta confirmarlo como decisión: límites del plan gratuito, coste al crecer, remitente con dominio propio en lugar del compartido, y qué debe pasar cuando el envío falla. El borrado de cuenta se apoyará en la misma infraestructura.
+La recuperación de contraseña usa **Brevo por su API HTTP**, no por SMTP. El SMTP se probó y **no es viable**: Render bloquea los puertos 25, 465 y 587 en los servicios del plan gratuito, así que `JavaMailSender` no podía entregar nada, y el `MailHealthIndicator` que Actuator registraba al detectar el starter de correo tumbó producción entera abriendo una conexión SMTP en cada health check (`4b35d6e`, `5e2c21a`). Eso no es una preferencia revisable mientras el hosting sea el plan gratuito de Render: **el transporte tiene que ir por HTTPS**.
+
+Lo que sí sigue **pendiente de confirmar como decisión**: el proveedor (Brevo frente a alternativas), los límites del plan gratuito y el coste al crecer, y el remitente con dominio propio en lugar del compartido. El borrado de cuenta se apoyará en la misma infraestructura.
+
+**Ya resuelto de lo que estaba abierto —qué pasa cuando el envío falla—**: la excepción no se propaga al endpoint, porque `POST /auth/forgot-password` responde lo mismo exista la cuenta o no y dejarla escapar lo convertiría en un detector de cuentas; pero el fallo **sí deja rastro**, con el código de estado y el cuerpo del error en el log, y el `messageId` de Brevo cuando el envío sale. El código de seis dígitos no aparece en el log por ningún camino.
 
 ### DEC-025 · Destino del histórico de calorías de entrenamiento
 **Estado:** PENDIENTE · **Depende de:** DEC-004
