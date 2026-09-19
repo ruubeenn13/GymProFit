@@ -30,7 +30,7 @@
 | JJWT | 0.13.0 | Generación y validación de tokens JWT |
 | SpringDoc OpenAPI | 2.8.15 | Documentación Swagger |
 | MariaDB | — | Base de datos relacional |
-| JUnit 5 + Mockito | — | 132 tests unitarios e integración |
+| JUnit 5 + Mockito | — | 329 tests unitarios, de controlador y de integración |
 | Maven | — | Gestión de dependencias |
 
 ---
@@ -122,6 +122,13 @@ src/main/java/com/gymprofit/api/
 
 Todos van bajo el context-path `/api`. Los `@RequestMapping` de los controllers **no incluyen** `/api`.
 
+> **Falta en esta tabla el módulo de nutrición** (`/alimentos`, `/comidas`,
+> `/alimentos-comida`), que llegó después. Manda el código; Swagger en local lo
+> lista entero. Dos reglas de ese módulo que no se ven en la ruta y conviene
+> saber: el **catálogo** de alimentos (los de `usuario_id` NULL) **solo lo
+> escribe un ADMIN**, y los alimentos con dueño solo su dueño; el import de Open
+> Food Facts por código de barras sí crea catálogo, porque son productos reales.
+
 ### AUTH — `/auth`
 
 | Método | URL | Auth | Descripción |
@@ -129,6 +136,11 @@ Todos van bajo el context-path `/api`. Los `@RequestMapping` de los controllers 
 | POST | `/auth/login` | No | Login. Body: `{username, password}` → `TokenDTO` |
 | POST | `/auth/register` | No | Registro. Body: `{username, password, email}` → 201 |
 | POST | `/auth/guest` | No | Login como invitado → `TokenDTO` con ROLE_GUEST |
+| POST | `/auth/refresh` | No | Renueva el access token con el refresh opaco, que se rota |
+| POST | `/auth/logout` | No | Revoca el refresh token recibido |
+| POST | `/auth/change-password` | USER/ADMIN | Cambia la contraseña. El username sale del token, nunca del body. Revoca todas las sesiones |
+| POST | `/auth/forgot-password` | No | Pide un código de 6 dígitos por correo. Responde **siempre lo mismo**, exista la cuenta o no |
+| POST | `/auth/reset-password` | No | Canjea el código por una contraseña nueva. 15 min de vida, 5 intentos, un solo uso. Revoca todas las sesiones |
 
 ### USUARIOS — `/usuarios`
 
@@ -142,8 +154,9 @@ Todos van bajo el context-path `/api`. Los `@RequestMapping` de los controllers 
 | GET | `/usuarios` | ADMIN | Todos los usuarios |
 | DELETE | `/usuarios/{id}` | ADMIN | Soft delete |
 | DELETE | `/usuarios/{id}/permanente` | ADMIN | Eliminar permanentemente |
-| POST | `/usuarios/{id}/foto` | USER/ADMIN | Subir foto de perfil (multipart/form-data, campo `foto`). Guarda en `./uploads/fotos-perfil/{id}.jpg` |
+| POST | `/usuarios/{id}/foto` | USER/ADMIN | Subir foto de perfil (multipart/form-data, campo `foto`). Se guarda en la tabla `fotos_perfil`, no en disco |
 | GET | `/usuarios/{id}/foto` | USER/ADMIN | Obtener foto de perfil (bytes JPEG). 404 si no existe |
+| DELETE | `/usuarios/me` | USER | **Borra la cuenta y todos sus datos, sin vuelta atrás.** Body: `{password}` — se reautentica antes de tocar nada. El usuario sale del token, nunca de la ruta. En el cupo estricto del rate limit |
 
 ### EJERCICIOS — `/ejercicios`
 
@@ -302,7 +315,7 @@ V202605261000__Add_foto_perfil_usuarios.sql          ← columna foto_perfil VAR
 
 ## Tests
 
-**132 tests — BUILD SUCCESS**
+**329 tests — BUILD SUCCESS**
 
 ```
 controller/: AuthControllerTest, EjercicioControllerTest, RutinaControllerTest,

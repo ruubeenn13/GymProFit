@@ -400,6 +400,36 @@ Pedía decidir de forma consciente si el `applicationId` `es.pmdm.gymprofit` —
 
 ---
 
+### DEC-031 · Borrar la cuenta borra de verdad, y borra ya
+**Estado:** Aceptada · **Fecha:** 2026-09-19
+
+**Contexto.** `gymprofit.app/eliminar-cuenta` promete por escrito que el borrado es irreversible, y esa página es una de las dos URL que Google Play exige enlazar en la ficha. Lo que la API hiciera tenía que coincidir con lo prometido, no parecerse.
+
+**Decisión.** `DELETE /usuarios/me` borra la cuenta y todos sus datos **en el acto**: sin periodo de gracia, sin copia anonimizada y sin baja lógica. Exige la **contraseña actual** aunque la petición ya venga autenticada, porque un token robado —o un móvil desbloqueado un minuto— no debe bastar para vaciar una cuenta. El usuario sale del token (DEC-013) y la ruta va en el cupo estricto del rate limit.
+
+**El borrado se escribe, no se hereda de las cascadas.** Las `ON DELETE` del esquema siguen ahí, pero nada de lo que importa depende de ellas: una cascada no se lee, no se prueba con nombre propio y no avisa cuando alguien añade una tabla. El servicio borra en orden explícito y deja en el log cuántas filas se lleva cada paso.
+
+**Los alimentos personalizados se borran, no se despublican.** En `alimentos`, `usuario_id` NULL significa *catálogo público*, así que el `ON DELETE SET NULL` de esa tabla **no borraba: publicaba** la dieta privada de quien se iba. Era un fallo de privacidad, no una decisión.
+
+**Las filas de terceros se tocan, y se anota.** Una comida de otro usuario que referencie un alimento del que se va pierde esa línea, y sus totales se recalculan; una sesión de otro que apunte a una rutina del que se va **se desvincula, no se borra**, porque es un entrenamiento real de esa persona. Ambas cosas solo pueden existir por IDOR de escritura ya cerradas, quedan registradas en el log, y **no se notifica** a esos usuarios: explicarles el cambio les diría que otra persona ha borrado su cuenta. Entre el derecho de supresión prometido y una fila fabricada abusando de un fallo, gana la supresión.
+
+**Qué la invalidaría.** Una obligación legal o contable de conservar algo —hoy no la hay: no se factura nada—, o que apareciera un caso real de borrado por error lo bastante frecuente como para que un periodo de gracia compense romper la promesa de irreversibilidad. Si algún día se monetiza, esto se revisa junto con DEC-028 y el resto de lo que cambia al ser comerciante.
+
+---
+
+### DEC-032 · El catálogo de alimentos lo escribe ADMIN; el escáner es la excepción
+**Estado:** Aceptada · **Fecha:** 2026-09-19
+
+**Contexto.** En `alimentos`, un `usuario_id` NULL marca la fila como catálogo público, que ve todo el mundo —incluido GUEST, cuyo token se obtiene sin credenciales—. `POST /alimentos` estaba abierto a cualquier USER, tomaba el `usuarioId` del cuerpo y, si se omitía, creaba la fila sin dueño. Con el registro abierto, eso era **escritura efectivamente anónima en el catálogo compartido**. En una aplicación de nutrición el daño no es de privacidad: son macros falsos que alguien se cree y se come.
+
+**Decisión.** El propietario de un alimento sale **siempre del token** (DEC-013) y el `usuarioId` del cuerpo se ignora. Un USER crea alimentos **suyos**; crear catálogo —filas sin dueño— es cosa de **ADMIN**. Lo mismo vale para modificar, desactivar y borrar: el catálogo solo lo toca un ADMIN, y un alimento con dueño, su dueño. Cambiarle los macros a un alimento del catálogo se los cambia a todo el mundo, así que no basta con cerrar la creación.
+
+**La excepción es el escáner.** `POST /alimentos/importar` materializa un producto de **Open Food Facts** por código de barras y sí crea una fila **sin dueño**, porque es catálogo real y no la comida de nadie, y lo dispara un usuario normal al escanear. No pasa por la ruta de creación: construye la entidad desde el producto externo. Es la diferencia entre *escribir en el catálogo* y *traerse un producto que ya existe*.
+
+**Qué la invalidaría.** Querer un catálogo **colaborativo**, con alimentos propuestos por usuarios y visibles para el resto. Eso no reabre esta decisión sin más: pediría moderación, autoría visible y forma de corregir, que es un sistema, no un permiso. También la invalidaría dejar de tener catálogo propio y apoyarse solo en Open Food Facts.
+
+---
+
 ## Pendientes de decidir
 
 Se registran aquí para que no se decidan por omisión.

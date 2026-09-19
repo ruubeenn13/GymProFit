@@ -9,8 +9,7 @@
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
 ![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white)
 
-*Trabajo de Fin de Grado — CFGS Desarrollo de Aplicaciones Multimedia (2º DAM)*
-*Autor: Rubén Juan Candela*
+*Producto en desarrollo · Autor: Rubén Juan Candela*
 
 </div>
 
@@ -354,7 +353,7 @@ Controller → Service → Repository (JPA / jOOQ) → MariaDB
 
 #### `src/test/`
 
-**230 tests**: unitarios de services (Mockito), de controllers con MockMvc y de integración end-to-end. Incluyen los tests de **ownership/IDOR** (`AbstractOwnershipTest`: `@SpringBootTest` sin mocks con usuarios reales owner/attacker — recurso ajeno → 403, propio → 200; 7 dominios), rate-limit (`AuthRateLimitFilterTest`), recordatorios push (`RecordatorioNotificacionesTaskTest`) y catálogo multiidioma (`CatalogoI18nTest`).
+**329 tests**: unitarios de services (Mockito), de controllers con MockMvc y de integración end-to-end. Incluyen los tests de **ownership/IDOR** (`AbstractOwnershipTest`: `@SpringBootTest` sin mocks con usuarios reales owner/attacker — recurso ajeno → 403, propio → 200), la cadena de **recuperación de contraseña** (`PasswordResetServiceTest`), el **borrado de cuenta** (`BorradoCuentaTest`, que saca del esquema la lista de tablas a comprobar para que una tabla nueva no se quede sin borrar en silencio), rate-limit (`AuthRateLimitFilterTest`), el **pool asíncrono de correo** (`CorreoAsyncConfigTest`), recordatorios push (`RecordatorioNotificacionesTaskTest`) y catálogo multiidioma (`CatalogoI18nTest`).
 
 ---
 
@@ -494,7 +493,7 @@ Abre `app/GymProFit` en Android Studio, sincroniza Gradle y ejecuta en emulador 
 | API | **Render** (Docker multi-stage, free tier) — `https://api.gymprofit.app/api` (dominio propio por CNAME; ver DEC-029) |
 | Base de datos | **Aiven for MySQL** (always-free, TLS `verify-full` con CA) |
 | App Android | buildTypes: `debug` → API local, `release` → producción con minify/R8 (APK ~5 MB) |
-| CI | **GitHub Actions**: build + 230 tests contra MariaDB efímera en cada push/PR |
+| CI | **GitHub Actions**: build + 329 tests contra MariaDB efímera en cada push/PR |
 | Keep-alive | Cron cada 10 min a `/actuator/health` para que el free tier de Render no se duerma |
 
 Guía completa paso a paso en [documentacion/DESPLIEGUE.md](documentacion/DESPLIEGUE.md).
