@@ -490,7 +490,7 @@ Abre `app/GymProFit` en Android Studio, sincroniza Gradle y ejecuta en emulador 
 
 | Componente | Dónde |
 |---|---|
-| API | **Render** (Docker multi-stage, free tier) — `https://gymprofit-api.onrender.com/api` |
+| API | **Render** (Docker multi-stage, free tier) — `https://api.gymprofit.app/api` (dominio propio por CNAME; ver DEC-029) |
 | Base de datos | **Aiven for MySQL** (always-free, TLS `verify-full` con CA) |
 | App Android | buildTypes: `debug` → API local, `release` → producción con minify/R8 (APK ~5 MB) |
 | CI | **GitHub Actions**: build + 230 tests contra MariaDB efímera en cada push/PR |

@@ -105,6 +105,14 @@ Pendiente (clics de cuenta, con guía): crear MySQL en Aiven → copiar credenci
 - **Heap JVM**: el `Dockerfile` arranca con `-XX:MaxRAMPercentage=60.0`. En la instancia free de Render (512 MB) el default de la JVM (~25% ≈ 128 MB) se quedó corto al añadir `firebase-admin` (grpc/netty): el primer deploy agotó el timeout del health check ("no open ports detected") con arranques de ~180 s. Con el 60% (~300 MB) el arranque tiene margen.
 - **Zona horaria**: los recordatorios push usan `zone="Europe/Madrid"` en los `@Scheduled` (el contenedor corre en UTC). Ver `documentacion/NOTIFICACIONES.md`.
 
+## Actualización 2026-09-19 — dominio propio para la API
+
+- **El host público de la API pasa a ser `https://api.gymprofit.app/api/`** (DEC-029). Verificado desde fuera: dominio validado en Render, certificado emitido y `/api/actuator/health` respondiendo 200.
+- **El servicio de `gymprofit-api.onrender.com` NO se desactiva.** Es el destino del CNAME, y además es lo que siguen llamando las builds de release ya repartidas: su `BASE_URL` va compilado en el APK y no se puede cambiar a distancia.
+- **Ese es justo el motivo del cambio.** `BASE_URL` es una constante de `BuildConfig`, así que cada instalación se queda con el host del día que se instaló. Con el nombre del proveedor dentro del APK, mudarse de Render obligaría a publicar una versión nueva y a esperar a que todo el mundo la instalara; con el dominio propio basta con mover el CNAME. Por eso se hace **antes** de publicar.
+- **El keep-alive de GitHub Actions apunta también al dominio propio**, no por simetría: vigilar el host que ya nadie usa dejaría el workflow en verde mientras el camino real —DNS y certificado incluidos— está caído.
+- Sin cambios en la app fuera de `buildTypes.release`: `network_security_config.xml` solo abre excepciones de HTTP en claro para hosts locales, y el dominio nuevo va por HTTPS.
+
 ## Pasos de migración pendientes (cuando se despliegue)
 
 1. **BD**: crear instancia Aiven for MySQL; volcar el esquema con Flyway (las migraciones `V*.sql` corren solas al arrancar).

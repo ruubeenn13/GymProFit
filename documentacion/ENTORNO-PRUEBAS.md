@@ -12,7 +12,7 @@ Verificado en emulador el 18 de septiembre de 2026.
 
 | | Pruebas (build `debug`) | Producción (build `release`) |
 |---|---|---|
-| API | `http://10.0.2.2:8080/api/` (tu PC) | `https://gymprofit-api.onrender.com/api/` |
+| API | `http://10.0.2.2:8080/api/` (tu PC) | `https://api.gymprofit.app/api/` |
 | Base de datos | MariaDB local, puerto **3308** | Aiven MySQL |
 | Crashlytics y Analytics | **apagados** | activos |
 | Distintivo en pantalla | `PRUEBAS · LOCAL` arriba | ninguno |

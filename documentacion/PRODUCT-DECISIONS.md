@@ -360,6 +360,23 @@ El segundo es más simple y más grave, y hace al primero irrelevante: `POST /au
 
 ---
 
+### DEC-029 · El host de la API es `api.gymprofit.app`, no el del proveedor
+**Estado:** Aceptada · **Fecha:** 2026-09-19
+
+**Contexto.** El `BASE_URL` del build de release **se compila dentro del APK** como constante de `BuildConfig`. No es una preferencia que se lea al arrancar ni algo que se pueda cambiar desde el servidor: **cada instalación se queda para siempre con el host que tuviera el día que se instaló**, y la única forma de moverlo es publicar una versión nueva y esperar a que todo el mundo la instale. Mientras ahí figurara `gymprofit-api.onrender.com`, el nombre del proveedor estaba grabado en cada teléfono.
+
+**Decisión.** El host público de la API es **`api.gymprofit.app`**, un nombre del producto, y es el que va en `buildTypes.release` y en el keep-alive. El servicio de `onrender.com` **no se desactiva**: es el destino del CNAME y es también lo que siguen llamando las builds ya repartidas.
+
+**Se hace antes de publicar a propósito.** Es el momento en que sale gratis. Después de la primera publicación, cada host mal elegido se arrastra tanto como el `applicationId` de DEC-023, solo que sin aviso: la app vieja sigue funcionando hasta el día en que el host desaparece.
+
+**El keep-alive también apunta ahí, y no por simetría.** Lo que hay que vigilar es el camino por el que entran los usuarios —su DNS y su certificado, no solo el proceso del otro extremo—. Un keep-alive contra un host que ya nadie usa puede estar en verde mientras el real está caído.
+
+**Consecuencias.** Mudarse de proveedor pasa a ser mover un CNAME, con las instalaciones existentes sin enterarse. A cambio, el dominio hay que renovarlo y su DNS pasa a ser parte de la infraestructura: si caduca o se configura mal, la app no llega a la API aunque el servidor esté perfecto. El certificado lo emite y renueva Render para el dominio personalizado.
+
+**Qué la invalidaría.** Que se dejara de usar Render y el CNAME tuviera que apuntar a otro sitio — que es **precisamente el caso que esta decisión hace indoloro**, así que no la invalida, la justifica. Sí la invalidarían: perder el control del dominio `gymprofit.app`, o que apareciera una razón para servir la API desde un nombre distinto del de la marca. Si algún día hiciera falta cambiar de host de verdad, el sitio donde se decide sigue siendo este archivo, no un `build.gradle`.
+
+---
+
 ## Pendientes de decidir
 
 Se registran aquí para que no se decidan por omisión.
