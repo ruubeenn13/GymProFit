@@ -55,10 +55,13 @@ una fuente a un tercero le entrega la IP del visitante; hacerlo justo en la pág
 que explica cómo se tratan sus datos sería contradecirla en la primera línea. El
 resto de la tipografía es la del sistema, que no se descarga de ningún sitio.
 
-## Pendiente y bloqueante
+## Revisar si la app se monetiza
 
-El bloque **«1. Responsable del tratamiento»** de `privacidad.html` está sin
-rellenar (`[PENDIENTE DE COMPLETAR]`): faltan nombre o razón social, NIF si
-aplica y dirección postal. El RGPD exige identificar al responsable, así que
-**esto bloquea la publicación en Play**: una política de privacidad sin
-responsable identificado no cumple, y es de las cosas que se revisan.
+El responsable del tratamiento está identificado con nombre y con el correo
+`privacidad@gymprofit.app` como vía de contacto, **sin dirección postal**: la app
+es gratuita y sin actividad económica.
+
+Eso cambia el día que se monetice. Al pasar a ser comerciante en la UE, Play
+**publica la dirección postal de todas formas**, así que entonces hay que volver
+sobre este bloque y decidir si se pone aquí también, en lugar de facilitarla solo
+a petición.
