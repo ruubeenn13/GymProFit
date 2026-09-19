@@ -305,6 +305,36 @@
         <item name="android:popupBackground">@drawable/bg_popup_menu</item>
     </style>
 
+    <!-- ── Lista de texto con viñetas (el <ul> de la web, en Android) ───────
+         Tres piezas: la fila, el punto y el texto. El punto es una View sin
+         foco ni contentDescription: es decoración, y TalkBack tiene que leer la
+         frase, no un punto por línea. -->
+    <style name="GymProFit.ItemLista" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:layout_marginBottom">10dp</item>
+    </style>
+
+    <style name="GymProFit.PuntoLista" parent="">
+        <item name="android:layout_width">5dp</item>
+        <item name="android:layout_height">5dp</item>
+        <item name="android:layout_marginTop">9dp</item>
+        <item name="android:background">@drawable/bg_punto_lista</item>
+        <item name="android:backgroundTint">?attr/colorOnSurfaceVariant</item>
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+
+    <style name="GymProFit.TextoLista" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginStart">12dp</item>
+        <item name="android:textSize">@dimen/text_caption</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="android:lineSpacingMultiplier">1.35</item>
+    </style>
+
     <!-- Transición ENTRE PANTALLAS (Activities): deslizamiento lateral con parallax.
          Colgado del tema (DayNight) → mismo comportamiento en modo claro y oscuro. -->
     <style name="GymProFit.WindowAnimation" parent="@android:style/Animation.Activity">

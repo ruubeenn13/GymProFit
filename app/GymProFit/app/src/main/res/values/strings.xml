@@ -620,4 +620,47 @@
     <!-- Celebración del resumen tras entrenar (fase 4) -->
     <string name="resumen_celebracion_eyebrow">HAS MOVIDO</string>
     <string name="resumen_celebracion_unidad">kilos en esta sesión</string>
+
+    <!-- POLITICA DE PRIVACIDAD (GP-008)
+         La politica NO viaja dentro del APK: se abre en el navegador, para poder
+         corregirla sin publicar una version nueva. -->
+    <string name="url_privacidad" translatable="false">https://gymprofit.app/privacidad</string>
+    <string name="url_privacidad_conservacion" translatable="false">https://gymprofit.app/privacidad#conservacion</string>
+    <string name="politica_privacidad">Política de privacidad</string>
+    <string name="registro_aviso_privacidad">Al crear tu cuenta confirmas que has leído la %1$s</string>
+    <string name="registro_aviso_privacidad_enlace">Política de Privacidad</string>
+    <string name="error_sin_navegador">No hay ninguna aplicación para abrir enlaces</string>
+
+    <!-- ELIMINAR CUENTA (GP-008)
+         El texto es el mismo que el de gymprofit.app/eliminar-cuenta: si las dos
+         versiones prometen cosas distintas, una de las dos miente. -->
+    <string name="eliminar_cuenta_titulo">Eliminar cuenta</string>
+    <string name="eliminar_cuenta_icono_descripcion">Aviso de borrado permanente</string>
+    <string name="eliminar_cuenta_intro">El borrado es definitivo e inmediato: no hay papelera ni forma de recuperar tu historial después.</string>
+    <string name="eliminar_cuenta_que_se_borra">Qué se borra</string>
+    <string name="eliminar_cuenta_borra_1">Tu cuenta: nombre de usuario, dirección de correo y contraseña.</string>
+    <string name="eliminar_cuenta_borra_2">Tu perfil: peso, altura, edad, nivel de experiencia y objetivo.</string>
+    <string name="eliminar_cuenta_borra_3">Tu fotografía de perfil, si subiste alguna.</string>
+    <string name="eliminar_cuenta_borra_4">Todo tu historial de entrenamiento: rutinas, sesiones, ejercicios realizados, series con sus pesos y repeticiones, notas y progreso.</string>
+    <string name="eliminar_cuenta_borra_5">Todo tu registro de nutrición: comidas, alimentos consumidos y alimentos personalizados que hayas creado.</string>
+    <string name="eliminar_cuenta_borra_6">Tus mediciones corporales, objetivos personales y logros.</string>
+    <string name="eliminar_cuenta_borra_7">Tus sesiones abiertas y el identificador de tu dispositivo para notificaciones.</string>
+    <string name="eliminar_cuenta_que_no_se_borra">Qué no se borra</string>
+    <string name="eliminar_cuenta_no_borra_1">Los informes de fallo ya enviados a Firebase Crashlytics, que son anónimos y no están asociados a tu cuenta.</string>
+    <string name="eliminar_cuenta_no_borra_2">Los alimentos del catálogo general, que no son tuyos ni contienen datos personales.</string>
+    <string name="eliminar_cuenta_no_borra_3">Los registros técnicos del servidor, que no contienen datos personales identificables.</string>
+    <string name="eliminar_cuenta_antes">Antes de hacerlo</string>
+    <string name="eliminar_cuenta_antes_1">Si solo quieres dejar de usar la aplicación una temporada, no hace falta borrar nada: basta con cerrar sesión. Tu historial te esperará.</string>
+    <string name="eliminar_cuenta_antes_2">Si lo que quieres es una copia de tus datos antes de borrarlos, pídela a soporte@gymprofit.app y se te enviará.</string>
+    <string name="eliminar_cuenta_conservacion_enlace">Cuánto tiempo se conservan tus datos</string>
+    <string name="eliminar_cuenta_confirmar_titulo">Confirma que eres tú</string>
+    <string name="eliminar_cuenta_password">Tu contraseña actual</string>
+    <string name="eliminar_cuenta_password_explicacion">Te pedimos la contraseña aunque ya hayas iniciado sesión: un móvil desbloqueado un minuto no debe bastar para vaciar tu cuenta.</string>
+    <string name="eliminar_cuenta_confirmacion">Entiendo que se borrará todo y que no se puede deshacer</string>
+    <string name="eliminar_cuenta_btn">Eliminar mi cuenta definitivamente</string>
+    <string name="eliminar_cuenta_error_password_vacia">Escribe tu contraseña</string>
+    <string name="eliminar_cuenta_error_password">La contraseña no es correcta</string>
+    <string name="eliminar_cuenta_cargando">Borrando tu cuenta y tus datos…</string>
+    <string name="eliminar_cuenta_ok">Tu cuenta y tus datos se han borrado</string>
+    <string name="perfil_eliminar_cuenta">Eliminar cuenta</string>
 </resources>

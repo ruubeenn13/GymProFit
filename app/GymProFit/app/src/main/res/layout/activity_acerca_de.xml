@@ -308,6 +308,39 @@
 
                     </LinearLayout>
 
+                    <!-- Política de privacidad (GP-008): el texto vive en
+                         gymprofit.app, no dentro del APK, para poder corregirlo sin
+                         publicar versión. Esta es la vía de consulta desde la app. -->
+                    <LinearLayout
+                        android:id="@+id/llAcercaPrivacidad"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="4dp"
+                        android:layout_marginTop="6dp">
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:src="@drawable/ic_web"
+                            android:alpha="0.55"
+                            android:contentDescription="@null" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="@string/politica_privacidad"
+                            android:textSize="@dimen/text_body"
+                            android:textColor="?attr/colorPrimary" />
+
+                    </LinearLayout>
+
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>

@@ -134,6 +134,33 @@ public class PreferencesManager {
         editor.apply();
     }
 
+    /**
+     * Borra del dispositivo todo rastro de la cuenta (GP-008).
+     *
+     * <p>No vale con {@link #cerrarSesion()}: cerrar sesión conserva a propósito el
+     * perfil local (peso, altura, macros, nivel, borrador del onboarding y la marca
+     * de onboarding completado) para que volver a entrar no obligue a repetirlo.
+     * Cuando la cuenta ya no existe en el servidor, ese perfil local es un residuo
+     * de datos personales de alguien que ha pedido justo lo contrario, y además
+     * reaparecería en la siguiente cuenta que se creara en el mismo móvil.
+     *
+     * <p>Se vacía el almacén cifrado entero (no solo las dos claves de sesión) y se
+     * tiran todas las preferencias en claro <b>salvo tema e idioma</b>, que son
+     * ajustes del dispositivo y no datos de la cuenta: reiniciarlos dejaría la app
+     * en otro color y otro idioma justo después de borrarse, sin explicación.
+     */
+    public void borrarDatosLocales() {
+        securePrefs.edit().clear().apply();
+
+        int tema = getTheme();
+        String idioma = getLanguage();
+
+        editor.clear();
+        editor.putInt(KEY_THEME, tema);
+        editor.putString(KEY_LANGUAGE, idioma);
+        editor.apply();
+    }
+
     public void saveUsuarioId(int id) { editor.putInt(KEY_USUARIO_ID, id); editor.apply(); }
     public int getUsuarioId() { return prefs.getInt(KEY_USUARIO_ID, -1); }
 

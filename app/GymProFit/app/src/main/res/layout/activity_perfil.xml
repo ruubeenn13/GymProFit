@@ -673,6 +673,62 @@
                     app:icon="@drawable/ic_logo_gym"
                     app:iconGravity="start" />
 
+            <!-- Eliminar cuenta (GP-008).
+                 Va en su propia tarjeta y no dentro de la lista de arriba: borrar la
+                 cuenta no es "una actividad más" y no debe quedar a un dedo de
+                 distancia de ver los logros. Pero tampoco escondida: Google Play
+                 exige que la vía de borrado se encuentre desde dentro de la app. -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardEliminarCuenta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="24dp"
+                    app:strokeColor="?attr/colorError">
+
+                    <LinearLayout
+                        android:id="@+id/itemEliminarCuenta"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="56dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="12dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_delete"
+                            app:tint="?attr/colorError"
+                            android:contentDescription="@null" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="14dp"
+                            android:text="@string/perfil_eliminar_cuenta"
+                            android:textSize="@dimen/text_subtitle"
+                            android:textColor="?attr/colorError" />
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="?attr/colorError"
+                            android:alpha="0.6"
+                            android:contentDescription="@null" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
             </LinearLayout>
 
         </LinearLayout>

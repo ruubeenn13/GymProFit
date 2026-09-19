@@ -2,7 +2,14 @@ package es.pmdm.gymprofit.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.view.View;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -62,6 +69,45 @@ public class RegistroActivity extends AppCompatActivity {
         etRegEmail = findViewById(R.id.etRegEmail);
         etRegPassword = findViewById(R.id.etRegPassword);
         etRegConfirmarPassword = findViewById(R.id.etRegConfirmarPassword);
+        montarAvisoPrivacidad();
+    }
+
+    /**
+     * Pinta el aviso de privacidad bajo el botón de crear cuenta, con solo el
+     * nombre de la política pulsable (GP-008).
+     *
+     * <p>Es un aviso y no una casilla de aceptación a propósito: una política de
+     * privacidad se <b>informa</b> (art. 13 RGPD), no se acepta. Una casilla de
+     * "acepto la política" daría a entender que la base legal es el consentimiento,
+     * y la del núcleo del servicio es la ejecución del propio servicio; el
+     * consentimiento solo cubre foto, mediciones y notificaciones. Términos de
+     * servicio no hay, así que no queda nada que aceptar.
+     *
+     * <p>El nombre de la política se busca dentro de la frase ya traducida en vez de
+     * darlo por hecho al final: en inglés no cae en la misma posición.
+     */
+    private void montarAvisoPrivacidad() {
+        TextView tvAviso = findViewById(R.id.tvRegistroPrivacidad);
+
+        String enlace = getString(R.string.registro_aviso_privacidad_enlace);
+        String frase  = getString(R.string.registro_aviso_privacidad, enlace);
+        int inicio    = frase.indexOf(enlace);
+
+        SpannableString texto = new SpannableString(frase);
+        if (inicio >= 0) {
+            // ClickableSpan y no un OnClickListener en toda la vista: TalkBack lo
+            // anuncia como enlace dentro de la frase, y el resto del texto no queda
+            // convertido en un botón gigante que no lleva a ninguna parte.
+            texto.setSpan(new ClickableSpan() {
+                @Override
+                public void onClick(@NonNull View widget) {
+                    UIHelper.abrirUrl(RegistroActivity.this, getString(R.string.url_privacidad));
+                }
+            }, inicio, inicio + enlace.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            tvAviso.setMovementMethod(LinkMovementMethod.getInstance());
+        }
+
+        tvAviso.setText(texto);
     }
 
     // Configura los botones: volver al login y crear cuenta (con validación

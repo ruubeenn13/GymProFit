@@ -173,6 +173,22 @@
                 android:textSize="@dimen/text_subtitle"
                 app:cornerRadius="12dp" />
 
+            <!-- Aviso de privacidad (GP-008).
+                 Es un AVISO, no una casilla de aceptación: una política de privacidad
+                 se informa (art. 13 RGPD), no se acepta. Una casilla de "acepto"
+                 daría a entender que la base legal es el consentimiento, y la del
+                 núcleo del servicio no lo es. Términos de servicio no hay, así que
+                 no queda nada que aceptar. El texto se abre en el navegador. -->
+            <TextView
+                android:id="@+id/tvRegistroPrivacidad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textSize="@dimen/text_caption"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textColorLink="?attr/colorPrimary"
+                android:lineSpacingMultiplier="1.3" />
+
             <!-- Ya tengo cuenta -->
             <TextView
                 android:id="@+id/tvYaTengoCuenta"

@@ -51,6 +51,31 @@ public class UIHelper {
         mostrarToast(context, mensaje, R.drawable.ic_error);
     }
 
+    // ENLACES EXTERNOS
+
+    /**
+     * Abre una URL en el navegador del dispositivo.
+     *
+     * <p>La usa la política de privacidad (GP-008), que vive en gymprofit.app y
+     * <b>no</b> se empaqueta dentro del APK: así se corrige sin publicar una
+     * versión nueva, que es justo lo que exige un documento legal que puede
+     * cambiar entre dos releases.
+     *
+     * <p>Un móvil sin ninguna app capaz de abrir http es raro pero posible (un
+     * perfil de trabajo restringido, una tablet recortada). Si pasa, se avisa:
+     * dejar que la {@link android.content.ActivityNotFoundException} cierre la app
+     * por no encontrar navegador sería peor que el enlace que no se abre.
+     */
+    public static void abrirUrl(Context context, String url) {
+        android.content.Intent intent = new android.content.Intent(
+                android.content.Intent.ACTION_VIEW, android.net.Uri.parse(url));
+        try {
+            context.startActivity(intent);
+        } catch (android.content.ActivityNotFoundException e) {
+            mostrarToastError(context, context.getString(R.string.error_sin_navegador));
+        }
+    }
+
     // ERRORES DE FORMULARIO
 
     /**

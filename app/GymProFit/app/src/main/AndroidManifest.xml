@@ -141,6 +141,8 @@
         <activity android:name=".ui.activities.CrearAlimentoActivity" android:exported="false" />
         <activity android:name=".ui.activities.AdminAlimentosActivity" android:exported="false" />
         <activity android:name=".ui.activities.AcercaDeActivity" android:exported="false" />
+        <!-- Borrado definitivo de la cuenta (GP-008); se abre desde el perfil -->
+        <activity android:name=".ui.activities.EliminarCuentaActivity" android:exported="false" />
 
         <!-- FileProvider para compartir/capturar la foto de perfil con la cámara -->
         <provider

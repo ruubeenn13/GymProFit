@@ -55,6 +55,9 @@ public class AcercaDeActivity extends AppCompatActivity {
 
         findViewById(R.id.llAcercaEmail).setOnClickListener(v -> abrirEmail());
         findViewById(R.id.llAcercaCompartir).setOnClickListener(v -> compartirViaSms());
+        // La política se abre en el navegador: no viaja dentro del APK (GP-008).
+        findViewById(R.id.llAcercaPrivacidad).setOnClickListener(v ->
+                es.pmdm.gymprofit.utils.UIHelper.abrirUrl(this, getString(R.string.url_privacidad)));
     }
 
     // Comparte la app por SMS: abre el selector de contactos del sistema. El picker

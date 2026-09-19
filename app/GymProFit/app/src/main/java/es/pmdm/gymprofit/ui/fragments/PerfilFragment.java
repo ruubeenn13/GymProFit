@@ -41,6 +41,7 @@ import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.ui.activities.AcercaDeActivity;
 import es.pmdm.gymprofit.ui.activities.AdminActivity;
 import es.pmdm.gymprofit.ui.activities.EditarPerfilActivity;
+import es.pmdm.gymprofit.ui.activities.EliminarCuentaActivity;
 import es.pmdm.gymprofit.ui.activities.LogrosActivity;
 import es.pmdm.gymprofit.ui.activities.MedicionesActivity;
 import es.pmdm.gymprofit.ui.activities.SesionesActivity;
@@ -330,6 +331,13 @@ public class PerfilFragment extends BaseFragment {
 
         findViewById(R.id.btnAcercaDe).setOnClickListener(v ->
                 startActivity(new Intent(requireContext(), AcercaDeActivity.class)));
+
+        // Eliminar cuenta (GP-008). Se guarda igual que el resto de accesos que
+        // tocan datos propios: un invitado no tiene cuenta que borrar.
+        findViewById(R.id.itemEliminarCuenta).setOnClickListener(v -> {
+            if (!verificarAccesoRegistrado()) return;
+            startActivity(new Intent(requireContext(), EliminarCuentaActivity.class));
+        });
 
         View itemAdmin = findViewById(R.id.itemAdmin);
         if (prefsManager.isAdmin()) {

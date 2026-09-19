@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  bg_punto_lista — viñeta de las listas de texto (el equivalente al <li> de la web).
+  Es decoración pura: quien la use la pone en una View sin foco, nunca en un
+  ImageView con contentDescription, para que TalkBack no lea un punto por línea.
+  El color se tiñe desde el layout con android:backgroundTint para seguir al tema.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="#FFFFFF" />
+</shape>

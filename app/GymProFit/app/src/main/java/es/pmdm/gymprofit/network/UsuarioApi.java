@@ -9,6 +9,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.HTTP;
 import retrofit2.http.Multipart;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
@@ -58,4 +59,21 @@ public interface UsuarioApi {
     // con AsyncTask + HttpURLConnection que quedaba fuera de Retrofit.
     @GET("usuarios/{id}/foto")
     Call<ResponseBody> descargarFoto(@Path("id") int id);
+
+    /**
+     * Borra definitivamente la cuenta del usuario autenticado (GP-008).
+     *
+     * <p>No lleva id en la ruta a propósito: el usuario que se borra sale del token
+     * (DEC-013), así que ni el cuerpo ni la URL pueden decir a quién se borra. El
+     * cuerpo solo lleva {@code password}, la contraseña actual, porque el borrado es
+     * irreversible y un token robado no debe bastar para vaciar una cuenta.
+     *
+     * <p>Se declara con {@code @HTTP} y no con {@code @DELETE} porque el DELETE de
+     * Retrofit no admite cuerpo; {@code hasBody = true} es lo que lo permite.
+     *
+     * <p>La API responde 200 con {@code {"mensaje": ...}}, que aquí se descarta
+     * ({@code Call<Void>}), y <b>403</b> si la contraseña no es la de la cuenta.
+     */
+    @HTTP(method = "DELETE", path = "usuarios/me", hasBody = true)
+    Call<Void> eliminarCuentaPropia(@Body Map<String, Object> body);
 }

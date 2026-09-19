@@ -621,4 +621,45 @@
     <!-- Post-workout celebration (phase 4) -->
     <string name="resumen_celebracion_eyebrow">YOU MOVED</string>
     <string name="resumen_celebracion_unidad">kilos in this session</string>
+
+    <!-- PRIVACY POLICY (GP-008)
+         The policy is NOT shipped inside the APK: it opens in the browser, so it can
+         be corrected without publishing a new version. -->
+    <string name="politica_privacidad">Privacy policy</string>
+    <string name="registro_aviso_privacidad">By creating your account you confirm that you have read the %1$s</string>
+    <string name="registro_aviso_privacidad_enlace">Privacy Policy</string>
+    <string name="error_sin_navegador">There is no application available to open links</string>
+
+    <!-- DELETE ACCOUNT (GP-008)
+         Same wording as gymprofit.app/eliminar-cuenta: if the two versions promise
+         different things, one of them is lying. -->
+    <string name="eliminar_cuenta_titulo">Delete account</string>
+    <string name="eliminar_cuenta_icono_descripcion">Permanent deletion warning</string>
+    <string name="eliminar_cuenta_intro">Deletion is permanent and immediate: there is no bin and no way to recover your history afterwards.</string>
+    <string name="eliminar_cuenta_que_se_borra">What gets deleted</string>
+    <string name="eliminar_cuenta_borra_1">Your account: username, email address and password.</string>
+    <string name="eliminar_cuenta_borra_2">Your profile: weight, height, age, experience level and goal.</string>
+    <string name="eliminar_cuenta_borra_3">Your profile picture, if you uploaded one.</string>
+    <string name="eliminar_cuenta_borra_4">Your whole training history: routines, sessions, exercises performed, sets with their weights and reps, notes and progress.</string>
+    <string name="eliminar_cuenta_borra_5">Your whole nutrition log: meals, foods eaten and any custom foods you created.</string>
+    <string name="eliminar_cuenta_borra_6">Your body measurements, personal goals and achievements.</string>
+    <string name="eliminar_cuenta_borra_7">Your open sessions and your device identifier for notifications.</string>
+    <string name="eliminar_cuenta_que_no_se_borra">What does not get deleted</string>
+    <string name="eliminar_cuenta_no_borra_1">Crash reports already sent to Firebase Crashlytics, which are anonymous and not linked to your account.</string>
+    <string name="eliminar_cuenta_no_borra_2">Foods from the general catalogue, which are not yours and hold no personal data.</string>
+    <string name="eliminar_cuenta_no_borra_3">Server technical logs, which hold no identifiable personal data.</string>
+    <string name="eliminar_cuenta_antes">Before you do it</string>
+    <string name="eliminar_cuenta_antes_1">If you only want to stop using the app for a while, you do not need to delete anything: signing out is enough. Your history will be waiting.</string>
+    <string name="eliminar_cuenta_antes_2">If what you want is a copy of your data before deleting it, ask for it at soporte@gymprofit.app and it will be sent to you.</string>
+    <string name="eliminar_cuenta_conservacion_enlace">How long your data is kept</string>
+    <string name="eliminar_cuenta_confirmar_titulo">Confirm it is you</string>
+    <string name="eliminar_cuenta_password">Your current password</string>
+    <string name="eliminar_cuenta_password_explicacion">We ask for your password even though you are already signed in: an unlocked phone left alone for a minute must not be enough to wipe your account.</string>
+    <string name="eliminar_cuenta_confirmacion">I understand that everything will be deleted and that this cannot be undone</string>
+    <string name="eliminar_cuenta_btn">Delete my account permanently</string>
+    <string name="eliminar_cuenta_error_password_vacia">Enter your password</string>
+    <string name="eliminar_cuenta_error_password">That password is not correct</string>
+    <string name="eliminar_cuenta_cargando">Deleting your account and your data…</string>
+    <string name="eliminar_cuenta_ok">Your account and your data have been deleted</string>
+    <string name="perfil_eliminar_cuenta">Delete account</string>
 </resources>
