@@ -74,6 +74,29 @@ public class SecurityUtils {
     }
 
     /**
+     * Verifica la propiedad solo cuando el recurso tiene dueño (DEC-027).
+     * <p>
+     * Para los recursos que pueden ser de catálogo público o de un usuario, según que su
+     * columna {@code usuario_id} sea NULL o no: un alimento creado por alguien es suyo y
+     * nadie más lo toca, pero uno del catálogo es de todos y negarlo rompería el uso
+     * normal. Un {@code ownerId} nulo significa «no es de nadie», y ahí no hay nada que
+     * comprobar.
+     * <p>
+     * No vale llamar a {@link #checkOwnership(Integer)} con null: ahí un recurso sin dueño
+     * se rechazaría a todo el mundo menos a ADMIN.
+     *
+     * @param ownerId id del propietario, o {@code null} si el recurso es de catálogo.
+     * @throws UnauthorizedException (→ 403) si el recurso tiene dueño y no es quien llama.
+     */
+    public void checkOwnershipIfOwned(Integer ownerId) {
+        if (ownerId == null) {
+            return;
+        }
+
+        checkOwnership(ownerId);
+    }
+
+    /**
      * Exige que el usuario autenticado sea ADMIN (p. ej. listados globales {@code findAll}).
      *
      * @throws UnauthorizedException (→ 403) si no es ADMIN.

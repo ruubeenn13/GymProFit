@@ -82,6 +82,8 @@ public class AlimentoComidaService implements IAlimentoComidaService {
             Alimento alimento = alimentoRepository.findById(alimentoComidaCreateDTO.getAlimentoId())
                     .orElseThrow(() -> new NotFoundEntityException("El alimento con id " + alimentoComidaCreateDTO.getAlimentoId() + " no existe"));
 
+            checkAlimentoAccesible(alimento);
+
             if (alimentoComidaRepository.existsByComidaIdAndAlimentoId(
                     alimentoComidaCreateDTO.getComidaId(),
                     alimentoComidaCreateDTO.getAlimentoId())) {
@@ -126,6 +128,8 @@ public class AlimentoComidaService implements IAlimentoComidaService {
 
             Alimento alimento = alimentoRepository.findById(alimentoComidaDTO.getAlimentoId())
                     .orElseThrow(() -> new NotFoundEntityException("El alimento con id " + alimentoComidaDTO.getAlimentoId() + " no existe"));
+
+            checkAlimentoAccesible(alimento);
 
             alimentoComida.setComida(comida);
             alimentoComida.setAlimento(alimento);
@@ -299,6 +303,24 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         Comida comida = comidaRepository.findById(comidaId)
                 .orElseThrow(() -> new NotFoundEntityException("La comida con id " + comidaId + " no existe"));
         securityUtils.checkOwnership(comida.getUsuario().getId());
+    }
+
+    /**
+     * Verifica que el alimento que se va a meter en la comida se le puede enseñar a quien llama.
+     * <p>
+     * El id del alimento llega en el cuerpo de la petición, así que es un id elegido por el
+     * cliente y hay que tratarlo como tal. Un alimento del catálogo (dueño NULL) es de todos
+     * y se permite: es el caso normal. Uno creado por otro usuario es suyo, y aceptarlo aquí
+     * sería una IDOR con forma de escritura, porque {@code AlimentoComidaDTO} devuelve su
+     * nombre, su categoría, su {@code usuarioIdAlimento} y sus macros. Criterio de DEC-027:
+     * el id tiene dueño, luego 403.
+     *
+     * @param alimento alimento ya cargado que se quiere asociar a la comida.
+     * @throws com.gymprofit.api.exceptions.UnauthorizedException (→ 403) si es de otro usuario.
+     */
+    private void checkAlimentoAccesible(Alimento alimento) {
+        securityUtils.checkOwnershipIfOwned(
+                alimento.getUsuario() == null ? null : alimento.getUsuario().getId());
     }
 
     // Calcula las calorías de la línea proporcionalmente a la cantidad en
