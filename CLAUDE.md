@@ -48,9 +48,19 @@ Que los tests existentes sigan en verde no significa que lo nuevo esté probado.
 
 ## Commits
 
-Convención `tipo(ámbito): resumen` — `feat`, `fix`, `refactor`, `docs`, `test`; ámbitos `api`, `android`, `api,android`.
+Convención `tipo(ámbito): resumen`.
 
-`test` es para lo que solo añade o corrige pruebas sin tocar el comportamiento. Un cambio de código que trae sus tests, como pide *Terminado*, va con el tipo del cambio (`feat` o `fix`), no con `test`.
+**Tipos** — se enumeran porque son pocos y estables: `feat`, `fix`, `refactor`, `docs`, `test`, `build`, `ci`.
+
+- `test` es para lo que solo añade o corrige pruebas sin tocar el comportamiento. Un cambio de código que trae sus tests, como pide *Terminado*, va con el tipo del cambio (`feat` o `fix`), no con `test`.
+- `ci` es para cambios a los workflows en sí. Un cambio funcional que de paso toca un workflow lleva el tipo del cambio, igual que con `test`.
+
+**Ámbitos** — no se enumeran: una lista cerrada se desvía sola y acaba mintiendo. La regla es que el ámbito nombra **la parte del producto que se toca**:
+
+- Si esa parte es un directorio de primer nivel del monorepo, se usa su nombre: `api`, `android` (por `app/`), `db`, `web`, `documentacion`.
+- Si no lo es, el ámbito es el nombre corto de lo que se toca: `changelog`, `decisiones`, `reglas`.
+- Varios ámbitos van separados por **coma**: `feat(api,android)`.
+
 El cuerpo explica **por qué**, no qué líneas cambiaron.
 Todo cambio funcional se anota en `CHANGELOG.md` con su hash.
 
