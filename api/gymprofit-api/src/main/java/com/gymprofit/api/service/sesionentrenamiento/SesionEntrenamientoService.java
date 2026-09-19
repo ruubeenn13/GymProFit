@@ -12,6 +12,7 @@ import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.exceptions.CreateEntityException;
 import com.gymprofit.api.exceptions.DeleteEntityException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
+import com.gymprofit.api.exceptions.UnauthorizedException;
 import com.gymprofit.api.exceptions.UpdateEntityException;
 import com.gymprofit.api.mappers.SesionEntrenamientoMapper;
 import com.gymprofit.api.repository.jpa.IRutinaRepository;
@@ -100,6 +101,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
                 Rutina rutina = rutinaRepository.findById(sesionEntrenamientoCreateDTO.getRutinaId())
                         .orElseThrow(() -> new NotFoundEntityException("La rutina con id " + sesionEntrenamientoCreateDTO.getRutinaId() + " no existe"));
 
+                checkRutinaUtilizable(rutina);
+
                 sesion.setRutina(rutina);
             }
 
@@ -128,7 +131,9 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
                 if (!nuevos.isEmpty()) dto.setNuevosLogros(nuevos);
             }
             return dto;
-        } catch (NotFoundEntityException e) {
+        } catch (NotFoundEntityException | UnauthorizedException e) {
+            // El 403 de la rutina ajena tiene que salir tal cual: envuelto en
+            // CreateEntityException se convertiría en un 500 y dejaría de ser un rechazo.
             throw e;
         } catch (Exception e) {
             throw new CreateEntityException(SesionEntrenamiento.class.getSimpleName(), sesionEntrenamientoCreateDTO, e);
@@ -153,6 +158,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
                 Rutina rutina = rutinaRepository.findById(sesionEntrenamientoDTO.getRutinaId())
                         .orElseThrow(() -> new NotFoundEntityException("La rutina con id " + sesionEntrenamientoDTO.getRutinaId() + " no existe"));
 
+                checkRutinaUtilizable(rutina);
+
                 sesion.setRutina(rutina);
             } else {
                 sesion.setRutina(null);
@@ -168,7 +175,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
             SesionEntrenamiento sesionActualizada = sesionEntrenamientoRepository.save(sesion);
 
             return sesionEntrenamientoMapper.toDTO(sesionActualizada);
-        } catch (NotFoundEntityException e) {
+        } catch (NotFoundEntityException | UnauthorizedException e) {
             throw  e;
         } catch (Exception e) {
             throw new UpdateEntityException(SesionEntrenamiento.class.getSimpleName(), sesionEntrenamientoDTO, e);
@@ -541,5 +548,22 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
         java.math.BigDecimal porResumen = ejercicioRealizadoRepository.volumenDeResumen(sesionId);
         return porResumen == null ? java.math.BigDecimal.ZERO : porResumen;
+    }
+
+    /**
+     * Verifica que la rutina que se asocia a la sesión se le puede ofrecer a quien llama.
+     * <p>
+     * El {@code rutinaId} llega en el cuerpo, así que lo elige el cliente. Una rutina sin
+     * dueño es una plantilla del sistema y la puede usar cualquiera —es el caso normal al
+     * empezar a entrenar—; una rutina con dueño es de esa persona, y enlazarla desde la
+     * sesión de otro crea una fila cruzada que nada de la aplicación permite. Criterio de
+     * DEC-027: manda el dueño del id, no el verbo de la petición.
+     *
+     * @param rutina rutina ya cargada que se quiere asociar a la sesión.
+     * @throws com.gymprofit.api.exceptions.UnauthorizedException (→ 403) si es de otro usuario.
+     */
+    private void checkRutinaUtilizable(Rutina rutina) {
+        securityUtils.checkOwnershipIfOwned(
+                rutina.getUsuario() == null ? null : rutina.getUsuario().getId());
     }
 }
