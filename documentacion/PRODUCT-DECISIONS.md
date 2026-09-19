@@ -5,6 +5,7 @@ Decisiones tomadas, con su porqué. Sirve para no volver a discutir lo ya discut
 **Reglas del archivo**
 
 - Los IDs son estables y no se reutilizan. Una decisión que deja de valer se marca `Sustituida por DEC-xxx`; no se borra.
+- Una entrada sale de **Pendientes de decidir** en el mismo momento en que se resuelve, y pasa al bloque de decisiones con su ID intacto. El encabezado de una sección es una afirmación: si ahí debajo queda algo ya resuelto, el archivo miente a quien lo escanea sin abrir cada entrada, que es justo como se lee esta sección.
 - Cada entrada dice qué la invalidaría. Si nadie sabe contestar a eso, probablemente no era una decisión, era una preferencia.
 - Aquí van decisiones **duraderas**. Las tareas están en el backlog, que vive fuera de este repositorio y es su única fuente de verdad.
 - Si el código contradice una decisión de aquí, manda la decisión y el código es deuda. Las contradicciones conocidas están anotadas.
@@ -392,14 +393,16 @@ El segundo es más simple y más grave, y hace al primero irrelevante: `POST /au
 
 ---
 
-## Pendientes de decidir
-
-Se registran aquí para que no se decidan por omisión.
-
 ### DEC-023 · Identificador de la aplicación
 **Estado:** RESUELTA por DEC-030 · **Fecha de cierre:** 2026-09-19
 
 Pedía decidir de forma consciente si el `applicationId` `es.pmdm.gymprofit` —donde PMDM es el módulo académico del ciclo— se cambiaba antes de publicar, porque **tras la primera publicación no se puede cambiar nunca**. Ya no bloquea la subida a Play: **DEC-030** fija `com.gymprofit.app` y deja escrito por qué los paquetes Java se quedan como están.
+
+---
+
+## Pendientes de decidir
+
+Se registran aquí para que no se decidan por omisión.
 
 ### DEC-024 · Proveedor de correo transaccional
 **Estado:** PENDIENTE DE CONFIRMAR
