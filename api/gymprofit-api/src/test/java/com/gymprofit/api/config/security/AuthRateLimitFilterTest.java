@@ -39,6 +39,16 @@ class AuthRateLimitFilterTest {
         return res.getStatus();
     }
 
+    // Dispara una petición a la ruta ESTRICTA indicada, siempre desde la misma IP.
+    private int dispararEstricta(AuthRateLimitFilter f, String ruta) throws Exception {
+        MockHttpServletRequest req = new MockHttpServletRequest("POST", ruta);
+        req.setServletPath(ruta);
+        req.setRemoteAddr("10.0.0.7");
+        MockHttpServletResponse res = new MockHttpServletResponse();
+        f.doFilterInternal(req, res, new MockFilterChain());
+        return res.getStatus();
+    }
+
     // Dispara una petición a una ruta NO estricta (nivel global) desde la IP dada.
     private int dispararGlobal(AuthRateLimitFilter f, String ip) throws Exception {
         MockHttpServletRequest req = new MockHttpServletRequest("GET", "/rutinas");
@@ -127,6 +137,21 @@ class AuthRateLimitFilterTest {
         assertEquals(429, dispararUna(f), "2ª estricta 429 (cupo estricto=1)");
         // La misma IP en una ruta global sigue teniendo su cupo alto intacto.
         assertEquals(200, dispararGlobal(f, "10.0.0.7"), "la global de la misma IP pasa");
+    }
+
+    @Test
+    @DisplayName("la recuperación de contraseña está en el cupo estricto, no en el global")
+    void recuperacion_de_contrasena_va_al_cupo_estricto() throws Exception {
+        // Cupo estricto 2 y global 1000: si estas dos rutas hubieran caído en el nivel
+        // global, ninguna de las peticiones de aquí llegaría a ver un 429.
+        AuthRateLimitFilter f = nuevoFiltro(2, 60);
+
+        // Pedir códigos en cadena es spam a una bandeja ajena; canjearlos en cadena es
+        // fuerza bruta sobre seis dígitos. Las dos comparten el mismo contador estricto.
+        assertEquals(200, dispararEstricta(f, "/auth/forgot-password"), "la 1ª de forgot pasa");
+        assertEquals(200, dispararEstricta(f, "/auth/reset-password"), "la 2ª (reset) agota el cupo");
+        assertEquals(429, dispararEstricta(f, "/auth/forgot-password"), "la 3ª supera el cupo estricto");
+        assertEquals(429, dispararEstricta(f, "/auth/reset-password"), "y reset comparte ese contador");
     }
 
     @Test
