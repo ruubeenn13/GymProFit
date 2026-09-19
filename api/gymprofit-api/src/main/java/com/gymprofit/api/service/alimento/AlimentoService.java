@@ -78,11 +78,7 @@ public class AlimentoService implements IAlimentoService {
             Alimento alimento = alimentoMapper.toEntity(alimentoCreateDTO);
             alimento.setActivo(true);
 
-            if (alimentoCreateDTO.getUsuarioId() != null) {
-                Usuario usuario = usuarioRepository.findById(alimentoCreateDTO.getUsuarioId())
-                        .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + alimentoCreateDTO.getUsuarioId() + " no existe"));
-                alimento.setUsuario(usuario);
-            }
+            asignarPropietario(alimento, alimentoCreateDTO.getUsuarioId());
 
             Alimento alimentoGuardado = alimentoRepository.save(alimento);
 
@@ -100,6 +96,8 @@ public class AlimentoService implements IAlimentoService {
 
         Alimento alimento = alimentoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("El alimento con id " + id + " no existe"));
+
+        checkPuedeEscribir(alimento);
 
         try {
             alimento.setActivo(false);
@@ -120,6 +118,8 @@ public class AlimentoService implements IAlimentoService {
         Alimento alimento = alimentoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("El alimento con id " + id + " no existe"));
 
+        checkPuedeEscribir(alimento);
+
         try {
             alimento.setActivo(true);
             alimentoRepository.save(alimento);
@@ -139,6 +139,8 @@ public class AlimentoService implements IAlimentoService {
         Alimento alimento = alimentoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("El alimento con id " + id + " no existe"));
 
+        checkPuedeEscribir(alimento);
+
         try {
             alimentoRepository.delete(alimento);
 
@@ -156,6 +158,8 @@ public class AlimentoService implements IAlimentoService {
 
         Alimento alimento = alimentoRepository.findById(alimentoDTO.getId())
                 .orElseThrow(() -> new NotFoundEntityException("El alimento con id " + alimentoDTO.getId() + " no existe"));
+
+        checkPuedeEscribir(alimento);
 
         try {
             // Mapear los cambios del DTO a la entidad
@@ -252,6 +256,67 @@ public class AlimentoService implements IAlimentoService {
         return alimentoMapper.toDTOList(alimentos);
     }
 
+    /**
+     * Decide de quién es el alimento que se está creando. El id del cuerpo NO manda.
+     * <p>
+     * Un USER crea siempre alimentos SUYOS: el propietario sale del token (DEC-013) y lo
+     * que venga en el cuerpo se ignora, porque obedecerlo permitía crear comida a nombre
+     * de otra persona. Y omitir el campo tampoco es una vía libre: sin dueño, la fila nace
+     * como <strong>catálogo público</strong> —eso significa {@code usuario_id} NULL en esta
+     * tabla— y el catálogo lo ve todo el mundo, GUEST incluido. Con el registro abierto,
+     * eso era escritura anónima en la comida compartida; en una aplicación de nutrición el
+     * daño son macros falsos que la gente se cree.
+     * <p>
+     * Solo un ADMIN puede crear catálogo, y solo un ADMIN puede crear un alimento a nombre
+     * de otro usuario.
+     *
+     * @param alimento  entidad nueva, todavía sin propietario.
+     * @param usuarioIdDelCuerpo lo que pedía el cliente; se ignora salvo que sea ADMIN.
+     */
+    private void asignarPropietario(Alimento alimento, Integer usuarioIdDelCuerpo) {
+        if (securityUtils.isAdmin()) {
+            // El panel de administración sí crea catálogo (sin usuarioId) y sí puede
+            // asignar un alimento a una cuenta concreta.
+            if (usuarioIdDelCuerpo != null) {
+                alimento.setUsuario(usuarioRepository.findById(usuarioIdDelCuerpo)
+                        .orElseThrow(() -> new NotFoundEntityException(
+                                "El usuario con id " + usuarioIdDelCuerpo + " no existe")));
+            }
+            return;
+        }
+
+        Integer propietario = securityUtils.getCurrentUserId();
+
+        if (usuarioIdDelCuerpo != null && !usuarioIdDelCuerpo.equals(propietario)) {
+            logger.warn("Se ignora el usuarioId={} del cuerpo al crear un alimento: el propietario "
+                    + "sale del token (id={})", usuarioIdDelCuerpo, propietario);
+        }
+
+        alimento.setUsuario(usuarioRepository.findById(propietario)
+                .orElseThrow(() -> new NotFoundEntityException(
+                        "El usuario con id " + propietario + " no existe")));
+    }
+
+    /**
+     * Verifica que quien llama puede escribir sobre este alimento.
+     * <p>
+     * Un alimento del catálogo (sin dueño) es de todos y lo toca solo un ADMIN: cambiarle
+     * los macros a uno del catálogo se lo cambia a todo el mundo. Uno con dueño es suyo, y
+     * ahí vale el criterio de siempre (DEC-027). Sin esto, el agujero de la creación se
+     * podía reabrir por la puerta de al lado, editando o desactivando lo que ya existe.
+     *
+     * @param alimento alimento ya cargado sobre el que se va a escribir.
+     * @throws com.gymprofit.api.exceptions.UnauthorizedException (→ 403) si es catálogo y no es ADMIN, o si es de otro.
+     */
+    private void checkPuedeEscribir(Alimento alimento) {
+        if (alimento.getUsuario() == null) {
+            securityUtils.requireAdmin();
+            return;
+        }
+
+        securityUtils.checkOwnership(alimento.getUsuario().getId());
+    }
+
     // Actualización parcial: solo modifica los campos no nulos del patchDTO.
     @Transactional
     @Override
@@ -260,6 +325,8 @@ public class AlimentoService implements IAlimentoService {
 
         Alimento alimento = alimentoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("El alimento con id " + id + " no existe"));
+
+        checkPuedeEscribir(alimento);
 
         try {
             if (patchDTO.getNombre() != null) alimento.setNombre(patchDTO.getNombre());

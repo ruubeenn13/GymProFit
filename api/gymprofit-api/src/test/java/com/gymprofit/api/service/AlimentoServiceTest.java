@@ -4,6 +4,7 @@ import com.gymprofit.api.dto.entity.alimento.AlimentoCreateDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoPatchDTO;
 import com.gymprofit.api.dto.jooq.AlimentoJooqDTO;
+import com.gymprofit.api.config.security.SecurityUtils;
 import com.gymprofit.api.entity.Alimento;
 import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
@@ -49,6 +50,11 @@ class AlimentoServiceTest {
 
     @Mock
     private IUsuarioRepository usuarioRepository;
+
+    // Desde que la escritura de alimentos comprueba quién llama, el servicio no arranca
+    // sin esto: un mock sin stubbing deja pasar requireAdmin() y checkOwnership().
+    @Mock
+    private SecurityUtils securityUtils;
 
     @InjectMocks
     private AlimentoService alimentoService;
@@ -117,10 +123,16 @@ class AlimentoServiceTest {
         assertThrows(NotFoundEntityException.class, () -> alimentoService.findById(99));
     }
 
-    // Comprueba que save persiste el alimento marcándolo como activo (sin usuario asociado)
+    // Un USER que crea un alimento lo crea SUYO aunque no mande usuarioId: sin dueño la
+    // fila sería catálogo público, y el catálogo no lo escribe un usuario cualquiera.
     @Test
-    @DisplayName("save correcto guarda el alimento con activo=true")
+    @DisplayName("save de un USER asigna el alimento a quien lo crea, con activo=true")
     void save_correcto_guarda_alimento() {
+        Usuario quienLlama = new Usuario();
+        quienLlama.setId(7);
+        when(securityUtils.isAdmin()).thenReturn(false);
+        when(securityUtils.getCurrentUserId()).thenReturn(7);
+        when(usuarioRepository.findById(7)).thenReturn(Optional.of(quienLlama));
         when(alimentoMapper.toEntity(alimentoCreateDTO)).thenReturn(alimento);
         when(alimentoRepository.save(any())).thenReturn(alimento);
         when(alimentoMapper.toDTO(alimento)).thenReturn(alimentoDTO);
@@ -129,17 +141,20 @@ class AlimentoServiceTest {
 
         assertNotNull(result);
         assertTrue(alimento.getActivo());
+        assertEquals(quienLlama, alimento.getUsuario());
         verify(alimentoRepository).save(any());
     }
 
-    // Comprueba que save asocia el usuario propietario cuando el DTO trae usuarioId
+    // Solo un ADMIN puede crear un alimento a nombre de otra cuenta: para el resto, el
+    // usuarioId del cuerpo se ignora y manda el token.
     @Test
-    @DisplayName("save con usuarioId asocia el alimento al usuario creador")
+    @DisplayName("save de un ADMIN sí respeta el usuarioId del cuerpo")
     void save_con_usuario_asocia_usuario() {
         Usuario usuario = new Usuario();
         usuario.setId(7);
         alimentoCreateDTO.setUsuarioId(7);
 
+        when(securityUtils.isAdmin()).thenReturn(true);
         when(alimentoMapper.toEntity(alimentoCreateDTO)).thenReturn(alimento);
         when(usuarioRepository.findById(7)).thenReturn(Optional.of(usuario));
         when(alimentoRepository.save(any())).thenReturn(alimento);
