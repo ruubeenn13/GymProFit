@@ -48,6 +48,7 @@ GymProFit/
 ├── 📂 app/            # Aplicación Android (Android Studio - Java)
 ├── 📂 api/            # API REST backend (Spring Boot - Java)
 ├── 📂 db/             # Script SQL de referencia (el esquema real lo crean las migraciones Flyway)
+├── 📂 web/            # Sitio público de gymprofit.app (estático; privacidad y eliminación de cuenta, exigidas por Play)
 └── 📂 documentacion/  # Guías: despliegue, entorno de desarrollo y de pruebas, notificaciones, auditorías y planes
                     #   · ENTORNO-PRUEBAS.md      → cómo trabajar sin tocar producción
                     #   · AUDITORIA-UX-2026-09.md → estado de las 42 pantallas y plan de rediseño

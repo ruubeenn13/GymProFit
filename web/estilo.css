@@ -1,0 +1,260 @@
+/* ------------------------------------------------------------------
+   GymProFit — hoja de estilo común
+   Los colores son los mismos tokens que values/colors.xml y
+   values-night/colors.xml de la app. Si allí cambian, aquí también.
+   Base = oscuro (el tema por defecto de la app); el claro entra con
+   prefers-color-scheme, que es lo que espera quien navega por web.
+   ------------------------------------------------------------------ */
+
+/* Barlow Condensed servida desde el propio dominio, con los MISMOS ficheros
+   que usa la app (res/font/*.ttf, convertidos a woff2). No se carga de Google
+   Fonts a propósito: una página que explica cómo se tratan tus datos no debería
+   enviar tu IP a un tercero solo para pintar un titular. Además así no depende
+   de una red ajena y no hay salto de fuente al cargar. */
+@font-face {
+  font-family: "Barlow Condensed";
+  src: url("/fuentes/barlow-condensed-500.woff2") format("woff2");
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Barlow Condensed";
+  src: url("/fuentes/barlow-condensed-600.woff2") format("woff2");
+  font-weight: 600; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Barlow Condensed";
+  src: url("/fuentes/barlow-condensed-700.woff2") format("woff2");
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+
+:root {
+  --bg:        #0B0C0E;
+  --surface:   #1B1E24;
+  --surface-2: #252A31;
+  --stroke:    #4A505B;
+  --primary:   #FF6A00;
+  --on-primary:#1A0E00;
+  --gold:      #E8B84B;
+  --text:      #F2F2F3;
+  --text-2:    #A1A9B6;
+
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --cond: "Barlow Condensed", var(--sans);
+
+  --radius: 10px;
+  --gutter: 20px;
+  --maxw: 760px;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg:        #F1F1EE;
+    --surface:   #FFFFFF;
+    --surface-2: #E8E8E3;
+    --stroke:    #C9C9C2;
+    --primary:   #B83E00;
+    --on-primary:#FFFFFF;
+    --gold:      #B58A2A;
+    --text:      #17181C;
+    --text-2:    #5A5C62;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Barlow Condensed solo trae 500/600/700: no existe el peso 400.
+   Por eso los titulares van en condensada y el cuerpo en la del
+   sistema, exactamente igual que en la app. */
+h1, h2, h3, .marca, .btn, .eyebrow {
+  font-family: var(--cond);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+a { color: var(--primary); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { opacity: 0.8; }
+
+/* ── Estructura ──────────────────────────────────────────────────── */
+
+.wrap {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+/* Franja de acento superior: la misma pieza de 4px que abre los correos
+   transaccionales (DEC-026). Es lo que hace que web y correo se reconozcan
+   como la misma marca sin repetir el logotipo dos veces. */
+.barra-acento {
+  height: 4px;
+  background: var(--primary);
+}
+
+header.sitio {
+  border-bottom: 1px solid var(--stroke);
+  padding: 20px 0;
+}
+
+.marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  font-size: 20px;
+  letter-spacing: 1.5px;
+  color: var(--text);
+  text-decoration: none;
+}
+.marca img { width: 30px; height: 30px; display: block; }
+
+main { padding: 48px 0 72px; }
+
+footer.sitio {
+  border-top: 1px solid var(--stroke);
+  padding: 28px 0 56px;
+  color: var(--text-2);
+  font-size: 15px;
+}
+footer.sitio nav { margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 18px; }
+
+/* ── Tipografía de contenido ─────────────────────────────────────── */
+
+.eyebrow {
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin: 0 0 12px;
+}
+
+h1 { font-size: 46px; line-height: 1.08; margin: 0 0 18px; }
+h2 { font-size: 26px; line-height: 1.2; margin: 44px 0 12px; }
+h3 { font-size: 20px; line-height: 1.25; margin: 30px 0 8px; }
+
+p  { margin: 0 0 18px; }
+.lead { font-size: 19px; color: var(--text-2); }
+
+ul { margin: 0 0 18px; padding-left: 22px; }
+li { margin-bottom: 8px; }
+
+.meta { color: var(--text-2); font-size: 15px; }
+
+/* ── Piezas ──────────────────────────────────────────────────────── */
+
+.tarjeta {
+  background: var(--surface);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius);
+  padding: 22px 24px;
+  margin: 0 0 20px;
+}
+.tarjeta h3 { margin-top: 0; }
+.tarjeta p:last-child { margin-bottom: 0; }
+
+.acento {
+  border-left: 3px solid var(--primary);
+  background: var(--surface-2);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 18px 22px;
+  margin: 0 0 24px;
+}
+.acento p:last-child { margin-bottom: 0; }
+
+.btn {
+  display: inline-block;
+  background: var(--primary);
+  color: var(--on-primary);
+  text-decoration: none;
+  font-size: 18px;
+  padding: 13px 26px;
+  border-radius: var(--radius);
+}
+.btn:hover { opacity: 0.9; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 24px;
+  font-size: 16px;
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 11px 12px;
+  border-bottom: 1px solid var(--stroke);
+}
+th {
+  font-family: var(--cond);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.tabla-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* ── Portada ─────────────────────────────────────────────────────── */
+
+/* Rejilla del hero: texto a la izquierda, logotipo a la derecha. El logo va
+   a tamaño completo y no como marca de agua: es lo único "de marca" que hay
+   en toda la página, así que esconderlo al 8% de opacidad no aportaría nada. */
+.hero {
+  padding: 64px 0 28px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 40px;
+  align-items: center;
+}
+.hero-logo img {
+  width: 190px; height: 190px; display: block;
+}
+
+@media (max-width: 760px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+  .hero-logo { order: -1; }
+  .hero-logo img { width: 104px; height: 104px; }
+}
+
+.pie-marca {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+}
+.pie-marca img { width: 20px; height: 20px; opacity: 0.85; }
+
+.estado {
+  display: inline-block;
+  font-family: var(--cond);
+  font-size: 14px;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  padding: 4px 14px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 600px) {
+  body { font-size: 16px; }
+  h1 { font-size: 34px; }
+  h2 { font-size: 23px; }
+  .lead { font-size: 18px; }
+  .hero { padding: 40px 0 16px; }
+  main { padding: 36px 0 56px; }
+}

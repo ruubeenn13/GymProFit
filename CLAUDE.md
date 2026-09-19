@@ -1,7 +1,9 @@
 # CLAUDE.md — reglas de trabajo en GymProFit
 
 Producto comercial real: app Android (Java, vistas XML) + API Spring Boot 3.5 / Java 21 / MariaDB.
-Monorepo: `api/gymprofit-api` · `app/GymProFit` · `db` · `documentacion`.
+Monorepo: `api/gymprofit-api` · `app/GymProFit` · `db` · `web` · `documentacion`.
+
+`web` es el sitio estático de `gymprofit.app`, desplegado por subida directa a Cloudflare Pages: un push aquí no despliega nada (ver `web/README.md`).
 
 ## Antes de tocar código
 
