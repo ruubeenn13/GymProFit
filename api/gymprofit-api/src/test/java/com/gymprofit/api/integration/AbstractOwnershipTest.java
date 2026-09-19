@@ -43,9 +43,14 @@ import java.util.List;
 @Transactional
 public abstract class AbstractOwnershipTest {
 
-    // Usernames fijos de los dos usuarios de prueba (rollback los libera tras cada test).
+    // Usernames fijos de los usuarios de prueba (rollback los libera tras cada test).
     protected static final String OWNER = "__idor_owner__";
     protected static final String ATTACKER = "__idor_attacker__";
+
+    // Invitado. El peor caso de todos: POST /auth/guest entrega un token con este rol SIN
+    // pedir credenciales, así que cualquiera con la URL de la API puede ser este usuario.
+    // Toda ruta que lleve un id de recurso en el camino tiene que cerrarle la puerta.
+    protected static final String GUEST = "__idor_guest__";
 
     @Autowired
     protected MockMvc mockMvc;
@@ -71,14 +76,16 @@ public abstract class AbstractOwnershipTest {
     // Entidades sembradas, disponibles para las subclases.
     protected Usuario owner;
     protected Usuario attacker;
+    protected Usuario guest;
 
-    // Crea los dos usuarios USER reales antes que la siembra de recursos de la subclase
+    // Crea los usuarios reales antes que la siembra de recursos de la subclase
     // (el @BeforeEach de la superclase corre primero). @WithUserDetails resuelve el
     // principal más tarde (setupBefore=TEST_EXECUTION), cuando ya existen en BD.
     @BeforeEach
     void baseSetup() {
         owner = crearUsuario(OWNER, RoleType.USER);
         attacker = crearUsuario(ATTACKER, RoleType.USER);
+        guest = crearUsuario(GUEST, RoleType.GUEST);
     }
 
     // Persiste un Usuario mínimo válido (mismo patrón que AuthService.register).

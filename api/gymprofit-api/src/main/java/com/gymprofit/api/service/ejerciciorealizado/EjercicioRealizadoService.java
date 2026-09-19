@@ -204,12 +204,29 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         return ejercicioRealizadoMapper.toDTOList(ejerciciosRealizados);
     }
 
-    // Lista todos los registros de un ejercicio concreto (sin filtrar por propietario).
+    /**
+     * Lista los registros de un ejercicio concreto <b>del usuario autenticado</b>.
+     * <p>
+     * El id que llega por la ruta es el del <em>ejercicio del catálogo</em>, no el de un
+     * recurso de nadie, así que aquí no hay propiedad que comprobar: no existe un «id
+     * ajeno» que rechazar con un 403. Lo que había que arreglar es el alcance, porque la
+     * consulta devolvía los registros de <b>todos los usuarios</b> y bastaba pedir
+     * cualquier ejercicio del catálogo para leer cuánto levanta cada uno y qué días
+     * entrena. El usuario sale del token y nunca de la petición.
+     * <p>
+     * ADMIN conserva la vista global, que es la que tenía declarada {@code findAll()}.
+     *
+     * @param ejercicioId ejercicio del catálogo cuyo histórico se pide.
+     * @return los registros propios, o los de todos si quien pregunta es ADMIN.
+     */
     @Override
     public List<EjercicioRealizadoDTO> findByEjercicioId(Integer ejercicioId) {
-        logger.info("Buscando ejercicios realizados por ejercicio di: {}", ejercicioId);
+        logger.info("Buscando ejercicios realizados por ejercicio id: {}", ejercicioId);
 
-        List<EjercicioRealizado> ejerciciosRealizados = ejercicioRealizadoRepository.findByEjercicioId(ejercicioId);
+        List<EjercicioRealizado> ejerciciosRealizados = securityUtils.isAdmin()
+                ? ejercicioRealizadoRepository.findByEjercicioId(ejercicioId)
+                : ejercicioRealizadoRepository.findByEjercicioIdAndSesionUsuarioId(
+                        ejercicioId, securityUtils.getCurrentUserId());
 
         return ejercicioRealizadoMapper.toDTOList(ejerciciosRealizados);
     }
@@ -229,20 +246,47 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         return ejercicioRealizadoMapper.toDTOList(ejerciciosRealizados);
     }
 
-    // Cuenta los ejercicios realizados en una sesión.
+    /**
+     * Cuenta los ejercicios realizados en una sesión, comprobando la propiedad de la sesión.
+     * <p>
+     * Un contador es información sobre el recurso aunque no devuelva ninguna fila suya:
+     * sin esta comprobación, iterar ids de sesión ajenas dibujaba el historial de
+     * entrenamiento de cualquiera —qué días entrenó y cuántos ejercicios hizo— sin leer
+     * un solo registro.
+     *
+     * @param sesionId sesión cuyos ejercicios se cuentan.
+     * @throws NotFoundEntityException si la sesión no existe.
+     */
     @Override
     public Long countBySesionId(Integer sesionId) {
         logger.info("Contando ejercicios realizados por sesión id: {}", sesionId);
 
+        SesionEntrenamiento sesion = sesionEntrenamientoRepository.findById(sesionId)
+                .orElseThrow(() -> new NotFoundEntityException("La sesión con id " + sesionId + " no existe"));
+
+        securityUtils.checkOwnership(sesion.getUsuario().getId());
+
         return ejercicioRealizadoRepository.countBySesionId(sesionId);
     }
 
-    // Cuenta cuántas veces se ha registrado un ejercicio concreto.
+    /**
+     * Cuenta cuántas veces ha registrado <b>el usuario autenticado</b> un ejercicio concreto.
+     * <p>
+     * Mismo caso que {@link #findByEjercicioId(Integer)}: el id de la ruta es el de un
+     * ejercicio del catálogo y no hay propiedad que rechazar, pero el contador global
+     * revelaba la actividad de todos los usuarios de la plataforma. ADMIN mantiene la
+     * cuenta global.
+     *
+     * @param ejercicioId ejercicio del catálogo que se cuenta.
+     */
     @Override
     public Long countByEjercicioId(Integer ejercicioId) {
         logger.info("Contando ejercicios realizados por ejercicio id: {}", ejercicioId);
 
-        return ejercicioRealizadoRepository.countByEjercicioId(ejercicioId);
+        return securityUtils.isAdmin()
+                ? ejercicioRealizadoRepository.countByEjercicioId(ejercicioId)
+                : ejercicioRealizadoRepository.countByEjercicioIdAndSesionUsuarioId(
+                        ejercicioId, securityUtils.getCurrentUserId());
     }
 
     // Elimina todos los ejercicios realizados de una sesión, comprobando su propiedad.
@@ -285,10 +329,23 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         }
     }
 
-    // Comprueba si existe un registro de ese ejercicio en esa sesión.
+    /**
+     * Comprueba si existe un registro de ese ejercicio en esa sesión, validando la
+     * propiedad de la sesión.
+     * <p>
+     * Un booleano también es información ajena: preguntando ejercicio a ejercicio sobre
+     * una sesión de otro se reconstruye su entrenamiento entero, un sí o un no cada vez.
+     *
+     * @throws NotFoundEntityException si la sesión no existe.
+     */
     @Override
     public boolean existsBySesionIdAndEjercicioId(Integer sesionId, Integer ejercicioId) {
         logger.info("Verificando si existe ejercicio realizado para sesión id: {} y ejercicio id: {}", sesionId, ejercicioId);
+
+        SesionEntrenamiento sesion = sesionEntrenamientoRepository.findById(sesionId)
+                .orElseThrow(() -> new NotFoundEntityException("La sesión con id " + sesionId + " no existe"));
+
+        securityUtils.checkOwnership(sesion.getUsuario().getId());
 
         return ejercicioRealizadoRepository.existsBySesionIdAndEjercicioId(sesionId, ejercicioId);
     }

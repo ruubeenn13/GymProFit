@@ -232,10 +232,20 @@ public class AlimentoService implements IAlimentoService {
         return alimentoRepository.countByCategoria(categoria);
     }
 
-    // Alimentos personalizados creados por un usuario concreto.
+    /**
+     * Alimentos personalizados creados por un usuario concreto.
+     * <p>
+     * El catálogo general de alimentos es público y sigue abierto a GUEST; estos no, porque
+     * los crea el usuario y llevan su dieta dentro. Sin la comprobación se listaban iterando
+     * ids con un token de invitado, que se obtiene sin credenciales.
+     *
+     * @param usuarioId usuario cuyos alimentos se piden; tiene que ser el del token, salvo ADMIN.
+     */
     @Override
     public List<AlimentoDTO> findByUsuarioId(Integer usuarioId) {
         logger.info("Buscando alimentos del usuario con id: {}", usuarioId);
+
+        securityUtils.checkOwnership(usuarioId);
 
         List<Alimento> alimentos = alimentoRepository.findByUsuarioId(usuarioId);
 

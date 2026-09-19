@@ -412,9 +412,22 @@ public class UsuarioService implements IUsuarioService {
         return null;
     }
 
-    // Devuelve los bytes de la foto de perfil desde la BD.
+    /**
+     * Devuelve los bytes de la foto de perfil desde la BD, comprobando la propiedad.
+     * <p>
+     * La foto es un dato personal —una cara— y la ruta lleva el id en el camino, así que
+     * sin esta comprobación se descargaban las de todo el mundo iterando ids. Antes además
+     * la ruta estaba abierta a GUEST, y un token de invitado se obtiene sin credenciales:
+     * cualquiera con la URL de la API podía recorrer el álbum entero. La app solo pide la
+     * suya, con el id que guarda en preferencias, así que restringirlo no le quita nada.
+     *
+     * @param id usuario cuya foto se pide; tiene que ser el del token, salvo ADMIN.
+     * @throws NotFoundEntityException si ese usuario no tiene foto.
+     */
     @Override
     public byte[] getFotoPerfil(Integer id) {
+        securityUtils.checkOwnership(id);
+
         return fotoPerfilRepository.findById(id)
                 .map(FotoPerfil::getDatos)
                 .orElseThrow(() -> new NotFoundEntityException("El usuario " + id + " no tiene foto de perfil"));

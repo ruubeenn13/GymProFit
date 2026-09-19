@@ -316,6 +316,26 @@ Decisiones tomadas, con su porqué. Sirve para no volver a discutir lo ya discut
 
 ---
 
+### DEC-027 · Un id de catálogo no es un id de recurso: ahí el criterio no es 403
+**Estado:** Aceptada · **Fecha:** 2026-09-19
+
+**Contexto.** Al cerrar las IDOR abiertas, el backlog pedía «403 en las cinco rutas». En tres se cumple. En las otras dos —`GET /ejercicios-realizados/ejercicio/{ejercicioId}` y `GET /ejercicios-realizados/count/ejercicio/{ejercicioId}`— **es imposible por construcción**, y perseguirlo habría llevado a inventarse un 403 falso o a dar por buena una ruta que seguía filtrando.
+
+**Decisión.** El criterio de aceptación depende de **qué es el id que viaja en la ruta**, y hay dos casos que no se defienden igual:
+
+- **Id de un recurso con dueño** (una sesión, una comida, un usuario). Existe un «recurso de otro» que pedir, así que la respuesta correcta es **403** y es lo que fija el test, tal y como manda DEC-014.
+- **Id del catálogo público** (un ejercicio, un alimento del catálogo, una categoría). Ese id es el mismo para todo el mundo y no pertenece a nadie: **no hay un id ajeno que rechazar**. El fallo posible no es de permisos sino de **alcance** —la consulta devolvía las filas de todos los usuarios—, y el criterio correcto es que **el atacante no vea nada del otro**: lista vacía (que aquí el controlador traduce a 404) o `count: 0`. Un 403 en esa ruta sería incorrecto además de inútil, porque negaría a un usuario legítimo su propio histórico.
+
+**El criterio «403 en las cinco rutas» del backlog estaba mal formulado.** Confundía la forma de la ruta con la forma del fallo. Queda anotado aquí para que no se reintroduzca al redactar el siguiente lote: antes de escribir el criterio hay que mirar si el id tiene dueño.
+
+**Un agregado también es información ajena.** Un contador o un `exists` no devuelven ni una fila del otro y aun así lo delatan: iterando ids de sesión se dibuja el historial de entrenamiento de cualquiera, y preguntando ejercicio a ejercicio se reconstruye una sesión entera a base de síes y noes. Se protegen igual que un listado.
+
+**Consecuencias.** DEC-014 no se relaja: sigue exigiendo test a toda ruta con id. Lo que esto añade es que el test comprueba **403 o aislamiento**, según el id. La vista global se conserva para ADMIN donde ya estaba declarada.
+
+**Qué la invalidaría.** Que el catálogo de ejercicios o de alimentos dejara de ser público y pasara a tener dueño, lo que convertiría esas rutas en el primer caso.
+
+---
+
 ## Pendientes de decidir
 
 Se registran aquí para que no se decidan por omisión.

@@ -128,6 +128,10 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.DELETE, "/alimentos/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.PATCH, "/alimentos/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.PUT, "/alimentos/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+                                // Los alimentos que crea un usuario NO son catálogo: llevan su dieta dentro.
+                                // Va ANTES del GET general de /alimentos/**, que sí es público, porque
+                                // gana la primera regla que encaja. La propiedad se comprueba en AlimentoService.
+                                .requestMatchers(HttpMethod.GET, "/alimentos/usuario/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.GET, "/alimentos/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
 
                                 // JOOQ ejercicios - accesibles por todos los roles
@@ -142,7 +146,10 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/usuarios/{id}").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.PUT, "/usuarios/{id}").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.PATCH, "/usuarios/{id}").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
-                                .requestMatchers(HttpMethod.GET, "/usuarios/{id}/foto").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
+                                // La foto de perfil es una cara, no un recurso público: estaba abierta a GUEST
+                                // y un token de invitado se obtiene sin credenciales, así que se descargaban
+                                // todas iterando ids. La propiedad se comprueba en UsuarioService.
+                                .requestMatchers(HttpMethod.GET, "/usuarios/{id}/foto").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.POST, "/usuarios/{id}/foto").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.GET, "/usuarios/{id}/estadisticas").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
 
@@ -162,7 +169,12 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.PUT, "/rutinas/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.DELETE, "/rutinas/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
 
-                                // GUEST/USER/ADMIN: consulta de logros
+                                // Los logros OBTENIDOS por un usuario dicen cuánto entrena y desde cuándo:
+                                // no son catálogo. Va ANTES del GET general de /logros/**, que sí es el
+                                // catálogo y sigue siendo público. Propiedad comprobada en LogroService.
+                                .requestMatchers(HttpMethod.GET, "/logros/usuario/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+
+                                // GUEST/USER/ADMIN: catálogo de logros disponibles (iguales para todos)
                                 .requestMatchers(HttpMethod.GET, "/logros/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
 
                                 // ADMIN: gestión de logros

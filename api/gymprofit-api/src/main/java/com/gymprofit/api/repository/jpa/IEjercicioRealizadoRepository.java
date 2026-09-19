@@ -24,8 +24,16 @@ public interface IEjercicioRealizadoRepository extends JpaRepository<EjercicioRe
     // Busca los ejercicios realizados en una sesión de entrenamiento.
     List<EjercicioRealizado> findBySesionId(Integer sesionId);
 
-    // Busca los registros de un ejercicio concreto en todas las sesiones.
+    // Busca los registros de un ejercicio concreto en todas las sesiones, de TODOS los
+    // usuarios. Solo para ADMIN: el servicio no la expone a un USER, que usa la variante
+    // filtrada por propietario.
     List<EjercicioRealizado> findByEjercicioId(Integer ejercicioId);
+
+    // Busca los registros de un ejercicio concreto que pertenecen a un usuario, a través
+    // de la sesión en la que se ejecutaron. Es la consulta que usa un USER: el histórico
+    // de un ejercicio es un dato privado —cuánto levanta cada uno y cuándo entrena—, y
+    // filtrarlo aquí evita tener que descartar filas ajenas más arriba.
+    List<EjercicioRealizado> findByEjercicioIdAndSesionUsuarioId(Integer ejercicioId, Integer usuarioId);
 
     // Busca el registro de un ejercicio concreto dentro de una sesión concreta.
     List<EjercicioRealizado> findBySesionIdAndEjercicioId(Integer sesionId, Integer ejercicioId);
@@ -33,8 +41,14 @@ public interface IEjercicioRealizadoRepository extends JpaRepository<EjercicioRe
     // Cuenta cuántos ejercicios se han realizado en una sesión.
     Long countBySesionId(Integer sesionId);
 
-    // Cuenta en cuántas sesiones se ha realizado un ejercicio concreto.
+    // Cuenta en cuántas sesiones se ha realizado un ejercicio concreto, contando las de
+    // TODOS los usuarios. Solo para ADMIN, por el mismo motivo que findByEjercicioId.
     Long countByEjercicioId(Integer ejercicioId);
+
+    // Cuenta cuántas veces ha realizado un usuario un ejercicio concreto. Un contador
+    // global también es información ajena: revela la actividad del resto aunque no
+    // devuelva ni una fila suya.
+    Long countByEjercicioIdAndSesionUsuarioId(Integer ejercicioId, Integer usuarioId);
 
     // Cuenta cuántos ejercicios ha realizado un usuario (a través de sus sesiones).
     Long countBySesionUsuarioId(Integer usuarioId);

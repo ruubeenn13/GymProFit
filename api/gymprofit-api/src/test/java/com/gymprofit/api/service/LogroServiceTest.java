@@ -1,5 +1,6 @@
 package com.gymprofit.api.service;
 
+import com.gymprofit.api.config.security.SecurityUtils;
 import com.gymprofit.api.dto.entity.logro.LogroCreateDTO;
 import com.gymprofit.api.dto.entity.logro.LogroDTO;
 import com.gymprofit.api.dto.entity.logro.UsuarioLogroDTO;
@@ -40,6 +41,11 @@ import static org.mockito.Mockito.*;
 class LogroServiceTest {
 
     // Repositorio de logros simulado
+    // Sin este mock, el checkOwnership de findByUsuarioId revienta con NPE. Simulado y no
+    // real a propósito: aquí se prueba la lógica del servicio, y el 403 de verdad —con el
+    // contexto levantado— lo cubre LogroOwnershipTest, que es donde vale.
+    @Mock private SecurityUtils securityUtils;
+
     @Mock private ILogroRepository logroRepository;
     // Relación usuario-logro (logros desbloqueados por usuario)
     @Mock private IUsuarioLogroRepository usuarioLogroRepository;

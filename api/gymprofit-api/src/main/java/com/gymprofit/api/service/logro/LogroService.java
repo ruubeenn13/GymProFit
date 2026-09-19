@@ -6,6 +6,7 @@ import com.gymprofit.api.dto.entity.logro.UsuarioLogroDTO;
 import com.gymprofit.api.entity.Logro;
 import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.entity.UsuarioLogro;
+import com.gymprofit.api.config.security.SecurityUtils;
 import com.gymprofit.api.enums.TipoLogro;
 import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
@@ -47,6 +48,7 @@ public class LogroService implements ILogroService {
     private final IEjercicioRealizadoRepository ejercicioRealizadoRepository;
     private final IObjetivoPersonalRepository objetivoPersonalRepository;
     private final LogroMapper logroMapper;
+    private final SecurityUtils securityUtils;
 
     private static final Logger logger = LoggerFactory.getLogger(LogroService.class);
 
@@ -56,9 +58,24 @@ public class LogroService implements ILogroService {
         return logroMapper.toDTOList(logroRepository.findAll());
     }
 
-    // Devuelve los logros obtenidos por un usuario, validando que exista.
+    /**
+     * Devuelve los logros obtenidos por un usuario, comprobando que quien pregunta es él.
+     * <p>
+     * El catálogo de logros ({@code findAll}) es público y sigue siendo consultable por un
+     * GUEST: son los mismos para todo el mundo. Los logros <em>obtenidos</em> no: dicen
+     * cuánto entrena una persona y desde cuándo, y sin esta comprobación se leían iterando
+     * ids de usuario con un token de invitado, que se consigue sin credenciales.
+     * <p>
+     * La comprobación va <b>antes</b> de mirar si el usuario existe, y no después: al revés,
+     * la diferencia entre 404 y 403 convertiría la ruta en un detector de qué ids existen.
+     *
+     * @param usuarioId usuario cuyos logros se piden; tiene que ser el del token, salvo ADMIN.
+     * @throws NotFoundEntityException si el usuario no existe.
+     */
     @Override
     public List<UsuarioLogroDTO> findByUsuarioId(Integer usuarioId) {
+        securityUtils.checkOwnership(usuarioId);
+
         if (!usuarioRepository.existsById(usuarioId)) {
             throw new NotFoundEntityException("Usuario con id " + usuarioId + " no encontrado");
         }
