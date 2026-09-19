@@ -50,10 +50,18 @@ Que los tests existentes sigan en verde no significa que lo nuevo esté probado.
 
 Convención `tipo(ámbito): resumen`.
 
-**Tipos** — se enumeran porque son pocos y estables: `feat`, `fix`, `refactor`, `docs`, `test`, `build`, `ci`.
+**Tipos** — se enumeran porque son pocos y estables: `feat`, `fix`, `refactor`, `docs`, `test`, `build`, `ci`, `perf`.
 
 - `test` es para lo que solo añade o corrige pruebas sin tocar el comportamiento. Un cambio de código que trae sus tests, como pide *Terminado*, va con el tipo del cambio (`feat` o `fix`), no con `test`.
 - `ci` es para cambios a los workflows en sí. Un cambio funcional que de paso toca un workflow lleva el tipo del cambio, igual que con `test`.
+- `perf` exige lo que exige DEC-021: una medición antes y otra después, con el número de partida registrado. Sin esas dos cifras el cambio no es `perf`, es `refactor` — la etiqueta no convierte una intuición en una mejora.
+
+**Dos tipos excluidos a propósito**, para no volver a discutirlo:
+
+- `chore` significa «ninguno de los anteriores», que es lo único que un tipo no puede significar: un commit sin tipo claro casi siempre es un commit sin propósito claro. Los usos del historial tienen todos mejor casa — `chore(security)` es `fix`, `chore(deps)` y `chore(build)` son `build`, silenciar warnings del mapeador es `refactor`.
+- `style` colisiona. En la convención estándar es formato y espacios sin cambio semántico; aquí se usó para cambios visuales de diseño, que son `feat` o `fix`. Con lo que se toca el diseño en este proyecto, esa ambigüedad fallaría cada vez.
+
+Los commits ya existentes se quedan como están: esto aplica de aquí en adelante.
 
 **Ámbitos** — no se enumeran: una lista cerrada se desvía sola y acaba mintiendo. La regla es que el ámbito nombra **la parte del producto que se toca**:
 
