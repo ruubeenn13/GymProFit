@@ -75,8 +75,19 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            // Producción: API pública en Render (HTTPS). Sobrescribe el BASE_URL del defaultConfig.
-            buildConfigField "String", "BASE_URL", "\"https://gymprofit-api.onrender.com/api/\""
+            // Producción: dominio propio (HTTPS). Sobrescribe el BASE_URL del defaultConfig.
+            //
+            // El host es del PRODUCTO, no del proveedor. No es cosmética: BASE_URL se
+            // compila dentro del APK como constante, así que cada instalación se queda
+            // para siempre con el host que tuviera el día que se instaló. Con
+            // gymprofit-api.onrender.com aquí, mudarse de Render obligaría a publicar
+            // una versión nueva y a esperar a que todo el mundo la instalara; con
+            // api.gymprofit.app basta con mover el CNAME (ver DEC-029).
+            //
+            // No revertir a la URL de onrender.com pensando que es un despiste: el
+            // servicio de Render sigue existiendo —es el destino del CNAME y lo usan
+            // las builds ya instaladas—, pero los APK nuevos no deben nombrarlo.
+            buildConfigField "String", "BASE_URL", "\"https://api.gymprofit.app/api/\""
         }
     }
 

@@ -26,7 +26,12 @@ jobs:
       # GET al health. --max-time 120 cubre el cold start (~40s) sin colgarse;
       # aunque el curl agotara el tiempo, la petición ya despierta el servicio.
       # '|| true' para que un fallo puntual de red no marque el run en rojo.
+      #
+      # Va al dominio propio y no al de onrender.com aunque los dos lleguen al
+      # mismo sitio: lo que hay que vigilar es el camino por el que entran los
+      # usuarios, con su DNS y su certificado. Un keep-alive contra un host que
+      # ya nadie usa puede estar verde mientras el real está caído.
       - name: Ping /actuator/health
         run: |
           curl -sS --max-time 180 -o /dev/null -w "HTTP %{http_code} en %{time_total}s\n" \
-            https://gymprofit-api.onrender.com/api/actuator/health || true
+            https://api.gymprofit.app/api/actuator/health || true
