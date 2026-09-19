@@ -283,58 +283,51 @@ public class EmailService implements IEmailService {
         return environment.matchesProfiles("prod");
     }
 
-    // Alternativa en texto plano, para clientes que no pintan HTML.
+    // Alternativa en texto plano, para clientes que no pintan HTML. Dice lo mismo que el
+    // HTML y en el mismo orden: primero el propósito, luego el código, luego la caducidad.
     private String cuerpoTexto(Usuario usuario, String codigo, int minutos) {
-        return "Hola, " + usuario.getUsername() + ".\n\n"
-                + "Tu código para restablecer la contraseña de GymProFit es " + codigo + ".\n"
+        return "Restablece tu contraseña\n\n"
+                + "Hola, " + usuario.getUsername() + ". Escribe este código en la aplicación "
+                + "para elegir una contraseña nueva:\n\n"
+                + codigo + "\n\n"
                 + "Caduca en " + minutos + " minutos y solo sirve una vez.\n\n"
-                + "Si no has pedido este código, ignora este correo: tu contraseña no ha cambiado.\n";
+                + "¿No has pedido este código? Ignora este correo. Tu contraseña no ha cambiado "
+                + "y nadie ha entrado en tu cuenta.\n";
     }
 
     /**
-     * Cuerpo HTML del correo, en la línea visual acordada: tarjeta blanca sobre fondo
-     * hueso y el código como único acento naranja.
+     * Cuerpo HTML del correo de recuperación: forma ACCIÓN con el código de protagonista y
+     * pie TRANSACCIONAL, porque este correo lo ha pedido el usuario y no se puede dar de
+     * baja de él sin quedarse sin forma de recuperar la cuenta.
      * <p>
-     * Se escribe con estilos en línea y sin imágenes a propósito. Gmail descarta los
-     * fondos con imagen y su proxy no siempre carga las remotas, así que el logotipo va
-     * como texto: prefiero un correo que se ve igual en todas partes a uno que en Gmail
-     * llega descabezado. Solo modo claro, que es lo decidido para esta familia de correos.
+     * La envoltura, los colores y las reglas de compatibilidad con Outlook viven en
+     * {@link PlantillaCorreo}; aquí solo está lo que distingue a este correo de los otros.
+     * El titular dice el propósito en vez de saludar: en la bandeja, junto al asunto, «Hola,
+     * ruben» no informa de nada, y el saludo funciona igual una línea más abajo.
+     * <p>
+     * El preencabezado repite el código a propósito. Ya va en el asunto por el mismo motivo:
+     * en un aviso de móvil, un código escondido en el cuerpo obliga a abrir el correo para
+     * leer seis dígitos.
+     *
+     * @param usuario destinatario, del que sale el nombre que se saluda.
+     * @param codigo  los seis dígitos.
+     * @param minutos minutos de validez.
+     * @return el documento HTML completo.
      */
     private String cuerpoHtml(Usuario usuario, String codigo, int minutos) {
-        return "<!DOCTYPE html><html lang=\"es\"><head><meta charset=\"utf-8\">"
-                + "<meta name=\"color-scheme\" content=\"light only\">"
-                + "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"></head>"
-                + "<body style=\"margin:0;padding:0;background:#FAF8F5;\">"
-                // Preencabezado: lo que se lee en la bandeja antes de abrir.
-                + "<div style=\"display:none;max-height:0;overflow:hidden;\">"
-                + "Código " + codigo + ", válido " + minutos + " minutos.</div>"
-                + "<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" "
-                + "style=\"background:#FAF8F5;padding:32px 16px;\"><tr><td align=\"center\">"
-                + "<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" "
-                + "style=\"max-width:480px;background:#FFFFFF;border:1px solid #ECE7E1;border-radius:14px;"
-                + "padding:32px;font-family:Helvetica,Arial,sans-serif;\">"
-                + "<tr><td style=\"font-size:20px;font-weight:700;color:#1B1917;padding-bottom:24px;\">"
-                + "Gym<span style=\"color:#B83E00;\">ProFit</span></td></tr>"
-                + "<tr><td style=\"font-size:22px;font-weight:700;color:#1B1917;padding-bottom:8px;\">"
-                + "Hola, " + escapar(usuario.getUsername()) + "</td></tr>"
-                + "<tr><td style=\"font-size:15px;line-height:22px;color:#57534E;padding-bottom:24px;\">"
-                + "Has pedido restablecer tu contraseña. Escribe este código en la aplicación:</td></tr>"
-                + "<tr><td align=\"center\" style=\"padding-bottom:24px;\">"
-                + "<div style=\"font-size:34px;font-weight:700;letter-spacing:10px;color:#B83E00;"
-                + "background:#FFF7F2;border:1px solid #F5DCCB;border-radius:10px;padding:18px 12px;\">"
-                + codigo + "</div></td></tr>"
-                + "<tr><td style=\"font-size:14px;line-height:21px;color:#57534E;\">"
-                + "Caduca en " + minutos + " minutos y solo sirve una vez.</td></tr>"
-                + "<tr><td style=\"font-size:13px;line-height:20px;color:#8A817C;padding-top:20px;"
-                + "border-top:1px solid #ECE7E1;margin-top:20px;\">"
-                + "Si no has pedido este código, ignora este correo: tu contraseña no ha cambiado.</td></tr>"
-                + "</table></td></tr></table></body></html>";
-    }
+        // El nombre de usuario lo elige el usuario y acaba dentro del HTML: se escapa aquí,
+        // porque los párrafos que recibe la plantilla son fragmentos de HTML, no texto plano.
+        String parrafo = "Hola, " + PlantillaCorreo.escapar(usuario.getUsername())
+                + ", escribe este código en la aplicación para elegir una contraseña nueva.";
+        String nota = "Caduca en " + PlantillaCorreo.destacar(minutos + " minutos")
+                + " y solo sirve una vez.";
 
-    // El nombre de usuario lo elige el usuario y acaba dentro del HTML del correo.
-    private String escapar(String texto) {
-        if (texto == null) return "";
-        return texto.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-                .replace("\"", "&quot;").replace("'", "&#39;");
+        return PlantillaCorreo.renderizar(
+                "Código " + codigo + ", válido " + minutos + " minutos.",
+                "Restablece tu contraseña",
+                PlantillaCorreo.Accion.conCodigo(parrafo, "TU CÓDIGO", codigo, nota),
+                "¿No has pedido este código? Ignora este correo. Tu contraseña no ha cambiado "
+                + "y nadie ha entrado en tu cuenta.",
+                PlantillaCorreo.Pie.transaccional());
     }
 }

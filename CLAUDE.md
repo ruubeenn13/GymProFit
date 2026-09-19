@@ -13,7 +13,7 @@ Monorepo: `api/gymprofit-api` · `app/GymProFit` · `db` · `documentacion`.
 ## Comandos
 
 ```bash
-# API: build + tests (244 tests, MariaDB local o perfil ci)
+# API: build + tests (MariaDB local o perfil ci)
 cd api/gymprofit-api && sh ./mvnw -B verify
 
 # Android: build de depuración y tests unitarios

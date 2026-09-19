@@ -295,6 +295,27 @@ Decisiones tomadas, con su porqué. Sirve para no volver a discutir lo ya discut
 
 ---
 
+### DEC-026 · Los correos son claros, de tablas y sin imágenes
+**Estado:** Aceptada · **Fecha:** 2026-09-19
+
+**Decisión.** Todos los correos salen de una misma plantilla (`PlantillaCorreo`), con una envoltura común —barra de acento, cabecera con la marca, contenido, franja de cierre y pie— y tres formas de contenido: **acción** (un protagonista único: un código o un botón), **aviso** (solo texto, nada que pulsar) y **datos** (número grande, etiqueta y comparación). Dos variantes de pie: **transaccional**, sin enlace de baja, y **comercial**, con él. La dirección visual es «A3 · profundidad por capas»: fondo `#E4DCD2`, tarjeta blanca de 520 px dentro de 600 px, acento `#B83E00` y profundidad por cambios de tono y líneas de 1 px.
+
+**Son claros aunque la app sea dark-first.** El correo no es la app. La app pinta su propio fondo y el usuario ha elegido su tema dentro de ella; un correo se abre dentro de la bandeja de otro, sobre el fondo que ese cliente decida, y ni Gmail ni Outlook dan forma fiable de saber cuál es —el `prefers-color-scheme` de un correo lo aplica una minoría de clientes, y varios de los demás *invierten* los colores por su cuenta—. Un correo diseñado en oscuro se ve bien donde se probó y sale con texto gris sobre gris donde no. El claro es el único fondo que se comporta igual en todas partes, y además es lo que espera un correo de seguridad.
+
+**Se maquetan con tablas.** Outlook de escritorio no usa un motor web: renderiza con el de Word. No entiende `flex` ni `grid`, ignora `border-radius` y `box-shadow`, y se salta buena parte del posicionamiento. Por eso todo va en tablas anidadas, con estilos en línea (el bloque `<style>` lo descartan varios clientes), los anchos también en el atributo `width`, y *ghost tables* entre comentarios `[if mso]` para fijar los 600/520 px que Outlook no saca de `max-width`. El diseño está pensado para esa pérdida: la profundidad viene de los tonos y de las líneas de 1 px, que sobreviven; las sombras están declaradas porque suman donde se entienden, pero nada depende de ellas.
+
+**Sin imágenes y sin fuentes cargadas.** Gmail pasa las imágenes remotas por su proxy y muchos clientes las bloquean hasta que el usuario acepta, así que un diseño que dependa de ellas llega roto justo la primera vez, que es la que importa en un correo de recuperación. Las fuentes web solo las aplica un puñado de clientes. La marca es un cuadrado de color más texto, y el hueco del cuadrado queda reservado al logotipo real: cuando exista, entra ahí sin mover nada. Tipografía del sistema y monoespaciada del sistema para el código, que es lo único donde importa que las cifras midan lo mismo.
+
+**Sin motor de plantillas.** Nada de Thymeleaf ni equivalentes: dependencia nueva y más arranque en una API que ya tarda 185 s en levantar en Render, para seis correos que no cambian en caliente. Bloques de texto de Java.
+
+**El dorado `#CBA135` queda reservado.** No se usa todavía. Es el color de los correos de celebración —récords, rachas—, y si se gasta antes en un correo corriente deja de significar nada cuando haga falta.
+
+**Consecuencias.** Un correo nuevo aporta solo su bloque central y elige forma y pie; la envoltura no se copia. La variante de pie es una decisión consciente y no estética: el resumen semanal y los avisos de récord son marketing a efectos legales aunque hablen de sentadillas, y llevan baja obligatoria; recuperación, verificación, borrado de cuenta y avisos de seguridad no la llevan, porque darse de baja de ellos equivale a quedarse sin cuenta. Todo valor que venga del usuario se escapa antes de entrar en la plantilla: sus párrafos son fragmentos de HTML, no texto plano.
+
+**Qué la invalidaría.** Que Outlook de escritorio deje de usar el motor de Word, lo que permitiría maquetar con CSS moderno y quitar las *ghost tables*. Que el soporte de `prefers-color-scheme` en correo deje de ser minoritario y predecible, lo que reabriría la variante oscura. Un rediseño de marca que exija un logotipo en imagen aceptando que llegue bloqueado, o llevar los correos a una herramienta externa de plantillas, que haría sobrar esta clase entera.
+
+---
+
 ## Pendientes de decidir
 
 Se registran aquí para que no se decidan por omisión.

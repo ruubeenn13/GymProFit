@@ -162,6 +162,61 @@ class EmailServiceTest {
     }
 
     /**
+     * El correo de recuperación usa la plantilla con forma ACCIÓN y pie TRANSACCIONAL.
+     * <p>
+     * Lo que se comprueba aquí no es la maquetación —eso es cosa de PlantillaCorreoTest—
+     * sino que este correo concreto elige bien: titular que dice el propósito en vez de
+     * saludar, el código dentro de su panel, y <b>sin enlace de baja</b>, que es la parte con
+     * consecuencias. Darse de baja de este correo equivale a quedarse sin forma de recuperar
+     * la cuenta, así que el día que alguien copie y pegue esto para escribir el resumen
+     * semanal, la variante de pie tiene que ser una decisión y no un descuido heredado.
+     */
+    @Test
+    void elCorreoDeRecuperacion_usaLaPlantillaConPieTransaccional(@TempDir Path buzon) throws Exception {
+        RestClient.Builder builder = builderDeBrevo();
+        MockRestServiceServer brevo = MockRestServiceServer.bindTo(builder).build();
+        StringBuilder enviado = new StringBuilder();
+        brevo.expect(requestTo(BrevoClientConfig.URL_ENVIO))
+                .andExpect(peticion -> enviado.append(((MockClientHttpRequest) peticion).getBodyAsString()))
+                .andRespond(withStatus(HttpStatus.CREATED)
+                        .contentType(MediaType.APPLICATION_JSON).body(RESPUESTA_OK));
+
+        servicio("prod", buzon, builder.build(), CLAVE_API)
+                .enviarCodigoRecuperacion(usuario(), CODIGO, MINUTOS);
+
+        String html = json.readTree(enviado.toString()).path("htmlContent").asText();
+        assertThat(html).contains("Restablece tu contraseña").doesNotContain("Hola, ruben</");
+        assertThat(html).contains("TU CÓDIGO").contains(CODIGO);
+        assertThat(html).contains("Tu contraseña no ha cambiado y nadie ha entrado en tu cuenta.");
+        assertThat(html).doesNotContain("Darse de baja");
+    }
+
+    /**
+     * El nombre de usuario entra en el HTML del correo y lo elige el usuario. Sin escapar,
+     * un nombre con etiquetas cuela marcado ajeno —incluido un enlace pulsable— dentro de un
+     * correo que llega firmado por GymProFit.
+     */
+    @Test
+    void unNombreDeUsuarioConHtml_saleEscapadoEnElCorreo(@TempDir Path buzon) throws Exception {
+        RestClient.Builder builder = builderDeBrevo();
+        MockRestServiceServer brevo = MockRestServiceServer.bindTo(builder).build();
+        StringBuilder enviado = new StringBuilder();
+        brevo.expect(requestTo(BrevoClientConfig.URL_ENVIO))
+                .andExpect(peticion -> enviado.append(((MockClientHttpRequest) peticion).getBodyAsString()))
+                .andRespond(withStatus(HttpStatus.CREATED)
+                        .contentType(MediaType.APPLICATION_JSON).body(RESPUESTA_OK));
+
+        Usuario usuario = usuario();
+        usuario.setUsername("<a href=\"http://malo\">pulsa</a>");
+        servicio("prod", buzon, builder.build(), CLAVE_API)
+                .enviarCodigoRecuperacion(usuario, CODIGO, MINUTOS);
+
+        String html = json.readTree(enviado.toString()).path("htmlContent").asText();
+        assertThat(html).contains("&lt;a href=&quot;http://malo&quot;&gt;pulsa&lt;/a&gt;");
+        assertThat(html).doesNotContain("<a href=\"http://malo\"");
+    }
+
+    /**
      * En éxito se registra el messageId, que es lo único que sirve para rastrear un envío en
      * el panel del proveedor. Con SMTP no había nada equivalente. El código, ni rastro.
      */
