@@ -3,54 +3,66 @@ package com.gymprofit.api.service.email;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gymprofit.api.config.BrevoClientConfig;
 import com.gymprofit.api.entity.Usuario;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.test.context.assertj.AssertableApplicationContext;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.mock.env.MockEnvironment;
+import org.springframework.mock.http.client.MockClientHttpRequest;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withException;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 
 // ============================================================
-// EmailServiceTest — el correo es obligatorio en producción y el código de
-// recuperación no se escribe en el log en ningún perfil.
+// EmailServiceTest — el correo sale por la API HTTP de Brevo, es obligatorio en
+// producción, y el código de recuperación no se escribe en el log por ningún camino.
 //
-// Dos bloques: el arranque (ApplicationContextRunner, que monta solo esta bean y
-// permite comprobar que el contexto FALLA sin tocar base de datos) y la entrega del
-// código, con el servicio construido a mano y un appender de Logback enganchado para
-// verificar lo que se registra y lo que no.
+// Tres bloques: el arranque (ApplicationContextRunner, que monta solo esta bean y permite
+// comprobar que el contexto FALLA sin tocar base de datos), la llamada HTTP
+// (MockRestServiceServer: nunca se llama a Brevo de verdad) y el modo degradado de dev/ci.
+// En todos ellos hay un appender de Logback enganchado para verificar lo que se registra
+// y —sobre todo— lo que no.
 // ============================================================
 class EmailServiceTest {
 
     private static final String CODIGO = "123456";
     private static final int MINUTOS = 15;
-    private static final String HOST_DE_CORREO = "smtp-relay.brevo.com";
+    private static final String CLAVE_API = "xkeysib-clave-de-prueba";
     private static final String REMITENTE = "GymProFit <no-reply@gymprofit.app>";
+    private static final String RESPUESTA_OK = "{\"messageId\":\"<202609190834.7@smtp-relay.mailin.fr>\"}";
 
     private ListAppender<ILoggingEvent> registro;
     private ch.qos.logback.classic.Logger logger;
+    private final ObjectMapper json = new ObjectMapper();
 
     @BeforeEach
     void engancharElLog() {
@@ -69,26 +81,26 @@ class EmailServiceTest {
     // --- Arranque -----------------------------------------------------------
 
     /**
-     * El agujero que se cierra: con el perfil prod y sin servidor SMTP, la API arrancaba
+     * El agujero que se cierra: con el perfil prod y sin proveedor de correo, la API arrancaba
      * con normalidad y /auth/forgot-password respondía 200 sin haber enviado nada. Ahora
      * el contexto no levanta, igual que ya pasaba con JWT_SECRET.
      */
     @Test
-    void enProduccionSinServidorDeCorreo_elContextoNoArranca() {
-        runner("prod").withPropertyValues("spring.mail.host=").run(contexto -> {
+    void enProduccionSinClaveDeApi_elContextoNoArranca() {
+        runner("prod").withPropertyValues("app.mail.brevo.api-key=").run(contexto -> {
             assertThat(contexto).hasFailed();
-            assertThat(causaRaiz(contexto)).contains("MAIL_HOST");
+            assertThat(causaRaiz(contexto)).contains("BREVO_API_KEY");
         });
     }
 
     /**
      * El remitente es el otro modo de fallar en silencio: Brevo rechaza cualquier direccion
-     * que no este verificada, el catch del envio se traga el rechazo y el endpoint responde
-     * 200 igual. Por eso MAIL_FROM tambien tiene que impedir el arranque si falta.
+     * que no este verificada, el fallo no se propaga y el endpoint responde 200 igual. Por
+     * eso MAIL_FROM tambien tiene que impedir el arranque si falta.
      */
     @Test
     void enProduccionSinRemitente_elContextoNoArranca() {
-        runner("prod").withPropertyValues("spring.mail.host=" + HOST_DE_CORREO, "app.mail.from=")
+        runner("prod").withPropertyValues("app.mail.brevo.api-key=" + CLAVE_API, "app.mail.from=")
                 .run(contexto -> {
                     assertThat(contexto).hasFailed();
                     assertThat(causaRaiz(contexto)).contains("MAIL_FROM");
@@ -97,33 +109,157 @@ class EmailServiceTest {
 
     // Con el correo configurado, el mismo perfil prod arranca sin quejarse.
     @Test
-    void enProduccionConServidorDeCorreo_elContextoArranca() {
-        runner("prod").withPropertyValues("spring.mail.host=" + HOST_DE_CORREO, "app.mail.from=" + REMITENTE)
+    void enProduccionConClaveDeApi_elContextoArranca() {
+        runner("prod").withPropertyValues("app.mail.brevo.api-key=" + CLAVE_API, "app.mail.from=" + REMITENTE)
                 .run(contexto -> assertThat(contexto).hasNotFailed().hasSingleBean(EmailService.class));
     }
 
     // dev y ci siguen arrancando sin cuenta de correo: ahí el modo degradado es útil.
     @Test
-    void fueraDeProduccionSinServidorDeCorreo_elContextoArranca() {
-        runner("dev").withPropertyValues("spring.mail.host=")
+    void fueraDeProduccionSinClaveDeApi_elContextoArranca() {
+        runner("dev").withPropertyValues("app.mail.brevo.api-key=")
                 .run(contexto -> assertThat(contexto).hasNotFailed().hasSingleBean(EmailService.class));
 
-        runner("ci").withPropertyValues("spring.mail.host=")
+        runner("ci").withPropertyValues("app.mail.brevo.api-key=")
                 .run(contexto -> assertThat(contexto).hasNotFailed().hasSingleBean(EmailService.class));
     }
 
-    // --- Entrega del código -------------------------------------------------
+    // --- Llamada a la API HTTP de Brevo -------------------------------------
+
+    /**
+     * El envío de verdad: POST a la URL de Brevo, la clave en la cabecera api-key y el cuerpo
+     * con las cinco piezas que exige la API. Se comprueba además que el remitente llega
+     * PARTIDO en nombre y dirección, que es lo que obliga a parsear app.mail.from.
+     */
+    @Test
+    void conClaveDeApi_seLlamaALaApiConElCuerpoCorrecto(@TempDir Path buzon) throws Exception {
+        RestClient.Builder builder = builderDeBrevo();
+        MockRestServiceServer brevo = MockRestServiceServer.bindTo(builder).build();
+        EmailService servicio = servicio("prod", buzon, builder.build(), CLAVE_API);
+        StringBuilder enviado = new StringBuilder();
+
+        brevo.expect(requestTo(BrevoClientConfig.URL_ENVIO))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(header("api-key", CLAVE_API))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                // MockRestServiceServer valida la petición pero no la devuelve, así que el
+                // cuerpo se captura aquí para poder afirmar sobre el JSON exacto que sale.
+                .andExpect(peticion -> enviado.append(((MockClientHttpRequest) peticion).getBodyAsString()))
+                .andRespond(withStatus(HttpStatus.CREATED)
+                        .contentType(MediaType.APPLICATION_JSON).body(RESPUESTA_OK));
+
+        servicio.enviarCodigoRecuperacion(usuario(), CODIGO, MINUTOS);
+
+        brevo.verify();
+        JsonNode cuerpo = json.readTree(enviado.toString());
+        assertThat(cuerpo.path("sender").path("name").asText()).isEqualTo("GymProFit");
+        assertThat(cuerpo.path("sender").path("email").asText()).isEqualTo("no-reply@gymprofit.app");
+        assertThat(cuerpo.path("to").get(0).path("email").asText()).isEqualTo("ruben@example.com");
+        assertThat(cuerpo.path("to").get(0).path("name").asText()).isEqualTo("ruben");
+        assertThat(cuerpo.path("subject").asText()).contains(CODIGO);
+        assertThat(cuerpo.path("textContent").asText()).contains(CODIGO).contains("15 minutos");
+        assertThat(cuerpo.path("htmlContent").asText()).contains(CODIGO).contains("<!DOCTYPE html>");
+    }
+
+    /**
+     * En éxito se registra el messageId, que es lo único que sirve para rastrear un envío en
+     * el panel del proveedor. Con SMTP no había nada equivalente. El código, ni rastro.
+     */
+    @Test
+    void enExito_seRegistraElMessageIdYNoElCodigo(@TempDir Path buzon) {
+        RestClient.Builder builder = builderDeBrevo();
+        MockRestServiceServer brevo = MockRestServiceServer.bindTo(builder).build();
+        brevo.expect(requestTo(BrevoClientConfig.URL_ENVIO))
+                .andRespond(withStatus(HttpStatus.CREATED)
+                        .contentType(MediaType.APPLICATION_JSON).body(RESPUESTA_OK));
+
+        servicio("prod", buzon, builder.build(), CLAVE_API)
+                .enviarCodigoRecuperacion(usuario(), CODIGO, MINUTOS);
+
+        assertThat(mensajesRegistrados())
+                .anyMatch(mensaje -> mensaje.contains("<202609190834.7@smtp-relay.mailin.fr>"));
+        assertThat(mensajesRegistrados()).noneMatch(mensaje -> mensaje.contains(CODIGO));
+        assertThat(registro.list).noneMatch(evento -> evento.getLevel() == Level.ERROR);
+        assertThat(ficherosDe(buzon)).isEmpty();
+    }
+
+    /**
+     * Un error de la API no puede propagarse —una excepción aquí convertiría
+     * /auth/forgot-password en un detector de qué cuentas existen— pero sí tiene que dejar
+     * el estado y el cuerpo en el log: es la señal de diagnóstico que con SMTP no existía.
+     */
+    @Test
+    void siLaApiDevuelveError_noSePropagaPeroQuedaElEstadoYElCuerpo(@TempDir Path buzon) {
+        RestClient.Builder builder = builderDeBrevo();
+        MockRestServiceServer brevo = MockRestServiceServer.bindTo(builder).build();
+        brevo.expect(requestTo(BrevoClientConfig.URL_ENVIO))
+                .andRespond(withStatus(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON)
+                        .body("{\"code\":\"invalid_parameter\",\"message\":\"sender email is not valid\"}"));
+
+        servicio("prod", buzon, builder.build(), CLAVE_API)
+                .enviarCodigoRecuperacion(usuario(), CODIGO, MINUTOS);
+
+        brevo.verify();
+        assertThat(mensajesRegistrados()).anyMatch(mensaje ->
+                mensaje.contains("400") && mensaje.contains("sender email is not valid"));
+        assertThat(registro.list).anyMatch(evento -> evento.getLevel() == Level.ERROR);
+        assertThat(mensajesRegistrados()).noneMatch(mensaje -> mensaje.contains(CODIGO));
+    }
+
+    /**
+     * El cuerpo de error viene de un tercero. Si alguna vez devolviera la petición de vuelta,
+     * el código acabaría en el log por la puerta de atrás: por eso se tacha antes de registrar.
+     */
+    @Test
+    void siElErrorDevuelveElCodigo_seTachaAntesDeRegistrarlo(@TempDir Path buzon) {
+        RestClient.Builder builder = builderDeBrevo();
+        MockRestServiceServer brevo = MockRestServiceServer.bindTo(builder).build();
+        brevo.expect(requestTo(BrevoClientConfig.URL_ENVIO))
+                .andRespond(withStatus(HttpStatus.BAD_REQUEST)
+                        .body("{\"message\":\"rejected\",\"subject\":\"" + CODIGO + " · Tu código\"}"));
+
+        servicio("prod", buzon, builder.build(), CLAVE_API)
+                .enviarCodigoRecuperacion(usuario(), CODIGO, MINUTOS);
+
+        assertThat(mensajesRegistrados()).noneMatch(mensaje -> mensaje.contains(CODIGO));
+        assertThat(mensajesRegistrados()).anyMatch(mensaje -> mensaje.contains("rejected"));
+    }
+
+    /**
+     * Un proveedor que no responde tampoco puede tumbar la petición: la excepción de
+     * transporte se queda dentro y el endpoint sigue respondiendo lo mismo de siempre.
+     */
+    @Test
+    void siLaApiNoResponde_laExcepcionNoSalePeroQuedaEnElLog(@TempDir Path buzon) {
+        RestClient.Builder builder = builderDeBrevo();
+        MockRestServiceServer brevo = MockRestServiceServer.bindTo(builder).build();
+        brevo.expect(requestTo(BrevoClientConfig.URL_ENVIO))
+                .andRespond(withException(new SocketTimeoutException("Connect timed out")));
+
+        servicio("prod", buzon, builder.build(), CLAVE_API)
+                .enviarCodigoRecuperacion(usuario(), CODIGO, MINUTOS);
+
+        assertThat(registro.list).anyMatch(evento -> evento.getLevel() == Level.ERROR);
+        assertThat(mensajesRegistrados()).noneMatch(mensaje -> mensaje.contains(CODIGO));
+        assertThat(ficherosDe(buzon)).isEmpty();
+    }
+
+    // --- Modo degradado de dev/ci -------------------------------------------
 
     /**
      * En dev/ci el flujo se tiene que poder probar sin cuenta de correo, así que el código
      * completo queda recuperable — pero en un fichero del directorio de build, no en el log.
+     * Y sin clave de API no se llama a nadie: el servidor simulado no espera ninguna petición.
      */
     @Test
-    void fueraDeProduccionSinSmtp_elCodigoVaAlBuzonLocalYNoAlLog(@TempDir Path buzon) throws IOException {
-        EmailService servicio = servicioSinSmtp("dev", buzon);
+    void fueraDeProduccionSinClaveDeApi_elCodigoVaAlBuzonLocalYNoAlLog(@TempDir Path buzon) throws IOException {
+        RestClient.Builder builder = builderDeBrevo();
+        MockRestServiceServer brevo = MockRestServiceServer.bindTo(builder).build();
+        EmailService servicio = servicio("dev", buzon, builder.build(), "");
 
         servicio.enviarCodigoRecuperacion(usuario(), CODIGO, MINUTOS);
 
+        brevo.verify(); // sin expectativas: no se ha hecho ninguna llamada HTTP
         List<Path> entregas = ficherosDe(buzon);
         assertThat(entregas).hasSize(1);
         assertThat(Files.readString(entregas.get(0), StandardCharsets.UTF_8)).contains(CODIGO);
@@ -132,52 +268,18 @@ class EmailServiceTest {
     }
 
     /**
-     * En producción no hay modo degradado que valga: si por lo que sea no hubiese sender,
+     * En producción no hay modo degradado que valga: si por lo que sea no hubiese clave,
      * el código no se escribe ni en el log ni en disco. El guard de arranque ya impide
      * llegar hasta aquí, esto es la segunda barrera.
      */
     @Test
-    void enProduccionSinSmtp_niSeEntregaElCodigoNiSeRegistra(@TempDir Path buzon) {
-        EmailService servicio = servicioSinSmtp("prod", buzon);
-
-        servicio.enviarCodigoRecuperacion(usuario(), CODIGO, MINUTOS);
+    void enProduccionSinClaveDeApi_niSeEntregaElCodigoNiSeRegistra(@TempDir Path buzon) {
+        servicio("prod", buzon, builderDeBrevo().build(), "")
+                .enviarCodigoRecuperacion(usuario(), CODIGO, MINUTOS);
 
         assertThat(ficherosDe(buzon)).isEmpty();
         assertThat(mensajesRegistrados()).noneMatch(mensaje -> mensaje.contains(CODIGO));
         assertThat(registro.list).anyMatch(evento -> evento.getLevel() == Level.ERROR);
-    }
-
-    // Con SMTP disponible se envía el correo y no se toca el buzón local.
-    @Test
-    void conSmtpDisponible_seEnviaElCorreoYNoSeEscribeNada(@TempDir Path buzon) {
-        JavaMailSender sender = mock(JavaMailSender.class);
-        when(sender.createMimeMessage()).thenReturn(new JavaMailSenderImpl().createMimeMessage());
-        EmailService servicio = servicio("prod", buzon, sender);
-
-        servicio.enviarCodigoRecuperacion(usuario(), CODIGO, MINUTOS);
-
-        verify(sender).send(any(jakarta.mail.internet.MimeMessage.class));
-        assertThat(ficherosDe(buzon)).isEmpty();
-        assertThat(mensajesRegistrados()).noneMatch(mensaje -> mensaje.contains(CODIGO));
-        // Sin errores: el correo se monta y sale. Esta comprobación es la que destapó que
-        // MimeMessageHelper estaba en modo no-multipart y el envío reventaba siempre.
-        assertThat(registro.list).noneMatch(evento -> evento.getLevel() == Level.ERROR);
-    }
-
-    // Un fallo de SMTP no se propaga (delataría qué cuentas existen) ni deja el código en el log.
-    @Test
-    void siElEnvioFalla_niSePropagaNiSeRegistraElCodigo(@TempDir Path buzon) {
-        JavaMailSender sender = mock(JavaMailSender.class);
-        when(sender.createMimeMessage()).thenReturn(new JavaMailSenderImpl().createMimeMessage());
-        org.mockito.Mockito.doThrow(new org.springframework.mail.MailSendException("smtp caído"))
-                .when(sender).send(any(jakarta.mail.internet.MimeMessage.class));
-        EmailService servicio = servicio("prod", buzon, sender);
-
-        servicio.enviarCodigoRecuperacion(usuario(), CODIGO, MINUTOS);
-
-        assertThat(mensajesRegistrados()).noneMatch(mensaje -> mensaje.contains(CODIGO));
-        assertThat(registro.list).anyMatch(evento -> evento.getLevel() == Level.ERROR);
-        assertThat(ficherosDe(buzon)).isEmpty();
     }
 
     // --- Ayudas -------------------------------------------------------------
@@ -198,8 +300,8 @@ class EmailServiceTest {
         }
 
         @Bean
-        EmailService emailService(ObjectProvider<JavaMailSender> proveedor, Environment environment) {
-            return new EmailService(proveedor, environment);
+        EmailService emailService(Environment environment) {
+            return new EmailService(RestClient.create(), new ObjectMapper(), environment);
         }
     }
 
@@ -213,21 +315,19 @@ class EmailServiceTest {
         return texto.toString();
     }
 
-    private EmailService servicioSinSmtp(String perfil, Path buzon) {
-        return servicio(perfil, buzon, null);
+    // Builder apuntando a la URL real de Brevo; el MockRestServiceServer lo intercepta antes
+    // de que salga nada a la red.
+    private RestClient.Builder builderDeBrevo() {
+        return RestClient.builder().baseUrl(BrevoClientConfig.URL_ENVIO);
     }
 
-    @SuppressWarnings("unchecked")
-    private EmailService servicio(String perfil, Path buzon, JavaMailSender sender) {
-        ObjectProvider<JavaMailSender> proveedor = mock(ObjectProvider.class);
-        when(proveedor.getIfAvailable()).thenReturn(sender);
-
+    private EmailService servicio(String perfil, Path buzon, RestClient cliente, String clave) {
         MockEnvironment environment = new MockEnvironment();
         environment.setActiveProfiles(perfil);
 
-        EmailService servicio = new EmailService(proveedor, environment);
+        EmailService servicio = new EmailService(cliente, json, environment);
         ReflectionTestUtils.setField(servicio, "remitente", REMITENTE);
-        ReflectionTestUtils.setField(servicio, "mailHost", sender == null ? "" : HOST_DE_CORREO);
+        ReflectionTestUtils.setField(servicio, "apiKey", clave);
         ReflectionTestUtils.setField(servicio, "outboxDir", buzon.toString());
         return servicio;
     }

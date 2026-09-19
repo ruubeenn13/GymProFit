@@ -70,11 +70,28 @@ descarta, porque `POST /auth/guest` emite el token sin comprobar credenciales.
 > `DataInitializer` no toca los usuarios que ya existen.
 
 ### El correo NO hace falta en dev ni en ci
-En `prod` las cuatro variables de correo son obligatorias y sin ellas la API no arranca, pero en
-dev y ci se pueden dejar sin configurar: sin `JavaMailSender`, `EmailService` entrega el código de
-recuperación en un fichero de **`target/mail-outbox/`** (configurable con `app.mail.outbox.dir`) y
-en el log solo deja la ruta. Así se puede probar el flujo entero de `/auth/forgot-password` sin
-cuenta de correo.
+En `prod` las dos variables de correo (`BREVO_API_KEY` y `MAIL_FROM`) son obligatorias y sin ellas
+la API no arranca, pero en dev y ci se pueden dejar sin configurar: sin clave de API,
+`EmailService` entrega el código de recuperación en un fichero de **`target/mail-outbox/`**
+(configurable con `app.mail.outbox.dir`) y en el log solo deja la ruta. Así se puede probar el
+flujo entero de `/auth/forgot-password` sin cuenta de correo.
+
+El transporte es la **API HTTP de Brevo** (`POST https://api.brevo.com/v3/smtp/email`), no su
+SMTP: Render bloquea los puertos 25, 465 y 587 en los servicios del plan gratuito, así que por
+SMTP no salía nada desde producción. Si quieres probar envíos de verdad en local, añade a tu
+`application-dev.properties`:
+
+```properties
+app.mail.brevo.api-key=xkeysib-<tu_clave>
+app.mail.from=GymProFit <tu_remitente_verificado@dominio>
+```
+
+> **La clave de API NO es la clave SMTP.** Son credenciales distintas y se generan en pestañas
+> distintas del panel: la de API está en *SMTP & API > **API Keys*** y empieza por `xkeysib-`; la
+> de SMTP está en *SMTP & API > SMTP*. Poner la de SMTP aquí da 401 en cada envío.
+
+Las variables `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME` y `MAIL_PASSWORD` **ya no las lee nadie**:
+`spring-boot-starter-mail` salió del `pom.xml`.
 
 El código **no se escribe en el log en ningún perfil**, ni completo ni a trozos: durante sus 15
 minutos de validez equivale a la contraseña de la cuenta, y un log se agrega, se rota a servicios

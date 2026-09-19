@@ -30,22 +30,29 @@ services:
         sync: false
       - key: JWT_SECRET                    # secreto aleatorio propio de producción (Base64)
         sync: false
-      # --- Correo transaccional (Brevo SMTP) ---
+      # --- Correo transaccional (Brevo, API HTTP) ---
+      # El transporte NO es SMTP: Render bloquea los puertos 25, 465 y 587 en los servicios
+      # del plan gratuito, asi que JavaMailSender no podia entregar nada nunca y ademas el
+      # MailHealthIndicator que traia el starter de correo tumbaba la instancia en cada
+      # health check. Se envia por POST https://api.brevo.com/v3/smtp/email, HTTPS en el 443.
+      #
       # OBLIGATORIAS: application-prod.properties las referencia sin valor por defecto,
-      # igual que JWT_SECRET. Si falta cualquiera de las cuatro, el servicio NO arranca.
+      # igual que JWT_SECRET. Si falta cualquiera de las dos, el servicio NO arranca.
       # Es deliberado: sin correo, /auth/forgot-password responde 200 sin enviar nada y
       # la recuperacion de cuenta falla de forma indistinguible del exito.
-      - key: MAIL_HOST                     # smtp-relay.brevo.com
-        sync: false
-      - key: MAIL_USERNAME                 # el "login" SMTP de Brevo, no el correo de la cuenta
-        sync: false
-      - key: MAIL_PASSWORD                 # la SMTP key de Brevo, no la contrasena de la cuenta
+      #
+      # BREVO_API_KEY: OJO, la clave de API NO es la clave SMTP. Son credenciales distintas
+      # y se generan en pestanas distintas del panel: Brevo > SMTP & API > API Keys (la
+      # clave empieza por "xkeysib-"), no la pestana SMTP. Una clave SMTP aqui da 401.
+      - key: BREVO_API_KEY
         sync: false
       # MAIL_FROM: remitente, formato "Nombre <direccion@dominio>". La direccion TIENE que
       # estar verificada en Brevo (Senders) o pertenecer a un dominio autenticado; con
       # cualquier otra, el proveedor rechaza el envio y el fallo no se nota desde la app.
       - key: MAIL_FROM
         sync: false
+      # BORRAR del dashboard si siguen dadas de alta: MAIL_HOST, MAIL_PORT, MAIL_USERNAME
+      # y MAIL_PASSWORD. Ya no las lee nadie; el starter de correo salio del pom.
       # --- Usuario administrador semilla ---
       # OPCIONAL: sin ella la API arranca, pero NO crea ninguna cuenta con rol ADMIN.
       # No tiene default a proposito: una contrasena de admin en el repo es una cuenta

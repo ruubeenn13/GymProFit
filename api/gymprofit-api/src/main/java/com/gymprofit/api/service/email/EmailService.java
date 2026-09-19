@@ -1,18 +1,19 @@
 package com.gymprofit.api.service.email;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gymprofit.api.entity.Usuario;
 import jakarta.annotation.PostConstruct;
-import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -22,22 +23,27 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 // ============================================================
 // EmailService — envío de los correos transaccionales de GymProFit
 // Ahora mismo solo manda uno: el código de recuperación de contraseña.
 //
-// El proveedor es Brevo por SMTP y se configura por variables de entorno.
+// El proveedor es Brevo y el transporte su API HTTP, NO su SMTP. Render bloquea los
+// puertos 25, 465 y 587 en los servicios del plan gratuito, así que JavaMailSender no
+// podía entregar nada desde producción por mucho que la configuración fuese correcta
+// (ver BrevoClientConfig). La clave de API va por variable de entorno.
 //
 // En PROD la configuración de correo es obligatoria y la app no arranca sin ella
-// (verificarConfiguracionDeCorreo). Antes spring.mail.host tenía default vacío también
-// en prod: sin MAIL_HOST la API arrancaba con normalidad, /auth/forgot-password respondía
-// 200 «te hemos enviado un código» y el código acababa escrito en el log en claro. La
-// única vía de recuperar una cuenta fallaba de forma indistinguible del éxito y encima
-// dejaba en los logs algo que durante 15 minutos equivale a la contraseña.
+// (verificarConfiguracionDeCorreo). Antes la propiedad del servidor tenía default vacío
+// también en prod: sin ella la API arrancaba con normalidad, /auth/forgot-password
+// respondía 200 «te hemos enviado un código» y el código acababa escrito en el log en
+// claro. La única vía de recuperar una cuenta fallaba de forma indistinguible del éxito
+// y encima dejaba en los logs algo que durante 15 minutos equivale a la contraseña.
 //
-// Fuera de prod —dev, ci— no hace falta cuenta de correo: sin JavaMailSender el código
-// se entrega en un fichero local (ver entregarSinSmtp), nunca en el log.
+// Fuera de prod —dev, ci— no hace falta cuenta de correo: sin clave de API el código se
+// entrega en un fichero local (ver entregarSinApi), nunca en el log.
 // ============================================================
 @Service
 @RequiredArgsConstructor
@@ -48,9 +54,23 @@ public class EmailService implements IEmailService {
     // Sello del nombre del fichero de entrega local fuera de prod.
     private static final DateTimeFormatter SELLO_FICHERO = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss-SSS");
 
-    // ObjectProvider y no inyección directa: el bean solo existe si spring.mail.host
-    // está configurado, y fuera de prod la API tiene que arrancar igual cuando no lo está.
-    private final ObjectProvider<JavaMailSender> mailSenderProvider;
+    // "Nombre Visible <direccion@dominio>". El grupo del nombre es perezoso y el de la
+    // dirección excluye '<' y '>' para que un nombre con espacios no se cuele dentro.
+    private static final Pattern REMITENTE_CON_NOMBRE = Pattern.compile("^\\s*(.*?)\\s*<\\s*([^<>]+?)\\s*>\\s*$");
+
+    // Nombre del remitente cuando app.mail.from trae solo la dirección: es el nombre del
+    // producto, no un dato inventado, y Brevo enseña la dirección pelada si se deja vacío.
+    private static final String NOMBRE_POR_DEFECTO = "GymProFit";
+
+    // Tope de lo que se registra de un cuerpo de error del proveedor. Brevo devuelve un
+    // JSON corto, pero un proxy o una página de error por el medio pueden devolver HTML.
+    private static final int MAX_CUERPO_EN_LOG = 500;
+
+    // Cliente HTTP dedicado a Brevo, con la URL de envío y los timeouts ya fijados.
+    private final RestClient brevoRestClient;
+
+    // Para leer el messageId de la respuesta. Es el ObjectMapper de Spring Boot, no se crea otro.
+    private final ObjectMapper objectMapper;
 
     // Para distinguir prod del resto: en prod no hay modo degradado que valga.
     private final Environment environment;
@@ -61,10 +81,13 @@ public class EmailService implements IEmailService {
     @Value("${app.mail.from:GymProFit <no-reply@gymprofit.app>}")
     private String remitente;
 
-    // Se lee la propiedad ya resuelta y no MAIL_HOST directamente: así también se detecta
-    // el caso de una variable definida pero vacía, que el placeholder sin default no ve.
-    @Value("${spring.mail.host:}")
-    private String mailHost;
+    // Clave de API de Brevo. OJO: NO es la clave SMTP; son credenciales distintas y se
+    // generan en pestañas distintas del panel (SMTP & API > API Keys, no > SMTP). En prod
+    // se mapea a BREVO_API_KEY sin default, igual que JWT_SECRET. Se lee la propiedad ya
+    // resuelta y no la variable: así también se detecta el caso de variable definida pero
+    // vacía, que un placeholder sin default no ve.
+    @Value("${app.mail.brevo.api-key:}")
+    private String apiKey;
 
     // Buzón local de dev/ci. Por defecto dentro del directorio de build, que ya está
     // fuera del repositorio y se borra con un mvn clean.
@@ -78,16 +101,15 @@ public class EmailService implements IEmailService {
      * valor por defecto, se convierte en un fallo de arranque. Aquí además el modo degradado
      * era peor que no arrancar, porque dejaba los códigos de un solo uso en los logs.
      * <p>
-     * Se comprueban el servidor y el remitente, y por el mismo motivo: sin servidor no se
+     * Se comprueban la clave de API y el remitente, y por el mismo motivo: sin clave no se
      * envía, y con un remitente que no esté verificado en Brevo el proveedor rechaza el
-     * correo. En los dos casos el catch del envío se traga el fallo y
-     * POST /auth/forgot-password responde 200 igual, así que el único sitio donde eso se
-     * puede detener es el arranque.
+     * correo. En los dos casos el envío falla sin propagar y POST /auth/forgot-password
+     * responde 200 igual, así que el único sitio donde eso se puede detener es el arranque.
      * <p>
      * Si las variables no están definidas, application-prod.properties ya no resuelve y el
      * contexto falla antes de llegar aquí. Este control cubre el otro caso: definidas pero vacías.
      *
-     * @throws IllegalStateException si el perfil prod está activo sin servidor o sin remitente.
+     * @throws IllegalStateException si el perfil prod está activo sin clave de API o sin remitente.
      */
     @PostConstruct
     void verificarConfiguracionDeCorreo() {
@@ -96,8 +118,8 @@ public class EmailService implements IEmailService {
         }
 
         List<String> faltan = new ArrayList<>();
-        if (!StringUtils.hasText(mailHost)) {
-            faltan.add("MAIL_HOST");
+        if (!StringUtils.hasText(apiKey)) {
+            faltan.add("BREVO_API_KEY");
         }
         if (!StringUtils.hasText(remitente)) {
             faltan.add("MAIL_FROM");
@@ -107,10 +129,9 @@ public class EmailService implements IEmailService {
             throw new IllegalStateException(
                     "Configuración de correo incompleta con el perfil prod activo, falta: "
                     + String.join(", ", faltan) + ". En producción el correo es obligatorio "
-                    + "(MAIL_HOST, MAIL_USERNAME, MAIL_PASSWORD y MAIL_FROM, esta última con una "
-                    + "dirección verificada en el proveedor), porque sin él POST /auth/forgot-password "
-                    + "responde 200 sin haber enviado nada y la recuperación de cuenta deja de "
-                    + "funcionar en silencio.");
+                    + "(BREVO_API_KEY y MAIL_FROM, esta última con una dirección verificada en el "
+                    + "proveedor), porque sin él POST /auth/forgot-password responde 200 sin haber "
+                    + "enviado nada y la recuperación de cuenta deja de funcionar en silencio.");
         }
     }
 
@@ -122,7 +143,9 @@ public class EmailService implements IEmailService {
      * <p>
      * Un fallo de envío se registra pero no se propaga. El endpoint que llama a esto
      * responde siempre lo mismo para no revelar qué cuentas existen, así que dejar
-     * escapar la excepción convertiría un error de SMTP en un detector de cuentas.
+     * escapar la excepción convertiría un error del proveedor en un detector de cuentas.
+     * Lo que sí queda ahora es rastro suficiente para diagnosticarlo —el código de estado
+     * y el cuerpo que devuelva la API—, que con SMTP no teníamos.
      *
      * @param usuario destinatario del código.
      * @param codigo  los seis dígitos en claro (lo único que sale del servidor sin hashear).
@@ -130,35 +153,48 @@ public class EmailService implements IEmailService {
      */
     @Override
     public void enviarCodigoRecuperacion(Usuario usuario, String codigo, int minutosValidez) {
-        String asunto = codigo + " · Tu código de GymProFit";
-
-        JavaMailSender sender = mailSenderProvider.getIfAvailable();
-        if (sender == null) {
-            entregarSinSmtp(usuario, codigo, minutosValidez);
+        if (!StringUtils.hasText(apiKey)) {
+            entregarSinApi(usuario, codigo, minutosValidez);
             return;
         }
 
+        MensajeBrevo mensaje = new MensajeBrevo(
+                remitenteDeBrevo(),
+                List.of(new MensajeBrevo.Destinatario(usuario.getEmail(), usuario.getUsername())),
+                codigo + " · Tu código de GymProFit",
+                cuerpoHtml(usuario, codigo, minutosValidez),
+                cuerpoTexto(usuario, codigo, minutosValidez));
+
         try {
-            MimeMessage mensaje = sender.createMimeMessage();
-            // multipart = true, obligatorio: setText(texto, html) monta un multipart/alternative
-            // y con el flag a false lanzaba IllegalStateException. Como el catch de abajo se traga
-            // el fallo para no delatar qué cuentas existen, el correo NUNCA salía y el endpoint
-            // respondía 200 igual; solo quedaba una línea de error en el log.
-            MimeMessageHelper helper = new MimeMessageHelper(mensaje, true, StandardCharsets.UTF_8.name());
-            helper.setFrom(remitente);
-            helper.setTo(usuario.getEmail());
-            helper.setSubject(asunto);
-            helper.setText(cuerpoTexto(usuario, codigo, minutosValidez),
-                    cuerpoHtml(usuario, codigo, minutosValidez));
-            sender.send(mensaje);
-            logger.info("Código de recuperación enviado al usuario id={}", usuario.getId());
+            // onStatus con predicado siempre cierto y manejador vacío desactiva el
+            // comportamiento por defecto de RestClient, que lanza en 4xx/5xx. Aquí interesa
+            // el cuerpo del error para poder diagnosticarlo, no una excepción.
+            ResponseEntity<String> respuesta = brevoRestClient.post()
+                    .header("api-key", apiKey)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .body(mensaje)
+                    .retrieve()
+                    .onStatus(estado -> true, (peticion, resultado) -> { })
+                    .toEntity(String.class);
+
+            if (respuesta.getStatusCode().is2xxSuccessful()) {
+                logger.info("Código de recuperación enviado al usuario id={} (messageId={})",
+                        usuario.getId(), messageId(respuesta.getBody()));
+            } else {
+                logger.error("Brevo rechazó el correo del usuario id={}: HTTP {} · {}",
+                        usuario.getId(), respuesta.getStatusCode().value(),
+                        cuerpoParaElLog(respuesta.getBody(), codigo));
+            }
         } catch (Exception e) {
-            logger.error("No se pudo enviar el código de recuperación al usuario id={}", usuario.getId(), e);
+            // Timeout, DNS, TLS: nada de esto llega al cliente, que sigue recibiendo 200.
+            logger.error("No se pudo entregar a Brevo el código de recuperación del usuario id={}",
+                    usuario.getId(), e);
         }
     }
 
     /**
-     * Entrega el código cuando no hay SMTP. Solo puede ocurrir fuera de producción.
+     * Entrega el código cuando no hay clave de API. Solo puede ocurrir fuera de producción.
      * <p>
      * El código completo se escribe en un fichero del buzón local y del log solo sale la ruta.
      * Es a propósito: durante su validez el código <em>es</em> la contraseña de la cuenta, y el
@@ -168,12 +204,12 @@ public class EmailService implements IEmailService {
      * probar el flujo entero sin cuenta de correo. Tampoco se registran dígitos sueltos del
      * código: dos de seis ya reducen el espacio de búsqueda a cien intentos.
      */
-    private void entregarSinSmtp(Usuario usuario, String codigo, int minutosValidez) {
+    private void entregarSinApi(Usuario usuario, String codigo, int minutosValidez) {
         if (esProduccion()) {
             // Cinturón y tirantes: verificarConfiguracionDeCorreo impide llegar hasta aquí en
             // prod, pero si alguna vez se llegara, el código NO acaba escrito en ningún sitio.
-            logger.error("SMTP no disponible con el perfil prod activo: no se ha enviado el código de "
-                    + "recuperación al usuario id={}", usuario.getId());
+            logger.error("Clave de API de Brevo no disponible con el perfil prod activo: no se ha "
+                    + "enviado el código de recuperación al usuario id={}", usuario.getId());
             return;
         }
 
@@ -183,12 +219,63 @@ public class EmailService implements IEmailService {
             Path fichero = buzon.resolve("codigo-" + usuario.getId() + "-"
                     + LocalDateTime.now().format(SELLO_FICHERO) + ".txt");
             Files.writeString(fichero, cuerpoTexto(usuario, codigo, minutosValidez), StandardCharsets.UTF_8);
-            logger.warn("SMTP no configurado; código de recuperación de '{}' (válido {} min) escrito en {}",
+            logger.warn("Correo no configurado; código de recuperación de '{}' (válido {} min) escrito en {}",
                     usuario.getUsername(), minutosValidez, fichero.toAbsolutePath());
         } catch (IOException e) {
-            logger.error("SMTP no configurado y tampoco se pudo escribir el código en el buzón local '{}'. "
+            logger.error("Correo no configurado y tampoco se pudo escribir el código en el buzón local '{}'. "
                     + "El usuario id={} no ha recibido su código.", outboxDir, usuario.getId(), e);
         }
+    }
+
+    /**
+     * Parte app.mail.from en las dos mitades que quiere la API: nombre y dirección.
+     * <p>
+     * El formato acordado es «Nombre &lt;direccion@dominio&gt;», que es el que entiende un
+     * cliente de correo y el que ya está documentado y dado de alta en Render. La API HTTP
+     * los quiere separados, así que se parten aquí en vez de cambiar el formato de la
+     * variable. Si viene solo la dirección, el nombre pasa a ser el del producto.
+     *
+     * @return el remitente en las dos piezas que espera Brevo.
+     */
+    private MensajeBrevo.Remitente remitenteDeBrevo() {
+        Matcher partes = REMITENTE_CON_NOMBRE.matcher(remitente);
+        if (partes.matches()) {
+            String nombre = partes.group(1);
+            return new MensajeBrevo.Remitente(
+                    StringUtils.hasText(nombre) ? nombre : NOMBRE_POR_DEFECTO, partes.group(2));
+        }
+        return new MensajeBrevo.Remitente(NOMBRE_POR_DEFECTO, remitente.trim());
+    }
+
+    /** Saca el messageId de la respuesta de Brevo, que es lo único que sirve para rastrear un envío. */
+    private String messageId(String cuerpo) {
+        if (!StringUtils.hasText(cuerpo)) {
+            return "sin messageId";
+        }
+        try {
+            JsonNode identificador = objectMapper.readTree(cuerpo).path("messageId");
+            return identificador.isMissingNode() ? "sin messageId" : identificador.asText();
+        } catch (Exception e) {
+            // La respuesta no era el JSON esperado. Es información que falta, no un fallo de envío.
+            return "sin messageId";
+        }
+    }
+
+    /**
+     * Prepara un cuerpo de error para el log: lo recorta y le tacha el código.
+     * <p>
+     * Brevo no devuelve la petición en sus errores, pero lo que se registra viene de un
+     * tercero y podría hacerlo —o podría hacerlo un proxy por el medio—, y el código no
+     * puede acabar en el log por ninguna vía. Tacharlo cuesta una llamada y cierra el camino.
+     */
+    private String cuerpoParaElLog(String cuerpo, String codigo) {
+        if (!StringUtils.hasText(cuerpo)) {
+            return "(sin cuerpo)";
+        }
+        String limpio = cuerpo.replace(codigo, "······");
+        return limpio.length() > MAX_CUERPO_EN_LOG
+                ? limpio.substring(0, MAX_CUERPO_EN_LOG) + "… (recortado)"
+                : limpio;
     }
 
     // El perfil prod es el único sin modo degradado: ahí el correo es infraestructura obligatoria.

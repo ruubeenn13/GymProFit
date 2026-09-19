@@ -95,14 +95,13 @@
 			<artifactId>mapstruct</artifactId>
 			<version>1.6.3</version>
 		</dependency>
-		<!-- Correo transaccional (código de recuperación de contraseña) por SMTP.
-		     Sin spring.mail.host configurado no se crea ningún JavaMailSender y el
-		     servicio de correo cae al log: la API arranca igual sin credenciales. -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-mail</artifactId>
-		</dependency>
-
+		<!-- NO hay starter de correo a propósito. El código de recuperación se envía por la
+		     API HTTP de Brevo con el RestClient que ya trae spring-boot-starter-web (ver
+		     BrevoClientConfig). spring-boot-starter-mail estuvo aquí y se quitó por dos
+		     motivos: Render bloquea los puertos 25/465/587 en el plan gratuito, así que
+		     JavaMailSender no podía entregar nada, y el MailHealthIndicator que registra
+		     Actuator al detectarlo abría una conexión SMTP en cada /actuator/health y
+		     tumbaba la instancia entera. -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>

@@ -34,7 +34,7 @@ API pública: **https://gymprofit-api.onrender.com** (Render Web Service, Docker
 
 ## Variables de entorno en Render
 
-Estado a 2026-09-19. En el perfil `prod` **ninguna de estas ocho tiene valor por defecto**: el
+Estado a 2026-09-19. En el perfil `prod` **ninguna de estas seis tiene valor por defecto**: el
 placeholder de `application-prod.properties` va pelado (`${VARIABLE}`) a propósito, así que si
 falta cualquiera de ellas el contexto de Spring no levanta y **el servicio no arranca**. Es
 deliberado: una configuración a medias que arranca es peor que un arranque que falla, porque el
@@ -46,20 +46,17 @@ fallo se descubre en producción y en silencio.
 | `SPRING_DATASOURCE_USERNAME` | Datasource | **No arranca** |
 | `SPRING_DATASOURCE_PASSWORD` | Datasource | **No arranca** |
 | `JWT_SECRET` | Firma de tokens | **No arranca** |
-| `MAIL_HOST` | Correo (Brevo SMTP) | **No arranca** |
-| `MAIL_USERNAME` | Correo (Brevo SMTP) | **No arranca** |
-| `MAIL_PASSWORD` | Correo (Brevo SMTP) | **No arranca** |
-| `MAIL_FROM` | Correo (Brevo SMTP) | **No arranca** |
+| `BREVO_API_KEY` | Correo (Brevo, API HTTP) | **No arranca** |
+| `MAIL_FROM` | Correo (Brevo, API HTTP) | **No arranca** |
 | `ADMIN_PASSWORD` | Semilla de administración | Arranca, pero **sin crear cuenta de administración** |
 
 Por grupos:
 
 - **Datasource y `JWT_SECRET`**: sin ellas no hay ni base de datos ni forma de firmar tokens.
-- **Correo**: las cuatro son obligatorias desde que la recuperación de contraseña existe. Antes
-  llevaban default vacío y la consecuencia era peor que no arrancar: Spring no creaba
-  `JavaMailSender`, el código de recuperación acababa escrito en el log y
-  `POST /auth/forgot-password` respondía 200 sin haber enviado nada. La única vía de recuperar
-  una cuenta fallaba de forma indistinguible del éxito.
+- **Correo**: las dos son obligatorias desde que la recuperación de contraseña existe. Antes
+  llevaban default vacío y la consecuencia era peor que no arrancar: el código de recuperación
+  acababa escrito en el log y `POST /auth/forgot-password` respondía 200 sin haber enviado nada.
+  La única vía de recuperar una cuenta fallaba de forma indistinguible del éxito.
 - **`ADMIN_PASSWORD`**: es la excepción, la única opcional. Sin ella la API funciona con
   normalidad pero `DataInitializer` **no crea ninguna cuenta con rol ADMIN** y lo deja anotado en
   el log de arranque. Es intencionado: una API sin panel de administración sigue sirviendo a sus
@@ -67,11 +64,26 @@ Por grupos:
   valor por defecto porque una contraseña de administrador en el repositorio es una cuenta de
   administración pública.
 
-> **`MAIL_FROM` no basta con que esté definida.** El formato es `Nombre <direccion@dominio>`, y la
-> dirección **tiene que estar verificada en el proveedor SMTP** (en Brevo: *Senders*) o pertenecer
-> a un dominio autenticado. Con cualquier otra, Brevo rechaza el envío aunque el resto de la
-> configuración sea correcta; el `catch` de `EmailService` no propaga el fallo —para no delatar qué
-> cuentas existen— así que el endpoint seguiría respondiendo 200 y el correo no saldría.
+> **`BREVO_API_KEY` no es la clave SMTP.** Son credenciales distintas y se generan en **pestañas
+> distintas** del panel de Brevo: la clave de API está en *SMTP & API > **API Keys*** y empieza por
+> `xkeysib-`; la de SMTP está en *SMTP & API > SMTP* y aquí no sirve para nada —da 401 en cada
+> envío—. Es el error fácil de cometer porque las dos viven en la misma sección.
+
+> **`MAIL_FROM` no basta con que esté definida.** El formato es `Nombre <direccion@dominio>`
+> —`EmailService` lo parte en `sender.name` y `sender.email`, que es como los quiere la API— y la
+> dirección **tiene que estar verificada en Brevo** (*Senders*) o pertenecer a un dominio
+> autenticado. Con cualquier otra, Brevo rechaza el envío aunque el resto de la configuración sea
+> correcta; `EmailService` no propaga el fallo —para no delatar qué cuentas existen— así que el
+> endpoint seguiría respondiendo 200 y el correo no saldría. Lo que sí queda desde el cambio a la
+> API HTTP es el **código de estado y el cuerpo del error en el log**, que con SMTP no teníamos.
+
+> **Variables que ya no se usan: `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME` y `MAIL_PASSWORD`.**
+> Se pueden borrar del dashboard de Render. El transporte dejó de ser SMTP porque **Render bloquea
+> los puertos 25, 465 y 587 en los servicios del plan gratuito**: `JavaMailSender` no podía
+> entregar nada por mucho que la configuración fuese correcta, y encima el `MailHealthIndicator`
+> que venía con el starter de correo abría una conexión SMTP en cada consulta de
+> `/api/actuator/health`, agotaba su timeout de 10 s y Render mataba la instancia entera. Ahora se
+> envía por `POST https://api.brevo.com/v3/smtp/email`, HTTPS por el 443, que no está bloqueado.
 
 ---
 

@@ -26,8 +26,7 @@ class ConfiguracionProdPropertiesTest {
 
     // Claves sin las que la API NO debe arrancar: placeholder pelado, sin dos puntos.
     private static final String[] OBLIGATORIAS = {
-            "jwt.secret", "spring.mail.host", "spring.mail.username", "spring.mail.password",
-            "app.mail.from",
+            "jwt.secret", "app.mail.brevo.api-key", "app.mail.from",
             "spring.datasource.url", "spring.datasource.username", "spring.datasource.password"
     };
 
