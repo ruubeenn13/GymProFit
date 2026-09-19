@@ -163,10 +163,15 @@ public class BorradoCuentaService implements IBorradoCuentaService {
      * <p>
      * No debería existir ninguna: la aplicación solo ofrece tus propias rutinas al
      * empezar una sesión. Si hay alguna es porque se fabricó a mano contra la API.
-     * Se desvincula en vez de borrarla —la sesión ajena es un entrenamiento real de otra
-     * persona y se conserva entera, solo pierde el enlace a una rutina que va a dejar de
-     * existir— y queda constancia en el log. No se avisa a esos usuarios: contarles por
-     * qué su sesión perdió la rutina sería contarles que alguien ha borrado su cuenta.
+     * <p>
+     * Se desvincula en vez de borrarla, y no por ser lo menos destructivo: {@code rutina_id}
+     * es NULL-able desde la migración inicial y la entidad lo documenta como «opcional,
+     * puede ser entrenamiento libre». Una sesión sin rutina <strong>no queda en un estado
+     * raro</strong>, queda como entrenamiento libre, que es un concepto del producto. Por
+     * eso esto no es un apaño pendiente de revisar.
+     * <p>
+     * Queda constancia en el log. No se avisa a esos usuarios: contarles por qué su sesión
+     * perdió la rutina sería contarles que alguien ha borrado su cuenta.
      */
     private void desvincularSesionesAjenasDeSusRutinas(Integer usuarioId) {
         int sesiones = em.createQuery("""
