@@ -14,8 +14,18 @@ public class SesionEntrenamiento {
     private int id;
     // Id del usuario que realizó la sesión.
     private int usuarioId;
-    // Id de la rutina asociada a la sesión.
-    private int rutinaId;
+    // Id de la rutina asociada, o null si la sesión es un ENTRENAMIENTO LIBRE.
+    //
+    // Es Integer y no int a propósito (GP-057): sesiones_entrenamiento.rutina_id es
+    // INT NULL desde la migración inicial y la API lo documenta como opcional. Con un
+    // int primitivo, Gson no tiene dónde escribir el null y deja el campo a 0, que no
+    // es «sin rutina» sino «la rutina número cero»: la app se quedaba buscando en el
+    // mapa de nombres una rutina que no existe y no podía distinguir los dos casos.
+    //
+    // Se llega aquí creando una sesión sin elegir rutina, y también cuando se borra la
+    // cuenta del dueño de una rutina que alguien más estaba usando: esa sesión se
+    // desvincula en vez de borrarse (DEC-031) y queda como entrenamiento libre.
+    private Integer rutinaId;
     // Fecha/hora de inicio de la sesión.
     private String fechaInicio;
     // Fecha/hora de fin de la sesión.
@@ -40,8 +50,12 @@ public class SesionEntrenamiento {
     public int getUsuarioId() { return usuarioId; }
     public void setUsuarioId(int usuarioId) { this.usuarioId = usuarioId; }
 
-    public int getRutinaId() { return rutinaId; }
-    public void setRutinaId(int rutinaId) { this.rutinaId = rutinaId; }
+    /** @return el id de la rutina, o {@code null} si fue un entrenamiento libre. */
+    public Integer getRutinaId() { return rutinaId; }
+    public void setRutinaId(Integer rutinaId) { this.rutinaId = rutinaId; }
+
+    /** Atajo legible para las pantallas: la sesión no se hizo sobre ninguna rutina. */
+    public boolean esEntrenamientoLibre() { return rutinaId == null; }
 
     public String getFechaInicio() { return fechaInicio; }
     public void setFechaInicio(String fechaInicio) { this.fechaInicio = fechaInicio; }

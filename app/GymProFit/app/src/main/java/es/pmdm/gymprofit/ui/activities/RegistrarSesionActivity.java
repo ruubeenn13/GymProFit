@@ -105,7 +105,10 @@ public class RegistrarSesionActivity extends AppCompatActivity {
     private void cargarRutinas() {
         int usuarioId = prefsManager.getUsuarioId();
         rutinaOpciones.clear();
-        rutinaOpciones.add(getString(R.string.sesiones_sin_rutina));
+        // La opción 0 crea la sesión sin rutinaId, que es exactamente lo que la lista
+        // y el resumen llaman «entrenamiento libre» (GP-057). Antes decía «sin rutina
+        // asociada»: la misma cosa con dos nombres según la pantalla.
+        rutinaOpciones.add(getString(R.string.sesiones_entrenamiento_libre));
 
         final List<Rutina> predefinidas = new ArrayList<>();
         AtomicInteger pendientes = new AtomicInteger(2);
@@ -192,7 +195,7 @@ public class RegistrarSesionActivity extends AppCompatActivity {
 
         for (int i = 0; i < rutinas.size(); i++) {
             if (rutinas.get(i).getId() == rutinaId) {
-                // +1 porque la posición 0 del spinner es "Sin rutina asociada".
+                // +1 porque la posición 0 del spinner es "Entrenamiento libre".
                 spRutina.setSelection(i + 1);
                 return;
             }
@@ -294,8 +297,11 @@ public class RegistrarSesionActivity extends AppCompatActivity {
                         nuevosLogros.addAll(sesionCreada.getNuevosLogros());
                     }
 
-                    String nombreRutina = "";
+                    // La posición 0 no es "no lo sé", es entrenamiento libre: se le
+                    // dice al resumen para que no lo pinte como una rutina sin nombre.
                     int pos = spRutina.getSelectedItemPosition();
+                    boolean libre = pos <= 0;
+                    String nombreRutina = "";
                     if (pos > 0 && pos <= rutinas.size()) {
                         nombreRutina = rutinas.get(pos - 1).getNombre();
                     }
@@ -308,6 +314,7 @@ public class RegistrarSesionActivity extends AppCompatActivity {
                                 ResumenSesionActivity.class);
                         intent.putExtra("sesionId", sesionIdGuardada);
                         intent.putExtra("rutinaNombre", nombreRutina);
+                        intent.putExtra(ResumenSesionActivity.EXTRA_ENTRENAMIENTO_LIBRE, libre);
                         intent.putStringArrayListExtra("nuevosLogros", nuevosLogros);
                         startActivity(intent);
                     }

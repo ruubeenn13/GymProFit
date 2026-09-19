@@ -40,6 +40,15 @@ import es.pmdm.gymprofit.utils.PreferencesManager;
 // ============================================================
 public class ResumenSesionActivity extends AppCompatActivity {
 
+    /**
+     * Extra booleano: la sesión no tiene rutina, es un entrenamiento libre (GP-057).
+     *
+     * <p>Lo manda quien abre esta pantalla porque ya lo sabe. Aquí se vuelve a pedir
+     * la sesión a la API, pero hasta que responde el rótulo tiene que decir algo, y
+     * sin el aviso diría «sin rutina asociada» un instante antes de corregirse.
+     */
+    public static final String EXTRA_ENTRENAMIENTO_LIBRE = "entrenamientoLibre";
+
     // Aplica la escala de fuente global de la app (agranda todo el texto uniformemente).
     @Override
     protected void attachBaseContext(android.content.Context newBase) {
@@ -72,6 +81,12 @@ public class ResumenSesionActivity extends AppCompatActivity {
     private ArrayList<String> nuevosLogros = new ArrayList<>();
     // Indica si se llegó desde el registro de una sesión (para lanzar notificaciones)
     private boolean fromRegistrar = false;
+    // Aviso de quien abre la pantalla: la sesión no tiene rutina (GP-057). Lo confirma
+    // después la propia sesión, cuando llega de la API.
+    private boolean entrenamientoLibre = false;
+    // Nombre de la rutina que traía el Intent, si lo traía. Aquí no se resuelve: el
+    // mapa id→nombre lo tiene la pantalla de la que se viene.
+    private String rutinaNombre;
 
     // Inicializa la actividad: aplica tema/idioma, recupera extras del intent
     // y dispara las 4 cargas asíncronas necesarias para el resumen.
@@ -86,6 +101,7 @@ public class ResumenSesionActivity extends AppCompatActivity {
         if (sesionId == -1) { finish(); return; }
 
         String rutinaNombre = getIntent().getStringExtra("rutinaNombre");
+        entrenamientoLibre = getIntent().getBooleanExtra(EXTRA_ENTRENAMIENTO_LIBRE, false);
         ArrayList<String> extras = getIntent().getStringArrayListExtra("nuevosLogros");
         if (extras != null) {
             nuevosLogros = extras;
@@ -158,7 +174,26 @@ public class ResumenSesionActivity extends AppCompatActivity {
         tvLogrosVacio = findViewById(R.id.tvLogrosVacioResumen);
         rvLogros.setLayoutManager(new LinearLayoutManager(this));
 
-        if (rutinaNombre != null && !rutinaNombre.isEmpty()) {
+        this.rutinaNombre = rutinaNombre;
+        pintarRutina();
+    }
+
+    /**
+     * Escribe el rótulo de la rutina. Tres casos, no dos (GP-057):
+     * <ul>
+     *   <li>entrenamiento libre: la sesión no tiene rutina, y eso es un estado válido
+     *       del modelo desde la primera migración, no un dato que falte;</li>
+     *   <li>rutina con nombre: el que venga de quien abrió la pantalla;</li>
+     *   <li>rutina sin nombre resoluble (archivada): «sin rutina asociada».</li>
+     * </ul>
+     *
+     * <p>Se llama dos veces: al montar la vista con el aviso del Intent, y otra vez
+     * cuando llega la sesión de la API, que es la que manda.
+     */
+    private void pintarRutina() {
+        if (entrenamientoLibre) {
+            tvRutina.setText(getString(R.string.sesiones_entrenamiento_libre));
+        } else if (rutinaNombre != null && !rutinaNombre.isEmpty()) {
             tvRutina.setText(rutinaNombre);
         } else {
             tvRutina.setText(getString(R.string.sesiones_sin_rutina));
@@ -229,6 +264,12 @@ public class ResumenSesionActivity extends AppCompatActivity {
     // desbloqueados; si viene de registrar la sesión, dispara notificaciones locales.
     private void mostrarContenido() {
         if (sesion != null) {
+            // La sesión que responde la API manda sobre el aviso del Intent (GP-057):
+            // si llega con rutina_id nulo es un entrenamiento libre, lo dijera quien
+            // lo dijera al abrir esta pantalla.
+            entrenamientoLibre = sesion.esEntrenamientoLibre();
+            pintarRutina();
+
             tvFecha.setText(sesion.getFechaInicio().isEmpty() ? "—" : FechaUtils.formatearFechaHora(sesion.getFechaInicio()));
             tvDuracion.setText(getString(R.string.sesiones_min, sesion.getDuracionMinutos()));
             tvCalorias.setText(getString(R.string.sesiones_kcal, sesion.getCaloriasQuemadas()));

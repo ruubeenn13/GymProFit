@@ -69,9 +69,18 @@ public class SesionAdapter extends RecyclerView.Adapter<SesionAdapter.ViewHolder
 
         h.tvFecha.setText(s.getFechaInicio().isEmpty() ? "—" : FechaUtils.formatearFechaHora(s.getFechaInicio()));
 
-        String rutinaNombre = rutinaNombres.get(s.getRutinaId());
-        h.tvRutina.setText(rutinaNombre != null ? rutinaNombre
-                : context.getString(R.string.sesiones_sin_rutina));
+        // Tres casos distintos, no dos (GP-057):
+        //   rutinaId null            → entrenamiento libre, un estado válido del modelo
+        //   rutinaId con nombre      → la rutina, por su nombre
+        //   rutinaId sin nombre      → la rutina existe pero no está entre las activas
+        //                              del usuario (archivada), así que no hay nombre
+        if (s.esEntrenamientoLibre()) {
+            h.tvRutina.setText(context.getString(R.string.sesiones_entrenamiento_libre));
+        } else {
+            String rutinaNombre = rutinaNombres.get(s.getRutinaId());
+            h.tvRutina.setText(rutinaNombre != null ? rutinaNombre
+                    : context.getString(R.string.sesiones_sin_rutina));
+        }
 
         h.tvDuracion.setText(context.getString(R.string.sesiones_min, s.getDuracionMinutos()));
         h.tvCalorias.setText(context.getString(R.string.sesiones_kcal, s.getCaloriasQuemadas()));

@@ -663,4 +663,10 @@
     <string name="eliminar_cuenta_cargando">Borrando tu cuenta y tus datos…</string>
     <string name="eliminar_cuenta_ok">Tu cuenta y tus datos se han borrado</string>
     <string name="perfil_eliminar_cuenta">Eliminar cuenta</string>
+
+    <!-- Entrenamiento libre (GP-057): una sesion sin rutina no es un dato que falte,
+         es un estado valido del modelo desde la primera migracion. Distinto de
+         sesiones_sin_rutina, que es "hay rutina pero no se ha podido resolver su
+         nombre" (por ejemplo, una rutina archivada). -->
+    <string name="sesiones_entrenamiento_libre">Entrenamiento libre</string>
 </resources>

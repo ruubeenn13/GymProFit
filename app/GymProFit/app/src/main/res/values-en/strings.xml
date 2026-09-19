@@ -662,4 +662,10 @@
     <string name="eliminar_cuenta_cargando">Deleting your account and your data…</string>
     <string name="eliminar_cuenta_ok">Your account and your data have been deleted</string>
     <string name="perfil_eliminar_cuenta">Delete account</string>
+
+    <!-- Free workout (GP-057): a session without a routine is not missing data, it is
+         a valid state of the model since the very first migration. Different from
+         sesiones_sin_rutina, which means "there is a routine but its name could not
+         be resolved" (an archived routine, for instance). -->
+    <string name="sesiones_entrenamiento_libre">Free workout</string>
 </resources>
