@@ -46,7 +46,9 @@ Que los tests existentes sigan en verde no significa que lo nuevo esté probado.
 
 ## Commits
 
-Convención `tipo(ámbito): resumen` — `feat`, `fix`, `refactor`, `docs`; ámbitos `api`, `android`, `api,android`.
+Convención `tipo(ámbito): resumen` — `feat`, `fix`, `refactor`, `docs`, `test`; ámbitos `api`, `android`, `api,android`.
+
+`test` es para lo que solo añade o corrige pruebas sin tocar el comportamiento. Un cambio de código que trae sus tests, como pide *Terminado*, va con el tipo del cambio (`feat` o `fix`), no con `test`.
 El cuerpo explica **por qué**, no qué líneas cambiaron.
 Todo cambio funcional se anota en `CHANGELOG.md` con su hash.
 

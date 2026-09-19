@@ -336,6 +336,30 @@ Decisiones tomadas, con su porqué. Sirve para no volver a discutir lo ya discut
 
 ---
 
+### DEC-028 · La enumeración de cuentas por el registro es una limitación aceptada, no un descuido
+**Estado:** Aceptada · **Fecha:** 2026-09-19 · **Se revisa con:** GP-045 (verificación de correo en el registro)
+
+**Contexto.** `POST /auth/forgot-password` se diseñó para no revelar qué cuentas existen: el cuerpo de la respuesta es el mismo exista la cuenta o no. Al escribir sus tests apareció que esa propiedad no se sostiene por dos sitios distintos.
+
+El primero es el propio endpoint: cuando la cuenta no existe —o está desactivada, o no tiene correo— el servicio vuelve pronto y no paga el hash del código ni el encolado del correo. El cuerpo es idéntico, el **coste no**, y esa diferencia se mide desde fuera sin herramientas especiales.
+
+El segundo es más simple y más grave, y hace al primero irrelevante: `POST /auth/register` responde en texto plano **«el username 'X' ya está en uso»** y **«el email 'X' ya está en uso»** (`AuthService.java:90` y `:94`). Quien quiera saber si una dirección está registrada no necesita cronometrar nada: la pregunta ya tiene respuesta directa, y además es la respuesta *correcta* para un formulario de alta.
+
+**Decisión.** La enumeración de cuentas queda **abierta y anotada**, no disimulada. En concreto:
+
+- El **cuerpo uniforme** de `/auth/forgot-password` se mantiene. Es barato y evita el caso obvio.
+- **No se añade trabajo caro artificial** en la rama sin cuenta para igualar tiempos. Compraría una propiedad que el registro regala igualmente, y el precio se paga en CPU en **cada intento fallido**, que en una instancia de 512 MB es justo lo que no sobra. Un hash de relleno es además un blanco cómodo: basta con repetir la petición para ocupar el servidor.
+- Los **javadoc dicen lo que el código hace**: el cuerpo es uniforme, el coste no, y la enumeración está abierta por el registro de todas formas. Una promesa de seguridad escrita en un comentario y no cumplida por el código es peor que no escribirla, porque el siguiente que lea el comentario dará el problema por resuelto.
+- Lo que sí contiene el daño es el **rate limit estricto** (DEC del filtro de autenticación): `/auth/register`, `/auth/forgot-password` y `/auth/reset-password` están en el cupo bajo por IP, así que enumerar es posible pero lento.
+
+**El username seguramente se quede como está.** Es un identificador **público** —se muestra en la aplicación— y el formulario de alta tiene que poder decir que está cogido para que el usuario elija otro. Ahí no hay secreto que proteger, así que decirlo no es una fuga.
+
+**El correo es el caso que sí hay que cerrar**, porque una dirección sí es un dato personal y saber que está registrada en una aplicación de gimnasio dice algo de su dueño.
+
+**Qué la invalidaría — y cuándo toca mirarlo.** El momento es **GP-045, la verificación de correo en el registro**: hasta entonces no hay con qué sustituir la respuesta síncrona, porque el alta tiene que resolverse en la misma petición. Con verificación por correo, el registro puede responder siempre igual —«te hemos mandado un correo»— y el conflicto de dirección se resuelve dentro del mensaje, que solo lee quien controla el buzón; ahí esta decisión se sustituye. También la invalidarían: que la aplicación pase a tratar la pertenencia como dato sensible por normativa o por un requisito de un tercero, que aparezca un incidente real de enumeración en producción, o que el username deje de ser visible para otros usuarios, que reabriría el caso del username junto al del correo.
+
+---
+
 ## Pendientes de decidir
 
 Se registran aquí para que no se decidan por omisión.
