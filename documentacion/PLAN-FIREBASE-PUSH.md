@@ -18,7 +18,8 @@ notificaciones programadas queda como follow-up (ahora solo envío inmediato).
 ## Config Firebase (ya hecho / verificado)
 - Proyecto: `GymProFit` · ID `gymprofit-app` · nº `416139974211`.
 - App Android `es.pmdm.gymprofit` · appId `1:416139974211:android:7ff523d38e6799625f66f6`.
-- `app/google-services.json` ✅ presente y coincide (nº proyecto, appId, paquete).
+- **Desde 2026-09-19 hay una segunda app Android en el mismo proyecto de Firebase: `com.gymprofit.app`**, que es el `applicationId` nuevo (DEC-030). La vieja se conserva porque es lo que declaran las builds ya repartidas. El paquete Java no ha cambiado.
+- `app/google-services.json` ✅ presente y coincide; ahora trae **los dos clientes**, y el plugin elige el que case con el `applicationId` del build.
 - SHA vacío: **irrelevante** para FCM push (solo hace falta para Auth/Dynamic Links).
 - `AndroidManifest.xml`: `POST_NOTIFICATIONS` ✅ ya declarado.
 - `build.gradle` (raíz + app): plugin `com.google.gms.google-services` ✅ + `firebase-bom:34.15.0` + `firebase-analytics` ✅.

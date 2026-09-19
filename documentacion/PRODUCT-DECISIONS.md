@@ -377,14 +377,29 @@ El segundo es más simple y más grave, y hace al primero irrelevante: `POST /au
 
 ---
 
+### DEC-030 · El `applicationId` es `com.gymprofit.app`
+**Estado:** Aceptada · **Fecha:** 2026-09-19 · **Resuelve:** DEC-023
+
+**Contexto.** El `applicationId` era `es.pmdm.gymprofit`, donde PMDM es el nombre de un módulo del ciclo formativo en el que nació el proyecto. **Tras la primera publicación en Play ya no se puede cambiar nunca**: queda en la URL de la ficha, en cada instalación y en la identidad con la que Play reconoce las actualizaciones. Cambiarlo después no es difícil, es **imposible**: sería una app distinta, sin sus usuarios, sin sus reseñas y sin su historial.
+
+**Decisión.** El `applicationId` es **`com.gymprofit.app`**. Coherente con el paquete de la API (`com.gymprofit.api`) y con el dominio del producto (`gymprofit.app`), y sin rastro del contexto académico en el que empezó (DEC-001).
+
+**Los paquetes Java se quedan en `es.pmdm.gymprofit`, y es a propósito.** Desde AGP 7 el `namespace` —la raíz de los paquetes y de la clase `R`— y el `applicationId` son ajustes **independientes**: el primero es una decisión de organización del código y no sale del repositorio; el segundo es la identidad pública de la app. Lo que se ve desde fuera —la ficha de Play, el directorio de datos del dispositivo, la autoridad del `FileProvider`, los proveedores de Firebase— sale del `applicationId` y ya se ha movido solo, porque el manifest usa `${applicationId}` y no cadenas escritas a mano. Renombrar los 121 ficheros Java sería **cosmético**, tocaría todos los imports y las reglas de ProGuard, y el riesgo se paga entero en release, que es donde R8 reescribe nombres. Si algún día se hace, es una tarea aparte y opcional.
+
+**Consecuencias.** El `google-services.json` pasa a declarar **dos clientes**, el nuevo y el viejo, para que Firebase siga reconociendo las builds ya repartidas mientras existan; el fichero está en `.gitignore` y no viaja en el repositorio. El único sitio del código que afirmaba el identificador antiguo era el test instrumentado de ejemplo, que comprobaba `getPackageName()` —que devuelve el `applicationId`, no el paquete Java— y se ha puesto al día.
+
+**Qué la invalidaría.** **Nada, una vez publicada la app** — y ese es justo el motivo de decidirlo ahora y no más tarde. Mientras no se haya subido nada a Play, incluida la pista interna, todavía se puede cambiar de idea sin coste; después, esta entrada deja de ser una decisión revisable y pasa a ser un hecho. Lo que sí puede cambiar sin tocar esto es el **namespace** de los paquetes Java, que es independiente.
+
+---
+
 ## Pendientes de decidir
 
 Se registran aquí para que no se decidan por omisión.
 
 ### DEC-023 · Identificador de la aplicación
-**Estado:** PENDIENTE · **Bloquea:** cualquier subida a Play Console, incluida la interna
+**Estado:** RESUELTA por DEC-030 · **Fecha de cierre:** 2026-09-19
 
-El `applicationId` es `es.pmdm.gymprofit`, donde PMDM es el módulo académico del ciclo. **Tras la primera publicación no se puede cambiar nunca**: queda en la URL de la ficha y en cada instalación. Alternativa propuesta: `com.gymprofit.app`. Cambiarlo obliga a recrear la app en Firebase. Hay que decidirlo de forma consciente y anotar aquí el resultado, se cambie o no.
+Pedía decidir de forma consciente si el `applicationId` `es.pmdm.gymprofit` —donde PMDM es el módulo académico del ciclo— se cambiaba antes de publicar, porque **tras la primera publicación no se puede cambiar nunca**. Ya no bloquea la subida a Play: **DEC-030** fija `com.gymprofit.app` y deja escrito por qué los paquetes Java se quedan como están.
 
 ### DEC-024 · Proveedor de correo transaccional
 **Estado:** PENDIENTE DE CONFIRMAR
