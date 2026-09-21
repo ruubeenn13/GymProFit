@@ -18,6 +18,18 @@ Verificado en emulador el 18 de septiembre de 2026.
 | Distintivo en pantalla | `PRUEBAS · LOCAL` arriba | ninguno |
 | Usuario | `prueba` / `Prueba1234.` | cuentas reales |
 
+Hay tres cuentas locales, cada una para una cosa:
+
+| Cuenta | Contraseña | Para qué |
+|---|---|---|
+| `prueba` | `Prueba1234.` | Recorrido normal, **con datos**: sesiones, comidas con alimentos, mediciones y rutinas propias |
+| `vacia` | `Vacia1234.` | **Estados vacíos**: no tiene ni un dato, y es donde se ven los huecos que el caso feliz tapa |
+| `admin` | `AdminDev1234.` | Panel de administración |
+
+El punto final de las contraseñas no es un capricho: `adb shell input text` no
+teclea `!`, así que una contraseña con admiración rompe cualquier prueba en
+emulador.
+
 Todo lo que crees, edites o borres en el build de pruebas se queda en la base de
 datos local. La de producción no se toca en ningún paso.
 
@@ -113,22 +125,36 @@ excluido del repositorio: son datos, no código.
 
 ## Qué contiene la base local
 
-Contado el 18 de septiembre de 2026:
+Contado el 21 de septiembre de 2026:
 
 | Tabla | Filas |
 |---|---|
 | ejercicios | 1527 (873 activos, con imágenes) |
-| usuarios | 18 |
-| alimentos | 11 |
-| rutinas | 11 |
-| sesiones de entrenamiento | 11 |
-| mediciones corporales | 14 |
-| comidas | 12 |
+| usuarios | 5 |
+| alimentos | 12 |
+| rutinas | 8 (6 predefinidas del catálogo + 2 de `prueba`) |
+| sesiones de entrenamiento | 6 |
+| mediciones corporales | 5 |
+| comidas | 4 |
 | logros | 6 |
 
-Suficiente para probar cualquier pantalla sin sembrar nada. El usuario `prueba`
-está recién creado, así que sirve para recorrer el alta y el onboarding desde
-cero; los demás tienen historial para probar listas y gráficas.
+El catálogo —ejercicios, alimentos y las rutinas predefinidas— es lo que hace que
+no haya que sembrar nada para probar una pantalla de lista. Lo demás es poco a
+propósito: los datos de usuario se crean y se borran constantemente al probar.
+
+**El recuento anterior, del 18 de septiembre, decía 18 usuarios y unas 11 filas
+por tabla de usuario.** Ya no es así, y no por un borrado accidental: son las
+altas y bajas de las pruebas de esos días, incluida la verificación del borrado
+de cuenta de GP-008, que por definición vacía todo lo de un usuario. Si el número
+importa para algo, **cuéntalo, no lo leas aquí**: esta tabla envejece en cuanto
+alguien prueba algo.
+
+`prueba` **ya no sirve para recorrer el alta desde cero**: tiene historial
+sembrado. Para el alta y el onboarding, crea una cuenta nueva desde la app; para
+los estados vacíos, usa `vacia`.
+
+En la base local queda además `gp008_test` (id 5078), sobrante de una sesión de
+pruebas del 19 de septiembre que se cortó a medias. No molesta y no se ha tocado.
 
 ---
 
