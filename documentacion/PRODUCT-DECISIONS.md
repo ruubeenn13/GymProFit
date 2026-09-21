@@ -64,7 +64,17 @@ Decisiones tomadas, con su porqué. Sirve para no volver a discutir lo ya discut
 
 **No afecta a** las calorías de **nutrición**, que proceden de los alimentos registrados y son reales.
 
-**Contradicción actual.** El cálculo sigue vivo en `RegistrarSesionActivity` y el valor se persiste y se muestra en varias pantallas. Es deuda pendiente de retirar, no una excepción concedida.
+**Contradicción actual.** El cálculo sigue vivo y el valor se persiste y se muestra en varias pantallas. Es deuda pendiente de retirar, no una excepción concedida.
+
+La auditoría de diseño del 21 de septiembre de 2026 ([AUDITORIA-DISENO-2026-09.md](AUDITORIA-DISENO-2026-09.md), P-13, P-19 y P-40) inventarió **dónde exactamente**, porque este apartado solo nombraba `RegistrarSesionActivity` y eso llevaba a creer que el problema estaba en un sitio:
+
+- `RegistrarSesionActivity` — el cálculo que originó la decisión.
+- Resumen de sesión y Home — muestran el valor persistido.
+- **Lista de rutinas, detalle de rutina y ficha de ejercicio** — muestran un valor que **no** viene de la sesión: lo calcula la API al vuelo en `api/gymprofit-api/src/main/java/com/gymprofit/api/entity/Rutina.java:90-91`, un `@Formula` de Hibernate con `SUM(series × repeticiones × calorias_quemadas)`, que es **literalmente la fórmula del contexto de arriba**. Lo pintan `RutinaAdapter.java:88` y `RutinasFragment.java:122`.
+
+Los números delatan solos la falta de fundamento: una rutina de movilidad de 35 minutos anuncia ~2385 kcal, más que la ingesta diaria completa del usuario.
+
+Importa distinguir los tres grupos porque **se retiran por separado**: quitar el valor de las pantallas de sesión no toca el `@Formula`, y mientras siga ahí la cifra vuelve a aparecer en cuanto alguien pinte una rutina.
 
 **Qué la invalidaría.** Un modelo de gasto energético con respaldo, alimentado por datos que el producto realmente tenga (carga, tiempo bajo tensión, peso corporal, y frecuencia cardíaca si algún día llega por Health Connect).
 
@@ -269,6 +279,10 @@ Decisiones tomadas, con su porqué. Sirve para no volver a discutir lo ya discut
 **Decisión.** Toda cadena visible va en recursos, en español e inglés. Los contadores usan plurales. Números, fechas y unidades respetan el idioma.
 
 **Consecuencias.** La paridad está al 100% y mantenerla es más barato que recuperarla.
+
+**Alcance, con una salvedad medida.** La paridad del 100% es la de los **recursos**: 569 cadenas traducibles en `values/` y otras tantas en `values-en/`, sin ninguna suelta. Lo que **no** cumple es el **contenido de la base de datos**, que también es texto visible y que esta decisión no distinguía: la auditoría de diseño del 21 de septiembre de 2026 ([AUDITORIA-DISENO-2026-09.md](AUDITORIA-DISENO-2026-09.md), T-10) contó **752 de 873 ejercicios activos (86%) con `nombre` idéntico a `nombre_en`** y 479 descripciones igual. Con la app en español, la pestaña más poblada se lee en inglés. Los logros sí están traducidos.
+
+Queda anotado aquí, y no solo en la auditoría, porque «la paridad está al 100%» leído a secas daba por cerrado algo que no lo está.
 
 **Qué la invalidaría.** Nada. Añadir idiomas amplía la regla, no la cambia.
 
