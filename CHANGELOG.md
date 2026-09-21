@@ -2,6 +2,12 @@
 
 Historial de cambios del proyecto (API Spring Boot + app Android). Ver también el [README](README.md).
 
+### 2026-09-21
+
+| Hash | Descripción |
+|---|---|
+| `3e7554e` | docs(documentacion): **auditoría de diseño medible de la app, pantalla por pantalla**. La auditoría de UX del 18 de septiembre juzgaba estructura y flujo; esta mira lo que se puede contar, medir o citar con un archivo y una línea, con 60 capturas en `documentacion/auditoria-diseno/` y los estados vacíos tomados con una cuenta sin un solo dato, que es donde peor se ve una app. Dos hallazgos por encima del resto. **Las calorías estimadas de entrenamiento siguen vivas en la lista de rutinas, el detalle de rutina y la ficha de ejercicio**, alimentadas por un `@Formula` de Hibernate que calcula `SUM(series × repeticiones × calorías)` — literalmente la fórmula que DEC-004 declara sin fundamento fisiológico. DEC-004 solo reconoce la contradicción en `RegistrarSesionActivity` y GP-010 solo cubre Home y el resumen de sesión: **esos tres puntos no los mira nadie**, y los números lo delatan solos (una rutina de movilidad de 35 min dice ~2385 kcal). Y **752 de los 873 ejercicios del catálogo (86 %) tienen el nombre en español idéntico al inglés**: las cadenas de la app cumplen DEC-020 —569 traducibles en cada idioma— pero el contenido de la pantalla más poblada se lee en inglés con la app en español. El resto se concentra en cinco patrones transversales que se arreglan de una vez: la barra flotante ocupa 86 dp y los contenedores reservan 16, así que tapa el final de las cinco pestañas; 35 zonas pulsables por debajo de 48 dp que salen de **tres** decisiones y no de 35; diez emojis usados como icono cuando el sistema vectorial a extender ya existe desde `59ea6f4`; 104 `android:alpha` sobre texto que no atenúan sino que mezclan con el fondo y tiran el contraste; y tres sistemas distintos de estado vacío con once listas sin ninguno. El tema oscuro sale bien parado —AA en 21 de 22 pares—; el que falla es el claro, en seis. El flujo de entrenamiento se inventaría y se captura pero se marca **bloqueado** por GP-010, GP-012 y GP-016, porque cambia de función y no de aspecto. Las cuatro pantallas que no se pudieron capturar se dicen con su motivo en vez de omitirlas en silencio. No se tocó ni un layout. |
+
 ### 2026-09-19
 
 | Hash | Descripción |
