@@ -199,10 +199,40 @@ Todos van bajo el context-path `/api`. Los `@RequestMapping` de los controllers 
 | GET | `/sesiones/{id}` | USER+ | Por ID |
 | GET | `/sesiones/usuario/{usuarioId}` | USER+ | Del usuario |
 | POST | `/sesiones` | USER+ | Crear sesión (evalúa logros si `completada=true`) |
+| POST | `/sesiones/completa` | USER+ | Crear sesión **con sus ejercicios y series** en una transacción. Idempotente |
 | PATCH | `/sesiones/{id}` | USER+ | Actualización parcial |
 | DELETE | `/sesiones/{id}` | USER+ | Eliminar |
 
 La respuesta de `POST /sesiones` incluye el campo `nuevosLogros: ["Nombre logro", ...]` (solo si se desbloquearon logros nuevos).
+
+**`POST /sesiones/completa` es el camino que usa la app** desde GP-006. Guarda la sesión entera —sesión, ejercicios realizados y series— **o no guarda nada**: antes eran un POST de sesión más uno por ejercicio, y un fallo en medio dejaba la sesión a medias.
+
+> **`claveIdempotencia` es obligatoria.** El cliente genera una por intento de guardado y la **reutiliza al reintentar**: si la misma clave llega dos veces, el servidor devuelve la sesión que ya creó en vez de crear otra. Así un fallo de red que sí llegó al servidor no acaba en dos entrenamientos. Única por `(usuario_id, clave)`, máximo 64 caracteres.
+
+```json
+{
+  "claveIdempotencia": "8f02abfa-…",
+  "rutinaId": 12,
+  "fechaInicio": "2026-09-23T12:54:00",
+  "duracionMinutos": 55,
+  "valoracion": 3,
+  "notas": "Buenas sensaciones",
+  "completada": true,
+  "ejercicios": [
+    {
+      "ejercicioId": 340,
+      "repeticionesReales": 10,
+      "series": [{"numeroSerie": 1, "repeticiones": 10, "peso": 60.0}]
+    }
+  ]
+}
+```
+
+`usuarioId` **no se manda**: sale del token (DEC-013). `rutinaId` puede faltar —entrenamiento libre— y la lista de ejercicios puede venir vacía. `valoracion` es 1..5 (ver abajo).
+
+`POST /sesiones` **se mantiene igual** para las builds repartidas fuera de Play, que no conocen la ruta nueva.
+
+> **`valoracion` es un campo**, no una línea de texto. Hasta GP-070 la app formateaba las estrellas y las metía como primera línea de `notas`; la migración `V202609231430` las extrajo a su columna. `INT NULL`, con `CHECK` de 1 a 5. No valorar es un caso normal.
 
 ### LOGROS — `/logros`
 

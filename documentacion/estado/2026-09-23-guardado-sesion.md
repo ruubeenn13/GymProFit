@@ -254,3 +254,21 @@ sh ./gradlew test          → BUILD SUCCESSFUL
 Las columnas viejas **no se tocan**: `sesiones_entrenamiento.notas` sigue ahí con
 el texto del usuario, y la valoración recuperada está en su columna nueva. No hay
 `DROP` en ninguna de las dos migraciones.
+
+### Lo que queda sin confirmar: el despliegue
+
+`https://api.gymprofit.app/api/actuator/health` responde `UP` después del push, y el
+catálogo de ejercicios sirve `200`. **Eso no prueba que corra la versión nueva**: si
+un despliegue falla, la instancia vieja sigue sirviendo y la salud sigue en verde.
+
+Desde fuera no se distingue: `actuator/info` da `401` —solo `health` es público—,
+`v3/api-docs` da `500`, y el token de `POST /auth/guest` recibe **`403` igual** en
+`/sesiones/completa` que en una ruta inventada, así que no discrimina. `OPTIONS`
+tampoco.
+
+La comprobación directa —registrar una cuenta de usar y tirar, pedir token y hacer
+`POST /api/sesiones/completa` con `{}`, donde `400` significa desplegado y `404` que
+no— **escribe en producción** y se dejó sin hacer a propósito. Queda **pendiente**:
+panel de Render, o esa prueba con permiso explícito. Y no es un despliegue
+cualquiera: lleva **dos migraciones** y los dos cambios de contrato del bloque
+anterior.
