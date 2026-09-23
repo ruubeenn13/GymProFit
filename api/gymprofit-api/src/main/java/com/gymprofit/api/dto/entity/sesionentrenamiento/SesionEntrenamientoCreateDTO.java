@@ -1,5 +1,7 @@
 package com.gymprofit.api.dto.entity.sesionentrenamiento;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
@@ -34,6 +36,12 @@ public class SesionEntrenamientoCreateDTO implements Serializable {
     // El gasto calórico de un entrenamiento no se puede estimar con los datos que
     // tiene la app, así que no se estima. La columna sigue en la base de datos hasta
     // la migración que la retire, pero ni se lee ni se escribe.
+
+    // Valoración de la sesión, 1 a 5. Opcional: no valorar es un caso válido, y
+    // por eso no lleva @NotNull. Lo que no vale es un 0 o un 7 (GP-070).
+    @Min(1)
+    @Max(5)
+    private Integer valoracion;
 
     private String notas;
     // Indica si la sesión de entrenamiento se completó

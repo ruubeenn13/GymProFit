@@ -43,7 +43,15 @@ public class SesionEntrenamiento {
     @Column(name = "calorias_quemadas")
     private Integer caloriasQuemadas;
 
-    // Notas adicionales sobre la sesión.
+    // Valoración de la sesión, de 1 a 5 estrellas. Nula si el usuario no valoró.
+    //
+    // Es un DATO y no una línea dentro de `notas` (GP-070): así se puede consultar,
+    // no se queda congelada en el idioma del momento, y la app deja de escribir
+    // dentro del texto del usuario.
+    @Column(name = "valoracion")
+    private Integer valoracion;
+
+    // Notas adicionales sobre la sesión. Solo lo que escribe el usuario.
     @Column(columnDefinition = "TEXT")
     private String notas;
 
