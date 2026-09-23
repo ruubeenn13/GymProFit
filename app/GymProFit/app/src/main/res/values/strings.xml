@@ -267,7 +267,10 @@
     <string name="sesiones_sin_rutina">Sin rutina asociada</string>
     <string name="sesiones_calorias_estimadas">Calorías estimadas</string>
     <string name="sesiones_valoracion">Valoración de la sesión</string>
-    <string name="sesiones_valoracion_fmt">⭐ %d/5</string>
+    <!-- Se guarda como texto en las notas de la sesión, no es una etiqueta de
+         pantalla: por eso dice de qué es la cifra en vez de llevar un símbolo
+         delante. La estrella que llevaba antes viajaba dentro del fichero de idioma. -->
+    <string name="sesiones_valoracion_fmt">Valoración: %d/5</string>
     <string name="sesiones_ejercicios_sesion">Ejercicios de la sesión</string>
     <string name="sesiones_peso_hint">Peso (kg)</string>
     <string name="sesiones_reps_hint">Reps</string>
@@ -283,8 +286,8 @@
     <string name="medicion_guardar">Guardar</string>
     <string name="medicion_fecha_ultima">Última medición: %s</string>
     <string name="medicion_grafica_peso">EVOLUCIÓN DEL PESO</string>
-    <string name="medicion_mas_detalles">Más detalles ▾</string>
-    <string name="medicion_menos_detalles">Menos detalles ▴</string>
+    <string name="medicion_mas_detalles">Más detalles</string>
+    <string name="medicion_menos_detalles">Menos detalles</string>
     <string name="grafica_met_peso">Peso</string>
     <string name="grafica_met_grasa">Grasa</string>
     <string name="grafica_met_cintura">Cintura</string>
@@ -463,7 +466,7 @@
     <string name="resumen_seccion_sesion">Sesión</string>
     <string name="resumen_seccion_stats">Mis estadísticas</string>
     <string name="resumen_seccion_logros">Logros desbloqueados</string>
-    <string name="resumen_completada">✓ Completada</string>
+    <string name="resumen_completada">Completada</string>
     <string name="resumen_sin_logros">Sin logros desbloqueados aún</string>
     <string name="resumen_stat_sesiones">Total sesiones</string>
     <string name="resumen_stat_completadas">Completadas</string>

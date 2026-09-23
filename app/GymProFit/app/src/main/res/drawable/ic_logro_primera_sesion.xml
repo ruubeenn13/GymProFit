@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ic_logro_primera_sesion — logro PRIMERA_SESION: banderín de salida.
+  La bandera es el arranque, no el premio: los logros de premio (medalla,
+  corona) quedan para los de arriba de la escala.
+
+  Trazo abierto de 1,9 sobre lienzo de 24, como ic_objetivo_*: la familia entera
+  se lee igual a 36 y a 44 dp. El color NO vive aquí, lo pone app:tint desde la
+  fila, así que el mismo archivo sirve en claro y en oscuro.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="24" android:viewportHeight="24">
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="?attr/colorOnSurfaceVariant"
+        android:strokeWidth="1.9"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M5.5,21.5 V3"/>
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="?attr/colorOnSurfaceVariant"
+        android:strokeWidth="1.9"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M5.5,4 h11.5 l-2.8,3.6 L17,11.2 H5.5 z"/>
+</vector>

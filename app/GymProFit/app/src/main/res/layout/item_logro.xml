@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   item_logro — item de RecyclerView para un logro/achievement del usuario.
-  Muestra icono/emoji, nombre, descripción y marca de desbloqueado, usado en la pantalla de logros.
+  Muestra icono, nombre, descripción y marca de desbloqueado, usado en la pantalla de logros.
+  El icono es un vector teñido por tema (ver LogroAdapter): el emoji anterior no
+  se teñía, no se alineaba con el texto y, al venir de un campo que la API no
+  envía, acababa siendo el MISMO trofeo en los seis logros.
 -->
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -20,14 +23,15 @@
         android:gravity="center_vertical"
         android:padding="16dp">
 
-        <!-- Icono / emoji -->
-        <TextView
-            android:id="@+id/tvIconoLogro"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:gravity="center"
-            android:textSize="@dimen/text_headline"
-            android:background="@null" />
+        <!-- Icono del logro: vector teñido, uno por tipo -->
+        <ImageView
+            android:id="@+id/ivIconoLogro"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            app:tint="?attr/colorPrimary"
+            android:contentDescription="@null" />
 
         <LinearLayout
             android:layout_width="0dp"

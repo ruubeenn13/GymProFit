@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ic_nivel_intermedio — nivel 2 de 4 del paso 5 del onboarding (Intermedio).
+
+  Los cuatro niveles comparten un MEDIDOR de cuatro barras ascendentes y solo
+  cambian cuántas van rellenas: 2 aquí. Se eligió un medidor y no cuatro
+  dibujos distintos (brote, brazo, trofeo, rayo) porque el dato que la pantalla
+  pide es una POSICIÓN en una escala, y con cuatro metáforas sueltas no se puede
+  comparar una tarjeta con la de al lado. Además el rayo ya es
+  ic_objetivo_fuerza, en el paso anterior: repetirlo aquí confundiría dos
+  preguntas seguidas.
+
+  Barra rellena = alcanzado, barra en contorno = por alcanzar. El color NO vive
+  aquí: la tarjeta aplica app:tint (colorOnSurfaceVariant en reposo,
+  colorPrimary al seleccionar), así que sirve igual en claro y en oscuro.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="24" android:viewportHeight="24">
+    <path
+        android:fillColor="?attr/colorOnSurfaceVariant"
+        android:pathData="M3,15.5 h3 v5 h-3 z"/>
+    <path
+        android:fillColor="?attr/colorOnSurfaceVariant"
+        android:pathData="M8,11.5 h3 v9 h-3 z"/>
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="?attr/colorOnSurfaceVariant"
+        android:strokeWidth="1.4"
+        android:strokeLineJoin="round"
+        android:pathData="M13,7.5 h3 v13 h-3 z"/>
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="?attr/colorOnSurfaceVariant"
+        android:strokeWidth="1.4"
+        android:strokeLineJoin="round"
+        android:pathData="M18,3.5 h3 v17 h-3 z"/>
+</vector>

@@ -437,7 +437,11 @@
                                 android:text="@string/medicion_mas_detalles"
                                 android:textSize="@dimen/text_body"
                                 android:textStyle="bold"
-                                android:textColor="?attr/colorPrimary" />
+                                android:textColor="?attr/colorPrimary"
+                                android:drawableEnd="@drawable/ic_chevron_down"
+                                android:drawableTint="?attr/colorPrimary"
+                                android:drawablePadding="6dp"
+                                android:gravity="center_vertical" />
 
                         </LinearLayout>
 

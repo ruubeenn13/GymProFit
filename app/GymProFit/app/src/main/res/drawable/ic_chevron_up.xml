@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ic_chevron_up — galón hacia arriba: "plegar". Pareja de ic_chevron_down.
+
+  Trazo abierto de 1,9 sobre lienzo de 24, como ic_objetivo_*: la familia entera
+  se lee igual a 36 y a 44 dp. El color NO vive aquí, lo pone app:tint desde la
+  fila, así que el mismo archivo sirve en claro y en oscuro.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="24" android:viewportHeight="24">
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="?attr/colorOnSurfaceVariant"
+        android:strokeWidth="1.9"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M6.5,14.5 L12,9 l5.5,5.5"/>
+</vector>

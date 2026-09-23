@@ -241,6 +241,10 @@
                         android:textSize="@dimen/text_label"
                         android:textColor="?attr/colorPrimary"
                         android:textStyle="bold"
+                        android:drawableStart="@drawable/ic_check"
+                        android:drawableTint="?attr/colorPrimary"
+                        android:drawablePadding="6dp"
+                        android:gravity="center_vertical"
                         android:visibility="gone" />
 
                 </LinearLayout>

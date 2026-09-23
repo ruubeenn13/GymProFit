@@ -65,8 +65,9 @@
                 app:strokeColor="?attr/colorOutlineVariant">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
-                    <TextView android:layout_width="36dp" android:layout_height="36dp"
-                        android:text="🌱" android:textSize="@dimen/text_headline" android:gravity="center" android:layout_marginEnd="14dp" />
+                    <ImageView android:layout_width="30dp" android:layout_height="30dp"
+                        android:src="@drawable/ic_nivel_principiante" app:tint="?attr/colorOnSurfaceVariant"
+                        android:layout_marginEnd="14dp" android:contentDescription="@null" />
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:text="@string/nivel_principiante" android:textSize="@dimen/text_body"
@@ -94,8 +95,9 @@
                 app:strokeColor="?attr/colorOutlineVariant">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
-                    <TextView android:layout_width="36dp" android:layout_height="36dp"
-                        android:text="💪" android:textSize="@dimen/text_headline" android:gravity="center" android:layout_marginEnd="14dp" />
+                    <ImageView android:layout_width="30dp" android:layout_height="30dp"
+                        android:src="@drawable/ic_nivel_intermedio" app:tint="?attr/colorOnSurfaceVariant"
+                        android:layout_marginEnd="14dp" android:contentDescription="@null" />
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:text="@string/nivel_intermedio" android:textSize="@dimen/text_body"
@@ -123,8 +125,9 @@
                 app:strokeColor="?attr/colorOutlineVariant">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
-                    <TextView android:layout_width="36dp" android:layout_height="36dp"
-                        android:text="🏆" android:textSize="@dimen/text_headline" android:gravity="center" android:layout_marginEnd="14dp" />
+                    <ImageView android:layout_width="30dp" android:layout_height="30dp"
+                        android:src="@drawable/ic_nivel_avanzado" app:tint="?attr/colorOnSurfaceVariant"
+                        android:layout_marginEnd="14dp" android:contentDescription="@null" />
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:text="@string/nivel_avanzado" android:textSize="@dimen/text_body"
@@ -152,8 +155,9 @@
                 app:strokeColor="?attr/colorOutlineVariant">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
-                    <TextView android:layout_width="36dp" android:layout_height="36dp"
-                        android:text="⚡" android:textSize="@dimen/text_headline" android:gravity="center" android:layout_marginEnd="14dp" />
+                    <ImageView android:layout_width="30dp" android:layout_height="30dp"
+                        android:src="@drawable/ic_nivel_experto" app:tint="?attr/colorOnSurfaceVariant"
+                        android:layout_marginEnd="14dp" android:contentDescription="@null" />
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:text="@string/nivel_experto" android:textSize="@dimen/text_body"
