@@ -55,7 +55,8 @@ public class ResumenSesionActivity extends AppCompatActivity {
         super.attachBaseContext(es.pmdm.gymprofit.utils.ScaleUtils.wrap(newBase));
     }
 
-    private TextView tvFecha, tvDuracion, tvRutina, tvNotas, tvCompletada;
+    private TextView tvFecha, tvDuracion, tvRutina, tvValoracion, tvNotas, tvCompletada;
+    private View layoutValoracion;
     private View layoutNotas;
     private TextView tvStatSesiones, tvStatCompletadas, tvStatMinutos, tvStatEjercicios;
     private TextView tvStatRacha, tvStatMejorRacha;
@@ -155,6 +156,8 @@ public class ResumenSesionActivity extends AppCompatActivity {
         tvFecha      = findViewById(R.id.tvFechaResumen);
         tvDuracion   = findViewById(R.id.tvDuracionResumen);
         tvRutina     = findViewById(R.id.tvRutinaResumen);
+        tvValoracion = findViewById(R.id.tvValoracionResumen);
+        layoutValoracion = findViewById(R.id.layoutValoracionResumen);
         layoutNotas  = findViewById(R.id.layoutNotasResumen);
         tvNotas      = findViewById(R.id.tvNotasResumen);
         tvCompletada = findViewById(R.id.tvCompletadaResumen);
@@ -269,10 +272,25 @@ public class ResumenSesionActivity extends AppCompatActivity {
             entrenamientoLibre = sesion.esEntrenamientoLibre();
             pintarRutina();
 
-            tvFecha.setText(sesion.getFechaInicio().isEmpty() ? "—" : FechaUtils.formatearFechaHora(sesion.getFechaInicio()));
+            String fecha = sesion.getFechaInicio();
+            tvFecha.setText(fecha == null || fecha.isEmpty()
+                    ? "—" : FechaUtils.formatearFechaHora(fecha));
             tvDuracion.setText(getString(R.string.sesiones_min, sesion.getDuracionMinutos()));
-            if (!sesion.getNotas().isEmpty()) {
-                tvNotas.setText(sesion.getNotas());
+
+            // La valoración es un campo desde GP-070, y puede no estar: no valorar es
+            // un caso normal y la fila se queda oculta.
+            Integer valoracion = sesion.getValoracion();
+            if (valoracion != null) {
+                tvValoracion.setText(getString(R.string.resumen_valoracion_fmt, valoracion));
+                layoutValoracion.setVisibility(View.VISIBLE);
+            }
+
+            // OJO con el null: hasta GP-070 las notas nunca venían vacías porque la app
+            // metía dentro la valoración. Ahora una sesión sin notas trae null, y esto
+            // reventaba la pantalla entera al volver de guardar.
+            String notas = sesion.getNotas();
+            if (notas != null && !notas.isEmpty()) {
+                tvNotas.setText(notas);
                 layoutNotas.setVisibility(View.VISIBLE);
             }
             tvCompletada.setVisibility(sesion.isCompletada() ? View.VISIBLE : View.GONE);

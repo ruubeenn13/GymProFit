@@ -38,6 +38,18 @@ public interface SesionApi {
     @POST("sesiones")
     Call<SesionEntrenamiento> crear(@Body Map<String, Object> body);
 
+    /**
+     * Guarda la sesión ENTERA —sesión, ejercicios y series— en una sola llamada
+     * atómica (GP-006). El cuerpo lleva `claveIdempotencia`, obligatoria: si la
+     * misma clave llega dos veces, el servidor devuelve la sesión que ya creó en
+     * vez de crear otra, que es lo que permite reintentar sin duplicar entrenos.
+     *
+     * <p>Convive con {@link #crear(Map)}: el camino viejo sigue existiendo para las
+     * builds repartidas fuera de Play, que no conocen esta ruta.
+     */
+    @POST("sesiones/completa")
+    Call<SesionEntrenamiento> guardarCompleta(@Body Map<String, Object> body);
+
     // Elimina una sesión de entrenamiento por su id (sin cuerpo de respuesta).
     @DELETE("sesiones/{id}")
     Call<Void> eliminar(@Path("id") int id);

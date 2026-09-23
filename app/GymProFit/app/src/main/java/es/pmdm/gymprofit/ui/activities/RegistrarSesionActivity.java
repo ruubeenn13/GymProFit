@@ -42,9 +42,22 @@ import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
 // RegistrarSesionActivity — Formulario para registrar una sesión de entrenamiento.
-// Permite elegir una rutina (propia o predefinida), calcula automáticamente las
-// calorías estimadas y los ejercicios/pesos asociados, y guarda la sesión junto
-// con los ejercicios realizados en la API, navegando después al resumen.
+// Permite elegir una rutina (propia o predefinida), carga sus ejercicios con sus
+// series, y guarda la sesión ENTERA en una sola llamada, navegando al resumen.
+//
+// GUARDADO (GP-006). Antes se creaba la sesión, se lanzaba un POST por ejercicio
+// con los callbacks vacíos y se cerraba la pantalla sin esperar a nada. Si fallaba
+// uno de los de en medio quedaba una sesión a medias y el usuario ya había visto
+// «guardado correctamente». Ahora va todo en POST /sesiones/completa, la pantalla
+// NO se cierra hasta recibir el éxito, y si falla se ofrece reintentar con lo
+// tecleado todavía en pantalla.
+//
+// La clave de idempotencia se genera UNA vez por intento de guardado y el
+// reintento reusa la misma: es lo que impide que un fallo de red que sí llegó al
+// servidor acabe en dos entrenamientos.
+//
+// Retoque mínimo de interfaz a propósito: GP-012 rehará esta pantalla como sesión
+// en vivo, así que aquí solo se arregla el guardado.
 // ============================================================
 public class RegistrarSesionActivity extends AppCompatActivity {
 
@@ -67,6 +80,17 @@ public class RegistrarSesionActivity extends AppCompatActivity {
     private final List<Rutina> rutinas = new ArrayList<>();
     private final List<String> rutinaOpciones = new ArrayList<>();
     private final List<EjercicioPesoAdapter.Item> ejercicioItems = new ArrayList<>();
+
+    /**
+     * Clave del intento de guardado en curso.
+     *
+     * <p>Se genera al pulsar «Guardar» y NO se regenera al reintentar: si la
+     * petición anterior sí llegó al servidor y lo único que se perdió fue la
+     * respuesta, el servidor reconoce la clave y devuelve la sesión que ya creó en
+     * vez de crear otra. Se limpia al guardar con éxito, para que el siguiente
+     * entrenamiento sea un intento nuevo.
+     */
+    private String claveIntentoGuardado;
     private EjercicioPesoAdapter ejercicioPesoAdapter;
 
     // Inicializa la pantalla: monta vistas, configura el RecyclerView de
@@ -228,14 +252,26 @@ public class RegistrarSesionActivity extends AppCompatActivity {
                 ejercicioPesoAdapter.notifyDataSetChanged();
                 cardEjercicios.setVisibility(nuevosItems.isEmpty() ? View.GONE : View.VISIBLE);
             }
-            @Override public void onFail(int code, String message) {}
+            @Override
+            public void onFail(int code, String message) {
+                // Sin los ejercicios de la rutina no hay nada que rellenar, pero la
+                // sesión se puede guardar igual con su duración y sus notas. Se avisa
+                // y se deja la tarjeta oculta: callarlo dejaría al usuario creyendo
+                // que esa rutina no tiene ejercicios.
+                UiFeedback.toastError(RegistrarSesionActivity.this, code, message);
+                ejercicioItems.clear();
+                ejercicioPesoAdapter.notifyDataSetChanged();
+                cardEjercicios.setVisibility(View.GONE);
+            }
         });
     }
 
-    // Valida la duración (obligatoria), construye el JSON de la sesión
-    // (rutina, fecha, duración, valoración y notas) y la envía a
-    // la API; si se crea correctamente, registra los ejercicios realizados
-    // y navega al resumen de la sesión.
+    /**
+     * Valida la duración, arma el cuerpo con la sesión entera y la envía.
+     *
+     * <p>Un mismo intento de guardado puede mandarse varias veces: la clave se genera
+     * aquí solo si no había ninguna, de modo que el reintento reusa la del fallo.
+     */
     private void guardarSesion() {
         String durStr = etDuracion.getText() != null ? etDuracion.getText().toString().trim() : "";
         if (durStr.isEmpty()) {
@@ -243,110 +279,140 @@ public class RegistrarSesionActivity extends AppCompatActivity {
             return;
         }
 
-        try {
-            // Cuerpo de creación como Map<String,Object> (Gson lo serializa a JSON).
-            Map<String, Object> body = new HashMap<>();
-            body.put("usuarioId", prefsManager.getUsuarioId());
-
-            int posicion = spRutina.getSelectedItemPosition();
-            if (posicion > 0 && posicion <= rutinas.size()) {
-                body.put("rutinaId", rutinas.get(posicion - 1).getId());
-            }
-
-            String now = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US).format(new Date());
-            body.put("fechaInicio", now);
-            body.put("duracionMinutos", Integer.parseInt(durStr));
-
-            int estrellas = (int) ratingBar.getRating();
-            String valoracion = getString(R.string.sesiones_valoracion_fmt, estrellas);
-            String notasUsuario = etNotas.getText() != null ? etNotas.getText().toString().trim() : "";
-            String notasFinal = notasUsuario.isEmpty() ? valoracion : valoracion + "\n" + notasUsuario;
-            body.put("notas", notasFinal);
-
-            body.put("completada", true);
-
-            // Muestra el spinner modal mientras se envía la sesión a la API.
-            LoadingDialog.show(this);
-            // La respuesta ya viene deserializada: id de la sesión + logros nuevos.
-            sesionApi.crear(body).enqueue(new ApiCallback<SesionEntrenamiento>() {
-                @Override
-                public void onOk(SesionEntrenamiento sesionCreada) {
-                    // Oculta el spinner al completarse el guardado correctamente.
-                    LoadingDialog.hide(RegistrarSesionActivity.this);
-                    UIHelper.mostrarToastExito(RegistrarSesionActivity.this,
-                            getString(R.string.sesiones_exito));
-
-                    int sesionIdGuardada = sesionCreada != null ? sesionCreada.getId() : -1;
-                    ArrayList<String> nuevosLogros = new ArrayList<>();
-                    if (sesionCreada != null && sesionCreada.getNuevosLogros() != null) {
-                        nuevosLogros.addAll(sesionCreada.getNuevosLogros());
-                    }
-
-                    // La posición 0 no es "no lo sé", es entrenamiento libre: se le
-                    // dice al resumen para que no lo pinte como una rutina sin nombre.
-                    int pos = spRutina.getSelectedItemPosition();
-                    boolean libre = pos <= 0;
-                    String nombreRutina = "";
-                    if (pos > 0 && pos <= rutinas.size()) {
-                        nombreRutina = rutinas.get(pos - 1).getNombre();
-                    }
-
-                    setResult(RESULT_OK);
-
-                    if (sesionIdGuardada != -1) {
-                        registrarEjerciciosRealizados(sesionIdGuardada);
-                        Intent intent = new Intent(RegistrarSesionActivity.this,
-                                ResumenSesionActivity.class);
-                        intent.putExtra("sesionId", sesionIdGuardada);
-                        intent.putExtra("rutinaNombre", nombreRutina);
-                        intent.putExtra(ResumenSesionActivity.EXTRA_ENTRENAMIENTO_LIBRE, libre);
-                        intent.putStringArrayListExtra("nuevosLogros", nuevosLogros);
-                        startActivity(intent);
-                    }
-
-                    finish();
-                }
-                @Override
-                public void onFail(int code, String message) {
-                    // Oculta el spinner y muestra el toast de error mapeado según el código.
-                    LoadingDialog.hide(RegistrarSesionActivity.this);
-                    UiFeedback.toastError(RegistrarSesionActivity.this, code, message);
-                }
-            });
-
-        } catch (NumberFormatException e) {
-            UIHelper.mostrarToastError(this, getString(R.string.error_conexion));
+        Integer duracion = Numeros.entero(durStr, 1, 600);
+        if (duracion == null) {
+            UIHelper.mostrarToastError(this, getString(R.string.sesiones_duracion_invalida));
+            return;
         }
+
+        if (claveIntentoGuardado == null) {
+            claveIntentoGuardado = java.util.UUID.randomUUID().toString();
+        }
+
+        enviarSesion(duracion);
     }
 
     /**
-     * Envía a la API un registro por ejercicio, con TODAS sus series dentro.
+     * Manda la sesión completa y decide qué pasa después.
      *
-     * <p>Antes se mandaba un único peso por ejercicio, así que un 4×8 subiendo
-     * carga no se podía registrar. Ahora viaja una entrada por serie con su peso
-     * y sus repeticiones reales, y el servidor deduce de ellas el resumen: no se
-     * mandan `seriesCompletadas` ni `pesoUsado` para que los dos no puedan
-     * contradecirse.
-     *
-     * <p>Las series sin peso ni repeticiones se descartan: son las que el usuario
-     * dejó en blanco porque no llegó a hacerlas.
+     * <p>La pantalla NO se cierra hasta el éxito. Si falla, lo tecleado sigue donde
+     * estaba y se ofrece reintentar con la MISMA clave.
      */
-    private void registrarEjerciciosRealizados(int sesionId) {
+    private void enviarSesion(int duracion) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("claveIdempotencia", claveIntentoGuardado);
+
+        int posicion = spRutina.getSelectedItemPosition();
+        if (posicion > 0 && posicion <= rutinas.size()) {
+            body.put("rutinaId", rutinas.get(posicion - 1).getId());
+        }
+
+        body.put("fechaInicio", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US).format(new Date()));
+        body.put("duracionMinutos", duracion);
+        body.put("completada", true);
+
+        // La valoración viaja como CAMPO (GP-070). Antes se formateaba con un recurso
+        // de idioma y se metía delante de las notas del usuario: no se podía consultar,
+        // se quedaba congelada en el idioma del momento, y el texto no era suyo.
+        int estrellas = (int) ratingBar.getRating();
+        if (estrellas >= 1 && estrellas <= 5) body.put("valoracion", estrellas);
+
+        String notas = etNotas.getText() != null ? etNotas.getText().toString().trim() : "";
+        if (!notas.isEmpty()) body.put("notas", notas);
+
+        body.put("ejercicios", construirEjercicios());
+
+        LoadingDialog.show(this);
+        sesionApi.guardarCompleta(body).enqueue(new ApiCallback<SesionEntrenamiento>() {
+            @Override
+            public void onOk(SesionEntrenamiento sesionCreada) {
+                LoadingDialog.hide(RegistrarSesionActivity.this);
+
+                if (sesionCreada == null || sesionCreada.getId() <= 0) {
+                    // Respuesta 200 sin sesión dentro: no hay nada que enseñar en el
+                    // resumen, y cerrar aquí sería volver a mentir. Se trata como fallo.
+                    ofrecerReintento(duracion, getString(R.string.sesiones_error_guardar));
+                    return;
+                }
+
+                // El intento terminó: la clave siguiente será otra.
+                claveIntentoGuardado = null;
+
+                UIHelper.mostrarToastExito(RegistrarSesionActivity.this, getString(R.string.sesiones_exito));
+                setResult(RESULT_OK);
+                irAlResumen(sesionCreada);
+                finish();
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                LoadingDialog.hide(RegistrarSesionActivity.this);
+                ofrecerReintento(duracion, UiFeedback.mensaje(RegistrarSesionActivity.this, code));
+            }
+        });
+    }
+
+    /**
+     * Avisa de que NO se ha guardado y ofrece repetir el envío.
+     *
+     * <p>Lo importante no es el diálogo, es lo que NO pasa: no se cierra la pantalla,
+     * no se borra nada de lo tecleado y no se cambia la clave. Cancelar deja al usuario
+     * donde estaba, con sus datos, para corregir o volver a intentarlo cuando quiera.
+     */
+    private void ofrecerReintento(int duracion, String motivo) {
+        UIHelper.mostrarDialogoConIcono(this,
+                getString(R.string.sesiones_error_guardar_titulo),
+                motivo + "\n\n" + getString(R.string.sesiones_error_guardar_ayuda),
+                R.drawable.ic_error,
+                getString(R.string.sesiones_error_reintentar),
+                getString(R.string.sesiones_error_ahora_no),
+                () -> enviarSesion(duracion));
+    }
+
+    // Abre el resumen de la sesión recién guardada.
+    private void irAlResumen(SesionEntrenamiento sesion) {
+        // La posición 0 no es "no lo sé", es entrenamiento libre: se le dice al resumen
+        // para que no lo pinte como una rutina sin nombre.
+        int pos = spRutina.getSelectedItemPosition();
+        boolean libre = pos <= 0;
+        String nombreRutina = (pos > 0 && pos <= rutinas.size()) ? rutinas.get(pos - 1).getNombre() : "";
+
+        ArrayList<String> nuevosLogros = new ArrayList<>();
+        if (sesion.getNuevosLogros() != null) nuevosLogros.addAll(sesion.getNuevosLogros());
+
+        Intent intent = new Intent(this, ResumenSesionActivity.class);
+        intent.putExtra("sesionId", sesion.getId());
+        intent.putExtra("rutinaNombre", nombreRutina);
+        intent.putExtra(ResumenSesionActivity.EXTRA_ENTRENAMIENTO_LIBRE, libre);
+        intent.putStringArrayListExtra("nuevosLogros", nuevosLogros);
+        startActivity(intent);
+    }
+
+    /**
+     * Arma la lista de ejercicios que viaja DENTRO de la sesión.
+     *
+     * <p>Antes cada ejercicio era un POST suelto que se lanzaba tras crear la sesión,
+     * con el callback vacío: si fallaba, nadie se enteraba. Ahora van en el mismo
+     * cuerpo y el servidor los guarda o los rechaza junto con ella.
+     *
+     * <p>Los ejercicios sin ninguna serie que guardar se descartan: son los que el
+     * usuario dejó en blanco porque no llegó a hacerlos.
+     */
+    private List<Map<String, Object>> construirEjercicios() {
+        List<Map<String, Object>> ejercicios = new ArrayList<>();
+
         for (EjercicioPesoAdapter.Item item : ejercicioItems) {
             List<Map<String, Object>> series = construirSeries(item);
             if (series.isEmpty()) continue;
 
-            Map<String, Object> body = new HashMap<>();
-            body.put("sesionId", sesionId);
-            body.put("ejercicioId", item.ejercicioId);
-            body.put("repeticionesReales", item.repeticiones);
-            body.put("series", series);
-
-            sesionApi.crearEjercicioRealizado(body).enqueue(new ApiCallback<Void>() {
-                @Override public void onOk(Void b) {}
-                @Override public void onFail(int c, String m) {}
-            });
+            Map<String, Object> ejercicio = new HashMap<>();
+            ejercicio.put("ejercicioId", item.ejercicioId);
+            ejercicio.put("repeticionesReales", item.repeticiones);
+            ejercicio.put("series", series);
+            ejercicios.add(ejercicio);
         }
+
+        return ejercicios;
     }
 
     /**
