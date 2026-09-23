@@ -95,30 +95,8 @@
                 android:textColor="?attr/colorOnSurface"
                 android:alpha="0.7" />
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="14dp"
-                android:layout_marginStart="12dp"
-                android:layout_marginEnd="12dp"
-                android:layout_gravity="center_vertical"
-                android:background="?attr/colorOutlineVariant" />
-
-            <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_calorias"
-                android:alpha="0.6"
-                android:contentDescription="@null" />
-
-            <TextView
-                android:id="@+id/tvCaloriasSesion"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:textSize="@dimen/text_caption"
-                android:textColor="?attr/colorOnSurface"
-                android:alpha="0.7" />
+            <!-- AQUÍ HABÍA UNAS kcal, Y SE RETIRAN (DEC-004 / GP-010): no se sustituyen
+                 por otro número, porque no hay ninguno que signifique lo mismo. -->
 
         </LinearLayout>
 

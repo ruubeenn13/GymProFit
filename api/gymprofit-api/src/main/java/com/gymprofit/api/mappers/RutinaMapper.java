@@ -35,7 +35,6 @@ public interface RutinaMapper {
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "activa", ignore = true)
     @Mapping(target = "numEjercicios", ignore = true)
-    @Mapping(target = "caloriasAproximadas", ignore = true)
     Rutina toEntity(RutinaCreateDTO rutinaCreateDTO);
 
     // Tras el mapeo base, localiza los textos del DTO: si el idioma del request

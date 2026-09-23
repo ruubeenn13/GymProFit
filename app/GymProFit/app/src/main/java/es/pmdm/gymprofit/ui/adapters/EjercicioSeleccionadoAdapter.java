@@ -94,12 +94,6 @@ public class EjercicioSeleccionadoAdapter
             h.chipDificultad.setVisibility(View.GONE);
         }
 
-        if (e.getCalorias() > 0) {
-            h.chipCalorias.setText(e.getCalorias() + " kcal");
-            h.chipCalorias.setVisibility(View.VISIBLE);
-        } else {
-            h.chipCalorias.setVisibility(View.GONE);
-        }
 
         h.chipSeriesReps.setText(item.getSeries() + " × " + item.getRepeticiones());
 
@@ -126,7 +120,7 @@ public class EjercicioSeleccionadoAdapter
     // ViewHolder con las referencias a las vistas de cada fila de ejercicio seleccionado.
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvNombre, tvDescripcion;
-        Chip chipDificultad, chipCalorias, chipSeriesReps;
+        Chip chipDificultad, chipSeriesReps;
         ImageView btnEliminar, ivChevron;
 
         ViewHolder(@NonNull View itemView) {
@@ -134,7 +128,6 @@ public class EjercicioSeleccionadoAdapter
             tvNombre         = itemView.findViewById(R.id.tvNombreSeleccionado);
             tvDescripcion    = itemView.findViewById(R.id.tvDescripcionSeleccionado);
             chipDificultad   = itemView.findViewById(R.id.chipDificultad);
-            chipCalorias     = itemView.findViewById(R.id.chipCalorias);
             chipSeriesReps   = itemView.findViewById(R.id.chipSeriesReps);
             btnEliminar      = itemView.findViewById(R.id.btnEliminarSeleccionado);
             ivChevron        = itemView.findViewById(R.id.ivChevron);

@@ -22,7 +22,9 @@ public class RutinaEjercicio {
     // Posición del ejercicio dentro de la rutina.
     private int orden;
     // Calorías estimadas del ejercicio (dato enriquecido desde el catálogo por la API).
-    private int caloriasEjercicio;
+    // NO HAY CAMPO DE CALORÍAS AQUÍ, Y ES A PROPÓSITO (DEC-004 / GP-010).
+    // La API dejó de enviarlo: el gasto calórico de un entrenamiento no se puede
+    // estimar con los datos que hay, así que no se estima ni se enseña.
     // Nombre del ejercicio (dato enriquecido desde el catálogo por la API).
     private String nombreEjercicio;
 
@@ -46,8 +48,6 @@ public class RutinaEjercicio {
     public int getOrden() { return orden; }
     public void setOrden(int orden) { this.orden = orden; }
 
-    public int getCaloriasEjercicio() { return caloriasEjercicio; }
-    public void setCaloriasEjercicio(int caloriasEjercicio) { this.caloriasEjercicio = caloriasEjercicio; }
 
     public String getNombreEjercicio() { return nombreEjercicio; }
     public void setNombreEjercicio(String nombreEjercicio) { this.nombreEjercicio = nombreEjercicio; }

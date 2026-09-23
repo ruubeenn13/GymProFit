@@ -157,25 +157,8 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Calorías -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="14dp"
-                android:hint="@string/admin_campo_calorias_ejercicio"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                app:boxCornerRadiusTopStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusBottomEnd="12dp">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etCalorias"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="number" />
-
-            </com.google.android.material.textfield.TextInputLayout>
+            <!-- AQUÍ HABÍA UN CAMPO DE CALORÍAS, Y SE RETIRA (DEC-004 / GP-010):
+                 la API ya no lo acepta, así que un ADMIN tampoco puede fijarlo. -->
 
             <!-- Equipamiento -->
             <com.google.android.material.textfield.TextInputLayout

@@ -110,20 +110,18 @@ public class ResumenCrearRutinaActivity extends AppCompatActivity {
     }
 
     // Muestra el nombre y descripción de la rutina y actualiza el texto de
-    // detalles (nivel, duración, kcal totales).
+    // detalles (nivel y duración).
     private void poblarInfoRutina() {
         ((TextView) findViewById(R.id.tvNombreRutina)).setText(nombre);
         ((TextView) findViewById(R.id.tvDescripcionRutina)).setText(descripcion);
         actualizarDetalles();
     }
 
-    // Calcula las kcal totales de la rutina (suma de series x repeticiones x
-    // calorías de cada ejercicio) y actualiza el texto de detalles.
+    // Pinta la línea de detalles de la rutina: nivel y duración.
     private void actualizarDetalles() {
-        int kcalTotal = 0;
-        for (EjercicioSeleccionado sel : ejercicios)
-            kcalTotal += sel.getSeries() * sel.getRepeticiones() * sel.getEjercicio().getCalorias();
-        String detalles = nivel + "  ·  " + duracion + " min  ·  " + kcalTotal + " kcal";
+        // El resumen dice nivel y duración. Las kcal que decía antes salían de
+        // series × reps × una constante del catálogo, y se retiran (DEC-004 / GP-010).
+        String detalles = nivel + "  ·  " + duracion + " min";
         ((TextView) findViewById(R.id.tvDetallesRutina)).setText(detalles);
     }
 
@@ -161,7 +159,6 @@ public class ResumenCrearRutinaActivity extends AppCompatActivity {
                 Ejercicio e = new Ejercicio();
                 e.setId(obj.getInt("ejercicioId"));
                 e.setNombre(obj.getString("nombre"));
-                e.setCalorias(obj.optInt("caloriasEjercicio", 0));
                 ejercicios.add(new EjercicioSeleccionado(e, obj.getInt("series"), obj.getInt("repeticiones")));
             }
             adapter.notifyDataSetChanged();
@@ -245,7 +242,6 @@ public class ResumenCrearRutinaActivity extends AppCompatActivity {
                 JSONObject obj = new JSONObject();
                 obj.put("ejercicioId",       sel.getEjercicio().getId());
                 obj.put("nombre",            sel.getEjercicio().getNombre());
-                obj.put("caloriasEjercicio", sel.getEjercicio().getCalorias());
                 obj.put("series",            sel.getSeries());
                 obj.put("repeticiones",      sel.getRepeticiones());
                 arr.put(obj);

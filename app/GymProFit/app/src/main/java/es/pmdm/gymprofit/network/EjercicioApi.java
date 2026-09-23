@@ -45,7 +45,7 @@ public interface EjercicioApi {
                                     @Query("size") int size);
 
     // Edita parcialmente un ejercicio (panel admin). body: nombre, descripcion,
-    // grupoMuscular, dificultad, caloriasQuemadas, equipoNecesario, instrucciones...
+    // grupoMuscular, dificultad, equipoNecesario, instrucciones...
     @PATCH("ejercicios/{id}")
     Call<Void> patch(@Path("id") int id, @Body Map<String, Object> body);
 

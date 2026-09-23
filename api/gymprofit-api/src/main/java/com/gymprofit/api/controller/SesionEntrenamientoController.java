@@ -127,12 +127,12 @@ public class SesionEntrenamientoController {
             @ApiResponse(responseCode = "404", description = "Sesión no encontrada",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
-    // Marca una sesión como completada, registrando calorías quemadas y notas opcionales
+    // Marca una sesión como completada, con notas opcionales. El parámetro
+    // caloriasQuemadas se retira: no había con qué estimarlas (DEC-004 / GP-010).
     @PutMapping("/sesiones/{id}/completar")
     public ResponseEntity<SesionEntrenamientoDTO> completarSesion(@PathVariable Integer id,
-                                                                  @RequestParam(required = false) Integer caloriasQuemadas,
                                                                   @RequestParam(required = false) String notas) {
-        SesionEntrenamientoDTO sesion = sesionEntrenamientoService.completarSesion(id, caloriasQuemadas, notas);
+        SesionEntrenamientoDTO sesion = sesionEntrenamientoService.completarSesion(id, notas);
 
         return ResponseEntity.ok(sesion);
     }

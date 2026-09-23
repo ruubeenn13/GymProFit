@@ -75,12 +75,11 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         String grupoMuscular = getIntent().getStringExtra("grupoMuscular");
         String musculoPrim   = getIntent().getStringExtra("musculoPrimario");
         String dificultad    = getIntent().getStringExtra("dificultad");
-        int calorias         = getIntent().getIntExtra("calorias", 0);
         String equipo        = getIntent().getStringExtra("equipoNecesario");
         String imagenUrl     = getIntent().getStringExtra("imagenUrl");
         String imagenUrl2    = getIntent().getStringExtra("imagenUrl2");
 
-        poblarVistas(nombre, descripcion, instrucciones, grupoMuscular, musculoPrim, dificultad, calorias, equipo);
+        poblarVistas(nombre, descripcion, instrucciones, grupoMuscular, musculoPrim, dificultad, equipo);
         configurarDemostracion(imagenUrl, imagenUrl2);
 
         int ejercicioId = getIntent().getIntExtra("id", -1);
@@ -215,7 +214,7 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
     // ocultando las secciones (equipamiento/descripción/instrucciones) vacías.
     private void poblarVistas(String nombre, String descripcion, String instrucciones,
                               String grupoMuscular, String musculoPrimario, String dificultad,
-                              int calorias, String equipo) {
+                              String equipo) {
         ((TextView) findViewById(R.id.tvNombreDetalle)).setText(nombre != null ? nombre : "");
 
         // Músculo: el primario preciso (ej. "Aductores") si la API lo trae;
@@ -227,8 +226,6 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.tvStatMusculo)).setText(musculo);
         ((TextView) findViewById(R.id.tvStatNivel)).setText(
                 !isEmpty(dificultad) ? es.pmdm.gymprofit.utils.UIHelper.traducirNivel(this, dificultad) : "—");
-        ((TextView) findViewById(R.id.tvStatCalorias)).setText(
-                calorias > 0 ? calorias + " kcal" : "—");
 
         if (!isEmpty(equipo)) {
             ((TextView) findViewById(R.id.tvStatEquipamiento)).setText(equipo);

@@ -85,7 +85,6 @@ public class RutinaAdapter extends RecyclerView.Adapter<RutinaAdapter.ViewHolder
         holder.chipNivel.setText(es.pmdm.gymprofit.utils.UIHelper.traducirNivel(holder.itemView.getContext(), rutina.getNivel())); // enum traducido
         holder.tvNumEjercicios.setText(rutina.getNumEjercicios() + " ejercicios");
         holder.tvDuracion.setText(rutina.getDuracionMinutos() + " min");
-        holder.tvCalorias.setText("~" + rutina.getCaloriasAproximadas() + " kcal");
         if (clickListener != null) {
             holder.itemView.setOnClickListener(v -> clickListener.onClick(rutina));
         }
@@ -132,7 +131,7 @@ public class RutinaAdapter extends RecyclerView.Adapter<RutinaAdapter.ViewHolder
 
     // ViewHolder con las referencias a las vistas de cada fila de rutina.
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvNombre, tvDescripcion, tvNumEjercicios, tvDuracion, tvCalorias;
+        TextView tvNombre, tvDescripcion, tvNumEjercicios, tvDuracion;
         Chip chipNivel;
 
         public ViewHolder(@NonNull View itemView) {
@@ -142,7 +141,6 @@ public class RutinaAdapter extends RecyclerView.Adapter<RutinaAdapter.ViewHolder
             chipNivel = itemView.findViewById(R.id.chipNivel);
             tvNumEjercicios = itemView.findViewById(R.id.tvNumEjercicios);
             tvDuracion = itemView.findViewById(R.id.tvDuracion);
-            tvCalorias = itemView.findViewById(R.id.tvCalorias);
         }
     }
 }

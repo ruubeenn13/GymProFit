@@ -54,7 +54,7 @@ Decisiones tomadas, con su porqué. Sirve para no volver a discutir lo ya discut
 ---
 
 ### DEC-004 · El entrenamiento no usa calorías estimadas como métrica
-**Estado:** Aceptada · **Fecha:** 2026-09-18 · **Deuda conocida**
+**Estado:** Aceptada · **Fecha:** 2026-09-18 · **Aplicada el 2026-09-23 (GP-010)**
 
 **Contexto.** El producto calculaba las calorías de una sesión como `calorías × series × repeticiones`. Es un número sin fundamento fisiológico: no depende de la carga, ni del peso corporal, ni del descanso, ni de nada real.
 
@@ -64,17 +64,21 @@ Decisiones tomadas, con su porqué. Sirve para no volver a discutir lo ya discut
 
 **No afecta a** las calorías de **nutrición**, que proceden de los alimentos registrados y son reales.
 
-**Contradicción actual.** El cálculo sigue vivo y el valor se persiste y se muestra en varias pantallas. Es deuda pendiente de retirar, no una excepción concedida.
-
-La auditoría de diseño del 21 de septiembre de 2026 ([AUDITORIA-DISENO-2026-09.md](AUDITORIA-DISENO-2026-09.md), P-13, P-19 y P-40) inventarió **dónde exactamente**, porque este apartado solo nombraba `RegistrarSesionActivity` y eso llevaba a creer que el problema estaba en un sitio:
+**Contradicción resuelta el 2026-09-23 (GP-010).** Hasta esa fecha el cálculo seguía vivo, el valor se persistía y se mostraba en varias pantallas. La auditoría de diseño del 21 de septiembre de 2026 ([AUDITORIA-DISENO-2026-09.md](AUDITORIA-DISENO-2026-09.md), P-13, P-19 y P-40) inventarió **dónde exactamente**, porque este apartado solo nombraba `RegistrarSesionActivity` y eso llevaba a creer que el problema estaba en un sitio. Lo que apareció fueron **tres grupos que se retiraban por separado**, y el tercero era el que nadie había mirado:
 
 - `RegistrarSesionActivity` — el cálculo que originó la decisión.
-- Resumen de sesión y Home — muestran el valor persistido.
-- **Lista de rutinas, detalle de rutina y ficha de ejercicio** — muestran un valor que **no** viene de la sesión: lo calcula la API al vuelo en `api/gymprofit-api/src/main/java/com/gymprofit/api/entity/Rutina.java:90-91`, un `@Formula` de Hibernate con `SUM(series × repeticiones × calorias_quemadas)`, que es **literalmente la fórmula del contexto de arriba**. Lo pintan `RutinaAdapter.java:88` y `RutinasFragment.java:122`.
+- Resumen de sesión y Home — mostraban el valor persistido.
+- **Lista de rutinas, detalle de rutina y ficha de ejercicio** — mostraban un valor que **no** venía de la sesión: lo calculaba la API al vuelo en un `@Formula` de Hibernate sobre `Rutina`, con `SUM(series × repeticiones × calorias_quemadas)`, que es **literalmente la fórmula del contexto de arriba**. Era una violación viva de esta decisión, en el servidor, sin inventariar.
 
-Los números delatan solos la falta de fundamento: una rutina de movilidad de 35 minutos anuncia ~2385 kcal, más que la ingesta diaria completa del usuario.
+Los números delataban solos la falta de fundamento: una rutina de movilidad de 35 minutos anunciaba ~2385 kcal, más que la ingesta diaria completa del usuario.
 
-Importa distinguir los tres grupos porque **se retiran por separado**: quitar el valor de las pantallas de sesión no toca el `@Formula`, y mientras siga ahí la cifra vuelve a aparecer en cuanto alguien pinte una rutina.
+**Qué se retiró.** En la API: el `@Formula`, el campo de calorías de los DTO de rutina, el de la relación rutina-ejercicio, la exposición de `ejercicios.calorias_quemadas` (incluidos el endpoint de búsqueda por rango de calorías y el filtro `caloriasMax`), la escritura de `sesiones_entrenamiento.calorias_quemadas` —parámetro de `PUT /sesiones/{id}/completar` incluido—, `totalCaloriasQuemadas` de las estadísticas, las kcal del resumen semanal por notificación, y la tabla de kcal por grupo muscular que rellenaba el catálogo al importarlo. En Android: las siete pantallas del inventario.
+
+**Las columnas NO se borran todavía.** `ejercicios.calorias_quemadas` y `sesiones_entrenamiento.calorias_quemadas` siguen en la base de datos: dejan de leerse y de escribirse, y se retiran en una migración posterior. Separar las dos cosas permite volver atrás sin perder el histórico mientras el cambio se asienta, y es lo que [DEC-025](#dec-025--destino-del-histórico-de-calorías-de-entrenamiento) tiene pendiente de decidir.
+
+**Qué se puso en su lugar.** En la tarjeta de rutina, **nada**: una rutina es una plantilla, no tiene pesos, y el volumen ahí no significa nada; inventar otro número para rellenar el hueco habría repetido el error con otra cara. En el resumen de sesión, los kilos movidos ya son el número grande (GP-011). En Home se **quitó la columna**: el volumen de la semana no se podía poner porque la app agrega la semana en el cliente desde la lista de sesiones, y ahí no viene el peso movido.
+
+**Lo que impide que vuelva.** `SinCaloriasEntrenamientoTest` afirma sobre el **JSON** —no sobre las clases Java— que ninguna de esas rutas devuelve el campo, y de paso que las calorías de nutrición siguen ahí. Un comentario no impide una reintroducción; un test que falla, sí.
 
 **Qué la invalidaría.** Un modelo de gasto energético con respaldo, alimentado por datos que el producto realmente tenga (carga, tiempo bajo tensión, peso corporal, y frecuencia cardíaca si algún día llega por Health Connect).
 

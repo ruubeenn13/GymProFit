@@ -55,9 +55,9 @@ public class ResumenSesionActivity extends AppCompatActivity {
         super.attachBaseContext(es.pmdm.gymprofit.utils.ScaleUtils.wrap(newBase));
     }
 
-    private TextView tvFecha, tvDuracion, tvCalorias, tvRutina, tvNotas, tvCompletada;
+    private TextView tvFecha, tvDuracion, tvRutina, tvNotas, tvCompletada;
     private View layoutNotas;
-    private TextView tvStatSesiones, tvStatCompletadas, tvStatMinutos, tvStatCalorias;
+    private TextView tvStatSesiones, tvStatCompletadas, tvStatMinutos, tvStatEjercicios;
     private TextView tvStatRacha, tvStatMejorRacha;
     private View layoutCelebracion;
     private TextView tvVolumenHero;
@@ -154,7 +154,6 @@ public class ResumenSesionActivity extends AppCompatActivity {
 
         tvFecha      = findViewById(R.id.tvFechaResumen);
         tvDuracion   = findViewById(R.id.tvDuracionResumen);
-        tvCalorias   = findViewById(R.id.tvCaloriasResumen);
         tvRutina     = findViewById(R.id.tvRutinaResumen);
         layoutNotas  = findViewById(R.id.layoutNotasResumen);
         tvNotas      = findViewById(R.id.tvNotasResumen);
@@ -163,7 +162,7 @@ public class ResumenSesionActivity extends AppCompatActivity {
         tvStatSesiones   = findViewById(R.id.tvStatSesiones);
         tvStatCompletadas = findViewById(R.id.tvStatCompletadas);
         tvStatMinutos    = findViewById(R.id.tvStatMinutos);
-        tvStatCalorias   = findViewById(R.id.tvStatCalorias);
+        tvStatEjercicios = findViewById(R.id.tvStatEjercicios);
         tvStatRacha      = findViewById(R.id.tvStatRacha);
         tvStatMejorRacha = findViewById(R.id.tvStatMejorRacha);
 
@@ -272,7 +271,6 @@ public class ResumenSesionActivity extends AppCompatActivity {
 
             tvFecha.setText(sesion.getFechaInicio().isEmpty() ? "—" : FechaUtils.formatearFechaHora(sesion.getFechaInicio()));
             tvDuracion.setText(getString(R.string.sesiones_min, sesion.getDuracionMinutos()));
-            tvCalorias.setText(getString(R.string.sesiones_kcal, sesion.getCaloriasQuemadas()));
             if (!sesion.getNotas().isEmpty()) {
                 tvNotas.setText(sesion.getNotas());
                 layoutNotas.setVisibility(View.VISIBLE);
@@ -284,7 +282,7 @@ public class ResumenSesionActivity extends AppCompatActivity {
             tvStatSesiones.setText(String.valueOf(estadisticas.getTotalSesiones()));
             tvStatCompletadas.setText(String.valueOf(estadisticas.getSesionesCompletadas()));
             tvStatMinutos.setText(String.valueOf(estadisticas.getTotalMinutosEntrenados()));
-            tvStatCalorias.setText(String.valueOf(estadisticas.getTotalCaloriasQuemadas()));
+            tvStatEjercicios.setText(String.valueOf(estadisticas.getTotalEjerciciosRealizados()));
             tvStatRacha.setText(String.valueOf(estadisticas.getRachaActualDias()));
             tvStatMejorRacha.setText(String.valueOf(estadisticas.getMejorRachaDias()));
         }
@@ -295,8 +293,7 @@ public class ResumenSesionActivity extends AppCompatActivity {
         }
 
         if (fromRegistrar && sesion != null) {
-            NotificationHelper.notificarSesionCompletada(this,
-                    sesion.getDuracionMinutos(), sesion.getCaloriasQuemadas());
+            NotificationHelper.notificarSesionCompletada(this, sesion.getDuracionMinutos());
             if (!nuevosLogros.isEmpty()) {
                 NotificationHelper.notificarLogrosDesbloqueados(this, nuevosLogros);
             }

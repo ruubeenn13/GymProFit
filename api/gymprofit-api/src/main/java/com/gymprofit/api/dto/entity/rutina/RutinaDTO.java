@@ -30,6 +30,8 @@ public class RutinaDTO implements Serializable {
     private Boolean activa;
     // Número de ejercicios que componen la rutina (calculado)
     private Integer numEjercicios;
-    // Estimación de calorías quemadas al completar la rutina (calculado)
-    private Integer caloriasAproximadas;
+    // NO HAY CAMPO DE CALORÍAS AQUÍ, Y ES A PROPÓSITO (DEC-004 / GP-010).
+    // El gasto calórico de un entrenamiento no se puede estimar con los datos que
+    // tiene la app, así que no se estima. La columna sigue en la base de datos hasta
+    // la migración que la retire, pero ni se lee ni se escribe.
 }

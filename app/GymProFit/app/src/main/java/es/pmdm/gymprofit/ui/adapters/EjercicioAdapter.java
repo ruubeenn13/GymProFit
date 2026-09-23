@@ -81,7 +81,7 @@ public class EjercicioAdapter extends RecyclerView.Adapter<EjercicioAdapter.View
         }
         holder.chipDificultad.setText(es.pmdm.gymprofit.utils.UIHelper.traducirNivel(holder.itemView.getContext(), ejercicio.getDificultad())); // enum traducido
         // Grupo muscular que trabaja (en vez de las calorías).
-        holder.chipCalorias.setText(es.pmdm.gymprofit.utils.UIHelper.traducirGrupoMuscular(holder.itemView.getContext(), ejercicio.getGrupoMuscular()));
+        holder.chipGrupo.setText(es.pmdm.gymprofit.utils.UIHelper.traducirGrupoMuscular(holder.itemView.getContext(), ejercicio.getGrupoMuscular()));
         if (clickListener != null) {
             holder.itemView.setOnClickListener(v -> clickListener.onClick(ejercicio));
         }
@@ -111,7 +111,7 @@ public class EjercicioAdapter extends RecyclerView.Adapter<EjercicioAdapter.View
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivIcono;
         TextView tvNombre, tvDescripcion;
-        Chip chipDificultad, chipCalorias;
+        Chip chipDificultad, chipGrupo;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -119,7 +119,7 @@ public class EjercicioAdapter extends RecyclerView.Adapter<EjercicioAdapter.View
             tvNombre = itemView.findViewById(R.id.tvNombreEjercicio);
             tvDescripcion = itemView.findViewById(R.id.tvDescripcionEjercicio);
             chipDificultad = itemView.findViewById(R.id.chipDificultad);
-            chipCalorias = itemView.findViewById(R.id.chipCalorias);
+            chipGrupo = itemView.findViewById(R.id.chipGrupo);
         }
     }
 }

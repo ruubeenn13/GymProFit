@@ -184,7 +184,7 @@ class SesionEntrenamientoServiceTest {
         assertThrows(NotFoundEntityException.class, () -> sesionEntrenamientoService.deleteById(99));
     }
 
-    // Comprueba que completarSesion marca completada, fija fecha fin, calorías y notas
+    // Comprueba que completarSesion marca completada, fija fecha fin y notas
     @Test
     @DisplayName("completarSesion marca la sesión como completada")
     void completarSesion_marca_completada() {
@@ -192,11 +192,10 @@ class SesionEntrenamientoServiceTest {
         when(sesionEntrenamientoRepository.save(any())).thenReturn(sesionEntrenamiento);
         when(sesionEntrenamientoMapper.toDTO(sesionEntrenamiento)).thenReturn(sesionEntrenamientoDTO);
 
-        sesionEntrenamientoService.completarSesion(1, 400, "Sesión completada");
+        sesionEntrenamientoService.completarSesion(1, "Sesión completada");
 
         assertTrue(sesionEntrenamiento.getCompletada());
         assertNotNull(sesionEntrenamiento.getFechaFin());
-        assertEquals(400, sesionEntrenamiento.getCaloriasQuemadas());
         assertEquals("Sesión completada", sesionEntrenamiento.getNotas());
     }
 
@@ -206,7 +205,7 @@ class SesionEntrenamientoServiceTest {
     void completarSesion_inexistente_lanza_excepcion() {
         when(sesionEntrenamientoRepository.findById(99)).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundEntityException.class, () -> sesionEntrenamientoService.completarSesion(99, null, null));
+        assertThrows(NotFoundEntityException.class, () -> sesionEntrenamientoService.completarSesion(99, null));
     }
 
     // Comprueba que se listan las sesiones asociadas a un usuario concreto

@@ -145,3 +145,111 @@ Los endpoints `count/...` y `exists/...` devuelven `0` o `false` para un usuario
 no existe, en vez de `404`. Es el mismo defecto de fondo, pero no estaba en el
 inventario de los 58 (no usan el patrón `isEmpty()`) y tocarlos no cambia nada para
 la app. Queda anotado.
+
+---
+
+## GP-010 · Las calorías estimadas de entrenamiento salen del producto
+
+Decisión actualizada: **DEC-004** pasa de «deuda conocida» a **aplicada**.
+
+### El origen estaba en la API, no en la app
+
+`api/.../entity/Rutina.java` tenía un `@Formula` de Hibernate con
+`SUM(series × repeticiones × calorias_quemadas)`: **literalmente la fórmula que
+DEC-004 declara sin fundamento**, calculada en el servidor en cada consulta de
+rutina. La ficha original de GP-010 solo cubría Home y el resumen de sesión, así
+que ese `@Formula` seguía vivo y habría repuesto la cifra en cuanto alguien
+pintara una rutina.
+
+Una rutina es además una **plantilla**: no tiene pesos. El número no era solo
+infundado, es que ahí no podía significar nada. «Movilidad Activa · 35 min ·
+~2385 kcal», más que la ingesta diaria completa del usuario.
+
+### Qué se ha retirado
+
+**API**
+
+| Sitio | Qué era |
+|---|---|
+| `Rutina.@Formula` | El cálculo del servidor |
+| `RutinaDTO`, `RutinaPatchDTO` | `caloriasAproximadas` |
+| `RutinaEjercicioDTO` | `caloriasEjercicio`, enriquecido desde el catálogo |
+| `EjercicioDTO`, `EjercicioCreateDTO`, `EjercicioPatchDTO`, `EjercicioJooqDTO` | `caloriasQuemadas` deja de exponerse |
+| `GET /jooq/ejercicios/calorias` y el filtro `caloriasMax` | Buscar por un número que ya no se enseña |
+| `SesionEntrenamientoDTO`/`Create`/`Patch` y el parámetro de `PUT /sesiones/{id}/completar` | `calorias_quemadas` deja de escribirse |
+| `UsuarioEstadisticasDTO` | `totalCaloriasQuemadas` |
+| Resumen semanal por notificación | Las kcal del mensaje (ES y EN) |
+| `WgerImportService` | La tabla de kcal por grupo muscular que rellenaba el catálogo al importarlo |
+
+Esa última es la que cierra el círculo: el número de la ficha de ejercicio —«5
+kcal»— salía de una constante por grupo muscular, **la misma para cualquiera que
+hiciera el ejercicio**.
+
+**Android** — las siete pantallas del inventario, más las tres que aparecieron al
+seguir el hilo: el resumen de creación de rutina, y los dos formularios de
+administración donde un ADMIN podía teclear el valor a mano.
+
+### Qué se ha puesto en su lugar
+
+- **Tarjeta de rutina: nada.** La tarjeta queda en «N ejercicios · X min». Una
+  plantilla no tiene pesos y el volumen ahí no significa nada; inventar otro
+  número para tapar el hueco habría repetido el error con otra cara.
+- **Resumen de sesión:** la fila de calorías desaparece. La tarjeta de estadística
+  «Calorías quemadas» pasa a **«Ejercicios hechos»**, que la API ya devolvía
+  (`totalEjerciciosRealizados`) y que es un recuento, no una estimación.
+- **Home: se quita la columna, y hay que decirlo.** No se pudo poner el volumen de
+  la semana porque **la app no lo tiene**: agrega la semana en el cliente a partir
+  de la lista de sesiones, y ahí no viene el peso movido. Ponerlo pediría un dato
+  nuevo de la API. «Esta semana» queda en dos tarjetas, Entrenos y Minutos.
+
+### Las columnas siguen en la base de datos
+
+`ejercicios.calorias_quemadas` y `sesiones_entrenamiento.calorias_quemadas`
+**no se borran**: dejan de leerse y de escribirse, y se retiran en una migración
+posterior, como planteaba la ficha original. Anotado en el CHANGELOG.
+
+### Las calorías de nutrición: comprobado explícitamente
+
+No se ha tocado nada de nutrición, y hay un test que lo fija. Contra la API en
+marcha, con el código nuevo:
+
+```
+/rutinas/predefinidas        → 0 apariciones de "calorias"
+/ejercicios/1                → 0
+/usuarios/{id}/estadisticas  → 0
+/alimentos/activos           → {"nombre":"Nutella","calorias":539,...}   ← intacto
+```
+
+### Lo que impide que vuelva
+
+`SinCaloriasEntrenamientoTest` (6 tests) afirma **sobre el JSON**, no sobre las
+clases Java: lo que DEC-004 prohíbe es enseñar el número, y lo que se enseña es lo
+que sale por el cable. Cinco rutas de entrenamiento sin el campo, y una de
+nutrición **con** él.
+
+`sh ./mvnw -B verify` → **351 tests, 0 fallos**. `sh ./gradlew assembleDebug` en
+verde.
+
+### Verificación en el emulador
+
+| Pantalla | Captura | Qué se ve ahora |
+|---|---|---|
+| Rutinas, cuenta vacía | `gp010-rutinas-vacia.png` | «2 ejercicios · 60 min». Sin kcal |
+| Detalle de rutina | `gp010-detalle-rutina.png` | «Intermedio · 60 min». Sin kcal ni separador suelto |
+| Ficha de ejercicio | `gp010-detalle-ejercicio.png` | Músculo · Nivel · Equipamiento |
+| Home | `gp010-home.png` | «Esta semana»: Entrenos y Minutos |
+| Registrar sesión | `gp010-registrar.png` | Sin la tarjeta de «Calorías estimadas»; la lista de ejercicios/pesos sigue cargando |
+| Resumen de sesión | `gp010-resumen-sesion.png` | Sin fila de calorías; «Ejercicios hechos: 3» |
+
+Se empezó por la pestaña de rutinas con la cuenta `vacia`, que es lo primero que
+ve un usuario nuevo, y se recorrió el resto del inventario desde ahí.
+
+### Un detalle que salió del cruce de las dos tareas
+
+`GET /usuarios/{id}/foto` responde **404 cuando el usuario no tiene foto**, y eso
+es correcto: no es una colección vacía, es un recurso que no existe, así que
+DEC-033 no lo cambia. Pero `PerfilFragment.cargarFotoPerfil` tenía un `onFail`
+vacío, y con GP-069 quitando el silencio global del 404 convenía dejar por escrito
+por qué **ese** sí se calla: la mayoría de las cuentas no tiene foto, el avatar por
+defecto es lo que se espera ver, y un toast en cada entrada al perfil sería ruido
+por un estado normal.

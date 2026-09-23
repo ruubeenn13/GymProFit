@@ -199,13 +199,6 @@ public class UsuarioJooqRepository implements IUsuarioJooqRepository {
                         .and(SESIONES_ENTRENAMIENTO.COMPLETADA.eq((byte) 1)))
                 .fetchOne(0, Integer.class);
 
-        Integer totalCalorias = dsl
-                .select(coalesce(sum(SESIONES_ENTRENAMIENTO.CALORIAS_QUEMADAS), 0))
-                .from(SESIONES_ENTRENAMIENTO)
-                .where(SESIONES_ENTRENAMIENTO.USUARIO_ID.eq(usuarioId)
-                        .and(SESIONES_ENTRENAMIENTO.COMPLETADA.eq((byte) 1)))
-                .fetchOne(0, Integer.class);
-
         // Ejercicio más frecuente
         String ejercicioMasFrecuente = dsl
                 .select(EJERCICIOS.NOMBRE)
@@ -262,7 +255,6 @@ public class UsuarioJooqRepository implements IUsuarioJooqRepository {
                 totalSesiones,
                 sesionesCompletadas,
                 totalMinutos,
-                totalCalorias,
                 ejercicioMasFrecuente,
                 rachaActual,
                 mejorRacha,

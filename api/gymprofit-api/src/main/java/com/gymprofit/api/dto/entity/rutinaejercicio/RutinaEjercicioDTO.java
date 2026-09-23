@@ -25,8 +25,10 @@ public class RutinaEjercicioDTO implements Serializable {
     private Integer tiempoDescanso;
     private Integer orden;
     private String notas;
-    // Calorías estimadas asociadas al ejercicio (dato enriquecido desde el catálogo de ejercicios)
-    private Integer caloriasEjercicio;
+    // NO HAY CAMPO DE CALORÍAS AQUÍ, Y ES A PROPÓSITO (DEC-004 / GP-010).
+    // El gasto calórico de un entrenamiento no se puede estimar con los datos que
+    // tiene la app, así que no se estima. La columna sigue en la base de datos hasta
+    // la migración que la retire, pero ni se lee ni se escribe.
     // Nombre del ejercicio (dato enriquecido desde el catálogo de ejercicios)
     private String nombreEjercicio;
 }
