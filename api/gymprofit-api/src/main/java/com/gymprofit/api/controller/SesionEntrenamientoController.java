@@ -329,9 +329,11 @@ public class SesionEntrenamientoController {
             @ApiResponse(responseCode = "404", description = "Sesión no encontrada",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
-    // Actualización parcial de campos de una sesión de entrenamiento
+    // Actualización parcial de campos de una sesión de entrenamiento.
+    // @Valid y no solo @RequestBody: sin él las restricciones del DTO —el rango 1..5
+    // de la valoración, por ejemplo— no se comprobarían nunca.
     @PatchMapping("/sesiones/{id}")
-    public ResponseEntity<SesionEntrenamientoDTO> patchSesion(@PathVariable Integer id, @RequestBody SesionEntrenamientoPatchDTO patchDTO) {
+    public ResponseEntity<SesionEntrenamientoDTO> patchSesion(@PathVariable Integer id, @Valid @RequestBody SesionEntrenamientoPatchDTO patchDTO) {
         return ResponseEntity.ok(sesionEntrenamientoService.patch(id, patchDTO));
     }
 

@@ -29,6 +29,10 @@ public class SesionEntrenamientoDTO implements Serializable {
     // El gasto calórico de un entrenamiento no se puede estimar con los datos que
     // tiene la app, así que no se estima. La columna sigue en la base de datos hasta
     // la migración que la retire, pero ni se lee ni se escribe.
+
+    // Valoración de 1 a 5, o null si no se valoró (GP-070).
+    private Integer valoracion;
+
     private String notas;
     private Boolean completada;
 

@@ -1,5 +1,7 @@
 package com.gymprofit.api.dto.entity.sesionentrenamiento;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,6 +26,11 @@ public class SesionEntrenamientoPatchDTO implements Serializable {
     // El gasto calórico de un entrenamiento no se puede estimar con los datos que
     // tiene la app, así que no se estima. La columna sigue en la base de datos hasta
     // la migración que la retire, pero ni se lee ni se escribe.
+    // Valoración de 1 a 5 (GP-070). Null = no se toca, como el resto del PATCH.
+    @Min(1)
+    @Max(5)
+    private Integer valoracion;
+
     private String notas;
     private Boolean completada;
 }

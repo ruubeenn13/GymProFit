@@ -168,6 +168,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
             sesion.setFechaInicio(sesionEntrenamientoDTO.getFechaInicio());
             sesion.setFechaFin(sesionEntrenamientoDTO.getFechaFin());
             sesion.setDuracionMinutos(sesionEntrenamientoDTO.getDuracionMinutos());
+            sesion.setValoracion(sesionEntrenamientoDTO.getValoracion());
             sesion.setNotas(sesionEntrenamientoDTO.getNotas());
             sesion.setCompletada(sesionEntrenamientoDTO.getCompletada());
 
@@ -436,6 +437,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
             if (patchDTO.getFechaInicio() != null) sesion.setFechaInicio(patchDTO.getFechaInicio());
             if (patchDTO.getFechaFin() != null) sesion.setFechaFin(patchDTO.getFechaFin());
             if (patchDTO.getDuracionMinutos() != null) sesion.setDuracionMinutos(patchDTO.getDuracionMinutos());
+            if (patchDTO.getValoracion() != null) sesion.setValoracion(patchDTO.getValoracion());
             if (patchDTO.getNotas() != null) sesion.setNotas(patchDTO.getNotas());
             if (patchDTO.getCompletada() != null) sesion.setCompletada(patchDTO.getCompletada());
 
