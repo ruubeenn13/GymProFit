@@ -51,6 +51,12 @@ public class SesionEntrenamiento {
     @Column(name = "valoracion")
     private Integer valoracion;
 
+    // Clave única del intento de guardado que creó esta sesión (GP-006). Nula en
+    // las sesiones creadas por el camino viejo, que no la manda. Es lo que permite
+    // reconocer un reintento y devolver la sesión que ya existe en vez de otra.
+    @Column(name = "idempotencia_clave", length = 64)
+    private String idempotenciaClave;
+
     // Notas adicionales sobre la sesión. Solo lo que escribe el usuario.
     @Column(columnDefinition = "TEXT")
     private String notas;

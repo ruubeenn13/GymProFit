@@ -22,6 +22,11 @@ import java.util.Optional;
 @RepositoryRestResource(exported = false)
 public interface ISesionEntrenamientoRepository extends JpaRepository<SesionEntrenamiento, Integer> {
 
+    // Sesión creada por un intento de guardado concreto (GP-006). El par
+    // (usuario, clave) y no la clave sola: así un reintento NUNCA puede devolver
+    // la sesión de otra persona, ni siquiera ante una colisión de claves.
+    Optional<SesionEntrenamiento> findByUsuarioIdAndIdempotenciaClave(Integer usuarioId, String idempotenciaClave);
+
     // Sesiones de un usuario.
     List<SesionEntrenamiento> findByUsuarioId(Integer usuarioId);
 
