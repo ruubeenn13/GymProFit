@@ -5,8 +5,9 @@
   ENCIMA, anclada abajo (liquid glass: el contenido scrollea por debajo y se ve
   difuminado a través del cristal). La barra no se recrea al cambiar de pestaña,
   por lo que su burbuja "viaja" siguiendo el scroll del pager; además permite
-  deslizar (swipe) entre pestañas. Los fragments reservan padding inferior
-  (BaseFragment) para que su contenido no quede tapado por la barra.
+  deslizar (swipe) entre pestañas. Sus medidas salen de @dimen/nav_bar_*, las
+  mismas que BaseFragment usa para reservar hueco bajo el contenido de cada
+  pestaña: si la barra cambia de alto, el hueco cambia con ella.
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -22,10 +23,10 @@
     <es.pmdm.gymprofit.ui.widget.FloatingNavBar
         android:id="@+id/floatingNav"
         android:layout_width="match_parent"
-        android:layout_height="72dp"
+        android:layout_height="@dimen/nav_bar_height"
         android:layout_gravity="bottom"
-        android:layout_marginStart="14dp"
-        android:layout_marginEnd="14dp"
-        android:layout_marginBottom="14dp" />
+        android:layout_marginStart="@dimen/nav_bar_margin"
+        android:layout_marginEnd="@dimen/nav_bar_margin"
+        android:layout_marginBottom="@dimen/nav_bar_margin" />
 
 </FrameLayout>
