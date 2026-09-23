@@ -7,7 +7,6 @@ import com.gymprofit.api.dto.entity.objetivopersonal.ObjetivoPersonalPatchDTO;
 import com.gymprofit.api.dto.entity.objetivopersonal.ObjetivoPersonalUpdateDTO;
 import com.gymprofit.api.enums.TipoObjetivo;
 import com.gymprofit.api.exceptions.InvalidDataException;
-import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.objetivopersonal.IObjetivoPersonalService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -126,17 +125,13 @@ public class ObjetivoPersonalController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Objetivos encontrados",
                     content = @Content(schema = @Schema(implementation = ObjetivoPersonalDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron objetivos para este usuario",
+            @ApiResponse(responseCode = "404", description = "El usuario indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Lista todos los objetivos personales de un usuario
     @GetMapping("/objetivos-personales/usuario/{usuarioId}")
     public ResponseEntity<List<ObjetivoPersonalDTO>> obtenerPorUsuario(@PathVariable Integer usuarioId) {
         List<ObjetivoPersonalDTO> objetivosPersonales = objetivoPersonalService.findByUsuarioId(usuarioId);
-
-        if (objetivosPersonales.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron objetivos personales para el usuario con id " + usuarioId);
-        }
 
         return ResponseEntity.ok(objetivosPersonales);
     }
@@ -145,17 +140,13 @@ public class ObjetivoPersonalController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Objetivos encontrados",
                     content = @Content(schema = @Schema(implementation = ObjetivoPersonalDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron objetivos para este usuario",
+            @ApiResponse(responseCode = "404", description = "El usuario indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Lista los objetivos de un usuario ordenados por fecha de inicio
     @GetMapping("/objetivos-personales/usuario/{usuarioId}/ordenados")
     public ResponseEntity<List<ObjetivoPersonalDTO>> obtenerPorUsuarioOrdenados(@PathVariable Integer usuarioId) {
         List<ObjetivoPersonalDTO> objetivosPersonales = objetivoPersonalService.findByUsuarioIdOrdenados(usuarioId);
-
-        if (objetivosPersonales.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron objetivos personales para el usuario con id " + usuarioId);
-        }
 
         return ResponseEntity.ok(objetivosPersonales);
     }
@@ -164,17 +155,13 @@ public class ObjetivoPersonalController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Objetivos pendientes encontrados",
                     content = @Content(schema = @Schema(implementation = ObjetivoPersonalDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron objetivos pendientes",
+            @ApiResponse(responseCode = "404", description = "El usuario indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Lista los objetivos pendientes (no completados) de un usuario
     @GetMapping("/objetivos-personales/usuario/{usuarioId}/pendientes")
     public ResponseEntity<List<ObjetivoPersonalDTO>> obtenerPendientesPorUsuario(@PathVariable Integer usuarioId) {
         List<ObjetivoPersonalDTO> objetivosPersonales = objetivoPersonalService.findPendientesByUsuarioId(usuarioId);
-
-        if (objetivosPersonales.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron objetivos pendientes para el usuario con id " + usuarioId);
-        }
 
         return ResponseEntity.ok(objetivosPersonales);
     }
@@ -183,7 +170,7 @@ public class ObjetivoPersonalController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Objetivos completados encontrados",
                     content = @Content(schema = @Schema(implementation = ObjetivoPersonalDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron objetivos completados",
+            @ApiResponse(responseCode = "404", description = "El usuario indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Lista los objetivos completados de un usuario
@@ -191,19 +178,13 @@ public class ObjetivoPersonalController {
     public ResponseEntity<List<ObjetivoPersonalDTO>> obtenerCompletadosPorUsuario(@PathVariable Integer usuarioId) {
         List<ObjetivoPersonalDTO> objetivosPersonales = objetivoPersonalService.findCompletadosByUsuarioId(usuarioId);
 
-        if (objetivosPersonales.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron objetivos completados para el usuario con id " + usuarioId);
-        }
-
         return ResponseEntity.ok(objetivosPersonales);
     }
 
     @Operation(summary = "Obtiene objetivos por tipo")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Objetivos encontrados",
-                    content = @Content(schema = @Schema(implementation = ObjetivoPersonalDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron objetivos para este tipo",
-                    content = @Content(schema = @Schema(implementation = Response.class)))
+                    content = @Content(schema = @Schema(implementation = ObjetivoPersonalDTO.class)))
     })
     // Filtra objetivos por tipo, validando que sea un valor válido del enum TipoObjetivo
     @GetMapping("/objetivos-personales/tipo/{tipoObjetivo}")
@@ -223,10 +204,6 @@ public class ObjetivoPersonalController {
         }
 
         List<ObjetivoPersonalDTO> objetivosPersonales = objetivoPersonalService.findByTipoObjetivo(tipoObjetivo);
-
-        if (objetivosPersonales.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron objetivos del tipo " + tipoObjetivo);
-        }
 
         return ResponseEntity.ok(objetivosPersonales);
     }

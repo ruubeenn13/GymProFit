@@ -208,8 +208,8 @@ public class MedicionesActivity extends AppCompatActivity {
 
             @Override
             public void onFail(int code, String message) {
-                // 404 = sin mediciones (vacío benigno) → intenta sembrar desde el perfil.
-                // -1/500 = error real de lectura → toast (UiFeedback silencia el 404).
+                // "Sin mediciones" ya no llega como 404: es 200 con [] y lo atiende
+                // onOk, que siembra desde el perfil. Aquí solo caen fallos de verdad.
                 UiFeedback.toastError(MedicionesActivity.this, code, message);
                 intentarCrearDesdePerfil(usuarioId);
             }

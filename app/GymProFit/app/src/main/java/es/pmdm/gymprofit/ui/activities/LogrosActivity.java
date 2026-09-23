@@ -103,7 +103,10 @@ public class LogrosActivity extends AppCompatActivity {
             }
             @Override
             public void onFail(int code, String message) {
-                // 404 = ningún logro desbloqueado
+                // "Ningún logro desbloqueado" ya no llega por aquí: es 200 con [].
+                // Lo que llegue es un fallo, y el catálogo se pinta igual pero sin
+                // marcas, así que hay que avisar de que esas marcas pueden faltar.
+                UiFeedback.toastError(LogrosActivity.this, code, message);
                 desbloqueados = new HashSet<>();
                 if (llamadasPendientes.decrementAndGet() == 0) mostrar();
             }

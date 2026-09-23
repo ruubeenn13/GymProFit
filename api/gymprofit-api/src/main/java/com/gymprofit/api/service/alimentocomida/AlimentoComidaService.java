@@ -187,6 +187,8 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         logger.info("Buscando comidas que contienen el alimento id: {}", alimentoId);
         securityUtils.requireAdmin();
 
+        exigirAlimentoExistente(alimentoId);
+
         List<AlimentoComida> alimentosComida = alimentoComidaRepository.findByAlimentoId(alimentoId);
 
         return alimentoComidaMapper.toDTOList(alimentosComida);
@@ -375,5 +377,18 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         comida.setTotalCarbohidratos(totalCarb);
         comida.setTotalGrasas(totalGras);
         comidaRepository.save(comida);
+    }
+
+    /**
+     * Un id de alimento que no existe es un 404, y se comprueba AQUÍ (DEC-033).
+     * Antes se deducía de que la lista saliera vacía, que no es lo mismo: «no hay
+     * datos» y «ese alimento no existe» son dos respuestas distintas, y la app no
+     * podía separarlas. La comprobación va DESPUÉS de la de propiedad para que a
+     * quien no es dueño se le responda 403 sin decirle si el id existe.
+     */
+    private void exigirAlimentoExistente(Integer alimentoId) {
+        if (!alimentoRepository.existsById(alimentoId)) {
+            throw new NotFoundEntityException("El alimento con id " + alimentoId + " no existe");
+        }
     }
 }

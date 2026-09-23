@@ -205,6 +205,8 @@ public class RutinaService implements IRutinaService {
     public List<RutinaDTO> findByUsuarioId(Integer usuarioId) {
         logger.info("Buscando rutinas por el usuario con id: {}", usuarioId);
 
+        exigirUsuarioExistente(usuarioId);
+
         Usuario currentUser = getCurrentUser();
         if (!isAdmin(currentUser) && !currentUser.getId().equals(usuarioId)) {
             throw new UnauthorizedException("No tienes acceso a las rutinas de otro usuario");
@@ -245,6 +247,8 @@ public class RutinaService implements IRutinaService {
     @Override
     public List<RutinaDTO> findByUsuarioIdAndActivas(Integer usuarioId) {
         logger.info("Buscando rutinas activas del usuario id: {}", usuarioId);
+
+        exigirUsuarioExistente(usuarioId);
 
         Usuario currentUser = getCurrentUser();
         if (!isAdmin(currentUser) && !currentUser.getId().equals(usuarioId)) {
@@ -333,6 +337,19 @@ public class RutinaService implements IRutinaService {
         }
         if (rutina.getUsuario() == null || !currentUser.getId().equals(rutina.getUsuario().getId())) {
             throw new UnauthorizedException();
+        }
+    }
+
+    /**
+     * Un id de usuario que no existe es un 404, y se comprueba AQUÍ (DEC-033).
+     * Antes se deducía de que la lista saliera vacía, que no es lo mismo: «no hay
+     * datos» y «ese usuario no existe» son dos respuestas distintas, y la app no
+     * podía separarlas. La comprobación va DESPUÉS de la de propiedad para que a
+     * quien no es dueño se le responda 403 sin decirle si el id existe.
+     */
+    private void exigirUsuarioExistente(Integer usuarioId) {
+        if (!usuarioRepository.existsById(usuarioId)) {
+            throw new NotFoundEntityException("El usuario con id " + usuarioId + " no existe");
         }
     }
 }

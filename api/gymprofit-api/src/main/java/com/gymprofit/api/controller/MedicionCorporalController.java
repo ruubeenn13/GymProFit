@@ -3,7 +3,6 @@ package com.gymprofit.api.controller;
 import com.gymprofit.api.dto.entity.medicioncorporal.MedicionCorporalCreateDTO;
 import com.gymprofit.api.dto.entity.medicioncorporal.MedicionCorporalDTO;
 import com.gymprofit.api.dto.entity.medicioncorporal.MedicionCorporalPatchDTO;
-import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.medicioncorporal.IMedicionCorporalService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -122,17 +121,13 @@ public class MedicionCorporalController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Mediciones encontradas",
                     content = @Content(schema = @Schema(implementation = MedicionCorporalDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron mediciones para este usuario",
+            @ApiResponse(responseCode = "404", description = "El usuario indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Lista todas las mediciones corporales de un usuario
     @GetMapping("/mediciones-corporales/usuario/{usuarioId}")
     public ResponseEntity<List<MedicionCorporalDTO>> obtenerMedicionPorUsuario(@PathVariable Integer usuarioId) {
         List<MedicionCorporalDTO> medicionesCorporales = medicionCorporalService.findByUsuarioId(usuarioId);
-
-        if(medicionesCorporales.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron mediciones para el usuario id " + usuarioId);
-        }
 
         return ResponseEntity.ok(medicionesCorporales);
     }
@@ -141,17 +136,13 @@ public class MedicionCorporalController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Mediciones encontradas ordenadas",
                     content = @Content(schema = @Schema(implementation = MedicionCorporalDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron mediciones para este usuario",
+            @ApiResponse(responseCode = "404", description = "El usuario indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Lista las mediciones de un usuario ordenadas de más reciente a más antigua
     @GetMapping("/mediciones-corporales/usuario/{usuarioId}/ordenadas")
     public ResponseEntity<List<MedicionCorporalDTO>> obtenerMedicionPorUsuarioOrdenadas(@PathVariable Integer usuarioId) {
         List<MedicionCorporalDTO> medicionesCorporales = medicionCorporalService.findByUsuarioIdOrdenadas(usuarioId);
-
-        if (medicionesCorporales.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron mediciones para el usuario con id " + usuarioId);
-        }
 
         return ResponseEntity.ok(medicionesCorporales);
     }
@@ -160,7 +151,7 @@ public class MedicionCorporalController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Mediciones encontradas",
                     content = @Content(schema = @Schema(implementation = MedicionCorporalDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron mediciones en ese rango de fechas",
+            @ApiResponse(responseCode = "404", description = "El usuario indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Filtra las mediciones de un usuario dentro de un rango de fechas
@@ -170,10 +161,6 @@ public class MedicionCorporalController {
                                                                                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)LocalDateTime fin) {
         List<MedicionCorporalDTO> medicionesCorporales = medicionCorporalService.findByUsuarioIdAndFechaBetween(usuarioId, inicio, fin);
 
-        if (medicionesCorporales.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron mediciones para el usuario " + usuarioId + " en ese rango de fecha");
-        }
-
         return ResponseEntity.ok(medicionesCorporales);
     }
 
@@ -181,17 +168,13 @@ public class MedicionCorporalController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Últimas mediciones encontradas",
                     content = @Content(schema = @Schema(implementation = MedicionCorporalDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron mediciones para este usuario",
+            @ApiResponse(responseCode = "404", description = "El usuario indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Obtiene las mediciones más recientes de un usuario
     @GetMapping("/mediciones-corporales/usuario/{usuarioId}/ultimas")
     public ResponseEntity<List<MedicionCorporalDTO>> obtenerUltimasMediciones (@PathVariable Integer usuarioId) {
         List<MedicionCorporalDTO> medicionesCorporales = medicionCorporalService.getUltimasMediciones(usuarioId);
-
-        if (medicionesCorporales.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron mediciones para el usuario con id " + usuarioId);
-        }
 
         return ResponseEntity.ok(medicionesCorporales);
     }

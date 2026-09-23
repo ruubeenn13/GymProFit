@@ -6,7 +6,6 @@ import com.gymprofit.api.dto.entity.notificacion.NotificacionCreateDTO;
 import com.gymprofit.api.dto.entity.notificacion.NotificacionDTO;
 import com.gymprofit.api.dto.entity.notificacion.NotificacionPatchDTO;
 import com.gymprofit.api.exceptions.InvalidDataException;
-import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.notificacion.INotificacionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -110,17 +109,13 @@ public class NotificacionController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Notificaciones encontradas",
                     content = @Content(schema = @Schema(implementation = NotificacionDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron notificaciones para este usuario",
+            @ApiResponse(responseCode = "404", description = "El usuario indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Lista todas las notificaciones de un usuario
     @GetMapping("/notificaciones/usuario/{usuarioId}")
     public ResponseEntity<List<NotificacionDTO>> obtenerNotificacionPorUsuario(@PathVariable Integer usuarioId) {
         List<NotificacionDTO> notificaciones = notificacionService.findByUsuarioId(usuarioId);
-
-        if (notificaciones.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron notificaciones para el usuario con id " + usuarioId);
-        }
 
         return ResponseEntity.ok(notificaciones);
     }
@@ -129,17 +124,13 @@ public class NotificacionController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Notificaciones encontradas ordenadas",
                     content = @Content(schema = @Schema(implementation = NotificacionDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron notificaciones",
+            @ApiResponse(responseCode = "404", description = "El usuario indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Lista las notificaciones de un usuario ordenadas por fecha
     @GetMapping("/notificaciones/usuario/{usuarioId}/ordenadas")
     public ResponseEntity<List<NotificacionDTO>> obtenerNotificacionPorUsuarioOrdenadas(@PathVariable Integer usuarioId) {
         List<NotificacionDTO> notificaciones = notificacionService.findByUsuarioIdOrdenadas(usuarioId);
-
-        if (notificaciones.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron notificaciones para el usuario con id " + usuarioId);
-        }
 
         return ResponseEntity.ok(notificaciones);
     }
@@ -148,17 +139,13 @@ public class NotificacionController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Notificaciones no leídas encontradas",
                     content = @Content(schema = @Schema(implementation = NotificacionDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron notificaciones no leídas",
+            @ApiResponse(responseCode = "404", description = "El usuario indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Lista las notificaciones no leídas de un usuario
     @GetMapping("/notificaciones/usuario/{usuarioId}/no-leidas")
     public ResponseEntity<List<NotificacionDTO>> obtenerNoLeidasPorUsuario(@PathVariable Integer usuarioId) {
         List<NotificacionDTO> notificaciones = notificacionService.findNoLeidasByUsuarioId(usuarioId);
-
-        if (notificaciones.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron notificaciones no leídas para el usuario con id " + usuarioId);
-        }
 
         return ResponseEntity.ok(notificaciones);
     }
@@ -167,17 +154,13 @@ public class NotificacionController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Notificaciones leídas encontradas",
                     content = @Content(schema = @Schema(implementation = NotificacionDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron notificaciones leídas",
+            @ApiResponse(responseCode = "404", description = "El usuario indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Lista las notificaciones ya leídas de un usuario
     @GetMapping("/notificaciones/usuario/{usuarioId}/leidas")
     public ResponseEntity<List<NotificacionDTO>> obtenerLeidasPorUsuario(@PathVariable Integer usuarioId) {
         List<NotificacionDTO> notificaciones = notificacionService.findLeidasByUsuarioId(usuarioId);
-
-        if (notificaciones.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron notificaciones leídas para el usuario con id " + usuarioId);
-        }
 
         return ResponseEntity.ok(notificaciones);
     }

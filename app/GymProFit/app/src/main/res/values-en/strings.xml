@@ -32,6 +32,7 @@
     <string name="feedback_cargando_servidor">Waking up the server, this may take a few seconds…</string>
     <string name="feedback_error_cold_start">Waking up the server, please retry in a few seconds</string>
     <string name="feedback_error_servidor">Server error, please try again later</string>
+    <string name="feedback_error_no_encontrado">We could not find that. It may no longer exist.</string>
     <string name="feedback_error_generico">Something went wrong, please try again</string>
     <string name="feedback_lista_vacia">Nothing here yet</string>
 

@@ -99,6 +99,28 @@ class RutinaEjercicioOwnershipTest extends AbstractOwnershipTest {
                 .andExpect(status().isForbidden());
     }
 
+    /**
+     * Hermano del anterior, y el que faltaba: {@code /ordenados} no hacía NI la
+     * comprobación de acceso ni la de existencia, así que devolvía el contenido de la
+     * rutina privada de otro en cuanto tenía ejercicios. El 404 por lista vacía tapaba
+     * a medias el agujero; al pasar a 200 con [] (GP-069) habría quedado a la vista.
+     */
+    @Test
+    @DisplayName("GET rutinas-ejercicios/rutina/{rutinaAjena}/ordenados → 403")
+    @WithUserDetails(value = ATTACKER, setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    void getEjerciciosOrdenadosDeRutinaAjena_devuelve403() throws Exception {
+        mockMvc.perform(get("/rutinas-ejercicios/rutina/" + rutinaIdOwner + "/ordenados"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("GET rutinas-ejercicios/rutina/{rutinaInexistente}/ordenados → 404")
+    @WithUserDetails(value = ATTACKER, setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    void getEjerciciosOrdenadosDeRutinaInexistente_devuelve404() throws Exception {
+        mockMvc.perform(get("/rutinas-ejercicios/rutina/999999/ordenados"))
+                .andExpect(status().isNotFound());
+    }
+
     @Test
     @DisplayName("GET rutina-ejercicio propio → 200 (control positivo)")
     @WithUserDetails(value = OWNER, setupBefore = TestExecutionEvent.TEST_EXECUTION)

@@ -115,7 +115,8 @@ public class SesionesActivity extends AppCompatActivity {
             }
             @Override
             public void onFail(int code, String message) {
-                // 404 = sin sesiones (vacío benigno, UiFeedback lo silencia); -1/500 → toast.
+                // "Sin sesiones" ya no llega como 404: es 200 con [] y lo atiende onOk.
+                // Aquí solo caen fallos de verdad, y se avisa de todos.
                 UiFeedback.toastError(SesionesActivity.this, code, message);
                 mostrar(new ArrayList<>());
             }

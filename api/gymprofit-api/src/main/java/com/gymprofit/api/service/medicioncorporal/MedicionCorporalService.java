@@ -175,6 +175,8 @@ public class MedicionCorporalService implements IMedicionCorporalService {
 
         securityUtils.checkOwnership(usuarioId);
 
+        exigirUsuarioExistente(usuarioId);
+
         List<MedicionCorporal> lista = medicionCorporalRepository.findByUsuarioId(usuarioId);
 
         return medicionCorporalMapper.toDTOList(lista);
@@ -186,6 +188,8 @@ public class MedicionCorporalService implements IMedicionCorporalService {
         logger.info("Buscando mediciones corporales del usuario id: {} ordenadas por fecha", usuarioId);
 
         securityUtils.checkOwnership(usuarioId);
+
+        exigirUsuarioExistente(usuarioId);
 
         List<MedicionCorporal> lista = medicionCorporalRepository.findByUsuarioIdOrderByFechaDesc(usuarioId);
 
@@ -199,6 +203,8 @@ public class MedicionCorporalService implements IMedicionCorporalService {
 
         securityUtils.checkOwnership(usuarioId);
 
+        exigirUsuarioExistente(usuarioId);
+
         List<MedicionCorporal> lista = medicionCorporalRepository.findByUsuarioIdAndFechaBetween(usuarioId, inicio, fin);
 
         return medicionCorporalMapper.toDTOList(lista);
@@ -210,6 +216,8 @@ public class MedicionCorporalService implements IMedicionCorporalService {
         logger.info("Obteniendo últimas mediciones del usuario id: {}", usuarioId);
 
         securityUtils.checkOwnership(usuarioId);
+
+        exigirUsuarioExistente(usuarioId);
 
         List<MedicionCorporal> lista = medicionCorporalRepository.getUltimasMediciones(usuarioId);
 
@@ -253,6 +261,19 @@ public class MedicionCorporalService implements IMedicionCorporalService {
             return medicionCorporalMapper.toDTO(medicionCorporalRepository.save(medicion));
         } catch (Exception e) {
             throw new UpdateEntityException(MedicionCorporal.class.getSimpleName(), id, e);
+        }
+    }
+
+    /**
+     * Un id de usuario que no existe es un 404, y se comprueba AQUÍ (DEC-033).
+     * Antes se deducía de que la lista saliera vacía, que no es lo mismo: «no hay
+     * datos» y «ese usuario no existe» son dos respuestas distintas, y la app no
+     * podía separarlas. La comprobación va DESPUÉS de la de propiedad para que a
+     * quien no es dueño se le responda 403 sin decirle si el id existe.
+     */
+    private void exigirUsuarioExistente(Integer usuarioId) {
+        if (!usuarioRepository.existsById(usuarioId)) {
+            throw new NotFoundEntityException("El usuario con id " + usuarioId + " no existe");
         }
     }
 }

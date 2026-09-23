@@ -244,6 +244,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
     public List<SesionEntrenamientoDTO> findByUsuarioId(Integer usuarioId) {
         securityUtils.checkOwnership(usuarioId);
 
+        exigirUsuarioExistente(usuarioId);
+
         logger.info("Buscando sesiones de entrenamiento por usuario id: {}", usuarioId);
 
         List<SesionEntrenamiento> sesiones = sesionEntrenamientoRepository.findByUsuarioId(usuarioId);
@@ -255,6 +257,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
     @Override
     public List<SesionEntrenamientoDTO> findByRutinaId(Integer rutinaId) {
         securityUtils.requireAdmin();
+
+        exigirRutinaExistente(rutinaId);
 
         logger.info("Buscando sesiones de entrenamiento por rutina id: {}", rutinaId);
 
@@ -292,6 +296,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
     public List<SesionEntrenamientoDTO> findByUsuarioIdAndCompletadas(Integer usuarioId) {
         securityUtils.checkOwnership(usuarioId);
 
+        exigirUsuarioExistente(usuarioId);
+
         logger.info("Buscando sesiones completadas del usuario id: {}", usuarioId);
 
         List<SesionEntrenamiento> sesiones = sesionEntrenamientoRepository.findByUsuarioIdAndCompletadaTrue(usuarioId);
@@ -304,6 +310,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
     public List<SesionEntrenamientoDTO> findByUsuarioIdAndPendientes(Integer usuarioId) {
         securityUtils.checkOwnership(usuarioId);
 
+        exigirUsuarioExistente(usuarioId);
+
         logger.info("Buscando sesiones pendientes del usuario id: {}", usuarioId);
 
         List<SesionEntrenamiento> sesiones = sesionEntrenamientoRepository.findByUsuarioIdAndCompletadaFalse(usuarioId);
@@ -315,6 +323,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
     @Override
     public List<SesionEntrenamientoDTO> findByUsuarioIdAndFecha(Integer usuarioId, LocalDate fecha) {
         securityUtils.checkOwnership(usuarioId);
+
+        exigirUsuarioExistente(usuarioId);
 
         logger.info("Buscando sesiones del usuario {} en la fecha {}", usuarioId, fecha);
 
@@ -346,6 +356,9 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
     @Override
     public List<SesionEntrenamientoDTO> findByUsuarioIdAndRutinaId(Integer usuarioId, Integer rutinaId) {
         securityUtils.checkOwnership(usuarioId);
+
+        exigirUsuarioExistente(usuarioId);
+        exigirRutinaExistente(rutinaId);
 
         logger.info("Buscando sesiones del usuario {} con rutina {}", usuarioId, rutinaId);
 
@@ -389,6 +402,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
     public List<SesionEntrenamientoDTO> findByUsuarioIdOrderByFecha(Integer usuarioId) {
         securityUtils.checkOwnership(usuarioId);
 
+        exigirUsuarioExistente(usuarioId);
+
         logger.info("Buscando sesiones del usuario {} ordenadas por fecha", usuarioId);
 
         List<SesionEntrenamiento> sesiones = sesionEntrenamientoRepository.getSesionesByUsuarioOrderByFecha(usuarioId);
@@ -400,6 +415,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
     @Override
     public List<SesionEntrenamientoDTO> findCompletadasByUsuario(Integer usuarioId) {
         securityUtils.checkOwnership(usuarioId);
+
+        exigirUsuarioExistente(usuarioId);
 
         logger.info("Buscando sesiones completadas del usuario {} ordenadas por fecha", usuarioId);
 
@@ -565,5 +582,31 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
     private void checkRutinaUtilizable(Rutina rutina) {
         securityUtils.checkOwnershipIfOwned(
                 rutina.getUsuario() == null ? null : rutina.getUsuario().getId());
+    }
+
+    /**
+     * Un id de rutina que no existe es un 404, y se comprueba AQUÍ (DEC-033).
+     * Antes se deducía de que la lista saliera vacía, que no es lo mismo: «no hay
+     * datos» y «esa rutina no existe» son dos respuestas distintas, y la app no
+     * podía separarlas. La comprobación va DESPUÉS de la de propiedad para que a
+     * quien no es dueño se le responda 403 sin decirle si el id existe.
+     */
+    private void exigirRutinaExistente(Integer rutinaId) {
+        if (!rutinaRepository.existsById(rutinaId)) {
+            throw new NotFoundEntityException("La rutina con id " + rutinaId + " no existe");
+        }
+    }
+
+    /**
+     * Un id de usuario que no existe es un 404, y se comprueba AQUÍ (DEC-033).
+     * Antes se deducía de que la lista saliera vacía, que no es lo mismo: «no hay
+     * datos» y «ese usuario no existe» son dos respuestas distintas, y la app no
+     * podía separarlas. La comprobación va DESPUÉS de la de propiedad para que a
+     * quien no es dueño se le responda 403 sin decirle si el id existe.
+     */
+    private void exigirUsuarioExistente(Integer usuarioId) {
+        if (!usuarioRepository.existsById(usuarioId)) {
+            throw new NotFoundEntityException("El usuario con id " + usuarioId + " no existe");
+        }
     }
 }

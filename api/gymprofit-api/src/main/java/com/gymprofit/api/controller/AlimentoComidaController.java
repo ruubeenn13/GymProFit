@@ -5,7 +5,6 @@ import com.gymprofit.api.dto.common.ExistsDTO;
 import com.gymprofit.api.dto.entity.alimentocomida.AlimentoComidaCreateDTO;
 import com.gymprofit.api.dto.entity.alimentocomida.AlimentoComidaDTO;
 import com.gymprofit.api.dto.entity.alimentocomida.AlimentoComidaPatchDTO;
-import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.alimentocomida.IAlimentoComidaService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -117,16 +116,12 @@ public class AlimentoComidaController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Alimentos encontrados",
                     content = @Content(schema = @Schema(implementation = AlimentoComidaDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron alimentos",
+            @ApiResponse(responseCode = "404", description = "La comida indicada no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @GetMapping("/alimentos-comida/comida/{comidaId}")
     public ResponseEntity<List<AlimentoComidaDTO>> obtenerAlimentosPorComida(@PathVariable Integer comidaId) {
         List<AlimentoComidaDTO> alimentosComida = alimentoComidaService.findByComidaId(comidaId);
-
-        if (alimentosComida.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron alimentos para la comida " + comidaId);
-        }
 
         return ResponseEntity.ok(alimentosComida);
     }
@@ -135,16 +130,12 @@ public class AlimentoComidaController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Comidas encontradas",
                     content = @Content(schema = @Schema(implementation = AlimentoComidaDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron comidas",
+            @ApiResponse(responseCode = "404", description = "El alimento indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @GetMapping("/alimentos-comida/alimento/{alimentoId}")
     public ResponseEntity<List<AlimentoComidaDTO>> obtenerComidasPorAlimento(@PathVariable Integer alimentoId) {
         List<AlimentoComidaDTO> alimentosComida= alimentoComidaService.findByAlimentoId(alimentoId);
-
-        if (alimentosComida.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron comidas con el alimento " + alimentoId);
-        }
 
         return ResponseEntity.ok(alimentosComida);
     }

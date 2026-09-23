@@ -233,6 +233,10 @@ class AlimentoComidaServiceTest {
     @Test
     @DisplayName("findByAlimentoId devuelve las comidas que contienen el alimento")
     void findByAlimentoId_devuelve_lista() {
+        // El servicio comprueba que el recurso padre existe antes de listar: una lista
+        // vacía ya no significa 404 (DEC-033), así que la existencia hay que simularla.
+        when(alimentoRepository.existsById(20)).thenReturn(true);
+
         when(alimentoComidaRepository.findByAlimentoId(20)).thenReturn(List.of(alimentoComida));
         when(alimentoComidaMapper.toDTOList(any())).thenReturn(List.of(alimentoComidaDTO));
 

@@ -32,6 +32,7 @@
     <string name="feedback_cargando_servidor">Activando el servidor, puede tardar unos segundos…</string>
     <string name="feedback_error_cold_start">Activando el servidor, reinténtalo en unos segundos</string>
     <string name="feedback_error_servidor">Error del servidor, inténtalo más tarde</string>
+    <string name="feedback_error_no_encontrado">No hemos encontrado eso. Puede que ya no exista.</string>
     <string name="feedback_error_generico">Algo salió mal, inténtalo de nuevo</string>
     <string name="feedback_lista_vacia">No hay nada aún</string>
 

@@ -145,6 +145,8 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
     public List<ObjetivoPersonalDTO> findByUsuarioId(Integer usuarioId) {
         securityUtils.checkOwnership(usuarioId);
 
+        exigirUsuarioExistente(usuarioId);
+
         logger.info("Buscando objetivos personales del usuario id: {}", usuarioId);
 
         List<ObjetivoPersonal> objetivosPersonales = objetivoPersonalRepository.findByUsuarioId(usuarioId);
@@ -156,6 +158,8 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
     @Override
     public List<ObjetivoPersonalDTO> findByUsuarioIdOrdenados(Integer usuarioId) {
         securityUtils.checkOwnership(usuarioId);
+
+        exigirUsuarioExistente(usuarioId);
 
         logger.info("Buscando objetivos personales del usuario id: {} ordenados por fecha", usuarioId);
 
@@ -169,6 +173,8 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
     public List<ObjetivoPersonalDTO> findPendientesByUsuarioId(Integer usuarioId) {
         securityUtils.checkOwnership(usuarioId);
 
+        exigirUsuarioExistente(usuarioId);
+
         logger.info("Buscando objetivos personales pendientes del usuario id: {}", usuarioId);
 
         List<ObjetivoPersonal> objetivosPersonales = objetivoPersonalRepository.findByUsuarioIdAndCompletadoFalse(usuarioId);
@@ -180,6 +186,8 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
     @Override
     public List<ObjetivoPersonalDTO> findCompletadosByUsuarioId(Integer usuarioId) {
         securityUtils.checkOwnership(usuarioId);
+
+        exigirUsuarioExistente(usuarioId);
 
         logger.info("Buscando objetivos personales completados del usuario id: {}", usuarioId);
 
@@ -278,6 +286,19 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
             return objetivoPersonalMapper.toDTO(objetivoPersonalRepository.save(objetivo));
         } catch (Exception e) {
             throw new UpdateEntityException(ObjetivoPersonal.class.getSimpleName(), id, e);
+        }
+    }
+
+    /**
+     * Un id de usuario que no existe es un 404, y se comprueba AQUÍ (DEC-033).
+     * Antes se deducía de que la lista saliera vacía, que no es lo mismo: «no hay
+     * datos» y «ese usuario no existe» son dos respuestas distintas, y la app no
+     * podía separarlas. La comprobación va DESPUÉS de la de propiedad para que a
+     * quien no es dueño se le responda 403 sin decirle si el id existe.
+     */
+    private void exigirUsuarioExistente(Integer usuarioId) {
+        if (!usuarioRepository.existsById(usuarioId)) {
+            throw new NotFoundEntityException("El usuario con id " + usuarioId + " no existe");
         }
     }
 }

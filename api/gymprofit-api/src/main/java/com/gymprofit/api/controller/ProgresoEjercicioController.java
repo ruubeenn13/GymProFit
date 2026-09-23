@@ -6,7 +6,6 @@ import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioCreateDTO
 import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioDTO;
 import com.gymprofit.api.dto.entity.progresoejercicio.RecordDestacadoDTO;
 import com.gymprofit.api.dto.entity.progresoejercicio.ProgresoEjercicioPatchDTO;
-import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.progresoejercicio.IProgresoEjercicioService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -123,17 +122,13 @@ public class ProgresoEjercicioController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Progresos encontrados",
                     content = @Content(schema = @Schema(implementation = ProgresoEjercicioDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron progresos para este usuario",
+            @ApiResponse(responseCode = "404", description = "El usuario indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Lista todos los progresos registrados por un usuario
     @GetMapping("/progreso-ejercicios/usuario/{usuarioId}")
     public ResponseEntity<List<ProgresoEjercicioDTO>> obtenerProgresoPorUsuario(@PathVariable Integer usuarioId) {
         List<ProgresoEjercicioDTO> progresoEjercicioDTOS = progresoEjercicioService.findByUsuarioId(usuarioId);
-
-        if (progresoEjercicioDTOS.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron progresos para el usuario con id " + usuarioId);
-        }
 
         return ResponseEntity.ok(progresoEjercicioDTOS);
     }
@@ -142,17 +137,13 @@ public class ProgresoEjercicioController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Progresos encontrados",
                     content = @Content(schema = @Schema(implementation = ProgresoEjercicioDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron progresos para este ejercicio",
+            @ApiResponse(responseCode = "404", description = "El ejercicio indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Lista los progresos registrados para un ejercicio concreto
     @GetMapping("/progreso-ejercicios/ejercicio/{ejercicioId}")
     public ResponseEntity<List<ProgresoEjercicioDTO>> obtenerProgresoPorEjercicio(@PathVariable Integer ejercicioId) {
         List<ProgresoEjercicioDTO> progresoEjercicioDTOS = progresoEjercicioService.findByEjercicioId(ejercicioId);
-
-        if (progresoEjercicioDTOS.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron progresos para el ejercicio con id " + ejercicioId);
-        }
 
         return ResponseEntity.ok(progresoEjercicioDTOS);
     }
@@ -161,17 +152,13 @@ public class ProgresoEjercicioController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Progresos encontrados ordenados",
                     content = @Content(schema = @Schema(implementation = ProgresoEjercicioDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron progresos para este usuario",
+            @ApiResponse(responseCode = "404", description = "El usuario indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Lista los progresos de un usuario ordenados de más reciente a más antiguo
     @GetMapping("/progreso-ejercicios/usuario/{usuarioId}/ordenados")
     public ResponseEntity<List<ProgresoEjercicioDTO>> obtenerProgresoPorUsuarioOrdenado(@PathVariable Integer usuarioId) {
         List<ProgresoEjercicioDTO> progresoEjercicioDTOS = progresoEjercicioService.findByUsuarioIdOrdenado(usuarioId);
-
-        if (progresoEjercicioDTOS.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron progresos para el usuario con id " + usuarioId);
-        }
 
         return ResponseEntity.ok(progresoEjercicioDTOS);
     }
@@ -180,7 +167,7 @@ public class ProgresoEjercicioController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Progresos encontrados",
                     content = @Content(schema = @Schema(implementation = ProgresoEjercicioDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron progresos",
+            @ApiResponse(responseCode = "404", description = "El usuario o el ejercicio indicados no existen",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Lista el progreso de un usuario en un ejercicio concreto
@@ -189,10 +176,6 @@ public class ProgresoEjercicioController {
                                                                                           @PathVariable Integer ejercicioId) {
         List<ProgresoEjercicioDTO> progresoEjercicioDTOS = progresoEjercicioService.findByUsuarioIdAndEjercicioId(usuarioId, ejercicioId);
 
-        if (progresoEjercicioDTOS.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron progresos para el usuario " + usuarioId + " en el ejercicio " + ejercicioId);
-        }
-
         return ResponseEntity.ok(progresoEjercicioDTOS);
     }
 
@@ -200,7 +183,7 @@ public class ProgresoEjercicioController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Progreso encontrado",
                     content = @Content(schema = @Schema(implementation = ProgresoEjercicioDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontró progreso",
+            @ApiResponse(responseCode = "404", description = "El usuario o el ejercicio indicados no existen",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Devuelve el historial de progreso de un usuario en un ejercicio, ordenado por fecha
@@ -208,10 +191,6 @@ public class ProgresoEjercicioController {
     public ResponseEntity<List<ProgresoEjercicioDTO>> obtenerProgresoPorUsuarioYEjercicioOrdenado(@PathVariable Integer usuarioId,
                                                                                                   @PathVariable Integer ejercicioId) {
         List<ProgresoEjercicioDTO> progresoEjercicioDTOS = progresoEjercicioService.getProgresoByUsuarioAndEjercicio(usuarioId, ejercicioId);
-
-        if (progresoEjercicioDTOS.isEmpty()) {
-            throw new NotFoundEntityException("No se encontró historial para el usuario " + usuarioId + " en el ejercicio " + ejercicioId);
-        }
 
         return ResponseEntity.ok(progresoEjercicioDTOS);
     }

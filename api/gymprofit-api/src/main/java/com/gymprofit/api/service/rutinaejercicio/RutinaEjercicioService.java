@@ -202,6 +202,8 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
     public List<RutinaEjercicioDTO> findByEjercicioId(Integer ejercicioId) {
         logger.info("Buscando rutinas que contienen el ejercicio id: {}", ejercicioId);
 
+        exigirEjercicioExistente(ejercicioId);
+
         List<RutinaEjercicio> lista = rutinaEjercicioRepository.findByEjercicioId(ejercicioId);
 
         return rutinaEjercicioMapper.toDTOList(lista);
@@ -211,6 +213,15 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
     @Override
     public List<RutinaEjercicioDTO> findByRutinaIdOrdenado(Integer rutinaId) {
         logger.info("Buscando ejercicios de rutina id: {} ordenados por posición", rutinaId);
+
+        // Las dos comprobaciones que hace findByRutinaId y aquí faltaban: la rutina
+        // tiene que existir (404) y hay que poder verla (403). Mientras la lista vacía
+        // respondía 404 el agujero quedaba medio tapado; al devolver 200 con [] se
+        // vería el contenido de la rutina privada de otro (DEC-014, DEC-027).
+        Rutina rutina = rutinaRepository.findById(rutinaId)
+                .orElseThrow(() -> new NotFoundEntityException("La rutina con id " + rutinaId + " no existe"));
+
+        checkRutinaReadAccess(rutina);
 
         List<RutinaEjercicio> lista = rutinaEjercicioRepository.findByRutinaIdOrderByOrdenAsc(rutinaId);
 
@@ -309,6 +320,19 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
             return rutinaEjercicioMapper.toDTO(rutinaEjercicioRepository.save(re));
         } catch (Exception e) {
             throw new UpdateEntityException(RutinaEjercicio.class.getSimpleName(), id, e);
+        }
+    }
+
+    /**
+     * Un id de ejercicio que no existe es un 404, y se comprueba AQUÍ (DEC-033).
+     * Antes se deducía de que la lista saliera vacía, que no es lo mismo: «no hay
+     * datos» y «ese ejercicio no existe» son dos respuestas distintas, y la app no
+     * podía separarlas. La comprobación va DESPUÉS de la de propiedad para que a
+     * quien no es dueño se le responda 403 sin decirle si el id existe.
+     */
+    private void exigirEjercicioExistente(Integer ejercicioId) {
+        if (!ejercicioRepository.existsById(ejercicioId)) {
+            throw new NotFoundEntityException("El ejercicio con id " + ejercicioId + " no existe");
         }
     }
 }

@@ -5,7 +5,6 @@ import com.gymprofit.api.dto.common.ExistsDTO;
 import com.gymprofit.api.dto.entity.ejerciciorealizado.EjercicioRealizadoCreateDTO;
 import com.gymprofit.api.dto.entity.ejerciciorealizado.EjercicioRealizadoDTO;
 import com.gymprofit.api.dto.entity.ejerciciorealizado.EjercicioRealizadoPatchDTO;
-import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.ejerciciorealizado.IEjercicioRealizadoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -122,17 +121,13 @@ public class EjercicioRealizadoController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ejercicios realizados encontrados",
                     content = @Content(schema = @Schema(implementation = EjercicioRealizadoDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron ejercicios realizados para esa sesión",
+            @ApiResponse(responseCode = "404", description = "La sesión indicada no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Lista los ejercicios realizados de una sesión concreta
     @GetMapping("/ejercicios-realizados/sesion/{sesionId}")
     public ResponseEntity<List<EjercicioRealizadoDTO>> obtenerPorSesion(@PathVariable Integer sesionId) {
         List<EjercicioRealizadoDTO> ejerciciosRealizados = ejercicioRealizadoService.findBySesionId(sesionId);
-
-        if (ejerciciosRealizados.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron ejercicios realizdos para la sesión con id " + sesionId);
-        }
 
         return ResponseEntity.ok(ejerciciosRealizados);
     }
@@ -141,17 +136,13 @@ public class EjercicioRealizadoController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ejercicios realizados encontrados",
                     content = @Content(schema = @Schema(implementation = EjercicioRealizadoDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron ejercicios realizados para ese ejercicio",
+            @ApiResponse(responseCode = "404", description = "El ejercicio indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Lista todas las ejecuciones registradas de un ejercicio concreto
     @GetMapping("/ejercicios-realizados/ejercicio/{ejercicioId}")
     public ResponseEntity<List<EjercicioRealizadoDTO>> obtenerPorEjercicio(@PathVariable Integer ejercicioId) {
         List<EjercicioRealizadoDTO> ejerciciosRealizados = ejercicioRealizadoService.findByEjercicioId(ejercicioId);
-
-        if (ejerciciosRealizados.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron ejercicios realizados para el ejercicio con id " + ejercicioId);
-        }
 
         return ResponseEntity.ok(ejerciciosRealizados);
     }
@@ -160,7 +151,7 @@ public class EjercicioRealizadoController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ejercicios realizados encontrados",
                     content = @Content(schema = @Schema(implementation = EjercicioRealizadoDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron ejercicios realizados para esa sesión y ejercicio",
+            @ApiResponse(responseCode = "404", description = "La sesión o el ejercicio indicados no existen",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Lista las ejecuciones de un ejercicio concreto dentro de una sesión concreta
@@ -168,10 +159,6 @@ public class EjercicioRealizadoController {
     public ResponseEntity<List<EjercicioRealizadoDTO>> obtenerPorSesionYEjercicio(@PathVariable Integer sesionId,
                                                                                   @PathVariable Integer ejercicioId) {
         List<EjercicioRealizadoDTO> ejerciciosRealizados = ejercicioRealizadoService.findBySesionIdAndEjercicioId(sesionId, ejercicioId);
-
-        if (ejerciciosRealizados.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron ejercicios realizados para la sesión " + sesionId + " y ejercicio " + ejercicioId);
-        }
 
         return ResponseEntity.ok(ejerciciosRealizados);
     }
