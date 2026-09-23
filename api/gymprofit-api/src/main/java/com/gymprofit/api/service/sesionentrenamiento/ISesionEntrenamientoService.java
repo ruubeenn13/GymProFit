@@ -1,6 +1,7 @@
 package com.gymprofit.api.service.sesionentrenamiento;
 
 
+import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionCompletaCreateDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoCreateDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.VolumenMuscularDTO;
@@ -22,6 +23,15 @@ public interface ISesionEntrenamientoService {
     SesionEntrenamientoDTO findById(Integer id);
     // Crea una nueva sesión de entrenamiento.
     SesionEntrenamientoDTO save(SesionEntrenamientoCreateDTO sesionEntrenamientoCreateDTO);
+
+    /**
+     * Guarda la sesión ENTERA —con sus ejercicios y sus series— en una sola
+     * transacción, y de forma idempotente (GP-006).
+     *
+     * @param dto la sesión completa, con su clave de intento de guardado.
+     * @return la sesión guardada, o la que ya existía si la clave se repite.
+     */
+    SesionEntrenamientoDTO guardarCompleta(SesionCompletaCreateDTO dto);
     // Sustituye los datos de una sesión existente.
     SesionEntrenamientoDTO modify(SesionEntrenamientoDTO sesionEntrenamientoDTO);
 

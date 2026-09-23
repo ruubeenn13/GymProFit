@@ -1,12 +1,18 @@
 package com.gymprofit.api.service.sesionentrenamiento;
 
+import com.gymprofit.api.dto.entity.serierealizada.SerieRealizadaCreateDTO;
+import com.gymprofit.api.dto.entity.sesionentrenamiento.EjercicioSesionCreateDTO;
+import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionCompletaCreateDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoCreateDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoPatchDTO;
 import com.gymprofit.api.config.security.SecurityUtils;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.VolumenMuscularDTO;
 import com.gymprofit.api.repository.jpa.IEjercicioRealizadoRepository;
+import com.gymprofit.api.entity.Ejercicio;
+import com.gymprofit.api.entity.EjercicioRealizado;
 import com.gymprofit.api.entity.Rutina;
+import com.gymprofit.api.entity.SerieRealizada;
 import com.gymprofit.api.entity.SesionEntrenamiento;
 import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.exceptions.CreateEntityException;
@@ -15,6 +21,7 @@ import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.UnauthorizedException;
 import com.gymprofit.api.exceptions.UpdateEntityException;
 import com.gymprofit.api.mappers.SesionEntrenamientoMapper;
+import com.gymprofit.api.repository.jpa.IEjercicioRepository;
 import com.gymprofit.api.repository.jpa.IRutinaRepository;
 import com.gymprofit.api.repository.jpa.ISesionEntrenamientoRepository;
 import com.gymprofit.api.repository.jpa.IUsuarioRepository;
@@ -25,11 +32,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.dao.DataIntegrityViolationException;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 // ============================================================
 // SesionEntrenamientoService — implementa la gestión de sesiones de entrenamiento.
@@ -50,6 +61,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
     private final SecurityUtils securityUtils;
     // Necesario para el volumen por músculo: el dato vive en los ejercicios realizados.
     private final IEjercicioRealizadoRepository ejercicioRealizadoRepository;
+    // El guardado completo valida contra el catálogo cada ejercicio que llega.
+    private final IEjercicioRepository ejercicioRepository;
     // Logger para trazar las operaciones del servicio.
     private final Logger logger = LoggerFactory.getLogger(SesionEntrenamientoService.class);
 
@@ -138,6 +151,142 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         } catch (Exception e) {
             throw new CreateEntityException(SesionEntrenamiento.class.getSimpleName(), sesionEntrenamientoCreateDTO, e);
         }
+    }
+
+    /**
+     * Guarda la sesión entera —sesión, ejercicios y series— en UNA transacción y de
+     * forma idempotente.
+     *
+     * <p><strong>Por qué existe.</strong> El camino viejo obligaba a crear primero la
+     * sesión para tener un id que poner en cada ejercicio, y a mandar después un POST
+     * por ejercicio. Si fallaba uno de los de en medio quedaba una sesión a medias, y
+     * la pantalla ya se había cerrado dándola por buena.
+     *
+     * <p><strong>Idempotencia.</strong> Un guardado atómico obliga a poder reintentar,
+     * y un reintento sin protección duplica entrenamientos: con mala red la petición
+     * puede llegar y guardarse y perderse solo la respuesta. Por eso el cliente manda
+     * una clave por intento y aquí se mira ANTES de crear nada. Y se vuelve a mirar si
+     * la inserción choca contra el índice único, que es lo que pasa cuando dos
+     * reintentos llegan a la vez: la comprobación previa no basta, porque entre la
+     * consulta y la inserción cabe otra petición.
+     *
+     * @param dto la sesión completa.
+     * @return la sesión recién creada, o la que ya existía para esa clave.
+     */
+    @Override
+    @Transactional
+    public SesionEntrenamientoDTO guardarCompleta(SesionCompletaCreateDTO dto) {
+        // El dueño sale del token, nunca del cuerpo (DEC-013).
+        Integer usuarioId = securityUtils.getCurrentUserId();
+
+        logger.info("Guardado completo de sesión para usuario id: {} con clave {}",
+                usuarioId, dto.getClaveIdempotencia());
+
+        // Reintento reconocido: se devuelve lo que ya hay y no se crea nada.
+        Optional<SesionEntrenamiento> yaGuardada =
+                sesionEntrenamientoRepository.findByUsuarioIdAndIdempotenciaClave(usuarioId, dto.getClaveIdempotencia());
+        if (yaGuardada.isPresent()) {
+            logger.info("Clave de idempotencia repetida: se devuelve la sesión {}", yaGuardada.get().getId());
+            return sesionEntrenamientoMapper.toDTO(yaGuardada.get());
+        }
+
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + usuarioId + " no existe"));
+
+        SesionEntrenamiento sesion = new SesionEntrenamiento();
+        sesion.setUsuario(usuario);
+        sesion.setIdempotenciaClave(dto.getClaveIdempotencia());
+        sesion.setDuracionMinutos(dto.getDuracionMinutos());
+        sesion.setValoracion(dto.getValoracion());
+        sesion.setNotas(dto.getNotas());
+        sesion.setCompletada(dto.getCompletada() == null || dto.getCompletada());
+
+        if (dto.getRutinaId() != null) {
+            Rutina rutina = rutinaRepository.findById(dto.getRutinaId())
+                    .orElseThrow(() -> new NotFoundEntityException("La rutina con id " + dto.getRutinaId() + " no existe"));
+            checkRutinaUtilizable(rutina);
+            sesion.setRutina(rutina);
+        }
+
+        sesion.setFechaInicio(dto.getFechaInicio() != null ? dto.getFechaInicio() : LocalDateTime.now());
+        int minutos = dto.getDuracionMinutos() != null ? dto.getDuracionMinutos() : 0;
+        sesion.setFechaFin(sesion.getFechaInicio().plusMinutes(minutos));
+
+        SesionEntrenamiento guardada;
+        try {
+            // Se persiste la sesión antes que los ejercicios porque estos la necesitan
+            // como padre; da igual para la atomicidad, que la garantiza la transacción:
+            // si un ejercicio revienta, esta fila se va con él.
+            guardada = sesionEntrenamientoRepository.save(sesion);
+
+            if (dto.getEjercicios() != null) {
+                for (EjercicioSesionCreateDTO ejercicioDTO : dto.getEjercicios()) {
+                    ejercicioRealizadoRepository.save(construirEjercicio(guardada, ejercicioDTO));
+                }
+            }
+
+            // Fuerza el INSERT ahora: sin esto, un choque contra el índice único saltaría
+            // al confirmar la transacción, fuera de este try, y no habría dónde atraparlo.
+            sesionEntrenamientoRepository.flush();
+        } catch (DataIntegrityViolationException e) {
+            // Dos reintentos a la vez: el otro ganó la carrera y ya guardó esta sesión.
+            return sesionEntrenamientoRepository
+                    .findByUsuarioIdAndIdempotenciaClave(usuarioId, dto.getClaveIdempotencia())
+                    .map(sesionEntrenamientoMapper::toDTO)
+                    .orElseThrow(() -> e);
+        }
+
+        SesionEntrenamientoDTO resultado = sesionEntrenamientoMapper.toDTO(guardada);
+        if (Boolean.TRUE.equals(guardada.getCompletada())) {
+            List<String> nuevos = logroService.evaluarLogros(usuarioId);
+            if (!nuevos.isEmpty()) resultado.setNuevosLogros(nuevos);
+        }
+        return resultado;
+    }
+
+    /**
+     * Arma un ejercicio de la sesión con sus series.
+     *
+     * <p>El ejercicio se busca en el catálogo y NO se crea: un id que no existe es un
+     * 404 que tumba el guardado entero, que es justo lo que GP-006 quiere. El resumen
+     * (series completadas y peso usado) se deduce de las series, igual que en el alta
+     * suelta, para que no puedan contradecirse.
+     */
+    private EjercicioRealizado construirEjercicio(SesionEntrenamiento sesion, EjercicioSesionCreateDTO dto) {
+        Ejercicio ejercicio = ejercicioRepository.findById(dto.getEjercicioId())
+                .orElseThrow(() -> new NotFoundEntityException("El ejercicio con id " + dto.getEjercicioId() + " no existe"));
+
+        EjercicioRealizado realizado = new EjercicioRealizado();
+        realizado.setSesion(sesion);
+        realizado.setEjercicio(ejercicio);
+        realizado.setRepeticionesReales(dto.getRepeticionesReales());
+        realizado.setNotas(dto.getNotas());
+
+        BigDecimal pesoMaximo = null;
+        int completadas = 0;
+
+        if (dto.getSeries() != null) {
+            for (SerieRealizadaCreateDTO serieDTO : dto.getSeries()) {
+                SerieRealizada serie = new SerieRealizada();
+                serie.setNumero(serieDTO.getNumero());
+                serie.setRepeticiones(serieDTO.getRepeticiones());
+                serie.setPeso(serieDTO.getPeso());
+                serie.setCompletada(serieDTO.getCompletada() == null || serieDTO.getCompletada());
+                serie.setEjercicioRealizado(realizado);
+                realizado.getSeries().add(serie);
+
+                if (Boolean.TRUE.equals(serie.getCompletada())) completadas++;
+                if (serieDTO.getPeso() != null
+                        && (pesoMaximo == null || serieDTO.getPeso().compareTo(pesoMaximo) > 0)) {
+                    pesoMaximo = serieDTO.getPeso();
+                }
+            }
+        }
+
+        realizado.setSeriesCompletadas(completadas);
+        realizado.setPesoUsado(pesoMaximo);
+
+        return realizado;
     }
 
     // Sustituye los datos de una sesión existente (fechas, calorías, notas, rutina asociada...).

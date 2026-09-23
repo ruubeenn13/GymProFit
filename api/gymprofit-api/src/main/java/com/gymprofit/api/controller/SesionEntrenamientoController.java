@@ -1,6 +1,7 @@
 package com.gymprofit.api.controller;
 
 import com.gymprofit.api.dto.common.CountDTO;
+import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionCompletaCreateDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoCreateDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoPatchDTO;
@@ -85,6 +86,30 @@ public class SesionEntrenamientoController {
         SesionEntrenamientoDTO sesion = sesionEntrenamientoService.save(sesionEntrenamientoCreateDTO);
 
         return ResponseEntity.ok(sesion);
+    }
+
+    @Operation(summary = "Guarda una sesión COMPLETA (sesión + ejercicios + series) de forma atómica e idempotente",
+            description = "Guarda todo en una transacción: o se guarda entero o no se guarda nada. " +
+                    "La clave de idempotencia es obligatoria; si llega repetida se devuelve la sesión " +
+                    "que ya existía en vez de crear otra, para que un reintento no duplique entrenamientos.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Sesión guardada, o la que ya existía para esa clave",
+                    content = @Content(schema = @Schema(implementation = SesionEntrenamientoDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos o falta la clave de idempotencia",
+                    content = @Content(schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "403", description = "La rutina indicada no es tuya",
+                    content = @Content(schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "404", description = "La rutina o alguno de los ejercicios no existe",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    // Ruta NUEVA y no un campo opcional del POST de siempre: así el camino viejo
+    // se queda exactamente como está para las builds repartidas fuera de Play, y
+    // esta puede exigir la clave de idempotencia sin volverla opcional —que es lo
+    // único que la hace servir para algo—.
+    @PostMapping("/sesiones/completa")
+    public ResponseEntity<SesionEntrenamientoDTO> guardarSesionCompleta(
+            @Valid @RequestBody SesionCompletaCreateDTO sesionCompletaCreateDTO) {
+        return ResponseEntity.ok(sesionEntrenamientoService.guardarCompleta(sesionCompletaCreateDTO));
     }
 
     @Operation(summary = "Modifica una sesión de entrenamiento existente")
