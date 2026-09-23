@@ -105,6 +105,15 @@
     <string name="rutinas_fuerza">Rutina de Fuerza</string>
     <string name="rutinas_fuerza_desc">8 ejercicios · 60 minutos</string>
     <string name="rutinas_crear_nueva">Crear nueva rutina</string>
+
+    <!-- Estado vacío de "Mis rutinas": la cuenta sin rutinas propias ve este bloque
+         y, debajo, las predefinidas ofrecidas como sugerencia. Antes veía las seis
+         predefinidas directamente bajo el rótulo "Mis rutinas", que no eran suyas. -->
+    <string name="rutinas_vacio_titulo">Aún no tienes rutinas propias</string>
+    <string name="rutinas_vacio_cuerpo">Crea la tuya con el botón de arriba, o empieza por una de las rutinas de GymProFit.</string>
+    <string name="rutinas_vacio_sugerencias">Rutinas para empezar</string>
+    <!-- Lista vacía por el filtro de nivel, no por falta de rutinas. -->
+    <string name="rutinas_vacio_filtro">No hay rutinas de este nivel</string>
     <string name="rutinas_todos">Todos</string>
     <string name="rutinas_principiante">Principiantes</string>
     <string name="rutinas_intermedio">Intermedio</string>

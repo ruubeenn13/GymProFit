@@ -111,3 +111,82 @@ intermedio.
 
 La reserva es geométrica: no depende del idioma ni del tema, así que no hay
 cuatro combinaciones que comprobar aquí.
+
+---
+
+## GP-060 · «Mis rutinas» enseña seis rutinas ajenas a quien no tiene ninguna
+
+Corresponde a **P-14** de la auditoría.
+
+### Qué pasaba
+
+`cargarRutinas()` pedía **siempre** las predefinidas y, encima, añadía las del
+usuario. Con una cuenta recién creada la lista traía seis rutinas del catálogo
+bajo el rótulo «Mis rutinas», que no son suyas, y el `tvEmpty` del layout era
+inalcanzable porque la lista nunca llegaba vacía.
+
+### Qué se ha hecho
+
+Las predefinidas dejan de mezclarse con las propias:
+
+1. Se piden **primero las propias**. Si hay alguna, la pantalla muestra solo esas
+   —que es lo único que «Mis rutinas» puede prometer.
+2. Si no hay ninguna, se piden las predefinidas y se muestran **dentro del estado
+   vacío**: un bloque con «Aún no tienes rutinas propias», la invitación a crear
+   una, y el rótulo **«Rutinas para empezar»** que atribuye las tarjetas de debajo
+   a GymProFit y no al usuario.
+3. El bloque es un ítem del `ConcatAdapter` (`RutinasVacioHeaderAdapter`,
+   `item_rutinas_vacio.xml`), entre la tarjeta «+ Nueva rutina» y el listado, para
+   que se desplace con la lista en lugar de flotar encima.
+
+Un invitado (`usuarioId == -1`) entra directo por el camino 2: no tiene rutinas
+propias que pedir, pero sigue viendo por dónde se empieza.
+
+### El 404 que estaba escondido debajo
+
+Al probarlo, la cuenta `vacia` seguía sin ver nada. El motivo no estaba en la
+pantalla: **la API responde `404` a una lista vacía**, no `200` con `[]`.
+
+```
+GET /api/rutinas/usuario/5080/activas  →  404
+```
+
+Es deliberado —`RutinaController#obtenerRutinasActivasPorUsuario` lanza
+`NotFoundEntityException` cuando la consulta no devuelve filas— y el contrato no
+se toca desde aquí (CLAUDE.md: hay builds repartidas fuera de Play que lo
+consumen). Así que **la pantalla lo traduce**: en estas dos llamadas un `404` no
+es un fallo, es el caso vacío, y no genera aviso al usuario. Cualquier otro
+código sí se avisa, y entonces la lista se deja vacía en vez de enseñar
+predefinidas que podrían estar tapando las del usuario.
+
+Esto explica también por qué el código anterior mezclaba: pedía las predefinidas
+primero justamente porque las propias «fallaban» cuando no había ninguna.
+
+### `tvEmpty` deja de ser código muerto
+
+Ahora es alcanzable, y dice dos cosas distintas según el caso:
+
+- Filtro de nivel sin resultados → «No hay rutinas de este nivel»
+  (`rutinas_vacio_filtro`).
+- Lista vacía sin filtro (solo ocurre tras un fallo de red) → «No hay nada aún»
+  (`feedback_lista_vacia`).
+
+### Consecuencia que conviene tener presente
+
+Una cuenta **con** rutinas propias ya no ve las predefinidas en esta pantalla.
+Es lo que se sigue de la decisión —las predefinidas son sugerencia de arranque—,
+y para el administrador no hay pérdida porque las gestiona desde el panel de
+administración. Si algún día se quiere un acceso permanente al catálogo de
+rutinas, es una sección aparte, no un mezclado bajo «Mis rutinas».
+
+### Verificación
+
+| Caso | Captura | Resultado |
+|---|---|---|
+| Cuenta `vacia`, ES, oscuro | `gp060-vacia-es-oscuro.png` | Estado vacío + «RUTINAS PARA EMPEZAR» sobre las seis predefinidas |
+| Cuenta `vacia`, EN, claro | `gp060-vacia-en-claro.png` | Igual, traducido y con el tema claro |
+| Cuenta `prueba` (2 rutinas propias), ES, oscuro | `gp060-prueba-es-oscuro.png` | Solo sus dos rutinas; ni bloque vacío ni predefinidas |
+| Filtro «Avanzado» sin resultados, ES, oscuro | `gp060-filtro-es-oscuro.png` | `tvEmpty` visible con «No hay rutinas de este nivel» |
+
+Cadenas nuevas en `values/strings.xml` y `values-en/strings.xml`. Los dos títulos
+del bloque llevan `accessibilityHeading="true"`.
