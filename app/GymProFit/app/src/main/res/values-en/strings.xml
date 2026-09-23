@@ -276,7 +276,7 @@
     <string name="sesiones_sin_rutina">No routine linked</string>
     <string name="sesiones_calorias_estimadas">Estimated calories</string>
     <string name="sesiones_valoracion">Session rating</string>
-    <string name="sesiones_valoracion_fmt">⭐ %d/5</string>
+    <string name="sesiones_valoracion_fmt">Rating: %d/5</string>
     <string name="sesiones_ejercicios_sesion">Session exercises</string>
     <string name="sesiones_peso_hint">Weight (kg)</string>
     <string name="sesiones_reps_hint">Reps</string>
@@ -292,8 +292,8 @@
     <string name="medicion_guardar">Save</string>
     <string name="medicion_fecha_ultima">Last measurement: %s</string>
     <string name="medicion_grafica_peso">WEIGHT TREND</string>
-    <string name="medicion_mas_detalles">More details ▾</string>
-    <string name="medicion_menos_detalles">Less details ▴</string>
+    <string name="medicion_mas_detalles">More details</string>
+    <string name="medicion_menos_detalles">Less details</string>
     <string name="grafica_met_peso">Weight</string>
     <string name="grafica_met_grasa">Fat</string>
     <string name="grafica_met_cintura">Waist</string>
@@ -462,7 +462,7 @@
     <string name="resumen_seccion_sesion">Session</string>
     <string name="resumen_seccion_stats">My Statistics</string>
     <string name="resumen_seccion_logros">Unlocked Achievements</string>
-    <string name="resumen_completada">✓ Completed</string>
+    <string name="resumen_completada">Completed</string>
     <string name="resumen_sin_logros">No achievements unlocked yet</string>
     <string name="resumen_stat_sesiones">Total sessions</string>
     <string name="resumen_stat_completadas">Completed</string>

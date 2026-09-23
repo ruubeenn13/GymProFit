@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ic_logro_maquina — logro MAQUINA (10 objetivos): corona.
+  Es el techo de la escala de logros, y la corona es lo único que se lee como
+  "por encima del trofeo" sin repetir ic_trofeo, que ya usa el récord de inicio.
+
+  Trazo abierto de 1,9 sobre lienzo de 24, como ic_objetivo_*: la familia entera
+  se lee igual a 36 y a 44 dp. El color NO vive aquí, lo pone app:tint desde la
+  fila, así que el mismo archivo sirve en claro y en oscuro.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="24" android:viewportHeight="24">
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="?attr/colorOnSurfaceVariant"
+        android:strokeWidth="1.9"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M4.4,19.8 h15.2"/>
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="?attr/colorOnSurfaceVariant"
+        android:strokeWidth="1.9"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M3.4,7.4 l4.4,3.8 L12,4.2 l4.2,7 l4.4,-3.8 l-1.9,9.2 H5.3 z"/>
+</vector>

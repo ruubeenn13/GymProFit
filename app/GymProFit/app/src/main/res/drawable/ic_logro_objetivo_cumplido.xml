@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ic_logro_objetivo_cumplido — logro OBJETIVO_CUMPLIDO: diana con dardo clavado.
+
+  La diana sola ya es ic_objetivo (objetivos personales del perfil), así que lo
+  que distingue a ESTE es el dardo: el objetivo no está planteado, está cumplido.
+  Se probó antes con una marca de verificación encima de la diana y a 34 dp los
+  dos trazos se cruzaban con los aros y el conjunto se leía como un garabato; el
+  dardo entra desde fuera y no pisa ningún aro.
+
+  Trazo abierto de 1,9 sobre lienzo de 24, como ic_objetivo_*: la familia entera
+  se lee igual a 36 y a 44 dp. El color NO vive aquí, lo pone app:tint desde la
+  fila, así que el mismo archivo sirve en claro y en oscuro.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="24" android:viewportHeight="24">
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="?attr/colorOnSurfaceVariant"
+        android:strokeWidth="1.9"
+        android:strokeLineCap="round"
+        android:pathData="M16.4,7.1 a7.3,7.3 0 1,1 -3.5,-2.9"/>
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="?attr/colorOnSurfaceVariant"
+        android:strokeWidth="1.9"
+        android:strokeLineCap="round"
+        android:pathData="M14.4,10.4 a3.6,3.6 0 1,1 -1.9,-1.8"/>
+    <path
+        android:fillColor="?attr/colorOnSurfaceVariant"
+        android:pathData="M10.6,11.1 m-1.5,0 a1.5,1.5 0 1,0 3,0 a1.5,1.5 0 1,0 -3,0"/>
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="?attr/colorOnSurfaceVariant"
+        android:strokeWidth="1.9"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M21,2.6 L10.6,11.1"/>
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="?attr/colorOnSurfaceVariant"
+        android:strokeWidth="1.9"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M16.8,3.1 L21,2.6 l-0.5,4.2"/>
+</vector>

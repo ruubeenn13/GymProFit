@@ -130,6 +130,11 @@ public class MedicionesActivity extends AppCompatActivity {
             layoutMasDetalles.setVisibility(masDetallesAbierto ? View.VISIBLE : View.GONE);
             tvMasDetalles.setText(masDetallesAbierto
                     ? R.string.medicion_menos_detalles : R.string.medicion_mas_detalles);
+            // El galón es un vector teñible y va aquí, no dentro de la cadena: un
+            // símbolo metido en el fichero de idioma no se tiñe con el tema y hay que
+            // acordarse de arrastrarlo a cada traducción.
+            tvMasDetalles.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0,
+                    masDetallesAbierto ? R.drawable.ic_chevron_up : R.drawable.ic_chevron_down, 0);
         });
 
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());

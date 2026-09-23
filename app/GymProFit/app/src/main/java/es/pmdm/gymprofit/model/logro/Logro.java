@@ -13,7 +13,15 @@ public class Logro {
     private String nombre;
     // Descripción del logro.
     private String descripcion;
-    // Icono asociado al logro (nombre/recurso o URL).
+    // Tipo/categoría del logro (enum TipoLogro de la API, serializado como texto:
+    // PRIMERA_SESION, CONSTANCIA, DEDICADO, CENTENARIO, OBJETIVO_CUMPLIDO, MAQUINA).
+    // Es el único identificador ESTABLE del logro que viaja en el DTO, y de él sale
+    // el icono de la fila: la tabla no tiene columna de icono y el id es un
+    // autoincremento que no dice nada.
+    private String tipo;
+
+    // Icono asociado al logro (nombre/recurso o URL). La API NO lo envía: queda
+    // para un catálogo que algún día traiga su propio icono.
     private String icono;
     // Criterio o tipo de métrica que evalúa el logro.
     private String criterio;
@@ -30,6 +38,9 @@ public class Logro {
 
     public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+
+    public String getTipo() { return tipo; }
+    public void setTipo(String tipo) { this.tipo = tipo; }
 
     public String getIcono() { return icono; }
     public void setIcono(String icono) { this.icono = icono; }
