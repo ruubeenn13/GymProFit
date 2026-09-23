@@ -161,7 +161,8 @@ public class ComidaActivity extends BaseActivity {
                 });
     }
 
-    // Carga los alimentos de la comida actual desde la API; en 404 muestra lista vacía
+    // Carga los alimentos de la comida actual desde la API. Una comida sin alimentos
+    // llega como 200 con [] desde GP-069; un 404 significa que la comida no existe.
     private void cargarAlimentos() {
         // Spinner de carga durante la petición (la lista estaría en blanco mientras carga).
         LoadingDialog.show(this);
@@ -180,15 +181,13 @@ public class ComidaActivity extends BaseActivity {
             public void onFail(int code, String message) {
                 // Punto terminal de la carga: oculta el spinner.
                 LoadingDialog.hide(ComidaActivity.this);
-                // 404 = la comida no tiene alimentos → lista vacía; otros errores se mapean a feedback.
-                if (code == 404) {
-                    listaAlimentos.clear();
-                    adapter.notifyDataSetChanged();
-                    actualizarTotales();
-                } else {
-                    // Mapea el error de carga a un toast según el código (cold-start/servidor/genérico).
-                    UiFeedback.toastError(ComidaActivity.this, code, message);
-                }
+                // Ya no hay caso benigno que distinguir: la comida vacía es 200 con [].
+                // Se vacía la lista para no dejar en pantalla datos de una carga previa,
+                // y se avisa del fallo (404 = la comida ya no existe).
+                listaAlimentos.clear();
+                adapter.notifyDataSetChanged();
+                actualizarTotales();
+                UiFeedback.toastError(ComidaActivity.this, code, message);
             }
         });
     }

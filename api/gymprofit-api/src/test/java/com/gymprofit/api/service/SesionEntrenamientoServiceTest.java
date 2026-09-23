@@ -213,6 +213,10 @@ class SesionEntrenamientoServiceTest {
     @Test
     @DisplayName("findByUsuarioId devuelve sesiones del usuario")
     void findByUsuarioId_devuelve_lista() {
+        // El servicio comprueba que el recurso padre existe antes de listar: una lista
+        // vacía ya no significa 404 (DEC-033), así que la existencia hay que simularla.
+        when(usuarioRepository.existsById(1)).thenReturn(true);
+
         when(sesionEntrenamientoRepository.findByUsuarioId(1)).thenReturn(List.of(sesionEntrenamiento));
         when(sesionEntrenamientoMapper.toDTOList(any())).thenReturn(List.of(sesionEntrenamientoDTO));
 

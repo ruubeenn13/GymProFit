@@ -195,6 +195,10 @@ class ObjetivoPersonalServiceTest {
     @Test
     @DisplayName("findByUsuarioId devuelve objetivos del usuario")
     void findByUsuarioId_devuelve_lista() {
+        // El servicio comprueba que el recurso padre existe antes de listar: una lista
+        // vacía ya no significa 404 (DEC-033), así que la existencia hay que simularla.
+        when(usuarioRepository.existsById(1)).thenReturn(true);
+
         when(objetivoPersonalRepository.findByUsuarioId(1)).thenReturn(List.of(objetivo));
         when(objetivoPersonalMapper.toDTOList(any())).thenReturn(List.of(objetivoDTO));
 

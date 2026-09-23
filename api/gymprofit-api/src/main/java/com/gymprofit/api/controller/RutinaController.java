@@ -4,7 +4,6 @@ import com.gymprofit.api.dto.entity.rutina.RutinaCreateDTO;
 import com.gymprofit.api.dto.entity.rutina.RutinaDTO;
 import com.gymprofit.api.dto.entity.rutina.RutinaPatchDTO;
 import com.gymprofit.api.exceptions.InvalidDataException;
-import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.rutina.IRutinaService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -159,7 +158,7 @@ public class RutinaController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Rutinas encontradas",
                     content = @Content(schema = @Schema(implementation = RutinaDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron rutinas para este usuario",
+            @ApiResponse(responseCode = "404", description = "El usuario indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Lista todas las rutinas de un usuario
@@ -167,19 +166,13 @@ public class RutinaController {
     public ResponseEntity<List<RutinaDTO>> obtenerRutinasPorUsuario(@PathVariable Integer usuarioId) {
         List<RutinaDTO> rutinas = rutinaService.findByUsuarioId(usuarioId);
 
-        if (rutinas.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron rutinas para el usuario con id " + usuarioId);
-        }
-
         return ResponseEntity.ok(rutinas);
     }
 
     @Operation(summary = "Busca rutinas por nivel")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Rutinas encontradas",
-                    content = @Content(schema = @Schema(implementation = RutinaDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron rutinas para este nivel",
-                    content = @Content(schema = @Schema(implementation = Response.class)))
+                    content = @Content(schema = @Schema(implementation = RutinaDTO.class)))
     })
     // Filtra rutinas por nivel de dificultad
     @GetMapping("/rutinas/nivel/{nivel}")
@@ -190,19 +183,13 @@ public class RutinaController {
 
         List<RutinaDTO> rutinas = rutinaService.findByNivel(nivel);
 
-        if (rutinas.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron rutinas para el nivel " + nivel);
-        }
-
         return ResponseEntity.ok(rutinas);
     }
 
     @Operation(summary = "Busca rutinas por nombre")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Rutinas encontradas",
-                    content = @Content(schema = @Schema(implementation = RutinaDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron rutinas con ese nombre",
-                    content = @Content(schema = @Schema(implementation = Response.class)))
+                    content = @Content(schema = @Schema(implementation = RutinaDTO.class)))
     })
     // Busca rutinas cuyo nombre coincida con el indicado
     @GetMapping("/rutinas/nombre/{nombre}")
@@ -213,28 +200,18 @@ public class RutinaController {
 
         List<RutinaDTO> rutinas = rutinaService.findByNombre(nombre);
 
-        if (rutinas.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron rutinas con el nombre: " + nombre);
-        }
-
         return ResponseEntity.ok(rutinas);
     }
 
     @Operation(summary = "Obtiene todas las rutinas activas")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de rutinas activas",
-                    content = @Content(schema = @Schema(implementation = RutinaDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron rutinas activas",
-                    content = @Content(schema = @Schema(implementation = Response.class)))
+                    content = @Content(schema = @Schema(implementation = RutinaDTO.class)))
     })
     // Devuelve todas las rutinas activas (no desactivadas)
     @GetMapping("/rutinas/activas")
     public ResponseEntity<List<RutinaDTO>> obtenerRutinasActivas() {
         List<RutinaDTO> rutinas = rutinaService.findActivas();
-
-        if (rutinas.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron rutinas activas");
-        }
 
         return ResponseEntity.ok(rutinas);
     }
@@ -242,18 +219,12 @@ public class RutinaController {
     @Operation(summary = "Obtiene todas las rutinas predefinidas")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de rutinas predefinidas",
-                    content = @Content(schema = @Schema(implementation = RutinaDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron rutinas predefinidas",
-                    content = @Content(schema = @Schema(implementation = Response.class)))
+                    content = @Content(schema = @Schema(implementation = RutinaDTO.class)))
     })
     // Devuelve las rutinas predefinidas de la aplicación (no creadas por usuarios)
     @GetMapping("/rutinas/predefinidas")
     public ResponseEntity<List<RutinaDTO>> obtenerRutinasPredefinidas() {
         List<RutinaDTO> rutinas = rutinaService.findPredefinidas();
-
-        if (rutinas.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron rutinas predefinidas");
-        }
 
         return ResponseEntity.ok(rutinas);
     }
@@ -262,7 +233,7 @@ public class RutinaController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Rutinas activas encontradas",
                     content = @Content(schema = @Schema(implementation = RutinaDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron rutinas activas para este usuario",
+            @ApiResponse(responseCode = "404", description = "El usuario indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Lista las rutinas activas de un usuario concreto
@@ -270,19 +241,13 @@ public class RutinaController {
     public ResponseEntity<List<RutinaDTO>> obtenerRutinasActivasPorUsuario(@PathVariable Integer usuarioId) {
         List<RutinaDTO> rutinas = rutinaService.findByUsuarioIdAndActivas(usuarioId);
 
-        if (rutinas.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron rutinas activas para el usuario con id " + usuarioId);
-        }
-
         return ResponseEntity.ok(rutinas);
     }
 
     @Operation(summary = "Busca rutinas predefinidas por nivel")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Rutinas predefinidas encontradas",
-                    content = @Content(schema = @Schema(implementation = RutinaDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron rutinas predefinidas para este nivel",
-                    content = @Content(schema = @Schema(implementation = Response.class)))
+                    content = @Content(schema = @Schema(implementation = RutinaDTO.class)))
     })
     // Filtra las rutinas predefinidas por nivel de dificultad
     @GetMapping("/rutinas/predefinidas/nivel/{nivel}")
@@ -292,10 +257,6 @@ public class RutinaController {
         }
 
         List<RutinaDTO> rutinas = rutinaService.findPredefinidasByNivel(nivel);
-
-        if (rutinas.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron rutinas predefinidas para el nivel " + nivel);
-        }
 
         return ResponseEntity.ok(rutinas);
     }

@@ -126,16 +126,22 @@ class EjercicioRealizadoOwnershipTest extends AbstractOwnershipTest {
 
     /**
      * El atacante pide el histórico del mismo ejercicio que acaba de registrar el owner.
-     * Antes recibía la fila del owner —cuánto peso movió y qué día—; ahora recibe 404,
-     * porque su propio histórico de ese ejercicio está vacío y el controlador traduce la
-     * lista vacía a 404. Lo que importa no es el código, sino que el dato del owner no sale.
+     * Antes recibía la fila del owner: cuánto peso movió y qué día. Ahora recibe
+     * <b>200 con la lista vacía</b>, que es lo que DEC-027 pide para un id del catálogo:
+     * no hay id ajeno que rechazar, lo que se comprueba es el aislamiento.
+     * <p>
+     * Hasta GP-069 esto daba 404, pero por el motivo equivocado: el controlador
+     * traducía «lista vacía» a 404 y el test pasaba sin distinguir «no ves nada» de
+     * «el ejercicio no existe». Con la convención nueva el 404 queda reservado a que
+     * el ejercicio del catálogo no exista, y el aislamiento se afirma sobre el cuerpo.
      */
     @Test
     @DisplayName("GET ejercicios-realizados/ejercicio/{id} no devuelve los registros de otro")
     @WithUserDetails(value = ATTACKER, setupBefore = TestExecutionEvent.TEST_EXECUTION)
     void getPorEjercicio_noDevuelveRegistrosAjenos() throws Exception {
         mockMvc.perform(get("/ejercicios-realizados/ejercicio/" + ejercicioIdCatalogo))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
     }
 
     @Test

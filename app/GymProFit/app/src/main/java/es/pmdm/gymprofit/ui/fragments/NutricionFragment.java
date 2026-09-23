@@ -196,11 +196,11 @@ public class NutricionFragment extends BaseFragment {
             @Override
             public void onFail(int code, String message) {
                 if (!isAdded()) return;
+                // Un día sin comidas ya no llega como 404: es 200 con [] y lo atiende
+                // onOk. Aquí solo caen fallos de verdad, y se avisa de todos.
                 comidasHoy.clear();
                 actualizarUI(fecha);
-                if (code != 404) {
-                    UiFeedback.toastError(requireActivity(), code, message);
-                }
+                UiFeedback.toastError(requireActivity(), code, message);
             }
         });
     }

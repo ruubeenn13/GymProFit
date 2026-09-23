@@ -5,7 +5,6 @@ import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoCreat
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoPatchDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.VolumenMuscularDTO;
-import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.sesionentrenamiento.ISesionEntrenamientoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -142,17 +141,13 @@ public class SesionEntrenamientoController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sesiones encontradas",
                     content = @Content(schema = @Schema(implementation = SesionEntrenamientoDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron sesiones",
+            @ApiResponse(responseCode = "404", description = "El usuario indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Lista todas las sesiones de un usuario concreto
     @GetMapping("/sesiones/usuario/{usuarioId}")
     public ResponseEntity<List<SesionEntrenamientoDTO>> obtenerSesionesPorUsuario(@PathVariable Integer usuarioId) {
         List<SesionEntrenamientoDTO> sesiones = sesionEntrenamientoService.findByUsuarioId(usuarioId);
-
-        if (sesiones.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron sesiónes para el usuario con id " + usuarioId);
-        }
 
         return ResponseEntity.ok(sesiones);
     }
@@ -161,7 +156,7 @@ public class SesionEntrenamientoController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sesiones encontradas",
                     content = @Content(schema = @Schema(implementation = SesionEntrenamientoDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron sesiones",
+            @ApiResponse(responseCode = "404", description = "La rutina indicada no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Lista todas las sesiones realizadas con una rutina concreta
@@ -169,28 +164,18 @@ public class SesionEntrenamientoController {
     public ResponseEntity<List<SesionEntrenamientoDTO>> obtenerSesionesPorRutina(@PathVariable Integer rutinaId) {
         List<SesionEntrenamientoDTO> sesiones = sesionEntrenamientoService.findByRutinaId(rutinaId);
 
-        if (sesiones.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron sesiones para la rutina con id " + rutinaId);
-        }
-
         return ResponseEntity.ok(sesiones);
     }
 
     @Operation(summary = "Obtiene todas las sesiones completadas")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sesiones completadas",
-                    content = @Content(schema = @Schema(implementation = SesionEntrenamientoDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron sesiones",
-                    content = @Content(schema = @Schema(implementation = Response.class)))
+                    content = @Content(schema = @Schema(implementation = SesionEntrenamientoDTO.class)))
     })
     // Lista todas las sesiones marcadas como completadas
     @GetMapping("/sesiones/completadas")
     public ResponseEntity<List<SesionEntrenamientoDTO>> obtenerSesionesCompletadas() {
         List<SesionEntrenamientoDTO> sesiones = sesionEntrenamientoService.findCompletadas();
-
-        if (sesiones.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron sesiones completadas");
-        }
 
         return ResponseEntity.ok(sesiones);
     }
@@ -198,18 +183,12 @@ public class SesionEntrenamientoController {
     @Operation(summary = "Obtiene todas las sesiones pendientes")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sesiones pendientes",
-                    content = @Content(schema = @Schema(implementation = SesionEntrenamientoDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron sesiones",
-                    content = @Content(schema = @Schema(implementation = Response.class)))
+                    content = @Content(schema = @Schema(implementation = SesionEntrenamientoDTO.class)))
     })
     // Lista todas las sesiones aún no completadas
     @GetMapping("/sesiones/pendientes")
     public ResponseEntity<List<SesionEntrenamientoDTO>> obtenerSesionesPendientes() {
         List<SesionEntrenamientoDTO> sesiones = sesionEntrenamientoService.findPendientes();
-
-        if (sesiones.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron sesiones pendientes");
-        }
 
         return ResponseEntity.ok(sesiones);
     }
@@ -218,17 +197,13 @@ public class SesionEntrenamientoController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sesiones encontradas",
                     content = @Content(schema = @Schema(implementation = SesionEntrenamientoDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron sesiones",
+            @ApiResponse(responseCode = "404", description = "El usuario indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Lista las sesiones completadas de un usuario concreto
     @GetMapping("/sesiones/usuario/{usuarioId}/completadas")
     public ResponseEntity<List<SesionEntrenamientoDTO>> obtenerSesionesCompletadasPorUsuario(@PathVariable Integer usuarioId) {
         List<SesionEntrenamientoDTO> sesiones = sesionEntrenamientoService.findByUsuarioIdAndCompletadas(usuarioId);
-
-        if (sesiones.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron sesiones completadas para el usuario " + usuarioId);
-        }
 
         return ResponseEntity.ok(sesiones);
     }
@@ -237,17 +212,13 @@ public class SesionEntrenamientoController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sesiones encontradas",
                     content = @Content(schema = @Schema(implementation = SesionEntrenamientoDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron sesiones",
+            @ApiResponse(responseCode = "404", description = "El usuario indicado no existe",
                     content = @Content(schema = @Schema(implementation = SesionEntrenamientoDTO.class)))
     })
     // Lista las sesiones pendientes de un usuario concreto
     @GetMapping("/sesiones/usuario/{usuarioId}/pendientes")
     public ResponseEntity<List<SesionEntrenamientoDTO>> obtenerSesionesPendientesPorUsuario(@PathVariable Integer usuarioId) {
         List<SesionEntrenamientoDTO> sesiones = sesionEntrenamientoService.findByUsuarioIdAndPendientes(usuarioId);
-
-        if (sesiones.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron sesiones pendientes para el usuario " + usuarioId);
-        }
 
         return ResponseEntity.ok(sesiones);
     }
@@ -256,7 +227,7 @@ public class SesionEntrenamientoController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sesiones encontradas",
                     content = @Content(schema = @Schema(implementation = SesionEntrenamientoDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron sesiones",
+            @ApiResponse(responseCode = "404", description = "El usuario indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @GetMapping("/sesiones/usuario/{usuarioId}/fecha/{fecha}")
@@ -265,28 +236,18 @@ public class SesionEntrenamientoController {
                                                                                         @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
         List<SesionEntrenamientoDTO> sesiones = sesionEntrenamientoService.findByUsuarioIdAndFecha(usuarioId, fecha);
 
-        if (sesiones.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron sesiones para el usuario " + usuarioId + " en la fecha " + fecha);
-        }
-
         return ResponseEntity.ok(sesiones);
     }
 
     @Operation(summary = "Obtiene sesiones por fecha")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sesiones encontradas",
-                    content = @Content(schema = @Schema(implementation = SesionEntrenamientoDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron sesiones",
-                    content = @Content(schema = @Schema(implementation = Response.class)))
+                    content = @Content(schema = @Schema(implementation = SesionEntrenamientoDTO.class)))
     })
     @GetMapping("/sesiones/fecha/{fecha}")
     // Lista todas las sesiones realizadas en una fecha concreta (cualquier usuario)
     public ResponseEntity<List<SesionEntrenamientoDTO>> obtenerSesionesPorFecha(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
         List<SesionEntrenamientoDTO> sesiones = sesionEntrenamientoService.findByFecha(fecha);
-
-        if (sesiones.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron sesiones en la fecha " + fecha);
-        }
 
         return ResponseEntity.ok(sesiones);
     }
@@ -295,7 +256,7 @@ public class SesionEntrenamientoController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sesiones encontradas",
                     content = @Content(schema = @Schema(implementation = SesionEntrenamientoDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron sesiones",
+            @ApiResponse(responseCode = "404", description = "El usuario o la rutina indicados no existen",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @GetMapping("/sesiones/usuario/{usuarioId}/rutina/{rutinaId}")
@@ -303,10 +264,6 @@ public class SesionEntrenamientoController {
     public ResponseEntity<List<SesionEntrenamientoDTO>> obtenerSesionesPorUsuarioYRutina(@PathVariable Integer usuarioId,
                                                                                          @PathVariable Integer rutinaId) {
         List<SesionEntrenamientoDTO> sesiones = sesionEntrenamientoService.findByUsuarioIdAndRutinaId(usuarioId, rutinaId);
-
-        if (sesiones.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron sesiones para el usuario con id " + usuarioId + " con la rutina " + rutinaId);
-        }
 
         return ResponseEntity.ok(sesiones);
     }
@@ -339,17 +296,13 @@ public class SesionEntrenamientoController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sesiones ordenadas",
                     content = @Content(schema = @Schema(implementation = SesionEntrenamientoDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron sesiones",
+            @ApiResponse(responseCode = "404", description = "El usuario indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Lista las sesiones de un usuario ordenadas cronológicamente por fecha
     @GetMapping("/sesiones/usuario/{usuarioId}/ordenadas")
     public ResponseEntity<List<SesionEntrenamientoDTO>> obtenerSesionesOrdenadasPorUsuario(@PathVariable Integer usuarioId) {
         List<SesionEntrenamientoDTO> sesiones = sesionEntrenamientoService.findByUsuarioIdOrderByFecha(usuarioId);
-
-        if (sesiones.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron sesiones para el usuario " + usuarioId);
-        }
 
         return ResponseEntity.ok(sesiones);
     }
@@ -358,17 +311,13 @@ public class SesionEntrenamientoController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sesiones completadas ordenadas",
                     content = @Content(schema = @Schema(implementation = SesionEntrenamientoDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron sesiones",
+            @ApiResponse(responseCode = "404", description = "El usuario indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Lista las sesiones completadas de un usuario ordenadas por fecha
     @GetMapping("/sesiones/usuario/{usuarioId}/completadas/ordenadas")
     public ResponseEntity<List<SesionEntrenamientoDTO>> obtenerSesionesCompletadasOrdenadasPorUsuario(@PathVariable Integer usuarioId) {
         List<SesionEntrenamientoDTO> sesiones = sesionEntrenamientoService.findCompletadasByUsuario(usuarioId);
-
-        if (sesiones.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron sesiones completadas para el usuario con id " + usuarioId);
-        }
 
         return ResponseEntity.ok(sesiones);
     }

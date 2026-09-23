@@ -209,7 +209,10 @@ public class DetalleRutinaActivity extends AppCompatActivity {
                     combinarYMostrar(ejercicioMap, relaciones);
             }
             @Override public void onFail(int code, String message) {
-                // 404 = sin ejercicios
+                // Una rutina sin ejercicios llega como 200 con [] desde GP-069, así que
+                // aquí solo caen fallos de verdad y hay que decirlos: un 404 significa
+                // que la rutina ya no existe, no que esté vacía.
+                UiFeedback.toastError(DetalleRutinaActivity.this, code, message);
                 if (pendientes.decrementAndGet() == 0)
                     combinarYMostrar(ejercicioMap, relaciones);
             }

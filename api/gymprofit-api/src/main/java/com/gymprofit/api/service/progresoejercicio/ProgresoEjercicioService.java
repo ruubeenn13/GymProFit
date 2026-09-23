@@ -154,6 +154,8 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
         logger.info("Buscando progresos del usuario id: {}", usuarioId);
         securityUtils.checkOwnership(usuarioId);
 
+        exigirUsuarioExistente(usuarioId);
+
         List<ProgresoEjercicio> progresoEjercicios = progresoEjercicioRepository.findByUsuarioId(usuarioId);
 
         return progresoEjercicioMapper.toDTOList(progresoEjercicios);
@@ -164,6 +166,8 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
     public List<ProgresoEjercicioDTO> findByEjercicioId(Integer ejercicioId) {
         logger.info("Buscando progresos del ejercicio id: {}", ejercicioId);
 
+        exigirEjercicioExistente(ejercicioId);
+
         List<ProgresoEjercicio> progresoEjercicios = progresoEjercicioRepository.findByEjercicioId(ejercicioId);
 
         return progresoEjercicioMapper.toDTOList(progresoEjercicios);
@@ -173,7 +177,11 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
     @Override
     public List<ProgresoEjercicioDTO> findByUsuarioIdAndEjercicioId(Integer usuarioId, Integer ejercicioId) {
         logger.info("Buscando progresos del usuario id: {} y ejercicio id: {}", usuarioId, ejercicioId);
+
         securityUtils.checkOwnership(usuarioId);
+
+        exigirUsuarioExistente(usuarioId);
+        exigirEjercicioExistente(ejercicioId);
 
         List<ProgresoEjercicio> progresoEjercicios = progresoEjercicioRepository.findByUsuarioIdAndEjercicioId(usuarioId, ejercicioId);
 
@@ -186,6 +194,8 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
         logger.info("Buscando progresos del usuario id: {} ordenados por fecha", usuarioId);
         securityUtils.checkOwnership(usuarioId);
 
+        exigirUsuarioExistente(usuarioId);
+
         List<ProgresoEjercicio> progresoEjercicios = progresoEjercicioRepository.findByUsuarioIdOrderByFechaDesc(usuarioId);
 
         return progresoEjercicioMapper.toDTOList(progresoEjercicios);
@@ -196,6 +206,9 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
     public List<ProgresoEjercicioDTO> getProgresoByUsuarioAndEjercicio(Integer usuarioId, Integer ejercicioId) {
         logger.info("Buscando progreso del usuario id: {} en ejercicio id: {}", usuarioId, ejercicioId);
         securityUtils.checkOwnership(usuarioId);
+
+        exigirUsuarioExistente(usuarioId);
+        exigirEjercicioExistente(ejercicioId);
 
         List<ProgresoEjercicio> progresoEjercicios = progresoEjercicioRepository.getProgresoByUsuarioAndEjercicio(usuarioId, ejercicioId);
 
@@ -317,5 +330,31 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
                 (java.math.BigDecimal) fila[2],
                 (Integer) fila[3],
                 (java.time.LocalDateTime) fila[4]));
+    }
+
+    /**
+     * Un id de ejercicio que no existe es un 404, y se comprueba AQUÍ (DEC-033).
+     * Antes se deducía de que la lista saliera vacía, que no es lo mismo: «no hay
+     * datos» y «ese ejercicio no existe» son dos respuestas distintas, y la app no
+     * podía separarlas. La comprobación va DESPUÉS de la de propiedad para que a
+     * quien no es dueño se le responda 403 sin decirle si el id existe.
+     */
+    private void exigirEjercicioExistente(Integer ejercicioId) {
+        if (!ejercicioRepository.existsById(ejercicioId)) {
+            throw new NotFoundEntityException("El ejercicio con id " + ejercicioId + " no existe");
+        }
+    }
+
+    /**
+     * Un id de usuario que no existe es un 404, y se comprueba AQUÍ (DEC-033).
+     * Antes se deducía de que la lista saliera vacía, que no es lo mismo: «no hay
+     * datos» y «ese usuario no existe» son dos respuestas distintas, y la app no
+     * podía separarlas. La comprobación va DESPUÉS de la de propiedad para que a
+     * quien no es dueño se le responda 403 sin decirle si el id existe.
+     */
+    private void exigirUsuarioExistente(Integer usuarioId) {
+        if (!usuarioRepository.existsById(usuarioId)) {
+            throw new NotFoundEntityException("El usuario con id " + usuarioId + " no existe");
+        }
     }
 }

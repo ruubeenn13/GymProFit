@@ -170,11 +170,6 @@ public class EliminarCuentaActivity extends BaseActivity {
                     // Sesión irrecuperable: el listener global de BaseActivity ya
                     // limpia y lleva al login. Un toast encima solo estorbaría.
                     Log.w("GymProFit", "eliminarCuentaPropia 401: sesión expirada");
-                } else if (code == 404) {
-                    // UiFeedback trata el 404 como "lista vacía" y no dice nada; aquí
-                    // no hay nada benigno que callar, así que se avisa a mano.
-                    UIHelper.mostrarToastError(EliminarCuentaActivity.this,
-                            getString(R.string.feedback_error_generico));
                 } else {
                     // Red caída, servidor dormido o 5xx: el aviso general. Nunca en
                     // silencio, que aquí el silencio se leería como "ya está hecho".

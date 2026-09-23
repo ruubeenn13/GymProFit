@@ -339,7 +339,7 @@ Queda anotado aquí, y no solo en la auditoría, porque «la paridad está al 10
 **Decisión.** El criterio de aceptación depende de **qué es el id que viaja en la ruta**, y hay dos casos que no se defienden igual:
 
 - **Id de un recurso con dueño** (una sesión, una comida, un usuario). Existe un «recurso de otro» que pedir, así que la respuesta correcta es **403** y es lo que fija el test, tal y como manda DEC-014.
-- **Id del catálogo público** (un ejercicio, un alimento del catálogo, una categoría). Ese id es el mismo para todo el mundo y no pertenece a nadie: **no hay un id ajeno que rechazar**. El fallo posible no es de permisos sino de **alcance** —la consulta devolvía las filas de todos los usuarios—, y el criterio correcto es que **el atacante no vea nada del otro**: lista vacía (que aquí el controlador traduce a 404) o `count: 0`. Un 403 en esa ruta sería incorrecto además de inútil, porque negaría a un usuario legítimo su propio histórico.
+- **Id del catálogo público** (un ejercicio, un alimento del catálogo, una categoría). Ese id es el mismo para todo el mundo y no pertenece a nadie: **no hay un id ajeno que rechazar**. El fallo posible no es de permisos sino de **alcance** —la consulta devolvía las filas de todos los usuarios—, y el criterio correcto es que **el atacante no vea nada del otro**: lista vacía o `count: 0`. *(Cuando se escribió esto, el controlador traducía la lista vacía a 404 y los tests lo afirmaban así; desde **DEC-033** esa lista vacía es un **200 con `[]`** y es sobre el cuerpo sobre lo que se afirma el aislamiento. El criterio no cambia, cambia la forma de comprobarlo.)* Un 403 en esa ruta sería incorrecto además de inútil, porque negaría a un usuario legítimo su propio histórico.
 
 **El criterio «403 en las cinco rutas» del backlog estaba mal formulado.** Confundía la forma de la ruta con la forma del fallo. Queda anotado aquí para que no se reintroduzca al redactar el siguiente lote: antes de escribir el criterio hay que mirar si el id tiene dueño.
 
@@ -443,6 +443,30 @@ Pedía decidir de forma consciente si el `applicationId` `es.pmdm.gymprofit` —
 **La excepción es el escáner.** `POST /alimentos/importar` materializa un producto de **Open Food Facts** por código de barras y sí crea una fila **sin dueño**, porque es catálogo real y no la comida de nadie, y lo dispara un usuario normal al escanear. No pasa por la ruta de creación: construye la entidad desde el producto externo. Es la diferencia entre *escribir en el catálogo* y *traerse un producto que ya existe*.
 
 **Qué la invalidaría.** Querer un catálogo **colaborativo**, con alimentos propuestos por usuarios y visibles para el resto. Eso no reabre esta decisión sin más: pediría moderación, autoría visible y forma de corregir, que es un sistema, no un permiso. También la invalidaría dejar de tener catálogo propio y apoyarse solo en Open Food Facts.
+
+---
+
+### DEC-033 · Una colección vacía es 200 con `[]`; el 404 es del recurso padre
+**Estado:** Aceptada · **Fecha:** 2026-09-23
+
+**Contexto.** La API respondía `404` cuando una lista salía vacía. No era un endpoint suelto: el patrón `if (lista.isEmpty()) throw new NotFoundEntityException(...)` aparecía **58 veces en 13 controladores**, o sea que era *la* convención. La consecuencia es que **el cliente no podía distinguir «no tienes datos» de «ha fallado algo»**, porque las dos cosas llegaban con el mismo código. Cada pantalla de la app acabó con su apaño para compensarlo, y `UiFeedback` silenciaba el 404 **en toda la aplicación** para que el estado vacío no saliera como error de red. El precio de ese silencio es que un 404 de verdad —un id borrado, una ruta mal construida— tampoco se veía: la pantalla se quedaba vacía sin decir nada.
+
+Se vio al cerrar GP-060: la pestaña de rutinas pedía las predefinidas **antes** que las propias precisamente porque las propias «fallaban» cuando el usuario no tenía ninguna. Un defecto de producto —seis rutinas ajenas bajo el rótulo «Mis rutinas»— que nacía de un código HTTP.
+
+**Decisión.** Dos reglas, y se aplican **endpoint por endpoint**, no en bloque:
+
+- **Una colección que existe y está vacía responde `200` con `[]`.** Vacío es un resultado, no un error.
+- **`404` es que el recurso PADRE de la ruta no existe**, y se comprueba **explícitamente** —`existsById` o cargando la entidad—, nunca deduciéndolo de que la lista salga vacía.
+
+La diferencia no es cosmética: `GET /sesiones/rutina/{id}` daba `404` igual si la rutina no existía que si existía sin sesiones, y **son dos respuestas distintas**. El precedente ya estaba escrito en el propio código: `LogroService.findByUsuarioId` comprueba propiedad, luego existencia, y devuelve la lista aunque venga vacía. Esto generaliza eso.
+
+**El orden importa: 403 antes que 404.** La comprobación de existencia va **después** de la de propiedad, para que a quien no es dueño se le responda `403` sin decirle de paso si el id existe. DEC-027 y DEC-014 no se relajan; lo único que cambia es **cómo se afirma el aislamiento en los tests**: donde el id es de catálogo público, el test pasa de exigir `404` a exigir `200` con lista vacía, que es lo que siempre quiso decir.
+
+**En el cliente, el 404 vuelve a ser un error.** Se retira el silencio de `UiFeedback` y los apaños de las nueve pantallas que trataban el 404 como «sin datos». Dejarlos habría sido peor que antes: con la lista vacía llegando ya como `200`, seguir callando el 404 solo escondría errores de verdad.
+
+**Consecuencias.** Es un **cambio de contrato** y toca a las builds repartidas fuera de Play, que no se actualizan solas. Se asume a sabiendas y ahora, antes de publicar: en cuanto la app esté en la tienda, esta convención queda congelada. Una build vieja contra la API nueva deja de ver 404 donde los esperaba —y como los trataba como estado vacío, el resultado es el mismo o mejor.
+
+**Qué la invalidaría.** Nada razonable. Lo único que la reabriría es que apareciera un endpoint donde la lista vacía signifique de verdad «esto no existe», y entonces el problema es el diseño de ese endpoint, no la convención.
 
 ---
 

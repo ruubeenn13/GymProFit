@@ -3,6 +3,7 @@ package es.pmdm.gymprofit.ui.activities;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -97,7 +98,12 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
             }
             @Override
             public void onFail(int code, String message) {
-                // Sin progreso (404/errores) → la card se queda oculta, sin molestar.
+                // "Sin progreso" ya no llega por aquí: es 200 con [] y lo atiende onOk,
+                // que deja la card oculta. Lo que cae aquí es un fallo de verdad, y la
+                // card se queda oculta a propósito: la ficha del ejercicio se lee igual
+                // sin la gráfica y un toast encima de la pantalla principal estorbaría
+                // más de lo que informa. Se deja rastro en el log.
+                Log.w("GymProFit", "cargarProgresion falló (" + code + "): " + message);
             }
         });
     }

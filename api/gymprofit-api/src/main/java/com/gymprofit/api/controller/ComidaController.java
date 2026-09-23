@@ -7,7 +7,6 @@ import com.gymprofit.api.dto.entity.comida.ComidaPatchDTO;
 import com.gymprofit.api.dto.entity.comida.ResumenDiarioNutricionDTO;
 import com.gymprofit.api.enums.TipoComida;
 import com.gymprofit.api.exceptions.InvalidDataException;
-import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.comida.IComidaService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -125,16 +124,12 @@ public class ComidaController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Comidas encontradas",
                     content = @Content(schema = @Schema(implementation = ComidaDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron comidas",
+            @ApiResponse(responseCode = "404", description = "El usuario indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @GetMapping("/comidas/usuario/{usuarioId}")
     public ResponseEntity<List<ComidaDTO>> obtenerComidasPorUsuario(@PathVariable Integer usuarioId) {
         List<ComidaDTO> comidas = comidaService.findByUsuarioId(usuarioId);
-
-        if (comidas.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron comidas para el usuario con id " + usuarioId);
-        }
 
         return ResponseEntity.ok(comidas);
     }
@@ -144,8 +139,6 @@ public class ComidaController {
             @ApiResponse(responseCode = "200", description = "Comidas encontradas",
                     content = @Content(schema = @Schema(implementation = ComidaDTO.class))),
             @ApiResponse(responseCode = "400", description = "Tipo de comida inválido",
-                    content = @Content(schema = @Schema(implementation = Response.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron comidas",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @GetMapping("/comidas/tipo/{tipoComida}")
@@ -158,29 +151,19 @@ public class ComidaController {
 
         List<ComidaDTO> comidas = comidaService.findByTipoComida(tipoComida);
 
-        if (comidas.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron comidas del tipo: " + tipoComida);
-        }
-
         return ResponseEntity.ok(comidas);
     }
 
     @Operation(summary = "Busca comidas por fecha")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Comidas encontradas",
-                    content = @Content(schema = @Schema(implementation = ComidaDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron comidas",
-                    content = @Content(schema = @Schema(implementation = Response.class)))
+                    content = @Content(schema = @Schema(implementation = ComidaDTO.class)))
     })
     @GetMapping("/comidas/fecha/{fecha}")
     public ResponseEntity<List<ComidaDTO>> obtenerComidasPorFecha(
             @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
 
         List<ComidaDTO> comidas = comidaService.findByFecha(fecha);
-
-        if (comidas.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron comidas en la fecha: " + fecha);
-        }
 
         return ResponseEntity.ok(comidas);
     }
@@ -189,7 +172,7 @@ public class ComidaController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Comidas encontradas",
                     content = @Content(schema = @Schema(implementation = ComidaDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron comidas",
+            @ApiResponse(responseCode = "404", description = "El usuario indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @GetMapping("/comidas/usuario/{usuarioId}/fecha/{fecha}")
@@ -198,10 +181,6 @@ public class ComidaController {
             @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
 
         List<ComidaDTO> comidas = comidaService.findByUsuarioIdAndFecha(usuarioId, fecha);
-
-        if (comidas.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron comidas para el usuario: " + usuarioId + " en la fecha " + fecha);
-        }
 
         return ResponseEntity.ok(comidas);
     }
@@ -231,7 +210,7 @@ public class ComidaController {
                     content = @Content(schema = @Schema(implementation = ComidaDTO.class))),
             @ApiResponse(responseCode = "400", description = "Tipo de comida inválido",
                     content = @Content(schema = @Schema(implementation = Response.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron comidas",
+            @ApiResponse(responseCode = "404", description = "El usuario indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @GetMapping("/comidas/usuario/{usuarioId}/tipo/{tipoComida}")
@@ -244,10 +223,6 @@ public class ComidaController {
         validarTipoComida(tipoComida);
 
         List<ComidaDTO> comidas = comidaService.findByUsuarioIdAndTipoComida(usuarioId, tipoComida);
-
-        if (comidas.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron comidas del tipo " + tipoComida);
-        }
 
         return ResponseEntity.ok(comidas);
     }

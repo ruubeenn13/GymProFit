@@ -63,10 +63,6 @@ public class RutinasFragment extends BaseFragment {
 
     private static final String NIVEL_TODOS = "Todos";
 
-    // La API responde 404 a una lista vacía en vez de 200 con []. Es su contrato y
-    // no se toca desde aquí, así que la pantalla lo traduce: 404 = no hay nada.
-    private static final int HTTP_NO_ENCONTRADO = 404;
-
     private final RutinaApi rutinaApi = ApiClient.service(RutinaApi.class);
 
     private ActivityResultLauncher<Intent> crearRutinaLauncher;
@@ -177,19 +173,13 @@ public class RutinasFragment extends BaseFragment {
             }
             @Override
             public void onFail(int code, String message) {
-                // La API devuelve 404 cuando la lista sale vacía (ver
-                // RutinaController#obtenerRutinasActivasPorUsuario), así que aquí
-                // un 404 NO es un error: es justo el caso del estado vacío.
-                if (code == HTTP_NO_ENCONTRADO) {
-                    cargarPredefinidasComoSugerencia(act);
-                    return;
-                }
                 LoadingDialog.hide(act);
                 if (!isAdded()) return;
-                // Con un fallo de verdad no se sabe si el usuario tiene rutinas
-                // propias, y sin saberlo no se puede atribuir nada: se avisa y se
-                // deja la lista vacía antes que enseñar predefinidas que podrían
-                // estar tapando las suyas.
+                // Desde GP-069 una lista vacía llega como 200 con [], así que aquí
+                // solo caen fallos de verdad. Y con un fallo no se sabe si el usuario
+                // tiene rutinas propias: sin saberlo no se puede atribuir nada, se
+                // avisa y se deja la lista vacía antes que enseñar predefinidas que
+                // podrían estar tapando las suyas.
                 UiFeedback.toastError(act, code, message);
                 mostrarRutinas(new ArrayList<>(), false);
             }
@@ -211,9 +201,9 @@ public class RutinasFragment extends BaseFragment {
                 LoadingDialog.hide(act);
                 if (!isAdded()) return;
                 // Sin sugerencias que ofrecer, el bloque de estado vacío mentiría:
-                // queda solo la tarjeta de crear rutina. Un 404 aquí significa que no
-                // hay predefinidas publicadas, que no es un fallo que avisar.
-                if (code != HTTP_NO_ENCONTRADO) UiFeedback.toastError(act, code, message);
+                // queda solo la tarjeta de crear rutina. Que no haya predefinidas
+                // publicadas ya no llega como fallo, llega como 200 con [].
+                UiFeedback.toastError(act, code, message);
                 mostrarRutinas(new ArrayList<>(), false);
             }
         });

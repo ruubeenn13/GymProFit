@@ -163,6 +163,8 @@ public class ComidaService implements IComidaService {
 
         securityUtils.checkOwnership(usuarioId);
 
+        exigirUsuarioExistente(usuarioId);
+
         List<Comida> comidas = comidaRepository.findByUsuarioId(usuarioId);
 
         return comidaMapper.toDTOList(comidas);
@@ -202,6 +204,8 @@ public class ComidaService implements IComidaService {
         logger.info("Buscando comidas por usuario {} y fecha {}", usuarioId, fecha);
 
         securityUtils.checkOwnership(usuarioId);
+
+        exigirUsuarioExistente(usuarioId);
 
         LocalDateTime inicio = fecha.atStartOfDay();
         LocalDateTime fin = fecha.atTime(23, 59, 59);
@@ -251,6 +255,8 @@ public class ComidaService implements IComidaService {
         logger.info("Buscando comidas por usuario {} y tipo {}", usuarioId, tipoComida);
 
         securityUtils.checkOwnership(usuarioId);
+
+        exigirUsuarioExistente(usuarioId);
 
         TipoComida tipo = TipoComida.valueOf(tipoComida.toUpperCase());
 
@@ -317,6 +323,19 @@ public class ComidaService implements IComidaService {
             return comidaMapper.toDTO(comidaRepository.save(comida));
         } catch (Exception e) {
             throw new UpdateEntityException(Comida.class.getSimpleName(), id, e);
+        }
+    }
+
+    /**
+     * Un id de usuario que no existe es un 404, y se comprueba AQUÍ (DEC-033).
+     * Antes se deducía de que la lista saliera vacía, que no es lo mismo: «no hay
+     * datos» y «ese usuario no existe» son dos respuestas distintas, y la app no
+     * podía separarlas. La comprobación va DESPUÉS de la de propiedad para que a
+     * quien no es dueño se le responda 403 sin decirle si el id existe.
+     */
+    private void exigirUsuarioExistente(Integer usuarioId) {
+        if (!usuarioRepository.existsById(usuarioId)) {
+            throw new NotFoundEntityException("El usuario con id " + usuarioId + " no existe");
         }
     }
 }

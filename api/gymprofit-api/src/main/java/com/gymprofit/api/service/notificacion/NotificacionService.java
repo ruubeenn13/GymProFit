@@ -173,6 +173,8 @@ public class NotificacionService implements INotificacionService {
 
         securityUtils.checkOwnership(usuarioId);
 
+        exigirUsuarioExistente(usuarioId);
+
         List<Notificacion> notificaciones = notificacionRepository.findByUsuarioId(usuarioId);
 
         return notificacionMapper.toDTOList(notificaciones);
@@ -184,6 +186,8 @@ public class NotificacionService implements INotificacionService {
         logger.info("Buscando notificaciones del usuario id: {} ordenadas por fecha", usuarioId);
 
         securityUtils.checkOwnership(usuarioId);
+
+        exigirUsuarioExistente(usuarioId);
 
         List<Notificacion> notificaciones = notificacionRepository.findByUsuarioIdOrderByFechaCreacionDesc(usuarioId);
 
@@ -197,6 +201,8 @@ public class NotificacionService implements INotificacionService {
 
         securityUtils.checkOwnership(usuarioId);
 
+        exigirUsuarioExistente(usuarioId);
+
         List<Notificacion> notificaciones = notificacionRepository.findByUsuarioIdAndLeidaFalse(usuarioId);
 
         return notificacionMapper.toDTOList(notificaciones);
@@ -208,6 +214,8 @@ public class NotificacionService implements INotificacionService {
         logger.info("Buscando notificaciones leídas del usuario id: {}", usuarioId);
 
         securityUtils.checkOwnership(usuarioId);
+
+        exigirUsuarioExistente(usuarioId);
 
         List<Notificacion> notificaciones = notificacionRepository.findByUsuarioIdAndLeidaTrue(usuarioId);
 
@@ -334,6 +342,19 @@ public class NotificacionService implements INotificacionService {
             return notificacionMapper.toDTO(notificacionRepository.save(notificacion));
         } catch (Exception e) {
             throw new UpdateEntityException(Notificacion.class.getSimpleName(), id, e);
+        }
+    }
+
+    /**
+     * Un id de usuario que no existe es un 404, y se comprueba AQUÍ (DEC-033).
+     * Antes se deducía de que la lista saliera vacía, que no es lo mismo: «no hay
+     * datos» y «ese usuario no existe» son dos respuestas distintas, y la app no
+     * podía separarlas. La comprobación va DESPUÉS de la de propiedad para que a
+     * quien no es dueño se le responda 403 sin decirle si el id existe.
+     */
+    private void exigirUsuarioExistente(Integer usuarioId) {
+        if (!usuarioRepository.existsById(usuarioId)) {
+            throw new NotFoundEntityException("El usuario con id " + usuarioId + " no existe");
         }
     }
 }

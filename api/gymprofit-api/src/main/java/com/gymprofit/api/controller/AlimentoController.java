@@ -7,7 +7,6 @@ import com.gymprofit.api.dto.entity.alimento.AlimentoDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoPatchDTO;
 import com.gymprofit.api.dto.entity.alimento.ImportarAlimentoDTO;
 import com.gymprofit.api.exceptions.InvalidDataException;
-import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.alimento.IAlimentoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -153,9 +152,7 @@ public class AlimentoController {
     @Operation(summary = "Busca alimentos por nombre")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Alimentos encontrados",
-                    content = @Content(schema = @Schema(implementation = AlimentoDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron alimentos",
-                    content = @Content(schema = @Schema(implementation = Response.class)))
+                    content = @Content(schema = @Schema(implementation = AlimentoDTO.class)))
     })
     @GetMapping("/alimentos/nombre/{nombre}")
     public ResponseEntity<List<AlimentoDTO>> obtenerAlimentosPorNombre(@PathVariable String nombre) {
@@ -164,10 +161,6 @@ public class AlimentoController {
         }
 
         List<AlimentoDTO> alimentos = alimentoService.findByNombre(nombre);
-
-        if (alimentos.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron alimentos con el nombre: " + nombre);
-        }
 
         return ResponseEntity.ok(alimentos);
     }
@@ -189,9 +182,7 @@ public class AlimentoController {
     @Operation(summary = "Busca alimentos por categoría")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Alimentos encontrados",
-                    content = @Content(schema = @Schema(implementation = AlimentoDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron alimentos",
-                    content = @Content(schema = @Schema(implementation = Response.class)))
+                    content = @Content(schema = @Schema(implementation = AlimentoDTO.class)))
     })
     @GetMapping("/alimentos/categoria/{categoria}")
     public ResponseEntity<List<AlimentoDTO>> obtenerAlimentosPorCategoria(@PathVariable String categoria) {
@@ -201,27 +192,17 @@ public class AlimentoController {
 
         List<AlimentoDTO> alimentos = alimentoService.findByCategoria(categoria);
 
-        if (alimentos.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron alimentos de la categoría: " + categoria);
-        }
-
         return ResponseEntity.ok(alimentos);
     }
 
     @Operation(summary = "Obtiene todos los alimentos activos")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de alimentos activos",
-                    content = @Content(schema = @Schema(implementation = AlimentoDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron alimentos",
-                    content = @Content(schema = @Schema(implementation = Response.class)))
+                    content = @Content(schema = @Schema(implementation = AlimentoDTO.class)))
     })
     @GetMapping("/alimentos/activos")
     public ResponseEntity<List<AlimentoDTO>> obtenerAlimentosActivos() {
         List<AlimentoDTO> alimentos = alimentoService.findActivos();
-
-        if (alimentos.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron alimentos activos");
-        }
 
         return ResponseEntity.ok(alimentos);
     }
@@ -265,8 +246,6 @@ public class AlimentoController {
             @ApiResponse(responseCode = "200", description = "Alimentos encontrados",
                     content = @Content(schema = @Schema(implementation = AlimentoDTO.class))),
             @ApiResponse(responseCode = "400", description = "Rango de calorías inválido",
-                    content = @Content(schema = @Schema(implementation = Response.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron alimentos",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @GetMapping("/alimentos/calorias")
@@ -285,10 +264,6 @@ public class AlimentoController {
         }
 
         List<AlimentoDTO> alimentos = alimentoService.findByCaloriasBetween(min, max);
-
-        if (alimentos.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron alimentos entre " + min + " calorías y " + max + " calorías");
-        }
 
         return ResponseEntity.ok(alimentos);
     }

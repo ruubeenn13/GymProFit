@@ -189,6 +189,10 @@ class MedicionCorporalServiceTest {
     @Test
     @DisplayName("findByUsuarioId devuelve las mediciones del usuario")
     void findByUsuarioId_devuelve_lista() {
+        // El servicio comprueba que el recurso padre existe antes de listar: una lista
+        // vacía ya no significa 404 (DEC-033), así que la existencia hay que simularla.
+        when(usuarioRepository.existsById(1)).thenReturn(true);
+
         when(medicionCorporalRepository.findByUsuarioId(1)).thenReturn(List.of(medicion));
         when(medicionCorporalMapper.toDTOList(any())).thenReturn(List.of(medicionDTO));
 
@@ -203,6 +207,10 @@ class MedicionCorporalServiceTest {
     @Test
     @DisplayName("findByUsuarioIdOrdenadas devuelve las mediciones ordenadas por fecha")
     void findByUsuarioIdOrdenadas_devuelve_lista() {
+        // El servicio comprueba que el recurso padre existe antes de listar: una lista
+        // vacía ya no significa 404 (DEC-033), así que la existencia hay que simularla.
+        when(usuarioRepository.existsById(1)).thenReturn(true);
+
         when(medicionCorporalRepository.findByUsuarioIdOrderByFechaDesc(1)).thenReturn(List.of(medicion));
         when(medicionCorporalMapper.toDTOList(any())).thenReturn(List.of(medicionDTO));
 
@@ -216,6 +224,10 @@ class MedicionCorporalServiceTest {
     @Test
     @DisplayName("findByUsuarioIdAndFechaBetween devuelve las mediciones del rango")
     void findByUsuarioIdAndFechaBetween_devuelve_lista() {
+        // El servicio comprueba que el recurso padre existe antes de listar: una lista
+        // vacía ya no significa 404 (DEC-033), así que la existencia hay que simularla.
+        when(usuarioRepository.existsById(1)).thenReturn(true);
+
         LocalDateTime inicio = LocalDateTime.now().minusDays(7);
         LocalDateTime fin = LocalDateTime.now();
         when(medicionCorporalRepository.findByUsuarioIdAndFechaBetween(1, inicio, fin)).thenReturn(List.of(medicion));
@@ -231,6 +243,10 @@ class MedicionCorporalServiceTest {
     @Test
     @DisplayName("getUltimasMediciones devuelve las mediciones más recientes")
     void getUltimasMediciones_devuelve_lista() {
+        // El servicio comprueba que el recurso padre existe antes de listar: una lista
+        // vacía ya no significa 404 (DEC-033), así que la existencia hay que simularla.
+        when(usuarioRepository.existsById(1)).thenReturn(true);
+
         when(medicionCorporalRepository.getUltimasMediciones(1)).thenReturn(List.of(medicion));
         when(medicionCorporalMapper.toDTOList(any())).thenReturn(List.of(medicionDTO));
 

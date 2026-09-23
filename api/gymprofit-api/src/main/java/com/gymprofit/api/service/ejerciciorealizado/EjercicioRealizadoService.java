@@ -223,6 +223,8 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
     public List<EjercicioRealizadoDTO> findByEjercicioId(Integer ejercicioId) {
         logger.info("Buscando ejercicios realizados por ejercicio id: {}", ejercicioId);
 
+        exigirEjercicioExistente(ejercicioId);
+
         List<EjercicioRealizado> ejerciciosRealizados = securityUtils.isAdmin()
                 ? ejercicioRealizadoRepository.findByEjercicioId(ejercicioId)
                 : ejercicioRealizadoRepository.findByEjercicioIdAndSesionUsuarioId(
@@ -371,6 +373,19 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
             return ejercicioRealizadoMapper.toDTO(ejercicioRealizadoRepository.save(ejercicioRealizado));
         } catch (Exception e) {
             throw new UpdateEntityException(EjercicioRealizado.class.getSimpleName(), id, e);
+        }
+    }
+
+    /**
+     * Un id de ejercicio que no existe es un 404, y se comprueba AQUÍ (DEC-033).
+     * Antes se deducía de que la lista saliera vacía, que no es lo mismo: «no hay
+     * datos» y «ese ejercicio no existe» son dos respuestas distintas, y la app no
+     * podía separarlas. La comprobación va DESPUÉS de la de propiedad para que a
+     * quien no es dueño se le responda 403 sin decirle si el id existe.
+     */
+    private void exigirEjercicioExistente(Integer ejercicioId) {
+        if (!ejercicioRepository.existsById(ejercicioId)) {
+            throw new NotFoundEntityException("El ejercicio con id " + ejercicioId + " no existe");
         }
     }
 }

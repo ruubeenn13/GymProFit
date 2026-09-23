@@ -5,7 +5,6 @@ import com.gymprofit.api.dto.common.ExistsDTO;
 import com.gymprofit.api.dto.entity.rutinaejercicio.RutinaEjercicioCreateDTO;
 import com.gymprofit.api.dto.entity.rutinaejercicio.RutinaEjercicioDTO;
 import com.gymprofit.api.dto.entity.rutinaejercicio.RutinaEjercicioPatchDTO;
-import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.rutinaejercicio.IRutinaEjercicioService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -125,17 +124,13 @@ public class RutinaEjercicioController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ejercicios encontrados",
                     content = @Content(schema = @Schema(implementation = RutinaEjercicioDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron ejercicios para esta rutina",
+            @ApiResponse(responseCode = "404", description = "La rutina indicada no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Lista los ejercicios pertenecientes a una rutina concreta
     @GetMapping("/rutinas-ejercicios/rutina/{rutinaId}")
     public ResponseEntity<List<RutinaEjercicioDTO>> obtenerPorRutina(@PathVariable Integer rutinaId) {
         List<RutinaEjercicioDTO> ejerciciosRutinas = rutinaEjercicioService.findByRutinaId(rutinaId);
-
-        if (ejerciciosRutinas.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron ejercicios para la rutina con id" + rutinaId);
-        }
 
         return ResponseEntity.ok(ejerciciosRutinas);
     }
@@ -144,17 +139,13 @@ public class RutinaEjercicioController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ejercicios encontrados ordenados",
                     content = @Content(schema = @Schema(implementation = RutinaEjercicioDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron ejercicios para esta rutina",
+            @ApiResponse(responseCode = "404", description = "La rutina indicada no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Lista los ejercicios de una rutina respetando el orden de ejecución
     @GetMapping("/rutinas-ejercicios/rutina/{rutinaId}/ordenados")
     public ResponseEntity<List<RutinaEjercicioDTO>> obtenerPorRutinaOrdenado(@PathVariable Integer rutinaId) {
         List<RutinaEjercicioDTO> ejerciciosRutinas = rutinaEjercicioService.findByRutinaIdOrdenado(rutinaId);
-
-        if (ejerciciosRutinas.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron ejercicios para la rutina con id " + rutinaId);
-        }
 
         return ResponseEntity.ok(ejerciciosRutinas);
     }
@@ -163,17 +154,13 @@ public class RutinaEjercicioController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Rutinas encontradas",
                     content = @Content(schema = @Schema(implementation = RutinaEjercicioDTO.class))),
-            @ApiResponse(responseCode = "404", description = "No se encontraron rutinas con este ejercicio",
+            @ApiResponse(responseCode = "404", description = "El ejercicio indicado no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     // Lista las rutinas en las que aparece un ejercicio dado
     @GetMapping("/rutinas-ejercicios/ejercicio/{ejercicioId}")
     public ResponseEntity<List<RutinaEjercicioDTO>> obtenerPorEjercicio(@PathVariable Integer ejercicioId) {
         List<RutinaEjercicioDTO> ejerciciosRutinas = rutinaEjercicioService.findByEjercicioId(ejercicioId);
-
-        if (ejerciciosRutinas.isEmpty()) {
-            throw new NotFoundEntityException("No se encontraron rutinas con el ejercicio " + ejercicioId);
-        }
 
         return ResponseEntity.ok(ejerciciosRutinas);
     }
