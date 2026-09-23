@@ -258,6 +258,12 @@
     <string name="sesiones_notas">Notas (opcional)</string>
     <string name="sesiones_guardar">Guardar sesión</string>
     <string name="sesiones_exito">Sesión registrada correctamente</string>
+    <string name="sesiones_duracion_invalida">La duración tiene que estar entre 1 y 600 minutos</string>
+    <string name="sesiones_error_guardar_titulo">No se ha guardado</string>
+    <string name="sesiones_error_reintentar">Reintentar</string>
+    <string name="sesiones_error_ahora_no">Ahora no</string>
+    <string name="sesiones_error_guardar">No se ha podido guardar la sesión.</string>
+    <string name="sesiones_error_guardar_ayuda">Tus datos siguen aquí. Puedes reintentarlo ahora o cerrar el aviso y volver a guardar más tarde.</string>
     <string name="sesiones_min">%d min</string>
     <string name="sesiones_eliminar">Eliminar sesión</string>
     <string name="sesiones_confirmar_eliminar">¿Eliminar esta sesión?</string>
@@ -471,6 +477,8 @@
     <string name="resumen_fecha">Fecha</string>
     <string name="resumen_duracion">Duración</string>
     <string name="resumen_rutina">Rutina</string>
+    <string name="resumen_valoracion">Valoración</string>
+    <string name="resumen_valoracion_fmt">%d/5</string>
     <string name="resumen_notas">Notas</string>
 
     <!-- Crear rutina — ejercicios -->

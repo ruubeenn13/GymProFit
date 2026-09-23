@@ -267,6 +267,12 @@
     <string name="sesiones_notas">Notes (optional)</string>
     <string name="sesiones_guardar">Save session</string>
     <string name="sesiones_exito">Session saved successfully</string>
+    <string name="sesiones_duracion_invalida">Duration must be between 1 and 600 minutes</string>
+    <string name="sesiones_error_guardar_titulo">Not saved</string>
+    <string name="sesiones_error_reintentar">Retry</string>
+    <string name="sesiones_error_ahora_no">Not now</string>
+    <string name="sesiones_error_guardar">The session could not be saved.</string>
+    <string name="sesiones_error_guardar_ayuda">Your data is still here. Retry now, or close this and save again later.</string>
     <string name="sesiones_min">%d min</string>
     <string name="sesiones_eliminar">Delete session</string>
     <string name="sesiones_confirmar_eliminar">Delete this session?</string>
@@ -467,6 +473,8 @@
     <string name="resumen_fecha">Date</string>
     <string name="resumen_duracion">Duration</string>
     <string name="resumen_rutina">Routine</string>
+    <string name="resumen_valoracion">Rating</string>
+    <string name="resumen_valoracion_fmt">%d/5</string>
     <string name="resumen_notas">Notes</string>
 
     <!-- Create routine — exercises -->

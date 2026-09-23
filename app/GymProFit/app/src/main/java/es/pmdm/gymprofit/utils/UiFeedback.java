@@ -28,6 +28,21 @@ public final class UiFeedback {
         // 401: la sesión expirada ya dispara el logout global; no duplicar aviso.
         if (code == 401) return;
 
+        UIHelper.mostrarToastError(context, mensaje(context, code));
+    }
+
+    /**
+     * Devuelve el mensaje que le corresponde a un código, sin enseñarlo.
+     *
+     * <p>Existe porque no todo fallo cabe en un toast: el guardado de una sesión
+     * (GP-006) necesita el mismo texto dentro de un diálogo que además ofrece
+     * reintentar. El mapeo vive en un solo sitio para que las dos formas de
+     * enseñarlo no se desincronicen.
+     *
+     * @param code código entregado por ApiCallback.onFail.
+     * @return texto localizado, listo para mostrar.
+     */
+    public static String mensaje(Context context, int code) {
         int res;
         if (code == 404) {
             // El recurso que se pide no existe. Ya NO significa "lista vacía": desde
@@ -42,6 +57,6 @@ public final class UiFeedback {
             res = R.string.feedback_error_generico;
         }
 
-        UIHelper.mostrarToastError(context, context.getString(res));
+        return context.getString(res);
     }
 }

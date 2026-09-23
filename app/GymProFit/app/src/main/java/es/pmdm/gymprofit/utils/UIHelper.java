@@ -181,6 +181,21 @@ public class UIHelper {
     // Muestra un diálogo de confirmación con icono opcional, fondo redondeado (colorSurface)
     // y ancho ajustado al 90% de la pantalla. Ejecuta onConfirmar solo si se pulsa confirmar.
     public static void mostrarDialogoConIcono(Context context, String titulo, String mensaje, int iconoRes, Runnable onConfirmar) {
+        mostrarDialogoConIcono(context, titulo, mensaje, iconoRes, null, null, onConfirmar);
+    }
+
+    /**
+     * Igual que el anterior, pero con el texto de los botones a elección de quien llama.
+     *
+     * <p>Existe porque «Confirmar / Cancelar» no dice nada en un aviso de error: en el
+     * guardado de una sesión (GP-006) los botones tienen que decir «Reintentar» y
+     * «Ahora no», que es la decisión que el usuario está tomando de verdad.
+     *
+     * @param textoConfirmar texto del botón principal, o null para el de siempre.
+     * @param textoCancelar  texto del botón secundario, o null para el de siempre.
+     */
+    public static void mostrarDialogoConIcono(Context context, String titulo, String mensaje, int iconoRes,
+                                              String textoConfirmar, String textoCancelar, Runnable onConfirmar) {
         Dialog dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_custom);
@@ -214,6 +229,9 @@ public class UIHelper {
             ivIcono.setVisibility(View.VISIBLE);
             ivIcono.setImageResource(iconoRes);
         }
+
+        if (textoConfirmar != null) btnConfirmar.setText(textoConfirmar);
+        if (textoCancelar != null) btnCancelar.setText(textoCancelar);
 
         btnCancelar.setOnClickListener(v -> dialog.dismiss());
         btnConfirmar.setOnClickListener(v -> {

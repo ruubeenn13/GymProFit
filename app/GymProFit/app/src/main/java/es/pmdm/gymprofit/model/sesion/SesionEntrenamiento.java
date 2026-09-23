@@ -36,7 +36,11 @@ public class SesionEntrenamiento {
     // NO HAY CAMPO DE CALORÍAS AQUÍ, Y ES A PROPÓSITO (DEC-004 / GP-010).
     // La API dejó de enviarlo: el gasto calórico de un entrenamiento no se puede
     // estimar con los datos que hay, así que no se estima ni se enseña.
-    // Notas u observaciones de la sesión.
+    // Valoración de 1 a 5; null si no se valoró. Es un campo desde GP-070: antes
+    // viajaba escrita dentro de las notas.
+    private Integer valoracion;
+
+    // Notas u observaciones de la sesión. Solo lo que escribe el usuario.
     private String notas;
     // Indica si la sesión se completó.
     private boolean completada;
@@ -68,6 +72,9 @@ public class SesionEntrenamiento {
     public int getDuracionMinutos() { return duracionMinutos; }
     public void setDuracionMinutos(int duracionMinutos) { this.duracionMinutos = duracionMinutos; }
 
+
+    public Integer getValoracion() { return valoracion; }
+    public void setValoracion(Integer valoracion) { this.valoracion = valoracion; }
 
     public String getNotas() { return notas; }
     public void setNotas(String notas) { this.notas = notas; }
