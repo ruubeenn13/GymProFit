@@ -253,3 +253,35 @@ vacío, y con GP-069 quitando el silencio global del 404 convenía dejar por esc
 por qué **ese** sí se calla: la mayoría de las cuentas no tiene foto, el avatar por
 defecto es lo que se espera ver, y un toast en cada entrada al perfil sería ruido
 por un estado normal.
+
+---
+
+## Lo que apareció al comprobar producción
+
+Render desplegó en verde (`c44ce17`, live a las 14:08). La convención nueva se
+ve desde fuera:
+
+```
+GET /rutinas/predefinidas     → 200 []      (antes: 404 «No se encontraron…»)
+GET /ejercicios/activos       → 0 apariciones de "calorias"
+GET /jooq/ejercicios/calorias → la ruta ya no existe
+```
+
+Esa primera línea destapó dos cosas:
+
+**1. Producción no tiene rutinas predefinidas sembradas.** La base de datos de
+Aiven no trae las seis del catálogo local. No es un fallo de este cambio —era
+igual antes, solo que salía como 404—, pero conviene saberlo: **un usuario nuevo
+en producción no ve sugerencias**, porque no hay ninguna que ofrecerle.
+
+**2. Un defecto que este cambio sí podía producir.** Con el catálogo vacío,
+`RutinasFragment` enseñaba el bloque de estado vacío **con el rótulo «Rutinas
+para empezar» y nada debajo**: exactamente el tipo de promesa vacía que GP-060
+vino a quitar. Antes no pasaba porque el 404 lo mandaba por la otra rama. Ahora
+el bloque solo se enseña si hay algo que sugerir.
+
+**3. Una ruta que no existe responde 500, no 404.** `GET /jooq/ejercicios/calorias`
+autenticado devuelve `500` en vez de `404`, y `/api/v3/api-docs` y
+`/api/swagger-ui` también dan `500` en producción. Es anterior a este trabajo y
+no lo toca —el manejador global convierte en 500 lo que no reconoce—, pero es
+del mismo género que GP-069: un código que no dice lo que pasa. Queda anotado.

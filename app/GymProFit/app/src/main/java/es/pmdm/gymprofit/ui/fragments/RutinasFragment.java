@@ -193,7 +193,14 @@ public class RutinasFragment extends BaseFragment {
             public void onOk(List<Rutina> predefinidas) {
                 LoadingDialog.hide(act);
                 if (!isAdded()) return;
-                mostrarRutinas(predefinidas != null ? predefinidas : new ArrayList<>(), true);
+                List<Rutina> sugerencias = predefinidas != null ? predefinidas : new ArrayList<>();
+                // El bloque de estado vacío solo se enseña si hay algo que sugerir: en
+                // producción el catálogo de predefinidas puede estar vacío, y desde
+                // GP-069 eso llega como 200 con [] en vez de como 404. Sin esta
+                // comprobación quedaría el rótulo «Rutinas para empezar» sin ninguna
+                // rutina debajo, que es exactamente el tipo de promesa vacía que
+                // GP-060 vino a quitar.
+                mostrarRutinas(sugerencias, !sugerencias.isEmpty());
             }
             @Override
             public void onFail(int code, String message) {
