@@ -464,7 +464,16 @@ Se vio al cerrar GP-060: la pestaña de rutinas pedía las predefinidas **antes*
 
 La diferencia no es cosmética: `GET /sesiones/rutina/{id}` daba `404` igual si la rutina no existía que si existía sin sesiones, y **son dos respuestas distintas**. El precedente ya estaba escrito en el propio código: `LogroService.findByUsuarioId` comprueba propiedad, luego existencia, y devuelve la lista aunque venga vacía. Esto generaliza eso.
 
-**El orden importa: 403 antes que 404.** La comprobación de existencia va **después** de la de propiedad, para que a quien no es dueño se le responda `403` sin decirle de paso si el id existe. DEC-027 y DEC-014 no se relajan; lo único que cambia es **cómo se afirma el aislamiento en los tests**: donde el id es de catálogo público, el test pasa de exigir `404` a exigir `200` con lista vacía, que es lo que siempre quiso decir.
+**El orden entre 403 y 404 depende de la forma de la ruta, y no es una elección libre.** Hay dos casos y el código hace uno en cada uno:
+
+- **Rutas que cuelgan del usuario** (`/sesiones/usuario/{id}`, `/comidas/usuario/{id}`…). El dueño del id **es el id**: se compara contra el del token y se decide **sin tocar la base de datos**. Ahí la propiedad va primero y a quien no es dueño se le responde `403` sin decirle de paso si ese usuario existe.
+- **Rutas que cuelgan de un recurso con dueño** (`/rutinas-ejercicios/rutina/{id}/ordenados`, `/sesiones/rutina/{id}`…). Aquí **no se puede comprobar la propiedad sin cargar el recurso**, porque el dueño está dentro de él. Un id inexistente da `404` —no hay nada que cargar— y uno ajeno da `403`. Es lo que hace `RutinaEjercicioService.findByRutinaIdOrdenado` —carga, `checkRutinaReadAccess`, lista— y es lo que afirman sus propios tests de `/ordenados`, uno por código.
+
+**Se deja así a sabiendas.** La diferencia entre `403` y `404` en el segundo caso sí revela si un id existe. El coste de taparlo sería responder `404` también al recurso ajeno, y el beneficio es **despreciable**: los ids son **secuenciales y autonuméricos**, así que quien quiera saber cuántas rutinas hay en la base no necesita sondear —le basta con crear una suya y mirar el número—. Se ganaría ocultar la existencia de ids sueltos a cambio de mentirle a quien se equivoca de id, que es el caso común. **El código no se toca.**
+
+*(La primera redacción de esta decisión decía «403 antes que 404» a secas, generalizando el primer caso al segundo. Era falso sobre el código y contradecía los tests que la propia decisión hizo escribir.)*
+
+DEC-027 y DEC-014 no se relajan; lo único que cambia es **cómo se afirma el aislamiento en los tests**: donde el id es de catálogo público, el test pasa de exigir `404` a exigir `200` con lista vacía, que es lo que siempre quiso decir.
 
 **En el cliente, el 404 vuelve a ser un error.** Se retira el silencio de `UiFeedback` y los apaños de las nueve pantallas que trataban el 404 como «sin datos». Dejarlos habría sido peor que antes: con la lista vacía llegando ya como `200`, seguir callando el 404 solo escondría errores de verdad.
 
