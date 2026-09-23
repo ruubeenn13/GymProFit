@@ -55,11 +55,14 @@ la lista aunque venga vacía. Esto generaliza eso; el helper nuevo de cada servi
 `exigirAlimentoExistente`) usa los repositorios que el servicio **ya inyectaba**, así
 que ningún constructor cambia.
 
-### El orden importa: 403 antes que 404
+### El orden entre 403 y 404 lo decide la forma de la ruta
 
-La comprobación de existencia va **después** de la de propiedad. A quien no es dueño
-se le responde `403` sin decirle de paso si el id existe, así que el cambio no abre
-un oráculo de enumeración de ids. Comprobado contra la API en marcha:
+En las rutas que cuelgan del usuario la propiedad se resuelve contra el token sin
+tocar la base, así que va primero: a quien no es dueño se le responde `403` sin
+decirle de paso si ese usuario existe. En las que cuelgan de un recurso con dueño
+hay que cargarlo para saber de quién es, así que un id inexistente da `404` y uno
+ajeno da `403`. Las dos formas están en la traza de abajo, y DEC-033 dice esto
+mismo desde su corrección del 2026-09-23. Comprobado contra la API en marcha:
 
 ```
 GET /sesiones/usuario/999999        (como USER)   → 403   ← no dice si existe
