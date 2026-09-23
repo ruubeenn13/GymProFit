@@ -21,7 +21,6 @@ public interface RutinaEjercicioMapper {
     // copiando nombre/calorías del ejercicio asociado para evitar otra consulta.
     @Mapping(target = "rutinaId", source = "rutina.id")
     @Mapping(target = "ejercicioId", source = "ejercicio.id")
-    @Mapping(target = "caloriasEjercicio", source = "ejercicio.caloriasQuemadas")
     @Mapping(target = "nombreEjercicio", source = "ejercicio.nombre")
     RutinaEjercicioDTO toDTO(RutinaEjercicio rutinaEjercicio);
 

@@ -26,7 +26,7 @@ import es.pmdm.gymprofit.utils.UIHelper;
 public class EditarRutinaAdminActivity extends BaseActivity {
 
     private int rutinaId;
-    private TextInputEditText etNombre, etDescripcion, etDuracion, etCalorias, etCategoria, etDiasSemana;
+    private TextInputEditText etNombre, etDescripcion, etDuracion, etCategoria, etDiasSemana;
     private Spinner spNivel;
 
     private static final String[] NIVELES = {"PRINCIPIANTE", "INTERMEDIO", "AVANZADO"};
@@ -45,7 +45,6 @@ public class EditarRutinaAdminActivity extends BaseActivity {
         etNombre     = findViewById(R.id.etNombre);
         etDescripcion= findViewById(R.id.etDescripcion);
         etDuracion   = findViewById(R.id.etDuracion);
-        etCalorias   = findViewById(R.id.etCaloriasRutina);
         etCategoria  = findViewById(R.id.etCategoria);
         etDiasSemana = findViewById(R.id.etDiasSemana);
         spNivel      = findViewById(R.id.spNivel);
@@ -60,8 +59,6 @@ public class EditarRutinaAdminActivity extends BaseActivity {
         etDescripcion.setText(getIntent().getStringExtra("descripcion"));
         int duracion = getIntent().getIntExtra("duracionMinutos", 0);
         if (duracion > 0) etDuracion.setText(String.valueOf(duracion));
-        int calorias = getIntent().getIntExtra("caloriasAproximadas", 0);
-        if (calorias > 0) etCalorias.setText(String.valueOf(calorias));
         etCategoria.setText(getIntent().getStringExtra("categoria"));
         etDiasSemana.setText(getIntent().getStringExtra("diasSemana"));
 
@@ -99,8 +96,6 @@ public class EditarRutinaAdminActivity extends BaseActivity {
             String durStr = etDuracion.getText() != null ? etDuracion.getText().toString().trim() : "";
             if (!durStr.isEmpty()) body.put("duracionMinutos", Integer.parseInt(durStr));
 
-            String calStr = etCalorias.getText() != null ? etCalorias.getText().toString().trim() : "";
-            if (!calStr.isEmpty()) body.put("caloriasAproximadas", Integer.parseInt(calStr));
 
             String cat = etCategoria.getText() != null ? etCategoria.getText().toString().trim() : "";
             if (!cat.isEmpty()) body.put("categoria", cat);

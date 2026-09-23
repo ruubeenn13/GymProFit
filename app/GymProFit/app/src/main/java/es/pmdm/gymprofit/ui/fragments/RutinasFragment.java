@@ -136,7 +136,6 @@ public class RutinasFragment extends BaseFragment {
         intent.putExtra("descripcion",  rutina.getDescripcion());
         intent.putExtra("nivel",        rutina.getNivel());
         intent.putExtra("duracion",     rutina.getDuracionMinutos());
-        intent.putExtra("calorias",     rutina.getCaloriasAproximadas());
         intent.putExtra("numEjercicios", rutina.getNumEjercicios());
         intent.putExtra("predefinida",  rutina.isPredefinida());
         intent.putExtra("usuarioId",    rutina.getUsuarioId());
@@ -244,7 +243,6 @@ public class RutinasFragment extends BaseFragment {
                 intent.putExtra("descripcion",         rutina.getDescripcion());
                 intent.putExtra("nivel",               rutina.getNivel());
                 intent.putExtra("duracionMinutos",     rutina.getDuracionMinutos());
-                intent.putExtra("caloriasAproximadas", rutina.getCaloriasAproximadas());
                 intent.putExtra("categoria",           rutina.getCategoria());
                 intent.putExtra("diasSemana",          rutina.getDiasSemana());
                 editarLauncher.launch(intent);

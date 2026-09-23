@@ -83,7 +83,6 @@ public class SesionAdapter extends RecyclerView.Adapter<SesionAdapter.ViewHolder
         }
 
         h.tvDuracion.setText(context.getString(R.string.sesiones_min, s.getDuracionMinutos()));
-        h.tvCalorias.setText(context.getString(R.string.sesiones_kcal, s.getCaloriasQuemadas()));
 
         h.btnEliminar.setOnClickListener(v -> deleteListener.onDelete(s));
         if (clickListener != null) {
@@ -96,7 +95,7 @@ public class SesionAdapter extends RecyclerView.Adapter<SesionAdapter.ViewHolder
 
     // Contiene las referencias a las vistas de un item de sesión.
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvFecha, tvRutina, tvDuracion, tvCalorias;
+        TextView tvFecha, tvRutina, tvDuracion;
         ImageView btnEliminar;
 
         ViewHolder(@NonNull View itemView) {
@@ -104,7 +103,6 @@ public class SesionAdapter extends RecyclerView.Adapter<SesionAdapter.ViewHolder
             tvFecha    = itemView.findViewById(R.id.tvFechaSesion);
             tvRutina   = itemView.findViewById(R.id.tvRutinaSesion);
             tvDuracion = itemView.findViewById(R.id.tvDuracionSesion);
-            tvCalorias = itemView.findViewById(R.id.tvCaloriasSesion);
             btnEliminar = itemView.findViewById(R.id.btnEliminarSesion);
         }
     }

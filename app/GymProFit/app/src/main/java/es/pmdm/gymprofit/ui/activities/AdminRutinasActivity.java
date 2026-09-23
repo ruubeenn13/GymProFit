@@ -237,7 +237,6 @@ public class AdminRutinasActivity extends BaseActivity {
         intent.putExtra("descripcion", r.getDescripcion());
         intent.putExtra("nivel", r.getNivel());
         intent.putExtra("duracionMinutos", r.getDuracionMinutos());
-        intent.putExtra("caloriasAproximadas", r.getCaloriasAproximadas());
         intent.putExtra("categoria", r.getCategoria());
         intent.putExtra("diasSemana", r.getDiasSemana());
         startActivity(intent);

@@ -48,7 +48,7 @@ import es.pmdm.gymprofit.utils.NavTabs;
 // entrenamiento (sesiones, calorías, minutos) y las acciones rápidas.
 // ============================================================
 public class HomeFragment extends BaseFragment {
-    private TextView tvConteoEntrenamientos, tvConteoCaloriasHome, tvConteoMinutosHome;
+    private TextView tvConteoEntrenamientos, tvConteoMinutosHome;
     private TextView tvRachaNumero, tvRachaUnidad, tvRachaMejor;
     private SiluetaMuscularView siluetaMuscular;
     private TextView tvCuerpoResumen;
@@ -70,7 +70,6 @@ public class HomeFragment extends BaseFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         tvConteoEntrenamientos = findViewById(R.id.tvConteoEntrenamientos);
-        tvConteoCaloriasHome   = findViewById(R.id.tvConteoCaloriasHome);
         tvConteoMinutosHome    = findViewById(R.id.tvConteoMinutosHome);
         tvRachaNumero = findViewById(R.id.tvRachaNumero);
         tvRachaUnidad = findViewById(R.id.tvRachaUnidad);
@@ -300,14 +299,13 @@ public class HomeFragment extends BaseFragment {
                 Date semanaInicio = cal.getTime();
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
-                int count = 0, calorias = 0, minutos = 0;
+                int count = 0, minutos = 0;
                 if (sesiones != null) {
                     for (SesionEntrenamiento s : sesiones) {
                         try {
                             Date fecha = sdf.parse(s.getFechaInicio());
                             if (fecha != null && !fecha.before(semanaInicio)) {
                                 count++;
-                                calorias += s.getCaloriasQuemadas();
                                 minutos  += s.getDuracionMinutos();
                             }
                         } catch (ParseException ignored) {}
@@ -315,13 +313,11 @@ public class HomeFragment extends BaseFragment {
                 }
 
                 tvConteoEntrenamientos.setText(String.valueOf(count));
-                tvConteoCaloriasHome.setText(String.valueOf(calorias));
                 tvConteoMinutosHome.setText(String.valueOf(minutos));
             }
             @Override public void onFail(int code, String message) {
                 if (!isAdded()) return;
                 tvConteoEntrenamientos.setText("—");
-                tvConteoCaloriasHome.setText("—");
                 tvConteoMinutosHome.setText("—");
                 super.onFail(code, message);
             }

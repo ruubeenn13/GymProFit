@@ -33,7 +33,9 @@ public class SesionEntrenamiento {
     // Duración total de la sesión en minutos.
     private int duracionMinutos;
     // Calorías quemadas durante la sesión.
-    private int caloriasQuemadas;
+    // NO HAY CAMPO DE CALORÍAS AQUÍ, Y ES A PROPÓSITO (DEC-004 / GP-010).
+    // La API dejó de enviarlo: el gasto calórico de un entrenamiento no se puede
+    // estimar con los datos que hay, así que no se estima ni se enseña.
     // Notas u observaciones de la sesión.
     private String notas;
     // Indica si la sesión se completó.
@@ -66,8 +68,6 @@ public class SesionEntrenamiento {
     public int getDuracionMinutos() { return duracionMinutos; }
     public void setDuracionMinutos(int duracionMinutos) { this.duracionMinutos = duracionMinutos; }
 
-    public int getCaloriasQuemadas() { return caloriasQuemadas; }
-    public void setCaloriasQuemadas(int caloriasQuemadas) { this.caloriasQuemadas = caloriasQuemadas; }
 
     public String getNotas() { return notas; }
     public void setNotas(String notas) { this.notas = notas; }

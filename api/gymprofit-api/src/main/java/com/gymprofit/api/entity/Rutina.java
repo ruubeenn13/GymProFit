@@ -87,7 +87,11 @@ public class Rutina {
     @org.hibernate.annotations.Formula("(SELECT COUNT(*) FROM rutina_ejercicio re WHERE re.rutina_id = id)")
     private Integer numEjercicios;
 
-    // Campo calculado (no persistido): calorías aproximadas que quema la rutina completa.
-    @org.hibernate.annotations.Formula("(SELECT COALESCE(SUM(re.series * re.repeticiones * e.calorias_quemadas), 0) FROM rutina_ejercicio re JOIN ejercicios e ON e.id = re.ejercicio_id WHERE re.rutina_id = id)")
-    private Integer caloriasAproximadas;
+    // AQUÍ HABÍA UN @Formula DE CALORÍAS, Y SE RETIRA (DEC-004 / GP-010).
+    // Calculaba SUM(series × repeticiones × calorias_quemadas), que es literalmente la
+    // fórmula que DEC-004 declara sin fundamento fisiológico: no conoce la carga, ni el
+    // peso del usuario, ni el descanso. Además, una rutina es una PLANTILLA —no tiene
+    // pesos—, así que ese número no significaba nada ni siquiera como orden de magnitud:
+    // «Movilidad Activa · 35 min · ~2385 kcal», más que la ingesta diaria entera.
+    // No se sustituye por otra cifra: el hueco se queda vacío.
 }

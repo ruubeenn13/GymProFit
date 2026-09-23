@@ -271,7 +271,6 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
                 JSONObject obj = new JSONObject();
                 obj.put("ejercicioId",      sel.getEjercicio().getId());
                 obj.put("nombre",           sel.getEjercicio().getNombre());
-                obj.put("caloriasEjercicio", sel.getEjercicio().getCalorias());
                 obj.put("series",           sel.getSeries());
                 obj.put("repeticiones",     sel.getRepeticiones());
                 arr.put(obj);

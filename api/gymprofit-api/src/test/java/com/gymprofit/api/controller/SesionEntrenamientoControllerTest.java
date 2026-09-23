@@ -143,16 +143,16 @@ class SesionEntrenamientoControllerTest {
                 .andExpect(jsonPath("$[0].usuarioId").value(1));
     }
 
-    // Comprueba que se puede completar una sesión indicando calorías quemadas y notas
+    // Comprueba que se puede completar una sesión con notas. El parámetro de
+    // calorías quemadas ya no existe (DEC-004 / GP-010).
     @Test
     @DisplayName("PUT /sesiones/{id}/completar con rol USER devuelve 200")
     @WithMockUser(roles = "USER")
     void completar_sesion_devuelve_200() throws Exception {
         sesionDTO.setCompletada(true);
-        when(sesionService.completarSesion(1, 400, "Buena sesión")).thenReturn(sesionDTO);
+        when(sesionService.completarSesion(1, "Buena sesión")).thenReturn(sesionDTO);
 
         mockMvc.perform(put("/sesiones/1/completar")
-                        .param("caloriasQuemadas", "400")
                         .param("notas", "Buena sesión"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.completada").value(true));

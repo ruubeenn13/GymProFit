@@ -29,7 +29,7 @@ public interface ISesionEntrenamientoService {
     void deleteById(Integer id);
 
     // Marca una sesión como completada, registrando calorías quemadas y notas.
-    SesionEntrenamientoDTO completarSesion(Integer id, Integer caloriasQuemadas, String notas);
+    SesionEntrenamientoDTO completarSesion(Integer id, String notas);
 
     // Lista las sesiones de un usuario.
     List<SesionEntrenamientoDTO> findByUsuarioId(Integer usuarioId);

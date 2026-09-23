@@ -248,7 +248,6 @@ public class EditarRutinaActivity extends AppCompatActivity {
                 Ejercicio e = new Ejercicio();
                 e.setId(ejercicioId);
                 e.setNombre(obj.optString("nombre", "Ejercicio " + ejercicioId));
-                e.setCalorias(obj.optInt("caloriasEjercicio", 0));
                 ejercicios.add(new EjercicioSeleccionado(e,
                         obj.optInt("series", 3), obj.optInt("repeticiones", 10)));
 

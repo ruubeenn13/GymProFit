@@ -79,7 +79,6 @@
     <!-- HOME -->
     <string name="home_resumen">Today\'s summary</string>
     <string name="home_entrenamientos">Workouts</string>
-    <string name="home_calorias">Calories</string>
     <string name="home_minutos">Minutes</string>
     <string name="home_acciones_rapidas">Quick actions</string>
     <string name="home_iniciar_entrenamiento">Start workout</string>
@@ -122,7 +121,6 @@
     <string name="rutinas_descripcion">Description</string>
     <string name="rutinas_nivel_label">Level</string>
     <string name="rutinas_duracion">Duration</string>
-    <string name="rutinas_calorias_aprox">Approximate calories</string>
     <string name="rutinas_num_ejercicios">Number of exercises</string>
     <string name="rutinas_guardar">Save routine</string>
     <string name="error_campo_requerido">This field is required</string>
@@ -266,16 +264,13 @@
     <string name="sesiones_registrar">Log session</string>
     <string name="sesiones_rutina">Routine</string>
     <string name="sesiones_duracion">Duration (min) *</string>
-    <string name="sesiones_calorias">Calories burned</string>
     <string name="sesiones_notas">Notes (optional)</string>
     <string name="sesiones_guardar">Save session</string>
     <string name="sesiones_exito">Session saved successfully</string>
     <string name="sesiones_min">%d min</string>
-    <string name="sesiones_kcal">%d kcal</string>
     <string name="sesiones_eliminar">Delete session</string>
     <string name="sesiones_confirmar_eliminar">Delete this session?</string>
     <string name="sesiones_sin_rutina">No routine linked</string>
-    <string name="sesiones_calorias_estimadas">Estimated calories</string>
     <string name="sesiones_valoracion">Session rating</string>
     <string name="sesiones_valoracion_fmt">Rating: %d/5</string>
     <string name="sesiones_ejercicios_sesion">Session exercises</string>
@@ -395,10 +390,8 @@
     <string name="admin_campo_grupo">Muscle group</string>
     <string name="admin_campo_dificultad">Difficulty</string>
     <string name="admin_campo_duracion">Duration (min)</string>
-    <string name="admin_campo_calorias_rutina">Approximate calories</string>
     <string name="admin_campo_categoria">Category</string>
     <string name="admin_campo_dias_semana">Weekdays (e.g. M,T,W,T,F)</string>
-    <string name="admin_campo_calorias_ejercicio">Calories burned</string>
     <string name="admin_campo_equipo">Required equipment</string>
     <string name="admin_campo_instrucciones">Instructions</string>
     <string name="admin_guardar">Save</string>
@@ -468,12 +461,11 @@
     <string name="resumen_stat_sesiones">Total sessions</string>
     <string name="resumen_stat_completadas">Completed</string>
     <string name="resumen_stat_minutos">Minutes trained</string>
-    <string name="resumen_stat_calorias">Calories burned</string>
+    <string name="resumen_stat_ejercicios">Exercises done</string>
     <string name="resumen_stat_racha">Current streak (days)</string>
     <string name="resumen_stat_mejor_racha">Best streak (days)</string>
     <string name="resumen_fecha">Date</string>
     <string name="resumen_duracion">Duration</string>
-    <string name="resumen_calorias">Calories</string>
     <string name="resumen_rutina">Routine</string>
     <string name="resumen_notas">Notes</string>
 
@@ -506,7 +498,7 @@
     <string name="notif_canal_rutinas">Routines</string>
     <string name="notif_canal_logros">Achievements</string>
     <string name="notif_sesion_titulo">Session completed!</string>
-    <string name="notif_sesion_texto">%1$d min · %2$d kcal burned</string>
+    <string name="notif_sesion_texto">%1$d min of training</string>
     <string name="notif_rutina_titulo">Routine created!</string>
     <string name="notif_rutina_texto">%s is ready to use</string>
     <string name="notif_logros_titulo">New achievement unlocked!</string>
@@ -519,7 +511,6 @@
     <string name="detalle_ejercicio_demostracion">Demo</string>
     <string name="detalle_ejercicio_musculo">Muscle</string>
     <string name="detalle_ejercicio_nivel">Level</string>
-    <string name="detalle_ejercicio_calorias">Calories</string>
     <string name="detalle_ejercicio_equipamiento">Equipment</string>
 
     <!-- Edit routine -->

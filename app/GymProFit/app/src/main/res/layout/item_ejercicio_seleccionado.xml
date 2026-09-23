@@ -77,17 +77,7 @@
                     android:visibility="gone"
                     style="@style/Widget.Material3.Chip.Assist" />
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipCalorias"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
-                    android:textSize="@dimen/text_eyebrow"
-                    app:chipMinHeight="24dp"
-                    android:clickable="false"
-                    android:focusable="false"
-                    android:visibility="gone"
-                    style="@style/Widget.Material3.Chip.Assist" />
+                <!-- AQUÍ HABÍA UN CHIP DE kcal, Y SE RETIRA (DEC-004 / GP-010). -->
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipSeriesReps"

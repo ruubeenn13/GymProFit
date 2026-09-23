@@ -32,12 +32,12 @@ public class NotificationHelper {
     private static final String CANAL_PUSH        = "5";
 
     /** Notificación simple al completar una sesión de entrenamiento. */
-    public static void notificarSesionCompletada(Context ctx, int duracion, int calorias) {
+    public static void notificarSesionCompletada(Context ctx, int duracion) {
         // 1.- Crear la notificación con sus propiedades
         NotificationCompat.Builder builder = new NotificationCompat.Builder(ctx, CANAL_SESIONES);
         builder.setSmallIcon(android.R.drawable.ic_dialog_info);
         builder.setContentTitle(ctx.getString(R.string.notif_sesion_titulo));
-        builder.setContentText(ctx.getString(R.string.notif_sesion_texto, duracion, calorias));
+        builder.setContentText(ctx.getString(R.string.notif_sesion_texto, duracion));
         builder.setPriority(NotificationCompat.PRIORITY_MAX);
         builder.setAutoCancel(true);
 

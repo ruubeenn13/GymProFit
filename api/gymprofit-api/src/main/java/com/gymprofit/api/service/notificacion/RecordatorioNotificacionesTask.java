@@ -255,16 +255,16 @@ public class RecordatorioNotificacionesTask {
                 if (sesiones.isEmpty()) continue;
 
                 // Totales de la semana (los campos pueden venir a null en sesiones sin cerrar).
+                // Las kcal se retiran del resumen con DEC-004 / GP-010: el resumen no puede
+                // presumir de un número que la app no sabe calcular.
                 int minutos = sesiones.stream()
                         .mapToInt(s -> s.getDuracionMinutos() == null ? 0 : s.getDuracionMinutos()).sum();
-                int kcal = sesiones.stream()
-                        .mapToInt(s -> s.getCaloriasQuemadas() == null ? 0 : s.getCaloriasQuemadas()).sum();
 
-                // Mensaje con placeholders MessageFormat: {0} sesiones, {1} minutos, {2} kcal.
+                // Mensaje con placeholders MessageFormat: {0} sesiones, {1} minutos.
                 Locale locale = localeDe(usuarioId);
                 String titulo = messageSource.getMessage(KEY_RESUMEN_TITULO, null, locale);
                 String mensaje = messageSource.getMessage(KEY_RESUMEN_MENSAJE,
-                        new Object[]{sesiones.size(), minutos, kcal}, locale);
+                        new Object[]{sesiones.size(), minutos}, locale);
 
                 notificacionService.crearSistema(usuarioId, titulo, mensaje, TipoNotificacion.SISTEMA);
             }

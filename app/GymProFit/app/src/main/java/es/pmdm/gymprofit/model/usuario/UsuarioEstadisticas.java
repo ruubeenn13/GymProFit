@@ -3,7 +3,7 @@ package es.pmdm.gymprofit.model.usuario;
 // ============================================================
 // UsuarioEstadisticas — modelo de datos con las estadísticas de entrenamiento de un usuario
 // Agrupa métricas agregadas calculadas por la API (sesiones totales y
-// completadas, minutos entrenados, calorías, racha de días y ejercicio
+// completadas, minutos entrenados, ejercicios realizados, racha de días y ejercicio
 // favorito) para mostrarlas en pantallas de progreso/perfil.
 // ============================================================
 public class UsuarioEstadisticas {
@@ -11,7 +11,13 @@ public class UsuarioEstadisticas {
     private int totalSesiones;
     private int sesionesCompletadas;
     private int totalMinutosEntrenados;
-    private int totalCaloriasQuemadas;
+    // NO HAY CAMPO DE CALORÍAS AQUÍ, Y ES A PROPÓSITO (DEC-004 / GP-010).
+    // La API dejó de enviarlo: el gasto calórico de un entrenamiento no se puede
+    // estimar con los datos que hay, así que no se estima ni se enseña.
+
+    // Ejercicios realizados en total. Ocupa en el resumen el hueco que dejan las
+    // calorías, y a diferencia de ellas es un recuento, no una estimación.
+    private int totalEjerciciosRealizados;
     private String ejercicioMasFrecuente;
     private int rachaActualDias;
     private int mejorRachaDias;
@@ -28,8 +34,8 @@ public class UsuarioEstadisticas {
     public int getTotalMinutosEntrenados() { return totalMinutosEntrenados; }
     public void setTotalMinutosEntrenados(int v) { this.totalMinutosEntrenados = v; }
 
-    public int getTotalCaloriasQuemadas() { return totalCaloriasQuemadas; }
-    public void setTotalCaloriasQuemadas(int v) { this.totalCaloriasQuemadas = v; }
+    public int getTotalEjerciciosRealizados() { return totalEjerciciosRealizados; }
+    public void setTotalEjerciciosRealizados(int v) { this.totalEjerciciosRealizados = v; }
 
     public String getEjercicioMasFrecuente() { return ejercicioMasFrecuente; }
     public void setEjercicioMasFrecuente(String v) { this.ejercicioMasFrecuente = v; }

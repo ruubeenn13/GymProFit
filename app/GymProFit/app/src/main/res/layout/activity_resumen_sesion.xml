@@ -164,27 +164,9 @@
                             android:textColor="?attr/colorOnSurface" />
                     </LinearLayout>
 
-                    <!-- Calorías -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="8dp">
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/resumen_calorias"
-                            android:textSize="@dimen/text_body"
-                            android:textColor="?attr/colorOnSurfaceVariant" />
-                        <TextView
-                            android:id="@+id/tvCaloriasResumen"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="—"
-                            android:textSize="@dimen/text_body"
-                            android:textColor="?attr/colorOnSurface" />
-                    </LinearLayout>
+                    <!-- AQUÍ HABÍA UNA FILA DE CALORÍAS, Y SE RETIRA (DEC-004 / GP-010).
+                         El número grande de esta pantalla son los kilos movidos, que sí
+                         se miden (GP-011). -->
 
                     <!-- Rutina -->
                     <LinearLayout
@@ -334,7 +316,7 @@
 
             </LinearLayout>
 
-            <!-- Fila 2: totalMinutos | totalCalorias -->
+            <!-- Fila 2: totalMinutos | totalEjerciciosRealizados -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -386,7 +368,7 @@
                         android:padding="12dp"
                         android:gravity="center">
                         <TextView
-                            android:id="@+id/tvStatCalorias"
+                            android:id="@+id/tvStatEjercicios"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="—"
@@ -398,7 +380,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/resumen_stat_calorias"
+                            android:text="@string/resumen_stat_ejercicios"
                             android:textSize="@dimen/text_eyebrow"
                             android:textAllCaps="true"
                             android:letterSpacing="0.12"

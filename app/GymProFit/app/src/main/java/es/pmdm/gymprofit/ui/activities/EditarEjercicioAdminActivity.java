@@ -26,7 +26,7 @@ import es.pmdm.gymprofit.utils.UIHelper;
 public class EditarEjercicioAdminActivity extends BaseActivity {
 
     private int ejercicioId;
-    private TextInputEditText etNombre, etDescripcion, etCalorias, etEquipo, etInstrucciones;
+    private TextInputEditText etNombre, etDescripcion, etEquipo, etInstrucciones;
     private Spinner spGrupoMuscular, spDificultad;
 
     // Opciones fijas para los spinners de grupo muscular y dificultad.
@@ -48,7 +48,6 @@ public class EditarEjercicioAdminActivity extends BaseActivity {
 
         etNombre       = findViewById(R.id.etNombre);
         etDescripcion  = findViewById(R.id.etDescripcion);
-        etCalorias     = findViewById(R.id.etCalorias);
         etEquipo       = findViewById(R.id.etEquipo);
         etInstrucciones= findViewById(R.id.etInstrucciones);
         spGrupoMuscular= findViewById(R.id.spGrupoMuscular);
@@ -67,8 +66,6 @@ public class EditarEjercicioAdminActivity extends BaseActivity {
         ejercicioId = getIntent().getIntExtra("id", -1);
         etNombre.setText(getIntent().getStringExtra("nombre"));
         etDescripcion.setText(getIntent().getStringExtra("descripcion"));
-        int calorias = getIntent().getIntExtra("calorias", 0);
-        if (calorias > 0) etCalorias.setText(String.valueOf(calorias));
         etEquipo.setText(getIntent().getStringExtra("equipoNecesario"));
         etInstrucciones.setText(getIntent().getStringExtra("instrucciones"));
 
@@ -107,8 +104,6 @@ public class EditarEjercicioAdminActivity extends BaseActivity {
             body.put("grupoMuscular", GRUPOS[spGrupoMuscular.getSelectedItemPosition()]);
             body.put("dificultad", DIFICULTADES[spDificultad.getSelectedItemPosition()]);
 
-            String calStr = etCalorias.getText() != null ? etCalorias.getText().toString().trim() : "";
-            if (!calStr.isEmpty()) body.put("caloriasQuemadas", Integer.parseInt(calStr));
 
             String equipo = etEquipo.getText() != null ? etEquipo.getText().toString().trim() : "";
             body.put("equipoNecesario", equipo.isEmpty() ? null : equipo);

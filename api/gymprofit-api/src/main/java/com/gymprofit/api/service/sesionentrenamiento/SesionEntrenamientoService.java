@@ -168,7 +168,6 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
             sesion.setFechaInicio(sesionEntrenamientoDTO.getFechaInicio());
             sesion.setFechaFin(sesionEntrenamientoDTO.getFechaFin());
             sesion.setDuracionMinutos(sesionEntrenamientoDTO.getDuracionMinutos());
-            sesion.setCaloriasQuemadas(sesionEntrenamientoDTO.getCaloriasQuemadas());
             sesion.setNotas(sesionEntrenamientoDTO.getNotas());
             sesion.setCompletada(sesionEntrenamientoDTO.getCompletada());
 
@@ -203,10 +202,11 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
     }
 
     // Marca la sesión como completada, fija la fecha de fin al momento actual,
-    // guarda calorías/notas opcionales y evalúa si el usuario desbloquea nuevos logros.
+    // guarda las notas opcionales y evalúa si el usuario desbloquea nuevos logros.
+    // Ya no recibe calorías: no había con qué estimarlas (DEC-004 / GP-010).
     @Transactional
     @Override
-    public SesionEntrenamientoDTO completarSesion(Integer id, Integer caloriasQuemadas, String notas) {
+    public SesionEntrenamientoDTO completarSesion(Integer id, String notas) {
         logger.info("Completando sesión de entrenamiento con id: {}", id);
 
         SesionEntrenamiento sesion = sesionEntrenamientoRepository.findById(id)
@@ -217,10 +217,6 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         try {
             sesion.setFechaFin(LocalDateTime.now());
             sesion.setCompletada(true);
-
-            if (caloriasQuemadas != null) {
-                sesion.setCaloriasQuemadas(caloriasQuemadas);
-            }
 
             if (notas != null){
                 sesion.setNotas(notas);
@@ -440,7 +436,6 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
             if (patchDTO.getFechaInicio() != null) sesion.setFechaInicio(patchDTO.getFechaInicio());
             if (patchDTO.getFechaFin() != null) sesion.setFechaFin(patchDTO.getFechaFin());
             if (patchDTO.getDuracionMinutos() != null) sesion.setDuracionMinutos(patchDTO.getDuracionMinutos());
-            if (patchDTO.getCaloriasQuemadas() != null) sesion.setCaloriasQuemadas(patchDTO.getCaloriasQuemadas());
             if (patchDTO.getNotas() != null) sesion.setNotas(patchDTO.getNotas());
             if (patchDTO.getCompletada() != null) sesion.setCompletada(patchDTO.getCompletada());
 

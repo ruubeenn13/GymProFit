@@ -23,7 +23,9 @@ public class Rutina {
     // Duración estimada de la rutina en minutos.
     private int duracionMinutos;
     // Calorías aproximadas que se queman al completarla.
-    private int caloriasAproximadas;
+    // NO HAY CAMPO DE CALORÍAS AQUÍ, Y ES A PROPÓSITO (DEC-004 / GP-010).
+    // La API dejó de enviarlo: el gasto calórico de un entrenamiento no se puede
+    // estimar con los datos que hay, así que no se estima ni se enseña.
     // Indica si es una rutina predefinida del sistema (no creada por el usuario).
     // En el JSON de la API la clave es "esPredefinida" (mapeo Gson vía @SerializedName).
     @SerializedName("esPredefinida")
@@ -43,13 +45,12 @@ public class Rutina {
 
     // Constructor con los datos básicos para crear una rutina nueva.
     public Rutina(String nombre, String nivel, String descripcion,
-                  int numEjercicios, int duracionMinutos, int caloriasAproximadas) {
+                  int numEjercicios, int duracionMinutos) {
         this.nombre = nombre;
         this.nivel = nivel;
         this.descripcion = descripcion;
         this.numEjercicios = numEjercicios;
         this.duracionMinutos = duracionMinutos;
-        this.caloriasAproximadas = caloriasAproximadas;
     }
 
     public int getId() { return id; }
@@ -70,8 +71,6 @@ public class Rutina {
     public int getDuracionMinutos() { return duracionMinutos; }
     public void setDuracionMinutos(int duracionMinutos) { this.duracionMinutos = duracionMinutos; }
 
-    public int getCaloriasAproximadas() { return caloriasAproximadas; }
-    public void setCaloriasAproximadas(int caloriasAproximadas) { this.caloriasAproximadas = caloriasAproximadas; }
 
     public boolean isPredefinida() { return predefinida; }
     public void setPredefinida(boolean predefinida) { this.predefinida = predefinida; }

@@ -150,7 +150,6 @@ public class EjercicioService implements IEjercicioService {
             ejercicio.setDificultad(Dificultad.valueOf(ejercicioDTO.getDificultad()));
             ejercicio.setImagenUrl(ejercicioDTO.getImagenUrl());
             ejercicio.setInstrucciones(ejercicioDTO.getInstrucciones());
-            ejercicio.setCaloriasQuemadas(ejercicioDTO.getCaloriasQuemadas());
             ejercicio.setEquipoNecesario(ejercicioDTO.getEquipoNecesario());
             ejercicio.setActivo(ejercicioDTO.getActivo());
 
@@ -224,7 +223,6 @@ public class EjercicioService implements IEjercicioService {
                 ejercicio.setDificultad(Dificultad.valueOf(patchDTO.getDificultad().toUpperCase()));
             if (patchDTO.getImagenUrl() != null) ejercicio.setImagenUrl(patchDTO.getImagenUrl());
             if (patchDTO.getInstrucciones() != null) ejercicio.setInstrucciones(patchDTO.getInstrucciones());
-            if (patchDTO.getCaloriasQuemadas() != null) ejercicio.setCaloriasQuemadas(patchDTO.getCaloriasQuemadas());
             if (patchDTO.getEquipoNecesario() != null) ejercicio.setEquipoNecesario(patchDTO.getEquipoNecesario());
             if (patchDTO.getActivo() != null) ejercicio.setActivo(patchDTO.getActivo());
 

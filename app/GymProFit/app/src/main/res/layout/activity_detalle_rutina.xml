@@ -104,28 +104,9 @@
                             android:textSize="@dimen/text_caption"
                             android:textColor="?attr/colorOnSurfaceVariant" />
 
-                        <View
-                            android:layout_width="1dp"
-                            android:layout_height="14dp"
-                            android:layout_marginStart="12dp"
-                            android:layout_marginEnd="12dp"
-                            android:background="?attr/colorOutlineVariant" />
-
-                        <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:layout_gravity="center_vertical"
-                            android:src="@drawable/ic_calorias"
-                            android:alpha="0.6"
-                            android:contentDescription="@null" />
-
-                        <TextView
-                            android:id="@+id/tvCaloriasDetalle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="6dp"
-                            android:textSize="@dimen/text_caption"
-                            android:textColor="?attr/colorOnSurfaceVariant" />
+                        <!-- AQUÍ HABÍA UN SEPARADOR Y UNAS kcal, Y SE RETIRAN
+                             (DEC-004 / GP-010). El separador se va con ellas: sin nada
+                             detrás quedaba una barra vertical suelta al final de la fila. -->
 
                     </LinearLayout>
 

@@ -62,29 +62,22 @@ public class EjercicioJooqController {
         return ResponseEntity.ok(ejercicioJooqRepository.findByGrupoMuscularAndDificultad(grupoMuscular, dificultad));
     }
 
-    @Operation(summary = "Busca ejercicios por rango de calorías quemadas con JOOQ")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ejercicios encontrados")
-    })
-    // Filtra ejercicios cuyas calorías quemadas estén entre min y max
-    @GetMapping("/jooq/ejercicios/calorias")
-    @PreAuthorize("hasAnyRole('GUEST', 'USER', 'ADMIN')")
-    public ResponseEntity<List<EjercicioJooqDTO>> findByCaloriasQuemadasBetween(@RequestParam Integer min,
-                                                                                @RequestParam Integer max) {
-        return ResponseEntity.ok(ejercicioJooqRepository.findByCaloriasQuemadasBetween(min, max));
-    }
+    // AQUÍ HABÍA UN GET /jooq/ejercicios/calorias, Y SE RETIRA (DEC-004 / GP-010).
+    // Buscar ejercicios por rango de gasto calórico era ofrecer como criterio un
+    // número que la app ya no enseña en ningún sitio y que nunca significó nada:
+    // sale de una constante por grupo muscular, no de la persona que entrena.
 
     @Operation(summary = "Búsqueda avanzada dinámica de ejercicios con JOOQ")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ejercicios encontrados")
     })
-    // Búsqueda combinada con filtros opcionales (nombre, grupo, dificultad, calorías máx)
+    // Búsqueda combinada con filtros opcionales (nombre, grupo, dificultad).
+    // El filtro caloriasMax se retira con DEC-004 / GP-010.
     @GetMapping("/jooq/ejercicios/busqueda")
     @PreAuthorize("hasAnyRole('GUEST', 'USER', 'ADMIN')")
     public ResponseEntity<List<EjercicioJooqDTO>> busquedaAvanzada(@RequestParam(required = false) String nombre,
                                                                    @RequestParam(required = false) String grupoMuscular,
-                                                                   @RequestParam(required = false) String dificultad,
-                                                                   @RequestParam(required = false) Integer caloriasMax) {
-        return ResponseEntity.ok(ejercicioJooqRepository.busquedaAvanzada(nombre, grupoMuscular, dificultad, caloriasMax));
+                                                                   @RequestParam(required = false) String dificultad) {
+        return ResponseEntity.ok(ejercicioJooqRepository.busquedaAvanzada(nombre, grupoMuscular, dificultad));
     }
 }

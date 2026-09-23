@@ -69,25 +69,11 @@ public class EjercicioJooqRepository implements IEjercicioJooqRepository {
         // WHERE grupo_muscular = 'grupoMuscular' AND dificultad = 'dificultad'
     }
 
-    // Filtra ejercicios cuyo gasto calórico está entre min y max, ordenados ascendentemente.
+    // Búsqueda combinada con filtros opcionales (nombre, grupo muscular, dificultad) para catálogo.
+    // El filtro por calorías se retira con DEC-004 / GP-010: filtrar por un número que
+    // no se enseña en ningún sitio, y que además no significa nada, no ayuda a nadie.
     @Override
-    public List<EjercicioJooqDTO> findByCaloriasQuemadasBetween(Integer min, Integer max) {
-        return dsl
-                .select()
-                .from(EJERCICIOS)
-                .where(EJERCICIOS.CALORIAS_QUEMADAS.between(min, max))
-                .orderBy(EJERCICIOS.CALORIAS_QUEMADAS.asc())
-                .fetchInto(EjercicioJooqDTO.class);
-
-        // SQL generado:
-        // SELECT * FROM ejercicios
-        // WHERE calorias_quemadas BETWEEN min AND max
-        // ORDER BY calorias_quemadas ASC
-    }
-
-    // Búsqueda combinada con filtros opcionales (nombre, grupo muscular, dificultad, calorías máx.) para catálogo.
-    @Override
-    public List<EjercicioJooqDTO> busquedaAvanzada(String nombre, String grupoMuscular, String dificultad, Integer caloriasMax) {
+    public List<EjercicioJooqDTO> busquedaAvanzada(String nombre, String grupoMuscular, String dificultad) {
         var conditions = new ArrayList<Condition>();
 
         // Filtrado dinámico por nombre
@@ -103,11 +89,6 @@ public class EjercicioJooqRepository implements IEjercicioJooqRepository {
         // Filtrado dinámico por dificultad
         if (dificultad != null && !dificultad.isBlank()) {
             conditions.add(EJERCICIOS.DIFICULTAD.eq(EjerciciosDificultad.valueOf(dificultad.toUpperCase())));
-        }
-
-        // Filtrado dinámico por calorías máximas
-        if (caloriasMax != null) {
-            conditions.add(EJERCICIOS.CALORIAS_QUEMADAS.le(caloriasMax));
         }
 
         return dsl

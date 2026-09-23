@@ -78,7 +78,6 @@
     <!-- HOME -->
     <string name="home_resumen">Resumen de hoy</string>
     <string name="home_entrenamientos">Entrenamientos</string>
-    <string name="home_calorias">Calorías</string>
     <string name="home_minutos">Minutos</string>
     <string name="home_acciones_rapidas">Acciones rápidas</string>
     <string name="home_iniciar_entrenamiento">Iniciar entrenamiento</string>
@@ -123,7 +122,6 @@
     <string name="rutinas_descripcion">Descripción</string>
     <string name="rutinas_nivel_label">Nivel</string>
     <string name="rutinas_duracion">Duración</string>
-    <string name="rutinas_calorias_aprox">Calorías aproximadas</string>
     <string name="rutinas_num_ejercicios">Número de ejercicios</string>
     <string name="rutinas_guardar">Guardar rutina</string>
     <string name="error_campo_requerido">Este campo es obligatorio</string>
@@ -257,16 +255,13 @@
     <string name="sesiones_registrar">Registrar sesión</string>
     <string name="sesiones_rutina">Rutina</string>
     <string name="sesiones_duracion">Duración (min) *</string>
-    <string name="sesiones_calorias">Calorías quemadas</string>
     <string name="sesiones_notas">Notas (opcional)</string>
     <string name="sesiones_guardar">Guardar sesión</string>
     <string name="sesiones_exito">Sesión registrada correctamente</string>
     <string name="sesiones_min">%d min</string>
-    <string name="sesiones_kcal">%d kcal</string>
     <string name="sesiones_eliminar">Eliminar sesión</string>
     <string name="sesiones_confirmar_eliminar">¿Eliminar esta sesión?</string>
     <string name="sesiones_sin_rutina">Sin rutina asociada</string>
-    <string name="sesiones_calorias_estimadas">Calorías estimadas</string>
     <string name="sesiones_valoracion">Valoración de la sesión</string>
     <!-- Se guarda como texto en las notas de la sesión, no es una etiqueta de
          pantalla: por eso dice de qué es la cifra en vez de llevar un símbolo
@@ -389,10 +384,8 @@
     <string name="admin_campo_grupo">Grupo muscular</string>
     <string name="admin_campo_dificultad">Dificultad</string>
     <string name="admin_campo_duracion">Duración (min)</string>
-    <string name="admin_campo_calorias_rutina">Calorías aproximadas</string>
     <string name="admin_campo_categoria">Categoría</string>
     <string name="admin_campo_dias_semana">Días semana (ej: L,M,X,J,V)</string>
-    <string name="admin_campo_calorias_ejercicio">Calorías quemadas</string>
     <string name="admin_campo_equipo">Equipamiento necesario</string>
     <string name="admin_campo_instrucciones">Instrucciones</string>
     <string name="admin_guardar">Guardar</string>
@@ -472,12 +465,11 @@
     <string name="resumen_stat_sesiones">Total sesiones</string>
     <string name="resumen_stat_completadas">Completadas</string>
     <string name="resumen_stat_minutos">Minutos entrenados</string>
-    <string name="resumen_stat_calorias">Calorías quemadas</string>
+    <string name="resumen_stat_ejercicios">Ejercicios hechos</string>
     <string name="resumen_stat_racha">Racha actual (días)</string>
     <string name="resumen_stat_mejor_racha">Mejor racha (días)</string>
     <string name="resumen_fecha">Fecha</string>
     <string name="resumen_duracion">Duración</string>
-    <string name="resumen_calorias">Calorías</string>
     <string name="resumen_rutina">Rutina</string>
     <string name="resumen_notas">Notas</string>
 
@@ -510,7 +502,7 @@
     <string name="notif_canal_rutinas">Rutinas</string>
     <string name="notif_canal_logros">Logros</string>
     <string name="notif_sesion_titulo">¡Sesión completada!</string>
-    <string name="notif_sesion_texto">%1$d min · %2$d kcal quemadas</string>
+    <string name="notif_sesion_texto">%1$d min de entrenamiento</string>
     <string name="notif_rutina_titulo">¡Rutina creada!</string>
     <string name="notif_rutina_texto">%s está lista para usar</string>
     <string name="notif_logros_titulo">¡Nuevo logro desbloqueado!</string>
@@ -523,7 +515,6 @@
     <string name="detalle_ejercicio_demostracion">Demostración</string>
     <string name="detalle_ejercicio_musculo">Músculo</string>
     <string name="detalle_ejercicio_nivel">Nivel</string>
-    <string name="detalle_ejercicio_calorias">Calorías</string>
     <string name="detalle_ejercicio_equipamiento">Equipamiento</string>
 
     <!-- Editar rutina -->

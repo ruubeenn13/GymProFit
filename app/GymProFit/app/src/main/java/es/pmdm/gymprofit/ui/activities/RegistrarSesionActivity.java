@@ -56,8 +56,7 @@ public class RegistrarSesionActivity extends AppCompatActivity {
 
     private Spinner spRutina;
     private TextInputEditText etDuracion, etNotas;
-    private TextView tvCaloriasCalculadas;
-    private View cardCalorias, cardEjercicios;
+    private View cardEjercicios;
     private RatingBar ratingBar;
     private PreferencesManager prefsManager;
     // Interfaz Retrofit tipada del dominio sesiones (etapa 2)
@@ -65,7 +64,6 @@ public class RegistrarSesionActivity extends AppCompatActivity {
     // Interfaz Retrofit tipada del dominio rutinas (etapa 2)
     private final RutinaApi rutinaApi = ApiClient.service(RutinaApi.class);
 
-    private int caloriasCalculadas = 0;
     private final List<Rutina> rutinas = new ArrayList<>();
     private final List<String> rutinaOpciones = new ArrayList<>();
     private final List<EjercicioPesoAdapter.Item> ejercicioItems = new ArrayList<>();
@@ -83,8 +81,6 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         spRutina             = findViewById(R.id.spRutina);
         etDuracion           = findViewById(R.id.etDuracion);
         etNotas              = findViewById(R.id.etNotas);
-        tvCaloriasCalculadas = findViewById(R.id.tvCaloriasCalculadas);
-        cardCalorias         = findViewById(R.id.cardCalorias);
         cardEjercicios       = findViewById(R.id.cardEjercicios);
         ratingBar            = findViewById(R.id.ratingBar);
 
@@ -170,10 +166,8 @@ public class RegistrarSesionActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position > 0 && position <= rutinas.size()) {
-                    calcularCaloriasRutina(rutinas.get(position - 1).getId());
+                    cargarEjerciciosDeRutina(rutinas.get(position - 1).getId());
                 } else {
-                    caloriasCalculadas = 0;
-                    cardCalorias.setVisibility(View.GONE);
                     ejercicioItems.clear();
                     ejercicioPesoAdapter.notifyDataSetChanged();
                     cardEjercicios.setVisibility(View.GONE);
@@ -202,39 +196,32 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         }
     }
 
-    // Obtiene los ejercicios de la rutina seleccionada, calcula las calorías
-    // totales (calorías x series x repeticiones) y arma la lista de
+    // Obtiene los ejercicios de la rutina seleccionada y arma la lista de
     // ejercicios/pesos que se mostrará en el RecyclerView.
-    private void calcularCaloriasRutina(int rutinaId) {
-        // Relaciones rutina-ejercicio (ya deserializadas por Gson): incluyen calorías
-        // y nombre enriquecidos desde el catálogo, igual que devolvía el JSON antiguo.
+    //
+    // Antes esto también calculaba calorías (calorías × series × repeticiones) y las
+    // pintaba en una tarjeta. Se retira con DEC-004 / GP-010: esa multiplicación no
+    // conoce la carga, ni el peso del usuario, ni el descanso.
+    private void cargarEjerciciosDeRutina(int rutinaId) {
+        // Relaciones rutina-ejercicio (ya deserializadas por Gson): traen el nombre
+        // enriquecido desde el catálogo, igual que devolvía el JSON antiguo.
         rutinaApi.getEjerciciosDeRutina(rutinaId).enqueue(new ApiCallback<List<RutinaEjercicio>>() {
             @Override
             public void onOk(List<RutinaEjercicio> lista) {
-                int total = 0;
                 List<EjercicioPesoAdapter.Item> nuevosItems = new ArrayList<>();
                 if (lista != null) {
                     int i = 0;
                     for (RutinaEjercicio re : lista) {
                         i++;
-                        int calorias    = re.getCaloriasEjercicio();
                         int series      = re.getSeries();
                         int reps        = re.getRepeticiones();
                         int ejercicioId = re.getEjercicioId();
                         String nombre   = (re.getNombreEjercicio() != null && !re.getNombreEjercicio().isEmpty())
                                 ? re.getNombreEjercicio() : "Ejercicio " + i;
-                        total += calorias * series * reps;
                         if (ejercicioId != -1) {
                             nuevosItems.add(new EjercicioPesoAdapter.Item(ejercicioId, nombre, series, reps));
                         }
                     }
-                }
-                caloriasCalculadas = total;
-                if (total > 0) {
-                    tvCaloriasCalculadas.setText(getString(R.string.sesiones_kcal, total));
-                    cardCalorias.setVisibility(View.VISIBLE);
-                } else {
-                    cardCalorias.setVisibility(View.GONE);
                 }
                 ejercicioItems.clear();
                 ejercicioItems.addAll(nuevosItems);
@@ -246,7 +233,7 @@ public class RegistrarSesionActivity extends AppCompatActivity {
     }
 
     // Valida la duración (obligatoria), construye el JSON de la sesión
-    // (rutina, fecha, duración, calorías, valoración y notas) y la envía a
+    // (rutina, fecha, duración, valoración y notas) y la envía a
     // la API; si se crea correctamente, registra los ejercicios realizados
     // y navega al resumen de la sesión.
     private void guardarSesion() {
@@ -269,8 +256,6 @@ public class RegistrarSesionActivity extends AppCompatActivity {
             String now = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US).format(new Date());
             body.put("fechaInicio", now);
             body.put("duracionMinutos", Integer.parseInt(durStr));
-
-            if (caloriasCalculadas > 0) body.put("caloriasQuemadas", caloriasCalculadas);
 
             int estrellas = (int) ratingBar.getRating();
             String valoracion = getString(R.string.sesiones_valoracion_fmt, estrellas);

@@ -77,12 +77,9 @@ public class WgerImportService {
         EQUIPO_ES.put("none (bodyweight exercise)", "Sin equipo");
     }
 
-    // Estimación de kcal por serie según grupo muscular (heurística honesta:
-    // wger no aporta gasto calórico; rangos coherentes con el catálogo previo)
-    private static final Map<GrupoMuscular, Integer> KCAL_GRUPO = Map.of(
-            GrupoMuscular.CARDIO, 10, GrupoMuscular.PIERNAS, 8, GrupoMuscular.ESPALDA, 8,
-            GrupoMuscular.FULLBODY, 9, GrupoMuscular.PECHO, 6, GrupoMuscular.HOMBROS, 6,
-            GrupoMuscular.BRAZOS, 5, GrupoMuscular.ABDOMEN, 5);
+    // AQUÍ HABÍA UNA TABLA DE kcal POR GRUPO MUSCULAR, Y SE RETIRA (DEC-004 / GP-010).
+    // Era el origen del número: una constante por grupo que no sabe nada de quién
+    // entrena ni de cuánto peso mueve. El catálogo importado ya no la rellena.
 
     // ── free-exercise-db → catálogo propio (fuente PRECISA cuando hay match) ──
     // Músculo primario FED → nombre ES mostrado en el detalle
@@ -428,7 +425,6 @@ public class WgerImportService {
         e.setMusculoPrimario(musculoEs);
         e.setMusculoPrimarioEn(musculoEn);
         e.setDificultad(nivelFed(nodo.path("level").asText("")));
-        e.setCaloriasQuemadas(KCAL_GRUPO.getOrDefault(grupo, 6));
         e.setEquipoNecesario(equipoFed != null ? equipoFed[0] : "Sin equipo");
         e.setEquipoNecesarioEn(equipoFed != null ? equipoFed[1] : "Bodyweight");
         e.setImagenUrl(img1);
@@ -514,7 +510,6 @@ public class WgerImportService {
         destino.setMusculoPrimario(origen.getMusculoPrimario());
         destino.setMusculoPrimarioEn(origen.getMusculoPrimarioEn());
         destino.setDificultad(origen.getDificultad());
-        destino.setCaloriasQuemadas(origen.getCaloriasQuemadas());
         destino.setEquipoNecesario(origen.getEquipoNecesario());
         destino.setEquipoNecesarioEn(origen.getEquipoNecesarioEn());
         destino.setImagenUrl(origen.getImagenUrl());

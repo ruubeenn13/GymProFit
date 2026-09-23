@@ -223,7 +223,6 @@ public class AdminEjerciciosActivity extends BaseActivity {
         intent.putExtra("descripcion", e.getDescripcion());
         intent.putExtra("grupoMuscular", e.getGrupoMuscular());
         intent.putExtra("dificultad", e.getDificultad());
-        intent.putExtra("calorias", e.getCalorias());
         intent.putExtra("equipoNecesario", e.getEquipoNecesario());
         intent.putExtra("instrucciones", e.getInstrucciones());
         startActivity(intent);

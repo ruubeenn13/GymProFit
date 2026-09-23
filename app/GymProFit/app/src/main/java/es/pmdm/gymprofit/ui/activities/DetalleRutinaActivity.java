@@ -63,7 +63,7 @@ public class DetalleRutinaActivity extends AppCompatActivity {
 
     private int rutinaId;
     private String nombre, descripcion, nivel;
-    private int duracion, calorias;
+    private int duracion;
     private boolean predefinida;
     private int rutinaUsuarioId;
 
@@ -82,7 +82,6 @@ public class DetalleRutinaActivity extends AppCompatActivity {
         descripcion    = getIntent().getStringExtra("descripcion");
         nivel          = getIntent().getStringExtra("nivel");
         duracion       = getIntent().getIntExtra("duracion", 0);
-        calorias       = getIntent().getIntExtra("calorias", 0);
         predefinida    = getIntent().getBooleanExtra("predefinida", false);
         rutinaUsuarioId = getIntent().getIntExtra("usuarioId", -1);
 
@@ -116,7 +115,6 @@ public class DetalleRutinaActivity extends AppCompatActivity {
         ((Chip) findViewById(R.id.chipNivelDetalle))
                 .setText(UIHelper.traducirNivel(this, nivel));
         ((TextView) findViewById(R.id.tvDuracionDetalle)).setText(duracion + " min");
-        ((TextView) findViewById(R.id.tvCaloriasDetalle)).setText("~" + calorias + " kcal");
     }
 
     // Configura el RecyclerView de ejercicios de la rutina (solo lectura,

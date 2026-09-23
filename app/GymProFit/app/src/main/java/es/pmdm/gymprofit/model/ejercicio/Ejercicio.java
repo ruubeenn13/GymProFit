@@ -34,9 +34,9 @@ public class Ejercicio {
     // Equipo/material necesario para realizarlo.
     private String equipoNecesario;
     // Calorías aproximadas quemadas por el ejercicio.
-    // La API devuelve esta métrica como "caloriasQuemadas"; se mapea al campo local "calorias".
-    @SerializedName("caloriasQuemadas")
-    private int calorias;
+    // NO HAY CAMPO DE CALORÍAS AQUÍ, Y ES A PROPÓSITO (DEC-004 / GP-010).
+    // La API dejó de enviarlo: el gasto calórico de un entrenamiento no se puede
+    // estimar con los datos que hay, así que no se estima ni se enseña.
     // Indica si el ejercicio está activo/visible en el catálogo.
     // La búsqueda admin (EjercicioJooqDTO) envía "activo" como Byte 0/1; el adaptador lo tolera.
     @JsonAdapter(BooleanNumericAdapter.class)
@@ -74,8 +74,6 @@ public class Ejercicio {
     public String getEquipoNecesario() { return equipoNecesario; }
     public void setEquipoNecesario(String equipoNecesario) { this.equipoNecesario = equipoNecesario; }
 
-    public int getCalorias() { return calorias; }
-    public void setCalorias(int calorias) { this.calorias = calorias; }
 
     public boolean isActivo() { return activo; }
     public void setActivo(boolean activo) { this.activo = activo; }
