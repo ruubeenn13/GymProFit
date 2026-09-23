@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_rutinas_vacio — Estado vacío de "Mis rutinas", como ítem del ConcatAdapter
+  entre la tarjeta "+ Nueva rutina" y las rutinas predefinidas.
+
+  Va DENTRO de la lista y no superpuesto porque las predefinidas se ofrecen debajo,
+  como sugerencia de por dónde empezar: el rótulo "Rutinas para empezar" es lo que
+  las desatribuye del "Mis rutinas" de la cabecera. Antes las seis predefinidas
+  colgaban directamente de ese rótulo y parecían del usuario.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="12dp"
+    android:paddingBottom="8dp">
+
+    <TextView
+        android:id="@+id/tvVacioTitulo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/rutinas_vacio_titulo"
+        android:textSize="@dimen/text_subtitle"
+        android:textStyle="bold"
+        android:textColor="?attr/colorOnSurface"
+        android:accessibilityHeading="true" />
+
+    <TextView
+        android:id="@+id/tvVacioCuerpo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="@string/rutinas_vacio_cuerpo"
+        android:textSize="@dimen/text_caption"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:lineSpacingExtra="2dp" />
+
+    <!-- Rótulo que atribuye las tarjetas de debajo: no son del usuario. -->
+    <TextView
+        android:id="@+id/tvVacioSugerencias"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="4dp"
+        android:text="@string/rutinas_vacio_sugerencias"
+        android:textSize="@dimen/text_eyebrow"
+        android:textStyle="bold"
+        android:textAllCaps="true"
+        android:letterSpacing="0.08"
+        android:textColor="?attr/colorPrimary"
+        android:accessibilityHeading="true" />
+
+</LinearLayout>

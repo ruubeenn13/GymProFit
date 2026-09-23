@@ -34,20 +34,38 @@ import es.pmdm.gymprofit.ui.activities.DetalleRutinaActivity;
 import es.pmdm.gymprofit.ui.activities.EditarRutinaActivity;
 import es.pmdm.gymprofit.ui.activities.EditarRutinaAdminActivity;
 import es.pmdm.gymprofit.ui.adapters.RutinaAdapter;
+import es.pmdm.gymprofit.ui.adapters.RutinasVacioHeaderAdapter;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
-// RutinasFragment — pestaña de listado de rutinas (predefinidas + del usuario)
-// con filtros por nivel y CRUD. Muestra un menú contextual por rutina (editar,
+// RutinasFragment — pestaña "Mis rutinas": las rutinas PROPIAS del usuario, con
+// filtros por nivel y CRUD. Muestra un menú contextual por rutina (editar,
 // activar/desactivar o eliminar) y navega al detalle de cada una.
+//
+// Las rutinas PREDEFINIDAS ya no se mezclan con las propias: solo aparecen cuando
+// el usuario no tiene ninguna, dentro del estado vacío y bajo su propio rótulo
+// ("Rutinas para empezar"), como sugerencia de por dónde arrancar. Antes se
+// concatenaban siempre, así que una cuenta recién creada veía seis rutinas ajenas
+// presentadas como suyas y el estado vacío del layout era inalcanzable.
 // ============================================================
 public class RutinasFragment extends BaseFragment {
     private RecyclerView rvRutinas;
     private RutinaAdapter adapter;
+    private RutinasVacioHeaderAdapter cabeceraVacio;
     private ChipGroup chipGroupNivel;
     private TextView tvEmpty;
+
+    // Nivel del chip activo. Solo sirve para distinguir "esta cuenta no tiene nada"
+    // de "el filtro no deja pasar nada", que son dos mensajes distintos.
+    private String nivelActual = NIVEL_TODOS;
+
+    private static final String NIVEL_TODOS = "Todos";
+
+    // La API responde 404 a una lista vacía en vez de 200 con []. Es su contrato y
+    // no se toca desde aquí, así que la pantalla lo traduce: 404 = no hay nada.
+    private static final int HTTP_NO_ENCONTRADO = 404;
 
     private final RutinaApi rutinaApi = ApiClient.service(RutinaApi.class);
 
@@ -101,7 +119,10 @@ public class RutinasFragment extends BaseFragment {
         // concatenada antes del adapter de rutinas. Sustituye al antiguo FAB (que ahora
         // quedaría oculto tras la barra de navegación flotante).
         NuevaRutinaHeaderAdapter header = new NuevaRutinaHeaderAdapter(this::crearRutina);
-        rvRutinas.setAdapter(new ConcatAdapter(header, adapter));
+        // Entre la tarjeta de crear y el listado va el bloque de estado vacío, que
+        // está oculto (0 ítems) mientras el usuario tenga rutinas propias.
+        cabeceraVacio = new RutinasVacioHeaderAdapter();
+        rvRutinas.setAdapter(new ConcatAdapter(header, cabeceraVacio, adapter));
     }
 
     // Abre la creación de una nueva rutina (requiere usuario registrado). Lo dispara la
@@ -126,58 +147,95 @@ public class RutinasFragment extends BaseFragment {
         detalleLauncher.launch(intent);
     }
 
-    // Carga las rutinas predefinidas y, si hay usuario, añade las propias.
+    // Carga la lista. Primero las PROPIAS: si hay alguna, la pantalla enseña solo
+    // esas, que es lo único que "Mis rutinas" puede prometer. Si no hay ninguna se
+    // piden las predefinidas y se muestran dentro del estado vacío, atribuidas a
+    // GymProFit y no al usuario.
     private void cargarRutinas() {
         final FragmentActivity act = requireActivity();
         int usuarioId = prefsManager.getUsuarioId();
 
         LoadingDialog.show(act);
 
-        rutinaApi.getPredefinidas().enqueue(new ApiCallback<List<Rutina>>() {
-            @Override
-            public void onOk(List<Rutina> predefinidas) {
-                List<Rutina> todas = new ArrayList<>(predefinidas != null ? predefinidas : new ArrayList<>());
+        // Invitado: no hay rutinas propias que pedir, pero sí tiene que poder ver
+        // por dónde se empieza.
+        if (usuarioId == -1) {
+            cargarPredefinidasComoSugerencia(act);
+            return;
+        }
 
-                if (usuarioId != -1) {
-                    rutinaApi.getDeUsuarioActivas(usuarioId).enqueue(new ApiCallback<List<Rutina>>() {
-                        @Override
-                        public void onOk(List<Rutina> propias) {
-                            if (propias != null) todas.addAll(propias);
-                            LoadingDialog.hide(act);
-                            if (!isAdded()) return;
-                            adapter.setRutinas(todas);
-                            actualizarEstadoVacio();
-                        }
-                        @Override
-                        public void onFail(int code, String message) {
-                            LoadingDialog.hide(act);
-                            if (!isAdded()) return;
-                            adapter.setRutinas(todas);
-                            actualizarEstadoVacio();
-                        }
-                    });
-                } else {
+        rutinaApi.getDeUsuarioActivas(usuarioId).enqueue(new ApiCallback<List<Rutina>>() {
+            @Override
+            public void onOk(List<Rutina> propias) {
+                if (propias != null && !propias.isEmpty()) {
                     LoadingDialog.hide(act);
                     if (!isAdded()) return;
-                    adapter.setRutinas(todas);
-                    actualizarEstadoVacio();
+                    mostrarRutinas(propias, false);
+                } else {
+                    cargarPredefinidasComoSugerencia(act);
                 }
             }
-
             @Override
             public void onFail(int code, String message) {
+                // La API devuelve 404 cuando la lista sale vacía (ver
+                // RutinaController#obtenerRutinasActivasPorUsuario), así que aquí
+                // un 404 NO es un error: es justo el caso del estado vacío.
+                if (code == HTTP_NO_ENCONTRADO) {
+                    cargarPredefinidasComoSugerencia(act);
+                    return;
+                }
                 LoadingDialog.hide(act);
                 if (!isAdded()) return;
+                // Con un fallo de verdad no se sabe si el usuario tiene rutinas
+                // propias, y sin saberlo no se puede atribuir nada: se avisa y se
+                // deja la lista vacía antes que enseñar predefinidas que podrían
+                // estar tapando las suyas.
                 UiFeedback.toastError(act, code, message);
-                actualizarEstadoVacio();
+                mostrarRutinas(new ArrayList<>(), false);
             }
         });
     }
 
-    // La tarjeta "+ Nueva rutina" (header del ConcatAdapter) hace de CTA/estado vacío,
-    // así que la lista siempre se muestra: no se oculta el RecyclerView ni se usa tvEmpty.
+    // Pide las rutinas predefinidas para ofrecerlas como sugerencia dentro del
+    // estado vacío. Solo se llama cuando consta que el usuario no tiene ninguna.
+    private void cargarPredefinidasComoSugerencia(final FragmentActivity act) {
+        rutinaApi.getPredefinidas().enqueue(new ApiCallback<List<Rutina>>() {
+            @Override
+            public void onOk(List<Rutina> predefinidas) {
+                LoadingDialog.hide(act);
+                if (!isAdded()) return;
+                mostrarRutinas(predefinidas != null ? predefinidas : new ArrayList<>(), true);
+            }
+            @Override
+            public void onFail(int code, String message) {
+                LoadingDialog.hide(act);
+                if (!isAdded()) return;
+                // Sin sugerencias que ofrecer, el bloque de estado vacío mentiría:
+                // queda solo la tarjeta de crear rutina. Un 404 aquí significa que no
+                // hay predefinidas publicadas, que no es un fallo que avisar.
+                if (code != HTTP_NO_ENCONTRADO) UiFeedback.toastError(act, code, message);
+                mostrarRutinas(new ArrayList<>(), false);
+            }
+        });
+    }
+
+    // Pinta la lista y decide si el bloque de estado vacío acompaña a las tarjetas.
+    private void mostrarRutinas(List<Rutina> rutinas, boolean comoSugerencia) {
+        cabeceraVacio.setVisible(comoSugerencia);
+        adapter.setRutinas(rutinas);
+        nivelActual = NIVEL_TODOS;
+        actualizarEstadoVacio();
+    }
+
+    // El mensaje de lista vacía solo aparece cuando no queda ni una tarjeta: con el
+    // estado vacío y sus sugerencias en pantalla siempre hay algo, así que en la
+    // práctica lo que se ve aquí es el filtro de nivel sin resultados.
     private void actualizarEstadoVacio() {
-        tvEmpty.setVisibility(View.GONE);
+        boolean sinTarjetas = adapter.getItemCount() == 0;
+        tvEmpty.setText(NIVEL_TODOS.equals(nivelActual)
+                ? R.string.feedback_lista_vacia
+                : R.string.rutinas_vacio_filtro);
+        tvEmpty.setVisibility(sinTarjetas ? View.VISIBLE : View.GONE);
         rvRutinas.setVisibility(View.VISIBLE);
     }
 
@@ -275,12 +333,13 @@ public class RutinasFragment extends BaseFragment {
             int id = list.get(0);
             String nivel;
 
-            if (id == R.id.chipTodos)              nivel = "Todos";
+            if (id == R.id.chipTodos)              nivel = NIVEL_TODOS;
             else if (id == R.id.chipPrincipiante)  nivel = "Principiante";
             else if (id == R.id.chipIntermedio)    nivel = "Intermedio";
             else if (id == R.id.chipAvanzado)      nivel = "Avanzado";
-            else                                   nivel = "Todos";
+            else                                   nivel = NIVEL_TODOS;
 
+            nivelActual = nivel;
             adapter.filtrarPorNivel(nivel);
             actualizarEstadoVacio();
         }));

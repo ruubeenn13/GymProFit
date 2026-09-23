@@ -106,6 +106,13 @@
     <string name="rutinas_fuerza">Strength Routine</string>
     <string name="rutinas_fuerza_desc">8 exercises · 60 minutes</string>
     <string name="rutinas_crear_nueva">Create new routine</string>
+
+    <!-- Empty state of "My routines": see values/strings.xml for the rationale. -->
+    <string name="rutinas_vacio_titulo">You have no routines of your own yet</string>
+    <string name="rutinas_vacio_cuerpo">Create one with the button above, or start with one of the GymProFit routines.</string>
+    <string name="rutinas_vacio_sugerencias">Routines to get you started</string>
+    <!-- Empty because of the level filter, not for lack of routines. -->
+    <string name="rutinas_vacio_filtro">No routines at this level</string>
     <string name="rutinas_todos">All</string>
     <string name="rutinas_principiante">Beginner</string>
     <string name="rutinas_intermedio">Intermediate</string>
