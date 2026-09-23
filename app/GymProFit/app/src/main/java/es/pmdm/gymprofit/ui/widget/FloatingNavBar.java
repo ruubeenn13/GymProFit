@@ -129,6 +129,22 @@ public class FloatingNavBar extends FrameLayout {
     private int colorMarca, textoActivo, textoInactivo;
     private boolean esOscuro;
 
+    // Espacio vertical que la barra le quita al contenido de una pestaña: su alto,
+    // su margen inferior y un poco de aire para que el último elemento no quede
+    // pegado al cristal. Las tres medidas son las MISMAS que activity_main.xml usa
+    // para dibujar la barra, así que no pueden desincronizarse: cambiar
+    // @dimen/nav_bar_height mueve la barra y el hueco a la vez.
+    //
+    // Lo usa BaseFragment para reservar ese hueco en el scroller de cada pestaña.
+    // OJO: clipToPadding="false" NO sustituye a esto — deja dibujar sobre el padding,
+    // pero no reserva sitio, así que por sí solo el último elemento sigue tapado.
+    public static int espacioReservado(@NonNull Context contexto) {
+        android.content.res.Resources r = contexto.getResources();
+        return r.getDimensionPixelSize(R.dimen.nav_bar_height)
+                + r.getDimensionPixelSize(R.dimen.nav_bar_margin)
+                + r.getDimensionPixelSize(R.dimen.nav_bar_content_gap);
+    }
+
     public FloatingNavBar(Context c) { this(c, null); }
     public FloatingNavBar(Context c, AttributeSet a) { super(c, a); init(); }
 

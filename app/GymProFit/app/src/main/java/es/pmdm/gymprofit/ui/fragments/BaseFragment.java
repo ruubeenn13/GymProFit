@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.ui.activities.BaseActivity;
+import es.pmdm.gymprofit.ui.widget.FloatingNavBar;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
@@ -34,18 +35,33 @@ public abstract class BaseFragment extends Fragment {
         prefsManager = new PreferencesManager(context);
     }
 
-    // La barra flotante se solapa con el contenido: reserva espacio inferior en el
-    // scroller principal para que el último elemento no quede oculto tras el cristal.
+    // La barra flotante se dibuja ENCIMA del contenido: sin reservar hueco, lo que
+    // cae en sus últimos 86 dp no se puede leer ni pulsar. Se añade ese hueco al
+    // padding inferior del scroller principal de la pestaña, y la medida sale de la
+    // propia barra (FloatingNavBar.espacioReservado), no de un número escrito aquí:
+    // así las cinco pestañas se enteran a la vez si la barra cambia de alto.
+    //
+    // clipToPadding="false" acompaña al padding, no lo sustituye: deja que el
+    // contenido siga viéndose difuminado bajo el cristal mientras se desplaza, pero
+    // el sitio lo reserva el padding.
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        View scroller = buscarScrollerVertical(view);
-        if (scroller != null) {
-            int reserva = Math.round(96 * getResources().getDisplayMetrics().density);
-            scroller.setPadding(scroller.getPaddingLeft(), scroller.getPaddingTop(),
-                    scroller.getPaddingRight(), scroller.getPaddingBottom() + reserva);
-            if (scroller instanceof ViewGroup) ((ViewGroup) scroller).setClipToPadding(false);
-        }
+        reservarHuecoBarraFlotante(view);
+    }
+
+    // Aplica la reserva al primer scroller vertical del árbol. Se marca la vista con
+    // un tag para no sumar el hueco dos veces si la vista se reutiliza.
+    private void reservarHuecoBarraFlotante(@NonNull View raiz) {
+        View scroller = buscarScrollerVertical(raiz);
+        if (scroller == null) return;
+        if (Boolean.TRUE.equals(scroller.getTag(R.id.tag_hueco_barra_reservado))) return;
+
+        int reserva = FloatingNavBar.espacioReservado(requireContext());
+        scroller.setPadding(scroller.getPaddingLeft(), scroller.getPaddingTop(),
+                scroller.getPaddingRight(), scroller.getPaddingBottom() + reserva);
+        if (scroller instanceof ViewGroup) ((ViewGroup) scroller).setClipToPadding(false);
+        scroller.setTag(R.id.tag_hueco_barra_reservado, Boolean.TRUE);
     }
 
     // Primer contenedor con scroll VERTICAL del árbol (ScrollView/NestedScrollView/

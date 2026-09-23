@@ -8,4 +8,8 @@
     <!-- Guarda el padding que traía escrito el layout antes de sumarle los insets
          del sistema. Ver InsetsUtils. -->
     <item name="tag_padding_original" type="id"/>
+    <!-- Marca el scroller de una pestaña al que ya se le ha sumado el hueco de la
+         barra flotante, para no sumárselo dos veces. Ver BaseFragment. -->
+    <item name="tag_hueco_barra_reservado" type="id"/>
+
 </resources>
