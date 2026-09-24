@@ -31,9 +31,12 @@ import es.pmdm.gymprofit.utils.FechaUtils;
 // Cada fila lleva un medallón de 48 dp con un Material Symbol:
 //   · bloqueado  → medallón gp_surface_2, glifo en CONTORNO con gp_text_secondary,
 //                  y debajo la barra y «3 de 7 sesiones» si el logro tiene pasos;
-//   · conseguido → medallón gp_primary_container, glifo RELLENO con gp_primary,
-//                  y debajo «Conseguido · 23 sept 2026».
-// El glifo pasa 3:1 contra su medallón en los dos temas (el mínimo es 4,50:1,
+//   · conseguido → medallón gp_gold_container, glifo RELLENO con gp_gold, y
+//                  debajo «Conseguido · 23 sept 2026» en gp_gold_text.
+// Lo conseguido es ORO y lo que está en curso es MARCA (DEC-018): por eso la
+// barra de progreso sigue en naranja. La primera versión de GP-079 puso el
+// conseguido en naranja y chocaba con esa decisión.
+// El glifo pasa 3:1 contra su medallón en los dos temas (el mínimo es 3,10:1,
 // conseguido en claro). Nada se atenúa con alpha: antes toda la tarjeta
 // bloqueada iba a setAlpha(0.5f) y el texto bajaba a unos 2,2:1.
 //
@@ -94,9 +97,9 @@ public class LogroAdapter extends RecyclerView.Adapter<LogroAdapter.ViewHolder> 
         String estado;
         if (logro.isConseguido()) {
             h.medallon.setBackgroundTintList(ColorStateList.valueOf(
-                    ContextCompat.getColor(ctx, R.color.gp_primary_container)));
+                    ContextCompat.getColor(ctx, R.color.gp_gold_container)));
             h.ivIcono.setImageResource(glifos.relleno);
-            h.ivIcono.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.gp_primary)));
+            h.ivIcono.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.gp_gold)));
 
             String fecha = FechaUtils.formatearFechaMedia(logro.getFechaObtenido(), localeDe(ctx));
             h.tvConseguido.setText(fecha != null

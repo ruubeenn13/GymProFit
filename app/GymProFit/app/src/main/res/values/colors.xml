@@ -25,6 +25,10 @@
          pasa 4,5:1. En oscuro los dos son el mismo color. -->
     <color name="gp_gold">#AE8528</color>
     <color name="gp_gold_text">#8A6920</color>
+    <!-- Fondo del medallón de un logro conseguido. gp_gold encima da 3,10:1
+         (GP-079, WCAG 1.4.11). Es muy claro a la fuerza: con el dorado gráfico
+         que exige 3:1 sobre el fondo, no cabe un contenedor más saturado. -->
+    <color name="gp_gold_container">#FFF4D9</color>
 
     <!-- ── Superficies ───────────────────────────────────────────────────── -->
     <!-- La tarjeta tiene que VERSE. Antes surface estaba a 1,07:1 del fondo y

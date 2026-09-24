@@ -3,7 +3,7 @@
   item_logro — un logro en la lista de logros y en el resumen de sesión (GP-079).
 
   Bloqueado y conseguido se distinguen por TRES cosas, no solo por el color:
-  el glifo (contorno frente a relleno), el medallón (neutro frente al de marca)
+  el glifo (contorno frente a relleno), el medallón (neutro frente a dorado)
   y el texto de debajo (el progreso frente a «Conseguido · fecha»).
 
   Antes el bloqueado se atenuaba con setAlpha(0.5f) sobre toda la tarjeta: con
@@ -102,7 +102,7 @@
 
             </LinearLayout>
 
-            <!-- Conseguido: «Conseguido · 23 sept 2026», en el color de marca -->
+            <!-- Conseguido: «Conseguido · 23 sept 2026», en oro (DEC-018) -->
             <TextView
                 android:id="@+id/tvConseguidoLogro"
                 android:layout_width="wrap_content"
@@ -110,7 +110,7 @@
                 android:layout_marginTop="6dp"
                 android:textSize="@dimen/text_label"
                 android:textStyle="bold"
-                android:textColor="?attr/colorPrimary"
+                android:textColor="@color/gp_gold_text"
                 android:visibility="gone" />
 
         </LinearLayout>

@@ -16,8 +16,8 @@ import java.util.regex.Pattern;
 // LogroMedallonTest — GP-079: el glifo del logro contra su medallón.
 //
 // El medallón y el glifo salen de la paleta (colors.xml y values-night):
-// bloqueado = gp_text_secondary sobre gp_surface_2; conseguido = gp_primary
-// sobre gp_primary_container. WCAG 1.4.11 pide 3:1 a un gráfico que informa.
+// bloqueado = gp_text_secondary sobre gp_surface_2; conseguido = gp_gold sobre
+// gp_gold_container, porque lo conseguido es oro (DEC-018). WCAG 1.4.11 pide 3:1 a un gráfico que informa.
 // Si alguien toca esos cuatro tokens, esto lo dice antes que una captura.
 // ============================================================
 public class LogroMedallonTest {
@@ -31,7 +31,7 @@ public class LogroMedallonTest {
 
     @Test
     public void conseguido_pasa_3_a_1_en_los_dos_temas() throws IOException {
-        comprobar("gp_primary", "gp_primary_container");
+        comprobar("gp_gold", "gp_gold_container");
     }
 
     private static void comprobar(String glifo, String medallon) throws IOException {
