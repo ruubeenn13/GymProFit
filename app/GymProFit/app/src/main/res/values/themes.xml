@@ -224,6 +224,20 @@
         <item name="checkedIcon">@drawable/ic_ms_check</item>
     </style>
 
+    <!-- Tema con barra de título, para las pantallas de licencias de
+         play-services-oss-licenses, que dependen de la ActionBar (GP-082) -->
+    <style name="Theme.GymProFit.ConBarra" parent="Theme.GymProFit">
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">false</item>
+        <!-- Sin esto la barra sale en el lila por defecto de Material 3 -->
+        <item name="actionBarStyle">@style/Widget.GymProFit.ActionBar</item>
+    </style>
+
+    <style name="Widget.GymProFit.ActionBar" parent="Widget.Material3.ActionBar.Solid">
+        <item name="background">?attr/colorSurface</item>
+        <item name="titleTextStyle">@style/TextAppearance.GymProFit.Headline</item>
+    </style>
+
     <!-- Spinner con la flecha de Material Symbols; el paddingEnd deja sitio a la flecha -->
     <style name="Widget.GymProFit.Spinner" parent="Widget.AppCompat.Spinner">
         <item name="android:background">@drawable/bg_spinner</item>

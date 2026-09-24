@@ -1,5 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
+    // Licencias de terceros: recoge las de cada dependencia en la compilación (GP-082)
+    alias(libs.plugins.oss.licenses)
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
 }
@@ -127,6 +129,9 @@ dependencies {
     implementation libs.gson
     implementation libs.okhttp.core
     implementation libs.okhttp.logging
+    // Pantalla de licencias de terceros generada por el plugin. No es una comodidad:
+    // Apache 2.0 pide acompañar la redistribución con su aviso (GP-082)
+    implementation libs.oss.licenses
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core

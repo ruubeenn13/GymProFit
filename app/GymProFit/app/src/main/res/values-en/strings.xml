@@ -640,6 +640,16 @@
          The policy is NOT shipped inside the APK: it opens in the browser, so it can
          be corrected without publishing a new version. -->
     <string name="politica_privacidad">Privacy policy</string>
+    <!-- Third-party licences (GP-082) -->
+    <string name="licencias_titulo">Third-party licences</string>
+    <string name="licencias_texto">GymProFit is built on other people\'s software and resources. Each keeps its own licence and copyright notice.</string>
+    <string name="licencias_bibliotecas">App libraries</string>
+    <string name="licencias_material_symbols">Material Symbols · Apache 2.0</string>
+    <string name="licencias_barlow">Barlow · SIL Open Font License 1.1</string>
+    <string name="licencias_mpandroidchart">MPAndroidChart · Apache 2.0</string>
+    <string name="licencias_aviso_material_symbols">Material Symbols Rounded icons, Copyright Google LLC. Distributed under the Apache License, Version 2.0, whose full text follows.</string>
+    <string name="licencias_aviso_barlow">Barlow Condensed font, Copyright 2017 The Barlow Project Authors. Distributed under the SIL Open Font License, Version 1.1, whose full text follows.</string>
+    <string name="licencias_aviso_mpandroidchart">MPAndroidChart, Copyright 2020 Philipp Jahoda. Distributed under the Apache License, Version 2.0, whose full text follows.</string>
     <string name="registro_aviso_privacidad">By creating your account you confirm that you have read the %1$s</string>
     <string name="registro_aviso_privacidad_enlace">Privacy Policy</string>
     <string name="error_sin_navegador">There is no application available to open links</string>
