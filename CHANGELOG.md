@@ -2,6 +2,16 @@
 
 Historial de cambios del proyecto (API Spring Boot + app Android). Ver también el [README](README.md).
 
+### 2026-09-24
+
+| Hash | Descripción |
+|---|---|
+| `6ea3b3f` | fix(android): **la paleta pasa AA en los dos temas y el texto deja de llevar alpha** (GP-063). Se volvió a medir antes de tocar: los seis pares de la auditoría salieron al céntimo, más dos que no midió (éxito y proteínas sobre el fondo), y todo se midió también contra la tarjeta **teñida** que pinta Material 3 con la elevación, que ningún XML nombra. El dorado se parte en `gp_gold` (gráfico, 3:1) y `gp_gold_text` (letra, 4,5:1); carbohidratos, proteínas y éxito se oscurecen lo justo; `gp_stroke` llega a 3:1 en los dos temas, revirtiendo a sabiendas el 2,06:1 «para no parecer un wireframe» del oscuro, porque esas tarjetas se pulsan. Los separadores internos pasan a `gp_divider`, que conserva el valor antiguo: es la excepción documentada. Los 33 `TextView` con `android:alpha` pasan a `colorOnSurfaceVariant` o, sobre la marca, a `gp_on_primary_secondary`. `PaletaContrasteTest` fija todos los pares y que no vuelva un alpha sobre texto. |
+| `ee4f0ff` | docs(api): **el ejemplo de `/sesiones/completa` usa el campo que la API pide**. Mandaba `numeroSerie` y el campo es `numero`, con `@NotNull`: copiar el ejemplo daba 400. Comprobado contra la API local. |
+| `cba7663` | feat(api,android): **un logro bloqueado parece bloqueado y dice cuánto falta** (GP-079). Métrica y umbral de cada logro pasan al enum `TipoLogro`, único sitio del que leen la concesión, el progreso y el aviso de «logro próximo» (que tenía un 6 y un 29 a mano). Ruta nueva y aditiva **`GET /logros/progreso`**, sin id: el usuario sale del token, así que no hay IDOR que proteger. `LogroProgresoTest` fija el borde (6 de 7 sin conceder, 7 de 7 concedido) y el aislamiento, y se comprobó que se pone rojo si se rompe cualquiera de los dos. En la app: una llamada en vez de dos, medallón de 48 dp con Material Symbols Rounded 400 importados del paquete oficial (Apache 2.0), glifo en contorno o relleno, barra y «3 de 7 sesiones» solo si hay más de un paso, «Conseguido · fecha» en el idioma de la app, y ningún `setAlpha`. |
+| `343e1b0` | fix(android): **el medidor de nivel deja de parecer el icono de cobertura** (GP-078). Cuatro segmentos iguales en horizontal, llenos en marca y vacíos en `gp_meter_track`: 3,86:1 en claro y 3,98:1 en oscuro, también en grises. TalkBack dice «Nivel N de 4» y anuncia qué tarjeta está elegida. |
+| `4616b2c` | fix(android): **la valoración de la sesión arranca sin valorar** (GP-077). Quien no tocaba las estrellas guardaba un 3. Ahora arranca en cero, no manda el campo (comprobado `NULL` en la base), dice que es opcional y tiene «Quitar valoración», porque un `RatingBar` no baja a cero con el dedo. TalkBack no lee el `stateDescription` de un `RatingBar`, así que el «sin valorar» va en la descripción. |
+
 ### 2026-09-23
 
 | Hash | Descripción |
