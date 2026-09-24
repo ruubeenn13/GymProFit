@@ -14,7 +14,11 @@ public class UtilREST {
     // Callback invocado cuando la API responde 401 y NO se ha podido renovar la sesión
     // (refresh ausente, expirado o revocado): hay que volver a login.
     public interface OnUnauthorizedListener {
-        void onTokenExpired();
+        /**
+         * @param cuentaDesactivada {@code true} si la API rechazó la sesión porque la
+         *                          cuenta está desactivada, no porque haya caducado (GP-083).
+         */
+        void onTokenExpired(boolean cuentaDesactivada);
     }
 
     // Callback para persistir los tokens renovados (p. ej. en PreferencesManager),
@@ -47,9 +51,9 @@ public class UtilREST {
     // Maneja un 401 no recuperable (el TokenAuthenticator ya intentó renovar y no pudo):
     // limpia la sesión y avisa vía OnUnauthorizedListener para volver a login. Lo usa
     // el ApiCallback tipado de la etapa 2.
-    static void notifyUnauthorized() {
+    static void notifyUnauthorized(boolean cuentaDesactivada) {
         clearToken();
-        if (unauthorizedListener != null) unauthorizedListener.onTokenExpired();
+        if (unauthorizedListener != null) unauthorizedListener.onTokenExpired(cuentaDesactivada);
     }
 
     // Llamado por ApiClient.TokenAuthenticator tras renovar el token: actualiza el estado

@@ -46,6 +46,8 @@ public class PreferencesManager {
     // asistente sigue a medias. Se borra al terminarlo o al saltarlo, y es
     // distinto de las claves de arriba, que son ya el perfil definitivo.
     private static final String KEY_OB_NOMBRE    = "ob_nombre";
+    // Ya no se escribe (GP-083: el asistente no pide el correo). Se sigue borrando en
+    // limpiarBorradorOnboarding para no dejar el de un borrador anterior en el móvil.
     private static final String KEY_OB_EMAIL     = "ob_email";
     private static final String KEY_OB_EDAD      = "ob_edad";
     private static final String KEY_OB_SEXO      = "ob_sexo";
@@ -229,9 +231,8 @@ public class PreferencesManager {
      *
      * @param edad en anios, o 0 si el usuario lo dejo en blanco (es opcional).
      */
-    public void guardarBorradorDatos(String nombre, String email, int edad, String sexo) {
+    public void guardarBorradorDatos(String nombre, int edad, String sexo) {
         editor.putString(KEY_OB_NOMBRE, nombre);
-        editor.putString(KEY_OB_EMAIL, email);
         editor.putInt(KEY_OB_EDAD, edad);
         editor.putString(KEY_OB_SEXO, sexo);
         editor.apply();
@@ -263,7 +264,6 @@ public class PreferencesManager {
     }
 
     public String getBorradorNombre()    { return prefs.getString(KEY_OB_NOMBRE, ""); }
-    public String getBorradorEmail()     { return prefs.getString(KEY_OB_EMAIL, ""); }
     public int    getBorradorEdad()      { return prefs.getInt(KEY_OB_EDAD, 0); }
     public String getBorradorSexo()      { return prefs.getString(KEY_OB_SEXO, "HOMBRE"); }
     public String getBorradorPeso()      { return prefs.getString(KEY_OB_PESO, ""); }

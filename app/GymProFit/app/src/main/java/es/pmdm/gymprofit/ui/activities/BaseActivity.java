@@ -61,9 +61,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         // La transición de deslizamiento la registra GymProFitApp para TODAS las Activities.
         super.onCreate(savedInstanceState);
 
-        UtilREST.setOnUnauthorizedListener(() -> {
+        UtilREST.setOnUnauthorizedListener(cuentaDesactivada -> {
             prefsManager.cerrarSesion();
             Intent intent = new Intent(this, LoginActivity.class);
+            // El login explica el cierre si la cuenta está desactivada (GP-083).
+            intent.putExtra(LoginActivity.EXTRA_CUENTA_DESACTIVADA, cuentaDesactivada);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();

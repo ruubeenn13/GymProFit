@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 // Contiene solo los campos modificables del perfil de usuario; los
 // campos null se ignoran en el service y no sobrescriben el valor actual.
 // Usado por ejemplo en el flujo de onboarding de la app Android.
+// "email" solo se admite si es el actual: ver UsuarioService.patch (GP-083).
 // ============================================================
 @Data
 @AllArgsConstructor
@@ -24,5 +25,6 @@ public class UsuarioPatchDTO implements Serializable {
     private Integer edad;
     private String nivelExperiencia;
     private TipoObjetivo objetivo;
-    private Boolean activo;
+    // Sin "activo" a propósito (GP-083): el usuario no decide si su cuenta está activa.
+    // Si un cliente lo manda, Jackson lo ignora como cualquier campo desconocido.
 }

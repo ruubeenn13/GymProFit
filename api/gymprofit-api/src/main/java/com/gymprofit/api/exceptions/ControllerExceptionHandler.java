@@ -145,6 +145,28 @@ public class ControllerExceptionHandler {
         );
     }
 
+    // El valor pedido ya lo usa otro registro (p. ej. el correo nuevo de GP-083): 409.
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(ConflictEntityException.class)
+    public ResponseEntity<Response> handleConflictEntityException(ConflictEntityException ex) {
+        return new ResponseEntity<>(
+                Response.generalError(HttpStatus.CONFLICT.value(), ex.getMessage()),
+                HttpStatus.CONFLICT
+        );
+    }
+
+    // Token o refresh válidos de una cuenta desactivada (GP-083): 401 con un código
+    // estable en "cause", para que la app explique el motivo en lugar de «sesión caducada».
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(CuentaDesactivadaException.class)
+    public ResponseEntity<Response> handleCuentaDesactivadaException(CuentaDesactivadaException ex) {
+        return new ResponseEntity<>(
+                Response.generalError(HttpStatus.UNAUTHORIZED.value(), ex.getMessage(),
+                        CuentaDesactivadaException.CODIGO),
+                HttpStatus.UNAUTHORIZED
+        );
+    }
+
     // Datos de entrada inválidos a nivel de negocio: 400.
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidDataException.class)

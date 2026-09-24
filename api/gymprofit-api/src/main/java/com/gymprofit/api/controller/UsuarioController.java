@@ -8,7 +8,9 @@ import com.gymprofit.api.dto.entity.usuario.UsuarioPatchDTO;
 import com.gymprofit.api.dto.entity.usuario.UsuarioUpdateDTO;
 import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.exceptions.Response;
+import com.gymprofit.api.dto.usuario.CambiarEmailDTO;
 import com.gymprofit.api.dto.usuario.EliminarCuentaDTO;
+import com.gymprofit.api.service.usuario.ICambioEmailService;
 import com.gymprofit.api.service.usuario.IBorradoCuentaService;
 import com.gymprofit.api.service.usuario.IUsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,6 +49,9 @@ public class UsuarioController {
     // Borrado de cuenta: servicio aparte porque no es una operación CRUD más, sino una
     // secuencia ordenada sobre toda la base de datos con su propia reautenticación.
     private final IBorradoCuentaService borradoCuentaService;
+
+    // Cambio del correo propio con reautenticación (GP-083).
+    private final ICambioEmailService cambioEmailService;
 
     @Operation(summary = "Obtiene todos los usuarios")
     @ApiResponses(value = {
@@ -310,5 +315,24 @@ public class UsuarioController {
         respuesta.put("mensaje", "Cuenta eliminada correctamente");
 
         return ResponseEntity.ok(respuesta);
+    }
+
+    @Operation(summary = "Cambia el correo de la cuenta propia",
+            description = "El usuario sale del token, nunca del cuerpo ni de la ruta. Exige la " +
+                    "contraseña actual, porque el correo es la llave de la recuperación de contraseña. " +
+                    "Pedir el correo que ya se tiene devuelve el perfil sin cambios. El correo nuevo " +
+                    "no se verifica todavía (GP-045).")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Correo cambiado; devuelve el perfil"),
+            @ApiResponse(responseCode = "400", description = "Correo vacío o sin formato de correo",
+                    content = @Content(schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "403", description = "La contraseña no es correcta",
+                    content = @Content(schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "409", description = "Otra cuenta ya usa ese correo",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @PutMapping("/usuarios/me/email")
+    public ResponseEntity<UsuarioDTO> cambiarEmailPropio(@Valid @RequestBody CambiarEmailDTO cambiarEmailDTO) {
+        return ResponseEntity.ok(cambioEmailService.cambiarEmailPropio(cambiarEmailDTO));
     }
 }

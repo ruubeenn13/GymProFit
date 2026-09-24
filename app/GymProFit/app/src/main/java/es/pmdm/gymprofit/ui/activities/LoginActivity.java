@@ -47,6 +47,12 @@ public class LoginActivity extends AppCompatActivity {
         super.attachBaseContext(es.pmdm.gymprofit.utils.ScaleUtils.wrap(newBase));
     }
 
+    /**
+     * Extra booleano: se llega al login porque la API rechazó la sesión por cuenta
+     * desactivada (GP-083). Sin él, el usuario solo veía volver el login sin saber por qué.
+     */
+    public static final String EXTRA_CUENTA_DESACTIVADA = "cuenta_desactivada";
+
     private EditText etUsuario, etPassword;
     private ImageButton btnCambiarTema, btnCambiarIdioma;
     private PreferencesManager prefsManager;
@@ -68,6 +74,16 @@ public class LoginActivity extends AppCompatActivity {
         inicializarVistas();
         configurarEventos();
         actualizarIconoTema();
+
+        // Una sola vez: al recrear la pantalla (cambio de tema) el extra seguiría ahí.
+        if (getIntent().getBooleanExtra(EXTRA_CUENTA_DESACTIVADA, false)) {
+            getIntent().removeExtra(EXTRA_CUENTA_DESACTIVADA);
+            new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                    .setTitle(R.string.login_cuenta_desactivada_titulo)
+                    .setMessage(R.string.login_cuenta_desactivada_mensaje)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show();
+        }
     }
 
     // Referencia los campos de texto y botones de tema/idioma del layout.

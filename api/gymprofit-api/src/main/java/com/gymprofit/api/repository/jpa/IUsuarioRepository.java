@@ -31,6 +31,9 @@ public interface IUsuarioRepository extends JpaRepository<Usuario, Integer> {
     // Comprueba si ya existe un usuario con ese email.
     Boolean existsByEmail(String email);
 
+    // ¿Usa este correo alguna cuenta que no sea la indicada? (cambio de correo, GP-083)
+    boolean existsByEmailAndIdNot(String email, Integer id);
+
     // Usuarios con la cuenta activa.
     List<Usuario> findByActivoTrue();
 }

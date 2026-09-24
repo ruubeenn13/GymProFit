@@ -166,6 +166,16 @@ class AuthRateLimitFilterTest {
     }
 
     @Test
+    @DisplayName("el cambio de correo está en el cupo estricto, no en el global")
+    void cambio_de_correo_va_al_cupo_estricto() throws Exception {
+        // PUT /usuarios/me/email también lleva la contraseña en el cuerpo (GP-083).
+        AuthRateLimitFilter f = nuevoFiltro(1, 60);
+
+        assertEquals(200, dispararEstricta(f, "/usuarios/me/email"), "la 1ª pasa");
+        assertEquals(429, dispararEstricta(f, "/usuarios/me/email"), "la 2ª supera el cupo estricto");
+    }
+
+    @Test
     @DisplayName("no se limitan preflight OPTIONS ni el health-check de la PaaS")
     void excluye_options_y_actuator() {
         AuthRateLimitFilter f = nuevoFiltro(1, 60);

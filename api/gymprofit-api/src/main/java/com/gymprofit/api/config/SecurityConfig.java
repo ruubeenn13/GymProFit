@@ -146,6 +146,10 @@ public class SecurityConfig {
                                 // su ruta del panel. No lo puede pedir un GUEST: no hay cuenta que borrar.
                                 .requestMatchers(HttpMethod.DELETE, "/usuarios/me").hasRole(RoleType.USER.name())
 
+                                // Cambio del correo propio (GP-083): el usuario sale del token. Va ANTES
+                                // de la regla general de /usuarios/**, que es solo de ADMIN. GUEST fuera.
+                                .requestMatchers(HttpMethod.PUT, "/usuarios/me/email").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+
                                 // USER: puede consultar y actualizar su propio perfil
                                 // IMPORTANTE: estas reglas van ANTES de la regla general de /usuarios/**
                                 .requestMatchers(HttpMethod.GET, "/usuarios/username/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())

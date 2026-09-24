@@ -76,6 +76,10 @@ class UsuarioServiceTest {
     @Mock
     private SecurityUtils securityUtils;
 
+    /** @Mock del servicio de refresh: desactivar una cuenta revoca sus sesiones (GP-083). */
+    @Mock
+    private com.gymprofit.api.service.auth.RefreshTokenService refreshTokenService;
+
     /**
      * @InjectMocks crea el UsuarioService REAL pero inyectándole
      * los mocks de arriba en vez de los beans reales de Spring.

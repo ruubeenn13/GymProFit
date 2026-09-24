@@ -1,5 +1,6 @@
 package com.gymprofit.api.config.security;
 
+import com.gymprofit.api.exceptions.CuentaDesactivadaException;
 import com.gymprofit.api.service.usuario.IUsuarioService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -51,6 +52,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UserDetails userDetails = usuarioService.loadUserByUsername(username);
 
                 if (jwtTokenProvider.isTokenValid(token, userDetails)) {
+                    // Un token bien firmado y sin caducar no basta: la cuenta puede haberse
+                    // desactivado después de emitirlo (GP-083). Se corta aquí con 401 y no
+                    // dejando la petición sin autenticar, porque entonces las rutas públicas
+                    // seguirían respondiendo a ese token como si nada.
+                    if (!userDetails.isEnabled()) {
+                        throw new CuentaDesactivadaException();
+                    }
+
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 

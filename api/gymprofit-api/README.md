@@ -150,7 +150,8 @@ Todos van bajo el context-path `/api`. Los `@RequestMapping` de los controllers 
 | GET | `/usuarios/username/{u}` | USER/ADMIN | Usuario por username |
 | GET | `/usuarios/{id}/estadisticas` | USER/ADMIN | Estadísticas jOOQ |
 | PUT | `/usuarios` | ADMIN | Actualizar completo (id en body) — SecurityConfig: solo ADMIN vía catch-all `/usuarios/**` |
-| PATCH | `/usuarios/{id}` | USER/ADMIN | Actualización parcial |
+| PATCH | `/usuarios/{id}` | USER/ADMIN | Actualización parcial del perfil. **No** cambia `activo` (lo ignora) ni el correo: un `email` distinto del actual da 400 |
+| PUT | `/usuarios/me/email` | USER/ADMIN | Cambia el correo propio. Body: `{email, password}` — reautentica. 400 formato, 403 contraseña, 409 en uso. El usuario sale del token. En el cupo estricto del rate limit. El correo nuevo aún no se verifica (GP-045) |
 | GET | `/usuarios` | ADMIN | Todos los usuarios |
 | DELETE | `/usuarios/{id}` | ADMIN | Soft delete |
 | DELETE | `/usuarios/{id}/permanente` | ADMIN | Eliminar permanentemente |
@@ -276,7 +277,7 @@ En cada serie, `numero` (de 1 a 20) y `repeticiones` (de 0 a 100) son obligatori
 |---|---|---|---|
 | GET | `/admin/usuarios?activo=&rol=&username=&page=&size=` | ADMIN | Usuarios con filtros dinámicos (jOOQ). `rol` acepta `USER`, `ADMIN` o con prefijo `ROLE_` |
 | GET | `/admin/estadisticas-globales` | ADMIN | Estadísticas globales: totalUsuarios, usuariosActivos, totalSesiones, sesionesHoy, rutinasPredefinidas, ejerciciosActivos |
-| PATCH | `/admin/usuarios/{id}/toggle-activo` | ADMIN | Activar/desactivar usuario |
+| PATCH | `/admin/usuarios/{id}/toggle-activo` | ADMIN | Activar/desactivar usuario. Desactivar revoca todos sus refresh tokens; y el token o el refresh de una cuenta desactivada reciben 401 con `cause: CUENTA_DESACTIVADA` en cualquier ruta |
 | PATCH | `/admin/usuarios/{id}/rol?nuevoRol=` | ADMIN | Cambiar rol del usuario (`ROLE_USER` o `ROLE_ADMIN`) |
 | GET | `/admin/rutinas/predefinidas/busqueda?nombre=&nivel=&categoria=&activa=` | ADMIN | Buscar rutinas predefinidas con filtros dinámicos (jOOQ) |
 | GET | `/admin/ejercicios/busqueda?nombre=&grupoMuscular=&dificultad=&activo=` | ADMIN | Buscar ejercicios del catálogo con filtros dinámicos (jOOQ) |

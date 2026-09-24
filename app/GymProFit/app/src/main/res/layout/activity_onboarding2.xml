@@ -2,7 +2,7 @@
 <!-- NUEVO FICHERO - Onboarding paso 2: Datos básicos + sexo -->
 <!--
   activity_onboarding2.xml — Onboarding paso 2/5: datos básicos del usuario.
-  Formulario con nombre, email, edad y selección de sexo mediante chips.
+  Formulario con nombre, edad y selección de sexo mediante chips.
   Incluye indicador de progreso y navegación anterior/siguiente.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -77,30 +77,8 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Email -->
-            <com.google.android.material.textfield.TextInputLayout
-        app:errorIconDrawable="@drawable/ic_ms_error"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:hint="@string/perfil_email"
-                app:boxBackgroundMode="outline"
-                app:boxCornerRadiusTopStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusBottomEnd="12dp"
-                app:startIconDrawable="@drawable/ic_ms_mail">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etEmailOnboarding"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress"
-                    android:paddingStart="40dp"
-                    android:paddingEnd="40dp"
-                    android:maxLines="1" />
-
-            </com.google.android.material.textfield.TextInputLayout>
+            <!-- Sin campo de correo (GP-083): la cuenta ya lo tiene desde el registro, y
+                 pedirlo en blanco tras iniciar sesión dejaba que una errata lo sobrescribiera. -->
 
             <!-- Edad -->
             <com.google.android.material.textfield.TextInputLayout

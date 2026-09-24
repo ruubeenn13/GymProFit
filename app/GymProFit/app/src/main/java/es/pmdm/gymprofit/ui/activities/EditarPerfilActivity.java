@@ -1,12 +1,17 @@
 package es.pmdm.gymprofit.ui.activities;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Patterns;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -29,6 +34,10 @@ import es.pmdm.gymprofit.utils.UiFeedback;
 // Permite modificar email, peso, altura, edad, nivel de experiencia y
 // objetivo, guarda los cambios vía PATCH y recalcula las macros
 // nutricionales locales con los nuevos datos.
+//
+// El correo NO viaja en el PATCH (GP-083): si se ha cambiado, primero va por
+// PUT /usuarios/me/email con la contraseña actual, y solo si sale bien se
+// guarda el resto del perfil.
 // ============================================================
 public class EditarPerfilActivity extends AppCompatActivity {
 
@@ -39,7 +48,11 @@ public class EditarPerfilActivity extends AppCompatActivity {
     }
 
     private PreferencesManager prefsManager;
-    private TextInputEditText etEmail, etPeso, etAltura, etEdad;
+    private TextInputEditText etEmail, etPeso, etAltura, etEdad, etPasswordEmail;
+    private TextInputLayout tilEmail, tilPasswordEmail;
+    // Correo que tiene la cuenta, tal como lo devolvió la API. null mientras no ha
+    // cargado: sin él no se sabe si lo escrito es un cambio, y el campo sigue bloqueado.
+    private String emailOriginal;
     private Spinner spNivel, spObjetivo;
     // Interfaz Retrofit tipada del dominio usuarios (etapa 2)
     private final UsuarioApi usuarioApi = ApiClient.service(UsuarioApi.class);
@@ -69,6 +82,10 @@ public class EditarPerfilActivity extends AppCompatActivity {
     // Enlaza las referencias a las vistas del layout.
     private void inicializarVistas() {
         etEmail    = findViewById(R.id.etEmail);
+        tilEmail   = findViewById(R.id.tilEmail);
+        etPasswordEmail  = findViewById(R.id.etPasswordEmail);
+        tilPasswordEmail = findViewById(R.id.tilPasswordEmail);
+        etEmail.setEnabled(false);
         etPeso     = findViewById(R.id.etPeso);
         etAltura   = findViewById(R.id.etAltura);
         etEdad     = findViewById(R.id.etEdad);
@@ -112,8 +129,11 @@ public class EditarPerfilActivity extends AppCompatActivity {
             @Override
             public void onOk(Usuario u) {
                 if (u == null) return;
-                if (u.getEmail() != null && !u.getEmail().isEmpty())
+                if (u.getEmail() != null && !u.getEmail().isEmpty()) {
+                    emailOriginal = u.getEmail();
                     etEmail.setText(u.getEmail());
+                    etEmail.setEnabled(true);
+                }
                 if (u.getPeso() != null && !u.getPeso().isEmpty())
                     etPeso.setText(u.getPeso());
                 if (u.getAltura() > 0)
@@ -125,7 +145,52 @@ public class EditarPerfilActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFail(int code, String message) {}
+            public void onFail(int code, String message) {
+                // Sin el perfil cargado, guardar pisaría los datos reales con el
+                // formulario en blanco: se avisa y el correo sigue bloqueado. El 401
+                // ya lo resuelve el aviso global.
+                if (code != 401) {
+                    UIHelper.mostrarToastError(EditarPerfilActivity.this,
+                            getString(R.string.editar_perfil_error_carga));
+                }
+            }
+        });
+    }
+
+    /**
+     * Dice si lo escrito en el campo de correo es un cambio respecto al de la cuenta.
+     *
+     * <p>Sin distinguir mayúsculas, como la restricción única de la base: cambiar solo
+     * mayúsculas no es otro correo y no merece pedir la contraseña.
+     *
+     * @param original correo de la cuenta, o null si no ha cargado.
+     * @param escrito lo que hay en el campo.
+     * @return {@code true} si hay que ir por el cambio de correo con contraseña.
+     */
+    static boolean cambiaEmail(String original, String escrito) {
+        if (original == null || escrito == null) return false;
+        return !escrito.trim().equalsIgnoreCase(original.trim());
+    }
+
+    // Muestra el campo de contraseña solo mientras el correo escrito es distinto del actual.
+    private void vigilarCambioDeEmail() {
+        etEmail.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence c, int a, int b, int d) {}
+            @Override public void onTextChanged(CharSequence c, int a, int b, int d) {}
+            @Override public void afterTextChanged(Editable e) {
+                tilEmail.setError(null);
+                boolean cambia = cambiaEmail(emailOriginal, e.toString());
+                tilPasswordEmail.setVisibility(cambia ? View.VISIBLE : View.GONE);
+                if (!cambia) {
+                    etPasswordEmail.setText("");
+                    tilPasswordEmail.setError(null);
+                }
+            }
+        });
+        etPasswordEmail.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence c, int a, int b, int d) {}
+            @Override public void onTextChanged(CharSequence c, int a, int b, int d) {}
+            @Override public void afterTextChanged(Editable e) { tilPasswordEmail.setError(null); }
         });
     }
 
@@ -143,6 +208,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
     private void configurarBotones() {
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
         findViewById(R.id.btnGuardar).setOnClickListener(v -> guardarCambios());
+        vigilarCambioDeEmail();
     }
 
     // Valida el email, construye el PATCH con los campos editados, y al
@@ -151,16 +217,73 @@ public class EditarPerfilActivity extends AppCompatActivity {
     private void guardarCambios() {
         String email = etEmail.getText() != null ? etEmail.getText().toString().trim() : "";
         if (email.isEmpty()) {
-            UIHelper.mostrarToastError(this, getString(R.string.editar_perfil_email_requerido));
+            tilEmail.setError(getString(R.string.editar_perfil_email_requerido));
+            etEmail.requestFocus();
             return;
         }
 
+        if (!cambiaEmail(emailOriginal, email)) {
+            guardarPerfil();
+            return;
+        }
+
+        // El formato se mira aquí para no gastar un viaje, pero la API lo vuelve a mirar.
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            tilEmail.setError(getString(R.string.registro_email_invalido));
+            etEmail.requestFocus();
+            return;
+        }
+        String password = etPasswordEmail.getText() != null ? etPasswordEmail.getText().toString() : "";
+        if (password.isEmpty()) {
+            tilPasswordEmail.setError(getString(R.string.editar_perfil_password_requerida));
+            etPasswordEmail.requestFocus();
+            return;
+        }
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("email", email);
+        body.put("password", password);
+
+        LoadingDialog.show(this);
+        usuarioApi.cambiarEmail(body).enqueue(new ApiCallback<Void>() {
+            @Override
+            public void onOk(Void ignorado) {
+                // El correo ya es el nuevo: si el resto del perfil fallara ahora, al
+                // reintentar no se volvería a pedir la contraseña por un cambio hecho.
+                emailOriginal = email;
+                tilPasswordEmail.setVisibility(View.GONE);
+                etPasswordEmail.setText("");
+                guardarPerfil();
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                LoadingDialog.hide(EditarPerfilActivity.this);
+                // Cada rechazo va al campo que lo causa, y el usuario no pierde nada.
+                if (code == 403) {
+                    tilPasswordEmail.setError(getString(R.string.editar_perfil_password_incorrecta));
+                    etPasswordEmail.requestFocus();
+                } else if (code == 409) {
+                    tilEmail.setError(getString(R.string.editar_perfil_email_en_uso));
+                    etEmail.requestFocus();
+                } else if (code == 400) {
+                    tilEmail.setError(getString(R.string.registro_email_invalido));
+                    etEmail.requestFocus();
+                } else {
+                    // 401 lo resuelve el aviso global; el resto, el mensaje por código.
+                    UiFeedback.toastError(EditarPerfilActivity.this, code, message);
+                }
+            }
+        });
+    }
+
+    // Guarda el resto del perfil por PATCH. El correo no va: se cambia por su ruta.
+    private void guardarPerfil() {
         int id = prefsManager.getUsuarioId();
         try {
             // Cuerpo de escritura como Map: los decimales viajan como BigDecimal y un
             // valor null BORRA el campo (Gson con serializeNulls, equivalente al antiguo JSONObject.NULL).
             Map<String, Object> body = new HashMap<>();
-            body.put("email", email);
 
             String pesoStr = etPeso.getText() != null ? etPeso.getText().toString().trim() : "";
             body.put("peso", pesoStr.isEmpty() ? null
@@ -215,6 +338,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
                 }
             });
         } catch (NumberFormatException e) {
+            LoadingDialog.hide(this);
             UIHelper.mostrarToastError(this, getString(R.string.editar_perfil_error));
         }
     }

@@ -21,6 +21,9 @@ import retrofit2.Response;
 // ============================================================
 public abstract class ApiCallback<T> implements Callback<T> {
 
+    // Código que manda la API en "cause" cuando la cuenta está desactivada (GP-083).
+    static final String CODIGO_CUENTA_DESACTIVADA = "CUENTA_DESACTIVADA";
+
     // Éxito (2xx): recibe el cuerpo ya deserializado (puede ser null en 204 No Content).
     public abstract void onOk(T body);
 
@@ -35,7 +38,8 @@ public abstract class ApiCallback<T> implements Callback<T> {
         int code = response.code();
         if (code == 401) {
             // El TokenAuthenticator ya intentó renovar y no pudo → sesión no recuperable.
-            UtilREST.notifyUnauthorized();
+            // Si la API dice que la cuenta está desactivada (GP-083), el aviso lo explica.
+            UtilREST.notifyUnauthorized(esCuentaDesactivada(leerError(response)));
             onFail(401, "Sesión expirada");
         } else if (response.isSuccessful()) {
             onOk(response.body());
@@ -47,6 +51,19 @@ public abstract class ApiCallback<T> implements Callback<T> {
     @Override
     public void onFailure(Call<T> call, Throwable t) {
         onFail(-1, t != null ? t.getMessage() : "Error de red");
+    }
+
+    /**
+     * Dice si un cuerpo de error 401 es el de una cuenta desactivada (GP-083).
+     *
+     * <p>Busca el código estable de la API y no el texto, que puede cambiar. Tampoco
+     * parsea: sin cabecera Accept, la API puede responder el error en XML en vez de JSON,
+     * y el código aparece igual en los dos.
+     *
+     * @param cuerpo cuerpo de error tal cual, o null.
+     */
+    static boolean esCuentaDesactivada(String cuerpo) {
+        return cuerpo != null && cuerpo.contains(CODIGO_CUENTA_DESACTIVADA);
     }
 
     // Lee el cuerpo de error como texto (o un mensaje genérico si no se puede).
