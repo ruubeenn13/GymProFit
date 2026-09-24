@@ -62,7 +62,7 @@
             android:id="@+id/ivCheckEspanol"
             android:layout_width="22dp"
             android:layout_height="22dp"
-            android:src="@drawable/ic_check"
+            android:src="@drawable/ic_ms_check"
             android:contentDescription="@null"
             android:visibility="gone" />
 
@@ -101,7 +101,7 @@
             android:id="@+id/ivCheckIngles"
             android:layout_width="22dp"
             android:layout_height="22dp"
-            android:src="@drawable/ic_check"
+            android:src="@drawable/ic_ms_check"
             android:contentDescription="@null"
             android:visibility="gone" />
 

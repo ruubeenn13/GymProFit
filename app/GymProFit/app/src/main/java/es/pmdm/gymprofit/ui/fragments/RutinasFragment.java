@@ -242,7 +242,7 @@ public class RutinasFragment extends BaseFragment {
 
         List<UIHelper.MenuAction> actions = new ArrayList<>();
 
-        actions.add(new UIHelper.MenuAction(R.drawable.ic_edit, getString(R.string.rutinas_editar), () -> {
+        actions.add(new UIHelper.MenuAction(R.drawable.ic_ms_edit, getString(R.string.rutinas_editar), () -> {
             if (rutina.isPredefinida()) {
                 Intent intent = new Intent(requireContext(), EditarRutinaAdminActivity.class);
                 intent.putExtra("id",                  rutina.getId());
@@ -265,18 +265,18 @@ public class RutinasFragment extends BaseFragment {
         }));
 
         if (rutina.isPredefinida()) {
-            int iconToggle = rutina.isActiva() ? R.drawable.ic_visibility_off : R.drawable.ic_check;
+            int iconToggle = rutina.isActiva() ? R.drawable.ic_ms_visibility_off : R.drawable.ic_ms_check;
             String labelToggle = rutina.isActiva()
                     ? getString(R.string.rutinas_desactivar)
                     : getString(R.string.rutinas_activar);
             actions.add(new UIHelper.MenuAction(iconToggle, labelToggle,
                     () -> toggleActivaRutinaPredefinida(rutina)));
         } else {
-            actions.add(new UIHelper.MenuAction(R.drawable.ic_delete, getString(R.string.rutinas_eliminar), true,
+            actions.add(new UIHelper.MenuAction(R.drawable.ic_ms_delete, getString(R.string.rutinas_eliminar), true,
                     () -> UIHelper.mostrarDialogoConIcono(act,
                             getString(R.string.rutinas_eliminar),
                             getString(R.string.rutinas_confirmar_eliminar),
-                            R.drawable.ic_delete,
+                            R.drawable.ic_ms_delete,
                             () -> eliminarRutina(rutina))));
         }
 

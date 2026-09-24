@@ -139,7 +139,7 @@ public class EditarRutinaActivity extends AppCompatActivity {
                         this,
                         getString(R.string.resumen_crear_rutina_confirmar_titulo),
                         getString(R.string.editar_rutina_eliminar_ejercicio),
-                        R.drawable.ic_delete,
+                        R.drawable.ic_ms_delete,
                         () -> eliminarEjercicio(item)));
         rv.setAdapter(adapter);
         actualizarTitulo();

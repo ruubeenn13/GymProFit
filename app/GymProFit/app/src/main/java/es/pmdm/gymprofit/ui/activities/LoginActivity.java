@@ -244,8 +244,8 @@ public class LoginActivity extends AppCompatActivity {
         int currentMode = prefsManager.getTheme();
         btnCambiarTema.setImageResource(
                 currentMode == AppCompatDelegate.MODE_NIGHT_YES
-                        ? R.drawable.ic_sun
-                        : R.drawable.ic_moon);
+                        ? R.drawable.ic_ms_light_mode
+                        : R.drawable.ic_ms_dark_mode);
     }
 
     // Muestra un diálogo personalizado para seleccionar el idioma (español/inglés),

@@ -13,6 +13,7 @@
 
     <!-- Campo para el número de series -->
     <com.google.android.material.textfield.TextInputLayout
+        app:errorIconDrawable="@drawable/ic_ms_error"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
@@ -35,6 +36,7 @@
 
     <!-- Campo para el número de repeticiones -->
     <com.google.android.material.textfield.TextInputLayout
+        app:errorIconDrawable="@drawable/ic_ms_error"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/crear_rutina_repeticiones"

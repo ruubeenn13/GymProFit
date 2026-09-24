@@ -20,7 +20,7 @@
         android:background="?attr/colorSurface"
         app:title="@string/resumen_crear_rutina_titulo"
         app:titleTextColor="?attr/colorOnSurface"
-        app:navigationIcon="@drawable/ic_arrow_back" />
+        app:navigationIcon="@drawable/ic_ms_arrow_back" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"

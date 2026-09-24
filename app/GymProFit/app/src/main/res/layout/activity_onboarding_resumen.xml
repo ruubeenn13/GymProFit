@@ -87,7 +87,7 @@
                             android:id="@+id/ivResumenObjetivoIcono"
                             android:layout_width="42dp"
                             android:layout_height="42dp"
-                            android:src="@drawable/ic_objetivo"
+                            android:src="@drawable/ic_ms_target"
                             android:alpha="0.4"
                             android:contentDescription="@null" />
 
@@ -246,7 +246,7 @@
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="horizontal" android:padding="16dp" android:gravity="center_vertical">
                     <ImageView android:layout_width="28dp" android:layout_height="28dp"
-                        android:src="@drawable/ic_agua" app:tint="?attr/colorPrimary"
+                        android:src="@drawable/ic_ms_water_drop" app:tint="?attr/colorPrimary"
                         android:layout_marginEnd="14dp" android:contentDescription="@null" />
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
                         android:layout_weight="1" android:orientation="vertical">

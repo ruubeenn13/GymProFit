@@ -31,6 +31,7 @@
 
     <!-- Peso de ESTA serie -->
     <com.google.android.material.textfield.TextInputLayout
+        app:errorIconDrawable="@drawable/ic_ms_error"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -62,6 +63,7 @@
 
     <!-- Repeticiones REALES de esta serie: fallar la última es información -->
     <com.google.android.material.textfield.TextInputLayout
+        app:errorIconDrawable="@drawable/ic_ms_error"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.8"
@@ -88,7 +90,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:padding="12dp"
-        android:src="@drawable/ic_check"
+        android:src="@drawable/ic_ms_check"
         app:tint="?attr/colorOnSurfaceVariant"
         android:alpha="0.35"
         android:clickable="true"

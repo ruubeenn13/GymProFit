@@ -24,7 +24,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:src="@drawable/ic_moon"
+            android:src="@drawable/ic_ms_dark_mode"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/cambiar_tema" />
 
@@ -37,7 +37,7 @@
             android:layout_toStartOf="@id/btnCambiarTema"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="4dp"
-            android:src="@drawable/ic_language"
+            android:src="@drawable/ic_ms_language"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/cambiar_idioma" />
 
@@ -74,6 +74,7 @@
 
             <!-- Campo de usuario -->
             <com.google.android.material.textfield.TextInputLayout
+        app:errorIconDrawable="@drawable/ic_ms_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
@@ -94,6 +95,7 @@
 
             <!-- Campo de contraseña con toggle de visibilidad -->
             <com.google.android.material.textfield.TextInputLayout
+        app:errorIconDrawable="@drawable/ic_ms_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -103,7 +105,8 @@
                 app:boxCornerRadiusTopEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusBottomEnd="12dp"
-                app:endIconMode="password_toggle">
+                app:endIconMode="password_toggle"
+                app:endIconDrawable="@drawable/sel_ojo_password">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etPassword"
@@ -181,7 +184,7 @@
                 android:text="@string/login_entrar_invitado"
                 android:textSize="@dimen/text_body"
                 app:cornerRadius="12dp"
-                app:icon="@drawable/ic_perfil"
+                app:icon="@drawable/ic_ms_person"
                 app:iconGravity="textStart" />
 
             <!-- Enlace de navegación hacia el registro -->

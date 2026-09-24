@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  bg_spinner — fondo de los Spinner con la flecha de Material Symbols (GP-080).
+  El fondo por defecto de AppCompat trae su propia flecha de Material Icons.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:width="24dp"
+        android:height="24dp"
+        android:gravity="end|center_vertical"
+        android:end="12dp"
+        android:drawable="@drawable/ic_ms_keyboard_arrow_down" />
+</layer-list>

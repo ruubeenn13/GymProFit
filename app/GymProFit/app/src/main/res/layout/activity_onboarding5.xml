@@ -77,7 +77,7 @@
                             android:textSize="@dimen/text_label" android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
                     <ImageView android:id="@+id/ivCheckPrincipiante" android:layout_width="20dp"
-                        android:layout_height="20dp" android:src="@drawable/ic_check"
+                        android:layout_height="20dp" android:src="@drawable/ic_ms_check"
                         android:visibility="gone" android:contentDescription="@null" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -107,7 +107,7 @@
                             android:textSize="@dimen/text_label" android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
                     <ImageView android:id="@+id/ivCheckIntermedio" android:layout_width="20dp"
-                        android:layout_height="20dp" android:src="@drawable/ic_check"
+                        android:layout_height="20dp" android:src="@drawable/ic_ms_check"
                         android:visibility="gone" android:contentDescription="@null" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -137,7 +137,7 @@
                             android:textSize="@dimen/text_label" android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
                     <ImageView android:id="@+id/ivCheckAvanzado" android:layout_width="20dp"
-                        android:layout_height="20dp" android:src="@drawable/ic_check"
+                        android:layout_height="20dp" android:src="@drawable/ic_ms_check"
                         android:visibility="gone" android:contentDescription="@null" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -167,7 +167,7 @@
                             android:textSize="@dimen/text_label" android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
                     <ImageView android:id="@+id/ivCheckExperto" android:layout_width="20dp"
-                        android:layout_height="20dp" android:src="@drawable/ic_check"
+                        android:layout_height="20dp" android:src="@drawable/ic_ms_check"
                         android:visibility="gone" android:contentDescription="@null" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

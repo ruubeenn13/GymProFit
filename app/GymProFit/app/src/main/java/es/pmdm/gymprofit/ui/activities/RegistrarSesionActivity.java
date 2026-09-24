@@ -413,7 +413,7 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         UIHelper.mostrarDialogoConIcono(this,
                 getString(R.string.sesiones_error_guardar_titulo),
                 motivo + "\n\n" + getString(R.string.sesiones_error_guardar_ayuda),
-                R.drawable.ic_error,
+                R.drawable.ic_ms_error,
                 getString(R.string.sesiones_error_reintentar),
                 getString(R.string.sesiones_error_ahora_no),
                 () -> enviarSesion(duracion));

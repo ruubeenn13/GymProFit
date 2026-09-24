@@ -83,7 +83,7 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_ejercicios"
+                android:src="@drawable/ic_ms_fitness_center"
                 android:alpha="0.6"
                 android:contentDescription="@null" />
 
@@ -107,7 +107,7 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_tiempo"
+                android:src="@drawable/ic_ms_schedule"
                 android:alpha="0.6"
                 android:contentDescription="@null" />
 

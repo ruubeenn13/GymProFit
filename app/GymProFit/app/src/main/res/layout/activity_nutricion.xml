@@ -46,7 +46,7 @@
                     android:id="@+id/btnMenuOpciones"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/ic_more_vert"
+                    android:src="@drawable/ic_ms_more_vert"
                     android:padding="8dp"
                     app:tint="?attr/colorOnSurface"
                     android:background="?attr/selectableItemBackgroundBorderless"
@@ -77,7 +77,7 @@
                         android:id="@+id/btnDiaPrev"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:src="@drawable/ic_chevron_right"
+                        android:src="@drawable/ic_ms_chevron_right"
                         android:rotation="180"
                         android:padding="8dp"
                         app:tint="?attr/colorPrimary"
@@ -99,7 +99,7 @@
                         android:id="@+id/btnDiaNext"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:src="@drawable/ic_chevron_right"
+                        android:src="@drawable/ic_ms_chevron_right"
                         android:padding="8dp"
                         app:tint="?attr/colorPrimary"
                         android:background="?attr/selectableItemBackgroundBorderless"
@@ -349,7 +349,7 @@
                     <LinearLayout style="@style/GymProFit.MealRow">
 
                         <FrameLayout style="@style/GymProFit.MealIconTile">
-                            <ImageView style="@style/GymProFit.MealIcon" android:src="@drawable/ic_stats" />
+                            <ImageView style="@style/GymProFit.MealIcon" android:src="@drawable/ic_ms_bar_chart" />
                         </FrameLayout>
 
                         <LinearLayout style="@style/GymProFit.MealText">
@@ -361,7 +361,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_gravity="center_vertical"
-                            android:src="@drawable/ic_chevron_right"
+                            android:src="@drawable/ic_ms_chevron_right"
                             app:tint="?attr/colorPrimary"
                             android:contentDescription="@null" />
 
@@ -389,7 +389,7 @@
                     <LinearLayout style="@style/GymProFit.MealRow">
 
                         <FrameLayout style="@style/GymProFit.MealIconTile">
-                            <ImageView style="@style/GymProFit.MealIcon" android:src="@drawable/ic_nutricion" />
+                            <ImageView style="@style/GymProFit.MealIcon" android:src="@drawable/ic_ms_restaurant" />
                         </FrameLayout>
 
                         <LinearLayout style="@style/GymProFit.MealText">
@@ -415,7 +415,7 @@
                     <LinearLayout style="@style/GymProFit.MealRow">
 
                         <FrameLayout style="@style/GymProFit.MealIconTile">
-                            <ImageView style="@style/GymProFit.MealIcon" android:src="@drawable/ic_nutricion" />
+                            <ImageView style="@style/GymProFit.MealIcon" android:src="@drawable/ic_ms_restaurant" />
                         </FrameLayout>
 
                         <LinearLayout style="@style/GymProFit.MealText">
@@ -441,7 +441,7 @@
                     <LinearLayout style="@style/GymProFit.MealRow">
 
                         <FrameLayout style="@style/GymProFit.MealIconTile">
-                            <ImageView style="@style/GymProFit.MealIcon" android:src="@drawable/ic_nutricion" />
+                            <ImageView style="@style/GymProFit.MealIcon" android:src="@drawable/ic_ms_restaurant" />
                         </FrameLayout>
 
                         <LinearLayout style="@style/GymProFit.MealText">
@@ -467,7 +467,7 @@
                     <LinearLayout style="@style/GymProFit.MealRow">
 
                         <FrameLayout style="@style/GymProFit.MealIconTile">
-                            <ImageView style="@style/GymProFit.MealIcon" android:src="@drawable/ic_nutricion" />
+                            <ImageView style="@style/GymProFit.MealIcon" android:src="@drawable/ic_ms_restaurant" />
                         </FrameLayout>
 
                         <LinearLayout style="@style/GymProFit.MealText">
@@ -493,7 +493,7 @@
                     <LinearLayout style="@style/GymProFit.MealRow">
 
                         <FrameLayout style="@style/GymProFit.MealIconTile">
-                            <ImageView style="@style/GymProFit.MealIcon" android:src="@drawable/ic_nutricion" />
+                            <ImageView style="@style/GymProFit.MealIcon" android:src="@drawable/ic_ms_restaurant" />
                         </FrameLayout>
 
                         <LinearLayout style="@style/GymProFit.MealText">

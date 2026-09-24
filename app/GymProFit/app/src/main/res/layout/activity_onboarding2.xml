@@ -55,6 +55,7 @@
 
             <!-- Nombre -->
             <com.google.android.material.textfield.TextInputLayout
+        app:errorIconDrawable="@drawable/ic_ms_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/perfil_nombre"
@@ -63,7 +64,7 @@
                 app:boxCornerRadiusTopEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusBottomEnd="12dp"
-                app:startIconDrawable="@drawable/ic_perfil">
+                app:startIconDrawable="@drawable/ic_ms_person">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etNombreOnboarding"
@@ -78,6 +79,7 @@
 
             <!-- Email -->
             <com.google.android.material.textfield.TextInputLayout
+        app:errorIconDrawable="@drawable/ic_ms_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -87,7 +89,7 @@
                 app:boxCornerRadiusTopEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusBottomEnd="12dp"
-                app:startIconDrawable="@drawable/ic_email">
+                app:startIconDrawable="@drawable/ic_ms_mail">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etEmailOnboarding"
@@ -102,6 +104,7 @@
 
             <!-- Edad -->
             <com.google.android.material.textfield.TextInputLayout
+        app:errorIconDrawable="@drawable/ic_ms_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -111,7 +114,7 @@
                 app:boxCornerRadiusTopEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusBottomEnd="12dp"
-                app:startIconDrawable="@drawable/ic_edad"
+                app:startIconDrawable="@drawable/ic_ms_cake"
                 app:suffixText="@string/onboarding_anos">
 
                 <com.google.android.material.textfield.TextInputEditText

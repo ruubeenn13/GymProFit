@@ -46,7 +46,7 @@
                     android:id="@+id/btnMenuOpciones"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/ic_more_vert"
+                    android:src="@drawable/ic_ms_more_vert"
                     android:padding="8dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
@@ -88,7 +88,7 @@
                                 android:layout_width="64dp"
                                 android:layout_height="64dp"
                                 android:layout_gravity="top|start"
-                                android:src="@drawable/ic_perfil"
+                                android:src="@drawable/ic_ms_person"
                                 android:scaleType="centerCrop"
                                 app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
                                 android:contentDescription="@string/perfil_mi_perfil" />
@@ -97,7 +97,7 @@
                                 android:layout_width="22dp"
                                 android:layout_height="22dp"
                                 android:layout_gravity="bottom|end"
-                                android:src="@drawable/ic_edit"
+                                android:src="@drawable/ic_ms_edit"
                                 android:background="@drawable/bg_circle_primary"
                                 android:padding="4dp"
                                 android:elevation="2dp"
@@ -168,7 +168,7 @@
                             <ImageView
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
-                                android:src="@drawable/ic_perfil"
+                                android:src="@drawable/ic_ms_person"
                                 android:alpha="0.6"
                                 android:contentDescription="@null" />
 
@@ -207,7 +207,7 @@
                             <ImageView
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
-                                android:src="@drawable/ic_email"
+                                android:src="@drawable/ic_ms_mail"
                                 android:alpha="0.6"
                                 android:contentDescription="@null" />
 
@@ -246,7 +246,7 @@
                             <ImageView
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
-                                android:src="@drawable/ic_nivel"
+                                android:src="@drawable/ic_ms_stairs"
                                 android:alpha="0.6"
                                 android:contentDescription="@null" />
 
@@ -286,7 +286,7 @@
                             <ImageView
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
-                                android:src="@drawable/ic_peso"
+                                android:src="@drawable/ic_ms_monitor_weight"
                                 android:alpha="0.6"
                                 android:contentDescription="@null" />
 
@@ -323,7 +323,7 @@
                             <ImageView
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
-                                android:src="@drawable/ic_altura"
+                                android:src="@drawable/ic_ms_height"
                                 android:alpha="0.6"
                                 android:contentDescription="@null" />
 
@@ -359,7 +359,7 @@
                             <ImageView
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
-                                android:src="@drawable/ic_edad"
+                                android:src="@drawable/ic_ms_cake"
                                 android:alpha="0.6"
                                 android:contentDescription="@null" />
 
@@ -398,7 +398,7 @@
                             <ImageView
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
-                                android:src="@drawable/ic_objetivo"
+                                android:src="@drawable/ic_ms_target"
                                 android:alpha="0.6"
                                 android:contentDescription="@null" />
 
@@ -435,7 +435,7 @@
                     android:layout_marginTop="10dp"
                     android:text="@string/perfil_editar"
                     app:cornerRadius="12dp"
-                    app:icon="@drawable/ic_edit"
+                    app:icon="@drawable/ic_ms_edit"
                     app:iconGravity="start" />
 
                 <!-- Sección: Mis actividades -->
@@ -474,7 +474,7 @@
                             <ImageView
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
-                                android:src="@drawable/ic_tiempo"
+                                android:src="@drawable/ic_ms_schedule"
                                 android:alpha="0.6"
                                 android:contentDescription="@null" />
 
@@ -490,7 +490,7 @@
                             <ImageView
                                 android:layout_width="16dp"
                                 android:layout_height="16dp"
-                                android:src="@drawable/ic_chevron_right"
+                                android:src="@drawable/ic_ms_chevron_right"
                                 android:alpha="0.4"
                                 android:contentDescription="@null" />
 
@@ -518,7 +518,7 @@
                             <ImageView
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
-                                android:src="@drawable/ic_peso"
+                                android:src="@drawable/ic_ms_monitor_weight"
                                 android:alpha="0.6"
                                 android:contentDescription="@null" />
 
@@ -566,7 +566,7 @@
                             <ImageView
                                 android:layout_width="16dp"
                                 android:layout_height="16dp"
-                                android:src="@drawable/ic_chevron_right"
+                                android:src="@drawable/ic_ms_chevron_right"
                                 android:alpha="0.4"
                                 android:contentDescription="@null" />
 
@@ -591,7 +591,7 @@
                             <ImageView
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
-                                android:src="@drawable/ic_check"
+                                android:src="@drawable/ic_ms_trophy"
                                 android:alpha="0.6"
                                 android:contentDescription="@null" />
 
@@ -607,7 +607,7 @@
                             <ImageView
                                 android:layout_width="16dp"
                                 android:layout_height="16dp"
-                                android:src="@drawable/ic_chevron_right"
+                                android:src="@drawable/ic_ms_chevron_right"
                                 android:alpha="0.4"
                                 android:contentDescription="@null" />
 
@@ -633,7 +633,7 @@
                             <ImageView
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
-                                android:src="@drawable/ic_edit"
+                                android:src="@drawable/ic_ms_edit"
                                 android:alpha="0.6"
                                 android:contentDescription="@null" />
 
@@ -649,7 +649,7 @@
                             <ImageView
                                 android:layout_width="16dp"
                                 android:layout_height="16dp"
-                                android:src="@drawable/ic_chevron_right"
+                                android:src="@drawable/ic_ms_chevron_right"
                                 android:alpha="0.4"
                                 android:contentDescription="@null" />
 
@@ -669,7 +669,7 @@
                     android:layout_marginBottom="16dp"
                     android:text="@string/acerca_btn"
                     app:cornerRadius="12dp"
-                    app:icon="@drawable/ic_logo_gym"
+                    app:icon="@drawable/ic_ms_info"
                     app:iconGravity="start" />
 
             <!-- Eliminar cuenta (GP-008).
@@ -703,7 +703,7 @@
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:src="@drawable/ic_delete"
+                            android:src="@drawable/ic_ms_delete"
                             app:tint="?attr/colorError"
                             android:contentDescription="@null" />
 
@@ -719,7 +719,7 @@
                         <ImageView
                             android:layout_width="16dp"
                             android:layout_height="16dp"
-                            android:src="@drawable/ic_chevron_right"
+                            android:src="@drawable/ic_ms_chevron_right"
                             app:tint="?attr/colorError"
                             android:alpha="0.6"
                             android:contentDescription="@null" />

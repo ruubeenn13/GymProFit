@@ -53,6 +53,11 @@
         <item name="android:popupMenuStyle">@style/Widget.GymProFit.PopupMenu</item>
         <item name="snackbarStyle">@style/Widget.GymProFit.Snackbar</item>
 
+        <!-- Iconos por defecto de los componentes, pasados a Material Symbols (GP-080) -->
+        <item name="spinnerStyle">@style/Widget.GymProFit.Spinner</item>
+        <item name="android:spinnerStyle">@style/Widget.GymProFit.Spinner</item>
+        <item name="searchViewStyle">@style/Widget.GymProFit.SearchView</item>
+
         <!-- Fuente ÚNICA en toda la app (Barlow Condensed, la de Home/Nutrición).
              fontFamily del tema = catch-all para TextViews; la escala tipográfica M3
              (abajo) fuerza la fuente también en botones, chips, diálogos, inputs... -->
@@ -216,6 +221,20 @@
         <item name="chipStrokeWidth">1dp</item>
         <item name="chipCornerRadius">12dp</item>
         <item name="checkedIconTint">?attr/colorPrimary</item>
+        <item name="checkedIcon">@drawable/ic_ms_check</item>
+    </style>
+
+    <!-- Spinner con la flecha de Material Symbols; el paddingEnd deja sitio a la flecha -->
+    <style name="Widget.GymProFit.Spinner" parent="Widget.AppCompat.Spinner">
+        <item name="android:background">@drawable/bg_spinner</item>
+        <item name="android:paddingEnd">44dp</item>
+    </style>
+
+    <!-- Buscador con la lupa y el aspa de Material Symbols -->
+    <style name="Widget.GymProFit.SearchView" parent="Widget.AppCompat.SearchView">
+        <item name="searchIcon">@drawable/ic_ms_search</item>
+        <item name="searchHintIcon">@drawable/ic_ms_search</item>
+        <item name="closeIcon">@drawable/ic_ms_close</item>
     </style>
 
     <!-- ── Bottom nav: fondo de superficie + pill naranja en el activo ─────── -->
@@ -302,7 +321,7 @@
     <style name="GymProFit.MealAdd" parent="">
         <item name="android:layout_width">30dp</item>
         <item name="android:layout_height">30dp</item>
-        <item name="android:src">@drawable/ic_add</item>
+        <item name="android:src">@drawable/ic_ms_add</item>
         <item name="tint">?attr/colorPrimary</item>
         <item name="android:contentDescription">@string/nutricion_agregar</item>
     </style>

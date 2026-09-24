@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorSurface"
-        app:navigationIcon="@drawable/ic_arrow_back"
+        app:navigationIcon="@drawable/ic_ms_arrow_back"
         app:title="@string/eliminar_cuenta_titulo"
         app:titleTextColor="?attr/colorOnSurface" />
 
@@ -48,7 +48,7 @@
                 <ImageView
                     android:layout_width="28dp"
                     android:layout_height="28dp"
-                    android:src="@drawable/ic_delete"
+                    android:src="@drawable/ic_ms_delete"
                     android:layout_marginTop="2dp"
                     app:tint="?attr/colorError"
                     android:contentDescription="@string/eliminar_cuenta_icono_descripcion" />
@@ -249,7 +249,7 @@
                         <ImageView
                             android:layout_width="16dp"
                             android:layout_height="16dp"
-                            android:src="@drawable/ic_web"
+                            android:src="@drawable/ic_ms_open_in_new"
                             android:alpha="0.55"
                             android:contentDescription="@null" />
 
@@ -297,6 +297,7 @@
                         android:lineSpacingMultiplier="1.35" />
 
                     <com.google.android.material.textfield.TextInputLayout
+        app:errorIconDrawable="@drawable/ic_ms_error"
                         android:id="@+id/tilEliminarPassword"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -306,8 +307,9 @@
                         app:boxCornerRadiusTopEnd="12dp"
                         app:boxCornerRadiusBottomStart="12dp"
                         app:boxCornerRadiusBottomEnd="12dp"
-                        app:startIconDrawable="@drawable/ic_lock"
-                        app:endIconMode="password_toggle">
+                        app:startIconDrawable="@drawable/ic_ms_lock"
+                        app:endIconMode="password_toggle"
+                app:endIconDrawable="@drawable/sel_ojo_password">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etEliminarPassword"
@@ -344,7 +346,7 @@
                         android:textColor="?attr/colorError"
                         android:textSize="@dimen/text_body"
                         app:cornerRadius="12dp"
-                        app:icon="@drawable/ic_delete"
+                        app:icon="@drawable/ic_ms_delete"
                         app:iconGravity="start"
                         app:iconTint="?attr/colorError"
                         app:strokeColor="?attr/colorError" />

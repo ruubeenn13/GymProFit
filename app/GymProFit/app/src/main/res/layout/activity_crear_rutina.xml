@@ -21,7 +21,7 @@
         android:background="?attr/colorSurface"
         app:title="@string/rutinas_crear_nueva"
         app:titleTextColor="?attr/colorOnSurface"
-        app:navigationIcon="@drawable/ic_arrow_back" />
+        app:navigationIcon="@drawable/ic_ms_arrow_back" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -37,6 +37,7 @@
 
             <!-- Nombre de la rutina -->
             <com.google.android.material.textfield.TextInputLayout
+        app:errorIconDrawable="@drawable/ic_ms_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/rutinas_nombre"
@@ -57,6 +58,7 @@
 
             <!-- Descripción de la rutina -->
             <com.google.android.material.textfield.TextInputLayout
+        app:errorIconDrawable="@drawable/ic_ms_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -121,6 +123,7 @@
 
             <!-- Duración estimada en minutos -->
             <com.google.android.material.textfield.TextInputLayout
+        app:errorIconDrawable="@drawable/ic_ms_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"

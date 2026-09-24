@@ -38,17 +38,17 @@ public class UIHelper {
 
     // Muestra un toast personalizado con icono informativo.
     public static void mostrarToastInfo(Context context, String mensaje) {
-        mostrarToast(context, mensaje, R.drawable.ic_info);
+        mostrarToast(context, mensaje, R.drawable.ic_ms_info);
     }
 
     // Muestra un toast personalizado con icono de éxito.
     public static void mostrarToastExito(Context context, String mensaje) {
-        mostrarToast(context, mensaje, R.drawable.ic_check);
+        mostrarToast(context, mensaje, R.drawable.ic_ms_check);
     }
 
     // Muestra un toast personalizado con icono de error.
     public static void mostrarToastError(Context context, String mensaje) {
-        mostrarToast(context, mensaje, R.drawable.ic_error);
+        mostrarToast(context, mensaje, R.drawable.ic_ms_error);
     }
 
     // ENLACES EXTERNOS

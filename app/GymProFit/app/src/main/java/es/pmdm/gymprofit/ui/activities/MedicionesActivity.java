@@ -134,7 +134,7 @@ public class MedicionesActivity extends AppCompatActivity {
             // símbolo metido en el fichero de idioma no se tiñe con el tema y hay que
             // acordarse de arrastrarlo a cada traducción.
             tvMasDetalles.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0,
-                    masDetallesAbierto ? R.drawable.ic_chevron_up : R.drawable.ic_chevron_down, 0);
+                    masDetallesAbierto ? R.drawable.ic_ms_keyboard_arrow_up : R.drawable.ic_ms_keyboard_arrow_down, 0);
         });
 
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());

@@ -19,7 +19,7 @@
         android:background="?attr/colorSurface"
         app:title="@string/detalle_ejercicio_titulo"
         app:titleTextColor="?attr/colorOnSurface"
-        app:navigationIcon="@drawable/ic_arrow_back" />
+        app:navigationIcon="@drawable/ic_ms_arrow_back" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -91,7 +91,7 @@
                         <ImageView
                             android:layout_width="56dp"
                             android:layout_height="56dp"
-                            android:src="@drawable/ic_ejercicios"
+                            android:src="@drawable/ic_ms_fitness_center"
                             android:tint="#33000000"
                             android:contentDescription="@null" />
 
@@ -138,7 +138,7 @@
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:src="@drawable/ic_ejercicios"
+                            android:src="@drawable/ic_ms_fitness_center"
                             android:alpha="0.55"
                             android:contentDescription="@null" />
 
@@ -179,7 +179,7 @@
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:src="@drawable/ic_nivel"
+                            android:src="@drawable/ic_ms_stairs"
                             android:alpha="0.55"
                             android:contentDescription="@null" />
 
@@ -231,7 +231,7 @@
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:src="@drawable/ic_info"
+                            android:src="@drawable/ic_ms_info"
                             android:alpha="0.55"
                             android:contentDescription="@null" />
 
