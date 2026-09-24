@@ -455,6 +455,7 @@
     <string name="editar_perfil_error">Error saving changes</string>
     <string name="editar_perfil_email_requerido">Email is required</string>
     <string name="nivel_principiante">Beginner</string>
+    <string name="nivel_escala">Level %1$d of %2$d</string>
     <string name="nivel_principiante_desc">Starting my fitness journey</string>
     <string name="nivel_intermedio">Intermediate</string>
     <string name="nivel_intermedio_desc">I train regularly with some experience</string>

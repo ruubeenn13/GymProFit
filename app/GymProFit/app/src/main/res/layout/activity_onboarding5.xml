@@ -2,7 +2,7 @@
 <!--
   activity_onboarding5.xml — Onboarding paso 5/5: selección de nivel de experiencia.
   Lista de cards seleccionables (principiante, intermedio, avanzado, experto) con
-  emoji, título, descripción y check visual al marcarse. Progreso + navegación.
+  medidor de nivel (N de 4), título, descripción y check visual al marcarse. Progreso + navegación.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -65,9 +65,9 @@
                 app:strokeColor="?attr/colorOutlineVariant">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
-                    <ImageView android:layout_width="30dp" android:layout_height="30dp"
-                        android:src="@drawable/ic_nivel_principiante" app:tint="?attr/colorOnSurfaceVariant"
-                        android:layout_marginEnd="14dp" android:contentDescription="@null" />
+                    <ImageView android:id="@+id/ivNivelPrincipiante" android:layout_width="45dp" android:layout_height="10dp"
+                        android:src="@drawable/ic_nivel_principiante"
+                        android:layout_marginEnd="14dp" />
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:text="@string/nivel_principiante" android:textSize="@dimen/text_body"
@@ -95,9 +95,9 @@
                 app:strokeColor="?attr/colorOutlineVariant">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
-                    <ImageView android:layout_width="30dp" android:layout_height="30dp"
-                        android:src="@drawable/ic_nivel_intermedio" app:tint="?attr/colorOnSurfaceVariant"
-                        android:layout_marginEnd="14dp" android:contentDescription="@null" />
+                    <ImageView android:id="@+id/ivNivelIntermedio" android:layout_width="45dp" android:layout_height="10dp"
+                        android:src="@drawable/ic_nivel_intermedio"
+                        android:layout_marginEnd="14dp" />
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:text="@string/nivel_intermedio" android:textSize="@dimen/text_body"
@@ -125,9 +125,9 @@
                 app:strokeColor="?attr/colorOutlineVariant">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
-                    <ImageView android:layout_width="30dp" android:layout_height="30dp"
-                        android:src="@drawable/ic_nivel_avanzado" app:tint="?attr/colorOnSurfaceVariant"
-                        android:layout_marginEnd="14dp" android:contentDescription="@null" />
+                    <ImageView android:id="@+id/ivNivelAvanzado" android:layout_width="45dp" android:layout_height="10dp"
+                        android:src="@drawable/ic_nivel_avanzado"
+                        android:layout_marginEnd="14dp" />
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:text="@string/nivel_avanzado" android:textSize="@dimen/text_body"
@@ -155,9 +155,9 @@
                 app:strokeColor="?attr/colorOutlineVariant">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
-                    <ImageView android:layout_width="30dp" android:layout_height="30dp"
-                        android:src="@drawable/ic_nivel_experto" app:tint="?attr/colorOnSurfaceVariant"
-                        android:layout_marginEnd="14dp" android:contentDescription="@null" />
+                    <ImageView android:id="@+id/ivNivelExperto" android:layout_width="45dp" android:layout_height="10dp"
+                        android:src="@drawable/ic_nivel_experto"
+                        android:layout_marginEnd="14dp" />
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:text="@string/nivel_experto" android:textSize="@dimen/text_body"

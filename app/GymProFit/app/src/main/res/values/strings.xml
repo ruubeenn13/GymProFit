@@ -459,6 +459,7 @@
     <string name="editar_perfil_error">Error al guardar los cambios</string>
     <string name="editar_perfil_email_requerido">El email es obligatorio</string>
     <string name="nivel_principiante">Principiante</string>
+    <string name="nivel_escala">Nivel %1$d de %2$d</string>
     <string name="nivel_principiante_desc">Comienzo mi aventura en el fitness</string>
     <string name="nivel_intermedio">Intermedio</string>
     <string name="nivel_intermedio_desc">Entreno regularmente con cierta experiencia</string>

@@ -56,6 +56,13 @@
     <color name="gp_error">#C62828</color>
     <color name="gp_error_container">#FDE9E9</color>
 
+    <!-- Pista vacía del medidor de nivel (GP-078). Se mide contra la MARCA, no
+         contra la tarjeta: lo que hay que distinguir es segmento lleno de vacío,
+         y eso pide 3:1 (WCAG 1.4.11). #D6D6D0 frente a #B83E00 da 3,86:1.
+         No reutiliza gp_stroke a propósito: el borde tiene que oscurecerse para
+         delimitar la tarjeta, y cuanto más oscuro, menos se distingue de la marca. -->
+    <color name="gp_meter_track">#D6D6D0</color>
+
     <!-- ── Alias legados (layouts existentes; apuntan a la paleta nueva) ──── -->
     <color name="primary_light">@color/gp_primary</color>
     <color name="on_primary_light">@color/gp_on_primary</color>
