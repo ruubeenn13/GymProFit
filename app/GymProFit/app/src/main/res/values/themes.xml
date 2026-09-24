@@ -1,7 +1,15 @@
 <resources>
     <!--
-      themes.xml — tema "atlético" de GymProFit (variante CLARA del DayNight;
-      values-night define la oscura, que es la por defecto).
+      themes.xml — tema "atlético" de GymProFit. Es la ÚNICA definición del tema,
+      para claro y oscuro (GP-084). Lo que cambia entre los dos sale de recursos
+      con qualifier: los colores de values-night/colors.xml y el color de los
+      iconos de la barra de estado de values-night/bools.xml.
+
+      Antes values-night/themes.xml redefinía el tema entero (45 atributos) y se
+      fue separando del claro: conservaba Barlow Condensed como fuente de todo
+      el texto, que ad0eaf0 había quitado del claro a propósito, y no tenía las
+      transiciones entre pantallas. En oscuro el cuerpo salía en la condensada
+      y las pantallas no deslizaban.
       Además de los colores M3, fija ESTILOS GLOBALES de widget (cards,
       botones, chips, bottom nav, dialogs) para que todas las pantallas
       hereden el rediseño sin tocar cada layout.
@@ -25,10 +33,11 @@
         <item name="android:textColorPrimary">@color/gp_on_surface</item>
         <item name="android:textColorSecondary">@color/gp_text_secondary</item>
 
-        <!-- Barras del sistema integradas con el fondo -->
+        <!-- Barras del sistema integradas con el fondo. Iconos oscuros en claro y
+             claros en oscuro: el valor sale de values(-night)/bools.xml. -->
         <item name="android:statusBarColor">@color/gp_background</item>
         <item name="android:navigationBarColor">@color/gp_background</item>
-        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightStatusBar">@bool/gp_iconos_barra_oscuros</item>
 
         <!-- Transición entre pantallas (deslizamiento lateral, ambos modos) -->
         <item name="android:windowAnimationStyle">@style/GymProFit.WindowAnimation</item>

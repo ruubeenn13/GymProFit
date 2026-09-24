@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Iconos de la barra de estado claros: sobre el fondo carbón -->
+    <bool name="gp_iconos_barra_oscuros">false</bool>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  bools.xml — lo que el tema necesita distinto en claro y en oscuro y no es un
+  color. values-night/bools.xml lo sobrescribe (GP-084).
+-->
+<resources>
+    <!-- Iconos de la barra de estado oscuros: sobre el fondo claro -->
+    <bool name="gp_iconos_barra_oscuros">true</bool>
+</resources>
