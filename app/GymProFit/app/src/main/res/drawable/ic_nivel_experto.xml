@@ -2,31 +2,31 @@
 <!--
   ic_nivel_experto — nivel 4 de 4 del paso 5 del onboarding (Experto).
 
-  Los cuatro niveles comparten un MEDIDOR de cuatro barras ascendentes y solo
-  cambian cuántas van rellenas: 4 aquí. Se eligió un medidor y no cuatro
-  dibujos distintos (brote, brazo, trofeo, rayo) porque el dato que la pantalla
-  pide es una POSICIÓN en una escala, y con cuatro metáforas sueltas no se puede
-  comparar una tarjeta con la de al lado. Además el rayo ya es
-  ic_objetivo_fuerza, en el paso anterior: repetirlo aquí confundiría dos
-  preguntas seguidas.
+  MEDIDOR de cuatro segmentos iguales en horizontal (GP-078). La versión
+  anterior eran cuatro barras ascendentes: el glifo de cobertura del móvil, y
+  lleno contra contorno en el mismo gris no se distinguía de un vistazo.
 
-  Barra rellena = alcanzado, barra en contorno = por alcanzar. El color NO vive
-  aquí: la tarjeta aplica app:tint (colorOnSurfaceVariant en reposo,
-  colorPrimary al seleccionar), así que sirve igual en claro y en oscuro.
+  Lleno = colorPrimary, vacío = gp_meter_track. Los colores viven AQUÍ, no en un
+  app:tint de la tarjeta: un tinte pintaría los cuatro segmentos del mismo color
+  y borraría justo la diferencia que el medidor tiene que enseñar. Lleno contra
+  vacío pasa 3:1 en los dos temas y, como el contraste es de luminancia, también
+  en escala de grises.
+
+  Viewport 36×8: cuatro segmentos de 7,5 de ancho con 2 de hueco y esquinas de 2.
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="24dp" android:height="24dp"
-    android:viewportWidth="24" android:viewportHeight="24">
+    android:width="36dp" android:height="8dp"
+    android:viewportWidth="36" android:viewportHeight="8">
     <path
-        android:fillColor="?attr/colorOnSurfaceVariant"
-        android:pathData="M3,15.5 h3 v5 h-3 z"/>
+        android:fillColor="?attr/colorPrimary"
+        android:pathData="M2,0 h3.5 a2,2 0 0 1 2,2 v4 a2,2 0 0 1 -2,2 h-3.5 a2,2 0 0 1 -2,-2 v-4 a2,2 0 0 1 2,-2 z"/>
     <path
-        android:fillColor="?attr/colorOnSurfaceVariant"
-        android:pathData="M8,11.5 h3 v9 h-3 z"/>
+        android:fillColor="?attr/colorPrimary"
+        android:pathData="M11.5,0 h3.5 a2,2 0 0 1 2,2 v4 a2,2 0 0 1 -2,2 h-3.5 a2,2 0 0 1 -2,-2 v-4 a2,2 0 0 1 2,-2 z"/>
     <path
-        android:fillColor="?attr/colorOnSurfaceVariant"
-        android:pathData="M13,7.5 h3 v13 h-3 z"/>
+        android:fillColor="?attr/colorPrimary"
+        android:pathData="M21,0 h3.5 a2,2 0 0 1 2,2 v4 a2,2 0 0 1 -2,2 h-3.5 a2,2 0 0 1 -2,-2 v-4 a2,2 0 0 1 2,-2 z"/>
     <path
-        android:fillColor="?attr/colorOnSurfaceVariant"
-        android:pathData="M18,3.5 h3 v17 h-3 z"/>
+        android:fillColor="?attr/colorPrimary"
+        android:pathData="M30.5,0 h3.5 a2,2 0 0 1 2,2 v4 a2,2 0 0 1 -2,2 h-3.5 a2,2 0 0 1 -2,-2 v-4 a2,2 0 0 1 2,-2 z"/>
 </vector>

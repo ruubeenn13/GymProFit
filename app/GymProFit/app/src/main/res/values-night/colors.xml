@@ -53,6 +53,9 @@
     <color name="gp_error">#F87171</color>
     <color name="gp_error_container">#3A1414</color>
 
+    <!-- Pista del medidor de nivel: #353A43 frente a #FF6A00 da 3,98:1 (GP-078). -->
+    <color name="gp_meter_track">#353A43</color>
+
     <!-- ── Alias legados usados por layouts existentes ───────────────────── -->
     <color name="on_surface">@color/gp_on_surface</color>
     <color name="primaryContainer_dark">#24252B</color>

@@ -93,6 +93,14 @@ public class Onboarding5Activity extends AppCompatActivity {
 
         todasLasCards  = new MaterialCardView[]{ cardPrincipiante, cardIntermedio, cardAvanzado, cardExperto };
         todosLosChecks = new ImageView[]{ ivCheckPrincipiante, ivCheckIntermedio, ivCheckAvanzado, ivCheckExperto };
+
+        // El medidor es información, no adorno: TalkBack tiene que decir en qué
+        // punto de la escala está cada tarjeta (GP-078).
+        int[] medidores = { R.id.ivNivelPrincipiante, R.id.ivNivelIntermedio, R.id.ivNivelAvanzado, R.id.ivNivelExperto };
+        for (int i = 0; i < medidores.length; i++) {
+            findViewById(medidores[i]).setContentDescription(
+                    getString(R.string.nivel_escala, i + 1, medidores.length));
+        }
     }
 
     // Resuelve del tema actual los colores de borde normal y de borde
@@ -125,6 +133,7 @@ public class Onboarding5Activity extends AppCompatActivity {
         for (MaterialCardView c : todasLasCards) {
             c.setStrokeColor(colorBordeNormal);
             c.setStrokeWidth(bordeNormalPx);
+            c.setSelected(false);
         }
         for (ImageView iv : todosLosChecks) {
             iv.setVisibility(View.GONE);
@@ -132,6 +141,8 @@ public class Onboarding5Activity extends AppCompatActivity {
 
         card.setStrokeColor(colorBordeSeleccionado);
         card.setStrokeWidth(bordeElegidoPx);
+        // La elección se veía solo por el borde y el check, que TalkBack no lee.
+        card.setSelected(true);
         check.setVisibility(View.VISIBLE);
     }
 
