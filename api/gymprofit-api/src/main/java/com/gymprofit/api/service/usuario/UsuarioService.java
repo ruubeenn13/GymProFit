@@ -17,6 +17,7 @@ import com.gymprofit.api.exceptions.*;
 import com.gymprofit.api.mappers.UsuarioMapper;
 import com.gymprofit.api.repository.jpa.IRoleRepository;
 import com.gymprofit.api.repository.jpa.IUsuarioRepository;
+import com.gymprofit.api.service.auth.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,8 @@ public class UsuarioService implements IUsuarioService {
     private final UsuarioMapper usuarioMapper;
     private final com.gymprofit.api.repository.jooq.usuario.IUsuarioJooqRepository usuarioJooqRepository;
     private final SecurityUtils securityUtils;
+    // Revoca las sesiones al desactivar una cuenta (GP-083).
+    private final RefreshTokenService refreshTokenService;
     // Fotos de perfil persistidas en BD (BLOB): el FS de Render es efímero.
     private final com.gymprofit.api.repository.jpa.IFotoPerfilRepository fotoPerfilRepository;
     // Logger para trazar las operaciones del servicio.
@@ -125,6 +128,7 @@ public class UsuarioService implements IUsuarioService {
         try {
             usuario.setActivo(false);
             usuarioRepository.save(usuario);
+            refreshTokenService.revocarTodosDeUsuario(usuario);
 
             logger.info("Usuario con id {} desactivado correctamente", id);
         } catch (Exception e) {
@@ -182,6 +186,9 @@ public class UsuarioService implements IUsuarioService {
             usuarioMapper.updateEntityFromDTO(usuarioUpdateDTO, usuario);
 
             usuarioRepository.save(usuario);
+            if (!usuario.isEnabled()) {
+                refreshTokenService.revocarTodosDeUsuario(usuario);
+            }
 
             return usuarioMapper.toDTO(usuario);
         } catch (Exception e) {
@@ -233,8 +240,20 @@ public class UsuarioService implements IUsuarioService {
         return usuarioMapper.toDTOList(usuarios);
     }
 
-    // Actualiza parcialmente un usuario (perfil, datos físicos, nivel de experiencia...)
-    // con los campos no nulos del patch.
+    /**
+     * Actualiza parcialmente el perfil (datos físicos, nivel, objetivo) con los campos no nulos.
+     * <p>
+     * Dos campos NO se escriben desde aquí (GP-083):
+     * <ul>
+     *   <li>{@code activo}: ya no está en el DTO. Lo decide la administración, nunca el
+     *       propio usuario; antes, un desactivado se reactivaba con el token que conservaba.</li>
+     *   <li>{@code email}: se cambia por {@code PUT /usuarios/me/email}, con la contraseña.
+     *       Aquí solo se acepta si es el mismo que ya tiene, porque las builds repartidas lo
+     *       mandan siempre al guardar el perfil y no deben romperse; si es distinto, 400.</li>
+     * </ul>
+     *
+     * @throws InvalidDataException (→ 400) si el email del cuerpo no es el actual.
+     */
     @Transactional
     @Override
     public UsuarioDTO patch(Integer id, UsuarioPatchDTO patchDTO) {
@@ -255,14 +274,19 @@ public class UsuarioService implements IUsuarioService {
             }
         }
 
+        // Mayúsculas aparte: la restricción única de la base tampoco las distingue.
+        if (patchDTO.getEmail() != null
+                && !patchDTO.getEmail().trim().equalsIgnoreCase(usuario.getEmail())) {
+            throw new InvalidDataException(
+                    "El correo no se cambia desde el perfil: usa PUT /usuarios/me/email con tu contraseña actual");
+        }
+
         try {
-            if (patchDTO.getEmail() != null) usuario.setEmail(patchDTO.getEmail());
             if (patchDTO.getPeso() != null) usuario.setPeso(patchDTO.getPeso());
             if (patchDTO.getAltura() != null) usuario.setAltura(patchDTO.getAltura());
             if (patchDTO.getEdad() != null) usuario.setEdad(patchDTO.getEdad());
             if (nivel != null) usuario.setNivelExperiencia(nivel);
             if (patchDTO.getObjetivo() != null) usuario.setObjetivo(patchDTO.getObjetivo());
-            if (patchDTO.getActivo() != null) usuario.setActivo(patchDTO.getActivo());
 
             return usuarioMapper.toDTO(usuarioRepository.save(usuario));
         } catch (Exception e) {
@@ -327,6 +351,11 @@ public class UsuarioService implements IUsuarioService {
         try {
             usuario.setActivo(!Boolean.TRUE.equals(usuario.getActivo()));
             usuarioRepository.save(usuario);
+            // Desactivar cierra también las sesiones abiertas: sin esto, el refresh que
+            // guarda el móvil seguía emitiendo tokens a una cuenta dada de baja (GP-083).
+            if (!usuario.isEnabled()) {
+                refreshTokenService.revocarTodosDeUsuario(usuario);
+            }
             logger.info("Admin: usuario id={} activo={}", id, usuario.getActivo());
         } catch (Exception e) {
             throw new UpdateEntityException(Usuario.class.getSimpleName(), id, e);

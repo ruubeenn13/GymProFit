@@ -39,7 +39,7 @@ public class Onboarding1Activity extends AppCompatActivity {
 
         setContentView(R.layout.activity_onboarding1);
 
-        // Login y registro traen el nombre, y el registro tambien el email. Es la
+        // Login y registro traen el nombre. Es la
         // UNICA entrada de datos por extras que queda: se vuelcan al borrador aqui
         // y de la pantalla siguiente en adelante el asistente ya no usa extras.
         sembrarBorradorConLosExtras();
@@ -117,7 +117,11 @@ public class Onboarding1Activity extends AppCompatActivity {
     }
 
     /**
-     * Vuelca al borrador el nombre y el email que traen login y registro.
+     * Vuelca al borrador el nombre que traen login y registro.
+     *
+     * <p>El correo NO (GP-083): la cuenta ya lo tiene desde el registro, y tras
+     * iniciar sesión llegaba en blanco, de modo que el asistente lo pedía otra vez y
+     * mandaba lo que se escribiera. Una errata dejaba la cuenta sin recuperación.
      *
      * <p>Solo rellena lo que este vacio: si el usuario ya habia empezado el
      * asistente y vuelve a entrar, manda lo que el escribio, no lo que venia de
@@ -125,17 +129,13 @@ public class Onboarding1Activity extends AppCompatActivity {
      */
     private void sembrarBorradorConLosExtras() {
         String username = getIntent().getStringExtra("username");
-        String email = getIntent().getStringExtra("email");
 
         String nombre = prefs.getBorradorNombre();
         if (nombre.isEmpty()) {
             nombre = (username != null && !username.isEmpty()) ? username : prefs.getUsername();
         }
 
-        String correo = prefs.getBorradorEmail();
-        if (correo.isEmpty() && email != null) correo = email;
-
-        prefs.guardarBorradorDatos(nombre, correo, prefs.getBorradorEdad(), prefs.getBorradorSexo());
+        prefs.guardarBorradorDatos(nombre, prefs.getBorradorEdad(), prefs.getBorradorSexo());
     }
 
     // Saltar el onboarding es una DECISION del usuario, no un abandono: se marca

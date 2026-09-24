@@ -166,8 +166,8 @@ public class OnboardingResumenActivity extends AppCompatActivity {
             // Cuerpo de escritura como Map; los decimales viajan como BigDecimal.
             Map<String, Object> body = new HashMap<>();
 
-            String emailStr = prefs.getBorradorEmail();
-            if (!emailStr.isEmpty()) body.put("email", emailStr);
+            // Sin correo (GP-083): el asistente ya no lo pide y la cuenta lo tiene.
+            // Cambiarlo tiene su propia ruta, con la contraseña, en editar perfil.
 
             BigDecimal pesoExacto = Numeros.exacto(prefs.getBorradorPeso(), 30, 300);
             if (pesoExacto != null) body.put("peso", pesoExacto);

@@ -37,7 +37,10 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
             "/auth/forgot-password", "/auth/reset-password",
             // Borrado de cuenta: lleva la contraseña en el cuerpo, así que repetirlo es
             // probar contraseñas, y lo que hay al otro lado de acertar es irreversible.
-            "/usuarios/me");
+            "/usuarios/me",
+            // Cambio de correo (GP-083): también reautentica con la contraseña, y acertar
+            // entrega la llave de la recuperación de contraseña.
+            "/usuarios/me/email");
 
     // Master de activación (existente): desactiva TODO el filtro (dev/tests).
     @Value("${app.auth.rate-limit.enabled:true}")

@@ -458,6 +458,14 @@
     <string name="editar_perfil_guardado">Perfil actualizado correctamente</string>
     <string name="editar_perfil_error">Error al guardar los cambios</string>
     <string name="editar_perfil_email_requerido">El email es obligatorio</string>
+    <string name="editar_perfil_password_actual">Contraseña actual</string>
+    <string name="editar_perfil_password_email_ayuda">Para cambiar el correo hace falta tu contraseña</string>
+    <string name="editar_perfil_password_requerida">Escribe tu contraseña actual para cambiar el correo</string>
+    <string name="editar_perfil_password_incorrecta">La contraseña no es correcta</string>
+    <string name="editar_perfil_email_en_uso">Ese correo ya lo usa otra cuenta</string>
+    <string name="editar_perfil_error_carga">No se ha podido cargar tu perfil. Vuelve a abrir la pantalla para reintentarlo.</string>
+    <string name="login_cuenta_desactivada_titulo">Cuenta desactivada</string>
+    <string name="login_cuenta_desactivada_mensaje">Tu cuenta está desactivada, así que se ha cerrado la sesión. Si crees que es un error, escríbenos a soporte@gymprofit.app.</string>
     <string name="nivel_principiante">Principiante</string>
     <string name="nivel_escala">Nivel %1$d de %2$d</string>
     <string name="nivel_principiante_desc">Comienzo mi aventura en el fitness</string>

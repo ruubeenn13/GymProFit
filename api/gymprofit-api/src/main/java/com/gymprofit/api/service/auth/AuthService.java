@@ -9,6 +9,7 @@ import com.gymprofit.api.entity.RefreshToken;
 import com.gymprofit.api.entity.Role;
 import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.enums.NivelExperiencia;
+import com.gymprofit.api.exceptions.CuentaDesactivadaException;
 import com.gymprofit.api.exceptions.DuplicateEntityException;
 import com.gymprofit.api.exceptions.InvalidCredentialsException;
 import com.gymprofit.api.exceptions.InvalidDataException;
@@ -163,6 +164,13 @@ public class AuthService implements IAuthService {
     public TokenDTO refresh(String refreshTokenValue) {
         RefreshToken actual = refreshTokenService.validar(refreshTokenValue);
         Usuario usuario = actual.getUsuario();
+
+        // Un refresh vigente de una cuenta desactivada no renueva nada (GP-083). Desactivar
+        // ya revoca los refresh, pero este es el control que no depende de que nadie se
+        // olvide de revocar: cualquier otra vía que ponga activo = false queda cubierta.
+        if (!usuario.isEnabled()) {
+            throw new CuentaDesactivadaException();
+        }
 
         String nuevoAccessToken = jwtTokenProvider.generateToken(usuario);
         RefreshToken nuevoRefresh = refreshTokenService.rotar(actual);

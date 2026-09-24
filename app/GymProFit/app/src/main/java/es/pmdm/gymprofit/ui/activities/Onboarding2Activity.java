@@ -15,7 +15,7 @@ import es.pmdm.gymprofit.utils.Numeros;
 
 // ============================================================
 // Onboarding2Activity — segundo paso del asistente de onboarding.
-// Recoge nombre, email, edad y sexo del usuario, precargando los
+// Recoge nombre, edad y sexo del usuario (el correo no: GP-083), precargando los
 // valores recibidos del paso anterior, y avanza al siguiente paso.
 // ============================================================
 public class Onboarding2Activity extends AppCompatActivity {
@@ -26,7 +26,7 @@ public class Onboarding2Activity extends AppCompatActivity {
         super.attachBaseContext(es.pmdm.gymprofit.utils.ScaleUtils.wrap(newBase));
     }
 
-    private TextInputEditText etNombre, etEmail, etEdad;
+    private TextInputEditText etNombre, etEdad;
     private ChipGroup chipGroupSexo;
     private PreferencesManager prefs;
 
@@ -42,7 +42,6 @@ public class Onboarding2Activity extends AppCompatActivity {
         setContentView(R.layout.activity_onboarding2);
 
         etNombre = findViewById(R.id.etNombreOnboarding);
-        etEmail = findViewById(R.id.etEmailOnboarding);
         etEdad = findViewById(R.id.etEdadOnboarding);
         chipGroupSexo = findViewById(R.id.chipGroupSexo);
 
@@ -73,7 +72,7 @@ public class Onboarding2Activity extends AppCompatActivity {
 
             String sexo = (chipGroupSexo.getCheckedChipId() == R.id.chipMujer) ? "MUJER" : "HOMBRE";
 
-            prefs.guardarBorradorDatos(nombre, etEmail.getText().toString().trim(), edad, sexo);
+            prefs.guardarBorradorDatos(nombre, edad, sexo);
             startActivity(new Intent(this, Onboarding3Activity.class));
         });
 
@@ -85,7 +84,6 @@ public class Onboarding2Activity extends AppCompatActivity {
     // pantalla de acceso o de una sesion anterior del asistente.
     private void precargarBorrador() {
         etNombre.setText(prefs.getBorradorNombre());
-        etEmail.setText(prefs.getBorradorEmail());
 
         int edad = prefs.getBorradorEdad();
         if (edad > 0) etEdad.setText(String.valueOf(edad));

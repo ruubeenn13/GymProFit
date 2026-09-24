@@ -12,6 +12,7 @@ import retrofit2.http.GET;
 import retrofit2.http.HTTP;
 import retrofit2.http.Multipart;
 import retrofit2.http.PATCH;
+import retrofit2.http.PUT;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
@@ -59,6 +60,16 @@ public interface UsuarioApi {
     // con AsyncTask + HttpURLConnection que quedaba fuera de Retrofit.
     @GET("usuarios/{id}/foto")
     Call<ResponseBody> descargarFoto(@Path("id") int id);
+
+    /**
+     * Cambia el correo del usuario autenticado (GP-083).
+     *
+     * <p>Sin id en la ruta: el usuario sale del token. El cuerpo lleva {@code email} y
+     * {@code password}, la contraseña actual. La API responde 403 si la contraseña no
+     * es la de la cuenta, 409 si otra cuenta ya usa el correo y 400 si no tiene formato.
+     */
+    @PUT("usuarios/me/email")
+    Call<Void> cambiarEmail(@Body Map<String, Object> body);
 
     /**
      * Borra definitivamente la cuenta del usuario autenticado (GP-008).

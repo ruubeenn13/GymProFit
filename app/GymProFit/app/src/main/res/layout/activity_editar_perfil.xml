@@ -54,9 +54,11 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Email -->
+            <!-- Email. Cambiarlo no va en el PATCH del perfil: va por PUT /usuarios/me/email
+                 y pide la contraseña actual (GP-083). -->
             <com.google.android.material.textfield.TextInputLayout
         app:errorIconDrawable="@drawable/ic_ms_error"
+                android:id="@+id/tilEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="14dp"
@@ -72,6 +74,37 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textEmailAddress" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Contraseña actual: solo aparece si el correo escrito no es el que ya tiene.
+                 El correo es la llave de la recuperación de contraseña, y cambiarlo con solo
+                 el token permitiría quedarse con la cuenta desde un móvil prestado. -->
+            <com.google.android.material.textfield.TextInputLayout
+        app:errorIconDrawable="@drawable/ic_ms_error"
+                android:id="@+id/tilPasswordEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp"
+                android:visibility="gone"
+                android:hint="@string/editar_perfil_password_actual"
+                app:helperText="@string/editar_perfil_password_email_ayuda"
+                app:helperTextEnabled="true"
+                app:startIconDrawable="@drawable/ic_ms_lock"
+                app:endIconMode="password_toggle"
+                app:endIconDrawable="@drawable/sel_ojo_password"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etPasswordEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:maxLines="1" />
 
             </com.google.android.material.textfield.TextInputLayout>
 

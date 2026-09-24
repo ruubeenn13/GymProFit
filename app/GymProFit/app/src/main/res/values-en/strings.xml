@@ -454,6 +454,14 @@
     <string name="editar_perfil_guardado">Profile updated successfully</string>
     <string name="editar_perfil_error">Error saving changes</string>
     <string name="editar_perfil_email_requerido">Email is required</string>
+    <string name="editar_perfil_password_actual">Current password</string>
+    <string name="editar_perfil_password_email_ayuda">Changing your email requires your password</string>
+    <string name="editar_perfil_password_requerida">Enter your current password to change your email</string>
+    <string name="editar_perfil_password_incorrecta">The password is incorrect</string>
+    <string name="editar_perfil_email_en_uso">That email is already used by another account</string>
+    <string name="editar_perfil_error_carga">Your profile could not be loaded. Open this screen again to retry.</string>
+    <string name="login_cuenta_desactivada_titulo">Account deactivated</string>
+    <string name="login_cuenta_desactivada_mensaje">Your account is deactivated, so you have been signed out. If you think this is a mistake, write to us at soporte@gymprofit.app.</string>
     <string name="nivel_principiante">Beginner</string>
     <string name="nivel_escala">Level %1$d of %2$d</string>
     <string name="nivel_principiante_desc">Starting my fitness journey</string>
