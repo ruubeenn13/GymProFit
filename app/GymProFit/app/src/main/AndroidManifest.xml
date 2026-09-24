@@ -141,6 +141,18 @@
         <activity android:name=".ui.activities.CrearAlimentoActivity" android:exported="false" />
         <activity android:name=".ui.activities.AdminAlimentosActivity" android:exported="false" />
         <activity android:name=".ui.activities.AcercaDeActivity" android:exported="false" />
+        <!-- Licencias de terceros (GP-082): el texto de lo que no sale de Gradle, y las
+             dos pantallas de play-services-oss-licenses con una barra de título, que el
+             tema de la app no tiene y sin la cual no dirían qué son ni tendrían volver. -->
+        <activity android:name=".ui.activities.LicenciaActivity" android:exported="false" />
+        <activity
+            android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
+            android:theme="@style/Theme.GymProFit.ConBarra"
+            tools:replace="android:theme" />
+        <activity
+            android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
+            android:theme="@style/Theme.GymProFit.ConBarra"
+            tools:replace="android:theme" />
         <!-- Borrado definitivo de la cuenta (GP-008); se abre desde el perfil -->
         <activity android:name=".ui.activities.EliminarCuentaActivity" android:exported="false" />
 

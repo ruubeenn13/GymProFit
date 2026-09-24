@@ -13,6 +13,11 @@ gson = "2.10.1"
 securityCrypto = "1.1.0-alpha06"
 glide = "4.16.0"
 mpandroidchart = "v3.1.0"
+# 17.3.0 y no la última a propósito: desde la 17.4.0 arrastra Material 1.13, que
+# saca colorPrimary y compañía de material.R.attr y rompe la compilación. Subir
+# Material es una tarea aparte, no un efecto secundario de la pantalla de licencias.
+ossLicenses = "17.3.0"
+ossLicensesPlugin = "0.13.0"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -30,7 +35,9 @@ gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 mpandroidchart = { group = "com.github.PhilJay", name = "MPAndroidChart", version.ref = "mpandroidchart" }
+oss-licenses = { group = "com.google.android.gms", name = "play-services-oss-licenses", version.ref = "ossLicenses" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+oss-licenses = { id = "com.google.android.gms.oss-licenses-plugin", version.ref = "ossLicensesPlugin" }
 

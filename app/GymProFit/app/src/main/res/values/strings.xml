@@ -646,6 +646,16 @@
     <string name="url_privacidad" translatable="false">https://gymprofit.app/privacidad</string>
     <string name="url_privacidad_conservacion" translatable="false">https://gymprofit.app/privacidad#conservacion</string>
     <string name="politica_privacidad">Política de privacidad</string>
+    <!-- Licencias de terceros (GP-082) -->
+    <string name="licencias_titulo">Licencias de terceros</string>
+    <string name="licencias_texto">GymProFit se apoya en software y recursos de otros. Cada uno conserva su licencia y su aviso de copyright.</string>
+    <string name="licencias_bibliotecas">Bibliotecas de la app</string>
+    <string name="licencias_material_symbols">Material Symbols · Apache 2.0</string>
+    <string name="licencias_barlow">Barlow · SIL Open Font License 1.1</string>
+    <string name="licencias_mpandroidchart">MPAndroidChart · Apache 2.0</string>
+    <string name="licencias_aviso_material_symbols">Iconos Material Symbols Rounded, Copyright Google LLC. Se distribuyen bajo la Licencia Apache, versión 2.0, cuyo texto completo sigue.</string>
+    <string name="licencias_aviso_barlow">Fuente Barlow Condensed, Copyright 2017 The Barlow Project Authors. Se distribuye bajo la SIL Open Font License, versión 1.1, cuyo texto completo sigue.</string>
+    <string name="licencias_aviso_mpandroidchart">MPAndroidChart, Copyright 2020 Philipp Jahoda. Se distribuye bajo la Licencia Apache, versión 2.0, cuyo texto completo sigue.</string>
     <string name="registro_aviso_privacidad">Al crear tu cuenta confirmas que has leído la %1$s</string>
     <string name="registro_aviso_privacidad_enlace">Política de Privacidad</string>
     <string name="error_sin_navegador">No hay ninguna aplicación para abrir enlaces</string>
