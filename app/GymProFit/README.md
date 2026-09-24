@@ -160,7 +160,7 @@ HomeActivity (navegación inferior)
 | `CrearAlimentoActivity` | Formulario alimento propio (nombre, categoría Spinner, calorías, proteínas, carbos, grasas). POST /alimentos con usuarioId. setResult al caller |
 | `AdminAlimentosActivity` | Gestión admin de alimentos: búsqueda, filtros categoría/estado, toggle activo, editar via dialog. Acceso desde AdminActivity (solo ROLE_ADMIN) |
 | `PerfilActivity` | Datos reales de la API + resumen de última medición corporal (peso/altura). Hereda de `BaseActivity`. Botón "Sobre GymProFit" al pie |
-| `AcercaDeActivity` | Pantalla "Acerca de": logo adaptativo claro/oscuro (`@drawable/logo` + `drawable-night/`), info extendida de la app (descripción, 6 features, tech stack) e info del desarrollador (bio, formación, 3 FCTs, email clickable `ACTION_SENDTO`). Botón "Compartir": pide permiso `READ_CONTACTS` en runtime vía `ActivityResultLauncher`; si se concede abre selector de contactos (`ACTION_PICK Phone.CONTENT_URI`); extrae número via `ContentResolver` y lanza `ACTION_SENDTO smsto:` con el texto pre-rellenado. Extiende `AppCompatActivity`, aplica tema/idioma manualmente |
+| `AcercaDeActivity` | Pantalla "Acerca de": logo adaptativo claro/oscuro (`@drawable/logo` + `drawable-night/`), tarjeta de licencias de terceros (GP-082), info extendida de la app (descripción, 6 features, tech stack) e info del desarrollador (bio, formación, 3 FCTs, email clickable `ACTION_SENDTO`). Botón "Compartir": pide permiso `READ_CONTACTS` en runtime vía `ActivityResultLauncher`; si se concede abre selector de contactos (`ACTION_PICK Phone.CONTENT_URI`); extrae número via `ContentResolver` y lanza `ACTION_SENDTO smsto:` con el texto pre-rellenado. Extiende `AppCompatActivity`, aplica tema/idioma manualmente |
 | `EditarPerfilActivity` | `PATCH /usuarios/{id}`. Spinner nivel con 4 opciones (PRINCIPIANTE–EXPERTO). `saveNivel()` en `onSuccess`. Campos vacíos → null en BD |
 | `SesionesActivity` | Historial de sesiones, eliminar |
 | `RegistrarSesionActivity` | Crear sesión: spinner rutinas, calorías calculadas, cards de ejercicios con campo de peso por ejercicio (RecyclerView+`EjercicioPesoAdapter`), RatingBar 1-5 |
@@ -205,22 +205,37 @@ UIHelper.mostrarToastExito(ctx, msg)
 UIHelper.mostrarToastError(ctx, msg)
 UIHelper.mostrarToastInfo(ctx, msg)
 UIHelper.mostrarDialogo(ctx, titulo, msg, runnable)
-UIHelper.mostrarDialogoConIcono(ctx, titulo, msg, R.drawable.ic_delete, runnable)
+UIHelper.mostrarDialogoConIcono(ctx, titulo, msg, R.drawable.ic_ms_delete, runnable)
 // PopupWindow anclado al elemento que lo dispara:
 UIHelper.mostrarMenuAnclado(ctx, anchorView, titulo_nullable, List<UIHelper.MenuAction>)
 // MenuAction(iconRes, label, destructive, action) — destructive=true → colorError + separador
 ```
 
-Diálogos: ancho = 90% de la pantalla. Icono papelera: `@drawable/ic_delete` (color `?attr/colorError`).
+Diálogos: ancho = 90% de la pantalla. Icono papelera: `@drawable/ic_ms_delete` (color por defecto `?attr/colorError`).
 `mostrarMenuAnclado`: PopupWindow con fondo redondeado `colorSurface` (12dp), elevación 8dp, alineado al borde derecho del anchor. Items destructivos precedidos de separador y en `colorError`.
+
+### Tema e iconos
+
+- **Un solo tema**, `Theme.GymProFit` en `values/themes.xml`, para claro y oscuro
+  (GP-084). `values-night/` solo tiene `colors.xml` y `bools.xml`: no se vuelve a
+  crear un `values-night/themes.xml`.
+- **Iconos: Material Symbols Rounded 400** (GP-080), importados del paquete npm
+  `@material-symbols/svg-400` y llamados `ic_ms_<símbolo>[_fill]`. El relleno es el
+  estado: contorno en reposo, relleno en lo activo. `IconosTest` impide añadir un
+  `ic_*` de otra familia. Excepciones: banderas, ilustraciones del cuerpo, el
+  medidor del onboarding y las capas del icono de la app.
+- **Licencias de terceros** (GP-082): Acerca de → «Licencias de terceros». Las
+  bibliotecas salen de `play-services-oss-licenses`; Material Symbols, Barlow y
+  MPAndroidChart van a mano con su texto en `res/raw/`. En las builds de depuración
+  la lista generada solo muestra «Debug License Info»: es el plugin, no un fallo.
 
 ### `NotificationHelper`
 
 ```java
-NotificationHelper.notificarSesionCompletada(ctx, duracionMinutos, calorias)
-NotificationHelper.notificarMedicionGuardada(ctx)
+NotificationHelper.notificarSesionCompletada(ctx, duracionMinutos)
 NotificationHelper.notificarRutinaCreada(ctx, nombreRutina)
 NotificationHelper.notificarLogrosDesbloqueados(ctx, List<String> nombres)
+NotificationHelper.notificarPush(ctx, titulo, cuerpo)   // push de FCM con la app abierta
 ```
 
 4 canales (API 26+). Permiso `POST_NOTIFICATIONS` solicitado en runtime en `HomeActivity` (API 33+).
@@ -259,8 +274,7 @@ POST   ejercicios-realizados
 GET    mediciones-corporales/usuario/{id}/ordenadas
 POST   mediciones-corporales
 DELETE mediciones-corporales/{id}
-GET    logros
-GET    logros/usuario/{usuarioId}
+GET    logros/progreso            // catálogo con el estado del usuario del token (GP-079)
 GET    admin/usuarios?page=&size=&activo=&rol=&username=
 GET    admin/estadisticas-globales
 PATCH  admin/usuarios/{id}/toggle-activo
