@@ -26,4 +26,24 @@ public final class FechaUtils {
         }
         return iso;
     }
+
+    /**
+     * Fecha de un ISO-8601 en formato medio del idioma dado: «23 sept 2026» en
+     * español, «Sep 23, 2026» en inglés. Solo usa la parte de fecha.
+     *
+     * @param iso    fecha ISO, con o sin hora
+     * @param locale idioma de la interfaz
+     * @return la fecha formateada, o {@code null} si no se puede leer
+     */
+    public static String formatearFechaMedia(String iso, java.util.Locale locale) {
+        if (iso == null || iso.length() < 10) return null;
+        try {
+            java.text.SimpleDateFormat entrada = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US);
+            entrada.setLenient(false);
+            java.util.Date fecha = entrada.parse(iso.substring(0, 10));
+            return java.text.DateFormat.getDateInstance(java.text.DateFormat.MEDIUM, locale).format(fecha);
+        } catch (java.text.ParseException e) {
+            return null;
+        }
+    }
 }

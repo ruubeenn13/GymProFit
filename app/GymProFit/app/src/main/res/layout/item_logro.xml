@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  item_logro — item de RecyclerView para un logro/achievement del usuario.
-  Muestra icono, nombre, descripción y marca de desbloqueado, usado en la pantalla de logros.
-  El icono es un vector teñido por tema (ver LogroAdapter): el emoji anterior no
-  se teñía, no se alineaba con el texto y, al venir de un campo que la API no
-  envía, acababa siendo el MISMO trofeo en los seis logros.
+  item_logro — un logro en la lista de logros y en el resumen de sesión (GP-079).
+
+  Bloqueado y conseguido se distinguen por TRES cosas, no solo por el color:
+  el glifo (contorno frente a relleno), el medallón (neutro frente al de marca)
+  y el texto de debajo (el progreso frente a «Conseguido · fecha»).
+
+  Antes el bloqueado se atenuaba con setAlpha(0.5f) sobre toda la tarjeta: con
+  todo bloqueado, que es lo que ve una cuenta nueva, parecía un fallo de render
+  y el texto caía a unos 2,2:1. Aquí no hay alpha en ningún sitio.
+
+  La tarjeta es un único nodo para TalkBack: LogroAdapter le pone una
+  descripción entera («Constancia. Completa 7 sesiones… Bloqueado, 3 de 7
+  sesiones») y los hijos no se leen sueltos.
 -->
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -12,6 +20,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="10dp"
+    android:focusable="true"
     app:cardCornerRadius="16dp"
     app:cardElevation="0dp"
     app:cardBackgroundColor="?attr/colorSurface">
@@ -21,23 +30,30 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:importantForAccessibility="noHideDescendants"
         android:padding="16dp">
 
-        <!-- Icono del logro: vector teñido, uno por tipo -->
-        <ImageView
-            android:id="@+id/ivIconoLogro"
-            android:layout_width="34dp"
-            android:layout_height="34dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            app:tint="?attr/colorPrimary"
-            android:contentDescription="@null" />
+        <!-- Medallón de 48 dp: el fondo y el glifo los tiñe el adapter según el estado -->
+        <FrameLayout
+            android:id="@+id/medallonLogro"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_circle">
+
+            <ImageView
+                android:id="@+id/ivIconoLogro"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null" />
+
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="16dp"
             android:orientation="vertical">
 
             <TextView
@@ -54,19 +70,50 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:textSize="@dimen/text_label"
-                android:textColor="?attr/colorOnSurface"
-                android:alpha="0.6" />
+                android:textColor="@color/gp_text_secondary" />
+
+            <!-- Bloqueado con más de un paso: barra y «3 de 7 sesiones» -->
+            <LinearLayout
+                android:id="@+id/layoutProgresoLogro"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/pbLogro"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:indicatorColor="?attr/colorPrimary"
+                    app:trackColor="@color/gp_meter_track"
+                    app:trackThickness="6dp"
+                    app:trackCornerRadius="3dp"
+                    app:trackStopIndicatorSize="0dp"
+                    app:indicatorTrackGapSize="0dp" />
+
+                <TextView
+                    android:id="@+id/tvProgresoLogro"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:textSize="@dimen/text_label"
+                    android:textColor="@color/gp_text_secondary" />
+
+            </LinearLayout>
+
+            <!-- Conseguido: «Conseguido · 23 sept 2026», en el color de marca -->
+            <TextView
+                android:id="@+id/tvConseguidoLogro"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:textSize="@dimen/text_label"
+                android:textStyle="bold"
+                android:textColor="?attr/colorPrimary"
+                android:visibility="gone" />
 
         </LinearLayout>
-
-        <!-- Checkmark si desbloqueado -->
-        <ImageView
-            android:id="@+id/ivDesbloqueado"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_check"
-            android:visibility="gone"
-            android:contentDescription="@null" />
 
     </LinearLayout>
 

@@ -2,6 +2,7 @@ package com.gymprofit.api.controller;
 
 import com.gymprofit.api.dto.entity.logro.LogroCreateDTO;
 import com.gymprofit.api.dto.entity.logro.LogroDTO;
+import com.gymprofit.api.dto.entity.logro.LogroProgresoDTO;
 import com.gymprofit.api.dto.entity.logro.UsuarioLogroDTO;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.logro.ILogroService;
@@ -52,6 +53,22 @@ public class LogroController {
     @GetMapping("/usuario/{usuarioId}")
     public ResponseEntity<List<UsuarioLogroDTO>> findByUsuarioId(@PathVariable Integer usuarioId) {
         return ResponseEntity.ok(logroService.findByUsuarioId(usuarioId));
+    }
+
+    @Operation(summary = "Logros del usuario autenticado con su progreso",
+            description = "Un elemento por logro del catálogo: si está conseguido y cuándo, y si no, "
+                    + "la métrica, el umbral y lo que lleva el usuario. El usuario sale del token: "
+                    + "la ruta no recibe id.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Catálogo con el progreso del usuario",
+                    content = @Content(schema = @Schema(implementation = LogroProgresoDTO.class))),
+            @ApiResponse(responseCode = "403", description = "Token de invitado: no hay progreso que dar",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    // Catálogo con el progreso del usuario del token (GP-079)
+    @GetMapping("/progreso")
+    public ResponseEntity<List<LogroProgresoDTO>> progreso() {
+        return ResponseEntity.ok(logroService.progresoDelUsuarioActual());
     }
 
     @Operation(summary = "Crea un nuevo logro (ADMIN)")

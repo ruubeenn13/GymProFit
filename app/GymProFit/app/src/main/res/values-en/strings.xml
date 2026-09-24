@@ -682,4 +682,28 @@
          sesiones_sin_rutina, which means "there is a routine but its name could not
          be resolved" (an archived routine, for instance). -->
     <string name="sesiones_entrenamiento_libre">Free workout</string>
+
+    <!-- Achievements: state and progress (GP-079) -->
+    <string name="logro_conseguido">Earned</string>
+    <string name="logro_conseguido_fecha">Earned · %1$s</string>
+    <string name="logro_bloqueado">Locked</string>
+    <string name="logro_a11y">%1$s. %2$s. %3$s</string>
+    <string name="logro_a11y_conseguido">Earned on %1$s</string>
+    <string name="logro_a11y_bloqueado_progreso">Locked, %1$s</string>
+    <plurals name="logro_progreso_sesiones">
+        <item quantity="one">%1$d of %2$d session</item>
+        <item quantity="other">%1$d of %2$d sessions</item>
+    </plurals>
+    <plurals name="logro_progreso_ejercicios">
+        <item quantity="one">%1$d of %2$d exercise</item>
+        <item quantity="other">%1$d of %2$d exercises</item>
+    </plurals>
+    <plurals name="logro_progreso_objetivos">
+        <item quantity="one">%1$d of %2$d goal</item>
+        <item quantity="other">%1$d of %2$d goals</item>
+    </plurals>
+    <plurals name="logro_progreso_pasos">
+        <item quantity="one">%1$d of %2$d step</item>
+        <item quantity="other">%1$d of %2$d steps</item>
+    </plurals>
 </resources>

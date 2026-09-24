@@ -2,6 +2,7 @@ package com.gymprofit.api.service.logro;
 
 import com.gymprofit.api.dto.entity.logro.LogroCreateDTO;
 import com.gymprofit.api.dto.entity.logro.LogroDTO;
+import com.gymprofit.api.dto.entity.logro.LogroProgresoDTO;
 import com.gymprofit.api.dto.entity.logro.UsuarioLogroDTO;
 import com.gymprofit.api.entity.Logro;
 import com.gymprofit.api.entity.Usuario;
@@ -26,8 +27,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 // ============================================================
@@ -119,9 +123,7 @@ public class LogroService implements ILogroService {
         Set<Integer> logroIds = new HashSet<>(usuarioLogroRepository.findLogroIdsByUsuarioId(usuarioId));
         List<Logro> todos = logroRepository.findAll();
 
-        long sesionesCompletadas  = sesionRepository.countByUsuarioIdAndCompletadaTrue(usuarioId);
-        long ejerciciosRealizados = ejercicioRealizadoRepository.countBySesionUsuarioId(usuarioId);
-        long objetivosCompletados = objetivoPersonalRepository.countByUsuarioIdAndCompletadoTrue(usuarioId);
+        Map<TipoLogro.Metrica, Long> valores = contarMetricas(usuarioId);
 
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new NotFoundEntityException("Usuario con id " + usuarioId + " no encontrado"));
@@ -135,17 +137,9 @@ public class LogroService implements ILogroService {
         for (Logro logro : todos) {
             if (logroIds.contains(logro.getId())) continue;
 
-            // Condición de desbloqueo específica según el tipo de logro.
-            boolean cumple = switch (logro.getTipo()) {
-                case PRIMERA_SESION    -> sesionesCompletadas >= 1;
-                case CONSTANCIA        -> sesionesCompletadas >= 7;
-                case DEDICADO          -> sesionesCompletadas >= 30;
-                case CENTENARIO        -> ejerciciosRealizados >= 100;
-                case OBJETIVO_CUMPLIDO -> objetivosCompletados >= 1;
-                case MAQUINA           -> objetivosCompletados >= 10;
-            };
-
-            if (cumple) {
+            // Métrica y umbral salen del tipo: el mismo sitio que lee el progreso.
+            TipoLogro tipo = logro.getTipo();
+            if (tipo.alcanzado(valores.get(tipo.getMetrica()))) {
                 UsuarioLogro usuarioLogro = new UsuarioLogro();
                 usuarioLogro.setUsuario(usuario);
                 usuarioLogro.setLogro(logro);
@@ -161,6 +155,65 @@ public class LogroService implements ILogroService {
         }
 
         return nuevos;
+    }
+
+    /**
+     * Catálogo con el estado del usuario del token: conseguido y cuándo, o cuánto lleva.
+     * <p>
+     * No lleva id en la ruta a propósito: el usuario sale del token (DEC-013), así que
+     * no hay id ajeno que pedir y la clase de IDOR no existe en vez de estar protegida.
+     * <p>
+     * El progreso se cuenta con {@link #contarMetricas} y se compara con
+     * {@link TipoLogro#alcanzado}, lo mismo que usa {@link #evaluarLogros}: en el borde
+     * (6 de 7, 7 de 7) no pueden decir cosas distintas. Se recorta al umbral para que
+     * la app no pinte «9 de 7».
+     */
+    @Override
+    public List<LogroProgresoDTO> progresoDelUsuarioActual() {
+        Integer usuarioId = securityUtils.getCurrentUserId();
+        Map<TipoLogro.Metrica, Long> valores = contarMetricas(usuarioId);
+
+        Map<Integer, UsuarioLogro> obtenidos = new HashMap<>();
+        for (UsuarioLogro ul : usuarioLogroRepository.findByUsuarioId(usuarioId)) {
+            obtenidos.put(ul.getLogro().getId(), ul);
+        }
+
+        boolean idiomaEn = "en".equals(LocaleContextHolder.getLocale().getLanguage());
+        List<LogroProgresoDTO> resultado = new ArrayList<>();
+        for (Logro logro : logroRepository.findAll()) {
+            TipoLogro tipo = logro.getTipo();
+            long valor = valores.get(tipo.getMetrica());
+            UsuarioLogro obtenido = obtenidos.get(logro.getId());
+
+            resultado.add(new LogroProgresoDTO(
+                    logro.getId(),
+                    localizado(idiomaEn, logro.getNombreEn(), logro.getNombre()),
+                    localizado(idiomaEn, logro.getDescripcionEn(), logro.getDescripcion()),
+                    tipo,
+                    tipo.getMetrica(),
+                    tipo.getUmbral(),
+                    (int) Math.min(valor, tipo.getUmbral()),
+                    obtenido != null,
+                    obtenido != null ? obtenido.getFechaObtenido() : null));
+        }
+        return resultado;
+    }
+
+    // Un recuento por métrica. Es el único sitio que sabe cómo se cuenta cada una.
+    private Map<TipoLogro.Metrica, Long> contarMetricas(Integer usuarioId) {
+        Map<TipoLogro.Metrica, Long> valores = new EnumMap<>(TipoLogro.Metrica.class);
+        valores.put(TipoLogro.Metrica.SESIONES_COMPLETADAS,
+                sesionRepository.countByUsuarioIdAndCompletadaTrue(usuarioId));
+        valores.put(TipoLogro.Metrica.EJERCICIOS_REALIZADOS,
+                ejercicioRealizadoRepository.countBySesionUsuarioId(usuarioId));
+        valores.put(TipoLogro.Metrica.OBJETIVOS_COMPLETADOS,
+                objetivoPersonalRepository.countByUsuarioIdAndCompletadoTrue(usuarioId));
+        return valores;
+    }
+
+    // Texto en inglés si el request es inglés y hay traducción; si no, el español.
+    private static String localizado(boolean idiomaEn, String en, String es) {
+        return idiomaEn && en != null && !en.isBlank() ? en : es;
     }
 
     // Convierte el string recibido en el enum TipoLogro, lanzando excepción si no es válido.

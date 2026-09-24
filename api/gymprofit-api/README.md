@@ -239,7 +239,8 @@ La respuesta de `POST /sesiones` incluye el campo `nuevosLogros: ["Nombre logro"
 | Método | URL | Auth | Descripción |
 |---|---|---|---|
 | GET | `/logros` | GUEST+ | Todos los logros |
-| GET | `/logros/usuario/{usuarioId}` | GUEST+ | Logros del usuario |
+| GET | `/logros/progreso` | USER+ | Catálogo con el estado del usuario del token: conseguido y cuándo, o métrica, umbral y progreso. Sin id en la ruta |
+| GET | `/logros/usuario/{usuarioId}` | USER+ | Logros obtenidos por el usuario (solo el propio, salvo ADMIN). La app ya no lo usa |
 | POST | `/logros` | ADMIN | Crear logro |
 | PUT | `/logros/{id}` | ADMIN | Actualizar logro |
 
@@ -306,14 +307,16 @@ La respuesta de `POST /sesiones` incluye el campo `nuevosLogros: ["Nombre logro"
 
 `LogroService.evaluarLogros(usuarioId)` se llama automáticamente al crear/completar una sesión. Devuelve `List<String>` con los nombres de logros recién desbloqueados (vacía si ninguno).
 
-| TipoLogro | Condición |
-|---|---|
-| `PRIMERA_SESION` | ≥ 1 sesión completada |
-| `CONSTANCIA` | ≥ 7 sesiones completadas |
-| `DEDICADO` | ≥ 30 sesiones completadas |
-| `CENTENARIO` | ≥ 100 ejercicios realizados |
-| `OBJETIVO_CUMPLIDO` | ≥ 1 objetivo personal completado |
-| `MAQUINA` | ≥ 10 objetivos completados |
+La métrica y el umbral de cada logro viven en el enum `TipoLogro`, y es el único sitio: de ahí leen la concesión (`evaluarLogros`), el progreso (`GET /logros/progreso`) y el aviso de «logro próximo». Si cambia un umbral, cambia también la descripción del logro en la tabla `logros`, que repite el número en prosa.
+
+| TipoLogro | Métrica | Umbral |
+|---|---|---|
+| `PRIMERA_SESION` | sesiones completadas | 1 |
+| `CONSTANCIA` | sesiones completadas | 7 |
+| `DEDICADO` | sesiones completadas | 30 |
+| `CENTENARIO` | ejercicios realizados | 100 |
+| `OBJETIVO_CUMPLIDO` | objetivos completados | 1 |
+| `MAQUINA` | objetivos completados | 10 |
 
 Los logros son permanentes: eliminar una sesión no revoca el logro obtenido.
 
