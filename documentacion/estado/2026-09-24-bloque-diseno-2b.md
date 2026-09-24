@@ -256,6 +256,9 @@ el menú de la app.
 
 ## GP-081 · El icono de la app y el de las notificaciones — PARADO
 
+> **Cerrado después, el mismo día:** el propietario eligió la **A**. Regenerado con el
+> script, fusionado en `main` como `7ac8e8a` y borrada la rama.
+
 **Está hecho y verificado, salvo el fondo, que te toca a ti.** Vive en la rama
 **`gp-081-icono-pendiente`** (`9157b6b`, versión B), fuera de `main`.
 
