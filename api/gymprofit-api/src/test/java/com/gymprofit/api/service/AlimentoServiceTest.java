@@ -282,10 +282,12 @@ class AlimentoServiceTest {
         verify(alimentoRepository).findByActivoTrue();
     }
 
-    // Comprueba que countActivos delega en el repositorio y devuelve el número de alimentos activos
+    // Comprueba que countActivos, para ADMIN, delega en el repositorio y devuelve el total.
+    // Para el resto cuenta solo los visibles (GP-048): eso lo fija AlimentoVisibilidadTest.
     @Test
-    @DisplayName("countActivos devuelve el número de alimentos activos")
+    @DisplayName("countActivos devuelve el número de alimentos activos (ADMIN)")
     void countActivos_devuelve_total() {
+        when(securityUtils.isAdmin()).thenReturn(true);
         when(alimentoRepository.countByActivoTrue()).thenReturn(5L);
 
         Long result = alimentoService.countActivos();

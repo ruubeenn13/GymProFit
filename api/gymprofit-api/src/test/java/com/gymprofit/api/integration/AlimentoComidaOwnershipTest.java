@@ -1,5 +1,11 @@
 package com.gymprofit.api.integration;
 
+import com.gymprofit.api.enums.RoleType;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import java.util.HashMap;
+import java.util.Map;
+import static org.assertj.core.api.Assertions.assertThat;
 import com.gymprofit.api.dto.entity.alimentocomida.AlimentoComidaCreateDTO;
 import com.gymprofit.api.dto.entity.alimentocomida.AlimentoComidaDTO;
 import com.gymprofit.api.dto.entity.comida.ComidaCreateDTO;
@@ -45,6 +51,8 @@ class AlimentoComidaOwnershipTest extends AbstractOwnershipTest {
 
     // Id de la comida cuyo dueño es OWNER.
     private Integer comidaIdOwner;
+    // Alimento del catálogo que está en la comida del owner (GP-048).
+    private Integer alimentoCatalogoGp048;
     // Id de la relación alimento-comida asociada a esa comida.
     private Integer alimentoComidaIdOwner;
 
@@ -70,6 +78,7 @@ class AlimentoComidaOwnershipTest extends AbstractOwnershipTest {
             // 2) Alimento del catálogo global (findAll → primer elemento).
             // Siembra el alimento del catálogo (CI no lo trae por Flyway).
             Integer alimentoId = crearAlimentoCatalogo().getId();
+            alimentoCatalogoGp048 = alimentoId;
 
             // 3) Relación alimento-comida sobre la comida del owner.
             AlimentoComidaCreateDTO acDTO = new AlimentoComidaCreateDTO();
@@ -193,5 +202,56 @@ class AlimentoComidaOwnershipTest extends AbstractOwnershipTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
+    }
+
+    // --- Cobertura de GP-048 ----------------------------------------------------
+    // Las rutas que no tenían test. Mismo criterio que SesionOwnershipTest: id ajeno →
+    // 403 al atacante y el dueño no lo recibe; lo global, solo ADMIN; y la regla de rol
+    // con el propio id del invitado.
+
+    private Usuario adminGp048;
+
+    private Usuario admin() {
+        if (adminGp048 == null) adminGp048 = crearUsuario("__idor_admin__", RoleType.ADMIN);
+        return adminGp048;
+    }
+
+    private void idAjeno(String ruta) throws Exception {
+        assertThat(estado(attacker, ruta)).as("atacante en " + ruta).isEqualTo(403);
+        assertThat(estado(owner, ruta)).as("dueño en " + ruta).isNotEqualTo(403);
+    }
+
+    private void soloAdmin(String ruta) throws Exception {
+        assertThat(estado(attacker, ruta)).as("USER en " + ruta).isEqualTo(403);
+        assertThat(estado(admin(), ruta)).as("ADMIN en " + ruta).isNotEqualTo(403);
+    }
+
+    private Map<String, Object> idsGp048() {
+        return Map.of("ac", alimentoComidaIdOwner, "comida", comidaIdOwner, "alimento", alimentoCatalogoGp048);
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @ValueSource(strings = {
+            "PATCH /alimentos-comida/{ac}",
+            "GET /alimentos-comida/comida/{comida}/alimento/{alimento}",
+            "GET /alimentos-comida/exists/comida/{comida}/alimento/{alimento}",
+            "GET /alimentos-comida/count/comida/{comida}",
+            "DELETE /alimentos-comida/comida/{comida}/alimento/{alimento}",
+            "DELETE /alimentos-comida/comida/{comida}"
+    })
+    @DisplayName("GP-048: comida ajena → 403 al atacante; el dueño no")
+    void gp048_idAjeno(String plantilla) throws Exception {
+        idAjeno(rellenar(plantilla, idsGp048()));
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @ValueSource(strings = {
+            "GET /alimentos-comida",
+            "GET /alimentos-comida/alimento/{alimento}",
+            "GET /alimentos-comida/count/alimento/{alimento}"
+    })
+    @DisplayName("GP-048: listado global → solo ADMIN")
+    void gp048_soloAdmin(String plantilla) throws Exception {
+        soloAdmin(rellenar(plantilla, idsGp048()));
     }
 }

@@ -168,7 +168,13 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
 
         exigirEjercicioExistente(ejercicioId);
 
-        List<ProgresoEjercicio> progresoEjercicios = progresoEjercicioRepository.findByEjercicioId(ejercicioId);
+        // El id es de un ejercicio del catálogo y no hay dueño que rechazar, pero la lista
+        // eran los progresos de TODOS los usuarios, con peso y fecha (GP-048). Ahora solo
+        // los del usuario del token; ADMIN conserva la vista global (DEC-027).
+        List<ProgresoEjercicio> progresoEjercicios = securityUtils.isAdmin()
+                ? progresoEjercicioRepository.findByEjercicioId(ejercicioId)
+                : progresoEjercicioRepository.findByUsuarioIdAndEjercicioId(
+                        securityUtils.getCurrentUserId(), ejercicioId);
 
         return progresoEjercicioMapper.toDTOList(progresoEjercicios);
     }
@@ -241,7 +247,11 @@ public class ProgresoEjercicioService implements IProgresoEjercicioService{
     public Long countByEjercicioId(Integer ejercicioId) {
         logger.info("Contando progresos del ejercicio id: {}", ejercicioId);
 
-        return progresoEjercicioRepository.countByEjercicioId(ejercicioId);
+        // Mismo caso que findByEjercicioId: el contador global delataba la actividad de todos.
+        return securityUtils.isAdmin()
+                ? progresoEjercicioRepository.countByEjercicioId(ejercicioId)
+                : progresoEjercicioRepository.countByUsuarioIdAndEjercicioId(
+                        securityUtils.getCurrentUserId(), ejercicioId);
     }
 
     // Elimina todos los progresos de un usuario (p.ej. al borrar la cuenta).

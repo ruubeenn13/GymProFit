@@ -230,10 +230,15 @@ public class UsuarioService implements IUsuarioService {
         return usuarioRepository.existsByEmail(email);
     }
 
-    // Lista los usuarios con estado activo.
+    // Lista los usuarios con estado activo. Solo ADMIN (GP-048): la regla GET /usuarios/{id}
+    // de SecurityConfig, pensada para el perfil propio, casa también con el literal
+    // "activos", y sin esta comprobación cualquier USER recibía correo, peso, altura y
+    // edad de todos los usuarios.
     @Override
     public List<UsuarioDTO> findActivos() {
         logger.info("Buscando usuarios activos");
+
+        securityUtils.requireAdmin();
 
         List<Usuario> usuarios = usuarioRepository.findByActivoTrue();
 
