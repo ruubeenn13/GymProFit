@@ -222,13 +222,15 @@ La respuesta de `POST /sesiones` incluye el campo `nuevosLogros: ["Nombre logro"
     {
       "ejercicioId": 340,
       "repeticionesReales": 10,
-      "series": [{"numeroSerie": 1, "repeticiones": 10, "peso": 60.0}]
+      "series": [{"numero": 1, "repeticiones": 10, "peso": 60.0}]
     }
   ]
 }
 ```
 
 `usuarioId` **no se manda**: sale del token (DEC-013). `rutinaId` puede faltar —entrenamiento libre— y la lista de ejercicios puede venir vacía. `valoracion` es 1..5 (ver abajo).
+
+En cada serie, `numero` (de 1 a 20) y `repeticiones` (de 0 a 100) son obligatorios; `peso` es opcional, de 0 a 500 kg. Sin `numero` la respuesta es un 400.
 
 `POST /sesiones` **se mantiene igual** para las builds repartidas fuera de Play, que no conocen la ruta nueva.
 
