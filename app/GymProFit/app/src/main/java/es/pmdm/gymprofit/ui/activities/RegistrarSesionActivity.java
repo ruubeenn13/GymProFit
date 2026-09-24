@@ -10,6 +10,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -38,6 +39,7 @@ import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.Numeros;
 import es.pmdm.gymprofit.utils.UIHelper;
+import es.pmdm.gymprofit.utils.Valoracion;
 import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
@@ -71,6 +73,8 @@ public class RegistrarSesionActivity extends AppCompatActivity {
     private TextInputEditText etDuracion, etNotas;
     private View cardEjercicios;
     private RatingBar ratingBar;
+    private TextView tvEstadoValoracion;
+    private View btnQuitarValoracion;
     private PreferencesManager prefsManager;
     // Interfaz Retrofit tipada del dominio sesiones (etapa 2)
     private final SesionApi sesionApi = ApiClient.service(SesionApi.class);
@@ -107,6 +111,9 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         etNotas              = findViewById(R.id.etNotas);
         cardEjercicios       = findViewById(R.id.cardEjercicios);
         ratingBar            = findViewById(R.id.ratingBar);
+        tvEstadoValoracion   = findViewById(R.id.tvEstadoValoracion);
+        btnQuitarValoracion  = findViewById(R.id.btnQuitarValoracion);
+        configurarValoracion();
 
         RecyclerView rvEjercicios = findViewById(R.id.rvEjercicios);
         ejercicioPesoAdapter = new EjercicioPesoAdapter(ejercicioItems);
@@ -118,6 +125,47 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         findViewById(R.id.btnGuardar).setOnClickListener(v -> guardarSesion());
 
         cargarRutinas();
+    }
+
+    /**
+     * La valoración es opcional y arranca en «sin valorar» (GP-077).
+     *
+     * <p>Con el dedo, un RatingBar no baja a cero: el primer toque ya marca una
+     * estrella. Por eso, en cuanto hay una, aparece «Quitar valoración» para
+     * deshacer un toque por error.
+     *
+     * <p>TalkBack trata el RatingBar aparte: añade por su cuenta «N estrellas de 5»
+     * y NO lee el stateDescription. Con estrellas eso basta; sin ellas diría
+     * «0 estrellas de 5», que suena a nota y no a ausencia de nota, así que en
+     * ese caso el «sin valorar» va en la propia descripción.
+     */
+    private void configurarValoracion() {
+        ratingBar.setOnRatingBarChangeListener((bar, estrellas, delUsuario) -> pintarValoracion());
+        btnQuitarValoracion.setOnClickListener(v -> {
+            ratingBar.setRating(0f);
+            // El botón desaparece con el toque: el foco vuelve a las estrellas, que
+            // anuncian «Sin valorar», en vez de perderse.
+            ratingBar.requestFocus();
+            ratingBar.sendAccessibilityEvent(android.view.accessibility.AccessibilityEvent.TYPE_VIEW_FOCUSED);
+        });
+        pintarValoracion();
+    }
+
+    // Refleja el estado de las estrellas en el rótulo, en TalkBack y en el botón.
+    private void pintarValoracion() {
+        Integer valor = Valoracion.paraEnviar(ratingBar.getRating());
+        if (valor == null) {
+            tvEstadoValoracion.setText(R.string.sesiones_sin_valorar);
+            ratingBar.setContentDescription(getString(R.string.sesiones_valoracion_desc_sin));
+            ViewCompat.setStateDescription(ratingBar, getString(R.string.sesiones_sin_valorar));
+            // INVISIBLE y no GONE: el hueco se queda y la tarjeta no salta al tocar.
+            btnQuitarValoracion.setVisibility(View.INVISIBLE);
+        } else {
+            tvEstadoValoracion.setText(getString(R.string.sesiones_valoracion_estado, valor));
+            ratingBar.setContentDescription(getString(R.string.sesiones_valoracion_desc));
+            ViewCompat.setStateDescription(ratingBar, getString(R.string.sesiones_valoracion_a11y, valor));
+            btnQuitarValoracion.setVisibility(View.VISIBLE);
+        }
     }
 
     // Carga en paralelo las rutinas predefinidas y las del usuario; cuando
@@ -314,8 +362,10 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         // La valoración viaja como CAMPO (GP-070). Antes se formateaba con un recurso
         // de idioma y se metía delante de las notas del usuario: no se podía consultar,
         // se quedaba congelada en el idioma del momento, y el texto no era suyo.
-        int estrellas = (int) ratingBar.getRating();
-        if (estrellas >= 1 && estrellas <= 5) body.put("valoracion", estrellas);
+        // Sin estrellas no se manda el campo: la base guarda NULL, no un valor que
+        // el usuario no ha dado (GP-077).
+        Integer valoracion = Valoracion.paraEnviar(ratingBar.getRating());
+        if (valoracion != null) body.put("valoracion", valoracion);
 
         String notas = etNotas.getText() != null ? etNotas.getText().toString().trim() : "";
         if (!notas.isEmpty()) body.put("notas", notas);

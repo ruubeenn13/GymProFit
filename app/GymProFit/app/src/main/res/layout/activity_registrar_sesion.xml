@@ -179,14 +179,46 @@
                         android:textColor="?attr/colorOnSurfaceVariant"
                         android:layout_marginBottom="8dp" />
 
+                    <!-- Arranca en 0, «sin valorar» (GP-077). Antes arrancaba en 3 y
+                         quien no tocaba las estrellas guardaba un 3 que no había dado. -->
                     <RatingBar
                         android:id="@+id/ratingBar"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:numStars="5"
                         android:stepSize="1"
-                        android:rating="3"
+                        android:rating="0"
                         style="@style/Widget.AppCompat.RatingBar" />
+
+                    <!-- Estado en palabras, y la salida para deshacer un toque por error:
+                         con el dedo no se puede bajar un RatingBar a cero. -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/tvEstadoValoracion"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:importantForAccessibility="no"
+                            android:text="@string/sesiones_sin_valorar"
+                            android:textSize="@dimen/text_label"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnQuitarValoracion"
+                            style="@style/Widget.Material3.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minHeight="48dp"
+                            android:text="@string/sesiones_quitar_valoracion"
+                            android:visibility="invisible" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
