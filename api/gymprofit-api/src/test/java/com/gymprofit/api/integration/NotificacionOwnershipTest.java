@@ -1,5 +1,12 @@
 package com.gymprofit.api.integration;
 
+import com.gymprofit.api.entity.Usuario;
+import com.gymprofit.api.enums.RoleType;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import java.util.HashMap;
+import java.util.Map;
+import static org.assertj.core.api.Assertions.assertThat;
 import com.gymprofit.api.dto.entity.notificacion.NotificacionCreateDTO;
 import com.gymprofit.api.enums.TipoNotificacion;
 import com.gymprofit.api.service.notificacion.INotificacionService;
@@ -82,5 +89,61 @@ class NotificacionOwnershipTest extends AbstractOwnershipTest {
     void getNotificacionPropia_devuelve200() throws Exception {
         mockMvc.perform(get("/notificaciones/" + notificacionIdOwner))
                 .andExpect(status().isOk());
+    }
+
+    // --- Cobertura de GP-048 ----------------------------------------------------
+    // Las rutas que no tenían test. Mismo criterio que SesionOwnershipTest: id ajeno →
+    // 403 al atacante y el dueño no lo recibe; lo global, solo ADMIN; y la regla de rol
+    // con el propio id del invitado.
+
+    private Usuario adminGp048;
+
+    private Usuario admin() {
+        if (adminGp048 == null) adminGp048 = crearUsuario("__idor_admin__", RoleType.ADMIN);
+        return adminGp048;
+    }
+
+    private void idAjeno(String ruta) throws Exception {
+        assertThat(estado(attacker, ruta)).as("atacante en " + ruta).isEqualTo(403);
+        assertThat(estado(owner, ruta)).as("dueño en " + ruta).isNotEqualTo(403);
+    }
+
+    private void soloAdmin(String ruta) throws Exception {
+        assertThat(estado(attacker, ruta)).as("USER en " + ruta).isEqualTo(403);
+        assertThat(estado(admin(), ruta)).as("ADMIN en " + ruta).isNotEqualTo(403);
+    }
+
+    private Map<String, Object> idsGp048() {
+        return Map.of("notificacion", notificacionIdOwner, "owner", owner.getId(), "tipo", "RECORDATORIO");
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @ValueSource(strings = {
+            "PATCH /notificaciones/{notificacion}",
+            "GET /notificaciones/usuario/{owner}/ordenadas",
+            "GET /notificaciones/usuario/{owner}/no-leidas",
+            "GET /notificaciones/usuario/{owner}/leidas",
+            "GET /notificaciones/usuario/{owner}/tipo/{tipo}",
+            "GET /notificaciones/count/usuario/{owner}",
+            "GET /notificaciones/count/usuario/{owner}/no-leidas",
+            "GET /notificaciones/exists/usuario/{owner}/no-leidas",
+            "PUT /notificaciones/usuario/{owner}/leer-todas",
+            "DELETE /notificaciones/usuario/{owner}"
+    })
+    @DisplayName("GP-048: id ajeno → 403 al atacante; el dueño no")
+    void gp048_idAjeno(String plantilla) throws Exception {
+        idAjeno(rellenar(plantilla, idsGp048()));
+    }
+
+    @Test
+    @DisplayName("GP-048: GET /notificaciones (todas) → solo ADMIN")
+    void gp048_soloAdmin() throws Exception {
+        soloAdmin("GET /notificaciones");
+    }
+
+    @Test
+    @DisplayName("GP-048: GUEST pidiendo SUS propias notificaciones → 403 (regla de rol)")
+    void gp048_guestConSuPropioId() throws Exception {
+        assertThat(estado(guest, "GET /notificaciones/usuario/" + guest.getId())).isEqualTo(403);
     }
 }

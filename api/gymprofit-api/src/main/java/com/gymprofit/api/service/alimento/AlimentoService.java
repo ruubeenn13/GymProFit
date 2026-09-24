@@ -51,7 +51,7 @@ public class AlimentoService implements IAlimentoService {
     public List<AlimentoDTO> findAll() {
         logger.info("Buscando todos los alimentos");
 
-        List<Alimento> alimentos = alimentoRepository.findAll();
+        List<Alimento> alimentos = visibles(alimentoRepository.findAll());
 
         return alimentoMapper.toDTOList(alimentos);
     }
@@ -63,6 +63,9 @@ public class AlimentoService implements IAlimentoService {
 
         Alimento alimento = alimentoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("El alimento con id " + id + " no existe"));
+
+        // Un alimento personal no es catálogo: lleva la dieta de alguien (GP-048).
+        securityUtils.checkOwnershipIfOwned(alimento.getUsuario() != null ? alimento.getUsuario().getId() : null);
 
         return alimentoMapper.toDTO(alimento);
     }
@@ -185,7 +188,7 @@ public class AlimentoService implements IAlimentoService {
     public List<AlimentoDTO> findByNombre(String nombre) {
         logger.info("Buscando alimentos por nombre: {}", nombre);
 
-        List<Alimento> alimentos = alimentoRepository.findByNombreContainingIgnoreCase(nombre);
+        List<Alimento> alimentos = visibles(alimentoRepository.findByNombreContainingIgnoreCase(nombre));
 
         return alimentoMapper.toDTOList(alimentos);
     }
@@ -195,7 +198,7 @@ public class AlimentoService implements IAlimentoService {
     public List<AlimentoDTO> findByCategoria(String categoria) {
         logger.info("Buscando alimentos por categoria: {}", categoria);
 
-        List<Alimento> alimentos = alimentoRepository.findByCategoria(categoria);
+        List<Alimento> alimentos = visibles(alimentoRepository.findByCategoria(categoria));
 
         return alimentoMapper.toDTOList(alimentos);
     }
@@ -205,7 +208,7 @@ public class AlimentoService implements IAlimentoService {
     public List<AlimentoDTO> findActivos() {
         logger.info("Buscando alimentos activos");
 
-        List<Alimento> alimentos = alimentoRepository.findByActivoTrue();
+        List<Alimento> alimentos = visibles(alimentoRepository.findByActivoTrue());
 
         return alimentoMapper.toDTOList(alimentos);
     }
@@ -215,7 +218,7 @@ public class AlimentoService implements IAlimentoService {
     public List<AlimentoDTO> findByCaloriasBetween(Integer min, Integer max) {
         logger.info("Buscando alimentos con calorias entre {} y {}", min, max);
 
-        List<Alimento> alimentos = alimentoRepository.findByCaloriasBetween(min, max);
+        List<Alimento> alimentos = visibles(alimentoRepository.findByCaloriasBetween(min, max));
 
         return alimentoMapper.toDTOList(alimentos);
     }
@@ -225,7 +228,8 @@ public class AlimentoService implements IAlimentoService {
     public Long countActivos() {
         logger.info("Contando alimentos activos");
 
-        return alimentoRepository.countByActivoTrue();
+        if (securityUtils.isAdmin()) return alimentoRepository.countByActivoTrue();
+        return (long) visibles(alimentoRepository.findByActivoTrue()).size();
     }
 
     // Número de alimentos que pertenecen a una categoría.
@@ -233,7 +237,8 @@ public class AlimentoService implements IAlimentoService {
     public Long countByCategoria(String categoria) {
         logger.info("Contando alimmentos por categoría: {}", categoria);
 
-        return alimentoRepository.countByCategoria(categoria);
+        if (securityUtils.isAdmin()) return alimentoRepository.countByCategoria(categoria);
+        return (long) visibles(alimentoRepository.findByCategoria(categoria)).size();
     }
 
     /**
@@ -308,6 +313,22 @@ public class AlimentoService implements IAlimentoService {
      * @param alimento alimento ya cargado sobre el que se va a escribir.
      * @throws com.gymprofit.api.exceptions.UnauthorizedException (→ 403) si es catálogo y no es ADMIN, o si es de otro.
      */
+    /**
+     * Deja solo los alimentos que el usuario autenticado puede ver: el catálogo global
+     * (sin dueño) y los suyos. ADMIN, todos.
+     * <p>
+     * GP-048: los listados del catálogo devolvían también los alimentos personales de
+     * todos los usuarios, a cualquiera y también al invitado. Es el hermano de
+     * /alimentos/usuario/{id}, que se cerró sin mirar las demás rutas que los devolvían.
+     */
+    private List<Alimento> visibles(List<Alimento> alimentos) {
+        if (securityUtils.isAdmin()) return alimentos;
+        Integer yo = securityUtils.getCurrentUserId();
+        return alimentos.stream()
+                .filter(a -> a.getUsuario() == null || a.getUsuario().getId().equals(yo))
+                .toList();
+    }
+
     private void checkPuedeEscribir(Alimento alimento) {
         if (alimento.getUsuario() == null) {
             securityUtils.requireAdmin();

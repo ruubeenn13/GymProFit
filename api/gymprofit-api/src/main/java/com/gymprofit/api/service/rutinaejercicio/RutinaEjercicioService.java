@@ -70,13 +70,25 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
      * @throws UnauthorizedException (→ 403) si no cumple la regla.
      */
     private void checkRutinaReadAccess(Rutina rutina) {
-        if (securityUtils.isAdmin()) return;
-        if (Boolean.TRUE.equals(rutina.getEsPredefinida())) return;
-
-        if (rutina.getUsuario() == null
-                || !securityUtils.getCurrentUserId().equals(rutina.getUsuario().getId())) {
+        if (!puedeLeer(rutina)) {
             throw new UnauthorizedException();
         }
+    }
+
+    // La regla de lectura, sin lanzar: la usan también los listados por ejercicio, que
+    // filtran en vez de rechazar porque su id es del catálogo y no tiene dueño (DEC-027).
+    private boolean puedeLeer(Rutina rutina) {
+        if (securityUtils.isAdmin()) return true;
+        if (Boolean.TRUE.equals(rutina.getEsPredefinida())) return true;
+        return rutina.getUsuario() != null
+                && securityUtils.getCurrentUserId().equals(rutina.getUsuario().getId());
+    }
+
+    // Carga la rutina o 404. Las rutas que cuelgan de una rutina tienen que cargarla para
+    // saber de quién es (DEC-033), igual que findByRutinaId.
+    private Rutina rutinaOr404(Integer rutinaId) {
+        return rutinaRepository.findById(rutinaId)
+                .orElseThrow(() -> new NotFoundEntityException("La rutina con id " + rutinaId + " no existe"));
     }
 
     // Lista todos los registros rutina-ejercicio del sistema (solo ADMIN).
@@ -204,7 +216,11 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
 
         exigirEjercicioExistente(ejercicioId);
 
-        List<RutinaEjercicio> lista = rutinaEjercicioRepository.findByEjercicioId(ejercicioId);
+        // El ejercicio es del catálogo, pero las rutinas que lo contienen no: sin filtrar
+        // salían las rutinas privadas de todos los usuarios, con sus series (GP-048).
+        List<RutinaEjercicio> lista = rutinaEjercicioRepository.findByEjercicioId(ejercicioId).stream()
+                .filter(re -> puedeLeer(re.getRutina()))
+                .toList();
 
         return rutinaEjercicioMapper.toDTOList(lista);
     }
@@ -233,6 +249,9 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
     public RutinaEjercicioDTO findByRutinaIdAndEjercicioId(Integer rutinaId, Integer ejercicioId) {
         logger.info("Buscando ejercicio id: {} en rutina id: {}", ejercicioId, rutinaId);
 
+        // Hermano de findByRutinaId sin su comprobación (GP-048).
+        checkRutinaReadAccess(rutinaOr404(rutinaId));
+
         RutinaEjercicio rutinaEjercicio = rutinaEjercicioRepository.findByRutinaIdAndEjercicioId(rutinaId, ejercicioId)
                 .orElseThrow(() -> new NotFoundEntityException("No existe el ejercicio " + ejercicioId + " en la rutina " + rutinaId));
 
@@ -244,6 +263,9 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
     public Long countByRutinaId(Integer rutinaId) {
         logger.info("Contando ejercicios de rutina id: {}", rutinaId);
 
+        // Un contador también es información ajena (GP-048).
+        checkRutinaReadAccess(rutinaOr404(rutinaId));
+
         return rutinaEjercicioRepository.countByRutinaId(rutinaId);
     }
 
@@ -252,7 +274,13 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
     public Long countByEjercicioId(Integer ejercicioId) {
         logger.info("Contando rutinas que contienen el ejercicio id: {}", ejercicioId);
 
-        return rutinaEjercicioRepository.countByEjercicioId(ejercicioId);
+        // Solo cuenta las rutinas que el usuario puede leer; ADMIN, todas (GP-048).
+        if (securityUtils.isAdmin()) {
+            return rutinaEjercicioRepository.countByEjercicioId(ejercicioId);
+        }
+        return rutinaEjercicioRepository.findByEjercicioId(ejercicioId).stream()
+                .filter(re -> puedeLeer(re.getRutina()))
+                .count();
     }
 
     // Elimina todos los ejercicios asociados a una rutina (p.ej. al borrar la rutina completa).
@@ -281,6 +309,9 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
     public void deleteByRutinaIdAndEjercicioId(Integer rutinaId, Integer ejercicioId) {
         logger.info("Eliminando ejercicio id: {} de rutina id: {}", ejercicioId, rutinaId);
 
+        // Borraba de la rutina de cualquiera, también de las predefinidas (GP-048).
+        checkRutinaOwnership(rutinaOr404(rutinaId));
+
         try {
             rutinaEjercicioRepository.deleteByRutinaIdAndEjercicioId(rutinaId, ejercicioId);
 
@@ -294,6 +325,9 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
     @Override
     public boolean existsByRutinaIdAndEjercicioId(Integer rutinaId, Integer ejercicioId) {
         logger.info("Verificando si existe ejercicio id: {} en rutina id: {}", ejercicioId, rutinaId);
+
+        // Un exists deja reconstruir una rutina ajena a base de síes y noes (GP-048).
+        checkRutinaReadAccess(rutinaOr404(rutinaId));
 
         return rutinaEjercicioRepository.existsByRutinaIdAndEjercicioId(rutinaId, ejercicioId);
     }

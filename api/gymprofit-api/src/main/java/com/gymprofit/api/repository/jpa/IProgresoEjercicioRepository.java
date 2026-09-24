@@ -44,6 +44,9 @@ public interface IProgresoEjercicioRepository extends JpaRepository<ProgresoEjer
     // Número de registros de progreso de un ejercicio.
     Long countByEjercicioId(Integer ejercicioId);
 
+    // Progresos de UN usuario en un ejercicio: el contador por ejercicio del catálogo (GP-048).
+    Long countByUsuarioIdAndEjercicioId(Integer usuarioId, Integer ejercicioId);
+
     /**
      * Mejor levantamiento del usuario, con el nombre del ejercicio ya resuelto.
      * <p>

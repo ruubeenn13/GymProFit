@@ -197,6 +197,10 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/ejercicios/**").hasRole(RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.PUT, "/ejercicios/**").hasRole(RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.DELETE, "/ejercicios/**").hasRole(RoleType.ADMIN.name())
+                                // PATCH faltaba (GP-048): caía en anyRequest().authenticated(), y como
+                                // EjercicioService.patch no comprueba nada, cualquier token —también el de
+                                // invitado, que se obtiene sin credenciales— reescribía el catálogo.
+                                .requestMatchers(HttpMethod.PATCH, "/ejercicios/**").hasRole(RoleType.ADMIN.name())
 
                                 // ADMIN: gestión completa de usuarios
                                 .requestMatchers("/usuarios/**").hasRole(RoleType.ADMIN.name())

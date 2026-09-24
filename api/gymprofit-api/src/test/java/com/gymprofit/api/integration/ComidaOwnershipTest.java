@@ -1,5 +1,12 @@
 package com.gymprofit.api.integration;
 
+import com.gymprofit.api.entity.Usuario;
+import com.gymprofit.api.enums.RoleType;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import java.util.HashMap;
+import java.util.Map;
+import static org.assertj.core.api.Assertions.assertThat;
 import com.gymprofit.api.dto.entity.comida.ComidaCreateDTO;
 import com.gymprofit.api.service.comida.IComidaService;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,5 +74,71 @@ class ComidaOwnershipTest extends AbstractOwnershipTest {
     void getComidaPropia_devuelve200() throws Exception {
         mockMvc.perform(get("/comidas/" + comidaIdOwner))
                 .andExpect(status().isOk());
+    }
+
+    // --- Cobertura de GP-048 ----------------------------------------------------
+    // Las rutas que no tenían test. Mismo criterio que SesionOwnershipTest: id ajeno →
+    // 403 al atacante y el dueño no lo recibe; lo global, solo ADMIN; y la regla de rol
+    // con el propio id del invitado.
+
+    private Usuario adminGp048;
+
+    private Usuario admin() {
+        if (adminGp048 == null) adminGp048 = crearUsuario("__idor_admin__", RoleType.ADMIN);
+        return adminGp048;
+    }
+
+    private void idAjeno(String ruta) throws Exception {
+        assertThat(estado(attacker, ruta)).as("atacante en " + ruta).isEqualTo(403);
+        assertThat(estado(owner, ruta)).as("dueño en " + ruta).isNotEqualTo(403);
+    }
+
+    private void soloAdmin(String ruta) throws Exception {
+        assertThat(estado(attacker, ruta)).as("USER en " + ruta).isEqualTo(403);
+        assertThat(estado(admin(), ruta)).as("ADMIN en " + ruta).isNotEqualTo(403);
+    }
+
+    private Map<String, Object> idsGp048() {
+        return Map.of("comida", comidaIdOwner, "owner", owner.getId(), "fecha", java.time.LocalDate.now(),
+                "tipo", "DESAYUNO");
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @ValueSource(strings = {
+            "PATCH /comidas/{comida}",
+            "GET /comidas/usuario/{owner}/fecha/{fecha}",
+            "GET /comidas/usuario/{owner}/resumen?inicio={fecha}&fin={fecha}",
+            "GET /comidas/usuario/{owner}/tipo/{tipo}",
+            "GET /comidas/count/usuario/{owner}",
+            "GET /comidas/count/usuario/{owner}/tipo/{tipo}"
+    })
+    @DisplayName("GP-048: id ajeno → 403 al atacante; el dueño no")
+    void gp048_idAjeno(String plantilla) throws Exception {
+        idAjeno(rellenar(plantilla, idsGp048()));
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @ValueSource(strings = {
+            "GET /comidas",
+            "GET /comidas/tipo/{tipo}",
+            "GET /comidas/fecha/{fecha}",
+            "GET /comidas/count/tipo/{tipo}"
+    })
+    @DisplayName("GP-048: listado global → solo ADMIN")
+    void gp048_soloAdmin(String plantilla) throws Exception {
+        soloAdmin(rellenar(plantilla, idsGp048()));
+    }
+
+    @Test
+    @DisplayName("GP-048: PUT /comidas con el id de una comida ajena en el cuerpo → 403")
+    void gp048_putConIdAjeno() throws Exception {
+        assertThat(pedir(attacker, "PUT /comidas", "{\"id\":" + comidaIdOwner + ",\"tipoComida\":\"CENA\"}")
+                .andReturn().getResponse().getStatus()).isEqualTo(403);
+    }
+
+    @Test
+    @DisplayName("GP-048: GUEST pidiendo SUS propias comidas → 403 (regla de rol)")
+    void gp048_guestConSuPropioId() throws Exception {
+        assertThat(estado(guest, "GET /comidas/usuario/" + guest.getId())).isEqualTo(403);
     }
 }

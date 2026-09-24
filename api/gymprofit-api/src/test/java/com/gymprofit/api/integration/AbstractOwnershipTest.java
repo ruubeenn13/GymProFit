@@ -1,5 +1,6 @@
 package com.gymprofit.api.integration;
 
+import com.gymprofit.api.config.security.JwtTokenProvider;
 import com.gymprofit.api.entity.Alimento;
 import com.gymprofit.api.entity.Ejercicio;
 import com.gymprofit.api.entity.Role;
@@ -16,14 +17,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 // ============================================================
 // AbstractOwnershipTest — base de los tests e2e de ownership (IDOR).
@@ -66,6 +73,9 @@ public abstract class AbstractOwnershipTest {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
     private IEjercicioRepository ejercicioRepository;
@@ -135,5 +145,52 @@ public abstract class AbstractOwnershipTest {
         } finally {
             SecurityContextHolder.clearContext();
         }
+    }
+
+    // --- Peticiones con JWT real (GP-048) -------------------------------------------
+    //
+    // Las familias de rutas se prueban con tests parametrizados: una plantilla por ruta,
+    // "VERBO /ruta/{marcador}", que cada clase rellena con los ids que ha sembrado. La
+    // petición lleva el token del usuario en la cabecera y pasa por el filtro JWT, así
+    // que no depende de @WithUserDetails ni de que el test fije el SecurityContext.
+
+    /** Sustituye cada {marcador} de la plantilla por su id. */
+    protected static String rellenar(String plantilla, Map<String, ?> ids) {
+        String r = plantilla;
+        for (Map.Entry<String, ?> e : ids.entrySet()) {
+            r = r.replace("{" + e.getKey() + "}", String.valueOf(e.getValue()));
+        }
+        if (r.contains("{")) {
+            throw new IllegalArgumentException("Marcador sin id en: " + r);
+        }
+        return r;
+    }
+
+    /** Hace "VERBO /ruta" como {@code quien}. POST, PUT y PATCH llevan "{}" de cuerpo. */
+    protected ResultActions pedir(Usuario quien, String verboYRuta) throws Exception {
+        return pedir(quien, verboYRuta, null);
+    }
+
+    /** Hace "VERBO /ruta" como {@code quien}, con el cuerpo JSON indicado. */
+    protected ResultActions pedir(Usuario quien, String verboYRuta, String cuerpo) throws Exception {
+        String[] partes = verboYRuta.split(" ", 2);
+        HttpMethod verbo = HttpMethod.valueOf(partes[0]);
+        MockHttpServletRequestBuilder peticion = MockMvcRequestBuilders.request(verbo, partes[1])
+                .header("Authorization", "Bearer " + jwtTokenProvider.generateToken(quien))
+                .accept(MediaType.APPLICATION_JSON);
+        if (cuerpo != null || verbo == HttpMethod.POST || verbo == HttpMethod.PUT || verbo == HttpMethod.PATCH) {
+            peticion.contentType(MediaType.APPLICATION_JSON).content(cuerpo != null ? cuerpo : "{}");
+        }
+        return mockMvc.perform(peticion);
+    }
+
+    /** JWT real de {@code quien}, para las peticiones que no pasan por {@link #pedir}. */
+    protected String token(Usuario quien) {
+        return jwtTokenProvider.generateToken(quien);
+    }
+
+    /** Estado HTTP de "VERBO /ruta" pedida como {@code quien}. */
+    protected int estado(Usuario quien, String verboYRuta) throws Exception {
+        return pedir(quien, verboYRuta).andReturn().getResponse().getStatus();
     }
 }
