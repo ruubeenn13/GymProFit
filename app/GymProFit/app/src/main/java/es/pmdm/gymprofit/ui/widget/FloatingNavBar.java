@@ -276,7 +276,8 @@ public class FloatingNavBar extends FrameLayout {
 
             TextView label = new TextView(getContext());
             label.setText(LABELS[i]);
-            label.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.5f);
+            label.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                    getResources().getDimension(R.dimen.text_eyebrow));   // 13 sp, el suelo de la escala
             label.setLetterSpacing(0.02f);
             label.setPadding(0, (int) dp(3), 0, 0);
             label.setSingleLine(true);

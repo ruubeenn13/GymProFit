@@ -6,8 +6,8 @@
    prefers-color-scheme, que es lo que espera quien navega por web.
    ------------------------------------------------------------------ */
 
-/* Barlow Condensed servida desde el propio dominio, con los MISMOS ficheros
-   que usa la app (res/font/*.ttf, convertidos a woff2). No se carga de Google
+/* Barlow y Barlow Condensed servidas desde el propio dominio, con los MISMOS
+   ficheros que usa la app (res/font/*.ttf, convertidos a woff2). No se carga de Google
    Fonts a propósito: una página que explica cómo se tratan tus datos no debería
    enviar tu IP a un tercero solo para pintar un titular. Además así no depende
    de una red ajena y no hay salto de fuente al cargar. */
@@ -26,6 +26,22 @@
   src: url("/fuentes/barlow-condensed-700.woff2") format("woff2");
   font-weight: 700; font-style: normal; font-display: swap;
 }
+/* Barlow de ancho normal, para todo el texto que no es titular (GP-089) */
+@font-face {
+  font-family: "Barlow";
+  src: url("/fuentes/barlow-400.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Barlow";
+  src: url("/fuentes/barlow-500.woff2") format("woff2");
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Barlow";
+  src: url("/fuentes/barlow-600.woff2") format("woff2");
+  font-weight: 600; font-style: normal; font-display: swap;
+}
 
 :root {
   --bg:        #0B0C0E;
@@ -38,7 +54,9 @@
   --text:      #F2F2F3;
   --text-2:    #A1A9B6;
 
-  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  /* Una familia, dos anchos, igual que la app. El sans-serif final solo se ve
+     si el fichero no llega a cargar. */
+  --sans: "Barlow", sans-serif;
   --cond: "Barlow Condensed", var(--sans);
 
   --radius: 10px;
@@ -74,14 +92,18 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Barlow Condensed solo trae 500/600/700: no existe el peso 400.
-   Por eso los titulares van en condensada y el cuerpo en la del
-   sistema, exactamente igual que en la app. */
+/* Condensada para titulares, cifras y etiquetas; Barlow normal para el
+   texto, porque a tamaño de lectura la condensada cierra las contraformas.
+   Exactamente igual que en la app. */
 h1, h2, h3, .marca, .btn, .eyebrow {
   font-family: var(--cond);
   font-weight: 700;
   letter-spacing: 0.01em;
 }
+
+/* Barlow se sirve hasta 600: la negrita del texto usa ese peso y no uno
+   sintetizado por el navegador. */
+strong, b { font-weight: 600; }
 
 a { color: var(--primary); text-decoration-thickness: 1px; text-underline-offset: 2px; }
 a:hover { opacity: 0.8; }
@@ -240,6 +262,7 @@ th {
 .estado {
   display: inline-block;
   font-family: var(--cond);
+  font-weight: 500;   /* la condensada se sirve de 500 a 700 */
   font-size: 14px;
   letter-spacing: 1.6px;
   text-transform: uppercase;

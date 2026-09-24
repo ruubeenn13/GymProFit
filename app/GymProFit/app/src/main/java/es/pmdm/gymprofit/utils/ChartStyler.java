@@ -55,8 +55,8 @@ public final class ChartStyler {
         chart.setNoDataText("");                  // el empty state lo pinta la pantalla
         chart.animateX(500);
 
-        ejeX(chart.getXAxis(), onVariant, tf, xFormatter);
-        ejeYIzq(chart.getAxisLeft(), onVariant, tf);
+        ejeX(ctx, chart.getXAxis(), onVariant, tf, xFormatter);
+        ejeYIzq(ctx, chart.getAxisLeft(), onVariant, tf);
         chart.getAxisRight().setEnabled(false);
     }
 
@@ -77,8 +77,8 @@ public final class ChartStyler {
         chart.setNoDataText("");
         chart.animateY(500);
 
-        ejeX(chart.getXAxis(), onVariant, tf, xFormatter);
-        ejeYIzq(chart.getAxisLeft(), onVariant, tf);
+        ejeX(ctx, chart.getXAxis(), onVariant, tf, xFormatter);
+        ejeYIzq(ctx, chart.getAxisLeft(), onVariant, tf);
         chart.getAxisRight().setEnabled(false);
     }
 
@@ -109,7 +109,7 @@ public final class ChartStyler {
         ds.setColor(marca);
         ds.setDrawValues(false);                   // valores por tooltip, no encima de cada barra (evita ruido)
         ds.setValueTextColor(attr(ctx, com.google.android.material.R.attr.colorOnSurfaceVariant, Color.GRAY));
-        ds.setValueTextSize(9f);
+        ds.setValueTextSize(textoSp(ctx));
         ds.setValueTypeface(tf);
         ds.setHighlightEnabled(true);
         ds.setHighLightColor(marca);
@@ -135,50 +135,63 @@ public final class ChartStyler {
         chart.setNoDataText("");
         chart.setCenterTextColor(onVariant);
         chart.setCenterTextTypeface(tf);
-        chart.setCenterTextSize(13f);
+        chart.setCenterTextSize(textoSp(ctx));
         chart.animateY(600);
 
         Legend l = chart.getLegend();
         l.setTextColor(onVariant);
         l.setTypeface(tf);
-        l.setTextSize(12f);
+        l.setTextSize(textoSp(ctx));
         l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
         l.setWordWrapEnabled(true);
     }
 
     // Aplica los colores (uno por porción) y el acabado a una serie de donut.
-    public static void stylePieDataSet(PieDataSet ds, int[] colors) {
+    public static void stylePieDataSet(PieDataSet ds, int[] colors, Context ctx) {
         ds.setColors(colors);
         ds.setSliceSpace(2.5f);
         ds.setDrawValues(true);
         ds.setValueTextColor(Color.WHITE);
-        ds.setValueTextSize(12f);
+        ds.setValueTextSize(textoSp(ctx));
         ds.setYValuePosition(PieDataSet.ValuePosition.INSIDE_SLICE);
     }
 
     // --- helpers privados ---
 
-    private static void ejeX(XAxis x, int color, Typeface tf, ValueFormatter fmt) {
+    private static void ejeX(Context ctx, XAxis x, int color, Typeface tf, ValueFormatter fmt) {
         x.setPosition(XAxis.XAxisPosition.BOTTOM);
         x.setDrawGridLines(false);
         x.setDrawAxisLine(false);
         x.setTextColor(color);
         x.setTypeface(tf);
-        x.setTextSize(10f);
+        x.setTextSize(textoSp(ctx));
         x.setGranularity(1f);
         x.setLabelCount(4, false);
         if (fmt != null) x.setValueFormatter(fmt);
     }
 
-    private static void ejeYIzq(YAxis y, int color, Typeface tf) {
+    private static void ejeYIzq(Context ctx, YAxis y, int color, Typeface tf) {
         y.setDrawAxisLine(false);
         y.setDrawGridLines(true);
         y.setGridColor(conAlfa(color, 0x22));   // rejilla horizontal MUY sutil
         y.setGridLineWidth(0.8f);
         y.setTextColor(color);
         y.setTypeface(tf);
-        y.setTextSize(10f);
+        y.setTextSize(textoSp(ctx));
         y.setLabelCount(4, false);
+    }
+
+    /**
+     * Tamaño de todo texto de gráfica, en las unidades de MPAndroidChart.
+     * La librería mide el texto en dp, así que por sí sola no sigue el tamaño de
+     * letra del sistema: se multiplica por él para que 13 sea 13 sp, el suelo de
+     * la escala de la app (GP-089). Tope en 24, el máximo que acepta la librería.
+     *
+     * @param ctx contexto con la configuración vigente
+     * @return tamaño en dp listo para {@code setTextSize}
+     */
+    public static float textoSp(Context ctx) {
+        return Math.min(24f, 13f * ctx.getResources().getConfiguration().fontScale);
     }
 
     private static Typeface fuente(Context ctx) {

@@ -21,6 +21,29 @@
             android:name="firebase_analytics_collection_enabled"
             android:value="false" />
 
+        <!-- Medidor de accesibilidad (solo depuración): vuelca al log el tamaño de
+             cada texto y de cada zona pulsable, leídos del árbol de accesibilidad.
+             Se activa por adb; ver MedidorAccesibilidad. -->
+        <service
+            android:name="es.pmdm.gymprofit.depuracion.MedidorAccesibilidad"
+            android:exported="true"
+            android:label="@string/medidor_nombre"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/medidor_accesibilidad" />
+        </service>
+
+        <!-- Trampolín de capturas (solo depuración): abre por adb cualquier
+             pantalla de la app, que en main no están exportadas. -->
+        <activity
+            android:name="es.pmdm.gymprofit.depuracion.TrampolinActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.NoDisplay" />
+
     </application>
 
 </manifest>

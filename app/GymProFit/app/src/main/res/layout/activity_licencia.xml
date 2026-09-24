@@ -49,8 +49,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textIsSelectable="true"
-                android:typeface="monospace"
-                android:textSize="@dimen/text_label"
+                android:textSize="@dimen/text_caption"
                 android:textColor="?attr/colorOnSurfaceVariant" />
 
             </HorizontalScrollView>

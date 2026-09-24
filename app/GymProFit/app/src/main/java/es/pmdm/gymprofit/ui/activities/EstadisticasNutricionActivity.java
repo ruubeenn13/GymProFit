@@ -209,7 +209,7 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         meta.setLineWidth(1.4f);
         meta.enableDashedLine(12f, 8f, 0f);
         meta.setTextColor(getColorTema(com.google.android.material.R.attr.colorOnSurfaceVariant));
-        meta.setTextSize(9f);
+        meta.setTextSize(ChartStyler.textoSp(this));
         chartKcal.getAxisLeft().addLimitLine(meta);
 
         // Tooltip: kcal + fecha.
@@ -253,7 +253,7 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         chartMacros.setCenterText(String.format(Locale.getDefault(), "%.0f g", prot + carb + grasa));
 
         PieDataSet ds = new PieDataSet(entradas, "");
-        ChartStyler.stylePieDataSet(ds, MACRO_COLORS);
+        ChartStyler.stylePieDataSet(ds, MACRO_COLORS, this);
         PieData data = new PieData(ds);
         data.setValueFormatter(new ValueFormatter() {
             @Override

@@ -6,7 +6,7 @@ JavaScript. Lo que hay en esta carpeta es exactamente lo que se sirve.
 
 ```
 index.html · privacidad.html · eliminar-cuenta.html · estilo.css
-fuentes/  tres .woff2 (Barlow Condensed 500 / 600 / 700)
+fuentes/  seis .woff2: Barlow 400 / 500 / 600 y Barlow Condensed 500 / 600 / 700
 img/      logos claro y oscuro (256 y 512, webp) + favicons y apple-touch-icon
 ```
 
@@ -46,14 +46,18 @@ misma marca.
 
 ## Las fuentes se sirven desde este dominio
 
-Los tres `.woff2` se generaron desde los `.ttf` de
-`app/GymProFit/app/src/main/res/font/` (`barlow_condensed_medium`, `_semibold` y
-`_bold`), por lo mismo: la web y la app tienen que verse iguales.
+Los seis `.woff2` se generaron desde los `.ttf` de
+`app/GymProFit/app/src/main/res/font/` (`barlow_regular`, `_medium` y `_semibold`;
+`barlow_condensed_medium`, `_semibold` y `_bold`), por lo mismo: la web y la app
+tienen que verse iguales. Una familia, dos anchos: la condensada en titulares,
+cifras y etiquetas, y Barlow en todo el texto. Para regenerarlos hace falta
+`fonttools` con `brotli`: `TTFont(ttf); f.flavor = "woff2"; f.save(woff2)`.
 
 Se sirven **desde el propio dominio a propósito**, y no desde Google Fonts. Pedir
 una fuente a un tercero le entrega la IP del visitante; hacerlo justo en la página
-que explica cómo se tratan sus datos sería contradecirla en la primera línea. El
-resto de la tipografía es la del sistema, que no se descarga de ningún sitio.
+que explica cómo se tratan sus datos sería contradecirla en la primera línea. No
+queda ninguna fuente del sistema a la vista: el `sans-serif` de la pila solo
+aparece si un fichero no llega a cargar.
 
 ## Revisar si la app se monetiza
 

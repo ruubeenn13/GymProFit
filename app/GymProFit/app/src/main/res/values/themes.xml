@@ -58,17 +58,23 @@
         <item name="android:spinnerStyle">@style/Widget.GymProFit.Spinner</item>
         <item name="searchViewStyle">@style/Widget.GymProFit.SearchView</item>
 
-        <!-- Fuente ÚNICA en toda la app (Barlow Condensed, la de Home/Nutrición).
-             fontFamily del tema = catch-all para TextViews; la escala tipográfica M3
-             (abajo) fuerza la fuente también en botones, chips, diálogos, inputs... -->
-        <!-- El cuerpo va en la fuente del sistema, NO en Barlow Condensed.
-             Barlow Condensed solo trae 500, 600 y 700: no existe el peso 400, así
-             que poniéndola como familia global TODO el texto de la app salía de
-             medium para arriba y no podía haber contraste de peso — todo gritaba
-             al mismo volumen. Y es una condensada de titular: a 15 sp, leyendo
-             macros, los contraformas se cierran y el texto se ve apretado.
-             La condensada se conserva donde le toca, en los estilos de cifra y
-             titular de más abajo, que la declaran ellos mismos. -->
+        <!-- Tipografía (GP-089): una familia, dos anchos.
+             Barlow Condensed para títulos, cifras y etiquetas; Barlow, de ancho
+             normal, para todo el texto. La condensada no va en el cuerpo por
+             legibilidad: a tamaño de lectura cierra las contraformas y el texto
+             se ve apretado. La familia Barlow Condensed SÍ tiene peso 400; lo que
+             no se empaquetó fue ese peso (ad0eaf0 decía lo contrario).
+             La fuente por defecto va en la APARIENCIA de texto por defecto
+             (textAppearanceSmall, la que toma un TextView que no declara otra) y
+             NO como android:fontFamily del tema: un fontFamily de tema se aplica
+             como atributo de la vista y gana al textAppearance, así que borraba la
+             condensada de todos los titulares que la llevan en su apariencia.
+             La escala M3 de abajo lleva la misma decisión a los componentes de
+             Material (botones, chips, campos, diálogos...). -->
+        <item name="android:textAppearanceSmall">@style/TextAppearance.GymProFit.Texto</item>
+        <!-- Desplegables: la fila del Spinner cuelga de este atributo del sistema -->
+        <item name="android:spinnerItemStyle">@style/Widget.GymProFit.SpinnerItem</item>
+        <item name="android:spinnerDropDownItemStyle">@style/Widget.GymProFit.SpinnerDropDownItem</item>
         <item name="textAppearanceDisplayLarge">@style/Font.GymProFit.DisplayLarge</item>
         <item name="textAppearanceDisplayMedium">@style/Font.GymProFit.DisplayMedium</item>
         <item name="textAppearanceDisplaySmall">@style/Font.GymProFit.DisplaySmall</item>
@@ -86,71 +92,95 @@
         <item name="textAppearanceLabelSmall">@style/Font.GymProFit.LabelSmall</item>
     </style>
 
-    <!-- ── Escala tipográfica M3 revestida con Barlow Condensed (fuente global) ──
-         Cada estilo hereda del M3 original (tamaños/interlineado) y solo cambia la
-         fuente. Se referencian desde el tema (día y noche) → una sola fuente en todo. -->
+    <!-- ── Escala tipográfica M3 llevada a la de la app (GP-089) ─────────────
+         Los componentes de Material no leen dimens.xml: toman su tamaño de estos
+         estilos. Con los de M3 tal cual, la etiqueta de un campo, el texto de un
+         chip, un snackbar o el mensaje de un diálogo salían a 11-14 sp, más
+         pequeños que el texto de al lado. Aquí cada escalón M3 apunta al de la
+         app: nada baja de 13 sp y el contenido no baja de 15.
+         Display, Headline y Title van en condensada (titulares); Body en Barlow
+         (texto); Label en condensada (botones, chips, etiquetas). -->
     <style name="Font.GymProFit.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge">
         <item name="fontFamily">@font/barlow_condensed</item>
         <item name="android:fontFamily">@font/barlow_condensed</item>
+        <item name="android:textSize">@dimen/text_number</item>
     </style>
     <style name="Font.GymProFit.DisplayMedium" parent="TextAppearance.Material3.DisplayMedium">
         <item name="fontFamily">@font/barlow_condensed</item>
         <item name="android:fontFamily">@font/barlow_condensed</item>
+        <item name="android:textSize">@dimen/text_display_large</item>
     </style>
     <style name="Font.GymProFit.DisplaySmall" parent="TextAppearance.Material3.DisplaySmall">
         <item name="fontFamily">@font/barlow_condensed</item>
         <item name="android:fontFamily">@font/barlow_condensed</item>
+        <item name="android:textSize">@dimen/text_display</item>
     </style>
     <style name="Font.GymProFit.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
         <item name="fontFamily">@font/barlow_condensed</item>
         <item name="android:fontFamily">@font/barlow_condensed</item>
+        <item name="android:textSize">@dimen/text_display</item>
     </style>
     <style name="Font.GymProFit.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
         <item name="fontFamily">@font/barlow_condensed</item>
         <item name="android:fontFamily">@font/barlow_condensed</item>
+        <item name="android:textSize">@dimen/text_headline</item>
     </style>
     <style name="Font.GymProFit.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
         <item name="fontFamily">@font/barlow_condensed</item>
         <item name="android:fontFamily">@font/barlow_condensed</item>
+        <item name="android:textSize">@dimen/text_headline</item>
     </style>
-    <!-- Solo cambian la FAMILIA (tamaños M3 originales). El agrandado de TODA la app se
-         hace de forma uniforme con un fontScale global (ScaleUtils), que escala también
-         los textSize hardcodeados de los layouts; así hay un único mando de tamaño. -->
     <style name="Font.GymProFit.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
         <item name="fontFamily">@font/barlow_condensed</item>
         <item name="android:fontFamily">@font/barlow_condensed</item>
+        <item name="android:textSize">@dimen/text_title</item>
     </style>
     <style name="Font.GymProFit.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
         <item name="fontFamily">@font/barlow_condensed</item>
         <item name="android:fontFamily">@font/barlow_condensed</item>
+        <item name="android:textSize">@dimen/text_subtitle</item>
     </style>
     <style name="Font.GymProFit.TitleSmall" parent="TextAppearance.Material3.TitleSmall">
         <item name="fontFamily">@font/barlow_condensed</item>
         <item name="android:fontFamily">@font/barlow_condensed</item>
+        <item name="android:textSize">@dimen/text_body</item>
     </style>
     <style name="Font.GymProFit.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
-        <item name="fontFamily">@font/barlow_condensed</item>
-        <item name="android:fontFamily">@font/barlow_condensed</item>
+        <item name="fontFamily">@font/barlow</item>
+        <item name="android:fontFamily">@font/barlow</item>
+        <item name="android:textSize">@dimen/text_body</item>
     </style>
     <style name="Font.GymProFit.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
-        <item name="fontFamily">@font/barlow_condensed</item>
-        <item name="android:fontFamily">@font/barlow_condensed</item>
+        <item name="fontFamily">@font/barlow</item>
+        <item name="android:fontFamily">@font/barlow</item>
+        <item name="android:textSize">@dimen/text_caption</item>
     </style>
     <style name="Font.GymProFit.BodySmall" parent="TextAppearance.Material3.BodySmall">
-        <item name="fontFamily">@font/barlow_condensed</item>
-        <item name="android:fontFamily">@font/barlow_condensed</item>
+        <item name="fontFamily">@font/barlow</item>
+        <item name="android:fontFamily">@font/barlow</item>
+        <item name="android:textSize">@dimen/text_eyebrow</item>
     </style>
     <style name="Font.GymProFit.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
         <item name="fontFamily">@font/barlow_condensed</item>
         <item name="android:fontFamily">@font/barlow_condensed</item>
+        <item name="android:textSize">@dimen/text_label</item>
     </style>
     <style name="Font.GymProFit.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
         <item name="fontFamily">@font/barlow_condensed</item>
         <item name="android:fontFamily">@font/barlow_condensed</item>
+        <item name="android:textSize">@dimen/text_eyebrow</item>
     </style>
     <style name="Font.GymProFit.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
         <item name="fontFamily">@font/barlow_condensed</item>
         <item name="android:fontFamily">@font/barlow_condensed</item>
+        <item name="android:textSize">@dimen/text_eyebrow</item>
+    </style>
+
+    <!-- Apariencia por defecto de todo TextView sin textAppearance propia: la del
+         sistema (tamaño y color) con Barlow en vez de Roboto (GP-089). -->
+    <style name="TextAppearance.GymProFit.Texto" parent="TextAppearance.AppCompat.Small">
+        <item name="fontFamily">@font/barlow</item>
+        <item name="android:fontFamily">@font/barlow</item>
     </style>
 
     <!-- ── Tipografía display (Barlow Condensed): números y títulos ───────── -->
@@ -183,6 +213,8 @@
 
     <!-- Etiqueta/eyebrow en mayúsculas sobre una stat -->
     <style name="TextAppearance.GymProFit.Label" parent="TextAppearance.Material3.LabelMedium">
+        <item name="fontFamily">@font/barlow_condensed</item>
+        <item name="android:fontFamily">@font/barlow_condensed</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:textSize">@dimen/text_label</item>
         <item name="android:letterSpacing">0.12</item>
@@ -242,6 +274,15 @@
     <style name="Widget.GymProFit.Spinner" parent="Widget.AppCompat.Spinner">
         <item name="android:background">@drawable/bg_spinner</item>
         <item name="android:paddingEnd">44dp</item>
+    </style>
+
+    <!-- Fila del desplegable cerrado y de su lista: en Barlow y con la escala
+         de la app, que la del sistema la dejaba en Roboto (GP-089) -->
+    <style name="Widget.GymProFit.SpinnerItem" parent="Widget.AppCompat.TextView.SpinnerItem">
+        <item name="android:textAppearance">@style/Font.GymProFit.BodyLarge</item>
+    </style>
+    <style name="Widget.GymProFit.SpinnerDropDownItem" parent="Widget.AppCompat.DropDownItem.Spinner">
+        <item name="android:textAppearance">@style/Font.GymProFit.BodyLarge</item>
     </style>
 
     <!-- Buscador con la lupa y el aspa de Material Symbols -->
@@ -328,7 +369,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">3dp</item>
-        <item name="android:textSize">13sp</item>
+        <item name="android:textSize">@dimen/text_caption</item>
         <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
     </style>
 

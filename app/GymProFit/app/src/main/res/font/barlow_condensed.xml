@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   barlow_condensed — familia tipográfica display de la app (rediseño atlético).
-  Condensada y contundente: se usa en números grandes, títulos y stats.
-  El cuerpo de texto sigue siendo la fuente del sistema (Roboto).
+  Condensada y contundente: se usa en cifras, títulos y etiquetas.
+  El texto va en Barlow de ancho normal (font/barlow.xml, GP-089).
+  La familia sí tiene peso 400; lo que no se empaquetó fue ese peso, porque
+  en la app la condensada nunca pone texto de lectura.
 -->
 <font-family xmlns:android="http://schemas.android.com/apk/res/android">
     <font
