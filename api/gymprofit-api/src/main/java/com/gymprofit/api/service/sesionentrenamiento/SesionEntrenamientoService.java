@@ -30,9 +30,9 @@ import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import org.springframework.dao.DataIntegrityViolationException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -165,10 +165,14 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
      * <p><strong>Idempotencia.</strong> Un guardado atómico obliga a poder reintentar,
      * y un reintento sin protección duplica entrenamientos: con mala red la petición
      * puede llegar y guardarse y perderse solo la respuesta. Por eso el cliente manda
-     * una clave por intento y aquí se mira ANTES de crear nada. Y se vuelve a mirar si
-     * la inserción choca contra el índice único, que es lo que pasa cuando dos
-     * reintentos llegan a la vez: la comprobación previa no basta, porque entre la
-     * consulta y la inserción cabe otra petición.
+     * una clave por intento y aquí se mira ANTES de crear nada.
+     *
+     * <p>La comprobación previa no basta cuando dos reintentos llegan a la vez: entre la
+     * consulta y la inserción cabe otra petición. Entonces el índice único
+     * {@code (usuario_id, idempotencia_clave)} deja entrar a una y a la otra le lanza
+     * DataIntegrityViolationException. Esa excepción NO se atrapa aquí: esta transacción
+     * ya no sirve para nada y tiene que revertirse entera. La recupera
+     * {@link GuardadoSesionCompletaService}, fuera de ella (GP-076).
      *
      * @param dto la sesión completa.
      * @return la sesión recién creada, o la que ya existía para esa clave.
@@ -212,28 +216,16 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         int minutos = dto.getDuracionMinutos() != null ? dto.getDuracionMinutos() : 0;
         sesion.setFechaFin(sesion.getFechaInicio().plusMinutes(minutos));
 
-        SesionEntrenamiento guardada;
-        try {
-            // Se persiste la sesión antes que los ejercicios porque estos la necesitan
-            // como padre; da igual para la atomicidad, que la garantiza la transacción:
-            // si un ejercicio revienta, esta fila se va con él.
-            guardada = sesionEntrenamientoRepository.save(sesion);
+        // Se persiste la sesión antes que los ejercicios porque estos la necesitan como
+        // padre; da igual para la atomicidad, que la garantiza la transacción: si un
+        // ejercicio revienta, esta fila se va con él. Con id IDENTITY el INSERT sale ya
+        // en save(), así que el choque con el índice único salta aquí mismo.
+        SesionEntrenamiento guardada = sesionEntrenamientoRepository.save(sesion);
 
-            if (dto.getEjercicios() != null) {
-                for (EjercicioSesionCreateDTO ejercicioDTO : dto.getEjercicios()) {
-                    ejercicioRealizadoRepository.save(construirEjercicio(guardada, ejercicioDTO));
-                }
+        if (dto.getEjercicios() != null) {
+            for (EjercicioSesionCreateDTO ejercicioDTO : dto.getEjercicios()) {
+                ejercicioRealizadoRepository.save(construirEjercicio(guardada, ejercicioDTO));
             }
-
-            // Fuerza el INSERT ahora: sin esto, un choque contra el índice único saltaría
-            // al confirmar la transacción, fuera de este try, y no habría dónde atraparlo.
-            sesionEntrenamientoRepository.flush();
-        } catch (DataIntegrityViolationException e) {
-            // Dos reintentos a la vez: el otro ganó la carrera y ya guardó esta sesión.
-            return sesionEntrenamientoRepository
-                    .findByUsuarioIdAndIdempotenciaClave(usuarioId, dto.getClaveIdempotencia())
-                    .map(sesionEntrenamientoMapper::toDTO)
-                    .orElseThrow(() -> e);
         }
 
         SesionEntrenamientoDTO resultado = sesionEntrenamientoMapper.toDTO(guardada);
@@ -242,6 +234,27 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
             if (!nuevos.isEmpty()) resultado.setNuevosLogros(nuevos);
         }
         return resultado;
+    }
+
+    /**
+     * Busca la sesión que guardó una clave de idempotencia, en una transacción NUEVA de
+     * solo lectura.
+     *
+     * <p>Tiene que ser una transacción nueva: con REPEATABLE READ, una lectura dentro de
+     * la que perdió la carrera usaría la instantánea de su comprobación previa y no vería
+     * la sesión ganadora. Desde la fachada, que no tiene transacción, bastaría REQUIRED;
+     * REQUIRES_NEW deja escrito que tiene que seguir siéndolo si alguien la llama desde
+     * dentro de otra. Ese segundo caso no tiene test.
+     *
+     * @param usuarioId dueño, sacado del token.
+     * @param clave clave de idempotencia del intento.
+     * @return la sesión, si ya existe.
+     */
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    public Optional<SesionEntrenamientoDTO> buscarPorClaveIdempotencia(Integer usuarioId, String clave) {
+        return sesionEntrenamientoRepository.findByUsuarioIdAndIdempotenciaClave(usuarioId, clave)
+                .map(sesionEntrenamientoMapper::toDTO);
     }
 
     /**

@@ -32,6 +32,12 @@ public interface ISesionEntrenamientoService {
      * @return la sesión guardada, o la que ya existía si la clave se repite.
      */
     SesionEntrenamientoDTO guardarCompleta(SesionCompletaCreateDTO dto);
+
+    /**
+     * Sesión guardada con esa clave de idempotencia, leída en una transacción nueva
+     * (GP-076): la usa la fachada del guardado para recuperar la sesión ganadora.
+     */
+    java.util.Optional<SesionEntrenamientoDTO> buscarPorClaveIdempotencia(Integer usuarioId, String clave);
     // Sustituye los datos de una sesión existente.
     SesionEntrenamientoDTO modify(SesionEntrenamientoDTO sesionEntrenamientoDTO);
 

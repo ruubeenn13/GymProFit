@@ -7,6 +7,7 @@ import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoPatchDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.VolumenMuscularDTO;
 import com.gymprofit.api.exceptions.Response;
+import com.gymprofit.api.service.sesionentrenamiento.IGuardadoSesionCompletaService;
 import com.gymprofit.api.service.sesionentrenamiento.ISesionEntrenamientoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -40,6 +41,9 @@ public class SesionEntrenamientoController {
 
     // Servicio con la lógica de negocio de sesiones de entrenamiento
     private final ISesionEntrenamientoService sesionEntrenamientoService;
+
+    // Guardado completo con la recuperación de la carrera fuera de la transacción (GP-076).
+    private final IGuardadoSesionCompletaService guardadoSesionCompletaService;
 
     @Operation(summary = "Obtiene todas las sesiones de entrenamiento")
     @ApiResponses(value = {
@@ -109,7 +113,7 @@ public class SesionEntrenamientoController {
     @PostMapping("/sesiones/completa")
     public ResponseEntity<SesionEntrenamientoDTO> guardarSesionCompleta(
             @Valid @RequestBody SesionCompletaCreateDTO sesionCompletaCreateDTO) {
-        return ResponseEntity.ok(sesionEntrenamientoService.guardarCompleta(sesionCompletaCreateDTO));
+        return ResponseEntity.ok(guardadoSesionCompletaService.guardar(sesionCompletaCreateDTO));
     }
 
     @Operation(summary = "Modifica una sesión de entrenamiento existente")
