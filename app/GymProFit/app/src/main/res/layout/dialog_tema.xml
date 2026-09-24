@@ -45,7 +45,7 @@
         <ImageView
             android:layout_width="22dp"
             android:layout_height="22dp"
-            android:src="@drawable/ic_sun"
+            android:src="@drawable/ic_ms_light_mode"
             android:contentDescription="@null"
             android:layout_marginEnd="12dp" />
 
@@ -61,7 +61,7 @@
             android:id="@+id/ivCheckClaro"
             android:layout_width="22dp"
             android:layout_height="22dp"
-            android:src="@drawable/ic_check"
+            android:src="@drawable/ic_ms_check"
             android:contentDescription="@null"
             android:visibility="gone" />
 
@@ -83,7 +83,7 @@
         <ImageView
             android:layout_width="22dp"
             android:layout_height="22dp"
-            android:src="@drawable/ic_moon"
+            android:src="@drawable/ic_ms_dark_mode"
             android:contentDescription="@null"
             android:layout_marginEnd="12dp" />
 
@@ -99,7 +99,7 @@
             android:id="@+id/ivCheckOscuro"
             android:layout_width="22dp"
             android:layout_height="22dp"
-            android:src="@drawable/ic_check"
+            android:src="@drawable/ic_ms_check"
             android:contentDescription="@null"
             android:visibility="gone" />
 

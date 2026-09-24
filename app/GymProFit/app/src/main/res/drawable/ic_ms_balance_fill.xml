@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ic_ms_balance_fill — Material Symbols Rounded «balance», peso 400, variante rellena.
+  Importado sin redibujar de @material-symbols/svg-400@0.47.5, rounded/balance-fill.svg.
+  Licencia Apache 2.0 (Google). El viewBox del SVG es 0 -960 960 960: el grupo
+  traslada 960 hacia abajo para que el trazado caiga en el viewport 0..960.
+  Color por defecto ?attr/colorOnSurfaceVariant, el del icono al que sustituye (GP-080);
+  quien lo tiñe, manda.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="960" android:viewportHeight="960">
+    <group android:translateY="960">
+        <path
+            android:fillColor="?attr/colorOnSurfaceVariant"
+            android:pathData="M110-120q-13 0-21.5-8.5T80-150q0-13 8.5-21.5T110-180h340v-484q-26-9-46.5-29.5T374-740H215l118 285q4 8 4.5 17t-1.5 18q-9 45-46 67.5T210-330q-43 0-80-22.5T84-420q-2-9-1.5-18t4.5-17l118-285h-55q-13 0-21.5-8.5T120-770q0-13 8.5-21.5T150-800h224q12-35 41-57.5t65-22.5q36 0 65 22.5t41 57.5h224q13 0 21.5 8.5T840-770q0 13-8.5 21.5T810-740h-55l118 285q4 8 4.5 17t-1.5 18q-9 45-46 67.5T750-330q-43 0-80-22.5T624-420q-2-9-1.5-18t4.5-17l118-285H586q-9 26-29.5 46.5T510-664v484h340q13 0 21.5 8.5T880-150q0 13-8.5 21.5T850-120H110Zm565-320h150l-75-184-75 184Zm-540 0h150l-75-184-75 184Zm345-280q21 0 35.5-15t14.5-35q0-21-14.5-35.5T480-820q-20 0-35 14.5T430-770q0 20 15 35t35 15Z"/>
+    </group>
+</vector>

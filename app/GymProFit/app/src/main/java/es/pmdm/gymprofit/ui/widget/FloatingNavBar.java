@@ -46,9 +46,15 @@ import es.pmdm.gymprofit.R;
 // ============================================================
 public class FloatingNavBar extends FrameLayout {
 
+    // El relleno es el estado (GP-080): contorno en reposo, relleno en la pestaña
+    // activa. Material Symbols Rounded 400, los dos del mismo paquete.
     private static final int[] ICONOS = {
-            R.drawable.ic_home, R.drawable.ic_rutinas, R.drawable.ic_ejercicios,
-            R.drawable.ic_nutricion, R.drawable.ic_perfil
+            R.drawable.ic_ms_home, R.drawable.ic_ms_assignment, R.drawable.ic_ms_fitness_center,
+            R.drawable.ic_ms_restaurant, R.drawable.ic_ms_person
+    };
+    private static final int[] ICONOS_ACTIVOS = {
+            R.drawable.ic_ms_home_fill, R.drawable.ic_ms_assignment_fill, R.drawable.ic_ms_fitness_center_fill,
+            R.drawable.ic_ms_restaurant_fill, R.drawable.ic_ms_person_fill
     };
     private static final int[] LABELS = {
             R.string.nav_home, R.string.nav_rutinas, R.string.nav_ejercicios,
@@ -528,6 +534,7 @@ public class FloatingNavBar extends FrameLayout {
     private void resaltar(int sel) {
         for (int i = 0; i < N; i++) {
             int color = i == sel ? textoActivo : textoInactivo;
+            iconos[i].setImageResource(i == sel ? ICONOS_ACTIVOS[i] : ICONOS[i]);
             ImageViewCompat.setImageTintList(iconos[i], ColorStateList.valueOf(color));
             labels[i].setTextColor(color);
             labels[i].setVisibility(VISIBLE);

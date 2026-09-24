@@ -29,7 +29,7 @@
             android:id="@+id/ivIconoEjercicio"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/ic_ejercicios"
+            android:src="@drawable/ic_ms_fitness_center"
             android:contentDescription="@null" />
 
         <LinearLayout
@@ -100,7 +100,7 @@
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:layout_marginStart="4dp"
-            android:src="@drawable/ic_close"
+            android:src="@drawable/ic_ms_close"
             android:tint="?attr/colorOnSurface"
             android:padding="6dp"
             android:background="?attr/selectableItemBackgroundBorderless"
@@ -115,7 +115,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginStart="4dp"
-            android:src="@drawable/ic_chevron_right"
+            android:src="@drawable/ic_ms_chevron_right"
             android:contentDescription="@null" />
 
     </LinearLayout>

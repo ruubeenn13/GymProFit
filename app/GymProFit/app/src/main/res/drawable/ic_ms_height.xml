@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ic_ms_height — Material Symbols Rounded «height», peso 400.
+  Importado sin redibujar de @material-symbols/svg-400@0.47.5, rounded/height.svg.
+  Licencia Apache 2.0 (Google). El viewBox del SVG es 0 -960 960 960: el grupo
+  traslada 960 hacia abajo para que el trazado caiga en el viewport 0..960.
+  Color por defecto ?attr/colorOnSurface, el del icono al que sustituye (GP-080);
+  quien lo tiñe, manda.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="960" android:viewportHeight="960">
+    <group android:translateY="960">
+        <path
+            android:fillColor="?attr/colorOnSurface"
+            android:pathData="M450-235v-490l-67 66q-9 9-21 9t-21-9q-9-9-9-21t9-21l118-118q5-5 10-7t11-2q6 0 11 2t10 7l118 118q9 9 9 21t-9 21q-9 9-21.5 9t-21.5-9l-66-66v490l67-66q9-8 21-8.5t21 8.5q9 9 9 21t-9 21L501-141q-5 5-10 7t-11 2q-6 0-11-2t-10-7L341-259q-9-9-9-21t9-21q9-9 21-8.5t21 8.5l67 66Z"/>
+    </group>
+</vector>

@@ -77,11 +77,11 @@ public class AdminRutinaAdapter extends RecyclerView.Adapter<AdminRutinaAdapter.
             if (pos == RecyclerView.NO_POSITION) return;
             Rutina current = items.get(pos);
             List<UIHelper.MenuAction> actions = new ArrayList<>();
-            actions.add(new UIHelper.MenuAction(R.drawable.ic_edit,
+            actions.add(new UIHelper.MenuAction(R.drawable.ic_ms_edit,
                     ctx.getString(R.string.admin_editar_rutina_titulo),
                     () -> listener.onEditar(current, pos)));
             actions.add(new UIHelper.MenuAction(
-                    current.isActiva() ? R.drawable.ic_visibility_off : R.drawable.ic_check,
+                    current.isActiva() ? R.drawable.ic_ms_visibility_off : R.drawable.ic_ms_check,
                     current.isActiva() ? ctx.getString(R.string.admin_desactivar) : ctx.getString(R.string.admin_activar),
                     () -> listener.onToggleActiva(current, pos)));
             UIHelper.mostrarMenuAnclado(ctx, v, null, actions);

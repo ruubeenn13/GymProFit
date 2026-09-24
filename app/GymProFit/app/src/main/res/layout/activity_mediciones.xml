@@ -26,7 +26,7 @@
             android:id="@+id/btnBack"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/ic_arrow_back"
+            android:src="@drawable/ic_ms_arrow_back"
             android:padding="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
@@ -63,7 +63,7 @@
             <ImageView
                 android:layout_width="64dp"
                 android:layout_height="64dp"
-                android:src="@drawable/ic_peso"
+                android:src="@drawable/ic_ms_monitor_weight"
                 android:alpha="0.3"
                 android:contentDescription="@null" />
 
@@ -91,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:text="@string/medicion_registrar_primera"
-                app:icon="@drawable/ic_add" />
+                app:icon="@drawable/ic_ms_add" />
 
         </LinearLayout>
 
@@ -279,7 +279,7 @@
                                 android:layout_width="16dp"
                                 android:layout_height="16dp"
                                 android:layout_marginStart="8dp"
-                                android:src="@drawable/ic_chevron_right"
+                                android:src="@drawable/ic_ms_chevron_right"
                                 android:alpha="0.4"
                                 android:contentDescription="@null" />
 
@@ -321,7 +321,7 @@
                                 android:layout_width="16dp"
                                 android:layout_height="16dp"
                                 android:layout_marginStart="8dp"
-                                android:src="@drawable/ic_chevron_right"
+                                android:src="@drawable/ic_ms_chevron_right"
                                 android:alpha="0.4"
                                 android:contentDescription="@null" />
 
@@ -363,7 +363,7 @@
                                 android:layout_width="16dp"
                                 android:layout_height="16dp"
                                 android:layout_marginStart="8dp"
-                                android:src="@drawable/ic_chevron_right"
+                                android:src="@drawable/ic_ms_chevron_right"
                                 android:alpha="0.4"
                                 android:contentDescription="@null" />
 
@@ -408,7 +408,7 @@
                                 android:layout_width="16dp"
                                 android:layout_height="16dp"
                                 android:layout_marginStart="8dp"
-                                android:src="@drawable/ic_chevron_right"
+                                android:src="@drawable/ic_ms_chevron_right"
                                 android:alpha="0.4"
                                 android:contentDescription="@null" />
 
@@ -438,7 +438,7 @@
                                 android:textSize="@dimen/text_body"
                                 android:textStyle="bold"
                                 android:textColor="?attr/colorPrimary"
-                                android:drawableEnd="@drawable/ic_chevron_down"
+                                android:drawableEnd="@drawable/ic_ms_keyboard_arrow_down"
                                 android:drawableTint="?attr/colorPrimary"
                                 android:drawablePadding="6dp"
                                 android:gravity="center_vertical" />
@@ -486,7 +486,7 @@
                                     android:layout_width="16dp"
                                     android:layout_height="16dp"
                                     android:layout_marginStart="8dp"
-                                    android:src="@drawable/ic_chevron_right"
+                                    android:src="@drawable/ic_ms_chevron_right"
                                     android:alpha="0.4"
                                     android:contentDescription="@null" />
 
@@ -528,7 +528,7 @@
                                     android:layout_width="16dp"
                                     android:layout_height="16dp"
                                     android:layout_marginStart="8dp"
-                                    android:src="@drawable/ic_chevron_right"
+                                    android:src="@drawable/ic_ms_chevron_right"
                                     android:alpha="0.4"
                                     android:contentDescription="@null" />
 
@@ -570,7 +570,7 @@
                                     android:layout_width="16dp"
                                     android:layout_height="16dp"
                                     android:layout_marginStart="8dp"
-                                    android:src="@drawable/ic_chevron_right"
+                                    android:src="@drawable/ic_ms_chevron_right"
                                     android:alpha="0.4"
                                     android:contentDescription="@null" />
 
@@ -612,7 +612,7 @@
                                     android:layout_width="16dp"
                                     android:layout_height="16dp"
                                     android:layout_marginStart="8dp"
-                                    android:src="@drawable/ic_chevron_right"
+                                    android:src="@drawable/ic_ms_chevron_right"
                                     android:alpha="0.4"
                                     android:contentDescription="@null" />
 

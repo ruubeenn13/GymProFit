@@ -26,7 +26,7 @@
             android:id="@+id/btnBack"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/ic_arrow_back"
+            android:src="@drawable/ic_ms_arrow_back"
             android:padding="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
@@ -45,7 +45,7 @@
             android:id="@+id/btnMenuOpciones"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/ic_more_vert"
+            android:src="@drawable/ic_ms_more_vert"
             android:padding="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
@@ -65,7 +65,7 @@
         android:paddingBottom="8dp"
         app:queryHint="@string/admin_buscar_usuarios"
         app:iconifiedByDefault="false"
-        app:searchIcon="@drawable/ic_search" />
+        app:searchIcon="@drawable/ic_ms_search" />
 
     <!-- Filtros: estado -->
     <HorizontalScrollView

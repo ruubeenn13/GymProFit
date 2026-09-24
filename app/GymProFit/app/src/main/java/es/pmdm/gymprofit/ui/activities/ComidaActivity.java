@@ -219,21 +219,21 @@ public class ComidaActivity extends BaseActivity {
         boolean esPredefinido = item.getUsuarioIdAlimento() == null;
 
         List<UIHelper.MenuAction> actions = new ArrayList<>();
-        actions.add(new UIHelper.MenuAction(R.drawable.ic_edit, getString(R.string.comida_editar_cantidad),
+        actions.add(new UIHelper.MenuAction(R.drawable.ic_ms_edit, getString(R.string.comida_editar_cantidad),
                 () -> mostrarDialogoEditarCantidad(item)));
         if (esAdmin && esPredefinido) {
-            actions.add(new UIHelper.MenuAction(R.drawable.ic_visibility_off, getString(R.string.comida_desactivar_alimento),
+            actions.add(new UIHelper.MenuAction(R.drawable.ic_ms_visibility_off, getString(R.string.comida_desactivar_alimento),
                     () -> UIHelper.mostrarDialogoConIcono(ComidaActivity.this,
                             getString(R.string.comida_desactivar_alimento),
                             getString(R.string.alimento_desactivar_confirmar),
-                            R.drawable.ic_visibility_off,
+                            R.drawable.ic_ms_visibility_off,
                             () -> desactivarAlimento(item))));
         }
-        actions.add(new UIHelper.MenuAction(R.drawable.ic_delete, getString(R.string.comida_eliminar_de_comida), true,
+        actions.add(new UIHelper.MenuAction(R.drawable.ic_ms_delete, getString(R.string.comida_eliminar_de_comida), true,
                 () -> UIHelper.mostrarDialogoConIcono(ComidaActivity.this,
                         getString(R.string.comida_eliminar_titulo),
                         getString(R.string.comida_eliminar_confirmar),
-                        R.drawable.ic_delete,
+                        R.drawable.ic_ms_delete,
                         () -> eliminarAlimento(item))));
         UIHelper.mostrarMenuAnclado(this, anchorView, item.getNombreAlimento(), actions);
     }

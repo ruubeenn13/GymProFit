@@ -146,7 +146,7 @@ public class SesionesActivity extends AppCompatActivity {
                 sesion -> UIHelper.mostrarDialogoConIcono(this,
                         getString(R.string.sesiones_eliminar),
                         getString(R.string.sesiones_confirmar_eliminar),
-                        R.drawable.ic_delete,
+                        R.drawable.ic_ms_delete,
                         () -> eliminarSesion(sesion)),
                 sesion -> {
                     Intent intent = new Intent(this, ResumenSesionActivity.class);

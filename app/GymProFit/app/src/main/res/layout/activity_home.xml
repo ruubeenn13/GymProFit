@@ -70,7 +70,7 @@
                     android:id="@+id/btnMenuOpciones"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/ic_more_vert"
+                    android:src="@drawable/ic_ms_more_vert"
                     android:padding="8dp"
                     app:tint="?attr/colorOnSurface"
                     android:background="?attr/selectableItemBackgroundBorderless"
@@ -181,7 +181,7 @@
                         <ImageView
                             android:layout_width="28dp"
                             android:layout_height="28dp"
-                            android:src="@drawable/ic_trofeo"
+                            android:src="@drawable/ic_ms_trophy"
                             app:tint="@color/gp_gold"
                             android:contentDescription="@null" />
 
@@ -259,7 +259,7 @@
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:layout_gravity="center"
-                                android:src="@drawable/ic_ejercicios"
+                                android:src="@drawable/ic_ms_fitness_center"
                                 app:tint="?attr/colorPrimary"
                                 android:contentDescription="@null" />
 
@@ -278,7 +278,7 @@
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
-                            android:src="@drawable/ic_chevron_right"
+                            android:src="@drawable/ic_ms_chevron_right"
                             app:tint="?attr/colorPrimary"
                             android:contentDescription="@null" />
 
@@ -311,7 +311,7 @@
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:layout_gravity="center"
-                                android:src="@drawable/ic_rutinas"
+                                android:src="@drawable/ic_ms_assignment"
                                 app:tint="?attr/colorPrimary"
                                 android:contentDescription="@null" />
 
@@ -330,7 +330,7 @@
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
-                            android:src="@drawable/ic_chevron_right"
+                            android:src="@drawable/ic_ms_chevron_right"
                             app:tint="?attr/colorPrimary"
                             android:contentDescription="@null" />
 
@@ -363,7 +363,7 @@
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:layout_gravity="center"
-                                android:src="@drawable/ic_nutricion"
+                                android:src="@drawable/ic_ms_restaurant"
                                 app:tint="?attr/colorPrimary"
                                 android:contentDescription="@null" />
 
@@ -382,7 +382,7 @@
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
-                            android:src="@drawable/ic_chevron_right"
+                            android:src="@drawable/ic_ms_chevron_right"
                             app:tint="?attr/colorPrimary"
                             android:contentDescription="@null" />
 
@@ -469,7 +469,7 @@
                                 android:layout_width="40dp"
                                 android:layout_height="40dp"
                                 android:layout_gravity="center"
-                                android:src="@drawable/ic_calorias"
+                                android:src="@drawable/ic_ms_local_fire_department"
                                 app:tint="?attr/colorOnPrimary"
                                 android:contentDescription="@string/home_racha" />
 
@@ -510,7 +510,7 @@
                             <ImageView
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
-                                android:src="@drawable/ic_ejercicios"
+                                android:src="@drawable/ic_ms_fitness_center"
                                 app:tint="?attr/colorPrimary"
                                 android:contentDescription="@null" />
 
@@ -559,7 +559,7 @@
                             <ImageView
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
-                                android:src="@drawable/ic_tiempo"
+                                android:src="@drawable/ic_ms_schedule"
                                 app:tint="?attr/colorPrimary"
                                 android:contentDescription="@null" />
 

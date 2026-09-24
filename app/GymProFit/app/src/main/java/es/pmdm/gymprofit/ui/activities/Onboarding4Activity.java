@@ -44,6 +44,15 @@ public class Onboarding4Activity extends AppCompatActivity {
     private ImageView ivCheckPerderPeso, ivCheckGanarMusculo, ivCheckMantener, ivCheckFuerza;
 
     // Iconos de cada objetivo: se tinen de naranja al seleccionar, como el borde.
+    // Contorno y relleno de cada objetivo, en el orden de las tarjetas.
+    private static final int[] ICONOS_OBJETIVO = {
+            R.drawable.ic_ms_trending_down, R.drawable.ic_ms_trending_up,
+            R.drawable.ic_ms_balance, R.drawable.ic_ms_bolt
+    };
+    private static final int[] ICONOS_OBJETIVO_ACTIVOS = {
+            R.drawable.ic_ms_trending_down_fill, R.drawable.ic_ms_trending_up_fill,
+            R.drawable.ic_ms_balance_fill, R.drawable.ic_ms_bolt_fill
+    };
     private ImageView ivIconoPerderPeso, ivIconoGanarMusculo, ivIconoMantener, ivIconoFuerza;
     private ImageView[] todosLosIconos;
 
@@ -183,10 +192,12 @@ public class Onboarding4Activity extends AppCompatActivity {
         cardSeleccionada.setStrokeWidth(bordeElegidoPx);
         checkSeleccionado.setVisibility(View.VISIBLE);
 
-        // El icono de la tarjeta elegida pasa de gris a naranja. Se localiza por
-        // posicion porque los tres arrays van en el mismo orden.
+        // El icono de la tarjeta elegida pasa de gris a naranja y de contorno a
+        // relleno (GP-080: el relleno es el estado). Se localiza por posicion
+        // porque los arrays van en el mismo orden.
         for (int i = 0; i < todasLasCards.length; i++) {
             boolean elegida = todasLasCards[i] == cardSeleccionada;
+            todosLosIconos[i].setImageResource(elegida ? ICONOS_OBJETIVO_ACTIVOS[i] : ICONOS_OBJETIVO[i]);
             todosLosIconos[i].setColorFilter(elegida ? colorBordeSeleccionado : colorBordeNormalIcono);
         }
     }

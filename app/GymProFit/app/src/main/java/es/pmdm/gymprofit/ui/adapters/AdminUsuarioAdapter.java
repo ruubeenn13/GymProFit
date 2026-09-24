@@ -93,10 +93,10 @@ public class AdminUsuarioAdapter extends RecyclerView.Adapter<AdminUsuarioAdapte
             Usuario current = items.get(pos);
             List<UIHelper.MenuAction> actions = new ArrayList<>();
             actions.add(new UIHelper.MenuAction(
-                    current.isActivo() ? R.drawable.ic_visibility_off : R.drawable.ic_check,
+                    current.isActivo() ? R.drawable.ic_ms_visibility_off : R.drawable.ic_ms_check,
                     current.isActivo() ? ctx.getString(R.string.admin_desactivar) : ctx.getString(R.string.admin_activar),
                     () -> listener.onToggleActivo(current, pos)));
-            actions.add(new UIHelper.MenuAction(R.drawable.ic_perfil,
+            actions.add(new UIHelper.MenuAction(R.drawable.ic_ms_person,
                     ctx.getString(R.string.admin_cambiar_rol_titulo),
                     () -> listener.onCambiarRol(current, pos)));
             UIHelper.mostrarMenuAnclado(ctx, v, null, actions);

@@ -92,10 +92,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     // Público para que los Fragments de MainActivity puedan delegar aquí su botón de menú.
     public void mostrarMenuOpciones(View anchor) {
         List<UIHelper.MenuAction> actions = new ArrayList<>();
-        actions.add(new UIHelper.MenuAction(R.drawable.ic_palette,  getString(R.string.perfil_tema),         this::mostrarDialogoTema));
-        actions.add(new UIHelper.MenuAction(R.drawable.ic_language, getString(R.string.perfil_idioma),       this::mostrarDialogoIdioma));
-        actions.add(new UIHelper.MenuAction(R.drawable.ic_email,    getString(R.string.menu_contactanos),    this::abrirEmailContacto));
-        actions.add(new UIHelper.MenuAction(R.drawable.ic_logout,   getString(R.string.perfil_cerrar_sesion), true, this::confirmarCerrarSesion));
+        actions.add(new UIHelper.MenuAction(R.drawable.ic_ms_palette,  getString(R.string.perfil_tema),         this::mostrarDialogoTema));
+        actions.add(new UIHelper.MenuAction(R.drawable.ic_ms_language, getString(R.string.perfil_idioma),       this::mostrarDialogoIdioma));
+        actions.add(new UIHelper.MenuAction(R.drawable.ic_ms_mail,    getString(R.string.menu_contactanos),    this::abrirEmailContacto));
+        actions.add(new UIHelper.MenuAction(R.drawable.ic_ms_logout,   getString(R.string.perfil_cerrar_sesion), true, this::confirmarCerrarSesion));
         UIHelper.mostrarMenuAnclado(this, anchor, null, actions);
     }
 
@@ -217,7 +217,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 this,
                 getString(R.string.perfil_cerrar_sesion),
                 getString(R.string.dialog_cerrar_sesion_mensaje),
-                R.drawable.ic_logout,
+                R.drawable.ic_ms_logout,
                 () -> {
                     // Da de baja el token FCM del dispositivo (best-effort, mientras el JWT sigue vivo).
                     PushTokenManager.eliminar(this);

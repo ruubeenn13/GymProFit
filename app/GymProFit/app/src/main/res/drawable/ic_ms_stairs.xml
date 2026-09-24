@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ic_ms_stairs — Material Symbols Rounded «stairs», peso 400.
+  Importado sin redibujar de @material-symbols/svg-400@0.47.5, rounded/stairs.svg.
+  Licencia Apache 2.0 (Google). El viewBox del SVG es 0 -960 960 960: el grupo
+  traslada 960 hacia abajo para que el trazado caiga en el viewport 0..960.
+  Color por defecto ?attr/colorOnSurface, el del icono al que sustituye (GP-080);
+  quien lo tiñe, manda.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="960" android:viewportHeight="960">
+    <group android:translateY="960">
+        <path
+            android:fillColor="?attr/colorOnSurface"
+            android:pathData="M407-383h73q12.75 0 21.38-8.63Q510-400.25 510-413v-103h73q12.75 0 21.38-8.63Q613-533.25 613-546v-104h67q12.75 0 21.38-8.68 8.62-8.67 8.62-21.5 0-12.82-8.62-21.32-8.63-8.5-21.38-8.5h-97q-12.75 0-21.37 8.62Q553-692.75 553-680v103h-73q-12.75 0-21.37 8.62Q450-559.75 450-547v103h-73q-12.75 0-21.37 8.62Q347-426.75 347-414v104h-67q-12.75 0-21.37 8.68-8.63 8.67-8.63 21.5 0 12.82 8.63 21.32 8.62 8.5 21.37 8.5h97q12.75 0 21.38-8.63Q407-267.25 407-280v-103ZM180-120q-24 0-42-18t-18-42v-600q0-24 18-42t42-18h600q24 0 42 18t18 42v600q0 24-18 42t-42 18H180Zm0-60h600v-600H180v600Zm0-600v600-600Z"/>
+    </group>
+</vector>

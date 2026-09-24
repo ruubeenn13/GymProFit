@@ -137,7 +137,7 @@ public class ResumenCrearRutinaActivity extends AppCompatActivity {
                         this,
                         getString(R.string.resumen_crear_rutina_confirmar_titulo),
                         getString(R.string.resumen_crear_rutina_confirmar_msg),
-                        R.drawable.ic_delete,
+                        R.drawable.ic_ms_delete,
                         () -> {
                             ejercicios.remove(item);
                             adapter.notifyDataSetChanged();

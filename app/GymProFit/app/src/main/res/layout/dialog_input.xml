@@ -16,6 +16,7 @@
     android:paddingBottom="4dp">
 
     <com.google.android.material.textfield.TextInputLayout
+        app:errorIconDrawable="@drawable/ic_ms_error"
         android:id="@+id/tilInput"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"

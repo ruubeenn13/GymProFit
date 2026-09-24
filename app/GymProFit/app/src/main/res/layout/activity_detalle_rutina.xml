@@ -20,7 +20,7 @@
         android:background="?attr/colorSurface"
         app:title="@string/detalle_rutina_titulo"
         app:titleTextColor="?attr/colorOnSurface"
-        app:navigationIcon="@drawable/ic_arrow_back" />
+        app:navigationIcon="@drawable/ic_ms_arrow_back" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -92,7 +92,7 @@
                             android:layout_width="16dp"
                             android:layout_height="16dp"
                             android:layout_gravity="center_vertical"
-                            android:src="@drawable/ic_tiempo"
+                            android:src="@drawable/ic_ms_schedule"
                             android:alpha="0.6"
                             android:contentDescription="@null" />
 
@@ -155,7 +155,7 @@
             android:textSize="@dimen/text_subtitle"
             android:visibility="gone"
             app:cornerRadius="12dp"
-            app:icon="@drawable/ic_edit"
+            app:icon="@drawable/ic_ms_edit"
             app:iconGravity="textStart" />
 
         <com.google.android.material.button.MaterialButton
@@ -166,7 +166,7 @@
             android:text="@string/detalle_rutina_entrenar"
             android:textSize="@dimen/text_subtitle"
             app:cornerRadius="12dp"
-            app:icon="@drawable/ic_ejercicios"
+            app:icon="@drawable/ic_ms_fitness_center"
             app:iconGravity="textStart" />
 
     </LinearLayout>

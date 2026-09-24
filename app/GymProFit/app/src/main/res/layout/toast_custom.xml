@@ -22,7 +22,7 @@
         android:id="@+id/ivToastIcono"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:src="@drawable/ic_info"
+        android:src="@drawable/ic_ms_info"
         android:contentDescription="@null" />
 
     <!-- Mensaje de texto del toast -->

@@ -78,11 +78,11 @@ public class AdminAlimentoAdapter extends RecyclerView.Adapter<AdminAlimentoAdap
             if (pos == RecyclerView.NO_POSITION) return;
             Alimento current = items.get(pos);
             List<UIHelper.MenuAction> actions = new ArrayList<>();
-            actions.add(new UIHelper.MenuAction(R.drawable.ic_edit,
+            actions.add(new UIHelper.MenuAction(R.drawable.ic_ms_edit,
                     ctx.getString(R.string.admin_editar_alimento_titulo),
                     () -> listener.onEditar(current, pos)));
             actions.add(new UIHelper.MenuAction(
-                    current.isActivo() ? R.drawable.ic_visibility_off : R.drawable.ic_check,
+                    current.isActivo() ? R.drawable.ic_ms_visibility_off : R.drawable.ic_ms_check,
                     current.isActivo() ? ctx.getString(R.string.admin_desactivar) : ctx.getString(R.string.admin_activar),
                     () -> listener.onToggleActivo(current, pos)));
             UIHelper.mostrarMenuAnclado(ctx, v, null, actions);

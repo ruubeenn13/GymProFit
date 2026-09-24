@@ -20,7 +20,7 @@
         android:background="?attr/colorSurface"
         app:title="@string/anadir_ejercicios_titulo"
         app:titleTextColor="?attr/colorOnSurface"
-        app:navigationIcon="@drawable/ic_arrow_back" />
+        app:navigationIcon="@drawable/ic_ms_arrow_back" />
 
     <!-- Área de búsqueda — ocupa todo el espacio disponible -->
     <LinearLayout
@@ -33,6 +33,7 @@
         android:paddingTop="12dp">
 
         <com.google.android.material.textfield.TextInputLayout
+        app:errorIconDrawable="@drawable/ic_ms_error"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/crear_rutina_buscar_ejercicio"
@@ -41,7 +42,7 @@
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
-            app:startIconDrawable="@drawable/ic_search">
+            app:startIconDrawable="@drawable/ic_ms_search">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etBuscarEjercicio"

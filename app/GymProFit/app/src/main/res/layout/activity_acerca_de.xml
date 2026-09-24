@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorSurface"
-        app:navigationIcon="@drawable/ic_arrow_back"
+        app:navigationIcon="@drawable/ic_ms_arrow_back"
         app:title="@string/acerca_btn"
         app:titleTextColor="?attr/colorOnSurface" />
 
@@ -129,7 +129,7 @@
                         android:gravity="center_vertical"
                         android:layout_marginBottom="8dp">
                         <ImageView android:layout_width="14dp" android:layout_height="14dp"
-                            android:src="@drawable/ic_check" android:alpha="0.45" android:contentDescription="@null" />
+                            android:src="@drawable/ic_ms_check" android:alpha="0.45" android:contentDescription="@null" />
                         <TextView android:layout_width="0dp" android:layout_height="wrap_content"
                             android:layout_weight="1" android:layout_marginStart="10dp"
                             android:text="@string/acerca_feat_1" android:textSize="@dimen/text_caption"
@@ -144,7 +144,7 @@
                         android:gravity="center_vertical"
                         android:layout_marginBottom="8dp">
                         <ImageView android:layout_width="14dp" android:layout_height="14dp"
-                            android:src="@drawable/ic_check" android:alpha="0.45" android:contentDescription="@null" />
+                            android:src="@drawable/ic_ms_check" android:alpha="0.45" android:contentDescription="@null" />
                         <TextView android:layout_width="0dp" android:layout_height="wrap_content"
                             android:layout_weight="1" android:layout_marginStart="10dp"
                             android:text="@string/acerca_feat_2" android:textSize="@dimen/text_caption"
@@ -159,7 +159,7 @@
                         android:gravity="center_vertical"
                         android:layout_marginBottom="8dp">
                         <ImageView android:layout_width="14dp" android:layout_height="14dp"
-                            android:src="@drawable/ic_check" android:alpha="0.45" android:contentDescription="@null" />
+                            android:src="@drawable/ic_ms_check" android:alpha="0.45" android:contentDescription="@null" />
                         <TextView android:layout_width="0dp" android:layout_height="wrap_content"
                             android:layout_weight="1" android:layout_marginStart="10dp"
                             android:text="@string/acerca_feat_3" android:textSize="@dimen/text_caption"
@@ -174,7 +174,7 @@
                         android:gravity="center_vertical"
                         android:layout_marginBottom="8dp">
                         <ImageView android:layout_width="14dp" android:layout_height="14dp"
-                            android:src="@drawable/ic_check" android:alpha="0.45" android:contentDescription="@null" />
+                            android:src="@drawable/ic_ms_check" android:alpha="0.45" android:contentDescription="@null" />
                         <TextView android:layout_width="0dp" android:layout_height="wrap_content"
                             android:layout_weight="1" android:layout_marginStart="10dp"
                             android:text="@string/acerca_feat_4" android:textSize="@dimen/text_caption"
@@ -189,7 +189,7 @@
                         android:gravity="center_vertical"
                         android:layout_marginBottom="8dp">
                         <ImageView android:layout_width="14dp" android:layout_height="14dp"
-                            android:src="@drawable/ic_check" android:alpha="0.45" android:contentDescription="@null" />
+                            android:src="@drawable/ic_ms_check" android:alpha="0.45" android:contentDescription="@null" />
                         <TextView android:layout_width="0dp" android:layout_height="wrap_content"
                             android:layout_weight="1" android:layout_marginStart="10dp"
                             android:text="@string/acerca_feat_5" android:textSize="@dimen/text_caption"
@@ -203,7 +203,7 @@
                         android:orientation="horizontal"
                         android:gravity="center_vertical">
                         <ImageView android:layout_width="14dp" android:layout_height="14dp"
-                            android:src="@drawable/ic_check" android:alpha="0.45" android:contentDescription="@null" />
+                            android:src="@drawable/ic_ms_check" android:alpha="0.45" android:contentDescription="@null" />
                         <TextView android:layout_width="0dp" android:layout_height="wrap_content"
                             android:layout_weight="1" android:layout_marginStart="10dp"
                             android:text="@string/acerca_feat_6" android:textSize="@dimen/text_caption"
@@ -263,7 +263,7 @@
                         <ImageView
                             android:layout_width="16dp"
                             android:layout_height="16dp"
-                            android:src="@drawable/ic_email"
+                            android:src="@drawable/ic_ms_mail"
                             android:alpha="0.55"
                             android:contentDescription="@null" />
 
@@ -294,7 +294,7 @@
                         <ImageView
                             android:layout_width="16dp"
                             android:layout_height="16dp"
-                            android:src="@drawable/ic_share"
+                            android:src="@drawable/ic_ms_share"
                             android:alpha="0.55"
                             android:contentDescription="@null" />
 
@@ -327,7 +327,7 @@
                         <ImageView
                             android:layout_width="16dp"
                             android:layout_height="16dp"
-                            android:src="@drawable/ic_web"
+                            android:src="@drawable/ic_ms_open_in_new"
                             android:alpha="0.55"
                             android:contentDescription="@null" />
 

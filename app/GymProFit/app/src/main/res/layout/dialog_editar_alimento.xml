@@ -18,7 +18,7 @@
         android:layout_width="44dp"
         android:layout_height="44dp"
         android:layout_gravity="center_horizontal"
-        android:src="@drawable/ic_edit"
+        android:src="@drawable/ic_ms_edit"
         android:contentDescription="@null" />
 
     <!-- Título del diálogo -->
@@ -53,6 +53,7 @@
 
             <!-- Nombre del alimento -->
             <com.google.android.material.textfield.TextInputLayout
+        app:errorIconDrawable="@drawable/ic_ms_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -67,6 +68,7 @@
 
             <!-- Calorías por 100g -->
             <com.google.android.material.textfield.TextInputLayout
+        app:errorIconDrawable="@drawable/ic_ms_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -81,6 +83,7 @@
 
             <!-- Proteínas por 100g -->
             <com.google.android.material.textfield.TextInputLayout
+        app:errorIconDrawable="@drawable/ic_ms_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -95,6 +98,7 @@
 
             <!-- Carbohidratos por 100g -->
             <com.google.android.material.textfield.TextInputLayout
+        app:errorIconDrawable="@drawable/ic_ms_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -109,6 +113,7 @@
 
             <!-- Grasas por 100g -->
             <com.google.android.material.textfield.TextInputLayout
+        app:errorIconDrawable="@drawable/ic_ms_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/admin_alimentos_campo_grasas"

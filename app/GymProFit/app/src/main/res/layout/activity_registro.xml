@@ -24,7 +24,7 @@
             android:layout_alignParentStart="true"
             android:layout_marginTop="16dp"
             android:layout_marginStart="16dp"
-            android:src="@drawable/ic_arrow_back"
+            android:src="@drawable/ic_ms_arrow_back"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/onboarding_anterior" />
 
@@ -67,6 +67,7 @@
 
             <!-- Username -->
             <com.google.android.material.textfield.TextInputLayout
+        app:errorIconDrawable="@drawable/ic_ms_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/login_usuario"
@@ -75,7 +76,7 @@
                 app:boxCornerRadiusTopEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusBottomEnd="12dp"
-                app:startIconDrawable="@drawable/ic_perfil">
+                app:startIconDrawable="@drawable/ic_ms_person">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etRegUsername"
@@ -90,6 +91,7 @@
 
             <!-- Email -->
             <com.google.android.material.textfield.TextInputLayout
+        app:errorIconDrawable="@drawable/ic_ms_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
@@ -99,7 +101,7 @@
                 app:boxCornerRadiusTopEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusBottomEnd="12dp"
-                app:startIconDrawable="@drawable/ic_email">
+                app:startIconDrawable="@drawable/ic_ms_mail">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etRegEmail"
@@ -114,6 +116,7 @@
 
             <!-- Password -->
             <com.google.android.material.textfield.TextInputLayout
+        app:errorIconDrawable="@drawable/ic_ms_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
@@ -123,8 +126,9 @@
                 app:boxCornerRadiusTopEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusBottomEnd="12dp"
-                app:startIconDrawable="@drawable/ic_lock"
-                app:endIconMode="password_toggle">
+                app:startIconDrawable="@drawable/ic_ms_lock"
+                app:endIconMode="password_toggle"
+                app:endIconDrawable="@drawable/sel_ojo_password">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etRegPassword"
@@ -139,6 +143,7 @@
 
             <!-- Confirmar password -->
             <com.google.android.material.textfield.TextInputLayout
+        app:errorIconDrawable="@drawable/ic_ms_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
@@ -148,8 +153,9 @@
                 app:boxCornerRadiusTopEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusBottomEnd="12dp"
-                app:startIconDrawable="@drawable/ic_lock"
-                app:endIconMode="password_toggle">
+                app:startIconDrawable="@drawable/ic_ms_lock"
+                app:endIconMode="password_toggle"
+                app:endIconDrawable="@drawable/sel_ojo_password">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etRegConfirmarPassword"

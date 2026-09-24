@@ -55,6 +55,7 @@
 
             <!-- Peso - manteniendo el paddingStart/End del usuario -->
             <com.google.android.material.textfield.TextInputLayout
+        app:errorIconDrawable="@drawable/ic_ms_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/perfil_peso"
@@ -63,7 +64,7 @@
                 app:boxCornerRadiusTopEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusBottomEnd="12dp"
-                app:startIconDrawable="@drawable/ic_peso"
+                app:startIconDrawable="@drawable/ic_ms_monitor_weight"
                 app:suffixText="kg">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -80,6 +81,7 @@
 
             <!-- Altura - manteniendo el paddingStart/End del usuario -->
             <com.google.android.material.textfield.TextInputLayout
+        app:errorIconDrawable="@drawable/ic_ms_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -89,7 +91,7 @@
                 app:boxCornerRadiusTopEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusBottomEnd="12dp"
-                app:startIconDrawable="@drawable/ic_altura"
+                app:startIconDrawable="@drawable/ic_ms_height"
                 app:suffixText="cm">
 
                 <com.google.android.material.textfield.TextInputEditText
