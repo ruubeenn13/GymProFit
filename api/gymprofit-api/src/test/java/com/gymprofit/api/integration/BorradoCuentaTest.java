@@ -51,7 +51,6 @@ class BorradoCuentaTest extends AbstractOwnershipTest {
             "notificaciones",
             "objetivos_personales",
             "password_reset_codigos",
-            "progreso_ejercicios",
             "refresh_tokens",
             "rutinas",
             "sesiones_entrenamiento",
@@ -111,8 +110,6 @@ class BorradoCuentaTest extends AbstractOwnershipTest {
                 INSERT INTO series_realizadas (ejercicio_realizado_id, numero, repeticiones)
                 VALUES (%d, 1, 10)""".formatted(ejercicioRealizadoId));
 
-        ejecutar("INSERT INTO progreso_ejercicios (usuario_id, ejercicio_id) VALUES (%d, %d)"
-                .formatted(owner.getId(), ejercicioId));
         ejecutar("INSERT INTO mediciones_corporales (usuario_id, peso, fecha) VALUES (%d, 80.5, NOW())"
                 .formatted(owner.getId()));
         ejecutar("""

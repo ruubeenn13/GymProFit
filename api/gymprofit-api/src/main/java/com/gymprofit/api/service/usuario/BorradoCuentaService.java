@@ -130,7 +130,6 @@ public class BorradoCuentaService implements IBorradoCuentaService {
         borrar("Alimentos personalizados", "DELETE FROM Alimento a WHERE a.usuario.id = :id", usuarioId);
 
         // --- Progreso y perfil ---------------------------------------------
-        borrar("Progreso de ejercicios", "DELETE FROM ProgresoEjercicio p WHERE p.usuario.id = :id", usuarioId);
         borrar("Mediciones corporales", "DELETE FROM MedicionCorporal m WHERE m.usuario.id = :id", usuarioId);
         borrar("Objetivos personales", "DELETE FROM ObjetivoPersonal o WHERE o.usuario.id = :id", usuarioId);
         borrar("Logros obtenidos", "DELETE FROM UsuarioLogro ul WHERE ul.usuario.id = :id", usuarioId);

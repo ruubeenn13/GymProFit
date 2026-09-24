@@ -169,6 +169,8 @@ public class SecurityConfig {
                                 .requestMatchers("/mediciones-corporales/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers("/objetivos-personales/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers("/progreso-ejercicios/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+                                // Récords (GP-088): del usuario del token; un invitado no entrena ni tiene.
+                                .requestMatchers("/records/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers("/notificaciones/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers("/comidas/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers("/alimentos-comida/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
