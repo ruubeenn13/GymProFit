@@ -277,7 +277,13 @@
     <string name="sesiones_eliminar">Delete session</string>
     <string name="sesiones_confirmar_eliminar">Delete this session?</string>
     <string name="sesiones_sin_rutina">No routine linked</string>
-    <string name="sesiones_valoracion">Session rating</string>
+    <string name="sesiones_valoracion">Rating (optional)</string>
+    <string name="sesiones_sin_valorar">Not rated</string>
+    <string name="sesiones_valoracion_estado">%1$d of 5</string>
+    <string name="sesiones_valoracion_a11y">%1$d of 5 stars</string>
+    <string name="sesiones_valoracion_desc">Session rating, optional</string>
+    <string name="sesiones_valoracion_desc_sin">Session rating, optional, not rated</string>
+    <string name="sesiones_quitar_valoracion">Clear rating</string>
     <string name="sesiones_valoracion_fmt">Rating: %d/5</string>
     <string name="sesiones_ejercicios_sesion">Session exercises</string>
     <string name="sesiones_peso_hint">Weight (kg)</string>
