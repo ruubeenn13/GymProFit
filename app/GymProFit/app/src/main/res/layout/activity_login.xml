@@ -70,8 +70,7 @@
                 android:layout_marginTop="8dp"
                 android:text="@string/login_subtitulo"
                 android:textSize="@dimen/text_subtitle"
-                android:textColor="?attr/colorOnSurface"
-                android:alpha="0.7" />
+                android:textColor="?attr/colorOnSurfaceVariant" />
 
             <!-- Campo de usuario -->
             <com.google.android.material.textfield.TextInputLayout
@@ -162,8 +161,7 @@
                     android:layout_marginEnd="12dp"
                     android:text="@string/login_o"
                     android:textSize="@dimen/text_caption"
-                    android:textColor="?attr/colorOnSurface"
-                    android:alpha="0.5" />
+                    android:textColor="?attr/colorOnSurfaceVariant" />
 
                 <View
                     android:layout_width="0dp"

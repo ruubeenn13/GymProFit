@@ -71,8 +71,7 @@
                 android:textSize="@dimen/text_caption"
                 android:maxLines="2"
                 android:ellipsize="end"
-                android:textColor="?attr/colorOnSurface"
-                android:alpha="0.6" />
+                android:textColor="?attr/colorOnSurfaceVariant" />
 
             <!-- Chips de dificultad y grupo muscular -->
             <LinearLayout

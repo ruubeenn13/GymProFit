@@ -71,7 +71,7 @@
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
                 app:strokeWidth="2dp"
-                app:strokeColor="?attr/colorOutlineVariant">
+                app:strokeColor="?attr/colorOutline">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="horizontal" android:padding="16dp" android:gravity="center_vertical">
                     <ImageView android:id="@+id/ivIconoPerderPeso"
@@ -103,7 +103,7 @@
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
                 app:strokeWidth="2dp"
-                app:strokeColor="?attr/colorOutlineVariant">
+                app:strokeColor="?attr/colorOutline">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="horizontal" android:padding="16dp" android:gravity="center_vertical">
                     <ImageView android:id="@+id/ivIconoGanarMusculo"
@@ -135,7 +135,7 @@
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
                 app:strokeWidth="2dp"
-                app:strokeColor="?attr/colorOutlineVariant">
+                app:strokeColor="?attr/colorOutline">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="horizontal" android:padding="16dp" android:gravity="center_vertical">
                     <ImageView android:id="@+id/ivIconoMantener"
@@ -167,7 +167,7 @@
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
                 app:strokeWidth="2dp"
-                app:strokeColor="?attr/colorOutlineVariant">
+                app:strokeColor="?attr/colorOutline">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="horizontal" android:padding="16dp" android:gravity="center_vertical">
                     <ImageView android:id="@+id/ivIconoFuerza"

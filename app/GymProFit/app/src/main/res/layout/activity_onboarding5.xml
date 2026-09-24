@@ -62,7 +62,7 @@
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
                 app:strokeWidth="2dp"
-                app:strokeColor="?attr/colorOutlineVariant">
+                app:strokeColor="?attr/colorOutline">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
                     <ImageView android:id="@+id/ivNivelPrincipiante" android:layout_width="45dp" android:layout_height="10dp"
@@ -92,7 +92,7 @@
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
                 app:strokeWidth="2dp"
-                app:strokeColor="?attr/colorOutlineVariant">
+                app:strokeColor="?attr/colorOutline">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
                     <ImageView android:id="@+id/ivNivelIntermedio" android:layout_width="45dp" android:layout_height="10dp"
@@ -122,7 +122,7 @@
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
                 app:strokeWidth="2dp"
-                app:strokeColor="?attr/colorOutlineVariant">
+                app:strokeColor="?attr/colorOutline">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
                     <ImageView android:id="@+id/ivNivelAvanzado" android:layout_width="45dp" android:layout_height="10dp"
@@ -152,7 +152,7 @@
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
                 app:strokeWidth="2dp"
-                app:strokeColor="?attr/colorOutlineVariant">
+                app:strokeColor="?attr/colorOutline">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
                     <ImageView android:id="@+id/ivNivelExperto" android:layout_width="45dp" android:layout_height="10dp"

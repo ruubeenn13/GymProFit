@@ -128,8 +128,7 @@
                                 android:layout_marginTop="2dp"
                                 android:text="@string/email_ejemplo"
                                 android:textSize="@dimen/text_caption"
-                                android:textColor="?attr/colorOnPrimary"
-                                android:alpha="0.8" />
+                                android:textColor="@color/gp_on_primary_secondary" />
 
                         </LinearLayout>
 

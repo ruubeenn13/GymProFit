@@ -103,7 +103,7 @@
                     app:cardElevation="1dp"
                     app:cardBackgroundColor="?attr/colorSurface"
                     app:strokeWidth="1dp"
-                    app:strokeColor="?attr/colorOutlineVariant">
+                    app:strokeColor="?attr/colorOutline">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -199,7 +199,7 @@
                                 android:textSize="@dimen/text_eyebrow"
                                 android:textStyle="bold"
                                 android:letterSpacing="0.14"
-                                android:textColor="@color/gp_gold" />
+                                android:textColor="@color/gp_gold_text" />
 
                             <TextView
                                 android:id="@+id/tvRecordEjercicio"
@@ -220,7 +220,7 @@
                             android:layout_marginStart="12dp"
                             android:textSize="@dimen/text_headline"
                             android:textStyle="bold"
-                            android:textColor="@color/gp_gold" />
+                            android:textColor="@color/gp_gold_text" />
 
                     </LinearLayout>
 
@@ -419,8 +419,7 @@
                                 android:textAllCaps="true"
                                 android:textSize="@dimen/text_caption"
                                 android:letterSpacing="0.12"
-                                android:textColor="?attr/colorOnPrimary"
-                                android:alpha="0.85" />
+                                android:textColor="@color/gp_on_primary_secondary" />
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
@@ -447,8 +446,7 @@
                                     android:layout_marginBottom="12dp"
                                     android:text="@string/home_minutos"
                                     android:textSize="@dimen/text_subtitle"
-                                    android:textColor="?attr/colorOnPrimary"
-                                    android:alpha="0.9" />
+                                    android:textColor="@color/gp_on_primary_secondary" />
 
                             </LinearLayout>
 
@@ -457,8 +455,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textSize="@dimen/text_caption"
-                                android:textColor="?attr/colorOnPrimary"
-                                android:alpha="0.85" />
+                                android:textColor="@color/gp_on_primary_secondary" />
 
                         </LinearLayout>
 
