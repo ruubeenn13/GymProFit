@@ -4,6 +4,7 @@ import com.gymprofit.api.entity.MedicionCorporal;
 import com.gymprofit.api.entity.ObjetivoPersonal;
 import com.gymprofit.api.entity.SesionEntrenamiento;
 import com.gymprofit.api.enums.TipoComida;
+import com.gymprofit.api.enums.TipoLogro;
 import com.gymprofit.api.enums.TipoNotificacion;
 import com.gymprofit.api.repository.jpa.IComidaRepository;
 import com.gymprofit.api.repository.jpa.IDeviceTokenRepository;
@@ -278,11 +279,9 @@ public class RecordatorioNotificacionesTask {
     // ============================================================
 
     // 20:30 — avisa cuando el usuario está a UNA sesión de un logro de constancia.
-    // DECISIÓN: los umbrales de logros NO son legibles de BD (la entidad Logro no tiene
-    // columna de umbral; están hardcodeados en el switch de LogroService.evaluarLogros:
-    // CONSTANCIA = 7 y DEDICADO = 30 sesiones completadas). Por eso aquí se hardcodean
-    // los valores 6 y 29 (a una sesión de cada logro), usando el mismo contador que
-    // LogroService (countByUsuarioIdAndCompletadaTrue) para mantener la coherencia.
+    // Los umbrales salen de TipoLogro, el mismo sitio que usa LogroService para
+    // conceder: antes aquí había un 6 y un 29 escritos a mano (GP-079). Se usa el mismo
+    // contador que LogroService (countByUsuarioIdAndCompletadaTrue).
     // Anti-spam de 7 días por si el usuario se queda parado justo en 6/29 sesiones.
     @Scheduled(cron = "0 30 20 * * *", zone = ZONA)
     public void logroProximo() {
@@ -291,8 +290,9 @@ public class RecordatorioNotificacionesTask {
 
             for (Integer usuarioId : deviceTokenRepository.findDistinctUsuarioIds()) {
                 long completadas = sesionEntrenamientoRepository.countByUsuarioIdAndCompletadaTrue(usuarioId);
-                // A una sesión de CONSTANCIA (7) o de DEDICADO (30).
-                if (completadas != 6 && completadas != 29) continue;
+                // A una sesión de CONSTANCIA o de DEDICADO.
+                if (completadas != TipoLogro.CONSTANCIA.getUmbral() - 1
+                        && completadas != TipoLogro.DEDICADO.getUmbral() - 1) continue;
 
                 // Textos resueltos en el idioma actual del usuario.
                 Locale locale = localeDe(usuarioId);

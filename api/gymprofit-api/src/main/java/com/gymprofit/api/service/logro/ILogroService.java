@@ -2,6 +2,7 @@ package com.gymprofit.api.service.logro;
 
 import com.gymprofit.api.dto.entity.logro.LogroCreateDTO;
 import com.gymprofit.api.dto.entity.logro.LogroDTO;
+import com.gymprofit.api.dto.entity.logro.LogroProgresoDTO;
 import com.gymprofit.api.dto.entity.logro.UsuarioLogroDTO;
 
 import java.util.List;
@@ -28,4 +29,11 @@ public interface ILogroService {
 
     // Evalúa el progreso del usuario y otorga los nuevos logros que cumpla; devuelve sus nombres.
     List<String> evaluarLogros(Integer usuarioId);
+
+    /**
+     * Catálogo de logros con el estado y el progreso del usuario del token (GP-079).
+     *
+     * @return un elemento por logro del catálogo, conseguido o no
+     */
+    List<LogroProgresoDTO> progresoDelUsuarioActual();
 }

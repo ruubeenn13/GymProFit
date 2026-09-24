@@ -10,16 +10,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import es.pmdm.gymprofit.R;
-import es.pmdm.gymprofit.model.logro.Logro;
-import es.pmdm.gymprofit.model.logro.UsuarioLogro;
+import es.pmdm.gymprofit.model.logro.LogroProgreso;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
 import es.pmdm.gymprofit.model.usuario.UsuarioEstadisticas;
 import es.pmdm.gymprofit.network.ApiCallback;
@@ -31,6 +28,7 @@ import es.pmdm.gymprofit.ui.adapters.LogroAdapter;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.NotificationHelper;
 import es.pmdm.gymprofit.utils.PreferencesManager;
+import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
 // ResumenSesionActivity — pantalla de resumen tras registrar/consultar una sesión.
@@ -72,13 +70,12 @@ public class ResumenSesionActivity extends AppCompatActivity {
     private final UsuarioApi usuarioApi = ApiClient.service(UsuarioApi.class);
     // Interfaz Retrofit tipada del dominio logros (etapa 2)
     private final LogroApi logroApi = ApiClient.service(LogroApi.class);
-    // Contador de llamadas asíncronas pendientes (sesión, estadísticas, logros totales y desbloqueados)
-    private final AtomicInteger pendientes = new AtomicInteger(4);
+    // Contador de llamadas asíncronas pendientes (sesión, estadísticas y logros con progreso)
+    private final AtomicInteger pendientes = new AtomicInteger(3);
 
     private SesionEntrenamiento sesion;
     private UsuarioEstadisticas estadisticas;
-    private List<Logro> todosLogros = new ArrayList<>();
-    private Set<Integer> desbloqueados = new HashSet<>();
+    private List<LogroProgreso> logros = new ArrayList<>();
     private ArrayList<String> nuevosLogros = new ArrayList<>();
     // Indica si se llegó desde el registro de una sesión (para lanzar notificaciones)
     private boolean fromRegistrar = false;
@@ -115,8 +112,7 @@ public class ResumenSesionActivity extends AppCompatActivity {
         cargarVolumen(sesionId);
         cargarSesion(sesionId);
         cargarEstadisticas(usuarioId);
-        cargarTodosLogros();
-        cargarLogrosDesbloqueados(usuarioId);
+        cargarLogros();
     }
 
     /**
@@ -224,31 +220,18 @@ public class ResumenSesionActivity extends AppCompatActivity {
         });
     }
 
-    // Obtiene el catálogo completo de logros disponibles en la app (ya deserializado por Gson).
-    private void cargarTodosLogros() {
-        logroApi.getLogros().enqueue(new ApiCallback<List<Logro>>() {
-            @Override public void onOk(List<Logro> lista) {
-                if (lista != null) todosLogros = lista;
-                comprobarYMostrar();
-            }
-            @Override public void onFail(int code, String message) { comprobarYMostrar(); }
-        });
-    }
-
-    // Obtiene el conjunto de ids de logros ya desbloqueados por el usuario
-    // (extrae el logroId de cada relación UsuarioLogro, igual que LogrosActivity).
-    private void cargarLogrosDesbloqueados(int usuarioId) {
-        logroApi.getLogrosDeUsuario(usuarioId).enqueue(new ApiCallback<List<UsuarioLogro>>() {
-            @Override public void onOk(List<UsuarioLogro> lista) {
-                Set<Integer> ids = new HashSet<>();
-                if (lista != null) {
-                    for (UsuarioLogro ul : lista) ids.add(ul.getLogroId());
-                }
-                desbloqueados = ids;
+    // Logros con su estado, de GET /logros/progreso (GP-079). Aquí solo se enseñan
+    // los conseguidos; el fallo no bloquea el resumen, que tiene más cosas.
+    private void cargarLogros() {
+        logroApi.getProgreso().enqueue(new ApiCallback<List<LogroProgreso>>() {
+            @Override public void onOk(List<LogroProgreso> lista) {
+                if (lista != null) logros = lista;
                 comprobarYMostrar();
             }
             @Override public void onFail(int code, String message) {
-                desbloqueados = new HashSet<>();
+                // El resto del resumen sí llegó: se avisa de que los logros faltan
+                // en vez de dejar un «sin logros» que podría ser falso.
+                UiFeedback.toastError(ResumenSesionActivity.this, code, message);
                 comprobarYMostrar();
             }
         });
@@ -305,9 +288,9 @@ public class ResumenSesionActivity extends AppCompatActivity {
             tvStatMejorRacha.setText(String.valueOf(estadisticas.getMejorRachaDias()));
         }
 
-        List<Logro> filtrados = new ArrayList<>();
-        for (Logro l : todosLogros) {
-            if (desbloqueados.contains(l.getId())) filtrados.add(l);
+        List<LogroProgreso> filtrados = new ArrayList<>();
+        for (LogroProgreso l : logros) {
+            if (l.isConseguido()) filtrados.add(l);
         }
 
         if (fromRegistrar && sesion != null) {
@@ -323,7 +306,7 @@ public class ResumenSesionActivity extends AppCompatActivity {
         } else {
             tvLogrosVacio.setVisibility(View.GONE);
             rvLogros.setVisibility(View.VISIBLE);
-            rvLogros.setAdapter(new LogroAdapter(filtrados, desbloqueados));
+            rvLogros.setAdapter(new LogroAdapter(filtrados));
         }
     }
 }

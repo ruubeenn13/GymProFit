@@ -688,4 +688,32 @@
          sesiones_sin_rutina, que es "hay rutina pero no se ha podido resolver su
          nombre" (por ejemplo, una rutina archivada). -->
     <string name="sesiones_entrenamiento_libre">Entrenamiento libre</string>
+
+    <!-- Logros: estado y progreso (GP-079) -->
+    <string name="logro_conseguido">Conseguido</string>
+    <string name="logro_conseguido_fecha">Conseguido · %1$s</string>
+    <string name="logro_bloqueado">Bloqueado</string>
+    <string name="logro_a11y">%1$s. %2$s. %3$s</string>
+    <string name="logro_a11y_conseguido">Conseguido el %1$s</string>
+    <string name="logro_a11y_bloqueado_progreso">Bloqueado, %1$s</string>
+    <plurals name="logro_progreso_sesiones">
+        <item quantity="one">%1$d de %2$d sesión</item>
+        <item quantity="many">%1$d de %2$d sesiones</item>
+        <item quantity="other">%1$d de %2$d sesiones</item>
+    </plurals>
+    <plurals name="logro_progreso_ejercicios">
+        <item quantity="one">%1$d de %2$d ejercicio</item>
+        <item quantity="many">%1$d de %2$d ejercicios</item>
+        <item quantity="other">%1$d de %2$d ejercicios</item>
+    </plurals>
+    <plurals name="logro_progreso_objetivos">
+        <item quantity="one">%1$d de %2$d objetivo</item>
+        <item quantity="many">%1$d de %2$d objetivos</item>
+        <item quantity="other">%1$d de %2$d objetivos</item>
+    </plurals>
+    <plurals name="logro_progreso_pasos">
+        <item quantity="one">%1$d de %2$d paso</item>
+        <item quantity="many">%1$d de %2$d pasos</item>
+        <item quantity="other">%1$d de %2$d pasos</item>
+    </plurals>
 </resources>

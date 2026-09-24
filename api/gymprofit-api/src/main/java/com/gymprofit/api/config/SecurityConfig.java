@@ -179,6 +179,8 @@ public class SecurityConfig {
                                 // no son catálogo. Va ANTES del GET general de /logros/**, que sí es el
                                 // catálogo y sigue siendo público. Propiedad comprobada en LogroService.
                                 .requestMatchers(HttpMethod.GET, "/logros/usuario/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+                                // Igual el progreso: es del usuario del token, y un invitado no tiene (GP-079).
+                                .requestMatchers(HttpMethod.GET, "/logros/progreso").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
 
                                 // GUEST/USER/ADMIN: catálogo de logros disponibles (iguales para todos)
                                 .requestMatchers(HttpMethod.GET, "/logros/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
