@@ -125,4 +125,9 @@
     <color name="green_chip_text">@color/gp_success</color>
     <color name="red_chip">@color/gp_error_container</color>
     <color name="red_chip_text">@color/gp_error</color>
+
+    <!-- Fondo del icono de la app (GP-081). Solo en values/: el icono del lanzador no
+         cambia con el tema de la app. Es el fondo del tema oscuro, con el logo de la
+         variante oscura encima (versión A, elegida por el propietario). -->
+    <color name="ic_launcher_fondo">#0B0C0E</color>
 </resources>
