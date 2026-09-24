@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ic_launcher_round — icono adaptativo del lanzador de la app (variante recortada en círculo).
-  Combina fondo, primer plano y versión monocromo para Android 8.0+ (API 26+).
+  Icono adaptativo de GymProFit (GP-081). Todo sale de la misma fuente, drawable-night/logo.png:
+    · primer plano: el logo dentro de la zona segura de 66 dp sobre 108, así que
+      ninguna máscara (círculo, squircle, cuadrado redondeado) lo recorta;
+    · fondo: color plano, ic_launcher_fondo;
+    · monocromo: la silueta del logo, para el icono temático de Android 13+.
+  Lo generó el script de GP-081; si cambia el logo, se regenera, no se retoca a mano.
 -->
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-    <background android:drawable="@drawable/ic_launcher_background" />
-    <foreground android:drawable="@drawable/ic_launcher_foreground" />
-    <monochrome android:drawable="@drawable/ic_launcher_foreground" />
+    <background android:drawable="@color/ic_launcher_fondo" />
+    <foreground android:drawable="@mipmap/ic_launcher_foreground" />
+    <monochrome android:drawable="@mipmap/ic_launcher_monochrome" />
 </adaptive-icon>

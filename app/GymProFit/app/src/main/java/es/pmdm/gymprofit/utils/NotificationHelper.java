@@ -35,7 +35,7 @@ public class NotificationHelper {
     public static void notificarSesionCompletada(Context ctx, int duracion) {
         // 1.- Crear la notificación con sus propiedades
         NotificationCompat.Builder builder = new NotificationCompat.Builder(ctx, CANAL_SESIONES);
-        builder.setSmallIcon(android.R.drawable.ic_dialog_info);
+        builder.setSmallIcon(R.drawable.ic_notificacion);
         builder.setContentTitle(ctx.getString(R.string.notif_sesion_titulo));
         builder.setContentText(ctx.getString(R.string.notif_sesion_texto, duracion));
         builder.setPriority(NotificationCompat.PRIORITY_MAX);
@@ -52,7 +52,7 @@ public class NotificationHelper {
     public static void notificarRutinaCreada(Context ctx, String nombre) {
         // 1.- Crear la notificación con sus propiedades
         NotificationCompat.Builder builder = new NotificationCompat.Builder(ctx, CANAL_RUTINAS);
-        builder.setSmallIcon(android.R.drawable.ic_dialog_info);
+        builder.setSmallIcon(R.drawable.ic_notificacion);
         builder.setContentTitle(ctx.getString(R.string.notif_rutina_titulo));
         builder.setContentText(ctx.getString(R.string.notif_rutina_texto, nombre));
         builder.setPriority(NotificationCompat.PRIORITY_MAX);
@@ -70,7 +70,7 @@ public class NotificationHelper {
     public static void notificarLogrosDesbloqueados(Context ctx, List<String> nombres) {
         // 1.- Crear la notificación con sus propiedades (estilo expandible)
         NotificationCompat.Builder builder = new NotificationCompat.Builder(ctx, CANAL_LOGROS);
-        builder.setSmallIcon(android.R.drawable.star_big_on);
+        builder.setSmallIcon(R.drawable.ic_notificacion);
         builder.setContentTitle(ctx.getString(R.string.notif_logros_titulo));
         builder.setContentText(ctx.getString(R.string.notif_logros_texto, nombres.size()));
         builder.setPriority(NotificationCompat.PRIORITY_MAX);
@@ -94,7 +94,7 @@ public class NotificationHelper {
     public static void notificarPush(Context ctx, String titulo, String cuerpo) {
         // 1.- Crear la notificación con el contenido que envía el backend
         NotificationCompat.Builder builder = new NotificationCompat.Builder(ctx, CANAL_PUSH);
-        builder.setSmallIcon(android.R.drawable.ic_dialog_info);
+        builder.setSmallIcon(R.drawable.ic_notificacion);
         builder.setContentTitle(titulo != null && !titulo.isEmpty()
                 ? titulo : ctx.getString(R.string.notif_push_titulo_defecto));
         builder.setContentText(cuerpo != null ? cuerpo : "");
@@ -112,8 +112,12 @@ public class NotificationHelper {
     }
 
     // Crea (si es necesario) el canal de notificación y muestra la notificación construida.
+    // Icono pequeño: la silueta del logo en blanco (GP-081). Antes las cuatro usaban
+    // una «i» o una estrella del sistema, y en la barra de estado no salía GymProFit.
+    // El color de marca tiñe el icono en la notificación desplegada.
     private static void enviar(Context ctx, String canalId, String canalNombre,
                                 int notifId, NotificationCompat.Builder builder) {
+        builder.setColor(androidx.core.content.ContextCompat.getColor(ctx, R.color.gp_primary));
         // 2.- Añadir el canal al sistema de notificaciones
         NotificationManager manager = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
 
