@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Solo en depuración. No se traducen: nunca llegan a un usuario. -->
+<resources>
+    <string name="medidor_nombre" translatable="false">GymProFit · medidor (depuración)</string>
+    <string name="medidor_descripcion" translatable="false">Vuelca al log el tamaño de los textos y de las zonas pulsables de GymProFit.</string>
+</resources>

@@ -18,8 +18,9 @@
 
     <!-- ── Escala tipográfica ─────────────────────────────────────────────── -->
 
-    <!-- Etiqueta en mayúsculas sobre una cifra. Sustituye a 10 y 11 sp. -->
-    <dimen name="text_eyebrow">12sp</dimen>
+    <!-- Etiqueta en mayúsculas sobre una cifra. Sustituye a 10 y 11 sp.
+         Es el suelo de la escala: ningún texto de la app baja de 13 sp (GP-089). -->
+    <dimen name="text_eyebrow">13sp</dimen>
 
     <!-- Botones, chips y etiquetas de campo. Sustituye a 12 sp. -->
     <dimen name="text_label">14sp</dimen>

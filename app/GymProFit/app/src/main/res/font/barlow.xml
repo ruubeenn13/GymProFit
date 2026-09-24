@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  barlow — la familia del TEXTO de la app (GP-089). Misma familia que la
+  condensada de los titulares, en ancho normal: una familia, dos anchos.
+  Pesos 400, 500 y 600. Un textStyle="bold" cae en el 600, que es el más
+  cercano, y no se sintetiza (minikin solo finge negrita si faltan 200).
+-->
+<font-family xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <font
+        android:font="@font/barlow_regular"
+        android:fontStyle="normal"
+        android:fontWeight="400"
+        app:font="@font/barlow_regular"
+        app:fontStyle="normal"
+        app:fontWeight="400" />
+    <font
+        android:font="@font/barlow_medium"
+        android:fontStyle="normal"
+        android:fontWeight="500"
+        app:font="@font/barlow_medium"
+        app:fontStyle="normal"
+        app:fontWeight="500" />
+    <font
+        android:font="@font/barlow_semibold"
+        android:fontStyle="normal"
+        android:fontWeight="600"
+        app:font="@font/barlow_semibold"
+        app:fontStyle="normal"
+        app:fontWeight="600" />
+</font-family>
