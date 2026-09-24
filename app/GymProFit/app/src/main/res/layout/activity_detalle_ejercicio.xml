@@ -63,8 +63,7 @@
                 android:textSize="@dimen/text_eyebrow"
                 android:textAllCaps="true"
                 android:letterSpacing="0.1"
-                android:textColor="?attr/colorOnSurface"
-                android:alpha="0.5" />
+                android:textColor="?attr/colorOnSurfaceVariant" />
 
             <!-- Card demostración: fondo blanco (las demos de wger/FED lo tienen)
                  y la imagen se muestra COMPLETA (fitCenter), nunca recortada. -->
@@ -150,8 +149,7 @@
                             android:layout_marginStart="14dp"
                             android:text="@string/detalle_ejercicio_musculo"
                             android:textSize="@dimen/text_body"
-                            android:textColor="?attr/colorOnSurface"
-                            android:alpha="0.6" />
+                            android:textColor="?attr/colorOnSurfaceVariant" />
 
                         <TextView
                             android:id="@+id/tvStatMusculo"
@@ -192,8 +190,7 @@
                             android:layout_marginStart="14dp"
                             android:text="@string/detalle_ejercicio_nivel"
                             android:textSize="@dimen/text_body"
-                            android:textColor="?attr/colorOnSurface"
-                            android:alpha="0.6" />
+                            android:textColor="?attr/colorOnSurfaceVariant" />
 
                         <TextView
                             android:id="@+id/tvStatNivel"
@@ -245,8 +242,7 @@
                             android:layout_marginStart="14dp"
                             android:text="@string/detalle_ejercicio_equipamiento"
                             android:textSize="@dimen/text_body"
-                            android:textColor="?attr/colorOnSurface"
-                            android:alpha="0.6" />
+                            android:textColor="?attr/colorOnSurfaceVariant" />
 
                         <TextView
                             android:id="@+id/tvStatEquipamiento"
@@ -325,8 +321,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/text_body"
-                        android:textColor="?attr/colorOnSurface"
-                        android:alpha="0.8"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:lineSpacingMultiplier="1.5" />
 
                 </LinearLayout>
@@ -364,8 +359,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/text_body"
-                        android:textColor="?attr/colorOnSurface"
-                        android:alpha="0.8"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:lineSpacingMultiplier="1.7" />
 
                 </LinearLayout>

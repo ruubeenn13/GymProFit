@@ -32,8 +32,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/text_caption"
-        android:textColor="?attr/colorOnSurface"
-        android:alpha="0.75"
+        android:textColor="?attr/colorOnSurfaceVariant"
         android:gravity="center"
         android:text="0 kcal | 0g prot | 0g carbos | 0g grasas" />
 

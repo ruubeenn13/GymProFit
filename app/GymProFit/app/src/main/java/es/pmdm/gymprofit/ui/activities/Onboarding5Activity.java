@@ -111,7 +111,8 @@ public class Onboarding5Activity extends AppCompatActivity {
         bordeElegidoPx = Math.round(3 * densidad);
 
         TypedValue typedValue = new TypedValue();
-        getTheme().resolveAttribute(com.google.android.material.R.attr.colorOutlineVariant, typedValue, true);
+        // colorOutline: canto de una tarjeta que se pulsa, a 3:1 (GP-063).
+        getTheme().resolveAttribute(com.google.android.material.R.attr.colorOutline, typedValue, true);
         colorBordeNormal = typedValue.data;
         getTheme().resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true);
         colorBordeSeleccionado = typedValue.data;

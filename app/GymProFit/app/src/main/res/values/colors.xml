@@ -18,26 +18,42 @@
     <color name="gp_on_primary">#FFFFFF</color>
     <color name="gp_primary_container">#FFE0CC</color>
     <color name="gp_on_primary_container">#5C1E00</color>
-    <!-- Dorado del logo: reservado a racha y logros -->
-    <color name="gp_gold">#B58A2A</color>
+    <!-- Dorado del logo: reservado a récords y logros (DEC-018). Son DOS tokens
+         porque el tema claro no admite uno solo (GP-063): el #B58A2A de antes daba
+         2,80:1 como texto sobre el fondo. gp_gold es para lo gráfico —borde,
+         icono— y pasa 3:1 sobre fondo y tarjeta; gp_gold_text es para letras y
+         pasa 4,5:1. En oscuro los dos son el mismo color. -->
+    <color name="gp_gold">#AE8528</color>
+    <color name="gp_gold_text">#8A6920</color>
 
     <!-- ── Superficies ───────────────────────────────────────────────────── -->
     <!-- La tarjeta tiene que VERSE. Antes surface estaba a 1,07:1 del fondo y
          el borde a 1,15:1, con elevación 0: una MaterialCardView era un
          rectángulo invisible, y toda la app está construida sobre tarjetas.
-         Ahora: surface 1,13:1 sobre el fondo y borde 1,66:1 sobre la tarjeta,
-         más 1dp de elevación (ver Widget.GymProFit.Card). En tema claro la
-         profundidad la da la sombra; el color solo acompaña. -->
+         Surface queda a 1,13:1 del fondo, con 1dp de elevación (ver
+         Widget.GymProFit.Card), que en claro tiñe la tarjeta a #FBF5F2.
+
+         gp_stroke es el BORDE que delimita —tarjeta, campo, chip— y desde GP-063
+         llega a 3:1 (WCAG 1.4.11) contra fondo, tarjeta y tarjeta teñida. Antes
+         daba 1,66:1. gp_divider es el SEPARADOR decorativo de dentro de una
+         tarjeta, que no delimita ningún componente: conserva el valor antiguo
+         para no convertir cada lista en una rejilla. -->
     <color name="gp_background">#F1F1EE</color>
     <color name="gp_surface">#FFFFFF</color>
     <color name="gp_surface_2">#E8E8E3</color>
-    <color name="gp_stroke">#C9C9C2</color>
+    <color name="gp_stroke">#8C8C7D</color>
+    <color name="gp_divider">#C9C9C2</color>
 
     <!-- ── Texto ─────────────────────────────────────────────────────────── -->
     <color name="gp_on_surface">#17181C</color>
     <!-- 6,68:1 sobre blanco. Es el token que sustituye a los android:alpha
          sobre texto, que bajaban hasta 2,14:1 (ilegible). -->
     <color name="gp_text_secondary">#5A5C62</color>
+    <!-- Texto secundario SOBRE LA MARCA (tarjetas naranjas de inicio, nutrición,
+         perfil y administración). Sustituye a los alpha 0,7–0,85 que llevaba
+         colorOnPrimary (GP-063): es la mezcla del 90 % ya hecha, 4,86:1 sobre
+         gp_primary. -->
+    <color name="gp_on_primary_secondary">#F8ECE6</color>
 
     <!-- ── Cuerpo anatómico (mapa muscular estilo Symmetry) ──────────────── -->
     <!-- Silueta neutra del cuerpo; el músculo trabajado se pinta en naranja -->
@@ -45,13 +61,17 @@
     <color name="body_highlight">#F25C00</color>
 
     <!-- ── Macros ────────────────────────────────────────────────────────── -->
-    <!-- Un color por macro: tres barras del mismo color no codifican nada. -->
-    <color name="gp_macro_proteinas">#2F6FD0</color>
-    <color name="gp_macro_carbos">#C27C12</color>
+    <!-- Un color por macro: tres barras del mismo color no codifican nada.
+         Los tres pasan 4,5:1 sobre fondo y tarjeta (GP-063): carbohidratos
+         (#C27C12) daba 3,39:1 y proteínas (#2F6FD0) 4,31:1 sobre el fondo. -->
+    <color name="gp_macro_proteinas">#2E6CCB</color>
+    <color name="gp_macro_carbos">#99620E</color>
     <color name="gp_macro_grasas">#7A54C4</color>
 
     <!-- ── Estados ───────────────────────────────────────────────────────── -->
-    <color name="gp_success">#1E8E4A</color>
+    <!-- 4,55:1 sobre su contenedor y 4,64:1 sobre el fondo (GP-063). El
+         #1E8E4A de antes daba 3,63:1 en el chip y 3,69:1 sobre el fondo. -->
+    <color name="gp_success">#1A7C41</color>
     <color name="gp_success_container">#DFF4E7</color>
     <color name="gp_error">#C62828</color>
     <color name="gp_error_container">#FDE9E9</color>

@@ -13,22 +13,31 @@
          primarios. Con #1A0E00 sube a 6,61:1. Es además lo que hacen Strava
          y Hevy: el naranja se ve más caro con texto oscuro encima. -->
     <color name="gp_on_primary">#1A0E00</color>
+    <!-- Texto secundario sobre la marca: la mezcla del 80 % ya hecha, 4,93:1 (GP-063). -->
+    <color name="gp_on_primary_secondary">#482000</color>
     <color name="gp_primary_container">#3A2110</color>
     <color name="gp_on_primary_container">#FFB27A</color>
     <color name="gp_gold">#E8B84B</color>
+    <color name="gp_gold_text">#E8B84B</color>
 
     <!-- ── Superficies ───────────────────────────────────────────────────── -->
     <!-- Mismo problema que en claro, peor: surface estaba a 1,10:1 del fondo y
          el borde a 1,25:1. En tema oscuro la sombra no se ve, así que el
-         trabajo de separar lo tiene que hacer el BORDE: pasa a 2,06:1 sobre la
-         tarjeta y 2,41:1 sobre el fondo. No llega al 3:1 de WCAG 1.4.11 a
-         propósito — a ese contraste el borde se lee como un wireframe y la
-         norma solo lo exige para identificar un CONTROL, no el canto de un
-         contenedor. -->
+         trabajo de separar lo tiene que hacer el BORDE.
+
+         Hasta GP-063 el borde se quedaba en 2,06:1 a propósito, con el
+         argumento de que a 3:1 se lee como un wireframe y de que WCAG 1.4.11
+         solo lo exige para identificar un control. Se cambia porque muchas de
+         estas tarjetas SON controles —se pulsan— y su canto es lo único que
+         dice dónde se pulsa. #676F7E da 3,30:1 sobre la tarjeta, 3,87:1 sobre
+         el fondo y 3,11:1 sobre la tarjeta teñida por la elevación (#262223).
+         gp_divider conserva el valor anterior para los separadores internos,
+         que no delimitan nada. -->
     <color name="gp_background">#0B0C0E</color>
     <color name="gp_surface">#1B1E24</color>
     <color name="gp_surface_2">#252A31</color>
-    <color name="gp_stroke">#4A505B</color>
+    <color name="gp_stroke">#676F7E</color>
+    <color name="gp_divider">#4A505B</color>
 
     <!-- ── Texto ─────────────────────────────────────────────────────────── -->
     <color name="gp_on_surface">#F2F2F3</color>

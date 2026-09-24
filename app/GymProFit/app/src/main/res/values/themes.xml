@@ -18,7 +18,7 @@
         <item name="colorSurfaceVariant">@color/gp_surface_2</item>
         <item name="colorOnSurfaceVariant">@color/gp_text_secondary</item>
         <item name="colorOutline">@color/gp_stroke</item>
-        <item name="colorOutlineVariant">@color/gp_stroke</item>
+        <item name="colorOutlineVariant">@color/gp_divider</item>
         <item name="colorError">@color/gp_error</item>
         <item name="android:colorBackground">@color/gp_background</item>
         <item name="android:windowBackground">@color/gp_background</item>

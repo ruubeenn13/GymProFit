@@ -113,8 +113,7 @@
                             android:textSize="@dimen/text_label"
                             android:textAllCaps="true"
                             android:letterSpacing="0.12"
-                            android:textColor="?attr/colorOnPrimary"
-                            android:alpha="0.8" />
+                            android:textColor="@color/gp_on_primary_secondary" />
 
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>

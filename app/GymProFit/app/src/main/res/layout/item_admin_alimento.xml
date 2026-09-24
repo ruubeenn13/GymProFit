@@ -13,7 +13,7 @@
     app:cardElevation="0dp"
     app:cardBackgroundColor="?attr/colorSurface"
     app:strokeWidth="1dp"
-    app:strokeColor="?attr/colorOutlineVariant">
+    app:strokeColor="?attr/colorOutline">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -75,7 +75,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textSize="@dimen/text_label"
-                android:alpha="0.6"
                 android:textColor="?attr/colorOnSurfaceVariant" />
 
             <TextView
@@ -83,7 +82,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_label"
-                android:alpha="0.6"
                 android:textColor="?attr/colorOnSurfaceVariant" />
 
         </LinearLayout>

@@ -59,8 +59,8 @@ public class Onboarding4Activity extends AppCompatActivity {
 
     private int colorBordeNormal;
     private int colorBordeSeleccionado;
-    // Gris de reposo del icono. No vale el del borde: colorOutlineVariant sobre
-    // fondo oscuro deja el dibujo casi invisible.
+    // Gris de reposo del icono. No vale el del borde: el gris de borde es para
+    // delimitar, no para dibujar, y deja el icono apagado sobre fondo oscuro.
     private int colorBordeNormalIcono;
 
     // Inicializa la pantalla: aplica tema/idioma, resuelve colores, monta vistas y
@@ -135,8 +135,10 @@ public class Onboarding4Activity extends AppCompatActivity {
 
         TypedValue typedValue = new TypedValue();
 
+        // colorOutline y no Variant: es el canto de una tarjeta que se pulsa, y
+        // tiene que llegar a 3:1 (GP-063). Variant queda para separadores.
         getTheme().resolveAttribute(
-                com.google.android.material.R.attr.colorOutlineVariant, typedValue, true
+                com.google.android.material.R.attr.colorOutline, typedValue, true
         );
 
         colorBordeNormal = typedValue.data;
