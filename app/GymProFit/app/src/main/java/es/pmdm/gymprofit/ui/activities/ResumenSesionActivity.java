@@ -2,6 +2,7 @@ package es.pmdm.gymprofit.ui.activities;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,6 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.logro.LogroProgreso;
+import es.pmdm.gymprofit.model.record.Record;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
 import es.pmdm.gymprofit.model.usuario.UsuarioEstadisticas;
 import es.pmdm.gymprofit.network.ApiCallback;
@@ -26,6 +28,7 @@ import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.ui.adapters.LogroAdapter;
 import es.pmdm.gymprofit.utils.FechaUtils;
+import es.pmdm.gymprofit.utils.Marcas;
 import es.pmdm.gymprofit.utils.NotificationHelper;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UiFeedback;
@@ -47,6 +50,10 @@ public class ResumenSesionActivity extends AppCompatActivity {
      * sin el aviso diría «sin rutina asociada» un instante antes de corregirse.
      */
     public static final String EXTRA_ENTRENAMIENTO_LIBRE = "entrenamientoLibre";
+    /** Récords que batió la sesión recién guardada (ArrayList de Record), GP-088. */
+    public static final String EXTRA_RECORDS = "recordsBatidos";
+    /** Cuántos ejercicios se hacían por primera vez en la sesión recién guardada. */
+    public static final String EXTRA_PRIMERAS_MARCAS = "primerasMarcas";
 
     // Aplica la escala de fuente global de la app (agranda todo el texto uniformemente).
     @Override
@@ -108,6 +115,7 @@ public class ResumenSesionActivity extends AppCompatActivity {
         }
 
         inicializarVistas(rutinaNombre);
+        pintarRecords();
 
         int usuarioId = prefsManager.getUsuarioId();
         cargarVolumen(sesionId);
@@ -175,6 +183,49 @@ public class ResumenSesionActivity extends AppCompatActivity {
 
         this.rutinaNombre = rutinaNombre;
         pintarRutina();
+    }
+
+    /**
+     * Pinta los récords que batió la sesión y cuántas primeras marcas dejó (GP-088).
+     *
+     * <p>Los trae el guardado, así que solo existen al llegar desde el registro; al
+     * abrir el resumen de una sesión vieja la sección no aparece. Tampoco aparece si
+     * no hay nada: una sección de récords vacía es un reproche.
+     */
+    @SuppressWarnings("unchecked")
+    private void pintarRecords() {
+        java.io.Serializable extra = getIntent().getSerializableExtra(EXTRA_RECORDS);
+        List<Record> records = extra instanceof List ? (List<Record>) extra : new ArrayList<>();
+        int primeras = getIntent().getIntExtra(EXTRA_PRIMERAS_MARCAS, 0);
+        if (records.isEmpty() && primeras == 0) return;
+
+        findViewById(R.id.layoutRecordsResumen).setVisibility(View.VISIBLE);
+        findViewById(R.id.tvRecordsTituloResumen).setVisibility(records.isEmpty() ? View.GONE : View.VISIBLE);
+
+        LinearLayout contenedor = findViewById(R.id.contenedorRecordsResumen);
+        java.util.Locale idioma = FechaUtils.localeDeLaApp(this);
+        for (Record r : records) {
+            View fila = getLayoutInflater().inflate(R.layout.item_record, contenedor, false);
+            String nombre = r.nombre(idioma);
+            String marca = Marcas.texto(this, r);
+            String antes = Marcas.anterior(this, r);
+            ((TextView) fila.findViewById(R.id.tvNombreRecord)).setText(nombre);
+            ((TextView) fila.findViewById(R.id.tvMarcaRecord)).setText(marca);
+            TextView tvDetalle = fila.findViewById(R.id.tvDetalleRecord);
+            tvDetalle.setText(antes);
+            tvDetalle.setVisibility(antes == null ? View.GONE : View.VISIBLE);
+            // Aquí la fila solo informa: no lleva a ningún sitio.
+            fila.setClickable(false);
+            fila.setFocusable(true);
+            fila.setContentDescription(getString(R.string.record_a11y, nombre, marca, antes != null ? antes : ""));
+            contenedor.addView(fila);
+        }
+
+        TextView tvPrimeras = findViewById(R.id.tvPrimerasMarcasResumen);
+        if (primeras > 0) {
+            tvPrimeras.setText(getResources().getQuantityString(R.plurals.resumen_primeras_marcas, primeras, primeras));
+            tvPrimeras.setVisibility(View.VISIBLE);
+        }
     }
 
     /**

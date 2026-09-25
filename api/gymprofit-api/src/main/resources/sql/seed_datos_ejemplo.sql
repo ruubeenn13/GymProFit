@@ -180,14 +180,9 @@ INSERT INTO ejercicios_realizados (id, series_completadas, repeticiones_rutinas,
 (23, 5,  5, 132.50, NULL, NULL,             9, 2),
 (24, 4,  8, 112.50, NULL, NULL,             9, 1);
 
--- ── PROGRESO_EJERCICIOS ───────────────────────────────────────────────────────
-INSERT INTO progreso_ejercicios (id, fecha, mejor_peso, mejor_repeticiones, mejor_tiempo_segundos, notas, usuario_id, ejercicio_id) VALUES
-(1, '2025-03-10 00:00:00', 125.00,  5, NULL, 'PR histórico',  1, 3),
-(2, '2025-03-10 00:00:00',  92.50,  8, NULL, NULL,            1, 1),
-(3, '2025-03-04 00:00:00',  40.00, 12, NULL, NULL,            2, 2),
-(4, '2025-03-07 00:00:00',   NULL, NULL, 1900, 'Mejor tiempo', 2, 9),
-(5, '2025-03-08 00:00:00', 152.50,  5, NULL, 'PR total',      3, 3),
-(6, '2025-03-08 00:00:00', 132.50,  5, NULL, 'PR sentadilla', 3, 2);
+-- ── PROGRESO_EJERCICIOS: sin uso desde GP-088 ─────────────────────────────────
+-- Los récords se calculan a partir de series_realizadas; la tabla sigue en el
+-- esquema hasta su migración de retirada, pero ya no se siembra.
 
 -- ── MEDICIONES_CORPORALES ─────────────────────────────────────────────────────
 INSERT INTO mediciones_corporales (id, fecha, peso, altura, imc, grasa_corporal, masa_muscular, cintura, pecho, brazos, piernas, notas, usuario_id) VALUES

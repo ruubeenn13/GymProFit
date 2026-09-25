@@ -130,7 +130,14 @@ public class BorradoCuentaService implements IBorradoCuentaService {
         borrar("Alimentos personalizados", "DELETE FROM Alimento a WHERE a.usuario.id = :id", usuarioId);
 
         // --- Progreso y perfil ---------------------------------------------
-        borrar("Progreso de ejercicios", "DELETE FROM ProgresoEjercicio p WHERE p.usuario.id = :id", usuarioId);
+        // progreso_ejercicios ya no tiene entidad ni se lee (GP-088: los récords salen de
+        // las series), pero la tabla sigue en el esquema hasta que se retire en una
+        // migración posterior, y su clave ajena a usuarios impediría borrar la cuenta.
+        // Se vacía en nativo mientras exista.
+        int progresos = em.createNativeQuery("DELETE FROM progreso_ejercicios WHERE usuario_id = :id")
+                .setParameter("id", usuarioId)
+                .executeUpdate();
+        logger.info("Borrado de cuenta id={} · Progreso de ejercicios (tabla sin uso): {} filas", usuarioId, progresos);
         borrar("Mediciones corporales", "DELETE FROM MedicionCorporal m WHERE m.usuario.id = :id", usuarioId);
         borrar("Objetivos personales", "DELETE FROM ObjetivoPersonal o WHERE o.usuario.id = :id", usuarioId);
         borrar("Logros obtenidos", "DELETE FROM UsuarioLogro ul WHERE ul.usuario.id = :id", usuarioId);

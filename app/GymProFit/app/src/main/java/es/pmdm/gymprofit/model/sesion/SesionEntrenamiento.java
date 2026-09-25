@@ -2,6 +2,8 @@ package es.pmdm.gymprofit.model.sesion;
 
 import java.util.List;
 
+import es.pmdm.gymprofit.model.record.Record;
+
 // ============================================================
 // SesionEntrenamiento — modelo de datos de una sesión de entrenamiento.
 // Registra la ejecución concreta de una rutina por parte de un usuario
@@ -48,6 +50,11 @@ public class SesionEntrenamiento {
     // creación; en las lecturas viene null). La clave JSON coincide con el campo.
     private List<String> nuevosLogros;
 
+    // Récords que batió esta sesión y ejercicios que se hacían por primera vez (GP-088).
+    // Solo los trae la respuesta del guardado completo; en las lecturas vienen null.
+    private List<Record> recordsBatidos;
+    private List<Record> primerasMarcas;
+
     public SesionEntrenamiento() {}
 
     public int getId() { return id; }
@@ -84,4 +91,7 @@ public class SesionEntrenamiento {
 
     public List<String> getNuevosLogros() { return nuevosLogros; }
     public void setNuevosLogros(List<String> nuevosLogros) { this.nuevosLogros = nuevosLogros; }
+
+    public List<Record> getRecordsBatidos() { return recordsBatidos != null ? recordsBatidos : new java.util.ArrayList<>(); }
+    public List<Record> getPrimerasMarcas() { return primerasMarcas != null ? primerasMarcas : new java.util.ArrayList<>(); }
 }

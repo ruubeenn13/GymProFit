@@ -611,6 +611,47 @@
                         <View android:layout_width="match_parent" android:layout_height="1dp"
                             android:layout_marginStart="16dp" android:background="?attr/colorOutlineVariant" />
 
+                        <!-- Récords (GP-088) -->
+                        <LinearLayout
+                            android:id="@+id/itemRecords"
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:paddingStart="16dp"
+                            android:paddingEnd="16dp"
+                            android:background="?attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:focusable="true">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_ms_trending_up"
+                                android:alpha="0.6"
+                                android:contentDescription="@null" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginStart="14dp"
+                                android:text="@string/perfil_ver_records"
+                                android:textSize="@dimen/text_subtitle"
+                                android:textColor="?attr/colorOnSurface" />
+
+                            <ImageView
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:src="@drawable/ic_ms_chevron_right"
+                                android:alpha="0.4"
+                                android:contentDescription="@null" />
+
+                        </LinearLayout>
+
+                        <View android:layout_width="match_parent" android:layout_height="1dp"
+                            android:layout_marginStart="16dp" android:background="?attr/colorOutlineVariant" />
+
                         <!-- Admin (solo ROLE_ADMIN) -->
                         <LinearLayout
                             android:id="@+id/itemAdmin"

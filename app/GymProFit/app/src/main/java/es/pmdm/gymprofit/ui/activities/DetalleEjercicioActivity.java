@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
@@ -25,10 +26,10 @@ import java.util.List;
 import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
-import es.pmdm.gymprofit.model.progreso.ProgresoEjercicio;
+import es.pmdm.gymprofit.model.record.PuntoProgresion;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
-import es.pmdm.gymprofit.network.ProgresoEjercicioApi;
+import es.pmdm.gymprofit.network.RecordApi;
 import es.pmdm.gymprofit.utils.ChartMarker;
 import es.pmdm.gymprofit.utils.ChartStyler;
 import es.pmdm.gymprofit.utils.PreferencesManager;
@@ -56,7 +57,7 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
     private Runnable frameRunnable;
 
     // Interfaz Retrofit del progreso por ejercicio (para la gráfica de progresión).
-    private final ProgresoEjercicioApi progresoApi = ApiClient.service(ProgresoEjercicioApi.class);
+    private final RecordApi recordApi = ApiClient.service(RecordApi.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,47 +84,56 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         configurarDemostracion(imagenUrl, imagenUrl2);
 
         int ejercicioId = getIntent().getIntExtra("id", -1);
-        cargarProgresion(prefs.getUsuarioId(), ejercicioId);
+        cargarProgresion(ejercicioId);
     }
 
-    // Pide el histórico de progreso del usuario para este ejercicio y lo pinta.
-    private void cargarProgresion(int usuarioId, int ejercicioId) {
-        if (usuarioId <= 0 || ejercicioId <= 0) return;
-        progresoApi.getHistorial(usuarioId, ejercicioId).enqueue(new ApiCallback<List<ProgresoEjercicio>>() {
+    // Pide la progresión del usuario en este ejercicio y la pinta. Desde GP-088 sale
+    // de las series de sus sesiones (antes, de una tabla que nadie escribía).
+    private void cargarProgresion(int ejercicioId) {
+        if (ejercicioId <= 0) return;
+        recordApi.getProgresion(ejercicioId).enqueue(new ApiCallback<List<PuntoProgresion>>() {
             @Override
-            public void onOk(List<ProgresoEjercicio> lista) {
+            public void onOk(List<PuntoProgresion> lista) {
                 if (isFinishing()) return;
                 pintarProgresion(lista);
             }
             @Override
             public void onFail(int code, String message) {
-                // "Sin progreso" ya no llega por aquí: es 200 con [] y lo atiende onOk,
-                // que deja la card oculta. Lo que cae aquí es un fallo de verdad, y la
-                // card se queda oculta a propósito: la ficha del ejercicio se lee igual
-                // sin la gráfica y un toast encima de la pantalla principal estorbaría
-                // más de lo que informa. Se deja rastro en el log.
+                // "Sin progreso" es 200 con [] y lo atiende onOk, que deja la card
+                // oculta. Lo que cae aquí es un fallo de verdad, y la card se queda
+                // oculta a propósito: la ficha se lee igual sin la gráfica y un toast
+                // encima estorbaría más de lo que informa. Se deja rastro en el log.
                 Log.w("GymProFit", "cargarProgresion falló (" + code + "): " + message);
             }
         });
     }
 
-    // Dibuja la evolución del mejor peso; resalta el récord (PR) y da tooltip al tocar.
-    private void pintarProgresion(List<ProgresoEjercicio> lista) {
+    /**
+     * Dibuja la mejor serie de cada sesión; resalta el récord y da tooltip al tocar.
+     *
+     * <p>Si el ejercicio se ha hecho alguna vez con peso se dibujan los kilos; si
+     * nunca, las repeticiones. No se mezclan: con peso y sin peso son marcas distintas.
+     */
+    private void pintarProgresion(List<PuntoProgresion> lista) {
         MaterialCardView card = findViewById(R.id.cardProgresion);
         LineChart chart = findViewById(R.id.chartProgresion);
         if (lista == null) return;
 
-        // La API entrega el histórico DESC (más reciente primero) → se recorre al revés
-        // para dibujar de antiguo a reciente (progresión ascendente en el tiempo).
+        boolean hayPeso = false;
+        for (PuntoProgresion p : lista) if (p.esDePeso() && p.getPeso() > 0) { hayPeso = true; break; }
+        final boolean enKilos = hayPeso;
+
+        // La API los entrega en orden cronológico, que es como se dibujan.
         List<Entry> entradas = new ArrayList<>();
         final List<String> etiquetas = new ArrayList<>();
-        float maxPeso = 0f;
-        for (int i = lista.size() - 1; i >= 0; i--) {
-            ProgresoEjercicio p = lista.get(i);
-            if (p.getMejorPeso() <= 0) continue;
-            entradas.add(new Entry(entradas.size(), (float) p.getMejorPeso()));
+        float max = 0f;
+        for (PuntoProgresion p : lista) {
+            if (enKilos != p.esDePeso()) continue;
+            float y = enKilos ? (float) p.getPeso() : p.getRepeticiones();
+            if (y <= 0) continue;
+            entradas.add(new Entry(entradas.size(), y));
             etiquetas.add(fechaCorta(p.getFecha()));
-            if (p.getMejorPeso() > maxPeso) maxPeso = (float) p.getMejorPeso();
+            if (y > max) max = y;
         }
 
         if (entradas.size() < 2) {
@@ -140,25 +150,31 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
             }
         });
 
-        // Tooltip: peso + fecha, con "· PR" en el récord.
-        final float pr = maxPeso;
+        // Tooltip: marca + fecha, con "· PR" en el récord.
+        final float pr = max;
         chart.setMarker(new ChartMarker(this, (e, h) -> {
             int idx = Math.round(e.getX());
             String fecha = (idx >= 0 && idx < etiquetas.size()) ? etiquetas.get(idx) : "";
             String sufijo = e.getY() >= pr ? " · " + getString(R.string.detalle_progresion_pr) : "";
-            return getString(R.string.grafica_kg_fecha, e.getY(), sufijo, fecha);
+            if (enKilos) return getString(R.string.grafica_kg_fecha, e.getY(), sufijo, fecha);
+            int reps = Math.round(e.getY());
+            return getString(R.string.grafica_reps_fecha,
+                    getResources().getQuantityString(R.plurals.record_repeticiones, reps, reps), sufijo, fecha);
         }));
 
-        LineDataSet ds = new LineDataSet(entradas, "peso");
+        LineDataSet ds = new LineDataSet(entradas, "");
         ChartStyler.styleLineDataSet(ds, this);
 
-        // Resalta el/los punto(s) de récord en dorado; el resto en naranja de marca.
+        // Resalta el/los punto(s) de récord en dorado (DEC-018: lo conseguido); el resto
+        // en el naranja de marca.
         int marca = ds.getColor();
-        int oro = android.graphics.Color.parseColor("#FFC24B");
+        int oro = ContextCompat.getColor(this, R.color.gp_gold);
         List<Integer> circulos = new ArrayList<>();
-        for (Entry e : entradas) circulos.add(e.getY() >= maxPeso ? oro : marca);
+        for (Entry e : entradas) circulos.add(e.getY() >= max ? oro : marca);
         ds.setCircleColors(circulos);
         ds.setCircleRadius(4.5f);
+        // Con muchas sesiones los círculos tapan la línea: por encima de 30 solo la línea.
+        ds.setDrawCircles(entradas.size() <= 30);
 
         chart.setData(new LineData(ds));
         chart.invalidate();

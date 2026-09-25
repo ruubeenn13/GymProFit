@@ -13,6 +13,7 @@ import com.gymprofit.api.repository.jpa.IEjercicioRealizadoRepository;
 import com.gymprofit.api.repository.jpa.ISesionEntrenamientoRepository;
 import com.gymprofit.api.repository.jpa.IUsuarioRepository;
 import com.gymprofit.api.service.logro.ILogroService;
+import com.gymprofit.api.service.record.IRecordService;
 import com.gymprofit.api.service.sesionentrenamiento.SesionEntrenamientoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -54,6 +55,10 @@ class SesionEntrenamientoServiceTest {
     @Mock
     private ILogroService logroService;
 
+    // GP-088: el guardado completo pide los récords de la sesión.
+    @Mock
+    private IRecordService recordService;
+
     // Mock de SecurityUtils: checkOwnership/requireAdmin quedan como no-op en las lecturas
     @Mock
     private SecurityUtils securityUtils;
@@ -74,6 +79,9 @@ class SesionEntrenamientoServiceTest {
     // Prepara usuario, rutina, sesión y DTOs de prueba antes de cada test
     @BeforeEach
     void setUp() {
+        // Sin series en estos tests: ningún cambio de marca que añadir a la respuesta.
+        lenient().when(recordService.cambiosDeMarcaDeSesion(any(), any()))
+                .thenReturn(List.of(List.of(), List.of()));
         usuario = new Usuario();
         usuario.setId(1);
         usuario.setUsername("testuser");

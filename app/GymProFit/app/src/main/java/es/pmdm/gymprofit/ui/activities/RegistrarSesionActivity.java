@@ -436,6 +436,8 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         intent.putExtra("rutinaNombre", nombreRutina);
         intent.putExtra(ResumenSesionActivity.EXTRA_ENTRENAMIENTO_LIBRE, libre);
         intent.putStringArrayListExtra("nuevosLogros", nuevosLogros);
+        intent.putExtra(ResumenSesionActivity.EXTRA_RECORDS, new ArrayList<>(sesion.getRecordsBatidos()));
+        intent.putExtra(ResumenSesionActivity.EXTRA_PRIMERAS_MARCAS, sesion.getPrimerasMarcas().size());
         startActivity(intent);
     }
 

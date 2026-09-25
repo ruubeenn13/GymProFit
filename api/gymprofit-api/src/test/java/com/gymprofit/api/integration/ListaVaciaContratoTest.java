@@ -102,15 +102,6 @@ class ListaVaciaContratoTest extends AbstractOwnershipTest {
     }
 
     @Test
-    @DisplayName("GET progreso-ejercicios/usuario/{propio} sin datos → 200 con []")
-    @WithUserDetails(value = OWNER, setupBefore = TestExecutionEvent.TEST_EXECUTION)
-    void progresosDeUsuarioSinDatos_devuelve200Vacio() throws Exception {
-        mockMvc.perform(get("/progreso-ejercicios/usuario/" + owner.getId()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(0)));
-    }
-
-    @Test
     @DisplayName("GET comidas/usuario/{propio} sin datos → 200 con []")
     @WithUserDetails(value = OWNER, setupBefore = TestExecutionEvent.TEST_EXECUTION)
     void comidasDeUsuarioSinDatos_devuelve200Vacio() throws Exception {

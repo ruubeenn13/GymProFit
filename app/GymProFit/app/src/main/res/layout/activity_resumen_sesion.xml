@@ -233,6 +233,42 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- === RÉCORDS DE LA SESIÓN (GP-088) ===
+                 Solo al llegar desde el registro, y solo si hay algo que contar: los
+                 récords batidos con la marca que superan y, en una línea, cuántos
+                 ejercicios se hacían por primera vez (punto de partida, no récord). -->
+            <LinearLayout
+                android:id="@+id/layoutRecordsResumen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tvRecordsTituloResumen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/resumen_seccion_records"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Headline"
+                    android:layout_marginBottom="8dp" />
+
+                <LinearLayout
+                    android:id="@+id/contenedorRecordsResumen"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+                <TextView
+                    android:id="@+id/tvPrimerasMarcasResumen"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:textSize="@dimen/text_body"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
             <!-- === CARD ESTADÍSTICAS === -->
             <TextView
                 android:layout_width="wrap_content"

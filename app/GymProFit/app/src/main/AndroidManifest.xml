@@ -79,6 +79,9 @@
             android:name=".ui.activities.LogrosActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.activities.RecordsActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.activities.MedicionesActivity"
             android:exported="false" />
         <!-- Sesiones de entrenamiento -->

@@ -43,6 +43,7 @@ import es.pmdm.gymprofit.ui.activities.AdminActivity;
 import es.pmdm.gymprofit.ui.activities.EditarPerfilActivity;
 import es.pmdm.gymprofit.ui.activities.EliminarCuentaActivity;
 import es.pmdm.gymprofit.ui.activities.LogrosActivity;
+import es.pmdm.gymprofit.ui.activities.RecordsActivity;
 import es.pmdm.gymprofit.ui.activities.MedicionesActivity;
 import es.pmdm.gymprofit.ui.activities.SesionesActivity;
 import es.pmdm.gymprofit.utils.UiFeedback;
@@ -334,6 +335,12 @@ public class PerfilFragment extends BaseFragment {
 
         findViewById(R.id.itemLogros).setOnClickListener(v ->
                 startActivity(new Intent(requireContext(), LogrosActivity.class)));
+
+        // Récords (GP-088): salen de las sesiones, así que un invitado no tiene.
+        findViewById(R.id.itemRecords).setOnClickListener(v -> {
+            if (!verificarAccesoRegistrado()) return;
+            startActivity(new Intent(requireContext(), RecordsActivity.class));
+        });
 
         findViewById(R.id.btnAcercaDe).setOnClickListener(v ->
                 startActivity(new Intent(requireContext(), AcercaDeActivity.class)));
