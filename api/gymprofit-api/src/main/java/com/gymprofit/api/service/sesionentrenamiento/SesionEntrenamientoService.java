@@ -356,6 +356,11 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         securityUtils.checkOwnership(sesion.getUsuario().getId());
 
         try {
+            // Primero sus ejercicios: la clave ajena de ejercicios_realizados a la sesión
+            // no borra en cascada, y la entidad no los mapea. Sin esto, borrar una sesión
+            // con ejercicios —todas desde GP-006— rompía la restricción al confirmar.
+            // Las series caen con cada ejercicio (cascada de la entidad y de la FK).
+            ejercicioRealizadoRepository.deleteBySesionId(id);
             sesionEntrenamientoRepository.delete(sesion);
 
             logger.info("Sesión de entrenamiento con id {} eliminada correctamente", id);

@@ -9,6 +9,7 @@ import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.mappers.SesionEntrenamientoMapper;
 import com.gymprofit.api.repository.jpa.IRutinaRepository;
+import com.gymprofit.api.repository.jpa.IEjercicioRealizadoRepository;
 import com.gymprofit.api.repository.jpa.ISesionEntrenamientoRepository;
 import com.gymprofit.api.repository.jpa.IUsuarioRepository;
 import com.gymprofit.api.service.logro.ILogroService;
@@ -56,6 +57,10 @@ class SesionEntrenamientoServiceTest {
     // Mock de SecurityUtils: checkOwnership/requireAdmin quedan como no-op en las lecturas
     @Mock
     private SecurityUtils securityUtils;
+
+    // Borrar una sesión borra antes sus ejercicios realizados (la FK no es en cascada).
+    @Mock
+    private IEjercicioRealizadoRepository ejercicioRealizadoRepository;
 
     @InjectMocks
     private SesionEntrenamientoService sesionEntrenamientoService;
@@ -171,6 +176,7 @@ class SesionEntrenamientoServiceTest {
         when(sesionEntrenamientoRepository.findById(1)).thenReturn(Optional.of(sesionEntrenamiento));
 
         assertDoesNotThrow(() -> sesionEntrenamientoService.deleteById(1));
+        verify(ejercicioRealizadoRepository).deleteBySesionId(1);
 
         verify(sesionEntrenamientoRepository).delete(sesionEntrenamiento);
     }
