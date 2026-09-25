@@ -52,6 +52,7 @@
 
         <!-- Área táctil de 48 dp: antes eran ~40 dp, por debajo del mínimo. -->
         <TextView
+            android:minHeight="48dp"
             android:id="@+id/tvSaltar1"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
