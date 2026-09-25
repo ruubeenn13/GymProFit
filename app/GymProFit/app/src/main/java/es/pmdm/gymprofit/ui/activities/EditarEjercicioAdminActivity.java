@@ -16,6 +16,7 @@ import es.pmdm.gymprofit.network.EjercicioApi;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.UiFeedback;
 import es.pmdm.gymprofit.utils.UIHelper;
+import com.google.android.material.appbar.MaterialToolbar;
 
 // ============================================================
 // EditarEjercicioAdminActivity — pantalla de administración para
@@ -43,7 +44,7 @@ public class EditarEjercicioAdminActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editar_ejercicio_admin);
 
-        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+        ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
         findViewById(R.id.btnGuardar).setOnClickListener(v -> guardar());
 
         etNombre       = findViewById(R.id.etNombre);

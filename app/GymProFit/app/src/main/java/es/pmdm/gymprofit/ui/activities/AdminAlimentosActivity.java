@@ -32,6 +32,7 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.ui.adapters.AdminAlimentoAdapter;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import com.google.android.material.appbar.MaterialToolbar;
 
 // ============================================================
 // AdminAlimentosActivity — gestión CRUD de alimentos desde el panel de administración
@@ -75,7 +76,7 @@ public class AdminAlimentosActivity extends BaseActivity {
         setContentView(R.layout.activity_admin_alimentos);
 
         setupMenuButton();
-        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+        ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
 
         RecyclerView rv = findViewById(R.id.rvAlimentos);
         rv.setLayoutManager(new LinearLayoutManager(this));

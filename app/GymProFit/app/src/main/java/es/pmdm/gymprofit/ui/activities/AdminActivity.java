@@ -11,6 +11,7 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import com.google.android.material.appbar.MaterialToolbar;
 
 // ============================================================
 // AdminActivity — panel principal de administración (rol ADMIN)
@@ -39,7 +40,7 @@ public class AdminActivity extends BaseActivity {
         tvRutinasPredefinidas = findViewById(R.id.tvRutinasPredefinidas);
         tvEjerciciosActivos   = findViewById(R.id.tvEjerciciosActivos);
 
-        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+        ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
         setupMenuButton();
 
         findViewById(R.id.cardGestionarUsuarios).setOnClickListener(v ->

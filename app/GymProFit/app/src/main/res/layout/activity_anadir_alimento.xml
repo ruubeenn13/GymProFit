@@ -13,32 +13,12 @@
 
     <!-- Toolbar -->
     <!-- Volver, título y acceso a crear alimento nuevo -->
-    <LinearLayout
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/Widget.GymProFit.Cabecera"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:padding="16dp"
-        android:paddingBottom="12dp"
-        android:background="?attr/colorSurface">
-
-        <ImageView
-            android:id="@+id/btnBack"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_ms_arrow_back"
-            android:padding="8dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/btn_volver" />
-
-        <TextView
-            android:id="@+id/tvTituloAnadir"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="8dp"
-            android:textAppearance="@style/TextAppearance.GymProFit.Headline"
-            android:text="@string/anadir_alimento_titulo" />
+        app:title="@string/anadir_alimento_titulo">
 
         <Button
             android:id="@+id/btnCrearAlimento"
@@ -46,9 +26,10 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_caption"
             android:text="@string/anadir_alimento_crear"
-            style="@style/Widget.MaterialComponents.Button.TextButton" />
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_gravity="end" />
 
-    </LinearLayout>
+    </com.google.android.material.appbar.MaterialToolbar>
 
     <!-- Search -->
     <!-- Campo de búsqueda de alimentos -->

@@ -97,17 +97,17 @@
         <!-- Botón para quitar el ejercicio de la selección -->
         <ImageView
             android:id="@+id/btnEliminarSeleccionado"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_marginStart="4dp"
             android:src="@drawable/ic_ms_close"
             android:tint="?attr/colorOnSurface"
-            android:padding="6dp"
+            android:padding="12dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:focusable="true"
             android:visibility="gone"
-            android:contentDescription="@null" />
+            android:contentDescription="@string/accion_quitar_ejercicio" />
 
         <!-- Chevron indicador de navegación al detalle -->
         <ImageView

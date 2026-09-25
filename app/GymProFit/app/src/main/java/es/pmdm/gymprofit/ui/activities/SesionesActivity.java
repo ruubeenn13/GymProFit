@@ -29,6 +29,7 @@ import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import com.google.android.material.appbar.MaterialToolbar;
 
 // ============================================================
 // SesionesActivity — historial de sesiones de entrenamiento del usuario.
@@ -74,7 +75,7 @@ public class SesionesActivity extends AppCompatActivity {
                     if (result.getResultCode() == RESULT_OK) cargarDatos();
                 });
 
-        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+        ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
         FloatingActionButton fab = findViewById(R.id.fabRegistrar);
         fab.setOnClickListener(v ->
                 registrarLauncher.launch(new Intent(this, RegistrarSesionActivity.class)));

@@ -23,6 +23,7 @@ import es.pmdm.gymprofit.network.RutinaApi;
 import es.pmdm.gymprofit.ui.adapters.AdminRutinaAdapter;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import com.google.android.material.appbar.MaterialToolbar;
 
 // ============================================================
 // AdminRutinasActivity — pantalla de administración de rutinas predefinidas
@@ -69,7 +70,7 @@ public class AdminRutinasActivity extends BaseActivity {
         setContentView(R.layout.activity_admin_rutinas);
 
         setupMenuButton();
-        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+        ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
 
         rv = findViewById(R.id.rvRutinas);
         rv.setLayoutManager(new LinearLayoutManager(this));

@@ -42,16 +42,11 @@
                     android:text="@string/perfil_mi_perfil"
                     android:textAppearance="@style/TextAppearance.GymProFit.Display" />
 
-                <ImageView
+                <ImageButton
                     android:id="@+id/btnMenuOpciones"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    style="@style/Widget.GymProFit.BotonIcono"
                     android:src="@drawable/ic_ms_more_vert"
-                    android:padding="8dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:contentDescription="@null" />
+                    android:contentDescription="@string/menu_opciones" />
 
             </LinearLayout>
 

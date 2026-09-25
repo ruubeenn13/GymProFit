@@ -23,6 +23,7 @@ import es.pmdm.gymprofit.network.EjercicioApi;
 import es.pmdm.gymprofit.ui.adapters.AdminEjercicioAdapter;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import com.google.android.material.appbar.MaterialToolbar;
 
 // ============================================================
 // AdminEjerciciosActivity — pantalla de administración de ejercicios
@@ -67,7 +68,7 @@ public class AdminEjerciciosActivity extends BaseActivity {
         setContentView(R.layout.activity_admin_ejercicios);
 
         setupMenuButton();
-        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+        ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
 
         rv = findViewById(R.id.rvEjercicios);
         rv.setLayoutManager(new LinearLayoutManager(this));

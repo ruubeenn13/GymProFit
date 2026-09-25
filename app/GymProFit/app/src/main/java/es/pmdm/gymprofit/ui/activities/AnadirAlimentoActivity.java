@@ -8,7 +8,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +42,7 @@ import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PaginacionScrollListener;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import com.google.android.material.appbar.MaterialToolbar;
 
 
 // ============================================================
@@ -99,8 +99,8 @@ public class AnadirAlimentoActivity extends BaseActivity {
         comidaId   = getIntent().getIntExtra("comidaId", -1);
         fecha      = getIntent().getStringExtra("fecha");
 
-        ImageView btnBack = findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(v -> finish());
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(v -> finish());
 
         RecyclerView rvAlimentos = findViewById(R.id.rvAlimentos);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);

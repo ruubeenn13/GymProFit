@@ -187,15 +187,23 @@
                 app:icon="@drawable/ic_ms_person"
                 app:iconGravity="textStart" />
 
-            <!-- Enlace de navegación hacia el registro -->
+            <!-- Enlace de navegación hacia el registro: 48 dp de alto como el de
+                 «¿Olvidaste la contraseña?» (GP-062); medía 23 dp -->
             <TextView
                 android:id="@+id/tvNoTienesCuenta"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="16dp"
+                android:minHeight="48dp"
+                android:gravity="center"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 android:text="@string/login_no_cuenta"
                 android:textSize="@dimen/text_body"
-                android:textColor="?attr/colorPrimary" />
+                android:textColor="?attr/colorPrimary"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true" />
 
         </LinearLayout>
 

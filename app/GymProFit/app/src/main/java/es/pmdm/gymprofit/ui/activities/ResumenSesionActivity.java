@@ -29,6 +29,7 @@ import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.NotificationHelper;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import com.google.android.material.appbar.MaterialToolbar;
 
 // ============================================================
 // ResumenSesionActivity — pantalla de resumen tras registrar/consultar una sesión.
@@ -147,7 +148,7 @@ public class ResumenSesionActivity extends AppCompatActivity {
 
     // Vincula las vistas del layout y muestra el nombre de la rutina asociada (si existe).
     private void inicializarVistas(String rutinaNombre) {
-        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+        ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
 
         tvFecha      = findViewById(R.id.tvFechaResumen);
         tvDuracion   = findViewById(R.id.tvDuracionResumen);

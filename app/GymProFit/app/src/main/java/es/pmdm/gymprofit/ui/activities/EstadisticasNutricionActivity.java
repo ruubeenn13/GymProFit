@@ -37,6 +37,7 @@ import es.pmdm.gymprofit.network.ComidaApi;
 import es.pmdm.gymprofit.utils.ChartMarker;
 import es.pmdm.gymprofit.utils.ChartStyler;
 import es.pmdm.gymprofit.utils.PreferencesManager;
+import com.google.android.material.appbar.MaterialToolbar;
 
 // ============================================================
 // EstadisticasNutricionActivity — pantalla dedicada de estadísticas de nutrición.
@@ -103,7 +104,7 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         pintarSwatch(R.id.legOff, COLOR_OFF);
         pintarSwatch(R.id.legOn, COLOR_ON);
 
-        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+        ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
 
         // Cambio de periodo (semana/mes): reinicia el desplazamiento al periodo actual.
         chipsPeriodo.setOnCheckedStateChangeListener((g, ids) -> {

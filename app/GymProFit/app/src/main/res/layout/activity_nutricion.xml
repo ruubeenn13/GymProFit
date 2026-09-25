@@ -42,17 +42,12 @@
                     android:text="@string/nutricion_seguimiento"
                     android:textAppearance="@style/TextAppearance.GymProFit.Display" />
 
-                <ImageView
+                <ImageButton
                     android:id="@+id/btnMenuOpciones"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    style="@style/Widget.GymProFit.BotonIcono"
                     android:src="@drawable/ic_ms_more_vert"
-                    android:padding="8dp"
                     app:tint="?attr/colorOnSurface"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:contentDescription="@null" />
+                    android:contentDescription="@string/menu_opciones" />
 
             </LinearLayout>
 
@@ -75,16 +70,16 @@
 
                     <ImageView
                         android:id="@+id/btnDiaPrev"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:src="@drawable/ic_ms_chevron_right"
                         android:rotation="180"
-                        android:padding="8dp"
+                        android:padding="12dp"
                         app:tint="?attr/colorPrimary"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:clickable="true"
                         android:focusable="true"
-                        android:contentDescription="@null" />
+                        android:contentDescription="@string/accion_dia_anterior" />
 
                     <TextView
                         android:id="@+id/tvFechaDia"
@@ -97,15 +92,15 @@
 
                     <ImageView
                         android:id="@+id/btnDiaNext"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:src="@drawable/ic_ms_chevron_right"
-                        android:padding="8dp"
+                        android:padding="12dp"
                         app:tint="?attr/colorPrimary"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:clickable="true"
                         android:focusable="true"
-                        android:contentDescription="@null" />
+                        android:contentDescription="@string/accion_dia_siguiente" />
 
                 </LinearLayout>
 

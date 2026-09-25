@@ -19,6 +19,7 @@ import es.pmdm.gymprofit.ui.adapters.LogroAdapter;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import com.google.android.material.appbar.MaterialToolbar;
 
 // ============================================================
 // LogrosActivity — pantalla de logros/achievements del usuario.
@@ -53,7 +54,7 @@ public class LogrosActivity extends AppCompatActivity {
         rvLogros = findViewById(R.id.rvLogros);
         tvVacio  = findViewById(R.id.tvVacio);
 
-        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+        ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
         rvLogros.setLayoutManager(new LinearLayoutManager(this));
 
         LoadingDialog.show(this);

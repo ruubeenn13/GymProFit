@@ -28,6 +28,7 @@ import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import com.google.android.material.appbar.MaterialToolbar;
 
 // ============================================================
 // EditarPerfilActivity — pantalla para editar el perfil del usuario.
@@ -206,7 +207,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
     }
 
     private void configurarBotones() {
-        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+        ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
         findViewById(R.id.btnGuardar).setOnClickListener(v -> guardarCambios());
         vigilarCambioDeEmail();
     }

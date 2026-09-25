@@ -10,14 +10,11 @@
     android:orientation="vertical"
     android:background="?attr/android:colorBackground">
 
-    <androidx.appcompat.widget.Toolbar
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
+        style="@style/Widget.GymProFit.Cabecera"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorSurface"
-        app:navigationIcon="@drawable/ic_ms_arrow_back"
-        app:navigationContentDescription="@string/btn_volver"
-        app:titleTextColor="?attr/colorOnSurface" />
+        android:layout_height="wrap_content" />
 
     <ScrollView
         android:layout_width="match_parent"

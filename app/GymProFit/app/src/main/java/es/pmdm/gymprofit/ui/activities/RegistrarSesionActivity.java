@@ -41,6 +41,7 @@ import es.pmdm.gymprofit.utils.Numeros;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.Valoracion;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import com.google.android.material.appbar.MaterialToolbar;
 
 // ============================================================
 // RegistrarSesionActivity — Formulario para registrar una sesión de entrenamiento.
@@ -121,7 +122,7 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         rvEjercicios.setNestedScrollingEnabled(false);
         rvEjercicios.setAdapter(ejercicioPesoAdapter);
 
-        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+        ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
         findViewById(R.id.btnGuardar).setOnClickListener(v -> guardarSesion());
 
         cargarRutinas();
