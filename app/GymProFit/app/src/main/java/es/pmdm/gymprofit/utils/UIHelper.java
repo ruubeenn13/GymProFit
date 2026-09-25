@@ -486,4 +486,30 @@ public class UIHelper {
             default:         return grupo;
         }
     }
+
+    /**
+     * Da 48 dp de alto al campo de texto de un SearchView (GP-062).
+     *
+     * <p>El campo interno de AppCompat trae {@code layout_height="36dp"} fijo en su layout
+     * y el estilo no deja cambiarlo: es lo que se pulsa para escribir, así que se ajusta
+     * aquí, en un solo sitio.
+     *
+     * @param buscador el SearchView ya inflado
+     */
+    public static void alturaTactilBuscador(androidx.appcompat.widget.SearchView buscador) {
+        TextView campo = buscador.findViewById(androidx.appcompat.R.id.search_src_text);
+        float d = buscador.getResources().getDisplayMetrics().density;
+        if (campo != null && campo.getLayoutParams() != null) {
+            campo.getLayoutParams().height = (int) (48 * d);
+            campo.requestLayout();
+        }
+        // Con wrap_content el SearchView no pasa de su alto preferido (48 dp), y dentro
+        // el campo lleva 4 dp de margen arriba y abajo: se queda en 40. Se le da el alto
+        // exacto que necesita: 48 del campo, sus márgenes y el relleno del propio buscador.
+        if (buscador.getLayoutParams() != null) {
+            buscador.getLayoutParams().height = (int) ((48 + 8) * d)
+                    + buscador.getPaddingTop() + buscador.getPaddingBottom();
+            buscador.requestLayout();
+        }
+    }
 }

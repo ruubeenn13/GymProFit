@@ -31,6 +31,7 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.ui.adapters.AdminAlimentoAdapter;
 import es.pmdm.gymprofit.utils.LoadingDialog;
+import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
 import com.google.android.material.appbar.MaterialToolbar;
 
@@ -108,6 +109,7 @@ public class AdminAlimentosActivity extends BaseActivity {
     // Configura el SearchView para filtrar por nombre en tiempo real
     private void configurarBusqueda() {
         SearchView sv = findViewById(R.id.searchView);
+        UIHelper.alturaTactilBuscador(sv);
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String q) {
