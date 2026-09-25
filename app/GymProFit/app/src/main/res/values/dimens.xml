@@ -9,10 +9,12 @@
 
   Once escalones, y ninguno más. Ningún layout vuelve a escribir un sp a pelo.
 
-  OJO CON LOS NÚMEROS: hasta ahora la app multiplicaba TODO el texto por 1,18 en
-  ScaleUtils. Ese parche se retira, así que estos valores ya vienen rebasados
-  (14sp x 1,18 = 16,5, de ahí que el cuerpo sea 17sp) para que el tamaño que se ve
-  en pantalla no cambie. No son números redondos porque no pueden serlo.
+  2026-09-25: la escala baja. Cuando se retiró el multiplicador de 1,18 de
+  ScaleUtils, estos valores se rebasaron para que en pantalla no cambiara nada, y se
+  quedaron grandes: cuerpo a 17 sp, titulares a 26, títulos de pantalla a 34-40. El
+  propietario vio toda la app demasiado grande. Ahora el cuerpo es 15 sp y cada
+  escalón sube alrededor de un 15 % sobre el anterior, así que las proporciones entre
+  niveles son regulares. El suelo sigue en 13 sp (GP-089).
 -->
 <resources>
 
@@ -26,31 +28,31 @@
     <dimen name="text_label">14sp</dimen>
 
     <!-- Texto secundario: descripciones, metadatos. Sustituye a 13 sp. -->
-    <dimen name="text_caption">15sp</dimen>
+    <dimen name="text_caption">14sp</dimen>
 
     <!-- Cuerpo. Es el tamaño más usado de la app. Sustituye a 14 y 15 sp. -->
-    <dimen name="text_body">17sp</dimen>
+    <dimen name="text_body">15sp</dimen>
 
     <!-- Título de fila o de tarjeta. Sustituye a 16 y 17 sp. -->
-    <dimen name="text_subtitle">19sp</dimen>
+    <dimen name="text_subtitle">17sp</dimen>
 
     <!-- Cabecera de sección. Sustituye a 18 y 20 sp. -->
-    <dimen name="text_title">22sp</dimen>
+    <dimen name="text_title">19sp</dimen>
 
     <!-- Titular de tarjeta grande. Sustituye a 22, 24 y 26 sp. -->
-    <dimen name="text_headline">26sp</dimen>
+    <dimen name="text_headline">22sp</dimen>
 
     <!-- Título de pantalla. Sustituye a 28, 30 y 32 sp. -->
-    <dimen name="text_display">34sp</dimen>
+    <dimen name="text_display">26sp</dimen>
 
     <!-- Título de pantalla grande. Sustituye a 34 y 40 sp. -->
-    <dimen name="text_display_large">40sp</dimen>
+    <dimen name="text_display_large">30sp</dimen>
 
     <!-- Cifra de estadística. Sustituye a 52 y 60 sp. -->
-    <dimen name="text_number">62sp</dimen>
+    <dimen name="text_number">44sp</dimen>
 
     <!-- La cifra protagonista de una pantalla. Sustituye a 64 sp. -->
-    <dimen name="text_number_hero">76sp</dimen>
+    <dimen name="text_number_hero">56sp</dimen>
 
     <!-- ── Barra de navegación flotante ─────────────────────────────── -->
 
