@@ -253,7 +253,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/nutricion_carbohidratos"
+                                android:text="@string/nutricion_carbohidratos_corto"
                                 android:textSize="@dimen/text_eyebrow"
                                 android:textColor="?attr/colorOnSurfaceVariant" />
 
