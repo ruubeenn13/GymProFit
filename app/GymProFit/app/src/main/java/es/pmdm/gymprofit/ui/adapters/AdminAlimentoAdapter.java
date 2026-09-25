@@ -61,7 +61,7 @@ public class AdminAlimentoAdapter extends RecyclerView.Adapter<AdminAlimentoAdap
         String cat = a.getCategoria();
         h.tvCategoria.setText((cat != null && !cat.isEmpty()) ? cat : "—");
 
-        h.tvCalorias.setText(a.getCalorias() + " kcal/100g");
+        h.tvCalorias.setText(h.itemView.getContext().getString(R.string.unidad_kcal_100g, a.getCalorias()));
 
         if (a.isActivo()) {
             h.chipEstado.setText(ctx.getString(R.string.admin_estado_activo));

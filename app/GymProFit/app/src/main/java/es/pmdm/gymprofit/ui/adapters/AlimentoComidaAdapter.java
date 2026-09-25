@@ -53,8 +53,8 @@ public class AlimentoComidaAdapter extends RecyclerView.Adapter<AlimentoComidaAd
     public void onBindViewHolder(@NonNull ViewHolder h, int position) {
         AlimentoComida item = items.get(position);
         h.tvNombreAlimento.setText(item.getNombreAlimento());
-        h.tvCantidadGramos.setText(String.format(Locale.getDefault(), "%.0f g", item.getCantidadGramos()));
-        h.tvCaloriasItem.setText(String.format(Locale.getDefault(), "%d kcal", item.getCaloriasTotales()));
+        h.tvCantidadGramos.setText(h.itemView.getContext().getString(R.string.unidad_g_redondeado, item.getCantidadGramos()));
+        h.tvCaloriasItem.setText(h.itemView.getContext().getString(R.string.unidad_kcal, item.getCaloriasTotales()));
         h.itemView.setOnLongClickListener(v -> {
             if (longClickListener != null) longClickListener.onItemLongClick(item, v);
             return true;

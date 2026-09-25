@@ -31,6 +31,7 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.ComidaApi;
 import es.pmdm.gymprofit.ui.activities.ComidaActivity;
 import es.pmdm.gymprofit.ui.activities.EstadisticasNutricionActivity;
+import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.CalculadoraNutricional;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
 import es.pmdm.gymprofit.utils.UiFeedback;
@@ -118,7 +119,7 @@ public class NutricionFragment extends BaseFragment {
         if (tvFechaDia == null) return;
         tvFechaDia.setText(esHoy()
                 ? getString(R.string.nutricion_hoy)
-                : new SimpleDateFormat("EEE d MMM", Locale.getDefault()).format(fechaSel.getTime()));
+                : new SimpleDateFormat(getString(R.string.nutricion_fecha_patron), FechaUtils.localeDeLaApp(requireContext())).format(fechaSel.getTime()));
         btnDiaNext.setVisibility(esHoy() ? View.INVISIBLE : View.VISIBLE);
     }
 
@@ -170,7 +171,7 @@ public class NutricionFragment extends BaseFragment {
         objetivoGrasas    = r.grasas;
 
         prefsManager.saveResultadoNutricional(objetivoCalorias, objetivoProteinas, objetivoCarbos, objetivoGrasas, r.agua);
-        tvCaloriasObjetivo.setText("/ " + objetivoCalorias + " kcal");
+        tvCaloriasObjetivo.setText(getString(R.string.unidad_kcal_objetivo, objetivoCalorias));
     }
 
     // ── Carga de comidas ─────────────────────────────────────────────────────
@@ -234,13 +235,13 @@ public class NutricionFragment extends BaseFragment {
         // suficiente proteína es un error. Ahora, al llegar, se pone en verde.
         int colorLogro = androidx.core.content.ContextCompat.getColor(
                 requireContext(), R.color.gp_success);
-        tvProteinasActuales.setText(String.format(Locale.getDefault(), "%.0fg", totalProt));
+        tvProteinasActuales.setText(getString(R.string.unidad_g_redondeado, totalProt));
         tvProteinasActuales.setTextColor(totalProt >= objetivoProteinas ? colorLogro : colorNormal);
 
-        tvCarbosActuales.setText(String.format(Locale.getDefault(), "%.0fg", totalCarb));
+        tvCarbosActuales.setText(getString(R.string.unidad_g_redondeado, totalCarb));
         tvCarbosActuales.setTextColor(totalCarb > objetivoCarbos ? colorError : colorNormal);
 
-        tvGrasasActuales.setText(String.format(Locale.getDefault(), "%.0fg", totalGras));
+        tvGrasasActuales.setText(getString(R.string.unidad_g_redondeado, totalGras));
         tvGrasasActuales.setTextColor(totalGras > objetivoGrasas ? colorError : colorNormal);
 
         actualizarSubtituloCard("DESAYUNO", tvSubDesayuno, fecha);
@@ -254,7 +255,7 @@ public class NutricionFragment extends BaseFragment {
     private void actualizarSubtituloCard(String tipo, TextView tvSub, String fecha) {
         Comida c = comidasHoy.get(tipo);
         if (c != null && c.getTotalCalorias() > 0) {
-            tvSub.setText(c.getTotalCalorias() + " kcal");
+            tvSub.setText(getString(R.string.unidad_kcal, c.getTotalCalorias()));
         } else {
             tvSub.setText(getString(R.string.sin_registrar));
         }

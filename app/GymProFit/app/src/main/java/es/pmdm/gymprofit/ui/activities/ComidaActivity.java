@@ -203,10 +203,10 @@ public class ComidaActivity extends BaseActivity {
             totalCarb += a.getCarbohidratosTotales();
             totalGras += a.getGrasasTotales();
         }
-        tvTotalCalorias.setText(String.format(Locale.getDefault(), "%d kcal", totalCal));
-        tvTotalProteinas.setText(String.format(Locale.getDefault(), "%.1fg prot", totalProt));
-        tvTotalCarbos.setText(String.format(Locale.getDefault(), "%.1fg carbos", totalCarb));
-        tvTotalGrasas.setText(String.format(Locale.getDefault(), "%.1fg grasas", totalGras));
+        tvTotalCalorias.setText(getString(R.string.unidad_kcal, totalCal));
+        tvTotalProteinas.setText(getString(R.string.comida_total_prot, totalProt));
+        tvTotalCarbos.setText(getString(R.string.comida_total_carbos, totalCarb));
+        tvTotalGrasas.setText(getString(R.string.comida_total_grasas, totalGras));
 
         View tvVacio = findViewById(R.id.tvSinAlimentos);
         if (tvVacio != null) {
@@ -258,8 +258,7 @@ public class ComidaActivity extends BaseActivity {
                     int kcal = item.getCaloriasTotales() > 0
                             ? (int) Math.round((item.getCaloriasTotales() / item.getCantidadGramos()) * g)
                             : 0;
-                    tvPreview.setText(String.format(Locale.getDefault(),
-                            "%d kcal | %.1fg prot | %.1fg carbos | %.1fg grasas",
+                    tvPreview.setText(getString(R.string.anadir_alimento_preview,
                             kcal,
                             (item.getProteinasTotales() / item.getCantidadGramos()) * g,
                             (item.getCarbohidratosTotales() / item.getCantidadGramos()) * g,

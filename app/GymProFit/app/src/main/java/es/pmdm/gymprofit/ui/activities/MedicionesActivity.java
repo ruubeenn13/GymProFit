@@ -272,10 +272,10 @@ public class MedicionesActivity extends AppCompatActivity {
 
         // Métrica + unidad según el chip activo.
         final int metrica;
-        final String unidad;
-        if (chipsMetrica.getCheckedChipId() == R.id.chipMetGrasa) { metrica = MET_GRASA; unidad = "%"; }
-        else if (chipsMetrica.getCheckedChipId() == R.id.chipMetCintura) { metrica = MET_CINTURA; unidad = "cm"; }
-        else { metrica = MET_PESO; unidad = "kg"; }
+        final int formatoTooltip;
+        if (chipsMetrica.getCheckedChipId() == R.id.chipMetGrasa) { metrica = MET_GRASA; formatoTooltip = R.string.grafica_pct_fecha; }
+        else if (chipsMetrica.getCheckedChipId() == R.id.chipMetCintura) { metrica = MET_CINTURA; formatoTooltip = R.string.grafica_cm_fecha; }
+        else { metrica = MET_PESO; formatoTooltip = R.string.grafica_kg_fecha_simple; }
 
         // Rango: fecha de corte (null = "Todo").
         String corte = null;
@@ -321,7 +321,7 @@ public class MedicionesActivity extends AppCompatActivity {
         chartPeso.setMarker(new ChartMarker(this, (e, h) -> {
             int idx = Math.round(e.getX());
             String fecha = (idx >= 0 && idx < etiquetas.size()) ? etiquetas.get(idx) : "";
-            return String.format(Locale.getDefault(), "%.1f %s\n%s", e.getY(), unidad, fecha);
+            return getString(formatoTooltip, e.getY(), fecha);
         }));
 
         LineDataSet ds = new LineDataSet(entradas, "m");
@@ -383,19 +383,19 @@ public class MedicionesActivity extends AppCompatActivity {
         }
 
         tvPesoVal.setText(ultimaMedicion.getPeso() > 0
-                ? String.format(Locale.getDefault(), "%.1f kg", ultimaMedicion.getPeso()) : anadir);
+                ? getString(R.string.unidad_kg_decimal, ultimaMedicion.getPeso()) : anadir);
         tvGrasaVal.setText(ultimaMedicion.getGrasaCorporal() > 0
                 ? String.format(Locale.getDefault(), "%.1f%%", ultimaMedicion.getGrasaCorporal()) : anadir);
         tvMusculoVal.setText(ultimaMedicion.getMasaMuscular() > 0
-                ? String.format(Locale.getDefault(), "%.1f kg", ultimaMedicion.getMasaMuscular()) : anadir);
+                ? getString(R.string.unidad_kg_decimal, ultimaMedicion.getMasaMuscular()) : anadir);
         tvCinturaVal.setText(ultimaMedicion.getCintura() > 0
-                ? String.format(Locale.getDefault(), "%.1f cm", ultimaMedicion.getCintura()) : anadir);
+                ? getString(R.string.unidad_cm_decimal, ultimaMedicion.getCintura()) : anadir);
         tvPechoVal.setText(ultimaMedicion.getPecho() > 0
-                ? String.format(Locale.getDefault(), "%.1f cm", ultimaMedicion.getPecho()) : anadir);
+                ? getString(R.string.unidad_cm_decimal, ultimaMedicion.getPecho()) : anadir);
         tvBrazosVal.setText(ultimaMedicion.getBrazos() > 0
-                ? String.format(Locale.getDefault(), "%.1f cm", ultimaMedicion.getBrazos()) : anadir);
+                ? getString(R.string.unidad_cm_decimal, ultimaMedicion.getBrazos()) : anadir);
         tvPiernasVal.setText(ultimaMedicion.getPiernas() > 0
-                ? String.format(Locale.getDefault(), "%.1f cm", ultimaMedicion.getPiernas()) : anadir);
+                ? getString(R.string.unidad_cm_decimal, ultimaMedicion.getPiernas()) : anadir);
         tvNotasVal.setText(ultimaMedicion.getNotas() != null && !ultimaMedicion.getNotas().isEmpty()
                 ? ultimaMedicion.getNotas() : anadir);
     }

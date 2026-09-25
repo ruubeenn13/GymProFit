@@ -54,13 +54,19 @@ public class EditarEjercicioAdminActivity extends BaseActivity {
         spGrupoMuscular= findViewById(R.id.spGrupoMuscular);
         spDificultad   = findViewById(R.id.spDificultad);
 
+        // Los códigos se guardan por posición; lo que se enseña es su nombre (GP-071).
+        String[] gruposVisibles = new String[GRUPOS.length];
+        for (int i = 0; i < GRUPOS.length; i++) gruposVisibles[i] = UIHelper.traducirGrupoMuscular(this, GRUPOS[i]);
+        String[] dificultadesVisibles = new String[DIFICULTADES.length];
+        for (int i = 0; i < DIFICULTADES.length; i++) dificultadesVisibles[i] = UIHelper.traducirNivel(this, DIFICULTADES[i]);
+
         ArrayAdapter<String> grupoAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, GRUPOS);
+                android.R.layout.simple_spinner_item, gruposVisibles);
         grupoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spGrupoMuscular.setAdapter(grupoAdapter);
 
         ArrayAdapter<String> difAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, DIFICULTADES);
+                android.R.layout.simple_spinner_item, dificultadesVisibles);
         difAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spDificultad.setAdapter(difAdapter);
 

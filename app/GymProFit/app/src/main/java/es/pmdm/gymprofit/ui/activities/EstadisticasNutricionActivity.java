@@ -217,7 +217,7 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         chartKcal.setMarker(new ChartMarker(this, (e, h) -> {
             int idx = Math.round(e.getX());
             String fecha = (idx >= 0 && idx < etiquetas.size()) ? etiquetas.get(idx) : "";
-            return String.format(Locale.getDefault(), "%d kcal\n%s", (int) e.getY(), fecha);
+            return getString(R.string.grafica_kcal_fecha, (int) e.getY(), fecha);
         }));
 
         BarDataSet ds = new BarDataSet(entradas, "kcal");
@@ -251,7 +251,7 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         entradas.add(new PieEntry((float) grasa, getString(R.string.macro_grasa)));
 
         ChartStyler.stylePie(chartMacros);
-        chartMacros.setCenterText(String.format(Locale.getDefault(), "%.0f g", prot + carb + grasa));
+        chartMacros.setCenterText(getString(R.string.unidad_g_redondeado, prot + carb + grasa));
 
         PieDataSet ds = new PieDataSet(entradas, "");
         ChartStyler.stylePieDataSet(ds, MACRO_COLORS, this);
@@ -259,7 +259,7 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         data.setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
-                return String.format(Locale.getDefault(), "%.0f g", value);
+                return getString(R.string.unidad_g_redondeado, value);
             }
         });
         chartMacros.setData(data);

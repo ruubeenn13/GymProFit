@@ -101,7 +101,7 @@ public class LogroAdapter extends RecyclerView.Adapter<LogroAdapter.ViewHolder> 
             h.ivIcono.setImageResource(glifos.relleno);
             h.ivIcono.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.gp_gold)));
 
-            String fecha = FechaUtils.formatearFechaMedia(logro.getFechaObtenido(), localeDe(ctx));
+            String fecha = FechaUtils.formatearFechaMedia(logro.getFechaObtenido(), FechaUtils.localeDeLaApp(ctx));
             h.tvConseguido.setText(fecha != null
                     ? ctx.getString(R.string.logro_conseguido_fecha, fecha)
                     : ctx.getString(R.string.logro_conseguido));
@@ -160,9 +160,6 @@ public class LogroAdapter extends RecyclerView.Adapter<LogroAdapter.ViewHolder> 
     }
 
     // Idioma de la interfaz (el elegido en la app, no necesariamente el del sistema).
-    private static Locale localeDe(Context ctx) {
-        return ctx.getResources().getConfiguration().getLocales().get(0);
-    }
 
     @Override
     public int getItemCount() { return items.size(); }

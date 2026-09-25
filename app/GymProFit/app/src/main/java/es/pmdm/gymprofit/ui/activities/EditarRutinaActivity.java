@@ -193,7 +193,10 @@ public class EditarRutinaActivity extends AppCompatActivity {
             if (e == null) {
                 e = new Ejercicio();
                 e.setId(ejercicioId);
-                e.setNombre("Ejercicio " + ejercicioId);
+                // El catálogo que se pide no trae los ejercicios desactivados; la relación
+                // sí trae su nombre. Sin él, el rótulo sale traducido (GP-071).
+                e.setNombre(rel.getNombreEjercicio() != null && !rel.getNombreEjercicio().isEmpty()
+                        ? rel.getNombreEjercicio() : getString(R.string.ejercicio_sin_nombre, ejercicioId));
             }
             ejercicios.add(new EjercicioSeleccionado(e, series, reps));
         }
@@ -247,7 +250,7 @@ public class EditarRutinaActivity extends AppCompatActivity {
 
                 Ejercicio e = new Ejercicio();
                 e.setId(ejercicioId);
-                e.setNombre(obj.optString("nombre", "Ejercicio " + ejercicioId));
+                e.setNombre(obj.optString("nombre", getString(R.string.ejercicio_sin_nombre, ejercicioId)));
                 ejercicios.add(new EjercicioSeleccionado(e,
                         obj.optInt("series", 3), obj.optInt("repeticiones", 10)));
 

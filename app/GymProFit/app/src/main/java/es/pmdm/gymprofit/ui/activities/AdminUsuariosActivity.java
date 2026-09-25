@@ -230,11 +230,11 @@ public class AdminUsuariosActivity extends BaseActivity {
         rg.setPadding(48, 24, 48, 0);
 
         RadioButton rbUser = new RadioButton(this);
-        rbUser.setText("USER");
+        rbUser.setText(R.string.rol_usuario);
         rbUser.setId(1);
 
         RadioButton rbAdmin = new RadioButton(this);
-        rbAdmin.setText("ADMIN");
+        rbAdmin.setText(R.string.rol_admin);
         rbAdmin.setId(2);
 
         rg.addView(rbUser);

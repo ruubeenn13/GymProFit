@@ -92,7 +92,7 @@ public class EjercicioPesoAdapter extends RecyclerView.Adapter<EjercicioPesoAdap
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Item item = items.get(position);
         holder.tvNombre.setText(item.nombre);
-        holder.tvSeriesReps.setText(item.series + " × " + item.repeticiones);
+        holder.tvSeriesReps.setText(holder.itemView.getContext().getString(R.string.series_por_reps, item.series, item.repeticiones));
 
         // Se vacía y se vuelve a montar: el ViewHolder se recicla y un ejercicio
         // puede tener un número de series distinto del que tenía el anterior.

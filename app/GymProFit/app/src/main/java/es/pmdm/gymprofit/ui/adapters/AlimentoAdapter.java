@@ -67,7 +67,7 @@ public class AlimentoAdapter extends RecyclerView.Adapter<AlimentoAdapter.ViewHo
         String subtitulo = alimento.getMarca() != null && !alimento.getMarca().isEmpty()
                 ? alimento.getMarca() : alimento.getCategoria();
         holder.tvCategoriaAlimento.setText(subtitulo);
-        holder.tvCaloriasPor100.setText(alimento.getCalorias() + " kcal/100g");
+        holder.tvCaloriasPor100.setText(holder.itemView.getContext().getString(R.string.unidad_kcal_100g, alimento.getCalorias()));
         holder.itemView.setOnClickListener(v -> listener.onItemClick(alimento));
         holder.itemView.setOnLongClickListener(v -> {
             if (longClickListener != null) {
