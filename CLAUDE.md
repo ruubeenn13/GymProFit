@@ -71,6 +71,8 @@ Los commits ya existentes se quedan como están: esto aplica de aquí en adelant
 - Si no lo es, el ámbito es el nombre corto de lo que se toca: `changelog`, `decisiones`, `reglas`.
 - Varios ámbitos van separados por **coma**: `feat(api,android)`.
 
+**Cada commit lleva solo los ficheros de su tarea.** Nunca `git add -A` (ni `git add .`, ni `commit -a`) con trabajo de otra tarea en el árbol: se añaden las rutas una a una y se revisa `git diff --cached --stat` antes de commitear. Así se colaron en `3de9436`, un commit de tipografía, los borrados a medias de GP-088, y `main` dejó de compilar.
+
 El cuerpo explica **por qué**, no qué líneas cambiaron.
 Todo cambio funcional se anota en `CHANGELOG.md` con su hash.
 
