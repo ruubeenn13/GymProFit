@@ -11,13 +11,13 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.AuthApi;
 import es.pmdm.gymprofit.utils.LoadingDialog;
+import es.pmdm.gymprofit.utils.PoliticaCuenta;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
@@ -38,11 +38,6 @@ import com.google.android.material.appbar.MaterialToolbar;
 // puede decir "ese usuario no existe": diría lo que el servidor calla a propósito.
 // ============================================================
 public class RecuperarPasswordActivity extends AppCompatActivity {
-
-    // Misma política que el registro y que la API. Si aquí fuera más laxa, el 400
-    // del servidor llegaría sin que el usuario sepa qué ha hecho mal.
-    private static final Pattern POLITICA_PASSWORD =
-            Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,}$");
 
     // Aplica la escala de fuente global de la app, igual que el resto de pantallas de acceso.
     @Override
@@ -171,7 +166,10 @@ public class RecuperarPasswordActivity extends AppCompatActivity {
             tilCodigo.setError(null);
         }
 
-        if (!POLITICA_PASSWORD.matcher(password).matches()) {
+        // Misma política que el registro y que la API (PoliticaCuenta, GP-095). Si aquí
+        // fuera más laxa, el 400 del servidor llegaría sin que el usuario sepa qué ha
+        // hecho mal. La de antes no tenía máximo y aceptaba dígitos no ASCII.
+        if (!PoliticaCuenta.passwordValida(password)) {
             tilPassword.setError(getString(R.string.recuperar_error_password));
             valido = false;
         } else {
