@@ -13,14 +13,12 @@
     android:background="?attr/android:colorBackground">
 
     <!-- Toolbar con título y botón de navegación atrás -->
-    <androidx.appcompat.widget.Toolbar
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
+        style="@style/Widget.GymProFit.Cabecera"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorSurface"
-        app:title="@string/resumen_crear_rutina_titulo"
-        app:titleTextColor="?attr/colorOnSurface"
-        app:navigationIcon="@drawable/ic_ms_arrow_back" />
+        android:layout_height="wrap_content"
+        app:title="@string/resumen_crear_rutina_titulo" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"

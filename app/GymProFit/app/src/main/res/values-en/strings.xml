@@ -569,6 +569,13 @@
     <string name="anadir_alimento_preview">%1$d kcal | %2$.1fg prot | %3$.1fg carbs | %4$.1fg fat</string>
     <string name="btn_anadir">Add</string>
     <string name="btn_volver">Back</string>
+    <string name="menu_opciones">More options</string>
+    <string name="accion_dia_anterior">Previous day</string>
+    <string name="accion_dia_siguiente">Next day</string>
+    <string name="accion_periodo_anterior">Previous period</string>
+    <string name="accion_periodo_siguiente">Next period</string>
+    <string name="accion_mas_acciones">More actions</string>
+    <string name="accion_quitar_ejercicio">Remove exercise</string>
 
     <!-- CREAR ALIMENTO -->
     <string name="crear_alimento_titulo">Create food</string>

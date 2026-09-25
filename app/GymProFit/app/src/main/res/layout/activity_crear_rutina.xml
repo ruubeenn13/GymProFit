@@ -14,14 +14,12 @@
     android:background="?attr/android:colorBackground">
 
     <!-- Toolbar con navegación hacia atrás -->
-    <androidx.appcompat.widget.Toolbar
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
+        style="@style/Widget.GymProFit.Cabecera"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorSurface"
-        app:title="@string/rutinas_crear_nueva"
-        app:titleTextColor="?attr/colorOnSurface"
-        app:navigationIcon="@drawable/ic_ms_arrow_back" />
+        android:layout_height="wrap_content"
+        app:title="@string/rutinas_crear_nueva" />
 
     <ScrollView
         android:layout_width="match_parent"

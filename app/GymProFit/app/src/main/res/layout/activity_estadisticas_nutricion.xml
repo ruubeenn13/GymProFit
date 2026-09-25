@@ -14,35 +14,12 @@
     android:background="?attr/android:colorBackground">
 
     <!-- Cabecera -->
-    <LinearLayout
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/Widget.GymProFit.Cabecera"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:padding="16dp"
-        android:background="?attr/colorSurface">
-
-        <ImageView
-            android:id="@+id/btnBack"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_ms_arrow_back"
-            android:padding="8dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true"
-            android:contentDescription="@null" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="8dp"
-            android:text="@string/nutricion_estadisticas"
-            android:textAppearance="@style/TextAppearance.GymProFit.Headline"
-            android:textSize="@dimen/text_headline" />
-
-    </LinearLayout>
+        app:title="@string/nutricion_estadisticas" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -91,16 +68,16 @@
 
                 <ImageView
                     android:id="@+id/btnPrev"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:src="@drawable/ic_ms_chevron_right"
                     android:rotation="180"
-                    android:padding="8dp"
+                    android:padding="12dp"
                     app:tint="?attr/colorPrimary"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:focusable="true"
-                    android:contentDescription="@null" />
+                    android:contentDescription="@string/accion_periodo_anterior" />
 
                 <TextView
                     android:id="@+id/tvPeriodo"
@@ -113,15 +90,15 @@
 
                 <ImageView
                     android:id="@+id/btnNext"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:src="@drawable/ic_ms_chevron_right"
-                    android:padding="8dp"
+                    android:padding="12dp"
                     app:tint="?attr/colorPrimary"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:focusable="true"
-                    android:contentDescription="@null" />
+                    android:contentDescription="@string/accion_periodo_siguiente" />
 
             </LinearLayout>
 

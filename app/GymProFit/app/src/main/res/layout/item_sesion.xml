@@ -52,15 +52,15 @@
 
             <ImageView
                 android:id="@+id/btnEliminarSesion"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:src="@drawable/ic_ms_delete"
-                android:padding="6dp"
+                android:padding="12dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
                 android:alpha="0.5"
-                android:contentDescription="@null" />
+                android:contentDescription="@string/sesiones_eliminar" />
 
         </LinearLayout>
 

@@ -35,6 +35,7 @@ import es.pmdm.gymprofit.ui.adapters.AlimentoComidaAdapter;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import com.google.android.material.appbar.MaterialToolbar;
 
 // ============================================================
 // ComidaActivity — log de alimentos de una comida del día
@@ -113,18 +114,18 @@ public class ComidaActivity extends BaseActivity {
 
     // Configura el botón de volver y el título de la toolbar según el tipo de comida
     private void configurarToolbar() {
-        findViewById(R.id.btnBack).setOnClickListener(v -> {
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(v -> {
             setResult(RESULT_OK);
             finish();
         });
 
-        TextView tvTitulo = findViewById(R.id.tvTituloComida);
         if (tipoComida != null) {
             Integer resId = TIPO_LABELS.get(tipoComida.toUpperCase(Locale.ROOT));
             if (resId != null) {
-                tvTitulo.setText(getString(resId));
+                toolbar.setTitle(resId);
             } else {
-                tvTitulo.setText(tipoComida);
+                toolbar.setTitle(tipoComida);
             }
         }
     }

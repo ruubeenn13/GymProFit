@@ -21,6 +21,7 @@ import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import com.google.android.material.appbar.MaterialToolbar;
 
 // ============================================================
 // RecuperarPasswordActivity — recuperar una contraseña olvidada.
@@ -85,7 +86,7 @@ public class RecuperarPasswordActivity extends AppCompatActivity {
 
     // Cablea volver, pedir el código, reenviarlo y restablecer la contraseña.
     private void configurarEventos() {
-        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+        ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
         findViewById(R.id.btnEnviarCodigo).setOnClickListener(v -> pedirCodigo());
         findViewById(R.id.btnReenviar).setOnClickListener(v -> reenviarCodigo());
         findViewById(R.id.btnRestablecer).setOnClickListener(v -> restablecer());

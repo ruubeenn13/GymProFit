@@ -270,6 +270,33 @@
         <item name="titleTextStyle">@style/TextAppearance.GymProFit.Headline</item>
     </style>
 
+    <!-- Cabecera de toda pantalla secundaria (GP-062): una sola, la MaterialToolbar.
+         Convivían dos patrones —Toolbar en 9 pantallas y una fila hecha a mano con un
+         ImageView de 40 dp en otras 18— y la hecha a mano ni llegaba a 48 dp ni tenía
+         nombre accesible en la flecha. El botón de navegación de la Toolbar mide lo
+         que ella de alto (56 dp) y aquí lleva siempre su «Volver». Se pone con
+         style= en cada layout y no como toolbarStyle del tema, para no tocar la barra
+         de acción de Theme.GymProFit.ConBarra. CabeceraTest vigila que no vuelva la
+         cabecera a mano. -->
+    <style name="Widget.GymProFit.Cabecera" parent="Widget.Material3.Toolbar.Surface">
+        <item name="android:background">?attr/colorSurface</item>
+        <item name="android:minHeight">?attr/actionBarSize</item>
+        <item name="navigationIcon">@drawable/ic_ms_arrow_back</item>
+        <item name="navigationIconTint">?attr/colorOnSurface</item>
+        <item name="navigationContentDescription">@string/btn_volver</item>
+        <item name="titleTextAppearance">@style/TextAppearance.GymProFit.Headline</item>
+        <item name="titleTextColor">?attr/colorOnSurface</item>
+    </style>
+
+    <!-- Botón de icono dentro de una cabecera o fila: 48 dp de zona táctil (GP-062) -->
+    <style name="Widget.GymProFit.BotonIcono" parent="Widget.AppCompat.ImageButton">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+    </style>
+
     <!-- Spinner con la flecha de Material Symbols; el paddingEnd deja sitio a la flecha -->
     <style name="Widget.GymProFit.Spinner" parent="Widget.AppCompat.Spinner">
         <item name="android:background">@drawable/bg_spinner</item>

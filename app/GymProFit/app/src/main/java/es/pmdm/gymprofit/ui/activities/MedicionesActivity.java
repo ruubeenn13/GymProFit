@@ -44,6 +44,7 @@ import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
 import es.pmdm.gymprofit.utils.Numeros;
+import com.google.android.material.appbar.MaterialToolbar;
 
 // ============================================================
 // MedicionesActivity — pantalla de mediciones corporales del usuario.
@@ -137,7 +138,7 @@ public class MedicionesActivity extends AppCompatActivity {
                     masDetallesAbierto ? R.drawable.ic_ms_keyboard_arrow_up : R.drawable.ic_ms_keyboard_arrow_down, 0);
         });
 
-        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+        ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
         // Sin FAB: registrar la primera medición desde el estado vacío; el resto se
         // edita in-place tocando cada fila (upsert por día al guardar).
         findViewById(R.id.btnRegistrarPrimera).setOnClickListener(v -> registrarPrimeraMedicion());

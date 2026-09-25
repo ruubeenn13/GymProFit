@@ -56,14 +56,14 @@
 
             <ImageView
                 android:id="@+id/btnAccionesRutina"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:src="@drawable/ic_ms_more_vert"
-                android:padding="4dp"
+                android:padding="12dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                android:contentDescription="@null" />
+                android:contentDescription="@string/accion_mas_acciones" />
 
         </LinearLayout>
 

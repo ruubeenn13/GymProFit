@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -26,6 +25,7 @@ import es.pmdm.gymprofit.model.alimento.Alimento;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import com.google.android.material.appbar.MaterialToolbar;
 
 // ============================================================
 // CrearAlimentoActivity — formulario de creación de alimento personalizado
@@ -82,8 +82,8 @@ public class CrearAlimentoActivity extends BaseActivity {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        ImageView btnBack = findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(v -> finish());
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(v -> finish());
 
         MaterialButton btnGuardar = findViewById(R.id.btnGuardarAlimento);
         btnGuardar.setOnClickListener(v -> guardarAlimento());
