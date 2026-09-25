@@ -271,6 +271,7 @@
                             android:textSize="@dimen/text_display_large"
                             android:textColor="?attr/colorOnSurface" />
                         <TextView
+                            android:textAppearance="@style/TextAppearance.GymProFit.Label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/resumen_stat_sesiones"
@@ -304,6 +305,7 @@
                             android:textSize="@dimen/text_display_large"
                             android:textColor="?attr/colorOnSurface" />
                         <TextView
+                            android:textAppearance="@style/TextAppearance.GymProFit.Label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/resumen_stat_completadas"
@@ -346,6 +348,7 @@
                             android:textSize="@dimen/text_display_large"
                             android:textColor="?attr/colorOnSurface" />
                         <TextView
+                            android:textAppearance="@style/TextAppearance.GymProFit.Label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/resumen_stat_minutos"
@@ -379,6 +382,7 @@
                             android:textSize="@dimen/text_display_large"
                             android:textColor="?attr/colorOnSurface" />
                         <TextView
+                            android:textAppearance="@style/TextAppearance.GymProFit.Label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/resumen_stat_ejercicios"
@@ -421,6 +425,7 @@
                             android:textSize="@dimen/text_display_large"
                             android:textColor="?attr/colorOnSurface" />
                         <TextView
+                            android:textAppearance="@style/TextAppearance.GymProFit.Label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/resumen_stat_racha"
@@ -454,6 +459,7 @@
                             android:textSize="@dimen/text_display_large"
                             android:textColor="?attr/colorOnSurface" />
                         <TextView
+                            android:textAppearance="@style/TextAppearance.GymProFit.Label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/resumen_stat_mejor_racha"

@@ -83,6 +83,7 @@
                             android:textColor="?attr/colorOnPrimary" />
 
                         <TextView
+                            android:textAppearance="@style/TextAppearance.GymProFit.Label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/admin_total_usuarios"
@@ -119,6 +120,7 @@
                             android:textColor="?attr/colorOnSurface" />
 
                         <TextView
+                            android:textAppearance="@style/TextAppearance.GymProFit.Label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/admin_usuarios_activos"
@@ -164,6 +166,7 @@
                             android:textColor="?attr/colorOnSurface" />
 
                         <TextView
+                            android:textAppearance="@style/TextAppearance.GymProFit.Label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/admin_total_sesiones"
@@ -200,6 +203,7 @@
                             android:textColor="?attr/colorOnSurface" />
 
                         <TextView
+                            android:textAppearance="@style/TextAppearance.GymProFit.Label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/admin_sesiones_hoy"
@@ -245,6 +249,7 @@
                             android:textColor="?attr/colorOnSurface" />
 
                         <TextView
+                            android:textAppearance="@style/TextAppearance.GymProFit.Label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/admin_rutinas_predefinidas"
@@ -281,6 +286,7 @@
                             android:textColor="?attr/colorOnSurface" />
 
                         <TextView
+                            android:textAppearance="@style/TextAppearance.GymProFit.Label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/admin_ejercicios_activos"

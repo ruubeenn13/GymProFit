@@ -37,6 +37,7 @@
 
     <!-- Rótulo que atribuye las tarjetas de debajo: no son del usuario. -->
     <TextView
+        android:textAppearance="@style/TextAppearance.GymProFit.Label"
         android:id="@+id/tvVacioSugerencias"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

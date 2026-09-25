@@ -151,6 +151,7 @@
             <!-- Selector de nivel de experiencia -->
             <!-- Nivel de experiencia -->
             <TextView
+                android:textAppearance="@style/TextAppearance.GymProFit.Label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="6dp"
@@ -179,6 +180,7 @@
             <!-- Selector de objetivo fitness -->
             <!-- Objetivo fitness -->
             <TextView
+                android:textAppearance="@style/TextAppearance.GymProFit.Label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="6dp"

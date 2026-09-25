@@ -33,6 +33,7 @@
 
             <!-- Rutina -->
             <TextView
+                android:textAppearance="@style/TextAppearance.GymProFit.Label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/sesiones_rutina"
@@ -149,6 +150,7 @@
                     android:padding="16dp">
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.GymProFit.Label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/sesiones_valoracion"
