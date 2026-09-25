@@ -121,6 +121,7 @@
                         android:padding="22dp">
 
                         <TextView
+                            android:textAppearance="@style/TextAppearance.GymProFit.Label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/nutricion_calorias_hoy"

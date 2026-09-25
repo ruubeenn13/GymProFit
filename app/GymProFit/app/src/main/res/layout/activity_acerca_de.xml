@@ -110,6 +110,7 @@
                         android:background="?attr/colorOutlineVariant" />
 
                     <TextView
+                        android:textAppearance="@style/TextAppearance.GymProFit.Label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/acerca_funcionalidades"

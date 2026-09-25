@@ -118,6 +118,26 @@ public class TipografiaTest {
         if (!fallos.isEmpty()) fail("Texto por debajo de 13 desde código:\n" + String.join("\n", fallos));
     }
 
+    // Una etiqueta en mayúsculas es la etiqueta de la escala (condensada, 13 sp,
+    // espaciada): tiene que llevar su apariencia y no un tamaño y un espaciado sueltos,
+    // que la dejaban en Barlow normal y hacían partir «PROTEÍNAS» en dos líneas.
+    @Test
+    public void toda_etiqueta_en_mayusculas_lleva_la_apariencia_label() throws IOException {
+        Pattern textView = Pattern.compile("<TextView\\b([^<>]*?)/?>");
+        List<String> fallos = new ArrayList<>();
+        for (Path f : ficheros(RES.resolve("layout"), ".xml")) {
+            Matcher m = textView.matcher(leer(f));
+            while (m.find()) {
+                String atributos = m.group(1);
+                if (atributos.contains("android:textAllCaps=\"true\"")
+                        && !atributos.contains("android:textAppearance=\"@style/TextAppearance.GymProFit.Label\"")) {
+                    fallos.add(f.getFileName().toString());
+                }
+            }
+        }
+        if (!fallos.isEmpty()) fail("Etiqueta en mayúsculas sin TextAppearance.GymProFit.Label:\n" + String.join("\n", fallos));
+    }
+
     private static List<String> buscar(Path raiz, String extension, Pattern patron) throws IOException {
         List<String> fallos = new ArrayList<>();
         for (Path f : ficheros(raiz, extension)) {
