@@ -74,8 +74,9 @@ public class AdminUsuarioAdapter extends RecyclerView.Adapter<AdminUsuarioAdapte
         h.itemView.setContentDescription(esCuentaPropia
                 ? ctx.getString(R.string.admin_usuario_es_tu_cuenta) : null);
 
-        String rol = u.getRol() != null ? u.getRol().replace("ROLE_", "") : "USER";
-        h.chipRol.setText(rol);
+        // El rol llega como código ("ROLE_ADMIN"): se enseña su nombre, no el código (GP-071).
+        boolean esAdmin = u.getRol() != null && u.getRol().contains("ADMIN");
+        h.chipRol.setText(esAdmin ? R.string.rol_admin : R.string.rol_usuario);
 
         if (u.isActivo()) {
             h.chipEstado.setText(ctx.getString(R.string.admin_estado_activo));

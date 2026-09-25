@@ -50,8 +50,11 @@ public class EditarRutinaAdminActivity extends BaseActivity {
         etDiasSemana = findViewById(R.id.etDiasSemana);
         spNivel      = findViewById(R.id.spNivel);
 
+        // Los códigos se guardan por posición; lo que se enseña es su nombre (GP-071).
+        String[] nivelesVisibles = new String[NIVELES.length];
+        for (int i = 0; i < NIVELES.length; i++) nivelesVisibles[i] = UIHelper.traducirNivel(this, NIVELES[i]);
         ArrayAdapter<String> nivelAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, NIVELES);
+                android.R.layout.simple_spinner_item, nivelesVisibles);
         nivelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spNivel.setAdapter(nivelAdapter);
 

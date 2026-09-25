@@ -103,10 +103,10 @@ public class OnboardingResumenActivity extends AppCompatActivity {
 
         ((TextView) findViewById(R.id.tvResumenCalorias)).setText(String.valueOf(resultado.calorias));
         ((TextView) findViewById(R.id.tvResumenObjetivo)).setText(obtenerNombreObjetivo(objetivo));
-        ((TextView) findViewById(R.id.tvResumenProteinas)).setText(resultado.proteinas + "g");
-        ((TextView) findViewById(R.id.tvResumenCarbos)).setText(resultado.carbohidratos + "g");
-        ((TextView) findViewById(R.id.tvResumenGrasas)).setText(resultado.grasas + "g");
-        ((TextView) findViewById(R.id.tvResumenAgua)).setText(resultado.agua + "L");
+        ((TextView) findViewById(R.id.tvResumenProteinas)).setText(getString(R.string.unidad_g_entero, resultado.proteinas));
+        ((TextView) findViewById(R.id.tvResumenCarbos)).setText(getString(R.string.unidad_g_entero, resultado.carbohidratos));
+        ((TextView) findViewById(R.id.tvResumenGrasas)).setText(getString(R.string.unidad_g_entero, resultado.grasas));
+        ((TextView) findViewById(R.id.tvResumenAgua)).setText(getString(R.string.unidad_litros, resultado.agua));
 
         // Las tres barras de macros estaban fijadas a 0 y sin id, así que nadie
         // podía tocarlas: tres rayas grises bajo tres números, para siempre. Una

@@ -83,8 +83,10 @@ public class RutinaAdapter extends RecyclerView.Adapter<RutinaAdapter.ViewHolder
         holder.tvNombre.setText(rutina.getNombre());
         holder.tvDescripcion.setText(rutina.getDescripcion());
         holder.chipNivel.setText(es.pmdm.gymprofit.utils.UIHelper.traducirNivel(holder.itemView.getContext(), rutina.getNivel())); // enum traducido
-        holder.tvNumEjercicios.setText(rutina.getNumEjercicios() + " ejercicios");
-        holder.tvDuracion.setText(rutina.getDuracionMinutos() + " min");
+        android.content.Context ctx = holder.itemView.getContext();
+        holder.tvNumEjercicios.setText(ctx.getResources().getQuantityString(
+                R.plurals.rutina_num_ejercicios, rutina.getNumEjercicios(), rutina.getNumEjercicios()));
+        holder.tvDuracion.setText(ctx.getString(R.string.sesiones_min, rutina.getDuracionMinutos()));
         if (clickListener != null) {
             holder.itemView.setOnClickListener(v -> clickListener.onClick(rutina));
         }

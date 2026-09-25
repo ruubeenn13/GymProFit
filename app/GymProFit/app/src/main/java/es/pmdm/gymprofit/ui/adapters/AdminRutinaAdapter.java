@@ -60,7 +60,8 @@ public class AdminRutinaAdapter extends RecyclerView.Adapter<AdminRutinaAdapter.
         String desc = r.getDescripcion();
         h.tvDescripcion.setText((desc != null && !desc.isEmpty()) ? desc : "—");
         h.chipNivel.setText(es.pmdm.gymprofit.utils.UIHelper.traducirNivel(ctx, r.getNivel())); // enum traducido
-        h.tvNumEjercicios.setText(r.getNumEjercicios() + " ejerc.");
+        h.tvNumEjercicios.setText(h.itemView.getContext().getResources().getQuantityString(
+                R.plurals.rutina_num_ejercicios, r.getNumEjercicios(), r.getNumEjercicios()));
 
         if (r.isActiva()) {
             h.chipEstado.setText(ctx.getString(R.string.admin_estado_activo));

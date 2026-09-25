@@ -121,7 +121,8 @@ public class ResumenCrearRutinaActivity extends AppCompatActivity {
     private void actualizarDetalles() {
         // El resumen dice nivel y duración. Las kcal que decía antes salían de
         // series × reps × una constante del catálogo, y se retiran (DEC-004 / GP-010).
-        String detalles = nivel + "  ·  " + duracion + " min";
+        // El nivel llega como código ("INTERMEDIO"): se traduce, como en el resto (GP-071).
+        String detalles = getString(R.string.nivel_y_duracion, UIHelper.traducirNivel(this, nivel), duracion);
         ((TextView) findViewById(R.id.tvDetallesRutina)).setText(detalles);
     }
 

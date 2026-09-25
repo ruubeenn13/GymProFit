@@ -290,7 +290,7 @@ public class RegistrarSesionActivity extends AppCompatActivity {
                         int reps        = re.getRepeticiones();
                         int ejercicioId = re.getEjercicioId();
                         String nombre   = (re.getNombreEjercicio() != null && !re.getNombreEjercicio().isEmpty())
-                                ? re.getNombreEjercicio() : "Ejercicio " + i;
+                                ? re.getNombreEjercicio() : getString(R.string.ejercicio_sin_nombre, i);
                         if (ejercicioId != -1) {
                             nuevosItems.add(new EjercicioPesoAdapter.Item(ejercicioId, nombre, series, reps));
                         }

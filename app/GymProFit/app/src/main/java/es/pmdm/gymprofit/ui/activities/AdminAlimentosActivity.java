@@ -131,7 +131,7 @@ public class AdminAlimentosActivity extends BaseActivity {
     private void configurarSpinner() {
         Spinner sp = findViewById(R.id.spCategoria);
         List<String> categorias = new ArrayList<>();
-        categorias.add("Todas");
+        categorias.add(getString(R.string.filtro_todas));
         ArrayAdapter<String> adapterSp = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, categorias);
         adapterSp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

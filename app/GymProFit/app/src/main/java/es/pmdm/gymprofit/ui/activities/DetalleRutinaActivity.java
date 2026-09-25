@@ -114,7 +114,7 @@ public class DetalleRutinaActivity extends AppCompatActivity {
         // pantalla no: mismo dato, dos vocabularios, a un toque de distancia.
         ((Chip) findViewById(R.id.chipNivelDetalle))
                 .setText(UIHelper.traducirNivel(this, nivel));
-        ((TextView) findViewById(R.id.tvDuracionDetalle)).setText(duracion + " min");
+        ((TextView) findViewById(R.id.tvDuracionDetalle)).setText(getString(R.string.sesiones_min, duracion));
     }
 
     // Configura el RecyclerView de ejercicios de la rutina (solo lectura,
@@ -231,7 +231,10 @@ public class DetalleRutinaActivity extends AppCompatActivity {
             if (e == null) {
                 e = new Ejercicio();
                 e.setId(ejercicioId);
-                e.setNombre("Ejercicio " + ejercicioId);
+                // El catálogo que se pide no trae los ejercicios desactivados; la relación
+                // sí trae su nombre. Sin él, el rótulo sale traducido (GP-071).
+                e.setNombre(rel.getNombreEjercicio() != null && !rel.getNombreEjercicio().isEmpty()
+                        ? rel.getNombreEjercicio() : getString(R.string.ejercicio_sin_nombre, ejercicioId));
             }
             ejercicios.add(new EjercicioSeleccionado(e, series, reps));
         }

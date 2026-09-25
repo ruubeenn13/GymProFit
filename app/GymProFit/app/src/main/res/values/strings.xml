@@ -741,4 +741,35 @@
         <item quantity="many">%1$d de %2$d pasos</item>
         <item quantity="other">%1$d de %2$d pasos</item>
     </plurals>
+    <!-- Unidades y cifras con su unidad (GP-071): nunca concatenadas en el código -->
+    <string name="unidad_kcal">%d kcal</string>
+    <string name="unidad_kcal_objetivo">/ %d kcal</string>
+    <string name="unidad_kcal_100g">%d kcal/100 g</string>
+    <string name="unidad_kg_entero">%d kg</string>
+    <string name="unidad_kg_decimal">%.1f kg</string>
+    <string name="unidad_cm_decimal">%.1f cm</string>
+    <string name="unidad_g_entero">%d g</string>
+    <string name="unidad_g_redondeado">%.0f g</string>
+    <string name="unidad_litros">%.1f L</string>
+    <string name="series_por_reps">%1$d × %2$d</string>
+    <string name="nivel_y_duracion">%1$s  ·  %2$d min</string>
+    <string name="grafica_kcal_fecha">%1$d kcal\n%2$s</string>
+    <string name="grafica_kg_fecha">%1$.1f kg%2$s\n%3$s</string>
+    <string name="grafica_cm_fecha">%1$.1f cm\n%2$s</string>
+    <string name="grafica_pct_fecha">%1$.1f %%\n%2$s</string>
+    <string name="grafica_kg_fecha_simple">%1$.1f kg\n%2$s</string>
+    <string name="rol_usuario">Usuario</string>
+    <string name="rol_admin">Administrador</string>
+    <string name="filtro_todas">Todas</string>
+    <plurals name="rutina_num_ejercicios">
+        <item quantity="one">%d ejercicio</item>
+        <item quantity="other">%d ejercicios</item>
+    </plurals>
+    <!-- Patrones de fecha (SimpleDateFormat) por idioma (GP-071) -->
+    <string name="home_fecha_patron" translatable="false">EEEE, d \'de\' MMMM</string>
+    <string name="nutricion_fecha_patron" translatable="false">EEE d MMM</string>
+    <string name="comida_total_prot">%.1f g prot</string>
+    <string name="comida_total_carbos">%.1f g carbos</string>
+    <string name="comida_total_grasas">%.1f g grasas</string>
+    <string name="ejercicio_sin_nombre">Ejercicio %d</string>
 </resources>

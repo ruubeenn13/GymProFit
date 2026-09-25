@@ -11,6 +11,20 @@ public final class FechaUtils {
 
     private FechaUtils() {}
 
+    /**
+     * Idioma de la interfaz, el que eligió el usuario en la app.
+     *
+     * <p>No es {@code Locale.getDefault()}: ese es el del proceso, y con el idioma por
+     * app puede seguir en el del sistema. Con él, la fecha de Inicio llegó a salir en
+     * inglés con la app en español (GP-071).
+     *
+     * @param ctx contexto con la configuración de la app
+     * @return el locale con el que se están resolviendo los recursos
+     */
+    public static java.util.Locale localeDeLaApp(android.content.Context ctx) {
+        return ctx.getResources().getConfiguration().getLocales().get(0);
+    }
+
     // Convierte una fecha ISO-8601 al formato de visualización "dd/MM/yyyy HH:mm".
     // Robusto a fracciones de segundo (solo usa los caracteres de fecha y hora:minuto).
     // Si el valor es null/vacío o no encaja, devuelve "" o el original sin tocar.

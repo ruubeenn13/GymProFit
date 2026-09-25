@@ -146,7 +146,7 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
             int idx = Math.round(e.getX());
             String fecha = (idx >= 0 && idx < etiquetas.size()) ? etiquetas.get(idx) : "";
             String sufijo = e.getY() >= pr ? " · " + getString(R.string.detalle_progresion_pr) : "";
-            return String.format(Locale.getDefault(), "%.1f kg%s\n%s", e.getY(), sufijo, fecha);
+            return getString(R.string.grafica_kg_fecha, e.getY(), sufijo, fecha);
         }));
 
         LineDataSet ds = new LineDataSet(entradas, "peso");

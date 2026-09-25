@@ -39,6 +39,7 @@ import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.ui.activities.RegistrarSesionActivity;
 import es.pmdm.gymprofit.ui.activities.SesionesActivity;
 import es.pmdm.gymprofit.ui.widget.SiluetaMuscularView;
+import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.EjercicioNavHelper;
 import es.pmdm.gymprofit.utils.NavTabs;
 
@@ -228,8 +229,8 @@ public class HomeFragment extends BaseFragment {
         // Sin decimales cuando no aportan: "80 kg" y no "80,0 kg".
         double peso = record.getPeso();
         String pesoTexto = peso == Math.floor(peso)
-                ? String.format(Locale.getDefault(), "%d kg", (long) peso)
-                : String.format(Locale.getDefault(), "%.1f kg", peso);
+                ? getString(R.string.unidad_kg_entero, (long) peso)
+                : getString(R.string.unidad_kg_decimal, peso);
         tvRecordPeso.setText(pesoTexto);
 
         // El id no basta para abrir el detalle, que espera el ejercicio entero en
@@ -342,11 +343,9 @@ public class HomeFragment extends BaseFragment {
         String username = prefsManager.getUsername();
         tvUsuario.setText(username.isEmpty() ? getString(R.string.home_usuario_defecto) : username);
 
-        Locale locale = Locale.getDefault();
-        String pattern = "en".equals(locale.getLanguage())
-                ? "EEEE, MMMM d"
-                : "EEEE, d 'de' MMMM";
-        SimpleDateFormat sdf = new SimpleDateFormat(pattern, locale);
+        // Idioma de la app, no el del proceso, y el patrón en recursos (GP-071).
+        SimpleDateFormat sdf = new SimpleDateFormat(getString(R.string.home_fecha_patron),
+                FechaUtils.localeDeLaApp(requireContext()));
         tvFecha.setText(sdf.format(new Date()));
     }
 
