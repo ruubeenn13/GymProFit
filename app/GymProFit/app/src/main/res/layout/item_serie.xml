@@ -45,6 +45,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etPesoSerie"
+            android:minHeight="48dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="numberDecimal"
@@ -76,6 +77,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etRepsSerie"
+            android:minHeight="48dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="number"

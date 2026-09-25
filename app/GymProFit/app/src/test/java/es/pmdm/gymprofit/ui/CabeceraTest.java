@@ -108,6 +108,35 @@ public class CabeceraTest {
         if (!fallos.isEmpty()) fail("Vistas pulsables sin nombre accesible:\n" + String.join("\n", fallos));
     }
 
+    // Un TextView pulsable es un enlace: mide lo que su texto (22-38 dp) salvo que
+    // pida los 48. Los de «Saltar» del onboarding y «¿Ya tienes cuenta?» del registro
+    // se escaparon a la primera pasada porque no declaran medida que leer.
+    @Test
+    public void todo_texto_pulsable_pide_48dp_de_alto() throws IOException {
+        Pattern textView = Pattern.compile("<TextView\\b([^<>]*?)/?>");
+        List<String> fallos = new ArrayList<>();
+        for (Path f : layouts()) {
+            String s = leer(f);
+            Matcher m = textView.matcher(s);
+            while (m.find()) {
+                String a = m.group(1);
+                if (a.contains("android:clickable=\"true\"") && !a.contains("android:minHeight=\"48dp\"")) {
+                    fallos.add(f.getFileName() + ":" + linea(s, m.start()));
+                }
+            }
+        }
+        if (!fallos.isEmpty()) fail("Texto pulsable sin minHeight de 48 dp:\n" + String.join("\n", fallos));
+    }
+
+    @Test
+    public void los_desplegables_miden_48dp() throws IOException {
+        Matcher m = Pattern.compile("<style name=\"Widget\\.GymProFit\\.Spinner\"[\\s\\S]*?</style>")
+                .matcher(leer(TEMAS));
+        assertTrue("Falta Widget.GymProFit.Spinner", m.find());
+        assertTrue("El desplegable común no pide 48 dp de alto",
+                m.group().contains("<item name=\"android:minHeight\">48dp</item>"));
+    }
+
     // Pulsable: la marca clickable, un botón, o un id de botón (btn…, fab…).
     private static boolean esPulsable(String etiqueta, String atributos) {
         Matcher id = Pattern.compile("android:id=\"@\\+id/(\\w+)\"").matcher(atributos);

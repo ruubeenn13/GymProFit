@@ -301,6 +301,8 @@
     <style name="Widget.GymProFit.Spinner" parent="Widget.AppCompat.Spinner">
         <item name="android:background">@drawable/bg_spinner</item>
         <item name="android:paddingEnd">44dp</item>
+        <!-- Zona táctil mínima (GP-062): el de crear alimento medía 24 dp de alto -->
+        <item name="android:minHeight">48dp</item>
     </style>
 
     <!-- Fila del desplegable cerrado y de su lista: en Barlow y con la escala
