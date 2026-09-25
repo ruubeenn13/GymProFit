@@ -24,7 +24,6 @@
     <string name="registro_titulo">Crear cuenta</string>
     <string name="registro_crear_cuenta">Crear cuenta</string>
     <string name="registro_exito">¡Cuenta creada correctamente!</string>
-    <string name="registro_error">Error al crear la cuenta</string>
     <string name="login_error_credenciales">Usuario o contraseña incorrectos</string>
     <string name="error_conexion">Error de conexión con el servidor</string>
 
@@ -55,8 +54,12 @@
     <string name="registro_confirmar_password">Confirmar contraseña</string>
     <string name="registro_ya_cuenta">¿Ya tienes cuenta? Inicia sesión</string>
     <string name="registro_email_invalido">Introduce un email válido</string>
-    <string name="registro_password_corta">La contraseña debe tener al menos 6 caracteres</string>
     <string name="registro_passwords_no_coinciden">Las contraseñas no coinciden</string>
+    <string name="registro_error_usuario_longitud">Entre %1$d y %2$d caracteres</string>
+    <string name="registro_error_email_largo">Máximo %1$d caracteres</string>
+    <string name="registro_error_usuario_en_uso">Ese nombre de usuario ya está cogido</string>
+    <string name="registro_error_email_en_uso">Ya hay una cuenta con este correo</string>
+    <string name="registro_error_ya_registrado">Ese usuario o ese correo ya tienen una cuenta</string>
 
     <!-- TEMA -->
     <string name="cambiar_tema">Cambiar tema</string>

@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,8 +26,11 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.AuthApi;
 import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.network.UtilREST;
+import es.pmdm.gymprofit.utils.LoadingDialog;
+import es.pmdm.gymprofit.utils.PoliticaCuenta;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
+import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
 // RegistroActivity — Pantalla de registro de un nuevo usuario.
@@ -43,6 +47,7 @@ public class RegistroActivity extends AppCompatActivity {
     }
 
     private TextInputEditText etRegUsername, etRegEmail, etRegPassword, etRegConfirmarPassword;
+    private TextInputLayout tilRegUsername, tilRegEmail, tilRegPassword, tilRegConfirmarPassword;
     private PreferencesManager prefsManager;
     // Interfaces Retrofit tipadas de auth y usuarios (etapa 2)
     private final AuthApi authApi = ApiClient.service(AuthApi.class);
@@ -69,6 +74,10 @@ public class RegistroActivity extends AppCompatActivity {
         etRegEmail = findViewById(R.id.etRegEmail);
         etRegPassword = findViewById(R.id.etRegPassword);
         etRegConfirmarPassword = findViewById(R.id.etRegConfirmarPassword);
+        tilRegUsername = findViewById(R.id.tilRegUsername);
+        tilRegEmail = findViewById(R.id.tilRegEmail);
+        tilRegPassword = findViewById(R.id.tilRegPassword);
+        tilRegConfirmarPassword = findViewById(R.id.tilRegConfirmarPassword);
         montarAvisoPrivacidad();
     }
 
@@ -121,60 +130,133 @@ public class RegistroActivity extends AppCompatActivity {
         });
     }
 
-    // Valida que los campos no estén vacíos, que el email tenga formato
-    // válido, que la contraseña tenga longitud mínima y que ambas coincidan.
+    /**
+     * Valida el formulario con las mismas reglas que la API ({@link PoliticaCuenta})
+     * y pone cada error en el campo que lo causa (GP-095).
+     *
+     * <p>Antes el registro solo pedía 6 caracteres de contraseña: una como
+     * «gymprofit1» pasaba aquí, la API la rechazaba con 400 y el usuario veía
+     * «Error al crear la cuenta» sin saber qué cambiar. Ahora lo que no aceptaría la
+     * API no sale del móvil. Se revisan todos los campos, no solo el primero que
+     * falla, para que se vean todos los errores de una vez.
+     *
+     * @return true si se puede enviar.
+     */
     private boolean validarCampos() {
-        String username = etRegUsername.getText().toString().trim();
-        String email = etRegEmail.getText().toString().trim();
-        String password = etRegPassword.getText().toString().trim();
-        String confirmar = etRegConfirmarPassword.getText().toString().trim();
+        String username = texto(etRegUsername);
+        String email = texto(etRegEmail);
+        String password = texto(etRegPassword);
+        String confirmar = texto(etRegConfirmarPassword);
 
-        if (username.isEmpty() || email.isEmpty() || password.isEmpty() || confirmar.isEmpty()) {
-            UIHelper.mostrarToastError(this, getString(R.string.error_campos_vacios));
-            return false;
+        String errUsuario = null;
+        if (username.isEmpty()) {
+            errUsuario = getString(R.string.error_campo_requerido);
+        } else if (!PoliticaCuenta.usuarioValido(username)) {
+            errUsuario = getString(R.string.registro_error_usuario_longitud,
+                    PoliticaCuenta.USUARIO_MIN, PoliticaCuenta.USUARIO_MAX);
         }
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            UIHelper.mostrarToastError(this, getString(R.string.registro_email_invalido));
-            etRegEmail.requestFocus();
-            return false;
+
+        String errEmail = null;
+        if (email.isEmpty()) {
+            errEmail = getString(R.string.error_campo_requerido);
+        } else if (!PoliticaCuenta.correoLongitudValida(email)) {
+            errEmail = getString(R.string.registro_error_email_largo, PoliticaCuenta.CORREO_MAX);
+        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            errEmail = getString(R.string.registro_email_invalido);
         }
-        if (password.length() < 6) {
-            UIHelper.mostrarToastError(this, getString(R.string.registro_password_corta));
-            etRegPassword.requestFocus();
-            return false;
+
+        String errPassword = null;
+        if (password.isEmpty()) {
+            errPassword = getString(R.string.error_campo_requerido);
+        } else if (!PoliticaCuenta.passwordValida(password)) {
+            errPassword = getString(R.string.password_politica);
         }
-        if (!password.equals(confirmar)) {
-            UIHelper.mostrarToastError(this, getString(R.string.registro_passwords_no_coinciden));
-            etRegConfirmarPassword.requestFocus();
-            return false;
+
+        String errConfirmar = null;
+        if (confirmar.isEmpty()) {
+            errConfirmar = getString(R.string.error_campo_requerido);
+        } else if (!confirmar.equals(password)) {
+            errConfirmar = getString(R.string.registro_passwords_no_coinciden);
         }
-        return true;
+
+        tilRegUsername.setError(errUsuario);
+        tilRegEmail.setError(errEmail);
+        tilRegPassword.setError(errPassword);
+        tilRegConfirmarPassword.setError(errConfirmar);
+
+        // El foco va al primer campo con error, que es el que TalkBack lee primero.
+        if (errUsuario != null) etRegUsername.requestFocus();
+        else if (errEmail != null) etRegEmail.requestFocus();
+        else if (errPassword != null) etRegPassword.requestFocus();
+        else if (errConfirmar != null) etRegConfirmarPassword.requestFocus();
+
+        return errUsuario == null && errEmail == null && errPassword == null && errConfirmar == null;
+    }
+
+    // Texto recortado de un campo; nunca null.
+    private static String texto(TextInputEditText et) {
+        return et.getText() != null ? et.getText().toString().trim() : "";
     }
 
     // Llama a la API para crear la cuenta; si tiene éxito, encadena el login
     // automático con las mismas credenciales.
     private void registrar() {
-        String username = etRegUsername.getText().toString().trim();
-        String email    = etRegEmail.getText().toString().trim();
-        String password = etRegPassword.getText().toString().trim();
+        String username = texto(etRegUsername);
+        String email    = texto(etRegEmail);
+        String password = texto(etRegPassword);
 
         Map<String, Object> body = new HashMap<>();
         body.put("username", username);
         body.put("password", password);
         body.put("email", email);
 
+        LoadingDialog.show(this);
         authApi.register(body).enqueue(new ApiCallback<Void>() {
             @Override
             public void onOk(Void ignored) {
+                LoadingDialog.hide(RegistroActivity.this);
                 UIHelper.mostrarToastExito(RegistroActivity.this, getString(R.string.registro_exito));
                 hacerLoginAutomatico(username, password);
             }
 
             @Override
             public void onFail(int code, String message) {
-                UIHelper.mostrarToastError(RegistroActivity.this, getString(R.string.registro_error));
+                LoadingDialog.hide(RegistroActivity.this);
+                mostrarErrorRegistro(code, message);
             }
         });
+    }
+
+    /**
+     * Enseña por qué la API no ha creado la cuenta (GP-095). Antes todo acababa en
+     * el mismo «Error al crear la cuenta».
+     *
+     * <p>Un 400 es que el usuario o el correo ya tienen cuenta: la validación local
+     * es la de la API, así que no puede ser otra cosa. El código de "cause" dice cuál
+     * de los dos y el error va a ese campo; sin código, un aviso que dice que es uno
+     * de los dos. Red, 429 y 5xx no dependen de lo escrito y van por el aviso común.
+     *
+     * @param code   código HTTP, o -1 si no hubo respuesta.
+     * @param cuerpo cuerpo de error tal cual.
+     */
+    private void mostrarErrorRegistro(int code, String cuerpo) {
+        if (code != 400) {
+            UiFeedback.toastError(this, code, cuerpo);
+            return;
+        }
+        switch (PoliticaCuenta.campoEnUso(cuerpo)) {
+            case USUARIO:
+                tilRegUsername.setError(getString(R.string.registro_error_usuario_en_uso));
+                etRegUsername.requestFocus();
+                break;
+            case CORREO:
+                tilRegEmail.setError(getString(R.string.registro_error_email_en_uso));
+                etRegEmail.requestFocus();
+                break;
+            default:
+                UIHelper.mostrarToastError(this, getString(R.string.registro_error_ya_registrado));
+                break;
+        }
     }
 
     // Hace login con las credenciales recién registradas, guarda el token y
