@@ -4,6 +4,7 @@
   Muestra información de la app, el desarrollador (formación, experiencia) y enlaces de contacto (email, web, teléfono, compartir).
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -52,10 +53,11 @@
                     android:textAppearance="@style/TextAppearance.GymProFit.Display" />
 
                 <TextView
+                    android:id="@+id/tvVersion"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="@string/splash_version"
+                    tools:text="v1.0.0"
                     android:textSize="@dimen/text_body"
                     android:textColor="?attr/colorPrimary" />
 
