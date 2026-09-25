@@ -2,6 +2,12 @@
 
 Historial de cambios del proyecto (API Spring Boot + app Android). Ver también el [README](README.md).
 
+### 2026-09-25
+
+| Hash | Descripción |
+|---|---|
+| `ea84b4c` | fix(api): **`main` vuelve a compilar**. `3de9436` (tipografía, GP-089) borró por error ocho ficheros de la API del trabajo a medias de GP-088 —entidad, mapper, repositorio, servicio e interfaz, los dos DTO y `ProgresoEjercicioOwnershipTest`— que `ProgresoEjercicioController` sigue usando, y Render no podía construir. Se recuperan tal cual estaban en `9ca07d3`. 573 tests en verde. CLAUDE.md añade la regla: cada commit lleva solo los ficheros de su tarea. |
+
 ### 2026-09-24
 
 | Hash | Descripción |
