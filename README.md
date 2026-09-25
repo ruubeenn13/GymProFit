@@ -278,7 +278,8 @@ Controller → Service → Repository (JPA / jOOQ) → MariaDB
 | `RutinaEjercicioController` | `/rutinas-ejercicios` | Relación rutina↔ejercicio |
 | `SesionEntrenamientoController` | `/sesiones` | Registro de sesiones completadas |
 | `EjercicioRealizadoController` | `/ejercicios-realizados` | Detalle ejercicios por sesión |
-| `ProgresoEjercicioController` | `/progreso-ejercicios` | Mejor marca por ejercicio |
+| `RecordController` | `/records` | Récords y progresión por ejercicio, calculados de las series (GP-088). Sin id de usuario: sale del token |
+| `ProgresoEjercicioController` | `/progreso-ejercicios` | Solo `historial` y `record-destacado`, para las builds ya repartidas; leen de las series |
 | `MedicionCorporalController` | `/mediciones-corporales` | Mediciones corporales. `GET /usuario/{id}/ordenadas` para historial |
 | `ObjetivoPersonalController` | `/objetivos-personales` | Objetivos con progreso |
 | `AlimentoController` | `/alimentos` | Catálogo nutricional |
@@ -304,7 +305,6 @@ Controller → Service → Repository (JPA / jOOQ) → MariaDB
 | `RutinaEjercicio` | `rutina_ejercicios` |
 | `SesionEntrenamiento` | `sesiones_entrenamiento` |
 | `EjercicioRealizado` | `ejercicios_realizados` |
-| `ProgresoEjercicio` | `progreso_ejercicios` |
 | `MedicionCorporal` | `mediciones_corporales` |
 | `ObjetivoPersonal` | `objetivos_personales` |
 | `Alimento` | `alimentos` |
@@ -371,7 +371,7 @@ MariaDB en `localhost:3308` en desarrollo (base de datos `gymprofit_db`); **MySQ
 | `rutina_ejercicios` | Series, reps, peso recomendado y orden |
 | `sesiones_entrenamiento` | fechaInicio, fechaFin, duracion, calorias |
 | `ejercicios_realizados` | Detalle por sesión |
-| `progreso_ejercicios` | Mejor marca histórica por ejercicio |
+| `progreso_ejercicios` | **Sin uso desde GP-088**: ni se lee ni se escribe; se retira en una migración posterior, cuando los récords estén comprobados en producción |
 | `mediciones_corporales` | Peso, altura, IMC, grasa, músculo, perímetros |
 | `objetivos_personales` | Valor actual vs meta, fechas y estado |
 | `alimentos` / `comidas` / `alimentos_comida` | Módulo nutricional |

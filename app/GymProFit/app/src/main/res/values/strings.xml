@@ -772,4 +772,32 @@
     <string name="comida_total_carbos">%.1f g carbos</string>
     <string name="comida_total_grasas">%.1f g grasas</string>
     <string name="ejercicio_sin_nombre">Ejercicio %d</string>
+    <!-- Récords (GP-088) -->
+    <string name="records_titulo">Récords</string>
+    <string name="perfil_ver_records">Mis récords</string>
+    <string name="records_vacio_titulo">Todavía sin récords</string>
+    <string name="records_vacio_texto">La primera vez que haces un ejercicio es tu punto de partida. Cuando lo superes, aparecerá aquí.</string>
+    <string name="record_batido_el">Batido el %s</string>
+    <string name="record_antes">Antes: %s</string>
+    <string name="record_peso_por_reps">%1$s × %2$d</string>
+    <string name="record_a11y">%1$s, %2$s. %3$s</string>
+    <string name="home_record_a11y">Tu récord: %1$s, %2$s</string>
+    <string name="resumen_seccion_records">Récords</string>
+    <string name="grafica_reps_fecha">%1$s%2$s\n%3$s</string>
+    <string name="zona_titulo_pierna">Pierna</string>
+    <string name="zona_titulo_espalda">Espalda</string>
+    <string name="zona_titulo_pecho">Pecho</string>
+    <string name="zona_titulo_hombros">Hombros</string>
+    <string name="zona_titulo_brazos">Brazos</string>
+    <string name="zona_titulo_core">Abdomen</string>
+    <string name="zona_titulo_otros">Otros</string>
+    <plurals name="record_repeticiones">
+        <item quantity="one">%d rep</item>
+        <item quantity="other">%d reps</item>
+    </plurals>
+    <plurals name="resumen_primeras_marcas">
+        <item quantity="one">%d ejercicio hecho por primera vez: es tu punto de partida.</item>
+        <item quantity="other">%d ejercicios hechos por primera vez: son tu punto de partida.</item>
+    </plurals>
+    <string name="separador_punto" translatable="false">"  ·  "</string>
 </resources>

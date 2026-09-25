@@ -2,6 +2,7 @@ package es.pmdm.gymprofit.ui.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,14 +26,15 @@ import java.util.Map;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
-import es.pmdm.gymprofit.model.progreso.RecordDestacado;
+import es.pmdm.gymprofit.model.record.Record;
+import es.pmdm.gymprofit.model.record.Records;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
 import es.pmdm.gymprofit.model.sesion.VolumenMuscular;
 import es.pmdm.gymprofit.model.usuario.UsuarioEstadisticas;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.EjercicioApi;
-import es.pmdm.gymprofit.network.ProgresoEjercicioApi;
+import es.pmdm.gymprofit.network.RecordApi;
 import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.network.UiApiCallback;
 import es.pmdm.gymprofit.network.UsuarioApi;
@@ -40,6 +42,8 @@ import es.pmdm.gymprofit.ui.activities.RegistrarSesionActivity;
 import es.pmdm.gymprofit.ui.activities.SesionesActivity;
 import es.pmdm.gymprofit.ui.widget.SiluetaMuscularView;
 import es.pmdm.gymprofit.utils.FechaUtils;
+import es.pmdm.gymprofit.utils.Marcas;
+import es.pmdm.gymprofit.utils.Zonas;
 import es.pmdm.gymprofit.utils.EjercicioNavHelper;
 import es.pmdm.gymprofit.utils.NavTabs;
 
@@ -57,7 +61,7 @@ public class HomeFragment extends BaseFragment {
     private TextView tvRecordEjercicio, tvRecordPeso;
     private final SesionApi sesionApi = ApiClient.service(SesionApi.class);
     private final UsuarioApi usuarioApi = ApiClient.service(UsuarioApi.class);
-    private final ProgresoEjercicioApi progresoApi = ApiClient.service(ProgresoEjercicioApi.class);
+    private final RecordApi recordApi = ApiClient.service(RecordApi.class);
     private final EjercicioApi ejercicioApi = ApiClient.service(EjercicioApi.class);
 
     @Nullable
@@ -140,7 +144,8 @@ public class HomeFragment extends BaseFragment {
             return;
         }
 
-        String zonaOlvidada = zonaSinTrabajar(porMusculo);
+        Zonas.Zona sinTrabajar = Zonas.sinTrabajar(porMusculo);
+        String zonaOlvidada = sinTrabajar == null ? null : getString(sinTrabajar.nombre);
         int grupos = porMusculo.size();
 
         // Plurales y no `getString`: con un solo grupo la frase decía "1 grupos".
@@ -151,87 +156,58 @@ public class HomeFragment extends BaseFragment {
                         R.plurals.home_cuerpo_resumen, grupos, grupos, zonaOlvidada));
     }
 
-    /**
-     * Nombra la zona del cuerpo que se ha quedado sin tocar esta semana.
-     * <p>
-     * Se razona por zonas y no por músculos sueltos porque "te falta pierna" es un
-     * consejo y "te faltan los aductores" es una queja. Si hay varias sin tocar se
-     * nombra la primera de la lista, que va ordenada por lo grave que es saltarse esa
-     * zona: nadie abandona el entrenamiento por no hacer antebrazo, pero sí se
-     * desequilibra por no hacer pierna.
-     *
-     * @return el nombre de la zona, o {@code null} si se han tocado todas.
-     */
-    @Nullable
-    private String zonaSinTrabajar(Map<String, Integer> porMusculo) {
-        String[][] zonas = {
-                { "zona_pierna",  "cuadriceps", "isquiotibiales", "gluteos", "gemelos", "aductores" },
-                { "zona_espalda", "dorsales", "trapecios", "lumbares" },
-                { "zona_pecho",   "pecho" },
-                { "zona_hombros", "hombros" },
-                { "zona_brazos",  "biceps", "triceps", "antebrazos" },
-                { "zona_core",    "abdominales" },
-        };
-
-        for (String[] zona : zonas) {
-            boolean tocada = false;
-            for (int i = 1; i < zona.length; i++) {
-                Integer series = porMusculo.get(zona[i]);
-                if (series != null && series > 0) { tocada = true; break; }
-            }
-            if (!tocada) {
-                int res = getResources().getIdentifier(
-                        zona[0], "string", requireContext().getPackageName());
-                return res == 0 ? null : getString(res);
-            }
-        }
-        return null;
-    }
+    // Qué zona falta se decide en Zonas (GP-088), la misma tabla con la que la pantalla
+    // de Récords agrupa. Se razona por zonas y no por músculos sueltos porque "te falta
+    // pierna" es un consejo y "te faltan los aductores" es una queja; si hay varias sin
+    // tocar se nombra la primera, que va ordenada por lo grave que es saltársela.
 
     /**
-     * Carga el mejor levantamiento del usuario y lo enseña en la tarjeta dorada.
+     * Carga el último récord del usuario y lo enseña en la tarjeta dorada.
      * <p>
+     * Desde GP-088 los récords se calculan de las series de las sesiones, así que un
+     * usuario que entrena ve el suyo sin hacer nada más. Se enseña el más reciente y no
+     * el más pesado: «acabas de superarte» dice más que «una vez levantaste mucho».
      * La tarjeta está oculta de partida y solo aparece si hay récord: una tarjeta de
-     * récord vacía le recuerda a quien empieza justo lo que no tiene todavía.
+     * récord vacía le recuerda a quien empieza justo lo que no tiene todavía. La primera
+     * marca de un ejercicio no cuenta: es el punto de partida.
      */
     private void cargarRecord() {
-        int usuarioId = prefsManager.getUsuarioId();
-        if (usuarioId == -1) { cardRecordHome.setVisibility(View.GONE); return; }
+        if (prefsManager.getUsuarioId() == -1) { cardRecordHome.setVisibility(View.GONE); return; }
 
-        progresoApi.getRecordDestacado(usuarioId).enqueue(new ApiCallback<RecordDestacado>() {
+        recordApi.getRecords(null).enqueue(new ApiCallback<Records>() {
             @Override
-            public void onOk(RecordDestacado record) {
+            public void onOk(Records r) {
                 if (!isAdded()) return;
-                // 204 sin cuerpo: todavía no hay récord.
-                if (record == null || record.getEjercicioNombre() == null) {
+                if (r == null || r.getRecords().isEmpty()) {
                     cardRecordHome.setVisibility(View.GONE);
                     return;
                 }
-                pintarRecord(record);
+                pintarRecord(r.getRecords().get(0));
             }
             @Override
             public void onFail(int code, String message) {
                 if (!isAdded()) return;
+                // La tarjeta es un extra de la pantalla: si falla se queda oculta y el
+                // resto de Inicio se lee igual. Queda rastro en el log.
+                Log.w("GymProFit", "cargarRecord falló (" + code + "): " + message);
                 cardRecordHome.setVisibility(View.GONE);
             }
         });
     }
 
     // Escribe el récord en la tarjeta y la deja abriendo el detalle de ese ejercicio.
-    private void pintarRecord(RecordDestacado record) {
+    private void pintarRecord(Record record) {
         cardRecordHome.setVisibility(View.VISIBLE);
 
-        tvRecordEjercicio.setText(record.getRepeticiones() > 0
-                ? getString(R.string.home_record_detalle,
-                        record.getEjercicioNombre(), record.getRepeticiones())
-                : record.getEjercicioNombre());
-
-        // Sin decimales cuando no aportan: "80 kg" y no "80,0 kg".
-        double peso = record.getPeso();
-        String pesoTexto = peso == Math.floor(peso)
-                ? getString(R.string.unidad_kg_entero, (long) peso)
-                : getString(R.string.unidad_kg_decimal, peso);
-        tvRecordPeso.setText(pesoTexto);
+        String nombre = record.nombre(FechaUtils.localeDeLaApp(requireContext()));
+        tvRecordEjercicio.setText(record.esDePeso() && record.getRepeticiones() > 0
+                ? getString(R.string.home_record_detalle, nombre, record.getRepeticiones())
+                : nombre);
+        tvRecordPeso.setText(record.esDePeso()
+                ? Marcas.kilos(requireContext(), record.getPeso())
+                : Marcas.texto(requireContext(), record));
+        cardRecordHome.setContentDescription(getString(R.string.home_record_a11y,
+                nombre, Marcas.texto(requireContext(), record)));
 
         // El id no basta para abrir el detalle, que espera el ejercicio entero en
         // extras; se pide al pulsar y no al cargar, para no gastar una llamada por

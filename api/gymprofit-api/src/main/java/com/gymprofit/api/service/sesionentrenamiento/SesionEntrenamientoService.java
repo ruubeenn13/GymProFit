@@ -8,6 +8,7 @@ import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoPatchDTO;
 import com.gymprofit.api.config.security.SecurityUtils;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.VolumenMuscularDTO;
+import com.gymprofit.api.dto.entity.record.RecordDTO;
 import com.gymprofit.api.repository.jpa.IEjercicioRealizadoRepository;
 import com.gymprofit.api.entity.Ejercicio;
 import com.gymprofit.api.entity.EjercicioRealizado;
@@ -25,7 +26,9 @@ import com.gymprofit.api.repository.jpa.IEjercicioRepository;
 import com.gymprofit.api.repository.jpa.IRutinaRepository;
 import com.gymprofit.api.repository.jpa.ISesionEntrenamientoRepository;
 import com.gymprofit.api.repository.jpa.IUsuarioRepository;
+import com.gymprofit.api.service.ejercicio.Musculos;
 import com.gymprofit.api.service.logro.ILogroService;
+import com.gymprofit.api.service.record.IRecordService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +66,9 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
     private final IEjercicioRealizadoRepository ejercicioRealizadoRepository;
     // El guardado completo valida contra el catálogo cada ejercicio que llega.
     private final IEjercicioRepository ejercicioRepository;
+
+    // Récords batidos al guardar (GP-088).
+    private final IRecordService recordService;
     // Logger para trazar las operaciones del servicio.
     private final Logger logger = LoggerFactory.getLogger(SesionEntrenamientoService.class);
 
@@ -191,7 +197,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
                 sesionEntrenamientoRepository.findByUsuarioIdAndIdempotenciaClave(usuarioId, dto.getClaveIdempotencia());
         if (yaGuardada.isPresent()) {
             logger.info("Clave de idempotencia repetida: se devuelve la sesión {}", yaGuardada.get().getId());
-            return sesionEntrenamientoMapper.toDTO(yaGuardada.get());
+            // Con sus récords: un reintento tras perder la respuesta no debe perderlos.
+            return conCambiosDeMarca(sesionEntrenamientoMapper.toDTO(yaGuardada.get()), usuarioId);
         }
 
         Usuario usuario = usuarioRepository.findById(usuarioId)
@@ -233,7 +240,22 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
             List<String> nuevos = logroService.evaluarLogros(usuarioId);
             if (!nuevos.isEmpty()) resultado.setNuevosLogros(nuevos);
         }
-        return resultado;
+        return conCambiosDeMarca(resultado, usuarioId);
+    }
+
+    /**
+     * Añade a la respuesta los récords batidos y las primeras marcas de la sesión (GP-088).
+     * <p>
+     * Va en la misma transacción que el guardado: la consulta de series ve las recién
+     * insertadas porque Hibernate vuelca antes de consultar. Una sesión no completada
+     * no cuenta para los récords, así que tampoco los trae.
+     */
+    private SesionEntrenamientoDTO conCambiosDeMarca(SesionEntrenamientoDTO dto, Integer usuarioId) {
+        if (!Boolean.TRUE.equals(dto.getCompletada())) return dto;
+        List<List<RecordDTO>> cambios = recordService.cambiosDeMarcaDeSesion(usuarioId, dto.getId());
+        if (!cambios.get(0).isEmpty()) dto.setRecordsBatidos(cambios.get(0));
+        if (!cambios.get(1).isEmpty()) dto.setPrimerasMarcas(cambios.get(1));
+        return dto;
     }
 
     /**
@@ -641,7 +663,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
             int series = fila[2] == null ? 0 : ((Number) fila[2]).intValue();
             if (series <= 0) continue;
 
-            String clave = normalizarMusculo(musculoPrimario, grupo);
+            String clave = Musculos.normalizar(musculoPrimario, grupo);
             if (clave == null) continue;
 
             acumulado.merge(clave, series, Integer::sum);
@@ -650,61 +672,6 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         return acumulado.entrySet().stream()
                 .map(e -> new VolumenMuscularDTO(e.getKey(), e.getValue()))
                 .toList();
-    }
-
-    /**
-     * Reduce el músculo de un ejercicio a una de las claves que la silueta sabe pintar.
-     * <p>
-     * Manda el músculo primario. Cuando falta —pasa en buena parte del catálogo
-     * importado de wger— se cae al grupo grueso y se elige el músculo más
-     * representativo de ese grupo, que es preferible a no pintar nada.
-     *
-     * @return clave normalizada, o {@code null} si no hay nada que pintar (CARDIO).
-     */
-    private String normalizarMusculo(String musculoPrimario, Object grupo) {
-        if (musculoPrimario != null && !musculoPrimario.isBlank()) {
-            String limpio = sinTildes(musculoPrimario.trim().toLowerCase());
-            switch (limpio) {
-                case "abdominales":     return "abdominales";
-                case "aductores":       return "aductores";
-                case "abductores":      return "gluteos";
-                case "biceps":          return "biceps";
-                case "gemelos":         return "gemelos";
-                case "pecho":           return "pecho";
-                case "antebrazos":      return "antebrazos";
-                case "gluteos":         return "gluteos";
-                case "isquiotibiales":  return "isquiotibiales";
-                case "dorsales":
-                case "espalda media":   return "dorsales";
-                case "lumbares":        return "lumbares";
-                case "cuello":          return "cuello";
-                case "cuadriceps":      return "cuadriceps";
-                case "hombros":         return "hombros";
-                case "trapecios":       return "trapecios";
-                case "triceps":         return "triceps";
-                default:                break;   // cae al grupo grueso
-            }
-        }
-
-        if (grupo == null) return null;
-
-        switch (grupo.toString().toUpperCase()) {
-            case "PECHO":    return "pecho";
-            case "ESPALDA":  return "dorsales";
-            case "PIERNAS":  return "cuadriceps";
-            case "HOMBROS":  return "hombros";
-            case "BRAZOS":   return "biceps";
-            case "ABDOMEN":  return "abdominales";
-            case "FULLBODY": return "pecho";
-            // CARDIO no tiene músculo que encender: no se inventa uno.
-            default:         return null;
-        }
-    }
-
-    // Quita las tildes para que "bíceps" y "biceps" sean el mismo músculo.
-    private String sinTildes(String texto) {
-        return java.text.Normalizer.normalize(texto, java.text.Normalizer.Form.NFD)
-                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
     }
 
     /**

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.gymprofit.api.dto.entity.record.RecordDTO;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,4 +41,14 @@ public class SesionEntrenamientoDTO implements Serializable {
     // Solo se incluye en la respuesta JSON si no es null.
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<String> nuevosLogros;
+
+    // Récords batidos en esta sesión (GP-088). Solo en la respuesta del guardado
+    // completo y solo si hay alguno: es un campo añadido, las builds viejas lo ignoran.
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<RecordDTO> recordsBatidos;
+
+    // Primeras marcas de la sesión: ejercicios que se hacían por primera vez. No son
+    // récords, son el punto de partida, y la app las enseña aparte.
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<RecordDTO> primerasMarcas;
 }
