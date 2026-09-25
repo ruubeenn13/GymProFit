@@ -22,6 +22,7 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.ui.adapters.AdminUsuarioAdapter;
 import es.pmdm.gymprofit.utils.LoadingDialog;
+import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
 import com.google.android.material.appbar.MaterialToolbar;
 
@@ -127,6 +128,7 @@ public class AdminUsuariosActivity extends BaseActivity {
     // Configura el buscador por username; filtra en cada cambio de texto
     private void configurarBusqueda() {
         SearchView sv = findViewById(R.id.searchView);
+        UIHelper.alturaTactilBuscador(sv);
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String q) {
