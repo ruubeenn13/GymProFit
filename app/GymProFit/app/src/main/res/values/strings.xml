@@ -6,7 +6,8 @@
     <!-- SPLASH ACTIVITY -->
     <string name="app_name">GymProFit</string>
     <string name="splash_subtitle">Tu compañero de fitness</string>
-    <string name="splash_version">v1.0</string>
+    <!-- La versión sale de versionName (build.gradle); aquí solo el formato -->
+    <string name="splash_version">v%s</string>
 
     <!-- LOGIN -->
     <string name="login_titulo">Bienvenido</string>

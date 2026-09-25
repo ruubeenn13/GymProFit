@@ -53,6 +53,9 @@ public class AcercaDeActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(v -> finish());
 
+        // La versión se lee del build: un texto fijo se quedaba atrás en cada entrega.
+        ((android.widget.TextView) findViewById(R.id.tvVersion))
+                .setText(getString(R.string.splash_version, es.pmdm.gymprofit.BuildConfig.VERSION_NAME));
         findViewById(R.id.llAcercaEmail).setOnClickListener(v -> abrirEmail());
         findViewById(R.id.llAcercaCompartir).setOnClickListener(v -> compartirViaSms());
         // La política se abre en el navegador: no viaja dentro del APK (GP-008).
