@@ -29,7 +29,7 @@ android {
         // en un salto grande). Solo se toca versionName. versionCode —el número interno
         // que Android exige que suba en cada entrega para instalar encima— se deriva de
         // él: 1.0.0 → 10000, 1.0.1 → 10001, 1.2.3 → 10203. Cada parte admite hasta 99.
-        versionName "1.0.0"
+        versionName "1.0.1"
         versionCode versionName.tokenize('.').collect { it as int }
                 .with { it[0] * 10000 + it[1] * 100 + it[2] }
 
