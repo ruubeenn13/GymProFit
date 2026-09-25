@@ -31,6 +31,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -170,6 +171,28 @@ class GuardadoSesionCompletaTest {
         // más alto de las dos.
         assertThat(ejercicioRealizadoRepository.findBySesionId(sesionId).get(0).getSeriesCompletadas()).isEqualTo(2);
         assertThat(ejercicioRealizadoRepository.findBySesionId(sesionId).get(0).getSeries()).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("Borrar una sesión guardada con ejercicios la borra entera, series incluidas")
+    @WithUserDetails(value = USUARIO, setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    void borrarSesionConEjercicios() throws Exception {
+        // Desde GP-006 toda sesión nueva lleva ejercicios, y la clave ajena de
+        // ejercicios_realizados a la sesión no tiene ON DELETE CASCADE: borrar solo la
+        // sesión rompía la restricción al confirmar y la API respondía 500. Con un test
+        // @Transactional no se ve, porque el borrado no llega a la base.
+        String respuesta = mockMvc.perform(post("/sesiones/completa")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(cuerpo("clave-borrar", ejercicio(ejercicioId))))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        int sesionId = objectMapper.readTree(respuesta).get("id").asInt();
+
+        mockMvc.perform(delete("/sesiones/" + sesionId))
+                .andExpect(status().is2xxSuccessful());
+
+        assertThat(sesionRepository.findById(sesionId)).isEmpty();
+        assertThat(ejercicioRealizadoRepository.findBySesionId(sesionId)).isEmpty();
     }
 
     @Test
