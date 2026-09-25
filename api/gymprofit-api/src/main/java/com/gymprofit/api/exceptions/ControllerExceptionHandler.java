@@ -135,12 +135,13 @@ public class ControllerExceptionHandler {
         );
     }
 
-    // Registro duplicado (violación de unicidad): 400.
+    // Registro duplicado (violación de unicidad): 400. Si la excepción lleva código
+    // (usuario o correo en uso en el registro, GP-095), viaja en "cause".
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(DuplicateEntityException.class)
     public ResponseEntity<Response> handleDuplicateEntityException(DuplicateEntityException ex) {
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.BAD_REQUEST.value(), ex.getMessage()),
+                Response.generalError(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), ex.getCodigo()),
                 HttpStatus.BAD_REQUEST
         );
     }

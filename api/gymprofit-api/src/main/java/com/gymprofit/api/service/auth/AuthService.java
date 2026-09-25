@@ -80,7 +80,8 @@ public class AuthService implements IAuthService {
         return new TokenDTO(token, refreshToken.getToken(), usuario.getUsername(), roles);
     }
 
-    // Registra un nuevo usuario público: valida unicidad de username/email,
+    // Registra un nuevo usuario público: valida unicidad de username/email
+    // (con un código en "cause" que dice cuál de los dos está en uso, GP-095),
     // codifica la contraseña, asigna siempre el rol USER y guarda el usuario.
     @Transactional
     @Override
@@ -88,11 +89,15 @@ public class AuthService implements IAuthService {
         logger.info("Registrando nuevo usuario: {}", registerDTO.getUsername());
 
         if (usuarioRepository.existsByUsername(registerDTO.getUsername())) {
-            throw new DuplicateEntityException("El username '" + registerDTO.getUsername() + "' ya está en uso");
+            throw DuplicateEntityException.conCodigo(
+                    "El username '" + registerDTO.getUsername() + "' ya está en uso",
+                    DuplicateEntityException.USERNAME_EN_USO);
         }
 
         if (usuarioRepository.existsByEmail(registerDTO.getEmail())) {
-            throw new DuplicateEntityException("El email '" + registerDTO.getEmail() + "' ya está en uso");
+            throw DuplicateEntityException.conCodigo(
+                    "El email '" + registerDTO.getEmail() + "' ya está en uso",
+                    DuplicateEntityException.EMAIL_EN_USO);
         }
 
         // Seguridad: el rol NUNCA se toma del cliente. El registro público crea siempre USER.
