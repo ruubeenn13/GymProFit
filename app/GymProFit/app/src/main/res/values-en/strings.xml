@@ -24,7 +24,6 @@
     <string name="registro_titulo">Create account</string>
     <string name="registro_crear_cuenta">Create account</string>
     <string name="registro_exito">Account created successfully!</string>
-    <string name="registro_error">Error creating account</string>
     <string name="login_error_credenciales">Wrong username or password</string>
     <string name="error_conexion">Connection error</string>
 
@@ -55,8 +54,12 @@
     <string name="registro_confirmar_password">Confirm password</string>
     <string name="registro_ya_cuenta">Already have an account? Log in</string>
     <string name="registro_email_invalido">Enter a valid email</string>
-    <string name="registro_password_corta">Password must be at least 6 characters</string>
     <string name="registro_passwords_no_coinciden">Passwords do not match</string>
+    <string name="registro_error_usuario_longitud">Between %1$d and %2$d characters</string>
+    <string name="registro_error_email_largo">At most %1$d characters</string>
+    <string name="registro_error_usuario_en_uso">That username is already taken</string>
+    <string name="registro_error_email_en_uso">There is already an account with this email</string>
+    <string name="registro_error_ya_registrado">That username or email already has an account</string>
 
 
     <!-- THEME -->

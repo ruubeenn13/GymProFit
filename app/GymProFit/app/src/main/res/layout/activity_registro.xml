@@ -3,6 +3,9 @@
   activity_registro.xml — Pantalla de registro de nuevo usuario.
   Formulario con username, email, password y confirmación de password,
   botón de crear cuenta y enlace para volver al login.
+  Cada campo tiene su TextInputLayout con id: los errores salen en el campo
+  que los causa, no en un toast (GP-095). La contraseña enseña sus requisitos
+  como texto de ayuda antes de escribir nada.
 -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -68,6 +71,7 @@
             <!-- Username -->
             <com.google.android.material.textfield.TextInputLayout
         app:errorIconDrawable="@drawable/ic_ms_error"
+                android:id="@+id/tilRegUsername"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/login_usuario"
@@ -92,6 +96,7 @@
             <!-- Email -->
             <com.google.android.material.textfield.TextInputLayout
         app:errorIconDrawable="@drawable/ic_ms_error"
+                android:id="@+id/tilRegEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
@@ -117,6 +122,7 @@
             <!-- Password -->
             <com.google.android.material.textfield.TextInputLayout
         app:errorIconDrawable="@drawable/ic_ms_error"
+                android:id="@+id/tilRegPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
@@ -128,7 +134,9 @@
                 app:boxCornerRadiusBottomEnd="12dp"
                 app:startIconDrawable="@drawable/ic_ms_lock"
                 app:endIconMode="password_toggle"
-                app:endIconDrawable="@drawable/sel_ojo_password">
+                app:endIconDrawable="@drawable/sel_ojo_password"
+                app:helperTextEnabled="true"
+                app:helperText="@string/password_politica">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etRegPassword"
@@ -144,6 +152,7 @@
             <!-- Confirmar password -->
             <com.google.android.material.textfield.TextInputLayout
         app:errorIconDrawable="@drawable/ic_ms_error"
+                android:id="@+id/tilRegConfirmarPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
