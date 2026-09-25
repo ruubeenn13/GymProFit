@@ -366,8 +366,8 @@
     <string name="admin_filtro_todos">Todos</string>
     <string name="admin_filtro_activos">Activos</string>
     <string name="admin_filtro_inactivos">Inactivos</string>
-    <string name="admin_filtro_user">USER</string>
-    <string name="admin_filtro_admin">ADMIN</string>
+    <string name="admin_filtro_user">Usuarios</string>
+    <string name="admin_filtro_admin">Administradores</string>
     <string name="admin_filtro_principiante">Principiante</string>
     <string name="admin_filtro_intermedio">Intermedio</string>
     <string name="admin_filtro_avanzado">Avanzado</string>
