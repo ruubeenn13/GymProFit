@@ -71,7 +71,8 @@ public class NotificationHelper {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(ctx, CANAL_LOGROS);
         builder.setSmallIcon(R.drawable.ic_notificacion);
         builder.setContentTitle(ctx.getString(R.string.notif_logros_titulo));
-        builder.setContentText(ctx.getString(R.string.notif_logros_texto, nombres.size()));
+        builder.setContentText(ctx.getResources().getQuantityString(
+                R.plurals.notif_logros_texto, nombres.size(), nombres.size()));
         builder.setPriority(NotificationCompat.PRIORITY_MAX);
         builder.setAutoCancel(true);
 

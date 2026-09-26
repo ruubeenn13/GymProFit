@@ -539,7 +539,10 @@
     <string name="notif_rutina_titulo">Routine created!</string>
     <string name="notif_rutina_texto">%s is ready to use</string>
     <string name="notif_logros_titulo">New achievement unlocked!</string>
-    <string name="notif_logros_texto">You earned %d achievement(s)</string>
+    <plurals name="notif_logros_texto">
+        <item quantity="one">You earned %d achievement</item>
+        <item quantity="other">You earned %d achievements</item>
+    </plurals>
 
     <!-- Exercise detail -->
     <string name="detalle_ejercicio_titulo">Exercise</string>

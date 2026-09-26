@@ -543,7 +543,10 @@
     <string name="notif_rutina_titulo">¡Rutina creada!</string>
     <string name="notif_rutina_texto">%s está lista para usar</string>
     <string name="notif_logros_titulo">¡Nuevo logro desbloqueado!</string>
-    <string name="notif_logros_texto">Has conseguido %d logro(s)</string>
+    <plurals name="notif_logros_texto">
+        <item quantity="one">Has conseguido %d logro</item>
+        <item quantity="other">Has conseguido %d logros</item>
+    </plurals>
 
     <!-- Detalle ejercicio -->
     <string name="detalle_ejercicio_titulo">Ejercicio</string>

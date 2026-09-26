@@ -72,6 +72,23 @@ public class TextoAFuegoTest {
         if (!fallos.isEmpty()) fail("Unidad escrita en el código (va en strings.xml):\n" + String.join("\n", fallos));
     }
 
+    // GP-025: un contador no se escribe «logro(s)»: va en <plurals> y se pide con
+    // getQuantityString. Mira las cadenas de todos los idiomas.
+    @Test
+    public void ningun_plural_hecho_a_mano() throws IOException {
+        Pattern pluralAMano = Pattern.compile("\\p{L}\\((s|es)\\)");
+        List<String> fallos = new ArrayList<>();
+        try (Stream<Path> s = Files.walk(Paths.get("src", "main", "res"))) {
+            for (Path f : s.filter(p -> p.getFileName().toString().equals("strings.xml")).collect(Collectors.toList())) {
+                List<String> lineas = Files.readAllLines(f, StandardCharsets.UTF_8);
+                for (int i = 0; i < lineas.size(); i++) {
+                    if (pluralAMano.matcher(lineas.get(i)).find()) fallos.add(f + ":" + (i + 1) + "  " + lineas.get(i).trim());
+                }
+            }
+        }
+        if (!fallos.isEmpty()) fail("Plural hecho a mano (va en <plurals>):\n" + String.join("\n", fallos));
+    }
+
     // Cada línea de código, sin comentarios ni logs, con su posición: {fichero:línea, texto}.
     private static List<String[]> lineas() throws IOException {
         List<Path> ficheros;
