@@ -13,7 +13,11 @@ services:
     rootDir: api/gymprofit-api             # monorepo: construye desde el módulo de la API
     dockerfilePath: ./Dockerfile
     healthCheckPath: /api/actuator/health  # context-path /api + actuator health
-    autoDeploy: true                       # redepliega en cada push a la rama conectada
+    # Despliega solo cuando el CI de GitHub pasa en verde para ese commit (GP-094).
+    # autoDeploy está obsoleto en Render; y si el servicio va por Blueprint, lo que
+    # diga este fichero manda sobre el panel. Un push solo de documentación (*.md,
+    # documentacion/) no lanza CI (paths-ignore de ci.yml), así que no despliega.
+    autoDeployTrigger: checksPass
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
