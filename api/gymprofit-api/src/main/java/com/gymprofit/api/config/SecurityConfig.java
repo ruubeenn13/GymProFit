@@ -118,6 +118,10 @@ public class SecurityConfig {
                                 // Sin context-path porque Spring Security evalúa sin /api.
                                 .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
 
+                                // Qué commit corre (GP-100): público para comprobar un despliegue sin
+                                // cuenta. Solo devuelve el hash; ver CommitInfoContributor.
+                                .requestMatchers(HttpMethod.GET, "/actuator/info").permitAll()
+
                                 // Swagger público
                                 .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/webjars/**").permitAll()
 
