@@ -483,6 +483,27 @@ DEC-027 y DEC-014 no se relajan; lo único que cambia es **cómo se afirma el ai
 
 ---
 
+### DEC-034 · Contraseñas según NIST SP 800-63B-4, con mínimo de 8
+**Estado:** Aceptada · **Fecha:** 2026-09-26 · **Sustituye:** la regla de mezcla de GP-095
+
+**Contexto.** El registro pedía de 8 a 100 caracteres con minúscula, mayúscula, dígito y símbolo. Es la regla que NIST retiró: la guía SP 800-63B-4 (versión final, agosto de 2025) dice que las reglas de composición no mejoran las contraseñas que la gente elige de verdad —producen `Password1!`— y sí aumentan la fricción y las que se apuntan en un papel. Lo que pide a cambio es longitud y una lista de bloqueo. Además, el máximo de 100 mentía: BCrypt solo admite 72 bytes, Spring Security rechaza más, y eso salía como el 400 genérico «Parámetro con valor inválido».
+
+**Decisión.** Al poner una contraseña nueva —alta, recuperar y cambiar—:
+
+- **Mínimo 8 caracteres**, contados como caracteres (code points) y no como unidades UTF-16: un emoji cuenta uno.
+- **Máximo 72 bytes en UTF-8**, que es lo que admite BCrypt. Con letras latinas son 72 caracteres; con eñes, menos. El error dice «demasiado larga», nunca el genérico.
+- **Sin reglas de composición.** Ni mayúsculas, ni números, ni símbolos obligatorios. Se admite cualquier carácter imprimible, espacios y Unicode incluidos. El texto de ayuda empuja hacia lo que sí sirve: «Una frase corta es más segura que una palabra».
+- **Lista de bloqueo dentro de la API**, sin servicios externos: las contraseñas de 8 o más caracteres de las 100 000 más frecuentes de la lista de 10 millones de Mark Burnett (dominio público), tomada de SecLists (MIT); 38 451 entradas en `seguridad/contrasenas-comunes.txt`, con la fuente en la cabecera. Más la que sea o contenga el nombre del servicio o el nombre de usuario. Sin distinguir mayúsculas. El rechazo es el mismo 400 con un código en `cause` —`PASSWORD_COMUN` o `PASSWORD_CONTIENE_NOMBRE`— y la app lo enseña en el campo.
+- **Las cuentas que ya existen siguen entrando con su contraseña.** La regla no se comprueba al entrar, ni en la API ni en la app. **Nada de cambios periódicos**: NIST los desaconseja por lo mismo que la composición.
+
+**La desviación: el mínimo es 8, no 15.** NIST pide 15 caracteres cuando la contraseña es el único factor de autenticación, que es el caso aquí. El propietario elige **8 por la fricción en el alta**: es una aplicación de gimnasio que se instala en el vestuario, y cada pantalla de más en el registro se paga en altas que no se completan. Es una decisión consciente, no un descuido, y lo que la compensa en parte es la lista de bloqueo, que quita justo las contraseñas de 8 a 14 caracteres que se prueban primero, y el rate limit estricto de las rutas de autenticación.
+
+**Consecuencias.** La 1.0.1 trata cualquier 400 del registro como «usuario o correo en uso»: con la lista de bloqueo, rechazaría contraseñas que ella da por buenas y lo explicaría mal. Por eso la parte de API se despliega a la vez que se reparte la 1.0.2, no antes. La lista ocupa unos 350 KB en el JAR y unos pocos MB de memoria al arrancar.
+
+**Qué la invalidaría.** Un segundo factor —entonces 8 es lo que pide NIST y la desviación desaparece—, o que aparezcan cuentas tomadas por contraseñas adivinadas, que obligaría a subir el mínimo hacia 15. Si la lista se queda corta, se cambia el fichero por uno mayor; la regla no cambia.
+
+---
+
 ## Pendientes de decidir
 
 Se registran aquí para que no se decidan por omisión.
