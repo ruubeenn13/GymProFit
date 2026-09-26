@@ -14,5 +14,14 @@ public final class NavTabs {
     // Pestaña inicial al abrir MainActivity (int con uno de los índices de arriba).
     public static final String EXTRA_TAB = "nav_tab";
 
+    /**
+     * Si atrás, desde esta pestaña, vuelve a Inicio en vez de salir de la app (GP-097).
+     * En Android la pantalla de inicio es la última antes de salir: desde cualquier otra
+     * pestaña atrás lleva a Inicio, y solo desde Inicio se sale.
+     */
+    public static boolean atrasVuelveAInicio(int tab) {
+        return tab != HOME;
+    }
+
     private NavTabs() {}
 }

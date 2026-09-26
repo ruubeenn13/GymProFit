@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -74,6 +75,15 @@ public class ResumenCrearRutinaActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(v -> handleBack());
+        // Atrás devuelve la lista, no la tira. Con targetSdk 36, en Android 16 ya no se
+        // llama a onBackPressed(): el override que había estaba muerto y el gesto cerraba
+        // el resumen sin devolver lo cambiado (GP-097).
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                handleBack();
+            }
+        });
 
         configurarRecycler();
         cargarEjerciciosDesdeExtras();
@@ -81,16 +91,6 @@ public class ResumenCrearRutinaActivity extends AppCompatActivity {
 
         findViewById(R.id.btnCancelar).setOnClickListener(v -> cancelar());
         findViewById(R.id.btnGuardar).setOnClickListener(v -> guardarRutina());
-    }
-
-    // Al pulsar atrás, devuelve la lista actual de ejercicios seleccionados
-    // a la pantalla anterior en lugar de descartarlos.
-    // Se mantiene el override de onBackPressed() (deprecado) por simplicidad,
-    // en lugar de migrar a OnBackPressedCallback/OnBackPressedDispatcher.
-    @SuppressWarnings("deprecation")
-    @Override
-    public void onBackPressed() {
-        handleBack();
     }
 
     // Devuelve como resultado (RESULT_CANCELED) la lista de ejercicios

@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -40,6 +41,17 @@ public class MainActivity extends BaseActivity {
     // salto interno de ViewPager2 en distancias >3 (que la haría empezar en el medio).
     private boolean swiping = false;
 
+    // Atrás fuera de Inicio vuelve a Inicio (GP-097). Solo está activo fuera de Inicio:
+    // en Inicio queda desactivado para que atrás salga de la app y Android 16 enseñe su
+    // animación de vuelta al escritorio, que se puede cancelar a mitad de gesto. Sin
+    // confirmación para salir: esa animación ya avisa.
+    private final OnBackPressedCallback atrasAInicio = new OnBackPressedCallback(false) {
+        @Override
+        public void handleOnBackPressed() {
+            irATab(NavTabs.HOME);
+        }
+    };
+
     // Infla el contenedor, monta el pager con los 5 fragments, engancha la barra
     // flotante al scroll del pager y abre la pestaña indicada en el intent.
     @Override
@@ -68,6 +80,12 @@ public class MainActivity extends BaseActivity {
         // continuo) y se asienta en la pestaña destino cuando el desplazamiento reposa.
         pager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
+            public void onPageSelected(int position) {
+                // Vale para toda forma de llegar: barra, deslizar, atajos de Inicio y
+                // el extra del intent.
+                atrasAInicio.setEnabled(NavTabs.atrasVuelveAInicio(position));
+            }
+            @Override
             public void onPageScrolled(int position, float offset, int offsetPx) {
                 if (swiping) nav.followScroll(position + offset);
             }
@@ -89,6 +107,8 @@ public class MainActivity extends BaseActivity {
                 ? savedInstanceState.getInt(KEY_TAB, tabPorDefecto) : tabPorDefecto;
         pager.setCurrentItem(tab, false);
         nav.setActiveIndex(tab);
+        atrasAInicio.setEnabled(NavTabs.atrasVuelveAInicio(tab));
+        getOnBackPressedDispatcher().addCallback(this, atrasAInicio);
 
         pedirPermisoNotificaciones();
     }

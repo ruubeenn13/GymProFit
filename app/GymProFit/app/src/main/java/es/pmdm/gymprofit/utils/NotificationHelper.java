@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.TaskStackBuilder;
 
 import java.util.List;
 
@@ -41,9 +42,7 @@ public class NotificationHelper {
         builder.setPriority(NotificationCompat.PRIORITY_MAX);
         builder.setAutoCancel(true);
 
-        Intent intent = new Intent(ctx, SesionesActivity.class);
-        PendingIntent pending = PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-        builder.setContentIntent(pending);
+        builder.setContentIntent(sobreInicio(ctx, new Intent(ctx, SesionesActivity.class), 1));
 
         enviar(ctx, CANAL_SESIONES, ctx.getString(R.string.notif_canal_sesiones), 1, builder);
     }
@@ -83,9 +82,7 @@ public class NotificationHelper {
         }
         builder.setStyle(estilo);
 
-        Intent intent = new Intent(ctx, LogrosActivity.class);
-        PendingIntent pending = PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-        builder.setContentIntent(pending);
+        builder.setContentIntent(sobreInicio(ctx, new Intent(ctx, LogrosActivity.class), 4));
 
         enviar(ctx, CANAL_LOGROS, ctx.getString(R.string.notif_canal_logros), 4, builder);
     }
@@ -109,6 +106,17 @@ public class NotificationHelper {
         // ID de notificación único por mensaje para que las push no se pisen entre sí.
         int notifId = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
         enviar(ctx, CANAL_PUSH, ctx.getString(R.string.notif_canal_push), notifId, builder);
+    }
+
+    // Abre la pantalla con Inicio debajo (GP-097). Sin pila, con la app cerrada, atrás
+    // desde Sesiones o Logros salía al escritorio. La pila sintética pone MainActivity
+    // debajo, en Inicio, como si se hubiera llegado navegando.
+    private static PendingIntent sobreInicio(Context ctx, Intent destino, int requestCode) {
+        return TaskStackBuilder.create(ctx)
+                .addNextIntent(new Intent(ctx, MainActivity.class))
+                .addNextIntent(destino)
+                .getPendingIntent(requestCode,
+                        PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     // Crea (si es necesario) el canal de notificación y muestra la notificación construida.
