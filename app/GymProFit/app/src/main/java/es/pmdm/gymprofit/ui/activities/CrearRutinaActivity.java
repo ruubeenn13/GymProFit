@@ -12,6 +12,7 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.textfield.TextInputEditText;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.utils.AvisoDescartar;
 import es.pmdm.gymprofit.utils.Numeros;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
@@ -36,6 +37,9 @@ public class CrearRutinaActivity extends AppCompatActivity {
     private ChipGroup chipGroupNivel;
     private PreferencesManager prefsManager;
 
+    // Nivel marcado al abrir: cambiarlo también es algo apuntado (GP-098).
+    private int nivelInicial;
+
     // Lanzador para recibir el resultado de AnadirEjerciciosActivity.
     private ActivityResultLauncher<Intent> anadirLauncher;
 
@@ -48,12 +52,17 @@ public class CrearRutinaActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener(v -> finish());
 
         etNombre       = findViewById(R.id.etNombre);
         etDescripcion  = findViewById(R.id.etDescripcion);
         etDuracion     = findViewById(R.id.etDuracion);
         chipGroupNivel = findViewById(R.id.chipGroupNivel);
+        nivelInicial   = chipGroupNivel.getCheckedChipId();
+
+        // Salir con algo apuntado pregunta antes de tirarlo (GP-098).
+        AvisoDescartar.instalar(this, toolbar, () ->
+                AvisoDescartar.hayTexto(etNombre.getText(), etDescripcion.getText(), etDuracion.getText())
+                        || chipGroupNivel.getCheckedChipId() != nivelInicial);
 
         anadirLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),

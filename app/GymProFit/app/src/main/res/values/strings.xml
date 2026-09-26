@@ -804,4 +804,10 @@
         <item quantity="other">%d ejercicios hechos por primera vez: son tu punto de partida.</item>
     </plurals>
     <string name="separador_punto" translatable="false">"  ·  "</string>
+
+    <!-- Aviso al salir de un formulario con algo sin guardar (GP-098) -->
+    <string name="descartar_titulo">¿Descartar lo que has apuntado?</string>
+    <string name="descartar_mensaje">Si sales ahora, se pierde lo que no has guardado.</string>
+    <string name="descartar_confirmar">Descartar</string>
+    <string name="descartar_seguir">Seguir editando</string>
 </resources>

@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.utils.AvisoDescartar;
 import es.pmdm.gymprofit.model.rutina.Rutina;
 import es.pmdm.gymprofit.model.rutina.RutinaEjercicio;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
@@ -41,7 +42,6 @@ import es.pmdm.gymprofit.utils.Numeros;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.Valoracion;
 import es.pmdm.gymprofit.utils.UiFeedback;
-import com.google.android.material.appbar.MaterialToolbar;
 
 // ============================================================
 // RegistrarSesionActivity — Formulario para registrar una sesión de entrenamiento.
@@ -122,7 +122,9 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         rvEjercicios.setNestedScrollingEnabled(false);
         rvEjercicios.setAdapter(ejercicioPesoAdapter);
 
-        ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
+        // Salir con algo apuntado pregunta antes de tirarlo (GP-098).
+        AvisoDescartar.instalar(this, findViewById(R.id.toolbar), () -> AvisoDescartar.sesionConDatos(
+                etDuracion.getText(), etNotas.getText(), ratingBar.getRating(), ejercicioItems));
         findViewById(R.id.btnGuardar).setOnClickListener(v -> guardarSesion());
 
         cargarRutinas();

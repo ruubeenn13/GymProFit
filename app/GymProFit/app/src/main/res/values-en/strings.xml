@@ -793,4 +793,10 @@
         <item quantity="one">%d exercise done for the first time: it is your starting point.</item>
         <item quantity="other">%d exercises done for the first time: they are your starting point.</item>
     </plurals>
+
+    <!-- Leaving a form with unsaved input (GP-098) -->
+    <string name="descartar_titulo">Discard what you\'ve entered?</string>
+    <string name="descartar_mensaje">If you leave now, anything you haven\'t saved will be lost.</string>
+    <string name="descartar_confirmar">Discard</string>
+    <string name="descartar_seguir">Keep editing</string>
 </resources>

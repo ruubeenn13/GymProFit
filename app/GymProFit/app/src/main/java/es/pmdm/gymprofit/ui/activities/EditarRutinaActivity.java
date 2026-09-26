@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.utils.AvisoDescartar;
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
 import es.pmdm.gymprofit.model.rutina.EjercicioSeleccionado;
 import es.pmdm.gymprofit.model.rutina.RutinaEjercicio;
@@ -67,6 +68,11 @@ public class EditarRutinaActivity extends AppCompatActivity {
     private final List<EjercicioSeleccionado> ejercicios = new ArrayList<>();
     private int rutinaId;
 
+    // Datos generales tal y como llegaron: lo que difiera está sin guardar (GP-098).
+    // Los ejercicios no cuentan: añadir o quitar uno se guarda en el acto.
+    private String nombreInicial, descripcionInicial, duracionInicial;
+    private int nivelInicial;
+
     // Lanzador para recibir los ejercicios añadidos desde AnadirEjerciciosActivity.
     private ActivityResultLauncher<Intent> anadirLauncher;
 
@@ -81,7 +87,6 @@ public class EditarRutinaActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener(v -> finish());
 
         etNombre       = findViewById(R.id.etNombreEditar);
         etDescripcion  = findViewById(R.id.etDescripcionEditar);
@@ -92,6 +97,17 @@ public class EditarRutinaActivity extends AppCompatActivity {
         etDescripcion.setText(getIntent().getStringExtra("descripcion"));
         etDuracion.setText(String.valueOf(getIntent().getIntExtra("duracion", 0)));
         preseleccionarNivel(getIntent().getStringExtra("nivel"));
+        nombreInicial      = String.valueOf(etNombre.getText());
+        descripcionInicial = String.valueOf(etDescripcion.getText());
+        duracionInicial    = String.valueOf(etDuracion.getText());
+        nivelInicial       = chipGroupNivel.getCheckedChipId();
+
+        // Salir con cambios sin guardar pregunta antes de tirarlos (GP-098).
+        AvisoDescartar.instalar(this, toolbar, () ->
+                AvisoDescartar.distinto(nombreInicial, etNombre.getText())
+                        || AvisoDescartar.distinto(descripcionInicial, etDescripcion.getText())
+                        || AvisoDescartar.distinto(duracionInicial, etDuracion.getText())
+                        || chipGroupNivel.getCheckedChipId() != nivelInicial);
 
         anadirLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),

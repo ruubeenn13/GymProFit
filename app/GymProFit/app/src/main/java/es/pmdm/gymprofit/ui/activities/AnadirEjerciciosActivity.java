@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.utils.AvisoDescartar;
 import es.pmdm.gymprofit.model.PageDTO;
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
 import es.pmdm.gymprofit.model.rutina.EjercicioSeleccionado;
@@ -101,7 +102,9 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener(v -> finish());
+        // Salir con ejercicios elegidos pregunta antes de tirarlos (GP-098), tanto en el
+        // asistente como al añadir desde el editor.
+        AvisoDescartar.instalar(this, toolbar, () -> !ejerciciosSeleccionados.isEmpty());
 
         editMode = getIntent().getBooleanExtra("editMode", false);
 
