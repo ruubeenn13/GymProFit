@@ -5,6 +5,7 @@
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -28,7 +29,9 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Previsualización de macros calculados para la cantidad introducida -->
+    <!-- Previsualización de macros calculados para la cantidad introducida. El valor
+         inicial lo pinta el código al abrir el diálogo, desde recursos (GP-026): aquí
+         solo hay un ejemplo para el editor, que en la app no se ve. -->
     <TextView
         android:id="@+id/tvPreviewMacros"
         android:layout_width="match_parent"
@@ -36,6 +39,6 @@
         android:textSize="@dimen/text_caption"
         android:textColor="?attr/colorOnSurfaceVariant"
         android:gravity="center"
-        android:text="0 kcal | 0g prot | 0g carbos | 0g grasas" />
+        tools:text="0 kcal | 0g prot | 0g carbos | 0g grasas" />
 
 </LinearLayout>

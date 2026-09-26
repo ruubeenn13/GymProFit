@@ -246,6 +246,13 @@ public class ComidaActivity extends BaseActivity {
         TextView tvPreview = dialogView.findViewById(R.id.tvPreviewMacros);
 
         etGramos.setText(String.format(Locale.getDefault(), "%.0f", item.getCantidadGramos()));
+        // Al abrir, los macros de la cantidad actual, desde recursos (GP-026). Antes se
+        // veía el texto de ejemplo del layout hasta tocar el campo.
+        tvPreview.setText(getString(R.string.anadir_alimento_preview,
+                item.getCaloriasTotales(),
+                item.getProteinasTotales(),
+                item.getCarbohidratosTotales(),
+                item.getGrasasTotales()));
 
         etGramos.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}

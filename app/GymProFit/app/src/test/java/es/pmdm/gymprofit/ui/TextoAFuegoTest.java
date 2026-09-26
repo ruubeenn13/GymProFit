@@ -72,6 +72,28 @@ public class TextoAFuegoTest {
         if (!fallos.isEmpty()) fail("Unidad escrita en el código (va en strings.xml):\n" + String.join("\n", fallos));
     }
 
+    // GP-026: tampoco en los layouts. Un android:text (o hint, contentDescription,
+    // title) con un literal que lleva letras se ve en la app en un solo idioma; el
+    // ejemplo para el editor va en tools:text, que la app no pinta.
+    @Test
+    public void ningun_texto_a_fuego_en_layouts() throws IOException {
+        Pattern literal = Pattern.compile("android:(text|hint|contentDescription|title)=\"([^\"@?][^\"]*)\"");
+        List<String> fallos = new ArrayList<>();
+        try (Stream<Path> s = Files.walk(Paths.get("src", "main", "res"))) {
+            for (Path f : s.filter(p -> p.getParent().getFileName().toString().matches("(layout|menu).*")
+                    && p.toString().endsWith(".xml")).collect(Collectors.toList())) {
+                List<String> lineas = Files.readAllLines(f, StandardCharsets.UTF_8);
+                for (int i = 0; i < lineas.size(); i++) {
+                    Matcher m = literal.matcher(lineas.get(i));
+                    while (m.find()) {
+                        if (LETRA.matcher(m.group(2)).find()) fallos.add(f + ":" + (i + 1) + "  " + lineas.get(i).trim());
+                    }
+                }
+            }
+        }
+        if (!fallos.isEmpty()) fail("Texto a fuego en un layout (va en strings.xml, o en tools:text si es un ejemplo):\n" + String.join("\n", fallos));
+    }
+
     // GP-025: un contador no se escribe «logro(s)»: va en <plurals> y se pide con
     // getQuantityString. Mira las cadenas de todos los idiomas.
     @Test

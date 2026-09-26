@@ -370,6 +370,8 @@ public class AnadirAlimentoActivity extends BaseActivity {
         android.view.View dialogView = getLayoutInflater().inflate(R.layout.dialog_gramos, null);
         EditText etGramos = dialogView.findViewById(R.id.etGramos);
         TextView tvPreviewMacros = dialogView.findViewById(R.id.tvPreviewMacros);
+        // Valor inicial desde recursos, en el idioma de la app (GP-026).
+        tvPreviewMacros.setText(getString(R.string.anadir_alimento_preview, 0, 0.0, 0.0, 0.0));
 
         etGramos.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
