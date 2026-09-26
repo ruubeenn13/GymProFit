@@ -21,6 +21,13 @@ import retrofit2.Response;
 // ============================================================
 public abstract class ApiCallback<T> implements Callback<T> {
 
+    /**
+     * Prefijo con el que viaja en el mensaje de un 429 la espera que pide la API en
+     * Retry-After (GP-096). onFail solo lleva código y texto, y cambiar su firma tocaría
+     * todas las pantallas; UiFeedback lo lee de ahí para decir cuánto esperar.
+     */
+    public static final String PREFIJO_RETRY_AFTER = "Retry-After=";
+
     // Código que manda la API en "cause" cuando la cuenta está desactivada (GP-083).
     static final String CODIGO_CUENTA_DESACTIVADA = "CUENTA_DESACTIVADA";
 
@@ -43,6 +50,9 @@ public abstract class ApiCallback<T> implements Callback<T> {
             onFail(401, "Sesión expirada");
         } else if (response.isSuccessful()) {
             onOk(response.body());
+        } else if (code == 429) {
+            String espera = response.headers().get("Retry-After");
+            onFail(code, (espera != null ? PREFIJO_RETRY_AFTER + espera.trim() + ";" : "") + leerError(response));
         } else {
             onFail(code, leerError(response));
         }

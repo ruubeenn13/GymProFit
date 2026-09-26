@@ -34,6 +34,16 @@
     <string name="feedback_error_servidor">Error del servidor, inténtalo más tarde</string>
     <string name="feedback_error_no_encontrado">No hemos encontrado eso. Puede que ya no exista.</string>
     <string name="feedback_error_generico">Algo salió mal, inténtalo de nuevo</string>
+    <!-- 429: pide esperar, no reintentar enseguida (GP-096) -->
+    <string name="feedback_error_demasiados">Demasiados intentos: espera un minuto y vuelve a probar</string>
+    <plurals name="feedback_error_demasiados_segundos">
+        <item quantity="one">Demasiados intentos: espera %d segundo y vuelve a probar</item>
+        <item quantity="other">Demasiados intentos: espera %d segundos y vuelve a probar</item>
+    </plurals>
+    <plurals name="feedback_error_demasiados_minutos">
+        <item quantity="one">Demasiados intentos: espera %d minuto y vuelve a probar</item>
+        <item quantity="other">Demasiados intentos: espera %d minutos y vuelve a probar</item>
+    </plurals>
     <string name="feedback_lista_vacia">No hay nada aún</string>
 
     <!-- NOTIFICACIONES PUSH (FCM) -->

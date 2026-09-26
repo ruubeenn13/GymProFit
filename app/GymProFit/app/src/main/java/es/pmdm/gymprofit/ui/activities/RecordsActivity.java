@@ -86,7 +86,7 @@ public class RecordsActivity extends AppCompatActivity {
                 LoadingDialog.hide(RecordsActivity.this);
                 // El fallo se queda en la pantalla, con reintentar: un aviso que se va
                 // dejaría una pantalla vacía que parece «no tienes récords».
-                tvError.setText(UiFeedback.mensaje(RecordsActivity.this, code));
+                tvError.setText(UiFeedback.mensaje(RecordsActivity.this, code, message));
                 mostrar(layoutError);
             }
         });

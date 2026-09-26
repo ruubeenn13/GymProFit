@@ -34,6 +34,16 @@
     <string name="feedback_error_servidor">Server error, please try again later</string>
     <string name="feedback_error_no_encontrado">We could not find that. It may no longer exist.</string>
     <string name="feedback_error_generico">Something went wrong, please try again</string>
+    <!-- 429: ask to wait, not to retry right away (GP-096) -->
+    <string name="feedback_error_demasiados">Too many attempts: wait a minute and try again</string>
+    <plurals name="feedback_error_demasiados_segundos">
+        <item quantity="one">Too many attempts: wait %d second and try again</item>
+        <item quantity="other">Too many attempts: wait %d seconds and try again</item>
+    </plurals>
+    <plurals name="feedback_error_demasiados_minutos">
+        <item quantity="one">Too many attempts: wait %d minute and try again</item>
+        <item quantity="other">Too many attempts: wait %d minutes and try again</item>
+    </plurals>
     <string name="feedback_lista_vacia">Nothing here yet</string>
 
     <!-- NOTIFICACIONES PUSH (FCM) -->

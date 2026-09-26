@@ -400,7 +400,7 @@ public class RegistrarSesionActivity extends AppCompatActivity {
             @Override
             public void onFail(int code, String message) {
                 LoadingDialog.hide(RegistrarSesionActivity.this);
-                ofrecerReintento(duracion, UiFeedback.mensaje(RegistrarSesionActivity.this, code));
+                ofrecerReintento(duracion, UiFeedback.mensaje(RegistrarSesionActivity.this, code, message));
             }
         });
     }

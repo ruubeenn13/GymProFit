@@ -33,6 +33,7 @@ import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.PushTokenManager;
 import es.pmdm.gymprofit.utils.UIHelper;
+import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
 // LoginActivity — pantalla de inicio de sesión de GymProFit.
@@ -190,7 +191,13 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onFail(int code, String message) {
-                UIHelper.mostrarToastError(LoginActivity.this, getString(R.string.login_error_credenciales));
+                // Red, límite de intentos y servidor no son culpa de las credenciales: decir
+                // «credenciales incorrectas» ante un 429 invita a reintentar enseguida (GP-096).
+                if (code == -1 || code == 429 || code >= 500) {
+                    UiFeedback.toastError(LoginActivity.this, code, message);
+                } else {
+                    UIHelper.mostrarToastError(LoginActivity.this, getString(R.string.login_error_credenciales));
+                }
             }
         });
     }
