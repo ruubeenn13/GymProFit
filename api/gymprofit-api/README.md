@@ -129,12 +129,19 @@ Todos van bajo el context-path `/api`. Los `@RequestMapping` de los controllers 
 > escribe un ADMIN**, y los alimentos con dueño solo su dueño; el import de Open
 > Food Facts por código de barras sí crea catálogo, porque son productos reales.
 
+### ACTUATOR — `/actuator`
+
+| Método | URL | Auth | Descripción |
+|---|---|---|---|
+| GET | `/actuator/health` | No | Salud para el health check de Render. No dice qué versión corre |
+| GET | `/actuator/info` | No | Solo `{"commit": "<hash>"}`: el que Render deja en `RENDER_GIT_COMMIT`, o `local` fuera de Render (GP-100). **Así se comprueba un despliegue**, nunca con una cuenta |
+
 ### AUTH — `/auth`
 
 | Método | URL | Auth | Descripción |
 |---|---|---|---|
 | POST | `/auth/login` | No | Login. Body: `{username, password}` → `TokenDTO` |
-| POST | `/auth/register` | No | Registro. Body: `{username, password, email}` → 201 |
+| POST | `/auth/register` | No | Registro. Body: `{username, password, email}` → 201. Contraseña según DEC-034: 8 caracteres como mínimo, 72 bytes como máximo, sin composición; si es común o lleva «gymprofit» o el usuario, 400 con `PASSWORD_COMUN` o `PASSWORD_CONTIENE_NOMBRE` en `cause` (igual en cambiar y recuperar) |
 | POST | `/auth/guest` | No | Login como invitado → `TokenDTO` con ROLE_GUEST |
 | POST | `/auth/refresh` | No | Renueva el access token con el refresh opaco, que se rota |
 | POST | `/auth/logout` | No | Revoca el refresh token recibido |

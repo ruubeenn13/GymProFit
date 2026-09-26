@@ -113,6 +113,11 @@ Pendiente (clics de cuenta, con guía): crear MySQL en Aiven → copiar credenci
 - **El keep-alive de GitHub Actions apunta también al dominio propio**, no por simetría: vigilar el host que ya nadie usa dejaría el workflow en verde mientras el camino real —DNS y certificado incluidos— está caído.
 - Sin cambios en la app fuera de `buildTypes.release`: `network_security_config.xml` solo abre excepciones de HTTP en claro para hosts locales, y el dominio nuevo va por HTTPS.
 
+## Actualización 2026-09-26 — qué commit corre y cuándo se despliega
+
+- **`GET https://api.gymprofit.app/api/actuator/info`** responde `{"commit":"<hash>"}`, público y sin nada más (GP-100). El health check sigue en verde aunque un despliegue falle y responda la instancia vieja, así que **un despliegue se da por hecho cuando ese hash es el del commit**, nunca probando con una cuenta.
+- **`render.yaml` pasa de `autoDeploy: true` a `autoDeployTrigger: checksPass`** (GP-094): Render despliega cuando el CI del commit pasa en verde. Un push solo de documentación (`*.md`, `documentacion/`) no lanza CI y no despliega. Si el servicio no se creó por Blueprint, el panel manda: comprobar allí que el disparador es «After CI Checks Pass».
+
 ## Pasos de migración pendientes (cuando se despliegue)
 
 1. **BD**: crear instancia Aiven for MySQL; volcar el esquema con Flyway (las migraciones `V*.sql` corren solas al arrancar).

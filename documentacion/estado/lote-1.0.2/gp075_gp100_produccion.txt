@@ -1,0 +1,21 @@
+# 2026-09-26, contra https://api.gymprofit.app/api, sin cabecera Accept
+
+GET /actuator/info (sin token)
+{"commit":"db854828f8da673beea8f29c211431c23a7ea53d"}
+
+GET /v3/api-docs (sin token)
+{"code":404,"message":"Recurso no encontrado","cause":null}  [404 application/json]
+GET /swagger-ui (sin token)
+{"code":404,"message":"Recurso no encontrado","cause":null}  [404 application/json]
+GET /swagger-ui.html (sin token)
+{"code":404,"message":"Recurso no encontrado","cause":null}  [404 application/json]
+
+GET /no-existe-gp075 (token de invitado)
+{"code":404,"message":"Recurso no encontrado","cause":null}  [404 application/json]
+GET /progreso-ejercicios (cuenta de prueba prueba-102-a)
+{"code":404,"message":"Recurso no encontrado","cause":null}  [404]
+
+PUT /comidas {"id":1} (cuenta de prueba prueba-102-a)
+{"code":400,"message":"{ tipoComida = must not be blank }","cause":null}  [400 application/json]
+
+# Antes (memoria del 2026-09-25): actuator/info → 401; v3/api-docs → 500; errores sin Accept en XML.

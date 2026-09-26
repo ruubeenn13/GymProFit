@@ -2,6 +2,25 @@
 
 Historial de cambios del proyecto (API Spring Boot + app Android). Ver también el [README](README.md).
 
+### 2026-09-26
+
+| Hash | Descripción |
+|---|---|
+| `b10fffe` | build(android): **versión 1.0.2**, etiquetada `v1.0.2`. Misma clave de firma. Etiquetas también para `v1.0.0` (`6885367`) y `v1.0.1` (`0feba89`). Informe en `documentacion/estado/2026-09-26-lote-1.0.2.md`. |
+| `02828d7` | docs(decisiones): **DEC-034, contraseñas según NIST con mínimo de 8**, con la desviación en la longitud (NIST pide 15 con un solo factor). |
+| `004294d` | feat(android): **la app pide la contraseña nueva como la API de GP-101**. Registro y recuperar comprueban 8 caracteres y 72 bytes antes de enviar; los códigos `PASSWORD_COMUN` y `PASSWORD_CONTIENE_NOMBRE` van al campo. Ayuda: «Una frase corta es más segura que una palabra». |
+| `60c1454` | feat(api): **contraseñas nuevas según NIST SP 800-63B-4, con mínimo de 8** (GP-101). Sustituye a la regla de mezcla de GP-095 en alta, recuperar y cambiar: 8 caracteres contados como code points, 72 bytes en UTF-8 (lo de más salía como «Parámetro con valor inválido»), sin composición, y lista de bloqueo dentro de la API (38 451 de la lista de Mark Burnett vía SecLists) más «gymprofit» o el usuario, con código en `cause`. Entrar no comprueba nada. `PoliticaContrasenaTest`: 12 de 14 en rojo con la regla anterior. 607 tests. |
+| `936a6ca` | fix(android): **el diálogo de gramos no enseña texto de ejemplo a fuego** (GP-026). `TextoAFuegoTest` mira también los literales de layouts y menús. |
+| `198be5c` | fix(android): **la notificación de logros cuenta con plurales** (GP-025). |
+| `b46e1fb` | fix(android): **ningún fallo de red mudo** (GP-017). Los cuatro `onFail` vacíos deciden con el porqué dentro, y el `onFail` por defecto de `ApiCallback`, que solo escribía en el log, pasa a abstracto. `OnFailVacioTest` impide que vuelvan. |
+| `7be6832` | fix(android): **un 429 pide esperar, y dice cuánto** (GP-096). Mensaje propio en `UiFeedback` con los segundos o minutos de `Retry-After`; el login deja de decir «credenciales incorrectas» ante un 429. |
+| `d65e178` | fix(android): **la sesión sobrevive a que Android mate la app en segundo plano** (GP-091). El token lo cargaba solo la splash; ahora `UtilREST` lo lee del almacén cifrado cuando le falta, y el token renovado también se guarda tras matar el proceso. Reproducido y verificado con `am kill` en el emulador. |
+| `0d64129` | feat(android): **salir de un formulario con algo apuntado pregunta antes** (GP-098). Registrar sesión y asistente y editor de rutina, con atrás y con la flecha. |
+| `442b542` | fix(android): **atrás vuelve a Inicio en vez de salir de la app** (GP-097). Lo vio el primer usuario de la 1.0.1. Las notificaciones de sesión y logros llevan Inicio debajo, y el resumen de crear rutina deja de usar `onBackPressed()`, muerto con targetSdk 36. Verificado en API 36 y 34, con gestos y con tres botones. |
+| `db85482` | build(render): **Render despliega solo con el CI en verde** (GP-094). `autoDeployTrigger: checksPass`. |
+| `b9ed20c` | fix(api): **lo que no es un fallo del servidor deja de responder 500** (GP-075). Ruta inexistente y Swagger apagado → 404; `PUT /comidas` sin `tipoComida` → 400; errores en JSON sin `Accept` (salían en XML por el resolvedor de Spring Data REST). |
+| `e58580a` | feat(api): **`/actuator/info` dice qué commit corre, sin iniciar sesión** (GP-100). Así se comprueba un despliegue desde ahora. |
+
 ### 2026-09-25
 
 | Hash | Descripción |
