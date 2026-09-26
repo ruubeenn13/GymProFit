@@ -18,6 +18,7 @@ import java.util.Set;
 
 import es.pmdm.gymprofit.utils.AnimUtils;
 import es.pmdm.gymprofit.utils.InsetsUtils;
+import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 
 // ============================================================
@@ -43,9 +44,29 @@ public class GymProFitApp extends Application {
     public void onCreate() {
         super.onCreate();
         verificarEntornoAislado();
+        registrarAlmacenTokens();
         aplicarIdiomaGuardado();
         crearCanalPush();
         registrarTransicionesGlobales();
+    }
+
+    // ------------------------------------------------------------------
+    // Sesión (GP-091)
+    // ------------------------------------------------------------------
+
+    // Enseña a UtilREST dónde están los tokens. Tiene que ser aquí y no en una pantalla:
+    // si Android mata la app en segundo plano, al volver recrea directamente la pantalla
+    // donde estaba el usuario, sin pasar por la splash, y la Application es lo único que
+    // se ejecuta siempre. Instancia propia de PreferencesManager: el refresco del token
+    // escribe desde un hilo de red.
+    private void registrarAlmacenTokens() {
+        PreferencesManager prefs = new PreferencesManager(this);
+        UtilREST.setAlmacen(new UtilREST.AlmacenTokens() {
+            @Override public String leerToken() { return prefs.getToken(); }
+            @Override public String leerRefresh() { return prefs.getRefreshToken(); }
+            @Override public void guardar(String token, String refresh) { prefs.saveSesion(token, refresh); }
+            @Override public void borrar() { prefs.borrarTokens(); }
+        });
     }
 
     // ------------------------------------------------------------------

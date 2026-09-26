@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import es.pmdm.gymprofit.network.UtilREST;
-import es.pmdm.gymprofit.utils.PreferencesManager;
 
 /**
  * Trampolín de depuración para capturar pantallas desde adb.
@@ -30,15 +28,8 @@ public class TrampolinActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Lo mismo que hace SplashActivity al arrancar: sin esto, en un proceso
-        // recién creado las peticiones salen sin token y la app cierra la sesión.
-        PreferencesManager prefs = new PreferencesManager(this);
-        UtilREST.setTokenPersister((token, refresh) ->
-                new PreferencesManager(getApplicationContext()).saveSesion(token, refresh));
-        if (prefs.haySesion()) {
-            UtilREST.setToken(prefs.getToken());
-            UtilREST.setRefreshToken(prefs.getRefreshToken());
-        }
+        // El token lo carga UtilREST del almacén cuando le falta (GP-091): ya no hace
+        // falta copiarlo aquí como hacía la splash.
 
         String destino = getIntent().getStringExtra("destino");
         if (destino != null) {

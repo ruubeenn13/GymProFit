@@ -10,7 +10,6 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import androidx.appcompat.app.AppCompatActivity;
 import es.pmdm.gymprofit.R;
-import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 
 // ============================================================
@@ -63,18 +62,8 @@ public class SplashActivity extends AppCompatActivity {
     private void verificarSesion() {
         // Handler ligado explícitamente al hilo principal (constructor sin Looper está deprecado)
         new Handler(Looper.getMainLooper()).post(() -> {
-            // Registra el persistidor: cuando UtilREST renueve el token con el refresh,
-            // guarda los nuevos tokens en preferencias (instancia propia → sin compartir editor
-            // con la UI, ya que el refresh ocurre en un hilo de red).
-            UtilREST.setTokenPersister((nuevoToken, nuevoRefresh) ->
-                    new PreferencesManager(getApplicationContext()).saveSesion(nuevoToken, nuevoRefresh));
-
-            boolean tieneSesion = prefsManager.haySesion();
-            if (tieneSesion) {
-                UtilREST.setToken(prefsManager.getToken());
-                UtilREST.setRefreshToken(prefsManager.getRefreshToken());
-            }
-
+            // El token ya no se carga aquí: lo lee UtilREST del almacén cifrado cuando le
+            // falta (GP-091), y así también vale para una pantalla restaurada sin splash.
             long tiempoTranscurrido = System.currentTimeMillis() - tiempoInicio;
             long tiempoRestante = Math.max(0, SPLASH_MIN_DURATION - tiempoTranscurrido);
 

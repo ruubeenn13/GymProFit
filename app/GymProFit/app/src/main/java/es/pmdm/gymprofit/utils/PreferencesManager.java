@@ -127,10 +127,15 @@ public class PreferencesManager {
                 .apply();
     }
 
+    // Borra solo los tokens del almacén cifrado (lo usa UtilREST al cerrar la sesión).
+    public void borrarTokens() {
+        securePrefs.edit().remove(KEY_TOKEN).remove(KEY_REFRESH_TOKEN).apply();
+    }
+
     // Borra los datos de sesión (tokens cifrados, id y username) pero conserva
     // las preferencias de onboarding, tema e idioma.
     public void cerrarSesion() {
-        securePrefs.edit().remove(KEY_TOKEN).remove(KEY_REFRESH_TOKEN).apply();
+        borrarTokens();
         editor.remove(KEY_USUARIO_ID);
         editor.remove(KEY_USERNAME);
         editor.apply();
