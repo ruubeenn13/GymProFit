@@ -59,6 +59,7 @@ public class PasswordResetService implements IPasswordResetService {
     private final RefreshTokenService refreshTokenService;
     private final IEmailService emailService;
     private final PasswordEncoder passwordEncoder;
+    private final PoliticaContrasena politicaContrasena;
 
     /**
      * Emite un código de recuperación y lo manda al correo de la cuenta.
@@ -161,6 +162,11 @@ public class PasswordResetService implements IPasswordResetService {
                     registro.getIntentos(), MAX_INTENTOS, usuario.getId());
             throw codigoNoValido();
         }
+
+        // Lista de bloqueo y nombre (GP-101), con el código ya comprobado: así el
+        // rechazo no dice nada a quien no lo tiene, y el código no se gasta, porque
+        // cambiar de contraseña no es un intento fallido.
+        politicaContrasena.comprobar(dto.getNewPassword(), usuario.getUsername());
 
         usuario.setPassword(passwordEncoder.encode(dto.getNewPassword()));
         usuarioRepository.save(usuario);

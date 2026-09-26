@@ -69,12 +69,12 @@ class RegistroDuplicadoTest extends AbstractOwnershipTest {
     }
 
     @Test
-    @DisplayName("contraseña sin símbolo → 400 de validación, sin código de duplicado")
+    @DisplayName("contraseña de 7 caracteres → 400 de validación, sin código de duplicado")
     void password_debil_sin_codigo() throws Exception {
         String cuerpo = objectMapper.writeValueAsString(Map.of(
                 "username", "libre-gp095",
                 "email", "libre-gp095@test.local",
-                "password", "Gymprofit1"));
+                "password", "Corta1!"));
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)

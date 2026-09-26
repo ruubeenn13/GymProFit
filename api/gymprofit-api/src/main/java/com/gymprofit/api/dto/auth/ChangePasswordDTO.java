@@ -1,8 +1,6 @@
 package com.gymprofit.api.dto.auth;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,12 +22,10 @@ public class ChangePasswordDTO implements Serializable {
     @NotBlank
     private String currentPassword;
 
-    // Nueva contraseña en texto plano (se hashea en el servicio). Misma política que el
-    // registro: mínimo 8 caracteres e incluir minúscula, mayúscula, dígito y símbolo.
+    // Contraseña en texto plano (se hashea en el servicio). Política de GP-101 (DEC-034):
+    // mínimo 8 caracteres, máximo 72 bytes, sin reglas de composición. La lista de
+    // bloqueo y el nombre los comprueba PoliticaContrasena en el servicio.
     @NotBlank
-    @Size(min = 8, max = 100)
-    @Pattern(
-            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).+$",
-            message = "La contraseña debe incluir minúscula, mayúscula, dígito y símbolo")
+    @ContrasenaNueva
     private String newPassword;
 }

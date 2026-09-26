@@ -244,12 +244,13 @@ class AuthControllerTest {
         verify(authService).changePassword(any(String.class), any(ChangePasswordDTO.class));
     }
 
-    // Política de contraseña: el registro con una débil (sin símbolo/mayúscula) → 400
-    // por @Valid antes de llegar al service.
+    // Política de contraseña (GP-101): el registro con una de menos de 8 caracteres → 400
+    // por @Valid antes de llegar al service. La lista de bloqueo va en el service y se
+    // prueba con el contexto en PoliticaContrasenaTest.
     @Test
-    @DisplayName("POST /auth/register con contraseña débil devuelve 400")
+    @DisplayName("POST /auth/register con contraseña corta devuelve 400")
     void register_password_debil_devuelve_400() throws Exception {
-        registerDTO.setPassword("password123"); // sin mayúscula ni símbolo
+        registerDTO.setPassword("corta12"); // 7 caracteres
 
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -262,11 +263,11 @@ class AuthControllerTest {
     // Cambio de contraseña con una nueva débil → 400 por @Valid; el service no se invoca.
     @Test
     @WithMockUser(username = "admin")
-    @DisplayName("POST /auth/change-password con nueva débil devuelve 400")
+    @DisplayName("POST /auth/change-password con nueva corta devuelve 400")
     void changePassword_nueva_debil_devuelve_400() throws Exception {
         mockMvc.perform(post("/auth/change-password")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"currentPassword\":\"Admin1234\",\"newPassword\":\"debil123\"}"))
+                        .content("{\"currentPassword\":\"Admin1234\",\"newPassword\":\"corta12\"}"))
                 .andExpect(status().isBadRequest());
 
         verify(authService, never()).changePassword(any(String.class), any(ChangePasswordDTO.class));

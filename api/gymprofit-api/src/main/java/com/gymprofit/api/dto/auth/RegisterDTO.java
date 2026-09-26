@@ -25,13 +25,11 @@ public class RegisterDTO implements Serializable {
     @Size(min = 3, max = 50)
     private String username;
 
-    // Contraseña en texto plano recibida del cliente (se hashea en el servicio).
-    // Política: mínimo 8 caracteres e incluir minúscula, mayúscula, dígito y símbolo.
+    // Contraseña en texto plano (se hashea en el servicio). Política de GP-101 (DEC-034):
+    // mínimo 8 caracteres, máximo 72 bytes, sin reglas de composición. La lista de
+    // bloqueo y el nombre los comprueba PoliticaContrasena en el servicio.
     @NotBlank
-    @Size(min = 8, max = 100)
-    @Pattern(
-            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).+$",
-            message = "La contraseña debe incluir minúscula, mayúscula, dígito y símbolo")
+    @ContrasenaNueva
     private String password;
 
     // Correo electrónico del usuario, debe tener formato válido

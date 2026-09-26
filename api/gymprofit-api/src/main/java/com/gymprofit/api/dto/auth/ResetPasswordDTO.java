@@ -31,12 +31,10 @@ public class ResetPasswordDTO implements Serializable {
     @Pattern(regexp = "^\\d{6}$", message = "El código debe tener 6 dígitos")
     private String codigo;
 
-    // Contraseña nueva en texto plano (se hashea en el servicio).
-    // Política: mínimo 8 caracteres e incluir minúscula, mayúscula, dígito y símbolo.
+    // Contraseña en texto plano (se hashea en el servicio). Política de GP-101 (DEC-034):
+    // mínimo 8 caracteres, máximo 72 bytes, sin reglas de composición. La lista de
+    // bloqueo y el nombre los comprueba PoliticaContrasena en el servicio.
     @NotBlank
-    @Size(min = 8, max = 100)
-    @Pattern(
-            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).+$",
-            message = "La contraseña debe incluir minúscula, mayúscula, dígito y símbolo")
+    @ContrasenaNueva
     private String newPassword;
 }

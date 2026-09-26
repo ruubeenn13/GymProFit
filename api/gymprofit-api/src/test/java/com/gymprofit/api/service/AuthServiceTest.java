@@ -60,6 +60,10 @@ class AuthServiceTest {
     @Mock
     private RefreshTokenService refreshTokenService;
 
+    // La política de contraseñas se prueba con el contexto en PoliticaContrasenaTest.
+    @Mock
+    private com.gymprofit.api.service.auth.PoliticaContrasena politicaContrasena;
+
     @InjectMocks
     private AuthService authService;
 

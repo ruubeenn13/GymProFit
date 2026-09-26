@@ -49,6 +49,7 @@ public class AuthService implements IAuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
+    private final PoliticaContrasena politicaContrasena;
     private final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
     // Autentica usuario/contraseña con el AuthenticationManager, establece el
@@ -99,6 +100,10 @@ public class AuthService implements IAuthService {
                     "El email '" + registerDTO.getEmail() + "' ya está en uso",
                     DuplicateEntityException.EMAIL_EN_USO);
         }
+
+        // Lista de bloqueo y nombre (GP-101). Después de la unicidad: si el usuario ya
+        // existe, eso es lo primero que hay que corregir.
+        politicaContrasena.comprobar(registerDTO.getPassword(), registerDTO.getUsername());
 
         // Seguridad: el rol NUNCA se toma del cliente. El registro público crea siempre USER.
         // Los cambios de rol se hacen solo desde el panel admin (PATCH /admin/usuarios/{id}/rol).
@@ -215,6 +220,9 @@ public class AuthService implements IAuthService {
         if (passwordEncoder.matches(changePasswordDTO.getNewPassword(), usuario.getPassword())) {
             throw new InvalidDataException("La nueva contraseña debe ser distinta de la actual");
         }
+
+        // Lista de bloqueo y nombre (GP-101).
+        politicaContrasena.comprobar(changePasswordDTO.getNewPassword(), usuario.getUsername());
 
         usuario.setPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
         usuarioRepository.save(usuario);

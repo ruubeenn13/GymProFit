@@ -148,6 +148,17 @@ public class ControllerExceptionHandler {
         );
     }
 
+    // Contraseña nueva que no vale para esa cuenta (GP-101): 400 con el código en "cause"
+    // (PASSWORD_COMUN o PASSWORD_CONTIENE_NOMBRE), como los de GP-095.
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ContrasenaRechazadaException.class)
+    public ResponseEntity<Response> handleContrasenaRechazada(ContrasenaRechazadaException ex) {
+        return new ResponseEntity<>(
+                Response.generalError(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), ex.getCodigo()),
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
     // El valor pedido ya lo usa otro registro (p. ej. el correo nuevo de GP-083): 409.
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(ConflictEntityException.class)

@@ -104,7 +104,7 @@ class PasswordResetServiceTest {
         passwordEncoder = new BCryptPasswordEncoder(4);
 
         service = new PasswordResetService(usuarioRepository, codigoRepository,
-                refreshTokenService, emailService, passwordEncoder);
+                refreshTokenService, emailService, passwordEncoder, new PoliticaContrasena());
 
         usuario = new Usuario();
         usuario.setId(7);
