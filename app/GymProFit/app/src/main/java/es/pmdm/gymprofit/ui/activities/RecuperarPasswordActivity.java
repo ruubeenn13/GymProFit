@@ -166,11 +166,12 @@ public class RecuperarPasswordActivity extends AppCompatActivity {
             tilCodigo.setError(null);
         }
 
-        // Misma política que el registro y que la API (PoliticaCuenta, GP-095). Si aquí
-        // fuera más laxa, el 400 del servidor llegaría sin que el usuario sepa qué ha
-        // hecho mal. La de antes no tenía máximo y aceptaba dígitos no ASCII.
-        if (!PoliticaCuenta.passwordValida(password)) {
-            tilPassword.setError(getString(R.string.recuperar_error_password));
+        // Misma política que el registro y que la API (PoliticaCuenta, GP-095 y GP-101).
+        // Si aquí fuera más laxa, el 400 del servidor llegaría sin que el usuario sepa qué
+        // ha hecho mal.
+        String errPassword = UIHelper.mensajePassword(this, PoliticaCuenta.problemaPassword(password));
+        if (errPassword != null) {
+            tilPassword.setError(errPassword);
             valido = false;
         } else {
             tilPassword.setError(null);
@@ -196,9 +197,14 @@ public class RecuperarPasswordActivity extends AppCompatActivity {
             @Override
             public void onFail(int code, String message) {
                 LoadingDialog.hide(RecuperarPasswordActivity.this);
-                // Un código equivocado o caducado llega como 400 y se marca en su campo;
-                // el resto (red, límite de peticiones) va al aviso general.
-                if (code == 400) {
+                // Un 400 es una contraseña que la API no acepta para la cuenta (GP-101), con
+                // su código, o si no un código equivocado o caducado; cada uno en su campo.
+                // El resto (red, límite de peticiones) va al aviso general.
+                String rechazo = UIHelper.mensajeRechazoPassword(RecuperarPasswordActivity.this,
+                        PoliticaCuenta.rechazoPassword(message));
+                if (code == 400 && rechazo != null) {
+                    tilPassword.setError(rechazo);
+                } else if (code == 400) {
                     tilCodigo.setError(getString(R.string.recuperar_error_codigo));
                 } else {
                     UiFeedback.toastError(RecuperarPasswordActivity.this, code, message);

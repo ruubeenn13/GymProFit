@@ -1,52 +1,76 @@
 package es.pmdm.gymprofit.utils;
 
-import java.util.regex.Pattern;
+import java.nio.charset.StandardCharsets;
 
 // ============================================================
 // PoliticaCuenta — las reglas de los datos de una cuenta, copiadas de la API.
 //
-// Una sola fuente para el registro y para recuperar contraseña (GP-095). El
-// registro se había quedado en «al menos 6 caracteres» mientras la API pedía de 8 a
-// 100 con minúscula, mayúscula, dígito y símbolo: la app daba por buena una
-// contraseña que la API rechazaba con 400, y el usuario solo veía «Error al crear
-// la cuenta».
+// Una sola fuente para el registro y para recuperar contraseña (GP-095): si la app
+// da por buena una contraseña que la API rechaza, el usuario solo ve un error suelto.
 //
-// Tiene que aceptar EXACTAMENTE lo que acepta RegisterDTO. Por eso el dígito es
-// [0-9] y no \d: en Android \d casa también con dígitos de otras escrituras, y en
-// la API no. Sin dependencias de Android, para probarla en la JVM.
+// Contraseña (GP-101, DEC-034), la de @ContrasenaNueva en la API: mínimo 8
+// CARACTERES, contados como caracteres y no como unidades UTF-16, y máximo 72 BYTES en
+// UTF-8, lo que admite BCrypt. Sin reglas de composición. La lista de contraseñas
+// comunes y el nombre los comprueba la API, que responde con un código en "cause".
+// Sin dependencias de Android, para probarla en la JVM.
 // ============================================================
 public final class PoliticaCuenta {
 
-    public static final int PASSWORD_MIN = 8;
-    public static final int PASSWORD_MAX = 100;
+    public static final int PASSWORD_MIN_CARACTERES = 8;
+    public static final int PASSWORD_MAX_BYTES = 72;
     public static final int USUARIO_MIN = 3;
     public static final int USUARIO_MAX = 50;
     public static final int CORREO_MAX = 100;
 
-    // Mismo patrón que el @Pattern de RegisterDTO; la longitud va aparte, como su @Size.
-    private static final Pattern PASSWORD =
-            Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).+$");
-
     // Códigos que manda la API en "cause" cuando el registro choca con otra cuenta.
     static final String CODIGO_USUARIO_EN_USO = "USERNAME_EN_USO";
     static final String CODIGO_CORREO_EN_USO = "EMAIL_EN_USO";
+    // Y cuando la contraseña nueva no vale para la cuenta (GP-101).
+    static final String CODIGO_PASSWORD_COMUN = "PASSWORD_COMUN";
+    static final String CODIGO_PASSWORD_CONTIENE_NOMBRE = "PASSWORD_CONTIENE_NOMBRE";
 
     /** Qué dato del registro tiene ya otra cuenta, según el código de la API. */
     public enum CampoEnUso { USUARIO, CORREO, DESCONOCIDO }
 
+    /** Qué le pasa a una contraseña antes de enviarla. */
+    public enum ProblemaPassword { CORTA, LARGA }
+
+    /** Por qué la API ha rechazado una contraseña nueva de forma válida. */
+    public enum RechazoPassword { COMUN, CONTIENE_NOMBRE, NINGUNO }
+
     private PoliticaCuenta() {}
 
     /**
-     * Dice si la API aceptará esta contraseña: de 8 a 100 caracteres, con
-     * minúscula, mayúscula, dígito y símbolo.
+     * Qué le falta a una contraseña para que la API la acepte en forma, o null si nada.
      *
      * @param password contraseña tal cual se enviará, o null.
      */
+    public static ProblemaPassword problemaPassword(String password) {
+        if (password == null || password.codePointCount(0, password.length()) < PASSWORD_MIN_CARACTERES) {
+            return ProblemaPassword.CORTA;
+        }
+        if (password.getBytes(StandardCharsets.UTF_8).length > PASSWORD_MAX_BYTES) {
+            return ProblemaPassword.LARGA;
+        }
+        return null;
+    }
+
+    /** Si la API aceptará la forma de esta contraseña. */
     public static boolean passwordValida(String password) {
-        return password != null
-                && password.length() >= PASSWORD_MIN
-                && password.length() <= PASSWORD_MAX
-                && PASSWORD.matcher(password).matches();
+        return problemaPassword(password) == null;
+    }
+
+    /**
+     * Lee del cuerpo de un 400 si la API ha rechazado la contraseña nueva y por qué.
+     * Busca el código y no el texto, igual que {@link #campoEnUso(String)}.
+     *
+     * @param cuerpo cuerpo de error tal cual, o null.
+     */
+    public static RechazoPassword rechazoPassword(String cuerpo) {
+        if (cuerpo == null) return RechazoPassword.NINGUNO;
+        if (cuerpo.contains(CODIGO_PASSWORD_COMUN)) return RechazoPassword.COMUN;
+        if (cuerpo.contains(CODIGO_PASSWORD_CONTIENE_NOMBRE)) return RechazoPassword.CONTIENE_NOMBRE;
+        return RechazoPassword.NINGUNO;
     }
 
     /**

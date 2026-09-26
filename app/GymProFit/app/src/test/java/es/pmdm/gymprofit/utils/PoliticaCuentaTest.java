@@ -2,73 +2,75 @@ package es.pmdm.gymprofit.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
 // ============================================================
-// PoliticaCuentaTest — GP-095: la app acepta exactamente lo que acepta la API.
+// PoliticaCuentaTest — la app acepta exactamente lo que acepta la API.
 //
-// El registro solo exigía 6 caracteres y la API (RegisterDTO) pide de 8 a 100 con
-// minúscula, mayúscula, dígito y símbolo: «gymprofit1» pasaba en la app, la API la
-// rechazaba con 400 y el usuario veía «Error al crear la cuenta» sin saber por qué.
-// Los casos de aquí son los que la API acepta y rechaza; si uno cambia de lado, la
-// app y la API vuelven a discrepar.
+// GP-095 la creó porque la app daba por buenas contraseñas que la API rechazaba.
+// GP-101 cambia la regla (DEC-034): mínimo 8 caracteres contados como caracteres,
+// máximo 72 bytes en UTF-8 y sin reglas de composición. Los casos son los mismos que
+// PoliticaContrasenaTest en la API; si uno cambia de lado, vuelven a discrepar. La
+// lista de bloqueo y el nombre solo los sabe la API: aquí se prueba que la app lee
+// sus códigos.
 // ============================================================
 public class PoliticaCuentaTest {
 
     // ---------- Contraseña ----------
 
     @Test
-    public void la_contrasena_del_fallo_se_rechaza() {
-        // Sin mayúscula ni símbolo: la que dio «Error al crear la cuenta».
-        assertFalse(PoliticaCuenta.passwordValida("gymprofit1"));
-        // Con mayúscula pero sin símbolo: tampoco la acepta la API.
-        assertFalse(PoliticaCuenta.passwordValida("Gymprofit1"));
+    public void siete_caracteres_es_corta() {
+        assertEquals(PoliticaCuenta.ProblemaPassword.CORTA, PoliticaCuenta.problemaPassword("zqxmplo"));
     }
 
     @Test
-    public void le_falta_una_clase_de_caracter() {
-        assertFalse("sin minúscula", PoliticaCuenta.passwordValida("GYMPROFIT1!"));
-        assertFalse("sin mayúscula", PoliticaCuenta.passwordValida("gymprofit1!"));
-        assertFalse("sin dígito", PoliticaCuenta.passwordValida("Gymprofit!!"));
-        assertFalse("sin símbolo", PoliticaCuenta.passwordValida("Gymprofit12"));
+    public void ocho_minusculas_sin_nada_mas_vale() {
+        assertNull(PoliticaCuenta.problemaPassword("zqxmplok"));
+        // La que tumbó el registro en GP-095 ya vale en forma (la API la juzga por la lista).
+        assertTrue(PoliticaCuenta.passwordValida("gymprofit1"));
     }
 
     @Test
-    public void longitud_de_8_a_100() {
-        assertFalse("7", PoliticaCuenta.passwordValida("Gym1.ab"));
-        assertTrue("8", PoliticaCuenta.passwordValida("Gym1.abc"));
-        assertTrue("100", PoliticaCuenta.passwordValida("Gym1." + "a".repeat(95)));
-        assertFalse("101", PoliticaCuenta.passwordValida("Gym1." + "a".repeat(96)));
+    public void una_frase_con_espacios_vale() {
+        assertNull(PoliticaCuenta.problemaPassword("tren de lavar"));
     }
 
     @Test
-    public void se_aceptan_las_normales() {
-        assertTrue(PoliticaCuenta.passwordValida("Gymprofit1!"));
-        assertTrue(PoliticaCuenta.passwordValida("Prueba1234."));
-        // El espacio y la ñ cuentan como símbolo: no son [A-Za-z0-9], igual que en la API.
-        assertTrue(PoliticaCuenta.passwordValida("Gym profit1"));
-        assertTrue(PoliticaCuenta.passwordValida("Contraseña1"));
+    public void se_cuentan_caracteres_no_unidades_utf16() {
+        // 7 emojis son 14 unidades UTF-16: con length() pasaría.
+        assertEquals(PoliticaCuenta.ProblemaPassword.CORTA,
+                PoliticaCuenta.problemaPassword("🏋".repeat(7)));
+        assertNull(PoliticaCuenta.problemaPassword("ñañañaña"));
     }
 
     @Test
-    public void el_digito_es_ascii_como_en_la_api() {
-        // En Android \d también casa con dígitos de otras escrituras; en la API no.
-        // «١» (dígito árabe) no es [0-9]: sin otro dígito, la API la rechaza.
-        assertFalse(PoliticaCuenta.passwordValida("Gymprofit\u0661!"));
+    public void hasta_72_bytes_en_utf8() {
+        assertNull(PoliticaCuenta.problemaPassword("€".repeat(24)));   // 72 bytes
+        assertEquals(PoliticaCuenta.ProblemaPassword.LARGA,
+                PoliticaCuenta.problemaPassword("€".repeat(25)));      // 75 bytes, 25 caracteres
+        assertNull(PoliticaCuenta.problemaPassword("a".repeat(72)));
+        assertEquals(PoliticaCuenta.ProblemaPassword.LARGA,
+                PoliticaCuenta.problemaPassword("a".repeat(73)));
     }
 
     @Test
-    public void nula_o_vacia_se_rechaza() {
+    public void nula_o_vacia_es_corta() {
         assertFalse(PoliticaCuenta.passwordValida(null));
         assertFalse(PoliticaCuenta.passwordValida(""));
     }
 
     @Test
-    public void un_salto_de_linea_no_pasa() {
-        // El «.+» de la API no casa con saltos de línea.
-        assertFalse(PoliticaCuenta.passwordValida("Gym1.abc\ndef"));
+    public void rechazo_por_el_codigo_de_la_api() {
+        assertEquals(PoliticaCuenta.RechazoPassword.COMUN, PoliticaCuenta.rechazoPassword(
+                "{\"code\":400,\"message\":\"Esa contraseña es demasiado común\",\"cause\":\"PASSWORD_COMUN\"}"));
+        assertEquals(PoliticaCuenta.RechazoPassword.CONTIENE_NOMBRE, PoliticaCuenta.rechazoPassword(
+                "{\"code\":400,\"cause\":\"PASSWORD_CONTIENE_NOMBRE\"}"));
+        assertEquals(PoliticaCuenta.RechazoPassword.NINGUNO, PoliticaCuenta.rechazoPassword(
+                "{\"code\":400,\"cause\":\"USERNAME_EN_USO\"}"));
+        assertEquals(PoliticaCuenta.RechazoPassword.NINGUNO, PoliticaCuenta.rechazoPassword(null));
     }
 
     // ---------- Usuario y correo ----------

@@ -168,8 +168,8 @@ public class RegistroActivity extends AppCompatActivity {
         String errPassword = null;
         if (password.isEmpty()) {
             errPassword = getString(R.string.error_campo_requerido);
-        } else if (!PoliticaCuenta.passwordValida(password)) {
-            errPassword = getString(R.string.password_politica);
+        } else {
+            errPassword = UIHelper.mensajePassword(this, PoliticaCuenta.problemaPassword(password));
         }
 
         String errConfirmar = null;
@@ -242,6 +242,13 @@ public class RegistroActivity extends AppCompatActivity {
     private void mostrarErrorRegistro(int code, String cuerpo) {
         if (code != 400) {
             UiFeedback.toastError(this, code, cuerpo);
+            return;
+        }
+        // Contraseña con buena forma que la API no acepta para esta cuenta (GP-101).
+        String errPassword = UIHelper.mensajeRechazoPassword(this, PoliticaCuenta.rechazoPassword(cuerpo));
+        if (errPassword != null) {
+            tilRegPassword.setError(errPassword);
+            etRegPassword.requestFocus();
             return;
         }
         switch (PoliticaCuenta.campoEnUso(cuerpo)) {

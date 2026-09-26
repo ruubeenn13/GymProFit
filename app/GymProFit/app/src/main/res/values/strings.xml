@@ -636,13 +636,17 @@
     <string name="recuperar_paso2_explicacion">Si hay una cuenta para «%1$s», el código ya está en su correo. Caduca en 15 minutos.</string>
     <string name="recuperar_codigo">Código de 6 dígitos</string>
     <string name="recuperar_password_nueva">Contraseña nueva</string>
-    <string name="password_politica">Mínimo 8 caracteres, con minúscula, mayúscula, dígito y símbolo.</string>
+    <!-- Contraseña nueva (GP-101, DEC-034): sin reglas de composición -->
+    <string name="password_politica">Mínimo 8 caracteres. Una frase corta es más segura que una palabra</string>
+    <string name="password_error_corta">Mínimo 8 caracteres</string>
+    <string name="password_error_larga">Demasiado larga: acórtala un poco</string>
+    <string name="password_error_comun">Es demasiado común: elige otra</string>
+    <string name="password_error_nombre">No puede contener «GymProFit» ni tu nombre de usuario</string>
     <string name="recuperar_restablecer">Restablecer contraseña</string>
     <string name="recuperar_reenviar">Enviar otro código</string>
     <string name="recuperar_ok">Contraseña cambiada. Ya puedes entrar con la nueva.</string>
     <string name="recuperar_error_identificador">Escribe tu usuario o tu correo</string>
     <string name="recuperar_error_codigo">El código son 6 dígitos</string>
-    <string name="recuperar_error_password">Mínimo 8 caracteres, con minúscula, mayúscula, dígito y símbolo</string>
 
     <!-- Silueta muscular de la pantalla de inicio (fase 4) -->
     <string name="home_cuerpo_eyebrow">ESTA SEMANA</string>

@@ -512,4 +512,26 @@ public class UIHelper {
             buscador.requestLayout();
         }
     }
+
+    /**
+     * Texto del error de una contraseña que no se puede enviar (GP-101), o null si vale.
+     * Registro y recuperar dicen lo mismo, con las reglas de {@link PoliticaCuenta}.
+     */
+    public static String mensajePassword(Context context, PoliticaCuenta.ProblemaPassword problema) {
+        if (problema == null) return null;
+        return context.getString(problema == PoliticaCuenta.ProblemaPassword.LARGA
+                ? R.string.password_error_larga : R.string.password_error_corta);
+    }
+
+    /**
+     * Texto del rechazo de la API a una contraseña nueva (GP-101), o null si el 400 no
+     * era por la contraseña.
+     */
+    public static String mensajeRechazoPassword(Context context, PoliticaCuenta.RechazoPassword rechazo) {
+        switch (rechazo) {
+            case COMUN: return context.getString(R.string.password_error_comun);
+            case CONTIENE_NOMBRE: return context.getString(R.string.password_error_nombre);
+            default: return null;
+        }
+    }
 }
