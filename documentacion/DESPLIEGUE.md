@@ -116,7 +116,8 @@ Pendiente (clics de cuenta, con guía): crear MySQL en Aiven → copiar credenci
 ## Actualización 2026-09-26 — qué commit corre y cuándo se despliega
 
 - **`GET https://api.gymprofit.app/api/actuator/info`** responde `{"commit":"<hash>"}`, público y sin nada más (GP-100). El health check sigue en verde aunque un despliegue falle y responda la instancia vieja, así que **un despliegue se da por hecho cuando ese hash es el del commit**, nunca probando con una cuenta.
-- **`render.yaml` pasa de `autoDeploy: true` a `autoDeployTrigger: checksPass`** (GP-094): Render despliega cuando el CI del commit pasa en verde. Un push solo de documentación (`*.md`, `documentacion/`) no lanza CI y no despliega. Si el servicio no se creó por Blueprint, el panel manda: comprobar allí que el disparador es «After CI Checks Pass».
+- **`render.yaml` pasa de `autoDeploy: true` a `autoDeployTrigger: checksPass`** (GP-094): Render despliega cuando el CI del commit pasa en verde. Un push solo de documentación (`*.md`, `documentacion/`) no lanza CI y no despliega.
+- **Pero el servicio NO lo está aplicando (comprobado el 2026-09-27).** `5773c60`, solo de documentación, no tuvo ni una ejecución de CI (0 checks en GitHub) y producción pasó a servirlo. Según la documentación de Render, con «After CI Checks Pass» un commit sin checks no se despliega, así que el disparador efectivo es otro: el servicio no está gestionado por el Blueprint (o no se ha sincronizado) y manda el panel. **Pendiente del propietario:** en Render → servicio → Settings → Auto-Deploy, poner «After CI Checks Pass» (o sincronizar el Blueprint). Hasta entonces, cada push a `main` despliega, con CI o sin él.
 
 ## Pasos de migración pendientes (cuando se despliegue)
 
