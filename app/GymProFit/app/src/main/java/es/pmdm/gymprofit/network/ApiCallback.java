@@ -1,7 +1,5 @@
 package es.pmdm.gymprofit.network;
 
-import android.util.Log;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -16,7 +14,7 @@ import retrofit2.Response;
 // Uso típico en una Activity:
 //   api.getOrdenadas(id).enqueue(new ApiCallback<List<MedicionCorporal>>() {
 //       public void onOk(List<MedicionCorporal> lista) { ...pintar UI... }
-//       public void onFail(int code, String msg) { ...toast de error... }   // opcional
+//       public void onFail(int code, String msg) { ...toast de error... }   // obligatorio
 //   });
 // ============================================================
 public abstract class ApiCallback<T> implements Callback<T> {
@@ -34,11 +32,11 @@ public abstract class ApiCallback<T> implements Callback<T> {
     // Éxito (2xx): recibe el cuerpo ya deserializado (puede ser null en 204 No Content).
     public abstract void onOk(T body);
 
-    // Error de red o respuesta no-2xx (401 ya gestionado aparte). Por defecto solo
-    // loguea; las Activities lo sobrescriben cuando quieren mostrar error al usuario.
-    public void onFail(int code, String message) {
-        Log.w("GymProFit", "API fail " + code + ": " + message);
-    }
+    // Error de red o respuesta no-2xx (401 ya gestionado aparte). Abstracto a propósito
+    // (GP-017): antes, por defecto, solo escribía en el log, y un fallo sin onFail propio
+    // era un fallo mudo. Cada llamada decide: mostrarlo, reintentar o ignorarlo con un
+    // comentario que diga por qué es seguro (OnFailVacioTest vigila lo último).
+    public abstract void onFail(int code, String message);
 
     @Override
     public void onResponse(Call<T> call, Response<T> response) {

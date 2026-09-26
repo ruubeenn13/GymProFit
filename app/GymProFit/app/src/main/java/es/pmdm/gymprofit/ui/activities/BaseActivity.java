@@ -230,7 +230,12 @@ public abstract class BaseActivity extends AppCompatActivity {
                         body.put("refreshToken", refresh);
                         authApi.logout(body).enqueue(new ApiCallback<Void>() {
                             @Override public void onOk(Void ignored) { }
-                            @Override public void onFail(int code, String message) { }
+                            @Override public void onFail(int code, String message) {
+                                // Se ignora a propósito (GP-017): la sesión se cierra igual en el
+                                // dispositivo, que borra el refresh; si la revocación no llega, ese
+                                // refresh queda en el servidor hasta caducar pero ya no lo tiene nadie.
+                                // Avisar de un fallo en algo que el usuario ya no ve solo confundiría.
+                            }
                         });
                     }
                     UtilREST.clearToken();

@@ -81,7 +81,13 @@ public final class PushTokenManager {
 
         api.eliminar(token).enqueue(new ApiCallback<Void>() {
             @Override public void onOk(Void ignored) { }
-            @Override public void onFail(int code, String message) { }
+            @Override public void onFail(int code, String message) {
+                // Se ignora a propósito (GP-017): quien sale no está para ver un aviso, y no
+                // se puede reintentar sin su sesión. Límite conocido: hasta que alguien vuelva
+                // a entrar en este dispositivo, la API puede seguir mandando aquí las push de
+                // la cuenta anterior; el siguiente registro reasigna el token a quien entre.
+                Log.w("GymProFit", "FCM: fallo dando de baja el token (" + code + ")");
+            }
         });
     }
 }

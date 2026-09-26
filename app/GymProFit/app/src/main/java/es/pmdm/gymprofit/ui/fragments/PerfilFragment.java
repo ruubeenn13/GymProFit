@@ -282,14 +282,16 @@ public class PerfilFragment extends BaseFragment {
                 if (bmp != null) ivAvatar.setImageBitmap(bmp);
             }
 
-            // Este onFail se calla a propósito, y es el único sitio donde eso sigue
-            // valiendo después de GP-069: la mayoría de los usuarios NO tiene foto, y
-            // la API responde 404 a eso (no es una colección, es un recurso que de
-            // verdad no existe, así que DEC-033 no lo cambia). Sin foto se queda el
-            // avatar por defecto, que es justo lo que el usuario espera ver; un toast
-            // en cada entrada al perfil sería ruido por un estado normal.
             @Override
-            public void onFail(int code, String message) { }
+            public void onFail(int code, String message) {
+                // Se ignora a propósito (GP-017). El 404 es lo normal: la mayoría de los
+                // usuarios NO tiene foto, y la API responde 404 a eso (es un recurso que de
+                // verdad no existe, así que DEC-033 no lo cambia); se queda el avatar por
+                // defecto, que es lo que el usuario espera ver. Un fallo de red o del
+                // servidor ya lo avisa la carga del perfil, que va a la vez: un segundo
+                // aviso por la foto sería el mismo error dos veces.
+                if (code != 404) Log.w("GymProFit", "Foto de perfil no disponible (" + code + ")");
+            }
         });
     }
 
@@ -312,7 +314,12 @@ public class PerfilFragment extends BaseFragment {
             }
 
             @Override
-            public void onFail(int code, String message) {}
+            public void onFail(int code, String message) {
+                // Se ignora a propósito (GP-017): el resumen de peso y altura es secundario y
+                // sin datos se queda oculto, igual que sin mediciones. Un fallo de red o del
+                // servidor ya lo avisa la carga del perfil, que va a la vez.
+                Log.w("GymProFit", "Última medición no disponible (" + code + ")");
+            }
         });
     }
 
