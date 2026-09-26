@@ -14,6 +14,8 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.ErrorResponse;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.HashMap;
@@ -276,10 +278,32 @@ public class ControllerExceptionHandler {
         );
     }
 
+    // Ruta que no existe (GP-075): 404. Sin este manejador caía en el fallback como 500,
+    // igual que las rutas de Swagger en producción, donde está apagado.
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<Response> handleNoResourceFound(NoResourceFoundException ex) {
+        return new ResponseEntity<>(
+                Response.generalError(HttpStatus.NOT_FOUND.value(), "Recurso no encontrado"),
+                HttpStatus.NOT_FOUND
+        );
+    }
+
     // Fallback genérico: cualquier excepción no controlada explícitamente arriba.
+    // Las excepciones de Spring MVC que ya traen un 4xx (método no admitido, tipo de
+    // contenido no admitido…) conservan su estado: son errores del cliente, no del
+    // servidor, y respondían 500 por pasar por aquí (GP-075).
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Response> handleException(Exception ex) {
+        if (ex instanceof ErrorResponse error && error.getStatusCode().is4xxClientError()) {
+            logger.warn("Petición rechazada ({}): {}", error.getStatusCode().value(), ex.getMessage());
+            HttpStatus estado = HttpStatus.valueOf(error.getStatusCode().value());
+            return new ResponseEntity<>(
+                    Response.generalError(estado.value(), estado.getReasonPhrase()),
+                    estado
+            );
+        }
         logger.error(ex.getMessage(), ex);
 
         return new ResponseEntity<>(

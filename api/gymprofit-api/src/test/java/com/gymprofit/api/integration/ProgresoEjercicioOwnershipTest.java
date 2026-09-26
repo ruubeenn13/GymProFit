@@ -63,14 +63,13 @@ class ProgresoEjercicioOwnershipTest extends AbstractOwnershipTest {
     @Test
     @DisplayName("El CRUD de la tabla retirada ya no responde")
     void crudRetirado() throws Exception {
-        // Si volviera a mapearse una ruta sobre la tabla, este test lo dice. Una ruta que
-        // no existe da hoy 500 y no 404 (el manejador global no distingue ese caso): lo
-        // que se afirma es que ya no sirve nada.
+        // Si volviera a mapearse una ruta sobre la tabla, este test lo dice. Desde GP-075
+        // una ruta que no existe da 404 y no 500, así que se afirma el 404 exacto.
         for (String ruta : new String[]{
                 "GET /progreso-ejercicios",
                 "GET /progreso-ejercicios/usuario/" + owner.getId(),
                 "DELETE /progreso-ejercicios/usuario/" + owner.getId()}) {
-            assertThat(estado(owner, ruta)).as(ruta).isGreaterThanOrEqualTo(400);
+            assertThat(estado(owner, ruta)).as(ruta).isEqualTo(404);
         }
     }
 }
