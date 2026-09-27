@@ -6,6 +6,11 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `76ddb16` | build(android): **versión 1.1.1** (10101), etiquetada `v1.1.1`. Misma clave de firma. No necesita nada nuevo de la API. Informe en `documentacion/estado/2026-09-27-lote-1.1.1.md`. |
+| `e16f8ae` | fix(admin): **accesibilidad, errores y carga de la web tras la auditoría con Impeccable** (GP-085): `aria-current` en vez de `aria-selected`, título por pantalla, zonas de 44 px, errores que no se van solos, aviso de cambios sin guardar, y cada pantalla se descarga al abrirla (paquete inicial de 340 a 294 kB). |
+| `214801b` | fix(api,android): **el borrado de cuenta, al día con el cambio de contraseña** (GP-119): 403 con `PASSWORD_ACTUAL_INCORRECTA` en `cause`, y la app recorta la contraseña. DEC-034 sin deuda. |
+| `98a799f` | fix(android): **el engranaje de Progreso sin el anillo naranja** (GP-118). |
+| `12d489e` | fix(android): **el «+» de la barra se ve entero** (GP-118): `filaBarra` ya no recorta a sus hijos ni a su relleno. Test instrumentado del rectángulo visible. |
 | `1894997` | fix(admin): **la cabecera de la web deja de decir «API en marcha» en cuanto la API no contesta** (GP-085): un fallo de red en una lista pide comprobarla en el acto. |
 | `c9ae39f` | feat(admin): **web de administración en `admin.gymprofit.app`, fase 1** (GP-085): Entrada, Resumen, Usuarios, Ejercicios y Alimentos en `admin/` (React, Vite, TypeScript). Solo cuentas ADMIN, tokens en memoria, una renovación y un reintento ante un 401. Cloudflare Workers con archivos estáticos, CSP que solo conecta con la API. DEC-035. Informe en `documentacion/estado/2026-09-27-admin-fase-1.md`. |
 | `557b5bb` | fix(api): **alta y último acceso de `/admin/cuentas` salen con su zona** (GP-085). |
