@@ -33,7 +33,6 @@
                 <ImageButton
                     android:id="@+id/btnAjustes"
                     style="@style/Widget.GymProFit.BotonRedondo"
-                    android:background="@drawable/bg_boton_ajustes"
                     android:contentDescription="@string/ajustes_titulo"
                     android:src="@drawable/ic_ms_settings" />
             </LinearLayout>
