@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ic_ms_policy — Material Symbols Rounded «policy», peso 400.
+  Importado sin redibujar de @material-symbols/svg-400@0.47.5, rounded/policy.svg.
+  Licencia Apache 2.0 (Google). El viewBox del SVG es 0 -960 960 960: el grupo
+  traslada 960 hacia abajo para que el trazado caiga en el viewport 0..960.
+  Color por defecto ?attr/colorOnSurface; quien lo tiñe, manda (GP-105).
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="960" android:viewportHeight="960">
+    <group android:translateY="960">
+        <path
+            android:fillColor="?attr/colorOnSurface"
+            android:pathData="M470-84.75q-5-.75-10-2.25-138-47-219-168.5t-81-266.61V-718q0-19.26 10.88-34.66Q181.75-768.07 199-775l260-97q11-4 21-4t21 4l260 97q17.25 6.93 28.13 22.34Q800-737.26 800-718v196q0 70-17 139t-59 130q-8 11-21.5 12.5T679-248L563-359q-19 11-40.16 18-21.16 7-42.84 7-62 0-105.5-43T331-482.5q0-62.5 43.5-106T480-632q62 0 105.5 43.5T629-482q0 21-6 42t-19 38l88 84q24-43 36-96.5T740-522v-198.48L480-815l-260 94.52V-522q0 131 72.5 236.5T480-142q23-6 54.5-23.5T592-203q10-8 22-7t20 11.5q8 10.5 6 23.5t-13 21q-29 22-60.5 38T500-87q-5 1.5-10 2.25T480-84q-5 0-10-.75Zm73-334.75q26-25.5 26-63T542.8-546q-26.21-26-63-26-36.8 0-62.8 26t-26 63.5q0 37.5 26.2 63 26.21 25.5 63 25.5 36.8 0 62.8-25.5ZM480-479Z"/>
+    </group>
+</vector>

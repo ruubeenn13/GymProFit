@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  view_acciones_rapidas — la hoja del «+» (GP-105): «¿Qué quieres hacer?» con tres
+  atajos. Flota 16 dp por encima de la barra, con 12 dp a los lados, como el lienzo.
+  Los subtítulos (qué rutina toca, qué comida, el último peso) empiezan ocultos y solo
+  se enseñan cuando el dato ya está cargado: nunca un «cargando» aquí dentro.
+-->
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/hojaAcciones"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:layout_marginStart="12dp"
+    android:layout_marginEnd="12dp"
+    android:layout_marginBottom="16dp"
+    android:visibility="gone"
+    app:cardCornerRadius="24dp"
+    app:cardBackgroundColor="?attr/colorSurface"
+    app:cardElevation="0dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="8dp">
+
+        <View
+            android:layout_width="36dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="6dp"
+            android:background="@drawable/bg_asa_hoja"
+            android:importantForAccessibility="no" />
+
+        <TextView
+            android:id="@+id/tvTituloAcciones"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="8dp"
+            android:accessibilityHeading="true"
+            android:text="@string/acciones_titulo"
+            android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
+
+        <LinearLayout
+            android:id="@+id/accionEntrenar"
+            style="@style/Widget.GymProFit.FilaAccion">
+
+            <FrameLayout
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_circle_primary"
+                android:importantForAccessibility="no">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_ms_play_arrow_fill"
+                    app:tint="?attr/colorOnPrimary"
+                    android:importantForAccessibility="no" />
+            </FrameLayout>
+
+            <LinearLayout style="@style/Widget.GymProFit.FilaAccion.Textos">
+
+                <TextView
+                    style="@style/Widget.GymProFit.FilaAccion.Titulo"
+                    android:text="@string/accion_entrenar" />
+
+                <TextView
+                    android:id="@+id/tvSubEntrenar"
+                    style="@style/Widget.GymProFit.FilaAccion.Sub" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/accionComida"
+            style="@style/Widget.GymProFit.FilaAccion">
+
+            <FrameLayout
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_circulo_superficie"
+                android:importantForAccessibility="no">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_ms_restaurant"
+                    app:tint="?attr/colorOnSurface"
+                    android:importantForAccessibility="no" />
+            </FrameLayout>
+
+            <LinearLayout style="@style/Widget.GymProFit.FilaAccion.Textos">
+
+                <TextView
+                    style="@style/Widget.GymProFit.FilaAccion.Titulo"
+                    android:text="@string/accion_comida" />
+
+                <TextView
+                    android:id="@+id/tvSubComida"
+                    style="@style/Widget.GymProFit.FilaAccion.Sub" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/accionPeso"
+            style="@style/Widget.GymProFit.FilaAccion">
+
+            <FrameLayout
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_circulo_superficie"
+                android:importantForAccessibility="no">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_ms_monitor_weight"
+                    app:tint="?attr/colorOnSurface"
+                    android:importantForAccessibility="no" />
+            </FrameLayout>
+
+            <LinearLayout style="@style/Widget.GymProFit.FilaAccion.Textos">
+
+                <TextView
+                    style="@style/Widget.GymProFit.FilaAccion.Titulo"
+                    android:text="@string/accion_peso" />
+
+                <TextView
+                    android:id="@+id/tvSubPeso"
+                    style="@style/Widget.GymProFit.FilaAccion.Sub" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

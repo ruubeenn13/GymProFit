@@ -15,11 +15,11 @@ import es.pmdm.gymprofit.R;
 //
 // La API reduce cada ejercicio a una clave de músculo (Musculos.normalizar, en la
 // API), la misma para la silueta de Inicio y para los récords. Qué músculos forman
-// cada zona vivía dentro de HomeFragment; la pantalla de Récords agrupa por zona y
+// cada zona vivía dentro de la pestaña Inicio; la pantalla de Récords agrupa por zona y
 // una segunda copia de la tabla acabaría diciendo otra cosa. Por eso está aquí.
 //
-// El orden importa: es el de lo grave que es saltarse la zona (ver
-// HomeFragment.cuerpoResumen) y el de las secciones de la pantalla de Récords.
+// El orden importa: es el de lo grave que es saltarse la zona (el de
+// la frase de la silueta) y el de las secciones de la pantalla de Récords.
 // ============================================================
 public final class Zonas {
 
@@ -50,7 +50,34 @@ public final class Zonas {
     public static final List<Zona> TODAS =
             Collections.unmodifiableList(Arrays.asList(PIERNA, ESPALDA, PECHO, HOMBROS, BRAZOS, CORE));
 
+    /**
+     * Las seis zonas en el orden de los chips (GP-105): «Esta semana» de Inicio y los
+     * filtros de la biblioteca de Entrenar. No es el de TODAS, que va por gravedad.
+     */
+    public static final List<Zona> ORDEN_CHIPS =
+            Collections.unmodifiableList(Arrays.asList(PECHO, ESPALDA, PIERNA, HOMBROS, BRAZOS, CORE));
+
     private Zonas() { }
+
+    /**
+     * Series por zona, en el orden de los chips: las seis zonas siempre, con 0 si no
+     * se ha tocado ninguno de sus músculos. Los músculos sin zona no cuentan.
+     *
+     * @param seriesPorMusculo series por clave de músculo (la de /volumen-muscular).
+     */
+    public static java.util.LinkedHashMap<Zona, Integer> seriesPorZona(
+            @Nullable Map<String, Integer> seriesPorMusculo) {
+        java.util.LinkedHashMap<Zona, Integer> porZona = new java.util.LinkedHashMap<>();
+        for (Zona z : ORDEN_CHIPS) porZona.put(z, 0);
+        if (seriesPorMusculo == null) return porZona;
+        for (Map.Entry<String, Integer> e : seriesPorMusculo.entrySet()) {
+            Zona z = deMusculo(e.getKey());
+            if (z != null && e.getValue() != null && e.getValue() > 0) {
+                porZona.put(z, porZona.get(z) + e.getValue());
+            }
+        }
+        return porZona;
+    }
 
     /**
      * Zona de una clave de músculo.

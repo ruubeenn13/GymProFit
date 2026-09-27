@@ -1,7 +1,6 @@
 package es.pmdm.gymprofit.ui.adapters;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +20,7 @@ import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.record.Record;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.Marcas;
+import es.pmdm.gymprofit.utils.TiempoRelativo;
 import es.pmdm.gymprofit.utils.Zonas;
 
 // ============================================================
@@ -41,10 +41,13 @@ public class RecordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     // Cada fila es un rótulo de zona (Integer: id del título) o un Record.
     private final List<Object> filas;
     private final OnRecordClick listener;
+    // El récord más reciente (el primero que da la API): trofeo y marca en dorado.
+    private final Record masReciente;
 
     public RecordAdapter(List<Record> records, OnRecordClick listener) {
         this.filas = agrupar(records);
         this.listener = listener;
+        this.masReciente = records.isEmpty() ? null : records.get(0);
     }
 
     /**
@@ -111,15 +114,29 @@ public class RecordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         h.tvNombre.setText(nombre);
         h.tvMarca.setText(marca);
 
-        // «Batido el 23 sept 2026 · Antes: 80 kg × 5»; lo que falte, no se escribe.
-        List<String> partes = new ArrayList<>();
-        String fecha = FechaUtils.formatearFechaMedia(r.getFecha(), idioma);
-        if (fecha != null) partes.add(ctx.getString(R.string.record_batido_el, fecha));
-        String anterior = Marcas.anterior(ctx, r);
-        if (anterior != null) partes.add(anterior);
-        String detalle = TextUtils.join(ctx.getString(R.string.separador_punto), partes);
+        // «hace 2 días · antes 82,5 kg × 10»; lo que falte, no se escribe (GP-105).
+        String cuando = TiempoRelativo.texto(ctx, r.getFecha());
+        String anterior = Marcas.anteriorSolo(ctx, r);
+        String detalle = cuando == null ? (anterior == null ? "" : ctx.getString(R.string.record_antes, anterior))
+                : anterior == null ? cuando : ctx.getString(R.string.record_hace_antes, cuando, anterior);
         h.tvDetalle.setText(detalle);
         h.tvDetalle.setVisibility(detalle.isEmpty() ? View.GONE : View.VISIBLE);
+
+        // Dorado solo el último récord: lo conseguido, no todo (DEC-018).
+        boolean dorado = r == masReciente;
+        h.ivTrofeo.setImageResource(dorado ? R.drawable.ic_ms_trophy_fill : R.drawable.ic_ms_trophy);
+        h.ivTrofeo.setImageTintList(android.content.res.ColorStateList.valueOf(dorado
+                ? androidx.core.content.ContextCompat.getColor(ctx, R.color.gp_gold)
+                : color(ctx, com.google.android.material.R.attr.colorOnSurfaceVariant)));
+        h.tvMarca.setTextColor(dorado ? androidx.core.content.ContextCompat.getColor(ctx, R.color.gp_gold_text)
+                : color(ctx, com.google.android.material.R.attr.colorOnSurface));
+
+        // Las filas de una zona forman una tarjeta: primera, intermedia o última.
+        boolean primera = !(position > 0 && filas.get(position - 1) instanceof Record);
+        boolean ultima = !(position + 1 < filas.size() && filas.get(position + 1) instanceof Record);
+        h.itemView.setBackgroundResource(primera && ultima ? R.drawable.bg_grupo_solo
+                : primera ? R.drawable.bg_grupo_primera : ultima ? R.drawable.bg_grupo_ultima : R.drawable.bg_grupo_media);
+        h.divider.setVisibility(ultima ? View.GONE : View.VISIBLE);
 
         h.itemView.setContentDescription(ctx.getString(R.string.record_a11y, nombre, marca, detalle));
         h.itemView.setOnClickListener(v -> { if (listener != null) listener.onClick(r); });
@@ -133,10 +150,20 @@ public class RecordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         SeccionHolder(View v) { super(v); tvSeccion = v.findViewById(R.id.tvSeccionRecord); }
     }
 
+    private static int color(Context ctx, int attr) {
+        android.util.TypedValue tv = new android.util.TypedValue();
+        ctx.getTheme().resolveAttribute(attr, tv, true);
+        return tv.data;
+    }
+
     static class RecordHolder extends RecyclerView.ViewHolder {
         final TextView tvNombre, tvMarca, tvDetalle;
+        final android.widget.ImageView ivTrofeo;
+        final View divider;
         RecordHolder(View v) {
             super(v);
+            ivTrofeo = v.findViewById(R.id.ivTrofeoRecord);
+            divider = v.findViewById(R.id.divRecord);
             tvNombre = v.findViewById(R.id.tvNombreRecord);
             tvMarca = v.findViewById(R.id.tvMarcaRecord);
             tvDetalle = v.findViewById(R.id.tvDetalleRecord);

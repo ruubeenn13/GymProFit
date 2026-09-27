@@ -42,12 +42,12 @@ public class AtrasTest {
 
     @Test
     public void desde_inicio_atras_sale() {
-        assertFalse(NavTabs.atrasVuelveAInicio(NavTabs.HOME));
+        assertFalse(NavTabs.atrasVuelveAInicio(NavTabs.INICIO));
     }
 
     @Test
     public void desde_las_demas_pestanas_atras_vuelve_a_inicio() {
-        for (int tab : new int[]{NavTabs.RUTINAS, NavTabs.EJERCICIOS, NavTabs.NUTRICION, NavTabs.PERFIL}) {
+        for (int tab : new int[]{NavTabs.ENTRENAR, NavTabs.NUTRICION, NavTabs.PROGRESO}) {
             assertTrue("pestaña " + tab, NavTabs.atrasVuelveAInicio(tab));
         }
     }

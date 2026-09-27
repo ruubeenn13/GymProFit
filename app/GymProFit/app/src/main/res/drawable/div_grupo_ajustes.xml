@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- div_grupo_ajustes — la línea de 1 dp entre filas de un grupo de Ajustes (GP-105). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <size android:height="1dp" />
+    <solid android:color="?attr/colorSurfaceVariant" />
+</shape>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- view_cifra_progreso — una cifra de Progreso (GP-105): el número y, debajo, qué es. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:focusable="true"
+    android:background="@drawable/bg_cifra_progreso">
+
+    <TextView
+        android:id="@+id/tvCifra"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="no"
+        android:textAppearance="@style/TextAppearance.GymProFit.Display"
+        android:textSize="@dimen/text_display" />
+
+    <TextView
+        android:id="@+id/tvCifraEtiqueta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:maxLines="1"
+        android:importantForAccessibility="no"
+        android:textSize="@dimen/text_eyebrow"
+        android:textColor="?attr/colorOnSurfaceVariant" />
+</LinearLayout>

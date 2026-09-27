@@ -574,7 +574,6 @@
     <string name="acerca_feat_6">Admin panel for managing users, routines, exercises and food items</string>
     <string name="acerca_contacto_titulo">Contact</string>
     <string name="acerca_contacto_texto">Got a question, spotted a bug or thought of something that would make the app better? Write to us.</string>
-    <string name="acerca_autor_email_label">rubenjuancandela06@gmail.com</string>
     <string name="acerca_compartir_label">Share app</string>
     <string name="acerca_compartir_texto">I recommend GymProFit for keeping track of your workouts and your food.</string>
 
@@ -816,4 +815,234 @@
     <string name="descartar_mensaje">If you leave now, anything you haven\'t saved will be lost.</string>
     <string name="descartar_confirmar">Discard</string>
     <string name="descartar_seguir">Keep editing</string>
+
+    <!-- GP-105 · barra de navegación y acciones rápidas -->
+    <string name="nav_inicio">Home</string>
+    <string name="nav_entrenar">Train</string>
+    <string name="nav_progreso">Progress</string>
+    <string name="nav_principal">Main navigation</string>
+    <string name="acciones_rapidas">Quick actions</string>
+    <string name="acciones_estado_abiertas">open</string>
+    <string name="acciones_estado_cerradas">closed</string>
+    <string name="acciones_accion_abrir">open</string>
+    <string name="acciones_accion_cerrar">close</string>
+    <string name="acciones_titulo">What do you want to do?</string>
+    <string name="accion_entrenar">Start a workout</string>
+    <string name="accion_entrenar_sub">Up today: %1$s</string>
+    <string name="accion_comida">Log a meal</string>
+    <string name="accion_comida_sub">Up now: %1$s</string>
+    <string name="accion_peso">Log weight or measurements</string>
+    <string name="accion_peso_sub">Last: %1$s, %2$s</string>
+    <string name="comida_min_desayuno">breakfast</string>
+    <string name="comida_min_almuerzo">mid-morning</string>
+    <string name="comida_min_comida">lunch</string>
+    <string name="comida_min_merienda">snack</string>
+    <string name="comida_min_cena">dinner</string>
+    <string name="tiempo_hoy">today</string>
+    <string name="tiempo_ayer">yesterday</string>
+    <plurals name="tiempo_hace_dias">
+        <item quantity="one">%d day ago</item>
+        <item quantity="other">%d days ago</item>
+    </plurals>
+    <plurals name="tiempo_hace_semanas">
+        <item quantity="one">%d week ago</item>
+        <item quantity="other">%d weeks ago</item>
+    </plurals>
+    <plurals name="tiempo_hace_meses">
+        <item quantity="one">%d month ago</item>
+        <item quantity="other">%d months ago</item>
+    </plurals>
+    <plurals name="tiempo_hace_anios">
+        <item quantity="one">%d year ago</item>
+        <item quantity="other">%d years ago</item>
+    </plurals>
+
+    <!-- GP-105 · Inicio -->
+    <string name="inicio_hola">Hi, %1$s</string>
+    <string name="inicio_avatar_a11y">Your progress and your profile</string>
+    <string name="hoy_toca">Up today</string>
+    <string name="hecho_hoy">Done today</string>
+    <string name="hoy_toca_unos_min">about %1$d min</string>
+    <string name="hoy_toca_ultima">last time, %1$s</string>
+    <string name="hoy_toca_nunca">you haven\'t done it yet</string>
+    <string name="hoy_toca_separador">%1$s · %2$s</string>
+    <string name="hoy_toca_sin_rutinas">You don\'t have any routines yet</string>
+    <string name="hoy_toca_sin_rutinas_sub">Start from a template or train your own way.</string>
+    <string name="hoy_toca_sin_rutinas_sub_crear">Build one for you or train your own way.</string>
+    <string name="hoy_toca_error">Today\'s routine couldn\'t be loaded.</string>
+    <string name="hecho_hoy_libre">Free workout</string>
+    <string name="btn_empezar">Start</string>
+    <string name="btn_cambiar">Change</string>
+    <string name="btn_empezar_otra">Start another</string>
+    <string name="btn_ver_plantillas">See templates</string>
+    <string name="btn_crea_primera_rutina">Create your first routine</string>
+    <string name="btn_empezar_sin_rutina">Start without a routine</string>
+    <string name="btn_reintentar">Try again</string>
+    <string name="cambiar_rutina_titulo">Which routine today?</string>
+    <string name="esta_semana">This week</string>
+    <plurals name="semana_sesiones">
+        <item quantity="one">%d session</item>
+        <item quantity="other">%d sessions</item>
+    </plurals>
+    <string name="duracion_h_min">%1$d h %2$d min</string>
+    <string name="duracion_min">%1$d min</string>
+    <string name="semana_zonas">%1$d of %2$d areas</string>
+    <string name="semana_chip">%1$s · %2$d</string>
+    <string name="semana_nota">The number is sets this week.</string>
+    <plurals name="semana_zona_hecha_a11y">
+        <item quantity="one">%1$s, %2$d set</item>
+        <item quantity="other">%1$s, %2$d sets</item>
+    </plurals>
+    <string name="semana_hechas_a11y">Done: %1$s.</string>
+    <string name="semana_pendientes_a11y">Still to do: %1$s.</string>
+    <string name="semana_ninguna_hecha_a11y">None done yet.</string>
+    <string name="semana_error">Your week couldn\'t be loaded.</string>
+    <string name="ultimo_record">Latest record</string>
+    <string name="ultimo_record_sub">Before: %1$s · %2$s</string>
+    <string name="nutricion_de_hoy">Today\'s nutrition</string>
+    <string name="nutricion_de_kcal">of %1$s kcal</string>
+    <string name="macro_prot_corto">Protein %1$d/%2$d g</string>
+    <string name="macro_carbos_corto">Carbs %1$d/%2$d g</string>
+    <string name="macro_grasas_corto">Fat %1$d/%2$d g</string>
+    <string name="nutricion_hoy_a11y">%1$s of %2$s kilocalories.</string>
+
+    <!-- GP-105 · Entrenar -->
+    <string name="entrenar_titulo">Train</string>
+    <string name="entrenar_crear_rutina_a11y">Create a routine</string>
+    <string name="mis_rutinas">My routines</string>
+    <string name="toca_hoy">Up today</string>
+    <string name="rutina_resumen">%1$s · %2$s</string>
+    <string name="empezar_rutina_a11y">Start %1$s</string>
+    <string name="mis_rutinas_vacio">You don\'t have any routines yet. Build one for you or start from a template.</string>
+    <string name="mis_rutinas_error">Your routines couldn\'t be loaded.</string>
+    <string name="plantillas_gymprofit">GymProFit templates</string>
+    <string name="ver_todas">See all</string>
+    <string name="ver_todas_plantillas_a11y">See all templates</string>
+    <string name="plantilla_resumen">%1$s · %2$s · %3$s</string>
+    <string name="plantillas_titulo">GymProFit templates</string>
+    <string name="plantillas_vacio">There are no templates yet.</string>
+    <string name="plantillas_error">The templates couldn\'t be loaded.</string>
+    <string name="biblioteca_ejercicios">Exercise library</string>
+    <string name="biblioteca_titulo">Exercise library</string>
+    <string name="biblioteca_buscar_n">Search %1$s exercises</string>
+    <string name="biblioteca_buscar">Search for an exercise</string>
+    <string name="biblioteca_zona_a11y">%1$s exercises</string>
+    <string-array name="dias_semana_iniciales">
+        <item>M</item>
+        <item>T</item>
+        <item>W</item>
+        <item>T</item>
+        <item>F</item>
+        <item>S</item>
+        <item>S</item>
+    </string-array>
+
+    <!-- GP-105 · Nutrición -->
+    <string name="nutricion_historial_a11y">History and stats</string>
+    <string name="nutricion_elegir_dia_a11y">Pick another day</string>
+    <string name="nutricion_te_quedan">Left</string>
+    <string name="nutricion_te_pasas">Over by</string>
+    <string name="nutricion_kcal_de">of %1$s kcal</string>
+    <string name="nutricion_kcal_valor">%1$s kcal</string>
+    <string name="nutricion_macro_valor">%1$d / %2$d g</string>
+    <plurals name="comida_n_alimentos">
+        <item quantity="one">%d food</item>
+        <item quantity="other">%d foods</item>
+    </plurals>
+    <string name="comida_resumen">%1$s · %2$s</string>
+    <string name="comida_ahora_toca">up now</string>
+    <string name="comida_anadir_desayuno">Add to breakfast</string>
+    <string name="comida_anadir_almuerzo">Add to mid-morning</string>
+    <string name="comida_anadir_comida">Add to lunch</string>
+    <string name="comida_anadir_merienda">Add to snack</string>
+    <string name="comida_anadir_cena">Add to dinner</string>
+    <string name="dia_futuro_a11y">%1$s, not here yet</string>
+    <string name="nutricion_kcal_a11y">%1$s of %2$s kilocalories. %3$s %4$s.</string>
+    <string name="nutricion_error_dia">This day couldn\'t be loaded.</string>
+
+    <!-- GP-105 · Progreso y Ajustes -->
+    <string name="progreso_titulo">Progress</string>
+    <string name="ajustes_titulo">Settings</string>
+    <string name="progreso_usuario">@%1$s</string>
+    <string name="progreso_avatar_a11y">Profile photo. Tap to change it</string>
+    <plurals name="progreso_sesiones">
+        <item quantity="one">session</item>
+        <item quantity="other">sessions</item>
+    </plurals>
+    <plurals name="progreso_records">
+        <item quantity="one">record</item>
+        <item quantity="other">records</item>
+    </plurals>
+    <plurals name="progreso_logros">
+        <item quantity="one">badge</item>
+        <item quantity="other">badges</item>
+    </plurals>
+    <string name="progreso_cifra_a11y">%1$s %2$s</string>
+    <string name="progreso_secciones_a11y">Progress sections</string>
+    <string name="seccion_records">Records</string>
+    <string name="seccion_logros">Badges</string>
+    <string name="seccion_medidas">Measures</string>
+    <string name="seccion_historial">History</string>
+    <string name="progreso_solo_registrados">Create an account to keep your progress.</string>
+    <string name="record_hace_antes">%1$s · before %2$s</string>
+    <string name="ajustes_cuenta">Account</string>
+    <string name="ajustes_foto">Profile photo</string>
+    <string name="ajustes_correo">Email</string>
+    <string name="ajustes_contrasena">Password</string>
+    <string name="ajustes_datos">Your details and goals</string>
+    <string name="ajustes_peso_altura_edad">Weight, height and age</string>
+    <string name="ajustes_sexo_actividad">Sex and activity</string>
+    <string name="ajustes_objetivo">Goal</string>
+    <string name="ajustes_nivel">Level</string>
+    <string name="ajustes_nota_recalculo">When you change your details or your goal, your calories and macros are recalculated.</string>
+    <string name="ajustes_preferencias">Preferences</string>
+    <string name="ajustes_tema">Theme</string>
+    <string name="ajustes_tema_claro">Light</string>
+    <string name="ajustes_tema_oscuro">Dark</string>
+    <string name="ajustes_idioma">Language</string>
+    <string name="ajustes_idioma_es">Español</string>
+    <string name="ajustes_idioma_en">English</string>
+    <string name="ajustes_notificaciones">Notifications</string>
+    <string name="ajustes_ayuda">Help</string>
+    <string name="ajustes_soporte">Contact support</string>
+    <string name="ajustes_error">Report a bug</string>
+    <string name="ajustes_mejora">Suggest an improvement</string>
+    <string name="ajustes_legal">Legal and about</string>
+    <string name="ajustes_terminos">Terms of use</string>
+    <string name="ajustes_acerca">About GymProFit</string>
+    <string name="ajustes_eliminar_nota">Deletes your account and all your data. It can\'t be undone.</string>
+    <string name="ajustes_admin">Administration</string>
+    <string name="ajustes_fila_valor_a11y">%1$s, %2$s</string>
+    <string name="ajustes_abre_fuera_a11y">%1$s. Opens in the browser</string>
+    <string name="email_soporte_asunto">Support · GymProFit</string>
+    <string name="email_error_asunto">Bug in GymProFit</string>
+    <string name="email_error_cuerpo">What happened:\n\n\nWhat you expected to happen:\n\n\nSteps to reproduce it:\n\n\n— Phone details (nothing personal) —\nGymProFit %1$s\nAndroid %2$s\n%3$s</string>
+    <string name="email_mejora_asunto">Suggestion for GymProFit</string>
+    <string name="email_elegir_app">Send email with…</string>
+    <string name="email_sin_app">There\'s no email app. Write to us at soporte@gymprofit.app</string>
+
+    <!-- GP-105 · cifra desconocida -->
+    <string name="sin_dato">—</string>
+
+    <!-- GP-105 · contraseña y correo desde Ajustes -->
+    <string name="cambiar_password_titulo">Change password</string>
+    <string name="cambiar_password_actual">Current password</string>
+    <string name="cambiar_password_nueva">New password</string>
+    <string name="cambiar_password_boton">Change password</string>
+    <string name="cambiar_password_actual_requerida">Enter your current password</string>
+    <string name="cambiar_password_actual_mal">That\'s not your current password</string>
+    <string name="cambiar_password_igual">The new one has to be different from the current one</string>
+    <string name="cambiar_password_ok">Password changed</string>
+    <string name="cambiar_password_vuelve_titulo">Your password has changed</string>
+    <string name="cambiar_password_vuelve_mensaje">For your security, your sessions were closed. Sign in with the new password.</string>
+    <string name="cambiar_correo_titulo">Change email</string>
+    <string name="cambiar_correo_actual">Now: %1$s</string>
+    <string name="cambiar_correo_nuevo">New email</string>
+    <string name="cambiar_correo_boton">Change email</string>
+    <string name="cambiar_correo_ok">Email changed</string>
+    <string name="cambiar_correo_igual">That\'s the email you already have</string>
+
+    <!-- GP-105 · añadir alimento: para qué comida -->
+    <string name="anadir_alimento_para">For</string>
+    <string name="anadir_alimento_para_a11y">Meal to add to</string>
 </resources>

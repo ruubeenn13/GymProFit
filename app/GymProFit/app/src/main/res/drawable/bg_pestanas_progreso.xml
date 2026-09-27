@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_pestanas_progreso — el carril de las pestañas de sección de Progreso (GP-105): radio 24. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="24dp" />
+    <solid android:color="?attr/colorSurface" />
+</shape>

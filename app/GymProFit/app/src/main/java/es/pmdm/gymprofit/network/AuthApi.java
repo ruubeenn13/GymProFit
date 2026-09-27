@@ -54,4 +54,10 @@ public interface AuthApi {
     @POST("auth/reset-password")
     Call<Void> resetPassword(@Body Map<String, Object> body);
 
+
+    // Cambia la contraseña del usuario del token (GP-105, pantalla de Ajustes). 403 si
+    // la actual no es la buena; 400 con código en cause si la nueva no vale (GP-101).
+    // Revoca todas las sesiones: la app vuelve a entrar con la nueva.
+    @POST("auth/change-password")
+    Call<Void> cambiarPassword(@Body Map<String, Object> body);
 }

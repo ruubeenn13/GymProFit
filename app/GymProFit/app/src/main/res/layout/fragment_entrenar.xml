@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  fragment_entrenar — pestaña Entrenar (GP-105), según 02-entrenar.png. Junta las
+  antiguas pestañas Rutinas y Ejercicios: mis rutinas con Empezar, empezar sin rutina,
+  el carrusel de plantillas de GymProFit y la entrada a la biblioteca de ejercicios.
+-->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout style="@style/Widget.GymProFit.CabeceraPestana">
+
+            <TextView
+                style="@style/Widget.GymProFit.TituloPestana"
+                android:text="@string/entrenar_titulo" />
+
+            <ImageButton
+                android:id="@+id/btnCrearRutina"
+                style="@style/Widget.GymProFit.BotonRedondo"
+                android:contentDescription="@string/entrenar_crear_rutina_a11y"
+                android:src="@drawable/ic_ms_add" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="16dp">
+
+            <TextView
+                style="@style/Widget.GymProFit.Seccion"
+                android:paddingStart="4dp"
+                android:paddingTop="4dp"
+                android:text="@string/mis_rutinas" />
+
+            <LinearLayout
+                android:id="@+id/listaMisRutinas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <!-- Sin rutinas propias -->
+            <LinearLayout
+                android:id="@+id/layoutRutinasVacio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tvRutinasVacio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:text="@string/mis_rutinas_vacio"
+                    android:textSize="@dimen/text_body"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCrearPrimera"
+                    style="@style/Widget.GymProFit.BotonPildora"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/btn_crea_primera_rutina"
+                    app:icon="@drawable/ic_ms_add" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/btnSinRutina"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="@string/btn_empezar_sin_rutina"
+                android:background="@drawable/bg_boton_discontinuo">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical"
+                    android:drawablePadding="6dp"
+                    android:importantForAccessibility="no"
+                    android:text="@string/btn_empezar_sin_rutina"
+                    android:textSize="@dimen/text_body"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorOnSurface"
+                    app:drawableStartCompat="@drawable/ic_ms_bolt"
+                    app:drawableTint="?attr/colorOnSurface" />
+            </FrameLayout>
+
+            <!-- Plantillas -->
+            <LinearLayout
+                android:id="@+id/cabeceraPlantillas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/Widget.GymProFit.Seccion"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/plantillas_gymprofit" />
+
+                <TextView
+                    android:id="@+id/btnVerTodas"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:contentDescription="@string/ver_todas_plantillas_a11y"
+                    android:text="@string/ver_todas"
+                    android:textSize="@dimen/text_caption"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorPrimary" />
+            </LinearLayout>
+
+            <HorizontalScrollView
+                android:id="@+id/scrollPlantillas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="-16dp"
+                android:scrollbars="none"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:id="@+id/listaPlantillas"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingEnd="16dp" />
+            </HorizontalScrollView>
+
+            <!-- Biblioteca -->
+            <TextView
+                style="@style/Widget.GymProFit.Seccion"
+                android:layout_marginTop="20dp"
+                android:paddingStart="4dp"
+                android:text="@string/biblioteca_ejercicios" />
+
+            <LinearLayout
+                android:id="@+id/campoBuscar"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/bg_campo_buscar">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_ms_search"
+                    app:tint="?attr/colorOnSurfaceVariant"
+                    android:importantForAccessibility="no" />
+
+                <TextView
+                    android:id="@+id/tvBuscarHint"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:text="@string/biblioteca_buscar"
+                    android:textSize="@dimen/text_body"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:importantForAccessibility="no" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnZonaPecho"
+                    style="@style/Widget.GymProFit.BotonZona"
+                    android:text="@string/zona_titulo_pecho" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnZonaEspalda"
+                    style="@style/Widget.GymProFit.BotonZona"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/zona_titulo_espalda" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnZonaPierna"
+                    style="@style/Widget.GymProFit.BotonZona"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/zona_titulo_pierna" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnZonaHombros"
+                    style="@style/Widget.GymProFit.BotonZona"
+                    android:text="@string/zona_titulo_hombros" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnZonaBrazos"
+                    style="@style/Widget.GymProFit.BotonZona"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/zona_titulo_brazos" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnZonaCore"
+                    style="@style/Widget.GymProFit.BotonZona"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/zona_titulo_core" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

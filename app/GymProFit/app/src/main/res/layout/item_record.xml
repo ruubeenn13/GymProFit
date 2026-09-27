@@ -1,57 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  item_record.xml — un récord vigente en la pantalla de Récords (GP-088).
-  Nombre y marca en la primera línea; debajo, cuándo se batió y qué marca superó.
-  La fila entera abre la ficha del ejercicio, con su gráfica.
+  item_record.xml — un récord vigente en Progreso › Récords (GP-088; GP-105 según
+  04-progreso.png). Las filas de una zona forman una tarjeta: el fondo lo pone el
+  adapter según la fila sea la primera, una intermedia o la última. Trofeo, nombre,
+  «hace 2 días · antes 82,5 kg × 10» y la marca a la derecha; el trofeo y la marca van
+  en dorado en el récord más reciente. La fila abre la ficha del ejercicio.
 -->
-<com.google.android.material.card.MaterialCardView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
+    android:orientation="vertical"
     android:clickable="true"
     android:focusable="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="72dp"
-        android:orientation="vertical"
+        android:minHeight="60dp"
+        android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:padding="16dp">
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp">
+
+        <ImageView
+            android:id="@+id/ivTrofeoRecord"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:importantForAccessibility="no" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tvNombreRecord"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="12dp"
-                android:textSize="@dimen/text_subtitle"
+                android:textSize="@dimen/text_fila"
+                android:textStyle="bold"
                 android:textColor="?attr/colorOnSurface" />
 
             <TextView
-                android:id="@+id/tvMarcaRecord"
-                android:layout_width="wrap_content"
+                android:id="@+id/tvDetalleRecord"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.GymProFit.Headline"
-                android:textColor="@color/gp_gold_text" />
-
+                android:textSize="@dimen/text_eyebrow"
+                android:textColor="?attr/colorOnSurfaceVariant" />
         </LinearLayout>
 
         <TextView
-            android:id="@+id/tvDetalleRecord"
-            android:layout_width="match_parent"
+            android:id="@+id/tvMarcaRecord"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textSize="@dimen/text_body"
-            android:textColor="?attr/colorOnSurfaceVariant" />
-
+            android:textAppearance="@style/TextAppearance.GymProFit.Display"
+            android:textSize="@dimen/text_title" />
     </LinearLayout>
 
-</com.google.android.material.card.MaterialCardView>
+    <View
+        android:id="@+id/divRecord"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginEnd="1dp"
+        android:background="?attr/colorSurfaceVariant"
+        android:importantForAccessibility="no" />
+</LinearLayout>

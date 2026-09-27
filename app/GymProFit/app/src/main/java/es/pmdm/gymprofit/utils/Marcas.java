@@ -49,6 +49,19 @@ public final class Marcas {
         return ctx.getString(R.string.record_antes, texto(ctx, r.esDePeso(), peso, reps));
     }
 
+    /**
+     * La marca que se superó, sin rótulo: «80 kg × 5» (GP-105, «Antes: … · hace N días»).
+     *
+     * @return el texto, o {@code null} si es una primera marca y no hay anterior.
+     */
+    @Nullable
+    public static String anteriorSolo(Context ctx, Record r) {
+        if (!r.tieneAnterior()) return null;
+        double peso = r.getPesoAnterior() != null ? r.getPesoAnterior() : 0;
+        int reps = r.getRepeticionesAnterior() != null ? r.getRepeticionesAnterior() : 0;
+        return texto(ctx, r.esDePeso(), peso, reps);
+    }
+
     private static String texto(Context ctx, boolean dePeso, double peso, int reps) {
         if (!dePeso) {
             return ctx.getResources().getQuantityString(R.plurals.record_repeticiones, reps, reps);

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  view_avatar — avatar redondo (GP-105): la foto de perfil si la hay y, si no, la
+  inicial del usuario. Lo rellena AvatarUtils. Quien lo incluye decide la medida y si
+  es pulsable (en Inicio lleva a Progreso; en Progreso cambia la foto).
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="48dp"
+    android:layout_height="48dp"
+    android:background="@drawable/bg_circulo_superficie"
+    android:clickable="true"
+    android:focusable="true">
+
+    <TextView
+        android:id="@+id/tvInicial"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:importantForAccessibility="no"
+        android:textAppearance="@style/TextAppearance.GymProFit.Display"
+        android:textSize="@dimen/text_title" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/ivFoto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:visibility="gone"
+        android:importantForAccessibility="no"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.GymProFit.Circulo" />
+</FrameLayout>

@@ -92,4 +92,31 @@ public class ZonasTest {
     private static Record record(String musculo) {
         return new Record(musculo.hashCode(), musculo, null, musculo, Record.TIPO_PESO, 50.0, 5, null);
     }
+
+    // --- GP-105: «Esta semana» de Inicio ---------------------------------------
+
+    @Test
+    public void series_por_zona_trae_las_seis_en_el_orden_de_los_chips() {
+        Map<String, Integer> porMusculo = new HashMap<>();
+        porMusculo.put("pecho", 8);
+        porMusculo.put("cuadriceps", 6);
+        porMusculo.put("gluteos", 4);
+        porMusculo.put("cuello", 3);          // sin zona: no cuenta
+
+        List<Zonas.Zona> orden = new java.util.ArrayList<>(Zonas.seriesPorZona(porMusculo).keySet());
+        assertEquals(Arrays.asList(Zonas.PECHO, Zonas.ESPALDA, Zonas.PIERNA,
+                Zonas.HOMBROS, Zonas.BRAZOS, Zonas.CORE), orden);
+
+        Map<Zonas.Zona, Integer> porZona = Zonas.seriesPorZona(porMusculo);
+        assertEquals(Integer.valueOf(8), porZona.get(Zonas.PECHO));
+        assertEquals(Integer.valueOf(10), porZona.get(Zonas.PIERNA));
+        assertEquals(Integer.valueOf(0), porZona.get(Zonas.ESPALDA));
+    }
+
+    @Test
+    public void semana_nueva_sin_nada_son_seis_zonas_a_cero() {
+        Map<Zonas.Zona, Integer> porZona = Zonas.seriesPorZona(null);
+        assertEquals(6, porZona.size());
+        for (Integer n : porZona.values()) assertEquals(Integer.valueOf(0), n);
+    }
 }

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_licencias — Licencias de terceros (GP-082), con su propia fila en Ajustes ›
+  Legal y acerca de desde GP-105 (antes, al final de Acerca de).
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?attr/android:colorBackground">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/Widget.GymProFit.Cabecera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="@string/licencias_titulo" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Licencias de terceros (GP-082). Las bibliotecas salen de las
+                 dependencias de Gradle (play-services-oss-licenses); lo que no es
+                 dependencia (iconos, fuente) o no declara licencia en su POM
+                 (MPAndroidChart, desde JitPack) va a mano. -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/licencias_titulo"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="6dp"
+                        android:text="@string/licencias_texto"
+                        android:textSize="@dimen/text_caption"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:lineSpacingMultiplier="1.35" />
+
+                    <TextView
+                        android:id="@+id/tvLicenciasBibliotecas"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:gravity="center_vertical"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground"
+                        android:drawablePadding="12dp"
+                        app:drawableEndCompat="@drawable/ic_ms_chevron_right"
+                        android:text="@string/licencias_bibliotecas"
+                        android:textSize="@dimen/text_body"
+                        android:textColor="?attr/colorOnSurface" />
+                    <TextView
+                        android:id="@+id/tvLicenciaMaterialSymbols"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:gravity="center_vertical"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground"
+                        android:drawablePadding="12dp"
+                        app:drawableEndCompat="@drawable/ic_ms_chevron_right"
+                        android:text="@string/licencias_material_symbols"
+                        android:textSize="@dimen/text_body"
+                        android:textColor="?attr/colorOnSurface" />
+                    <TextView
+                        android:id="@+id/tvLicenciaBarlow"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:gravity="center_vertical"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground"
+                        android:drawablePadding="12dp"
+                        app:drawableEndCompat="@drawable/ic_ms_chevron_right"
+                        android:text="@string/licencias_barlow"
+                        android:textSize="@dimen/text_body"
+                        android:textColor="?attr/colorOnSurface" />
+                    <TextView
+                        android:id="@+id/tvLicenciaMpAndroidChart"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:gravity="center_vertical"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground"
+                        android:drawablePadding="12dp"
+                        app:drawableEndCompat="@drawable/ic_ms_chevron_right"
+                        android:text="@string/licencias_mpandroidchart"
+                        android:textSize="@dimen/text_body"
+                        android:textColor="?attr/colorOnSurface" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

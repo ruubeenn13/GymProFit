@@ -9,15 +9,12 @@ import android.content.Intent;
 import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.TaskStackBuilder;
 
 import java.util.List;
 
 import es.pmdm.gymprofit.R;
-import es.pmdm.gymprofit.ui.activities.LogrosActivity;
 import es.pmdm.gymprofit.ui.activities.MainActivity;
-import es.pmdm.gymprofit.ui.activities.MedicionesActivity;
-import es.pmdm.gymprofit.ui.activities.SesionesActivity;
+import es.pmdm.gymprofit.ui.fragments.ProgresoFragment;
 
 // ============================================================
 // NotificationHelper — utilidad estática para generar y enviar notificaciones locales.
@@ -42,7 +39,7 @@ public class NotificationHelper {
         builder.setPriority(NotificationCompat.PRIORITY_MAX);
         builder.setAutoCancel(true);
 
-        builder.setContentIntent(sobreInicio(ctx, new Intent(ctx, SesionesActivity.class), 1));
+        builder.setContentIntent(enProgreso(ctx, ProgresoFragment.HISTORIAL, 1));
 
         enviar(ctx, CANAL_SESIONES, ctx.getString(R.string.notif_canal_sesiones), 1, builder);
     }
@@ -58,7 +55,7 @@ public class NotificationHelper {
         builder.setAutoCancel(true);
 
         Intent intent = new Intent(ctx, MainActivity.class);
-        intent.putExtra(NavTabs.EXTRA_TAB, NavTabs.RUTINAS);
+        intent.putExtra(NavTabs.EXTRA_TAB, NavTabs.ENTRENAR);
         PendingIntent pending = PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_IMMUTABLE);
         builder.setContentIntent(pending);
 
@@ -83,7 +80,7 @@ public class NotificationHelper {
         }
         builder.setStyle(estilo);
 
-        builder.setContentIntent(sobreInicio(ctx, new Intent(ctx, LogrosActivity.class), 4));
+        builder.setContentIntent(enProgreso(ctx, ProgresoFragment.LOGROS, 4));
 
         enviar(ctx, CANAL_LOGROS, ctx.getString(R.string.notif_canal_logros), 4, builder);
     }
@@ -109,15 +106,17 @@ public class NotificationHelper {
         enviar(ctx, CANAL_PUSH, ctx.getString(R.string.notif_canal_push), notifId, builder);
     }
 
-    // Abre la pantalla con Inicio debajo (GP-097). Sin pila, con la app cerrada, atrás
-    // desde Sesiones o Logros salía al escritorio. La pila sintética pone MainActivity
-    // debajo, en Inicio, como si se hubiera llegado navegando.
-    private static PendingIntent sobreInicio(Context ctx, Intent destino, int requestCode) {
-        return TaskStackBuilder.create(ctx)
-                .addNextIntent(new Intent(ctx, MainActivity.class))
-                .addNextIntent(destino)
-                .getPendingIntent(requestCode,
-                        PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+    // Abre Progreso en su sección, con Inicio debajo (GP-097, GP-105): la sección vive
+    // en la pestaña Progreso de MainActivity, y atrás desde una pestaña vuelve a Inicio
+    // antes de salir. Con la app abierta se reutiliza la misma MainActivity
+    // (onNewIntent) en vez de apilar otra.
+    private static PendingIntent enProgreso(Context ctx, int seccion, int requestCode) {
+        Intent intent = new Intent(ctx, MainActivity.class)
+                .putExtra(NavTabs.EXTRA_TAB, NavTabs.PROGRESO)
+                .putExtra(NavTabs.EXTRA_SECCION_PROGRESO, seccion)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        return PendingIntent.getActivity(ctx, requestCode, intent,
+                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     // Crea (si es necesario) el canal de notificación y muestra la notificación construida.

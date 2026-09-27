@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  bg_circulo_superficie — círculo del color de superficie elevada (#252A31 en oscuro):
+  iconos de la hoja del «+», botones redondos de cabecera y «+» de cada comida.
+-->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="?attr/colorControlHighlight">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="?attr/colorSurfaceVariant" />
+        </shape>
+    </item>
+</ripple>

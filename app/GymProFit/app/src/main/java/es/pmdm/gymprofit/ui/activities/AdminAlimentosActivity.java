@@ -76,7 +76,6 @@ public class AdminAlimentosActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_alimentos);
 
-        setupMenuButton();
         ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
 
         RecyclerView rv = findViewById(R.id.rvAlimentos);

@@ -62,7 +62,6 @@ public class AcercaDeActivity extends AppCompatActivity {
         findViewById(R.id.llAcercaPrivacidad).setOnClickListener(v ->
                 es.pmdm.gymprofit.utils.UIHelper.abrirUrl(this, getString(R.string.url_privacidad)));
 
-        configurarLicencias();
     }
 
     // Comparte la app por SMS: abre el selector de contactos del sistema. El picker
@@ -96,31 +95,13 @@ public class AcercaDeActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    // Abre un cliente de correo con el email de contacto y asunto precargados
+    // Abre un cliente de correo con soporte@gymprofit.app y el asunto precargados (GP-105:
+    // antes era un Gmail personal).
     private void abrirEmail() {
         Intent intent = new Intent(Intent.ACTION_SENDTO);
         intent.setData(Uri.parse("mailto:"));
-        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"rubenjuancandela06@gmail.com"});
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{getString(R.string.email_soporte)});
         intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_contacto_asunto));
         startActivity(Intent.createChooser(intent, getString(R.string.menu_contactanos)));
-    }
-
-    /**
-     * Licencias de terceros (GP-082). Las bibliotecas las lista play-services-oss-licenses
-     * a partir de las dependencias de la compilación; los iconos, la fuente y
-     * MPAndroidChart, que el plugin no ve, abren su texto completo.
-     */
-    private void configurarLicencias() {
-        findViewById(R.id.tvLicenciasBibliotecas).setOnClickListener(v -> {
-            com.google.android.gms.oss.licenses.OssLicensesMenuActivity.setActivityTitle(
-                    getString(R.string.licencias_bibliotecas));
-            startActivity(new Intent(this, com.google.android.gms.oss.licenses.OssLicensesMenuActivity.class));
-        });
-        findViewById(R.id.tvLicenciaMaterialSymbols).setOnClickListener(v -> startActivity(LicenciaActivity.intent(this,
-                R.string.licencias_material_symbols, R.string.licencias_aviso_material_symbols, R.raw.licencia_apache_2_0)));
-        findViewById(R.id.tvLicenciaBarlow).setOnClickListener(v -> startActivity(LicenciaActivity.intent(this,
-                R.string.licencias_barlow, R.string.licencias_aviso_barlow, R.raw.licencia_ofl_barlow)));
-        findViewById(R.id.tvLicenciaMpAndroidChart).setOnClickListener(v -> startActivity(LicenciaActivity.intent(this,
-                R.string.licencias_mpandroidchart, R.string.licencias_aviso_mpandroidchart, R.raw.licencia_apache_2_0)));
     }
 }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_campo_buscar — el buscador de la biblioteca en Entrenar (GP-105): píldora de 48 dp. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="?attr/colorControlHighlight">
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="24dp" />
+            <solid android:color="?attr/colorSurface" />
+            <stroke android:width="1dp" android:color="?attr/colorOutline" />
+        </shape>
+    </item>
+</ripple>

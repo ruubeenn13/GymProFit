@@ -2,295 +2,410 @@ package es.pmdm.gymprofit.ui.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
+import com.google.android.material.datepicker.CalendarConstraints;
+import com.google.android.material.datepicker.DateValidatorPointBackward;
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
+
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.model.comida.AlimentoComida;
 import es.pmdm.gymprofit.model.comida.Comida;
+import es.pmdm.gymprofit.network.AlimentoComidaApi;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.ComidaApi;
+import es.pmdm.gymprofit.ui.activities.AnadirAlimentoActivity;
 import es.pmdm.gymprofit.ui.activities.ComidaActivity;
 import es.pmdm.gymprofit.ui.activities.EstadisticasNutricionActivity;
+import es.pmdm.gymprofit.utils.ComidaQueToca;
+import es.pmdm.gymprofit.utils.DiaNutricion;
 import es.pmdm.gymprofit.utils.FechaUtils;
-import es.pmdm.gymprofit.utils.CalculadoraNutricional;
-import es.pmdm.gymprofit.utils.ResultadoNutricional;
 import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
-// NutricionFragment — pestaña de seguimiento nutricional.
-// Muestra calorías y macros del día, con cards por tipo de comida que abren
-// ComidaActivity para registrar/editar los alimentos de cada comida.
+// NutricionFragment — pestaña Nutrición (GP-105), según 03-nutricion.png.
+//
+// La tira de la semana (de lunes a domingo, con los días futuros desactivados)
+// sustituye a las flechas ‹ ›; el calendario abre un selector de fecha hasta hoy; el
+// botón de gráficas abre «Historial y estadísticas». La tarjeta de kcal y macros sale
+// de DiaNutricion, igual que «Nutrición de hoy» en Inicio, con las reglas de color de
+// siempre. Debajo, las cinco comidas: tocar abre la comida; su «+» abre directamente
+// añadir alimento, y el de la comida que toca por la hora va en naranja si está sin
+// registrar.
 // ============================================================
 public class NutricionFragment extends BaseFragment {
-    private ProgressBar progressCalorias, progressProteinas, progressCarbos, progressGrasas;
-    private TextView tvCaloriasActuales, tvCaloriasObjetivo;
-    private TextView tvProteinasActuales, tvCarbosActuales, tvGrasasActuales;
-    private TextView tvSubDesayuno, tvSubAlmuerzo, tvSubComida, tvSubMerienda, tvSubCena;
-
-    private int objetivoCalorias = 2000, objetivoProteinas = 150, objetivoCarbos = 250, objetivoGrasas = 65;
-    private final Map<String, Comida> comidasHoy = new HashMap<>();
-
-    // Día del diario que se está viendo (por defecto hoy; navegable a fechas pasadas).
-    private final Calendar fechaSel = Calendar.getInstance();
-    private TextView tvFechaDia;
-    private ImageView btnDiaNext;
 
     private final ComidaApi comidaApi = ApiClient.service(ComidaApi.class);
+    private final AlimentoComidaApi alimentoComidaApi = ApiClient.service(AlimentoComidaApi.class);
 
-    private ActivityResultLauncher<Intent> comidaLauncher;
+    // Día que se está viendo (por defecto hoy; nunca uno que no ha llegado).
+    private final Calendar fechaSel = Calendar.getInstance();
+    private final Map<String, Comida> comidasDia = new HashMap<>();
+    // Qué hay dentro de cada comida, para su resumen («Tostadas, café · 420 kcal»).
+    private final Map<Integer, List<AlimentoComida>> alimentosPorComida = new HashMap<>();
 
-    // Registra el launcher de ComidaActivity antes de STARTED.
+    private ActivityResultLauncher<Intent> recargar;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        comidaLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        recalcularObjetivos();
-                        cargarComidas();
-                    }
-                });
+        recargar = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                result -> { if (result.getResultCode() == Activity.RESULT_OK) cargarComidas(); });
     }
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.activity_nutricion, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_nutricion, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setupMenuButton();
-        inicializarVistas();
-        configurarCardsComida();
-        // Card visible → pantalla de estadísticas de nutrición (histórico, KPIs, gráficas).
-        view.findViewById(R.id.cardEstadisticas).setOnClickListener(v ->
+        findViewById(R.id.btnHistorial).setOnClickListener(v ->
                 startActivity(new Intent(requireContext(), EstadisticasNutricionActivity.class)));
-
-        // Navegación por días del diario (‹ día anterior / día siguiente ›).
-        tvFechaDia = findViewById(R.id.tvFechaDia);
-        btnDiaNext = findViewById(R.id.btnDiaNext);
-        findViewById(R.id.btnDiaPrev).setOnClickListener(v -> cambiarDia(-1));
-        btnDiaNext.setOnClickListener(v -> cambiarDia(1));
-        actualizarSelectorFecha();
+        findViewById(R.id.btnCalendario).setOnClickListener(v -> elegirFecha());
+        ((TextView) findViewById(R.id.macroProteinas).findViewById(R.id.tvMacroNombre)).setText(R.string.nutricion_proteinas);
+        ((TextView) findViewById(R.id.macroCarbos).findViewById(R.id.tvMacroNombre)).setText(R.string.nutricion_carbohidratos);
+        ((TextView) findViewById(R.id.macroGrasas).findViewById(R.id.tvMacroNombre)).setText(R.string.nutricion_grasas);
+        colorBarra(R.id.macroProteinas, R.color.gp_macro_proteinas);
+        colorBarra(R.id.macroCarbos, R.color.gp_macro_carbos);
+        colorBarra(R.id.macroGrasas, R.color.gp_macro_grasas);
     }
 
-    // Recalcula objetivos y recarga las comidas del día seleccionado al volver a primer plano.
     @Override
     public void onResume() {
         super.onResume();
-        recalcularObjetivos();
-        cargarComidas();
-    }
-
-    // Cambia el día del diario (sin pasar de hoy) y recarga.
-    private void cambiarDia(int delta) {
+        // Si la app se quedó abierta de un día para otro, «hoy» ya es otro.
         Calendar hoy = Calendar.getInstance();
-        fechaSel.add(Calendar.DAY_OF_YEAR, delta);
         if (fechaSel.after(hoy)) fechaSel.setTime(hoy.getTime());
-        actualizarSelectorFecha();
+        pintarSemana();
         cargarComidas();
     }
 
-    // Actualiza la etiqueta de fecha ("Hoy" o la fecha) y oculta "siguiente" si ya es hoy.
-    private void actualizarSelectorFecha() {
-        if (tvFechaDia == null) return;
-        tvFechaDia.setText(esHoy()
-                ? getString(R.string.nutricion_hoy)
-                : new SimpleDateFormat(getString(R.string.nutricion_fecha_patron), FechaUtils.localeDeLaApp(requireContext())).format(fechaSel.getTime()));
-        btnDiaNext.setVisibility(esHoy() ? View.INVISIBLE : View.VISIBLE);
+    // ── Tira de la semana ───────────────────────────────────────────────────
+
+    private void pintarSemana() {
+        LinearLayout tira = findViewById(R.id.tiraSemana);
+        tira.removeAllViews();
+        String[] iniciales = getResources().getStringArray(R.array.dias_semana_iniciales);
+        Locale idioma = FechaUtils.localeDeLaApp(requireContext());
+        SimpleDateFormat largo = new SimpleDateFormat(getString(R.string.home_fecha_patron), idioma);
+
+        Calendar hoy = Calendar.getInstance();
+        Calendar dia = (Calendar) fechaSel.clone();
+        dia.add(Calendar.DAY_OF_MONTH, -((dia.get(Calendar.DAY_OF_WEEK) + 5) % 7));   // lunes
+
+        int primario = color(com.google.android.material.R.attr.colorPrimary);
+        int sobrePrimario = color(com.google.android.material.R.attr.colorOnPrimary);
+        int texto = color(com.google.android.material.R.attr.colorOnSurface);
+        int secundario = color(com.google.android.material.R.attr.colorOnSurfaceVariant);
+        int apagado = color(com.google.android.material.R.attr.colorOutline);
+
+        LayoutInflater inflater = LayoutInflater.from(requireContext());
+        for (int i = 0; i < 7; i++) {
+            final Calendar esteDia = (Calendar) dia.clone();
+            boolean elegido = mismoDia(esteDia, fechaSel);
+            boolean futuro = esteDia.after(hoy) && !mismoDia(esteDia, hoy);
+
+            View celda = inflater.inflate(R.layout.item_dia_semana, tira, false);
+            TextView tvInicial = celda.findViewById(R.id.tvInicial);
+            TextView tvNumero = celda.findViewById(R.id.tvNumero);
+            tvInicial.setText(iniciales[i]);
+            tvNumero.setText(String.valueOf(esteDia.get(Calendar.DAY_OF_MONTH)));
+
+            if (elegido) {
+                celda.setBackgroundResource(R.drawable.bg_dia_elegido);
+                tvInicial.setTextColor(sobrePrimario);
+                tvNumero.setTextColor(sobrePrimario);
+                tvNumero.setTypeface(tvNumero.getTypeface(), android.graphics.Typeface.BOLD);
+            } else {
+                celda.setBackgroundResource(fondoPulsable());
+                tvInicial.setTextColor(futuro ? apagado : secundario);
+                tvNumero.setTextColor(futuro ? apagado : texto);
+            }
+
+            String nombre = largo.format(esteDia.getTime());
+            celda.setContentDescription(futuro ? getString(R.string.dia_futuro_a11y, nombre) : nombre);
+            celda.setSelected(elegido);
+            celda.setEnabled(!futuro);
+            celda.setOnClickListener(futuro ? null : v -> {
+                fechaSel.setTime(esteDia.getTime());
+                pintarSemana();
+                cargarComidas();
+            });
+            tira.addView(celda);
+            dia.add(Calendar.DAY_OF_MONTH, 1);
+        }
     }
 
-    // ¿El día seleccionado es hoy?
+    // Selector de fecha hasta hoy; la tira salta a la semana del día elegido.
+    private void elegirFecha() {
+        long hoyUtc = MaterialDatePicker.todayInUtcMilliseconds();
+        MaterialDatePicker<Long> picker = MaterialDatePicker.Builder.datePicker()
+                .setSelection(utcDe(fechaSel))
+                .setCalendarConstraints(new CalendarConstraints.Builder()
+                        .setEnd(hoyUtc)
+                        .setValidator(DateValidatorPointBackward.before(hoyUtc + 1))
+                        .build())
+                .build();
+        picker.addOnPositiveButtonClickListener(utc -> {
+            Calendar u = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+            u.setTimeInMillis(utc);
+            fechaSel.set(u.get(Calendar.YEAR), u.get(Calendar.MONTH), u.get(Calendar.DAY_OF_MONTH));
+            pintarSemana();
+            cargarComidas();
+        });
+        picker.show(getParentFragmentManager(), "fecha_nutricion");
+    }
+
+    private static long utcDe(Calendar local) {
+        Calendar u = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        u.clear();
+        u.set(local.get(Calendar.YEAR), local.get(Calendar.MONTH), local.get(Calendar.DAY_OF_MONTH));
+        return u.getTimeInMillis();
+    }
+
+    private static boolean mismoDia(Calendar a, Calendar b) {
+        return a.get(Calendar.YEAR) == b.get(Calendar.YEAR)
+                && a.get(Calendar.DAY_OF_YEAR) == b.get(Calendar.DAY_OF_YEAR);
+    }
+
     private boolean esHoy() {
-        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        return f.format(fechaSel.getTime()).equals(f.format(new Date()));
+        return mismoDia(fechaSel, Calendar.getInstance());
     }
 
-    // Fecha seleccionada en formato yyyy-MM-dd (para la API).
     private String fechaSelStr() {
         return new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(fechaSel.getTime());
     }
 
-    // ── Vistas ───────────────────────────────────────────────────────────────
+    // ── Carga ───────────────────────────────────────────────────────────────
 
-    private void inicializarVistas() {
-        progressCalorias   = findViewById(R.id.progressCalorias);
-        progressProteinas  = findViewById(R.id.progressProteinas);
-        progressCarbos     = findViewById(R.id.progressCarbos);
-        progressGrasas     = findViewById(R.id.progressGrasas);
-        tvCaloriasActuales = findViewById(R.id.tvCaloriasActuales);
-        tvCaloriasObjetivo = findViewById(R.id.tvCaloriasObjetivo);
-        tvProteinasActuales = findViewById(R.id.tvProteinasActuales);
-        tvCarbosActuales    = findViewById(R.id.tvCarbosActuales);
-        tvGrasasActuales    = findViewById(R.id.tvGrasasActuales);
-        tvSubDesayuno  = findViewById(R.id.tvSubDesayuno);
-        tvSubAlmuerzo  = findViewById(R.id.tvSubAlmuerzo);
-        tvSubComida    = findViewById(R.id.tvSubComida);
-        tvSubMerienda  = findViewById(R.id.tvSubMerienda);
-        tvSubCena      = findViewById(R.id.tvSubCena);
-    }
-
-    // ── Objetivos nutricionales ──────────────────────────────────────────────
-
-    // Recalcula los objetivos nutricionales a partir de los datos del perfil.
-    private void recalcularObjetivos() {
-        double peso      = prefsManager.getPeso();
-        double altura    = prefsManager.getAltura();
-        int edad         = prefsManager.getEdad();
-        boolean hombre   = "HOMBRE".equals(prefsManager.getSexo());
-        String actividad = prefsManager.getActividad();
-        String objetivo  = prefsManager.getObjetivo();
-
-        ResultadoNutricional r = CalculadoraNutricional.calcular(peso, altura, edad, hombre, actividad, objetivo);
-        objetivoCalorias  = r.calorias;
-        objetivoProteinas = r.proteinas;
-        objetivoCarbos    = r.carbohidratos;
-        objetivoGrasas    = r.grasas;
-
-        prefsManager.saveResultadoNutricional(objetivoCalorias, objetivoProteinas, objetivoCarbos, objetivoGrasas, r.agua);
-        tvCaloriasObjetivo.setText(getString(R.string.unidad_kcal_objetivo, objetivoCalorias));
-    }
-
-    // ── Carga de comidas ─────────────────────────────────────────────────────
-
-    // Obtiene las comidas del día seleccionado desde la API y actualiza la UI.
     private void cargarComidas() {
         int usuarioId = prefsManager.getUsuarioId();
         final String fecha = fechaSelStr();
-
+        if (usuarioId == -1) {
+            comidasDia.clear();
+            alimentosPorComida.clear();
+            pintar();
+            return;
+        }
         comidaApi.getDeUsuarioFecha(usuarioId, fecha).enqueue(new ApiCallback<List<Comida>>() {
             @Override
             public void onOk(List<Comida> lista) {
-                if (!isAdded()) return;
-                comidasHoy.clear();
-                if (lista != null) {
-                    for (Comida c : lista) {
-                        comidasHoy.put(c.getTipoComida(), c);
-                    }
-                }
-                actualizarUI(fecha);
+                if (!isAdded() || !fecha.equals(fechaSelStr())) return;
+                comidasDia.clear();
+                alimentosPorComida.clear();
+                if (lista != null) for (Comida c : lista) comidasDia.put(c.getTipoComida(), c);
+                pintar();
+                cargarAlimentos(fecha);
             }
-
             @Override
             public void onFail(int code, String message) {
                 if (!isAdded()) return;
-                // Un día sin comidas ya no llega como 404: es 200 con [] y lo atiende
-                // onOk. Aquí solo caen fallos de verdad, y se avisa de todos.
-                comidasHoy.clear();
-                actualizarUI(fecha);
+                // Un día sin comidas no llega aquí: es 200 con []. Esto es un fallo de
+                // verdad, y se avisa; no se pinta un día vacío que no lo es.
                 UiFeedback.toastError(requireActivity(), code, message);
             }
         });
     }
 
-    // ── Actualización de la UI ────────────────────────────────────────────────
-
-    // Actualiza totales, barras de progreso, macros y subtítulos de cards.
-    private void actualizarUI(String fecha) {
-        int totalCal = 0;
-        double totalProt = 0, totalCarb = 0, totalGras = 0;
-
-        for (Comida c : comidasHoy.values()) {
-            totalCal  += c.getTotalCalorias();
-            totalProt += c.getTotalProteinas();
-            totalCarb += c.getTotalCarbohidratos();
-            totalGras += c.getTotalGrasas();
+    // Lo que hay dentro de cada comida, para su resumen. Si alguna falla, esa comida
+    // se queda con el resumen corto (solo kcal), que sigue siendo cierto.
+    private void cargarAlimentos(String fecha) {
+        for (Comida c : comidasDia.values()) {
+            alimentoComidaApi.getDeComida(c.getId()).enqueue(new ApiCallback<List<AlimentoComida>>() {
+                @Override
+                public void onOk(List<AlimentoComida> lista) {
+                    if (!isAdded() || !fecha.equals(fechaSelStr())) return;
+                    alimentosPorComida.put(c.getId(), lista != null ? lista : new ArrayList<>());
+                    pintarComidas();
+                }
+                @Override
+                public void onFail(int code, String message) {
+                    // Se ignora a propósito (GP-017): el resumen de la tarjeta se queda en
+                    // las kcal, que ya están; el detalle está al abrir la comida.
+                }
+            });
         }
-
-        tvCaloriasActuales.setText(String.valueOf(totalCal));
-
-        progressCalorias.setProgress(Math.min(100, (int) (totalCal * 100.0 / objetivoCalorias)));
-        progressProteinas.setProgress(Math.min(100, (int) (totalProt * 100.0 / objetivoProteinas)));
-        progressCarbos.setProgress(Math.min(100, (int) (totalCarb * 100.0 / objetivoCarbos)));
-        progressGrasas.setProgress(Math.min(100, (int) (totalGras * 100.0 / objetivoGrasas)));
-
-        int colorNormal = getAttrColor(com.google.android.material.R.attr.colorOnSurface);
-        int colorError  = getAttrColor(com.google.android.material.R.attr.colorError);
-
-        // La proteína es un SUELO, no un techo: en déficit y en volumen se busca
-        // llegar. Marcarla en rojo al superarla le decía al usuario que comer
-        // suficiente proteína es un error. Ahora, al llegar, se pone en verde.
-        int colorLogro = androidx.core.content.ContextCompat.getColor(
-                requireContext(), R.color.gp_success);
-        tvProteinasActuales.setText(getString(R.string.unidad_g_redondeado, totalProt));
-        tvProteinasActuales.setTextColor(totalProt >= objetivoProteinas ? colorLogro : colorNormal);
-
-        tvCarbosActuales.setText(getString(R.string.unidad_g_redondeado, totalCarb));
-        tvCarbosActuales.setTextColor(totalCarb > objetivoCarbos ? colorError : colorNormal);
-
-        tvGrasasActuales.setText(getString(R.string.unidad_g_redondeado, totalGras));
-        tvGrasasActuales.setTextColor(totalGras > objetivoGrasas ? colorError : colorNormal);
-
-        actualizarSubtituloCard("DESAYUNO", tvSubDesayuno, fecha);
-        actualizarSubtituloCard("ALMUERZO", tvSubAlmuerzo, fecha);
-        actualizarSubtituloCard("COMIDA",   tvSubComida,   fecha);
-        actualizarSubtituloCard("MERIENDA", tvSubMerienda, fecha);
-        actualizarSubtituloCard("CENA",     tvSubCena,     fecha);
     }
 
-    // Actualiza el subtítulo de la card de un tipo de comida.
-    private void actualizarSubtituloCard(String tipo, TextView tvSub, String fecha) {
-        Comida c = comidasHoy.get(tipo);
-        if (c != null && c.getTotalCalorias() > 0) {
-            tvSub.setText(getString(R.string.unidad_kcal, c.getTotalCalorias()));
+    // ── Pintado ─────────────────────────────────────────────────────────────
+
+    private void pintar() {
+        pintarKcal();
+        pintarComidas();
+    }
+
+    private void pintarKcal() {
+        DiaNutricion d = DiaNutricion.de(new ArrayList<>(comidasDia.values()), DiaNutricion.objetivo(prefsManager));
+        NumberFormat nf = NumberFormat.getIntegerInstance(FechaUtils.localeDeLaApp(requireContext()));
+
+        ((TextView) findViewById(R.id.tvKcal)).setText(nf.format(d.kcal));
+        ((TextView) findViewById(R.id.tvKcalObjetivo)).setText(getString(R.string.nutricion_kcal_de, nf.format(d.objetivoKcal)));
+        int restantes = d.kcalRestantes();
+        TextView rotulo = findViewById(R.id.tvQuedanRotulo);
+        TextView quedan = findViewById(R.id.tvQuedan);
+        rotulo.setText(restantes >= 0 ? R.string.nutricion_te_quedan : R.string.nutricion_te_pasas);
+        quedan.setText(getString(R.string.nutricion_kcal_valor, nf.format(Math.abs(restantes))));
+        quedan.setTextColor(restantes >= 0 ? color(com.google.android.material.R.attr.colorOnSurface)
+                : color(com.google.android.material.R.attr.colorError));
+        ((LinearProgressIndicator) findViewById(R.id.barraKcal)).setProgressCompat(
+                DiaNutricion.porcentaje(d.kcal, d.objetivoKcal), false);
+        findViewById(R.id.filaKcal).setContentDescription(getString(R.string.nutricion_kcal_a11y,
+                nf.format(d.kcal), nf.format(d.objetivoKcal), rotulo.getText(), quedan.getText()));
+
+        macro(R.id.macroProteinas, d.proteinas, d.objetivoProteinas, d.estadoProteinas());
+        macro(R.id.macroCarbos, d.carbohidratos, d.objetivoCarbohidratos, d.estadoCarbohidratos());
+        macro(R.id.macroGrasas, d.grasas, d.objetivoGrasas, d.estadoGrasas());
+    }
+
+    private void macro(int id, double valor, int objetivo, DiaNutricion.Estado estado) {
+        View fila = findViewById(id);
+        TextView tvValor = fila.findViewById(R.id.tvMacroValor);
+        tvValor.setText(getString(R.string.nutricion_macro_valor, (int) Math.round(valor), objetivo));
+        tvValor.setTextColor(colorEstado(estado));
+        ((LinearProgressIndicator) fila.findViewById(R.id.barraMacro))
+                .setProgressCompat(DiaNutricion.porcentaje(valor, objetivo), false);
+        fila.setContentDescription(((TextView) fila.findViewById(R.id.tvMacroNombre)).getText()
+                + ", " + tvValor.getText());
+    }
+
+    private void pintarComidas() {
+        LinearLayout lista = findViewById(R.id.listaComidas);
+        lista.removeAllViews();
+        String queToca = esHoy() ? ComidaQueToca.ahora() : null;
+        LayoutInflater inflater = LayoutInflater.from(requireContext());
+
+        for (String tipo : ComidaQueToca.TIPOS) {
+            Comida c = comidasDia.get(tipo);
+            boolean registrada = c != null && c.getTotalCalorias() > 0;
+            boolean toca = tipo.equals(queToca) && !registrada;
+
+            View card = inflater.inflate(R.layout.item_comida_dia, lista, false);
+            String nombre = getString(ComidaQueToca.titulo(tipo));
+            ((TextView) card.findViewById(R.id.tvComidaNombre)).setText(nombre);
+            String resumen = resumenComida(c, toca);
+            ((TextView) card.findViewById(R.id.tvComidaResumen)).setText(resumen);
+            card.setContentDescription(nombre + ". " + resumen);
+            card.setOnClickListener(v -> abrirComida(tipo));
+
+            ImageButton mas = card.findViewById(R.id.btnAnadirComida);
+            mas.setContentDescription(getString(anadirA11y(tipo)));
+            if (toca) {
+                mas.setBackgroundResource(R.drawable.bg_circulo_primario_pulsable);
+                mas.setImageTintList(ColorStateList.valueOf(color(com.google.android.material.R.attr.colorOnPrimary)));
+            }
+            mas.setOnClickListener(v -> anadirAlimento(tipo));
+            lista.addView(card);
+        }
+    }
+
+    // «Tostadas con aguacate, café con leche · 420 kcal» con uno o dos alimentos;
+    // «3 alimentos · 820 kcal» con más; «Sin registrar», con «· ahora toca» si toca.
+    private String resumenComida(@Nullable Comida c, boolean toca) {
+        if (c == null || c.getTotalCalorias() <= 0) {
+            return toca ? getString(R.string.comida_resumen, getString(R.string.sin_registrar),
+                    getString(R.string.comida_ahora_toca)) : getString(R.string.sin_registrar);
+        }
+        String kcal = getString(R.string.unidad_kcal, c.getTotalCalorias());
+        List<AlimentoComida> alimentos = alimentosPorComida.get(c.getId());
+        if (alimentos == null || alimentos.isEmpty()) return kcal;
+        String queHay;
+        if (alimentos.size() <= 2) {
+            List<String> nombres = new ArrayList<>();
+            for (AlimentoComida a : alimentos) nombres.add(a.getNombreAlimento());
+            queHay = android.text.TextUtils.join(", ", nombres);
         } else {
-            tvSub.setText(getString(R.string.sin_registrar));
+            queHay = getResources().getQuantityString(R.plurals.comida_n_alimentos, alimentos.size(), alimentos.size());
+        }
+        return getString(R.string.comida_resumen, queHay, kcal);
+    }
+
+    private static int anadirA11y(String tipo) {
+        switch (tipo) {
+            case "DESAYUNO": return R.string.comida_anadir_desayuno;
+            case "ALMUERZO": return R.string.comida_anadir_almuerzo;
+            case "COMIDA":   return R.string.comida_anadir_comida;
+            case "MERIENDA": return R.string.comida_anadir_merienda;
+            default:         return R.string.comida_anadir_cena;
         }
     }
 
-    // Resuelve un color de atributo del tema actual.
-    private int getAttrColor(int attrResId) {
+    // Tocar la tarjeta abre la comida del día elegido, como antes.
+    private void abrirComida(String tipo) {
+        if (!verificarAccesoRegistrado()) return;
+        Intent intent = new Intent(requireContext(), ComidaActivity.class);
+        intent.putExtra("tipoComida", tipo);
+        Comida c = comidasDia.get(tipo);
+        intent.putExtra("comidaId", c != null ? c.getId() : -1);
+        intent.putExtra("fecha", fechaSelStr());
+        recargar.launch(intent);
+    }
+
+    // El «+» abre directamente añadir alimento en esa comida y ese día.
+    private void anadirAlimento(String tipo) {
+        if (!verificarAccesoRegistrado()) return;
+        Intent intent = new Intent(requireContext(), AnadirAlimentoActivity.class);
+        intent.putExtra("tipoComida", tipo);
+        Comida c = comidasDia.get(tipo);
+        intent.putExtra("comidaId", c != null ? c.getId() : -1);
+        intent.putExtra("fecha", fechaSelStr());
+        recargar.launch(intent);
+    }
+
+    // ── Utilidades ──────────────────────────────────────────────────────────
+
+    private void colorBarra(int filaId, int colorRes) {
+        ((LinearProgressIndicator) findViewById(filaId).findViewById(R.id.barraMacro))
+                .setIndicatorColor(ContextCompat.getColor(requireContext(), colorRes));
+    }
+
+    private int colorEstado(DiaNutricion.Estado e) {
+        switch (e) {
+            case LOGRADO: return ContextCompat.getColor(requireContext(), R.color.gp_success);
+            case PASADO:  return color(com.google.android.material.R.attr.colorError);
+            default:      return color(com.google.android.material.R.attr.colorOnSurfaceVariant);
+        }
+    }
+
+    private int fondoPulsable() {
         TypedValue tv = new TypedValue();
-        requireContext().getTheme().resolveAttribute(attrResId, tv, true);
+        requireContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackground, tv, true);
+        return tv.resourceId;
+    }
+
+    private int color(@AttrRes int attr) {
+        TypedValue tv = new TypedValue();
+        requireContext().getTheme().resolveAttribute(attr, tv, true);
         return tv.data;
-    }
-
-    // ── Cards de comida ───────────────────────────────────────────────────────
-
-    // Configura los listeners de click en cada card de tipo de comida.
-    private void configurarCardsComida() {
-        setupCardComida(R.id.cardDesayuno, "DESAYUNO");
-        setupCardComida(R.id.cardAlmuerzo, "ALMUERZO");
-        setupCardComida(R.id.cardComida,   "COMIDA");
-        setupCardComida(R.id.cardMerienda, "MERIENDA");
-        setupCardComida(R.id.cardCena,     "CENA");
-    }
-
-    // Asigna el listener de click a una card de comida y lanza ComidaActivity con el
-    // día ACTUALMENTE seleccionado (se lee al pulsar, no al configurar).
-    private void setupCardComida(int cardId, String tipo) {
-        View card = findViewById(cardId);
-        card.setOnClickListener(v -> {
-            if (!verificarAccesoRegistrado()) return;
-            Intent intent = new Intent(requireContext(), ComidaActivity.class);
-            intent.putExtra("tipoComida", tipo);
-            Comida c = comidasHoy.get(tipo);
-            intent.putExtra("comidaId", c != null ? c.getId() : -1);
-            intent.putExtra("fecha", fechaSelStr());
-            comidaLauncher.launch(intent);
-        });
     }
 }

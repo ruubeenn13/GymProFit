@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_rutina_entrenar — una rutina propia en Entrenar (GP-105): nombre, ejercicios y
+  duración, «Toca hoy» en la de Hoy toca, y Empezar. Empezar va relleno en la que toca
+  y en contorno en las demás. Tocar la tarjeta abre el detalle; la pulsación larga, el
+  menú de editar o eliminar.
+-->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.GymProFit.Card.Estructura"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="12dp"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="14dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvNombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.GymProFit.Display"
+                android:textSize="@dimen/text_headline" />
+
+            <TextView
+                android:id="@+id/tvResumen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textSize="@dimen/text_caption"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+
+            <TextView
+                android:id="@+id/tvTocaHoy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/toca_hoy"
+                android:textSize="@dimen/text_eyebrow"
+                android:textColor="?attr/colorOnPrimaryContainer"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEmpezarLleno"
+            style="@style/Widget.GymProFit.BotonPildora"
+            android:layout_width="wrap_content"
+            android:layout_marginStart="12dp"
+            android:textSize="@dimen/text_body"
+            android:text="@string/btn_empezar"
+            android:visibility="gone"
+            app:icon="@drawable/ic_ms_play_arrow_fill"
+            app:iconSize="20dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEmpezarContorno"
+            style="@style/Widget.GymProFit.BotonPildora.Contorno"
+            android:layout_width="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="@string/btn_empezar"
+            app:icon="@drawable/ic_ms_play_arrow"
+            app:iconSize="20dp" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

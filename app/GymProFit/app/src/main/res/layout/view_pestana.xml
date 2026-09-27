@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  view_pestana — una pestaña de la barra (GP-105): píldora de 56 × 32 dp con el
+  icono y, debajo, la etiqueta, siempre visible. La activa lleva la píldora rellena y
+  el icono relleno; las demás, solo el icono en contorno. Lo pinta BarraNavegacion.
+  La pestaña entera es la zona pulsable: su columna de la barra por 72 dp de alto.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="?attr/selectableItemBackgroundBorderless">
+
+    <FrameLayout
+        android:id="@+id/flPildora"
+        android:layout_width="56dp"
+        android:layout_height="32dp">
+
+        <ImageView
+            android:id="@+id/ivIcono"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:importantForAccessibility="no" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tvEtiqueta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:maxLines="1"
+        android:textSize="@dimen/text_eyebrow"
+        android:importantForAccessibility="no" />
+</LinearLayout>

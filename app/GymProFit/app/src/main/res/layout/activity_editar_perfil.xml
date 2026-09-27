@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   activity_editar_perfil.xml — Pantalla de edición del perfil del usuario.
-  Formulario con email, peso, altura, edad, nivel de experiencia y objetivo fitness,
-  con botón de guardado que envía los cambios a la API.
+  Formulario con peso, altura, edad, sexo, actividad, nivel y objetivo, con botón de
+  guardado. Se abre desde Ajustes › Tus datos y objetivos (GP-105).
 -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -31,61 +31,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Email. Cambiarlo no va en el PATCH del perfil: va por PUT /usuarios/me/email
-                 y pide la contraseña actual (GP-083). -->
-            <com.google.android.material.textfield.TextInputLayout
-        app:errorIconDrawable="@drawable/ic_ms_error"
-                android:id="@+id/tilEmail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="14dp"
-                android:hint="@string/perfil_email"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                app:boxCornerRadiusTopStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusBottomEnd="12dp">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etEmail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Contraseña actual: solo aparece si el correo escrito no es el que ya tiene.
-                 El correo es la llave de la recuperación de contraseña, y cambiarlo con solo
-                 el token permitiría quedarse con la cuenta desde un móvil prestado. -->
-            <com.google.android.material.textfield.TextInputLayout
-        app:errorIconDrawable="@drawable/ic_ms_error"
-                android:id="@+id/tilPasswordEmail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="14dp"
-                android:visibility="gone"
-                android:hint="@string/editar_perfil_password_actual"
-                app:helperText="@string/editar_perfil_password_email_ayuda"
-                app:helperTextEnabled="true"
-                app:startIconDrawable="@drawable/ic_ms_lock"
-                app:endIconMode="password_toggle"
-                app:endIconDrawable="@drawable/sel_ojo_password"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                app:boxCornerRadiusTopStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusBottomEnd="12dp">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etPasswordEmail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textPassword"
-                    android:maxLines="1" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Peso -->
+            <!-- El correo ya no está aquí: se cambia en Ajustes › Correo (GP-105). -->
             <com.google.android.material.textfield.TextInputLayout
         app:errorIconDrawable="@drawable/ic_ms_error"
                 android:layout_width="match_parent"
@@ -147,6 +93,56 @@
                     android:inputType="number" />
 
             </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Sexo y actividad (GP-105): antes solo se elegían en el onboarding;
+                 se guardan donde entonces y recalculan como entonces. -->
+            <TextView
+                android:textAppearance="@style/TextAppearance.GymProFit.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:text="@string/onboarding_sexo"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="?attr/colorOutline">
+
+                <Spinner
+                    android:id="@+id/spSexo"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:textAppearance="@style/TextAppearance.GymProFit.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:text="@string/onboarding_actividad_label"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="?attr/colorOutline">
+
+                <Spinner
+                    android:id="@+id/spActividad"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp" />
+
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- Selector de nivel de experiencia -->
             <!-- Nivel de experiencia -->
