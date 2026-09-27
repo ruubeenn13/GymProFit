@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Qué pide cada pantalla a la API</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:20px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; box-sizing: border-box; padding: 44px 56px; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif; display: flex; flex-direction: column; gap: 22px;">
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<h1 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 40px;">Qué pide cada pantalla a la API</h1>
+<p style="margin: 0; font-size: 17px; color: #A1A9B6;">Toda escritura pasa por la API con el rol de administrador: la web nunca toca la base. El token vive en memoria; al recargar la página, se vuelve a entrar.</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px;">
+<section style="background: #16191E; border: 1px solid #252A31; border-radius: 18px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px;">
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px;">Entrada</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.45; color: #C9CFD8;"><span style="color: #7FD69B; font-weight: 600;">Ya existe:</span> el login y el rol dentro del token.</p>
+<p style="margin: 0; font-size: 15px; line-height: 1.45; color: #C9CFD8;"><span style="color: #FFB27A; font-weight: 600;">Nuevo:</span> CORS para admin.gymprofit.app. Una cuenta que no es de administrador recibe el mismo aviso que una contraseña equivocada.</p>
+</section>
+<section style="background: #16191E; border: 1px solid #252A31; border-radius: 18px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px;">
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px;">Resumen</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.45; color: #C9CFD8;"><span style="color: #7FD69B; font-weight: 600;">Ya existe:</span> las estadísticas globales, health e info (el commit).</p>
+<p style="margin: 0; font-size: 15px; line-height: 1.45; color: #C9CFD8;"><span style="color: #FFB27A; font-weight: 600;">Nuevo:</span> altas por semana, quién entrenó esta semana, sesiones por día y quién apuntó comida hoy, en una sola ruta; y los contadores de lo que falta por revisar en el catálogo.</p>
+</section>
+<section style="background: #16191E; border: 1px solid #252A31; border-radius: 18px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px;">
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px;">Usuarios</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.45; color: #C9CFD8;"><span style="color: #7FD69B; font-weight: 600;">Ya existe:</span> el listado paginado, activar o desactivar, y cambiar el rol.</p>
+<p style="margin: 0; font-size: 15px; line-height: 1.45; color: #C9CFD8;"><span style="color: #FFB27A; font-weight: 600;">Nuevo:</span> buscar por correo, la última actividad, los contadores de la ficha y el borrado a petición del titular, confirmado con su nombre de usuario. Ninguna respuesta lleva datos de salud.</p>
+</section>
+<section style="background: #16191E; border: 1px solid #252A31; border-radius: 18px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px;">
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px;">Ejercicios</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.45; color: #C9CFD8;"><span style="color: #7FD69B; font-weight: 600;">Ya existe:</span> la búsqueda y los campos en español y en inglés.</p>
+<p style="margin: 0; font-size: 15px; line-height: 1.45; color: #C9CFD8;"><span style="color: #FFB27A; font-weight: 600;">Nuevo:</span> el filtro «sin revisar», la marca «se dice igual en español», el equipamiento como lista cerrada (hoy es texto libre) y en cuántas rutinas se usa cada uno.</p>
+</section>
+<section style="background: #16191E; border: 1px solid #252A31; border-radius: 18px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px;">
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px;">Plantillas</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.45; color: #C9CFD8;"><span style="color: #FFB27A; font-weight: 600;">Nuevo, casi todo:</span> una plantilla es un programa de varios días y cada día es una rutina. Nivel, minutos, equipamiento y objetivos, como listas cerradas; borrador o publicada. Al elegirla, sus días se copian a Mis rutinas y «Hoy toca» los va rotando.</p>
+<p style="margin: 0; font-size: 15px; line-height: 1.45; color: #C9CFD8;"><span style="color: #7FD69B; font-weight: 600;">Lo de hoy:</span> las rutinas predefinidas pasan a ser plantillas de un día.</p>
+</section>
+<section style="background: #16191E; border: 1px solid #252A31; border-radius: 18px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px;">
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px;">Alimentos</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.45; color: #C9CFD8;"><span style="color: #7FD69B; font-weight: 600;">Ya existe:</span> la búsqueda y la edición.</p>
+<p style="margin: 0; font-size: 15px; line-height: 1.45; color: #C9CFD8;"><span style="color: #FFB27A; font-weight: 600;">Nuevo:</span> el filtro «sin inglés», el origen (a mano u Open Food Facts) y avisar al guardar si las calorías no cuadran con los macros.</p>
+</section>
+</div>
+<section style="background: #101216; border: 1px solid #252A31; border-radius: 18px; padding: 18px 22px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px;">
+<div style="display: flex; flex-direction: column; gap: 8px;">
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px;">En todas</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.45; color: #C9CFD8;">Los errores de la API, en español. Y más adelante: el registro de cada acción de administración, exportar los datos de una cuenta para las peticiones que lleguen a privacidad@, y las importaciones de wger y Open Food Facts.</p>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px;">
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px;">En qué orden</h2>
+<ol style="margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.55; color: #C9CFD8;">
+<li>La API: CORS, el resumen, las búsquedas y los filtros.</li>
+<li>La web con Entrada, Resumen y Usuarios; luego Ejercicios y Alimentos.</li>
+<li>Plantillas, con su modelo nuevo.</li>
+<li>Tú pones Cloudflare Access delante; después sale el panel de la app.</li>
+</ol>
+</div>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

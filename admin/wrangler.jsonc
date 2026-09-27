@@ -1,0 +1,20 @@
+// ============================================================
+// Cloudflare Workers con archivos estáticos: la web de administración (GP-085)
+// Solo sirve dist/, sin código de Worker. Las rutas que no son un archivo
+// (/usuarios, /ejercicios…) devuelven index.html y las resuelve React Router.
+// Sin workers.dev ni URLs de previsualización: el único sitio donde vive es
+// admin.gymprofit.app, que Cloudflare Access protege delante (ver README.md).
+// ============================================================
+{
+  "name": "gymprofit-admin",
+  "compatibility_date": "2026-09-27",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  },
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [
+    { "pattern": "admin.gymprofit.app", "custom_domain": true }
+  ]
+}

@@ -1,0 +1,11 @@
+# Cabeceras de seguridad de admin.gymprofit.app (GP-085).
+# CSP: todo del propio dominio, salvo conectar con la API y las imágenes de los
+# ejercicios, que vienen de wger y de GitHub. Sin marcos ni objetos, sin scripts
+# de fuera, y sin mandar la dirección de la página a nadie.
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https://wger.de https://raw.githubusercontent.com; font-src 'self'; connect-src https://api.gymprofit.app; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: no-referrer
+  X-Frame-Options: DENY
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+  Cross-Origin-Opener-Policy: same-origin

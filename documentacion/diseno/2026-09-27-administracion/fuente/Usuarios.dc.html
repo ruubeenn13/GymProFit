@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Usuarios</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:22px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+button,input{font-family:inherit}
+button{cursor:pointer}
+a{color:#FF8A3D}a:hover{color:#FFB27A}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; display: grid; grid-template-columns: 248px minmax(0, 1fr); background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif; overflow: hidden;">
+<aside style="background: #101216; border-right: 1px solid #252A31; padding: 24px 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 28px;">
+<div style="display: flex; align-items: center; gap: 10px; padding: 4px 8px;">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px;">GymProFit</span>
+<span style="height: 24px; padding: 0 10px; border-radius: 12px; background: #3A2110; color: #FFB27A; font-size: 12px; font-weight: 600; display: flex; align-items: center;">Admin</span>
+</div>
+<nav aria-label="Secciones" style="display: flex; flex-direction: column; gap: 4px;">
+<a href="Resumen.dc.html" style="height: 44px; border-radius: 12px; color: #C9CFD8; display: flex; align-items: center; gap: 12px; padding: 0 12px; text-decoration: none; font-size: 15px;"><span class="ms" aria-hidden="true" style="color: #A1A9B6;">monitoring</span>Resumen</a>
+<a href="Usuarios.dc.html" aria-current="page" style="height: 44px; border-radius: 12px; background: #3A2110; color: #F2F2F3; display: flex; align-items: center; gap: 12px; padding: 0 12px; text-decoration: none; font-size: 15px; font-weight: 600;"><span class="ms f" aria-hidden="true" style="color: #FF8A3D;">group</span>Usuarios</a>
+<a href="Ejercicios.dc.html" style="height: 44px; border-radius: 12px; color: #C9CFD8; display: flex; align-items: center; gap: 12px; padding: 0 12px; text-decoration: none; font-size: 15px;"><span class="ms" aria-hidden="true" style="color: #A1A9B6;">fitness_center</span>Ejercicios</a>
+<a href="Plantillas.dc.html" style="height: 44px; border-radius: 12px; color: #C9CFD8; display: flex; align-items: center; gap: 12px; padding: 0 12px; text-decoration: none; font-size: 15px;"><span class="ms" aria-hidden="true" style="color: #A1A9B6;">calendar_view_week</span>Plantillas</a>
+<a href="Alimentos.dc.html" style="height: 44px; border-radius: 12px; color: #C9CFD8; display: flex; align-items: center; gap: 12px; padding: 0 12px; text-decoration: none; font-size: 15px;"><span class="ms" aria-hidden="true" style="color: #A1A9B6;">nutrition</span>Alimentos</a>
+</nav>
+<div style="display: flex; flex-direction: column; gap: 2px;">
+<span style="padding: 0 12px 6px; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: #7C8594;">Más adelante</span>
+<span style="height: 38px; display: flex; align-items: center; gap: 12px; padding: 0 12px; font-size: 14px; color: #7C8594;"><span class="ms" aria-hidden="true" style="font-size: 20px;">history</span>Registro de acciones</span>
+<span style="height: 38px; display: flex; align-items: center; gap: 12px; padding: 0 12px; font-size: 14px; color: #7C8594;"><span class="ms" aria-hidden="true" style="font-size: 20px;">download</span>Exportar datos de una cuenta</span>
+<span style="height: 38px; display: flex; align-items: center; gap: 12px; padding: 0 12px; font-size: 14px; color: #7C8594;"><span class="ms" aria-hidden="true" style="font-size: 20px;">cloud_sync</span>Importaciones</span>
+</div>
+<div style="margin-top: auto; border-top: 1px solid #252A31; padding: 16px 4px 0 8px; display: flex; align-items: center; gap: 12px;">
+<span style="width: 36px; height: 36px; border-radius: 18px; background: #252A31; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px;">A</span>
+<div style="flex-grow: 1; display: flex; flex-direction: column;"><span style="font-size: 14px; font-weight: 600;">admin</span><span style="font-size: 13px; color: #A1A9B6;">Administrador</span></div>
+<button type="button" aria-label="Cerrar sesión" style="width: 44px; height: 44px; border: 0; border-radius: 22px; background: transparent; color: #A1A9B6; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">logout</span></button>
+</div>
+</aside>
+<main style="display: flex; flex-direction: column; min-width: 0;">
+<header style="height: 76px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; border-bottom: 1px solid #1E2228;">
+<div style="display: flex; align-items: baseline; gap: 14px;">
+<h1 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 32px;">Usuarios</h1>
+<span style="font-size: 15px; color: #A1A9B6;">42 cuentas</span>
+</div>
+<div style="display: flex; gap: 10px; align-items: center;">
+<span style="height: 32px; padding: 0 12px; border-radius: 16px; background: #13301F; color: #7FD69B; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><span class="ms f" aria-hidden="true" style="font-size: 16px;">circle</span>API en marcha</span>
+<span style="height: 32px; padding: 0 12px; border-radius: 16px; border: 1px solid #4A505B; color: #C9CFD8; font-size: 14px; display: flex; align-items: center;">Producción · commit b10fffe</span>
+</div>
+</header>
+<div style="flex-grow: 1; min-height: 0; padding: 24px 32px; display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 20px;">
+<section style="display: flex; flex-direction: column; gap: 14px; min-width: 0;">
+<div style="display: flex; gap: 10px; align-items: center;">
+<label style="flex-grow: 1; height: 44px; border-radius: 22px; border: 1px solid #4A505B; background: #16191E; display: flex; align-items: center; gap: 8px; padding: 0 14px; box-sizing: border-box;"><span class="ms" aria-hidden="true" style="color: #A1A9B6; font-size: 20px;">search</span><input type="search" aria-label="Buscar cuentas" placeholder="Busca por usuario o correo" style="flex-grow: 1; border: 0; background: transparent; color: #F2F2F3; font-size: 15px; outline: none;"></label>
+<button type="button" style="height: 44px; padding: 0 14px 0 16px; border: 1px solid #4A505B; border-radius: 22px; background: transparent; color: #F2F2F3; font-size: 15px; display: flex; align-items: center; gap: 6px;">Rol: todos<span class="ms" aria-hidden="true" style="font-size: 20px; color: #A1A9B6;">expand_more</span></button>
+<button type="button" style="height: 44px; padding: 0 14px 0 16px; border: 1px solid #4A505B; border-radius: 22px; background: transparent; color: #F2F2F3; font-size: 15px; display: flex; align-items: center; gap: 6px;">Estado: todas<span class="ms" aria-hidden="true" style="font-size: 20px; color: #A1A9B6;">expand_more</span></button>
+</div>
+<div role="table" aria-label="Cuentas" style="background: #16191E; border: 1px solid #252A31; border-radius: 18px; overflow: hidden; display: flex; flex-direction: column;">
+<div role="row" style="height: 44px; display: grid; grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 0.9fr) minmax(0, 1fr); align-items: center; padding: 0 20px; gap: 12px; font-size: 13px; font-weight: 600; color: #A1A9B6; border-bottom: 1px solid #252A31;">
+<span role="columnheader">Cuenta</span><span role="columnheader">Alta</span><span role="columnheader">Última actividad</span><span role="columnheader">Rol</span><span role="columnheader">Estado</span>
+</div>
+<div role="row" aria-selected="true" style="height: 60px; display: grid; grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 0.9fr) minmax(0, 1fr); align-items: center; padding: 0 20px; gap: 12px; font-size: 14px; background: #252A31; border-bottom: 1px solid #1E2228;">
+<span role="cell" style="display: flex; flex-direction: column; min-width: 0;"><span style="font-weight: 600; font-size: 15px;">@carla_g</span><span style="color: #A1A9B6; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">carla@example.com</span></span>
+<span role="cell" style="color: #C9CFD8;">21 sep 2026</span><span role="cell" style="color: #C9CFD8;">Hoy, 18:40</span>
+<span role="cell"><span style="height: 26px; padding: 0 10px; border-radius: 13px; border: 1px solid #4A505B; color: #C9CFD8; font-size: 13px; display: inline-flex; align-items: center;">Usuario</span></span>
+<span role="cell"><span style="height: 26px; padding: 0 10px; border-radius: 13px; background: #13301F; color: #7FD69B; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center;">Activa</span></span>
+</div>
+<div role="row" style="height: 60px; display: grid; grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 0.9fr) minmax(0, 1fr); align-items: center; padding: 0 20px; gap: 12px; font-size: 14px; border-bottom: 1px solid #1E2228;">
+<span role="cell" style="display: flex; flex-direction: column; min-width: 0;"><span style="font-weight: 600; font-size: 15px;">@hugo.m</span><span style="color: #A1A9B6;">hugo@example.com</span></span>
+<span role="cell" style="color: #C9CFD8;">25 sep 2026</span><span role="cell" style="color: #C9CFD8;">Ayer</span>
+<span role="cell"><span style="height: 26px; padding: 0 10px; border-radius: 13px; border: 1px solid #4A505B; color: #C9CFD8; font-size: 13px; display: inline-flex; align-items: center;">Usuario</span></span>
+<span role="cell"><span style="height: 26px; padding: 0 10px; border-radius: 13px; background: #13301F; color: #7FD69B; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center;">Activa</span></span>
+</div>
+<div role="row" style="height: 60px; display: grid; grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 0.9fr) minmax(0, 1fr); align-items: center; padding: 0 20px; gap: 12px; font-size: 14px; border-bottom: 1px solid #1E2228;">
+<span role="cell" style="display: flex; flex-direction: column; min-width: 0;"><span style="font-weight: 600; font-size: 15px;">@marta.run</span><span style="color: #A1A9B6;">marta@example.com</span></span>
+<span role="cell" style="color: #C9CFD8;">14 sep 2026</span><span role="cell" style="color: #C9CFD8;">Hace 3 días</span>
+<span role="cell"><span style="height: 26px; padding: 0 10px; border-radius: 13px; border: 1px solid #4A505B; color: #C9CFD8; font-size: 13px; display: inline-flex; align-items: center;">Usuario</span></span>
+<span role="cell"><span style="height: 26px; padding: 0 10px; border-radius: 13px; background: #13301F; color: #7FD69B; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center;">Activa</span></span>
+</div>
+<div role="row" style="height: 60px; display: grid; grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 0.9fr) minmax(0, 1fr); align-items: center; padding: 0 20px; gap: 12px; font-size: 14px; border-bottom: 1px solid #1E2228;">
+<span role="cell" style="display: flex; flex-direction: column; min-width: 0;"><span style="font-weight: 600; font-size: 15px;">@admin</span><span style="color: #A1A9B6;">admin@gymprofit.app</span></span>
+<span role="cell" style="color: #C9CFD8;">19 sep 2026</span><span role="cell" style="color: #C9CFD8;">Ahora</span>
+<span role="cell"><span style="height: 26px; padding: 0 10px; border-radius: 13px; background: #3A2110; color: #FFB27A; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center;">Admin</span></span>
+<span role="cell"><span style="height: 26px; padding: 0 10px; border-radius: 13px; background: #13301F; color: #7FD69B; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center;">Activa</span></span>
+</div>
+<div role="row" style="height: 60px; display: grid; grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 0.9fr) minmax(0, 1fr); align-items: center; padding: 0 20px; gap: 12px; font-size: 14px; border-bottom: 1px solid #1E2228;">
+<span role="cell" style="display: flex; flex-direction: column; min-width: 0;"><span style="font-weight: 600; font-size: 15px;">@dani_lifts</span><span style="color: #A1A9B6;">dani@example.com</span></span>
+<span role="cell" style="color: #C9CFD8;">2 sep 2026</span><span role="cell" style="color: #C9CFD8;">Hace 12 días</span>
+<span role="cell"><span style="height: 26px; padding: 0 10px; border-radius: 13px; border: 1px solid #4A505B; color: #C9CFD8; font-size: 13px; display: inline-flex; align-items: center;">Usuario</span></span>
+<span role="cell"><span style="height: 26px; padding: 0 10px; border-radius: 13px; background: #13301F; color: #7FD69B; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center;">Activa</span></span>
+</div>
+<div role="row" style="height: 60px; display: grid; grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 0.9fr) minmax(0, 1fr); align-items: center; padding: 0 20px; gap: 12px; font-size: 14px; border-bottom: 1px solid #1E2228;">
+<span role="cell" style="display: flex; flex-direction: column; min-width: 0;"><span style="font-weight: 600; font-size: 15px;">@paula_s</span><span style="color: #A1A9B6;">paula@example.com</span></span>
+<span role="cell" style="color: #C9CFD8;">28 ago 2026</span><span role="cell" style="color: #C9CFD8;">Hace 30 días</span>
+<span role="cell"><span style="height: 26px; padding: 0 10px; border-radius: 13px; border: 1px solid #4A505B; color: #C9CFD8; font-size: 13px; display: inline-flex; align-items: center;">Usuario</span></span>
+<span role="cell"><span style="height: 26px; padding: 0 10px; border-radius: 13px; border: 1px solid #7A3434; color: #F9A8A8; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center;">Desactivada</span></span>
+</div>
+<div role="row" style="height: 60px; display: grid; grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 0.9fr) minmax(0, 1fr); align-items: center; padding: 0 20px; gap: 12px; font-size: 14px; border-bottom: 1px solid #1E2228;">
+<span role="cell" style="display: flex; flex-direction: column; min-width: 0;"><span style="font-weight: 600; font-size: 15px;">@javi_r</span><span style="color: #A1A9B6;">javi@example.com</span></span>
+<span role="cell" style="color: #C9CFD8;">20 ago 2026</span><span role="cell" style="color: #C9CFD8;">Hace 2 días</span>
+<span role="cell"><span style="height: 26px; padding: 0 10px; border-radius: 13px; border: 1px solid #4A505B; color: #C9CFD8; font-size: 13px; display: inline-flex; align-items: center;">Usuario</span></span>
+<span role="cell"><span style="height: 26px; padding: 0 10px; border-radius: 13px; background: #13301F; color: #7FD69B; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center;">Activa</span></span>
+</div>
+<div role="row" style="height: 60px; display: grid; grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 0.9fr) minmax(0, 1fr); align-items: center; padding: 0 20px; gap: 12px; font-size: 14px;">
+<span role="cell" style="display: flex; flex-direction: column; min-width: 0;"><span style="font-weight: 600; font-size: 15px;">@nerea.fit</span><span style="color: #A1A9B6;">nerea@example.com</span></span>
+<span role="cell" style="color: #C9CFD8;">15 ago 2026</span><span role="cell" style="color: #C9CFD8;">Hoy, 09:12</span>
+<span role="cell"><span style="height: 26px; padding: 0 10px; border-radius: 13px; border: 1px solid #4A505B; color: #C9CFD8; font-size: 13px; display: inline-flex; align-items: center;">Usuario</span></span>
+<span role="cell"><span style="height: 26px; padding: 0 10px; border-radius: 13px; background: #13301F; color: #7FD69B; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center;">Activa</span></span>
+</div>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: #A1A9B6;">
+<span>1–8 de 42</span>
+<div style="display: flex; gap: 6px;">
+<button type="button" aria-label="Página anterior" style="width: 44px; height: 44px; border: 1px solid #4A505B; border-radius: 22px; background: transparent; color: #7C8594; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">chevron_left</span></button>
+<button type="button" aria-label="Página siguiente" style="width: 44px; height: 44px; border: 1px solid #4A505B; border-radius: 22px; background: transparent; color: #F2F2F3; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">chevron_right</span></button>
+</div>
+</div>
+</section>
+<aside aria-label="Cuenta @carla_g" style="background: #16191E; border: 1px solid #252A31; border-radius: 18px; padding: 20px; display: flex; flex-direction: column; gap: 16px; min-height: 0;">
+<div style="display: flex; align-items: flex-start; gap: 12px;">
+<span style="width: 48px; height: 48px; border-radius: 24px; background: #252A31; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px; flex-shrink: 0;">C</span>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 6px;">
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px;">@carla_g</h2>
+<div style="display: flex; gap: 6px;"><span style="height: 26px; padding: 0 10px; border-radius: 13px; border: 1px solid #4A505B; color: #C9CFD8; font-size: 13px; display: inline-flex; align-items: center;">Usuario</span><span style="height: 26px; padding: 0 10px; border-radius: 13px; background: #13301F; color: #7FD69B; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center;">Activa</span></div>
+</div>
+<button type="button" aria-label="Cerrar la ficha" style="width: 44px; height: 44px; border: 0; border-radius: 22px; background: transparent; color: #A1A9B6; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><span class="ms" aria-hidden="true">close</span></button>
+</div>
+<dl style="margin: 0; display: grid; grid-template-columns: 130px minmax(0, 1fr); row-gap: 10px; column-gap: 12px; font-size: 14px;">
+<dt style="color: #A1A9B6;">Correo</dt><dd style="margin: 0;">carla@example.com</dd>
+<dt style="color: #A1A9B6;">Alta</dt><dd style="margin: 0;">21 sep 2026</dd>
+<dt style="color: #A1A9B6;">Última actividad</dt><dd style="margin: 0;">Hoy, 18:40</dd>
+<dt style="color: #A1A9B6;">Sesiones</dt><dd style="margin: 0;">12 registradas</dd>
+<dt style="color: #A1A9B6;">Comidas</dt><dd style="margin: 0;">48 registradas</dd>
+</dl>
+<p style="margin: 0; padding: 12px 14px; border-radius: 12px; background: #1B1E24; font-size: 14px; line-height: 1.45; color: #C9CFD8; display: flex; gap: 10px;"><span class="ms" aria-hidden="true" style="color: #A1A9B6; font-size: 20px;">visibility_off</span>Su peso, sus medidas, sus entrenamientos y sus comidas no se enseñan aquí: son datos de salud.</p>
+<div style="display: flex; flex-direction: column; gap: 10px; padding-top: 4px;">
+<button type="button" style="height: 46px; border: 1px solid #4A505B; border-radius: 23px; background: transparent; color: #F2F2F3; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;"><span class="ms" aria-hidden="true" style="font-size: 20px;">block</span>Desactivar la cuenta</button>
+<span style="font-size: 13px; color: #A1A9B6; padding: 0 4px;">No podrá entrar y sus sesiones se cierran. Sus datos se quedan y se puede volver a activar.</span>
+<button type="button" style="height: 46px; border: 1px solid #4A505B; border-radius: 23px; background: transparent; color: #F2F2F3; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;"><span class="ms" aria-hidden="true" style="font-size: 20px;">shield_person</span>Dar rol de administrador</button>
+</div>
+<div style="margin-top: auto; border-top: 1px solid #252A31; padding-top: 14px; display: flex; flex-direction: column; gap: 8px;">
+<button type="button" style="height: 46px; border: 1px solid #7A3434; border-radius: 23px; background: transparent; color: #F9A8A8; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;"><span class="ms" aria-hidden="true" style="font-size: 20px;">delete_forever</span>Borrar la cuenta y sus datos</button>
+<span style="font-size: 13px; line-height: 1.4; color: #A1A9B6; padding: 0 4px;">Solo si su titular lo pide a privacidad@gymprofit.app. Pide escribir su nombre de usuario para confirmar, y no se puede deshacer.</span>
+</div>
+</aside>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

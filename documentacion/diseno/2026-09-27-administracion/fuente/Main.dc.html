@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Entrar en la administración</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:22px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+button,input{font-family:inherit}
+button{cursor:pointer}
+a{color:#FF8A3D}a:hover{color:#FFB27A}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; display: grid; grid-template-columns: 640px minmax(0, 1fr); background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif;">
+<section style="background: #101216; border-right: 1px solid #252A31; padding: 56px 64px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;">
+<div style="display: flex; align-items: center; gap: 12px;">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 34px; letter-spacing: 0.3px;">GymProFit</span>
+<span style="height: 28px; padding: 0 12px; border-radius: 14px; background: #3A2110; color: #FFB27A; font-size: 14px; font-weight: 600; display: flex; align-items: center;">Administración</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 32px;">
+<h1 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 60px; line-height: 1.02;">Todo el producto,<br>en una pestaña.</h1>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 18px; font-size: 17px; color: #D3D8DF;">
+<li style="display: flex; align-items: center; gap: 14px;"><span class="ms" aria-hidden="true" style="color: #FF8A3D;">monitoring</span>Cómo va el producto, de un vistazo</li>
+<li style="display: flex; align-items: center; gap: 14px;"><span class="ms" aria-hidden="true" style="color: #FF8A3D;">group</span>Las cuentas, sin enseñar datos de salud</li>
+<li style="display: flex; align-items: center; gap: 14px;"><span class="ms" aria-hidden="true" style="color: #FF8A3D;">fitness_center</span>Ejercicios en español y en inglés</li>
+<li style="display: flex; align-items: center; gap: 14px;"><span class="ms" aria-hidden="true" style="color: #FF8A3D;">calendar_view_week</span>Plantillas de entrenamiento</li>
+<li style="display: flex; align-items: center; gap: 14px;"><span class="ms" aria-hidden="true" style="color: #FF8A3D;">nutrition</span>Alimentos del catálogo</li>
+</ul>
+</div>
+<p style="margin: 0; display: flex; gap: 12px; align-items: flex-start; font-size: 15px; line-height: 1.5; color: #A1A9B6; max-width: 480px;"><span class="ms" aria-hidden="true" style="color: #A1A9B6; margin-top: 1px;">verified_user</span>Dos cerraduras: antes de esta página, tu cuenta de Google en Cloudflare Access; aquí, tu cuenta de administrador de GymProFit.</p>
+</section>
+<section style="display: flex; align-items: center; justify-content: center; padding: 56px; box-sizing: border-box;">
+<form style="width: 420px; display: flex; flex-direction: column; gap: 22px;">
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px;">Entrar</h2>
+<span style="font-size: 16px; color: #A1A9B6;">Con tu cuenta de administrador de GymProFit.</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px;">
+<label for="usuario" style="font-size: 14px; font-weight: 600; color: #D3D8DF;">Usuario</label>
+<input id="usuario" type="text" autocomplete="username" value="admin" style="height: 50px; border-radius: 12px; border: 1px solid #4A505B; background: #16191E; color: #F2F2F3; font-size: 16px; padding: 0 16px; outline: none;">
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px;">
+<label for="contrasena" style="font-size: 14px; font-weight: 600; color: #D3D8DF;">Contraseña</label>
+<div style="height: 50px; border-radius: 12px; border: 2px solid #FF6A00; background: #16191E; display: flex; align-items: center; padding: 0 4px 0 16px; box-sizing: border-box;">
+<input id="contrasena" type="password" autocomplete="current-password" value="una frase larga y tuya" style="flex-grow: 1; height: 44px; border: 0; background: transparent; color: #F2F2F3; font-size: 16px; outline: none;">
+<button type="button" aria-label="Enseñar la contraseña" style="width: 44px; height: 44px; border: 0; border-radius: 22px; background: transparent; color: #A1A9B6; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">visibility</span></button>
+</div>
+</div>
+<button type="submit" style="height: 52px; border: 0; border-radius: 26px; background: #FF6A00; color: #1A0E00; font-size: 17px; font-weight: 700;">Entrar</button>
+<div style="display: flex; flex-direction: column; gap: 10px; padding-top: 6px; border-top: 1px solid #252A31;">
+<p style="margin: 0; font-size: 14px; line-height: 1.5; color: #A1A9B6;">Solo entran cuentas con rol de administrador. Cualquier otra recibe el mismo aviso que una contraseña equivocada.</p>
+<p style="margin: 0; font-size: 14px; line-height: 1.5; color: #A1A9B6;">¿Has olvidado la contraseña? Se recupera desde la app, con el correo de la cuenta.</p>
+</div>
+</form>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

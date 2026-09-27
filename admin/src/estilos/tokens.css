@@ -1,0 +1,72 @@
+/* ============================================================
+   Tokens de la web de administración (GP-085)
+   Valores del diseño aprobado (documentacion/diseno/2026-09-27-administracion/),
+   que son los de la app en oscuro. Si cambian en la app, cambian aquí.
+   ============================================================ */
+
+@font-face { font-family: "Barlow"; src: url("/fuentes/barlow-400.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Barlow"; src: url("/fuentes/barlow-500.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Barlow"; src: url("/fuentes/barlow-600.woff2") format("woff2"); font-weight: 600; font-display: swap; }
+@font-face { font-family: "Barlow"; src: url("/fuentes/barlow-700.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Barlow Condensed"; src: url("/fuentes/barlow-condensed-500.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Barlow Condensed"; src: url("/fuentes/barlow-condensed-600.woff2") format("woff2"); font-weight: 600; font-display: swap; }
+@font-face { font-family: "Barlow Condensed"; src: url("/fuentes/barlow-condensed-700.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+
+:root {
+  color-scheme: dark;
+
+  /* Superficies */
+  --fondo: #0B0C0E;
+  --lateral: #101216;
+  --tarjeta: #16191E;
+  --campo: #0F1114;
+  --nota: #1B1E24;
+  --seleccion: #252A31;
+
+  /* Bordes */
+  --borde: #252A31;
+  --borde-suave: #1E2228;
+  --borde-control: #4A505B;
+
+  /* Texto */
+  --texto: #F2F2F3;
+  --texto-etiqueta: #D3D8DF;
+  --texto-secundario: #C9CFD8;
+  --texto-apagado: #A1A9B6;
+  --texto-tenue: #7C8594;
+
+  /* Marca */
+  --acento: #FF6A00;
+  --acento-sobre: #1A0E00;
+  --acento-fondo: #3A2110;
+  --acento-claro: #FFB27A;
+  --enlace: #FF8A3D;
+
+  /* Estados */
+  --ok: #7FD69B;
+  --ok-fondo: #13301F;
+  --aviso: #E8B84B;
+  --aviso-fondo: #3A2E12;
+  --peligro: #F9A8A8;
+  --peligro-borde: #7A3434;
+
+  /* Gráficas */
+  --barra-alta: #6B3A17;
+  --barra-sesion: #2F4E78;
+  --barra-sesion-hoy: #6BA6F5;
+
+  /* Tipografía */
+  --fuente: "Barlow", system-ui, sans-serif;
+  --fuente-titular: "Barlow Condensed", "Barlow", system-ui, sans-serif;
+
+  /* Medidas */
+  --lateral-ancho: 248px;
+  --cabecera-alto: 76px;
+  --radio-tarjeta: 18px;
+  --radio-control: 12px;
+  --alto-control: 44px;
+  --alto-campo: 46px;
+  --alto-boton: 46px;
+  --gutter: 32px;
+  --foco: 0 0 0 3px var(--fondo), 0 0 0 5px var(--acento-claro);
+}
