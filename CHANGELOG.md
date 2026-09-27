@@ -6,6 +6,7 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `8ea5d02` | fix(api): **la cuenta del bot también usa el dominio del producto** (GP-106): migración `V202609271100`, con las mismas guardas que la de admin y guest. El bot entra por nombre de usuario y no se entera. |
 | `94dcdce` | Fusión de `gp-105-estructura` en `main`: la estructura nueva entra entera, después de la comprobación en release. Informe en `documentacion/estado/2026-09-27-lote-1.1.0.md`. |
 | `d5260d1` | fix(android): **el aviso de descartar de los diálogos también en Android 13-15** (GP-108). En Android 16 el atrás llega por el `OnBackInvokedDispatcher` de la ventana del diálogo y en 13-15 como tecla: se registran los dos. |
 | `eebe1a1` | build(android): **versión 1.1.0** (10100), etiquetada `v1.1.0`. Misma clave de firma. |
