@@ -111,7 +111,9 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "Contraseña cambiada correctamente"),
             @ApiResponse(responseCode = "400", description = "Datos inválidos (nueva igual a la actual, formato)",
                     content = @Content(schema = @Schema(implementation = Response.class))),
-            @ApiResponse(responseCode = "401", description = "No autenticado o contraseña actual incorrecta",
+            @ApiResponse(responseCode = "401", description = "No autenticado",
+                    content = @Content(schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "403", description = "Contraseña actual incorrecta (cause: PASSWORD_ACTUAL_INCORRECTA)",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @PostMapping("/change-password")

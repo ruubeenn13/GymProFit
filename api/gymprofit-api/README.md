@@ -145,7 +145,7 @@ Todos van bajo el context-path `/api`. Los `@RequestMapping` de los controllers 
 | POST | `/auth/guest` | No | Login como invitado → `TokenDTO` con ROLE_GUEST |
 | POST | `/auth/refresh` | No | Renueva el access token con el refresh opaco, que se rota |
 | POST | `/auth/logout` | No | Revoca el refresh token recibido |
-| POST | `/auth/change-password` | USER/ADMIN | Cambia la contraseña. El username sale del token, nunca del body. Revoca todas las sesiones |
+| POST | `/auth/change-password` | USER/ADMIN | Cambia la contraseña. El username sale del token, nunca del body. Revoca todas las sesiones. Contraseña actual incorrecta → 403 con `PASSWORD_ACTUAL_INCORRECTA` en `cause` |
 | POST | `/auth/forgot-password` | No | Pide un código de 6 dígitos por correo. Responde **siempre lo mismo**, exista la cuenta o no |
 | POST | `/auth/reset-password` | No | Canjea el código por una contraseña nueva. 15 min de vida, 5 intentos, un solo uso. Revoca todas las sesiones |
 

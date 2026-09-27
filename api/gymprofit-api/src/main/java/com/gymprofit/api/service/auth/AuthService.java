@@ -9,9 +9,9 @@ import com.gymprofit.api.entity.RefreshToken;
 import com.gymprofit.api.entity.Role;
 import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.enums.NivelExperiencia;
+import com.gymprofit.api.exceptions.ContrasenaActualIncorrectaException;
 import com.gymprofit.api.exceptions.CuentaDesactivadaException;
 import com.gymprofit.api.exceptions.DuplicateEntityException;
-import com.gymprofit.api.exceptions.InvalidCredentialsException;
 import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.repository.jpa.IRoleRepository;
@@ -211,9 +211,10 @@ public class AuthService implements IAuthService {
         Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundEntityException("Usuario no encontrado"));
 
-        // La contraseña actual debe coincidir con la almacenada; si no, 401 (no autorizado a cambiarla).
+        // La contraseña actual debe coincidir con la almacenada; si no, 403 con código.
+        // No 401: la app lo tomaría por sesión caducada y echaría al usuario.
         if (!passwordEncoder.matches(changePasswordDTO.getCurrentPassword(), usuario.getPassword())) {
-            throw new InvalidCredentialsException("La contraseña actual no es correcta");
+            throw new ContrasenaActualIncorrectaException();
         }
 
         // La nueva no puede ser igual a la actual (obliga a un cambio real).

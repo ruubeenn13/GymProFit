@@ -6,7 +6,7 @@ import com.gymprofit.api.dto.auth.LoginDTO;
 import com.gymprofit.api.dto.auth.RegisterDTO;
 import com.gymprofit.api.dto.auth.TokenDTO;
 import com.gymprofit.api.exceptions.DuplicateEntityException;
-import com.gymprofit.api.exceptions.InvalidCredentialsException;
+import com.gymprofit.api.exceptions.ContrasenaActualIncorrectaException;
 import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.service.auth.IAuthService;
 import org.junit.jupiter.api.BeforeEach;
@@ -210,18 +210,20 @@ class AuthControllerTest {
         verify(authService, never()).changePassword(any(String.class), any(ChangePasswordDTO.class));
     }
 
-    // Contraseña actual incorrecta: el service lanza InvalidCredentialsException → 401.
+    // Contraseña actual incorrecta: el service lanza ContrasenaActualIncorrectaException → 403
+    // con el código en cause (no 401, que la app toma por sesión caducada).
     @Test
     @WithMockUser(username = "admin")
-    @DisplayName("POST /auth/change-password con contraseña actual incorrecta devuelve 401")
-    void changePassword_actual_incorrecta_devuelve_401() throws Exception {
-        doThrow(new InvalidCredentialsException("La contraseña actual no es correcta"))
+    @DisplayName("POST /auth/change-password con contraseña actual incorrecta devuelve 403")
+    void changePassword_actual_incorrecta_devuelve_403() throws Exception {
+        doThrow(new ContrasenaActualIncorrectaException())
                 .when(authService).changePassword(any(String.class), any(ChangePasswordDTO.class));
 
         mockMvc.perform(post("/auth/change-password")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"currentPassword\":\"malmal1\",\"newPassword\":\"NewPass9!\"}"))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.cause").value(ContrasenaActualIncorrectaException.CODIGO));
 
         verify(authService).changePassword(any(String.class), any(ChangePasswordDTO.class));
     }

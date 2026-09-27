@@ -181,6 +181,18 @@ public class ControllerExceptionHandler {
         );
     }
 
+    // Contraseña actual equivocada al cambiarla: 403 con código en "cause". No 401,
+    // que la app toma por sesión caducada.
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(ContrasenaActualIncorrectaException.class)
+    public ResponseEntity<Response> handleContrasenaActualIncorrecta(ContrasenaActualIncorrectaException ex) {
+        return new ResponseEntity<>(
+                Response.generalError(HttpStatus.FORBIDDEN.value(), ex.getMessage(),
+                        ContrasenaActualIncorrectaException.CODIGO),
+                HttpStatus.FORBIDDEN
+        );
+    }
+
     // Datos de entrada inválidos a nivel de negocio: 400.
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidDataException.class)
