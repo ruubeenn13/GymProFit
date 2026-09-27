@@ -1,7 +1,13 @@
 # ============================================================
-# CI — Build + Tests de la API (Spring Boot)
+# CI — la API (Spring Boot) y la web de administración (admin/)
 # Se ejecuta en cada push a main y en cada pull request.
-# Es el gate que valida el auto-merge de Dependabot antes de fusionar.
+# api-build-test es el gate que valida el auto-merge de Dependabot antes de fusionar.
+#
+# Un cambio solo en admin/ no lanza la API (GP-121). No se hace con paths-ignore
+# en el disparador: un workflow que no arranca deja el check requerido «esperando»
+# para siempre y colgaría el auto-merge. El workflow arranca siempre, el job
+# «cambios» mira qué se ha tocado, y el job que no toca se salta: un job saltado
+# cuenta como superado para los checks requeridos.
 # ============================================================
 name: CI
 
@@ -23,8 +29,43 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # ----------------------------------------------------------
+  # Qué se ha tocado: la API corre salvo que todo lo cambiado esté en admin/;
+  # la web, si algo de admin/ ha cambiado. Ante la duda (primer push de una rama,
+  # historia reescrita), corren las dos.
+  # ----------------------------------------------------------
+  cambios:
+    name: cambios
+    runs-on: ubuntu-latest
+    outputs:
+      api: ${{ steps.ver.outputs.api }}
+      admin: ${{ steps.ver.outputs.admin }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Ver qué ha cambiado
+        id: ver
+        env:
+          BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          if [ -z "$BASE" ] || ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
+            echo "Sin base con la que comparar: corren la API y la web."
+            echo "api=true" >> "$GITHUB_OUTPUT"
+            echo "admin=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          FICHEROS=$(git diff --name-only "$BASE" HEAD)
+          echo "$FICHEROS"
+          if printf '%s\n' "$FICHEROS" | grep -qv '^admin/'; then echo "api=true" >> "$GITHUB_OUTPUT"; else echo "api=false" >> "$GITHUB_OUTPUT"; fi
+          if printf '%s\n' "$FICHEROS" | grep -q '^admin/'; then echo "admin=true" >> "$GITHUB_OUTPUT"; else echo "admin=false" >> "$GITHUB_OUTPUT"; fi
+
   api-build-test:
     name: api-build-test
+    needs: cambios
+    if: needs.cambios.outputs.api == 'true'
     runs-on: ubuntu-latest
 
     # Todos los pasos Maven corren dentro del módulo de la API
@@ -75,3 +116,46 @@ jobs:
           # en el runner se redirige a un dir escribible del temporal.
           LOG_DIR: ${{ runner.temp }}/gymprofit-logs
         run: sh ./mvnw -B verify
+
+  # ----------------------------------------------------------
+  # Web de administración: instalar, tests, compilar y el detector de Impeccable,
+  # con versión fija (la del motor de la skill). El detector falla con cualquier
+  # hallazgo, también los avisos: lo que choque con el diseño aprobado se deja
+  # como excepción con su motivo (npx impeccable ignores), no se tolera aquí.
+  # ----------------------------------------------------------
+  admin-build-test:
+    name: admin-build-test
+    needs: cambios
+    if: needs.cambios.outputs.admin == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: admin
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: admin/package-lock.json
+
+      - name: Instalar
+        run: npm ci
+
+      - name: Tests
+        run: npm test
+
+      - name: Compilar
+        run: npm run build
+
+      - name: Detector de Impeccable
+        run: |
+          npx -y impeccable@4.0.0 detect --json src > "$RUNNER_TEMP/impeccable.json" || true
+          node -e '
+            const h = JSON.parse(require("fs").readFileSync(process.argv[1], "utf8"));
+            if (h.length) { console.error(JSON.stringify(h, null, 2)); process.exit(1); }
+            console.log("Impeccable: sin hallazgos.");
+          ' "$RUNNER_TEMP/impeccable.json"
