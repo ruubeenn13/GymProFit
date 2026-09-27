@@ -13,6 +13,9 @@ export interface Carga<T> {
   recargar: () => void;
 }
 
+/** Evento que avisa de que la API no ha contestado, para comprobar su estado ya. */
+export const EVENTO_SIN_RESPUESTA = 'gymprofit:api-sin-respuesta';
+
 /** Texto de un error para enseñarlo tal cual. */
 export function textoError(e: unknown): string {
   if (e instanceof ApiError) return e.message;
@@ -39,7 +42,10 @@ export function useCarga<T>(pedir: (senal: AbortSignal) => Promise<T>, deps: Dep
       })
       .catch((e) => {
         // Una petición cancelada no es un error: la sustituye otra.
-        if (!control.signal.aborted) setError(textoError(e));
+        if (control.signal.aborted) return;
+        setError(textoError(e));
+        // Sin respuesta de la API: la cabecera no debe seguir diciendo «en marcha».
+        if (!(e instanceof ApiError)) window.dispatchEvent(new Event(EVENTO_SIN_RESPUESTA));
       })
       .finally(() => {
         if (!control.signal.aborted) setCargando(false);

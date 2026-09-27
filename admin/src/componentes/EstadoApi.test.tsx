@@ -1,0 +1,30 @@
+// Estado de la API en la cabecera: si una petición se queda sin respuesta, la
+// cabecera lo comprueba en el acto y deja de decir «API en marcha».
+import { act, cleanup, render, screen } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { EVENTO_SIN_RESPUESTA } from '../util/useCarga';
+import { PildorasEstado, ProveedorEstadoApi } from './EstadoApi';
+
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});
+
+describe('estado de la API', () => {
+  it('pasa a «sin respuesta» en cuanto una lista no llega a la API', async () => {
+    let caida = false;
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => {
+      if (caida) throw new TypeError('Failed to fetch');
+      const cuerpo = String(url).endsWith('/actuator/health') ? { status: 'UP' } : { commit: 'b10fffe1234' };
+      return new Response(JSON.stringify(cuerpo), { status: 200 });
+    }));
+
+    render(<ProveedorEstadoApi><PildorasEstado /></ProveedorEstadoApi>);
+    expect(await screen.findByText('API en marcha')).toBeTruthy();
+    expect(screen.getByRole('link').getAttribute('href')).toBe('https://github.com/ruubeenn13/GymProFit/commit/b10fffe1234');
+
+    caida = true;
+    act(() => { window.dispatchEvent(new Event(EVENTO_SIN_RESPUESTA)); });
+    expect(await screen.findByText('API sin respuesta')).toBeTruthy();
+  });
+});

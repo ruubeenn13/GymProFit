@@ -1,11 +1,13 @@
 // ============================================================
 // Estado de la API: si responde (/actuator/health) y qué commit corre
 // (/actuator/info), con enlace al commit en GitHub (GP-085). Se comprueba al
-// abrir y cada minuto; lo comparten la cabecera y la tarjeta Sistema del Resumen.
+// abrir, cada minuto y en cuanto una petición se queda sin respuesta; lo comparten
+// la cabecera y la tarjeta Sistema del Resumen.
 // ============================================================
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { admin } from '../api/admin';
 import { api } from '../api/cliente';
+import { EVENTO_SIN_RESPUESTA } from '../util/useCarga';
 import { Icono } from './Icono';
 
 const REPOSITORIO = 'https://github.com/ruubeenn13/GymProFit';
@@ -52,9 +54,11 @@ export function ProveedorEstadoApi({ children }: { children: ReactNode }) {
       if (!control.signal.aborted) setComprobado(new Date());
     })();
     const reloj = window.setInterval(comprobar, CADA_MS);
+    window.addEventListener(EVENTO_SIN_RESPUESTA, comprobar);
     return () => {
       control.abort();
       window.clearInterval(reloj);
+      window.removeEventListener(EVENTO_SIN_RESPUESTA, comprobar);
     };
   }, [vuelta, comprobar]);
 
