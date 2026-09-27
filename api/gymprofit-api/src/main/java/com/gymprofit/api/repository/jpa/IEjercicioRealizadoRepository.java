@@ -75,6 +75,20 @@ public interface IEjercicioRealizadoRepository extends JpaRepository<EjercicioRe
                                          @Param("desde") LocalDateTime desde);
 
     /**
+     * Como {@link #seriesPorMusculoDesde}, pero por el INICIO de la sesión: para la semana
+     * natural de Inicio, una sesión es del día en que empieza aunque acabe pasada la
+     * medianoche, igual que la cuenta de sesiones de la semana que hace la app.
+     *
+     * @return filas {@code [musculoPrimario, grupoMuscular, series]}.
+     */
+    @Query("SELECT e.musculoPrimario, e.grupoMuscular, SUM(COALESCE(er.seriesCompletadas, 0)) " +
+           "FROM EjercicioRealizado er JOIN er.ejercicio e JOIN er.sesion s " +
+           "WHERE s.usuario.id = :usuarioId AND s.completada = true AND s.fechaInicio >= :desde " +
+           "GROUP BY e.musculoPrimario, e.grupoMuscular")
+    List<Object[]> seriesPorMusculoDesdeInicio(@Param("usuarioId") Integer usuarioId,
+                                               @Param("desde") LocalDateTime desde);
+
+    /**
      * Kilos movidos en una sesión, sumando serie a serie (peso × repeticiones).
      * <p>
      * Solo cubre las sesiones con registro por serie. Las anteriores no tienen filas

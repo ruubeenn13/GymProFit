@@ -206,6 +206,7 @@ Todos van bajo el context-path `/api`. Los `@RequestMapping` de los controllers 
 |---|---|---|---|
 | GET | `/sesiones/{id}` | USER+ | Por ID |
 | GET | `/sesiones/usuario/{usuarioId}` | USER+ | Del usuario |
+| GET | `/sesiones/usuario/{usuarioId}/volumen-muscular` | USER+ | Series por músculo: de los últimos `dias` (7 por defecto) o, con `desde`, de las sesiones que empiezan desde esa fecha y hora local (la semana natural de Inicio) |
 | POST | `/sesiones` | USER+ | Crear sesión (evalúa logros si `completada=true`) |
 | POST | `/sesiones/completa` | USER+ | Crear sesión **con sus ejercicios y series** en una transacción. Idempotente |
 | PATCH | `/sesiones/{id}` | USER+ | Actualización parcial |

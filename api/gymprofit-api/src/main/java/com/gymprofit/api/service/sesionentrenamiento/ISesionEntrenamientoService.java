@@ -7,6 +7,7 @@ import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.VolumenMuscularDTO;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 // ============================================================
@@ -90,6 +91,12 @@ public interface ISesionEntrenamientoService {
      * @return una entrada por músculo tocado; los no tocados simplemente no salen.
      */
     List<VolumenMuscularDTO> getVolumenMuscular(Integer usuarioId, int dias);
+
+    /**
+     * Series por músculo de las sesiones que empiezan en {@code desde} o después: la
+     * semana natural de Inicio, con el lunes a las 00:00 que manda la app en su hora.
+     */
+    List<VolumenMuscularDTO> getVolumenMuscularDesde(Integer usuarioId, LocalDateTime desde);
 
     /**
      * Kilos movidos en una sesión: el número grande del resumen tras entrenar.

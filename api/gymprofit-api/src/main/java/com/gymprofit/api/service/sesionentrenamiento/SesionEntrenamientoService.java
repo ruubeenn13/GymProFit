@@ -651,8 +651,26 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         securityUtils.checkOwnership(usuarioId);
 
         LocalDateTime desde = LocalDateTime.now().minusDays(Math.max(1, dias));
-        List<Object[]> filas = ejercicioRealizadoRepository.seriesPorMusculoDesde(usuarioId, desde);
+        return agruparPorMusculo(ejercicioRealizadoRepository.seriesPorMusculoDesde(usuarioId, desde));
+    }
 
+    /**
+     * Series por músculo de la semana natural, para «Esta semana» de Inicio.
+     * <p>
+     * El lunes lo calcula la app con su zona horaria, que es la misma con la que guarda
+     * {@code fechaInicio}: la API no sabe en qué huso está el usuario y no lo adivina.
+     *
+     * @param usuarioId dueño de las sesiones (se comprueba la propiedad).
+     * @param desde     inicio de la semana, en la hora local del usuario.
+     */
+    @Override
+    public List<VolumenMuscularDTO> getVolumenMuscularDesde(Integer usuarioId, LocalDateTime desde) {
+        securityUtils.checkOwnership(usuarioId);
+        return agruparPorMusculo(ejercicioRealizadoRepository.seriesPorMusculoDesdeInicio(usuarioId, desde));
+    }
+
+    // Normaliza y acumula las filas [musculoPrimario, grupoMuscular, series] por músculo.
+    private List<VolumenMuscularDTO> agruparPorMusculo(List<Object[]> filas) {
         // Dos filas distintas ("Bíceps" y "biceps") pueden caer en el mismo músculo, así
         // que se acumulan en un mapa en vez de mapearse una a una.
         Map<String, Integer> acumulado = new LinkedHashMap<>();

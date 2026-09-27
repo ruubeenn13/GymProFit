@@ -1,5 +1,7 @@
 package com.gymprofit.api.controller;
 
+import io.swagger.v3.oas.annotations.Parameter;
+import java.time.LocalDateTime;
 import com.gymprofit.api.dto.common.CountDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionCompletaCreateDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoCreateDTO;
@@ -366,7 +368,7 @@ public class SesionEntrenamientoController {
         return ResponseEntity.ok(sesionEntrenamientoService.patch(id, patchDTO));
     }
 
-    @Operation(summary = "Series por músculo del usuario en los últimos días",
+    @Operation(summary = "Series por músculo del usuario en los últimos días o desde una fecha",
             description = "Alimenta la silueta muscular de la pantalla de inicio: por cada músculo " +
                     "tocado en sesiones completadas dentro de la ventana, cuántas series ha recibido. " +
                     "Los músculos sin trabajar no aparecen; la app los pinta en gris.")
@@ -380,10 +382,18 @@ public class SesionEntrenamientoController {
     @GetMapping("/sesiones/usuario/{usuarioId}/volumen-muscular")
     public ResponseEntity<List<VolumenMuscularDTO>> obtenerVolumenMuscular(
             @PathVariable Integer usuarioId,
-            @RequestParam(defaultValue = "7") int dias) {
+            @RequestParam(defaultValue = "7") int dias,
+            @Parameter(description = "Inicio de la semana natural en la hora local del usuario "
+                    + "(p. ej. 2026-09-21T00:00:00). Si viene, manda sobre dias y cuenta las "
+                    + "sesiones que empiezan desde ahí.")
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde) {
 
         // Lista vacía y no 404: un usuario que no ha entrenado nunca no es un error, es
         // justamente el caso que la silueta en gris está pensada para enseñar.
+        if (desde != null) {
+            return ResponseEntity.ok(sesionEntrenamientoService.getVolumenMuscularDesde(usuarioId, desde));
+        }
         return ResponseEntity.ok(sesionEntrenamientoService.getVolumenMuscular(usuarioId, dias));
     }
 

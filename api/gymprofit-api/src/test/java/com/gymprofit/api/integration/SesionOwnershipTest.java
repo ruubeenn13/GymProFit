@@ -76,6 +76,7 @@ class SesionOwnershipTest extends AbstractOwnershipTest {
             "GET /sesiones/usuario/{owner}/ordenadas",
             "GET /sesiones/usuario/{owner}/completadas/ordenadas",
             "GET /sesiones/usuario/{owner}/volumen-muscular",
+            "GET /sesiones/usuario/{owner}/volumen-muscular?desde=2026-09-21T00:00:00",
             "GET /sesiones/count/usuario/{owner}"
     })
     @DisplayName("id ajeno → 403 al atacante; el dueño no recibe 403")
