@@ -99,6 +99,16 @@ public class MainActivity extends BaseActivity {
         pager.setUserInputEnabled(false);
         // Las cuatro vivas: cambiar de pestaña no re-infla; cada una recarga al volver.
         pager.setOffscreenPageLimit(NavTabs.TOTAL - 1);
+        // Cada pestaña que se crea fuera de la vista nace ya apartada del foco.
+        getSupportFragmentManager().registerFragmentLifecycleCallbacks(
+                new androidx.fragment.app.FragmentManager.FragmentLifecycleCallbacks() {
+                    @Override
+                    public void onFragmentViewCreated(@NonNull androidx.fragment.app.FragmentManager fm,
+                                                      @NonNull Fragment f, @NonNull View v,
+                                                      @Nullable Bundle estado) {
+                        pager.post(() -> ocultarPestanasNoVisibles(pager.getCurrentItem()));
+                    }
+                }, false);
 
         barra.setOyente(new BarraNavegacion.Oyente() {
             @Override public void onPestana(int pestana) {
@@ -183,6 +193,23 @@ public class MainActivity extends BaseActivity {
     private void pintarPestana(int index) {
         barra.setActiva(index);
         atrasAInicio.setEnabled(NavTabs.atrasVuelveAInicio(index));
+        pager.post(() -> ocultarPestanasNoVisibles(index));
+    }
+
+    // Las cuatro pestañas siguen vivas en el pager: sin esto el foco de teclado (Tab) y
+    // el de accesibilidad entraban en las que no se ven. Con -1 se apartan todas (la
+    // hoja del «+» abierta tapa la que se ve).
+    private void ocultarPestanasNoVisibles(int visible) {
+        for (int i = 0; i < NavTabs.TOTAL; i++) {
+            Fragment f = getSupportFragmentManager().findFragmentByTag("f" + i);
+            View v = f != null ? f.getView() : null;
+            if (v == null) continue;
+            boolean esta = i == visible;
+            ((android.view.ViewGroup) v).setDescendantFocusability(esta
+                    ? android.view.ViewGroup.FOCUS_AFTER_DESCENDANTS : android.view.ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+            v.setImportantForAccessibility(esta ? View.IMPORTANT_FOR_ACCESSIBILITY_AUTO
+                    : View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+        }
     }
 
     // Lleva a la sección de Progreso que pida el intent (notificaciones).
@@ -228,7 +255,7 @@ public class MainActivity extends BaseActivity {
         barra.setAccionesAbiertas(true);
         atrasCierraHoja.setEnabled(true);
         // Lo de detrás deja de existir para TalkBack mientras la hoja está abierta.
-        pager.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+        ocultarPestanasNoVisibles(-1);
         View titulo = findViewById(R.id.tvTituloAcciones);
         titulo.post(() -> titulo.performAccessibilityAction(
                 AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS, null));
@@ -250,7 +277,7 @@ public class MainActivity extends BaseActivity {
 
         barra.setAccionesAbiertas(false);
         atrasCierraHoja.setEnabled(false);
-        pager.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
+        ocultarPestanasNoVisibles(pager.getCurrentItem());
     }
 
     // Subtítulos de la hoja: solo lo que ya se sabe; lo demás, oculto.
