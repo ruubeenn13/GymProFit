@@ -5,7 +5,9 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import com.gymprofit.api.dto.auth.ResetPasswordDTO;
 import com.gymprofit.api.entity.PasswordResetCodigo;
+import com.gymprofit.api.entity.Role;
 import com.gymprofit.api.entity.Usuario;
+import com.gymprofit.api.enums.RoleType;
 import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.repository.jpa.IPasswordResetCodigoRepository;
 import com.gymprofit.api.repository.jpa.IUsuarioRepository;
@@ -190,6 +192,19 @@ class PasswordResetServiceTest {
 
         verifyNoInteractions(emailService);
         verify(codigoRepository, never()).save(any(PasswordResetCodigo.class));
+    }
+
+    @Test
+    @DisplayName("la cuenta de invitado no recibe código, se pida por usuario o por correo")
+    void cuenta_invitado_no_recibe_codigo() {
+        usuario.setRoles(List.of(new Role(RoleType.GUEST.getValue(), RoleType.GUEST)));
+
+        assertThatCode(() -> service.solicitarCodigo(USERNAME)).doesNotThrowAnyException();
+        assertThatCode(() -> service.solicitarCodigo(EMAIL)).doesNotThrowAnyException();
+
+        verifyNoInteractions(emailService);
+        verify(codigoRepository, never()).save(any(PasswordResetCodigo.class));
+        assertThat(almacen).isEmpty();
     }
 
     @Test

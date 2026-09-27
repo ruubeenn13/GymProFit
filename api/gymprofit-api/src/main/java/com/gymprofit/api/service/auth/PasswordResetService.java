@@ -3,6 +3,7 @@ package com.gymprofit.api.service.auth;
 import com.gymprofit.api.dto.auth.ResetPasswordDTO;
 import com.gymprofit.api.entity.PasswordResetCodigo;
 import com.gymprofit.api.entity.Usuario;
+import com.gymprofit.api.enums.RoleType;
 import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.repository.jpa.IPasswordResetCodigoRepository;
 import com.gymprofit.api.repository.jpa.IUsuarioRepository;
@@ -93,6 +94,13 @@ public class PasswordResetService implements IPasswordResetService {
         // Una cuenta desactivada no se recupera por correo: eso lo decide un administrador.
         if (!Boolean.TRUE.equals(usuario.getActivo())) {
             logger.info("Recuperación de contraseña pedida para la cuenta desactivada id={}", usuario.getId());
+            return;
+        }
+
+        // El invitado es una cuenta compartida y sin dueño (ver DataInitializer): no hay
+        // nadie a quien devolverle el acceso, así que tampoco hay código que mandar.
+        if (esInvitado(usuario)) {
+            logger.info("Recuperación de contraseña pedida para la cuenta de invitado id={}", usuario.getId());
             return;
         }
 
@@ -189,6 +197,12 @@ public class PasswordResetService implements IPasswordResetService {
         Optional<Usuario> porUsername = usuarioRepository.findByUsername(limpio);
 
         return porUsername.isPresent() ? porUsername : usuarioRepository.findByEmail(limpio);
+    }
+
+    // El rol GUEST lo lleva solo la cuenta compartida de POST /auth/guest.
+    private static boolean esInvitado(Usuario usuario) {
+        return usuario.getRoles() != null
+                && usuario.getRoles().stream().anyMatch(rol -> rol.getNombre() == RoleType.GUEST);
     }
 
     // Seis dígitos con ceros a la izquierda incluidos: 000123 es tan válido como 987654.

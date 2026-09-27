@@ -40,10 +40,12 @@ public class DataInitializer implements CommandLineRunner {
 
     private static final Logger logger = LoggerFactory.getLogger(DataInitializer.class);
 
+    // Correos en gymprofit.app, el dominio del producto (GP-106). Las filas ya creadas
+    // con el dominio anterior las mueve la migración V202609271000.
     private static final String ADMIN_USERNAME = "admin";
-    private static final String ADMIN_EMAIL = "admin@gymprofit.com";
+    private static final String ADMIN_EMAIL = "admin@gymprofit.app";
     private static final String GUEST_USERNAME = "guest";
-    private static final String GUEST_EMAIL = "guest@gymprofit.com";
+    private static final String GUEST_EMAIL = "guest@gymprofit.app";
 
     // Generador de la contraseña inutilizable del invitado (ver crearInvitado).
     private static final SecureRandom RANDOM = new SecureRandom();

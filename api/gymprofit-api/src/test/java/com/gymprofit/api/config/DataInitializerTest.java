@@ -92,7 +92,7 @@ class DataInitializerTest {
         Usuario admin = buscar(usuariosCreados(2), "admin");
         assertThat(tieneRol(admin, RoleType.ADMIN)).isTrue();
         assertThat(admin.getPassword()).isEqualTo("enc:" + PASSWORD_DE_ADMIN);
-        assertThat(admin.getEmail()).isEqualTo("admin@gymprofit.com");
+        assertThat(admin.getEmail()).isEqualTo("admin@gymprofit.app");
         assertThat(admin.getActivo()).isTrue();
     }
 
@@ -111,6 +111,22 @@ class DataInitializerTest {
         assertThat(tieneRol(guest, RoleType.GUEST)).isTrue();
         assertThat(passwordEncoder.matches("guest", guest.getPassword())).isFalse();
         assertThat(passwordEncoder.matches("", guest.getPassword())).isFalse();
+    }
+
+    /**
+     * GP-106. Las cuentas semilla solo pueden llevar correos de gymprofit.app, el dominio
+     * del producto. Un correo en un dominio ajeno es un buzón que controla otro: quien lo
+     * tenga recibe lo que la API mande a esa cuenta.
+     */
+    @Test
+    void ningunaCuentaSemillaTieneCorreoFueraDeGymprofitApp() {
+        prepararBdVacia();
+
+        ejecutarSemilla(PASSWORD_DE_ADMIN);
+
+        assertThat(usuariosCreados(2))
+                .extracting(Usuario::getEmail)
+                .allSatisfy(email -> assertThat(email).endsWith("@gymprofit.app"));
     }
 
     // Dos arranques no pueden compartir la contraseña del invitado: si fuese determinista
