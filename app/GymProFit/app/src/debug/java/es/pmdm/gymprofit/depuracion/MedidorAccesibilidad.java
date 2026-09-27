@@ -132,6 +132,22 @@ public class MedidorAccesibilidad extends AccessibilityService {
                 Log.i(TAG, String.format(Locale.ROOT, "TAP %3.0fx%-3.0f %s %s %s \"%s\"",
                         wDp, hDp, bajo ? "<48" : "   ", n.getClassName(), id, recortar(nombre)));
             }
+            // Lo que TalkBack dice además del nombre (GP-105): estado, rol, si está
+            // seleccionado y su posición en una colección.
+            CharSequence estado = Build.VERSION.SDK_INT >= 30 ? n.getStateDescription() : null;
+            CharSequence rol = n.getExtras() != null
+                    ? n.getExtras().getCharSequence("AccessibilityNodeInfo.roleDescription") : null;
+            if (n.getContentDescription() != null || estado != null || rol != null || n.isSelected()) {
+                AccessibilityNodeInfo.CollectionItemInfo item = n.getCollectionItemInfo();
+                // Lo que TalkBack no ve (importantForAccessibility en no) sale marcado:
+                // este medidor pide también las vistas no importantes.
+                Log.i(TAG, String.format(Locale.ROOT, "A11Y%s %s nombre=\"%s\" estado=\"%s\" rol=\"%s\" sel=%b pos=%s",
+                        n.isImportantForAccessibility() ? "" : "(oculto)",
+                        id, n.getContentDescription() != null
+                                ? n.getContentDescription().toString().replace('\n', ' ') : "",
+                        estado != null ? estado : "", rol != null ? rol : "", n.isSelected(),
+                        item != null ? item.getColumnIndex() : "-"));
+            }
         }
         for (int i = 0; i < n.getChildCount(); i++) {
             recorrer(n.getChild(i), dm, escala, c);
