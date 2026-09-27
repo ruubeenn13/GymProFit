@@ -26,14 +26,17 @@ import es.pmdm.gymprofit.network.RutinaApi;
 import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.ui.activities.ResumenSesionActivity;
 import es.pmdm.gymprofit.ui.adapters.SesionAdapter;
+import es.pmdm.gymprofit.utils.NombresRutina;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
 // HistorialFragment — sección Historial de Progreso (GP-105; antes SesionesActivity).
 //
-// Las sesiones registradas con el nombre de su rutina propia. Se borra con
-// confirmación y se abre el resumen de cada una. Registrar una sesión está en el «+» y en Entrenar.
+// Las sesiones registradas con el nombre de su rutina. El nombre sale de las rutinas
+// propias Y de las plantillas: antes solo conocía las propias y una sesión hecha con
+// una plantilla decía «Sin rutina asociada» (GP-113). Se borra con confirmación y se
+// abre el resumen de cada una. Registrar una sesión está en el «+» y en Entrenar.
 // ============================================================
 public class HistorialFragment extends BaseFragment {
 
@@ -44,7 +47,7 @@ public class HistorialFragment extends BaseFragment {
     private final RutinaApi rutinaApi = ApiClient.service(RutinaApi.class);
 
     private Map<Integer, String> rutinaNombres = new HashMap<>();
-    @Nullable private List<Rutina> propias;
+    @Nullable private List<Rutina> propias, plantillas;
     @Nullable private List<SesionEntrenamiento> sesiones;
     private int pendientes;
     private boolean fallo;
@@ -78,14 +81,20 @@ public class HistorialFragment extends BaseFragment {
             mostrar(new ArrayList<>());
             return;
         }
-        pendientes = 2;
+        pendientes = 3;
         fallo = false;
         propias = null;
+        plantillas = null;
         sesiones = null;
 
         rutinaApi.getDeUsuarioActivas(uid).enqueue(new ApiCallback<List<Rutina>>() {
             @Override public void onOk(List<Rutina> l) { propias = l; listo(); }
             // Sin los nombres, las sesiones se ven igual, solo sin rótulo de rutina.
+            @Override public void onFail(int code, String m) { listo(); }
+        });
+        rutinaApi.getPredefinidas().enqueue(new ApiCallback<List<Rutina>>() {
+            @Override public void onOk(List<Rutina> l) { plantillas = l; listo(); }
+            // Igual que arriba: el nombre es un rótulo, no el dato.
             @Override public void onFail(int code, String m) { listo(); }
         });
         sesionApi.getDeUsuario(uid).enqueue(new ApiCallback<List<SesionEntrenamiento>>() {
@@ -105,8 +114,7 @@ public class HistorialFragment extends BaseFragment {
 
     private void listo() {
         if (!isAdded() || fallo || --pendientes > 0 || sesiones == null) return;
-        rutinaNombres = new HashMap<>();
-        if (propias != null) for (Rutina r : propias) rutinaNombres.put(r.getId(), r.getNombre());
+        rutinaNombres = NombresRutina.de(propias, plantillas);
         tvVacio.setText(R.string.sesiones_sin_sesiones);
         mostrar(sesiones);
     }
