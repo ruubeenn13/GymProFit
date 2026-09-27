@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.Serializable;
 
@@ -29,6 +30,7 @@ public class ResetPasswordDTO implements Serializable {
     // Los seis dígitos recibidos por correo.
     @NotBlank
     @Pattern(regexp = "^\\d{6}$", message = "El código debe tener 6 dígitos")
+    @ToString.Exclude
     private String codigo;
 
     // Contraseña en texto plano (se hashea en el servicio). Política de GP-101 (DEC-034):
@@ -36,5 +38,6 @@ public class ResetPasswordDTO implements Serializable {
     // bloqueo y el nombre los comprueba PoliticaContrasena en el servicio.
     @NotBlank
     @ContrasenaNueva
+    @ToString.Exclude
     private String newPassword;
 }

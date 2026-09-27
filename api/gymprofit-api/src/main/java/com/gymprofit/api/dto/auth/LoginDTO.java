@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.Serializable;
 
@@ -22,5 +23,6 @@ public class LoginDTO implements Serializable {
 
     // Contraseña en texto plano (se valida contra el hash almacenado)
     @NotBlank
+    @ToString.Exclude
     private String password;
 }

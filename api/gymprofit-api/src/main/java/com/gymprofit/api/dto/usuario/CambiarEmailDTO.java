@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.Serializable;
 
@@ -31,5 +32,6 @@ public class CambiarEmailDTO implements Serializable {
 
     // Contraseña actual en texto plano, solo para comparar contra el hash guardado.
     @NotBlank
+    @ToString.Exclude
     private String password;
 }

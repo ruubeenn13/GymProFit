@@ -4,6 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import com.gymprofit.api.enums.TipoObjetivo;
 
@@ -27,6 +28,7 @@ public class UsuarioCreateDTO implements Serializable {
     // Contraseña en claro recibida del cliente (se cifra en el servicio antes de guardar).
     @NotBlank
     @Size(min = 6, max = 100)
+    @ToString.Exclude
     private String password;
 
     // Correo electrónico válido y único.

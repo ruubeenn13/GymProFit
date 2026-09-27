@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.Serializable;
 
@@ -18,6 +19,7 @@ import java.io.Serializable;
 public class DeviceTokenCreateDTO implements Serializable {
     // Token FCM del dispositivo (obligatorio).
     @NotBlank
+    @ToString.Exclude
     private String token;
 
     // Plataforma del dispositivo (opcional; por defecto ANDROID).

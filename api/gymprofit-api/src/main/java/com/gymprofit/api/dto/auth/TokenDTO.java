@@ -3,6 +3,7 @@ package com.gymprofit.api.dto.auth;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.List;
@@ -18,8 +19,10 @@ import java.util.List;
 @NoArgsConstructor
 public class TokenDTO implements Serializable {
     // Access token JWT de vida corta que autoriza las peticiones.
+    @ToString.Exclude
     private String token;
     // Refresh token opaco de larga duración para renovar el access token.
+    @ToString.Exclude
     private String refreshToken;
     private String username;
     private List<String> roles;

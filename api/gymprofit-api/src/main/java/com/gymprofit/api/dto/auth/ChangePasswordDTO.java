@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.Serializable;
 
@@ -20,6 +21,7 @@ import java.io.Serializable;
 public class ChangePasswordDTO implements Serializable {
     // Contraseña actual en texto plano; se valida contra el hash guardado antes de permitir el cambio.
     @NotBlank
+    @ToString.Exclude
     private String currentPassword;
 
     // Contraseña en texto plano (se hashea en el servicio). Política de GP-101 (DEC-034):
@@ -27,5 +29,6 @@ public class ChangePasswordDTO implements Serializable {
     // bloqueo y el nombre los comprueba PoliticaContrasena en el servicio.
     @NotBlank
     @ContrasenaNueva
+    @ToString.Exclude
     private String newPassword;
 }

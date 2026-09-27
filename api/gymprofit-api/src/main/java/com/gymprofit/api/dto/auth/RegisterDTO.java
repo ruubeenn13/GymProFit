@@ -4,6 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import com.gymprofit.api.enums.TipoObjetivo;
 
@@ -30,6 +31,7 @@ public class RegisterDTO implements Serializable {
     // bloqueo y el nombre los comprueba PoliticaContrasena en el servicio.
     @NotBlank
     @ContrasenaNueva
+    @ToString.Exclude
     private String password;
 
     // Correo electrónico del usuario, debe tener formato válido

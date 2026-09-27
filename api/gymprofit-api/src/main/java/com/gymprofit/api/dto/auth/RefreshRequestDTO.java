@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.Serializable;
 
@@ -20,5 +21,6 @@ public class RefreshRequestDTO implements Serializable {
 
     // Refresh token opaco emitido previamente en el login.
     @NotBlank(message = "El refresh token es obligatorio")
+    @ToString.Exclude
     private String refreshToken;
 }
