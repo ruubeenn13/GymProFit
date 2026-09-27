@@ -4,6 +4,9 @@
   una fila de cinco columnas iguales: Inicio · Entrenar · «+» · Nutrición · Progreso.
   80 dp de alto como el lienzo (8 arriba, 12 abajo); el hueco de la barra de gestos
   o de botones del sistema se suma debajo, desde BarraNavegacion.aplicarInsets.
+  El «+» sube 2 dp por encima de su columna (marginTop -2dp, como el lienzo): para que
+  esos 2 dp se dibujen, ni su columna ni filaBarra recortan a sus hijos, y filaBarra
+  tampoco a su relleno (GP-118, BarraNavegacionRecorteTest).
 -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -18,6 +21,8 @@
         android:layout_width="match_parent"
         android:layout_height="79dp"
         android:orientation="horizontal"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         android:paddingStart="4dp"
         android:paddingEnd="4dp"
         android:paddingTop="8dp"
