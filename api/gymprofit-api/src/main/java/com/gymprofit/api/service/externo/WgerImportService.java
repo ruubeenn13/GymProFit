@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gymprofit.api.entity.Ejercicio;
 import com.gymprofit.api.enums.Dificultad;
+import com.gymprofit.api.enums.Equipamiento;
 import com.gymprofit.api.enums.GrupoMuscular;
 import com.gymprofit.api.exceptions.ExternalServiceException;
 import com.gymprofit.api.repository.jpa.IEjercicioRepository;
@@ -259,7 +260,8 @@ public class WgerImportService {
     }
 
     // Traducción ES de wger (nombre + descripción ES/EN) para enriquecer FED.
-    private record WgerEs(String nombreEs, String descEs, String descEn) {}
+    // Visible en el paquete para los tests (GP-122).
+    record WgerEs(String nombreEs, String descEs, String descEn) {}
 
     // Descarga wger y construye un índice: nombre EN normalizado → traducción ES/EN.
     // free-exercise-db es solo inglés; los ejercicios que matchean por nombre muestran
@@ -382,7 +384,8 @@ public class WgerImportService {
     // Convierte un ejercicio de free-exercise-db en entidad Ejercicio. TODOS traen
     // 2 fotogramas → todos con demostración. Enriquece nombre/descripción con la
     // traducción ES de wger si el nombre matchea; si no, queda en inglés (fallback).
-    private Optional<Ejercicio> mapearFed(JsonNode nodo, Map<String, WgerEs> wgerEs) {
+    // Visible en el paquete para los tests (GP-122).
+    Optional<Ejercicio> mapearFed(JsonNode nodo, Map<String, WgerEs> wgerEs) {
         JsonNode imagenes = nodo.path("images");
         if (!imagenes.isArray() || imagenes.isEmpty()) return Optional.empty();
 
@@ -427,6 +430,10 @@ public class WgerImportService {
         e.setDificultad(nivelFed(nodo.path("level").asText("")));
         e.setEquipoNecesario(equipoFed != null ? equipoFed[0] : "Sin equipo");
         e.setEquipoNecesarioEn(equipoFed != null ? equipoFed[1] : "Bodyweight");
+        // La lista cerrada por la que filtra la administración, sacada del mismo texto
+        // (GP-122). En uno ya existente no se toca: copiarCampos no la copia, y lo que
+        // se haya corregido a mano se queda.
+        e.setEquipamiento(Equipamiento.desdeEquipoNecesario(e.getEquipoNecesario(), e.getEquipoNecesarioEn()));
         e.setImagenUrl(img1);
         e.setImagenUrl2(img2);
         e.setActivo(true);
