@@ -3,7 +3,7 @@
 // Solo pasan cuentas ADMIN; cualquier otra ve el mismo aviso que una contraseña
 // equivocada, para no decir desde fuera qué cuentas existen ni cuáles no lo son.
 // ============================================================
-import { useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { ApiError } from '../api/cliente';
 import { Icono, type NombreIcono } from '../componentes/Icono';
@@ -19,7 +19,7 @@ const PUNTOS: { icono: NombreIcono; texto: string }[] = [
 ];
 
 export function Entrada() {
-  const { usuario, caducada, entrar } = useSesion();
+  const { usuario, caducada, entrar, salir } = useSesion();
   const navegar = useNavigate();
   const ubicacion = useLocation();
   const [nombre, setNombre] = useState('');
@@ -29,8 +29,22 @@ export function Entrada() {
   const [error, setError] = useState<string | null>(null);
 
   useTituloDocumento('Entrar');
-  const destino = (ubicacion.state as { desde?: string } | null)?.desde ?? '/';
-  if (usuario) return <Navigate to={destino} replace />;
+  const estado = ubicacion.state as { desde?: string; cerrarSesion?: boolean } | null;
+  const destino = estado?.desde ?? '/';
+  // «Cerrar sesión» llega aquí navegando, para que el aviso de cambios sin guardar
+  // salte antes; la sesión se cierra ya en Entrada.
+  // Después se limpia el estado de la navegación: si no, volver a entrar la cerraría otra vez.
+  const cerrando = !!estado?.cerrarSesion && !!usuario;
+  const yaCerrando = useRef(false);
+  useEffect(() => {
+    if (!cerrando || yaCerrando.current) return;
+    yaCerrando.current = true;
+    void salir().finally(() => {
+      yaCerrando.current = false;
+      navegar('/entrar', { replace: true });
+    });
+  }, [cerrando, salir, navegar]);
+  if (usuario && !cerrando) return <Navigate to={destino} replace />;
 
   async function alEnviar(e: FormEvent) {
     e.preventDefault();
@@ -72,6 +86,11 @@ export function Entrada() {
       </section>
       <section className="entrada__formulario">
         <form onSubmit={alEnviar} noValidate aria-labelledby="titulo-entrar">
+          {/* En el móvil, solo el formulario: la marca sube aquí. */}
+          <div className="entrada__marca entrada__marca--movil">
+            <span className="marca marca--grande">GymProFit</span>
+            <span className="insignia insignia--grande">Administración</span>
+          </div>
           <div className="entrada__cabeza">
             <h1 id="titulo-entrar">Entrar</h1>
             <span>Con tu cuenta de administrador de GymProFit.</span>
@@ -80,14 +99,18 @@ export function Entrada() {
             <p className="nota" role="status"><Icono nombre="history" tamano={20} />La sesión ha caducado. Vuelve a entrar.</p>
           )}
           <div className="campo">
-            <label htmlFor="usuario" className="campo__etiqueta entrada__etiqueta">Usuario</label>
-            <input id="usuario" className="campo__control entrada__control" type="text" autoComplete="username"
+            <label htmlFor="usuario" className="campo__etiqueta entrada__etiqueta">
+              Usuario <span className="campo__obligatorio">(obligatorio)</span>
+            </label>
+            <input id="usuario" className="campo__control entrada__control" type="text" autoComplete="username" aria-required="true"
                    value={nombre} onChange={(e) => setNombre(e.target.value)} aria-invalid={!!error} autoFocus />
           </div>
           <div className="campo">
-            <label htmlFor="contrasena" className="campo__etiqueta entrada__etiqueta">Contraseña</label>
+            <label htmlFor="contrasena" className="campo__etiqueta entrada__etiqueta">
+              Contraseña <span className="campo__obligatorio">(obligatorio)</span>
+            </label>
             <div className="entrada__clave">
-              <input id="contrasena" type={verContrasena ? 'text' : 'password'} autoComplete="current-password"
+              <input id="contrasena" type={verContrasena ? 'text' : 'password'} autoComplete="current-password" aria-required="true"
                      value={contrasena} onChange={(e) => setContrasena(e.target.value)} aria-invalid={!!error}
                      aria-describedby={error ? 'error-entrada' : undefined} />
               <button type="button" className="boton-icono"

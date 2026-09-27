@@ -4,17 +4,19 @@
 // «sin revisar», grupo y equipamiento; y el editor, con «Guardar y siguiente sin
 // revisar» y la marca «se dice igual en español». Un nombre en español distinto
 // del inglés cuenta como revisado al guardar (lo decide la API).
+// Lista y editor lado a lado solo desde 1440 px; por debajo, el editor ocupa la
+// pantalla, con «Volver a la lista» (GP-120).
 // ============================================================
-import { useCallback, useEffect, useId, useState, type FormEvent, type ReactNode } from 'react';
-import { admin, type EjercicioDetalle, type EjercicioGuardar, type ResumenEjercicios } from '../api/admin';
+import { useCallback, useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from 'react';
+import { admin, type Ejercicio, type EjercicioDetalle, type EjercicioGuardar, type ResumenEjercicios } from '../api/admin';
 import { Icono } from '../componentes/Icono';
 import { Marco } from '../componentes/Marco';
-import { AvisoFlotante, Buscador, DialogoDescartar, EstadoLista, Filtro, Interruptor, Paginacion, useAvisoAlSalir, type Aviso } from '../componentes/Piezas';
+import { AvisoFlotante, Buscador, DialogoDescartar, EstadoLista, Filtro, Interruptor, Paginacion, POR_PAGINA, useBloqueoCambios, type Aviso } from '../componentes/Piezas';
 import { cuenta, entero } from '../util/formato';
+import { ANCHO, useMedia } from '../util/useMedia';
 import { textoError, useCarga } from '../util/useCarga';
 import { DIFICULTADES, GRUPOS, ORIGEN_EJERCICIO } from './etiquetas';
 
-const TAMANO = 8;
 
 type Formulario = Omit<EjercicioGuardar, 'nombreEn' | 'descripcion' | 'descripcionEn' | 'instrucciones' | 'instruccionesEn'
   | 'musculoPrimario' | 'musculoPrimarioEn'> & {
@@ -55,8 +57,10 @@ function faltaEspanol(es: string, en: string): string | undefined {
   return undefined;
 }
 
-function Editor({ id, resumen, alGuardado, alSiguiente, avisar, alCambiarSucio }: {
+function Editor({ id, resumen, alGuardado, alSiguiente, avisar, alCambiarSucio, enfocar }: {
   id: number;
+  /** Poner el foco en el título al cargar: al abrirlo a pantalla completa o al pasar al siguiente. */
+  enfocar: boolean;
   alCambiarSucio: (sucio: boolean) => void;
   resumen: ResumenEjercicios | null;
   alGuardado: () => void;
@@ -69,10 +73,16 @@ function Editor({ id, resumen, alGuardado, alSiguiente, avisar, alCambiarSucio }
   const [base, setBase] = useState<Formulario | null>(null);
   const [guardando, setGuardando] = useState(false);
   const [errorNombre, setErrorNombre] = useState<string | null>(null);
+  const titulo = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     if (datos) { setF(aFormulario(datos)); setBase(aFormulario(datos)); }
   }, [datos]);
+
+  const cargado = !!datos && !!f;
+  useEffect(() => {
+    if (cargado && enfocar) titulo.current?.focus();
+  }, [cargado, enfocar]);
 
   const cambiar = <K extends keyof Formulario>(clave: K, valor: Formulario[K]) => setF((x) => (x ? { ...x, [clave]: valor } : x));
 
@@ -111,7 +121,6 @@ function Editor({ id, resumen, alGuardado, alSiguiente, avisar, alCambiarSucio }
   }
 
   const sucio = !!f && !!base && JSON.stringify(f) !== JSON.stringify(base);
-  useAvisoAlSalir(sucio);
   useEffect(() => { alCambiarSucio(sucio); }, [sucio, alCambiarSucio]);
   // Al cerrarse el editor (otra fila, «siguiente»), sus cambios dejan de contar.
   useEffect(() => () => alCambiarSucio(false), [alCambiarSucio]);
@@ -121,13 +130,13 @@ function Editor({ id, resumen, alGuardado, alSiguiente, avisar, alCambiarSucio }
   const quedaraRevisado = !!f && (f.nombreRevisado || !mismoNombre);
 
   return (
-    <form className="tarjeta editor" onSubmit={alEnviar} aria-label={datos ? `Editar ${datos.nombre}` : 'Editor de ejercicio'} noValidate>
+    <form className="editor" onSubmit={alEnviar} aria-label={datos ? `Editar ${datos.nombre}` : 'Editor de ejercicio'} noValidate>
       <EstadoLista cargando={cargando && !datos} error={error} vacio={false} textoVacio="" alReintentar={recargar}>
         {datos && f && (
           <>
             <div className="editor__cabeza">
               <div>
-                <h2>{datos.nombre}</h2>
+                <h2 ref={titulo} tabIndex={-1}>{datos.nombre}</h2>
                 <span className="editor__origen">
                   {ORIGEN_EJERCICIO[datos.origen]} · {datos.rutinas === 0 ? 'no está en ninguna rutina' : `se usa en ${cuenta(datos.rutinas, 'rutina', 'rutinas')}`}
                 </span>
@@ -139,8 +148,10 @@ function Editor({ id, resumen, alGuardado, alSiguiente, avisar, alCambiarSucio }
 
             <div className="rejilla rejilla--2">
               <div className="campo">
-                <label htmlFor="ej-nombre" className="campo__etiqueta">Nombre en español</label>
-                <input id="ej-nombre" className={`campo__control${!quedaraRevisado ? ' campo__control--pendiente' : ''}`}
+                <label htmlFor="ej-nombre" className="campo__etiqueta">
+                  Nombre en español <span className="campo__obligatorio">(obligatorio)</span>
+                </label>
+                <input id="ej-nombre" className={`campo__control${!quedaraRevisado ? ' campo__control--pendiente' : ''}`} aria-required="true"
                        value={f.nombre} maxLength={100} onChange={(e) => cambiar('nombre', e.target.value)}
                        aria-invalid={!!errorNombre} aria-describedby={errorNombre ? 'ej-nombre-error' : undefined} />
                 {errorNombre && <span id="ej-nombre-error" className="campo__error">{errorNombre}</span>}
@@ -247,6 +258,13 @@ function Editor({ id, resumen, alGuardado, alSiguiente, avisar, alCambiarSucio }
   );
 }
 
+/** Lo que le falta a un ejercicio, para la tarjeta del móvil. */
+function falta(e: Ejercicio): string | null {
+  if (!e.nombreRevisado) return 'Sin revisar';
+  if (!e.nombreEn) return 'Falta el inglés';
+  return null;
+}
+
 export function Ejercicios() {
   const [q, setQ] = useState('');
   const [sinRevisar, setSinRevisar] = useState(true);
@@ -255,17 +273,29 @@ export function Ejercicios() {
   const [pagina, setPagina] = useState(0);
   const [elegido, setElegido] = useState<number | null>(null);
   const [sucio, setSucio] = useState(false);
-  const [pendiente, setPendiente] = useState<number | null>(null);
-
-  // Elegir otra fila con cambios sin guardar pregunta antes.
-  function elegir(id: number) {
-    if (id === elegido) return;
-    if (sucio) setPendiente(id); else setElegido(id);
-  }
+  // A dónde se iba cuando saltó el aviso de cambios: otra fila, o la lista (null).
+  const [pendiente, setPendiente] = useState<{ id: number | null } | null>(null);
+  const [enfocar, setEnfocar] = useState(false);
+  const [volverA, setVolverA] = useState<number | null>(null);
   const [aviso, setAviso] = useState<Aviso | null>(null);
+  const dos = useMedia(ANCHO.dosColumnas);
+  const movil = useMedia(ANCHO.movil);
+  const avisoSalir = useBloqueoCambios(sucio);
+
+  function abrir(id: number | null) {
+    if (id === null && elegido !== null) setVolverA(elegido);
+    setEnfocar(!dos);
+    setElegido(id);
+  }
+
+  // Elegir otra fila, o volver a la lista, con cambios sin guardar pregunta antes.
+  function elegir(id: number | null) {
+    if (id === elegido) return;
+    if (sucio) setPendiente({ id }); else abrir(id);
+  }
 
   const resumen = useCarga((s) => admin.resumenEjercicios(s), []);
-  const lista = useCarga((s) => admin.ejercicios({ q, grupo, equipamiento, sinRevisar, page: pagina, size: TAMANO }, s),
+  const lista = useCarga((s) => admin.ejercicios({ q, grupo, equipamiento, sinRevisar, page: pagina, size: POR_PAGINA }, s),
     [q, grupo, equipamiento, sinRevisar, pagina]);
   const cerrarAviso = useCallback(() => setAviso(null), []);
 
@@ -278,9 +308,17 @@ export function Ejercicios() {
   }, [resumen.error, resumen.recargar]);
 
   useEffect(() => {
-    // Al abrir la pantalla, el primero de la lista queda elegido: es por donde se empieza.
-    if (elegido === null && lista.datos?.content.length) setElegido(lista.datos.content[0].id);
-  }, [lista.datos, elegido]);
+    // Con lista y editor juntos, el primero queda elegido: es por donde se empieza.
+    // Por debajo de 1440 px se empieza por la lista.
+    if (dos && elegido === null && lista.datos?.content.length) setElegido(lista.datos.content[0].id);
+  }, [lista.datos, elegido, dos]);
+
+  useEffect(() => {
+    // Al volver a la lista, el foco vuelve a la fila de la que se salió.
+    if (volverA === null || elegido !== null) return;
+    document.querySelector<HTMLElement>(`[data-fila="${volverA}"]`)?.focus();
+    setVolverA(null);
+  }, [volverA, elegido]);
 
   function filtrar(cambio: () => void) {
     cambio();
@@ -297,6 +335,7 @@ export function Ejercicios() {
       const pendientes = await admin.ejercicios({ sinRevisar: true, page: 0, size: 100 });
       const otro = pendientes.content.find((e) => e.id !== actual);
       if (otro) {
+        setEnfocar(true);
         setElegido(otro.id);
         setAviso({ tipo: 'ok', texto: 'Guardado. Vamos con el siguiente sin revisar.' });
       } else {
@@ -309,55 +348,85 @@ export function Ejercicios() {
 
   const total = lista.datos?.totalElements ?? 0;
   const r = resumen.datos;
+  const ejercicios = lista.datos?.content ?? [];
+  const verLista = dos || elegido === null;
 
   return (
     <Marco titulo="Ejercicios" subtitulo={r ? `${entero(r.activos)} activos · ${entero(r.sinRevisar)} sin revisar` : undefined}>
-      <div className="dos-columnas dos-columnas--ejercicios">
-        <section className="lista" aria-label="Lista de ejercicios">
-          <Buscador etiqueta="Buscar ejercicios" marcador="Busca por nombre, en español o en inglés" alBuscar={(t) => filtrar(() => setQ(t))} />
-          <div className="lista__filtros lista__filtros--envuelve">
-            <button type="button" className="chip" aria-pressed={sinRevisar} onClick={() => filtrar(() => setSinRevisar((v) => !v))}>
-              {sinRevisar && <Icono nombre="check" tamano={18} />}Sin revisar{r ? ` · ${entero(r.sinRevisar)}` : ''}
-            </button>
-            <Filtro etiqueta="Grupo" valor={grupo} alCambiar={(v) => filtrar(() => setGrupo(v))}
-                    opciones={[{ valor: '', texto: 'todos' }, ...Object.entries(GRUPOS).map(([v, t]) => ({ valor: v, texto: t.toLowerCase() }))]} />
-            <Filtro etiqueta="Equipamiento" valor={equipamiento} alCambiar={(v) => filtrar(() => setEquipamiento(v))}
-                    opciones={[{ valor: '', texto: 'todo' }, ...(r?.equipamientos ?? []).map((o) => ({ valor: o.valor, texto: o.etiqueta.toLowerCase() }))]} />
-          </div>
-          <div className="tarjeta tabla-marco">
-            <EstadoLista cargando={lista.cargando} error={lista.error} vacio={total === 0}
-                         textoVacio={sinRevisar ? 'No queda ningún ejercicio sin revisar con estos filtros.' : 'Ningún ejercicio con estos filtros.'}
-                         alReintentar={lista.recargar}>
-              <table className="tabla tabla--ejercicios">
-                <caption className="solo-lector">{sinRevisar ? 'Ejercicios sin revisar' : 'Ejercicios'}, por nombre</caption>
-                <thead><tr><th scope="col">Nombre · español / inglés</th><th scope="col">Grupo</th><th scope="col">Equipamiento</th></tr></thead>
-                <tbody>
-                  {lista.datos?.content.map((e) => (
-                    <tr key={e.id} data-elegida={elegido === e.id} onClick={() => elegir(e.id)}>
-                      <td>
-                        <button type="button" className="fila-boton" aria-current={elegido === e.id ? 'true' : undefined} onClick={(ev) => { ev.stopPropagation(); elegir(e.id); }}>
-                          <span className="fila-boton__principal">{e.nombre}</span>
-                          <span className="fila-boton__secundario">{e.nombreEn ?? 'Sin nombre en inglés'}</span>
+      <div className={`reparto${dos ? ' reparto--dos' : ''}`}>
+        {verLista && (
+          <section className="lista" aria-label="Lista de ejercicios">
+            <div className="lista__filtros lista__filtros--envuelve">
+              <Buscador etiqueta="Buscar ejercicios" marcador="Busca por nombre, en español o en inglés" alBuscar={(t) => filtrar(() => setQ(t))} />
+              <button type="button" className="chip" aria-pressed={sinRevisar} onClick={() => filtrar(() => setSinRevisar((v) => !v))}>
+                {sinRevisar && <Icono nombre="check" tamano={18} />}Sin revisar{r ? ` · ${entero(r.sinRevisar)}` : ''}
+              </button>
+              <Filtro etiqueta="Grupo" valor={grupo} alCambiar={(v) => filtrar(() => setGrupo(v))}
+                      opciones={[{ valor: '', texto: 'todos' }, ...Object.entries(GRUPOS).map(([v, t]) => ({ valor: v, texto: t.toLowerCase() }))]} />
+              <Filtro etiqueta="Equipamiento" valor={equipamiento} alCambiar={(v) => filtrar(() => setEquipamiento(v))}
+                      opciones={[{ valor: '', texto: 'todo' }, ...(r?.equipamientos ?? []).map((o) => ({ valor: o.valor, texto: o.etiqueta.toLowerCase() }))]} />
+            </div>
+            <div className={movil ? 'tarjetas-marco' : 'tarjeta tabla-marco'}>
+              <EstadoLista cargando={lista.cargando} error={lista.error} vacio={total === 0}
+                           textoVacio={sinRevisar ? 'No queda ningún ejercicio sin revisar con estos filtros.' : 'Ningún ejercicio con estos filtros.'}
+                           alReintentar={lista.recargar}>
+                {movil ? (
+                  <ul className="tarjetas" aria-label={sinRevisar ? 'Ejercicios sin revisar, por nombre' : 'Ejercicios, por nombre'}>
+                    {ejercicios.map((e) => (
+                      <li key={e.id}>
+                        <button type="button" className="tarjeta-fila" data-fila={e.id} onClick={() => elegir(e.id)}>
+                          <span className="tarjeta-fila__texto">
+                            <span className="fila-boton__principal">{e.nombre}</span>
+                            <span className="fila-boton__secundario">{e.nombreEn ?? 'Sin nombre en inglés'}</span>
+                          </span>
+                          {falta(e) && <span className="etiqueta etiqueta--aviso">{falta(e)}</span>}
                         </button>
-                      </td>
-                      <td>{GRUPOS[e.grupoMuscular] ?? e.grupoMuscular}</td>
-                      <td>{r?.equipamientos.find((o) => o.valor === e.equipamiento)?.etiqueta ?? e.equipamiento}
-                        {!e.activo && <span className="solo-lector"> (oculto en la app)</span>}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </EstadoLista>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <table className="tabla tabla--ejercicios">
+                    <caption className="solo-lector">{sinRevisar ? 'Ejercicios sin revisar' : 'Ejercicios'}, por nombre</caption>
+                    <thead><tr><th scope="col">Nombre · español / inglés</th><th scope="col">Grupo</th><th scope="col">Equipamiento</th></tr></thead>
+                    <tbody>
+                      {ejercicios.map((e) => (
+                        <tr key={e.id} data-elegida={elegido === e.id} onClick={() => elegir(e.id)}>
+                          <td>
+                            <button type="button" className="fila-boton" data-fila={e.id} aria-current={elegido === e.id ? 'true' : undefined}
+                                    onClick={(ev) => { ev.stopPropagation(); elegir(e.id); }}>
+                              <span className="fila-boton__principal">{e.nombre}</span>
+                              <span className="fila-boton__secundario">{e.nombreEn ?? 'Sin nombre en inglés'}</span>
+                            </button>
+                          </td>
+                          <td>{GRUPOS[e.grupoMuscular] ?? e.grupoMuscular}</td>
+                          <td>{r?.equipamientos.find((o) => o.valor === e.equipamiento)?.etiqueta ?? e.equipamiento}
+                            {!e.activo && <span className="solo-lector"> (oculto en la app)</span>}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </EstadoLista>
+            </div>
+            {total > 0 && <Paginacion pagina={pagina} tamano={POR_PAGINA} total={total} alCambiar={setPagina} />}
+          </section>
+        )}
+        {elegido !== null ? (
+          <div className="reparto__editor">
+            {!dos && (
+              <button type="button" className="boton boton--volver" onClick={() => elegir(null)}>
+                <Icono nombre="chevron_left" tamano={20} />Volver a la lista
+              </button>
+            )}
+            <Editor key={elegido} id={elegido} resumen={r} alGuardado={alGuardado} alSiguiente={siguiente} avisar={setAviso}
+                    alCambiarSucio={setSucio} enfocar={enfocar} />
           </div>
-          {total > 0 && <Paginacion pagina={pagina} tamano={TAMANO} total={total} alCambiar={setPagina} />}
-        </section>
-        {elegido !== null
-          ? <Editor key={elegido} id={elegido} resumen={r} alGuardado={alGuardado} alSiguiente={siguiente} avisar={setAviso}
-                    alCambiarSucio={setSucio} />
-          : <div className="tarjeta editor editor--vacio"><p>Elige un ejercicio de la lista para editarlo.</p></div>}
+        ) : dos && <div className="editor editor--vacio"><p>Elige un ejercicio de la lista para editarlo.</p></div>}
       </div>
       <DialogoDescartar abierto={pendiente !== null} alSeguir={() => setPendiente(null)}
-                        alDescartar={() => { setSucio(false); setElegido(pendiente); setPendiente(null); }} />
+                        texto={pendiente?.id === null ? 'Hay cambios sin guardar en el editor. Si vuelves a la lista, se pierden.' : undefined}
+                        alDescartar={() => { setSucio(false); abrir(pendiente!.id); setPendiente(null); }} />
+      {avisoSalir}
       <AvisoFlotante aviso={aviso} alCerrar={cerrarAviso} />
     </Marco>
   );

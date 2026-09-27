@@ -45,7 +45,7 @@ function AltasPorSemana({ semanas }: { semanas: DatosResumen['altasPorSemana'] }
             <div key={s.lunes} className="grafica__columna">
               <span className={`grafica__valor${actual ? ' grafica__valor--actual' : ''}`}>{s.altas}</span>
               <div className={`grafica__barra grafica__barra--alta${actual ? ' grafica__barra--actual' : ''}`}
-                   style={{ height: alto(s.altas, maximo, 135) }} />
+                   style={{ height: alto(s.altas, maximo, 136) }} />
             </div>
           );
         })}
@@ -78,7 +78,7 @@ function SesionesPorDia({ dias }: { dias: DatosResumen['sesionesPorDia'] }) {
         {dias.map((d, i) => (
           <div key={d.fecha} title={`${diaMes(deCalendario(d.fecha))}: ${d.sesiones}`}
                className={`grafica__barra grafica__barra--sesion${i === dias.length - 1 ? ' grafica__barra--hoy' : ''}`}
-               style={{ height: alto(d.sesiones, maximo, 168) }} />
+               style={{ height: alto(d.sesiones, maximo, 160) }} />
         ))}
       </div>
       <div className="grafica__ejes grafica__ejes--dias" aria-hidden="true">

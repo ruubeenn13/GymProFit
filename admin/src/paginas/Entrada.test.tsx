@@ -28,8 +28,8 @@ function pintar(fetchFalso: typeof fetch) {
       </MemoryRouter>
     </ProveedorSesion>,
   );
-  fireEvent.change(screen.getByLabelText('Usuario'), { target: { value: 'ana' } });
-  fireEvent.change(screen.getByLabelText('Contraseña'), { target: { value: 'una frase larga' } });
+  fireEvent.change(screen.getByLabelText(/^Usuario/), { target: { value: 'ana' } });
+  fireEvent.change(screen.getByLabelText(/^Contraseña/), { target: { value: 'una frase larga' } });
   fireEvent.click(screen.getByRole('button', { name: 'Entrar' }));
   return cliente;
 }
@@ -51,6 +51,19 @@ describe('Entrada', () => {
     const cliente = pintar(responder(200, { token: 't', refreshToken: 'r', username: 'admin', roles: ['ADMIN'] }));
     expect(await screen.findByText('Panel de administración')).toBeTruthy();
     expect(cliente.usuario()).toBe('admin');
+  });
+
+  it('usuario y contraseña se marcan como obligatorios', () => {
+    const cliente = crearCliente({ base: 'https://api.test/api', fetch: responder(500, {}) });
+    render(
+      <ProveedorSesion cliente={cliente}>
+        <MemoryRouter initialEntries={['/entrar']}><Entrada /></MemoryRouter>
+      </ProveedorSesion>,
+    );
+    for (const campo of [screen.getByLabelText(/^Usuario/), screen.getByLabelText(/^Contraseña/)]) {
+      expect(campo.getAttribute('aria-required')).toBe('true');
+      expect((campo as HTMLInputElement).labels?.[0].textContent).toMatch(/obligatorio/);
+    }
   });
 
   it('sin usuario o sin contraseña, lo dice antes de llamar a la API', async () => {

@@ -4,7 +4,8 @@ Fase 1 de GP-085: Entrada, Resumen, Usuarios, Ejercicios y Alimentos. Plantillas
 Decisión de arquitectura: **DEC-035** en `documentacion/PRODUCT-DECISIONS.md`.
 
 - **React + Vite + TypeScript**, React Router. Tests con Vitest y Testing Library. Nada más: ni librerías de componentes ni de gráficas (las barras del resumen son CSS).
-- **Solo en español** y pensada para escritorio (1280 px o más); por debajo se apila.
+- **Solo en español y solo en tema oscuro** (DEC-035). Se adapta a cualquier ancho (GP-120): barra lateral desde 1280 px, barra de iconos de 768 a 1279, y por debajo el título arriba, cuatro pestañas abajo y tarjetas en vez de tablas. Ejercicios y Alimentos enseñan lista y editor juntos desde 1440 px.
+- **Producto y sistema visual** en `PRODUCT.md` y `DESIGN.md`, para Impeccable. `DESIGN.md` sale de `src/estilos/tokens.css`: si cambia un token, cambian los dos.
 - **Toda escritura pasa por la API con rol ADMIN.** La web nunca toca la base de datos y no lleva ningún secreto: solo la URL de la API, en `.env.development` y `.env.production`. El repositorio es público.
 - **Tokens solo en memoria.** Ni `localStorage` ni `sessionStorage`: al recargar se vuelve a entrar. Ante un 401, una renovación con `/auth/refresh` y un solo reintento; si falla, a Entrada.
 - **Fuentes e iconos servidos desde la propia web.** Barlow y Barlow Condensed en `public/fuentes` (las mismas que `web/`, más Barlow 700, OFL). Los iconos son Material Symbols Rounded en SVG, en `src/iconos`, solo los que se usan. Nada de Google Fonts ni de CDN.
@@ -17,6 +18,7 @@ npm ci
 npm run dev      # http://localhost:5173, contra la API local (http://localhost:8080/api)
 npm test         # Vitest
 npm run build    # dist/
+npx -y impeccable@4.0.0 detect src   # detector de Impeccable; el CI falla con cualquier hallazgo
 ```
 
 La API local ya admite el origen `http://localhost:5173` (valor por defecto de `app.cors.allowed-origins`). Para entrar, la cuenta `admin` de la base local; **nunca la de producción** para probar.

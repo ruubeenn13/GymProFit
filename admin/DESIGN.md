@@ -10,7 +10,7 @@ colors:
   seleccion: "#252A31"
   borde: "#252A31"
   borde-suave: "#1E2228"
-  borde-control: "#4A505B"
+  borde-control: "#676F7E"
   texto: "#F2F2F3"
   texto-etiqueta: "#D3D8DF"
   texto-secundario: "#C9CFD8"
@@ -29,36 +29,93 @@ colors:
   peligro: "#F9A8A8"
   peligro-borde: "#7A3434"
   peligro-fondo: "#2A1616"
-  barra-alta: "#6B3A17"
-  barra-sesion: "#2F4E78"
+  barra-alta: "#A05722"
+  barra-sesion: "#4270A8"
+  foto-fondo: "#FFFFFF"
   barra-sesion-hoy: "#6BA6F5"
 typography:
+  entrada-titular:
+    fontFamily: "Barlow Condensed, Barlow, system-ui, sans-serif"
+    fontSize: "60px"
+    fontWeight: 700
+    lineHeight: 1.02
+  entrada-titular-medio:
+    fontFamily: "Barlow Condensed, Barlow, system-ui, sans-serif"
+    fontSize: "46px"
+    fontWeight: 700
+  entrada-titulo:
+    fontFamily: "Barlow Condensed, Barlow, system-ui, sans-serif"
+    fontSize: "38px"
+    fontWeight: 700
   display:
     fontFamily: "Barlow Condensed, Barlow, system-ui, sans-serif"
     fontSize: "36px"
     fontWeight: 700
     lineHeight: 1
+  marca-grande:
+    fontFamily: "Barlow Condensed, Barlow, system-ui, sans-serif"
+    fontSize: "34px"
+    fontWeight: 700
   headline:
     fontFamily: "Barlow Condensed, Barlow, system-ui, sans-serif"
     fontSize: "32px"
+    fontWeight: 700
+  title-lg:
+    fontFamily: "Barlow Condensed, Barlow, system-ui, sans-serif"
+    fontSize: "28px"
+    fontWeight: 700
+  marca:
+    fontFamily: "Barlow Condensed, Barlow, system-ui, sans-serif"
+    fontSize: "26px"
+    fontWeight: 700
+  title-dialogo:
+    fontFamily: "Barlow Condensed, Barlow, system-ui, sans-serif"
+    fontSize: "24px"
     fontWeight: 700
   title:
     fontFamily: "Barlow Condensed, Barlow, system-ui, sans-serif"
     fontSize: "22px"
     fontWeight: 700
+  body-destacado:
+    fontFamily: "Barlow, system-ui, sans-serif"
+    fontSize: "17px"
+    fontWeight: 400
+  body-lg:
+    fontFamily: "Barlow, system-ui, sans-serif"
+    fontSize: "16px"
+    fontWeight: 400
   body:
     fontFamily: "Barlow, system-ui, sans-serif"
     fontSize: "15px"
     fontWeight: 400
     lineHeight: 1.4
+  body-sm:
+    fontFamily: "Barlow, system-ui, sans-serif"
+    fontSize: "14px"
+    fontWeight: 400
   label:
     fontFamily: "Barlow, system-ui, sans-serif"
     fontSize: "13px"
     fontWeight: 600
+  caption:
+    fontFamily: "Barlow, system-ui, sans-serif"
+    fontSize: "12px"
+    fontWeight: 400
 rounded:
+  barra-base: "2px"
+  barra-sesion: "4px"
+  barra-alta: "6px"
+  aviso: "8px"
+  pildora-22: "11px"
   control: "12px"
+  pildora-26: "13px"
+  pildora-28: "14px"
   tarjeta: "18px"
-  pildora: "22px"
+  pildora-40: "20px"
+  pildora-44: "22px"
+  pildora-46: "23px"
+  pildora-48: "24px"
+  pildora-52: "26px"
 spacing:
   s1: "4px"
   s2: "8px"
@@ -69,13 +126,13 @@ components:
   boton-principal:
     backgroundColor: "{colors.acento}"
     textColor: "{colors.acento-sobre}"
-    rounded: "{rounded.pildora}"
+    rounded: "{rounded.pildora-46}"
     height: "46px"
     padding: "0 20px"
   boton:
     backgroundColor: "transparent"
     textColor: "{colors.texto}"
-    rounded: "{rounded.pildora}"
+    rounded: "{rounded.pildora-46}"
     height: "46px"
     padding: "0 20px"
   campo:
@@ -132,6 +189,9 @@ de su mismo tono.
   de tarjeta, filas de tabla y controles.
 - Cinco tonos de texto, de **texto** a **texto tenue**, para jerarquía sin tamaño.
 
+- **Blanco foto** (foto-fondo): solo el fondo de las miniaturas, porque las fotos del catálogo
+  vienen con fondo blanco.
+
 ### Estados
 - **Verde** (ok / ok-fondo), **ámbar** (aviso / aviso-fondo) y **rojo claro** (peligro,
   peligro-borde, peligro-fondo): siempre texto claro sobre fondo oscuro del mismo tono.
@@ -148,12 +208,17 @@ decora.
 **Character:** Condensada y firme para títulos y cifras; Barlow limpia para leer y escribir.
 
 ### Hierarchy
+- **Entrada** (700, 60px; 46px por debajo de 1280 px; título del formulario a 38px): solo la
+  pantalla de Entrada.
 - **Display** (700, 36px, 1): cifras del Resumen.
-- **Headline** (700, 32px): título de cada pantalla.
-- **Title** (700, 22px): títulos de tarjeta y de gráfica.
-- **Body** (400, 15px, 1.4): tablas, fichas y formularios. En el móvil, nunca por debajo de 14px y
-  los campos a 16px.
+- **Marca** (700, 26px; 34px en Entrada): el nombre GymProFit.
+- **Headline** (700, 32px; 26px en el móvil): título de cada pantalla.
+- **Title** (700, 22px): títulos de tarjeta y de gráfica; 24px en diálogos, 26px en la ficha y
+  28px en el editor.
+- **Body** (400, 15px, 1.4): tablas, fichas y formularios; 14px para textos secundarios, 16px
+  para campos en el móvil y 17px para la lista de Entrada. En el móvil, nunca por debajo de 14px.
 - **Label** (600, 13px): etiquetas de campo y cabeceras de tabla en escritorio.
+- **Caption** (400, 12px): ejes de gráfica e insignia, solo en escritorio.
 
 ## Layout
 
@@ -177,7 +242,8 @@ con un velo negro al 60%.
 ## Shapes
 
 Esquinas suaves y consistentes: 12px en campos y notas, 18px en tarjetas y diálogos, y píldora
-completa en botones, filtros, chips y etiquetas.
+completa (la mitad del alto) en botones, filtros, chips, etiquetas e interruptor. Las barras de
+las gráficas, redondeadas arriba (6 o 4px) y casi rectas abajo (2px).
 
 ## Components
 

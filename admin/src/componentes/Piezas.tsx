@@ -1,8 +1,10 @@
 // ============================================================
-// Piezas pequeñas compartidas por las pantallas (GP-085):
-// estado de lista, paginación, filtro, interruptor, buscador y aviso flotante.
+// Piezas pequeñas compartidas por las pantallas (GP-085, GP-120):
+// estado de lista, paginación, filtro, interruptor, buscador, aviso flotante y el
+// aviso de cambios sin guardar.
 // ============================================================
 import { useEffect, useId, useState, type ReactNode } from 'react';
+import { useBlocker } from 'react-router-dom';
 import { entero } from '../util/formato';
 import { Dialogo } from './Dialogo';
 import { Icono } from './Icono';
@@ -47,7 +49,10 @@ export function EstadoLista({ cargando, error, vacio, textoVacio, alReintentar, 
   return <>{children}</>;
 }
 
-/** «1–8 de 42» y las flechas de página. */
+/** Filas por página en las tres listas. */
+export const POR_PAGINA = 25;
+
+/** «1–25 de 42» y las flechas de página. */
 export function Paginacion({ pagina, tamano, total, alCambiar }: {
   pagina: number; tamano: number; total: number; alCambiar: (p: number) => void;
 }) {
@@ -173,17 +178,38 @@ export function useAvisoAlSalir(sucio: boolean) {
   }, [sucio]);
 }
 
-/** Pregunta antes de tirar lo escrito en un editor al elegir otra fila. */
-export function DialogoDescartar({ abierto, alDescartar, alSeguir }: {
-  abierto: boolean; alDescartar: () => void; alSeguir: () => void;
+/**
+ * Pregunta antes de tirar lo escrito en un editor.
+ *
+ * @param props.texto qué pasa si se descarta; por defecto, al abrir otro
+ */
+export function DialogoDescartar({ abierto, alDescartar, alSeguir, texto }: {
+  abierto: boolean; alDescartar: () => void; alSeguir: () => void; texto?: string;
 }) {
   return (
     <Dialogo abierto={abierto} titulo="¿Descartar los cambios?" alCerrar={alSeguir}>
-      <p className="dialogo__texto">Hay cambios sin guardar en el editor. Si abres otro, se pierden.</p>
+      <p className="dialogo__texto">{texto ?? 'Hay cambios sin guardar en el editor. Si abres otro, se pierden.'}</p>
       <div className="dialogo__acciones">
         <button type="button" className="boton" onClick={alSeguir}>Seguir editando</button>
         <button type="button" className="boton boton--peligro" onClick={alDescartar}>Descartar</button>
       </div>
     </Dialogo>
+  );
+}
+
+/**
+ * Con cambios sin guardar, salir de la pantalla por la barra lateral, por las
+ * pestañas o por cualquier enlace pregunta antes, con el mismo diálogo que al elegir
+ * otra fila. Cerrar o recargar la pestaña lo pregunta el navegador (useAvisoAlSalir).
+ *
+ * @param sucio si hay algo escrito que no se ha guardado
+ * @return el diálogo, para pintarlo en la pantalla
+ */
+export function useBloqueoCambios(sucio: boolean): ReactNode {
+  useAvisoAlSalir(sucio);
+  const bloqueo = useBlocker(({ currentLocation, nextLocation }) => sucio && currentLocation.pathname !== nextLocation.pathname);
+  return (
+    <DialogoDescartar abierto={bloqueo.state === 'blocked'} texto="Hay cambios sin guardar en el editor. Si sales, se pierden."
+                      alSeguir={() => bloqueo.reset?.()} alDescartar={() => bloqueo.proceed?.()} />
   );
 }

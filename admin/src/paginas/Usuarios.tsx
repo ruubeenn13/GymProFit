@@ -4,6 +4,8 @@
 // la ficha de la cuenta: sus datos, cuántas sesiones y comidas tiene (no cuáles:
 // son datos de salud), desactivar, dar o quitar el rol de administrador, y el
 // borrado a petición del titular, que pide escribir su nombre de usuario.
+// La ficha se abre como panel encima de la tabla (GP-120); en el móvil, la tabla
+// pasa a tarjetas y la ficha ocupa la pantalla.
 // La API es la que protege: aquí solo se evita pedir lo que va a rechazar.
 // ============================================================
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
@@ -11,12 +13,12 @@ import { admin, type Cuenta, type FichaCuenta } from '../api/admin';
 import { Dialogo } from '../componentes/Dialogo';
 import { Icono } from '../componentes/Icono';
 import { Marco } from '../componentes/Marco';
-import { AvisoFlotante, Buscador, EstadoLista, Filtro, Paginacion, type Aviso } from '../componentes/Piezas';
+import { Panel } from '../componentes/Panel';
+import { AvisoFlotante, Buscador, EstadoLista, Filtro, Paginacion, POR_PAGINA, type Aviso } from '../componentes/Piezas';
 import { useSesion } from '../sesion/Sesion';
 import { cuenta as contar, fechaCorta, haceCuanto } from '../util/formato';
+import { ANCHO, useMedia } from '../util/useMedia';
 import { textoError, useCarga } from '../util/useCarga';
-
-const TAMANO = 8;
 
 const TEXTO_ROL: Record<string, string> = { ADMIN: 'Admin', USER: 'Usuario', GUEST: 'Invitado' };
 
@@ -69,14 +71,14 @@ function DialogoBorrar({ cuenta, abierto, alCerrar, alBorrada }: {
           Solo si su titular lo ha pedido a privacidad@gymprofit.app.</p>
         <div className="campo">
           <label htmlFor="confirmacion" className="campo__etiqueta">
-            Escribe <strong>{cuenta.username}</strong> para confirmar
+            Escribe <strong>{cuenta.username}</strong> para confirmar <span className="campo__obligatorio">(obligatorio)</span>
           </label>
-          <input id="confirmacion" className="campo__control" autoComplete="off" spellCheck={false}
+          <input id="confirmacion" className="campo__control" autoComplete="off" spellCheck={false} aria-required="true"
                  value={confirmacion} onChange={(e) => setConfirmacion(e.target.value)} />
         </div>
         <div className="campo">
-          <label htmlFor="motivo" className="campo__etiqueta">Motivo</label>
-          <textarea id="motivo" className="campo__control" rows={2} maxLength={500}
+          <label htmlFor="motivo" className="campo__etiqueta">Motivo <span className="campo__obligatorio">(obligatorio)</span></label>
+          <textarea id="motivo" className="campo__control" rows={2} maxLength={500} aria-required="true"
                     placeholder="Por ejemplo: correo a privacidad@ del 27 de septiembre"
                     value={motivo} onChange={(e) => setMotivo(e.target.value)} aria-describedby="ayuda-motivo" />
           <span id="ayuda-motivo" className="campo__ayuda">Queda en el registro de la API, con el id de la cuenta.</span>
@@ -97,6 +99,7 @@ function Ficha({ id, alCerrar, alCambiar, avisar }: {
   id: number; alCerrar: () => void; alCambiar: () => void; avisar: (a: Aviso) => void;
 }) {
   const { usuario } = useSesion();
+  const movil = useMedia(ANCHO.movil);
   const { datos, cargando, error, recargar } = useCarga<FichaCuenta>((s) => admin.cuenta(id, s), [id]);
   const [ocupado, setOcupado] = useState(false);
   const [dialogoRol, setDialogoRol] = useState(false);
@@ -121,7 +124,12 @@ function Ficha({ id, alCerrar, alCambiar, avisar }: {
   const esAdmin = c?.rol === 'ADMIN';
 
   return (
-    <aside className="tarjeta ficha" aria-label={c ? `Cuenta @${c.username}` : 'Ficha de la cuenta'}>
+    <div className="ficha">
+      {movil && (
+        <button type="button" className="boton boton--volver" onClick={alCerrar}>
+          <Icono nombre="chevron_left" tamano={20} />Volver
+        </button>
+      )}
       <EstadoLista cargando={cargando && !datos} error={error} vacio={false} textoVacio="" alReintentar={recargar}>
         {c && datos && (
           <>
@@ -131,9 +139,11 @@ function Ficha({ id, alCerrar, alCambiar, avisar }: {
                 <h2>@{c.username}</h2>
                 <div className="ficha__etiquetas"><EtiquetaRol rol={c.rol} /><EtiquetaEstado activo={c.activo} /></div>
               </div>
-              <button type="button" className="boton-icono" aria-label="Cerrar la ficha" onClick={alCerrar}>
-                <Icono nombre="close" />
-              </button>
+              {!movil && (
+                <button type="button" className="boton-icono" aria-label="Cerrar la ficha" onClick={alCerrar}>
+                  <Icono nombre="close" />
+                </button>
+              )}
             </div>
             <dl className="ficha__datos">
               <dt>Correo</dt><dd>{c.email}</dd>
@@ -210,7 +220,27 @@ function Ficha({ id, alCerrar, alCambiar, avisar }: {
           </>
         )}
       </EstadoLista>
-    </aside>
+    </div>
+  );
+}
+
+/** En el móvil, una cuenta por tarjeta: usuario, correo y su estado. */
+function TarjetasCuentas({ cuentas, elegida, alAbrir }: { cuentas: Cuenta[]; elegida: number | null; alAbrir: (c: Cuenta) => void }) {
+  return (
+    <ul className="tarjetas" aria-label="Cuentas, de la más nueva a la más antigua">
+      {cuentas.map((c) => (
+        <li key={c.id}>
+          <button type="button" className="tarjeta-fila" data-fila={c.id} aria-current={elegida === c.id ? 'true' : undefined}
+                  onClick={() => alAbrir(c)}>
+            <span className="tarjeta-fila__texto">
+              <span className="fila-boton__principal">@{c.username}</span>
+              <span className="fila-boton__secundario">{c.email}</span>
+            </span>
+            <EtiquetaEstado activo={c.activo} />
+          </button>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -219,10 +249,11 @@ export function Usuarios() {
   const [rol, setRol] = useState('');
   const [estado, setEstado] = useState('');
   const [pagina, setPagina] = useState(0);
-  const [elegida, setElegida] = useState<number | null>(null);
+  const [elegida, setElegida] = useState<Cuenta | null>(null);
   const [aviso, setAviso] = useState<Aviso | null>(null);
+  const movil = useMedia(ANCHO.movil);
 
-  const lista = useCarga((s) => admin.cuentas({ q, rol, activo: estado, page: pagina, size: TAMANO }, s),
+  const lista = useCarga((s) => admin.cuentas({ q, rol, activo: estado, page: pagina, size: POR_PAGINA }, s),
     [q, rol, estado, pagina]);
   const cerrarAviso = useCallback(() => setAviso(null), []);
 
@@ -232,22 +263,23 @@ export function Usuarios() {
   }
 
   const total = lista.datos?.totalElements ?? 0;
+  const cuentas = lista.datos?.content ?? [];
 
   return (
     <Marco titulo="Usuarios" subtitulo={lista.datos ? contar(total, 'cuenta', 'cuentas') : undefined}>
-      <div className={`dos-columnas dos-columnas--usuarios${elegida === null ? ' dos-columnas--sin-panel' : ''}`}>
-        <section className="lista" aria-label="Cuentas">
-          <div className="lista__filtros">
-            <Buscador etiqueta="Buscar cuentas" marcador="Busca por usuario o correo" alBuscar={(t) => filtrar(() => setQ(t))} />
-            <Filtro alto etiqueta="Rol" valor={rol} alCambiar={(v) => filtrar(() => setRol(v))}
-                    opciones={[{ valor: '', texto: 'todos' }, { valor: 'USER', texto: 'usuario' }, { valor: 'ADMIN', texto: 'admin' },
-                      { valor: 'GUEST', texto: 'invitado' }]} />
-            <Filtro alto etiqueta="Estado" valor={estado} alCambiar={(v) => filtrar(() => setEstado(v))}
-                    opciones={[{ valor: '', texto: 'todas' }, { valor: 'true', texto: 'activas' }, { valor: 'false', texto: 'desactivadas' }]} />
-          </div>
-          <div className="tarjeta tabla-marco">
-            <EstadoLista cargando={lista.cargando} error={lista.error} vacio={total === 0}
-                         textoVacio="Ninguna cuenta con esos filtros." alReintentar={lista.recargar}>
+      <section className="lista" aria-label="Cuentas">
+        <div className="lista__filtros">
+          <Buscador etiqueta="Buscar cuentas" marcador="Busca por usuario o correo" alBuscar={(t) => filtrar(() => setQ(t))} />
+          <Filtro alto etiqueta="Rol" valor={rol} alCambiar={(v) => filtrar(() => setRol(v))}
+                  opciones={[{ valor: '', texto: 'todos' }, { valor: 'USER', texto: 'usuario' }, { valor: 'ADMIN', texto: 'admin' },
+                    { valor: 'GUEST', texto: 'invitado' }]} />
+          <Filtro alto etiqueta="Estado" valor={estado} alCambiar={(v) => filtrar(() => setEstado(v))}
+                  opciones={[{ valor: '', texto: 'todas' }, { valor: 'true', texto: 'activas' }, { valor: 'false', texto: 'desactivadas' }]} />
+        </div>
+        <div className={movil ? 'tarjetas-marco' : 'tarjeta tabla-marco'}>
+          <EstadoLista cargando={lista.cargando} error={lista.error} vacio={total === 0}
+                       textoVacio="Ninguna cuenta con esos filtros." alReintentar={lista.recargar}>
+            {movil ? <TarjetasCuentas cuentas={cuentas} elegida={elegida?.id ?? null} alAbrir={setElegida} /> : (
               <table className="tabla tabla--usuarios">
                 <caption className="solo-lector">Cuentas, de la más nueva a la más antigua</caption>
                 <thead>
@@ -255,10 +287,11 @@ export function Usuarios() {
                     <th scope="col">Rol</th><th scope="col">Estado</th></tr>
                 </thead>
                 <tbody>
-                  {lista.datos?.content.map((c) => (
-                    <tr key={c.id} data-elegida={elegida === c.id} onClick={() => setElegida(c.id)}>
+                  {cuentas.map((c) => (
+                    <tr key={c.id} data-elegida={elegida?.id === c.id} onClick={() => setElegida(c)}>
                       <td>
-                        <button type="button" className="fila-boton" aria-current={elegida === c.id ? 'true' : undefined} onClick={(e) => { e.stopPropagation(); setElegida(c.id); }}
+                        <button type="button" className="fila-boton" data-fila={c.id} aria-current={elegida?.id === c.id ? 'true' : undefined}
+                                onClick={(e) => { e.stopPropagation(); setElegida(c); }}
                                 aria-label={`@${c.username}, ${c.email}. Abrir la ficha`}>
                           <span className="fila-boton__principal">@{c.username}</span>
                           <span className="fila-boton__secundario">{c.email}</span>
@@ -272,14 +305,17 @@ export function Usuarios() {
                   ))}
                 </tbody>
               </table>
-            </EstadoLista>
-          </div>
-          {total > 0 && <Paginacion pagina={pagina} tamano={TAMANO} total={total} alCambiar={setPagina} />}
-        </section>
-        {elegida !== null && (
-          <Ficha key={elegida} id={elegida} alCerrar={() => setElegida(null)} alCambiar={lista.recargar} avisar={setAviso} />
-        )}
-      </div>
+            )}
+          </EstadoLista>
+        </div>
+        {total > 0 && <Paginacion pagina={pagina} tamano={POR_PAGINA} total={total} alCambiar={setPagina} />}
+      </section>
+      {elegida !== null && (
+        <Panel abierto etiqueta={`Cuenta @${elegida.username}`} alCerrar={() => setElegida(null)}
+               volverA={() => document.querySelector<HTMLElement>(`[data-fila="${elegida.id}"]`)}>
+          <Ficha key={elegida.id} id={elegida.id} alCerrar={() => setElegida(null)} alCambiar={lista.recargar} avisar={setAviso} />
+        </Panel>
+      )}
       <AvisoFlotante aviso={aviso} alCerrar={cerrarAviso} />
     </Marco>
   );

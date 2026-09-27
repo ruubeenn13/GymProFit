@@ -3,17 +3,19 @@
 // Solo el catálogo: los alimentos que crea cada persona son su dieta y la API no
 // los devuelve aquí. Editor con aviso si las calorías no cuadran con los macros
 // (util/calorias.ts). Se guarda con PATCH /alimentos/{id}, la ruta de siempre.
+// Lista y editor lado a lado solo desde 1440 px; por debajo, el editor ocupa la
+// pantalla, con «Volver a la lista» (GP-120).
 // ============================================================
-import { useCallback, useEffect, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { admin, type Alimento, type AlimentoCambios } from '../api/admin';
 import { Icono } from '../componentes/Icono';
 import { Marco } from '../componentes/Marco';
-import { AvisoFlotante, Buscador, DialogoDescartar, EstadoLista, Filtro, Interruptor, Paginacion, useAvisoAlSalir, type Aviso } from '../componentes/Piezas';
+import { AvisoFlotante, Buscador, DialogoDescartar, EstadoLista, Filtro, Interruptor, Paginacion, POR_PAGINA, useBloqueoCambios, type Aviso } from '../componentes/Piezas';
 import { comprobarCalorias } from '../util/calorias';
 import { decimal1, entero, leerNumero } from '../util/formato';
+import { ANCHO, useMedia } from '../util/useMedia';
 import { textoError, useCarga } from '../util/useCarga';
 
-const TAMANO = 8;
 
 const ORIGEN: Record<Alimento['origen'], string> = {
   OPEN_FOOD_FACTS: 'Importado de Open Food Facts al escanear su código',
@@ -74,18 +76,21 @@ function AvisoCalorias({ f }: { f: Formulario }) {
   );
 }
 
-function Editor({ alimento, categorias, alGuardado, alSiguiente, avisar, alCambiarSucio }: {
+function Editor({ alimento, categorias, alGuardado, alSiguiente, avisar, alCambiarSucio, enfocar }: {
   alimento: Alimento; categorias: string[]; alCambiarSucio: (sucio: boolean) => void;
+  /** Poner el foco en el título al abrirlo: a pantalla completa o al pasar al siguiente. */
+  enfocar: boolean;
   alGuardado: () => void; alSiguiente: (actual: number) => Promise<void>; avisar: (a: Aviso) => void;
 }) {
   const [f, setF] = useState<Formulario>(() => aFormulario(alimento));
   const [errores, setErrores] = useState<Partial<Record<keyof Formulario, string>>>({});
   const [guardando, setGuardando] = useState(false);
+  const titulo = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => { setF(aFormulario(alimento)); setErrores({}); }, [alimento]);
+  useEffect(() => { if (enfocar) titulo.current?.focus(); }, [enfocar]);
 
   const sucio = JSON.stringify(f) !== JSON.stringify(aFormulario(alimento));
-  useAvisoAlSalir(sucio);
   useEffect(() => { alCambiarSucio(sucio); }, [sucio, alCambiarSucio]);
   // Al cerrarse el editor (otra fila, «siguiente»), sus cambios dejan de contar.
   useEffect(() => () => alCambiarSucio(false), [alCambiarSucio]);
@@ -129,10 +134,10 @@ function Editor({ alimento, categorias, alGuardado, alSiguiente, avisar, alCambi
   const sinIngles = !f.nombreEn.trim();
 
   return (
-    <form className="tarjeta editor" onSubmit={alEnviar} aria-label={`Editar ${alimento.nombre}`} noValidate>
+    <form className="editor" onSubmit={alEnviar} aria-label={`Editar ${alimento.nombre}`} noValidate>
       <div className="editor__cabeza">
         <div>
-          <h2>{alimento.nombre}</h2>
+          <h2 ref={titulo} tabIndex={-1}>{alimento.nombre}</h2>
           <span className="editor__origen">{ORIGEN[alimento.origen]}</span>
         </div>
         {sinIngles ? <span className="etiqueta etiqueta--aviso">Falta el inglés</span> : null}
@@ -140,8 +145,10 @@ function Editor({ alimento, categorias, alGuardado, alSiguiente, avisar, alCambi
 
       <div className="rejilla rejilla--2">
         <div className="campo">
-          <label htmlFor="al-es" className="campo__etiqueta">Nombre en español</label>
-          <input id="al-es" className="campo__control" value={f.nombre} maxLength={100} onChange={(e) => cambiar('nombre', e.target.value)}
+          <label htmlFor="al-es" className="campo__etiqueta">
+            Nombre en español <span className="campo__obligatorio">(obligatorio)</span>
+          </label>
+          <input id="al-es" className="campo__control" aria-required="true" value={f.nombre} maxLength={100} onChange={(e) => cambiar('nombre', e.target.value)}
                  aria-invalid={!!errores.nombre} aria-describedby={errores.nombre ? 'al-es-error' : undefined} />
           {errores.nombre && <span id="al-es-error" className="campo__error">{errores.nombre}</span>}
         </div>
@@ -177,8 +184,11 @@ function Editor({ alimento, categorias, alGuardado, alSiguiente, avisar, alCambi
         <div className="rejilla rejilla--5">
           {NUMEROS.map(({ clave, etiqueta }) => (
             <div className="campo" key={clave}>
-              <label htmlFor={`al-${clave}`} className="campo__etiqueta campo__etiqueta--suave">{etiqueta}</label>
+              <label htmlFor={`al-${clave}`} className="campo__etiqueta campo__etiqueta--suave">
+                {etiqueta}{clave === 'calorias' && <> <span className="campo__obligatorio">(obligatorio)</span></>}
+              </label>
               <input id={`al-${clave}`} className="campo__control" inputMode="decimal" value={f[clave] as string}
+                     aria-required={clave === 'calorias' ? true : undefined}
                      onChange={(e) => cambiar(clave, e.target.value as never)} aria-invalid={!!errores[clave]}
                      aria-describedby={errores[clave] ? `al-${clave}-error` : undefined} />
               {errores[clave] && <span id={`al-${clave}-error`} className="campo__error">{errores[clave]}</span>}
@@ -220,17 +230,29 @@ export function Alimentos() {
   const [pagina, setPagina] = useState(0);
   const [elegido, setElegido] = useState<Alimento | null>(null);
   const [sucio, setSucio] = useState(false);
-  const [pendiente, setPendiente] = useState<Alimento | null>(null);
-
-  // Elegir otra fila con cambios sin guardar pregunta antes.
-  function elegir(a: Alimento) {
-    if (a.id === elegido?.id) return;
-    if (sucio) setPendiente(a); else setElegido(a);
-  }
+  // A dónde se iba cuando saltó el aviso de cambios: otra fila, o la lista (null).
+  const [pendiente, setPendiente] = useState<{ alimento: Alimento | null } | null>(null);
+  const [enfocar, setEnfocar] = useState(false);
+  const [volverA, setVolverA] = useState<number | null>(null);
   const [aviso, setAviso] = useState<Aviso | null>(null);
+  const dos = useMedia(ANCHO.dosColumnas);
+  const movil = useMedia(ANCHO.movil);
+  const avisoSalir = useBloqueoCambios(sucio);
+
+  function abrir(a: Alimento | null) {
+    if (a === null && elegido !== null) setVolverA(elegido.id);
+    setEnfocar(!dos);
+    setElegido(a);
+  }
+
+  // Elegir otra fila, o volver a la lista, con cambios sin guardar pregunta antes.
+  function elegir(a: Alimento | null) {
+    if ((a?.id ?? null) === (elegido?.id ?? null)) return;
+    if (sucio) setPendiente({ alimento: a }); else abrir(a);
+  }
 
   const resumen = useCarga((s) => admin.resumenAlimentos(s), []);
-  const lista = useCarga((s) => admin.alimentos({ q, categoria, sinIngles, origen, page: pagina, size: TAMANO }, s),
+  const lista = useCarga((s) => admin.alimentos({ q, categoria, sinIngles, origen, page: pagina, size: POR_PAGINA }, s),
     [q, categoria, sinIngles, origen, pagina]);
   const cerrarAviso = useCallback(() => setAviso(null), []);
 
@@ -245,8 +267,19 @@ export function Alimentos() {
   useEffect(() => {
     if (!lista.datos) return;
     // El elegido se refresca con lo que devuelve la lista (tras guardar, trae lo nuevo).
-    setElegido((actual) => (actual ? lista.datos!.content.find((a) => a.id === actual.id) ?? actual : lista.datos!.content[0] ?? null));
-  }, [lista.datos]);
+    // Con lista y editor juntos, sin elegido, el primero; por debajo de 1440 px se
+    // empieza por la lista.
+    setElegido((actual) => (actual
+      ? lista.datos!.content.find((a) => a.id === actual.id) ?? actual
+      : dos ? lista.datos!.content[0] ?? null : null));
+  }, [lista.datos, dos]);
+
+  useEffect(() => {
+    // Al volver a la lista, el foco vuelve a la fila de la que se salió.
+    if (volverA === null || elegido !== null) return;
+    document.querySelector<HTMLElement>(`[data-fila="${volverA}"]`)?.focus();
+    setVolverA(null);
+  }, [volverA, elegido]);
 
   function filtrar(cambio: () => void) {
     cambio();
@@ -262,7 +295,10 @@ export function Alimentos() {
     try {
       const pendientes = await admin.alimentos({ sinIngles: true, page: 0, size: 100 });
       const otro = pendientes.content.find((a) => a.id !== actual);
-      setElegido(otro ?? null);
+      if (otro) {
+        setEnfocar(true);
+        setElegido(otro);
+      }
       setAviso({ tipo: 'ok', texto: otro ? 'Guardado. Vamos con el siguiente sin inglés.' : 'Guardado. No queda ninguno sin inglés.' });
     } catch (err) {
       setAviso({ tipo: 'error', texto: `Guardado, pero no se ha podido buscar el siguiente: ${textoError(err)}` });
@@ -271,61 +307,91 @@ export function Alimentos() {
 
   const total = lista.datos?.totalElements ?? 0;
   const r = resumen.datos;
+  const alimentos = lista.datos?.content ?? [];
+  const verLista = dos || elegido === null;
 
   return (
     <Marco titulo="Alimentos" subtitulo={r ? `${entero(r.catalogo)} en el catálogo · ${entero(r.sinIngles)} sin nombre en inglés` : undefined}>
-      <div className="dos-columnas dos-columnas--alimentos">
-        <section className="lista" aria-label="Lista de alimentos">
-          <Buscador etiqueta="Buscar alimentos" marcador="Busca por nombre o por código de barras" alBuscar={(t) => filtrar(() => setQ(t))} />
-          <div className="lista__filtros lista__filtros--envuelve">
-            <button type="button" className="chip" aria-pressed={sinIngles} onClick={() => filtrar(() => setSinIngles((v) => !v))}>
-              {sinIngles && <Icono nombre="check" tamano={18} />}Sin nombre en inglés{r ? ` · ${entero(r.sinIngles)}` : ''}
-            </button>
-            <Filtro etiqueta="Categoría" valor={categoria} alCambiar={(v) => filtrar(() => setCategoria(v))}
-                    opciones={[{ valor: '', texto: 'todas' }, ...(r?.categorias ?? []).map((c) => ({ valor: c, texto: c.toLowerCase() }))]} />
-            <Filtro etiqueta="Origen" valor={origen} alCambiar={(v) => filtrar(() => setOrigen(v))}
-                    opciones={[{ valor: '', texto: 'todos' }, { valor: 'OPEN_FOOD_FACTS', texto: 'Open Food Facts' }, { valor: 'MANUAL', texto: 'a mano' }]} />
-          </div>
-          <div className="tarjeta tabla-marco">
-            <EstadoLista cargando={lista.cargando} error={lista.error} vacio={total === 0}
-                         textoVacio="Ningún alimento del catálogo con estos filtros." alReintentar={lista.recargar}>
-              <table className="tabla tabla--alimentos">
-                <caption className="solo-lector">Alimentos del catálogo, por nombre; valores por 100 g</caption>
-                <thead>
-                  <tr><th scope="col">Alimento</th><th scope="col" className="num">kcal</th><th scope="col" className="num">Prot.</th>
-                    <th scope="col" className="num">Carbos</th><th scope="col" className="num">Grasas</th></tr>
-                </thead>
-                <tbody>
-                  {lista.datos?.content.map((a) => (
-                    <tr key={a.id} data-elegida={elegido?.id === a.id} onClick={() => elegir(a)}>
-                      <td>
-                        <button type="button" className="fila-boton" aria-current={elegido?.id === a.id ? 'true' : undefined} onClick={(ev) => { ev.stopPropagation(); elegir(a); }}>
-                          <span className="fila-boton__principal">{a.nombre}</span>
-                          {a.nombreEn
-                            ? <span className="fila-boton__secundario">{a.nombreEn}</span>
-                            : <span className="fila-boton__secundario fila-boton__secundario--aviso">Falta el inglés</span>}
+      <div className={`reparto${dos ? ' reparto--dos' : ''}`}>
+        {verLista && (
+          <section className="lista" aria-label="Lista de alimentos">
+            <div className="lista__filtros lista__filtros--envuelve">
+              <Buscador etiqueta="Buscar alimentos" marcador="Busca por nombre o por código de barras" alBuscar={(t) => filtrar(() => setQ(t))} />
+              <button type="button" className="chip" aria-pressed={sinIngles} onClick={() => filtrar(() => setSinIngles((v) => !v))}>
+                {sinIngles && <Icono nombre="check" tamano={18} />}Sin nombre en inglés{r ? ` · ${entero(r.sinIngles)}` : ''}
+              </button>
+              <Filtro etiqueta="Categoría" valor={categoria} alCambiar={(v) => filtrar(() => setCategoria(v))}
+                      opciones={[{ valor: '', texto: 'todas' }, ...(r?.categorias ?? []).map((c) => ({ valor: c, texto: c.toLowerCase() }))]} />
+              <Filtro etiqueta="Origen" valor={origen} alCambiar={(v) => filtrar(() => setOrigen(v))}
+                      opciones={[{ valor: '', texto: 'todos' }, { valor: 'OPEN_FOOD_FACTS', texto: 'Open Food Facts' }, { valor: 'MANUAL', texto: 'a mano' }]} />
+            </div>
+            <div className={movil ? 'tarjetas-marco' : 'tarjeta tabla-marco'}>
+              <EstadoLista cargando={lista.cargando} error={lista.error} vacio={total === 0}
+                           textoVacio="Ningún alimento del catálogo con estos filtros." alReintentar={lista.recargar}>
+                {movil ? (
+                  <ul className="tarjetas" aria-label="Alimentos del catálogo, por nombre">
+                    {alimentos.map((a) => (
+                      <li key={a.id}>
+                        <button type="button" className="tarjeta-fila" data-fila={a.id} onClick={() => elegir(a)}>
+                          <span className="tarjeta-fila__texto">
+                            <span className="fila-boton__principal">{a.nombre}</span>
+                            {a.nombreEn && <span className="fila-boton__secundario">{a.nombreEn}</span>}
+                          </span>
+                          {!a.nombreEn && <span className="etiqueta etiqueta--aviso">Falta el inglés</span>}
                         </button>
-                      </td>
-                      <td className="num">{entero(a.calorias)}</td>
-                      <td className="num">{decimal1(a.proteinas)}</td>
-                      <td className="num">{decimal1(a.carbohidratos)}</td>
-                      <td className="num">{decimal1(a.grasas)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </EstadoLista>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <table className="tabla tabla--alimentos">
+                    <caption className="solo-lector">Alimentos del catálogo, por nombre; valores por 100 g</caption>
+                    <thead>
+                      <tr><th scope="col">Alimento</th><th scope="col" className="num">kcal</th><th scope="col" className="num">Prot.</th>
+                        <th scope="col" className="num">Carbos</th><th scope="col" className="num">Grasas</th></tr>
+                    </thead>
+                    <tbody>
+                      {alimentos.map((a) => (
+                        <tr key={a.id} data-elegida={elegido?.id === a.id} onClick={() => elegir(a)}>
+                          <td>
+                            <button type="button" className="fila-boton" data-fila={a.id} aria-current={elegido?.id === a.id ? 'true' : undefined}
+                                    onClick={(ev) => { ev.stopPropagation(); elegir(a); }}>
+                              <span className="fila-boton__principal">{a.nombre}</span>
+                              {a.nombreEn
+                                ? <span className="fila-boton__secundario">{a.nombreEn}</span>
+                                : <span className="fila-boton__secundario fila-boton__secundario--aviso">Falta el inglés</span>}
+                            </button>
+                          </td>
+                          <td className="num">{entero(a.calorias)}</td>
+                          <td className="num">{decimal1(a.proteinas)}</td>
+                          <td className="num">{decimal1(a.carbohidratos)}</td>
+                          <td className="num">{decimal1(a.grasas)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </EstadoLista>
+            </div>
+            {total > 0 && <Paginacion pagina={pagina} tamano={POR_PAGINA} total={total} alCambiar={setPagina} />}
+            <span className="lista__nota">Valores por 100 g. Los alimentos que crea cada persona son suyos y no salen aquí.</span>
+          </section>
+        )}
+        {elegido ? (
+          <div className="reparto__editor">
+            {!dos && (
+              <button type="button" className="boton boton--volver" onClick={() => elegir(null)}>
+                <Icono nombre="chevron_left" tamano={20} />Volver a la lista
+              </button>
+            )}
+            <Editor key={elegido.id} alimento={elegido} categorias={r?.categorias ?? []} alGuardado={alGuardado}
+                    alSiguiente={siguiente} avisar={setAviso} alCambiarSucio={setSucio} enfocar={enfocar} />
           </div>
-          {total > 0 && <Paginacion pagina={pagina} tamano={TAMANO} total={total} alCambiar={setPagina} />}
-          <span className="lista__nota">Valores por 100 g. Los alimentos que crea cada persona son suyos y no salen aquí.</span>
-        </section>
-        {elegido
-          ? <Editor key={elegido.id} alimento={elegido} categorias={r?.categorias ?? []} alGuardado={alGuardado}
-                    alSiguiente={siguiente} avisar={setAviso} alCambiarSucio={setSucio} />
-          : <div className="tarjeta editor editor--vacio"><p>Elige un alimento de la lista para editarlo.</p></div>}
+        ) : dos && <div className="editor editor--vacio"><p>Elige un alimento de la lista para editarlo.</p></div>}
       </div>
       <DialogoDescartar abierto={pendiente !== null} alSeguir={() => setPendiente(null)}
-                        alDescartar={() => { setSucio(false); setElegido(pendiente); setPendiente(null); }} />
+                        texto={pendiente?.alimento === null ? 'Hay cambios sin guardar en el editor. Si vuelves a la lista, se pierden.' : undefined}
+                        alDescartar={() => { setSucio(false); abrir(pendiente!.alimento); setPendiente(null); }} />
+      {avisoSalir}
       <AvisoFlotante aviso={aviso} alCerrar={cerrarAviso} />
     </Marco>
   );

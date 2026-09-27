@@ -2,7 +2,8 @@
 // Estado de la API: si responde (/actuator/health) y qué commit corre
 // (/actuator/info), con enlace al commit en GitHub (GP-085). Se comprueba al
 // abrir, cada minuto y en cuanto una petición se queda sin respuesta; lo comparten
-// la cabecera y la tarjeta Sistema del Resumen.
+// el pie de la barra lateral (o el menú de cuenta en el móvil) y la tarjeta Sistema
+// del Resumen.
 // ============================================================
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { admin } from '../api/admin';
@@ -88,25 +89,34 @@ export function useEstadoApi(): Estado {
   return v;
 }
 
-/** Las dos píldoras de la cabecera: «API en marcha» y «Producción · commit abc1234». */
-export function PildorasEstado() {
+/**
+ * Una línea: «● API en marcha · abc1234», con el enlace al commit y el botón de
+ * «Comprobar otra vez». Va en el pie de la barra lateral y en el menú del móvil;
+ * en la barra de iconos se reduce al punto y al botón, y el texto sale al pasar.
+ */
+export function LineaApi() {
   const e = useEstadoApi();
-  const texto = e.enMarcha === null ? 'Comprobando la API…' : e.enMarcha ? 'API en marcha' : 'API sin respuesta';
-  const commit = e.commit ? `${e.entorno} · commit ${e.commit}` : `${e.entorno} · sin commit`;
+  const estado = e.enMarcha === null ? 'Comprobando la API…' : e.enMarcha ? 'API en marcha' : 'API sin respuesta';
+  const clase = e.enMarcha ? 'linea-api--ok' : e.enMarcha === false ? 'linea-api--mal' : '';
   return (
-    <div className="pildoras" role="status" aria-live="polite">
-      <span className={`pildora ${e.enMarcha ? 'pildora--ok' : e.enMarcha === false ? 'pildora--mal' : ''}`}>
-        <Icono nombre="circle_relleno" tamano={16} />
-        {texto}
+    <div className={`linea-api ${clase}`}>
+      <Icono nombre="circle_relleno" tamano={16} className="linea-api__punto" />
+      <span className="linea-api__texto" role="status" aria-live="polite">
+        {estado}
+        {' · '}
+        {e.enlaceCommit ? (
+          <a href={e.enlaceCommit} target="_blank" rel="noreferrer noopener"
+             aria-label={`Commit ${e.commit} en ${e.entorno === 'Producción' ? 'producción' : 'local'}. Ver en GitHub (se abre en otra pestaña)`}>
+            {e.commit}
+          </a>
+        ) : (
+          <span>{e.entorno === 'Producción' ? 'sin commit' : 'local'}</span>
+        )}
       </span>
-      {e.enlaceCommit ? (
-        <a className="pildora pildora--borde" href={e.enlaceCommit} target="_blank" rel="noreferrer noopener"
-           aria-label={`${commit}. Ver el commit en GitHub (se abre en otra pestaña)`}>
-          {commit}
-        </a>
-      ) : (
-        <span className="pildora pildora--borde">{commit}</span>
-      )}
+      <button type="button" className="boton-icono linea-api__comprobar" aria-label="Comprobar otra vez"
+              title="Comprobar otra vez" onClick={e.comprobar}>
+        <Icono nombre="refresh" tamano={18} />
+      </button>
     </div>
   );
 }

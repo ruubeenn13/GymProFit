@@ -26,7 +26,9 @@
   /* Bordes */
   --borde: #252A31;
   --borde-suave: #1E2228;
-  --borde-control: #4A505B;
+  /* 3,74:1 sobre el campo y 3,48:1 sobre la tarjeta, como el gp_stroke de la app
+     (GP-120; antes #4A505B, 2,3:1). */
+  --borde-control: #676F7E;
 
   /* Texto */
   --texto: #F2F2F3;
@@ -54,23 +56,26 @@
   --peligro-pildora: #3A1616;
   --velo: rgba(0, 0, 0, 0.6);
 
-  /* Gráficas */
-  --barra-alta: #6B3A17;
-  --barra-sesion: #2F4E78;
+  /* Gráficas: las barras a 3:1 o más sobre la tarjeta (GP-120; antes 1,9 y 2,1:1).
+     La de la semana y la del día actual siguen siendo las que destacan. */
+  --barra-alta: #A05722;
+  --barra-sesion: #4270A8;
   --barra-sesion-hoy: #6BA6F5;
 
   /* Tipografía */
   --fuente: "Barlow", system-ui, sans-serif;
   --fuente-titular: "Barlow Condensed", "Barlow", system-ui, sans-serif;
 
-  /* Medidas */
-  --lateral-ancho: 248px;
-  --cabecera-alto: 76px;
+  /* Medidas. Espaciado de 4 en 4: 8, 12, 16 y 24. */
+  --lateral-ancho: 232px;
+  --riel-ancho: 72px;
+  --pestanas-alto: 64px;
+  --cabecera-alto: 72px;
   --radio-tarjeta: 18px;
   --radio-control: 12px;
   --alto-control: 44px;
   --alto-campo: 46px;
   --alto-boton: 46px;
-  --gutter: 32px;
+  --gutter: 24px;
   --foco: 0 0 0 3px var(--fondo), 0 0 0 5px var(--acento-claro);
 }

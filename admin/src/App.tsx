@@ -4,7 +4,7 @@
 // a Entrada recordando a dónde se iba.
 // ============================================================
 import { lazy, Suspense, type ComponentType, type ReactNode } from 'react';
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Navigate, useLocation, type RouteObject } from 'react-router-dom';
 import { ProveedorEstadoApi } from './componentes/EstadoApi';
 import { Entrada } from './paginas/Entrada';
 import { useSesion } from './sesion/Sesion';
@@ -52,15 +52,12 @@ function ConSesion({ children }: { children: ReactNode }) {
   );
 }
 
-export function App() {
-  return (
-    <Routes>
-      <Route path="/entrar" element={<Entrada />} />
-      <Route path="/" element={<ConSesion><Resumen /></ConSesion>} />
-      <Route path="/usuarios" element={<ConSesion><Usuarios /></ConSesion>} />
-      <Route path="/ejercicios" element={<ConSesion><Ejercicios /></ConSesion>} />
-      <Route path="/alimentos" element={<ConSesion><Alimentos /></ConSesion>} />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
-  );
-}
+/** Las rutas de la web, para el router de datos de main.tsx. */
+export const rutas: RouteObject[] = [
+  { path: '/entrar', element: <Entrada /> },
+  { path: '/', element: <ConSesion><Resumen /></ConSesion> },
+  { path: '/usuarios', element: <ConSesion><Usuarios /></ConSesion> },
+  { path: '/ejercicios', element: <ConSesion><Ejercicios /></ConSesion> },
+  { path: '/alimentos', element: <ConSesion><Alimentos /></ConSesion> },
+  { path: '*', element: <Navigate to="/" replace /> },
+];
