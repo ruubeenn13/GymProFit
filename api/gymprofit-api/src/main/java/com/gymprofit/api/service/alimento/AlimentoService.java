@@ -8,6 +8,7 @@ import com.gymprofit.api.dto.entity.alimento.AlimentoPatchDTO;
 import com.gymprofit.api.dto.jooq.AlimentoJooqDTO;
 import com.gymprofit.api.entity.Alimento;
 import com.gymprofit.api.entity.Usuario;
+import com.gymprofit.api.exceptions.ConflictEntityException;
 import com.gymprofit.api.exceptions.CreateEntityException;
 import com.gymprofit.api.exceptions.DeleteEntityException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
@@ -347,6 +348,12 @@ public class AlimentoService implements IAlimentoService {
 
         checkPuedeEscribir(alimento);
 
+        // El código de barras es único: repetido es un conflicto, no un 500 de la base.
+        String barcode = patchDTO.getBarcode() == null ? null : textoONulo(patchDTO.getBarcode());
+        if (barcode != null && alimentoRepository.existsByBarcodeAndIdNot(barcode, id)) {
+            throw new ConflictEntityException("error.alimento.barcodeEnUso", barcode);
+        }
+
         try {
             if (patchDTO.getNombre() != null) alimento.setNombre(patchDTO.getNombre());
             if (patchDTO.getCategoria() != null) alimento.setCategoria(patchDTO.getCategoria());
@@ -358,11 +365,19 @@ public class AlimentoService implements IAlimentoService {
             if (patchDTO.getPorcionGramos() != null) alimento.setPorcionGramos(patchDTO.getPorcionGramos());
             if (patchDTO.getDescripcion() != null) alimento.setDescripcion(patchDTO.getDescripcion());
             if (patchDTO.getActivo() != null) alimento.setActivo(patchDTO.getActivo());
+            if (patchDTO.getNombreEn() != null) alimento.setNombreEn(textoONulo(patchDTO.getNombreEn()));
+            if (patchDTO.getMarca() != null) alimento.setMarca(textoONulo(patchDTO.getMarca()));
+            if (patchDTO.getBarcode() != null) alimento.setBarcode(textoONulo(patchDTO.getBarcode()));
 
             return alimentoMapper.toDTO(alimentoRepository.save(alimento));
         } catch (Exception e) {
             throw new UpdateEntityException(Alimento.class.getSimpleName(), id, e);
         }
+    }
+
+    // Blanco → null, para poder borrar un campo opcional con PATCH.
+    private static String textoONulo(String texto) {
+        return texto.isBlank() ? null : texto.trim();
     }
 
     // Búsqueda de alimentos para el panel admin (incluye inactivos) mediante jOOQ.

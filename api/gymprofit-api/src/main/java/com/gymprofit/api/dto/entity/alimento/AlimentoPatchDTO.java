@@ -26,4 +26,9 @@ public class AlimentoPatchDTO implements Serializable {
     private Integer porcionGramos;
     private String descripcion;
     private Boolean activo;
+    // Añadidos para la web de administración (GP-085). Opcionales como el resto: null no
+    // cambia nada; un texto en blanco lo borra.
+    private String nombreEn;
+    private String marca;
+    private String barcode;
 }
