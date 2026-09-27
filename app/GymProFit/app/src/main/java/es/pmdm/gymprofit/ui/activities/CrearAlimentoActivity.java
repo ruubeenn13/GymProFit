@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.utils.AvisoDescartar;
 import es.pmdm.gymprofit.network.AlimentoApi;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
@@ -82,8 +83,11 @@ public class CrearAlimentoActivity extends BaseActivity {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
+        // Salir con algo escrito pregunta antes de tirarlo (GP-108).
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setNavigationOnClickListener(v -> finish());
+        AvisoDescartar.instalar(this, toolbar, () -> AvisoDescartar.hayTexto(
+                etNombre.getText(), etCalorias.getText(), etProteinas.getText(),
+                etCarbohidratos.getText(), etGrasas.getText()));
 
         MaterialButton btnGuardar = findViewById(R.id.btnGuardarAlimento);
         btnGuardar.setOnClickListener(v -> guardarAlimento());

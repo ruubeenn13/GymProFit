@@ -6,7 +6,6 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -20,6 +19,7 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.AuthApi;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.utils.AvatarUtils;
+import es.pmdm.gymprofit.utils.AvisoDescartar;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PoliticaCuenta;
 import es.pmdm.gymprofit.utils.PreferencesManager;
@@ -61,7 +61,9 @@ public class CambiarPasswordActivity extends AppCompatActivity {
         tilNueva = findViewById(R.id.tilNueva);
         etActual = findViewById(R.id.etActual);
         etNueva = findViewById(R.id.etNueva);
-        ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
+        // Salir con algo escrito pregunta antes de tirarlo (GP-108).
+        AvisoDescartar.instalar(this, findViewById(R.id.toolbar),
+                () -> AvisoDescartar.hayTexto(etActual.getText(), etNueva.getText()));
         findViewById(R.id.btnGuardar).setOnClickListener(v -> cambiar());
     }
 

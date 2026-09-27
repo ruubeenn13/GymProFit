@@ -6,7 +6,6 @@ import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.math.BigDecimal;
@@ -18,6 +17,7 @@ import es.pmdm.gymprofit.model.usuario.Usuario;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.UsuarioApi;
+import es.pmdm.gymprofit.utils.AvisoDescartar;
 import es.pmdm.gymprofit.utils.CalculadoraNutricional;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PreferencesManager;
@@ -46,6 +46,10 @@ public class EditarPerfilActivity extends AppCompatActivity {
     private PreferencesManager prefsManager;
     private TextInputEditText etPeso, etAltura, etEdad;
     private Spinner spNivel, spObjetivo, spSexo, spActividad;
+    // Cómo estaba el formulario al abrirlo (y al llegar el perfil): salir con algo
+    // distinto pregunta antes de tirarlo (GP-108).
+    private String[] textosIniciales = {"", "", ""};
+    private int[] seleccionIniciales = {0, 0, 0, 0};
     // Interfaz Retrofit tipada del dominio usuarios (etapa 2)
     private final UsuarioApi usuarioApi = ApiClient.service(UsuarioApi.class);
 
@@ -81,7 +85,8 @@ public class EditarPerfilActivity extends AppCompatActivity {
 
         configurarSpinners();
         cargarDatosUsuario();
-        ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
+        guardarEstadoInicial();
+        AvisoDescartar.instalar(this, findViewById(R.id.toolbar), this::hayCambios);
         findViewById(R.id.btnGuardar).setOnClickListener(v -> guardarPerfil());
     }
 
@@ -118,6 +123,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
                 if (u.getEdad() > 0) etEdad.setText(String.valueOf(u.getEdad()));
                 seleccionarSpinner(spNivel, NIVELES, u.getNivelExperiencia());
                 seleccionarSpinner(spObjetivo, OBJETIVOS, u.getObjetivo());
+                guardarEstadoInicial();
             }
 
             @Override
@@ -130,6 +136,25 @@ public class EditarPerfilActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void guardarEstadoInicial() {
+        textosIniciales = new String[]{texto(etPeso), texto(etAltura), texto(etEdad)};
+        seleccionIniciales = seleccion();
+    }
+
+    private boolean hayCambios() {
+        return AvisoDescartar.distintos(textosIniciales, etPeso.getText(), etAltura.getText(), etEdad.getText())
+                || !java.util.Arrays.equals(seleccionIniciales, seleccion());
+    }
+
+    private int[] seleccion() {
+        return new int[]{spNivel.getSelectedItemPosition(), spObjetivo.getSelectedItemPosition(),
+                spSexo.getSelectedItemPosition(), spActividad.getSelectedItemPosition()};
+    }
+
+    private static String texto(TextInputEditText et) {
+        return et.getText() == null ? "" : et.getText().toString();
     }
 
     // Selecciona en el spinner la posición cuyo valor coincide con el actual del usuario.

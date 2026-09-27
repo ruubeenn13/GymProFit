@@ -7,7 +7,6 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -19,6 +18,7 @@ import es.pmdm.gymprofit.model.usuario.Usuario;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.UsuarioApi;
+import es.pmdm.gymprofit.utils.AvisoDescartar;
 import es.pmdm.gymprofit.utils.Correo;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PreferencesManager;
@@ -56,7 +56,9 @@ public class CambiarCorreoActivity extends AppCompatActivity {
         tilPassword = findViewById(R.id.tilPasswordEmail);
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPasswordEmail);
-        ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
+        // Salir con algo escrito pregunta antes de tirarlo (GP-108).
+        AvisoDescartar.instalar(this, findViewById(R.id.toolbar),
+                () -> AvisoDescartar.hayTexto(etEmail.getText(), etPassword.getText()));
         findViewById(R.id.btnGuardar).setOnClickListener(v -> guardar());
 
         usuarioApi.getPorId(prefs.getUsuarioId()).enqueue(new ApiCallback<Usuario>() {

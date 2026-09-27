@@ -38,6 +38,7 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.ComidaApi;
 import es.pmdm.gymprofit.ui.adapters.AlimentoAdapter;
+import es.pmdm.gymprofit.utils.AvisoDescartar;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PaginacionScrollListener;
 import es.pmdm.gymprofit.utils.UIHelper;
@@ -420,7 +421,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
             }
         });
 
-        new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+        androidx.appcompat.app.AlertDialog dialogo = new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
                 .setView(dialogView)
                 .setPositiveButton(getString(R.string.btn_anadir), (dialog, which) -> {
                     String raw = etGramos.getText().toString().trim();
@@ -442,7 +443,10 @@ public class AnadirAlimentoActivity extends BaseActivity {
                     anadirAlimento(alimento, gramos);
                 })
                 .setNegativeButton(getString(R.string.dialog_cancelar), null)
-                .show();
+                .create();
+        // Salir con una cantidad escrita pregunta antes de tirarla (GP-108).
+        AvisoDescartar.instalarEnDialogo(this, dialogo, () -> AvisoDescartar.hayTexto(etGramos.getText()), etGramos);
+        dialogo.show();
     }
 
     // Añade el alimento a la comida; si la comida aún no existe (comidaId == -1) la crea primero
