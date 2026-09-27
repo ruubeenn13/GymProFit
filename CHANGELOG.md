@@ -6,6 +6,16 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `1894997` | fix(admin): **la cabecera de la web deja de decir «API en marcha» en cuanto la API no contesta** (GP-085): un fallo de red en una lista pide comprobarla en el acto. |
+| `c9ae39f` | feat(admin): **web de administración en `admin.gymprofit.app`, fase 1** (GP-085): Entrada, Resumen, Usuarios, Ejercicios y Alimentos en `admin/` (React, Vite, TypeScript). Solo cuentas ADMIN, tokens en memoria, una renovación y un reintento ante un 401. Cloudflare Workers con archivos estáticos, CSP que solo conecta con la API. DEC-035. Informe en `documentacion/estado/2026-09-27-admin-fase-1.md`. |
+| `557b5bb` | fix(api): **alta y último acceso de `/admin/cuentas` salen con su zona** (GP-085). |
+| `83f70f6` | fix(api): la opción de equipamiento lleva `valor`, no `codigo` (GP-085); rutas de la web en el README de la API. |
+| `e34bae9` | feat(api): **`GET /admin/resumen`** (GP-085): cuentas, altas por semana, quién entrenó, sesiones por día, quién apuntó comida y lo pendiente del catálogo, en hora de Madrid. |
+| `aad81cb` | feat(api): **`/admin/alimentos`, solo el catálogo** (GP-085). `PATCH /alimentos/{id}` gana `nombreEn`, `marca` y `barcode`, opcionales; código repetido, 409. |
+| `beeaa90` | feat(api): **`/admin/ejercicios`** (GP-085), con `equipamiento` como lista cerrada y `nombre_revisado`; migraciones `V202609271300` y `V202609271301`. |
+| `05db066` | feat(api): **`/admin/cuentas`** (GP-085): búsqueda paginada, ficha sin datos de salud, `ultimo_acceso` (`V202609271200`) y borrado a petición del titular con el borrado de GP-008. |
+| `102462c` | fix(api): **CORS de producción solo para `https://admin.gymprofit.app`** (GP-085), escrito en `application-prod.properties` y fijado por test. |
+| `e6f0bb7` | fix(api): **errores en español por defecto y en inglés con `Accept-Language: en`** (GP-109). Los mensajes son claves de `messages*.properties`; un test exige cada una en los dos idiomas. |
 | `8ea5d02` | fix(api): **la cuenta del bot también usa el dominio del producto** (GP-106): migración `V202609271100`, con las mismas guardas que la de admin y guest. El bot entra por nombre de usuario y no se entera. |
 | `94dcdce` | Fusión de `gp-105-estructura` en `main`: la estructura nueva entra entera, después de la comprobación en release. Informe en `documentacion/estado/2026-09-27-lote-1.1.0.md`. |
 | `d5260d1` | fix(android): **el aviso de descartar de los diálogos también en Android 13-15** (GP-108). En Android 16 el atrás llega por el `OnBackInvokedDispatcher` de la ventana del diálogo y en 13-15 como tecla: se registran los dos. |

@@ -506,6 +506,26 @@ DEC-027 y DEC-014 no se relajan; lo único que cambia es **cómo se afirma el ai
 
 ---
 
+### DEC-035 · La administración es una web aparte, detrás de dos cerraduras, que nunca toca la base
+**Estado:** Aceptada · **Fecha:** 2026-09-27 · **Tarea:** GP-085 (fase 1)
+
+**Contexto.** El panel de administración vivía dentro de la app Android. Sirve para activar o desactivar una cuenta, pero no para el trabajo que de verdad pide el producto: 752 de 873 ejercicios activos se llamaban igual en español que en inglés (DEC-020), y traducir un catálogo así en la pantalla de un móvil no se hace. Hacía falta una herramienta de escritorio. Lo que no podía pasar es que esa herramienta abriera una segunda puerta a los datos.
+
+**Decisión.**
+
+- **Dónde vive.** Es una web propia, en `admin/` del monorepo (React, Vite y TypeScript), servida en **`admin.gymprofit.app`** como Cloudflare Worker de solo archivos estáticos (`gymprofit-admin`), sin `workers.dev` ni URLs de previsualización. Solo en español: la usa el propietario.
+- **Dos cerraduras.** La primera es **Cloudflare Access** delante del dominio, que solo deja pasar el correo del propietario: sin ella no se descarga ni el HTML. La segunda es **una cuenta con rol ADMIN** de GymProFit en Entrada; cualquier otra cuenta recibe el mismo aviso que una contraseña equivocada. Y detrás de las dos sigue la que manda: **la API exige ADMIN en cada ruta `/admin`**, venga la petición de la web o de cualquier otro sitio. La web no decide nada de seguridad; como mucho, evita pedir lo que la API va a rechazar.
+- **Tokens solo en memoria.** Ni `localStorage` ni `sessionStorage`: un script que llegara a ejecutarse en la página no encontraría dónde leerlos después, y al cerrar la pestaña no queda nada. El precio es volver a entrar al recargar, que en una herramienta de uso ocasional es barato. Ante un 401, una renovación y un solo reintento; si falla, a Entrada.
+- **Nunca toca la base.** Toda lectura y toda escritura pasan por la API con el token de la cuenta ADMIN. La web no lleva credenciales de base de datos, ni claves, ni ningún secreto: el repositorio es público y lo único que se compila dentro es la URL de la API.
+- **Sin datos de salud.** Ninguna respuesta de `/admin` lleva peso, medidas, entrenamientos ni comidas; de una cuenta se ve cuántas sesiones y comidas tiene, no cuáles. Las rutas de la web son nuevas y con DTO propios: las que usa el panel de la app (que sí devuelven peso y altura) no cambian de forma, y ese panel sale en la fase 2.
+- **CORS y cabeceras.** Producción solo admite el origen `https://admin.gymprofit.app` (escrito en `application-prod.properties`, fijado por test). La web lleva una CSP que solo deja conectar con `https://api.gymprofit.app` y prohíbe los marcos.
+
+**Consecuencias.** La superficie nueva es un sitio estático: no hay servidor propio que mantener ni base que proteger en otro sitio. Añadir una pantalla de administración es añadir rutas a la API (con su test de 403 para USER e invitado, DEC-014) y una página a la web. El panel de la app queda como duplicado hasta que se retire en la fase 2.
+
+**Qué la invalidaría.** Que haga falta más de un administrador con permisos distintos: entonces Access con un solo correo no basta y el rol ADMIN único se queda corto, y habría que diseñar roles (lo que DEC-012 anticipa para las capacidades). Que la web necesite hacer algo que la API no expone —la tentación de «leerlo directamente de la base»—: se añade a la API, nunca se abre la base a la web. Que Cloudflare deje de ser el proveedor del dominio: la web es estática y se muda a cualquier sitio que sirva archivos y cabeceras, pero Access habría que sustituirlo por otra cerradura equivalente antes de publicar.
+
+---
+
 ## Pendientes de decidir
 
 Se registran aquí para que no se decidan por omisión.
