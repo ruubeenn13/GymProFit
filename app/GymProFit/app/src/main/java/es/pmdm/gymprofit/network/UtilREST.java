@@ -42,12 +42,20 @@ public class UtilREST {
     // Refresh token opaco (de vida larga) para renovar el access token sin re-login.
     private static volatile String refreshToken = null;
     private static OnUnauthorizedListener unauthorizedListener = null;
+    // Si ya se ha avisado de esta sesión perdida (GP-107). Una pantalla lanza varias
+    // peticiones a la vez y, si la sesión no se puede renovar, caen todas con 401: sin
+    // esto cada una abría Login otra vez. Se rearma al entrar de nuevo (setToken).
+    private static final java.util.concurrent.atomic.AtomicBoolean sesionPerdidaAvisada =
+            new java.util.concurrent.atomic.AtomicBoolean(false);
     private static volatile AlmacenTokens almacen = null;
 
     // Registra el almacén persistente (lo hace GymProFitApp en onCreate).
     public static void setAlmacen(AlmacenTokens a) { almacen = a; }
 
-    public static void setToken(String t) { token = t; }
+    public static void setToken(String t) {
+        token = t;
+        if (t != null) sesionPerdidaAvisada.set(false);
+    }
     // Limpia AMBOS tokens (logout / sesión no recuperable), en memoria y en el almacén:
     // si solo se limpiara la memoria, la siguiente petición los volvería a cargar.
     public static void clearToken() {
@@ -79,7 +87,7 @@ public class UtilREST {
     }
 
     // Solo para tests: olvida la memoria sin tocar el almacén, como al matar el proceso.
-    static void olvidarMemoria() { token = null; refreshToken = null; }
+    static void olvidarMemoria() { token = null; refreshToken = null; sesionPerdidaAvisada.set(false); }
 
     // Registra el listener global que se dispara al recibir un 401 no recuperable.
     public static void setOnUnauthorizedListener(OnUnauthorizedListener l) { unauthorizedListener = l; }
@@ -87,8 +95,10 @@ public class UtilREST {
     // Maneja un 401 no recuperable (el TokenAuthenticator ya intentó renovar y no pudo):
     // limpia la sesión y avisa vía OnUnauthorizedListener para volver a login. Lo usa
     // el ApiCallback tipado de la etapa 2.
+    // Solo el primer 401 de una sesión perdida avisa; los que llegan detrás, no (GP-107).
     static void notifyUnauthorized(boolean cuentaDesactivada) {
         clearToken();
+        if (!sesionPerdidaAvisada.compareAndSet(false, true)) return;
         if (unauthorizedListener != null) unauthorizedListener.onTokenExpired(cuentaDesactivada);
     }
 

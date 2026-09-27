@@ -38,6 +38,7 @@ public class UtilRESTTest {
 
     @After
     public void limpiar() {
+        UtilREST.setOnUnauthorizedListener(null);
         UtilREST.setAlmacen(null);
         UtilREST.olvidarMemoria();
     }
@@ -71,5 +72,33 @@ public class UtilRESTTest {
         assertNull(almacen.leerRefresh());
         assertNull(UtilREST.getToken());
         assertNull(UtilREST.getRefreshToken());
+    }
+
+    // --- GP-107: un 401 en cadena abre Login una sola vez ------------------
+
+    @Test
+    public void seis_401_seguidos_avisan_una_sola_vez() {
+        almacen.guardar("acceso-1", "refresco-1");
+        int[] avisos = {0};
+        UtilREST.setOnUnauthorizedListener(desactivada -> avisos[0]++);
+
+        // La reproducción de GP-091: seis peticiones de la misma pantalla caen a la vez.
+        for (int i = 0; i < 6; i++) UtilREST.notifyUnauthorized(false);
+
+        assertEquals(1, avisos[0]);
+        assertNull(UtilREST.getToken());
+    }
+
+    @Test
+    public void tras_volver_a_entrar_un_401_nuevo_vuelve_a_avisar() {
+        almacen.guardar("acceso-1", "refresco-1");
+        int[] avisos = {0};
+        UtilREST.setOnUnauthorizedListener(desactivada -> avisos[0]++);
+
+        UtilREST.notifyUnauthorized(false);
+        UtilREST.setToken("acceso-2");
+        UtilREST.notifyUnauthorized(false);
+
+        assertEquals(2, avisos[0]);
     }
 }
