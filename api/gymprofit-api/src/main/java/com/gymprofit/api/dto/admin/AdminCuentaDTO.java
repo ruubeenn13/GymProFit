@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 // ============================================================
 // AdminCuentaDTO — una cuenta en la web de administración (GP-085)
@@ -21,10 +21,11 @@ public class AdminCuentaDTO implements Serializable {
     private Integer id;
     private String username;
     private String email;
-    // Alta y último acceso, con el reloj del servidor.
-    private LocalDateTime fechaRegistro;
+    // Alta y último acceso como instantes, con su zona: en la base van en el reloj del
+    // servidor (UTC en Render) y sin zona, y la web los leería como hora local.
+    private OffsetDateTime fechaRegistro;
     // null si no ha entrado desde que existe la columna (27-09-2026).
-    private LocalDateTime ultimoAcceso;
+    private OffsetDateTime ultimoAcceso;
     // ADMIN, USER o GUEST.
     private String rol;
     private boolean activo;

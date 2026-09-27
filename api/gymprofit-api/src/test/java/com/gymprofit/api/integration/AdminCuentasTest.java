@@ -91,7 +91,10 @@ class AdminCuentasTest extends AbstractOwnershipTest {
                 .andExpect(jsonPath("$.totalElements").isNumber())
                 .andExpect(jsonPath("$.totalPages").isNumber())
                 .andExpect(jsonPath("$.content[0].rol").value("USER"))
-                .andExpect(jsonPath("$.content[0].activo").value(true));
+                .andExpect(jsonPath("$.content[0].activo").value(true))
+                // Instante con zona: sin ella, la web leería la hora del servidor como local.
+                .andExpect(jsonPath("$.content[0].fechaRegistro",
+                        org.hamcrest.Matchers.matchesPattern(".*(Z|[+-][0-9]{2}:[0-9]{2})$")));
         pedir(admin, "GET /admin/cuentas?q=" + ATTACKER + "@test.local")
                 .andExpect(jsonPath("$.content[*].username", hasItem(ATTACKER)));
         pedir(admin, "GET /admin/cuentas?q=__idor&rol=GUEST")

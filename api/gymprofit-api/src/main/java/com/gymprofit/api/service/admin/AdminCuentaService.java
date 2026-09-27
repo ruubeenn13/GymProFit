@@ -24,6 +24,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.Comparator;
 import java.util.Locale;
 
@@ -120,7 +123,12 @@ public class AdminCuentaService implements IAdminCuentaService {
     }
 
     private static AdminCuentaDTO aDTO(Usuario u) {
-        return new AdminCuentaDTO(u.getId(), u.getUsername(), u.getEmail(), u.getFechaRegistro(),
-                u.getUltimoAcceso(), rolPrincipal(u), u.isEnabled());
+        return new AdminCuentaDTO(u.getId(), u.getUsername(), u.getEmail(), instante(u.getFechaRegistro()),
+                instante(u.getUltimoAcceso()), rolPrincipal(u), u.isEnabled());
+    }
+
+    // Las fechas de cuenta las pone el servidor con su reloj: se les añade su zona.
+    private static OffsetDateTime instante(LocalDateTime relojServidor) {
+        return relojServidor == null ? null : relojServidor.atZone(ZoneId.systemDefault()).toOffsetDateTime();
     }
 }
