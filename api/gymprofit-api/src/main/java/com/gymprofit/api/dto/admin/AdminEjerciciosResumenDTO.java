@@ -26,7 +26,7 @@ public class AdminEjerciciosResumenDTO implements Serializable {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Opcion implements Serializable {
-        private String codigo;
+        private String valor;
         private String etiqueta;
         private String etiquetaEn;
     }

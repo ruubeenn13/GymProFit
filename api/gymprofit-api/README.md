@@ -291,6 +291,23 @@ En cada serie, `numero` (de 1 a 20) y `repeticiones` (de 0 a 100) son obligatori
 | GET | `/admin/ejercicios/busqueda?nombre=&grupoMuscular=&dificultad=&activo=` | ADMIN | Buscar ejercicios del catálogo con filtros dinámicos (jOOQ) |
 | GET | `/admin/alimentos/busqueda?nombre=&categoria=&activo=` | ADMIN | Buscar alimentos con filtros dinámicos (jOOQ) |
 
+**Web de administración (GP-085).** Rutas nuevas para `admin.gymprofit.app`; las de arriba las sigue usando el panel de la app y no cambian. Ninguna lleva datos de salud (peso, medidas, entrenamientos ni comidas): solo cuentas y recuentos.
+
+| Método | URL | Auth | Descripción |
+|---|---|---|---|
+| GET | `/admin/resumen` | ADMIN | Cuentas (total, altas de la semana, activas), sesiones completadas (hoy, semana, total), quién entrenó esta semana, quién apuntó comida hoy, altas de las 8 últimas semanas, sesiones de los 14 últimos días y lo pendiente del catálogo. Días y semanas (lunes a domingo) en hora de Madrid |
+| GET | `/admin/cuentas?q=&rol=&activo=&page=&size=` | ADMIN | Cuentas paginadas (`PageDTO`, con el total). `q` busca en usuario y correo. Usuario, correo, alta, último acceso, rol y estado |
+| GET | `/admin/cuentas/{id}` | ADMIN | La cuenta y cuántas sesiones y comidas tiene |
+| DELETE | `/admin/cuentas/{id}` | ADMIN | Borrado a petición del titular, el de GP-008. Cuerpo `{confirmacion, motivo}`: la confirmación es su nombre de usuario (si no, 400). No vale para la propia cuenta ni para otra ADMIN (409). 204 |
+| GET | `/admin/ejercicios?q=&grupo=&equipamiento=&sinRevisar=&page=&size=` | ADMIN | Ejercicios paginados, activos o no. `q` busca en los dos idiomas; `sinRevisar=true` deja los activos con el nombre sin revisar |
+| GET | `/admin/ejercicios/resumen` | ADMIN | Activos, sin revisar y la lista de equipamiento con etiqueta en ES y EN |
+| GET | `/admin/ejercicios/{id}` | ADMIN | El ejercicio para el editor, con su origen y en cuántas rutinas se usa |
+| PUT | `/admin/ejercicios/{id}` | ADMIN | Guarda el ejercicio entero. Un nombre en español distinto del inglés lo marca como revisado |
+| GET | `/admin/alimentos?q=&categoria=&sinIngles=&origen=&page=&size=` | ADMIN | Solo el catálogo (sin dueño), nunca los alimentos de un usuario. `origen` es `OPEN_FOOD_FACTS` (con código de barras) o `MANUAL`. Se editan con `PATCH /alimentos/{id}` |
+| GET | `/admin/alimentos/resumen` | ADMIN | Tamaño del catálogo, cuántos sin nombre en inglés y sus categorías |
+
+**Idioma de los errores (GP-109).** Español por defecto; inglés con `Accept-Language: en`. Los textos son claves de `messages.properties` y `messages_en.properties`.
+
 ---
 
 ## Seguridad y roles
