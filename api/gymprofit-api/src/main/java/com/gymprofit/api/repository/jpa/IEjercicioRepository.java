@@ -2,6 +2,7 @@ package com.gymprofit.api.repository.jpa;
 
 import com.gymprofit.api.entity.Ejercicio;
 import com.gymprofit.api.enums.Dificultad;
+import com.gymprofit.api.enums.Equipamiento;
 import com.gymprofit.api.enums.GrupoMuscular;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,31 @@ import java.util.List;
 @Repository
 @RepositoryRestResource(exported = false)
 public interface IEjercicioRepository extends JpaRepository<Ejercicio, Integer> {
+
+    /**
+     * Ejercicios para la web de administración (GP-085), activos o no. Un parámetro
+     * null no filtra; sinRevisar = true deja los activos con el nombre sin revisar.
+     *
+     * @param patron "%texto%" en minúsculas, que se busca en los dos nombres, o null
+     */
+    @Query("""
+            SELECT e FROM Ejercicio e
+            WHERE (:patron IS NULL OR LOWER(e.nombre) LIKE :patron OR LOWER(e.nombreEn) LIKE :patron)
+              AND (:grupo IS NULL OR e.grupoMuscular = :grupo)
+              AND (:equipamiento IS NULL OR e.equipamiento = :equipamiento)
+              AND (:sinRevisar = false OR (e.nombreRevisado = false AND e.activo = true))
+            """)
+    Page<Ejercicio> buscarParaAdmin(@Param("patron") String patron,
+                                    @Param("grupo") GrupoMuscular grupo,
+                                    @Param("equipamiento") Equipamiento equipamiento,
+                                    @Param("sinRevisar") boolean sinRevisar,
+                                    Pageable pageable);
+
+    // Activos (cabecera de la pantalla de ejercicios, GP-085).
+    long countByActivoTrue();
+
+    // Activos con el nombre sin revisar: lo que falta por traducir (GP-085).
+    long countByActivoTrueAndNombreRevisadoFalse();
 
     // Busca un ejercicio por su id en wger (clave de upsert del import externo legado).
     java.util.Optional<Ejercicio> findByWgerId(Integer wgerId);

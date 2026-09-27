@@ -1,5 +1,7 @@
 package com.gymprofit.api.repository.jpa;
 
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import com.gymprofit.api.entity.RutinaEjercicio;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -36,6 +38,11 @@ public interface IRutinaEjercicioRepository extends JpaRepository<RutinaEjercici
 
     // Número de rutinas en las que aparece un ejercicio.
     Long countByEjercicioId(Integer ejercicioId);
+
+    // Rutinas distintas que incluyen el ejercicio (una rutina puede repetirlo). GP-085.
+    @Query(
+            "SELECT COUNT(DISTINCT re.rutina.id) FROM RutinaEjercicio re WHERE re.ejercicio.id = :id")
+    long contarRutinasConEjercicio(@Param("id") Integer ejercicioId);
 
     // Elimina todas las asociaciones de ejercicios de una rutina.
     void deleteByRutinaId(Integer rutinaId);

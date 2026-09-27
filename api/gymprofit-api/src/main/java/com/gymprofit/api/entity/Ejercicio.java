@@ -1,6 +1,7 @@
 package com.gymprofit.api.entity;
 
 import com.gymprofit.api.enums.Dificultad;
+import com.gymprofit.api.enums.Equipamiento;
 import com.gymprofit.api.enums.GrupoMuscular;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -76,6 +77,15 @@ public class Ejercicio {
     private String equipoNecesario;
 
     // Indica si el ejercicio está activo/visible (borrado lógico).
+    // Lista cerrada para filtrar (GP-085). equipoNecesario sigue siendo el texto que ve la app.
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private Equipamiento equipamiento = Equipamiento.OTRO;
+
+    // Alguien ha revisado el nombre en español (GP-085). Lo que se importa llega sin revisar.
+    @Column(name = "nombre_revisado", nullable = false)
+    private Boolean nombreRevisado = false;
+
     @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
     private Boolean activo;
 
