@@ -76,20 +76,21 @@ public final class AvisoDescartar {
             if (!hayCambios.getAsBoolean()) dialogo.cancel();
             else preguntar(act, dialogo::dismiss);
         };
-        // En Android 13+ el atrás de la ventana del diálogo va por su propio
-        // OnBackInvokedDispatcher, y el de androidx no llegaba a él (comprobado en
-        // API 36): se registra ahí, por delante del cierre por defecto del Dialog.
+        // Hacen falta los dos caminos. En Android 16 con targetSdk 36 el atrás llega por el
+        // OnBackInvokedDispatcher de la ventana del diálogo, y el de androidx no le llegaba
+        // (comprobado en API 36); en Android 13-15, sin haber optado por el atrás
+        // predictivo, llega como tecla y lo recibe el de androidx (comprobado en API 34).
+        // Nunca los dos a la vez: cada versión usa uno.
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             dialogo.getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
                     android.window.OnBackInvokedDispatcher.PRIORITY_OVERLAY, alVolver::run);
-        } else {
-            dialogo.getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
-                @Override
-                public void handleOnBackPressed() {
-                    alVolver.run();
-                }
-            });
         }
+        dialogo.getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                alVolver.run();
+            }
+        });
     }
 
     // «¿Descartar lo que has apuntado?» (Descartar / Seguir editando).
