@@ -47,13 +47,69 @@ public final class AvisoDescartar {
             act.finish();
             return;
         }
+        preguntar(act, act::finish);
+    }
+
+    /**
+     * El mismo aviso en un diálogo con campos (GP-108): la cantidad al añadir un
+     * alimento, una medida. Atrás, con algo escrito, pregunta antes de cerrar; tocar
+     * fuera no lo cierra mientras haya algo escrito. «Cancelar» sigue cerrando sin
+     * preguntar: ahí descartar es lo que se ha pedido.
+     *
+     * @param act        la pantalla que abre el diálogo.
+     * @param dialogo    el diálogo ya creado.
+     * @param hayCambios dice, al salir, si hay algo sin guardar.
+     * @param campos     los campos del diálogo, para saber cuándo cambia.
+     */
+    public static void instalarEnDialogo(android.app.Activity act, androidx.appcompat.app.AlertDialog dialogo,
+                                         BooleanSupplier hayCambios, android.widget.TextView... campos) {
+        android.text.TextWatcher vigilante = new android.text.TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence c, int a, int b, int d) {}
+            @Override public void onTextChanged(CharSequence c, int a, int b, int d) {}
+            @Override public void afterTextChanged(android.text.Editable e) {
+                dialogo.setCanceledOnTouchOutside(!hayCambios.getAsBoolean());
+            }
+        };
+        for (android.widget.TextView campo : campos) campo.addTextChangedListener(vigilante);
+        dialogo.setCanceledOnTouchOutside(!hayCambios.getAsBoolean());
+        Runnable alVolver = () -> {
+            if (!hayCambios.getAsBoolean()) dialogo.cancel();
+            else preguntar(act, dialogo::dismiss);
+        };
+        // Hacen falta los dos caminos. En Android 16 con targetSdk 36 el atrás llega por el
+        // OnBackInvokedDispatcher de la ventana del diálogo, y el de androidx no le llegaba
+        // (comprobado en API 36); en Android 13-15, sin haber optado por el atrás
+        // predictivo, llega como tecla y lo recibe el de androidx (comprobado en API 34).
+        // Nunca los dos a la vez: cada versión usa uno.
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            dialogo.getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
+                    android.window.OnBackInvokedDispatcher.PRIORITY_OVERLAY, alVolver::run);
+        }
+        dialogo.getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                alVolver.run();
+            }
+        });
+    }
+
+    // «¿Descartar lo que has apuntado?» (Descartar / Seguir editando).
+    private static void preguntar(android.app.Activity act, Runnable descartar) {
         UIHelper.mostrarDialogoConIcono(act,
                 act.getString(R.string.descartar_titulo),
                 act.getString(R.string.descartar_mensaje),
                 R.drawable.ic_ms_delete,
                 act.getString(R.string.descartar_confirmar),
                 act.getString(R.string.descartar_seguir),
-                act::finish);
+                descartar);
+    }
+
+    /** Si alguno de los campos ya no tiene el texto con el que se abrió la pantalla. */
+    public static boolean distintos(String[] iniciales, CharSequence... actuales) {
+        for (int i = 0; i < actuales.length; i++) {
+            if (distinto(i < iniciales.length ? iniciales[i] : null, actuales[i])) return true;
+        }
+        return false;
     }
 
     /** Si alguno de los textos lleva algo más que espacios. */

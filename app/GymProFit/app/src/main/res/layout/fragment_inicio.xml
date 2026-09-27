@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  fragment_inicio — pestaña Inicio (GP-105), según 01-inicio.png.
+  Cabecera con la fecha, el saludo y el avatar; debajo, cuatro tarjetas: Hoy toca,
+  Esta semana, Último récord y Nutrición de hoy. La silueta muscular y la racha ya no
+  están aquí.
+-->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scrollInicio"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Cabecera -->
+        <LinearLayout style="@style/Widget.GymProFit.CabeceraPestana">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvFecha"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_caption"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+                <TextView
+                    android:id="@+id/tvHola"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:accessibilityHeading="true"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Display" />
+            </LinearLayout>
+
+            <include
+                android:id="@+id/avatarInicio"
+                layout="@layout/view_avatar"
+                android:layout_width="48dp"
+                android:layout_height="48dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="16dp">
+
+            <!-- Hoy toca -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardHoyToca"
+                style="@style/Widget.GymProFit.Card.Estructura"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:id="@+id/ivHoyIcono"
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:src="@drawable/ic_ms_event_available"
+                            app:tint="?attr/colorOnSurfaceVariant"
+                            android:importantForAccessibility="no" />
+
+                        <TextView
+                            android:id="@+id/tvHoyEyebrow"
+                            style="@style/Widget.GymProFit.Seccion"
+                            android:layout_marginStart="6dp"
+                            android:text="@string/hoy_toca" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvHoyTitulo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Display"
+                        android:textSize="@dimen/text_display" />
+
+                    <TextView
+                        android:id="@+id/tvHoySub"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:textSize="@dimen/text_body"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal"
+                        android:id="@+id/filaBotonesHoy">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnHoyPrincipal"
+                            style="@style/Widget.GymProFit.BotonPildora"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/btn_empezar"
+                            app:icon="@drawable/ic_ms_play_arrow_fill" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnHoySecundario"
+                            style="@style/Widget.GymProFit.BotonPildora.Contorno"
+                            android:layout_width="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="@string/btn_cambiar" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Esta semana -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardSemana"
+                style="@style/Widget.GymProFit.Card.Estructura"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            style="@style/Widget.GymProFit.Seccion"
+                            android:text="@string/esta_semana" />
+
+                        <TextView
+                            android:id="@+id/tvSemanaResumen"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="8dp"
+                            android:gravity="end"
+                            android:textSize="@dimen/text_caption"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvSemanaZonas"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Display"
+                        android:textSize="@dimen/text_headline" />
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/grupoZonas"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        app:chipSpacingHorizontal="8dp"
+                        app:chipSpacingVertical="8dp" />
+
+                    <TextView
+                        android:id="@+id/tvSemanaNota"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/semana_nota"
+                        android:textSize="@dimen/text_eyebrow"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Último récord -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardRecordHome"
+                style="@style/Widget.GymProFit.Card.Estructura"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:visibility="gone"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardBackgroundColor="@color/gp_gold_container"
+                app:strokeColor="@color/gp_gold">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp">
+
+                    <FrameLayout
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_circulo_oro"
+                        android:importantForAccessibility="no">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_ms_trophy_fill"
+                            app:tint="@color/gp_gold_container"
+                            android:importantForAccessibility="no" />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="14dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/Widget.GymProFit.Seccion"
+                            android:text="@string/ultimo_record"
+                            android:textColor="@color/gp_gold_text" />
+
+                        <TextView
+                            android:id="@+id/tvRecordEjercicio"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:textSize="@dimen/text_subtitle"
+                            android:textStyle="bold"
+                            android:textColor="?attr/colorOnSurface" />
+
+                        <TextView
+                            android:id="@+id/tvRecordAntes"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:textSize="@dimen/text_caption"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Nutrición de hoy -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardNutricionHoy"
+                style="@style/Widget.GymProFit.Card.Estructura"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="14dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            style="@style/Widget.GymProFit.Seccion"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/nutricion_de_hoy" />
+
+                        <TextView
+                            android:id="@+id/btnRegistrarComida"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minHeight="48dp"
+                            android:gravity="center_vertical"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:background="?attr/selectableItemBackground"
+                            android:text="@string/accion_comida"
+                            android:textSize="@dimen/text_caption"
+                            android:textStyle="bold"
+                            android:textColor="?attr/colorPrimary" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/filaKcalHoy"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:baselineAligned="true">
+
+                        <TextView
+                            android:id="@+id/tvKcalHoy"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.GymProFit.Display"
+                            android:textSize="@dimen/text_display" />
+
+                        <TextView
+                            android:id="@+id/tvKcalObjetivoHoy"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:textSize="@dimen/text_body"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
+                    </LinearLayout>
+
+                    <com.google.android.material.progressindicator.LinearProgressIndicator
+                        android:id="@+id/barraKcalHoy"
+                        style="@style/Widget.GymProFit.BarraProgreso"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        app:trackThickness="8dp"
+                        app:trackCornerRadius="4dp" />
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/grupoMacrosHoy"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        app:chipSpacingHorizontal="16dp"
+                        app:chipSpacingVertical="6dp">
+
+                        <TextView
+                            android:id="@+id/tvMacroProtHoy"
+                            style="@style/Widget.GymProFit.MacroPunto"
+                            app:drawableStartCompat="@drawable/punto_proteinas" />
+
+                        <TextView
+                            android:id="@+id/tvMacroCarbosHoy"
+                            style="@style/Widget.GymProFit.MacroPunto"
+                            app:drawableStartCompat="@drawable/punto_carbos" />
+
+                        <TextView
+                            android:id="@+id/tvMacroGrasasHoy"
+                            style="@style/Widget.GymProFit.MacroPunto"
+                            app:drawableStartCompat="@drawable/punto_grasas" />
+                    </com.google.android.material.chip.ChipGroup>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_circulo_contenedor — el avatar grande de Progreso (GP-105): el contenedor del color de marca. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="?attr/colorControlHighlight">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="?attr/colorPrimaryContainer" />
+        </shape>
+    </item>
+</ripple>

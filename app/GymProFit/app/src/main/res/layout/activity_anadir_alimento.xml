@@ -31,6 +31,78 @@
 
     </com.google.android.material.appbar.MaterialToolbar>
 
+    <!-- Para qué comida (GP-105): se ve y se puede cambiar antes de guardar. El atajo
+         del «+» llega con la que toca por la hora ya marcada. -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:importantForAccessibility="no"
+            android:text="@string/anadir_alimento_para"
+            android:textSize="@dimen/text_body"
+            android:textColor="?attr/colorOnSurfaceVariant" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:paddingEnd="12dp">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupComida"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/anadir_alimento_para_a11y"
+                app:singleLine="true"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipComidaDesayuno"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nutricion_desayuno" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipComidaAlmuerzo"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nutricion_almuerzo" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipComidaComida"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nutricion_comida" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipComidaMerienda"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nutricion_merienda" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipComidaCena"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nutricion_cena" />
+
+            </com.google.android.material.chip.ChipGroup>
+        </HorizontalScrollView>
+    </LinearLayout>
+
     <!-- Search -->
     <!-- Campo de búsqueda de alimentos -->
     <com.google.android.material.textfield.TextInputLayout

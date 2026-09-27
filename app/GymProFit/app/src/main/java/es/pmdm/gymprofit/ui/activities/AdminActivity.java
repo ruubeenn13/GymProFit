@@ -41,7 +41,6 @@ public class AdminActivity extends BaseActivity {
         tvEjerciciosActivos   = findViewById(R.id.tvEjerciciosActivos);
 
         ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
-        setupMenuButton();
 
         findViewById(R.id.cardGestionarUsuarios).setOnClickListener(v ->
                 startActivity(new Intent(this, AdminUsuariosActivity.class)));

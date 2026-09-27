@@ -54,12 +54,18 @@ public final class InputDialog {
             et.setSelection(et.getText() != null ? et.getText().length() : 0);
         }
 
-        new MaterialAlertDialogBuilder(ctx)
+        androidx.appcompat.app.AlertDialog dialogo = new MaterialAlertDialogBuilder(ctx)
                 .setTitle(titulo)
                 .setView(v)
                 .setPositiveButton(R.string.medicion_guardar, (d, w) ->
                         cb.onConfirm(et.getText() != null ? et.getText().toString().trim() : ""))
                 .setNegativeButton(R.string.dialog_cancelar, null)
-                .show();
+                .create();
+        // Salir con otro valor escrito pregunta antes de tirarlo (GP-108).
+        if (ctx instanceof android.app.Activity) {
+            AvisoDescartar.instalarEnDialogo((android.app.Activity) ctx, dialogo,
+                    () -> AvisoDescartar.distinto(valorInicial, et.getText()), et);
+        }
+        dialogo.show();
     }
 }

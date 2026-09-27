@@ -68,7 +68,6 @@ public class AdminEjerciciosActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_ejercicios);
 
-        setupMenuButton();
         ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
 
         rv = findViewById(R.id.rvEjercicios);

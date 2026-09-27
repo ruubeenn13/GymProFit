@@ -40,6 +40,12 @@ public final class InsetsUtils {
     // Pantallas que NO deben separarse de las barras: ocupan la pantalla completa a
     // propósito y colocan su propio contenido centrado. Padding aquí solo las
     // descuadraría.
+    // Pantallas que colocan sus márgenes ellas mismas. MainActivity pinta la barra de
+    // navegación bajo la barra de gestos (GP-105): con el padding común en la raíz, el
+    // fondo de la barra quedaría cortado encima y debajo asomaría otro color.
+    private static final Set<String> CON_INSETS_PROPIOS = new HashSet<>(Arrays.asList(
+            "MainActivity"));
+
     private static final Set<String> A_PANTALLA_COMPLETA = new HashSet<>(Arrays.asList(
             "SplashActivity"));
 
@@ -65,6 +71,7 @@ public final class InsetsUtils {
         ajustarContrasteDeBarras(actividad, ventana);
 
         if (A_PANTALLA_COMPLETA.contains(actividad.getClass().getSimpleName())) return;
+        if (CON_INSETS_PROPIOS.contains(actividad.getClass().getSimpleName())) return;
 
         View raiz = raizDeContenido(actividad);
         if (raiz == null) return;

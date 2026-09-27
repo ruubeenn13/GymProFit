@@ -38,6 +38,7 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.ComidaApi;
 import es.pmdm.gymprofit.ui.adapters.AlimentoAdapter;
+import es.pmdm.gymprofit.utils.AvisoDescartar;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PaginacionScrollListener;
 import es.pmdm.gymprofit.utils.UIHelper;
@@ -67,6 +68,9 @@ public class AnadirAlimentoActivity extends BaseActivity {
     private int comidaId;
     // Fecha (YYYY-MM-DD) de la comida
     private String fecha;
+    // Tipo con el que se abrió: si se cambia en los chips, el comidaId ya no vale y
+    // hay que buscar (o crear) la comida del tipo elegido.
+    private String tipoInicial;
 
     // Lista mostrada en el RecyclerView (se rellena por páginas del servidor)
     private final List<Alimento> listaAlimentos = new ArrayList<>();
@@ -98,6 +102,8 @@ public class AnadirAlimentoActivity extends BaseActivity {
         tipoComida = getIntent().getStringExtra("tipoComida");
         comidaId   = getIntent().getIntExtra("comidaId", -1);
         fecha      = getIntent().getStringExtra("fecha");
+        tipoInicial = tipoComida;
+        configurarSelectorComida();
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(v -> finish());
@@ -154,6 +160,24 @@ public class AnadirAlimentoActivity extends BaseActivity {
         });
 
         cargarAlimentos();
+    }
+
+    // Los cinco chips de «Para»: se ve a qué comida va y se puede cambiar (GP-105).
+    private static final String[] TIPOS = {"DESAYUNO", "ALMUERZO", "COMIDA", "MERIENDA", "CENA"};
+    private static final int[] CHIPS = {R.id.chipComidaDesayuno, R.id.chipComidaAlmuerzo,
+            R.id.chipComidaComida, R.id.chipComidaMerienda, R.id.chipComidaCena};
+
+    private void configurarSelectorComida() {
+        com.google.android.material.chip.ChipGroup grupo = findViewById(R.id.chipGroupComida);
+        for (int i = 0; i < TIPOS.length; i++) {
+            if (TIPOS[i].equals(tipoComida)) grupo.check(CHIPS[i]);
+        }
+        grupo.setOnCheckedStateChangeListener((g, ids) -> {
+            if (ids.isEmpty()) return;
+            for (int i = 0; i < CHIPS.length; i++) {
+                if (CHIPS[i] == ids.get(0)) tipoComida = TIPOS[i];
+            }
+        });
     }
 
     // Construye el menú contextual (editar/desactivar/eliminar) según el rol y si es propio o predefinido
@@ -397,7 +421,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
             }
         });
 
-        new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+        androidx.appcompat.app.AlertDialog dialogo = new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
                 .setView(dialogView)
                 .setPositiveButton(getString(R.string.btn_anadir), (dialog, which) -> {
                     String raw = etGramos.getText().toString().trim();
@@ -419,11 +443,42 @@ public class AnadirAlimentoActivity extends BaseActivity {
                     anadirAlimento(alimento, gramos);
                 })
                 .setNegativeButton(getString(R.string.dialog_cancelar), null)
-                .show();
+                .create();
+        // Salir con una cantidad escrita pregunta antes de tirarla (GP-108).
+        AvisoDescartar.instalarEnDialogo(this, dialogo, () -> AvisoDescartar.hayTexto(etGramos.getText()), etGramos);
+        dialogo.show();
     }
 
     // Añade el alimento a la comida; si la comida aún no existe (comidaId == -1) la crea primero
     private void anadirAlimento(Alimento alimento, double gramos) {
+        // Sin id, o con otra comida elegida en los chips: se busca la de ese tipo y ese
+        // día antes de crear una, para no duplicarla (el atajo del «+» llega sin id).
+        if (comidaId == -1 || !tipoComida.equals(tipoInicial)) {
+            LoadingDialog.show(this);
+            comidaApi.getDeUsuarioFecha(prefsManager.getUsuarioId(), fecha).enqueue(new ApiCallback<List<Comida>>() {
+                @Override
+                public void onOk(List<Comida> lista) {
+                    LoadingDialog.hide(AnadirAlimentoActivity.this);
+                    comidaId = -1;
+                    tipoInicial = tipoComida;
+                    if (lista != null) {
+                        for (Comida c : lista) if (tipoComida.equals(c.getTipoComida())) comidaId = c.getId();
+                    }
+                    crearOAnadir(alimento, gramos);
+                }
+                @Override
+                public void onFail(int code, String message) {
+                    LoadingDialog.hide(AnadirAlimentoActivity.this);
+                    UiFeedback.toastError(AnadirAlimentoActivity.this, code, message);
+                }
+            });
+            return;
+        }
+        crearOAnadir(alimento, gramos);
+    }
+
+    // Añade el alimento a la comida; si la comida aún no existe (comidaId == -1) la crea primero
+    private void crearOAnadir(Alimento alimento, double gramos) {
         if (comidaId == -1) {
             // Cuerpo de creación: la fecha del path es yyyy-MM-dd; aquí se envía como ISO con hora 00:00:00.
             Map<String, Object> body = new HashMap<>();

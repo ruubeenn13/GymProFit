@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- item_record_seccion.xml — rótulo de zona del cuerpo en la pantalla de Récords (GP-088) -->
-<TextView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- item_record_seccion.xml — rótulo de zona en Progreso › Récords («PECHO»). -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tvSeccionRecord"
+    style="@style/Widget.GymProFit.Seccion"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingTop="20dp"
-    android:paddingBottom="8dp"
-    android:textAppearance="@style/TextAppearance.GymProFit.Label" />
+    android:paddingStart="4dp"
+    android:paddingTop="14dp"
+    android:paddingBottom="12dp" />

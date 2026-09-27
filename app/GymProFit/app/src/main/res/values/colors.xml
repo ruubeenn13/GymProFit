@@ -129,5 +129,8 @@
     <!-- Fondo del icono de la app (GP-081). Solo en values/: el icono del lanzador no
          cambia con el tema de la app. Es el fondo del tema oscuro, con el logo de la
          variante oscura encima (versión A, elegida por el propietario). -->
+    <!-- Velo bajo la hoja del «+» (GP-105): negro al 62 %, igual en los dos temas. -->
+    <color name="gp_velo">#9E000000</color>
+
     <color name="ic_launcher_fondo">#0B0C0E</color>
 </resources>

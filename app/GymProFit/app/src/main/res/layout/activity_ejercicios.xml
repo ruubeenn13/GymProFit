@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  activity_ejercicios.xml — Catálogo de ejercicios disponibles en la app.
-  Buscador, filtros por grupo muscular (chips) y listado en RecyclerView,
-  con barra de navegación inferior.
+  activity_ejercicios.xml — Biblioteca de ejercicios (GP-105: antes, pestaña).
+  Cabecera con volver, buscador, filtros por grupo muscular (chips) y listado con
+  scroll infinito. Se abre desde Entrenar, ya filtrada o con el teclado abierto.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -17,43 +17,28 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <!-- Cabecera con título, menú de opciones y buscador -->
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            style="@style/Widget.GymProFit.Cabecera"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:title="@string/biblioteca_titulo" />
+
+        <!-- Buscador -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
             android:paddingBottom="12dp"
             android:background="?attr/colorSurface">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginEnd="-12dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/ejercicios_catalogo"
-                    android:textAppearance="@style/TextAppearance.GymProFit.Display" />
-
-                <ImageButton
-                    android:id="@+id/btnMenuOpciones"
-                    style="@style/Widget.GymProFit.BotonIcono"
-                    android:src="@drawable/ic_ms_more_vert"
-                    android:contentDescription="@string/menu_opciones" />
-
-            </LinearLayout>
 
             <com.google.android.material.textfield.TextInputLayout
         app:errorIconDrawable="@drawable/ic_ms_error"
                 android:id="@+id/tilBuscar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
                 android:hint="@string/ejercicios_buscar"
                 app:boxBackgroundMode="outline"
                 app:boxCornerRadiusTopStart="12dp"

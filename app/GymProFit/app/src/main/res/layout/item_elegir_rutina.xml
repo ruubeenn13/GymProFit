@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- item_elegir_rutina — una fila de la hoja de elegir rutina (GP-105). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.GymProFit.FilaAccion"
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp">
+
+    <ImageView
+        android:id="@+id/ivIcono"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        app:tint="?attr/colorOnSurfaceVariant"
+        android:importantForAccessibility="no" />
+
+    <LinearLayout style="@style/Widget.GymProFit.FilaAccion.Textos">
+
+        <TextView
+            android:id="@+id/tvTitulo"
+            style="@style/Widget.GymProFit.FilaAccion.Titulo" />
+
+        <TextView
+            android:id="@+id/tvSub"
+            style="@style/Widget.GymProFit.FilaAccion.Sub" />
+    </LinearLayout>
+</LinearLayout>

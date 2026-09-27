@@ -578,7 +578,7 @@
     <string name="acerca_feat_6">Panel de administración para gestión de usuarios, rutinas, ejercicios y alimentos</string>
     <string name="acerca_contacto_titulo">Contacto</string>
     <string name="acerca_contacto_texto">¿Tienes una duda, has visto un fallo o se te ocurre algo que mejoraría la app? Escríbenos.</string>
-    <string name="acerca_autor_email_label">rubenjuancandela06@gmail.com</string>
+    <string name="acerca_autor_email_label" translatable="false">soporte@gymprofit.app</string>
     <string name="acerca_compartir_label">Compartir app</string>
     <string name="acerca_compartir_texto">Te recomiendo GymProFit para llevar tus entrenamientos y tu alimentación.</string>
 
@@ -810,7 +810,7 @@
     <string name="zona_titulo_pecho">Pecho</string>
     <string name="zona_titulo_hombros">Hombros</string>
     <string name="zona_titulo_brazos">Brazos</string>
-    <string name="zona_titulo_core">Abdomen</string>
+    <string name="zona_titulo_core">Core</string>
     <string name="zona_titulo_otros">Otros</string>
     <plurals name="record_repeticiones">
         <item quantity="one">%d rep</item>
@@ -827,4 +827,235 @@
     <string name="descartar_mensaje">Si sales ahora, se pierde lo que no has guardado.</string>
     <string name="descartar_confirmar">Descartar</string>
     <string name="descartar_seguir">Seguir editando</string>
+
+    <!-- GP-105 · barra de navegación y acciones rápidas -->
+    <string name="nav_inicio">Inicio</string>
+    <string name="nav_entrenar">Entrenar</string>
+    <string name="nav_progreso">Progreso</string>
+    <string name="nav_principal">Navegación principal</string>
+    <string name="acciones_rapidas">Acciones rápidas</string>
+    <string name="acciones_estado_abiertas">abiertas</string>
+    <string name="acciones_estado_cerradas">cerradas</string>
+    <string name="acciones_accion_abrir">abrir</string>
+    <string name="acciones_accion_cerrar">cerrar</string>
+    <string name="acciones_titulo">¿Qué quieres hacer?</string>
+    <string name="accion_entrenar">Empezar entrenamiento</string>
+    <string name="accion_entrenar_sub">Hoy toca: %1$s</string>
+    <string name="accion_comida">Registrar comida</string>
+    <string name="accion_comida_sub">Ahora toca: %1$s</string>
+    <string name="accion_peso">Anotar peso o medidas</string>
+    <string name="accion_peso_sub">Última: %1$s, %2$s</string>
+    <string name="comida_min_desayuno">desayuno</string>
+    <string name="comida_min_almuerzo">almuerzo</string>
+    <string name="comida_min_comida">comida</string>
+    <string name="comida_min_merienda">merienda</string>
+    <string name="comida_min_cena">cena</string>
+    <string name="tiempo_hoy">hoy</string>
+    <string name="tiempo_ayer">ayer</string>
+    <plurals name="tiempo_hace_dias">
+        <item quantity="one">hace %d día</item>
+        <item quantity="other">hace %d días</item>
+    </plurals>
+    <plurals name="tiempo_hace_semanas">
+        <item quantity="one">hace %d semana</item>
+        <item quantity="other">hace %d semanas</item>
+    </plurals>
+    <plurals name="tiempo_hace_meses">
+        <item quantity="one">hace %d mes</item>
+        <item quantity="other">hace %d meses</item>
+    </plurals>
+    <plurals name="tiempo_hace_anios">
+        <item quantity="one">hace %d año</item>
+        <item quantity="other">hace %d años</item>
+    </plurals>
+
+    <!-- GP-105 · Inicio -->
+    <string name="inicio_hola">Hola, %1$s</string>
+    <string name="inicio_avatar_a11y">Tu progreso y tu perfil</string>
+    <string name="hoy_toca">Hoy toca</string>
+    <string name="hecho_hoy">Hecho hoy</string>
+    <string name="hoy_toca_unos_min">unos %1$d min</string>
+    <string name="hoy_toca_ultima">la última, %1$s</string>
+    <string name="hoy_toca_nunca">todavía no la has hecho</string>
+    <string name="hoy_toca_separador">%1$s · %2$s</string>
+    <string name="hoy_toca_sin_rutinas">Todavía no tienes rutinas</string>
+    <string name="hoy_toca_sin_rutinas_sub">Empieza con una plantilla o entrena a tu aire.</string>
+    <string name="hoy_toca_sin_rutinas_sub_crear">Crea una a tu medida o entrena a tu aire.</string>
+    <string name="hoy_toca_error">No se ha podido cargar tu rutina de hoy.</string>
+    <string name="hecho_hoy_libre">Entrenamiento libre</string>
+    <string name="btn_empezar">Empezar</string>
+    <string name="btn_cambiar">Cambiar</string>
+    <string name="btn_empezar_otra">Empezar otra</string>
+    <string name="btn_ver_plantillas">Ver plantillas</string>
+    <string name="btn_crea_primera_rutina">Crea tu primera rutina</string>
+    <string name="btn_empezar_sin_rutina">Empezar sin rutina</string>
+    <string name="btn_reintentar">Reintentar</string>
+    <string name="cambiar_rutina_titulo">¿Qué rutina hoy?</string>
+    <string name="esta_semana">Esta semana</string>
+    <plurals name="semana_sesiones">
+        <item quantity="one">%d sesión</item>
+        <item quantity="other">%d sesiones</item>
+    </plurals>
+    <string name="duracion_h_min">%1$d h %2$d min</string>
+    <string name="duracion_min">%1$d min</string>
+    <string name="semana_zonas">%1$d de %2$d zonas</string>
+    <string name="semana_chip">%1$s · %2$d</string>
+    <string name="semana_nota">El número es de series esta semana.</string>
+    <plurals name="semana_zona_hecha_a11y">
+        <item quantity="one">%1$s, %2$d serie</item>
+        <item quantity="other">%1$s, %2$d series</item>
+    </plurals>
+    <string name="semana_hechas_a11y">Hechas: %1$s.</string>
+    <string name="semana_pendientes_a11y">Pendientes: %1$s.</string>
+    <string name="semana_ninguna_hecha_a11y">Ninguna hecha todavía.</string>
+    <string name="semana_error">No se ha podido cargar tu semana.</string>
+    <string name="ultimo_record">Último récord</string>
+    <string name="ultimo_record_sub">Antes: %1$s · %2$s</string>
+    <string name="nutricion_de_hoy">Nutrición de hoy</string>
+    <string name="nutricion_de_kcal">de %1$s kcal</string>
+    <string name="macro_prot_corto">Prot. %1$d/%2$d g</string>
+    <string name="macro_carbos_corto">Carbos %1$d/%2$d g</string>
+    <string name="macro_grasas_corto">Grasas %1$d/%2$d g</string>
+    <string name="nutricion_hoy_a11y">%1$s de %2$s kilocalorías.</string>
+
+    <!-- GP-105 · Entrenar -->
+    <string name="entrenar_titulo">Entrenar</string>
+    <string name="entrenar_crear_rutina_a11y">Crear una rutina</string>
+    <string name="mis_rutinas">Mis rutinas</string>
+    <string name="toca_hoy">Toca hoy</string>
+    <string name="rutina_resumen">%1$s · %2$s</string>
+    <string name="empezar_rutina_a11y">Empezar %1$s</string>
+    <string name="mis_rutinas_vacio">Todavía no tienes rutinas. Crea una a tu medida o empieza con una plantilla.</string>
+    <string name="mis_rutinas_error">No se han podido cargar tus rutinas.</string>
+    <string name="plantillas_gymprofit">Plantillas de GymProFit</string>
+    <string name="ver_todas">Ver todas</string>
+    <string name="ver_todas_plantillas_a11y">Ver todas las plantillas</string>
+    <string name="plantilla_resumen">%1$s · %2$s · %3$s</string>
+    <string name="plantillas_titulo">Plantillas de GymProFit</string>
+    <string name="plantillas_vacio">Todavía no hay plantillas.</string>
+    <string name="plantillas_error">No se han podido cargar las plantillas.</string>
+    <string name="biblioteca_ejercicios">Biblioteca de ejercicios</string>
+    <string name="biblioteca_titulo">Biblioteca de ejercicios</string>
+    <string name="biblioteca_buscar_n">Busca entre %1$s ejercicios</string>
+    <string name="biblioteca_buscar">Busca un ejercicio</string>
+    <string name="biblioteca_zona_a11y">Ejercicios de %1$s</string>
+    <string-array name="dias_semana_iniciales">
+        <item>L</item>
+        <item>M</item>
+        <item>X</item>
+        <item>J</item>
+        <item>V</item>
+        <item>S</item>
+        <item>D</item>
+    </string-array>
+
+    <!-- GP-105 · Nutrición -->
+    <string name="nutricion_historial_a11y">Historial y estadísticas</string>
+    <string name="nutricion_elegir_dia_a11y">Elegir otro día</string>
+    <string name="nutricion_te_quedan">Te quedan</string>
+    <string name="nutricion_te_pasas">Te pasas</string>
+    <string name="nutricion_kcal_de">de %1$s kcal</string>
+    <string name="nutricion_kcal_valor">%1$s kcal</string>
+    <string name="nutricion_macro_valor">%1$d / %2$d g</string>
+    <plurals name="comida_n_alimentos">
+        <item quantity="one">%d alimento</item>
+        <item quantity="other">%d alimentos</item>
+    </plurals>
+    <string name="comida_resumen">%1$s · %2$s</string>
+    <string name="comida_ahora_toca">ahora toca</string>
+    <string name="comida_anadir_desayuno">Añadir al desayuno</string>
+    <string name="comida_anadir_almuerzo">Añadir al almuerzo</string>
+    <string name="comida_anadir_comida">Añadir a la comida</string>
+    <string name="comida_anadir_merienda">Añadir a la merienda</string>
+    <string name="comida_anadir_cena">Añadir a la cena</string>
+    <string name="dia_futuro_a11y">%1$s, todavía no ha llegado</string>
+    <string name="nutricion_kcal_a11y">%1$s de %2$s kilocalorías. %3$s %4$s.</string>
+    <string name="nutricion_error_dia">No se ha podido cargar este día.</string>
+
+    <!-- GP-105 · Progreso y Ajustes -->
+    <string name="progreso_titulo">Progreso</string>
+    <string name="ajustes_titulo">Ajustes</string>
+    <string name="progreso_usuario">@%1$s</string>
+    <string name="progreso_avatar_a11y">Foto de perfil. Toca para cambiarla</string>
+    <plurals name="progreso_sesiones">
+        <item quantity="one">sesión</item>
+        <item quantity="other">sesiones</item>
+    </plurals>
+    <plurals name="progreso_records">
+        <item quantity="one">récord</item>
+        <item quantity="other">récords</item>
+    </plurals>
+    <plurals name="progreso_logros">
+        <item quantity="one">logro</item>
+        <item quantity="other">logros</item>
+    </plurals>
+    <string name="progreso_cifra_a11y">%1$s %2$s</string>
+    <string name="progreso_secciones_a11y">Secciones de progreso</string>
+    <string name="seccion_records">Récords</string>
+    <string name="seccion_logros">Logros</string>
+    <string name="seccion_medidas">Medidas</string>
+    <string name="seccion_historial">Historial</string>
+    <string name="progreso_solo_registrados">Crea una cuenta para guardar tu progreso.</string>
+    <string name="record_hace_antes">%1$s · antes %2$s</string>
+    <string name="ajustes_cuenta">Cuenta</string>
+    <string name="ajustes_foto">Foto de perfil</string>
+    <string name="ajustes_correo">Correo</string>
+    <string name="ajustes_contrasena">Contraseña</string>
+    <string name="ajustes_datos">Tus datos y objetivos</string>
+    <string name="ajustes_peso_altura_edad">Peso, altura y edad</string>
+    <string name="ajustes_sexo_actividad">Sexo y actividad</string>
+    <string name="ajustes_objetivo">Objetivo</string>
+    <string name="ajustes_nivel">Nivel</string>
+    <string name="ajustes_nota_recalculo">Al cambiar tus datos o tu objetivo, se recalculan tus calorías y tus macros.</string>
+    <string name="ajustes_preferencias">Preferencias</string>
+    <string name="ajustes_tema">Tema</string>
+    <string name="ajustes_tema_claro">Claro</string>
+    <string name="ajustes_tema_oscuro">Oscuro</string>
+    <string name="ajustes_idioma">Idioma</string>
+    <string name="ajustes_idioma_es">Español</string>
+    <string name="ajustes_idioma_en">English</string>
+    <string name="ajustes_notificaciones">Notificaciones</string>
+    <string name="ajustes_ayuda">Ayuda</string>
+    <string name="ajustes_soporte">Contactar con soporte</string>
+    <string name="ajustes_error">Informar de un error</string>
+    <string name="ajustes_mejora">Sugerir una mejora</string>
+    <string name="ajustes_legal">Legal y acerca de</string>
+    <string name="ajustes_terminos">Términos de uso</string>
+    <string name="ajustes_acerca">Acerca de GymProFit</string>
+    <string name="ajustes_eliminar_nota">Borra tu cuenta y todos tus datos. No se puede deshacer.</string>
+    <string name="ajustes_admin">Administración</string>
+    <string name="ajustes_fila_valor_a11y">%1$s, %2$s</string>
+    <string name="ajustes_abre_fuera_a11y">%1$s. Se abre en el navegador</string>
+    <string name="email_soporte" translatable="false">soporte@gymprofit.app</string>
+    <string name="email_soporte_asunto">Soporte · GymProFit</string>
+    <string name="email_error_asunto">Error en GymProFit</string>
+    <string name="email_error_cuerpo">Qué ha pasado:\n\n\nQué esperabas que pasara:\n\n\nPasos para repetirlo:\n\n\n— Datos del teléfono (no incluyen nada personal) —\nGymProFit %1$s\nAndroid %2$s\n%3$s</string>
+    <string name="email_mejora_asunto">Sugerencia para GymProFit</string>
+    <string name="email_elegir_app">Enviar correo con…</string>
+    <string name="email_sin_app">No hay ninguna app de correo. Escríbenos a soporte@gymprofit.app</string>
+
+    <!-- GP-105 · cifra desconocida -->
+    <string name="sin_dato">—</string>
+
+    <!-- GP-105 · contraseña y correo desde Ajustes -->
+    <string name="cambiar_password_titulo">Cambiar contraseña</string>
+    <string name="cambiar_password_actual">Contraseña actual</string>
+    <string name="cambiar_password_nueva">Contraseña nueva</string>
+    <string name="cambiar_password_boton">Cambiar contraseña</string>
+    <string name="cambiar_password_actual_requerida">Escribe tu contraseña actual</string>
+    <string name="cambiar_password_actual_mal">La contraseña actual no es correcta</string>
+    <string name="cambiar_password_igual">La nueva tiene que ser distinta de la actual</string>
+    <string name="cambiar_password_ok">Contraseña cambiada</string>
+    <string name="cambiar_password_vuelve_titulo">Tu contraseña ha cambiado</string>
+    <string name="cambiar_password_vuelve_mensaje">Por seguridad se han cerrado tus sesiones. Entra con la contraseña nueva.</string>
+    <string name="cambiar_correo_titulo">Cambiar correo</string>
+    <string name="cambiar_correo_actual">Ahora: %1$s</string>
+    <string name="cambiar_correo_nuevo">Correo nuevo</string>
+    <string name="cambiar_correo_boton">Cambiar correo</string>
+    <string name="cambiar_correo_ok">Correo cambiado</string>
+    <string name="cambiar_correo_igual">Es el mismo correo que ya tienes</string>
+
+    <!-- GP-105 · añadir alimento: para qué comida -->
+    <string name="anadir_alimento_para">Para</string>
+    <string name="anadir_alimento_para_a11y">Comida a la que se añade</string>
 </resources>

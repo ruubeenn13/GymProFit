@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_chip_zona — una zona de «Esta semana» (GP-105): «✓ Pecho · 8» relleno si se ha
+  trabajado, «○ Hombros» en contorno si no. No se pulsa; TalkBack lee la tarjeta
+  entera, así que el chip no es un elemento propio.
+-->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Widget.GymProFit.ChipZona"
+    android:importantForAccessibility="no" />

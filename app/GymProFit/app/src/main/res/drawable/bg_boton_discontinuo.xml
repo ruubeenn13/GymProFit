@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_boton_discontinuo — «Empezar sin rutina» en Entrenar (GP-105): borde discontinuo, radio 20. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="?attr/colorControlHighlight">
+    <item android:id="@android:id/mask">
+        <shape android:shape="rectangle">
+            <corners android:radius="20dp" />
+            <solid android:color="@android:color/white" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="20dp" />
+            <stroke android:width="1dp" android:color="?attr/colorOutline"
+                android:dashWidth="5dp" android:dashGap="4dp" />
+        </shape>
+    </item>
+</ripple>

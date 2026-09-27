@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Barra con acciones rápidas</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+button{font-family:inherit;cursor:pointer}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif;">
+<header style="display: flex; align-items: center; justify-content: space-between; padding: 18px 20px 6px;">
+<div style="display: flex; flex-direction: column; gap: 2px;">
+<span style="font-size: 14px; color: #A1A9B6;">Domingo, 27 de septiembre</span>
+<h1 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 30px;">Hola, Rubén</h1>
+</div>
+<span style="width: 44px; height: 44px; border-radius: 22px; background: #252A31; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px;">R</span>
+</header>
+<div style="padding: 8px 16px; display: flex; flex-direction: column; gap: 12px;">
+<div style="height: 180px; background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px;"></div>
+<div style="height: 200px; background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px;"></div>
+<div style="height: 92px; background: #3A2E12; border: 1px solid #6B5421; border-radius: 20px;"></div>
+</div>
+<div style="position: absolute; inset: 0; background: rgba(0, 0, 0, 0.62);"></div>
+<section aria-label="Acciones rápidas" style="position: absolute; left: 0; right: 0; bottom: 96px; margin: 0 12px; background: #1B1E24; border: 1px solid #4A505B; border-radius: 24px; padding: 10px 8px 8px; display: flex; flex-direction: column; gap: 2px;">
+<span style="align-self: center; width: 36px; height: 4px; border-radius: 2px; background: #4A505B; margin-bottom: 6px;"></span>
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px; padding: 4px 12px 8px;">¿Qué quieres hacer?</span>
+<button type="button" style="height: 60px; border: 0; border-radius: 16px; background: transparent; color: #F2F2F3; display: flex; align-items: center; gap: 14px; padding: 0 12px; font-size: 16px; font-weight: 600; text-align: left;"><span style="width: 40px; height: 40px; border-radius: 20px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; justify-content: center;"><span class="ms f" aria-hidden="true">play_arrow</span></span><span style="display: flex; flex-direction: column; gap: 2px;">Empezar entrenamiento<span style="font-size: 13px; font-weight: 400; color: #A1A9B6;">Hoy toca: Pecho y tríceps</span></span></button>
+<button type="button" style="height: 60px; border: 0; border-radius: 16px; background: transparent; color: #F2F2F3; display: flex; align-items: center; gap: 14px; padding: 0 12px; font-size: 16px; font-weight: 600; text-align: left;"><span style="width: 40px; height: 40px; border-radius: 20px; background: #252A31; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">restaurant</span></span><span style="display: flex; flex-direction: column; gap: 2px;">Registrar comida<span style="font-size: 13px; font-weight: 400; color: #A1A9B6;">Ahora toca: cena</span></span></button>
+<button type="button" style="height: 60px; border: 0; border-radius: 16px; background: transparent; color: #F2F2F3; display: flex; align-items: center; gap: 14px; padding: 0 12px; font-size: 16px; font-weight: 600; text-align: left;"><span style="width: 40px; height: 40px; border-radius: 20px; background: #252A31; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">monitor_weight</span></span><span style="display: flex; flex-direction: column; gap: 2px;">Anotar peso o medidas<span style="font-size: 13px; font-weight: 400; color: #A1A9B6;">Última: 78,4 kg, hace 5 días</span></span></button>
+</section>
+<nav aria-label="Navegación principal" style="position: absolute; left: 0; right: 0; bottom: 0; height: 80px; background: #121418; border-top: 1px solid #252A31; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 8px 4px 12px; box-sizing: border-box; align-items: start;">
+<a href="Main.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: #F2F2F3;"><span style="width: 56px; height: 32px; border-radius: 16px; background: #3A2110; display: flex; align-items: center; justify-content: center;"><span class="ms f" aria-hidden="true" style="color: #FF6A00;">home</span></span><span style="font-size: 13px; font-weight: 700;">Inicio</span></a>
+<a href="Entrenar.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: #A1A9B6;"><span style="width: 56px; height: 32px; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">fitness_center</span></span><span style="font-size: 13px;">Entrenar</span></a>
+<a href="Main.dc.html" role="button" aria-label="Cerrar acciones rápidas" aria-expanded="true" style="justify-self: center; width: 56px; height: 56px; margin-top: -2px; border-radius: 28px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; justify-content: center; text-decoration: none;"><span class="ms" aria-hidden="true" style="font-size: 30px;">close</span></a>
+<a href="Nutricion.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: #A1A9B6;"><span style="width: 56px; height: 32px; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">restaurant</span></span><span style="font-size: 13px;">Nutrición</span></a>
+<a href="Progreso.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: #A1A9B6;"><span style="width: 56px; height: 32px; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">monitoring</span></span><span style="font-size: 13px;">Progreso</span></a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

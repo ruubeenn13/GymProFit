@@ -65,6 +65,12 @@ public interface SesionApi {
     Call<List<VolumenMuscular>> getVolumenMuscular(@Path("usuarioId") int usuarioId,
                                                    @Query("dias") int dias);
 
+    // Series por músculo de las sesiones que empiezan desde «desde» (la semana natural
+    // de Inicio, GP-105): el lunes a las 00:00 en la hora local, «yyyy-MM-ddTHH:mm:ss».
+    @GET("sesiones/usuario/{usuarioId}/volumen-muscular")
+    Call<List<VolumenMuscular>> getVolumenMuscularDesde(@Path("usuarioId") int usuarioId,
+                                                        @Query("desde") String desde);
+
     // Kilos movidos en una sesión. Respuesta: {"volumenKg": 4250.00}. Es el número
     // grande del resumen tras entrenar.
     @GET("sesiones/{id}/volumen")

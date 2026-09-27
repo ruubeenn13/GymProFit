@@ -143,8 +143,8 @@ public class UIHelper {
                     tv.setCompoundDrawablePadding((int) (12 * context.getResources().getDisplayMetrics().density));
                     tv.setGravity(Gravity.CENTER_VERTICAL);
                 }
-                // Si la pantalla tiene barra de navegación flotante, el aviso aparece por encima
-                View nav = root.findViewById(R.id.floatingNav);
+                // Si la pantalla tiene la barra de navegación, el aviso aparece por encima
+                View nav = root.findViewById(R.id.barra);
                 if (nav != null) sb.setAnchorView(nav);
                 sb.show();
                 return;
@@ -426,7 +426,32 @@ public class UIHelper {
             case "PRINCIPIANTE": return context.getString(R.string.nivel_principiante);
             case "INTERMEDIO":   return context.getString(R.string.nivel_intermedio);
             case "AVANZADO":     return context.getString(R.string.nivel_avanzado);
+            case "EXPERTO":      return context.getString(R.string.nivel_experto);
             default:             return nivel;
+        }
+    }
+
+    /** Traduce el objetivo (PERDER_PESO…MEJORAR_FUERZA) al idioma de la app. */
+    public static String traducirObjetivo(Context context, String objetivo) {
+        if (objetivo == null) return "";
+        switch (objetivo.toUpperCase()) {
+            case "PERDER_PESO":         return context.getString(R.string.objetivo_perder_peso);
+            case "GANAR_MASA_MUSCULAR": return context.getString(R.string.objetivo_ganar_musculo);
+            case "MANTENER_PESO":       return context.getString(R.string.objetivo_mantener);
+            case "MEJORAR_FUERZA":      return context.getString(R.string.objetivo_fuerza);
+            default:                    return objetivo;
+        }
+    }
+
+    /** Traduce el nivel de actividad física (SEDENTARIO…ACTIVO) al idioma de la app. */
+    public static String traducirActividad(Context context, String actividad) {
+        if (actividad == null) return "";
+        switch (actividad.toUpperCase()) {
+            case "SEDENTARIO": return context.getString(R.string.onboarding_sedentario);
+            case "LIGERO":     return context.getString(R.string.onboarding_ligero);
+            case "MODERADO":   return context.getString(R.string.onboarding_moderado);
+            case "ACTIVO":     return context.getString(R.string.onboarding_activo);
+            default:           return actividad;
         }
     }
 

@@ -17,17 +17,7 @@
         style="@style/Widget.GymProFit.Cabecera"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="@string/admin_ejercicios_titulo">
-
-        <ImageButton
-            android:id="@+id/btnMenuOpciones"
-            style="@style/Widget.GymProFit.BotonIcono"
-            android:layout_gravity="end"
-            android:layout_marginEnd="4dp"
-            android:src="@drawable/ic_ms_more_vert"
-            android:contentDescription="@string/menu_opciones" />
-
-    </com.google.android.material.appbar.MaterialToolbar>
+        app:title="@string/admin_ejercicios_titulo" />
 
     <!-- SearchView -->
     <androidx.appcompat.widget.SearchView

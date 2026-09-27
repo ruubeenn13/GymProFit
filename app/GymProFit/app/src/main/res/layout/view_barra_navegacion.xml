@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  view_barra_navegacion — contenido de BarraNavegacion (GP-105): una línea arriba y
+  una fila de cinco columnas iguales: Inicio · Entrenar · «+» · Nutrición · Progreso.
+  80 dp de alto como el lienzo (8 arriba, 12 abajo); el hueco de la barra de gestos
+  o de botones del sistema se suma debajo, desde BarraNavegacion.aplicarInsets.
+-->
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?attr/colorSurfaceVariant" />
+
+    <LinearLayout
+        android:id="@+id/filaBarra"
+        android:layout_width="match_parent"
+        android:layout_height="79dp"
+        android:orientation="horizontal"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="12dp">
+
+        <include android:id="@+id/tabInicio" layout="@layout/view_pestana" />
+        <include android:id="@+id/tabEntrenar" layout="@layout/view_pestana" />
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clipChildren="false">
+
+            <ImageButton
+                android:id="@+id/btnAcciones"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_gravity="top|center_horizontal"
+                android:layout_marginTop="-2dp"
+                android:background="@drawable/bg_boton_acciones"
+                android:contentDescription="@string/acciones_rapidas"
+                android:padding="13dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_ms_add"
+                app:tint="?attr/colorOnPrimary" />
+        </FrameLayout>
+
+        <include android:id="@+id/tabNutricion" layout="@layout/view_pestana" />
+        <include android:id="@+id/tabProgreso" layout="@layout/view_pestana" />
+    </LinearLayout>
+</merge>

@@ -35,8 +35,9 @@ import es.pmdm.gymprofit.utils.UIHelper;
 
 // ============================================================
 // BaseActivity — clase base para todas las Activities de GymProFit
-// Centraliza tema claro/oscuro, idioma, menú de opciones (tema/idioma/
-// contacto/cerrar sesión) y el logout automático ante 401 no autorizado.
+// Centraliza tema claro/oscuro, idioma, los diálogos de tema e idioma y cerrar
+// sesión (que desde GP-105 abre Ajustes; el menú de tres puntos ya no existe) y el
+// logout automático ante 401 no autorizado.
 // ============================================================
 public abstract class BaseActivity extends AppCompatActivity {
 
@@ -84,25 +85,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         return true;
     }
 
-    // Vincula el botón de menú de opciones (si existe en el layout) al menú anclado con las opciones comunes
-    protected void setupMenuButton() {
-        View btn = findViewById(R.id.btnMenuOpciones);
-        if (btn != null) btn.setOnClickListener(this::mostrarMenuOpciones);
-    }
-
-    // Construye y muestra el menú anclado con las opciones: tema, idioma, contacto y cerrar sesión.
-    // Público para que los Fragments de MainActivity puedan delegar aquí su botón de menú.
-    public void mostrarMenuOpciones(View anchor) {
-        List<UIHelper.MenuAction> actions = new ArrayList<>();
-        actions.add(new UIHelper.MenuAction(R.drawable.ic_ms_palette,  getString(R.string.perfil_tema),         this::mostrarDialogoTema));
-        actions.add(new UIHelper.MenuAction(R.drawable.ic_ms_language, getString(R.string.perfil_idioma),       this::mostrarDialogoIdioma));
-        actions.add(new UIHelper.MenuAction(R.drawable.ic_ms_mail,    getString(R.string.menu_contactanos),    this::abrirEmailContacto));
-        actions.add(new UIHelper.MenuAction(R.drawable.ic_ms_logout,   getString(R.string.perfil_cerrar_sesion), true, this::confirmarCerrarSesion));
-        UIHelper.mostrarMenuAnclado(this, anchor, null, actions);
-    }
-
     // Muestra un diálogo custom para elegir tema claro/oscuro; guarda la preferencia y recrea la activity
-    private void mostrarDialogoTema() {
+    protected void mostrarDialogoTema() {
         Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_tema);
@@ -150,7 +134,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     // Muestra un diálogo custom para elegir idioma español/inglés; guarda la preferencia y recrea la activity
-    private void mostrarDialogoIdioma() {
+    protected void mostrarDialogoIdioma() {
         Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_idioma);
@@ -195,16 +179,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-    // Abre un cliente de correo con destinatario, asunto y cuerpo predefinidos para contactar con soporte
-    private void abrirEmailContacto() {
-        Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.setData(Uri.parse("mailto:"));
-        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"rubenjuancandela06@gmail.com"});
-        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_contacto_asunto));
-        intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.email_contacto_cuerpo));
-        startActivity(Intent.createChooser(intent, getString(R.string.menu_contactanos)));
-    }
-
     // Re-registra el token FCM tras cambiar el idioma: el backend guarda el idioma junto
     // al token para localizar las push, así que hay que re-enviarlo. Se invalida la caché
     // (si no, PushTokenManager saltaría el POST al no haber cambiado el token).
@@ -214,7 +188,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     // Muestra un diálogo de confirmación y, al aceptar, limpia token/sesión y redirige a LoginActivity
-    private void confirmarCerrarSesion() {
+    protected void confirmarCerrarSesion() {
         UIHelper.mostrarDialogoConIcono(
                 this,
                 getString(R.string.perfil_cerrar_sesion),
@@ -240,6 +214,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                     }
                     UtilREST.clearToken();
                     prefsManager.cerrarSesion();
+                    es.pmdm.gymprofit.utils.AvatarUtils.olvidar();
                     Intent intent = new Intent(this, LoginActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);

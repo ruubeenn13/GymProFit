@@ -33,6 +33,11 @@
     <!-- Cuerpo. Es el tamaño más usado de la app. Sustituye a 14 y 15 sp. -->
     <dimen name="text_body">15sp</dimen>
 
+    <!-- Fila de lista y nombre en tarjetas pequeñas de la estructura de GP-105 (hoja
+         del «+», comidas, plantillas, récords de Progreso). El lienzo aprobado el
+         27-09-2026 lo pide a 16 sp, entre cuerpo y subtítulo. -->
+    <dimen name="text_fila">16sp</dimen>
+
     <!-- Título de fila o de tarjeta. Sustituye a 16 y 17 sp. -->
     <dimen name="text_subtitle">17sp</dimen>
 
@@ -54,20 +59,5 @@
     <!-- La cifra protagonista de una pantalla. Sustituye a 64 sp. -->
     <dimen name="text_number_hero">56sp</dimen>
 
-    <!-- ── Barra de navegación flotante ─────────────────────────────── -->
-
-    <!--
-      Las medidas de la FloatingNavBar viven aquí y en ningún otro sitio.
-      activity_main.xml dibuja la barra con ellas y FloatingNavBar.espacioReservado()
-      calcula con ellas el hueco que las cinco pestañas reservan debajo de su
-      contenido. Escribir ese hueco a mano en cada layout era justo lo que dejaba
-      la última tarjeta y "Registrar comida" bajo el cristal: cinco números que
-      nadie actualizaba cuando la barra cambiaba de alto.
-    -->
-    <dimen name="nav_bar_height">72dp</dimen>
-    <dimen name="nav_bar_margin">14dp</dimen>
-
-    <!-- Aire entre el último elemento del contenido y el borde de la barra. -->
-    <dimen name="nav_bar_content_gap">12dp</dimen>
 
 </resources>

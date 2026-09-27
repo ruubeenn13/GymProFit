@@ -72,7 +72,6 @@ public class AdminUsuariosActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_usuarios);
 
-        setupMenuButton();
         ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
 
         rv = findViewById(R.id.rvUsuarios);

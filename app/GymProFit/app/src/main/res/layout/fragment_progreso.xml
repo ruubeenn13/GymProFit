@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  fragment_progreso — pestaña Progreso (GP-105), según 04-progreso.png.
+  Cabecera con el engranaje (Ajustes), el perfil, tres cifras y las pestañas
+  Récords · Logros · Medidas · Historial. La cabecera se desplaza con el contenido y
+  las pestañas se quedan arriba; debajo, la sección elegida.
+-->
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarProgreso"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/android:colorBackground"
+        app:elevation="0dp"
+        app:liftOnScroll="false">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_scrollFlags="scroll">
+
+            <LinearLayout style="@style/Widget.GymProFit.CabeceraPestana">
+
+                <TextView
+                    style="@style/Widget.GymProFit.TituloPestana"
+                    android:text="@string/progreso_titulo" />
+
+                <ImageButton
+                    android:id="@+id/btnAjustes"
+                    style="@style/Widget.GymProFit.BotonRedondo"
+                    android:background="@drawable/bg_boton_ajustes"
+                    android:contentDescription="@string/ajustes_titulo"
+                    android:src="@drawable/ic_ms_settings" />
+            </LinearLayout>
+
+            <!-- Perfil -->
+            <LinearLayout
+                android:id="@+id/filaPerfil"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="4dp">
+
+                <include
+                    android:id="@+id/avatarProgreso"
+                    layout="@layout/view_avatar"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="14dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvNombrePerfil"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_title"
+                        android:textStyle="bold"
+                        android:textColor="?attr/colorOnSurface" />
+
+                    <TextView
+                        android:id="@+id/tvSubPerfil"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:textSize="@dimen/text_caption"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Tres cifras -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="14dp"
+                android:orientation="horizontal">
+
+                <include
+                    android:id="@+id/cifraSesiones"
+                    layout="@layout/view_cifra_progreso"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <include
+                    android:id="@+id/cifraRecords"
+                    layout="@layout/view_cifra_progreso"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp" />
+
+                <include
+                    android:id="@+id/cifraLogros"
+                    layout="@layout/view_cifra_progreso"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Pestañas de sección: se quedan arriba al desplazar -->
+        <LinearLayout
+            android:id="@+id/pestanasProgreso"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="14dp"
+            android:orientation="horizontal"
+            android:padding="4dp"
+            android:background="@drawable/bg_pestanas_progreso">
+
+            <TextView android:id="@+id/secRecords" style="@style/Widget.GymProFit.PestanaSeccion" android:text="@string/seccion_records" />
+            <TextView android:id="@+id/secLogros" style="@style/Widget.GymProFit.PestanaSeccion" android:layout_marginStart="4dp" android:text="@string/seccion_logros" />
+            <TextView android:id="@+id/secMedidas" style="@style/Widget.GymProFit.PestanaSeccion" android:layout_marginStart="4dp" android:text="@string/seccion_medidas" />
+            <TextView android:id="@+id/secHistorial" style="@style/Widget.GymProFit.PestanaSeccion" android:layout_marginStart="4dp" android:text="@string/seccion_historial" />
+        </LinearLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/contenedorSeccion"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

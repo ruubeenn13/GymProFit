@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- punto_proteinas — el punto de 8 dp del color de la macro en las tarjetas de nutrición (GP-105). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <size android:width="8dp" android:height="8dp" />
+    <solid android:color="@color/gp_macro_proteinas" />
+</shape>

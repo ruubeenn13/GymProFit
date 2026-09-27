@@ -75,24 +75,12 @@
         <activity
             android:name=".ui.activities.EditarPerfilActivity"
             android:exported="false" />
-        <activity
-            android:name=".ui.activities.LogrosActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.activities.RecordsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.activities.MedicionesActivity"
-            android:exported="false" />
         <!-- Sesiones de entrenamiento -->
         <activity
             android:name=".ui.activities.RegistrarSesionActivity"
             android:exported="false" />
         <activity
             android:name=".ui.activities.ResumenSesionActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.activities.SesionesActivity"
             android:exported="false" />
         <!-- Registro de usuario y flujo de onboarding (pasos 1 a 5 + resumen) -->
         <activity
@@ -135,8 +123,8 @@
         <activity
             android:name=".ui.activities.CrearRutinaActivity"
             android:exported="false" />
-        <!-- Navegación principal por pestañas: 1 Activity + ViewPager2 + 5 Fragments
-             (Home/Rutinas/Ejercicios/Nutrición/Perfil) con la FloatingNavBar fija. -->
+        <!-- Navegación principal (GP-105): 1 Activity + ViewPager2 + 4 Fragments
+             (Inicio/Entrenar/Nutrición/Progreso) con la barra fija y el «+». -->
         <activity
             android:name=".ui.activities.MainActivity"
             android:exported="false" />
@@ -166,8 +154,16 @@
             android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
             android:theme="@style/Theme.GymProFit.ConBarra"
             tools:replace="android:theme" />
-        <!-- Borrado definitivo de la cuenta (GP-008); se abre desde el perfil -->
+        <!-- Borrado definitivo de la cuenta (GP-008); se abre desde Ajustes -->
         <activity android:name=".ui.activities.EliminarCuentaActivity" android:exported="false" />
+        <!-- Estructura de GP-105: Ajustes y lo que cuelga de él, la biblioteca de
+             ejercicios y todas las plantillas (antes, pestañas o parte del perfil). -->
+        <activity android:name=".ui.activities.AjustesActivity" android:exported="false" />
+        <activity android:name=".ui.activities.CambiarPasswordActivity" android:exported="false" />
+        <activity android:name=".ui.activities.CambiarCorreoActivity" android:exported="false" />
+        <activity android:name=".ui.activities.LicenciasActivity" android:exported="false" />
+        <activity android:name=".ui.activities.EjerciciosActivity" android:exported="false" />
+        <activity android:name=".ui.activities.PlantillasActivity" android:exported="false" />
 
         <!-- FileProvider para compartir/capturar la foto de perfil con la cámara -->
         <provider

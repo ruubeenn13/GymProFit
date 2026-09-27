@@ -53,6 +53,8 @@ public class LoginActivity extends AppCompatActivity {
      * desactivada (GP-083). Sin él, el usuario solo veía volver el login sin saber por qué.
      */
     public static final String EXTRA_CUENTA_DESACTIVADA = "cuenta_desactivada";
+    // Tras cambiar la contraseña, si la app no pudo volver a entrar sola (GP-105).
+    public static final String EXTRA_PASSWORD_CAMBIADA = "password_cambiada";
 
     private EditText etUsuario, etPassword;
     private ImageButton btnCambiarTema, btnCambiarIdioma;
@@ -82,6 +84,13 @@ public class LoginActivity extends AppCompatActivity {
             new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
                     .setTitle(R.string.login_cuenta_desactivada_titulo)
                     .setMessage(R.string.login_cuenta_desactivada_mensaje)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show();
+        } else if (getIntent().getBooleanExtra(EXTRA_PASSWORD_CAMBIADA, false)) {
+            getIntent().removeExtra(EXTRA_PASSWORD_CAMBIADA);
+            new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                    .setTitle(R.string.cambiar_password_vuelve_titulo)
+                    .setMessage(R.string.cambiar_password_vuelve_mensaje)
                     .setPositiveButton(android.R.string.ok, null)
                     .show();
         }

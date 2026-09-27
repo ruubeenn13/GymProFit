@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  dialog_elegir_rutina — la hoja de «Cambiar» en Hoy toca (GP-105): las rutinas
+  propias y, al final, «Empezar sin rutina». Las filas las añade ElegirRutinaHoja.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="10dp"
+    android:paddingBottom="16dp">
+
+    <View
+        android:layout_width="36dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="6dp"
+        android:background="@drawable/bg_asa_hoja"
+        android:importantForAccessibility="no" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="8dp"
+        android:accessibilityHeading="true"
+        android:text="@string/cambiar_rutina_titulo"
+        android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/listaRutinas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  view_fila_ajuste — una fila de Ajustes (GP-105): icono gris, texto, valor opcional a
+  la derecha («Oscuro», «r***@gmail.com») y chevron o «abre fuera». La rellena
+  AjustesActivity; TalkBack la lee de una vez («Tema, Oscuro»).
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.GymProFit.FilaAjuste">
+
+    <ImageView
+        android:id="@+id/ivIcono"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        app:tint="?attr/colorOnSurfaceVariant"
+        android:importantForAccessibility="no" />
+
+    <TextView
+        android:id="@+id/tvTitulo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="14dp"
+        android:textSize="@dimen/text_body"
+        android:textColor="?attr/colorOnSurface"
+        android:importantForAccessibility="no" />
+
+    <TextView
+        android:id="@+id/tvValor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:maxWidth="180dp"
+        android:gravity="end"
+        android:textSize="@dimen/text_caption"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:visibility="gone"
+        android:importantForAccessibility="no" />
+
+    <ImageView
+        android:id="@+id/ivFlecha"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="14dp"
+        android:src="@drawable/ic_ms_chevron_right"
+        app:tint="?attr/colorOnSurfaceVariant"
+        android:importantForAccessibility="no" />
+</LinearLayout>
