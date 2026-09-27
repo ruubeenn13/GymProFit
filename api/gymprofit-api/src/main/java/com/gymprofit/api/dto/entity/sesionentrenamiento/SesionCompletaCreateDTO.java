@@ -39,8 +39,8 @@ public class SesionCompletaCreateDTO implements Serializable {
      * Es obligatoria. Sin ella este endpoint no aporta nada sobre el viejo: el
      * reintento que la pantalla necesita duplicaría entrenamientos.
      */
-    @NotBlank(message = "La clave de idempotencia es obligatoria")
-    @Size(max = 64, message = "La clave de idempotencia no puede pasar de 64 caracteres")
+    @NotBlank(message = "{validacion.idempotencia.obligatoria}")
+    @Size(max = 64, message = "{validacion.idempotencia.larga}")
     @Schema(description = "Clave única del intento de guardado; el reintento reusa la misma",
             example = "9f1c1a7e-0b2f-4c4a-9d3e-6a5b8c7d0e1f")
     private String claveIdempotencia;
@@ -51,12 +51,12 @@ public class SesionCompletaCreateDTO implements Serializable {
     @Schema(description = "Inicio de la sesión; si falta, el momento de guardar")
     private LocalDateTime fechaInicio;
 
-    @PositiveOrZero(message = "La duración no puede ser negativa")
+    @PositiveOrZero(message = "{validacion.duracion.negativa}")
     @Schema(description = "Duración en minutos", example = "45")
     private Integer duracionMinutos;
 
-    @Min(value = 1, message = "La valoración va de 1 a 5")
-    @Max(value = 5, message = "La valoración va de 1 a 5")
+    @Min(value = 1, message = "{validacion.valoracion.rango}")
+    @Max(value = 5, message = "{validacion.valoracion.rango}")
     @Schema(description = "Valoración de 1 a 5; nula si no se valoró", example = "4")
     private Integer valoracion;
 

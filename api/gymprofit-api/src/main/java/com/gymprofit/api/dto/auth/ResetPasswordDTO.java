@@ -29,7 +29,7 @@ public class ResetPasswordDTO implements Serializable {
 
     // Los seis dígitos recibidos por correo.
     @NotBlank
-    @Pattern(regexp = "^\\d{6}$", message = "El código debe tener 6 dígitos")
+    @Pattern(regexp = "^\\d{6}$", message = "{validacion.codigo.seisDigitos}")
     @ToString.Exclude
     private String codigo;
 

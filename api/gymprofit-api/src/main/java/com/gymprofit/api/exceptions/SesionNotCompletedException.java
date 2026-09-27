@@ -5,15 +5,13 @@ package com.gymprofit.api.exceptions;
 // Se lanza cuando se intenta realizar una operación que requiere que una
 // SesionEntrenamiento esté finalizada (p.ej. calcular progreso).
 // ============================================================
-public class SesionNotCompletedException extends RuntimeException {
+public class SesionNotCompletedException extends ExcepcionConClave {
 
-    // Constructor que compone el mensaje a partir del id de la sesión.
-    public SesionNotCompletedException(Integer sesionId) {
-        super("La sesión de entrenamiento con id " + sesionId + " no está completada");
-    }
-
-    // Constructor con mensaje personalizado.
-    public SesionNotCompletedException(String message) {
-        super(message);
+    /**
+     * @param clave clave del mensaje en messages*.properties (GP-109)
+     * @param args  argumentos del mensaje
+     */
+    public SesionNotCompletedException(String clave, Object... args) {
+        super(clave, args, null);
     }
 }

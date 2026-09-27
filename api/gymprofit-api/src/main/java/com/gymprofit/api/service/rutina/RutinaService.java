@@ -56,7 +56,7 @@ public class RutinaService implements IRutinaService {
         logger.info("Buscando todas las rutinas");
 
         if (!isAdmin(getCurrentUser())) {
-            throw new UnauthorizedException("Solo ADMIN puede listar todas las rutinas");
+            throw new UnauthorizedException("error.rutina.listarTodas");
         }
 
         return rutinaMapper.toDTOList(rutinaRepository.findAll());
@@ -68,10 +68,10 @@ public class RutinaService implements IRutinaService {
         logger.info("Buscando rutina por id: {}", id);
 
         Rutina rutina = rutinaRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("La rutina con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.rutina.noExiste", id));
 
         if (!canView(rutina)) {
-            throw new UnauthorizedException("No tienes acceso a esta rutina");
+            throw new UnauthorizedException("error.rutina.sinAcceso");
         }
 
         return rutinaMapper.toDTO(rutina);
@@ -88,10 +88,10 @@ public class RutinaService implements IRutinaService {
         boolean predefinida = Boolean.TRUE.equals(rutinaCreateDTO.getEsPredefinida());
 
         if (predefinida && !admin) {
-            throw new UnauthorizedException("Solo ADMIN puede crear rutinas predefinidas");
+            throw new UnauthorizedException("error.rutina.predefinidaCrear");
         }
         if (!predefinida && !admin && !currentUser.getId().equals(rutinaCreateDTO.getUsuarioId())) {
-            throw new UnauthorizedException("No puedes crear rutinas para otro usuario");
+            throw new UnauthorizedException("error.rutina.paraOtro");
         }
 
         try {
@@ -104,7 +104,7 @@ public class RutinaService implements IRutinaService {
                         ? rutinaCreateDTO.getUsuarioId()
                         : currentUser.getId();
                 Usuario propietario = usuarioRepository.findById(targetId)
-                        .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + targetId + " no existe"));
+                        .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", targetId));
                 rutina.setUsuario(propietario);
             }
 
@@ -123,7 +123,7 @@ public class RutinaService implements IRutinaService {
         logger.info("Desactivando rutina con id: {}", id);
 
         Rutina rutina = rutinaRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("La rutina con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.rutina.noExiste", id));
 
         checkOwnership(rutina);
 
@@ -143,7 +143,7 @@ public class RutinaService implements IRutinaService {
         logger.info("Activando rutina con id: {}", id);
 
         Rutina rutina = rutinaRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("La rutina con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.rutina.noExiste", id));
 
         checkOwnership(rutina);
 
@@ -163,7 +163,7 @@ public class RutinaService implements IRutinaService {
         logger.info("Eliminando permanentemente rutina con id: {}", id);
 
         Rutina rutina = rutinaRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("La rutina con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.rutina.noExiste", id));
 
         checkOwnership(rutina);
 
@@ -182,7 +182,7 @@ public class RutinaService implements IRutinaService {
         logger.info("Modificando rutina con id: {}", rutinaDTO.getId());
 
         Rutina rutina = rutinaRepository.findById(rutinaDTO.getId())
-                .orElseThrow(() -> new NotFoundEntityException("La rutina con id " + rutinaDTO.getId() + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.rutina.noExiste", rutinaDTO.getId()));
 
         checkOwnership(rutina);
 
@@ -209,7 +209,7 @@ public class RutinaService implements IRutinaService {
 
         Usuario currentUser = getCurrentUser();
         if (!isAdmin(currentUser) && !currentUser.getId().equals(usuarioId)) {
-            throw new UnauthorizedException("No tienes acceso a las rutinas de otro usuario");
+            throw new UnauthorizedException("error.rutina.deOtro");
         }
 
         return rutinaMapper.toDTOList(rutinaRepository.findByUsuarioId(usuarioId));
@@ -252,7 +252,7 @@ public class RutinaService implements IRutinaService {
 
         Usuario currentUser = getCurrentUser();
         if (!isAdmin(currentUser) && !currentUser.getId().equals(usuarioId)) {
-            throw new UnauthorizedException("No tienes acceso a las rutinas de otro usuario");
+            throw new UnauthorizedException("error.rutina.deOtro");
         }
 
         return rutinaMapper.toDTOList(rutinaRepository.findByUsuarioIdAndActivaTrue(usuarioId));
@@ -272,7 +272,7 @@ public class RutinaService implements IRutinaService {
         logger.info("Aplicando patch a rutina con id: {}", id);
 
         Rutina rutina = rutinaRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("La rutina con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.rutina.noExiste", id));
 
         checkOwnership(rutina);
 
@@ -332,7 +332,7 @@ public class RutinaService implements IRutinaService {
         if (isAdmin(currentUser)) return;
 
         if (Boolean.TRUE.equals(rutina.getEsPredefinida())) {
-            throw new UnauthorizedException("Solo ADMIN puede modificar rutinas predefinidas");
+            throw new UnauthorizedException("error.rutina.predefinidaModificar");
         }
         if (rutina.getUsuario() == null || !currentUser.getId().equals(rutina.getUsuario().getId())) {
             throw new UnauthorizedException();
@@ -348,7 +348,7 @@ public class RutinaService implements IRutinaService {
      */
     private void exigirUsuarioExistente(Integer usuarioId) {
         if (!usuarioRepository.existsById(usuarioId)) {
-            throw new NotFoundEntityException("El usuario con id " + usuarioId + " no existe");
+            throw new NotFoundEntityException("error.usuario.noExiste", usuarioId);
         }
     }
 }

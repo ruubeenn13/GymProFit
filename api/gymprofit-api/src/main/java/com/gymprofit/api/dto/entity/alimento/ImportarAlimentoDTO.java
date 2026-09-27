@@ -18,6 +18,6 @@ import java.io.Serializable;
 public class ImportarAlimentoDTO implements Serializable {
 
     // Código de barras del producto en Open Food Facts
-    @NotBlank(message = "El código de barras es obligatorio")
+    @NotBlank(message = "{validacion.codigoBarras.obligatorio}")
     private String barcode;
 }

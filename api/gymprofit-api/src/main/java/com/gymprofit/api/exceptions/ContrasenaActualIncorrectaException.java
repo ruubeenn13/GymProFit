@@ -9,12 +9,12 @@ package com.gymprofit.api.exceptions;
 // puede, lleva a Login—, y teclear mal la contraseña actual no es perder la sesión.
 // Es el mismo 403 que da el borrado de cuenta (GP-008) con la contraseña equivocada.
 // ============================================================
-public class ContrasenaActualIncorrectaException extends RuntimeException {
+public class ContrasenaActualIncorrectaException extends ExcepcionConClave {
 
     /** Código estable que viaja en {@code cause} para que el cliente no dependa del texto. */
     public static final String CODIGO = "PASSWORD_ACTUAL_INCORRECTA";
 
     public ContrasenaActualIncorrectaException() {
-        super("La contraseña actual no es correcta");
+        super("error.contrasena.actualIncorrecta", null, null);
     }
 }

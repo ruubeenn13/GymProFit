@@ -54,14 +54,11 @@ public class PoliticaContrasena {
     public void comprobar(String contrasena, String username) {
         String c = contrasena.toLowerCase(Locale.ROOT);
         if (comunes.contains(c)) {
-            throw new ContrasenaRechazadaException(
-                    "Esa contraseña es demasiado común", ContrasenaRechazadaException.PASSWORD_COMUN);
+            throw new ContrasenaRechazadaException(ContrasenaRechazadaException.PASSWORD_COMUN);
         }
         if (c.contains(NOMBRE_SERVICIO)
                 || (username != null && !username.isBlank() && c.contains(username.toLowerCase(Locale.ROOT)))) {
-            throw new ContrasenaRechazadaException(
-                    "La contraseña no puede contener el nombre del servicio ni tu usuario",
-                    ContrasenaRechazadaException.PASSWORD_CONTIENE_NOMBRE);
+            throw new ContrasenaRechazadaException(ContrasenaRechazadaException.PASSWORD_CONTIENE_NOMBRE);
         }
     }
 

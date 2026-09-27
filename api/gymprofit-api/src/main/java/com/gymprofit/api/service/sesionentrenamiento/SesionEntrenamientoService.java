@@ -91,7 +91,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         logger.info("Buscando sesión de entrenamiento por id: {}", id);
 
         SesionEntrenamiento sesion = sesionEntrenamientoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("La sesión de entrenamiento con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.sesion.noExiste", id));
 
         securityUtils.checkOwnership(sesion.getUsuario().getId());
 
@@ -111,14 +111,14 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
         try {
             Usuario usuario = usuarioRepository.findById(sesionEntrenamientoCreateDTO.getUsuarioId())
-                    .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + sesionEntrenamientoCreateDTO.getUsuarioId() + " no existe"));
+                    .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", sesionEntrenamientoCreateDTO.getUsuarioId()));
 
             SesionEntrenamiento sesion = sesionEntrenamientoMapper.toEntity(sesionEntrenamientoCreateDTO);
             sesion.setUsuario(usuario);
 
             if (sesionEntrenamientoCreateDTO.getRutinaId() != null) {
                 Rutina rutina = rutinaRepository.findById(sesionEntrenamientoCreateDTO.getRutinaId())
-                        .orElseThrow(() -> new NotFoundEntityException("La rutina con id " + sesionEntrenamientoCreateDTO.getRutinaId() + " no existe"));
+                        .orElseThrow(() -> new NotFoundEntityException("error.rutina.noExiste", sesionEntrenamientoCreateDTO.getRutinaId()));
 
                 checkRutinaUtilizable(rutina);
 
@@ -202,7 +202,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         }
 
         Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + usuarioId + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", usuarioId));
 
         SesionEntrenamiento sesion = new SesionEntrenamiento();
         sesion.setUsuario(usuario);
@@ -214,7 +214,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
         if (dto.getRutinaId() != null) {
             Rutina rutina = rutinaRepository.findById(dto.getRutinaId())
-                    .orElseThrow(() -> new NotFoundEntityException("La rutina con id " + dto.getRutinaId() + " no existe"));
+                    .orElseThrow(() -> new NotFoundEntityException("error.rutina.noExiste", dto.getRutinaId()));
             checkRutinaUtilizable(rutina);
             sesion.setRutina(rutina);
         }
@@ -289,7 +289,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
      */
     private EjercicioRealizado construirEjercicio(SesionEntrenamiento sesion, EjercicioSesionCreateDTO dto) {
         Ejercicio ejercicio = ejercicioRepository.findById(dto.getEjercicioId())
-                .orElseThrow(() -> new NotFoundEntityException("El ejercicio con id " + dto.getEjercicioId() + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.ejercicio.noExiste", dto.getEjercicioId()));
 
         EjercicioRealizado realizado = new EjercicioRealizado();
         realizado.setSesion(sesion);
@@ -331,7 +331,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         logger.info("Modificando sesión de entrenamiento con id: {}", sesionEntrenamientoDTO.getId());
 
         SesionEntrenamiento sesion = sesionEntrenamientoRepository.findById(sesionEntrenamientoDTO.getId())
-                .orElseThrow(() -> new NotFoundEntityException("La sesión de entrenamiento con id " + sesionEntrenamientoDTO.getId() + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.sesion.noExiste", sesionEntrenamientoDTO.getId()));
 
         securityUtils.checkOwnership(sesion.getUsuario().getId());
 
@@ -340,7 +340,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
             if (sesionEntrenamientoDTO.getRutinaId() != null) {
                 Rutina rutina = rutinaRepository.findById(sesionEntrenamientoDTO.getRutinaId())
-                        .orElseThrow(() -> new NotFoundEntityException("La rutina con id " + sesionEntrenamientoDTO.getRutinaId() + " no existe"));
+                        .orElseThrow(() -> new NotFoundEntityException("error.rutina.noExiste", sesionEntrenamientoDTO.getRutinaId()));
 
                 checkRutinaUtilizable(rutina);
 
@@ -373,7 +373,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         logger.info("Eliminando sesión de entrenamiento con id: {}", id);
 
         SesionEntrenamiento sesion = sesionEntrenamientoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("La sesión de entrenamiento con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.sesion.noExiste", id));
 
         securityUtils.checkOwnership(sesion.getUsuario().getId());
 
@@ -400,7 +400,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         logger.info("Completando sesión de entrenamiento con id: {}", id);
 
         SesionEntrenamiento sesion = sesionEntrenamientoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("La sesión de entrenamiento con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.sesion.noExiste", id));
 
         securityUtils.checkOwnership(sesion.getUsuario().getId());
 
@@ -618,7 +618,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         logger.info("Aplicando patch a sesión de entrenamiento con id: {}", id);
 
         SesionEntrenamiento sesion = sesionEntrenamientoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("La sesión de entrenamiento con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.sesion.noExiste", id));
 
         securityUtils.checkOwnership(sesion.getUsuario().getId());
 
@@ -705,8 +705,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
     @Override
     public java.math.BigDecimal getVolumenLevantado(Integer sesionId) {
         SesionEntrenamiento sesion = sesionEntrenamientoRepository.findById(sesionId)
-                .orElseThrow(() -> new NotFoundEntityException(
-                        "La sesi\u00f3n con id " + sesionId + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.sesion.noExiste", sesionId));
         securityUtils.checkOwnership(sesion.getUsuario().getId());
 
         java.math.BigDecimal porSeries = ejercicioRealizadoRepository.volumenDeSeries(sesionId);
@@ -742,7 +741,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
      */
     private void exigirRutinaExistente(Integer rutinaId) {
         if (!rutinaRepository.existsById(rutinaId)) {
-            throw new NotFoundEntityException("La rutina con id " + rutinaId + " no existe");
+            throw new NotFoundEntityException("error.rutina.noExiste", rutinaId);
         }
     }
 
@@ -755,7 +754,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
      */
     private void exigirUsuarioExistente(Integer usuarioId) {
         if (!usuarioRepository.existsById(usuarioId)) {
-            throw new NotFoundEntityException("El usuario con id " + usuarioId + " no existe");
+            throw new NotFoundEntityException("error.usuario.noExiste", usuarioId);
         }
     }
 }

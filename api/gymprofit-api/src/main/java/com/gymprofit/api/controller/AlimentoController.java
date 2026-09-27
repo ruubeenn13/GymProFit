@@ -157,7 +157,7 @@ public class AlimentoController {
     @GetMapping("/alimentos/nombre/{nombre}")
     public ResponseEntity<List<AlimentoDTO>> obtenerAlimentosPorNombre(@PathVariable String nombre) {
         if (nombre == null || nombre.trim().isEmpty()) {
-            throw new InvalidDataException("El nombre no puede estar vacío");
+            throw new InvalidDataException("error.nombre.vacio");
         }
 
         List<AlimentoDTO> alimentos = alimentoService.findByNombre(nombre);
@@ -187,7 +187,7 @@ public class AlimentoController {
     @GetMapping("/alimentos/categoria/{categoria}")
     public ResponseEntity<List<AlimentoDTO>> obtenerAlimentosPorCategoria(@PathVariable String categoria) {
         if (categoria == null || categoria.trim().isEmpty()) {
-            throw new InvalidDataException("La categoría no puede estar vacía");
+            throw new InvalidDataException("error.categoria.vacia");
         }
 
         List<AlimentoDTO> alimentos = alimentoService.findByCategoria(categoria);
@@ -252,15 +252,15 @@ public class AlimentoController {
     public ResponseEntity<List<AlimentoDTO>> obtenerAlimentosPorCalorias(@RequestParam Integer min,
                                                                          @RequestParam Integer max) {
         if (min == null || max == null) {
-            throw new InvalidDataException("Los valores min y max son obligatorios");
+            throw new InvalidDataException("error.rango.obligatorio");
         }
 
         if (min < 0 || max < 0) {
-            throw new InvalidDataException("Las calorías no pueden ser negativas");
+            throw new InvalidDataException("error.calorias.negativas");
         }
 
         if (min > max) {
-            throw new InvalidDataException("El valor mínimo no puede ser mayor que el máximo");
+            throw new InvalidDataException("error.rango.invertido");
         }
 
         List<AlimentoDTO> alimentos = alimentoService.findByCaloriasBetween(min, max);
@@ -288,7 +288,7 @@ public class AlimentoController {
     @GetMapping("/alimentos/count/categoria/{categoria}")
     public ResponseEntity<CountDTO> contarAlimentosPorCategoria(@PathVariable String categoria) {
         if (categoria == null || categoria.trim().isEmpty()) {
-            throw new InvalidDataException("La categoría no puede estar vacía");
+            throw new InvalidDataException("error.categoria.vacia");
         }
 
         Long count = alimentoService.countByCategoria(categoria);

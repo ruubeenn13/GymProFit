@@ -5,15 +5,13 @@ package com.gymprofit.api.exceptions;
 // Se lanza cuando una búsqueda por id (o similar) no devuelve resultados.
 // Capturada por ControllerExceptionHandler para devolver 404.
 // ============================================================
-public class NotFoundEntityException extends RuntimeException {
+public class NotFoundEntityException extends ExcepcionConClave {
 
-    // Constructor con mensaje personalizado.
-    public NotFoundEntityException(String message) {
-        super(message);
-    }
-
-    // Constructor con mensaje y causa original de la excepción.
-    public NotFoundEntityException(String message, Throwable cause) {
-        super(message, cause);
+    /**
+     * @param clave clave del mensaje en messages*.properties (GP-109)
+     * @param args  argumentos del mensaje
+     */
+    public NotFoundEntityException(String clave, Object... args) {
+        super(clave, args, null);
     }
 }

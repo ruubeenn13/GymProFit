@@ -89,7 +89,7 @@ class ObjetivoPersonalControllerTest {
     @WithMockUser(roles = "USER")
     void findById_inexistente_devuelve_404() throws Exception {
         when(objetivoService.findById(99))
-                .thenThrow(new NotFoundEntityException("El objetivo personal con id 99 no existe"));
+                .thenThrow(new NotFoundEntityException("error.objetivo.noExiste", 99));
 
         mockMvc.perform(get("/objetivos-personales/99"))
                 .andExpect(status().isNotFound());

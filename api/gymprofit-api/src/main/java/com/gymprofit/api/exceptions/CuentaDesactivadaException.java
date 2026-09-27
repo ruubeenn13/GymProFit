@@ -12,12 +12,12 @@ package com.gymprofit.api.exceptions;
 // contraseña, así que decir ahí «desactivada» se lo diría a quien no la sabe. El
 // login sigue respondiendo el 401 genérico de credenciales.
 // ============================================================
-public class CuentaDesactivadaException extends RuntimeException {
+public class CuentaDesactivadaException extends ExcepcionConClave {
 
     /** Código estable que viaja en {@code cause} para que el cliente no dependa del texto. */
     public static final String CODIGO = "CUENTA_DESACTIVADA";
 
     public CuentaDesactivadaException() {
-        super("La cuenta está desactivada");
+        super("error.cuenta.desactivada", null, null);
     }
 }

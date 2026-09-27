@@ -45,10 +45,10 @@ public class RefreshTokenService {
     @Transactional(readOnly = true)
     public RefreshToken validar(String token) {
         RefreshToken refreshToken = refreshTokenRepository.findByToken(token)
-                .orElseThrow(() -> new InvalidCredentialsException("Refresh token inválido"));
+                .orElseThrow(() -> new InvalidCredentialsException("error.refresh.invalido"));
 
         if (refreshToken.isRevocado() || refreshToken.getFechaExpiracion().isBefore(LocalDateTime.now())) {
-            throw new InvalidCredentialsException("Refresh token expirado o revocado");
+            throw new InvalidCredentialsException("error.refresh.caducado");
         }
 
         return refreshToken;

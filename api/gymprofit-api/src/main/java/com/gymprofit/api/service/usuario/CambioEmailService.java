@@ -59,11 +59,11 @@ public class CambioEmailService implements ICambioEmailService {
         Integer usuarioId = securityUtils.getCurrentUserId();
 
         Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + usuarioId + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", usuarioId));
 
         if (!passwordEncoder.matches(dto.getPassword(), usuario.getPassword())) {
             logger.warn("Intento de cambio de correo con contraseña incorrecta, usuario id={}", usuarioId);
-            throw new UnauthorizedException("La contraseña no es correcta");
+            throw new UnauthorizedException("error.contrasena.incorrecta");
         }
 
         String nuevo = dto.getEmail().trim();
@@ -72,7 +72,7 @@ public class CambioEmailService implements ICambioEmailService {
         }
 
         if (usuarioRepository.existsByEmailAndIdNot(nuevo, usuarioId)) {
-            throw new ConflictEntityException("Ese correo ya lo usa otra cuenta");
+            throw new ConflictEntityException("error.correo.enUso");
         }
 
         usuario.setEmail(nuevo);
@@ -85,7 +85,7 @@ public class CambioEmailService implements ICambioEmailService {
             // quitando la comprobación de arriba, el 409 lo sigue dando este catch.
             usuarioRepository.saveAndFlush(usuario);
         } catch (DataIntegrityViolationException e) {
-            throw new ConflictEntityException("Ese correo ya lo usa otra cuenta");
+            throw new ConflictEntityException("error.correo.enUso");
         }
 
         logger.info("Correo cambiado para el usuario id={}", usuarioId);

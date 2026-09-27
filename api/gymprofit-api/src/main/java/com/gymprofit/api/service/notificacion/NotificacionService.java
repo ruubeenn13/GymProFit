@@ -57,7 +57,7 @@ public class NotificacionService implements INotificacionService {
         logger.info("Buscando notificacion por id: {}", id);
 
         Notificacion notificacion = notificacionRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("La notificación con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.notificacion.noExiste", id));
 
         securityUtils.checkOwnership(notificacion.getUsuario().getId());
 
@@ -75,15 +75,14 @@ public class NotificacionService implements INotificacionService {
         }
 
         Usuario usuario = usuarioRepository.findById(notificacionCreateDTO.getUsuarioId())
-                .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + notificacionCreateDTO.getUsuarioId() + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", notificacionCreateDTO.getUsuarioId()));
 
         TipoNotificacion tipoNotificacion;
 
         try {
             tipoNotificacion = TipoNotificacion.valueOf(notificacionCreateDTO.getTipo().toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new InvalidDataException("Tipo de notificación inválido: " + notificacionCreateDTO.getTipo() +
-                    ". Valores válidos: RECORDATORIO, LOGRO, OBJETIVO, SISTEMA");
+            throw new InvalidDataException("error.tipoNotificacion.invalidoValores", notificacionCreateDTO.getTipo());
         }
 
         try {
@@ -98,7 +97,7 @@ public class NotificacionService implements INotificacionService {
             Notificacion notificacionGuardada = notificacionRepository.save(notificacion);
 
             Notificacion notificacionRecargada = notificacionRepository.findById(notificacionGuardada.getId())
-                    .orElseThrow(() -> new NotFoundEntityException("Error al recuperar la notificación guardada"));
+                    .orElseThrow(() -> new NotFoundEntityException("error.notificacion.noRecuperada"));
 
             // Envío push inmediato si no es programada (las programadas las manda el job @Scheduled).
             // enviarA es tolerante a fallos: si el push falla o está desactivado, la notificación
@@ -128,7 +127,7 @@ public class NotificacionService implements INotificacionService {
         logger.info("Creando notificación de sistema '{}' para usuario id: {}", titulo, usuarioId);
 
         Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + usuarioId + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", usuarioId));
 
         Notificacion notificacion = new Notificacion();
         notificacion.setUsuario(usuario);
@@ -153,7 +152,7 @@ public class NotificacionService implements INotificacionService {
         logger.info("Eliminando notifiación con id: {}", id);
 
         Notificacion notificacion = notificacionRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("La notificación con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.notificacion.noExiste", id));
 
         securityUtils.checkOwnership(notificacion.getUsuario().getId());
 
@@ -234,7 +233,7 @@ public class NotificacionService implements INotificacionService {
         try {
             tipoNotificacion = TipoNotificacion.valueOf(tipo.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new InvalidDataException("Tipo de notifiación inválido: " + tipo);
+            throw new InvalidDataException("error.tipoNotificacion.invalido", tipo);
         }
 
         List<Notificacion> notificaciones = notificacionRepository.findByUsuarioIdAndTipo(usuarioId, tipoNotificacion);
@@ -249,7 +248,7 @@ public class NotificacionService implements INotificacionService {
         logger.info("Marcando notificación id: {} como leída", id);
 
         Notificacion notificacion = notificacionRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("La notificación con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.notificacion.noExiste", id));
 
         securityUtils.checkOwnership(notificacion.getUsuario().getId());
 
@@ -327,7 +326,7 @@ public class NotificacionService implements INotificacionService {
         logger.info("Aplicando patch a notificación con id: {}", id);
 
         Notificacion notificacion = notificacionRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("La notificación con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.notificacion.noExiste", id));
 
         securityUtils.checkOwnership(notificacion.getUsuario().getId());
 
@@ -354,7 +353,7 @@ public class NotificacionService implements INotificacionService {
      */
     private void exigirUsuarioExistente(Integer usuarioId) {
         if (!usuarioRepository.existsById(usuarioId)) {
-            throw new NotFoundEntityException("El usuario con id " + usuarioId + " no existe");
+            throw new NotFoundEntityException("error.usuario.noExiste", usuarioId);
         }
     }
 }

@@ -180,7 +180,7 @@ public class UsuarioController {
     @GetMapping("/usuarios/username/{username}")
     public ResponseEntity<UsuarioDTO> obtenerUsuarioPorUsername(@PathVariable String username) {
         if (username == null || username.trim().isEmpty()) {
-            throw new InvalidDataException("El username no puede estar vacío");
+            throw new InvalidDataException("error.username.vacio");
         }
 
         UsuarioDTO usuario = usuarioService.findByUsername(username);
@@ -199,7 +199,7 @@ public class UsuarioController {
     @GetMapping("/usuarios/email/{email}")
     public ResponseEntity<UsuarioDTO> obtenerUsuarioPorEmail(@PathVariable String email) {
         if (email == null || email.trim().isEmpty()) {
-            throw new InvalidDataException("El email no puede estar vacío");
+            throw new InvalidDataException("error.email.vacio");
         }
 
         UsuarioDTO usuario = usuarioService.findByEmail(email);

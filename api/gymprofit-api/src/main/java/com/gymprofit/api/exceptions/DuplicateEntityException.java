@@ -9,7 +9,7 @@ package com.gymprofit.api.exceptions;
 // qué campo está repetido sin depender del texto (GP-095: el registro distingue
 // usuario en uso de correo en uso).
 // ============================================================
-public class DuplicateEntityException extends RuntimeException {
+public class DuplicateEntityException extends ExcepcionConClave {
 
     /** Registro: el nombre de usuario ya lo tiene otra cuenta. */
     public static final String USERNAME_EN_USO = "USERNAME_EN_USO";
@@ -20,33 +20,28 @@ public class DuplicateEntityException extends RuntimeException {
     // Código estable para "cause", o null si el error no necesita distinguirse.
     private final String codigo;
 
-    // Constructor con mensaje directo.
-    public DuplicateEntityException(String message) {
-        super(message);
-        this.codigo = null;
+    /**
+     * @param clave clave del mensaje en messages*.properties (GP-109)
+     * @param args  argumentos del mensaje
+     */
+    public DuplicateEntityException(String clave, Object... args) {
+        this(null, clave, args);
     }
 
-    // Construye el mensaje indicando el campo y el valor duplicado.
-    public DuplicateEntityException(String field, String value) {
-        super("Ya existe un registro con " + field + ": " + value);
-        this.codigo = null;
-    }
-
-    // El tercer parámetro solo desempata con el constructor (field, value), que ya
-    // ocupa la firma de dos String. Se construye por conCodigo().
-    private DuplicateEntityException(String message, String codigo, boolean conCodigo) {
-        super(message);
+    private DuplicateEntityException(String codigo, String clave, Object[] args) {
+        super(clave, args, null);
         this.codigo = codigo;
     }
 
     /**
      * Error de unicidad con un código estable en el campo {@code cause} de la respuesta.
      *
-     * @param message texto para el cliente, el mismo que sin código.
-     * @param codigo  uno de los códigos de esta clase.
+     * @param codigo uno de los códigos de esta clase.
+     * @param clave  clave del mensaje, el mismo que sin código.
+     * @param args   argumentos del mensaje.
      */
-    public static DuplicateEntityException conCodigo(String message, String codigo) {
-        return new DuplicateEntityException(message, codigo, true);
+    public static DuplicateEntityException conCodigo(String codigo, String clave, Object... args) {
+        return new DuplicateEntityException(codigo, clave, args);
     }
 
     /** Código estable para {@code cause}, o null si no lo lleva. */

@@ -160,7 +160,7 @@ class AuthControllerTest {
     @DisplayName("POST /auth/register con username duplicado devuelve 400")
     void register_username_duplicado_devuelve_400() throws Exception {
         // Simulamos que el service lanza DuplicateEntityException
-        doThrow(new DuplicateEntityException("El username 'newuser' ya está en uso"))
+        doThrow(new DuplicateEntityException("error.username.enUso", "newuser"))
                 .when(authService).register(any(RegisterDTO.class));
 
         mockMvc.perform(post("/auth/register")
@@ -233,7 +233,7 @@ class AuthControllerTest {
     @WithMockUser(username = "admin")
     @DisplayName("POST /auth/change-password con nueva igual a la actual devuelve 400")
     void changePassword_nueva_igual_actual_devuelve_400() throws Exception {
-        doThrow(new InvalidDataException("La nueva contraseña debe ser distinta de la actual"))
+        doThrow(new InvalidDataException("error.contrasena.igual"))
                 .when(authService).changePassword(any(String.class), any(ChangePasswordDTO.class));
 
         // Nueva válida (cumple la política) pero IGUAL a la actual: pasa @Valid y llega

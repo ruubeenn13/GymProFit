@@ -8,9 +8,13 @@ package com.gymprofit.api.exceptions;
 // para las builds repartidas. Esta nace con GP-083, en el cambio de correo, donde el
 // 409 es parte del contrato desde el principio.
 // ============================================================
-public class ConflictEntityException extends RuntimeException {
+public class ConflictEntityException extends ExcepcionConClave {
 
-    public ConflictEntityException(String message) {
-        super(message);
+    /**
+     * @param clave clave del mensaje en messages*.properties (GP-109)
+     * @param args  argumentos del mensaje
+     */
+    public ConflictEntityException(String clave, Object... args) {
+        super(clave, args, null);
     }
 }

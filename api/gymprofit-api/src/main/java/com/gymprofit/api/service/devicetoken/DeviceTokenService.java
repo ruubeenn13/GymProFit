@@ -40,7 +40,7 @@ public class DeviceTokenService implements IDeviceTokenService {
         logger.info("Registrando token FCM para usuario id: {}", usuarioId);
 
         Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + usuarioId + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", usuarioId));
 
         // Plataforma por defecto ANDROID si no se indica.
         String plataforma = (dto.getPlataforma() == null || dto.getPlataforma().isBlank())

@@ -124,7 +124,7 @@ public class RecordService implements IRecordService {
     public List<ProgresoEjercicioDTO> historialLegado(Integer usuarioId, Integer ejercicioId) {
         securityUtils.checkOwnership(usuarioId);
         if (!usuarioRepository.existsById(usuarioId)) {
-            throw new NotFoundEntityException("El usuario con id " + usuarioId + " no existe");
+            throw new NotFoundEntityException("error.usuario.noExiste", usuarioId);
         }
         exigirEjercicio(ejercicioId);
 
@@ -155,7 +155,7 @@ public class RecordService implements IRecordService {
 
     private void exigirEjercicio(Integer ejercicioId) {
         if (!ejercicioRepository.existsById(ejercicioId)) {
-            throw new NotFoundEntityException("El ejercicio con id " + ejercicioId + " no existe");
+            throw new NotFoundEntityException("error.ejercicio.noExiste", ejercicioId);
         }
     }
 

@@ -166,7 +166,7 @@ public class EjercicioController {
     @GetMapping("/ejercicios/grupo/{grupoMuscular}")
     public ResponseEntity<List<EjercicioDTO>> obtenerEjerciciosPorGrupo(@PathVariable String grupoMuscular) {
         if (grupoMuscular == null || grupoMuscular.trim().isEmpty()) {
-            throw new InvalidDataException("El grupo muscular no puede estar vacío");
+            throw new InvalidDataException("error.grupoMuscular.vacio");
         }
 
         List<EjercicioDTO> ejercicios = ejercicioService.findByGrupoMuscular(grupoMuscular);
@@ -182,7 +182,7 @@ public class EjercicioController {
     @GetMapping("/ejercicios/dificultad/{dificultad}")
     public ResponseEntity<List<EjercicioDTO>> obtenerEjerciciosPorDificultad(@PathVariable String dificultad) {
         if (dificultad == null || dificultad.trim().isEmpty()) {
-            throw new InvalidDataException("La dificultad no puede estar vacía");
+            throw new InvalidDataException("error.dificultad.vacia");
         }
 
         List<EjercicioDTO> ejercicios = ejercicioService.findByDificultad(dificultad);
@@ -198,7 +198,7 @@ public class EjercicioController {
     @GetMapping("/ejercicios/nombre/{nombre}")
     public ResponseEntity<List<EjercicioDTO>> obtenerEjerciciosPorNombre(@PathVariable String nombre) {
         if (nombre == null || nombre.trim().isEmpty()) {
-            throw new InvalidDataException("El nombre no puede estar vacío");
+            throw new InvalidDataException("error.nombre.vacio");
         }
 
         List<EjercicioDTO> ejercicios = ejercicioService.findByNombre(nombre);

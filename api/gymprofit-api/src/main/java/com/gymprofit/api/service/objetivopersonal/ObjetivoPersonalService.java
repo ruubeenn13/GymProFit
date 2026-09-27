@@ -60,7 +60,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         logger.info("Buscando objetivo personal por id: {}", id);
 
         ObjetivoPersonal objetivoPersonal = objetivoPersonalRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("El objetivo personal con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.objetivo.noExiste", id));
 
         securityUtils.checkOwnership(objetivoPersonal.getUsuario().getId());
 
@@ -76,7 +76,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         logger.info("Creando un nuevo objetivo personal para usuario id: {}", objetivoPersonalCreateDTO.getUsuarioId());
 
         Usuario usuario = usuarioRepository.findById(objetivoPersonalCreateDTO.getUsuarioId())
-                .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + objetivoPersonalCreateDTO.getUsuarioId() + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", objetivoPersonalCreateDTO.getUsuarioId()));
 
         try {
             ObjetivoPersonal objetivoPersonal = objetivoPersonalMapper.toEntity(objetivoPersonalCreateDTO);
@@ -87,7 +87,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
             ObjetivoPersonal objetivoGuardado = objetivoPersonalRepository.save(objetivoPersonal);
 
             ObjetivoPersonal objetivoRecargado = objetivoPersonalRepository.findById(objetivoGuardado.getId())
-                    .orElseThrow(() -> new NotFoundEntityException("Error al recuperar el objetivo personal guardado"));
+                    .orElseThrow(() -> new NotFoundEntityException("error.objetivo.noRecuperado"));
 
             return objetivoPersonalMapper.toDTO(objetivoRecargado);
         } catch (NotFoundEntityException e) {
@@ -104,7 +104,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         logger.info("Actualizando el objetivo personal con id: {}", objetivoPersonalUpdateDTO.getId());
 
         ObjetivoPersonal objetivoPersonal = objetivoPersonalRepository.findById(objetivoPersonalUpdateDTO.getId())
-                .orElseThrow(() -> new NotFoundEntityException("El objetivo personal con id " + objetivoPersonalUpdateDTO.getId() + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.objetivo.noExiste", objetivoPersonalUpdateDTO.getId()));
 
         securityUtils.checkOwnership(objetivoPersonal.getUsuario().getId());
 
@@ -127,7 +127,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         logger.info("Eliminando objetivo personal con id: {}", id);
 
         ObjetivoPersonal objetivoPersonal = objetivoPersonalRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("El objetivo personal con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.objetivo.noExiste", id));
 
         securityUtils.checkOwnership(objetivoPersonal.getUsuario().getId());
 
@@ -217,12 +217,12 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         logger.info("Completando objetivo personal con id: {}", id);
 
         ObjetivoPersonal objetivoPersonal = objetivoPersonalRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("El objetivo personal con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.objetivo.noExiste", id));
 
         securityUtils.checkOwnership(objetivoPersonal.getUsuario().getId());
 
         if (objetivoPersonal.getCompletado()) {
-            throw new ObjetivoAlreadyCompletedException("El objetivo personal con id " + id + " ya está completado");
+            throw new ObjetivoAlreadyCompletedException("error.objetivo.completado", id);
         }
 
         objetivoPersonal.setCompletado(true);
@@ -272,7 +272,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         logger.info("Aplicando patch a objetivo personal con id: {}", id);
 
         ObjetivoPersonal objetivo = objetivoPersonalRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("El objetivo personal con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.objetivo.noExiste", id));
 
         securityUtils.checkOwnership(objetivo.getUsuario().getId());
 
@@ -298,7 +298,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
      */
     private void exigirUsuarioExistente(Integer usuarioId) {
         if (!usuarioRepository.existsById(usuarioId)) {
-            throw new NotFoundEntityException("El usuario con id " + usuarioId + " no existe");
+            throw new NotFoundEntityException("error.usuario.noExiste", usuarioId);
         }
     }
 }

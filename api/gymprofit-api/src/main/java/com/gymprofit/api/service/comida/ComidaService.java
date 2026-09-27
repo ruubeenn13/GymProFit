@@ -65,7 +65,7 @@ public class ComidaService implements IComidaService {
         logger.info("Buscando comida por id: {}", id);
 
         Comida comida = comidaRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("La comida con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.comida.noExiste", id));
 
         securityUtils.checkOwnership(comida.getUsuario().getId());
 
@@ -85,7 +85,7 @@ public class ComidaService implements IComidaService {
 
         try {
             Usuario usuario = usuarioRepository.findById(comidaCreateDTO.getUsuarioId())
-                    .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + comidaCreateDTO.getUsuarioId() + " no existe"));
+                    .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", comidaCreateDTO.getUsuarioId()));
 
             Comida comida = comidaMapper.toEntity(comidaCreateDTO);
             comida.setUsuario(usuario);
@@ -113,7 +113,7 @@ public class ComidaService implements IComidaService {
         logger.info("Modificando comida con id: {}", comidaDTO.getId());
 
         Comida comida = comidaRepository.findById(comidaDTO.getId())
-                .orElseThrow(() -> new NotFoundEntityException("La comida con id " + comidaDTO.getId() + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.comida.noExiste", comidaDTO.getId()));
 
         securityUtils.checkOwnership(comida.getUsuario().getId());
 
@@ -143,7 +143,7 @@ public class ComidaService implements IComidaService {
         logger.info("Eliminando comida con id: {}", id);
 
         Comida comida = comidaRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("La comida con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.comida.noExiste", id));
 
         securityUtils.checkOwnership(comida.getUsuario().getId());
 
@@ -306,7 +306,7 @@ public class ComidaService implements IComidaService {
         logger.info("Aplicando patch a comida con id: {}", id);
 
         Comida comida = comidaRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("La comida con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.comida.noExiste", id));
 
         securityUtils.checkOwnership(comida.getUsuario().getId());
 
@@ -335,7 +335,7 @@ public class ComidaService implements IComidaService {
      */
     private void exigirUsuarioExistente(Integer usuarioId) {
         if (!usuarioRepository.existsById(usuarioId)) {
-            throw new NotFoundEntityException("El usuario con id " + usuarioId + " no existe");
+            throw new NotFoundEntityException("error.usuario.noExiste", usuarioId);
         }
     }
 }

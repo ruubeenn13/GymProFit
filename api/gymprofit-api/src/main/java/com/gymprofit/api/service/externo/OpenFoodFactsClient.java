@@ -105,7 +105,7 @@ public class OpenFoodFactsClient {
             if (root.path("status") .asInt(0) != 1) return Optional.empty();
             return mapearProducto(root.path("product"));
         } catch (Exception ex) {
-            throw new ExternalServiceException("Open Food Facts no disponible: " + ex.getMessage(), ex);
+            throw new ExternalServiceException(ex, "error.externo.noDisponible", "Open Food Facts");
         }
     }
 

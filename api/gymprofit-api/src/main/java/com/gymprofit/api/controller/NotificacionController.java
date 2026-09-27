@@ -178,13 +178,13 @@ public class NotificacionController {
     public ResponseEntity<List<NotificacionDTO>> obtenerNotificacionPorUsuarioYTipo(@PathVariable Integer usuarioId,
                                                                                     @PathVariable String tipo) {
         if (tipo == null ||tipo.trim().isEmpty()) {
-            throw new InvalidDataException("El tipo no puede estar vacío");
+            throw new InvalidDataException("error.tipo.vacio");
         }
 
         List<NotificacionDTO> notificaciones = notificacionService.findByUsuarioIdAndTipo(usuarioId, tipo);
 
         if (notificaciones.isEmpty()) {
-            throw new InvalidDataException("No se encontraron notificaciones de tipo " + tipo + " para el usuario " + usuarioId);
+            throw new InvalidDataException("error.notificaciones.sinTipo", tipo, usuarioId);
         }
 
         return ResponseEntity.ok(notificaciones);

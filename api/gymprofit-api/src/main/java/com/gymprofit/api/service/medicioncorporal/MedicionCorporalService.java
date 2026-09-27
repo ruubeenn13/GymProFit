@@ -59,7 +59,7 @@ public class MedicionCorporalService implements IMedicionCorporalService {
         logger.info("Buscando medicion corporal por id: {}", id);
 
         MedicionCorporal medicion = medicionCorporalRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("La medición corporal con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.medicion.noExiste", id));
 
         securityUtils.checkOwnership(medicion.getUsuario().getId());
 
@@ -77,7 +77,7 @@ public class MedicionCorporalService implements IMedicionCorporalService {
         logger.info("Creando nueva medición corporal para usuario id: {}", createDTO.getUsuarioId());
 
         Usuario usuario = usuarioRepository.findById(createDTO.getUsuarioId())
-                .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + createDTO.getUsuarioId() + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", createDTO.getUsuarioId()));
 
         try {
             MedicionCorporal medicion = medicionCorporalMapper.toEntity(createDTO);
@@ -97,7 +97,7 @@ public class MedicionCorporalService implements IMedicionCorporalService {
             MedicionCorporal recargada = medicionCorporalRepository.findByUsuarioIdOrderByFechaDesc(usuario.getId())
                     .stream()
                     .findFirst()
-                    .orElseThrow(() -> new NotFoundEntityException("Error al recuperar la medición corporal guardada"));
+                    .orElseThrow(() -> new NotFoundEntityException("error.medicion.noRecuperada"));
 
             return medicionCorporalMapper.toDTO(recargada);
         } catch (NotFoundEntityException e) {
@@ -114,7 +114,7 @@ public class MedicionCorporalService implements IMedicionCorporalService {
         logger.info("Modificando medición corporal con id: {}", dto.getId());
 
         MedicionCorporal medicion = medicionCorporalRepository.findById(dto.getId())
-                .orElseThrow(() -> new NotFoundEntityException("La medición corporal con id " + dto.getId() + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.medicion.noExiste", dto.getId()));
 
         securityUtils.checkOwnership(medicion.getUsuario().getId());
 
@@ -154,7 +154,7 @@ public class MedicionCorporalService implements IMedicionCorporalService {
         logger.info("Eliminando medición corporal con id: {}", id);
 
         MedicionCorporal medicion = medicionCorporalRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("La medición corporal con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.medicion.noExiste", id));
 
         securityUtils.checkOwnership(medicion.getUsuario().getId());
 
@@ -231,7 +231,7 @@ public class MedicionCorporalService implements IMedicionCorporalService {
         logger.info("Aplicando patch a medición corporal con id: {}", id);
 
         MedicionCorporal medicion = medicionCorporalRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("La medición corporal con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.medicion.noExiste", id));
 
         securityUtils.checkOwnership(medicion.getUsuario().getId());
 
@@ -273,7 +273,7 @@ public class MedicionCorporalService implements IMedicionCorporalService {
      */
     private void exigirUsuarioExistente(Integer usuarioId) {
         if (!usuarioRepository.existsById(usuarioId)) {
-            throw new NotFoundEntityException("El usuario con id " + usuarioId + " no existe");
+            throw new NotFoundEntityException("error.usuario.noExiste", usuarioId);
         }
     }
 }

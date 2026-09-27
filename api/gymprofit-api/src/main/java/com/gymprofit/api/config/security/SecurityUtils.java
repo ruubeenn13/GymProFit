@@ -35,7 +35,7 @@ public class SecurityUtils {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || !(authentication.getPrincipal() instanceof Usuario)) {
-            throw new UnauthorizedException("No hay un usuario autenticado en el contexto de seguridad");
+            throw new UnauthorizedException("error.acceso.sinUsuario");
         }
 
         return (Usuario) authentication.getPrincipal();
@@ -69,7 +69,7 @@ public class SecurityUtils {
                 .anyMatch(role -> role.getNombre() == RoleType.ADMIN);
 
         if (!admin && !current.getId().equals(ownerId)) {
-            throw new UnauthorizedException("No tienes permiso para acceder a este recurso");
+            throw new UnauthorizedException("error.acceso.recurso");
         }
     }
 
@@ -103,7 +103,7 @@ public class SecurityUtils {
      */
     public void requireAdmin() {
         if (!isAdmin()) {
-            throw new UnauthorizedException("Esta operación requiere rol ADMIN");
+            throw new UnauthorizedException("error.acceso.soloAdmin");
         }
     }
 }

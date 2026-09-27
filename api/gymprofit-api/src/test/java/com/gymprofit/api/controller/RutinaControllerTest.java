@@ -106,7 +106,7 @@ class RutinaControllerTest {
     @WithMockUser(roles = "USER")
     void findById_inexistente_devuelve_404() throws Exception {
         when(rutinaService.findById(99))
-                .thenThrow(new NotFoundEntityException("La rutina con id 99 no existe"));
+                .thenThrow(new NotFoundEntityException("error.rutina.noExiste", 99));
 
         mockMvc.perform(get("/rutinas/99"))
                 .andExpect(status().isNotFound());

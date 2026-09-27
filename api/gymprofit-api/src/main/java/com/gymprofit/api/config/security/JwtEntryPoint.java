@@ -1,9 +1,11 @@
 package com.gymprofit.api.config.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gymprofit.api.exceptions.MensajesError;
 import com.gymprofit.api.exceptions.Response;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -23,10 +25,13 @@ import java.io.IOException;
 // y acabaría como un 500).
 // ============================================================
 @Component
+@RequiredArgsConstructor
 public class JwtEntryPoint implements AuthenticationEntryPoint {
 
     private final Logger logger = LoggerFactory.getLogger(JwtEntryPoint.class);
     private final ObjectMapper objectMapper = new ObjectMapper();
+    // Corre antes del DispatcherServlet: el idioma sale de la petición (GP-109).
+    private final MensajesError mensajes;
 
     // Registra el fallo de autenticación y escribe una respuesta 401 con cuerpo JSON.
     @Override
@@ -39,7 +44,8 @@ public class JwtEntryPoint implements AuthenticationEntryPoint {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
 
-        Response cuerpo = Response.generalError(HttpStatus.UNAUTHORIZED.value(), "No autenticado");
+        Response cuerpo = Response.generalError(HttpStatus.UNAUTHORIZED.value(),
+                mensajes.texto(request, "error.autenticacion"));
         objectMapper.writeValue(response.getWriter(), cuerpo);
     }
 }

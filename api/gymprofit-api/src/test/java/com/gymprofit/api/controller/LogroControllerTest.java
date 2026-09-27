@@ -91,7 +91,7 @@ class LogroControllerTest {
     @WithMockUser(roles = "USER")
     void findByUsuarioId_inexistente_devuelve_404() throws Exception {
         when(logroService.findByUsuarioId(99))
-                .thenThrow(new NotFoundEntityException("Usuario con id 99 no encontrado"));
+                .thenThrow(new NotFoundEntityException("error.usuario.noExiste", 99));
 
         mockMvc.perform(get("/logros/usuario/99"))
                 .andExpect(status().isNotFound());
@@ -148,7 +148,7 @@ class LogroControllerTest {
     @WithMockUser(roles = "ADMIN")
     void update_inexistente_devuelve_404() throws Exception {
         when(logroService.update(eq(99), any(LogroCreateDTO.class)))
-                .thenThrow(new NotFoundEntityException("Logro con id 99 no encontrado"));
+                .thenThrow(new NotFoundEntityException("error.logro.noExiste", 99));
 
         mockMvc.perform(put("/logros/99")
                         .contentType(MediaType.APPLICATION_JSON)

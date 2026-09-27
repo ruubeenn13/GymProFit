@@ -190,7 +190,7 @@ public class ObjetivoPersonalController {
     @GetMapping("/objetivos-personales/tipo/{tipoObjetivo}")
     public ResponseEntity<List<ObjetivoPersonalDTO>> obtenerPorTipoObjetivo(@PathVariable String tipoObjetivo) {
         if (tipoObjetivo == null || tipoObjetivo.trim().isEmpty()) {
-            throw new InvalidDataException("El tipo de objetivo no puede estar vacío");
+            throw new InvalidDataException("error.tipoObjetivo.vacio");
         }
 
         try {
@@ -199,8 +199,7 @@ public class ObjetivoPersonalController {
         } catch (IllegalArgumentException e) {
             // La lista se construye desde el propio enum: antes estaba escrita a mano
             // y ya se había desincronizado (mencionaba REDUCIR_CALORIAS, que nunca existió).
-            throw new InvalidDataException("Tipo de objetivo inválido: " + tipoObjetivo
-                    + ". Valores válidos: " + Arrays.toString(TipoObjetivo.values()));
+            throw new InvalidDataException("error.tipoObjetivo.invalido", tipoObjetivo, Arrays.toString(TipoObjetivo.values()));
         }
 
         List<ObjetivoPersonalDTO> objetivosPersonales = objetivoPersonalService.findByTipoObjetivo(tipoObjetivo);

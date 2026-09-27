@@ -67,7 +67,7 @@ public class AuthService implements IAuthService {
         String token = jwtTokenProvider.generateToken(auth);
 
         Usuario usuario = usuarioRepository.findByUsername(loginDTO.getUsername())
-                .orElseThrow(() -> new NotFoundEntityException("Usuario no encontrado"));
+                .orElseThrow(() -> new NotFoundEntityException("error.usuario.noEncontrado"));
 
         List<String> roles = usuario.getRoles().stream()
                 .map(role -> role.getNombre().name())
@@ -90,15 +90,13 @@ public class AuthService implements IAuthService {
         logger.info("Registrando nuevo usuario: {}", registerDTO.getUsername());
 
         if (usuarioRepository.existsByUsername(registerDTO.getUsername())) {
-            throw DuplicateEntityException.conCodigo(
-                    "El username '" + registerDTO.getUsername() + "' ya está en uso",
-                    DuplicateEntityException.USERNAME_EN_USO);
+            throw DuplicateEntityException.conCodigo(DuplicateEntityException.USERNAME_EN_USO,
+                    "error.username.enUso", registerDTO.getUsername());
         }
 
         if (usuarioRepository.existsByEmail(registerDTO.getEmail())) {
-            throw DuplicateEntityException.conCodigo(
-                    "El email '" + registerDTO.getEmail() + "' ya está en uso",
-                    DuplicateEntityException.EMAIL_EN_USO);
+            throw DuplicateEntityException.conCodigo(DuplicateEntityException.EMAIL_EN_USO,
+                    "error.email.enUso", registerDTO.getEmail());
         }
 
         // Lista de bloqueo y nombre (GP-101). Después de la unicidad: si el usuario ya
@@ -109,7 +107,7 @@ public class AuthService implements IAuthService {
         // Los cambios de rol se hacen solo desde el panel admin (PATCH /admin/usuarios/{id}/rol).
         List<Role> roles = roleRepository.findByNombreIn(List.of(USER.getValue()));
         if (roles.isEmpty()) {
-            throw new NotFoundEntityException("Rol USER no encontrado; verificar seed de roles");
+            throw new NotFoundEntityException("error.rol.userNoExiste");
         }
 
         NivelExperiencia nivelExperiencia = null;
@@ -117,7 +115,7 @@ public class AuthService implements IAuthService {
             try {
                 nivelExperiencia = NivelExperiencia.valueOf(registerDTO.getNivelExperiencia().toUpperCase());
             } catch (IllegalArgumentException e) {
-                throw new InvalidDataException("Nivel de experiencia inválido: " + registerDTO.getNivelExperiencia());
+                throw new InvalidDataException("error.nivelExperiencia.invalido", registerDTO.getNivelExperiencia());
             }
         }
 
@@ -145,7 +143,7 @@ public class AuthService implements IAuthService {
     @Override
     public TokenDTO loginAsGuest() {
         Usuario guest = usuarioRepository.findByUsername("guest")
-                .orElseThrow(() -> new NotFoundEntityException("Usuario guest no encontrado"));
+                .orElseThrow(() -> new NotFoundEntityException("error.usuario.invitadoNoExiste"));
 
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                 guest, null, guest.getAuthorities()
@@ -209,7 +207,7 @@ public class AuthService implements IAuthService {
     @Override
     public void changePassword(String username, ChangePasswordDTO changePasswordDTO) {
         Usuario usuario = usuarioRepository.findByUsername(username)
-                .orElseThrow(() -> new NotFoundEntityException("Usuario no encontrado"));
+                .orElseThrow(() -> new NotFoundEntityException("error.usuario.noEncontrado"));
 
         // La contraseña actual debe coincidir con la almacenada; si no, 403 con código.
         // No 401: la app lo tomaría por sesión caducada y echaría al usuario.
@@ -219,7 +217,7 @@ public class AuthService implements IAuthService {
 
         // La nueva no puede ser igual a la actual (obliga a un cambio real).
         if (passwordEncoder.matches(changePasswordDTO.getNewPassword(), usuario.getPassword())) {
-            throw new InvalidDataException("La nueva contraseña debe ser distinta de la actual");
+            throw new InvalidDataException("error.contrasena.igual");
         }
 
         // Lista de bloqueo y nombre (GP-101).

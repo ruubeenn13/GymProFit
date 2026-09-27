@@ -144,7 +144,7 @@ public class ComidaController {
     @GetMapping("/comidas/tipo/{tipoComida}")
     public ResponseEntity<List<ComidaDTO>> obtenerComidasPorTipo(@PathVariable String tipoComida) {
         if (tipoComida == null || tipoComida.trim().isEmpty()) {
-            throw new InvalidDataException("El tipo de comida no puede estar vacío");
+            throw new InvalidDataException("error.tipoComida.vacio");
         }
 
         validarTipoComida(tipoComida);
@@ -217,7 +217,7 @@ public class ComidaController {
     public ResponseEntity<List<ComidaDTO>> obtenerComidasPorUsuarioYTipo(@PathVariable Integer usuarioId,
                                                                          @PathVariable String tipoComida) {
         if (tipoComida == null || tipoComida.trim().isEmpty()) {
-            throw new InvalidDataException("El tipo de comida no puede estar vacío");
+            throw new InvalidDataException("error.tipoComida.vacio");
         }
 
         validarTipoComida(tipoComida);
@@ -286,7 +286,7 @@ public class ComidaController {
         try {
             TipoComida.valueOf(tipoComida.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new InvalidDataException("Tipo de comida inválido: " + tipoComida);
+            throw new InvalidDataException("error.tipoComida.invalido", tipoComida);
         }
     }
 }

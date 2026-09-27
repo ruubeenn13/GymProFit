@@ -62,7 +62,7 @@ public class AlimentoService implements IAlimentoService {
         logger.info("Buscando alimento por id: {}", id);
 
         Alimento alimento = alimentoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("El alimento con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.alimento.noExiste", id));
 
         // Un alimento personal no es catálogo: lleva la dieta de alguien (GP-048).
         securityUtils.checkOwnershipIfOwned(alimento.getUsuario() != null ? alimento.getUsuario().getId() : null);
@@ -98,7 +98,7 @@ public class AlimentoService implements IAlimentoService {
         logger.info("Desactivando alimento con id: {}", id);
 
         Alimento alimento = alimentoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("El alimento con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.alimento.noExiste", id));
 
         checkPuedeEscribir(alimento);
 
@@ -119,7 +119,7 @@ public class AlimentoService implements IAlimentoService {
         logger.info("Activando alimento con id: {}", id);
 
         Alimento alimento = alimentoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("El alimento con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.alimento.noExiste", id));
 
         checkPuedeEscribir(alimento);
 
@@ -140,7 +140,7 @@ public class AlimentoService implements IAlimentoService {
         logger.info("Eliminando permanentemente alimento con id: {}", id);
 
         Alimento alimento = alimentoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("El alimento con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.alimento.noExiste", id));
 
         checkPuedeEscribir(alimento);
 
@@ -160,7 +160,7 @@ public class AlimentoService implements IAlimentoService {
         logger.info("Modificando alimento con id: {}", alimentoDTO.getId());
 
         Alimento alimento = alimentoRepository.findById(alimentoDTO.getId())
-                .orElseThrow(() -> new NotFoundEntityException("El alimento con id " + alimentoDTO.getId() + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.alimento.noExiste", alimentoDTO.getId()));
 
         checkPuedeEscribir(alimento);
 
@@ -284,8 +284,7 @@ public class AlimentoService implements IAlimentoService {
             // asignar un alimento a una cuenta concreta.
             if (usuarioIdDelCuerpo != null) {
                 alimento.setUsuario(usuarioRepository.findById(usuarioIdDelCuerpo)
-                        .orElseThrow(() -> new NotFoundEntityException(
-                                "El usuario con id " + usuarioIdDelCuerpo + " no existe")));
+                        .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", usuarioIdDelCuerpo)));
             }
             return;
         }
@@ -298,8 +297,7 @@ public class AlimentoService implements IAlimentoService {
         }
 
         alimento.setUsuario(usuarioRepository.findById(propietario)
-                .orElseThrow(() -> new NotFoundEntityException(
-                        "El usuario con id " + propietario + " no existe")));
+                .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", propietario)));
     }
 
     /**
@@ -345,7 +343,7 @@ public class AlimentoService implements IAlimentoService {
         logger.info("Aplicando patch a alimento con id: {}", id);
 
         Alimento alimento = alimentoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("El alimento con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.alimento.noExiste", id));
 
         checkPuedeEscribir(alimento);
 
@@ -443,8 +441,7 @@ public class AlimentoService implements IAlimentoService {
         }
 
         AlimentoDTO dto = openFoodFactsClient.porBarcode(codigo)
-                .orElseThrow(() -> new NotFoundEntityException(
-                        "No existe producto con código de barras " + codigo + " en Open Food Facts"));
+                .orElseThrow(() -> new NotFoundEntityException("error.openfoodfacts.noExiste", codigo));
 
         Alimento alimento = new Alimento();
         alimento.setNombre(dto.getNombre());

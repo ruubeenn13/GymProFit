@@ -71,12 +71,12 @@ public class BorradoCuentaService implements IBorradoCuentaService {
         Integer usuarioId = securityUtils.getCurrentUserId();
 
         Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + usuarioId + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", usuarioId));
 
         // Reautenticación. Va la primera: si falla, no se ha borrado ni una fila.
         if (!passwordEncoder.matches(dto.getPassword(), usuario.getPassword())) {
             logger.warn("Intento de borrado de cuenta con contraseña incorrecta, usuario id={}", usuarioId);
-            throw new UnauthorizedException("La contraseña no es correcta");
+            throw new UnauthorizedException("error.contrasena.incorrecta");
         }
 
         logger.info("Borrando definitivamente la cuenta del usuario id={}", usuarioId);

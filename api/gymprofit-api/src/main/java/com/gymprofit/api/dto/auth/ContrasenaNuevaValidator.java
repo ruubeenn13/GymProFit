@@ -23,21 +23,22 @@ public class ContrasenaNuevaValidator implements ConstraintValidator<ContrasenaN
     }
 
     /**
-     * Por qué no vale una contraseña, o null si vale.
+     * Por qué no vale una contraseña, como plantilla de mensaje ({clave} de
+     * messages*.properties, GP-109), o null si vale.
      *
      * @param valor la contraseña tal cual llega.
      */
     static String error(String valor) {
         if (valor.codePointCount(0, valor.length()) < ContrasenaNueva.MINIMO_CARACTERES) {
-            return "La contraseña debe tener al menos " + ContrasenaNueva.MINIMO_CARACTERES + " caracteres";
+            return "{validacion.contrasena.corta}";
         }
         if (valor.getBytes(StandardCharsets.UTF_8).length > ContrasenaNueva.MAXIMO_BYTES) {
-            return "La contraseña es demasiado larga";
+            return "{validacion.contrasena.larga}";
         }
         boolean imprimible = valor.codePoints().noneMatch(c ->
                 Character.isISOControl(c) || Character.getType(c) == Character.UNASSIGNED);
         if (!imprimible) {
-            return "La contraseña solo puede llevar caracteres imprimibles";
+            return "{validacion.contrasena.imprimible}";
         }
         return null;
     }

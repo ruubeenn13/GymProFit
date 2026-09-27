@@ -84,7 +84,7 @@ public class UsuarioService implements IUsuarioService {
         securityUtils.checkOwnership(id);
 
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", id));
 
         return usuarioMapper.toDTO(usuario);
     }
@@ -96,11 +96,11 @@ public class UsuarioService implements IUsuarioService {
         logger.info("Intento de crear un usuario");
 
         if (existsByUsername(usuarioCreateDTO.getUsername())) {
-            throw new DuplicateEntityException("username", usuarioCreateDTO.getUsername());
+            throw new DuplicateEntityException("error.username.enUso", usuarioCreateDTO.getUsername());
         }
 
         if (existsByEmail(usuarioCreateDTO.getEmail())) {
-            throw new DuplicateEntityException("email", usuarioCreateDTO.getEmail());
+            throw new DuplicateEntityException("error.email.enUso", usuarioCreateDTO.getEmail());
         }
 
         try {
@@ -123,7 +123,7 @@ public class UsuarioService implements IUsuarioService {
         logger.info("Intento de eliminar un usuario con id: {}", id);
 
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", id));
 
         try {
             usuario.setActivo(false);
@@ -143,7 +143,7 @@ public class UsuarioService implements IUsuarioService {
         logger.info("Activando usuario con id: {}", id);
 
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", id));
 
         try {
             usuario.setActivo(true);
@@ -162,7 +162,7 @@ public class UsuarioService implements IUsuarioService {
         logger.info("Eliminando permanentemente usuario con id: {}", id);
 
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", id));
 
         try {
             usuarioRepository.delete(usuario);
@@ -180,7 +180,7 @@ public class UsuarioService implements IUsuarioService {
         logger.info("Intento de modificar usuario con id: {}", usuarioUpdateDTO.getId());
 
         Usuario usuario = usuarioRepository.findById(usuarioUpdateDTO.getId())
-                .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + usuarioUpdateDTO.getId() + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", usuarioUpdateDTO.getId()));
 
         try {
             usuarioMapper.updateEntityFromDTO(usuarioUpdateDTO, usuario);
@@ -202,7 +202,7 @@ public class UsuarioService implements IUsuarioService {
         logger.info("Buscando usuario por username: {}", username);
 
         Usuario usuario = usuarioRepository.findByUsername(username)
-                .orElseThrow(() -> new NotFoundEntityException("El usuario con username '" + username + "' no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExisteUsername", username));
 
         securityUtils.checkOwnership(usuario.getId());
 
@@ -215,7 +215,7 @@ public class UsuarioService implements IUsuarioService {
         logger.info("Buscando un usuario por email: {}", email);
 
         Usuario usuario = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundEntityException("El usuario con email '" + email + "' no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExisteEmail", email));
 
         return usuarioMapper.toDTO(usuario);
     }
@@ -267,7 +267,7 @@ public class UsuarioService implements IUsuarioService {
         securityUtils.checkOwnership(id);
 
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", id));
 
         // Se valida y convierte el nivel de experiencia antes de aplicar cambios.
         NivelExperiencia nivel = null;
@@ -275,15 +275,14 @@ public class UsuarioService implements IUsuarioService {
             try {
                 nivel = NivelExperiencia.valueOf(patchDTO.getNivelExperiencia().toUpperCase());
             } catch (IllegalArgumentException ex) {
-                throw new InvalidDataException("Nivel de experiencia inválido: " + patchDTO.getNivelExperiencia());
+                throw new InvalidDataException("error.nivelExperiencia.invalido", patchDTO.getNivelExperiencia());
             }
         }
 
         // Mayúsculas aparte: la restricción única de la base tampoco las distingue.
         if (patchDTO.getEmail() != null
                 && !patchDTO.getEmail().trim().equalsIgnoreCase(usuario.getEmail())) {
-            throw new InvalidDataException(
-                    "El correo no se cambia desde el perfil: usa PUT /usuarios/me/email con tu contraseña actual");
+            throw new InvalidDataException("error.correo.desdePerfil");
         }
 
         try {
@@ -305,7 +304,7 @@ public class UsuarioService implements IUsuarioService {
         securityUtils.checkOwnership(usuarioId);
 
         if (!usuarioRepository.existsById(usuarioId)) {
-            throw new NotFoundEntityException("Usuario con id " + usuarioId + " no encontrado");
+            throw new NotFoundEntityException("error.usuario.noExiste", usuarioId);
         }
         return usuarioJooqRepository.getEstadisticas(usuarioId);
     }
@@ -337,8 +336,7 @@ public class UsuarioService implements IUsuarioService {
      */
     private void rechazarSiEsUnoMismo(Integer id) {
         if (id != null && id.equals(securityUtils.getCurrentUserId())) {
-            throw new InvalidDataException(
-                    "No puedes aplicar esta operación sobre tu propia cuenta de administrador");
+            throw new InvalidDataException("error.admin.propiaCuenta");
         }
     }
 
@@ -351,7 +349,7 @@ public class UsuarioService implements IUsuarioService {
         rechazarSiEsUnoMismo(id);
 
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", id));
 
         try {
             usuario.setActivo(!Boolean.TRUE.equals(usuario.getActivo()));
@@ -378,14 +376,14 @@ public class UsuarioService implements IUsuarioService {
         securityUtils.checkOwnership(id);
 
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("Usuario con id " + id + " no encontrado"));
+                .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", id));
 
         // Validaciones básicas del binario antes de persistirlo.
         if (file == null || file.isEmpty()) {
-            throw new InvalidDataException("La foto de perfil está vacía");
+            throw new InvalidDataException("error.foto.vacia");
         }
         if (file.getSize() > MAX_FOTO_BYTES) {
-            throw new InvalidDataException("La foto de perfil supera el tamaño máximo de 5 MB");
+            throw new InvalidDataException("error.foto.tamano");
         }
 
         // Se leen los bytes una sola vez para poder inspeccionar la cabecera y persistirla.
@@ -400,7 +398,7 @@ public class UsuarioService implements IUsuarioService {
         // que envía el cliente (se puede falsear para colar un binario que no es imagen).
         String tipoReal = detectarTipoImagen(datos);
         if (tipoReal == null) {
-            throw new InvalidDataException("El archivo no es una imagen válida (se admite JPEG, PNG o WEBP)");
+            throw new InvalidDataException("error.foto.formato");
         }
 
         // Upsert por usuario (PK = usuario_id): reutiliza la fila si ya tenía foto.
@@ -464,7 +462,7 @@ public class UsuarioService implements IUsuarioService {
 
         return fotoPerfilRepository.findById(id)
                 .map(FotoPerfil::getDatos)
-                .orElseThrow(() -> new NotFoundEntityException("El usuario " + id + " no tiene foto de perfil"));
+                .orElseThrow(() -> new NotFoundEntityException("error.foto.noExiste", id));
     }
 
     // Cambia el rol de un usuario (uso administrativo), validando que el rol exista.
@@ -476,17 +474,17 @@ public class UsuarioService implements IUsuarioService {
         rechazarSiEsUnoMismo(id);
 
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("El usuario con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", id));
 
         RoleType roleType;
         try {
             roleType = RoleType.valueOf(nuevoRol.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new InvalidDataException("Rol inválido: " + nuevoRol + ". Valores válidos: ADMIN, USER, GUEST");
+            throw new InvalidDataException("error.rol.invalido", nuevoRol);
         }
 
         Role role = roleRepository.findByNombre(roleType)
-                .orElseThrow(() -> new NotFoundEntityException("Rol " + nuevoRol + " no encontrado en BD"));
+                .orElseThrow(() -> new NotFoundEntityException("error.rol.noExiste", nuevoRol));
 
         try {
             // Lista MUTABLE a propósito: con List.of(...) el merge de Hibernate revienta con

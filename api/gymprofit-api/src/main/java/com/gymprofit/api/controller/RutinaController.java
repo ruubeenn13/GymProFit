@@ -178,7 +178,7 @@ public class RutinaController {
     @GetMapping("/rutinas/nivel/{nivel}")
     public ResponseEntity<List<RutinaDTO>> obtenerRutinasPorNivel(@PathVariable String nivel) {
         if (nivel == null || nivel.trim().isEmpty()) {
-            throw new InvalidDataException("El nivel no puede estar vacío");
+            throw new InvalidDataException("error.nivel.vacio");
         }
 
         List<RutinaDTO> rutinas = rutinaService.findByNivel(nivel);
@@ -195,7 +195,7 @@ public class RutinaController {
     @GetMapping("/rutinas/nombre/{nombre}")
     public ResponseEntity<List<RutinaDTO>> obtenerRutinasPorNombre(@PathVariable String nombre) {
         if (nombre == null || nombre.trim().isEmpty()) {
-            throw new InvalidDataException("El nombre no puede estar vacío");
+            throw new InvalidDataException("error.nombre.vacio");
         }
 
         List<RutinaDTO> rutinas = rutinaService.findByNombre(nombre);
@@ -253,7 +253,7 @@ public class RutinaController {
     @GetMapping("/rutinas/predefinidas/nivel/{nivel}")
     public ResponseEntity<List<RutinaDTO>> obtenerRutinasPredefinidasPorNivel(@PathVariable String nivel) {
         if (nivel == null || nivel.trim().isEmpty()) {
-            throw new InvalidDataException("El nivel no puede estar vacío");
+            throw new InvalidDataException("error.nivel.vacio");
         }
 
         List<RutinaDTO> rutinas = rutinaService.findPredefinidasByNivel(nivel);

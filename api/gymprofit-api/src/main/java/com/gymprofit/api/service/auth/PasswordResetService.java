@@ -212,6 +212,6 @@ public class PasswordResetService implements IPasswordResetService {
 
     // Un único mensaje para todos los fallos de canje, a propósito.
     private static InvalidDataException codigoNoValido() {
-        return new InvalidDataException("El código no es válido o ha caducado");
+        return new InvalidDataException("error.codigo.invalido");
     }
 }

@@ -90,7 +90,7 @@ class UsuarioControllerTest {
     @WithMockUser(roles = "ADMIN")
     void findById_inexistente_devuelve_404() throws Exception {
         when(usuarioService.findById(99))
-                .thenThrow(new NotFoundEntityException("El usuario con id 99 no existe"));
+                .thenThrow(new NotFoundEntityException("error.usuario.noExiste", 99));
 
         mockMvc.perform(get("/usuarios/99"))
                 .andExpect(status().isNotFound());

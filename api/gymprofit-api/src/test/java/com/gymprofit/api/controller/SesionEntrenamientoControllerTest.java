@@ -97,7 +97,7 @@ class SesionEntrenamientoControllerTest {
     @WithMockUser(roles = "USER")
     void findById_inexistente_devuelve_404() throws Exception {
         when(sesionService.findById(99))
-                .thenThrow(new NotFoundEntityException("Sesión con id 99 no existe"));
+                .thenThrow(new NotFoundEntityException("error.sesion.noExiste", 99));
 
         mockMvc.perform(get("/sesiones/99"))
                 .andExpect(status().isNotFound());

@@ -6,15 +6,18 @@ package com.gymprofit.api.exceptions;
 // sobre el que no tiene permisos (p.ej. IDOR entre usuarios). Capturada
 // por ControllerExceptionHandler para devolver 403.
 // ============================================================
-public class UnauthorizedException extends RuntimeException {
+public class UnauthorizedException extends ExcepcionConClave {
 
-    // Constructor con mensaje personalizado.
-    public UnauthorizedException(String message) {
-        super(message);
+    /**
+     * @param clave clave del mensaje en messages*.properties (GP-109)
+     * @param args  argumentos del mensaje
+     */
+    public UnauthorizedException(String clave, Object... args) {
+        super(clave, args, null);
     }
 
-    // Constructor con mensaje por defecto genérico.
+    // Mensaje por defecto genérico.
     public UnauthorizedException() {
-        super("No tienes permisos para realizar esta acción");
+        this("error.acceso.sinPermiso");
     }
 }

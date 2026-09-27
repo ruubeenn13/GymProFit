@@ -108,7 +108,7 @@ class EjercicioControllerTest {
     @WithMockUser(roles = "USER")
     void findById_inexistente_devuelve_404() throws Exception {
         when(ejercicioService.findById(99))
-                .thenThrow(new NotFoundEntityException("El ejercicio con id 99 no existe"));
+                .thenThrow(new NotFoundEntityException("error.ejercicio.noExiste", 99));
 
         mockMvc.perform(get("/ejercicios/99"))
                 .andExpect(status().isNotFound());

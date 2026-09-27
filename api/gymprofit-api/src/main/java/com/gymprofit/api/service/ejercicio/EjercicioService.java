@@ -58,7 +58,7 @@ public class EjercicioService implements IEjercicioService {
         logger.info("Buscando ejercicio por id: {}", id);
 
         Ejercicio ejercicio = ejercicioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("El ejercicio con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.ejercicio.noExiste", id));
 
         return ejercicioMapper.toDTO(ejercicio);
     }
@@ -88,7 +88,7 @@ public class EjercicioService implements IEjercicioService {
         logger.info("Desactivando ejercicio con id: {}", id);
 
         Ejercicio ejercicio = ejercicioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("El ejercicio con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.ejercicio.noExiste", id));
 
         try {
             ejercicio.setActivo(false);
@@ -108,7 +108,7 @@ public class EjercicioService implements IEjercicioService {
         logger.info("Activando ejercicio con id: {}", id);
 
         Ejercicio ejercicio = ejercicioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("El ejercicio con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.ejercicio.noExiste", id));
 
         ejercicio.setActivo(true);
         ejercicioRepository.save(ejercicio);
@@ -123,7 +123,7 @@ public class EjercicioService implements IEjercicioService {
         logger.info("Eliminando permanentemente ejercicio con id: {}", id);
 
         Ejercicio ejercicio = ejercicioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("El ejercicio con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.ejercicio.noExiste", id));
 
         try {
             ejercicioRepository.delete(ejercicio);
@@ -141,7 +141,7 @@ public class EjercicioService implements IEjercicioService {
         logger.info("Modificando ejercicio con id: {}", ejercicioDTO.getId());
 
         Ejercicio ejercicio = ejercicioRepository.findById(ejercicioDTO.getId())
-                .orElseThrow(() -> new NotFoundEntityException("El ejercicio con id " + ejercicioDTO.getId() + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.ejercicio.noExiste", ejercicioDTO.getId()));
 
         try {
             ejercicio.setNombre(ejercicioDTO.getNombre());
@@ -212,7 +212,7 @@ public class EjercicioService implements IEjercicioService {
         logger.info("Aplicando patch a ejercicio con id: {}", id);
 
         Ejercicio ejercicio = ejercicioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("El ejercicio con id " + id + " no existe"));
+                .orElseThrow(() -> new NotFoundEntityException("error.ejercicio.noExiste", id));
 
         try {
             if (patchDTO.getNombre() != null) ejercicio.setNombre(patchDTO.getNombre());
@@ -265,7 +265,7 @@ public class EjercicioService implements IEjercicioService {
         try {
             return GrupoMuscular.valueOf(valor.trim().toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new InvalidDataException("Grupo muscular inválido: " + valor);
+            throw new InvalidDataException("error.grupoMuscular.invalido", valor);
         }
     }
 
@@ -275,7 +275,7 @@ public class EjercicioService implements IEjercicioService {
         try {
             return Dificultad.valueOf(valor.trim().toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new InvalidDataException("Dificultad inválida: " + valor);
+            throw new InvalidDataException("error.dificultad.invalida", valor);
         }
     }
 }

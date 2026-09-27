@@ -5,7 +5,7 @@ package com.gymprofit.api.exceptions;
 // vale para esa cuenta (GP-101). ControllerExceptionHandler la devuelve como 400 con
 // el código en "cause", para que la app lo enseñe en el campo sin depender del texto.
 // ============================================================
-public class ContrasenaRechazadaException extends RuntimeException {
+public class ContrasenaRechazadaException extends ExcepcionConClave {
 
     /** Está en la lista de contraseñas comunes o filtradas. */
     public static final String PASSWORD_COMUN = "PASSWORD_COMUN";
@@ -15,8 +15,12 @@ public class ContrasenaRechazadaException extends RuntimeException {
 
     private final String codigo;
 
-    public ContrasenaRechazadaException(String message, String codigo) {
-        super(message);
+    /**
+     * @param codigo uno de los códigos de esta clase; elige también el mensaje.
+     */
+    public ContrasenaRechazadaException(String codigo) {
+        super(PASSWORD_COMUN.equals(codigo) ? "error.contrasena.comun" : "error.contrasena.contieneNombre",
+                null, null);
         this.codigo = codigo;
     }
 

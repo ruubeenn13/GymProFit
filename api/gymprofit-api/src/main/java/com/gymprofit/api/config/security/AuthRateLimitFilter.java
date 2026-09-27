@@ -1,9 +1,13 @@
 package com.gymprofit.api.config.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gymprofit.api.exceptions.MensajesError;
+import com.gymprofit.api.exceptions.Response;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -41,6 +45,15 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
             // Cambio de correo (GP-083): también reautentica con la contraseña, y acertar
             // entrega la llave de la recuperación de contraseña.
             "/usuarios/me/email");
+
+    // Texto del 429 en el idioma de la petición (GP-109). Por setter para que los tests
+    // unitarios sigan construyendo el filtro con new; sin él, el texto sale en español.
+    private MensajesError mensajes;
+
+    @Autowired
+    void setMensajes(MensajesError mensajes) {
+        this.mensajes = mensajes;
+    }
 
     // Master de activación (existente): desactiva TODO el filtro (dev/tests).
     @Value("${app.auth.rate-limit.enabled:true}")
@@ -115,8 +128,11 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Retry-After", String.valueOf(retryAfter));
-        response.getWriter().write(
-                "{\"code\":429,\"message\":\"Demasiadas peticiones. Inténtalo de nuevo en unos segundos.\"}");
+        String texto = mensajes != null
+                ? mensajes.texto(request, "error.demasiadasPeticiones")
+                : "Demasiadas peticiones. Inténtalo de nuevo en unos segundos.";
+        new ObjectMapper().writeValue(response.getWriter(),
+                Response.generalError(HttpStatus.TOO_MANY_REQUESTS.value(), texto));
     }
 
     // Aplica la ventana fija de forma atómica: reinicia si la ventana caducó, si no incrementa.

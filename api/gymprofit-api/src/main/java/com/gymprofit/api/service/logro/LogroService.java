@@ -81,7 +81,7 @@ public class LogroService implements ILogroService {
         securityUtils.checkOwnership(usuarioId);
 
         if (!usuarioRepository.existsById(usuarioId)) {
-            throw new NotFoundEntityException("Usuario con id " + usuarioId + " no encontrado");
+            throw new NotFoundEntityException("error.usuario.noExiste", usuarioId);
         }
         return logroMapper.toUsuarioLogroDTOList(usuarioLogroRepository.findByUsuarioId(usuarioId));
     }
@@ -105,7 +105,7 @@ public class LogroService implements ILogroService {
     @Transactional
     public LogroDTO update(Integer id, LogroCreateDTO updateDTO) {
         Logro logro = logroRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("Logro con id " + id + " no encontrado"));
+                .orElseThrow(() -> new NotFoundEntityException("error.logro.noExiste", id));
 
         if (updateDTO.getNombre() != null) logro.setNombre(updateDTO.getNombre());
         if (updateDTO.getDescripcion() != null) logro.setDescripcion(updateDTO.getDescripcion());
@@ -126,7 +126,7 @@ public class LogroService implements ILogroService {
         Map<TipoLogro.Metrica, Long> valores = contarMetricas(usuarioId);
 
         Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new NotFoundEntityException("Usuario con id " + usuarioId + " no encontrado"));
+                .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", usuarioId));
 
         List<String> nuevos = new ArrayList<>();
 
@@ -221,7 +221,7 @@ public class LogroService implements ILogroService {
         try {
             return TipoLogro.valueOf(tipo.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new InvalidDataException("Tipo de logro inválido: " + tipo);
+            throw new InvalidDataException("error.tipoLogro.invalido", tipo);
         }
     }
 }

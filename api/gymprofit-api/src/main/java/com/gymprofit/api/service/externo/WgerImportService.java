@@ -254,7 +254,7 @@ public class WgerImportService {
                     .retrieve().body(String.class);
             return objectMapper.readTree(body);
         } catch (Exception ex) {
-            throw new ExternalServiceException("free-exercise-db no disponible: " + ex.getMessage(), ex);
+            throw new ExternalServiceException(ex, "error.externo.noDisponible", "free-exercise-db");
         }
     }
 
@@ -375,7 +375,7 @@ public class WgerImportService {
                     .retrieve().body(String.class);
             return objectMapper.readTree(body);
         } catch (Exception ex) {
-            throw new ExternalServiceException("wger no disponible (offset " + offset + "): " + ex.getMessage(), ex);
+            throw new ExternalServiceException(ex, "error.externo.noDisponible", "wger (offset " + offset + ")");
         }
     }
 

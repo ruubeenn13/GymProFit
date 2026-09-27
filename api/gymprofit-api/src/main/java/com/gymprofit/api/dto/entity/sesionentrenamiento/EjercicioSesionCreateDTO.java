@@ -29,11 +29,11 @@ import java.util.List;
 @Schema(description = "Un ejercicio de la sesión, con sus series")
 public class EjercicioSesionCreateDTO implements Serializable {
 
-    @NotNull(message = "El ejercicio es obligatorio")
+    @NotNull(message = "{validacion.ejercicio.obligatorio}")
     @Schema(description = "Id del ejercicio del catálogo", example = "42")
     private Integer ejercicioId;
 
-    @Min(value = 0, message = "Las repeticiones no pueden ser negativas")
+    @Min(value = 0, message = "{validacion.repeticiones.negativas}")
     @Schema(description = "Repeticiones que pedía la rutina, como referencia", example = "10")
     private Integer repeticionesReales;
 

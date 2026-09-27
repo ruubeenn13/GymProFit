@@ -5,15 +5,13 @@ package com.gymprofit.api.exceptions;
 // Se lanza al intentar modificar/completar un ObjetivoPersonal que ya
 // tiene estado "completado", evitando transiciones de estado inválidas.
 // ============================================================
-public class ObjetivoAlreadyCompletedException extends RuntimeException {
+public class ObjetivoAlreadyCompletedException extends ExcepcionConClave {
 
-    // Constructor que compone el mensaje a partir del id del objetivo.
-    public ObjetivoAlreadyCompletedException(Integer objetivoId) {
-        super("El objetivo con id " + objetivoId + " ya está completado");
-    }
-
-    // Constructor con mensaje personalizado.
-    public ObjetivoAlreadyCompletedException(String message) {
-        super(message);
+    /**
+     * @param clave clave del mensaje en messages*.properties (GP-109)
+     * @param args  argumentos del mensaje
+     */
+    public ObjetivoAlreadyCompletedException(String clave, Object... args) {
+        super(clave, args, null);
     }
 }

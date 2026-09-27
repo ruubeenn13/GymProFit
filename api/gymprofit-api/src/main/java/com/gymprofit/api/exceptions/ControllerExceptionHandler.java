@@ -1,6 +1,7 @@
 package com.gymprofit.api.exceptions;
 
 import io.jsonwebtoken.JwtException;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,11 @@ import java.util.stream.Collectors;
 // de estado correcto, evitando filtrar detalles internos al cliente.
 // ============================================================
 @ControllerAdvice
+@RequiredArgsConstructor
 public class ControllerExceptionHandler {
+
+    // Textos en el idioma de la petición (GP-109).
+    private final MensajesError mensajes;
 
     // Logger para registrar la causa real de los errores internos.
     private final Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
@@ -62,7 +67,7 @@ public class ControllerExceptionHandler {
     public ResponseEntity<Response> handleNotReadable(HttpMessageNotReadableException ex) {
         logger.warn("Cuerpo de la petición ilegible: {}", ex.getMessage());
         return new ResponseEntity<>(
-                Response.validationError("Cuerpo de la petición ausente o mal formado"),
+                Response.validationError(mensajes.texto("error.cuerpo.ilegible")),
                 HttpStatus.BAD_REQUEST
         );
     }
@@ -73,7 +78,7 @@ public class ControllerExceptionHandler {
     public ResponseEntity<Response> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
         logger.warn("Parámetro con tipo inválido: {}", ex.getMessage());
         return new ResponseEntity<>(
-                Response.validationError("Parámetro inválido: " + ex.getName()),
+                Response.validationError(mensajes.texto("error.parametro.tipo", ex.getName())),
                 HttpStatus.BAD_REQUEST
         );
     }
@@ -84,7 +89,7 @@ public class ControllerExceptionHandler {
     public ResponseEntity<Response> handleMissingParam(MissingServletRequestParameterException ex) {
         logger.warn("Falta parámetro obligatorio: {}", ex.getMessage());
         return new ResponseEntity<>(
-                Response.validationError("Falta el parámetro obligatorio: " + ex.getParameterName()),
+                Response.validationError(mensajes.texto("error.parametro.falta", ex.getParameterName())),
                 HttpStatus.BAD_REQUEST
         );
     }
@@ -96,7 +101,7 @@ public class ControllerExceptionHandler {
         logger.error(ex.getMessage(), ex);
 
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage()),
+                Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), mensajes.texto("error.guardar.crear")),
                 HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
@@ -109,7 +114,7 @@ public class ControllerExceptionHandler {
         logger.error(ex.getMessage(), ex);
 
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage()),
+                Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), mensajes.texto("error.guardar.actualizar")),
                 HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
@@ -122,7 +127,7 @@ public class ControllerExceptionHandler {
         logger.error(ex.getMessage(), ex);
 
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage()),
+                Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), mensajes.texto("error.guardar.eliminar")),
                 HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
@@ -132,7 +137,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(NotFoundEntityException.class)
     public ResponseEntity<Response> handleNotFoundEntityException(NotFoundEntityException ex) {
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.NOT_FOUND.value(), ex.getMessage()),
+                Response.generalError(HttpStatus.NOT_FOUND.value(), mensajes.texto(ex)),
                 HttpStatus.NOT_FOUND
         );
     }
@@ -143,7 +148,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(DuplicateEntityException.class)
     public ResponseEntity<Response> handleDuplicateEntityException(DuplicateEntityException ex) {
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), ex.getCodigo()),
+                Response.generalError(HttpStatus.BAD_REQUEST.value(), mensajes.texto(ex), ex.getCodigo()),
                 HttpStatus.BAD_REQUEST
         );
     }
@@ -154,7 +159,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(ContrasenaRechazadaException.class)
     public ResponseEntity<Response> handleContrasenaRechazada(ContrasenaRechazadaException ex) {
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), ex.getCodigo()),
+                Response.generalError(HttpStatus.BAD_REQUEST.value(), mensajes.texto(ex), ex.getCodigo()),
                 HttpStatus.BAD_REQUEST
         );
     }
@@ -164,7 +169,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(ConflictEntityException.class)
     public ResponseEntity<Response> handleConflictEntityException(ConflictEntityException ex) {
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.CONFLICT.value(), ex.getMessage()),
+                Response.generalError(HttpStatus.CONFLICT.value(), mensajes.texto(ex)),
                 HttpStatus.CONFLICT
         );
     }
@@ -175,7 +180,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(CuentaDesactivadaException.class)
     public ResponseEntity<Response> handleCuentaDesactivadaException(CuentaDesactivadaException ex) {
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.UNAUTHORIZED.value(), ex.getMessage(),
+                Response.generalError(HttpStatus.UNAUTHORIZED.value(), mensajes.texto(ex),
                         CuentaDesactivadaException.CODIGO),
                 HttpStatus.UNAUTHORIZED
         );
@@ -187,7 +192,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(ContrasenaActualIncorrectaException.class)
     public ResponseEntity<Response> handleContrasenaActualIncorrecta(ContrasenaActualIncorrectaException ex) {
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.FORBIDDEN.value(), ex.getMessage(),
+                Response.generalError(HttpStatus.FORBIDDEN.value(), mensajes.texto(ex),
                         ContrasenaActualIncorrectaException.CODIGO),
                 HttpStatus.FORBIDDEN
         );
@@ -198,7 +203,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(InvalidDataException.class)
     public ResponseEntity<Response> handleInvalidDataException(InvalidDataException ex) {
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.BAD_REQUEST.value(), ex.getMessage()),
+                Response.generalError(HttpStatus.BAD_REQUEST.value(), mensajes.texto(ex)),
                 HttpStatus.BAD_REQUEST
         );
     }
@@ -207,8 +212,9 @@ public class ControllerExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_GATEWAY)
     @ExceptionHandler(ExternalServiceException.class)
     public ResponseEntity<Response> handleExternalServiceException(ExternalServiceException ex) {
+        logger.warn(ex.getMessage(), ex.getCause());
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.BAD_GATEWAY.value(), ex.getMessage()),
+                Response.generalError(HttpStatus.BAD_GATEWAY.value(), mensajes.texto(ex)),
                 HttpStatus.BAD_GATEWAY
         );
     }
@@ -218,7 +224,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<Response> handleInvalidCredentialsException(InvalidCredentialsException ex) {
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.UNAUTHORIZED.value(), ex.getMessage()),
+                Response.generalError(HttpStatus.UNAUTHORIZED.value(), mensajes.texto(ex)),
                 HttpStatus.UNAUTHORIZED
         );
     }
@@ -228,7 +234,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<Response> handleUnauthorizedException(UnauthorizedException ex) {
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.FORBIDDEN.value(), ex.getMessage()),
+                Response.generalError(HttpStatus.FORBIDDEN.value(), mensajes.texto(ex)),
                 HttpStatus.FORBIDDEN
         );
     }
@@ -238,7 +244,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(SesionNotCompletedException.class)
     public ResponseEntity<Response> handleSesionNotCompletedException(SesionNotCompletedException ex) {
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.BAD_REQUEST.value(), ex.getMessage()),
+                Response.generalError(HttpStatus.BAD_REQUEST.value(), mensajes.texto(ex)),
                 HttpStatus.BAD_REQUEST
         );
     }
@@ -248,7 +254,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(ObjetivoAlreadyCompletedException.class)
     public ResponseEntity<Response> handleObjetivoAlreadyCompletedException(ObjetivoAlreadyCompletedException ex) {
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.BAD_REQUEST.value(), ex.getMessage()),
+                Response.generalError(HttpStatus.BAD_REQUEST.value(), mensajes.texto(ex)),
                 HttpStatus.BAD_REQUEST
         );
     }
@@ -261,7 +267,7 @@ public class ControllerExceptionHandler {
         logger.error(ex.getMessage(), ex);
 
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage()),
+                Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), mensajes.texto(ex)),
                 HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
@@ -274,7 +280,7 @@ public class ControllerExceptionHandler {
         logger.warn("Argumento inválido en la petición: {}", ex.getMessage());
 
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.BAD_REQUEST.value(), "Parámetro con valor inválido"),
+                Response.generalError(HttpStatus.BAD_REQUEST.value(), mensajes.texto("error.parametro.valor")),
                 HttpStatus.BAD_REQUEST
         );
     }
@@ -285,7 +291,7 @@ public class ControllerExceptionHandler {
     public ResponseEntity<Response> handleJwtException(JwtException ex) {
         logger.warn(ex.getMessage());
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.UNAUTHORIZED.value(), "Token inválido o expirado"),
+                Response.generalError(HttpStatus.UNAUTHORIZED.value(), mensajes.texto("error.token.invalido")),
                 HttpStatus.UNAUTHORIZED
         );
     }
@@ -296,7 +302,7 @@ public class ControllerExceptionHandler {
     public ResponseEntity<Response> handleAccessDeniedException(AccessDeniedException ex) {
         logger.error(ex.getMessage(), ex);
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.FORBIDDEN.value(), "Acceso denegado"),
+                Response.generalError(HttpStatus.FORBIDDEN.value(), mensajes.texto("error.acceso.denegado")),
                 HttpStatus.FORBIDDEN
         );
     }
@@ -307,7 +313,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<Response> handleNoResourceFound(NoResourceFoundException ex) {
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.NOT_FOUND.value(), "Recurso no encontrado"),
+                Response.generalError(HttpStatus.NOT_FOUND.value(), mensajes.texto("error.ruta.noExiste")),
                 HttpStatus.NOT_FOUND
         );
     }
@@ -323,14 +329,14 @@ public class ControllerExceptionHandler {
             logger.warn("Petición rechazada ({}): {}", error.getStatusCode().value(), ex.getMessage());
             HttpStatus estado = HttpStatus.valueOf(error.getStatusCode().value());
             return new ResponseEntity<>(
-                    Response.generalError(estado.value(), estado.getReasonPhrase()),
+                    Response.generalError(estado.value(), mensajes.textoEstado(estado.value(), estado.getReasonPhrase())),
                     estado
             );
         }
         logger.error(ex.getMessage(), ex);
 
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error interno del servidor"),
+                Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), mensajes.texto("error.interno")),
                 HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
@@ -345,7 +351,7 @@ public class ControllerExceptionHandler {
     public ResponseEntity<Response> handleAuthenticationException(AuthenticationException ex) {
         logger.warn("Fallo de autenticación: {}", ex.getMessage());
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.UNAUTHORIZED.value(), "Credenciales inválidas"),
+                Response.generalError(HttpStatus.UNAUTHORIZED.value(), mensajes.texto("error.credenciales")),
                 HttpStatus.UNAUTHORIZED
         );
     }

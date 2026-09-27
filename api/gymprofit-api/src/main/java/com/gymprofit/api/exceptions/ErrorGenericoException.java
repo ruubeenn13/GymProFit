@@ -5,15 +5,13 @@ package com.gymprofit.api.exceptions;
 // por las excepciones custom más específicas. La captura
 // ControllerExceptionHandler devolviendo 500 sin exponer la causa.
 // ============================================================
-public class ErrorGenericoException extends RuntimeException {
+public class ErrorGenericoException extends ExcepcionConClave {
 
-    // Constructor con mensaje directo.
-    public ErrorGenericoException(String message) {
-        super(message);
-    }
-
-    // Constructor con mensaje y causa original.
-    public ErrorGenericoException(String message, Throwable cause) {
-        super(message, cause);
+    /**
+     * @param clave clave del mensaje en messages*.properties (GP-109)
+     * @param args  argumentos del mensaje
+     */
+    public ErrorGenericoException(String clave, Object... args) {
+        super(clave, args, null);
     }
 }
