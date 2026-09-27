@@ -1,0 +1,8 @@
+== change-password con la actual mal
+{"code":403,"message":"La contraseña actual no es correcta","cause":"PASSWORD_ACTUAL_INCORRECTA"} HTTP 403
+== volumen-muscular?desde (semana natural, cuenta nueva)
+[] HTTP 200
+== volumen-muscular?dias=7 (builds repartidas)
+[] HTTP 200
+== borrado de la cuenta de prueba
+{"mensaje":"Cuenta eliminada correctamente"} HTTP 200

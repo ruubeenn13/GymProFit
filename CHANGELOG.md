@@ -2,6 +2,16 @@
 
 Historial de cambios del proyecto (API Spring Boot + app Android). Ver también el [README](README.md).
 
+### 2026-09-27
+
+| Hash | Descripción |
+|---|---|
+| `12c14c1` | fix(android): **una sesión perdida abre Login una sola vez** (GP-107). Varias peticiones que caen con 401 a la vez abrían `LoginActivity` una vez cada una; solo avisa la primera y el aviso se rearma al volver a entrar. Reproducido desactivando una cuenta con Inicio abierto: 4 aperturas antes, 1 después. |
+| `04fab69` | feat(api): **series por zona de la semana natural** en `/sesiones/usuario/{id}/volumen-muscular`, con `desde` opcional (el lunes a las 00:00 en la hora del usuario, por el inicio de la sesión). Aditivo: sin `desde` sigue mandando `dias`. Para «Esta semana» de Inicio (GP-105). |
+| `3a2af47` | fix(api): **`POST /auth/change-password` con la contraseña actual mal responde 403** con `PASSWORD_ACTUAL_INCORRECTA` en `cause`, no 401, que la app toma por sesión caducada. |
+| `93b7a6a` | fix(api): **los logs de desarrollo salen del repositorio y ningún DTO imprime contraseñas, códigos ni tokens en su `toString`** (GP-115). `DtoSinSecretosEnToStringTest` recorre el paquete entero. El historial no se reescribe. |
+| `da08ac6` | fix(api): **las cuentas semilla usan el dominio del producto** (GP-106): `admin@gymprofit.app` y `guest@gymprofit.app`, con migración que solo cambia las filas que siguen con el correo anterior. La cuenta de invitado no recibe código de recuperación. |
+
 ### 2026-09-26
 
 | Hash | Descripción |
