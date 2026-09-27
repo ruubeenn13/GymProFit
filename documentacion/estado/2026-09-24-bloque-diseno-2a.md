@@ -16,11 +16,11 @@ repositorio por tamaño: son más de 190.
 
 | Commit | Qué |
 |---|---|
-| `4616b2c` | GP-077 · la valoración de la sesión arranca sin valorar |
-| `343e1b0` | GP-078 · el medidor de nivel deja de parecer el icono de cobertura |
-| `cba7663` | GP-079 · un logro bloqueado parece bloqueado y dice cuánto falta (API + Android) |
-| `6ea3b3f` | GP-063 · la paleta pasa AA en los dos temas y el texto deja de llevar alpha |
-| `ee4f0ff` | README de la API · el ejemplo de `/sesiones/completa` usa `numero` |
+| `5565f6e` | GP-077 · la valoración de la sesión arranca sin valorar |
+| `3f6e4ed` | GP-078 · el medidor de nivel deja de parecer el icono de cobertura |
+| `36cd260` | GP-079 · un logro bloqueado parece bloqueado y dice cuánto falta (API + Android) |
+| `e27bc5b` | GP-063 · la paleta pasa AA en los dos temas y el texto deja de llevar alpha |
+| `139f547` | README de la API · el ejemplo de `/sesiones/completa` usa `numero` |
 
 Tests nuevos: 3 + 3 + 2 + 2 + 3 en la app (`ValoracionTest`, `MedidorNivelTest`,
 `LogroMedallonTest`, `FechaUtilsTest`, `PaletaContrasteTest`) y 2 + 6 en la API

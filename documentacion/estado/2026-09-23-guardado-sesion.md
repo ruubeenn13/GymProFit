@@ -9,10 +9,10 @@ Ejecutado el 2026-09-23. Emulador `Medium_Phone_API_36.1` contra la API local
 
 | Commit | Qué |
 |---|---|
-| `c0c0238` | GP-070 · la valoración pasa a ser un campo, y se recupera la ya guardada |
-| `7442a53` | GP-006 · la sesión se guarda entera o no se guarda, y no se duplica al reintentar |
-| `f38800e` | GP-006 + GP-070 en Android · la pantalla deja de mentir |
-| `721d256` | DEC-033 · la decisión dice lo que el código hace con 403 y 404 |
+| `d521865` | GP-070 · la valoración pasa a ser un campo, y se recupera la ya guardada |
+| `ecc8955` | GP-006 · la sesión se guarda entera o no se guarda, y no se duplica al reintentar |
+| `78fdd8c` | GP-006 + GP-070 en Android · la pantalla deja de mentir |
+| `4fe0ce5` | DEC-033 · la decisión dice lo que el código hace con 403 y 404 |
 
 ---
 
@@ -48,11 +48,11 @@ Salen del **historial de git de `sesiones_valoracion_fmt`** en `values/` y
 
 | Literal | Dónde | Desde |
 |---|---|---|
-| `⭐ %d/5` | ES y EN | `6ca53c3` (2026-05-22) hasta `5e0dee3` (2026-09-23) |
-| `Valoración: %d/5` | ES | `40c686b` (2026-09-23) |
-| `Rating: %d/5` | EN | `40c686b` (2026-09-23) |
+| `⭐ %d/5` | ES y EN | `6ca53c3` (2026-05-22) hasta `6cae9f1` (2026-09-23) |
+| `Valoración: %d/5` | ES | `78f9a8e` (2026-09-23) |
+| `Rating: %d/5` | EN | `78f9a8e` (2026-09-23) |
 
-El emoji salió de las cadenas en `40c686b` (GP-061) y el texto se hizo explícito
+El emoji salió de las cadenas en `78f9a8e` (GP-061) y el texto se hizo explícito
 porque esto **se guarda**, no se lee en pantalla.
 
 ### Por qué la coincidencia es tan estricta

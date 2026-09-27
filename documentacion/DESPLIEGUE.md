@@ -117,7 +117,20 @@ Pendiente (clics de cuenta, con guía): crear MySQL en Aiven → copiar credenci
 
 - **`GET https://api.gymprofit.app/api/actuator/info`** responde `{"commit":"<hash>"}`, público y sin nada más (GP-100). El health check sigue en verde aunque un despliegue falle y responda la instancia vieja, así que **un despliegue se da por hecho cuando ese hash es el del commit**, nunca probando con una cuenta.
 - **`render.yaml` pasa de `autoDeploy: true` a `autoDeployTrigger: checksPass`** (GP-094): Render despliega cuando el CI del commit pasa en verde. Un push solo de documentación (`*.md`, `documentacion/`) no lanza CI y no despliega.
-- **Pero el servicio NO lo está aplicando (comprobado el 2026-09-27).** `5773c60`, solo de documentación, no tuvo ni una ejecución de CI (0 checks en GitHub) y producción pasó a servirlo. Según la documentación de Render, con «After CI Checks Pass» un commit sin checks no se despliega, así que el disparador efectivo es otro: el servicio no está gestionado por el Blueprint (o no se ha sincronizado) y manda el panel. **Resuelto el 2026-09-27:** el propietario puso «After CI Checks Pass» en el panel (Settings → Auto-Deploy). El siguiente commit solo de documentación, `44c1320`, ya no se desplegó: producción siguió en `5773c60`. El ajuste vive en el panel, no en `render.yaml`: si algún día se recrea el servicio, hay que volver a ponerlo.
+- **Pero el servicio NO lo está aplicando (comprobado el 2026-09-27).** `ab9dd3f`, solo de documentación, no tuvo ni una ejecución de CI (0 checks en GitHub) y producción pasó a servirlo. Según la documentación de Render, con «After CI Checks Pass» un commit sin checks no se despliega, así que el disparador efectivo es otro: el servicio no está gestionado por el Blueprint (o no se ha sincronizado) y manda el panel. **Resuelto el 2026-09-27:** el propietario puso «After CI Checks Pass» en el panel (Settings → Auto-Deploy). El siguiente commit solo de documentación, `29fbe8b`, ya no se desplegó: producción siguió en `ab9dd3f`. El ajuste vive en el panel, no en `render.yaml`: si algún día se recrea el servicio, hay que volver a ponerlo.
+
+## GP-124 · Un despliegue que Render no lanzó (2026-09-27)
+
+- `e07adba` llegó a `main` con su CI en verde y Render **no lanzó el despliegue**: más de una hora
+  después, `/actuator/info` seguía dando `f8790e7`, hasta que se desplegó. La causa no se ha
+  aclarado. `3465225`, con la misma forma (commit de documentación al final de un push que trae
+  código y CI en verde), sí se desplegó solo, en unos 15 minutos.
+- **Tras cada fusión en `main`, comprobar `/actuator/info`.** Si en 15 minutos no da el commit
+  fusionado, pedir al propietario el despliegue manual (*Manual Deploy → Deploy latest commit*).
+- Los hashes de este apartado son los del historial reescrito el 2026-09-27 para quitar el
+  coautor de cuatro commits (el mapa, en `estado/2026-09-27-historial-sin-coautor.md`).
+  **`/actuator/info` seguirá dando `b71c46d`**, el hash viejo de `3465225`, hasta el próximo
+  despliegue: el código es el mismo y no se ha redesplegado.
 
 ## Pasos de migración pendientes (cuando se despliegue)
 

@@ -5,25 +5,25 @@ Informe final del bloque. El del 2026-09-24
 mitad de sesión y queda como foto de aquel momento.
 
 Ejecutado el 2026-09-25. Emulador `Medium_Phone_API_36.1` contra la API local.
-Todo se comprobó en ejecución. «Antes» es `9ca07d3` (el último commit anterior al
+Todo se comprobó en ejecución. «Antes» es `a4d5955` (el último commit anterior al
 bloque), compilado desde un worktree con las herramientas de depuración copiadas;
 «después» es `main` al cerrar. Láminas en [`bloque-diseno-2c/`](bloque-diseno-2c/);
 las capturas originales (unas 400) se quedan fuera del repositorio por tamaño.
 
 | Commit | Qué |
 |---|---|
-| `ea84b4c` | **Previo**: `main` no compilaba. `3de9436` había borrado ocho ficheros de la API |
-| `55db41a` | CLAUDE.md: cada commit lleva solo los ficheros de su tarea |
-| `eadb19f` | GP-062 · una sola cabecera y 48 dp en todo lo pulsable |
-| `1a48873` | **Fallo encontrado**: borrar una sesión con ejercicios daba 500 |
-| `11b1348` | GP-071 · ni códigos de la API ni unidades a fuego en pantalla |
-| `7b6f29b` | GP-089 · las etiquetas en mayúsculas también van en condensada |
-| `ce1d3a6` | GP-089 · «Carbohidratos» ya no se parte con la letra grande |
-| `996cfd0` | GP-062 · los pulsables sin medida escrita también llegan a 48 dp |
-| `ed9237c` | GP-062 · el campo de los buscadores de administración mide 48 dp |
-| `61b1afb` | GP-071 · los filtros de rol dicen el rol, no el código |
-| `c21b9a7` | GP-088 · los récords salen de las series de las sesiones |
-| `6921083` | **Pedido durante el bloque**: la letra baja a una escala más contenida y regular |
+| `9ca4d28` | **Previo**: `main` no compilaba. `6accede` había borrado ocho ficheros de la API |
+| `4fa9501` | CLAUDE.md: cada commit lleva solo los ficheros de su tarea |
+| `914ee6b` | GP-062 · una sola cabecera y 48 dp en todo lo pulsable |
+| `25941da` | **Fallo encontrado**: borrar una sesión con ejercicios daba 500 |
+| `fa4c369` | GP-071 · ni códigos de la API ni unidades a fuego en pantalla |
+| `0022ca7` | GP-089 · las etiquetas en mayúsculas también van en condensada |
+| `22444c8` | GP-089 · «Carbohidratos» ya no se parte con la letra grande |
+| `5a7a4d9` | GP-062 · los pulsables sin medida escrita también llegan a 48 dp |
+| `46c2036` | GP-062 · el campo de los buscadores de administración mide 48 dp |
+| `2f6fd89` | GP-071 · los filtros de rol dicen el rol, no el código |
+| `cadf265` | GP-088 · los récords salen de las series de las sesiones |
+| `9cb0d94` | **Pedido durante el bloque**: la letra baja a una escala más contenida y regular |
 
 API: 580 tests en verde. App: 67. Tests nuevos: `CabeceraTest`, `TextoAFuegoTest`,
 `ZonasTest`, `RecordsTest`, `CalculadoraRecordsTest`, una regla más en
@@ -43,38 +43,38 @@ trampolín de depuración (`TrampolinActivity`) y la cuenta `prueba` o `admin`. 
 Splash y Licencias: la primera redirige y la segunda recibe sus textos como
 identificadores de recurso, que no se pueden pasar por adb.
 
-Las láminas de «después» están tomadas **con la escala de letra nueva** (`6921083`,
+Las láminas de «después» están tomadas **con la escala de letra nueva** (`9cb0d94`,
 abajo); las de GP-088 del apartado de récords, con la anterior.
 
 ---
 
 ## Antes de empezar: `main` no compilaba
 
-`3de9436`, el commit de tipografía, se llevó por un `git add` de más ocho ficheros de
+`6accede`, el commit de tipografía, se llevó por un `git add` de más ocho ficheros de
 la API que eran trabajo a medias de GP-088; `ProgresoEjercicioController` los seguía
-usando y Render no podía construir. `ea84b4c` los restauró tal cual estaban en
-`9ca07d3` (573 tests en verde) y se subió en cuanto pasó. `55db41a` deja la regla en
+usando y Render no podía construir. `9ca4d28` los restauró tal cual estaban en
+`a4d5955` (573 tests en verde) y se subió en cuanto pasó. `4fa9501` deja la regla en
 `CLAUDE.md`.
 
 ---
 
 ## GP-089 · Verificación de la tipografía
 
-El código ya estaba en `main` desde `3de9436`. Faltaba verificarlo en pantalla, y al
+El código ya estaba en `main` desde `6accede`. Faltaba verificarlo en pantalla, y al
 hacerlo aparecieron dos cosas.
 
 **Las etiquetas en mayúsculas no iban en la condensada.** En el resumen del
 onboarding «PROTEÍNAS» se partía en «PROTEÍNA / S». No era la fuente nueva —ya pasaba
 en «antes»—, sino que **33 etiquetas** estaban hechas a mano: tamaño, mayúsculas y
 espaciado sueltos, sin la apariencia de etiqueta, así que salían en Barlow de ancho
-normal cuando GP-089 dice que las etiquetas van en la condensada. `7b6f29b` les pone
+normal cuando GP-089 dice que las etiquetas van en la condensada. `0022ca7` les pone
 `TextAppearance.GymProFit.Label`, y `TipografiaTest` lo exige: sin el arreglo da los
 33 casos.
 
 ![La etiqueta partida, antes y después](bloque-diseno-2c/gp089-etiquetas.jpg)
 
 **A 1,3, «Carbohidratos» se partía a media palabra** en la tarjeta de Nutrición
-(«Carbohidrat/os»); también venía de antes. `ce1d3a6` usa «Carbos», como el resumen
+(«Carbohidrat/os»); también venía de antes. `22444c8` usa «Carbos», como el resumen
 del onboarding.
 
 **Letra del sistema a 1,3**, cinco pantallas (Inicio, Nutrición, Registrar sesión,
@@ -117,7 +117,7 @@ pantalla, esperando a que la actividad en primer plano sea la pedida y descontan
 lo que corta el borde de un contenedor desplazable (una fila a medio asomar no es
 pequeña, está recortada). Cuenta todo nodo pulsable, marcable o de pulsación larga.
 
-| | Antes (`9ca07d3`) | Después |
+| | Antes (`a4d5955`) | Después |
 |---|---|---|
 | 34 pantallas de usuario | **44** zonas por debajo de 48 dp, en 24 pantallas | **0** |
 | — Registrar sesión | 11 | 0 |
@@ -131,7 +131,7 @@ queda fuera de pantalla; con la lista desplazada, Registrar sesión llega a las 
 
 Fue en tres pasos, porque el primero no bastó:
 
-1. `eadb19f` sube a 48 dp todo lo que **declaraba** una medida menor: menú de
+1. `914ee6b` sube a 48 dp todo lo que **declaraba** una medida menor: menú de
    opciones de pestañas y administración, flechas de día y de periodo, acciones de
    fila de administración (32 dp) y botones de borrar fila (36 dp), conservando el
    tamaño del icono. El enlace de registro del login medía 23 dp de alto. Todos
@@ -139,15 +139,15 @@ Fue en tres pasos, porque el primero no bastó:
 2. El recorrido encontró lo que **no declara** medida: «Saltar» en los cinco pasos
    del onboarding (59×38), «¿Ya tienes cuenta?» del registro (22 de alto), los
    desplegables (el de categoría de crear alimento, 24) y los campos de peso y
-   repeticiones de cada serie. `996cfd0`.
+   repeticiones de cada serie. `5a7a4d9`.
 3. En administración quedaba el campo del buscador: el `SearchView` de AppCompat lo
    trae a 36 dp fijos y, con `wrap_content`, no pasa de su alto preferido.
-   `UIHelper.alturaTactilBuscador`, en un solo sitio. `ed9237c`.
+   `UIHelper.alturaTactilBuscador`, en un solo sitio. `46c2036`.
 
 `CabeceraTest` fija que no vuelva la cabecera a mano, que toda `MaterialToolbar`
 lleve el estilo, que ninguna medida pulsable escrita baje de 48 dp, que ningún
 pulsable tenga `contentDescription="@null"`, que todo texto pulsable pida 48 dp y
-que el desplegable común también. En `9ca07d3` se pone rojo: 27 cabeceras fuera de
+que el desplegable común también. En `a4d5955` se pone rojo: 27 cabeceras fuera de
 patrón, 36 pulsables sin nombre y 37 medidas por debajo.
 
 ---
@@ -201,7 +201,7 @@ de una sesión con ejercicios → **500**.
 La clave ajena de `ejercicios_realizados` a la sesión no borra en cascada y la
 entidad no mapea sus ejercicios, así que la restricción saltaba al confirmar. Desde
 GP-006 toda sesión nueva lleva ejercicios: **la papelera de Sesiones fallaba con
-cualquier sesión registrada con la app actual, también en producción**. `1a48873`
+cualquier sesión registrada con la app actual, también en producción**. `25941da`
 borra antes sus ejercicios; las series caen con ellos.
 
 El test va en `GuardadoSesionCompletaTest`, que no es `@Transactional`: con un test
@@ -320,7 +320,7 @@ cambian: van en dp.
 
 ## Pendiente del propietario
 
-- **Desplegar y confirmar**: `1a48873` y `c21b9a7` cambian la API (arreglo del
+- **Desplegar y confirmar**: `25941da` y `cadf265` cambian la API (arreglo del
   borrado; rutas `/records`; campos nuevos en la respuesta del guardado; rutas de
   progreso retiradas salvo las dos heredadas).
 - **Retirar `progreso_ejercicios`** en una migración posterior, cuando los récords

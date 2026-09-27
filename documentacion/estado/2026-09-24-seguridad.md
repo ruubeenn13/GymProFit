@@ -10,10 +10,10 @@ levantan el contexto (`AbstractOwnershipTest`): ninguno simula el servicio.
 
 | Commit | Qué |
 |---|---|
-| `7ac8e8a` | GP-081 · icono adaptativo con el logo real, versión A (`#0B0C0E` con la G de la variante oscura) |
-| `8833279` | GP-083 · una cuenta desactivada deja de entrar y el correo se cambia con contraseña |
-| `cd1ff75` | GP-076 · la carrera del guardado idempotente de la sesión ya no da 500 |
-| `018babb` | GP-048 · cobertura IDOR de todas las rutas con id, y **cinco fallos reales** que salieron al buscar hermanos |
+| `6f88abc` | GP-081 · icono adaptativo con el logo real, versión A (`#0B0C0E` con la G de la variante oscura) |
+| `9dc7f1b` | GP-083 · una cuenta desactivada deja de entrar y el correo se cambia con contraseña |
+| `66d983e` | GP-076 · la carrera del guardado idempotente de la sesión ya no da 500 |
+| `7e93af5` | GP-048 · cobertura IDOR de todas las rutas con id, y **cinco fallos reales** que salieron al buscar hermanos |
 
 Tests de la API: **573 en verde** (390 al empezar el lote). Tests de la app: los
 anteriores más 8 nuevos, en verde. Nada de esto cambia un contrato que usen las

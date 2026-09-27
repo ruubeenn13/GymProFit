@@ -8,8 +8,8 @@ y qué falta. **No es el informe final.**
 
 | Tarea | Estado | Dónde |
 |---|---|---|
-| Regla de seguridad en `CLAUDE.md` | Hecha | `9ca07d3` |
-| GP-089 tipografía | Código en `main`; verificación a medias | `3de9436` |
+| Regla de seguridad en `CLAUDE.md` | Hecha | `a4d5955` |
+| GP-089 tipografía | Código en `main`; verificación a medias | `6accede` |
 | GP-062 cabecera y zonas pulsables | Sin empezar; cifra verificada en ejecución | — |
 | GP-071 códigos de API a la vista | Sin empezar; barrido iniciado | — |
 | GP-088 récords | API escrita, **sin compilar**, en rama aparte | `wip/gp-088-records` (`d06b372`) |

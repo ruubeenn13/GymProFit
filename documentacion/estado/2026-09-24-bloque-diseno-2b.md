@@ -10,10 +10,10 @@ capturas originales se quedan fuera del repositorio por tamaño.
 
 | Commit | Qué |
 |---|---|
-| `170c7f2` | GP-084 · el tema oscuro deja de tener otra tipografía |
-| `3c528ea` | GP-079 · el logro conseguido va en dorado, no en naranja |
-| `3ef0e23` | GP-080 · un solo sistema de iconos en toda la app |
-| `d936bf1` | GP-082 · pantalla de licencias de terceros |
+| `834a4ac` | GP-084 · el tema oscuro deja de tener otra tipografía |
+| `fc761d5` | GP-079 · el logro conseguido va en dorado, no en naranja |
+| `14dd544` | GP-080 · un solo sistema de iconos en toda la app |
+| `c52778b` | GP-082 · pantalla de licencias de terceros |
 | `9157b6b` | GP-081 · **en la rama `gp-081-icono-pendiente`, no en `main`**: espera la decisión del fondo |
 
 Nada de este bloque tocó la API. Tests de la app: 40 en verde. `IconosTest` es
@@ -257,7 +257,7 @@ el menú de la app.
 ## GP-081 · El icono de la app y el de las notificaciones — PARADO
 
 > **Cerrado después, el mismo día:** el propietario eligió la **A**. Regenerado con el
-> script, fusionado en `main` como `7ac8e8a` y borrada la rama.
+> script, fusionado en `main` como `6f88abc` y borrada la rama.
 
 **Está hecho y verificado, salvo el fondo, que te toca a ti.** Vive en la rama
 **`gp-081-icono-pendiente`** (`9157b6b`, versión B), fuera de `main`.

@@ -261,7 +261,7 @@ por un estado normal.
 
 ## Lo que apareció al comprobar producción
 
-Render desplegó en verde (`c44ce17`, live a las 14:08). La convención nueva se
+Render desplegó en verde (`99bd99d`, live a las 14:08). La convención nueva se
 ve desde fuera:
 
 ```
