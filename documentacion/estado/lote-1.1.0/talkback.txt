@@ -1,0 +1,62 @@
+Árbol de accesibilidad medido con MedidorAccesibilidad (variante debug), API 36. «(oculto)» = lo que TalkBack no recibe.
+
+## hoja-abierta
+A11Y(oculto) avatarInicio nombre="Tu progreso y tu perfil" estado="" rol="" sel=false pos=-
+A11Y(oculto) grupoZonas nombre="1 de 6 zonas. Hechas: Pecho, 1 serie. Pendientes: Espalda, Pierna, Hombros, Brazos, Core." estado="" rol="" sel=false pos=-
+A11Y(oculto) cardRecordHome nombre="Último récord. Press de banca · 82,5 kg × 10. Antes: 72,5 kg × 10 · hace 1 semana" estado="" rol="" sel=false pos=-
+A11Y(oculto) filaKcalHoy nombre="0 de 2.545 kilocalorías." estado="" rol="" sel=false pos=-
+A11Y(oculto) barraKcalHoy nombre="" estado="0 %" rol="" sel=false pos=-
+A11Y accionEntrenar nombre="Empezar entrenamiento. Hoy toca: Empuje - Pecho y hombro" estado="" rol="" sel=false pos=-
+A11Y accionComida nombre="Registrar comida. Ahora toca: almuerzo" estado="" rol="" sel=false pos=-
+A11Y accionPeso nombre="Anotar peso o medidas. Última: 78,5 kg, hace 6 días" estado="" rol="" sel=false pos=-
+A11Y filaBarra nombre="Navegación principal" estado="" rol="" sel=false pos=-
+A11Y tabInicio nombre="Inicio" estado="" rol="pestaña" sel=true pos=0
+A11Y(oculto) flPildora nombre="" estado="" rol="" sel=true pos=-
+A11Y(oculto) ivIcono nombre="" estado="" rol="" sel=true pos=-
+A11Y(oculto) tvEtiqueta nombre="" estado="" rol="" sel=true pos=-
+A11Y tabEntrenar nombre="Entrenar" estado="" rol="pestaña" sel=false pos=1
+A11Y btnAcciones nombre="Acciones rápidas" estado="abiertas" rol="" sel=false pos=-
+A11Y tabNutricion nombre="Nutrición" estado="" rol="pestaña" sel=false pos=2
+A11Y tabProgreso nombre="Progreso" estado="" rol="pestaña" sel=false pos=3
+=== FIN hoja-abierta textos=40 minSp=9.0 textos<13=1 pulsables=15 pulsables<48=0
+
+## inicio-hoja-cerrada
+A11Y avatarInicio nombre="Tu progreso y tu perfil" estado="" rol="" sel=false pos=-
+A11Y grupoZonas nombre="1 de 6 zonas. Hechas: Pecho, 1 serie. Pendientes: Espalda, Pierna, Hombros, Brazos, Core." estado="" rol="" sel=false pos=-
+A11Y cardRecordHome nombre="Último récord. Press de banca · 82,5 kg × 10. Antes: 72,5 kg × 10 · hace 1 semana" estado="" rol="" sel=false pos=-
+A11Y filaKcalHoy nombre="0 de 2.545 kilocalorías." estado="" rol="" sel=false pos=-
+A11Y barraKcalHoy nombre="" estado="0 %" rol="" sel=false pos=-
+A11Y filaBarra nombre="Navegación principal" estado="" rol="" sel=false pos=-
+A11Y tabInicio nombre="Inicio" estado="" rol="pestaña" sel=true pos=0
+A11Y(oculto) flPildora nombre="" estado="" rol="" sel=true pos=-
+A11Y(oculto) ivIcono nombre="" estado="" rol="" sel=true pos=-
+A11Y(oculto) tvEtiqueta nombre="" estado="" rol="" sel=true pos=-
+A11Y tabEntrenar nombre="Entrenar" estado="" rol="pestaña" sel=false pos=1
+A11Y btnAcciones nombre="Acciones rápidas" estado="cerradas" rol="" sel=false pos=-
+A11Y tabNutricion nombre="Nutrición" estado="" rol="pestaña" sel=false pos=2
+A11Y tabProgreso nombre="Progreso" estado="" rol="pestaña" sel=false pos=3
+=== FIN inicio-hoja-cerrada textos=32 minSp=9.0 textos<13=1 pulsables=11 pulsables<48=0
+
+## progreso
+A11Y btnAjustes nombre="Ajustes" estado="" rol="" sel=false pos=-
+A11Y avatarProgreso nombre="Foto de perfil. Toca para cambiarla" estado="" rol="" sel=false pos=-
+A11Y cifraSesiones nombre="8 sesiones" estado="" rol="" sel=false pos=-
+A11Y cifraRecords nombre="1 récord" estado="" rol="" sel=false pos=-
+A11Y cifraLogros nombre="2 logros" estado="" rol="" sel=false pos=-
+A11Y pestanasProgreso nombre="Secciones de progreso" estado="" rol="" sel=false pos=-
+A11Y secRecords nombre="" estado="" rol="pestaña" sel=true pos=0
+A11Y secLogros nombre="" estado="" rol="pestaña" sel=false pos=1
+A11Y secMedidas nombre="" estado="" rol="pestaña" sel=false pos=2
+A11Y secHistorial nombre="" estado="" rol="pestaña" sel=false pos=3
+A11Y - nombre="Press de banca, 82,5 kg × 10. hace 1 semana · antes 72,5 kg × 10" estado="" rol="" sel=false pos=-
+A11Y filaBarra nombre="Navegación principal" estado="" rol="" sel=false pos=-
+A11Y tabInicio nombre="Inicio" estado="" rol="pestaña" sel=false pos=0
+A11Y tabEntrenar nombre="Entrenar" estado="" rol="pestaña" sel=false pos=1
+A11Y btnAcciones nombre="Acciones rápidas" estado="cerradas" rol="" sel=false pos=-
+A11Y tabNutricion nombre="Nutrición" estado="" rol="pestaña" sel=false pos=2
+A11Y tabProgreso nombre="Progreso" estado="" rol="pestaña" sel=true pos=3
+A11Y(oculto) flPildora nombre="" estado="" rol="" sel=true pos=-
+A11Y(oculto) ivIcono nombre="" estado="" rol="" sel=true pos=-
+A11Y(oculto) tvEtiqueta nombre="" estado="" rol="" sel=true pos=-
+=== FIN progreso textos=23 minSp=9.0 textos<13=1 pulsables=12 pulsables<48=0
+

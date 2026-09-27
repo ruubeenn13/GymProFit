@@ -1,0 +1,52 @@
+## atras_api36_gestos
+atr·s desde tabEntrenar: es.pmdm.gymprofit.ui.activities.MainActivity pestaÒa=tabInicio
+atr·s desde tabNutricion: es.pmdm.gymprofit.ui.activities.MainActivity pestaÒa=tabInicio
+atr·s desde tabProgreso: es.pmdm.gymprofit.ui.activities.MainActivity pestaÒa=tabInicio
+atr·s desde Inicio: .NexusLauncherActivity
+atr·s con la hoja abierta: hoja=cerrada es.pmdm.gymprofit.ui.activities.MainActivity pestaÒa=tabInicio
+atr·s desde Ajustes (es.pmdm.gymprofit.ui.activities.AjustesActivity): es.pmdm.gymprofit.ui.activities.MainActivity pestaÒa=tabProgreso
+
+## atras_api36_botones
+atr·s desde tabEntrenar: es.pmdm.gymprofit.ui.activities.MainActivity pestaÒa=tabInicio
+atr·s desde tabNutricion: es.pmdm.gymprofit.ui.activities.MainActivity pestaÒa=tabInicio
+atr·s desde tabProgreso: es.pmdm.gymprofit.ui.activities.MainActivity pestaÒa=tabInicio
+atr·s desde Inicio: .NexusLauncherActivity
+atr·s con la hoja abierta: hoja=cerrada es.pmdm.gymprofit.ui.activities.MainActivity pestaÒa=tabInicio
+atr·s desde Ajustes (es.pmdm.gymprofit.ui.activities.AjustesActivity): es.pmdm.gymprofit.ui.activities.MainActivity pestaÒa=tabProgreso
+
+## atras_api34_gestos
+atr√°s desde tabEntrenar: es.pmdm.gymprofit.ui.activities.MainActivity pesta√±a=tabInicio
+atr√°s desde tabNutricion: es.pmdm.gymprofit.ui.activities.MainActivity pesta√±a=tabInicio
+atr√°s desde tabProgreso: es.pmdm.gymprofit.ui.activities.MainActivity pesta√±a=tabInicio
+atr√°s desde Inicio: .NexusLauncherActivity
+atr√°s con la hoja abierta: hoja=cerrada es.pmdm.gymprofit.ui.activities.MainActivity pesta√±a=tabInicio
+atr√°s desde Ajustes (es.pmdm.gymprofit.ui.activities.AjustesActivity): es.pmdm.gymprofit.ui.activities.MainActivity pesta√±a=tabProgreso
+
+## atras_api34_botones
+atr√°s desde tabEntrenar: es.pmdm.gymprofit.ui.activities.MainActivity pesta√±a=tabInicio
+atr√°s desde tabNutricion: es.pmdm.gymprofit.ui.activities.MainActivity pesta√±a=tabInicio
+atr√°s desde tabProgreso: es.pmdm.gymprofit.ui.activities.MainActivity pesta√±a=tabInicio
+atr√°s desde Inicio: .NexusLauncherActivity
+atr√°s con la hoja abierta: hoja=cerrada es.pmdm.gymprofit.ui.activities.MainActivity pesta√±a=tabInicio
+atr√°s desde Ajustes (es.pmdm.gymprofit.ui.activities.AjustesActivity): es.pmdm.gymprofit.ui.activities.MainActivity pesta√±a=tabProgreso
+
+## atajos_api36
+accionEntrenar: sub=['Empezar entrenamiento'] ‚Üí RegistrarSesionActivity rutina=Entrenamiento libre 
+accionComida: sub=['Registrar comida. Ahora toca: almuerzo'] ‚Üí AnadirAlimentoActivity comida marcada=Almuerzo 
+accionPeso: sub=['Anotar peso o medidas'] ‚Üí MainActivity di√°logo peso=s√≠ 
+
+## atajos_api34
+accionEntrenar: sub=['Empezar entrenamiento'] ‚Üí RegistrarSesionActivity rutina=Entrenamiento libre 
+accionComida: sub=['Registrar comida. Ahora toca: almuerzo'] ‚Üí AnadirAlimentoActivity comida marcada=Almuerzo 
+accionPeso: sub=['Anotar peso o medidas'] ‚Üí MainActivity di√°logo peso=s√≠ 
+
+## invitado_api36
+accionEntrenar: sub=['Empezar entrenamiento'] ‚Üí MainActivity rutina=HOY TOCA 
+accionComida: sub=['Registrar comida. Ahora toca: almuerzo'] ‚Üí MainActivity comida marcada=- 
+accionPeso: sub=['Anotar peso o medidas'] ‚Üí MainActivity di√°logo peso=no 
+
+## invitado_api34
+accionEntrenar: sub=['Empezar entrenamiento'] ‚Üí MainActivity rutina=HOY TOCA 
+accionComida: sub=['Registrar comida. Ahora toca: almuerzo'] ‚Üí MainActivity comida marcada=- 
+accionPeso: sub=['Anotar peso o medidas'] ‚Üí MainActivity di√°logo peso=no 
+

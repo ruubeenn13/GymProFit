@@ -6,6 +6,17 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `94dcdce` | Fusión de `gp-105-estructura` en `main`: la estructura nueva entra entera, después de la comprobación en release. Informe en `documentacion/estado/2026-09-27-lote-1.1.0.md`. |
+| `d5260d1` | fix(android): **el aviso de descartar de los diálogos también en Android 13-15** (GP-108). En Android 16 el atrás llega por el `OnBackInvokedDispatcher` de la ventana del diálogo y en 13-15 como tecla: se registran los dos. |
+| `eebe1a1` | build(android): **versión 1.1.0** (10100), etiquetada `v1.1.0`. Misma clave de firma. |
+| `fde28c4` | fix(android): **los botones de Hoy toca sin rutinas no se cortan** (GP-105): se apilan en vez de ir en fila. |
+| `3941df1` | test(android): el medidor de accesibilidad de debug vuelca nombre, estado, rol, selección y lo oculto. |
+| `52c4151` | fix(android): **el foco no entra en las pestañas que no se ven** (GP-105), ni en la visible con la hoja del «+» abierta. |
+| `1e86639` | feat(android): **salir de más formularios con algo escrito pregunta antes** (GP-108): editar perfil, contraseña, correo, crear alimento, la cantidad al añadir un alimento y las mediciones. |
+| `4aba76a` | fix(android): **no se enseñan los logros que dependen de objetivos personales** (GP-114). |
+| `6b97b0b` | fix(android): **el historial dice el nombre de la plantilla** (GP-113). |
+| `dc4a19e` | feat(android,documentacion): **estructura nueva con la barra B** (GP-105): cuatro pestañas (Inicio, Entrenar, Nutrición, Progreso), «+» con tres atajos, Progreso con Récords, Logros, Medidas e Historial, y Ajustes, que reúne la pestaña Perfil y el menú de tres puntos. |
+| `de43067` | docs(decisiones): **DEC-034**, la app recorta los espacios de los extremos de la contraseña (el borrado de cuenta aún no). |
 | `12c14c1` | fix(android): **una sesión perdida abre Login una sola vez** (GP-107). Varias peticiones que caen con 401 a la vez abrían `LoginActivity` una vez cada una; solo avisa la primera y el aviso se rearma al volver a entrar. Reproducido desactivando una cuenta con Inicio abierto: 4 aperturas antes, 1 después. |
 | `04fab69` | feat(api): **series por zona de la semana natural** en `/sesiones/usuario/{id}/volumen-muscular`, con `desde` opcional (el lunes a las 00:00 en la hora del usuario, por el inicio de la sesión). Aditivo: sin `desde` sigue mandando `dias`. Para «Esta semana» de Inicio (GP-105). |
 | `3a2af47` | fix(api): **`POST /auth/change-password` con la contraseña actual mal responde 403** con `PASSWORD_ACTUAL_INCORRECTA` en `cause`, no 401, que la app toma por sesión caducada. |
