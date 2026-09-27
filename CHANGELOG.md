@@ -6,6 +6,7 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `aa131a7` | docs(changelog,documentacion,reglas): **historial de `main` reescrito para quitar el coautor de Claude** de cuatro commits del 21-09 (decisión del propietario): cambian los hashes de 123 commits y las cinco etiquetas; los `.md` citan ya los nuevos. Mapa viejo → nuevo en `documentacion/estado/2026-09-27-historial-sin-coautor.md`. Y GP-124 en `DESPLIEGUE.md`: tras cada fusión, comprobar `/actuator/info`. |
 | `bb1edfb` | ci(admin,api): **la web de administración en el CI** (GP-121): instalar, tests, compilar y el detector de Impeccable (4.0.0), que falla con cualquier hallazgo. Un cambio solo en `admin/` ya no lanza la API, sin colgar el gate de Dependabot: el workflow arranca siempre y salta el job que no toca. |
 | `238c32c` | docs(decisiones): la web de administración, **solo en tema oscuro** (DEC-035). |
 | `2e191de` | feat(admin): **la web de administración se adapta a cualquier pantalla y aprovecha el espacio** (GP-120): barra lateral desde 1280 px, barra de iconos de 768 a 1279 y pestañas abajo en el móvil; la API y el commit en el pie de la barra; tablas de 25 filas con cabecera fija (tarjetas en el móvil); la ficha de una cuenta como panel; lista y editor juntos solo desde 1440. Bordes de campo y barras de gráfica a 3:1, obligatorios marcados y aviso de cambios sin guardar también al salir por un enlace. Informe en `documentacion/estado/2026-09-27-admin-fase-1-1.md`. |
