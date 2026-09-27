@@ -24,6 +24,12 @@ public class LogroProgreso {
 
     public LogroProgreso() {}
 
+    /** Para pruebas: un logro del catálogo con su tipo y si está conseguido. */
+    public LogroProgreso(String tipo, boolean conseguido) {
+        this.tipo = tipo;
+        this.conseguido = conseguido;
+    }
+
     public int getLogroId() { return logroId; }
     public String getNombre() { return nombre; }
     public String getDescripcion() { return descripcion; }

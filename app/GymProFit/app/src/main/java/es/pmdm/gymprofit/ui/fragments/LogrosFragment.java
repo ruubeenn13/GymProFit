@@ -20,13 +20,15 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.LogroApi;
 import es.pmdm.gymprofit.ui.adapters.LogroAdapter;
+import es.pmdm.gymprofit.utils.LogrosVisibles;
 import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
 // LogrosFragment — sección Logros de Progreso (GP-105; antes LogrosActivity).
 //
 // El catálogo con el estado de cada logro: conseguido y cuándo, o cuánto falta
-// (GP-079), en una sola llamada a GET /logros/progreso.
+// (GP-079), en una sola llamada a GET /logros/progreso. Los que dependen de
+// objetivos personales no salen mientras no haya pantalla para crearlos (GP-114).
 // ============================================================
 public class LogrosFragment extends BaseFragment {
 
@@ -56,7 +58,7 @@ public class LogrosFragment extends BaseFragment {
         api.getProgreso().enqueue(new ApiCallback<List<LogroProgreso>>() {
             @Override
             public void onOk(List<LogroProgreso> lista) {
-                if (isAdded()) mostrar(lista != null ? lista : new ArrayList<>());
+                if (isAdded()) mostrar(LogrosVisibles.filtrar(lista));
             }
             @Override
             public void onFail(int code, String message) {

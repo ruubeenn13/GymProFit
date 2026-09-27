@@ -39,6 +39,7 @@ import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.ui.activities.AjustesActivity;
 import es.pmdm.gymprofit.ui.widget.FotoPerfil;
 import es.pmdm.gymprofit.utils.AvatarUtils;
+import es.pmdm.gymprofit.utils.LogrosVisibles;
 import es.pmdm.gymprofit.utils.UIHelper;
 
 // ============================================================
@@ -266,10 +267,7 @@ public class ProgresoFragment extends BaseFragment {
         });
         logroApi.getProgreso().enqueue(new ApiCallback<List<LogroProgreso>>() {
             @Override public void onOk(List<LogroProgreso> l) {
-                if (!isAdded()) return;
-                int n = 0;
-                if (l != null) for (LogroProgreso x : l) if (x.isConseguido()) n++;
-                cifra(R.id.cifraLogros, n, R.plurals.progreso_logros);
+                if (isAdded()) cifra(R.id.cifraLogros, LogrosVisibles.conseguidos(l), R.plurals.progreso_logros);
             }
             @Override public void onFail(int code, String m) { if (isAdded()) sinCifra(R.id.cifraLogros, R.plurals.progreso_logros); }
         });
