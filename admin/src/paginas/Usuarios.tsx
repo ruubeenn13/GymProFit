@@ -13,7 +13,7 @@ import { Icono } from '../componentes/Icono';
 import { Marco } from '../componentes/Marco';
 import { AvisoFlotante, Buscador, EstadoLista, Filtro, Paginacion, type Aviso } from '../componentes/Piezas';
 import { useSesion } from '../sesion/Sesion';
-import { cuenta as contar, entero, fechaCorta, haceCuanto } from '../util/formato';
+import { cuenta as contar, fechaCorta, haceCuanto } from '../util/formato';
 import { textoError, useCarga } from '../util/useCarga';
 
 const TAMANO = 8;
@@ -256,9 +256,9 @@ export function Usuarios() {
                 </thead>
                 <tbody>
                   {lista.datos?.content.map((c) => (
-                    <tr key={c.id} aria-selected={elegida === c.id} onClick={() => setElegida(c.id)}>
+                    <tr key={c.id} data-elegida={elegida === c.id} onClick={() => setElegida(c.id)}>
                       <td>
-                        <button type="button" className="fila-boton" onClick={(e) => { e.stopPropagation(); setElegida(c.id); }}
+                        <button type="button" className="fila-boton" aria-current={elegida === c.id ? 'true' : undefined} onClick={(e) => { e.stopPropagation(); setElegida(c.id); }}
                                 aria-label={`@${c.username}, ${c.email}. Abrir la ficha`}>
                           <span className="fila-boton__principal">@{c.username}</span>
                           <span className="fila-boton__secundario">{c.email}</span>
@@ -275,7 +275,6 @@ export function Usuarios() {
             </EstadoLista>
           </div>
           {total > 0 && <Paginacion pagina={pagina} tamano={TAMANO} total={total} alCambiar={setPagina} />}
-          {lista.datos && total > 0 && <span className="solo-lector" aria-live="polite">{entero(total)} cuentas</span>}
         </section>
         {elegida !== null && (
           <Ficha key={elegida} id={elegida} alCerrar={() => setElegida(null)} alCambiar={lista.recargar} avisar={setAviso} />

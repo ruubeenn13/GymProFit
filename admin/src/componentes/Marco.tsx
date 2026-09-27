@@ -2,7 +2,7 @@
 // Marco — barra lateral y cabecera comunes a todas las pantallas (GP-085)
 // Plantillas es de la fase 2: no sale en la barra lateral.
 // ============================================================
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useSesion } from '../sesion/Sesion';
 import { Icono, type NombreIcono } from './Icono';
@@ -73,11 +73,21 @@ function BarraLateral() {
   );
 }
 
+/** Pone «titulo · GymProFit Admin» como título del documento. */
+export function useTituloDocumento(titulo: string) {
+  useEffect(() => {
+    document.title = `${titulo} · GymProFit Admin`;
+  }, [titulo]);
+}
+
 /**
  * @param props.titulo     título de la pantalla (h1)
  * @param props.subtitulo  texto al lado del título
  */
 export function Marco({ titulo, subtitulo, children }: { titulo: string; subtitulo?: ReactNode; children: ReactNode }) {
+  // Cada pantalla con su título: es lo primero que lee un lector de pantalla al
+  // cambiar de sección, y lo que distingue las pestañas (WCAG 2.4.2).
+  useTituloDocumento(titulo);
   return (
     <div className="marco">
       <a className="saltar" href="#contenido">Saltar al contenido</a>

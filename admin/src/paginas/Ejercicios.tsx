@@ -9,7 +9,7 @@ import { useCallback, useEffect, useId, useState, type FormEvent, type ReactNode
 import { admin, type EjercicioDetalle, type EjercicioGuardar, type ResumenEjercicios } from '../api/admin';
 import { Icono } from '../componentes/Icono';
 import { Marco } from '../componentes/Marco';
-import { AvisoFlotante, Buscador, EstadoLista, Filtro, Interruptor, Paginacion, type Aviso } from '../componentes/Piezas';
+import { AvisoFlotante, Buscador, DialogoDescartar, EstadoLista, Filtro, Interruptor, Paginacion, useAvisoAlSalir, type Aviso } from '../componentes/Piezas';
 import { cuenta, entero } from '../util/formato';
 import { textoError, useCarga } from '../util/useCarga';
 import { DIFICULTADES, GRUPOS, ORIGEN_EJERCICIO } from './etiquetas';
@@ -55,8 +55,9 @@ function faltaEspanol(es: string, en: string): string | undefined {
   return undefined;
 }
 
-function Editor({ id, resumen, alGuardado, alSiguiente, avisar }: {
+function Editor({ id, resumen, alGuardado, alSiguiente, avisar, alCambiarSucio }: {
   id: number;
+  alCambiarSucio: (sucio: boolean) => void;
   resumen: ResumenEjercicios | null;
   alGuardado: () => void;
   alSiguiente: (actual: number) => Promise<void>;
@@ -64,11 +65,13 @@ function Editor({ id, resumen, alGuardado, alSiguiente, avisar }: {
 }) {
   const { datos, cargando, error, recargar } = useCarga<EjercicioDetalle>((s) => admin.ejercicio(id, s), [id]);
   const [f, setF] = useState<Formulario | null>(null);
+  // Lo último cargado o guardado: con eso se compara para saber si hay cambios.
+  const [base, setBase] = useState<Formulario | null>(null);
   const [guardando, setGuardando] = useState(false);
   const [errorNombre, setErrorNombre] = useState<string | null>(null);
 
   useEffect(() => {
-    if (datos) setF(aFormulario(datos));
+    if (datos) { setF(aFormulario(datos)); setBase(aFormulario(datos)); }
   }, [datos]);
 
   const cambiar = <K extends keyof Formulario>(clave: K, valor: Formulario[K]) => setF((x) => (x ? { ...x, [clave]: valor } : x));
@@ -92,6 +95,7 @@ function Editor({ id, resumen, alGuardado, alSiguiente, avisar }: {
         await alSiguiente(id);
       } else {
         setF(aFormulario(guardado));
+        setBase(aFormulario(guardado));
         avisar({ tipo: 'ok', texto: guardado.nombreRevisado ? 'Guardado. Queda revisado.' : 'Guardado.' });
       }
     } catch (err) {
@@ -105,6 +109,12 @@ function Editor({ id, resumen, alGuardado, alSiguiente, avisar }: {
     e.preventDefault();
     void guardar(false);
   }
+
+  const sucio = !!f && !!base && JSON.stringify(f) !== JSON.stringify(base);
+  useAvisoAlSalir(sucio);
+  useEffect(() => { alCambiarSucio(sucio); }, [sucio, alCambiarSucio]);
+  // Al cerrarse el editor (otra fila, «siguiente»), sus cambios dejan de contar.
+  useEffect(() => () => alCambiarSucio(false), [alCambiarSucio]);
 
   const mismoNombre = !!f && f.nombre.trim().toLowerCase() === f.nombreEn.trim().toLowerCase();
   // Lo que quedará al guardar: revisado si se marca o si los nombres ya son distintos.
@@ -244,12 +254,28 @@ export function Ejercicios() {
   const [equipamiento, setEquipamiento] = useState('');
   const [pagina, setPagina] = useState(0);
   const [elegido, setElegido] = useState<number | null>(null);
+  const [sucio, setSucio] = useState(false);
+  const [pendiente, setPendiente] = useState<number | null>(null);
+
+  // Elegir otra fila con cambios sin guardar pregunta antes.
+  function elegir(id: number) {
+    if (id === elegido) return;
+    if (sucio) setPendiente(id); else setElegido(id);
+  }
   const [aviso, setAviso] = useState<Aviso | null>(null);
 
   const resumen = useCarga((s) => admin.resumenEjercicios(s), []);
   const lista = useCarga((s) => admin.ejercicios({ q, grupo, equipamiento, sinRevisar, page: pagina, size: TAMANO }, s),
     [q, grupo, equipamiento, sinRevisar, pagina]);
   const cerrarAviso = useCallback(() => setAviso(null), []);
+
+  useEffect(() => {
+    // Sin el resumen faltan la cabecera y las opciones de un filtro: se dice, con reintento.
+    if (resumen.error) {
+      setAviso({ tipo: 'error', texto: `No se ha podido cargar el resumen: ${resumen.error}`,
+        accion: { texto: 'Reintentar', alPulsar: resumen.recargar } });
+    }
+  }, [resumen.error, resumen.recargar]);
 
   useEffect(() => {
     // Al abrir la pantalla, el primero de la lista queda elegido: es por donde se empieza.
@@ -307,9 +333,9 @@ export function Ejercicios() {
                 <thead><tr><th scope="col">Nombre · español / inglés</th><th scope="col">Grupo</th><th scope="col">Equipamiento</th></tr></thead>
                 <tbody>
                   {lista.datos?.content.map((e) => (
-                    <tr key={e.id} aria-selected={elegido === e.id} onClick={() => setElegido(e.id)}>
+                    <tr key={e.id} data-elegida={elegido === e.id} onClick={() => elegir(e.id)}>
                       <td>
-                        <button type="button" className="fila-boton" onClick={(ev) => { ev.stopPropagation(); setElegido(e.id); }}>
+                        <button type="button" className="fila-boton" aria-current={elegido === e.id ? 'true' : undefined} onClick={(ev) => { ev.stopPropagation(); elegir(e.id); }}>
                           <span className="fila-boton__principal">{e.nombre}</span>
                           <span className="fila-boton__secundario">{e.nombreEn ?? 'Sin nombre en inglés'}</span>
                         </button>
@@ -326,9 +352,12 @@ export function Ejercicios() {
           {total > 0 && <Paginacion pagina={pagina} tamano={TAMANO} total={total} alCambiar={setPagina} />}
         </section>
         {elegido !== null
-          ? <Editor key={elegido} id={elegido} resumen={r} alGuardado={alGuardado} alSiguiente={siguiente} avisar={setAviso} />
+          ? <Editor key={elegido} id={elegido} resumen={r} alGuardado={alGuardado} alSiguiente={siguiente} avisar={setAviso}
+                    alCambiarSucio={setSucio} />
           : <div className="tarjeta editor editor--vacio"><p>Elige un ejercicio de la lista para editarlo.</p></div>}
       </div>
+      <DialogoDescartar abierto={pendiente !== null} alSeguir={() => setPendiente(null)}
+                        alDescartar={() => { setSucio(false); setElegido(pendiente); setPendiente(null); }} />
       <AvisoFlotante aviso={aviso} alCerrar={cerrarAviso} />
     </Marco>
   );

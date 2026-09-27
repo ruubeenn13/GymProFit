@@ -53,12 +53,16 @@ export function ProveedorEstadoApi({ children }: { children: ReactNode }) {
       }
       if (!control.signal.aborted) setComprobado(new Date());
     })();
-    const reloj = window.setInterval(comprobar, CADA_MS);
+    // Con la pestaña oculta no se pregunta: nadie lo ve. Al volver, se comprueba ya.
+    const reloj = window.setInterval(() => { if (!document.hidden) comprobar(); }, CADA_MS);
+    const alVolver = () => { if (!document.hidden) comprobar(); };
     window.addEventListener(EVENTO_SIN_RESPUESTA, comprobar);
+    document.addEventListener('visibilitychange', alVolver);
     return () => {
       control.abort();
       window.clearInterval(reloj);
       window.removeEventListener(EVENTO_SIN_RESPUESTA, comprobar);
+      document.removeEventListener('visibilitychange', alVolver);
     };
   }, [vuelta, comprobar]);
 

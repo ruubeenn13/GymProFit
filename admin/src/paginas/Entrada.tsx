@@ -7,6 +7,7 @@ import { useState, type FormEvent } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { ApiError } from '../api/cliente';
 import { Icono, type NombreIcono } from '../componentes/Icono';
+import { useTituloDocumento } from '../componentes/Marco';
 import { useSesion } from '../sesion/Sesion';
 import { textoError } from '../util/useCarga';
 
@@ -27,6 +28,7 @@ export function Entrada() {
   const [enviando, setEnviando] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  useTituloDocumento('Entrar');
   const destino = (ubicacion.state as { desde?: string } | null)?.desde ?? '/';
   if (usuario) return <Navigate to={destino} replace />;
 

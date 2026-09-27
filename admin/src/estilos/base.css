@@ -48,9 +48,9 @@ h1, h2, h3 { font-family: var(--fuente-titular); font-weight: 700; margin: 0; }
 }
 .boton:hover:not(:disabled) { background: var(--nota); }
 .boton--principal { border: 0; background: var(--acento); color: var(--acento-sobre); font-weight: 700; }
-.boton--principal:hover:not(:disabled) { background: #FF7A1A; }
+.boton--principal:hover:not(:disabled) { background: var(--acento-hover); }
 .boton--peligro { border-color: var(--peligro-borde); color: var(--peligro); }
-.boton--peligro:hover:not(:disabled) { background: #2A1616; }
+.boton--peligro:hover:not(:disabled) { background: var(--peligro-fondo); }
 .boton--ancho { width: 100%; }
 
 .boton-icono {
@@ -118,6 +118,12 @@ textarea.campo__control:focus-visible { padding: 9px 11px; }
   background: transparent; color: var(--texto); font-size: 14px;
   display: inline-flex; align-items: center; gap: 6px; min-width: 44px;
 }
+/* Chips y filtros miden 40 px, como el diseño; la zona pulsable llega a 44 sin que
+   cambie lo que se ve (DEC-019). */
+.chip { position: relative; }
+.chip::after { content: ""; position: absolute; inset: -2px 0; }
+.filtro select { height: 44px; margin: -2px 0; }
+.filtro--alto select { height: 100%; margin: 0; }
 .chip[aria-pressed="true"] { border-color: transparent; background: var(--acento-fondo); color: var(--acento-claro); font-weight: 600; }
 
 /* ---------- Etiquetas de estado ---------- */
@@ -161,7 +167,7 @@ textarea.campo__control:focus-visible { padding: 9px 11px; }
 .tabla tbody tr:last-child td { border-bottom: 0; }
 .tabla tbody tr { cursor: pointer; }
 .tabla tbody tr:hover { background: var(--nota); }
-.tabla tbody tr[aria-selected="true"] { background: var(--seleccion); }
+.tabla tbody tr[data-elegida="true"] { background: var(--seleccion); }
 .tabla .num { text-align: right; font-variant-numeric: tabular-nums; }
 .fila-boton {
   display: flex; flex-direction: column; align-items: flex-start; gap: 0; width: 100%; min-height: 44px; justify-content: center;
@@ -199,6 +205,6 @@ textarea.campo__control:focus-visible { padding: 9px 11px; }
   border: 1px solid var(--borde); border-radius: var(--radio-tarjeta); background: var(--tarjeta); color: var(--texto);
   padding: 24px; width: min(480px, calc(100vw - 32px));
 }
-.dialogo::backdrop { background: rgba(0, 0, 0, 0.6); }
+.dialogo::backdrop { background: var(--velo); }
 .dialogo__cuerpo { display: flex; flex-direction: column; gap: 16px; }
 .dialogo__acciones { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }

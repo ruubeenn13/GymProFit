@@ -4,6 +4,7 @@
 // ============================================================
 import { useEffect, useId, useState, type ReactNode } from 'react';
 import { entero } from '../util/formato';
+import { Dialogo } from './Dialogo';
 import { Icono } from './Icono';
 
 /** Carga, error con reintento, o vacío. Si no toca ninguno, pinta los hijos. */
@@ -123,12 +124,20 @@ export function Buscador({ etiqueta, marcador, alBuscar }: { etiqueta: string; m
   );
 }
 
-export interface Aviso { tipo: 'ok' | 'error'; texto: string }
+export interface Aviso {
+  tipo: 'ok' | 'error';
+  texto: string;
+  /** Acción opcional en el propio aviso (por ejemplo, reintentar). */
+  accion?: { texto: string; alPulsar: () => void };
+}
 
-/** Aviso flotante que se va solo a los 5 s. */
+/**
+ * Aviso flotante. El de éxito se va solo a los 5 s; el de error se queda hasta que
+ * se cierra: un error que desaparece antes de leerlo no se ha dicho (WCAG 2.2.1).
+ */
 export function AvisoFlotante({ aviso, alCerrar }: { aviso: Aviso | null; alCerrar: () => void }) {
   useEffect(() => {
-    if (!aviso) return;
+    if (!aviso || aviso.tipo === 'error') return;
     const t = window.setTimeout(alCerrar, 5000);
     return () => window.clearTimeout(t);
   }, [aviso, alCerrar]);
@@ -137,9 +146,44 @@ export function AvisoFlotante({ aviso, alCerrar }: { aviso: Aviso | null; alCerr
     <div className={`aviso-flotante aviso-flotante--${aviso.tipo}`} role={aviso.tipo === 'error' ? 'alert' : 'status'}>
       <Icono nombre={aviso.tipo === 'error' ? 'error' : 'check_circle'} tamano={20} />
       <span>{aviso.texto}</span>
+      {aviso.accion && (
+        <button type="button" className="enlace-accion" onClick={() => { aviso.accion!.alPulsar(); alCerrar(); }}>
+          {aviso.accion.texto}
+        </button>
+      )}
       <button type="button" className="boton-icono" aria-label="Cerrar el aviso" onClick={alCerrar}>
         <Icono nombre="close" tamano={20} />
       </button>
     </div>
+  );
+}
+
+/**
+ * Con cambios sin guardar, el navegador pregunta antes de cerrar o recargar la
+ * pestaña: los tokens viven en memoria, así que recargar además cierra la sesión.
+ *
+ * @param sucio si hay algo escrito que no se ha guardado
+ */
+export function useAvisoAlSalir(sucio: boolean) {
+  useEffect(() => {
+    if (!sucio) return;
+    const alSalir = (e: BeforeUnloadEvent) => { e.preventDefault(); };
+    window.addEventListener('beforeunload', alSalir);
+    return () => window.removeEventListener('beforeunload', alSalir);
+  }, [sucio]);
+}
+
+/** Pregunta antes de tirar lo escrito en un editor al elegir otra fila. */
+export function DialogoDescartar({ abierto, alDescartar, alSeguir }: {
+  abierto: boolean; alDescartar: () => void; alSeguir: () => void;
+}) {
+  return (
+    <Dialogo abierto={abierto} titulo="¿Descartar los cambios?" alCerrar={alSeguir}>
+      <p className="dialogo__texto">Hay cambios sin guardar en el editor. Si abres otro, se pierden.</p>
+      <div className="dialogo__acciones">
+        <button type="button" className="boton" onClick={alSeguir}>Seguir editando</button>
+        <button type="button" className="boton boton--peligro" onClick={alDescartar}>Descartar</button>
+      </div>
+    </Dialogo>
   );
 }

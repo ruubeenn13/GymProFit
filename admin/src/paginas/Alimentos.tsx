@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { admin, type Alimento, type AlimentoCambios } from '../api/admin';
 import { Icono } from '../componentes/Icono';
 import { Marco } from '../componentes/Marco';
-import { AvisoFlotante, Buscador, EstadoLista, Filtro, Interruptor, Paginacion, type Aviso } from '../componentes/Piezas';
+import { AvisoFlotante, Buscador, DialogoDescartar, EstadoLista, Filtro, Interruptor, Paginacion, useAvisoAlSalir, type Aviso } from '../componentes/Piezas';
 import { comprobarCalorias } from '../util/calorias';
 import { decimal1, entero, leerNumero } from '../util/formato';
 import { textoError, useCarga } from '../util/useCarga';
@@ -74,8 +74,8 @@ function AvisoCalorias({ f }: { f: Formulario }) {
   );
 }
 
-function Editor({ alimento, categorias, alGuardado, alSiguiente, avisar }: {
-  alimento: Alimento; categorias: string[];
+function Editor({ alimento, categorias, alGuardado, alSiguiente, avisar, alCambiarSucio }: {
+  alimento: Alimento; categorias: string[]; alCambiarSucio: (sucio: boolean) => void;
   alGuardado: () => void; alSiguiente: (actual: number) => Promise<void>; avisar: (a: Aviso) => void;
 }) {
   const [f, setF] = useState<Formulario>(() => aFormulario(alimento));
@@ -83,6 +83,12 @@ function Editor({ alimento, categorias, alGuardado, alSiguiente, avisar }: {
   const [guardando, setGuardando] = useState(false);
 
   useEffect(() => { setF(aFormulario(alimento)); setErrores({}); }, [alimento]);
+
+  const sucio = JSON.stringify(f) !== JSON.stringify(aFormulario(alimento));
+  useAvisoAlSalir(sucio);
+  useEffect(() => { alCambiarSucio(sucio); }, [sucio, alCambiarSucio]);
+  // Al cerrarse el editor (otra fila, «siguiente»), sus cambios dejan de contar.
+  useEffect(() => () => alCambiarSucio(false), [alCambiarSucio]);
 
   const cambiar = <K extends keyof Formulario>(clave: K, valor: Formulario[K]) => setF((x) => ({ ...x, [clave]: valor }));
 
@@ -213,12 +219,28 @@ export function Alimentos() {
   const [origen, setOrigen] = useState('');
   const [pagina, setPagina] = useState(0);
   const [elegido, setElegido] = useState<Alimento | null>(null);
+  const [sucio, setSucio] = useState(false);
+  const [pendiente, setPendiente] = useState<Alimento | null>(null);
+
+  // Elegir otra fila con cambios sin guardar pregunta antes.
+  function elegir(a: Alimento) {
+    if (a.id === elegido?.id) return;
+    if (sucio) setPendiente(a); else setElegido(a);
+  }
   const [aviso, setAviso] = useState<Aviso | null>(null);
 
   const resumen = useCarga((s) => admin.resumenAlimentos(s), []);
   const lista = useCarga((s) => admin.alimentos({ q, categoria, sinIngles, origen, page: pagina, size: TAMANO }, s),
     [q, categoria, sinIngles, origen, pagina]);
   const cerrarAviso = useCallback(() => setAviso(null), []);
+
+  useEffect(() => {
+    // Sin el resumen faltan la cabecera y las opciones de un filtro: se dice, con reintento.
+    if (resumen.error) {
+      setAviso({ tipo: 'error', texto: `No se ha podido cargar el resumen: ${resumen.error}`,
+        accion: { texto: 'Reintentar', alPulsar: resumen.recargar } });
+    }
+  }, [resumen.error, resumen.recargar]);
 
   useEffect(() => {
     if (!lista.datos) return;
@@ -275,9 +297,9 @@ export function Alimentos() {
                 </thead>
                 <tbody>
                   {lista.datos?.content.map((a) => (
-                    <tr key={a.id} aria-selected={elegido?.id === a.id} onClick={() => setElegido(a)}>
+                    <tr key={a.id} data-elegida={elegido?.id === a.id} onClick={() => elegir(a)}>
                       <td>
-                        <button type="button" className="fila-boton" onClick={(ev) => { ev.stopPropagation(); setElegido(a); }}>
+                        <button type="button" className="fila-boton" aria-current={elegido?.id === a.id ? 'true' : undefined} onClick={(ev) => { ev.stopPropagation(); elegir(a); }}>
                           <span className="fila-boton__principal">{a.nombre}</span>
                           {a.nombreEn
                             ? <span className="fila-boton__secundario">{a.nombreEn}</span>
@@ -299,9 +321,11 @@ export function Alimentos() {
         </section>
         {elegido
           ? <Editor key={elegido.id} alimento={elegido} categorias={r?.categorias ?? []} alGuardado={alGuardado}
-                    alSiguiente={siguiente} avisar={setAviso} />
+                    alSiguiente={siguiente} avisar={setAviso} alCambiarSucio={setSucio} />
           : <div className="tarjeta editor editor--vacio"><p>Elige un alimento de la lista para editarlo.</p></div>}
       </div>
+      <DialogoDescartar abierto={pendiente !== null} alSeguir={() => setPendiente(null)}
+                        alDescartar={() => { setSucio(false); setElegido(pendiente); setPendiente(null); }} />
       <AvisoFlotante aviso={aviso} alCerrar={cerrarAviso} />
     </Marco>
   );

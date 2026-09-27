@@ -68,7 +68,7 @@
   display: inline-flex; align-items: center; gap: 6px; background: var(--nota); color: var(--texto-secundario);
 }
 .pildora--ok { background: var(--ok-fondo); color: var(--ok); }
-.pildora--mal { background: #3A1616; color: var(--peligro); }
+.pildora--mal { background: var(--peligro-pildora); color: var(--peligro); }
 .pildora--borde { background: transparent; border: 1px solid var(--borde-control); color: var(--texto-secundario); font-weight: 400; text-decoration: none; }
 a.pildora--borde:hover { color: var(--texto); border-color: var(--texto-apagado); }
 .principal__contenido { flex-grow: 1; padding: 24px var(--gutter) 32px; outline: none; min-width: 0; }

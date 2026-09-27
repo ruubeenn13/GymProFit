@@ -40,6 +40,7 @@
   --acento-sobre: #1A0E00;
   --acento-fondo: #3A2110;
   --acento-claro: #FFB27A;
+  --acento-hover: #FF7A1A;
   --enlace: #FF8A3D;
 
   /* Estados */
@@ -49,6 +50,9 @@
   --aviso-fondo: #3A2E12;
   --peligro: #F9A8A8;
   --peligro-borde: #7A3434;
+  --peligro-fondo: #2A1616;
+  --peligro-pildora: #3A1616;
+  --velo: rgba(0, 0, 0, 0.6);
 
   /* Gráficas */
   --barra-alta: #6B3A17;
