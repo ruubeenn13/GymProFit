@@ -16,4 +16,15 @@ public interface IBorradoCuentaService {
      * @param dto contraseña actual, para reautenticar.
      */
     void eliminarCuentaPropia(EliminarCuentaDTO dto);
+
+    /**
+     * Borra de forma definitiva la cuenta indicada y todo lo suyo, sin más comprobaciones.
+     * <p>
+     * Es el mismo borrado que {@link #eliminarCuentaPropia}; quien llama responde de
+     * haber comprobado antes que se puede (la contraseña del titular, o la confirmación
+     * del administrador en el borrado a petición, GP-085).
+     *
+     * @param usuarioId cuenta que se borra.
+     */
+    void borrarCuenta(Integer usuarioId);
 }

@@ -74,6 +74,10 @@ public class Usuario implements UserDetails {
     private LocalDateTime fechaRegistro;
 
     // Indica si la cuenta está activa (usado también por isEnabled()).
+    // Última vez que entró o renovó el token (GP-085). Reloj del servidor, como fechaRegistro.
+    @Column(name = "ultimo_acceso")
+    private LocalDateTime ultimoAcceso;
+
     @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
     private Boolean activo;
 

@@ -79,6 +79,17 @@ public class BorradoCuentaService implements IBorradoCuentaService {
             throw new UnauthorizedException("error.contrasena.incorrecta");
         }
 
+        borrarCuenta(usuarioId);
+    }
+
+    /**
+     * Borrado sin comprobaciones: las hace quien llama. Ver la interfaz.
+     *
+     * @param usuarioId cuenta que se borra.
+     */
+    @Override
+    @Transactional
+    public void borrarCuenta(Integer usuarioId) {
         logger.info("Borrando definitivamente la cuenta del usuario id={}", usuarioId);
 
         // El resto va por consultas masivas, que no pasan por el contexto de persistencia.

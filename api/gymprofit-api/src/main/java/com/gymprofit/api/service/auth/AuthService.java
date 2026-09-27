@@ -76,6 +76,9 @@ public class AuthService implements IAuthService {
         // Emite un refresh token opaco para renovar el access token sin re-login.
         RefreshToken refreshToken = refreshTokenService.crear(usuario);
 
+        // Último acceso, para la web de administración (GP-085).
+        usuarioRepository.registrarAcceso(usuario.getId(), LocalDateTime.now());
+
         logger.info("Login exitoso para usuario: {}", loginDTO.getUsername());
 
         return new TokenDTO(token, refreshToken.getToken(), usuario.getUsername(), roles);
@@ -182,6 +185,7 @@ public class AuthService implements IAuthService {
 
         String nuevoAccessToken = jwtTokenProvider.generateToken(usuario);
         RefreshToken nuevoRefresh = refreshTokenService.rotar(actual);
+        usuarioRepository.registrarAcceso(usuario.getId(), LocalDateTime.now());
 
         List<String> roles = usuario.getRoles().stream()
                 .map(role -> role.getNombre().name())

@@ -1,6 +1,14 @@
 package com.gymprofit.api.repository.jpa;
 
 import com.gymprofit.api.entity.Usuario;
+import com.gymprofit.api.enums.RoleType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
@@ -36,4 +44,27 @@ public interface IUsuarioRepository extends JpaRepository<Usuario, Integer> {
 
     // Usuarios con la cuenta activa.
     List<Usuario> findByActivoTrue();
+
+    // Apunta el último acceso (GP-085) sin cargar la entidad ni tocar el resto de campos.
+    @Modifying
+    @Transactional
+    @Query("UPDATE Usuario u SET u.ultimoAcceso = :ahora WHERE u.id = :id")
+    void registrarAcceso(@Param("id") Integer id, @Param("ahora") LocalDateTime ahora);
+
+    /**
+     * Cuentas para la web de administración (GP-085): búsqueda por usuario o correo y
+     * filtros opcionales; un parámetro null no filtra.
+     *
+     * @param patron  "%texto%" en minúsculas, o null
+     * @param rol     rol exacto, o null
+     * @param activo  estado, o null
+     */
+    @Query("""
+            SELECT u FROM Usuario u
+            WHERE (:patron IS NULL OR LOWER(u.username) LIKE :patron OR LOWER(u.email) LIKE :patron)
+              AND (:activo IS NULL OR u.activo = :activo)
+              AND (:rol IS NULL OR EXISTS (SELECT r FROM Usuario u2 JOIN u2.roles r WHERE u2 = u AND r.nombre = :rol))
+            """)
+    Page<Usuario> buscarParaAdmin(@Param("patron") String patron, @Param("rol") RoleType rol,
+                                  @Param("activo") Boolean activo, Pageable pageable);
 }

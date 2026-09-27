@@ -1,6 +1,8 @@
 package com.gymprofit.api.integration;
 
 import com.gymprofit.api.dto.usuario.EliminarCuentaDTO;
+import com.gymprofit.api.entity.Usuario;
+import com.gymprofit.api.enums.RoleType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.BeforeEach;
@@ -273,6 +275,29 @@ class BorradoCuentaTest extends AbstractOwnershipTest {
         assertThat(contar("SELECT COUNT(*) FROM comidas WHERE id = " + comidaId)).isOne();
         assertThat(contar("SELECT COUNT(*) FROM series_realizadas WHERE ejercicio_realizado_id = "
                 + ejercicioRealizadoId)).isOne();
+    }
+
+    @Test
+    @DisplayName("el borrado a petición desde la administración (GP-085) tampoco deja ni una fila")
+    void el_borrado_desde_la_administracion_no_deja_ni_una_fila() throws Exception {
+        Usuario admin = crearUsuario("__gp085_admin_borra__", RoleType.ADMIN);
+        pedir(admin, "DELETE /admin/cuentas/" + owner.getId(),
+                "{\"confirmacion\":\"" + OWNER + "\",\"motivo\":\"Correo a privacidad@ del 27-09\"}")
+                .andExpect(status().isNoContent());
+
+        for (String tabla : TABLAS_CONOCIDAS) {
+            assertThat(contar("SELECT COUNT(*) FROM " + tabla + " WHERE usuario_id = " + owner.getId()))
+                    .as("quedan filas del usuario en %s", tabla)
+                    .isZero();
+        }
+        assertThat(contar("SELECT COUNT(*) FROM alimentos_comida WHERE comida_id = " + comidaId)).isZero();
+        assertThat(contar("SELECT COUNT(*) FROM rutina_ejercicio WHERE rutina_id = " + rutinaId)).isZero();
+        assertThat(contar("SELECT COUNT(*) FROM ejercicios_realizados WHERE sesion_id = " + sesionId)).isZero();
+        assertThat(contar("SELECT COUNT(*) FROM series_realizadas WHERE ejercicio_realizado_id = "
+                + ejercicioRealizadoId)).isZero();
+        assertThat(contar("SELECT COUNT(*) FROM usuarios WHERE id = " + owner.getId())).isZero();
+        // Lo del otro usuario sigue: su sesión, desvinculada de la rutina que se ha ido.
+        assertThat(contar("SELECT COUNT(*) FROM sesiones_entrenamiento WHERE id = " + sesionAjenaId)).isOne();
     }
 
     // --- Andamiaje ----------------------------------------------------------
