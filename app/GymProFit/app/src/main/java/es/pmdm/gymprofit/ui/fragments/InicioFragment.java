@@ -59,6 +59,7 @@ import es.pmdm.gymprofit.utils.EjercicioNavHelper;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.HoyToca;
 import es.pmdm.gymprofit.utils.Marcas;
+import es.pmdm.gymprofit.utils.NombresRutina;
 import es.pmdm.gymprofit.utils.NavTabs;
 import es.pmdm.gymprofit.utils.TiempoRelativo;
 import es.pmdm.gymprofit.utils.UiFeedback;
@@ -200,6 +201,7 @@ public class InicioFragment extends BaseFragment {
         MaterialCardView card = findViewById(R.id.cardHoyToca);
         card.setOnClickListener(null);
         card.setClickable(false);
+        apilarBotones(false);
 
         HoyToca.Eleccion eleccion = HoyToca.elegir(propias, sesiones);
         if (main() != null) main().publicarHoyToca(eleccion == null ? null : eleccion.rutina);
@@ -242,6 +244,8 @@ public class InicioFragment extends BaseFragment {
             secundario.setVisibility(View.VISIBLE);
             secundario.setText(R.string.btn_empezar_sin_rutina);
             secundario.setOnClickListener(v -> empezar(null));
+            // Dos textos largos no caben lado a lado sin cortarse: uno debajo del otro.
+            apilarBotones(true);
             return;
         }
 
@@ -267,6 +271,24 @@ public class InicioFragment extends BaseFragment {
                 ? getString(R.string.hoy_toca_nunca)
                 : getString(R.string.hoy_toca_ultima, cuando));
         return unir(partes);
+    }
+
+    // Los dos botones de Hoy toca, en fila (Empezar · Cambiar) o uno sobre otro.
+    private void apilarBotones(boolean apilar) {
+        android.widget.LinearLayout fila = findViewById(R.id.filaBotonesHoy);
+        fila.setOrientation(apilar ? android.widget.LinearLayout.VERTICAL : android.widget.LinearLayout.HORIZONTAL);
+        int margen = Math.round(8 * getResources().getDisplayMetrics().density);
+        android.widget.LinearLayout.LayoutParams p1 = (android.widget.LinearLayout.LayoutParams)
+                findViewById(R.id.btnHoyPrincipal).getLayoutParams();
+        p1.width = apilar ? ViewGroup.LayoutParams.MATCH_PARENT : 0;
+        p1.weight = apilar ? 0 : 1;
+        android.widget.LinearLayout.LayoutParams p2 = (android.widget.LinearLayout.LayoutParams)
+                findViewById(R.id.btnHoySecundario).getLayoutParams();
+        p2.width = apilar ? ViewGroup.LayoutParams.MATCH_PARENT : ViewGroup.LayoutParams.WRAP_CONTENT;
+        p2.setMarginStart(apilar ? 0 : margen);
+        p2.leftMargin = apilar ? 0 : margen;
+        p2.topMargin = apilar ? margen : 0;
+        fila.requestLayout();
     }
 
     private void pintarHoyTocaError() {
@@ -304,11 +326,8 @@ public class InicioFragment extends BaseFragment {
     @Nullable
     private String nombreRutina(@Nullable Integer id) {
         if (id == null) return null;
-        for (List<Rutina> l : new List[]{propias, plantillas}) {
-            if (l == null) continue;
-            for (Rutina r : l) if (r.getId() == id) return r.getNombre();
-        }
-        return null;
+        String nombre = NombresRutina.de(propias, plantillas).get(id);
+        return nombre;
     }
 
     // «2 sesiones · 1 h 50 min», desde el lunes a las 00:00.
