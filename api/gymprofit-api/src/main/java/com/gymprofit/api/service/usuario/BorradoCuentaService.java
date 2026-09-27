@@ -3,8 +3,8 @@ package com.gymprofit.api.service.usuario;
 import com.gymprofit.api.config.security.SecurityUtils;
 import com.gymprofit.api.dto.usuario.EliminarCuentaDTO;
 import com.gymprofit.api.entity.Usuario;
+import com.gymprofit.api.exceptions.ContrasenaActualIncorrectaException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
-import com.gymprofit.api.exceptions.UnauthorizedException;
 import com.gymprofit.api.repository.jpa.IUsuarioRepository;
 import com.gymprofit.api.service.alimentocomida.IAlimentoComidaService;
 import jakarta.persistence.EntityManager;
@@ -63,7 +63,8 @@ public class BorradoCuentaService implements IBorradoCuentaService {
      * forma de pedir el borrado de otro. La contraseña se comprueba ANTES de tocar nada.
      *
      * @param dto contraseña actual.
-     * @throws UnauthorizedException (→ 403) si la contraseña no es la de la cuenta.
+     * @throws ContrasenaActualIncorrectaException (→ 403, PASSWORD_ACTUAL_INCORRECTA) si la contraseña
+     *         no es la de la cuenta.
      */
     @Override
     @Transactional
@@ -76,7 +77,8 @@ public class BorradoCuentaService implements IBorradoCuentaService {
         // Reautenticación. Va la primera: si falla, no se ha borrado ni una fila.
         if (!passwordEncoder.matches(dto.getPassword(), usuario.getPassword())) {
             logger.warn("Intento de borrado de cuenta con contraseña incorrecta, usuario id={}", usuarioId);
-            throw new UnauthorizedException("error.contrasena.incorrecta");
+            // 403 con código en cause, como al cambiar la contraseña (GP-119).
+            throw new ContrasenaActualIncorrectaException();
         }
 
         borrarCuenta(usuarioId);

@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 // ============================================================
@@ -268,7 +269,10 @@ class BorradoCuentaTest extends AbstractOwnershipTest {
     @DisplayName("con la contraseña equivocada no se borra nada")
     @WithUserDetails(value = OWNER, setupBefore = TestExecutionEvent.TEST_EXECUTION)
     void sin_la_contrasena_correcta_no_se_borra_nada() throws Exception {
-        borrarCuenta("NoEsLaSuya1!").andExpect(status().isForbidden());
+        // 403 con código, como al cambiar la contraseña (GP-119): la app no depende del texto.
+        borrarCuenta("NoEsLaSuya1!")
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.cause").value("PASSWORD_ACTUAL_INCORRECTA"));
 
         // Ni la cuenta ni un solo dato: la comprobación va antes de tocar la primera tabla.
         assertThat(contar("SELECT COUNT(*) FROM usuarios WHERE id = " + owner.getId())).isOne();

@@ -1,5 +1,6 @@
 package es.pmdm.gymprofit.ui.activities;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -48,5 +49,17 @@ public class EliminarCuentaActivityTest {
     @Test
     public void ni_casilla_ni_password_es_el_estado_inicial_de_la_pantalla() {
         assertFalse(EliminarCuentaActivity.puedeEliminar("", false));
+    }
+
+    // --- GP-119: la contraseña se recorta como en el resto de la app (DEC-034) ---
+
+    @Test
+    public void la_contrasena_se_envia_sin_los_espacios_de_los_extremos() {
+        assertEquals("una frase larga", EliminarCuentaActivity.contrasenaParaEnviar("  una frase larga "));
+    }
+
+    @Test
+    public void los_espacios_de_dentro_cuentan() {
+        assertEquals("una  frase", EliminarCuentaActivity.contrasenaParaEnviar("una  frase"));
     }
 }

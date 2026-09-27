@@ -105,6 +105,17 @@ public class EliminarCuentaActivity extends BaseActivity {
         return confirmado && password != null && !password.trim().isEmpty();
     }
 
+    /**
+     * La contraseña tal como se envía: sin los espacios de los extremos, como al
+     * entrar, al cambiarla y al cambiar el correo (DEC-034). El teclado del móvil
+     * añade un espacio al final sin que se vea; los de dentro sí cuentan.
+     *
+     * @param tecleado lo que hay en el campo.
+     */
+    static String contrasenaParaEnviar(String tecleado) {
+        return tecleado == null ? "" : tecleado.trim();
+    }
+
     // Refleja en el botón el estado actual del formulario.
     private void actualizarBoton() {
         btnEliminar.setEnabled(puedeEliminar(texto(), cbConfirmacion.isChecked()));
@@ -125,7 +136,7 @@ public class EliminarCuentaActivity extends BaseActivity {
         tilPassword.setError(null);
 
         Map<String, Object> body = new HashMap<>();
-        body.put("password", password);
+        body.put("password", contrasenaParaEnviar(password));
 
         LoadingDialog.show(this, getString(R.string.eliminar_cuenta_cargando));
         // Mientras la petición viaja, el botón no acepta un segundo toque: repetir
