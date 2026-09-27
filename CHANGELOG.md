@@ -6,6 +6,11 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `d294f83` | ci(admin,api): **la web de administración en el CI** (GP-121): instalar, tests, compilar y el detector de Impeccable (4.0.0), que falla con cualquier hallazgo. Un cambio solo en `admin/` ya no lanza la API, sin colgar el gate de Dependabot: el workflow arranca siempre y salta el job que no toca. |
+| `8db994e` | docs(decisiones): la web de administración, **solo en tema oscuro** (DEC-035). |
+| `eae139a` | feat(admin): **la web de administración se adapta a cualquier pantalla y aprovecha el espacio** (GP-120): barra lateral desde 1280 px, barra de iconos de 768 a 1279 y pestañas abajo en el móvil; la API y el commit en el pie de la barra; tablas de 25 filas con cabecera fija (tarjetas en el móvil); la ficha de una cuenta como panel; lista y editor juntos solo desde 1440. Bordes de campo y barras de gráfica a 3:1, obligatorios marcados y aviso de cambios sin guardar también al salir por un enlace. Informe en `documentacion/estado/2026-09-27-admin-fase-1-1.md`. |
+| `da8a595` | docs(admin): `PRODUCT.md` y `DESIGN.md` de la web de administración, para Impeccable (GP-120). |
+| `e7905c8` | fix(api): **el equipamiento de los ejercicios importados** (GP-122): el mapeo de `equipo_necesario` pasa de la migración a `Equipamiento.desdeEquipoNecesario`, y la importación lo usa; lo nuevo ya no llega como «Otro». |
 | `76ddb16` | build(android): **versión 1.1.1** (10101), etiquetada `v1.1.1`. Misma clave de firma. No necesita nada nuevo de la API. Informe en `documentacion/estado/2026-09-27-lote-1.1.1.md`. |
 | `e16f8ae` | fix(admin): **accesibilidad, errores y carga de la web tras la auditoría con Impeccable** (GP-085): `aria-current` en vez de `aria-selected`, título por pantalla, zonas de 44 px, errores que no se van solos, aviso de cambios sin guardar, y cada pantalla se descarga al abrirla (paquete inicial de 340 a 294 kB). |
 | `214801b` | fix(api,android): **el borrado de cuenta, al día con el cambio de contraseña** (GP-119): 403 con `PASSWORD_ACTUAL_INCORRECTA` en `cause`, y la app recorta la contraseña. DEC-034 sin deuda. |
