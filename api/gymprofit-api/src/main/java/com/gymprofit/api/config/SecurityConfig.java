@@ -54,8 +54,10 @@ public class SecurityConfig {
     private final AuthRateLimitFilter authRateLimitFilter;
 
     // Orígenes permitidos por CORS (lista blanca, separada por comas), configurable por entorno.
-    // Por defecto solo orígenes de desarrollo local; en producción se define el dominio web real.
-    @Value("${app.cors.allowed-origins:http://localhost:5173,http://localhost:3000,http://localhost:8080}")
+    // Por defecto, solo el servidor de desarrollo de la web de administración (Vite, 5173).
+    // Producción lo fija en application-prod.properties a https://admin.gymprofit.app, y
+    // ConfiguracionProdPropertiesTest impide que vuelva a heredar este valor local.
+    @Value("${app.cors.allowed-origins:http://localhost:5173}")
     private String allowedOrigins;
 
     // Bean del codificador de contraseñas usado al registrar y autenticar usuarios.

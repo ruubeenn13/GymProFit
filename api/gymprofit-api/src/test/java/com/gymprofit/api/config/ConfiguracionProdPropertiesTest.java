@@ -58,6 +58,16 @@ class ConfiguracionProdPropertiesTest {
         assertThat(valor).isEqualTo("${ADMIN_PASSWORD:}");
     }
 
+    /**
+     * El único origen de navegador en producción es la web de administración (GP-085).
+     * Si la línea falta, producción hereda el valor por defecto de SecurityConfig, que es
+     * el localhost del desarrollo.
+     */
+    @Test
+    void elCorsDeProduccionSoloAdmiteLaWebDeAdministracion() throws IOException {
+        assertThat(cargar().getProperty("app.cors.allowed-origins")).isEqualTo("https://admin.gymprofit.app");
+    }
+
     private Properties cargar() throws IOException {
         Properties propiedades = new Properties();
         try (InputStream entrada = new ClassPathResource(FICHERO).getInputStream()) {
