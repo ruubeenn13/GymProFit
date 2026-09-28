@@ -1,7 +1,10 @@
 package es.pmdm.gymprofit.ui.activities;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -9,58 +12,52 @@ import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
+import androidx.lifecycle.AbstractSavedStateViewModelFactory;
+import androidx.lifecycle.SavedStateHandle;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.textfield.TextInputEditText;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import es.pmdm.gymprofit.R;
-import es.pmdm.gymprofit.utils.AvisoDescartar;
 import es.pmdm.gymprofit.model.rutina.Rutina;
-import es.pmdm.gymprofit.model.rutina.RutinaEjercicio;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
-import es.pmdm.gymprofit.network.ApiCallback;
-import es.pmdm.gymprofit.network.ApiClient;
-import es.pmdm.gymprofit.network.RutinaApi;
-import es.pmdm.gymprofit.network.SesionApi;
+import es.pmdm.gymprofit.network.RegistroSesionRepositorioApi;
 import es.pmdm.gymprofit.ui.adapters.EjercicioPesoAdapter;
+import es.pmdm.gymprofit.ui.viewmodels.RegistrarSesionViewModel;
+import es.pmdm.gymprofit.ui.viewmodels.RegistrarSesionViewModel.EstadoGuardado;
+import es.pmdm.gymprofit.utils.AvisoDescartar;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PreferencesManager;
-import es.pmdm.gymprofit.utils.Numeros;
 import es.pmdm.gymprofit.utils.UIHelper;
-import es.pmdm.gymprofit.utils.Valoracion;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import es.pmdm.gymprofit.utils.Valoracion;
 
 // ============================================================
 // RegistrarSesionActivity — Formulario para registrar una sesión de entrenamiento.
 // Permite elegir una rutina (propia o predefinida), carga sus ejercicios con sus
 // series, y guarda la sesión ENTERA en una sola llamada, navegando al resumen.
 //
-// GUARDADO (GP-006). Antes se creaba la sesión, se lanzaba un POST por ejercicio
-// con los callbacks vacíos y se cerraba la pantalla sin esperar a nada. Si fallaba
-// uno de los de en medio quedaba una sesión a medias y el usuario ya había visto
-// «guardado correctamente». Ahora va todo en POST /sesiones/completa, la pantalla
-// NO se cierra hasta recibir el éxito, y si falla se ofrece reintentar con lo
-// tecleado todavía en pantalla.
+// GUARDADO (GP-006). Todo va en POST /sesiones/completa, la pantalla NO se cierra
+// hasta recibir el éxito, y si falla se ofrece reintentar con lo tecleado intacto y
+// la misma clave de idempotencia.
 //
-// La clave de idempotencia se genera UNA vez por intento de guardado y el
-// reintento reusa la misma: es lo que impide que un fallo de red que sí llegó al
-// servidor acabe en dos entrenamientos.
+// BORRADOR (GP-016). La pantalla ya no guarda nada: lo tecleado, la rutina elegida,
+// la clave y el guardado en marcha viven en RegistrarSesionViewModel, que los escribe
+// en su SavedStateHandle. Girar, «No conservar actividades» o que Android mate la app
+// en segundo plano no pierden nada. Aquí solo se pinta ese estado y se le pasa cada
+// cambio; la red tampoco se llama desde aquí, sino desde el repositorio.
 //
 // Retoque mínimo de interfaz a propósito: GP-012 rehará esta pantalla como sesión
-// en vivo, así que aquí solo se arregla el guardado.
+// en vivo.
 // ============================================================
 public class RegistrarSesionActivity extends AppCompatActivity {
 
@@ -70,40 +67,40 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         super.attachBaseContext(es.pmdm.gymprofit.utils.ScaleUtils.wrap(newBase));
     }
 
+    /**
+     * Id de la rutina con la que se ha entrado, o -1 si se abrió sin rutina.
+     *
+     * <p>Lo manda quien lanza la pantalla desde el detalle de una rutina o desde
+     * el Home. Solo cuenta la primera vez: al restaurar manda lo que eligió el usuario.
+     */
+    public static final String EXTRA_RUTINA_ID = "rutinaId";
+
     private Spinner spRutina;
     private TextInputEditText etDuracion, etNotas;
     private View cardEjercicios;
     private RatingBar ratingBar;
     private TextView tvEstadoValoracion;
     private View btnQuitarValoracion;
-    private PreferencesManager prefsManager;
-    // Interfaz Retrofit tipada del dominio sesiones (etapa 2)
-    private final SesionApi sesionApi = ApiClient.service(SesionApi.class);
-    // Interfaz Retrofit tipada del dominio rutinas (etapa 2)
-    private final RutinaApi rutinaApi = ApiClient.service(RutinaApi.class);
 
-    private final List<Rutina> rutinas = new ArrayList<>();
-    private final List<String> rutinaOpciones = new ArrayList<>();
+    private RegistrarSesionViewModel vm;
     private final List<EjercicioPesoAdapter.Item> ejercicioItems = new ArrayList<>();
-
-    /**
-     * Clave del intento de guardado en curso.
-     *
-     * <p>Se genera al pulsar «Guardar» y NO se regenera al reintentar: si la
-     * petición anterior sí llegó al servidor y lo único que se perdió fue la
-     * respuesta, el servidor reconoce la clave y devuelve la sesión que ya creó en
-     * vez de crear otra. Se limpia al guardar con éxito, para que el siguiente
-     * entrenamiento sea un intento nuevo.
-     */
-    private String claveIntentoGuardado;
     private EjercicioPesoAdapter ejercicioPesoAdapter;
 
-    // Inicializa la pantalla: monta vistas, configura el RecyclerView de
-    // ejercicios/pesos y carga las rutinas disponibles para el spinner.
+    // Las rutinas que hay ahora en el selector, en su orden (posición 0 = libre).
+    private List<Rutina> rutinasMostradas = new ArrayList<>();
+    // Posición del selector que ya refleja el borrador. El Spinner avisa también de las
+    // selecciones que pone el código (al montarlo, al restaurar): esas no son una
+    // elección del usuario y no deben recargar ejercicios encima de lo tecleado.
+    private int posicionSincronizada = -1;
+    // El aviso de fallo abierto, para no apilar otro y cerrarlo al destruir la pantalla.
+    private Dialog avisoFallo;
+
+    // Inicializa la pantalla: monta las vistas, crea (o recupera) el ViewModel, pinta
+    // el borrador que tenga y se suscribe a sus cambios.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        prefsManager = new PreferencesManager(this);
+        PreferencesManager prefsManager = new PreferencesManager(this);
         prefsManager.applyTheme();
         setContentView(R.layout.activity_registrar_sesion);
 
@@ -114,20 +111,62 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         ratingBar            = findViewById(R.id.ratingBar);
         tvEstadoValoracion   = findViewById(R.id.tvEstadoValoracion);
         btnQuitarValoracion  = findViewById(R.id.btnQuitarValoracion);
+
+        int usuarioId = prefsManager.getUsuarioId();
+        vm = new ViewModelProvider(this, new AbstractSavedStateViewModelFactory(this, null) {
+            @NonNull
+            @Override
+            @SuppressWarnings("unchecked")
+            protected <T extends ViewModel> T create(@NonNull String key, @NonNull Class<T> modelClass,
+                                                     @NonNull SavedStateHandle handle) {
+                return (T) new RegistrarSesionViewModel(handle, new RegistroSesionRepositorioApi(usuarioId));
+            }
+        }).get(RegistrarSesionViewModel.class);
+
+        int rutinaDeEntrada = getIntent().getIntExtra(EXTRA_RUTINA_ID, -1);
+        vm.iniciar(rutinaDeEntrada != -1 ? rutinaDeEntrada : null);
+
+        pintarCamposDelBorrador();
         configurarValoracion();
 
         RecyclerView rvEjercicios = findViewById(R.id.rvEjercicios);
-        ejercicioPesoAdapter = new EjercicioPesoAdapter(ejercicioItems);
+        ejercicioPesoAdapter = new EjercicioPesoAdapter(ejercicioItems, vm);
         rvEjercicios.setLayoutManager(new LinearLayoutManager(this));
         rvEjercicios.setNestedScrollingEnabled(false);
         rvEjercicios.setAdapter(ejercicioPesoAdapter);
 
         // Salir con algo apuntado pregunta antes de tirarlo (GP-098).
-        AvisoDescartar.instalar(this, findViewById(R.id.toolbar), () -> AvisoDescartar.sesionConDatos(
-                etDuracion.getText(), etNotas.getText(), ratingBar.getRating(), ejercicioItems));
-        findViewById(R.id.btnGuardar).setOnClickListener(v -> guardarSesion());
+        AvisoDescartar.instalar(this, findViewById(R.id.toolbar), vm::hayDatos);
+        findViewById(R.id.btnGuardar).setOnClickListener(v -> pulsarGuardar());
 
-        cargarRutinas();
+        vm.getRutinas().observe(this, this::pintarRutinas);
+        vm.getEjercicios().observe(this, this::pintarEjercicios);
+        vm.getErrorEjercicios().observe(this, evento -> {
+            RegistrarSesionViewModel.Fallo fallo = evento.tomar();
+            if (fallo != null) UiFeedback.toastError(this, fallo.codigo, fallo.mensaje);
+        });
+        vm.getEstadoGuardado().observe(this, this::pintarGuardado);
+    }
+
+    /**
+     * Pone en los campos lo que tenga el borrador y engancha la escritura hacia él.
+     *
+     * <p>El guardado de estado propio de estas vistas se apaga: la verdad es el
+     * ViewModel, y que Android restaure por su cuenta la posición del selector —de una
+     * lista que se ha vuelto a pedir y puede venir en otro orden— elegiría otra rutina.
+     */
+    private void pintarCamposDelBorrador() {
+        etDuracion.setSaveEnabled(false);
+        etNotas.setSaveEnabled(false);
+        ratingBar.setSaveEnabled(false);
+        spRutina.setSaveEnabled(false);
+
+        etDuracion.setText(vm.getDuracion());
+        etNotas.setText(vm.getNotas());
+        ratingBar.setRating(vm.getValoracion());
+
+        etDuracion.addTextChangedListener(new AlCambiar(vm::setDuracion));
+        etNotas.addTextChangedListener(new AlCambiar(vm::setNotas));
     }
 
     /**
@@ -143,7 +182,10 @@ public class RegistrarSesionActivity extends AppCompatActivity {
      * ese caso el «sin valorar» va en la propia descripción.
      */
     private void configurarValoracion() {
-        ratingBar.setOnRatingBarChangeListener((bar, estrellas, delUsuario) -> pintarValoracion());
+        ratingBar.setOnRatingBarChangeListener((bar, estrellas, delUsuario) -> {
+            vm.setValoracion(estrellas);
+            pintarValoracion();
+        });
         btnQuitarValoracion.setOnClickListener(v -> {
             ratingBar.setRating(0f);
             // El botón desaparece con el toque: el foco vuelve a las estrellas, que
@@ -171,332 +213,196 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         }
     }
 
-    // Carga en paralelo las rutinas predefinidas y las del usuario; cuando
-    // ambas llamadas terminan, combina los resultados y actualiza el spinner.
-    private void cargarRutinas() {
-        int usuarioId = prefsManager.getUsuarioId();
-        rutinaOpciones.clear();
-        // La opción 0 crea la sesión sin rutinaId, que es exactamente lo que la lista
-        // y el resumen llaman «entrenamiento libre» (GP-057). Antes decía «sin rutina
-        // asociada»: la misma cosa con dos nombres según la pantalla.
-        rutinaOpciones.add(getString(R.string.sesiones_entrenamiento_libre));
-
-        final List<Rutina> predefinidas = new ArrayList<>();
-        AtomicInteger pendientes = new AtomicInteger(2);
-
-        // Rutinas predefinidas del sistema (ya deserializadas por Gson).
-        rutinaApi.getPredefinidas().enqueue(new ApiCallback<List<Rutina>>() {
-            @Override public void onOk(List<Rutina> lista) {
-                if (lista != null) predefinidas.addAll(lista);
-                if (pendientes.decrementAndGet() == 0) combinarYMostrar(predefinidas);
-            }
-            @Override public void onFail(int code, String message) {
-                if (pendientes.decrementAndGet() == 0) combinarYMostrar(predefinidas);
-            }
-        });
-
-        // Rutinas activas del usuario (ya deserializadas por Gson).
-        rutinaApi.getDeUsuarioActivas(usuarioId).enqueue(new ApiCallback<List<Rutina>>() {
-            @Override public void onOk(List<Rutina> lista) {
-                if (lista != null) rutinas.addAll(lista);
-                if (pendientes.decrementAndGet() == 0) combinarYMostrar(predefinidas);
-            }
-            @Override public void onFail(int code, String message) {
-                if (pendientes.decrementAndGet() == 0) combinarYMostrar(predefinidas);
-            }
-        });
-    }
-
     /**
-     * Id de la rutina con la que se ha entrado, o -1 si se abrió sin rutina.
+     * Monta el selector con las rutinas recién llegadas y deja marcada la del borrador.
      *
-     * <p>Lo manda quien lanza la pantalla desde el detalle de una rutina o desde
-     * el Home. Antes la pantalla solo se abría desde el historial y siempre
-     * arrancaba en "Sin rutina asociada", así que el camino por defecto producía
-     * una sesión sin ejercicios: sin ejercicios no hay progreso y sin progreso la
-     * gráfica del récord no aparece nunca.
+     * <p>La opción 0 crea la sesión sin rutinaId, que es exactamente lo que la lista y
+     * el resumen llaman «entrenamiento libre» (GP-057).
      */
-    public static final String EXTRA_RUTINA_ID = "rutinaId";
+    private void pintarRutinas(List<Rutina> rutinas) {
+        rutinasMostradas = rutinas != null ? rutinas : new ArrayList<>();
+        List<String> opciones = new ArrayList<>();
+        opciones.add(getString(R.string.sesiones_entrenamiento_libre));
+        for (Rutina r : rutinasMostradas) opciones.add(r.getNombre());
 
-    // Une rutinas predefinidas y del usuario en una única lista y refresca
-    // el spinner en el hilo principal.
-    private void combinarYMostrar(List<Rutina> predefinidas) {
-        List<Rutina> todas = new ArrayList<>(predefinidas);
-        todas.addAll(rutinas);
-        rutinas.clear();
-        rutinas.addAll(todas);
-        for (Rutina r : todas) rutinaOpciones.add(r.getNombre());
-        actualizarSpinner();
-        preseleccionarRutina();
-    }
-
-    // Rellena el spinner de rutinas y, al seleccionar una, calcula sus
-    // calorías estimadas; si se selecciona "sin rutina", limpia los cálculos.
-    private void actualizarSpinner() {
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, rutinaOpciones);
+                android.R.layout.simple_spinner_item, opciones);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        posicionSincronizada = posicionDe(vm.getRutinaId());
         spRutina.setAdapter(spinnerAdapter);
+        spRutina.setSelection(posicionSincronizada, false);
         spRutina.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position > 0 && position <= rutinas.size()) {
-                    cargarEjerciciosDeRutina(rutinas.get(position - 1).getId());
-                } else {
-                    ejercicioItems.clear();
-                    ejercicioPesoAdapter.notifyDataSetChanged();
-                    cardEjercicios.setVisibility(View.GONE);
-                }
+                if (position == posicionSincronizada) return;
+                posicionSincronizada = position;
+                boolean deLista = position > 0 && position <= rutinasMostradas.size();
+                vm.elegirRutina(deLista ? rutinasMostradas.get(position - 1).getId() : null);
             }
             @Override public void onNothingSelected(AdapterView<?> parent) {}
         });
     }
 
-    /**
-     * Deja marcada en el selector la rutina con la que se entró, si la hay.
-     *
-     * <p>Se llama después de montar el spinner, porque hasta que no han llegado
-     * las dos listas (predefinidas y propias) no se sabe en qué posición cae.
-     */
-    private void preseleccionarRutina() {
-        int rutinaId = getIntent().getIntExtra(EXTRA_RUTINA_ID, -1);
-        if (rutinaId == -1) return;
-
-        for (int i = 0; i < rutinas.size(); i++) {
-            if (rutinas.get(i).getId() == rutinaId) {
-                // +1 porque la posición 0 del spinner es "Entrenamiento libre".
-                spRutina.setSelection(i + 1);
-                return;
-            }
+    // Posición del selector para una rutina (+1 por el «Entrenamiento libre» del 0).
+    private int posicionDe(Integer rutinaId) {
+        if (rutinaId == null) return 0;
+        for (int i = 0; i < rutinasMostradas.size(); i++) {
+            if (rutinasMostradas.get(i).getId() == rutinaId) return i + 1;
         }
+        return 0;
     }
 
-    // Obtiene los ejercicios de la rutina seleccionada y arma la lista de
-    // ejercicios/pesos que se mostrará en el RecyclerView.
+    // Pinta los ejercicios del borrador. Solo llega al cambiar de rutina o al restaurar:
+    // teclear no repinta la lista, que se llevaría el foco del campo.
     //
-    // Antes esto también calculaba calorías (calorías × series × repeticiones) y las
-    // pintaba en una tarjeta. Se retira con DEC-004 / GP-010: esa multiplicación no
-    // conoce la carga, ni el peso del usuario, ni el descanso.
-    private void cargarEjerciciosDeRutina(int rutinaId) {
-        // Relaciones rutina-ejercicio (ya deserializadas por Gson): traen el nombre
-        // enriquecido desde el catálogo, igual que devolvía el JSON antiguo.
-        rutinaApi.getEjerciciosDeRutina(rutinaId).enqueue(new ApiCallback<List<RutinaEjercicio>>() {
-            @Override
-            public void onOk(List<RutinaEjercicio> lista) {
-                List<EjercicioPesoAdapter.Item> nuevosItems = new ArrayList<>();
-                if (lista != null) {
-                    int i = 0;
-                    for (RutinaEjercicio re : lista) {
-                        i++;
-                        int series      = re.getSeries();
-                        int reps        = re.getRepeticiones();
-                        int ejercicioId = re.getEjercicioId();
-                        String nombre   = (re.getNombreEjercicio() != null && !re.getNombreEjercicio().isEmpty())
-                                ? re.getNombreEjercicio() : getString(R.string.ejercicio_sin_nombre, i);
-                        if (ejercicioId != -1) {
-                            nuevosItems.add(new EjercicioPesoAdapter.Item(ejercicioId, nombre, series, reps));
-                        }
-                    }
-                }
-                ejercicioItems.clear();
-                ejercicioItems.addAll(nuevosItems);
-                ejercicioPesoAdapter.notifyDataSetChanged();
-                cardEjercicios.setVisibility(nuevosItems.isEmpty() ? View.GONE : View.VISIBLE);
-            }
-            @Override
-            public void onFail(int code, String message) {
-                // Sin los ejercicios de la rutina no hay nada que rellenar, pero la
-                // sesión se puede guardar igual con su duración y sus notas. Se avisa
-                // y se deja la tarjeta oculta: callarlo dejaría al usuario creyendo
-                // que esa rutina no tiene ejercicios.
-                UiFeedback.toastError(RegistrarSesionActivity.this, code, message);
-                ejercicioItems.clear();
-                ejercicioPesoAdapter.notifyDataSetChanged();
-                cardEjercicios.setVisibility(View.GONE);
-            }
-        });
+    // Antes esto también calculaba calorías y las pintaba en una tarjeta. Se retiró con
+    // DEC-004 / GP-010: esa multiplicación no conoce la carga, ni el peso, ni el descanso.
+    private void pintarEjercicios(List<EjercicioPesoAdapter.Item> items) {
+        ejercicioItems.clear();
+        if (items != null) ejercicioItems.addAll(items);
+        ejercicioPesoAdapter.notifyDataSetChanged();
+        cardEjercicios.setVisibility(ejercicioItems.isEmpty() ? View.GONE : View.VISIBLE);
+    }
+
+    // Pulsar Guardar: el ViewModel valida y manda; aquí solo se dice lo que falta.
+    private void pulsarGuardar() {
+        switch (vm.guardar()) {
+            case FALTA_DURACION:
+                UIHelper.mostrarToastError(this, getString(R.string.error_campo_requerido));
+                break;
+            case DURACION_INVALIDA:
+                UIHelper.mostrarToastError(this, getString(R.string.sesiones_duracion_invalida));
+                break;
+            default:
+                // ENVIADO lo pinta el estado; YA_EN_CURSO es un doble toque y no hace nada.
+                break;
+        }
     }
 
     /**
-     * Valida la duración, arma el cuerpo con la sesión entera y la envía.
-     *
-     * <p>Un mismo intento de guardado puede mandarse varias veces: la clave se genera
-     * aquí solo si no había ninguna, de modo que el reintento reusa la del fallo.
+     * Pinta el guardado. Tras girar, la pantalla nueva recibe el estado en curso: si
+     * sigue guardando, vuelve el «Cargando…»; si falló y nadie cerró el aviso, vuelve el
+     * aviso; y el éxito abre el resumen una sola vez, porque se marca como abierto.
      */
-    private void guardarSesion() {
-        String durStr = etDuracion.getText() != null ? etDuracion.getText().toString().trim() : "";
-        if (durStr.isEmpty()) {
-            UIHelper.mostrarToastError(this, getString(R.string.error_campo_requerido));
-            return;
-        }
-
-        Integer duracion = Numeros.entero(durStr, 1, 600);
-        if (duracion == null) {
-            UIHelper.mostrarToastError(this, getString(R.string.sesiones_duracion_invalida));
-            return;
-        }
-
-        if (claveIntentoGuardado == null) {
-            claveIntentoGuardado = java.util.UUID.randomUUID().toString();
-        }
-
-        enviarSesion(duracion);
-    }
-
-    /**
-     * Manda la sesión completa y decide qué pasa después.
-     *
-     * <p>La pantalla NO se cierra hasta el éxito. Si falla, lo tecleado sigue donde
-     * estaba y se ofrece reintentar con la MISMA clave.
-     */
-    private void enviarSesion(int duracion) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("claveIdempotencia", claveIntentoGuardado);
-
-        int posicion = spRutina.getSelectedItemPosition();
-        if (posicion > 0 && posicion <= rutinas.size()) {
-            body.put("rutinaId", rutinas.get(posicion - 1).getId());
-        }
-
-        body.put("fechaInicio", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US).format(new Date()));
-        body.put("duracionMinutos", duracion);
-        body.put("completada", true);
-
-        // La valoración viaja como CAMPO (GP-070). Antes se formateaba con un recurso
-        // de idioma y se metía delante de las notas del usuario: no se podía consultar,
-        // se quedaba congelada en el idioma del momento, y el texto no era suyo.
-        // Sin estrellas no se manda el campo: la base guarda NULL, no un valor que
-        // el usuario no ha dado (GP-077).
-        Integer valoracion = Valoracion.paraEnviar(ratingBar.getRating());
-        if (valoracion != null) body.put("valoracion", valoracion);
-
-        String notas = etNotas.getText() != null ? etNotas.getText().toString().trim() : "";
-        if (!notas.isEmpty()) body.put("notas", notas);
-
-        body.put("ejercicios", construirEjercicios());
-
-        LoadingDialog.show(this);
-        sesionApi.guardarCompleta(body).enqueue(new ApiCallback<SesionEntrenamiento>() {
-            @Override
-            public void onOk(SesionEntrenamiento sesionCreada) {
-                LoadingDialog.hide(RegistrarSesionActivity.this);
-
-                if (sesionCreada == null || sesionCreada.getId() <= 0) {
-                    // Respuesta 200 sin sesión dentro: no hay nada que enseñar en el
-                    // resumen, y cerrar aquí sería volver a mentir. Se trata como fallo.
-                    ofrecerReintento(duracion, getString(R.string.sesiones_error_guardar));
-                    return;
-                }
-
-                // El intento terminó: la clave siguiente será otra.
-                claveIntentoGuardado = null;
-
-                UIHelper.mostrarToastExito(RegistrarSesionActivity.this, getString(R.string.sesiones_exito));
+    private void pintarGuardado(EstadoGuardado estado) {
+        switch (estado.fase) {
+            case GUARDANDO:
+                LoadingDialog.show(this);
+                break;
+            case FALLO:
+                LoadingDialog.hide(this);
+                ofrecerReintento(estado);
+                break;
+            case EXITO:
+                LoadingDialog.hide(this);
+                vm.resumenAbierto();
+                UIHelper.mostrarToastExito(this, getString(R.string.sesiones_exito));
                 setResult(RESULT_OK);
-                irAlResumen(sesionCreada);
+                irAlResumen(estado.sesion);
                 finish();
-            }
-
-            @Override
-            public void onFail(int code, String message) {
-                LoadingDialog.hide(RegistrarSesionActivity.this);
-                ofrecerReintento(duracion, UiFeedback.mensaje(RegistrarSesionActivity.this, code, message));
-            }
-        });
+                break;
+            default:
+                LoadingDialog.hide(this);
+                break;
+        }
     }
 
     /**
-     * Avisa de que NO se ha guardado y ofrece repetir el envío.
+     * Avisa de que NO se ha guardado —o de que no se sabe— y ofrece repetir el envío.
      *
      * <p>Lo importante no es el diálogo, es lo que NO pasa: no se cierra la pantalla,
-     * no se borra nada de lo tecleado y no se cambia la clave. Cancelar deja al usuario
-     * donde estaba, con sus datos, para corregir o volver a intentarlo cuando quiera.
+     * no se borra nada de lo tecleado y no se cambia la clave. «Ahora no» deja al
+     * usuario donde estaba, con sus datos, para volver a guardar cuando quiera.
      */
-    private void ofrecerReintento(int duracion, String motivo) {
-        UIHelper.mostrarDialogoConIcono(this,
-                getString(R.string.sesiones_error_guardar_titulo),
-                motivo + "\n\n" + getString(R.string.sesiones_error_guardar_ayuda),
-                R.drawable.ic_ms_error,
+    private void ofrecerReintento(EstadoGuardado estado) {
+        if (avisoFallo != null && avisoFallo.isShowing()) return;
+
+        String titulo;
+        String mensaje;
+        if (estado.interrumpido) {
+            titulo = getString(R.string.sesiones_error_interrumpido_titulo);
+            mensaje = getString(R.string.sesiones_error_interrumpido);
+        } else {
+            titulo = getString(R.string.sesiones_error_guardar_titulo);
+            String motivo = estado.codigo == 0
+                    ? getString(R.string.sesiones_error_guardar)
+                    : UiFeedback.mensaje(this, estado.codigo, estado.mensaje);
+            mensaje = motivo + "\n\n" + getString(R.string.sesiones_error_guardar_ayuda);
+        }
+
+        avisoFallo = UIHelper.mostrarDialogoConIcono(this, titulo, mensaje, R.drawable.ic_ms_error,
                 getString(R.string.sesiones_error_reintentar),
                 getString(R.string.sesiones_error_ahora_no),
-                () -> enviarSesion(duracion));
+                () -> {
+                    avisoFallo = null;
+                    pulsarGuardar();
+                },
+                () -> {
+                    avisoFallo = null;
+                    vm.descartarFallo();
+                });
+    }
+
+    // Al volver de segundo plano con el guardado aún en marcha, el «Cargando…» vuelve:
+    // el LiveData no repite un estado que ya entregó.
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EstadoGuardado estado = vm.getEstadoGuardado().getValue();
+        if (estado != null && estado.fase == RegistrarSesionViewModel.Fase.GUARDANDO) {
+            LoadingDialog.show(this);
+        }
+    }
+
+    // El «Cargando…» se quita al dejar de verse: cerrado a tiempo no queda colgado de
+    // una pantalla destruida al girar. onStart lo vuelve a poner si sigue guardando.
+    @Override
+    protected void onStop() {
+        LoadingDialog.hide(this);
+        super.onStop();
+    }
+
+    // El aviso de fallo se cierra sin contar como «Ahora no»: la pantalla nueva lo
+    // vuelve a enseñar, porque en el ViewModel sigue abierto.
+    @Override
+    protected void onDestroy() {
+        if (avisoFallo != null) {
+            avisoFallo.dismiss();
+            avisoFallo = null;
+        }
+        super.onDestroy();
     }
 
     // Abre el resumen de la sesión recién guardada.
     private void irAlResumen(SesionEntrenamiento sesion) {
-        // La posición 0 no es "no lo sé", es entrenamiento libre: se le dice al resumen
+        // Sin rutina no es "no lo sé", es entrenamiento libre: se le dice al resumen
         // para que no lo pinte como una rutina sin nombre.
-        int pos = spRutina.getSelectedItemPosition();
-        boolean libre = pos <= 0;
-        String nombreRutina = (pos > 0 && pos <= rutinas.size()) ? rutinas.get(pos - 1).getNombre() : "";
+        Integer rutinaId = vm.getRutinaId();
 
         ArrayList<String> nuevosLogros = new ArrayList<>();
         if (sesion.getNuevosLogros() != null) nuevosLogros.addAll(sesion.getNuevosLogros());
 
         Intent intent = new Intent(this, ResumenSesionActivity.class);
         intent.putExtra("sesionId", sesion.getId());
-        intent.putExtra("rutinaNombre", nombreRutina);
-        intent.putExtra(ResumenSesionActivity.EXTRA_ENTRENAMIENTO_LIBRE, libre);
+        intent.putExtra("rutinaNombre", vm.nombreRutina(rutinaId));
+        intent.putExtra(ResumenSesionActivity.EXTRA_ENTRENAMIENTO_LIBRE, rutinaId == null);
         intent.putStringArrayListExtra("nuevosLogros", nuevosLogros);
         intent.putExtra(ResumenSesionActivity.EXTRA_RECORDS, new ArrayList<>(sesion.getRecordsBatidos()));
         intent.putExtra(ResumenSesionActivity.EXTRA_PRIMERAS_MARCAS, sesion.getPrimerasMarcas().size());
         startActivity(intent);
     }
 
-    /**
-     * Arma la lista de ejercicios que viaja DENTRO de la sesión.
-     *
-     * <p>Antes cada ejercicio era un POST suelto que se lanzaba tras crear la sesión,
-     * con el callback vacío: si fallaba, nadie se enteraba. Ahora van en el mismo
-     * cuerpo y el servidor los guarda o los rechaza junto con ella.
-     *
-     * <p>Los ejercicios sin ninguna serie que guardar se descartan: son los que el
-     * usuario dejó en blanco porque no llegó a hacerlos.
-     */
-    private List<Map<String, Object>> construirEjercicios() {
-        List<Map<String, Object>> ejercicios = new ArrayList<>();
+    // TextWatcher mínimo: pasa el texto entero al borrador en cada cambio.
+    private static class AlCambiar implements TextWatcher {
+        interface Destino { void set(String valor); }
 
-        for (EjercicioPesoAdapter.Item item : ejercicioItems) {
-            List<Map<String, Object>> series = construirSeries(item);
-            if (series.isEmpty()) continue;
+        private final Destino destino;
 
-            Map<String, Object> ejercicio = new HashMap<>();
-            ejercicio.put("ejercicioId", item.ejercicioId);
-            ejercicio.put("repeticionesReales", item.repeticiones);
-            ejercicio.put("series", series);
-            ejercicios.add(ejercicio);
-        }
+        AlCambiar(Destino destino) { this.destino = destino; }
 
-        return ejercicios;
-    }
-
-    /**
-     * Convierte lo que el usuario tecleó en el cuerpo que espera la API.
-     *
-     * <p>El peso y las repeticiones pasan por {@link Numeros}, que acepta coma o
-     * punto y devuelve null fuera de rango en vez de lanzar: un valor imposible
-     * se descarta, nunca se sustituye por uno inventado.
-     *
-     * @return una entrada por serie con algo que guardar; puede venir vacía.
-     */
-    private List<Map<String, Object>> construirSeries(EjercicioPesoAdapter.Item item) {
-        List<Map<String, Object>> series = new ArrayList<>();
-
-        for (EjercicioPesoAdapter.Serie serie : item.realizadas) {
-            Integer reps = Numeros.entero(serie.repeticiones, 0, 100);
-            BigDecimal peso = Numeros.exacto(serie.peso, 0, 500);
-
-            // Una serie en blanco es una serie que no se hizo.
-            if (reps == null && peso == null) continue;
-
-            Map<String, Object> fila = new HashMap<>();
-            fila.put("numero", serie.numero);
-            fila.put("repeticiones", reps != null ? reps : 0);
-            if (peso != null) fila.put("peso", peso);
-            fila.put("completada", serie.completada);
-            series.add(fila);
-        }
-
-        return series;
+        @Override public void beforeTextChanged(CharSequence s, int a, int b, int c) {}
+        @Override public void onTextChanged(CharSequence s, int a, int b, int c) {}
+        @Override public void afterTextChanged(Editable s) { destino.set(s.toString()); }
     }
 }

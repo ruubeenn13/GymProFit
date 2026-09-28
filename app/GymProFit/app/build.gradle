@@ -121,6 +121,12 @@ dependencies {
     // Navegación principal por pestañas: 1 Activity + ViewPager2 + Fragments
     implementation 'androidx.viewpager2:viewpager2:1.1.0'
     implementation 'androidx.fragment:fragment:1.8.5'
+    // ViewModel + SavedStateHandle + LiveData: el borrador de Registrar sesión sobrevive a
+    // girar y a que Android mate el proceso (GP-016). Ya llegaban por activity y fragment;
+    // se declaran porque se usan directamente, a la versión que ya se resolvía.
+    implementation libs.lifecycle.viewmodel
+    implementation libs.lifecycle.viewmodel.savedstate
+    implementation libs.lifecycle.livedata
     // Cifrado del token/refresh en almacenamiento (EncryptedSharedPreferences)
     implementation libs.security.crypto
     // Carga de imágenes remotas (catálogo de ejercicios wger, futuras fotos)
@@ -138,6 +144,8 @@ dependencies {
     // Apache 2.0 pide acompañar la redistribución con su aviso (GP-082)
     implementation libs.oss.licenses
     testImplementation libs.junit
+    // InstantTaskExecutorRule: LiveData síncrono en los tests del ViewModel (GP-016)
+    testImplementation libs.core.testing
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
 

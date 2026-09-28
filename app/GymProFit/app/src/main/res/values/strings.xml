@@ -278,6 +278,8 @@
     <string name="sesiones_error_ahora_no">Ahora no</string>
     <string name="sesiones_error_guardar">No se ha podido guardar la sesión.</string>
     <string name="sesiones_error_guardar_ayuda">Tus datos siguen aquí. Puedes reintentarlo ahora o cerrar el aviso y volver a guardar más tarde.</string>
+    <string name="sesiones_error_interrumpido_titulo">No sabemos si se ha guardado</string>
+    <string name="sesiones_error_interrumpido">La app se cerró mientras guardaba la sesión. Reintentar no la duplica: si ya había llegado, se queda la que se guardó.</string>
     <string name="sesiones_min">%d min</string>
     <string name="sesiones_eliminar">Eliminar sesión</string>
     <string name="sesiones_confirmar_eliminar">¿Eliminar esta sesión?</string>

@@ -196,6 +196,23 @@ public class UIHelper {
      */
     public static void mostrarDialogoConIcono(Context context, String titulo, String mensaje, int iconoRes,
                                               String textoConfirmar, String textoCancelar, Runnable onConfirmar) {
+        mostrarDialogoConIcono(context, titulo, mensaje, iconoRes, textoConfirmar, textoCancelar, onConfirmar, null);
+    }
+
+    /**
+     * Igual que el anterior, y además avisa cuando se cierra SIN confirmar: el botón
+     * secundario, atrás o un toque fuera.
+     *
+     * <p>Existe para Registrar sesión (GP-016): el aviso de fallo es un estado del
+     * ViewModel, y al girar la pantalla se vuelve a enseñar mientras nadie lo haya
+     * cerrado. Para eso el ViewModel tiene que enterarse de «Ahora no».
+     *
+     * @param onCancelar se ejecuta al cerrarlo sin confirmar; null si no importa.
+     * @return el diálogo, para cerrarlo sin disparar nada si la pantalla se destruye.
+     */
+    public static Dialog mostrarDialogoConIcono(Context context, String titulo, String mensaje, int iconoRes,
+                                                String textoConfirmar, String textoCancelar,
+                                                Runnable onConfirmar, Runnable onCancelar) {
         Dialog dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_custom);
@@ -233,7 +250,11 @@ public class UIHelper {
         if (textoConfirmar != null) btnConfirmar.setText(textoConfirmar);
         if (textoCancelar != null) btnCancelar.setText(textoCancelar);
 
-        btnCancelar.setOnClickListener(v -> dialog.dismiss());
+        // cancel() y no dismiss(): así el botón pasa por el mismo aviso que atrás y el
+        // toque fuera. dismiss() a secas no lo dispara, y por eso cerrarlo desde fuera
+        // al destruir la pantalla no cuenta como «Ahora no».
+        btnCancelar.setOnClickListener(v -> dialog.cancel());
+        if (onCancelar != null) dialog.setOnCancelListener(d -> onCancelar.run());
         btnConfirmar.setOnClickListener(v -> {
             dialog.dismiss();
             if (onConfirmar != null) onConfirmar.run();
@@ -245,6 +266,7 @@ public class UIHelper {
             int ancho = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.90);
             dialog.getWindow().setLayout(ancho, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
         }
+        return dialog;
     }
 
     /**

@@ -287,6 +287,8 @@
     <string name="sesiones_error_ahora_no">Not now</string>
     <string name="sesiones_error_guardar">The session could not be saved.</string>
     <string name="sesiones_error_guardar_ayuda">Your data is still here. Retry now, or close this and save again later.</string>
+    <string name="sesiones_error_interrumpido_titulo">We don\'t know if it was saved</string>
+    <string name="sesiones_error_interrumpido">The app closed while saving the session. Retrying won\'t duplicate it: if it had already arrived, the saved one is kept.</string>
     <string name="sesiones_min">%d min</string>
     <string name="sesiones_eliminar">Delete session</string>
     <string name="sesiones_confirmar_eliminar">Delete this session?</string>
