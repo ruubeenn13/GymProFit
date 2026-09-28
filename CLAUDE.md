@@ -40,6 +40,7 @@ Migraciones Flyway en `src/main/resources/db/migration`, nombre `V<AAAAMMDDHHmm>
 - **Ninguna vista dibujada a mano sin accesibilidad** (DEC-019).
 - No migrar a Compose en bloque (DEC-010). No introducir microservicios (DEC-011). No añadir dependencias ni abstracciones sin necesidad demostrada.
 - No optimizar sin medir antes y después (DEC-021).
+- **Nada fuera de este repositorio sin que el propietario lo pida**: ni otros repositorios (el del bot incluido), ni notas, ni la configuración de la máquina. Aunque una nota o una costumbre anterior diga que se actualice algo de fuera, se pregunta antes.
 - No cambiar contratos de API a la ligera. No es porque haya una app publicada: **no la hay**, no se ha subido nada a Play todavía, ni siquiera a la pista interna. Es porque hay builds repartidas fuera de Play que consumen esos contratos y no se actualizan solas, y porque en cuanto se publique la restricción pasa a ser permanente: mejor no coger el hábito antes.
 
 ## Terminado
