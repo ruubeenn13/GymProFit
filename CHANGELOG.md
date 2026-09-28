@@ -2,6 +2,14 @@
 
 Historial de cambios del proyecto (API Spring Boot + app Android). Ver también el [README](README.md).
 
+### 2026-09-28
+
+| Hash | Descripción |
+|---|---|
+| `38d8108` | build(android): **versión 1.1.2** (10102), etiquetada `v1.1.2`. Misma clave de firma. No necesita nada nuevo de la API. Informe en `documentacion/estado/2026-09-28-lote-1.1.2.md`. |
+| `206699a` | fix(android): **espacio duro entre cifra y unidad** (GP-123) en todos los textos, ES y EN: «72,5 kg» ya no parte línea en Récords con la letra grande. `EspacioDuroUnidadesTest` vigila los `strings.xml`. |
+| `e1e0db5` | fix(android): **lo tecleado en Registrar sesión sobrevive a girar, a «No conservar actividades» y a que Android mate la app** (GP-016): el borrador y la clave de idempotencia viven en un ViewModel con `SavedStateHandle`, y la red en `RegistroSesionRepositorio`. Un doble toque o girar mientras guarda mandan una sola petición; si el proceso muere con el guardado en vuelo, se ofrece reintentar con la misma clave. |
+
 ### 2026-09-27
 
 | Hash | Descripción |
