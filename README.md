@@ -166,7 +166,7 @@ Capa de red basada en **Retrofit2 + OkHttp3 + Gson**, con una interfaz tipada po
 | `AcercaDeActivity` | Pantalla "Acerca de": logo adaptativo claro/oscuro, info extendida de la app (descripción, 6 features, tech stack) e info del desarrollador (bio, formación, 3 FCTs, email clickable). Botón "Compartir": abre el selector de compartir del sistema con el enlace de la app (sin permisos adicionales) |
 | `EditarPerfilActivity` | Editar email, peso, altura, edad, nivel, objetivo. PATCH /usuarios/{id} |
 | `SesionesActivity` | Historial de sesiones con opción de eliminar |
-| `RegistrarSesionActivity` | Formulario para registrar sesión: rutina (spinner), calorías calculadas, cards de ejercicios con peso por ejercicio (`EjercicioPesoAdapter`), notas, valoración (RatingBar 1-5). POST /ejercicios-realizados por cada ejercicio al finalizar |
+| `RegistrarSesionActivity` | Formulario para registrar sesión: rutina (spinner), ejercicios serie a serie (`EjercicioPesoAdapter`), duración, notas y valoración (RatingBar 1-5). Guarda todo en un solo POST /sesiones/completa idempotente (GP-006). El borrador vive en `RegistrarSesionViewModel` (`SavedStateHandle`) y la red en `RegistroSesionRepositorio`: girar o que Android mate la app no pierde nada (GP-016) |
 | `ResumenSesionActivity` | Detalle de sesión completada + estadísticas del usuario + logros desbloqueados |
 | `MedicionesActivity` | Historial de mediciones corporales con opción de eliminar |
 | `RegistrarMedicionActivity` | Formulario para añadir medición (peso obligatorio, resto opcionales) |

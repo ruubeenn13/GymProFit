@@ -31,11 +31,32 @@ import es.pmdm.gymprofit.R;
 // Cada fila es ahora un ejercicio con una línea por serie: peso, repeticiones
 // REALES y marca de completada. Las repeticiones se precargan con las que pedía
 // la rutina, pero son editables: fallar la última serie es información.
+//
+// GP-016. Lo tecleado ya no vive aquí: los Item y las Serie son el borrador de
+// RegistrarSesionViewModel, que los guarda en su SavedStateHandle para que girar o que
+// Android mate la app no los pierda. El adaptador los pinta y cada cambio se lo pasa
+// al Editor, que es quien los escribe. Por eso son Serializable.
 // ============================================================
 public class EjercicioPesoAdapter extends RecyclerView.Adapter<EjercicioPesoAdapter.ViewHolder> {
 
-    /** Una serie concreta, tal y como la va rellenando el usuario. */
-    public static class Serie {
+    /**
+     * Quien escribe en el borrador. El adaptador no toca los campos: avisa y luego
+     * repinta lo que haya quedado (escribir un peso, por ejemplo, marca la serie hecha).
+     * Los índices son los del ejercicio en la lista y de la serie dentro de él.
+     */
+    public interface Editor {
+        void peso(int ejercicio, int serie, String valor);
+        void repeticiones(int ejercicio, int serie, String valor);
+        void alternarHecha(int ejercicio, int serie);
+    }
+
+    /**
+     * Una serie concreta, tal y como la va rellenando el usuario. El peso y las
+     * repeticiones son el TEXTO tecleado, no números: «72,» a medio escribir se
+     * conserva tal cual, y se convierte solo al guardar.
+     */
+    public static class Serie implements java.io.Serializable {
+        private static final long serialVersionUID = 1L;
         public final int numero;
         public String peso = "";
         public String repeticiones = "";
@@ -48,15 +69,17 @@ public class EjercicioPesoAdapter extends RecyclerView.Adapter<EjercicioPesoAdap
     }
 
     /** Un ejercicio de la sesión, con lo que pedía la rutina y lo realmente hecho. */
-    public static class Item {
+    public static class Item implements java.io.Serializable {
+        private static final long serialVersionUID = 1L;
         public final int ejercicioId;
+        /** Nombre del catálogo; null si no vino, y entonces se pinta «Ejercicio N». */
         public final String nombre;
         /** Series que pedía la rutina. Se usa solo para la cabecera y la precarga. */
         public final int series;
         /** Repeticiones que pedía la rutina. */
         public final int repeticiones;
         /** Lo realmente hecho, una entrada por serie. */
-        public final List<Serie> realizadas = new ArrayList<>();
+        public final ArrayList<Serie> realizadas = new ArrayList<>();
 
         public Item(int ejercicioId, String nombre, int series, int repeticiones) {
             this.ejercicioId = ejercicioId;
@@ -74,9 +97,15 @@ public class EjercicioPesoAdapter extends RecyclerView.Adapter<EjercicioPesoAdap
     }
 
     private final List<Item> items;
+    private final Editor editor;
 
-    public EjercicioPesoAdapter(List<Item> items) {
+    /**
+     * @param items  la lista que se pinta; quien la da la actualiza y avisa.
+     * @param editor adónde va cada cambio que teclea el usuario.
+     */
+    public EjercicioPesoAdapter(List<Item> items, Editor editor) {
         this.items = items;
+        this.editor = editor;
     }
 
     @NonNull
@@ -91,25 +120,28 @@ public class EjercicioPesoAdapter extends RecyclerView.Adapter<EjercicioPesoAdap
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Item item = items.get(position);
-        holder.tvNombre.setText(item.nombre);
+        holder.tvNombre.setText(item.nombre != null ? item.nombre
+                : holder.itemView.getContext().getString(R.string.ejercicio_sin_nombre, position + 1));
         holder.tvSeriesReps.setText(holder.itemView.getContext().getString(R.string.series_por_reps, item.series, item.repeticiones));
 
         // Se vacía y se vuelve a montar: el ViewHolder se recicla y un ejercicio
         // puede tener un número de series distinto del que tenía el anterior.
         holder.contenedor.removeAllViews();
-        for (Serie serie : item.realizadas) {
-            holder.contenedor.addView(crearFilaSerie(holder.contenedor, serie));
+        for (int i = 0; i < item.realizadas.size(); i++) {
+            holder.contenedor.addView(crearFilaSerie(holder.contenedor, holder, item.realizadas.get(i), i));
         }
     }
 
     /**
      * Monta la fila de una serie y la deja enganchada al modelo.
      *
-     * @param padre contenedor al que se añadirá, solo para inflar con sus reglas.
-     * @param serie la serie que representa; se escribe directamente sobre ella.
+     * @param padre   contenedor al que se añadirá, solo para inflar con sus reglas.
+     * @param holder  la tarjeta del ejercicio, para saber su posición al escribir.
+     * @param serie   la serie que se pinta; se lee de ella, no se escribe.
+     * @param indice  qué serie del ejercicio es.
      * @return la fila lista para añadir.
      */
-    private View crearFilaSerie(ViewGroup padre, Serie serie) {
+    private View crearFilaSerie(ViewGroup padre, ViewHolder holder, Serie serie, int indice) {
         View fila = LayoutInflater.from(padre.getContext())
                 .inflate(R.layout.item_serie, padre, false);
 
@@ -125,23 +157,18 @@ public class EjercicioPesoAdapter extends RecyclerView.Adapter<EjercicioPesoAdap
         // Las filas se crean nuevas en cada bind, así que no hay listeners viejos
         // que quitar: cada TextWatcher vive lo que vive su vista.
         //
-        // Escribir un peso MARCA la serie como hecha. Si hubiera que pulsar además
-        // el check, quien rellenara sus cuatro series sin tocarlo guardaría "0
-        // series completadas" y cualquier estadística construida encima mentiría.
-        // El check queda para lo contrario: desmarcar una serie que se apuntó pero
-        // no se llegó a terminar.
+        // Escribir un peso marca la serie como hecha: esa regla vive en el ViewModel,
+        // aquí solo se repinta el check con lo que haya quedado.
         etPeso.addTextChangedListener(new EscribeEn(valor -> {
-            serie.peso = valor;
-            if (!valor.isEmpty() && !serie.completada) {
-                serie.completada = true;
-                pintarCompletada(ivCheck, true);
-            }
+            editor.peso(holder.getBindingAdapterPosition(), indice, valor);
+            pintarCompletada(ivCheck, serie.completada);
         }));
-        etReps.addTextChangedListener(new EscribeEn(valor -> serie.repeticiones = valor));
+        etReps.addTextChangedListener(new EscribeEn(valor ->
+                editor.repeticiones(holder.getBindingAdapterPosition(), indice, valor)));
 
         pintarCompletada(ivCheck, serie.completada);
         ivCheck.setOnClickListener(v -> {
-            serie.completada = !serie.completada;
+            editor.alternarHecha(holder.getBindingAdapterPosition(), indice);
             pintarCompletada(ivCheck, serie.completada);
         });
 

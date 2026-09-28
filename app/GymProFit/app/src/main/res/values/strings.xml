@@ -195,8 +195,8 @@
     <string name="perfil_editar">Editar información</string>
     <string name="perfil_sin_datos">No registrado</string>
     <string name="perfil_anos">%d años</string>
-    <string name="perfil_kg">%s kg</string>
-    <string name="perfil_cm">%d cm</string>
+    <string name="perfil_kg">%s\u00A0kg</string>
+    <string name="perfil_cm">%d\u00A0cm</string>
 
     <!-- GENERAL -->
     <string name="sin_registrar">Sin registrar</string>
@@ -278,7 +278,9 @@
     <string name="sesiones_error_ahora_no">Ahora no</string>
     <string name="sesiones_error_guardar">No se ha podido guardar la sesión.</string>
     <string name="sesiones_error_guardar_ayuda">Tus datos siguen aquí. Puedes reintentarlo ahora o cerrar el aviso y volver a guardar más tarde.</string>
-    <string name="sesiones_min">%d min</string>
+    <string name="sesiones_error_interrumpido_titulo">No sabemos si se ha guardado</string>
+    <string name="sesiones_error_interrumpido">La app se cerró mientras guardaba la sesión. Reintentar no la duplica: si ya había llegado, se queda la que se guardó.</string>
+    <string name="sesiones_min">%d\u00A0min</string>
     <string name="sesiones_eliminar">Eliminar sesión</string>
     <string name="sesiones_confirmar_eliminar">¿Eliminar esta sesión?</string>
     <string name="sesiones_sin_rutina">Sin rutina asociada</string>
@@ -437,7 +439,7 @@
     <string name="admin_exito_toggle_alimento">Estado actualizado</string>
     <string name="admin_editar_alimento_titulo">Editar alimento</string>
     <string name="admin_alimentos_campo_nombre">Nombre</string>
-    <string name="admin_alimentos_campo_calorias">Calorías / 100 g</string>
+    <string name="admin_alimentos_campo_calorias">Calorías / 100\u00A0g</string>
     <string name="admin_alimentos_campo_proteinas">Proteínas (g)</string>
     <string name="admin_alimentos_campo_carbohidratos">Carbohidratos (g)</string>
     <string name="admin_alimentos_campo_grasas">Grasas (g)</string>
@@ -539,7 +541,7 @@
     <string name="notif_canal_rutinas">Rutinas</string>
     <string name="notif_canal_logros">Logros</string>
     <string name="notif_sesion_titulo">¡Sesión completada!</string>
-    <string name="notif_sesion_texto">%1$d min de entrenamiento</string>
+    <string name="notif_sesion_texto">%1$d\u00A0min de entrenamiento</string>
     <string name="notif_rutina_titulo">¡Rutina creada!</string>
     <string name="notif_rutina_texto">%s está lista para usar</string>
     <string name="notif_logros_titulo">¡Nuevo logro desbloqueado!</string>
@@ -587,7 +589,7 @@
     <string name="anadir_alimento_buscar_hint">Buscar alimento…</string>
     <string name="anadir_alimento_crear">Crear alimento</string>
     <string name="anadir_alimento_gramos_hint">Cantidad (g)</string>
-    <string name="anadir_alimento_preview">%1$d kcal | %2$.1fg prot | %3$.1fg carbos | %4$.1fg grasas</string>
+    <string name="anadir_alimento_preview">%1$d\u00A0kcal | %2$.1f\u00A0g prot | %3$.1f\u00A0g carbos | %4$.1f\u00A0g grasas</string>
     <string name="btn_anadir">Añadir</string>
     <string name="btn_volver">Volver</string>
     <string name="menu_opciones">Más opciones</string>
@@ -624,7 +626,7 @@
     <string name="error_edad_invalida">Pon tu edad en años, entre 10 y 120</string>
     <string name="error_peso_invalido">Pon tu peso en kilos, entre 30 y 300</string>
     <string name="error_altura_invalida">Pon tu altura en centímetros, entre 100 y 250</string>
-    <string name="error_altura_en_metros">¿Querías decir %1$d cm? Escribe la altura en centímetros</string>
+    <string name="error_altura_en_metros">¿Querías decir %1$d\u00A0cm? Escribe la altura en centímetros</string>
     <string name="error_medida_invalida">Pon un número entre %1$s y %2$s</string>
 
     <!-- Recuperacion de contrasena olvidada -->
@@ -670,7 +672,7 @@
 
     <!-- Tarjeta de récord de la pantalla de inicio (fase 4) -->
     <string name="home_record_eyebrow">TU RÉCORD</string>
-    <string name="home_record_detalle">%1$s · %2$d reps</string>
+    <string name="home_record_detalle">%1$s · %2$d\u00A0reps</string>
 
     <!-- Celebración del resumen tras entrenar (fase 4) -->
     <string name="resumen_celebracion_eyebrow">HAS MOVIDO</string>
@@ -763,22 +765,22 @@
         <item quantity="other">%1$d de %2$d pasos</item>
     </plurals>
     <!-- Unidades y cifras con su unidad (GP-071): nunca concatenadas en el código -->
-    <string name="unidad_kcal">%d kcal</string>
-    <string name="unidad_kcal_objetivo">/ %d kcal</string>
-    <string name="unidad_kcal_100g">%d kcal/100 g</string>
-    <string name="unidad_kg_entero">%d kg</string>
-    <string name="unidad_kg_decimal">%.1f kg</string>
-    <string name="unidad_cm_decimal">%.1f cm</string>
-    <string name="unidad_g_entero">%d g</string>
-    <string name="unidad_g_redondeado">%.0f g</string>
-    <string name="unidad_litros">%.1f L</string>
+    <string name="unidad_kcal">%d\u00A0kcal</string>
+    <string name="unidad_kcal_objetivo">/ %d\u00A0kcal</string>
+    <string name="unidad_kcal_100g">%d\u00A0kcal/100\u00A0g</string>
+    <string name="unidad_kg_entero">%d\u00A0kg</string>
+    <string name="unidad_kg_decimal">%.1f\u00A0kg</string>
+    <string name="unidad_cm_decimal">%.1f\u00A0cm</string>
+    <string name="unidad_g_entero">%d\u00A0g</string>
+    <string name="unidad_g_redondeado">%.0f\u00A0g</string>
+    <string name="unidad_litros">%.1f\u00A0L</string>
     <string name="series_por_reps">%1$d × %2$d</string>
-    <string name="nivel_y_duracion">%1$s  ·  %2$d min</string>
-    <string name="grafica_kcal_fecha">%1$d kcal\n%2$s</string>
-    <string name="grafica_kg_fecha">%1$.1f kg%2$s\n%3$s</string>
-    <string name="grafica_cm_fecha">%1$.1f cm\n%2$s</string>
+    <string name="nivel_y_duracion">%1$s  ·  %2$d\u00A0min</string>
+    <string name="grafica_kcal_fecha">%1$d\u00A0kcal\n%2$s</string>
+    <string name="grafica_kg_fecha">%1$.1f\u00A0kg%2$s\n%3$s</string>
+    <string name="grafica_cm_fecha">%1$.1f\u00A0cm\n%2$s</string>
     <string name="grafica_pct_fecha">%1$.1f %%\n%2$s</string>
-    <string name="grafica_kg_fecha_simple">%1$.1f kg\n%2$s</string>
+    <string name="grafica_kg_fecha_simple">%1$.1f\u00A0kg\n%2$s</string>
     <string name="rol_usuario">Usuario</string>
     <string name="rol_admin">Administrador</string>
     <string name="filtro_todas">Todas</string>
@@ -789,9 +791,9 @@
     <!-- Patrones de fecha (SimpleDateFormat) por idioma (GP-071) -->
     <string name="home_fecha_patron" translatable="false">EEEE, d \'de\' MMMM</string>
     <string name="nutricion_fecha_patron" translatable="false">EEE d MMM</string>
-    <string name="comida_total_prot">%.1f g prot</string>
-    <string name="comida_total_carbos">%.1f g carbos</string>
-    <string name="comida_total_grasas">%.1f g grasas</string>
+    <string name="comida_total_prot">%.1f\u00A0g prot</string>
+    <string name="comida_total_carbos">%.1f\u00A0g carbos</string>
+    <string name="comida_total_grasas">%.1f\u00A0g grasas</string>
     <string name="ejercicio_sin_nombre">Ejercicio %d</string>
     <!-- Récords (GP-088) -->
     <string name="records_titulo">Récords</string>
@@ -814,7 +816,7 @@
     <string name="zona_titulo_otros">Otros</string>
     <plurals name="record_repeticiones">
         <item quantity="one">%d rep</item>
-        <item quantity="other">%d reps</item>
+        <item quantity="other">%d\u00A0reps</item>
     </plurals>
     <plurals name="resumen_primeras_marcas">
         <item quantity="one">%d ejercicio hecho por primera vez: es tu punto de partida.</item>
@@ -874,7 +876,7 @@
     <string name="inicio_avatar_a11y">Tu progreso y tu perfil</string>
     <string name="hoy_toca">Hoy toca</string>
     <string name="hecho_hoy">Hecho hoy</string>
-    <string name="hoy_toca_unos_min">unos %1$d min</string>
+    <string name="hoy_toca_unos_min">unos %1$d\u00A0min</string>
     <string name="hoy_toca_ultima">la última, %1$s</string>
     <string name="hoy_toca_nunca">todavía no la has hecho</string>
     <string name="hoy_toca_separador">%1$s · %2$s</string>
@@ -896,8 +898,8 @@
         <item quantity="one">%d sesión</item>
         <item quantity="other">%d sesiones</item>
     </plurals>
-    <string name="duracion_h_min">%1$d h %2$d min</string>
-    <string name="duracion_min">%1$d min</string>
+    <string name="duracion_h_min">%1$d\u00A0h %2$d\u00A0min</string>
+    <string name="duracion_min">%1$d\u00A0min</string>
     <string name="semana_zonas">%1$d de %2$d zonas</string>
     <string name="semana_chip">%1$s · %2$d</string>
     <string name="semana_nota">El número es de series esta semana.</string>
@@ -912,10 +914,10 @@
     <string name="ultimo_record">Último récord</string>
     <string name="ultimo_record_sub">Antes: %1$s · %2$s</string>
     <string name="nutricion_de_hoy">Nutrición de hoy</string>
-    <string name="nutricion_de_kcal">de %1$s kcal</string>
-    <string name="macro_prot_corto">Prot. %1$d/%2$d g</string>
-    <string name="macro_carbos_corto">Carbos %1$d/%2$d g</string>
-    <string name="macro_grasas_corto">Grasas %1$d/%2$d g</string>
+    <string name="nutricion_de_kcal">de %1$s\u00A0kcal</string>
+    <string name="macro_prot_corto">Prot. %1$d/%2$d\u00A0g</string>
+    <string name="macro_carbos_corto">Carbos %1$d/%2$d\u00A0g</string>
+    <string name="macro_grasas_corto">Grasas %1$d/%2$d\u00A0g</string>
     <string name="nutricion_hoy_a11y">%1$s de %2$s kilocalorías.</string>
 
     <!-- GP-105 · Entrenar -->
@@ -954,9 +956,9 @@
     <string name="nutricion_elegir_dia_a11y">Elegir otro día</string>
     <string name="nutricion_te_quedan">Te quedan</string>
     <string name="nutricion_te_pasas">Te pasas</string>
-    <string name="nutricion_kcal_de">de %1$s kcal</string>
-    <string name="nutricion_kcal_valor">%1$s kcal</string>
-    <string name="nutricion_macro_valor">%1$d / %2$d g</string>
+    <string name="nutricion_kcal_de">de %1$s\u00A0kcal</string>
+    <string name="nutricion_kcal_valor">%1$s\u00A0kcal</string>
+    <string name="nutricion_macro_valor">%1$d / %2$d\u00A0g</string>
     <plurals name="comida_n_alimentos">
         <item quantity="one">%d alimento</item>
         <item quantity="other">%d alimentos</item>
