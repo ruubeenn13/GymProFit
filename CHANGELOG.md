@@ -6,6 +6,9 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `a375837` | docs(reglas): **nada fuera de este repositorio sin que el propietario lo pida** (otros repositorios, notas, la configuración de la máquina). |
+| `0bbc699` | docs(admin): **el despliegue de la web, tal y como se publicó**: Access primero, el Worker con *Import a repository*, el directorio raíz que se corrige después, cómo se ve un despliegue bueno y cómo dar de alta a otro administrador. |
+| `a727147` | ci(android): **el CI compila la app y pasa sus tests** (GP-126): job `android-build-test` (JDK 17, caché de Gradle, `google-services.json` de mentira). La firma de release solo se configura con `keystore.properties`; sin él, un clon limpio compila el debug y empaquetar el release falla con un mensaje claro. Informe en `documentacion/estado/2026-09-28-mantenimiento-gp126.md`. |
 | `38d8108` | build(android): **versión 1.1.2** (10102), etiquetada `v1.1.2`. Misma clave de firma. No necesita nada nuevo de la API. Informe en `documentacion/estado/2026-09-28-lote-1.1.2.md`. |
 | `206699a` | fix(android): **espacio duro entre cifra y unidad** (GP-123) en todos los textos, ES y EN: «72,5 kg» ya no parte línea en Récords con la letra grande. `EspacioDuroUnidadesTest` vigila los `strings.xml`. |
 | `e1e0db5` | fix(android): **lo tecleado en Registrar sesión sobrevive a girar, a «No conservar actividades» y a que Android mate la app** (GP-016): el borrador y la clave de idempotencia viven en un ViewModel con `SavedStateHandle`, y la red en `RegistroSesionRepositorio`. Un doble toque o girar mientras guarda mandan una sola petición; si el proceso muere con el guardado en vuelo, se ofrece reintentar con la misma clave. |
