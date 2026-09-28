@@ -9,7 +9,12 @@ plugins {
 android {
     def keystoreProps = new Properties()
     def keystorePropsFile = rootProject.file("keystore.properties")
-    if (keystorePropsFile.exists()) {
+    // La firma de release solo existe si hay keystore.properties (no se versiona). Sin
+    // él, un clon limpio —o el CI— compila el debug y pasa los tests; el release no se
+    // puede construir y lo dice (ver el final del fichero). Antes, signingConfigs hacía
+    // file(null) y rompía la configuración entera, debug incluido (GP-126).
+    def hayFirmaRelease = keystorePropsFile.exists()
+    if (hayFirmaRelease) {
         keystoreProps.load(new FileInputStream(keystorePropsFile))
     }
 
@@ -61,11 +66,30 @@ android {
     }
 
     signingConfigs {
-        release {
-            storeFile file(keystoreProps['storeFile'])
-            storePassword keystoreProps['storePassword']
-            keyAlias keystoreProps['keyAlias']
-            keyPassword keystoreProps['keyPassword']
+        if (hayFirmaRelease) {
+            release {
+                storeFile file(keystoreProps['storeFile'])
+                storePassword keystoreProps['storePassword']
+                keyAlias keystoreProps['keyAlias']
+                keyPassword keystoreProps['keyPassword']
+            }
+        }
+    }
+
+    // Sin firma, AGP construiría un release SIN FIRMAR sin quejarse (app-release-unsigned),
+    // que no se instala encima del repartido. Se falla antes de empezar si se pide empaquetar
+    // un release. Compilar y probar el release (testReleaseUnitTest) sí se puede: no firma.
+    gradle.taskGraph.whenReady { grafo ->
+        // Nombres exactos: con un patrón, «bundleRelease…» casaría con tareas internas
+        // (bundleReleaseClassesToCompileJar) que testReleaseUnitTest sí ejecuta.
+        def empaquetaRelease = grafo.allTasks.any {
+            it.name in ['packageRelease', 'packageReleaseBundle', 'bundleRelease', 'signReleaseBundle']
+        }
+        if (empaquetaRelease && !hayFirmaRelease) {
+            throw new GradleException(
+                    "No se puede construir el release: falta keystore.properties en ${rootProject.projectDir}.\n" +
+                    "La firma de release no se versiona: ver «Compilar y firmar» en app/GymProFit/README.md.\n" +
+                    "Para compilar y probar sin firmar: sh ./gradlew assembleDebug test")
         }
     }
 
@@ -83,7 +107,7 @@ android {
             }
         }
         release {
-            signingConfig signingConfigs.release
+            if (hayFirmaRelease) signingConfig signingConfigs.release
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'

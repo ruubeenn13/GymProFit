@@ -51,6 +51,32 @@ BASE_URL=http://10.0.2.2:8080/api/
 
 Abrir `app/GymProFit` en Android Studio → sincronizar Gradle → Run en emulador API 24+.
 
+### 4. Compilar y firmar (GP-126)
+
+Desde la línea de comandos, con JDK 17 o superior (lo pide el AGP):
+
+```bash
+sh ./gradlew assembleDebug test
+```
+
+Un clon limpio lo compila y pasa los tests **sin** `local.properties` (el `BASE_URL` por
+defecto es el del emulador) y **sin** `keystore.properties`. Sí necesita un
+`app/google-services.json` para el plugin de Firebase: el de verdad no se versiona, y el CI
+genera uno de mentira con el `applicationId` `com.gymprofit.app`.
+
+El **release** se firma con `keystore.properties` en esta carpeta (no se versiona):
+
+```properties
+storeFile=../gymprofit-release.keystore
+storePassword=…
+keyAlias=…
+keyPassword=…
+```
+
+Sin ese fichero, empaquetar el release (`assembleRelease`, `bundleRelease`) falla al empezar
+con un mensaje que lo dice, en vez de sacar un APK sin firmar que no se instala encima del
+repartido.
+
 ---
 
 ## Arquitectura

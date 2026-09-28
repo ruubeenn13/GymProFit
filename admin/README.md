@@ -29,23 +29,48 @@ Para añadir un icono: descargar el SVG de Material Symbols Rounded (`https://ra
 
 `wrangler.jsonc` publica `dist/` como Worker **gymprofit-admin**, sin código propio: las rutas que no son un archivo devuelven `index.html` (modo SPA). Sin `workers.dev` ni URLs de previsualización; el dominio es `admin.gymprofit.app`. Las cabeceras de seguridad están en `public/_headers`: CSP que solo deja conectar con `https://api.gymprofit.app`, sin marcos (`frame-ancestors 'none'`), `nosniff` y `Referrer-Policy: no-referrer`.
 
-Un push **no** despliega nada hasta que el repositorio esté conectado (paso 1). Antes de conectarlo, la API tiene que estar desplegada con la fase 1 (CORS para `https://admin.gymprofit.app` y las rutas `/admin/...`).
+Publicada el 2026-09-28. Desde entonces **cada push a `main` despliega** por Workers Builds. Lo que sigue es cómo se montó, en este orden, con lo que salió mal la primera vez.
 
-### Lo que tiene que hacer el propietario en Cloudflare
+### 1 · Primero, Cloudflare Access
 
-1. **Conectar el repositorio en Workers Builds.** Workers y Pages → Crear → *Import a repository* → `ruubeenn13/GymProFit`.
-   - Nombre del proyecto: `gymprofit-admin` (tiene que coincidir con `name` de `wrangler.jsonc`).
-   - Rama de producción: `main`.
-   - **Directorio raíz: `admin`**.
-   - Comando de compilación: `npm ci && npm run build`.
-   - Comando de despliegue: `npx wrangler deploy`.
-   - Desactivar las compilaciones de ramas que no son `main` (*non-production branch builds*): no se quieren versiones de previsualización.
-2. **El dominio.** Lo da de alta el propio `wrangler deploy` por `routes` (`custom_domain: true`), porque la zona `gymprofit.app` está en la misma cuenta. Comprobar en el Worker → *Settings* → *Domains & Routes* que aparece `admin.gymprofit.app` y que `workers.dev` y *Preview URLs* están desactivados.
-3. **Cloudflare Access delante de `admin.gymprofit.app`, solo para tu correo.** Zero Trust → Access → Applications → *Add an application* → *Self-hosted*.
-   - Dominio: `admin.gymprofit.app` (toda la ruta).
-   - Proveedor de identidad: Google (o el código de un solo uso por correo).
-   - Política *Allow* con la regla *Emails* igual a tu correo, y nada más.
-   - Duración de la sesión: la que prefieras (24 h es razonable).
-   - Comprobar en una ventana privada que la página pide Access antes de enseñar Entrada.
+Antes de que exista el Worker, para que `admin.gymprofit.app` no esté abierto ni un minuto.
+
+1. Zero Trust → **Access controls → Applications → Create new application → Self-hosted and private**.
+2. Dominio: `admin.gymprofit.app` (toda la ruta).
+3. Política **«Administradores»**, acción *Allow*, con **Include → Emails**: los correos de los administradores, y nada más.
+4. Duración de la sesión: **24 h**.
+5. **El código por correo (One-time PIN) no viene activado en las cuentas nuevas**: se añade en Zero Trust → **Integraciones → Proveedores de identidad**. Sin él, Access no tiene con qué pedir la identidad.
+6. Comprobar en una ventana privada que la página pide Access antes de enseñar Entrada.
+
+### 2 · Después, el Worker
+
+1. **Workers & Pages → Create application → Import a repository.** No el enlace de Pages: eso crea un proyecto de Pages, no un Worker.
+   - Repositorio `ruubeenn13/GymProFit`, nombre **`gymprofit-admin`** (tiene que coincidir con `name` de `wrangler.jsonc`), rama de producción `main`.
+   - **Si falla la conexión con GitHub**: desinstalar la app «Cloudflare Workers and Pages» en GitHub (Settings → Applications, en *Installed GitHub Apps* y en *Authorized GitHub Apps*) y volver a conectar, dándole acceso **solo a este repositorio**.
+2. **El formulario de creación no tiene directorio raíz.** Se crea como salga y se corrige justo después, en el Worker → **Settings → Build**:
+   - **Producción**: directorio raíz **`admin`**; compilación **`npm ci && npm run build`**; despliegue **`npx wrangler deploy`**.
+   - **Previews Base**: vistas previas **apagadas**.
+3. En el Worker → **Settings → Dominios**: `workers.dev` y *Preview URLs* **apagados**. `admin.gymprofit.app` lo da de alta el propio `wrangler deploy` por `routes` (`custom_domain: true`), porque la zona `gymprofit.app` está en la misma cuenta.
+
+**Por qué ese orden importa.** El primer despliegue corrió en la raíz del repositorio: `wrangler` no encontró `wrangler.jsonc`, se inventó una configuración, **subió `admin/` entera con `node_modules`** y dejó **`workers.dev` público**, sin Access delante. Tras corregir el directorio raíz y apagar `workers.dev` a mano, el siguiente despliegue salió bien.
+
+### Cómo se ve un despliegue bueno
+
+En el registro de la compilación:
+
+- `Read 21 files from … admin/dist` (21 el 28-09; si la web cambia, cambia el número. Lo que importa es que lea de `admin/dist`, no de la raíz).
+- **Ningún aviso** sobre `workers_dev`.
+- Entre los *triggers*, **`admin.gymprofit.app (custom domain)`**.
+
+Si falta cualquiera de las tres, el directorio raíz o `wrangler.jsonc` no se están usando: parar y revisar el paso 2.
+
+### Dar de alta a otro administrador
+
+Hacen falta **los dos sitios**:
+
+1. Su correo en la política «Administradores» de Access.
+2. El rol **ADMIN** en su cuenta de GymProFit (en esta web, Usuarios → su ficha → cambiar rol).
+
+Para quitarlo, en los dos sitios también: si solo se quita uno, el otro sigue concedido y basta con volver a darle el primero para que entre.
 
 Access es la primera cerradura; la segunda es la cuenta ADMIN de GymProFit en Entrada, y la tercera, la que manda, la API, que exige ADMIN en cada ruta `/admin`.
