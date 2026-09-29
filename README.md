@@ -392,11 +392,11 @@ MariaDB en `localhost:3308` en desarrollo (base de datos `gymprofit_db`); **MySQ
 |---|---|
 | Java 11 | Lenguaje principal |
 | Android SDK 36 (minSdk 24) | Plataforma objetivo |
-| Retrofit2 + OkHttp3 + Gson | Cliente HTTP tipado (interceptor de token + authenticator de refresh) |
-| Firebase (BoM 34.15.0) | Cloud Messaging (push) + Analytics |
-| Material Design 3 | Componentes visuales y temas |
-| EncryptedSharedPreferences (security-crypto) | Persistencia cifrada de tokens y datos de sesión |
-| Gradle 8.13 | Build system (minify/R8 en release) |
+| Retrofit 3 + OkHttp 4.12 + Gson 2.14 | Cliente HTTP tipado (interceptor de token + authenticator de refresh) |
+| Firebase (BoM 34.19.0) | Cloud Messaging (push), Analytics y Crashlytics |
+| Material Components 1.14 (Material Design 3) | Componentes visuales y temas claro/oscuro |
+| EncryptedSharedPreferences (security-crypto 1.1.0) | Persistencia cifrada de tokens y datos de sesión |
+| Gradle 9.8 + plugin de Android 9.2.1 | Build system (minify/R8 en release); pide JDK 17 o superior |
 
 ### API REST
 

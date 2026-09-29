@@ -20,11 +20,11 @@
 |---|---|
 | Java 11 | Lenguaje |
 | Android SDK 36 (minSdk 24) | Plataforma objetivo |
-| HttpURLConnection + AsyncTask | Cliente HTTP (arquitectura UD06 requerida por el profesor) |
-| org.json | Parseo JSON nativo Android — sin dependencias externas |
-| Material Design 3 | Componentes visuales y temas (claro/oscuro) |
-| SharedPreferences | Persistencia local del token JWT y configuración |
-| Gradle 8.13 | Build system |
+| Retrofit 3 + OkHttp 4.12 + Gson 2.14 | Cliente HTTP tipado por interfaces (`network/*Api`), con el token por interceptor en `ApiClient` |
+| Material Components 1.14 (Material Design 3) | Componentes visuales y temas (claro/oscuro) |
+| EncryptedSharedPreferences (security-crypto 1.1.0) | Token JWT y datos de sesión cifrados, siempre a través de `PreferencesManager` |
+| Firebase (BoM 34.19.0) | Push, Analytics y Crashlytics |
+| Gradle 9.8 + plugin de Android 9.2.1 | Build system |
 
 ---
 
@@ -32,8 +32,8 @@
 
 ### 1. Requisitos previos
 
-- Android Studio Hedgehog o superior
-- JDK 11
+- Android Studio compatible con el plugin de Android 9.2 (Hedgehog ya no basta)
+- JDK 17 o superior (lo pide el plugin de Android; el código compila a Java 11)
 - API en ejecución en `localhost:8080` (ver `api/gymprofit-api/README.md`)
 
 ### 2. Crear `local.properties`
