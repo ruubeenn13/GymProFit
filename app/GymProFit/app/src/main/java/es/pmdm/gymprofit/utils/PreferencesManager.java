@@ -202,34 +202,65 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
     public String getNombre() { return prefs.getString(PREFIJO_NOMBRE + getUsername(), ""); }
 
     public void saveNivel(String nivel) { editor.putString(KEY_NIVEL, nivel); editor.apply(); }
-    public String getNivel() { return prefs.getString(KEY_NIVEL, ""); }
+    // Nivel, objetivo, peso, altura y edad: como el sexo, el de otra cuenta no se usa (GP-129).
+    public String getNivel() { return perfilUsable() ? prefs.getString(KEY_NIVEL, "") : ""; }
 
     public void saveObjetivo(String objetivo) { editor.putString(KEY_OBJETIVO, objetivo); editor.apply(); }
-    public String getObjetivo() { return prefs.getString(KEY_OBJETIVO, ""); }
+    public String getObjetivo() { return perfilUsable() ? prefs.getString(KEY_OBJETIVO, "") : ""; }
 
     // Sexo y actividad (GP-111). Los getters dan el valor por defecto si lo guardado es
     // de otra cuenta del mismo móvil: para la que ha entrado es como si no hubiera nada.
-    @Override
     public void saveSexo(String sexo) { editor.putString(KEY_SEXO, sexo); editor.apply(); }
     public String getSexo() { return perfilUsable() ? prefs.getString(KEY_SEXO, "HOMBRE") : "HOMBRE"; }
 
-    @Override
     public void saveActividad(String actividad) { editor.putString(KEY_ACTIVIDAD, actividad); editor.apply(); }
     public String getActividad() { return perfilUsable() ? prefs.getString(KEY_ACTIVIDAD, "MODERADO") : "MODERADO"; }
 
-    /** El sexo tal cual está guardado, o null si nunca se eligió en este móvil. */
-    @Nullable @Override
-    public String getSexoGuardado() { return prefs.getString(KEY_SEXO, null); }
+    // Clave de las preferencias de cada campo del perfil que se cruza con la API.
+    private static String clave(PerfilCuenta.Campo campo) {
+        switch (campo) {
+            case SEXO:      return KEY_SEXO;
+            case ACTIVIDAD: return KEY_ACTIVIDAD;
+            case PESO:      return KEY_PESO;
+            case ALTURA:    return KEY_ALTURA;
+            case EDAD:      return KEY_EDAD;
+            case OBJETIVO:  return KEY_OBJETIVO;
+            default:        return KEY_NIVEL;
+        }
+    }
 
-    /** La actividad tal cual está guardada, o null si nunca se eligió en este móvil. */
+    /**
+     * El valor guardado tal cual, como texto, o null si la clave no existe: así se
+     * distingue un valor elegido del valor por defecto que dan los getters.
+     */
     @Nullable @Override
-    public String getActividadGuardada() { return prefs.getString(KEY_ACTIVIDAD, null); }
+    public String leer(@NonNull PerfilCuenta.Campo campo) {
+        String k = clave(campo);
+        if (!prefs.contains(k)) return null;
+        switch (campo) {
+            case PESO:
+            case ALTURA: return String.valueOf(prefs.getFloat(k, 0f));
+            case EDAD:   return String.valueOf(prefs.getInt(k, 0));
+            default:
+                String v = prefs.getString(k, "");
+                return v.isEmpty() ? null : v;
+        }
+    }
 
     @Override
-    public void borrarSexo() { editor.remove(KEY_SEXO); editor.apply(); }
+    public void guardar(@NonNull PerfilCuenta.Campo campo, @NonNull String valor) {
+        String k = clave(campo);
+        switch (campo) {
+            case PESO:
+            case ALTURA: editor.putFloat(k, Float.parseFloat(valor)); break;
+            case EDAD:   editor.putInt(k, Integer.parseInt(valor)); break;
+            default:     editor.putString(k, valor);
+        }
+        editor.apply();
+    }
 
     @Override
-    public void borrarActividad() { editor.remove(KEY_ACTIVIDAD); editor.apply(); }
+    public void borrar(@NonNull PerfilCuenta.Campo campo) { editor.remove(clave(campo)); editor.apply(); }
 
     /** Usuario de quien son el sexo y la actividad guardados; null en instalaciones anteriores. */
     @Nullable @Override
@@ -357,11 +388,11 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
     public boolean isGuest() { return "ROLE_GUEST".equals(getRol()); }
 
     public void savePeso(double peso)     { editor.putFloat(KEY_PESO, (float) peso); editor.apply(); }
-    public double getPeso()               { return prefs.getFloat(KEY_PESO, 70.0f); }
+    public double getPeso()               { return perfilUsable() ? prefs.getFloat(KEY_PESO, 70.0f) : 70.0; }
 
     public void saveAltura(double altura) { editor.putFloat(KEY_ALTURA, (float) altura); editor.apply(); }
-    public double getAltura()             { return prefs.getFloat(KEY_ALTURA, 170.0f); }
+    public double getAltura()             { return perfilUsable() ? prefs.getFloat(KEY_ALTURA, 170.0f) : 170.0; }
 
     public void saveEdad(int edad)        { editor.putInt(KEY_EDAD, edad); editor.apply(); }
-    public int getEdad()                  { return prefs.getInt(KEY_EDAD, 25); }
+    public int getEdad()                  { return perfilUsable() ? prefs.getInt(KEY_EDAD, 25) : 25; }
 }

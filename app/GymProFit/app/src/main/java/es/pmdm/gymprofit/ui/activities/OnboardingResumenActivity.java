@@ -19,6 +19,7 @@ import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.utils.CalculadoraNutricional;
 import es.pmdm.gymprofit.utils.NombreVisible;
 import es.pmdm.gymprofit.utils.Numeros;
+import es.pmdm.gymprofit.utils.PerfilCuenta;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
 import es.pmdm.gymprofit.utils.UIHelper;
@@ -86,9 +87,14 @@ public class OnboardingResumenActivity extends AppCompatActivity {
         // si el borrador viniese de una versión anterior o quedara a medias.
         Double pesoLeido = Numeros.decimal(prefs.getBorradorPeso(), 30, 300);
         double peso = (pesoLeido != null) ? pesoLeido : 70;
-        prefs.savePeso(peso);
-        prefs.saveAltura(altura);
-        prefs.saveEdad(edad);
+        // Se guarda solo lo contestado (GP-129): el 70, el 170 y el 25 de arriba son para
+        // el cálculo, y una clave guardada cuenta como elegida y se sube a la API al entrar.
+        PerfilCuenta.guardarOpcional(prefs, PerfilCuenta.Campo.PESO,
+                pesoLeido == null ? null : String.valueOf(pesoLeido));
+        PerfilCuenta.guardarOpcional(prefs, PerfilCuenta.Campo.ALTURA,
+                String.valueOf(prefs.getBorradorAltura()));
+        PerfilCuenta.guardarOpcional(prefs, PerfilCuenta.Campo.EDAD,
+                String.valueOf(prefs.getBorradorEdad()));
         if (!nivel.isEmpty()) prefs.saveNivel(nivel);
         boolean esHombre = "HOMBRE".equals(sexo);
 
