@@ -130,6 +130,10 @@ public class SecurityConfig {
                                 // GUEST: solo GET en endpoints públicos
                                 .requestMatchers(HttpMethod.GET, "/ejercicios/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.GET, "/rutinas/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
+                                // Programas (GP-074): el catálogo se lee como el de rutinas; seguir
+                                // uno crea rutinas del usuario, y eso el invitado no puede.
+                                .requestMatchers(HttpMethod.GET, "/programas", "/programas/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
+                                .requestMatchers(HttpMethod.POST, "/programas/*/seguir").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.POST, "/alimentos/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.DELETE, "/alimentos/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.PATCH, "/alimentos/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())

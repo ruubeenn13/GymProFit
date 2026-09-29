@@ -11,6 +11,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,6 +36,13 @@ class DtoSinSecretosEnToStringTest {
     // y «codigo», que en los DTO solo es el código de recuperación de ResetPasswordDTO.
     private static final Pattern SENSIBLE =
             Pattern.compile("(?i).*(password|contrasena|token|secret).*|codigo");
+
+    // Campos que casan con el patrón y NO son secretos, uno a uno y con su clase: el
+    // código de un programa o de una plantilla es su id público en el catálogo (GP-074).
+    // Lista cerrada a propósito: un «codigo» nuevo en otro DTO sigue saltando.
+    private static final Set<String> NO_SENSIBLES = Set.of(
+            "com.gymprofit.api.dto.entity.programa.ProgramaDTO.codigo",
+            "com.gymprofit.api.dto.entity.programa.RutinaConEjerciciosDTO.codigo");
 
     private static final String MARCA = "SECRETO-GP115-NO-DEBE-SALIR";
 
@@ -89,7 +97,8 @@ class DtoSinSecretosEnToStringTest {
             for (Field campo : c.getDeclaredFields()) {
                 if (campo.getType() == String.class
                         && !Modifier.isStatic(campo.getModifiers())
-                        && SENSIBLE.matcher(campo.getName()).matches()) {
+                        && SENSIBLE.matcher(campo.getName()).matches()
+                        && !NO_SENSIBLES.contains(c.getName() + "." + campo.getName())) {
                     campos.add(campo);
                 }
             }

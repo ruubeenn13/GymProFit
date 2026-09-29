@@ -54,6 +54,7 @@ class BorradoCuentaTest extends AbstractOwnershipTest {
             "notificaciones",
             "objetivos_personales",
             "password_reset_codigos",
+            "programas_usuario",
             "progreso_ejercicios",
             "refresh_tokens",
             "rutinas",
@@ -145,6 +146,22 @@ class BorradoCuentaTest extends AbstractOwnershipTest {
                 VALUES ('Plantilla del sistema', 'PRINCIPIANTE', NULL)""");
         ejecutar("INSERT INTO rutina_ejercicio (rutina_id, ejercicio_id) VALUES (%d, %d)"
                 .formatted(plantillaId, ejercicioId));
+
+        // --- Un programa que sigue (GP-074), con su copia de la plantilla ------
+        // El programa y la plantilla son del catálogo y sobreviven; la fila de
+        // programas_usuario y la copia son suyas.
+        Integer programaId = insertar("""
+                INSERT INTO programas (codigo, nombre, nivel, equipamiento, dias_min, dias_max)
+                VALUES ('TEST-BORRADO', 'Programa de prueba', 'INTERMEDIO', 'GIMNASIO', 3, 3)""");
+        Integer sigueId = insertar("""
+                INSERT INTO programas_usuario (usuario_id, programa_id, minutos, fecha_inicio)
+                VALUES (%d, %d, 45, NOW())""".formatted(owner.getId(), programaId));
+        Integer copiaId = insertar("""
+                INSERT INTO rutinas (nombre, nivel, usuario_id, plantilla_id, programa_usuario_id)
+                VALUES ('Copia de la plantilla', 'INTERMEDIO', %d, %d, %d)"""
+                .formatted(owner.getId(), plantillaId, sigueId));
+        ejecutar("INSERT INTO rutina_ejercicio (rutina_id, ejercicio_id) VALUES (%d, %d)"
+                .formatted(copiaId, ejercicioId));
 
         // --- Filas cruzadas de OTRO usuario ---------------------------------
         // Estas son las que la aplicación correcta no deja crear. Se insertan a mano
@@ -239,6 +256,8 @@ class BorradoCuentaTest extends AbstractOwnershipTest {
                 .as("la plantilla del sistema").isOne();
         assertThat(contar("SELECT COUNT(*) FROM rutina_ejercicio WHERE rutina_id = " + plantillaId))
                 .as("los ejercicios de la plantilla").isOne();
+        assertThat(contar("SELECT COUNT(*) FROM programas WHERE codigo = 'TEST-BORRADO'"))
+                .as("el programa del catálogo que seguía").isOne();
     }
 
     @Test

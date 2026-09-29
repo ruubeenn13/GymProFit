@@ -130,6 +130,9 @@ public class BorradoCuentaService implements IBorradoCuentaService {
         // usuario_id NULL: en SQL, NULL = :id no es cierto. Las plantillas se quedan.
         borrar("Rutinas", "DELETE FROM Rutina r WHERE r.usuario.id = :id", usuarioId);
 
+        // Después de las rutinas: sus copias de programa apuntan a estas filas (GP-074).
+        borrar("Programas que sigue", "DELETE FROM ProgramaUsuario pu WHERE pu.usuario.id = :id", usuarioId);
+
         // --- Nutrición -----------------------------------------------------
         borrar("Líneas de sus comidas", """
                 DELETE FROM AlimentoComida ac WHERE ac.comida.id IN (
