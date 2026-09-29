@@ -9,8 +9,8 @@ import android.content.res.Configuration;
 // grande de forma uniforme, incluidos los textSize hardcodeados en los layouts
 // (fontScale multiplica la conversión sp→px). Se aplica en attachBaseContext de
 // las Activities. Respeta además la escala del sistema (accesibilidad): se
-// MULTIPLICA sobre la del usuario, no se reemplaza. La barra de navegación queda
-// excluida porque sus etiquetas se miden en dp (no en sp).
+// MULTIPLICA sobre la del usuario, no se reemplaza. Las etiquetas de la barra de
+// navegación siguen a la del sistema solo hasta 1,3 (GP-128, BarraNavegacion).
 // ============================================================
 public final class ScaleUtils {
 

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.TooltipCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.view.AccessibilityDelegateCompat;
 import androidx.core.view.ViewCompat;
@@ -39,6 +40,9 @@ import es.pmdm.gymprofit.utils.NavTabs;
 // El hueco de la barra de gestos o de botones del sistema se suma aquí y en ningún
 // otro sitio (aplicarInsetInferior): la barra no se superpone al contenido, así que
 // ninguna pestaña tiene que reservar nada (GP-059).
+//
+// Las etiquetas crecen con la letra del sistema solo hasta 1,3 (GP-128): más grandes
+// no caben. Cada botón enseña su nombre en un tooltip al mantenerlo pulsado.
 // ============================================================
 public class BarraNavegacion extends LinearLayout {
 
@@ -83,6 +87,7 @@ public class BarraNavegacion extends LinearLayout {
         normal = ResourcesCompat.getFont(c, R.font.barlow);
         negrita = Typeface.create(normal, Typeface.BOLD);
 
+        float tamEtiqueta = tamanoEtiqueta();
         int[] ids = {R.id.tabInicio, R.id.tabEntrenar, R.id.tabNutricion, R.id.tabProgreso};
         for (int i = 0; i < ids.length; i++) {
             final int indice = i;
@@ -90,7 +95,10 @@ public class BarraNavegacion extends LinearLayout {
             pestanas[i] = p;
             TextView etiqueta = p.findViewById(R.id.tvEtiqueta);
             etiqueta.setText(ETIQUETAS[i]);
+            etiqueta.setTextSize(TypedValue.COMPLEX_UNIT_PX, tamEtiqueta);
             p.setContentDescription(c.getString(ETIQUETAS[i]));
+            // Mantener pulsado enseña el nombre: a letra grande la etiqueta se queda en 1,3.
+            TooltipCompat.setTooltipText(p, c.getString(ETIQUETAS[i]));
             p.setOnClickListener(v -> { if (oyente != null) oyente.onPestana(indice); });
             ViewCompat.setAccessibilityDelegate(p, new AccessibilityDelegateCompat() {
                 @Override
@@ -120,7 +128,33 @@ public class BarraNavegacion extends LinearLayout {
 
         btnAcciones = findViewById(R.id.btnAcciones);
         btnAcciones.setOnClickListener(v -> { if (oyente != null) oyente.onAcciones(); });
+        // El «+» no tiene etiqueta: su nombre, al mantenerlo pulsado, como las pestañas.
+        TooltipCompat.setTooltipText(btnAcciones, btnAcciones.getContentDescription());
         pintarAcciones(false);
+    }
+
+    /** Hasta dónde crecen las etiquetas con la letra del sistema (GP-128). */
+    static final float ESCALA_MAXIMA_ETIQUETA = 1.3f;
+
+    /**
+     * Escala de las etiquetas de la barra para una escala de letra del sistema (GP-128).
+     *
+     * <p>A letra grande no caben ni en dos líneas —«Nutrición» es una sola palabra—, así
+     * que siguen a la del sistema hasta 1,3 y ahí se quedan, como la barra de iOS. El
+     * nombre entero lo dan el tooltip al mantener pulsado y TalkBack, que lo lee siempre.
+     */
+    public static float escalaEtiqueta(float escalaSistema) {
+        return Math.min(escalaSistema, ESCALA_MAXIMA_ETIQUETA);
+    }
+
+    // Tamaño de las etiquetas en px: el de text_eyebrow a la escala de escalaEtiqueta().
+    // Se calcula a mano porque un tamaño en sp crece sin tope con la letra del sistema.
+    private float tamanoEtiqueta() {
+        TypedValue valor = new TypedValue();
+        getResources().getValue(R.dimen.text_eyebrow, valor, true);
+        float sp = TypedValue.complexToFloat(valor.data);
+        float escala = escalaEtiqueta(getResources().getConfiguration().fontScale);
+        return sp * getResources().getDisplayMetrics().density * escala;
     }
 
     public void setOyente(Oyente oyente) { this.oyente = oyente; }

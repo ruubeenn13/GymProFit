@@ -211,11 +211,17 @@
     </style>
 
     <!-- Pestaña de sección de Progreso: cuarta parte del carril, 48 dp. -->
+    <!-- wrap_content y no 0dp (GP-128): dentro del carril que se desplaza, un 0dp con
+         peso se reparte a partes iguales y recorta la pestaña larga. Con wrap_content
+         cada una mide su texto, y el peso solo reparte lo que sobra cuando caben. -->
     <style name="Widget.GymProFit.PestanaSeccion" parent="">
-        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
         <item name="android:minHeight">48dp</item>
+        <!-- Aire a los lados: a letra grande la pestaña mide lo que su texto (GP-128). -->
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
         <item name="android:gravity">center</item>
         <item name="android:maxLines">1</item>
         <item name="android:clickable">true</item>

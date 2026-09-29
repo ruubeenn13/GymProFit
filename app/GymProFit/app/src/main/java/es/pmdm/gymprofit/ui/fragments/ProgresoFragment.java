@@ -6,6 +6,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.AttrRes;
@@ -184,6 +185,12 @@ public class ProgresoFragment extends BaseFragment {
                     : com.google.android.material.R.attr.colorOnSurfaceVariant));
             pestanas[i].setTypeface(null, esta ? android.graphics.Typeface.BOLD : android.graphics.Typeface.NORMAL);
         }
+
+        // A letra grande el carril se desplaza (GP-128): la pestaña elegida, a la vista.
+        HorizontalScrollView carril = findViewById(R.id.carrilPestanasProgreso);
+        View elegida = pestanas[nueva];
+        carril.post(() -> carril.smoothScrollTo(
+                Math.max(0, elegida.getLeft() - (carril.getWidth() - elegida.getWidth()) / 2), 0));
 
         if ((abrirPeso || abrirPesoPendiente) && visible instanceof MedidasFragment) {
             abrirPesoPendiente = false;
