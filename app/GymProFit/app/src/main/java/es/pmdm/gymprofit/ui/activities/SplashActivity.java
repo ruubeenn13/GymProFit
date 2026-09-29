@@ -10,6 +10,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import androidx.appcompat.app.AppCompatActivity;
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.network.PerfilRemoto;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 
 // ============================================================
@@ -88,6 +89,9 @@ public class SplashActivity extends AppCompatActivity {
      */
     private Class<?> siguientePantalla() {
         if (!prefsManager.haySesion()) return LoginActivity.class;
+
+        // Con sesión, el perfil de la API se cruza con el del móvil sin esperar (GP-111).
+        PerfilRemoto.alArrancar(this);
 
         // Los invitados no tienen onboarding: entran a mirar la app sin configurar nada.
         if (prefsManager.isGuest()) return MainActivity.class;

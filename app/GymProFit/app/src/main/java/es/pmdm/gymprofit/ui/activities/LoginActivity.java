@@ -26,6 +26,7 @@ import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.auth.TokenResponse;
 import es.pmdm.gymprofit.model.usuario.Usuario;
 import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.PerfilRemoto;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.AuthApi;
 import es.pmdm.gymprofit.network.UsuarioApi;
@@ -219,6 +220,11 @@ public class LoginActivity extends AppCompatActivity {
             public void onOk(Usuario u) {
                 if (u != null) {
                     prefsManager.saveUsuarioId(u.getId());
+
+                    // Sexo y actividad de la API al móvil, o del móvil a la API si solo
+                    // están aquí (GP-111). Antes de marcar el onboarding: esa marca cuenta
+                    // para decidir de quién es el perfil de una instalación antigua.
+                    PerfilRemoto.alEntrar(LoginActivity.this, u);
 
                     // Registra el token FCM del dispositivo para recibir push (best-effort).
                     PushTokenManager.registrar(LoginActivity.this);

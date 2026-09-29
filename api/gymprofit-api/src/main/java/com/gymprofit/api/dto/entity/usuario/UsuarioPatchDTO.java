@@ -1,5 +1,7 @@
 package com.gymprofit.api.dto.entity.usuario;
 
+import com.gymprofit.api.enums.NivelActividad;
+import com.gymprofit.api.enums.Sexo;
 import com.gymprofit.api.enums.TipoObjetivo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,12 +21,17 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UsuarioPatchDTO implements Serializable {
+    // Nombre para mostrar (GP-116): se recorta; en blanco lo borra; más de 40 caracteres, 400.
+    private String nombre;
     private String email;
     private BigDecimal peso;
     private BigDecimal altura;
     private Integer edad;
     private String nivelExperiencia;
     private TipoObjetivo objetivo;
+    // GP-111. Enums: un valor fuera de la lista no se deserializa y da 400 antes de tocar nada.
+    private Sexo sexo;
+    private NivelActividad nivelActividad;
     // Sin "activo" a propósito (GP-083): el usuario no decide si su cuenta está activa.
     // Si un cliente lo manda, Jackson lo ignora como cualquier campo desconocido.
 }

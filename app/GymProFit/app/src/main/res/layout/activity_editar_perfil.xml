@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   activity_editar_perfil.xml — Pantalla de edición del perfil del usuario.
-  Formulario con peso, altura, edad, sexo, actividad, nivel y objetivo, con botón de
+  Formulario con nombre para mostrar (GP-116), peso, altura, edad, sexo, actividad, nivel y objetivo, con botón de
   guardado. Se abre desde Ajustes › Tus datos y objetivos (GP-105).
 -->
 <LinearLayout
@@ -30,6 +30,33 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp">
+
+            <!-- Nombre para mostrar (GP-116): opcional; en blanco se usa el de usuario.
+                 40 como la columna de la API; el contador avisa antes de llegar. -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilNombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp"
+                android:hint="@string/perfil_nombre"
+                app:helperText="@string/editar_perfil_nombre_ayuda"
+                app:counterEnabled="true"
+                app:counterMaxLength="40"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etNombre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName|textCapWords"
+                    android:maxLength="40"
+                    android:maxLines="1" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!-- El correo ya no está aquí: se cambia en Ajustes › Correo (GP-105). -->
             <com.google.android.material.textfield.TextInputLayout

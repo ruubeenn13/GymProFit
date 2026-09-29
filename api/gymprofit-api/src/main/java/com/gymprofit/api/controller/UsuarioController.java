@@ -244,10 +244,15 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarios);
     }
 
-    @Operation(summary = "Actualiza parcialmente un usuario")
+    @Operation(summary = "Actualiza parcialmente un usuario",
+            description = "Un campo null o ausente no se toca. nombre se recorta, de 1 a 40 caracteres, "
+                    + "y en blanco se borra (GP-116). sexo (HOMBRE, MUJER) y nivelActividad "
+                    + "(SEDENTARIO, LIGERO, MODERADO, ACTIVO) son opcionales (GP-111).")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuario actualizado",
                     content = @Content(schema = @Schema(implementation = UsuarioDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Un valor fuera de su lista, un nombre de más de 40 caracteres o un email distinto del actual",
+                    content = @Content(schema = @Schema(implementation = Response.class))),
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })

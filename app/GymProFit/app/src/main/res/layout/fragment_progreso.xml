@@ -114,16 +114,29 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Pestañas de sección: se quedan arriba al desplazar -->
-        <LinearLayout
-            android:id="@+id/pestanasProgreso"
+        <!-- Pestañas de sección: se quedan arriba al desplazar. Van en un carril que se
+             desplaza en horizontal (GP-128): con sitio, fillViewport lo estira al ancho y
+             las pestañas se reparten iguales; a letra grande, miden lo que su texto y el
+             carril se desplaza en vez de recortarlas. -->
+        <HorizontalScrollView
+            android:id="@+id/carrilPestanasProgreso"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginTop="14dp"
             android:layout_marginBottom="14dp"
+            android:fillViewport="true"
+            android:scrollbars="none"
+            android:requiresFadingEdge="horizontal"
+            android:fadingEdgeLength="24dp">
+
+        <LinearLayout
+            android:id="@+id/pestanasProgreso"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:baselineAligned="false"
             android:padding="4dp"
             android:background="@drawable/bg_pestanas_progreso">
 
@@ -132,6 +145,7 @@
             <TextView android:id="@+id/secMedidas" style="@style/Widget.GymProFit.PestanaSeccion" android:layout_marginStart="4dp" android:text="@string/seccion_medidas" />
             <TextView android:id="@+id/secHistorial" style="@style/Widget.GymProFit.PestanaSeccion" android:layout_marginStart="4dp" android:text="@string/seccion_historial" />
         </LinearLayout>
+        </HorizontalScrollView>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.fragment.app.FragmentContainerView

@@ -15,12 +15,17 @@ public class Usuario {
     // Identificador único del usuario en la base de datos
     private int id;
     private String username;
+    // Nombre para mostrar (GP-116); null si no tiene. Ver NombreVisible.
+    private String nombre;
     private String email;
     private String peso;
     private double altura;
     private int edad;
     private String nivelExperiencia;
     private String objetivo;
+    // GP-111: null si el usuario no los ha dicho (o la API es anterior a la 1.1.3).
+    private String sexo;
+    private String nivelActividad;
     private String fechaRegistro;
     // El listado admin (AdminUsuarioDTO) envía "activo" como Byte 0/1; el adaptador lo tolera.
     @JsonAdapter(BooleanNumericAdapter.class)
@@ -36,6 +41,9 @@ public class Usuario {
 
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
+
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
@@ -54,6 +62,12 @@ public class Usuario {
 
     public String getObjetivo() { return objetivo; }
     public void setObjetivo(String objetivo) { this.objetivo = objetivo; }
+
+    public String getSexo() { return sexo; }
+    public void setSexo(String sexo) { this.sexo = sexo; }
+
+    public String getNivelActividad() { return nivelActividad; }
+    public void setNivelActividad(String nivelActividad) { this.nivelActividad = nivelActividad; }
 
     public String getFechaRegistro() { return fechaRegistro; }
     public void setFechaRegistro(String fechaRegistro) { this.fechaRegistro = fechaRegistro; }

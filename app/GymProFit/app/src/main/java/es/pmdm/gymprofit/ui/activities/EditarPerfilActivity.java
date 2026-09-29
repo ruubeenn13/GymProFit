@@ -20,6 +20,7 @@ import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.utils.AvisoDescartar;
 import es.pmdm.gymprofit.utils.CalculadoraNutricional;
 import es.pmdm.gymprofit.utils.LoadingDialog;
+import es.pmdm.gymprofit.utils.NombreVisible;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
 import es.pmdm.gymprofit.utils.UIHelper;
@@ -28,11 +29,11 @@ import es.pmdm.gymprofit.utils.UiFeedback;
 // ============================================================
 // EditarPerfilActivity — tus datos y objetivos (GP-105: Ajustes › Tus datos y
 // objetivos).
-// Peso, altura y edad; sexo y actividad; objetivo y nivel. Guarda vía PATCH lo que
+// Nombre para mostrar (GP-116); peso, altura y edad; sexo y actividad; objetivo y nivel. Guarda vía PATCH lo que
 // guarda la API y recalcula las macros nutricionales locales con los datos nuevos.
 //
-// Sexo y actividad solo se elegían en el onboarding y viven en el teléfono: se
-// guardan donde entonces (PreferencesManager) y recalculan como entonces. El correo ya
+// Sexo y actividad van también a la API (GP-111) y se guardan en el teléfono, que es
+// de donde calcula las macros; el perfil del teléfono queda apuntado a esta cuenta. El correo ya
 // no está aquí: se cambia en Ajustes › Correo, con la contraseña (GP-083).
 // ============================================================
 public class EditarPerfilActivity extends AppCompatActivity {
@@ -44,11 +45,11 @@ public class EditarPerfilActivity extends AppCompatActivity {
     }
 
     private PreferencesManager prefsManager;
-    private TextInputEditText etPeso, etAltura, etEdad;
+    private TextInputEditText etNombre, etPeso, etAltura, etEdad;
     private Spinner spNivel, spObjetivo, spSexo, spActividad;
     // Cómo estaba el formulario al abrirlo (y al llegar el perfil): salir con algo
     // distinto pregunta antes de tirarlo (GP-108).
-    private String[] textosIniciales = {"", "", ""};
+    private String[] textosIniciales = {"", "", "", ""};
     private int[] seleccionIniciales = {0, 0, 0, 0};
     // Interfaz Retrofit tipada del dominio usuarios (etapa 2)
     private final UsuarioApi usuarioApi = ApiClient.service(UsuarioApi.class);
@@ -61,7 +62,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
     private static final String[] OBJETIVOS = {
             "PERDER_PESO", "GANAR_MASA_MUSCULAR", "MANTENER_PESO", "MEJORAR_FUERZA"
     };
-    // Valores guardados en el teléfono para sexo y actividad (los del onboarding).
+    // Valores de sexo y actividad, los mismos en el teléfono y en la API (GP-111).
     private static final String[] SEXOS = {"HOMBRE", "MUJER"};
     private static final String[] ACTIVIDADES = {
             CalculadoraNutricional.ACTIVIDAD_SEDENTARIO, CalculadoraNutricional.ACTIVIDAD_LIGERO,
@@ -75,6 +76,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
         prefsManager.applyTheme();
         setContentView(R.layout.activity_editar_perfil);
 
+        etNombre    = findViewById(R.id.etNombre);
         etPeso      = findViewById(R.id.etPeso);
         etAltura    = findViewById(R.id.etAltura);
         etEdad      = findViewById(R.id.etEdad);
@@ -83,6 +85,8 @@ public class EditarPerfilActivity extends AppCompatActivity {
         spSexo      = findViewById(R.id.spSexo);
         spActividad = findViewById(R.id.spActividad);
 
+        // Lo guardado en el móvil primero; lo de la API lo corrige al llegar.
+        etNombre.setText(prefsManager.getNombre());
         configurarSpinners();
         cargarDatosUsuario();
         guardarEstadoInicial();
@@ -118,11 +122,15 @@ public class EditarPerfilActivity extends AppCompatActivity {
             @Override
             public void onOk(Usuario u) {
                 if (u == null) return;
+                etNombre.setText(u.getNombre() == null ? "" : u.getNombre());
                 if (u.getPeso() != null && !u.getPeso().isEmpty()) etPeso.setText(u.getPeso());
                 if (u.getAltura() > 0) etAltura.setText(String.valueOf((int) u.getAltura()));
                 if (u.getEdad() > 0) etEdad.setText(String.valueOf(u.getEdad()));
                 seleccionarSpinner(spNivel, NIVELES, u.getNivelExperiencia());
                 seleccionarSpinner(spObjetivo, OBJETIVOS, u.getObjetivo());
+                // Lo de la API manda sobre lo del móvil (GP-111); sin ellos, lo del móvil.
+                seleccionarSpinner(spSexo, SEXOS, u.getSexo());
+                seleccionarSpinner(spActividad, ACTIVIDADES, u.getNivelActividad());
                 guardarEstadoInicial();
             }
 
@@ -139,12 +147,12 @@ public class EditarPerfilActivity extends AppCompatActivity {
     }
 
     private void guardarEstadoInicial() {
-        textosIniciales = new String[]{texto(etPeso), texto(etAltura), texto(etEdad)};
+        textosIniciales = new String[]{texto(etNombre), texto(etPeso), texto(etAltura), texto(etEdad)};
         seleccionIniciales = seleccion();
     }
 
     private boolean hayCambios() {
-        return AvisoDescartar.distintos(textosIniciales, etPeso.getText(), etAltura.getText(), etEdad.getText())
+        return AvisoDescartar.distintos(textosIniciales, etNombre.getText(), etPeso.getText(), etAltura.getText(), etEdad.getText())
                 || !java.util.Arrays.equals(seleccionIniciales, seleccion());
     }
 
@@ -173,8 +181,12 @@ public class EditarPerfilActivity extends AppCompatActivity {
     private void guardarPerfil() {
         int id = prefsManager.getUsuarioId();
         try {
-            // Un valor null BORRA el campo (Gson con serializeNulls).
+            // Un valor null no toca el campo: la API ignora los null del PATCH.
             Map<String, Object> body = new HashMap<>();
+
+            // En blanco borra el nombre (GP-116): la API ignora el null, no el vacío.
+            String nombre = NombreVisible.paraEnviar(etNombre.getText());
+            body.put("nombre", nombre);
 
             String pesoStr = etPeso.getText() != null ? etPeso.getText().toString().trim() : "";
             body.put("peso", pesoStr.isEmpty() ? null : new BigDecimal(pesoStr.replace(",", ".")));
@@ -187,12 +199,15 @@ public class EditarPerfilActivity extends AppCompatActivity {
 
             body.put("nivelExperiencia", NIVELES[spNivel.getSelectedItemPosition()]);
             body.put("objetivo", OBJETIVOS[spObjetivo.getSelectedItemPosition()]);
+            body.put("sexo", SEXOS[spSexo.getSelectedItemPosition()]);
+            body.put("nivelActividad", ACTIVIDADES[spActividad.getSelectedItemPosition()]);
 
             LoadingDialog.show(this);
             usuarioApi.patch(id, body).enqueue(new ApiCallback<Void>() {
                 @Override
                 public void onOk(Void response) {
                     LoadingDialog.hide(EditarPerfilActivity.this);
+                    prefsManager.saveNombre(prefsManager.getUsername(), nombre);
                     if (!pesoStr.isEmpty()) prefsManager.savePeso(Double.parseDouble(pesoStr.replace(",", ".")));
                     if (!alturaStr.isEmpty()) prefsManager.saveAltura(Double.parseDouble(alturaStr));
                     if (!edadStr.isEmpty()) prefsManager.saveEdad(Integer.parseInt(edadStr));
@@ -201,6 +216,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
                     prefsManager.saveNivel(NIVELES[spNivel.getSelectedItemPosition()]);
                     prefsManager.saveSexo(SEXOS[spSexo.getSelectedItemPosition()]);
                     prefsManager.saveActividad(ACTIVIDADES[spActividad.getSelectedItemPosition()]);
+                    prefsManager.apuntarDuenoPerfil(prefsManager.getUsername());
 
                     // Recalcular macros con los nuevos datos
                     ResultadoNutricional r = CalculadoraNutricional.calcular(prefsManager.getPeso(),

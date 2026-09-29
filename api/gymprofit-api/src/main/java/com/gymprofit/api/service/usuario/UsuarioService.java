@@ -57,6 +57,8 @@ public class UsuarioService implements IUsuarioService {
 
     // Tamaño máximo de la foto de perfil (5 MB): evita meter binarios enormes en la BD.
     private static final long MAX_FOTO_BYTES = 5 * 1024 * 1024;
+    // Largo máximo del nombre para mostrar (GP-116), el de la columna usuarios.nombre.
+    static final int NOMBRE_MAX = 40;
 
 
     // Carga el usuario por username para el proceso de autenticación de Spring Security.
@@ -279,6 +281,13 @@ public class UsuarioService implements IUsuarioService {
             }
         }
 
+        // Nombre para mostrar (GP-116): se valida antes de tocar nada. Los caracteres se
+        // cuentan como la columna VARCHAR(40) de utf8mb4, por puntos de código: un emoji es uno.
+        String nombre = patchDTO.getNombre() == null ? null : patchDTO.getNombre().strip();
+        if (nombre != null && nombre.codePointCount(0, nombre.length()) > NOMBRE_MAX) {
+            throw new InvalidDataException("error.nombre.largo", NOMBRE_MAX);
+        }
+
         // Mayúsculas aparte: la restricción única de la base tampoco las distingue.
         if (patchDTO.getEmail() != null
                 && !patchDTO.getEmail().trim().equalsIgnoreCase(usuario.getEmail())) {
@@ -291,6 +300,9 @@ public class UsuarioService implements IUsuarioService {
             if (patchDTO.getEdad() != null) usuario.setEdad(patchDTO.getEdad());
             if (nivel != null) usuario.setNivelExperiencia(nivel);
             if (patchDTO.getObjetivo() != null) usuario.setObjetivo(patchDTO.getObjetivo());
+            if (nombre != null) usuario.setNombre(nombre.isEmpty() ? null : nombre);
+            if (patchDTO.getSexo() != null) usuario.setSexo(patchDTO.getSexo());
+            if (patchDTO.getNivelActividad() != null) usuario.setNivelActividad(patchDTO.getNivelActividad());
 
             return usuarioMapper.toDTO(usuarioRepository.save(usuario));
         } catch (Exception e) {

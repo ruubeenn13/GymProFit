@@ -1,6 +1,8 @@
 package com.gymprofit.api.entity;
 
+import com.gymprofit.api.enums.NivelActividad;
 import com.gymprofit.api.enums.NivelExperiencia;
+import com.gymprofit.api.enums.Sexo;
 import com.gymprofit.api.enums.TipoObjetivo;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -44,6 +46,10 @@ public class Usuario implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    // Nombre para mostrar (GP-116), aparte del de usuario. Opcional, de 1 a 40 caracteres.
+    @Column(length = 40)
+    private String nombre;
+
     // Correo electrónico único del usuario.
     @Column(nullable = false, unique = true, length = 100)
     private String email;
@@ -68,6 +74,16 @@ public class Usuario implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(length = 50)
     private TipoObjetivo objetivo;
+
+    // Sexo para la fórmula de las calorías (GP-111). Opcional.
+    @Enumerated(EnumType.STRING)
+    @Column(length = 10)
+    private Sexo sexo;
+
+    // Actividad diaria fuera del gimnasio, el multiplicador de las calorías (GP-111). Opcional.
+    @Enumerated(EnumType.STRING)
+    @Column(name = "nivel_actividad", length = 20)
+    private NivelActividad nivelActividad;
 
     // Fecha en la que se registró el usuario.
     @Column(name = "fecha_registro")

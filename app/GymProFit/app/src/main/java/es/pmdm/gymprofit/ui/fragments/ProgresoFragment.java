@@ -6,6 +6,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.AttrRes;
@@ -40,6 +41,7 @@ import es.pmdm.gymprofit.ui.activities.AjustesActivity;
 import es.pmdm.gymprofit.ui.widget.FotoPerfil;
 import es.pmdm.gymprofit.utils.AvatarUtils;
 import es.pmdm.gymprofit.utils.LogrosVisibles;
+import es.pmdm.gymprofit.utils.NombreVisible;
 import es.pmdm.gymprofit.utils.UIHelper;
 
 // ============================================================
@@ -184,6 +186,12 @@ public class ProgresoFragment extends BaseFragment {
             pestanas[i].setTypeface(null, esta ? android.graphics.Typeface.BOLD : android.graphics.Typeface.NORMAL);
         }
 
+        // A letra grande el carril se desplaza (GP-128): la pestaña elegida, a la vista.
+        HorizontalScrollView carril = findViewById(R.id.carrilPestanasProgreso);
+        View elegida = pestanas[nueva];
+        carril.post(() -> carril.smoothScrollTo(
+                Math.max(0, elegida.getLeft() - (carril.getWidth() - elegida.getWidth()) / 2), 0));
+
         if ((abrirPeso || abrirPesoPendiente) && visible instanceof MedidasFragment) {
             abrirPesoPendiente = false;
             ((AppBarLayout) findViewById(R.id.appBarProgreso)).setExpanded(false, false);
@@ -204,14 +212,19 @@ public class ProgresoFragment extends BaseFragment {
 
     private void pintarAvatar() {
         if (!isAdded()) return;
-        AvatarUtils.pintar(findViewById(R.id.avatarProgreso), prefsManager.getUsername(),
+        AvatarUtils.pintar(findViewById(R.id.avatarProgreso), nombreVisible(),
                 prefsManager.getUsuarioId(), color(com.google.android.material.R.attr.colorOnPrimaryContainer));
     }
 
-    // El usuario no tiene un nombre aparte del de usuario: la API no guarda otro.
+    // El nombre para mostrar y, sin él, el de usuario (GP-116). El «@usuario» del
+    // subtítulo es siempre el de usuario.
+    private String nombreVisible() {
+        return NombreVisible.de(prefsManager.getNombre(), prefsManager.getUsername());
+    }
+
     private void pintarPerfil() {
         String username = prefsManager.getUsername();
-        ((TextView) findViewById(R.id.tvNombrePerfil)).setText(username);
+        ((TextView) findViewById(R.id.tvNombrePerfil)).setText(nombreVisible());
         pintarAvatar();
         pintarSubtitulo(username, prefsManager.getNivel(), prefsManager.getObjetivo());
 
@@ -221,7 +234,10 @@ public class ProgresoFragment extends BaseFragment {
             @Override
             public void onOk(Usuario u) {
                 if (u == null || !isAdded()) return;
-                ((TextView) findViewById(R.id.tvNombrePerfil)).setText(u.getUsername());
+                // Puede haberse cambiado desde otro móvil: se guarda la copia y se repinta.
+                prefsManager.saveNombre(prefsManager.getUsername(), u.getNombre());
+                ((TextView) findViewById(R.id.tvNombrePerfil)).setText(NombreVisible.de(u.getNombre(), u.getUsername()));
+                pintarAvatar();
                 pintarSubtitulo(u.getUsername(), u.getNivelExperiencia(), u.getObjetivo());
             }
             @Override
