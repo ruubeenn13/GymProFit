@@ -8,6 +8,7 @@
   una fila por serie (item_serie) que rellena el adapter.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -15,33 +16,38 @@
     android:paddingTop="12dp"
     android:paddingBottom="14dp">
 
-    <!-- Cabecera: nombre del ejercicio y lo que pedía la rutina -->
-    <LinearLayout
+    <!-- Cabecera: nombre del ejercicio y, debajo, lo que pedía la rutina con su pauta
+         (lote 1.2.1). Una debajo de otra: a letra grande el nombre parte línea y la
+         pauta no se corta. -->
+    <TextView
+        android:id="@+id/tvNombreEjercicioPeso"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:textSize="@dimen/text_body"
+        android:textStyle="bold"
+        android:textColor="?attr/colorOnSurface" />
 
-        <TextView
-            android:id="@+id/tvNombreEjercicioPeso"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="@dimen/text_body"
-            android:textStyle="bold"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:textColor="?attr/colorOnSurface" />
+    <TextView
+        android:id="@+id/tvSeriesRepsPeso"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:gravity="center_vertical"
+        android:drawablePadding="4dp"
+        android:textSize="@dimen/text_caption"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        app:drawableTint="?attr/colorOnSurfaceVariant" />
 
-        <TextView
-            android:id="@+id/tvSeriesRepsPeso"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:textSize="@dimen/text_caption"
-            android:textColor="?attr/colorOnSurfaceVariant" />
-
-    </LinearLayout>
+    <!-- Por lado: qué se apunta en cada serie («Reps por pierna») -->
+    <TextView
+        android:id="@+id/tvColumnaSeries"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:textSize="@dimen/text_caption"
+        android:textStyle="bold"
+        android:textColor="?attr/colorOnSurface"
+        android:visibility="gone" />
 
     <!-- Una fila por serie; las mete el adapter -->
     <LinearLayout

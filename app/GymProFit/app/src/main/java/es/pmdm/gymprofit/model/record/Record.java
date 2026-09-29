@@ -20,6 +20,8 @@ public class Record implements Serializable {
     public static final String TIPO_PESO = "PESO";
     /** Ejercicio sin peso: la marca son las repeticiones. */
     public static final String TIPO_REPETICIONES = "REPETICIONES";
+    /** Ejercicio por tiempo, como la plancha: la marca son los segundos (GP-125). */
+    public static final String TIPO_TIEMPO = "TIEMPO";
 
     private int ejercicioId;
     private String ejercicioNombre;
@@ -33,6 +35,9 @@ public class Record implements Serializable {
     private Integer sesionId;
     private Double pesoAnterior;
     private Integer repeticionesAnterior;
+    // Por tiempo (GP-125): los segundos de la marca y los de la que superó.
+    private Integer segundos;
+    private Integer segundosAnterior;
 
     public int getEjercicioId() { return ejercicioId; }
     public String getMusculo() { return musculo; }
@@ -45,11 +50,30 @@ public class Record implements Serializable {
     @Nullable public Double getPesoAnterior() { return pesoAnterior; }
     @Nullable public Integer getRepeticionesAnterior() { return repeticionesAnterior; }
 
-    /** @return {@code true} si la marca son kilos y no solo repeticiones. */
-    public boolean esDePeso() { return !TIPO_REPETICIONES.equals(tipo); }
+    public int getSegundos() { return segundos == null ? 0 : segundos; }
+    @Nullable public Integer getSegundosAnterior() { return segundosAnterior; }
+
+    /**
+     * @return {@code true} si la marca son kilos. Antes era «todo lo que no sea de
+     * repeticiones», y una marca por tiempo salía como «0 kg» (GP-125).
+     */
+    public boolean esDePeso() { return TIPO_PESO.equals(tipo); }
+
+    /** @return {@code true} si la marca son segundos (GP-125). */
+    public boolean esDeTiempo() { return TIPO_TIEMPO.equals(tipo); }
 
     /** @return {@code true} si trae la marca que superó (un récord, no una primera marca). */
-    public boolean tieneAnterior() { return pesoAnterior != null || repeticionesAnterior != null; }
+    public boolean tieneAnterior() {
+        return esDeTiempo() ? segundosAnterior != null : pesoAnterior != null || repeticionesAnterior != null;
+    }
+
+    // Para construir casos por tiempo en los tests.
+    public static Record deTiempo(int ejercicioId, String nombre, int segundos, @Nullable Integer anterior) {
+        Record r = new Record(ejercicioId, nombre, null, null, TIPO_TIEMPO, null, 0, null);
+        r.segundos = segundos;
+        r.segundosAnterior = anterior;
+        return r;
+    }
 
     /**
      * Nombre del ejercicio en el idioma de la app.

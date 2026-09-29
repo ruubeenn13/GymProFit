@@ -95,7 +95,35 @@ public class EjercicioSeleccionadoAdapter
         }
 
 
-        h.chipSeriesReps.setText(item.getSeries() + " × " + item.getRepeticiones());
+        // La pauta (GP-074/GP-125): «3 × 8–12», «3 × 30–60 s» con el cronómetro, «por
+        // pierna»… Sin fila de rutina, las series y repeticiones de siempre.
+        android.content.Context ctx = h.itemView.getContext();
+        es.pmdm.gymprofit.model.rutina.RutinaEjercicio pauta = item.getPauta();
+        String textoPauta = pauta != null ? es.pmdm.gymprofit.utils.Pauta.texto(ctx, pauta)
+                : ctx.getString(R.string.series_por_reps, item.getSeries(), item.getRepeticiones());
+        h.chipSeriesReps.setText(textoPauta);
+        boolean porTiempo = pauta != null && pauta.esPorTiempo();
+        h.chipSeriesReps.setChipIconResource(R.drawable.ic_ms_timer);
+        h.chipSeriesReps.setChipIconVisible(porTiempo);
+        h.chipBasico.setVisibility(pauta != null && pauta.esBasico() ? View.VISIBLE : View.GONE);
+
+        java.util.List<String> extra = new java.util.ArrayList<>();
+        if (pauta != null) {
+            String descanso = es.pmdm.gymprofit.utils.Pauta.descanso(ctx, pauta.getTiempoDescanso());
+            if (descanso != null) extra.add(descanso);
+            if (pauta.getNotas() != null && !pauta.getNotas().trim().isEmpty()) extra.add(pauta.getNotas().trim());
+        }
+        String notas = String.join(ctx.getString(R.string.separador_punto), extra);
+        h.tvNotas.setText(notas);
+        h.tvNotas.setVisibility(notas.isEmpty() ? View.GONE : View.VISIBLE);
+
+        java.util.List<String> a11y = new java.util.ArrayList<>();
+        a11y.add(e.getNombre() != null ? e.getNombre() : "");
+        a11y.add(textoPauta);
+        if (porTiempo) a11y.add(ctx.getString(R.string.pauta_por_tiempo_a11y));
+        if (pauta != null && pauta.esBasico()) a11y.add(ctx.getString(R.string.pauta_basico));
+        if (!notas.isEmpty()) a11y.add(notas);
+        h.itemView.setContentDescription(String.join(". ", a11y));
 
         if (deleteListener != null) {
             h.btnEliminar.setVisibility(View.VISIBLE);
@@ -119,8 +147,8 @@ public class EjercicioSeleccionadoAdapter
 
     // ViewHolder con las referencias a las vistas de cada fila de ejercicio seleccionado.
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvNombre, tvDescripcion;
-        Chip chipDificultad, chipSeriesReps;
+        TextView tvNombre, tvDescripcion, tvNotas;
+        Chip chipDificultad, chipSeriesReps, chipBasico;
         ImageView btnEliminar, ivChevron;
 
         ViewHolder(@NonNull View itemView) {
@@ -129,6 +157,8 @@ public class EjercicioSeleccionadoAdapter
             tvDescripcion    = itemView.findViewById(R.id.tvDescripcionSeleccionado);
             chipDificultad   = itemView.findViewById(R.id.chipDificultad);
             chipSeriesReps   = itemView.findViewById(R.id.chipSeriesReps);
+            chipBasico       = itemView.findViewById(R.id.chipBasico);
+            tvNotas          = itemView.findViewById(R.id.tvNotasSeleccionado);
             btnEliminar      = itemView.findViewById(R.id.btnEliminarSeleccionado);
             ivChevron        = itemView.findViewById(R.id.ivChevron);
         }

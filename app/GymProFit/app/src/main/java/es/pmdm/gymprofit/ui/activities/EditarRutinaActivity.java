@@ -214,7 +214,7 @@ public class EditarRutinaActivity extends AppCompatActivity {
                 e.setNombre(rel.getNombreEjercicio() != null && !rel.getNombreEjercicio().isEmpty()
                         ? rel.getNombreEjercicio() : getString(R.string.ejercicio_sin_nombre, ejercicioId));
             }
-            ejercicios.add(new EjercicioSeleccionado(e, series, reps));
+            ejercicios.add(new EjercicioSeleccionado(e, series, reps, rel));
         }
         adapter.notifyDataSetChanged();
         actualizarTitulo();

@@ -130,6 +130,8 @@ public class RecordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 : color(ctx, com.google.android.material.R.attr.colorOnSurfaceVariant)));
         h.tvMarca.setTextColor(dorado ? androidx.core.content.ContextCompat.getColor(ctx, R.color.gp_gold_text)
                 : color(ctx, com.google.android.material.R.attr.colorOnSurface));
+        // Por tiempo (GP-125), el cronómetro delante de «1:05».
+        Marcas.iconoTiempo(h.tvMarca, r);
 
         // Las filas de una zona forman una tarjeta: primera, intermedia o última.
         boolean primera = !(position > 0 && filas.get(position - 1) instanceof Record);

@@ -244,7 +244,8 @@ public class RegistrarSesionViewModel extends ViewModel implements EjercicioPeso
                         String nombre = re.getNombreEjercicio();
                         items.add(new EjercicioPesoAdapter.Item(re.getEjercicioId(),
                                 nombre != null && !nombre.isEmpty() ? nombre : null,
-                                re.getSeries(), re.getRepeticiones()));
+                                re.getSeries(), re.getRepeticiones(), re.getMedida(),
+                                re.getRepeticionesMin(), re.getRepeticionesMax(), re.getPorLado()));
                     }
                 }
                 ponerEjercicios(items, rutinaId);
@@ -288,6 +289,16 @@ public class RegistrarSesionViewModel extends ViewModel implements EjercicioPeso
         EjercicioPesoAdapter.Serie s = serie(ejercicio, serie);
         if (s == null) return;
         s.repeticiones = valor;
+        guardarBorrador();
+    }
+
+    /** Escribir los segundos de una serie por tiempo la marca como hecha, como el peso (GP-125). */
+    @Override
+    public void segundos(int ejercicio, int serie, String valor) {
+        EjercicioPesoAdapter.Serie s = serie(ejercicio, serie);
+        if (s == null) return;
+        s.segundos = valor;
+        if (!valor.isEmpty()) s.completada = true;
         guardarBorrador();
     }
 
@@ -473,6 +484,19 @@ public class RegistrarSesionViewModel extends ViewModel implements EjercicioPeso
     private List<Map<String, Object>> seriesDelCuerpo(EjercicioPesoAdapter.Item item) {
         List<Map<String, Object>> series = new ArrayList<>();
         for (EjercicioPesoAdapter.Serie serie : item.realizadas) {
+            if (item.porTiempo()) {
+                // Por tiempo (GP-125): solo los segundos, de 1 a 3600, y repeticiones a 0,
+                // que la API exige y no admite otro valor en una serie por tiempo.
+                Integer segundos = Numeros.entero(serie.segundos, 1, 3600);
+                if (segundos == null) continue;
+                Map<String, Object> fila = new HashMap<>();
+                fila.put("numero", serie.numero);
+                fila.put("repeticiones", 0);
+                fila.put("segundos", segundos);
+                fila.put("completada", serie.completada);
+                series.add(fila);
+                continue;
+            }
             Integer reps = Numeros.entero(serie.repeticiones, 0, 100);
             BigDecimal peso = Numeros.exacto(serie.peso, 0, 500);
             // Una serie en blanco es una serie que no se hizo.

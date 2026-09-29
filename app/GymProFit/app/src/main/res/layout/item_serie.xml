@@ -31,6 +31,7 @@
 
     <!-- Peso de ESTA serie -->
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilPesoSerie"
         app:errorIconDrawable="@drawable/ic_ms_error"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -55,6 +56,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
+        android:id="@+id/tvPorSerie"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
@@ -64,6 +66,7 @@
 
     <!-- Repeticiones REALES de esta serie: fallar la última es información -->
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilRepsSerie"
         app:errorIconDrawable="@drawable/ic_ms_error"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -82,6 +85,34 @@
             android:layout_height="wrap_content"
             android:inputType="number"
             android:maxLength="3"
+            android:imeOptions="actionNext" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Segundos de ESTA serie, en los ejercicios por tiempo (GP-125): sustituye al peso y
+         a las repeticiones, que la fila esconde. De 1 a 3600; se guarda con 0 repeticiones. -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilSegundosSerie"
+        app:errorIconDrawable="@drawable/ic_ms_error"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.8"
+        android:layout_marginStart="10dp"
+        android:visibility="gone"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
+        app:startIconDrawable="@drawable/ic_ms_timer"
+        app:boxCornerRadiusTopStart="8dp"
+        app:boxCornerRadiusTopEnd="8dp"
+        app:boxCornerRadiusBottomStart="8dp"
+        app:boxCornerRadiusBottomEnd="8dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etSegundosSerie"
+            android:minHeight="48dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:maxLength="4"
             android:imeOptions="actionNext" />
 
     </com.google.android.material.textfield.TextInputLayout>

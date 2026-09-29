@@ -48,6 +48,8 @@ public class EjercicioPesoAdapter extends RecyclerView.Adapter<EjercicioPesoAdap
         void peso(int ejercicio, int serie, String valor);
         void repeticiones(int ejercicio, int serie, String valor);
         void alternarHecha(int ejercicio, int serie);
+        /** Segundos de una serie por tiempo (GP-125). */
+        void segundos(int ejercicio, int serie, String valor);
     }
 
     /**
@@ -60,6 +62,8 @@ public class EjercicioPesoAdapter extends RecyclerView.Adapter<EjercicioPesoAdap
         public final int numero;
         public String peso = "";
         public String repeticiones = "";
+        /** Segundos, en las series por tiempo (GP-125); vacío en las demás. */
+        public String segundos = "";
         public boolean completada = false;
 
         public Serie(int numero, String repeticiones) {
@@ -80,20 +84,39 @@ public class EjercicioPesoAdapter extends RecyclerView.Adapter<EjercicioPesoAdap
         public final int repeticiones;
         /** Lo realmente hecho, una entrada por serie. */
         public final ArrayList<Serie> realizadas = new ArrayList<>();
+        // La pauta de la rutina, si la trae (GP-074/GP-125): la medida (REPETICIONES o
+        // SEGUNDOS), el rango y si es por lado. Nulos en las rutinas de siempre.
+        public String medida;
+        public Integer minimo;
+        public Integer maximo;
+        public String porLado;
 
         public Item(int ejercicioId, String nombre, int series, int repeticiones) {
+            this(ejercicioId, nombre, series, repeticiones, null, null, null, null);
+        }
+
+        public Item(int ejercicioId, String nombre, int series, int repeticiones, String medida,
+                    Integer minimo, Integer maximo, String porLado) {
             this.ejercicioId = ejercicioId;
             this.nombre = nombre;
             this.series = series;
             this.repeticiones = repeticiones;
+            this.medida = medida;
+            this.minimo = minimo;
+            this.maximo = maximo;
+            this.porLado = porLado;
 
             // Se arranca con tantas series como pedía la rutina, con sus
             // repeticiones ya puestas: lo normal es cumplir el plan, así que el
-            // usuario solo teclea el peso y corrige lo que se salga.
+            // usuario solo teclea el peso y corrige lo que se salga. Por tiempo no se
+            // precarga nada: cada serie pide sus segundos, y en blanco es que no se hizo.
             for (int i = 1; i <= Math.max(1, series); i++) {
-                realizadas.add(new Serie(i, String.valueOf(repeticiones)));
+                realizadas.add(new Serie(i, porTiempo() ? "" : String.valueOf(repeticiones)));
             }
         }
+
+        /** Si las series se miden en segundos (plancha…): solo piden los segundos. */
+        public boolean porTiempo() { return "SEGUNDOS".equals(medida); }
     }
 
     private final List<Item> items;
@@ -122,13 +145,23 @@ public class EjercicioPesoAdapter extends RecyclerView.Adapter<EjercicioPesoAdap
         Item item = items.get(position);
         holder.tvNombre.setText(item.nombre != null ? item.nombre
                 : holder.itemView.getContext().getString(R.string.ejercicio_sin_nombre, position + 1));
-        holder.tvSeriesReps.setText(holder.itemView.getContext().getString(R.string.series_por_reps, item.series, item.repeticiones));
+        // Lo que pedía la rutina, con su pauta: «3 × 8–12», «2 × 30–60 s» con el cronómetro.
+        android.content.Context ctx = holder.itemView.getContext();
+        es.pmdm.gymprofit.utils.Pauta.Formatos formatos = es.pmdm.gymprofit.utils.Pauta.Formatos.de(ctx);
+        holder.tvSeriesReps.setText(es.pmdm.gymprofit.utils.Pauta.texto(formatos, item.series, item.minimo,
+                item.maximo, item.repeticiones, item.medida, item.porLado));
+        holder.tvSeriesReps.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                item.porTiempo() ? R.drawable.ic_ms_timer : 0, 0, 0, 0);
+        // Por lado, la columna lo dice: «reps por pierna», «segundos por lado».
+        String columna = columna(ctx, item);
+        holder.tvColumna.setText(columna);
+        holder.tvColumna.setVisibility(columna == null ? View.GONE : View.VISIBLE);
 
         // Se vacía y se vuelve a montar: el ViewHolder se recicla y un ejercicio
         // puede tener un número de series distinto del que tenía el anterior.
         holder.contenedor.removeAllViews();
         for (int i = 0; i < item.realizadas.size(); i++) {
-            holder.contenedor.addView(crearFilaSerie(holder.contenedor, holder, item.realizadas.get(i), i));
+            holder.contenedor.addView(crearFilaSerie(holder.contenedor, holder, item, item.realizadas.get(i), i));
         }
     }
 
@@ -137,11 +170,12 @@ public class EjercicioPesoAdapter extends RecyclerView.Adapter<EjercicioPesoAdap
      *
      * @param padre   contenedor al que se añadirá, solo para inflar con sus reglas.
      * @param holder  la tarjeta del ejercicio, para saber su posición al escribir.
+     * @param item    el ejercicio, para saber si va por tiempo y su rango.
      * @param serie   la serie que se pinta; se lee de ella, no se escribe.
      * @param indice  qué serie del ejercicio es.
      * @return la fila lista para añadir.
      */
-    private View crearFilaSerie(ViewGroup padre, ViewHolder holder, Serie serie, int indice) {
+    private View crearFilaSerie(ViewGroup padre, ViewHolder holder, Item item, Serie serie, int indice) {
         View fila = LayoutInflater.from(padre.getContext())
                 .inflate(R.layout.item_serie, padre, false);
 
@@ -149,10 +183,36 @@ public class EjercicioPesoAdapter extends RecyclerView.Adapter<EjercicioPesoAdap
 
         TextInputEditText etPeso = fila.findViewById(R.id.etPesoSerie);
         TextInputEditText etReps = fila.findViewById(R.id.etRepsSerie);
+        TextInputEditText etSegundos = fila.findViewById(R.id.etSegundosSerie);
         ImageView ivCheck = fila.findViewById(R.id.ivSerieCompletada);
+
+        // Por tiempo (GP-125): solo los segundos, sin peso ni repeticiones. En las demás,
+        // el rango de la rutina de pista en las repeticiones.
+        boolean porTiempo = item.porTiempo();
+        fila.findViewById(R.id.tilPesoSerie).setVisibility(porTiempo ? View.GONE : View.VISIBLE);
+        fila.findViewById(R.id.tvPorSerie).setVisibility(porTiempo ? View.GONE : View.VISIBLE);
+        fila.findViewById(R.id.tilRepsSerie).setVisibility(porTiempo ? View.GONE : View.VISIBLE);
+        fila.findViewById(R.id.tilSegundosSerie).setVisibility(porTiempo ? View.VISIBLE : View.GONE);
+        es.pmdm.gymprofit.utils.Pauta.Formatos f = es.pmdm.gymprofit.utils.Pauta.Formatos.de(padre.getContext());
+        if (porTiempo) {
+            ((com.google.android.material.textfield.TextInputLayout) fila.findViewById(R.id.tilSegundosSerie))
+                    // Solo el rango («30–60 s»): el cronómetro ya dice que son segundos, y a
+                    // letra grande «Segundos · 30–60 s» se cortaba.
+                    .setHint(es.pmdm.gymprofit.utils.Pauta.cantidad(f, item.minimo, item.maximo, item.repeticiones,
+                            item.medida));
+        } else if (item.minimo != null && item.maximo != null && !item.minimo.equals(item.maximo)) {
+            ((com.google.android.material.textfield.TextInputLayout) fila.findViewById(R.id.tilRepsSerie))
+                    .setHint(es.pmdm.gymprofit.utils.Pauta.cantidad(f, item.minimo, item.maximo, item.repeticiones,
+                            item.medida));
+        }
 
         etPeso.setText(serie.peso);
         etReps.setText(serie.repeticiones);
+        etSegundos.setText(serie.segundos);
+        etSegundos.addTextChangedListener(new EscribeEn(valor -> {
+            editor.segundos(holder.getBindingAdapterPosition(), indice, valor);
+            pintarCompletada(ivCheck, serie.completada);
+        }));
 
         // Las filas se crean nuevas en cada bind, así que no hay listeners viejos
         // que quitar: cada TextWatcher vive lo que vive su vista.
@@ -175,6 +235,19 @@ public class EjercicioPesoAdapter extends RecyclerView.Adapter<EjercicioPesoAdap
         return fila;
     }
 
+    // «Reps por pierna», «Segundos por lado»…; null si el ejercicio no es por lado.
+    static String columna(android.content.Context ctx, Item item) {
+        if (item.porLado == null) return null;
+        int id;
+        switch (item.porLado) {
+            case "PIERNA": id = item.porTiempo() ? R.string.registro_segundos_por_pierna : R.string.registro_reps_por_pierna; break;
+            case "BRAZO":  id = item.porTiempo() ? R.string.registro_segundos_por_brazo : R.string.registro_reps_por_brazo; break;
+            case "LADO":   id = item.porTiempo() ? R.string.registro_segundos_por_lado : R.string.registro_reps_por_lado; break;
+            default: return null;
+        }
+        return ctx.getString(id);
+    }
+
     // Una serie marcada se ve al 100% y en el naranja de marca; sin marcar, apagada.
     private void pintarCompletada(ImageView check, boolean completada) {
         check.setAlpha(completada ? 1f : 0.35f);
@@ -191,13 +264,14 @@ public class EjercicioPesoAdapter extends RecyclerView.Adapter<EjercicioPesoAdap
 
     // ViewHolder: cabecera y contenedor de las filas de serie.
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvNombre, tvSeriesReps;
+        TextView tvNombre, tvSeriesReps, tvColumna;
         LinearLayout contenedor;
 
         ViewHolder(View v) {
             super(v);
             tvNombre = v.findViewById(R.id.tvNombreEjercicioPeso);
             tvSeriesReps = v.findViewById(R.id.tvSeriesRepsPeso);
+            tvColumna = v.findViewById(R.id.tvColumnaSeries);
             contenedor = v.findViewById(R.id.contenedorSeries);
         }
     }

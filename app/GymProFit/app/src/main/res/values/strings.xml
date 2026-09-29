@@ -332,6 +332,8 @@
     <string name="nutricion_hoy">Hoy</string>
     <string name="detalle_progresion_titulo">PROGRESIÓN · PESO MÁX.</string>
     <string name="detalle_progresion_pr">PR</string>
+    <string name="detalle_progresion_titulo_tiempo">PROGRESIÓN · MEJOR TIEMPO (S)</string>
+    <string name="detalle_progresion_titulo_reps">PROGRESIÓN · MÁS REPETICIONES</string>
     <string name="nutricion_estadisticas_titulo">Historial y estadísticas</string>
     <string name="nutricion_estadisticas_sub">Media, adherencia y gráficas</string>
     <string name="stats_periodo_semana">Semana</string>
@@ -806,6 +808,8 @@
     <string name="home_record_a11y">Tu récord: %1$s, %2$s</string>
     <string name="resumen_seccion_records">Récords</string>
     <string name="grafica_reps_fecha">%1$s%2$s\n%3$s</string>
+    <!-- Por tiempo (GP-125): «1:05 · PR», y debajo la fecha -->
+    <string name="grafica_tiempo_fecha">%1$s%2$s\n%3$s</string>
     <string name="zona_titulo_pierna">Pierna</string>
     <string name="zona_titulo_espalda">Espalda</string>
     <string name="zona_titulo_pecho">Pecho</string>
@@ -1134,4 +1138,11 @@
         <item quantity="one">%d\u00A0día</item>
         <item quantity="other">%d\u00A0días</item>
     </plurals>
+    <!-- Registro por tiempo y por lado (GP-125) -->
+    <string name="registro_reps_por_pierna">Reps por pierna</string>
+    <string name="registro_reps_por_brazo">Reps por brazo</string>
+    <string name="registro_reps_por_lado">Reps por lado</string>
+    <string name="registro_segundos_por_pierna">Segundos por pierna</string>
+    <string name="registro_segundos_por_brazo">Segundos por brazo</string>
+    <string name="registro_segundos_por_lado">Segundos por lado</string>
 </resources>

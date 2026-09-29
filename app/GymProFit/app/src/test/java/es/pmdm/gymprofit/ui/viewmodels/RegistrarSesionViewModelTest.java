@@ -347,6 +347,43 @@ public class RegistrarSesionViewModelTest {
         assertEquals("la serie en blanco no viaja", 2, series.size());
     }
 
+    @Test
+    public void una_serie_por_tiempo_manda_sus_segundos_con_cero_repeticiones() {
+        Falso red = new Falso();
+        RegistrarSesionViewModel vm = new RegistrarSesionViewModel(new SavedStateHandle(), red);
+        vm.iniciar(RUTINA_PIERNA);
+        red.responderRutinas();
+        List<RutinaEjercicio> lista = new ArrayList<>();
+        RutinaEjercicio plancha = ejercicio(900, "Plancha lateral", 3, 40);
+        plancha.setMedida("SEGUNDOS");
+        plancha.setRepeticionesMin(20);
+        plancha.setRepeticionesMax(40);
+        plancha.setPorLado("LADO");
+        lista.add(plancha);
+        red.responderEjercicios(0, lista);
+
+        List<EjercicioPesoAdapter.Item> items = vm.getEjercicios().getValue();
+        assertTrue(items.get(0).porTiempo());
+        assertEquals("por tiempo no se precarga nada", "", items.get(0).realizadas.get(0).repeticiones);
+        assertFalse("sin nada escrito, no hay datos que perder", vm.hayDatos());
+
+        vm.segundos(0, 0, "35");
+        vm.segundos(0, 1, "0");      // fuera de rango: no viaja
+        assertTrue(items.get(0).realizadas.get(0).completada);
+        assertTrue(vm.hayDatos());
+
+        vm.setDuracion("20");
+        vm.guardar();
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> ejercicios = (List<Map<String, Object>>) red.guardados.get(0).cuerpo.get("ejercicios");
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> series = (List<Map<String, Object>>) ejercicios.get(0).get("series");
+        assertEquals("solo la serie con segundos válidos", 1, series.size());
+        assertEquals(35, series.get(0).get("segundos"));
+        assertEquals(0, series.get(0).get("repeticiones"));
+        assertFalse("sin peso", series.get(0).containsKey("peso"));
+    }
+
     // ── Apoyo ─────────────────────────────────────────────────
 
     // Rutina de pierna con los ejercicios ya cargados y una duración puesta.

@@ -210,7 +210,10 @@ public class ResumenSesionActivity extends AppCompatActivity {
             String marca = Marcas.texto(this, r);
             String antes = Marcas.anterior(this, r);
             ((TextView) fila.findViewById(R.id.tvNombreRecord)).setText(nombre);
-            ((TextView) fila.findViewById(R.id.tvMarcaRecord)).setText(marca);
+            TextView tvMarca = fila.findViewById(R.id.tvMarcaRecord);
+            tvMarca.setText(marca);
+            // Por tiempo (GP-125), el cronómetro delante de «1:05».
+            Marcas.iconoTiempo(tvMarca, r);
             TextView tvDetalle = fila.findViewById(R.id.tvDetalleRecord);
             tvDetalle.setText(antes);
             tvDetalle.setVisibility(antes == null ? View.GONE : View.VISIBLE);

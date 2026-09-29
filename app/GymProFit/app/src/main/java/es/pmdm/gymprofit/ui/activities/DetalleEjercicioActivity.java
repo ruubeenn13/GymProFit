@@ -119,17 +119,22 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         LineChart chart = findViewById(R.id.chartProgresion);
         if (lista == null) return;
 
-        boolean hayPeso = false;
-        for (PuntoProgresion p : lista) if (p.esDePeso() && p.getPeso() > 0) { hayPeso = true; break; }
+        boolean hayPeso = false, hayTiempo = false;
+        for (PuntoProgresion p : lista) {
+            if (p.esDePeso() && p.getPeso() > 0) hayPeso = true;
+            if (p.esDeTiempo() && p.getSegundos() > 0) hayTiempo = true;
+        }
         final boolean enKilos = hayPeso;
+        // Un ejercicio por tiempo (GP-125) se dibuja en segundos.
+        final boolean enSegundos = !hayPeso && hayTiempo;
 
         // La API los entrega en orden cronológico, que es como se dibujan.
         List<Entry> entradas = new ArrayList<>();
         final List<String> etiquetas = new ArrayList<>();
         float max = 0f;
         for (PuntoProgresion p : lista) {
-            if (enKilos != p.esDePeso()) continue;
-            float y = enKilos ? (float) p.getPeso() : p.getRepeticiones();
+            if (enKilos != p.esDePeso() || enSegundos != p.esDeTiempo()) continue;
+            float y = enKilos ? (float) p.getPeso() : enSegundos ? p.getSegundos() : p.getRepeticiones();
             if (y <= 0) continue;
             entradas.add(new Entry(entradas.size(), y));
             etiquetas.add(fechaCorta(p.getFecha()));
@@ -141,6 +146,11 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
             return;
         }
         card.setVisibility(View.VISIBLE);
+        // El título dice qué se dibuja: kilos, segundos (GP-125) o repeticiones. Antes decía
+        // «peso máx.» también cuando la gráfica era de repeticiones.
+        ((android.widget.TextView) findViewById(R.id.tvProgresionTitulo)).setText(enKilos
+                ? R.string.detalle_progresion_titulo
+                : enSegundos ? R.string.detalle_progresion_titulo_tiempo : R.string.detalle_progresion_titulo_reps);
 
         ChartStyler.styleLine(chart, new ValueFormatter() {
             @Override
@@ -157,6 +167,10 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
             String fecha = (idx >= 0 && idx < etiquetas.size()) ? etiquetas.get(idx) : "";
             String sufijo = e.getY() >= pr ? " · " + getString(R.string.detalle_progresion_pr) : "";
             if (enKilos) return getString(R.string.grafica_kg_fecha, e.getY(), sufijo, fecha);
+            if (enSegundos) {
+                return getString(R.string.grafica_tiempo_fecha, es.pmdm.gymprofit.utils.Marcas.tiempo(Math.round(e.getY())),
+                        sufijo, fecha);
+            }
             int reps = Math.round(e.getY());
             return getString(R.string.grafica_reps_fecha,
                     getResources().getQuantityString(R.plurals.record_repeticiones, reps, reps), sufijo, fecha);
