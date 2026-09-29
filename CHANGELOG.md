@@ -6,6 +6,8 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `0c8e863` | build(android): **versión 1.1.4** (10104), etiquetada `v1.1.4`. Misma clave de firma. No necesita nada nuevo de la API. Informe en `documentacion/estado/2026-09-29-lote-1.1.4.md`. |
+| `a6d7824` | fix(android): **al reinstalar, el perfil entero vuelve de la API** (GP-129): el peso, la altura, la edad, el objetivo y el nivel se cruzan como el sexo y la actividad; lo que solo tiene el móvil se sube una vez, y si algo cambia se recalcula el objetivo nutricional. El onboarding deja de guardar como elegidos los valores por defecto del cálculo. |
 | `9d37dd7` | build(android): **versión 1.1.3** (10103), etiquetada `v1.1.3`. Misma clave de firma. Necesita la API de este lote (desplegada: `652a5f3`). Informe en `documentacion/estado/2026-09-29-lote-1.1.3.md`. |
 | `9381ea8` | fix(android): **nada se corta a letra 2,0** (GP-128): las pestañas de Progreso van en un carril que se desplaza en horizontal; las etiquetas de la barra crecen con la letra del sistema hasta 1,3 y cada botón enseña su nombre en un tooltip. |
 | `e1e4940` | feat(api,android): **un nombre para mostrar** (GP-116): `nombre` opcional en `UsuarioDTO` y en el PATCH (recortado, 1 a 40 caracteres, en blanco lo borra; `V202609291100`). Lo manda el onboarding, se cambia y se borra en Editar perfil, y lo usan Inicio, Progreso y el avatar; sin él, el de usuario. |
