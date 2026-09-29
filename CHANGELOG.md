@@ -6,6 +6,13 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `fe2e283` | Fusión de `lote-1.2.3` en `main`. Informe en `documentacion/estado/2026-09-29-lote-1.2.3.md`. |
+| `82b8ee7` | build(android): **versión 1.2.3** (10203), etiquetada `v1.2.3`. Misma clave de firma. No necesita nada nuevo de la API. |
+| `2402609` | fix(android): **el botón de la hoja de cambiar el tiempo dice lo que hace** (GP-135): con los mismos minutos, «Rehacer las rutinas»; con otros, «Cambiar a N min». |
+| `9f498b1` | build(android): **security-crypto 1.1.0** (#4). |
+| `205ba32` | build(android): **Retrofit 3.0.0** (#6). |
+| `cf6029a` | build(android): **Gradle 9.8, plugin de Android 9.2.1 y Material 1.14** (GP-136, #29 y #13): `colorPrimary` y `colorError` desde `androidx.appcompat.R.attr`, `colorOnSecondaryContainer` fijado con el valor de la 1.12 y sin el tope de oss-licenses; las pantallas salen iguales píxel a píxel. |
+| `24a8ce7` | build(api): **`mvnw.cmd` con LF dentro del repositorio**, como pide el `.gitattributes` de la API. |
 | `c5a3408` | Fusión de `lote-1.2.2` en `main`. Informe en `documentacion/estado/2026-09-29-lote-1.2.2.md`. |
 | `c48afce` | build(android): **versión 1.2.2** (10202), etiquetada `v1.2.2`. Misma clave de firma. Necesita la API de este lote (desplegada: `c5a3408`). |
 | `d4dfe92` | fix(android): **las columnas de Registrar se leen enteras con la letra grande** (GP-133): si un rótulo no cabe en su campo, peso y repeticiones se apilan a todo el ancho (`CamposSerie`); a letra normal siguen en fila. |
