@@ -3,8 +3,11 @@ package com.gymprofit.api.mappers;
 import com.gymprofit.api.dto.entity.rutinaejercicio.RutinaEjercicioCreateDTO;
 import com.gymprofit.api.dto.entity.rutinaejercicio.RutinaEjercicioDTO;
 import com.gymprofit.api.entity.RutinaEjercicio;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.List;
 
@@ -23,6 +26,17 @@ public interface RutinaEjercicioMapper {
     @Mapping(target = "ejercicioId", source = "ejercicio.id")
     @Mapping(target = "nombreEjercicio", source = "ejercicio.nombre")
     RutinaEjercicioDTO toDTO(RutinaEjercicio rutinaEjercicio);
+
+    // Con la petición en inglés (Accept-Language → LocaleContextHolder) y traducción en el
+    // ejercicio, el nombre en inglés; si no, el español (GP-132). MapStruct lo llama al
+    // final de toDTO y de toDTOList.
+    @AfterMapping
+    default void localizarNombre(RutinaEjercicio rutinaEjercicio, @MappingTarget RutinaEjercicioDTO dto) {
+        if (!"en".equals(LocaleContextHolder.getLocale().getLanguage())) return;
+        if (rutinaEjercicio.getEjercicio() == null) return;
+        String en = rutinaEjercicio.getEjercicio().getNombreEn();
+        if (en != null && !en.isBlank()) dto.setNombreEjercicio(en);
+    }
 
     // Convierte una lista de entidades RutinaEjercicio en su lista de DTOs.
     List<RutinaEjercicioDTO> toDTOList(List<RutinaEjercicio> rutinaEjercicios);

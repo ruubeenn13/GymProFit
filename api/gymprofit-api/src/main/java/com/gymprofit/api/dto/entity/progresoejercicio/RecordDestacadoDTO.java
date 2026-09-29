@@ -21,7 +21,7 @@ public class RecordDestacadoDTO implements Serializable {
 
     private Integer ejercicioId;
 
-    // Nombre en el idioma en que está guardado el catálogo.
+    // Nombre en el idioma de la petición; el español si no hay traducción (GP-132).
     private String ejercicioNombre;
 
     // Peso del récord, en kilos.

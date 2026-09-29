@@ -9,6 +9,9 @@ import com.gymprofit.api.jooq.enums.UsuariosNivelExperiencia;
 import lombok.RequiredArgsConstructor;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.Record2;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -199,17 +202,26 @@ public class UsuarioJooqRepository implements IUsuarioJooqRepository {
                         .and(SESIONES_ENTRENAMIENTO.COMPLETADA.eq((byte) 1)))
                 .fetchOne(0, Integer.class);
 
-        // Ejercicio más frecuente
-        String ejercicioMasFrecuente = dsl
-                .select(EJERCICIOS.NOMBRE)
+        // Ejercicio más frecuente, en el idioma de la petición: el inglés si se pide así y
+        // lo tiene, el español si no (GP-132). nombre_en no está en las clases generadas
+        // de jOOQ (son de antes de la traducción del catálogo), así que se nombra a mano.
+        Field<String> nombreEn = field(EJERCICIOS.getQualifiedName().append("nombre_en"), String.class);
+        Record2<String, String> masFrecuente = dsl
+                .select(EJERCICIOS.NOMBRE, nombreEn)
                 .from(EJERCICIOS_REALIZADOS)
                 .join(SESIONES_ENTRENAMIENTO).on(EJERCICIOS_REALIZADOS.SESION_ID.eq(SESIONES_ENTRENAMIENTO.ID))
                 .join(EJERCICIOS).on(EJERCICIOS_REALIZADOS.EJERCICIO_ID.eq(EJERCICIOS.ID))
                 .where(SESIONES_ENTRENAMIENTO.USUARIO_ID.eq(usuarioId))
-                .groupBy(EJERCICIOS.ID, EJERCICIOS.NOMBRE)
+                .groupBy(EJERCICIOS.ID, EJERCICIOS.NOMBRE, nombreEn)
                 .orderBy(count(EJERCICIOS_REALIZADOS.ID).desc())
                 .limit(1)
-                .fetchOne(EJERCICIOS.NOMBRE);
+                .fetchOne();
+        String ejercicioMasFrecuente = null;
+        if (masFrecuente != null) {
+            String en = masFrecuente.value2();
+            boolean ingles = "en".equals(LocaleContextHolder.getLocale().getLanguage());
+            ejercicioMasFrecuente = ingles && en != null && !en.isBlank() ? en : masFrecuente.value1();
+        }
 
         // Total ejercicios realizados
         Integer totalEjercicios = dsl
