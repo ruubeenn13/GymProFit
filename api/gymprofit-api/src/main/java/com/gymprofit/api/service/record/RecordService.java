@@ -85,7 +85,7 @@ public class RecordService implements IRecordService {
         Resultado r = calcular(securityUtils.getCurrentUserId());
         return r.progresion().getOrDefault(ejercicioId, List.of()).stream()
                 .map(m -> new PuntoProgresionDTO(m.sesionId(), m.fecha(), m.tipo().name(),
-                        m.peso(), m.repeticiones(), m.unoRmEstimado()))
+                        m.peso(), m.repeticiones(), m.unoRmEstimado(), m.segundos()))
                 .collect(Collectors.toList());
     }
 
@@ -141,7 +141,7 @@ public class RecordService implements IRecordService {
     private Resultado calcular(Integer usuarioId) {
         List<Serie> series = ejercicioRealizadoRepository.seriesCompletadasDeUsuario(usuarioId).stream()
                 .map(f -> new Serie((Integer) f[0], (LocalDateTime) f[1], (Integer) f[2],
-                        (BigDecimal) f[3], ((Number) f[4]).intValue()))
+                        (BigDecimal) f[3], ((Number) f[4]).intValue(), (Integer) f[5]))
                 .collect(Collectors.toList());
         return CalculadoraRecords.calcular(series);
     }
@@ -175,6 +175,8 @@ public class RecordService implements IRecordService {
                 m.fecha(),
                 m.sesionId(),
                 antes != null ? antes.peso() : null,
-                antes != null ? antes.repeticiones() : null);
+                antes != null ? antes.repeticiones() : null,
+                m.segundos(),
+                antes != null ? antes.segundos() : null);
     }
 }

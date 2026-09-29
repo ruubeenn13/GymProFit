@@ -29,25 +29,45 @@ import java.util.stream.Collectors;
 //   · Con peso y sin peso son dos marcas distintas del mismo ejercicio (unas
 //     dominadas lastradas no compiten con unas sin lastre).
 //   · 1RM estimado con la fórmula de Epley: peso × (1 + repeticiones / 30).
+//   · Por tiempo (GP-125, la plancha): la marca es la serie más larga. Es una marca
+//     aparte, como la de con peso y sin peso, y sus series no compiten con las otras.
 // ============================================================
 public final class CalculadoraRecords {
 
     private CalculadoraRecords() { }
 
     /** Qué mide una marca: kilos (con sus repeticiones) o solo repeticiones. */
-    public enum Tipo { PESO, REPETICIONES }
+    public enum Tipo { PESO, REPETICIONES, TIEMPO }
 
     /**
      * Una serie completada, tal como sale de la base de datos.
      *
-     * @param peso kilos; {@code null} o cero en un ejercicio sin peso.
+     * @param peso     kilos; {@code null} o cero en un ejercicio sin peso.
+     * @param segundos segundos de una serie por tiempo (GP-125); {@code null} en las demás.
      */
     public record Serie(Integer sesionId, LocalDateTime fecha, Integer ejercicioId,
-                        BigDecimal peso, int repeticiones) { }
+                        BigDecimal peso, int repeticiones, Integer segundos) {
 
-    /** La mejor serie de un ejercicio en una sesión. */
+        /** Una serie de repeticiones, sin segundos. */
+        public Serie(Integer sesionId, LocalDateTime fecha, Integer ejercicioId, BigDecimal peso, int repeticiones) {
+            this(sesionId, fecha, ejercicioId, peso, repeticiones, null);
+        }
+
+        boolean porTiempo() {
+            return segundos != null && segundos > 0;
+        }
+    }
+
+    /** La mejor serie de un ejercicio en una sesión. {@code segundos} solo en las de TIEMPO. */
     public record Marca(Integer ejercicioId, Tipo tipo, BigDecimal peso, int repeticiones,
-                        BigDecimal unoRmEstimado, Integer sesionId, LocalDateTime fecha) { }
+                        BigDecimal unoRmEstimado, Integer sesionId, LocalDateTime fecha, Integer segundos) {
+
+        /** Una marca de peso o de repeticiones, sin segundos. */
+        public Marca(Integer ejercicioId, Tipo tipo, BigDecimal peso, int repeticiones,
+                     BigDecimal unoRmEstimado, Integer sesionId, LocalDateTime fecha) {
+            this(ejercicioId, tipo, peso, repeticiones, unoRmEstimado, sesionId, fecha, null);
+        }
+    }
 
     /**
      * Un momento en que cambió la marca de un ejercicio.
@@ -118,7 +138,7 @@ public final class CalculadoraRecords {
         Map<Integer, List<Marca>> progresion = new TreeMap<>();
 
         Map<Integer, List<Serie>> porEjercicio = series.stream()
-                .filter(s -> s.repeticiones() > 0)
+                .filter(s -> s.repeticiones() > 0 || s.porTiempo())
                 .collect(Collectors.groupingBy(Serie::ejercicioId, TreeMap::new, Collectors.toList()));
 
         for (Map.Entry<Integer, List<Serie>> ejercicio : porEjercicio.entrySet()) {
@@ -133,9 +153,10 @@ public final class CalculadoraRecords {
             for (List<Serie> sesion : porSesion.values()) {
                 Marca conPeso = mejorConPeso(sesion);
                 Marca sinPeso = mejorSinPeso(sesion);
-                puntos.add(conPeso != null ? conPeso : sinPeso);
+                Marca tiempo = mejorTiempo(sesion);
+                puntos.add(conPeso != null ? conPeso : sinPeso != null ? sinPeso : tiempo);
 
-                for (Marca m : new Marca[]{conPeso, sinPeso}) {
+                for (Marca m : new Marca[]{conPeso, sinPeso, tiempo}) {
                     if (m == null) continue;
                     Marca previa = mejor.get(m.tipo());
                     if (previa == null) {
@@ -173,6 +194,7 @@ public final class CalculadoraRecords {
     // true si `nueva` supera a `previa`: igualar no cuenta.
     private static boolean supera(Marca nueva, Marca previa) {
         if (nueva.tipo() == Tipo.REPETICIONES) return nueva.repeticiones() > previa.repeticiones();
+        if (nueva.tipo() == Tipo.TIEMPO) return nueva.segundos() > previa.segundos();
         int porPeso = nueva.peso().compareTo(previa.peso());
         return porPeso > 0 || (porPeso == 0 && nueva.repeticiones() > previa.repeticiones());
     }
@@ -183,7 +205,7 @@ public final class CalculadoraRecords {
 
     // La serie más pesada de la sesión; a igual peso, la de más repeticiones.
     private static Marca mejorConPeso(List<Serie> sesion) {
-        return sesion.stream().filter(CalculadoraRecords::tienePeso)
+        return sesion.stream().filter(s -> !s.porTiempo()).filter(CalculadoraRecords::tienePeso)
                 .max(Comparator.comparing(Serie::peso).thenComparingInt(Serie::repeticiones))
                 .map(s -> new Marca(s.ejercicioId(), Tipo.PESO, s.peso().stripTrailingZeros(),
                         s.repeticiones(), unoRmEpley(s.peso(), s.repeticiones()), s.sesionId(), s.fecha()))
@@ -192,10 +214,19 @@ public final class CalculadoraRecords {
 
     // La serie sin peso con más repeticiones de la sesión.
     private static Marca mejorSinPeso(List<Serie> sesion) {
-        return sesion.stream().filter(s -> !tienePeso(s))
+        return sesion.stream().filter(s -> !s.porTiempo()).filter(s -> !tienePeso(s))
                 .max(Comparator.comparingInt(Serie::repeticiones))
                 .map(s -> new Marca(s.ejercicioId(), Tipo.REPETICIONES, null, s.repeticiones(),
                         null, s.sesionId(), s.fecha()))
+                .orElse(null);
+    }
+
+    // La serie por tiempo más larga de la sesión (GP-125). Repeticiones a 0.
+    private static Marca mejorTiempo(List<Serie> sesion) {
+        return sesion.stream().filter(Serie::porTiempo)
+                .max(Comparator.comparingInt(Serie::segundos))
+                .map(s -> new Marca(s.ejercicioId(), Tipo.TIEMPO, null, 0, null, s.sesionId(), s.fecha(),
+                        s.segundos()))
                 .orElse(null);
     }
 }

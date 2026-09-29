@@ -127,6 +127,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
             SerieRealizada serie = new SerieRealizada();
             serie.setNumero(dto.getNumero());
             serie.setRepeticiones(dto.getRepeticiones());
+            serie.setSegundos(dto.getSegundos());
             serie.setPeso(dto.getPeso());
             serie.setCompletada(dto.getCompletada() == null || dto.getCompletada());
             serie.setEjercicioRealizado(ejercicio);

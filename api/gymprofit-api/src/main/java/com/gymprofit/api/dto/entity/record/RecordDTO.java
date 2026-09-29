@@ -32,6 +32,7 @@ public class RecordDTO implements Serializable {
     private String musculo;
 
     // PESO: la marca son los kilos con sus repeticiones. REPETICIONES: ejercicio sin peso.
+    // TIEMPO: ejercicio por tiempo, como la plancha (GP-125).
     private String tipo;
 
     // Kilos de la serie. Nulo en un ejercicio sin peso.
@@ -47,4 +48,9 @@ public class RecordDTO implements Serializable {
     // La marca que se superó. Nulos en una primera marca, que no supera nada.
     private BigDecimal pesoAnterior;
     private Integer repeticionesAnterior;
+
+    // TIEMPO (GP-125): la marca son los segundos de una serie por tiempo, y repeticiones
+    // va a 0. Nulos en las marcas de peso o de repeticiones.
+    private Integer segundos;
+    private Integer segundosAnterior;
 }
