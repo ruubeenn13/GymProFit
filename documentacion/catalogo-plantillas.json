@@ -1,0 +1,3462 @@
+{
+  "catalogo": "GymProFit · plantillas v1",
+  "aprobado": "2026-09-28",
+  "documento": "documentacion/CATALOGO-PLANTILLAS.md",
+  "ejercicios": [
+    {
+      "fedId": "Barbell_Bench_Press_-_Medium_Grip",
+      "nombre": "Press de banca con barra"
+    },
+    {
+      "fedId": "Barbell_Curl",
+      "nombre": "Curl de bíceps con barra"
+    },
+    {
+      "fedId": "Barbell_Hip_Thrust",
+      "nombre": "Hip thrust con barra"
+    },
+    {
+      "fedId": "Barbell_Squat",
+      "nombre": "Sentadilla con barra"
+    },
+    {
+      "fedId": "Bench_Dips",
+      "nombre": "Fondos en banco o silla"
+    },
+    {
+      "fedId": "Bent_Over_Barbell_Row",
+      "nombre": "Remo con barra"
+    },
+    {
+      "fedId": "Bent_Over_Two-Dumbbell_Row",
+      "nombre": "Remo con dos mancuernas, sin apoyo"
+    },
+    {
+      "fedId": "Bodyweight_Squat",
+      "nombre": "Sentadilla sin peso"
+    },
+    {
+      "fedId": "Bodyweight_Walking_Lunge",
+      "nombre": "Zancadas caminando"
+    },
+    {
+      "fedId": "Butt_Lift_Bridge",
+      "nombre": "Puente de glúteo"
+    },
+    {
+      "fedId": "Butterfly",
+      "nombre": "Aperturas en máquina"
+    },
+    {
+      "fedId": "Cable_Crossover",
+      "nombre": "Cruce de poleas"
+    },
+    {
+      "fedId": "Cable_Crunch",
+      "nombre": "Crunch en polea"
+    },
+    {
+      "fedId": "Cable_Rope_Overhead_Triceps_Extension",
+      "nombre": "Extensión de tríceps sobre la cabeza, en polea"
+    },
+    {
+      "fedId": "Chin-Up",
+      "nombre": "Dominadas supinas"
+    },
+    {
+      "fedId": "Dead_Bug",
+      "nombre": "Dead bug"
+    },
+    {
+      "fedId": "Dumbbell_Bench_Press",
+      "nombre": "Press de banca con mancuernas"
+    },
+    {
+      "fedId": "Dumbbell_Bicep_Curl",
+      "nombre": "Curl de bíceps con mancuernas"
+    },
+    {
+      "fedId": "Dumbbell_Flyes",
+      "nombre": "Aperturas con mancuernas"
+    },
+    {
+      "fedId": "Dumbbell_Incline_Row",
+      "nombre": "Remo con apoyo en el pecho, con mancuernas"
+    },
+    {
+      "fedId": "Dumbbell_Lunges",
+      "nombre": "Zancadas con mancuernas"
+    },
+    {
+      "fedId": "Dumbbell_Seated_One-Leg_Calf_Raise",
+      "nombre": "Elevación de gemelo sentado, a una pierna, con mancuerna"
+    },
+    {
+      "fedId": "Dumbbell_Step_Ups",
+      "nombre": "Subidas al banco con mancuernas"
+    },
+    {
+      "fedId": "EZ-Bar_Curl",
+      "nombre": "Curl con barra Z"
+    },
+    {
+      "fedId": "Face_Pull",
+      "nombre": "Face pull en polea"
+    },
+    {
+      "fedId": "Floor_Glute-Ham_Raise",
+      "nombre": "Curl nórdico"
+    },
+    {
+      "fedId": "Glute_Kickback",
+      "nombre": "Patada de glúteo en cuadrupedia"
+    },
+    {
+      "fedId": "Goblet_Squat",
+      "nombre": "Sentadilla goblet, con mancuerna o kettlebell",
+      "equipamiento": "MANCUERNAS"
+    },
+    {
+      "fedId": "Hack_Squat",
+      "nombre": "Sentadilla hack en máquina"
+    },
+    {
+      "fedId": "Hammer_Curls",
+      "nombre": "Curl martillo"
+    },
+    {
+      "fedId": "Incline_Dumbbell_Curl",
+      "nombre": "Curl inclinado con mancuernas"
+    },
+    {
+      "fedId": "Incline_Dumbbell_Press",
+      "nombre": "Press inclinado con mancuernas"
+    },
+    {
+      "fedId": "Leg_Press",
+      "nombre": "Prensa de piernas"
+    },
+    {
+      "fedId": "Leverage_Shoulder_Press",
+      "nombre": "Press de hombros en máquina"
+    },
+    {
+      "fedId": "Lying_Dumbbell_Tricep_Extension",
+      "nombre": "Press francés con mancuernas"
+    },
+    {
+      "fedId": "Lying_Leg_Curls",
+      "nombre": "Curl femoral tumbado"
+    },
+    {
+      "fedId": "One-Arm_Dumbbell_Row",
+      "nombre": "Remo con mancuerna a una mano"
+    },
+    {
+      "fedId": "Plank",
+      "nombre": "Plancha"
+    },
+    {
+      "fedId": "Pullups",
+      "nombre": "Dominadas"
+    },
+    {
+      "fedId": "Push-Ups_-_Close_Triceps_Position",
+      "nombre": "Flexiones cerradas"
+    },
+    {
+      "fedId": "Push-Ups_With_Feet_Elevated",
+      "nombre": "Flexiones con los pies elevados"
+    },
+    {
+      "fedId": "Pushups",
+      "nombre": "Flexiones"
+    },
+    {
+      "fedId": "Reverse_Crunch",
+      "nombre": "Crunch inverso"
+    },
+    {
+      "fedId": "Reverse_Flyes",
+      "nombre": "Pájaros en banco inclinado"
+    },
+    {
+      "fedId": "Romanian_Deadlift",
+      "nombre": "Peso muerto rumano con barra"
+    },
+    {
+      "fedId": "Seated_Cable_Rows",
+      "nombre": "Remo en polea sentado"
+    },
+    {
+      "fedId": "Seated_Calf_Raise",
+      "nombre": "Elevación de gemelos sentado, en máquina"
+    },
+    {
+      "fedId": "Seated_Dumbbell_Press",
+      "nombre": "Press de hombros con mancuernas, sentado"
+    },
+    {
+      "fedId": "Seated_Leg_Curl",
+      "nombre": "Curl femoral sentado"
+    },
+    {
+      "fedId": "Side_Bridge",
+      "nombre": "Plancha lateral",
+      "descripcionSiVacia": "Túmbate de lado con el antebrazo bajo el hombro y las piernas estiradas, un pie sobre el otro. Sube la cadera hasta que el cuerpo forme una línea recta de la cabeza a los pies, sin dejarla caer ni echarla atrás. Aguanta el tiempo marcado respirando con normalidad y cambia de lado.",
+      "descripcionEnSiVacia": "Lie on your side with your forearm under your shoulder and your legs straight, one foot on top of the other. Lift your hips until your body forms a straight line from head to feet, without letting them sag or drift back. Hold for the set time, breathing normally, then switch sides."
+    },
+    {
+      "fedId": "Side_Lateral_Raise",
+      "nombre": "Elevaciones laterales"
+    },
+    {
+      "fedId": "Single_Leg_Glute_Bridge",
+      "nombre": "Puente de glúteo a una pierna"
+    },
+    {
+      "fedId": "Split_Squat_with_Dumbbells",
+      "nombre": "Sentadilla búlgara con mancuernas"
+    },
+    {
+      "fedId": "Standing_Calf_Raises",
+      "nombre": "Elevación de gemelos de pie, en máquina"
+    },
+    {
+      "fedId": "Standing_Dumbbell_Calf_Raise",
+      "nombre": "Elevación de gemelos de pie con mancuernas"
+    },
+    {
+      "fedId": "Standing_Dumbbell_Triceps_Extension",
+      "nombre": "Extensión de tríceps sobre la cabeza con mancuerna"
+    },
+    {
+      "fedId": "Standing_Military_Press",
+      "nombre": "Press militar de pie, con barra"
+    },
+    {
+      "fedId": "Step-up_with_Knee_Raise",
+      "nombre": "Subida al banco con elevación de rodilla"
+    },
+    {
+      "fedId": "Stiff-Legged_Dumbbell_Deadlift",
+      "nombre": "Peso muerto rumano con mancuernas"
+    },
+    {
+      "fedId": "Tricep_Dumbbell_Kickback",
+      "nombre": "Patada de tríceps con mancuerna"
+    },
+    {
+      "fedId": "Triceps_Pushdown",
+      "nombre": "Extensión de tríceps en polea"
+    },
+    {
+      "fedId": "Wide-Grip_Lat_Pulldown",
+      "nombre": "Jalón al pecho"
+    }
+  ],
+  "rutinas": [
+    {
+      "codigo": "GIM-PE-A",
+      "nombre": "Para empezar A",
+      "nombreEn": "Getting started A",
+      "descripcion": "Básicos: prensa, press con mancuernas y jalón al pecho. Extras: femoral, hombro y abdomen.",
+      "descripcionEn": "Main lifts: leg press, dumbbell bench press and lat pulldown. Extras: hamstrings, shoulders and abs.",
+      "nivel": "PRINCIPIANTE",
+      "equipamiento": "GIMNASIO",
+      "categoria": "Gimnasio",
+      "categoriaEn": "Gym",
+      "duracionMinutos": 45,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Leg_Press",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 2,
+          "fedId": "Dumbbell_Bench_Press",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 3,
+          "fedId": "Wide-Grip_Lat_Pulldown",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 4,
+          "fedId": "Lying_Leg_Curls",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 5,
+          "fedId": "Side_Lateral_Raise",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 6,
+          "fedId": "Cable_Crunch",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "GIM-PE-B",
+      "nombre": "Para empezar B",
+      "nombreEn": "Getting started B",
+      "descripcion": "Básicos: sentadilla goblet, remo en polea, press de hombros y peso muerto rumano. Extras: pecho, bíceps y tríceps.",
+      "descripcionEn": "Main lifts: goblet squat, cable row, machine shoulder press and Romanian deadlift. Extras: chest, biceps and triceps.",
+      "nivel": "PRINCIPIANTE",
+      "equipamiento": "GIMNASIO",
+      "categoria": "Gimnasio",
+      "categoriaEn": "Gym",
+      "duracionMinutos": 55,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Goblet_Squat",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 2,
+          "fedId": "Seated_Cable_Rows",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 3,
+          "fedId": "Leverage_Shoulder_Press",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 4,
+          "fedId": "Stiff-Legged_Dumbbell_Deadlift",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 5,
+          "fedId": "Butterfly",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 6,
+          "fedId": "Dumbbell_Bicep_Curl",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 7,
+          "fedId": "Triceps_Pushdown",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "GIM-CC-A",
+      "nombre": "Cuerpo completo A",
+      "nombreEn": "Full body A",
+      "descripcion": "Básicos: sentadilla, press de banca y remo con barra. Extras: femoral, hombro, tríceps y abdomen.",
+      "descripcionEn": "Main lifts: squat, bench press and barbell row. Extras: hamstrings, shoulders, triceps and abs.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "GIMNASIO",
+      "categoria": "Gimnasio",
+      "categoriaEn": "Gym",
+      "duracionMinutos": 50,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Barbell_Squat",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 2,
+          "fedId": "Barbell_Bench_Press_-_Medium_Grip",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 3,
+          "fedId": "Bent_Over_Barbell_Row",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 4,
+          "fedId": "Lying_Leg_Curls",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 5,
+          "fedId": "Side_Lateral_Raise",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 6,
+          "fedId": "Triceps_Pushdown",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 7,
+          "fedId": "Plank",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "SEGUNDOS",
+          "min": 30,
+          "max": 60,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "GIM-CC-B",
+      "nombre": "Cuerpo completo B",
+      "nombreEn": "Full body B",
+      "descripcion": "Básicos: peso muerto rumano, press militar y jalón al pecho. Extras: cuádriceps, pecho, bíceps y abdomen.",
+      "descripcionEn": "Main lifts: Romanian deadlift, overhead press and lat pulldown. Extras: quads, chest, biceps and abs.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "GIMNASIO",
+      "categoria": "Gimnasio",
+      "categoriaEn": "Gym",
+      "duracionMinutos": 50,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Romanian_Deadlift",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 2,
+          "fedId": "Standing_Military_Press",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 3,
+          "fedId": "Wide-Grip_Lat_Pulldown",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 4,
+          "fedId": "Leg_Press",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 5,
+          "fedId": "Incline_Dumbbell_Press",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 6,
+          "fedId": "Barbell_Curl",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 7,
+          "fedId": "Cable_Crunch",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "GIM-CC-C",
+      "nombre": "Cuerpo completo C",
+      "nombreEn": "Full body C",
+      "descripcion": "Básicos: hip thrust, press con mancuernas y dominadas. Extras: cuádriceps, glúteo, femoral, hombro y bíceps.",
+      "descripcionEn": "Main lifts: hip thrust, dumbbell bench press and pull-ups. Extras: quads, glutes, hamstrings, shoulders and biceps.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "GIMNASIO",
+      "categoria": "Gimnasio",
+      "categoriaEn": "Gym",
+      "duracionMinutos": 50,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Barbell_Hip_Thrust",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": "Espalda apoyada en un banco.",
+          "notaEn": "Upper back resting on a bench."
+        },
+        {
+          "orden": 2,
+          "fedId": "Dumbbell_Bench_Press",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 3,
+          "fedId": "Pullups",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": "Si no llegas a 6, en la máquina asistida o con jalón al pecho.",
+          "notaEn": "If you can't do 6, use the assisted machine or do lat pulldowns instead."
+        },
+        {
+          "orden": 4,
+          "fedId": "Dumbbell_Lunges",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": "PIERNA",
+          "descansoSegundos": 90,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 5,
+          "fedId": "Seated_Leg_Curl",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 6,
+          "fedId": "Face_Pull",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 7,
+          "fedId": "Hammer_Curls",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "GIM-TORSO-A",
+      "nombre": "Torso A",
+      "nombreEn": "Upper A",
+      "descripcion": "Básicos: press de banca, remo con barra y press militar. Extras: espalda, hombro, bíceps y tríceps.",
+      "descripcionEn": "Main lifts: bench press, barbell row and overhead press. Extras: back, shoulders, biceps and triceps.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "GIMNASIO",
+      "categoria": "Gimnasio",
+      "categoriaEn": "Gym",
+      "duracionMinutos": 55,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Barbell_Bench_Press_-_Medium_Grip",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 2,
+          "fedId": "Bent_Over_Barbell_Row",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 3,
+          "fedId": "Standing_Military_Press",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 4,
+          "fedId": "Wide-Grip_Lat_Pulldown",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 5,
+          "fedId": "Side_Lateral_Raise",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 6,
+          "fedId": "Barbell_Curl",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 7,
+          "fedId": "Triceps_Pushdown",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "GIM-TORSO-B",
+      "nombre": "Torso B",
+      "nombreEn": "Upper B",
+      "descripcion": "Básicos: press inclinado, dominadas y remo en polea. Extras: pecho, hombro, bíceps y tríceps.",
+      "descripcionEn": "Main lifts: incline dumbbell press, pull-ups and cable row. Extras: chest, shoulders, biceps and triceps.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "GIMNASIO",
+      "categoria": "Gimnasio",
+      "categoriaEn": "Gym",
+      "duracionMinutos": 55,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Incline_Dumbbell_Press",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 2,
+          "fedId": "Pullups",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": "Si no llegas a 6, en la máquina asistida o con jalón al pecho.",
+          "notaEn": "If you can't do 6, use the assisted machine or do lat pulldowns instead."
+        },
+        {
+          "orden": 3,
+          "fedId": "Seated_Cable_Rows",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 4,
+          "fedId": "Butterfly",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 5,
+          "fedId": "Side_Lateral_Raise",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 6,
+          "fedId": "Incline_Dumbbell_Curl",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 7,
+          "fedId": "Cable_Rope_Overhead_Triceps_Extension",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "GIM-PIERNA-A",
+      "nombre": "Pierna A",
+      "nombreEn": "Lower A",
+      "descripcion": "Básicos: sentadilla y peso muerto rumano. Extras: cuádriceps, femoral, gemelo y abdomen.",
+      "descripcionEn": "Main lifts: squat and Romanian deadlift. Extras: quads, hamstrings, calves and abs.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "GIMNASIO",
+      "categoria": "Gimnasio",
+      "categoriaEn": "Gym",
+      "duracionMinutos": 50,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Barbell_Squat",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 2,
+          "fedId": "Romanian_Deadlift",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 3,
+          "fedId": "Leg_Press",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 4,
+          "fedId": "Lying_Leg_Curls",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 5,
+          "fedId": "Standing_Calf_Raises",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 6,
+          "fedId": "Cable_Crunch",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "GIM-PIERNA-B",
+      "nombre": "Pierna B",
+      "nombreEn": "Lower B",
+      "descripcion": "Básicos: sentadilla hack y hip thrust. Extras: cuádriceps, glúteo, femoral, gemelo y abdomen.",
+      "descripcionEn": "Main lifts: hack squat and hip thrust. Extras: quads, glutes, hamstrings, calves and abs.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "GIMNASIO",
+      "categoria": "Gimnasio",
+      "categoriaEn": "Gym",
+      "duracionMinutos": 50,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Hack_Squat",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 2,
+          "fedId": "Barbell_Hip_Thrust",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": "Espalda apoyada en un banco.",
+          "notaEn": "Upper back resting on a bench."
+        },
+        {
+          "orden": 3,
+          "fedId": "Split_Squat_with_Dumbbells",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": "PIERNA",
+          "descansoSegundos": 90,
+          "nota": "Pie de atrás sobre un banco.",
+          "notaEn": "Rear foot up on a bench."
+        },
+        {
+          "orden": 4,
+          "fedId": "Seated_Leg_Curl",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 5,
+          "fedId": "Seated_Calf_Raise",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 6,
+          "fedId": "Plank",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "SEGUNDOS",
+          "min": 30,
+          "max": 60,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "GIM-EMPUJE",
+      "nombre": "Empuje",
+      "nombreEn": "Push",
+      "descripcion": "Básicos: press de banca y press de hombros. Extras: pecho, hombro y tríceps.",
+      "descripcionEn": "Main lifts: bench press and dumbbell shoulder press. Extras: chest, shoulders and triceps.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "GIMNASIO",
+      "categoria": "Gimnasio",
+      "categoriaEn": "Gym",
+      "duracionMinutos": 55,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Barbell_Bench_Press_-_Medium_Grip",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 2,
+          "fedId": "Seated_Dumbbell_Press",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 3,
+          "fedId": "Incline_Dumbbell_Press",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 4,
+          "fedId": "Cable_Crossover",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 5,
+          "fedId": "Side_Lateral_Raise",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 6,
+          "fedId": "Triceps_Pushdown",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 7,
+          "fedId": "Cable_Rope_Overhead_Triceps_Extension",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "GIM-TIRON",
+      "nombre": "Tirón",
+      "nombreEn": "Pull",
+      "descripcion": "Básicos: dominadas y remo en polea. Extras: espalda, hombro y bíceps.",
+      "descripcionEn": "Main lifts: pull-ups and cable row. Extras: back, shoulders and biceps.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "GIMNASIO",
+      "categoria": "Gimnasio",
+      "categoriaEn": "Gym",
+      "duracionMinutos": 50,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Pullups",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": "Si no llegas a 6, en la máquina asistida o con jalón al pecho.",
+          "notaEn": "If you can't do 6, use the assisted machine or do lat pulldowns instead."
+        },
+        {
+          "orden": 2,
+          "fedId": "Seated_Cable_Rows",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 3,
+          "fedId": "One-Arm_Dumbbell_Row",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": "BRAZO",
+          "descansoSegundos": 90,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 4,
+          "fedId": "Face_Pull",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 5,
+          "fedId": "EZ-Bar_Curl",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 6,
+          "fedId": "Hammer_Curls",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "MAN-PE-A",
+      "nombre": "Para empezar A",
+      "nombreEn": "Getting started A",
+      "descripcion": "Básicos: sentadilla goblet, press con mancuernas, remo a una mano y peso muerto rumano. Extras: hombro y abdomen.",
+      "descripcionEn": "Main lifts: goblet squat, dumbbell bench press, one-arm dumbbell row and Romanian deadlift. Extras: shoulders and abs.",
+      "nivel": "PRINCIPIANTE",
+      "equipamiento": "MANCUERNAS",
+      "categoria": "Mancuernas",
+      "categoriaEn": "Dumbbells",
+      "duracionMinutos": 50,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Goblet_Squat",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 2,
+          "fedId": "Dumbbell_Bench_Press",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 3,
+          "fedId": "One-Arm_Dumbbell_Row",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": "BRAZO",
+          "descansoSegundos": 90,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 4,
+          "fedId": "Stiff-Legged_Dumbbell_Deadlift",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 5,
+          "fedId": "Side_Lateral_Raise",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 6,
+          "fedId": "Plank",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "SEGUNDOS",
+          "min": 20,
+          "max": 40,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "MAN-PE-B",
+      "nombre": "Para empezar B",
+      "nombreEn": "Getting started B",
+      "descripcion": "Básicos: zancadas, press de hombros y remo con apoyo. Extras: glúteo, pecho, bíceps y tríceps.",
+      "descripcionEn": "Main lifts: lunges, dumbbell shoulder press and chest-supported row. Extras: glutes, chest, biceps and triceps.",
+      "nivel": "PRINCIPIANTE",
+      "equipamiento": "MANCUERNAS",
+      "categoria": "Mancuernas",
+      "categoriaEn": "Dumbbells",
+      "duracionMinutos": 50,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Dumbbell_Lunges",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": "PIERNA",
+          "descansoSegundos": 90,
+          "nota": "Si te cuesta el equilibrio, sin mancuernas y con una mano en la pared.",
+          "notaEn": "If balance is hard, go without dumbbells and keep one hand on the wall."
+        },
+        {
+          "orden": 2,
+          "fedId": "Seated_Dumbbell_Press",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 3,
+          "fedId": "Dumbbell_Incline_Row",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": "Pecho apoyado en el banco inclinado.",
+          "notaEn": "Chest resting on the incline bench."
+        },
+        {
+          "orden": 4,
+          "fedId": "Butt_Lift_Bridge",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": "Con una mancuerna sobre la cadera cuando llegues a 15.",
+          "notaEn": "Once you reach 15, rest a dumbbell on your hips."
+        },
+        {
+          "orden": 5,
+          "fedId": "Dumbbell_Flyes",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 6,
+          "fedId": "Dumbbell_Bicep_Curl",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 7,
+          "fedId": "Standing_Dumbbell_Triceps_Extension",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "MAN-CC-A",
+      "nombre": "Cuerpo completo A",
+      "nombreEn": "Full body A",
+      "descripcion": "Básicos: sentadilla goblet, press con mancuernas y remo a una mano. Extras: femoral, hombro, tríceps y abdomen.",
+      "descripcionEn": "Main lifts: goblet squat, dumbbell bench press and one-arm dumbbell row. Extras: hamstrings, shoulders, triceps and abs.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "MANCUERNAS",
+      "categoria": "Mancuernas",
+      "categoriaEn": "Dumbbells",
+      "duracionMinutos": 50,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Goblet_Squat",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 2,
+          "fedId": "Dumbbell_Bench_Press",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 3,
+          "fedId": "One-Arm_Dumbbell_Row",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 12,
+          "porLado": "BRAZO",
+          "descansoSegundos": 90,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 4,
+          "fedId": "Floor_Glute-Ham_Raise",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 3,
+          "max": 6,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": "Pies sujetos bajo un sofá o por alguien. Baja lo más despacio que puedas y empújate con las manos para subir; si no llegas a 3, solo la bajada.",
+          "notaEn": "Feet hooked under a sofa or held by someone. Lower yourself as slowly as you can and push off with your hands to come back up; if you can't do 3, do just the lowering."
+        },
+        {
+          "orden": 5,
+          "fedId": "Side_Lateral_Raise",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 6,
+          "fedId": "Standing_Dumbbell_Triceps_Extension",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 7,
+          "fedId": "Plank",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "SEGUNDOS",
+          "min": 30,
+          "max": 60,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "MAN-CC-B",
+      "nombre": "Cuerpo completo B",
+      "nombreEn": "Full body B",
+      "descripcion": "Básicos: peso muerto rumano, press de hombros y remo con apoyo. Extras: cuádriceps, glúteo, pecho, bíceps y abdomen.",
+      "descripcionEn": "Main lifts: Romanian deadlift, dumbbell shoulder press and chest-supported row. Extras: quads, glutes, chest, biceps and abs.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "MANCUERNAS",
+      "categoria": "Mancuernas",
+      "categoriaEn": "Dumbbells",
+      "duracionMinutos": 50,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Stiff-Legged_Dumbbell_Deadlift",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 2,
+          "fedId": "Seated_Dumbbell_Press",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 3,
+          "fedId": "Dumbbell_Incline_Row",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": "Pecho apoyado en el banco inclinado.",
+          "notaEn": "Chest resting on the incline bench."
+        },
+        {
+          "orden": 4,
+          "fedId": "Dumbbell_Lunges",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": "PIERNA",
+          "descansoSegundos": 90,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 5,
+          "fedId": "Dumbbell_Flyes",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 6,
+          "fedId": "Dumbbell_Bicep_Curl",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 7,
+          "fedId": "Side_Bridge",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "SEGUNDOS",
+          "min": 20,
+          "max": 40,
+          "porLado": "LADO",
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "MAN-CC-C",
+      "nombre": "Cuerpo completo C",
+      "nombreEn": "Full body C",
+      "descripcion": "Básicos: sentadilla búlgara, press inclinado y remo sin apoyo. Extras: glúteo, hombro, bíceps y abdomen.",
+      "descripcionEn": "Main lifts: Bulgarian split squat, incline dumbbell press and bent-over dumbbell row. Extras: glutes, shoulders, biceps and abs.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "MANCUERNAS",
+      "categoria": "Mancuernas",
+      "categoriaEn": "Dumbbells",
+      "duracionMinutos": 50,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Split_Squat_with_Dumbbells",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 12,
+          "porLado": "PIERNA",
+          "descansoSegundos": 90,
+          "nota": "Pie de atrás sobre un banco.",
+          "notaEn": "Rear foot up on a bench."
+        },
+        {
+          "orden": 2,
+          "fedId": "Incline_Dumbbell_Press",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 3,
+          "fedId": "Bent_Over_Two-Dumbbell_Row",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 4,
+          "fedId": "Single_Leg_Glute_Bridge",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": "PIERNA",
+          "descansoSegundos": 60,
+          "nota": "Con una mancuerna sobre la cadera cuando llegues a 15.",
+          "notaEn": "Once you reach 15, rest a dumbbell on your hips."
+        },
+        {
+          "orden": 5,
+          "fedId": "Reverse_Flyes",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": "Boca abajo sobre el banco inclinado.",
+          "notaEn": "Face down on the incline bench."
+        },
+        {
+          "orden": 6,
+          "fedId": "Hammer_Curls",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 7,
+          "fedId": "Reverse_Crunch",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "MAN-TORSO-A",
+      "nombre": "Torso A",
+      "nombreEn": "Upper A",
+      "descripcion": "Básicos: press con mancuernas, remo a una mano y press de hombros. Extras: espalda, hombro, bíceps y tríceps.",
+      "descripcionEn": "Main lifts: dumbbell bench press, one-arm dumbbell row and dumbbell shoulder press. Extras: back, shoulders, biceps and triceps.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "MANCUERNAS",
+      "categoria": "Mancuernas",
+      "categoriaEn": "Dumbbells",
+      "duracionMinutos": 55,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Dumbbell_Bench_Press",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 2,
+          "fedId": "One-Arm_Dumbbell_Row",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 12,
+          "porLado": "BRAZO",
+          "descansoSegundos": 90,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 3,
+          "fedId": "Seated_Dumbbell_Press",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 4,
+          "fedId": "Dumbbell_Incline_Row",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": "Pecho apoyado en el banco inclinado.",
+          "notaEn": "Chest resting on the incline bench."
+        },
+        {
+          "orden": 5,
+          "fedId": "Side_Lateral_Raise",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 6,
+          "fedId": "Dumbbell_Bicep_Curl",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 7,
+          "fedId": "Lying_Dumbbell_Tricep_Extension",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "MAN-TORSO-B",
+      "nombre": "Torso B",
+      "nombreEn": "Upper B",
+      "descripcion": "Básicos: press inclinado y remo con apoyo. Extras: espalda, pecho, hombro, bíceps y tríceps.",
+      "descripcionEn": "Main lifts: incline dumbbell press and chest-supported row. Extras: back, chest, shoulders, biceps and triceps.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "MANCUERNAS",
+      "categoria": "Mancuernas",
+      "categoriaEn": "Dumbbells",
+      "duracionMinutos": 55,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Incline_Dumbbell_Press",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 2,
+          "fedId": "Dumbbell_Incline_Row",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": "Pecho apoyado en el banco inclinado.",
+          "notaEn": "Chest resting on the incline bench."
+        },
+        {
+          "orden": 3,
+          "fedId": "Bent_Over_Two-Dumbbell_Row",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 4,
+          "fedId": "Dumbbell_Flyes",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 5,
+          "fedId": "Side_Lateral_Raise",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 6,
+          "fedId": "Incline_Dumbbell_Curl",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 7,
+          "fedId": "Standing_Dumbbell_Triceps_Extension",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "MAN-PIERNA-A",
+      "nombre": "Pierna A",
+      "nombreEn": "Lower A",
+      "descripcion": "Básicos: sentadilla goblet y peso muerto rumano. Extras: cuádriceps, glúteo, femoral, gemelo y abdomen.",
+      "descripcionEn": "Main lifts: goblet squat and Romanian deadlift. Extras: quads, glutes, hamstrings, calves and abs.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "MANCUERNAS",
+      "categoria": "Mancuernas",
+      "categoriaEn": "Dumbbells",
+      "duracionMinutos": 50,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Goblet_Squat",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 2,
+          "fedId": "Stiff-Legged_Dumbbell_Deadlift",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 3,
+          "fedId": "Dumbbell_Lunges",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": "PIERNA",
+          "descansoSegundos": 90,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 4,
+          "fedId": "Floor_Glute-Ham_Raise",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 3,
+          "max": 6,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": "Pies sujetos bajo un sofá o por alguien. Baja lo más despacio que puedas y empújate con las manos para subir; si no llegas a 3, solo la bajada.",
+          "notaEn": "Feet hooked under a sofa or held by someone. Lower yourself as slowly as you can and push off with your hands to come back up; if you can't do 3, do just the lowering."
+        },
+        {
+          "orden": 5,
+          "fedId": "Standing_Dumbbell_Calf_Raise",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": "Puntas sobre un escalón o un libro gordo.",
+          "notaEn": "Balls of your feet on a step or a thick book."
+        },
+        {
+          "orden": 6,
+          "fedId": "Plank",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "SEGUNDOS",
+          "min": 30,
+          "max": 60,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "MAN-PIERNA-B",
+      "nombre": "Pierna B",
+      "nombreEn": "Lower B",
+      "descripcion": "Básicos: sentadilla búlgara y peso muerto rumano. Extras: cuádriceps, glúteo, gemelo y abdomen.",
+      "descripcionEn": "Main lifts: Bulgarian split squat and Romanian deadlift. Extras: quads, glutes, calves and abs.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "MANCUERNAS",
+      "categoria": "Mancuernas",
+      "categoriaEn": "Dumbbells",
+      "duracionMinutos": 60,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Split_Squat_with_Dumbbells",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 12,
+          "porLado": "PIERNA",
+          "descansoSegundos": 90,
+          "nota": "Pie de atrás sobre un banco.",
+          "notaEn": "Rear foot up on a bench."
+        },
+        {
+          "orden": 2,
+          "fedId": "Stiff-Legged_Dumbbell_Deadlift",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 3,
+          "fedId": "Dumbbell_Step_Ups",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": "PIERNA",
+          "descansoSegundos": 90,
+          "nota": "En un banco estable; sube por el centro, no por el extremo.",
+          "notaEn": "Use a stable bench and step onto the middle, not the end."
+        },
+        {
+          "orden": 4,
+          "fedId": "Single_Leg_Glute_Bridge",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": "PIERNA",
+          "descansoSegundos": 60,
+          "nota": "Con una mancuerna sobre la cadera cuando llegues a 15.",
+          "notaEn": "Once you reach 15, rest a dumbbell on your hips."
+        },
+        {
+          "orden": 5,
+          "fedId": "Dumbbell_Seated_One-Leg_Calf_Raise",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": "PIERNA",
+          "descansoSegundos": 60,
+          "nota": "Sentado, con la mancuerna sobre la rodilla y la punta del pie sobre un libro gordo.",
+          "notaEn": "Seated, with the dumbbell on your knee and the ball of your foot on a thick book."
+        },
+        {
+          "orden": 6,
+          "fedId": "Side_Bridge",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "SEGUNDOS",
+          "min": 20,
+          "max": 40,
+          "porLado": "LADO",
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "MAN-EMPUJE",
+      "nombre": "Empuje",
+      "nombreEn": "Push",
+      "descripcion": "Básicos: press con mancuernas y press de hombros. Extras: pecho, hombro y tríceps.",
+      "descripcionEn": "Main lifts: dumbbell bench press and dumbbell shoulder press. Extras: chest, shoulders and triceps.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "MANCUERNAS",
+      "categoria": "Mancuernas",
+      "categoriaEn": "Dumbbells",
+      "duracionMinutos": 55,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Dumbbell_Bench_Press",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 2,
+          "fedId": "Seated_Dumbbell_Press",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 3,
+          "fedId": "Incline_Dumbbell_Press",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 4,
+          "fedId": "Dumbbell_Flyes",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 5,
+          "fedId": "Side_Lateral_Raise",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 6,
+          "fedId": "Standing_Dumbbell_Triceps_Extension",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 7,
+          "fedId": "Tricep_Dumbbell_Kickback",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "MAN-TIRON",
+      "nombre": "Tirón",
+      "nombreEn": "Pull",
+      "descripcion": "Básicos: remo sin apoyo y remo con apoyo. Extras: espalda, hombro y bíceps.",
+      "descripcionEn": "Main lifts: bent-over dumbbell row and chest-supported row. Extras: back, shoulders and biceps.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "MANCUERNAS",
+      "categoria": "Mancuernas",
+      "categoriaEn": "Dumbbells",
+      "duracionMinutos": 50,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Bent_Over_Two-Dumbbell_Row",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 2,
+          "fedId": "Dumbbell_Incline_Row",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": "Pecho apoyado en el banco inclinado.",
+          "notaEn": "Chest resting on the incline bench."
+        },
+        {
+          "orden": 3,
+          "fedId": "One-Arm_Dumbbell_Row",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": "BRAZO",
+          "descansoSegundos": 90,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 4,
+          "fedId": "Reverse_Flyes",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": "Boca abajo sobre el banco inclinado.",
+          "notaEn": "Face down on the incline bench."
+        },
+        {
+          "orden": 5,
+          "fedId": "Incline_Dumbbell_Curl",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        },
+        {
+          "orden": 6,
+          "fedId": "Hammer_Curls",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "PC-PE-A",
+      "nombre": "Para empezar A",
+      "nombreEn": "Getting started A",
+      "descripcion": "Básicos: sentadilla, flexiones y dominadas supinas. Extras: glúteo y abdomen.",
+      "descripcionEn": "Main exercises: squat, push-ups and chin-ups. Extras: glutes and abs.",
+      "nivel": "PRINCIPIANTE",
+      "equipamiento": "PESO_CORPORAL",
+      "categoria": "Peso corporal",
+      "categoriaEn": "Bodyweight",
+      "duracionMinutos": 40,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Bodyweight_Squat",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 20,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": "Cuando llegues a 20 en todas las series, ponte una mochila con peso.",
+          "notaEn": "Once every set reaches 20, wear a loaded backpack."
+        },
+        {
+          "orden": 2,
+          "fedId": "Pushups",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": "Si no llegas a 6, con las manos en un banco o en una silla contra la pared: cuanto más alto, más fácil. Cuando llegues a 12 en todas las series, con los pies en una silla.",
+          "notaEn": "If you can't do 6, put your hands on a bench or on a chair against the wall: the higher, the easier. Once every set reaches 12, put your feet on a chair."
+        },
+        {
+          "orden": 3,
+          "fedId": "Chin-Up",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 3,
+          "max": 8,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": "Si aún no llegas a 3, negativas: sube de un salto o desde una silla y baja en 3–5 s; cada bajada cuenta como una repetición.",
+          "notaEn": "If you can't do 3 yet, do negatives: jump up or step up from a chair and lower yourself over 3–5 s; each lowering counts as one rep."
+        },
+        {
+          "orden": 4,
+          "fedId": "Butt_Lift_Bridge",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 20,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": "Cuando llegues a 20 en todas las series, a una pierna.",
+          "notaEn": "Once every set reaches 20, do it on one leg."
+        },
+        {
+          "orden": 5,
+          "fedId": "Plank",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "SEGUNDOS",
+          "min": 20,
+          "max": 40,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "PC-PE-B",
+      "nombre": "Para empezar B",
+      "nombreEn": "Getting started B",
+      "descripcion": "Básicos: zancadas, dominadas y flexiones. Extras: glúteo y abdomen.",
+      "descripcionEn": "Main exercises: walking lunges, pull-ups and push-ups. Extras: glutes and abs.",
+      "nivel": "PRINCIPIANTE",
+      "equipamiento": "PESO_CORPORAL",
+      "categoria": "Peso corporal",
+      "categoriaEn": "Bodyweight",
+      "duracionMinutos": 40,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Bodyweight_Walking_Lunge",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 12,
+          "porLado": "PIERNA",
+          "descansoSegundos": 90,
+          "nota": "Si no tienes sitio, alternando en el sitio.",
+          "notaEn": "If you don't have room, alternate legs in place."
+        },
+        {
+          "orden": 2,
+          "fedId": "Pullups",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 3,
+          "max": 8,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": "Si aún no llegas a 3, negativas: sube de un salto o desde una silla y baja en 3–5 s; cada bajada cuenta como una repetición.",
+          "notaEn": "If you can't do 3 yet, do negatives: jump up or step up from a chair and lower yourself over 3–5 s; each lowering counts as one rep."
+        },
+        {
+          "orden": 3,
+          "fedId": "Pushups",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 12,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": "Si no llegas a 6, con las manos en un banco o en una silla contra la pared: cuanto más alto, más fácil. Cuando llegues a 12 en todas las series, con los pies en una silla.",
+          "notaEn": "If you can't do 6, put your hands on a bench or on a chair against the wall: the higher, the easier. Once every set reaches 12, put your feet on a chair."
+        },
+        {
+          "orden": 4,
+          "fedId": "Single_Leg_Glute_Bridge",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 12,
+          "porLado": "PIERNA",
+          "descansoSegundos": 60,
+          "nota": "Cuando llegues a 15 en todas las series, con una mochila con peso sobre la cadera.",
+          "notaEn": "Once every set reaches 15, rest a loaded backpack on your hips."
+        },
+        {
+          "orden": 5,
+          "fedId": "Side_Bridge",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "SEGUNDOS",
+          "min": 15,
+          "max": 30,
+          "porLado": "LADO",
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "PC-CC-A",
+      "nombre": "Cuerpo completo A",
+      "nombreEn": "Full body A",
+      "descripcion": "Básicos: dominadas, flexiones con pies elevados y zancadas. Extras: femoral, tríceps y abdomen.",
+      "descripcionEn": "Main exercises: pull-ups, feet-elevated push-ups and walking lunges. Extras: hamstrings, triceps and abs.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "PESO_CORPORAL",
+      "categoria": "Peso corporal",
+      "categoriaEn": "Bodyweight",
+      "duracionMinutos": 45,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Pullups",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": "Si no llegas a 6, acaba la serie con negativas (bajar en 3–5 s). Cuando llegues a 10 en todas las series, ponte una mochila con peso.",
+          "notaEn": "If you can't do 6, finish the set with negatives (lower over 3–5 s). Once every set reaches 10, wear a loaded backpack."
+        },
+        {
+          "orden": 2,
+          "fedId": "Push-Ups_With_Feet_Elevated",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": "Pies en una silla o un banco. Cuando llegues a 15 en todas las series, ponte una mochila con peso.",
+          "notaEn": "Feet on a chair or bench. Once every set reaches 15, wear a loaded backpack."
+        },
+        {
+          "orden": 3,
+          "fedId": "Bodyweight_Walking_Lunge",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 15,
+          "porLado": "PIERNA",
+          "descansoSegundos": 90,
+          "nota": "Si no tienes sitio, alternando en el sitio. Cuando llegues a 15 en todas las series, ponte una mochila con peso.",
+          "notaEn": "If you don't have room, alternate legs in place. Once every set reaches 15, wear a loaded backpack."
+        },
+        {
+          "orden": 4,
+          "fedId": "Floor_Glute-Ham_Raise",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 3,
+          "max": 6,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": "Pies sujetos bajo un sofá o por alguien. Baja lo más despacio que puedas y empújate con las manos para subir; si no llegas a 3, solo la bajada.",
+          "notaEn": "Feet hooked under a sofa or held by someone. Lower yourself as slowly as you can and push off with your hands to come back up; if you can't do 3, do just the lowering."
+        },
+        {
+          "orden": 5,
+          "fedId": "Push-Ups_-_Close_Triceps_Position",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": "Cuando llegues a 15 en todas las series, con los pies en una silla.",
+          "notaEn": "Once every set reaches 15, put your feet on a chair."
+        },
+        {
+          "orden": 6,
+          "fedId": "Plank",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "SEGUNDOS",
+          "min": 30,
+          "max": 60,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "PC-CC-B",
+      "nombre": "Cuerpo completo B",
+      "nombreEn": "Full body B",
+      "descripcion": "Básicos: dominadas supinas, flexiones y subidas al banco. Extras: glúteo, tríceps y abdomen.",
+      "descripcionEn": "Main exercises: chin-ups, push-ups and step-ups. Extras: glutes, triceps and abs.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "PESO_CORPORAL",
+      "categoria": "Peso corporal",
+      "categoriaEn": "Bodyweight",
+      "duracionMinutos": 45,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Chin-Up",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": "Si no llegas a 6, acaba la serie con negativas (bajar en 3–5 s). Cuando llegues a 10 en todas las series, ponte una mochila con peso.",
+          "notaEn": "If you can't do 6, finish the set with negatives (lower over 3–5 s). Once every set reaches 10, wear a loaded backpack."
+        },
+        {
+          "orden": 2,
+          "fedId": "Pushups",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 20,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": "Cuando llegues a 20 en todas las series, ponte una mochila con peso.",
+          "notaEn": "Once every set reaches 20, wear a loaded backpack."
+        },
+        {
+          "orden": 3,
+          "fedId": "Step-up_with_Knee_Raise",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 15,
+          "porLado": "PIERNA",
+          "descansoSegundos": 90,
+          "nota": "En un banco, una silla estable o un escalón alto. Cuando llegues a 15 en todas las series, ponte una mochila con peso.",
+          "notaEn": "On a bench, a sturdy chair or a high step. Once every set reaches 15, wear a loaded backpack."
+        },
+        {
+          "orden": 4,
+          "fedId": "Single_Leg_Glute_Bridge",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 15,
+          "porLado": "PIERNA",
+          "descansoSegundos": 60,
+          "nota": "Cuando llegues a 15 en todas las series, con una mochila con peso sobre la cadera.",
+          "notaEn": "Once every set reaches 15, rest a loaded backpack on your hips."
+        },
+        {
+          "orden": 5,
+          "fedId": "Bench_Dips",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": "Manos en una silla o un banco detrás. Si molesta el hombro, flexiones cerradas en su lugar. Cuando llegues a 15 en todas las series, pies en otra silla.",
+          "notaEn": "Hands on a chair or bench behind you. If your shoulder hurts, do close-grip push-ups instead. Once every set reaches 15, put your feet on another chair."
+        },
+        {
+          "orden": 6,
+          "fedId": "Reverse_Crunch",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": "Cuando llegues a 15 en todas las series, baja las piernas en 3 s.",
+          "notaEn": "Once every set reaches 15, lower your legs over 3 s."
+        }
+      ]
+    },
+    {
+      "codigo": "PC-CC-C",
+      "nombre": "Cuerpo completo C",
+      "nombreEn": "Full body C",
+      "descripcion": "Básicos: dominadas, flexiones con pies elevados y sentadilla. Extras: femoral, glúteo y abdomen.",
+      "descripcionEn": "Main exercises: pull-ups, feet-elevated push-ups and squat. Extras: hamstrings, glutes and abs.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "PESO_CORPORAL",
+      "categoria": "Peso corporal",
+      "categoriaEn": "Bodyweight",
+      "duracionMinutos": 45,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Pullups",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": "Si no llegas a 6, acaba la serie con negativas (bajar en 3–5 s). Cuando llegues a 10 en todas las series, ponte una mochila con peso.",
+          "notaEn": "If you can't do 6, finish the set with negatives (lower over 3–5 s). Once every set reaches 10, wear a loaded backpack."
+        },
+        {
+          "orden": 2,
+          "fedId": "Push-Ups_With_Feet_Elevated",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": "Pies en una silla o un banco. Cuando llegues a 15 en todas las series, ponte una mochila con peso.",
+          "notaEn": "Feet on a chair or bench. Once every set reaches 15, wear a loaded backpack."
+        },
+        {
+          "orden": 3,
+          "fedId": "Bodyweight_Squat",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 15,
+          "max": 25,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": "Cuando llegues a 25 en todas las series, ponte una mochila con peso.",
+          "notaEn": "Once every set reaches 25, wear a loaded backpack."
+        },
+        {
+          "orden": 4,
+          "fedId": "Floor_Glute-Ham_Raise",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 3,
+          "max": 6,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": "Pies sujetos bajo un sofá o por alguien. Baja lo más despacio que puedas y empújate con las manos para subir; si no llegas a 3, solo la bajada.",
+          "notaEn": "Feet hooked under a sofa or held by someone. Lower yourself as slowly as you can and push off with your hands to come back up; if you can't do 3, do just the lowering."
+        },
+        {
+          "orden": 5,
+          "fedId": "Glute_Kickback",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 20,
+          "porLado": "PIERNA",
+          "descansoSegundos": 60,
+          "nota": "Cuando llegues a 20 en todas las series, aguanta 2 s arriba en cada repetición.",
+          "notaEn": "Once every set reaches 20, hold 2 s at the top of each rep."
+        },
+        {
+          "orden": 6,
+          "fedId": "Side_Bridge",
+          "tipo": "EXTRA",
+          "series": 2,
+          "medida": "SEGUNDOS",
+          "min": 20,
+          "max": 40,
+          "porLado": "LADO",
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "PC-TORSO-A",
+      "nombre": "Torso A",
+      "nombreEn": "Upper A",
+      "descripcion": "Básicos: dominadas y flexiones con pies elevados. Extras: espalda, pecho, tríceps y abdomen.",
+      "descripcionEn": "Main exercises: pull-ups and feet-elevated push-ups. Extras: back, chest, triceps and abs.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "PESO_CORPORAL",
+      "categoria": "Peso corporal",
+      "categoriaEn": "Bodyweight",
+      "duracionMinutos": 50,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Pullups",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": "Si no llegas a 6, acaba la serie con negativas (bajar en 3–5 s). Cuando llegues a 10 en todas las series, ponte una mochila con peso.",
+          "notaEn": "If you can't do 6, finish the set with negatives (lower over 3–5 s). Once every set reaches 10, wear a loaded backpack."
+        },
+        {
+          "orden": 2,
+          "fedId": "Push-Ups_With_Feet_Elevated",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": "Pies en una silla o un banco. Cuando llegues a 15 en todas las series, ponte una mochila con peso.",
+          "notaEn": "Feet on a chair or bench. Once every set reaches 15, wear a loaded backpack."
+        },
+        {
+          "orden": 3,
+          "fedId": "Chin-Up",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": "Si no llegas a 6, acaba la serie con negativas (bajar en 3–5 s). Cuando llegues a 10 en todas las series, ponte una mochila con peso.",
+          "notaEn": "If you can't do 6, finish the set with negatives (lower over 3–5 s). Once every set reaches 10, wear a loaded backpack."
+        },
+        {
+          "orden": 4,
+          "fedId": "Pushups",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 20,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": "Cuando llegues a 20 en todas las series, ponte una mochila con peso.",
+          "notaEn": "Once every set reaches 20, wear a loaded backpack."
+        },
+        {
+          "orden": 5,
+          "fedId": "Push-Ups_-_Close_Triceps_Position",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": "Cuando llegues a 15 en todas las series, con los pies en una silla.",
+          "notaEn": "Once every set reaches 15, put your feet on a chair."
+        },
+        {
+          "orden": 6,
+          "fedId": "Plank",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "SEGUNDOS",
+          "min": 30,
+          "max": 60,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "PC-TORSO-B",
+      "nombre": "Torso B",
+      "nombreEn": "Upper B",
+      "descripcion": "Básicos: dominadas supinas y flexiones. Extras: espalda, pecho, tríceps y abdomen.",
+      "descripcionEn": "Main exercises: chin-ups and push-ups. Extras: back, chest, triceps and abs.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "PESO_CORPORAL",
+      "categoria": "Peso corporal",
+      "categoriaEn": "Bodyweight",
+      "duracionMinutos": 50,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Chin-Up",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": "Si no llegas a 6, acaba la serie con negativas (bajar en 3–5 s). Cuando llegues a 10 en todas las series, ponte una mochila con peso.",
+          "notaEn": "If you can't do 6, finish the set with negatives (lower over 3–5 s). Once every set reaches 10, wear a loaded backpack."
+        },
+        {
+          "orden": 2,
+          "fedId": "Pushups",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 20,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": "Cuando llegues a 20 en todas las series, ponte una mochila con peso.",
+          "notaEn": "Once every set reaches 20, wear a loaded backpack."
+        },
+        {
+          "orden": 3,
+          "fedId": "Pullups",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 6,
+          "max": 10,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": "Si no llegas a 6, acaba la serie con negativas (bajar en 3–5 s). Cuando llegues a 10 en todas las series, ponte una mochila con peso.",
+          "notaEn": "If you can't do 6, finish the set with negatives (lower over 3–5 s). Once every set reaches 10, wear a loaded backpack."
+        },
+        {
+          "orden": 4,
+          "fedId": "Push-Ups_With_Feet_Elevated",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": "Pies en una silla o un banco. Cuando llegues a 15 en todas las series, ponte una mochila con peso.",
+          "notaEn": "Feet on a chair or bench. Once every set reaches 15, wear a loaded backpack."
+        },
+        {
+          "orden": 5,
+          "fedId": "Bench_Dips",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": "Manos en una silla o un banco detrás. Si molesta el hombro, flexiones cerradas en su lugar. Cuando llegues a 15 en todas las series, pies en otra silla.",
+          "notaEn": "Hands on a chair or bench behind you. If your shoulder hurts, do close-grip push-ups instead. Once every set reaches 15, put your feet on another chair."
+        },
+        {
+          "orden": 6,
+          "fedId": "Reverse_Crunch",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 15,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": "Cuando llegues a 15 en todas las series, baja las piernas en 3 s.",
+          "notaEn": "Once every set reaches 15, lower your legs over 3 s."
+        }
+      ]
+    },
+    {
+      "codigo": "PC-PIERNA-A",
+      "nombre": "Pierna A",
+      "nombreEn": "Lower A",
+      "descripcion": "Básicos: zancadas y curl nórdico. Extras: cuádriceps, glúteo y abdomen.",
+      "descripcionEn": "Main exercises: walking lunges and Nordic curl. Extras: quads, glutes and abs.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "PESO_CORPORAL",
+      "categoria": "Peso corporal",
+      "categoriaEn": "Bodyweight",
+      "duracionMinutos": 50,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Bodyweight_Walking_Lunge",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 15,
+          "porLado": "PIERNA",
+          "descansoSegundos": 90,
+          "nota": "Si no tienes sitio, alternando en el sitio. Cuando llegues a 15 en todas las series, ponte una mochila con peso.",
+          "notaEn": "If you don't have room, alternate legs in place. Once every set reaches 15, wear a loaded backpack."
+        },
+        {
+          "orden": 2,
+          "fedId": "Floor_Glute-Ham_Raise",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 3,
+          "max": 6,
+          "porLado": null,
+          "descansoSegundos": 120,
+          "nota": "Pies sujetos bajo un sofá o por alguien. Baja lo más despacio que puedas y empújate con las manos para subir; si no llegas a 3, solo la bajada.",
+          "notaEn": "Feet hooked under a sofa or held by someone. Lower yourself as slowly as you can and push off with your hands to come back up; if you can't do 3, do just the lowering."
+        },
+        {
+          "orden": 3,
+          "fedId": "Bodyweight_Squat",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 15,
+          "max": 25,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": "Cuando llegues a 25 en todas las series, ponte una mochila con peso.",
+          "notaEn": "Once every set reaches 25, wear a loaded backpack."
+        },
+        {
+          "orden": 4,
+          "fedId": "Glute_Kickback",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 12,
+          "max": 20,
+          "porLado": "PIERNA",
+          "descansoSegundos": 60,
+          "nota": "Cuando llegues a 20 en todas las series, aguanta 2 s arriba en cada repetición.",
+          "notaEn": "Once every set reaches 20, hold 2 s at the top of each rep."
+        },
+        {
+          "orden": 5,
+          "fedId": "Side_Bridge",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "SEGUNDOS",
+          "min": 20,
+          "max": 40,
+          "porLado": "LADO",
+          "descansoSegundos": 60,
+          "nota": null,
+          "notaEn": null
+        }
+      ]
+    },
+    {
+      "codigo": "PC-PIERNA-B",
+      "nombre": "Pierna B",
+      "nombreEn": "Lower B",
+      "descripcion": "Básicos: subidas al banco y puente a una pierna. Extras: femoral, cuádriceps y abdomen.",
+      "descripcionEn": "Main exercises: step-ups and single-leg glute bridge. Extras: hamstrings, quads and abs.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "PESO_CORPORAL",
+      "categoria": "Peso corporal",
+      "categoriaEn": "Bodyweight",
+      "duracionMinutos": 45,
+      "ejercicios": [
+        {
+          "orden": 1,
+          "fedId": "Step-up_with_Knee_Raise",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 15,
+          "porLado": "PIERNA",
+          "descansoSegundos": 90,
+          "nota": "En un banco, una silla estable o un escalón alto. Cuando llegues a 15 en todas las series, ponte una mochila con peso.",
+          "notaEn": "On a bench, a sturdy chair or a high step. Once every set reaches 15, wear a loaded backpack."
+        },
+        {
+          "orden": 2,
+          "fedId": "Single_Leg_Glute_Bridge",
+          "tipo": "BASICO",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 10,
+          "max": 15,
+          "porLado": "PIERNA",
+          "descansoSegundos": 90,
+          "nota": "Cuando llegues a 15 en todas las series, con una mochila con peso sobre la cadera.",
+          "notaEn": "Once every set reaches 15, rest a loaded backpack on your hips."
+        },
+        {
+          "orden": 3,
+          "fedId": "Floor_Glute-Ham_Raise",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 3,
+          "max": 6,
+          "porLado": null,
+          "descansoSegundos": 90,
+          "nota": "Pies sujetos bajo un sofá o por alguien. Baja lo más despacio que puedas y empújate con las manos para subir; si no llegas a 3, solo la bajada.",
+          "notaEn": "Feet hooked under a sofa or held by someone. Lower yourself as slowly as you can and push off with your hands to come back up; if you can't do 3, do just the lowering."
+        },
+        {
+          "orden": 4,
+          "fedId": "Bodyweight_Squat",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 15,
+          "max": 25,
+          "porLado": null,
+          "descansoSegundos": 60,
+          "nota": "Cuando llegues a 25 en todas las series, ponte una mochila con peso.",
+          "notaEn": "Once every set reaches 25, wear a loaded backpack."
+        },
+        {
+          "orden": 5,
+          "fedId": "Dead_Bug",
+          "tipo": "EXTRA",
+          "series": 3,
+          "medida": "REPETICIONES",
+          "min": 8,
+          "max": 12,
+          "porLado": "LADO",
+          "descansoSegundos": 60,
+          "nota": "Cuando llegues a 12 en todas las series, baja brazo y pierna en 3 s.",
+          "notaEn": "Once every set reaches 12, lower your arm and leg over 3 s."
+        }
+      ]
+    }
+  ],
+  "programas": [
+    {
+      "codigo": "GIM-PE",
+      "nombre": "Para empezar",
+      "nombreEn": "Getting started",
+      "descripcion": "Para tus primeros meses: dos rutinas que se alternan, con los ejercicios básicos y pocas series para aprender la técnica. Con 2 días, A el lunes y B el jueves; con 3, lunes, miércoles y viernes, alternando: A-B-A una semana y B-A-B la siguiente. Para un gimnasio con barras, máquinas y poleas. Calienta 5 minutos suaves y haz 1–2 series ligeras del primer ejercicio. Cuando todas las series lleguen al máximo de repeticiones, sube el peso lo mínimo.",
+      "descripcionEn": "For your first months: two alternating workouts with the basic lifts and few sets, to learn good technique. With 2 days, A on Monday and B on Thursday; with 3, Monday, Wednesday and Friday, alternating: A-B-A one week and B-A-B the next. For a gym with barbells, machines and cables. Warm up with 5 easy minutes and 1–2 light sets of the first exercise. When every set reaches the top of the rep range, increase the weight by the smallest step you can.",
+      "nivel": "PRINCIPIANTE",
+      "equipamiento": "GIMNASIO",
+      "diasMin": 2,
+      "diasMax": 3,
+      "semana": [
+        "GIM-PE-A",
+        "GIM-PE-B"
+      ]
+    },
+    {
+      "codigo": "GIM-CC",
+      "nombre": "Cuerpo completo",
+      "nombreEn": "Full body",
+      "descripcion": "Tres rutinas de cuerpo completo, cada una con sus básicos. Con 3 días, lunes A, miércoles B y viernes C; con 2, se van rotando: A y B, luego C y A, luego B y C. Para un gimnasio con barras, máquinas y poleas. Calienta 5 minutos suaves y haz 1–2 series ligeras del primer ejercicio. Cuando todas las series lleguen al máximo de repeticiones, sube el peso lo mínimo.",
+      "descripcionEn": "Three full-body workouts, each with its own main lifts. With 3 days, A on Monday, B on Wednesday and C on Friday; with 2, rotate them: A and B, then C and A, then B and C. For a gym with barbells, machines and cables. Warm up with 5 easy minutes and 1–2 light sets of the first exercise. When every set reaches the top of the rep range, increase the weight by the smallest step you can.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "GIMNASIO",
+      "diasMin": 2,
+      "diasMax": 3,
+      "semana": [
+        "GIM-CC-A",
+        "GIM-CC-B",
+        "GIM-CC-C"
+      ]
+    },
+    {
+      "codigo": "GIM-TP",
+      "nombre": "Torso y pierna",
+      "nombreEn": "Upper/lower",
+      "descripcion": "Dos días de torso y dos de pierna: cada músculo se entrena dos veces por semana, con más volumen que en cuerpo completo. Lunes torso A, martes pierna A, jueves torso B y viernes pierna B. Para un gimnasio con barras, máquinas y poleas. Calienta 5 minutos suaves y haz 1–2 series ligeras del primer ejercicio. Cuando todas las series lleguen al máximo de repeticiones, sube el peso lo mínimo.",
+      "descripcionEn": "Two upper-body and two lower-body days: every muscle is trained twice a week, with more volume than full body. Upper A on Monday, lower A on Tuesday, upper B on Thursday and lower B on Friday. For a gym with barbells, machines and cables. Warm up with 5 easy minutes and 1–2 light sets of the first exercise. When every set reaches the top of the rep range, increase the weight by the smallest step you can.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "GIMNASIO",
+      "diasMin": 4,
+      "diasMax": 4,
+      "semana": [
+        "GIM-TORSO-A",
+        "GIM-PIERNA-A",
+        "GIM-TORSO-B",
+        "GIM-PIERNA-B"
+      ]
+    },
+    {
+      "codigo": "MAN-PE",
+      "nombre": "Para empezar",
+      "nombreEn": "Getting started",
+      "descripcion": "Para tus primeros meses: dos rutinas que se alternan, con los ejercicios básicos y pocas series para aprender la técnica. Con 2 días, A el lunes y B el jueves; con 3, lunes, miércoles y viernes, alternando: A-B-A una semana y B-A-B la siguiente. Solo necesitas mancuernas y un banco inclinable. Calienta 5 minutos suaves y haz 1–2 series ligeras del primer ejercicio. Cuando todas las series lleguen al máximo de repeticiones, sube el peso lo mínimo. Si ya no tienes mancuernas más pesadas, sigue subiendo repeticiones, hasta 20.",
+      "descripcionEn": "For your first months: two alternating workouts with the basic lifts and few sets, to learn good technique. With 2 days, A on Monday and B on Thursday; with 3, Monday, Wednesday and Friday, alternating: A-B-A one week and B-A-B the next. All you need is dumbbells and an adjustable bench. Warm up with 5 easy minutes and 1–2 light sets of the first exercise. When every set reaches the top of the rep range, increase the weight by the smallest step you can. Once you run out of heavier dumbbells, keep adding reps, up to 20.",
+      "nivel": "PRINCIPIANTE",
+      "equipamiento": "MANCUERNAS",
+      "diasMin": 2,
+      "diasMax": 3,
+      "semana": [
+        "MAN-PE-A",
+        "MAN-PE-B"
+      ]
+    },
+    {
+      "codigo": "MAN-CC",
+      "nombre": "Cuerpo completo",
+      "nombreEn": "Full body",
+      "descripcion": "Tres rutinas de cuerpo completo, cada una con sus básicos. Con 3 días, lunes A, miércoles B y viernes C; con 2, se van rotando: A y B, luego C y A, luego B y C. Solo necesitas mancuernas y un banco inclinable, y un sofá o algo firme bajo el que sujetar los pies para el curl nórdico. Calienta 5 minutos suaves y haz 1–2 series ligeras del primer ejercicio. Cuando todas las series lleguen al máximo de repeticiones, sube el peso lo mínimo. Si ya no tienes mancuernas más pesadas, sigue subiendo repeticiones, hasta 20.",
+      "descripcionEn": "Three full-body workouts, each with its own main lifts. With 3 days, A on Monday, B on Wednesday and C on Friday; with 2, rotate them: A and B, then C and A, then B and C. All you need is dumbbells and an adjustable bench, plus a sofa or something sturdy to hook your feet under for the Nordic curl. Warm up with 5 easy minutes and 1–2 light sets of the first exercise. When every set reaches the top of the rep range, increase the weight by the smallest step you can. Once you run out of heavier dumbbells, keep adding reps, up to 20.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "MANCUERNAS",
+      "diasMin": 2,
+      "diasMax": 3,
+      "semana": [
+        "MAN-CC-A",
+        "MAN-CC-B",
+        "MAN-CC-C"
+      ]
+    },
+    {
+      "codigo": "MAN-TP",
+      "nombre": "Torso y pierna",
+      "nombreEn": "Upper/lower",
+      "descripcion": "Dos días de torso y dos de pierna: cada músculo se entrena dos veces por semana, con más volumen que en cuerpo completo. Lunes torso A, martes pierna A, jueves torso B y viernes pierna B. Solo necesitas mancuernas y un banco inclinable, y un sofá o algo firme bajo el que sujetar los pies para el curl nórdico. Calienta 5 minutos suaves y haz 1–2 series ligeras del primer ejercicio. Cuando todas las series lleguen al máximo de repeticiones, sube el peso lo mínimo. Si ya no tienes mancuernas más pesadas, sigue subiendo repeticiones, hasta 20.",
+      "descripcionEn": "Two upper-body and two lower-body days: every muscle is trained twice a week, with more volume than full body. Upper A on Monday, lower A on Tuesday, upper B on Thursday and lower B on Friday. All you need is dumbbells and an adjustable bench, plus a sofa or something sturdy to hook your feet under for the Nordic curl. Warm up with 5 easy minutes and 1–2 light sets of the first exercise. When every set reaches the top of the rep range, increase the weight by the smallest step you can. Once you run out of heavier dumbbells, keep adding reps, up to 20.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "MANCUERNAS",
+      "diasMin": 4,
+      "diasMax": 4,
+      "semana": [
+        "MAN-TORSO-A",
+        "MAN-PIERNA-A",
+        "MAN-TORSO-B",
+        "MAN-PIERNA-B"
+      ]
+    },
+    {
+      "codigo": "PC-PE",
+      "nombre": "Para empezar",
+      "nombreEn": "Getting started",
+      "descripcion": "Para tus primeros meses: dos rutinas que se alternan, con los ejercicios básicos y pocas series para aprender la técnica. Con 2 días, A el lunes y B el jueves; con 3, lunes, miércoles y viernes, alternando: A-B-A una semana y B-A-B la siguiente. Solo necesitas una barra de dominadas y una silla o un banco. Calienta 5 minutos suaves y haz una serie fácil del primer ejercicio. Cuando todas las series lleguen al máximo, pasa a la versión más difícil que dice la nota del ejercicio.",
+      "descripcionEn": "For your first months: two alternating workouts with the basic lifts and few sets, to learn good technique. With 2 days, A on Monday and B on Thursday; with 3, Monday, Wednesday and Friday, alternating: A-B-A one week and B-A-B the next. All you need is a pull-up bar and a chair or bench. Warm up with 5 easy minutes and one easy set of the first exercise. When every set reaches the top of the range, move to the harder version in the exercise note.",
+      "nivel": "PRINCIPIANTE",
+      "equipamiento": "PESO_CORPORAL",
+      "diasMin": 2,
+      "diasMax": 3,
+      "semana": [
+        "PC-PE-A",
+        "PC-PE-B"
+      ]
+    },
+    {
+      "codigo": "PC-CC",
+      "nombre": "Cuerpo completo",
+      "nombreEn": "Full body",
+      "descripcion": "Tres rutinas de cuerpo completo, cada una con sus básicos. Con 3 días, lunes A, miércoles B y viernes C; con 2, se van rotando: A y B, luego C y A, luego B y C. Solo necesitas una barra de dominadas y una silla o un banco, y un sofá o algo firme bajo el que sujetar los pies para el curl nórdico. Calienta 5 minutos suaves y haz una serie fácil del primer ejercicio. Cuando todas las series lleguen al máximo, pasa a la versión más difícil que dice la nota del ejercicio.",
+      "descripcionEn": "Three full-body workouts, each with its own main lifts. With 3 days, A on Monday, B on Wednesday and C on Friday; with 2, rotate them: A and B, then C and A, then B and C. All you need is a pull-up bar and a chair or bench, plus a sofa or something sturdy to hook your feet under for the Nordic curl. Warm up with 5 easy minutes and one easy set of the first exercise. When every set reaches the top of the range, move to the harder version in the exercise note.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "PESO_CORPORAL",
+      "diasMin": 2,
+      "diasMax": 3,
+      "semana": [
+        "PC-CC-A",
+        "PC-CC-B",
+        "PC-CC-C"
+      ]
+    },
+    {
+      "codigo": "PC-TP",
+      "nombre": "Torso y pierna",
+      "nombreEn": "Upper/lower",
+      "descripcion": "Dos días de torso y dos de pierna: cada músculo se entrena dos veces por semana, con más volumen que en cuerpo completo. Lunes torso A, martes pierna A, jueves torso B y viernes pierna B. Solo necesitas una barra de dominadas y una silla o un banco, y un sofá o algo firme bajo el que sujetar los pies para el curl nórdico. Calienta 5 minutos suaves y haz una serie fácil del primer ejercicio. Cuando todas las series lleguen al máximo, pasa a la versión más difícil que dice la nota del ejercicio.",
+      "descripcionEn": "Two upper-body and two lower-body days: every muscle is trained twice a week, with more volume than full body. Upper A on Monday, lower A on Tuesday, upper B on Thursday and lower B on Friday. All you need is a pull-up bar and a chair or bench, plus a sofa or something sturdy to hook your feet under for the Nordic curl. Warm up with 5 easy minutes and one easy set of the first exercise. When every set reaches the top of the range, move to the harder version in the exercise note.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "PESO_CORPORAL",
+      "diasMin": 4,
+      "diasMax": 4,
+      "semana": [
+        "PC-TORSO-A",
+        "PC-PIERNA-A",
+        "PC-TORSO-B",
+        "PC-PIERNA-B"
+      ]
+    },
+    {
+      "codigo": "GIM-TPET",
+      "nombre": "Torso y pierna + empuje y tirón",
+      "nombreEn": "Upper/lower + push/pull",
+      "descripcion": "Cinco días: torso y pierna al principio de la semana, y empuje, tirón y pierna al final. Lunes torso A, martes pierna A, jueves empuje, viernes tirón y sábado pierna B. Para un gimnasio con barras, máquinas y poleas. Calienta 5 minutos suaves y haz 1–2 series ligeras del primer ejercicio. Cuando todas las series lleguen al máximo de repeticiones, sube el peso lo mínimo.",
+      "descripcionEn": "Five days: upper and lower early in the week, then push, pull and legs. Upper A on Monday, lower A on Tuesday, push on Thursday, pull on Friday and lower B on Saturday. For a gym with barbells, machines and cables. Warm up with 5 easy minutes and 1–2 light sets of the first exercise. When every set reaches the top of the rep range, increase the weight by the smallest step you can.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "GIMNASIO",
+      "diasMin": 5,
+      "diasMax": 5,
+      "semana": [
+        "GIM-TORSO-A",
+        "GIM-PIERNA-A",
+        "GIM-EMPUJE",
+        "GIM-TIRON",
+        "GIM-PIERNA-B"
+      ]
+    },
+    {
+      "codigo": "GIM-ETP",
+      "nombre": "Empuje, tirón y pierna",
+      "nombreEn": "Push/pull/legs",
+      "descripcion": "Seis días: empuje, tirón y pierna, dos veces por semana. Lunes y jueves empuje, martes y viernes tirón, miércoles pierna A y sábado pierna B. Para un gimnasio con barras, máquinas y poleas. Calienta 5 minutos suaves y haz 1–2 series ligeras del primer ejercicio. Cuando todas las series lleguen al máximo de repeticiones, sube el peso lo mínimo.",
+      "descripcionEn": "Six days: push, pull and legs, twice a week. Push on Monday and Thursday, pull on Tuesday and Friday, lower A on Wednesday and lower B on Saturday. For a gym with barbells, machines and cables. Warm up with 5 easy minutes and 1–2 light sets of the first exercise. When every set reaches the top of the rep range, increase the weight by the smallest step you can.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "GIMNASIO",
+      "diasMin": 6,
+      "diasMax": 6,
+      "semana": [
+        "GIM-EMPUJE",
+        "GIM-TIRON",
+        "GIM-PIERNA-A",
+        "GIM-EMPUJE",
+        "GIM-TIRON",
+        "GIM-PIERNA-B"
+      ]
+    },
+    {
+      "codigo": "MAN-TPET",
+      "nombre": "Torso y pierna + empuje y tirón",
+      "nombreEn": "Upper/lower + push/pull",
+      "descripcion": "Cinco días: torso y pierna al principio de la semana, y empuje, tirón y pierna al final. Lunes torso A, martes pierna A, jueves empuje, viernes tirón y sábado pierna B. Solo necesitas mancuernas y un banco inclinable, y un sofá o algo firme bajo el que sujetar los pies para el curl nórdico. Calienta 5 minutos suaves y haz 1–2 series ligeras del primer ejercicio. Cuando todas las series lleguen al máximo de repeticiones, sube el peso lo mínimo. Si ya no tienes mancuernas más pesadas, sigue subiendo repeticiones, hasta 20.",
+      "descripcionEn": "Five days: upper and lower early in the week, then push, pull and legs. Upper A on Monday, lower A on Tuesday, push on Thursday, pull on Friday and lower B on Saturday. All you need is dumbbells and an adjustable bench, plus a sofa or something sturdy to hook your feet under for the Nordic curl. Warm up with 5 easy minutes and 1–2 light sets of the first exercise. When every set reaches the top of the rep range, increase the weight by the smallest step you can. Once you run out of heavier dumbbells, keep adding reps, up to 20.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "MANCUERNAS",
+      "diasMin": 5,
+      "diasMax": 5,
+      "semana": [
+        "MAN-TORSO-A",
+        "MAN-PIERNA-A",
+        "MAN-EMPUJE",
+        "MAN-TIRON",
+        "MAN-PIERNA-B"
+      ]
+    },
+    {
+      "codigo": "MAN-ETP",
+      "nombre": "Empuje, tirón y pierna",
+      "nombreEn": "Push/pull/legs",
+      "descripcion": "Seis días: empuje, tirón y pierna, dos veces por semana. Lunes y jueves empuje, martes y viernes tirón, miércoles pierna A y sábado pierna B. Solo necesitas mancuernas y un banco inclinable, y un sofá o algo firme bajo el que sujetar los pies para el curl nórdico. Calienta 5 minutos suaves y haz 1–2 series ligeras del primer ejercicio. Cuando todas las series lleguen al máximo de repeticiones, sube el peso lo mínimo. Si ya no tienes mancuernas más pesadas, sigue subiendo repeticiones, hasta 20.",
+      "descripcionEn": "Six days: push, pull and legs, twice a week. Push on Monday and Thursday, pull on Tuesday and Friday, lower A on Wednesday and lower B on Saturday. All you need is dumbbells and an adjustable bench, plus a sofa or something sturdy to hook your feet under for the Nordic curl. Warm up with 5 easy minutes and 1–2 light sets of the first exercise. When every set reaches the top of the rep range, increase the weight by the smallest step you can. Once you run out of heavier dumbbells, keep adding reps, up to 20.",
+      "nivel": "INTERMEDIO",
+      "equipamiento": "MANCUERNAS",
+      "diasMin": 6,
+      "diasMax": 6,
+      "semana": [
+        "MAN-EMPUJE",
+        "MAN-TIRON",
+        "MAN-PIERNA-A",
+        "MAN-EMPUJE",
+        "MAN-TIRON",
+        "MAN-PIERNA-B"
+      ]
+    }
+  ]
+}

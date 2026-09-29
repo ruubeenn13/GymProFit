@@ -1,5 +1,8 @@
 package com.gymprofit.api.entity;
 
+import com.gymprofit.api.enums.MedidaSerie;
+import com.gymprofit.api.enums.PorLado;
+import com.gymprofit.api.enums.TipoEjercicioRutina;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -50,6 +53,32 @@ public class RutinaEjercicio {
     // Notas adicionales sobre la ejecución del ejercicio en esta rutina.
     @Column(columnDefinition = "TEXT")
     private String notas;
+
+    // --- Opcionales del catálogo de plantillas (GP-074). Nulos en las rutinas de antes. ---
+
+    // Rango de repeticiones (o de segundos, si la medida es SEGUNDOS). repeticiones lleva
+    // el máximo, para que una build vieja enseñe algo con sentido.
+    @Column(name = "repeticiones_min")
+    private Integer repeticionesMin;
+
+    @Column(name = "repeticiones_max")
+    private Integer repeticionesMax;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 15)
+    private MedidaSerie medida;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 10)
+    private TipoEjercicioRutina tipo;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "por_lado", length = 10)
+    private PorLado porLado;
+
+    // Nota en inglés (solo las plantillas; una copia lleva la nota en el idioma en que se hizo).
+    @Column(name = "notas_en", columnDefinition = "TEXT")
+    private String notasEn;
 
     // Rutina a la que pertenece este ejercicio.
     @ManyToOne(fetch = FetchType.LAZY)

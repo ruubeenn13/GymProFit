@@ -1,6 +1,8 @@
 package com.gymprofit.api.dto.entity.serierealizada;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Max;
@@ -39,6 +41,12 @@ public class SerieRealizadaCreateDTO implements Serializable {
     @Schema(description = "Repeticiones realmente hechas", example = "8")
     private Integer repeticiones;
 
+    @Min(value = 1, message = "{validacion.segundos.minimo}")
+    @Max(value = 3600, message = "{validacion.segundos.maximo}")
+    @Schema(description = "Segundos de una serie por tiempo (plancha…); entonces repeticiones va a 0. "
+            + "Nulo en una serie de repeticiones", example = "45")
+    private Integer segundos;
+
     @DecimalMin(value = "0.0", message = "{validacion.peso.negativo}")
     @DecimalMax(value = "500.0", message = "{validacion.peso.maximo}")
     @Schema(description = "Peso usado; nulo o cero si es peso corporal", example = "70.00")
@@ -46,4 +54,12 @@ public class SerieRealizadaCreateDTO implements Serializable {
 
     @Schema(description = "Si se marcó como completada; por defecto sí", example = "true")
     private Boolean completada;
+
+    // Una serie por tiempo no tiene repeticiones: van a 0 (GP-125). Si llegaran las dos
+    // cosas no habría forma de saber cuál manda, como con el resumen de un ejercicio.
+    @JsonIgnore
+    @AssertTrue(message = "{validacion.serie.tiempoConRepeticiones}")
+    public boolean isSinRepeticionesSiEsPorTiempo() {
+        return segundos == null || repeticiones == null || repeticiones == 0;
+    }
 }

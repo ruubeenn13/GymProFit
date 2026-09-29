@@ -83,6 +83,25 @@ public class Rutina {
     @Column(name = "categoria_en", length = 50)
     private String categoriaEn;
 
+    // Código estable del catálogo (GIM-CC-A…). Solo lo llevan las plantillas (GP-074).
+    @Column(length = 20, unique = true)
+    private String codigo;
+
+    // Rutina plantilla de un programa (GP-074): sin usuario y NO predefinida, para que las
+    // builds 1.1.x, que listan las predefinidas, no la vean. Se sirve por /programas.
+    @Column(name = "es_plantilla", nullable = false)
+    private Boolean esPlantilla = Boolean.FALSE;
+
+    // En una copia, la plantilla de la que sale.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "plantilla_id")
+    private Rutina plantilla;
+
+    // En una copia, el «programa que sigue» del que forma parte.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "programa_usuario_id")
+    private ProgramaUsuario programaUsuario;
+
     // Campo calculado (no persistido): número de ejercicios asociados a la rutina.
     @org.hibernate.annotations.Formula("(SELECT COUNT(*) FROM rutina_ejercicio re WHERE re.rutina_id = id)")
     private Integer numEjercicios;

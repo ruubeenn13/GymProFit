@@ -32,5 +32,11 @@ public interface RutinaEjercicioMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "rutina", ignore = true)
     @Mapping(target = "ejercicio", ignore = true)
+    @Mapping(target = "repeticionesMin", ignore = true)
+    @Mapping(target = "repeticionesMax", ignore = true)
+    @Mapping(target = "medida", ignore = true)
+    @Mapping(target = "tipo", ignore = true)
+    @Mapping(target = "porLado", ignore = true)
+    @Mapping(target = "notasEn", ignore = true)
     RutinaEjercicio toEntity(RutinaEjercicioCreateDTO rutinaEjercicioCreateDTO);
 }

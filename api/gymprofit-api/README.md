@@ -190,6 +190,18 @@ Todos van bajo el context-path `/api`. Los `@RequestMapping` de los controllers 
 | PATCH | `/rutinas/{id}` | USER+ | Actualización parcial |
 | DELETE | `/rutinas/{id}` | USER+ | Desactivar |
 
+Las 31 rutinas **plantilla** de los programas no salen por ninguna ruta de `/rutinas` (no son predefinidas ni tienen dueño): se sirven por `/programas`. Una copia de un programa lleva en su `RutinaDTO` `plantillaId`, `plantillaCodigo`, `programaUsuarioId` y `programaCodigo`; cada ejercicio de rutina puede llevar `repeticionesMin`, `repeticionesMax`, `medida` (`REPETICIONES`/`SEGUNDOS`), `tipo` (`BASICO`/`EXTRA`) y `porLado` (`PIERNA`/`BRAZO`/`LADO`), y `repeticiones` lleva el máximo del rango.
+
+### PROGRAMAS — `/programas` (GP-074)
+
+Catálogo v1 en `documentacion/CATALOGO-PLANTILLAS.md`, sembrado por la migración `V202609292002` desde `db/semillas/catalogo-plantillas-v1.json`. Textos en ES o EN según `Accept-Language`.
+
+| Método | URL | Auth | Descripción |
+|---|---|---|---|
+| GET | `/programas?equipamiento=&dias=&nivel=` | GUEST+ | Programas activos; `AVANZADO`/`EXPERTO` dan los de intermedio. `[]` si no casa ninguno, 400 si un filtro no es válido |
+| GET | `/programas/{codigo}` | GUEST+ | La semana y cada rutina distinta con sus ejercicios |
+| POST | `/programas/{codigo}/seguir` | USER+ | Cuerpo opcional `{"minutos": 30\|45\|60\|75}` (60 si falta). Copia cada rutina distinta para el usuario del token con las reglas del punto 3 del catálogo (nivel, objetivo, tiempo). 201 con lo creado |
+
 ### RUTINAS-EJERCICIOS — `/rutinas-ejercicios`
 
 | Método | URL | Auth | Descripción |

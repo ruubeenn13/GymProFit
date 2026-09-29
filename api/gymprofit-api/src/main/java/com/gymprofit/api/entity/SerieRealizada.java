@@ -41,6 +41,11 @@ public class SerieRealizada {
     @Column(nullable = false)
     private Integer repeticiones;
 
+    // Segundos de una serie por tiempo, como la plancha (GP-125). Nulo en una serie de
+    // repeticiones; en una por tiempo, repeticiones va a 0.
+    @Column
+    private Integer segundos;
+
     // Peso de esta serie. Nulo en ejercicios de peso corporal.
     @Column(precision = 5, scale = 2)
     private BigDecimal peso;

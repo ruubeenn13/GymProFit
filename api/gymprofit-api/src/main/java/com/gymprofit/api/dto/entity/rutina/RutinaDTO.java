@@ -30,6 +30,13 @@ public class RutinaDTO implements Serializable {
     private Boolean activa;
     // Número de ejercicios que componen la rutina (calculado)
     private Integer numEjercicios;
+    // Solo en una copia de un programa (GP-074): la plantilla de la que sale y el
+    // «programa que sigue» del que forma parte. El orden de la semana sale del programa
+    // (GET /programas/{codigo}), por el código de la plantilla. Nulos en el resto.
+    private Integer plantillaId;
+    private String plantillaCodigo;
+    private Integer programaUsuarioId;
+    private String programaCodigo;
     // NO HAY CAMPO DE CALORÍAS AQUÍ, Y ES A PROPÓSITO (DEC-004 / GP-010).
     // El gasto calórico de un entrenamiento no se puede estimar con los datos que
     // tiene la app, así que no se estima. La columna sigue en la base de datos hasta

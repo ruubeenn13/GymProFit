@@ -305,6 +305,7 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
                 SerieRealizada serie = new SerieRealizada();
                 serie.setNumero(serieDTO.getNumero());
                 serie.setRepeticiones(serieDTO.getRepeticiones());
+                serie.setSegundos(serieDTO.getSegundos());
                 serie.setPeso(serieDTO.getPeso());
                 serie.setCompletada(serieDTO.getCompletada() == null || serieDTO.getCompletada());
                 serie.setEjercicioRealizado(realizado);

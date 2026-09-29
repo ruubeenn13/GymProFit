@@ -1,5 +1,6 @@
 package com.gymprofit.api.mappers;
 
+import com.gymprofit.api.dto.entity.programa.RutinaConEjerciciosDTO;
 import com.gymprofit.api.dto.entity.rutina.RutinaCreateDTO;
 import com.gymprofit.api.dto.entity.rutina.RutinaDTO;
 import com.gymprofit.api.entity.Rutina;
@@ -7,6 +8,7 @@ import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.List;
@@ -23,7 +25,22 @@ public interface RutinaMapper {
     // Convierte una entidad Rutina en su DTO de salida.
     @Mapping(target = "usuarioId", source = "usuario.id")
     @Mapping(target = "nivel", source = "nivel")
+    @Mapping(target = "plantillaId", source = "plantilla.id")
+    @Mapping(target = "plantillaCodigo", source = "plantilla.codigo")
+    @Mapping(target = "programaUsuarioId", source = "programaUsuario.id")
+    @Mapping(target = "programaCodigo", source = "programaUsuario.programa.codigo")
     RutinaDTO toDTO(Rutina rutina);
+
+    // La misma conversión, en el DTO que además lleva los ejercicios (GP-074). Los
+    // ejercicios los pone el servicio, que los localiza y los ordena.
+    @Mapping(target = "usuarioId", source = "usuario.id")
+    @Mapping(target = "plantillaId", source = "plantilla.id")
+    @Mapping(target = "plantillaCodigo", source = "plantilla.codigo")
+    @Mapping(target = "programaUsuarioId", source = "programaUsuario.id")
+    @Mapping(target = "programaCodigo", source = "programaUsuario.programa.codigo")
+    @Mapping(target = "ejercicios", ignore = true)
+    @Named("conEjercicios") // fuera de la selección automática: si no, toDTOList no sabría cuál usar
+    RutinaConEjerciciosDTO toConEjercicios(Rutina rutina);
 
     // Convierte una lista de entidades Rutina en su lista de DTOs.
     List<RutinaDTO> toDTOList(List<Rutina> rutinas);
@@ -35,6 +52,10 @@ public interface RutinaMapper {
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "activa", ignore = true)
     @Mapping(target = "numEjercicios", ignore = true)
+    @Mapping(target = "codigo", ignore = true)
+    @Mapping(target = "esPlantilla", ignore = true)
+    @Mapping(target = "plantilla", ignore = true)
+    @Mapping(target = "programaUsuario", ignore = true)
     Rutina toEntity(RutinaCreateDTO rutinaCreateDTO);
 
     // Tras el mapeo base, localiza los textos del DTO: si el idioma del request

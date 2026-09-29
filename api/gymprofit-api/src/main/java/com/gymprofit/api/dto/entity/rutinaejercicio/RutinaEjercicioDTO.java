@@ -31,4 +31,12 @@ public class RutinaEjercicioDTO implements Serializable {
     // la migración que la retire, pero ni se lee ni se escribe.
     // Nombre del ejercicio (dato enriquecido desde el catálogo de ejercicios)
     private String nombreEjercicio;
+    // Opcionales del catálogo de plantillas (GP-074); nulos en las rutinas de antes.
+    // repeticiones lleva el máximo del rango. medida: REPETICIONES o SEGUNDOS (entonces el
+    // rango son segundos). tipo: BASICO o EXTRA. porLado: PIERNA, BRAZO o LADO.
+    private Integer repeticionesMin;
+    private Integer repeticionesMax;
+    private String medida;
+    private String tipo;
+    private String porLado;
 }

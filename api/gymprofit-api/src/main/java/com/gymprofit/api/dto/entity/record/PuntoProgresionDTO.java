@@ -22,9 +22,12 @@ public class PuntoProgresionDTO implements Serializable {
     private Integer sesionId;
     private LocalDateTime fecha;
 
-    // PESO o REPETICIONES, como en RecordDTO.
+    // PESO, REPETICIONES o TIEMPO, como en RecordDTO.
     private String tipo;
     private BigDecimal peso;
     private Integer repeticiones;
     private BigDecimal unoRmEstimado;
+
+    // Segundos de la mejor serie por tiempo (GP-125); nulo en las demás.
+    private Integer segundos;
 }

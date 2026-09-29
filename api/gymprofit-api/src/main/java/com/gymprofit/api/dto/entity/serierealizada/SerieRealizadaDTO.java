@@ -28,6 +28,8 @@ public class SerieRealizadaDTO implements Serializable {
     @Schema(description = "Repeticiones realmente hechas", example = "8")
     private Integer repeticiones;
 
+    @Schema(description = "Segundos de una serie por tiempo (GP-125); nulo en una de repeticiones", example = "45")
+    private Integer segundos;
     @Schema(description = "Peso usado en esta serie; nulo si es peso corporal", example = "70.00")
     private BigDecimal peso;
 

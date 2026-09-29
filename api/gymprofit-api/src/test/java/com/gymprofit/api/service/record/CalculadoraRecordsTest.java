@@ -1,6 +1,7 @@
 package com.gymprofit.api.service.record;
 
 import com.gymprofit.api.service.record.CalculadoraRecords.Evento;
+import com.gymprofit.api.service.record.CalculadoraRecords.Marca;
 import com.gymprofit.api.service.record.CalculadoraRecords.Resultado;
 import com.gymprofit.api.service.record.CalculadoraRecords.Serie;
 import com.gymprofit.api.service.record.CalculadoraRecords.Tipo;
@@ -169,5 +170,42 @@ class CalculadoraRecordsTest {
     @DisplayName("1RM de Epley: 82,5 kg x 5 son 96,3 kg")
     void epley() {
         assertThat(CalculadoraRecords.unoRmEpley(new BigDecimal("82.5"), 5)).isEqualByComparingTo("96.3");
+    }
+
+    // --- Series por tiempo (GP-125) ---------------------------------------------
+
+    private static final int PLANCHA = 3;
+
+    private static Serie tiempo(int sesion, int diasDespues, int segundos) {
+        return new Serie(sesion, LUNES.plusDays(diasDespues), PLANCHA, null, 0, segundos);
+    }
+
+    @Test
+    @DisplayName("Por tiempo: la marca es la serie más larga, y superarla es récord")
+    void porTiempo_laSerieMasLarga() {
+        Resultado r = CalculadoraRecords.calcular(List.of(
+                tiempo(10, 0, 30), tiempo(10, 0, 45),
+                tiempo(11, 2, 45),
+                tiempo(12, 4, 40), tiempo(12, 4, 60)));
+
+        assertThat(r.records()).hasSize(1);
+        Evento e = r.records().get(0);
+        assertThat(e.marca().tipo()).isEqualTo(Tipo.TIEMPO);
+        assertThat(e.marca().segundos()).isEqualTo(60);
+        assertThat(e.marca().repeticiones()).isZero();
+        assertThat(e.marca().peso()).isNull();
+        assertThat(e.anterior().segundos()).isEqualTo(45);
+        assertThat(r.progresion().get(PLANCHA)).extracting(Marca::segundos).containsExactly(45, 45, 60);
+    }
+
+    @Test
+    @DisplayName("Por tiempo: una serie con peso no cuenta como marca de peso, ni una de 0 repeticiones como de repeticiones")
+    void porTiempo_noCompiteConLasOtras() {
+        Resultado r = CalculadoraRecords.calcular(List.of(
+                new Serie(10, LUNES, PLANCHA, new BigDecimal("20"), 0, 60),
+                new Serie(11, LUNES.plusDays(2), PLANCHA, new BigDecimal("25"), 0, 50)));
+
+        assertThat(r.eventos()).extracting(ev -> ev.marca().tipo()).containsOnly(Tipo.TIEMPO);
+        assertThat(r.records()).isEmpty();
     }
 }

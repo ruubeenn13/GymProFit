@@ -320,9 +320,16 @@ public class RutinaService implements IRutinaService {
 
     /**
      * Filtra una lista de rutinas dejando solo las visibles para el usuario autenticado.
+     * Las plantillas de los programas (GP-074) no salen en ningún listado de /rutinas,
+     * tampoco para ADMIN: se sirven por /programas, y estos listados son los que conocen
+     * las builds 1.1.x. A un usuario ya se las quita canView, porque no tienen dueño ni
+     * son predefinidas.
      */
     private List<Rutina> filterViewable(List<Rutina> rutinas) {
-        return rutinas.stream().filter(this::canView).toList();
+        return rutinas.stream()
+                .filter(r -> !Boolean.TRUE.equals(r.getEsPlantilla()))
+                .filter(this::canView)
+                .toList();
     }
 
     // Verifica que el usuario autenticado pueda modificar/eliminar la rutina: ADMIN siempre,

@@ -94,8 +94,11 @@ public interface IEjercicioRealizadoRepository extends JpaRepository<EjercicioRe
      * Solo cubre las sesiones con registro por serie. Las anteriores no tienen filas
      * en {@code series_realizadas} y se calculan aparte, desde el resumen del ejercicio.
      */
+    // Las series por tiempo no cuentan (GP-125): no tienen repeticiones que multiplicar,
+    // y si llevan peso (una plancha lastrada) no son kilos movidos.
     @Query("SELECT COALESCE(SUM(sr.peso * sr.repeticiones), 0) " +
-           "FROM SerieRealizada sr WHERE sr.ejercicioRealizado.sesion.id = :sesionId")
+           "FROM SerieRealizada sr WHERE sr.ejercicioRealizado.sesion.id = :sesionId " +
+           "AND sr.segundos IS NULL")
     java.math.BigDecimal volumenDeSeries(@Param("sesionId") Integer sesionId);
 
     /**
@@ -123,11 +126,13 @@ public interface IEjercicioRealizadoRepository extends JpaRepository<EjercicioRe
      * batió. Solo sesiones completadas y series marcadas, con al menos una repetición.
      * Medido con 450 sesiones y 10 800 series de un mismo usuario: 11,4 ms.
      *
-     * @return filas {@code [sesionId, fechaInicio, ejercicioId, peso, repeticiones]}.
+     * Las series por tiempo (GP-125) entran con sus segundos y 0 repeticiones.
+     *
+     * @return filas {@code [sesionId, fechaInicio, ejercicioId, peso, repeticiones, segundos]}.
      */
-    @Query("SELECT s.id, s.fechaInicio, e.id, sr.peso, sr.repeticiones " +
+    @Query("SELECT s.id, s.fechaInicio, e.id, sr.peso, sr.repeticiones, sr.segundos " +
            "FROM SerieRealizada sr JOIN sr.ejercicioRealizado er JOIN er.sesion s JOIN er.ejercicio e " +
            "WHERE s.usuario.id = :usuarioId AND s.completada = true " +
-           "AND sr.completada = true AND sr.repeticiones > 0")
+           "AND sr.completada = true AND (sr.repeticiones > 0 OR sr.segundos > 0)")
     List<Object[]> seriesCompletadasDeUsuario(@Param("usuarioId") Integer usuarioId);
 }
