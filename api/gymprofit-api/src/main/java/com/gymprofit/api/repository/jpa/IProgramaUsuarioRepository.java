@@ -7,6 +7,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 // ============================================================
 // IProgramaUsuarioRepository — los programas que sigue cada usuario (GP-074)
@@ -16,6 +17,9 @@ import java.util.List;
 @RepositoryRestResource(exported = false)
 public interface IProgramaUsuarioRepository extends JpaRepository<ProgramaUsuario, Integer> {
 
-    // Programas que sigue un usuario.
+    // Programas que sigue o siguió un usuario.
     List<ProgramaUsuario> findByUsuarioId(Integer usuarioId);
+
+    // El que sigue ahora (sin fecha de fin). Si hubiera más de uno, el más reciente.
+    Optional<ProgramaUsuario> findFirstByUsuarioIdAndFechaFinIsNullOrderByIdDesc(Integer usuarioId);
 }

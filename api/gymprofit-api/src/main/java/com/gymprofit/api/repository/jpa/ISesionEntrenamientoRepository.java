@@ -54,6 +54,14 @@ public interface ISesionEntrenamientoRepository extends JpaRepository<SesionEntr
     // Sesiones de un usuario para una rutina concreta.
     List<SesionEntrenamiento> findByUsuarioIdAndRutinaId(Integer usuarioId, Integer rutinaId);
 
+    // Código de la plantilla de cada sesión completada hecha con una copia de ese
+    // «programa que sigue», por orden de fecha (GP-074): de ahí sale la rutina que toca.
+    // Cuentan también las de copias ya desactivadas: la sesión se hizo.
+    @Query("SELECT s.rutina.plantilla.codigo FROM SesionEntrenamiento s " +
+           "WHERE s.rutina.programaUsuario.id = :programaUsuarioId AND s.completada = true " +
+           "ORDER BY s.fechaInicio ASC, s.id ASC")
+    List<String> plantillasDeSesionesDelPrograma(@Param("programaUsuarioId") Integer programaUsuarioId);
+
     // Número total de sesiones de un usuario.
     Long countByUsuarioId(Integer usuarioId);
 

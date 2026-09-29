@@ -23,6 +23,9 @@ public class SesionEntrenamientoDTO implements Serializable {
     private Integer id;
     private Integer usuarioId;
     private Integer rutinaId;
+    // Nombre de la rutina, también si está desactivada (lote 1.2.1): el historial lo
+    // sacaba de las rutinas activas y las de un programa dejado salían sin nombre.
+    private String rutinaNombre;
     private LocalDateTime fechaInicio;
     private LocalDateTime fechaFin;
     private Integer duracionMinutos;

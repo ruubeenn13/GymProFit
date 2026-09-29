@@ -263,16 +263,17 @@ class ProgramasTest extends AbstractOwnershipTest {
     }
 
     @Test
-    @DisplayName("seguirlo otra vez crea otras copias y no toca las que había")
+    @DisplayName("seguirlo otra vez crea otras copias; las de antes se quedan, con sus cambios, pero desactivadas (1.2.1)")
     void seguir_dos_veces() throws Exception {
         JsonNode primera = json(pedir(owner, "es", "POST /programas/PC-PE/seguir", "{\"minutos\":45}"));
         Integer copia = primera.get("rutinas").get(0).get("id").asInt();
-        jdbc.update("UPDATE rutinas SET nombre = 'La mía' WHERE id = ?", copia);
+        assertThat(pedir(owner, "es", "PATCH /rutinas/" + copia, "{\"nombre\":\"La mía\"}").getStatus()).isEqualTo(200);
 
         JsonNode segunda = json(pedir(owner, "es", "POST /programas/PC-PE/seguir", "{\"minutos\":30}"));
         assertThat(segunda.get("id").asInt()).isNotEqualTo(primera.get("id").asInt());
         assertThat(contarRutinas(owner)).isEqualTo(4);
         assertThat(jdbc.queryForObject("SELECT nombre FROM rutinas WHERE id = ?", String.class, copia)).isEqualTo("La mía");
+        assertThat(jdbc.queryForObject("SELECT activa FROM rutinas WHERE id = ?", Boolean.class, copia)).isFalse();
         assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM programas_usuario WHERE usuario_id = ?", Integer.class,
                 owner.getId())).isEqualTo(2);
     }

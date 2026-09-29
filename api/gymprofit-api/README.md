@@ -190,7 +190,7 @@ Todos van bajo el context-path `/api`. Los `@RequestMapping` de los controllers 
 | PATCH | `/rutinas/{id}` | USER+ | Actualización parcial |
 | DELETE | `/rutinas/{id}` | USER+ | Desactivar |
 
-Las 31 rutinas **plantilla** de los programas no salen por ninguna ruta de `/rutinas` (no son predefinidas ni tienen dueño): se sirven por `/programas`. Una copia de un programa lleva en su `RutinaDTO` `plantillaId`, `plantillaCodigo`, `programaUsuarioId` y `programaCodigo`; cada ejercicio de rutina puede llevar `repeticionesMin`, `repeticionesMax`, `medida` (`REPETICIONES`/`SEGUNDOS`), `tipo` (`BASICO`/`EXTRA`) y `porLado` (`PIERNA`/`BRAZO`/`LADO`), y `repeticiones` lleva el máximo del rango.
+Las 31 rutinas **plantilla** de los programas no salen por ninguna ruta de `/rutinas` (no son predefinidas ni tienen dueño): se sirven por `/programas`. Una copia de un programa lleva en su `RutinaDTO` `plantillaId`, `plantillaCodigo`, `programaUsuarioId`, `programaCodigo` y `programaNombre` (en el idioma de la petición); cada ejercicio de rutina puede llevar `repeticionesMin`, `repeticionesMax`, `medida` (`REPETICIONES`/`SEGUNDOS`), `tipo` (`BASICO`/`EXTRA`) y `porLado` (`PIERNA`/`BRAZO`/`LADO`), y `repeticiones` lleva el máximo del rango.
 
 ### PROGRAMAS — `/programas` (GP-074)
 
@@ -200,7 +200,13 @@ Catálogo v1 en `documentacion/CATALOGO-PLANTILLAS.md`, sembrado por la migraci�
 |---|---|---|---|
 | GET | `/programas?equipamiento=&dias=&nivel=` | GUEST+ | Programas activos; `AVANZADO`/`EXPERTO` dan los de intermedio. `[]` si no casa ninguno, 400 si un filtro no es válido |
 | GET | `/programas/{codigo}` | GUEST+ | La semana y cada rutina distinta con sus ejercicios |
-| POST | `/programas/{codigo}/seguir` | USER+ | Cuerpo opcional `{"minutos": 30\|45\|60\|75}` (60 si falta). Copia cada rutina distinta para el usuario del token con las reglas del punto 3 del catálogo (nivel, objetivo, tiempo). 201 con lo creado |
+| GET | `/programas/recomendado?equipamiento=&dias=` | GUEST+ | El de la tabla del punto 1 del catálogo para el nivel del perfil (sin nivel, principiante; `AVANZADO`/`EXPERTO`, intermedio), con el nivel usado y el porqué si no es el obvio. Días de 2 a 6 |
+| GET | `/programas/{codigo}/vista-previa?minutos=` | GUEST+ | Cada rutina como quedaría al seguirlo, con las mismas reglas y sin guardar nada: duración, ejercicios, los que se quitan, las series de los básicos si cambian y los ajustes del perfil (`AVANZADO`, `FUERZA`) |
+| POST | `/programas/{codigo}/seguir` | USER+ | Cuerpo opcional `{"minutos": 30\|45\|60\|75}` (60 si falta). Deja el que siguiera y copia cada rutina distinta para el usuario del token con las reglas del punto 3 del catálogo (nivel, objetivo, tiempo). Si es el mismo programa, empieza en la posición que tocaba. 201 con lo creado |
+| GET | `/programas/seguido` | USER+ | El programa que sigue, sus minutos, su ciclo con sus rutinas y la posición que toca hoy; 204 si no sigue ninguno |
+| DELETE | `/programas/seguido` | USER+ | Lo deja: fecha de fin y sus rutinas desactivadas; sesiones y récords se quedan. 204 también si no seguía ninguno |
+
+Se sigue un programa a la vez. La que toca: desde la posición inicial, cada sesión hecha con una de sus rutinas, por orden de fecha, lleva a la siguiente aparición de esa rutina en el ciclo y toca la de después; se saltan las rutinas borradas. `SesionEntrenamientoDTO` lleva `rutinaNombre`, también si la rutina está desactivada.
 
 ### RUTINAS-EJERCICIOS — `/rutinas-ejercicios`
 
