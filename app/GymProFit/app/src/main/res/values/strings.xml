@@ -1121,6 +1121,7 @@
     <string name="seguir_mismo">Tus rutinas de %1$s se rehacen con %2$s y pierdes los cambios que les hayas hecho; tus sesiones y récords se quedan.</string>
     <string name="seguir_boton">Seguir</string>
     <string name="seguir_boton_mismo">Cambiar a %1$s</string>
+    <string name="seguir_boton_rehacer">Rehacer las rutinas</string>
     <string name="seguir_error_vista">No se ha podido calcular cómo quedaría.</string>
     <string name="seguir_hecho">Ya sigues %1$s</string>
     <string name="seguir_rutina_linea">%1$s · %2$s</string>

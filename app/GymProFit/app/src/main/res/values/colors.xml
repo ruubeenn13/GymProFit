@@ -18,6 +18,8 @@
     <color name="gp_on_primary">#FFFFFF</color>
     <color name="gp_primary_container">#FFE0CC</color>
     <color name="gp_on_primary_container">#5C1E00</color>
+    <!-- El de Material 1.12 (GP-136): texto sobre colorSecondaryContainer, que no se fija. -->
+    <color name="gp_on_secondary_container">#1D192B</color>
     <!-- Dorado del logo: reservado a récords y logros (DEC-018). Son DOS tokens
          porque el tema claro no admite uno solo (GP-063): el #B58A2A de antes daba
          2,80:1 como texto sobre el fondo. gp_gold es para lo gráfico —borde,

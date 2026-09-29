@@ -34,7 +34,7 @@ android {
         // en un salto grande). Solo se toca versionName. versionCode —el número interno
         // que Android exige que suba en cada entrega para instalar encima— se deriva de
         // él: 1.0.0 → 10000, 1.0.1 → 10001, 1.2.3 → 10203. Cada parte admite hasta 99.
-        versionName "1.2.2"
+        versionName "1.2.3"
         versionCode versionName.tokenize('.').collect { it as int }
                 .with { it[0] * 10000 + it[1] * 100 + it[2] }
 
@@ -144,7 +144,7 @@ dependencies {
     implementation libs.constraintlayout
     // Navegación principal por pestañas: 1 Activity + ViewPager2 + Fragments
     implementation 'androidx.viewpager2:viewpager2:1.1.0'
-    implementation 'androidx.fragment:fragment:1.8.5'
+    implementation 'androidx.fragment:fragment:1.9.1'
     // ViewModel + SavedStateHandle + LiveData: el borrador de Registrar sesión sobrevive a
     // girar y a que Android mate el proceso (GP-016). Ya llegaban por activity y fragment;
     // se declaran porque se usan directamente, a la versión que ya se resolvía.
@@ -173,7 +173,7 @@ dependencies {
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
 
-    implementation platform('com.google.firebase:firebase-bom:34.15.0')
+    implementation platform('com.google.firebase:firebase-bom:34.19.0')
     implementation 'com.google.firebase:firebase-analytics'
     // Cloud Messaging: recepción de notificaciones push (versión fijada por el BOM)
     implementation 'com.google.firebase:firebase-messaging'

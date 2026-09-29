@@ -84,7 +84,7 @@ public final class ChartStyler {
 
     // Aplica el color de marca (naranja) y el acabado suave a una serie de línea.
     public static void styleLineDataSet(LineDataSet ds, Context ctx) {
-        int marca = attr(ctx, com.google.android.material.R.attr.colorPrimary, Color.parseColor("#FF6A00"));
+        int marca = attr(ctx, androidx.appcompat.R.attr.colorPrimary, Color.parseColor("#FF6A00"));
 
         ds.setColor(marca);
         ds.setLineWidth(2.4f);
@@ -103,7 +103,7 @@ public final class ChartStyler {
 
     // Aplica el color de marca a una serie de barras.
     public static void styleBarDataSet(BarDataSet ds, Context ctx) {
-        int marca = attr(ctx, com.google.android.material.R.attr.colorPrimary, Color.parseColor("#FF6A00"));
+        int marca = attr(ctx, androidx.appcompat.R.attr.colorPrimary, Color.parseColor("#FF6A00"));
         Typeface tf = fuente(ctx);
 
         ds.setColor(marca);

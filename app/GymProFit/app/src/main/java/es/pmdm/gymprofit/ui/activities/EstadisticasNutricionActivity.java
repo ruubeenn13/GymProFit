@@ -206,7 +206,7 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         // Línea de objetivo de kcal.
         chartKcal.getAxisLeft().removeAllLimitLines();
         LimitLine meta = new LimitLine(objetivoKcal, getString(R.string.nutricion_meta_kcal));
-        meta.setLineColor(getColorTema(com.google.android.material.R.attr.colorPrimary));
+        meta.setLineColor(getColorTema(androidx.appcompat.R.attr.colorPrimary));
         meta.setLineWidth(1.4f);
         meta.enableDashedLine(12f, 8f, 0f);
         meta.setTextColor(getColorTema(com.google.android.material.R.attr.colorOnSurfaceVariant));

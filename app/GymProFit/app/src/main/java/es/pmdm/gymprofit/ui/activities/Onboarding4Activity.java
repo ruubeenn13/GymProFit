@@ -153,7 +153,7 @@ public class Onboarding4Activity extends AppCompatActivity {
         colorBordeNormal = typedValue.data;
 
         getTheme().resolveAttribute(
-                com.google.android.material.R.attr.colorPrimary, typedValue, true
+                androidx.appcompat.R.attr.colorPrimary, typedValue, true
         );
 
         colorBordeSeleccionado = typedValue.data;

@@ -142,8 +142,22 @@ public final class SeguirProgramaHoja {
         }
         aviso.setText(texto);
         aviso.setVisibility(texto == null ? View.GONE : View.VISIBLE);
-        ((TextView) boton).setText(mismo ? act.getString(R.string.seguir_boton_mismo, minutosTxt)
-                : act.getString(R.string.seguir_boton));
+        ((TextView) boton).setText(act.getString(textoBoton(mismo, mismo ? seguido.getMinutos() : 0, minutos),
+                minutosTxt));
+    }
+
+    /**
+     * El texto del botón.
+     *
+     * @param mismo    si es el programa que ya sigue.
+     * @param actuales los minutos que tiene ahora (solo cuentan si es el mismo).
+     * @param elegidos los minutos elegidos en la hoja.
+     * @return el recurso del texto; el de «Cambiar a» lleva los minutos de argumento.
+     */
+    static int textoBoton(boolean mismo, int actuales, int elegidos) {
+        if (!mismo) return R.string.seguir_boton;
+        // Con los mismos minutos no cambia el tiempo: lo que hace es rehacer las rutinas (GP-135).
+        return actuales == elegidos ? R.string.seguir_boton_rehacer : R.string.seguir_boton_mismo;
     }
 
     // Cada rutina con sus minutos y lo que cambia, y el ajuste del perfil.

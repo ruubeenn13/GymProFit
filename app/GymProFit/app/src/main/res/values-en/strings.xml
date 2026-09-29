@@ -1108,6 +1108,7 @@
     <string name="seguir_mismo">Your %1$s routines are rebuilt for %2$s and you lose any changes you made to them; your sessions and records stay.</string>
     <string name="seguir_boton">Follow</string>
     <string name="seguir_boton_mismo">Change to %1$s</string>
+    <string name="seguir_boton_rehacer">Rebuild the routines</string>
     <string name="seguir_error_vista">We could not work out how it would look.</string>
     <string name="seguir_hecho">You now follow %1$s</string>
     <string name="seguir_rutina_linea">%1$s · %2$s</string>
