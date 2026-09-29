@@ -6,6 +6,10 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `9c5b257` | Fusión de `lote-1.2.0` en `main`: **lote 1.2.0, solo API** (sin versión de la app ni etiqueta; la app llega en la 1.2.1). Informe en `documentacion/estado/2026-09-29-lote-1.2.0.md`. |
+| `700cc5b` | feat(api,db): **series por tiempo y su récord** (GP-125): una serie guarda `segundos` con `repeticiones` a 0 (las dos cosas, 400; `V202609292100`); récord `TIEMPO`, la serie más larga, con `segundos` y `segundosAnterior` en `RecordDTO` y la progresión; el volumen no las cuenta. |
+| `4685a83` | feat(api,db): **programas del catálogo y seguir uno** (GP-074): modelo de programa y «programa que sigue», las 31 rutinas como plantillas que no son predefinidas (ninguna ruta de `/rutinas` las enseña), rango, medida, básico o extra, por lado y nota EN en cada ejercicio de rutina; semilla desde una copia fija del JSON (`V202609292002`), 58 nombres revisados y retirada de las seis predefinidas del TFG; `GET /programas`, `GET /programas/{codigo}` y `POST /programas/{codigo}/seguir` con las reglas del catálogo aplicadas en la API. |
+| `c70aca8` | docs(documentacion): **catálogo de plantillas v1** (`CATALOGO-PLANTILLAS.md` y `catalogo-plantillas.json`), aprobado el 28-09. |
 | `0c8e863` | build(android): **versión 1.1.4** (10104), etiquetada `v1.1.4`. Misma clave de firma. No necesita nada nuevo de la API. Informe en `documentacion/estado/2026-09-29-lote-1.1.4.md`. |
 | `a6d7824` | fix(android): **al reinstalar, el perfil entero vuelve de la API** (GP-129): el peso, la altura, la edad, el objetivo y el nivel se cruzan como el sexo y la actividad; lo que solo tiene el móvil se sube una vez, y si algo cambia se recalcula el objetivo nutricional. El onboarding deja de guardar como elegidos los valores por defecto del cálculo. |
 | `9d37dd7` | build(android): **versión 1.1.3** (10103), etiquetada `v1.1.3`. Misma clave de firma. Necesita la API de este lote (desplegada: `652a5f3`). Informe en `documentacion/estado/2026-09-29-lote-1.1.3.md`. |
