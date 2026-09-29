@@ -166,12 +166,12 @@ HomeActivity (navegación inferior)
 
 | Activity | Descripción |
 |---|---|
-| `SplashActivity` | Launcher. Restaura token JWT → Home o Login |
-| `LoginActivity` | POST /auth/login. Guarda token, id, username, rol |
+| `SplashActivity` | Launcher. Restaura token JWT → Home o Login. Con sesión, cruza el perfil con la API sin esperar (`PerfilRemoto.alArrancar`, GP-111/GP-129) |
+| `LoginActivity` | POST /auth/login. Guarda token, id, username, rol, y cruza el perfil con la API (`PerfilRemoto.alEntrar`) antes de marcar el onboarding |
 | `RegistroActivity` | POST /auth/register |
 | `Onboarding1–4Activity` | Configuración inicial: datos personales, medidas, actividad, objetivo |
 | `Onboarding5Activity` | Selección de nivel de experiencia (PRINCIPIANTE / INTERMEDIO / AVANZADO / EXPERTO) con cards seleccionables |
-| `OnboardingResumenActivity` | Cálculo nutricional + `PATCH /usuarios/{id}` con todos los datos del onboarding |
+| `OnboardingResumenActivity` | Cálculo nutricional + `PATCH /usuarios/{id}` con todos los datos del onboarding, también nombre, sexo y actividad. Guarda en el móvil solo lo contestado (nunca los 70 kg / 170 cm / 25 años del cálculo) y apunta el dueño del perfil |
 | `HomeActivity` | Saludo contextual, fecha locale-aware. Estadísticas reales de la semana actual (entrenamientos, calorías, minutos) cargadas desde API. Detecta JWT expirado (401) → redirige a Login |
 | `EjerciciosActivity` | Catálogo con buscador y filtro por grupo muscular |
 | `RutinasActivity` | Listado rutinas del usuario + predefinidas. Filtro por nivel. Long-press contextual: admin en predefinidas (Editar→`EditarRutinaAdminActivity` + Desactivar/Activar) o en propias (Editar + Eliminar); usuario solo en propias (Editar + Eliminar) |
@@ -187,7 +187,7 @@ HomeActivity (navegación inferior)
 | `AdminAlimentosActivity` | Gestión admin de alimentos: búsqueda, filtros categoría/estado, toggle activo, editar via dialog. Acceso desde AdminActivity (solo ROLE_ADMIN) |
 | `PerfilActivity` | Datos reales de la API + resumen de última medición corporal (peso/altura). Hereda de `BaseActivity`. Botón "Sobre GymProFit" al pie |
 | `AcercaDeActivity` | Pantalla "Acerca de": logo adaptativo claro/oscuro (`@drawable/logo` + `drawable-night/`), tarjeta de licencias de terceros (GP-082), info extendida de la app (descripción, 6 features, tech stack) e info del desarrollador (bio, formación, 3 FCTs, email clickable `ACTION_SENDTO`). Botón "Compartir": pide permiso `READ_CONTACTS` en runtime vía `ActivityResultLauncher`; si se concede abre selector de contactos (`ACTION_PICK Phone.CONTENT_URI`); extrae número via `ContentResolver` y lanza `ACTION_SENDTO smsto:` con el texto pre-rellenado. Extiende `AppCompatActivity`, aplica tema/idioma manualmente |
-| `EditarPerfilActivity` | `PATCH /usuarios/{id}`. Spinner nivel con 4 opciones (PRINCIPIANTE–EXPERTO). `saveNivel()` en `onSuccess`. Campos vacíos → null en BD |
+| `EditarPerfilActivity` | Ajustes › Tus datos. `PATCH /usuarios/{id}` con nombre para mostrar (en blanco lo borra), peso, altura, edad, sexo, actividad, nivel y objetivo. Un campo numérico vacío va como `null`, que la API **ignora** (no lo borra). Al guardar, apunta el dueño del perfil y recalcula las macros |
 | `SesionesActivity` | Historial de sesiones, eliminar |
 | `RegistrarSesionActivity` | Crear sesión: spinner rutinas, calorías calculadas, cards de ejercicios con campo de peso por ejercicio (RecyclerView+`EjercicioPesoAdapter`), RatingBar 1-5 |
 | `ResumenSesionActivity` | Detalle sesión + 6 stats de usuario + logros desbloqueados |
@@ -222,7 +222,17 @@ prefs.setOnboardingCompletadoParaUsuario(username)
 prefs.haySesion()             // true si hay token no vacío
 prefs.applyTheme()            // aplicar antes de setContentView en todo onCreate
 prefs.cerrarSesion()          // limpia token + id + username (no elimina onboarding, tema ni idioma)
+prefs.getNombre()             // nombre para mostrar de la cuenta que ha entrado (clave nombre_<username>, GP-116)
+prefs.getDuenoPerfil()        // de qué cuenta es el perfil local (perfil_dueno, GP-111)
+prefs.leer(Campo) / guardar(Campo, v) / borrar(Campo)  // PerfilCuenta.Almacen: null si la clave no existe
 ```
+
+**Perfil local y dos cuentas (GP-111, GP-129).** Sexo, actividad, peso, altura, edad, objetivo y
+nivel son claves globales que `cerrarSesion()` conserva. `PerfilCuenta` decide de quién son
+(`perfil_dueno`, o en una instalación antigua la única cuenta con `onboarding_done_<usuario>`) y
+qué se trae o se sube al entrar; `PerfilRemoto` hace la red. Los getters de esos campos dan el
+valor por defecto si lo guardado es de otra cuenta. `NombreVisible` elige entre el nombre para
+mostrar y el de usuario.
 
 ### `UIHelper`
 
@@ -329,6 +339,8 @@ PUT    ejercicios/{id}/activar
 | Tema/idioma deben aplicarse antes de `setContentView` | Orden en `onCreate`: `applyTheme()` → `aplicarIdioma()` → `setContentView()`. `BaseActivity` lo gestiona; las subclases solo llaman `super.onCreate()` primero |
 | Filtros de enum en adapters usan `equalsIgnoreCase` | La API devuelve enums en UPPERCASE |
 | `fecha_fin` NOT NULL en sesiones | La API calcula `fechaInicio + duracionMinutos` si no se envía |
+| En el PATCH de `/usuarios/{id}` un `null` no borra | La API ignora los null. Para borrar el nombre se manda en blanco (`NombreVisible.paraEnviar`) |
+| Una clave de preferencias que existe cuenta como elegida | `PerfilCuenta` sube a la API lo que el móvil tiene y ella no: no guardar nunca un valor por defecto como si fuera del usuario (`PerfilCuenta.guardarOpcional`) |
 
 ---
 

@@ -18,13 +18,14 @@ Verificado en emulador el 18 de septiembre de 2026.
 | Distintivo en pantalla | `PRUEBAS · LOCAL` arriba | ninguno |
 | Usuario | `prueba` / `Prueba1234.` | cuentas reales |
 
-Hay tres cuentas locales, cada una para una cosa:
+Hay estas cuentas locales, cada una para una cosa:
 
 | Cuenta | Contraseña | Para qué |
 |---|---|---|
 | `prueba` | `Prueba1234.` | Recorrido normal, **con datos**: sesiones, comidas con alimentos, mediciones y rutinas propias |
 | `vacia` | `Vacia1234.` | **Estados vacíos**: no tiene ni un dato, y es donde se ven los huecos que el caso feliz tapa |
 | `admin` | `AdminDev1234.` | Panel de administración |
+| `gp111a` / `gp111b` | `Gp1111234.` | **Dos cuentas en el mismo móvil** (GP-111, GP-129): `gp111a` con el perfil entero en la API; `gp111b` solo con nivel, objetivo, sexo y actividad |
 
 El punto final de las contraseñas no es un capricho: `adb shell input text` no
 teclea `!`, así que una contraseña con admiración rompe cualquier prueba en
