@@ -256,6 +256,15 @@
         <item name="checkedIcon">@drawable/ic_ms_check</item>
     </style>
 
+    <!-- Chips de filtro dentro de una hoja inferior (GP-134): sin marcar, sin relleno,
+         como los de una pantalla (ver color/chip_fondo_hoja). -->
+    <style name="Widget.GymProFit.Chip.Hoja" parent="Widget.Material3.Chip.Filter">
+        <item name="chipBackgroundColor">@color/chip_fondo_hoja</item>
+        <!-- Debajo del fondo el chip pinta colorSurface, que en la hoja lleva el tinte
+             de elevación: también fuera, o el relleno sigue ahí. -->
+        <item name="chipSurfaceColor">@android:color/transparent</item>
+    </style>
+
     <!-- Tema con barra de título, para las pantallas de licencias de
          play-services-oss-licenses, que dependen de la ActionBar (GP-082) -->
     <style name="Theme.GymProFit.ConBarra" parent="Theme.GymProFit">

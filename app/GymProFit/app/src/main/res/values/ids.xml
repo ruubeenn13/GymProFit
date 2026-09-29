@@ -11,5 +11,8 @@
     <!-- Marca el scroller de una pestaña al que ya se le ha sumado el hueco de la
          barra flotante, para no sumárselo dos veces. Ver BaseFragment. -->
     <item name="tag_hueco_barra_reservado" type="id"/>
+    <!-- Cómo dejaron el XML y el adapter cada campo de una serie, para volver a ponerlos
+         en fila después de apilarlos. Ver CamposSerie. -->
+    <item name="campos_serie_guardado" type="id"/>
 
 </resources>

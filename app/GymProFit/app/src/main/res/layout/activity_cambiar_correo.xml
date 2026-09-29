@@ -75,7 +75,7 @@
                 app:helperTextEnabled="true"
                 app:helperText="@string/editar_perfil_password_email_ayuda">
 
-                <com.google.android.material.textfield.TextInputEditText
+                <es.pmdm.gymprofit.ui.widget.CampoContrasena
                     android:id="@+id/etPasswordEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -152,6 +152,10 @@ class ProgramaSeguidoTest extends AbstractOwnershipTest {
         JsonNode s = json(pedir(owner, "es", "GET /programas/seguido", null));
         assertThat(s.get("minutos").asInt()).isEqualTo(45);
         assertThat(s.get("posicionHoy").asInt()).isEqualTo(2);
+        // La barra del ciclo conserva la hecha antes del cambio (GP-134).
+        List<Boolean> hechas = new ArrayList<>();
+        s.get("ciclo").forEach(d -> hechas.add(d.get("hecha").asBoolean()));
+        assertThat(hechas).containsExactly(true, false, false, false);
         assertThat(copia(owner, "GIM-TORSO-A")).isNotEqualTo(torso);
         for (JsonNode r : s.get("rutinas")) assertThat(r.get("duracionMinutos").asInt()).isLessThanOrEqualTo(45);
     }

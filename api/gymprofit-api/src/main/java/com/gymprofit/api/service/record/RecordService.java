@@ -18,6 +18,7 @@ import com.gymprofit.api.service.record.CalculadoraRecords.Resultado;
 import com.gymprofit.api.service.record.CalculadoraRecords.Serie;
 import com.gymprofit.api.service.record.CalculadoraRecords.Tipo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -114,7 +115,7 @@ public class RecordService implements IRecordService {
                         .thenComparing(Marca::fecha, Comparator.nullsFirst(Comparator.naturalOrder())))
                 .map(m -> {
                     Ejercicio e = ejercicioRepository.findById(m.ejercicioId()).orElse(null);
-                    return new RecordDestacadoDTO(m.ejercicioId(), e != null ? e.getNombre() : null,
+                    return new RecordDestacadoDTO(m.ejercicioId(), nombreEnSuIdioma(e),
                             m.peso(), m.repeticiones(), m.fecha());
                 });
     }
@@ -157,6 +158,16 @@ public class RecordService implements IRecordService {
         if (!ejercicioRepository.existsById(ejercicioId)) {
             throw new NotFoundEntityException("error.ejercicio.noExiste", ejercicioId);
         }
+    }
+
+    // El nombre del ejercicio en el idioma de la petición: en inglés si se pide así y lo
+    // tiene; si no, el español (GP-132). RecordDTO lleva los dos y elige la app; el
+    // destacado lleva uno solo, así que lo elige la API.
+    private static String nombreEnSuIdioma(Ejercicio e) {
+        if (e == null) return null;
+        String en = e.getNombreEn();
+        if ("en".equals(LocaleContextHolder.getLocale().getLanguage()) && en != null && !en.isBlank()) return en;
+        return e.getNombre();
     }
 
     private static RecordDTO aDTO(Evento evento, Map<Integer, Ejercicio> catalogo) {
