@@ -49,6 +49,19 @@
                         android:layout_height="wrap_content"
                         android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
 
+                    <!-- Si es de un programa, de cuál (lote 1.2.1) -->
+                    <TextView
+                        android:id="@+id/tvProgramaDetalle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:drawablePadding="6dp"
+                        android:gravity="center_vertical"
+                        android:textSize="@dimen/text_body"
+                        android:textStyle="bold"
+                        android:textColor="?attr/colorPrimary"
+                        android:visibility="gone" />
+
                     <TextView
                         android:id="@+id/tvDescripcionDetalle"
                         android:layout_width="match_parent"

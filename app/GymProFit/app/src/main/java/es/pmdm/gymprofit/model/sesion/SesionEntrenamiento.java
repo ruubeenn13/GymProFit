@@ -28,6 +28,8 @@ public class SesionEntrenamiento {
     // cuenta del dueño de una rutina que alguien más estaba usando: esa sesión se
     // desvincula en vez de borrarse (DEC-031) y queda como entrenamiento libre.
     private Integer rutinaId;
+    // Nombre de la rutina, también si ya está desactivada (lote 1.2.1). Null sin rutina.
+    private String rutinaNombre;
     // Fecha/hora de inicio de la sesión.
     private String fechaInicio;
     // Fecha/hora de fin de la sesión.
@@ -69,6 +71,9 @@ public class SesionEntrenamiento {
 
     /** Atajo legible para las pantallas: la sesión no se hizo sobre ninguna rutina. */
     public boolean esEntrenamientoLibre() { return rutinaId == null; }
+
+    public String getRutinaNombre() { return rutinaNombre; }
+    public void setRutinaNombre(String rutinaNombre) { this.rutinaNombre = rutinaNombre; }
 
     public String getFechaInicio() { return fechaInicio; }
     public void setFechaInicio(String fechaInicio) { this.fechaInicio = fechaInicio; }

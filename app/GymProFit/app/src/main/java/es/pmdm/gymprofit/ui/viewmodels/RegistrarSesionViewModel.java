@@ -195,36 +195,17 @@ public class RegistrarSesionViewModel extends ViewModel implements EjercicioPeso
         }
     }
 
-    // Pide las dos listas a la vez y las publica juntas, predefinidas primero.
+    // Pide las rutinas del usuario, las propias y las de su programa. Las predefinidas
+    // ya no: desde la 1.2.0 no hay ninguna, las sustituyen los programas (GP-074).
     private void pedirRutinas() {
-        final List<Rutina> predefinidas = new ArrayList<>();
-        final List<Rutina> propias = new ArrayList<>();
-        final int[] pendientes = {2};
-        Runnable alTerminar = () -> {
-            if (--pendientes[0] > 0) return;
-            List<Rutina> todas = new ArrayList<>(predefinidas);
-            todas.addAll(propias);
-            rutinas.setValue(todas);
-        };
-        repo.rutinasPredefinidas(new RegistroSesionRepositorio.Respuesta<List<Rutina>>() {
-            @Override public void ok(List<Rutina> lista) {
-                if (lista != null) predefinidas.addAll(lista);
-                alTerminar.run();
-            }
-            @Override public void fallo(int codigo, String mensaje) {
-                // Sin predefinidas se sigue: la sesión se puede guardar como entrenamiento
-                // libre o con las propias. Es lo que hacía la pantalla antes de GP-016.
-                alTerminar.run();
-            }
-        });
         repo.rutinasDelUsuario(new RegistroSesionRepositorio.Respuesta<List<Rutina>>() {
             @Override public void ok(List<Rutina> lista) {
-                if (lista != null) propias.addAll(lista);
-                alTerminar.run();
+                rutinas.setValue(lista != null ? lista : new ArrayList<>());
             }
             @Override public void fallo(int codigo, String mensaje) {
-                // Igual que arriba: sin las propias quedan las predefinidas y el libre.
-                alTerminar.run();
+                // Sin sus rutinas la sesión se puede guardar igual como entrenamiento
+                // libre: el selector se queda solo con esa opción, como antes de GP-016.
+                rutinas.setValue(new ArrayList<>());
             }
         });
     }
@@ -263,7 +244,8 @@ public class RegistrarSesionViewModel extends ViewModel implements EjercicioPeso
                         String nombre = re.getNombreEjercicio();
                         items.add(new EjercicioPesoAdapter.Item(re.getEjercicioId(),
                                 nombre != null && !nombre.isEmpty() ? nombre : null,
-                                re.getSeries(), re.getRepeticiones()));
+                                re.getSeries(), re.getRepeticiones(), re.getMedida(),
+                                re.getRepeticionesMin(), re.getRepeticionesMax(), re.getPorLado()));
                     }
                 }
                 ponerEjercicios(items, rutinaId);
@@ -307,6 +289,16 @@ public class RegistrarSesionViewModel extends ViewModel implements EjercicioPeso
         EjercicioPesoAdapter.Serie s = serie(ejercicio, serie);
         if (s == null) return;
         s.repeticiones = valor;
+        guardarBorrador();
+    }
+
+    /** Escribir los segundos de una serie por tiempo la marca como hecha, como el peso (GP-125). */
+    @Override
+    public void segundos(int ejercicio, int serie, String valor) {
+        EjercicioPesoAdapter.Serie s = serie(ejercicio, serie);
+        if (s == null) return;
+        s.segundos = valor;
+        if (!valor.isEmpty()) s.completada = true;
         guardarBorrador();
     }
 
@@ -492,6 +484,19 @@ public class RegistrarSesionViewModel extends ViewModel implements EjercicioPeso
     private List<Map<String, Object>> seriesDelCuerpo(EjercicioPesoAdapter.Item item) {
         List<Map<String, Object>> series = new ArrayList<>();
         for (EjercicioPesoAdapter.Serie serie : item.realizadas) {
+            if (item.porTiempo()) {
+                // Por tiempo (GP-125): solo los segundos, de 1 a 3600, y repeticiones a 0,
+                // que la API exige y no admite otro valor en una serie por tiempo.
+                Integer segundos = Numeros.entero(serie.segundos, 1, 3600);
+                if (segundos == null) continue;
+                Map<String, Object> fila = new HashMap<>();
+                fila.put("numero", serie.numero);
+                fila.put("repeticiones", 0);
+                fila.put("segundos", segundos);
+                fila.put("completada", serie.completada);
+                series.add(fila);
+                continue;
+            }
             Integer reps = Numeros.entero(serie.repeticiones, 0, 100);
             BigDecimal peso = Numeros.exacto(serie.peso, 0, 500);
             // Una serie en blanco es una serie que no se hizo.

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_programa — un programa en la lista de Programas (lote 1.2.1): nombre, «Lo sigues»
+  si es el suyo, «3 días · 45–55 min · Intermedio» y, en el recomendado, su porqué.
+  Tocar abre el detalle.
+-->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.GymProFit.Card.Estructura"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="12dp"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:importantForAccessibility="no">
+
+            <TextView
+                android:id="@+id/tvProgramaNombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.GymProFit.Display"
+                android:textSize="@dimen/text_headline" />
+
+            <TextView
+                android:id="@+id/tvLoSigues"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:background="@drawable/bg_chip_zona_hecha"
+                android:text="@string/programas_lo_sigues"
+                android:textSize="@dimen/text_eyebrow"
+                android:textColor="?attr/colorOnPrimaryContainer"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvProgramaResumen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textSize="@dimen/text_caption"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+
+            <TextView
+                android:id="@+id/tvProgramaMotivo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textSize="@dimen/text_body"
+                android:textColor="?attr/colorOnSurface"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_ms_chevron_right"
+            app:tint="?attr/colorOnSurfaceVariant"
+            android:importantForAccessibility="no" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.pmdm.gymprofit.model.programa.ProgramaQueSigue;
 import es.pmdm.gymprofit.model.rutina.Rutina;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
 
@@ -15,6 +16,10 @@ import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
 // De las rutinas propias activas, la que más tiempo lleva sin hacerse. Las que no se
 // han hecho nunca van primero; a igualdad, manda el orden de la lista (el de «Mis
 // rutinas»). Una sesión cuenta como hecha el día en que empieza.
+//
+// Siguiendo un programa (GP-074, lote 1.2.1), la de hoy es la que toca en el programa,
+// que calcula la API; sin programa, o si ha borrado todas sus rutinas, la regla de
+// arriba sobre «Mis rutinas».
 //
 // Las fechas llegan como las da la API, «yyyy-MM-ddTHH:mm:ss»; solo importa el día,
 // y los días se comparan como texto ISO, que ordena igual que el calendario.
@@ -28,11 +33,33 @@ public final class HoyToca {
         public final Rutina rutina;
         /** Día de la última vez («yyyy-MM-dd»), o {@code null} si no se ha hecho nunca. */
         @Nullable public final String ultimoDia;
+        /** Si sale del programa que sigue. */
+        public final boolean delPrograma;
 
-        Eleccion(Rutina rutina, @Nullable String ultimoDia) {
+        Eleccion(Rutina rutina, @Nullable String ultimoDia, boolean delPrograma) {
             this.rutina = rutina;
             this.ultimoDia = ultimoDia;
+            this.delPrograma = delPrograma;
         }
+    }
+
+    /**
+     * Elige la rutina de hoy con el programa que sigue, si sigue uno.
+     *
+     * @param seguido  el programa que sigue, o null.
+     * @param activas  rutinas activas del usuario (propias y de programa), en su orden.
+     * @param sesiones sesiones del usuario, en cualquier orden.
+     * @return la del programa; sin programa (o sin ninguna rutina suya activa), la de
+     *         «Mis rutinas»; o null si no hay ninguna.
+     */
+    @Nullable
+    public static Eleccion elegir(@Nullable ProgramaQueSigue seguido, @Nullable List<Rutina> activas,
+                                  @Nullable List<SesionEntrenamiento> sesiones) {
+        Rutina delPrograma = TuPrograma.hoy(seguido);
+        if (delPrograma != null) {
+            return new Eleccion(delPrograma, ultimoDiaPorRutina(sesiones).get(delPrograma.getId()), true);
+        }
+        return elegir(TuPrograma.misRutinas(activas), sesiones);
     }
 
     /**
@@ -66,7 +93,7 @@ public final class HoyToca {
                 diaElegida = dia;
             }
         }
-        return new Eleccion(elegida, diaElegida);
+        return new Eleccion(elegida, diaElegida, false);
     }
 
     /**

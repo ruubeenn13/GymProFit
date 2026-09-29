@@ -45,6 +45,9 @@ import es.pmdm.gymprofit.utils.UiFeedback;
 // ============================================================
 public class DetalleRutinaActivity extends AppCompatActivity {
 
+    /** Nombre del programa del que es la rutina, si es de uno (lote 1.2.1). */
+    public static final String EXTRA_PROGRAMA_NOMBRE = "programaNombre";
+
     // Aplica la escala de fuente global de la app (agranda todo el texto uniformemente).
     @Override
     protected void attachBaseContext(android.content.Context newBase) {
@@ -115,6 +118,15 @@ public class DetalleRutinaActivity extends AppCompatActivity {
         ((Chip) findViewById(R.id.chipNivelDetalle))
                 .setText(UIHelper.traducirNivel(this, nivel));
         ((TextView) findViewById(R.id.tvDuracionDetalle)).setText(getString(R.string.sesiones_min, duracion));
+
+        // Una rutina de programa dice de cuál es: se edita y se borra como las propias,
+        // pero al dejar el programa sale de Entrenar con él.
+        String programa = getIntent().getStringExtra(EXTRA_PROGRAMA_NOMBRE);
+        TextView tvPrograma = findViewById(R.id.tvProgramaDetalle);
+        if (programa != null && !programa.isEmpty()) {
+            tvPrograma.setText(getString(R.string.detalle_rutina_de_programa, programa));
+            tvPrograma.setVisibility(View.VISIBLE);
+        }
     }
 
     // Configura el RecyclerView de ejercicios de la rutina (solo lectura,
@@ -236,7 +248,7 @@ public class DetalleRutinaActivity extends AppCompatActivity {
                 e.setNombre(rel.getNombreEjercicio() != null && !rel.getNombreEjercicio().isEmpty()
                         ? rel.getNombreEjercicio() : getString(R.string.ejercicio_sin_nombre, ejercicioId));
             }
-            ejercicios.add(new EjercicioSeleccionado(e, series, reps));
+            ejercicios.add(new EjercicioSeleccionado(e, series, reps, rel));
         }
         adapter.notifyDataSetChanged();
         actualizarTitulo();

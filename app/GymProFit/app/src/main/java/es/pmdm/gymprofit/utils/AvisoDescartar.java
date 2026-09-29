@@ -140,7 +140,8 @@ public final class AvisoDescartar {
             if (item.realizadas.size() != Math.max(1, item.series)) return true;
             String planReps = String.valueOf(item.repeticiones);
             for (EjercicioPesoAdapter.Serie s : item.realizadas) {
-                if (s.completada || hayTexto(s.peso) || distinto(planReps, s.repeticiones)) return true;
+                if (s.completada || hayTexto(s.peso, s.segundos)) return true;
+                if (!item.porTiempo() && distinto(planReps, s.repeticiones)) return true;
             }
         }
         return false;

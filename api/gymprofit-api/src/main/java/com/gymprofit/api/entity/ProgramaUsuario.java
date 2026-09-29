@@ -16,8 +16,9 @@ import java.time.LocalDateTime;
 // ============================================================
 // ProgramaUsuario — un programa que sigue un usuario (GP-074)
 // Al seguirlo, el usuario se lleva una copia de cada rutina distinta del programa,
-// enlazada a esta fila. Seguirlo otra vez crea otra fila y otras copias. La borra el
-// borrado de cuenta (DEC-031).
+// enlazada a esta fila. Seguirlo otra vez crea otra fila y otras copias. Se sigue uno a
+// la vez: dejarlo o seguir otro le pone fechaFin y desactiva sus copias (lote 1.2.1). La
+// borra el borrado de cuenta (DEC-031).
 // ============================================================
 @Table(name = "programas_usuario")
 public class ProgramaUsuario {
@@ -40,4 +41,12 @@ public class ProgramaUsuario {
 
     @Column(name = "fecha_inicio", nullable = false)
     private LocalDateTime fechaInicio;
+
+    // Cuándo lo dejó (o siguió otro). Null mientras lo sigue: solo hay uno así por usuario.
+    @Column(name = "fecha_fin")
+    private LocalDateTime fechaFin;
+
+    // Por dónde empieza el ciclo, desde 1. Al cambiar el tiempo del mismo programa, la que tocaba.
+    @Column(name = "posicion_inicial", nullable = false)
+    private Integer posicionInicial = 1;
 }

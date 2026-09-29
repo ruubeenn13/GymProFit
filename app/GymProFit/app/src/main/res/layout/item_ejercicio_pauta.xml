@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_ejercicio_pauta — un ejercicio con su pauta en una línea (lote 1.2.1): el nombre y
+  «3 × 8–12», con el cronómetro si va por tiempo. Lo usan «Hoy toca» de Tu programa y las
+  rutinas del detalle de un programa. A letra grande el nombre parte línea; la pauta no
+  se corta porque va a su ancho.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
+    android:focusable="true">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:importantForAccessibility="no">
+
+        <TextView
+            android:id="@+id/tvEjercicio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_body"
+            android:textColor="?attr/colorOnSurface" />
+
+        <TextView
+            android:id="@+id/tvNotaEjercicio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textSize="@dimen/text_caption"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvBasico"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:background="@drawable/bg_chip_zona_hecha"
+        android:text="@string/pauta_basico"
+        android:textSize="@dimen/text_eyebrow"
+        android:textColor="?attr/colorOnPrimaryContainer"
+        android:importantForAccessibility="no"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/tvPauta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:gravity="center_vertical"
+        android:drawablePadding="4dp"
+        android:textAppearance="@style/TextAppearance.GymProFit.Label"
+        android:textAllCaps="false"
+        android:textSize="@dimen/text_body"
+        android:textStyle="bold"
+        android:textColor="?attr/colorOnSurface"
+        app:drawableTint="?attr/colorOnSurfaceVariant"
+        android:importantForAccessibility="no" />
+</LinearLayout>

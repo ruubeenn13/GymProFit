@@ -26,6 +26,8 @@ public class ProgramaSeguidoDTO implements Serializable {
     @Schema(example = "45")
     private Integer minutos;
     private LocalDateTime fechaInicio;
+    @Schema(description = "Por dónde empieza el ciclo: 1, o la que tocaba si era el mismo programa", example = "1")
+    private Integer posicionInicial;
     @Schema(description = "Una copia por cada rutina distinta del programa")
     private List<RutinaConEjerciciosDTO> rutinas;
 }

@@ -2,40 +2,43 @@ package es.pmdm.gymprofit.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Map;
 
-import es.pmdm.gymprofit.model.rutina.Rutina;
+import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
 
 // ============================================================
-// NombresRutinaTest — GP-113: una sesión hecha con una plantilla dice el nombre de
-// la plantilla en el historial, no «Sin rutina asociada».
+// NombresRutinaTest — el historial nombra cada sesión con lo que manda la API, también
+// la de una rutina desactivada (lote 1.2.1; antes GP-113 con las plantillas).
 // ============================================================
 public class NombresRutinaTest {
 
-    private static Rutina rutina(int id, String nombre) {
-        Rutina r = new Rutina();
-        r.setId(id);
-        r.setNombre(nombre);
-        return r;
+    private static SesionEntrenamiento sesion(Integer rutinaId, String nombre) {
+        SesionEntrenamiento s = new SesionEntrenamiento();
+        s.setRutinaId(rutinaId);
+        s.setRutinaNombre(nombre);
+        return s;
     }
 
     @Test
-    public void la_plantilla_tambien_tiene_nombre() {
-        Map<Integer, String> nombres = NombresRutina.de(
-                Collections.singletonList(rutina(40, "Mi pierna")),
-                Collections.singletonList(rutina(2, "Full Body")));
+    public void cada_sesion_lleva_el_nombre_de_su_rutina_aunque_este_desactivada() {
+        Map<Integer, String> nombres = NombresRutina.deSesiones(Arrays.asList(
+                sesion(40, "Mi pierna"),
+                sesion(7, "Torso A"),       // de un programa ya dejado: rutina desactivada
+                sesion(null, null)));       // entrenamiento libre
 
         assertEquals("Mi pierna", nombres.get(40));
-        assertEquals("Full Body", nombres.get(2));
+        assertEquals("Torso A", nombres.get(7));
         assertNull(nombres.get(99));
     }
 
     @Test
-    public void una_lista_que_no_llego_no_rompe() {
-        assertEquals("Full Body", NombresRutina.de(null, Collections.singletonList(rutina(2, "Full Body"))).get(2));
+    public void sin_nombre_o_sin_lista_no_rompe() {
+        assertTrue(NombresRutina.deSesiones(null).isEmpty());
+        assertTrue(NombresRutina.deSesiones(Arrays.asList(sesion(3, ""), sesion(4, null))).isEmpty());
     }
 }

@@ -85,8 +85,7 @@ public class RegistrarSesionViewModelTest {
         assertTrue(items.get(1).realizadas.get(0).completada);
 
         assertEquals("no se vuelven a pedir los ejercicios", 0, redNueva.ejercicios.size());
-        assertEquals("las listas de rutinas sí se vuelven a pedir", 1, redNueva.predefinidas.size());
-        assertEquals(1, redNueva.delUsuario.size());
+        assertEquals("la lista de rutinas sí se vuelve a pedir", 1, redNueva.delUsuario.size());
     }
 
     @Test
@@ -348,6 +347,43 @@ public class RegistrarSesionViewModelTest {
         assertEquals("la serie en blanco no viaja", 2, series.size());
     }
 
+    @Test
+    public void una_serie_por_tiempo_manda_sus_segundos_con_cero_repeticiones() {
+        Falso red = new Falso();
+        RegistrarSesionViewModel vm = new RegistrarSesionViewModel(new SavedStateHandle(), red);
+        vm.iniciar(RUTINA_PIERNA);
+        red.responderRutinas();
+        List<RutinaEjercicio> lista = new ArrayList<>();
+        RutinaEjercicio plancha = ejercicio(900, "Plancha lateral", 3, 40);
+        plancha.setMedida("SEGUNDOS");
+        plancha.setRepeticionesMin(20);
+        plancha.setRepeticionesMax(40);
+        plancha.setPorLado("LADO");
+        lista.add(plancha);
+        red.responderEjercicios(0, lista);
+
+        List<EjercicioPesoAdapter.Item> items = vm.getEjercicios().getValue();
+        assertTrue(items.get(0).porTiempo());
+        assertEquals("por tiempo no se precarga nada", "", items.get(0).realizadas.get(0).repeticiones);
+        assertFalse("sin nada escrito, no hay datos que perder", vm.hayDatos());
+
+        vm.segundos(0, 0, "35");
+        vm.segundos(0, 1, "0");      // fuera de rango: no viaja
+        assertTrue(items.get(0).realizadas.get(0).completada);
+        assertTrue(vm.hayDatos());
+
+        vm.setDuracion("20");
+        vm.guardar();
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> ejercicios = (List<Map<String, Object>>) red.guardados.get(0).cuerpo.get("ejercicios");
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> series = (List<Map<String, Object>>) ejercicios.get(0).get("series");
+        assertEquals("solo la serie con segundos válidos", 1, series.size());
+        assertEquals(35, series.get(0).get("segundos"));
+        assertEquals(0, series.get(0).get("repeticiones"));
+        assertFalse("sin peso", series.get(0).containsKey("peso"));
+    }
+
     // ── Apoyo ─────────────────────────────────────────────────
 
     // Rutina de pierna con los ejercicios ya cargados y una duración puesta.
@@ -422,12 +458,10 @@ public class RegistrarSesionViewModelTest {
             }
         }
 
-        final List<Llamada<List<Rutina>>> predefinidas = new ArrayList<>();
         final List<Llamada<List<Rutina>>> delUsuario = new ArrayList<>();
         final List<Llamada<List<RutinaEjercicio>>> ejercicios = new ArrayList<>();
         final List<Llamada<SesionEntrenamiento>> guardados = new ArrayList<>();
 
-        @Override public void rutinasPredefinidas(Respuesta<List<Rutina>> r) { predefinidas.add(new Llamada<>(null, null, r)); }
         @Override public void rutinasDelUsuario(Respuesta<List<Rutina>> r) { delUsuario.add(new Llamada<>(null, null, r)); }
         @Override public void ejerciciosDeRutina(int id, Respuesta<List<RutinaEjercicio>> r) { ejercicios.add(new Llamada<>(id, null, r)); }
         @Override public void guardarCompleta(Map<String, Object> c, Respuesta<SesionEntrenamiento> r) { guardados.add(new Llamada<>(null, c, r)); }
@@ -440,8 +474,7 @@ public class RegistrarSesionViewModelTest {
                 r.setNombre("Rutina " + id);
                 lista.add(r);
             }
-            predefinidas.get(predefinidas.size() - 1).respuesta.ok(lista);
-            delUsuario.get(delUsuario.size() - 1).respuesta.ok(new ArrayList<>());
+            delUsuario.get(delUsuario.size() - 1).respuesta.ok(lista);
         }
 
         void responderEjercicios(int llamada, List<RutinaEjercicio> lista) {

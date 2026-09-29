@@ -25,11 +25,6 @@ public class RegistroSesionRepositorioApi implements RegistroSesionRepositorio {
     }
 
     @Override
-    public void rutinasPredefinidas(Respuesta<List<Rutina>> respuesta) {
-        rutinaApi.getPredefinidas().enqueue(reenviar(respuesta));
-    }
-
-    @Override
     public void rutinasDelUsuario(Respuesta<List<Rutina>> respuesta) {
         rutinaApi.getDeUsuarioActivas(usuarioId).enqueue(reenviar(respuesta));
     }

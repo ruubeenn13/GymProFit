@@ -40,6 +40,9 @@ public interface IRutinaRepository extends JpaRepository<Rutina, Integer> {
     // Búsqueda de rutinas por nombre, ignorando mayúsculas/minúsculas.
     List<Rutina> findByNombreContainingIgnoreCase(String nombre);
 
+    // Copias de un «programa que sigue» (GP-074), activas o no.
+    List<Rutina> findByProgramaUsuarioId(Integer programaUsuarioId);
+
     // Rutinas activas de un usuario concreto.
     List<Rutina> findByUsuarioIdAndActivaTrue(Integer usuarioId);
 

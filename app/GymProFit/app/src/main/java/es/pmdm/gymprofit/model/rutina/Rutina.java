@@ -40,6 +40,12 @@ public class Rutina {
     private String fechaCreacion;
     // Indica si la rutina está activa/en uso.
     private boolean activa;
+    // Solo en una rutina de un programa que se sigue (GP-074): la plantilla de la que
+    // sale, el «programa que sigue» y el programa. Nulos en las propias.
+    private String plantillaCodigo;
+    private Integer programaUsuarioId;
+    private String programaCodigo;
+    private String programaNombre;
 
     public Rutina() {}
 
@@ -89,4 +95,19 @@ public class Rutina {
 
     public boolean isActiva() { return activa; }
     public void setActiva(boolean activa) { this.activa = activa; }
+
+    public String getPlantillaCodigo() { return plantillaCodigo; }
+    public void setPlantillaCodigo(String plantillaCodigo) { this.plantillaCodigo = plantillaCodigo; }
+
+    public Integer getProgramaUsuarioId() { return programaUsuarioId; }
+    public void setProgramaUsuarioId(Integer programaUsuarioId) { this.programaUsuarioId = programaUsuarioId; }
+
+    public String getProgramaCodigo() { return programaCodigo; }
+    public void setProgramaCodigo(String programaCodigo) { this.programaCodigo = programaCodigo; }
+
+    public String getProgramaNombre() { return programaNombre; }
+    public void setProgramaNombre(String programaNombre) { this.programaNombre = programaNombre; }
+
+    /** Si es de un programa que se sigue; si no, es una rutina propia de «Mis rutinas». */
+    public boolean esDePrograma() { return programaUsuarioId != null; }
 }

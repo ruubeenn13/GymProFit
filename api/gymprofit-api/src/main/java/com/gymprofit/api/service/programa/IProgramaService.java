@@ -2,9 +2,13 @@ package com.gymprofit.api.service.programa;
 
 import com.gymprofit.api.dto.entity.programa.ProgramaDTO;
 import com.gymprofit.api.dto.entity.programa.ProgramaDetalleDTO;
+import com.gymprofit.api.dto.entity.programa.ProgramaQueSigueDTO;
 import com.gymprofit.api.dto.entity.programa.ProgramaSeguidoDTO;
+import com.gymprofit.api.dto.entity.programa.RecomendadoDTO;
+import com.gymprofit.api.dto.entity.programa.VistaPreviaDTO;
 
 import java.util.List;
+import java.util.Optional;
 
 // ============================================================
 // IProgramaService — catálogo de programas y seguir uno (GP-074)
@@ -39,4 +43,27 @@ public interface IProgramaService {
      * @return lo creado.
      */
     ProgramaSeguidoDTO seguir(String codigo, Integer minutos);
+
+    /**
+     * Cómo quedaría cada rutina al seguir el programa, con las mismas reglas y el perfil
+     * del token, sin guardar nada.
+     *
+     * @param codigo  código del programa.
+     * @param minutos 30, 45, 60 o 75; null es 60.
+     */
+    VistaPreviaDTO vistaPrevia(String codigo, Integer minutos);
+
+    /**
+     * El programa de la tabla del catálogo para el nivel del perfil del token.
+     *
+     * @param equipamiento GIMNASIO, MANCUERNAS o PESO_CORPORAL (obligatorio).
+     * @param dias         de 2 a 6 (obligatorio).
+     */
+    RecomendadoDTO recomendado(String equipamiento, Integer dias);
+
+    /** El programa que sigue el usuario del token, o vacío si no sigue ninguno. */
+    Optional<ProgramaQueSigueDTO> seguido();
+
+    /** Deja el programa que sigue, si sigue alguno: fecha de fin y sus rutinas desactivadas. */
+    void dejarSeguido();
 }

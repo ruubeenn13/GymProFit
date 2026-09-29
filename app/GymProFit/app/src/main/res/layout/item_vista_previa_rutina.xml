@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_vista_previa_rutina — una rutina en la vista previa de seguir un programa (lote
+  1.2.1): «Torso A · 45 min» y debajo lo que cambia («Sin … ni …», «Básicos a 2 series»)
+  o «Completa».
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:focusable="true">
+
+    <TextView
+        android:id="@+id/tvVistaNombre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_fila"
+        android:textStyle="bold"
+        android:textColor="?attr/colorOnSurface"
+        android:importantForAccessibility="no" />
+
+    <TextView
+        android:id="@+id/tvVistaDetalle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:textSize="@dimen/text_caption"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:importantForAccessibility="no" />
+</LinearLayout>

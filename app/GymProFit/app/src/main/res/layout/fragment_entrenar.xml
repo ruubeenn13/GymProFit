@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   fragment_entrenar — pestaña Entrenar (GP-105), según 02-entrenar.png. Junta las
-  antiguas pestañas Rutinas y Ejercicios: mis rutinas con Empezar, empezar sin rutina,
-  el carrusel de plantillas de GymProFit y la entrada a la biblioteca de ejercicios.
+  antiguas pestañas Rutinas y Ejercicios: arriba «Tu programa» (lote 1.2.1, en
+  view_tu_programa), luego mis rutinas con Empezar, empezar sin rutina y la entrada a la
+  biblioteca de ejercicios. El carrusel de plantillas se fue con la 1.2.0: ya no hay.
 -->
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -37,10 +38,14 @@
             android:paddingTop="8dp"
             android:paddingBottom="16dp">
 
+            <include
+                android:id="@+id/tuPrograma"
+                layout="@layout/view_tu_programa" />
+
             <TextView
                 style="@style/Widget.GymProFit.Seccion"
+                android:layout_marginTop="20dp"
                 android:paddingStart="4dp"
-                android:paddingTop="4dp"
                 android:text="@string/mis_rutinas" />
 
             <LinearLayout
@@ -101,56 +106,6 @@
                     app:drawableStartCompat="@drawable/ic_ms_bolt"
                     app:drawableTint="?attr/colorOnSurface" />
             </FrameLayout>
-
-            <!-- Plantillas -->
-            <LinearLayout
-                android:id="@+id/cabeceraPlantillas"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingStart="4dp"
-                android:paddingEnd="4dp"
-                android:visibility="gone">
-
-                <TextView
-                    style="@style/Widget.GymProFit.Seccion"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:text="@string/plantillas_gymprofit" />
-
-                <TextView
-                    android:id="@+id/btnVerTodas"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minHeight="48dp"
-                    android:gravity="center_vertical"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="?attr/selectableItemBackground"
-                    android:contentDescription="@string/ver_todas_plantillas_a11y"
-                    android:text="@string/ver_todas"
-                    android:textSize="@dimen/text_caption"
-                    android:textStyle="bold"
-                    android:textColor="?attr/colorPrimary" />
-            </LinearLayout>
-
-            <HorizontalScrollView
-                android:id="@+id/scrollPlantillas"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="-16dp"
-                android:scrollbars="none"
-                android:visibility="gone">
-
-                <LinearLayout
-                    android:id="@+id/listaPlantillas"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingEnd="16dp" />
-            </HorizontalScrollView>
 
             <!-- Biblioteca -->
             <TextView

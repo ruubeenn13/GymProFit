@@ -37,6 +37,8 @@ public class RutinaDTO implements Serializable {
     private String plantillaCodigo;
     private Integer programaUsuarioId;
     private String programaCodigo;
+    // Nombre de ese programa, en el idioma de la petición (lote 1.2.1).
+    private String programaNombre;
     // NO HAY CAMPO DE CALORÍAS AQUÍ, Y ES A PROPÓSITO (DEC-004 / GP-010).
     // El gasto calórico de un entrenamiento no se puede estimar con los datos que
     // tiene la app, así que no se estima. La columna sigue en la base de datos hasta

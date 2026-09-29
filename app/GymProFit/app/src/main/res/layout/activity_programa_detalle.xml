@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_programa_detalle — el detalle de un programa (GP-074, lote 1.2.1).
+  Nombre, material y nivel, días y minutos, la descripción entera de la API (ya trae
+  los días sugeridos), el ciclo en orden con su explicación y cada rutina desplegable
+  con sus ejercicios y su pauta. Abajo, fijo, «Seguir este programa» (o «Cambiar el
+  tiempo» si ya es el suyo).
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?attr/android:colorBackground">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/Widget.GymProFit.Cabecera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <include
+                android:id="@+id/estadoDetalle"
+                layout="@layout/view_estado" />
+
+            <LinearLayout
+                android:id="@+id/contenidoDetalle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tvDetalleNombre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:accessibilityHeading="true"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Display"
+                    android:textSize="@dimen/text_display" />
+
+                <TextView
+                    android:id="@+id/tvDetalleMaterial"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textSize="@dimen/text_body"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+                <TextView
+                    android:id="@+id/tvDetalleDias"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textSize="@dimen/text_body"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+                <TextView
+                    android:id="@+id/tvDetalleDescripcion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:lineSpacingMultiplier="1.15"
+                    android:textSize="@dimen/text_body"
+                    android:textColor="?attr/colorOnSurface" />
+
+                <TextView
+                    style="@style/Widget.GymProFit.Seccion"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/programa_ciclo_titulo" />
+
+                <LinearLayout
+                    android:id="@+id/listaCiclo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/programa_ciclo_explicacion"
+                    android:textSize="@dimen/text_caption"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+                <TextView
+                    style="@style/Widget.GymProFit.Seccion"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/programa_rutinas_titulo" />
+
+                <LinearLayout
+                    android:id="@+id/listaRutinasPrograma"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/barraSeguir"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        android:padding="16dp"
+        android:visibility="gone">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSeguirPrograma"
+            style="@style/Widget.GymProFit.BotonPildora"
+            android:layout_width="match_parent"
+            android:maxLines="2"
+            android:text="@string/programa_seguir" />
+    </LinearLayout>
+</LinearLayout>

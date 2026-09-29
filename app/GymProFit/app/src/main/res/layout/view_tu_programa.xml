@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  view_tu_programa — «Tu programa», arriba de Entrenar (GP-074, lote 1.2.1).
+
+  Tres casos: sin programa, una tarjeta «Elige tu programa» que lleva a Programas; con
+  programa, su nombre, material y minutos, el ciclo en una barra con las hechas de esta
+  vuelta, «Hoy toca» con sus ejercicios y Empezar, y debajo el resto de sus rutinas; y
+  si ha borrado todas sus rutinas, la tarjeta lo dice y ofrece volver a seguirlo o
+  dejarlo. Mientras carga o si falla, el bloque de estado. Lo pinta TuProgramaVista.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/Widget.GymProFit.Seccion"
+        android:paddingStart="4dp"
+        android:paddingTop="4dp"
+        android:text="@string/tu_programa" />
+
+    <include
+        android:id="@+id/estadoPrograma"
+        layout="@layout/view_estado" />
+
+    <!-- Sin programa -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardElegirPrograma"
+        style="@style/Widget.GymProFit.Card.Estructura"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="16dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                android:background="@drawable/bg_circulo_superficie"
+                android:src="@drawable/ic_ms_calendar_month"
+                app:tint="?attr/colorPrimary"
+                android:importantForAccessibility="no" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="14dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tu_programa_elige_titulo"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Display"
+                    android:textSize="@dimen/text_headline" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/tu_programa_elige_sub"
+                    android:textSize="@dimen/text_caption"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/ic_ms_chevron_right"
+                app:tint="?attr/colorOnSurfaceVariant"
+                android:importantForAccessibility="no" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Con programa -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardPrograma"
+        style="@style/Widget.GymProFit.Card.Estructura"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <LinearLayout
+                    android:id="@+id/cabeceraPrograma"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:focusable="true">
+
+                    <TextView
+                        android:id="@+id/tvProgramaNombre"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Display"
+                        android:textSize="@dimen/text_headline"
+                        android:importantForAccessibility="no" />
+
+                    <TextView
+                        android:id="@+id/tvProgramaResumen"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:textSize="@dimen/text_caption"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:importantForAccessibility="no" />
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/btnMenuPrograma"
+                    style="@style/Widget.GymProFit.BotonIcono"
+                    android:src="@drawable/ic_ms_more_vert"
+                    app:tint="?attr/colorOnSurface"
+                    android:contentDescription="@string/tu_programa_menu_a11y" />
+            </LinearLayout>
+
+            <!-- El ciclo: un tramo por día; los rellena TuProgramaVista -->
+            <LinearLayout
+                android:id="@+id/barraCiclo"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="8dp"
+                android:orientation="horizontal"
+                android:focusable="true" />
+
+            <!-- Hoy toca -->
+            <LinearLayout
+                android:id="@+id/bloqueHoy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/Widget.GymProFit.Seccion"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/hoy_toca"
+                    android:textColor="?attr/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/tvHoyNombre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Display"
+                    android:textSize="@dimen/text_title" />
+
+                <TextView
+                    android:id="@+id/tvHoySub"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textSize="@dimen/text_caption"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+                <LinearLayout
+                    android:id="@+id/listaEjerciciosHoy"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEmpezarHoy"
+                    style="@style/Widget.GymProFit.BotonPildora"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/btn_empezar"
+                    app:icon="@drawable/ic_ms_play_arrow_fill" />
+            </LinearLayout>
+
+            <!-- Ha borrado todas sus rutinas -->
+            <LinearLayout
+                android:id="@+id/bloqueBorradas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/tu_programa_borradas"
+                    android:textSize="@dimen/text_body"
+                    android:textColor="?attr/colorOnSurface" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnVolverASeguir"
+                    style="@style/Widget.GymProFit.BotonPildora"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="12dp"
+                    android:maxLines="2"
+                    android:text="@string/tu_programa_volver_a_seguir" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnDejarPrograma"
+                    style="@style/Widget.GymProFit.BotonPildora.Contorno"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="8dp"
+                    android:maxLines="2"
+                    android:text="@string/tu_programa_dejar" />
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- El resto de sus rutinas, una vez cada una, en el orden en que tocan -->
+    <TextView
+        android:id="@+id/tvDespues"
+        style="@style/Widget.GymProFit.Seccion"
+        android:layout_marginTop="16dp"
+        android:paddingStart="4dp"
+        android:text="@string/tu_programa_despues"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/listaRestoPrograma"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+</LinearLayout>

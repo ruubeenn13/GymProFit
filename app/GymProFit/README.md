@@ -178,7 +178,9 @@ HomeActivity (navegación inferior)
 | `CrearRutinaActivity` | Paso 1/3: nombre, descripción, nivel, duración |
 | `AnadirEjerciciosActivity` | Paso 2/3: buscador + filtro dificultad, selección con series/reps |
 | `ResumenCrearRutinaActivity` | Paso 3/3: revisión + POST /rutinas + POST /rutinas-ejercicios × N |
-| `DetalleRutinaActivity` | Vista readonly. Botón editar visible solo si es rutina propia |
+| `ProgramasActivity` | Elegir programa (GP-074, 1.2.1): dónde entrena y días por semana (recordados por cuenta en `PreferencesManager`), «Para ti · nivel …» con `GET /programas/recomendado` y su porqué, y los demás de ese material. El que sigue lleva «Lo sigues» |
+| `ProgramaDetalleActivity` | Detalle de un programa: descripción, ciclo en orden y cada rutina desplegable con su pauta. «Seguir este programa» (o «Cambiar el tiempo») abre `SeguirProgramaHoja`: minutos y vista previa de la API. Al seguirlo vuelve a Entrenar |
+| `DetalleRutinaActivity` | Vista readonly. Botón editar visible solo si es rutina propia (también las de un programa). Si es de un programa, dice de cuál |
 | `EditarRutinaActivity` | PATCH nombre/desc/nivel/duración + añadir/eliminar ejercicios |
 | `NutricionActivity` | Rediseñada: objetivos dinámicos en `onResume` (CalculadoraNutricional con datos frescos del perfil), barras de progreso consumido vs objetivo (rojo si supera), 5 cards de comida (DESAYUNO..CENA) → ComidaActivity |
 | `ComidaActivity` | Log diario de una comida: header con totales (calorías/macros), RecyclerView AlimentoComidaAdapter, FAB → AnadirAlimentoActivity, long-press → popup contextual anclado (editar cantidad / desactivar / eliminar) |
@@ -282,6 +284,12 @@ Mifflin-St Jeor con factor de actividad y distribución de macros por objetivo. 
 
 ---
 
+### Entrenar: «Tu programa» y «Mis rutinas» (1.2.1)
+
+Arriba, «Tu programa» (`TuProgramaVista`): sin programa, «Elige tu programa»; con él, el ciclo en una barra, «Hoy toca» con sus ejercicios y el resto de sus rutinas; su menú ve el programa, cambia el tiempo, cambia de programa o lo deja. «Mis rutinas» solo lleva las propias (sin `programaUsuarioId`). La rutina que toca la calcula la API; la app no aplica ninguna regla de los programas (`TuPrograma`, `HoyToca.elegir(seguido, …)`). Las predefinidas ya no se piden en ningún sitio: desde la 1.2.0 no hay. El historial nombra cada sesión con `rutinaNombre`, que la API manda también con la rutina desactivada.
+
+---
+
 ## Endpoints usados desde Android
 
 Base URL: `BuildConfig.BASE_URL` desde `local.properties`.
@@ -294,7 +302,13 @@ PATCH  usuarios/{id}
 GET    usuarios/{id}/estadisticas
 GET    ejercicios/activos
 GET    ejercicios/grupo/{grupoMuscular}
-GET    rutinas/predefinidas
+GET    programas?equipamiento=                             → catálogo de programas (1.2.1)
+GET    programas/recomendado?equipamiento=&dias=
+GET    programas/{codigo}
+GET    programas/{codigo}/vista-previa?minutos=
+POST   programas/{codigo}/seguir                           body {minutos}
+GET    programas/seguido                                   → 204 sin programa
+DELETE programas/seguido
 GET    rutinas/usuario/{usuarioId}
 POST   rutinas
 PATCH  rutinas/{id}

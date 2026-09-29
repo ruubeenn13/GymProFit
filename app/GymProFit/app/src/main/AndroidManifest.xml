@@ -108,6 +108,8 @@
         <activity
             android:name=".ui.activities.EditarRutinaActivity"
             android:exported="false" />
+        <activity android:name=".ui.activities.ProgramasActivity" android:exported="false" />
+        <activity android:name=".ui.activities.ProgramaDetalleActivity" android:exported="false" />
         <activity
             android:name=".ui.activities.DetalleRutinaActivity"
             android:exported="false" />
@@ -163,7 +165,6 @@
         <activity android:name=".ui.activities.CambiarCorreoActivity" android:exported="false" />
         <activity android:name=".ui.activities.LicenciasActivity" android:exported="false" />
         <activity android:name=".ui.activities.EjerciciosActivity" android:exported="false" />
-        <activity android:name=".ui.activities.PlantillasActivity" android:exported="false" />
 
         <!-- FileProvider para compartir/capturar la foto de perfil con la cámara -->
         <provider

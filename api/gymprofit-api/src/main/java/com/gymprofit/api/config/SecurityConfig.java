@@ -132,6 +132,9 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/rutinas/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
                                 // Programas (GP-074): el catálogo se lee como el de rutinas; seguir
                                 // uno crea rutinas del usuario, y eso el invitado no puede.
+                                // El programa que sigue (lote 1.2.1): del usuario del token, y el
+                                // invitado no sigue ninguno. Antes que la regla general de lectura.
+                                .requestMatchers("/programas/seguido").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.GET, "/programas", "/programas/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.POST, "/programas/*/seguir").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.POST, "/alimentos/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())

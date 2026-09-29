@@ -29,6 +29,7 @@ public interface RutinaMapper {
     @Mapping(target = "plantillaCodigo", source = "plantilla.codigo")
     @Mapping(target = "programaUsuarioId", source = "programaUsuario.id")
     @Mapping(target = "programaCodigo", source = "programaUsuario.programa.codigo")
+    @Mapping(target = "programaNombre", source = "programaUsuario.programa.nombre")
     RutinaDTO toDTO(Rutina rutina);
 
     // La misma conversión, en el DTO que además lleva los ejercicios (GP-074). Los
@@ -38,6 +39,7 @@ public interface RutinaMapper {
     @Mapping(target = "plantillaCodigo", source = "plantilla.codigo")
     @Mapping(target = "programaUsuarioId", source = "programaUsuario.id")
     @Mapping(target = "programaCodigo", source = "programaUsuario.programa.codigo")
+    @Mapping(target = "programaNombre", source = "programaUsuario.programa.nombre")
     @Mapping(target = "ejercicios", ignore = true)
     @Named("conEjercicios") // fuera de la selección automática: si no, toDTOList no sabría cuál usar
     RutinaConEjerciciosDTO toConEjercicios(Rutina rutina);
@@ -74,5 +76,10 @@ public interface RutinaMapper {
             dto.setDescripcion(rutina.getDescripcionEn());
         if (rutina.getCategoriaEn() != null && !rutina.getCategoriaEn().isBlank())
             dto.setCategoria(rutina.getCategoriaEn());
+        // El programa del que sale una copia es del catálogo: ese sí tiene traducción.
+        if (rutina.getProgramaUsuario() != null) {
+            String en = rutina.getProgramaUsuario().getPrograma().getNombreEn();
+            if (en != null && !en.isBlank()) dto.setProgramaNombre(en);
+        }
     }
 }

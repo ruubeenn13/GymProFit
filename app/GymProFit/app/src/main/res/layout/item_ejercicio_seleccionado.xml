@@ -58,12 +58,14 @@
                 android:ellipsize="end"
                 android:visibility="gone" />
 
-            <!-- Chips de dificultad, calorías y series/reps configuradas -->
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <!-- Chips de dificultad, «Básico» y la pauta. Un ChipGroup y no una fila: a
+                 letra grande parte línea en vez de cortar la pauta (lote 1.2.1). -->
+            <com.google.android.material.chip.ChipGroup
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:orientation="horizontal">
+                app:chipSpacingHorizontal="6dp"
+                app:chipSpacingVertical="4dp">
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipDificultad"
@@ -79,10 +81,24 @@
                 <!-- AQUÍ HABÍA UN CHIP DE kcal, Y SE RETIRA (DEC-004 / GP-010). -->
 
                 <com.google.android.material.chip.Chip
+                    android:id="@+id/chipBasico"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pauta_basico"
+                    android:textSize="@dimen/text_eyebrow"
+                    app:chipMinHeight="24dp"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:importantForAccessibility="no"
+                    android:visibility="gone"
+                    style="@style/Widget.Material3.Chip.Assist" />
+
+                <com.google.android.material.chip.Chip
                     android:id="@+id/chipSeriesReps"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
+                    app:chipIconSize="16dp"
+                    app:chipIconTint="?attr/colorOnSurfaceVariant"
                     android:textSize="@dimen/text_eyebrow"
                     android:textStyle="bold"
                     app:chipMinHeight="24dp"
@@ -90,7 +106,17 @@
                     android:focusable="false"
                     style="@style/Widget.Material3.Chip.Suggestion" />
 
-            </LinearLayout>
+            </com.google.android.material.chip.ChipGroup>
+
+            <!-- Descanso y notas de la rutina, si las tiene (lote 1.2.1) -->
+            <TextView
+                android:id="@+id/tvNotasSeleccionado"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textSize="@dimen/text_caption"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:visibility="gone" />
 
         </LinearLayout>
 

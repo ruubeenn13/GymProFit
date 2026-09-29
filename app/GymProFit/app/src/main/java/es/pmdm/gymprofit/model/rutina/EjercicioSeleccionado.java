@@ -17,12 +17,24 @@ public class EjercicioSeleccionado {
     // Número de repeticiones por serie.
     private final int repeticiones;
 
+    // La fila de la rutina de la que sale, si sale de una: trae la pauta (rango, medida,
+    // por lado, básico, descanso y notas; GP-074/GP-125). Null al crear una rutina.
+    private final RutinaEjercicio pauta;
+
     // Crea la asociación ejercicio-series-repeticiones seleccionada por el usuario.
     public EjercicioSeleccionado(Ejercicio ejercicio, int series, int repeticiones) {
+        this(ejercicio, series, repeticiones, null);
+    }
+
+    /** Con la fila de la rutina, para enseñar su pauta completa (detalle y editor). */
+    public EjercicioSeleccionado(Ejercicio ejercicio, int series, int repeticiones, RutinaEjercicio pauta) {
         this.ejercicio = ejercicio;
         this.series = series;
         this.repeticiones = repeticiones;
+        this.pauta = pauta;
     }
+
+    public RutinaEjercicio getPauta() { return pauta; }
 
     public Ejercicio getEjercicio() { return ejercicio; }
     public int getSeries() { return series; }

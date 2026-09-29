@@ -36,19 +36,21 @@ import es.pmdm.gymprofit.model.comida.Comida;
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
 import es.pmdm.gymprofit.model.record.Record;
 import es.pmdm.gymprofit.model.record.Records;
+import es.pmdm.gymprofit.model.programa.ProgramaQueSigue;
 import es.pmdm.gymprofit.model.rutina.Rutina;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
 import es.pmdm.gymprofit.model.sesion.VolumenMuscular;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.ComidaApi;
+import es.pmdm.gymprofit.network.ProgramaApi;
 import es.pmdm.gymprofit.network.EjercicioApi;
 import es.pmdm.gymprofit.network.RecordApi;
 import es.pmdm.gymprofit.network.RutinaApi;
 import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.ui.activities.AnadirAlimentoActivity;
 import es.pmdm.gymprofit.ui.activities.CrearRutinaActivity;
-import es.pmdm.gymprofit.ui.activities.PlantillasActivity;
+import es.pmdm.gymprofit.ui.activities.ProgramasActivity;
 import es.pmdm.gymprofit.ui.activities.RegistrarSesionActivity;
 import es.pmdm.gymprofit.ui.activities.ResumenSesionActivity;
 import es.pmdm.gymprofit.ui.widget.ElegirRutinaHoja;
@@ -60,7 +62,6 @@ import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.HoyToca;
 import es.pmdm.gymprofit.utils.Marcas;
 import es.pmdm.gymprofit.utils.NombreVisible;
-import es.pmdm.gymprofit.utils.NombresRutina;
 import es.pmdm.gymprofit.utils.NavTabs;
 import es.pmdm.gymprofit.utils.TiempoRelativo;
 import es.pmdm.gymprofit.utils.UiFeedback;
@@ -70,9 +71,10 @@ import es.pmdm.gymprofit.utils.Zonas;
 // InicioFragment — pestaña Inicio (GP-105), según 01-inicio.png.
 //
 // Cabecera (fecha, «Hola, <nombre>» y avatar que lleva a Progreso) y cuatro tarjetas:
-//   · Hoy toca: la rutina propia que más tiempo lleva sin hacerse (HoyToca), con
-//     Empezar y Cambiar; «Hecho hoy» si ya hay una sesión hoy; y, sin rutinas
-//     propias, «Ver plantillas» o «Crea tu primera rutina» más «Empezar sin rutina».
+//   · Hoy toca: siguiendo un programa, la que toca en él (lote 1.2.1); sin programa, la
+//     rutina propia que más tiempo lleva sin hacerse (HoyToca), con Empezar y Cambiar;
+//     «Hecho hoy» si ya hay una sesión hoy; y, sin programa ni rutinas, «Elige tu
+//     programa» (a Programas) y «Crea tu primera rutina».
 //   · Esta semana (GP-090): sesiones y tiempo desde el lunes, y las seis zonas con
 //     sus series de la semana natural (/volumen-muscular?desde=, A.4).
 //   · Último récord: la tarjeta dorada de siempre, con lo de antes y cuándo.
@@ -86,11 +88,12 @@ public class InicioFragment extends BaseFragment {
     private final RecordApi recordApi = ApiClient.service(RecordApi.class);
     private final ComidaApi comidaApi = ApiClient.service(ComidaApi.class);
     private final EjercicioApi ejercicioApi = ApiClient.service(EjercicioApi.class);
+    private final ProgramaApi programaApi = ApiClient.service(ProgramaApi.class);
 
-    // Lo cargado para Hoy toca; las dos llamadas se esperan la una a la otra.
+    // Lo cargado para Hoy toca; las tres llamadas se esperan unas a otras.
     @Nullable private List<Rutina> propias;
-    @Nullable private List<Rutina> plantillas;
     @Nullable private List<SesionEntrenamiento> sesiones;
+    @Nullable private ProgramaQueSigue seguido;
     private boolean falloHoyToca;
     private int pendientesHoyToca;
 
@@ -140,20 +143,21 @@ public class InicioFragment extends BaseFragment {
 
     // ── Hoy toca y Esta semana ────────────────────────────────────────────────
 
-    // Rutinas propias, plantillas y sesiones: con las tres se decide Hoy toca, y con
-    // las sesiones se cuentan también la semana.
+    // Rutinas activas, sesiones y el programa que sigue: con las tres se decide Hoy toca,
+    // y con las sesiones se cuenta también la semana.
     private void cargarHoyTocaYSemana() {
         int uid = prefsManager.getUsuarioId();
         falloHoyToca = false;
         propias = null;
-        plantillas = null;
         sesiones = null;
+        seguido = null;
 
         if (uid == -1) {
-            // Invitado: no tiene rutinas ni sesiones propias.
+            // Invitado: no tiene rutinas, sesiones ni programa propios.
             propias = new ArrayList<>();
             sesiones = new ArrayList<>();
             pendientesHoyToca = 1;
+            hoyTocaListo();
         } else {
             pendientesHoyToca = 3;
             rutinaApi.getDeUsuarioActivas(uid).enqueue(new ApiCallback<List<Rutina>>() {
@@ -164,16 +168,16 @@ public class InicioFragment extends BaseFragment {
                 @Override public void onOk(List<SesionEntrenamiento> l) { sesiones = l != null ? l : new ArrayList<>(); hoyTocaListo(); }
                 @Override public void onFail(int code, String m) { falloHoyToca(code, m); }
             });
+            programaApi.seguido().enqueue(new ApiCallback<ProgramaQueSigue>() {
+                @Override public void onOk(ProgramaQueSigue s) { seguido = s; hoyTocaListo(); }
+                @Override public void onFail(int code, String m) {
+                    // Sin saber el programa, Hoy toca se decide con «Mis rutinas», como antes
+                    // de la 1.2.1: se ve algo razonable y Entrenar enseña el fallo con reintentar.
+                    seguido = null;
+                    hoyTocaListo();
+                }
+            });
         }
-        rutinaApi.getPredefinidas().enqueue(new ApiCallback<List<Rutina>>() {
-            @Override public void onOk(List<Rutina> l) { plantillas = l != null ? l : new ArrayList<>(); hoyTocaListo(); }
-            @Override public void onFail(int code, String m) {
-                // Las plantillas solo deciden entre «Ver plantillas» y «Crea tu primera
-                // rutina»: sin ellas se ofrece crear, que siempre es posible.
-                plantillas = new ArrayList<>();
-                hoyTocaListo();
-            }
-        });
     }
 
     private void falloHoyToca(int code, String message) {
@@ -205,14 +209,14 @@ public class InicioFragment extends BaseFragment {
         card.setClickable(false);
         apilarBotones(false);
 
-        HoyToca.Eleccion eleccion = HoyToca.elegir(propias, sesiones);
+        HoyToca.Eleccion eleccion = HoyToca.elegir(seguido, propias, sesiones);
         if (main() != null) main().publicarHoyToca(eleccion == null ? null : eleccion.rutina);
 
         SesionEntrenamiento deHoy = HoyToca.sesionDeHoy(sesiones, TiempoRelativo.hoy());
         if (deHoy != null) {
             eyebrow.setText(R.string.hecho_hoy);
             icono.setImageResource(R.drawable.ic_ms_check_circle_fill);
-            String nombre = nombreRutina(deHoy.getRutinaId());
+            String nombre = deHoy.getRutinaNombre();
             titulo.setText(nombre != null ? nombre : getString(R.string.hecho_hoy_libre));
             sub.setText(getString(R.string.duracion_min, deHoy.getDuracionMinutos()));
             // Tocar la tarjeta abre el resumen de la sesión de hoy.
@@ -228,24 +232,20 @@ public class InicioFragment extends BaseFragment {
         icono.setImageResource(R.drawable.ic_ms_event_available);
 
         if (eleccion == null) {
-            boolean hayPlantillas = plantillas != null && !plantillas.isEmpty();
+            // Sin programa ni rutinas: lo principal es elegir un programa; crear una rutina
+            // propia se queda. Entrenar a su aire sigue en el «+» y en Entrenar.
             titulo.setText(R.string.hoy_toca_sin_rutinas);
-            sub.setText(hayPlantillas ? R.string.hoy_toca_sin_rutinas_sub : R.string.hoy_toca_sin_rutinas_sub_crear);
+            sub.setText(R.string.hoy_toca_sin_rutinas_sub_programa);
             principal.setIcon(null);
-            if (hayPlantillas) {
-                principal.setText(R.string.btn_ver_plantillas);
-                principal.setOnClickListener(v -> startActivity(new Intent(requireContext(), PlantillasActivity.class)));
-            } else {
-                principal.setText(R.string.btn_crea_primera_rutina);
-                principal.setOnClickListener(v -> {
-                    if (verificarAccesoRegistrado()) {
-                        startActivity(new Intent(requireContext(), CrearRutinaActivity.class));
-                    }
-                });
-            }
+            principal.setText(R.string.tu_programa_elige_titulo);
+            principal.setOnClickListener(v -> startActivity(new Intent(requireContext(), ProgramasActivity.class)));
             secundario.setVisibility(View.VISIBLE);
-            secundario.setText(R.string.btn_empezar_sin_rutina);
-            secundario.setOnClickListener(v -> empezar(null));
+            secundario.setText(R.string.btn_crea_primera_rutina);
+            secundario.setOnClickListener(v -> {
+                if (verificarAccesoRegistrado()) {
+                    startActivity(new Intent(requireContext(), CrearRutinaActivity.class));
+                }
+            });
             // Dos textos largos no caben lado a lado sin cortarse: uno debajo del otro.
             apilarBotones(true);
             return;
@@ -322,14 +322,6 @@ public class InicioFragment extends BaseFragment {
         intent.putExtra(ResumenSesionActivity.EXTRA_ENTRENAMIENTO_LIBRE, s.esEntrenamientoLibre());
         intent.putExtra("rutinaNombre", nombre != null ? nombre : "");
         startActivity(intent);
-    }
-
-    // Nombre de una rutina propia o de una plantilla (GP-113: las dos cuentan).
-    @Nullable
-    private String nombreRutina(@Nullable Integer id) {
-        if (id == null) return null;
-        String nombre = NombresRutina.de(propias, plantillas).get(id);
-        return nombre;
     }
 
     // «2 sesiones · 1 h 50 min», desde el lunes a las 00:00.

@@ -42,7 +42,8 @@ class DtoSinSecretosEnToStringTest {
     // Lista cerrada a propósito: un «codigo» nuevo en otro DTO sigue saltando.
     private static final Set<String> NO_SENSIBLES = Set.of(
             "com.gymprofit.api.dto.entity.programa.ProgramaDTO.codigo",
-            "com.gymprofit.api.dto.entity.programa.RutinaConEjerciciosDTO.codigo");
+            "com.gymprofit.api.dto.entity.programa.RutinaConEjerciciosDTO.codigo",
+            "com.gymprofit.api.dto.entity.programa.RutinaVistaPreviaDTO.codigo");
 
     private static final String MARCA = "SECRETO-GP115-NO-DEBE-SALIR";
 

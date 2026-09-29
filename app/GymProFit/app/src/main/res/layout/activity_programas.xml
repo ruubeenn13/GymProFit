@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_programas — elegir programa (GP-074, lote 1.2.1).
+  Dónde entrena y cuántos días (recordados por cuenta), «Para ti · nivel …» con el
+  recomendado y su porqué, y debajo los demás de ese material. El que sigue lleva
+  «Lo sigues». Los estados (cargando, error, vacío) van en el contenido.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?attr/android:colorBackground">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/Widget.GymProFit.Cabecera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="@string/programas_titulo" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                style="@style/Widget.GymProFit.Seccion"
+                android:paddingStart="4dp"
+                android:text="@string/programas_donde" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipsEquipamiento"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipGimnasio"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:text="@string/equipamiento_gimnasio" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipMancuernas"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:text="@string/equipamiento_mancuernas" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipPesoCorporal"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:text="@string/equipamiento_peso_corporal" />
+            </com.google.android.material.chip.ChipGroup>
+
+            <TextView
+                style="@style/Widget.GymProFit.Seccion"
+                android:layout_marginTop="16dp"
+                android:paddingStart="4dp"
+                android:text="@string/programas_dias" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipsDias"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:singleSelection="true"
+                app:selectionRequired="true" />
+
+            <include
+                android:id="@+id/estadoProgramas"
+                layout="@layout/view_estado" />
+
+            <LinearLayout
+                android:id="@+id/contenidoProgramas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tvParaTi"
+                    style="@style/Widget.GymProFit.Seccion"
+                    android:layout_marginTop="24dp"
+                    android:paddingStart="4dp"
+                    android:textColor="?attr/colorPrimary" />
+
+                <FrameLayout
+                    android:id="@+id/contenedorRecomendado"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    style="@style/Widget.GymProFit.Seccion"
+                    android:layout_marginTop="24dp"
+                    android:paddingStart="4dp"
+                    android:text="@string/programas_mas" />
+
+                <LinearLayout
+                    android:id="@+id/listaProgramas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+                <TextView
+                    android:id="@+id/tvProgramasVacio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:text="@string/programas_vacio"
+                    android:textSize="@dimen/text_body"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>
