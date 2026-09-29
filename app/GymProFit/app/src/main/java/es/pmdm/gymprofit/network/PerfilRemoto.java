@@ -5,14 +5,14 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.Map;
 
 import es.pmdm.gymprofit.model.usuario.Usuario;
+import es.pmdm.gymprofit.utils.DiaNutricion;
 import es.pmdm.gymprofit.utils.PerfilCuenta;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 
 // ============================================================
-// PerfilRemoto — al entrar, cruza el perfil de la API con el del móvil (GP-111) y
+// PerfilRemoto — al entrar, cruza el perfil de la API con el del móvil (GP-111, GP-129) y
 // guarda la copia local del nombre para mostrar (GP-116).
 //
 // La decisión (de quién es lo guardado, qué se trae y qué se sube) es de PerfilCuenta;
@@ -62,10 +62,13 @@ public final class PerfilRemoto {
         // El nombre para mostrar solo vive en la API (GP-116): el móvil guarda una copia.
         prefs.saveNombre(usuario, u.getNombre());
 
-        Map<String, Object> subir = PerfilCuenta.alEntrar(prefs, usuario, u.getSexo(), u.getNivelActividad());
-        if (subir.isEmpty()) return;
+        PerfilCuenta.Resultado r = PerfilCuenta.alEntrar(prefs, usuario, PerfilCuenta.deUsuario(u));
+        // Con otro peso, otra edad u otro objetivo, el objetivo nutricional guardado ya no
+        // vale: se recalcula ya, para las pantallas que lo leen de preferencias (GP-129).
+        if (r.cambiado) DiaNutricion.objetivo(prefs);
+        if (r.subir.isEmpty()) return;
 
-        ApiClient.service(UsuarioApi.class).patch(u.getId(), subir).enqueue(new ApiCallback<Void>() {
+        ApiClient.service(UsuarioApi.class).patch(u.getId(), r.subir).enqueue(new ApiCallback<Void>() {
             @Override
             public void onOk(Void response) {
                 // Nada más que hacer: la próxima vez la API ya los trae.
