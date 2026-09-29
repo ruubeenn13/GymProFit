@@ -6,6 +6,14 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `c5a3408` | Fusión de `lote-1.2.2` en `main`. Informe en `documentacion/estado/2026-09-29-lote-1.2.2.md`. |
+| `c48afce` | build(android): **versión 1.2.2** (10202), etiquetada `v1.2.2`. Misma clave de firma. Necesita la API de este lote (desplegada: `c5a3408`). |
+| `d4dfe92` | fix(android): **las columnas de Registrar se leen enteras con la letra grande** (GP-133): si un rótulo no cabe en su campo, peso y repeticiones se apilan a todo el ancho (`CamposSerie`); a letra normal siguen en fila. |
+| `3e8d0de` | fix(api,android): **la barra del ciclo conserva las hechas al cambiar el tiempo** y **los chips sin marcar de la hoja de seguir, sin relleno** (GP-134). |
+| `778c23c` | fix(api): **el nombre del ejercicio, en el idioma de la petición** (GP-132): los ejercicios de una rutina (`/rutinas-ejercicios`), el récord destacado y el ejercicio más frecuente de las estadísticas; sin traducción, el español. |
+| `9ac03fa` | fix(android): **las contraseñas, fuera del árbol de accesibilidad mientras están ocultas** (GP-131): los ocho campos de contraseña pasan a `CampoContrasena`. |
+| `80462f6` | build(api): fusión del PR #24 de Dependabot, **dependencias de Maven al día** (Lombok 1.18.48, firebase-admin 9.11.0, maven-compiler-plugin 3.16.0, jooq-codegen 3.21.9, Maven 3.9.16). |
+| `7c1d962` | ci: fusión del PR #30 de Dependabot, **acciones de GitHub al día**. El #29 (Gradle) sigue abierto: Gradle 9.8 no funciona con el AGP 8.13. |
 | `e045e10` | Fusión de `lote-1.2.1` en `main`. Informe en `documentacion/estado/2026-09-29-lote-1.2.1.md`. |
 | `1ae0b42` | build(android): **versión 1.2.1** (10201), etiquetada `v1.2.1`. Misma clave de firma. Necesita la API de este lote (desplegada: `e045e10`). |
 | `79e3d87` | feat(android): **la pauta de cada ejercicio y las series por tiempo** (GP-125): «3 × 8–12», «3 × 30–60 s» con el cronómetro y «por pierna» en el detalle, el editor y el registro; las series por tiempo piden solo los segundos y se guardan con repeticiones a 0; marcas TIEMPO en minutos y segundos en Récords, el resumen y la gráfica (antes salían como «0 kg»). |
