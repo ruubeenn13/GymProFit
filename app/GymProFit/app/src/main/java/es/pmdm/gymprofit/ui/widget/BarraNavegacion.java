@@ -81,7 +81,7 @@ public class BarraNavegacion extends LinearLayout {
         setBackgroundColor(color(com.google.android.material.R.attr.colorSurface));
         LayoutInflater.from(c).inflate(R.layout.view_barra_navegacion, this, true);
 
-        colorMarca = color(com.google.android.material.R.attr.colorPrimary);
+        colorMarca = color(androidx.appcompat.R.attr.colorPrimary);
         colorTexto = color(com.google.android.material.R.attr.colorOnSurface);
         colorSecundario = color(com.google.android.material.R.attr.colorOnSurfaceVariant);
         normal = ResourcesCompat.getFont(c, R.font.barlow);

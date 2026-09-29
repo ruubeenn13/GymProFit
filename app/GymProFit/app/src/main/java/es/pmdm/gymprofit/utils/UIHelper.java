@@ -356,7 +356,7 @@ public class UIHelper {
         context.getTheme().resolveAttribute(com.google.android.material.R.attr.colorOnSurface, tv, true);
         int colorNormal = tv.data;
         tv = new TypedValue();
-        context.getTheme().resolveAttribute(com.google.android.material.R.attr.colorError, tv, true);
+        context.getTheme().resolveAttribute(androidx.appcompat.R.attr.colorError, tv, true);
         int colorDestructive = tv.data;
         tv = new TypedValue();
         context.getTheme().resolveAttribute(com.google.android.material.R.attr.colorOutlineVariant, tv, true);

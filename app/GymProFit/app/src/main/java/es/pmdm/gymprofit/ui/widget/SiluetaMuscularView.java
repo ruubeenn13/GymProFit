@@ -73,7 +73,7 @@ public class SiluetaMuscularView extends View {
     public SiluetaMuscularView(Context c, @Nullable AttributeSet a) { super(c, a); init(); }
 
     private void init() {
-        colorMarca = attr(com.google.android.material.R.attr.colorPrimary);
+        colorMarca = attr(androidx.appcompat.R.attr.colorPrimary);
         separacion = (int) (12 * getResources().getDisplayMetrics().density);
 
         siluetaFrontal = ContextCompat.getDrawable(getContext(), R.drawable.ic_silueta_frontal);

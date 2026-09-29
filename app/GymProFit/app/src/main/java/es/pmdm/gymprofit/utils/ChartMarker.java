@@ -36,7 +36,7 @@ public class ChartMarker extends MarkerView {
         tv = findViewById(R.id.tvMarker);
 
         int surface = attr(ctx, com.google.android.material.R.attr.colorSurface, Color.DKGRAY);
-        int marca   = attr(ctx, com.google.android.material.R.attr.colorPrimary, Color.parseColor("#FF6A00"));
+        int marca   = attr(ctx, androidx.appcompat.R.attr.colorPrimary, Color.parseColor("#FF6A00"));
 
         GradientDrawable bg = new GradientDrawable();
         bg.setColor(surface);

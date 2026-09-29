@@ -21,6 +21,9 @@
         <item name="colorPrimaryContainer">@color/gp_primary_container</item>
         <item name="colorOnPrimaryContainer">@color/gp_on_primary_container</item>
         <item name="colorSecondary">@color/gp_gold</item>
+        <!-- Fijado con el valor que daba Material hasta la 1.12 (GP-136): desde la 1.13, en
+             claro y en Android 12 o más, salía más gris, y es el texto de los chips marcados. -->
+        <item name="colorOnSecondaryContainer">@color/gp_on_secondary_container</item>
         <item name="colorSurface">@color/gp_surface</item>
         <item name="colorOnSurface">@color/gp_on_surface</item>
         <item name="colorSurfaceVariant">@color/gp_surface_2</item>

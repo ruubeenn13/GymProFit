@@ -154,7 +154,7 @@ public class TuProgramaVista {
         barra.removeAllViews();
         List<TuPrograma.EstadoDia> dias = TuPrograma.barra(seguido);
         float dp = ctx.getResources().getDisplayMetrics().density;
-        int primario = color(ctx, com.google.android.material.R.attr.colorPrimary);
+        int primario = color(ctx, androidx.appcompat.R.attr.colorPrimary);
         int apagado = color(ctx, com.google.android.material.R.attr.colorOutline);
         for (int i = 0; i < dias.size(); i++) {
             View tramo = new View(ctx);

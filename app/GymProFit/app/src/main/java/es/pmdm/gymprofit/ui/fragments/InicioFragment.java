@@ -540,7 +540,7 @@ public class InicioFragment extends BaseFragment {
     private int colorEstado(DiaNutricion.Estado e) {
         switch (e) {
             case LOGRADO: return ContextCompat.getColor(requireContext(), R.color.gp_success);
-            case PASADO:  return color(com.google.android.material.R.attr.colorError);
+            case PASADO:  return color(androidx.appcompat.R.attr.colorError);
             default:      return color(com.google.android.material.R.attr.colorOnSurface);
         }
     }

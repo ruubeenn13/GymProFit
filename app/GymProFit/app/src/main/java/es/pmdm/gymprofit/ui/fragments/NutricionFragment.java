@@ -124,7 +124,7 @@ public class NutricionFragment extends BaseFragment {
         Calendar dia = (Calendar) fechaSel.clone();
         dia.add(Calendar.DAY_OF_MONTH, -((dia.get(Calendar.DAY_OF_WEEK) + 5) % 7));   // lunes
 
-        int primario = color(com.google.android.material.R.attr.colorPrimary);
+        int primario = color(androidx.appcompat.R.attr.colorPrimary);
         int sobrePrimario = color(com.google.android.material.R.attr.colorOnPrimary);
         int texto = color(com.google.android.material.R.attr.colorOnSurface);
         int secundario = color(com.google.android.material.R.attr.colorOnSurfaceVariant);
@@ -277,7 +277,7 @@ public class NutricionFragment extends BaseFragment {
         rotulo.setText(restantes >= 0 ? R.string.nutricion_te_quedan : R.string.nutricion_te_pasas);
         quedan.setText(getString(R.string.nutricion_kcal_valor, nf.format(Math.abs(restantes))));
         quedan.setTextColor(restantes >= 0 ? color(com.google.android.material.R.attr.colorOnSurface)
-                : color(com.google.android.material.R.attr.colorError));
+                : color(androidx.appcompat.R.attr.colorError));
         ((LinearProgressIndicator) findViewById(R.id.barraKcal)).setProgressCompat(
                 DiaNutricion.porcentaje(d.kcal, d.objetivoKcal), false);
         findViewById(R.id.filaKcal).setContentDescription(getString(R.string.nutricion_kcal_a11y,
@@ -392,7 +392,7 @@ public class NutricionFragment extends BaseFragment {
     private int colorEstado(DiaNutricion.Estado e) {
         switch (e) {
             case LOGRADO: return ContextCompat.getColor(requireContext(), R.color.gp_success);
-            case PASADO:  return color(com.google.android.material.R.attr.colorError);
+            case PASADO:  return color(androidx.appcompat.R.attr.colorError);
             default:      return color(com.google.android.material.R.attr.colorOnSurfaceVariant);
         }
     }

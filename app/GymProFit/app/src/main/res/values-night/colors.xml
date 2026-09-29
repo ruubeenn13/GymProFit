@@ -17,6 +17,8 @@
     <color name="gp_on_primary_secondary">#482000</color>
     <color name="gp_primary_container">#3A2110</color>
     <color name="gp_on_primary_container">#FFB27A</color>
+    <!-- El de Material 1.12 (GP-136). -->
+    <color name="gp_on_secondary_container">#E8DEF8</color>
     <color name="gp_gold">#E8B84B</color>
     <color name="gp_gold_text">#E8B84B</color>
     <!-- Medallón de logro conseguido: gp_gold encima da 7,21:1 (GP-079). -->
