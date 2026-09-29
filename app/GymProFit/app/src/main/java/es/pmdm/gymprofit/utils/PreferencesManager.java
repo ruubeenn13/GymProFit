@@ -186,6 +186,26 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
     public String getFcmTokenEnviado() { return prefs.getString("fcm_token_enviado", ""); }
     public void clearFcmTokenEnviado() { editor.remove("fcm_token_enviado"); editor.apply(); }
 
+    // ── Programas (GP-074, lote 1.2.1) ──
+    // Dónde entrena y cuántos días, lo último que eligió en Programas. Por cuenta: en un
+    // móvil con dos cuentas cada una tiene lo suyo. La primera vez, gimnasio y 3 días.
+    private static final String PREFIJO_PROGRAMAS_EQUIPAMIENTO = "programas_equipamiento_";
+    private static final String PREFIJO_PROGRAMAS_DIAS = "programas_dias_";
+
+    public String getProgramasEquipamiento() {
+        return prefs.getString(PREFIJO_PROGRAMAS_EQUIPAMIENTO + getUsuarioId(), "GIMNASIO");
+    }
+
+    public int getProgramasDias() {
+        return prefs.getInt(PREFIJO_PROGRAMAS_DIAS + getUsuarioId(), 3);
+    }
+
+    public void saveProgramasFiltros(String equipamiento, int dias) {
+        editor.putString(PREFIJO_PROGRAMAS_EQUIPAMIENTO + getUsuarioId(), equipamiento);
+        editor.putInt(PREFIJO_PROGRAMAS_DIAS + getUsuarioId(), dias);
+        editor.apply();
+    }
+
     public void saveUsername(String username) { editor.putString(KEY_USERNAME, username); editor.apply(); }
     public String getUsername() { return prefs.getString(KEY_USERNAME, ""); }
 

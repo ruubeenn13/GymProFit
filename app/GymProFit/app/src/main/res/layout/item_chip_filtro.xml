@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_chip_filtro — un chip de filtro creado desde el código (lote 1.2.1): los días por
+  semana de Programas. A 48 dp de alto, como el resto de lo que se toca.
+-->
+<com.google.android.material.chip.Chip xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Widget.Material3.Chip.Filter"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:minHeight="48dp"
+    android:minWidth="48dp" />

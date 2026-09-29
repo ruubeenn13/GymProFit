@@ -85,8 +85,7 @@ public class RegistrarSesionViewModelTest {
         assertTrue(items.get(1).realizadas.get(0).completada);
 
         assertEquals("no se vuelven a pedir los ejercicios", 0, redNueva.ejercicios.size());
-        assertEquals("las listas de rutinas sí se vuelven a pedir", 1, redNueva.predefinidas.size());
-        assertEquals(1, redNueva.delUsuario.size());
+        assertEquals("la lista de rutinas sí se vuelve a pedir", 1, redNueva.delUsuario.size());
     }
 
     @Test
@@ -422,12 +421,10 @@ public class RegistrarSesionViewModelTest {
             }
         }
 
-        final List<Llamada<List<Rutina>>> predefinidas = new ArrayList<>();
         final List<Llamada<List<Rutina>>> delUsuario = new ArrayList<>();
         final List<Llamada<List<RutinaEjercicio>>> ejercicios = new ArrayList<>();
         final List<Llamada<SesionEntrenamiento>> guardados = new ArrayList<>();
 
-        @Override public void rutinasPredefinidas(Respuesta<List<Rutina>> r) { predefinidas.add(new Llamada<>(null, null, r)); }
         @Override public void rutinasDelUsuario(Respuesta<List<Rutina>> r) { delUsuario.add(new Llamada<>(null, null, r)); }
         @Override public void ejerciciosDeRutina(int id, Respuesta<List<RutinaEjercicio>> r) { ejercicios.add(new Llamada<>(id, null, r)); }
         @Override public void guardarCompleta(Map<String, Object> c, Respuesta<SesionEntrenamiento> r) { guardados.add(new Llamada<>(null, c, r)); }
@@ -440,8 +437,7 @@ public class RegistrarSesionViewModelTest {
                 r.setNombre("Rutina " + id);
                 lista.add(r);
             }
-            predefinidas.get(predefinidas.size() - 1).respuesta.ok(lista);
-            delUsuario.get(delUsuario.size() - 1).respuesta.ok(new ArrayList<>());
+            delUsuario.get(delUsuario.size() - 1).respuesta.ok(lista);
         }
 
         void responderEjercicios(int llamada, List<RutinaEjercicio> lista) {

@@ -40,6 +40,8 @@ public final class MenuRutina {
         intent.putExtra("numEjercicios", rutina.getNumEjercicios());
         intent.putExtra("predefinida",   rutina.isPredefinida());
         intent.putExtra("usuarioId",     rutina.getUsuarioId());
+        // De qué programa es, si es de uno (lote 1.2.1); null en las propias.
+        intent.putExtra(DetalleRutinaActivity.EXTRA_PROGRAMA_NOMBRE, rutina.getProgramaNombre());
         launcher.launch(intent);
     }
 

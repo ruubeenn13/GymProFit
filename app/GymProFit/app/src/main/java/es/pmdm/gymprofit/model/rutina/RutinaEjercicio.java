@@ -27,6 +27,16 @@ public class RutinaEjercicio {
     // estimar con los datos que hay, así que no se estima ni se enseña.
     // Nombre del ejercicio (dato enriquecido desde el catálogo por la API).
     private String nombreEjercicio;
+    // Descanso entre series, en segundos, y notas de la rutina.
+    private Integer tiempoDescanso;
+    private String notas;
+    // Pauta de las rutinas de programa (GP-074/GP-125); nulos en las propias. El rango es
+    // de repeticiones, o de segundos si la medida es SEGUNDOS. repeticiones lleva el máximo.
+    private Integer repeticionesMin;
+    private Integer repeticionesMax;
+    private String medida;
+    private String tipo;
+    private String porLado;
 
     public RutinaEjercicio() {}
 
@@ -51,4 +61,31 @@ public class RutinaEjercicio {
 
     public String getNombreEjercicio() { return nombreEjercicio; }
     public void setNombreEjercicio(String nombreEjercicio) { this.nombreEjercicio = nombreEjercicio; }
+
+    public Integer getTiempoDescanso() { return tiempoDescanso; }
+    public void setTiempoDescanso(Integer tiempoDescanso) { this.tiempoDescanso = tiempoDescanso; }
+
+    public String getNotas() { return notas; }
+    public void setNotas(String notas) { this.notas = notas; }
+
+    public Integer getRepeticionesMin() { return repeticionesMin; }
+    public void setRepeticionesMin(Integer repeticionesMin) { this.repeticionesMin = repeticionesMin; }
+
+    public Integer getRepeticionesMax() { return repeticionesMax; }
+    public void setRepeticionesMax(Integer repeticionesMax) { this.repeticionesMax = repeticionesMax; }
+
+    public String getMedida() { return medida; }
+    public void setMedida(String medida) { this.medida = medida; }
+
+    public String getTipo() { return tipo; }
+    public void setTipo(String tipo) { this.tipo = tipo; }
+
+    public String getPorLado() { return porLado; }
+    public void setPorLado(String porLado) { this.porLado = porLado; }
+
+    /** Si la serie se mide en segundos (plancha…) y no en repeticiones (GP-125). */
+    public boolean esPorTiempo() { return "SEGUNDOS".equals(medida); }
+
+    /** Si es uno de los básicos de la rutina (se enseña como etiqueta). */
+    public boolean esBasico() { return "BASICO".equals(tipo); }
 }

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  view_estado — cargando, error con reintentar o vacío, dentro del contenido (lote 1.2.1).
+  Lo maneja VistaEstado. El error no es solo un toast: se queda en la pantalla con su
+  botón, que es donde se busca cuando algo no aparece.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:paddingTop="24dp"
+    android:paddingBottom="24dp"
+    android:visibility="gone">
+
+    <ProgressBar
+        android:id="@+id/pbEstado"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:indeterminateTint="?attr/colorPrimary"
+        android:contentDescription="@string/feedback_cargando" />
+
+    <TextView
+        android:id="@+id/tvEstado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:textSize="@dimen/text_body"
+        android:textColor="?attr/colorOnSurfaceVariant" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnEstadoReintentar"
+        style="@style/Widget.GymProFit.BotonPildora.Contorno"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/btn_reintentar" />
+</LinearLayout>

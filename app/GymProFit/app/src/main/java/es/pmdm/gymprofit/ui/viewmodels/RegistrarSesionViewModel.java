@@ -195,36 +195,17 @@ public class RegistrarSesionViewModel extends ViewModel implements EjercicioPeso
         }
     }
 
-    // Pide las dos listas a la vez y las publica juntas, predefinidas primero.
+    // Pide las rutinas del usuario, las propias y las de su programa. Las predefinidas
+    // ya no: desde la 1.2.0 no hay ninguna, las sustituyen los programas (GP-074).
     private void pedirRutinas() {
-        final List<Rutina> predefinidas = new ArrayList<>();
-        final List<Rutina> propias = new ArrayList<>();
-        final int[] pendientes = {2};
-        Runnable alTerminar = () -> {
-            if (--pendientes[0] > 0) return;
-            List<Rutina> todas = new ArrayList<>(predefinidas);
-            todas.addAll(propias);
-            rutinas.setValue(todas);
-        };
-        repo.rutinasPredefinidas(new RegistroSesionRepositorio.Respuesta<List<Rutina>>() {
-            @Override public void ok(List<Rutina> lista) {
-                if (lista != null) predefinidas.addAll(lista);
-                alTerminar.run();
-            }
-            @Override public void fallo(int codigo, String mensaje) {
-                // Sin predefinidas se sigue: la sesión se puede guardar como entrenamiento
-                // libre o con las propias. Es lo que hacía la pantalla antes de GP-016.
-                alTerminar.run();
-            }
-        });
         repo.rutinasDelUsuario(new RegistroSesionRepositorio.Respuesta<List<Rutina>>() {
             @Override public void ok(List<Rutina> lista) {
-                if (lista != null) propias.addAll(lista);
-                alTerminar.run();
+                rutinas.setValue(lista != null ? lista : new ArrayList<>());
             }
             @Override public void fallo(int codigo, String mensaje) {
-                // Igual que arriba: sin las propias quedan las predefinidas y el libre.
-                alTerminar.run();
+                // Sin sus rutinas la sesión se puede guardar igual como entrenamiento
+                // libre: el selector se queda solo con esa opción, como antes de GP-016.
+                rutinas.setValue(new ArrayList<>());
             }
         });
     }

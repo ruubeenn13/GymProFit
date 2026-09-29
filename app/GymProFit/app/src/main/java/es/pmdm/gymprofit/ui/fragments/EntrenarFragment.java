@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -22,45 +21,61 @@ import java.util.List;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.PageDTO;
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
+import es.pmdm.gymprofit.model.programa.ProgramaQueSigue;
 import es.pmdm.gymprofit.model.rutina.Rutina;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.EjercicioApi;
+import es.pmdm.gymprofit.network.ProgramaApi;
 import es.pmdm.gymprofit.network.RutinaApi;
 import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.ui.activities.CrearRutinaActivity;
 import es.pmdm.gymprofit.ui.activities.EjerciciosActivity;
-import es.pmdm.gymprofit.ui.activities.PlantillasActivity;
+import es.pmdm.gymprofit.ui.activities.ProgramaDetalleActivity;
+import es.pmdm.gymprofit.ui.activities.ProgramasActivity;
 import es.pmdm.gymprofit.ui.activities.RegistrarSesionActivity;
 import es.pmdm.gymprofit.ui.widget.MenuRutina;
+import es.pmdm.gymprofit.ui.widget.SeguirProgramaHoja;
+import es.pmdm.gymprofit.ui.widget.TuProgramaVista;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.HoyToca;
+import es.pmdm.gymprofit.utils.TuPrograma;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import es.pmdm.gymprofit.utils.VistaEstado;
 
 // ============================================================
 // EntrenarFragment — pestaña Entrenar (GP-105), según 02-entrenar.png.
 //
 // Junta las antiguas pestañas Rutinas y Ejercicios:
-//   · Mis rutinas: tarjetas con Empezar; tocar abre el detalle y la pulsación larga
-//     el menú de siempre. La de Hoy toca lleva «Toca hoy» y el Empezar relleno.
+//   · Tu programa (GP-074, lote 1.2.1): sin programa, «Elige tu programa»; con él, su
+//     ciclo, «Hoy toca» y el resto de sus rutinas, y el menú para verlo, cambiar el
+//     tiempo, cambiar de programa o dejarlo. Lo pinta TuProgramaVista.
+//   · Mis rutinas: solo las propias (las de un programa van arriba); tarjetas con
+//     Empezar, tocar abre el detalle y la pulsación larga el menú de siempre. Sin
+//     programa, la de Hoy toca lleva «Toca hoy» y el Empezar relleno.
 //   · Empezar sin rutina: registrar sesión en entrenamiento libre.
-//   · Plantillas de GymProFit: carrusel y «Ver todas» (PlantillasActivity, con el
-//     filtro por nivel de GP-072). Sin plantillas, la sección no sale.
 //   · Biblioteca: el buscador y las zonas abren la pantalla de ejercicios, ya
 //     filtrada o con el teclado abierto. El número de la ayuda sale de la API.
+// El carrusel de plantillas se fue con la 1.2.0: desde entonces no hay predefinidas.
 // ============================================================
 public class EntrenarFragment extends BaseFragment {
 
     private final RutinaApi rutinaApi = ApiClient.service(RutinaApi.class);
     private final SesionApi sesionApi = ApiClient.service(SesionApi.class);
     private final EjercicioApi ejercicioApi = ApiClient.service(EjercicioApi.class);
+    private final ProgramaApi programaApi = ApiClient.service(ProgramaApi.class);
 
     private ActivityResultLauncher<Intent> recargar;
+    private TuProgramaVista tuPrograma;
 
+    // Lo cargado: las rutinas activas (propias y del programa), las sesiones y el
+    // programa que sigue. «Mis rutinas» se pinta con las tres; «Tu programa», con él.
     @Nullable private List<Rutina> propias;
     @Nullable private List<SesionEntrenamiento> sesiones;
+    @Nullable private ProgramaQueSigue seguido;
+    private boolean seguidoListo;
     private boolean falloPropias;
 
     @Override
@@ -83,8 +98,7 @@ public class EntrenarFragment extends BaseFragment {
         findViewById(R.id.btnCrearRutina).setOnClickListener(v -> crearRutina());
         findViewById(R.id.btnCrearPrimera).setOnClickListener(v -> crearRutina());
         findViewById(R.id.btnSinRutina).setOnClickListener(v -> empezar(null));
-        findViewById(R.id.btnVerTodas).setOnClickListener(v ->
-                startActivity(new Intent(requireContext(), PlantillasActivity.class)));
+        tuPrograma = new TuProgramaVista(findViewById(R.id.tuPrograma), accionesPrograma());
         findViewById(R.id.campoBuscar).setOnClickListener(v -> abrirBiblioteca(null, true));
 
         zona(R.id.btnZonaPecho, "PECHO");
@@ -102,7 +116,6 @@ public class EntrenarFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         cargarMisRutinas();
-        cargarPlantillas();
     }
 
     // ── Mis rutinas ─────────────────────────────────────────────────────────
@@ -111,13 +124,20 @@ public class EntrenarFragment extends BaseFragment {
         int uid = prefsManager.getUsuarioId();
         propias = null;
         sesiones = null;
+        seguido = null;
+        seguidoListo = false;
         falloPropias = false;
         if (uid == -1) {
+            // Invitado: ni rutinas ni programa propios; la tarjeta lleva a Programas, que
+            // se pueden ver aunque no seguir.
             propias = new ArrayList<>();
             sesiones = new ArrayList<>();
+            seguidoListo = true;
+            tuPrograma.sinPrograma();
             pintarMisRutinas();
             return;
         }
+        cargarPrograma();
         rutinaApi.getDeUsuarioActivas(uid).enqueue(new ApiCallback<List<Rutina>>() {
             @Override public void onOk(List<Rutina> l) { propias = l != null ? l : new ArrayList<>(); listo(); }
             @Override public void onFail(int code, String message) {
@@ -138,24 +158,50 @@ public class EntrenarFragment extends BaseFragment {
         });
     }
 
+    // El programa que sigue: su tarjeta, y de él depende qué lleva «Toca hoy» abajo.
+    private void cargarPrograma() {
+        tuPrograma.cargando();
+        programaApi.seguido().enqueue(new ApiCallback<ProgramaQueSigue>() {
+            @Override public void onOk(ProgramaQueSigue s) {
+                if (!isAdded()) return;
+                seguido = s;
+                seguidoListo = true;
+                if (s == null) tuPrograma.sinPrograma();
+                else tuPrograma.pintar(s);
+                listo();
+            }
+            @Override public void onFail(int code, String message) {
+                if (!isAdded()) return;
+                // El fallo se enseña en la tarjeta, con reintentar; «Mis rutinas» se pinta
+                // igual, sin marcar ninguna como la de hoy.
+                seguidoListo = true;
+                tuPrograma.error(VistaEstado.mensaje(requireContext(), R.string.tu_programa_error, code, message),
+                        () -> cargarMisRutinas());
+                listo();
+            }
+        });
+    }
+
     private void listo() {
-        if (!isAdded() || falloPropias || propias == null || sesiones == null) return;
+        if (!isAdded() || falloPropias || propias == null || sesiones == null || !seguidoListo) return;
         pintarMisRutinas();
     }
 
     private void pintarMisRutinas() {
         LinearLayout lista = findViewById(R.id.listaMisRutinas);
         lista.removeAllViews();
-        boolean vacia = propias == null || propias.isEmpty();
+        List<Rutina> mias = TuPrograma.misRutinas(propias);
+        boolean vacia = mias.isEmpty();
         findViewById(R.id.layoutRutinasVacio).setVisibility(vacia ? View.VISIBLE : View.GONE);
         ((TextView) findViewById(R.id.tvRutinasVacio)).setText(R.string.mis_rutinas_vacio);
         findViewById(R.id.btnCrearPrimera).setVisibility(View.VISIBLE);
         if (vacia) return;
 
-        HoyToca.Eleccion hoy = HoyToca.elegir(propias, sesiones);
+        // Siguiendo un programa, lo que toca está arriba: aquí no se marca ninguna.
+        HoyToca.Eleccion hoy = HoyToca.elegir(seguido, propias, sesiones);
         LayoutInflater inflater = LayoutInflater.from(requireContext());
-        for (Rutina r : propias) {
-            boolean toca = hoy != null && hoy.rutina.getId() == r.getId();
+        for (Rutina r : mias) {
+            boolean toca = hoy != null && !hoy.delPrograma && hoy.rutina.getId() == r.getId();
             View card = inflater.inflate(R.layout.item_rutina_entrenar, lista, false);
             ((TextView) card.findViewById(R.id.tvNombre)).setText(r.getNombre());
             String resumen = getString(R.string.rutina_resumen,
@@ -203,50 +249,60 @@ public class EntrenarFragment extends BaseFragment {
         startActivity(i);
     }
 
-    // ── Plantillas ──────────────────────────────────────────────────────────
+    // ── Tu programa ─────────────────────────────────────────────────────────
 
-    private void cargarPlantillas() {
-        rutinaApi.getPredefinidas().enqueue(new ApiCallback<List<Rutina>>() {
-            @Override public void onOk(List<Rutina> l) { if (isAdded()) pintarPlantillas(l); }
-            @Override public void onFail(int code, String message) {
-                // Sin plantillas la sección no sale (producción no tiene, GP-074). Un fallo
-                // se trata igual: el resto de la pestaña se usa sin ellas, y el aviso de
-                // red ya lo da Mis rutinas, que se pide a la vez.
-                if (isAdded()) pintarPlantillas(null);
+    private TuProgramaVista.Acciones accionesPrograma() {
+        return new TuProgramaVista.Acciones() {
+            @Override public void elegirPrograma() {
+                startActivity(new Intent(requireContext(), ProgramasActivity.class));
             }
-        });
+            @Override public void empezar(Rutina rutina) { EntrenarFragment.this.empezar(rutina); }
+            @Override public void abrirRutina(Rutina rutina) {
+                MenuRutina.abrirDetalle(requireActivity(), recargar, rutina);
+            }
+            @Override public void menuRutina(View ancla, Rutina rutina) {
+                if (!verificarAccesoRegistrado()) return;
+                MenuRutina.mostrar(requireActivity(), ancla, rutina, recargar, EntrenarFragment.this::cargarMisRutinas);
+            }
+            @Override public void menuPrograma(View ancla, ProgramaQueSigue s) { mostrarMenuPrograma(ancla, s); }
+            @Override public void volverASeguir(ProgramaQueSigue s) { cambiarTiempo(s); }
+            @Override public void dejar() { confirmarDejar(); }
+        };
     }
 
-    private void pintarPlantillas(@Nullable List<Rutina> plantillas) {
-        boolean hay = plantillas != null && !plantillas.isEmpty();
-        findViewById(R.id.cabeceraPlantillas).setVisibility(hay ? View.VISIBLE : View.GONE);
-        findViewById(R.id.scrollPlantillas).setVisibility(hay ? View.VISIBLE : View.GONE);
-        LinearLayout lista = findViewById(R.id.listaPlantillas);
-        lista.removeAllViews();
-        if (!hay) return;
-
-        LayoutInflater inflater = LayoutInflater.from(requireContext());
-        for (Rutina r : plantillas) {
-            View card = inflater.inflate(R.layout.item_plantilla_carrusel, lista, false);
-            ((ImageView) card.findViewById(R.id.ivIcono)).setImageResource(iconoPlantilla(r));
-            ((TextView) card.findViewById(R.id.tvNombre)).setText(r.getNombre());
-            String resumen = getString(R.string.plantilla_resumen,
-                    getResources().getQuantityString(R.plurals.rutina_num_ejercicios, r.getNumEjercicios(), r.getNumEjercicios()),
-                    getString(R.string.duracion_min, r.getDuracionMinutos()),
-                    UIHelper.traducirNivel(requireContext(), r.getNivel()));
-            ((TextView) card.findViewById(R.id.tvResumen)).setText(resumen);
-            card.setContentDescription(r.getNombre() + ". " + resumen);
-            card.setOnClickListener(v -> MenuRutina.abrirDetalle(requireActivity(), recargar, r));
-            lista.addView(card);
-        }
+    // Ver el programa, cambiar el tiempo, cambiar de programa y dejarlo.
+    private void mostrarMenuPrograma(View ancla, ProgramaQueSigue s) {
+        List<UIHelper.MenuAction> acciones = new ArrayList<>();
+        acciones.add(new UIHelper.MenuAction(R.drawable.ic_ms_visibility, getString(R.string.tu_programa_ver), () ->
+                startActivity(new Intent(requireContext(), ProgramaDetalleActivity.class)
+                        .putExtra(ProgramaDetalleActivity.EXTRA_CODIGO, s.getPrograma().getCodigo()))));
+        acciones.add(new UIHelper.MenuAction(R.drawable.ic_ms_schedule, getString(R.string.tu_programa_cambiar_tiempo),
+                () -> cambiarTiempo(s)));
+        acciones.add(new UIHelper.MenuAction(R.drawable.ic_ms_calendar_month, getString(R.string.tu_programa_cambiar),
+                () -> startActivity(new Intent(requireContext(), ProgramasActivity.class))));
+        acciones.add(new UIHelper.MenuAction(R.drawable.ic_ms_close, getString(R.string.tu_programa_dejar), true,
+                this::confirmarDejar));
+        UIHelper.mostrarMenuAnclado(requireActivity(), ancla, s.getPrograma().getNombre(), acciones);
     }
 
-    // Icono por el tipo de plantilla: cuerpo completo, cardio o por partes.
-    private static int iconoPlantilla(Rutina r) {
-        String c = r.getCategoria() == null ? "" : r.getCategoria().toUpperCase(java.util.Locale.ROOT);
-        if (c.contains("GENERAL")) return R.drawable.ic_ms_accessibility_new;
-        if (c.contains("CARDIO")) return R.drawable.ic_ms_directions_run;
-        return R.drawable.ic_ms_splitscreen;
+    private void cambiarTiempo(ProgramaQueSigue s) {
+        SeguirProgramaHoja.mostrar(requireActivity(), s.getPrograma().getCodigo(), s.getPrograma().getNombre(), s,
+                this::cargarMisRutinas);
+    }
+
+    private void confirmarDejar() {
+        UIHelper.mostrarDialogoConIcono(requireActivity(), getString(R.string.tu_programa_dejar),
+                getString(R.string.tu_programa_dejar_confirmar), R.drawable.ic_ms_close, () ->
+                        programaApi.dejar().enqueue(new ApiCallback<Void>() {
+                            @Override public void onOk(Void body) {
+                                if (!isAdded()) return;
+                                UIHelper.mostrarToastExito(requireActivity(), getString(R.string.tu_programa_dejado));
+                                cargarMisRutinas();
+                            }
+                            @Override public void onFail(int code, String message) {
+                                if (isAdded()) UiFeedback.toastError(requireActivity(), code, message);
+                            }
+                        }));
     }
 
     // ── Biblioteca ──────────────────────────────────────────────────────────

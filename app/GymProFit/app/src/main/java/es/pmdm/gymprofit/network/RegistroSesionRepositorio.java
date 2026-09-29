@@ -28,10 +28,10 @@ public interface RegistroSesionRepositorio {
         void fallo(int codigo, String mensaje);
     }
 
-    /** Rutinas predefinidas del sistema. */
-    void rutinasPredefinidas(Respuesta<List<Rutina>> respuesta);
-
-    /** Rutinas activas del usuario de la sesión. */
+    /**
+     * Rutinas activas del usuario de la sesión, las propias y las de su programa. Las
+     * predefinidas ya no se piden: desde la 1.2.0 no hay ninguna (GP-074).
+     */
     void rutinasDelUsuario(Respuesta<List<Rutina>> respuesta);
 
     /** Ejercicios de una rutina, con sus series y repeticiones. */

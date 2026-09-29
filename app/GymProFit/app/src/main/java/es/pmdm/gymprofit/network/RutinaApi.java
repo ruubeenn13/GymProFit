@@ -27,9 +27,8 @@ public interface RutinaApi {
 
     // ── RUTINAS ───────────────────────────────────────────────
 
-    // Catálogo de rutinas predefinidas del sistema.
-    @GET("rutinas/predefinidas")
-    Call<List<Rutina>> getPredefinidas();
+    // Las predefinidas ya no se piden: desde la 1.2.0 no hay ninguna (GP-074); las
+    // sustituyen los programas (ProgramaApi).
 
     // Rutinas activas creadas o asignadas a un usuario concreto.
     @GET("rutinas/usuario/{usuarioId}/activas")
