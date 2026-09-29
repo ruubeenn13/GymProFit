@@ -17,6 +17,7 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.utils.CalculadoraNutricional;
+import es.pmdm.gymprofit.utils.NombreVisible;
 import es.pmdm.gymprofit.utils.Numeros;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
@@ -184,6 +185,9 @@ public class OnboardingResumenActivity extends AppCompatActivity {
             if (!nivel.isEmpty()) body.put("nivelExperiencia", nivel);
 
             body.put("objetivo", prefs.getObjetivo());
+            // El nombre del paso 2 (GP-116): obligatorio allí, así que no llega en blanco.
+            String nombre = NombreVisible.paraEnviar(prefs.getBorradorNombre());
+            if (!nombre.isEmpty()) body.put("nombre", nombre);
             // GP-111: ya guardados en calcularYMostrar, con su valor por defecto si faltaban.
             body.put("sexo", prefs.getSexo());
             body.put("nivelActividad", prefs.getActividad());
@@ -191,6 +195,7 @@ public class OnboardingResumenActivity extends AppCompatActivity {
             usuarioApi.patch(usuarioId, body).enqueue(new ApiCallback<Void>() {
                 @Override
                 public void onOk(Void response) {
+                    if (!nombre.isEmpty()) prefs.saveNombre(prefs.getUsername(), nombre);
                     UIHelper.mostrarToastExito(OnboardingResumenActivity.this,
                             getString(R.string.onboarding_guardado_exito));
                     marcarOnboardingCompletado(prefs);

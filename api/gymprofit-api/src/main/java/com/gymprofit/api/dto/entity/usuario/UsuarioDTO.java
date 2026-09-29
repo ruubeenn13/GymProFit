@@ -22,6 +22,8 @@ import java.io.Serializable;
 public class UsuarioDTO implements Serializable {
     private Integer id;
     private String username;
+    // Nombre para mostrar (GP-116); null si no tiene, y la app usa el username.
+    private String nombre;
     private String email;
     private String peso;
     private Double altura;

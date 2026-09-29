@@ -21,6 +21,8 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UsuarioPatchDTO implements Serializable {
+    // Nombre para mostrar (GP-116): se recorta; en blanco lo borra; más de 40 caracteres, 400.
+    private String nombre;
     private String email;
     private BigDecimal peso;
     private BigDecimal altura;

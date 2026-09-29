@@ -45,7 +45,7 @@ public interface UsuarioApi {
 
     // Actualiza parcialmente los datos de un usuario (onboarding y edición de perfil).
     // body: Map con los campos a cambiar. Un null o un campo ausente NO toca nada: la API
-    // ignora los null del PATCH.
+    // ignora los null del PATCH. Para borrar el nombre se manda en blanco (GP-116).
     @PATCH("usuarios/{id}")
     Call<Void> patch(@Path("id") int id, @Body Map<String, Object> body);
 

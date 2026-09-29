@@ -179,6 +179,7 @@
     <string name="perfil_mi_perfil">Mi perfil</string>
     <string name="perfil_informacion">Información personal</string>
     <string name="perfil_nombre">Nombre</string>
+    <string name="editar_perfil_nombre_ayuda">En blanco, se usa tu nombre de usuario</string>
     <string name="perfil_email">Email</string>
     <string name="perfil_configuracion">Configuración</string>
     <string name="perfil_tema">Tema</string>

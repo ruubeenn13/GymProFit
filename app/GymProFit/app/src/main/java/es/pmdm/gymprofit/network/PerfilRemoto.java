@@ -12,7 +12,8 @@ import es.pmdm.gymprofit.utils.PerfilCuenta;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 
 // ============================================================
-// PerfilRemoto — al entrar, cruza el perfil de la API con el del móvil (GP-111).
+// PerfilRemoto — al entrar, cruza el perfil de la API con el del móvil (GP-111) y
+// guarda la copia local del nombre para mostrar (GP-116).
 //
 // La decisión (de quién es lo guardado, qué se trae y qué se sube) es de PerfilCuenta;
 // aquí solo se pide el perfil cuando hace falta y se manda el PATCH que salga. Se llama
@@ -57,6 +58,9 @@ public final class PerfilRemoto {
         PreferencesManager prefs = new PreferencesManager(context.getApplicationContext());
         String usuario = prefs.getUsername();
         if (u == null || prefs.isGuest() || usuario == null || usuario.isEmpty()) return;
+
+        // El nombre para mostrar solo vive en la API (GP-116): el móvil guarda una copia.
+        prefs.saveNombre(usuario, u.getNombre());
 
         Map<String, Object> subir = PerfilCuenta.alEntrar(prefs, usuario, u.getSexo(), u.getNivelActividad());
         if (subir.isEmpty()) return;

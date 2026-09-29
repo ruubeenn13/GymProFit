@@ -40,6 +40,7 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
     // De qué cuenta son el sexo y la actividad guardados (GP-111): ver PerfilCuenta.
     private static final String KEY_PERFIL_DUENO = "perfil_dueno";
     private static final String PREFIJO_ONBOARDING = "onboarding_done_";
+    private static final String PREFIJO_NOMBRE = "nombre_";
     private static final String KEY_CALORIAS = "calorias_diarias";
     private static final String KEY_PROTEINAS = "proteinas_diarias";
     private static final String KEY_CARBOS = "carbos_diarios";
@@ -187,6 +188,18 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
 
     public void saveUsername(String username) { editor.putString(KEY_USERNAME, username); editor.apply(); }
     public String getUsername() { return prefs.getString(KEY_USERNAME, ""); }
+
+    // Nombre para mostrar (GP-116), guardado por cuenta: en un móvil con dos cuentas
+    // cada una ve el suyo nada más entrar, antes de que conteste la API.
+    public void saveNombre(String username, @Nullable String nombre) {
+        if (username == null || username.isEmpty()) return;
+        if (nombre == null || nombre.trim().isEmpty()) editor.remove(PREFIJO_NOMBRE + username);
+        else editor.putString(PREFIJO_NOMBRE + username, nombre.trim());
+        editor.apply();
+    }
+
+    /** Nombre para mostrar de la cuenta que ha entrado, o "" si no tiene. */
+    public String getNombre() { return prefs.getString(PREFIJO_NOMBRE + getUsername(), ""); }
 
     public void saveNivel(String nivel) { editor.putString(KEY_NIVEL, nivel); editor.apply(); }
     public String getNivel() { return prefs.getString(KEY_NIVEL, ""); }

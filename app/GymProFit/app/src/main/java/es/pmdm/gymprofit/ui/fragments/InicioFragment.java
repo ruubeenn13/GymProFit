@@ -59,6 +59,7 @@ import es.pmdm.gymprofit.utils.EjercicioNavHelper;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.HoyToca;
 import es.pmdm.gymprofit.utils.Marcas;
+import es.pmdm.gymprofit.utils.NombreVisible;
 import es.pmdm.gymprofit.utils.NombresRutina;
 import es.pmdm.gymprofit.utils.NavTabs;
 import es.pmdm.gymprofit.utils.TiempoRelativo;
@@ -129,8 +130,9 @@ public class InicioFragment extends BaseFragment {
         ((TextView) findViewById(R.id.tvFecha)).setText(fecha.isEmpty() ? fecha
                 : fecha.substring(0, 1).toUpperCase(idioma) + fecha.substring(1));
 
-        String nombre = prefsManager.getUsername();
-        if (nombre == null || nombre.isEmpty()) nombre = getString(R.string.home_usuario_defecto);
+        // El nombre para mostrar y, sin él, el de usuario (GP-116).
+        String nombre = NombreVisible.de(prefsManager.getNombre(), prefsManager.getUsername());
+        if (nombre.isEmpty()) nombre = getString(R.string.home_usuario_defecto);
         ((TextView) findViewById(R.id.tvHola)).setText(getString(R.string.inicio_hola, nombre));
         AvatarUtils.pintar(findViewById(R.id.avatarInicio), nombre, prefsManager.getUsuarioId(),
                 color(com.google.android.material.R.attr.colorOnSurface));

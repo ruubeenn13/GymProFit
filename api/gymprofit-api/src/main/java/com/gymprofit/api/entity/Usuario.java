@@ -46,6 +46,10 @@ public class Usuario implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    // Nombre para mostrar (GP-116), aparte del de usuario. Opcional, de 1 a 40 caracteres.
+    @Column(length = 40)
+    private String nombre;
+
     // Correo electrónico único del usuario.
     @Column(nullable = false, unique = true, length = 100)
     private String email;
