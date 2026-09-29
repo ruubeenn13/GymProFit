@@ -100,6 +100,8 @@ public class OnboardingResumenActivity extends AppCompatActivity {
         prefs.saveObjetivo(objetivo);
         prefs.saveSexo(sexo);
         prefs.saveActividad(actividad);
+        // Desde aquí el perfil del móvil es de esta cuenta (GP-111).
+        prefs.apuntarDuenoPerfil(prefs.getUsername());
 
         ((TextView) findViewById(R.id.tvResumenCalorias)).setText(String.valueOf(resultado.calorias));
         ((TextView) findViewById(R.id.tvResumenObjetivo)).setText(obtenerNombreObjetivo(objetivo));
@@ -182,6 +184,9 @@ public class OnboardingResumenActivity extends AppCompatActivity {
             if (!nivel.isEmpty()) body.put("nivelExperiencia", nivel);
 
             body.put("objetivo", prefs.getObjetivo());
+            // GP-111: ya guardados en calcularYMostrar, con su valor por defecto si faltaban.
+            body.put("sexo", prefs.getSexo());
+            body.put("nivelActividad", prefs.getActividad());
 
             usuarioApi.patch(usuarioId, body).enqueue(new ApiCallback<Void>() {
                 @Override

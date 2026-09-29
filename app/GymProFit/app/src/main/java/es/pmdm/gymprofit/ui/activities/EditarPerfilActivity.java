@@ -31,8 +31,8 @@ import es.pmdm.gymprofit.utils.UiFeedback;
 // Peso, altura y edad; sexo y actividad; objetivo y nivel. Guarda vía PATCH lo que
 // guarda la API y recalcula las macros nutricionales locales con los datos nuevos.
 //
-// Sexo y actividad solo se elegían en el onboarding y viven en el teléfono: se
-// guardan donde entonces (PreferencesManager) y recalculan como entonces. El correo ya
+// Sexo y actividad van también a la API (GP-111) y se guardan en el teléfono, que es
+// de donde calcula las macros; el perfil del teléfono queda apuntado a esta cuenta. El correo ya
 // no está aquí: se cambia en Ajustes › Correo, con la contraseña (GP-083).
 // ============================================================
 public class EditarPerfilActivity extends AppCompatActivity {
@@ -61,7 +61,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
     private static final String[] OBJETIVOS = {
             "PERDER_PESO", "GANAR_MASA_MUSCULAR", "MANTENER_PESO", "MEJORAR_FUERZA"
     };
-    // Valores guardados en el teléfono para sexo y actividad (los del onboarding).
+    // Valores de sexo y actividad, los mismos en el teléfono y en la API (GP-111).
     private static final String[] SEXOS = {"HOMBRE", "MUJER"};
     private static final String[] ACTIVIDADES = {
             CalculadoraNutricional.ACTIVIDAD_SEDENTARIO, CalculadoraNutricional.ACTIVIDAD_LIGERO,
@@ -123,6 +123,9 @@ public class EditarPerfilActivity extends AppCompatActivity {
                 if (u.getEdad() > 0) etEdad.setText(String.valueOf(u.getEdad()));
                 seleccionarSpinner(spNivel, NIVELES, u.getNivelExperiencia());
                 seleccionarSpinner(spObjetivo, OBJETIVOS, u.getObjetivo());
+                // Lo de la API manda sobre lo del móvil (GP-111); sin ellos, lo del móvil.
+                seleccionarSpinner(spSexo, SEXOS, u.getSexo());
+                seleccionarSpinner(spActividad, ACTIVIDADES, u.getNivelActividad());
                 guardarEstadoInicial();
             }
 
@@ -173,7 +176,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
     private void guardarPerfil() {
         int id = prefsManager.getUsuarioId();
         try {
-            // Un valor null BORRA el campo (Gson con serializeNulls).
+            // Un valor null no toca el campo: la API ignora los null del PATCH.
             Map<String, Object> body = new HashMap<>();
 
             String pesoStr = etPeso.getText() != null ? etPeso.getText().toString().trim() : "";
@@ -187,6 +190,8 @@ public class EditarPerfilActivity extends AppCompatActivity {
 
             body.put("nivelExperiencia", NIVELES[spNivel.getSelectedItemPosition()]);
             body.put("objetivo", OBJETIVOS[spObjetivo.getSelectedItemPosition()]);
+            body.put("sexo", SEXOS[spSexo.getSelectedItemPosition()]);
+            body.put("nivelActividad", ACTIVIDADES[spActividad.getSelectedItemPosition()]);
 
             LoadingDialog.show(this);
             usuarioApi.patch(id, body).enqueue(new ApiCallback<Void>() {
@@ -201,6 +206,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
                     prefsManager.saveNivel(NIVELES[spNivel.getSelectedItemPosition()]);
                     prefsManager.saveSexo(SEXOS[spSexo.getSelectedItemPosition()]);
                     prefsManager.saveActividad(ACTIVIDADES[spActividad.getSelectedItemPosition()]);
+                    prefsManager.apuntarDuenoPerfil(prefsManager.getUsername());
 
                     // Recalcular macros con los nuevos datos
                     ResultadoNutricional r = CalculadoraNutricional.calcular(prefsManager.getPeso(),

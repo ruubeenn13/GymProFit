@@ -5,9 +5,15 @@ package es.pmdm.gymprofit.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
+
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 // ============================================================
 // PreferencesManager — encapsula el acceso a SharedPreferences de la app.
@@ -15,7 +21,7 @@ import androidx.security.crypto.MasterKey;
 // onboarding (nivel, objetivo, sexo, actividad), resultados nutricionales y
 // datos físicos del usuario, evitando el acceso directo desde las Activities.
 // ============================================================
-public class PreferencesManager {
+public class PreferencesManager implements PerfilCuenta.Almacen {
 
     // Nombre del archivo de SharedPreferences y claves usadas para cada dato guardado.
     private static final String PREF_NAME = "GymProFitPrefs";
@@ -31,6 +37,9 @@ public class PreferencesManager {
     private static final String KEY_OBJETIVO = "objetivo";
     private static final String KEY_SEXO = "sexo";
     private static final String KEY_ACTIVIDAD = "actividad";
+    // De qué cuenta son el sexo y la actividad guardados (GP-111): ver PerfilCuenta.
+    private static final String KEY_PERFIL_DUENO = "perfil_dueno";
+    private static final String PREFIJO_ONBOARDING = "onboarding_done_";
     private static final String KEY_CALORIAS = "calorias_diarias";
     private static final String KEY_PROTEINAS = "proteinas_diarias";
     private static final String KEY_CARBOS = "carbos_diarios";
@@ -185,11 +194,52 @@ public class PreferencesManager {
     public void saveObjetivo(String objetivo) { editor.putString(KEY_OBJETIVO, objetivo); editor.apply(); }
     public String getObjetivo() { return prefs.getString(KEY_OBJETIVO, ""); }
 
+    // Sexo y actividad (GP-111). Los getters dan el valor por defecto si lo guardado es
+    // de otra cuenta del mismo móvil: para la que ha entrado es como si no hubiera nada.
+    @Override
     public void saveSexo(String sexo) { editor.putString(KEY_SEXO, sexo); editor.apply(); }
-    public String getSexo() { return prefs.getString(KEY_SEXO, "HOMBRE"); }
+    public String getSexo() { return perfilUsable() ? prefs.getString(KEY_SEXO, "HOMBRE") : "HOMBRE"; }
 
+    @Override
     public void saveActividad(String actividad) { editor.putString(KEY_ACTIVIDAD, actividad); editor.apply(); }
-    public String getActividad() { return prefs.getString(KEY_ACTIVIDAD, "MODERADO"); }
+    public String getActividad() { return perfilUsable() ? prefs.getString(KEY_ACTIVIDAD, "MODERADO") : "MODERADO"; }
+
+    /** El sexo tal cual está guardado, o null si nunca se eligió en este móvil. */
+    @Nullable @Override
+    public String getSexoGuardado() { return prefs.getString(KEY_SEXO, null); }
+
+    /** La actividad tal cual está guardada, o null si nunca se eligió en este móvil. */
+    @Nullable @Override
+    public String getActividadGuardada() { return prefs.getString(KEY_ACTIVIDAD, null); }
+
+    @Override
+    public void borrarSexo() { editor.remove(KEY_SEXO); editor.apply(); }
+
+    @Override
+    public void borrarActividad() { editor.remove(KEY_ACTIVIDAD); editor.apply(); }
+
+    /** Usuario de quien son el sexo y la actividad guardados; null en instalaciones anteriores. */
+    @Nullable @Override
+    public String getDuenoPerfil() { return prefs.getString(KEY_PERFIL_DUENO, null); }
+
+    @Override
+    public void apuntarDuenoPerfil(String usuario) { editor.putString(KEY_PERFIL_DUENO, usuario); editor.apply(); }
+
+    /** Usuarios que han terminado el onboarding en este móvil. */
+    @NonNull @Override
+    public Set<String> getCuentasConOnboarding() {
+        Set<String> cuentas = new HashSet<>();
+        for (Map.Entry<String, ?> e : prefs.getAll().entrySet()) {
+            if (e.getKey().startsWith(PREFIJO_ONBOARDING) && Boolean.TRUE.equals(e.getValue())) {
+                cuentas.add(e.getKey().substring(PREFIJO_ONBOARDING.length()));
+            }
+        }
+        return cuentas;
+    }
+
+    private boolean perfilUsable() {
+        return PerfilCuenta.usable(PerfilCuenta.propiedad(getDuenoPerfil(), getCuentasConOnboarding(), getUsername()));
+    }
 
     // Guarda de una sola vez el resultado nutricional calculado en el onboarding.
     public void saveResultadoNutricional(int calorias, int proteinas, int carbos, int grasas, double agua) {
@@ -212,13 +262,13 @@ public class PreferencesManager {
 
     // Marca el onboarding como completado para un usuario concreto (clave dinámica por username).
     public void setOnboardingCompletadoParaUsuario(String username) {
-        editor.putBoolean("onboarding_done_" + username, true);
+        editor.putBoolean(PREFIJO_ONBOARDING + username, true);
         editor.apply();
     }
     // Comprueba si el usuario indicado ya completó el onboarding.
     public boolean isOnboardingCompletadoParaUsuario(String username) {
         if (username == null || username.isEmpty()) return false;
-        return prefs.getBoolean("onboarding_done_" + username, false);
+        return prefs.getBoolean(PREFIJO_ONBOARDING + username, false);
     }
 
     // ------------------------------------------------------------------

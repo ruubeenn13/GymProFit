@@ -157,7 +157,7 @@ Todos van bajo el context-path `/api`. Los `@RequestMapping` de los controllers 
 | GET | `/usuarios/username/{u}` | USER/ADMIN | Usuario por username |
 | GET | `/usuarios/{id}/estadisticas` | USER/ADMIN | Estadísticas jOOQ |
 | PUT | `/usuarios` | ADMIN | Actualizar completo (id en body) — SecurityConfig: solo ADMIN vía catch-all `/usuarios/**` |
-| PATCH | `/usuarios/{id}` | USER/ADMIN | Actualización parcial del perfil. **No** cambia `activo` (lo ignora) ni el correo: un `email` distinto del actual da 400 |
+| PATCH | `/usuarios/{id}` | USER/ADMIN | Actualización parcial del perfil: un campo `null` o ausente no se toca. `sexo` y `nivelActividad` opcionales (GP-111), 400 si no están en su lista. **No** cambia `activo` (lo ignora) ni el correo: un `email` distinto del actual da 400 |
 | PUT | `/usuarios/me/email` | USER/ADMIN | Cambia el correo propio. Body: `{email, password}` — reautentica. 400 formato, 403 contraseña, 409 en uso. El usuario sale del token. En el cupo estricto del rate limit. El correo nuevo aún no se verifica (GP-045) |
 | GET | `/usuarios` | ADMIN | Todos los usuarios |
 | DELETE | `/usuarios/{id}` | ADMIN | Soft delete |

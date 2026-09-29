@@ -291,6 +291,8 @@ public class UsuarioService implements IUsuarioService {
             if (patchDTO.getEdad() != null) usuario.setEdad(patchDTO.getEdad());
             if (nivel != null) usuario.setNivelExperiencia(nivel);
             if (patchDTO.getObjetivo() != null) usuario.setObjetivo(patchDTO.getObjetivo());
+            if (patchDTO.getSexo() != null) usuario.setSexo(patchDTO.getSexo());
+            if (patchDTO.getNivelActividad() != null) usuario.setNivelActividad(patchDTO.getNivelActividad());
 
             return usuarioMapper.toDTO(usuarioRepository.save(usuario));
         } catch (Exception e) {

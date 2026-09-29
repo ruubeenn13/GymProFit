@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import com.gymprofit.api.enums.NivelActividad;
+import com.gymprofit.api.enums.Sexo;
 import com.gymprofit.api.enums.TipoObjetivo;
 
 import java.io.Serializable;
@@ -26,6 +28,9 @@ public class UsuarioDTO implements Serializable {
     private Integer edad;
     private String nivelExperiencia;
     private TipoObjetivo objetivo;
+    // Opcionales (GP-111): null si el usuario no los ha dicho.
+    private Sexo sexo;
+    private NivelActividad nivelActividad;
     private String fechaRegistro;
     private Boolean activo;
     private String fotoPerfil;
