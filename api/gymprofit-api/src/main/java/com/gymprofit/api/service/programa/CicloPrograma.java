@@ -45,7 +45,11 @@ public final class CicloPrograma {
         if (n == 0) return new Estado(null, Set.of());
 
         int toca = posicionInicial >= 1 && posicionInicial <= n ? posicionInicial - 1 : 0;
+        // Seguir desde una posición que no es la 1 es seguir a mitad de vuelta (cambiar el
+        // tiempo sigue el programa otra vez desde la que tocaba): las anteriores ya estaban
+        // hechas en esta vuelta, y la barra no las puede perder (GP-134).
         Set<Integer> hechas = new TreeSet<>();
+        for (int p = 1; p <= toca; p++) hechas.add(p);
         for (String codigo : sesiones) {
             int salto = -1;
             for (int k = 0; k < n; k++) {

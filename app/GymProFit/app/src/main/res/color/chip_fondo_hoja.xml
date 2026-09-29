@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  chip_fondo_hoja — fondo de los chips de filtro dentro de una hoja inferior (GP-134).
+
+  El de Material pinta el chip sin marcar con colorSurface. En una pantalla es el mismo
+  color que el fondo y el chip se ve solo con su borde, como en Programas; dentro de la
+  hoja, que es más clara y lleva el tinte de elevación, salía un relleno marrón. Sin
+  marcar va transparente, para que se vea igual en los dos sitios; marcado, como el de
+  Material.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@android:color/transparent" android:state_enabled="false" />
+    <item android:color="?attr/colorSecondaryContainer" android:state_checked="true" />
+    <item android:color="@android:color/transparent" />
+</selector>

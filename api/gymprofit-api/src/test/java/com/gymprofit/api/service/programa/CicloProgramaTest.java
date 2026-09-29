@@ -92,6 +92,32 @@ class CicloProgramaTest {
     }
 
     @Test
+    @DisplayName("desde una posición que no es la 1, las anteriores cuentan como hechas (GP-134)")
+    void posicion_inicial_a_mitad_de_vuelta() {
+        // Cambiar el tiempo a mitad de vuelta sigue el programa otra vez desde la que tocaba:
+        // la barra no puede perder las que ya estaban hechas.
+        assertThat(calcular(TP, 3).hechas()).containsExactly(1, 2);
+        assertThat(calcular(TP, 3).posicionHoy()).isEqualTo(3);
+
+        CicloPrograma.Estado e = calcular(TP, 3, "TORSO-B");
+        assertThat(e.posicionHoy()).isEqualTo(4);
+        assertThat(e.hechas()).containsExactly(1, 2, 3);
+
+        // Al acabar esa vuelta, la barra empieza de cero como siempre.
+        e = calcular(TP, 3, "TORSO-B", "PIERNA-B");
+        assertThat(e.posicionHoy()).isEqualTo(1);
+        assertThat(e.hechas()).isEmpty();
+
+        // Hacer una de antes de la inicial da la vuelta: esa es de la vuelta nueva.
+        e = calcular(TP, 3, "TORSO-A");
+        assertThat(e.posicionHoy()).isEqualTo(2);
+        assertThat(e.hechas()).containsExactly(1);
+
+        // Fuera de rango cuenta como 1: nada hecho.
+        assertThat(calcular(TP, 9).hechas()).isEmpty();
+    }
+
+    @Test
     @DisplayName("una sesión de una rutina que no es del ciclo no mueve nada")
     void ajena() {
         assertThat(calcular(TP, 2, "OTRA").posicionHoy()).isEqualTo(2);
