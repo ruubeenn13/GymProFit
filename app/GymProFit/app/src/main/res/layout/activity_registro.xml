@@ -138,7 +138,7 @@
                 app:helperTextEnabled="true"
                 app:helperText="@string/password_politica">
 
-                <com.google.android.material.textfield.TextInputEditText
+                <es.pmdm.gymprofit.ui.widget.CampoContrasena
                     android:id="@+id/etRegPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -166,7 +166,7 @@
                 app:endIconMode="password_toggle"
                 app:endIconDrawable="@drawable/sel_ojo_password">
 
-                <com.google.android.material.textfield.TextInputEditText
+                <es.pmdm.gymprofit.ui.widget.CampoContrasena
                     android:id="@+id/etRegConfirmarPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
