@@ -2,6 +2,15 @@
 
 Historial de cambios del proyecto (API Spring Boot + app Android). Ver también el [README](README.md).
 
+### 2026-09-29
+
+| Hash | Descripción |
+|---|---|
+| `9d37dd7` | build(android): **versión 1.1.3** (10103), etiquetada `v1.1.3`. Misma clave de firma. Necesita la API de este lote (desplegada: `652a5f3`). Informe en `documentacion/estado/2026-09-29-lote-1.1.3.md`. |
+| `9381ea8` | fix(android): **nada se corta a letra 2,0** (GP-128): las pestañas de Progreso van en un carril que se desplaza en horizontal; las etiquetas de la barra crecen con la letra del sistema hasta 1,3 y cada botón enseña su nombre en un tooltip. |
+| `e1e4940` | feat(api,android): **un nombre para mostrar** (GP-116): `nombre` opcional en `UsuarioDTO` y en el PATCH (recortado, 1 a 40 caracteres, en blanco lo borra; `V202609291100`). Lo manda el onboarding, se cambia y se borra en Editar perfil, y lo usan Inicio, Progreso y el avatar; sin él, el de usuario. |
+| `dd6f09d` | feat(api,android): **el sexo y la actividad se guardan en la API** (GP-111): `sexo` y `nivelActividad` opcionales en `UsuarioDTO` y en el PATCH (400 fuera de la lista; `V202609291000`). La app los manda, los trae al entrar y, en una instalación anterior, sube una vez los del móvil si son de esta cuenta; en un móvil con dos cuentas solo usa los de la que entra. |
+
 ### 2026-09-28
 
 | Hash | Descripción |
