@@ -32,8 +32,12 @@ import java.util.Optional;
 // mediciones, objetivos, logros) y generan notificaciones motivacionales vía
 // NotificacionService.crearSistema (sin SecurityContext, push inmediata).
 // Reglas comunes de todos los generadores:
-//   - Solo se notifica a usuarios con dispositivo registrado (findDistinctUsuarioIds):
-//     evita engordar la tabla con notificaciones para cuentas muertas.
+//   - Solo se notifica a usuarios con dispositivo registrado y con su tipo de aviso
+//     encendido (GP-112): entrenar (inactividad), comidas (las cinco) y progreso
+//     (resumen, logro próximo, medición y objetivo). Sin dispositivo, además, se
+//     engordaría la tabla con notificaciones para cuentas muertas.
+//   - El recordatorio genérico de las 18:00 se retiró con GP-112: saltaba también los
+//     días de descanso de un programa, justo cuando no toca entrenar.
 //   - Anti-spam por título exacto con existsByUsuarioIdAndTituloAndFechaCreacionAfter
 //     en los recordatorios que podrían repetirse varios días seguidos.
 //   - Todos los cron van con zone Europe/Madrid (el servidor de prod corre en UTC).
@@ -69,8 +73,6 @@ public class RecordatorioNotificacionesTask {
     public static final String KEY_CENA_TITULO = "notif.cena.titulo";
     public static final String KEY_CENA_MENSAJE = "notif.cena.mensaje";
     // Entrenamiento y actividad.
-    public static final String KEY_ENTRENAR_TITULO = "notif.entrenar.titulo";
-    public static final String KEY_ENTRENAR_MENSAJE = "notif.entrenar.mensaje";
     public static final String KEY_INACTIVIDAD_TITULO = "notif.inactividad.titulo";
     public static final String KEY_INACTIVIDAD_MENSAJE = "notif.inactividad.mensaje";
     public static final String KEY_RESUMEN_TITULO = "notif.resumen.titulo";
@@ -150,7 +152,7 @@ public class RecordatorioNotificacionesTask {
             LocalDateTime inicioDia = LocalDate.now().atStartOfDay();
             LocalDateTime finDia = inicioDia.plusDays(1).minusSeconds(1);
 
-            for (Integer usuarioId : deviceTokenRepository.findDistinctUsuarioIds()) {
+            for (Integer usuarioId : deviceTokenRepository.findUsuarioIdsConAvisosComidas()) {
                 // Condición: no existe comida de ese tipo registrada hoy.
                 if (!comidaRepository.existsByUsuarioIdAndTipoComidaAndFechaBetween(usuarioId, tipo, inicioDia, finDia)) {
                     // Título y mensaje en el idioma actual del usuario.
@@ -166,45 +168,11 @@ public class RecordatorioNotificacionesTask {
     }
 
     // ============================================================
-    // 6. Recordatorio de entrenamiento (usuarios activos)
-    // ============================================================
-
-    // 18:00 — recuerda entrenar a quien aún no lo ha hecho hoy pero SÍ ha entrenado en los
-    // últimos 3 días (usuario activo). Los inactivos los cubre recordatorioInactividad, así
-    // no se duplican avisos el mismo día. Sin anti-spam extra: el cron es 1 vez/día.
-    @Scheduled(cron = "0 0 18 * * *", zone = ZONA)
-    public void recordatorioEntrenar() {
-        try {
-            LocalDateTime ahora = LocalDateTime.now();
-            LocalDateTime inicioHoy = LocalDate.now().atStartOfDay();
-
-            for (Integer usuarioId : deviceTokenRepository.findDistinctUsuarioIds()) {
-                // ¿Entrenó hoy? Si ya entrenó, no molestar.
-                boolean entrenoHoy = sesionEntrenamientoRepository
-                        .existsByUsuarioIdAndFechaInicioBetween(usuarioId, inicioHoy, ahora);
-                if (entrenoHoy) continue;
-
-                // ¿Activo? Alguna sesión en los últimos 3 días (si no, es territorio del job de inactividad).
-                boolean activo = sesionEntrenamientoRepository
-                        .existsByUsuarioIdAndFechaInicioBetween(usuarioId, ahora.minusDays(3), ahora);
-                if (activo) {
-                    // Textos resueltos en el idioma actual del usuario.
-                    Locale locale = localeDe(usuarioId);
-                    String titulo = messageSource.getMessage(KEY_ENTRENAR_TITULO, null, locale);
-                    String mensaje = messageSource.getMessage(KEY_ENTRENAR_MENSAJE, null, locale);
-                    notificacionService.crearSistema(usuarioId, titulo, mensaje, TipoNotificacion.RECORDATORIO);
-                }
-            }
-        } catch (Exception e) {
-            logger.warn("Fallo en recordatorio de entrenamiento: {}", e.getMessage());
-        }
-    }
-
-    // ============================================================
     // 7. Recordatorio de inactividad
     // ============================================================
 
     // 12:00 — anima a volver a quien lleva ≥3 días sin entrenar (o nunca ha entrenado).
+    // Con los avisos de entrenar encendidos (GP-112).
     // Anti-spam de 4 días: no se re-envía si ya se mandó este mismo aviso recientemente.
     // El anti-spam compara el título resuelto en el idioma ACTUAL del usuario (ver
     // edge case documentado en la cabecera de la clase).
@@ -213,7 +181,7 @@ public class RecordatorioNotificacionesTask {
         try {
             LocalDateTime ahora = LocalDateTime.now();
 
-            for (Integer usuarioId : deviceTokenRepository.findDistinctUsuarioIds()) {
+            for (Integer usuarioId : deviceTokenRepository.findUsuarioIdsConAvisosEntrenar()) {
                 // Última sesión del usuario: inactivo si no existe o si es de hace 3 días o más.
                 Optional<SesionEntrenamiento> ultima =
                         sesionEntrenamientoRepository.findTopByUsuarioIdOrderByFechaInicioDesc(usuarioId);
@@ -241,8 +209,9 @@ public class RecordatorioNotificacionesTask {
     // 8. Resumen semanal
     // ============================================================
 
-    // Domingo 20:00 — resumen de la semana (lunes 00:00 → ahora) con nº de sesiones,
-    // minutos y kcal totales. Si no hubo ninguna sesión, no se envía nada.
+    // Domingo 20:00 — resumen de la semana (lunes 00:00 → ahora) con nº de sesiones y
+    // minutos, con los avisos de progreso encendidos. Si no hubo ninguna sesión, no se
+    // envía nada. «1 sesión» / «2 sesiones»: el plural lo pone el mensaje (ChoiceFormat).
     // Sin anti-spam: el cron solo dispara una vez por semana.
     @Scheduled(cron = "0 0 20 * * SUN", zone = ZONA)
     public void resumenSemanal() {
@@ -250,7 +219,7 @@ public class RecordatorioNotificacionesTask {
             LocalDateTime lunes = LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay();
             LocalDateTime ahora = LocalDateTime.now();
 
-            for (Integer usuarioId : deviceTokenRepository.findDistinctUsuarioIds()) {
+            for (Integer usuarioId : deviceTokenRepository.findUsuarioIdsConAvisosProgreso()) {
                 List<SesionEntrenamiento> sesiones = sesionEntrenamientoRepository
                         .findByUsuarioIdAndFechaInicioBetween(usuarioId, lunes, ahora);
                 if (sesiones.isEmpty()) continue;
@@ -288,7 +257,7 @@ public class RecordatorioNotificacionesTask {
         try {
             LocalDateTime ahora = LocalDateTime.now();
 
-            for (Integer usuarioId : deviceTokenRepository.findDistinctUsuarioIds()) {
+            for (Integer usuarioId : deviceTokenRepository.findUsuarioIdsConAvisosProgreso()) {
                 long completadas = sesionEntrenamientoRepository.countByUsuarioIdAndCompletadaTrue(usuarioId);
                 // A una sesión de CONSTANCIA o de DEDICADO.
                 if (completadas != TipoLogro.CONSTANCIA.getUmbral() - 1
@@ -321,7 +290,7 @@ public class RecordatorioNotificacionesTask {
         try {
             LocalDateTime ahora = LocalDateTime.now();
 
-            for (Integer usuarioId : deviceTokenRepository.findDistinctUsuarioIds()) {
+            for (Integer usuarioId : deviceTokenRepository.findUsuarioIdsConAvisosProgreso()) {
                 // Condición: tiene al menos una medición y la última es antigua (≥30 días).
                 Optional<MedicionCorporal> ultima =
                         medicionCorporalRepository.findFirstByUsuarioIdOrderByFechaDesc(usuarioId);
@@ -356,7 +325,7 @@ public class RecordatorioNotificacionesTask {
             LocalDateTime ahora = LocalDateTime.now();
             LocalDate hoy = LocalDate.now();
 
-            for (Integer usuarioId : deviceTokenRepository.findDistinctUsuarioIds()) {
+            for (Integer usuarioId : deviceTokenRepository.findUsuarioIdsConAvisosProgreso()) {
                 List<ObjetivoPersonal> proximos = objetivoPersonalRepository
                         .findByUsuarioIdAndCompletadoFalseAndFechaLimiteBetween(usuarioId, hoy, hoy.plusDays(3));
                 if (proximos.isEmpty()) continue;

@@ -303,6 +303,9 @@ public class UsuarioService implements IUsuarioService {
             if (nombre != null) usuario.setNombre(nombre.isEmpty() ? null : nombre);
             if (patchDTO.getSexo() != null) usuario.setSexo(patchDTO.getSexo());
             if (patchDTO.getNivelActividad() != null) usuario.setNivelActividad(patchDTO.getNivelActividad());
+            if (patchDTO.getAvisosEntrenar() != null) usuario.setAvisosEntrenar(patchDTO.getAvisosEntrenar());
+            if (patchDTO.getAvisosComidas() != null) usuario.setAvisosComidas(patchDTO.getAvisosComidas());
+            if (patchDTO.getAvisosProgreso() != null) usuario.setAvisosProgreso(patchDTO.getAvisosProgreso());
 
             return usuarioMapper.toDTO(usuarioRepository.save(usuario));
         } catch (Exception e) {

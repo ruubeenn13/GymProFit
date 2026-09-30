@@ -38,9 +38,15 @@ public interface IDeviceTokenRepository extends JpaRepository<DeviceToken, Integ
     // (el dispositivo usado más recientemente marca el idioma vigente).
     Optional<DeviceToken> findTopByUsuarioIdOrderByFechaActualizacionDesc(Integer usuarioId);
 
-    // Ids de usuario distintos con al menos un dispositivo registrado: los recordatorios
-    // programados solo se generan para ellos (evita crear notificaciones para cuentas
-    // muertas que nunca podrían recibir la push).
-    @Query("SELECT DISTINCT d.usuario.id FROM DeviceToken d")
-    List<Integer> findDistinctUsuarioIds();
+    // Ids de usuario distintos con al menos un dispositivo registrado y ese tipo de aviso
+    // encendido (GP-112): los recordatorios programados solo se generan para ellos (sin
+    // dispositivo, además, serían notificaciones para cuentas que nunca recibirán la push).
+    @Query("SELECT DISTINCT d.usuario.id FROM DeviceToken d WHERE d.usuario.avisosEntrenar = true")
+    List<Integer> findUsuarioIdsConAvisosEntrenar();
+
+    @Query("SELECT DISTINCT d.usuario.id FROM DeviceToken d WHERE d.usuario.avisosComidas = true")
+    List<Integer> findUsuarioIdsConAvisosComidas();
+
+    @Query("SELECT DISTINCT d.usuario.id FROM DeviceToken d WHERE d.usuario.avisosProgreso = true")
+    List<Integer> findUsuarioIdsConAvisosProgreso();
 }

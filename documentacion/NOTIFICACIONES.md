@@ -13,7 +13,7 @@ App Android         │                                                         
   POST /notificaciones (fechaProgramada) → BD con push_enviada=false                         │
                     │                                    ▲                                   │
                     │  NotificacionProgramadaTask (@Scheduled 60s) ── envía vencidas ────────┤
-                    │  RecordatorioNotificacionesTask (11 crons) ── genera recordatorios ────┤
+                    │  RecordatorioNotificacionesTask (10 crons) ── genera recordatorios ────┤
                     │                                    │                                   │
                     │  PushNotificationService ── Firebase Admin SDK ──► FCM (Google)        │
                     └────────────────────────────────────┼───────────────────────────────────┘
@@ -31,27 +31,30 @@ App Android         │                                                         
 | `NotificacionService.save` | CRUD normal (usuario autenticado). Inmediata → push al momento (`push_enviada=true`); con `fechaProgramada` → queda pendiente (`push_enviada=false`). |
 | `NotificacionService.crearSistema` | Variante **sin SecurityUtils** para los jobs `@Scheduled` (no tienen SecurityContext). Persiste in-app + push inmediata. |
 | `NotificacionProgramadaTask` | Cada 60 s: envía las notificaciones con `fecha_programada` vencida y `push_enviada=false`, y las marca enviadas (sin duplicados; la BD es la cola — sobrevive reinicios). |
-| `RecordatorioNotificacionesTask` | Los 11 generadores automáticos (tabla abajo). |
+| `RecordatorioNotificacionesTask` | Los 10 generadores automáticos (tabla abajo). |
 
-## Los 11 recordatorios automáticos
+## Los 10 recordatorios automáticos
 
-Todos con `zone="Europe/Madrid"` (el servidor corre en UTC) y **solo para usuarios con dispositivo registrado** (`findDistinctUsuarioIds`). La condición se evalúa **en el momento del envío** (no se pre-programa): si registras la cena a las 20:50, a las 21:00 no llega nada.
+Todos con `zone="Europe/Madrid"` (el servidor corre en UTC) y **solo para usuarios con dispositivo registrado y con su tipo de aviso encendido**. La condición se evalúa **en el momento del envío** (no se pre-programa): si registras la cena a las 20:50, a las 21:00 no llega nada.
 
-| # | Recordatorio | Cuándo | Condición | Anti-spam |
-|---|---|---|---|---|
-| 1-5 | Comidas (desayuno/almuerzo/comida/merienda/cena) | 8:00 / 11:00 / 14:00 / 17:00 / 21:00 | No registró esa comida hoy | — (cron 1/día) |
-| 6 | Entrenar (genérico, sin nombre de rutina) | 18:00 | No entrenó hoy **y** sí en los últimos 3 días (activos) | — |
-| 7 | Inactividad | 12:00 | ≥3 días sin sesión (o nunca) | 4 días |
-| 8 | Resumen semanal | domingo 20:00 | ≥1 sesión esta semana (nº sesiones, min, kcal) | — |
-| 9 | Logro próximo | 20:30 | A 1 sesión de CONSTANCIA (7) o DEDICADO (30)* | 7 días |
-| 10 | Medición mensual | 10:00 | Última medición hace ≥30 días | 30 días |
-| 11 | Objetivo por vencer | 12:30 | Objetivo sin completar con fecha límite ≤3 días | 3 días |
+| # | Recordatorio | Aviso | Cuándo | Condición | Anti-spam |
+|---|---|---|---|---|---|
+| 1-5 | Comidas (desayuno/almuerzo/comida/merienda/cena) | comidas | 8:00 / 11:00 / 14:00 / 17:00 / 21:00 | No registró esa comida hoy | — (cron 1/día) |
+| 6 | Inactividad | entrenar | 12:00 | ≥3 días sin sesión (o nunca) | 4 días |
+| 7 | Resumen semanal | progreso | domingo 20:00 | ≥1 sesión esta semana: «1 sesión» o «2 sesiones» y los minutos | — |
+| 8 | Logro próximo | progreso | 20:30 | A 1 sesión de CONSTANCIA o DEDICADO (umbrales de `TipoLogro`, GP-079) | 7 días |
+| 9 | Medición mensual | progreso | 10:00 | Última medición hace ≥30 días | 30 días |
+| 10 | Objetivo por vencer | progreso | 12:30 | Objetivo sin completar con fecha límite ≤3 días | 3 días |
 
-\* Umbrales hardcodeados: en BD la tabla `logros` no guarda el umbral (vive en el switch de `LogroService`).
+El resumen ya no lleva kcal (DEC-004, GP-010).
+
+### Avisos por tipo (GP-112, lote 1.5.0)
+
+Tres interruptores por cuenta en `usuarios`, en `UsuarioDTO` y en `PATCH /usuarios/{id}`: `avisosEntrenar` (sí), `avisosComidas` (no) y `avisosProgreso` (sí). Los valores de serie los pone la migración `V202609302000` con el `DEFAULT` de la columna, así que valen también para las cuentas que ya existían: **quien recibía los de comidas deja de recibirlos**, y la 1.4.0 no tiene dónde encenderlos (llega con la 1.5.1).
+
+El recordatorio genérico de entrenar de las 18:00 **se retiró**: avisaba a quien había entrenado en los últimos tres días y no hoy, también en los días de descanso de un programa, que es justo cuando no toca.
 
 **Anti-spam**: `existsByUsuarioIdAndTituloAndFechaCreacionAfter` — no se repite una notificación con el mismo título dentro de su ventana. Edge case aceptado: si el usuario cambia de idioma, el título cambia y puede recibir un duplicado puntual.
-
-Los generadores 6 y 7 se complementan sin duplicarse: 6 solo avisa a usuarios activos; a partir de 3 días parados entra 7.
 
 **Descartado a propósito**: notificación de "récord personal" — el servidor no calcula récords (`mejorPeso` llega ya calculado del cliente); inventar la lógica excedía el alcance.
 
@@ -93,5 +96,5 @@ Detalle y medidas en `documentacion/estado/2026-09-30-lote-1.4.0.md`.
 ## Cómo añadir un recordatorio nuevo
 
 1. Clave `notif.nuevo.titulo`/`notif.nuevo.mensaje` en `messages.properties` **y** `messages_en.properties`.
-2. Método `@Scheduled(cron="...", zone="Europe/Madrid")` en `RecordatorioNotificacionesTask`: iterar `findDistinctUsuarioIds()`, evaluar condición, anti-spam si es recurrente, `notificacionService.crearSistema(...)` con textos resueltos vía `MessageSource` + `localeDe(usuarioId)`.
-3. Test en `RecordatorioNotificacionesTaskTest` (invocar el método directamente, sin esperar al cron).
+2. Método `@Scheduled(cron="...", zone="Europe/Madrid")` en `RecordatorioNotificacionesTask`: iterar los usuarios con su tipo de aviso encendido (`findUsuarioIdsConAvisos…()`; uno nuevo, si no encaja en ninguno, necesita su interruptor), evaluar condición, anti-spam si es recurrente, `notificacionService.crearSistema(...)` con textos resueltos vía `MessageSource` + `localeDe(usuarioId)`.
+3. Test en `RecordatorioNotificacionesTaskTest` (invocar el método directamente, sin esperar al cron), y en `AvisosPorTipoTest` que respeta su interruptor.
