@@ -6,6 +6,13 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `9b1b53a` | Fusión de `lote-1.4.0` en `main`; etiquetada `v1.4.0`. Solo app: Render no despliega. Informe en `documentacion/estado/2026-09-30-lote-1.4.0.md`. |
+| `bfe8e2f` | build(android): **versión 1.4.0** (10400). Misma clave de firma. No necesita nada nuevo de la API. |
+| `00a72e0` | fix(android): **el descanso va antes que la lista en el recorrido de TalkBack** y **la hoja del permiso se desplaza** a letra 2,0 (GP-013). |
+| `9cf6d22` | fix(android): **crear y editar alimento no guardan un 0 que nadie escribió** (GP-142): un macro que no se entiende marca su campo y no se guarda; también en administración, donde además unas calorías demasiado grandes no decían nada. |
+| `ce8caf2` | feat(android): **Ajustes, «Entrenamiento»** (GP-013): empezar el descanso al marcar, el descanso sin pauta (60, 90, 120 o 180 s) y el estado de los avisos con la pantalla apagada, con «Activar». |
+| `78304a0` | feat(android): **el aviso del descanso con la app fuera o la pantalla apagada** (GP-013): una alarma por descanso (exacta con permiso, `setWindow` sin él), «Descanso terminado» en el canal nuevo «Descanso», la notificación de la sesión cuenta hacia atrás, `SCHEDULE_EXACT_ALARM` pedido con la hoja del lienzo una sola vez y la alarma rehecha exacta al llegar el permiso. |
+| `66d7f17` | feat(android): **el descanso entre series** (GP-013): empieza al marcar con el de la pauta (o el de Ajustes), no hay tras la última serie; «Después», cuenta atrás, barra, ±15 s y «Saltar» abajo, sin bloquear; la barra de Inicio lo enseña; con la app delante vibra y suena según el modo del móvil y No molestar; la hora de fin vive en el fichero de la sesión. |
 | `9024637` | Fusión de `lote-1.3.1` en `main`; etiquetada `v1.3.1`. Informe en `documentacion/estado/2026-09-30-lote-1.3.1.md`. |
 | `0a0fb72` | build(android): **versión 1.3.1** (10301). Misma clave de firma. Necesita el orden del historial de la API (`9024637`). |
 | `8bb5e7c` | fix(android): **el resumen cuenta ejercicios nuevos, no primeras marcas** (GP-140): con dos ejercicios nuevos decía «3», porque uno puede dejar marca de peso y de repeticiones. |
