@@ -23,7 +23,9 @@ import java.util.Set;
 // quién es la cuenta:
 //   · Contraseñas comunes o filtradas: seguridad/contrasenas-comunes.txt, dentro de la
 //     API y sin servicios externos (fuente y licencia en la cabecera del fichero).
-//   · La que es o contiene el nombre del servicio o el nombre de usuario.
+//   · La que es o contiene el nombre del servicio, el nombre de usuario o la parte del
+//     correo antes de la «@» (lote 1.5.0: el alta nueva no pide usuario y el correo es
+//     con lo que se entra), estas dos con un mínimo de 3 caracteres.
 // Sin distinguir mayúsculas. Cada rechazo lleva su código en "cause" y el mismo 400.
 // Solo al poner una contraseña nueva (alta, recuperar, cambiar), nunca al entrar.
 // ============================================================
@@ -32,6 +34,9 @@ public class PoliticaContrasena {
 
     /** Nombre del servicio: una contraseña que lo contiene es de las primeras que se prueban. */
     static final String NOMBRE_SERVICIO = "gymprofit";
+
+    /** Largo mínimo de un nombre (usuario o parte del correo) para contar como tal. */
+    static final int MIN_NOMBRE = 3;
 
     private static final String LISTA = "seguridad/contrasenas-comunes.txt";
 
@@ -45,21 +50,35 @@ public class PoliticaContrasena {
     }
 
     /**
-     * Rechaza la contraseña si está en la lista o contiene el servicio o el usuario.
+     * Rechaza la contraseña si está en la lista o contiene el servicio, el usuario o la
+     * parte del correo antes de la «@».
      *
      * @param contrasena la contraseña nueva, ya validada en forma.
      * @param username   el nombre de usuario de la cuenta.
+     * @param email      el correo de la cuenta, o null.
      * @throws ContrasenaRechazadaException (→ 400 con código en "cause").
      */
-    public void comprobar(String contrasena, String username) {
+    public void comprobar(String contrasena, String username, String email) {
         String c = contrasena.toLowerCase(Locale.ROOT);
         if (comunes.contains(c)) {
             throw new ContrasenaRechazadaException(ContrasenaRechazadaException.PASSWORD_COMUN);
         }
-        if (c.contains(NOMBRE_SERVICIO)
-                || (username != null && !username.isBlank() && c.contains(username.toLowerCase(Locale.ROOT)))) {
+        if (c.contains(NOMBRE_SERVICIO) || contiene(c, username) || contiene(c, parteLocal(email))) {
             throw new ContrasenaRechazadaException(ContrasenaRechazadaException.PASSWORD_CONTIENE_NOMBRE);
         }
+    }
+
+    // Un nombre cuenta desde 3 caracteres, el mínimo de un nombre de usuario: con menos,
+    // rechazaría media lengua sin ganar nada.
+    private static boolean contiene(String contrasena, String nombre) {
+        return nombre != null && nombre.strip().length() >= MIN_NOMBRE
+                && contrasena.contains(nombre.strip().toLowerCase(Locale.ROOT));
+    }
+
+    private static String parteLocal(String email) {
+        if (email == null) return null;
+        int arroba = email.lastIndexOf('@');
+        return arroba < 0 ? email : email.substring(0, arroba);
     }
 
     // Lee la lista una vez al arrancar. Sin ella no se arranca: una política que no se

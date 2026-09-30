@@ -203,6 +203,71 @@ class PoliticaContrasenaTest extends AbstractOwnershipTest {
         }
     }
 
+    @Nested
+    @DisplayName("La parte del correo antes de la «@» (lote 1.5.0)")
+    class ParteDelCorreo {
+
+        private ResultActions alta(String username, String email, String password) throws Exception {
+            Map<String, String> cuerpo = new java.util.HashMap<>(Map.of("email", email, "password", password));
+            if (username != null) cuerpo.put("username", username);
+            return mockMvc.perform(post("/auth/register")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(cuerpo)));
+        }
+
+        // Una cuenta cuyo correo no se parece a su usuario, para que solo el correo pueda chocar.
+        private Usuario conCorreo(String username, String email) {
+            Usuario u = crearUsuario(username, RoleType.USER);
+            u.setEmail(email);
+            return usuarioRepository.save(u);
+        }
+
+        @Test
+        @DisplayName("alta: con la parte del correo dentro, aunque el usuario sea otro → 400 PASSWORD_CONTIENE_NOMBRE")
+        void alta_con_el_correo() throws Exception {
+            alta("otro-gp103", "Buzon.Gp103@test.local", "xxbuzon.GP103yy")
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.cause").value(ContrasenaRechazadaException.PASSWORD_CONTIENE_NOMBRE));
+        }
+
+        @Test
+        @DisplayName("alta: una parte de 2 caracteres no cuenta, con el mismo mínimo de 3 → 201")
+        void parte_corta_no_cuenta() throws Exception {
+            alta("corto-gp103", "ab@test.local", "abrazo largo")
+                    .andExpect(status().isCreated());
+        }
+
+        @Test
+        @DisplayName("cambiar a una con la parte del correo → 400 PASSWORD_CONTIENE_NOMBRE")
+        void cambiar_con_el_correo() throws Exception {
+            Usuario u = conCorreo("cambio-gp103", "buzon.cambio@test.local");
+            pedir(u, "POST /auth/change-password",
+                    "{\"currentPassword\":\"Test1234\",\"newPassword\":\"mi buzon.cambio nuevo\"}")
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.cause").value(ContrasenaRechazadaException.PASSWORD_CONTIENE_NOMBRE));
+        }
+
+        @Test
+        @DisplayName("recuperar con una con la parte del correo → 400 PASSWORD_CONTIENE_NOMBRE")
+        void recuperar_con_el_correo() throws Exception {
+            Usuario u = conCorreo("recupera-gp103", "buzon.recupera@test.local");
+            PasswordResetCodigo registro = new PasswordResetCodigo();
+            registro.setUsuario(u);
+            registro.setCodigoHash(passwordEncoder.encode("123456"));
+            registro.setFechaCreacion(LocalDateTime.now());
+            registro.setFechaExpiracion(LocalDateTime.now().plusMinutes(15));
+            codigoRepository.save(registro);
+
+            String cuerpo = objectMapper.writeValueAsString(Map.of(
+                    "identificador", u.getUsername(), "codigo", "123456", "newPassword", "otra buzon.recupera"));
+            mockMvc.perform(post("/auth/reset-password")
+                            .contentType(MediaType.APPLICATION_JSON).content(cuerpo))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.cause").value(ContrasenaRechazadaException.PASSWORD_CONTIENE_NOMBRE));
+        }
+    }
+
     @Test
     @DisplayName("una cuenta con contraseña de la regla vieja (o de ninguna) sigue entrando")
     void cuenta_existente_sigue_entrando() throws Exception {

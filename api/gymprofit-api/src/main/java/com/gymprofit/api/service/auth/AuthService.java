@@ -117,7 +117,7 @@ public class AuthService implements IAuthService {
 
         // Lista de bloqueo y nombre (GP-101). Después de la unicidad: si el usuario ya
         // existe, eso es lo primero que hay que corregir.
-        politicaContrasena.comprobar(registerDTO.getPassword(), username);
+        politicaContrasena.comprobar(registerDTO.getPassword(), username, registerDTO.getEmail());
 
         // Seguridad: el rol NUNCA se toma del cliente. El registro público crea siempre USER.
         // Los cambios de rol se hacen solo desde el panel admin (PATCH /admin/usuarios/{id}/rol).
@@ -242,7 +242,7 @@ public class AuthService implements IAuthService {
         }
 
         // Lista de bloqueo y nombre (GP-101).
-        politicaContrasena.comprobar(changePasswordDTO.getNewPassword(), usuario.getUsername());
+        politicaContrasena.comprobar(changePasswordDTO.getNewPassword(), usuario.getUsername(), usuario.getEmail());
 
         usuario.setPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
         usuarioRepository.save(usuario);
