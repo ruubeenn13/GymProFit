@@ -3,6 +3,7 @@ package es.pmdm.gymprofit.network;
 import java.util.List;
 import java.util.Map;
 
+import es.pmdm.gymprofit.model.envivo.UltimaVez;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
 import es.pmdm.gymprofit.model.sesion.VolumenMuscular;
 import retrofit2.Call;
@@ -75,4 +76,11 @@ public interface SesionApi {
     // grande del resumen tras entrenar.
     @GET("sesiones/{id}/volumen")
     Call<Map<String, Double>> getVolumenSesion(@Path("id") int id);
+
+    /**
+     * Última vez de cada ejercicio (GP-014): las series de la última sesión terminada del
+     * usuario del token que tuvo cada uno. Hasta 30 ids, separados por comas.
+     */
+    @GET("sesiones/ultima-vez")
+    Call<List<UltimaVez>> ultimaVez(@Query("ejercicios") String ejercicios);
 }

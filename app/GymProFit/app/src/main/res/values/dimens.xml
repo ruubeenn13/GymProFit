@@ -60,4 +60,9 @@
     <dimen name="text_number_hero">56sp</dimen>
 
 
+
+    <!-- Sesión en vivo (GP-012): hueco libre al final de la lista para el descanso (GP-013). -->
+    <dimen name="envivo_hueco_descanso">160dp</dimen>
+    <!-- Ancho de la columna del número de serie. -->
+    <dimen name="envivo_col_serie">40dp</dimen>
 </resources>

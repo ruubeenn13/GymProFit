@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_envivo_campo — campo de kg, reps o tiempo de una serie en vivo (GP-012). Con foco,
+     el borde toma el color de acento para que se vea dónde se escribe. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <solid android:color="?attr/colorSurfaceVariant" />
+            <stroke android:width="2dp" android:color="?attr/colorPrimary" />
+            <corners android:radius="10dp" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="?attr/colorSurfaceVariant" />
+            <corners android:radius="10dp" />
+        </shape>
+    </item>
+</selector>

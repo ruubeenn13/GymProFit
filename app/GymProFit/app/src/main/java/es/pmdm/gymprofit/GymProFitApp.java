@@ -38,6 +38,7 @@ public class GymProFitApp extends Application {
     private static final Set<String> PANTALLAS_MODAL = new HashSet<>(Arrays.asList(
             "CrearRutinaActivity",
             "RegistrarSesionActivity",
+            "SesionEnVivoActivity",
             "AnadirEjerciciosActivity"));
 
     @Override
@@ -48,6 +49,22 @@ public class GymProFitApp extends Application {
         aplicarIdiomaGuardado();
         crearCanalPush();
         registrarTransicionesGlobales();
+        observarSesionEnCurso();
+    }
+
+    // ------------------------------------------------------------------
+    // Sesión en vivo (GP-012)
+    // ------------------------------------------------------------------
+
+    // La sesión en curso de la cuenta que haya, y su notificación continua. Aquí y no en
+    // una pantalla: al reiniciar el móvil o tras matar la app, la notificación vuelve
+    // en cuanto el proceso arranca, entre por donde entre. Cada cambio de la sesión la
+    // repinta; si ya no hay sesión (guardada, descartada, otra cuenta), la quita.
+    private void observarSesionEnCurso() {
+        es.pmdm.gymprofit.envivo.SesionEnCursoRepositorio repo =
+                es.pmdm.gymprofit.envivo.SesionEnCursoRepositorio.get(this);
+        repo.usarCuenta(new PreferencesManager(this).getUsuarioId());
+        repo.getSesion().observeForever(s -> es.pmdm.gymprofit.envivo.NotificacionSesion.pintar(this, s));
     }
 
     // ------------------------------------------------------------------

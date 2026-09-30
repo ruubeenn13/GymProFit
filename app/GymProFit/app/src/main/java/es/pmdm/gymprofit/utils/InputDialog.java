@@ -32,6 +32,11 @@ public final class InputDialog {
                 InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL, false, cb);
     }
 
+    // Diálogo numérico entero (sin decimales): minutos, series.
+    public static void entero(Context ctx, String titulo, String hint, String valorInicial, OnConfirm cb) {
+        mostrar(ctx, titulo, hint, valorInicial, null, InputType.TYPE_CLASS_NUMBER, false, cb);
+    }
+
     // Diálogo de texto (multilínea).
     public static void texto(Context ctx, String titulo, String hint, String valorInicial, OnConfirm cb) {
         mostrar(ctx, titulo, hint, valorInicial, null,

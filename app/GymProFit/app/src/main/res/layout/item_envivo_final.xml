@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_envivo_final — final de la lista de la sesión en vivo (GP-012): el estado de la
+  carga (cargando, error con reintentar o sin ejercicios), «Añadir ejercicio» y
+  «Descartar la sesión». Tras el primer intento de guardar, los botones no salen.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="16dp">
+
+    <LinearLayout
+        android:id="@+id/grupoEstado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingBottom="16dp">
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/progresoCarga"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:indeterminate="true"
+            android:importantForAccessibility="no" />
+
+        <TextView
+            android:id="@+id/tvEstado"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:accessibilityLiveRegion="polite"
+            android:gravity="center"
+            android:textSize="@dimen/text_body"
+            android:textColor="?attr/colorOnSurfaceVariant" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnReintentarCarga"
+            style="@style/Widget.GymProFit.BotonPildora.Contorno"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/btn_reintentar" />
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAnadirEjercicio"
+        style="@style/Widget.GymProFit.BotonPildora.Contorno"
+        android:layout_width="match_parent"
+        android:text="@string/envivo_anadir_ejercicio"
+        app:icon="@drawable/ic_ms_add" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnDescartar"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:minHeight="48dp"
+        android:text="@string/envivo_descartar"
+        android:textColor="?attr/colorError"
+        android:textSize="@dimen/text_fila" />
+</LinearLayout>

@@ -161,6 +161,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/tvHoyEtiqueta"
                     style="@style/Widget.GymProFit.Seccion"
                     android:layout_marginTop="16dp"
                     android:text="@string/hoy_toca"

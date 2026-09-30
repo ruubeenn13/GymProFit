@@ -86,6 +86,14 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
     // Indica si se llegó desde la edición de una rutina existente (afecta al resultado devuelto)
     private boolean editMode = false;
 
+    /**
+     * Se añade a la sesión en vivo (GP-012): tocar un ejercicio lo elige sin preguntar
+     * series ni repeticiones, porque en la sesión entra con 3 series vacías y lo que
+     * cuenta es lo que se haga. Va con editMode, que es lo que devuelve la lista.
+     */
+    public static final String EXTRA_MODO_SESION = "modoSesion";
+    private boolean modoSesion = false;
+
     // Launcher hacia ResumenCrearRutinaActivity; propaga el resultado o sincroniza la lista al volver
     private ActivityResultLauncher<Intent> resumenLauncher;
 
@@ -107,6 +115,7 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
         AvisoDescartar.instalar(this, toolbar, () -> !ejerciciosSeleccionados.isEmpty());
 
         editMode = getIntent().getBooleanExtra("editMode", false);
+        modoSesion = getIntent().getBooleanExtra(EXTRA_MODO_SESION, false);
 
         etBuscar            = findViewById(R.id.etBuscarEjercicio);
         chipGroupDificultad = findViewById(R.id.chipGroupDificultad);
@@ -220,6 +229,13 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
                 UIHelper.mostrarToastError(this, getString(R.string.crear_rutina_ejercicio_duplicado));
                 return;
             }
+        }
+
+        if (modoSesion) {
+            ejerciciosSeleccionados.add(new EjercicioSeleccionado(ejercicio, 3, 10));
+            actualizarBoton();
+            UIHelper.mostrarToastExito(this, getString(R.string.envivo_anadido, ejercicio.getNombre()));
+            return;
         }
 
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_series_reps, null);

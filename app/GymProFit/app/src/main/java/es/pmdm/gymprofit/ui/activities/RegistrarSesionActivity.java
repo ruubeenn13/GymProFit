@@ -42,7 +42,11 @@ import es.pmdm.gymprofit.utils.UiFeedback;
 import es.pmdm.gymprofit.utils.Valoracion;
 
 // ============================================================
-// RegistrarSesionActivity — Formulario para registrar una sesión de entrenamiento.
+// RegistrarSesionActivity — Apuntar un entrenamiento ya hecho (GP-012), desde el «+»:
+// con su fecha (hoy por defecto, nunca futura) y su duración; el inicio es ese día a la
+// hora de ahora menos la duración. Empezar a entrenar abre la sesión en vivo.
+//
+// Formulario para registrar una sesión de entrenamiento.
 // Permite elegir una rutina (propia o predefinida), carga sus ejercicios con sus
 // series, y guarda la sesión ENTERA en una sola llamada, navegando al resumen.
 //
@@ -127,6 +131,7 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         vm.iniciar(rutinaDeEntrada != -1 ? rutinaDeEntrada : null);
 
         pintarCamposDelBorrador();
+        configurarFecha();
         configurarValoracion();
 
         RecyclerView rvEjercicios = findViewById(R.id.rvEjercicios);
@@ -167,6 +172,55 @@ public class RegistrarSesionActivity extends AppCompatActivity {
 
         etDuracion.addTextChangedListener(new AlCambiar(vm::setDuracion));
         etNotas.addTextChangedListener(new AlCambiar(vm::setNotas));
+    }
+
+    /**
+     * La fecha del entrenamiento (GP-012): hoy por defecto y nunca futura. El calendario
+     * no deja elegir un día posterior a hoy, y el ViewModel tampoco lo acepta.
+     */
+    private void configurarFecha() {
+        TextInputEditText etFecha = findViewById(R.id.etFecha);
+        etFecha.setSaveEnabled(false);
+        pintarFecha(etFecha);
+        View.OnClickListener abrir = v -> {
+            long hoyUtc = com.google.android.material.datepicker.MaterialDatePicker.todayInUtcMilliseconds();
+            com.google.android.material.datepicker.MaterialDatePicker<Long> picker =
+                    com.google.android.material.datepicker.MaterialDatePicker.Builder.datePicker()
+                            .setTitleText(R.string.sesiones_fecha)
+                            .setSelection(utcDe(vm.getFecha()))
+                            .setCalendarConstraints(new com.google.android.material.datepicker.CalendarConstraints.Builder()
+                                    .setEnd(hoyUtc)
+                                    .setValidator(com.google.android.material.datepicker.DateValidatorPointBackward.now())
+                                    .build())
+                            .build();
+            picker.addOnPositiveButtonClickListener(sel -> {
+                java.text.SimpleDateFormat f = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US);
+                f.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
+                vm.setFecha(f.format(new java.util.Date(sel)));
+                pintarFecha(etFecha);
+            });
+            picker.show(getSupportFragmentManager(), "fecha");
+        };
+        etFecha.setOnClickListener(abrir);
+        ((com.google.android.material.textfield.TextInputLayout) findViewById(R.id.tilFecha))
+                .setEndIconOnClickListener(abrir);
+    }
+
+    // El día elegido, en medianoche UTC, que es como lo cuenta el calendario.
+    private static long utcDe(String dia) {
+        java.util.Calendar c = java.util.Calendar.getInstance(java.util.TimeZone.getTimeZone("UTC"));
+        c.clear();
+        c.set(Integer.parseInt(dia.substring(0, 4)), Integer.parseInt(dia.substring(5, 7)) - 1,
+                Integer.parseInt(dia.substring(8, 10)));
+        return c.getTimeInMillis();
+    }
+
+    // «30 sept 2026», en el idioma de la app, y TalkBack lo dice con «Cambiar».
+    private void pintarFecha(TextInputEditText etFecha) {
+        String texto = es.pmdm.gymprofit.utils.FechaUtils.formatearFechaMedia(vm.getFecha(),
+                es.pmdm.gymprofit.utils.FechaUtils.localeDeLaApp(this));
+        etFecha.setText(texto);
+        etFecha.setContentDescription(getString(R.string.sesiones_fecha_a11y, texto));
     }
 
     /**

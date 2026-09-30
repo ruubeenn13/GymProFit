@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  activity_registrar_sesion.xml — Formulario para registrar una sesión de entrenamiento.
+  activity_registrar_sesion.xml — Apuntar un entrenamiento ya hecho (GP-012), con su
+  fecha y su duración. Empezar a entrenar abre la sesión en vivo, no esto.
   Selección de rutina, duración, cálculo automático de calorías estimadas,
   lista de ejercicios de la rutina con peso, notas y valoración con estrellas.
 -->
@@ -18,7 +19,7 @@
         style="@style/Widget.GymProFit.Cabecera"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="@string/sesiones_registrar" />
+        app:title="@string/apuntar_titulo" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -56,6 +57,33 @@
                     android:paddingEnd="16dp" />
 
             </com.google.android.material.card.MaterialCardView>
+
+            <!-- Fecha (GP-012): hoy por defecto, nunca futura. Se elige en el calendario;
+                 el campo no se escribe. -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilFecha"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:hint="@string/sesiones_fecha"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:endIconDrawable="@drawable/ic_ms_calendar_month"
+                app:endIconMode="custom">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etFecha"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:cursorVisible="false"
+                    android:focusable="false"
+                    android:inputType="none"
+                    android:minHeight="48dp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Duración -->
             <com.google.android.material.textfield.TextInputLayout

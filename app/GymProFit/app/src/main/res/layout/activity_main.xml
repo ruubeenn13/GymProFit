@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   activity_main — la navegación principal (GP-105).
-  Arriba, las cuatro pestañas en un ViewPager2 sin deslizamiento; abajo, la barra fija.
+  Arriba, las cuatro pestañas en un ViewPager2 sin deslizamiento; abajo, la barra fija,
+  y sobre ella, si hay una sesión en curso, su barra (GP-012).
   La barra no se superpone al contenido: cada pestaña llega hasta su borde y no tiene
   que reservar hueco. El velo y la hoja del «+» cubren solo el contenido, de modo que
   la barra —y su «×»— siguen a la vista y a mano con la hoja abierta.
@@ -33,6 +34,8 @@
 
         <include layout="@layout/view_acciones_rapidas" />
     </FrameLayout>
+
+    <include layout="@layout/view_barra_sesion" />
 
     <es.pmdm.gymprofit.ui.widget.BarraNavegacion
         android:id="@+id/barra"
