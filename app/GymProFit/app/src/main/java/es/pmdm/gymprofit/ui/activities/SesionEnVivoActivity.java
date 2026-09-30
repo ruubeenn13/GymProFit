@@ -47,6 +47,7 @@ import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.envivo.CronometroSerie;
 import es.pmdm.gymprofit.envivo.EmpezarSesion;
 import es.pmdm.gymprofit.envivo.LogicaDescanso;
+import es.pmdm.gymprofit.envivo.PermisosDescanso;
 import es.pmdm.gymprofit.envivo.TextosDescanso;
 import es.pmdm.gymprofit.envivo.LogicaSesion;
 import es.pmdm.gymprofit.envivo.SesionEnCursoRepositorio;
@@ -348,6 +349,31 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         }
     }
 
+    // La primera vez que empieza un descanso sin lo necesario para avisar con la pantalla
+    // apagada, la hoja lo explica y lo pide. Solo una vez: después queda en Ajustes.
+    private void quizaPedirPermiso() {
+        SesionEnCurso s = repo.actual();
+        if (s == null || s.descanso == null) return;
+        PreferencesManager prefs = new PreferencesManager(this);
+        PermisosDescanso.Falta falta = PermisosDescanso.falta(this);
+        if (falta == PermisosDescanso.Falta.NADA || prefs.getHojaPermisoDescansoVista()) return;
+        prefs.saveHojaPermisoDescansoVista();
+
+        BottomSheetDialog hoja = new BottomSheetDialog(this);
+        View v = getLayoutInflater().inflate(R.layout.dialog_permiso_descanso, null, false);
+        ((TextView) v.findViewById(R.id.tvPermisoTexto)).setText(falta == PermisosDescanso.Falta.ALARMAS
+                ? R.string.descanso_permiso_texto_alarmas : R.string.descanso_permiso_texto_notificaciones);
+        v.findViewById(R.id.btnDarPermiso).setOnClickListener(b -> {
+            hoja.dismiss();
+            PermisosDescanso.activar(this);
+        });
+        v.findViewById(R.id.btnAhoraNo).setOnClickListener(b -> hoja.dismiss());
+        hoja.setContentView(v);
+        hoja.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
+        hoja.getBehavior().setSkipCollapsed(true);
+        hoja.show();
+    }
+
     // «Descanso: quedan 1 minuto y 42 segundos. Después: Hip thrust con barra, serie 3».
     private String descripcionDescanso(SesionEnCurso s) {
         return getString(R.string.envivo_descanso_a11y,
@@ -369,6 +395,7 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
                         ? R.string.envivo_falta_reps : R.string.envivo_falta_segundos);
                 break;
             case NO_VALIDO: avisar(R.string.envivo_no_valido); break;
+            case HECHA: quizaPedirPermiso(); break;
             default: break;
         }
     }
@@ -484,7 +511,9 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
             View v = getLayoutInflater().inflate(R.layout.dialog_cronometro, null, false);
             tvCronoTiempo = v.findViewById(R.id.tvCronoTiempo);
             barraCrono = v.findViewById(R.id.barraCrono);
-            v.findViewById(R.id.btnParar).setOnClickListener(b -> repo.pararYApuntar());
+            v.findViewById(R.id.btnParar).setOnClickListener(b -> {
+                if (repo.pararYApuntar()) quizaPedirPermiso();
+            });
             v.findViewById(R.id.btnCancelarCrono).setOnClickListener(b -> repo.cancelarCronometro());
             hojaCrono.setContentView(v);
             // Solo se cierra con sus dos botones: un toque fuera no puede tirar la serie.

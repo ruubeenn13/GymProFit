@@ -18,6 +18,9 @@ import androidx.annotation.Nullable;
 // sesión, en Inicio con la barra o en el detalle de un ejercicio. Con la app fuera no
 // corre nada (entre series no hay nada en segundo plano): avisa la alarma.
 //
+// Al volver a cualquier pantalla revisa también el permiso de alarmas exactas, por si
+// se acaba de dar en Ajustes con un descanso en marcha.
+//
 // «Delante» es que haya alguna actividad empezada: con la pantalla apagada no hay
 // ninguna y avisa la alarma con su notificación.
 // ============================================================
@@ -71,7 +74,11 @@ public final class VigilanteDescanso implements Application.ActivityLifecycleCal
     }
 
     @Override public void onActivityCreated(@NonNull Activity a, @Nullable Bundle b) { }
-    @Override public void onActivityResumed(@NonNull Activity a) { }
+    // Al volver de Ajustes del sistema el permiso de alarmas exactas puede haber
+    // llegado: la alarma de un descanso en marcha se vuelve a poner exacta.
+    @Override public void onActivityResumed(@NonNull Activity a) {
+        SesionEnCursoRepositorio.get(app).revisarPermisoAlarma();
+    }
     @Override public void onActivityPaused(@NonNull Activity a) { }
     @Override public void onActivitySaveInstanceState(@NonNull Activity a, @NonNull Bundle b) { }
     @Override public void onActivityDestroyed(@NonNull Activity a) { }

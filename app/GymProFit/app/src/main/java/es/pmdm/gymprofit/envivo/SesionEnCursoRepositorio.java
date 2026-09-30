@@ -153,6 +153,13 @@ public class SesionEnCursoRepositorio {
         @Override public boolean empezarAlMarcar() { return true; }
         @Override public int sinPautaSegundos() { return LogicaDescanso.SIN_PAUTA_DEFECTO; }
     };
+    // La alarma del fin del descanso, para cuando la app no está delante.
+    private ProgramadorAlarma programador = new ProgramadorAlarma(new ProgramadorAlarma.Alarmas() {
+        @Override public boolean puedeExactas() { return true; }
+        @Override public void exacta(long cuandoMs) { }
+        @Override public void ventana(long cuandoMs, long largoMs) { }
+        @Override public void cancelar() { }
+    });
     // El aviso del fin del descanso: solo en memoria, es de la pantalla y dura segundos.
     @Nullable private FinDescanso finDescanso;
 
@@ -173,6 +180,7 @@ public class SesionEnCursoRepositorio {
                     es.pmdm.gymprofit.utils.FechaUtils.localeDeLaApp(app));
             // Ajustes se leen cada vez: un cambio vale para la siguiente serie que se marque.
             es.pmdm.gymprofit.utils.PreferencesManager prefs = new es.pmdm.gymprofit.utils.PreferencesManager(app);
+            instancia.setProgramador(new ProgramadorAlarma(new AlarmasDescanso(app)));
             instancia.setAjustesDescanso(new AjustesDescanso() {
                 @Override public boolean empezarAlMarcar() { return prefs.getDescansoAlMarcar(); }
                 @Override public int sinPautaSegundos() { return prefs.getDescansoSinPauta(); }
@@ -206,10 +214,20 @@ public class SesionEnCursoRepositorio {
             s.codigoFallo = -1;
             almacen.escribir(s);
         }
-        sesion.setValue(s);
+        poner(s);
     }
 
     public int getUsuarioId() { return usuarioId; }
+
+    /** Quien pone y quita la alarma del fin del descanso. */
+    public void setProgramador(@NonNull ProgramadorAlarma p) {
+        programador = p;
+        SesionEnCurso s = actual();
+        programador.sincronizar(s != null ? s.descanso : null);
+    }
+
+    /** El permiso de alarmas exactas puede haber cambiado: la alarma puesta se rehace si toca. */
+    public void revisarPermisoAlarma() { programador.revisarPermiso(); }
 
     /** De dónde sale el descanso sin pauta y si empieza al marcar (Ajustes). */
     public void setAjustesDescanso(@NonNull AjustesDescanso a) { ajustesDescanso = a; }
@@ -221,7 +239,7 @@ public class SesionEnCursoRepositorio {
     public void borrarDeCuenta(int usuarioId) {
         if (usuarioId <= 0) return;
         almacen.borrar(usuarioId);
-        if (usuarioId == this.usuarioId) sesion.setValue(null);
+        if (usuarioId == this.usuarioId) poner(null);
     }
 
     // ── Lecturas ─────────────────────────────────────────────
@@ -274,7 +292,7 @@ public class SesionEnCursoRepositorio {
     public void descartar() {
         if (usuarioId > 0) almacen.borrar(usuarioId);
         finDescanso = null;
-        sesion.setValue(null);
+        poner(null);
     }
 
     /** Pide los ejercicios de la rutina, si aún no están (primera vez o tras un fallo). */
@@ -707,7 +725,7 @@ public class SesionEnCursoRepositorio {
     public void cerrarFinDescanso() {
         finDescanso = null;
         SesionEnCurso s = actual();
-        if (s != null) sesion.setValue(s);
+        if (s != null) poner(s);
     }
 
     // ── La hoja de terminar ──────────────────────────────────
@@ -806,7 +824,7 @@ public class SesionEnCursoRepositorio {
                         // Si mientras tanto se descartó y empezó otra, esa no se toca.
                         if (actual() == enviada) {
                             almacen.borrar(enviada.usuarioId);
-                            sesion.setValue(null);
+                            poner(null);
                         }
                     }
 
@@ -823,6 +841,13 @@ public class SesionEnCursoRepositorio {
     // Escribe al fichero y avisa a quien observa.
     private void publicar(SesionEnCurso s) {
         almacen.escribir(s);
+        poner(s);
+    }
+
+    // Avisa a quien observa y deja la alarma del descanso como pide la sesión: a su
+    // hora, o quitada si ya no hay descanso (o sesión).
+    private void poner(@Nullable SesionEnCurso s) {
         sesion.setValue(s);
+        programador.sincronizar(s != null ? s.descanso : null);
     }
 }

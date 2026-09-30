@@ -1273,4 +1273,17 @@
     <string name="envivo_barra_descanso">Descanso · %1$s · %2$s</string>
     <string name="envivo_barra_descanso_a11y">Descanso: quedan %1$s. %2$s. Volver a la sesión</string>
     <string name="envivo_barra_fin">%1$s · %2$s</string>
+    <!-- Descanso con la app fuera o la pantalla apagada (GP-013) -->
+    <string name="descanso_canal">Descanso</string>
+    <string name="descanso_canal_descripcion">Avisa al acabar el descanso entre series</string>
+    <string name="descanso_notif_texto">%1$s, serie %2$d</string>
+    <string name="envivo_notif_descanso_titulo">Descanso · %1$s</string>
+    <string name="envivo_notif_descanso_texto">Después: serie %1$d · %2$s, %3$s</string>
+    <string name="envivo_notif_descanso_texto_ultima">%1$s, %2$s</string>
+    <string name="descanso_permiso_titulo">Avisarte con la pantalla apagada</string>
+    <string name="descanso_permiso_texto_alarmas">Para sonar justo al acabar el descanso, aunque lleves el móvil en el bolsillo, GymProFit necesita el permiso «Alarmas y recordatorios». Solo lo usa en los descansos.</string>
+    <string name="descanso_permiso_texto_notificaciones">Para avisarte al acabar el descanso, aunque lleves el móvil en el bolsillo, GymProFit necesita poder mandarte notificaciones.</string>
+    <string name="descanso_permiso_dar">Dar permiso</string>
+    <string name="descanso_permiso_ahora_no">Ahora no</string>
+    <string name="descanso_permiso_nota">Sin él, con la pantalla apagada el aviso puede llegar tarde. Puedes darlo cuando quieras en Ajustes.</string>
 </resources>

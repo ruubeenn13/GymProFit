@@ -12,6 +12,11 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- El cronómetro de las series por tiempo avisa vibrando al mínimo y al máximo (GP-012). -->
     <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- El fin del descanso suena a su hora con la pantalla apagada (GP-013). SCHEDULE y
+         nunca USE_EXACT_ALARM: Play reserva ese a las apps de alarmas, temporizadores y
+         calendarios. En Android 14 o más, las instalaciones nuevas lo tienen denegado y
+         se pide con una hoja la primera vez que empieza un descanso. -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
@@ -50,6 +55,19 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/gp_primary" />
+
+        <!-- El fin del descanso (GP-013): su alarma, y el cambio del permiso de alarmas
+             exactas, que manda el sistema (acción protegida). -->
+        <receiver
+            android:name=".envivo.FinDescansoReceiver"
+            android:exported="false" />
+        <receiver
+            android:name=".envivo.PermisoAlarmasReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
 
         <!-- Activities de administración (gestión de usuarios, rutinas, ejercicios, alimentos) -->
         <activity
