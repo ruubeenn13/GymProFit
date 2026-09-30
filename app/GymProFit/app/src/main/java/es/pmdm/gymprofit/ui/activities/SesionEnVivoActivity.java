@@ -315,6 +315,15 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
             }
         });
 
+        // En el recorrido de TalkBack el descanso va antes que la lista, aunque esté
+        // abajo: es lo que corre. Cuenta atrás, −15 s, +15 s, Saltar; y el aviso del fin.
+        grupoCuentaAtras.setAccessibilityTraversalBefore(R.id.btnDescansoMenos);
+        findViewById(R.id.btnDescansoMenos).setAccessibilityTraversalBefore(R.id.btnDescansoMas);
+        btnDescansoMas.setAccessibilityTraversalBefore(R.id.btnDescansoSaltar);
+        findViewById(R.id.btnDescansoSaltar).setAccessibilityTraversalBefore(R.id.rvSesion);
+        findViewById(R.id.grupoFinDescanso).setAccessibilityTraversalBefore(R.id.btnCerrarFin);
+        findViewById(R.id.btnCerrarFin).setAccessibilityTraversalBefore(R.id.rvSesion);
+
         // La lista deja libre debajo de su final lo que ocupe el panel (con letra grande
         // crece), para que la última serie no quede tapada.
         int hueco = getResources().getDimensionPixelSize(R.dimen.envivo_hueco_descanso);
