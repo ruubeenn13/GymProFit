@@ -155,6 +155,14 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             nuevas.add(fin);
         }
         List<Fila> viejas = filas;
+        // Sin ejercicios pintados todavía (solo la fila final, mientras cargaban), se pinta
+        // de cero: con DiffUtil la lista se anclaba a esa fila final y, al llegar los
+        // ejercicios encima, se abría por el final en vez de por el primero.
+        if (viejas.size() <= 1) {
+            filas = nuevas;
+            notifyDataSetChanged();
+            return;
+        }
         DiffUtil.DiffResult d = DiffUtil.calculateDiff(new DiffUtil.Callback() {
             @Override public int getOldListSize() { return viejas.size(); }
             @Override public int getNewListSize() { return nuevas.size(); }
