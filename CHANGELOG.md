@@ -6,6 +6,14 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `81a077a` | Fusión de `lote-1.5.0` en `main` (desplegada a las 22:22). Solo API, sin etiqueta. Informe en `documentacion/estado/2026-09-30-lote-1.5.0.md`. |
+| `9b18632` | docs(decisiones): **DEC-036** (entrar con correo o usuario; el usuario lo propone la API), **DEC-037** (avisos por tipo, comidas apagado de serie) y **DEC-038** (edad mínima en la API). |
+| `df8bf4e` | feat(api): **avisos por tipo** (GP-112): `avisosEntrenar` (inactividad), `avisosComidas` (las cinco) y `avisosProgreso` (resumen, logro, medición y objetivo) en `UsuarioDTO` y el PATCH; de serie sí, no y sí, **también para las cuentas que ya existían**. Fuera el recordatorio de las 18:00. El resumen dice «1 sesión» o «2 sesiones». |
+| `f8d6dd7` | feat(api): **edad mínima de 14** en el alta y en el PATCH: 400 con `EDAD_MINIMA`. |
+| `3d96fe4` | feat(api): **entrar con el correo o con el usuario** (GP-103): con «@», primero por correo sin distinguir mayúsculas. |
+| `bda1137` | fix(api): **la contraseña tampoco puede contener la parte del correo** antes de la «@» (desde 3 caracteres). |
+| `99dd0ff` | feat(api): **alta sin nombre de usuario** (GP-103): lo propone la API con el correo y lo devuelve; el alta acepta `nombre`, `sexo` y `nivelActividad`; ningún usuario nuevo lleva «@» (`USERNAME_NO_VALIDO`). |
+| `77c38fc` | feat(api): **recomendado y vista previa sin cuenta** (GP-103), con `nivel` y `objetivo` en la consulta; con ellos no se mira el perfil. |
 | `9b1b53a` | Fusión de `lote-1.4.0` en `main`; etiquetada `v1.4.0`. Solo app: Render no despliega. Informe en `documentacion/estado/2026-09-30-lote-1.4.0.md`. |
 | `bfe8e2f` | build(android): **versión 1.4.0** (10400). Misma clave de firma. No necesita nada nuevo de la API. |
 | `00a72e0` | fix(android): **el descanso va antes que la lista en el recorrido de TalkBack** y **la hoja del permiso se desplaza** a letra 2,0 (GP-013). |
