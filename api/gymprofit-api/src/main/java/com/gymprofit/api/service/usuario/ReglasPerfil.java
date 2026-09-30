@@ -12,7 +12,22 @@ public final class ReglasPerfil {
     /** Largo máximo del nombre para mostrar (GP-116), el de la columna usuarios.nombre. */
     public static final int NOMBRE_MAX = 40;
 
+    /** Edad mínima: la política de privacidad dice que la app no es para menores de 14. */
+    public static final int EDAD_MINIMA = 14;
+
     private ReglasPerfil() {
+    }
+
+    /**
+     * Rechaza una edad menor que la mínima. Sin edad no hay nada que comprobar: es opcional.
+     *
+     * @param edad la edad que llega del cliente, o null.
+     * @throws InvalidDataException 400 con {@code EDAD_MINIMA} en "cause".
+     */
+    public static void edad(Integer edad) {
+        if (edad != null && edad < EDAD_MINIMA) {
+            throw InvalidDataException.conCodigo(InvalidDataException.EDAD_MINIMA, "error.edad.minima", EDAD_MINIMA);
+        }
     }
 
     /**

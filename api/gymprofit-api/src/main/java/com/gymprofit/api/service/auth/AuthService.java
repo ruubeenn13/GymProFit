@@ -126,6 +126,7 @@ public class AuthService implements IAuthService {
 
         // El perfil se valida antes de proponer nada ni tocar la contraseña.
         String nombre = ReglasPerfil.nombre(registerDTO.getNombre());
+        ReglasPerfil.edad(registerDTO.getEdad());
 
         String username = propuesto ? nombreUsuario.proponer(registerDTO.getEmail()) : registerDTO.getUsername();
 

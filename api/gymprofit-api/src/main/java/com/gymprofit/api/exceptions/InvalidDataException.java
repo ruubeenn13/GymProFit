@@ -13,6 +13,9 @@ public class InvalidDataException extends ExcepcionConClave {
     /** El nombre de usuario lleva «@», que queda para el correo (GP-103). */
     public static final String USERNAME_NO_VALIDO = "USERNAME_NO_VALIDO";
 
+    /** La edad es menor que la mínima de la app, 14 (lote 1.5.0). */
+    public static final String EDAD_MINIMA = "EDAD_MINIMA";
+
     // Código estable para "cause", o null si el error no necesita distinguirse.
     private final String codigo;
 

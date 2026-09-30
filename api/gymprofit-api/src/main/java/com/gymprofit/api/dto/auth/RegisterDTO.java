@@ -50,8 +50,9 @@ public class RegisterDTO implements Serializable {
     @Positive
     private BigDecimal altura;
 
-    // Edad del usuario, entre 0 y 120 años
-    @Min(0) @Max(120)
+    // Edad del usuario, hasta 120 años. El mínimo (14) lo comprueba ReglasPerfil en el
+    // servicio, para que cualquier edad menor dé el mismo 400 claro con EDAD_MINIMA.
+    @Max(120)
     private Integer edad;
 
     private String nivelExperiencia;

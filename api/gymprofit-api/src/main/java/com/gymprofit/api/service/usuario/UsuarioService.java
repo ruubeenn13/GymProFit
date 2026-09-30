@@ -283,8 +283,10 @@ public class UsuarioService implements IUsuarioService {
             }
         }
 
-        // Nombre para mostrar (GP-116): se valida antes de tocar nada, con la regla del alta.
+        // Nombre para mostrar (GP-116) y edad mínima: se validan antes de tocar nada, con
+        // las reglas del alta.
         String nombre = ReglasPerfil.nombre(patchDTO.getNombre());
+        ReglasPerfil.edad(patchDTO.getEdad());
 
         // Mayúsculas aparte: la restricción única de la base tampoco las distingue.
         if (patchDTO.getEmail() != null
