@@ -7,6 +7,7 @@ import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoCreat
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoPatchDTO;
 import com.gymprofit.api.config.security.SecurityUtils;
+import com.gymprofit.api.dto.entity.sesionentrenamiento.UltimaVezDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.VolumenMuscularDTO;
 import com.gymprofit.api.dto.entity.record.RecordDTO;
 import com.gymprofit.api.repository.jpa.IEjercicioRealizadoRepository;
@@ -18,6 +19,7 @@ import com.gymprofit.api.entity.SesionEntrenamiento;
 import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.exceptions.CreateEntityException;
 import com.gymprofit.api.exceptions.DeleteEntityException;
+import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.UnauthorizedException;
 import com.gymprofit.api.exceptions.UpdateEntityException;
@@ -71,6 +73,9 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
     private final IRecordService recordService;
     // Logger para trazar las operaciones del servicio.
     private final Logger logger = LoggerFactory.getLogger(SesionEntrenamientoService.class);
+
+    // Tope de ejercicios por petición de la última vez (GP-014): más que cualquier rutina.
+    static final int MAX_ULTIMA_VEZ = 30;
 
 
     // Lista todas las sesiones de entrenamiento (solo ADMIN).
@@ -714,6 +719,43 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
         java.math.BigDecimal porResumen = ejercicioRealizadoRepository.volumenDeResumen(sesionId);
         return porResumen == null ? java.math.BigDecimal.ZERO : porResumen;
+    }
+
+    /**
+     * Última vez de cada ejercicio pedido (GP-014), solo del usuario del token.
+     * <p>
+     * Las filas llegan ordenadas por ejercicio y, dentro, de la sesión de id más alto a
+     * la más baja: si dos sesiones empatan en fecha, gana la guardada después, y si el
+     * ejercicio salió dos veces en esa sesión, la primera vez que aparece.
+     *
+     * @param ejercicioIds de 1 a {@link #MAX_ULTIMA_VEZ} ids, sin repetir.
+     * @return una entrada por ejercicio con alguna vez; los que no tienen ninguna no salen.
+     */
+    @Override
+    public List<UltimaVezDTO> getUltimaVez(java.util.Set<Integer> ejercicioIds) {
+        if (ejercicioIds == null || ejercicioIds.isEmpty() || ejercicioIds.size() > MAX_ULTIMA_VEZ) {
+            throw new InvalidDataException("error.ultimaVez.ejercicios", MAX_ULTIMA_VEZ);
+        }
+        Integer usuarioId = securityUtils.getCurrentUserId();
+
+        Map<Integer, UltimaVezDTO> porEjercicio = new LinkedHashMap<>();
+        Map<Integer, Integer> realizadoElegido = new java.util.HashMap<>();
+        for (Object[] f : ejercicioRealizadoRepository.seriesUltimaVez(usuarioId, ejercicioIds)) {
+            Integer ejercicioId = (Integer) f[0];
+            Integer realizadoId = (Integer) f[3];
+            UltimaVezDTO ultima = porEjercicio.get(ejercicioId);
+            if (ultima == null) {
+                ultima = new UltimaVezDTO(ejercicioId, (LocalDateTime) f[2], new java.util.ArrayList<>());
+                porEjercicio.put(ejercicioId, ultima);
+                realizadoElegido.put(ejercicioId, realizadoId);
+            }
+            // Solo las series del primer ejercicio realizado elegido: ni la otra sesión del
+            // empate ni la segunda aparición del ejercicio en la misma.
+            if (!realizadoId.equals(realizadoElegido.get(ejercicioId))) continue;
+            ultima.getSeries().add(new UltimaVezDTO.Serie(
+                    (Integer) f[4], (BigDecimal) f[5], (Integer) f[6], (Integer) f[7]));
+        }
+        return List.copyOf(porEjercicio.values());
     }
 
     /**

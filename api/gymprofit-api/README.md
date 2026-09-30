@@ -226,6 +226,7 @@ Se sigue un programa a la vez. La que toca: desde la posición inicial, cada ses
 | GET | `/sesiones/usuario/{usuarioId}` | USER+ | Del usuario |
 | GET | `/sesiones/usuario/{usuarioId}/volumen-muscular` | USER+ | Series por músculo: de los últimos `dias` (7 por defecto) o, con `desde`, de las sesiones que empiezan desde esa fecha y hora local (la semana natural de Inicio) |
 | POST | `/sesiones` | USER+ | Crear sesión (evalúa logros si `completada=true`) |
+| GET | `/sesiones/ultima-vez?ejercicios=12,34` | USER+ | La última vez de cada ejercicio (GP-014): las series marcadas de la última sesión terminada del usuario del token que tenga series de él, con su fecha. Los que no tienen ninguna no salen; hasta 30 ids |
 | POST | `/sesiones/completa` | USER+ | Crear sesión **con sus ejercicios y series** en una transacción. Idempotente |
 | PATCH | `/sesiones/{id}` | USER+ | Actualización parcial |
 | DELETE | `/sesiones/{id}` | USER+ | Eliminar |

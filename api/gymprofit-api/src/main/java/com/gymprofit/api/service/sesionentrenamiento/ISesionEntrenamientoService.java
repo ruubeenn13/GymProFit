@@ -105,4 +105,13 @@ public interface ISesionEntrenamientoService {
      * @return kilos totales, 0 si la sesión no registró pesos.
      */
     java.math.BigDecimal getVolumenLevantado(Integer sesionId);
+
+    /**
+     * Series de la última sesión terminada del usuario del token que tenga series de
+     * cada ejercicio pedido (GP-014). Los ejercicios sin ninguna no salen.
+     *
+     * @param ejercicioIds de 1 a 30 ids del catálogo.
+     * @return una entrada por ejercicio con alguna vez.
+     */
+    List<com.gymprofit.api.dto.entity.sesionentrenamiento.UltimaVezDTO> getUltimaVez(java.util.Set<Integer> ejercicioIds);
 }
