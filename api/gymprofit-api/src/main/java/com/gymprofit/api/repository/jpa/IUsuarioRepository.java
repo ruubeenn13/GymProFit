@@ -33,6 +33,10 @@ public interface IUsuarioRepository extends JpaRepository<Usuario, Integer> {
     // Busca un usuario por su email.
     Optional<Usuario> findByEmail(String email);
 
+    // Correo sin distinguir mayúsculas, para entrar con él (GP-103). La restricción
+    // única de la base tampoco las distingue, así que como mucho hay una.
+    Optional<Usuario> findByEmailIgnoreCase(String email);
+
     // Comprueba si ya existe un usuario con ese username.
     Boolean existsByUsername(String username);
 

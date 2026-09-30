@@ -56,19 +56,21 @@ public class AuthService implements IAuthService {
 
     // Autentica usuario/contraseña con el AuthenticationManager, establece el
     // contexto de seguridad y genera el token JWT con los roles del usuario.
+    // Se entra con el correo o con el usuario (GP-103): ver nombreParaEntrar.
     @Override
     public TokenDTO login(LoginDTO loginDTO) {
-        logger.info("Iniciando sesión para usuario: {}", loginDTO.getUsername());
+        String username = nombreParaEntrar(loginDTO.getUsername());
+        logger.info("Iniciando sesión para usuario: {}", username);
 
         Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword())
+                new UsernamePasswordAuthenticationToken(username, loginDTO.getPassword())
         );
 
         SecurityContextHolder.getContext().setAuthentication(auth);
 
         String token = jwtTokenProvider.generateToken(auth);
 
-        Usuario usuario = usuarioRepository.findByUsername(loginDTO.getUsername())
+        Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundEntityException("error.usuario.noEncontrado"));
 
         List<String> roles = usuario.getRoles().stream()
@@ -81,9 +83,21 @@ public class AuthService implements IAuthService {
         // Último acceso, para la web de administración (GP-085).
         usuarioRepository.registrarAcceso(usuario.getId(), LocalDateTime.now());
 
-        logger.info("Login exitoso para usuario: {}", loginDTO.getUsername());
+        logger.info("Login exitoso para usuario: {}", username);
 
         return new TokenDTO(token, refreshToken.getToken(), usuario.getUsername(), roles);
+    }
+
+    // Lo escrito en «usuario» al entrar, pasado al nombre de usuario de la cuenta (GP-103).
+    // Con «@» es un correo: se busca por él sin distinguir mayúsculas y, si no hay cuenta
+    // con ese correo, se prueba como usuario, por si una cuenta antigua lleva «@» en el
+    // nombre (ya no se crean así). Si no casa nada se devuelve tal cual, y la autenticación
+    // falla con el mismo 401 que una contraseña equivocada: no dice qué correos existen.
+    private String nombreParaEntrar(String escrito) {
+        if (escrito == null || escrito.indexOf('@') < 0) return escrito;
+        return usuarioRepository.findByEmailIgnoreCase(escrito.strip())
+                .map(Usuario::getUsername)
+                .orElse(escrito);
     }
 
     // Registra un nuevo usuario público: valida unicidad de username/email

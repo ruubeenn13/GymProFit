@@ -41,7 +41,10 @@ public class AuthController {
     private final IAuthService authService;
     private final IPasswordResetService passwordResetService;
 
-    @Operation(summary = "Inicia sesión y devuelve un token JWT")
+    @Operation(summary = "Inicia sesión y devuelve un token JWT",
+            description = "En «username» va el nombre de usuario o el correo (GP-103). Con «@» se busca primero " +
+                    "por correo, sin distinguir mayúsculas, y si no hay, por usuario. El token y la respuesta " +
+                    "llevan el username de la cuenta.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Login correcto, token generado",
                     content = @Content(schema = @Schema(implementation = TokenDTO.class))),
