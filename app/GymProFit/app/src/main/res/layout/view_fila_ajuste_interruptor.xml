@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  view_fila_ajuste_interruptor — una fila de Ajustes con interruptor (GP-013): icono,
+  texto y el interruptor a la derecha. Toda la fila lo cambia; TalkBack la lee como un
+  interruptor con su texto y su estado.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.GymProFit.FilaAjuste"
+    android:minHeight="56dp">
+
+    <ImageView
+        android:id="@+id/ivIcono"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:importantForAccessibility="no"
+        app:tint="?attr/colorOnSurfaceVariant" />
+
+    <TextView
+        android:id="@+id/tvTitulo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_weight="1"
+        android:importantForAccessibility="no"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="@dimen/text_body" />
+
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/swInterruptor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:clickable="false"
+        android:focusable="false"
+        android:importantForAccessibility="no" />
+</LinearLayout>

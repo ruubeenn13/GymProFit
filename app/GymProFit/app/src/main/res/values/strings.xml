@@ -1286,4 +1286,18 @@
     <string name="descanso_permiso_dar">Dar permiso</string>
     <string name="descanso_permiso_ahora_no">Ahora no</string>
     <string name="descanso_permiso_nota">Sin él, con la pantalla apagada el aviso puede llegar tarde. Puedes darlo cuando quieras en Ajustes.</string>
+    <!-- Ajustes, «Entrenamiento» (GP-013) -->
+    <string name="ajustes_entrenamiento">Entrenamiento</string>
+    <string name="ajustes_descanso_al_marcar">Empezar el descanso al marcar una serie</string>
+    <string name="ajustes_descanso_sin_pauta">Descanso sin pauta</string>
+    <string name="ajustes_descanso_sin_pauta_sub">En el entrenamiento libre y los ejercicios añadidos</string>
+    <string name="ajustes_descanso_segundos">%1$d\u00A0s</string>
+    <string name="ajustes_descanso_minutos">%1$d\u00A0min</string>
+    <string name="ajustes_avisos_apagada">Avisos con la pantalla apagada</string>
+    <string name="ajustes_avisos_activados">Activados</string>
+    <string name="ajustes_avisos_sin_permiso">Sin permiso: pueden llegar tarde</string>
+    <string name="ajustes_avisos_activar">Activar</string>
+    <string name="ajustes_avisos_activar_a11y">Activar los avisos con la pantalla apagada</string>
+    <string name="ajustes_avisos_nota">El aviso suena y vibra según el modo del móvil.</string>
+    <string name="ajustes_fila_sub_a11y">%1$s, %2$s</string>
 </resources>

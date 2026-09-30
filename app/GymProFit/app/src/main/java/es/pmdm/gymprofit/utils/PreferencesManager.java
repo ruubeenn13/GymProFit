@@ -127,9 +127,8 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
 
     /** «Descanso sin pauta», en segundos: una de las opciones, 90 de serie. */
     public int getDescansoSinPauta() {
-        int s = prefs.getInt(KEY_DESCANSO_SIN_PAUTA, es.pmdm.gymprofit.envivo.LogicaDescanso.SIN_PAUTA_DEFECTO);
-        for (int o : es.pmdm.gymprofit.envivo.LogicaDescanso.SIN_PAUTA_OPCIONES) if (o == s) return s;
-        return es.pmdm.gymprofit.envivo.LogicaDescanso.SIN_PAUTA_DEFECTO;
+        return es.pmdm.gymprofit.envivo.LogicaDescanso.sinPautaValido(
+                prefs.getInt(KEY_DESCANSO_SIN_PAUTA, es.pmdm.gymprofit.envivo.LogicaDescanso.SIN_PAUTA_DEFECTO));
     }
     public void saveDescansoSinPauta(int segundos) { editor.putInt(KEY_DESCANSO_SIN_PAUTA, segundos).apply(); }
 

@@ -35,6 +35,12 @@ public final class LogicaDescanso {
      */
     public static final long MARGEN_AVISO_MS = 3000;
 
+    /** El descanso sin pauta guardado, si es una de las opciones; si no, el de serie. */
+    public static int sinPautaValido(int guardado) {
+        for (int o : SIN_PAUTA_OPCIONES) if (o == guardado) return guardado;
+        return SIN_PAUTA_DEFECTO;
+    }
+
     /** Segundos de descanso tras una serie de este ejercicio. */
     public static int segundosPara(@NonNull SesionEnCurso.Ejercicio e, int sinPauta) {
         if (e.deRutina && e.descanso != null && e.descanso > 0) return Math.min(e.descanso, MAX_SEGUNDOS);

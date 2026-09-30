@@ -369,4 +369,13 @@ public class DescansoTest {
         assertFalse("No molestar no molesta", dnd.sonar);
         assertFalse(dnd.vibrar);
     }
+
+    // ── Ajustes ──────────────────────────────────────────────
+
+    @Test
+    public void el_descanso_sin_pauta_solo_admite_sus_opciones() {
+        for (int o : new int[]{60, 90, 120, 180}) assertEquals(o, LogicaDescanso.sinPautaValido(o));
+        assertEquals("lo que no es una opción vuelve a 90", 90, LogicaDescanso.sinPautaValido(45));
+        assertEquals(90, LogicaDescanso.sinPautaValido(0));
+    }
 }
