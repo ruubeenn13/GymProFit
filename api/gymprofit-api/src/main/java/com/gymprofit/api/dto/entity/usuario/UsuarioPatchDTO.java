@@ -32,6 +32,10 @@ public class UsuarioPatchDTO implements Serializable {
     // GP-111. Enums: un valor fuera de la lista no se deserializa y da 400 antes de tocar nada.
     private Sexo sexo;
     private NivelActividad nivelActividad;
+    // Avisos por tipo (GP-112). null no toca nada, como el resto.
+    private Boolean avisosEntrenar;
+    private Boolean avisosComidas;
+    private Boolean avisosProgreso;
     // Sin "activo" a propósito (GP-083): el usuario no decide si su cuenta está activa.
     // Si un cliente lo manda, Jackson lo ignora como cualquier campo desconocido.
 }

@@ -37,17 +37,19 @@ class IdiomaErroresTest extends AbstractOwnershipTest {
     @Test
     @DisplayName("validación del proveedor sin cabecera → español")
     void validacion_proveedor_espanol() throws Exception {
-        mockMvc.perform(registro("{\"password\":\"una frase larga\"}"))
+        // Sin correo: el usuario es opcional desde GP-103 y ya no sirve de ejemplo.
+        mockMvc.perform(registro("{\"username\":\"gp109\",\"password\":\"una frase larga\"}"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message", containsString("username = no debe estar vacío")));
+                .andExpect(jsonPath("$.message", containsString("email = no debe estar vacío")));
     }
 
     @Test
     @DisplayName("validación del proveedor con Accept-Language: en → inglés")
     void validacion_proveedor_ingles() throws Exception {
-        mockMvc.perform(registro("{\"password\":\"una frase larga\"}").header("Accept-Language", "en"))
+        mockMvc.perform(registro("{\"username\":\"gp109\",\"password\":\"una frase larga\"}")
+                        .header("Accept-Language", "en"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message", containsString("username = must not be blank")));
+                .andExpect(jsonPath("$.message", containsString("email = must not be blank")));
     }
 
     @Test

@@ -16,6 +16,7 @@ import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.repository.jpa.IRoleRepository;
 import com.gymprofit.api.repository.jpa.IUsuarioRepository;
+import com.gymprofit.api.service.usuario.ReglasPerfil;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,23 +51,26 @@ public class AuthService implements IAuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
     private final PoliticaContrasena politicaContrasena;
+    private final NombreUsuario nombreUsuario;
     private final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
     // Autentica usuario/contraseña con el AuthenticationManager, establece el
     // contexto de seguridad y genera el token JWT con los roles del usuario.
+    // Se entra con el correo o con el usuario (GP-103): ver nombreParaEntrar.
     @Override
     public TokenDTO login(LoginDTO loginDTO) {
-        logger.info("Iniciando sesión para usuario: {}", loginDTO.getUsername());
+        String username = nombreParaEntrar(loginDTO.getUsername());
+        logger.info("Iniciando sesión para usuario: {}", username);
 
         Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword())
+                new UsernamePasswordAuthenticationToken(username, loginDTO.getPassword())
         );
 
         SecurityContextHolder.getContext().setAuthentication(auth);
 
         String token = jwtTokenProvider.generateToken(auth);
 
-        Usuario usuario = usuarioRepository.findByUsername(loginDTO.getUsername())
+        Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundEntityException("error.usuario.noEncontrado"));
 
         List<String> roles = usuario.getRoles().stream()
@@ -79,22 +83,40 @@ public class AuthService implements IAuthService {
         // Último acceso, para la web de administración (GP-085).
         usuarioRepository.registrarAcceso(usuario.getId(), LocalDateTime.now());
 
-        logger.info("Login exitoso para usuario: {}", loginDTO.getUsername());
+        logger.info("Login exitoso para usuario: {}", username);
 
         return new TokenDTO(token, refreshToken.getToken(), usuario.getUsername(), roles);
+    }
+
+    // Lo escrito en «usuario» al entrar, pasado al nombre de usuario de la cuenta (GP-103).
+    // Con «@» es un correo: se busca por él sin distinguir mayúsculas y, si no hay cuenta
+    // con ese correo, se prueba como usuario, por si una cuenta antigua lleva «@» en el
+    // nombre (ya no se crean así). Si no casa nada se devuelve tal cual, y la autenticación
+    // falla con el mismo 401 que una contraseña equivocada: no dice qué correos existen.
+    private String nombreParaEntrar(String escrito) {
+        if (escrito == null || escrito.indexOf('@') < 0) return escrito;
+        return usuarioRepository.findByEmailIgnoreCase(escrito.strip())
+                .map(Usuario::getUsername)
+                .orElse(escrito);
     }
 
     // Registra un nuevo usuario público: valida unicidad de username/email
     // (con un código en "cause" que dice cuál de los dos está en uso, GP-095),
     // codifica la contraseña, asigna siempre el rol USER y guarda el usuario.
+    // Sin username, lo propone NombreUsuario con la parte del correo (GP-103), después
+    // de comprobar el correo: si ya tiene cuenta, eso es lo que hay que decir.
     @Transactional
     @Override
-    public void register(RegisterDTO registerDTO) {
-        logger.info("Registrando nuevo usuario: {}", registerDTO.getUsername());
+    public String register(RegisterDTO registerDTO) {
+        boolean propuesto = registerDTO.getUsername() == null || registerDTO.getUsername().isBlank();
+        logger.info("Registrando nuevo usuario: {}", propuesto ? "(propuesto por la API)" : registerDTO.getUsername());
 
-        if (usuarioRepository.existsByUsername(registerDTO.getUsername())) {
-            throw DuplicateEntityException.conCodigo(DuplicateEntityException.USERNAME_EN_USO,
-                    "error.username.enUso", registerDTO.getUsername());
+        if (!propuesto) {
+            NombreUsuario.comprobar(registerDTO.getUsername());
+            if (usuarioRepository.existsByUsername(registerDTO.getUsername())) {
+                throw DuplicateEntityException.conCodigo(DuplicateEntityException.USERNAME_EN_USO,
+                        "error.username.enUso", registerDTO.getUsername());
+            }
         }
 
         if (usuarioRepository.existsByEmail(registerDTO.getEmail())) {
@@ -102,9 +124,15 @@ public class AuthService implements IAuthService {
                     "error.email.enUso", registerDTO.getEmail());
         }
 
+        // El perfil se valida antes de proponer nada ni tocar la contraseña.
+        String nombre = ReglasPerfil.nombre(registerDTO.getNombre());
+        ReglasPerfil.edad(registerDTO.getEdad());
+
+        String username = propuesto ? nombreUsuario.proponer(registerDTO.getEmail()) : registerDTO.getUsername();
+
         // Lista de bloqueo y nombre (GP-101). Después de la unicidad: si el usuario ya
         // existe, eso es lo primero que hay que corregir.
-        politicaContrasena.comprobar(registerDTO.getPassword(), registerDTO.getUsername());
+        politicaContrasena.comprobar(registerDTO.getPassword(), username, registerDTO.getEmail());
 
         // Seguridad: el rol NUNCA se toma del cliente. El registro público crea siempre USER.
         // Los cambios de rol se hacen solo desde el panel admin (PATCH /admin/usuarios/{id}/rol).
@@ -123,7 +151,7 @@ public class AuthService implements IAuthService {
         }
 
         Usuario usuario = new Usuario();
-        usuario.setUsername(registerDTO.getUsername());
+        usuario.setUsername(username);
         usuario.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
         usuario.setEmail(registerDTO.getEmail());
         usuario.setPeso(registerDTO.getPeso());
@@ -131,14 +159,18 @@ public class AuthService implements IAuthService {
         usuario.setEdad(registerDTO.getEdad());
         usuario.setNivelExperiencia(nivelExperiencia);
         usuario.setObjetivo(registerDTO.getObjetivo());
+        usuario.setNombre(nombre == null || nombre.isEmpty() ? null : nombre);
+        usuario.setSexo(registerDTO.getSexo());
+        usuario.setNivelActividad(registerDTO.getNivelActividad());
         usuario.setFechaRegistro(LocalDateTime.now());
         usuario.setActivo(true);
         usuario.setRoles(roles);
 
         usuarioRepository.save(usuario);
 
-        logger.info("Usuario '{}' registrado correctamente con roles: {}", registerDTO.getUsername(),
+        logger.info("Usuario '{}' registrado correctamente con roles: {}", username,
                 roles.stream().map(r -> r.getNombre().name()).collect(Collectors.joining(", ")));
+        return username;
     }
 
     // Genera un token JWT para el usuario invitado predefinido "guest" sin
@@ -225,7 +257,7 @@ public class AuthService implements IAuthService {
         }
 
         // Lista de bloqueo y nombre (GP-101).
-        politicaContrasena.comprobar(changePasswordDTO.getNewPassword(), usuario.getUsername());
+        politicaContrasena.comprobar(changePasswordDTO.getNewPassword(), usuario.getUsername(), usuario.getEmail());
 
         usuario.setPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
         usuarioRepository.save(usuario);

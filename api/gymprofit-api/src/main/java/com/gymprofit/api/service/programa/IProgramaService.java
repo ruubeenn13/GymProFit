@@ -45,21 +45,26 @@ public interface IProgramaService {
     ProgramaSeguidoDTO seguir(String codigo, Integer minutos);
 
     /**
-     * Cómo quedaría cada rutina al seguir el programa, con las mismas reglas y el perfil
-     * del token, sin guardar nada.
+     * Cómo quedaría cada rutina al seguir el programa, con las mismas reglas, sin guardar
+     * nada. Con nivel u objetivo se usan esos y no se mira el perfil (GP-103); sin ellos,
+     * el perfil del token, y sin token, ninguno.
      *
-     * @param codigo  código del programa.
-     * @param minutos 30, 45, 60 o 75; null es 60.
+     * @param codigo   código del programa.
+     * @param minutos  30, 45, 60 o 75; null es 60.
+     * @param nivel    nivel de experiencia del cuestionario, o null.
+     * @param objetivo objetivo del cuestionario, o null.
      */
-    VistaPreviaDTO vistaPrevia(String codigo, Integer minutos);
+    VistaPreviaDTO vistaPrevia(String codigo, Integer minutos, String nivel, String objetivo);
 
     /**
-     * El programa de la tabla del catálogo para el nivel del perfil del token.
+     * El programa de la tabla del catálogo para el nivel pedido o, sin él, el del perfil
+     * del token; sin token ni nivel, como un perfil sin nivel (GP-103).
      *
      * @param equipamiento GIMNASIO, MANCUERNAS o PESO_CORPORAL (obligatorio).
      * @param dias         de 2 a 6 (obligatorio).
+     * @param nivel        nivel de experiencia del cuestionario, o null.
      */
-    RecomendadoDTO recomendado(String equipamiento, Integer dias);
+    RecomendadoDTO recomendado(String equipamiento, Integer dias, String nivel);
 
     /** El programa que sigue el usuario del token, o vacío si no sigue ninguno. */
     Optional<ProgramaQueSigueDTO> seguido();

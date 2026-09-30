@@ -34,6 +34,10 @@ public class UsuarioDTO implements Serializable {
     private Sexo sexo;
     private NivelActividad nivelActividad;
     private String fechaRegistro;
+    // Avisos por tipo (GP-112): entrenar (inactividad), comidas y progreso.
+    private Boolean avisosEntrenar;
+    private Boolean avisosComidas;
+    private Boolean avisosProgreso;
     private Boolean activo;
     private String fotoPerfil;
 }

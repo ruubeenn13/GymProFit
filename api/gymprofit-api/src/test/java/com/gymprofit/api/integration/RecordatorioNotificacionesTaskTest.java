@@ -48,10 +48,14 @@ class RecordatorioNotificacionesTaskTest extends AbstractOwnershipTest {
     private MessageSource messageSource;
 
     // Registra un dispositivo del owner: los generadores solo notifican a usuarios
-    // con token FCM (findDistinctUsuarioIds), sin él el owner sería invisible al job.
+    // con token FCM, sin él el owner sería invisible al job.
     // Idioma "es" por defecto (campo NOT NULL); el test de i18n lo cambia a "en".
+    // Los avisos de comidas vienen apagados de serie (GP-112) y estos tests usan la cena:
+    // se encienden aquí. Cada interruptor se prueba en AvisosPorTipoTest.
     @BeforeEach
     void seedDeviceToken() {
+        owner.setAvisosComidas(true);
+
         DeviceToken dt = new DeviceToken();
         dt.setToken("test-token-recordatorio");
         dt.setUsuario(owner);

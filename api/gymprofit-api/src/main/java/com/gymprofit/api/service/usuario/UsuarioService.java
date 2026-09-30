@@ -17,6 +17,7 @@ import com.gymprofit.api.exceptions.*;
 import com.gymprofit.api.mappers.UsuarioMapper;
 import com.gymprofit.api.repository.jpa.IRoleRepository;
 import com.gymprofit.api.repository.jpa.IUsuarioRepository;
+import com.gymprofit.api.service.auth.NombreUsuario;
 import com.gymprofit.api.service.auth.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -57,8 +58,6 @@ public class UsuarioService implements IUsuarioService {
 
     // Tamaño máximo de la foto de perfil (5 MB): evita meter binarios enormes en la BD.
     private static final long MAX_FOTO_BYTES = 5 * 1024 * 1024;
-    // Largo máximo del nombre para mostrar (GP-116), el de la columna usuarios.nombre.
-    static final int NOMBRE_MAX = 40;
 
 
     // Carga el usuario por username para el proceso de autenticación de Spring Security.
@@ -96,6 +95,9 @@ public class UsuarioService implements IUsuarioService {
     @Transactional
     public UsuarioDTO save(UsuarioCreateDTO usuarioCreateDTO) {
         logger.info("Intento de crear un usuario");
+
+        // Ningún nombre nuevo lleva «@», tampoco el que crea un administrador (GP-103).
+        NombreUsuario.comprobar(usuarioCreateDTO.getUsername());
 
         if (existsByUsername(usuarioCreateDTO.getUsername())) {
             throw new DuplicateEntityException("error.username.enUso", usuarioCreateDTO.getUsername());
@@ -281,12 +283,10 @@ public class UsuarioService implements IUsuarioService {
             }
         }
 
-        // Nombre para mostrar (GP-116): se valida antes de tocar nada. Los caracteres se
-        // cuentan como la columna VARCHAR(40) de utf8mb4, por puntos de código: un emoji es uno.
-        String nombre = patchDTO.getNombre() == null ? null : patchDTO.getNombre().strip();
-        if (nombre != null && nombre.codePointCount(0, nombre.length()) > NOMBRE_MAX) {
-            throw new InvalidDataException("error.nombre.largo", NOMBRE_MAX);
-        }
+        // Nombre para mostrar (GP-116) y edad mínima: se validan antes de tocar nada, con
+        // las reglas del alta.
+        String nombre = ReglasPerfil.nombre(patchDTO.getNombre());
+        ReglasPerfil.edad(patchDTO.getEdad());
 
         // Mayúsculas aparte: la restricción única de la base tampoco las distingue.
         if (patchDTO.getEmail() != null
@@ -303,6 +303,9 @@ public class UsuarioService implements IUsuarioService {
             if (nombre != null) usuario.setNombre(nombre.isEmpty() ? null : nombre);
             if (patchDTO.getSexo() != null) usuario.setSexo(patchDTO.getSexo());
             if (patchDTO.getNivelActividad() != null) usuario.setNivelActividad(patchDTO.getNivelActividad());
+            if (patchDTO.getAvisosEntrenar() != null) usuario.setAvisosEntrenar(patchDTO.getAvisosEntrenar());
+            if (patchDTO.getAvisosComidas() != null) usuario.setAvisosComidas(patchDTO.getAvisosComidas());
+            if (patchDTO.getAvisosProgreso() != null) usuario.setAvisosProgreso(patchDTO.getAvisosProgreso());
 
             return usuarioMapper.toDTO(usuarioRepository.save(usuario));
         } catch (Exception e) {

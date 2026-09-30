@@ -159,22 +159,22 @@ public class ProgramaService implements IProgramaService {
         boolean en = enIngles();
         List<RutinaConEjerciciosDTO> copias = new ArrayList<>();
         for (Rutina plantilla : rutinasDistintas(programa)) {
-            copias.add(copiar(planificar(plantilla, programa, usuario, tiempo, en), sigue, usuario, ahora, en));
+            copias.add(copiar(planificar(plantilla, programa, Perfil.de(usuario), tiempo, en), sigue, usuario, ahora, en));
         }
         return new ProgramaSeguidoDTO(sigue.getId(), programa.getCodigo(), tiempo, ahora, posicionInicial, copias);
     }
 
     @Override
-    public VistaPreviaDTO vistaPrevia(String codigo, Integer minutos) {
+    public VistaPreviaDTO vistaPrevia(String codigo, Integer minutos, String nivel, String objetivo) {
         int tiempo = minutosValidos(minutos);
         Programa programa = programaOr404(codigo);
-        Usuario usuario = usuarioActual();
+        Perfil perfil = perfilPedido(nivel, objetivo);
         boolean en = enIngles();
 
         List<RutinaVistaPreviaDTO> rutinas = new ArrayList<>();
         boolean avanzado = false;
         for (Rutina plantilla : rutinasDistintas(programa)) {
-            Plan plan = planificar(plantilla, programa, usuario, tiempo, en);
+            Plan plan = planificar(plantilla, programa, perfil, tiempo, en);
             avanzado |= plan.ajuste().avanzado();
 
             Set<Integer> quedan = new HashSet<>();
@@ -194,12 +194,12 @@ public class ProgramaService implements IProgramaService {
 
         List<String> ajustes = new ArrayList<>();
         if (avanzado) ajustes.add(AJUSTE_AVANZADO);
-        if (usuario.getObjetivo() == TipoObjetivo.MEJORAR_FUERZA) ajustes.add(AJUSTE_FUERZA);
+        if (perfil.objetivo() == TipoObjetivo.MEJORAR_FUERZA) ajustes.add(AJUSTE_FUERZA);
         return new VistaPreviaDTO(programa.getCodigo(), tiempo, ajustes, rutinas);
     }
 
     @Override
-    public RecomendadoDTO recomendado(String equipamiento, Integer dias) {
+    public RecomendadoDTO recomendado(String equipamiento, Integer dias, String nivel) {
         if (equipamiento == null || equipamiento.isBlank()) {
             throw new InvalidDataException("error.programa.equipamientoNoValido", String.valueOf(equipamiento));
         }
@@ -207,7 +207,9 @@ public class ProgramaService implements IProgramaService {
         if (dias == null || dias < 2 || dias > 6) {
             throw new InvalidDataException("error.programa.diasRecomendado");
         }
-        NivelExperiencia perfil = usuarioActual().getNivelExperiencia();
+        // Con el nivel del cuestionario no se mira el perfil, y nivelEnPerfil va a false.
+        boolean delPerfil = vacio(nivel);
+        NivelExperiencia perfil = perfilPedido(nivel, null).nivel();
         RecomendacionPrograma.Recomendacion r = RecomendacionPrograma.elegir(equipo, dias, perfil);
         Programa programa = programaOr404(r.codigo());
 
@@ -216,7 +218,7 @@ public class ProgramaService implements IProgramaService {
         String motivo = r.motivo() == null ? null
                 : messageSource.getMessage(r.motivo(), null, LocaleContextHolder.getLocale());
         return new RecomendadoDTO(dto, perfil == null ? NivelExperiencia.PRINCIPIANTE.name() : perfil.name(),
-                perfil != null, motivo);
+                delPerfil && perfil != null, motivo);
     }
 
     @Override
@@ -316,14 +318,14 @@ public class ProgramaService implements IProgramaService {
     private record Plan(Rutina plantilla, List<RutinaEjercicio> origen, ReglasPrograma.Resultado ajuste,
                         List<RutinaEjercicio> filas) { }
 
-    private Plan planificar(Rutina plantilla, Programa programa, Usuario usuario, int minutos, boolean en) {
+    private Plan planificar(Rutina plantilla, Programa programa, Perfil perfil, int minutos, boolean en) {
         List<RutinaEjercicio> origen = rutinaEjercicioRepository.findByRutinaIdOrderByOrdenAsc(plantilla.getId());
         List<ReglasPrograma.Ejercicio> entrada = new ArrayList<>();
         for (int i = 0; i < origen.size(); i++) {
             entrada.add(paraReglas(i, origen.get(i)));
         }
         ReglasPrograma.Resultado ajuste = ReglasPrograma.aplicar(entrada, programa.getNivel(),
-                usuario.getNivelExperiencia(), usuario.getObjetivo(), minutos);
+                perfil.nivel(), perfil.objetivo(), minutos);
 
         List<RutinaEjercicio> filas = new ArrayList<>();
         int orden = 1;
@@ -390,6 +392,48 @@ public class ProgramaService implements IProgramaService {
             throw new InvalidDataException("error.programa.minutosNoValidos");
         }
         return tiempo;
+    }
+
+    // El nivel y el objetivo con los que se planifica (GP-103). Si llega alguno por la
+    // consulta —el cuestionario del alta, aún sin cuenta— manda la consulta entera y el
+    // perfil no se mira: mezclar el nivel del cuestionario con el objetivo de una cuenta
+    // daría un plan que no es el de nadie. Sin parámetros, el perfil del token; sin
+    // token, ninguno, como un perfil sin nivel.
+    private record Perfil(NivelExperiencia nivel, TipoObjetivo objetivo) {
+        static Perfil de(Usuario u) {
+            return new Perfil(u.getNivelExperiencia(), u.getObjetivo());
+        }
+    }
+
+    private Perfil perfilPedido(String nivel, String objetivo) {
+        if (!vacio(nivel) || !vacio(objetivo)) {
+            return new Perfil(vacio(nivel) ? null : nivelExperiencia(nivel),
+                    vacio(objetivo) ? null : tipoObjetivo(objetivo));
+        }
+        return securityUtils.getCurrentUserIdSiLoHay()
+                .flatMap(usuarioRepository::findById)
+                .map(Perfil::de)
+                .orElse(new Perfil(null, null));
+    }
+
+    private static boolean vacio(String valor) {
+        return valor == null || valor.isBlank();
+    }
+
+    private static NivelExperiencia nivelExperiencia(String valor) {
+        try {
+            return NivelExperiencia.valueOf(valor.trim().toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException e) {
+            throw new InvalidDataException("error.programa.nivelNoValido", valor);
+        }
+    }
+
+    private static TipoObjetivo tipoObjetivo(String valor) {
+        try {
+            return TipoObjetivo.valueOf(valor.trim().toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException e) {
+            throw new InvalidDataException("error.programa.objetivoNoValido", valor);
+        }
     }
 
     private Usuario usuarioActual() {

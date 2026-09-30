@@ -140,8 +140,8 @@ Todos van bajo el context-path `/api`. Los `@RequestMapping` de los controllers 
 
 | Método | URL | Auth | Descripción |
 |---|---|---|---|
-| POST | `/auth/login` | No | Login. Body: `{username, password}` → `TokenDTO` |
-| POST | `/auth/register` | No | Registro. Body: `{username, password, email}` → 201. Contraseña según DEC-034: 8 caracteres como mínimo, 72 bytes como máximo, sin composición; si es común o lleva «gymprofit» o el usuario, 400 con `PASSWORD_COMUN` o `PASSWORD_CONTIENE_NOMBRE` en `cause` (igual en cambiar y recuperar) |
+| POST | `/auth/login` | No | Login. Body: `{username, password}` → `TokenDTO`. En `username` va el usuario o el correo (GP-103): con «@» se busca primero por correo, sin distinguir mayúsculas, y si no hay, por usuario. El token lleva el username de la cuenta |
+| POST | `/auth/register` | No | Registro. Body: `{username?, password, email, nombre?, sexo?, nivelActividad?, …}` → 201 con `{mensaje, username}`. `username` es opcional (GP-103): sin él, la API lo propone con la parte del correo antes de la «@» (minúsculas, sin tildes, solo letras, números, `.` y `_`, de 3 a 30; con número si se queda corto o ya existe). Ningún usuario nuevo lleva «@»: 400 con `USERNAME_NO_VALIDO`, también en `POST /usuarios`. `nombre` con la regla del PATCH. `edad` menor de 14, 400 con `EDAD_MINIMA`. Contraseña según DEC-034: 8 caracteres como mínimo, 72 bytes como máximo, sin composición; si es común o lleva «gymprofit», el usuario o la parte del correo antes de la «@» (estos dos desde 3 caracteres), 400 con `PASSWORD_COMUN` o `PASSWORD_CONTIENE_NOMBRE` en `cause` (igual en cambiar y recuperar) |
 | POST | `/auth/guest` | No | Login como invitado → `TokenDTO` con ROLE_GUEST |
 | POST | `/auth/refresh` | No | Renueva el access token con el refresh opaco, que se rota |
 | POST | `/auth/logout` | No | Revoca el refresh token recibido |
@@ -157,7 +157,7 @@ Todos van bajo el context-path `/api`. Los `@RequestMapping` de los controllers 
 | GET | `/usuarios/username/{u}` | USER/ADMIN | Usuario por username |
 | GET | `/usuarios/{id}/estadisticas` | USER/ADMIN | Estadísticas jOOQ |
 | PUT | `/usuarios` | ADMIN | Actualizar completo (id en body) — SecurityConfig: solo ADMIN vía catch-all `/usuarios/**` |
-| PATCH | `/usuarios/{id}` | USER/ADMIN | Actualización parcial del perfil: un campo `null` o ausente no se toca. `sexo` y `nivelActividad` opcionales (GP-111), 400 si no están en su lista. `nombre` opcional (GP-116): se recorta, en blanco se borra y con más de 40 caracteres da 400. **No** cambia `activo` (lo ignora) ni el correo: un `email` distinto del actual da 400 |
+| PATCH | `/usuarios/{id}` | USER/ADMIN | Actualización parcial del perfil: un campo `null` o ausente no se toca. `sexo` y `nivelActividad` opcionales (GP-111), 400 si no están en su lista. `nombre` opcional (GP-116): se recorta, en blanco se borra y con más de 40 caracteres da 400. `edad` menor de 14 da 400 con `EDAD_MINIMA` en `cause`, como en el alta. `avisosEntrenar`, `avisosComidas` y `avisosProgreso` (GP-112) encienden o apagan cada tipo de recordatorio; de serie, sí, no y sí (ver `documentacion/NOTIFICACIONES.md`). **No** cambia `activo` (lo ignora) ni el correo: un `email` distinto del actual da 400 |
 | PUT | `/usuarios/me/email` | USER/ADMIN | Cambia el correo propio. Body: `{email, password}` — reautentica. 400 formato, 403 contraseña, 409 en uso. El usuario sale del token. En el cupo estricto del rate limit. El correo nuevo aún no se verifica (GP-045) |
 | GET | `/usuarios` | ADMIN | Todos los usuarios |
 | DELETE | `/usuarios/{id}` | ADMIN | Soft delete |
@@ -200,8 +200,8 @@ Catálogo v1 en `documentacion/CATALOGO-PLANTILLAS.md`, sembrado por la migraci�
 |---|---|---|---|
 | GET | `/programas?equipamiento=&dias=&nivel=` | GUEST+ | Programas activos; `AVANZADO`/`EXPERTO` dan los de intermedio. `[]` si no casa ninguno, 400 si un filtro no es válido |
 | GET | `/programas/{codigo}` | GUEST+ | La semana y cada rutina distinta con sus ejercicios |
-| GET | `/programas/recomendado?equipamiento=&dias=` | GUEST+ | El de la tabla del punto 1 del catálogo para el nivel del perfil (sin nivel, principiante; `AVANZADO`/`EXPERTO`, intermedio), con el nivel usado y el porqué si no es el obvio. Días de 2 a 6 |
-| GET | `/programas/{codigo}/vista-previa?minutos=` | GUEST+ | Cada rutina como quedaría al seguirlo, con las mismas reglas y sin guardar nada: duración, ejercicios, los que se quitan, las series de los básicos si cambian y los ajustes del perfil (`AVANZADO`, `FUERZA`) |
+| GET | `/programas/recomendado?equipamiento=&dias=&nivel=` | Público | El de la tabla del punto 1 del catálogo para el nivel pedido o, sin él, el del perfil del token (sin nivel, principiante; `AVANZADO`/`EXPERTO`, intermedio), con el nivel usado y el porqué si no es el obvio. Días de 2 a 6. Sin token (GP-103, el alta nueva): solo el catálogo, nada de ninguna cuenta. Con `nivel` no se mira el perfil y `nivelEnPerfil` es `false`. Un token caducado sigue siendo 401 |
+| GET | `/programas/{codigo}/vista-previa?minutos=&nivel=&objetivo=` | Público | Cada rutina como quedaría al seguirlo, con las mismas reglas y sin guardar nada: duración, ejercicios, los que se quitan, las series de los básicos si cambian y los ajustes (`AVANZADO`, `FUERZA`). Con `nivel` u `objetivo` se usan esos y el perfil no se mira, ni para los ajustes; sin ellos, el perfil del token; sin token, ninguno (GP-103) |
 | POST | `/programas/{codigo}/seguir` | USER+ | Cuerpo opcional `{"minutos": 30\|45\|60\|75}` (60 si falta). Deja el que siguiera y copia cada rutina distinta para el usuario del token con las reglas del punto 3 del catálogo (nivel, objetivo, tiempo). Si es el mismo programa, empieza en la posición que tocaba. 201 con lo creado |
 | GET | `/programas/seguido` | USER+ | El programa que sigue, sus minutos, su ciclo con sus rutinas y la posición que toca hoy; 204 si no sigue ninguno |
 | DELETE | `/programas/seguido` | USER+ | Lo deja: fecha de fin y sus rutinas desactivadas; sesiones y récords se quedan. 204 también si no seguía ninguno |

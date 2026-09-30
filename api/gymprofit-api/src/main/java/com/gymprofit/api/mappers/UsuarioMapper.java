@@ -34,6 +34,10 @@ public interface UsuarioMapper {
     @Mapping(target = "fotoPerfil", ignore = true)
     @Mapping(target = "roles", ignore = true)
     @Mapping(target = "authorities", ignore = true)
+    // Los avisos por tipo (GP-112) solo se cambian por el PATCH; al crear, los de serie.
+    @Mapping(target = "avisosEntrenar", ignore = true)
+    @Mapping(target = "avisosComidas", ignore = true)
+    @Mapping(target = "avisosProgreso", ignore = true)
     Usuario toEntity(UsuarioCreateDTO usuarioCreateDTO);
 
     // Actualiza en el sitio (@MappingTarget) los campos editables de una
@@ -47,5 +51,9 @@ public interface UsuarioMapper {
     @Mapping(target = "fotoPerfil", ignore = true)
     @Mapping(target = "roles", ignore = true)
     @Mapping(target = "authorities", ignore = true)
+    // Los avisos por tipo (GP-112) solo se cambian por el PATCH; al crear, los de serie.
+    @Mapping(target = "avisosEntrenar", ignore = true)
+    @Mapping(target = "avisosComidas", ignore = true)
+    @Mapping(target = "avisosProgreso", ignore = true)
     void updateEntityFromDTO(UsuarioUpdateDTO usuarioUpdateDTO, @MappingTarget Usuario usuario);
 }

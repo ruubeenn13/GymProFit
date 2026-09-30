@@ -493,7 +493,7 @@ DEC-027 y DEC-014 no se relajan; lo único que cambia es **cómo se afirma el ai
 - **Mínimo 8 caracteres**, contados como caracteres (code points) y no como unidades UTF-16: un emoji cuenta uno.
 - **Máximo 72 bytes en UTF-8**, que es lo que admite BCrypt. Con letras latinas son 72 caracteres; con eñes, menos. El error dice «demasiado larga», nunca el genérico.
 - **Sin reglas de composición.** Ni mayúsculas, ni números, ni símbolos obligatorios. Se admite cualquier carácter imprimible, espacios y Unicode incluidos. El texto de ayuda empuja hacia lo que sí sirve: «Una frase corta es más segura que una palabra».
-- **Lista de bloqueo dentro de la API**, sin servicios externos: las contraseñas de 8 o más caracteres de las 100 000 más frecuentes de la lista de 10 millones de Mark Burnett (dominio público), tomada de SecLists (MIT); 38 451 entradas en `seguridad/contrasenas-comunes.txt`, con la fuente en la cabecera. Más la que sea o contenga el nombre del servicio o el nombre de usuario. Sin distinguir mayúsculas. El rechazo es el mismo 400 con un código en `cause` —`PASSWORD_COMUN` o `PASSWORD_CONTIENE_NOMBRE`— y la app lo enseña en el campo.
+- **Lista de bloqueo dentro de la API**, sin servicios externos: las contraseñas de 8 o más caracteres de las 100 000 más frecuentes de la lista de 10 millones de Mark Burnett (dominio público), tomada de SecLists (MIT); 38 451 entradas en `seguridad/contrasenas-comunes.txt`, con la fuente en la cabecera. Más la que sea o contenga el nombre del servicio, el nombre de usuario o la parte del correo antes de la «@» (esta desde el lote 1.5.0, porque el alta nueva no pide usuario y se entra con el correo); el usuario y el correo cuentan desde 3 caracteres. Sin distinguir mayúsculas. El rechazo es el mismo 400 con un código en `cause` —`PASSWORD_COMUN` o `PASSWORD_CONTIENE_NOMBRE`— y la app lo enseña en el campo.
 - **Las cuentas que ya existen siguen entrando con su contraseña.** La regla no se comprueba al entrar, ni en la API ni en la app. **Nada de cambios periódicos**: NIST los desaconseja por lo mismo que la composición.
 - **La app recorta los espacios del principio y del final de la contraseña**, y lo hace igual al crearla, al entrar y al cambiarla (también al recuperarla). El motivo es el teclado del móvil: el autocompletado y el pegado añaden un espacio al final sin que se vea, y una contraseña guardada con ese espacio no vuelve a entrar si al día siguiente no se añade. Lo que importa es que las tres pantallas hagan lo mismo: si una recortara y otra no, la misma contraseña valdría en una y fallaría en otra. Los espacios de dentro sí cuentan, y una frase corta sigue siendo una buena contraseña. La API no recorta: recibe lo que la app manda.
   ~~*Al escribir esto (2026-09-27), la confirmación del borrado de cuenta manda la contraseña sin recortar. Es deuda anotada, no parte de la regla.*~~ **Saldada en GP-119 (1.1.1):** el borrado de cuenta también recorta, y con la contraseña equivocada la API responde 403 con `PASSWORD_ACTUAL_INCORRECTA` en `cause`, como al cambiarla. La del cambio de correo, que tenía el mismo defecto, recorta desde que pasó a Ajustes (GP-105).
@@ -523,6 +523,55 @@ DEC-027 y DEC-014 no se relajan; lo único que cambia es **cómo se afirma el ai
 **Consecuencias.** La superficie nueva es un sitio estático: no hay servidor propio que mantener ni base que proteger en otro sitio. Añadir una pantalla de administración es añadir rutas a la API (con su test de 403 para USER e invitado, DEC-014) y una página a la web. El panel de la app queda como duplicado hasta que se retire en la fase 2.
 
 **Qué la invalidaría.** Que haga falta más de un administrador con permisos distintos: entonces Access con un solo correo no basta y el rol ADMIN único se queda corto, y habría que diseñar roles (lo que DEC-012 anticipa para las capacidades). Que la web necesite hacer algo que la API no expone —la tentación de «leerlo directamente de la base»—: se añade a la API, nunca se abre la base a la web. Que Cloudflare deje de ser el proveedor del dominio: la web es estática y se muda a cualquier sitio que sirva archivos y cabeceras, pero Access habría que sustituirlo por otra cerradura equivalente antes de publicar.
+
+---
+
+### DEC-036 · Se entra con el correo o con el usuario, y el usuario lo propone la API
+**Estado:** Aceptada · **Fecha:** 2026-09-30 · **Tarea:** GP-103 (fase 1, lote 1.5.0)
+
+**Contexto.** El alta nueva es un cuestionario sin cuenta, «Tu plan» con el programa recomendado y la cuenta al final («Guarda tu plan»). Pedir ahí un nombre de usuario es una pregunta más en el peor momento, y la mayoría de la gente no recuerda qué usuario eligió, pero sí su correo.
+
+**Decisión.**
+
+- **Entrar.** `POST /auth/login` acepta en el mismo campo `username` el usuario o el correo; el campo no cambia de nombre para que las builds ya repartidas sigan entrando. Con «@» se busca primero por correo, **sin distinguir mayúsculas**, y si no hay cuenta con ese correo, por usuario, por si alguna antigua lleva «@» en el nombre. Un correo que no existe da el mismo 401 que una contraseña equivocada. El token sale con el `username` de la cuenta.
+- **El usuario, opcional en el alta.** Si no llega, la API lo propone con la parte del correo antes de la «@»: minúsculas, sin tildes, solo letras, números, punto y guion bajo, de 3 a 30 caracteres (sin nada aprovechable, «usuario»). Si se queda corto o ya existe, se le añade el primer número que lo deja libre («ana», «ana2»). La respuesta del alta lo devuelve.
+- **Ningún usuario nuevo lleva «@»**, se cree la cuenta por donde se cree (alta y `POST /usuarios`): 400 con `USERNAME_NO_VALIDO`. El login decide por la «@» si lo escrito es un correo, y un usuario con «@» podría llamarse como el correo de otra cuenta.
+- **La contraseña** tampoco puede contener la parte del correo antes de la «@» (DEC-034), con el mismo mínimo de 3 caracteres que el usuario: es lo primero que probaría quien conoce la dirección.
+
+**Consecuencias.** Un usuario propuesto es la parte local del correo, así que quien lo vea sabe media dirección. Hoy solo lo ven la propia cuenta y la administración (comprobado en las rutas de la API; el bot de Discord está fuera de este repositorio y no se ha mirado). Dos altas simultáneas con la misma base pueden recibir la misma propuesta; la restricción única de la base impide el duplicado, y la segunda falla con un 500 en vez de pisar a la primera. Es raro (hacen falta dos altas con la misma base en el mismo instante) y se deja anotado.
+
+**Qué la invalidaría.** Que el usuario pase a verse entre cuentas (un ranking, un perfil público): entonces el propuesto no puede salir del correo y hay que pedirlo o generarlo de otra forma. Que haga falta cambiar el usuario después del alta: hoy no se puede, y un propuesto que no gusta se queda. Con GP-045 (verificación de correo) el correo pasa a ser el identificador fuerte y esta decisión no cambia, pero DEC-028 sí.
+
+---
+
+### DEC-037 · Avisos por tipo, con comidas apagadas de serie
+**Estado:** Aceptada · **Fecha:** 2026-09-30 · **Tarea:** GP-112 (lote 1.5.0)
+
+**Contexto.** Los recordatorios que genera el servidor eran todo o nada. Los de comidas son cinco al día y solo sirven a quien registra lo que come; quien no lo hace solo podía callarlos apagando todas las notificaciones, también las que sí le servían. Y el recordatorio genérico de entrenar de las 18:00 saltaba los días de descanso de un programa.
+
+**Decisión.**
+
+- Tres interruptores por cuenta: **entrenar** (el de inactividad), **comidas** (los cinco) y **progreso** (resumen semanal, logro próximo, medición mensual y objetivo por vencer). Están en `UsuarioDTO` y se cambian por el PATCH.
+- **Valores de serie: entrenar sí, comidas no, progreso sí**, también para las cuentas que ya existían (los pone el `DEFAULT` de la migración). Comidas va apagado porque cinco avisos diarios sin haberlos pedido son la forma más rápida de que alguien apague todas las notificaciones de la app.
+- **Se retira el recordatorio de las 18:00.** No sabía si ese día tocaba descanso; el de inactividad ya cubre a quien lleva tres días sin entrenar.
+- Un recordatorio nuevo va en uno de los tres tipos, o trae su propio interruptor.
+
+**Consecuencias.** Quien recibía los de comidas deja de recibirlos al desplegar, y la 1.4.0 no tiene dónde encenderlos: llegan con la 1.5.1. Las notificaciones que crea la propia app (sesión en curso, descanso) no dependen de estos interruptores.
+
+**Qué la invalidaría.** Que los datos muestren que quien registra comidas deja de hacerlo sin los avisos: entonces comidas se enciende de serie para quien haya registrado alguna. Que se añada un recordatorio de entrenar que sepa del programa (qué día toca): volvería a caber uno a una hora fija, dentro de «entrenar».
+
+---
+
+### DEC-038 · La edad mínima, 14, la comprueba también la API
+**Estado:** Aceptada · **Fecha:** 2026-09-30 · **Tarea:** lote 1.5.0
+
+**Contexto.** La política de privacidad dice que GymProFit no es para menores de 14, pero la API aceptaba cualquier edad y la app dejaba poner desde 10. Una regla que solo está en un texto legal no protege a nadie.
+
+**Decisión.** El alta y el PATCH del perfil rechazan una edad menor de 14 con un 400 que dice el mínimo en el idioma de la petición y lleva `EDAD_MINIMA` en `cause`. La comprobación está en el servicio y no en el DTO, para que 0 o una edad negativa den el mismo 400 claro. Sin edad no se comprueba nada: sigue siendo opcional, y no se pide para usar la app.
+
+**Consecuencias.** La 1.4.0 deja poner de 10 a 13 en el onboarding, y Editar perfil no comprueba la edad; con una menor de 14 el guardado del perfil falla con un 400 que esa versión no sabe explicar. La 1.5.1 tiene que poner el mínimo en sus formularios y enseñar el mensaje. Las cuentas que ya tienen guardada una edad menor no se tocan: la regla se aplica al escribirla.
+
+**Qué la invalidaría.** Que la política cambie el mínimo (por país, o a 16 por el RGPD en algún mercado): se cambia el número en `ReglasPerfil` y en la política a la vez. Que se decida verificar la edad de verdad: esto solo rechaza lo que se declara.
 
 ---
 

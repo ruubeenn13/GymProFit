@@ -58,18 +58,21 @@ public class ProgramaController {
     }
 
     @Operation(summary = "El programa recomendado",
-            description = "El de la tabla del catálogo para el nivel del perfil del token, con el nivel usado y, " +
-                    "si no es el obvio, el porqué en el idioma de la petición. Sin nivel en el perfil, como " +
-                    "principiante; AVANZADO y EXPERTO, como intermedio.")
+            description = "El de la tabla del catálogo para el nivel pedido o, sin él, el del perfil del token, con " +
+                    "el nivel usado y, si no es el obvio, el porqué en el idioma de la petición. Sin nivel, como " +
+                    "principiante; AVANZADO y EXPERTO, como intermedio. Se puede pedir sin token (GP-103): solo " +
+                    "lee el catálogo. Con nivel no se mira el perfil y nivelEnPerfil es false.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "El recomendado"),
-            @ApiResponse(responseCode = "400", description = "Falta el equipamiento o los días no van de 2 a 6",
+            @ApiResponse(responseCode = "400", description = "Falta el equipamiento, los días no van de 2 a 6 o " +
+                    "el nivel no existe",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @GetMapping("/recomendado")
     public ResponseEntity<RecomendadoDTO> recomendado(@RequestParam(required = false) String equipamiento,
-                                                      @RequestParam(required = false) Integer dias) {
-        return ResponseEntity.ok(programaService.recomendado(equipamiento, dias));
+                                                      @RequestParam(required = false) Integer dias,
+                                                      @RequestParam(required = false) String nivel) {
+        return ResponseEntity.ok(programaService.recomendado(equipamiento, dias, nivel));
     }
 
     @Operation(summary = "El programa que sigue el usuario",
@@ -96,20 +99,23 @@ public class ProgramaController {
     }
 
     @Operation(summary = "Vista previa de seguir un programa",
-            description = "Cada rutina como quedaría al seguirlo con esos minutos y el perfil del token, con las " +
-                    "mismas reglas, sin guardar nada: duración, ejercicios, los que se quitan, las series de los " +
-                    "básicos si cambian y los ajustes del perfil que se aplican.")
+            description = "Cada rutina como quedaría al seguirlo con esos minutos, con las mismas reglas, sin " +
+                    "guardar nada: duración, ejercicios, los que se quitan, las series de los básicos si cambian y " +
+                    "los ajustes que se aplican. Con nivel u objetivo se usan esos y el perfil no se mira; sin " +
+                    "ellos, el perfil del token. Se puede pedir sin token (GP-103): solo lee el catálogo.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "La vista previa"),
-            @ApiResponse(responseCode = "400", description = "Minutos no válidos",
+            @ApiResponse(responseCode = "400", description = "Minutos, nivel u objetivo no válidos",
                     content = @Content(schema = @Schema(implementation = Response.class))),
             @ApiResponse(responseCode = "404", description = "No hay programa con ese código",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @GetMapping("/{codigo}/vista-previa")
     public ResponseEntity<VistaPreviaDTO> vistaPrevia(@PathVariable String codigo,
-                                                      @RequestParam(required = false) Integer minutos) {
-        return ResponseEntity.ok(programaService.vistaPrevia(codigo, minutos));
+                                                      @RequestParam(required = false) Integer minutos,
+                                                      @RequestParam(required = false) String nivel,
+                                                      @RequestParam(required = false) String objetivo) {
+        return ResponseEntity.ok(programaService.vistaPrevia(codigo, minutos, nivel, objetivo));
     }
 
     @Operation(summary = "Un programa con su semana y cada rutina con sus ejercicios")

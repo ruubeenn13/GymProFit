@@ -97,6 +97,20 @@ public class Usuario implements UserDetails {
     @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
     private Boolean activo;
 
+    // Avisos por tipo (GP-112): qué recordatorios del servidor recibe. Los valores de
+    // serie son los de la migración, también para las cuentas que ya existían.
+    // Entrenar: el de inactividad.
+    @Column(name = "avisos_entrenar", nullable = false)
+    private Boolean avisosEntrenar = true;
+
+    // Comidas: los cinco de comidas. Apagado de serie.
+    @Column(name = "avisos_comidas", nullable = false)
+    private Boolean avisosComidas = false;
+
+    // Progreso: resumen semanal, logro próximo, medición mensual y objetivo por vencer.
+    @Column(name = "avisos_progreso", nullable = false)
+    private Boolean avisosProgreso = true;
+
     // Ruta/nombre del archivo de la foto de perfil.
     @Column(name = "foto_perfil")
     private String fotoPerfil;

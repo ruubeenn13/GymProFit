@@ -15,8 +15,9 @@ public interface IAuthService {
     // Autentica al usuario y devuelve un token JWT junto con sus roles.
     TokenDTO login(LoginDTO loginDTO);
 
-    // Registra un nuevo usuario público (siempre con rol USER).
-    void register(RegisterDTO registerDTO);
+    // Registra un nuevo usuario público (siempre con rol USER) y devuelve su nombre de
+    // usuario: el que llegó o, sin él, el que propone la API (GP-103).
+    String register(RegisterDTO registerDTO);
 
     // Genera un token JWT para el usuario invitado predefinido "guest".
     TokenDTO loginAsGuest();

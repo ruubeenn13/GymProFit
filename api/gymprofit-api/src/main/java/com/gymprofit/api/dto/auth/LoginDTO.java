@@ -17,7 +17,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginDTO implements Serializable {
-    // Nombre de usuario para autenticación
+    // El nombre de usuario o el correo (GP-103). El campo conserva el nombre para que la
+    // 1.4.0, que manda «username», siga entrando igual.
     @NotBlank
     private String username;
 

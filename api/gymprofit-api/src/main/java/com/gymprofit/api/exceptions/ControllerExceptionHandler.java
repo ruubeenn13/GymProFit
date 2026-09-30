@@ -203,7 +203,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(InvalidDataException.class)
     public ResponseEntity<Response> handleInvalidDataException(InvalidDataException ex) {
         return new ResponseEntity<>(
-                Response.generalError(HttpStatus.BAD_REQUEST.value(), mensajes.texto(ex)),
+                Response.generalError(HttpStatus.BAD_REQUEST.value(), mensajes.texto(ex), ex.getCodigo()),
                 HttpStatus.BAD_REQUEST
         );
     }

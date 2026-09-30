@@ -174,7 +174,7 @@ public class PasswordResetService implements IPasswordResetService {
         // Lista de bloqueo y nombre (GP-101), con el código ya comprobado: así el
         // rechazo no dice nada a quien no lo tiene, y el código no se gasta, porque
         // cambiar de contraseña no es un intento fallido.
-        politicaContrasena.comprobar(dto.getNewPassword(), usuario.getUsername());
+        politicaContrasena.comprobar(dto.getNewPassword(), usuario.getUsername(), usuario.getEmail());
 
         usuario.setPassword(passwordEncoder.encode(dto.getNewPassword()));
         usuarioRepository.save(usuario);
