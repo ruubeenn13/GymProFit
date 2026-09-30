@@ -2,6 +2,7 @@ package es.pmdm.gymprofit.utils;
 
 import android.content.Context;
 import android.text.InputType;
+import android.text.method.DigitsKeyListener;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -53,6 +54,12 @@ public final class InputDialog {
         til.setHint(hint);
         if (sufijo != null) til.setSuffixText(sufijo);
         et.setInputType(inputType);
+        if ((inputType & InputType.TYPE_NUMBER_FLAG_DECIMAL) != 0) {
+            // El teclado numérico en español manda coma y numberDecimal la tira (GP-139):
+            // se aceptan las dos, y el teclado sigue siendo el numérico.
+            et.setKeyListener(DigitsKeyListener.getInstance("0123456789.,"));
+            et.setRawInputType(inputType);
+        }
         if (multilinea) et.setSingleLine(false);
         if (valorInicial != null && !valorInicial.isEmpty()) {
             et.setText(valorInicial);

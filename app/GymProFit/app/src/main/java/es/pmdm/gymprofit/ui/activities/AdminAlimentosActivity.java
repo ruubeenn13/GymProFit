@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.chip.ChipGroup;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +30,7 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.ui.adapters.AdminAlimentoAdapter;
 import es.pmdm.gymprofit.utils.LoadingDialog;
+import es.pmdm.gymprofit.utils.Numeros;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -301,11 +301,11 @@ public class AdminAlimentosActivity extends BaseActivity {
                 String calStr = etCalorias.getText().toString().trim();
                 if (!calStr.isEmpty()) patch.put("calorias", Integer.parseInt(calStr));
                 String protStr = etProteinas.getText().toString().trim();
-                if (!protStr.isEmpty()) patch.put("proteinas", new BigDecimal(protStr));
+                if (!protStr.isEmpty()) patch.put("proteinas", Numeros.leerExacto(protStr));
                 String carbStr = etCarbohidratos.getText().toString().trim();
-                if (!carbStr.isEmpty()) patch.put("carbohidratos", new BigDecimal(carbStr));
+                if (!carbStr.isEmpty()) patch.put("carbohidratos", Numeros.leerExacto(carbStr));
                 String grasStr = etGrasas.getText().toString().trim();
-                if (!grasStr.isEmpty()) patch.put("grasas", new BigDecimal(grasStr));
+                if (!grasStr.isEmpty()) patch.put("grasas", Numeros.leerExacto(grasStr));
 
                 dialog.dismiss();
                 // Spinner mientras se envía la edición parcial del alimento

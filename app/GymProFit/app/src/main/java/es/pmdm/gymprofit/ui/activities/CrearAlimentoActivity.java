@@ -24,6 +24,7 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.model.alimento.Alimento;
 import es.pmdm.gymprofit.utils.LoadingDialog;
+import es.pmdm.gymprofit.utils.Numeros;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -194,7 +195,7 @@ public class CrearAlimentoActivity extends BaseActivity {
         String raw = field.getText().toString().trim();
         if (raw.isEmpty()) return 0.0;
         try {
-            return Double.parseDouble(raw);
+            return Numeros.leerDecimal(raw);
         } catch (NumberFormatException e) {
             return 0.0;
         }

@@ -111,4 +111,34 @@ public class NumerosTest {
         assertNull(Numeros.exacto("setenta y cinco", 30, 300));
         assertNull(Numeros.exacto("", 30, 300));
     }
+
+    // ── Lectores que lanzan (GP-139): los sitios que ya tratan la excepción ──
+
+    @Test
+    public void leerDecimal_acepta_coma_y_punto() {
+        assertEquals(12.5, Numeros.leerDecimal("12,5"), 0.0001);
+        assertEquals(12.5, Numeros.leerDecimal(" 12.5 "), 0.0001);
+        assertEquals(150, Numeros.leerDecimal("150"), 0.0001);
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void leerDecimal_vacio_lanza() {
+        Numeros.leerDecimal("  ");
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void leerDecimal_dos_separadores_lanza() {
+        Numeros.leerDecimal("1,2.5");
+    }
+
+    @Test
+    public void leerExacto_acepta_coma_sin_perder_decimales() {
+        assertEquals(new BigDecimal("72.5"), Numeros.leerExacto("72,5"));
+        assertEquals(new BigDecimal("0.35"), Numeros.leerExacto("0.35"));
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void leerExacto_no_numerico_lanza() {
+        Numeros.leerExacto("abc");
+    }
 }
