@@ -72,6 +72,17 @@ Los generadores 6 y 7 se complementan sin duplicarse: 6 solo avisa a usuarios ac
 | `network/DeviceTokenApi` | `POST`/`DELETE notificaciones/token`. |
 | Hooks | Registro tras login (`LoginActivity.obtenerUsuario`); baja en logout (`BaseActivity.confirmarCerrarSesion`); re-sync al cambiar idioma. |
 
+## Notificaciones locales de la sesión en vivo
+
+No pasan por el servidor: las publica la app.
+
+| Canal | Qué |
+|---|---|
+| `"6"` «Sesión en curso» (baja, sin sonido) | `NotificacionSesion`: continua mientras hay una sesión, con el reloj; durante un descanso cuenta hacia atrás hasta su fin («Descanso · Hip thrust», «Después: serie 3 · Pierna B, 27 min»). Tocarla abre la sesión. |
+| `"7"` «Descanso» (alta, sonido y vibración del sistema) | `NotificacionDescanso` (GP-013, 1.4.0): «Descanso terminado · Hip thrust con barra, serie 3», solo con la app fuera o la pantalla apagada. La lanza una alarma a la hora de fin (`AlarmasDescanso`: exacta con `SCHEDULE_EXACT_ALARM`, `setWindow` sin él) que recibe `FinDescansoReceiver`. Categoría recordatorio: No molestar la silencia. Con la app delante no se publica: avisa `AvisoDescanso` (vibra y suena según el modo del móvil). |
+
+Detalle y medidas en `documentacion/estado/2026-09-30-lote-1.4.0.md`.
+
 ## Operación
 
 - **Prod (Render)**: env var `FIREBASE_CREDENTIALS_JSON`. Verificar en logs: `Firebase Admin SDK inicializado: notificaciones push ACTIVADAS`.
