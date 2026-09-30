@@ -23,6 +23,7 @@ import es.pmdm.gymprofit.network.AlimentoApi;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.model.alimento.Alimento;
+import es.pmdm.gymprofit.utils.CamposMacro;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.Numeros;
 import es.pmdm.gymprofit.utils.UIHelper;
@@ -151,14 +152,15 @@ public class CrearAlimentoActivity extends BaseActivity {
             return;
         }
 
+        // Un macro que no se entiende se marca y no se guarda (GP-142); vacío es 0.
+        double[] macros = CamposMacro.leer(etProteinas, etCarbohidratos, etGrasas);
+        if (macros == null) return;
+        double proteinas = macros[0], carbohidratos = macros[1], grasas = macros[2];
+
         if (categorias.isEmpty()) {
             UIHelper.mostrarToastError(this, getString(R.string.error_conexion));
             return;
         }
-
-        double proteinas     = parseDoubleOrZero(etProteinas);
-        double carbohidratos = parseDoubleOrZero(etCarbohidratos);
-        double grasas        = parseDoubleOrZero(etGrasas);
 
         // Cuerpo parcial: BigDecimal en los macros decimales, enteros/strings tal cual.
         Map<String, Object> body = new HashMap<>();
@@ -189,15 +191,4 @@ public class CrearAlimentoActivity extends BaseActivity {
         });
     }
 
-    // Parsea el contenido de un campo a double, devolviendo 0.0 si está vacío o no es válido
-    private double parseDoubleOrZero(TextInputEditText field) {
-        if (field.getText() == null) return 0.0;
-        String raw = field.getText().toString().trim();
-        if (raw.isEmpty()) return 0.0;
-        try {
-            return Numeros.leerDecimal(raw);
-        } catch (NumberFormatException e) {
-            return 0.0;
-        }
-    }
 }

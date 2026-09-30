@@ -293,6 +293,8 @@ public class AdminAlimentosActivity extends BaseActivity {
                 .prepararDialogoFormulario(this, dialogView);
 
         dialogView.findViewById(R.id.btnDialogConfirmar).setOnClickListener(v -> {
+            // Un macro que no se entiende se marca y el diálogo sigue abierto (GP-142).
+            if (es.pmdm.gymprofit.utils.CamposMacro.leer(etProteinas, etCarbohidratos, etGrasas) == null) return;
             try {
                 // Cuerpo de edición parcial: solo se incluyen los campos rellenados (decimales como BigDecimal).
                 Map<String, Object> patch = new HashMap<>();
@@ -324,7 +326,12 @@ public class AdminAlimentosActivity extends BaseActivity {
                         UiFeedback.toastError(AdminAlimentosActivity.this, code, message);
                     }
                 });
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException e) {
+                // Solo puede ser las calorías (los macros ya se han comprobado): demasiado
+                // grandes para un número. Se marca el campo y el diálogo sigue abierto.
+                etCalorias.setError(getString(R.string.error_numero_invalido));
+                etCalorias.requestFocus();
+            }
         });
         dialogView.findViewById(R.id.btnDialogCancelar).setOnClickListener(v -> dialog.dismiss());
 

@@ -89,6 +89,17 @@ public final class Numeros {
     }
 
     /**
+     * Un macro de alimento (proteínas, carbohidratos, grasas): vacío es 0, que es lo que
+     * significa no ponerlo; lo que no se entiende («1,2.5») es null, para marcarlo y no
+     * guardar un 0 que nadie escribió (GP-142).
+     */
+    @Nullable
+    public static Double macro(@Nullable String texto) {
+        if (texto == null || texto.trim().isEmpty()) return 0.0;
+        return decimal(texto, 0, Double.MAX_VALUE);
+    }
+
+    /**
      * Como {@link Double#parseDouble}, pero acepta coma o punto como separador: para
      * los sitios que ya tratan la {@link NumberFormatException} (vista previa, campos
      * opcionales). El teclado numérico de un móvil en español manda coma (GP-139).

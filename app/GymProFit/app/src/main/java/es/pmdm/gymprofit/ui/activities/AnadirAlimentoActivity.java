@@ -39,6 +39,7 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.ComidaApi;
 import es.pmdm.gymprofit.ui.adapters.AlimentoAdapter;
 import es.pmdm.gymprofit.utils.AvisoDescartar;
+import es.pmdm.gymprofit.utils.CamposMacro;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.Numeros;
 import es.pmdm.gymprofit.utils.PaginacionScrollListener;
@@ -233,9 +234,12 @@ public class AnadirAlimentoActivity extends BaseActivity {
                 if (!nombre.isEmpty()) body.put("nombre", nombre);
                 String calStr = etCalorias.getText() != null ? etCalorias.getText().toString().trim() : "";
                 if (!calStr.isEmpty()) body.put("calorias", Integer.parseInt(calStr));
-                body.put("proteinas",     BigDecimal.valueOf(parseDoubleOrZero(etProteinas)));
-                body.put("carbohidratos", BigDecimal.valueOf(parseDoubleOrZero(etCarbos)));
-                body.put("grasas",        BigDecimal.valueOf(parseDoubleOrZero(etGrasas)));
+                // Un macro que no se entiende se marca y el diálogo sigue abierto (GP-142).
+                double[] macros = CamposMacro.leer(etProteinas, etCarbos, etGrasas);
+                if (macros == null) return;
+                body.put("proteinas",     BigDecimal.valueOf(macros[0]));
+                body.put("carbohidratos", BigDecimal.valueOf(macros[1]));
+                body.put("grasas",        BigDecimal.valueOf(macros[2]));
                 dialog.dismiss();
                 // Muestra el spinner modal mientras se guarda la edición del alimento
                 LoadingDialog.show(this);
@@ -254,7 +258,10 @@ public class AnadirAlimentoActivity extends BaseActivity {
                     }
                 });
             } catch (NumberFormatException e) {
-                UIHelper.mostrarToastError(this, getString(R.string.error_conexion));
+                // Solo pueden ser las calorías (los macros ya se han comprobado): demasiado
+                // grandes para un número. Se marca el campo y el diálogo sigue abierto.
+                etCalorias.setError(getString(R.string.error_numero_invalido));
+                etCalorias.requestFocus();
             }
         });
         dialogView.findViewById(R.id.btnDialogCancelar).setOnClickListener(v -> dialog.dismiss());
@@ -542,15 +549,4 @@ public class AnadirAlimentoActivity extends BaseActivity {
         });
     }
 
-    // Parsea el contenido de un campo a double, devolviendo 0.0 si está vacío o no es válido
-    private double parseDoubleOrZero(TextInputEditText field) {
-        if (field.getText() == null) return 0.0;
-        String raw = field.getText().toString().trim();
-        if (raw.isEmpty()) return 0.0;
-        try {
-            return Numeros.leerDecimal(raw);
-        } catch (NumberFormatException e) {
-            return 0.0;
-        }
-    }
 }

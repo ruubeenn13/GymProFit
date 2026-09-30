@@ -141,4 +141,26 @@ public class NumerosTest {
     public void leerExacto_no_numerico_lanza() {
         Numeros.leerExacto("abc");
     }
+
+    // ── Macros de alimento (GP-142) ──────────────────────────
+
+    @Test
+    public void macro_vacio_es_cero() {
+        assertEquals(0.0, Numeros.macro(""), 0);
+        assertEquals(0.0, Numeros.macro("   "), 0);
+        assertEquals(0.0, Numeros.macro(null), 0);
+    }
+
+    @Test
+    public void macro_acepta_coma_y_punto() {
+        assertEquals(12.5, Numeros.macro("12,5"), 0.0001);
+        assertEquals(3.0, Numeros.macro("3"), 0.0001);
+    }
+
+    @Test
+    public void macro_que_no_se_entiende_no_es_cero() {
+        assertNull("«1,2.5» no se guarda como 0", Numeros.macro("1,2.5"));
+        assertNull(Numeros.macro("."));
+        assertNull("negativo", Numeros.macro("-3"));
+    }
 }
