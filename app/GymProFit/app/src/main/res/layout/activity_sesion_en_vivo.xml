@@ -5,7 +5,8 @@
   series hechas de las totales y los ejercicios hechos, con una barra de progreso.
   Si se intentó guardar, el estado del guardado. Luego la lista: una tarjeta por
   ejercicio con una fila por serie, y al final «Añadir ejercicio» y «Descartar».
-  La lista deja libre la parte de abajo de la pantalla: ahí irá el descanso (GP-013).
+  Abajo, sobre la lista, el descanso entre series (GP-013, view_descanso); la lista deja
+  debajo de su final el hueco que ocupa.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -206,11 +207,19 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvSesion"
+    <!-- La lista y, encima de su parte de abajo, el descanso (GP-013). -->
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:clipToPadding="false"
-        android:paddingBottom="@dimen/envivo_hueco_descanso" />
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvSesion"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/envivo_hueco_descanso" />
+
+        <include layout="@layout/view_descanso" />
+    </FrameLayout>
 </LinearLayout>

@@ -1232,4 +1232,32 @@
     </plurals>
     <string name="envivo_anadido">Added: %1$s</string>
     <string name="apuntar_titulo">Past workout</string>
+    <!-- Rest between sets (GP-013) -->
+    <string name="envivo_descanso">Rest</string>
+    <string name="envivo_descanso_despues">Next: %1$s, set %2$d</string>
+    <string name="envivo_descanso_menos">−15\u00A0s</string>
+    <string name="envivo_descanso_mas">+15\u00A0s</string>
+    <string name="envivo_descanso_menos_a11y">Take off 15 seconds</string>
+    <string name="envivo_descanso_mas_a11y">Add 15 seconds</string>
+    <string name="envivo_descanso_saltar">Skip</string>
+    <string name="envivo_descanso_saltar_a11y">Skip the rest</string>
+    <string name="envivo_descanso_a11y">Rest: %1$s left. %2$s</string>
+    <string name="envivo_descanso_sin_despues">Last set</string>
+    <plurals name="envivo_minutos">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+    <plurals name="envivo_segundos">
+        <item quantity="one">%d second</item>
+        <item quantity="other">%d seconds</item>
+    </plurals>
+    <string name="envivo_min_y_seg">%1$s and %2$s</string>
+    <string name="envivo_fin_titulo">Go for set %1$d!</string>
+    <string name="envivo_fin_titulo_sin_serie">Rest over</string>
+    <string name="envivo_fin_texto">%1$s · rest is over</string>
+    <string name="envivo_fin_cerrar">Dismiss</string>
+    <string name="envivo_serie_siguiente_a11y">Set %1$d, up next</string>
+    <string name="envivo_barra_descanso">Rest · %1$s · %2$s</string>
+    <string name="envivo_barra_descanso_a11y">Rest: %1$s left. %2$s. Back to the workout</string>
+    <string name="envivo_barra_fin">%1$s · %2$s</string>
 </resources>

@@ -46,6 +46,8 @@ import java.util.Locale;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.envivo.CronometroSerie;
 import es.pmdm.gymprofit.envivo.EmpezarSesion;
+import es.pmdm.gymprofit.envivo.LogicaDescanso;
+import es.pmdm.gymprofit.envivo.TextosDescanso;
 import es.pmdm.gymprofit.envivo.LogicaSesion;
 import es.pmdm.gymprofit.envivo.SesionEnCursoRepositorio;
 import es.pmdm.gymprofit.model.envivo.SesionEnCurso;
@@ -98,9 +100,15 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         @Override public void run() {
             pintarReloj();
             comprobarCronometro();
+            pintarDescanso(repo.actual());
             reloj.postDelayed(this, 1000);
         }
     };
+
+    // El descanso (GP-013): el panel de abajo y el aviso de su fin.
+    private View zonaDescanso, panelDescanso, grupoCuentaAtras, avisoFin, btnDescansoMas;
+    private TextView tvDescansoTiempo, tvDescansoDespues, tvFinTitulo, tvFinTexto;
+    private LinearProgressIndicator barraDescanso;
 
     @Nullable private BottomSheetDialog hojaCrono;
     @Nullable private TextView tvCronoTiempo;
@@ -157,6 +165,7 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
             ((androidx.recyclerview.widget.SimpleItemAnimator) rv.getItemAnimator()).setSupportsChangeAnimations(false);
         }
         instalarDeslizar();
+        configurarDescanso();
 
         anadirEjercicios = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 r -> {
@@ -224,6 +233,7 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
 
         adapter.pintar(s);
         pintarGuardado(s);
+        pintarDescanso(s);
 
         // Mientras corre un cronómetro la pantalla no se apaga; y su hoja se enseña
         // también al volver a la pantalla (sigue contando desde que empezó).
@@ -272,6 +282,76 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         texto.setVisibility(guardando ? View.GONE : View.VISIBLE);
         findViewById(R.id.btnReintentar).setVisibility(guardando ? View.GONE : View.VISIBLE);
         findViewById(R.id.btnDescartarGuardado).setVisibility(guardando ? View.GONE : View.VISIBLE);
+    }
+
+    // ── Descanso (GP-013) ────────────────────────────────────
+
+    private void configurarDescanso() {
+        zonaDescanso = findViewById(R.id.zonaDescanso);
+        panelDescanso = findViewById(R.id.panelDescanso);
+        grupoCuentaAtras = findViewById(R.id.grupoCuentaAtras);
+        avisoFin = findViewById(R.id.avisoFinDescanso);
+        tvDescansoTiempo = findViewById(R.id.tvDescansoTiempo);
+        tvDescansoDespues = findViewById(R.id.tvDescansoDespues);
+        tvFinTitulo = findViewById(R.id.tvFinTitulo);
+        tvFinTexto = findViewById(R.id.tvFinTexto);
+        barraDescanso = findViewById(R.id.barraDescanso);
+        btnDescansoMas = findViewById(R.id.btnDescansoMas);
+        findViewById(R.id.btnDescansoMenos).setOnClickListener(v -> repo.ajustarDescanso(-LogicaDescanso.PASO_SEGUNDOS));
+        btnDescansoMas.setOnClickListener(v -> repo.ajustarDescanso(LogicaDescanso.PASO_SEGUNDOS));
+        findViewById(R.id.btnDescansoSaltar).setOnClickListener(v -> repo.saltarDescanso());
+        findViewById(R.id.btnCerrarFin).setOnClickListener(v -> repo.cerrarFinDescanso());
+
+        // TalkBack lee lo que queda al llegar al panel o al tocarlo: la descripción se
+        // calcula en ese momento. Cambiarla a cada segundo sería un aviso por segundo.
+        ViewCompat.setAccessibilityDelegate(grupoCuentaAtras, new androidx.core.view.AccessibilityDelegateCompat() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(@NonNull View host,
+                                                          @NonNull androidx.core.view.accessibility.AccessibilityNodeInfoCompat info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                SesionEnCurso s = repo.actual();
+                if (s != null && s.descanso != null) info.setContentDescription(descripcionDescanso(s));
+            }
+        });
+
+        // La lista deja libre debajo de su final lo que ocupe el panel (con letra grande
+        // crece), para que la última serie no quede tapada.
+        int hueco = getResources().getDimensionPixelSize(R.dimen.envivo_hueco_descanso);
+        zonaDescanso.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) -> {
+            int alto = panelDescanso.getVisibility() == View.VISIBLE || avisoFin.getVisibility() == View.VISIBLE
+                    ? v.getHeight() : 0;
+            int abajo = Math.max(hueco, alto);
+            if (rv.getPaddingBottom() != abajo) {
+                rv.post(() -> rv.setPadding(rv.getPaddingLeft(), rv.getPaddingTop(), rv.getPaddingRight(), abajo));
+            }
+        });
+    }
+
+    // Cada segundo y a cada cambio: la cuenta atrás, «Después», la barra y el aviso del fin.
+    private void pintarDescanso(@Nullable SesionEnCurso s) {
+        if (panelDescanso == null) return;
+        SesionEnCurso.Descanso d = s != null ? s.descanso : null;
+        SesionEnCursoRepositorio.FinDescanso fin = d == null ? repo.finDescanso() : null;
+        panelDescanso.setVisibility(d != null ? View.VISIBLE : View.GONE);
+        avisoFin.setVisibility(fin != null ? View.VISIBLE : View.GONE);
+        if (d != null) {
+            long ahora = repo.ahora();
+            tvDescansoTiempo.setText(LogicaSesion.tiempo(LogicaDescanso.restanteSegundos(d, ahora)));
+            tvDescansoDespues.setText(TextosDescanso.despues(this, s));
+            barraDescanso.setProgress(LogicaDescanso.progreso(d, ahora));
+            btnDescansoMas.setEnabled(LogicaDescanso.puedeSumar(d, ahora));
+        }
+        if (fin != null) {
+            tvFinTitulo.setText(TextosDescanso.tituloFin(this, fin));
+            tvFinTexto.setText(getString(R.string.envivo_fin_texto,
+                    TextosDescanso.ejercicio(this, fin.ejercicio, fin.ejercicioId)));
+        }
+    }
+
+    // «Descanso: quedan 1 minuto y 42 segundos. Después: Hip thrust con barra, serie 3».
+    private String descripcionDescanso(SesionEnCurso s) {
+        return getString(R.string.envivo_descanso_a11y,
+                TextosDescanso.duracionHablada(this, LogicaDescanso.restanteSegundos(s.descanso, repo.ahora())), TextosDescanso.despues(this, s));
     }
 
     // ── Lista ────────────────────────────────────────────────

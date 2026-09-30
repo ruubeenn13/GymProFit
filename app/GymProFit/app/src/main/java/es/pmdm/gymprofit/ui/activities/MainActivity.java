@@ -165,6 +165,21 @@ public class MainActivity extends BaseActivity {
         View barraSesion = findViewById(R.id.barraSesion);
         barraSesion.setOnClickListener(v -> tocarBarraSesion());
         findViewById(R.id.btnBarraSesion).setOnClickListener(v -> tocarBarraSesion());
+        // Con un descanso en marcha, la descripción se calcula al llegar a la barra: lo
+        // que queda en ese momento, sin cambiarla (ni anunciarla) cada segundo.
+        androidx.core.view.ViewCompat.setAccessibilityDelegate(barraSesion, new androidx.core.view.AccessibilityDelegateCompat() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(@NonNull View host,
+                                                          @NonNull androidx.core.view.accessibility.AccessibilityNodeInfoCompat info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                SesionEnCurso s = sesionEnCurso.actual();
+                if (s == null || s.descanso == null || s.guardado != SesionEnCurso.Guardado.EDITANDO) return;
+                int queda = es.pmdm.gymprofit.envivo.LogicaDescanso.restanteSegundos(s.descanso, sesionEnCurso.ahora());
+                info.setContentDescription(getString(R.string.envivo_barra_descanso_a11y,
+                        es.pmdm.gymprofit.envivo.TextosDescanso.duracionHablada(MainActivity.this, queda),
+                        es.pmdm.gymprofit.envivo.TextosDescanso.despues(MainActivity.this, s)));
+            }
+        });
         sesionEnCurso.getSesion().observe(this, s -> pintarBarraSesion());
         // Un guardado que termina aquí es el reintento de al abrir la app: se dice.
         sesionEnCurso.getResultado().observe(this, evento -> {
@@ -194,6 +209,8 @@ public class MainActivity extends BaseActivity {
         if (s == null) return;
         String nombre = EmpezarSesion.nombre(this, s.rutinaNombre);
         android.widget.TextView texto = findViewById(R.id.tvBarraSesion);
+        android.widget.ImageView icono = findViewById(R.id.ivBarraSesion);
+        icono.setImageResource(R.drawable.ic_ms_timer);
         com.google.android.material.button.MaterialButton boton = findViewById(R.id.btnBarraSesion);
         if (s.guardado == SesionEnCurso.Guardado.FALLO) {
             texto.setText(getString(R.string.envivo_barra_sin_guardar, nombre));
@@ -203,6 +220,23 @@ public class MainActivity extends BaseActivity {
             texto.setText(getString(R.string.envivo_barra_guardando, nombre));
             boton.setText(R.string.envivo_volver);
             barraSesion.setContentDescription(texto.getText());
+        } else if (s.descanso != null) {
+            // Descanso en marcha (GP-013): la cuenta atrás y lo que viene. TalkBack oye lo
+            // que queda al llegar a la barra (el delegado lo calcula entonces).
+            int queda = es.pmdm.gymprofit.envivo.LogicaDescanso.restanteSegundos(s.descanso, sesionEnCurso.ahora());
+            texto.setText(getString(R.string.envivo_barra_descanso, LogicaSesion.tiempo(queda),
+                    es.pmdm.gymprofit.envivo.TextosDescanso.despues(this, s)));
+            boton.setText(R.string.envivo_volver);
+            barraSesion.setContentDescription(null);
+        } else if (sesionEnCurso.finDescanso() != null) {
+            // «¡A por la serie 3! · Hip thrust con barra», unos segundos.
+            SesionEnCursoRepositorio.FinDescanso fin = sesionEnCurso.finDescanso();
+            texto.setText(getString(R.string.envivo_barra_fin,
+                    es.pmdm.gymprofit.envivo.TextosDescanso.tituloFin(this, fin),
+                    es.pmdm.gymprofit.envivo.TextosDescanso.ejercicio(this, fin.ejercicio, fin.ejercicioId)));
+            boton.setText(R.string.envivo_volver);
+            icono.setImageResource(R.drawable.ic_ms_notifications_active_fill);
+            barraSesion.setContentDescription(texto.getText() + ". " + getString(R.string.envivo_volver));
         } else {
             String reloj = LogicaSesion.reloj(s.inicioMs, sesionEnCurso.ahora());
             texto.setText(getString(R.string.envivo_barra, nombre, reloj));

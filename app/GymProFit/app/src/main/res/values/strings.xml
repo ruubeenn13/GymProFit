@@ -1245,4 +1245,32 @@
     </plurals>
     <string name="envivo_anadido">Añadido: %1$s</string>
     <string name="apuntar_titulo">Entrenamiento hecho</string>
+    <!-- Descanso entre series (GP-013) -->
+    <string name="envivo_descanso">Descanso</string>
+    <string name="envivo_descanso_despues">Después: %1$s, serie %2$d</string>
+    <string name="envivo_descanso_menos">−15\u00A0s</string>
+    <string name="envivo_descanso_mas">+15\u00A0s</string>
+    <string name="envivo_descanso_menos_a11y">Quitar 15 segundos</string>
+    <string name="envivo_descanso_mas_a11y">Añadir 15 segundos</string>
+    <string name="envivo_descanso_saltar">Saltar</string>
+    <string name="envivo_descanso_saltar_a11y">Saltar el descanso</string>
+    <string name="envivo_descanso_a11y">Descanso: quedan %1$s. %2$s</string>
+    <string name="envivo_descanso_sin_despues">Última serie</string>
+    <plurals name="envivo_minutos">
+        <item quantity="one">%d minuto</item>
+        <item quantity="other">%d minutos</item>
+    </plurals>
+    <plurals name="envivo_segundos">
+        <item quantity="one">%d segundo</item>
+        <item quantity="other">%d segundos</item>
+    </plurals>
+    <string name="envivo_min_y_seg">%1$s y %2$s</string>
+    <string name="envivo_fin_titulo">¡A por la serie %1$d!</string>
+    <string name="envivo_fin_titulo_sin_serie">Descanso terminado</string>
+    <string name="envivo_fin_texto">%1$s · se acabó el descanso</string>
+    <string name="envivo_fin_cerrar">Cerrar el aviso</string>
+    <string name="envivo_serie_siguiente_a11y">Serie %1$d, la siguiente</string>
+    <string name="envivo_barra_descanso">Descanso · %1$s · %2$s</string>
+    <string name="envivo_barra_descanso_a11y">Descanso: quedan %1$s. %2$s. Volver a la sesión</string>
+    <string name="envivo_barra_fin">%1$s · %2$s</string>
 </resources>

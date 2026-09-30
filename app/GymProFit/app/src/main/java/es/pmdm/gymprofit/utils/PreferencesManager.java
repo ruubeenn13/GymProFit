@@ -28,6 +28,10 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
     // Archivo SEPARADO y CIFRADO (EncryptedSharedPreferences) solo para los tokens sensibles.
     private static final String SECURE_PREF_NAME = "gymprofit_secure_prefs";
     private static final String KEY_THEME = "theme_mode";
+    // Descanso entre series (GP-013): del móvil, no de la cuenta, como el tema.
+    private static final String KEY_DESCANSO_AL_MARCAR = "descanso_al_marcar";
+    private static final String KEY_DESCANSO_SIN_PAUTA = "descanso_sin_pauta";
+    private static final String KEY_HOJA_PERMISO_DESCANSO = "descanso_hoja_permiso_vista";
     private static final String KEY_LANGUAGE = "app_language";
     private static final String KEY_TOKEN = "auth_token";
     private static final String KEY_REFRESH_TOKEN = "refresh_token";
@@ -116,6 +120,22 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
     // Oscuro por defecto (rediseño atlético); el usuario puede forzar claro desde el menú.
     public int getTheme() { return prefs.getInt(KEY_THEME, AppCompatDelegate.MODE_NIGHT_YES); }
     public void applyTheme() { AppCompatDelegate.setDefaultNightMode(getTheme()); }
+
+    /** «Empezar el descanso al marcar una serie»: sí, de serie (GP-013). */
+    public boolean getDescansoAlMarcar() { return prefs.getBoolean(KEY_DESCANSO_AL_MARCAR, true); }
+    public void saveDescansoAlMarcar(boolean si) { editor.putBoolean(KEY_DESCANSO_AL_MARCAR, si).apply(); }
+
+    /** «Descanso sin pauta», en segundos: una de las opciones, 90 de serie. */
+    public int getDescansoSinPauta() {
+        int s = prefs.getInt(KEY_DESCANSO_SIN_PAUTA, es.pmdm.gymprofit.envivo.LogicaDescanso.SIN_PAUTA_DEFECTO);
+        for (int o : es.pmdm.gymprofit.envivo.LogicaDescanso.SIN_PAUTA_OPCIONES) if (o == s) return s;
+        return es.pmdm.gymprofit.envivo.LogicaDescanso.SIN_PAUTA_DEFECTO;
+    }
+    public void saveDescansoSinPauta(int segundos) { editor.putInt(KEY_DESCANSO_SIN_PAUTA, segundos).apply(); }
+
+    /** Si ya salió sola la hoja del permiso de avisar con la pantalla apagada: solo una vez. */
+    public boolean getHojaPermisoDescansoVista() { return prefs.getBoolean(KEY_HOJA_PERMISO_DESCANSO, false); }
+    public void saveHojaPermisoDescansoVista() { editor.putBoolean(KEY_HOJA_PERMISO_DESCANSO, true).apply(); }
 
     public void saveLanguage(String code) { editor.putString(KEY_LANGUAGE, code); editor.apply(); }
     public String getLanguage() { return prefs.getString(KEY_LANGUAGE, ""); }
