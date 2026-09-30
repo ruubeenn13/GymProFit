@@ -100,4 +100,15 @@ public class HoyTocaTest {
         assertNull(HoyToca.sesionDeHoy(s, "2026-09-28"));
         assertNull(HoyToca.sesionDeHoy(null, "2026-09-28"));
     }
+
+    @Test
+    public void hecho_hoy_no_depende_del_orden_de_la_lista() {
+        SesionEntrenamiento primera = sesion(1, "2026-09-30T18:00:00");
+        primera.setId(10);
+        SesionEntrenamiento despues = sesion(2, "2026-09-30T18:00:00");
+        despues.setId(11);
+
+        assertEquals(11, HoyToca.sesionDeHoy(Arrays.asList(primera, despues), "2026-09-30").getId());
+        assertEquals(11, HoyToca.sesionDeHoy(Arrays.asList(despues, primera), "2026-09-30").getId());
+    }
 }

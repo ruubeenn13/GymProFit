@@ -108,7 +108,9 @@ public final class HoyToca {
         for (SesionEntrenamiento s : sesiones) {
             String inicio = s.getFechaInicio();
             if (inicio == null || !hoy.equals(dia(inicio))) continue;
-            if (ultima == null || inicio.compareTo(ultima.getFechaInicio()) > 0) ultima = s;
+            // A igual hora de inicio, la guardada después: así no depende del orden de la lista.
+            int cmp = ultima == null ? 1 : inicio.compareTo(ultima.getFechaInicio());
+            if (cmp > 0 || (cmp == 0 && s.getId() > ultima.getId())) ultima = s;
         }
         return ultima;
     }
