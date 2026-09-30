@@ -24,6 +24,8 @@
         <!-- Fijado con el valor que daba Material hasta la 1.12 (GP-136): desde la 1.13, en
              claro y en Android 12 o más, salía más gris, y es el texto de los chips marcados. -->
         <item name="colorOnSecondaryContainer">@color/gp_on_secondary_container</item>
+        <!-- El calendario, con la letra de la 1.12: ver ThemeOverlay.GymProFit.Calendario. -->
+        <item name="materialCalendarTheme">@style/ThemeOverlay.GymProFit.Calendario</item>
         <item name="colorSurface">@color/gp_surface</item>
         <item name="colorOnSurface">@color/gp_on_surface</item>
         <item name="colorSurfaceVariant">@color/gp_surface_2</item>
@@ -360,6 +362,24 @@
     <style name="ThemeOverlay.GymProFit.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
         <item name="colorSurface">@color/gp_surface</item>
         <item name="dialogCornerRadius">22dp</item>
+    </style>
+
+    <!-- ── Calendario (MaterialDatePicker) con la letra de la 1.12 ──────────
+         Material 1.13 puso autoajuste de tamaño (hasta 16sp) a los días y a sus
+         iniciales; con la escala de letra de la app salían 2 px más altos que en la
+         1.12, sin que nadie lo decidiera. Se deja el estilo de Material sin el
+         autoajuste, como el color de los chips (GP-136). -->
+    <style name="ThemeOverlay.GymProFit.Calendario" parent="ThemeOverlay.Material3.MaterialCalendar">
+        <item name="materialCalendarDay">@style/Widget.GymProFit.CalendarioDia</item>
+        <item name="materialCalendarDayOfWeekLabel">@style/Widget.GymProFit.CalendarioSemana</item>
+    </style>
+
+    <style name="Widget.GymProFit.CalendarioDia" parent="Widget.Material3.MaterialCalendar.DayTextView">
+        <item name="autoSizeTextType">none</item>
+    </style>
+
+    <style name="Widget.GymProFit.CalendarioSemana" parent="Widget.Material3.MaterialCalendar.DayOfWeekLabel">
+        <item name="autoSizeTextType">none</item>
     </style>
 
     <!-- ── Snackbar sobre superficie secundaria ────────────────────────────── -->
