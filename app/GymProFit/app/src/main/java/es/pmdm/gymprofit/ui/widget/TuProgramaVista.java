@@ -110,6 +110,19 @@ public class TuProgramaVista {
         }
     }
 
+    // La rutina de la sesión en curso (GP-012), o null: su tarjeta dice «En curso» y
+    // «Volver». Lo fija quien pinta, antes de pintar.
+    @androidx.annotation.Nullable private Integer rutinaEnCurso;
+
+    /** La rutina de la sesión en curso, o null si no hay (o es sin rutina). */
+    public void setRutinaEnCurso(@androidx.annotation.Nullable Integer rutinaId) {
+        rutinaEnCurso = rutinaId;
+    }
+
+    private boolean enCurso(Rutina r) {
+        return rutinaEnCurso != null && rutinaEnCurso == r.getId();
+    }
+
     private void pintarHoy(RutinaConEjercicios hoy) {
         ((TextView) raiz.findViewById(R.id.tvHoyNombre)).setText(hoy.getNombre());
         ((TextView) raiz.findViewById(R.id.tvHoySub)).setText(resumen(ctx, hoy));
@@ -119,8 +132,12 @@ public class TuProgramaVista {
         List<RutinaEjercicio> ejercicios = hoy.getEjercicios() != null ? hoy.getEjercicios() : new ArrayList<>();
         for (RutinaEjercicio re : ejercicios) lista.addView(FilaPauta.crear(ctx, lista, re, false));
 
-        View empezar = raiz.findViewById(R.id.btnEmpezarHoy);
-        empezar.setContentDescription(ctx.getString(R.string.empezar_rutina_a11y, hoy.getNombre()));
+        com.google.android.material.button.MaterialButton empezar = raiz.findViewById(R.id.btnEmpezarHoy);
+        boolean enCurso = enCurso(hoy);
+        ((TextView) raiz.findViewById(R.id.tvHoyEtiqueta)).setText(enCurso ? R.string.envivo_en_curso : R.string.hoy_toca);
+        empezar.setText(enCurso ? R.string.envivo_volver : R.string.btn_empezar);
+        empezar.setContentDescription(enCurso ? ctx.getString(R.string.envivo_volver_rutina_a11y, hoy.getNombre())
+                : ctx.getString(R.string.empezar_rutina_a11y, hoy.getNombre()));
         empezar.setOnClickListener(v -> acciones.empezar(hoy));
     }
 
@@ -135,10 +152,17 @@ public class TuProgramaVista {
             String resumen = resumen(ctx, r);
             ((TextView) card.findViewById(R.id.tvNombre)).setText(r.getNombre());
             ((TextView) card.findViewById(R.id.tvResumen)).setText(resumen);
-            View boton = card.findViewById(R.id.btnEmpezarContorno);
-            boton.setContentDescription(ctx.getString(R.string.empezar_rutina_a11y, r.getNombre()));
+            com.google.android.material.button.MaterialButton boton = card.findViewById(R.id.btnEmpezarContorno);
+            boolean enCurso = enCurso(r);
+            TextView etiqueta = card.findViewById(R.id.tvTocaHoy);
+            etiqueta.setText(R.string.envivo_en_curso);
+            etiqueta.setVisibility(enCurso ? View.VISIBLE : View.GONE);
+            boton.setText(enCurso ? R.string.envivo_volver : R.string.btn_empezar);
+            boton.setContentDescription(enCurso ? ctx.getString(R.string.envivo_volver_rutina_a11y, r.getNombre())
+                    : ctx.getString(R.string.empezar_rutina_a11y, r.getNombre()));
             boton.setOnClickListener(v -> acciones.empezar(r));
-            card.setContentDescription(r.getNombre() + ". " + resumen);
+            card.setContentDescription(r.getNombre() + ". " + resumen
+                    + (enCurso ? ". " + ctx.getString(R.string.envivo_en_curso) : ""));
             card.setOnClickListener(v -> acciones.abrirRutina(r));
             card.setOnLongClickListener(v -> {
                 acciones.menuRutina(v, r);

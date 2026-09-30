@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  view_acciones_rapidas — la hoja del «+» (GP-105): «¿Qué quieres hacer?» con tres
+  view_acciones_rapidas — la hoja del «+» (GP-105): «¿Qué quieres hacer?» con cuatro
   atajos. Flota 16 dp por encima de la barra, con 12 dp a los lados, como el lienzo.
   Los subtítulos (qué rutina toca, qué comida, el último peso) empiezan ocultos y solo
   se enseñan cuando el dato ya está cargado: nunca un «cargando» aquí dentro.
@@ -71,12 +71,48 @@
             <LinearLayout style="@style/Widget.GymProFit.FilaAccion.Textos">
 
                 <TextView
+                    android:id="@+id/tvTituloEntrenar"
                     style="@style/Widget.GymProFit.FilaAccion.Titulo"
                     android:text="@string/accion_entrenar" />
 
                 <TextView
                     android:id="@+id/tvSubEntrenar"
                     style="@style/Widget.GymProFit.FilaAccion.Sub" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Apuntar un entrenamiento ya hecho, con su fecha y su duración (GP-012): el
+             formulario de siempre. Empezar ya no lo abre: abre la sesión en vivo. -->
+        <LinearLayout
+            android:id="@+id/accionApuntar"
+            style="@style/Widget.GymProFit.FilaAccion">
+
+            <FrameLayout
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_circulo_superficie"
+                android:importantForAccessibility="no">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_ms_edit"
+                    app:tint="?attr/colorOnSurface"
+                    android:importantForAccessibility="no" />
+            </FrameLayout>
+
+            <LinearLayout style="@style/Widget.GymProFit.FilaAccion.Textos">
+
+                <TextView
+                    style="@style/Widget.GymProFit.FilaAccion.Titulo"
+                    android:text="@string/accion_apuntar" />
+
+                <TextView
+                    android:id="@+id/tvSubApuntar"
+                    style="@style/Widget.GymProFit.FilaAccion.Sub"
+                    android:text="@string/accion_apuntar_sub"
+                    android:visibility="visible" />
             </LinearLayout>
         </LinearLayout>
 

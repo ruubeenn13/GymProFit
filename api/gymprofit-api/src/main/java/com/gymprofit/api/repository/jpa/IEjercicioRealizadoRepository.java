@@ -135,4 +135,27 @@ public interface IEjercicioRealizadoRepository extends JpaRepository<EjercicioRe
            "WHERE s.usuario.id = :usuarioId AND s.completada = true " +
            "AND sr.completada = true AND (sr.repeticiones > 0 OR sr.segundos > 0)")
     List<Object[]> seriesCompletadasDeUsuario(@Param("usuarioId") Integer usuarioId);
+
+    /**
+     * Series de la última vez de cada ejercicio pedido (GP-014): las de la sesión
+     * completada más reciente del usuario que tenga alguna serie marcada de ese
+     * ejercicio. Mismo criterio de serie válida que {@link #seriesCompletadasDeUsuario}.
+     * <p>
+     * Si dos sesiones empatan en fecha, o el ejercicio sale dos veces en la misma, vuelven
+     * todas y el servicio se queda con una; por eso el orden.
+     *
+     * @return filas {@code [ejercicioId, sesionId, fechaInicio, ejercicioRealizadoId,
+     *         numero, peso, repeticiones, segundos]}.
+     */
+    @Query("SELECT e.id, s.id, s.fechaInicio, er.id, sr.numero, sr.peso, sr.repeticiones, sr.segundos " +
+           "FROM SerieRealizada sr JOIN sr.ejercicioRealizado er JOIN er.sesion s JOIN er.ejercicio e " +
+           "WHERE s.usuario.id = :usuarioId AND s.completada = true AND e.id IN :ejercicioIds " +
+           "AND sr.completada = true AND (sr.repeticiones > 0 OR sr.segundos > 0) " +
+           "AND s.fechaInicio = (SELECT MAX(s2.fechaInicio) FROM SerieRealizada sr2 " +
+           "  JOIN sr2.ejercicioRealizado er2 JOIN er2.sesion s2 " +
+           "  WHERE s2.usuario.id = :usuarioId AND s2.completada = true AND er2.ejercicio.id = e.id " +
+           "  AND sr2.completada = true AND (sr2.repeticiones > 0 OR sr2.segundos > 0)) " +
+           "ORDER BY e.id, s.id DESC, er.id, sr.numero")
+    List<Object[]> seriesUltimaVez(@Param("usuarioId") Integer usuarioId,
+                                   @Param("ejercicioIds") java.util.Collection<Integer> ejercicioIds);
 }

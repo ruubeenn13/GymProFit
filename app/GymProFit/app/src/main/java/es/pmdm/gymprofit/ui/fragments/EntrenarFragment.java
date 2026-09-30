@@ -1,5 +1,7 @@
 package es.pmdm.gymprofit.ui.fragments;
 
+import es.pmdm.gymprofit.envivo.SesionEnCursoRepositorio;
+import es.pmdm.gymprofit.model.envivo.SesionEnCurso;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -34,7 +36,7 @@ import es.pmdm.gymprofit.ui.activities.CrearRutinaActivity;
 import es.pmdm.gymprofit.ui.activities.EjerciciosActivity;
 import es.pmdm.gymprofit.ui.activities.ProgramaDetalleActivity;
 import es.pmdm.gymprofit.ui.activities.ProgramasActivity;
-import es.pmdm.gymprofit.ui.activities.RegistrarSesionActivity;
+import es.pmdm.gymprofit.envivo.EmpezarSesion;
 import es.pmdm.gymprofit.ui.widget.MenuRutina;
 import es.pmdm.gymprofit.ui.widget.SeguirProgramaHoja;
 import es.pmdm.gymprofit.ui.widget.TuProgramaVista;
@@ -110,6 +112,33 @@ public class EntrenarFragment extends BaseFragment {
 
         pintarAyudaBuscador(null);
         cargarTotalEjercicios();
+
+        // La tarjeta de la rutina en curso dice «En curso» (GP-012): al empezar, guardar o
+        // descartar se repinta con lo que ya hay, sin volver a pedirlo.
+        SesionEnCursoRepositorio.get(requireContext()).getSesion().observe(getViewLifecycleOwner(), s -> {
+            // Guardada: el programa avanza y cambia qué toca; se vuelve a pedir.
+            boolean guardadaODescartada = habiaSesion && s == null;
+            habiaSesion = s != null;
+            if (guardadaODescartada) {
+                cargarMisRutinas();
+                return;
+            }
+            if (seguido != null) {
+                tuPrograma.setRutinaEnCurso(rutinaEnCurso());
+                tuPrograma.pintar(seguido);
+            }
+            listo();
+        });
+    }
+
+    // Si en el último aviso había sesión en curso.
+    private boolean habiaSesion;
+
+    // La rutina de la sesión en curso, o null.
+    @Nullable
+    private Integer rutinaEnCurso() {
+        SesionEnCurso s = SesionEnCursoRepositorio.get(requireContext()).actual();
+        return s != null ? s.rutinaId : null;
     }
 
     @Override
@@ -167,7 +196,10 @@ public class EntrenarFragment extends BaseFragment {
                 seguido = s;
                 seguidoListo = true;
                 if (s == null) tuPrograma.sinPrograma();
-                else tuPrograma.pintar(s);
+                else {
+                    tuPrograma.setRutinaEnCurso(rutinaEnCurso());
+                    tuPrograma.pintar(s);
+                }
                 listo();
             }
             @Override public void onFail(int code, String message) {
@@ -208,17 +240,26 @@ public class EntrenarFragment extends BaseFragment {
                     getResources().getQuantityString(R.plurals.rutina_num_ejercicios, r.getNumEjercicios(), r.getNumEjercicios()),
                     getString(R.string.duracion_min, r.getDuracionMinutos()));
             ((TextView) card.findViewById(R.id.tvResumen)).setText(resumen);
-            card.findViewById(R.id.tvTocaHoy).setVisibility(toca ? View.VISIBLE : View.GONE);
+            // La de la sesión en curso dice «En curso» y vuelve a ella (GP-012).
+            Integer enCursoId = rutinaEnCurso();
+            boolean enCurso = enCursoId != null && enCursoId == r.getId();
+            TextView etiqueta = card.findViewById(R.id.tvTocaHoy);
+            etiqueta.setText(enCurso ? R.string.envivo_en_curso : R.string.toca_hoy);
+            etiqueta.setVisibility(toca || enCurso ? View.VISIBLE : View.GONE);
 
-            View lleno = card.findViewById(R.id.btnEmpezarLleno);
-            View contorno = card.findViewById(R.id.btnEmpezarContorno);
-            lleno.setVisibility(toca ? View.VISIBLE : View.GONE);
-            contorno.setVisibility(toca ? View.GONE : View.VISIBLE);
-            View boton = toca ? lleno : contorno;
-            boton.setContentDescription(getString(R.string.empezar_rutina_a11y, r.getNombre()));
+            com.google.android.material.button.MaterialButton lleno = card.findViewById(R.id.btnEmpezarLleno);
+            com.google.android.material.button.MaterialButton contorno = card.findViewById(R.id.btnEmpezarContorno);
+            boolean destacado = toca || enCurso;
+            lleno.setVisibility(destacado ? View.VISIBLE : View.GONE);
+            contorno.setVisibility(destacado ? View.GONE : View.VISIBLE);
+            com.google.android.material.button.MaterialButton boton = destacado ? lleno : contorno;
+            boton.setText(enCurso ? R.string.envivo_volver : R.string.btn_empezar);
+            boton.setContentDescription(enCurso ? getString(R.string.envivo_volver_rutina_a11y, r.getNombre())
+                    : getString(R.string.empezar_rutina_a11y, r.getNombre()));
             boton.setOnClickListener(v -> empezar(r));
 
-            card.setContentDescription(r.getNombre() + ". " + resumen + (toca ? ". " + getString(R.string.toca_hoy) : ""));
+            card.setContentDescription(r.getNombre() + ". " + resumen
+                    + (enCurso ? ". " + getString(R.string.envivo_en_curso) : toca ? ". " + getString(R.string.toca_hoy) : ""));
             card.setOnClickListener(v -> MenuRutina.abrirDetalle(requireActivity(), recargar, r));
             card.setOnLongClickListener(v -> {
                 if (!verificarAccesoRegistrado()) return true;
@@ -241,12 +282,11 @@ public class EntrenarFragment extends BaseFragment {
         recargar.launch(new Intent(requireContext(), CrearRutinaActivity.class));
     }
 
-    // Registrar sesión con esa rutina, o en entrenamiento libre si es null.
+    // La sesión en vivo con esa rutina, o vacía si es null (GP-012). Con otra en curso,
+    // EmpezarSesion pregunta.
     private void empezar(@Nullable Rutina r) {
         if (!verificarAccesoRegistrado()) return;
-        Intent i = new Intent(requireContext(), RegistrarSesionActivity.class);
-        if (r != null) i.putExtra(RegistrarSesionActivity.EXTRA_RUTINA_ID, r.getId());
-        startActivity(i);
+        EmpezarSesion.empezar(requireActivity(), r);
     }
 
     // ── Tu programa ─────────────────────────────────────────────────────────

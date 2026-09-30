@@ -50,6 +50,60 @@ public class RegistrarSesionViewModelTest {
     private static final int RUTINA_PIERNA = 5;
     private static final int RUTINA_TORSO = 8;
 
+    // ── La fecha (GP-012: apuntar un entrenamiento hecho) ────────
+
+    private static final java.util.TimeZone MADRID = java.util.TimeZone.getTimeZone("Europe/Madrid");
+    // 2026-09-30 19:10:00 en Madrid.
+    private static final long AHORA = 1_790_788_200_000L;
+
+    private RegistrarSesionViewModel conReloj(Falso red) {
+        RegistrarSesionViewModel vm = new RegistrarSesionViewModel(new SavedStateHandle(), red);
+        vm.ahora = () -> AHORA;
+        vm.zona = MADRID;
+        return vm;
+    }
+
+    @Test
+    public void la_fecha_es_hoy_por_defecto_y_el_inicio_ahora_menos_la_duracion() {
+        Falso red = new Falso();
+        RegistrarSesionViewModel vm = conReloj(red);
+        vm.iniciar(null);
+        red.responderRutinas();
+        assertEquals("2026-09-30", vm.getFecha());
+
+        vm.setDuracion("45");
+        vm.guardar();
+
+        assertEquals("2026-09-30T18:25:00", red.guardados.get(0).cuerpo.get("fechaInicio"));
+    }
+
+    @Test
+    public void un_entrenamiento_de_ayer_empieza_ayer_a_la_hora_de_ahora_menos_la_duracion() {
+        Falso red = new Falso();
+        RegistrarSesionViewModel vm = conReloj(red);
+        vm.iniciar(null);
+        red.responderRutinas();
+
+        assertTrue(vm.setFecha("2026-09-29"));
+        vm.setDuracion("60");
+        vm.guardar();
+
+        assertEquals("2026-09-29T18:10:00", red.guardados.get(0).cuerpo.get("fechaInicio"));
+    }
+
+    @Test
+    public void nunca_una_fecha_futura() {
+        RegistrarSesionViewModel vm = conReloj(new Falso());
+        assertFalse(vm.setFecha("2026-10-01"));
+        assertEquals("2026-09-30", vm.getFecha());
+    }
+
+    @Test
+    public void si_la_duracion_cruza_la_medianoche_empieza_el_dia_anterior() {
+        assertEquals("2026-09-28T23:30:00",
+                RegistrarSesionViewModel.fechaInicio("2026-09-29", 1_790_634_600_000L, 60, MADRID));
+    }
+
     // ── Restaurar ─────────────────────────────────────────────
 
     @Test

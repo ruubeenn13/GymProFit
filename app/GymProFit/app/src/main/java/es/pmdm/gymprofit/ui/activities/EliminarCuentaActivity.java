@@ -153,6 +153,9 @@ public class EliminarCuentaActivity extends BaseActivity {
                 // guardado en el móvil sobran, incluido el perfil local que
                 // cerrarSesion() conserva a propósito para volver a entrar.
                 UtilREST.clearToken();
+                // La sesión en curso, si había, también se va del móvil (GP-012).
+                es.pmdm.gymprofit.envivo.SesionEnCursoRepositorio.get(EliminarCuentaActivity.this)
+                        .borrarDeCuenta(prefsManager.getUsuarioId());
                 prefsManager.borrarDatosLocales();
 
                 UIHelper.mostrarToastExito(EliminarCuentaActivity.this,

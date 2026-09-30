@@ -1,5 +1,12 @@
 package es.pmdm.gymprofit.ui.activities;
 
+import android.os.Handler;
+import android.os.Looper;
+import es.pmdm.gymprofit.envivo.EmpezarSesion;
+import es.pmdm.gymprofit.utils.UIHelper;
+import es.pmdm.gymprofit.envivo.LogicaSesion;
+import es.pmdm.gymprofit.envivo.SesionEnCursoRepositorio;
+import es.pmdm.gymprofit.model.envivo.SesionEnCurso;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -66,6 +73,16 @@ public class MainActivity extends BaseActivity {
 
     private final MedicionApi medicionApi = ApiClient.service(MedicionApi.class);
 
+    // La sesión en curso (GP-012): su barra sobre la navegación y la primera fila del «+».
+    private SesionEnCursoRepositorio sesionEnCurso;
+    private final Handler relojBarra = new Handler(Looper.getMainLooper());
+    private final Runnable ticBarra = new Runnable() {
+        @Override public void run() {
+            pintarBarraSesion();
+            relojBarra.postDelayed(this, 1000);
+        }
+    };
+
     // Atrás fuera de Inicio vuelve a Inicio (GP-097). En Inicio queda desactivado para
     // que atrás salga de la app con la animación del sistema, que se puede cancelar.
     private final OnBackPressedCallback atrasAInicio = new OnBackPressedCallback(false) {
@@ -122,6 +139,7 @@ public class MainActivity extends BaseActivity {
 
         velo.setOnClickListener(v -> cerrarAcciones());
         findViewById(R.id.accionEntrenar).setOnClickListener(v -> accionEntrenar());
+        findViewById(R.id.accionApuntar).setOnClickListener(v -> accionApuntar());
         findViewById(R.id.accionComida).setOnClickListener(v -> accionComida());
         findViewById(R.id.accionPeso).setOnClickListener(v -> accionPeso());
 
@@ -136,6 +154,78 @@ public class MainActivity extends BaseActivity {
         if (savedInstanceState == null) aplicarDestino(getIntent());
         cargarUltimoPeso();
         pedirPermisoNotificaciones();
+        configurarSesionEnCurso();
+    }
+
+    // ── Sesión en curso (GP-012) ──────────────────────────────────────────────
+
+    private void configurarSesionEnCurso() {
+        sesionEnCurso = SesionEnCursoRepositorio.get(this);
+        sesionEnCurso.usarCuenta(prefsManager.getUsuarioId());
+        View barraSesion = findViewById(R.id.barraSesion);
+        barraSesion.setOnClickListener(v -> tocarBarraSesion());
+        findViewById(R.id.btnBarraSesion).setOnClickListener(v -> tocarBarraSesion());
+        sesionEnCurso.getSesion().observe(this, s -> pintarBarraSesion());
+        // Un guardado que termina aquí es el reintento de al abrir la app: se dice.
+        sesionEnCurso.getResultado().observe(this, evento -> {
+            SesionEnCursoRepositorio.Resultado r = evento.tomar();
+            if (r != null && r.ok()) {
+                UIHelper.mostrarToastExito(this, getString(R.string.envivo_guardada_sola,
+                        EmpezarSesion.nombre(this, r.guardada.rutinaNombre)));
+            }
+        });
+        // Una sesión que se intentó guardar y no se pudo se reintenta sola, una vez.
+        sesionEnCurso.reintentarAlAbrir();
+    }
+
+    // Con el guardado fallido, la barra reintenta; si no, abre la sesión.
+    private void tocarBarraSesion() {
+        SesionEnCurso s = sesionEnCurso.actual();
+        if (s == null) return;
+        if (s.guardado == SesionEnCurso.Guardado.FALLO) sesionEnCurso.reintentar();
+        else EmpezarSesion.abrir(this);
+    }
+
+    // «Sesión en curso · Pierna B · 23:14 · Volver», o «Sin guardar · Pierna B · Reintentar».
+    private void pintarBarraSesion() {
+        View barraSesion = findViewById(R.id.barraSesion);
+        SesionEnCurso s = sesionEnCurso != null ? sesionEnCurso.actual() : null;
+        barraSesion.setVisibility(s == null ? View.GONE : View.VISIBLE);
+        if (s == null) return;
+        String nombre = EmpezarSesion.nombre(this, s.rutinaNombre);
+        android.widget.TextView texto = findViewById(R.id.tvBarraSesion);
+        com.google.android.material.button.MaterialButton boton = findViewById(R.id.btnBarraSesion);
+        if (s.guardado == SesionEnCurso.Guardado.FALLO) {
+            texto.setText(getString(R.string.envivo_barra_sin_guardar, nombre));
+            boton.setText(R.string.btn_reintentar);
+            barraSesion.setContentDescription(getString(R.string.envivo_barra_sin_guardar_a11y, nombre));
+        } else if (s.guardado == SesionEnCurso.Guardado.GUARDANDO) {
+            texto.setText(getString(R.string.envivo_barra_guardando, nombre));
+            boton.setText(R.string.envivo_volver);
+            barraSesion.setContentDescription(texto.getText());
+        } else {
+            String reloj = LogicaSesion.reloj(s.inicioMs, sesionEnCurso.ahora());
+            texto.setText(getString(R.string.envivo_barra, nombre, reloj));
+            boton.setText(R.string.envivo_volver);
+            // TalkBack oye los minutos: cambiar la descripción cada segundo sería ruido.
+            String minutos = getString(R.string.duracion_min, LogicaSesion.minutosReloj(s.inicioMs, sesionEnCurso.ahora()));
+            String a11y = getString(R.string.envivo_barra_a11y, nombre, minutos);
+            if (!a11y.contentEquals(barraSesion.getContentDescription() != null ? barraSesion.getContentDescription() : "")) {
+                barraSesion.setContentDescription(a11y);
+            }
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        relojBarra.post(ticBarra);
+    }
+
+    @Override
+    protected void onStop() {
+        relojBarra.removeCallbacks(ticBarra);
+        super.onStop();
     }
 
     // Las notificaciones abren esta misma pantalla en una pestaña concreta.
@@ -286,14 +376,26 @@ public class MainActivity extends BaseActivity {
         android.widget.TextView subComida = findViewById(R.id.tvSubComida);
         android.widget.TextView subPeso = findViewById(R.id.tvSubPeso);
 
-        mostrarSub(subEntrenar, hoyToca != null
-                ? getString(R.string.accion_entrenar_sub, hoyToca.getNombre()) : null);
+        // Con una sesión en curso, la primera fila vuelve a ella.
+        SesionEnCurso enCurso = sesionEnCurso != null ? sesionEnCurso.actual() : null;
+        android.widget.TextView tituloEntrenar = findViewById(R.id.tvTituloEntrenar);
+        tituloEntrenar.setText(enCurso != null ? R.string.envivo_volver_sesion : R.string.accion_entrenar);
+        if (enCurso != null) {
+            mostrarSub(subEntrenar, getString(R.string.envivo_volver_sesion_sub,
+                    EmpezarSesion.nombre(this, enCurso.rutinaNombre),
+                    LogicaSesion.minutosReloj(enCurso.inicioMs, sesionEnCurso.ahora())));
+        } else {
+            mostrarSub(subEntrenar, hoyToca != null
+                    ? getString(R.string.accion_entrenar_sub, hoyToca.getNombre()) : null);
+        }
         mostrarSub(subComida, getString(R.string.accion_comida_sub,
                 getString(ComidaQueToca.enFrase(ComidaQueToca.ahora()))));
         mostrarSub(subPeso, ultimoPeso);
 
         // TalkBack lee cada fila de una vez: título y, si lo hay, subtítulo.
-        describir(R.id.accionEntrenar, R.string.accion_entrenar, subEntrenar);
+        describir(R.id.accionEntrenar, enCurso != null ? R.string.envivo_volver_sesion : R.string.accion_entrenar,
+                subEntrenar);
+        describir(R.id.accionApuntar, R.string.accion_apuntar, findViewById(R.id.tvSubApuntar));
         describir(R.id.accionComida, R.string.accion_comida, subComida);
         describir(R.id.accionPeso, R.string.accion_peso, subPeso);
     }
@@ -349,13 +451,20 @@ public class MainActivity extends BaseActivity {
 
     // ── Acciones ─────────────────────────────────────────────────────────────
 
-    // Empezar entrenamiento → registrar sesión con la rutina de «Hoy toca» ya elegida.
+    // Empezar entrenamiento → la sesión en vivo con la rutina de «Hoy toca» (GP-012); con
+    // una en curso, vuelve a ella.
     private void accionEntrenar() {
         cerrarAcciones();
         if (!verificarAccesoRegistrado()) return;
-        Intent i = new Intent(this, RegistrarSesionActivity.class);
-        if (hoyToca != null) i.putExtra(RegistrarSesionActivity.EXTRA_RUTINA_ID, hoyToca.getId());
-        startActivity(i);
+        if (sesionEnCurso.hay()) EmpezarSesion.abrir(this);
+        else EmpezarSesion.empezar(this, hoyToca);
+    }
+
+    // Apuntar un entrenamiento ya hecho → el formulario, con su fecha y su duración.
+    private void accionApuntar() {
+        cerrarAcciones();
+        if (!verificarAccesoRegistrado()) return;
+        startActivity(new Intent(this, RegistrarSesionActivity.class));
     }
 
     // Registrar comida → añadir alimento, hoy, en la comida que toca por la hora.

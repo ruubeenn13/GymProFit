@@ -142,7 +142,7 @@ public class DetalleRutinaActivity extends AppCompatActivity {
     }
 
     /**
-     * Abre el registro de sesión con esta rutina ya seleccionada.
+     * Empieza la sesión en vivo de esta rutina (GP-012).
      *
      * <p>Es la acción por la que se entra a esta pantalla: ver una rutina y
      * hacerla. Hasta ahora ese camino estaba cortado.
@@ -155,9 +155,9 @@ public class DetalleRutinaActivity extends AppCompatActivity {
             return;
         }
 
-        Intent intent = new Intent(this, RegistrarSesionActivity.class);
-        intent.putExtra(RegistrarSesionActivity.EXTRA_RUTINA_ID, rutinaId);
-        startActivity(intent);
+        // La sesión en vivo, con el reloj en marcha desde este toque (GP-012).
+        es.pmdm.gymprofit.envivo.EmpezarSesion.empezar(this, rutinaId, nombre,
+                getIntent().getStringExtra(EXTRA_PROGRAMA_NOMBRE));
     }
 
     // Muestra el botón de editar solo si la rutina no es predefinida

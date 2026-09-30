@@ -55,6 +55,11 @@ public class RegistrarSesionViewModel extends ViewModel implements EjercicioPeso
     static final String K_VALORACION = "borrador_valoracion";
     static final String K_CLAVE = "borrador_clave";
     static final String K_EN_VUELO = "borrador_en_vuelo";
+    static final String K_FECHA = "borrador_fecha";
+
+    // La hora, para que los tests la fijen.
+    java.util.function.LongSupplier ahora = System::currentTimeMillis;
+    java.util.TimeZone zona = java.util.TimeZone.getDefault();
 
     /** En qué punto está el guardado. */
     public enum Fase {
@@ -329,6 +334,53 @@ public class RegistrarSesionViewModel extends ViewModel implements EjercicioPeso
 
     public void setNotas(String valor) { handle.set(K_NOTAS, valor); }
 
+    /**
+     * El día del entrenamiento que se apunta (GP-012), «yyyy-MM-dd». Nunca futuro: un día
+     * posterior a hoy no se acepta.
+     *
+     * @return si se aceptó.
+     */
+    public boolean setFecha(@NonNull String dia) {
+        if (dia.compareTo(hoy()) > 0) return false;
+        handle.set(K_FECHA, dia);
+        return true;
+    }
+
+    /** El día del entrenamiento, «yyyy-MM-dd»; hoy por defecto. */
+    @NonNull
+    public String getFecha() {
+        String f = handle.get(K_FECHA);
+        return f != null && f.compareTo(hoy()) <= 0 ? f : hoy();
+    }
+
+    private String hoy() {
+        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        f.setTimeZone(zona);
+        return f.format(new Date(ahora.getAsLong()));
+    }
+
+    /**
+     * El inicio de un entrenamiento que se apunta hecho: ese día, a la hora de ahora menos
+     * la duración. Si eso cae antes de medianoche, cae el día anterior: es lo que pasó.
+     *
+     * @param dia     «yyyy-MM-dd».
+     * @param ahoraMs la hora de ahora.
+     * @param minutos la duración.
+     */
+    @NonNull
+    static String fechaInicio(@NonNull String dia, long ahoraMs, int minutos, @NonNull java.util.TimeZone zona) {
+        java.util.Calendar c = java.util.Calendar.getInstance(zona, Locale.US);
+        c.setTimeInMillis(ahoraMs);
+        c.set(java.util.Calendar.YEAR, Integer.parseInt(dia.substring(0, 4)));
+        c.set(java.util.Calendar.MONTH, Integer.parseInt(dia.substring(5, 7)) - 1);
+        c.set(java.util.Calendar.DAY_OF_MONTH, Integer.parseInt(dia.substring(8, 10)));
+        c.set(java.util.Calendar.MILLISECOND, 0);
+        c.add(java.util.Calendar.MINUTE, -minutos);
+        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+        f.setTimeZone(zona);
+        return f.format(c.getTime());
+    }
+
     public void setValoracion(float estrellas) { handle.set(K_VALORACION, estrellas); }
 
     // ── Lecturas ──────────────────────────────────────────────
@@ -446,7 +498,9 @@ public class RegistrarSesionViewModel extends ViewModel implements EjercicioPeso
         body.put("claveIdempotencia", getClave());
         Integer rutina = getRutinaId();
         if (rutina != null) body.put("rutinaId", rutina);
-        body.put("fechaInicio", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US).format(new Date()));
+        // El día elegido (hoy por defecto) a la hora de ahora menos la duración (GP-012):
+        // antes era la hora de guardar, como si el entrenamiento empezara al terminarlo.
+        body.put("fechaInicio", fechaInicio(getFecha(), ahora.getAsLong(), minutos, zona));
         body.put("duracionMinutos", minutos);
         body.put("completada", true);
 

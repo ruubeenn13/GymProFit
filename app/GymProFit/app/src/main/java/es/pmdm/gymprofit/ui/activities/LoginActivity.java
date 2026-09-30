@@ -75,6 +75,10 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_login);
 
+        // En Entrada no hay cuenta: la sesión en curso de la anterior (si la había) deja de
+        // verse y su notificación se quita. Sigue en su fichero para cuando vuelva (GP-012).
+        es.pmdm.gymprofit.envivo.SesionEnCursoRepositorio.get(this).usarCuenta(prefsManager.getUsuarioId());
+
         inicializarVistas();
         configurarEventos();
         actualizarIconoTema();

@@ -7,6 +7,7 @@ import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionCompletaCreateDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoCreateDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoPatchDTO;
+import com.gymprofit.api.dto.entity.sesionentrenamiento.UltimaVezDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.VolumenMuscularDTO;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.sesionentrenamiento.IGuardadoSesionCompletaService;
@@ -116,6 +117,28 @@ public class SesionEntrenamientoController {
     public ResponseEntity<SesionEntrenamientoDTO> guardarSesionCompleta(
             @Valid @RequestBody SesionCompletaCreateDTO sesionCompletaCreateDTO) {
         return ResponseEntity.ok(guardadoSesionCompletaService.guardar(sesionCompletaCreateDTO));
+    }
+
+    @Operation(summary = "Última vez de cada ejercicio (GP-014)",
+            description = "Para cada ejercicio pedido, las series marcadas de la última sesión " +
+                    "terminada del usuario del token que tenga series de ese ejercicio, con la " +
+                    "fecha de la sesión. Los ejercicios sin ninguna no salen. Hasta 30 ids.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Una entrada por ejercicio con alguna vez; [] si ninguno",
+                    content = @Content(schema = @Schema(implementation = UltimaVezDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Sin ids o más de 30",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    // Lo que la sesión en vivo enseña como «Anterior» y como pista de cada campo. Sin
+    // usuario en la ruta: sale del token (DEC-013), y los ids son del catálogo público.
+    @GetMapping("/sesiones/ultima-vez")
+    public ResponseEntity<List<UltimaVezDTO>> obtenerUltimaVez(
+            @Parameter(description = "Ids de ejercicio separados por comas, de 1 a 30", example = "12,34,56")
+            @RequestParam(required = false) List<Integer> ejercicios) {
+        java.util.Set<Integer> ids = ejercicios == null ? java.util.Set.of()
+                : ejercicios.stream().filter(java.util.Objects::nonNull)
+                        .collect(java.util.stream.Collectors.toCollection(java.util.LinkedHashSet::new));
+        return ResponseEntity.ok(sesionEntrenamientoService.getUltimaVez(ids));
     }
 
     @Operation(summary = "Modifica una sesión de entrenamiento existente")

@@ -1,5 +1,8 @@
 package es.pmdm.gymprofit.ui.fragments;
 
+import es.pmdm.gymprofit.envivo.LogicaSesion;
+import es.pmdm.gymprofit.envivo.SesionEnCursoRepositorio;
+import es.pmdm.gymprofit.model.envivo.SesionEnCurso;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
@@ -51,7 +54,7 @@ import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.ui.activities.AnadirAlimentoActivity;
 import es.pmdm.gymprofit.ui.activities.CrearRutinaActivity;
 import es.pmdm.gymprofit.ui.activities.ProgramasActivity;
-import es.pmdm.gymprofit.ui.activities.RegistrarSesionActivity;
+import es.pmdm.gymprofit.envivo.EmpezarSesion;
 import es.pmdm.gymprofit.ui.activities.ResumenSesionActivity;
 import es.pmdm.gymprofit.ui.widget.ElegirRutinaHoja;
 import es.pmdm.gymprofit.utils.AvatarUtils;
@@ -112,7 +115,27 @@ public class InicioFragment extends BaseFragment {
         avatar.setOnClickListener(v -> irATab(NavTabs.PROGRESO));
         findViewById(R.id.btnRegistrarComida).setOnClickListener(v -> registrarComida());
         findViewById(R.id.cardNutricionHoy).setOnClickListener(v -> irATab(NavTabs.NUTRICION));
+
+        // Hoy toca dice «En curso» con la sesión de su rutina en marcha (GP-012). Al
+        // empezar, guardar o descartar se repinta con lo ya cargado.
+        // Si la sesión desaparece (se guardó, quizá sola al abrir la app), Hoy toca y la
+        // semana ya no son los de antes: se vuelven a pedir.
+        SesionEnCursoRepositorio.get(requireContext()).getSesion().observe(getViewLifecycleOwner(), s -> {
+            if (habiaSesion && s == null) {
+                cargarHoyTocaYSemana();
+                cargarVolumenSemana();
+                cargarRecord();
+            } else if (hoyTocaPintado) {
+                pintarHoyToca();
+            }
+            habiaSesion = s != null;
+        });
     }
+
+    // Si Hoy toca ya se pintó con datos: antes no hay nada que repintar.
+    private boolean hoyTocaPintado;
+    // Si en el último aviso había sesión en curso.
+    private boolean habiaSesion;
 
     @Override
     public void onResume() {
@@ -211,6 +234,25 @@ public class InicioFragment extends BaseFragment {
 
         HoyToca.Eleccion eleccion = HoyToca.elegir(seguido, propias, sesiones);
         if (main() != null) main().publicarHoyToca(eleccion == null ? null : eleccion.rutina);
+        hoyTocaPintado = true;
+        principal.setContentDescription(null);
+
+        // La de hoy está en curso: la tarjeta lo dice y vuelve a ella.
+        SesionEnCursoRepositorio repo = SesionEnCursoRepositorio.get(requireContext());
+        SesionEnCurso enCurso = repo.actual();
+        if (eleccion != null && enCurso != null && enCurso.rutinaId != null
+                && enCurso.rutinaId == eleccion.rutina.getId()) {
+            eyebrow.setText(R.string.envivo_en_curso);
+            icono.setImageResource(R.drawable.ic_ms_timer);
+            titulo.setText(eleccion.rutina.getNombre());
+            sub.setText(getString(R.string.duracion_min, LogicaSesion.minutosReloj(enCurso.inicioMs, repo.ahora())));
+            principal.setText(R.string.envivo_volver);
+            principal.setIconResource(R.drawable.ic_ms_play_arrow_fill);
+            principal.setContentDescription(getString(R.string.envivo_volver_rutina_a11y, eleccion.rutina.getNombre()));
+            principal.setOnClickListener(v -> EmpezarSesion.abrir(requireActivity()));
+            secundario.setVisibility(View.GONE);
+            return;
+        }
 
         SesionEntrenamiento deHoy = HoyToca.sesionDeHoy(sesiones, TiempoRelativo.hoy());
         if (deHoy != null) {
@@ -308,12 +350,11 @@ public class InicioFragment extends BaseFragment {
         ElegirRutinaHoja.mostrar(requireActivity(), propias != null ? propias : new ArrayList<>(), this::empezar);
     }
 
-    // Registrar sesión con esa rutina, o en entrenamiento libre si es null.
+    // La sesión en vivo con esa rutina, o vacía si es null (GP-012). Con otra en curso,
+    // EmpezarSesion pregunta.
     private void empezar(@Nullable Rutina r) {
         if (!verificarAccesoRegistrado()) return;
-        Intent i = new Intent(requireContext(), RegistrarSesionActivity.class);
-        if (r != null) i.putExtra(RegistrarSesionActivity.EXTRA_RUTINA_ID, r.getId());
-        startActivity(i);
+        EmpezarSesion.empezar(requireActivity(), r);
     }
 
     private void abrirResumen(SesionEntrenamiento s, @Nullable String nombre) {
