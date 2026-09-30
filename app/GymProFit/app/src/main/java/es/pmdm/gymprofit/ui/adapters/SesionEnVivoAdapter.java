@@ -29,6 +29,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.envivo.LogicaDescanso;
 import es.pmdm.gymprofit.envivo.LogicaSesion;
 import es.pmdm.gymprofit.envivo.SesionEnCursoRepositorio;
 import es.pmdm.gymprofit.model.envivo.SesionEnCurso;
@@ -74,6 +75,8 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         int numero;
         String anterior, anteriorA11y, peso, reps, segundos, pistaPeso, pistaReps, pistaSegundos;
         boolean hecha, editable;
+        /** La que toca tras el descanso: se resalta mientras dura (GP-013). */
+        boolean siguiente;
         // Pie
         boolean puedeAnadir;
         // Final
@@ -93,7 +96,8 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     && Objects.equals(peso, o.peso) && Objects.equals(reps, o.reps)
                     && Objects.equals(segundos, o.segundos) && Objects.equals(pistaPeso, o.pistaPeso)
                     && Objects.equals(pistaReps, o.pistaReps) && Objects.equals(pistaSegundos, o.pistaSegundos)
-                    && hecha == o.hecha && editable == o.editable && puedeAnadir == o.puedeAnadir
+                    && hecha == o.hecha && editable == o.editable && siguiente == o.siguiente
+                    && puedeAnadir == o.puedeAnadir
                     && carga == o.carga && vacia == o.vacia;
         }
     }
@@ -137,12 +141,17 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         List<Fila> nuevas = new ArrayList<>();
         if (s != null) {
             boolean editable = s.claveIdempotencia == null;
+            // Durante el descanso se resalta la serie que viene después.
+            LogicaDescanso.Siguiente sig = s.descanso != null ? LogicaDescanso.siguiente(s) : null;
+            long siguienteId = sig != null ? sig.serieId : Long.MIN_VALUE;
             LogicaSesion.Textos t = textos();
             Locale locale = locale();
             for (SesionEnCurso.Ejercicio e : s.ejercicios) {
                 nuevas.add(cabecera(e, editable));
                 for (int i = 0; i < e.series.size(); i++) {
-                    nuevas.add(serie(e, i, editable, t, locale));
+                    Fila f = serie(e, i, editable, t, locale);
+                    f.siguiente = f.id == siguienteId;
+                    nuevas.add(f);
                 }
                 Fila pie = new Fila(PIE, -e.id);
                 pie.editable = editable;
@@ -422,10 +431,16 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             rotular(etTiempo, ctx.getString(R.string.envivo_tiempo_a11y, f.numero), f.pistaSegundos);
             pintando = false;
 
-            // Hecha: la fila se tiñe y el botón lo dice con el icono y con su estado.
-            fila.setBackgroundColor(f.hecha
-                    ? MaterialColors.getColor(fila, com.google.android.material.R.attr.colorPrimaryContainer)
-                    : android.graphics.Color.TRANSPARENT);
+            // Hecha: la fila se tiñe y el botón lo dice con el icono y con su estado. La
+            // siguiente, durante el descanso, lleva el borde del color principal.
+            if (f.hecha) {
+                fila.setBackgroundColor(MaterialColors.getColor(fila,
+                        com.google.android.material.R.attr.colorPrimaryContainer));
+            } else if (f.siguiente) {
+                fila.setBackgroundResource(R.drawable.bg_serie_siguiente);
+            } else {
+                fila.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+            }
             btnMarcar.setImageResource(f.hecha ? R.drawable.ic_ms_check_circle_fill : R.drawable.ic_ms_radio_button_unchecked);
             btnMarcar.setImageTintList(ColorStateList.valueOf(MaterialColors.getColor(btnMarcar, f.hecha
                     ? androidx.appcompat.R.attr.colorPrimary : com.google.android.material.R.attr.colorOnSurfaceVariant)));
@@ -440,7 +455,8 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             // TalkBack: «Serie 2. Anterior: 57,5 × 12» en el número, que es donde entra
             // en la fila; y «Quitar serie» como acción, que es lo que sustituye al gesto.
-            String nombre = ctx.getString(R.string.envivo_serie_a11y, f.numero);
+            String nombre = ctx.getString(f.siguiente && !f.hecha
+                    ? R.string.envivo_serie_siguiente_a11y : R.string.envivo_serie_a11y, f.numero);
             tvNumero.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
             tvNumero.setContentDescription(f.anteriorA11y == null ? nombre
                     : nombre + ". " + ctx.getString(R.string.envivo_anterior_a11y, f.anteriorA11y));

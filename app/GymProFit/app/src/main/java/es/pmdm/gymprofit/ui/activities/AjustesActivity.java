@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -19,6 +20,7 @@ import com.google.android.material.appbar.MaterialToolbar;
 
 import es.pmdm.gymprofit.BuildConfig;
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.envivo.PermisosDescanso;
 import es.pmdm.gymprofit.model.usuario.Usuario;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
@@ -77,6 +79,9 @@ public class AjustesActivity extends BaseActivity {
         fila(R.id.filaObjetivo, R.drawable.ic_ms_flag, R.string.ajustes_objetivo, editarPerfil);
         fila(R.id.filaNivel, R.drawable.ic_ms_stairs, R.string.ajustes_nivel, editarPerfil);
 
+        // Entrenamiento (GP-013)
+        configurarEntrenamiento();
+
         // Preferencias
         fila(R.id.filaTema, R.drawable.ic_ms_palette, R.string.ajustes_tema, this::mostrarDialogoTema);
         fila(R.id.filaIdioma, R.drawable.ic_ms_language, R.string.ajustes_idioma, this::mostrarDialogoIdioma);
@@ -124,6 +129,7 @@ public class AjustesActivity extends BaseActivity {
 
     // Valores de la derecha: lo guardado en el teléfono ya, y el correo al llegar.
     private void pintarValores() {
+        pintarEntrenamiento();
         valor(R.id.filaSexoActividad, R.string.ajustes_sexo_actividad,
                 UIHelper.traducirActividad(this, prefsManager.getActividad()));
         valor(R.id.filaObjetivo, R.string.ajustes_objetivo, UIHelper.traducirObjetivo(this, prefsManager.getObjetivo()));
@@ -157,6 +163,98 @@ public class AjustesActivity extends BaseActivity {
                 // valor a la derecha, y la pantalla del correo lo vuelve a pedir y avisa.
             }
         });
+    }
+
+    // ── Entrenamiento (GP-013) ──────────────────────────────────────────────
+
+    // El descanso entre series: si empieza al marcar, el de sin pauta y si los avisos con
+    // la pantalla apagada pueden llegar a su hora. Se guardan en el móvil, como el tema.
+    private void configurarEntrenamiento() {
+        View alMarcar = findViewById(R.id.filaDescansoAlMarcar);
+        ((ImageView) alMarcar.findViewById(R.id.ivIcono)).setImageResource(R.drawable.ic_ms_timer);
+        ((TextView) alMarcar.findViewById(R.id.tvTitulo)).setText(R.string.ajustes_descanso_al_marcar);
+        alMarcar.setOnClickListener(v -> {
+            prefsManager.saveDescansoAlMarcar(!prefsManager.getDescansoAlMarcar());
+            pintarEntrenamiento();
+        });
+        // TalkBack la lee como un interruptor: «Empezar el descanso…, activado».
+        androidx.core.view.ViewCompat.setAccessibilityDelegate(alMarcar, new androidx.core.view.AccessibilityDelegateCompat() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(@NonNull View host,
+                                                          @NonNull androidx.core.view.accessibility.AccessibilityNodeInfoCompat info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                info.setClassName(android.widget.Switch.class.getName());
+                info.setCheckable(true);
+                info.setChecked(prefsManager.getDescansoAlMarcar());
+            }
+        });
+        alMarcar.setContentDescription(getString(R.string.ajustes_descanso_al_marcar));
+
+        View sinPauta = findViewById(R.id.filaDescansoSinPauta);
+        ((ImageView) sinPauta.findViewById(R.id.ivIcono)).setImageResource(R.drawable.ic_ms_hourglass);
+        ((TextView) sinPauta.findViewById(R.id.tvTitulo)).setText(R.string.ajustes_descanso_sin_pauta);
+        ((TextView) sinPauta.findViewById(R.id.tvSub)).setText(R.string.ajustes_descanso_sin_pauta_sub);
+        sinPauta.findViewById(R.id.tvValor).setVisibility(View.VISIBLE);
+        sinPauta.findViewById(R.id.ivFlecha).setVisibility(View.VISIBLE);
+        sinPauta.setOnClickListener(v -> elegirDescansoSinPauta());
+
+        View avisos = findViewById(R.id.filaAvisosDescanso);
+        ((ImageView) avisos.findViewById(R.id.ivIcono)).setImageResource(R.drawable.ic_ms_notifications);
+        ((TextView) avisos.findViewById(R.id.tvTitulo)).setText(R.string.ajustes_avisos_apagada);
+        // La fila solo informa; lo que se toca es «Activar».
+        avisos.setClickable(false);
+        avisos.setBackground(null);
+        com.google.android.material.button.MaterialButton activar = avisos.findViewById(R.id.btnAccion);
+        activar.setText(R.string.ajustes_avisos_activar);
+        activar.setContentDescription(getString(R.string.ajustes_avisos_activar_a11y));
+        activar.setOnClickListener(v -> PermisosDescanso.activar(this));
+    }
+
+    private void pintarEntrenamiento() {
+        View alMarcar = findViewById(R.id.filaDescansoAlMarcar);
+        ((com.google.android.material.materialswitch.MaterialSwitch) alMarcar.findViewById(R.id.swInterruptor))
+                .setChecked(prefsManager.getDescansoAlMarcar());
+
+        View sinPauta = findViewById(R.id.filaDescansoSinPauta);
+        String valor = textoDescanso(prefsManager.getDescansoSinPauta());
+        ((TextView) sinPauta.findViewById(R.id.tvValor)).setText(valor);
+        sinPauta.setContentDescription(getString(R.string.ajustes_fila_valor_a11y,
+                getString(R.string.ajustes_descanso_sin_pauta),
+                valor + ". " + getString(R.string.ajustes_descanso_sin_pauta_sub)));
+
+        View avisos = findViewById(R.id.filaAvisosDescanso);
+        boolean listos = PermisosDescanso.falta(this) == PermisosDescanso.Falta.NADA;
+        String estado = getString(listos ? R.string.ajustes_avisos_activados : R.string.ajustes_avisos_sin_permiso);
+        ((TextView) avisos.findViewById(R.id.tvSub)).setText(estado);
+        avisos.findViewById(R.id.btnAccion).setVisibility(listos ? View.GONE : View.VISIBLE);
+        avisos.setContentDescription(getString(R.string.ajustes_fila_sub_a11y,
+                getString(R.string.ajustes_avisos_apagada), estado));
+    }
+
+    // «90 s», «2 min».
+    private String textoDescanso(int segundos) {
+        return segundos % 60 == 0 && segundos >= 120
+                ? getString(R.string.ajustes_descanso_minutos, segundos / 60)
+                : getString(R.string.ajustes_descanso_segundos, segundos);
+    }
+
+    private void elegirDescansoSinPauta() {
+        int[] opciones = es.pmdm.gymprofit.envivo.LogicaDescanso.SIN_PAUTA_OPCIONES;
+        String[] textos = new String[opciones.length];
+        int elegida = 0;
+        for (int i = 0; i < opciones.length; i++) {
+            textos[i] = textoDescanso(opciones[i]);
+            if (opciones[i] == prefsManager.getDescansoSinPauta()) elegida = i;
+        }
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.ajustes_descanso_sin_pauta)
+                .setSingleChoiceItems(textos, elegida, (d, i) -> {
+                    prefsManager.saveDescansoSinPauta(opciones[i]);
+                    pintarEntrenamiento();
+                    d.dismiss();
+                })
+                .setNegativeButton(R.string.dialog_cancelar, null)
+                .show();
     }
 
     // ── Filas ───────────────────────────────────────────────────────────────

@@ -62,7 +62,23 @@ public final class NotificacionSesion {
                 .setCategory(NotificationCompat.CATEGORY_WORKOUT)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setContentIntent(abrir(ctx));
-        if (!sinGuardar) {
+        if (s.descanso != null) NotificacionDescanso.quitar(ctx);
+        if (!sinGuardar && s.descanso != null) {
+            // Descanso en marcha (GP-013): cuenta hacia atrás hasta su fin (lo lleva el
+            // sistema, sin refrescos). Al acabar, la sesión cambia y vuelve el reloj.
+            LogicaDescanso.Siguiente sig = LogicaDescanso.siguiente(s);
+            SesionEnCurso.Ejercicio e = sig != null ? sig.ejercicio
+                    : SesionEnCursoRepositorio.ejercicioDeSerie(s, s.descanso.serieId);
+            String ejercicio = e != null ? TextosDescanso.ejercicio(ctx, e.nombre, e.ejercicioId) : "";
+            String minutos = ctx.getString(R.string.duracion_min,
+                    LogicaSesion.minutosReloj(s.inicioMs, System.currentTimeMillis()));
+            b.setContentTitle(ctx.getString(R.string.envivo_notif_descanso_titulo, ejercicio))
+                    .setContentText(sig != null
+                            ? ctx.getString(R.string.envivo_notif_descanso_texto, sig.numero, nombre, minutos)
+                            : ctx.getString(R.string.envivo_notif_descanso_texto_ultima, nombre, minutos))
+                    .setWhen(s.descanso.finMs).setShowWhen(true).setUsesChronometer(true)
+                    .setChronometerCountDown(true);
+        } else if (!sinGuardar) {
             b.setWhen(s.inicioMs).setShowWhen(true).setUsesChronometer(true);
         }
         try {

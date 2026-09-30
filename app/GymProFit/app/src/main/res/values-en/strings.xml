@@ -1232,4 +1232,59 @@
     </plurals>
     <string name="envivo_anadido">Added: %1$s</string>
     <string name="apuntar_titulo">Past workout</string>
+    <!-- Rest between sets (GP-013) -->
+    <string name="envivo_descanso">Rest</string>
+    <string name="envivo_descanso_despues">Next: %1$s, set %2$d</string>
+    <string name="envivo_descanso_menos">−15\u00A0s</string>
+    <string name="envivo_descanso_mas">+15\u00A0s</string>
+    <string name="envivo_descanso_menos_a11y">Take off 15 seconds</string>
+    <string name="envivo_descanso_mas_a11y">Add 15 seconds</string>
+    <string name="envivo_descanso_saltar">Skip</string>
+    <string name="envivo_descanso_saltar_a11y">Skip the rest</string>
+    <string name="envivo_descanso_a11y">Rest: %1$s left. %2$s</string>
+    <string name="envivo_descanso_sin_despues">Last set</string>
+    <plurals name="envivo_minutos">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+    <plurals name="envivo_segundos">
+        <item quantity="one">%d second</item>
+        <item quantity="other">%d seconds</item>
+    </plurals>
+    <string name="envivo_min_y_seg">%1$s and %2$s</string>
+    <string name="envivo_fin_titulo">Go for set %1$d!</string>
+    <string name="envivo_fin_titulo_sin_serie">Rest over</string>
+    <string name="envivo_fin_texto">%1$s · rest is over</string>
+    <string name="envivo_fin_cerrar">Dismiss</string>
+    <string name="envivo_serie_siguiente_a11y">Set %1$d, up next</string>
+    <string name="envivo_barra_descanso">Rest · %1$s · %2$s</string>
+    <string name="envivo_barra_descanso_a11y">Rest: %1$s left. %2$s. Back to the workout</string>
+    <string name="envivo_barra_fin">%1$s · %2$s</string>
+    <!-- Rest with the app closed or the screen off (GP-013) -->
+    <string name="descanso_canal">Rest</string>
+    <string name="descanso_canal_descripcion">Lets you know when the rest between sets is over</string>
+    <string name="descanso_notif_texto">%1$s, set %2$d</string>
+    <string name="envivo_notif_descanso_titulo">Rest · %1$s</string>
+    <string name="envivo_notif_descanso_texto">Next: set %1$d · %2$s, %3$s</string>
+    <string name="envivo_notif_descanso_texto_ultima">%1$s, %2$s</string>
+    <string name="descanso_permiso_titulo">Alert you with the screen off</string>
+    <string name="descanso_permiso_texto_alarmas">To ring right when your rest is over, even with your phone in your pocket, GymProFit needs the “Alarms &amp; reminders” permission. It only uses it for rests.</string>
+    <string name="descanso_permiso_texto_notificaciones">To let you know when your rest is over, even with your phone in your pocket, GymProFit needs to be able to send you notifications.</string>
+    <string name="descanso_permiso_dar">Allow</string>
+    <string name="descanso_permiso_ahora_no">Not now</string>
+    <string name="descanso_permiso_nota">Without it, with the screen off the alert may come late. You can allow it any time in Settings.</string>
+    <!-- Settings, «Workout» (GP-013) -->
+    <string name="ajustes_entrenamiento">Workout</string>
+    <string name="ajustes_descanso_al_marcar">Start the rest when you tick off a set</string>
+    <string name="ajustes_descanso_sin_pauta">Rest with no target</string>
+    <string name="ajustes_descanso_sin_pauta_sub">In free workouts and added exercises</string>
+    <string name="ajustes_descanso_segundos">%1$d\u00A0s</string>
+    <string name="ajustes_descanso_minutos">%1$d\u00A0min</string>
+    <string name="ajustes_avisos_apagada">Alerts with the screen off</string>
+    <string name="ajustes_avisos_activados">On</string>
+    <string name="ajustes_avisos_sin_permiso">No permission: they may come late</string>
+    <string name="ajustes_avisos_activar">Turn on</string>
+    <string name="ajustes_avisos_activar_a11y">Turn on alerts with the screen off</string>
+    <string name="ajustes_avisos_nota">The alert rings and vibrates according to your phone’s sound mode.</string>
+    <string name="ajustes_fila_sub_a11y">%1$s, %2$s</string>
 </resources>

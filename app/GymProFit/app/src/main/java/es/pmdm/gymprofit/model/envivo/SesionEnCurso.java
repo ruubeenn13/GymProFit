@@ -62,6 +62,9 @@ public class SesionEnCurso {
 
     @Nullable public Cronometro cronometro;
 
+    /** El descanso en marcha (GP-013), o null. Vive aquí para seguir si Android cierra la app. */
+    @Nullable public Descanso descanso;
+
     // Lo de la hoja de terminar: se guarda con la sesión para que no se pierda.
     /** Minutos ajustados a mano; null = los del reloj. */
     @Nullable public Integer duracionAjustada;
@@ -141,5 +144,18 @@ public class SesionEnCurso {
         public long inicioMs;
         public boolean avisoMinimo;
         public boolean avisoMaximo;
+    }
+
+    /**
+     * El descanso entre series, en marcha (GP-013). Termina en {@link #finMs}; la cuenta
+     * atrás se pinta desde ahí, así que no se para aunque Android cierre la app.
+     */
+    public static class Descanso {
+        /** La serie cuyo marcado lo empezó: desmarcarla lo quita. */
+        public long serieId;
+        /** Cuándo acaba, en milisegundos de época. */
+        public long finMs;
+        /** Lo que dura en total, con los ±15 s: para la barra de progreso. */
+        public long duracionMs;
     }
 }

@@ -1245,4 +1245,59 @@
     </plurals>
     <string name="envivo_anadido">Añadido: %1$s</string>
     <string name="apuntar_titulo">Entrenamiento hecho</string>
+    <!-- Descanso entre series (GP-013) -->
+    <string name="envivo_descanso">Descanso</string>
+    <string name="envivo_descanso_despues">Después: %1$s, serie %2$d</string>
+    <string name="envivo_descanso_menos">−15\u00A0s</string>
+    <string name="envivo_descanso_mas">+15\u00A0s</string>
+    <string name="envivo_descanso_menos_a11y">Quitar 15 segundos</string>
+    <string name="envivo_descanso_mas_a11y">Añadir 15 segundos</string>
+    <string name="envivo_descanso_saltar">Saltar</string>
+    <string name="envivo_descanso_saltar_a11y">Saltar el descanso</string>
+    <string name="envivo_descanso_a11y">Descanso: quedan %1$s. %2$s</string>
+    <string name="envivo_descanso_sin_despues">Última serie</string>
+    <plurals name="envivo_minutos">
+        <item quantity="one">%d minuto</item>
+        <item quantity="other">%d minutos</item>
+    </plurals>
+    <plurals name="envivo_segundos">
+        <item quantity="one">%d segundo</item>
+        <item quantity="other">%d segundos</item>
+    </plurals>
+    <string name="envivo_min_y_seg">%1$s y %2$s</string>
+    <string name="envivo_fin_titulo">¡A por la serie %1$d!</string>
+    <string name="envivo_fin_titulo_sin_serie">Descanso terminado</string>
+    <string name="envivo_fin_texto">%1$s · se acabó el descanso</string>
+    <string name="envivo_fin_cerrar">Cerrar el aviso</string>
+    <string name="envivo_serie_siguiente_a11y">Serie %1$d, la siguiente</string>
+    <string name="envivo_barra_descanso">Descanso · %1$s · %2$s</string>
+    <string name="envivo_barra_descanso_a11y">Descanso: quedan %1$s. %2$s. Volver a la sesión</string>
+    <string name="envivo_barra_fin">%1$s · %2$s</string>
+    <!-- Descanso con la app fuera o la pantalla apagada (GP-013) -->
+    <string name="descanso_canal">Descanso</string>
+    <string name="descanso_canal_descripcion">Avisa al acabar el descanso entre series</string>
+    <string name="descanso_notif_texto">%1$s, serie %2$d</string>
+    <string name="envivo_notif_descanso_titulo">Descanso · %1$s</string>
+    <string name="envivo_notif_descanso_texto">Después: serie %1$d · %2$s, %3$s</string>
+    <string name="envivo_notif_descanso_texto_ultima">%1$s, %2$s</string>
+    <string name="descanso_permiso_titulo">Avisarte con la pantalla apagada</string>
+    <string name="descanso_permiso_texto_alarmas">Para sonar justo al acabar el descanso, aunque lleves el móvil en el bolsillo, GymProFit necesita el permiso «Alarmas y recordatorios». Solo lo usa en los descansos.</string>
+    <string name="descanso_permiso_texto_notificaciones">Para avisarte al acabar el descanso, aunque lleves el móvil en el bolsillo, GymProFit necesita poder mandarte notificaciones.</string>
+    <string name="descanso_permiso_dar">Dar permiso</string>
+    <string name="descanso_permiso_ahora_no">Ahora no</string>
+    <string name="descanso_permiso_nota">Sin él, con la pantalla apagada el aviso puede llegar tarde. Puedes darlo cuando quieras en Ajustes.</string>
+    <!-- Ajustes, «Entrenamiento» (GP-013) -->
+    <string name="ajustes_entrenamiento">Entrenamiento</string>
+    <string name="ajustes_descanso_al_marcar">Empezar el descanso al marcar una serie</string>
+    <string name="ajustes_descanso_sin_pauta">Descanso sin pauta</string>
+    <string name="ajustes_descanso_sin_pauta_sub">En el entrenamiento libre y los ejercicios añadidos</string>
+    <string name="ajustes_descanso_segundos">%1$d\u00A0s</string>
+    <string name="ajustes_descanso_minutos">%1$d\u00A0min</string>
+    <string name="ajustes_avisos_apagada">Avisos con la pantalla apagada</string>
+    <string name="ajustes_avisos_activados">Activados</string>
+    <string name="ajustes_avisos_sin_permiso">Sin permiso: pueden llegar tarde</string>
+    <string name="ajustes_avisos_activar">Activar</string>
+    <string name="ajustes_avisos_activar_a11y">Activar los avisos con la pantalla apagada</string>
+    <string name="ajustes_avisos_nota">El aviso suena y vibra según el modo del móvil.</string>
+    <string name="ajustes_fila_sub_a11y">%1$s, %2$s</string>
 </resources>

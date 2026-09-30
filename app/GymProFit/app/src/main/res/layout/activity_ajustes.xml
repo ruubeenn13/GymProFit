@@ -73,6 +73,31 @@
                 android:textSize="@dimen/text_eyebrow"
                 android:textColor="?attr/colorOnSurfaceVariant" />
 
+            <!-- Entrenamiento (GP-013): el descanso entre series y sus avisos. -->
+            <TextView
+                style="@style/Widget.GymProFit.Seccion"
+                android:paddingStart="4dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"
+                android:text="@string/ajustes_entrenamiento" />
+
+            <LinearLayout
+                style="@style/Widget.GymProFit.GrupoAjustes">
+                <include android:id="@+id/filaDescansoAlMarcar" layout="@layout/view_fila_ajuste_interruptor" />
+                <include android:id="@+id/filaDescansoSinPauta" layout="@layout/view_fila_ajuste_sub" />
+                <include android:id="@+id/filaAvisosDescanso" layout="@layout/view_fila_ajuste_sub" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"
+                android:paddingTop="6dp"
+                android:text="@string/ajustes_avisos_nota"
+                android:textSize="@dimen/text_eyebrow"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+
             <TextView
                 style="@style/Widget.GymProFit.Seccion"
                 android:paddingStart="4dp"

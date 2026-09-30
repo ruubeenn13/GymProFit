@@ -63,6 +63,8 @@
 
     <!-- Sesión en vivo (GP-012): hueco libre al final de la lista para el descanso (GP-013). -->
     <dimen name="envivo_hueco_descanso">160dp</dimen>
+    <!-- La cuenta atrás del descanso: grande, se lee de un vistazo (GP-013). -->
+    <dimen name="envivo_descanso_numero">46sp</dimen>
     <!-- Ancho de la columna del número de serie. -->
     <dimen name="envivo_col_serie">40dp</dimen>
 </resources>

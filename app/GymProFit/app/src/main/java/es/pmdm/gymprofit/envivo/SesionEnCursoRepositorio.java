@@ -63,6 +63,36 @@ public class SesionEnCursoRepositorio {
     /** La hora, para que los tests la muevan. */
     public interface Reloj { long ahora(); }
 
+    /** Lo que decide el descanso desde Ajustes (GP-013). */
+    public interface AjustesDescanso {
+        /** «Empezar el descanso al marcar una serie». */
+        boolean empezarAlMarcar();
+
+        /** «Descanso sin pauta», en segundos. */
+        int sinPautaSegundos();
+    }
+
+    /** Lo que dice la pantalla al acabar un descanso: «¡A por la serie 3!». */
+    public static final class FinDescanso {
+        /** Ejercicio de la serie que toca, o null si no tiene nombre. */
+        @Nullable public final String ejercicio;
+        public final int ejercicioId;
+        /** Número de la serie que toca; 0 si ya no queda ninguna. */
+        public final int numero;
+        /** Hasta cuándo se enseña. */
+        public final long hastaMs;
+
+        FinDescanso(@Nullable String ejercicio, int ejercicioId, int numero, long hastaMs) {
+            this.ejercicio = ejercicio;
+            this.ejercicioId = ejercicioId;
+            this.numero = numero;
+            this.hastaMs = hastaMs;
+        }
+    }
+
+    /** Lo que dura en pantalla el aviso del fin del descanso si no se cierra antes. */
+    public static final long FIN_VISIBLE_MS = 8000;
+
     /** Qué pasó al tocar «Empezar». */
     public enum Empezar {
         /** No había ninguna: empieza. */
@@ -119,6 +149,20 @@ public class SesionEnCursoRepositorio {
     private final MutableLiveData<SesionEnCurso> sesion = new MutableLiveData<>(null);
     private final MutableLiveData<Evento<Resultado>> resultado = new MutableLiveData<>();
 
+    private AjustesDescanso ajustesDescanso = new AjustesDescanso() {
+        @Override public boolean empezarAlMarcar() { return true; }
+        @Override public int sinPautaSegundos() { return LogicaDescanso.SIN_PAUTA_DEFECTO; }
+    };
+    // La alarma del fin del descanso, para cuando la app no está delante.
+    private ProgramadorAlarma programador = new ProgramadorAlarma(new ProgramadorAlarma.Alarmas() {
+        @Override public boolean puedeExactas() { return true; }
+        @Override public void exacta(long cuandoMs) { }
+        @Override public void ventana(long cuandoMs, long largoMs) { }
+        @Override public void cancelar() { }
+    });
+    // El aviso del fin del descanso: solo en memoria, es de la pantalla y dura segundos.
+    @Nullable private FinDescanso finDescanso;
+
     private int usuarioId = -1;
     // Una vez por proceso: «al abrir la app».
     private boolean reintentoAlAbrirHecho;
@@ -134,6 +178,13 @@ public class SesionEnCursoRepositorio {
                     new AlmacenSesion(new File(app.getFilesDir(), "sesion_en_curso")),
                     new RedSesionEnVivo(), System::currentTimeMillis, TimeZone.getDefault(),
                     es.pmdm.gymprofit.utils.FechaUtils.localeDeLaApp(app));
+            // Ajustes se leen cada vez: un cambio vale para la siguiente serie que se marque.
+            es.pmdm.gymprofit.utils.PreferencesManager prefs = new es.pmdm.gymprofit.utils.PreferencesManager(app);
+            instancia.setProgramador(new ProgramadorAlarma(new AlarmasDescanso(app)));
+            instancia.setAjustesDescanso(new AjustesDescanso() {
+                @Override public boolean empezarAlMarcar() { return prefs.getDescansoAlMarcar(); }
+                @Override public int sinPautaSegundos() { return prefs.getDescansoSinPauta(); }
+            });
         }
         return instancia;
     }
@@ -163,10 +214,23 @@ public class SesionEnCursoRepositorio {
             s.codigoFallo = -1;
             almacen.escribir(s);
         }
-        sesion.setValue(s);
+        poner(s);
     }
 
     public int getUsuarioId() { return usuarioId; }
+
+    /** Quien pone y quita la alarma del fin del descanso. */
+    public void setProgramador(@NonNull ProgramadorAlarma p) {
+        programador = p;
+        SesionEnCurso s = actual();
+        programador.sincronizar(s != null ? s.descanso : null);
+    }
+
+    /** El permiso de alarmas exactas puede haber cambiado: la alarma puesta se rehace si toca. */
+    public void revisarPermisoAlarma() { programador.revisarPermiso(); }
+
+    /** De dónde sale el descanso sin pauta y si empieza al marcar (Ajustes). */
+    public void setAjustesDescanso(@NonNull AjustesDescanso a) { ajustesDescanso = a; }
 
     /**
      * Borra la sesión en curso de una cuenta que se ha eliminado (GP-008): lo que se
@@ -175,7 +239,7 @@ public class SesionEnCursoRepositorio {
     public void borrarDeCuenta(int usuarioId) {
         if (usuarioId <= 0) return;
         almacen.borrar(usuarioId);
-        if (usuarioId == this.usuarioId) sesion.setValue(null);
+        if (usuarioId == this.usuarioId) poner(null);
     }
 
     // ── Lecturas ─────────────────────────────────────────────
@@ -227,7 +291,8 @@ public class SesionEnCursoRepositorio {
     /** Tira la sesión en curso: se borra del móvil y deja de verse en todas partes. */
     public void descartar() {
         if (usuarioId > 0) almacen.borrar(usuarioId);
-        sesion.setValue(null);
+        finDescanso = null;
+        poner(null);
     }
 
     /** Pide los ejercicios de la rutina, si aún no están (primera vez o tras un fallo). */
@@ -391,7 +456,14 @@ public class SesionEnCursoRepositorio {
         if (e == null) return null;
         int indice = indiceDe(e, serieId);
         LogicaSesion.Marcado m = LogicaSesion.marcar(e, indice, locale);
-        if (m == LogicaSesion.Marcado.HECHA || m == LogicaSesion.Marcado.DESMARCADA) publicar(s);
+        if (m == LogicaSesion.Marcado.HECHA) {
+            alHacerSerie(s, serieId);
+            publicar(s);
+        } else if (m == LogicaSesion.Marcado.DESMARCADA) {
+            // Desmarcar la serie que empezó el descanso lo quita: ya no se ha hecho.
+            if (s.descanso != null && s.descanso.serieId == serieId) s.descanso = null;
+            publicar(s);
+        }
         return m;
     }
 
@@ -512,6 +584,8 @@ public class SesionEnCursoRepositorio {
         c.serieId = serieId;
         c.inicioMs = reloj.ahora();
         s.cronometro = c;
+        // Si se empieza a hacer una serie, el descanso ya ha acabado.
+        s.descanso = null;
         publicar(s);
         return true;
     }
@@ -553,6 +627,7 @@ public class SesionEnCursoRepositorio {
         }
         serie.segundos = LogicaSesion.tiempo(segundos);
         serie.hecha = true;
+        alHacerSerie(s, serie.id);
         publicar(s);
         return true;
     }
@@ -563,6 +638,94 @@ public class SesionEnCursoRepositorio {
         if (s == null || s.cronometro == null) return;
         s.cronometro = null;
         publicar(s);
+    }
+
+    // ── Descanso (GP-013) ────────────────────────────────────
+
+    // Una serie hecha empieza el descanso con el de su ejercicio (o lo quita si era la
+    // última que quedaba), si así está en Ajustes.
+    private void alHacerSerie(SesionEnCurso s, long serieId) {
+        finDescanso = null;
+        if (ajustesDescanso.empezarAlMarcar()) {
+            LogicaDescanso.empezar(s, serieId, reloj.ahora(), ajustesDescanso.sinPautaSegundos());
+        } else if (LogicaDescanso.siguiente(s) == null) {
+            s.descanso = null;
+        }
+    }
+
+    /** «−15 s» o «+15 s». */
+    public boolean ajustarDescanso(int segundos) {
+        SesionEnCurso s = editando();
+        if (s == null || !LogicaDescanso.ajustar(s, segundos, reloj.ahora())) return false;
+        publicar(s);
+        return true;
+    }
+
+    /** «Saltar»: se quita sin avisar. */
+    public void saltarDescanso() {
+        SesionEnCurso s = actual();
+        if (s == null || s.descanso == null) return;
+        s.descanso = null;
+        publicar(s);
+    }
+
+    /**
+     * Mira el descanso (lo hace el vigilante de la app, una vez por segundo, con alguna
+     * pantalla delante). Si acaba de terminar devuelve TERMINA una sola vez, para que
+     * quien mira avise, y deja «¡A por la serie N!» unos segundos. Si terminó hace rato,
+     * se quita sin más.
+     */
+    @NonNull
+    public LogicaDescanso.Estado comprobarDescanso() {
+        SesionEnCurso s = actual();
+        if (s == null) return LogicaDescanso.Estado.NINGUNO;
+        long ahora = reloj.ahora();
+        LogicaDescanso.Estado e = LogicaDescanso.estado(s.descanso, ahora);
+        if (e == LogicaDescanso.Estado.TERMINA || e == LogicaDescanso.Estado.TERMINO_ANTES) {
+            s.descanso = null;
+            finDescanso = e == LogicaDescanso.Estado.TERMINA ? fin(s, ahora) : null;
+            publicar(s);
+        }
+        return e;
+    }
+
+    /**
+     * La alarma del fin del descanso ha sonado con la app fuera: se quita el descanso (no
+     * volverá a sonar al abrirla) y se devuelve qué toca, para la notificación.
+     *
+     * @return qué toca, o null si no había un descanso terminado (se saltó, se empezó
+     *         otro o ya se avisó).
+     */
+    @Nullable
+    public FinDescanso terminarPorAlarma() {
+        SesionEnCurso s = actual();
+        long ahora = reloj.ahora();
+        // Un segundo de gracia: la alarma puede despertar justo antes de la hora.
+        if (s == null || s.descanso == null || s.descanso.finMs > ahora + 1000) return null;
+        s.descanso = null;
+        FinDescanso f = fin(s, ahora);
+        publicar(s);
+        return f;
+    }
+
+    private static FinDescanso fin(SesionEnCurso s, long ahora) {
+        LogicaDescanso.Siguiente sig = LogicaDescanso.siguiente(s);
+        return sig == null ? new FinDescanso(null, 0, 0, ahora + FIN_VISIBLE_MS)
+                : new FinDescanso(sig.ejercicio.nombre, sig.ejercicio.ejercicioId, sig.numero, ahora + FIN_VISIBLE_MS);
+    }
+
+    /** El aviso del fin del descanso mientras dura en pantalla, o null. */
+    @Nullable
+    public FinDescanso finDescanso() {
+        if (finDescanso != null && reloj.ahora() >= finDescanso.hastaMs) finDescanso = null;
+        return finDescanso;
+    }
+
+    /** Su botón de cerrar. */
+    public void cerrarFinDescanso() {
+        finDescanso = null;
+        SesionEnCurso s = actual();
+        if (s != null) poner(s);
     }
 
     // ── La hoja de terminar ──────────────────────────────────
@@ -613,6 +776,7 @@ public class SesionEnCursoRepositorio {
         s.duracionEnviada = minutosPropuestos();
         s.claveIdempotencia = UUID.randomUUID().toString();
         s.cronometro = null;
+        s.descanso = null;
         enviar(s);
         return Guardar.ENVIADO;
     }
@@ -660,7 +824,7 @@ public class SesionEnCursoRepositorio {
                         // Si mientras tanto se descartó y empezó otra, esa no se toca.
                         if (actual() == enviada) {
                             almacen.borrar(enviada.usuarioId);
-                            sesion.setValue(null);
+                            poner(null);
                         }
                     }
 
@@ -677,6 +841,13 @@ public class SesionEnCursoRepositorio {
     // Escribe al fichero y avisa a quien observa.
     private void publicar(SesionEnCurso s) {
         almacen.escribir(s);
+        poner(s);
+    }
+
+    // Avisa a quien observa y deja la alarma del descanso como pide la sesión: a su
+    // hora, o quitada si ya no hay descanso (o sesión).
+    private void poner(@Nullable SesionEnCurso s) {
         sesion.setValue(s);
+        programador.sincronizar(s != null ? s.descanso : null);
     }
 }

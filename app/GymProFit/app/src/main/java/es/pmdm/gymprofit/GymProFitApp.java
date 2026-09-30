@@ -50,6 +50,8 @@ public class GymProFitApp extends Application {
         crearCanalPush();
         registrarTransicionesGlobales();
         observarSesionEnCurso();
+        // El fin del descanso con la app delante, esté en la pantalla que esté (GP-013).
+        es.pmdm.gymprofit.envivo.VigilanteDescanso.instalar(this);
     }
 
     // ------------------------------------------------------------------
