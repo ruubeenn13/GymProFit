@@ -82,7 +82,8 @@ MainActivity — ViewPager2 (5 Fragments) + FloatingNavBar liquid glass fija
   ├── NutricionFragment → ComidaActivity → AnadirAlimentoActivity / CrearAlimentoActivity
   │        └── EstadisticasNutricionActivity
   └── PerfilFragment → EditarPerfilActivity
-        ├── SesionesActivity → RegistrarSesionActivity → ResumenSesionActivity
+        ├── Empezar → SesionEnVivoActivity → ResumenSesionActivity
+        ├── «+» Apuntar → RegistrarSesionActivity → ResumenSesionActivity
         ├── MedicionesActivity → RegistrarMedicionActivity
         ├── LogrosActivity
         ├── AcercaDeActivity
@@ -166,7 +167,8 @@ Capa de red basada en **Retrofit2 + OkHttp3 + Gson**, con una interfaz tipada po
 | `AcercaDeActivity` | Pantalla "Acerca de": logo adaptativo claro/oscuro, info extendida de la app (descripción, 6 features, tech stack) e info del desarrollador (bio, formación, 3 FCTs, email clickable). Botón "Compartir": abre el selector de compartir del sistema con el enlace de la app (sin permisos adicionales) |
 | `EditarPerfilActivity` | Editar email, peso, altura, edad, nivel, objetivo. PATCH /usuarios/{id} |
 | `SesionesActivity` | Historial de sesiones con opción de eliminar |
-| `RegistrarSesionActivity` | Formulario para registrar sesión: rutina (spinner), ejercicios serie a serie (`EjercicioPesoAdapter`), duración, notas y valoración (RatingBar 1-5). Guarda todo en un solo POST /sesiones/completa idempotente (GP-006). El borrador vive en `RegistrarSesionViewModel` (`SavedStateHandle`) y la red en `RegistroSesionRepositorio`: girar o que Android mate la app no pierde nada (GP-016) |
+| `SesionEnVivoActivity` | La sesión en vivo (GP-012): la abren todos los «Empezar», con el reloj en marcha desde el toque. Una tarjeta por ejercicio con su pauta y una fila por serie con «Anterior» y pistas de la última vez (`GET /sesiones/ultima-vez`, GP-014); marcar confirma la pista; cronómetro en las series por tiempo. La sesión vive en `SesionEnCursoRepositorio` (un fichero por cuenta, escrito de forma atómica a cada cambio), que observan también la barra sobre la navegación, la notificación continua, Inicio, Entrenar y el «+». Se guarda por POST /sesiones/completa y desde el primer intento ya no se edita |
+| `RegistrarSesionActivity` | Apuntar un entrenamiento ya hecho, desde el «+», con su fecha (hoy por defecto, nunca futura) y su duración (GP-012). Formulario para registrar sesión: rutina (spinner), ejercicios serie a serie (`EjercicioPesoAdapter`), duración, notas y valoración (RatingBar 1-5). Guarda todo en un solo POST /sesiones/completa idempotente (GP-006). El borrador vive en `RegistrarSesionViewModel` (`SavedStateHandle`) y la red en `RegistroSesionRepositorio`: girar o que Android mate la app no pierde nada (GP-016) |
 | `ResumenSesionActivity` | Detalle de sesión completada + estadísticas del usuario + logros desbloqueados |
 | `MedicionesActivity` | Historial de mediciones corporales con opción de eliminar |
 | `RegistrarMedicionActivity` | Formulario para añadir medición (peso obligatorio, resto opcionales) |

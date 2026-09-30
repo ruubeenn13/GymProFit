@@ -152,7 +152,8 @@ HomeActivity (navegación inferior)
   │           └── (click ejercicio) → DetalleEjercicioActivity
   ├── NutricionActivity → ComidaActivity → AnadirAlimentoActivity → CrearAlimentoActivity
   └── PerfilActivity → EditarPerfilActivity
-        ├── SesionesActivity → RegistrarSesionActivity → ResumenSesionActivity
+        ├── Empezar → SesionEnVivoActivity → ResumenSesionActivity
+        ├── «+» Apuntar → RegistrarSesionActivity → ResumenSesionActivity
         ├── MedicionesActivity → RegistrarMedicionActivity
         ├── LogrosActivity
         ├── AcercaDeActivity
@@ -191,7 +192,8 @@ HomeActivity (navegación inferior)
 | `AcercaDeActivity` | Pantalla "Acerca de": logo adaptativo claro/oscuro (`@drawable/logo` + `drawable-night/`), tarjeta de licencias de terceros (GP-082), info extendida de la app (descripción, 6 features, tech stack) e info del desarrollador (bio, formación, 3 FCTs, email clickable `ACTION_SENDTO`). Botón "Compartir": pide permiso `READ_CONTACTS` en runtime vía `ActivityResultLauncher`; si se concede abre selector de contactos (`ACTION_PICK Phone.CONTENT_URI`); extrae número via `ContentResolver` y lanza `ACTION_SENDTO smsto:` con el texto pre-rellenado. Extiende `AppCompatActivity`, aplica tema/idioma manualmente |
 | `EditarPerfilActivity` | Ajustes › Tus datos. `PATCH /usuarios/{id}` con nombre para mostrar (en blanco lo borra), peso, altura, edad, sexo, actividad, nivel y objetivo. Un campo numérico vacío va como `null`, que la API **ignora** (no lo borra). Al guardar, apunta el dueño del perfil y recalcula las macros |
 | `SesionesActivity` | Historial de sesiones, eliminar |
-| `RegistrarSesionActivity` | Crear sesión: spinner rutinas, calorías calculadas, cards de ejercicios con campo de peso por ejercicio (RecyclerView+`EjercicioPesoAdapter`), RatingBar 1-5 |
+| `SesionEnVivoActivity` | La sesión en vivo (GP-012): la abren todos los «Empezar», con el reloj en marcha desde el toque. Una tarjeta por ejercicio con su pauta y una fila por serie con «Anterior» y pistas de la última vez (`GET /sesiones/ultima-vez`, GP-014); marcar confirma la pista; cronómetro en las series por tiempo. La sesión vive en `SesionEnCursoRepositorio` (un fichero por cuenta, escrito de forma atómica a cada cambio), que observan también la barra sobre la navegación, la notificación continua, Inicio, Entrenar y el «+». Se guarda por POST /sesiones/completa y desde el primer intento ya no se edita |
+| `RegistrarSesionActivity` | Apuntar un entrenamiento ya hecho, desde el «+» (GP-012): rutina, fecha (hoy por defecto, nunca futura), duración, series por ejercicio (`EjercicioPesoAdapter`), notas y valoración; el inicio es ese día a la hora de ahora menos la duración |
 | `ResumenSesionActivity` | Detalle sesión + 6 stats de usuario + logros desbloqueados |
 | `MedicionesActivity` | Vista detallada de la última medición corporal (peso, altura, grasa, músculo, perímetros). FAB para registrar nueva |
 | `RegistrarMedicionActivity` | POST /mediciones-corporales |

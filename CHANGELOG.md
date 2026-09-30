@@ -2,6 +2,19 @@
 
 Historial de cambios del proyecto (API Spring Boot + app Android). Ver también el [README](README.md).
 
+### 2026-09-30
+
+| Hash | Descripción |
+|---|---|
+| `b26f862` | Fusión de `lote-1.3.0` en `main` con el arreglo de abajo; etiquetada `v1.3.0`. Informe en `documentacion/estado/2026-09-30-lote-1.3.0.md`. |
+| `06e7e15` | fix(android): **la sesión en vivo se abre por el primer ejercicio**: mientras llegaban los ejercicios la lista se anclaba a su fila final y se abría por el final (visto en la prueba contra producción). |
+| `6d96610` | Fusión de `lote-1.3.0` en `main` (desplegada a las 13:30). |
+| `1d47ad1` | build(android): **versión 1.3.0** (10300). Misma clave de firma. Necesita `GET /sesiones/ultima-vez` (desplegada: `6d96610`). |
+| `2ab84f3` | feat(android): **la sesión en vivo** (GP-012) **con la última vez de cada ejercicio** (GP-014): todos los «Empezar» la abren con el reloj en marcha; «Anterior» y pistas de la última vez, marcar confirma la pista, «Primera vez» sin historial; cronómetro con vibración al mínimo y al máximo en las series por tiempo; la sesión vive en un fichero por cuenta escrito de forma atómica, con una sola fuente de verdad que observan la barra sobre la navegación, la notificación continua, Inicio, Entrenar y el «+»; una a la vez; se guarda por `/sesiones/completa` y desde el primer intento ya no se edita, con reintento automático al abrir la app. El formulario de siempre queda para apuntar un entrenamiento hecho, con su fecha. |
+| `53dcb75` | feat(api): **`GET /sesiones/ultima-vez?ejercicios=…`** (GP-014): las series de la última sesión terminada del usuario del token que tenga cada ejercicio, con su fecha; los que no tienen ninguna no salen; hasta 30 ids. |
+| `a3f63c6` | fix(android): **el calendario vuelve a la letra de la 1.12**: Material 1.13 puso autoajuste de tamaño a los días y salían 2 px más altos; único cambio no decidido al comparar Nutrición, Ajustes y los formularios de rutina con la 1.2.2. |
+| `85422ac` | build(android): fusión del PR #31 de Dependabot, **plugin de Android 9.4.1**. |
+
 ### 2026-09-29
 
 | Hash | Descripción |
