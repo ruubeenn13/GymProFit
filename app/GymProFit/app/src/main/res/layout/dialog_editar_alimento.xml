@@ -93,7 +93,8 @@
                     android:id="@+id/etProteinasEditar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal" />
+                    android:inputType="numberDecimal"
+                    android:digits="0123456789.," />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Carbohidratos por 100g -->
@@ -108,7 +109,8 @@
                     android:id="@+id/etCarbohidratosEditar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal" />
+                    android:inputType="numberDecimal"
+                    android:digits="0123456789.," />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Grasas por 100g -->
@@ -122,7 +124,8 @@
                     android:id="@+id/etGrasasEditar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal" />
+                    android:inputType="numberDecimal"
+                    android:digits="0123456789.," />
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>

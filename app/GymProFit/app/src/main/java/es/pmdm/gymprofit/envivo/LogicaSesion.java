@@ -28,10 +28,10 @@ import es.pmdm.gymprofit.utils.Numeros;
 // strings.xml.
 //
 // Marcar es confirmar (GP-014): una serie marcada con un campo vacío se queda con lo de
-// su pista, y se escribe en el campo para que lo que se ve sea lo que se guarda. Sin
-// última vez, la pista de las repeticiones es el rango de la pauta y lo que se confirma
-// es su mínimo: el rango no es un número, y el mínimo es lo único de él que no
-// presume de más.
+// su pista, y se escribe en el campo para que lo que se ve sea lo que se guarda. Solo
+// se confirma la última vez: sin ella, la pista es la pauta (un rango, o un número de la
+// rutina), que no es algo que se haya hecho. Guardarla como hecha inventaría el dato que
+// la próxima vez sale como «Anterior», así que la serie no se marca y hay que escribirlo.
 // ============================================================
 public final class LogicaSesion {
 
@@ -281,18 +281,18 @@ public final class LogicaSesion {
         HECHA,
         /** La serie deja de estar hecha. */
         DESMARCADA,
-        /** Sin repeticiones ni pista de dónde sacarlas: hay que escribirlas. */
+        /** Sin repeticiones ni última vez que confirmar: hay que escribirlas. */
         FALTAN_REPS,
-        /** Sin segundos ni pista: hay que escribirlos o usar el cronómetro. */
+        /** Sin segundos ni última vez: hay que escribirlos o usar el cronómetro. */
         FALTAN_SEGUNDOS,
         /** Lo escrito no es un número válido. */
         NO_VALIDO
     }
 
     /**
-     * Marca o desmarca la serie. Al marcar, cada campo vacío se rellena con lo que
-     * confirma su pista: la última vez, o el mínimo de la pauta en las repeticiones.
-     * Lo que no se puede confirmar ni leer deja la serie sin marcar.
+     * Marca o desmarca la serie. Al marcar, cada campo vacío se rellena con lo de la
+     * última vez. La pauta no se confirma: sin última vez, las repeticiones (o los
+     * segundos) vacías dejan la serie sin marcar, igual que lo que no se puede leer.
      */
     @NonNull
     public static Marcado marcar(@NonNull SesionEnCurso.Ejercicio e, int indice, @NonNull Locale locale) {
@@ -306,9 +306,8 @@ public final class LogicaSesion {
         if (porTiempo(e)) {
             String seg = s.segundos.trim();
             if (seg.isEmpty()) {
-                Integer confirmado = a != null && a.segundos != null && a.segundos > 0 ? a.segundos : minimoPauta(e);
-                if (confirmado == null) return Marcado.FALTAN_SEGUNDOS;
-                s.segundos = tiempo(confirmado);
+                if (a == null || a.segundos == null || a.segundos <= 0) return Marcado.FALTAN_SEGUNDOS;
+                s.segundos = tiempo(a.segundos);
             } else if (segundosDe(seg) == null) {
                 return Marcado.NO_VALIDO;
             }
@@ -320,9 +319,8 @@ public final class LogicaSesion {
         String peso = s.peso.trim();
         String repsFinal = reps;
         if (reps.isEmpty()) {
-            Integer confirmado = a != null && a.repeticiones > 0 ? Integer.valueOf(a.repeticiones) : minimoPauta(e);
-            if (confirmado == null) return Marcado.FALTAN_REPS;
-            repsFinal = String.valueOf(confirmado);
+            if (a == null || a.repeticiones <= 0) return Marcado.FALTAN_REPS;
+            repsFinal = String.valueOf(a.repeticiones);
         } else if (Numeros.entero(reps, 1, 100) == null) {
             return Marcado.NO_VALIDO;
         }

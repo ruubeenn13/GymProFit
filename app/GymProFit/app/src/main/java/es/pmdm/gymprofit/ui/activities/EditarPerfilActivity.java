@@ -21,6 +21,7 @@ import es.pmdm.gymprofit.utils.AvisoDescartar;
 import es.pmdm.gymprofit.utils.CalculadoraNutricional;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.NombreVisible;
+import es.pmdm.gymprofit.utils.Numeros;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
 import es.pmdm.gymprofit.utils.UIHelper;
@@ -189,7 +190,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
             body.put("nombre", nombre);
 
             String pesoStr = etPeso.getText() != null ? etPeso.getText().toString().trim() : "";
-            body.put("peso", pesoStr.isEmpty() ? null : new BigDecimal(pesoStr.replace(",", ".")));
+            body.put("peso", pesoStr.isEmpty() ? null : Numeros.leerExacto(pesoStr));
 
             String alturaStr = etAltura.getText() != null ? etAltura.getText().toString().trim() : "";
             body.put("altura", alturaStr.isEmpty() ? null : new BigDecimal(alturaStr));
@@ -208,7 +209,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
                 public void onOk(Void response) {
                     LoadingDialog.hide(EditarPerfilActivity.this);
                     prefsManager.saveNombre(prefsManager.getUsername(), nombre);
-                    if (!pesoStr.isEmpty()) prefsManager.savePeso(Double.parseDouble(pesoStr.replace(",", ".")));
+                    if (!pesoStr.isEmpty()) prefsManager.savePeso(Numeros.leerDecimal(pesoStr));
                     if (!alturaStr.isEmpty()) prefsManager.saveAltura(Double.parseDouble(alturaStr));
                     if (!edadStr.isEmpty()) prefsManager.saveEdad(Integer.parseInt(edadStr));
                     String objetivo = OBJETIVOS[spObjetivo.getSelectedItemPosition()];

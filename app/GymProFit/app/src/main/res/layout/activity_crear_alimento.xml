@@ -97,7 +97,8 @@
                     android:id="@+id/etProteinas"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal" />
+                    android:inputType="numberDecimal"
+                    android:digits="0123456789.," />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -114,7 +115,8 @@
                     android:id="@+id/etCarbohidratos"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal" />
+                    android:inputType="numberDecimal"
+                    android:digits="0123456789.," />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -131,7 +133,8 @@
                     android:id="@+id/etGrasas"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal" />
+                    android:inputType="numberDecimal"
+                    android:digits="0123456789.," />
 
             </com.google.android.material.textfield.TextInputLayout>
 

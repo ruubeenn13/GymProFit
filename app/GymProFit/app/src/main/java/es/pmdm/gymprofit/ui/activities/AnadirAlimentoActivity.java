@@ -40,6 +40,7 @@ import es.pmdm.gymprofit.network.ComidaApi;
 import es.pmdm.gymprofit.ui.adapters.AlimentoAdapter;
 import es.pmdm.gymprofit.utils.AvisoDescartar;
 import es.pmdm.gymprofit.utils.LoadingDialog;
+import es.pmdm.gymprofit.utils.Numeros;
 import es.pmdm.gymprofit.utils.PaginacionScrollListener;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
@@ -409,7 +410,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
                     return;
                 }
                 try {
-                    double gramos = Double.parseDouble(raw);
+                    double gramos = Numeros.leerDecimal(raw);
                     int kcal  = (int) (alimento.getCalorias()      * gramos / 100);
                     double prot  = alimento.getProteinas()     * gramos / 100;
                     double carbs = alimento.getCarbohidratos() * gramos / 100;
@@ -431,7 +432,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
                     }
                     double gramos;
                     try {
-                        gramos = Double.parseDouble(raw);
+                        gramos = Numeros.leerDecimal(raw);
                     } catch (NumberFormatException e) {
                         Toast.makeText(this, getString(R.string.anadir_alimento_gramos_hint), Toast.LENGTH_SHORT).show();
                         return;
@@ -547,7 +548,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
         String raw = field.getText().toString().trim();
         if (raw.isEmpty()) return 0.0;
         try {
-            return Double.parseDouble(raw);
+            return Numeros.leerDecimal(raw);
         } catch (NumberFormatException e) {
             return 0.0;
         }

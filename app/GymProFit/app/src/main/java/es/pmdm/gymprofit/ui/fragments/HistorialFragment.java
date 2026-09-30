@@ -24,6 +24,7 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.ui.activities.ResumenSesionActivity;
 import es.pmdm.gymprofit.ui.adapters.SesionAdapter;
+import es.pmdm.gymprofit.utils.HistorialSesiones;
 import es.pmdm.gymprofit.utils.NombresRutina;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
@@ -77,7 +78,8 @@ public class HistorialFragment extends BaseFragment {
         sesionApi.getDeUsuario(uid).enqueue(new ApiCallback<List<SesionEntrenamiento>>() {
             @Override public void onOk(List<SesionEntrenamiento> l) {
                 if (!isAdded()) return;
-                List<SesionEntrenamiento> sesiones = l != null ? l : new ArrayList<>();
+                // Por fecha, no por el orden en que llegan (GP-141).
+                List<SesionEntrenamiento> sesiones = HistorialSesiones.masRecientePrimero(l);
                 rutinaNombres = NombresRutina.deSesiones(sesiones);
                 tvVacio.setText(R.string.sesiones_sin_sesiones);
                 mostrar(sesiones);

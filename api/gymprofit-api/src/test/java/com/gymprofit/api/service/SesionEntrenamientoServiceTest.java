@@ -230,7 +230,7 @@ class SesionEntrenamientoServiceTest {
         // vacía ya no significa 404 (DEC-033), así que la existencia hay que simularla.
         when(usuarioRepository.existsById(1)).thenReturn(true);
 
-        when(sesionEntrenamientoRepository.findByUsuarioId(1)).thenReturn(List.of(sesionEntrenamiento));
+        when(sesionEntrenamientoRepository.findByUsuarioIdOrderByFechaInicioDescIdDesc(1)).thenReturn(List.of(sesionEntrenamiento));
         when(sesionEntrenamientoMapper.toDTOList(any())).thenReturn(List.of(sesionEntrenamientoDTO));
 
         List<SesionEntrenamientoDTO> result = sesionEntrenamientoService.findByUsuarioId(1);

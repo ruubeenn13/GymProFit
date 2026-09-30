@@ -191,7 +191,8 @@ public class SesionEntrenamientoController {
         return ResponseEntity.ok(sesion);
     }
 
-    @Operation(summary = "Obtiene todas las sesiones de un usuario")
+    @Operation(summary = "Obtiene todas las sesiones de un usuario",
+            description = "De la más reciente a la más antigua por fecha de inicio; a igual fecha, la guardada después primero.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sesiones encontradas",
                     content = @Content(schema = @Schema(implementation = SesionEntrenamientoDTO.class))),

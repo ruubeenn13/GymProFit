@@ -1177,7 +1177,7 @@
     <string name="envivo_crono_pauta">Target: %1$s</string>
     <string name="envivo_crono_sin_pauta">No target: stop whenever you like</string>
     <string name="envivo_crono_parar">Stop and log</string>
-    <string name="envivo_crono_parado">The stopwatch stopped on its own after an hour</string>
+    <string name="envivo_crono_parado">The stopwatch stopped at one hour. Enter the seconds yourself</string>
     <string name="envivo_cargando">Loading the exercises…</string>
     <string name="envivo_error_carga">Couldn\'t load the routine\'s exercises. The clock is still running.</string>
     <string name="envivo_vacia">No exercises yet. Add the first one.</string>

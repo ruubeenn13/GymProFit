@@ -33,6 +33,7 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.ui.adapters.AlimentoComidaAdapter;
 import es.pmdm.gymprofit.utils.LoadingDialog;
+import es.pmdm.gymprofit.utils.Numeros;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -260,7 +261,7 @@ public class ComidaActivity extends BaseActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 try {
-                    double g = Double.parseDouble(s.toString());
+                    double g = Numeros.leerDecimal(s.toString());
                     // Las calorías almacenadas son por 100 g
                     int kcal = item.getCaloriasTotales() > 0
                             ? (int) Math.round((item.getCaloriasTotales() / item.getCantidadGramos()) * g)
@@ -283,7 +284,7 @@ public class ComidaActivity extends BaseActivity {
                     String texto = etGramos.getText().toString().trim();
                     if (texto.isEmpty()) return;
                     try {
-                        double nuevosGramos = Double.parseDouble(texto);
+                        double nuevosGramos = Numeros.leerDecimal(texto);
                         if (nuevosGramos <= 0) return;
                         // Cuerpo parcial: cantidadGramos como BigDecimal (decimal).
                         Map<String, Object> body = new HashMap<>();

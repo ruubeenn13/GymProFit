@@ -102,4 +102,16 @@ public final class Marcas {
                 ? ctx.getString(R.string.record_peso_por_reps, kilos(ctx, peso), reps)
                 : kilos(ctx, peso);
     }
+
+    /**
+     * Cuántos ejercicios distintos hay en unas marcas (GP-140). Un ejercicio nuevo puede
+     * dejar una primera marca de peso y otra de repeticiones: el resumen cuenta
+     * ejercicios, no marcas.
+     */
+    public static int ejerciciosDistintos(@Nullable java.util.List<Record> marcas) {
+        if (marcas == null) return 0;
+        java.util.Set<Integer> ids = new java.util.HashSet<>();
+        for (Record r : marcas) ids.add(r.getEjercicioId());
+        return ids.size();
+    }
 }

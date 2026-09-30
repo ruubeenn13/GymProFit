@@ -1190,7 +1190,7 @@
     <string name="envivo_crono_pauta">Pauta: %1$s</string>
     <string name="envivo_crono_sin_pauta">Sin pauta: para cuando quieras</string>
     <string name="envivo_crono_parar">Parar y apuntar</string>
-    <string name="envivo_crono_parado">El cronómetro se ha parado solo a la hora</string>
+    <string name="envivo_crono_parado">El cronómetro se ha parado a la hora. Apunta los segundos a mano</string>
     <string name="envivo_cargando">Cargando los ejercicios…</string>
     <string name="envivo_error_carga">No se han podido cargar los ejercicios de la rutina. El reloj sigue en marcha.</string>
     <string name="envivo_vacia">Aún no hay ejercicios. Añade el primero.</string>

@@ -1,5 +1,6 @@
 package es.pmdm.gymprofit.utils;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.math.BigDecimal;
@@ -85,6 +86,33 @@ public final class Numeros {
         } catch (NumberFormatException e) {
             return null;
         }
+    }
+
+    /**
+     * Como {@link Double#parseDouble}, pero acepta coma o punto como separador: para
+     * los sitios que ya tratan la {@link NumberFormatException} (vista previa, campos
+     * opcionales). El teclado numérico de un móvil en español manda coma (GP-139).
+     *
+     * @throws NumberFormatException si está vacío o no es un número
+     */
+    public static double leerDecimal(@Nullable String texto) {
+        String limpio = normalizar(texto);
+        if (limpio == null) throw new NumberFormatException(texto);
+        double valor = Double.parseDouble(limpio);
+        if (Double.isNaN(valor) || Double.isInfinite(valor)) throw new NumberFormatException(texto);
+        return valor;
+    }
+
+    /**
+     * Como {@code new BigDecimal(texto)}, pero acepta coma o punto como separador.
+     *
+     * @throws NumberFormatException si está vacío o no es un número
+     */
+    @NonNull
+    public static BigDecimal leerExacto(@Nullable String texto) {
+        String limpio = normalizar(texto);
+        if (limpio == null) throw new NumberFormatException(texto);
+        return new BigDecimal(limpio);
     }
 
     // Deja el texto listo para parsear: sin espacios y con punto decimal.

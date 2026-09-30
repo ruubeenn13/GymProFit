@@ -52,6 +52,7 @@ import es.pmdm.gymprofit.model.envivo.SesionEnCurso;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
 import es.pmdm.gymprofit.ui.adapters.SesionEnVivoAdapter;
 import es.pmdm.gymprofit.utils.InputDialog;
+import es.pmdm.gymprofit.utils.Marcas;
 import es.pmdm.gymprofit.utils.Numeros;
 import es.pmdm.gymprofit.utils.Pauta;
 import es.pmdm.gymprofit.utils.PreferencesManager;
@@ -280,8 +281,13 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         LogicaSesion.Marcado m = repo.marcar(serieId, getResources().getConfiguration().getLocales().get(0));
         if (m == null) return;
         switch (m) {
-            case FALTAN_REPS: avisar(R.string.envivo_falta_reps); break;
-            case FALTAN_SEGUNDOS: avisar(R.string.envivo_falta_segundos); break;
+            case FALTAN_REPS:
+            case FALTAN_SEGUNDOS:
+                // No se marca: el foco va al campo que falta y se dice qué escribir.
+                SesionEnVivoAdapter.enfocarSerie(rv, serieId);
+                avisar(m == LogicaSesion.Marcado.FALTAN_REPS
+                        ? R.string.envivo_falta_reps : R.string.envivo_falta_segundos);
+                break;
             case NO_VALIDO: avisar(R.string.envivo_no_valido); break;
             default: break;
         }
@@ -439,11 +445,18 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
     }
 
     private void comprobarCronometro() {
+        SesionEnCurso antes = repo.actual();
+        long serieCrono = antes != null && antes.cronometro != null ? antes.cronometro.serieId : -1;
         CronometroSerie.Aviso a = repo.comprobarCronometro();
         switch (a) {
             case VIBRAR_CORTA: vibrar(new long[]{0, 180}); break;
             case VIBRAR_DOBLE: vibrar(new long[]{0, 180, 140, 180}); break;
-            case PARAR: avisar(R.string.envivo_crono_parado); break;
+            case PARAR:
+                // A la hora no se apunta nada (una serie de una hora casi seguro es un
+                // olvido): se dice, y el foco va al tiempo de esa serie para escribirlo.
+                if (serieCrono != -1) SesionEnVivoAdapter.enfocarSerie(rv, serieCrono);
+                avisar(R.string.envivo_crono_parado);
+                break;
             default: break;
         }
         pintarCronometro();
@@ -586,7 +599,8 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         intent.putExtra(ResumenSesionActivity.EXTRA_ENTRENAMIENTO_LIBRE, guardadaEnCurso.rutinaId == null);
         intent.putStringArrayListExtra("nuevosLogros", nuevosLogros);
         intent.putExtra(ResumenSesionActivity.EXTRA_RECORDS, new ArrayList<>(sesion.getRecordsBatidos()));
-        intent.putExtra(ResumenSesionActivity.EXTRA_PRIMERAS_MARCAS, sesion.getPrimerasMarcas().size());
+        intent.putExtra(ResumenSesionActivity.EXTRA_PRIMERAS_MARCAS,
+                Marcas.ejerciciosDistintos(sesion.getPrimerasMarcas()));
         if (isTaskRoot()) startActivity(new Intent(this, MainActivity.class));
         startActivity(intent);
         finish();

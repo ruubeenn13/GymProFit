@@ -7,6 +7,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -241,6 +242,24 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override public int getItemCount() { return filas.size(); }
 
     @Override public int getItemViewType(int position) { return filas.get(position).tipo; }
+
+    /**
+     * Pone el foco en el campo que falta de la serie (repeticiones o tiempo) y abre el
+     * teclado. Devuelve el campo, o null si la fila no está en pantalla.
+     */
+    @Nullable
+    public static EditText enfocarSerie(@NonNull RecyclerView rv, long serieId) {
+        RecyclerView.ViewHolder vh = rv.findViewHolderForItemId(SERIE * 1_000_000_000_000L + serieId);
+        if (!(vh instanceof SesionEnVivoAdapter.SerieVH)) return null;
+        SerieVH serie = (SerieVH) vh;
+        EditText campo = serie.etTiempo.getVisibility() == View.VISIBLE ? serie.etTiempo : serie.etReps;
+        if (!campo.isEnabled()) return null;
+        campo.requestFocus();
+        InputMethodManager imm = (InputMethodManager) campo.getContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) imm.showSoftInput(campo, InputMethodManager.SHOW_IMPLICIT);
+        return campo;
+    }
 
     @Override public long getItemId(int position) {
         Fila f = filas.get(position);

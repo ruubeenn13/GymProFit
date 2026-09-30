@@ -431,7 +431,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         }
     }
 
-    // Lista las sesiones de un usuario concreto (requiere ser el propio usuario o ADMIN).
+    // Lista las sesiones de un usuario concreto, de la más reciente a la más antigua
+    // por fecha de inicio (GP-141). Requiere ser el propio usuario o ADMIN.
     @Override
     public List<SesionEntrenamientoDTO> findByUsuarioId(Integer usuarioId) {
         securityUtils.checkOwnership(usuarioId);
@@ -440,7 +441,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
         logger.info("Buscando sesiones de entrenamiento por usuario id: {}", usuarioId);
 
-        List<SesionEntrenamiento> sesiones = sesionEntrenamientoRepository.findByUsuarioId(usuarioId);
+        List<SesionEntrenamiento> sesiones =
+                sesionEntrenamientoRepository.findByUsuarioIdOrderByFechaInicioDescIdDesc(usuarioId);
 
         return sesionEntrenamientoMapper.toDTOList(sesiones);
     }

@@ -190,9 +190,33 @@ public class LogicaSesionTest {
         assertEquals("57,5", e.series.get(0).peso);
         assertEquals("12", e.series.get(0).repeticiones);
 
-        assertEquals(LogicaSesion.Marcado.HECHA, LogicaSesion.marcar(e, 1, ES));
-        assertEquals("sin anterior, el mínimo del rango", "8", e.series.get(1).repeticiones);
+        assertEquals("sin anterior, el rango no se confirma", LogicaSesion.Marcado.FALTAN_REPS,
+                LogicaSesion.marcar(e, 1, ES));
+        assertFalse(e.series.get(1).hecha);
+        assertEquals("sin anterior no se inventan repeticiones", "", e.series.get(1).repeticiones);
         assertEquals("sin anterior no se inventa peso", "", e.series.get(1).peso);
+    }
+
+    @Test
+    public void la_pauta_no_se_confirma_como_si_fuera_la_ultima_vez() {
+        SesionEnCurso.Ejercicio fija = ejercicio(12, 1);
+        fija.repeticionesPauta = 10;
+        fija.anteriorCargado = true;
+        assertEquals(LogicaSesion.Marcado.FALTAN_REPS, LogicaSesion.marcar(fija, 0, ES));
+        assertFalse(fija.series.get(0).hecha);
+
+        SesionEnCurso.Ejercicio plancha = ejercicio(7, 2);
+        plancha.medida = "SEGUNDOS";
+        plancha.minimo = 30;
+        plancha.maximo = 60;
+        plancha.anteriorCargado = true;
+        plancha.anterior.add(new SesionEnCurso.SerieAnterior(1, null, 0, 40));
+
+        assertEquals(LogicaSesion.Marcado.HECHA, LogicaSesion.marcar(plancha, 0, ES));
+        assertEquals("con última vez se confirma", "0:40", plancha.series.get(0).segundos);
+        assertEquals(LogicaSesion.Marcado.FALTAN_SEGUNDOS, LogicaSesion.marcar(plancha, 1, ES));
+        assertFalse(plancha.series.get(1).hecha);
+        assertEquals("", plancha.series.get(1).segundos);
     }
 
     @Test

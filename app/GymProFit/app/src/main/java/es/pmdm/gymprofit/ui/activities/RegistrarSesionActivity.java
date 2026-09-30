@@ -36,6 +36,7 @@ import es.pmdm.gymprofit.ui.viewmodels.RegistrarSesionViewModel;
 import es.pmdm.gymprofit.ui.viewmodels.RegistrarSesionViewModel.EstadoGuardado;
 import es.pmdm.gymprofit.utils.AvisoDescartar;
 import es.pmdm.gymprofit.utils.LoadingDialog;
+import es.pmdm.gymprofit.utils.Marcas;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
@@ -443,7 +444,8 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         intent.putExtra(ResumenSesionActivity.EXTRA_ENTRENAMIENTO_LIBRE, rutinaId == null);
         intent.putStringArrayListExtra("nuevosLogros", nuevosLogros);
         intent.putExtra(ResumenSesionActivity.EXTRA_RECORDS, new ArrayList<>(sesion.getRecordsBatidos()));
-        intent.putExtra(ResumenSesionActivity.EXTRA_PRIMERAS_MARCAS, sesion.getPrimerasMarcas().size());
+        intent.putExtra(ResumenSesionActivity.EXTRA_PRIMERAS_MARCAS,
+                Marcas.ejerciciosDistintos(sesion.getPrimerasMarcas()));
         startActivity(intent);
     }
 

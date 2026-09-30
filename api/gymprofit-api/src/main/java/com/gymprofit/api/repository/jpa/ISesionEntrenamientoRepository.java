@@ -27,8 +27,13 @@ public interface ISesionEntrenamientoRepository extends JpaRepository<SesionEntr
     // la sesión de otra persona, ni siquiera ante una colisión de claves.
     Optional<SesionEntrenamiento> findByUsuarioIdAndIdempotenciaClave(Integer usuarioId, String idempotenciaClave);
 
-    // Sesiones de un usuario.
+    // Sesiones de un usuario, sin orden (para quien solo cuenta o recorre).
     List<SesionEntrenamiento> findByUsuarioId(Integer usuarioId);
+
+    // Historial de un usuario (GP-141): de la más reciente a la más antigua por fecha
+    // de inicio y, a igual fecha, la guardada después primero. El orden de guardado
+    // no sirve: una sesión apuntada a posteriori es de antes aunque llegue después.
+    List<SesionEntrenamiento> findByUsuarioIdOrderByFechaInicioDescIdDesc(Integer usuarioId);
 
     // Sesiones asociadas a una rutina.
     List<SesionEntrenamiento> findByRutinaId(Integer rutinaId);
