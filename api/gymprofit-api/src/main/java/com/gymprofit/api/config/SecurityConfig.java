@@ -134,6 +134,11 @@ public class SecurityConfig {
                                 // uno crea rutinas del usuario, y eso el invitado no puede.
                                 // El programa que sigue (lote 1.2.1): del usuario del token, y el
                                 // invitado no sigue ninguno. Antes que la regla general de lectura.
+                                // El alta nueva (GP-103) enseña el programa recomendado antes de
+                                // crear la cuenta: estas dos solo leen el catálogo y no devuelven
+                                // nada de ninguna cuenta. Con token siguen usando el perfil, y un
+                                // token caducado sigue siendo 401 (lo corta el filtro JWT).
+                                .requestMatchers(HttpMethod.GET, "/programas/recomendado", "/programas/*/vista-previa").permitAll()
                                 .requestMatchers("/programas/seguido").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.GET, "/programas", "/programas/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.POST, "/programas/*/seguir").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())

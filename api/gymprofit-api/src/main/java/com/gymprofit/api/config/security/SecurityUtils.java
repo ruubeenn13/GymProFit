@@ -7,6 +7,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 /**
  * Utilidades de autorización a nivel de objeto (ownership).
  * <p>
@@ -46,6 +48,16 @@ public class SecurityUtils {
      */
     public Integer getCurrentUserId() {
         return getCurrentUser().getId();
+    }
+
+    /**
+     * Id del usuario autenticado, o vacío si la petición llega sin token: para las rutas
+     * públicas que responden distinto con cuenta y sin ella (GP-103).
+     */
+    public Optional<Integer> getCurrentUserIdSiLoHay() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null && authentication.getPrincipal() instanceof Usuario u
+                ? Optional.of(u.getId()) : Optional.empty();
     }
 
     /**
