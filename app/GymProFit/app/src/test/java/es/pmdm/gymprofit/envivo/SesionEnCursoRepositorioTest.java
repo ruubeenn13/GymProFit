@@ -145,6 +145,7 @@ public class SesionEnCursoRepositorioTest {
     public void sobrevive_a_que_android_cierre_la_app() {
         empezarConRutina();
         repo.escribirPeso(serie(0, 0), "57,");
+        repo.escribirRepeticiones(serie(0, 1), "10");
         repo.marcar(serie(0, 1));
 
         SesionEnCursoRepositorio despues = nuevoProceso();
