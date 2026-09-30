@@ -52,6 +52,7 @@ import es.pmdm.gymprofit.model.envivo.SesionEnCurso;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
 import es.pmdm.gymprofit.ui.adapters.SesionEnVivoAdapter;
 import es.pmdm.gymprofit.utils.InputDialog;
+import es.pmdm.gymprofit.utils.Marcas;
 import es.pmdm.gymprofit.utils.Numeros;
 import es.pmdm.gymprofit.utils.Pauta;
 import es.pmdm.gymprofit.utils.PreferencesManager;
@@ -598,7 +599,8 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         intent.putExtra(ResumenSesionActivity.EXTRA_ENTRENAMIENTO_LIBRE, guardadaEnCurso.rutinaId == null);
         intent.putStringArrayListExtra("nuevosLogros", nuevosLogros);
         intent.putExtra(ResumenSesionActivity.EXTRA_RECORDS, new ArrayList<>(sesion.getRecordsBatidos()));
-        intent.putExtra(ResumenSesionActivity.EXTRA_PRIMERAS_MARCAS, sesion.getPrimerasMarcas().size());
+        intent.putExtra(ResumenSesionActivity.EXTRA_PRIMERAS_MARCAS,
+                Marcas.ejerciciosDistintos(sesion.getPrimerasMarcas()));
         if (isTaskRoot()) startActivity(new Intent(this, MainActivity.class));
         startActivity(intent);
         finish();
