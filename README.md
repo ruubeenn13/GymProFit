@@ -34,7 +34,7 @@
 
 **GymProFit** es un proyecto full-stack compuesto por una aplicación Android nativa y una API REST propia. Permite a los usuarios registrarse, gestionar sus rutinas de entrenamiento, registrar sesiones, consultar un catálogo de ejercicios, hacer seguimiento de mediciones corporales, ver sus logros desbloqueados, llevar un registro nutricional diario y calcular sus necesidades nutricionales personalizadas según su perfil físico.
 
-Incluye además **notificaciones push** (Firebase Cloud Messaging) con 11 recordatorios automáticos programados en el servidor, soporte **multiidioma completo (ES/EN)** — interfaz, push y catálogo de la BD — y autenticación con **refresh token** (renovación de sesión transparente). La API está **desplegada en producción** en Render + Aiven MySQL (ver [Despliegue en producción](#-despliegue-en-producción)).
+Incluye además **notificaciones push** (Firebase Cloud Messaging) con 10 recordatorios automáticos programados en el servidor, que cada cuenta enciende o apaga por tipo (entrenar, comidas y progreso), soporte **multiidioma completo (ES/EN)** — interfaz, push y catálogo de la BD — y autenticación con **refresh token** (renovación de sesión transparente). La API está **desplegada en producción** en Render + Aiven MySQL (ver [Despliegue en producción](#-despliegue-en-producción)).
 
 El sistema distingue tres roles de usuario: **GUEST**, **USER** y **ADMIN**, con permisos diferenciados para cada operación de la API, comprobación de *ownership* en los recursos de usuario y rate-limiting en los endpoints de autenticación.
 
@@ -273,7 +273,7 @@ Controller → Service → Repository (JPA / jOOQ) → MariaDB
 
 | Controlador | Ruta base | Descripción |
 |---|---|---|
-| `AuthController` | `/auth` | Login, registro, guest, **refresh** y logout. Access JWT de 30 min + refresh opaco rotado/revocable |
+| `AuthController` | `/auth` | Login (con el usuario o el correo), registro (el usuario es opcional: sin él lo propone la API con el correo), guest, **refresh** y logout. Access JWT de 30 min + refresh opaco rotado/revocable |
 | `UsuarioController` | `/usuarios` | CRUD completo. Solo ADMIN lista todos |
 | `EjercicioController` | `/ejercicios` | CRUD. Filtros por grupo, dificultad y nombre. Escritura solo ADMIN |
 | `RutinaController` | `/rutinas` | CRUD rutinas. Predefinidas y de usuario |
@@ -334,7 +334,7 @@ Controller → Service → Repository (JPA / jOOQ) → MariaDB
 
 #### 🔔 Notificaciones push (FCM)
 
-`PushNotificationService` envía las push a todos los dispositivos del usuario vía **Firebase Admin SDK** (tolerante a fallos, borra tokens muertos). Dos jobs `@Scheduled` completan el sistema: `NotificacionProgramadaTask` (cada 60 s envía las notificaciones programadas vencidas) y `RecordatorioNotificacionesTask`, con **11 recordatorios automáticos** (5 comidas, entrenar, inactividad, resumen semanal, logro próximo, medición mensual y objetivo por vencer — cron `Europe/Madrid`, solo usuarios con dispositivo registrado, anti-spam por título). Los textos se resuelven con `MessageSource` según `device_tokens.idioma` (push localizadas ES/EN). Detalle completo en [documentacion/NOTIFICACIONES.md](documentacion/NOTIFICACIONES.md).
+`PushNotificationService` envía las push a todos los dispositivos del usuario vía **Firebase Admin SDK** (tolerante a fallos, borra tokens muertos). Dos jobs `@Scheduled` completan el sistema: `NotificacionProgramadaTask` (cada 60 s envía las notificaciones programadas vencidas) y `RecordatorioNotificacionesTask`, con **10 recordatorios automáticos** (5 comidas, inactividad, resumen semanal, logro próximo, medición mensual y objetivo por vencer — cron `Europe/Madrid`, solo usuarios con dispositivo registrado y con ese tipo de aviso encendido, anti-spam por título). Los avisos por tipo (GP-112): entrenar y progreso encendidos de serie, comidas apagado. Los textos se resuelven con `MessageSource` según `device_tokens.idioma` (push localizadas ES/EN). Detalle completo en [documentacion/NOTIFICACIONES.md](documentacion/NOTIFICACIONES.md).
 
 ---
 
