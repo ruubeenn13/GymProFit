@@ -55,9 +55,13 @@ public class AuthController {
         return ResponseEntity.ok(token);
     }
 
-    @Operation(summary = "Registra un nuevo usuario con el rol USER por defecto")
+    @Operation(summary = "Registra un nuevo usuario con el rol USER por defecto",
+            description = "username es opcional (GP-103): sin él, la API lo propone con la parte del correo " +
+                    "antes de la «@» y lo devuelve en la respuesta. Ningún username lleva «@» " +
+                    "(400 con USERNAME_NO_VALIDO). Acepta además nombre, sexo y nivelActividad, con las reglas " +
+                    "del PATCH de /usuarios/{id}.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Usuario registrado correctamente"),
+            @ApiResponse(responseCode = "201", description = "Usuario registrado: {mensaje, username}"),
             @ApiResponse(responseCode = "400", description = "Datos inválidos o usuario ya existente",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
@@ -65,9 +69,11 @@ public class AuthController {
     public ResponseEntity<Map<String, Object>> register(@Valid @RequestBody RegisterDTO registerDTO) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        authService.register(registerDTO);
+        String username = authService.register(registerDTO);
 
         respuesta.put("mensaje", "Usuario registrado correctamente");
+        // El nombre con el que se creó: sin username en el alta, el que propuso la API (GP-103).
+        respuesta.put("username", username);
 
         return new ResponseEntity<>(respuesta, HttpStatus.CREATED);
     }

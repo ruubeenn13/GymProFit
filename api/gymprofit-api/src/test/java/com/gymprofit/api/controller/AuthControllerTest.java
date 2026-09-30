@@ -142,8 +142,8 @@ class AuthControllerTest {
     @Test
     @DisplayName("POST /auth/register correcto devuelve 201 y mensaje")
     void register_correcto_devuelve_201() throws Exception {
-        // Simulamos que el service registra correctamente (no devuelve nada)
-        doNothing().when(authService).register(any(RegisterDTO.class));
+        // Simulamos que el service registra correctamente y devuelve el usuario creado
+        when(authService.register(any(RegisterDTO.class))).thenReturn("newuser");
 
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -151,7 +151,8 @@ class AuthControllerTest {
                 // Verificamos que el código de respuesta es 201 (Created)
                 .andExpect(status().isCreated())
                 // Verificamos que el JSON contiene el mensaje de éxito
-                .andExpect(jsonPath("$.mensaje").value("Usuario registrado correctamente"));
+                .andExpect(jsonPath("$.mensaje").value("Usuario registrado correctamente"))
+                .andExpect(jsonPath("$.username").value("newuser"));
 
         verify(authService).register(any(RegisterDTO.class));
     }

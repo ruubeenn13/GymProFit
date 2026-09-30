@@ -141,7 +141,7 @@ Todos van bajo el context-path `/api`. Los `@RequestMapping` de los controllers 
 | Método | URL | Auth | Descripción |
 |---|---|---|---|
 | POST | `/auth/login` | No | Login. Body: `{username, password}` → `TokenDTO` |
-| POST | `/auth/register` | No | Registro. Body: `{username, password, email}` → 201. Contraseña según DEC-034: 8 caracteres como mínimo, 72 bytes como máximo, sin composición; si es común o lleva «gymprofit» o el usuario, 400 con `PASSWORD_COMUN` o `PASSWORD_CONTIENE_NOMBRE` en `cause` (igual en cambiar y recuperar) |
+| POST | `/auth/register` | No | Registro. Body: `{username?, password, email, nombre?, sexo?, nivelActividad?, …}` → 201 con `{mensaje, username}`. `username` es opcional (GP-103): sin él, la API lo propone con la parte del correo antes de la «@» (minúsculas, sin tildes, solo letras, números, `.` y `_`, de 3 a 30; con número si se queda corto o ya existe). Ningún usuario nuevo lleva «@»: 400 con `USERNAME_NO_VALIDO`, también en `POST /usuarios`. `nombre` con la regla del PATCH. Contraseña según DEC-034: 8 caracteres como mínimo, 72 bytes como máximo, sin composición; si es común o lleva «gymprofit» o el usuario, 400 con `PASSWORD_COMUN` o `PASSWORD_CONTIENE_NOMBRE` en `cause` (igual en cambiar y recuperar) |
 | POST | `/auth/guest` | No | Login como invitado → `TokenDTO` con ROLE_GUEST |
 | POST | `/auth/refresh` | No | Renueva el access token con el refresh opaco, que se rota |
 | POST | `/auth/logout` | No | Revoca el refresh token recibido |

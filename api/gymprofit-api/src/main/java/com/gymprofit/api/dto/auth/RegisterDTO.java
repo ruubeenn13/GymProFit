@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import com.gymprofit.api.enums.NivelActividad;
+import com.gymprofit.api.enums.Sexo;
 import com.gymprofit.api.enums.TipoObjetivo;
 
 import java.io.Serializable;
@@ -21,8 +23,8 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegisterDTO implements Serializable {
-    // Nombre de usuario único, entre 3 y 50 caracteres
-    @NotBlank
+    // Nombre de usuario único, entre 3 y 50 caracteres y sin «@». Opcional desde el alta
+    // nueva (GP-103): si no llega, la API lo propone con la parte del correo (NombreUsuario).
     @Size(min = 3, max = 50)
     private String username;
 
@@ -54,4 +56,11 @@ public class RegisterDTO implements Serializable {
 
     private String nivelExperiencia;
     private TipoObjetivo objetivo;
+
+    // El resto del perfil, para que la cuenta nazca con él en una sola llamada (GP-103).
+    // Nombre para mostrar con la regla del PATCH (GP-116): recortado, en blanco no se
+    // guarda y con más de 40 caracteres es 400. Enums: fuera de su lista, 400.
+    private String nombre;
+    private Sexo sexo;
+    private NivelActividad nivelActividad;
 }
