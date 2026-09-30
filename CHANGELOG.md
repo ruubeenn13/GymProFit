@@ -6,6 +6,12 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `9024637` | Fusión de `lote-1.3.1` en `main`; etiquetada `v1.3.1`. Informe en `documentacion/estado/2026-09-30-lote-1.3.1.md`. |
+| `0a0fb72` | build(android): **versión 1.3.1** (10301). Misma clave de firma. Necesita el orden del historial de la API (`9024637`). |
+| `8bb5e7c` | fix(android): **el resumen cuenta ejercicios nuevos, no primeras marcas** (GP-140): con dos ejercicios nuevos decía «3», porque uno puede dejar marca de peso y de repeticiones. |
+| `a208b60` | fix(android): **los campos decimales aceptan coma y punto** (GP-139): Crear alimento, Editar perfil, el onboarding, editar alimento, los gramos, Apuntar y el diálogo de Medidas; se leen con `Numeros`, y un test recorre los layouts. |
+| `f0a6f00` | fix(api,android): **el historial sale por fecha** (GP-141): `GET /sesiones/usuario/{id}` de la más reciente a la más antigua por fecha de inicio (y por id a igualdad); la app reordena igual sin fiarse del orden, y «Hecho hoy» desempata por id. |
+| `086606b` | fix(android): **sin última vez, marcar con las repeticiones vacías pide el número** en vez de guardar el mínimo del rango (tampoco los segundos ni una pauta fija); el foco va al campo. **El cronómetro que se para a la hora lo dice** y pide los segundos a mano. |
 | `b26f862` | Fusión de `lote-1.3.0` en `main` con el arreglo de abajo; etiquetada `v1.3.0`. Informe en `documentacion/estado/2026-09-30-lote-1.3.0.md`. |
 | `06e7e15` | fix(android): **la sesión en vivo se abre por el primer ejercicio**: mientras llegaban los ejercicios la lista se anclaba a su fila final y se abría por el final (visto en la prueba contra producción). |
 | `6d96610` | Fusión de `lote-1.3.0` en `main` (desplegada a las 13:30). |
