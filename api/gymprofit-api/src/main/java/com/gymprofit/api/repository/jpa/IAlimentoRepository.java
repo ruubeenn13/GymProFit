@@ -57,8 +57,6 @@ public interface IAlimentoRepository extends JpaRepository<Alimento, Integer> {
     @Query("SELECT DISTINCT a.categoria FROM Alimento a WHERE a.usuario IS NULL AND a.categoria IS NOT NULL ORDER BY a.categoria")
     List<String> categoriasDelCatalogo();
 
-    // ¿Usa este código de barras otro alimento? (edición desde la web, GP-085)
-    boolean existsByBarcodeAndIdNot(String barcode, Integer id);
 
     // Busca alimentos por categoría (ej. "Fruta", "Lácteo").
     List<Alimento> findByCategoria(String categoria);
@@ -81,9 +79,18 @@ public interface IAlimentoRepository extends JpaRepository<Alimento, Integer> {
     // Busca los alimentos personalizados creados por un usuario concreto.
     List<Alimento> findByUsuarioId(Integer usuarioId);
 
-    // El producto del CATÁLOGO con ese código de barras (upsert del import OFF). Solo
-    // catálogo: un alimento propio con código es de su dueño y no sale por aquí.
-    java.util.Optional<Alimento> findByBarcodeAndUsuarioIsNull(String barcode);
+    // El alimento del CATÁLOGO con ese código de barras. Solo catálogo: un alimento
+    // propio con código es de su dueño y no sale por aquí (GP-160).
+    java.util.Optional<Alimento> findFirstByBarcodeAndUsuarioIsNullOrderByIdAsc(String barcode);
+
+    // El alimento activo de ESTE usuario con ese código (GP-160).
+    java.util.Optional<Alimento> findFirstByBarcodeAndUsuarioIdAndActivoTrueOrderByIdAsc(String barcode, Integer usuarioId);
+
+    // ¿Otro alimento del catálogo usa ya este código? (el código es único por dueño)
+    boolean existsByBarcodeAndUsuarioIsNullAndIdNot(String barcode, Integer id);
+
+    // ¿Otro alimento de este usuario usa ya este código?
+    boolean existsByBarcodeAndUsuarioIdAndIdNot(String barcode, Integer usuarioId, Integer id);
 
     // Alimentos propios del usuario (activos) cuyo nombre contiene el texto:
     // se antepone a los resultados externos en la búsqueda con query.

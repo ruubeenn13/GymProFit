@@ -6,7 +6,6 @@ import com.gymprofit.api.dto.entity.alimento.AlimentoDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoPatchDTO;
 import com.gymprofit.api.dto.jooq.AlimentoJooqDTO;
 import com.gymprofit.api.entity.Alimento;
-import com.gymprofit.api.entity.ProductoOff;
 import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.exceptions.ConflictEntityException;
 import com.gymprofit.api.exceptions.CreateEntityException;
@@ -16,11 +15,8 @@ import com.gymprofit.api.exceptions.UpdateEntityException;
 import com.gymprofit.api.mappers.AlimentoMapper;
 import com.gymprofit.api.repository.jooq.alimento.IAlimentoJooqRepository;
 import com.gymprofit.api.repository.jpa.IAlimentoRepository;
-import com.gymprofit.api.repository.jpa.IProductoOffRepository;
 import com.gymprofit.api.repository.jpa.IUsuarioRepository;
 import com.gymprofit.api.service.busqueda.IndiceAlimentos;
-import com.gymprofit.api.service.externo.OpenFoodFactsClient;
-import com.gymprofit.api.service.productooff.MaterializadorProducto;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,9 +43,6 @@ public class AlimentoService implements IAlimentoService {
     private final AlimentoMapper alimentoMapper;
     private final IUsuarioRepository usuarioRepository;
     private final SecurityUtils securityUtils;
-    private final OpenFoodFactsClient openFoodFactsClient;
-    private final IProductoOffRepository productoOffRepository;
-    private final MaterializadorProducto materializadorProducto;
     private final org.springframework.context.ApplicationEventPublisher eventos;
     private final Logger logger = LoggerFactory.getLogger(AlimentoService.class);
 
@@ -361,7 +354,12 @@ public class AlimentoService implements IAlimentoService {
 
         // El código de barras es único: repetido es un conflicto, no un 500 de la base.
         String barcode = patchDTO.getBarcode() == null ? null : textoONulo(patchDTO.getBarcode());
-        if (barcode != null && alimentoRepository.existsByBarcodeAndIdNot(barcode, id)) {
+        // Único por dueño (GP-160): en el catálogo, entre el catálogo; en lo de un
+        // usuario, entre lo suyo. Así no se sabe qué códigos usan los demás.
+        boolean enUso = barcode != null && (alimento.getUsuario() == null
+                ? alimentoRepository.existsByBarcodeAndUsuarioIsNullAndIdNot(barcode, id)
+                : alimentoRepository.existsByBarcodeAndUsuarioIdAndIdNot(barcode, alimento.getUsuario().getId(), id));
+        if (enUso) {
             throw new ConflictEntityException("error.alimento.barcodeEnUso", barcode);
         }
 
@@ -400,73 +398,6 @@ public class AlimentoService implements IAlimentoService {
         logger.info("Búsqueda admin de alimentos");
 
         return alimentoJooqRepository.busquedaAdmin(nombre, categoria, activo);
-    }
-
-    /**
-     * Materializa en el catálogo el producto con ese código de barras y lo devuelve.
-     * <p>
-     * Por orden: si ya es catálogo, esa fila (reactivada si un ADMIN la había desactivado
-     * y alguien la vuelve a elegir); si está en productos_off, se materializa desde ahí sin
-     * salir de casa (GP-164); y solo si no, se pregunta a Open Food Facts. Crea filas sin
-     * dueño a propósito: un producto es catálogo, no la comida de quien lo elige (DEC-032).
-     *
-     * @param barcode código de barras.
-     * @return el alimento del catálogo con ese código.
-     */
-    @Override
-    @Transactional
-    public AlimentoDTO importarPorBarcode(String barcode) {
-        logger.info("Importando alimento por barcode: {}", barcode);
-
-        if (barcode == null || barcode.isBlank()) {
-            throw new com.gymprofit.api.exceptions.InvalidDataException("El código de barras es obligatorio");
-        }
-        String codigo = barcode.trim();
-
-        java.util.Optional<Alimento> existente = alimentoRepository.findByBarcodeAndUsuarioIsNull(codigo);
-        if (existente.isPresent()) {
-            Alimento alimento = existente.get();
-            if (!Boolean.TRUE.equals(alimento.getActivo())) {
-                alimento.setActivo(true);
-                alimentoRepository.save(alimento);
-                avisarCatalogo();
-            }
-            return alimentoMapper.toDTO(alimento);
-        }
-
-        java.util.Optional<ProductoOff> producto = productoOffRepository.findByCodigo(codigo);
-        if (producto.isPresent()) {
-            return materializar(producto.get());
-        }
-
-        AlimentoDTO dto = openFoodFactsClient.porBarcode(codigo)
-                .orElseThrow(() -> new NotFoundEntityException("error.openfoodfacts.noExiste", codigo));
-
-        Alimento alimento = new Alimento();
-        alimento.setNombre(dto.getNombre());
-        alimento.setBarcode(dto.getBarcode());
-        alimento.setMarca(dto.getMarca());
-        alimento.setCalorias(dto.getCalorias());
-        alimento.setProteinas(dto.getProteinas());
-        alimento.setCarbohidratos(dto.getCarbohidratos());
-        alimento.setGrasas(dto.getGrasas());
-        alimento.setFibra(dto.getFibra());
-        alimento.setPorcionGramos(dto.getPorcionGramos());
-        alimento.setActivo(true);
-        alimento.setFuente("OFF");
-        alimento.setCodigoOrigen(dto.getBarcode());
-        // usuario null → alimento global (visible para todos los usuarios)
-
-        Alimento guardado = alimentoRepository.save(alimento);
-        avisarCatalogo();
-        return alimentoMapper.toDTO(guardado);
-    }
-
-    // Crea la fila de catálogo del producto y la devuelve con su ración.
-    private AlimentoDTO materializar(ProductoOff producto) {
-        Alimento alimento = materializadorProducto.materializar(producto);
-        avisarCatalogo();
-        return alimentoMapper.toDTO(alimento);
     }
 
     // El índice de búsqueda del catálogo se reconstruye en la siguiente búsqueda (GP-162).

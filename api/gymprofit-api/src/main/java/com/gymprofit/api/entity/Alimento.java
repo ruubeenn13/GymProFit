@@ -74,9 +74,9 @@ public class Alimento {
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
-    // Código de barras del producto (Open Food Facts); null en alimentos
-    // personalizados. Clave de upsert del import externo (índice único).
-    @Column(length = 32, unique = true)
+    // Código de barras. Único por dueño (GP-160, DEC-040): en el catálogo, el de un
+    // producto; en un alimento de usuario, el que él le puso.
+    @Column(length = 32)
     private String barcode;
 
     // Marca/fabricante del producto (Open Food Facts).

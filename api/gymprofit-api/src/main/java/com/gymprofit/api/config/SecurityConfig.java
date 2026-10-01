@@ -155,6 +155,10 @@ public class SecurityConfig {
                                 // Va ANTES del GET general de /alimentos/**, que sí es público, porque
                                 // gana la primera regla que encaja. La propiedad se comprueba en AlimentoService.
                                 .requestMatchers(HttpMethod.GET, "/alimentos/usuario/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+                                // Buscar por código puede materializar un producto en el catálogo y
+                                // gasta cupo de Open Food Facts: como POST /alimentos/importar, solo
+                                // con cuenta (GP-160).
+                                .requestMatchers(HttpMethod.GET, "/alimentos/codigo/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.GET, "/alimentos/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
 
                                 // JOOQ ejercicios - accesibles por todos los roles

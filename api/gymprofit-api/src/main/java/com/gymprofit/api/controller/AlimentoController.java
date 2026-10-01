@@ -10,6 +10,7 @@ import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.alimento.IAlimentoService;
 import com.gymprofit.api.service.busqueda.BusquedaAlimentosService;
+import com.gymprofit.api.service.codigo.CodigoBarrasService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -41,6 +42,7 @@ public class AlimentoController {
 
     private final IAlimentoService alimentoService;
     private final BusquedaAlimentosService busquedaAlimentosService;
+    private final CodigoBarrasService codigoBarrasService;
 
     @Operation(summary = "Obtiene todos los alimentos")
     @ApiResponses(value = {
@@ -230,21 +232,48 @@ public class AlimentoController {
         return ResponseEntity.ok(busquedaAlimentosService.buscar(q, categoria, page, size));
     }
 
-    @Operation(summary = "Importa un producto de Open Food Facts al catálogo local",
-            description = "Materializa en la BD local (por código de barras) un producto elegido en la " +
-                    "búsqueda externa, para poder referenciarlo desde comidas. Idempotente: si ya está " +
-                    "importado devuelve el existente (y lo reactiva si estaba desactivado).")
+    @Operation(summary = "Importa al catálogo el producto de un código de barras",
+            description = "Materializa en el catálogo (sin dueño, DEC-032) el producto con ese código, para "
+                    + "poder ponerlo en una comida. Mismo camino que GET /alimentos/codigo/{codigo}, sin mirar "
+                    + "los alimentos propios: catálogo, productos de España y, si no, una lectura a Open Food "
+                    + "Facts. Idempotente: si ya está, devuelve el mismo (reactivado si estaba desactivado).")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Alimento importado (o ya existente)",
+            @ApiResponse(responseCode = "200", description = "Alimento del catálogo",
                     content = @Content(schema = @Schema(implementation = AlimentoDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Barcode inexistente en Open Food Facts",
+            @ApiResponse(responseCode = "400", description = "El código no son solo cifras",
                     content = @Content(schema = @Schema(implementation = Response.class))),
-            @ApiResponse(responseCode = "502", description = "Open Food Facts no disponible",
+            @ApiResponse(responseCode = "404", description = "No existe en ninguna parte",
+                    content = @Content(schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "502", description = "Open Food Facts no responde",
+                    content = @Content(schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "503", description = "Sin cupo de lecturas a Open Food Facts (Retry-After)",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @PostMapping("/alimentos/importar")
     public ResponseEntity<AlimentoDTO> importarAlimento(@Valid @RequestBody ImportarAlimentoDTO body) {
-        return ResponseEntity.ok(alimentoService.importarPorBarcode(body.getBarcode()));
+        return ResponseEntity.ok(codigoBarrasService.importar(body.getBarcode()));
+    }
+
+    @Operation(summary = "Busca un alimento por su código de barras (GP-160)",
+            description = "Primero tus alimentos con ese código; después el catálogo; después los productos de "
+                    + "España, materializándolo; y si no, una lectura a Open Food Facts que se guarda. Si "
+                    + "tampoco, 404, para ofrecer crearlo con el código puesto. Un alimento propio con código "
+                    + "no le sale nunca a otro usuario.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Alimento",
+                    content = @Content(schema = @Schema(implementation = AlimentoDTO.class))),
+            @ApiResponse(responseCode = "400", description = "El código no son solo cifras",
+                    content = @Content(schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "404", description = "No existe en ninguna parte",
+                    content = @Content(schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "502", description = "Open Food Facts no responde",
+                    content = @Content(schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "503", description = "Sin cupo de lecturas a Open Food Facts (Retry-After)",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @GetMapping("/alimentos/codigo/{codigo}")
+    public ResponseEntity<AlimentoDTO> porCodigo(@PathVariable String codigo) {
+        return ResponseEntity.ok(codigoBarrasService.porCodigo(codigo));
     }
 
     @Operation(summary = "Busca alimentos por rango de calorías")

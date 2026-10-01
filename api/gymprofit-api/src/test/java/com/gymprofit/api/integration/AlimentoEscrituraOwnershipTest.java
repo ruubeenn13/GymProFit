@@ -6,7 +6,8 @@ import com.gymprofit.api.entity.Alimento;
 import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.enums.RoleType;
 import com.gymprofit.api.repository.jpa.IAlimentoRepository;
-import com.gymprofit.api.service.alimento.IAlimentoService;
+import com.gymprofit.api.service.codigo.CodigoBarrasService;
+import com.gymprofit.api.dto.entity.productooff.ProductoOffImportDTO;
 import com.gymprofit.api.service.externo.OpenFoodFactsClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -47,8 +48,9 @@ class AlimentoEscrituraOwnershipTest extends AbstractOwnershipTest {
     @Autowired
     private IAlimentoRepository alimentoRepository;
 
+
     @Autowired
-    private IAlimentoService alimentoService;
+    private CodigoBarrasService codigoBarrasService;
 
     // El cliente de Open Food Facts se simula: el test no puede depender de una API
     // de terceros, y lo que se comprueba es el efecto local del import, no la red.
@@ -176,16 +178,15 @@ class AlimentoEscrituraOwnershipTest extends AbstractOwnershipTest {
     @DisplayName("el import por código de barras sigue creando catálogo, y lo hace un USER")
     @WithUserDetails(value = ATTACKER, setupBefore = TestExecutionEvent.TEST_EXECUTION)
     void el_import_de_open_food_facts_sigue_funcionando() {
-        AlimentoDTO externo = new AlimentoDTO();
-        externo.setNombre("Producto escaneado");
-        externo.setBarcode("8410000000000");
-        externo.setCalorias(120);
+        // 4·5 + 4·20 + 9·2 = 118 kcal: un producto aceptable.
+        ProductoOffImportDTO externo = new ProductoOffImportDTO("8410000000000", "Producto escaneado", null,
+                120.0, 5.0, 20.0, 2.0, null, null, null, null, 0, null, null);
         when(openFoodFactsClient.porBarcode(anyString())).thenReturn(Optional.of(externo));
 
         // Esta vía crea filas SIN dueño a propósito: un producto de Open Food Facts es
         // catálogo real, no la comida de nadie, y lo materializa un usuario normal al
         // escanear. Si el arreglo de arriba la hubiera tocado, se rompía el escáner.
-        AlimentoDTO importado = alimentoService.importarPorBarcode("8410000000000");
+        AlimentoDTO importado = codigoBarrasService.importar("8410000000000");
 
         assertThat(duenoDe(importado.getId()))
                 .as("el producto importado es catálogo, no del que escanea")

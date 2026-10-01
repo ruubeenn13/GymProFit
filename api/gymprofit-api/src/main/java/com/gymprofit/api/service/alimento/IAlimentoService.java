@@ -54,6 +54,4 @@ public interface IAlimentoService {
     // Búsqueda de alimentos para el panel admin (incluye inactivos) mediante jOOQ.
     List<AlimentoJooqDTO> busquedaAdmin(String nombre, String categoria, Boolean activo);
 
-    // Materializa en el catálogo el producto con ese código (catálogo, productos_off u Open Food Facts).
-    AlimentoDTO importarPorBarcode(String barcode);
 }
