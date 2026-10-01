@@ -82,3 +82,4 @@ Todo cambio funcional se anota en `CHANGELOG.md` con su hash.
 - **Decisiones vigentes** → `documentacion/PRODUCT-DECISIONS.md` (este repositorio).
 - **Backlog, roadmap y prioridades** → fuera del repositorio, en el proyecto de planificación. Fuente única; no se duplican aquí.
 - **Auditorías con fecha en el nombre** → fotos del pasado. Útiles como contexto, nunca como estado actual.
+- **Vídeos y ficheros de más de 2 MB** → nunca en el repositorio. Los vídeos van al escritorio del propietario, junto al APK, y el informe del lote da su nombre y su duración. Lo ya versionado se queda como está.

@@ -543,6 +543,14 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
         return prefs.getBoolean(PREFIJO_AVISOS_PREGUNTADOS + usuario, false);
     }
 
+    // Si esta instalación pidió alguna vez el permiso de notificaciones (GP-151). Es del
+    // móvil, no de la cuenta, como el permiso; con él PermisoAvisos distingue «sin pedir
+    // nunca» de «Android ya no deja pedirlo».
+    private static final String KEY_PERMISO_AVISOS_PEDIDO = "permiso_avisos_pedido";
+
+    public void setPermisoAvisosPedido() { editor.putBoolean(KEY_PERMISO_AVISOS_PEDIDO, true).apply(); }
+    public boolean isPermisoAvisosPedido() { return prefs.getBoolean(KEY_PERMISO_AVISOS_PEDIDO, false); }
+
     public void saveRol(String rol) { editor.putString(KEY_ROL, rol); editor.apply(); }
     public String getRol() { return prefs.getString(KEY_ROL, "ROLE_USER"); }
     public boolean isAdmin() { return "ROLE_ADMIN".equals(getRol()); }

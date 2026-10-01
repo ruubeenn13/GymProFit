@@ -1,6 +1,8 @@
 package es.pmdm.gymprofit.envivo;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -11,6 +13,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -47,13 +50,14 @@ public class AlarmaDescansoTest {
     private SesionEnCursoRepositorioTest.RedFalsa red;
     private AlarmasFalsas alarmas;
     private long ahora = 1_790_000_000_000L;
+    private File carpeta;
     private SesionEnCursoRepositorio repo;
 
     @Before
     public void preparar() throws Exception {
         red = new SesionEnCursoRepositorioTest.RedFalsa();
         alarmas = new AlarmasFalsas();
-        repo = new SesionEnCursoRepositorio(new AlmacenSesion(tmp.newFolder("s")), red, () -> ahora,
+        repo = new SesionEnCursoRepositorio(new AlmacenSesion(carpeta = tmp.newFolder("s")), red, () -> ahora,
                 TimeZone.getTimeZone("Europe/Madrid"), new Locale("es", "ES"));
         repo.setProgramador(new ProgramadorAlarma(alarmas));
         repo.usarCuenta(7);
@@ -171,6 +175,68 @@ public class AlarmaDescansoTest {
         int antes = alarmas.llamadas.size();
         repo.revisarPermisoAlarma();
         assertEquals("sin cambio, no se toca", antes, alarmas.llamadas.size());
+    }
+
+    // ── GP-144: al cargar, nada de alarmas con la hora pasada ──
+
+    /**
+     * Un proceso nuevo, como lo arranca Android para la alarma o al abrir la app: lee la
+     * sesión del fichero. Igual que get(), pone el programador antes de la cuenta.
+     */
+    private SesionEnCursoRepositorio procesoNuevo(AlarmasFalsas a) {
+        SesionEnCursoRepositorio r = new SesionEnCursoRepositorio(new AlmacenSesion(carpeta),
+                new SesionEnCursoRepositorioTest.RedFalsa(), () -> ahora,
+                TimeZone.getTimeZone("Europe/Madrid"), new Locale("es", "ES"));
+        r.setProgramador(new ProgramadorAlarma(a));
+        r.usarCuenta(7);
+        return r;
+    }
+
+    @Test
+    public void proceso_nuevo_con_un_descanso_acabado_hace_una_hora_ni_alarma_ni_aviso() {
+        hacer(0);                       // descanso de 120 s
+        ahora += 120_000 + 3_600_000;   // acabó hace una hora
+
+        AlarmasFalsas otras = new AlarmasFalsas();
+        SesionEnCursoRepositorio r = procesoNuevo(otras);
+
+        assertFalse("no se pone una alarma con la hora pasada: " + otras.llamadas,
+                otras.llamadas.stream().anyMatch(l -> l.startsWith("exacta") || l.startsWith("ventana")));
+        assertNull("el descanso caducado se quita al cargar", r.actual().descanso);
+        assertNull("y la alarma que quedara en el sistema no avisa", r.terminarPorAlarma());
+    }
+
+    @Test
+    public void alarma_a_su_hora_con_la_app_matada_avisa_como_ahora() {
+        hacer(0);
+        ahora += 120_000 + 500;         // la alarma despierta el proceso a su hora
+
+        AlarmasFalsas otras = new AlarmasFalsas();
+        SesionEnCursoRepositorio r = procesoNuevo(otras);
+
+        assertFalse("tampoco aquí se pone otra", otras.llamadas.stream()
+                .anyMatch(l -> l.startsWith("exacta") || l.startsWith("ventana")));
+        SesionEnCursoRepositorio.FinDescanso fin = r.terminarPorAlarma();
+        assertNotNull("avisa", fin);
+        assertEquals(2, fin.numero);
+    }
+
+    @Test
+    public void una_alarma_que_llega_tarde_de_mas_se_quita_sin_avisar() {
+        hacer(0);
+        ahora += 120_000 + LogicaDescanso.CADUCA_MS + 1_000;
+
+        assertNull(repo.terminarPorAlarma());
+        assertNull(repo.actual().descanso);
+    }
+
+    @Test
+    public void una_alarma_que_llega_algo_tarde_sin_permiso_de_exactas_avisa() {
+        alarmas.permiso = false;
+        hacer(0);
+        ahora += 120_000 + LogicaDescanso.CADUCA_MS - 1_000;
+
+        assertNotNull(repo.terminarPorAlarma());
     }
 
     @Test

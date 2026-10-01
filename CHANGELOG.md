@@ -6,6 +6,17 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `196634d` | build(android): **versión 1.5.2** (10502). Misma clave de firma. Solo app; lleva también `25fdb8a`. |
+| `adb9348` | fix(android): TalkBack no lee dos puntos seguidos en las fuentes de datos de Licencias (GP-153). |
+| `25c2e12` | docs(reglas): ningún vídeo ni fichero de más de 2 MB en el repositorio; los vídeos van al escritorio y el informe da nombre y duración. |
+| `625bab8` | refactor(android): fuera los 55 textos del onboarding y el registro viejos que lint da por no usados, en ES y EN. Los del invitado se quedan (GP-150). |
+| `9ba1a25` | feat(android): Licencias de terceros con sus fuentes de datos: free-exercise-db (Unlicense), wger (Creative Commons según cada ejercicio) y Open Food Facts (ODbL), cada una con su enlace (GP-153). |
+| `4997547` | fix(android): Eliminar cuenta dice lo mismo que `gymprofit.app/eliminar-cuenta`: nombre, sexo, actividad, avisos y programa; la copia de los datos, a privacidad@. |
+| `2980e7c` | feat(web): `terminos.html` nuevo, los términos en el pie de todas las páginas, y privacidad y eliminar cuenta al día con el alta nueva. Copia de lo que se sirve en Cloudflare Pages. |
+| `86a79c5` | feat(android): términos de uso en Ajustes y Acerca de; la frase de «Guarda tu plan» confirma los 14 años (GP-087). |
+| `a310544` | fix(android): un descanso que acabó hace más de 5 min se quita sin avisar al cargar la sesión o si su alarma llega tarde, y no se pone ninguna alarma con la hora pasada (GP-144). |
+| `2993d31` | fix(android): durante el descanso, la notificación de la sesión ya no enseña minutos parados; al acabar vuelve el reloj (GP-143). |
+| `eb7ca66` | feat(android): «¿Te avisamos?» sustituye a la petición suelta del permiso de Inicio: una vez por cuenta y móvil, con los avisos de la cuenta, y nada si no se pueden leer (GP-151). |
 | `25fdb8a` | fix(android): en «Tu plan» en inglés, los ejercicios en mayúsculas de título ya no se quedan a medias en minúscula. Visto en la prueba contra producción; no va en el APK etiquetado `v1.5.1`. |
 | `1014358` | Fusión de `lote-1.5.1` en `main` (desplegada a las 12:30); etiquetada `v1.5.1`. Informe y vídeo en `documentacion/estado/2026-10-01-lote-1.5.1.*`. |
 | `11446b6` | build(android): **versión 1.5.1** (10501). Misma clave de firma. Necesita la API del lote 1.5.0 y los dos arreglos de esta (GP-146, GP-147). **No se reparte hasta que exista gymprofit.app/terminos.** |

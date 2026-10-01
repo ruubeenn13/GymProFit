@@ -40,8 +40,7 @@ import es.pmdm.gymprofit.utils.UIHelper;
 //     los avisos por tipo de la cuenta y el permiso del sistema (GP-112).
 //   · Ayuda: soporte, informar de un error (con versión, Android y modelo; nada
 //     personal) y sugerir una mejora, los tres a soporte@gymprofit.app.
-//   · Legal y acerca de: privacidad, licencias y Acerca de. Términos de uso sale
-//     oculto hasta que exista la página (GP-087).
+//   · Legal y acerca de: privacidad, términos de uso (GP-087), licencias y Acerca de.
 //   · Cerrar sesión y Eliminar cuenta, al final: eliminar queda a tres toques de
 //     cualquier pestaña (Progreso → engranaje → Eliminar cuenta, GP-008).
 //   · Administración, solo para ADMIN y temporal hasta que exista la web (GP-085).
@@ -101,8 +100,10 @@ public class AjustesActivity extends BaseActivity {
         fila(R.id.filaPrivacidad, R.drawable.ic_ms_policy, R.string.politica_privacidad,
                 () -> UIHelper.abrirUrl(this, getString(R.string.url_privacidad)));
         abreFuera(R.id.filaPrivacidad, R.string.politica_privacidad);
-        // Términos de uso: oculto hasta que exista la página (GP-087).
-        findViewById(R.id.filaTerminos).setVisibility(View.GONE);
+        // Términos de uso (GP-087): como la privacidad, en gymprofit.app.
+        fila(R.id.filaTerminos, R.drawable.ic_ms_gavel, R.string.ajustes_terminos,
+                () -> UIHelper.abrirUrl(this, getString(R.string.url_terminos)));
+        abreFuera(R.id.filaTerminos, R.string.ajustes_terminos);
         fila(R.id.filaLicencias, R.drawable.ic_ms_license, R.string.licencias_titulo,
                 () -> startActivity(new Intent(this, LicenciasActivity.class)));
         fila(R.id.filaAcerca, R.drawable.ic_ms_info, R.string.ajustes_acerca,

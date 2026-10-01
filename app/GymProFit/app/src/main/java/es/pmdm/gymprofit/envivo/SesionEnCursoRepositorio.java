@@ -214,6 +214,11 @@ public class SesionEnCursoRepositorio {
             s.codigoFallo = -1;
             almacen.escribir(s);
         }
+        if (s != null && LogicaDescanso.caducado(s.descanso, reloj.ahora())) {
+            // Acabó hace rato con la app fuera (GP-144): se quita sin avisar.
+            s.descanso = null;
+            almacen.escribir(s);
+        }
         poner(s);
     }
 
@@ -223,7 +228,7 @@ public class SesionEnCursoRepositorio {
     public void setProgramador(@NonNull ProgramadorAlarma p) {
         programador = p;
         SesionEnCurso s = actual();
-        programador.sincronizar(s != null ? s.descanso : null);
+        programador.sincronizar(s != null ? s.descanso : null, reloj.ahora());
     }
 
     /** El permiso de alarmas exactas puede haber cambiado: la alarma puesta se rehace si toca. */
@@ -702,6 +707,12 @@ public class SesionEnCursoRepositorio {
         long ahora = reloj.ahora();
         // Un segundo de gracia: la alarma puede despertar justo antes de la hora.
         if (s == null || s.descanso == null || s.descanso.finMs > ahora + 1000) return null;
+        if (LogicaDescanso.caducado(s.descanso, ahora)) {
+            // La alarma llega tarde de más (GP-144): se quita sin avisar.
+            s.descanso = null;
+            publicar(s);
+            return null;
+        }
         s.descanso = null;
         FinDescanso f = fin(s, ahora);
         publicar(s);
@@ -848,6 +859,6 @@ public class SesionEnCursoRepositorio {
     // hora, o quitada si ya no hay descanso (o sesión).
     private void poner(@Nullable SesionEnCurso s) {
         sesion.setValue(s);
-        programador.sincronizar(s != null ? s.descanso : null);
+        programador.sincronizar(s != null ? s.descanso : null, reloj.ahora());
     }
 }

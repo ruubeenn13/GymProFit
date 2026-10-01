@@ -202,11 +202,15 @@ public class AltaActivity extends BaseActivity implements Alta {
         });
     }
 
+    // Entre «Empezar» e Inicio, «¿Te avisamos?» si a esta cuenta no se le ha preguntado en
+    // este móvil (GP-151); ella abre Inicio al acabar. Si no toca o no se puede, a Inicio.
     private void irAInicio() {
-        LoadingDialog.hide(this);
         PerfilAlta.terminar(prefsManager, prefsManager.getUsername());
-        startActivity(new Intent(this, MainActivity.class)
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-        finish();
+        AvisosActivity.abrirSiToca(this, false, () -> {
+            LoadingDialog.hide(this);
+            startActivity(new Intent(this, MainActivity.class)
+                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            finish();
+        });
     }
 }

@@ -153,7 +153,7 @@ public class MainActivity extends BaseActivity {
 
         if (savedInstanceState == null) aplicarDestino(getIntent());
         cargarUltimoPeso();
-        pedirPermisoNotificaciones();
+        if (savedInstanceState == null) preguntarAvisos();
         configurarSesionEnCurso();
     }
 
@@ -523,11 +523,20 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    // Solicita el permiso de notificaciones (Android 13+) una sola vez al entrar. A quien
-    // ya se le preguntó en «¿Te avisamos?» del alta no se le vuelve a pedir: si dijo
-    // «Ahora no», es que no (GP-112).
-    private void pedirPermisoNotificaciones() {
-        if (prefsManager.isAvisosPreguntados(prefsManager.getUsername())) return;
+    // Al abrir Inicio, «¿Te avisamos?» a la cuenta a la que no se le ha preguntado en este
+    // móvil (GP-151): ya no se pide el permiso a secas. Si no se pueden leer sus avisos,
+    // esta vez nada; AvisosActivity.abrirSiToca lo decide.
+    private void preguntarAvisos() {
+        if (prefsManager.isGuest()) {
+            pedirPermisoInvitado();
+            return;
+        }
+        AvisosActivity.abrirSiToca(this, true, null);
+    }
+
+    // El invitado de la 1.4.0 sigue como antes: el permiso de Android a secas, al entrar,
+    // hasta que lo conceda o Android deje de enseñarlo. Se va con el invitado (GP-150).
+    private void pedirPermisoInvitado() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
                 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 0);

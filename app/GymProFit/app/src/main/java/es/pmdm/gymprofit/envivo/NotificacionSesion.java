@@ -66,16 +66,16 @@ public final class NotificacionSesion {
         if (!sinGuardar && s.descanso != null) {
             // Descanso en marcha (GP-013): cuenta hacia atrás hasta su fin (lo lleva el
             // sistema, sin refrescos). Al acabar, la sesión cambia y vuelve el reloj.
+            // Sin los minutos de sesión (GP-143): sin refrescos, se quedaban parados en
+            // los del principio del descanso.
             LogicaDescanso.Siguiente sig = LogicaDescanso.siguiente(s);
             SesionEnCurso.Ejercicio e = sig != null ? sig.ejercicio
                     : SesionEnCursoRepositorio.ejercicioDeSerie(s, s.descanso.serieId);
             String ejercicio = e != null ? TextosDescanso.ejercicio(ctx, e.nombre, e.ejercicioId) : "";
-            String minutos = ctx.getString(R.string.duracion_min,
-                    LogicaSesion.minutosReloj(s.inicioMs, System.currentTimeMillis()));
             b.setContentTitle(ctx.getString(R.string.envivo_notif_descanso_titulo, ejercicio))
                     .setContentText(sig != null
-                            ? ctx.getString(R.string.envivo_notif_descanso_texto, sig.numero, nombre, minutos)
-                            : ctx.getString(R.string.envivo_notif_descanso_texto_ultima, nombre, minutos))
+                            ? ctx.getString(R.string.envivo_notif_descanso_texto, sig.numero, nombre)
+                            : nombre)
                     .setWhen(s.descanso.finMs).setShowWhen(true).setUsesChronometer(true)
                     .setChronometerCountDown(true);
         } else if (!sinGuardar) {

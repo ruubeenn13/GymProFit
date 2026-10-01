@@ -1,10 +1,12 @@
 package es.pmdm.gymprofit.ui.activities;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.google.android.material.appbar.MaterialToolbar;
@@ -23,6 +26,7 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.ui.widget.FilaAviso;
 import es.pmdm.gymprofit.utils.AvisosCuenta;
+import es.pmdm.gymprofit.utils.PermisoAvisos;
 import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
@@ -41,6 +45,7 @@ public class NotificacionesActivity extends BaseActivity {
     private final UsuarioApi usuarioApi = ApiClient.service(UsuarioApi.class);
     private FilaAviso entrenar, comidas, progreso;
     private ActivityResultLauncher<String> pedirPermiso;
+    private long pedidoEn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +74,15 @@ public class NotificacionesActivity extends BaseActivity {
         sistema.setContentDescription(getString(R.string.ajustes_abre_fuera_a11y, getString(R.string.notificaciones_sistema)));
         sistema.setOnClickListener(v -> abrirAjustesDelSistema());
 
-        pedirPermiso = registerForActivityResult(new ActivityResultContracts.RequestPermission(),
-                concedido -> pintarPermiso());
+        pedirPermiso = registerForActivityResult(new ActivityResultContracts.RequestPermission(), concedido -> {
+            boolean explicar = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                    && shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS);
+            // Android contestó sin enseñar nada: ya no deja pedirlo, quedan los ajustes.
+            if (PermisoAvisos.sinDialogo(concedido, explicar, SystemClock.elapsedRealtime() - pedidoEn)) {
+                abrirAjustesDelSistema();
+            }
+            pintarPermiso();
+        });
         findViewById(R.id.btnPermisoAvisos).setOnClickListener(v -> activarPermiso());
 
         cargar();
@@ -137,15 +149,17 @@ public class NotificacionesActivity extends BaseActivity {
         findViewById(R.id.cardPermisoAvisos).setVisibility(permitidas ? View.GONE : View.VISIBLE);
     }
 
-    // En Android 13+ se pide el permiso; si ya se denegó del todo, o en versiones
-    // anteriores, solo queda abrir los ajustes de la app.
+    // Si Android aún deja pedirlo, se pide; si no (o antes de Android 13), solo quedan
+    // los ajustes de la app. El mismo criterio que «¿Te avisamos?» (PermisoAvisos).
     private void activarPermiso() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                && shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
-            pedirPermiso.launch(Manifest.permission.POST_NOTIFICATIONS);
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                && !prefsManager.isAvisosPreguntados(prefsManager.getUsername())) {
-            prefsManager.setAvisosPreguntados(prefsManager.getUsername());
+        boolean explicar = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                && shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS);
+        PermisoAvisos.Estado e = PermisoAvisos.estado(Build.VERSION.SDK_INT,
+                NotificationManagerCompat.from(this).areNotificationsEnabled(), explicar,
+                prefsManager.isPermisoAvisosPedido());
+        if (e == PermisoAvisos.Estado.PEDIBLE && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            prefsManager.setPermisoAvisosPedido();
+            pedidoEn = SystemClock.elapsedRealtime();
             pedirPermiso.launch(Manifest.permission.POST_NOTIFICATIONS);
         } else {
             abrirAjustesDelSistema();
@@ -153,13 +167,16 @@ public class NotificacionesActivity extends BaseActivity {
     }
 
     private void abrirAjustesDelSistema() {
-        Intent i;
+        startActivity(ajustesDelSistema(this));
+    }
+
+    /** Los ajustes de notificaciones de la app (o su ficha, antes de Android 8). */
+    @NonNull
+    public static Intent ajustesDelSistema(@NonNull Context ctx) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            i = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
-                    .putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
-        } else {
-            i = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName()));
+            return new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                    .putExtra(Settings.EXTRA_APP_PACKAGE, ctx.getPackageName());
         }
-        startActivity(i);
+        return new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + ctx.getPackageName()));
     }
 }
