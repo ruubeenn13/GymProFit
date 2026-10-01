@@ -709,10 +709,10 @@
     <string name="eliminar_cuenta_icono_descripcion">Aviso de borrado permanente</string>
     <string name="eliminar_cuenta_intro">El borrado es definitivo e inmediato: no hay papelera ni forma de recuperar tu historial después.</string>
     <string name="eliminar_cuenta_que_se_borra">Qué se borra</string>
-    <string name="eliminar_cuenta_borra_1">Tu cuenta: nombre de usuario, dirección de correo y contraseña.</string>
-    <string name="eliminar_cuenta_borra_2">Tu perfil: peso, altura, edad, nivel de experiencia y objetivo.</string>
+    <string name="eliminar_cuenta_borra_1">Tu cuenta: nombre, nombre de usuario, dirección de correo y contraseña.</string>
+    <string name="eliminar_cuenta_borra_2">Tu perfil: sexo, edad, altura, peso, nivel de actividad, nivel de experiencia, objetivo y los avisos que elegiste.</string>
     <string name="eliminar_cuenta_borra_3">Tu fotografía de perfil, si subiste alguna.</string>
-    <string name="eliminar_cuenta_borra_4">Todo tu historial de entrenamiento: rutinas, sesiones, ejercicios realizados, series con sus pesos y repeticiones, notas y progreso.</string>
+    <string name="eliminar_cuenta_borra_4">Todo tu historial de entrenamiento: el programa que sigues, rutinas, sesiones, ejercicios realizados, series con sus pesos y repeticiones, notas y progreso.</string>
     <string name="eliminar_cuenta_borra_5">Todo tu registro de nutrición: comidas, alimentos consumidos y alimentos personalizados que hayas creado.</string>
     <string name="eliminar_cuenta_borra_6">Tus mediciones corporales, objetivos personales y logros.</string>
     <string name="eliminar_cuenta_borra_7">Tus sesiones abiertas y el identificador de tu dispositivo para notificaciones.</string>
@@ -722,7 +722,7 @@
     <string name="eliminar_cuenta_no_borra_3">Los registros técnicos del servidor, que no contienen datos personales identificables.</string>
     <string name="eliminar_cuenta_antes">Antes de hacerlo</string>
     <string name="eliminar_cuenta_antes_1">Si solo quieres dejar de usar la aplicación una temporada, no hace falta borrar nada: basta con cerrar sesión. Tu historial te esperará.</string>
-    <string name="eliminar_cuenta_antes_2">Si lo que quieres es una copia de tus datos antes de borrarlos, pídela a soporte@gymprofit.app y se te enviará.</string>
+    <string name="eliminar_cuenta_antes_2">Si lo que quieres es una copia de tus datos antes de borrarlos, pídela a privacidad@gymprofit.app y se te enviará.</string>
     <string name="eliminar_cuenta_conservacion_enlace">Cuánto tiempo se conservan tus datos</string>
     <string name="eliminar_cuenta_confirmar_titulo">Confirma que eres tú</string>
     <string name="eliminar_cuenta_password">Tu contraseña actual</string>

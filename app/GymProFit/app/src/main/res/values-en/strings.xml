@@ -701,10 +701,10 @@
     <string name="eliminar_cuenta_icono_descripcion">Permanent deletion warning</string>
     <string name="eliminar_cuenta_intro">Deletion is permanent and immediate: there is no bin and no way to recover your history afterwards.</string>
     <string name="eliminar_cuenta_que_se_borra">What gets deleted</string>
-    <string name="eliminar_cuenta_borra_1">Your account: username, email address and password.</string>
-    <string name="eliminar_cuenta_borra_2">Your profile: weight, height, age, experience level and goal.</string>
+    <string name="eliminar_cuenta_borra_1">Your account: name, username, email address and password.</string>
+    <string name="eliminar_cuenta_borra_2">Your profile: sex, age, height, weight, activity level, experience level, goal and the alerts you chose.</string>
     <string name="eliminar_cuenta_borra_3">Your profile picture, if you uploaded one.</string>
-    <string name="eliminar_cuenta_borra_4">Your whole training history: routines, sessions, exercises performed, sets with their weights and reps, notes and progress.</string>
+    <string name="eliminar_cuenta_borra_4">Your whole training history: the programme you follow, routines, sessions, exercises performed, sets with their weights and reps, notes and progress.</string>
     <string name="eliminar_cuenta_borra_5">Your whole nutrition log: meals, foods eaten and any custom foods you created.</string>
     <string name="eliminar_cuenta_borra_6">Your body measurements, personal goals and achievements.</string>
     <string name="eliminar_cuenta_borra_7">Your open sessions and your device identifier for notifications.</string>
@@ -714,7 +714,7 @@
     <string name="eliminar_cuenta_no_borra_3">Server technical logs, which hold no identifiable personal data.</string>
     <string name="eliminar_cuenta_antes">Before you do it</string>
     <string name="eliminar_cuenta_antes_1">If you only want to stop using the app for a while, you do not need to delete anything: signing out is enough. Your history will be waiting.</string>
-    <string name="eliminar_cuenta_antes_2">If what you want is a copy of your data before deleting it, ask for it at soporte@gymprofit.app and it will be sent to you.</string>
+    <string name="eliminar_cuenta_antes_2">If what you want is a copy of your data before deleting it, ask for it at privacidad@gymprofit.app and it will be sent to you.</string>
     <string name="eliminar_cuenta_conservacion_enlace">How long your data is kept</string>
     <string name="eliminar_cuenta_confirmar_titulo">Confirm it is you</string>
     <string name="eliminar_cuenta_password">Your current password</string>
