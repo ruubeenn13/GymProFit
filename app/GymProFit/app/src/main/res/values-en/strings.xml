@@ -1523,4 +1523,24 @@
     <string name="entrar_usuario">Email or username</string>
     <string name="entrar_sin_cuenta">No account?</string>
     <string name="entrar_empieza_aqui">Start here</string>
+
+    <!-- ── Home, day one (GP-103, 1.5.1) ──────────────────────────────────── -->
+    <string name="inicio_pasos_titulo">First steps · %1$d of %2$d</string>
+    <string name="inicio_pasos_ocultar_a11y">Hide first steps</string>
+    <string name="inicio_paso_plan">Your plan</string>
+    <string name="inicio_paso_entreno">Your first workout</string>
+    <string name="inicio_paso_entreno_sub">%1$s, whenever you like</string>
+    <string name="inicio_paso_entreno_sub_libre">Whenever you like, in Train</string>
+    <string name="inicio_paso_comida">Your first meal</string>
+    <string name="inicio_paso_comida_sub">Log what you eat today</string>
+    <string name="inicio_paso_hecho">Done</string>
+    <string name="inicio_paso_hecho_a11y">%1$s: %2$s</string>
+    <string name="inicio_paso_pendiente_a11y">%1$s, to do. %2$s</string>
+    <string name="inicio_fundador_titulo">Hi, I’m Rubén</string>
+    <string name="inicio_fundador_texto">I make GymProFit so that training with a plan is easy. If something breaks or you miss something, write to me: I read it myself.</string>
+    <string name="inicio_fundador_escribir">Write</string>
+    <string name="inicio_fundador_ocultar">Hide</string>
+    <string name="inicio_programa_pendiente_sub">We couldn’t set it up when you created your account. Follow it whenever you like.</string>
+    <string name="inicio_programa_pendiente_seguir">Follow the programme</string>
+    <string name="inicio_programa_pendiente_a11y">Follow the programme %1$s</string>
 </resources>

@@ -1539,4 +1539,25 @@
     <string name="entrar_usuario_ejemplo" translatable="false">lucia@example.com</string>
     <string name="entrar_sin_cuenta">¿No tienes cuenta?</string>
     <string name="entrar_empieza_aqui">Empieza aquí</string>
+
+    <!-- ── Inicio, el primer día (GP-103, lote 1.5.1) ─────────────────────── -->
+    <string name="inicio_pasos_titulo">Primeros pasos · %1$d de %2$d</string>
+    <string name="inicio_pasos_ocultar_a11y">Ocultar primeros pasos</string>
+    <string name="inicio_paso_plan">Tu plan</string>
+    <string name="inicio_paso_entreno">Tu primer entrenamiento</string>
+    <string name="inicio_paso_entreno_sub">%1$s, cuando quieras</string>
+    <string name="inicio_paso_entreno_sub_libre">Cuando quieras, en Entrenar</string>
+    <string name="inicio_paso_comida">Tu primera comida</string>
+    <string name="inicio_paso_comida_sub">Apunta lo que comas hoy</string>
+    <string name="inicio_paso_hecho">Hecho</string>
+    <string name="inicio_paso_hecho_a11y">%1$s: %2$s</string>
+    <string name="inicio_paso_pendiente_a11y">%1$s, pendiente. %2$s</string>
+    <string name="inicio_fundador_inicial" translatable="false">R</string>
+    <string name="inicio_fundador_titulo">Hola, soy Rubén</string>
+    <string name="inicio_fundador_texto">Hago GymProFit para que entrenar con un plan sea fácil. Si algo falla o echas algo en falta, escríbeme: lo leo yo.</string>
+    <string name="inicio_fundador_escribir">Escribir</string>
+    <string name="inicio_fundador_ocultar">Ocultar</string>
+    <string name="inicio_programa_pendiente_sub">No pudimos prepararlo al crear tu cuenta. Síguelo cuando quieras.</string>
+    <string name="inicio_programa_pendiente_seguir">Seguir el programa</string>
+    <string name="inicio_programa_pendiente_a11y">Seguir el programa %1$s</string>
 </resources>

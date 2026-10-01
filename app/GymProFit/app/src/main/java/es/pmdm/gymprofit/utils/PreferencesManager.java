@@ -517,6 +517,19 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
     public void marcarPrimerDia(String usuario) { editor.putBoolean(PREFIJO_PRIMER_DIA + usuario, true).apply(); }
     public boolean isPrimerDia(String usuario)  { return prefs.getBoolean(PREFIJO_PRIMER_DIA + usuario, false); }
 
+    // Lo que Inicio recuerda del primer día: si se ocultaron «Primeros pasos» o la tarjeta
+    // del fundador, y si la cuenta ya apuntó alguna comida (Inicio solo pide las de hoy).
+    private static final String PREFIJO_PASOS_OCULTOS = "primeros_pasos_ocultos_";
+    private static final String PREFIJO_FUNDADOR_OCULTO = "fundador_oculto_";
+    private static final String PREFIJO_PRIMERA_COMIDA = "primera_comida_";
+
+    public void ocultarPrimerosPasos(String usuario) { editor.putBoolean(PREFIJO_PASOS_OCULTOS + usuario, true).apply(); }
+    public boolean isPrimerosPasosOcultos(String usuario) { return prefs.getBoolean(PREFIJO_PASOS_OCULTOS + usuario, false); }
+    public void ocultarFundador(String usuario) { editor.putBoolean(PREFIJO_FUNDADOR_OCULTO + usuario, true).apply(); }
+    public boolean isFundadorOculto(String usuario) { return prefs.getBoolean(PREFIJO_FUNDADOR_OCULTO + usuario, false); }
+    public void marcarPrimeraComida(String usuario) { editor.putBoolean(PREFIJO_PRIMERA_COMIDA + usuario, true).apply(); }
+    public boolean isPrimeraComida(String usuario) { return prefs.getBoolean(PREFIJO_PRIMERA_COMIDA + usuario, false); }
+
     // ── Avisos (GP-112, lote 1.5.1) ──
     // Si a esta cuenta ya se le preguntó por los avisos en el alta: entonces Inicio no
     // vuelve a pedir el permiso de Android por su cuenta, también si dijo «Ahora no».
