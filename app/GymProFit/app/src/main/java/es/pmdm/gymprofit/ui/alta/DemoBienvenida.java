@@ -92,7 +92,23 @@ public class DemoBienvenida extends FrameLayout {
         char coma = DecimalFormatSymbols.getInstance(FechaUtils.localeDeLaApp(context)).getDecimalSeparator();
         tecleoKg = new String[]{"6", "62", "62" + coma, "62" + coma + "5"};
         barraDescanso.setPivotX(0f);
+        // Es una ilustración, y para TalkBack una imagen con su descripción: su texto no
+        // crece con la letra del sistema, que a 2,0 la partía. Lo que se lee de verdad en
+        // la bienvenida (título, texto y botones) sí crece.
+        fijarTexto(this, getResources().getDisplayMetrics().density
+                / getResources().getDisplayMetrics().scaledDensity);
         aplicar(Movimiento.quieto(context) ? QUIETO : 0);
+    }
+
+    // Pasa el texto de sp a dp: lo deja al tamaño que tendría con la letra a 1,0.
+    private static void fijarTexto(View v, float factor) {
+        if (v instanceof TextView) {
+            TextView t = (TextView) v;
+            t.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, t.getTextSize() * factor);
+        } else if (v instanceof ViewGroup) {
+            ViewGroup g = (ViewGroup) v;
+            for (int i = 0; i < g.getChildCount(); i++) fijarTexto(g.getChildAt(i), factor);
+        }
     }
 
     private void rellenar(View fila, int num, String kg, String reps) {

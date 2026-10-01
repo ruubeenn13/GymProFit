@@ -9,7 +9,7 @@
     android:orientation="horizontal"
     android:padding="4dp">
 
-    <TextView android:id="@+id/demoNum" style="@style/Widget.GymProFit.Demo.Celda" android:layout_width="30dp"
+    <TextView android:id="@+id/demoNum" style="@style/Widget.GymProFit.Demo.Celda" android:layout_width="38dp"
         android:textSize="@dimen/text_body" />
     <TextView android:id="@+id/demoAnterior" style="@style/Widget.GymProFit.Demo.Celda" android:layout_width="0dp"
         android:layout_weight="1.25" android:textSize="@dimen/text_caption" android:textStyle="normal"
