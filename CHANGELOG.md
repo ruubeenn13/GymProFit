@@ -6,6 +6,7 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `642bcd3` | Fusión de `lote-1.5.2` en `main`, CI en verde; etiquetada `v1.5.2`. Solo app y web: Render no despliega. Informe en `documentacion/estado/2026-10-01-lote-1.5.2.md`. |
 | `196634d` | build(android): **versión 1.5.2** (10502). Misma clave de firma. Solo app; lleva también `25fdb8a`. |
 | `adb9348` | fix(android): TalkBack no lee dos puntos seguidos en las fuentes de datos de Licencias (GP-153). |
 | `25c2e12` | docs(reglas): ningún vídeo ni fichero de más de 2 MB en el repositorio; los vídeos van al escritorio y el informe da nombre y duración. |
