@@ -4,7 +4,7 @@ import java.util.List;
 
 // ============================================================
 // TokenResponse — POJO de la respuesta de autenticación (etapa 2, Fase 7).
-// Deserializa vía Gson el TokenDTO que devuelve la API en login/guest:
+// Deserializa vía Gson el TokenDTO que devuelve la API en login:
 // access token JWT (vida corta), refresh token opaco (vida larga), username
 // y la lista de roles. Sustituye al parseo manual de UtilJSONParser
 // (parseToken/parseRefreshToken/parseTokenUsername/parseTokenRol) en las

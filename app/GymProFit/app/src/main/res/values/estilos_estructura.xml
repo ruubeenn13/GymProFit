@@ -4,14 +4,14 @@
   pestañas y Ajustes). Las medidas son las del lienzo aprobado el 27-09-2026
   (documentacion/diseno/2026-09-27-estructura); los colores, los tokens del tema.
 -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Título de pantalla de las cuatro pestañas: Barlow Condensed 700 a 30 sp. -->
     <style name="Widget.GymProFit.TituloPestana" parent="">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:accessibilityHeading">true</item>
+        <item name="android:accessibilityHeading" tools:targetApi="28">true</item>
         <item name="android:textAppearance">@style/TextAppearance.GymProFit.Display</item>
     </style>
 
@@ -41,7 +41,7 @@
     <style name="Widget.GymProFit.Seccion" parent="">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:accessibilityHeading">true</item>
+        <item name="android:accessibilityHeading" tools:targetApi="28">true</item>
         <item name="android:textAppearance">@style/TextAppearance.GymProFit.Label</item>
         <item name="android:textSize">@dimen/text_eyebrow</item>
         <item name="android:letterSpacing">0.08</item>

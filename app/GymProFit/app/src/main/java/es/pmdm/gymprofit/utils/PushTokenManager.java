@@ -35,7 +35,7 @@ public final class PushTokenManager {
     public static void registrar(Context context) {
         PreferencesManager prefs = new PreferencesManager(context.getApplicationContext());
 
-        // Sin sesión (o invitado sin id) no hay a quién asociar el token.
+        // Sin sesión (o sin id) no hay a quién asociar el token.
         if (prefs.getUsuarioId() == -1) return;
 
         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {

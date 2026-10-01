@@ -69,8 +69,8 @@ public class AvisosActivity extends BaseActivity {
     private long pedidoEn;
 
     /**
-     * Abre «¿Te avisamos?» para una cuenta que ya existe, si toca: no es el invitado y en
-     * este móvil no se le ha preguntado. Antes lee sus avisos, porque la pantalla enseña
+     * Abre «¿Te avisamos?» para una cuenta que ya existe, si toca: en este móvil no se le
+     * ha preguntado. Antes lee sus avisos, porque la pantalla enseña
      * los de la cuenta y nunca los de serie; si no se pueden leer, esa vez no se abre ni
      * se pide nada, y se intenta en la siguiente apertura.
      *
@@ -82,7 +82,7 @@ public class AvisosActivity extends BaseActivity {
     public static void abrirSiToca(@NonNull Activity desde, boolean volver, @Nullable Runnable siNo) {
         PreferencesManager prefs = new PreferencesManager(desde);
         int id = prefs.getUsuarioId();
-        if (id == -1 || !PermisoAvisos.tocaPreguntar(prefs.isGuest(), prefs.isAvisosPreguntados(prefs.getUsername()))) {
+        if (id == -1 || !PermisoAvisos.tocaPreguntar(prefs.isAvisosPreguntados(prefs.getUsername()))) {
             if (siNo != null) siNo.run();
             return;
         }

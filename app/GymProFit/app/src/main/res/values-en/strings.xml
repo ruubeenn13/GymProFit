@@ -10,16 +10,6 @@
     <string name="splash_version">v%s</string>
 
     <!-- LOGIN -->
-    <string name="login_titulo">Welcome</string>
-    <string name="login_subtitulo">Log in to continue</string>
-    <string name="login_usuario">Username</string>
-    <string name="login_password">Password</string>
-    <string name="login_entrar">Log In</string>
-    <string name="login_no_cuenta">Don\'t have an account? Sign up</string>
-    <string name="login_entrar_invitado">Continue as guest</string>
-    <string name="login_o">or</string>
-    <string name="login_error_invitado">Could not enter as guest</string>
-    <string name="error_solo_usuarios_registrados">You need an account to access this feature</string>
     <string name="error_campos_vacios">Please fill in all fields</string>
     <string name="login_error_credenciales">Wrong username or password</string>
     <string name="error_conexion">Connection error</string>
@@ -73,48 +63,16 @@
     <string name="idioma_ingles">English</string>
 
     <!-- MAIN ACTIVITY -->
-    <string name="nav_home">Home</string>
-    <string name="nav_rutinas">Routines</string>
-    <string name="nav_ejercicios">Exercises</string>
     <string name="nav_nutricion">Nutrition</string>
-    <string name="nav_perfil">Profile</string>
     <string name="nav_rol_pestana">tab</string>
 
     <!-- HOME -->
-    <string name="home_resumen">Today\'s summary</string>
-    <string name="home_entrenamientos">Workouts</string>
-    <string name="home_minutos">Minutes</string>
-    <string name="home_acciones_rapidas">Quick actions</string>
-    <string name="home_iniciar_entrenamiento">Start workout</string>
-    <string name="home_saludo">Good morning,</string>
-    <string name="home_buenos_dias">Good morning,</string>
-    <string name="home_buenas_tardes">Good afternoon,</string>
-    <string name="home_buenas_noches">Good evening,</string>
     <string name="home_usuario_defecto">User</string>
-    <string name="home_esta_semana">this week</string>
-    <string name="home_entrenamientos_semana">Workouts this week</string>
-    <string name="home_ver_rutinas">View my routines</string>
-    <string name="home_registrar_comida">Log a meal</string>
-    <string name="home_racha">Streak</string>
-    <string name="home_racha_dias_unidad">days</string>
-    <string name="home_racha_dia_unidad">day</string>
-    <string name="home_racha_mejor">Best streak: %d</string>
-    <string name="home_racha_vacia">Train today and start your streak!</string>
-    <string name="home_semana_titulo">This week</string>
-    <string name="home_entrenos">Workouts</string>
 
     <!-- ROUTINES -->
-    <string name="rutinas_mis_rutinas">My routines</string>
-    <string name="rutinas_full_body">Full Body Routine</string>
-    <string name="rutinas_full_body_desc">5 exercises · 45 minutes</string>
-    <string name="rutinas_fuerza">Strength Routine</string>
-    <string name="rutinas_fuerza_desc">8 exercises · 60 minutes</string>
     <string name="rutinas_crear_nueva">Create new routine</string>
 
     <!-- Empty state of "My routines": see values/strings.xml for the rationale. -->
-    <string name="rutinas_vacio_titulo">You have no routines of your own yet</string>
-    <string name="rutinas_vacio_cuerpo">Create one with the button above, or start with one of the GymProFit routines.</string>
-    <string name="rutinas_vacio_sugerencias">Routines to get you started</string>
     <!-- Empty because of the level filter, not for lack of routines. -->
     <string name="rutinas_principiante">Beginner</string>
     <string name="rutinas_intermedio">Intermediate</string>
@@ -123,16 +81,10 @@
     <string name="rutinas_descripcion">Description</string>
     <string name="rutinas_nivel_label">Level</string>
     <string name="rutinas_duracion">Duration</string>
-    <string name="rutinas_num_ejercicios">Number of exercises</string>
     <string name="rutinas_guardar">Save routine</string>
     <string name="error_campo_requerido">This field is required</string>
 
     <!-- EXERCISES -->
-    <string name="ejercicios_press_banca">Bench press</string>
-    <string name="ejercicios_press_banca_desc">Pectoral, Triceps</string>
-    <string name="ejercicios_dominadas">Pull-ups</string>
-    <string name="ejercicios_dominadas_desc">Lats, Biceps</string>
-    <string name="ejercicios_catalogo">Exercise catalog</string>
     <string name="ejercicios_buscar">Search exercise</string>
     <string name="ejercicios_todos">All</string>
     <string name="ejercicios_pecho">Chest</string>
@@ -143,9 +95,6 @@
     <string name="ejercicios_core">Core</string>
 
     <!-- NUTRITION -->
-    <string name="nutricion_seguimiento">Nutritional tracking</string>
-    <string name="nutricion_calorias_hoy">Today\'s calories</string>
-    <string name="nutricion_objetivo">Daily goal</string>
     <string name="nutricion_proteinas">Proteins</string>
     <string name="nutricion_carbohidratos">Carbs</string>
     <string name="nutricion_grasas">Fats</string>
@@ -154,7 +103,6 @@
     <string name="nutricion_comida">Lunch</string>
     <string name="nutricion_merienda">Snack</string>
     <string name="nutricion_cena">Dinner</string>
-    <string name="nutricion_agregar">Add meal</string>
     <string name="comida_eliminar_titulo">Confirm deletion</string>
     <string name="comida_eliminar_confirmar">Remove food from meal</string>
     <string name="comida_sin_alimentos">No foods logged</string>
@@ -163,34 +111,19 @@
     <string name="comida_eliminar_de_comida">Remove</string>
 
     <!-- PROFILE -->
-    <string name="perfil_mi_perfil">My profile</string>
-    <string name="perfil_informacion">Personal information</string>
     <string name="perfil_nombre">Name</string>
     <string name="editar_perfil_nombre_ayuda">Leave it blank to use your username</string>
-    <string name="perfil_email">Email</string>
-    <string name="perfil_configuracion">Settings</string>
-    <string name="perfil_tema">Theme</string>
-    <string name="perfil_idioma">Language</string>
     <string name="menu_contactanos">Contact us</string>
     <string name="email_contacto_asunto">Question / Suggestion — GymProFit</string>
-    <string name="email_contacto_cuerpo">Hi GymProFit team,\n\nI am writing to:\n\n[Describe your question or suggestion here]\n\nThank you.</string>
     <string name="perfil_cerrar_sesion">Log out</string>
     <string name="perfil_nivel">Experience level</string>
     <string name="perfil_peso">Weight</string>
     <string name="perfil_altura">Height</string>
     <string name="perfil_edad">Age</string>
     <string name="perfil_objetivo">Goal</string>
-    <string name="perfil_editar">Edit information</string>
-    <string name="perfil_sin_datos">Not registered</string>
-    <string name="perfil_anos">%d years</string>
-    <string name="perfil_kg">%s\u00A0kg</string>
-    <string name="perfil_cm">%d\u00A0cm</string>
 
     <!-- GENERAL -->
     <string name="sin_registrar">Not registered</string>
-    <string name="comidas_hoy">Today\'s meals</string>
-    <string name="usuario_ejemplo">User</string>
-    <string name="email_ejemplo">user@email.com</string>
 
     <!-- DIALOGS -->
     <string name="dialog_cancelar">Cancel</string>
@@ -214,7 +147,6 @@
     <string name="onboarding_ligero">Light</string>
     <string name="onboarding_moderado">Moderate</string>
     <string name="onboarding_activo">Active</string>
-    <string name="nutricion_carbohidratos_corto">Carbs</string>
 
     <!-- OBJETIVOS -->
     <string name="objetivo_perder_peso">Lose fat</string>
@@ -223,9 +155,7 @@
     <string name="objetivo_fuerza">Gain strength</string>
 
     <!-- SESSIONS -->
-    <string name="sesiones_titulo">My sessions</string>
     <string name="sesiones_sin_sesiones">No sessions recorded</string>
-    <string name="sesiones_registrar">Log session</string>
     <string name="sesiones_rutina">Routine</string>
     <string name="sesiones_duracion">Duration (min) *</string>
     <string name="sesiones_notas">Notes (optional)</string>
@@ -250,7 +180,6 @@
     <string name="sesiones_valoracion_desc">Session rating, optional</string>
     <string name="sesiones_valoracion_desc_sin">Session rating, optional, not rated</string>
     <string name="sesiones_quitar_valoracion">Clear rating</string>
-    <string name="sesiones_valoracion_fmt">Rating: %d/5</string>
     <string name="sesiones_ejercicios_sesion">Session exercises</string>
     <string name="sesiones_peso_hint">Weight (kg)</string>
     <string name="sesiones_reps_hint">Reps</string>
@@ -258,10 +187,7 @@
     <string name="sesiones_serie_completada">Mark set as done</string>
 
     <!-- MEASUREMENTS -->
-    <string name="mediciones_titulo">Body measurements</string>
     <string name="mediciones_sin_mediciones">No measurements recorded</string>
-    <string name="mediciones_eliminar">Delete measurement</string>
-    <string name="mediciones_confirmar_eliminar">Delete this measurement?</string>
     <string name="medicion_anadir">Add</string>
     <string name="medicion_guardar">Save</string>
     <string name="medicion_fecha_ultima">Last measurement: %s</string>
@@ -277,8 +203,6 @@
     <string name="grafica_titulo_grasa">BODY FAT TREND</string>
     <string name="grafica_titulo_cintura">WAIST TREND</string>
     <string name="grafica_sin_datos">No data for this metric yet.\nLog at least 2 to see the trend.</string>
-    <string name="grafica_rango_7">7 days</string>
-    <string name="nutricion_historial">History</string>
     <string name="nutricion_grafica_kcal">CALORIES PER DAY</string>
     <string name="nutricion_grafica_vacia">No meals logged yet.\nLog some to see your history.</string>
     <string name="nutricion_meta_kcal">Goal</string>
@@ -286,13 +210,10 @@
     <string name="dialogo_escribe_nota">Write a note</string>
     <string name="medicion_registrar_primera">Log measurement</string>
     <string name="nutricion_estadisticas">Statistics</string>
-    <string name="nutricion_hoy">Today</string>
     <string name="detalle_progresion_titulo">PROGRESSION · MAX WEIGHT</string>
     <string name="detalle_progresion_pr">PR</string>
     <string name="detalle_progresion_titulo_tiempo">PROGRESSION · BEST TIME (S)</string>
     <string name="detalle_progresion_titulo_reps">PROGRESSION · MOST REPS</string>
-    <string name="nutricion_estadisticas_titulo">History &amp; statistics</string>
-    <string name="nutricion_estadisticas_sub">Average, adherence and charts</string>
     <string name="stats_periodo_semana">Week</string>
     <string name="stats_periodo_mes">Month</string>
     <string name="stats_kpi_media">Avg kcal/day</string>
@@ -317,13 +238,11 @@
     <string name="medicion_label_notas">Notes</string>
 
     <!-- ACHIEVEMENTS -->
-    <string name="logros_titulo">My achievements</string>
     <string name="logros_sin_logros">No achievements available</string>
 
     <!-- ADMIN -->
     <string name="admin_titulo">Admin panel</string>
     <string name="admin_estadisticas">Global statistics</string>
-    <string name="admin_usuarios">Registered users</string>
     <string name="admin_total_usuarios">Total users</string>
     <string name="admin_usuarios_activos">Active</string>
     <string name="admin_total_sesiones">Total sessions</string>
@@ -346,7 +265,6 @@
     <string name="admin_filtro_intermedio">Intermediate</string>
     <string name="admin_filtro_avanzado">Advanced</string>
     <string name="admin_toggle_activo_titulo">Change status</string>
-    <string name="admin_toggle_activo_msg">Activate or deactivate this user?</string>
     <string name="admin_toggle_usuario_activar">Activate the account of “%1$s”?</string>
     <string name="admin_toggle_usuario_desactivar">Deactivate the account of “%1$s”? They will not be able to sign in until you reactivate it.</string>
     <string name="admin_cambiar_rol_msg">Role of “%1$s”</string>
@@ -393,7 +311,6 @@
     <string name="admin_gestionar_alimentos">Food management</string>
     <string name="admin_alimentos_titulo">Food management</string>
     <string name="admin_alimentos_buscar_hint">Search food…</string>
-    <string name="admin_alimentos_filtro_categoria">Category</string>
     <string name="admin_exito_toggle_alimento">Status updated</string>
     <string name="admin_editar_alimento_titulo">Edit food</string>
     <string name="admin_alimentos_campo_nombre">Name</string>
@@ -403,11 +320,6 @@
     <string name="admin_alimentos_campo_grasas">Fat (g)</string>
 
     <!-- PROFILE — activities -->
-    <string name="perfil_mis_actividades">My activities</string>
-    <string name="perfil_ver_sesiones">My sessions</string>
-    <string name="perfil_ver_mediciones">My measurements</string>
-    <string name="perfil_ver_logros">My achievements</string>
-    <string name="perfil_panel_admin">Admin panel</string>
     <string name="perfil_cambiar_foto">Change profile picture</string>
     <string name="perfil_foto_galeria">Choose from gallery</string>
     <string name="perfil_foto_camara">Take a photo</string>
@@ -456,16 +368,13 @@
     <string name="resumen_notas">Notes</string>
 
     <!-- Create routine — exercises -->
-    <string name="crear_rutina_ejercicios">Exercises</string>
     <string name="crear_rutina_buscar_ejercicio">Search exercise...</string>
-    <string name="crear_rutina_ejercicios_anadidos">Added exercises</string>
     <string name="crear_rutina_series">Sets</string>
     <string name="crear_rutina_repeticiones">Reps</string>
     <string name="crear_rutina_ejercicio_duplicado">Exercise already added</string>
     <string name="crear_rutina_dificultad_todos">All</string>
     <string name="crear_rutina_siguiente">Next</string>
     <string name="anadir_ejercicios_titulo">Add exercises</string>
-    <string name="anadir_ejercicios_anadidos_fmt">Added: %d</string>
     <string name="anadir_ejercicios_continuar_fmt">Continue (%d)</string>
     <string name="resumen_crear_rutina_titulo">Summary</string>
     <string name="resumen_crear_rutina_ejercicios_fmt">Exercises (%d)</string>
@@ -534,9 +443,6 @@
     <string name="anadir_alimento_preview">%1$d\u00A0kcal | %2$.1f\u00A0g prot | %3$.1f\u00A0g carbs | %4$.1f\u00A0g fat</string>
     <string name="btn_anadir">Add</string>
     <string name="btn_volver">Back</string>
-    <string name="menu_opciones">More options</string>
-    <string name="accion_dia_anterior">Previous day</string>
-    <string name="accion_dia_siguiente">Next day</string>
     <string name="accion_periodo_anterior">Previous period</string>
     <string name="accion_periodo_siguiente">Next period</string>
     <string name="accion_mas_acciones">More actions</string>
@@ -563,14 +469,9 @@
     <!-- Numeric field validation errors (see utils/Numeros). -->
     <string name="error_numero_invalido">Enter a valid number</string>
     <string name="error_duracion_invalida">Enter a duration between 5 and 300 minutes</string>
-    <string name="error_series_invalida">Enter between 1 and 10 sets</string>
-    <string name="error_reps_invalida">Enter between 1 and 50\u00A0reps</string>
-    <string name="error_edad_invalida">Enter your age in years, between 10 and 120</string>
     <string name="error_edad_rango">Enter your age in years, between %1$d and %2$d</string>
     <string name="error_edad_minima">GymProFit is for people aged %1$d or over, as the privacy policy says</string>
     <string name="error_peso_invalido">Enter your weight in kilos, between 30 and 300</string>
-    <string name="error_altura_invalida">Enter your height in centimetres, between 100 and 250</string>
-    <string name="error_altura_en_metros">Did you mean %1$d\u00A0cm? Enter your height in centimetres</string>
     <string name="error_medida_invalida">Enter a number between %1$s and %2$s</string>
 
     <!-- Forgotten password recovery -->
@@ -595,9 +496,6 @@
     <string name="recuperar_error_codigo">The code is 6 digits long</string>
 
     <!-- Home muscle silhouette (phase 4) -->
-    <string name="home_cuerpo_eyebrow">THIS WEEK</string>
-    <string name="home_cuerpo_leyenda">The more orange, the more sets it took</string>
-    <string name="home_cuerpo_vacio">Your body is still unlit</string>
     <plurals name="home_cuerpo_resumen">
         <item quantity="one">%1$d group · %2$s missing</item>
         <item quantity="other">%1$d groups · %2$s missing</item>
@@ -606,7 +504,6 @@
         <item quantity="one">%1$d group · whole body</item>
         <item quantity="other">%1$d groups · whole body</item>
     </plurals>
-    <string name="home_cuerpo_descripcion">Body silhouette with the muscles trained this week highlighted</string>
     <string name="zona_pierna">legs</string>
     <string name="zona_espalda">back</string>
     <string name="zona_pecho">chest</string>
@@ -615,8 +512,6 @@
     <string name="zona_core">core</string>
 
     <!-- Home record card (phase 4) -->
-    <string name="home_record_eyebrow">YOUR RECORD</string>
-    <string name="home_record_detalle">%1$s · %2$d\u00A0reps</string>
 
     <!-- Post-workout celebration (phase 4) -->
     <string name="resumen_celebracion_eyebrow">YOU MOVED</string>
@@ -711,14 +606,11 @@
     </plurals>
     <!-- Units and figures with their unit (GP-071): never concatenated in code -->
     <string name="unidad_kcal">%d\u00A0kcal</string>
-    <string name="unidad_kcal_objetivo">/ %d\u00A0kcal</string>
     <string name="unidad_kcal_100g">%d\u00A0kcal/100\u00A0g</string>
     <string name="unidad_kg_entero">%d\u00A0kg</string>
     <string name="unidad_kg_decimal">%.1f\u00A0kg</string>
     <string name="unidad_cm_decimal">%.1f\u00A0cm</string>
-    <string name="unidad_g_entero">%d\u00A0g</string>
     <string name="unidad_g_redondeado">%.0f\u00A0g</string>
-    <string name="unidad_litros">%.1f\u00A0L</string>
     <string name="series_por_reps">%1$d × %2$d</string>
     <string name="nivel_y_duracion">%1$s  ·  %2$d\u00A0min</string>
     <string name="grafica_kcal_fecha">%1$d\u00A0kcal\n%2$s</string>
@@ -735,21 +627,16 @@
     </plurals>
     <!-- Patrones de fecha (SimpleDateFormat) por idioma (GP-071) -->
     <string name="home_fecha_patron" translatable="false">EEEE, MMMM d</string>
-    <string name="nutricion_fecha_patron" translatable="false">EEE, MMM d</string>
     <string name="comida_total_prot">%.1f\u00A0g protein</string>
     <string name="comida_total_carbos">%.1f\u00A0g carbs</string>
     <string name="comida_total_grasas">%.1f\u00A0g fat</string>
     <string name="ejercicio_sin_nombre">Exercise %d</string>
     <!-- Récords (GP-088) -->
-    <string name="records_titulo">Records</string>
-    <string name="perfil_ver_records">My records</string>
     <string name="records_vacio_titulo">No records yet</string>
     <string name="records_vacio_texto">The first time you do an exercise is your starting point. Beat it and it will show up here.</string>
-    <string name="record_batido_el">Set on %s</string>
     <string name="record_antes">Before: %s</string>
     <string name="record_peso_por_reps">%1$s × %2$d</string>
     <string name="record_a11y">%1$s, %2$s. %3$s</string>
-    <string name="home_record_a11y">Your record: %1$s, %2$s</string>
     <string name="resumen_seccion_records">Records</string>
     <string name="grafica_reps_fecha">%1$s%2$s\n%3$s</string>
     <!-- Por tiempo (GP-125): «1:05 · PR», y debajo la fecha -->
@@ -908,7 +795,6 @@
     <string name="comida_anadir_cena">Add to dinner</string>
     <string name="dia_futuro_a11y">%1$s, not here yet</string>
     <string name="nutricion_kcal_a11y">%1$s of %2$s kilocalories. %3$s %4$s.</string>
-    <string name="nutricion_error_dia">This day couldn\'t be loaded.</string>
 
     <!-- GP-105 · Progreso y Ajustes -->
     <string name="progreso_titulo">Progress</string>
@@ -933,7 +819,6 @@
     <string name="seccion_logros">Badges</string>
     <string name="seccion_medidas">Measures</string>
     <string name="seccion_historial">History</string>
-    <string name="progreso_solo_registrados">Create an account to keep your progress.</string>
     <string name="record_hace_antes">%1$s · before %2$s</string>
     <string name="ajustes_cuenta">Account</string>
     <string name="ajustes_foto">Profile photo</string>
@@ -1023,7 +908,6 @@
     <string name="tu_programa_borradas">You have deleted every routine in this program.</string>
     <string name="tu_programa_volver_a_seguir">Follow it again</string>
     <string name="tu_programa_error">Your program could not be loaded.</string>
-    <string name="tu_programa_hoy_sub">%1$s · %2$s</string>
     <string name="programas_titulo">Programs</string>
     <string name="programas_donde">Where you train</string>
     <string name="programas_dias">Days per week</string>
@@ -1038,7 +922,6 @@
     <string name="programa_dias_rango">%1$d–%2$d\u00A0days</string>
     <string name="programa_minutos_rango">%1$d–%2$d\u00A0min</string>
     <string name="programa_resumen">%1$s · %2$s · %3$s</string>
-    <string name="programa_abrir_a11y">%1$s. %2$s. Opens the program</string>
     <string name="programa_ciclo_titulo">The cycle</string>
     <string name="programa_ciclo_explicacion">In this order, then back to the start. If you miss a day, next time just carry on with the next one.</string>
     <string name="programa_ciclo_dia">%1$d. %2$s</string>

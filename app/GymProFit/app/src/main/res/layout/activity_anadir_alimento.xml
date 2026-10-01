@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         app:title="@string/anadir_alimento_titulo">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCrearAlimento"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

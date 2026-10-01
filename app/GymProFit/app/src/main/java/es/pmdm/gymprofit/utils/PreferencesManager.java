@@ -554,7 +554,8 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
     public void saveRol(String rol) { editor.putString(KEY_ROL, rol); editor.apply(); }
     public String getRol() { return prefs.getString(KEY_ROL, "ROLE_USER"); }
     public boolean isAdmin() { return "ROLE_ADMIN".equals(getRol()); }
-    public boolean isGuest() { return "ROLE_GUEST".equals(getRol()); }
+    /** Quita el rol guardado (GP-150: el del invitado de la 1.4.0, al cerrar su sesión). */
+    public void olvidarRol() { editor.remove(KEY_ROL).apply(); }
 
     public void savePeso(double peso)     { editor.putFloat(KEY_PESO, (float) peso); editor.apply(); }
     public double getPeso()               { return perfilUsable() ? prefs.getFloat(KEY_PESO, 70.0f) : 70.0; }

@@ -233,7 +233,7 @@ public class PasoPlanFragment extends PasoAltaFragment {
             public void onOk(Recomendado rec) {
                 if (!isAdded()) return;
                 if (rec == null || rec.getPrograma() == null) {
-                    errorPrograma(404);
+                    errorPrograma(404, null);
                     return;
                 }
                 Programa p = rec.getPrograma();
@@ -249,7 +249,7 @@ public class PasoPlanFragment extends PasoAltaFragment {
                             @Override
                             public void onFail(int code, String message) {
                                 if (!isAdded()) return;
-                                errorPrograma(code);
+                                errorPrograma(code, message);
                             }
                         });
             }
@@ -257,7 +257,7 @@ public class PasoPlanFragment extends PasoAltaFragment {
             @Override
             public void onFail(int code, String message) {
                 if (!isAdded()) return;
-                errorPrograma(code);
+                errorPrograma(code, message);
             }
         });
     }
@@ -270,10 +270,21 @@ public class PasoPlanFragment extends PasoAltaFragment {
         raiz.findViewById(R.id.contenidoPrograma).setVisibility(e == Estado.LISTO ? View.VISIBLE : View.GONE);
     }
 
-    private void errorPrograma(int code) {
+    // El error de la tarjeta, con «Reintentar». Con demasiadas peticiones (429, el cupo
+    // de GP-148), cuánto esperar; sin red, que no hay red; si no, el genérico.
+    private void errorPrograma(int code, @Nullable String message) {
         estadoPrograma(Estado.ERROR);
-        ((TextView) raiz.findViewById(R.id.tvErrorPrograma)).setText(
-                code == -1 ? R.string.alta_plan_programa_sin_red : R.string.alta_plan_programa_error);
+        TextView texto = raiz.findViewById(R.id.tvErrorPrograma);
+        switch (es.pmdm.gymprofit.utils.ErrorAlta.programa(code)) {
+            case ESPERA:
+                texto.setText(es.pmdm.gymprofit.utils.UiFeedback.mensaje(requireContext(), code, message));
+                break;
+            case SIN_RED:
+                texto.setText(R.string.alta_plan_programa_sin_red);
+                break;
+            default:
+                texto.setText(R.string.alta_plan_programa_error);
+        }
     }
 
     private void pintarPrograma(@NonNull Recomendado rec, @Nullable VistaPrevia vp, @NonNull AltaPasos.Respuestas r) {

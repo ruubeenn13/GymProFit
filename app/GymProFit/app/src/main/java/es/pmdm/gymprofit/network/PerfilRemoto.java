@@ -27,13 +27,12 @@ public final class PerfilRemoto {
 
     /**
      * Arranque con sesión: pide el perfil a la API y lo cruza con el del móvil.
-     * Los invitados no tienen perfil que guardar.
      */
     public static void alArrancar(@NonNull Context context) {
         Context app = context.getApplicationContext();
         PreferencesManager prefs = new PreferencesManager(app);
         int id = prefs.getUsuarioId();
-        if (id == -1 || prefs.isGuest()) return;
+        if (id == -1) return;
 
         ApiClient.service(UsuarioApi.class).getPorId(id).enqueue(new ApiCallback<Usuario>() {
             @Override
@@ -57,7 +56,7 @@ public final class PerfilRemoto {
     public static void alEntrar(@NonNull Context context, @Nullable Usuario u) {
         PreferencesManager prefs = new PreferencesManager(context.getApplicationContext());
         String usuario = prefs.getUsername();
-        if (u == null || prefs.isGuest() || usuario == null || usuario.isEmpty()) return;
+        if (u == null || usuario == null || usuario.isEmpty()) return;
 
         // El nombre para mostrar solo vive en la API (GP-116): el móvil guarda una copia.
         prefs.saveNombre(usuario, u.getNombre());

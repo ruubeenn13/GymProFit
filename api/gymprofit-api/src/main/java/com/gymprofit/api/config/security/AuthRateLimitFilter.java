@@ -17,12 +17,17 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.concurrent.ConcurrentHashMap;
 
 // ============================================================
-// AuthRateLimitFilter — limitador de peticiones por IP en DOS niveles.
+// AuthRateLimitFilter — limitador de peticiones por IP en TRES niveles.
 //  - Nivel ESTRICTO: rutas de autenticación sin login (login/register/guest/
 //    refresh/change-password), objetivo de fuerza bruta → cupo bajo.
+//  - Nivel PROGRAMA (GP-148): las dos rutas del programa que no piden cuenta, el
+//    recomendado y la vista previa. Son las más caras de las abiertas (la vista previa
+//    hace 29 consultas y tarda ~0,3 s de servidor en producción). Cupo intermedio que
+//    un alta normal, que las pide dos o tres veces, no roza.
 //  - Nivel GLOBAL (backstop): TODAS las demás rutas, con un cupo alto que un
 //    usuario real nunca alcanza pero que frena scraping/DoS (vaciar la BD).
 // Ventana fija por IP y nivel; al superar el cupo responde 429 + Retry-After.
@@ -46,6 +51,10 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
             // entrega la llave de la recuperación de contraseña.
             "/usuarios/me/email");
 
+    // Las rutas del nivel del programa: /programas/recomendado y /programas/{codigo}/vista-previa.
+    private static final Pattern RUTAS_PROGRAMA =
+            Pattern.compile("^/programas/(recomendado|[^/]+/vista-previa)$");
+
     // Texto del 429 en el idioma de la petición (GP-109). Por setter para que los tests
     // unitarios sigan construyendo el filtro con new; sin él, el texto sale en español.
     private MensajesError mensajes;
@@ -67,6 +76,14 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
     @Value("${app.auth.rate-limit.window-seconds:60}")
     private long ventanaEstrictaSeg;
 
+    // Nivel del programa (GP-148): recomendado y vista previa, juntos.
+    @Value("${app.rate-limit.programa.max-requests:30}")
+    private int maxPrograma;
+
+    // Duración de la ventana del nivel del programa (segundos).
+    @Value("${app.rate-limit.programa.window-seconds:60}")
+    private long ventanaProgramaSeg;
+
     // Nivel global (backstop): cupo alto por IP para el resto de rutas.
     @Value("${app.rate-limit.global.max-requests:200}")
     private int maxGlobal;
@@ -77,6 +94,7 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
 
     // Contadores separados por nivel (una entrada por IP en cada uno).
     private final ConcurrentHashMap<String, Contador> contadoresEstrictos = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Contador> contadoresPrograma = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, Contador> contadoresGlobales = new ConcurrentHashMap<>();
 
     // Contador mutable de una IP: momento de inicio de la ventana y nº de peticiones.
@@ -110,11 +128,15 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
         }
 
         String ip = clientIp(request);
-        boolean estricta = RUTAS_ESTRICTAS.contains(request.getServletPath());
+        String ruta = request.getServletPath();
+        boolean estricta = RUTAS_ESTRICTAS.contains(ruta);
+        boolean programa = !estricta && RUTAS_PROGRAMA.matcher(ruta).matches();
 
-        // Cada petición cuenta SOLO en el nivel que le corresponde (estricto o global).
+        // Cada petición cuenta SOLO en el nivel que le corresponde.
         boolean permitido = estricta
                 ? permitido(contadoresEstrictos, ip, maxEstricto, ventanaEstrictaSeg)
+                : programa
+                ? permitido(contadoresPrograma, ip, maxPrograma, ventanaProgramaSeg)
                 : permitido(contadoresGlobales, ip, maxGlobal, ventanaGlobalSeg);
 
         if (permitido) {
@@ -123,7 +145,7 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
         }
 
         // Cupo superado: 429 con cuerpo JSON homogéneo (mismo shape que Response) y Retry-After.
-        long retryAfter = estricta ? ventanaEstrictaSeg : ventanaGlobalSeg;
+        long retryAfter = estricta ? ventanaEstrictaSeg : programa ? ventanaProgramaSeg : ventanaGlobalSeg;
         response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");

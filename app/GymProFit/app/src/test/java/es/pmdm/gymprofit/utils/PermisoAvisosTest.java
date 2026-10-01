@@ -52,9 +52,8 @@ public class PermisoAvisosTest {
     }
 
     @Test
-    public void seEnsenaUnaVezYNuncaAlInvitado() {
-        assertTrue(PermisoAvisos.tocaPreguntar(false, false));
-        assertFalse(PermisoAvisos.tocaPreguntar(false, true));
-        assertFalse(PermisoAvisos.tocaPreguntar(true, false));
+    public void seEnsenaUnaVez() {
+        assertTrue(PermisoAvisos.tocaPreguntar(false));
+        assertFalse(PermisoAvisos.tocaPreguntar(true));
     }
 }

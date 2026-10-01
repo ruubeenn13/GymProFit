@@ -10,16 +10,6 @@
     <string name="splash_version">v%s</string>
 
     <!-- LOGIN -->
-    <string name="login_titulo">Bienvenido</string>
-    <string name="login_subtitulo">Inicia sesión para continuar</string>
-    <string name="login_usuario">Usuario</string>
-    <string name="login_password">Contraseña</string>
-    <string name="login_entrar">Entrar</string>
-    <string name="login_no_cuenta">¿No tienes cuenta? Regístrate</string>
-    <string name="login_entrar_invitado">Entrar como invitado</string>
-    <string name="login_o">o</string>
-    <string name="login_error_invitado">No se pudo entrar como invitado</string>
-    <string name="error_solo_usuarios_registrados">Debes crear una cuenta para acceder a esta funcionalidad</string>
     <string name="error_campos_vacios">Por favor, completa todos los campos</string>
     <string name="login_error_credenciales">Usuario o contraseña incorrectos</string>
     <string name="error_conexion">Error de conexión con el servidor</string>
@@ -72,50 +62,18 @@
     <string name="idioma_ingles">English</string>
 
     <!-- MAIN ACTIVITY -->
-    <string name="nav_home">Inicio</string>
-    <string name="nav_rutinas">Rutinas</string>
-    <string name="nav_ejercicios">Ejercicios</string>
     <string name="nav_nutricion">Nutrición</string>
-    <string name="nav_perfil">Perfil</string>
     <string name="nav_rol_pestana">pestaña</string>
 
     <!-- HOME -->
-    <string name="home_resumen">Resumen de hoy</string>
-    <string name="home_entrenamientos">Entrenamientos</string>
-    <string name="home_minutos">Minutos</string>
-    <string name="home_acciones_rapidas">Acciones rápidas</string>
-    <string name="home_iniciar_entrenamiento">Iniciar entrenamiento</string>
-    <string name="home_saludo">Buenos días,</string>
-    <string name="home_buenos_dias">Buenos días,</string>
-    <string name="home_buenas_tardes">Buenas tardes,</string>
-    <string name="home_buenas_noches">Buenas noches,</string>
     <string name="home_usuario_defecto">Usuario</string>
-    <string name="home_esta_semana">esta semana</string>
-    <string name="home_entrenamientos_semana">Entrenamientos esta semana</string>
-    <string name="home_ver_rutinas">Ver mis rutinas</string>
-    <string name="home_registrar_comida">Registrar comida</string>
-    <string name="home_racha">Racha</string>
-    <string name="home_racha_dias_unidad">días</string>
-    <string name="home_racha_dia_unidad">día</string>
-    <string name="home_racha_mejor">Mejor racha: %d</string>
-    <string name="home_racha_vacia">¡Entrena hoy y empieza tu racha!</string>
-    <string name="home_semana_titulo">Esta semana</string>
-    <string name="home_entrenos">Entrenos</string>
 
     <!-- RUTINAS -->
-    <string name="rutinas_mis_rutinas">Mis rutinas</string>
-    <string name="rutinas_full_body">Rutina Full Body</string>
-    <string name="rutinas_full_body_desc">5 ejercicios · 45 minutos</string>
-    <string name="rutinas_fuerza">Rutina de Fuerza</string>
-    <string name="rutinas_fuerza_desc">8 ejercicios · 60 minutos</string>
     <string name="rutinas_crear_nueva">Crear nueva rutina</string>
 
     <!-- Estado vacío de "Mis rutinas": la cuenta sin rutinas propias ve este bloque
          y, debajo, las predefinidas ofrecidas como sugerencia. Antes veía las seis
          predefinidas directamente bajo el rótulo "Mis rutinas", que no eran suyas. -->
-    <string name="rutinas_vacio_titulo">Aún no tienes rutinas propias</string>
-    <string name="rutinas_vacio_cuerpo">Crea la tuya con el botón de arriba, o empieza por una de las rutinas de GymProFit.</string>
-    <string name="rutinas_vacio_sugerencias">Rutinas para empezar</string>
     <!-- Lista vacía por el filtro de nivel, no por falta de rutinas. -->
     <string name="rutinas_principiante">Principiantes</string>
     <string name="rutinas_intermedio">Intermedio</string>
@@ -124,19 +82,13 @@
     <string name="rutinas_descripcion">Descripción</string>
     <string name="rutinas_nivel_label">Nivel</string>
     <string name="rutinas_duracion">Duración</string>
-    <string name="rutinas_num_ejercicios">Número de ejercicios</string>
     <string name="rutinas_guardar">Guardar rutina</string>
     <string name="error_campo_requerido">Este campo es obligatorio</string>
 
     <!-- EJERCICIOS -->
-    <string name="ejercicios_catalogo">Catálogo de ejercicios</string>
     <string name="ejercicios_buscar">Buscar ejercicio</string>
     <string name="ejercicios_pecho">Pecho</string>
     <string name="ejercicios_espalda">Espalda</string>
-    <string name="ejercicios_press_banca">Press banca</string>
-    <string name="ejercicios_press_banca_desc">Pectoral, Tríceps</string>
-    <string name="ejercicios_dominadas">Dominadas</string>
-    <string name="ejercicios_dominadas_desc">Dorsales, Bíceps</string>
     <string name="ejercicios_todos">Todos</string>
     <string name="ejercicios_piernas">Piernas</string>
     <string name="ejercicios_brazos">Brazos</string>
@@ -144,9 +96,6 @@
     <string name="ejercicios_core">Core</string>
 
     <!-- NUTRICIÓN -->
-    <string name="nutricion_seguimiento">Seguimiento nutricional</string>
-    <string name="nutricion_calorias_hoy">Calorías de hoy</string>
-    <string name="nutricion_objetivo">Objetivo diario</string>
     <string name="nutricion_proteinas">Proteínas</string>
     <string name="nutricion_carbohidratos">Carbohidratos</string>
     <string name="nutricion_grasas">Grasas</string>
@@ -155,7 +104,6 @@
     <string name="nutricion_comida">Comida</string>
     <string name="nutricion_merienda">Merienda</string>
     <string name="nutricion_cena">Cena</string>
-    <string name="nutricion_agregar">Agregar comida</string>
     <string name="comida_eliminar_titulo">Confirmar eliminación</string>
     <string name="comida_eliminar_confirmar">Eliminar alimento de la comida</string>
     <string name="comida_sin_alimentos">Sin alimentos registrados</string>
@@ -164,34 +112,19 @@
     <string name="comida_eliminar_de_comida">Eliminar</string>
 
     <!-- PERFIL -->
-    <string name="perfil_mi_perfil">Mi perfil</string>
-    <string name="perfil_informacion">Información personal</string>
     <string name="perfil_nombre">Nombre</string>
     <string name="editar_perfil_nombre_ayuda">En blanco, se usa tu nombre de usuario</string>
-    <string name="perfil_email">Email</string>
-    <string name="perfil_configuracion">Configuración</string>
-    <string name="perfil_tema">Tema</string>
-    <string name="perfil_idioma">Idioma</string>
     <string name="menu_contactanos">Contáctanos</string>
     <string name="email_contacto_asunto">Consulta / Sugerencia — GymProFit</string>
-    <string name="email_contacto_cuerpo">Hola equipo de GymProFit,\n\nEscribo para:\n\n[Describe tu consulta o sugerencia aquí]\n\nGracias.</string>
     <string name="perfil_cerrar_sesion">Cerrar sesión</string>
     <string name="perfil_nivel">Nivel de experiencia</string>
     <string name="perfil_peso">Peso</string>
     <string name="perfil_altura">Altura</string>
     <string name="perfil_edad">Edad</string>
     <string name="perfil_objetivo">Objetivo</string>
-    <string name="perfil_editar">Editar información</string>
-    <string name="perfil_sin_datos">No registrado</string>
-    <string name="perfil_anos">%d años</string>
-    <string name="perfil_kg">%s\u00A0kg</string>
-    <string name="perfil_cm">%d\u00A0cm</string>
 
     <!-- GENERAL -->
     <string name="sin_registrar">Sin registrar</string>
-    <string name="comidas_hoy">Comidas de hoy</string>
-    <string name="usuario_ejemplo">Usuario</string>
-    <string name="email_ejemplo">usuario@email.com</string>
 
     <!-- DIALOGOS -->
     <string name="dialog_cancelar">Cancelar</string>
@@ -215,12 +148,9 @@
     <string name="onboarding_ligero">Ligero</string>
     <string name="onboarding_moderado">Moderado</string>
     <string name="onboarding_activo">Activo</string>
-    <string name="nutricion_carbohidratos_corto">Carbos</string>
 
     <!-- SESIONES -->
-    <string name="sesiones_titulo">Mis sesiones</string>
     <string name="sesiones_sin_sesiones">No hay sesiones registradas</string>
-    <string name="sesiones_registrar">Registrar sesión</string>
     <string name="sesiones_rutina">Rutina</string>
     <string name="sesiones_duracion">Duración (min) *</string>
     <string name="sesiones_notas">Notas (opcional)</string>
@@ -248,7 +178,6 @@
     <!-- Se guarda como texto en las notas de la sesión, no es una etiqueta de
          pantalla: por eso dice de qué es la cifra en vez de llevar un símbolo
          delante. La estrella que llevaba antes viajaba dentro del fichero de idioma. -->
-    <string name="sesiones_valoracion_fmt">Valoración: %d/5</string>
     <string name="sesiones_ejercicios_sesion">Ejercicios de la sesión</string>
     <string name="sesiones_peso_hint">Peso (kg)</string>
     <string name="sesiones_reps_hint">Reps</string>
@@ -256,10 +185,7 @@
     <string name="sesiones_serie_completada">Marcar serie como completada</string>
 
     <!-- MEDICIONES -->
-    <string name="mediciones_titulo">Mediciones corporales</string>
     <string name="mediciones_sin_mediciones">No hay mediciones registradas</string>
-    <string name="mediciones_eliminar">Eliminar medición</string>
-    <string name="mediciones_confirmar_eliminar">¿Eliminar esta medición?</string>
     <string name="medicion_anadir">Añadir</string>
     <string name="medicion_guardar">Guardar</string>
     <string name="medicion_fecha_ultima">Última medición: %s</string>
@@ -275,8 +201,6 @@
     <string name="grafica_titulo_grasa">EVOLUCIÓN DE LA GRASA</string>
     <string name="grafica_titulo_cintura">EVOLUCIÓN DE LA CINTURA</string>
     <string name="grafica_sin_datos">Aún no hay datos de esta métrica.\nRegistra al menos 2 para ver la evolución.</string>
-    <string name="grafica_rango_7">7 días</string>
-    <string name="nutricion_historial">Historial</string>
     <string name="nutricion_grafica_kcal">CALORÍAS POR DÍA</string>
     <string name="nutricion_grafica_vacia">Aún no has registrado comidas.\nRegistra alguna para ver el historial.</string>
     <string name="nutricion_meta_kcal">Meta</string>
@@ -284,13 +208,10 @@
     <string name="dialogo_escribe_nota">Escribe una nota</string>
     <string name="medicion_registrar_primera">Registrar medición</string>
     <string name="nutricion_estadisticas">Estadísticas</string>
-    <string name="nutricion_hoy">Hoy</string>
     <string name="detalle_progresion_titulo">PROGRESIÓN · PESO MÁX.</string>
     <string name="detalle_progresion_pr">PR</string>
     <string name="detalle_progresion_titulo_tiempo">PROGRESIÓN · MEJOR TIEMPO (S)</string>
     <string name="detalle_progresion_titulo_reps">PROGRESIÓN · MÁS REPETICIONES</string>
-    <string name="nutricion_estadisticas_titulo">Historial y estadísticas</string>
-    <string name="nutricion_estadisticas_sub">Media, adherencia y gráficas</string>
     <string name="stats_periodo_semana">Semana</string>
     <string name="stats_periodo_mes">Mes</string>
     <string name="stats_kpi_media">Media kcal/día</string>
@@ -315,13 +236,11 @@
     <string name="medicion_label_notas">Notas</string>
 
     <!-- LOGROS -->
-    <string name="logros_titulo">Mis logros</string>
     <string name="logros_sin_logros">No hay logros disponibles</string>
 
     <!-- ADMIN -->
     <string name="admin_titulo">Panel de administración</string>
     <string name="admin_estadisticas">Estadísticas globales</string>
-    <string name="admin_usuarios">Usuarios registrados</string>
     <string name="admin_total_usuarios">Total usuarios</string>
     <string name="admin_usuarios_activos">Activos</string>
     <string name="admin_total_sesiones">Total sesiones</string>
@@ -344,7 +263,6 @@
     <string name="admin_filtro_intermedio">Intermedio</string>
     <string name="admin_filtro_avanzado">Avanzado</string>
     <string name="admin_toggle_activo_titulo">Cambiar estado</string>
-    <string name="admin_toggle_activo_msg">¿Activar o desactivar este usuario?</string>
     <string name="admin_toggle_usuario_activar">¿Activar la cuenta de «%1$s»?</string>
     <string name="admin_toggle_usuario_desactivar">¿Desactivar la cuenta de «%1$s»? No podrá volver a entrar hasta que la reactives.</string>
     <string name="admin_cambiar_rol_msg">Rol de «%1$s»</string>
@@ -391,7 +309,6 @@
     <string name="admin_gestionar_alimentos">Gestión de alimentos</string>
     <string name="admin_alimentos_titulo">Gestión de alimentos</string>
     <string name="admin_alimentos_buscar_hint">Buscar alimento…</string>
-    <string name="admin_alimentos_filtro_categoria">Categoría</string>
     <string name="admin_exito_toggle_alimento">Estado actualizado</string>
     <string name="admin_editar_alimento_titulo">Editar alimento</string>
     <string name="admin_alimentos_campo_nombre">Nombre</string>
@@ -401,11 +318,6 @@
     <string name="admin_alimentos_campo_grasas">Grasas (g)</string>
 
     <!-- PERFIL — actividades -->
-    <string name="perfil_mis_actividades">Mis actividades</string>
-    <string name="perfil_ver_sesiones">Mis sesiones</string>
-    <string name="perfil_ver_mediciones">Mis mediciones</string>
-    <string name="perfil_ver_logros">Mis logros</string>
-    <string name="perfil_panel_admin">Panel de administración</string>
     <string name="perfil_cambiar_foto">Cambiar foto de perfil</string>
     <string name="perfil_foto_galeria">Elegir de galería</string>
     <string name="perfil_foto_camara">Tomar foto</string>
@@ -460,16 +372,13 @@
     <string name="resumen_notas">Notas</string>
 
     <!-- Crear rutina — ejercicios -->
-    <string name="crear_rutina_ejercicios">Ejercicios</string>
     <string name="crear_rutina_buscar_ejercicio">Buscar ejercicio...</string>
-    <string name="crear_rutina_ejercicios_anadidos">Ejercicios añadidos</string>
     <string name="crear_rutina_series">Series</string>
     <string name="crear_rutina_repeticiones">Repeticiones</string>
     <string name="crear_rutina_ejercicio_duplicado">Ejercicio ya añadido</string>
     <string name="crear_rutina_dificultad_todos">Todos</string>
     <string name="crear_rutina_siguiente">Siguiente</string>
     <string name="anadir_ejercicios_titulo">Añadir ejercicios</string>
-    <string name="anadir_ejercicios_anadidos_fmt">Añadidos: %d</string>
     <string name="anadir_ejercicios_continuar_fmt">Continuar (%d)</string>
     <string name="resumen_crear_rutina_titulo">Resumen</string>
     <string name="resumen_crear_rutina_ejercicios_fmt">Ejercicios (%d)</string>
@@ -539,9 +448,6 @@
     <string name="anadir_alimento_preview">%1$d\u00A0kcal | %2$.1f\u00A0g prot | %3$.1f\u00A0g carbos | %4$.1f\u00A0g grasas</string>
     <string name="btn_anadir">Añadir</string>
     <string name="btn_volver">Volver</string>
-    <string name="menu_opciones">Más opciones</string>
-    <string name="accion_dia_anterior">Día anterior</string>
-    <string name="accion_dia_siguiente">Día siguiente</string>
     <string name="accion_periodo_anterior">Periodo anterior</string>
     <string name="accion_periodo_siguiente">Periodo siguiente</string>
     <string name="accion_mas_acciones">Más acciones</string>
@@ -568,15 +474,10 @@
     <!-- Errores de validación de campos numéricos (ver utils/Numeros). -->
     <string name="error_numero_invalido">Introduce un número válido</string>
     <string name="error_duracion_invalida">Pon una duración de entre 5 y 300 minutos</string>
-    <string name="error_series_invalida">Pon entre 1 y 10 series</string>
-    <string name="error_reps_invalida">Pon entre 1 y 50 repeticiones</string>
-    <string name="error_edad_invalida">Pon tu edad en años, entre 10 y 120</string>
     <!-- GP-145: la edad de Editar perfil, de 14 a 100; el mínimo es el de la política (DEC-038). -->
     <string name="error_edad_rango">Pon tu edad en años, entre %1$d y %2$d</string>
     <string name="error_edad_minima">GymProFit es para personas de %1$d años o más, como dice la política de privacidad</string>
     <string name="error_peso_invalido">Pon tu peso en kilos, entre 30 y 300</string>
-    <string name="error_altura_invalida">Pon tu altura en centímetros, entre 100 y 250</string>
-    <string name="error_altura_en_metros">¿Querías decir %1$d\u00A0cm? Escribe la altura en centímetros</string>
     <string name="error_medida_invalida">Pon un número entre %1$s y %2$s</string>
 
     <!-- Recuperacion de contrasena olvidada -->
@@ -601,9 +502,6 @@
     <string name="recuperar_error_codigo">El código son 6 dígitos</string>
 
     <!-- Silueta muscular de la pantalla de inicio (fase 4) -->
-    <string name="home_cuerpo_eyebrow">ESTA SEMANA</string>
-    <string name="home_cuerpo_leyenda">Cuanto más naranja, más series ha recibido</string>
-    <string name="home_cuerpo_vacio">Tu cuerpo está por encender</string>
     <plurals name="home_cuerpo_resumen">
         <item quantity="one">%1$d grupo · te falta %2$s</item>
         <item quantity="other">%1$d grupos · te falta %2$s</item>
@@ -612,7 +510,6 @@
         <item quantity="one">%1$d grupo · cuerpo completo</item>
         <item quantity="other">%1$d grupos · cuerpo completo</item>
     </plurals>
-    <string name="home_cuerpo_descripcion">Silueta del cuerpo con los músculos entrenados esta semana resaltados</string>
     <string name="zona_pierna">pierna</string>
     <string name="zona_espalda">espalda</string>
     <string name="zona_pecho">pecho</string>
@@ -621,8 +518,6 @@
     <string name="zona_core">abdomen</string>
 
     <!-- Tarjeta de récord de la pantalla de inicio (fase 4) -->
-    <string name="home_record_eyebrow">TU RÉCORD</string>
-    <string name="home_record_detalle">%1$s · %2$d\u00A0reps</string>
 
     <!-- Celebración del resumen tras entrenar (fase 4) -->
     <string name="resumen_celebracion_eyebrow">HAS MOVIDO</string>
@@ -726,14 +621,11 @@
     </plurals>
     <!-- Unidades y cifras con su unidad (GP-071): nunca concatenadas en el código -->
     <string name="unidad_kcal">%d\u00A0kcal</string>
-    <string name="unidad_kcal_objetivo">/ %d\u00A0kcal</string>
     <string name="unidad_kcal_100g">%d\u00A0kcal/100\u00A0g</string>
     <string name="unidad_kg_entero">%d\u00A0kg</string>
     <string name="unidad_kg_decimal">%.1f\u00A0kg</string>
     <string name="unidad_cm_decimal">%.1f\u00A0cm</string>
-    <string name="unidad_g_entero">%d\u00A0g</string>
     <string name="unidad_g_redondeado">%.0f\u00A0g</string>
-    <string name="unidad_litros">%.1f\u00A0L</string>
     <string name="series_por_reps">%1$d × %2$d</string>
     <string name="nivel_y_duracion">%1$s  ·  %2$d\u00A0min</string>
     <string name="grafica_kcal_fecha">%1$d\u00A0kcal\n%2$s</string>
@@ -750,21 +642,16 @@
     </plurals>
     <!-- Patrones de fecha (SimpleDateFormat) por idioma (GP-071) -->
     <string name="home_fecha_patron" translatable="false">EEEE, d \'de\' MMMM</string>
-    <string name="nutricion_fecha_patron" translatable="false">EEE d MMM</string>
     <string name="comida_total_prot">%.1f\u00A0g prot</string>
     <string name="comida_total_carbos">%.1f\u00A0g carbos</string>
     <string name="comida_total_grasas">%.1f\u00A0g grasas</string>
     <string name="ejercicio_sin_nombre">Ejercicio %d</string>
     <!-- Récords (GP-088) -->
-    <string name="records_titulo">Récords</string>
-    <string name="perfil_ver_records">Mis récords</string>
     <string name="records_vacio_titulo">Todavía sin récords</string>
     <string name="records_vacio_texto">La primera vez que haces un ejercicio es tu punto de partida. Cuando lo superes, aparecerá aquí.</string>
-    <string name="record_batido_el">Batido el %s</string>
     <string name="record_antes">Antes: %s</string>
     <string name="record_peso_por_reps">%1$s × %2$d</string>
     <string name="record_a11y">%1$s, %2$s. %3$s</string>
-    <string name="home_record_a11y">Tu récord: %1$s, %2$s</string>
     <string name="resumen_seccion_records">Récords</string>
     <string name="grafica_reps_fecha">%1$s%2$s\n%3$s</string>
     <!-- Por tiempo (GP-125): «1:05 · PR», y debajo la fecha -->
@@ -924,7 +811,6 @@
     <string name="comida_anadir_cena">Añadir a la cena</string>
     <string name="dia_futuro_a11y">%1$s, todavía no ha llegado</string>
     <string name="nutricion_kcal_a11y">%1$s de %2$s kilocalorías. %3$s %4$s.</string>
-    <string name="nutricion_error_dia">No se ha podido cargar este día.</string>
 
     <!-- GP-105 · Progreso y Ajustes -->
     <string name="progreso_titulo">Progreso</string>
@@ -949,7 +835,6 @@
     <string name="seccion_logros">Logros</string>
     <string name="seccion_medidas">Medidas</string>
     <string name="seccion_historial">Historial</string>
-    <string name="progreso_solo_registrados">Crea una cuenta para guardar tu progreso.</string>
     <string name="record_hace_antes">%1$s · antes %2$s</string>
     <string name="ajustes_cuenta">Cuenta</string>
     <string name="ajustes_foto">Foto de perfil</string>
@@ -1040,7 +925,6 @@
     <string name="tu_programa_borradas">Has borrado todas las rutinas de este programa.</string>
     <string name="tu_programa_volver_a_seguir">Volver a seguirlo</string>
     <string name="tu_programa_error">No se ha podido cargar tu programa.</string>
-    <string name="tu_programa_hoy_sub">%1$s · %2$s</string>
     <string name="programas_titulo">Programas</string>
     <string name="programas_donde">Dónde entrenas</string>
     <string name="programas_dias">Días por semana</string>
@@ -1055,7 +939,6 @@
     <string name="programa_dias_rango">%1$d–%2$d\u00A0días</string>
     <string name="programa_minutos_rango">%1$d–%2$d\u00A0min</string>
     <string name="programa_resumen">%1$s · %2$s · %3$s</string>
-    <string name="programa_abrir_a11y">%1$s. %2$s. Abre el programa</string>
     <string name="programa_ciclo_titulo">El ciclo</string>
     <string name="programa_ciclo_explicacion">En este orden, y vuelta a empezar. Si un día no puedes, al siguiente sigues con la que toca.</string>
     <string name="programa_ciclo_dia">%1$d. %2$s</string>

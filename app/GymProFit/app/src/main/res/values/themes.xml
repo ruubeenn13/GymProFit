@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!--
       themes.xml — tema "atlético" de GymProFit. Es la ÚNICA definición del tema,
       para claro y oscuro (GP-084). Lo que cambia entre los dos sale de recursos
@@ -192,7 +192,7 @@
     <!-- Cifra XXL de stats (kcal de hoy, peso...) -->
     <style name="TextAppearance.GymProFit.Number" parent="TextAppearance.Material3.DisplayMedium">
         <item name="fontFamily">@font/barlow_condensed</item>
-        <item name="android:textFontWeight">700</item>
+        <item name="android:textFontWeight" tools:targetApi="28">700</item>
         <item name="android:textSize">@dimen/text_number</item>
         <item name="android:letterSpacing">0</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
@@ -201,7 +201,7 @@
     <!-- Título grande de pantalla -->
     <style name="TextAppearance.GymProFit.Display" parent="TextAppearance.Material3.HeadlineLarge">
         <item name="fontFamily">@font/barlow_condensed</item>
-        <item name="android:textFontWeight">700</item>
+        <item name="android:textFontWeight" tools:targetApi="28">700</item>
         <item name="android:textSize">@dimen/text_display_large</item>
         <item name="android:letterSpacing">0.01</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
@@ -210,7 +210,7 @@
     <!-- Titular de sección/card -->
     <style name="TextAppearance.GymProFit.Headline" parent="TextAppearance.Material3.TitleLarge">
         <item name="fontFamily">@font/barlow_condensed</item>
-        <item name="android:textFontWeight">600</item>
+        <item name="android:textFontWeight" tools:targetApi="28">600</item>
         <item name="android:textSize">@dimen/text_headline</item>
         <item name="android:letterSpacing">0.01</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
@@ -434,13 +434,6 @@
         <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
     </style>
 
-    <style name="GymProFit.MealAdd" parent="">
-        <item name="android:layout_width">30dp</item>
-        <item name="android:layout_height">30dp</item>
-        <item name="android:src">@drawable/ic_ms_add</item>
-        <item name="tint">?attr/colorPrimary</item>
-        <item name="android:contentDescription">@string/nutricion_agregar</item>
-    </style>
 
     <!-- Estilo del menú emergente (popup) usado en toolbars y menús contextuales -->
     <style name="Widget.GymProFit.PopupMenu" parent="Widget.Material3.PopupMenu">

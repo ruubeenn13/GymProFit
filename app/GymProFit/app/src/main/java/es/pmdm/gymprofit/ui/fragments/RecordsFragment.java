@@ -67,9 +67,8 @@ public class RecordsFragment extends BaseFragment {
 
     // Pide los récords y enseña la lista, el vacío o el error.
     private void cargar() {
-        // Los récords salen de las sesiones: un invitado no tiene.
-        if (prefsManager.isGuest() || prefsManager.getUsuarioId() == -1) {
-            ((TextView) findViewById(R.id.tvVacioTitulo)).setText(R.string.progreso_solo_registrados);
+        // Sin id de cuenta no hay récords que pedir: el vacío de siempre.
+        if (prefsManager.getUsuarioId() == -1) {
             mostrar(layoutVacio);
             return;
         }

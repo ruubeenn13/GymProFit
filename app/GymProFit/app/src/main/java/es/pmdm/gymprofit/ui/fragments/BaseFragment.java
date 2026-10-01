@@ -40,15 +40,6 @@ public abstract class BaseFragment extends Fragment {
         return v != null ? v.findViewById(id) : null;
     }
 
-    // Muestra el toast de "solo usuarios registrados" si el usuario es invitado.
-    protected boolean verificarAccesoRegistrado() {
-        if (prefsManager.isGuest()) {
-            UIHelper.mostrarToastError(requireActivity(), getString(R.string.error_solo_usuarios_registrados));
-            return false;
-        }
-        return true;
-    }
-
     /** La MainActivity anfitriona, o null si el fragment vive en otra pantalla. */
     @Nullable
     protected MainActivity main() {

@@ -19,7 +19,7 @@ Monorepo: `api/gymprofit-api` · `app/GymProFit` · `db` · `web` · `documentac
 cd api/gymprofit-api && sh ./mvnw -B verify
 
 # Android: build de depuración y tests unitarios
-cd app/GymProFit && sh ./gradlew assembleDebug && sh ./gradlew test
+cd app/GymProFit && sh ./gradlew assembleDebug && sh ./gradlew test && sh ./gradlew lintDebug
 ```
 
 `sh ./` y no `./`: los wrappers están versionados sin bit de ejecución (modo `100644`), así que en un clon limpio `./mvnw` falla. El CI ya lo invoca así.

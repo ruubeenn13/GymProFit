@@ -267,7 +267,7 @@ Controller → Service → Repository (JPA / jOOQ) → MariaDB
 | `SwaggerConfig` | OpenAPI en `/swagger-ui.html` |
 | `security/JwtTokenProvider` | Genera y valida el access JWT (30 min). Configurable con `jwt.secret` y `jwt.expiration` |
 | `security/JwtAuthenticationFilter` | Extrae y valida JWT en cada petición |
-| `security/AuthRateLimitFilter` | Rate-limiting por IP en `/auth/**` (ventana fija 15 req/60s → 429 + `Retry-After`) |
+| `security/AuthRateLimitFilter` | Rate-limiting por IP en tres niveles, ventana fija de 60 s → 429 + `Retry-After`: autenticación 15, recomendado y vista previa del programa 30 (GP-148), resto 200 |
 | `security/SecurityUtils` | Comprobación de *ownership* (`checkOwnership`): un USER solo accede a sus propios recursos (protección anti-IDOR) |
 
 ---

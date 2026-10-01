@@ -56,8 +56,10 @@ Abrir `app/GymProFit` en Android Studio → sincronizar Gradle → Run en emulad
 Desde la línea de comandos, con JDK 17 o superior (lo pide el AGP):
 
 ```bash
-sh ./gradlew assembleDebug test
+sh ./gradlew assembleDebug test lintDebug
 ```
+
+`lintDebug` tiene que pasar: el CI lo corre igual que los tests (GP-155).
 
 Un clon limpio lo compila y pasa los tests **sin** `local.properties` (el `BASE_URL` por
 defecto es el del emulador) y **sin** `keystore.properties`. Sí necesita un

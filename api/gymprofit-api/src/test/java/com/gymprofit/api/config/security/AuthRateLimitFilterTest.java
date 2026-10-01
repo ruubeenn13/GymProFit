@@ -191,4 +191,62 @@ class AuthRateLimitFilterTest {
         normal.setServletPath("/rutinas");
         assertFalse(f.shouldNotFilter(normal), "una ruta normal sí se filtra");
     }
+
+    // ── GP-148: las dos rutas abiertas del programa, con su propio cupo ──
+
+    // Filtro con el nivel del programa a 3 por minuto y los otros dos holgados.
+    private AuthRateLimitFilter filtroPrograma() {
+        AuthRateLimitFilter f = nuevoFiltro(15, 60);
+        ReflectionTestUtils.setField(f, "maxPrograma", 3);
+        ReflectionTestUtils.setField(f, "ventanaProgramaSeg", 60L);
+        return f;
+    }
+
+    private MockHttpServletResponse disparar(AuthRateLimitFilter f, String metodo, String ruta, String ip)
+            throws Exception {
+        MockHttpServletRequest req = new MockHttpServletRequest(metodo, ruta);
+        req.setServletPath(ruta);
+        req.setRemoteAddr(ip);
+        MockHttpServletResponse res = new MockHttpServletResponse();
+        f.doFilterInternal(req, res, new MockFilterChain());
+        return res;
+    }
+
+    @Test
+    @DisplayName("GP-148: recomendado y vista previa comparten un cupo propio, con 429 y Retry-After")
+    void programa_abierto_tiene_cupo_propio() throws Exception {
+        AuthRateLimitFilter f = filtroPrograma();
+        assertEquals(200, disparar(f, "GET", "/programas/recomendado", "10.0.0.9").getStatus());
+        assertEquals(200, disparar(f, "GET", "/programas/GIM-CC/vista-previa", "10.0.0.9").getStatus());
+        assertEquals(200, disparar(f, "GET", "/programas/recomendado", "10.0.0.9").getStatus());
+
+        MockHttpServletResponse cuarta = disparar(f, "GET", "/programas/CASA-MAN/vista-previa", "10.0.0.9");
+        assertEquals(429, cuarta.getStatus(), "la cuarta supera el cupo del programa");
+        assertEquals("60", cuarta.getHeader("Retry-After"));
+        assertTrue(cuarta.getContentAsString().contains("429"));
+    }
+
+    @Test
+    @DisplayName("GP-148: el cupo del programa no gasta el global ni el de otra IP")
+    void programa_abierto_no_toca_el_resto() throws Exception {
+        AuthRateLimitFilter f = filtroPrograma();
+        for (int i = 0; i < 4; i++) disparar(f, "GET", "/programas/recomendado", "10.0.0.9");
+
+        assertEquals(200, disparar(f, "GET", "/programas/recomendado", "10.0.0.10").getStatus(),
+                "otra IP tiene su propio cupo");
+        assertEquals(200, disparar(f, "GET", "/rutinas", "10.0.0.9").getStatus(),
+                "el resto de rutas sigue en el global");
+        assertEquals(200, disparar(f, "GET", "/programas/seguido", "10.0.0.9").getStatus(),
+                "las rutas con cuenta del programa no entran en este cupo");
+        assertEquals(200, disparar(f, "POST", "/auth/login", "10.0.0.9").getStatus());
+    }
+
+    @Test
+    @DisplayName("GP-148: solo la vista previa de un código, no cualquier ruta que acabe igual")
+    void programa_abierto_solo_sus_dos_rutas() throws Exception {
+        AuthRateLimitFilter f = filtroPrograma();
+        for (int i = 0; i < 4; i++) disparar(f, "GET", "/programas/recomendado", "10.0.0.9");
+        assertEquals(200, disparar(f, "GET", "/programas/a/b/vista-previa", "10.0.0.9").getStatus());
+        assertEquals(200, disparar(f, "GET", "/programas/GIM-CC", "10.0.0.9").getStatus());
+    }
 }

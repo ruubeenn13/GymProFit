@@ -80,8 +80,12 @@ public class ApiClient {
                 .callTimeout(60, TimeUnit.SECONDS)
                 .addInterceptor(new AuthInterceptor())
                 // Accept-Language: el backend localiza con él los textos del catálogo
-                // (ejercicios, logros...). Locale.getDefault() ya refleja el idioma elegido
-                // en la app (aplicarIdioma hace Locale.setDefault al arrancar cada pantalla).
+                // (ejercicios, logros, programas...). Locale.getDefault() es el idioma elegido
+                // en la app, y si no hay, el del sistema: GymProFitApp lo fija con
+                // AppCompatDelegate.setApplicationLocales y, con él, Android 13 o más (el
+                // sistema) y AppCompat en las anteriores cambian también el Locale por
+                // defecto del proceso. Comprobado en API 36 y API 30 con la app en inglés y el
+                // sistema en español (GP-156): «Tu plan» sale en inglés.
                 .addInterceptor(chain -> chain.proceed(chain.request().newBuilder()
                         .header("Accept-Language", java.util.Locale.getDefault().getLanguage())
                         .build()))

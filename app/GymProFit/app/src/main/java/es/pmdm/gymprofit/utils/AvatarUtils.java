@@ -41,7 +41,7 @@ public final class AvatarUtils {
      *
      * @param avatar     la raíz de view_avatar.
      * @param nombre     de dónde sale la inicial.
-     * @param usuarioId  -1 para el invitado (solo inicial).
+     * @param usuarioId  -1 sin cuenta (solo inicial).
      * @param colorTexto color de la inicial.
      */
     public static void pintar(View avatar, @Nullable String nombre, int usuarioId, @ColorInt int colorTexto) {

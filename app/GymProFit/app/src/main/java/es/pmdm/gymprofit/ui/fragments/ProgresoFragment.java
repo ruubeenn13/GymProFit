@@ -95,7 +95,7 @@ public class ProgresoFragment extends BaseFragment {
         View avatar = findViewById(R.id.avatarProgreso);
         avatar.setBackgroundResource(R.drawable.bg_circulo_contenedor);
         avatar.setContentDescription(getString(R.string.progreso_avatar_a11y));
-        avatar.setOnClickListener(v -> { if (verificarAccesoRegistrado()) fotoPerfil.elegir(); });
+        avatar.setOnClickListener(v -> fotoPerfil.elegir());
         ((TextView) avatar.findViewById(R.id.tvInicial)).setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 getResources().getDimension(R.dimen.text_display_large) * 0.93f);
 
@@ -229,7 +229,7 @@ public class ProgresoFragment extends BaseFragment {
         pintarSubtitulo(username, prefsManager.getNivel(), prefsManager.getObjetivo());
 
         int uid = prefsManager.getUsuarioId();
-        if (uid == -1 || prefsManager.isGuest()) return;
+        if (uid == -1) return;
         usuarioApi.getPorId(uid).enqueue(new ApiCallback<Usuario>() {
             @Override
             public void onOk(Usuario u) {
@@ -263,7 +263,7 @@ public class ProgresoFragment extends BaseFragment {
 
     private void cargarCifras() {
         int uid = prefsManager.getUsuarioId();
-        if (uid == -1 || prefsManager.isGuest()) {
+        if (uid == -1) {
             cifra(R.id.cifraSesiones, 0, R.plurals.progreso_sesiones);
             cifra(R.id.cifraRecords, 0, R.plurals.progreso_records);
             cifra(R.id.cifraLogros, 0, R.plurals.progreso_logros);

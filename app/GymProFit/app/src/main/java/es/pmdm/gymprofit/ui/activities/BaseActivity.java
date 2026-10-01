@@ -30,6 +30,7 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.AuthApi;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.utils.PreferencesManager;
+import es.pmdm.gymprofit.utils.SesionInvitado;
 import es.pmdm.gymprofit.utils.PushTokenManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
@@ -62,6 +63,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         // La transición de deslizamiento la registra GymProFitApp para TODAS las Activities.
         super.onCreate(savedInstanceState);
 
+        // Una pantalla que Android restaura con la sesión de invitado de la 1.4.0, sin pasar
+        // por el arranque, la cierra igual (GP-150). La subclase sigue su onCreate, pero ya
+        // sin sesión y terminando; no se instala el aviso de 401, que llevaría a Entrar.
+        if (SesionInvitado.cerrarSiHay(this, prefsManager)) return;
+
         UtilREST.setOnUnauthorizedListener(cuentaDesactivada -> {
             prefsManager.cerrarSesion();
             Intent intent = new Intent(this, LoginActivity.class);
@@ -71,18 +77,6 @@ public abstract class BaseActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
-    }
-
-    /**
-     * Muestra toast de "solo usuarios registrados" si el usuario es invitado.
-     * @return {@code true} si puede continuar, {@code false} si es guest.
-     */
-    protected boolean verificarAccesoRegistrado() {
-        if (prefsManager.isGuest()) {
-            UIHelper.mostrarToastError(this, getString(R.string.error_solo_usuarios_registrados));
-            return false;
-        }
-        return true;
     }
 
     // Muestra un diálogo custom para elegir tema claro/oscuro; guarda la preferencia y recrea la activity
