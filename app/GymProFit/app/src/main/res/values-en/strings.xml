@@ -1267,8 +1267,7 @@
     <string name="descanso_canal_descripcion">Lets you know when the rest between sets is over</string>
     <string name="descanso_notif_texto">%1$s, set %2$d</string>
     <string name="envivo_notif_descanso_titulo">Rest · %1$s</string>
-    <string name="envivo_notif_descanso_texto">Next: set %1$d · %2$s, %3$s</string>
-    <string name="envivo_notif_descanso_texto_ultima">%1$s, %2$s</string>
+    <string name="envivo_notif_descanso_texto">Next: set %1$d · %2$s</string>
     <string name="descanso_permiso_titulo">Alert you with the screen off</string>
     <string name="descanso_permiso_texto_alarmas">To ring right when your rest is over, even with your phone in your pocket, GymProFit needs the “Alarms &amp; reminders” permission. It only uses it for rests.</string>
     <string name="descanso_permiso_texto_notificaciones">To let you know when your rest is over, even with your phone in your pocket, GymProFit needs to be able to send you notifications.</string>
@@ -1451,9 +1450,9 @@
     <string name="avisos_ejemplo_titulo">Rest over</string>
     <string name="avisos_ejemplo_texto">Barbell bench press, set 3</string>
     <string name="avisos_titulo">Shall we remind you?</string>
+    <string name="avisos_texto">Only about what you choose, and you can change it any time in Settings. Then Android will ask for permission.</string>
     <string name="avisos_texto_concedido">Only about what you choose, and you can change it any time in Settings.</string>
     <string name="avisos_texto_bloqueado">Only about what you choose, and you can change it any time in Settings. Android has GymProFit’s alerts turned off right now: “Turn on alerts” takes you to its settings.</string>
-    <string name="avisos_texto">Only about what you choose, and you can change it any time in Settings. Then Android will ask for permission.</string>
     <string name="avisos_tipos_a11y">Which alerts you want</string>
     <string name="avisos_descanso">End of each rest</string>
     <string name="avisos_descanso_sub">Even with the screen off. Comes with the session</string>
@@ -1464,8 +1463,8 @@
     <string name="avisos_progreso">Your progress</string>
     <string name="avisos_progreso_sub">Achievements, the Sunday summary and weighing in each month</string>
     <string name="avisos_activar">Turn on alerts</string>
-    <string name="avisos_guardar">Save</string>
     <string name="avisos_ahora_no">Not now</string>
+    <string name="avisos_guardar">Save</string>
     <string name="avisos_error_guardar">We couldn’t save your alerts. Change them any time in Settings › Notifications.</string>
     <string name="notificaciones_sin_permiso">Android isn’t letting GymProFit alert you: until you turn it on, none will reach you.</string>
     <string name="notificaciones_activar">Turn on</string>
