@@ -232,8 +232,14 @@ public class IndiceAlimentos {
         }
         long[] ordenados = Arrays.stream(codigo).filter(c -> c >= 0).sorted().toArray();
         productos = new Productos(texto, ids.aArray(), escaneos.aArray(), primerTermino, longitud, codigo, ordenados);
-        logger.info("Índice de productos: {} productos, {} términos distintos, {} ms",
-                n, texto.terminosDistintos(), (System.nanoTime() - inicio) / 1_000_000);
+        // Render gratis no enseña la memoria: va aquí, en el log del arranque y de cada
+        // importación, para saber cuánto margen queda (GP-168).
+        java.lang.management.MemoryMXBean memoria = java.lang.management.ManagementFactory.getMemoryMXBean();
+        java.lang.management.MemoryUsage heap = memoria.getHeapMemoryUsage();
+        logger.info("Índice de productos: {} productos, {} términos distintos, {} ms · heap {} de {} MB, no-heap {} MB",
+                n, texto.terminosDistintos(), (System.nanoTime() - inicio) / 1_000_000,
+                heap.getUsed() / 1_048_576, heap.getMax() / 1_048_576,
+                memoria.getNonHeapMemoryUsage().getUsed() / 1_048_576);
     }
 
     // --- Utilidades ---------------------------------------------------------
