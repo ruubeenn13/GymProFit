@@ -1,11 +1,11 @@
 # web — sitio público de GymProFit
 
-Sitio estático de `gymprofit.app`: portada, política de privacidad y la página de
-eliminación de cuenta. HTML y CSS a mano, sin build, sin dependencias y sin
+Sitio estático de `gymprofit.app`: portada, política de privacidad, términos de uso
+y la página de eliminación de cuenta. HTML y CSS a mano, sin build, sin dependencias y sin
 JavaScript. Lo que hay en esta carpeta es exactamente lo que se sirve.
 
 ```
-index.html · privacidad.html · eliminar-cuenta.html · estilo.css
+index.html · privacidad.html · terminos.html · eliminar-cuenta.html · estilo.css
 fuentes/  seis .woff2: Barlow 400 / 500 / 600 y Barlow Condensed 500 / 600 / 700
 img/      logos claro y oscuro (256 y 512, webp) + favicons y apple-touch-icon
 ```
@@ -18,7 +18,8 @@ despliega nada**. El dominio `gymprofit.app` apunta a ese proyecto.
 
 ## Cómo se despliega a mano
 
-1. Comprimir el **contenido** de `web/`, no la carpeta.
+1. Comprimir el **contenido** de `web/` menos este README, no la carpeta. El zip
+   que se sube es eso: lo que hay aquí, salvo `README.md`.
 2. Proyecto `gymprofit` en Cloudflare Pages → pestaña **Implementaciones** → subir
    el zip.
 
@@ -29,7 +30,7 @@ que no existen. El sitio se ve sin estilos y sin tipografía.
 
 ## Rutas limpias
 
-Los enlaces internos son `/privacidad` y `/eliminar-cuenta`, sin `.html`: Pages
+Los enlaces internos son `/privacidad`, `/terminos` y `/eliminar-cuenta`, sin `.html`: Pages
 resuelve la ruta limpia al fichero correspondiente. Esas dos URL públicas son
 **requisito de Google Play** —política de privacidad y vía de eliminación de
 cuenta—, así que si alguna vez se cambia de alojamiento hay que comprobar que el

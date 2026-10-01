@@ -35,7 +35,7 @@
 
     <p class="eyebrow">Legal</p>
     <h1>Política de privacidad</h1>
-    <p class="meta">Última actualización: 19 de septiembre de 2026</p>
+    <p class="meta">Última actualización: 1 de octubre de 2026</p>
 
     <p class="lead">Esta política describe qué datos trata GymProFit, con qué finalidad, durante cuánto tiempo y con quién se comparten. Está escrita a partir de lo que la aplicación hace de verdad, no de una plantilla.</p>
 
@@ -52,19 +52,24 @@
         <tr><th>Dato</th><th>Cuándo se recoge</th><th>Obligatorio</th></tr>
       </thead>
       <tbody>
-        <tr><td>Nombre de usuario y dirección de correo</td><td>Al registrarte</td><td>Sí</td></tr>
-        <tr><td>Contraseña</td><td>Al registrarte</td><td>Sí — se guarda cifrada con BCrypt, nunca en claro</td></tr>
-        <tr><td>Peso, altura y edad</td><td>Al configurar tu perfil</td><td>Sí, para calcular objetivos</td></tr>
-        <tr><td>Nivel de experiencia y objetivo de entrenamiento</td><td>Al configurar tu perfil</td><td>Sí</td></tr>
+        <tr><td>Nombre y dirección de correo</td><td>Al crear la cuenta</td><td>Sí</td></tr>
+        <tr><td>Nombre de usuario</td><td>Al crear la cuenta. Si no lo eliges, lo propone la aplicación a partir de tu nombre. Puedes entrar con él o con el correo</td><td>Sí</td></tr>
+        <tr><td>Contraseña</td><td>Al crear la cuenta</td><td>Sí — se guarda cifrada con BCrypt, nunca en claro</td></tr>
+        <tr><td>Objetivo y nivel de experiencia</td><td>Al preparar tu plan</td><td>Sí</td></tr>
+        <tr><td>Sexo, edad, altura, peso y nivel de actividad</td><td>Al preparar tu plan o en Editar perfil</td><td>No. Sin ellos no se calcula tu objetivo de calorías</td></tr>
+        <tr><td>Qué avisos quieres recibir: entrenar, comidas y progreso</td><td>Después de crear la cuenta, o en Ajustes</td><td>No. Tienen valores de serie y puedes apagarlos todos</td></tr>
         <tr><td>Fotografía de perfil</td><td>Si decides subirla</td><td>No</td></tr>
         <tr><td>Mediciones corporales</td><td>Si decides registrarlas</td><td>No</td></tr>
       </tbody>
     </table>
     </div>
 
+    <h3>Antes de crear la cuenta</h3>
+    <p>Las respuestas del cuestionario se guardan solo en tu móvil hasta que creas la cuenta. Para recomendarte un programa, la aplicación consulta al servidor con tu nivel, tu objetivo, dónde entrenas, cuántos días y cuánto tiempo, sin ninguna cuenta ni identificador tuyo.</p>
+
     <h3>Datos que se generan al usar la aplicación</h3>
     <ul>
-      <li><strong>Entrenamiento:</strong> rutinas, ejercicios realizados, series con su peso y repeticiones, duración y valoración de cada sesión, notas que escribas, progreso por ejercicio y logros conseguidos.</li>
+      <li><strong>Entrenamiento:</strong> el programa que sigues y el tiempo por sesión que elegiste, rutinas, ejercicios realizados, series con su peso y repeticiones, duración y valoración de cada sesión, notas que escribas, progreso por ejercicio y logros conseguidos.</li>
       <li><strong>Nutrición:</strong> comidas registradas, alimentos consumidos y alimentos personalizados que crees.</li>
       <li><strong>Objetivos personales</strong> que definas y su estado.</li>
       <li><strong>Cuenta:</strong> fecha de registro, tokens de sesión y, si pides recuperar la contraseña, un código temporal guardado cifrado que caduca a los 15 minutos.</li>
@@ -82,6 +87,7 @@
       <li>Crear y mantener tu cuenta, y permitirte iniciar sesión de forma segura.</li>
       <li>Guardar y mostrarte tu historial de entrenamiento, nutrición y progreso.</li>
       <li>Calcular tus objetivos y métricas a partir de tus datos físicos.</li>
+      <li>Recomendarte un programa de entrenamiento según tus respuestas.</li>
       <li>Enviarte el código de recuperación cuando olvidas la contraseña, y avisos de seguridad de tu cuenta.</li>
       <li>Enviarte los recordatorios que hayas activado.</li>
       <li>Detectar y corregir fallos de la aplicación.</li>
@@ -91,7 +97,7 @@
     <h2>4. Base legal</h2>
     <ul>
       <li><strong>Ejecución del servicio</strong> (art. 6.1.b RGPD): los datos de cuenta, entrenamiento, nutrición y progreso son necesarios para que la aplicación funcione. Sin ellos no hay servicio que prestar.</li>
-      <li><strong>Consentimiento</strong> (art. 6.1.a): la fotografía de perfil, las mediciones corporales y las notificaciones son opcionales y puedes retirarlas cuando quieras.</li>
+      <li><strong>Consentimiento</strong> (art. 6.1.a): el sexo, la edad, la altura, el peso y el nivel de actividad, la fotografía de perfil, las mediciones corporales y las notificaciones son opcionales. Los das si quieres, para calcular tus calorías o para recibir avisos, y puedes retirarlos cuando quieras.</li>
       <li><strong>Interés legítimo</strong> (art. 6.1.f): los informes de fallo y el uso básico, para mantener la aplicación en funcionamiento.</li>
     </ul>
 
@@ -113,6 +119,7 @@
     </table>
     </div>
     <p class="meta">Algunos de estos proveedores pueden tratar datos fuera del Espacio Económico Europeo, amparados en las cláusulas contractuales tipo aprobadas por la Comisión Europea.</p>
+    <p>Además, la aplicación descarga las imágenes de los ejercicios de GitHub (raw.githubusercontent.com), donde las publica el proyecto abierto free-exercise-db. Al cargarlas, GitHub recibe la dirección IP y datos técnicos del móvil, como cualquier web a la que te conectas. No recibe ningún dato de tu cuenta.</p>
 
     <h2 id="conservacion">6. Cuánto tiempo se conservan</h2>
     <p>Tus datos se conservan mientras mantengas la cuenta activa. Si solicitas su eliminación, se borran conforme a lo descrito en <a href="/eliminar-cuenta">Eliminar cuenta</a>.</p>
@@ -131,7 +138,7 @@
     </ul>
 
     <h2>9. Menores de edad</h2>
-    <p>GymProFit no está dirigida a menores de 14 años y no se recogen datos de forma consciente de personas por debajo de esa edad. Si detectas que un menor ha creado una cuenta, escribe a <a href="mailto:privacidad@gymprofit.app">privacidad@gymprofit.app</a> y se eliminará.</p>
+    <p>GymProFit no está dirigida a menores de 14 años y no se recogen datos de forma consciente de personas por debajo de esa edad. Para crear una cuenta hay que tener 14 años o más, como dicen los <a href="/terminos">términos de uso</a>, y si indicas una edad menor, la aplicación no deja crearla. Si detectas que un menor de 14 años ha creado una cuenta, escribe a <a href="mailto:privacidad@gymprofit.app">privacidad@gymprofit.app</a> y se eliminará.</p>
 
     <h2>10. Cambios en esta política</h2>
     <p>Si esta política cambia de forma relevante, se avisará dentro de la aplicación antes de que los cambios surtan efecto. La fecha de la última actualización aparece al principio de esta página.</p>
@@ -143,6 +150,7 @@
   <div class="wrap">
     <nav>
       <a href="/">Inicio</a>
+      <a href="/terminos">Términos de uso</a>
       <a href="/eliminar-cuenta">Eliminar cuenta</a>
       <a href="mailto:soporte@gymprofit.app">Soporte</a>
     </nav>
