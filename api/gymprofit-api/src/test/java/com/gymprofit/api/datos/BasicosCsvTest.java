@@ -110,9 +110,18 @@ class BasicosCsvTest {
     }
 
     @Test
-    @DisplayName("hay una lista de básicos habituales para la búsqueda vacía")
-    void hay_habituales() {
-        assertThat(basicos.stream().filter(b -> "s".equals(b.get("habitual"))).count()).isBetween(10L, 40L);
+    @DisplayName("los habituales de la búsqueda vacía son los marcados en el CSV, ni uno más")
+    void hay_habituales() throws IOException {
+        Set<String> marcados = new HashSet<>();
+        basicos.stream().filter(b -> "s".equals(b.get("habitual")))
+                .forEach(b -> marcados.add(b.get("fuente") + ";" + b.get("codigo")));
+        assertThat(marcados).hasSizeBetween(10, 40);
+
+        List<String> lista = java.nio.file.Files.readAllLines(
+                        java.nio.file.Path.of("src/main/resources/busqueda/habituales.txt"))
+                .stream().map(String::strip).filter(l -> !l.isEmpty() && !l.startsWith("#")).toList();
+        assertThat(lista).doesNotHaveDuplicates();
+        assertThat(new HashSet<>(lista)).isEqualTo(marcados);
     }
 
     @Test

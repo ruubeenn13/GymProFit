@@ -1,0 +1,19 @@
+# Sinónimos de la búsqueda de alimentos (GP-162, DEC-040).
+# Una línea por grupo, separados por comas. Todas las palabras de un grupo se buscan
+# como si fueran la primera. Se escriben en singular, sin tildes y en minúsculas.
+# Lista corta a propósito: solo variantes de uso común en España y en inglés.
+yogur, yogurt, yoghurt, yogourt
+alubia, judia, habichuela, frijol
+platano, banana
+patata, papa
+zumo, jugo
+melocoton, durazno
+aguacate, palta
+cacahuete, cacahuate, mani
+guisante, arveja
+gamba, langostino
+calabacin, zucchini
+berenjena, aubergine
+pimiento, pepper
+filete, bistec
+fiambre, embutido

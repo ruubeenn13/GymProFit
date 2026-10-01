@@ -9,6 +9,7 @@ import com.gymprofit.api.dto.entity.alimento.ImportarAlimentoDTO;
 import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.alimento.IAlimentoService;
+import com.gymprofit.api.service.busqueda.BusquedaAlimentosService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -39,6 +40,7 @@ import java.util.Map;
 public class AlimentoController {
 
     private final IAlimentoService alimentoService;
+    private final BusquedaAlimentosService busquedaAlimentosService;
 
     @Operation(summary = "Obtiene todos los alimentos")
     @ApiResponses(value = {
@@ -207,10 +209,14 @@ public class AlimentoController {
         return ResponseEntity.ok(alimentos);
     }
 
-    @Operation(summary = "Búsqueda paginada del catálogo de alimentos",
-            description = "Devuelve los alimentos activos visibles para el usuario autenticado (globales + propios), " +
-                    "con filtro opcional por texto (nombre ES/EN) y categoría. Diseñado para scroll infinito: " +
-                    "una página vacía devuelve 200 con content=[] (nunca 404).")
+    @Operation(summary = "Búsqueda paginada de alimentos, sin salir de casa (GP-162)",
+            description = "Busca en lo tuyo (tus alimentos y lo apuntado en los últimos 60 días), los básicos "
+                    + "y los productos de España, en ese orden; cada resultado lleva su `grupo` (TUYO, BASICO, "
+                    + "PRODUCTO). Un producto sin materializar va con id nulo y su código: se importa con "
+                    + "POST /alimentos/importar. Da igual tildes, mayúsculas, singular o plural y el orden de "
+                    + "las palabras, y admite una errata en palabras de 5 letras o más. Sin texto: lo tuyo por "
+                    + "uso reciente y los básicos habituales. Nunca llama a Open Food Facts. Una página vacía es "
+                    + "200 con content=[].")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Página de alimentos",
                     content = @Content(schema = @Schema(implementation = PageDTO.class)))
@@ -221,7 +227,7 @@ public class AlimentoController {
             @RequestParam(required = false) String categoria,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        return ResponseEntity.ok(alimentoService.buscarCatalogo(q, categoria, page, size));
+        return ResponseEntity.ok(busquedaAlimentosService.buscar(q, categoria, page, size));
     }
 
     @Operation(summary = "Importa un producto de Open Food Facts al catálogo local",
