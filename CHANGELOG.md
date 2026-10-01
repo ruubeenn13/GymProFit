@@ -6,6 +6,15 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `b8bd13d` | Fusión de `lote-1.5.3` en `main` (desplegada a las 14:54, CI en verde con `lintDebug`); etiquetada `v1.5.3`. Informe en `documentacion/estado/2026-10-01-lote-1.5.3.md`. |
+| `b2ce399` | build(android): **versión 1.5.3** (10503). Misma clave de firma. Necesita la API de esta fusión. |
+| `0d51044` | feat(android): la tarjeta del programa de «Tu plan» dice cuánto esperar con un 429, con «Reintentar» (GP-148). |
+| `a40ca4b` | fix(android): «SERIE» cabe en la demo de la bienvenida en pantallas de 393 dp. |
+| `1ebbe8f` | docs(android): el comentario de `ApiClient` dice de dónde sale el `Accept-Language`; comprobado que lleva el idioma de la app en API 36 y API 30 (GP-156). |
+| `ba9afff` | fix(android): `lintDebug` en verde (WrongViewCast, ids a mano, atributos de API 28, `app:tint`, cámara opcional, 113 textos y un estilo sin uso) y en el CI (GP-155). |
+| `331633d` | feat(android): fuera las ramas de invitado y sus textos; una sesión de invitado de la 1.4.0 se cierra al abrir y va a la bienvenida (GP-150). |
+| `538e9d4` | fix(api): jOOQ ya no escribe el esquema `gymprofit_db`; `NombreEjercicioIdiomaTest` pasa igual con una base nueva en local que en el CI (GP-149). |
+| `cd5ab42` | fix(api): el recomendado y la vista previa del programa tienen cupo propio, 30 por minuto y por IP, con 429 y `Retry-After` (GP-148). |
 | `642bcd3` | Fusión de `lote-1.5.2` en `main`, CI en verde; etiquetada `v1.5.2`. Solo app y web: Render no despliega. Informe en `documentacion/estado/2026-10-01-lote-1.5.2.md`. |
 | `196634d` | build(android): **versión 1.5.2** (10502). Misma clave de firma. Solo app; lleva también `25fdb8a`. |
 | `adb9348` | fix(android): TalkBack no lee dos puntos seguidos en las fuentes de datos de Licencias (GP-153). |
