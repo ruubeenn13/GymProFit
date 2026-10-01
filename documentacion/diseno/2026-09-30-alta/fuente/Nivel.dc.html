@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Tu nivel</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+button,input{font-family:inherit}
+button{cursor:pointer}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+.toque:active{transform:scale(.97)}
+@keyframes entra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.18);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes destello{0%{box-shadow:0 0 0 0 rgba(255,106,0,0)}40%{box-shadow:0 0 12px 3px rgba(255,106,0,.7)}100%{box-shadow:0 0 0 0 rgba(255,106,0,0)}}
+@keyframes llena50{from{width:50%}}
+@media (prefers-reduced-motion: reduce){.anim{animation:none !important;transition:none !important}.toque:active{transform:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif; display: flex; flex-direction: column;">
+<header style="display: flex; align-items: center; gap: 8px; padding: 8px 20px 0 4px;">
+<a href="Objetivo.dc.html" aria-label="Atrás" class="toque" style="flex-shrink: 0; width: 48px; height: 48px; border-radius: 24px; color: #F2F2F3; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: transform 120ms cubic-bezier(.2,0,0,1);"><span class="ms" aria-hidden="true">arrow_back</span></a>
+<div role="progressbar" aria-label="Progreso" aria-valuemin="0" aria-valuemax="100" aria-valuenow="25" aria-valuetext="Capítulo 1 de 4, tu objetivo" style="flex-grow: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px;">
+<span class="anim" style="height: 6px; border-radius: 3px; background: #252A31; animation: destello 700ms ease-out 650ms;"><span class="anim" style="display: block; width: 100%; height: 6px; border-radius: 3px; background: #FF6A00; animation: llena50 450ms cubic-bezier(.2,0,0,1) 150ms backwards;"></span></span>
+<span style="height: 6px; border-radius: 3px; background: #252A31;"></span>
+<span style="height: 6px; border-radius: 3px; background: #252A31;"></span>
+<span style="height: 6px; border-radius: 3px; background: #252A31;"></span>
+</div>
+</header>
+<div style="padding: 24px 20px 0; display: flex; flex-direction: column; gap: 10px;">
+<span class="anim" style="color: #FFB27A; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; animation: entra 350ms cubic-bezier(.05,.7,.1,1) backwards;">Tu objetivo · 1 de 4</span>
+<h1 class="anim" style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 34px; line-height: 1.08; animation: entra 350ms cubic-bezier(.05,.7,.1,1) 50ms backwards;">¿Cuánta experiencia tienes?</h1>
+<p class="anim" style="margin: 0; font-size: 16px; line-height: 1.45; color: #C9CED6; animation: entra 350ms cubic-bezier(.05,.7,.1,1) 100ms backwards;">Con esto elegimos tu programa y cuántas series haces en cada ejercicio.</p>
+</div>
+<div style="flex-grow: 1;"></div>
+<div role="radiogroup" aria-label="Tu nivel" style="padding: 0 16px; display: flex; flex-direction: column; gap: 10px;">
+<button type="button" role="radio" class="anim toque" aria-checked="{{ principiante.sel }}" onClick="{{ principiante.pick }}" style="display: flex; align-items: center; gap: 14px; width: 100%; min-height: 76px; padding: 12px 16px; border-radius: 18px; border: 2px solid {{ principiante.borde }}; background: {{ principiante.fondo }}; color: #F2F2F3; text-align: left; box-sizing: border-box; transition: background-color 150ms ease-out, border-color 150ms ease-out, transform 120ms cubic-bezier(.2,0,0,1); animation: entra 350ms cubic-bezier(.05,.7,.1,1) 160ms backwards;">
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 17px; font-weight: 600;">Principiante</span><span style="font-size: 14px; line-height: 1.35; color: #C9CED6;">Empiezo, o vuelvo tras más de 6 meses sin entrenar</span></span>
+<span aria-hidden="true" class="anim" style="flex-shrink: 0; width: 28px; height: 28px; border-radius: 14px; border: 2px solid {{ principiante.aro }}; background: {{ principiante.marca }}; display: flex; align-items: center; justify-content: center; box-sizing: border-box; transition: background-color 150ms ease-out, border-color 150ms ease-out;"><sc-if value="{{ principiante.sel }}" hint-placeholder-val="{{ false }}"><span class="ms f anim" style="font-size: 18px; color: #1A0E00; animation: pop 260ms cubic-bezier(.34,1.56,.64,1);">check</span></sc-if></span>
+</button>
+<button type="button" role="radio" class="anim toque" aria-checked="{{ intermedio.sel }}" onClick="{{ intermedio.pick }}" style="display: flex; align-items: center; gap: 14px; width: 100%; min-height: 76px; padding: 12px 16px; border-radius: 18px; border: 2px solid {{ intermedio.borde }}; background: {{ intermedio.fondo }}; color: #F2F2F3; text-align: left; box-sizing: border-box; transition: background-color 150ms ease-out, border-color 150ms ease-out, transform 120ms cubic-bezier(.2,0,0,1); animation: entra 350ms cubic-bezier(.05,.7,.1,1) 200ms backwards;">
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 17px; font-weight: 600;">Intermedio</span><span style="font-size: 14px; line-height: 1.35; color: #C9CED6;">Entreno con constancia desde hace más de 6 meses</span></span>
+<span aria-hidden="true" class="anim" style="flex-shrink: 0; width: 28px; height: 28px; border-radius: 14px; border: 2px solid {{ intermedio.aro }}; background: {{ intermedio.marca }}; display: flex; align-items: center; justify-content: center; box-sizing: border-box; transition: background-color 150ms ease-out, border-color 150ms ease-out;"><sc-if value="{{ intermedio.sel }}" hint-placeholder-val="{{ true }}"><span class="ms f anim" style="font-size: 18px; color: #1A0E00; animation: pop 260ms cubic-bezier(.34,1.56,.64,1);">check</span></sc-if></span>
+</button>
+<button type="button" role="radio" class="anim toque" aria-checked="{{ avanzado.sel }}" onClick="{{ avanzado.pick }}" style="display: flex; align-items: center; gap: 14px; width: 100%; min-height: 76px; padding: 12px 16px; border-radius: 18px; border: 2px solid {{ avanzado.borde }}; background: {{ avanzado.fondo }}; color: #F2F2F3; text-align: left; box-sizing: border-box; transition: background-color 150ms ease-out, border-color 150ms ease-out, transform 120ms cubic-bezier(.2,0,0,1); animation: entra 350ms cubic-bezier(.05,.7,.1,1) 240ms backwards;">
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 17px; font-weight: 600;">Avanzado</span><span style="font-size: 14px; line-height: 1.35; color: #C9CED6;">Llevo años entrenando y domino los básicos</span></span>
+<span aria-hidden="true" class="anim" style="flex-shrink: 0; width: 28px; height: 28px; border-radius: 14px; border: 2px solid {{ avanzado.aro }}; background: {{ avanzado.marca }}; display: flex; align-items: center; justify-content: center; box-sizing: border-box; transition: background-color 150ms ease-out, border-color 150ms ease-out;"><sc-if value="{{ avanzado.sel }}" hint-placeholder-val="{{ false }}"><span class="ms f anim" style="font-size: 18px; color: #1A0E00; animation: pop 260ms cubic-bezier(.34,1.56,.64,1);">check</span></sc-if></span>
+</button>
+</div>
+<div style="padding: 16px 16px 24px;">
+<a href="SobreTi.dc.html" class="anim toque" style="height: 52px; border-radius: 26px; background: #FF6A00; color: #1A0E00; font-size: 17px; font-weight: 700; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: transform 120ms cubic-bezier(.2,0,0,1); animation: entra 350ms cubic-bezier(.05,.7,.1,1) 300ms backwards;">Siguiente</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { sel: 'intermedio' };
+  }
+  renderVals() {
+    const sel = this.state.sel;
+    const op = (id) => {
+      const si = sel === id;
+      return {
+        sel: si,
+        fondo: si ? '#2A1B0F' : '#1B1E24',
+        borde: si ? '#FF6A00' : '#1B1E24',
+        aro: si ? '#FF6A00' : '#6F7784',
+        marca: si ? '#FF6A00' : 'transparent',
+        pick: () => this.setState({ sel: id })
+      };
+    };
+    return {
+      principiante: op('principiante'),
+      intermedio: op('intermedio'),
+      avanzado: op('avanzado')
+    };
+  }
+}
+</script>
+</body>
+</html>

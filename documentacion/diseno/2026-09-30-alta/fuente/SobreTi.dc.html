@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Sobre ti</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+button,input{font-family:inherit}
+button{cursor:pointer}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+.toque:active{transform:scale(.98)}
+@keyframes entra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.18);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes late{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.9);opacity:0}}
+@keyframes destello{0%{box-shadow:0 0 0 0 rgba(255,106,0,0)}40%{box-shadow:0 0 12px 3px rgba(255,106,0,.7)}100%{box-shadow:0 0 0 0 rgba(255,106,0,0)}}
+@keyframes llena0{from{width:0}}
+@media (prefers-reduced-motion: reduce){.anim{animation:none !important;transition:none !important}.toque:active{transform:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif; display: flex; flex-direction: column;">
+<header style="display: flex; align-items: center; gap: 8px; padding: 8px 20px 0 4px;">
+<a href="Nivel.dc.html" aria-label="Atrás" class="toque" style="flex-shrink: 0; width: 48px; height: 48px; border-radius: 24px; color: #F2F2F3; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: transform 120ms cubic-bezier(.2,0,0,1);"><span class="ms" aria-hidden="true">arrow_back</span></a>
+<div role="progressbar" aria-label="Progreso" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-valuetext="Capítulo 2 de 4, sobre ti" style="flex-grow: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px;">
+<span style="height: 6px; border-radius: 3px; background: #FF6A00;"></span>
+<span class="anim" style="height: 6px; border-radius: 3px; background: #252A31; animation: destello 700ms ease-out 700ms;"><span class="anim" style="display: block; width: 100%; height: 6px; border-radius: 3px; background: #FF6A00; animation: llena0 500ms cubic-bezier(.2,0,0,1) 150ms backwards;"></span></span>
+<span style="height: 6px; border-radius: 3px; background: #252A31;"></span>
+<span style="height: 6px; border-radius: 3px; background: #252A31;"></span>
+</div>
+</header>
+<div style="padding: 20px 20px 0; display: flex; flex-direction: column; gap: 10px;">
+<div style="position: relative; width: 56px; height: 56px; margin-bottom: 4px;">
+<span class="anim" aria-hidden="true" style="position: absolute; inset: 0; border-radius: 28px; border: 2px solid #FF6A00; box-sizing: border-box; opacity: 0; animation: late 900ms ease-out 300ms 2 forwards;"></span>
+<span class="anim" aria-hidden="true" style="position: absolute; inset: 0; border-radius: 28px; background: #3A2110; color: #FF6A00; display: flex; align-items: center; justify-content: center; animation: pop 450ms cubic-bezier(.34,1.56,.64,1) backwards;"><span class="ms f" style="font-size: 30px;">person</span></span>
+</div>
+<span class="anim" style="color: #FFB27A; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; animation: entra 350ms cubic-bezier(.05,.7,.1,1) 60ms backwards;">Sobre ti · 2 de 4</span>
+<h1 class="anim" style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 34px; line-height: 1.08; animation: entra 350ms cubic-bezier(.05,.7,.1,1) 110ms backwards;">Cuéntanos sobre ti</h1>
+<p class="anim" style="margin: 0; font-size: 16px; line-height: 1.45; color: #C9CED6; animation: entra 350ms cubic-bezier(.05,.7,.1,1) 160ms backwards;">Para calcular tus calorías y tus macros. Solo se usa para eso y lo cambias cuando quieras en tu perfil.</p>
+</div>
+<div style="flex-grow: 1;"></div>
+<section aria-label="Tus datos" class="anim" style="margin: 0 16px; background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; animation: entra 400ms cubic-bezier(.05,.7,.1,1) 200ms backwards;">
+<button type="button" class="anim toque" style="display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 0 12px 0 16px; border: 0; border-bottom: 1px solid #252A31; background: transparent; color: #F2F2F3; text-align: left; transition: transform 120ms cubic-bezier(.2,0,0,1); animation: entra 300ms cubic-bezier(.05,.7,.1,1) 260ms backwards;"><span style="flex-grow: 1; font-size: 16px;">Sexo</span><span style="font-size: 16px; font-weight: 600; color: #C9CED6;">Mujer</span><span class="ms" aria-hidden="true" style="color: #A1A9B6;">chevron_right</span></button>
+<button type="button" class="anim toque" style="display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 0 12px 0 16px; border: 0; border-bottom: 1px solid #252A31; background: transparent; color: #F2F2F3; text-align: left; transition: transform 120ms cubic-bezier(.2,0,0,1); animation: entra 300ms cubic-bezier(.05,.7,.1,1) 300ms backwards;"><span style="flex-grow: 1; font-size: 16px;">Edad</span><span style="font-size: 16px; font-weight: 600; color: #C9CED6;">29 años</span><span class="ms" aria-hidden="true" style="color: #A1A9B6;">chevron_right</span></button>
+<button type="button" class="anim toque" style="display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 0 12px 0 16px; border: 0; border-bottom: 1px solid #252A31; background: transparent; color: #F2F2F3; text-align: left; transition: transform 120ms cubic-bezier(.2,0,0,1); animation: entra 300ms cubic-bezier(.05,.7,.1,1) 340ms backwards;"><span style="flex-grow: 1; font-size: 16px;">Altura</span><span style="font-size: 16px; font-weight: 600; color: #C9CED6;">165 cm</span><span class="ms" aria-hidden="true" style="color: #A1A9B6;">chevron_right</span></button>
+<button type="button" class="anim toque" style="display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 0 12px 0 16px; border: 0; border-bottom: 1px solid #252A31; background: transparent; color: #F2F2F3; text-align: left; transition: transform 120ms cubic-bezier(.2,0,0,1); animation: entra 300ms cubic-bezier(.05,.7,.1,1) 380ms backwards;"><span style="flex-grow: 1; font-size: 16px;">Peso</span><span style="font-size: 16px; font-weight: 600; color: #C9CED6;">62 kg</span><span class="ms" aria-hidden="true" style="color: #A1A9B6;">chevron_right</span></button>
+<a href="Actividad.dc.html" class="anim toque" style="display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 0 12px 0 16px; text-decoration: none; color: #F2F2F3; transition: transform 120ms cubic-bezier(.2,0,0,1); animation: entra 300ms cubic-bezier(.05,.7,.1,1) 420ms backwards;"><span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px;">Actividad</span><span style="font-size: 13px; color: #A1A9B6;">Contando el ejercicio que ya haces</span></span><span style="font-size: 16px; font-weight: 600; color: #C9CED6;">Moderado</span><span class="ms" aria-hidden="true" style="color: #A1A9B6;">chevron_right</span></a>
+</section>
+<div style="padding: 16px 16px 20px; display: flex; flex-direction: column; gap: 4px;">
+<a href="Donde.dc.html" class="anim toque" style="height: 52px; border-radius: 26px; background: #FF6A00; color: #1A0E00; font-size: 17px; font-weight: 700; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: transform 120ms cubic-bezier(.2,0,0,1); animation: entra 350ms cubic-bezier(.05,.7,.1,1) 480ms backwards;">Siguiente</a>
+<a href="Donde.dc.html" class="anim toque" style="height: 48px; border-radius: 24px; color: #F2F2F3; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: transform 120ms cubic-bezier(.2,0,0,1); animation: entra 350ms cubic-bezier(.05,.7,.1,1) 520ms backwards;">Prefiero no decirlo</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

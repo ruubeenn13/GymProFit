@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Qué cambia por dentro</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+</style>
+</helmet>
+<div style="width: 900px; height: 1600px; box-sizing: border-box; padding: 52px 56px; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif; display: flex; flex-direction: column; gap: 16px;">
+<div style="display: flex; flex-direction: column; gap: 8px;">
+<h1 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 46px; line-height: 1.05;">Qué cambia por dentro</h1>
+<p style="margin: 0; font-size: 18px; line-height: 1.45; color: #C9CED6;">Lo que la app pide a la API y lo que se reutiliza.</p>
+</div>
+<section style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 18px 20px; display: flex; flex-direction: column; gap: 6px;">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700;">Hasta «Guarda tu plan», todo en el móvil</h2>
+<p style="margin: 0; font-size: 16px; line-height: 1.45; color: #C9CED6;">Las respuestas van al borrador que ya tiene el onboarding, que sobrevive a que Android cierre la app. Calorías, macros y agua salen de CalculadoraNutricional, como hoy; solo el programa viene de la API.</p>
+</section>
+<section style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px;">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700;">La API: cinco cambios pequeños</h2>
+<ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 16px; line-height: 1.45; color: #C9CED6;">
+<li><code style="font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 15px;">GET /programas/recomendado</code> y <code style="font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 15px;">GET /programas/{codigo}/vista-previa</code> aceptan <code style="font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 15px;">nivel</code> y <code style="font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 15px;">objetivo</code> y se pueden pedir sin token; con ellos no miran el perfil. Solo leen el catálogo.</li>
+<li><code style="font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 15px;">POST /auth/register</code> sin <code style="font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 15px;">username</code>: lo propone la API a partir del correo y lo hace único. Acepta además nombre, sexo y actividad, así que la cuenta nace con su perfil en una sola llamada.</li>
+<li>La regla de la contraseña que mira el nombre de usuario pasa a mirar el correo, porque el usuario ya no lo elige.</li>
+<li><code style="font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 15px;">POST /auth/login</code> acepta el correo o el usuario.</li>
+<li>GP-112: un interruptor por tipo de aviso, guardado en la cuenta, que las tareas de avisos de la API respetan.</li>
+</ul>
+</section>
+<section style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 18px 20px; display: flex; flex-direction: column; gap: 6px;">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700;">Después de crear la cuenta</h2>
+<p style="margin: 0; font-size: 16px; line-height: 1.45; color: #C9CED6;"><code style="font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 15px;">POST /programas/{codigo}/seguir</code> con los minutos elegidos, los avisos y a Inicio. Si seguirlo falla, Inicio lo ofrece; la cuenta ya existe y el plan no se pierde.</p>
+</section>
+<section style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 18px 20px; display: flex; flex-direction: column; gap: 6px;">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700;">Con la red lenta</h2>
+<p style="margin: 0; font-size: 16px; line-height: 1.45; color: #C9CED6;">Render gratis puede tardar en despertar, así que la bienvenida hace una llamada ligera al abrirse. La tarjeta del programa tiene su carga y su error, y crear la cuenta, su reintento sin perder lo contestado.</p>
+</section>
+<section style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 18px 20px; display: flex; flex-direction: column; gap: 6px;">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700;">Qué sustituye</h2>
+<p style="margin: 0; font-size: 16px; line-height: 1.45; color: #C9CED6;">RegistroActivity, Onboarding1 a 5 y el resumen. Quien entra con una cuenta sin onboarding responde lo mismo, sin la cuenta al final.</p>
+</section>
+<section style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 18px 20px; display: flex; flex-direction: column; gap: 6px;">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700;">El movimiento (GP-104)</h2>
+<p style="margin: 0; font-size: 16px; line-height: 1.45; color: #C9CED6;">Doce momentos, en «Así se mueve»: cada toque responde, cada capítulo se abre con su icono que late, el plan se construye delante con su anillo y la cuenta creada acaba en check. Con «Quitar animaciones», todo en su estado final; nada espera a una animación y no hace falta ninguna dependencia nueva.</p>
+</section>
+<section style="border: 1px dashed #4A505B; border-radius: 20px; padding: 18px 20px; display: flex; flex-direction: column; gap: 6px;">
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 24px;">Terminado cuando</h2>
+<p style="margin: 0; font-size: 16px; line-height: 1.45; color: #C9CED6;">ES y EN, claro y oscuro, TalkBack y letra a 2,0; probado contra producción con una cuenta nueva; y el embudo, medido si GP-019 ya está decidido.</p>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":900,"height":1600}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

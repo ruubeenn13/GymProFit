@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Bienvenida</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+button,input{font-family:inherit}
+button{cursor:pointer}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+.toque:active{transform:scale(.97)}
+@keyframes entra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes respira{0%{transform:scale(1);box-shadow:0 0 0 0 rgba(255,106,0,.55)}45%{transform:scale(1.03)}100%{transform:scale(1);box-shadow:0 0 0 16px rgba(255,106,0,0)}}
+@keyframes vivo{0%,37%{opacity:1;transform:translateY(0)}44%,90%{opacity:.35;transform:translateY(-10px)}97%,100%{opacity:1;transform:translateY(0)}}
+@keyframes resumen{0%,38%{opacity:0;transform:translateY(40px) scale(.96);animation-timing-function:cubic-bezier(.34,1.56,.64,1)}46%,90%{opacity:1;transform:translateY(0) scale(1)}96%,100%{opacity:0;transform:translateY(40px) scale(.96)}}
+@keyframes digito{0%{opacity:0;transform:translateY(5px)}2.5%{opacity:1;transform:translateY(0)}85%{opacity:1}89%,100%{opacity:0}}
+@keyframes onda{0%,17%{transform:scale(.2);opacity:0}17.5%{transform:scale(.4);opacity:.6}23%,100%{transform:scale(1.8);opacity:0}}
+@keyframes chk{0%,18%{background:transparent;border-color:#6F7784}19.5%,90%{background:#FF6A00;border-color:#FF6A00}96%,100%{background:transparent;border-color:#6F7784}}
+@keyframes chkIcon{0%,18.5%{opacity:0;transform:scale(.4)}21%{opacity:1;transform:scale(1.25)}23%,90%{opacity:1;transform:scale(1)}96%,100%{opacity:0;transform:scale(.4)}}
+@keyframes fila{0%,19%{background:transparent}22%,90%{background:#2A1B0F}96%,100%{background:transparent}}
+@keyframes descanso{0%,22%{opacity:0;transform:translateY(-6px)}25%,90%{opacity:1;transform:none}95%,100%{opacity:0;transform:none}}
+@keyframes descansoBarra{0%,25%{transform:scaleX(1)}37%,100%{transform:scaleX(.8)}}
+@keyframes oro{0%,46%{transform:scale(.5);animation-timing-function:cubic-bezier(.34,1.56,.64,1)}51%,100%{transform:scale(1)}}
+@keyframes chispa{0%,47%{transform:translateX(0) scale(.3);opacity:0}48.5%{transform:translateX(4px) scale(1);opacity:1}57%,100%{transform:translateX(30px) scale(.4);opacity:0}}
+@keyframes brillo{0%,49%{transform:translateX(-160%) skewX(-20deg)}60%,100%{transform:translateX(420%) skewX(-20deg)}}
+@media (prefers-reduced-motion: reduce){.anim{animation:none !important;transition:none !important}.toque:active{transform:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif; display: flex; flex-direction: column;">
+<header class="anim" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 0 20px; animation: entra 400ms cubic-bezier(.05,.7,.1,1) backwards;">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: 0.3px;">GymProFit</span>
+<button type="button" class="toque" aria-label="Idioma: español. Cambiar" style="height: 44px; padding: 0 14px 0 10px; border: 1px solid #4A505B; border-radius: 22px; background: transparent; color: #F2F2F3; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 6px; transition: transform 120ms cubic-bezier(.2,0,0,1);"><span class="ms" aria-hidden="true" style="font-size: 20px;">language</span>ES</button>
+</header>
+<div role="img" aria-label="Demostración: se apunta la tercera serie de press de banca, empieza el descanso y, al guardar la sesión, sale un récord nuevo" style="position: relative; height: 470px; margin: 16px 16px 0;">
+<section class="anim" style="position: absolute; left: 0; right: 0; top: 0; background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 14px 12px 12px; display: flex; flex-direction: column; gap: 8px; opacity: 0.35; transform: translateY(-10px); animation: vivo 8s ease-in-out infinite;">
+<div style="display: flex; flex-direction: column; gap: 3px; padding: 0 4px;">
+<span style="display: flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 600;">Press de banca con barra<span style="font-size: 12px; font-weight: 600; color: #FFB27A; border: 1px solid #7A4A22; border-radius: 10px; padding: 1px 8px;">Básico</span></span>
+<span style="font-size: 14px; color: #C9CED6;">3 × 6–10 · descanso 2 min</span>
+</div>
+<div style="display: grid; grid-template-columns: 30px minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1fr) 44px; gap: 6px; padding: 0 4px;">
+<span style="font-size: 11px; color: #A1A9B6; text-transform: uppercase; letter-spacing: 1px; text-align: center;">Serie</span><span style="font-size: 11px; color: #A1A9B6; text-transform: uppercase; letter-spacing: 1px; text-align: center;">Anterior</span><span style="font-size: 11px; color: #A1A9B6; text-transform: uppercase; letter-spacing: 1px; text-align: center;">kg</span><span style="font-size: 11px; color: #A1A9B6; text-transform: uppercase; letter-spacing: 1px; text-align: center;">reps</span><span></span>
+</div>
+<div style="display: grid; grid-template-columns: 30px minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1fr) 44px; gap: 6px; align-items: center; padding: 4px; border-radius: 12px; background: #2A1B0F;">
+<span style="font-size: 15px; font-weight: 600; text-align: center;">1</span><span style="font-size: 14px; color: #A1A9B6; text-align: center;">60 × 8</span><span style="font-size: 17px; font-weight: 600; text-align: center;">60</span><span style="font-size: 17px; font-weight: 600; text-align: center;">8</span><span style="width: 44px; height: 44px; border-radius: 22px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; justify-content: center;"><span class="ms f">check</span></span>
+</div>
+<div style="display: grid; grid-template-columns: 30px minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1fr) 44px; gap: 6px; align-items: center; padding: 4px; border-radius: 12px; background: #2A1B0F;">
+<span style="font-size: 15px; font-weight: 600; text-align: center;">2</span><span style="font-size: 14px; color: #A1A9B6; text-align: center;">60 × 8</span><span style="font-size: 17px; font-weight: 600; text-align: center;">60</span><span style="font-size: 17px; font-weight: 600; text-align: center;">8</span><span style="width: 44px; height: 44px; border-radius: 22px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; justify-content: center;"><span class="ms f">check</span></span>
+</div>
+<div class="anim" style="display: grid; grid-template-columns: 30px minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1fr) 44px; gap: 6px; align-items: center; padding: 4px; border-radius: 12px; background: #2A1B0F; animation: fila 8s linear infinite;">
+<span style="font-size: 15px; font-weight: 600; text-align: center;">3</span><span style="font-size: 14px; color: #A1A9B6; text-align: center;">60 × 7</span>
+<span style="display: flex; justify-content: center; font-size: 17px; font-weight: 600;"><span class="anim" style="animation: digito 8s linear 0.4s infinite both;">6</span><span class="anim" style="animation: digito 8s linear 0.55s infinite both;">2</span><span class="anim" style="animation: digito 8s linear 0.68s infinite both;">,</span><span class="anim" style="animation: digito 8s linear 0.82s infinite both;">5</span></span>
+<span style="display: flex; justify-content: center; font-size: 17px; font-weight: 600;"><span class="anim" style="animation: digito 8s linear 1.05s infinite both;">8</span></span>
+<span style="position: relative; width: 44px; height: 44px;">
+<span class="anim" style="position: absolute; inset: 0; border-radius: 22px; background: rgba(255, 178, 122, 0.55); opacity: 0; animation: onda 8s linear infinite;"></span>
+<span class="anim" style="position: absolute; inset: 0; border-radius: 22px; border: 2px solid #FF6A00; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; justify-content: center; box-sizing: border-box; animation: chk 8s linear infinite;"><span class="ms f anim" style="animation: chkIcon 8s linear infinite;">check</span></span>
+</span>
+</div>
+<div class="anim" style="display: flex; flex-direction: column; gap: 6px; padding: 8px 10px; border-radius: 12px; background: #121418; animation: descanso 8s linear infinite;">
+<div style="display: flex; align-items: center; gap: 8px;"><span class="ms" aria-hidden="true" style="font-size: 18px; color: #FFB27A;">timer</span><span style="flex-grow: 1; font-size: 12px; font-weight: 700; color: #FFB27A; text-transform: uppercase; letter-spacing: 1px;">Descanso</span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px;">1:58</span></div>
+<div style="height: 4px; border-radius: 2px; background: #252A31;"><div class="anim" style="height: 4px; border-radius: 2px; background: #FF6A00; transform-origin: left center; transform: scaleX(0.8); animation: descansoBarra 8s linear infinite;"></div></div>
+</div>
+</section>
+<section class="anim" style="position: absolute; left: 12px; right: 12px; bottom: 0; background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45); animation: resumen 8s linear infinite;">
+<div style="display: flex; align-items: center; gap: 10px;">
+<span class="ms f" style="color: #FF6A00; font-size: 28px;">check_circle</span>
+<div style="display: flex; flex-direction: column; gap: 1px;">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px; line-height: 1.1;">Sesión guardada</span>
+<span style="font-size: 14px; color: #A1A9B6;">Cuerpo completo A · 44 min</span>
+</div>
+</div>
+<span style="color: #A1A9B6; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 1px; text-transform: uppercase;">Récords</span>
+<div style="position: relative; overflow: hidden; background: #3A2E12; border: 1px solid #6B5421; border-radius: 16px; padding: 12px; display: flex; align-items: center; gap: 12px;">
+<span style="position: relative; flex-shrink: 0; width: 44px; height: 44px;">
+<span aria-hidden="true" style="position: absolute; left: 19px; top: 19px; width: 6px; height: 6px; transform: rotate(0deg);"><span class="anim" style="display: block; width: 6px; height: 6px; border-radius: 3px; background: #E8B84B; opacity: 0; animation: chispa 8s linear infinite;"></span></span>
+<span aria-hidden="true" style="position: absolute; left: 19px; top: 19px; width: 6px; height: 6px; transform: rotate(60deg);"><span class="anim" style="display: block; width: 6px; height: 6px; border-radius: 3px; background: #FFB27A; opacity: 0; animation: chispa 8s linear infinite;"></span></span>
+<span aria-hidden="true" style="position: absolute; left: 19px; top: 19px; width: 6px; height: 6px; transform: rotate(120deg);"><span class="anim" style="display: block; width: 6px; height: 6px; border-radius: 3px; background: #E8B84B; opacity: 0; animation: chispa 8s linear infinite;"></span></span>
+<span aria-hidden="true" style="position: absolute; left: 19px; top: 19px; width: 6px; height: 6px; transform: rotate(180deg);"><span class="anim" style="display: block; width: 6px; height: 6px; border-radius: 3px; background: #FFB27A; opacity: 0; animation: chispa 8s linear infinite;"></span></span>
+<span aria-hidden="true" style="position: absolute; left: 19px; top: 19px; width: 6px; height: 6px; transform: rotate(240deg);"><span class="anim" style="display: block; width: 6px; height: 6px; border-radius: 3px; background: #E8B84B; opacity: 0; animation: chispa 8s linear infinite;"></span></span>
+<span aria-hidden="true" style="position: absolute; left: 19px; top: 19px; width: 6px; height: 6px; transform: rotate(300deg);"><span class="anim" style="display: block; width: 6px; height: 6px; border-radius: 3px; background: #FFB27A; opacity: 0; animation: chispa 8s linear infinite;"></span></span>
+<span class="anim" style="position: absolute; inset: 0; border-radius: 22px; background: #E8B84B; display: flex; align-items: center; justify-content: center; animation: oro 8s linear infinite;"><span class="ms f" style="color: #3A2E12;">trophy</span></span>
+</span>
+<div style="display: flex; flex-direction: column; gap: 2px;">
+<span style="font-size: 16px; font-weight: 600;">Press de banca con barra</span>
+<span style="font-size: 14px; color: #D9C9A0;">62,5 kg × 8 · antes 60 kg × 8</span>
+</div>
+<span class="anim" aria-hidden="true" style="position: absolute; top: 0; bottom: 0; left: 0; width: 30%; background: linear-gradient(90deg, rgba(255, 236, 190, 0), rgba(255, 236, 190, 0.3), rgba(255, 236, 190, 0)); transform: translateX(-160%) skewX(-20deg); animation: brillo 8s linear infinite;"></span>
+</div>
+</section>
+</div>
+<div style="flex-grow: 1;"></div>
+<div style="padding: 0 20px; display: flex; flex-direction: column; gap: 10px;">
+<h1 class="anim" style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.05; animation: entra 450ms cubic-bezier(.05,.7,.1,1) 150ms backwards;">Apunta cada serie y mira cómo subes</h1>
+<p class="anim" style="margin: 0; font-size: 17px; line-height: 1.45; color: #C9CED6; animation: entra 450ms cubic-bezier(.05,.7,.1,1) 230ms backwards;">En un minuto tienes tu programa de entrenamiento y tus calorías del día.</p>
+</div>
+<div style="padding: 20px 16px 20px; display: flex; flex-direction: column; gap: 4px;">
+<a href="Objetivo.dc.html" class="anim toque" style="height: 52px; border-radius: 26px; background: #FF6A00; color: #1A0E00; font-size: 17px; font-weight: 700; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: transform 120ms cubic-bezier(.2,0,0,1); animation: entra 450ms cubic-bezier(.05,.7,.1,1) 310ms backwards, respira 1400ms ease-in-out 1800ms;">Empezar</a>
+<a href="Entrar.dc.html" class="anim toque" style="height: 48px; border-radius: 24px; color: #F2F2F3; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: transform 120ms cubic-bezier(.2,0,0,1); animation: entra 450ms cubic-bezier(.05,.7,.1,1) 370ms backwards;">Ya tengo cuenta</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

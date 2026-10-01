@@ -1,0 +1,193 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "Actividad.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "5 · Una hoja: cuánto te mueves",
+      "w": 390,
+      "x": 1880,
+      "y": 0
+    },
+    "Avisos.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "12 · Los avisos, eligiendo",
+      "w": 390,
+      "x": 2030,
+      "y": 1250
+    },
+    "Decisiones.dc.html": {
+      "h": 1600,
+      "title": "Decisiones para aprobar",
+      "w": 1100,
+      "x": 0,
+      "y": 2830
+    },
+    "DiasTiempo.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "7 · Días y tiempo",
+      "w": 390,
+      "x": 2820,
+      "y": 0
+    },
+    "Donde.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "6 · Dónde entrenas",
+      "w": 390,
+      "x": 2350,
+      "y": 0
+    },
+    "Entrar.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "11 · Ya tengo cuenta",
+      "w": 390,
+      "x": 1410,
+      "y": 1250
+    },
+    "Guarda.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "title": "9 · Guarda tu plan (Google, en la fase 2)",
+      "w": 390,
+      "x": 470,
+      "y": 1250
+    },
+    "GuardaErrores.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "title": "10 · Si algo no vale al crearla",
+      "w": 390,
+      "x": 940,
+      "y": 1250
+    },
+    "Inicio.dc.html": {
+      "h": 1120,
+      "is_interactive": true,
+      "title": "13 · Inicio, el primer día",
+      "w": 390,
+      "x": 2500,
+      "y": 1250
+    },
+    "Main.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "1 · Bienvenida: la función, en marcha",
+      "w": 390,
+      "x": 0,
+      "y": 0
+    },
+    "Nivel.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "3 · Tu nivel",
+      "w": 390,
+      "x": 940,
+      "y": 0
+    },
+    "Objetivo.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "2 · Tu objetivo",
+      "w": 390,
+      "x": 470,
+      "y": 0
+    },
+    "Plan.dc.html": {
+      "h": 1080,
+      "is_interactive": true,
+      "title": "8 · Tu plan, construido delante",
+      "w": 390,
+      "x": 0,
+      "y": 1250
+    },
+    "SobreTi.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "4 · Sobre ti, en una pantalla",
+      "w": 390,
+      "x": 1410,
+      "y": 0
+    },
+    "Tecnica.dc.html": {
+      "h": 1600,
+      "title": "Qué cambia por dentro",
+      "w": 900,
+      "x": 1180,
+      "y": 2830
+    },
+    "Movimiento.dc.html": {
+      "h": 1600,
+      "title": "Así se mueve: los doce momentos",
+      "w": 1100,
+      "x": 2160,
+      "y": 2830
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-09-30T18:30:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "notes": {
+    "t1": {
+      "kind": "title1",
+      "maxW": 3210,
+      "text": "De la bienvenida a las preguntas",
+      "w": 240,
+      "x": 0,
+      "y": -260
+    },
+    "t2": {
+      "kind": "title1",
+      "maxW": 1800,
+      "text": "Tu plan y la cuenta",
+      "w": 240,
+      "x": 0,
+      "y": 990
+    },
+    "t3": {
+      "kind": "title1",
+      "maxW": 860,
+      "text": "Después de la cuenta",
+      "w": 240,
+      "x": 2030,
+      "y": 990
+    },
+    "t4": {
+      "kind": "title1",
+      "maxW": 3260,
+      "text": "Lo que apruebas, cómo funciona y cómo se mueve",
+      "w": 240,
+      "x": 0,
+      "y": 2570
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Objetivo.dc.html",
+    "Nivel.dc.html",
+    "SobreTi.dc.html",
+    "Actividad.dc.html",
+    "Donde.dc.html",
+    "DiasTiempo.dc.html",
+    "Plan.dc.html",
+    "Guarda.dc.html",
+    "GuardaErrores.dc.html",
+    "Entrar.dc.html",
+    "Avisos.dc.html",
+    "Inicio.dc.html",
+    "Decisiones.dc.html",
+    "Tecnica.dc.html",
+    "Movimiento.dc.html"
+  ],
+  "pages": [],
+  "title": "El alta nueva"
+}
