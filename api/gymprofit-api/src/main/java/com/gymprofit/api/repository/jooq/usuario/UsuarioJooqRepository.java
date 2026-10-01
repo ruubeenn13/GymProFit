@@ -204,8 +204,9 @@ public class UsuarioJooqRepository implements IUsuarioJooqRepository {
 
         // Ejercicio más frecuente, en el idioma de la petición: el inglés si se pide así y
         // lo tiene, el español si no (GP-132). nombre_en no está en las clases generadas
-        // de jOOQ (son de antes de la traducción del catálogo), así que se nombra a mano.
-        Field<String> nombreEn = field(EJERCICIOS.getQualifiedName().append("nombre_en"), String.class);
+        // de jOOQ (son de antes de la traducción del catálogo), así que se nombra a mano,
+        // con la tabla y sin el esquema (GP-149).
+        Field<String> nombreEn = field(name(EJERCICIOS.getName(), "nombre_en"), String.class);
         Record2<String, String> masFrecuente = dsl
                 .select(EJERCICIOS.NOMBRE, nombreEn)
                 .from(EJERCICIOS_REALIZADOS)
