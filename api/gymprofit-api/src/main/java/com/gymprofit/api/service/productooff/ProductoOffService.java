@@ -82,13 +82,18 @@ public class ProductoOffService {
     /**
      * Guarda (o actualiza) un único producto ya validado, el que trae la lectura de un
      * código a Open Food Facts (GP-160).
+     * <p>
+     * No avisa de {@link ProductosCambiados}: quien lo llama lo materializa en el acto, y
+     * así entra en el índice del catálogo, que se reconstruye entero en milisegundos.
+     * Reconstruir el de los ~200 000 productos por cada código leído no añadiría nada a
+     * la búsqueda y en Render, con 0,1 de CPU, se nota. Entra en el índice de productos
+     * con la siguiente reconstrucción (arranque o importación).
      *
      * @param producto producto que ya pasó {@link ProductoOffValidacion#limpiar}.
      */
     @Transactional
     public void guardarUno(ProductoOffImportDTO producto) {
         guardar(List.of(producto));
-        eventos.publishEvent(new ProductosCambiados());
     }
 
     /**

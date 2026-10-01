@@ -84,6 +84,8 @@ public class IndiceAlimentos {
     private volatile boolean catalogoSucio = true;
     private volatile Productos productos;
     private ScheduledFuture<?> reconstruccionPendiente;
+    // Cuántas reconstrucciones de productos se han programado tras un cambio (para los tests).
+    private final java.util.concurrent.atomic.AtomicLong programadas = new java.util.concurrent.atomic.AtomicLong();
 
     public IndiceAlimentos(JdbcTemplate jdbc, DataSource dataSource,
                            @Value("${app.busqueda.reconstruir-productos-tras-ms:30000}") long esperaTrasImportacionMs) {
@@ -169,8 +171,14 @@ public class IndiceAlimentos {
     @EventListener
     synchronized void alCambiarProductos(ProductoOffService.ProductosCambiados evento) {
         if (reconstruccionPendiente != null) reconstruccionPendiente.cancel(false);
+        programadas.incrementAndGet();
         reconstruccionPendiente = programador.schedule(this::reconstruirProductosRegistrando,
                 esperaTrasImportacionMs, TimeUnit.MILLISECONDS);
+    }
+
+    /** Cuántas reconstrucciones del índice de productos se han programado desde el arranque. */
+    long reconstruccionesProgramadas() {
+        return programadas.get();
     }
 
     private void reconstruirProductosRegistrando() {
