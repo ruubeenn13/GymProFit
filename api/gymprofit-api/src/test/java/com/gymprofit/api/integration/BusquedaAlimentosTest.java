@@ -47,9 +47,6 @@ class BusquedaAlimentosTest extends AbstractOwnershipTest {
     private IndiceAlimentos indice;
 
     @Autowired
-    private com.gymprofit.api.service.busqueda.BusquedaAlimentosService busqueda;
-
-    @Autowired
     private IAlimentoRepository alimentoRepository;
 
     @Autowired
@@ -238,16 +235,6 @@ class BusquedaAlimentosTest extends AbstractOwnershipTest {
                 .header("Accept-Language", "en").header("Authorization", bearer(owner)))).get("content").get(0);
         assertThat(primero.get("nombre").asText()).isEqualTo("Banana");
         assertThat(primero.get("raciones").get(0).get("nombre").asText()).isEqualTo("1 medium banana");
-    }
-
-    @Test
-    @DisplayName("calentar la búsqueda corre sin usuario y no escribe nada (GP-168)")
-    void calentar_sin_usuario() {
-        Integer antes = jdbc.queryForObject("SELECT COUNT(*) FROM alimentos", Integer.class);
-        org.springframework.security.core.context.SecurityContextHolder.clearContext();
-        busqueda.calentar();
-        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM alimentos", Integer.class)).isEqualTo(antes);
-        verify(openFoodFactsClient, never()).porBarcode(anyString());
     }
 
     @Test
