@@ -191,6 +191,31 @@ class BusquedaAlimentosTest extends AbstractOwnershipTest {
     }
 
     @Test
+    @DisplayName("con más productos que una página, cada página sigue el orden y el total cuenta todos")
+    void muchas_paginas_en_orden() throws Exception {
+        List<ProductoOffImportDTO> muchos = new ArrayList<>();
+        for (int i = 0; i < 30; i++) {
+            muchos.add(producto(String.valueOf(8400000950000L + i), "Galleta pqzmuchas " + i, "Marca",
+                    458, 7, 70, 16, 1000 - i * 10));
+        }
+        productoOffService.importarLote(muchos);
+        indice.reconstruirProductos();
+
+        List<String> recorridos = new ArrayList<>();
+        for (int pagina = 0; pagina < 10; pagina++) {
+            JsonNode respuesta = json(mockMvc.perform(get("/alimentos/buscar")
+                    .param("q", "pqzmuchas").param("page", String.valueOf(pagina)).param("size", "7")
+                    .header("Authorization", bearer(owner))));
+            assertThat(respuesta.get("totalElements").asInt()).isEqualTo(30);
+            respuesta.get("content").forEach(n -> recorridos.add(n.get("barcode").asText()));
+            if (respuesta.get("last").asBoolean()) break;
+        }
+        List<String> esperados = new ArrayList<>();
+        for (int i = 0; i < 30; i++) esperados.add(String.valueOf(8400000950000L + i)); // más escaneados primero
+        assertThat(recorridos).isEqualTo(esperados);
+    }
+
+    @Test
     @DisplayName("la categoría sigue filtrando, y con ella no salen productos")
     void categoria() throws Exception {
         JsonNode content = json(mockMvc.perform(get("/alimentos/buscar")

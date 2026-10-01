@@ -19,6 +19,7 @@ import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -104,6 +105,8 @@ public class BusquedaAlimentosService {
                 .toList();
         List<Ref> refs = new ArrayList<>();
         Set<Integer> idsTuyos = new HashSet<>();
+        // Productos que casan pero no hace falta pintar: cuentan en el total, nada más.
+        int sinPintar = 0;
 
         IndiceAlimentos.Catalogo catalogo = indice.catalogo();
         if (consulta.isEmpty()) {
@@ -120,14 +123,15 @@ public class BusquedaAlimentosService {
                 refs.add(new Ref(TUYO, false, t.id()));
                 idsTuyos.add(t.id());
             }
-            conTextoCatalogoYProductos(catalogo, consulta, cat, idsTuyos, refs);
+            sinPintar = conTextoCatalogoYProductos(catalogo, consulta, cat, idsTuyos, refs, (pagina + 1) * tam);
         }
 
+        int total = refs.size() + sinPintar;
         int desde = Math.min(refs.size(), pagina * tam);
         int hasta = Math.min(refs.size(), desde + tam);
         List<AlimentoDTO> contenido = pintar(refs.subList(desde, hasta), catalogo);
-        int totalPaginas = Math.max(1, (int) Math.ceil((double) refs.size() / tam));
-        return new PageDTO<>(contenido, pagina, tam, refs.size(), totalPaginas, hasta >= refs.size());
+        int totalPaginas = Math.max(1, (int) Math.ceil((double) total / tam));
+        return new PageDTO<>(contenido, pagina, tam, total, totalPaginas, pagina * tam + tam >= total);
     }
 
     // --- Sin texto ----------------------------------------------------------
@@ -194,8 +198,15 @@ public class BusquedaAlimentosService {
         return docs.stream().map(tuyos::get).toList();
     }
 
-    private void conTextoCatalogoYProductos(IndiceAlimentos.Catalogo catalogo, List<String> consulta, String cat,
-                                            Set<Integer> idsTuyos, List<Ref> refs) {
+    /**
+     * Añade a {@code refs} los básicos y los productos que casan, ordenados, pero solo
+     * hasta {@code hasta} resultados en total: de una búsqueda como «aceite» casan miles de
+     * productos y solo se pinta una página.
+     *
+     * @return cuántos productos casan y no se han añadido (cuentan en el total).
+     */
+    private int conTextoCatalogoYProductos(IndiceAlimentos.Catalogo catalogo, List<String> consulta, String cat,
+                                           Set<Integer> idsTuyos, List<Ref> refs, int hasta) {
         IndiceAlimentos.Productos productos = cat == null ? indice.productos() : null;
 
         // Catálogo: básicos aquí; los productos ya materializados, con los productos.
@@ -236,16 +247,34 @@ public class BusquedaAlimentosService {
                 .thenComparingInt(Candidato::longitud).thenComparingInt(x -> x.ref().id()));
         basicos.forEach(b -> refs.add(b.ref()));
 
+        int falta = Math.max(0, hasta - refs.size());
+        int casan = deProductos.size();
         if (productos != null) {
+            // Con miles de coincidencias, un comparador sobre objetos se nota en Render (0,1
+            // de CPU). Cada producto se resume en un número cuyo orden es el de la lista
+            // (nivel, más escaneados, nombre más corto y, al final, el orden del índice, que
+            // es el de su id), se ordenan los números y solo se convierten los que hacen falta.
             IndiceTexto.Coincidencias p = productos.texto().buscar(consulta);
             Set<Integer> primeros = posicionesPrimerTermino(productos.texto(), consulta);
             BitSet encontrados = p.todos();
+            long[] claves = new long[encontrados.cardinality()];
+            int n = 0;
+            boolean mirarTuyos = !idsTuyos.isEmpty();
             for (int d = encontrados.nextSetBit(0); d >= 0; d = encontrados.nextSetBit(d + 1)) {
-                Integer materializado = catalogo.idPorCodigo().get(productos.codigos()[d]);
-                if (materializado != null && idsTuyos.contains(materializado)) continue;
+                if (mirarTuyos) {
+                    Integer materializado = catalogo.idPorCodigo().get(productos.codigos()[d]);
+                    if (materializado != null && idsTuyos.contains(materializado)) continue;
+                }
                 boolean exacto = p.exactos().get(d);
                 boolean empieza = primeros.contains(productos.primerTermino()[d]);
                 int nivel = exacto ? (empieza ? 1 : 2) : (empieza ? 3 : 4);
+                claves[n++] = clave(nivel, productos.escaneos()[d], productos.longitud()[d], d);
+            }
+            Arrays.sort(claves, 0, n);
+            casan += n;
+            for (int i = 0; i < Math.min(n, falta); i++) {
+                int d = (int) (claves[i] & MASCARA_DOC);
+                int nivel = (int) (claves[i] >>> BIT_NIVEL);
                 deProductos.add(new Candidato(nivel, 1, productos.escaneos()[d], productos.longitud()[d],
                         new Ref(PRODUCTO, true, productos.ids()[d])));
             }
@@ -255,7 +284,21 @@ public class BusquedaAlimentosService {
                 .thenComparingInt(Candidato::longitud)
                 .thenComparing(x -> x.ref().esProducto())
                 .thenComparingInt(x -> x.ref().id()));
-        deProductos.forEach(x -> refs.add(x.ref()));
+        int anadidos = Math.min(falta, deProductos.size());
+        deProductos.subList(0, anadidos).forEach(x -> refs.add(x.ref()));
+        return casan - anadidos;
+    }
+
+    // Clave de orden de un producto: 3 bits de nivel, 24 de escaneos al revés, 10 de
+    // longitud del nombre y 20 de posición en el índice (hasta 1 048 575 productos).
+    private static final int BIT_NIVEL = 54;
+    private static final long MAX_ESCANEOS = (1L << 24) - 1;
+    private static final long MASCARA_DOC = (1L << 20) - 1;
+
+    static long clave(int nivel, int escaneos, int longitud, int doc) {
+        long inverso = MAX_ESCANEOS - Math.min(Math.max(escaneos, 0), MAX_ESCANEOS);
+        return ((long) nivel << BIT_NIVEL) | (inverso << 30) | ((long) Math.min(longitud, 1023) << 20)
+                | (doc & MASCARA_DOC);
     }
 
     private static int nivelDoc(IndiceTexto texto, List<String> consulta, List<String> nombre, boolean exacto,

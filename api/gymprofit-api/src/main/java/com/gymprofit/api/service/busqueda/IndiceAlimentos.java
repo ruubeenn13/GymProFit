@@ -203,7 +203,8 @@ public class IndiceAlimentos {
         List<String> primeros = new ArrayList<>();
         IntLista longitudes = new IntLista();
         List<Long> codigos = new ArrayList<>();
-        jdbcStreaming.query("SELECT id, codigo, nombre, marca, escaneos FROM productos_off", rs -> {
+        // En orden de id: la posición en el índice desempata la búsqueda como lo haría el id.
+        jdbcStreaming.query("SELECT id, codigo, nombre, marca, escaneos FROM productos_off ORDER BY id", rs -> {
             List<String> nombre = Normalizador.terminos(rs.getString("nombre"));
             List<String> todos = new ArrayList<>(nombre);
             todos.addAll(Normalizador.terminos(rs.getString("marca")));
@@ -214,8 +215,13 @@ public class IndiceAlimentos {
             longitudes.anadir(Math.min(Short.MAX_VALUE, rs.getString("nombre").length()));
             codigos.add(codigoNumerico(rs.getString("codigo")));
         });
-        IndiceTexto texto = constructor.construir();
         int n = ids.tamano();
+        if (n > (1 << 20)) {
+            // La clave de orden de la búsqueda guarda la posición en 20 bits: más de esto
+            // desordenaría resultados. Se queda el índice anterior y se avisa (DEC-040).
+            throw new IllegalStateException("Más de 1 048 576 productos: el índice de búsqueda no los admite");
+        }
+        IndiceTexto texto = constructor.construir();
         int[] primerTermino = new int[n];
         short[] longitud = new short[n];
         long[] codigo = new long[n];
