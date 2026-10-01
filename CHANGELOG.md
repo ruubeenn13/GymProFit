@@ -6,6 +6,14 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `75f98cd` | Fusión de `lote-1.6.0-remate` en `main` (GP-168), desplegada a las 23:30 con el CI en verde, sin etiqueta. En producción, recién desplegada, la búsqueda queda **290 ms** por encima de health; en caliente, **141**. El criterio de 150 en frío no se cumple. Medidas en la sección «Remate» del informe del lote 1.6.0. |
+| `6d0b571` | perf(api): fuera el calentamiento de la búsqueda: 354 ms por encima de health en frío con él, 287 sin él. |
+| `ec2f73c` | perf(api): calentar la búsqueda al terminar el índice (a medir; quitado en `6d0b571`). Fusión `435fb48`. |
+| `8af45c2` | perf(api): fuera el relleno de las listas de IN: 283 frente a 287 ms en frío, sin mejora en caliente. |
+| `a79d62a` | perf(api): relleno de las listas de IN de Hibernate (a medir; quitado en `8af45c2`). Fusión `90acbd6`. |
+| `983e127` | feat(api): el log del índice de productos dice el heap usado y máximo y el no-heap de la JVM. Fusión `6fd2889`. |
+| `dd33667` | test(api): una búsqueda cuesta 7 sentencias SQL con 30 resultados y 6 con 3 (o la vacía): las raciones ya iban en un lote. Sin el lote, 20. |
+| — | docs: **endurecido `POST /alimentos/importar`** (`c429ea0`, `94b9e6e`, desplegado el 1 de octubre a las 21:34): buscaba el código en toda la tabla y podía devolver el alimento propio de otro usuario con ese código; ahora solo catálogo. Y comprobar si un código está en uso solo mira lo del mismo dueño. Lo cubre `CodigoBarrasTest` (`lo_propio_primero_y_aislado`, `mismo_codigo_en_dos_usuarios`). |
 | `45209ea` | Fusión de `lote-1.6.0` en `main` con el arreglo de la medida, desplegada a las 22:11 con el CI en verde. |
 | `0e95289` | fix(api): la búsqueda ordena los productos por una clave numérica y solo pinta hasta la página pedida. Medido en producción: sin cambio apreciable; lo que cuesta en frío es otra cosa (ver el informe). |
 | `a395cb4` | Fusión de `lote-1.6.0` en `main` (desplegada a las 21:34, CI en verde). Sin etiqueta: no hay versión de la app. Primera importación: 198 224 productos, 29 MB de tabla y ~60 MB del disco de Aiven, 174 s de envío. En caliente, la búsqueda queda 134 ms por encima de health. Informe en `documentacion/estado/2026-10-01-lote-1.6.0.md`. |
