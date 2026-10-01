@@ -1,0 +1,517 @@
+fuente;codigo;nombre_es;nombre_en;gramos;fuente_peso
+CIQUAL;36017;1 pechuga entera;1 whole breast;272;USDA FDC 171077: 1 piece
+CIQUAL;36017;1 filete;1 fillet;113;USDA FDC 171077: 4 oz
+CIQUAL;36018;1 filete;1 fillet;113;USDA FDC 171077: 4 oz
+CIQUAL;36024;1 muslo sin hueso;1 boneless thigh;52;USDA FDC 172387: 1 thigh, bone and skin removed
+CIQUAL;36006;1 muslo sin hueso;1 boneless thigh;52;USDA FDC 172387: 1 thigh, bone and skin removed
+CIQUAL;36002;1 muslo con piel;1 thigh with skin;193;USDA FDC 172385: 1 thigh with skin
+CIQUAL;36023;1 alita;1 wing;107;USDA FDC 172390: 1 piece
+CIQUAL;36005;1 ración;1 serving;85;USDA FDC 171474: 3 oz
+CIQUAL;36304;1 filete;1 fillet;113;USDA FDC 171098: 4 oz
+CIQUAL;36306;1 filete;1 fillet;113;USDA FDC 171098: 4 oz
+CIQUAL;36307;1 ración;1 serving;113;USDA FDC 171098: 4 oz
+CIQUAL;6201;1 filete;1 steak;113;USDA FDC 174762: 4 oz
+CIQUAL;6206;1 filete;1 steak;199;USDA FDC 173409: 1 steak
+CIQUAL;6207;1 filete;1 steak;199;USDA FDC 173409: 1 steak
+CIQUAL;6116;1 filete;1 steak;113;USDA FDC 174762: 4 oz
+CIQUAL;6103;1 entrecot;1 steak;238;USDA FDC 172174: 1 steak
+CIQUAL;6250;1 hamburguesa;1 patty;113;USDA FDC 174030: 4 oz
+CIQUAL;6252;1 hamburguesa;1 patty;113;USDA FDC 174030: 4 oz
+CIQUAL;6256;1 hamburguesa;1 patty;113;USDA FDC 174030: 4 oz
+CIQUAL;6253;1 ración;1 serving;85;USDA FDC 174030: 3 oz
+CIQUAL;6231;1 ración;1 serving;113;USDA FDC 174762: 4 oz
+CIQUAL;6521;1 filete;1 escalope;113;USDA FDC 174762: 4 oz
+CIQUAL;28204;1 solomillo entero;1 whole tenderloin;505;USDA FDC 168249: 1 roast
+CIQUAL;28204;1 ración;1 serving;113;USDA FDC 168249: 4 oz
+CIQUAL;28203;1 ración;1 serving;85;USDA FDC 168249: 3 oz
+CIQUAL;28100;1 chuleta sin hueso;1 boneless chop;178;USDA FDC 167829: 1 chop without refuse
+CIQUAL;28101;1 chuleta sin hueso;1 boneless chop;178;USDA FDC 167829: 1 chop without refuse
+CIQUAL;28302;1 ración;1 serving;113;USDA FDC 167829: 4 oz
+CIQUAL;28002;1 ración;1 serving;113;USDA FDC 167829: 4 oz
+CIQUAL;28472;1 ración;1 serving;113;USDA FDC 174030: 4 oz
+CIQUAL;21521;1 ración;1 serving;113;USDA FDC 174762: 4 oz
+CIQUAL;21502;1 ración;1 serving;113;USDA FDC 174762: 4 oz
+CIQUAL;34001;1 ración;1 serving;113;USDA FDC 174762: 4 oz
+CIQUAL;34002;1 ración;1 serving;85;USDA FDC 174762: 3 oz
+CIQUAL;36206;1 ración;1 serving;113;USDA FDC 174762: 4 oz
+CIQUAL;36101;1 ración;1 serving;85;USDA FDC 174762: 3 oz
+CIQUAL;6900;1 filete;1 steak;113;USDA FDC 174762: 4 oz
+CIQUAL;40108;1 ración;1 serving;85;USDA FDC 174762: 3 oz
+CIQUAL;40106;1 ración;1 serving;85;USDA FDC 174762: 3 oz
+CIQUAL;28845;1 loncha;1 slice;15;USDA FDC 172941: 1 slice (loncha fina de embutido)
+CIQUAL;28845;1 ración;1 serving;56;USDA FDC 173864: 56 grams 1 serving
+CIQUAL;28910;1 loncha;1 slice;28;USDA FDC 173864: 1 slice
+CIQUAL;28900;1 loncha;1 slice;28;USDA FDC 173864: 1 slice
+CIQUAL;28964;1 loncha;1 slice;16;USDA FDC 172941: 1 slice
+CIQUAL;28963;1 loncha;1 slice;16;USDA FDC 172941: 1 slice
+CIQUAL;30315;1 loncha;1 slice;10;USDA FDC 172938: 1 slice
+CIQUAL;30315;1 ración;1 serving;27;USDA FDC 174582: 3 slices 1 serving
+CIQUAL;30300;1 loncha;1 slice;10;USDA FDC 172938: 1 slice
+CIQUAL;30300;1 ración;1 serving;27;USDA FDC 174582: 3 slices 1 serving
+CIQUAL;30350;1 loncha;1 slice;10;USDA FDC 172938: 1 slice
+CIQUAL;30789;1 loncha;1 slice;28;USDA FDC 173864: 1 slice
+CIQUAL;8703;1 ración;1 serving;85;USDA FDC 174762: 3 oz
+CIQUAL;30131;1 salchicha;1 sausage;45;USDA FDC 171624: 1 link
+CIQUAL;30110;1 salchicha;1 sausage;45;USDA FDC 171624: 1 link
+CIQUAL;28502;1 loncha;1 slice;10;USDA FDC 172938: 1 slice
+CIQUAL;28727;1 loncha;1 slice;10;USDA FDC 172938: 1 slice
+CIQUAL;8316;1 ración;1 serving;28;USDA FDC 173864: 1 slice (1 oz)
+CIQUAL;36027;5 nuggets;5 nuggets;88;USDA FDC 170795: 5 pieces
+CIQUAL;36318;1 filete;1 cutlet;113;USDA FDC 171098: 4 oz
+CIQUAL;25163;1 ración;1 serving;113;USDA FDC 174030: 4 oz
+CIQUAL;26036;1 lomo;1 fillet;198;USDA FDC 175167: 0.5 fillet
+CIQUAL;26036;1 ración;1 serving;85;USDA FDC 175167: 3 oz
+CIQUAL;26230;1 ración;1 serving;85;USDA FDC 175167: 3 oz
+CIQUAL;26037;1 ración;1 serving;28;USDA FDC 173709: 1 oz
+CIQUAL;26039;1 lata pequeña escurrida;1 small drained can;56;Lata de 80 g, la más vendida en España: 56 g de peso escurrido declarado
+CIQUAL;26039;1 ración;1 serving;85;USDA FDC 173709: 3 oz
+CIQUAL;26180;1 lata pequeña escurrida;1 small drained can;56;Lata de 80 g, la más vendida en España: 56 g de peso escurrido declarado
+CIQUAL;26053;1 ración;1 serving;85;USDA FDC 175159: 3 oz
+CIQUAL;26044;1 filete;1 fillet;193;USDA FDC 171964: 1 fillet
+CIQUAL;26044;1 ración;1 serving;85;USDA FDC 171964: 3 oz
+CIQUAL;26120;1 ración;1 serving;85;USDA FDC 171964: 3 oz
+CIQUAL;26043;1 filete;1 fillet;231;USDA FDC 171955: 1 fillet
+CIQUAL;26043;1 ración;1 serving;85;USDA FDC 171955: 3 oz
+CIQUAL;26098;1 ración;1 serving;28;USDA FDC 171955: 1 oz
+CIQUAL;26024;1 ración;1 serving;85;USDA FDC 171955: 3 oz
+CIQUAL;26065;1 sardina;1 sardine;12;USDA FDC 175139: 1 small
+CIQUAL;26040;1 lata;1 can;92;USDA FDC 175139: 1 can (3.75 oz)
+CIQUAL;26040;2 sardinas;2 sardines;24;USDA FDC 175139: 2 sardines
+CIQUAL;26051;1 filete;1 fillet;112;USDA FDC 175119: 1 fillet
+CIQUAL;26079;1 ración;1 serving;85;USDA FDC 175119: 3 oz
+CIQUAL;26694;1 anchoa;1 anchovy;4;USDA FDC 174183: 1 anchovy
+CIQUAL;26694;1 lata;1 can;45;USDA FDC 174183: 1 can (2 oz)
+CIQUAL;26088;1 ración;1 serving;85;USDA FDC 171964: 3 oz
+CIQUAL;26134;1 filete;1 fillet;193;USDA FDC 171964: 1 fillet
+CIQUAL;26006;1 filete;1 fillet;193;USDA FDC 171964: 1 fillet
+CIQUAL;26058;1 ración;1 serving;85;USDA FDC 171964: 3 oz
+CIQUAL;27009;1 filete;1 fillet;79;USDA FDC 173717: 1 fillet
+CIQUAL;26018;1 ración;1 serving;85;USDA FDC 171964: 3 oz
+CIQUAL;26174;1 ración;1 serving;85;USDA FDC 171964: 3 oz
+CIQUAL;26082;1 rodaja;1 steak;136;USDA FDC 173703: 1 piece
+CIQUAL;26011;1 ración;1 serving;85;USDA FDC 175119: 3 oz
+CIQUAL;10021;1 ración;1 serving;85;USDA FDC 175179: 3 oz
+CIQUAL;10007;1 ración;1 serving;85;USDA FDC 175179: 3 oz
+CIQUAL;10024;1 ración;1 serving;85;USDA FDC 175179: 3 oz
+CIQUAL;10014;1 mejillón;1 mussel;16;USDA FDC 174216: 1 medium
+CIQUAL;10014;1 ración;1 serving;85;USDA FDC 174216: 3 oz
+CIQUAL;10013;1 ración;1 serving;85;USDA FDC 174216: 3 oz
+CIQUAL;10001;1 ración;1 serving;85;USDA FDC 174223: 3 oz
+CIQUAL;10002;1 ración;1 serving;85;USDA FDC 174223: 3 oz
+CIQUAL;10018;1 ración;1 serving;85;USDA FDC 174218: 3 oz
+CIQUAL;10079;1 ración;1 serving;85;USDA FDC 174218: 3 oz
+CIQUAL;10016;1 ración;1 serving;85;USDA FDC 174223: 3 oz
+CIQUAL;10017;1 almeja;1 clam;14.5;USDA FDC 174214: 1 medium
+CIQUAL;10017;1 ración;1 serving;85;USDA FDC 174214: 3 oz
+CIQUAL;26046;1 barrita;1 stick;17;USDA FDC 173702: 3 oz / 5 barritas
+CIQUAL;26046;1 ración;1 serving;85;USDA FDC 173702: 3 oz
+CIQUAL;26028;1 varita;1 fish finger;28;USDA FDC 174195: 1 stick
+CIQUAL;22000;1 huevo L;1 large egg;50;USDA FDC 171287: 1 large
+CIQUAL;22000;1 huevo M;1 medium egg;44;USDA FDC 171287: 1 medium
+CIQUAL;22000;1 huevo XL;1 extra large egg;56;USDA FDC 171287: 1 extra large
+CIQUAL;22010;1 huevo L;1 large egg;50;USDA FDC 173424: 1 large
+CIQUAL;22011;1 huevo L;1 large egg;50;USDA FDC 171287: 1 large
+CIQUAL;22505;1 huevo L;1 large egg;46;USDA FDC 173423: 1 large
+USDA;173423;1 huevo L;1 large egg;46;USDA FDC 173423: 1 large
+CIQUAL;22502;1 huevo;1 egg;61;USDA FDC 172187: 1 large
+CIQUAL;22001;1 clara;1 egg white;33;USDA FDC 172183: 1 large
+CIQUAL;22002;1 yema;1 egg yolk;17;USDA FDC 172184: 1 large
+CIQUAL;22500;1 tortilla de 2 huevos;1 two-egg omelette;122;USDA FDC 172187: 2 large
+CIQUAL;22510;1 ración;1 serving;150;Pincho o ración de bar habitual en España (estimación propia)
+CIQUAL;22050;1 huevo;1 egg;9;USDA FDC 172191: 1 egg
+CIQUAL;19041;1 vaso (250 ml);1 glass (250 ml);254;USDA FDC 171267: 1 cup (240 ml) = 244 g, a 250 ml
+CIQUAL;19041;1 taza (240 ml);1 cup (240 ml);244;USDA FDC 171267: 1 cup
+CIQUAL;19023;1 vaso (250 ml);1 glass (250 ml);254;USDA FDC 171265: 1 cup (240 ml) = 244 g, a 250 ml
+CIQUAL;19050;1 vaso (250 ml);1 glass (250 ml);254;USDA FDC 171267: 1 cup (240 ml) = 244 g, a 250 ml
+CIQUAL;19060;1 vaso (250 ml);1 glass (250 ml);254;USDA FDC 171267: 1 cup (240 ml) = 244 g, a 250 ml
+CIQUAL;19593;1 yogur;1 pot;125;Envase de 125 g, el estándar del yogur en España
+CIQUAL;19594;1 yogur;1 pot;125;Envase de 125 g, el estándar del yogur en España
+CIQUAL;19599;1 yogur;1 pot;125;Envase de 125 g, el estándar del yogur en España
+CIQUAL;19575;1 yogur;1 pot;125;Envase de 125 g, el estándar del yogur en España
+CIQUAL;19587;1 yogur;1 pot;125;Envase de 125 g, el estándar del yogur en España
+CIQUAL;19860;1 yogur;1 pot;125;Envase de 125 g, el estándar del yogur en España
+USDA;170894;1 tarrina;1 container;170;USDA FDC 170894: 1 container
+CIQUAL;19724;1 tarrina;1 container;150;USDA FDC 170902: 1 container (5.3 oz)
+CIQUAL;19865;1 vaso (250 ml);1 glass (250 ml);253;USDA FDC 170904: 1 cup (240 ml) = 243 g, a 250 ml
+CIQUAL;19644;1 cucharada;1 tablespoon;15;USDA FDC 173418: 1 tbsp
+CIQUAL;19644;1 tarrina;1 container;125;Envase de 125 g, el estándar del yogur en España
+CIQUAL;19646;1 tarrina;1 container;125;Envase de 125 g, el estándar del yogur en España
+USDA;173417;1 taza;1 cup;226;USDA FDC 173417: 1 cup (not packed)
+USDA;173417;1 ración;1 serving;113;USDA FDC 173417: 4 oz
+CIQUAL;12068;1 cucharada;1 tablespoon;14.5;USDA FDC 173418: 1 tbsp
+CIQUAL;12069;1 cucharada;1 tablespoon;15;USDA FDC 169079: 1 tbsp
+USDA;171248;1 cucharada;1 tablespoon;15;USDA FDC 171248: 0.5 cup = 124 g / 8
+USDA;171248;Media taza;Half cup;124;USDA FDC 171248: 0.5 cup
+CIQUAL;19590;1 bola;1 ball;125;Bola de 125 g, el envase estándar en España
+CIQUAL;19590;1 ración;1 serving;28;USDA FDC 170845: 1 oz
+CIQUAL;12072;1 burrata;1 burrata;125;Envase de 125 g, el habitual en España
+CIQUAL;12120;1 cucharada rallado;1 tablespoon grated;5;USDA FDC 170848: 1 tbsp grated
+CIQUAL;12120;1 ración;1 serving;28;USDA FDC 170848: 1 oz
+CIQUAL;12122;1 loncha;1 slice;20;USDA FDC 171251: 1 slice (3/4 oz)
+CIQUAL;12122;1 ración;1 serving;28;USDA FDC 171251: 1 oz
+CIQUAL;12747;1 loncha;1 slice;20;USDA FDC 171251: 1 slice (3/4 oz)
+CIQUAL;12115;1 loncha;1 slice;28;USDA FDC 171251: 1 slice (1 oz)
+CIQUAL;12736;1 loncha;1 slice;28;USDA FDC 171251: 1 slice (1 oz)
+CIQUAL;12729;1 loncha;1 slice;28;USDA FDC 171251: 1 slice (1 oz)
+CIQUAL;12726;1 loncha;1 slice;21;USDA FDC 170899: 1 slice (3/4 oz)
+CIQUAL;12020;1 ración;1 serving;28;USDA FDC 172177: 1 oz
+CIQUAL;12001;1 porción;1 wedge;38;USDA FDC 172178: 1 wedge
+CIQUAL;12812;1 rodaja;1 slice;28;USDA FDC 173435: 1 oz
+CIQUAL;12066;1 ración;1 serving;28;USDA FDC 173420: 1 oz
+CIQUAL;12300;1 loncha;1 slice;21;USDA FDC 171290: 1 slice (3/4 oz)
+CIQUAL;12303;1 quesito;1 triangle;16;Porción de 16 g, la estándar de los quesitos en España
+CIQUAL;12775;1 puñado;1 handful;28;USDA FDC 171251: 1 oz
+CIQUAL;16400;1 cucharada;1 tablespoon;14.2;USDA FDC 173410: 1 tbsp
+CIQUAL;16400;1 nuez;1 pat;5;USDA FDC 173410: 1 pat
+CIQUAL;16415;1 cucharada;1 tablespoon;14.2;USDA FDC 173410: 1 tbsp
+CIQUAL;19417;1 cucharada;1 tablespoon;15;USDA FDC 170859: 1 tbsp
+CIQUAL;19417;1 brik (200 ml);1 carton (200 ml);200;Brik de 200 ml, el estándar en España (densidad ≈ 1 g/ml)
+CIQUAL;19436;1 cucharada;1 tablespoon;15;USDA FDC 170859: 1 tbsp
+USDA;170859;1 cucharada;1 tablespoon;15;USDA FDC 170859: 1 tbsp
+CIQUAL;19674;1 flan;1 flan;100;Envase de 100 g, el estándar del flan en España
+CIQUAL;39229;1 natillas;1 pot;125;Envase de 125 g, el estándar en España
+CIQUAL;39212;1 arroz con leche;1 pot;125;Envase de 125 g, el estándar en España
+CIQUAL;39200;1 natillas;1 pot;125;Envase de 125 g, el estándar en España
+CIQUAL;20585;1 ración en seco;1 dry serving;60;USDA FDC 172421: 1 cup cocido = 198 g ≈ 80 g en seco; ración de 60 g en seco
+CIQUAL;20587;1 plato;1 plate;198;USDA FDC 172421: 1 cup
+CIQUAL;20587;1 cucharada;1 tablespoon;12.3;USDA FDC 172421: 1 tbsp
+CIQUAL;20535;1 ración en seco;1 dry serving;60;USDA FDC 172421: 1 cup cocido = 198 g ≈ 80 g en seco; ración de 60 g en seco
+CIQUAL;20510;1 bote escurrido;1 drained jar;250;Bote de 400 g, el estándar en España: 250 g escurridos declarados
+CIQUAL;20510;1 plato;1 plate;198;USDA FDC 172421: 1 cup
+CIQUAL;20516;1 ración en seco;1 dry serving;60;USDA FDC 173757: 1 cup cocido = 164 g; ración de 60 g en seco
+CIQUAL;20507;1 plato;1 plate;164;USDA FDC 173757: 1 cup
+CIQUAL;20532;1 bote escurrido;1 drained jar;250;Bote de 400 g, el estándar en España: 250 g escurridos declarados
+CIQUAL;20532;1 plato;1 plate;164;USDA FDC 173757: 1 cup
+CIQUAL;20501;1 ración en seco;1 dry serving;60;USDA FDC 175203: 1 cup cocido = 179 g; ración de 60 g en seco
+CIQUAL;20502;1 plato;1 plate;179;USDA FDC 175203: 1 cup
+CIQUAL;20511;1 bote escurrido;1 drained jar;250;Bote de 400 g, el estándar en España: 250 g escurridos declarados
+CIQUAL;20525;1 ración en seco;1 dry serving;60;USDA FDC 173740: 1 cup cocido = 177 g; ración de 60 g en seco
+CIQUAL;20503;1 plato;1 plate;177;USDA FDC 173740: 1 cup
+CIQUAL;20524;1 bote escurrido;1 drained jar;250;Bote de 400 g, el estándar en España: 250 g escurridos declarados
+CIQUAL;20500;1 plato;1 plate;170;USDA FDC 173753: 1 cup
+CIQUAL;20072;Media taza;Half cup;80;USDA FDC 170017: 0.5 cup
+CIQUAL;20124;Media taza;Half cup;80;USDA FDC 170017: 0.5 cup
+CIQUAL;20901;1 taza;1 cup;186;USDA FDC 174270: 1 cup
+USDA;168411;1 taza;1 cup;155;USDA FDC 168411: 1 cup
+CIQUAL;20904;1 ración;1 serving;81;USDA FDC 172475: 0.25 block
+USDA;174272;1 taza;1 cup;166;USDA FDC 174272: 1 cup
+CIQUAL;20591;1 ración;1 serving;85;USDA FDC 174030: 3 oz
+CIQUAL;25621;1 cucharada;1 tablespoon;15;USDA FDC 174289: 1 tbsp
+CIQUAL;9100;1 ración en seco;1 dry serving;80;USDA FDC 168877: 1 cup = 185 g; ración de 80 g en seco
+CIQUAL;9104;1 taza;1 cup;158;USDA FDC 168878: 1 cup
+CIQUAL;9102;1 ración en seco;1 dry serving;80;USDA FDC 168877: 1 cup = 185 g; ración de 80 g en seco
+CIQUAL;9103;1 taza;1 cup;202;USDA FDC 169704: 1 cup
+CIQUAL;9125;1 taza;1 cup;158;USDA FDC 168878: 1 cup
+CIQUAL;9810;1 ración en seco;1 dry serving;80;USDA FDC 169736: 2 oz = 57 g; ración española de 80 g en seco
+CIQUAL;9811;1 taza de espaguetis;1 cup spaghetti;124;USDA FDC 169737: 1 cup spaghetti not packed
+CIQUAL;9811;1 taza de macarrones;1 cup penne;107;USDA FDC 169737: 1 cup penne
+CIQUAL;9870;1 ración en seco;1 dry serving;80;USDA FDC 169736: 2 oz = 57 g; ración española de 80 g en seco
+CIQUAL;9871;1 taza;1 cup;124;USDA FDC 169737: 1 cup spaghetti not packed
+CIQUAL;9815;1 ración;1 serving;125;Envase de 250 g para dos raciones, el habitual en España
+CIQUAL;25216;1 taza;1 cup;124;USDA FDC 169737: 1 cup spaghetti not packed
+CIQUAL;9863;1 ración en seco;1 dry serving;43;USDA FDC 168905: 1.5 oz
+CIQUAL;9901;1 taza;1 cup;176;USDA FDC 168914: 1 cup
+CIQUAL;9610;1 ración en seco;1 dry serving;60;USDA FDC 169700: 1 oz dry yields; ración de 60 g en seco
+CIQUAL;9683;1 taza;1 cup;157;USDA FDC 169700: 1 cup, cooked
+CIQUAL;9340;1 ración en seco;1 dry serving;60;USDA FDC 168917: 1 cup cocido = 185 g; ración de 60 g en seco
+CIQUAL;9341;1 taza;1 cup;185;USDA FDC 168917: 1 cup
+CIQUAL;9691;1 taza;1 cup;182;USDA FDC 170287: 1 cup
+CIQUAL;9615;1 taza;1 cup;240;USDA FDC 169761: 1 cup de agua equivalente (estimación propia)
+CIQUAL;32140;1 taza;1 cup;81;USDA FDC 173904: 1 cup
+CIQUAL;32140;1 cucharada;1 tablespoon;5;USDA FDC 173904: 1 cup = 81 g / 16
+CIQUAL;32140;1 ración;1 serving;40;USDA FDC 173904: 0.33 cup = 27 g; ración de 40 g
+CIQUAL;32004;1 taza;1 cup;122;USDA FDC 171646: 1 cup
+CIQUAL;32004;1 ración;1 serving;40;USDA FDC 171646: 1 oz = 28 g; ración de 40 g
+CIQUAL;32005;1 taza;1 cup;28;USDA FDC 174648: 1 cup (1 NLEA serving)
+CIQUAL;32003;1 ración;1 serving;30;USDA FDC 171646: 1 oz ≈ 28 g; ración de 30 g declarada en los envases españoles
+CIQUAL;7001;1 rebanada;1 slice;28;USDA FDC 172818: 1 oz
+CIQUAL;7001;1 barra;1 baguette;250;Barra de 250 g, la estándar en España
+CIQUAL;7001;Media barra;Half baguette;125;Barra de 250 g, la estándar en España
+CIQUAL;7110;1 rebanada;1 slice;32;USDA FDC 172688: 1 slice
+CIQUAL;7100;1 rebanada;1 slice;32;USDA FDC 172688: 1 slice
+CIQUAL;7255;1 rebanada;1 slice;26;USDA FDC 168013: 1 slice regular
+CIQUAL;7125;1 rebanada;1 slice;32;USDA FDC 172684: 1 slice, regular
+CIQUAL;7200;1 rebanada;1 slice;25;USDA FDC 172818: 1 slice
+CIQUAL;7111;1 rebanada;1 slice;32;USDA FDC 172688: 1 slice
+CIQUAL;7130;1 rebanada;1 slice;25;USDA FDC 172818: 1 slice
+CIQUAL;7259;1 pan;1 bun;44;USDA FDC 172796: 1 roll
+CIQUAL;7180;1 pan grande;1 large pita;60;USDA FDC 174915: 1 pita, large
+CIQUAL;7180;1 pan pequeño;1 small pita;28;USDA FDC 174915: 1 pita, small
+CIQUAL;7815;1 tortilla mediana;1 medium tortilla;49;USDA FDC 175037: 1 tortilla (approx 7-8" dia)
+CIQUAL;7815;1 tortilla grande;1 large tortilla;72;USDA FDC 175037: 1 tortilla (approx 10" dia)
+CIQUAL;7813;1 tortilla;1 tortilla;24;USDA FDC 175036: 1 tortilla
+CIQUAL;7300;1 tostada;1 toast;8;Tostada de 8 g, la habitual en los paquetes españoles
+CIQUAL;7340;1 tostada;1 toast;8;Tostada de 8 g, la habitual en los paquetes españoles
+CIQUAL;7352;1 tortita;1 cake;9;USDA FDC 170250: 1 cake
+CIQUAL;7354;1 tortita;1 cake;9;USDA FDC 170250: 1 cake
+CIQUAL;7525;1 ración;1 serving;28;USDA FDC 174982: 1 oz
+CIQUAL;7351;1 cracker;1 cracker;4;USDA FDC 174982: 1 cracker, rectangular
+CIQUAL;9435;1 taza;1 cup;125;USDA FDC 168894: 1 cup
+CIQUAL;9435;1 cucharada;1 tablespoon;8;USDA FDC 168894: 1 cup = 125 g / 16
+CIQUAL;9415;1 taza;1 cup;125;USDA FDC 168894: 1 cup
+CIQUAL;7615;1 cruasán mediano;1 medium croissant;57;USDA FDC 174987: 1 croissant, medium
+CIQUAL;7615;1 cruasán pequeño;1 small croissant;42;USDA FDC 174987: 1 croissant, small
+CIQUAL;7730;1 napolitana;1 pastry;57;USDA FDC 174987: 1 croissant, medium
+CIQUAL;7746;1 ración;1 serving;57;USDA FDC 174987: 1 croissant, medium
+CIQUAL;4008;1 patata mediana;1 medium potato;136;USDA FDC 170438: 1 potato (2-1/2" dia)
+CIQUAL;4003;1 patata mediana;1 medium potato;136;USDA FDC 170438: 1 potato (2-1/2" dia)
+CIQUAL;4003;Media taza;Half cup;78;USDA FDC 170438: 0.5 cup
+CIQUAL;4026;1 patata mediana;1 medium potato;136;USDA FDC 170438: 1 potato (2-1/2" dia)
+CIQUAL;4018;1 taza;1 cup;210;USDA FDC 170493: 1 cup
+CIQUAL;4032;1 ración;1 serving;85;USDA FDC 168948: 3 oz
+CIQUAL;4101;1 boniato mediano;1 medium sweet potato;130;USDA FDC 168482: 1 sweetpotato, 5" long
+CIQUAL;4102;1 boniato mediano;1 medium sweet potato;130;USDA FDC 168482: 1 sweetpotato, 5" long
+CIQUAL;25510;1 ración;1 serving;200;Envase de 400 g para dos raciones, el habitual en España
+CIQUAL;13005;1 plátano mediano;1 medium banana;118;USDA FDC 173944: 1 medium
+CIQUAL;13005;1 plátano pequeño;1 small banana;101;USDA FDC 173944: 1 small
+CIQUAL;13005;1 plátano grande;1 large banana;136;USDA FDC 173944: 1 large
+CIQUAL;13039;1 manzana mediana;1 medium apple;182;USDA FDC 171688: 1 medium
+CIQUAL;13039;1 manzana pequeña;1 small apple;149;USDA FDC 171688: 1 small
+CIQUAL;13037;1 pera mediana;1 medium pear;178;USDA FDC 169118: 1 medium
+CIQUAL;13034;1 naranja mediana;1 medium orange;131;USDA FDC 169097: 1 fruit
+CIQUAL;13034;1 naranja grande;1 large orange;184;USDA FDC 169097: 1 large
+CIQUAL;13024;1 mandarina;1 mandarin;88;USDA FDC 169105: 1 medium
+CIQUAL;13043;1 melocotón mediano;1 medium peach;150;USDA FDC 169928: 1 medium
+CIQUAL;13399;1 nectarina mediana;1 medium nectarine;142;USDA FDC 169914: 1 medium
+CIQUAL;13000;1 albaricoque;1 apricot;35;USDA FDC 171697: 1 apricot
+CIQUAL;13100;1 ciruela;1 plum;66;USDA FDC 169949: 1 fruit
+CIQUAL;13008;1 cereza;1 cherry;8.2;USDA FDC 171719: 1 cherry
+CIQUAL;13008;1 taza;1 cup;154;USDA FDC 171719: 1 cup, without pits
+CIQUAL;13014;1 fresa;1 strawberry;12;USDA FDC 167762: 1 medium
+CIQUAL;13014;1 taza;1 cup;144;USDA FDC 167762: 1 cup, whole
+CIQUAL;13015;1 taza;1 cup;123;USDA FDC 167755: 1 cup
+CIQUAL;13028;1 taza;1 cup;148;USDA FDC 171711: 1 cup
+CIQUAL;13029;1 taza;1 cup;144;USDA FDC 173946: 1 cup
+CIQUAL;13395;10 uvas;10 grapes;49;USDA FDC 174683: 10 grapes
+CIQUAL;13395;1 taza;1 cup;151;USDA FDC 174683: 1 cup
+CIQUAL;13026;1 tajada;1 wedge;102;USDA FDC 169092: 1 wedge, large
+CIQUAL;13742;1 tajada;1 wedge;160;USDA FDC 169911: 1 wedge (1/8 of 6" to 7" dia melon)
+CIQUAL;13036;1 tajada;1 wedge;286;USDA FDC 167765: 1 wedge
+CIQUAL;13002;1 rodaja;1 slice;84;USDA FDC 169124: 1 slice (3-1/2" dia x 3/4" thick)
+CIQUAL;13025;1 mango;1 mango;336;USDA FDC 169910: 1 fruit without refuse
+CIQUAL;13021;1 kiwi;1 kiwi;69;USDA FDC 168153: 1 fruit
+CIQUAL;13035;1 taza;1 cup;145;USDA FDC 169926: 1 cup 1" pieces
+CIQUAL;13012;1 higo;1 fig;50;USDA FDC 173021: 1 medium
+CIQUAL;13018;1 granada;1 pomegranate;282;USDA FDC 169134: 1 pomegranate
+CIQUAL;13018;Media taza de granos;Half cup of seeds;87;USDA FDC 169134: 0.5 cup arils
+CIQUAL;13009;1 limón;1 lemon;58;USDA FDC 167746: 1 fruit (2-1/8" dia)
+CIQUAL;13040;Medio pomelo;Half grapefruit;123;USDA FDC 174673: 0.5 fruit
+CIQUAL;13066;1 caqui;1 persimmon;168;USDA FDC 169941: 1 fruit
+CIQUAL;13564;1 níspero;1 loquat;16;USDA FDC 169908: 1 medium
+CIQUAL;13023;1 lichi;1 lychee;9.6;USDA FDC 169086: 1 fruit without refuse
+CIQUAL;13016;1 maracuyá;1 passion fruit;18;USDA FDC 169108: 1 fruit without refuse
+CIQUAL;13004;1 aguacate;1 avocado;201;USDA FDC 171705: 1 avocado
+CIQUAL;13004;Medio aguacate;Half avocado;100;USDA FDC 171705: 1 avocado = 201 g / 2
+CIQUAL;15006;1 ración;1 serving;28;USDA FDC 170567: 1 oz
+CIQUAL;13011;1 dátil;1 date;24;USDA FDC 168191: 1 date, pitted
+CIQUAL;13046;1 puñado;1 handful;28;USDA FDC 170567: 1 oz
+CIQUAL;13042;1 ciruela pasa;1 prune;9.5;USDA FDC 168162: 1 prune, pitted
+CIQUAL;13001;1 orejón;1 dried apricot half;3.5;USDA FDC 173941: 1 half
+CIQUAL;13013;1 higo seco;1 dried fig;8.4;USDA FDC 174665: 1 fig
+CIQUAL;13089;1 puñado;1 handful;28;USDA FDC 170567: 1 oz
+CIQUAL;13038;1 tarrina;1 pot;100;Envase de 100 g, el estándar de la compota en España
+CIQUAL;13134;1 taza;1 cup;150;USDA FDC 173944: 1 cup, sliced (estimación por la fruta más abundante)
+CIQUAL;13033;1 aceituna;1 olive;4.4;USDA FDC 169094: 1 large
+CIQUAL;13033;10 aceitunas;10 olives;44;USDA FDC 169094: 1 large × 10
+CIQUAL;13032;1 aceituna;1 olive;4.4;USDA FDC 169094: 1 large
+CIQUAL;20385;1 tomate mediano;1 medium tomato;123;USDA FDC 170457: 1 medium whole
+CIQUAL;20385;1 tomate grande;1 large tomato;182;USDA FDC 170457: 1 large whole
+CIQUAL;20172;1 tomate cherry;1 cherry tomato;17;USDA FDC 170457: 1 cherry
+CIQUAL;20048;1 lata escurrida;1 drained can;240;Lata de 400 g, la estándar en España: 240 g escurridos declarados
+CIQUAL;20170;1 cucharada;1 tablespoon;15;USDA FDC 171192: 0.5 cup = 132 g / 8 (estimación por volumen)
+CIQUAL;20068;1 cucharada;1 tablespoon;16;USDA FDC 172241: 1 tbsp de líquido denso (estimación por volumen)
+CIQUAL;20019;1 pepino;1 cucumber;301;USDA FDC 168409: 1 cucumber
+CIQUAL;20019;Media taza en rodajas;Half cup sliced;52;USDA FDC 168409: 0.5 cup slices
+CIQUAL;20031;1 hoja;1 leaf;24;USDA FDC 169249: 1 leaf outer
+CIQUAL;20031;1 taza;1 cup;36;USDA FDC 169249: 1 cup shredded
+CIQUAL;20171;1 hoja;1 leaf;28;USDA FDC 169247: 1 leaf outer
+CIQUAL;20171;1 taza;1 cup;47;USDA FDC 169247: 1 cup shredded
+CIQUAL;20200;1 taza;1 cup;36;USDA FDC 169249: 1 cup shredded
+CIQUAL;20217;1 taza;1 cup;20;USDA FDC 168462: 1 cup de hoja tierna (estimación por la espinaca, 30 g)
+CIQUAL;20099;1 taza;1 cup;30;USDA FDC 168462: 1 cup
+CIQUAL;20059;1 taza;1 cup;30;USDA FDC 168462: 1 cup
+CIQUAL;20027;Media taza;Half cup;90;USDA FDC 168462: 1 bunch 340 g crudo reduce a ≈ 1 cup cocido (estimación propia)
+CIQUAL;20346;1 taza;1 cup;30;USDA FDC 168462: 1 cup de hoja (estimación por la espinaca)
+CIQUAL;20057;1 taza troceado;1 cup chopped;91;USDA FDC 170379: 1 cup chopped
+CIQUAL;20351;1 taza;1 cup;91;USDA FDC 170379: 1 cup chopped
+CIQUAL;20016;1 taza troceada;1 cup chopped;107;USDA FDC 169986: 1 cup chopped
+CIQUAL;20017;1 taza;1 cup;107;USDA FDC 169986: 1 cup chopped
+CIQUAL;20058;1 taza;1 cup;88;USDA FDC 170383: 1 cup
+CIQUAL;20069;1 taza picado;1 cup shredded;70;USDA FDC 169975: 1 cup, shredded
+CIQUAL;20014;1 taza picada;1 cup shredded;70;USDA FDC 169975: 1 cup, shredded
+CIQUAL;20009;1 zanahoria mediana;1 medium carrot;61;USDA FDC 170393: 1 medium
+CIQUAL;20009;1 zanahoria grande;1 large carrot;72;USDA FDC 170393: 1 large
+CIQUAL;20307;1 taza;1 cup;128;USDA FDC 170393: 1 cup chopped
+CIQUAL;20020;1 calabacín mediano;1 medium courgette;196;USDA FDC 169291: 1 medium
+CIQUAL;20021;1 taza;1 cup;113;USDA FDC 169291: 1 cup, sliced
+CIQUAL;20053;1 berenjena;1 aubergine;458;USDA FDC 169228: 1 eggplant, peeled
+CIQUAL;20087;1 pimiento mediano;1 medium pepper;119;USDA FDC 170108: 1 medium
+CIQUAL;20085;1 pimiento mediano;1 medium pepper;119;USDA FDC 170427: 1 medium
+CIQUAL;20275;1 ración;1 serving;85;USDA FDC 170108: 3 oz (estimación por peso)
+CIQUAL;20034;1 cebolla mediana;1 medium onion;110;USDA FDC 170000: 1 medium
+CIQUAL;20034;1 cucharada picada;1 tablespoon chopped;10;USDA FDC 170000: 1 tbsp chopped
+CIQUAL;20238;1 cebolla mediana;1 medium onion;110;USDA FDC 170000: 1 medium
+CIQUAL;20035;Media taza;Half cup;105;USDA FDC 170000: 1 cup chopped = 160 g, reducido al cocinar (estimación propia)
+CIQUAL;11000;1 diente;1 clove;3;USDA FDC 169230: 1 clove
+CIQUAL;20039;1 puerro;1 leek;89;USDA FDC 169246: 1 leek
+CIQUAL;20023;1 rama;1 stalk;40;USDA FDC 169988: 1 stalk, medium
+CIQUAL;20056;1 champiñón;1 mushroom;18;USDA FDC 169251: 1 medium
+CIQUAL;20056;1 taza;1 cup;70;USDA FDC 169251: 1 cup, pieces or slices
+CIQUAL;20125;Media taza;Half cup;78;USDA FDC 169251: 1 cup whole 96 g, salteado (estimación propia)
+CIQUAL;20114;1 taza;1 cup;70;USDA FDC 169251: 1 cup, pieces or slices
+CIQUAL;20061;1 taza;1 cup;100;USDA FDC 169961: 1 cup 1/2" pieces
+CIQUAL;20030;1 taza;1 cup;125;USDA FDC 169961: 1 cup 1/2" pieces, cocida (estimación propia)
+CIQUAL;20279;1 espárrago;1 spear;16;USDA FDC 168389: 1 spear, medium
+CIQUAL;20076;1 espárrago;1 spear;20;USDA FDC 168389: 1 spear, large
+CIQUAL;20052;1 alcachofa;1 artichoke;128;USDA FDC 169205: 1 artichoke, medium
+CIQUAL;20000;1 alcachofa;1 artichoke;128;USDA FDC 169205: 1 artichoke, medium
+CIQUAL;20091;1 remolacha;1 beetroot;82;USDA FDC 169145: 1 beet
+CIQUAL;20003;1 remolacha;1 beetroot;82;USDA FDC 169145: 1 beet
+CIQUAL;20045;1 rábano;1 radish;4.5;USDA FDC 169276: 1 medium
+CIQUAL;20044;1 taza;1 cup;116;USDA FDC 168448: 1 cup (1" cubes)
+CIQUAL;20138;1 taza;1 cup;140;USDA FDC 169295: 1 cup, cubes
+CIQUAL;20026;1 endibia;1 head;53;USDA FDC 170404: 1 head
+CIQUAL;20004;1 taza;1 cup;36;USDA FDC 169991: 1 cup
+CIQUAL;20028;1 bulbo;1 bulb;234;USDA FDC 169385: 1 bulb
+CIQUAL;20064;1 nabo;1 turnip;122;USDA FDC 170465: 1 medium
+CIQUAL;20066;1 lata escurrida;1 drained can;211;USDA FDC 169214: 1 can (12 oz) yields
+CIQUAL;20066;Media taza;Half cup;82;USDA FDC 169214: 1 cup = 164 g / 2
+CIQUAL;20183;1 taza;1 cup;104;USDA FDC 169957: 1 cup
+CIQUAL;11014;1 cucharada;1 tablespoon;3.8;USDA FDC 170416: 1 tbsp
+CIQUAL;11004;1 pepinillo;1 gherkin;35;USDA FDC 168558: 1 spear, small
+CIQUAL;25967;1 vaso (250 ml);1 glass (250 ml);250;Densidad ≈ 1 g/ml (estimación propia)
+CIQUAL;15000;1 puñado;1 handful;28;USDA FDC 170567: 1 oz (23 whole kernels)
+CIQUAL;15000;1 almendra;1 almond;1.2;USDA FDC 170567: 1 almond
+CIQUAL;15042;1 puñado;1 handful;28;USDA FDC 170567: 1 oz
+CIQUAL;15005;1 puñado;1 handful;28;USDA FDC 170187: 1 oz (14 halves)
+CIQUAL;15005;1 nuez;1 walnut;4;USDA FDC 170187: 1 cup in shell, edible yield (7 nuts) = 28 g
+CIQUAL;15004;1 puñado;1 handful;28;USDA FDC 170581: 1 oz (21 whole kernels)
+CIQUAL;15054;1 puñado;1 handful;28;USDA FDC 170162: 1 oz
+CIQUAL;15044;1 puñado;1 handful;28;USDA FDC 170184: 1 oz (49 kernels)
+CIQUAL;15001;1 puñado;1 handful;28;USDA FDC 172430: 1 oz
+CIQUAL;15002;1 puñado;1 handful;28;USDA FDC 172430: 1 oz
+CIQUAL;15008;1 nuez;1 nut;5;USDA FDC 170569: 1 kernel
+CIQUAL;15027;1 puñado;1 handful;28;USDA FDC 170178: 1 oz
+CIQUAL;15025;1 cucharada;1 tablespoon;8.5;USDA FDC 170591: 1 cup = 135 g / 16
+CIQUAL;15066;1 puñado;1 handful;28;USDA FDC 170567: 1 oz
+CIQUAL;15011;1 cucharada;1 tablespoon;9;USDA FDC 170562: 1 cup = 140 g / 16
+CIQUAL;15064;1 cucharada;1 tablespoon;9;USDA FDC 170562: 1 cup = 140 g / 16 (estimación por la pipa de girasol)
+CIQUAL;15047;1 cucharada;1 tablespoon;12;USDA FDC 170554: 1 oz ≈ 2,5 cucharadas
+CIQUAL;15034;1 cucharada;1 tablespoon;10.3;USDA FDC 169414: 1 tbsp, whole
+CIQUAL;15010;1 cucharada;1 tablespoon;9;USDA FDC 170150: 1 tbsp
+CIQUAL;15202;1 cucharada;1 tablespoon;16;USDA FDC 172470: 2 tbsp = 32 g
+CIQUAL;15007;1 cucharada;1 tablespoon;5;USDA FDC 170567: 1 oz ≈ 5,5 cucharadas de coco rallado (estimación propia)
+CIQUAL;17270;1 cucharada;1 tablespoon;13.5;USDA FDC 171413: 1 tablespoon
+CIQUAL;17270;1 cucharadita;1 teaspoon;4.5;USDA FDC 171413: 1 tsp
+CIQUAL;17440;1 cucharada;1 tablespoon;13.5;USDA FDC 171413: 1 tablespoon
+CIQUAL;17130;1 cucharada;1 tablespoon;13.5;USDA FDC 171413: 1 tablespoon
+CIQUAL;16050;1 cucharada;1 tablespoon;13.6;USDA FDC 171412: 1 tbsp
+CIQUAL;16520;1 cucharada;1 tablespoon;12.8;USDA FDC 171401: 1 tbsp
+CIQUAL;11054;1 cucharada;1 tablespoon;13.8;USDA FDC 171009: 1 tbsp
+CIQUAL;11079;1 cucharada;1 tablespoon;15;USDA FDC 171009: 1 tbsp (versión light, más densa: estimación propia)
+CIQUAL;11168;1 cucharada;1 tablespoon;13.8;USDA FDC 171009: 1 tbsp
+CIQUAL;11108;1 cucharada;1 tablespoon;15;USDA FDC 172241: 1 tbsp de líquido (estimación por volumen)
+CIQUAL;18045;1 vaso (250 ml);1 glass (250 ml);250;Densidad 1 g/ml
+CIQUAL;18004;1 taza;1 cup;237;USDA FDC 171890: 1 cup (8 fl oz)
+CIQUAL;18004;1 café solo;1 espresso;30;USDA FDC 171890: 1 fl oz
+CIQUAL;18151;1 taza;1 cup;237;USDA FDC 171890: 1 cup (8 fl oz)
+CIQUAL;18154;1 taza;1 cup;237;USDA FDC 173227: 1 cup (8 fl oz)
+CIQUAL;18155;1 taza;1 cup;237;USDA FDC 173227: 1 cup (8 fl oz)
+CIQUAL;18022;1 taza;1 cup;237;USDA FDC 173227: 1 cup (8 fl oz)
+CIQUAL;2013;1 vaso (250 ml);1 glass (250 ml);258;USDA FDC 169098: 1 cup (240 ml) = 248 g, a 250 ml
+CIQUAL;2070;1 vaso (250 ml);1 glass (250 ml);258;USDA FDC 169098: 1 cup (240 ml) = 248 g, a 250 ml
+CIQUAL;2074;1 vaso (250 ml);1 glass (250 ml);258;USDA FDC 169098: 1 cup (240 ml) = 248 g, a 250 ml
+CIQUAL;2016;1 vaso (250 ml);1 glass (250 ml);258;USDA FDC 169098: 1 cup (240 ml) = 248 g, a 250 ml
+CIQUAL;18018;1 lata (330 ml);1 can (330 ml);342;USDA FDC 174852: 1 fl oz = 30,7 g, a 330 ml
+CIQUAL;18010;1 lata (330 ml);1 can (330 ml);342;USDA FDC 174852: 1 fl oz = 30,7 g, a 330 ml
+CIQUAL;18348;1 botella (500 ml);1 bottle (500 ml);518;USDA FDC 174852: 1 fl oz = 30,7 g, a 500 ml
+CIQUAL;18352;1 lata (250 ml);1 can (250 ml);262;USDA FDC 171937: 1 fl oz = 31 g, a 250 ml
+CIQUAL;18352;1 lata (500 ml);1 can (500 ml);524;USDA FDC 171937: 1 fl oz = 31 g, a 500 ml
+CIQUAL;18025;1 botella (330 ml);1 bottle (330 ml);330;Densidad ≈ 1 g/ml
+CIQUAL;18900;1 vaso (250 ml);1 glass (250 ml);253;USDA FDC 173776: 1 cup (240 ml) = 243 g, a 250 ml
+CIQUAL;18899;1 vaso (250 ml);1 glass (250 ml);250;USDA FDC 171942: 8 fl oz = 240 g, a 250 ml
+CIQUAL;18107;1 vaso (250 ml);1 glass (250 ml);250;USDA FDC 174820: 8 fl oz = 240 g, a 250 ml
+CIQUAL;18904;1 vaso (250 ml);1 glass (250 ml);250;USDA FDC 171942: 8 fl oz = 240 g, a 250 ml
+CIQUAL;18104;1 taza;1 cup;254;USDA FDC 171267: 1 cup (240 ml) = 244 g, a 250 ml
+CIQUAL;5001;1 caña (200 ml);1 small glass (200 ml);201;USDA FDC 168746: 1 fl oz = 29,7 g, a 200 ml
+CIQUAL;5001;1 tercio (330 ml);1 bottle (330 ml);331;USDA FDC 168746: 1 fl oz = 29,7 g, a 330 ml
+CIQUAL;5001;1 lata (330 ml);1 can (330 ml);331;USDA FDC 168746: 1 fl oz = 29,7 g, a 330 ml
+CIQUAL;5214;1 copa;1 glass;147;USDA FDC 173190: 1 serving (5 fl oz)
+CIQUAL;5215;1 copa;1 glass;147;USDA FDC 174837: 1 serving (5 fl oz)
+CIQUAL;5216;1 copa;1 glass;147;USDA FDC 174837: 1 serving (5 fl oz)
+CIQUAL;5201;1 copa;1 glass;147;USDA FDC 174837: 1 serving (5 fl oz)
+CIQUAL;5003;1 vaso;1 glass;200;Densidad ≈ 1 g/ml, vaso de 200 ml
+CIQUAL;1017;1 vaso;1 glass;200;Densidad ≈ 1 g/ml, vaso de 200 ml
+CIQUAL;1007;1 vaso;1 glass;100;Densidad ≈ 1 g/ml, vaso de 100 ml
+CIQUAL;1005;1 copa;1 shot;42;USDA FDC 171919: 1 Jigger 1.5 fl oz
+CIQUAL;1004;1 copa;1 shot;42;USDA FDC 171919: 1 Jigger 1.5 fl oz
+CIQUAL;1002;1 copa;1 shot;42;USDA FDC 171919: 1 Jigger 1.5 fl oz
+CIQUAL;1008;1 copa;1 shot;42;USDA FDC 171919: 1 Jigger 1.5 fl oz
+USDA;173180;1 cacito;1 scoop;32;USDA FDC 173180: 0.33 cup
+USDA;173177;1 cacito;1 scoop;28.7;USDA FDC 173177: 3 scoop = 86 g
+USDA;174276;1 cacito;1 scoop;28.35;USDA FDC 174276: 1 oz
+CIQUAL;11007;1 sobre;1 envelope;7;USDA FDC 169599: 1 envelope (1 tbsp)
+CIQUAL;22004;1 cucharada;1 tablespoon;7;USDA FDC 169599: 1 tbsp de polvo (estimación por la gelatina)
+CIQUAL;11009;1 cucharada;1 tablespoon;8;USDA FDC 175043: 1 tbsp = 12 g de levadura seca; en copos, 8 g (estimación propia)
+CIQUAL;9660;1 cucharada;1 tablespoon;7;USDA FDC 168892: 1 cup = 115 g / 16
+CIQUAL;31104;1 barrita;1 bar;58;Barrita de 58 g, la habitual de las sustitutivas en España
+CIQUAL;4004;1 bolsa pequeña;1 small bag;28;USDA FDC 169677: 1 oz
+CIQUAL;38417;1 ración;1 serving;28;USDA FDC 167558: 1 oz
+CIQUAL;9231;1 taza;1 cup;8;USDA FDC 167959: 1 cup
+CIQUAL;9230;1 taza;1 cup;11;USDA FDC 167959: 1 cup = 8 g sin aceite; con aceite, 11 g (estimación propia)
+CIQUAL;24001;1 galleta;1 biscuit;6;Galleta María de 6 g, la habitual en España
+CIQUAL;24020;1 galleta;1 biscuit;9;Galleta de 9 g, la habitual en los paquetes españoles
+CIQUAL;24036;1 galleta;1 biscuit;14;USDA FDC 172717: 1 cookie = 14,2 g
+CIQUAL;24684;1 galleta;1 cookie;14.2;USDA FDC 172717: 1 cookie
+CIQUAL;24632;1 magdalena;1 madeleine;30;Magdalena de 30 g, la habitual en los paquetes españoles
+CIQUAL;23925;1 porción;1 slice;63;USDA FDC 172707: 1 piece (1/12 of 10 inch cake)
+CIQUAL;23585;1 porción;1 slice;63;USDA FDC 172707: 1 piece (1/12 of 10 inch cake)
+CIQUAL;23880;1 donut;1 doughnut;45;USDA FDC 174992: 1 doughnut, medium
+CIQUAL;23799;1 crepe;1 crepe;50;Crepe de 50 g, la habitual en los paquetes españoles
+CIQUAL;23850;1 gofre;1 waffle;75;USDA FDC 175039: 1 waffle, round
+CIQUAL;31106;1 barrita;1 bar;25;Barrita de 25 g, la habitual en España
+CIQUAL;31113;1 barrita;1 bar;25;Barrita de 25 g, la habitual en España
+CIQUAL;31004;1 onza;1 square;6;Tableta de 100 g en 16-17 onzas: 6 g
+CIQUAL;31004;1 tableta;1 bar;100;Tableta de 100 g, la estándar en España
+CIQUAL;31005;1 onza;1 square;6;Tableta de 100 g en 16-17 onzas: 6 g
+CIQUAL;31005;1 tableta;1 bar;100;Tableta de 100 g, la estándar en España
+CIQUAL;31010;1 onza;1 square;6;Tableta de 100 g en 16-17 onzas: 6 g
+CIQUAL;31032;1 cucharada;1 tablespoon;15;Ración de 15 g declarada en los envases (USDA FDC 172470: 2 tbsp = 32 g de crema untable)
+CIQUAL;31000;1 barrita;1 bar;44;USDA FDC 167587: 1 bar (1.55 oz)
+CIQUAL;31060;10 gominolas;10 gummies;22;USDA FDC 167989: 10 gummy bears
+CIQUAL;39515;1 bola;1 scoop;66;USDA FDC 167575: 1 serving 1/2 cup
+CIQUAL;39524;1 bola;1 scoop;74;USDA FDC 167577: 0.5 cup
+CIQUAL;39526;1 polo;1 lolly;66;USDA FDC 167577: 1 bar (2.75 fl oz)
+CIQUAL;31016;1 cucharadita;1 teaspoon;4.2;USDA FDC 169655: 1 tsp
+CIQUAL;31016;1 sobre;1 packet;8;Sobre de 8 g, el habitual en la hostelería española
+CIQUAL;31017;1 cucharadita;1 teaspoon;4.2;USDA FDC 169655: 1 tsp
+CIQUAL;31008;1 cucharada;1 tablespoon;21;USDA FDC 169640: 1 tbsp
+CIQUAL;31034;1 cucharada;1 tablespoon;20;USDA FDC 169661: 1 tbsp
+CIQUAL;31024;1 cucharada;1 tablespoon;20;USDA FDC 169641: 1 tbsp
+CIQUAL;30995;1 cucharada;1 tablespoon;20;USDA FDC 169641: 1 tbsp
+CIQUAL;18100;1 cucharada;1 tablespoon;5.4;USDA FDC 169593: 1 tbsp
+CIQUAL;11008;1 cucharada;1 tablespoon;17;USDA FDC 168556: 1 tbsp
+CIQUAL;11013;1 cucharadita;1 teaspoon;5;USDA FDC 172234: 1 tsp
+CIQUAL;11104;1 cucharada;1 tablespoon;16;USDA FDC 174277: 1 tbsp
+CIQUAL;11018;1 cucharada;1 tablespoon;15;USDA FDC 173469: 1 tbsp = 14,9 g
+CIQUAL;11091;1 cucharada;1 tablespoon;16;USDA FDC 172241: 1 tbsp
+CIQUAL;11179;1 cucharada;1 tablespoon;16;USDA FDC 171579: 0.25 cup = 63 g / 4
+CIQUAL;25525;Media taza;Half cup;132;USDA FDC 171192: 1 serving 1/2 cup
+CIQUAL;11143;Media taza;Half cup;125;USDA FDC 171192: 0.5 cup de salsa (estimación por volumen)
+CIQUAL;25620;1 cucharada;1 tablespoon;15;USDA FDC 174289: 1 tbsp de crema untable (estimación por el hummus)
+CIQUAL;25947;1 taza;1 cup;249;USDA FDC 174536: 1 cup
+CIQUAL;25031;1 plato;1 plate;300;Ración de 300 g de plato único (estimación propia)
+CIQUAL;25404;1 porción;1 slice;107;USDA FDC 173292: 1 slice
+CIQUAL;25404;1 pizza mediana;1 medium pizza;400;Pizza congelada de 400 g, la más vendida en España
+CIQUAL;25435;1 porción;1 slice;107;USDA FDC 173292: 1 slice
+CIQUAL;25435;1 pizza mediana;1 medium pizza;400;Pizza congelada de 400 g, la más vendida en España
+CIQUAL;25081;1 ración;1 serving;300;Bandeja individual de 300 g, la habitual en España
+CIQUAL;25085;1 plato;1 plate;300;Ración de 300 g de plato único (estimación propia)
+CIQUAL;25135;1 plato;1 plate;300;Ración de 300 g de plato único (estimación propia)
+CIQUAL;25413;1 hamburguesa;1 burger;99;USDA FDC 170328: 1 sandwich
+CIQUAL;25429;1 kebab;1 kebab;350;Kebab de 350 g (estimación propia)
+CIQUAL;25522;1 bocadillo;1 sandwich;200;Media barra de 125 g con relleno (estimación propia)
+CIQUAL;4049;1 croqueta;1 croquette;30;Croqueta de 30 g, la habitual congelada en España
+CIQUAL;25590;1 falafel;1 falafel;17;USDA FDC 172455: 1 patty
+CIQUAL;25138;1 plato;1 plate;300;Ración de 300 g de plato único (estimación propia)
+CIQUAL;11058;1 pizca;1 pinch;0.4;USDA FDC 173468: 1 dash

@@ -1,0 +1,448 @@
+fuente;codigo;categoria;nombre_es;nombre_en;kcal;proteinas;carbohidratos;grasas;fibra;habitual;excepcion_kcal;nombre_origen
+CIQUAL;36017;Carnes y aves;Pechuga de pollo, cruda;Chicken breast, raw;110;23.4;0.0;1.5;0.0;s;;Poulet, filet sans peau cru
+CIQUAL;36018;Carnes y aves;Pechuga de pollo, a la plancha;Chicken breast, grilled;141;30.1;0.0;2.0;0.0;;;Poulet, filet sans peau grillé/poêlé
+CIQUAL;36024;Carnes y aves;Muslo de pollo sin piel, crudo;Chicken thigh, skinless, raw;114;19.3;0.0;4.05;0.0;;;Poulet, cuisse, viande crue
+CIQUAL;36006;Carnes y aves;Muslo de pollo sin piel, asado;Chicken thigh, skinless, roasted;171;24.8;0.0;8.03;0.0;;;Poulet, cuisse, viande rôtie/cuite au four
+CIQUAL;36002;Carnes y aves;Muslo de pollo con piel, crudo;Chicken thigh with skin, raw;192;17.3;0.0;13.5;0.0;;;Poulet, cuisse, viande et peau crue
+CIQUAL;36023;Carnes y aves;Alitas de pollo, crudas;Chicken wings, raw;181;20.4;0.0;11.0;0.0;;;Poulet, aile, viande et peau crues
+CIQUAL;36005;Carnes y aves;Pollo asado con piel;Roast chicken with skin;204;28.9;0.0;9.88;0.0;;;Poulet, viande et peau rôties/cuites au four
+CIQUAL;36304;Carnes y aves;Pechuga de pavo, cruda;Turkey breast, raw;108;23.7;0.0;1.48;0.0;;;Dinde, escalope crue
+CIQUAL;36306;Carnes y aves;Pechuga de pavo, a la plancha;Turkey breast, grilled;124;28.5;0.0;1.09;0.0;;;Dinde, escalope grillée/poêlée
+CIQUAL;36307;Carnes y aves;Muslo de pavo sin piel, crudo;Turkey thigh, skinless, raw;108;21.3;0.0;2.5;0.0;;;Dinde, cuisse, viande crue
+CIQUAL;6201;Carnes y aves;Filete de ternera, crudo;Beef steak, raw;229;18.7;0.06;17.2;0.0;;;Boeuf, steak ou bifteck cru
+CIQUAL;6206;Carnes y aves;Cadera de ternera, cruda;Beef rump, raw;118;23.5;0.4;2.5;0.0;;;Boeuf, rumsteck cru
+CIQUAL;6207;Carnes y aves;Cadera de ternera, a la plancha;Beef rump, grilled;138;29.0;0.0;2.1;0.0;;;Boeuf, rumsteck grillé/poêlé
+CIQUAL;6116;Carnes y aves;Solomillo de ternera, crudo;Beef tenderloin, raw;132;21.6;0.22;4.95;0.0;;;Boeuf, filet cru
+CIQUAL;6103;Carnes y aves;Entrecot de ternera, crudo;Beef rib-eye, raw;231;19.4;0.0;17.1;0.0;;;Boeuf, entrecôte crue
+CIQUAL;6250;Carnes y aves;Carne picada de ternera 5 % grasa, cruda;Lean ground beef 5% fat, raw;130;21.9;0.3;4.59;0.0;;;Boeuf, steak haché 5% MG cru
+CIQUAL;6252;Carnes y aves;Carne picada de ternera 10 % grasa, cruda;Ground beef 10% fat, raw;170;20.0;0.0;10.0;0.0;;;Boeuf, steak haché 10% MG cru
+CIQUAL;6256;Carnes y aves;Carne picada de ternera 20 % grasa, cruda;Ground beef 20% fat, raw;249;17.2;0.0;20.0;0.0;;;Boeuf, steak haché 20% MG cru
+CIQUAL;6253;Carnes y aves;Carne picada de ternera 10 % grasa, cocinada;Ground beef 10% fat, cooked;210;26.1;0.0;11.8;0.0;;;Boeuf, steak haché 10% MG cuit
+CIQUAL;6231;Carnes y aves;Ternera para guisar, cruda;Stewing beef, raw;164;24.0;0.0;7.5;0.0;;;Boeuf, à bourguignon ou pot-au-feu, cru
+CIQUAL;6521;Carnes y aves;Escalope de ternera, crudo;Veal escalope, raw;114;20.5;0.58;3.28;0.0;;;Veau, escalope crue
+CIQUAL;28204;Carnes y aves;Solomillo de cerdo, crudo;Pork tenderloin, raw;123;21.2;0.4;4.09;0.0;;;Porc, filet mignon cru
+CIQUAL;28203;Carnes y aves;Solomillo de cerdo, cocinado;Pork tenderloin, cooked;168;26.1;0.0;7.1;0.0;;;Porc, filet mignon cuit
+CIQUAL;28100;Carnes y aves;Chuleta de cerdo, cruda;Pork chop, raw;164;19.8;0.38;9.3;0.0;;;Porc, côte crue
+CIQUAL;28101;Carnes y aves;Chuleta de cerdo, a la plancha;Pork chop, grilled;211;29.6;0.0;10.3;0.0;;;Porc, côte grillée/poêlée
+CIQUAL;28302;Carnes y aves;Aguja de cerdo, cruda;Pork shoulder, raw;238;17.1;0.1;18.8;0.0;;;Porc, échine crue
+CIQUAL;28002;Carnes y aves;Panceta de cerdo, cruda;Pork belly, raw;253;17.0;0.0;20.5;0.0;;;Porc, poitrine crue
+CIQUAL;28472;Carnes y aves;Carne picada de cerdo, cruda;Ground pork, raw;187;18.9;0.23;12.3;0.0;;;Porc, hachage sans jarret, sans bateau, découenné, dégraissé, désossé, cru
+CIQUAL;21521;Carnes y aves;Chuletas de cordero, crudas;Lamb chops, raw;262;16.6;0.35;21.5;0.0;;;Agneau, côte ou côtelette, crue (aliment moyen)
+CIQUAL;21502;Carnes y aves;Pierna de cordero, cruda;Leg of lamb, raw;128;20.0;0.48;5.13;0.0;;;Agneau, gigot cru
+CIQUAL;34001;Carnes y aves;Conejo, crudo;Rabbit, raw;188;20.4;0.58;11.6;0.0;;;Lapin, viande crue
+CIQUAL;34002;Carnes y aves;Conejo, cocinado;Rabbit, cooked;167;20.5;0.5;9.2;0.0;;;Lapin, viande cuite
+CIQUAL;36206;Carnes y aves;Magret de pato, crudo;Duck breast, raw;337;17.9;0.1;29.4;0.0;;;Canard, magret cru
+CIQUAL;36101;Carnes y aves;Codorniz, cruda;Quail, raw;128;21.8;0.0;4.53;0.0;;;Caille, viande crue
+CIQUAL;6900;Carnes y aves;Carne de caballo, cruda;Horse meat, raw;132;20.2;0.5;5.5;0.0;;;Cheval, viande crue
+CIQUAL;40108;Carnes y aves;Hígado de pollo, crudo;Chicken liver, raw;134;21.5;1.25;4.75;0.0;;;Foie, volaille, cru
+CIQUAL;40106;Carnes y aves;Hígado de ternera, crudo;Calf liver, raw;120;15.5;5.64;3.4;0.0;;;Foie, veau, cru
+CIQUAL;28845;Carnes y aves;Jamón serrano;Serrano ham;235;30.4;0.76;12.3;0.0;s;;Jambon sec Serrano
+CIQUAL;28910;Carnes y aves;Jamón cocido;Cooked ham;125;19.5;1.7;4.5;0.08;s;;Jambon cuit, choix
+CIQUAL;28900;Carnes y aves;Jamón cocido extra;Premium cooked ham;113;21.0;0.76;2.83;0.1;;;Jambon cuit, supérieur
+CIQUAL;28964;Carnes y aves;Pechuga de pavo en lonchas;Sliced turkey breast;99;20.9;0.02;1.67;0.39;s;;Jambon de dinde ou blanc de dinde en tranche
+CIQUAL;28963;Carnes y aves;Pechuga de pollo en lonchas;Sliced chicken breast;105;20.7;1.39;1.79;0.53;;;Jambon de poulet ou blanc de poulet en tranche
+CIQUAL;30315;Carnes y aves;Chorizo;Chorizo;425;23.5;1.24;36.1;0.93;;;Chorizo
+CIQUAL;30300;Carnes y aves;Salchichón o fuet;Dry-cured sausage (salchichón, fuet);418;24.2;5.48;33.1;0.73;;;Saucisson sec
+CIQUAL;30350;Carnes y aves;Salami;Salami;457;17.7;2.59;41.8;0.0;;;Salami
+CIQUAL;30789;Carnes y aves;Mortadela;Mortadella;310;15.2;0.69;27.4;0.0;;;Mortadelle
+CIQUAL;8703;Carnes y aves;Morcilla;Black pudding;297;12.2;0.29;27.1;1.42;;;Boudin noir, à cuire
+CIQUAL;30131;Carnes y aves;Salchichas de pollo tipo Frankfurt;Chicken frankfurters;236;14.0;1.82;18.9;0.0;;;Saucisse de volaille type knack
+CIQUAL;30110;Carnes y aves;Salchicha fresca de cerdo, cruda;Fresh pork sausage, raw;321;13.3;0.64;29.5;0.0;;;Saucisse de Toulouse crue
+CIQUAL;28502;Carnes y aves;Bacon ahumado;Smoked bacon;303;15.6;0.79;26.1;1.0;;;Poitrine de porc en salaison, fumée, crue
+CIQUAL;28727;Carnes y aves;Lomo de cerdo curado;Cured pork loin;118;23.1;0.7;2.6;0.0;;;Filet de bacon
+CIQUAL;8316;Carnes y aves;Paté de hígado;Liver pâté;316;13.7;1.21;28.3;0.84;;;Pâté de foie de volaille
+CIQUAL;36027;Carnes y aves;Nuggets de pollo;Chicken nuggets;250;15.6;19.4;11.6;2.4;;;Nuggets ou croquette panée de poulet, préemballé
+CIQUAL;36318;Carnes y aves;Filete de pavo empanado;Breaded turkey cutlet;211;14.1;13.5;10.9;1.3;;;Escalope panée, viennoise ou milanaise, dinde, cuite
+CIQUAL;25163;Carnes y aves;Albóndigas de ternera, cocinadas;Beef meatballs, cooked;217;18.5;5.65;13.3;0.63;;;Boulettes au boeuf, cuites
+CIQUAL;26036;Pescado y marisco;Salmón, crudo;Salmon, raw;193;20.5;0.0;12.4;0.12;s;;Saumon, élevage, cru
+CIQUAL;26230;Pescado y marisco;Salmón, al horno;Salmon, baked;214;22.1;0.98;13.5;0.0;;;Saumon, élevage, rôti/cuit au four
+CIQUAL;26037;Pescado y marisco;Salmón ahumado;Smoked salmon;184;22.2;0.13;10.5;0.26;;;Saumon fumé
+CIQUAL;26039;Pescado y marisco;Atún al natural, en lata;Canned tuna in water;143;26.8;0.0;3.94;0.0;s;;Thon, au naturel, appertisé, égoutté
+CIQUAL;26180;Pescado y marisco;Atún en aceite, en lata;Canned tuna in oil;206;23.3;0.76;12.2;0.0;;;Thon à l'huile de tournesol, entier, appertisé, égoutté
+CIQUAL;26053;Pescado y marisco;Atún fresco, crudo;Fresh tuna, raw;155;24.0;2.72;5.38;0.0;;;Thon, cru
+CIQUAL;26044;Pescado y marisco;Merluza, cruda;Hake, raw;83;17.6;0.0;1.35;0.0;;;Merlu, cru
+CIQUAL;26120;Pescado y marisco;Merluza, cocinada;Hake, cooked;112;21.2;0.0;3.0;0.0;;;Merlu, cuit à l'étouffée
+CIQUAL;26043;Pescado y marisco;Bacalao fresco, crudo;Cod, raw;77;18.1;0.0;0.57;0.1;;;Cabillaud, cru
+CIQUAL;26098;Pescado y marisco;Bacalao salado, seco;Salt cod, dried;210;47.6;1.1;1.67;0.0;;;Morue, salée, sèche
+CIQUAL;26024;Pescado y marisco;Bacalao desalado, cocido;Salt cod, desalted and boiled;113;26.0;0.0;1.01;0.0;;;Morue, salée, bouillie/cuite à l'eau
+CIQUAL;26065;Pescado y marisco;Sardinas, crudas;Sardines, raw;160;19.5;0.0;9.17;0.0;;;Sardine, crue
+CIQUAL;26040;Pescado y marisco;Sardinas en aceite de oliva, en lata;Canned sardines in olive oil;224;23.3;0.11;14.5;0.0;;;Sardine, à l'huile d'olive, appertisée, égouttée
+CIQUAL;26051;Pescado y marisco;Caballa, cruda;Mackerel, raw;198;18.1;0.93;13.5;0.0;;;Maquereau, cru
+CIQUAL;26079;Pescado y marisco;Boquerones, crudos;Anchovies, raw;129;18.6;0.0;6.07;0.0;;;Anchois, cru
+CIQUAL;26694;Pescado y marisco;Anchoas en aceite de oliva;Anchovy fillets in olive oil;197;25.0;1.36;9.9;1.1;;;Anchois, filets, salés, à l'huile d'olive, semi-conserve, égouttés
+CIQUAL;26088;Pescado y marisco;Dorada, cruda;Gilthead sea bream, raw;129;20.9;0.0;5.1;0.0;;;Dorade royale ou daurade ou vraie daurade, élevage, crue
+CIQUAL;26134;Pescado y marisco;Carbonero, crudo;Coley, raw;82;18.8;0.0;0.8;0.0;;;Lieu noir, cru
+CIQUAL;26006;Pescado y marisco;Abadejo, crudo;Pollock, raw;73;16.3;0.51;0.61;0.09;;;Lieu ou colin d'Alaska, cru
+CIQUAL;26058;Pescado y marisco;Lenguado, crudo;Sole, raw;77;18.0;0.0;0.6;0.0;;;Sole, crue
+CIQUAL;27009;Pescado y marisco;Trucha, cruda;Trout, raw;132;19.0;0.0;6.24;0.0;;;Truite arc en ciel, élevage, crue
+CIQUAL;26018;Pescado y marisco;Rape, crudo;Monkfish, raw;67;15.1;0.0;0.74;0.1;;;Lotte ou baudroie, crue
+CIQUAL;26174;Pescado y marisco;Rodaballo, crudo;Turbot, raw;86;17.9;0.0;1.55;0.0;;;Turbot, cru
+CIQUAL;26082;Pescado y marisco;Pez espada, crudo;Swordfish, raw;134;18.9;1.0;5.97;0.0;;;Espadon, cru
+CIQUAL;26011;Pescado y marisco;Arenque, crudo;Herring, raw;176;17.7;0.0;11.7;0.0;;;Hareng, cru
+CIQUAL;10021;Pescado y marisco;Gambas, crudas;Prawns, raw;99;19.7;3.21;0.84;0.0;;;Crevette, crue
+CIQUAL;10007;Pescado y marisco;Gambas, cocidas;Prawns, cooked;91;20.5;0.2;0.79;0.0;;;Crevette, cuite
+CIQUAL;10024;Pescado y marisco;Cigalas, crudas;Langoustines, raw;90;19.1;1.53;0.79;0.0;;;Langoustine, crue
+CIQUAL;10014;Pescado y marisco;Mejillones, crudos;Mussels, raw;72;11.2;2.69;1.82;0.0;;;Moule commune, crue
+CIQUAL;10013;Pescado y marisco;Mejillones, cocidos;Mussels, cooked;108;17.2;5.12;2.09;0.0;;;Moule, bouillie/cuite à l'eau
+CIQUAL;10001;Pescado y marisco;Calamar, crudo;Squid, raw;77;14.4;2.17;1.19;0.0;;;Calmar ou calamar ou encornet, cru
+CIQUAL;10002;Pescado y marisco;Calamares a la romana;Battered squid rings;229;8.69;26.7;9.5;1.0;;;Calmar ou calamar ou encornet, à la romaine (beignet), préemballé
+CIQUAL;10018;Pescado y marisco;Pulpo, crudo;Octopus, raw;60;12.9;0.97;0.5;0.0;;;Poulpe, cru
+CIQUAL;10079;Pescado y marisco;Pulpo, cocido;Octopus, cooked;156;29.8;4.4;2.08;0.0;;;Poulpe, cuit
+CIQUAL;10016;Pescado y marisco;Sepia, cruda;Cuttlefish, raw;76;16.2;0.51;1.05;0.0;;;Seiche, crue
+CIQUAL;10017;Pescado y marisco;Almejas, crudas;Clams, raw;80;11.5;2.66;2.65;0.0;;;Clam, praire ou palourde, cru
+CIQUAL;26046;Pescado y marisco;Surimi;Surimi;117;7.54;11.8;4.33;0.73;;;Surimi, bâtonnets, tranche ou râpé saveur crabe
+CIQUAL;26028;Pescado y marisco;Varitas de pescado empanadas;Breaded fish fingers;255;13.2;18.4;13.7;2.5;;;Nuggets ou croquette panée de poisson, préemballé
+CIQUAL;22000;Huevos;Huevo;Egg;140;12.8;0.06;9.83;0.0;s;;Oeuf cru
+CIQUAL;22010;Huevos;Huevo duro;Hard-boiled egg;134;13.5;0.52;8.62;0.0;;;Oeuf dur
+CIQUAL;22011;Huevos;Huevo escalfado;Poached egg;139;12.5;0.89;9.47;0.0;;;Oeuf poché
+CIQUAL;22505;Huevos;Huevo a la plancha;Fried egg, no oil;157;14.6;1.4;10.4;0.0;;;Oeuf au plat, sans matière grasse
+USDA;173423;Huevos;Huevo frito;Fried egg;196;13.61;0.83;14.84;0.0;;;Egg, whole, cooked, fried
+CIQUAL;22502;Huevos;Huevos revueltos;Scrambled eggs;167;11.9;0.44;13.0;0.0;;;Oeuf brouillé, avec matière grasse
+CIQUAL;22001;Huevos;Clara de huevo;Egg white;48;10.9;0.73;0.17;0.0;s;;Oeuf, blanc (blanc d'oeuf), cru
+CIQUAL;22002;Huevos;Yema de huevo;Egg yolk;307;15.5;1.09;26.7;0.0;;;Oeuf, jaune (jaune d'oeuf), cru
+CIQUAL;22500;Huevos;Tortilla francesa;Plain omelette;196;13.8;0.9;15.3;0.0;;;Omelette nature, faite maison
+CIQUAL;22510;Huevos;Tortilla de patatas;Spanish potato omelette;165;5.56;11.7;9.9;2.7;;;Tortilla espagnole aux oignons (omelette aux pommes de terre et oignons), préemballée
+CIQUAL;22050;Huevos;Huevo de codorniz;Quail egg;154;13.1;0.41;11.1;0.0;;;Oeuf de caille, cru
+CIQUAL;19041;Lácteos;Leche semidesnatada;Semi-skimmed milk;48;3.41;5.0;1.56;0.0;s;;Lait demi-écrémé, UHT
+CIQUAL;19023;Lácteos;Leche entera;Whole milk;65;3.39;4.77;3.55;0.0;;;Lait entier, UHT
+CIQUAL;19050;Lácteos;Leche desnatada;Skimmed milk;34;3.53;5.01;0.02;0.0;;;Lait écrémé, UHT
+CIQUAL;19060;Lácteos;Leche sin lactosa semidesnatada;Lactose-free semi-skimmed milk;44;3.38;4.69;1.29;0.0;;;Lait demi-écrémé (ou à teneur en matière grasse légèrement inférieure), UHT,  à teneur réduite en lactose
+CIQUAL;19593;Lácteos;Yogur natural;Plain yogurt;50;3.75;4.26;1.68;0.0;s;;Yaourt ou lait fermenté, nature
+CIQUAL;19594;Lácteos;Yogur natural desnatado;Plain fat-free yogurt;39;4.08;4.89;0.05;0.03;;;Yaourt ou lait fermenté, nature, 0% MG
+CIQUAL;19599;Lácteos;Yogur natural azucarado;Sweetened plain yogurt;82;2.86;10.7;2.81;0.03;;;Yaourt ou lait fermenté, nature, sucré
+CIQUAL;19575;Lácteos;Yogur de sabores;Flavoured yogurt;86;3.09;12.7;2.25;0.02;;;Yaourt ou lait fermenté, aromatisé, sucré
+CIQUAL;19587;Lácteos;Yogur con frutas;Fruit yogurt;89;3.17;12.6;2.41;0.6;;;Yaourt ou lait fermenté, aux fruits, sucré
+CIQUAL;19860;Lácteos;Yogur griego natural;Plain Greek-style yogurt;103;2.96;3.73;8.16;0.07;;;Yaourt à la grecque nature
+USDA;170894;Lácteos;Yogur griego natural desnatado;Plain non-fat Greek yogurt;59;10.19;3.6;0.39;0.0;;;Yogurt, Greek, plain, nonfat (Includes foods for USDA's Food Distribution Program)
+CIQUAL;19724;Lácteos;Yogur alto en proteínas, natural;High-protein plain yogurt;74;9.1;3.45;2.7;0.05;;;Spécialité laitière riche en protéines, nature
+CIQUAL;19865;Lácteos;Kéfir;Kefir;61;3.13;4.5;3.4;0.0;;;Kéfir de lait
+CIQUAL;19644;Lácteos;Queso batido desnatado;Fat-free quark;48;7.19;4.22;0.05;0.04;;;Fromage blanc, nature, 0% MG
+CIQUAL;19646;Lácteos;Queso batido natural;Plain quark;76;7.13;3.86;3.23;0.02;;;Fromage blanc, nature, 2-3% MG
+USDA;173417;Lácteos;Queso cottage;Cottage cheese;72;12.39;2.72;1.02;0.0;;;Cheese, cottage, lowfat, 1% milkfat
+CIQUAL;12068;Lácteos;Queso fresco para untar;Cream cheese spread;225;6.13;3.31;20.7;0.0;;;Fromage frais ou spécialité fromagère non affinée, nature, à tartiner, en barquette, non allégée en matière grasse
+CIQUAL;12069;Lácteos;Queso fresco para untar, light;Light cream cheese spread;133;10.6;5.12;7.48;0.25;;;Fromage frais ou spécialité fromagère non affinée, nature, à tartiner, en barquette, allégée en matière grasse
+USDA;171248;Lácteos;Requesón;Ricotta;138;11.39;5.14;7.91;0.0;;;Cheese, ricotta, part skim milk
+CIQUAL;19590;Lácteos;Mozzarella;Mozzarella;227;16.1;0.7;17.7;0.0;;;Mozzarella au lait de vache
+CIQUAL;12072;Lácteos;Burrata;Burrata;259;10.6;0.93;23.4;0.0;;;Burrata
+CIQUAL;12120;Lácteos;Parmesano;Parmesan;411;30.5;1.14;31.0;0.0;;;Parmesan
+CIQUAL;12122;Lácteos;Queso de oveja curado;Cured sheep's cheese;383;25.0;1.0;31.0;0.0;;;Pecorino (fromage de brebis)
+CIQUAL;12747;Lácteos;Queso de oveja semicurado;Semi-cured sheep's cheese;393;21.8;0.72;33.6;0.0;;;Fromage de brebis à pâte pressée non cuite des Pyrénées, type tomme ou tome
+CIQUAL;12115;Lácteos;Emmental;Emmental;373;27.3;0.0;28.8;0.0;;;Emmental ou emmenthal
+CIQUAL;12736;Lácteos;Gouda;Gouda;369;24.2;0.0;30.2;0.0;;;Gouda
+CIQUAL;12729;Lácteos;Edam;Edam;320;25.2;0.0;24.4;0.0;;;Edam
+CIQUAL;12726;Lácteos;Cheddar;Cheddar;399;24.2;1.2;32.6;0.0;;;Cheddar
+CIQUAL;12020;Lácteos;Brie;Brie;345;17.3;0.68;30.4;0.06;;;Brie, sans précision
+CIQUAL;12001;Lácteos;Camembert;Camembert;280;19.1;0.0;22.5;0.0;;;Camembert, sans précision sur le type de lait (pasteurisé ou cru)
+CIQUAL;12812;Lácteos;Rulo de cabra;Goat's cheese log;285;18.4;0.0;23.3;0.0;;;Fromage de chèvre bûche
+CIQUAL;12066;Lácteos;Queso feta;Feta cheese;284;14.8;0.45;24.3;0.2;;;Feta, au lait de brebis 70% minimum et lait de chèvre 30% maximum
+CIQUAL;12300;Lácteos;Queso en lonchas fundido;Processed cheese slices;246;13.8;5.34;18.5;0.0;;;Fromage fondu en tranchettes
+CIQUAL;12303;Lácteos;Quesitos;Processed cheese triangles;238;11.0;8.52;17.6;0.13;;;Fromage fondu en portion (triangle), non enrichi
+CIQUAL;12775;Lácteos;Queso rallado;Grated cheese;386;31.4;0.15;28.9;0.0;;;Mélange de fromages râpés (ex : spécial gratins, spécial pâtes, spécial pizzas…)
+CIQUAL;16400;Lácteos;Mantequilla;Butter;753;0.63;0.71;83.0;0.0;;;Beurre à 80% MG minimum, doux
+CIQUAL;16415;Lácteos;Mantequilla light;Light butter;390;0.25;3.6;41.7;0.0;;;Beurre à 39-41% MG, léger, doux
+CIQUAL;19417;Lácteos;Nata para cocinar 30 %;Cooking cream 30%;293;2.16;3.69;30.0;0.0;;;Crème 30% MG, fluide, UHT
+CIQUAL;19436;Lácteos;Nata ligera 15 %;Light cream 15%;173;2.9;4.3;16.0;0.0;;;Crème 12 à 20% MG, légère, fluide, rayon frais
+USDA;170859;Lácteos;Nata para montar;Heavy whipping cream;340;2.84;2.84;36.08;0.0;;;Cream, fluid, heavy whipping
+CIQUAL;19674;Lácteos;Flan de huevo;Egg custard flan;113;4.14;17.7;2.74;0.38;;;Flan aux oeufs, rayon frais
+CIQUAL;39229;Lácteos;Natillas de vainilla;Vanilla custard;103;2.92;16.2;2.88;0.11;;;Crème dessert à la vanille, rayon frais
+CIQUAL;39212;Lácteos;Arroz con leche;Rice pudding;121;2.94;18.9;3.4;1.2;;;Riz au lait vanille, cannelle ou nature, rayon frais
+CIQUAL;39200;Lácteos;Natillas de chocolate;Chocolate custard;121;3.39;17.9;3.55;1.5;;;Crème dessert au chocolat, rayon frais
+CIQUAL;20585;Legumbres;Lentejas, secas;Lentils, dry;327;25.1;44.5;1.8;16.4;;;Lentille verte, sèche
+CIQUAL;20587;Legumbres;Lentejas, cocidas;Lentils, cooked;125;10.1;16.2;0.58;8.45;s;;Lentille verte, bouillie/cuite à l'eau
+CIQUAL;20535;Legumbres;Lentejas rojas, secas;Red lentils, dry;328;27.7;44.9;0.8;15.4;;;Lentille corail, sèche
+CIQUAL;20510;Legumbres;Lentejas de bote;Canned lentils;90;6.83;12.3;0.64;4.0;;;Lentille, cuisinée, appertisée, égouttée
+CIQUAL;20516;Legumbres;Garbanzos, secos;Chickpeas, dry;350;20.5;47.5;6.04;12.2;;;Pois chiche, sec
+CIQUAL;20507;Legumbres;Garbanzos, cocidos;Chickpeas, cooked;148;8.31;17.7;3.0;8.2;s;;Pois chiche, bouilli/cuit à l'eau
+CIQUAL;20532;Legumbres;Garbanzos de bote;Canned chickpeas;122;6.74;15.0;2.68;5.45;;;Pois chiche, appertisé, égoutté
+CIQUAL;20501;Legumbres;Alubias blancas, secas;White beans, dry;307;23.4;43.9;0.85;15.2;;;Haricot blanc, sec
+CIQUAL;20502;Legumbres;Alubias blancas, cocidas;White beans, cooked;112;6.75;12.0;1.1;13.8;;;Haricot blanc, bouilli/cuit à l'eau
+CIQUAL;20511;Legumbres;Alubias blancas de bote;Canned white beans;86;5.88;10.9;0.5;7.0;;;Haricot blanc, appertisé, égoutté
+CIQUAL;20525;Legumbres;Alubias rojas, secas;Kidney beans, dry;314;22.5;46.1;1.06;15.2;;;Haricot rouge, sec
+CIQUAL;20503;Legumbres;Alubias rojas, cocidas;Kidney beans, cooked;116;9.63;12.3;0.6;11.6;;;Haricot rouge, bouilli/cuit à l'eau
+CIQUAL;20524;Legumbres;Alubias rojas de bote;Canned kidney beans;108;8.31;13.0;0.97;7.0;;;Haricot rouge, appertisé, égoutté
+CIQUAL;20500;Legumbres;Habas, cocidas;Broad beans, cooked;83;8.06;9.35;0.8;3.1;;;Fève, bouillie/cuite à l'eau
+CIQUAL;20072;Legumbres;Guisantes, crudos;Green peas, raw;81;5.42;11.4;0.4;5.1;;;Petits pois, crus
+CIQUAL;20124;Legumbres;Guisantes congelados, cocidos;Frozen peas, cooked;66;5.15;7.95;0.27;5.5;;;Petits pois, surgelés, cuits
+CIQUAL;20901;Legumbres;Soja en grano;Soybeans;441;40.0;20.9;19.9;9.3;;;Soja, graine entière
+USDA;168411;Legumbres;Edamame, cocido;Edamame, cooked;121;11.91;8.91;5.2;5.2;;USDA calcula la energía de la soja con factores de Atwater propios (proteína 3,47, grasa 8,37 e hidratos 4,07 kcal/g);Edamame, frozen, prepared
+CIQUAL;20904;Legumbres;Tofu;Tofu;147;14.7;2.87;8.5;0.25;;;Tofu nature, préemballé
+USDA;174272;Legumbres;Tempeh;Tempeh;192;20.29;7.64;10.8;;;USDA calcula la energía de la soja con factores de Atwater propios (proteína 3,47, grasa 8,37 e hidratos 4,07 kcal/g);Tempeh
+CIQUAL;20591;Legumbres;Soja texturizada, hidratada;Textured soy protein, rehydrated;150;20.4;7.03;2.9;5.61;;;Protéine de soja texturée, réhydratée
+CIQUAL;25621;Legumbres;Hummus;Hummus;258;8.06;9.0;19.9;5.18;;;Houmous, préemballé
+CIQUAL;9100;Cereales y pan;Arroz blanco, crudo;White rice, uncooked;350;7.38;77.5;0.79;1.53;;;Riz blanc, cru
+CIQUAL;9104;Cereales y pan;Arroz blanco, cocido;White rice, cooked;155;3.31;33.2;0.7;1.4;s;;Riz blanc, cuit, sans sel ajouté
+CIQUAL;9102;Cereales y pan;Arroz integral, crudo;Brown rice, uncooked;350;7.38;71.4;2.8;5.0;;;Riz complet, cru
+CIQUAL;9103;Cereales y pan;Arroz integral, cocido;Brown rice, cooked;187;4.06;37.6;1.8;2.1;;;Riz complet, cuit, sans sel ajouté
+CIQUAL;9125;Cereales y pan;Arroz basmati, cocido;Basmati rice, cooked;148;3.19;32.9;0.4;0.25;;;Riz basmati, cuit, sans sel ajouté
+CIQUAL;9810;Cereales y pan;Pasta, cruda;Pasta, uncooked;364;13.1;72.7;1.6;2.91;;;Pâtes sèches, standard, crues
+CIQUAL;9811;Cereales y pan;Pasta, cocida;Pasta, cooked;167;6.69;31.4;1.1;2.2;s;;Pâtes sèches, standard, cuites, sans sel ajouté
+CIQUAL;9870;Cereales y pan;Pasta integral, cruda;Whole-wheat pasta, uncooked;353;12.6;67.6;2.2;6.1;;;Pâtes sèches, au blé complet, crues
+CIQUAL;9871;Cereales y pan;Pasta integral, cocida;Whole-wheat pasta, cooked;179;7.88;31.3;1.4;5.1;;;Pâtes sèches, au blé complet, cuites, sans sel ajouté
+CIQUAL;9815;Cereales y pan;Pasta fresca al huevo, cruda;Fresh egg pasta, uncooked;283;11.1;53.8;1.87;3.17;;;Pâtes fraîches, aux oeufs, crues
+CIQUAL;25216;Cereales y pan;Pasta rellena, cocida;Filled pasta, cooked;198;7.97;25.6;6.48;2.49;;;Pâtes fraîches farcies (ex : raviolis, tortellinis), cuites (aliment moyen)
+CIQUAL;9863;Cereales y pan;Fideos orientales, crudos;Asian noodles, uncooked;371;13.0;71.0;3.0;4.0;;;Pâtes ou nouilles asiatiques sèches, au blé et aux oeufs, nature, crues
+CIQUAL;9901;Cereales y pan;Fideos de arroz, cocidos;Rice noodles, cooked;87;1.5;20.1;0.25;0.25;;;Vermicelle de riz, cuite, sans sel ajouté
+CIQUAL;9610;Cereales y pan;Sémola de trigo, cruda;Wheat semolina, uncooked;350;13.0;69.8;1.28;3.7;;;Semoule de blé dur, crue
+CIQUAL;9683;Cereales y pan;Cuscús, cocido;Couscous, cooked;164;6.38;31.0;0.9;2.8;;;Semoule ou graine de couscous, cuite, sans sel ajouté
+CIQUAL;9340;Cereales y pan;Quinoa, cruda;Quinoa, uncooked;358;14.1;58.1;6.07;7.0;;;Quinoa, cru
+CIQUAL;9341;Cereales y pan;Quinoa, cocida;Quinoa, cooked;149;5.0;27.9;1.1;3.8;;;Quinoa, bouilli/cuit à l'eau, sans sel ajouté
+CIQUAL;9691;Cereales y pan;Bulgur, cocido;Bulgur, cooked;131;4.63;24.1;1.0;3.7;;;Boulgour de blé, cuit, sans sel ajouté
+CIQUAL;9615;Cereales y pan;Polenta, cocida;Polenta, cooked;76;1.38;16.9;0.15;1.6;;;Polenta ou semoule de maïs, cuite, sans sel ajouté
+CIQUAL;32140;Cereales y pan;Copos de avena;Rolled oats;369;11.4;57.7;7.82;11.2;s;;Flocons d'avoine
+CIQUAL;32004;Cereales y pan;Muesli;Muesli;433;8.87;63.4;14.3;6.9;;;Muesli (aliment moyen)
+CIQUAL;32005;Cereales y pan;Copos de maíz;Corn flakes;368;6.88;80.0;1.0;5.5;;;Pétales de maïs nature, enrichis en vitamines et minéraux
+CIQUAL;32003;Cereales y pan;Cereales de desayuno;Breakfast cereal;402;8.02;73.2;7.21;5.99;;;Céréales pour petit déjeuner (aliment moyen)
+CIQUAL;7001;Cereales y pan;Pan blanco;White bread;287;9.06;58.3;1.4;2.7;s;;Pain blanc (par ex. : baguette, boule…)
+CIQUAL;7110;Cereales y pan;Pan integral;Wholemeal bread;234;9.5;41.2;1.7;7.3;;;Pain complet ou intégral (à la farine T150)
+CIQUAL;7100;Cereales y pan;Pan de pueblo;Country bread;253;8.25;50.0;1.3;4.3;;;Pain de campagne
+CIQUAL;7255;Cereales y pan;Pan con semillas;Seeded bread;269;10.5;46.9;3.2;5.2;;;Pain aux céréales et/ou graines
+CIQUAL;7125;Cereales y pan;Pan de centeno;Rye bread;260;9.06;51.5;1.0;4.5;;;Pain de seigle et froment
+CIQUAL;7200;Cereales y pan;Pan de molde blanco;White sandwich bread;279;7.74;50.4;4.37;2.83;;;Pain de mie blanc, préemballé
+CIQUAL;7111;Cereales y pan;Pan de molde integral;Wholemeal sandwich bread;257;8.0;41.8;4.1;7.3;;;Pain de mie complet, préemballé
+CIQUAL;7130;Cereales y pan;Pan sin gluten;Gluten-free bread;249;4.81;37.1;6.6;9.9;;;Pain sans gluten, préemballé
+CIQUAL;7259;Cereales y pan;Pan de hamburguesa;Burger bun;283;9.0;47.2;4.9;3.5;;;Pain pour burger ou hot dog (bun), préemballé
+CIQUAL;7180;Cereales y pan;Pan de pita;Pita bread;249;8.2;48.8;1.5;3.7;;;Pain pita
+CIQUAL;7815;Cereales y pan;Tortilla de trigo;Wheat tortilla;320;8.79;53.0;7.48;2.89;;;Tortilla souple (à garnir), à base de blé
+CIQUAL;7813;Cereales y pan;Tortilla de maíz;Corn tortilla;316;6.67;58.0;5.57;3.57;;;Tortilla souple (à garnir), à base de maïs
+CIQUAL;7300;Cereales y pan;Pan tostado;Crispbread toast;394;11.0;73.2;5.43;4.32;;;Biscotte classique
+CIQUAL;7340;Cereales y pan;Pan tostado integral;Wholemeal crispbread toast;389;12.4;66.0;5.9;11.0;;;Biscotte au blé complet
+CIQUAL;7352;Cereales y pan;Tortitas de arroz;Rice cakes;381;8.81;77.9;3.0;3.4;;;Galette de riz complet soufflé
+CIQUAL;7354;Cereales y pan;Tortitas de maíz;Corn cakes;387;7.38;83.5;1.9;3.0;;;Galette de maïs soufflé
+CIQUAL;7525;Cereales y pan;Picos de pan;Breadsticks;428;12.5;68.8;10.5;4.25;;;Gressin, nature (sans sésame)
+CIQUAL;7351;Cereales y pan;Crackers;Crackers;442;11.4;68.6;12.3;4.1;;;Cracker de table au froment
+CIQUAL;9435;Cereales y pan;Harina de trigo;Wheat flour;346;11.0;71.5;1.0;3.5;;;Farine de blé tendre ou froment T65
+CIQUAL;9415;Cereales y pan;Harina integral de trigo;Wholemeal wheat flour;342;12.2;64.9;1.52;10.2;;;Farine de blé tendre ou froment T150
+CIQUAL;7615;Cereales y pan;Cruasán;Croissant;412;6.94;47.6;21.1;1.8;;;Croissant ordinaire, artisanal
+CIQUAL;7730;Cereales y pan;Napolitana de chocolate;Pain au chocolat;423;8.19;45.4;22.5;3.0;;;Pain au chocolat, artisanal
+CIQUAL;7746;Cereales y pan;Brioche;Brioche;363;8.41;52.1;13.0;1.94;;;Brioche, sans précision (aliment moyen)
+CIQUAL;4008;Cereales y pan;Patata, cruda;Potato, raw;80;2.02;16.2;0.09;2.2;;;Pomme de terre, sans peau, crue
+CIQUAL;4003;Cereales y pan;Patata, cocida;Potato, boiled;81;1.8;16.8;0.34;1.8;s;;Pomme de terre, bouillie/cuite à l'eau
+CIQUAL;4026;Cereales y pan;Patata, asada;Potato, baked;91;2.5;19.0;0.13;2.2;;;Pomme de terre, rôtie/cuite au four
+CIQUAL;4018;Cereales y pan;Puré de patata;Mashed potatoes;95;1.87;15.7;2.4;1.5;;;Purée de pomme de terre, avec lait et beurre, sans sel ajouté
+CIQUAL;4032;Cereales y pan;Patatas fritas, caseras;French fries;258;3.28;32.7;11.9;3.9;;;Frites de pommes de terre, surgelées, cuites en friteuse
+CIQUAL;4101;Cereales y pan;Boniato, crudo;Sweet potato, raw;81;1.57;17.1;0.05;3.0;;;Patate douce, crue
+CIQUAL;4102;Cereales y pan;Boniato, cocinado;Sweet potato, cooked;79;1.69;16.3;0.15;2.9;;;Patate douce, cuite
+CIQUAL;25510;Cereales y pan;Ñoquis de patata, cocidos;Potato gnocchi, cooked;178;5.01;34.1;2.05;1.75;;;Gnocchi à la pomme de terre, cuit
+CIQUAL;13005;Frutas;Plátano;Banana;88;1.06;19.7;0.25;2.7;s;;Banane, chair sans peau, crue
+CIQUAL;13039;Frutas;Manzana;Apple;54;0.25;11.6;0.25;1.4;s;;Pomme, chair et peau, crue
+CIQUAL;13037;Frutas;Pera;Pear;57;0.36;12.3;0.27;2.9;;;Poire, chair et peau, crue
+CIQUAL;13034;Frutas;Naranja;Orange;42;0.75;8.03;0.25;2.7;s;;Orange, chair sans peau, sans pépins, crue
+CIQUAL;13024;Frutas;Mandarina;Mandarin;46;0.81;9.17;0.25;1.7;;;Clémentine ou mandarine, chair sans peau, sans pépins, crue
+CIQUAL;13043;Frutas;Melocotón;Peach;38;0.91;7.55;0.25;1.5;;;Pêche, chair et peau, sans noyau, crue
+CIQUAL;13399;Frutas;Nectarina;Nectarine;50;0.74;11.3;0.25;0.47;;;Nectarine ou brugnon, chair et peau, sans noyau, crue (aliment moyen)
+CIQUAL;13000;Frutas;Albaricoque;Apricot;44;0.81;9.01;0.25;1.7;;;Abricot, dénoyauté, cru
+CIQUAL;13100;Frutas;Ciruela;Plum;52;0.7;9.92;0.28;1.4;;;Prune, sans noyau, crue
+CIQUAL;13008;Frutas;Cerezas;Cherries;54;0.81;13.0;0.15;1.6;;;Ceriser, chair et peau, sans noyau, crue
+CIQUAL;13014;Frutas;Fresas;Strawberries;35;0.63;6.03;0.25;3.8;s;;Fraise, crue
+CIQUAL;13015;Frutas;Frambuesas;Raspberries;48;1.19;5.83;0.8;4.3;;;Framboise, crue
+CIQUAL;13028;Frutas;Arándanos;Blueberries;58;0.87;10.6;0.33;2.4;;;Myrtille, crue
+CIQUAL;13029;Frutas;Moras;Blackberries;46;1.13;6.53;0.7;5.2;;;Mûre (de ronce), crue
+CIQUAL;13395;Frutas;Uvas;Grapes;71;0.7;16.3;0.25;1.11;;;Raisin cru (aliment moyen)
+CIQUAL;13026;Frutas;Melón cantalupo;Cantaloupe melon;60;1.13;14.8;0.25;1.3;;;Melon cantaloup (par ex.: Charentais), chair sans peau, sans pépins, cru
+CIQUAL;13742;Frutas;Melón piel de sapo;Honeydew melon;22;0.54;4.3;0.14;0.8;;;Melon miel ou melon honeydew, chair sans peau, sans pépins, cru
+CIQUAL;13036;Frutas;Sandía;Watermelon;35;0.69;8.33;0.25;0.5;;;Pastèque, chair sans peau, sans pépins, crue
+CIQUAL;13002;Frutas;Piña;Pineapple;52;0.25;11.7;0.25;1.2;;;Ananas, chair sans peau, cru
+CIQUAL;13025;Frutas;Mango;Mango;71;0.63;14.3;0.25;1.6;;;Mangue, chair sans peau, sans noyau, crue
+CIQUAL;13021;Frutas;Kiwi;Kiwi;61;0.88;11.0;0.6;2.4;;;Kiwi, chair sans peau, avec pépins, cru
+CIQUAL;13035;Frutas;Papaya;Papaya;40;0.75;8.53;0.15;1.8;;;Papaye, chair sans peau, crue
+CIQUAL;13012;Frutas;Higos;Figs;68;1.19;13.5;0.25;4.1;;;Figue, crue
+CIQUAL;13018;Frutas;Granada;Pomegranate;81;1.44;14.3;1.2;2.3;;;Grenade, chair sans peau, avec pépins, crue
+CIQUAL;13009;Frutas;Limón;Lemon;24;0.25;1.56;0.25;0.25;;ácidos orgánicos 6.01 g/100 g a 3 kcal/g;Citron, chair sans peau, sans pépins, cru
+CIQUAL;13040;Frutas;Pomelo;Grapefruit;34;0.84;5.92;0.25;1.1;;;Pomelo (dit Pamplemousse), chair sans peau, sans pépins, cru
+CIQUAL;13066;Frutas;Caqui;Persimmon;66;0.88;14.3;0.15;3.4;;;Kaki, chair et peau, cru
+CIQUAL;13564;Frutas;Níspero;Loquat;48;0.43;9.9;0.2;1.7;;;Nèfle du Japon, chair et peau, sans noyau, crue
+CIQUAL;13023;Frutas;Lichi;Lychee;78;1.13;16.1;0.25;2.0;;;Litchi, chair sans peau, sans noyau, cru
+CIQUAL;13016;Frutas;Maracuyá;Passion fruit;102;2.13;10.9;3.0;6.8;;;Fruit de la passion ou maracudja, chair sans peau, avec pépins, cru
+CIQUAL;13004;Frutas;Aguacate;Avocado;203;1.56;0.0;20.6;3.6;s;;Avocat, chair sans peau, sans noyau, cru
+CIQUAL;15006;Frutas;Coco fresco;Fresh coconut;369;4.09;4.69;34.7;10.6;;;Noix de coco, chair, fraîche
+CIQUAL;13011;Frutas;Dátiles;Dates;287;1.81;64.7;0.25;7.3;;;Datte, chair et peau, sans noyau, sèche
+CIQUAL;13046;Frutas;Pasas;Raisins;322;3.0;73.2;0.9;4.2;;;Raisin sec
+CIQUAL;13042;Frutas;Ciruelas pasas;Prunes;229;1.63;55.4;0.4;5.1;;;Pruneau, sans noyau, sec
+CIQUAL;13001;Frutas;Orejones de albaricoque;Dried apricots;239;2.88;59.1;0.5;8.3;;polioles 22.6 g/100 g a 2,4 kcal/g y ácidos orgánicos 1.98 g/100 g a 3 kcal/g;Abricot, dénoyauté, sec
+CIQUAL;13013;Frutas;Higos secos;Dried figs;261;2.9;55.0;1.22;8.15;;;Figue, sèche
+CIQUAL;13089;Frutas;Plátano deshidratado;Dried banana;365;3.89;78.4;1.81;9.9;;;Banane, chair sans peau, sèche
+CIQUAL;13038;Frutas;Compota de manzana;Apple compote;107;0.25;25.8;0.23;1.54;;;Compote de pomme, préemballée
+CIQUAL;13134;Frutas;Macedonia de frutas;Fruit salad;79;0.61;18.0;0.24;1.36;;;Salade de fruits, crue
+CIQUAL;13033;Frutas;Aceitunas verdes;Green olives;164;1.13;0.61;16.6;3.6;;;Olive verte, en saumure, égouttée
+CIQUAL;13032;Frutas;Aceitunas negras;Black olives;173;1.38;0.05;17.2;6.2;;;Olive noire, en saumure, égouttée
+CIQUAL;20385;Verduras;Tomate;Tomato;19;0.6;3.69;0.25;1.02;s;;Tomate sans précision, crue (aliment moyen)
+CIQUAL;20172;Verduras;Tomate cherry;Cherry tomatoes;32;1.31;5.62;0.25;1.2;;;Tomate cerise, crue
+CIQUAL;20048;Verduras;Tomate pelado en conserva;Canned peeled tomatoes;16;0.9;1.61;0.28;1.27;;;Tomate, pelée, appertisée, égouttée
+CIQUAL;20170;Verduras;Tomate triturado;Crushed tomatoes;48;1.5;8.42;0.2;1.6;;;Tomate, purée, appertisée
+CIQUAL;20068;Verduras;Concentrado de tomate;Tomato paste;99;4.4;17.1;0.53;4.2;;;Tomate, concentré, appertisé
+CIQUAL;20019;Verduras;Pepino;Cucumber;17;0.65;2.87;0.11;0.5;;;Concombre, chair et peau, cru
+CIQUAL;20031;Verduras;Lechuga;Lettuce;15;1.35;1.22;0.2;1.1;s;;Laitue, crue
+CIQUAL;20171;Verduras;Lechuga romana;Romaine lettuce;17;1.23;1.35;0.3;2.1;;;Laitue romaine, crue
+CIQUAL;20200;Verduras;Lechuga iceberg;Iceberg lettuce;17;0.95;2.5;0.14;1.1;;;Laitue iceberg, crue
+CIQUAL;20217;Verduras;Rúcula;Rocket;28;2.58;2.1;0.66;1.6;;;Roquette, crue
+CIQUAL;20099;Verduras;Canónigos;Lamb's lettuce;15;2.0;0.5;0.25;2.3;;;Mâche, crue
+CIQUAL;20059;Verduras;Espinacas, crudas;Spinach, raw;33;2.68;3.06;0.39;2.6;;;Épinard, cru
+CIQUAL;20027;Verduras;Espinacas, cocidas;Spinach, cooked;20;3.2;0.25;0.14;2.7;;;Épinard, cuit
+CIQUAL;20346;Verduras;Kale;Kale;35;2.92;0.32;1.49;4.1;;;Chou kale, cru
+CIQUAL;20057;Verduras;Brócoli, crudo;Broccoli, raw;32;2.9;2.15;0.36;2.6;;;Brocoli, cru
+CIQUAL;20351;Verduras;Brócoli, cocido;Broccoli, cooked;30;3.17;1.79;0.6;2.59;;;Brocoli, cuit (aliment moyen)
+CIQUAL;20016;Verduras;Coliflor, cruda;Cauliflower, raw;25;1.81;2.13;0.7;2.2;;;Chou-fleur, cru
+CIQUAL;20017;Verduras;Coliflor, cocida;Cauliflower, cooked;21;1.6;1.6;0.46;2.0;;;Chou-fleur, bouilli/cuit à l'eau
+CIQUAL;20058;Verduras;Coles de Bruselas;Brussels sprouts;44;3.38;4.59;0.3;3.8;;;Chou de Bruxelles, cru
+CIQUAL;20069;Verduras;Repollo;Green cabbage;24;1.43;2.74;0.14;2.55;;;Chou vert, cru
+CIQUAL;20014;Verduras;Lombarda;Red cabbage;26;1.13;4.33;0.25;2.8;;;Chou rouge, cru
+CIQUAL;20009;Verduras;Zanahoria;Carrot;30;0.78;5.16;0.25;2.9;s;;Carotte, crue
+CIQUAL;20307;Verduras;Zanahoria, cocida;Carrot, cooked;40;0.63;7.33;0.3;3.7;;;Carotte, cuite à la vapeur
+CIQUAL;20020;Verduras;Calabacín;Courgette;17;1.21;1.75;0.32;1.0;;;Courgette, chair et peau, crue
+CIQUAL;20021;Verduras;Calabacín, cocinado;Courgette, cooked;16;0.93;1.4;0.36;1.5;;;Courgette, chair et peau, cuite
+CIQUAL;20053;Verduras;Berenjena;Aubergine;23;0.98;2.7;0.18;3.0;;;Aubergine, crue
+CIQUAL;20087;Verduras;Pimiento rojo;Red pepper;34;1.06;5.98;0.25;3.2;;;Poivron rouge, cru
+CIQUAL;20085;Verduras;Pimiento verde;Green pepper;22;0.81;3.43;0.25;3.2;;;Poivron vert, cru
+CIQUAL;20275;Verduras;Pimiento asado en conserva;Canned roasted pepper;26;0.96;4.5;0.2;1.35;;;Poivron rouge, appertisé, égoutté
+CIQUAL;20034;Verduras;Cebolla;Onion;39;1.1;6.25;0.62;1.7;;;Oignon, cru
+CIQUAL;20238;Verduras;Cebolla morada;Red onion;35;1.31;5.63;0.4;2.5;;;Oignon rouge, cru
+CIQUAL;20035;Verduras;Cebolla, cocinada;Onion, cooked;35;1.3;6.2;0.2;1.4;;;Oignon, cuit
+CIQUAL;11000;Verduras;Ajo;Garlic;109;5.31;18.6;0.25;5.8;;;Ail, cru
+CIQUAL;20039;Verduras;Puerro;Leek;30;1.5;4.55;0.3;1.8;;;Poireau, cru
+CIQUAL;20023;Verduras;Apio;Celery;15;0.63;2.41;0.25;2.2;;;Céleri branche, cru
+CIQUAL;20056;Verduras;Champiñones;Mushrooms;21;2.11;1.83;0.36;1.0;;;Champignon de Paris ou champignon de couche, cru
+CIQUAL;20125;Verduras;Champiñones salteados;Sautéed mushrooms;38;4.44;4.53;0.6;0.9;;;Champignon de Paris ou champignon de couche, sauté/poêlé, sans matière grasse
+CIQUAL;20114;Verduras;Setas;Oyster mushrooms;27;3.31;1.5;0.41;2.3;;;Champignon, pleurote, crue
+CIQUAL;20061;Verduras;Judías verdes;Green beans;32;1.83;4.14;0.22;2.7;;;Haricot vert, cru
+CIQUAL;20030;Verduras;Judías verdes, cocidas;Green beans, cooked;29;2.0;3.0;0.17;4.0;;;Haricot vert, cuit
+CIQUAL;20279;Verduras;Espárragos verdes;Green asparagus;25;2.46;2.03;0.27;2.15;;;Asperge, verte, crue
+CIQUAL;20076;Verduras;Espárragos blancos en conserva;Canned white asparagus;20;1.57;1.2;0.65;1.55;;;Asperge, appertisée, égouttée
+CIQUAL;20052;Verduras;Alcachofa;Artichoke;45;3.27;4.84;0.15;5.4;;;Artichaut, cru
+CIQUAL;20000;Verduras;Alcachofa, cocida;Artichoke, cooked;33;2.53;0.99;0.28;8.3;;;Artichaut, cuit
+CIQUAL;20091;Verduras;Remolacha, cruda;Beetroot, raw;40;1.61;6.34;0.17;2.8;;;Betterave rouge, crue
+CIQUAL;20003;Verduras;Remolacha, cocida;Beetroot, cooked;42;1.44;7.13;0.4;2.5;;;Betterave rouge, cuite
+CIQUAL;20045;Verduras;Rábanos;Radishes;11;0.94;1.53;0.25;1.4;;;Radis rouge, cru
+CIQUAL;20044;Verduras;Calabaza;Pumpkin;20;1.05;3.5;0.1;0.5;;;Potiron, cru
+CIQUAL;20138;Verduras;Calabaza butternut;Butternut squash;30;1.0;5.4;0.1;2.0;;;Courge butternut (doubeurre), chair sans peau, crue
+CIQUAL;20026;Verduras;Endibia;Chicory;17;1.19;2.83;0.25;1.1;;;Endive, crue
+CIQUAL;20004;Verduras;Acelgas;Swiss chard;13;1.0;1.63;0.25;1.8;;;Bette ou blette, côte (sans feuille), crue
+CIQUAL;20028;Verduras;Hinojo;Fennel;18;1.0;2.63;0.25;2.6;;;Fenouil, cru
+CIQUAL;20064;Verduras;Nabo;Turnip;26;0.9;4.39;0.1;1.8;;;Navet, pelé, cru
+CIQUAL;20066;Verduras;Maíz dulce en conserva;Canned sweet corn;105;2.66;18.3;1.68;3.1;;;Maïs doux, appertisé, égoutté
+CIQUAL;20183;Verduras;Brotes de soja;Bean sprouts;28;2.81;3.4;0.25;1.7;;;"Graine germée de haricot mungo ou pousse de ""soja"", crue"
+CIQUAL;11014;Verduras;Perejil;Parsley;42;2.97;4.1;0.63;4.3;;;Persil, frais
+CIQUAL;11004;Verduras;Pepinillos en vinagre;Pickled gherkins;16;1.06;0.78;0.3;1.5;;;Cornichon, au vinaigre
+CIQUAL;25967;Verduras;Gazpacho;Gazpacho;40;0.81;3.21;2.33;1.07;;;Soupe froide type gaspacho ou gazpacho, préemballée
+CIQUAL;15000;Frutos secos;Almendras;Almonds;615;22.6;9.51;51.3;12.5;s;;Amande, avec peau, sans sel ajouté
+CIQUAL;15042;Frutos secos;Almendras tostadas saladas;Salted roasted almonds;647;24.1;12.2;53.9;8.46;;;Amande, grillée, salée
+CIQUAL;15005;Frutos secos;Nueces;Walnuts;709;15.7;6.88;67.3;6.7;s;;Noix, cerneau, séchée
+CIQUAL;15004;Frutos secos;Avellanas;Hazelnuts;632;17.0;7.16;56.9;11.6;;;Noisette, sans sel ajouté
+CIQUAL;15054;Frutos secos;Anacardos;Cashews;618;20.5;21.3;48.1;8.4;;;Noix de cajou, grillée, sans sel ajouté
+CIQUAL;15044;Frutos secos;Pistachos;Pistachios;631;21.7;14.9;51.6;10.2;;;Pistache, grillée, sans sel ajouté
+CIQUAL;15001;Frutos secos;Cacahuetes;Peanuts;623;26.1;14.8;49.1;8.6;;;Cacahuète, sans sel ajouté
+CIQUAL;15002;Frutos secos;Cacahuetes tostados salados;Salted roasted peanuts;635;26.2;14.2;50.8;8.08;;;Cacahuète, grillée, salée
+CIQUAL;15008;Frutos secos;Nueces de Brasil;Brazil nuts;701;16.4;4.23;67.1;7.5;;;Noix du Brésil ou noix d'Amazonie, sans sel ajouté
+CIQUAL;15027;Frutos secos;Nueces de macadamia;Macadamia nuts;757;9.33;5.22;75.8;8.6;;;Noix de macadamia, sans sel ajouté
+CIQUAL;15025;Frutos secos;Piñones;Pine nuts;712;16.2;2.93;68.4;10.0;;;Pignon de pin
+CIQUAL;15066;Frutos secos;Frutos secos variados;Mixed nuts;632;18.2;10.5;55.0;10.7;;;Fruits à coques et cacahuète, sans sel ajouté (aliment moyen)
+CIQUAL;15011;Frutos secos;Pipas de girasol;Sunflower seeds;653;25.1;10.1;55.5;6.4;;;Tournesol, graine
+CIQUAL;15064;Frutos secos;Pipas de calabaza;Pumpkin seeds;618;35.6;5.39;49.1;6.0;;;Courge, graine, séchée
+CIQUAL;15047;Frutos secos;Semillas de chía;Chia seeds;454;19.5;7.72;30.7;34.4;;;Chia, graine, séchée
+CIQUAL;15034;Frutos secos;Semillas de lino;Flaxseed;528;22.4;6.49;40.3;24.4;;;Lin, graine
+CIQUAL;15010;Frutos secos;Sésamo;Sesame seeds;606;20.9;12.8;49.7;11.8;;;Sésame, graine
+CIQUAL;15202;Frutos secos;Crema de cacahuete;Peanut butter;643;25.4;17.3;51.4;5.0;s;;Beurre de cacahuète ou pâte d'arachide
+CIQUAL;15007;Frutos secos;Coco rallado;Desiccated coconut;692;8.06;7.81;66.8;13.7;;;Noix de coco, chair, sèche
+CIQUAL;17270;Aceites y grasas;Aceite de oliva virgen extra;Extra virgin olive oil;899;0.25;0.0;99.9;0.0;s;;Huile d'olive vierge extra
+CIQUAL;17440;Aceites y grasas;Aceite de girasol;Sunflower oil;900;0.25;0.0;100.0;0.0;;;Huile de tournesol
+CIQUAL;17130;Aceites y grasas;Aceite de colza;Rapeseed oil;900;0.0;0.0;100.0;0.0;;;Huile de colza
+CIQUAL;16050;Aceites y grasas;Aceite de coco;Coconut oil;899;0.16;0.0;99.9;0.0;;;Huile ou graisse de coco, vierge
+CIQUAL;16520;Aceites y grasas;Manteca de cerdo;Lard;900;0.0;0.0;100.0;0.0;;;Saindoux
+CIQUAL;11054;Aceites y grasas;Mayonesa;Mayonnaise;692;1.33;3.41;74.5;0.26;;;Mayonnaise (70% MG min.), préemballée
+CIQUAL;11079;Aceites y grasas;Mayonesa light;Light mayonnaise;297;1.09;8.82;28.5;0.31;;;Mayonnaise à teneur réduite en matière grasse ou mayonnaise allégée, préemballée
+CIQUAL;11168;Aceites y grasas;Alioli;Aioli;480;1.13;5.44;50.2;0.25;;;Sauce aïoli, préemballée
+CIQUAL;11108;Aceites y grasas;Vinagreta de aceite de oliva;Olive oil vinaigrette;471;0.7;3.03;50.5;0.53;;;Sauce vinaigrette à l'huile d'olive (50 à 75% d'huile), préemballée
+CIQUAL;18045;Bebidas;Agua;Water;0;0.0;0.01;0.0;0.0;;;Eau minérale, embouteilée, plate (aliment moyen)
+CIQUAL;18004;Bebidas;Café solo;Black coffee;6;0.25;1.35;0.02;0.25;s;;Café, non instantané, sans sucres ajoutés, prêt à boire
+CIQUAL;18151;Bebidas;Café con leche sin azúcar;Coffee with milk, unsweetened;22;1.36;2.31;0.76;0.0;;;Café au lait, café crème ou cappuccino, instantané ou non, sans sucres ajoutés, prêt à boire
+CIQUAL;18154;Bebidas;Té negro;Black tea;1;0.0;0.3;0.01;0.0;;;Thé noir, infusé, sans sucres ajoutés
+CIQUAL;18155;Bebidas;Té verde;Green tea;5;0.0;1.09;0.0;0.0;;;Thé vert, infusé, sans sucres ajoutés
+CIQUAL;18022;Bebidas;Infusión;Herbal tea;1;0.0;0.2;0.0;0.0;;;Tisane infusée ou infusion, sans sucres ajoutés
+CIQUAL;2013;Bebidas;Zumo de naranja natural;Fresh orange juice;45;0.7;9.19;0.2;0.2;;;Jus d'orange, frais
+CIQUAL;2070;Bebidas;Zumo de naranja envasado;Bottled orange juice;45;0.61;9.61;0.11;0.28;;;Jus d'orange, pur jus
+CIQUAL;2074;Bebidas;Zumo de manzana;Apple juice;49;0.17;11.4;0.14;0.23;;;Jus de pomme, pur jus
+CIQUAL;2016;Bebidas;Zumo de uva;Grape juice;69;0.25;16.3;0.06;0.14;;;Jus de raisin, pur jus
+CIQUAL;18018;Bebidas;Refresco de cola;Cola;40;0.0;10.0;0.0;0.0;;;Cola, sucré
+CIQUAL;18010;Bebidas;Gaseosa;Lemonade soda;33;0.0;8.24;0.0;0.14;;;Limonade, sucrée
+CIQUAL;18348;Bebidas;Bebida isotónica;Sports drink;22;0.0;5.41;0.0;0.0;;;Boisson pour le sport, sucrée
+CIQUAL;18352;Bebidas;Bebida energética;Energy drink;41;0.1;10.2;0.0;0.11;;;Boisson énergisante, sucrée
+CIQUAL;18025;Bebidas;Kombucha;Kombucha;7;0.25;1.45;0.15;0.25;;;Kombucha, préemballé
+CIQUAL;18900;Bebidas;Bebida de soja;Soy drink;42;3.5;1.87;2.1;0.71;;;Boisson au soja, nature, non enrichie, préemballée
+CIQUAL;18899;Bebidas;Bebida de avena;Oat drink;41;0.25;7.78;1.1;0.25;;;Boisson à l'avoine, nature, sans sucres ajoutés, non enrichie, préemballée
+CIQUAL;18107;Bebidas;Bebida de almendra;Almond drink;36;1.06;0.68;3.2;0.25;;;Boisson à l'amande, nature, sans sucres ajoutés, non enrichie, préemballée
+CIQUAL;18904;Bebidas;Bebida de arroz;Rice drink;52;0.25;10.8;1.0;0.25;;;Boisson au riz, nature, préemballée
+CIQUAL;18104;Bebidas;Cacao soluble con leche;Hot chocolate with milk;66;3.78;9.5;1.42;0.0;;;Chocolat chaud, boisson instantanée, sucrée, prête à boire (reconstituée avec du lait demi-écrémé)
+CIQUAL;5001;Bebidas;Cerveza;Beer;39;0.39;3.12;0.0;0.0;;alcohol 3.57 g/100 g a 7 kcal/g;"Bière ""coeur de marché"" (4-5° alcool)"
+CIQUAL;5214;Bebidas;Vino tinto;Red wine;76;0.16;0.0;0.25;0.5;;alcohol 10.8 g/100 g a 7 kcal/g;Vin rouge
+CIQUAL;5215;Bebidas;Vino blanco;White wine;55;0.25;0.17;0.0;0.0;;alcohol 7.75 g/100 g a 7 kcal/g;Vin blanc sec
+CIQUAL;5216;Bebidas;Vino rosado;Rosé wine;69;0.15;1.4;0.0;0.0;;alcohol 9 g/100 g a 7 kcal/g;Vin rosé
+CIQUAL;5201;Bebidas;Cava;Sparkling wine;72;0.1;1.78;0.0;0.0;;alcohol 9.26 g/100 g a 7 kcal/g;Vin blanc mousseux
+CIQUAL;5003;Bebidas;Sidra;Cider;36;0.07;3.67;0.09;0.0;;alcohol 3.18 g/100 g a 7 kcal/g;Cidre (aliment moyen)
+CIQUAL;1017;Bebidas;Sangría;Sangria;89;0.0;11.0;0.05;0.0;;alcohol 6.32 g/100 g a 7 kcal/g;Sangria, faite maison
+CIQUAL;1007;Bebidas;Vermut;Vermouth;137;0.05;11.3;0.0;0.0;;alcohol 13.1 g/100 g a 7 kcal/g;Apéritif à base de vin ou vermouth
+CIQUAL;1005;Bebidas;Whisky;Whisky;252;0.0;0.1;0.0;0.0;;alcohol 36 g/100 g a 7 kcal/g;Whisky
+CIQUAL;1004;Bebidas;Ron;Rum;234;0.0;0.0;0.0;0.0;;alcohol 33.4 g/100 g a 7 kcal/g;Rhum
+CIQUAL;1002;Bebidas;Ginebra;Gin;265;0.0;0.0;0.0;0.0;;alcohol 37.9 g/100 g a 7 kcal/g;Gin
+CIQUAL;1008;Bebidas;Vodka;Vodka;250;0.0;0.0;0.0;0.0;;alcohol 35.7 g/100 g a 7 kcal/g;Vodka
+USDA;173180;Suplementos;Proteína de suero en polvo;Whey protein powder;352;78.13;6.25;1.56;3.1;s;;Beverages, Protein powder whey based
+USDA;173177;Suplementos;Proteína de suero aislada en polvo;Whey protein isolate powder;359;58.14;29.07;1.16;0.0;;;Beverages, Whey protein powder isolate
+USDA;174276;Suplementos;Proteína de soja aislada;Soy protein isolate;335;88.32;0.0;3.39;0.0;;USDA calcula la energía de la soja con factores de Atwater propios (proteína 3,47, grasa 8,37 e hidratos 4,07 kcal/g);Soy protein isolate
+CIQUAL;11007;Suplementos;Gelatina en polvo;Gelatin powder;348;86.9;0.0;0.1;0.0;;;Gélatine, sèche
+CIQUAL;22004;Suplementos;Clara de huevo en polvo;Egg white powder;356;81.1;7.8;0.0;0.0;;;Oeuf, blanc (blanc d'oeuf), en poudre
+CIQUAL;11009;Suplementos;Levadura de cerveza;Brewer's yeast;334;40.4;21.8;4.5;22.5;;;Levure de bière en paillettes
+CIQUAL;9660;Suplementos;Germen de trigo;Wheat germ;375;29.2;35.1;9.5;16.3;;;Germe de blé
+CIQUAL;31104;Suplementos;Barrita sustitutiva;Meal replacement bar;391;5.9;71.0;11.2;5.8;;;Barre céréalière diététique hypocalorique
+CIQUAL;4004;Snacks;Patatas fritas de bolsa;Potato crisps;532;6.0;51.0;32.7;4.7;;;Chips de pommes de terre nature ou aromatisées
+CIQUAL;38417;Snacks;Nachos;Tortilla chips;488;6.68;62.6;22.5;4.33;;;Chips de maïs ou tortilla chips, nature
+CIQUAL;9231;Snacks;Palomitas;Popcorn;419;11.0;59.7;12.3;12.8;;;Pop-corn ou maïs éclaté, sans huile, non salé
+CIQUAL;9230;Snacks;Palomitas saladas con aceite;Salted popcorn with oil;477;8.3;50.2;24.6;10.6;;;Pop-corn ou maïs éclaté, à l'huile, salé
+CIQUAL;24001;Snacks;Galletas María;Plain biscuits;438;7.13;74.9;11.5;3.3;;;Biscuit sec nature
+CIQUAL;24020;Snacks;Galletas integrales;Wholegrain biscuits;462;7.75;63.0;18.4;6.6;;;Biscuit sec aux céréales complètes
+CIQUAL;24036;Snacks;Galletas de chocolate;Chocolate biscuits;507;7.75;59.5;25.6;3.9;;;Biscuit sec au chocolat, non enrichi
+CIQUAL;24684;Snacks;Cookies;Chocolate chip cookies;493;6.44;61.0;23.8;4.3;;;Cookie au chocolat, préemballé
+CIQUAL;24632;Snacks;Magdalenas;Madeleine cakes;441;5.55;55.3;21.6;1.4;;;Madeleine ordinaire, préemballée
+CIQUAL;23925;Snacks;Bizcocho;Sponge cake;438;5.68;50.5;23.2;1.83;;;Gâteau marbré au chocolat, préemballé
+CIQUAL;23585;Snacks;Pastel de chocolate;Chocolate cake;445;5.88;51.0;24.0;3.7;;;Gâteau au chocolat, préemballé
+CIQUAL;23880;Snacks;Donut;Doughnut;404;7.25;39.4;23.7;2.0;;;Beignet ou donut rond moelleux, sans fourrage, saupoudré de sucre
+CIQUAL;23799;Snacks;Crepe;Crepe;257;6.31;41.6;6.8;2.2;;;Crêpe, nature, préemballée, rayon frais
+CIQUAL;23850;Snacks;Gofre;Waffle;301;8.0;36.1;13.4;1.9;;;Gaufre bruxelloise ou liégeoise nature, artisanale
+CIQUAL;31106;Snacks;Barrita de cereales con chocolate;Chocolate cereal bar;451;6.55;73.0;14.9;4.5;;;Barre céréalière au chocolat
+CIQUAL;31113;Snacks;Barrita de cereales con frutas;Fruit cereal bar;379;5.49;74.1;7.07;3.8;;;Barre céréalière aux fruits
+CIQUAL;31004;Snacks;Chocolate con leche;Milk chocolate;550;7.5;58.9;30.8;2.9;;;Chocolat au lait, tablette
+CIQUAL;31005;Snacks;Chocolate negro;Dark chocolate;521;5.98;53.0;29.6;8.31;;;Chocolat noir 50 % de cacao environ, tablette
+CIQUAL;31010;Snacks;Chocolate blanco;White chocolate;563;6.16;57.1;34.2;1.0;;;Chocolat blanc, tablette
+CIQUAL;31032;Snacks;Crema de cacao y avellanas;Chocolate hazelnut spread;549;5.02;57.9;32.4;3.23;;;Pâte à tartiner chocolat et noisette
+CIQUAL;31000;Snacks;Barrita de chocolate;Chocolate bar;492;5.56;61.4;24.1;3.7;;;Barre chocolatée biscuitée
+CIQUAL;31060;Snacks;Gominolas;Gummy sweets;339;4.88;76.9;0.53;1.5;;;Bonbon gélifié
+CIQUAL;39515;Snacks;Helado;Ice cream;191;2.5;26.1;8.4;1.5;;;Glace ou crème glacée, en bac
+CIQUAL;39524;Snacks;Sorbete;Sorbet;122;0.4;28.7;0.56;0.99;;;Sorbet, en bac
+CIQUAL;39526;Snacks;Polo de hielo;Ice lolly;84;0.17;20.5;0.17;0.26;;;Glace à l'eau
+CIQUAL;31016;Otro;Azúcar;Sugar;399;0.0;99.7;0.0;0.0;;;Sucre blanc
+CIQUAL;31017;Otro;Azúcar moreno;Brown sugar;393;0.12;98.1;0.0;0.0;;;Sucre roux
+CIQUAL;31008;Otro;Miel;Honey;331;0.65;82.1;0.0;0.0;;;Miel
+CIQUAL;31034;Otro;Sirope de arce;Maple syrup;269;0.04;67.2;0.06;0.0;;;Sirop d'érable
+CIQUAL;31024;Otro;Mermelada de fresa;Strawberry jam;248;0.25;60.5;0.5;0.7;;;Confiture de fraise (extra ou classique)
+CIQUAL;30995;Otro;Mermelada light;Reduced-sugar jam;166;0.31;40.3;0.1;1.37;;;Confiture de fraise, allégée en sucres
+CIQUAL;18100;Otro;Cacao puro en polvo;Unsweetened cocoa powder;387;22.4;11.6;20.6;29.5;;;Cacao, sans sucres ajoutés, poudre soluble
+CIQUAL;11008;Otro;Kétchup;Ketchup;108;1.23;23.7;0.16;1.77;;;Ketchup, préemballé
+CIQUAL;11013;Otro;Mostaza;Mustard;151;6.92;4.33;11.2;0.5;;;Moutarde
+CIQUAL;11104;Otro;Salsa de soja;Soy sauce;40;7.25;1.72;0.25;0.9;;;Sauce soja, préemballée
+CIQUAL;11018;Otro;Vinagre;Vinegar;22;0.04;0.95;0.1;0.0;;ácidos orgánicos 5.9 g/100 g a 3 kcal/g;Vinaigre
+CIQUAL;11091;Otro;Vinagre balsámico;Balsamic vinegar;92;0.69;18.0;0.3;0.75;;ácidos orgánicos 5.16 g/100 g a 3 kcal/g;Vinaigre balsamique
+CIQUAL;11179;Otro;Pesto;Pesto;370;3.94;6.6;35.4;2.5;;;Sauce pesto, préemballée
+CIQUAL;25525;Otro;Salsa de tomate;Tomato sauce;42;2.04;4.71;0.75;2.81;;;Sauce tomate cuisinée pour pizza
+CIQUAL;11143;Otro;Bechamel;Béchamel sauce;147;3.84;8.97;10.6;0.2;;;Sauce béchamel au beurre, faite maison
+CIQUAL;25620;Otro;Guacamole;Guacamole;191;1.82;4.64;17.2;4.84;;;Guacamole, préemballé
+CIQUAL;25947;Otro;Caldo de pollo;Chicken broth;7;1.23;0.28;0.13;0.0;;;Bouillon de volaille, déshydraté reconstitué
+CIQUAL;25031;Otro;Paella;Paella;148;7.86;17.1;4.9;1.85;;;Paëlla, préemballée
+CIQUAL;25404;Otro;Pizza margarita;Margherita pizza;224;8.7;29.6;7.41;2.27;;;Pizza au fromage ou pizza margherita, préemballée
+CIQUAL;25435;Otro;Pizza de jamón y queso;Ham and cheese pizza;228;10.7;26.2;8.49;1.95;;;Pizza jambon fromage, préemballée
+CIQUAL;25081;Otro;Lasaña de carne;Meat lasagne;134;6.29;13.5;5.72;1.91;;;Lasagnes ou canellonis à la viande (bolognaise), préemballés
+CIQUAL;25085;Otro;Espaguetis a la boloñesa;Spaghetti bolognese;116;5.32;13.6;4.07;1.9;;;Pâtes à la bolognaise (spaghetti, tagliatelles…), préemballées
+CIQUAL;25135;Otro;Pasta a la carbonara;Pasta carbonara;161;5.91;14.2;8.7;1.18;;;Pâtes à la carbonara (spaghetti, tagliatelles…), préemballées
+CIQUAL;25413;Otro;Hamburguesa completa;Hamburger;251;13.3;29.5;8.44;1.8;;;Hamburger, de restauration rapide
+CIQUAL;25429;Otro;Kebab;Kebab;272;15.0;29.9;9.8;2.0;;;Sandwich grec ou kebab, baguette, crudités
+CIQUAL;25522;Otro;Bocadillo;Sandwich;280;12.4;30.3;11.7;2.08;;;Sandwich (aliment moyen)
+CIQUAL;4049;Otro;Croquetas;Croquettes;164;2.52;22.4;6.59;2.43;;;Croquette de pomme de terre, surgelée, à cuire
+CIQUAL;25590;Otro;Falafel;Falafel;211;7.38;17.7;10.8;6.0;;;Falafel ou boulette de pois-chiche et/ou fève, préemballé
+CIQUAL;25138;Otro;Cuscús con pollo;Chicken couscous;130;7.5;15.6;3.85;1.47;;;Couscous au poulet
+CIQUAL;11058;Otro;Sal;Salt;0;0.0;0.0;0.0;0.0;;;Sel blanc alimentaire, iodé, non fluoré (marin, ignigène ou gemme)
