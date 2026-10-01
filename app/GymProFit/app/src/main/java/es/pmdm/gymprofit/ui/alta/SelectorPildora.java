@@ -98,7 +98,12 @@ public class SelectorPildora extends FrameLayout {
                 o.setTypeface(ResourcesCompat.getFont(getContext(), R.font.barlow_condensed), Typeface.BOLD);
                 o.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
             } else {
-                o.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.text_body));
+                // A letra grande, «75+ min» se partía por la mitad: una línea, y el texto
+                // encoge hasta 13 sp, el mínimo de la app (GP-089), antes de partirse.
+                o.setMaxLines(1);
+                androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(o,
+                        13, Math.max(13, Math.round(getResources().getDimension(R.dimen.text_body)
+                                / getResources().getDisplayMetrics().scaledDensity)), 1, TypedValue.COMPLEX_UNIT_SP);
             }
             GradientDrawable borde = new GradientDrawable();
             borde.setCornerRadius(altoDp * d / 2f);
