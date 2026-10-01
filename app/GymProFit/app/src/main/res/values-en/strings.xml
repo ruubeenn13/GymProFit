@@ -1516,4 +1516,11 @@
     <string name="demo_rutina">Full body A · 44 min</string>
     <string name="demo_records">Records</string>
     <string name="demo_record_marca">62.5 kg × 8 · before 60 kg × 8</string>
+
+    <!-- ── «I already have an account» (GP-103, 1.5.1) ── -->
+    <string name="entrar_titulo">Log in</string>
+    <string name="entrar_texto">With your email or your username.</string>
+    <string name="entrar_usuario">Email or username</string>
+    <string name="entrar_sin_cuenta">No account?</string>
+    <string name="entrar_empieza_aqui">Start here</string>
 </resources>

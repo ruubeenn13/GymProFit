@@ -1531,4 +1531,12 @@
     <string name="demo_rutina">Cuerpo completo A · 44 min</string>
     <string name="demo_records">Récords</string>
     <string name="demo_record_marca">62,5 kg × 8 · antes 60 kg × 8</string>
+
+    <!-- ── «Ya tengo cuenta» (GP-103, lote 1.5.1) ── -->
+    <string name="entrar_titulo">Entrar</string>
+    <string name="entrar_texto">Con tu correo o con tu nombre de usuario.</string>
+    <string name="entrar_usuario">Correo o usuario</string>
+    <string name="entrar_usuario_ejemplo" translatable="false">lucia@example.com</string>
+    <string name="entrar_sin_cuenta">¿No tienes cuenta?</string>
+    <string name="entrar_empieza_aqui">Empieza aquí</string>
 </resources>
