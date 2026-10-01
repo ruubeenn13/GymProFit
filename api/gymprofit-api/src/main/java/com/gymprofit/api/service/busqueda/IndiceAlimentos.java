@@ -72,7 +72,6 @@ public class IndiceAlimentos {
 
     private final JdbcTemplate jdbc;
     private final JdbcTemplate jdbcStreaming;
-    private final org.springframework.context.ApplicationEventPublisher eventos;
     private final List<String> habituales;
     private final long esperaTrasImportacionMs;
     private final ScheduledExecutorService programador = Executors.newSingleThreadScheduledExecutor(r -> {
@@ -89,10 +88,8 @@ public class IndiceAlimentos {
     private final java.util.concurrent.atomic.AtomicLong programadas = new java.util.concurrent.atomic.AtomicLong();
 
     public IndiceAlimentos(JdbcTemplate jdbc, DataSource dataSource,
-                           org.springframework.context.ApplicationEventPublisher eventos,
                            @Value("${app.busqueda.reconstruir-productos-tras-ms:30000}") long esperaTrasImportacionMs) {
         this.jdbc = jdbc;
-        this.eventos = eventos;
         this.jdbcStreaming = new JdbcTemplate(dataSource);
         // Que el driver no traiga las 200 000 filas de golpe a memoria.
         this.jdbcStreaming.setFetchSize(1000);
@@ -159,10 +156,6 @@ public class IndiceAlimentos {
     }
 
     // --- Productos ----------------------------------------------------------
-
-    /** Aviso de que el índice de productos está construido y en uso. */
-    public record ProductosIndexados() {
-    }
 
     /** El índice de productos, o null si todavía no está construido. */
     Productos productos() {
@@ -239,7 +232,6 @@ public class IndiceAlimentos {
         }
         long[] ordenados = Arrays.stream(codigo).filter(c -> c >= 0).sorted().toArray();
         productos = new Productos(texto, ids.aArray(), escaneos.aArray(), primerTermino, longitud, codigo, ordenados);
-        eventos.publishEvent(new ProductosIndexados());
         // Render gratis no enseña la memoria: va aquí, en el log del arranque y de cada
         // importación, para saber cuánto margen queda (GP-168).
         java.lang.management.MemoryMXBean memoria = java.lang.management.ManagementFactory.getMemoryMXBean();
