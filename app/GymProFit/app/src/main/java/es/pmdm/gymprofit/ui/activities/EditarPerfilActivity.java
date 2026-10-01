@@ -237,7 +237,11 @@ public class EditarPerfilActivity extends AppCompatActivity {
         etEdad.addTextChangedListener(new android.text.TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int a, int b, int c) { }
             @Override public void onTextChanged(CharSequence s, int a, int b, int c) { }
-            @Override public void afterTextChanged(android.text.Editable e) { pintar.run(); }
+            @Override public void afterTextChanged(android.text.Editable e) {
+                pintar.run();
+                // Corregida la edad, su error ya no dice la verdad (GP-145).
+                ((TextInputLayout) findViewById(R.id.tilEdad)).setError(null);
+            }
         });
         spObjetivo.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
             @Override
