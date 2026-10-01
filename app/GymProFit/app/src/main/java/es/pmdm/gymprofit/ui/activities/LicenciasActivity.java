@@ -65,8 +65,11 @@ public class LicenciasActivity extends AppCompatActivity {
         View v = findViewById(fila);
         ((TextView) v.findViewById(R.id.tvFuenteNombre)).setText(nombre);
         ((TextView) v.findViewById(R.id.tvFuenteUso)).setText(uso);
-        v.setContentDescription(getString(R.string.ajustes_abre_fuera_a11y,
-                getString(nombre) + ". " + getString(uso)));
+        // «Nombre. Uso. Se abre en el navegador»: el uso trae su punto, que se quita para
+        // no leer dos seguidos.
+        String frase = getString(nombre) + ". " + getString(uso);
+        if (frase.endsWith(".")) frase = frase.substring(0, frase.length() - 1);
+        v.setContentDescription(getString(R.string.ajustes_abre_fuera_a11y, frase));
         v.setOnClickListener(x -> UIHelper.abrirUrl(this, getString(url)));
     }
 }
