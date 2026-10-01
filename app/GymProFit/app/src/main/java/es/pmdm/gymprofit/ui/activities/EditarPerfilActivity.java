@@ -21,6 +21,7 @@ import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.utils.AvisoDescartar;
 import es.pmdm.gymprofit.utils.CalculadoraNutricional;
 import es.pmdm.gymprofit.utils.LoadingDialog;
+import es.pmdm.gymprofit.utils.NivelVisible;
 import es.pmdm.gymprofit.utils.NombreVisible;
 import es.pmdm.gymprofit.utils.Numeros;
 import es.pmdm.gymprofit.utils.PreferencesManager;
@@ -57,10 +58,11 @@ public class EditarPerfilActivity extends AppCompatActivity {
     // Interfaz Retrofit tipada del dominio usuarios (etapa 2)
     private final UsuarioApi usuarioApi = ApiClient.service(UsuarioApi.class);
 
-    // Valores enviados a la API para nivel de experiencia.
-    private static final String[] NIVELES = {
-            "PRINCIPIANTE", "INTERMEDIO", "AVANZADO", "EXPERTO"
-    };
+    // Valores enviados a la API para nivel de experiencia: tres (GP-103). Experto se
+    // enseña como Avanzado y se conserva si no se cambia (NivelVisible).
+    private static final String[] NIVELES = NivelVisible.OFRECIDOS;
+    // El nivel que tiene la cuenta, tal cual, para no convertir un Experto en Avanzado.
+    private String nivelGuardado;
     // Valores enviados a la API para el objetivo del usuario.
     private static final String[] OBJETIVOS = {
             "PERDER_PESO", "GANAR_MASA_MUSCULAR", "MANTENER_PESO", "MEJORAR_FUERZA"
@@ -100,14 +102,53 @@ public class EditarPerfilActivity extends AppCompatActivity {
     // Spinners con textos localizados; los valores reales son las constantes de arriba.
     private void configurarSpinners() {
         rellenar(spNivel, getString(R.string.nivel_principiante), getString(R.string.nivel_intermedio),
-                getString(R.string.nivel_avanzado), getString(R.string.nivel_experto));
+                getString(R.string.nivel_avanzado));
         rellenar(spObjetivo, getString(R.string.objetivo_perder_peso), getString(R.string.objetivo_ganar_musculo),
                 getString(R.string.objetivo_mantener), getString(R.string.objetivo_fuerza));
         rellenar(spSexo, getString(R.string.onboarding_hombre), getString(R.string.onboarding_mujer));
-        rellenar(spActividad, getString(R.string.onboarding_sedentario), getString(R.string.onboarding_ligero),
-                getString(R.string.onboarding_moderado), getString(R.string.onboarding_activo));
+        rellenarActividad();
         seleccionarSpinner(spSexo, SEXOS, prefsManager.getSexo());
         seleccionarSpinner(spActividad, ACTIVIDADES, prefsManager.getActividad());
+        nivelGuardado = prefsManager.getNivel();
+        seleccionarSpinner(spNivel, NIVELES, NivelVisible.valor(nivelGuardado));
+    }
+
+    /**
+     * La actividad con lo que cuenta cada opción (GP-103): en la lista desplegada, título
+     * y descripción; cerrada, el título, con la descripción de la elegida debajo.
+     */
+    private void rellenarActividad() {
+        int[] titulos = {R.string.onboarding_sedentario, R.string.onboarding_ligero,
+                R.string.onboarding_moderado, R.string.onboarding_activo};
+        int[] descripciones = {R.string.actividad_sedentario_desc, R.string.actividad_ligero_desc,
+                R.string.actividad_moderado_desc, R.string.actividad_activo_desc};
+        String[] textos = new String[titulos.length];
+        for (int i = 0; i < titulos.length; i++) textos[i] = getString(titulos[i]);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, textos) {
+            @Override
+            public android.view.View getDropDownView(int position, android.view.View convertView,
+                                                     @androidx.annotation.NonNull android.view.ViewGroup parent) {
+                android.widget.TextView v = (android.widget.TextView) super.getDropDownView(position, convertView, parent);
+                v.setSingleLine(false);
+                v.setText(getString(R.string.actividad_con_descripcion,
+                        getString(titulos[position]), getString(descripciones[position])));
+                return v;
+            }
+        };
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spActividad.setAdapter(adapter);
+        android.widget.TextView desc = findViewById(R.id.tvActividadDesc);
+        spActividad.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> p, android.view.View v, int pos, long id) {
+                desc.setText(descripciones[pos]);
+            }
+
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> p) {
+                desc.setText(null);
+            }
+        });
     }
 
     private void rellenar(Spinner spinner, String... textos) {
@@ -129,7 +170,8 @@ public class EditarPerfilActivity extends AppCompatActivity {
                 if (u.getPeso() != null && !u.getPeso().isEmpty()) etPeso.setText(u.getPeso());
                 if (u.getAltura() > 0) etAltura.setText(String.valueOf((int) u.getAltura()));
                 if (u.getEdad() > 0) etEdad.setText(String.valueOf(u.getEdad()));
-                seleccionarSpinner(spNivel, NIVELES, u.getNivelExperiencia());
+                nivelGuardado = u.getNivelExperiencia();
+                seleccionarSpinner(spNivel, NIVELES, NivelVisible.valor(nivelGuardado));
                 seleccionarSpinner(spObjetivo, OBJETIVOS, u.getObjetivo());
                 // Lo de la API manda sobre lo del móvil (GP-111); sin ellos, lo del móvil.
                 seleccionarSpinner(spSexo, SEXOS, u.getSexo());
@@ -230,7 +272,8 @@ public class EditarPerfilActivity extends AppCompatActivity {
             Integer edad = ReglasEdad.leer(edadStr);
             body.put("edad", edad);
 
-            body.put("nivelExperiencia", NIVELES[spNivel.getSelectedItemPosition()]);
+            String nivel = NivelVisible.aGuardar(NIVELES[spNivel.getSelectedItemPosition()], nivelGuardado);
+            body.put("nivelExperiencia", nivel);
             body.put("objetivo", OBJETIVOS[spObjetivo.getSelectedItemPosition()]);
             body.put("sexo", SEXOS[spSexo.getSelectedItemPosition()]);
             body.put("nivelActividad", ACTIVIDADES[spActividad.getSelectedItemPosition()]);
@@ -246,7 +289,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
                     if (edad != null) prefsManager.saveEdad(edad);
                     String objetivo = OBJETIVOS[spObjetivo.getSelectedItemPosition()];
                     prefsManager.saveObjetivo(objetivo);
-                    prefsManager.saveNivel(NIVELES[spNivel.getSelectedItemPosition()]);
+                    prefsManager.saveNivel(nivel);
                     prefsManager.saveSexo(SEXOS[spSexo.getSelectedItemPosition()]);
                     prefsManager.saveActividad(ACTIVIDADES[spActividad.getSelectedItemPosition()]);
                     prefsManager.apuntarDuenoPerfil(prefsManager.getUsername());

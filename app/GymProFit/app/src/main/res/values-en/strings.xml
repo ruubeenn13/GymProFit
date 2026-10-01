@@ -1289,4 +1289,96 @@
     <string name="ajustes_avisos_activar_a11y">Turn on alerts with the screen off</string>
     <string name="ajustes_avisos_nota">The alert rings and vibrates according to your phone’s sound mode.</string>
     <string name="ajustes_fila_sub_a11y">%1$s, %2$s</string>
+
+    <!-- ── New sign-up: the questions (GP-103, 1.5.1) ─────────────────────── -->
+    <string name="alta_opcion_a11y">%1$s. %2$s</string>
+    <string name="alta_progreso_a11y">Progress</string>
+    <string name="alta_capitulo_a11y">Chapter %1$d of %2$d, %3$s</string>
+    <string name="alta_antetitulo">%1$s · %2$d of %3$d</string>
+    <string name="alta_capitulo_objetivo">Your goal</string>
+    <string name="alta_capitulo_sobre_ti">About you</string>
+    <string name="alta_capitulo_entrenamiento">Your training</string>
+    <string name="alta_capitulo_plan">Your plan</string>
+    <string name="alta_objetivo_titulo">What do you want to achieve?</string>
+    <string name="alta_objetivo_texto">We use this to work out your calories and tune your routines. You can change it later.</string>
+    <string name="alta_objetivo_perder_desc">You’ll eat 20% less than you burn, with more protein</string>
+    <string name="alta_objetivo_musculo_desc">You’ll eat 15% more than you burn, with more protein</string>
+    <string name="alta_objetivo_mantener_desc">You’ll eat what you burn</string>
+    <string name="alta_objetivo_fuerza_desc">10% more, and the big lifts at 4–6 reps</string>
+    <string name="alta_nivel_titulo">How much experience do you have?</string>
+    <string name="alta_nivel_texto">We use this to pick your programme and how many sets you do in each exercise.</string>
+    <string name="alta_nivel_principiante_desc">I’m starting out, or coming back after more than 6 months off</string>
+    <string name="alta_nivel_intermedio_desc">I’ve trained consistently for more than 6 months</string>
+    <string name="alta_nivel_avanzado_desc">I’ve trained for years and I know the big lifts</string>
+    <string name="alta_sobre_ti_titulo">Tell us about you</string>
+    <string name="alta_sobre_ti_texto">To work out your calories and macros. It’s only used for that, and you can change it any time in your profile.</string>
+    <string name="alta_sobre_ti_datos_a11y">Your details</string>
+    <string name="alta_sexo">Sex</string>
+    <string name="alta_edad">Age</string>
+    <string name="alta_altura">Height</string>
+    <string name="alta_peso">Weight</string>
+    <string name="alta_actividad">Activity</string>
+    <string name="alta_actividad_sub">Including the exercise you already do</string>
+    <string name="alta_elegir">Choose</string>
+    <string name="alta_fila_a11y">%1$s: %2$s</string>
+    <string name="alta_fila_sin_elegir_a11y">%1$s: not chosen</string>
+    <plurals name="alta_edad_valor">
+        <item quantity="one">%d year</item>
+        <item quantity="other">%d years</item>
+    </plurals>
+    <string name="alta_altura_valor">%1$d cm</string>
+    <string name="alta_peso_valor">%1$s kg</string>
+    <string name="alta_unidad_cm">cm</string>
+    <string name="alta_unidad_kg">kg</string>
+    <string name="alta_prefiero_no_decirlo">I’d rather not say</string>
+    <string name="alta_listo">Done</string>
+    <string name="alta_actividad_titulo">How much do you move?</string>
+    <string name="alta_actividad_texto">Count your daily life and the exercise you already do.</string>
+    <string name="actividad_sedentario_desc">I sit at work and hardly exercise</string>
+    <string name="actividad_ligero_desc">Light exercise 1–3 days a week</string>
+    <string name="actividad_moderado_desc">Exercise 3–5 days a week</string>
+    <string name="actividad_activo_desc">Hard exercise almost every day, or a physical job</string>
+    <string name="actividad_con_descripcion">%1$s\n%2$s</string>
+    <string name="alta_sexo_titulo">What’s your sex?</string>
+    <string name="alta_sexo_texto">Only for the calorie formula.</string>
+    <string name="alta_edad_titulo">How old are you?</string>
+    <string name="alta_altura_titulo">How tall are you?</string>
+    <string name="alta_peso_titulo">How much do you weigh?</string>
+    <string name="alta_peso_kilos_a11y">Kilos</string>
+    <string name="alta_peso_decimas_a11y">Tenths of a kilo</string>
+    <string name="alta_donde_titulo">Where will you train?</string>
+    <string name="alta_donde_texto">Your programme only has exercises you can do there.</string>
+    <string name="alta_donde_gimnasio_desc">With barbells, machines and cables</string>
+    <string name="alta_donde_mancuernas_desc">At home, with dumbbells and an incline bench</string>
+    <string name="alta_donde_corporal_desc">With a pull-up bar and a chair or a bench</string>
+    <string name="alta_dias_titulo">How much can you train?</string>
+    <string name="alta_dias_texto">Your programme is split over those days and each routine fits in that time. You can change it later.</string>
+    <string name="alta_dias_etiqueta">Days per week</string>
+    <string name="alta_tiempo_etiqueta">Time per session</string>
+    <plurals name="alta_dias_a11y">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <string name="alta_minutos">%1$d min</string>
+    <string name="alta_minutos_o_mas">%1$d+ min</string>
+    <string name="alta_minutos_a11y">%1$d minutes</string>
+    <string name="alta_minutos_o_mas_a11y">%1$d minutes or more</string>
+    <string name="alta_por_ejemplo">For example</string>
+    <string-array name="alta_ejemplo_dias">
+        <item>For example, Monday and Thursday</item>
+        <item>For example, Monday, Wednesday and Friday</item>
+        <item>For example, Monday, Tuesday, Thursday and Friday</item>
+        <item>For example, Monday to Friday</item>
+        <item>For example, Monday to Saturday</item>
+    </string-array>
+    <string-array name="alta_semana_letras">
+        <item>M</item>
+        <item>T</item>
+        <item>W</item>
+        <item>T</item>
+        <item>F</item>
+        <item>S</item>
+        <item>S</item>
+    </string-array>
+    <string name="alta_ver_mi_plan">See my plan</string>
 </resources>

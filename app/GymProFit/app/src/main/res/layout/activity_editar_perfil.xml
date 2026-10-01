@@ -173,6 +173,18 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Qué cuenta cada nivel de actividad (GP-103): el factor de la fórmula ya
+                 incluye el ejercicio, y sin decirlo cada uno entendía una cosa. -->
+            <TextView
+                android:id="@+id/tvActividadDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:textSize="@dimen/text_caption"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+
             <!-- Selector de nivel de experiencia -->
             <!-- Nivel de experiencia -->
             <TextView

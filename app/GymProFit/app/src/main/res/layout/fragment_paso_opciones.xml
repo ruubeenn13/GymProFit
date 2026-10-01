@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  fragment_paso_opciones — una pregunta del alta con opciones (GP-103): objetivo, nivel y
+  dónde entrenas. La cabecera arriba, las opciones abajo, junto al pulgar, y «Siguiente»
+  fijo al pie, apagado hasta responder. A letra grande, lo de arriba se desplaza y el
+  botón sigue a la vista.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollPaso"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/cabeceraPaso"
+                layout="@layout/view_cabecera_paso" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:minHeight="24dp" />
+
+            <LinearLayout
+                android:id="@+id/grupoOpciones"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="4dp" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="24dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSiguientePaso"
+            style="@style/Widget.GymProFit.Alta.Boton"
+            android:enabled="false"
+            android:text="@string/onboarding_siguiente" />
+    </FrameLayout>
+</LinearLayout>

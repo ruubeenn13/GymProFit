@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  view_opcion_alta — una opción de las preguntas del alta (GP-103), como en Objetivo,
+  Nivel, Dónde y la hoja de actividad del lienzo: icono opcional en un círculo de 44 dp,
+  título y descripción, y la marca redonda de 28 dp a la derecha. Lo pinta OpcionAlta,
+  que pone el fondo, el borde y los colores del tema según esté elegida o no.
+-->
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <FrameLayout
+        android:id="@+id/marcoIconoOpcion"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginEnd="14dp"
+        android:importantForAccessibility="noHideDescendants"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/ivIconoOpcion"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:importantForAccessibility="no" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:importantForAccessibility="noHideDescendants">
+
+        <TextView
+            android:id="@+id/tvTituloOpcion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="@dimen/text_subtitle"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvDescripcionOpcion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:lineSpacingMultiplier="1.1"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="@dimen/text_caption"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/marcaOpcion"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="12dp"
+        android:importantForAccessibility="noHideDescendants">
+
+        <ImageView
+            android:id="@+id/ivCheckOpcion"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_ms_check"
+            android:visibility="invisible"
+            app:tint="?attr/colorOnPrimary"
+            android:importantForAccessibility="no" />
+    </FrameLayout>
+</merge>

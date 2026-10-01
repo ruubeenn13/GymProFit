@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- El aro que late al abrir un capítulo del alta (GP-104, momento 4): 2 dp de la marca. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <stroke android:width="2dp" android:color="?attr/colorPrimary" />
+</shape>

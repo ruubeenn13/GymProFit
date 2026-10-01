@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  view_cabecera_paso — la cabecera de una pregunta del alta (GP-103): el icono del
+  capítulo si la pregunta lo abre, el antetítulo «Tu objetivo · 1 de 4», el título y el
+  para qué sirve. 20 dp a los lados, como el lienzo.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp"
+    android:paddingTop="20dp">
+
+    <include
+        android:id="@+id/iconoCapitulo"
+        layout="@layout/view_icono_capitulo"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginBottom="14dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/tvAntetitulo"
+        style="@style/Widget.GymProFit.Alta.Antetitulo" />
+
+    <TextView
+        android:id="@+id/tvTituloPaso"
+        style="@style/Widget.GymProFit.Alta.Titulo" />
+
+    <TextView
+        android:id="@+id/tvTextoPaso"
+        style="@style/Widget.GymProFit.Alta.Texto" />
+</LinearLayout>

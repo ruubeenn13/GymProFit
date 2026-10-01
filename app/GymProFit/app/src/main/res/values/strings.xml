@@ -1303,4 +1303,96 @@
     <string name="ajustes_avisos_activar_a11y">Activar los avisos con la pantalla apagada</string>
     <string name="ajustes_avisos_nota">El aviso suena y vibra según el modo del móvil.</string>
     <string name="ajustes_fila_sub_a11y">%1$s, %2$s</string>
+
+    <!-- ── Alta nueva: las preguntas (GP-103, lote 1.5.1) ─────────────────── -->
+    <string name="alta_opcion_a11y">%1$s. %2$s</string>
+    <string name="alta_progreso_a11y">Progreso</string>
+    <string name="alta_capitulo_a11y">Capítulo %1$d de %2$d, %3$s</string>
+    <string name="alta_antetitulo">%1$s · %2$d de %3$d</string>
+    <string name="alta_capitulo_objetivo">Tu objetivo</string>
+    <string name="alta_capitulo_sobre_ti">Sobre ti</string>
+    <string name="alta_capitulo_entrenamiento">Tu entrenamiento</string>
+    <string name="alta_capitulo_plan">Tu plan</string>
+    <string name="alta_objetivo_titulo">¿Qué quieres conseguir?</string>
+    <string name="alta_objetivo_texto">Con esto calculamos tus calorías y ajustamos tus rutinas. Puedes cambiarlo después.</string>
+    <string name="alta_objetivo_perder_desc">Comerás un 20 % menos de lo que gastas, con más proteína</string>
+    <string name="alta_objetivo_musculo_desc">Comerás un 15 % más de lo que gastas, con más proteína</string>
+    <string name="alta_objetivo_mantener_desc">Comerás lo mismo que gastas</string>
+    <string name="alta_objetivo_fuerza_desc">Un 10 % más, y los básicos a 4–6 repeticiones</string>
+    <string name="alta_nivel_titulo">¿Cuánta experiencia tienes?</string>
+    <string name="alta_nivel_texto">Con esto elegimos tu programa y cuántas series haces en cada ejercicio.</string>
+    <string name="alta_nivel_principiante_desc">Empiezo, o vuelvo tras más de 6 meses sin entrenar</string>
+    <string name="alta_nivel_intermedio_desc">Entreno con constancia desde hace más de 6 meses</string>
+    <string name="alta_nivel_avanzado_desc">Llevo años entrenando y domino los básicos</string>
+    <string name="alta_sobre_ti_titulo">Cuéntanos sobre ti</string>
+    <string name="alta_sobre_ti_texto">Para calcular tus calorías y tus macros. Solo se usa para eso y lo cambias cuando quieras en tu perfil.</string>
+    <string name="alta_sobre_ti_datos_a11y">Tus datos</string>
+    <string name="alta_sexo">Sexo</string>
+    <string name="alta_edad">Edad</string>
+    <string name="alta_altura">Altura</string>
+    <string name="alta_peso">Peso</string>
+    <string name="alta_actividad">Actividad</string>
+    <string name="alta_actividad_sub">Contando el ejercicio que ya haces</string>
+    <string name="alta_elegir">Elegir</string>
+    <string name="alta_fila_a11y">%1$s: %2$s</string>
+    <string name="alta_fila_sin_elegir_a11y">%1$s: sin elegir</string>
+    <plurals name="alta_edad_valor">
+        <item quantity="one">%d año</item>
+        <item quantity="other">%d años</item>
+    </plurals>
+    <string name="alta_altura_valor">%1$d cm</string>
+    <string name="alta_peso_valor">%1$s kg</string>
+    <string name="alta_unidad_cm">cm</string>
+    <string name="alta_unidad_kg">kg</string>
+    <string name="alta_prefiero_no_decirlo">Prefiero no decirlo</string>
+    <string name="alta_listo">Listo</string>
+    <string name="alta_actividad_titulo">¿Cuánto te mueves?</string>
+    <string name="alta_actividad_texto">Cuenta tu día a día y el ejercicio que ya haces.</string>
+    <string name="actividad_sedentario_desc">Trabajo sentado y casi no hago ejercicio</string>
+    <string name="actividad_ligero_desc">Ejercicio suave 1–3 días por semana</string>
+    <string name="actividad_moderado_desc">Ejercicio 3–5 días por semana</string>
+    <string name="actividad_activo_desc">Ejercicio intenso casi a diario, o un trabajo físico</string>
+    <string name="actividad_con_descripcion">%1$s\n%2$s</string>
+    <string name="alta_sexo_titulo">¿Cuál es tu sexo?</string>
+    <string name="alta_sexo_texto">Solo para la fórmula de las calorías.</string>
+    <string name="alta_edad_titulo">¿Cuántos años tienes?</string>
+    <string name="alta_altura_titulo">¿Cuánto mides?</string>
+    <string name="alta_peso_titulo">¿Cuánto pesas?</string>
+    <string name="alta_peso_kilos_a11y">Kilos</string>
+    <string name="alta_peso_decimas_a11y">Décimas de kilo</string>
+    <string name="alta_donde_titulo">¿Dónde vas a entrenar?</string>
+    <string name="alta_donde_texto">Tu programa solo lleva ejercicios que puedas hacer ahí.</string>
+    <string name="alta_donde_gimnasio_desc">Con barras, máquinas y poleas</string>
+    <string name="alta_donde_mancuernas_desc">En casa, con mancuernas y un banco inclinable</string>
+    <string name="alta_donde_corporal_desc">Con una barra de dominadas y una silla o un banco</string>
+    <string name="alta_dias_titulo">¿Cuánto puedes entrenar?</string>
+    <string name="alta_dias_texto">Tu programa se reparte en esos días y cada rutina cabe en ese tiempo. Puedes cambiarlo después.</string>
+    <string name="alta_dias_etiqueta">Días por semana</string>
+    <string name="alta_tiempo_etiqueta">Tiempo por sesión</string>
+    <plurals name="alta_dias_a11y">
+        <item quantity="one">%d día</item>
+        <item quantity="other">%d días</item>
+    </plurals>
+    <string name="alta_minutos">%1$d min</string>
+    <string name="alta_minutos_o_mas">%1$d+ min</string>
+    <string name="alta_minutos_a11y">%1$d minutos</string>
+    <string name="alta_minutos_o_mas_a11y">%1$d minutos o más</string>
+    <string name="alta_por_ejemplo">Por ejemplo</string>
+    <string-array name="alta_ejemplo_dias">
+        <item>Por ejemplo, lunes y jueves</item>
+        <item>Por ejemplo, lunes, miércoles y viernes</item>
+        <item>Por ejemplo, lunes, martes, jueves y viernes</item>
+        <item>Por ejemplo, de lunes a viernes</item>
+        <item>Por ejemplo, de lunes a sábado</item>
+    </string-array>
+    <string-array name="alta_semana_letras">
+        <item>L</item>
+        <item>M</item>
+        <item>X</item>
+        <item>J</item>
+        <item>V</item>
+        <item>S</item>
+        <item>D</item>
+    </string-array>
+    <string name="alta_ver_mi_plan">Ver mi plan</string>
 </resources>

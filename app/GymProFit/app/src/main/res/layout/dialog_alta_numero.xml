@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  dialog_alta_numero — una hoja de «Sobre ti» para un número (GP-103): edad, altura y
+  peso. Selectores del sistema (NumberPicker), que TalkBack ya sabe leer y mover, con la
+  unidad al lado, y «Listo».
+-->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="24dp">
+
+        <TextView
+            android:id="@+id/tvTituloHoja"
+            style="@style/Widget.GymProFit.Alta.TituloHoja" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <NumberPicker
+                android:id="@+id/npEntero"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:descendantFocusability="blocksDescendants" />
+
+            <NumberPicker
+                android:id="@+id/npDecimal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:descendantFocusability="blocksDescendants"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvUnidadHoja"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:textSize="@dimen/text_subtitle"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:importantForAccessibility="no" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnListoHoja"
+            style="@style/Widget.GymProFit.Alta.Boton"
+            android:layout_marginTop="16dp"
+            android:text="@string/alta_listo" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

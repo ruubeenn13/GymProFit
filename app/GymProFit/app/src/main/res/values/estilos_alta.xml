@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  estilos_alta — piezas repetidas del alta nueva (GP-103), con las medidas del lienzo
+  aprobado el 30-09-2026 (documentacion/diseno/2026-09-30-alta). Los colores son los
+  tokens del tema: donde el lienzo pone otro tono, manda el token (GP-063).
+-->
+<resources>
+    <!-- «Tu objetivo · 1 de 4»: condensada 600, 14 sp, en mayúsculas y en naranja claro. -->
+    <style name="Widget.GymProFit.Alta.Antetitulo" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/barlow_condensed</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/text_caption</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.07</item>
+        <item name="android:textColor">?attr/colorOnPrimaryContainer</item>
+    </style>
+
+    <!-- Título de pregunta: condensada 700 a 34 sp. -->
+    <style name="Widget.GymProFit.Alta.Titulo" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:accessibilityHeading">true</item>
+        <item name="android:textAppearance">@style/TextAppearance.GymProFit.Display</item>
+        <item name="android:textSize">34sp</item>
+        <item name="android:lineSpacingMultiplier">0.95</item>
+    </style>
+
+    <!-- Para qué sirve la pregunta: 16 sp, en el gris del texto secundario. -->
+    <style name="Widget.GymProFit.Alta.Texto" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:textSize">@dimen/text_fila</item>
+        <item name="android:lineSpacingMultiplier">1.2</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <!-- Botón principal del alta: 52 dp, radio 26, 17 sp en negrita. -->
+    <style name="Widget.GymProFit.Alta.Boton" parent="Widget.GymProFit.BotonPildora">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:minHeight">52dp</item>
+        <item name="cornerRadius">26dp</item>
+        <item name="android:textSize">@dimen/text_subtitle</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:maxLines">2</item>
+    </style>
+
+    <!-- Botón de texto del alta («Prefiero no decirlo», «Ya tengo cuenta»): 48 dp. -->
+    <style name="Widget.GymProFit.Alta.BotonTexto" parent="Widget.Material3.Button.TextButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:fontFamily">@font/barlow</item>
+        <item name="fontFamily">@font/barlow</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:textSize">@dimen/text_fila</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <!-- Rótulo de un grupo de opciones («Días por semana»): el de sección. -->
+    <style name="Widget.GymProFit.Alta.Etiqueta" parent="Widget.GymProFit.Seccion">
+        <item name="android:paddingStart">4dp</item>
+        <item name="android:paddingEnd">4dp</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <!-- Título de una hoja del alta: condensada 700 a 28 sp. -->
+    <style name="Widget.GymProFit.Alta.TituloHoja" parent="Widget.GymProFit.Alta.Titulo">
+        <item name="android:layout_marginTop">0dp</item>
+        <item name="android:textSize">28sp</item>
+        <item name="android:paddingStart">4dp</item>
+        <item name="android:paddingEnd">4dp</item>
+    </style>
+</resources>

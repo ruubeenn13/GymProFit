@@ -444,6 +444,16 @@ public class UIHelper {
     /** Traduce el nivel/dificultad (PRINCIPIANTE/INTERMEDIO/AVANZADO) al idioma de la app. */
     public static String traducirNivel(Context context, String nivel) {
         if (nivel == null) return "—";
+        // El nivel en tres (GP-103): Experto se enseña como Avanzado en toda la app.
+        return traducirNivelExacto(context, NivelVisible.valor(nivel));
+    }
+
+    /**
+     * Traduce el nivel sin juntar Experto con Avanzado. Solo para la administración,
+     * que escribe el valor exacto y necesita distinguir los cuatro.
+     */
+    public static String traducirNivelExacto(Context context, String nivel) {
+        if (nivel == null) return "—";
         switch (nivel.toUpperCase()) {
             case "PRINCIPIANTE": return context.getString(R.string.nivel_principiante);
             case "INTERMEDIO":   return context.getString(R.string.nivel_intermedio);
