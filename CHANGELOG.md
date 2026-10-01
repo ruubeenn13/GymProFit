@@ -2,6 +2,31 @@
 
 Historial de cambios del proyecto (API Spring Boot + app Android). Ver también el [README](README.md).
 
+### 2026-10-01
+
+| Hash | Descripción |
+|---|---|
+| `11446b6` | build(android): **versión 1.5.1** (10501). Misma clave de firma. Necesita la API del lote 1.5.0 y los dos arreglos de esta (GP-146, GP-147). **No se reparte hasta que exista gymprofit.app/terminos.** |
+| `c5f5ea4` | fix(android): el error de la edad de Editar perfil se va al corregirla (GP-145). |
+| `3ddafd8` | fix(android): aire entre los primeros pasos a letra 2,0. |
+| `5944312` | fix(android): en «Guarda tu plan» el error de un campo se va al corregirlo. |
+| `c42cec4` | fix(android): «75+ min» ya no se parte a letra 2,0 (una línea, hasta 13 sp); la descripción de la actividad en Editar perfil deja aire. |
+| `a6c18dc` | fix(android): la demostración de la bienvenida no crece con la letra del sistema (es una ilustración; para TalkBack, una imagen con su descripción). |
+| `83e3aa0` | feat(android): **Inicio, el primer día** (GP-103): «Primeros pasos» (tu plan, tu primer entrenamiento, tu primera comida), que se marcan solos, se ocultan y desaparecen al completarse; la tarjeta del fundador; Hoy toca ofrece el programa que el alta no pudo seguir. |
+| `74512ec` | feat(android): **«Ya tengo cuenta»** (GP-103): correo o usuario, sin «Entrar como invitado» (el código se queda hasta GP-150); atrás lleva a la bienvenida. |
+| `1adcc96` | feat(android): la bienvenida **despierta la API** al abrirse (`GET /actuator/health`). |
+| `b33c484` | feat(android): **el recorrido del alta nueva** (GP-103): bienvenida con la demostración en bucle y el idioma; el cuestionario con su barra de capítulos; «Tu plan», «Guarda tu plan», los avisos e Inicio. Fuera RegistroActivity, Onboarding1 a 5 y el resumen. Una cuenta sin onboarding responde lo mismo y termina en «Empezar». |
+| `eaf0805` | fix(android): la notificación de ejemplo, sin tinte naranja. |
+| `8fc37ca` | feat(android): **«Guarda tu plan»** (GP-103): nombre, correo y contraseña con ojo; alta con el perfil entero, entrar con el correo y seguir el programa, con el botón que se hace círculo y «Todo listo»; errores bajo su campo (correo en uso con «Entrar con él», contraseña «ni tu correo», sin red con reintento). |
+| `aa13803` | feat(android): **los avisos por tipo** (GP-112): «¿Te avisamos?» en el alta, con la notificación de ejemplo y los tres interruptores antes del permiso; los mismos en **Ajustes › Notificaciones**, guardados con el PATCH. |
+| `b722994` | feat(android): **«Tu plan»** (GP-103): calorías, macros y agua que cuentan, el programa de la API sin token con su carga y su error, el aviso de salud y los términos. **De 14 a 17 años, «Perder grasa» da mantenimiento** y lo dice (también en Editar perfil). Sin peso ni altura, Nutrición cuenta lo comido sin objetivo inventado. |
+| `3888af6` | feat(android): **las preguntas del alta** (GP-103): objetivo, nivel en tres (Experto se enseña como Avanzado en toda la app), «Sobre ti» con hojas y edad de 14 a 100, dónde, y días con tiempo; la actividad lleva su descripción, también en Editar perfil. |
+| `0606831` | fix(android): **la edad de Editar perfil, de 14 a 100** y sin romper con cualquier texto; `EDAD_MINIMA` se explica (GP-145). |
+| `a352ad4` | feat(android,decisiones): **el sistema de movimiento** (GP-104, **DEC-039**): los doce momentos con su duración, su curva y su vibración en `Movimiento`; con «Quitar animaciones», estado final. El récord del resumen de sesión lo estrena. |
+| `aa94159` | fix(api): **dos altas a la vez con la misma base ya no dan 500** (GP-146): la que choca prueba el número siguiente. |
+| `9b0cf31` | fix(api): **el usuario propuesto sale del nombre** (GP-147); del correo, solo sin nombre. |
+| `523c412` | docs(documentacion): el diseño aprobado del alta nueva en `documentacion/diseno/2026-09-30-alta/`. |
+
 ### 2026-09-30
 
 | Hash | Descripción |
