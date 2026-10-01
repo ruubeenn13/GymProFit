@@ -35,4 +35,8 @@ public class AdminAlimentoDTO implements Serializable {
     private boolean activo;
     // OPEN_FOOD_FACTS si tiene código de barras (vino del escáner); MANUAL si no.
     private String origen;
+    // De dónde salen los datos (GP-127): CIQUAL, USDA, OFF; null, hecho a mano.
+    private String fuente;
+    // true en los básicos, curados uno a uno.
+    private boolean revisado;
 }

@@ -116,6 +116,25 @@ class AdminAlimentosTest extends AbstractOwnershipTest {
     }
 
     @Test
+    @DisplayName("filtra por fuente: los básicos de Ciqual y de USDA, Open Food Facts y lo hecho a mano (GP-127)")
+    void filtro_fuente() throws Exception {
+        pedir(admin, "GET /admin/alimentos?fuente=CIQUAL&size=100")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[*].fuente", org.hamcrest.Matchers.everyItem(org.hamcrest.Matchers.is("CIQUAL"))))
+                .andExpect(jsonPath("$.content[*].revisado", org.hamcrest.Matchers.everyItem(org.hamcrest.Matchers.is(true))))
+                .andExpect(jsonPath("$.totalElements", org.hamcrest.Matchers.greaterThan(300)));
+        pedir(admin, "GET /admin/alimentos?fuente=usda&size=100")
+                .andExpect(jsonPath("$.content[*].fuente", org.hamcrest.Matchers.everyItem(org.hamcrest.Matchers.is("USDA"))));
+        pedir(admin, "GET /admin/alimentos?q=zgp085&fuente=MANUAL")
+                .andExpect(jsonPath("$.content[*].fuente", org.hamcrest.Matchers.everyItem(org.hamcrest.Matchers.nullValue())));
+        pedir(admin, "GET /admin/alimentos?fuente=SATELITE").andExpect(status().isBadRequest());
+        pedir(admin, "GET /admin/alimentos/resumen")
+                .andExpect(jsonPath("$.porFuente.CIQUAL", org.hamcrest.Matchers.greaterThan(300)))
+                .andExpect(jsonPath("$.porFuente.USDA", org.hamcrest.Matchers.greaterThan(5)))
+                .andExpect(jsonPath("$.productos").isNumber());
+    }
+
+    @Test
     @DisplayName("la ruta de siempre edita el nombre en inglés, la marca y el código de barras")
     void editar() throws Exception {
         pedir(admin, "PATCH /alimentos/" + escaneado.getId(),

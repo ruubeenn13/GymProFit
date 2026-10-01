@@ -30,6 +30,7 @@ public interface IAlimentoRepository extends JpaRepository<Alimento, Integer> {
      * @param patron       "%texto%" en minúsculas: nombre, nombre en inglés o código de barras
      * @param sinIngles    true deja los que no tienen nombre en inglés
      * @param openFoodFacts true, los que tienen código de barras; false, los hechos a mano
+     * @param fuente       CIQUAL, USDA, OFF o MANUAL (sin fuente: hechos a mano), GP-127
      */
     @Query("""
             SELECT a FROM Alimento a
@@ -41,10 +42,18 @@ public interface IAlimentoRepository extends JpaRepository<Alimento, Integer> {
               AND (:openFoodFacts IS NULL
                    OR (:openFoodFacts = true AND a.barcode IS NOT NULL)
                    OR (:openFoodFacts = false AND a.barcode IS NULL))
+              AND (:fuente IS NULL
+                   OR (:fuente = 'MANUAL' AND a.fuente IS NULL)
+                   OR a.fuente = :fuente)
             """)
     Page<Alimento> buscarCatalogoAdmin(@Param("patron") String patron, @Param("categoria") String categoria,
                                        @Param("sinIngles") boolean sinIngles,
-                                       @Param("openFoodFacts") Boolean openFoodFacts, Pageable pageable);
+                                       @Param("openFoodFacts") Boolean openFoodFacts,
+                                       @Param("fuente") String fuente, Pageable pageable);
+
+    // Cuántos alimentos del catálogo hay de cada fuente (GP-127): [fuente o null, total].
+    @Query("SELECT a.fuente, COUNT(a) FROM Alimento a WHERE a.usuario IS NULL GROUP BY a.fuente")
+    List<Object[]> contarCatalogoPorFuente();
 
     // Tamaño del catálogo (sin los alimentos de los usuarios), GP-085.
     long countByUsuarioIsNull();
