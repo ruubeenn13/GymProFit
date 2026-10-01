@@ -76,6 +76,8 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
     private static final String KEY_OB_MINUTOS   = "ob_minutos";
     private static final String KEY_OB_SIN_DATOS = "ob_sin_datos";
     private static final String KEY_OB_PASO      = "ob_paso";
+    private static final String KEY_OB_PROGRAMA  = "ob_programa";
+    private static final String KEY_OB_PROGRAMA_NOMBRE = "ob_programa_nombre";
 
     private SharedPreferences prefs;
     private SharedPreferences.Editor editor;
@@ -340,6 +342,15 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
         editor.apply();
     }
 
+    /**
+     * Si hay con qué calcular las calorías: peso y altura de esta cuenta (GP-103). Sin
+     * ellos —«Prefiero no decirlo» en el alta— no hay objetivo, en vez de uno inventado
+     * con los valores por defecto.
+     */
+    public boolean hayDatosParaCalorias() {
+        return perfilUsable() && prefs.contains(KEY_PESO) && prefs.contains(KEY_ALTURA);
+    }
+
     public int getCaloriasDiarias() { return prefs.getInt(KEY_CALORIAS, 2000); }
     public int getProteinasDiarias() { return prefs.getInt(KEY_PROTEINAS, 150); }
     public int getCarbosDiarios() { return prefs.getInt(KEY_CARBOS, 250); }
@@ -442,6 +453,13 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
     public boolean isBorradorSinDatos()    { return prefs.getBoolean(KEY_OB_SIN_DATOS, false); }
     public int    getBorradorPaso()        { return prefs.getInt(KEY_OB_PASO, 0); }
 
+    /** El programa que recomendó «Tu plan», para seguirlo al crear la cuenta. */
+    public void guardarBorradorPrograma(String codigo, String nombre) {
+        editor.putString(KEY_OB_PROGRAMA, codigo).putString(KEY_OB_PROGRAMA_NOMBRE, nombre).apply();
+    }
+    public String getBorradorProgramaCodigo() { return prefs.getString(KEY_OB_PROGRAMA, ""); }
+    public String getBorradorProgramaNombre() { return prefs.getString(KEY_OB_PROGRAMA_NOMBRE, ""); }
+
     /** Borra las cinco respuestas de «Sobre ti» (al elegir «Prefiero no decirlo»). */
     public void borrarBorradorSobreTi() {
         editor.remove(KEY_OB_SEXO).remove(KEY_OB_EDAD).remove(KEY_OB_ALTURA)
@@ -464,7 +482,8 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
               .remove(KEY_OB_SEXO).remove(KEY_OB_PESO).remove(KEY_OB_ALTURA)
               .remove(KEY_OB_ACTIVIDAD).remove(KEY_OB_OBJETIVO).remove(KEY_OB_NIVEL)
               .remove(KEY_OB_DONDE).remove(KEY_OB_DIAS).remove(KEY_OB_MINUTOS)
-              .remove(KEY_OB_SIN_DATOS).remove(KEY_OB_PASO);
+              .remove(KEY_OB_SIN_DATOS).remove(KEY_OB_PASO)
+              .remove(KEY_OB_PROGRAMA).remove(KEY_OB_PROGRAMA_NOMBRE);
         editor.apply();
     }
 

@@ -1395,4 +1395,68 @@
         <item>D</item>
     </string-array>
     <string name="alta_ver_mi_plan">Ver mi plan</string>
+
+    <!-- ── Alta nueva: «Tu plan» (GP-103, lote 1.5.1) ─────────────────────── -->
+    <string name="sin_valor">—</string>
+    <string name="enumeracion_y">" y "</string>
+    <string name="alta_plan_resumen">Para %1$s, %2$s, %3$s de %4$d minutos.</string>
+    <string name="alta_para_perder">perder grasa</string>
+    <string name="alta_para_musculo">ganar músculo</string>
+    <string name="alta_para_mantener">mantenerte</string>
+    <string name="alta_para_fuerza">ganar fuerza</string>
+    <string name="alta_en_el_gimnasio">en el gimnasio</string>
+    <string name="alta_en_casa">en casa con mancuernas</string>
+    <string name="alta_con_tu_peso">con tu peso corporal</string>
+    <plurals name="alta_plan_dias">
+        <item quantity="one">%d día</item>
+        <item quantity="other">%d días</item>
+    </plurals>
+    <string name="alta_plan_cada_dia">Cada día</string>
+    <string name="alta_plan_kcal_al_dia">kcal al día</string>
+    <string name="alta_plan_proteina">Proteína</string>
+    <string name="alta_plan_carbohidratos">Carbohidratos</string>
+    <string name="alta_plan_grasa">Grasa</string>
+    <string name="alta_plan_agua">Agua</string>
+    <string name="alta_plan_gramos">%1$d g</string>
+    <string name="alta_plan_litros">%1$s L</string>
+    <string name="alta_plan_kcal_a11y">%1$s kilocalorías al día</string>
+    <string name="alta_plan_macros_a11y">Proteína, %1$d gramos. Carbohidratos, %2$d gramos. Grasa, %3$d gramos. Agua, %4$s litros.</string>
+    <string name="alta_plan_nota_perder">Un 20 % menos de lo que gastas, para perder grasa.</string>
+    <string name="alta_plan_nota_musculo">Un 15 % más de lo que gastas, para ganar músculo.</string>
+    <string name="alta_plan_nota_mantener">Lo mismo que gastas, para mantenerte.</string>
+    <string name="alta_plan_nota_fuerza">Un 10 % más de lo que gastas, para ganar fuerza.</string>
+    <string name="alta_plan_nota_menores">Con menos de 18 años, «Perder grasa» se queda en tus calorías de mantenimiento. Si quieres perder grasa, háblalo antes con un profesional.</string>
+    <string name="alta_plan_sin_calorias">Sin calorías por ahora: has preferido no decir tus datos. Añádelos cuando quieras en tu perfil y las calculamos.</string>
+    <string name="alta_plan_tu_programa">Tu programa</string>
+    <string name="alta_plan_programa_cargando">Buscando tu programa…</string>
+    <string name="alta_plan_programa_error">No hemos podido cargar tu programa. Tu plan sigue aquí.</string>
+    <string name="alta_plan_programa_sin_red">Sin conexión: no hemos podido cargar tu programa. Tu plan sigue aquí.</string>
+    <string name="alta_plan_detalle_programa">%1$s · %2$s · sesiones de %3$d min</string>
+    <string name="alta_plan_rutina_a11y">%1$s, %2$d minutos. %3$s</string>
+    <string-array name="alta_dias_semana">
+        <item>lunes</item>
+        <item>martes</item>
+        <item>miércoles</item>
+        <item>jueves</item>
+        <item>viernes</item>
+        <item>sábado</item>
+        <item>domingo</item>
+    </string-array>
+    <string name="alta_plan_dia_rutina">%1$s %2$s</string>
+    <string name="alta_plan_dias_texto">%1$s. En Entrenar las tienes todas, y en Inicio, la que toca.</string>
+    <string name="alta_plan_dias_sin_rutinas">En Entrenar tendrás todas tus rutinas, y en Inicio, la que toca.</string>
+    <string name="alta_terminos_enlace">Términos de uso</string>
+    <string name="alta_plan_aviso_salud">Es una estimación para empezar, no un consejo médico. Si tienes alguna lesión o problema de salud, o estás embarazada, consulta antes con un profesional. %1$s</string>
+    <string name="url_terminos" translatable="false">https://gymprofit.app/terminos</string>
+    <string name="alta_guarda_tu_plan">Guarda tu plan</string>
+    <string name="alta_empezar">Empezar</string>
+    <string name="nutricion_sin_objetivo">kcal · sin objetivo</string>
+    <string name="nutricion_sin_objetivo_rotulo">Tu objetivo</string>
+    <string name="nutricion_sin_objetivo_accion">Añade tu peso y tu altura en tu perfil</string>
+    <string name="nutricion_sin_objetivo_a11y">%1$s kilocalorías hoy, sin objetivo. Añade tu peso y tu altura en tu perfil para tenerlo.</string>
+    <string name="macro_prot_solo">Prot. %1$d g</string>
+    <string name="macro_carbos_solo">Carbos %1$d g</string>
+    <string name="macro_grasas_solo">Grasas %1$d g</string>
+    <string name="nutricion_macro_solo">%1$d g</string>
+    <string name="editar_perfil_nota_menores">Con menos de 18 años, «Perder grasa» se queda en tus calorías de mantenimiento. Si quieres perder grasa, háblalo antes con un profesional.</string>
 </resources>

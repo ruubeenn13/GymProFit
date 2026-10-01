@@ -1381,4 +1381,67 @@
         <item>S</item>
     </string-array>
     <string name="alta_ver_mi_plan">See my plan</string>
+
+    <!-- ── New sign-up: «Your plan» (GP-103, 1.5.1) ───────────────────────── -->
+    <string name="sin_valor">—</string>
+    <string name="enumeracion_y">" and "</string>
+    <string name="alta_plan_resumen">To %1$s, %2$s, %3$s of %4$d minutes.</string>
+    <string name="alta_para_perder">lose fat</string>
+    <string name="alta_para_musculo">build muscle</string>
+    <string name="alta_para_mantener">stay where you are</string>
+    <string name="alta_para_fuerza">get stronger</string>
+    <string name="alta_en_el_gimnasio">at the gym</string>
+    <string name="alta_en_casa">at home with dumbbells</string>
+    <string name="alta_con_tu_peso">with your bodyweight</string>
+    <plurals name="alta_plan_dias">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <string name="alta_plan_cada_dia">Every day</string>
+    <string name="alta_plan_kcal_al_dia">kcal a day</string>
+    <string name="alta_plan_proteina">Protein</string>
+    <string name="alta_plan_carbohidratos">Carbs</string>
+    <string name="alta_plan_grasa">Fat</string>
+    <string name="alta_plan_agua">Water</string>
+    <string name="alta_plan_gramos">%1$d g</string>
+    <string name="alta_plan_litros">%1$s L</string>
+    <string name="alta_plan_kcal_a11y">%1$s kilocalories a day</string>
+    <string name="alta_plan_macros_a11y">Protein, %1$d grams. Carbs, %2$d grams. Fat, %3$d grams. Water, %4$s litres.</string>
+    <string name="alta_plan_nota_perder">20% less than you burn, to lose fat.</string>
+    <string name="alta_plan_nota_musculo">15% more than you burn, to build muscle.</string>
+    <string name="alta_plan_nota_mantener">What you burn, to stay where you are.</string>
+    <string name="alta_plan_nota_fuerza">10% more than you burn, to get stronger.</string>
+    <string name="alta_plan_nota_menores">Under 18, “Lose fat” stays at your maintenance calories. If you want to lose fat, talk it over with a professional first.</string>
+    <string name="alta_plan_sin_calorias">No calories for now: you’d rather not give your details. Add them in your profile whenever you like and we’ll work them out.</string>
+    <string name="alta_plan_tu_programa">Your programme</string>
+    <string name="alta_plan_programa_cargando">Finding your programme…</string>
+    <string name="alta_plan_programa_error">We couldn’t load your programme. Your plan is still here.</string>
+    <string name="alta_plan_programa_sin_red">No connection: we couldn’t load your programme. Your plan is still here.</string>
+    <string name="alta_plan_detalle_programa">%1$s · %2$s · %3$d min sessions</string>
+    <string name="alta_plan_rutina_a11y">%1$s, %2$d minutes. %3$s</string>
+    <string-array name="alta_dias_semana">
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+        <item>Sunday</item>
+    </string-array>
+    <string name="alta_plan_dia_rutina">%1$s %2$s</string>
+    <string name="alta_plan_dias_texto">%1$s. You’ll have them all in Train, and today’s in Home.</string>
+    <string name="alta_plan_dias_sin_rutinas">You’ll have all your routines in Train, and today’s in Home.</string>
+    <string name="alta_terminos_enlace">Terms of use</string>
+    <string name="alta_plan_aviso_salud">This is an estimate to get you started, not medical advice. If you have an injury or a health problem, or you’re pregnant, check with a professional first. %1$s</string>
+    <string name="alta_guarda_tu_plan">Save your plan</string>
+    <string name="alta_empezar">Start</string>
+    <string name="nutricion_sin_objetivo">kcal · no target</string>
+    <string name="nutricion_sin_objetivo_rotulo">Your target</string>
+    <string name="nutricion_sin_objetivo_accion">Add your weight and height in your profile</string>
+    <string name="nutricion_sin_objetivo_a11y">%1$s kilocalories today, no target. Add your weight and height in your profile to get one.</string>
+    <string name="macro_prot_solo">Prot. %1$d g</string>
+    <string name="macro_carbos_solo">Carbs %1$d g</string>
+    <string name="macro_grasas_solo">Fat %1$d g</string>
+    <string name="nutricion_macro_solo">%1$d g</string>
+    <string name="editar_perfil_nota_menores">Under 18, “Lose fat” stays at your maintenance calories. If you want to lose fat, talk it over with a professional first.</string>
 </resources>

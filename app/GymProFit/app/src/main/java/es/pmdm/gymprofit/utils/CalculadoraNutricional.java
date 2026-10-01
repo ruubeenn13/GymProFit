@@ -39,15 +39,26 @@ public class CalculadoraNutricional {
         }
     }
 
+    /** Hasta esta edad, incluida, «Perder grasa» no lleva déficit (GP-103). */
+    public static final int EDAD_SIN_DEFICIT = 17;
+
     // Calcula calorías diarias y reparto de macros (proteínas/carbos/grasas) más el
     // agua recomendada, según los datos físicos del usuario, su actividad y su objetivo.
+    //
+    // De 14 a 17 años, «Perder grasa» da las de mantenimiento (decisión 6 del lienzo del
+    // alta): un déficit a esa edad es cosa de un profesional, no de una fórmula. Va aquí,
+    // y no en la pantalla del plan, para que valga también al recalcular desde Editar
+    // perfil y en Nutrición. El resultado lo marca para que las pantallas lo digan.
     public static ResultadoNutricional calcular(double pesoKg, double alturaCm, int edad, boolean esHombre, String actividad, String objetivo) {
         double tmb  = calcularTMB(pesoKg, alturaCm, edad, esHombre);
         double tdee = tmb * factorActividad(actividad);
 
         int calorias, proteinas, carbohidratos, grasas;
 
-        switch (objetivo) {
+        boolean sinDeficit = OBJETIVO_PERDER_PESO.equals(objetivo) && edad > 0 && edad <= EDAD_SIN_DEFICIT;
+        String calculo = sinDeficit ? OBJETIVO_MANTENER_PESO : (objetivo == null ? "" : objetivo);
+
+        switch (calculo) {
             case OBJETIVO_PERDER_PESO:
                 // Déficit del 20%, proteína alta para preservar músculo
                 calorias      = (int) (tdee * 0.80);
@@ -84,12 +95,14 @@ public class CalculadoraNutricional {
         // Agua recomendada: 35ml por kg de peso corporal
         double agua = Math.round(pesoKg * 0.035 * 10.0) / 10.0;
 
-        return new ResultadoNutricional(
+        ResultadoNutricional r = new ResultadoNutricional(
                 calorias,
                 proteinas,
                 Math.max(carbohidratos, 0),
                 Math.max(grasas, 0),
                 agua
         );
+        r.mantenimientoPorEdad = sinDeficit;
+        return r;
     }
 }

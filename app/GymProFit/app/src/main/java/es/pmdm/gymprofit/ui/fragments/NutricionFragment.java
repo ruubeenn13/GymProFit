@@ -270,10 +270,24 @@ public class NutricionFragment extends BaseFragment {
         NumberFormat nf = NumberFormat.getIntegerInstance(FechaUtils.localeDeLaApp(requireContext()));
 
         ((TextView) findViewById(R.id.tvKcal)).setText(nf.format(d.kcal));
-        ((TextView) findViewById(R.id.tvKcalObjetivo)).setText(getString(R.string.nutricion_kcal_de, nf.format(d.objetivoKcal)));
-        int restantes = d.kcalRestantes();
         TextView rotulo = findViewById(R.id.tvQuedanRotulo);
         TextView quedan = findViewById(R.id.tvQuedan);
+        if (d.sinObjetivo) {
+            // Sin peso ni altura (GP-103): lo comido, sin objetivo que restar.
+            ((TextView) findViewById(R.id.tvKcalObjetivo)).setText(R.string.nutricion_sin_objetivo);
+            rotulo.setText(R.string.nutricion_sin_objetivo_rotulo);
+            quedan.setText(R.string.nutricion_sin_objetivo_accion);
+            quedan.setTextColor(color(com.google.android.material.R.attr.colorOnSurface));
+            ((LinearProgressIndicator) findViewById(R.id.barraKcal)).setProgressCompat(0, false);
+            findViewById(R.id.filaKcal).setContentDescription(
+                    getString(R.string.nutricion_sin_objetivo_a11y, nf.format(d.kcal)));
+            macroSinObjetivo(R.id.macroProteinas, d.proteinas);
+            macroSinObjetivo(R.id.macroCarbos, d.carbohidratos);
+            macroSinObjetivo(R.id.macroGrasas, d.grasas);
+            return;
+        }
+        ((TextView) findViewById(R.id.tvKcalObjetivo)).setText(getString(R.string.nutricion_kcal_de, nf.format(d.objetivoKcal)));
+        int restantes = d.kcalRestantes();
         rotulo.setText(restantes >= 0 ? R.string.nutricion_te_quedan : R.string.nutricion_te_pasas);
         quedan.setText(getString(R.string.nutricion_kcal_valor, nf.format(Math.abs(restantes))));
         quedan.setTextColor(restantes >= 0 ? color(com.google.android.material.R.attr.colorOnSurface)
@@ -286,6 +300,16 @@ public class NutricionFragment extends BaseFragment {
         macro(R.id.macroProteinas, d.proteinas, d.objetivoProteinas, d.estadoProteinas());
         macro(R.id.macroCarbos, d.carbohidratos, d.objetivoCarbohidratos, d.estadoCarbohidratos());
         macro(R.id.macroGrasas, d.grasas, d.objetivoGrasas, d.estadoGrasas());
+    }
+
+    private void macroSinObjetivo(int id, double valor) {
+        View fila = findViewById(id);
+        TextView tvValor = fila.findViewById(R.id.tvMacroValor);
+        tvValor.setText(getString(R.string.nutricion_macro_solo, (int) Math.round(valor)));
+        tvValor.setTextColor(color(com.google.android.material.R.attr.colorOnSurface));
+        ((LinearProgressIndicator) fila.findViewById(R.id.barraMacro)).setProgressCompat(0, false);
+        fila.setContentDescription(((TextView) fila.findViewById(R.id.tvMacroNombre)).getText()
+                + ", " + tvValor.getText());
     }
 
     private void macro(int id, double valor, int objetivo, DiaNutricion.Estado estado) {

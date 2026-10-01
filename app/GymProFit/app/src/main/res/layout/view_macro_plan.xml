@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  view_macro_plan — un macro en «Tu plan» (GP-103): su punto de color, el nombre y los
+  gramos, que cuentan al entrar. TalkBack lo lee con la lista entera.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:importantForAccessibility="noHideDescendants">
+
+    <View
+        android:id="@+id/puntoMacro"
+        android:layout_width="8dp"
+        android:layout_height="8dp" />
+
+    <TextView
+        android:id="@+id/tvNombreMacro"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="7dp"
+        android:textSize="@dimen/text_caption" />
+
+    <TextView
+        android:id="@+id/tvValorMacro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFeatureSettings="tnum"
+        android:textSize="@dimen/text_caption"
+        android:textStyle="bold" />
+</LinearLayout>

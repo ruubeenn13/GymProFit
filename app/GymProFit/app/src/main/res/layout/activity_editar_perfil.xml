@@ -243,6 +243,19 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- De 14 a 17 años, «Perder grasa» se queda en mantenimiento (GP-103): se dice. -->
+            <TextView
+                android:id="@+id/tvNotaObjetivo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:text="@string/editar_perfil_nota_menores"
+                android:textSize="@dimen/text_caption"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:visibility="gone" />
+
             <!-- Botón de guardado de cambios -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnGuardar"

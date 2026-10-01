@@ -560,6 +560,11 @@ public class InicioFragment extends BaseFragment {
         NumberFormat nf = NumberFormat.getIntegerInstance(FechaUtils.localeDeLaApp(requireContext()));
         TextView kcal = findViewById(R.id.tvKcalHoy);
         kcal.setText(nf.format(d.kcal));
+        if (d.sinObjetivo) {
+            pintarNutricionSinObjetivo(d, nf);
+            return;
+        }
+        findViewById(R.id.barraKcalHoy).setVisibility(View.VISIBLE);
         ((TextView) findViewById(R.id.tvKcalObjetivoHoy)).setText(getString(R.string.nutricion_de_kcal, nf.format(d.objetivoKcal)));
         ((LinearProgressIndicator) findViewById(R.id.barraKcalHoy)).setProgressCompat(
                 DiaNutricion.porcentaje(d.kcal, d.objetivoKcal), false);
@@ -570,6 +575,24 @@ public class InicioFragment extends BaseFragment {
 
         findViewById(R.id.filaKcalHoy).setContentDescription(
                 getString(R.string.nutricion_hoy_a11y, nf.format(d.kcal), nf.format(d.objetivoKcal)));
+    }
+
+    // Sin peso ni altura (GP-103, «Prefiero no decirlo»): lo comido, sin objetivo ni barra.
+    private void pintarNutricionSinObjetivo(DiaNutricion d, NumberFormat nf) {
+        ((TextView) findViewById(R.id.tvKcalObjetivoHoy)).setText(R.string.nutricion_sin_objetivo);
+        findViewById(R.id.barraKcalHoy).setVisibility(View.GONE);
+        int normal = color(com.google.android.material.R.attr.colorOnSurface);
+        TextView prot = findViewById(R.id.tvMacroProtHoy);
+        prot.setText(getString(R.string.macro_prot_solo, (int) Math.round(d.proteinas)));
+        prot.setTextColor(normal);
+        TextView carbos = findViewById(R.id.tvMacroCarbosHoy);
+        carbos.setText(getString(R.string.macro_carbos_solo, (int) Math.round(d.carbohidratos)));
+        carbos.setTextColor(normal);
+        TextView grasas = findViewById(R.id.tvMacroGrasasHoy);
+        grasas.setText(getString(R.string.macro_grasas_solo, (int) Math.round(d.grasas)));
+        grasas.setTextColor(normal);
+        findViewById(R.id.filaKcalHoy).setContentDescription(
+                getString(R.string.nutricion_sin_objetivo_a11y, nf.format(d.kcal)));
     }
 
     private void macro(int id, int formato, double valor, int objetivo, DiaNutricion.Estado estado) {

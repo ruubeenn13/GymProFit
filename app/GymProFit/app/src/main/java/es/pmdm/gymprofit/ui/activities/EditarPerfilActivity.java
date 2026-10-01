@@ -96,6 +96,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
         cargarDatosUsuario();
         guardarEstadoInicial();
         AvisoDescartar.instalar(this, findViewById(R.id.toolbar), this::hayCambios);
+        vigilarNotaMenores();
         findViewById(R.id.btnGuardar).setOnClickListener(v -> guardarPerfil());
     }
 
@@ -219,6 +220,37 @@ public class EditarPerfilActivity extends AppCompatActivity {
                 return;
             }
         }
+    }
+
+    /**
+     * De 14 a 17 años con «Perder grasa», la calculadora da las calorías de mantenimiento
+     * (GP-103): la nota lo dice debajo del objetivo mientras se cumplan las dos cosas.
+     */
+    private void vigilarNotaMenores() {
+        Runnable pintar = () -> {
+            Integer edad = ReglasEdad.leer(texto(etEdad));
+            boolean perder = CalculadoraNutricional.OBJETIVO_PERDER_PESO.equals(
+                    OBJETIVOS[Math.max(0, spObjetivo.getSelectedItemPosition())]);
+            boolean menor = edad != null && edad <= CalculadoraNutricional.EDAD_SIN_DEFICIT;
+            findViewById(R.id.tvNotaObjetivo).setVisibility(perder && menor ? android.view.View.VISIBLE : android.view.View.GONE);
+        };
+        etEdad.addTextChangedListener(new android.text.TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int a, int b, int c) { }
+            @Override public void onTextChanged(CharSequence s, int a, int b, int c) { }
+            @Override public void afterTextChanged(android.text.Editable e) { pintar.run(); }
+        });
+        spObjetivo.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> p, android.view.View v, int pos, long id) {
+                pintar.run();
+            }
+
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> p) {
+                pintar.run();
+            }
+        });
+        pintar.run();
     }
 
     /**
