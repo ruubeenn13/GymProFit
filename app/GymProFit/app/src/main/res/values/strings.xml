@@ -1496,7 +1496,7 @@
     <string name="guarda_contrasena">Contraseña</string>
     <string name="guarda_entrar_con_el">Entrar con él</string>
     <string name="guarda_crear_cuenta">Crear cuenta</string>
-    <string name="guarda_legal">Al crear tu cuenta aceptas los %1$s y confirmas que has leído la %2$s.</string>
+    <string name="guarda_legal">Al crear tu cuenta confirmas que tienes 14 años o más, aceptas los %1$s y has leído la %2$s.</string>
     <string name="guarda_ya_tienes_cuenta">¿Ya tienes cuenta?</string>
     <string name="guarda_entrar">Entrar</string>
     <string name="guarda_seguir">Seguir</string>

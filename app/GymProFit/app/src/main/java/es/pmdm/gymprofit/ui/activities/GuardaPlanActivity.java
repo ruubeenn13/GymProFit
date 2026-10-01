@@ -133,8 +133,10 @@ public class GuardaPlanActivity extends BaseActivity {
         out.putBoolean("cuentaCreada", cuentaCreada);
     }
 
-    // «Al crear tu cuenta aceptas los Términos de uso y confirmas que has leído la
-    // Política de privacidad», con los dos nombres pulsables dentro de la frase.
+    // «Al crear tu cuenta confirmas que tienes 14 años o más, aceptas los Términos de uso
+    // y has leído la Política de privacidad» (GP-087), con los dos nombres pulsables
+    // dentro de la frase. La edad es opcional en el alta: si no se da, no se comprueba;
+    // si se da, la API la exige de 14 en adelante (DEC-038).
     private void montarLegal() {
         TextView tv = findViewById(R.id.tvLegalGuarda);
         String terminos = getString(R.string.alta_terminos_enlace);

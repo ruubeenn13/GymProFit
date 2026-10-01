@@ -343,6 +343,37 @@
 
                     </LinearLayout>
 
+                    <!-- Términos de uso (GP-087), junto a la política y por la misma vía:
+                         el texto vive en gymprofit.app. -->
+                    <LinearLayout
+                        android:id="@+id/llAcercaTerminos"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="4dp">
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:src="@drawable/ic_ms_open_in_new"
+                            android:alpha="0.55"
+                            android:contentDescription="@null" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="@string/ajustes_terminos"
+                            android:textSize="@dimen/text_body"
+                            android:textColor="?attr/colorPrimary" />
+
+                    </LinearLayout>
+
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>

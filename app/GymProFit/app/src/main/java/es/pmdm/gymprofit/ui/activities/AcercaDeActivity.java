@@ -61,6 +61,8 @@ public class AcercaDeActivity extends AppCompatActivity {
         // La política se abre en el navegador: no viaja dentro del APK (GP-008).
         findViewById(R.id.llAcercaPrivacidad).setOnClickListener(v ->
                 es.pmdm.gymprofit.utils.UIHelper.abrirUrl(this, getString(R.string.url_privacidad)));
+        findViewById(R.id.llAcercaTerminos).setOnClickListener(v ->
+                es.pmdm.gymprofit.utils.UIHelper.abrirUrl(this, getString(R.string.url_terminos)));
 
     }
 

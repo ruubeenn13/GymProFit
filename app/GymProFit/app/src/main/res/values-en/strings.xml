@@ -1481,7 +1481,7 @@
     <string name="guarda_contrasena">Password</string>
     <string name="guarda_entrar_con_el">Log in with it</string>
     <string name="guarda_crear_cuenta">Create account</string>
-    <string name="guarda_legal">By creating your account you accept the %1$s and confirm that you have read the %2$s.</string>
+    <string name="guarda_legal">By creating your account you confirm that you are 14 or older, accept the %1$s and have read the %2$s.</string>
     <string name="guarda_ya_tienes_cuenta">Already have an account?</string>
     <string name="guarda_entrar">Log in</string>
     <string name="guarda_seguir">Continue</string>
