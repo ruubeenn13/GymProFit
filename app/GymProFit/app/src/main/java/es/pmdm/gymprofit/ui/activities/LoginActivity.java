@@ -56,6 +56,8 @@ public class LoginActivity extends AppCompatActivity {
     public static final String EXTRA_CUENTA_DESACTIVADA = "cuenta_desactivada";
     // Tras cambiar la contraseña, si la app no pudo volver a entrar sola (GP-105).
     public static final String EXTRA_PASSWORD_CAMBIADA = "password_cambiada";
+    // El correo con que entrar, desde «Entrar con él» de «Guarda tu plan» (GP-103).
+    public static final String EXTRA_USUARIO = "usuario";
 
     private EditText etUsuario, etPassword;
     private ImageButton btnCambiarTema, btnCambiarIdioma;
@@ -80,6 +82,8 @@ public class LoginActivity extends AppCompatActivity {
         es.pmdm.gymprofit.envivo.SesionEnCursoRepositorio.get(this).usarCuenta(prefsManager.getUsuarioId());
 
         inicializarVistas();
+        String usuario = getIntent().getStringExtra(EXTRA_USUARIO);
+        if (usuario != null && savedInstanceState == null) etUsuario.setText(usuario);
         configurarEventos();
         actualizarIconoTema();
 

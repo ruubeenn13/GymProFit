@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  view_paso_crear — un paso de crear la cuenta en «Guarda tu plan» (GP-103): un giro
+  mientras se hace y un check naranja que salta al acabar (momento 9), con su texto.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <FrameLayout
+        android:layout_width="22dp"
+        android:layout_height="22dp">
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/giroPaso"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            app:indicatorColor="?attr/colorOnPrimaryContainer"
+            app:indicatorSize="18dp"
+            app:trackThickness="2dp"
+            android:importantForAccessibility="no" />
+
+        <ImageView
+            android:id="@+id/checkPaso"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_ms_check_circle_fill"
+            android:visibility="invisible"
+            app:tint="?attr/colorPrimary"
+            android:importantForAccessibility="no" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tvPaso"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="10dp"
+        android:textSize="@dimen/text_body" />
+</LinearLayout>

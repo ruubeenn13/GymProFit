@@ -641,7 +641,7 @@
     <string name="password_error_corta">At least 8 characters</string>
     <string name="password_error_larga">Too long: make it a bit shorter</string>
     <string name="password_error_comun">It is too common: choose another one</string>
-    <string name="password_error_nombre">It cannot contain “GymProFit” or your username</string>
+    <string name="password_error_nombre">It cannot contain “GymProFit”, your username or your email</string>
     <string name="recuperar_restablecer">Reset password</string>
     <string name="recuperar_reenviar">Send another code</string>
     <string name="recuperar_ok">Password changed. You can sign in with the new one.</string>
@@ -1468,4 +1468,29 @@
     <string name="notificaciones_activar">Turn on</string>
     <string name="notificaciones_que_avisamos">What we alert you about</string>
     <string name="notificaciones_sistema">Android settings</string>
+
+    <!-- ── New sign-up: «Save your plan» (GP-103, 1.5.1) ──────────────────── -->
+    <string name="guarda_volver_a11y">Back to your plan</string>
+    <string name="guarda_plan_listo">Your plan is ready</string>
+    <string name="guarda_texto">Create your account so you don’t lose it and can log your workouts from today.</string>
+    <string name="guarda_nombre">Name</string>
+    <string name="guarda_nombre_ayuda">How we’ll greet you in the app</string>
+    <string name="guarda_correo">Email</string>
+    <string name="guarda_contrasena">Password</string>
+    <string name="guarda_entrar_con_el">Log in with it</string>
+    <string name="guarda_crear_cuenta">Create account</string>
+    <string name="guarda_legal">By creating your account you accept the %1$s and confirm that you have read the %2$s.</string>
+    <string name="guarda_ya_tienes_cuenta">Already have an account?</string>
+    <string name="guarda_entrar">Log in</string>
+    <string name="guarda_seguir">Continue</string>
+    <string name="guarda_error_nombre">Enter your name</string>
+    <string name="guarda_error_clave_nombre">It cannot contain “GymProFit”, your name or your email</string>
+    <string name="guarda_sin_red">No connection. Your plan is still here: try again.</string>
+    <string name="guarda_todo_listo">All set, %1$s</string>
+    <string name="guarda_todo_listo_texto">Your plan is saved and %1$s is waiting for you in Home.</string>
+    <string name="guarda_todo_listo_texto_sin_programa">Your plan is saved and waiting for you in Home.</string>
+    <string name="guarda_creando_a11y">Creating your account</string>
+    <string name="guarda_paso_cuenta">Creating your account</string>
+    <string name="guarda_paso_programa">Getting %1$s ready</string>
+    <string name="guarda_paso_hecho_a11y">%1$s: done</string>
 </resources>

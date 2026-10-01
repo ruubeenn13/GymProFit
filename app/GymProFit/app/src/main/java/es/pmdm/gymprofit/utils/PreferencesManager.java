@@ -487,6 +487,36 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
         editor.apply();
     }
 
+    // ── Después del alta (GP-103, lote 1.5.1) ──
+    // El programa que el alta no pudo seguir (sin red, o la API falló): la cuenta vale e
+    // Inicio lo ofrece. Y el primer día: Inicio enseña «Primeros pasos» y al fundador.
+    private static final String PREFIJO_PENDIENTE_CODIGO = "programa_pendiente_codigo_";
+    private static final String PREFIJO_PENDIENTE_NOMBRE = "programa_pendiente_nombre_";
+    private static final String PREFIJO_PENDIENTE_MINUTOS = "programa_pendiente_minutos_";
+    private static final String PREFIJO_PRIMER_DIA = "primer_dia_";
+
+    public void guardarProgramaPendiente(String codigo, String nombre, int minutos) {
+        int id = getUsuarioId();
+        editor.putString(PREFIJO_PENDIENTE_CODIGO + id, codigo)
+              .putString(PREFIJO_PENDIENTE_NOMBRE + id, nombre)
+              .putInt(PREFIJO_PENDIENTE_MINUTOS + id, minutos).apply();
+    }
+
+    /** El código del programa que quedó por seguir, o "" si no hay. */
+    public String getProgramaPendienteCodigo() { return prefs.getString(PREFIJO_PENDIENTE_CODIGO + getUsuarioId(), ""); }
+    public String getProgramaPendienteNombre() { return prefs.getString(PREFIJO_PENDIENTE_NOMBRE + getUsuarioId(), ""); }
+    public int getProgramaPendienteMinutos()   { return prefs.getInt(PREFIJO_PENDIENTE_MINUTOS + getUsuarioId(), 60); }
+
+    public void borrarProgramaPendiente() {
+        int id = getUsuarioId();
+        editor.remove(PREFIJO_PENDIENTE_CODIGO + id).remove(PREFIJO_PENDIENTE_NOMBRE + id)
+              .remove(PREFIJO_PENDIENTE_MINUTOS + id).apply();
+    }
+
+    /** La cuenta acaba de hacer el alta (o el cuestionario): Inicio la recibe como primer día. */
+    public void marcarPrimerDia(String usuario) { editor.putBoolean(PREFIJO_PRIMER_DIA + usuario, true).apply(); }
+    public boolean isPrimerDia(String usuario)  { return prefs.getBoolean(PREFIJO_PRIMER_DIA + usuario, false); }
+
     // ── Avisos (GP-112, lote 1.5.1) ──
     // Si a esta cuenta ya se le preguntó por los avisos en el alta: entonces Inicio no
     // vuelve a pedir el permiso de Android por su cuenta, también si dijo «Ahora no».

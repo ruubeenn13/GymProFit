@@ -190,6 +190,9 @@
         <!-- Ajustes › Notificaciones y «¿Te avisamos?» del alta (GP-112, lote 1.5.1). -->
         <activity android:name=".ui.activities.NotificacionesActivity" android:exported="false" />
         <activity android:name=".ui.activities.AvisosActivity" android:exported="false" />
+        <!-- «Guarda tu plan»: la cuenta al final del alta (GP-103). -->
+        <activity android:name=".ui.activities.GuardaPlanActivity" android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ui.activities.CambiarPasswordActivity" android:exported="false" />
         <activity android:name=".ui.activities.CambiarCorreoActivity" android:exported="false" />
         <activity android:name=".ui.activities.LicenciasActivity" android:exported="false" />

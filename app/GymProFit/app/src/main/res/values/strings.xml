@@ -647,7 +647,7 @@
     <string name="password_error_corta">Mínimo 8 caracteres</string>
     <string name="password_error_larga">Demasiado larga: acórtala un poco</string>
     <string name="password_error_comun">Es demasiado común: elige otra</string>
-    <string name="password_error_nombre">No puede contener «GymProFit» ni tu nombre de usuario</string>
+    <string name="password_error_nombre">No puede contener «GymProFit», tu nombre de usuario ni tu correo</string>
     <string name="recuperar_restablecer">Restablecer contraseña</string>
     <string name="recuperar_reenviar">Enviar otro código</string>
     <string name="recuperar_ok">Contraseña cambiada. Ya puedes entrar con la nueva.</string>
@@ -1483,4 +1483,29 @@
     <string name="notificaciones_activar">Activar</string>
     <string name="notificaciones_que_avisamos">Qué te avisamos</string>
     <string name="notificaciones_sistema">Ajustes de Android</string>
+
+    <!-- ── Alta nueva: «Guarda tu plan» (GP-103, lote 1.5.1) ──────────────── -->
+    <string name="guarda_volver_a11y">Volver a tu plan</string>
+    <string name="guarda_plan_listo">Tu plan está listo</string>
+    <string name="guarda_texto">Crea tu cuenta para no perderlo y apuntar tus entrenamientos desde hoy.</string>
+    <string name="guarda_nombre">Nombre</string>
+    <string name="guarda_nombre_ayuda">Así te saludamos en la app</string>
+    <string name="guarda_correo">Correo</string>
+    <string name="guarda_contrasena">Contraseña</string>
+    <string name="guarda_entrar_con_el">Entrar con él</string>
+    <string name="guarda_crear_cuenta">Crear cuenta</string>
+    <string name="guarda_legal">Al crear tu cuenta aceptas los %1$s y confirmas que has leído la %2$s.</string>
+    <string name="guarda_ya_tienes_cuenta">¿Ya tienes cuenta?</string>
+    <string name="guarda_entrar">Entrar</string>
+    <string name="guarda_seguir">Seguir</string>
+    <string name="guarda_error_nombre">Escribe tu nombre</string>
+    <string name="guarda_error_clave_nombre">No puede contener «GymProFit», tu nombre ni tu correo</string>
+    <string name="guarda_sin_red">Sin conexión. Tu plan sigue aquí: vuelve a intentarlo.</string>
+    <string name="guarda_todo_listo">Todo listo, %1$s</string>
+    <string name="guarda_todo_listo_texto">Tu plan está guardado y %1$s te espera en Inicio.</string>
+    <string name="guarda_todo_listo_texto_sin_programa">Tu plan está guardado y te espera en Inicio.</string>
+    <string name="guarda_creando_a11y">Creando tu cuenta</string>
+    <string name="guarda_paso_cuenta">Creando tu cuenta</string>
+    <string name="guarda_paso_programa">Preparando %1$s</string>
+    <string name="guarda_paso_hecho_a11y">%1$s: hecho</string>
 </resources>
