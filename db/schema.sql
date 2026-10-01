@@ -1,7 +1,7 @@
 -- ============================================
 -- BASE DE DATOS: GymProFit - MariaDB/MySQL
 -- Autor: Rubén Juan Candela
--- Ciclo: CFGS Desarrollo de Aplicaciones Multimedia (2º DAM)
+-- Ciclo: CFGS Desarrollo de Aplicaciones Multiplataforma (2º DAM)
 -- Tablas: 13 tablas relacionadas
 -- ============================================
 

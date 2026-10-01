@@ -515,6 +515,6 @@ El historial de cambios se ha movido a **[CHANGELOG.md](CHANGELOG.md)**.
 <div align="center">
 
 Desarrollado por **Rubén Juan Candela**
-CFGS Desarrollo de Aplicaciones Multimedia · 2º DAM · 2026
+CFGS Desarrollo de Aplicaciones Multiplataforma · 2º DAM · 2026
 
 </div>
