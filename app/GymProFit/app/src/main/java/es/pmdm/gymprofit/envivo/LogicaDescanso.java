@@ -34,6 +34,20 @@ public final class LogicaDescanso {
      * quita sin sonar. Un tic por segundo lo ve siempre antes.
      */
     public static final long MARGEN_AVISO_MS = 3000;
+    /**
+     * Pasado esto desde el fin, el aviso de la alarma ya no sirve y el descanso se quita
+     * sin avisar, venga de donde venga (GP-144). Cinco minutos: sin permiso de alarmas
+     * exactas la alarma va en una ventana (setWindow) que el sistema, con el móvil en
+     * reposo, deja para la siguiente ventana de mantenimiento, y esas llegan cada pocos
+     * minutos en el reposo ligero. Más allá, «¡A por la serie 3!» llega cuando ya se ha
+     * hecho o se ha dejado: un descanso de los de la app dura como mucho diez minutos.
+     */
+    public static final long CADUCA_MS = 5 * 60_000;
+
+    /** Si un descanso terminado ya no merece aviso. */
+    public static boolean caducado(@Nullable SesionEnCurso.Descanso d, long ahoraMs) {
+        return d != null && ahoraMs - d.finMs > CADUCA_MS;
+    }
 
     /** El descanso sin pauta guardado, si es una de las opciones; si no, el de serie. */
     public static int sinPautaValido(int guardado) {

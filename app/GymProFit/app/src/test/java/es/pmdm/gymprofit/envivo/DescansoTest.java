@@ -327,7 +327,8 @@ public class DescansoTest {
         SesionEnCursoRepositorio despues = nuevoProceso();
         despues.usarCuenta(7);
 
-        assertEquals(Estado.TERMINO_ANTES, despues.comprobarDescanso());
+        // Desde GP-144 se quita ya al cargar: al mirarlo no queda ninguno.
+        assertEquals(Estado.NINGUNO, despues.comprobarDescanso());
         assertNull(despues.actual().descanso);
         assertNull("sin «¡A por la serie!» de hace diez minutos", despues.finDescanso());
         assertNull("y queda quitado en el fichero", almacen.leer(7).descanso);

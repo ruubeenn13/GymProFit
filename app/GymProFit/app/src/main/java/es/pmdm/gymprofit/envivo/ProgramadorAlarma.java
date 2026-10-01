@@ -45,13 +45,18 @@ public class ProgramadorAlarma {
         this.alarmas = alarmas;
     }
 
-    /** La deja como pide el descanso: puesta a su hora, o quitada si no hay. */
-    public void sincronizar(@Nullable SesionEnCurso.Descanso d) {
+    /**
+     * La deja como pide el descanso: puesta a su hora, o quitada si no hay. Con la hora
+     * ya pasada no se pone (GP-144): o la que había está sonando, o el descanso se quita
+     * al cargarlo; ponerla sonaría al momento, tarde.
+     */
+    public void sincronizar(@Nullable SesionEnCurso.Descanso d, long ahoraMs) {
         if (d == null) {
             if (puesta != null) alarmas.cancelar();
             puesta = null;
             return;
         }
+        if (d.finMs <= ahoraMs) return;
         if (puesta != null && puesta == d.finMs && puestaExacta == alarmas.puedeExactas()) return;
         poner(d.finMs);
     }
