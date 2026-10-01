@@ -21,9 +21,6 @@
     <string name="login_error_invitado">No se pudo entrar como invitado</string>
     <string name="error_solo_usuarios_registrados">Debes crear una cuenta para acceder a esta funcionalidad</string>
     <string name="error_campos_vacios">Por favor, completa todos los campos</string>
-    <string name="registro_titulo">Crear cuenta</string>
-    <string name="registro_crear_cuenta">Crear cuenta</string>
-    <string name="registro_exito">¡Cuenta creada correctamente!</string>
     <string name="login_error_credenciales">Usuario o contraseña incorrectos</string>
     <string name="error_conexion">Error de conexión con el servidor</string>
 
@@ -60,16 +57,9 @@
     <string name="grupo_cardio">Cardio</string>
     <string name="grupo_fullbody">Cuerpo completo</string>
 
-    <string name="registro_subtitulo">Crea tu cuenta y empieza tu camino</string>
-    <string name="registro_confirmar_password">Confirmar contraseña</string>
-    <string name="registro_ya_cuenta">¿Ya tienes cuenta? Inicia sesión</string>
     <string name="registro_email_invalido">Introduce un email válido</string>
-    <string name="registro_passwords_no_coinciden">Las contraseñas no coinciden</string>
-    <string name="registro_error_usuario_longitud">Entre %1$d y %2$d caracteres</string>
     <string name="registro_error_email_largo">Máximo %1$d caracteres</string>
-    <string name="registro_error_usuario_en_uso">Ese nombre de usuario ya está cogido</string>
     <string name="registro_error_email_en_uso">Ya hay una cuenta con este correo</string>
-    <string name="registro_error_ya_registrado">Ese usuario o ese correo ya tienen una cuenta</string>
 
     <!-- TEMA -->
     <string name="cambiar_tema">Cambiar tema</string>
@@ -216,35 +206,7 @@
     <string name="rutinas_activar">Activar</string>
 
     <!-- ONBOARDING -->
-    <string name="onboarding_saltar">Saltar</string>
-    <string name="onboarding_empezar">Empezar</string>
     <string name="onboarding_siguiente">Siguiente</string>
-    <string name="onboarding_anterior">Anterior</string>
-    <string name="onboarding_finalizar">Finalizar</string>
-    <string name="onboarding_comenzar">¡Empezar ahora!</string>
-    <string name="onboarding_bienvenida_antetitulo">Te damos la bienvenida</string>
-    <string name="onboarding_bienvenida_saludo">Hola, %1$s</string>
-    <string name="onboarding_bienvenida_num_1">1</string>
-    <string name="onboarding_bienvenida_num_2">2</string>
-    <string name="onboarding_bienvenida_num_3">3</string>
-    <string name="onboarding_bienvenida_num_4">4</string>
-    <string name="onboarding_bienvenida_paso_datos">Tus datos</string>
-    <string name="onboarding_bienvenida_paso_medidas">Tu peso y tu altura</string>
-    <string name="onboarding_bienvenida_paso_objetivo">Tu objetivo</string>
-    <string name="onboarding_bienvenida_paso_nivel">Tu nivel de experiencia</string>
-    <string name="onboarding_bienvenida_desc">Cuatro preguntas y calculamos tus calorías y tus macros de cada día. Se tarda menos de un minuto.</string>
-    <string name="onboarding_datos_titulo">Cuéntanos sobre ti</string>
-    <string name="onboarding_datos_desc">Estos datos nos ayudan a personalizar tu experiencia.</string>
-    <string name="onboarding_medidas_titulo">Tus medidas</string>
-    <string name="onboarding_medidas_desc">Usaremos esto para calcular tus necesidades calóricas.</string>
-    <string name="onboarding_objetivo_titulo">Tu objetivo</string>
-    <string name="onboarding_objetivo_desc">Elige el objetivo que mejor se adapte a ti.</string>
-    <string name="onboarding_resumen_titulo">Tu plan personalizado</string>
-    <string name="onboarding_resumen_desc">Basado en tus datos hemos calculado lo que necesitas cada día.</string>
-    <string name="onboarding_resumen_objetivo">Tu objetivo</string>
-    <string name="onboarding_resumen_kcal_dia">kcal / día</string>
-    <string name="onboarding_resumen_agua">Agua recomendada al día</string>
-    <string name="onboarding_anos">años</string>
     <string name="onboarding_sexo">Sexo</string>
     <string name="onboarding_hombre">Hombre</string>
     <string name="onboarding_mujer">Mujer</string>
@@ -253,13 +215,6 @@
     <string name="onboarding_ligero">Ligero</string>
     <string name="onboarding_moderado">Moderado</string>
     <string name="onboarding_activo">Activo</string>
-    <string name="onboarding_selecciona_objetivo">Selecciona un objetivo</string>
-    <string name="onboarding_nivel_titulo">Tu nivel de experiencia</string>
-    <string name="onboarding_nivel_desc">Esto nos ayuda a personalizar tus rutinas y recomendaciones.</string>
-    <string name="onboarding_selecciona_nivel">Selecciona tu nivel de experiencia</string>
-    <string name="onboarding_guardado_exito">¡Perfil guardado correctamente!</string>
-    <string name="onboarding_guardado_local">Datos guardados localmente</string>
-    <string name="onboarding_resumen_meta">Tu objetivo nutricional diario</string>
     <string name="nutricion_carbohidratos_corto">Carbos</string>
 
     <!-- SESIONES -->
@@ -461,13 +416,9 @@
 
     <!-- OBJETIVOS -->
     <string name="objetivo_perder_peso">Perder grasa</string>
-    <string name="objetivo_perder_peso_desc">Comerás algo menos de lo que gastas</string>
     <string name="objetivo_ganar_musculo">Ganar músculo</string>
-    <string name="objetivo_ganar_musculo_desc">Comerás algo más y con más proteína</string>
     <string name="objetivo_mantener">Mantenerme</string>
-    <string name="objetivo_mantener_desc">Las mismas calorías que gastas</string>
     <string name="objetivo_fuerza">Ganar fuerza</string>
-    <string name="objetivo_fuerza_desc">Más proteína, con una subida moderada</string>
 
     <!-- Editar perfil -->
     <string name="editar_perfil_titulo">Editar perfil</string>
@@ -484,14 +435,9 @@
     <string name="login_cuenta_desactivada_titulo">Cuenta desactivada</string>
     <string name="login_cuenta_desactivada_mensaje">Tu cuenta está desactivada, así que se ha cerrado la sesión. Si crees que es un error, escríbenos a soporte@gymprofit.app.</string>
     <string name="nivel_principiante">Principiante</string>
-    <string name="nivel_escala">Nivel %1$d de %2$d</string>
-    <string name="nivel_principiante_desc">Comienzo mi aventura en el fitness</string>
     <string name="nivel_intermedio">Intermedio</string>
-    <string name="nivel_intermedio_desc">Entreno regularmente con cierta experiencia</string>
     <string name="nivel_avanzado">Avanzado</string>
-    <string name="nivel_avanzado_desc">Entreno con alta intensidad y muy buenos resultados</string>
     <string name="nivel_experto">Experto</string>
-    <string name="nivel_experto_desc">Rendimiento de élite y amplia trayectoria deportiva</string>
 
     <!-- Resumen sesión -->
     <string name="resumen_titulo">Resumen de sesión</string>
@@ -709,7 +655,6 @@
     <string name="licencias_wger_uso">Los nombres y las descripciones de parte de los ejercicios. Sus textos tienen licencias Creative Commons que indica cada ejercicio.</string>
     <string name="licencias_off">Open Food Facts · ODbL</string>
     <string name="licencias_off_uso">Los alimentos que se importan por código de barras.</string>
-    <string name="registro_aviso_privacidad">Al crear tu cuenta confirmas que has leído la %1$s</string>
     <string name="registro_aviso_privacidad_enlace">Política de Privacidad</string>
     <string name="error_sin_navegador">No hay ninguna aplicación para abrir enlaces</string>
 
