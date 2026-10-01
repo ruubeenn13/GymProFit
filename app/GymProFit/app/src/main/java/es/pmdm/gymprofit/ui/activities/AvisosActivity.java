@@ -2,22 +2,34 @@ package es.pmdm.gymprofit.ui.activities;
 
 import android.Manifest;
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationManagerCompat;
+
+import com.google.android.material.button.MaterialButton;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.model.usuario.Usuario;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.ui.widget.FilaAviso;
 import es.pmdm.gymprofit.utils.AvisosCuenta;
+import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.Movimiento;
+import es.pmdm.gymprofit.utils.PermisoAvisos;
+import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 
 // ============================================================
@@ -32,13 +44,78 @@ import es.pmdm.gymprofit.utils.UIHelper;
 // Los dos botones guardan los interruptores con el PATCH. «Activar avisos» pide además
 // el permiso del sistema (Android 13+); «Ahora no», no, y Inicio tampoco lo pedirá
 // después por su cuenta. Las dos acaban en Inicio: nada aquí bloquea el alta.
+//
+// GP-151 (lote 1.5.2): sustituye también a la petición suelta que hacía Inicio. Sale una
+// vez por cuenta y móvil a quien no se le ha preguntado —quien actualiza desde la 1.4.0,
+// quien entra en otro móvil, la cuenta antigua tras «Empezar»—, y entonces los
+// interruptores son los de la cuenta, leídos antes de abrirla (abrirSiToca); si no se
+// pueden leer, esa vez no sale. El botón principal depende del permiso (PermisoAvisos):
+// concedido, «Guardar» y solo guarda; bloqueado, lleva a los ajustes de la app.
 // ============================================================
 public class AvisosActivity extends BaseActivity {
+
+    /** Los interruptores de una cuenta que ya existe; sin ellos, los de serie del alta. */
+    private static final String EXTRA_ENTRENAR = "avisos_entrenar";
+    private static final String EXTRA_COMIDAS = "avisos_comidas";
+    private static final String EXTRA_PROGRESO = "avisos_progreso";
+    /** Al terminar, cerrarse y volver a donde estaba (Inicio) en vez de abrir Inicio de cero. */
+    private static final String EXTRA_VOLVER = "avisos_volver";
 
     private final UsuarioApi usuarioApi = ApiClient.service(UsuarioApi.class);
     private FilaAviso entrenar, comidas, progreso;
     @Nullable private ValueAnimator bucle;
     private ActivityResultLauncher<String> pedirPermiso;
+    private PermisoAvisos.Estado permiso = PermisoAvisos.Estado.PEDIBLE;
+    private long pedidoEn;
+
+    /**
+     * Abre «¿Te avisamos?» para una cuenta que ya existe, si toca: no es el invitado y en
+     * este móvil no se le ha preguntado. Antes lee sus avisos, porque la pantalla enseña
+     * los de la cuenta y nunca los de serie; si no se pueden leer, esa vez no se abre ni
+     * se pide nada, y se intenta en la siguiente apertura.
+     *
+     * @param desde   la pantalla que la abre.
+     * @param volver  true desde Inicio (al acabar se cierra y vuelve); false desde el
+     *                cuestionario de una cuenta antigua (al acabar abre Inicio).
+     * @param siNo    lo que se hace cuando no se abre; null si nada.
+     */
+    public static void abrirSiToca(@NonNull Activity desde, boolean volver, @Nullable Runnable siNo) {
+        PreferencesManager prefs = new PreferencesManager(desde);
+        int id = prefs.getUsuarioId();
+        if (id == -1 || !PermisoAvisos.tocaPreguntar(prefs.isGuest(), prefs.isAvisosPreguntados(prefs.getUsername()))) {
+            if (siNo != null) siNo.run();
+            return;
+        }
+        ApiClient.service(UsuarioApi.class).getPorId(id).enqueue(new ApiCallback<Usuario>() {
+            @Override
+            public void onOk(Usuario u) {
+                if (desde.isFinishing() || desde.isDestroyed()) return;
+                if (u == null) {
+                    if (siNo != null) siNo.run();
+                    return;
+                }
+                AvisosCuenta.Estado e = AvisosCuenta.Estado.de(u.getAvisosEntrenar(), u.getAvisosComidas(),
+                        u.getAvisosProgreso());
+                Intent i = new Intent(desde, AvisosActivity.class)
+                        .putExtra(EXTRA_ENTRENAR, e.entrenar)
+                        .putExtra(EXTRA_COMIDAS, e.comidas)
+                        .putExtra(EXTRA_PROGRESO, e.progreso)
+                        .putExtra(EXTRA_VOLVER, volver);
+                if (!volver) i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                LoadingDialog.hide(desde); // la de «Empezar», antes de que se cierre su pantalla
+                desde.startActivity(i);
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                // Sin los de la cuenta no se enseña nada (GP-151): ni pantalla, ni permiso,
+                // ni error, porque quien no la ha pedido no echa nada en falta. Se queda
+                // sin marcar y sale en la siguiente apertura con red.
+                if (desde.isFinishing() || desde.isDestroyed()) return;
+                if (siNo != null) siNo.run();
+            }
+        });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,31 +130,39 @@ public class AvisosActivity extends BaseActivity {
                 R.string.avisos_comidas, R.string.avisos_comidas_sub, true);
         progreso = new FilaAviso(findViewById(R.id.filaAvisoProgreso), R.drawable.ic_ms_trophy,
                 R.string.avisos_progreso, R.string.avisos_progreso_sub, true);
+        // Los de la cuenta si vienen (cuenta que ya existe); si no, los de serie (alta).
         AvisosCuenta.Estado deSerie = AvisosCuenta.Estado.deSerie();
+        Intent in = getIntent();
+        AvisosCuenta.Estado inicial = new AvisosCuenta.Estado(
+                in.getBooleanExtra(EXTRA_ENTRENAR, deSerie.entrenar),
+                in.getBooleanExtra(EXTRA_COMIDAS, deSerie.comidas),
+                in.getBooleanExtra(EXTRA_PROGRESO, deSerie.progreso));
         boolean girada = savedInstanceState != null;
-        entrenar.setActiva(girada ? savedInstanceState.getBoolean("entrenar") : deSerie.entrenar);
-        comidas.setActiva(girada ? savedInstanceState.getBoolean("comidas") : deSerie.comidas);
-        progreso.setActiva(girada ? savedInstanceState.getBoolean("progreso") : deSerie.progreso);
+        entrenar.setActiva(girada ? savedInstanceState.getBoolean("entrenar") : inicial.entrenar);
+        comidas.setActiva(girada ? savedInstanceState.getBoolean("comidas") : inicial.comidas);
+        progreso.setActiva(girada ? savedInstanceState.getBoolean("progreso") : inicial.progreso);
+        // Vista una vez, cuenta como preguntada, también si se sale con atrás.
+        if (!girada) prefsManager.setAvisosPreguntados(prefsManager.getUsername());
         FilaAviso.AlCambiar nada = activa -> { /* se guardan al pulsar un botón */ };
         entrenar.alCambiar(nada);
         comidas.alCambiar(nada);
         progreso.alCambiar(nada);
 
-        pedirPermiso = registerForActivityResult(new ActivityResultContracts.RequestPermission(),
-                concedido -> irAInicio());
+        pedirPermiso = registerForActivityResult(new ActivityResultContracts.RequestPermission(), concedido -> {
+            // La 1.4.0 lo pedía sin apuntarlo: si Android ya no lo deja pedir, contesta al
+            // instante sin enseñar nada, y entonces se lleva a los ajustes de la app.
+            boolean explicar = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                    && shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS);
+            boolean ajustes = PermisoAvisos.sinDialogo(concedido, explicar, SystemClock.elapsedRealtime() - pedidoEn);
+            seguir();
+            if (ajustes) abrirAjustes();
+        });
 
         View activar = findViewById(R.id.btnActivarAvisos);
-        activar.setOnClickListener(v -> {
-            guardar();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                pedirPermiso.launch(Manifest.permission.POST_NOTIFICATIONS);
-            } else {
-                irAInicio();
-            }
-        });
+        activar.setOnClickListener(v -> activar());
         findViewById(R.id.btnAhoraNo).setOnClickListener(v -> {
             guardar();
-            irAInicio();
+            seguir();
         });
 
         if (!girada) {
@@ -88,6 +173,65 @@ public class AvisosActivity extends BaseActivity {
             Movimiento.respirar(activar, 1400);
         }
         bajarEjemplo();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        pintarPermiso();
+    }
+
+    // El botón principal y el texto, según lo que se pueda hacer con el permiso.
+    private void pintarPermiso() {
+        boolean concedido = NotificationManagerCompat.from(this).areNotificationsEnabled();
+        boolean explicar = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                && shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS);
+        permiso = PermisoAvisos.estado(Build.VERSION.SDK_INT, concedido, explicar, prefsManager.isPermisoAvisosPedido());
+        MaterialButton activar = findViewById(R.id.btnActivarAvisos);
+        TextView texto = findViewById(R.id.tvTextoAvisos);
+        switch (permiso) {
+            case CONCEDIDO:
+                activar.setText(R.string.avisos_guardar);
+                texto.setText(R.string.avisos_texto_concedido);
+                break;
+            case BLOQUEADO:
+                activar.setText(R.string.avisos_activar);
+                texto.setText(R.string.avisos_texto_bloqueado);
+                break;
+            default:
+                activar.setText(R.string.avisos_activar);
+                texto.setText(R.string.avisos_texto);
+        }
+    }
+
+    // «Activar avisos» (o «Guardar»): guarda siempre; luego, según el permiso, nada, el
+    // diálogo de Android o los ajustes de la app.
+    private void activar() {
+        guardar();
+        switch (permiso) {
+            case PEDIBLE:
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                        && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                    prefsManager.setPermisoAvisosPedido();
+                    pedidoEn = SystemClock.elapsedRealtime();
+                    pedirPermiso.launch(Manifest.permission.POST_NOTIFICATIONS);
+                    return;
+                }
+                seguir();
+                break;
+            case BLOQUEADO:
+                seguir();
+                abrirAjustes();
+                break;
+            default:
+                seguir();
+        }
+    }
+
+    // Los ajustes de notificaciones de la app, en su propia tarea para que Inicio, que se
+    // abre a la vez, no los tape.
+    private void abrirAjustes() {
+        startActivity(NotificacionesActivity.ajustesDelSistema(this).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
     @Override
@@ -155,7 +299,6 @@ public class AvisosActivity extends BaseActivity {
     // Los tres interruptores a la cuenta. Si falla, se dice y se sigue: se cambian
     // luego en Ajustes › Notificaciones, y la cuenta conserva los de serie.
     private void guardar() {
-        prefsManager.setAvisosPreguntados(prefsManager.getUsername());
         int id = prefsManager.getUsuarioId();
         if (id == -1) return;
         AvisosCuenta.Estado e = new AvisosCuenta.Estado(entrenar.isActiva(), comidas.isActiva(), progreso.isActiva());
@@ -170,6 +313,12 @@ public class AvisosActivity extends BaseActivity {
                 UIHelper.mostrarToastError(getApplicationContext(), getString(R.string.avisos_error_guardar));
             }
         });
+    }
+
+    // Desde Inicio, se vuelve a él; desde el alta, se abre de cero.
+    private void seguir() {
+        if (getIntent().getBooleanExtra(EXTRA_VOLVER, false)) finish();
+        else irAInicio();
     }
 
     private void irAInicio() {

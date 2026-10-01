@@ -1466,6 +1466,8 @@
     <string name="avisos_ejemplo_titulo">Descanso terminado</string>
     <string name="avisos_ejemplo_texto">Press de banca con barra, serie 3</string>
     <string name="avisos_titulo">¿Te avisamos?</string>
+    <string name="avisos_texto_concedido">Solo de lo que elijas, y lo cambias cuando quieras en Ajustes.</string>
+    <string name="avisos_texto_bloqueado">Solo de lo que elijas, y lo cambias cuando quieras en Ajustes. Ahora Android tiene apagados los avisos de GymProFit: «Activar avisos» te lleva a sus ajustes.</string>
     <string name="avisos_texto">Solo de lo que elijas, y lo cambias cuando quieras en Ajustes. Después, Android te pedirá permiso.</string>
     <string name="avisos_tipos_a11y">Qué avisos quieres</string>
     <string name="avisos_descanso">Fin de cada descanso</string>
@@ -1477,6 +1479,7 @@
     <string name="avisos_progreso">Tu progreso</string>
     <string name="avisos_progreso_sub">Logros, el resumen del domingo y pesarte cada mes</string>
     <string name="avisos_activar">Activar avisos</string>
+    <string name="avisos_guardar">Guardar</string>
     <string name="avisos_ahora_no">Ahora no</string>
     <string name="avisos_error_guardar">No se han podido guardar tus avisos. Cámbialos cuando quieras en Ajustes › Notificaciones.</string>
     <string name="notificaciones_sin_permiso">Android no deja que GymProFit te avise: hasta que lo actives, no te llegará ninguno.</string>
