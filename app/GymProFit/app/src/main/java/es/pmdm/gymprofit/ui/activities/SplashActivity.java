@@ -16,7 +16,7 @@ import es.pmdm.gymprofit.utils.PreferencesManager;
 // ============================================================
 // SplashActivity — pantalla de arranque de la aplicación.
 // Muestra una animación de entrada mientras comprueba si hay sesión guardada,
-// y tras un tiempo mínimo visible redirige a Home (si hay sesión) o a Login.
+// y tras un tiempo mínimo visible redirige a Home (si hay sesión) o a la bienvenida.
 // ============================================================
 public class SplashActivity extends AppCompatActivity {
 
@@ -69,7 +69,10 @@ public class SplashActivity extends AppCompatActivity {
             long tiempoRestante = Math.max(0, SPLASH_MIN_DURATION - tiempoTranscurrido);
 
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                startActivity(new Intent(this, siguientePantalla()));
+                Class<?> siguiente = siguientePantalla();
+                // Una cuenta con sesión y sin onboarding responde el cuestionario (GP-103).
+                startActivity(siguiente == AltaActivity.class
+                        ? AltaActivity.paraCuentaExistente(this) : new Intent(this, siguiente));
                 finish();
             }, tiempoRestante);
         });
@@ -88,7 +91,8 @@ public class SplashActivity extends AppCompatActivity {
      * @return la Activity a la que hay que ir.
      */
     private Class<?> siguientePantalla() {
-        if (!prefsManager.haySesion()) return LoginActivity.class;
+        // Sin sesión, la bienvenida del alta nueva (GP-103), no el login.
+        if (!prefsManager.haySesion()) return BienvenidaActivity.class;
 
         // Con sesión, el perfil de la API se cruza con el del móvil sin esperar (GP-111).
         PerfilRemoto.alArrancar(this);
@@ -100,6 +104,6 @@ public class SplashActivity extends AppCompatActivity {
         boolean completado = usuario != null && !usuario.isEmpty()
                 && prefsManager.isOnboardingCompletadoParaUsuario(usuario);
 
-        return completado ? MainActivity.class : Onboarding1Activity.class;
+        return completado ? MainActivity.class : AltaActivity.class;
     }
 }

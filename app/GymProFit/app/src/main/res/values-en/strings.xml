@@ -1493,4 +1493,27 @@
     <string name="guarda_paso_cuenta">Creating your account</string>
     <string name="guarda_paso_programa">Getting %1$s ready</string>
     <string name="guarda_paso_hecho_a11y">%1$s: done</string>
+
+    <!-- ── New sign-up: welcome (GP-103, 1.5.1) ───────────────────────────── -->
+    <string name="bienvenida_titulo">Log every set and watch yourself climb</string>
+    <string name="bienvenida_texto">In a minute you’ll have your training programme and your calories for the day.</string>
+    <string name="bienvenida_ya_tengo_cuenta">I already have an account</string>
+    <string name="bienvenida_idioma_es">ES</string>
+    <string name="bienvenida_idioma_en">EN</string>
+    <string name="bienvenida_idioma_a11y">Language: %1$s. Change</string>
+    <string name="demo_a11y">Demo: the third set of bench press is logged, the rest starts and, when the session is saved, a new record appears</string>
+    <string name="demo_ejercicio">Barbell bench press</string>
+    <string name="demo_basico">Compound</string>
+    <string name="demo_pauta">3 × 6–10 · 2 min rest</string>
+    <string name="demo_col_serie">Set</string>
+    <string name="demo_col_anterior">Previous</string>
+    <string name="demo_col_kg">kg</string>
+    <string name="demo_col_reps">reps</string>
+    <string name="demo_anterior">%1$d × %2$d</string>
+    <string name="demo_descanso">Rest</string>
+    <string name="demo_descanso_tiempo">1:58</string>
+    <string name="demo_sesion_guardada">Session saved</string>
+    <string name="demo_rutina">Full body A · 44 min</string>
+    <string name="demo_records">Records</string>
+    <string name="demo_record_marca">62.5 kg × 8 · before 60 kg × 8</string>
 </resources>

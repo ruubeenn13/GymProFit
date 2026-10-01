@@ -135,8 +135,9 @@ public class LoginActivity extends AppCompatActivity {
 
         findViewById(R.id.btnEntrarInvitado).setOnClickListener(v -> hacerLoginInvitado());
 
+        // Sin cuenta, el alta nueva: el cuestionario y la cuenta al final (GP-103).
         findViewById(R.id.tvNoTienesCuenta).setOnClickListener(v ->
-                startActivity(new Intent(this, RegistroActivity.class)));
+                startActivity(new Intent(this, AltaActivity.class)));
 
         btnCambiarTema.setOnClickListener(v -> cambiarTema());
         btnCambiarIdioma.setOnClickListener(v -> mostrarDialogoIdioma());
@@ -268,9 +269,9 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(new Intent(this, MainActivity.class)
                     .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         } else {
-            Intent intent = new Intent(this, Onboarding1Activity.class);
-            intent.putExtra("username", prefsManager.getUsername());
-            startActivity(intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            // Una cuenta sin onboarding responde lo mismo que el alta y acaba en «Empezar».
+            startActivity(AltaActivity.paraCuentaExistente(this)
+                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         }
         finish();
     }

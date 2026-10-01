@@ -370,7 +370,16 @@ public final class Movimiento {
      */
     public static void celebrarRecord(@NonNull ViewGroup fila, @NonNull View trofeo,
                                       @ColorInt int oro, @ColorInt int claro, long retraso) {
-        vibrar(fila, Vibracion.EXITO);
+        celebrarRecord(fila, trofeo, oro, claro, retraso, true);
+    }
+
+    /**
+     * 12 · Récord, con o sin vibración: la demostración de la bienvenida lo repite en
+     * bucle y no puede vibrar cada 8 segundos.
+     */
+    public static void celebrarRecord(@NonNull ViewGroup fila, @NonNull View trofeo,
+                                      @ColorInt int oro, @ColorInt int claro, long retraso, boolean conVibracion) {
+        if (conVibracion) vibrar(fila, Vibracion.EXITO);
         if (quieto(fila.getContext())) return;
 
         trofeo.setScaleX(0.5f);

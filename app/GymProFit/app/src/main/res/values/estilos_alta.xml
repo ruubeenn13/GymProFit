@@ -78,4 +78,24 @@
         <item name="android:paddingStart">4dp</item>
         <item name="android:paddingEnd">4dp</item>
     </style>
+
+    <!-- Cabecera de columna de la demostración de la bienvenida: 13 sp, en mayúsculas. -->
+    <style name="Widget.GymProFit.Demo.Columna" parent="">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/text_eyebrow</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <!-- Celda de una serie de la demostración: cifra centrada en negrita. -->
+    <style name="Widget.GymProFit.Demo.Celda" parent="">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textSize">@dimen/text_subtitle</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>

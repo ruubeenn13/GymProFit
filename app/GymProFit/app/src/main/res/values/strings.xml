@@ -1508,4 +1508,27 @@
     <string name="guarda_paso_cuenta">Creando tu cuenta</string>
     <string name="guarda_paso_programa">Preparando %1$s</string>
     <string name="guarda_paso_hecho_a11y">%1$s: hecho</string>
+
+    <!-- ── Alta nueva: la bienvenida (GP-103, lote 1.5.1) ─────────────────── -->
+    <string name="bienvenida_titulo">Apunta cada serie y mira cómo subes</string>
+    <string name="bienvenida_texto">En un minuto tienes tu programa de entrenamiento y tus calorías del día.</string>
+    <string name="bienvenida_ya_tengo_cuenta">Ya tengo cuenta</string>
+    <string name="bienvenida_idioma_es">ES</string>
+    <string name="bienvenida_idioma_en">EN</string>
+    <string name="bienvenida_idioma_a11y">Idioma: %1$s. Cambiar</string>
+    <string name="demo_a11y">Demostración: se apunta la tercera serie de press de banca, empieza el descanso y, al guardar la sesión, sale un récord nuevo</string>
+    <string name="demo_ejercicio">Press de banca con barra</string>
+    <string name="demo_basico">Básico</string>
+    <string name="demo_pauta">3 × 6–10 · descanso 2 min</string>
+    <string name="demo_col_serie">Serie</string>
+    <string name="demo_col_anterior">Anterior</string>
+    <string name="demo_col_kg">kg</string>
+    <string name="demo_col_reps">reps</string>
+    <string name="demo_anterior">%1$d × %2$d</string>
+    <string name="demo_descanso">Descanso</string>
+    <string name="demo_descanso_tiempo">1:58</string>
+    <string name="demo_sesion_guardada">Sesión guardada</string>
+    <string name="demo_rutina">Cuerpo completo A · 44 min</string>
+    <string name="demo_records">Récords</string>
+    <string name="demo_record_marca">62,5 kg × 8 · antes 60 kg × 8</string>
 </resources>

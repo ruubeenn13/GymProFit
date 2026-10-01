@@ -23,7 +23,6 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,14 +36,10 @@ import es.pmdm.gymprofit.network.ProgramaApi;
 import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.alta.CheckTrazado;
-import es.pmdm.gymprofit.utils.AltaPasos;
-import es.pmdm.gymprofit.utils.DiaNutricion;
 import es.pmdm.gymprofit.utils.ErrorAlta;
 import es.pmdm.gymprofit.utils.Movimiento;
-import es.pmdm.gymprofit.utils.NivelVisible;
 import es.pmdm.gymprofit.utils.NombreVisible;
-import es.pmdm.gymprofit.utils.Numeros;
-import es.pmdm.gymprofit.utils.PerfilCuenta;
+import es.pmdm.gymprofit.utils.PerfilAlta;
 import es.pmdm.gymprofit.utils.PoliticaCuenta;
 import es.pmdm.gymprofit.utils.PushTokenManager;
 import es.pmdm.gymprofit.utils.UIHelper;
@@ -208,21 +203,11 @@ public class GuardaPlanActivity extends BaseActivity {
     }
 
     private void registrar() {
-        AltaPasos.Respuestas r = prefsManager.getBorradorRespuestas();
-        Map<String, Object> body = new HashMap<>();
+        // El perfil entero en el alta: la cuenta nace con lo contestado (PerfilAlta).
+        Map<String, Object> body = PerfilAlta.cuerpo(prefsManager.getBorradorRespuestas());
         body.put("email", texto(etCorreo));
         body.put("password", texto(etClave));
         body.put("nombre", NombreVisible.paraEnviar(etNombre.getText()));
-        if (!r.nivel.isEmpty()) body.put("nivelExperiencia", NivelVisible.valor(r.nivel));
-        if (!r.objetivo.isEmpty()) body.put("objetivo", r.objetivo);
-        if (r.conCalorias()) {
-            body.put("sexo", r.sexo);
-            body.put("nivelActividad", r.actividad);
-            body.put("edad", r.edad);
-            body.put("altura", BigDecimal.valueOf(r.altura));
-            BigDecimal peso = Numeros.exacto(r.peso, 30, 300);
-            if (peso != null) body.put("peso", peso);
-        }
         authApi.register(body).enqueue(new ApiCallback<Void>() {
             @Override
             public void onOk(Void ignored) {
@@ -292,31 +277,11 @@ public class GuardaPlanActivity extends BaseActivity {
         });
     }
 
-    /**
-     * Lo contestado pasa a ser el perfil de esta cuenta en el móvil, como hacía el
-     * resumen del onboarding de antes. Con «Prefiero no decirlo», los datos del cuerpo
-     * se borran: los que hubiera serían de otra cuenta, y ahora el perfil es de esta.
-     */
+    // Lo contestado pasa a ser el perfil de esta cuenta en el móvil (PerfilAlta), y el
+    // nombre, el suyo para mostrar.
     private void guardarPerfilLocal(String username) {
-        AltaPasos.Respuestas r = prefsManager.getBorradorRespuestas();
         prefsManager.saveNombre(username, NombreVisible.paraEnviar(etNombre.getText()));
-        prefsManager.apuntarDuenoPerfil(username);
-        PerfilCuenta.Campo[] cuerpo = {PerfilCuenta.Campo.SEXO, PerfilCuenta.Campo.ACTIVIDAD,
-                PerfilCuenta.Campo.PESO, PerfilCuenta.Campo.ALTURA, PerfilCuenta.Campo.EDAD};
-        if (r.conCalorias()) {
-            prefsManager.saveSexo(r.sexo);
-            prefsManager.saveActividad(r.actividad);
-            Double peso = Numeros.decimal(r.peso, 30, 300);
-            if (peso != null) prefsManager.savePeso(peso);
-            prefsManager.saveAltura(r.altura);
-            prefsManager.saveEdad(r.edad);
-        } else {
-            for (PerfilCuenta.Campo c : cuerpo) prefsManager.borrar(c);
-        }
-        if (!r.objetivo.isEmpty()) prefsManager.saveObjetivo(r.objetivo);
-        if (!r.nivel.isEmpty()) prefsManager.saveNivel(NivelVisible.valor(r.nivel));
-        if (!r.donde.isEmpty()) prefsManager.saveProgramasFiltros(r.donde, r.dias);
-        DiaNutricion.objetivo(prefsManager);
+        PerfilAlta.guardarLocal(prefsManager, prefsManager.getBorradorRespuestas(), username);
     }
 
     // El programa de «Tu plan» con los minutos elegidos. Si falla, la cuenta vale: queda
@@ -354,10 +319,7 @@ public class GuardaPlanActivity extends BaseActivity {
         String nombre = NombreVisible.paraEnviar(etNombre.getText());
         String programa = prefsManager.getBorradorProgramaNombre();
         boolean conPrograma = !programa.isEmpty() && prefsManager.getProgramaPendienteCodigo().isEmpty();
-        prefsManager.setOnboardingCompletado(true);
-        prefsManager.setOnboardingCompletadoParaUsuario(usuario);
-        prefsManager.marcarPrimerDia(usuario);
-        prefsManager.limpiarBorradorOnboarding();
+        PerfilAlta.terminar(prefsManager, usuario);
         creando = false;
 
         Movimiento.vibrar(crear, Movimiento.Vibracion.EXITO);

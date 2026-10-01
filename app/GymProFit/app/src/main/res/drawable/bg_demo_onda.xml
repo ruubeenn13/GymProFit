@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- La onda que sale del check al marcar en la demostración (GP-103). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval"><solid android:color="?attr/colorOnPrimaryContainer" /></shape>

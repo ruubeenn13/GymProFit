@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_alta — el cuestionario del alta (GP-103): la cabecera con atrás y la barra de
+  los cuatro capítulos, que se queda mientras cambian las preguntas debajo.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/Widget.GymProFit.Cabecera"
+            android:background="?android:attr/colorBackground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:contentInsetStartWithNavigation="0dp">
+
+        <es.pmdm.gymprofit.ui.alta.BarraCapitulos
+            android:id="@+id/barraCapitulos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="14dp" />
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/contenedorAlta"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+</LinearLayout>

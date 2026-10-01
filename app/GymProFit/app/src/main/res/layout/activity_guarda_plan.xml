@@ -20,6 +20,7 @@
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             style="@style/Widget.GymProFit.Cabecera"
+            android:background="?android:attr/colorBackground"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:navigationContentDescription="@string/guarda_volver_a11y" />
