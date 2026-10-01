@@ -6,6 +6,8 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `25fdb8a` | fix(android): en «Tu plan» en inglés, los ejercicios en mayúsculas de título ya no se quedan a medias en minúscula. Visto en la prueba contra producción; no va en el APK etiquetado `v1.5.1`. |
+| `1014358` | Fusión de `lote-1.5.1` en `main` (desplegada a las 12:30); etiquetada `v1.5.1`. Informe y vídeo en `documentacion/estado/2026-10-01-lote-1.5.1.*`. |
 | `11446b6` | build(android): **versión 1.5.1** (10501). Misma clave de firma. Necesita la API del lote 1.5.0 y los dos arreglos de esta (GP-146, GP-147). **No se reparte hasta que exista gymprofit.app/terminos.** |
 | `c5f5ea4` | fix(android): el error de la edad de Editar perfil se va al corregirla (GP-145). |
 | `3ddafd8` | fix(android): aire entre los primeros pasos a letra 2,0. |
