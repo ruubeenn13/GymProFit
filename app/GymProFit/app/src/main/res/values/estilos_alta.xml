@@ -4,7 +4,7 @@
   aprobado el 30-09-2026 (documentacion/diseno/2026-09-30-alta). Los colores son los
   tokens del tema: donde el lienzo pone otro tono, manda el token (GP-063).
 -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- «Tu objetivo · 1 de 4»: condensada 600, 14 sp, en mayúsculas y en naranja claro. -->
     <style name="Widget.GymProFit.Alta.Antetitulo" parent="">
         <item name="android:layout_width">wrap_content</item>
@@ -22,7 +22,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">10dp</item>
-        <item name="android:accessibilityHeading">true</item>
+        <item name="android:accessibilityHeading" tools:targetApi="28">true</item>
         <item name="android:textAppearance">@style/TextAppearance.GymProFit.Display</item>
         <item name="android:textSize">34sp</item>
         <item name="android:lineSpacingMultiplier">0.95</item>

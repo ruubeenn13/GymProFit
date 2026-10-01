@@ -232,25 +232,29 @@ public class AdminUsuariosActivity extends BaseActivity {
 
         RadioButton rbUser = new RadioButton(this);
         rbUser.setText(R.string.rol_usuario);
-        rbUser.setId(1);
+        // Ids generados, no 1 y 2 a mano: un id de vista tiene que ser un recurso o uno
+        // de generateViewId (lint, GP-155).
+        int idUser = android.view.View.generateViewId();
+        rbUser.setId(idUser);
 
         RadioButton rbAdmin = new RadioButton(this);
         rbAdmin.setText(R.string.rol_admin);
-        rbAdmin.setId(2);
+        int idAdmin = android.view.View.generateViewId();
+        rbAdmin.setId(idAdmin);
 
         rg.addView(rbUser);
         rg.addView(rbAdmin);
 
         String rolActual = u.getRol() != null ? u.getRol() : "";
-        if (rolActual.contains("ADMIN")) rg.check(2);
-        else rg.check(1);
+        if (rolActual.contains("ADMIN")) rg.check(idAdmin);
+        else rg.check(idUser);
 
         new MaterialAlertDialogBuilder(this)
                 .setTitle(getString(R.string.admin_cambiar_rol_titulo))
                 .setMessage(getString(R.string.admin_cambiar_rol_msg, u.getUsername()))
                 .setView(rg)
                 .setPositiveButton(getString(R.string.admin_guardar), (d, w) -> {
-                    String nuevoRol = rg.getCheckedRadioButtonId() == 2 ? "ROLE_ADMIN" : "ROLE_USER";
+                    String nuevoRol = rg.getCheckedRadioButtonId() == idAdmin ? "ROLE_ADMIN" : "ROLE_USER";
                     // Muestra el overlay de carga durante el cambio de rol
                     LoadingDialog.show(this);
                     api.cambiarRol(u.getId(), nuevoRol).enqueue(new ApiCallback<Void>() {

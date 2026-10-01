@@ -91,7 +91,7 @@
                             android:layout_width="56dp"
                             android:layout_height="56dp"
                             android:src="@drawable/ic_ms_fitness_center"
-                            android:tint="#33000000"
+                            app:tint="#33000000"
                             android:contentDescription="@null" />
 
                     </LinearLayout>

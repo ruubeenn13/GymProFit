@@ -18,6 +18,9 @@
          se pide con una hoja la primera vez que empieza un descanso. -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <!-- El escáner de alimentos usa la cámara, pero la app sirve sin ella: que no la
+         exija a los dispositivos que no tienen (lint, GP-155). -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
 

@@ -221,3 +221,7 @@ jobs:
       # sh ./ y no ./: el wrapper está versionado sin bit de ejecución
       - name: Build & test
         run: sh ./gradlew --no-daemon assembleDebug test
+
+      # Lint de Android en verde (GP-155): un error de lint para el CI, como un test.
+      - name: Lint
+        run: sh ./gradlew --no-daemon lintDebug

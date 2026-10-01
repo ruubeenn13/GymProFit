@@ -127,7 +127,7 @@
             android:layout_height="48dp"
             android:layout_marginStart="4dp"
             android:src="@drawable/ic_ms_close"
-            android:tint="?attr/colorOnSurface"
+            app:tint="?attr/colorOnSurface"
             android:padding="12dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
