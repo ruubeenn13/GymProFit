@@ -687,6 +687,9 @@
          corregirla sin publicar una version nueva. -->
     <string name="url_privacidad" translatable="false">https://gymprofit.app/privacidad</string>
     <string name="url_privacidad_conservacion" translatable="false">https://gymprofit.app/privacidad#conservacion</string>
+    <string name="url_fed" translatable="false">https://github.com/yuhonas/free-exercise-db</string>
+    <string name="url_wger" translatable="false">https://wger.de</string>
+    <string name="url_off" translatable="false">https://world.openfoodfacts.org/data</string>
     <string name="politica_privacidad">Política de privacidad</string>
     <!-- Licencias de terceros (GP-082) -->
     <string name="licencias_titulo">Licencias de terceros</string>
@@ -698,6 +701,14 @@
     <string name="licencias_aviso_material_symbols">Iconos Material Symbols Rounded, Copyright Google LLC. Se distribuyen bajo la Licencia Apache, versión 2.0, cuyo texto completo sigue.</string>
     <string name="licencias_aviso_barlow">Fuentes Barlow y Barlow Condensed, Copyright 2017 The Barlow Project Authors. Se distribuyen bajo la SIL Open Font License, versión 1.1, cuyo texto completo sigue.</string>
     <string name="licencias_aviso_mpandroidchart">MPAndroidChart, Copyright 2020 Philipp Jahoda. Se distribuye bajo la Licencia Apache, versión 2.0, cuyo texto completo sigue.</string>
+    <string name="licencias_datos">Datos</string>
+    <string name="licencias_datos_texto">El catálogo de ejercicios y los alimentos que se buscan por código de barras salen de proyectos abiertos. Cada fuente conserva su licencia.</string>
+    <string name="licencias_fed">free-exercise-db · Unlicense (dominio público)</string>
+    <string name="licencias_fed_uso">El catálogo de ejercicios y sus imágenes.</string>
+    <string name="licencias_wger">wger · Creative Commons</string>
+    <string name="licencias_wger_uso">Los nombres y las descripciones de parte de los ejercicios. Sus textos tienen licencias Creative Commons que indica cada ejercicio.</string>
+    <string name="licencias_off">Open Food Facts · ODbL</string>
+    <string name="licencias_off_uso">Los alimentos que se importan por código de barras.</string>
     <string name="registro_aviso_privacidad">Al crear tu cuenta confirmas que has leído la %1$s</string>
     <string name="registro_aviso_privacidad_enlace">Política de Privacidad</string>
     <string name="error_sin_navegador">No hay ninguna aplicación para abrir enlaces</string>

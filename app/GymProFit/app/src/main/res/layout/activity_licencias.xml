@@ -120,6 +120,44 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Los datos de terceros (GP-153): de dónde salen el catálogo de
+                 ejercicios, sus textos y los alimentos por código de barras. Lo mismo
+                 que dice el punto 7 de gymprofit.app/terminos. -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/licencias_datos"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="6dp"
+                        android:text="@string/licencias_datos_texto"
+                        android:textSize="@dimen/text_caption"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:lineSpacingMultiplier="1.35" />
+
+                    <include android:id="@+id/filaFuenteFed" layout="@layout/view_fila_fuente" />
+                    <include android:id="@+id/filaFuenteWger" layout="@layout/view_fila_fuente" />
+                    <include android:id="@+id/filaFuenteOff" layout="@layout/view_fila_fuente" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>

@@ -690,6 +690,14 @@
     <string name="licencias_aviso_material_symbols">Material Symbols Rounded icons, Copyright Google LLC. Distributed under the Apache License, Version 2.0, whose full text follows.</string>
     <string name="licencias_aviso_barlow">Barlow and Barlow Condensed fonts, Copyright 2017 The Barlow Project Authors. Distributed under the SIL Open Font License, Version 1.1, whose full text follows.</string>
     <string name="licencias_aviso_mpandroidchart">MPAndroidChart, Copyright 2020 Philipp Jahoda. Distributed under the Apache License, Version 2.0, whose full text follows.</string>
+    <string name="licencias_datos">Data</string>
+    <string name="licencias_datos_texto">The exercise catalogue and the foods looked up by barcode come from open projects. Each source keeps its own licence.</string>
+    <string name="licencias_fed">free-exercise-db · Unlicense (public domain)</string>
+    <string name="licencias_fed_uso">The exercise catalogue and its images.</string>
+    <string name="licencias_wger">wger · Creative Commons</string>
+    <string name="licencias_wger_uso">The names and descriptions of some exercises. Their texts carry Creative Commons licences, stated on each exercise.</string>
+    <string name="licencias_off">Open Food Facts · ODbL</string>
+    <string name="licencias_off_uso">The foods imported by barcode.</string>
     <string name="registro_aviso_privacidad">By creating your account you confirm that you have read the %1$s</string>
     <string name="registro_aviso_privacidad_enlace">Privacy Policy</string>
     <string name="error_sin_navegador">There is no application available to open links</string>
