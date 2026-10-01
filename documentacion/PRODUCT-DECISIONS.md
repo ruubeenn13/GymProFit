@@ -575,6 +575,43 @@ DEC-027 y DEC-014 no se relajan; lo único que cambia es **cómo se afirma el ai
 
 ---
 
+### DEC-039 · El movimiento: doce momentos, cuatro curvas y nada que esperar
+**Estado:** Aceptada · **Fecha:** 2026-10-01 · **Tarea:** GP-104 (lote 1.5.1)
+
+**Contexto.** La app se movía a trozos: cada pantalla elegía su duración y su curva (260 ms aquí, 600 allá, un `DecelerateInterpolator` suelto), y nadie sabía qué tenía que pasar con «Quitar animaciones». El alta nueva se aprobó con su movimiento dibujado al milisegundo (`documentacion/diseno/2026-09-30-alta/fuente/Movimiento.dc.html`), y hacía falta un sitio donde vivieran esos números para que la siguiente pantalla no se los inventara.
+
+**Decisión.** El movimiento sale de `Movimiento` (`utils/Movimiento.java`) y de nada más: las pantallas piden un momento, no escriben milisegundos ni curvas.
+
+Cuatro curvas: **enfatizada** `cubic-bezier(.05,.7,.1,1)` para lo que entra; **estándar** `(.2,0,0,1)` para lo que cambia de sitio o de tamaño; **rebote** `(.34,1.56,.64,1)` para lo que salta; **temblor** `(.36,.07,.19,.97)` para el error. Y lineal para lo que gira.
+
+| Momento | Qué pasa | Duración y curva | Vibración |
+|---|---|---|---|
+| 1 · Elegir | Se hunde un 3 % al tocar (`TOQUE`), fondo y borde se rellenan (`RELLENO`), el check salta (`CHECK`) y el icono gira y rebota (`ICONO`) | 120 estándar · 150 · 260 rebote · 420 rebote | Ligera |
+| 2 · «Siguiente» se enciende | La primera vez que se responde, se llena de naranja y crece de 0,94 a 1 (`ENCIENDE`) | 380 rebote | — |
+| 3 · Entrar en pantalla | Título, texto y opciones suben 16 dp, uno tras otro (`ENTRA`, `ENTRA_ESCALON`) | 350 enfatizada, cada 40 | — |
+| 4 · Abrir capítulo | El icono del capítulo salta (`CAPITULO`) y su aro late dos veces (`LATIDO`) | 450 rebote · 900 ×2 | Media |
+| 5 · Barra de progreso | El tramo se llena (`BARRA`) y, al cerrar un capítulo, destella (`DESTELLO`) | 500 estándar · 700 | — |
+| 6 · Selector que se desliza | La píldora viaja a la opción (`PILDORA`) y la semana de ejemplo se enciende día a día (`DIA`, `DIA_ESCALON`) | 320 rebote · 280 rebote, cada 35 | Ligera |
+| 7 · Cifras que cuentan | Las calorías cuentan mientras el anillo se dibuja por macros (`CIFRAS`), y al final un halo (`HALO`) | 1200 con 1 − (1 − t)³ · 900 | — |
+| 8 · El programa llega | La tarjeta sube (`CARTA`), las rutinas entran de una en una (`FILA`, `FILA_ESCALON`) y un brillo la cruza una vez (`BRILLO`) | 450 enfatizada · 300, cada 100 · 900 | — |
+| 9 · Cuenta creada | El botón se hace círculo (`CIRCULO`), gira mientras responde la API (`GIRO`) y acaba en un check que se traza (`TRAZO`) | 300 estándar · 700 lineal · 420 | Éxito |
+| 10 · Error | El campo tiembla (`TEMBLOR`) y el mensaje aparece debajo (`MENSAJE`) | 380 temblor · 250 | Error |
+| 11 · Aviso de ejemplo | Baja como una notificación de verdad y su icono zumba (`AVISO`, en bucle) | 5000 | — |
+| 12 · Récord | El trofeo salta (`TROFEO`), suelta seis chispas doradas (`CHISPAS`) y un brillo cruza la fila (`BRILLO`). En la bienvenida y en el resumen de cada sesión | 450 rebote · 700 · 900 | Éxito |
+
+Las reglas:
+
+- **Con «Quitar animaciones», todo en su estado final.** Casi todo lo hace Android: con la escala de duración a 0, un animador salta a su final. Por eso se anima siempre *hacia* el estado final, nunca desde él. Lo que va en bucle (la demostración de la bienvenida, el aviso de ejemplo) pregunta antes a `Movimiento.quieto()` y se queda en su último fotograma.
+- **Las vibraciones se quedan**, porque no son movimiento. Van por `performHapticFeedback`, que respeta el ajuste de vibración al tocar del sistema.
+- **Nada espera a una animación.** Ningún botón se apaga mientras algo se mueve, y lo que entra en pantalla se puede tocar desde el primer fotograma.
+- **Sin dependencias nuevas**: animadores, interpoladores, vectores y la capa superpuesta de las vistas.
+
+**Consecuencias.** Un momento nuevo se añade aquí y en `Movimiento` a la vez; `MovimientoTest` lee esta tabla y el código y falla si los números no coinciden. Las animaciones de antes del alta (el deslizamiento entre pantallas, la entrada de la bienvenida vieja) siguen con lo suyo hasta que se toquen.
+
+**Qué la invalidaría.** Que se mida que el movimiento cuesta fotogramas en los móviles baratos para los que se diseña (DEC-021): se recorta el momento que lo cause, no el sistema. Un rediseño de marca que cambie el carácter del movimiento.
+
+---
+
 ## Pendientes de decidir
 
 Se registran aquí para que no se decidan por omisión.
