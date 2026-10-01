@@ -105,6 +105,9 @@ public class GuardaPlanActivity extends BaseActivity {
         findViewById(R.id.btnEntrarGuarda).setOnClickListener(v -> irAEntrar(null));
         findViewById(R.id.btnEntrarConCorreo).setOnClickListener(v -> irAEntrar(texto(etCorreo)));
         montarLegal();
+        limpiarAlEscribir(etNombre, tilNombre, null);
+        limpiarAlEscribir(etCorreo, tilCorreo, errorCorreoEnUso);
+        limpiarAlEscribir(etClave, tilClave, null);
 
         // Mientras se crea la cuenta, atrás no deja el alta a medias.
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -452,6 +455,19 @@ public class GuardaPlanActivity extends BaseActivity {
     }
 
     // ── Utilidades ──────────────────────────────────────────────────────────
+
+    // El error de un campo se va en cuanto se vuelve a escribir en él: ya no dice la verdad.
+    private void limpiarAlEscribir(TextInputEditText et, TextInputLayout til, @Nullable View extra) {
+        et.addTextChangedListener(new android.text.TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int a, int b, int c) { }
+            @Override public void onTextChanged(CharSequence s, int a, int b, int c) { }
+            @Override
+            public void afterTextChanged(android.text.Editable e) {
+                if (til.getError() != null) til.setError(null);
+                if (extra != null) extra.setVisibility(View.GONE);
+            }
+        });
+    }
 
     // A «Ya tengo cuenta», con el correo puesto si llega uno.
     private void irAEntrar(@Nullable String correo) {
