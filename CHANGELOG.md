@@ -6,6 +6,12 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `2d3d22d` | test(api): el escaneo de secretos de los DTO admite el código de barras de un producto, y `AlimentoServiceTest` simula el aviso al índice de búsqueda. |
+| `5d4ad6a` | feat(api,admin,web): la web de administración filtra por **fuente** (Ciqual, USDA, Open Food Facts, a mano) con cuántos hay de cada una y los productos de España para elegir; la sección 7 de los términos cita Ciqual (Licence Ouverte), USDA (dominio público) y Open Food Facts (ODbL). |
+| `94b9e6e` | feat(api): **`GET /alimentos/codigo/{codigo}`** (GP-160): tus alimentos, el catálogo, los productos de España y, si no, una lectura a Open Food Facts que se guarda; 404 si no existe. 10 lecturas por minuto para toda la API, con 503 y `Retry-After`, y un día de memoria para los códigos que no existen. El código de barras pasa a ser único por dueño. `POST /alimentos/importar` va por el mismo camino. |
+| `071576a` | feat(api): **la búsqueda de alimentos ya no sale de casa** (GP-162): grupos TUYO, BASICO y PRODUCTO; tildes, plurales, orden, una errata y sinónimos; índice invertido en memoria (12,5 MB, 1,3 s, 24 ms de mediana en local). Sin búsqueda por texto a Open Food Facts. |
+| `c429ea0` | feat(api): **productos de España de Open Food Facts** (GP-164) en `productos_off`, con su workflow semanal `importar-productos.yml` y `POST /importacion/productos` con clave propia (`IMPORTACION_CLAVE`, obligatoria en prod). Elegir un producto lo materializa desde la tabla. 198 224 productos, 29 MB en local. |
+| `ad4257e` | feat(api): **447 alimentos básicos** de Ciqual 2025 y USDA FoodData Central con nombre en ES y EN, valores por 100 g y 516 raciones con la fuente de cada peso (GP-127). Lista curada y script en `api/gymprofit-api/datos/basicos`. |
 | `b8bd13d` | Fusión de `lote-1.5.3` en `main` (desplegada a las 14:54, CI en verde con `lintDebug`); etiquetada `v1.5.3`. Informe en `documentacion/estado/2026-10-01-lote-1.5.3.md`. |
 | `b2ce399` | build(android): **versión 1.5.3** (10503). Misma clave de firma. Necesita la API de esta fusión. |
 | `0d51044` | feat(android): la tarjeta del programa de «Tu plan» dice cuánto esperar con un 429, con «Reintentar» (GP-148). |

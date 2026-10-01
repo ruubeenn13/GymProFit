@@ -444,7 +444,7 @@ Pedía decidir de forma consciente si el `applicationId` `es.pmdm.gymprofit` —
 
 **Decisión.** El propietario de un alimento sale **siempre del token** (DEC-013) y el `usuarioId` del cuerpo se ignora. Un USER crea alimentos **suyos**; crear catálogo —filas sin dueño— es cosa de **ADMIN**. Lo mismo vale para modificar, desactivar y borrar: el catálogo solo lo toca un ADMIN, y un alimento con dueño, su dueño. Cambiarle los macros a un alimento del catálogo se los cambia a todo el mundo, así que no basta con cerrar la creación.
 
-**La excepción es el escáner.** `POST /alimentos/importar` materializa un producto de **Open Food Facts** por código de barras y sí crea una fila **sin dueño**, porque es catálogo real y no la comida de nadie, y lo dispara un usuario normal al escanear. No pasa por la ruta de creación: construye la entidad desde el producto externo. Es la diferencia entre *escribir en el catálogo* y *traerse un producto que ya existe*.
+**La excepción es el escáner.** `POST /alimentos/importar` materializa un producto de **Open Food Facts** por código de barras y sí crea una fila **sin dueño**, porque es catálogo real y no la comida de nadie, y lo dispara un usuario normal al escanear. No pasa por la ruta de creación: construye la entidad desde el producto externo. Es la diferencia entre *escribir en el catálogo* y *traerse un producto que ya existe*. *(Desde el lote 1.6.0 el producto sale primero de `productos_off`, la copia semanal de Open Food Facts (DEC-041), y solo si no está se lee de Open Food Facts; `GET /alimentos/codigo/{codigo}` materializa por el mismo camino. La regla no cambia: es catálogo y lo dispara un usuario normal.)*
 
 **Qué la invalidaría.** Querer un catálogo **colaborativo**, con alimentos propuestos por usuarios y visibles para el resto. Eso no reabre esta decisión sin más: pediría moderación, autoría visible y forma de corregir, que es un sistema, no un permiso. También la invalidaría dejar de tener catálogo propio y apoyarse solo en Open Food Facts.
 
@@ -609,6 +609,59 @@ Las reglas:
 **Consecuencias.** Un momento nuevo se añade aquí y en `Movimiento` a la vez; `MovimientoTest` lee esta tabla y el código y falla si los números no coinciden. Las animaciones de antes del alta (el deslizamiento entre pantallas, la entrada de la bienvenida vieja) siguen con lo suyo hasta que se toquen.
 
 **Qué la invalidaría.** Que se mida que el movimiento cuesta fotogramas en los móviles baratos para los que se diseña (DEC-021): se recorta el momento que lo cause, no el sistema. Un rediseño de marca que cambie el carácter del movimiento.
+
+---
+
+### DEC-040 · Los alimentos se buscan en casa: básicos propios, productos de España e índice en memoria
+**Estado:** Aceptada · **Fecha:** 2026-10-01 · **Tareas:** GP-127, GP-162, GP-164 (lote 1.6.0)
+
+**Contexto.** `GET /alimentos/buscar` preguntaba a Open Food Facts en cada pulsación (la app busca a los 400 ms) y, sin texto, por sus «populares». Open Food Facts limita a 10 búsquedas por minuto y por IP, pide no usarlo para buscar mientras se escribe, y todos los usuarios salen por la IP de Render: con unos pocos usuarios a la vez, la búsqueda se caía para todos. Y era flojo en lo básico: «pollo» no daba una pechuga de pollo genérica, sino productos con marca.
+
+**Decisión.**
+
+- **Tres fuentes, todas en nuestra base.** Los **básicos** (unos 450 genéricos, `datos/basicos/`): Ciqual 2025 de ANSES, con Licence Ouverte / Etalab 2.0, que permite el uso comercial citando la fuente, como base; USDA FoodData Central (SR Legacy, dominio público) para lo que falta y para el peso de las raciones. **BEDCA no**: pide autorización expresa de AESAN para uso comercial. Los **productos de España**, de la exportación de Open Food Facts (ODbL), en `productos_off` (DEC-041). Y **lo de cada usuario**.
+- **El alimento dice de dónde sale.** `fuente` (CIQUAL, USDA, OFF o nada si se hizo a mano), `codigo_origen`, `revisado` (los básicos sí, los productos no) y sus raciones en `alimento_raciones`, cada peso con su fuente. Los valores siguen siendo por 100 g (`calcularCalorias` divide entre 100).
+- **Tres grupos, en este orden**, y cada resultado lleva su `grupo`: **TUYO** (tus alimentos y lo que has apuntado en los últimos 60 días), **BASICO** y **PRODUCTO** (los de `productos_off` y los ya materializados). Un producto sin materializar va con `id` nulo y su código, como iban los de Open Food Facts, así que la 1.5.3 los importa al elegirlos sin cambiar nada. Sin texto: lo tuyo por uso reciente y una lista fija de básicos habituales (`busqueda/habituales.txt`). Lo de otro usuario nunca sale (DEC-027).
+- **Qué casa con qué** (`Normalizador`, `IndiceTexto`): sin tildes ni mayúsculas; singular y plural llevados a la misma forma; sin «de», «con», «la», «of»…, así que da igual el orden; el último término, por prefijo (se busca mientras se escribe); una errata en palabras de 5 letras o más; unos pocos sinónimos versionados (`busqueda/sinonimos.txt`). Se busca en ES, en EN y en la marca. Delante, los que casan con todos los términos exactos y cuyo nombre empieza por el primero; dentro de los básicos, los habituales; dentro de los productos, los más escaneados.
+- **Ninguna búsqueda por texto sale de casa.** El cliente de Open Food Facts ya no tiene `buscar` ni `browsePopulares`; solo queda la lectura de un código suelto, con cupo (GP-160).
+
+**El motor: un índice invertido en memoria, no la base.** Medido en local con los 198 224 productos reales:
+
+| | En la base (`LIKE '%…%'`) | En memoria |
+|---|---|---|
+| Consulta | 95–123 ms por consulta en MariaDB local (barrido completo), sin tildes, plurales ni erratas | 24 ms de mediana y 30 de peor caso por petición entera (16 ms por encima de `/actuator/health`), con todo el normalizado |
+| Memoria de la API | nada | 12,5 MB de heap tras GC (68,4 → 80,9 MB), para 198 224 productos y 37 777 términos distintos |
+| Construir | — | 1,3 s, en segundo plano al arrancar |
+
+El `LIKE` con comodín delante no usa índice: barre la tabla entera en cada pulsación, y eso en un ordenador de sobremesa ya se come casi todo el presupuesto de 150 ms; en el MySQL compartido de Aiven, más. Hacer en SQL lo que hace el normalizador (plurales, erratas) obligaría a columnas o tablas de n-gramas propias, que con 200 000 productos multiplican el disco, que es justo lo escaso (1 GB entre todo). El parser ngram de MySQL no existe en MariaDB, y lo que solo existe en uno no se usa. El índice en memoria cabe con holgura en los ~300 MB de heap de Render y no cuesta disco.
+
+**En producción, con la tabla llena** (20 búsquedas distintas, `curl` desde fuera): pendiente de medir tras el despliegue (se apunta aquí y en el informe del lote).
+
+**Consecuencias.** La API tarda unos segundos más en tener el grupo de productos tras arrancar: el índice se construye en segundo plano y, mientras, la búsqueda sigue con TUYO y BASICO. Tras cada importación se reconstruye cuando lleva 30 s sin llegar ningún lote. El catálogo (básicos y materializados, unos pocos miles) se reconstruye en la primera búsqueda después de cualquier cambio. Lo de cada usuario se lee de la base en cada búsqueda, porque es poco y cambia a cada comida apuntada.
+
+**El código de barras de un alimento propio y el de un producto conviven** (para el «Créalo» de la 1.6.1). `uq_alimentos_barcode`, único en toda la tabla, pasa a ser único **por dueño**: `(barcode, usuario_id)`. En el catálogo, la unicidad de los productos la da `(fuente, codigo_origen)`. Así, si escaneas un código que no existe y creas tu alimento con ese código, es tuyo: a ti te sale primero al escanearlo; a nadie más le sale nunca. Si más adelante ese producto llega a `productos_off`, a los demás les sale el producto y a ti el tuyo, sin choque. MySQL no permite una columna generada sobre `usuario_id` mientras su clave ajena borre con SET NULL, por eso no se hizo con `IFNULL(usuario_id, 0)`.
+
+**Qué la invalidaría.** Que el índice no quepa: con más de un millón de productos o con el plan de Render más pequeño, medir otra vez y pasar a n-gramas en la base o a un servicio de búsqueda. Que Open Food Facts cambie la licencia de la exportación. Que los usuarios pidan un catálogo colaborativo (DEC-032).
+
+---
+
+### DEC-041 · Los productos de Open Food Facts llegan cada semana por la API, con una clave propia
+**Estado:** Aceptada · **Fecha:** 2026-10-01 · **Tarea:** GP-164 (lote 1.6.0)
+
+**Contexto.** Para buscar productos sin preguntar a Open Food Facts hay que tenerlos. La exportación completa pesa 1,3 GB comprimida y tiene 4,5 millones de productos; la API vive en 512 MB y Aiven da 1 GB de disco para todo.
+
+**Decisión.**
+
+- **La importación no corre dentro de la API.** Un workflow de GitHub Actions (`importar-productos.yml`), los lunes y a mano, descarga la exportación, filtra con `datos/productos/filtrar_off.py` y manda los productos en lotes de 1000 a `POST /importacion/productos`. La API solo recibe lotes: nada descarga, nada toca la base por otro camino (DEC-035).
+- **Qué entra**: vendido en España, con código, nombre y los cuatro valores por 100 g, sin cifras imposibles (nada por encima de 100 g por cada 100 g, kcal que cuadran con los macros), y sin duplicados (mismo nombre normalizado, marca y kcal: el más escaneado). La API vuelve a comprobarlo en cada lote.
+- **Presupuesto: 200 MB** para `productos_off` y sus índices; si no caben, los más escaneados. Medido: 198 224 productos en 19,5 MB de datos y 9,5 MB de índices en MariaDB local; caben todos, sin `--max`. En producción, en el informe del lote.
+- **La ruta pide una clave propia, no ADMIN.** Cabecera `X-Clave-Importacion`, comparada en tiempo constante y antes de leer el cuerpo. Una cuenta ADMIN guardada en un secreto de GitHub daría a quien la robara todo el panel (desactivar cuentas, cambiar el catálogo); la clave solo deja escribir en `productos_off`. Sin ella, 403 para todos, ADMIN incluido. En producción es `IMPORTACION_CLAVE`, sin valor por defecto (DEC-016) y de 32 caracteres o más: si falta, la API no arranca. El mismo valor va en el secreto `IMPORTACION_CLAVE` del repositorio.
+- **Reimportar no toca lo materializado.** Un producto elegido se copia a `alimentos` (DEC-032) y las comidas apuntan a esa copia; la importación actualiza `productos_off`, nunca `alimentos`.
+- **ODbL.** Los datos de Open Food Facts no se modifican; lo normalizado vive solo en la memoria de la API. Derivan de Open Food Facts `productos_off` y las filas de `alimentos` con `fuente = 'OFF'`: si se mejoran, se ofrecen de vuelta.
+
+**Consecuencias.** Un producto que se quite de Open Food Facts sigue en `productos_off` hasta que se limpie a mano: la importación añade y actualiza, no borra. Un producto nuevo tarda como mucho una semana en salir en la búsqueda, salvo que alguien lo escanee (GP-160), que lo trae al momento.
+
+**Qué la invalidaría.** Que los productos de España dejen de caber en el presupuesto aun quedándose con los más escaneados. Que haga falta más de una fuente de productos: entonces la clave se queda corta y conviene una cuenta de servicio con su rol (DEC-012).
 
 ---
 
