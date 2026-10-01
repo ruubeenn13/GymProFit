@@ -6,6 +6,12 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `45209ea` | Fusión de `lote-1.6.0` en `main` con el arreglo de la medida, desplegada a las 22:11 con el CI en verde. |
+| `0e95289` | fix(api): la búsqueda ordena los productos por una clave numérica y solo pinta hasta la página pedida. Medido en producción: sin cambio apreciable; lo que cuesta en frío es otra cosa (ver el informe). |
+| `a395cb4` | Fusión de `lote-1.6.0` en `main` (desplegada a las 21:34, CI en verde). Sin etiqueta: no hay versión de la app. Primera importación: 198 224 productos, 29 MB de tabla y ~60 MB del disco de Aiven, 174 s de envío. En caliente, la búsqueda queda 134 ms por encima de health. Informe en `documentacion/estado/2026-10-01-lote-1.6.0.md`. |
+| `a6f7c38` | fix(web): los términos citan «Ciqual 2025», con la fecha que pide la Licence Ouverte. |
+| `fb4f490` | fix(api): leer un código de Open Food Facts ya no reconstruye el índice de los ~200 000 productos; el producto entra por el del catálogo. |
+| `3dcc97a` | docs(decisiones,changelog,documentacion): DEC-040, DEC-041 y el informe del lote 1.6.0. |
 | `2d3d22d` | test(api): el escaneo de secretos de los DTO admite el código de barras de un producto, y `AlimentoServiceTest` simula el aviso al índice de búsqueda. |
 | `5d4ad6a` | feat(api,admin,web): la web de administración filtra por **fuente** (Ciqual, USDA, Open Food Facts, a mano) con cuántos hay de cada una y los productos de España para elegir; la sección 7 de los términos cita Ciqual (Licence Ouverte), USDA (dominio público) y Open Food Facts (ODbL). |
 | `94b9e6e` | feat(api): **`GET /alimentos/codigo/{codigo}`** (GP-160): tus alimentos, el catálogo, los productos de España y, si no, una lectura a Open Food Facts que se guarda; 404 si no existe. 10 lecturas por minuto para toda la API, con 503 y `Retry-After`, y un día de memoria para los códigos que no existen. El código de barras pasa a ser único por dueño. `POST /alimentos/importar` va por el mismo camino. |
