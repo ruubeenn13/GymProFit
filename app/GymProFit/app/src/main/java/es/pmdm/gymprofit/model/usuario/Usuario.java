@@ -32,6 +32,10 @@ public class Usuario {
     private boolean activo;
     private String rol;
     private String fotoPerfil;
+    // Avisos por tipo (GP-112, DEC-037): null si la API no los manda (anterior a la 1.5.0).
+    private Boolean avisosEntrenar;
+    private Boolean avisosComidas;
+    private Boolean avisosProgreso;
 
     // Constructor vacío requerido para deserialización JSON (Gson/Retrofit)
     public Usuario() {}
@@ -80,4 +84,8 @@ public class Usuario {
 
     public String getFotoPerfil() { return fotoPerfil; }
     public void setFotoPerfil(String fotoPerfil) { this.fotoPerfil = fotoPerfil; }
+
+    public Boolean getAvisosEntrenar() { return avisosEntrenar; }
+    public Boolean getAvisosComidas() { return avisosComidas; }
+    public Boolean getAvisosProgreso() { return avisosProgreso; }
 }

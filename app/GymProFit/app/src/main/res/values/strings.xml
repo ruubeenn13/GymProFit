@@ -1459,4 +1459,28 @@
     <string name="macro_grasas_solo">Grasas %1$d g</string>
     <string name="nutricion_macro_solo">%1$d g</string>
     <string name="editar_perfil_nota_menores">Con menos de 18 años, «Perder grasa» se queda en tus calorías de mantenimiento. Si quieres perder grasa, háblalo antes con un profesional.</string>
+
+    <!-- ── Avisos por tipo: el alta y Ajustes › Notificaciones (GP-112, lote 1.5.1) ── -->
+    <string name="avisos_ejemplo_a11y">Ejemplo de aviso: Descanso terminado. Press de banca con barra, serie 3</string>
+    <string name="avisos_ejemplo_origen">GymProFit · ahora</string>
+    <string name="avisos_ejemplo_titulo">Descanso terminado</string>
+    <string name="avisos_ejemplo_texto">Press de banca con barra, serie 3</string>
+    <string name="avisos_titulo">¿Te avisamos?</string>
+    <string name="avisos_texto">Solo de lo que elijas, y lo cambias cuando quieras en Ajustes. Después, Android te pedirá permiso.</string>
+    <string name="avisos_tipos_a11y">Qué avisos quieres</string>
+    <string name="avisos_descanso">Fin de cada descanso</string>
+    <string name="avisos_descanso_sub">Aunque tengas la pantalla apagada. Va con la sesión</string>
+    <string name="avisos_entrenar">Recordarme entrenar</string>
+    <string name="avisos_entrenar_sub">Si pasan 3 días sin entrenar</string>
+    <string name="avisos_comidas">Recordarme las comidas</string>
+    <string name="avisos_comidas_sub">A su hora, si no has apuntado esa comida</string>
+    <string name="avisos_progreso">Tu progreso</string>
+    <string name="avisos_progreso_sub">Logros, el resumen del domingo y pesarte cada mes</string>
+    <string name="avisos_activar">Activar avisos</string>
+    <string name="avisos_ahora_no">Ahora no</string>
+    <string name="avisos_error_guardar">No se han podido guardar tus avisos. Cámbialos cuando quieras en Ajustes › Notificaciones.</string>
+    <string name="notificaciones_sin_permiso">Android no deja que GymProFit te avise: hasta que lo actives, no te llegará ninguno.</string>
+    <string name="notificaciones_activar">Activar</string>
+    <string name="notificaciones_que_avisamos">Qué te avisamos</string>
+    <string name="notificaciones_sistema">Ajustes de Android</string>
 </resources>

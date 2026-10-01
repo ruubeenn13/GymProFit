@@ -487,6 +487,19 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
         editor.apply();
     }
 
+    // ── Avisos (GP-112, lote 1.5.1) ──
+    // Si a esta cuenta ya se le preguntó por los avisos en el alta: entonces Inicio no
+    // vuelve a pedir el permiso de Android por su cuenta, también si dijo «Ahora no».
+    private static final String PREFIJO_AVISOS_PREGUNTADOS = "avisos_preguntados_";
+
+    public void setAvisosPreguntados(String usuario) {
+        editor.putBoolean(PREFIJO_AVISOS_PREGUNTADOS + usuario, true).apply();
+    }
+
+    public boolean isAvisosPreguntados(String usuario) {
+        return prefs.getBoolean(PREFIJO_AVISOS_PREGUNTADOS + usuario, false);
+    }
+
     public void saveRol(String rol) { editor.putString(KEY_ROL, rol); editor.apply(); }
     public String getRol() { return prefs.getString(KEY_ROL, "ROLE_USER"); }
     public boolean isAdmin() { return "ROLE_ADMIN".equals(getRol()); }

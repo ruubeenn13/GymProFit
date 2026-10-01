@@ -187,6 +187,9 @@
         <!-- Estructura de GP-105: Ajustes y lo que cuelga de él, la biblioteca de
              ejercicios y todas las plantillas (antes, pestañas o parte del perfil). -->
         <activity android:name=".ui.activities.AjustesActivity" android:exported="false" />
+        <!-- Ajustes › Notificaciones y «¿Te avisamos?» del alta (GP-112, lote 1.5.1). -->
+        <activity android:name=".ui.activities.NotificacionesActivity" android:exported="false" />
+        <activity android:name=".ui.activities.AvisosActivity" android:exported="false" />
         <activity android:name=".ui.activities.CambiarPasswordActivity" android:exported="false" />
         <activity android:name=".ui.activities.CambiarCorreoActivity" android:exported="false" />
         <activity android:name=".ui.activities.LicenciasActivity" android:exported="false" />

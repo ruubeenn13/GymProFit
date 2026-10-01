@@ -1444,4 +1444,28 @@
     <string name="macro_grasas_solo">Fat %1$d g</string>
     <string name="nutricion_macro_solo">%1$d g</string>
     <string name="editar_perfil_nota_menores">Under 18, “Lose fat” stays at your maintenance calories. If you want to lose fat, talk it over with a professional first.</string>
+
+    <!-- ── Alerts by type: sign-up and Settings › Notifications (GP-112, 1.5.1) ── -->
+    <string name="avisos_ejemplo_a11y">Example alert: Rest over. Barbell bench press, set 3</string>
+    <string name="avisos_ejemplo_origen">GymProFit · now</string>
+    <string name="avisos_ejemplo_titulo">Rest over</string>
+    <string name="avisos_ejemplo_texto">Barbell bench press, set 3</string>
+    <string name="avisos_titulo">Shall we remind you?</string>
+    <string name="avisos_texto">Only about what you choose, and you can change it any time in Settings. Then Android will ask for permission.</string>
+    <string name="avisos_tipos_a11y">Which alerts you want</string>
+    <string name="avisos_descanso">End of each rest</string>
+    <string name="avisos_descanso_sub">Even with the screen off. Comes with the session</string>
+    <string name="avisos_entrenar">Remind me to train</string>
+    <string name="avisos_entrenar_sub">If 3 days go by without training</string>
+    <string name="avisos_comidas">Remind me about meals</string>
+    <string name="avisos_comidas_sub">At their time, if you haven’t logged that meal</string>
+    <string name="avisos_progreso">Your progress</string>
+    <string name="avisos_progreso_sub">Achievements, the Sunday summary and weighing in each month</string>
+    <string name="avisos_activar">Turn on alerts</string>
+    <string name="avisos_ahora_no">Not now</string>
+    <string name="avisos_error_guardar">We couldn’t save your alerts. Change them any time in Settings › Notifications.</string>
+    <string name="notificaciones_sin_permiso">Android isn’t letting GymProFit alert you: until you turn it on, none will reach you.</string>
+    <string name="notificaciones_activar">Turn on</string>
+    <string name="notificaciones_que_avisamos">What we alert you about</string>
+    <string name="notificaciones_sistema">Android settings</string>
 </resources>
