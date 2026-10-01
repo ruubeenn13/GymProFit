@@ -103,7 +103,8 @@ public class AuthService implements IAuthService {
     // Registra un nuevo usuario público: valida unicidad de username/email
     // (con un código en "cause" que dice cuál de los dos está en uso, GP-095),
     // codifica la contraseña, asigna siempre el rol USER y guarda el usuario.
-    // Sin username, lo propone NombreUsuario con la parte del correo (GP-103), después
+    // Sin username, lo propone NombreUsuario con el nombre o, sin él, con la parte del
+    // correo (GP-103, GP-147), después
     // de comprobar el correo: si ya tiene cuenta, eso es lo que hay que decir.
     @Transactional
     @Override
@@ -128,7 +129,8 @@ public class AuthService implements IAuthService {
         String nombre = ReglasPerfil.nombre(registerDTO.getNombre());
         ReglasPerfil.edad(registerDTO.getEdad());
 
-        String username = propuesto ? nombreUsuario.proponer(registerDTO.getEmail()) : registerDTO.getUsername();
+        // Con nombre, sale del nombre; del correo, solo sin él (GP-147).
+        String username = propuesto ? nombreUsuario.proponer(nombre, registerDTO.getEmail()) : registerDTO.getUsername();
 
         // Lista de bloqueo y nombre (GP-101). Después de la unicidad: si el usuario ya
         // existe, eso es lo primero que hay que corregir.

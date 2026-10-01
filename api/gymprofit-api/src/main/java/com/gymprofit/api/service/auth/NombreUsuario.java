@@ -11,9 +11,12 @@ import java.util.Locale;
 // ============================================================
 // NombreUsuario — el nombre de usuario de una cuenta nueva (GP-103, lote 1.5.0)
 //
-// El alta nueva no lo pide: la API lo propone con la parte del correo antes de la «@»,
-// en minúsculas, sin tildes y solo con letras, números, punto y guion bajo, de 3 a 30
+// El alta nueva no lo pide: la API lo propone con el nombre de la persona, en
+// minúsculas, sin tildes y solo con letras, números, punto y guion bajo, de 3 a 30
 // caracteres. Si se queda corto o ya existe, se le añade un número.
+//
+// Del correo, solo cuando no llega nombre (GP-147, lote 1.5.1): la parte antes de la
+// «@» es media dirección, y el usuario se ve en la app.
 //
 // Y ningún nombre nuevo lleva «@», se cree la cuenta por donde se cree: el login decide
 // por la «@» si lo escrito es un correo (POST /auth/login), y un usuario con «@» podría
@@ -47,15 +50,21 @@ public class NombreUsuario {
     }
 
     /**
-     * Propone un nombre libre a partir del correo: la base limpia si está libre y tiene
-     * 3 caracteres; si no, la base con el primer número que la deja libre y en 3 o más,
-     * recortando la base para no pasar de 30. «ana» choca → «ana2», «ana3»…
+     * Propone un nombre libre a partir del nombre de la persona, o del correo si no hay
+     * nombre: la base limpia si está libre y tiene 3 caracteres; si no, la base con el
+     * primer número que la deja libre y en 3 o más, recortando la base para no pasar de
+     * 30. «ana» choca → «ana2», «ana3»…
      *
-     * @param email el correo de la cuenta nueva.
-     * @return un nombre de usuario libre en este momento.
+     * <p>Un nombre sin nada aprovechable («李») da «usuario», no el correo: si llega
+     * nombre, el correo no se mira.
+     *
+     * @param nombre el nombre de la cuenta nueva, ya recortado; null o en blanco si no hay.
+     * @param email  el correo de la cuenta nueva.
+     * @return un nombre de usuario libre en este momento. Libre al mirarlo: otra alta
+     *         puede llevárselo antes de guardar, y eso lo resuelve quien guarda (GP-146).
      */
-    public String proponer(String email) {
-        String base = base(email);
+    public String proponer(String nombre, String email) {
+        String base = (nombre == null || nombre.isBlank()) ? base(email) : limpia(nombre);
         if (base.length() >= MIN && !usuarioRepository.existsByUsername(base)) {
             return base;
         }
@@ -72,8 +81,13 @@ public class NombreUsuario {
     // La parte del correo antes de la última «@», limpia y recortada a 30.
     static String base(String email) {
         int arroba = email.lastIndexOf('@');
-        String local = arroba < 0 ? email : email.substring(0, arroba);
-        String sinTildes = Normalizer.normalize(local.toLowerCase(Locale.ROOT), Normalizer.Form.NFD)
+        return limpia(arroba < 0 ? email : email.substring(0, arroba));
+    }
+
+    // En minúsculas, sin tildes, solo letras, números, punto y guion bajo, y recortada a 30;
+    // «usuario» si no queda nada.
+    static String limpia(String texto) {
+        String sinTildes = Normalizer.normalize(texto.toLowerCase(Locale.ROOT), Normalizer.Form.NFD)
                 .replaceAll("\\p{M}", "");
         String limpio = recortar(sinTildes.replaceAll("[^a-z0-9._]", ""), MAX_PROPUESTO);
         return limpio.isEmpty() ? BASE_VACIA : limpio;

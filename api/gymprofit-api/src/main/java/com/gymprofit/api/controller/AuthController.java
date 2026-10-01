@@ -59,8 +59,8 @@ public class AuthController {
     }
 
     @Operation(summary = "Registra un nuevo usuario con el rol USER por defecto",
-            description = "username es opcional (GP-103): sin él, la API lo propone con la parte del correo " +
-                    "antes de la «@» y lo devuelve en la respuesta. Ningún username lleva «@» " +
+            description = "username es opcional (GP-103): sin él, la API lo propone con el nombre o, si no llega " +
+                    "nombre, con la parte del correo antes de la «@» (GP-147), y lo devuelve en la respuesta. Ningún username lleva «@» " +
                     "(400 con USERNAME_NO_VALIDO). Acepta además nombre, sexo y nivelActividad, con las reglas " +
                     "del PATCH de /usuarios/{id}.")
     @ApiResponses(value = {

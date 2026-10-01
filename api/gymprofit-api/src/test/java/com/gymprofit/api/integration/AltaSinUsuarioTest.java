@@ -53,6 +53,23 @@ class AltaSinUsuarioTest extends AbstractOwnershipTest {
     }
 
     @Test
+    @DisplayName("GP-147: con nombre, el usuario sale del nombre con las mismas reglas, y no enseña el correo")
+    void con_nombre_sale_del_nombre() throws Exception {
+        String primero = altaOk(Map.of("email", "lgomez.1990@a.com", "nombre", "Lucía Gómez"));
+        String segundo = altaOk(Map.of("email", "otra.cosa@b.com", "nombre", "  lucía gómez "));
+        assertThat(primero).isEqualTo("luciagomez");
+        assertThat(segundo).isEqualTo("luciagomez2");
+        assertThat(primero + segundo).doesNotContain("lgomez").doesNotContain("otra");
+
+        // Un nombre corto se completa con número, como el correo.
+        assertThat(altaOk(Map.of("email", "corto-gp147@a.com", "nombre", "Al"))).isEqualTo("al1");
+        // Del correo, solo sin nombre: en blanco cuenta como que no llega.
+        assertThat(altaOk(Map.of("email", "sinnombre@a.com", "nombre", "   "))).isEqualTo("sinnombre");
+        // Un nombre sin nada aprovechable no tira del correo: «usuario».
+        assertThat(altaOk(Map.of("email", "secreto-gp147@a.com", "nombre", "李"))).isEqualTo("usuario");
+    }
+
+    @Test
     @DisplayName("la propuesta va en minúsculas, sin tildes y solo con letras, números, punto y guion bajo")
     void propuesta_limpia() throws Exception {
         assertThat(altaOk(Map.of("email", "José.Pérez_Ñú+gym@x.com"))).isEqualTo("jose.perez_nugym");
