@@ -7,6 +7,9 @@ import android.view.View;
 import com.google.android.material.button.MaterialButton;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.SaludApi;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.Movimiento;
 
@@ -39,6 +42,7 @@ public class BienvenidaActivity extends BaseActivity {
                 startActivity(new Intent(this, LoginActivity.class)));
 
         if (savedInstanceState == null) {
+            despertarApi();
             Movimiento.entrarUna(findViewById(R.id.cabeceraBienvenida), 0, 400, 16);
             Movimiento.entrarUna(findViewById(R.id.tvTituloBienvenida), 150, 450, 16);
             Movimiento.entrarUna(findViewById(R.id.tvTextoBienvenida), 230, 450, 16);
@@ -46,5 +50,25 @@ public class BienvenidaActivity extends BaseActivity {
             Movimiento.entrarUna(findViewById(R.id.btnYaTengoCuenta), 370, 450, 16);
             Movimiento.respirar(empezar, 1800);
         }
+    }
+
+    /**
+     * Una llamada ligera para que la API despierte mientras se contesta el cuestionario
+     * (Render gratis la duerme). No se espera ni se enseña nada: si falla, «Tu plan»
+     * tiene su carga y su error, y lo vuelve a pedir.
+     */
+    private void despertarApi() {
+        ApiClient.service(SaludApi.class).despertar().enqueue(new ApiCallback<Void>() {
+            @Override
+            public void onOk(Void ignorado) {
+                // Despierta: no hay nada que enseñar.
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                // Se ignora a propósito: solo era para despertarla, y quien la necesita de
+                // verdad («Tu plan») tiene su carga, su error y su reintento.
+            }
+        });
     }
 }
