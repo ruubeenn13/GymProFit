@@ -29,4 +29,14 @@ public class EnumeracionTest {
         assertEquals("TRX remo", Enumeracion.enMedio("TRX remo", es));
         assertEquals("Lunes A", Enumeracion.alPrincipio("lunes A", es));
     }
+
+    @Test
+    public void unNombreEnMayusculasDeTituloSeQuedaComoEsta() {
+        // El catálogo en inglés viene así; «barbell Bench Press» se leía roto en «Tu plan».
+        Locale en = Locale.ENGLISH;
+        assertEquals("Barbell Bench Press - Medium Grip", Enumeracion.enMedio("Barbell Bench Press - Medium Grip", en));
+        assertEquals("Bent Over Barbell Row", Enumeracion.enMedio("Bent Over Barbell Row", en));
+        assertEquals("pullups", Enumeracion.enMedio("Pullups", en));
+        assertEquals("press militar de pie", Enumeracion.enMedio("Press militar de pie", new Locale("es")));
+    }
 }

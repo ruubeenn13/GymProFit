@@ -36,12 +36,17 @@ public final class Enumeracion {
 
     /**
      * Pasa a minúscula la primera letra, para lo que va en medio de una frase («Press de
-     * banca» → «press de banca»). Deja igual lo que empieza por dos mayúsculas («TRX»).
+     * banca» → «press de banca»). Deja igual lo que empieza por dos mayúsculas («TRX») y
+     * lo que va en mayúsculas de título («Bent Over Barbell Row», como viene el catálogo
+     * en inglés): bajar solo la primera letra lo dejaría a medias.
      */
     @NonNull
     public static String enMedio(@NonNull String texto, @NonNull Locale idioma) {
         if (texto.length() < 2) return texto.toLowerCase(idioma);
         if (Character.isUpperCase(texto.charAt(1))) return texto;
+        for (String palabra : texto.substring(1).split("\\s+")) {
+            if (!palabra.isEmpty() && Character.isUpperCase(palabra.charAt(0))) return texto;
+        }
         return texto.substring(0, 1).toLowerCase(idioma) + texto.substring(1);
     }
 
