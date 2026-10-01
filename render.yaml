@@ -57,6 +57,12 @@ services:
         sync: false
       # BORRAR del dashboard si siguen dadas de alta: MAIL_HOST, MAIL_PORT, MAIL_USERNAME
       # y MAIL_PASSWORD. Ya no las lee nadie; el starter de correo salio del pom.
+      # --- Importación semanal de productos (GP-164, DEC-041) ---
+      # OBLIGATORIA: sin valor por defecto; si falta, el servicio NO arranca. Clave aleatoria
+      # de al menos 32 caracteres (p. ej. `openssl rand -base64 48`). La misma va en el secreto
+      # IMPORTACION_CLAVE del repositorio de GitHub, que usa el workflow importar-productos.yml.
+      - key: IMPORTACION_CLAVE
+        sync: false
       # --- Usuario administrador semilla ---
       # OPCIONAL: sin ella la API arranca, pero NO crea ninguna cuenta con rol ADMIN.
       # No tiene default a proposito: una contrasena de admin en el repo es una cuenta

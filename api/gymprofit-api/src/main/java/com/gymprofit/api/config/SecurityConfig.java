@@ -124,6 +124,11 @@ public class SecurityConfig {
                                 // cuenta. Solo devuelve el hash; ver CommitInfoContributor.
                                 .requestMatchers(HttpMethod.GET, "/actuator/info").permitAll()
 
+                                // Importación semanal de productos (GP-164, DEC-041). No lleva token
+                                // de usuario: la cerradura es la clave propia que comprueba
+                                // ClaveImportacion antes de leer el cuerpo. Sin ella, 403 a todos.
+                                .requestMatchers(HttpMethod.POST, "/importacion/**").permitAll()
+
                                 // Swagger público
                                 .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/webjars/**").permitAll()
 

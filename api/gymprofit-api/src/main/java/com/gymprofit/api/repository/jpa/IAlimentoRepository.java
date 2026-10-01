@@ -81,8 +81,9 @@ public interface IAlimentoRepository extends JpaRepository<Alimento, Integer> {
     // Busca los alimentos personalizados creados por un usuario concreto.
     List<Alimento> findByUsuarioId(Integer usuarioId);
 
-    // Busca un alimento importado por su código de barras (upsert del import OFF).
-    java.util.Optional<Alimento> findByBarcode(String barcode);
+    // El producto del CATÁLOGO con ese código de barras (upsert del import OFF). Solo
+    // catálogo: un alimento propio con código es de su dueño y no sale por aquí.
+    java.util.Optional<Alimento> findByBarcodeAndUsuarioIsNull(String barcode);
 
     // Alimentos propios del usuario (activos) cuyo nombre contiene el texto:
     // se antepone a los resultados externos en la búsqueda con query.

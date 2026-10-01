@@ -48,6 +48,7 @@ fallo se descubre en producción y en silencio.
 | `JWT_SECRET` | Firma de tokens | **No arranca** |
 | `BREVO_API_KEY` | Correo (Brevo, API HTTP) | **No arranca** |
 | `MAIL_FROM` | Correo (Brevo, API HTTP) | **No arranca** |
+| `IMPORTACION_CLAVE` | Importación semanal de productos (GP-164) | **No arranca** |
 | `ADMIN_PASSWORD` | Semilla de administración | Arranca, pero **sin crear cuenta de administración** |
 
 Por grupos:
@@ -57,6 +58,10 @@ Por grupos:
   llevaban default vacío y la consecuencia era peor que no arrancar: el código de recuperación
   acababa escrito en el log y `POST /auth/forgot-password` respondía 200 sin haber enviado nada.
   La única vía de recuperar una cuenta fallaba de forma indistinguible del éxito.
+- **`IMPORTACION_CLAVE`**: la cerradura de `POST /importacion/productos`, la ruta por la que el
+  workflow semanal `importar-productos.yml` carga los productos de Open Food Facts (DEC-041). Al
+  menos 32 caracteres aleatorios; con menos, tampoco arranca. El mismo valor va en el secreto
+  `IMPORTACION_CLAVE` del repositorio de GitHub (*Settings > Secrets and variables > Actions*).
 - **`ADMIN_PASSWORD`**: es la excepción, la única opcional. Sin ella la API funciona con
   normalidad pero `DataInitializer` **no crea ninguna cuenta con rol ADMIN** y lo deja anotado en
   el log de arranque. Es intencionado: una API sin panel de administración sigue sirviendo a sus
