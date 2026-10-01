@@ -1,0 +1,85 @@
+# ============================================================
+# importar-productos — los productos de Open Food Facts que se venden en España (GP-164)
+#
+# Cada semana descarga la exportación completa de Open Food Facts (~1,3 GB comprimida),
+# se queda con los productos de España con nombre y los cuatro valores, quita duplicados
+# y los manda por lotes a POST /importacion/productos. Todo pasa por la API (DEC-035):
+# este workflow no tiene credenciales de la base de datos. Se lanza también a mano.
+#
+# Necesita el secreto IMPORTACION_CLAVE del repositorio, con el mismo valor que la
+# variable IMPORTACION_CLAVE de Render (DEC-041). Sin él, el job falla al empezar.
+#
+# Presupuesto: productos_off y sus índices, como mucho 200 MB en el disco de Aiven.
+# MAX_PRODUCTOS deja fuera los menos escaneados si hiciera falta (0 = todos).
+# Las reglas del filtro y por qué, en api/gymprofit-api/datos/productos/README.md.
+# ============================================================
+name: importar-productos
+
+on:
+  schedule:
+    - cron: '17 3 * * 1'   # los lunes a las 03:17 UTC, cuando no hay nadie
+  workflow_dispatch:
+    inputs:
+      max_productos:
+        description: 'Como mucho N productos, los más escaneados (0 = todos)'
+        required: false
+        default: '0'
+
+# Una sola importación a la vez.
+concurrency:
+  group: importar-productos
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  importar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      API: https://api.gymprofit.app/api
+      MAX_PRODUCTOS: ${{ github.event.inputs.max_productos || '0' }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Comprobar el secreto
+        env:
+          IMPORTACION_CLAVE: ${{ secrets.IMPORTACION_CLAVE }}
+        run: |
+          if [ "${#IMPORTACION_CLAVE}" -lt 32 ]; then
+            echo "::error::Falta el secreto IMPORTACION_CLAVE (al menos 32 caracteres)"; exit 1
+          fi
+
+      - name: Descargar la exportación de Open Food Facts
+        run: |
+          curl -sSL --fail --retry 3 -o off.csv.gz \
+            https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv.gz
+          ls -lh off.csv.gz
+
+      - name: Filtrar los productos de España
+        run: |
+          python3 api/gymprofit-api/datos/productos/filtrar_off.py off.csv.gz productos.jsonl \
+            --max "$MAX_PRODUCTOS" | tee filtro.json
+
+      - name: Despertar la API
+        run: |
+          curl -sS --max-time 180 -o /dev/null -w "HTTP %{http_code} en %{time_total}s\n" \
+            "$API/actuator/health" || true
+
+      - name: Mandar los productos a la API
+        env:
+          IMPORTACION_CLAVE: ${{ secrets.IMPORTACION_CLAVE }}
+        run: |
+          python3 api/gymprofit-api/datos/productos/importar_productos.py productos.jsonl "$API" | tee importacion.json
+
+      - name: Resumen
+        if: always()
+        run: |
+          {
+            echo "### Importación de productos"
+            echo '```'
+            [ -f filtro.json ] && cat filtro.json
+            [ -f importacion.json ] && cat importacion.json
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

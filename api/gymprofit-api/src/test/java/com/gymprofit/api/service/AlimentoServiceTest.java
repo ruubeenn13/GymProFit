@@ -56,6 +56,10 @@ class AlimentoServiceTest {
     @Mock
     private SecurityUtils securityUtils;
 
+    // Cada escritura avisa al índice de búsqueda del catálogo (GP-162).
+    @Mock
+    private org.springframework.context.ApplicationEventPublisher eventos;
+
     @InjectMocks
     private AlimentoService alimentoService;
 

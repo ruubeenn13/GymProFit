@@ -38,12 +38,14 @@ class DtoSinSecretosEnToStringTest {
             Pattern.compile("(?i).*(password|contrasena|token|secret).*|codigo");
 
     // Campos que casan con el patrón y NO son secretos, uno a uno y con su clase: el
-    // código de un programa o de una plantilla es su id público en el catálogo (GP-074).
+    // código de un programa o de una plantilla es su id público en el catálogo (GP-074);
+    // el de un producto, su código de barras, que está impreso en el envase (GP-164).
     // Lista cerrada a propósito: un «codigo» nuevo en otro DTO sigue saltando.
     private static final Set<String> NO_SENSIBLES = Set.of(
             "com.gymprofit.api.dto.entity.programa.ProgramaDTO.codigo",
             "com.gymprofit.api.dto.entity.programa.RutinaConEjerciciosDTO.codigo",
-            "com.gymprofit.api.dto.entity.programa.RutinaVistaPreviaDTO.codigo");
+            "com.gymprofit.api.dto.entity.programa.RutinaVistaPreviaDTO.codigo",
+            "com.gymprofit.api.dto.entity.productooff.ProductoOffImportDTO.codigo");
 
     private static final String MARCA = "SECRETO-GP115-NO-DEBE-SALIR";
 

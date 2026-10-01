@@ -106,12 +106,20 @@ export interface Alimento {
   porcionGramos: number | null;
   activo: boolean;
   origen: 'OPEN_FOOD_FACTS' | 'MANUAL';
+  /** De dónde salen los datos (GP-127): básicos de Ciqual o USDA, Open Food Facts; null, a mano. */
+  fuente?: 'CIQUAL' | 'USDA' | 'OFF' | null;
+  /** true en los básicos, curados uno a uno. */
+  revisado?: boolean;
 }
 
 export interface ResumenAlimentos {
   catalogo: number;
   sinIngles: number;
   categorias: string[];
+  /** Cuántos del catálogo hay de cada fuente (GP-127). */
+  porFuente?: Partial<Record<'CIQUAL' | 'USDA' | 'OFF' | 'MANUAL', number>>;
+  /** Productos de España para elegir, materializados o no (GP-164). */
+  productos?: number;
 }
 
 /** Cambios de un alimento para PATCH /alimentos/{id}; un texto vacío borra el campo. */
@@ -165,7 +173,7 @@ export function rutasAdmin(cliente: Cliente = api) {
     guardarEjercicio: (id: number, datos: EjercicioGuardar) =>
       cliente.pedir<EjercicioDetalle>(`/admin/ejercicios/${id}`, { metodo: 'PUT', cuerpo: datos }),
 
-    alimentos: (f: { q?: string; categoria?: string; sinIngles?: boolean; origen?: string; page: number; size: number },
+    alimentos: (f: { q?: string; categoria?: string; sinIngles?: boolean; fuente?: string; page: number; size: number },
                 senal?: AbortSignal) =>
       cliente.pedir<Pagina<Alimento>>('/admin/alimentos' + consulta(f), { senal }),
     resumenAlimentos: (senal?: AbortSignal) => cliente.pedir<ResumenAlimentos>('/admin/alimentos/resumen', { senal }),

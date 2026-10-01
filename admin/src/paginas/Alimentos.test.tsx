@@ -10,14 +10,17 @@ import { pintarPantalla } from '../pruebas/pintar';
 
 const ALIMENTOS: Alimento[] = [
   { id: 1, nombre: 'Yogur natural', nombreEn: null, marca: null, categoria: 'Lácteos', barcode: null, calorias: 61,
-    proteinas: 3.5, carbohidratos: 4.7, grasas: 3.3, fibra: 0, porcionGramos: 125, activo: true, origen: 'MANUAL' },
+    proteinas: 3.5, carbohidratos: 4.7, grasas: 3.3, fibra: 0, porcionGramos: 125, activo: true, origen: 'MANUAL',
+    fuente: null, revisado: false },
   { id: 2, nombre: 'Plátano', nombreEn: 'Banana', marca: null, categoria: 'Frutas', barcode: null, calorias: 89,
-    proteinas: 1.1, carbohidratos: 22.8, grasas: 0.3, fibra: 2.6, porcionGramos: 120, activo: true, origen: 'MANUAL' },
+    proteinas: 1.1, carbohidratos: 22.8, grasas: 0.3, fibra: 2.6, porcionGramos: 120, activo: true, origen: 'MANUAL',
+    fuente: 'CIQUAL', revisado: true },
 ];
 
 vi.mock('../api/admin', () => ({
   admin: {
-    resumenAlimentos: vi.fn(async () => ({ catalogo: 2, sinIngles: 1, categorias: ['Frutas', 'Lácteos'] })),
+    resumenAlimentos: vi.fn(async () => ({ catalogo: 2, sinIngles: 1, categorias: ['Frutas', 'Lácteos'],
+      porFuente: { CIQUAL: 1, USDA: 0, OFF: 0, MANUAL: 1 }, productos: 198224 })),
     alimentos: vi.fn(async () => ({ content: ALIMENTOS, page: 0, size: 25, totalElements: 2, totalPages: 1, last: true })),
     guardarAlimento: vi.fn(),
     salud: vi.fn(async () => ({ status: 'UP' })),
@@ -47,6 +50,18 @@ describe('Alimentos desde 1440 px: lista y editor juntos', () => {
   it('pide 25 por página', async () => {
     await editor('Yogur natural');
     expect(vi.mocked(admin.alimentos)).toHaveBeenCalledWith(expect.objectContaining({ size: 25 }), expect.anything());
+  });
+
+  it('filtra por fuente, con cuántos hay de cada una, y dice de dónde sale cada alimento (GP-127)', async () => {
+    await editor('Yogur natural');
+    expect(screen.getByText('Añadido a mano al catálogo')).toBeTruthy();
+    const filtro = screen.getByLabelText('Fuente:') as HTMLSelectElement;
+    expect(Array.from(filtro.options).map((o) => o.textContent)).toEqual(
+      ['todas', 'Ciqual · 1', 'USDA · 0', 'Open Food Facts · 0', 'a mano · 1']);
+    fireEvent.change(filtro, { target: { value: 'CIQUAL' } });
+    await waitFor(() => expect(vi.mocked(admin.alimentos)).toHaveBeenCalledWith(
+      expect.objectContaining({ fuente: 'CIQUAL' }), expect.anything()));
+    expect(screen.getByText(/198\.224 productos de España para elegir/)).toBeTruthy();
   });
 
   it('la fila abierta se anuncia con aria-current y ninguna fila usa aria-selected', async () => {

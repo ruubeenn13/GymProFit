@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 // ============================================================
 // AlimentoDTO — representación completa de un alimento para lectura
@@ -35,4 +36,15 @@ public class AlimentoDTO implements Serializable {
     private String barcode;
     // Marca/fabricante del producto (Open Food Facts)
     private String marca;
+
+    // --- GP-127 / GP-162: campos nuevos y opcionales. Una app que no los conozca los ignora.
+
+    // De dónde salen los datos: CIQUAL, USDA, OFF; null si se hizo a mano.
+    private String fuente;
+    // true en los básicos, curados uno a uno.
+    private Boolean revisado;
+    // Raciones con nombre y peso; lista vacía si no tiene.
+    private List<RacionDTO> raciones;
+    // Solo en la búsqueda: TUYO, BASICO o PRODUCTO (el grupo en el que sale el resultado).
+    private String grupo;
 }

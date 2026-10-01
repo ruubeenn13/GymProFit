@@ -17,10 +17,24 @@ import { ANCHO, useMedia } from '../util/useMedia';
 import { textoError, useCarga } from '../util/useCarga';
 
 
-const ORIGEN: Record<Alimento['origen'], string> = {
-  OPEN_FOOD_FACTS: 'Importado de Open Food Facts al escanear su código',
-  MANUAL: 'Añadido a mano al catálogo',
-};
+// De dónde sale cada alimento (GP-127). Sin fuente, se mira el origen de antes.
+function procedencia(a: Alimento): string {
+  switch (a.fuente) {
+    case 'CIQUAL': return 'Básico de Ciqual (ANSES), revisado';
+    case 'USDA': return 'Básico de USDA FoodData Central, revisado';
+    case 'OFF': return 'Producto de Open Food Facts, sin revisar';
+    default: return a.origen === 'OPEN_FOOD_FACTS' ? 'Importado de Open Food Facts al escanear su código'
+      : 'Añadido a mano al catálogo';
+  }
+}
+
+const FUENTES = [
+  { valor: '', texto: 'todas' },
+  { valor: 'CIQUAL', texto: 'Ciqual' },
+  { valor: 'USDA', texto: 'USDA' },
+  { valor: 'OFF', texto: 'Open Food Facts' },
+  { valor: 'MANUAL', texto: 'a mano' },
+];
 
 interface Formulario {
   nombre: string; nombreEn: string; marca: string; categoria: string; barcode: string;
@@ -138,7 +152,7 @@ function Editor({ alimento, categorias, alGuardado, alSiguiente, avisar, alCambi
       <div className="editor__cabeza">
         <div>
           <h2 ref={titulo} tabIndex={-1}>{alimento.nombre}</h2>
-          <span className="editor__origen">{ORIGEN[alimento.origen]}</span>
+          <span className="editor__origen">{procedencia(alimento)}</span>
         </div>
         {sinIngles ? <span className="etiqueta etiqueta--aviso">Falta el inglés</span> : null}
       </div>
@@ -226,7 +240,7 @@ export function Alimentos() {
   const [q, setQ] = useState('');
   const [sinIngles, setSinIngles] = useState(false);
   const [categoria, setCategoria] = useState('');
-  const [origen, setOrigen] = useState('');
+  const [fuente, setFuente] = useState('');
   const [pagina, setPagina] = useState(0);
   const [elegido, setElegido] = useState<Alimento | null>(null);
   const [sucio, setSucio] = useState(false);
@@ -252,8 +266,8 @@ export function Alimentos() {
   }
 
   const resumen = useCarga((s) => admin.resumenAlimentos(s), []);
-  const lista = useCarga((s) => admin.alimentos({ q, categoria, sinIngles, origen, page: pagina, size: POR_PAGINA }, s),
-    [q, categoria, sinIngles, origen, pagina]);
+  const lista = useCarga((s) => admin.alimentos({ q, categoria, sinIngles, fuente, page: pagina, size: POR_PAGINA }, s),
+    [q, categoria, sinIngles, fuente, pagina]);
   const cerrarAviso = useCallback(() => setAviso(null), []);
 
   useEffect(() => {
@@ -311,7 +325,8 @@ export function Alimentos() {
   const verLista = dos || elegido === null;
 
   return (
-    <Marco titulo="Alimentos" subtitulo={r ? `${entero(r.catalogo)} en el catálogo · ${entero(r.sinIngles)} sin nombre en inglés` : undefined}>
+    <Marco titulo="Alimentos" subtitulo={r ? `${entero(r.catalogo)} en el catálogo · ${entero(r.sinIngles)} sin nombre en inglés`
+      + (r.productos ? ` · ${entero(r.productos)} productos de España para elegir` : '') : undefined}>
       <div className={`reparto${dos ? ' reparto--dos' : ''}`}>
         {verLista && (
           <section className="lista" aria-label="Lista de alimentos">
@@ -322,8 +337,11 @@ export function Alimentos() {
               </button>
               <Filtro etiqueta="Categoría" valor={categoria} alCambiar={(v) => filtrar(() => setCategoria(v))}
                       opciones={[{ valor: '', texto: 'todas' }, ...(r?.categorias ?? []).map((c) => ({ valor: c, texto: c.toLowerCase() }))]} />
-              <Filtro etiqueta="Origen" valor={origen} alCambiar={(v) => filtrar(() => setOrigen(v))}
-                      opciones={[{ valor: '', texto: 'todos' }, { valor: 'OPEN_FOOD_FACTS', texto: 'Open Food Facts' }, { valor: 'MANUAL', texto: 'a mano' }]} />
+              <Filtro etiqueta="Fuente" valor={fuente} alCambiar={(v) => filtrar(() => setFuente(v))}
+                      opciones={FUENTES.map((f) => {
+                        const n = f.valor ? r?.porFuente?.[f.valor as 'CIQUAL'] : undefined;
+                        return { valor: f.valor, texto: n === undefined ? f.texto : `${f.texto} · ${entero(n)}` };
+                      })} />
             </div>
             <div className={movil ? 'tarjetas-marco' : 'tarjeta tabla-marco'}>
               <EstadoLista cargando={lista.cargando} error={lista.error} vacio={total === 0}

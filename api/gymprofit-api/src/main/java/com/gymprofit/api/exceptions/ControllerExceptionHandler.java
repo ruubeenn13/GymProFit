@@ -219,6 +219,14 @@ public class ControllerExceptionHandler {
         );
     }
 
+    // Sin cupo para llamar a Open Food Facts (GP-160): 503 con Retry-After.
+    @ExceptionHandler(ServicioSaturadoException.class)
+    public ResponseEntity<Response> handleServicioSaturadoException(ServicioSaturadoException ex) {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .header(org.springframework.http.HttpHeaders.RETRY_AFTER, String.valueOf(ex.getReintentarEnSegundos()))
+                .body(Response.generalError(HttpStatus.SERVICE_UNAVAILABLE.value(), mensajes.texto(ex)));
+    }
+
     // Credenciales inválidas (lógica propia de negocio): 401.
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidCredentialsException.class)

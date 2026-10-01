@@ -1,7 +1,6 @@
 package com.gymprofit.api.service.alimento;
 
 import com.gymprofit.api.config.security.SecurityUtils;
-import com.gymprofit.api.dto.common.PageDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoCreateDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoPatchDTO;
@@ -17,7 +16,7 @@ import com.gymprofit.api.mappers.AlimentoMapper;
 import com.gymprofit.api.repository.jooq.alimento.IAlimentoJooqRepository;
 import com.gymprofit.api.repository.jpa.IAlimentoRepository;
 import com.gymprofit.api.repository.jpa.IUsuarioRepository;
-import com.gymprofit.api.service.externo.OpenFoodFactsClient;
+import com.gymprofit.api.service.busqueda.IndiceAlimentos;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +43,7 @@ public class AlimentoService implements IAlimentoService {
     private final AlimentoMapper alimentoMapper;
     private final IUsuarioRepository usuarioRepository;
     private final SecurityUtils securityUtils;
-    private final OpenFoodFactsClient openFoodFactsClient;
+    private final org.springframework.context.ApplicationEventPublisher eventos;
     private final Logger logger = LoggerFactory.getLogger(AlimentoService.class);
 
     // Devuelve todos los alimentos existentes (activos e inactivos).
@@ -85,6 +84,7 @@ public class AlimentoService implements IAlimentoService {
             asignarPropietario(alimento, alimentoCreateDTO.getUsuarioId());
 
             Alimento alimentoGuardado = alimentoRepository.save(alimento);
+            avisarCatalogo();
 
             return alimentoMapper.toDTO(alimentoGuardado);
         } catch (Exception ex) {
@@ -106,6 +106,7 @@ public class AlimentoService implements IAlimentoService {
         try {
             alimento.setActivo(false);
             alimentoRepository.save(alimento);
+            avisarCatalogo();
 
             logger.info("Alimento con id {} desactivado correctamente", id);
         } catch (Exception ex) {
@@ -127,6 +128,7 @@ public class AlimentoService implements IAlimentoService {
         try {
             alimento.setActivo(true);
             alimentoRepository.save(alimento);
+            avisarCatalogo();
 
             logger.info("Alimento con id {} activado correctamente", id);
         } catch (Exception ex) {
@@ -147,6 +149,7 @@ public class AlimentoService implements IAlimentoService {
 
         try {
             alimentoRepository.delete(alimento);
+            avisarCatalogo();
 
             logger.info("Alimento con id {} eliminado permanentemente", id);
         } catch (Exception ex) {
@@ -177,6 +180,7 @@ public class AlimentoService implements IAlimentoService {
             alimento.setActivo(alimentoDTO.getActivo());  // ← Permitir modificar estado
 
             Alimento alimentoActualizado = alimentoRepository.save(alimento);
+            avisarCatalogo();
 
             return alimentoMapper.toDTO(alimentoActualizado);
         } catch (Exception ex) {
@@ -350,7 +354,12 @@ public class AlimentoService implements IAlimentoService {
 
         // El código de barras es único: repetido es un conflicto, no un 500 de la base.
         String barcode = patchDTO.getBarcode() == null ? null : textoONulo(patchDTO.getBarcode());
-        if (barcode != null && alimentoRepository.existsByBarcodeAndIdNot(barcode, id)) {
+        // Único por dueño (GP-160): en el catálogo, entre el catálogo; en lo de un
+        // usuario, entre lo suyo. Así no se sabe qué códigos usan los demás.
+        boolean enUso = barcode != null && (alimento.getUsuario() == null
+                ? alimentoRepository.existsByBarcodeAndUsuarioIsNullAndIdNot(barcode, id)
+                : alimentoRepository.existsByBarcodeAndUsuarioIdAndIdNot(barcode, alimento.getUsuario().getId(), id));
+        if (enUso) {
             throw new ConflictEntityException("error.alimento.barcodeEnUso", barcode);
         }
 
@@ -369,7 +378,9 @@ public class AlimentoService implements IAlimentoService {
             if (patchDTO.getMarca() != null) alimento.setMarca(textoONulo(patchDTO.getMarca()));
             if (patchDTO.getBarcode() != null) alimento.setBarcode(textoONulo(patchDTO.getBarcode()));
 
-            return alimentoMapper.toDTO(alimentoRepository.save(alimento));
+            Alimento guardado = alimentoRepository.save(alimento);
+            avisarCatalogo();
+            return alimentoMapper.toDTO(guardado);
         } catch (Exception e) {
             throw new UpdateEntityException(Alimento.class.getSimpleName(), id, e);
         }
@@ -389,88 +400,8 @@ public class AlimentoService implements IAlimentoService {
         return alimentoJooqRepository.busquedaAdmin(nombre, categoria, activo);
     }
 
-    // Búsqueda paginada del catálogo. Sin texto → alimentos locales (propios
-    // del usuario + importados) como siempre. Con texto → búsqueda EN VIVO en
-    // Open Food Facts (catálogo real de productos) anteponiendo en la primera
-    // página los alimentos propios del usuario que coincidan. El usuarioId
-    // sale SIEMPRE del token (nunca del cliente).
-    @Override
-    public PageDTO<AlimentoDTO> buscarCatalogo(String q, String categoria, int page, int size) {
-        logger.info("Búsqueda paginada de alimentos: q={}, categoria={}, page={}, size={}", q, categoria, page, size);
-
-        // Normalizar filtros: blanco → null (sin filtro). El filtro por categoría
-        // no aplica al catálogo externo (OFF no usa nuestras categorías canónicas).
-        String texto = (q == null || q.isBlank()) ? null : q.trim();
-        int pagina = Math.max(0, page);
-        int tam = Math.min(Math.max(1, size), 100);
-
-        Integer usuarioId = securityUtils.getCurrentUserId();
-
-        // Sin texto → browse por popularidad (más escaneados de España);
-        // con texto → búsqueda por relevancia. En ambos casos, en la página 0
-        // se anteponen los alimentos PROPIOS del usuario que coincidan.
-        OpenFoodFactsClient.BusquedaExterna externa = (texto == null)
-                ? openFoodFactsClient.browsePopulares(pagina, tam)
-                : openFoodFactsClient.buscar(texto, pagina, tam);
-
-        List<AlimentoDTO> contenido = new java.util.ArrayList<>();
-        if (pagina == 0) {
-            contenido.addAll(alimentoMapper.toDTOList(
-                    alimentoRepository.buscarPropios(texto == null ? "" : texto, usuarioId)));
-        }
-        // Los productos OFF ya importados llegan como externos (id null); al
-        // seleccionarlos, el upsert de /alimentos/importar devuelve la fila local
-        contenido.addAll(externa.alimentos());
-
-        long total = externa.totalElements();
-        int totalPaginas = (int) Math.ceil((double) Math.max(total, contenido.size()) / tam);
-        boolean ultima = (long) (pagina + 1) * tam >= total;
-
-        return new PageDTO<>(contenido, pagina, tam, Math.max(total, contenido.size()),
-                Math.max(totalPaginas, 1), ultima);
-    }
-
-    // Importa (o recupera si ya existe) un producto de Open Food Facts a la BD
-    // local por su código de barras. Necesario porque las comidas referencian
-    // alimentos por FK: el producto externo se materializa al seleccionarlo.
-    @Override
-    @Transactional
-    public AlimentoDTO importarPorBarcode(String barcode) {
-        logger.info("Importando alimento OFF por barcode: {}", barcode);
-
-        if (barcode == null || barcode.isBlank()) {
-            throw new com.gymprofit.api.exceptions.InvalidDataException("El código de barras es obligatorio");
-        }
-        String codigo = barcode.trim();
-
-        // Ya importado → devolver el existente (idempotente)
-        java.util.Optional<Alimento> existente = alimentoRepository.findByBarcode(codigo);
-        if (existente.isPresent()) {
-            Alimento alimento = existente.get();
-            // Reactivar si un admin lo había desactivado y el usuario lo vuelve a elegir
-            if (!Boolean.TRUE.equals(alimento.getActivo())) {
-                alimento.setActivo(true);
-                alimentoRepository.save(alimento);
-            }
-            return alimentoMapper.toDTO(alimento);
-        }
-
-        AlimentoDTO dto = openFoodFactsClient.porBarcode(codigo)
-                .orElseThrow(() -> new NotFoundEntityException("error.openfoodfacts.noExiste", codigo));
-
-        Alimento alimento = new Alimento();
-        alimento.setNombre(dto.getNombre());
-        alimento.setBarcode(dto.getBarcode());
-        alimento.setMarca(dto.getMarca());
-        alimento.setCalorias(dto.getCalorias());
-        alimento.setProteinas(dto.getProteinas());
-        alimento.setCarbohidratos(dto.getCarbohidratos());
-        alimento.setGrasas(dto.getGrasas());
-        alimento.setFibra(dto.getFibra());
-        alimento.setPorcionGramos(dto.getPorcionGramos());
-        alimento.setActivo(true);
-        // usuario null → alimento global (visible para todos los usuarios)
-
-        return alimentoMapper.toDTO(alimentoRepository.save(alimento));
+    // El índice de búsqueda del catálogo se reconstruye en la siguiente búsqueda (GP-162).
+    private void avisarCatalogo() {
+        eventos.publishEvent(new IndiceAlimentos.CatalogoCambiado());
     }
 }

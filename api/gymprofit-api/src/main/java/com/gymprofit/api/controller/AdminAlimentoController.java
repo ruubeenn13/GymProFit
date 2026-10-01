@@ -34,7 +34,7 @@ public class AdminAlimentoController {
     @Operation(summary = "Alimentos del catálogo paginados, sin los de los usuarios (ADMIN)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Página de alimentos del catálogo, con el total"),
-            @ApiResponse(responseCode = "400", description = "Origen desconocido",
+            @ApiResponse(responseCode = "400", description = "Origen o fuente desconocidos",
                     content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @GetMapping
@@ -43,9 +43,10 @@ public class AdminAlimentoController {
             @RequestParam(required = false) String categoria,
             @RequestParam(defaultValue = "false") boolean sinIngles,
             @RequestParam(required = false) String origen,
+            @RequestParam(required = false) String fuente,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        return ResponseEntity.ok(adminAlimentoService.listar(q, categoria, sinIngles, origen, page, size));
+        return ResponseEntity.ok(adminAlimentoService.listar(q, categoria, sinIngles, origen, fuente, page, size));
     }
 
     @Operation(summary = "Tamaño del catálogo, sin inglés y categorías (ADMIN)")

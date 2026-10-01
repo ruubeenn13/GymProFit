@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -72,9 +74,9 @@ public class Alimento {
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
-    // Código de barras del producto (Open Food Facts); null en alimentos
-    // personalizados. Clave de upsert del import externo (índice único).
-    @Column(length = 32, unique = true)
+    // Código de barras. Único por dueño (GP-160, DEC-040): en el catálogo, el de un
+    // producto; en un alimento de usuario, el que él le puso.
+    @Column(length = 32)
     private String barcode;
 
     // Marca/fabricante del producto (Open Food Facts).
@@ -92,4 +94,23 @@ public class Alimento {
     // Traducción EN de la descripción.
     @Column(name = "descripcion_en", columnDefinition = "TEXT")
     private String descripcionEn;
+
+    // De dónde salen los datos (GP-127): CIQUAL, USDA, OFF; null si se hizo a mano.
+    @Column(length = 16)
+    private String fuente;
+
+    // Código del alimento en su fuente; con la fuente, identifica la fila.
+    @Column(name = "codigo_origen", length = 32)
+    private String codigoOrigen;
+
+    // true en los básicos, curados uno a uno; false en el resto.
+    @Column(nullable = false)
+    private boolean revisado;
+
+    // Raciones con nombre y peso (GP-127). Por lotes, para que un listado no haga una
+    // consulta por alimento.
+    @OneToMany(mappedBy = "alimento", fetch = FetchType.LAZY)
+    @OrderBy("orden ASC")
+    @org.hibernate.annotations.BatchSize(size = 100)
+    private List<AlimentoRacion> raciones = new ArrayList<>();
 }

@@ -30,6 +30,7 @@ public interface IAlimentoRepository extends JpaRepository<Alimento, Integer> {
      * @param patron       "%texto%" en minúsculas: nombre, nombre en inglés o código de barras
      * @param sinIngles    true deja los que no tienen nombre en inglés
      * @param openFoodFacts true, los que tienen código de barras; false, los hechos a mano
+     * @param fuente       CIQUAL, USDA, OFF o MANUAL (sin fuente: hechos a mano), GP-127
      */
     @Query("""
             SELECT a FROM Alimento a
@@ -41,10 +42,18 @@ public interface IAlimentoRepository extends JpaRepository<Alimento, Integer> {
               AND (:openFoodFacts IS NULL
                    OR (:openFoodFacts = true AND a.barcode IS NOT NULL)
                    OR (:openFoodFacts = false AND a.barcode IS NULL))
+              AND (:fuente IS NULL
+                   OR (:fuente = 'MANUAL' AND a.fuente IS NULL)
+                   OR a.fuente = :fuente)
             """)
     Page<Alimento> buscarCatalogoAdmin(@Param("patron") String patron, @Param("categoria") String categoria,
                                        @Param("sinIngles") boolean sinIngles,
-                                       @Param("openFoodFacts") Boolean openFoodFacts, Pageable pageable);
+                                       @Param("openFoodFacts") Boolean openFoodFacts,
+                                       @Param("fuente") String fuente, Pageable pageable);
+
+    // Cuántos alimentos del catálogo hay de cada fuente (GP-127): [fuente o null, total].
+    @Query("SELECT a.fuente, COUNT(a) FROM Alimento a WHERE a.usuario IS NULL GROUP BY a.fuente")
+    List<Object[]> contarCatalogoPorFuente();
 
     // Tamaño del catálogo (sin los alimentos de los usuarios), GP-085.
     long countByUsuarioIsNull();
@@ -57,8 +66,6 @@ public interface IAlimentoRepository extends JpaRepository<Alimento, Integer> {
     @Query("SELECT DISTINCT a.categoria FROM Alimento a WHERE a.usuario IS NULL AND a.categoria IS NOT NULL ORDER BY a.categoria")
     List<String> categoriasDelCatalogo();
 
-    // ¿Usa este código de barras otro alimento? (edición desde la web, GP-085)
-    boolean existsByBarcodeAndIdNot(String barcode, Integer id);
 
     // Busca alimentos por categoría (ej. "Fruta", "Lácteo").
     List<Alimento> findByCategoria(String categoria);
@@ -81,8 +88,18 @@ public interface IAlimentoRepository extends JpaRepository<Alimento, Integer> {
     // Busca los alimentos personalizados creados por un usuario concreto.
     List<Alimento> findByUsuarioId(Integer usuarioId);
 
-    // Busca un alimento importado por su código de barras (upsert del import OFF).
-    java.util.Optional<Alimento> findByBarcode(String barcode);
+    // El alimento del CATÁLOGO con ese código de barras. Solo catálogo: un alimento
+    // propio con código es de su dueño y no sale por aquí (GP-160).
+    java.util.Optional<Alimento> findFirstByBarcodeAndUsuarioIsNullOrderByIdAsc(String barcode);
+
+    // El alimento activo de ESTE usuario con ese código (GP-160).
+    java.util.Optional<Alimento> findFirstByBarcodeAndUsuarioIdAndActivoTrueOrderByIdAsc(String barcode, Integer usuarioId);
+
+    // ¿Otro alimento del catálogo usa ya este código? (el código es único por dueño)
+    boolean existsByBarcodeAndUsuarioIsNullAndIdNot(String barcode, Integer id);
+
+    // ¿Otro alimento de este usuario usa ya este código?
+    boolean existsByBarcodeAndUsuarioIdAndIdNot(String barcode, Integer usuarioId, Integer id);
 
     // Alimentos propios del usuario (activos) cuyo nombre contiene el texto:
     // se antepone a los resultados externos en la búsqueda con query.

@@ -124,6 +124,11 @@ public class SecurityConfig {
                                 // cuenta. Solo devuelve el hash; ver CommitInfoContributor.
                                 .requestMatchers(HttpMethod.GET, "/actuator/info").permitAll()
 
+                                // Importación semanal de productos (GP-164, DEC-041). No lleva token
+                                // de usuario: la cerradura es la clave propia que comprueba
+                                // ClaveImportacion antes de leer el cuerpo. Sin ella, 403 a todos.
+                                .requestMatchers(HttpMethod.POST, "/importacion/**").permitAll()
+
                                 // Swagger público
                                 .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/webjars/**").permitAll()
 
@@ -150,6 +155,10 @@ public class SecurityConfig {
                                 // Va ANTES del GET general de /alimentos/**, que sí es público, porque
                                 // gana la primera regla que encaja. La propiedad se comprueba en AlimentoService.
                                 .requestMatchers(HttpMethod.GET, "/alimentos/usuario/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+                                // Buscar por código puede materializar un producto en el catálogo y
+                                // gasta cupo de Open Food Facts: como POST /alimentos/importar, solo
+                                // con cuenta (GP-160).
+                                .requestMatchers(HttpMethod.GET, "/alimentos/codigo/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.GET, "/alimentos/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
 
                                 // JOOQ ejercicios - accesibles por todos los roles

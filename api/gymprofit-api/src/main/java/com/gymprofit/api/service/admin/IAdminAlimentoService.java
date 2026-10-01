@@ -20,7 +20,8 @@ public interface IAdminAlimentoService {
      * @param page      página, desde 0
      * @param size      tamaño, de 1 a 100
      */
-    PageDTO<AdminAlimentoDTO> listar(String q, String categoria, boolean sinIngles, String origen, int page, int size);
+    PageDTO<AdminAlimentoDTO> listar(String q, String categoria, boolean sinIngles, String origen, String fuente,
+                                     int page, int size);
 
     /** Tamaño del catálogo, cuántos sin inglés y las categorías que usa. */
     AdminAlimentosResumenDTO resumen();
