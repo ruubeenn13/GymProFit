@@ -148,13 +148,6 @@ public class DetalleRutinaActivity extends AppCompatActivity {
      * hacerla. Hasta ahora ese camino estaba cortado.
      */
     private void entrenarEstaRutina() {
-        // Esta Activity extiende AppCompatActivity, no BaseActivity, así que no
-        // hereda verificarAccesoRegistrado(): el guard de invitado se hace aquí.
-        if (prefsManager.isGuest()) {
-            UIHelper.mostrarToastError(this, getString(R.string.error_solo_usuarios_registrados));
-            return;
-        }
-
         // La sesión en vivo, con el reloj en marcha desde este toque (GP-012).
         es.pmdm.gymprofit.envivo.EmpezarSesion.empezar(this, rutinaId, nombre,
                 getIntent().getStringExtra(EXTRA_PROGRAMA_NOMBRE));

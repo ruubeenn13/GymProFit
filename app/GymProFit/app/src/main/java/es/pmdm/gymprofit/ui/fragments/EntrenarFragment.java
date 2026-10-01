@@ -157,8 +157,7 @@ public class EntrenarFragment extends BaseFragment {
         seguidoListo = false;
         falloPropias = false;
         if (uid == -1) {
-            // Invitado: ni rutinas ni programa propios; la tarjeta lleva a Programas, que
-            // se pueden ver aunque no seguir.
+            // Sin id de cuenta: ni rutinas ni programa propios; la tarjeta lleva a Programas.
             propias = new ArrayList<>();
             sesiones = new ArrayList<>();
             seguidoListo = true;
@@ -262,7 +261,6 @@ public class EntrenarFragment extends BaseFragment {
                     + (enCurso ? ". " + getString(R.string.envivo_en_curso) : toca ? ". " + getString(R.string.toca_hoy) : ""));
             card.setOnClickListener(v -> MenuRutina.abrirDetalle(requireActivity(), recargar, r));
             card.setOnLongClickListener(v -> {
-                if (!verificarAccesoRegistrado()) return true;
                 MenuRutina.mostrar(requireActivity(), v, r, recargar, this::cargarMisRutinas);
                 return true;
             });
@@ -278,14 +276,12 @@ public class EntrenarFragment extends BaseFragment {
     }
 
     private void crearRutina() {
-        if (!verificarAccesoRegistrado()) return;
         recargar.launch(new Intent(requireContext(), CrearRutinaActivity.class));
     }
 
     // La sesión en vivo con esa rutina, o vacía si es null (GP-012). Con otra en curso,
     // EmpezarSesion pregunta.
     private void empezar(@Nullable Rutina r) {
-        if (!verificarAccesoRegistrado()) return;
         EmpezarSesion.empezar(requireActivity(), r);
     }
 
@@ -301,7 +297,6 @@ public class EntrenarFragment extends BaseFragment {
                 MenuRutina.abrirDetalle(requireActivity(), recargar, rutina);
             }
             @Override public void menuRutina(View ancla, Rutina rutina) {
-                if (!verificarAccesoRegistrado()) return;
                 MenuRutina.mostrar(requireActivity(), ancla, rutina, recargar, EntrenarFragment.this::cargarMisRutinas);
             }
             @Override public void menuPrograma(View ancla, ProgramaQueSigue s) { mostrarMenuPrograma(ancla, s); }

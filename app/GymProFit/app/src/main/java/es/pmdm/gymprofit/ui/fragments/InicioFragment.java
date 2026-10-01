@@ -179,7 +179,7 @@ public class InicioFragment extends BaseFragment {
         seguido = null;
 
         if (uid == -1) {
-            // Invitado: no tiene rutinas, sesiones ni programa propios.
+            // Sin id de cuenta: ni rutinas, ni sesiones, ni programa propios.
             propias = new ArrayList<>();
             sesiones = new ArrayList<>();
             pendientesHoyToca = 1;
@@ -292,11 +292,7 @@ public class InicioFragment extends BaseFragment {
             principal.setOnClickListener(v -> startActivity(new Intent(requireContext(), ProgramasActivity.class)));
             secundario.setVisibility(View.VISIBLE);
             secundario.setText(R.string.btn_crea_primera_rutina);
-            secundario.setOnClickListener(v -> {
-                if (verificarAccesoRegistrado()) {
-                    startActivity(new Intent(requireContext(), CrearRutinaActivity.class));
-                }
-            });
+            secundario.setOnClickListener(v -> startActivity(new Intent(requireContext(), CrearRutinaActivity.class)));
             // Dos textos largos no caben lado a lado sin cortarse: uno debajo del otro.
             apilarBotones(true);
             return;
@@ -399,14 +395,12 @@ public class InicioFragment extends BaseFragment {
     }
 
     private void elegirRutina() {
-        if (!verificarAccesoRegistrado()) return;
         ElegirRutinaHoja.mostrar(requireActivity(), propias != null ? propias : new ArrayList<>(), this::empezar);
     }
 
     // La sesión en vivo con esa rutina, o vacía si es null (GP-012). Con otra en curso,
     // EmpezarSesion pregunta.
     private void empezar(@Nullable Rutina r) {
-        if (!verificarAccesoRegistrado()) return;
         EmpezarSesion.empezar(requireActivity(), r);
     }
 
@@ -670,7 +664,6 @@ public class InicioFragment extends BaseFragment {
 
     // Registrar comida → añadir alimento, hoy, en la comida que toca por la hora.
     private void registrarComida() {
-        if (!verificarAccesoRegistrado()) return;
         Intent i = new Intent(requireContext(), AnadirAlimentoActivity.class);
         i.putExtra("tipoComida", ComidaQueToca.ahora());
         i.putExtra("comidaId", -1);

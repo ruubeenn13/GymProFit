@@ -386,7 +386,6 @@ public class NutricionFragment extends BaseFragment {
 
     // Tocar la tarjeta abre la comida del día elegido, como antes.
     private void abrirComida(String tipo) {
-        if (!verificarAccesoRegistrado()) return;
         Intent intent = new Intent(requireContext(), ComidaActivity.class);
         intent.putExtra("tipoComida", tipo);
         Comida c = comidasDia.get(tipo);
@@ -397,7 +396,6 @@ public class NutricionFragment extends BaseFragment {
 
     // El «+» abre directamente añadir alimento en esa comida y ese día.
     private void anadirAlimento(String tipo) {
-        if (!verificarAccesoRegistrado()) return;
         Intent intent = new Intent(requireContext(), AnadirAlimentoActivity.class);
         intent.putExtra("tipoComida", tipo);
         Comida c = comidasDia.get(tipo);

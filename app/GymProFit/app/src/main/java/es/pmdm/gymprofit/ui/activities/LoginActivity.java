@@ -108,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
     }
 
-    // Configura los listeners de login, login como invitado, ir a registro
+    // Configura los listeners de login e ir a registro
     // y cambio de tema/idioma.
     private void configurarEventos() {
         // Salida para quien no recuerda la contraseña. Sin esto, olvidarla significaba
@@ -131,45 +131,6 @@ public class LoginActivity extends AppCompatActivity {
         // Sin cuenta, el alta nueva: el cuestionario y la cuenta al final (GP-103).
         findViewById(R.id.tvNoTienesCuenta).setOnClickListener(v ->
                 startActivity(new Intent(this, AltaActivity.class)));
-    }
-
-    // Realiza login como invitado (rol GUEST): guarda token/rol y marca
-    // el onboarding como completado, navegando directo a HomeActivity.
-    // Sin botón desde la 1.5.1 (GP-103): el plan ya se ve sin cuenta y el invitado era una
-    // cuenta compartida. El código se queda hasta que GP-150 lo retire con la API.
-    @SuppressWarnings("unused")
-    private void hacerLoginInvitado() {
-        authApi.guest().enqueue(new ApiCallback<TokenResponse>() {
-            @Override
-            public void onOk(TokenResponse body) {
-                if (body == null) {
-                    UIHelper.mostrarToastError(LoginActivity.this, getString(R.string.login_error_invitado));
-                    return;
-                }
-                String token   = body.getToken();
-                String refresh = body.getRefreshToken();
-                String user    = body.getUsername();
-                String rol     = body.rolPrincipal();
-
-                // Guarda los tokens en UtilREST (memoria, para interceptor/authenticator)
-                // y en preferencias (cifrado, para sobrevivir a reinicios), igual que antes.
-                UtilREST.setToken(token);
-                UtilREST.setRefreshToken(refresh);
-                prefsManager.saveSesion(token, refresh);
-                prefsManager.saveUsername(user);
-                prefsManager.saveRol(rol);
-                prefsManager.setOnboardingCompletado(true);
-
-                startActivity(new Intent(LoginActivity.this, MainActivity.class)
-                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-                finish();
-            }
-
-            @Override
-            public void onFail(int code, String message) {
-                UIHelper.mostrarToastError(LoginActivity.this, getString(R.string.login_error_invitado));
-            }
-        });
     }
 
     // Realiza el login normal con credenciales, guarda token/usuario/rol

@@ -2,8 +2,8 @@
 <!--
   activity_login — «Ya tengo cuenta» (GP-103, tablero 11 del lienzo del alta).
   Correo o usuario (DEC-036) y contraseña con ojo, «¿Has olvidado tu contraseña?», Entrar
-  y «¿No tienes cuenta? Empieza aquí». Sin «Entrar como invitado» desde la 1.5.1 (el
-  código del invitado sigue; retirarlo es GP-150) ni «Continuar con Google», que es la
+  y «¿No tienes cuenta? Empieza aquí». Sin «Entrar como invitado» (el invitado
+  salió de la app en GP-150) ni «Continuar con Google», que es la
   fase 2 (GP-086). Tema e idioma ya no están aquí: el idioma está en la bienvenida.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

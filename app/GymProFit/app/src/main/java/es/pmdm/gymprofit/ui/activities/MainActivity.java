@@ -465,7 +465,7 @@ public class MainActivity extends BaseActivity {
     // de la hoja sale sin subtítulo, que es exactamente lo que se quiere.
     private void cargarUltimoPeso() {
         int uid = prefsManager.getUsuarioId();
-        if (uid == -1 || prefsManager.isGuest()) return;
+        if (uid == -1) return;
         medicionApi.getOrdenadas(uid).enqueue(new ApiCallback<List<MedicionCorporal>>() {
             @Override
             public void onOk(List<MedicionCorporal> lista) {
@@ -489,7 +489,6 @@ public class MainActivity extends BaseActivity {
     // una en curso, vuelve a ella.
     private void accionEntrenar() {
         cerrarAcciones();
-        if (!verificarAccesoRegistrado()) return;
         if (sesionEnCurso.hay()) EmpezarSesion.abrir(this);
         else EmpezarSesion.empezar(this, hoyToca);
     }
@@ -497,14 +496,12 @@ public class MainActivity extends BaseActivity {
     // Apuntar un entrenamiento ya hecho → el formulario, con su fecha y su duración.
     private void accionApuntar() {
         cerrarAcciones();
-        if (!verificarAccesoRegistrado()) return;
         startActivity(new Intent(this, RegistrarSesionActivity.class));
     }
 
     // Registrar comida → añadir alimento, hoy, en la comida que toca por la hora.
     private void accionComida() {
         cerrarAcciones();
-        if (!verificarAccesoRegistrado()) return;
         Intent i = new Intent(this, AnadirAlimentoActivity.class);
         i.putExtra("tipoComida", ComidaQueToca.ahora());
         i.putExtra("comidaId", -1);
@@ -515,7 +512,6 @@ public class MainActivity extends BaseActivity {
     // Anotar peso o medidas → Progreso › Medidas con el diálogo del peso abierto.
     private void accionPeso() {
         cerrarAcciones();
-        if (!verificarAccesoRegistrado()) return;
         irATab(NavTabs.PROGRESO);
         pager.post(() -> {
             ProgresoFragment p = progreso();
@@ -527,20 +523,7 @@ public class MainActivity extends BaseActivity {
     // móvil (GP-151): ya no se pide el permiso a secas. Si no se pueden leer sus avisos,
     // esta vez nada; AvisosActivity.abrirSiToca lo decide.
     private void preguntarAvisos() {
-        if (prefsManager.isGuest()) {
-            pedirPermisoInvitado();
-            return;
-        }
         AvisosActivity.abrirSiToca(this, true, null);
-    }
-
-    // El invitado de la 1.4.0 sigue como antes: el permiso de Android a secas, al entrar,
-    // hasta que lo conceda o Android deje de enseñarlo. Se va con el invitado (GP-150).
-    private void pedirPermisoInvitado() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 0);
-        }
     }
 
     // Adapter del pager: instancia el fragment de cada pestaña.

@@ -96,7 +96,7 @@ public class NotificacionesActivity extends BaseActivity {
 
     private void cargar() {
         int id = prefsManager.getUsuarioId();
-        if (id == -1 || prefsManager.isGuest()) return;
+        if (id == -1) return;
         usuarioApi.getPorId(id).enqueue(new ApiCallback<Usuario>() {
             @Override
             public void onOk(Usuario u) {

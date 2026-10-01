@@ -212,8 +212,8 @@ public class MedidasFragment extends BaseFragment {
     // si no hay ninguna, intenta crear una a partir de los datos del perfil.
     private void cargarMedicion() {
         int usuarioId = prefsManager.getUsuarioId();
-        // Un invitado no tiene mediciones que guardar: se le dice en el vacío.
-        if (usuarioId == -1 || prefsManager.isGuest()) { mostrarVacio(); return; }
+        // Sin id de cuenta no hay mediciones que pedir: el vacío.
+        if (usuarioId == -1) { mostrarVacio(); return; }
 
         // Spinner durante la carga (pantalla en blanco hasta responder).
         LoadingDialog.show(requireActivity());
@@ -558,7 +558,6 @@ public class MedidasFragment extends BaseFragment {
 
     // Abre el diálogo para registrar la PRIMERA medición (peso) cuando no hay ninguna.
     private void registrarPrimeraMedicion() {
-        if (!verificarAccesoRegistrado()) return;
         InputDialog.numerico(requireActivity(), getString(R.string.perfil_peso),
                 getString(R.string.dialogo_nuevo_valor), null, "kg", valor -> {
             if (valor.isEmpty()) return;

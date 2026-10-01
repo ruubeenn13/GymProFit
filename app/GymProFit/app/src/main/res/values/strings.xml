@@ -16,10 +16,7 @@
     <string name="login_password">Contraseña</string>
     <string name="login_entrar">Entrar</string>
     <string name="login_no_cuenta">¿No tienes cuenta? Regístrate</string>
-    <string name="login_entrar_invitado">Entrar como invitado</string>
     <string name="login_o">o</string>
-    <string name="login_error_invitado">No se pudo entrar como invitado</string>
-    <string name="error_solo_usuarios_registrados">Debes crear una cuenta para acceder a esta funcionalidad</string>
     <string name="error_campos_vacios">Por favor, completa todos los campos</string>
     <string name="login_error_credenciales">Usuario o contraseña incorrectos</string>
     <string name="error_conexion">Error de conexión con el servidor</string>
@@ -949,7 +946,6 @@
     <string name="seccion_logros">Logros</string>
     <string name="seccion_medidas">Medidas</string>
     <string name="seccion_historial">Historial</string>
-    <string name="progreso_solo_registrados">Crea una cuenta para guardar tu progreso.</string>
     <string name="record_hace_antes">%1$s · antes %2$s</string>
     <string name="ajustes_cuenta">Cuenta</string>
     <string name="ajustes_foto">Foto de perfil</string>

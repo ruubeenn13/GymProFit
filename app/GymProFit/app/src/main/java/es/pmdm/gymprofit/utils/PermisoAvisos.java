@@ -56,8 +56,8 @@ public final class PermisoAvisos {
         return !concedido && !explicar && ms < MS_SIN_DIALOGO;
     }
 
-    /** «¿Te avisamos?» sale una vez por cuenta y móvil, y nunca al invitado. */
-    public static boolean tocaPreguntar(boolean invitado, boolean yaPreguntado) {
-        return !invitado && !yaPreguntado;
+    /** «¿Te avisamos?» sale una vez por cuenta y móvil. */
+    public static boolean tocaPreguntar(boolean yaPreguntado) {
+        return !yaPreguntado;
     }
 }

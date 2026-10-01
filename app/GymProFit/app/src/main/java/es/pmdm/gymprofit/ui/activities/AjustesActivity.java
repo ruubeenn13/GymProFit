@@ -59,18 +59,18 @@ public class AjustesActivity extends BaseActivity {
 
         // Cuenta
         fila(R.id.filaFoto, R.drawable.ic_ms_photo_camera, R.string.ajustes_foto, () -> {
-            if (verificarAccesoRegistrado()) fotoPerfil.elegir();
+            fotoPerfil.elegir();
         });
         fila(R.id.filaCorreo, R.drawable.ic_ms_mail, R.string.ajustes_correo, () -> {
-            if (verificarAccesoRegistrado()) startActivity(new Intent(this, CambiarCorreoActivity.class));
+            startActivity(new Intent(this, CambiarCorreoActivity.class));
         });
         fila(R.id.filaContrasena, R.drawable.ic_ms_lock, R.string.ajustes_contrasena, () -> {
-            if (verificarAccesoRegistrado()) startActivity(new Intent(this, CambiarPasswordActivity.class));
+            startActivity(new Intent(this, CambiarPasswordActivity.class));
         });
 
         // Tus datos y objetivos: los cuatro abren editar perfil, donde están juntos.
         Runnable editarPerfil = () -> {
-            if (verificarAccesoRegistrado()) startActivity(new Intent(this, EditarPerfilActivity.class));
+            startActivity(new Intent(this, EditarPerfilActivity.class));
         };
         fila(R.id.filaPesoAlturaEdad, R.drawable.ic_ms_straighten, R.string.ajustes_peso_altura_edad, editarPerfil);
         fila(R.id.filaSexoActividad, R.drawable.ic_ms_directions_run, R.string.ajustes_sexo_actividad, editarPerfil);
@@ -85,7 +85,7 @@ public class AjustesActivity extends BaseActivity {
         fila(R.id.filaIdioma, R.drawable.ic_ms_language, R.string.ajustes_idioma, this::mostrarDialogoIdioma);
         // Los avisos por tipo de la cuenta y el permiso del sistema (GP-112).
         fila(R.id.filaNotificaciones, R.drawable.ic_ms_notifications, R.string.ajustes_notificaciones, () -> {
-            if (verificarAccesoRegistrado()) startActivity(new Intent(this, NotificacionesActivity.class));
+            startActivity(new Intent(this, NotificacionesActivity.class));
         });
 
         // Ayuda
@@ -119,7 +119,7 @@ public class AjustesActivity extends BaseActivity {
 
         findViewById(R.id.btnCerrarSesion).setOnClickListener(v -> confirmarCerrarSesion());
         findViewById(R.id.btnEliminarCuenta).setOnClickListener(v -> {
-            if (verificarAccesoRegistrado()) startActivity(new Intent(this, EliminarCuentaActivity.class));
+            startActivity(new Intent(this, EliminarCuentaActivity.class));
         });
     }
 
@@ -145,7 +145,7 @@ public class AjustesActivity extends BaseActivity {
                         ? R.string.ajustes_idioma_en : R.string.ajustes_idioma_es));
 
         int uid = prefsManager.getUsuarioId();
-        if (uid == -1 || prefsManager.isGuest()) return;
+        if (uid == -1) return;
         usuarioApi.getPorId(uid).enqueue(new ApiCallback<Usuario>() {
             @Override
             public void onOk(Usuario u) {

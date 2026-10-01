@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.network.PerfilRemoto;
 import es.pmdm.gymprofit.utils.PreferencesManager;
+import es.pmdm.gymprofit.utils.SesionInvitado;
 
 // ============================================================
 // SplashActivity — pantalla de arranque de la aplicación.
@@ -69,6 +70,8 @@ public class SplashActivity extends AppCompatActivity {
             long tiempoRestante = Math.max(0, SPLASH_MIN_DURATION - tiempoTranscurrido);
 
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                // La sesión de invitado de la 1.4.0 se cierra y va a la bienvenida (GP-150).
+                if (SesionInvitado.cerrarSiHay(this, prefsManager)) return;
                 Class<?> siguiente = siguientePantalla();
                 // Una cuenta con sesión y sin onboarding responde el cuestionario (GP-103).
                 startActivity(siguiente == AltaActivity.class
@@ -96,9 +99,6 @@ public class SplashActivity extends AppCompatActivity {
 
         // Con sesión, el perfil de la API se cruza con el del móvil sin esperar (GP-111).
         PerfilRemoto.alArrancar(this);
-
-        // Los invitados no tienen onboarding: entran a mirar la app sin configurar nada.
-        if (prefsManager.isGuest()) return MainActivity.class;
 
         String usuario = prefsManager.getUsername();
         boolean completado = usuario != null && !usuario.isEmpty()

@@ -70,8 +70,8 @@ public class HistorialFragment extends BaseFragment {
 
     private void cargar() {
         int uid = prefsManager.getUsuarioId();
-        if (uid == -1 || prefsManager.isGuest()) {
-            tvVacio.setText(R.string.progreso_solo_registrados);
+        if (uid == -1) {
+            // Sin id de cuenta no hay sesiones que pedir: el vacío de siempre.
             mostrar(new ArrayList<>());
             return;
         }
