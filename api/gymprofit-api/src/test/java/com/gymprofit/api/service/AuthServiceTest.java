@@ -143,7 +143,7 @@ class AuthServiceTest {
 
         assertDoesNotThrow(() -> authService.register(registerDTO));
 
-        verify(usuarioRepository).save(any(Usuario.class));
+        verify(usuarioRepository).saveAndFlush(any(Usuario.class));
     }
 
     // Comprueba que registrar con un username ya existente lanza DuplicateEntityException
@@ -154,7 +154,7 @@ class AuthServiceTest {
 
         assertThrows(DuplicateEntityException.class, () -> authService.register(registerDTO));
 
-        verify(usuarioRepository, never()).save(any());
+        verify(usuarioRepository, never()).saveAndFlush(any());
     }
 
     // Comprueba que registrar con un email ya existente lanza DuplicateEntityException
@@ -166,7 +166,7 @@ class AuthServiceTest {
 
         assertThrows(DuplicateEntityException.class, () -> authService.register(registerDTO));
 
-        verify(usuarioRepository, never()).save(any());
+        verify(usuarioRepository, never()).saveAndFlush(any());
     }
 
     // Comprueba que refresh valida el token, rota y devuelve nuevo access + refresh
