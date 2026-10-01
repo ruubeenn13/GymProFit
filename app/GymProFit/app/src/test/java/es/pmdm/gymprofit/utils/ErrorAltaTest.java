@@ -33,4 +33,13 @@ public class ErrorAltaTest {
         assertEquals(ErrorAlta.Tipo.OTRO, ErrorAlta.de(500, null));
         assertEquals(ErrorAlta.Tipo.OTRO, ErrorAlta.de(400, "{\"cause\":\"EDAD_MINIMA\"}"));
     }
+
+    @Test
+    public void laTarjetaDelProgramaDiceCuantoEsperarConElCupo() {
+        // GP-148: el recomendado y la vista previa tienen cupo propio; pasarse es un 429.
+        assertEquals(ErrorAlta.Programa.ESPERA, ErrorAlta.programa(429));
+        assertEquals(ErrorAlta.Programa.SIN_RED, ErrorAlta.programa(-1));
+        assertEquals(ErrorAlta.Programa.OTRO, ErrorAlta.programa(500));
+        assertEquals(ErrorAlta.Programa.OTRO, ErrorAlta.programa(404));
+    }
 }

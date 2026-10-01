@@ -18,6 +18,20 @@ public final class ErrorAlta {
 
     private ErrorAlta() {}
 
+    /**
+     * Qué dice la tarjeta del programa de «Tu plan» cuando no carga, siempre con
+     * «Reintentar»: cuánto esperar si se pasó del cupo (429, GP-148), que no hay red, o
+     * el genérico.
+     */
+    public enum Programa { ESPERA, SIN_RED, OTRO }
+
+    /** @param code código HTTP, o -1 si no hubo respuesta. */
+    @NonNull
+    public static Programa programa(int code) {
+        if (code == 429) return Programa.ESPERA;
+        return code == -1 ? Programa.SIN_RED : Programa.OTRO;
+    }
+
     /** Dónde va el error. */
     public enum Tipo { CORREO_EN_USO, PASSWORD_COMUN, PASSWORD_CONTIENE_NOMBRE, SIN_RED, OTRO }
 
