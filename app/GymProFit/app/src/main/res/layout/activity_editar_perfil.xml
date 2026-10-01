@@ -101,9 +101,10 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Edad -->
+            <!-- Edad: de 14 a 100 (GP-145); por debajo de 14 se explica el mínimo. -->
             <com.google.android.material.textfield.TextInputLayout
-        app:errorIconDrawable="@drawable/ic_ms_error"
+                android:id="@+id/tilEdad"
+                app:errorIconDrawable="@drawable/ic_ms_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="14dp"

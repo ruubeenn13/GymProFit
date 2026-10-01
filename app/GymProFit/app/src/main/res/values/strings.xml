@@ -625,6 +625,9 @@
     <string name="error_series_invalida">Pon entre 1 y 10 series</string>
     <string name="error_reps_invalida">Pon entre 1 y 50 repeticiones</string>
     <string name="error_edad_invalida">Pon tu edad en años, entre 10 y 120</string>
+    <!-- GP-145: la edad de Editar perfil, de 14 a 100; el mínimo es el de la política (DEC-038). -->
+    <string name="error_edad_rango">Pon tu edad en años, entre %1$d y %2$d</string>
+    <string name="error_edad_minima">GymProFit es para personas de %1$d años o más, como dice la política de privacidad</string>
     <string name="error_peso_invalido">Pon tu peso en kilos, entre 30 y 300</string>
     <string name="error_altura_invalida">Pon tu altura en centímetros, entre 100 y 250</string>
     <string name="error_altura_en_metros">¿Querías decir %1$d\u00A0cm? Escribe la altura en centímetros</string>

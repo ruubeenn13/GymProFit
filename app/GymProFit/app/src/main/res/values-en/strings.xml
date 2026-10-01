@@ -620,6 +620,8 @@
     <string name="error_series_invalida">Enter between 1 and 10 sets</string>
     <string name="error_reps_invalida">Enter between 1 and 50\u00A0reps</string>
     <string name="error_edad_invalida">Enter your age in years, between 10 and 120</string>
+    <string name="error_edad_rango">Enter your age in years, between %1$d and %2$d</string>
+    <string name="error_edad_minima">GymProFit is for people aged %1$d or over, as the privacy policy says</string>
     <string name="error_peso_invalido">Enter your weight in kilos, between 30 and 300</string>
     <string name="error_altura_invalida">Enter your height in centimetres, between 100 and 250</string>
     <string name="error_altura_en_metros">Did you mean %1$d\u00A0cm? Enter your height in centimetres</string>

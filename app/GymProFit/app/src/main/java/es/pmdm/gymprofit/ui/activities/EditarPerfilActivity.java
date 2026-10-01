@@ -7,6 +7,7 @@ import android.widget.Spinner;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.NombreVisible;
 import es.pmdm.gymprofit.utils.Numeros;
 import es.pmdm.gymprofit.utils.PreferencesManager;
+import es.pmdm.gymprofit.utils.ReglasEdad;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
@@ -177,6 +179,33 @@ public class EditarPerfilActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Comprueba la edad escrita y, si no vale, lo dice en su campo (GP-145).
+     *
+     * <p>Por debajo de 14 no es un número mal escrito, es la edad mínima de la política
+     * (DEC-038): se explica eso, no «pon un número entre…».
+     *
+     * @return true si está vacía o es de 14 a 100.
+     */
+    private boolean edadValida(String edadStr) {
+        switch (ReglasEdad.estado(edadStr)) {
+            case MENOR:
+                marcarEdad(getString(R.string.error_edad_minima, ReglasEdad.MINIMA));
+                return false;
+            case FUERA:
+                marcarEdad(getString(R.string.error_edad_rango, ReglasEdad.MINIMA, ReglasEdad.MAXIMA));
+                return false;
+            default:
+                ((TextInputLayout) findViewById(R.id.tilEdad)).setError(null);
+                return true;
+        }
+    }
+
+    private void marcarEdad(String mensaje) {
+        ((TextInputLayout) findViewById(R.id.tilEdad)).setError(mensaje);
+        etEdad.requestFocus();
+    }
+
     // Guarda el perfil por PATCH y, al tener éxito, guarda sexo y actividad en el
     // teléfono y recalcula las macros con los datos nuevos.
     private void guardarPerfil() {
@@ -195,8 +224,11 @@ public class EditarPerfilActivity extends AppCompatActivity {
             String alturaStr = etAltura.getText() != null ? etAltura.getText().toString().trim() : "";
             body.put("altura", alturaStr.isEmpty() ? null : new BigDecimal(alturaStr));
 
+            // De 14 a 100, leída sin romper con cualquier texto (GP-145).
             String edadStr = etEdad.getText() != null ? etEdad.getText().toString().trim() : "";
-            body.put("edad", edadStr.isEmpty() ? null : Integer.parseInt(edadStr));
+            if (!edadValida(edadStr)) return;
+            Integer edad = ReglasEdad.leer(edadStr);
+            body.put("edad", edad);
 
             body.put("nivelExperiencia", NIVELES[spNivel.getSelectedItemPosition()]);
             body.put("objetivo", OBJETIVOS[spObjetivo.getSelectedItemPosition()]);
@@ -211,7 +243,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
                     prefsManager.saveNombre(prefsManager.getUsername(), nombre);
                     if (!pesoStr.isEmpty()) prefsManager.savePeso(Numeros.leerDecimal(pesoStr));
                     if (!alturaStr.isEmpty()) prefsManager.saveAltura(Double.parseDouble(alturaStr));
-                    if (!edadStr.isEmpty()) prefsManager.saveEdad(Integer.parseInt(edadStr));
+                    if (edad != null) prefsManager.saveEdad(edad);
                     String objetivo = OBJETIVOS[spObjetivo.getSelectedItemPosition()];
                     prefsManager.saveObjetivo(objetivo);
                     prefsManager.saveNivel(NIVELES[spNivel.getSelectedItemPosition()]);
@@ -233,6 +265,11 @@ public class EditarPerfilActivity extends AppCompatActivity {
                 @Override
                 public void onFail(int code, String message) {
                     LoadingDialog.hide(EditarPerfilActivity.this);
+                    // La API comprueba también el mínimo (DEC-038): se explica en el campo.
+                    if (code == 400 && ReglasEdad.esEdadMinima(message)) {
+                        marcarEdad(getString(R.string.error_edad_minima, ReglasEdad.MINIMA));
+                        return;
+                    }
                     UiFeedback.toastError(EditarPerfilActivity.this, code, message);
                 }
             });
