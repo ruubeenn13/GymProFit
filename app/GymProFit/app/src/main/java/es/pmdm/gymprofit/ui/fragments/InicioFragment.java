@@ -64,6 +64,8 @@ import es.pmdm.gymprofit.utils.EjercicioNavHelper;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.HoyToca;
 import es.pmdm.gymprofit.utils.Marcas;
+import es.pmdm.gymprofit.utils.Movimiento;
+import es.pmdm.gymprofit.utils.PrimerosPasos;
 import es.pmdm.gymprofit.utils.NombreVisible;
 import es.pmdm.gymprofit.utils.NavTabs;
 import es.pmdm.gymprofit.utils.TiempoRelativo;
@@ -115,6 +117,7 @@ public class InicioFragment extends BaseFragment {
         avatar.setOnClickListener(v -> irATab(NavTabs.PROGRESO));
         findViewById(R.id.btnRegistrarComida).setOnClickListener(v -> registrarComida());
         findViewById(R.id.cardNutricionHoy).setOnClickListener(v -> irATab(NavTabs.NUTRICION));
+        prepararPrimerDia();
 
         // Hoy toca dice «En curso» con la sesión de su rutina en marcha (GP-012). Al
         // empezar, guardar o descartar se repinta con lo ya cargado.
@@ -218,6 +221,7 @@ public class InicioFragment extends BaseFragment {
         if (--pendientesHoyToca > 0) return;
         pintarHoyToca();
         pintarSemanaSesiones();
+        pintarPrimerDia();
     }
 
     private void pintarHoyToca() {
@@ -273,6 +277,11 @@ public class InicioFragment extends BaseFragment {
         eyebrow.setText(R.string.hoy_toca);
         icono.setImageResource(R.drawable.ic_ms_event_available);
 
+        if (eleccion == null && !prefsManager.getProgramaPendienteCodigo().isEmpty()) {
+            pintarProgramaPendiente(titulo, sub, principal, secundario);
+            return;
+        }
+
         if (eleccion == null) {
             // Sin programa ni rutinas: lo principal es elegir un programa; crear una rutina
             // propia se queda. Entrenar a su aire sigue en el «+» y en Entrenar.
@@ -302,6 +311,50 @@ public class InicioFragment extends BaseFragment {
         secundario.setVisibility(View.VISIBLE);
         secundario.setText(R.string.btn_cambiar);
         secundario.setOnClickListener(v -> elegirRutina());
+        // El primer día, «Empezar» llama la atención dos veces, una sola vez (GP-104).
+        if (esPrimerDia() && !empezarAnimado) {
+            empezarAnimado = true;
+            Movimiento.respirar(principal, 1300);
+            Movimiento.respirar(principal, 2700);
+        }
+    }
+
+    // Si «Empezar» ya llamó la atención en esta vista.
+    private boolean empezarAnimado;
+
+    // El programa que el alta no pudo seguir (GP-103): Inicio lo ofrece con sus minutos.
+    private void pintarProgramaPendiente(TextView titulo, TextView sub, MaterialButton principal,
+                                         MaterialButton secundario) {
+        String nombre = prefsManager.getProgramaPendienteNombre();
+        titulo.setText(nombre);
+        sub.setText(R.string.inicio_programa_pendiente_sub);
+        principal.setIcon(null);
+        principal.setText(R.string.inicio_programa_pendiente_seguir);
+        principal.setContentDescription(getString(R.string.inicio_programa_pendiente_a11y, nombre));
+        principal.setOnClickListener(v -> seguirPendiente(principal));
+        secundario.setVisibility(View.GONE);
+    }
+
+    private void seguirPendiente(MaterialButton boton) {
+        boton.setEnabled(false);
+        java.util.Map<String, Object> body = new java.util.HashMap<>();
+        body.put("minutos", prefsManager.getProgramaPendienteMinutos());
+        programaApi.seguir(prefsManager.getProgramaPendienteCodigo(), body).enqueue(new ApiCallback<Void>() {
+            @Override
+            public void onOk(Void ignorado) {
+                if (!isAdded()) return;
+                boton.setEnabled(true);
+                prefsManager.borrarProgramaPendiente();
+                cargarHoyTocaYSemana();
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                if (!isAdded()) return;
+                boton.setEnabled(true);
+                UiFeedback.toastError(requireActivity(), code, message);
+            }
+        });
     }
 
     // «6 ejercicios · unos 55 min · la última, hace 4 días»
@@ -556,10 +609,21 @@ public class InicioFragment extends BaseFragment {
     }
 
     private void pintarNutricion(@Nullable List<Comida> comidas) {
+        // La primera comida de «Primeros pasos»: Inicio solo pide las de hoy, así que se
+        // apunta la primera vez que aparece una y ya se queda hecha.
+        if (comidas != null && !comidas.isEmpty() && !prefsManager.getUsername().isEmpty()) {
+            prefsManager.marcarPrimeraComida(prefsManager.getUsername());
+            pintarPrimerDia();
+        }
         DiaNutricion d = DiaNutricion.de(comidas, DiaNutricion.objetivo(prefsManager));
         NumberFormat nf = NumberFormat.getIntegerInstance(FechaUtils.localeDeLaApp(requireContext()));
         TextView kcal = findViewById(R.id.tvKcalHoy);
         kcal.setText(nf.format(d.kcal));
+        if (d.sinObjetivo) {
+            pintarNutricionSinObjetivo(d, nf);
+            return;
+        }
+        findViewById(R.id.barraKcalHoy).setVisibility(View.VISIBLE);
         ((TextView) findViewById(R.id.tvKcalObjetivoHoy)).setText(getString(R.string.nutricion_de_kcal, nf.format(d.objetivoKcal)));
         ((LinearProgressIndicator) findViewById(R.id.barraKcalHoy)).setProgressCompat(
                 DiaNutricion.porcentaje(d.kcal, d.objetivoKcal), false);
@@ -570,6 +634,24 @@ public class InicioFragment extends BaseFragment {
 
         findViewById(R.id.filaKcalHoy).setContentDescription(
                 getString(R.string.nutricion_hoy_a11y, nf.format(d.kcal), nf.format(d.objetivoKcal)));
+    }
+
+    // Sin peso ni altura (GP-103, «Prefiero no decirlo»): lo comido, sin objetivo ni barra.
+    private void pintarNutricionSinObjetivo(DiaNutricion d, NumberFormat nf) {
+        ((TextView) findViewById(R.id.tvKcalObjetivoHoy)).setText(R.string.nutricion_sin_objetivo);
+        findViewById(R.id.barraKcalHoy).setVisibility(View.GONE);
+        int normal = color(com.google.android.material.R.attr.colorOnSurface);
+        TextView prot = findViewById(R.id.tvMacroProtHoy);
+        prot.setText(getString(R.string.macro_prot_solo, (int) Math.round(d.proteinas)));
+        prot.setTextColor(normal);
+        TextView carbos = findViewById(R.id.tvMacroCarbosHoy);
+        carbos.setText(getString(R.string.macro_carbos_solo, (int) Math.round(d.carbohidratos)));
+        carbos.setTextColor(normal);
+        TextView grasas = findViewById(R.id.tvMacroGrasasHoy);
+        grasas.setText(getString(R.string.macro_grasas_solo, (int) Math.round(d.grasas)));
+        grasas.setTextColor(normal);
+        findViewById(R.id.filaKcalHoy).setContentDescription(
+                getString(R.string.nutricion_sin_objetivo_a11y, nf.format(d.kcal)));
     }
 
     private void macro(int id, int formato, double valor, int objetivo, DiaNutricion.Estado estado) {
@@ -594,6 +676,94 @@ public class InicioFragment extends BaseFragment {
         i.putExtra("comidaId", -1);
         i.putExtra("fecha", TiempoRelativo.hoy());
         startActivity(i);
+    }
+
+    // ── El primer día (GP-103) ───────────────────────────────────────────────
+
+    private boolean esPrimerDia() {
+        String u = prefsManager.getUsername();
+        return !u.isEmpty() && prefsManager.isPrimerDia(u);
+    }
+
+    private void prepararPrimerDia() {
+        String u = prefsManager.getUsername();
+        findViewById(R.id.btnOcultarPasos).setOnClickListener(v -> {
+            prefsManager.ocultarPrimerosPasos(u);
+            findViewById(R.id.cardPrimerosPasos).setVisibility(View.GONE);
+        });
+        findViewById(R.id.btnOcultarFundador).setOnClickListener(v -> {
+            prefsManager.ocultarFundador(u);
+            findViewById(R.id.cardFundador).setVisibility(View.GONE);
+        });
+        findViewById(R.id.btnEscribirFundador).setOnClickListener(v -> escribirAlFundador());
+        pintarFundador();
+    }
+
+    // Un correo a soporte, que lee el fundador (el texto de la tarjeta lo promete).
+    private void escribirAlFundador() {
+        Intent i = new Intent(Intent.ACTION_SENDTO, android.net.Uri.parse("mailto:"));
+        i.putExtra(Intent.EXTRA_EMAIL, new String[]{getString(R.string.email_soporte)});
+        try {
+            startActivity(Intent.createChooser(i, getString(R.string.email_elegir_app)));
+        } catch (android.content.ActivityNotFoundException e) {
+            es.pmdm.gymprofit.utils.UIHelper.mostrarToastError(requireContext(), getString(R.string.email_sin_app));
+        }
+    }
+
+    private void pintarFundador() {
+        String u = prefsManager.getUsername();
+        findViewById(R.id.cardFundador).setVisibility(
+                esPrimerDia() && !prefsManager.isFundadorOculto(u) ? View.VISIBLE : View.GONE);
+    }
+
+    // «Primeros pasos»: tu plan (hecho al llegar aquí), tu primer entrenamiento y tu primera
+    // comida. Se marcan solos y, con los tres, la tarjeta se va para siempre.
+    private void pintarPrimerDia() {
+        if (!isAdded()) return;
+        pintarFundador();
+        String u = prefsManager.getUsername();
+        PrimerosPasos p = new PrimerosPasos(true, sesiones != null && !sesiones.isEmpty(),
+                prefsManager.isPrimeraComida(u));
+        View card = findViewById(R.id.cardPrimerosPasos);
+        if (p.completos() && esPrimerDia()) prefsManager.ocultarPrimerosPasos(u);
+        if (!p.visible(esPrimerDia(), prefsManager.isPrimerosPasosOcultos(u))) {
+            card.setVisibility(View.GONE);
+            return;
+        }
+        boolean nueva = card.getVisibility() != View.VISIBLE;
+        card.setVisibility(View.VISIBLE);
+        ((TextView) findViewById(R.id.tvPrimerosPasos)).setText(
+                getString(R.string.inicio_pasos_titulo, p.hechos(), PrimerosPasos.TOTAL));
+        LinearProgressIndicator barra = findViewById(R.id.barraPasos);
+        barra.setProgressCompat(p.hechos() * 100 / PrimerosPasos.TOTAL, nueva && !Movimiento.quieto(requireContext()));
+
+        HoyToca.Eleccion hoy = HoyToca.elegir(seguido, propias, sesiones);
+        paso(R.id.pasoPlan, R.string.inicio_paso_plan, getString(R.string.inicio_paso_hecho), true, null);
+        paso(R.id.pasoEntreno, R.string.inicio_paso_entreno, p.entreno ? getString(R.string.inicio_paso_hecho)
+                        : hoy != null ? getString(R.string.inicio_paso_entreno_sub, hoy.rutina.getNombre())
+                        : getString(R.string.inicio_paso_entreno_sub_libre),
+                p.entreno, () -> irATab(NavTabs.ENTRENAR));
+        paso(R.id.pasoComida, R.string.inicio_paso_comida, p.comida ? getString(R.string.inicio_paso_hecho)
+                : getString(R.string.inicio_paso_comida_sub), p.comida, this::registrarComida);
+    }
+
+    private void paso(int id, int titulo, String sub, boolean hecho, @Nullable Runnable accion) {
+        View fila = findViewById(id);
+        TextView t = fila.findViewById(R.id.tvTituloPaso);
+        t.setText(titulo);
+        t.setTextColor(color(hecho ? com.google.android.material.R.attr.colorOnSurfaceVariant
+                : com.google.android.material.R.attr.colorOnSurface));
+        t.setTypeface(null, hecho ? android.graphics.Typeface.NORMAL : android.graphics.Typeface.BOLD);
+        ((TextView) fila.findViewById(R.id.tvSubPaso)).setText(sub);
+        ImageView icono = fila.findViewById(R.id.ivPaso);
+        icono.setImageResource(hecho ? R.drawable.ic_ms_check_circle_fill : R.drawable.ic_ms_radio_button_unchecked);
+        icono.setImageTintList(ColorStateList.valueOf(color(hecho ? androidx.appcompat.R.attr.colorPrimary
+                : com.google.android.material.R.attr.colorOutline)));
+        fila.findViewById(R.id.ivFlechaPaso).setVisibility(hecho ? View.INVISIBLE : View.VISIBLE);
+        fila.setClickable(!hecho && accion != null);
+        fila.setOnClickListener(hecho || accion == null ? null : v -> accion.run());
+        fila.setContentDescription(getString(hecho ? R.string.inicio_paso_hecho_a11y
+                : R.string.inicio_paso_pendiente_a11y, getString(titulo), sub));
     }
 
     // ── Utilidades ───────────────────────────────────────────────────────────

@@ -625,6 +625,9 @@
     <string name="error_series_invalida">Pon entre 1 y 10 series</string>
     <string name="error_reps_invalida">Pon entre 1 y 50 repeticiones</string>
     <string name="error_edad_invalida">Pon tu edad en años, entre 10 y 120</string>
+    <!-- GP-145: la edad de Editar perfil, de 14 a 100; el mínimo es el de la política (DEC-038). -->
+    <string name="error_edad_rango">Pon tu edad en años, entre %1$d y %2$d</string>
+    <string name="error_edad_minima">GymProFit es para personas de %1$d años o más, como dice la política de privacidad</string>
     <string name="error_peso_invalido">Pon tu peso en kilos, entre 30 y 300</string>
     <string name="error_altura_invalida">Pon tu altura en centímetros, entre 100 y 250</string>
     <string name="error_altura_en_metros">¿Querías decir %1$d\u00A0cm? Escribe la altura en centímetros</string>
@@ -644,7 +647,7 @@
     <string name="password_error_corta">Mínimo 8 caracteres</string>
     <string name="password_error_larga">Demasiado larga: acórtala un poco</string>
     <string name="password_error_comun">Es demasiado común: elige otra</string>
-    <string name="password_error_nombre">No puede contener «GymProFit» ni tu nombre de usuario</string>
+    <string name="password_error_nombre">No puede contener «GymProFit», tu nombre de usuario ni tu correo</string>
     <string name="recuperar_restablecer">Restablecer contraseña</string>
     <string name="recuperar_reenviar">Enviar otro código</string>
     <string name="recuperar_ok">Contraseña cambiada. Ya puedes entrar con la nueva.</string>
@@ -1300,4 +1303,261 @@
     <string name="ajustes_avisos_activar_a11y">Activar los avisos con la pantalla apagada</string>
     <string name="ajustes_avisos_nota">El aviso suena y vibra según el modo del móvil.</string>
     <string name="ajustes_fila_sub_a11y">%1$s, %2$s</string>
+
+    <!-- ── Alta nueva: las preguntas (GP-103, lote 1.5.1) ─────────────────── -->
+    <string name="alta_opcion_a11y">%1$s. %2$s</string>
+    <string name="alta_progreso_a11y">Progreso</string>
+    <string name="alta_capitulo_a11y">Capítulo %1$d de %2$d, %3$s</string>
+    <string name="alta_antetitulo">%1$s · %2$d de %3$d</string>
+    <string name="alta_capitulo_objetivo">Tu objetivo</string>
+    <string name="alta_capitulo_sobre_ti">Sobre ti</string>
+    <string name="alta_capitulo_entrenamiento">Tu entrenamiento</string>
+    <string name="alta_capitulo_plan">Tu plan</string>
+    <string name="alta_objetivo_titulo">¿Qué quieres conseguir?</string>
+    <string name="alta_objetivo_texto">Con esto calculamos tus calorías y ajustamos tus rutinas. Puedes cambiarlo después.</string>
+    <string name="alta_objetivo_perder_desc">Comerás un 20 % menos de lo que gastas, con más proteína</string>
+    <string name="alta_objetivo_musculo_desc">Comerás un 15 % más de lo que gastas, con más proteína</string>
+    <string name="alta_objetivo_mantener_desc">Comerás lo mismo que gastas</string>
+    <string name="alta_objetivo_fuerza_desc">Un 10 % más, y los básicos a 4–6 repeticiones</string>
+    <string name="alta_nivel_titulo">¿Cuánta experiencia tienes?</string>
+    <string name="alta_nivel_texto">Con esto elegimos tu programa y cuántas series haces en cada ejercicio.</string>
+    <string name="alta_nivel_principiante_desc">Empiezo, o vuelvo tras más de 6 meses sin entrenar</string>
+    <string name="alta_nivel_intermedio_desc">Entreno con constancia desde hace más de 6 meses</string>
+    <string name="alta_nivel_avanzado_desc">Llevo años entrenando y domino los básicos</string>
+    <string name="alta_sobre_ti_titulo">Cuéntanos sobre ti</string>
+    <string name="alta_sobre_ti_texto">Para calcular tus calorías y tus macros. Solo se usa para eso y lo cambias cuando quieras en tu perfil.</string>
+    <string name="alta_sobre_ti_datos_a11y">Tus datos</string>
+    <string name="alta_sexo">Sexo</string>
+    <string name="alta_edad">Edad</string>
+    <string name="alta_altura">Altura</string>
+    <string name="alta_peso">Peso</string>
+    <string name="alta_actividad">Actividad</string>
+    <string name="alta_actividad_sub">Contando el ejercicio que ya haces</string>
+    <string name="alta_elegir">Elegir</string>
+    <string name="alta_fila_a11y">%1$s: %2$s</string>
+    <string name="alta_fila_sin_elegir_a11y">%1$s: sin elegir</string>
+    <plurals name="alta_edad_valor">
+        <item quantity="one">%d año</item>
+        <item quantity="other">%d años</item>
+    </plurals>
+    <string name="alta_altura_valor">%1$d cm</string>
+    <string name="alta_peso_valor">%1$s kg</string>
+    <string name="alta_unidad_cm">cm</string>
+    <string name="alta_unidad_kg">kg</string>
+    <string name="alta_prefiero_no_decirlo">Prefiero no decirlo</string>
+    <string name="alta_listo">Listo</string>
+    <string name="alta_actividad_titulo">¿Cuánto te mueves?</string>
+    <string name="alta_actividad_texto">Cuenta tu día a día y el ejercicio que ya haces.</string>
+    <string name="actividad_sedentario_desc">Trabajo sentado y casi no hago ejercicio</string>
+    <string name="actividad_ligero_desc">Ejercicio suave 1–3 días por semana</string>
+    <string name="actividad_moderado_desc">Ejercicio 3–5 días por semana</string>
+    <string name="actividad_activo_desc">Ejercicio intenso casi a diario, o un trabajo físico</string>
+    <string name="actividad_con_descripcion">%1$s\n%2$s</string>
+    <string name="alta_sexo_titulo">¿Cuál es tu sexo?</string>
+    <string name="alta_sexo_texto">Solo para la fórmula de las calorías.</string>
+    <string name="alta_edad_titulo">¿Cuántos años tienes?</string>
+    <string name="alta_altura_titulo">¿Cuánto mides?</string>
+    <string name="alta_peso_titulo">¿Cuánto pesas?</string>
+    <string name="alta_peso_kilos_a11y">Kilos</string>
+    <string name="alta_peso_decimas_a11y">Décimas de kilo</string>
+    <string name="alta_donde_titulo">¿Dónde vas a entrenar?</string>
+    <string name="alta_donde_texto">Tu programa solo lleva ejercicios que puedas hacer ahí.</string>
+    <string name="alta_donde_gimnasio_desc">Con barras, máquinas y poleas</string>
+    <string name="alta_donde_mancuernas_desc">En casa, con mancuernas y un banco inclinable</string>
+    <string name="alta_donde_corporal_desc">Con una barra de dominadas y una silla o un banco</string>
+    <string name="alta_dias_titulo">¿Cuánto puedes entrenar?</string>
+    <string name="alta_dias_texto">Tu programa se reparte en esos días y cada rutina cabe en ese tiempo. Puedes cambiarlo después.</string>
+    <string name="alta_dias_etiqueta">Días por semana</string>
+    <string name="alta_tiempo_etiqueta">Tiempo por sesión</string>
+    <plurals name="alta_dias_a11y">
+        <item quantity="one">%d día</item>
+        <item quantity="other">%d días</item>
+    </plurals>
+    <string name="alta_minutos">%1$d min</string>
+    <string name="alta_minutos_o_mas">%1$d+ min</string>
+    <string name="alta_minutos_a11y">%1$d minutos</string>
+    <string name="alta_minutos_o_mas_a11y">%1$d minutos o más</string>
+    <string name="alta_por_ejemplo">Por ejemplo</string>
+    <string-array name="alta_ejemplo_dias">
+        <item>Por ejemplo, lunes y jueves</item>
+        <item>Por ejemplo, lunes, miércoles y viernes</item>
+        <item>Por ejemplo, lunes, martes, jueves y viernes</item>
+        <item>Por ejemplo, de lunes a viernes</item>
+        <item>Por ejemplo, de lunes a sábado</item>
+    </string-array>
+    <string-array name="alta_semana_letras">
+        <item>L</item>
+        <item>M</item>
+        <item>X</item>
+        <item>J</item>
+        <item>V</item>
+        <item>S</item>
+        <item>D</item>
+    </string-array>
+    <string name="alta_ver_mi_plan">Ver mi plan</string>
+
+    <!-- ── Alta nueva: «Tu plan» (GP-103, lote 1.5.1) ─────────────────────── -->
+    <string name="sin_valor">—</string>
+    <string name="enumeracion_y">" y "</string>
+    <string name="alta_plan_resumen">Para %1$s, %2$s, %3$s de %4$d minutos.</string>
+    <string name="alta_para_perder">perder grasa</string>
+    <string name="alta_para_musculo">ganar músculo</string>
+    <string name="alta_para_mantener">mantenerte</string>
+    <string name="alta_para_fuerza">ganar fuerza</string>
+    <string name="alta_en_el_gimnasio">en el gimnasio</string>
+    <string name="alta_en_casa">en casa con mancuernas</string>
+    <string name="alta_con_tu_peso">con tu peso corporal</string>
+    <plurals name="alta_plan_dias">
+        <item quantity="one">%d día</item>
+        <item quantity="other">%d días</item>
+    </plurals>
+    <string name="alta_plan_cada_dia">Cada día</string>
+    <string name="alta_plan_kcal_al_dia">kcal al día</string>
+    <string name="alta_plan_proteina">Proteína</string>
+    <string name="alta_plan_carbohidratos">Carbohidratos</string>
+    <string name="alta_plan_grasa">Grasa</string>
+    <string name="alta_plan_agua">Agua</string>
+    <string name="alta_plan_gramos">%1$d g</string>
+    <string name="alta_plan_litros">%1$s L</string>
+    <string name="alta_plan_kcal_a11y">%1$s kilocalorías al día</string>
+    <string name="alta_plan_macros_a11y">Proteína, %1$d gramos. Carbohidratos, %2$d gramos. Grasa, %3$d gramos. Agua, %4$s litros.</string>
+    <string name="alta_plan_nota_perder">Un 20 % menos de lo que gastas, para perder grasa.</string>
+    <string name="alta_plan_nota_musculo">Un 15 % más de lo que gastas, para ganar músculo.</string>
+    <string name="alta_plan_nota_mantener">Lo mismo que gastas, para mantenerte.</string>
+    <string name="alta_plan_nota_fuerza">Un 10 % más de lo que gastas, para ganar fuerza.</string>
+    <string name="alta_plan_nota_menores">Con menos de 18 años, «Perder grasa» se queda en tus calorías de mantenimiento. Si quieres perder grasa, háblalo antes con un profesional.</string>
+    <string name="alta_plan_sin_calorias">Sin calorías por ahora: has preferido no decir tus datos. Añádelos cuando quieras en tu perfil y las calculamos.</string>
+    <string name="alta_plan_tu_programa">Tu programa</string>
+    <string name="alta_plan_programa_cargando">Buscando tu programa…</string>
+    <string name="alta_plan_programa_error">No hemos podido cargar tu programa. Tu plan sigue aquí.</string>
+    <string name="alta_plan_programa_sin_red">Sin conexión: no hemos podido cargar tu programa. Tu plan sigue aquí.</string>
+    <string name="alta_plan_detalle_programa">%1$s · %2$s · sesiones de %3$d min</string>
+    <string name="alta_plan_rutina_a11y">%1$s, %2$d minutos. %3$s</string>
+    <string-array name="alta_dias_semana">
+        <item>lunes</item>
+        <item>martes</item>
+        <item>miércoles</item>
+        <item>jueves</item>
+        <item>viernes</item>
+        <item>sábado</item>
+        <item>domingo</item>
+    </string-array>
+    <string name="alta_plan_dia_rutina">%1$s %2$s</string>
+    <string name="alta_plan_dias_texto">%1$s. En Entrenar las tienes todas, y en Inicio, la que toca.</string>
+    <string name="alta_plan_dias_sin_rutinas">En Entrenar tendrás todas tus rutinas, y en Inicio, la que toca.</string>
+    <string name="alta_terminos_enlace">Términos de uso</string>
+    <string name="alta_plan_aviso_salud">Es una estimación para empezar, no un consejo médico. Si tienes alguna lesión o problema de salud, o estás embarazada, consulta antes con un profesional. %1$s</string>
+    <string name="url_terminos" translatable="false">https://gymprofit.app/terminos</string>
+    <string name="alta_guarda_tu_plan">Guarda tu plan</string>
+    <string name="alta_empezar">Empezar</string>
+    <string name="nutricion_sin_objetivo">kcal · sin objetivo</string>
+    <string name="nutricion_sin_objetivo_rotulo">Tu objetivo</string>
+    <string name="nutricion_sin_objetivo_accion">Añade tu peso y tu altura en tu perfil</string>
+    <string name="nutricion_sin_objetivo_a11y">%1$s kilocalorías hoy, sin objetivo. Añade tu peso y tu altura en tu perfil para tenerlo.</string>
+    <string name="macro_prot_solo">Prot. %1$d g</string>
+    <string name="macro_carbos_solo">Carbos %1$d g</string>
+    <string name="macro_grasas_solo">Grasas %1$d g</string>
+    <string name="nutricion_macro_solo">%1$d g</string>
+    <string name="editar_perfil_nota_menores">Con menos de 18 años, «Perder grasa» se queda en tus calorías de mantenimiento. Si quieres perder grasa, háblalo antes con un profesional.</string>
+
+    <!-- ── Avisos por tipo: el alta y Ajustes › Notificaciones (GP-112, lote 1.5.1) ── -->
+    <string name="avisos_ejemplo_a11y">Ejemplo de aviso: Descanso terminado. Press de banca con barra, serie 3</string>
+    <string name="avisos_ejemplo_origen">GymProFit · ahora</string>
+    <string name="avisos_ejemplo_titulo">Descanso terminado</string>
+    <string name="avisos_ejemplo_texto">Press de banca con barra, serie 3</string>
+    <string name="avisos_titulo">¿Te avisamos?</string>
+    <string name="avisos_texto">Solo de lo que elijas, y lo cambias cuando quieras en Ajustes. Después, Android te pedirá permiso.</string>
+    <string name="avisos_tipos_a11y">Qué avisos quieres</string>
+    <string name="avisos_descanso">Fin de cada descanso</string>
+    <string name="avisos_descanso_sub">Aunque tengas la pantalla apagada. Va con la sesión</string>
+    <string name="avisos_entrenar">Recordarme entrenar</string>
+    <string name="avisos_entrenar_sub">Si pasan 3 días sin entrenar</string>
+    <string name="avisos_comidas">Recordarme las comidas</string>
+    <string name="avisos_comidas_sub">A su hora, si no has apuntado esa comida</string>
+    <string name="avisos_progreso">Tu progreso</string>
+    <string name="avisos_progreso_sub">Logros, el resumen del domingo y pesarte cada mes</string>
+    <string name="avisos_activar">Activar avisos</string>
+    <string name="avisos_ahora_no">Ahora no</string>
+    <string name="avisos_error_guardar">No se han podido guardar tus avisos. Cámbialos cuando quieras en Ajustes › Notificaciones.</string>
+    <string name="notificaciones_sin_permiso">Android no deja que GymProFit te avise: hasta que lo actives, no te llegará ninguno.</string>
+    <string name="notificaciones_activar">Activar</string>
+    <string name="notificaciones_que_avisamos">Qué te avisamos</string>
+    <string name="notificaciones_sistema">Ajustes de Android</string>
+
+    <!-- ── Alta nueva: «Guarda tu plan» (GP-103, lote 1.5.1) ──────────────── -->
+    <string name="guarda_volver_a11y">Volver a tu plan</string>
+    <string name="guarda_plan_listo">Tu plan está listo</string>
+    <string name="guarda_texto">Crea tu cuenta para no perderlo y apuntar tus entrenamientos desde hoy.</string>
+    <string name="guarda_nombre">Nombre</string>
+    <string name="guarda_nombre_ayuda">Así te saludamos en la app</string>
+    <string name="guarda_correo">Correo</string>
+    <string name="guarda_contrasena">Contraseña</string>
+    <string name="guarda_entrar_con_el">Entrar con él</string>
+    <string name="guarda_crear_cuenta">Crear cuenta</string>
+    <string name="guarda_legal">Al crear tu cuenta aceptas los %1$s y confirmas que has leído la %2$s.</string>
+    <string name="guarda_ya_tienes_cuenta">¿Ya tienes cuenta?</string>
+    <string name="guarda_entrar">Entrar</string>
+    <string name="guarda_seguir">Seguir</string>
+    <string name="guarda_error_nombre">Escribe tu nombre</string>
+    <string name="guarda_error_clave_nombre">No puede contener «GymProFit», tu nombre ni tu correo</string>
+    <string name="guarda_sin_red">Sin conexión. Tu plan sigue aquí: vuelve a intentarlo.</string>
+    <string name="guarda_todo_listo">Todo listo, %1$s</string>
+    <string name="guarda_todo_listo_texto">Tu plan está guardado y %1$s te espera en Inicio.</string>
+    <string name="guarda_todo_listo_texto_sin_programa">Tu plan está guardado y te espera en Inicio.</string>
+    <string name="guarda_creando_a11y">Creando tu cuenta</string>
+    <string name="guarda_paso_cuenta">Creando tu cuenta</string>
+    <string name="guarda_paso_programa">Preparando %1$s</string>
+    <string name="guarda_paso_hecho_a11y">%1$s: hecho</string>
+
+    <!-- ── Alta nueva: la bienvenida (GP-103, lote 1.5.1) ─────────────────── -->
+    <string name="bienvenida_titulo">Apunta cada serie y mira cómo subes</string>
+    <string name="bienvenida_texto">En un minuto tienes tu programa de entrenamiento y tus calorías del día.</string>
+    <string name="bienvenida_ya_tengo_cuenta">Ya tengo cuenta</string>
+    <string name="bienvenida_idioma_es">ES</string>
+    <string name="bienvenida_idioma_en">EN</string>
+    <string name="bienvenida_idioma_a11y">Idioma: %1$s. Cambiar</string>
+    <string name="demo_a11y">Demostración: se apunta la tercera serie de press de banca, empieza el descanso y, al guardar la sesión, sale un récord nuevo</string>
+    <string name="demo_ejercicio">Press de banca con barra</string>
+    <string name="demo_basico">Básico</string>
+    <string name="demo_pauta">3 × 6–10 · descanso 2 min</string>
+    <string name="demo_col_serie">Serie</string>
+    <string name="demo_col_anterior">Anterior</string>
+    <string name="demo_col_kg">kg</string>
+    <string name="demo_col_reps">reps</string>
+    <string name="demo_anterior">%1$d × %2$d</string>
+    <string name="demo_descanso">Descanso</string>
+    <string name="demo_descanso_tiempo">1:58</string>
+    <string name="demo_sesion_guardada">Sesión guardada</string>
+    <string name="demo_rutina">Cuerpo completo A · 44 min</string>
+    <string name="demo_records">Récords</string>
+    <string name="demo_record_marca">62,5 kg × 8 · antes 60 kg × 8</string>
+
+    <!-- ── «Ya tengo cuenta» (GP-103, lote 1.5.1) ── -->
+    <string name="entrar_titulo">Entrar</string>
+    <string name="entrar_texto">Con tu correo o con tu nombre de usuario.</string>
+    <string name="entrar_usuario">Correo o usuario</string>
+    <string name="entrar_usuario_ejemplo" translatable="false">lucia@example.com</string>
+    <string name="entrar_sin_cuenta">¿No tienes cuenta?</string>
+    <string name="entrar_empieza_aqui">Empieza aquí</string>
+
+    <!-- ── Inicio, el primer día (GP-103, lote 1.5.1) ─────────────────────── -->
+    <string name="inicio_pasos_titulo">Primeros pasos · %1$d de %2$d</string>
+    <string name="inicio_pasos_ocultar_a11y">Ocultar primeros pasos</string>
+    <string name="inicio_paso_plan">Tu plan</string>
+    <string name="inicio_paso_entreno">Tu primer entrenamiento</string>
+    <string name="inicio_paso_entreno_sub">%1$s, cuando quieras</string>
+    <string name="inicio_paso_entreno_sub_libre">Cuando quieras, en Entrenar</string>
+    <string name="inicio_paso_comida">Tu primera comida</string>
+    <string name="inicio_paso_comida_sub">Apunta lo que comas hoy</string>
+    <string name="inicio_paso_hecho">Hecho</string>
+    <string name="inicio_paso_hecho_a11y">%1$s: %2$s</string>
+    <string name="inicio_paso_pendiente_a11y">%1$s, pendiente. %2$s</string>
+    <string name="inicio_fundador_inicial" translatable="false">R</string>
+    <string name="inicio_fundador_titulo">Hola, soy Rubén</string>
+    <string name="inicio_fundador_texto">Hago GymProFit para que entrenar con un plan sea fácil. Si algo falla o echas algo en falta, escríbeme: lo leo yo.</string>
+    <string name="inicio_fundador_escribir">Escribir</string>
+    <string name="inicio_fundador_ocultar">Ocultar</string>
+    <string name="inicio_programa_pendiente_sub">No pudimos prepararlo al crear tu cuenta. Síguelo cuando quieras.</string>
+    <string name="inicio_programa_pendiente_seguir">Seguir el programa</string>
+    <string name="inicio_programa_pendiente_a11y">Seguir el programa %1$s</string>
 </resources>

@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Una serie marcada en la demostración (GP-103): el contenedor de la marca. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle"><solid android:color="?attr/colorPrimaryContainer" /><corners android:radius="12dp" /></shape>

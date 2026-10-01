@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Tarjeta de la demostración de la bienvenida (GP-103): la de la estructura, radio 20 y borde del tema. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle"><solid android:color="?attr/colorSurface" /><stroke android:width="1dp" android:color="?attr/colorOutlineVariant" /><corners android:radius="20dp" /></shape>

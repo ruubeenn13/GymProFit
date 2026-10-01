@@ -64,7 +64,7 @@ public class AdminEjercicioAdapter extends RecyclerView.Adapter<AdminEjercicioAd
         h.chipGrupo.setText((grupo != null && !grupo.isEmpty()) ? es.pmdm.gymprofit.utils.UIHelper.traducirGrupoMuscular(ctx, grupo) : "—"); // enum traducido
 
         String dif = e.getDificultad();
-        h.chipDificultad.setText((dif != null && !dif.isEmpty()) ? es.pmdm.gymprofit.utils.UIHelper.traducirNivel(ctx, dif) : "—"); // enum traducido
+        h.chipDificultad.setText((dif != null && !dif.isEmpty()) ? es.pmdm.gymprofit.utils.UIHelper.traducirNivelExacto(ctx, dif) : "—"); // enum traducido
 
         if (e.isActivo()) {
             h.chipEstado.setText(ctx.getString(R.string.admin_estado_activo));

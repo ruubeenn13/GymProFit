@@ -75,6 +75,8 @@ public class EstadisticasNutricionActivity extends BaseActivity {
     private int lenDias = 7;
     private int offset = 0;
     private int objetivoKcal = 2000;
+    // Sin peso ni altura no hay objetivo (GP-103): ni línea de meta ni días «en objetivo».
+    private boolean conObjetivo = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +85,9 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         prefs.applyTheme();
         setContentView(R.layout.activity_estadisticas_nutricion);
 
-        objetivoKcal = prefs.getCaloriasDiarias();
+        es.pmdm.gymprofit.utils.ResultadoNutricional objetivo = es.pmdm.gymprofit.utils.DiaNutricion.objetivo(prefs);
+        conObjetivo = objetivo != null;
+        objetivoKcal = conObjetivo ? objetivo.calorias : 0;
 
         tvPeriodo    = findViewById(R.id.tvPeriodo);
         tvVacia      = findViewById(R.id.tvVacia);
@@ -103,6 +107,8 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         pintarSwatch(R.id.legNone, colorNone);
         pintarSwatch(R.id.legOff, COLOR_OFF);
         pintarSwatch(R.id.legOn, COLOR_ON);
+        // Sin objetivo no hay «en objetivo» ni «fuera»: la leyenda no aplica.
+        if (!conObjetivo) ((View) findViewById(R.id.legOn).getParent()).setVisibility(View.GONE);
 
         ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
 
@@ -173,8 +179,8 @@ public class EstadisticasNutricionActivity extends BaseActivity {
 
         tvMedia.setText(String.valueOf(media));
         tvDias.setText(String.valueOf(diasReg));
-        tvObjetivo.setText(String.valueOf(enObjetivo));
-        tvAdherencia.setText(adherencia + "%");
+        tvObjetivo.setText(conObjetivo ? String.valueOf(enObjetivo) : getString(R.string.sin_valor));
+        tvAdherencia.setText(conObjetivo ? adherencia + "%" : getString(R.string.sin_valor));
 
         renderMacros(lista);
         construirHeatmap(lista);
@@ -206,12 +212,14 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         // Línea de objetivo de kcal.
         chartKcal.getAxisLeft().removeAllLimitLines();
         LimitLine meta = new LimitLine(objetivoKcal, getString(R.string.nutricion_meta_kcal));
+        if (conObjetivo) {
         meta.setLineColor(getColorTema(androidx.appcompat.R.attr.colorPrimary));
         meta.setLineWidth(1.4f);
         meta.enableDashedLine(12f, 8f, 0f);
         meta.setTextColor(getColorTema(com.google.android.material.R.attr.colorOnSurfaceVariant));
         meta.setTextSize(ChartStyler.textoSp(this));
         chartKcal.getAxisLeft().addLimitLine(meta);
+        }
 
         // Tooltip: kcal + fecha.
         chartKcal.setMarker(new ChartMarker(this, (e, h) -> {
@@ -290,6 +298,8 @@ public class EstadisticasNutricionActivity extends BaseActivity {
             Integer kcal = porFecha.get(iso.format(cal.getTime()));
             int color;
             if (kcal == null) color = colorNone;
+            // Sin objetivo (GP-103), un día con comidas es solo eso: registrado.
+            else if (!conObjetivo) color = getColorTema(com.google.android.material.R.attr.colorOnSurfaceVariant);
             else if (Math.abs(kcal - objetivoKcal) <= margen) color = COLOR_ON;
             else color = COLOR_OFF;
 

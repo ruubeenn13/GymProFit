@@ -1,23 +1,11 @@
 package es.pmdm.gymprofit.ui.activities;
 
-import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.util.TypedValue;
-import android.view.View;
-import android.view.Window;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 
-import com.google.android.material.button.MaterialButton;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,8 +26,8 @@ import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
 // LoginActivity — pantalla de inicio de sesión de GymProFit.
-// Permite autenticarse con usuario/contraseña, entrar como invitado,
-// ir al registro y cambiar tema/idioma antes de acceder a la app.
+// Se entra con el correo o el usuario (DEC-036) y la contraseña; sin cuenta, al alta
+// nueva (GP-103). Es «Ya tengo cuenta» del lienzo del alta.
 // ============================================================
 public class LoginActivity extends AppCompatActivity {
 
@@ -56,9 +44,10 @@ public class LoginActivity extends AppCompatActivity {
     public static final String EXTRA_CUENTA_DESACTIVADA = "cuenta_desactivada";
     // Tras cambiar la contraseña, si la app no pudo volver a entrar sola (GP-105).
     public static final String EXTRA_PASSWORD_CAMBIADA = "password_cambiada";
+    // El correo con que entrar, desde «Entrar con él» de «Guarda tu plan» (GP-103).
+    public static final String EXTRA_USUARIO = "usuario";
 
     private EditText etUsuario, etPassword;
-    private ImageButton btnCambiarTema, btnCambiarIdioma;
     private PreferencesManager prefsManager;
     // Interfaces Retrofit tipadas de auth y usuarios (etapa 2)
     private final AuthApi authApi = ApiClient.service(AuthApi.class);
@@ -80,8 +69,20 @@ public class LoginActivity extends AppCompatActivity {
         es.pmdm.gymprofit.envivo.SesionEnCursoRepositorio.get(this).usarCuenta(prefsManager.getUsuarioId());
 
         inicializarVistas();
+        ((com.google.android.material.appbar.MaterialToolbar) findViewById(R.id.toolbar))
+                .setNavigationOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
+        // Tras cerrar sesión, Entrar es la única pantalla: atrás lleva a la bienvenida, que
+        // tiene «Empezar» y el idioma, en vez de cerrar la app (GP-103).
+        getOnBackPressedDispatcher().addCallback(this, new androidx.activity.OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (isTaskRoot()) startActivity(new Intent(LoginActivity.this, BienvenidaActivity.class));
+                finish();
+            }
+        });
+        String usuario = getIntent().getStringExtra(EXTRA_USUARIO);
+        if (usuario != null && savedInstanceState == null) etUsuario.setText(usuario);
         configurarEventos();
-        actualizarIconoTema();
 
         // Una sola vez: al recrear la pantalla (cambio de tema) el extra seguiría ahí.
         if (getIntent().getBooleanExtra(EXTRA_CUENTA_DESACTIVADA, false)) {
@@ -101,12 +102,10 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    // Referencia los campos de texto y botones de tema/idioma del layout.
+    // Referencia los campos de texto del layout.
     private void inicializarVistas() {
         etUsuario = findViewById(R.id.etUsuario);
         etPassword = findViewById(R.id.etPassword);
-        btnCambiarTema = findViewById(R.id.btnCambiarTema);
-        btnCambiarIdioma = findViewById(R.id.btnCambiarIdioma);
     }
 
     // Configura los listeners de login, login como invitado, ir a registro
@@ -129,17 +128,16 @@ public class LoginActivity extends AppCompatActivity {
             hacerLogin(usuario, password);
         });
 
-        findViewById(R.id.btnEntrarInvitado).setOnClickListener(v -> hacerLoginInvitado());
-
+        // Sin cuenta, el alta nueva: el cuestionario y la cuenta al final (GP-103).
         findViewById(R.id.tvNoTienesCuenta).setOnClickListener(v ->
-                startActivity(new Intent(this, RegistroActivity.class)));
-
-        btnCambiarTema.setOnClickListener(v -> cambiarTema());
-        btnCambiarIdioma.setOnClickListener(v -> mostrarDialogoIdioma());
+                startActivity(new Intent(this, AltaActivity.class)));
     }
 
     // Realiza login como invitado (rol GUEST): guarda token/rol y marca
     // el onboarding como completado, navegando directo a HomeActivity.
+    // Sin botón desde la 1.5.1 (GP-103): el plan ya se ve sin cuenta y el invitado era una
+    // cuenta compartida. El código se queda hasta que GP-150 lo retire con la API.
+    @SuppressWarnings("unused")
     private void hacerLoginInvitado() {
         authApi.guest().enqueue(new ApiCallback<TokenResponse>() {
             @Override
@@ -264,86 +262,10 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(new Intent(this, MainActivity.class)
                     .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         } else {
-            Intent intent = new Intent(this, Onboarding1Activity.class);
-            intent.putExtra("username", prefsManager.getUsername());
-            startActivity(intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            // Una cuenta sin onboarding responde lo mismo que el alta y acaba en «Empezar».
+            startActivity(AltaActivity.paraCuentaExistente(this)
+                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         }
         finish();
-    }
-
-    // Alterna entre tema claro y oscuro, guarda la preferencia y recrea la Activity.
-    private void cambiarTema() {
-        int currentMode = prefsManager.getTheme();
-        int newMode = (currentMode == AppCompatDelegate.MODE_NIGHT_YES)
-                ? AppCompatDelegate.MODE_NIGHT_NO
-                : AppCompatDelegate.MODE_NIGHT_YES;
-        prefsManager.saveTheme(newMode);
-        recreate();
-    }
-
-    // Actualiza el icono del botón de tema (sol/luna) según el modo actual.
-    private void actualizarIconoTema() {
-        int currentMode = prefsManager.getTheme();
-        btnCambiarTema.setImageResource(
-                currentMode == AppCompatDelegate.MODE_NIGHT_YES
-                        ? R.drawable.ic_ms_light_mode
-                        : R.drawable.ic_ms_dark_mode);
-    }
-
-    // Muestra un diálogo personalizado para seleccionar el idioma (español/inglés),
-    // marcando el check del idioma actualmente activo.
-    private void mostrarDialogoIdioma() {
-        Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_idioma);
-
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            dialog.getWindow().setDimAmount(0.5f);
-        }
-
-        LinearLayout root = dialog.findViewById(R.id.dialogRoot);
-        TypedValue typedValue = new TypedValue();
-        getTheme().resolveAttribute(com.google.android.material.R.attr.colorSurface, typedValue, true);
-
-        GradientDrawable fondo = new GradientDrawable();
-        fondo.setShape(GradientDrawable.RECTANGLE);
-        fondo.setCornerRadius(20 * getResources().getDisplayMetrics().density);
-        fondo.setColor(typedValue.data);
-        root.setBackground(fondo);
-
-        String idiomaActual = prefsManager.getLanguage();
-        ImageView ivCheckEspanol = dialog.findViewById(R.id.ivCheckEspanol);
-        ImageView ivCheckIngles  = dialog.findViewById(R.id.ivCheckIngles);
-
-        if ("es".equals(idiomaActual) || idiomaActual.isEmpty()) {
-            ivCheckEspanol.setVisibility(View.VISIBLE);
-        } else if ("en".equals(idiomaActual)) {
-            ivCheckIngles.setVisibility(View.VISIBLE);
-        }
-
-        dialog.findViewById(R.id.optionEspanol).setOnClickListener(v -> {
-            cambiarIdioma("es");
-            dialog.dismiss();
-        });
-        dialog.findViewById(R.id.optionIngles).setOnClickListener(v -> {
-            cambiarIdioma("en");
-            dialog.dismiss();
-        });
-        ((MaterialButton) dialog.findViewById(R.id.btnCerrarIdioma))
-                .setOnClickListener(v -> dialog.dismiss());
-
-        dialog.show();
-        if (dialog.getWindow() != null) {
-            int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.88);
-            dialog.getWindow().setLayout(width, android.view.WindowManager.LayoutParams.WRAP_CONTENT);
-        }
-    }
-
-    // Guarda el idioma y lo aplica vía AndroidX per-app locales (recrea la Activity solo).
-    private void cambiarIdioma(String languageCode) {
-        prefsManager.saveLanguage(languageCode);
-        androidx.appcompat.app.AppCompatDelegate.setApplicationLocales(
-                androidx.core.os.LocaleListCompat.forLanguageTags(languageCode));
     }
 }

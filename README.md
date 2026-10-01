@@ -69,10 +69,12 @@ detalle/formulario siguen siendo Activities sueltas lanzadas con `startActivity`
 
 ```
 SplashActivity
-     ↓
-LoginActivity ←→ RegistroActivity
-     ↓ (primer acceso)
-Onboarding (1 → 2 → 3 → 4 → 5 → Resumen)
+     ↓ (sin sesión)
+BienvenidaActivity ──«Ya tengo cuenta»──→ LoginActivity (correo o usuario)
+     ↓ «Empezar»                               ↓ (cuenta sin onboarding)
+AltaActivity: objetivo → nivel → sobre ti → dónde → días → tu plan
+     ↓ «Guarda tu plan»                        ↓ «Empezar» (PATCH + seguir programa)
+GuardaPlanActivity → AvisosActivity            ↓
      ↓
 MainActivity — ViewPager2 (5 Fragments) + FloatingNavBar liquid glass fija
   ├── HomeFragment
@@ -146,10 +148,11 @@ Capa de red basada en **Retrofit2 + OkHttp3 + Gson**, con una interfaz tipada po
 |---|---|
 | `SplashActivity` | Carga inicial. Restaura la sesión (tokens cifrados en `EncryptedSharedPreferences`) y redirige a Home o Login |
 | `LoginActivity` | Inicio de sesión. Guarda access + refresh token, id, username y rol; registra el token FCM del dispositivo. Detecta si onboarding ya fue completado |
-| `RegistroActivity` | Registro de nuevo usuario |
-| `Onboarding1–4Activity` | Flujo de configuración inicial (datos físicos, actividad, objetivo) |
-| `Onboarding5Activity` | Selección de nivel de experiencia: PRINCIPIANTE, INTERMEDIO, AVANZADO, EXPERTO |
-| `OnboardingResumenActivity` | Resumen nutricional y guardado. `PATCH /usuarios/{id}` con todos los datos del onboarding |
+| `BienvenidaActivity` | Primera pantalla sin sesión (1.5.1): la demostración en bucle, el idioma, «Empezar» y «Ya tengo cuenta». Despierta la API al abrirse |
+| `AltaActivity` | El cuestionario del alta (GP-103): cinco preguntas en cuatro capítulos y «Tu plan» (calorías de `CalculadoraNutricional` y el programa de `GET /programas/recomendado` sin token). Las respuestas van al borrador según se eligen. Con una cuenta sin onboarding acaba en «Empezar» |
+| `GuardaPlanActivity` | «Guarda tu plan»: nombre, correo y contraseña; alta con el perfil entero, entrar con el correo y seguir el programa |
+| `AvisosActivity` | «¿Te avisamos?»: los tres avisos de la cuenta (GP-112) antes del permiso de Android |
+| `NotificacionesActivity` | Ajustes › Notificaciones: los mismos tres interruptores, guardados con el PATCH |
 | `HomeActivity` | Pantalla principal con BottomNav. Estadísticas reales de la semana (entrenamientos, calorías, minutos) cargadas en `onResume`. Detecta JWT expirado → redirige a Login |
 | `EjerciciosActivity` | Catálogo con filtro por grupo muscular y búsqueda |
 | `RutinasActivity` | Listado de rutinas del usuario y predefinidas. Filtro por nivel |

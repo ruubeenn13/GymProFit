@@ -139,10 +139,12 @@ es.pmdm.gymprofit/
 
 ```
 SplashActivity
-     ↓
-LoginActivity ←→ RegistroActivity
-     ↓ (primer acceso)
-Onboarding (1 → 2 → 3 → 4 → 5 → Resumen)
+     ↓ (sin sesión)
+BienvenidaActivity ──«Ya tengo cuenta»──→ LoginActivity (correo o usuario)
+     ↓ «Empezar»                               ↓ (cuenta sin onboarding)
+AltaActivity: objetivo → nivel → sobre ti → dónde → días → tu plan
+     ↓ «Guarda tu plan»                        ↓ «Empezar» (PATCH + seguir programa)
+GuardaPlanActivity → AvisosActivity            ↓
      ↓
 HomeActivity (navegación inferior)
   ├── EjerciciosActivity → DetalleEjercicioActivity (vídeo + instrucciones)
@@ -169,10 +171,11 @@ HomeActivity (navegación inferior)
 |---|---|
 | `SplashActivity` | Launcher. Restaura token JWT → Home o Login. Con sesión, cruza el perfil con la API sin esperar (`PerfilRemoto.alArrancar`, GP-111/GP-129) |
 | `LoginActivity` | POST /auth/login. Guarda token, id, username, rol, y cruza el perfil con la API (`PerfilRemoto.alEntrar`) antes de marcar el onboarding |
-| `RegistroActivity` | POST /auth/register |
-| `Onboarding1–4Activity` | Configuración inicial: datos personales, medidas, actividad, objetivo |
-| `Onboarding5Activity` | Selección de nivel de experiencia (PRINCIPIANTE / INTERMEDIO / AVANZADO / EXPERTO) con cards seleccionables |
-| `OnboardingResumenActivity` | Cálculo nutricional + `PATCH /usuarios/{id}` con todos los datos del onboarding, también nombre, sexo y actividad. Guarda en el móvil solo lo contestado (nunca los 70 kg / 170 cm / 25 años del cálculo) y apunta el dueño del perfil |
+| `BienvenidaActivity` | Primera pantalla sin sesión (lote 1.5.1): demostración en bucle (`DemoBienvenida`), idioma, «Empezar» y «Ya tengo cuenta»; `GET /actuator/health` para despertar la API |
+| `AltaActivity` | Cuestionario del alta (GP-103) con fragmentos en `ui/alta/`: objetivo, nivel (en tres; Experto se enseña como Avanzado), «Sobre ti» con hojas, dónde, días y tiempo, y «Tu plan». Orden y reglas en `AltaPasos`; respuestas en el borrador de `PreferencesManager`. Con una cuenta sin onboarding, «Empezar» sube el perfil (`PerfilAlta`) y sigue el programa |
+| `GuardaPlanActivity` | «Guarda tu plan»: alta con el perfil entero, login con el correo, `POST /programas/{codigo}/seguir`; errores bajo su campo (`ErrorAlta`) y reintento sin red |
+| `AvisosActivity` | «¿Te avisamos?»: notificación de ejemplo y los tres avisos de la cuenta (GP-112); «Activar avisos» pide el permiso, «Ahora no», no |
+| `NotificacionesActivity` | Ajustes › Notificaciones: los tres avisos con el PATCH y el aviso si Android no deja notificar |
 | `HomeActivity` | Saludo contextual, fecha locale-aware. Estadísticas reales de la semana actual (entrenamientos, calorías, minutos) cargadas desde API. Detecta JWT expirado (401) → redirige a Login |
 | `EjerciciosActivity` | Catálogo con buscador y filtro por grupo muscular |
 | `RutinasActivity` | Listado rutinas del usuario + predefinidas. Filtro por nivel. Long-press contextual: admin en predefinidas (Editar→`EditarRutinaAdminActivity` + Desactivar/Activar) o en propias (Editar + Eliminar); usuario solo en propias (Editar + Eliminar) |

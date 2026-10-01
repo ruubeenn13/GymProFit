@@ -7,6 +7,7 @@ import android.widget.Spinner;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -20,9 +21,11 @@ import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.utils.AvisoDescartar;
 import es.pmdm.gymprofit.utils.CalculadoraNutricional;
 import es.pmdm.gymprofit.utils.LoadingDialog;
+import es.pmdm.gymprofit.utils.NivelVisible;
 import es.pmdm.gymprofit.utils.NombreVisible;
 import es.pmdm.gymprofit.utils.Numeros;
 import es.pmdm.gymprofit.utils.PreferencesManager;
+import es.pmdm.gymprofit.utils.ReglasEdad;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
@@ -55,10 +58,11 @@ public class EditarPerfilActivity extends AppCompatActivity {
     // Interfaz Retrofit tipada del dominio usuarios (etapa 2)
     private final UsuarioApi usuarioApi = ApiClient.service(UsuarioApi.class);
 
-    // Valores enviados a la API para nivel de experiencia.
-    private static final String[] NIVELES = {
-            "PRINCIPIANTE", "INTERMEDIO", "AVANZADO", "EXPERTO"
-    };
+    // Valores enviados a la API para nivel de experiencia: tres (GP-103). Experto se
+    // enseña como Avanzado y se conserva si no se cambia (NivelVisible).
+    private static final String[] NIVELES = NivelVisible.OFRECIDOS;
+    // El nivel que tiene la cuenta, tal cual, para no convertir un Experto en Avanzado.
+    private String nivelGuardado;
     // Valores enviados a la API para el objetivo del usuario.
     private static final String[] OBJETIVOS = {
             "PERDER_PESO", "GANAR_MASA_MUSCULAR", "MANTENER_PESO", "MEJORAR_FUERZA"
@@ -92,20 +96,60 @@ public class EditarPerfilActivity extends AppCompatActivity {
         cargarDatosUsuario();
         guardarEstadoInicial();
         AvisoDescartar.instalar(this, findViewById(R.id.toolbar), this::hayCambios);
+        vigilarNotaMenores();
         findViewById(R.id.btnGuardar).setOnClickListener(v -> guardarPerfil());
     }
 
     // Spinners con textos localizados; los valores reales son las constantes de arriba.
     private void configurarSpinners() {
         rellenar(spNivel, getString(R.string.nivel_principiante), getString(R.string.nivel_intermedio),
-                getString(R.string.nivel_avanzado), getString(R.string.nivel_experto));
+                getString(R.string.nivel_avanzado));
         rellenar(spObjetivo, getString(R.string.objetivo_perder_peso), getString(R.string.objetivo_ganar_musculo),
                 getString(R.string.objetivo_mantener), getString(R.string.objetivo_fuerza));
         rellenar(spSexo, getString(R.string.onboarding_hombre), getString(R.string.onboarding_mujer));
-        rellenar(spActividad, getString(R.string.onboarding_sedentario), getString(R.string.onboarding_ligero),
-                getString(R.string.onboarding_moderado), getString(R.string.onboarding_activo));
+        rellenarActividad();
         seleccionarSpinner(spSexo, SEXOS, prefsManager.getSexo());
         seleccionarSpinner(spActividad, ACTIVIDADES, prefsManager.getActividad());
+        nivelGuardado = prefsManager.getNivel();
+        seleccionarSpinner(spNivel, NIVELES, NivelVisible.valor(nivelGuardado));
+    }
+
+    /**
+     * La actividad con lo que cuenta cada opción (GP-103): en la lista desplegada, título
+     * y descripción; cerrada, el título, con la descripción de la elegida debajo.
+     */
+    private void rellenarActividad() {
+        int[] titulos = {R.string.onboarding_sedentario, R.string.onboarding_ligero,
+                R.string.onboarding_moderado, R.string.onboarding_activo};
+        int[] descripciones = {R.string.actividad_sedentario_desc, R.string.actividad_ligero_desc,
+                R.string.actividad_moderado_desc, R.string.actividad_activo_desc};
+        String[] textos = new String[titulos.length];
+        for (int i = 0; i < titulos.length; i++) textos[i] = getString(titulos[i]);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, textos) {
+            @Override
+            public android.view.View getDropDownView(int position, android.view.View convertView,
+                                                     @androidx.annotation.NonNull android.view.ViewGroup parent) {
+                android.widget.TextView v = (android.widget.TextView) super.getDropDownView(position, convertView, parent);
+                v.setSingleLine(false);
+                v.setText(getString(R.string.actividad_con_descripcion,
+                        getString(titulos[position]), getString(descripciones[position])));
+                return v;
+            }
+        };
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spActividad.setAdapter(adapter);
+        android.widget.TextView desc = findViewById(R.id.tvActividadDesc);
+        spActividad.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> p, android.view.View v, int pos, long id) {
+                desc.setText(descripciones[pos]);
+            }
+
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> p) {
+                desc.setText(null);
+            }
+        });
     }
 
     private void rellenar(Spinner spinner, String... textos) {
@@ -127,7 +171,8 @@ public class EditarPerfilActivity extends AppCompatActivity {
                 if (u.getPeso() != null && !u.getPeso().isEmpty()) etPeso.setText(u.getPeso());
                 if (u.getAltura() > 0) etAltura.setText(String.valueOf((int) u.getAltura()));
                 if (u.getEdad() > 0) etEdad.setText(String.valueOf(u.getEdad()));
-                seleccionarSpinner(spNivel, NIVELES, u.getNivelExperiencia());
+                nivelGuardado = u.getNivelExperiencia();
+                seleccionarSpinner(spNivel, NIVELES, NivelVisible.valor(nivelGuardado));
                 seleccionarSpinner(spObjetivo, OBJETIVOS, u.getObjetivo());
                 // Lo de la API manda sobre lo del móvil (GP-111); sin ellos, lo del móvil.
                 seleccionarSpinner(spSexo, SEXOS, u.getSexo());
@@ -177,6 +222,68 @@ public class EditarPerfilActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * De 14 a 17 años con «Perder grasa», la calculadora da las calorías de mantenimiento
+     * (GP-103): la nota lo dice debajo del objetivo mientras se cumplan las dos cosas.
+     */
+    private void vigilarNotaMenores() {
+        Runnable pintar = () -> {
+            Integer edad = ReglasEdad.leer(texto(etEdad));
+            boolean perder = CalculadoraNutricional.OBJETIVO_PERDER_PESO.equals(
+                    OBJETIVOS[Math.max(0, spObjetivo.getSelectedItemPosition())]);
+            boolean menor = edad != null && edad <= CalculadoraNutricional.EDAD_SIN_DEFICIT;
+            findViewById(R.id.tvNotaObjetivo).setVisibility(perder && menor ? android.view.View.VISIBLE : android.view.View.GONE);
+        };
+        etEdad.addTextChangedListener(new android.text.TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int a, int b, int c) { }
+            @Override public void onTextChanged(CharSequence s, int a, int b, int c) { }
+            @Override public void afterTextChanged(android.text.Editable e) {
+                pintar.run();
+                // Corregida la edad, su error ya no dice la verdad (GP-145).
+                ((TextInputLayout) findViewById(R.id.tilEdad)).setError(null);
+            }
+        });
+        spObjetivo.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> p, android.view.View v, int pos, long id) {
+                pintar.run();
+            }
+
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> p) {
+                pintar.run();
+            }
+        });
+        pintar.run();
+    }
+
+    /**
+     * Comprueba la edad escrita y, si no vale, lo dice en su campo (GP-145).
+     *
+     * <p>Por debajo de 14 no es un número mal escrito, es la edad mínima de la política
+     * (DEC-038): se explica eso, no «pon un número entre…».
+     *
+     * @return true si está vacía o es de 14 a 100.
+     */
+    private boolean edadValida(String edadStr) {
+        switch (ReglasEdad.estado(edadStr)) {
+            case MENOR:
+                marcarEdad(getString(R.string.error_edad_minima, ReglasEdad.MINIMA));
+                return false;
+            case FUERA:
+                marcarEdad(getString(R.string.error_edad_rango, ReglasEdad.MINIMA, ReglasEdad.MAXIMA));
+                return false;
+            default:
+                ((TextInputLayout) findViewById(R.id.tilEdad)).setError(null);
+                return true;
+        }
+    }
+
+    private void marcarEdad(String mensaje) {
+        ((TextInputLayout) findViewById(R.id.tilEdad)).setError(mensaje);
+        etEdad.requestFocus();
+    }
+
     // Guarda el perfil por PATCH y, al tener éxito, guarda sexo y actividad en el
     // teléfono y recalcula las macros con los datos nuevos.
     private void guardarPerfil() {
@@ -195,10 +302,14 @@ public class EditarPerfilActivity extends AppCompatActivity {
             String alturaStr = etAltura.getText() != null ? etAltura.getText().toString().trim() : "";
             body.put("altura", alturaStr.isEmpty() ? null : new BigDecimal(alturaStr));
 
+            // De 14 a 100, leída sin romper con cualquier texto (GP-145).
             String edadStr = etEdad.getText() != null ? etEdad.getText().toString().trim() : "";
-            body.put("edad", edadStr.isEmpty() ? null : Integer.parseInt(edadStr));
+            if (!edadValida(edadStr)) return;
+            Integer edad = ReglasEdad.leer(edadStr);
+            body.put("edad", edad);
 
-            body.put("nivelExperiencia", NIVELES[spNivel.getSelectedItemPosition()]);
+            String nivel = NivelVisible.aGuardar(NIVELES[spNivel.getSelectedItemPosition()], nivelGuardado);
+            body.put("nivelExperiencia", nivel);
             body.put("objetivo", OBJETIVOS[spObjetivo.getSelectedItemPosition()]);
             body.put("sexo", SEXOS[spSexo.getSelectedItemPosition()]);
             body.put("nivelActividad", ACTIVIDADES[spActividad.getSelectedItemPosition()]);
@@ -211,10 +322,10 @@ public class EditarPerfilActivity extends AppCompatActivity {
                     prefsManager.saveNombre(prefsManager.getUsername(), nombre);
                     if (!pesoStr.isEmpty()) prefsManager.savePeso(Numeros.leerDecimal(pesoStr));
                     if (!alturaStr.isEmpty()) prefsManager.saveAltura(Double.parseDouble(alturaStr));
-                    if (!edadStr.isEmpty()) prefsManager.saveEdad(Integer.parseInt(edadStr));
+                    if (edad != null) prefsManager.saveEdad(edad);
                     String objetivo = OBJETIVOS[spObjetivo.getSelectedItemPosition()];
                     prefsManager.saveObjetivo(objetivo);
-                    prefsManager.saveNivel(NIVELES[spNivel.getSelectedItemPosition()]);
+                    prefsManager.saveNivel(nivel);
                     prefsManager.saveSexo(SEXOS[spSexo.getSelectedItemPosition()]);
                     prefsManager.saveActividad(ACTIVIDADES[spActividad.getSelectedItemPosition()]);
                     prefsManager.apuntarDuenoPerfil(prefsManager.getUsername());
@@ -233,6 +344,11 @@ public class EditarPerfilActivity extends AppCompatActivity {
                 @Override
                 public void onFail(int code, String message) {
                     LoadingDialog.hide(EditarPerfilActivity.this);
+                    // La API comprueba también el mínimo (DEC-038): se explica en el campo.
+                    if (code == 400 && ReglasEdad.esEdadMinima(message)) {
+                        marcarEdad(getString(R.string.error_edad_minima, ReglasEdad.MINIMA));
+                        return;
+                    }
                     UiFeedback.toastError(EditarPerfilActivity.this, code, message);
                 }
             });

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -38,7 +37,7 @@ import es.pmdm.gymprofit.utils.UIHelper;
 //     GP-083) y contraseña (pantalla nueva sobre /auth/change-password).
 //   · Tus datos y objetivos: todo abre editar perfil, que recalcula como siempre.
 //   · Preferencias: tema e idioma con los diálogos de siempre; notificaciones abre
-//     los ajustes de la app en el sistema.
+//     los avisos por tipo de la cuenta y el permiso del sistema (GP-112).
 //   · Ayuda: soporte, informar de un error (con versión, Android y modelo; nada
 //     personal) y sugerir una mejora, los tres a soporte@gymprofit.app.
 //   · Legal y acerca de: privacidad, licencias y Acerca de. Términos de uso sale
@@ -85,8 +84,10 @@ public class AjustesActivity extends BaseActivity {
         // Preferencias
         fila(R.id.filaTema, R.drawable.ic_ms_palette, R.string.ajustes_tema, this::mostrarDialogoTema);
         fila(R.id.filaIdioma, R.drawable.ic_ms_language, R.string.ajustes_idioma, this::mostrarDialogoIdioma);
-        fila(R.id.filaNotificaciones, R.drawable.ic_ms_notifications, R.string.ajustes_notificaciones,
-                this::abrirAjustesNotificaciones);
+        // Los avisos por tipo de la cuenta y el permiso del sistema (GP-112).
+        fila(R.id.filaNotificaciones, R.drawable.ic_ms_notifications, R.string.ajustes_notificaciones, () -> {
+            if (verificarAccesoRegistrado()) startActivity(new Intent(this, NotificacionesActivity.class));
+        });
 
         // Ayuda
         fila(R.id.filaSoporte, R.drawable.ic_ms_support_agent, R.string.ajustes_soporte,
@@ -285,18 +286,6 @@ public class AjustesActivity extends BaseActivity {
     }
 
     // ── Acciones ────────────────────────────────────────────────────────────
-
-    // Los ajustes de notificaciones de la app en el sistema.
-    private void abrirAjustesNotificaciones() {
-        Intent i;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            i = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
-                    .putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
-        } else {
-            i = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName()));
-        }
-        startActivity(i);
-    }
 
     // Correo a soporte@gymprofit.app con el asunto (y el cuerpo) de cada caso.
     private void escribir(String asunto, @Nullable String cuerpo) {

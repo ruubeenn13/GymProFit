@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Tu plan</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+button,input{font-family:inherit}
+button{cursor:pointer}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+.toque:active{transform:scale(.97)}
+@keyframes entra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes entraCarta{from{opacity:0;transform:translateY(28px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes destello{0%{box-shadow:0 0 0 0 rgba(255,106,0,0)}40%{box-shadow:0 0 12px 3px rgba(255,106,0,.7)}100%{box-shadow:0 0 0 0 rgba(255,106,0,0)}}
+@keyframes llena0{from{width:0}}
+@keyframes arco{from{stroke-dasharray:0 364.42}}
+@keyframes aura{0%{transform:scale(.8);opacity:0}30%{opacity:1}100%{transform:scale(1.3);opacity:0}}
+@keyframes gota{from{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}to{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}}
+@keyframes brilloCarta{from{transform:translateX(-130%) skewX(-18deg)}to{transform:translateX(420%) skewX(-18deg)}}
+@keyframes respira{0%{transform:scale(1);box-shadow:0 0 0 0 rgba(255,106,0,.55)}45%{transform:scale(1.03)}100%{transform:scale(1);box-shadow:0 0 0 16px rgba(255,106,0,0)}}
+@media (prefers-reduced-motion: reduce){.anim{animation:none !important;transition:none !important}.toque:active{transform:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 1080px; position: relative; overflow: hidden; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif;">
+<header style="display: flex; align-items: center; gap: 8px; padding: 8px 20px 0 4px;">
+<a href="DiasTiempo.dc.html" aria-label="Atrás" class="toque" style="flex-shrink: 0; width: 48px; height: 48px; border-radius: 24px; color: #F2F2F3; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: transform 120ms cubic-bezier(.2,0,0,1);"><span class="ms" aria-hidden="true">arrow_back</span></a>
+<div role="progressbar" aria-label="Progreso" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" aria-valuetext="Capítulo 4 de 4, tu plan" style="flex-grow: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px;">
+<span style="height: 6px; border-radius: 3px; background: #FF6A00;"></span>
+<span style="height: 6px; border-radius: 3px; background: #FF6A00;"></span>
+<span style="height: 6px; border-radius: 3px; background: #FF6A00;"></span>
+<span class="anim" style="height: 6px; border-radius: 3px; background: #252A31; animation: destello 700ms ease-out 650ms;"><span class="anim" style="display: block; width: 100%; height: 6px; border-radius: 3px; background: #FF6A00; animation: llena0 500ms cubic-bezier(.2,0,0,1) 150ms backwards;"></span></span>
+</div>
+</header>
+<main style="padding: 20px 16px 120px; display: flex; flex-direction: column; gap: 12px;">
+<div style="padding: 0 4px; display: flex; flex-direction: column; gap: 8px;">
+<span class="anim" style="color: #FFB27A; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; animation: entra 350ms cubic-bezier(.05,.7,.1,1) backwards;">Tu plan · 4 de 4</span>
+<h1 class="anim" style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.05; animation: entra 350ms cubic-bezier(.05,.7,.1,1) 50ms backwards;">Tu plan</h1>
+<p class="anim" style="margin: 0; font-size: 16px; line-height: 1.45; color: #C9CED6; animation: entra 350ms cubic-bezier(.05,.7,.1,1) 100ms backwards;">Para ganar músculo, en el gimnasio, 3 días de 45 minutos.</p>
+</div>
+<section aria-label="Cada día" class="anim" style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 14px; animation: entra 400ms cubic-bezier(.05,.7,.1,1) 120ms backwards;">
+<span style="color: #A1A9B6; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 1px; text-transform: uppercase;">Cada día</span>
+<div style="display: flex; align-items: center; gap: 16px;">
+<div style="position: relative; flex-shrink: 0; width: 136px; height: 136px;">
+<span class="anim" aria-hidden="true" style="position: absolute; inset: -12px; border-radius: 80px; background: radial-gradient(circle, rgba(255, 106, 0, 0.32), rgba(255, 106, 0, 0) 70%); opacity: 0; animation: aura 900ms ease-out 1250ms forwards;"></span>
+<svg width="136" height="136" viewBox="0 0 136 136" aria-hidden="true" style="position: absolute; inset: 0; transform: rotate(-90deg);">
+<circle cx="68" cy="68" r="58" fill="none" stroke="#252A31" stroke-width="12"></circle>
+<circle class="anim" cx="68" cy="68" r="58" fill="none" stroke="#6BA6F5" stroke-width="12" style="stroke-dasharray: 78.8 364.42; stroke-dashoffset: -2; animation: arco 320ms cubic-bezier(.2,0,0,1) 200ms backwards;"></circle>
+<circle class="anim" cx="68" cy="68" r="58" fill="none" stroke="#E8A94B" stroke-width="12" style="stroke-dasharray: 187.2 364.42; stroke-dashoffset: -84.8; animation: arco 480ms cubic-bezier(.2,0,0,1) 520ms backwards;"></circle>
+<circle class="anim" cx="68" cy="68" r="58" fill="none" stroke="#B295E8" stroke-width="12" style="stroke-dasharray: 86.4 364.42; stroke-dashoffset: -276; animation: arco 320ms cubic-bezier(.2,0,0,1) 1000ms backwards;"></circle>
+</svg>
+<div role="img" aria-label="2397 kilocalorías al día" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;">
+<span aria-hidden="true" style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1; font-variant-numeric: tabular-nums;">{{ kcal }}</span>
+<span aria-hidden="true" style="font-size: 13px; color: #A1A9B6;">kcal al día</span>
+</div>
+</div>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 12px;">
+<div style="display: flex; justify-content: space-between; align-items: baseline; font-size: 14px;"><span style="display: flex; align-items: center; gap: 7px;"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 4px; background: #6BA6F5;"></span>Proteína</span><span style="font-weight: 700; font-variant-numeric: tabular-nums;">{{ prot }} g</span></div>
+<div style="display: flex; justify-content: space-between; align-items: baseline; font-size: 14px;"><span style="display: flex; align-items: center; gap: 7px;"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 4px; background: #E8A94B;"></span>Carbohidratos</span><span style="font-weight: 700; font-variant-numeric: tabular-nums;">{{ carb }} g</span></div>
+<div style="display: flex; justify-content: space-between; align-items: baseline; font-size: 14px;"><span style="display: flex; align-items: center; gap: 7px;"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 4px; background: #B295E8;"></span>Grasa</span><span style="font-weight: 700; font-variant-numeric: tabular-nums;">{{ grasa }} g</span></div>
+<div style="display: flex; justify-content: space-between; align-items: center; font-size: 14px; padding-top: 10px; border-top: 1px solid #252A31;"><span style="display: flex; align-items: center; gap: 5px;"><span class="ms anim" aria-hidden="true" style="font-size: 18px; color: #6BA6F5; font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; animation: gota 700ms ease-out 1100ms backwards;">water_drop</span>Agua</span><span style="font-weight: 700; font-variant-numeric: tabular-nums;">{{ agua }} L</span></div>
+</div>
+</div>
+<span style="font-size: 14px; line-height: 1.4; color: #C9CED6;">Un 15 % más de lo que gastas, para ganar músculo.</span>
+</section>
+<section aria-label="Tu programa" class="anim" style="position: relative; overflow: hidden; background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px; animation: entraCarta 450ms cubic-bezier(.05,.7,.1,1) 1150ms backwards;">
+<span style="color: #A1A9B6; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 1px; text-transform: uppercase;">Tu programa</span>
+<div style="display: flex; flex-direction: column; gap: 2px;">
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 28px; line-height: 1.1;">Cuerpo completo</h2>
+<span style="font-size: 14px; color: #A1A9B6;">Gimnasio · 3 días · sesiones de 45 min</span>
+</div>
+<div style="display: flex; flex-direction: column; background: #121418; border-radius: 16px;">
+<div class="anim" style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: 1px solid #252A31; animation: entra 300ms cubic-bezier(.05,.7,.1,1) 1400ms backwards;"><span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px; font-weight: 600;">Cuerpo completo A</span><span style="font-size: 13px; line-height: 1.35; color: #A1A9B6;">Sentadilla, press de banca y remo con barra</span></span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px; white-space: nowrap;">45 min</span></div>
+<div class="anim" style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: 1px solid #252A31; animation: entra 300ms cubic-bezier(.05,.7,.1,1) 1500ms backwards;"><span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px; font-weight: 600;">Cuerpo completo B</span><span style="font-size: 13px; line-height: 1.35; color: #A1A9B6;">Peso muerto rumano, press militar y jalón al pecho</span></span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px; white-space: nowrap;">45 min</span></div>
+<div class="anim" style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; animation: entra 300ms cubic-bezier(.05,.7,.1,1) 1600ms backwards;"><span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px; font-weight: 600;">Cuerpo completo C</span><span style="font-size: 13px; line-height: 1.35; color: #A1A9B6;">Hip thrust, press con mancuernas y dominadas</span></span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px; white-space: nowrap;">45 min</span></div>
+</div>
+<div style="display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.4; color: #C9CED6;"><span class="ms" aria-hidden="true" style="font-size: 20px; color: #A1A9B6;">event</span><span>Lunes A, miércoles B y viernes C. En Entrenar las tienes todas, y en Inicio, la que toca.</span></div>
+<span class="anim" aria-hidden="true" style="position: absolute; top: 0; bottom: 0; left: 0; width: 28%; background: linear-gradient(90deg, rgba(255, 178, 122, 0), rgba(255, 178, 122, 0.16), rgba(255, 178, 122, 0)); transform: translateX(-130%) skewX(-18deg); pointer-events: none; animation: brilloCarta 900ms ease-in-out 1800ms both;"></span>
+</section>
+<section aria-label="Aviso de salud" class="anim" style="background: #121418; border: 1px solid #4A505B; border-radius: 16px; padding: 14px; display: flex; gap: 12px; align-items: flex-start; animation: entra 350ms cubic-bezier(.05,.7,.1,1) 2000ms backwards;">
+<span class="ms" aria-hidden="true" style="flex-shrink: 0; color: #A1A9B6;">health_and_safety</span>
+<p style="margin: 0; font-size: 14px; line-height: 1.45; color: #C9CED6;">Es una estimación para empezar, no un consejo médico. Si tienes alguna lesión o problema de salud, o estás embarazada, consulta antes con un profesional. <a href="#" style="font-weight: 600;">Términos de uso</a></p>
+</section>
+</main>
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 16px 24px; background: #0B0C0E; border-top: 1px solid #252A31;">
+<a href="Guarda.dc.html" class="anim toque" style="height: 52px; border-radius: 26px; background: #FF6A00; color: #1A0E00; font-size: 17px; font-weight: 700; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: transform 120ms cubic-bezier(.2,0,0,1); animation: respira 1400ms ease-in-out 2400ms;">Guarda tu plan</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1080}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { t: 1 };
+  }
+  componentDidMount() {
+    const quieto = typeof window !== 'undefined' && window.matchMedia
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (quieto || typeof requestAnimationFrame !== 'function') return;
+    const inicio = performance.now();
+    const paso = (ahora) => {
+      const t = Math.min(1, (ahora - inicio) / 1200);
+      this.setState({ t });
+      if (t < 1) this.raf = requestAnimationFrame(paso);
+    };
+    this.setState({ t: 0 });
+    this.raf = requestAnimationFrame(paso);
+  }
+  componentWillUnmount() {
+    if (this.raf) cancelAnimationFrame(this.raf);
+  }
+  renderVals() {
+    const e = 1 - Math.pow(1 - this.state.t, 3);
+    return {
+      kcal: String(Math.round(2397 * e)),
+      prot: String(Math.round(136 * e)),
+      carb: String(Math.round(314 * e)),
+      grasa: String(Math.round(66 * e)),
+      agua: (2.2 * e).toFixed(1).replace('.', ',')
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -204,8 +204,15 @@ public class ResumenSesionActivity extends AppCompatActivity {
 
         LinearLayout contenedor = findViewById(R.id.contenedorRecordsResumen);
         java.util.Locale idioma = FechaUtils.localeDeLaApp(this);
+        int oro = androidx.core.content.ContextCompat.getColor(this, R.color.gp_gold);
+        int claro = androidx.core.content.ContextCompat.getColor(this, R.color.gp_on_primary_container);
+        int orden = 0;
         for (Record r : records) {
             View fila = getLayoutInflater().inflate(R.layout.item_record, contenedor, false);
+            // El trofeo dorado de cada récord batido, que celebra al entrar (GP-104, momento 12).
+            android.widget.ImageView trofeo = fila.findViewById(R.id.ivTrofeoRecord);
+            trofeo.setImageResource(R.drawable.ic_ms_trophy_fill);
+            trofeo.setImageTintList(android.content.res.ColorStateList.valueOf(oro));
             String nombre = r.nombre(idioma);
             String marca = Marcas.texto(this, r);
             String antes = Marcas.anterior(this, r);
@@ -222,6 +229,9 @@ public class ResumenSesionActivity extends AppCompatActivity {
             fila.setFocusable(true);
             fila.setContentDescription(getString(R.string.record_a11y, nombre, marca, antes != null ? antes : ""));
             contenedor.addView(fila);
+            // Uno detrás de otro, para que cada récord se vea celebrar.
+            es.pmdm.gymprofit.utils.Movimiento.celebrarRecord((android.view.ViewGroup) fila, trofeo,
+                    oro, claro, 400L + 300L * orden++);
         }
 
         TextView tvPrimeras = findViewById(R.id.tvPrimerasMarcasResumen);

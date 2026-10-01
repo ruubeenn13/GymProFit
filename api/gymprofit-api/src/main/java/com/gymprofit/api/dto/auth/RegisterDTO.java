@@ -24,7 +24,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class RegisterDTO implements Serializable {
     // Nombre de usuario único, entre 3 y 50 caracteres y sin «@». Opcional desde el alta
-    // nueva (GP-103): si no llega, la API lo propone con la parte del correo (NombreUsuario).
+    // nueva (GP-103): si no llega, la API lo propone con el nombre o, sin él, con la parte
+    // del correo (NombreUsuario, GP-147).
     @Size(min = 3, max = 50)
     private String username;
 

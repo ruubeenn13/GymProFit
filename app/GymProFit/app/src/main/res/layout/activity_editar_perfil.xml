@@ -101,9 +101,10 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Edad -->
+            <!-- Edad: de 14 a 100 (GP-145); por debajo de 14 se explica el mínimo. -->
             <com.google.android.material.textfield.TextInputLayout
-        app:errorIconDrawable="@drawable/ic_ms_error"
+                android:id="@+id/tilEdad"
+                app:errorIconDrawable="@drawable/ic_ms_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="14dp"
@@ -172,6 +173,19 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Qué cuenta cada nivel de actividad (GP-103): el factor de la fórmula ya
+                 incluye el ejercicio, y sin decirlo cada uno entendía una cosa. -->
+            <TextView
+                android:id="@+id/tvActividadDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:layout_marginBottom="14dp"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:textSize="@dimen/text_caption"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+
             <!-- Selector de nivel de experiencia -->
             <!-- Nivel de experiencia -->
             <TextView
@@ -229,6 +243,19 @@
                     android:paddingEnd="16dp" />
 
             </com.google.android.material.card.MaterialCardView>
+
+            <!-- De 14 a 17 años, «Perder grasa» se queda en mantenimiento (GP-103): se dice. -->
+            <TextView
+                android:id="@+id/tvNotaObjetivo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:text="@string/editar_perfil_nota_menores"
+                android:textSize="@dimen/text_caption"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:visibility="gone" />
 
             <!-- Botón de guardado de cambios -->
             <com.google.android.material.button.MaterialButton

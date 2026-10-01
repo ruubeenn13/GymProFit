@@ -31,6 +31,18 @@ public interface ProgramaApi {
     @GET("programas/recomendado")
     Call<Recomendado> recomendado(@Query("equipamiento") String equipamiento, @Query("dias") int dias);
 
+    // El recomendado para un nivel dado, sin mirar el perfil: lo pide el alta antes de que
+    // haya cuenta (GP-103), y la ruta no necesita token. Con nivel siempre: sin él, la API
+    // busca el del perfil y su motivo dice «Editar perfil», que en el alta no existe.
+    @GET("programas/recomendado")
+    Call<Recomendado> recomendadoPara(@Query("equipamiento") String equipamiento, @Query("dias") int dias,
+                                      @Query("nivel") String nivel);
+
+    // Cómo quedaría con ese nivel, objetivo y minutos, sin mirar el perfil (GP-103).
+    @GET("programas/{codigo}/vista-previa")
+    Call<VistaPrevia> vistaPreviaPara(@Path("codigo") String codigo, @Query("minutos") int minutos,
+                                      @Query("nivel") String nivel, @Query("objetivo") String objetivo);
+
     // La semana y cada rutina con sus ejercicios.
     @GET("programas/{codigo}")
     Call<ProgramaDetalle> detalle(@Path("codigo") String codigo);

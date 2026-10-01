@@ -70,6 +70,14 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
     private static final String KEY_OB_ACTIVIDAD = "ob_actividad";
     private static final String KEY_OB_OBJETIVO  = "ob_objetivo";
     private static final String KEY_OB_NIVEL     = "ob_nivel";
+    // Del alta nueva (GP-103, lote 1.5.1).
+    private static final String KEY_OB_DONDE     = "ob_donde";
+    private static final String KEY_OB_DIAS      = "ob_dias";
+    private static final String KEY_OB_MINUTOS   = "ob_minutos";
+    private static final String KEY_OB_SIN_DATOS = "ob_sin_datos";
+    private static final String KEY_OB_PASO      = "ob_paso";
+    private static final String KEY_OB_PROGRAMA  = "ob_programa";
+    private static final String KEY_OB_PROGRAMA_NOMBRE = "ob_programa_nombre";
 
     private SharedPreferences prefs;
     private SharedPreferences.Editor editor;
@@ -334,6 +342,15 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
         editor.apply();
     }
 
+    /**
+     * Si hay con qué calcular las calorías: peso y altura de esta cuenta (GP-103). Sin
+     * ellos —«Prefiero no decirlo» en el alta— no hay objetivo, en vez de uno inventado
+     * con los valores por defecto.
+     */
+    public boolean hayDatosParaCalorias() {
+        return perfilUsable() && prefs.contains(KEY_PESO) && prefs.contains(KEY_ALTURA);
+    }
+
     public int getCaloriasDiarias() { return prefs.getInt(KEY_CALORIAS, 2000); }
     public int getProteinasDiarias() { return prefs.getInt(KEY_PROTEINAS, 150); }
     public int getCarbosDiarios() { return prefs.getInt(KEY_CARBOS, 250); }
@@ -410,6 +427,52 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
     public String getBorradorObjetivo()  { return prefs.getString(KEY_OB_OBJETIVO, ""); }
     public String getBorradorNivel()     { return prefs.getString(KEY_OB_NIVEL, ""); }
 
+    // ── Borrador del alta nueva (GP-103, lote 1.5.1) ──
+    // Cada respuesta se guarda al elegirla, no al pulsar «Siguiente»: si Android cierra
+    // la app a mitad de una pregunta, lo elegido sigue ahí al volver.
+
+    public void guardarBorradorSexo(String sexo)        { editor.putString(KEY_OB_SEXO, sexo).apply(); }
+    public void guardarBorradorEdad(int edad)           { editor.putInt(KEY_OB_EDAD, edad).apply(); }
+    public void guardarBorradorAltura(double altura)    { editor.putFloat(KEY_OB_ALTURA, (float) altura).apply(); }
+    /** @param peso ya normalizado con punto decimal. */
+    public void guardarBorradorPeso(String peso)        { editor.putString(KEY_OB_PESO, peso).apply(); }
+    public void guardarBorradorActividad(String a)      { editor.putString(KEY_OB_ACTIVIDAD, a).apply(); }
+    public void guardarBorradorDonde(String donde)      { editor.putString(KEY_OB_DONDE, donde).apply(); }
+    public void guardarBorradorDias(int dias)           { editor.putInt(KEY_OB_DIAS, dias).apply(); }
+    public void guardarBorradorMinutos(int minutos)     { editor.putInt(KEY_OB_MINUTOS, minutos).apply(); }
+    /** «Prefiero no decirlo» en «Sobre ti»: el plan sale sin calorías. */
+    public void guardarBorradorSinDatos(boolean si)     { editor.putBoolean(KEY_OB_SIN_DATOS, si).apply(); }
+    /** La pantalla del cuestionario en la que se está, por su orden. */
+    public void guardarBorradorPaso(int paso)           { editor.putInt(KEY_OB_PASO, paso).apply(); }
+
+    /** El sexo elegido, o "" si aún no (getBorradorSexo da HOMBRE por defecto). */
+    public String getBorradorSexoElegido() { return prefs.getString(KEY_OB_SEXO, ""); }
+    public String getBorradorDonde()       { return prefs.getString(KEY_OB_DONDE, ""); }
+    public int    getBorradorDias()        { return prefs.getInt(KEY_OB_DIAS, 0); }
+    public int    getBorradorMinutos()     { return prefs.getInt(KEY_OB_MINUTOS, 0); }
+    public boolean isBorradorSinDatos()    { return prefs.getBoolean(KEY_OB_SIN_DATOS, false); }
+    public int    getBorradorPaso()        { return prefs.getInt(KEY_OB_PASO, 0); }
+
+    /** El programa que recomendó «Tu plan», para seguirlo al crear la cuenta. */
+    public void guardarBorradorPrograma(String codigo, String nombre) {
+        editor.putString(KEY_OB_PROGRAMA, codigo).putString(KEY_OB_PROGRAMA_NOMBRE, nombre).apply();
+    }
+    public String getBorradorProgramaCodigo() { return prefs.getString(KEY_OB_PROGRAMA, ""); }
+    public String getBorradorProgramaNombre() { return prefs.getString(KEY_OB_PROGRAMA_NOMBRE, ""); }
+
+    /** Borra las cinco respuestas de «Sobre ti» (al elegir «Prefiero no decirlo»). */
+    public void borrarBorradorSobreTi() {
+        editor.remove(KEY_OB_SEXO).remove(KEY_OB_EDAD).remove(KEY_OB_ALTURA)
+              .remove(KEY_OB_PESO).remove(KEY_OB_ACTIVIDAD).apply();
+    }
+
+    /** Lo contestado, de una vez, para las reglas de AltaPasos. */
+    public AltaPasos.Respuestas getBorradorRespuestas() {
+        return new AltaPasos.Respuestas(getBorradorObjetivo(), getBorradorNivel(), getBorradorSexoElegido(),
+                getBorradorEdad(), getBorradorAltura(), getBorradorPeso(), getBorradorActividad(),
+                isBorradorSinDatos(), getBorradorDonde(), getBorradorDias(), getBorradorMinutos());
+    }
+
     /**
      * Tira el borrador. Se llama al terminar el asistente y al saltarlo: en
      * ambos casos deja de haber nada que reanudar.
@@ -417,8 +480,67 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
     public void limpiarBorradorOnboarding() {
         editor.remove(KEY_OB_NOMBRE).remove(KEY_OB_EMAIL).remove(KEY_OB_EDAD)
               .remove(KEY_OB_SEXO).remove(KEY_OB_PESO).remove(KEY_OB_ALTURA)
-              .remove(KEY_OB_ACTIVIDAD).remove(KEY_OB_OBJETIVO).remove(KEY_OB_NIVEL);
+              .remove(KEY_OB_ACTIVIDAD).remove(KEY_OB_OBJETIVO).remove(KEY_OB_NIVEL)
+              .remove(KEY_OB_DONDE).remove(KEY_OB_DIAS).remove(KEY_OB_MINUTOS)
+              .remove(KEY_OB_SIN_DATOS).remove(KEY_OB_PASO)
+              .remove(KEY_OB_PROGRAMA).remove(KEY_OB_PROGRAMA_NOMBRE);
         editor.apply();
+    }
+
+    // ── Después del alta (GP-103, lote 1.5.1) ──
+    // El programa que el alta no pudo seguir (sin red, o la API falló): la cuenta vale e
+    // Inicio lo ofrece. Y el primer día: Inicio enseña «Primeros pasos» y al fundador.
+    private static final String PREFIJO_PENDIENTE_CODIGO = "programa_pendiente_codigo_";
+    private static final String PREFIJO_PENDIENTE_NOMBRE = "programa_pendiente_nombre_";
+    private static final String PREFIJO_PENDIENTE_MINUTOS = "programa_pendiente_minutos_";
+    private static final String PREFIJO_PRIMER_DIA = "primer_dia_";
+
+    public void guardarProgramaPendiente(String codigo, String nombre, int minutos) {
+        int id = getUsuarioId();
+        editor.putString(PREFIJO_PENDIENTE_CODIGO + id, codigo)
+              .putString(PREFIJO_PENDIENTE_NOMBRE + id, nombre)
+              .putInt(PREFIJO_PENDIENTE_MINUTOS + id, minutos).apply();
+    }
+
+    /** El código del programa que quedó por seguir, o "" si no hay. */
+    public String getProgramaPendienteCodigo() { return prefs.getString(PREFIJO_PENDIENTE_CODIGO + getUsuarioId(), ""); }
+    public String getProgramaPendienteNombre() { return prefs.getString(PREFIJO_PENDIENTE_NOMBRE + getUsuarioId(), ""); }
+    public int getProgramaPendienteMinutos()   { return prefs.getInt(PREFIJO_PENDIENTE_MINUTOS + getUsuarioId(), 60); }
+
+    public void borrarProgramaPendiente() {
+        int id = getUsuarioId();
+        editor.remove(PREFIJO_PENDIENTE_CODIGO + id).remove(PREFIJO_PENDIENTE_NOMBRE + id)
+              .remove(PREFIJO_PENDIENTE_MINUTOS + id).apply();
+    }
+
+    /** La cuenta acaba de hacer el alta (o el cuestionario): Inicio la recibe como primer día. */
+    public void marcarPrimerDia(String usuario) { editor.putBoolean(PREFIJO_PRIMER_DIA + usuario, true).apply(); }
+    public boolean isPrimerDia(String usuario)  { return prefs.getBoolean(PREFIJO_PRIMER_DIA + usuario, false); }
+
+    // Lo que Inicio recuerda del primer día: si se ocultaron «Primeros pasos» o la tarjeta
+    // del fundador, y si la cuenta ya apuntó alguna comida (Inicio solo pide las de hoy).
+    private static final String PREFIJO_PASOS_OCULTOS = "primeros_pasos_ocultos_";
+    private static final String PREFIJO_FUNDADOR_OCULTO = "fundador_oculto_";
+    private static final String PREFIJO_PRIMERA_COMIDA = "primera_comida_";
+
+    public void ocultarPrimerosPasos(String usuario) { editor.putBoolean(PREFIJO_PASOS_OCULTOS + usuario, true).apply(); }
+    public boolean isPrimerosPasosOcultos(String usuario) { return prefs.getBoolean(PREFIJO_PASOS_OCULTOS + usuario, false); }
+    public void ocultarFundador(String usuario) { editor.putBoolean(PREFIJO_FUNDADOR_OCULTO + usuario, true).apply(); }
+    public boolean isFundadorOculto(String usuario) { return prefs.getBoolean(PREFIJO_FUNDADOR_OCULTO + usuario, false); }
+    public void marcarPrimeraComida(String usuario) { editor.putBoolean(PREFIJO_PRIMERA_COMIDA + usuario, true).apply(); }
+    public boolean isPrimeraComida(String usuario) { return prefs.getBoolean(PREFIJO_PRIMERA_COMIDA + usuario, false); }
+
+    // ── Avisos (GP-112, lote 1.5.1) ──
+    // Si a esta cuenta ya se le preguntó por los avisos en el alta: entonces Inicio no
+    // vuelve a pedir el permiso de Android por su cuenta, también si dijo «Ahora no».
+    private static final String PREFIJO_AVISOS_PREGUNTADOS = "avisos_preguntados_";
+
+    public void setAvisosPreguntados(String usuario) {
+        editor.putBoolean(PREFIJO_AVISOS_PREGUNTADOS + usuario, true).apply();
+    }
+
+    public boolean isAvisosPreguntados(String usuario) {
+        return prefs.getBoolean(PREFIJO_AVISOS_PREGUNTADOS + usuario, false);
     }
 
     public void saveRol(String rol) { editor.putString(KEY_ROL, rol); editor.apply(); }

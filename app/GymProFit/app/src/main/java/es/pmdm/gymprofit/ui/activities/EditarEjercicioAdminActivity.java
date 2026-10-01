@@ -58,7 +58,7 @@ public class EditarEjercicioAdminActivity extends BaseActivity {
         String[] gruposVisibles = new String[GRUPOS.length];
         for (int i = 0; i < GRUPOS.length; i++) gruposVisibles[i] = UIHelper.traducirGrupoMuscular(this, GRUPOS[i]);
         String[] dificultadesVisibles = new String[DIFICULTADES.length];
-        for (int i = 0; i < DIFICULTADES.length; i++) dificultadesVisibles[i] = UIHelper.traducirNivel(this, DIFICULTADES[i]);
+        for (int i = 0; i < DIFICULTADES.length; i++) dificultadesVisibles[i] = UIHelper.traducirNivelExacto(this, DIFICULTADES[i]);
 
         ArrayAdapter<String> grupoAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, gruposVisibles);

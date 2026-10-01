@@ -20,6 +20,7 @@ import com.gymprofit.api.service.usuario.ReglasPerfil;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -103,9 +104,16 @@ public class AuthService implements IAuthService {
     // Registra un nuevo usuario público: valida unicidad de username/email
     // (con un código en "cause" que dice cuál de los dos está en uso, GP-095),
     // codifica la contraseña, asigna siempre el rol USER y guarda el usuario.
-    // Sin username, lo propone NombreUsuario con la parte del correo (GP-103), después
-    // de comprobar el correo: si ya tiene cuenta, eso es lo que hay que decir.
-    @Transactional
+    // Sin username, lo propone NombreUsuario con el nombre o, sin él, con la parte del
+    // correo (GP-103, GP-147), después de comprobar el correo: si ya tiene cuenta, eso es
+    // lo que hay que decir.
+    //
+    // SIN @Transactional, a propósito (GP-146). Dos altas a la vez con la misma base ven
+    // libre la misma propuesta y la restricción única deja entrar solo a una. Para que la
+    // otra pueda probar el número siguiente, cada intento de guardar tiene que ser su
+    // propia transacción: saveAndFlush la abre y la cierra, y si choca se revierte entera
+    // sin dejar marcada como rollback-only una transacción de fuera, que es lo que
+    // convertía el choque en un 500 (el mismo caso que GuardadoSesionCompletaService).
     @Override
     public String register(RegisterDTO registerDTO) {
         boolean propuesto = registerDTO.getUsername() == null || registerDTO.getUsername().isBlank();
@@ -128,7 +136,8 @@ public class AuthService implements IAuthService {
         String nombre = ReglasPerfil.nombre(registerDTO.getNombre());
         ReglasPerfil.edad(registerDTO.getEdad());
 
-        String username = propuesto ? nombreUsuario.proponer(registerDTO.getEmail()) : registerDTO.getUsername();
+        // Con nombre, sale del nombre; del correo, solo sin él (GP-147).
+        String username = propuesto ? nombreUsuario.proponer(nombre, registerDTO.getEmail()) : registerDTO.getUsername();
 
         // Lista de bloqueo y nombre (GP-101). Después de la unicidad: si el usuario ya
         // existe, eso es lo primero que hay que corregir.
@@ -150,9 +159,53 @@ public class AuthService implements IAuthService {
             }
         }
 
+        String hash = passwordEncoder.encode(registerDTO.getPassword());
+        for (int intento = 1; ; intento++) {
+            try {
+                usuarioRepository.saveAndFlush(nuevoUsuario(registerDTO, username, hash, nombre, nivelExperiencia, roles));
+                break;
+            } catch (DataIntegrityViolationException e) {
+                username = otroIntento(registerDTO, propuesto, nombre, username, intento, e);
+            }
+        }
+
+        logger.info("Usuario '{}' registrado correctamente con roles: {}", username,
+                roles.stream().map(r -> r.getNombre().name()).collect(Collectors.joining(", ")));
+        return username;
+    }
+
+    /** Intentos de guardar un usuario propuesto antes de rendirse (GP-146). */
+    static final int INTENTOS_ALTA = 5;
+
+    // Qué hacer cuando el alta choca al guardar con otra que se ha adelantado (GP-146).
+    // Si se llevó el correo, es el mismo «correo en uso» de la comprobación previa; si se
+    // llevó el usuario escrito, lo mismo con el usuario. Si se llevó el propuesto, se
+    // propone otra vez, que ya lo ve ocupado y da el número siguiente. Cualquier otra
+    // cosa, o demasiados choques seguidos, sigue su curso.
+    private String otroIntento(RegisterDTO dto, boolean propuesto, String nombre, String username,
+                               int intento, DataIntegrityViolationException e) {
+        if (usuarioRepository.existsByEmail(dto.getEmail())) {
+            throw DuplicateEntityException.conCodigo(DuplicateEntityException.EMAIL_EN_USO,
+                    "error.email.enUso", dto.getEmail());
+        }
+        if (!propuesto && usuarioRepository.existsByUsername(username)) {
+            throw DuplicateEntityException.conCodigo(DuplicateEntityException.USERNAME_EN_USO,
+                    "error.username.enUso", username);
+        }
+        if (!propuesto || intento >= INTENTOS_ALTA || !usuarioRepository.existsByUsername(username)) {
+            throw e;
+        }
+        String otro = nombreUsuario.proponer(nombre, dto.getEmail());
+        logger.info("Alta: el usuario propuesto '{}' se lo llevó otra alta; se prueba '{}'", username, otro);
+        return otro;
+    }
+
+    // La fila del usuario nuevo, entera; una por intento, para no reutilizar la que chocó.
+    private static Usuario nuevoUsuario(RegisterDTO registerDTO, String username, String hash, String nombre,
+                                        NivelExperiencia nivelExperiencia, List<Role> roles) {
         Usuario usuario = new Usuario();
         usuario.setUsername(username);
-        usuario.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
+        usuario.setPassword(hash);
         usuario.setEmail(registerDTO.getEmail());
         usuario.setPeso(registerDTO.getPeso());
         usuario.setAltura(registerDTO.getAltura());
@@ -165,12 +218,7 @@ public class AuthService implements IAuthService {
         usuario.setFechaRegistro(LocalDateTime.now());
         usuario.setActivo(true);
         usuario.setRoles(roles);
-
-        usuarioRepository.save(usuario);
-
-        logger.info("Usuario '{}' registrado correctamente con roles: {}", username,
-                roles.stream().map(r -> r.getNombre().name()).collect(Collectors.joining(", ")));
-        return username;
+        return usuario;
     }
 
     // Genera un token JWT para el usuario invitado predefinido "guest" sin

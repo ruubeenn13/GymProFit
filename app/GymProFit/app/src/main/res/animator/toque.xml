@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  toque — 1 · Elegir (GP-104, DEC-039): lo que se pulsa se hunde un 3 % en 120 ms con
+  la curva estándar, y vuelve igual al soltar. Con «Quitar animaciones», Android lo
+  deja quieto: la escala de duración a 0 salta al final, que es el tamaño normal al soltar.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <set>
+            <objectAnimator android:propertyName="scaleX" android:valueTo="0.97" android:duration="120"
+                android:interpolator="@interpolator/estandar" />
+            <objectAnimator android:propertyName="scaleY" android:valueTo="0.97" android:duration="120"
+                android:interpolator="@interpolator/estandar" />
+        </set>
+    </item>
+    <item>
+        <set>
+            <objectAnimator android:propertyName="scaleX" android:valueTo="1" android:duration="120"
+                android:interpolator="@interpolator/estandar" />
+            <objectAnimator android:propertyName="scaleY" android:valueTo="1" android:duration="120"
+                android:interpolator="@interpolator/estandar" />
+        </set>
+    </item>
+</selector>

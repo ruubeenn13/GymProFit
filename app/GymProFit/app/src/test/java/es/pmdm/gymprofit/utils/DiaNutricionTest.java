@@ -1,6 +1,7 @@
 package es.pmdm.gymprofit.utils;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -51,5 +52,18 @@ public class DiaNutricionTest {
         assertEquals(DiaNutricion.Estado.NORMAL, d.estadoGrasas());
         assertEquals(-300, d.kcalRestantes());
         assertEquals(100, DiaNutricion.porcentaje(d.kcal, d.objetivoKcal));
+    }
+
+    @Test
+    public void sin_objetivo_cuenta_lo_comido_y_nada_se_pasa() {
+        // «Prefiero no decirlo» (GP-103): sin peso ni altura no hay objetivo que inventar.
+        DiaNutricion d = DiaNutricion.de(Arrays.asList(comida(2300, 150, 201, 70)), null);
+        assertTrue(d.sinObjetivo);
+        assertEquals(2300, d.kcal);
+        assertEquals(0, d.objetivoKcal);
+        assertEquals(0, DiaNutricion.porcentaje(d.kcal, d.objetivoKcal));
+        assertEquals(DiaNutricion.Estado.NORMAL, d.estadoProteinas());
+        assertEquals(DiaNutricion.Estado.NORMAL, d.estadoCarbohidratos());
+        assertEquals(DiaNutricion.Estado.NORMAL, d.estadoGrasas());
     }
 }

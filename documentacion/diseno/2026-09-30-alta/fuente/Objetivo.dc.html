@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Tu objetivo</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+button,input{font-family:inherit}
+button{cursor:pointer}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+.toque:active{transform:scale(.97)}
+@keyframes entra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.18);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes rebote{0%{transform:scale(.6) rotate(-14deg)}60%{transform:scale(1.18) rotate(5deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes late{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.9);opacity:0}}
+@keyframes enciende{0%{transform:scale(.94);background-color:#252A31;color:#6F7784}100%{transform:scale(1);background-color:#FF6A00;color:#1A0E00}}
+@keyframes llena0{from{width:0}}
+@media (prefers-reduced-motion: reduce){.anim{animation:none !important;transition:none !important}.toque:active{transform:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif; display: flex; flex-direction: column;">
+<header style="display: flex; align-items: center; gap: 8px; padding: 8px 20px 0 4px;">
+<a href="Main.dc.html" aria-label="Atrás" class="toque" style="flex-shrink: 0; width: 48px; height: 48px; border-radius: 24px; color: #F2F2F3; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: transform 120ms cubic-bezier(.2,0,0,1);"><span class="ms" aria-hidden="true">arrow_back</span></a>
+<div role="progressbar" aria-label="Progreso" aria-valuemin="0" aria-valuemax="100" aria-valuenow="12" aria-valuetext="Capítulo 1 de 4, tu objetivo" style="flex-grow: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px;">
+<span style="height: 6px; border-radius: 3px; background: #252A31; overflow: hidden;"><span class="anim" style="display: block; width: 50%; height: 6px; border-radius: 3px; background: #FF6A00; animation: llena0 500ms cubic-bezier(.2,0,0,1) 150ms backwards;"></span></span>
+<span style="height: 6px; border-radius: 3px; background: #252A31;"></span>
+<span style="height: 6px; border-radius: 3px; background: #252A31;"></span>
+<span style="height: 6px; border-radius: 3px; background: #252A31;"></span>
+</div>
+</header>
+<div style="padding: 20px 20px 0; display: flex; flex-direction: column; gap: 10px;">
+<div style="position: relative; width: 56px; height: 56px; margin-bottom: 4px;">
+<span class="anim" aria-hidden="true" style="position: absolute; inset: 0; border-radius: 28px; border: 2px solid #FF6A00; box-sizing: border-box; opacity: 0; animation: late 900ms ease-out 300ms 2 forwards;"></span>
+<span class="anim" aria-hidden="true" style="position: absolute; inset: 0; border-radius: 28px; background: #3A2110; color: #FF6A00; display: flex; align-items: center; justify-content: center; animation: pop 450ms cubic-bezier(.34,1.56,.64,1) backwards;"><span class="ms f" style="font-size: 30px;">flag</span></span>
+</div>
+<span class="anim" style="color: #FFB27A; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; animation: entra 350ms cubic-bezier(.05,.7,.1,1) 60ms backwards;">Tu objetivo · 1 de 4</span>
+<h1 class="anim" style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 34px; line-height: 1.08; animation: entra 350ms cubic-bezier(.05,.7,.1,1) 110ms backwards;">¿Qué quieres conseguir?</h1>
+<p class="anim" style="margin: 0; font-size: 16px; line-height: 1.45; color: #C9CED6; animation: entra 350ms cubic-bezier(.05,.7,.1,1) 160ms backwards;">Con esto calculamos tus calorías y ajustamos tus rutinas. Puedes cambiarlo después.</p>
+</div>
+<div style="flex-grow: 1;"></div>
+<div role="radiogroup" aria-label="Tu objetivo" style="padding: 0 16px; display: flex; flex-direction: column; gap: 10px;">
+<button type="button" role="radio" class="anim toque" aria-checked="{{ perder.sel }}" onClick="{{ perder.pick }}" style="display: flex; align-items: center; gap: 14px; width: 100%; min-height: 76px; padding: 12px 14px; border-radius: 18px; border: 2px solid {{ perder.borde }}; background: {{ perder.fondo }}; color: #F2F2F3; text-align: left; box-sizing: border-box; transition: background-color 150ms ease-out, border-color 150ms ease-out, transform 120ms cubic-bezier(.2,0,0,1); animation: entra 350ms cubic-bezier(.05,.7,.1,1) 220ms backwards;">
+<span aria-hidden="true" class="anim" style="flex-shrink: 0; width: 44px; height: 44px; border-radius: 22px; background: {{ perder.icoFondo }}; color: {{ perder.icoColor }}; display: flex; align-items: center; justify-content: center; transition: background-color 150ms ease-out, color 150ms ease-out;"><sc-if value="{{ perder.sel }}" hint-placeholder-val="{{ false }}"><span class="ms f anim" style="animation: rebote 420ms cubic-bezier(.34,1.56,.64,1);">trending_down</span></sc-if><sc-if value="{{ perder.noSel }}" hint-placeholder-val="{{ true }}"><span class="ms">trending_down</span></sc-if></span>
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 17px; font-weight: 600;">Perder grasa</span><span style="font-size: 14px; line-height: 1.35; color: #C9CED6;">Comerás un 20 % menos de lo que gastas, con más proteína</span></span>
+<span aria-hidden="true" class="anim" style="flex-shrink: 0; width: 28px; height: 28px; border-radius: 14px; border: 2px solid {{ perder.aro }}; background: {{ perder.marca }}; display: flex; align-items: center; justify-content: center; box-sizing: border-box; transition: background-color 150ms ease-out, border-color 150ms ease-out;"><sc-if value="{{ perder.sel }}" hint-placeholder-val="{{ false }}"><span class="ms f anim" style="font-size: 18px; color: #1A0E00; animation: pop 260ms cubic-bezier(.34,1.56,.64,1);">check</span></sc-if></span>
+</button>
+<button type="button" role="radio" class="anim toque" aria-checked="{{ musculo.sel }}" onClick="{{ musculo.pick }}" style="display: flex; align-items: center; gap: 14px; width: 100%; min-height: 76px; padding: 12px 14px; border-radius: 18px; border: 2px solid {{ musculo.borde }}; background: {{ musculo.fondo }}; color: #F2F2F3; text-align: left; box-sizing: border-box; transition: background-color 150ms ease-out, border-color 150ms ease-out, transform 120ms cubic-bezier(.2,0,0,1); animation: entra 350ms cubic-bezier(.05,.7,.1,1) 260ms backwards;">
+<span aria-hidden="true" class="anim" style="flex-shrink: 0; width: 44px; height: 44px; border-radius: 22px; background: {{ musculo.icoFondo }}; color: {{ musculo.icoColor }}; display: flex; align-items: center; justify-content: center; transition: background-color 150ms ease-out, color 150ms ease-out;"><sc-if value="{{ musculo.sel }}" hint-placeholder-val="{{ false }}"><span class="ms f anim" style="animation: rebote 420ms cubic-bezier(.34,1.56,.64,1);">fitness_center</span></sc-if><sc-if value="{{ musculo.noSel }}" hint-placeholder-val="{{ true }}"><span class="ms">fitness_center</span></sc-if></span>
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 17px; font-weight: 600;">Ganar músculo</span><span style="font-size: 14px; line-height: 1.35; color: #C9CED6;">Comerás un 15 % más de lo que gastas, con más proteína</span></span>
+<span aria-hidden="true" class="anim" style="flex-shrink: 0; width: 28px; height: 28px; border-radius: 14px; border: 2px solid {{ musculo.aro }}; background: {{ musculo.marca }}; display: flex; align-items: center; justify-content: center; box-sizing: border-box; transition: background-color 150ms ease-out, border-color 150ms ease-out;"><sc-if value="{{ musculo.sel }}" hint-placeholder-val="{{ false }}"><span class="ms f anim" style="font-size: 18px; color: #1A0E00; animation: pop 260ms cubic-bezier(.34,1.56,.64,1);">check</span></sc-if></span>
+</button>
+<button type="button" role="radio" class="anim toque" aria-checked="{{ mantener.sel }}" onClick="{{ mantener.pick }}" style="display: flex; align-items: center; gap: 14px; width: 100%; min-height: 76px; padding: 12px 14px; border-radius: 18px; border: 2px solid {{ mantener.borde }}; background: {{ mantener.fondo }}; color: #F2F2F3; text-align: left; box-sizing: border-box; transition: background-color 150ms ease-out, border-color 150ms ease-out, transform 120ms cubic-bezier(.2,0,0,1); animation: entra 350ms cubic-bezier(.05,.7,.1,1) 300ms backwards;">
+<span aria-hidden="true" class="anim" style="flex-shrink: 0; width: 44px; height: 44px; border-radius: 22px; background: {{ mantener.icoFondo }}; color: {{ mantener.icoColor }}; display: flex; align-items: center; justify-content: center; transition: background-color 150ms ease-out, color 150ms ease-out;"><sc-if value="{{ mantener.sel }}" hint-placeholder-val="{{ false }}"><span class="ms f anim" style="animation: rebote 420ms cubic-bezier(.34,1.56,.64,1);">balance</span></sc-if><sc-if value="{{ mantener.noSel }}" hint-placeholder-val="{{ true }}"><span class="ms">balance</span></sc-if></span>
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 17px; font-weight: 600;">Mantenerme</span><span style="font-size: 14px; line-height: 1.35; color: #C9CED6;">Comerás lo mismo que gastas</span></span>
+<span aria-hidden="true" class="anim" style="flex-shrink: 0; width: 28px; height: 28px; border-radius: 14px; border: 2px solid {{ mantener.aro }}; background: {{ mantener.marca }}; display: flex; align-items: center; justify-content: center; box-sizing: border-box; transition: background-color 150ms ease-out, border-color 150ms ease-out;"><sc-if value="{{ mantener.sel }}" hint-placeholder-val="{{ false }}"><span class="ms f anim" style="font-size: 18px; color: #1A0E00; animation: pop 260ms cubic-bezier(.34,1.56,.64,1);">check</span></sc-if></span>
+</button>
+<button type="button" role="radio" class="anim toque" aria-checked="{{ fuerza.sel }}" onClick="{{ fuerza.pick }}" style="display: flex; align-items: center; gap: 14px; width: 100%; min-height: 76px; padding: 12px 14px; border-radius: 18px; border: 2px solid {{ fuerza.borde }}; background: {{ fuerza.fondo }}; color: #F2F2F3; text-align: left; box-sizing: border-box; transition: background-color 150ms ease-out, border-color 150ms ease-out, transform 120ms cubic-bezier(.2,0,0,1); animation: entra 350ms cubic-bezier(.05,.7,.1,1) 340ms backwards;">
+<span aria-hidden="true" class="anim" style="flex-shrink: 0; width: 44px; height: 44px; border-radius: 22px; background: {{ fuerza.icoFondo }}; color: {{ fuerza.icoColor }}; display: flex; align-items: center; justify-content: center; transition: background-color 150ms ease-out, color 150ms ease-out;"><sc-if value="{{ fuerza.sel }}" hint-placeholder-val="{{ false }}"><span class="ms f anim" style="animation: rebote 420ms cubic-bezier(.34,1.56,.64,1);">bolt</span></sc-if><sc-if value="{{ fuerza.noSel }}" hint-placeholder-val="{{ true }}"><span class="ms">bolt</span></sc-if></span>
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 17px; font-weight: 600;">Ganar fuerza</span><span style="font-size: 14px; line-height: 1.35; color: #C9CED6;">Un 10 % más, y los básicos a 4–6 repeticiones</span></span>
+<span aria-hidden="true" class="anim" style="flex-shrink: 0; width: 28px; height: 28px; border-radius: 14px; border: 2px solid {{ fuerza.aro }}; background: {{ fuerza.marca }}; display: flex; align-items: center; justify-content: center; box-sizing: border-box; transition: background-color 150ms ease-out, border-color 150ms ease-out;"><sc-if value="{{ fuerza.sel }}" hint-placeholder-val="{{ false }}"><span class="ms f anim" style="font-size: 18px; color: #1A0E00; animation: pop 260ms cubic-bezier(.34,1.56,.64,1);">check</span></sc-if></span>
+</button>
+</div>
+<div style="padding: 16px 16px 24px;">
+<sc-if value="{{ hay }}" hint-placeholder-val="{{ false }}"><a href="Nivel.dc.html" class="anim toque" style="height: 52px; border-radius: 26px; background: #FF6A00; color: #1A0E00; font-size: 17px; font-weight: 700; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: transform 120ms cubic-bezier(.2,0,0,1); animation: enciende 380ms cubic-bezier(.34,1.56,.64,1);">Siguiente</a></sc-if>
+<sc-if value="{{ noHay }}" hint-placeholder-val="{{ true }}"><button type="button" disabled class="anim" style="width: 100%; height: 52px; border: 0; border-radius: 26px; background: #252A31; color: #6F7784; font-size: 17px; font-weight: 700; cursor: default; animation: entra 350ms cubic-bezier(.05,.7,.1,1) 400ms backwards;">Siguiente</button></sc-if>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { sel: null };
+  }
+  renderVals() {
+    const sel = this.state.sel;
+    const op = (id) => {
+      const si = sel === id;
+      return {
+        sel: si,
+        noSel: !si,
+        fondo: si ? '#2A1B0F' : '#1B1E24',
+        borde: si ? '#FF6A00' : '#1B1E24',
+        aro: si ? '#FF6A00' : '#6F7784',
+        marca: si ? '#FF6A00' : 'transparent',
+        icoFondo: si ? '#FF6A00' : '#252A31',
+        icoColor: si ? '#1A0E00' : '#FFB27A',
+        pick: () => this.setState({ sel: id })
+      };
+    };
+    return {
+      perder: op('perder'),
+      musculo: op('musculo'),
+      mantener: op('mantener'),
+      fuerza: op('fuerza'),
+      hay: sel !== null,
+      noHay: sel === null
+    };
+  }
+}
+</script>
+</body>
+</html>

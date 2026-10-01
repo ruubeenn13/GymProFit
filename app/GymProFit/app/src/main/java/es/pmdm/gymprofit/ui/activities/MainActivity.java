@@ -523,8 +523,11 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    // Solicita el permiso de notificaciones (Android 13+) una sola vez al entrar.
+    // Solicita el permiso de notificaciones (Android 13+) una sola vez al entrar. A quien
+    // ya se le preguntó en «¿Te avisamos?» del alta no se le vuelve a pedir: si dijo
+    // «Ahora no», es que no (GP-112).
     private void pedirPermisoNotificaciones() {
+        if (prefsManager.isAvisosPreguntados(prefsManager.getUsername())) return;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
                 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 0);

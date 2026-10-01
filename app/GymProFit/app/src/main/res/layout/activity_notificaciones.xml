@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_notificaciones — Ajustes › Notificaciones (GP-112, lote 1.5.1): los mismos
+  avisos que el alta, con los interruptores de la cuenta, y el permiso del sistema con
+  su atajo. Cada cambio se guarda en el momento con el PATCH.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/Widget.GymProFit.Cabecera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="@string/ajustes_notificaciones" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="24dp">
+
+            <!-- Sin permiso del sistema, nada llega: se dice y se ofrece activarlo. -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardPermisoAvisos"
+                style="@style/Widget.GymProFit.Card.Estructura"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/notificaciones_sin_permiso"
+                        android:textSize="@dimen/text_body"
+                        android:textColor="?attr/colorOnSurface" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnPermisoAvisos"
+                        style="@style/Widget.GymProFit.BotonPildora"
+                        android:layout_width="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/notificaciones_activar" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                style="@style/Widget.GymProFit.Seccion"
+                android:layout_marginStart="4dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/notificaciones_que_avisamos"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+
+            <LinearLayout
+                style="@style/Widget.GymProFit.GrupoAjustes">
+
+                <include android:id="@+id/filaAvisoDescanso" layout="@layout/view_fila_aviso" />
+                <include android:id="@+id/filaAvisoEntrenar" layout="@layout/view_fila_aviso" />
+                <include android:id="@+id/filaAvisoComidas" layout="@layout/view_fila_aviso" />
+                <include android:id="@+id/filaAvisoProgreso" layout="@layout/view_fila_aviso" />
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/Widget.GymProFit.GrupoAjustes"
+                android:layout_marginTop="16dp">
+
+                <include android:id="@+id/filaAjustesSistema" layout="@layout/view_fila_ajuste" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

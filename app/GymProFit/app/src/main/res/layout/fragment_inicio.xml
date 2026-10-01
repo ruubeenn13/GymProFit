@@ -113,7 +113,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:orientation="horizontal"
-                        android:id="@+id/filaBotonesHoy">
+                        android:id="@+id/filaBotonesHoy"
+                        android:clipChildren="false"
+                        android:clipToPadding="false">
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnHoyPrincipal"
@@ -130,6 +132,62 @@
                             android:layout_marginStart="8dp"
                             android:text="@string/btn_cambiar" />
                     </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Primeros pasos (GP-103): solo el primer día; se marcan solos, se pueden
+                 ocultar y desaparecen al completarse. -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardPrimerosPasos"
+                style="@style/Widget.GymProFit.Card.Estructura"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="8dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="8dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tvPrimerosPasos"
+                            style="@style/Widget.GymProFit.Seccion"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
+
+                        <ImageButton
+                            android:id="@+id/btnOcultarPasos"
+                            style="@style/Widget.GymProFit.BotonIcono"
+                            android:src="@drawable/ic_ms_close"
+                            android:contentDescription="@string/inicio_pasos_ocultar_a11y"
+                            app:tint="?attr/colorOnSurfaceVariant" />
+                    </LinearLayout>
+
+                    <com.google.android.material.progressindicator.LinearProgressIndicator
+                        android:id="@+id/barraPasos"
+                        style="@style/Widget.GymProFit.BarraProgreso"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:importantForAccessibility="no"
+                        app:trackThickness="6dp"
+                        app:trackCornerRadius="3dp" />
+
+                    <include android:id="@+id/pasoPlan" layout="@layout/item_primer_paso" />
+                    <include android:id="@+id/pasoEntreno" layout="@layout/item_primer_paso" />
+                    <include android:id="@+id/pasoComida" layout="@layout/item_primer_paso" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -366,6 +424,78 @@
                     </com.google.android.material.chip.ChipGroup>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <!-- El fundador (GP-103): el primer día, con su texto; se oculta. -->
+            <LinearLayout
+                android:id="@+id/cardFundador"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_tarjeta_fundador"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:background="@drawable/bg_circulo_capitulo"
+                        android:gravity="center"
+                        android:text="@string/inicio_fundador_inicial"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Display"
+                        android:textSize="20sp"
+                        android:textColor="?attr/colorOnPrimaryContainer"
+                        android:importantForAccessibility="no" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="12dp"
+                        android:accessibilityHeading="true"
+                        android:text="@string/inicio_fundador_titulo"
+                        android:textSize="@dimen/text_subtitle"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:lineSpacingMultiplier="1.2"
+                    android:text="@string/inicio_fundador_texto"
+                    android:textSize="@dimen/text_body"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnEscribirFundador"
+                        style="@style/Widget.GymProFit.BotonPildora.Contorno"
+                        android:layout_width="wrap_content"
+                        android:text="@string/inicio_fundador_escribir"
+                        app:icon="@drawable/ic_ms_mail" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnOcultarFundador"
+                        style="@style/Widget.GymProFit.Alta.BotonTexto"
+                        android:layout_width="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="@string/inicio_fundador_ocultar"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="@dimen/text_body" />
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

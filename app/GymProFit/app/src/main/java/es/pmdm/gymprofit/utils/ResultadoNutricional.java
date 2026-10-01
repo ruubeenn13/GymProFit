@@ -12,6 +12,11 @@ public class ResultadoNutricional {
     public int carbohidratos;
     public int grasas;
     public double agua;
+    /**
+     * De 14 a 17 años, «Perder grasa» da las calorías de mantenimiento (GP-103, decisión 6
+     * del lienzo del alta): sin déficit a esa edad. Las pantallas lo dicen cuando es true.
+     */
+    public boolean mantenimientoPorEdad;
 
     // Construye el resultado con todos los valores calculados.
     public ResultadoNutricional(int calorias, int proteinas, int carbohidratos, int grasas, double agua) {

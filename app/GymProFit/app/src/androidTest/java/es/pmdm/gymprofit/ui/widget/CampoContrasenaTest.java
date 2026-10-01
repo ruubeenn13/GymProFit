@@ -108,12 +108,12 @@ public class CampoContrasenaTest {
         });
     }
 
-    /** Los ocho campos: cada formulario con contraseña, y cuántas lleva. */
+    /** Los siete campos: cada formulario con contraseña, y cuántas lleva. */
     @Test
-    public void los_ocho_campos_de_contrasena_son_campo_contrasena() {
+    public void los_siete_campos_de_contrasena_son_campo_contrasena() {
         int[][] formularios = {
                 {R.layout.activity_login, 1},
-                {R.layout.activity_registro, 2},
+                {R.layout.activity_guarda_plan, 1},
                 {R.layout.activity_recuperar_password, 1},
                 {R.layout.activity_cambiar_password, 2},
                 {R.layout.activity_cambiar_correo, 1},
@@ -134,7 +134,7 @@ public class CampoContrasenaTest {
                 }
                 total += contrasenas.size();
             }
-            assertEquals(8, total);
+            assertEquals(7, total);
         });
     }
 

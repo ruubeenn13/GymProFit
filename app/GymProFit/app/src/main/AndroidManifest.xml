@@ -108,28 +108,10 @@
         <activity
             android:name=".ui.activities.ResumenSesionActivity"
             android:exported="false" />
-        <!-- Registro de usuario y flujo de onboarding (pasos 1 a 5 + resumen) -->
-        <activity
-            android:name=".ui.activities.RegistroActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.activities.OnboardingResumenActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.activities.Onboarding4Activity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.activities.Onboarding5Activity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.activities.Onboarding3Activity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.activities.Onboarding2Activity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.activities.Onboarding1Activity"
-            android:exported="false" />
+        <!-- El alta nueva (GP-103): la bienvenida y el cuestionario. «Guarda tu plan» y
+             los avisos van con Ajustes. -->
+        <activity android:name=".ui.activities.BienvenidaActivity" android:exported="false" />
+        <activity android:name=".ui.activities.AltaActivity" android:exported="false" />
         <!-- Rutinas: edición, detalle, creación y gestión de ejercicios asociados -->
         <activity
             android:name=".ui.activities.EditarRutinaActivity"
@@ -187,6 +169,12 @@
         <!-- Estructura de GP-105: Ajustes y lo que cuelga de él, la biblioteca de
              ejercicios y todas las plantillas (antes, pestañas o parte del perfil). -->
         <activity android:name=".ui.activities.AjustesActivity" android:exported="false" />
+        <!-- Ajustes › Notificaciones y «¿Te avisamos?» del alta (GP-112, lote 1.5.1). -->
+        <activity android:name=".ui.activities.NotificacionesActivity" android:exported="false" />
+        <activity android:name=".ui.activities.AvisosActivity" android:exported="false" />
+        <!-- «Guarda tu plan»: la cuenta al final del alta (GP-103). -->
+        <activity android:name=".ui.activities.GuardaPlanActivity" android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ui.activities.CambiarPasswordActivity" android:exported="false" />
         <activity android:name=".ui.activities.CambiarCorreoActivity" android:exported="false" />
         <activity android:name=".ui.activities.LicenciasActivity" android:exported="false" />

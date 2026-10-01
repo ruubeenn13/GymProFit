@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Cuánto te mueves</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#060708;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+button,input{font-family:inherit}
+button{cursor:pointer}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+.toque:active{transform:scale(.97)}
+@keyframes entra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.18);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes hoja{from{transform:translateY(100%)}to{transform:none}}
+@keyframes velo{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion: reduce){.anim{animation:none !important;transition:none !important}.toque:active{transform:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif;">
+<div aria-hidden="true" style="padding: 76px 20px 0; display: flex; flex-direction: column; gap: 10px; color: #C9CED6;">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 1px; text-transform: uppercase;">Sobre ti · 2 de 4</span>
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 34px; line-height: 1.08;">Cuéntanos sobre ti</span>
+</div>
+<div class="anim" aria-hidden="true" style="position: absolute; inset: 0; background: rgba(4, 5, 6, 0.82); animation: velo 220ms ease-out backwards;"></div>
+<section role="dialog" aria-modal="true" aria-labelledby="titulo-actividad" class="anim" style="position: absolute; left: 0; right: 0; bottom: 0; background: #1B1E24; border-radius: 28px 28px 0 0; padding: 10px 16px 24px; display: flex; flex-direction: column; gap: 12px; box-sizing: border-box; animation: hoja 380ms cubic-bezier(.05,.7,.1,1) backwards;">
+<span aria-hidden="true" style="align-self: center; width: 36px; height: 4px; border-radius: 2px; background: #4A505B;"></span>
+<h2 id="titulo-actividad" class="anim" style="margin: 0; padding: 0 4px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 28px; line-height: 1.1; animation: entra 300ms cubic-bezier(.05,.7,.1,1) 180ms backwards;">¿Cuánto te mueves?</h2>
+<p class="anim" style="margin: 0; padding: 0 4px; font-size: 15px; line-height: 1.45; color: #C9CED6; animation: entra 300ms cubic-bezier(.05,.7,.1,1) 220ms backwards;">Cuenta tu día a día y el ejercicio que ya haces.</p>
+<div role="radiogroup" aria-labelledby="titulo-actividad" style="display: flex; flex-direction: column; gap: 8px;">
+<button type="button" role="radio" class="anim toque" aria-checked="{{ sedentario.sel }}" onClick="{{ sedentario.pick }}" style="display: flex; align-items: center; gap: 12px; width: 100%; min-height: 68px; padding: 10px 14px; border-radius: 16px; border: 2px solid {{ sedentario.borde }}; background: {{ sedentario.fondo }}; color: #F2F2F3; text-align: left; box-sizing: border-box; transition: background-color 150ms ease-out, border-color 150ms ease-out, transform 120ms cubic-bezier(.2,0,0,1); animation: entra 300ms cubic-bezier(.05,.7,.1,1) 260ms backwards;">
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px; font-weight: 600;">Sedentario</span><span style="font-size: 14px; line-height: 1.35; color: #C9CED6;">Trabajo sentado y casi no hago ejercicio</span></span>
+<span aria-hidden="true" class="anim" style="flex-shrink: 0; width: 26px; height: 26px; border-radius: 13px; border: 2px solid {{ sedentario.aro }}; background: {{ sedentario.marca }}; display: flex; align-items: center; justify-content: center; box-sizing: border-box; transition: background-color 150ms ease-out, border-color 150ms ease-out;"><sc-if value="{{ sedentario.sel }}" hint-placeholder-val="{{ false }}"><span class="ms f anim" style="font-size: 17px; color: #1A0E00; animation: pop 260ms cubic-bezier(.34,1.56,.64,1);">check</span></sc-if></span>
+</button>
+<button type="button" role="radio" class="anim toque" aria-checked="{{ ligero.sel }}" onClick="{{ ligero.pick }}" style="display: flex; align-items: center; gap: 12px; width: 100%; min-height: 68px; padding: 10px 14px; border-radius: 16px; border: 2px solid {{ ligero.borde }}; background: {{ ligero.fondo }}; color: #F2F2F3; text-align: left; box-sizing: border-box; transition: background-color 150ms ease-out, border-color 150ms ease-out, transform 120ms cubic-bezier(.2,0,0,1); animation: entra 300ms cubic-bezier(.05,.7,.1,1) 300ms backwards;">
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px; font-weight: 600;">Ligero</span><span style="font-size: 14px; line-height: 1.35; color: #C9CED6;">Ejercicio suave 1–3 días por semana</span></span>
+<span aria-hidden="true" class="anim" style="flex-shrink: 0; width: 26px; height: 26px; border-radius: 13px; border: 2px solid {{ ligero.aro }}; background: {{ ligero.marca }}; display: flex; align-items: center; justify-content: center; box-sizing: border-box; transition: background-color 150ms ease-out, border-color 150ms ease-out;"><sc-if value="{{ ligero.sel }}" hint-placeholder-val="{{ false }}"><span class="ms f anim" style="font-size: 17px; color: #1A0E00; animation: pop 260ms cubic-bezier(.34,1.56,.64,1);">check</span></sc-if></span>
+</button>
+<button type="button" role="radio" class="anim toque" aria-checked="{{ moderado.sel }}" onClick="{{ moderado.pick }}" style="display: flex; align-items: center; gap: 12px; width: 100%; min-height: 68px; padding: 10px 14px; border-radius: 16px; border: 2px solid {{ moderado.borde }}; background: {{ moderado.fondo }}; color: #F2F2F3; text-align: left; box-sizing: border-box; transition: background-color 150ms ease-out, border-color 150ms ease-out, transform 120ms cubic-bezier(.2,0,0,1); animation: entra 300ms cubic-bezier(.05,.7,.1,1) 340ms backwards;">
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px; font-weight: 600;">Moderado</span><span style="font-size: 14px; line-height: 1.35; color: #C9CED6;">Ejercicio 3–5 días por semana</span></span>
+<span aria-hidden="true" class="anim" style="flex-shrink: 0; width: 26px; height: 26px; border-radius: 13px; border: 2px solid {{ moderado.aro }}; background: {{ moderado.marca }}; display: flex; align-items: center; justify-content: center; box-sizing: border-box; transition: background-color 150ms ease-out, border-color 150ms ease-out;"><sc-if value="{{ moderado.sel }}" hint-placeholder-val="{{ true }}"><span class="ms f anim" style="font-size: 17px; color: #1A0E00; animation: pop 260ms cubic-bezier(.34,1.56,.64,1);">check</span></sc-if></span>
+</button>
+<button type="button" role="radio" class="anim toque" aria-checked="{{ activo.sel }}" onClick="{{ activo.pick }}" style="display: flex; align-items: center; gap: 12px; width: 100%; min-height: 68px; padding: 10px 14px; border-radius: 16px; border: 2px solid {{ activo.borde }}; background: {{ activo.fondo }}; color: #F2F2F3; text-align: left; box-sizing: border-box; transition: background-color 150ms ease-out, border-color 150ms ease-out, transform 120ms cubic-bezier(.2,0,0,1); animation: entra 300ms cubic-bezier(.05,.7,.1,1) 380ms backwards;">
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px; font-weight: 600;">Activo</span><span style="font-size: 14px; line-height: 1.35; color: #C9CED6;">Ejercicio intenso casi a diario, o un trabajo físico</span></span>
+<span aria-hidden="true" class="anim" style="flex-shrink: 0; width: 26px; height: 26px; border-radius: 13px; border: 2px solid {{ activo.aro }}; background: {{ activo.marca }}; display: flex; align-items: center; justify-content: center; box-sizing: border-box; transition: background-color 150ms ease-out, border-color 150ms ease-out;"><sc-if value="{{ activo.sel }}" hint-placeholder-val="{{ false }}"><span class="ms f anim" style="font-size: 17px; color: #1A0E00; animation: pop 260ms cubic-bezier(.34,1.56,.64,1);">check</span></sc-if></span>
+</button>
+</div>
+<a href="SobreTi.dc.html" class="anim toque" style="margin-top: 4px; height: 52px; border-radius: 26px; background: #FF6A00; color: #1A0E00; font-size: 17px; font-weight: 700; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: transform 120ms cubic-bezier(.2,0,0,1); animation: entra 300ms cubic-bezier(.05,.7,.1,1) 420ms backwards;">Listo</a>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { sel: 'moderado' };
+  }
+  renderVals() {
+    const sel = this.state.sel;
+    const op = (id) => {
+      const si = sel === id;
+      return {
+        sel: si,
+        fondo: si ? '#2A1B0F' : '#121418',
+        borde: si ? '#FF6A00' : '#121418',
+        aro: si ? '#FF6A00' : '#6F7784',
+        marca: si ? '#FF6A00' : 'transparent',
+        pick: () => this.setState({ sel: id })
+      };
+    };
+    return {
+      sedentario: op('sedentario'),
+      ligero: op('ligero'),
+      moderado: op('moderado'),
+      activo: op('activo')
+    };
+  }
+}
+</script>
+</body>
+</html>

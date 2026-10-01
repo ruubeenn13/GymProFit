@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  view_icono_capitulo — el icono que abre un capítulo del alta (GP-103): círculo de 56 dp
+  con el icono relleno de 30 dp en naranja, y detrás el aro que late dos veces al entrar
+  (GP-104, momento 4). Es decoración: el capítulo lo dicen el antetítulo y la barra.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="56dp"
+    android:layout_height="56dp"
+    android:layout_marginBottom="4dp"
+    android:clipChildren="false"
+    android:importantForAccessibility="noHideDescendants">
+
+    <View
+        android:id="@+id/aroCapitulo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0"
+        android:background="@drawable/bg_aro_capitulo" />
+
+    <FrameLayout
+        android:id="@+id/circuloCapitulo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_circulo_capitulo">
+
+        <ImageView
+            android:id="@+id/ivIconoCapitulo"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            app:tint="?attr/colorPrimary" />
+    </FrameLayout>
+</FrameLayout>
