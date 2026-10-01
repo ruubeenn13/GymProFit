@@ -94,11 +94,35 @@ public class BusquedaAlimentosService {
      * @param size      tamaño de página, de 1 a 100.
      */
     public PageDTO<AlimentoDTO> buscar(String q, String categoria, int page, int size) {
+        return buscarPara(securityUtils.getCurrentUserId(), q, categoria, page, size);
+    }
+
+    // Búsquedas habituales que recorren todo el camino (índice, base, raciones y DTO):
+    // compilan en el JIT y en la caché de planes de Hibernate lo que, si no, se paga la
+    // primera vez que busca alguien de verdad. Con 0,1 de CPU eso son cientos de ms (GP-168).
+    static final List<String> PARA_CALENTAR = List.of(
+            "", "pollo", "leche", "arroz", "platano", "huevo", "pan", "yogur", "atun", "manzana",
+            "queso", "hacendado", "coca cola", "aceite", "galletas", "tomate", "pechga", "pollo pechuga");
+
+    /**
+     * Busca unas cuantas cosas habituales sin usuario (nada de lo de nadie), varias veces
+     * y con varios tamaños de página. La llama CalentadorBusqueda cuando el índice de
+     * productos está listo.
+     */
+    public void calentar() {
+        for (int vuelta = 0; vuelta < 3; vuelta++) {
+            for (String q : PARA_CALENTAR) {
+                buscarPara(0, q, null, 0, 20);
+                buscarPara(0, q, null, 1, 20);
+            }
+        }
+    }
+
+    private PageDTO<AlimentoDTO> buscarPara(Integer usuarioId, String q, String categoria, int page, int size) {
         int pagina = Math.max(0, page);
         int tam = Math.min(Math.max(1, size), 100);
         String cat = categoria == null || categoria.isBlank() ? null : categoria.trim();
         List<String> consulta = Normalizador.terminos(q);
-        Integer usuarioId = securityUtils.getCurrentUserId();
 
         List<Tuyo> tuyos = cargarTuyos(usuarioId).stream()
                 .filter(t -> cat == null || cat.equals(t.categoria()))
