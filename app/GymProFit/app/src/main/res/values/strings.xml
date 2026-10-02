@@ -1532,4 +1532,6 @@
     <string name="ficha_info_cerrada">Plegada</string>
     <string name="crear_alimento_codigo_en_uso">Ya tienes un alimento con este código.</string>
     <string name="ficha_proteina_corta">prot.</string>
+    <string name="escaner_preparando">Preparando el lector de códigos…</string>
+    <string name="escaner_sin_lector">No se ha podido preparar el lector de códigos. Escribe el código a mano.</string>
 </resources>

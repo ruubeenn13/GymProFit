@@ -168,8 +168,10 @@ dependencies {
     // Apache 2.0 pide acompañar la redistribución con su aviso (GP-082)
     implementation libs.oss.licenses
     // Escáner de códigos de barras (lote 1.6.1): la cámara con CameraX y la lectura en el
-    // móvil con ML Kit, con el modelo dentro del APK: funciona nada más instalar, sin red
-    // y sin depender de Google Play, que es como se reparte la app hoy (fuera de Play).
+    // móvil con ML Kit, con el modelo de Google Play Services: unos 200 KB. El modelo
+    // dentro del APK llevaba una librería nativa de 3 a 5 MB por arquitectura, y un APK
+    // repartido fuera de Play las lleva todas: de 6,7 a 28,8 MB. Se descarga la primera
+    // vez que se abre el escáner (EscanerActivity lo pide y lo dice).
     implementation libs.camera.camera2
     implementation libs.camera.lifecycle
     implementation libs.camera.view

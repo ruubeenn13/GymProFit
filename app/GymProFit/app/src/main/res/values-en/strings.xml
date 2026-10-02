@@ -1510,4 +1510,6 @@
     <string name="ficha_info_cerrada">Collapsed</string>
     <string name="crear_alimento_codigo_en_uso">You already have a food with this barcode.</string>
     <string name="ficha_proteina_corta">prot.</string>
+    <string name="escaner_preparando">Getting the barcode reader ready…</string>
+    <string name="escaner_sin_lector">The barcode reader could not be set up. Type the code by hand.</string>
 </resources>

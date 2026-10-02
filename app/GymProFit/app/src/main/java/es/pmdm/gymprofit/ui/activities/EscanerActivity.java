@@ -27,6 +27,10 @@ import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.common.moduleinstall.ModuleInstall;
+import com.google.android.gms.common.moduleinstall.ModuleInstallClient;
+import com.google.android.gms.common.moduleinstall.ModuleInstallRequest;
+import com.google.android.gms.common.moduleinstall.ModuleInstallStatusUpdate;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -64,7 +68,8 @@ import es.pmdm.gymprofit.utils.UiFeedback;
 // EscanerActivity — escanear un código de barras (tablero 6, lote 1.6.1)
 //
 // La cámara con CameraX y la lectura en el móvil con ML Kit (EAN-13, EAN-8, UPC-A y
-// UPC-E), con el modelo dentro del APK: la imagen no sale del móvil ni se guarda.
+// UPC-E), con el modelo de Google Play Services, que se pide la primera vez que se abre
+// el escáner y se dice mientras baja: la imagen no sale del móvil ni se guarda.
 // Lo que se hace con cada lectura y cada respuesta lo decide EstadoEscaner: mientras
 // hay hoja no se lee otro código.
 //   · Permiso: se pide al entrar, con una línea de para qué. Si se niega, se explica y
@@ -98,8 +103,10 @@ public class EscanerActivity extends BaseActivity {
 
     private final ExecutorService hilo = Executors.newSingleThreadExecutor();
     private BarcodeScanner lector;
-    // Lo lee el hilo del análisis: solo se analizan imágenes mientras se busca.
+    // Lo lee el hilo del análisis: solo se analizan imágenes mientras se busca. El primer
+    // análisis que sale bien dice que el modelo de lectura ya está en el móvil.
     private volatile boolean analizar;
+    private volatile boolean lectorListo;
 
     private ActivityResultLauncher<String> permiso;
     private ActivityResultLauncher<Intent> despues;
@@ -128,6 +135,7 @@ public class EscanerActivity extends BaseActivity {
         lector = BarcodeScanning.getClient(new BarcodeScannerOptions.Builder()
                 .setBarcodeFormats(Barcode.FORMAT_EAN_13, Barcode.FORMAT_EAN_8, Barcode.FORMAT_UPC_A, Barcode.FORMAT_UPC_E)
                 .build());
+        prepararLector();
 
         permiso = registerForActivityResult(new ActivityResultContracts.RequestPermission(), concedido -> {
             if (concedido) iniciarCamara();
@@ -168,6 +176,45 @@ public class EscanerActivity extends BaseActivity {
         super.onDestroy();
     }
 
+    // El modelo de lectura llega con Google Play Services: si aún no está en el móvil, se
+    // pide y se dice («Preparando el lector…») hasta que llega. Sin él queda escribir.
+    private void prepararLector() {
+        ModuleInstallClient instalador = ModuleInstall.getClient(this);
+        instalador.areModulesAvailable(lector).addOnSuccessListener(r -> {
+            if (r.areModulesAvailable()) {
+                lectorPreparado();
+                return;
+            }
+            // Si ya ha analizado una imagen, el lector funciona: la respuesta llega tarde.
+            if (lectorListo || isDestroyed()) return;
+            if (camara != null || !tienePermiso()) aviso.setText(R.string.escaner_preparando);
+            ModuleInstallRequest pedido = ModuleInstallRequest.newBuilder().addApi(lector)
+                    .setListener(estadoInstalacion -> {
+                        int fase = estadoInstalacion.getInstallState();
+                        if (fase == ModuleInstallStatusUpdate.InstallState.STATE_COMPLETED) lectorPreparado();
+                        else if (fase == ModuleInstallStatusUpdate.InstallState.STATE_FAILED
+                                || fase == ModuleInstallStatusUpdate.InstallState.STATE_CANCELED) sinLector();
+                    }).build();
+            instalador.installModules(pedido).addOnSuccessListener(respuesta -> {
+                if (respuesta.areModulesAlreadyInstalled()) lectorPreparado();
+            }).addOnFailureListener(e -> sinLector());
+        }).addOnFailureListener(e -> sinLector());
+    }
+
+    private void lectorPreparado() {
+        if (isDestroyed()) return;
+        if (lectorListo) return;
+        lectorListo = true;
+        if (camara != null && estado.leeCamara()) aviso.setText(R.string.escaner_apunta);
+    }
+
+    // Sin Google Play Services o sin poder bajar el modelo: se dice y queda escribir el código.
+    private void sinLector() {
+        if (isDestroyed() || lectorListo) return;
+        lectorListo = false;
+        if (findViewById(R.id.panelSinPermiso).getVisibility() != View.VISIBLE) aviso.setText(R.string.escaner_sin_lector);
+    }
+
     private boolean tienePermiso() {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
     }
@@ -187,7 +234,7 @@ public class EscanerActivity extends BaseActivity {
     private void iniciarCamara() {
         aviso.setVisibility(View.VISIBLE);
         marco.setVisibility(View.VISIBLE);
-        aviso.setText(R.string.escaner_apunta);
+        aviso.setText(lectorListo ? R.string.escaner_apunta : R.string.escaner_preparando);
         marco.buscar();
         ListenableFuture<ProcessCameraProvider> futuro = ProcessCameraProvider.getInstance(this);
         futuro.addListener(() -> {
@@ -203,6 +250,8 @@ public class EscanerActivity extends BaseActivity {
                 camara = proveedor.bindToLifecycle(this, CameraSelector.DEFAULT_BACK_CAMERA, vista, analisis);
                 btnLinterna.setVisibility(camara.getCameraInfo().hasFlashUnit() ? View.VISIBLE : View.GONE);
                 analizar = estado.leeCamara();
+                // El lector puede haber quedado listo antes que la cámara.
+                if (lectorListo && estado.leeCamara()) aviso.setText(R.string.escaner_apunta);
             } catch (Exception e) {
                 // Sin cámara trasera o sin poder abrirla: se dice y queda escribir el código.
                 camara = null;
@@ -221,6 +270,8 @@ public class EscanerActivity extends BaseActivity {
         InputImage entrada = InputImage.fromMediaImage(imagen.getImage(), imagen.getImageInfo().getRotationDegrees());
         lector.process(entrada)
                 .addOnSuccessListener(codigos -> {
+                    // Si ha analizado, el modelo ya está: el aviso de «preparando» se va.
+                    if (!lectorListo) runOnUiThread(this::lectorPreparado);
                     for (Barcode b : codigos) {
                         String valor = b.getRawValue();
                         if (valor != null && !valor.isEmpty()) {
@@ -230,7 +281,8 @@ public class EscanerActivity extends BaseActivity {
                     }
                 })
                 // Una imagen que no se puede analizar no es un error para quien escanea:
-                // llega otra en unas décimas de segundo.
+                // llega otra en unas décimas de segundo. Mientras el modelo baja, todas
+                // fallan, y el aviso dice «preparando».
                 .addOnFailureListener(e -> { })
                 .addOnCompleteListener(t -> imagen.close());
     }
@@ -479,7 +531,7 @@ public class EscanerActivity extends BaseActivity {
         findViewById(R.id.btnEscribirCodigo).setVisibility(View.VISIBLE);
         if (camara != null) {
             marco.buscar();
-            aviso.setText(R.string.escaner_apunta);
+            aviso.setText(lectorListo ? R.string.escaner_apunta : R.string.escaner_preparando);
             aviso.setTextColor(ContextCompat.getColor(this, R.color.gp_escaner_texto));
             analizar = true;
         }

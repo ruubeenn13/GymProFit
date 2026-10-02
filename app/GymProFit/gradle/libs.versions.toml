@@ -20,7 +20,7 @@ mpandroidchart = "v3.1.0"
 ossLicenses = "17.5.2"
 ossLicensesPlugin = "0.13.0"
 camerax = "1.6.0"
-mlkitBarcode = "17.3.0"
+mlkitBarcode = "18.3.1"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -46,7 +46,7 @@ oss-licenses = { group = "com.google.android.gms", name = "play-services-oss-lic
 camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camerax" }
 camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax" }
 camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax" }
-mlkit-barcode = { group = "com.google.mlkit", name = "barcode-scanning", version.ref = "mlkitBarcode" }
+mlkit-barcode = { group = "com.google.android.gms", name = "play-services-mlkit-barcode-scanning", version.ref = "mlkitBarcode" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
