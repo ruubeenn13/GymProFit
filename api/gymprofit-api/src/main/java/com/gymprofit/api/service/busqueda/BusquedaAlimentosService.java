@@ -315,30 +315,30 @@ public class BusquedaAlimentosService {
     // --- Lo tuyo ------------------------------------------------------------
 
     // Tus alimentos y los que has apuntado en los últimos 60 días (solo los que puedes
-    // ver: catálogo o tuyos). Dos consultas pequeñas, por índice de usuario.
+    // ver: catálogo o tuyos), en una sola consulta: cada viaje a Aiven son ~14 ms (GP-168).
+    // Las dos mitades van por índice de usuario; un alimento tuyo apuntado hace poco sale
+    // en las dos, y manda la primera, que lleva su último uso de siempre.
     private List<Tuyo> cargarTuyos(Integer usuarioId) {
         Map<Integer, Tuyo> porId = new LinkedHashMap<>();
-        jdbc.query("""
-                SELECT a.id, a.nombre, a.nombre_en, a.categoria, a.marca,
-                       (SELECT MAX(c.fecha) FROM alimentos_comida ac JOIN comidas c ON c.id = ac.comida_id
-                        WHERE ac.alimento_id = a.id AND c.usuario_id = ?) AS ultimo
-                FROM alimentos a WHERE a.usuario_id = ? AND a.activo = 1""", rs -> {
-            porId.put(rs.getInt("id"), new Tuyo(rs.getInt("id"), rs.getString("nombre"), rs.getString("nombre_en"),
-                    rs.getString("categoria"), rs.getString("marca"), fecha(rs.getTimestamp("ultimo"))));
-        }, usuarioId, usuarioId);
         Timestamp desde = Timestamp.valueOf(LocalDateTime.now().minusDays(DIAS_RECIENTES));
         jdbc.query("""
-                SELECT a.id, a.nombre, a.nombre_en, a.categoria, a.marca, MAX(c.fecha) AS ultimo
+                SELECT 0 AS parte, a.id, a.nombre, a.nombre_en, a.categoria, a.marca,
+                       (SELECT MAX(c.fecha) FROM alimentos_comida ac JOIN comidas c ON c.id = ac.comida_id
+                        WHERE ac.alimento_id = a.id AND c.usuario_id = ?) AS ultimo
+                FROM alimentos a WHERE a.usuario_id = ? AND a.activo = 1
+                UNION ALL
+                SELECT 1 AS parte, a.id, a.nombre, a.nombre_en, a.categoria, a.marca, MAX(c.fecha) AS ultimo
                 FROM comidas c
                 JOIN alimentos_comida ac ON ac.comida_id = c.id
                 JOIN alimentos a ON a.id = ac.alimento_id
                 WHERE c.usuario_id = ? AND c.fecha >= ? AND a.activo = 1
                   AND (a.usuario_id IS NULL OR a.usuario_id = ?)
-                GROUP BY a.id, a.nombre, a.nombre_en, a.categoria, a.marca""", rs -> {
+                GROUP BY a.id, a.nombre, a.nombre_en, a.categoria, a.marca
+                ORDER BY parte""", rs -> {
             porId.putIfAbsent(rs.getInt("id"), new Tuyo(rs.getInt("id"), rs.getString("nombre"),
                     rs.getString("nombre_en"), rs.getString("categoria"), rs.getString("marca"),
                     fecha(rs.getTimestamp("ultimo"))));
-        }, usuarioId, desde, usuarioId);
+        }, usuarioId, usuarioId, usuarioId, desde, usuarioId);
         return new ArrayList<>(porId.values());
     }
 
@@ -362,7 +362,10 @@ public class BusquedaAlimentosService {
         Set<Integer> idsAlimentos = new HashSet<>(alimentoDeProducto.values());
         pagina.stream().filter(r -> !r.esProducto()).forEach(r -> idsAlimentos.add(r.id()));
         Map<Integer, Alimento> alimentos = new HashMap<>();
-        alimentoRepository.findAllById(idsAlimentos).forEach(a -> alimentos.put(a.getId(), a));
+        // Los alimentos con sus raciones, en una consulta (antes, dos).
+        if (!idsAlimentos.isEmpty()) {
+            alimentoRepository.conRaciones(idsAlimentos).forEach(a -> alimentos.put(a.getId(), a));
+        }
 
         boolean ingles = "en".equals(LocaleContextHolder.getLocale().getLanguage());
         List<AlimentoDTO> resultado = new ArrayList<>();

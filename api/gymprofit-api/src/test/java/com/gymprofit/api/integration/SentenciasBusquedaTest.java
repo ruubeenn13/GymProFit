@@ -53,15 +53,16 @@ class SentenciasBusquedaTest extends AbstractOwnershipTest {
         buscar("pollo", 30); // la primera petición del contexto carga cosas que no son de la búsqueda
 
         // «pollo» trae básicos (con raciones) y productos: el usuario del token y sus roles
-        // (2), lo tuyo (2), los productos de la página, sus alimentos y sus raciones en un lote.
-        assertThat(contar("pollo", 30)).isEqualTo(7);
+        // (2), lo tuyo en una (1), los productos de la página (1) y sus alimentos con sus
+        // raciones en otra (1). Eran 7 hasta la 1.6.1: lo tuyo eran dos y las raciones, aparte.
+        assertThat(contar("pollo", 30)).isEqualTo(5);
         // Con 3, todos básicos: una menos, la de productos. Nunca una por resultado.
-        assertThat(contar("pollo", 3)).isEqualTo(6);
+        assertThat(contar("pollo", 3)).isEqualTo(4);
         // Vacía: los 31 habituales con sus raciones, sin productos.
-        assertThat(contar("", 31)).isEqualTo(6);
+        assertThat(contar("", 31)).isEqualTo(4);
         // Solo productos sin materializar: ni alimentos ni raciones.
-        assertThat(contar("kzsentencias", 30)).isEqualTo(5);
-        assertThat(contar("aceite", 30)).isLessThanOrEqualTo(7);
+        assertThat(contar("kzsentencias", 30)).isEqualTo(4);
+        assertThat(contar("aceite", 30)).isLessThanOrEqualTo(5);
     }
 
     // Cada búsqueda con la sesión de JPA limpia, como una petición de verdad: si no, lo

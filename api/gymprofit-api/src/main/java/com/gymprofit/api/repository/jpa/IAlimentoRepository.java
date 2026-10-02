@@ -98,6 +98,12 @@ public interface IAlimentoRepository extends JpaRepository<Alimento, Integer> {
     // ¿Otro alimento del catálogo usa ya este código? (el código es único por dueño)
     boolean existsByBarcodeAndUsuarioIsNullAndIdNot(String barcode, Integer id);
 
+    // Los alimentos de esos ids con sus raciones y su dueño, en una sola consulta: la
+    // búsqueda pinta así su página (GP-168). Sin orden: quien llama los coloca.
+    @Query("SELECT DISTINCT a FROM Alimento a LEFT JOIN FETCH a.raciones LEFT JOIN FETCH a.usuario "
+            + "WHERE a.id IN :ids")
+    List<Alimento> conRaciones(@Param("ids") java.util.Collection<Integer> ids);
+
     // ¿Otro alimento de este usuario usa ya este código?
     boolean existsByBarcodeAndUsuarioIdAndIdNot(String barcode, Integer usuarioId, Integer id);
 
