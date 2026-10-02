@@ -404,7 +404,7 @@ public class BusquedaAlimentosService {
         dto.setRevisado(false);
         // Las mismas que tendrá al materializarse (RacionesProducto), aún sin id.
         dto.setRaciones(RacionesProducto.de(p).stream()
-                .map(r -> new RacionDTO(null, ingles ? r.nombreEn() : r.nombre(), r.gramos()))
+                .map(r -> RacionDTO.de(null, ingles ? r.nombreEn() : r.nombre(), r.gramos(), ingles, null))
                 .toList());
         return dto;
     }

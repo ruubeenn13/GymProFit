@@ -34,6 +34,8 @@ public interface AlimentoComidaMapper {
     @Mapping(target = "racionId", source = "racion.id")
     @Mapping(target = "racionGramos", source = "racion.gramos")
     @Mapping(target = "racionNombre", ignore = true)
+    @Mapping(target = "racionUnidad", ignore = true)
+    @Mapping(target = "racionUnidadPlural", ignore = true)
     @Mapping(target = "grasasTotales", expression = "java(alimentoComida.getAlimento().getGrasas() != null ? alimentoComida.getAlimento().getGrasas().multiply(alimentoComida.getCantidadGramos()).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP) : BigDecimal.ZERO)")
     AlimentoComidaDTO toDTO(AlimentoComida alimentoComida);
 
@@ -55,6 +57,11 @@ public interface AlimentoComidaMapper {
     default void nombreRacion(AlimentoComida alimentoComida, @MappingTarget AlimentoComidaDTO dto) {
         if (alimentoComida.getRacion() == null) return;
         boolean ingles = "en".equals(LocaleContextHolder.getLocale().getLanguage());
-        dto.setRacionNombre(ingles ? alimentoComida.getRacion().getNombreEn() : alimentoComida.getRacion().getNombre());
+        String nombre = ingles ? alimentoComida.getRacion().getNombreEn() : alimentoComida.getRacion().getNombre();
+        dto.setRacionNombre(nombre);
+        com.gymprofit.api.service.busqueda.UnidadesRacion.de(nombre, ingles).ifPresent(u -> {
+            dto.setRacionUnidad(u.singular());
+            dto.setRacionUnidadPlural(u.plural());
+        });
     }
 }
