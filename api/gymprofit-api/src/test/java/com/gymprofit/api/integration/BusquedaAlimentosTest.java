@@ -246,6 +246,22 @@ class BusquedaAlimentosTest extends AbstractOwnershipTest {
         verify(openFoodFactsClient, never()).porBarcode(anyString());
     }
 
+    @Test
+    @DisplayName("lote 1.6.1: un producto sin materializar trae su envase como ración, sin id")
+    void producto_con_envase() throws Exception {
+        productoOffService.importarLote(List.of(new ProductoOffImportDTO("8400000900127", "Yogur kzenvase",
+                "Marca", 60.0, 10.0, 4.0, 0.2, null, 100.0, "100 g", "4 x 125 g", 50, null, null)));
+        indice.reconstruirProductos();
+
+        JsonNode primero = buscar(owner, "kzenvase").get("content").get(0);
+        assertThat(primero.get("id").isNull()).isTrue();
+        JsonNode raciones = primero.get("raciones");
+        assertThat(raciones.get(0).get("nombre").asText()).isEqualTo("1 unidad");
+        assertThat(raciones.get(0).get("gramos").asDouble()).isEqualTo(125.0);
+        assertThat(raciones.get(0).get("id").isNull()).isTrue();
+        assertThat(raciones.get(1).get("nombre").asText()).isEqualTo("1 ración");
+    }
+
     // --- Andamiaje ----------------------------------------------------------
 
     private JsonNode buscar(Usuario quien, String q) throws Exception {

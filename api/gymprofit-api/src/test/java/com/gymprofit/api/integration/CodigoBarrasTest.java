@@ -111,6 +111,12 @@ class CodigoBarrasTest extends AbstractOwnershipTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.fuente").value("OFF"))
                 .andExpect(jsonPath("$.usuarioId").doesNotExist())
+                // Lote 1.6.1: el envase como primera ración, con su id para elegirla.
+                .andExpect(jsonPath("$.raciones[0].nombre").value("1 envase"))
+                .andExpect(jsonPath("$.raciones[0].gramos").value(500.0))
+                .andExpect(jsonPath("$.raciones[0].id").isNumber())
+                .andExpect(jsonPath("$.raciones[1].nombre").value("1 ración"))
+                .andExpect(jsonPath("$.raciones[1].gramos").value(30.0))
                 .andReturn());
         assertThat(alimentoRepository.findById(id).orElseThrow().getUsuario()).isNull();
 

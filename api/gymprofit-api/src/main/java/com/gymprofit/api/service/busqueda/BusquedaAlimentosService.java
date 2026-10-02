@@ -6,6 +6,7 @@ import com.gymprofit.api.dto.entity.alimento.AlimentoDTO;
 import com.gymprofit.api.dto.entity.alimento.RacionDTO;
 import com.gymprofit.api.entity.Alimento;
 import com.gymprofit.api.entity.ProductoOff;
+import com.gymprofit.api.service.productooff.RacionesProducto;
 import com.gymprofit.api.mappers.AlimentoMapper;
 import com.gymprofit.api.repository.jpa.IAlimentoRepository;
 import com.gymprofit.api.repository.jpa.IProductoOffRepository;
@@ -401,9 +402,10 @@ public class BusquedaAlimentosService {
         dto.setActivo(true);
         dto.setFuente("OFF");
         dto.setRevisado(false);
-        BigDecimal gramos = p.getRacionGramos();
-        dto.setRaciones(gramos == null || gramos.signum() <= 0 ? List.of()
-                : List.of(new RacionDTO(null, ingles ? "1 serving" : "1 ración", gramos)));
+        // Las mismas que tendrá al materializarse (RacionesProducto), aún sin id.
+        dto.setRaciones(RacionesProducto.de(p).stream()
+                .map(r -> new RacionDTO(null, ingles ? r.nombreEn() : r.nombre(), r.gramos()))
+                .toList());
         return dto;
     }
 }
