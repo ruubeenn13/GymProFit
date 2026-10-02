@@ -6,6 +6,11 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `edc7217` | feat(api): **un alimento propio con marca y con su ración** (`POST /alimentos` y `PATCH /alimentos/{id}`, `raciones: [{unidad, gramos}]`): lista cerrada UNIDAD, RACION, ENVASE, REBANADA, una sola; al cambiarla conserva su fila; `RacionDTO.clave`. En el catálogo, 400. `RacionPropiaTest`. |
+| `5878dbf` | test(api): `UnidadesEnRespuestasTest` avisa al índice del catálogo y ya no depende del orden de los tests. |
+| `32d351c` | fix(api): el nombre del alimento de una línea de comida, en el idioma de la petición; la categoría sigue siendo la clave canónica (GP-176). `NombreLineaIdiomaTest`. |
+| `bea3dc3` | feat(api): las raciones traen su unidad en singular y en plural, en el idioma de la petición (`unidad`, `unidadPlural`, `racionUnidad`, `racionUnidadPlural`), de un diccionario versionado (GP-172). |
+| `218cc22` | docs(documentacion): el lienzo de la nutrición del 02-10 (elegir la comida, una comida, crear un alimento), antes que el código. |
 | `69bcb36` | Fusión de `lote-1.6.1` en `main` con la app, CI en verde (API, app; la web de administración ya iba en `b95fc8c`); etiquetada `v1.6.1`. Informe en `documentacion/estado/2026-10-02-lote-1.6.1.md`. |
 | `f2d4ea8` | build(android): **versión 1.6.1** (10601). Misma clave de firma. Necesita la API de `b95fc8c` (desplegada). APK de 7 543 948 bytes. |
 | `ffe66df` | build(android): el modelo de ML Kit de Google Play Services, no dentro del APK: el release con el de dentro pesaba 28,8 MB (DEC-042). |
