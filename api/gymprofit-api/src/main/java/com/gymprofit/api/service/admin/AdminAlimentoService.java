@@ -80,7 +80,8 @@ public class AdminAlimentoService implements IAdminAlimentoService {
         return f;
     }
 
-    private static AdminAlimentoDTO aDTO(Alimento a) {
+    /** El alimento como lo edita la web (también en los avisos, lote 1.6.1). */
+    public static AdminAlimentoDTO aDTO(Alimento a) {
         return AdminAlimentoDTO.builder()
                 .id(a.getId())
                 .nombre(a.getNombre())

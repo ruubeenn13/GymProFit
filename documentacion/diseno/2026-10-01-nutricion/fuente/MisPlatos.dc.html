@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Mis platos</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+button,input{font-family:inherit}
+button{cursor:pointer}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+.toque{transition:transform 120ms cubic-bezier(.2,0,0,1)}
+.toque:active{transform:scale(.97)}
+@keyframes entra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes llena0{from{width:0}}
+@keyframes salta{0%{transform:scale(0)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes sube{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){.anim{animation:none !important;transition:none !important}.toque:active{transform:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 1220px; position: relative; overflow: hidden; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif;">
+<header style="display: flex; align-items: center; gap: 4px; padding: 8px 12px 0 4px;">
+<a href="Main.dc.html" aria-label="Cerrar" class="toque" style="width: 48px; height: 48px; border-radius: 24px; color: #F2F2F3; display: flex; align-items: center; justify-content: center; text-decoration: none;"><span class="ms" aria-hidden="true">close</span></a>
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px;">Añadir a</span>
+<button type="button" aria-label="Cambiar de comida: ahora, merienda" class="toque" style="min-height: 44px; display: flex; align-items: center; gap: 2px; padding: 0 8px 0 12px; border: none; border-radius: 22px; background: #3A2110; color: #FFB27A; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px;">merienda<span class="ms" aria-hidden="true">expand_more</span></button>
+</header>
+<main style="padding: 12px 16px 120px; display: flex; flex-direction: column; gap: 14px;">
+<div style="display: flex; gap: 8px;">
+<a href="Buscar.dc.html" class="toque" style="flex-grow: 1; min-height: 52px; display: flex; align-items: center; gap: 10px; padding: 0 16px; border-radius: 26px; background: #1B1E24; border: 1px solid #676F7E; color: #A1A9B6; text-decoration: none; font-size: 16px;"><span class="ms" aria-hidden="true">search</span>Busca un alimento o un plato</a>
+<a href="Escaner.dc.html" aria-label="Escanear un código de barras" class="toque" style="flex-shrink: 0; width: 52px; height: 52px; border-radius: 26px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; justify-content: center; text-decoration: none;"><span class="ms" aria-hidden="true">barcode_scanner</span></a>
+</div>
+<nav aria-label="Qué ver" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 26px; background: #1B1E24;">
+<a href="Anadir.dc.html" style="min-height: 44px; border-radius: 22px; color: #C9CED6; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; text-decoration: none;">Todo</a>
+<a href="Favoritos.dc.html" style="min-height: 44px; border-radius: 22px; color: #C9CED6; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 15px; font-weight: 600; text-decoration: none;"><span class="ms" aria-hidden="true" style="font-size: 18px;">favorite</span>Favoritos</a>
+<a href="MisPlatos.dc.html" aria-current="page" style="min-height: 44px; border-radius: 22px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 15px; font-weight: 700; text-decoration: none;"><span class="ms" aria-hidden="true" style="font-size: 18px;">menu_book</span>Mis platos</a>
+</nav>
+<section aria-label="Lo que te encaja" style="display: flex; flex-direction: column; gap: 8px;">
+<div style="display: flex; flex-direction: column; gap: 2px; padding: 0 4px;">
+<h2 style="margin: 0; display: flex; align-items: center; gap: 6px; color: #FFB27A; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 1px; text-transform: uppercase;"><span class="ms f" aria-hidden="true" style="font-size: 18px;">auto_awesome</span>Lo que te encaja</h2>
+<span style="font-size: 15px; color: #C9CED6;">Te quedan <strong style="color: #F2F2F3;">1.161 kcal</strong> y <strong style="color: #F2F2F3;">54 g de proteína</strong></span>
+</div>
+<sc-for list="{{ encajan }}" as="s" hint-placeholder-count="3">
+<div class="anim" style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 12px 8px 12px 14px; display: flex; flex-direction: column; gap: 10px; animation: entra 350ms cubic-bezier(.05,.7,.1,1) backwards; animation-delay: {{ s.retraso }};">
+<div style="display: flex; align-items: center; gap: 10px;">
+<a href="Ficha.dc.html" style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; color: #F2F2F3; text-decoration: none;"><span style="font-size: 16px; font-weight: 600;">{{ s.nombre }}</span><span style="font-size: 14px; color: #A1A9B6;">{{ s.detalle }}</span></a>
+<sc-if value="{{ s.libre }}" hint-placeholder-val="{{ true }}">
+<button type="button" onClick="{{ s.tocar }}" aria-label="{{ s.etiqueta }}" class="toque" style="flex-shrink: 0; width: 44px; height: 44px; border: none; border-radius: 22px; background: #252A31; color: #F2F2F3; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">add</span></button>
+</sc-if>
+<sc-if value="{{ s.anadido }}" hint-placeholder-val="{{ false }}">
+<button type="button" onClick="{{ s.tocar }}" aria-label="{{ s.etiquetaQuitar }}" class="toque" style="flex-shrink: 0; width: 44px; height: 44px; border: none; border-radius: 22px; background: #143323; color: #4ADE80; display: flex; align-items: center; justify-content: center;"><span class="ms anim" aria-hidden="true" style="animation: salta 260ms cubic-bezier(.34,1.56,.64,1) backwards;">check</span></button>
+</sc-if>
+</div>
+<div role="img" aria-label="{{ s.cubreA11y }}" style="display: flex; align-items: center; gap: 10px; padding-right: 6px;">
+<span aria-hidden="true" style="flex-grow: 1; height: 8px; border-radius: 4px; background: #353A43; overflow: hidden; display: flex;"><span class="anim" style="width: {{ s.ancho }}; border-radius: 4px; background: #6BA6F5; animation: llena0 600ms cubic-bezier(.2,0,0,1) 300ms backwards;"></span></span>
+<span aria-hidden="true" style="flex-shrink: 0; font-size: 14px; color: #C9CED6; font-variant-numeric: tabular-nums;">{{ s.cubre }}</span>
+</div>
+<span style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #A1A9B6;"><span class="ms" aria-hidden="true" style="font-size: 16px;">{{ s.porqueIcono }}</span>{{ s.porque }}</span>
+</div>
+</sc-for>
+</section>
+<section aria-label="Mis platos" style="display: flex; flex-direction: column; gap: 8px;">
+<h2 style="margin: 0; padding: 0 4px; color: #A1A9B6; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 1px; text-transform: uppercase;">Mis platos</h2>
+<div style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
+<sc-for list="{{ platos }}" as="r" hint-placeholder-count="4">
+<div style="display: flex; align-items: center; gap: 4px; padding: 4px 8px 4px 14px; border-bottom: 1px solid #252A31;">
+<a href="Ficha.dc.html" style="flex-grow: 1; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 10px 0; text-decoration: none; color: #F2F2F3;"><span class="ms" aria-hidden="true" style="color: #A1A9B6;">{{ r.icono }}</span><span style="min-width: 0; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ r.nombre }}</span><span style="font-size: 14px; color: #A1A9B6;">{{ r.detalle }}</span></span></a>
+<sc-if value="{{ r.libre }}" hint-placeholder-val="{{ true }}">
+<button type="button" onClick="{{ r.tocar }}" aria-label="{{ r.etiqueta }}" class="toque" style="flex-shrink: 0; width: 44px; height: 44px; border: none; border-radius: 22px; background: #252A31; color: #F2F2F3; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">add</span></button>
+</sc-if>
+<sc-if value="{{ r.anadido }}" hint-placeholder-val="{{ false }}">
+<button type="button" onClick="{{ r.tocar }}" aria-label="{{ r.etiquetaQuitar }}" class="toque" style="flex-shrink: 0; width: 44px; height: 44px; border: none; border-radius: 22px; background: #143323; color: #4ADE80; display: flex; align-items: center; justify-content: center;"><span class="ms anim" aria-hidden="true" style="animation: salta 260ms cubic-bezier(.34,1.56,.64,1) backwards;">check</span></button>
+</sc-if>
+</div>
+</sc-for>
+<a href="CrearPlato.dc.html" class="toque" style="min-height: 56px; display: flex; align-items: center; gap: 12px; padding: 0 14px; color: #FF6A00; font-size: 16px; font-weight: 700; text-decoration: none;"><span class="ms" aria-hidden="true">add_circle</span>Crear un plato</a>
+</div>
+</section>
+<section aria-label="Alimentos que has creado" style="display: flex; flex-direction: column; gap: 8px;">
+<h2 style="margin: 0; padding: 0 4px; color: #A1A9B6; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 1px; text-transform: uppercase;">Alimentos que has creado</h2>
+<div style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
+<div style="display: flex; align-items: center; gap: 4px; padding: 4px 8px 4px 14px;">
+<a href="Ficha.dc.html" style="flex-grow: 1; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 10px 0; text-decoration: none; color: #F2F2F3;"><span class="ms" aria-hidden="true" style="color: #A1A9B6;">local_drink</span><span style="min-width: 0; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px;">Kéfir natural</span><span style="font-size: 14px; color: #A1A9B6;">1 vaso (200 ml) · 104 kcal · con su código</span></span></a>
+<button type="button" aria-label="Añadir kéfir natural, 1 vaso, 104 kcal" class="toque" style="flex-shrink: 0; width: 44px; height: 44px; border: none; border-radius: 22px; background: #252A31; color: #F2F2F3; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">add</span></button>
+</div>
+</div>
+</section>
+</main>
+<sc-if value="{{ hayAlgo }}" hint-placeholder-val="{{ false }}">
+<div role="status" class="anim" style="position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 16px 24px; background: #121418; border-top: 1px solid #252A31; display: flex; align-items: center; gap: 12px; animation: sube 350ms cubic-bezier(.05,.7,.1,1) backwards;">
+<span style="flex-grow: 1; display: flex; flex-direction: column;"><span style="font-size: 16px; font-weight: 600;">{{ resumen }}</span><span style="font-size: 14px; color: #A1A9B6; font-variant-numeric: tabular-nums;">{{ kcalSuma }}</span></span>
+<a href="Main.dc.html" class="toque" style="min-height: 52px; padding: 0 28px; border-radius: 26px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; font-size: 17px; font-weight: 700; text-decoration: none;">Hecho</a>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1220}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { anadidos: {} };
+  }
+  renderVals() {
+    const falta = 54;
+    const sugerencias = [
+      { id: 's1', nombre: 'Yogur proteico y plátano', detalle: '227 kcal · 21 g de proteína', kcal: 227, prot: 21, porqueIcono: 'schedule', porque: 'Lo sueles tomar a media tarde' },
+      { id: 's2', nombre: 'Batido post-entreno', detalle: 'Tu plato · 365 kcal · 35 g de proteína', kcal: 365, prot: 35, porqueIcono: 'fitness_center', porque: 'Hoy has entrenado' },
+      { id: 's3', nombre: 'Pan integral con pavo', detalle: '203 kcal · 19 g de proteína', kcal: 203, prot: 19, porqueIcono: 'history', porque: 'Tu merienda de ayer' }
+    ];
+    const platosBase = [
+      { id: 'p1', icono: 'menu_book', nombre: 'Lentejas de casa', detalle: '1 ración · 474 kcal · 25 g prot.', kcal: 474 },
+      { id: 'p2', icono: 'menu_book', nombre: 'Batido post-entreno', detalle: '1 ración · 365 kcal · 35 g prot.', kcal: 365 },
+      { id: 'p3', icono: 'menu_book', nombre: 'Tortilla de patatas', detalle: '1 ración (1/6) · 220 kcal · 10 g prot.', kcal: 220 },
+      { id: 'p4', icono: 'menu_book', nombre: 'Ensalada de pasta', detalle: '1 ración (1/3) · 420 kcal · 18 g prot.', kcal: 420 }
+    ];
+    const marcados = this.state.anadidos;
+    const conmutar = (id) => () => {
+      const nuevos = { ...this.state.anadidos };
+      if (nuevos[id]) delete nuevos[id]; else nuevos[id] = true;
+      this.setState({ anadidos: nuevos });
+    };
+    const encajan = sugerencias.map((s, i) => {
+      const pct = Math.round((s.prot / falta) * 100);
+      return {
+        ...s,
+        retraso: (i * 60) + 'ms',
+        ancho: Math.min(100, pct) + '%',
+        cubre: pct + ' % de lo que falta',
+        cubreA11y: 'Cubre el ' + pct + ' por ciento de la proteína que te falta',
+        anadido: !!marcados[s.id],
+        libre: !marcados[s.id],
+        etiqueta: 'Añadir ' + s.nombre.toLowerCase() + ', ' + s.detalle,
+        etiquetaQuitar: 'Quitar ' + s.nombre.toLowerCase() + ' de la merienda',
+        tocar: conmutar(s.id)
+      };
+    });
+    const platos = platosBase.map((r) => ({
+      ...r,
+      anadido: !!marcados[r.id],
+      libre: !marcados[r.id],
+      etiqueta: 'Añadir ' + r.nombre.toLowerCase() + ', ' + r.detalle,
+      etiquetaQuitar: 'Quitar ' + r.nombre.toLowerCase() + ' de la merienda',
+      tocar: conmutar(r.id)
+    }));
+    const todos = sugerencias.concat(platosBase);
+    const elegidos = todos.filter((r) => marcados[r.id]);
+    const k = elegidos.length;
+    const suma = elegidos.reduce((s, r) => s + r.kcal, 0);
+    return {
+      encajan,
+      platos,
+      hayAlgo: k > 0,
+      resumen: k === 1 ? '1 añadido a la merienda' : k + ' añadidos a la merienda',
+      kcalSuma: '+' + suma + ' kcal'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Favoritos</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+button,input{font-family:inherit}
+button{cursor:pointer}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+.toque{transition:transform 120ms cubic-bezier(.2,0,0,1)}
+.toque:active{transform:scale(.97)}
+@keyframes entra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes salta{0%{transform:scale(0)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes sube{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
+@keyframes late{0%{transform:scale(1)}30%{transform:scale(1.3)}60%{transform:scale(.95)}100%{transform:scale(1)}}
+@keyframes nueva{0%{opacity:0;transform:translateY(-12px);background:#3A2110}40%{opacity:1;transform:none;background:#3A2110}100%{background:transparent}}
+@media (prefers-reduced-motion: reduce){.anim{animation:none !important;transition:none !important}.toque:active{transform:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 920px; position: relative; overflow: hidden; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif;">
+<header style="display: flex; align-items: center; gap: 4px; padding: 8px 12px 0 4px;">
+<a href="Main.dc.html" aria-label="Cerrar" class="toque" style="width: 48px; height: 48px; border-radius: 24px; color: #F2F2F3; display: flex; align-items: center; justify-content: center; text-decoration: none;"><span class="ms" aria-hidden="true">close</span></a>
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px;">Añadir a</span>
+<button type="button" aria-label="Cambiar de comida: ahora, merienda" class="toque" style="min-height: 44px; display: flex; align-items: center; gap: 2px; padding: 0 8px 0 12px; border: none; border-radius: 22px; background: #3A2110; color: #FFB27A; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px;">merienda<span class="ms" aria-hidden="true">expand_more</span></button>
+</header>
+<main style="padding: 12px 16px 120px; display: flex; flex-direction: column; gap: 14px;">
+<div style="display: flex; gap: 8px;">
+<a href="Buscar.dc.html" class="toque" style="flex-grow: 1; min-height: 52px; display: flex; align-items: center; gap: 10px; padding: 0 16px; border-radius: 26px; background: #1B1E24; border: 1px solid #676F7E; color: #A1A9B6; text-decoration: none; font-size: 16px;"><span class="ms" aria-hidden="true">search</span>Busca un alimento o un plato</a>
+<a href="Escaner.dc.html" aria-label="Escanear un código de barras" class="toque" style="flex-shrink: 0; width: 52px; height: 52px; border-radius: 26px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; justify-content: center; text-decoration: none;"><span class="ms" aria-hidden="true">barcode_scanner</span></a>
+</div>
+<nav aria-label="Qué ver" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 26px; background: #1B1E24;">
+<a href="Anadir.dc.html" style="min-height: 44px; border-radius: 22px; color: #C9CED6; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; text-decoration: none;">Todo</a>
+<a href="Favoritos.dc.html" aria-current="page" style="min-height: 44px; border-radius: 22px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 15px; font-weight: 700; text-decoration: none;"><span class="ms f" aria-hidden="true" style="font-size: 18px;">favorite</span>Favoritos</a>
+<a href="MisPlatos.dc.html" style="min-height: 44px; border-radius: 22px; color: #C9CED6; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 15px; font-weight: 600; text-decoration: none;"><span class="ms" aria-hidden="true" style="font-size: 18px;">menu_book</span>Mis platos</a>
+</nav>
+<sc-if value="{{ sugerir }}" hint-placeholder-val="{{ true }}">
+<section aria-label="Sugerencia de favorito" class="anim" style="background: #1B1E24; border: 1px solid #676F7E; border-radius: 20px; padding: 14px 8px 14px 16px; display: flex; align-items: center; gap: 12px; animation: entra 350ms cubic-bezier(.05,.7,.1,1) backwards;">
+<span class="ms" aria-hidden="true" style="flex-shrink: 0; color: #FFB27A;">bakery_dining</span>
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px; font-weight: 600;">¿Pan integral a favoritos?</span><span style="font-size: 14px; color: #A1A9B6;">Lo has añadido 4 veces en dos semanas</span></span>
+<button type="button" onClick="{{ guardarPan }}" aria-label="Sí, añadir pan integral a favoritos" class="toque" style="flex-shrink: 0; width: 48px; height: 48px; border: none; border-radius: 24px; background: #3A2110; color: #FF6A00; display: flex; align-items: center; justify-content: center;"><span class="ms f" aria-hidden="true">favorite</span></button>
+<button type="button" onClick="{{ descartar }}" aria-label="No, gracias" class="toque" style="flex-shrink: 0; width: 48px; height: 48px; border: none; border-radius: 24px; background: transparent; color: #A1A9B6; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">close</span></button>
+</section>
+</sc-if>
+<section aria-label="Tus favoritos" style="display: flex; flex-direction: column; gap: 8px;">
+<div style="display: flex; align-items: baseline; justify-content: space-between; padding: 0 4px;"><h2 style="margin: 0; color: #A1A9B6; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 1px; text-transform: uppercase;">Los que más usas</h2><span style="font-size: 14px; color: #A1A9B6;">{{ cuantos }}</span></div>
+<div style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
+<sc-for list="{{ favoritos }}" as="r" hint-placeholder-count="7">
+<div class="anim" style="display: flex; align-items: center; gap: 4px; padding: 4px 8px 4px 14px; border-bottom: 1px solid #252A31; animation: {{ r.anim }}; animation-delay: {{ r.retraso }};">
+<a href="Ficha.dc.html" style="flex-grow: 1; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 10px 0; text-decoration: none; color: #F2F2F3;"><span class="ms" aria-hidden="true" style="color: #A1A9B6;">{{ r.icono }}</span><span style="min-width: 0; display: flex; flex-direction: column; gap: 2px;"><span style="display: flex; align-items: center; gap: 8px; font-size: 16px;"><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ r.nombre }}</span><sc-if value="{{ r.esPlato }}" hint-placeholder-val="{{ false }}"><span style="flex-shrink: 0; padding: 1px 8px; border-radius: 10px; background: #252A31; color: #C9CED6; font-size: 12px; font-weight: 700;">Plato</span></sc-if></span><span style="font-size: 14px; color: #A1A9B6;">{{ r.cantidad }}</span></span></a>
+<sc-if value="{{ r.libre }}" hint-placeholder-val="{{ true }}">
+<button type="button" onClick="{{ r.tocar }}" aria-label="{{ r.etiqueta }}" class="toque" style="flex-shrink: 0; width: 44px; height: 44px; border: none; border-radius: 22px; background: #252A31; color: #F2F2F3; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">add</span></button>
+</sc-if>
+<sc-if value="{{ r.anadido }}" hint-placeholder-val="{{ false }}">
+<button type="button" onClick="{{ r.tocar }}" aria-label="{{ r.etiquetaQuitar }}" class="toque" style="flex-shrink: 0; width: 44px; height: 44px; border: none; border-radius: 22px; background: #143323; color: #4ADE80; display: flex; align-items: center; justify-content: center;"><span class="ms anim" aria-hidden="true" style="animation: salta 260ms cubic-bezier(.34,1.56,.64,1) backwards;">check</span></button>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</section>
+</main>
+<sc-if value="{{ hayAlgo }}" hint-placeholder-val="{{ false }}">
+<div role="status" class="anim" style="position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 16px 24px; background: #121418; border-top: 1px solid #252A31; display: flex; align-items: center; gap: 12px; animation: sube 350ms cubic-bezier(.05,.7,.1,1) backwards;">
+<span style="flex-grow: 1; display: flex; flex-direction: column;"><span style="font-size: 16px; font-weight: 600;">{{ resumen }}</span><span style="font-size: 14px; color: #A1A9B6; font-variant-numeric: tabular-nums;">{{ kcalSuma }}</span></span>
+<a href="Main.dc.html" class="toque" style="min-height: 52px; padding: 0 28px; border-radius: 26px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; font-size: 17px; font-weight: 700; text-decoration: none;">Hecho</a>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":920}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { anadidos: {}, pan: false, descartado: false };
+  }
+  renderVals() {
+    const base = [
+      { id: 'yogur', icono: 'breakfast_dining', nombre: 'Yogur proteico natural', cantidad: '1 envase (200 g) · 120 kcal', kcal: 120 },
+      { id: 'pollo', icono: 'set_meal', nombre: 'Pechuga de pollo a la plancha', cantidad: '150 g · 165 kcal', kcal: 165 },
+      { id: 'pan', icono: 'bakery_dining', nombre: 'Pan integral', cantidad: '2 rebanadas (56 g) · 140 kcal', kcal: 140, nuevo: true },
+      { id: 'arroz', icono: 'rice_bowl', nombre: 'Arroz blanco cocido', cantidad: '200 g · 260 kcal', kcal: 260 },
+      { id: 'lentejas', icono: 'menu_book', nombre: 'Lentejas de casa', cantidad: '1 ración · 474 kcal', kcal: 474, esPlato: true },
+      { id: 'avena', icono: 'grain', nombre: 'Copos de avena', cantidad: '50 g · 186 kcal', kcal: 186 },
+      { id: 'platano', icono: 'nutrition', nombre: 'Plátano', cantidad: '1 unidad (120 g) · 107 kcal', kcal: 107 },
+      { id: 'leche', icono: 'local_cafe', nombre: 'Leche semidesnatada', cantidad: '1 vaso (250 ml) · 115 kcal', kcal: 115 }
+    ];
+    const visibles = base.filter((r) => !r.nuevo || this.state.pan);
+    const marcados = this.state.anadidos;
+    let n = 0;
+    const favoritos = visibles.map((r) => {
+      const esNueva = !!r.nuevo;
+      return {
+        ...r,
+        esPlato: !!r.esPlato,
+        anadido: !!marcados[r.id],
+        libre: !marcados[r.id],
+        retraso: esNueva ? '0ms' : (n++ * 40) + 'ms',
+        anim: esNueva ? 'nueva 1400ms cubic-bezier(.05,.7,.1,1) backwards' : 'entra 350ms cubic-bezier(.05,.7,.1,1) backwards',
+        etiqueta: 'Añadir ' + r.nombre.toLowerCase() + ', ' + r.cantidad,
+        etiquetaQuitar: 'Quitar ' + r.nombre.toLowerCase() + ' de la merienda',
+        tocar: () => {
+          const nuevos = { ...this.state.anadidos };
+          if (nuevos[r.id]) delete nuevos[r.id]; else nuevos[r.id] = true;
+          this.setState({ anadidos: nuevos });
+        }
+      };
+    });
+    const elegidos = visibles.filter((r) => marcados[r.id]);
+    const k = elegidos.length;
+    const suma = elegidos.reduce((s, r) => s + r.kcal, 0);
+    return {
+      favoritos,
+      cuantos: visibles.length + ' favoritos',
+      sugerir: !this.state.pan && !this.state.descartado,
+      guardarPan: () => this.setState({ pan: true }),
+      descartar: () => this.setState({ descartado: true }),
+      hayAlgo: k > 0,
+      resumen: k === 1 ? '1 añadido a la merienda' : k + ' añadidos a la merienda',
+      kcalSuma: '+' + suma + ' kcal'
+    };
+  }
+}
+</script>
+</body>
+</html>

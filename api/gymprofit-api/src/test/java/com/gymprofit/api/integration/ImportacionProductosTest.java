@@ -115,7 +115,10 @@ class ImportacionProductosTest extends AbstractOwnershipTest {
                 .andExpect(jsonPath("$.nombre").value("Nombre de la semana 1"))
                 .andExpect(jsonPath("$.fuente").value("OFF"))
                 .andExpect(jsonPath("$.revisado").value(false))
-                .andExpect(jsonPath("$.raciones[0].gramos").value(30.0))
+                // El envase de 500 g primero (lote 1.6.1), después la ración declarada.
+                .andExpect(jsonPath("$.raciones[0].nombre").value("1 envase"))
+                .andExpect(jsonPath("$.raciones[0].gramos").value(500.0))
+                .andExpect(jsonPath("$.raciones[1].gramos").value(30.0))
                 .andReturn().getResponse().getContentAsString();
         Integer id = objectMapper.readTree(json).get("id").asInt();
         verify(openFoodFactsClient, never()).porBarcode(anyString());

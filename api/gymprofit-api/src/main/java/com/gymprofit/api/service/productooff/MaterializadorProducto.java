@@ -36,7 +36,8 @@ public class MaterializadorProducto {
     }
 
     /**
-     * Crea la fila de catálogo del producto, con su ración si la declara.
+     * Crea la fila de catálogo del producto, con sus raciones: el envase si se lee, y la
+     * ración que declara (RacionesProducto).
      *
      * @param producto producto de productos_off.
      * @return el alimento creado.
@@ -60,16 +61,15 @@ public class MaterializadorProducto {
         // usuario null: catálogo, no la comida de quien lo elige (DEC-032).
         Alimento guardado = alimentoRepository.saveAndFlush(alimento);
 
-        BigDecimal gramos = producto.getRacionGramos();
-        if (gramos != null && gramos.signum() > 0) {
+        int orden = 1;
+        for (RacionesProducto.Racion r : RacionesProducto.de(producto)) {
             AlimentoRacion racion = new AlimentoRacion();
             racion.setAlimento(guardado);
-            racion.setNombre("1 ración");
-            racion.setNombreEn("1 serving");
-            racion.setGramos(gramos);
-            racion.setFuente(recortar("Open Food Facts: " + (producto.getRacionTexto() == null
-                    ? gramos.stripTrailingZeros().toPlainString() + " g" : producto.getRacionTexto()), 255));
-            racion.setOrden(1);
+            racion.setNombre(r.nombre());
+            racion.setNombreEn(r.nombreEn());
+            racion.setGramos(r.gramos());
+            racion.setFuente(r.fuente());
+            racion.setOrden(orden++);
             // También en la lista de la entidad, para que la respuesta ya la lleve.
             guardado.getRaciones().add(racionRepository.save(racion));
         }

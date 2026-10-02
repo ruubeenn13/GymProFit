@@ -15,6 +15,9 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RacionDTO implements Serializable {
+    // Id de la ración (lote 1.6.1), para elegirla al añadir; null en un producto que
+    // aún no está en el catálogo.
+    private Integer id;
     private String nombre;
     private BigDecimal gramos;
 }

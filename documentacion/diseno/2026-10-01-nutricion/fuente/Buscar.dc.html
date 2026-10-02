@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Buscar «pollo»</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+button,input{font-family:inherit}
+button{cursor:pointer}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+.toque{transition:transform 120ms cubic-bezier(.2,0,0,1)}
+.toque:active{transform:scale(.97)}
+@keyframes entra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes salta{0%{transform:scale(0)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){.anim{animation:none !important;transition:none !important}.toque:active{transform:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 900px; position: relative; overflow: hidden; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif;">
+<header style="display: flex; align-items: center; gap: 8px; padding: 8px 16px 0 4px;">
+<a href="Anadir.dc.html" aria-label="Atrás" class="toque" style="flex-shrink: 0; width: 48px; height: 48px; border-radius: 24px; color: #F2F2F3; display: flex; align-items: center; justify-content: center; text-decoration: none;"><span class="ms" aria-hidden="true">arrow_back</span></a>
+<label for="busca" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">Buscar un alimento</label>
+<div style="flex-grow: 1; min-height: 52px; display: flex; align-items: center; gap: 8px; padding: 0 4px 0 16px; border-radius: 26px; background: #1B1E24; border: 2px solid #FF6A00;">
+<span class="ms" aria-hidden="true" style="color: #A1A9B6;">search</span>
+<input id="busca" value="pollo" style="flex-grow: 1; min-width: 0; height: 44px; border: none; outline: none; background: transparent; color: #F2F2F3; font-size: 17px;">
+<button type="button" aria-label="Borrar la búsqueda" class="toque" style="width: 44px; height: 44px; border: none; border-radius: 22px; background: transparent; color: #A1A9B6; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">close</span></button>
+</div>
+</header>
+<main style="padding: 16px 16px 40px; display: flex; flex-direction: column; gap: 16px;">
+<sc-for list="{{ grupos }}" as="gr" hint-placeholder-count="3">
+<section aria-label="{{ gr.titulo }}" style="display: flex; flex-direction: column; gap: 8px;">
+<h2 style="margin: 0; padding: 0 4px; display: flex; align-items: center; gap: 6px; color: #A1A9B6; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 1px; text-transform: uppercase;">{{ gr.titulo }}</h2>
+<div style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
+<sc-for list="{{ gr.filas }}" as="f" hint-placeholder-count="2">
+<div class="anim" style="display: flex; align-items: center; gap: 4px; padding: 4px 8px 4px 14px; border-bottom: 1px solid #252A31; animation: entra 350ms cubic-bezier(.05,.7,.1,1) backwards; animation-delay: {{ f.retraso }};">
+<a href="Ficha.dc.html" style="flex-grow: 1; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 10px 0; text-decoration: none; color: #F2F2F3;"><span class="ms" aria-hidden="true" style="color: #A1A9B6;">{{ f.icono }}</span><span style="min-width: 0; display: flex; flex-direction: column; gap: 2px;"><span style="display: flex; align-items: center; gap: 6px; font-size: 16px;"><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ f.nombre }}</span><sc-if value="{{ f.verificado }}" hint-placeholder-val="{{ false }}"><span class="ms f" role="img" aria-label="Datos revisados" style="font-size: 18px; color: #6BA6F5;">verified</span></sc-if></span><span style="font-size: 14px; color: #A1A9B6;">{{ f.detalle }}</span></span></a>
+<sc-if value="{{ f.libre }}" hint-placeholder-val="{{ true }}">
+<button type="button" onClick="{{ f.tocar }}" aria-label="{{ f.etiqueta }}" class="toque" style="flex-shrink: 0; width: 44px; height: 44px; border: none; border-radius: 22px; background: #252A31; color: #F2F2F3; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">add</span></button>
+</sc-if>
+<sc-if value="{{ f.anadido }}" hint-placeholder-val="{{ false }}">
+<button type="button" onClick="{{ f.tocar }}" aria-label="Añadido. Tocar para quitarlo" class="toque" style="flex-shrink: 0; width: 44px; height: 44px; border: none; border-radius: 22px; background: #143323; color: #4ADE80; display: flex; align-items: center; justify-content: center;"><span class="ms anim" aria-hidden="true" style="animation: salta 260ms cubic-bezier(.34,1.56,.64,1) backwards;">check</span></button>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</section>
+</sc-for>
+<section aria-label="Si no está" style="border: 1px dashed #676F7E; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+<span style="font-size: 16px; font-weight: 600;">¿No lo encuentras?</span>
+<div style="display: flex; gap: 8px;">
+<a href="Escaner.dc.html" class="toque" style="flex-grow: 1; min-height: 48px; border-radius: 24px; background: #252A31; color: #F2F2F3; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 15px; font-weight: 600; text-decoration: none;"><span class="ms" aria-hidden="true" style="font-size: 20px;">barcode_scanner</span>Escanéalo</a>
+<a href="#" class="toque" style="flex-grow: 1; min-height: 48px; border-radius: 24px; background: #252A31; color: #F2F2F3; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 15px; font-weight: 600; text-decoration: none;"><span class="ms" aria-hidden="true" style="font-size: 20px;">add_circle</span>Créalo</a>
+</div>
+</section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { anadidos: {} };
+  }
+  renderVals() {
+    const datos = [
+      { titulo: 'Tuyo', filas: [
+        { id: 't1', icono: 'history', nombre: 'Pechuga de pollo a la plancha', detalle: 'Última vez: 150 g · 165 kcal', verificado: false }
+      ] },
+      { titulo: 'Básicos', filas: [
+        { id: 'b1', icono: 'set_meal', nombre: 'Pechuga de pollo, cruda', detalle: '110 kcal por 100 g · 23 g de proteína', verificado: true },
+        { id: 'b2', icono: 'set_meal', nombre: 'Muslo de pollo sin piel, crudo', detalle: '121 kcal por 100 g · 20 g de proteína', verificado: true },
+        { id: 'b3', icono: 'set_meal', nombre: 'Pollo asado con piel', detalle: '239 kcal por 100 g · 27 g de proteína', verificado: true }
+      ] },
+      { titulo: 'Productos', filas: [
+        { id: 'p1', icono: 'inventory_2', nombre: 'Pechuga de pollo asada en lonchas', detalle: '2 lonchas (30 g) · 31 kcal', verificado: true },
+        { id: 'p2', icono: 'inventory_2', nombre: 'Caldo de pollo', detalle: '1 vaso (250 ml) · 15 kcal', verificado: false },
+        { id: 'p3', icono: 'inventory_2', nombre: 'Nuggets de pollo', detalle: '6 piezas (100 g) · 250 kcal', verificado: false }
+      ] }
+    ];
+    let n = 0;
+    const grupos = datos.map((gr) => ({
+      titulo: gr.titulo,
+      filas: gr.filas.map((f) => {
+        const marcado = !!this.state.anadidos[f.id];
+        const retraso = (n++ * 40) + 'ms';
+        return {
+          ...f,
+          retraso,
+          anadido: marcado,
+          libre: !marcado,
+          etiqueta: 'Añadir ' + f.nombre.toLowerCase() + ', ' + f.detalle,
+          tocar: () => {
+            const nuevos = { ...this.state.anadidos };
+            if (nuevos[f.id]) delete nuevos[f.id]; else nuevos[f.id] = true;
+            this.setState({ anadidos: nuevos });
+          }
+        };
+      })
+    }));
+    return { grupos };
+  }
+}
+</script>
+</body>
+</html>

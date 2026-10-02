@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Decisiones para aprobar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+</style>
+</helmet>
+<div style="width: 1100px; height: 2100px; box-sizing: border-box; padding: 52px 56px; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif; display: flex; flex-direction: column; gap: 24px;">
+<div style="display: flex; flex-direction: column; gap: 8px;">
+<h1 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 46px; line-height: 1.05;">Lo que apruebas con este lienzo</h1>
+<p style="margin: 0; font-size: 18px; line-height: 1.45; color: #C9CED6;">La nutrición entera: GP-162 con GP-160, GP-164, GP-127, GP-165 y GP-166. El ejemplo es Lucía, un jueves de entreno, a la hora de la merienda.</p>
+</div>
+<section aria-label="Ya aprobado" style="background: #121418; border: 1px solid #143323; border-radius: 20px; padding: 20px 22px; display: flex; flex-direction: column; gap: 14px;">
+<h2 style="margin: 0; display: flex; align-items: center; gap: 10px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px;"><span style="width: 32px; height: 32px; border-radius: 16px; background: #143323; color: #4ADE80; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true" style="font-size: 20px;">check</span></span>Ya aprobado el 01-10</h2>
+<ul style="margin: 0; padding-left: 20px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 36px; row-gap: 8px; font-size: 16px; line-height: 1.45; color: #C9CED6;">
+<li>Los cuatro principios y el movimiento, con «Quitar animaciones».</li>
+<li>Lo tuyo primero, favoritos, «¿Copiar la de ayer?», raciones, el escáner y la búsqueda propia.</li>
+<li>Recetas a nuestra manera: Mis platos y «Lo que te encaja».</li>
+<li>El agua, «Cómo encaja en tu día» y el resumen semanal.</li>
+<li>El vínculo con el entreno, en tres sitios.</li>
+<li>La foto con IA, después del lanzamiento y de pago.</li>
+<li>Fuera: voz, lista de la compra, planes de comidas, micronutrientes y entrenador con IA.</li>
+</ul>
+</section>
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 30px;">Para aprobar</h2>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px;">
+<sc-for list="{{ decisiones }}" as="d" hint-placeholder-count="14">
+<section style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 18px 20px; display: flex; gap: 14px;"><span style="flex-shrink: 0; width: 34px; height: 34px; border-radius: 17px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; justify-content: center; font-weight: 700;">{{ d.n }}</span><div style="display: flex; flex-direction: column; gap: 6px;"><h3 style="margin: 0; font-size: 20px; font-weight: 700;">{{ d.titulo }}</h3><p style="margin: 0; font-size: 16px; line-height: 1.45; color: #C9CED6;">{{ d.texto }}</p><span style="font-size: 14px; color: #A1A9B6;">{{ d.donde }}</span></div></section>
+</sc-for>
+</div>
+<section style="border: 1px dashed #4A505B; border-radius: 20px; padding: 18px 22px; display: flex; flex-direction: column; gap: 6px;">
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 24px;">Fuera de este lienzo</h2>
+<p style="margin: 0; font-size: 16px; line-height: 1.45; color: #C9CED6;">La foto con IA (GP-161), que tendrá su sitio en el escáner. Editar los objetivos del plan, que siguen en el perfil. El modo claro de estas pantallas sale de los mismos tokens.</p>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1100,"height":2100}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const lista = [
+      ['El «+» añade sin preguntar', 'Con la última cantidad que usaste. Tocar el nombre abre la ficha. Lo añadido se junta abajo, con «Hecho».', 'Tableros 4, 5, 8 y 9'],
+      ['Tres pestañas: Todo, Favoritos y Mis platos', '«Mis platos» sustituye a «Mis alimentos» de la propuesta y guarda también los alimentos que creas.', 'Tableros 4, 8 y 9'],
+      ['Buscar por grupos', 'Tuyo, Básicos y Productos, en ese orden. La insignia azul marca lo revisado por nosotros. Si no está: escanéalo o créalo.', 'Tablero 5'],
+      ['El escáner, con pantalla propia', 'Al leer: esquinas en verde, vibración y la hoja para añadir en un toque. El permiso de cámara ya está en la app, por la foto de perfil. Sin «Foto» hasta que exista.', 'Tablero 6'],
+      ['La ficha, sin micronutrientes', 'Cuatro cifras, el reparto, cómo encaja y la cantidad en envases, raciones o gramos. «Reportar un problema» llega a la web de administración.', 'Tablero 7'],
+      ['Te proponemos el favorito', 'Si añades lo mismo 4 veces en 14 días, una tarjeta propone guardarlo, una sola vez. Se ordenan por uso.', 'Tablero 8'],
+      ['«Lo que te encaja», sin IA', 'De tus platos, favoritos y recientes: lo que cabe en las kcal que te quedan, por la proteína que falta y lo que sueles tomar a esa hora. Tres como mucho.', 'Tablero 9'],
+      ['Mis platos, por raciones o por peso', 'El peso hecho es opcional y deja apuntarlo en gramos. También «Guardar como plato» desde una comida. Editarlo no cambia los días pasados.', 'Tableros 2 y 10'],
+      ['Borrar sin preguntar, con deshacer', 'Se desliza la fila y se borra; el aviso con «Deshacer» se queda unos segundos.', 'Tablero 2'],
+      ['Día completo: todas las comidas apuntadas', 'Sin clavar las calorías. Una comida que no haces se marca «Hoy no» y cuenta. Sin rachas que se rompan ni culpa.', 'Tablero 3'],
+      ['El agua, a vasos', 'De 250 ml, cambiables en el perfil, hacia el objetivo del plan. Tocar el último vaso lo quita. Sin recordatorios por ahora.', 'Tablero 1'],
+      ['El entreno, con la proteína', 'El diario marca el día que entrenas. Al acabar, lo que te falta y tres ideas para apuntar, si faltan 20 g o más. Los objetivos del día no cambian.', 'Tableros 1 y 11'],
+      ['El resumen, los lunes', 'Una tarjeta en Nutrición el lunes y, siempre, desde el diario: proteína, días completos, calorías, agua y una observación. Sin notificación.', 'Tablero 12'],
+      ['De dónde salen los básicos', 'Ciqual (licencia abierta, uso comercial citándola) y USDA (dominio público), con nombres en español revisados. BEDCA pide permiso expreso: se puede pedir, sin esperarlo.', 'Qué cambia por dentro']
+    ];
+    return {
+      decisiones: lista.map((x, i) => ({ n: String(i + 1), titulo: x[0], texto: x[1], donde: x[2] }))
+    };
+  }
+}
+</script>
+</body>
+</html>

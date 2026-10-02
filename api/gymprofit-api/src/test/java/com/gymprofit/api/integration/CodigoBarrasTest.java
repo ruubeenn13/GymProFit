@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.gymprofit.api.dto.entity.productooff.ProductoOffImportDTO;
 import com.gymprofit.api.entity.Alimento;
 import com.gymprofit.api.entity.Usuario;
+import com.gymprofit.api.enums.RoleType;
 import com.gymprofit.api.repository.jpa.IAlimentoRepository;
 import com.gymprofit.api.repository.jpa.IProductoOffRepository;
 import com.gymprofit.api.service.externo.LimiteOpenFoodFacts;
@@ -110,6 +111,12 @@ class CodigoBarrasTest extends AbstractOwnershipTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.fuente").value("OFF"))
                 .andExpect(jsonPath("$.usuarioId").doesNotExist())
+                // Lote 1.6.1: el envase como primera ración, con su id para elegirla.
+                .andExpect(jsonPath("$.raciones[0].nombre").value("1 envase"))
+                .andExpect(jsonPath("$.raciones[0].gramos").value(500.0))
+                .andExpect(jsonPath("$.raciones[0].id").isNumber())
+                .andExpect(jsonPath("$.raciones[1].nombre").value("1 ración"))
+                .andExpect(jsonPath("$.raciones[1].gramos").value(30.0))
                 .andReturn());
         assertThat(alimentoRepository.findById(id).orElseThrow().getUsuario()).isNull();
 
@@ -152,9 +159,11 @@ class CodigoBarrasTest extends AbstractOwnershipTest {
     @Test
     @DisplayName("10 lecturas por minuto para toda la API; la undécima, 503 con Retry-After")
     void cupo_503() throws Exception {
-        Usuario[] quienes = {owner, attacker};
+        // Cuatro cuentas: con 3 por cuenta y minuto (GP-167), dos no llegan a 10.
+        Usuario[] quienes = {owner, attacker, crearUsuario("__off_c__", RoleType.USER),
+                crearUsuario("__off_d__", RoleType.USER)};
         for (int i = 0; i < 10; i++) {
-            pedir(quienes[i % 2], "GET /alimentos/codigo/84000008000" + String.format("%02d", i))
+            pedir(quienes[i % 4],"GET /alimentos/codigo/84000008000" + String.format("%02d", i))
                     .andExpect(status().isNotFound());
         }
         MvcResult saturado = pedir(owner, "GET /alimentos/codigo/8400000800099")
@@ -168,6 +177,28 @@ class CodigoBarrasTest extends AbstractOwnershipTest {
         // Lo que ya tenemos sigue saliendo sin cupo.
         productoOffService.importarLote(List.of(galletas("8400000700078")));
         pedir(owner, "GET /alimentos/codigo/8400000700078").andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("GP-167: 3 lecturas nuevas por minuto y por cuenta; la cuarta, 503, y otra cuenta sigue")
+    void cupo_por_cuenta_503() throws Exception {
+        for (int i = 0; i < 3; i++) {
+            pedir(owner, "GET /alimentos/codigo/84000008100" + i).andExpect(status().isNotFound());
+        }
+        MvcResult saturado = pedir(owner, "GET /alimentos/codigo/8400000810099")
+                .andExpect(status().isServiceUnavailable())
+                .andExpect(header().exists("Retry-After"))
+                .andReturn();
+        assertThat(Integer.parseInt(saturado.getResponse().getHeader("Retry-After"))).isBetween(1, 60);
+        verify(openFoodFactsClient, never()).porBarcode(eq("8400000810099"));
+
+        // La otra cuenta no paga lo de la primera.
+        pedir(attacker, "GET /alimentos/codigo/8400000810099").andExpect(status().isNotFound());
+        verify(openFoodFactsClient).porBarcode(eq("8400000810099"));
+
+        // Y lo que ya tenemos sale sin cupo, también para la cuenta sin él.
+        productoOffService.importarLote(List.of(galletas("8400000810088")));
+        pedir(owner, "GET /alimentos/codigo/8400000810088").andExpect(status().isOk());
     }
 
     @Test

@@ -17,4 +17,10 @@ import java.math.BigDecimal;
 public class AlimentoComidaPatchDTO {
     private BigDecimal cantidadGramos;
     private Integer caloriasTotales;
+
+    // Lote 1.6.1: la ración elegida y cuántas, las dos juntas. Sin cantidadGramos, los
+    // gramos salen de la ración; con ella, mandan los gramos. Cambiar solo los gramos
+    // quita la ración que hubiera.
+    private Integer racionId;
+    private BigDecimal raciones;
 }

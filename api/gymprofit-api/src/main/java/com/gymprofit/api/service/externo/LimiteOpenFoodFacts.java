@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -16,6 +17,10 @@ import java.util.Map;
 // para no rozar el suyo: ventana deslizante de 60 s. Sin cupo, quien llama responde
 // 503 con Retry-After (los segundos hasta que se libere la lectura más antigua).
 //
+// Además, un cupo por cuenta (GP-167): 3 lecturas por minuto y 30 al día. Si no, una
+// sola cuenta (o un script con su token) se come las 10 de todos. La lectura que niega
+// la cuenta no gasta cupo de la API. El Retry-After es lo que falte del más estricto.
+//
 // Y recuerda durante un día los códigos que Open Food Facts no tiene: volver a
 // escanear uno no gasta cupo. Como mucho 10 000; al llenarse se olvida el más viejo.
 //
@@ -26,11 +31,16 @@ import java.util.Map;
 public class LimiteOpenFoodFacts {
 
     static final long VENTANA_MS = 60_000;
+    static final long DIA_MS = 24L * 60 * 60 * 1000;
     static final long OLVIDO_MS = 24L * 60 * 60 * 1000;
     static final int MAX_DESCONOCIDOS = 10_000;
 
     private final int lecturasPorMinuto;
+    private final int lecturasPorMinutoCuenta;
+    private final int lecturasPorDiaCuenta;
     private final Deque<Long> lecturas = new ArrayDeque<>();
+    // Las lecturas de cada cuenta en las últimas 24 h, como mucho lecturasPorDiaCuenta.
+    private final Map<Integer, Deque<Long>> porCuenta = new HashMap<>();
     private final Map<String, Long> desconocidos = new LinkedHashMap<>(256, 0.75f, false) {
         @Override
         protected boolean removeEldestEntry(Map.Entry<String, Long> mayor) {
@@ -38,27 +48,60 @@ public class LimiteOpenFoodFacts {
         }
     };
 
-    public LimiteOpenFoodFacts(@Value("${app.openfoodfacts.lecturas-por-minuto:10}") int lecturasPorMinuto) {
+    public LimiteOpenFoodFacts(@Value("${app.openfoodfacts.lecturas-por-minuto:10}") int lecturasPorMinuto,
+                               @Value("${app.openfoodfacts.lecturas-por-minuto-cuenta:3}") int lecturasPorMinutoCuenta,
+                               @Value("${app.openfoodfacts.lecturas-por-dia-cuenta:30}") int lecturasPorDiaCuenta) {
         this.lecturasPorMinuto = lecturasPorMinuto;
+        this.lecturasPorMinutoCuenta = lecturasPorMinutoCuenta;
+        this.lecturasPorDiaCuenta = lecturasPorDiaCuenta;
     }
 
     /**
-     * Pide una lectura.
+     * Pide una lectura para una cuenta: la cuenta como hecha solo si hay cupo en la API
+     * y en la cuenta.
      *
-     * @return 0 si hay cupo (y la cuenta como hecha); si no, los segundos que faltan
-     * para que lo haya, como mínimo 1.
+     * @param usuarioId la cuenta que la pide (la del token).
+     * @return 0 si hay cupo; si no, los segundos que faltan para que lo haya, como mínimo 1.
      */
-    public synchronized long pedirLectura() {
+    public synchronized long pedirLectura(Integer usuarioId) {
         long ahora = ahora();
         while (!lecturas.isEmpty() && ahora - lecturas.peekFirst() >= VENTANA_MS) {
             lecturas.pollFirst();
         }
-        if (lecturas.size() < lecturasPorMinuto) {
-            lecturas.addLast(ahora);
-            return 0;
+        Deque<Long> deLaCuenta = porCuenta.computeIfAbsent(usuarioId, k -> new ArrayDeque<>());
+        while (!deLaCuenta.isEmpty() && ahora - deLaCuenta.peekFirst() >= DIA_MS) {
+            deLaCuenta.pollFirst();
         }
-        long espera = VENTANA_MS - (ahora - lecturas.peekFirst());
-        return Math.max(1, (espera + 999) / 1000);
+
+        long espera = 0;
+        if (lecturas.size() >= lecturasPorMinuto) {
+            espera = VENTANA_MS - (ahora - lecturas.peekFirst());
+        }
+        if (deLaCuenta.size() >= lecturasPorDiaCuenta) {
+            espera = Math.max(espera, DIA_MS - (ahora - deLaCuenta.peekFirst()));
+        }
+        long ultimoMinuto = deLaCuenta.stream().filter(t -> ahora - t < VENTANA_MS).count();
+        if (ultimoMinuto >= lecturasPorMinutoCuenta) {
+            // La que hace salir de la ventana a una de las del último minuto.
+            long masVieja = deLaCuenta.stream().filter(t -> ahora - t < VENTANA_MS)
+                    .skip(ultimoMinuto - lecturasPorMinutoCuenta).findFirst().orElse(ahora);
+            espera = Math.max(espera, VENTANA_MS - (ahora - masVieja));
+        }
+        if (espera > 0) {
+            if (deLaCuenta.isEmpty()) porCuenta.remove(usuarioId);
+            return Math.max(1, (espera + 999) / 1000);
+        }
+        lecturas.addLast(ahora);
+        deLaCuenta.addLast(ahora);
+        olvidarCuentasQuietas(ahora);
+        return 0;
+    }
+
+    // Las cuentas sin lecturas en 24 h no ocupan memoria. Se mira de vez en cuando, no a
+    // cada lectura: con 30 al día por cuenta, el mapa crece despacio.
+    private void olvidarCuentasQuietas(long ahora) {
+        if (porCuenta.size() < 1000) return;
+        porCuenta.values().removeIf(d -> d.isEmpty() || ahora - d.peekLast() >= DIA_MS);
     }
 
     /** ¿Se preguntó por este código hace menos de un día y Open Food Facts no lo tenía? */
@@ -80,6 +123,7 @@ public class LimiteOpenFoodFacts {
     /** Olvida los códigos desconocidos y las lecturas hechas (para los tests). */
     public synchronized void reiniciar() {
         lecturas.clear();
+        porCuenta.clear();
         desconocidos.clear();
     }
 

@@ -44,7 +44,7 @@ describe('Marco', () => {
   it('cada sección de la barra lateral tiene su nombre accesible', () => {
     pintar();
     const nav = screen.getByRole('navigation', { name: 'Secciones' });
-    for (const nombre of ['Resumen', 'Usuarios', 'Ejercicios', 'Alimentos']) {
+    for (const nombre of ['Resumen', 'Usuarios', 'Ejercicios', 'Alimentos', 'Avisos']) {
       expect(within(nav).getByRole('link', { name: nombre })).toBeTruthy();
     }
   });

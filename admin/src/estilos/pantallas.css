@@ -217,6 +217,11 @@
 .editor__cabeza > div { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .editor__cabeza h2 { font-size: 28px; overflow-wrap: anywhere; }
 .editor__origen { font-size: 13px; color: var(--texto-apagado); }
+/* Avisos (lote 1.6.1): el motivo y «Resuelto» encima del editor de siempre. */
+.aviso-detalle { display: flex; flex-direction: column; gap: 16px; }
+.aviso-detalle__cabeza { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.aviso-detalle__motivo { display: flex; align-items: center; gap: 8px; margin: 0; font-weight: 600; }
+.editor--vacio h2 { font-size: 28px; color: var(--texto); overflow-wrap: anywhere; }
 .editor__fila { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .editor__visible { margin-left: auto; }
 .editor__visible--abajo { align-self: flex-end; }

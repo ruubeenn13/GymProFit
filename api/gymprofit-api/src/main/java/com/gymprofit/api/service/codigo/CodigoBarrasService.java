@@ -124,7 +124,7 @@ public class CodigoBarrasService {
         if (limite.esDesconocido(codigo)) {
             throw new NotFoundEntityException("error.openfoodfacts.noExiste", codigo);
         }
-        long espera = limite.pedirLectura();
+        long espera = limite.pedirLectura(securityUtils.getCurrentUserId());
         if (espera > 0) {
             logger.warn("Sin cupo para leer {} de Open Food Facts; reintentar en {} s", codigo, espera);
             throw new ServicioSaturadoException(espera, "error.openfoodfacts.saturado");

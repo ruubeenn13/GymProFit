@@ -5,11 +5,13 @@ import com.gymprofit.api.dto.entity.alimentocomida.AlimentoComidaDTO;
 import com.gymprofit.api.dto.entity.alimentocomida.AlimentoComidaPatchDTO;
 import com.gymprofit.api.entity.Alimento;
 import com.gymprofit.api.entity.AlimentoComida;
+import com.gymprofit.api.entity.AlimentoRacion;
 import com.gymprofit.api.entity.Comida;
 import com.gymprofit.api.config.security.SecurityUtils;
 import com.gymprofit.api.exceptions.*;
 import com.gymprofit.api.mappers.AlimentoComidaMapper;
 import com.gymprofit.api.repository.jpa.IAlimentoComidaRepository;
+import com.gymprofit.api.repository.jpa.IAlimentoRacionRepository;
 import com.gymprofit.api.repository.jpa.IAlimentoRepository;
 import com.gymprofit.api.repository.jpa.IComidaRepository;
 import lombok.AllArgsConstructor;
@@ -35,6 +37,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
     private final IAlimentoComidaRepository alimentoComidaRepository;
     private final IComidaRepository comidaRepository;
     private final IAlimentoRepository alimentoRepository;
+    private final IAlimentoRacionRepository racionRepository;
     private final AlimentoComidaMapper alimentoComidaMapper;
     private final SecurityUtils securityUtils;
     private final Logger logger = LoggerFactory.getLogger(AlimentoComidaService.class);
@@ -277,8 +280,19 @@ public class AlimentoComidaService implements IAlimentoComidaService {
 
         securityUtils.checkOwnership(alimentoComida.getComida().getUsuario().getId());
 
+        // Fuera del try: una ración mal pedida es un 400, no un error de actualización.
+        boolean conRacion = patchDTO.getRacionId() != null || patchDTO.getRaciones() != null;
+        if (conRacion) {
+            ponerCantidad(alimentoComida, patchDTO.getCantidadGramos(), patchDTO.getRacionId(), patchDTO.getRaciones());
+        }
+
         try {
-            if (patchDTO.getCantidadGramos() != null) {
+            if (conRacion) {
+                // Ya puesta arriba, con sus calorías.
+            } else if (patchDTO.getCantidadGramos() != null) {
+                // Solo gramos: ya no es «2 rebanadas».
+                alimentoComida.setRacion(null);
+                alimentoComida.setRaciones(null);
                 alimentoComida.setCantidadGramos(patchDTO.getCantidadGramos());
                 alimentoComida.setCaloriasTotales(calcularCalorias(alimentoComida.getAlimento(), patchDTO.getCantidadGramos()));
             } else if (patchDTO.getCaloriasTotales() != null) {
@@ -323,6 +337,48 @@ public class AlimentoComidaService implements IAlimentoComidaService {
     private void checkAlimentoAccesible(Alimento alimento) {
         securityUtils.checkOwnershipIfOwned(
                 alimento.getUsuario() == null ? null : alimento.getUsuario().getId());
+    }
+
+    /**
+     * Pone la cantidad de una línea elegida por raciones (lote 1.6.1): la ración y cuántas,
+     * y los gramos y las calorías. Los gramos que lleguen mandan; si no llegan, salen de la
+     * ración. La ración tiene que ser de ese alimento.
+     *
+     * @param linea    la línea, con su alimento.
+     * @param gramos   gramos pedidos, o null para calcularlos.
+     * @param racionId ración elegida; obligatoria con {@code raciones}.
+     * @param raciones cuántas, mayor que 0; obligatoria con {@code racionId}.
+     * @throws InvalidDataException (400) si falta una de las dos o la ración es de otro alimento.
+     */
+    @Override
+    public void ponerCantidad(AlimentoComida linea, BigDecimal gramos, Integer racionId, BigDecimal raciones) {
+        if (racionId == null || raciones == null || raciones.signum() <= 0) {
+            throw new InvalidDataException("error.racion.incompleta");
+        }
+        if (gramos != null && gramos.signum() <= 0) {
+            throw new InvalidDataException("error.racion.incompleta");
+        }
+        AlimentoRacion racion = racionRepository.findById(racionId)
+                .filter(r -> r.getAlimento().getId().equals(linea.getAlimento().getId()))
+                .orElseThrow(() -> new InvalidDataException("error.racion.otroAlimento", racionId));
+        BigDecimal cantidad = gramos != null ? gramos
+                : racion.getGramos().multiply(raciones).setScale(2, java.math.RoundingMode.HALF_UP);
+        linea.setRacion(racion);
+        linea.setRaciones(raciones);
+        linea.setCantidadGramos(cantidad);
+        linea.setCaloriasTotales(calcularCalorias(linea.getAlimento(), cantidad));
+    }
+
+    /**
+     * Pone los gramos de una línea y sus calorías (lote 1.6.1). No toca la ración.
+     *
+     * @param linea  la línea, con su alimento.
+     * @param gramos gramos, mayores que 0.
+     */
+    @Override
+    public void ponerGramos(AlimentoComida linea, BigDecimal gramos) {
+        linea.setCantidadGramos(gramos);
+        linea.setCaloriasTotales(calcularCalorias(linea.getAlimento(), gramos));
     }
 
     // Calcula las calorías de la línea proporcionalmente a la cantidad en

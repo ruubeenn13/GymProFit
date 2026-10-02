@@ -122,6 +122,25 @@ export interface ResumenAlimentos {
   productos?: number;
 }
 
+/** Por qué se reporta un alimento (lote 1.6.1). */
+export type MotivoAviso = 'VALORES' | 'NOMBRE' | 'RACION' | 'REPETIDO' | 'OTRO';
+
+/** Un aviso pendiente: de un alimento del catálogo, o del código de un producto sin materializar. */
+export interface AvisoAlimento {
+  id: number;
+  alimentoId: number | null;
+  barcode: string | null;
+  nombre: string | null;
+  marca: string | null;
+  fuente: string | null;
+  motivo: MotivoAviso;
+  veces: number;
+  creado: string;
+  actualizado: string;
+  /** El alimento entero para editarlo; null si es un producto sin materializar. */
+  alimento: Alimento | null;
+}
+
 /** Cambios de un alimento para PATCH /alimentos/{id}; un texto vacío borra el campo. */
 export type AlimentoCambios = Partial<{
   nombre: string;
@@ -179,6 +198,10 @@ export function rutasAdmin(cliente: Cliente = api) {
     resumenAlimentos: (senal?: AbortSignal) => cliente.pedir<ResumenAlimentos>('/admin/alimentos/resumen', { senal }),
     guardarAlimento: (id: number, cambios: AlimentoCambios) =>
       cliente.pedir<unknown>(`/alimentos/${id}`, { metodo: 'PATCH', cuerpo: cambios }),
+
+    avisos: (f: { page: number; size: number }, senal?: AbortSignal) =>
+      cliente.pedir<Pagina<AvisoAlimento>>('/admin/avisos-alimento' + consulta(f), { senal }),
+    resolverAviso: (id: number) => cliente.pedir<void>(`/admin/avisos-alimento/${id}/resuelto`, { metodo: 'PUT' }),
 
     salud: (senal?: AbortSignal) => cliente.pedirPublico<{ status: string }>('/actuator/health', senal),
     info: (senal?: AbortSignal) => cliente.pedirPublico<{ commit?: string }>('/actuator/info', senal),

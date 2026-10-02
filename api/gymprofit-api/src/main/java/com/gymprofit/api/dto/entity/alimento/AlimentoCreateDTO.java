@@ -53,4 +53,9 @@ public class AlimentoCreateDTO implements Serializable {
     private String descripcion;
     // Id del usuario propietario si es un alimento personalizado (null si es global)
     private Integer usuarioId;
+
+    // Código de barras, opcional (lote 1.6.1): «Créalo» desde el escáner o la búsqueda lo
+    // trae puesto. Solo cifras, como en GET /alimentos/codigo; único por dueño (DEC-040).
+    @jakarta.validation.constraints.Pattern(regexp = "[0-9]{1,32}")
+    private String barcode;
 }

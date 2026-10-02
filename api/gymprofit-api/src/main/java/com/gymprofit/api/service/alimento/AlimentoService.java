@@ -77,12 +77,14 @@ public class AlimentoService implements IAlimentoService {
     public AlimentoDTO save(AlimentoCreateDTO alimentoCreateDTO) {
         logger.info("Creando nuevo alimento: {}", alimentoCreateDTO.getNombre());
 
+        Alimento alimento = alimentoMapper.toEntity(alimentoCreateDTO);
+        alimento.setActivo(true);
+        asignarPropietario(alimento, alimentoCreateDTO.getUsuarioId());
+        // Con código (1.6.1), único por dueño, como en el PATCH: repetido es un 409, no un
+        // 500 de la clave única. Fuera del try, que lo convertiría en un error de creación.
+        exigirCodigoLibre(alimento, -1);
+
         try {
-            Alimento alimento = alimentoMapper.toEntity(alimentoCreateDTO);
-            alimento.setActivo(true);
-
-            asignarPropietario(alimento, alimentoCreateDTO.getUsuarioId());
-
             Alimento alimentoGuardado = alimentoRepository.save(alimento);
             avisarCatalogo();
 
@@ -305,6 +307,30 @@ public class AlimentoService implements IAlimentoService {
                 .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", propietario)));
     }
 
+    private void exigirCodigoLibre(Alimento nuevo, Integer id) {
+        String barcode = nuevo.getBarcode() == null ? null : textoONulo(nuevo.getBarcode());
+        nuevo.setBarcode(barcode);
+        exigirCodigoLibre(barcode, nuevo, id);
+    }
+
+    /**
+     * El código es único por dueño (GP-160): en el catálogo, entre el catálogo; en lo de
+     * un usuario, entre lo suyo. Así no se sabe qué códigos usan los demás.
+     *
+     * @param barcode código pedido; null, nada que comprobar.
+     * @param alimento el alimento que lo llevará, ya con su dueño.
+     * @param id su id, o -1 si aún no existe.
+     * @throws ConflictEntityException (409) si otro alimento del mismo dueño ya lo usa.
+     */
+    private void exigirCodigoLibre(String barcode, Alimento alimento, Integer id) {
+        boolean enUso = barcode != null && (alimento.getUsuario() == null
+                ? alimentoRepository.existsByBarcodeAndUsuarioIsNullAndIdNot(barcode, id)
+                : alimentoRepository.existsByBarcodeAndUsuarioIdAndIdNot(barcode, alimento.getUsuario().getId(), id));
+        if (enUso) {
+            throw new ConflictEntityException("error.alimento.barcodeEnUso", barcode);
+        }
+    }
+
     /**
      * Verifica que quien llama puede escribir sobre este alimento.
      * <p>
@@ -354,14 +380,7 @@ public class AlimentoService implements IAlimentoService {
 
         // El código de barras es único: repetido es un conflicto, no un 500 de la base.
         String barcode = patchDTO.getBarcode() == null ? null : textoONulo(patchDTO.getBarcode());
-        // Único por dueño (GP-160): en el catálogo, entre el catálogo; en lo de un
-        // usuario, entre lo suyo. Así no se sabe qué códigos usan los demás.
-        boolean enUso = barcode != null && (alimento.getUsuario() == null
-                ? alimentoRepository.existsByBarcodeAndUsuarioIsNullAndIdNot(barcode, id)
-                : alimentoRepository.existsByBarcodeAndUsuarioIdAndIdNot(barcode, alimento.getUsuario().getId(), id));
-        if (enUso) {
-            throw new ConflictEntityException("error.alimento.barcodeEnUso", barcode);
-        }
+        exigirCodigoLibre(barcode, alimento, id);
 
         try {
             if (patchDTO.getNombre() != null) alimento.setNombre(patchDTO.getNombre());
