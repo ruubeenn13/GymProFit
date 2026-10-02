@@ -110,4 +110,19 @@ public class EtiquetaAlimentoTest {
         assertTrue(EtiquetaAlimento.cuadra(30, 15));
         assertFalse(EtiquetaAlimento.cuadra(40, 15));
     }
+
+    // GP-178: se compara siempre por 100 g. Por una ración de 12 g, 60 kcal frente a las 44
+    // de los macros se separan 16 y el margen mínimo de 20 lo dejaba pasar; por 100 g son
+    // 500 frente a 367, y no cuadra.
+    @Test
+    public void las_calorias_se_comparan_por_100_g() {
+        EtiquetaAlimento.Cifras porRacion = cifras(60.0, 1.0, 6.0, null, 2.75);
+        assertEquals(Boolean.FALSE, EtiquetaAlimento.cuadra(porRacion, 12));
+        // Lo mismo escrito por 100 g da lo mismo.
+        assertEquals(Boolean.FALSE, EtiquetaAlimento.cuadra(cifras(500.0, 8.33, 50.0, null, 22.92), 100));
+        // Y lo que cuadra por 100 g cuadra por la ración: 50 frente a 48 en 12 g.
+        assertEquals(Boolean.TRUE, EtiquetaAlimento.cuadra(cifras(50.0, 1.0, 6.0, null, 3.75), 12));
+        // Sin los tres macros no se sabe.
+        assertNull(EtiquetaAlimento.cuadra(cifras(60.0, 1.0, null, null, 2.0), 12));
+    }
 }

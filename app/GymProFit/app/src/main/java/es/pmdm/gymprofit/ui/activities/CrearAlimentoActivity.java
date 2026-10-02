@@ -436,8 +436,8 @@ public class CrearAlimentoActivity extends BaseActivity {
             aviso.setVisibility(View.GONE);
             return;
         }
-        int energia = (int) Math.round(e);
-        boolean cuadra = EtiquetaAlimento.cuadra(energia, segun);
+        // Se compara por 100 g, se escriba por 100 g o por la ración (GP-178).
+        boolean cuadra = Boolean.TRUE.equals(EtiquetaAlimento.cuadra(escritas(), porRacion ? gramosBase : 100));
         int col = cuadra ? ContextCompat.getColor(this, R.color.gp_success)
                 : color(com.google.android.material.R.attr.colorOnSurfaceVariant);
         aviso.setText(cuadra ? getString(R.string.crear_cuadra)

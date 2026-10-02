@@ -19,7 +19,7 @@ import java.util.Map;
 //     102 g: las etiquetas redondean cada cifra y la suma puede pasarse un poco.
 //   · El aviso de las calorías compara la energía con 4·P + 4·C + 9·G (solo con los tres
 //     escritos) y no impide guardar: la fibra y el alcohol cuentan aparte. Cuadra si se
-//     separa como mucho 20 kcal o un 15 %, lo que sea mayor.
+//     separa como mucho 20 kcal o un 15 %, lo que sea mayor, siempre por 100 g (GP-178).
 // Sin vistas, para probarlo.
 // ============================================================
 public final class EtiquetaAlimento {
@@ -118,6 +118,21 @@ public final class EtiquetaAlimento {
     /** Si la energía escrita cuadra con la de los macros. */
     public static boolean cuadra(int energia, int segunMacros) {
         return Math.abs(energia - segunMacros) <= Math.max(MARGEN_KCAL, MARGEN_PCT * segunMacros);
+    }
+
+    /**
+     * Si cuadra lo escrito, comparado siempre por 100 g (GP-178): por una ración pequeña
+     * las cifras son tan bajas que el margen mínimo de 20 kcal lo dejaba pasar casi todo.
+     *
+     * @param gramosBase 100, o los gramos de la ración si las cifras son por ración.
+     * @return null si falta la energía o alguno de los tres macros.
+     */
+    @Nullable
+    public static Boolean cuadra(@NonNull Cifras c, double gramosBase) {
+        if (c.energia == null || c.proteinas == null || c.hidratos == null || c.grasas == null) return null;
+        double f = 100 / gramosBase;
+        double segun = 4 * c.proteinas + 4 * c.hidratos + 9 * c.grasas;
+        return cuadra((int) Math.round(c.energia * f), (int) Math.round(segun * f));
     }
 
     /** Lo que saldría, redondeado a 10 para el aviso («unas 430 kcal»). */
