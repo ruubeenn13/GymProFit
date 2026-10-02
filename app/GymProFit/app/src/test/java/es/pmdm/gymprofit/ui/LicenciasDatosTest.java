@@ -40,6 +40,25 @@ public class LicenciasDatosTest {
         }
     }
 
+    // Lote 1.6.1: los básicos salen de Ciqual 2025 (ANSES, Licence Ouverte, que pide
+    // citarla) y de USDA FoodData Central (dominio público), como dicen los términos.
+    @Test
+    public void losBasicosCitanCiqualYUsda() throws IOException {
+        for (String carpeta : new String[]{"values", "values-en"}) {
+            String ciqual = cadena(carpeta, "licencias_ciqual");
+            assertNotNull(carpeta + ": falta Ciqual", ciqual);
+            assertTrue(carpeta, ciqual.contains("Ciqual 2025") && ciqual.contains("ANSES"));
+            assertTrue(carpeta, ciqual.contains("Licence Ouverte"));
+            String usda = cadena(carpeta, "licencias_usda");
+            assertNotNull(carpeta + ": falta USDA", usda);
+            assertTrue(carpeta, usda.contains("USDA FoodData Central"));
+            assertNotNull(carpeta, cadena(carpeta, "licencias_ciqual_uso"));
+            assertNotNull(carpeta, cadena(carpeta, "licencias_usda_uso"));
+        }
+        assertTrue(cadena("values", "url_ciqual").startsWith("https://ciqual.anses.fr"));
+        assertTrue(cadena("values", "url_usda").startsWith("https://fdc.nal.usda.gov"));
+    }
+
     @Test
     public void cadaFuenteTieneSuEnlace() throws IOException {
         assertTrue(cadena("values", "url_fed").startsWith("https://github.com/yuhonas/free-exercise-db"));
