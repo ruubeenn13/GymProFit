@@ -6,6 +6,7 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `1965f0d` | Fusión de `lote-1.5.4` en `main`, CI en verde; etiquetada `v1.5.4`. Solo app: Render no despliega nada nuevo. Informe en `documentacion/estado/2026-10-02-lote-1.5.4.md`. |
 | `3a40a19` | build(android): **versión 1.5.4** (10504). Misma clave de firma. Solo app, sin API nueva. |
 | `06bb0a6` | fix(android): el botón de «Guarda tu plan» vuelve entero tras un error, aunque la API responda antes de que acabe de encoger; el éxito lo deja en círculo (GP-163). `AnchoCreandoTest`. |
 
