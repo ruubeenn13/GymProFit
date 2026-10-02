@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  item_alimento_busqueda — una fila de Añadir y de Buscar (tableros 4 y 5, lote 1.6.1).
-  Icono del grupo, nombre con la insignia azul de «datos revisados» y, debajo, las kcal
+  item_alimento_busqueda — una fila de Añadir y de Buscar (tableros 4, 5 y 8, lotes 1.6.1 y 1.6.3).
+  Icono de su categoría, nombre con la insignia azul de «datos revisados» y, debajo, las kcal
   por 100 g y la proteína, o la marca y su ración si es un producto. Tocarla abre la
   ficha; mantenerla pulsada, si es tuya, editar o eliminar. Las filas de un grupo forman
   su tarjeta con bg_grupo_* (primera, media, última o sola), que pone el adaptador, y
-  una raya las separa.
+  una raya las separa. A la derecha, el «+» de 44 dp (lote 1.6.3), que añade sin preguntar
+  y se vuelve ✓; tocar el ✓ lo quita.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -26,7 +27,7 @@
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:paddingStart="14dp"
-        android:paddingEnd="14dp"
+        android:paddingEnd="6dp"
         android:paddingTop="10dp"
         android:paddingBottom="10dp">
 
@@ -72,6 +73,28 @@
             android:textSize="@dimen/text_caption"
             android:textColor="?attr/colorOnSurfaceVariant" />
     </LinearLayout>
+
+    <!-- El «+» (o el ✓): un círculo de 44 dp, como el tablero, dentro de una zona de toque
+         de 48 (bg_mas_fila lo inserta 2 dp). Su fondo lo tiñe el adaptador. -->
+    <FrameLayout
+        android:id="@+id/btnMasFila"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="6dp"
+        android:background="@drawable/bg_mas_fila"
+        android:backgroundTint="@color/gp_surface_2"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:id="@+id/ivMasFila"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_ms_add"
+            app:tint="?attr/colorOnSurface" />
+    </FrameLayout>
     </LinearLayout>
 
     <View

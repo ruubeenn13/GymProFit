@@ -7,6 +7,8 @@
   Debajo, el buscador y el botón naranja del escáner. La lista es la de Añadir
   (Recientes y Habituales) sin escribir, y la de la búsqueda con 2 letras o más.
   Cargando, error con reintentar y vacío, con view_estado.
+  Lote 1.6.3: sin texto, las pestañas «Todo» y «Favoritos» (tablero 4; «Mis platos» no se
+  dibuja hasta su lote), y abajo la barra de «Hecho» con lo añadido, que sube con el primero.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -129,6 +131,51 @@
             android:backgroundTint="?attr/colorPrimary" />
     </LinearLayout>
 
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/pestanasAnadir"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="10dp"
+        android:contentDescription="@string/anadir_pestanas"
+        app:singleSelection="true"
+        app:selectionRequired="true"
+        app:checkedButton="@+id/btnPestanaTodo">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPestanaTodo"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minHeight="48dp"
+            android:backgroundTint="@color/sel_unidad_fondo"
+            android:textColor="@color/sel_unidad_texto"
+            android:textStyle="bold"
+            android:textSize="@dimen/text_body"
+            android:text="@string/anadir_pestana_todo"
+            app:strokeColor="?attr/colorOutline" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPestanaFavoritos"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minHeight="48dp"
+            android:backgroundTint="@color/sel_unidad_fondo"
+            android:textColor="@color/sel_unidad_texto"
+            android:textStyle="bold"
+            android:textSize="@dimen/text_body"
+            android:text="@string/anadir_pestana_favoritos"
+            app:icon="@drawable/ic_ms_favorite"
+            app:iconGravity="textStart"
+            app:iconSize="18dp"
+            app:iconTint="@color/sel_unidad_texto"
+            app:strokeColor="?attr/colorOutline" />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -144,5 +191,61 @@
         <include
             android:id="@+id/estadoAnadir"
             layout="@layout/view_estado" />
+
+        <!-- La barra de «Hecho»: lo añadido sin salir de aquí (tablero 4, B3). -->
+        <LinearLayout
+            android:id="@+id/barraHecho"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="?attr/colorSurface"
+            android:elevation="8dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="16dp"
+            android:accessibilityLiveRegion="polite"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:id="@+id/textosBarraHecho"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:focusable="true">
+
+                <TextView
+                    android:id="@+id/tvResumenHecho"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_fila"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorOnSurface" />
+
+                <TextView
+                    android:id="@+id/tvKcalHecho"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFeatureSettings="tnum"
+                    android:textSize="@dimen/text_caption"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnHecho"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="52dp"
+                android:layout_marginStart="12dp"
+                android:paddingStart="28dp"
+                android:paddingEnd="28dp"
+                android:text="@string/barra_hecho"
+                android:textSize="@dimen/text_subtitle"
+                android:textStyle="bold"
+                app:cornerRadius="26dp" />
+        </LinearLayout>
     </FrameLayout>
 </LinearLayout>

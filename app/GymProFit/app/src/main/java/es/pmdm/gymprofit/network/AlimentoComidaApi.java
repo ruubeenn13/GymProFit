@@ -36,6 +36,11 @@ public interface AlimentoComidaApi {
     @PATCH("alimentos-comida/{id}")
     Call<Void> patch(@Path("id") int id, @Body Map<String, Object> body);
 
+    // El mismo PATCH, leyendo la línea que devuelve (lote 1.6.3): Añadir necesita su
+    // cantidad nueva al actualizar desde la ficha o al deshacer una suma.
+    @PATCH("alimentos-comida/{id}")
+    Call<AlimentoComida> patchLinea(@Path("id") int id, @Body Map<String, Object> body);
+
     // Elimina un alimento de una comida (quita el registro de la relación).
     @DELETE("alimentos-comida/{id}")
     Call<Void> eliminar(@Path("id") int id);

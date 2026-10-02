@@ -29,6 +29,23 @@
             android:contentDescription="@string/ficha_atras"
             android:src="@drawable/ic_ms_arrow_back"
             app:tint="?attr/colorOnSurface" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <!-- El corazón (tablero 7, lote 1.6.3): vacío o relleno; al marcarlo, late. -->
+        <ImageButton
+            android:id="@+id/btnFavoritoFicha"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/bg_mas_fila"
+            android:backgroundTint="@color/gp_surface"
+            android:src="@drawable/ic_ms_favorite"
+            android:visibility="invisible"
+            app:tint="?attr/colorOnSurface" />
     </LinearLayout>
 
     <FrameLayout

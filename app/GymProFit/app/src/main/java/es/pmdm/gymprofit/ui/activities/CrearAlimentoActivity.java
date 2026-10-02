@@ -138,9 +138,10 @@ public class CrearAlimentoActivity extends BaseActivity {
             pintar();
         }));
 
-        // Lo que se añade desde la ficha del alimento creado cierra también esta pantalla.
+        // Lo que se añade desde la ficha del alimento creado cierra también esta pantalla, y
+        // lo añadido sigue hasta Añadir, que lo cuenta en su barra (lote 1.6.3).
         fichaLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), r -> {
-            setResult(r.getResultCode() == RESULT_OK ? RESULT_OK : RESULT_CANCELED);
+            setResult(r.getResultCode() == RESULT_OK ? RESULT_OK : RESULT_CANCELED, r.getData());
             finish();
         });
 
@@ -697,7 +698,9 @@ public class CrearAlimentoActivity extends BaseActivity {
                     // A la ficha del alimento creado, con su ración: no se apunta nada sin
                     // ver cuánto.
                     fichaLauncher.launch(FichaAlimentoActivity.paraAnadir(CrearAlimentoActivity.this, creado.getId(),
-                            tipoComida, getIntent().getStringExtra(AnadirAlimentoActivity.EXTRA_FECHA)));
+                            tipoComida, getIntent().getStringExtra(AnadirAlimentoActivity.EXTRA_FECHA))
+                            .putExtra(AnadirAlimentoActivity.EXTRA_EN_ANADIR,
+                                    getIntent().getBooleanExtra(AnadirAlimentoActivity.EXTRA_EN_ANADIR, false)));
                     return;
                 }
                 // «Solo guardar»: se vuelve a donde se estaba, que recarga y lo enseña.

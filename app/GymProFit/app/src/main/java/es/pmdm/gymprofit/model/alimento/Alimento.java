@@ -42,6 +42,13 @@ public class Alimento {
     // Solo en la búsqueda: TUYO, BASICO o PRODUCTO.
     @Nullable private String grupo;
     @Nullable private Double fibra;
+    // --- Lote 1.6.3 ---
+    // La categoría canónica, sin traducir («Lácteos»), para el icono y el nombre (Categorias).
+    @Nullable private String categoriaClave;
+    // Si es favorito de la cuenta (en la búsqueda, la ficha y los favoritos).
+    @Nullable private Boolean favorito;
+    // Lo último que apuntaste (en lo tuyo de la búsqueda y en los favoritos); null si nunca.
+    @Nullable private UltimaCantidad ultima;
     // Indica si el alimento está activo (borrado lógico)
     // La búsqueda admin (AlimentoJooqDTO) envía "activo" como Byte 0/1; el adaptador lo tolera.
     @JsonAdapter(BooleanNumericAdapter.class)
@@ -97,6 +104,12 @@ public class Alimento {
     /** Propio de la cuenta: no se reporta, se edita. */
     public boolean esPropio() { return usuarioId != null; }
 
+    @Nullable public String getCategoriaClave() { return categoriaClave; }
+    public void setCategoriaClave(@Nullable String categoriaClave) { this.categoriaClave = categoriaClave; }
+    public boolean isFavorito() { return Boolean.TRUE.equals(favorito); }
+    public void setFavorito(boolean favorito) { this.favorito = favorito; }
+    @Nullable public UltimaCantidad getUltima() { return ultima; }
+    public void setUltima(@Nullable UltimaCantidad ultima) { this.ultima = ultima; }
     public boolean isActivo() { return activo; }
     public void setActivo(boolean activo) { this.activo = activo; }
 }

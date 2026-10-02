@@ -1636,4 +1636,55 @@
     <string name="crear_error_numero">Escribe un número</string>
     <string name="crear_error_racion">Más de 0 y hasta 2000\u00A0g</string>
     <string name="crear_error_carga">No se ha podido abrir el alimento</string>
+    <!-- ── Lote 1.6.3: añadir en un toque, la barra de «Hecho» y los favoritos ── -->
+    <string name="anadir_pestanas">Qué ver</string>
+    <string name="anadir_pestana_todo">Todo</string>
+    <string name="anadir_pestana_favoritos">Favoritos</string>
+    <string name="recientes_ver_todos">Ver todos</string>
+    <string name="recientes_ver_todos_a11y">Ver todos los recientes</string>
+    <!-- Una fila: la cantidad y sus kcal (tablero 4). -->
+    <string name="fila_cantidad_kcal">%1$s · %2$s\u00A0kcal</string>
+    <string name="fila_ultima_vez">Última vez: %1$s · %2$s\u00A0kcal</string>
+    <string name="a_la_desayuno">al desayuno</string>
+    <string name="a_la_almuerzo">al almuerzo</string>
+    <string name="a_la_comida">a la comida</string>
+    <string name="a_la_merienda">a la merienda</string>
+    <string name="a_la_cena">a la cena</string>
+    <!-- TalkBack del «+»: qué añade, cuánto y a qué comida. -->
+    <string name="fila_mas_a11y">Añadir %1$s, %2$s, %3$s</string>
+    <string name="fila_check_a11y">%1$s, añadido. Tocar para quitarlo</string>
+    <string name="anadir_fallo_anadir">No se ha podido añadir %1$s. %2$s</string>
+    <string name="anadir_fallo_quitar">No se ha podido quitar %1$s. %2$s</string>
+    <plurals name="barra_anadidos_a">
+        <item quantity="one">%1$d añadido %2$s</item>
+        <item quantity="other">%1$d añadidos %2$s</item>
+    </plurals>
+    <plurals name="barra_anadidos">
+        <item quantity="one">%d añadido</item>
+        <item quantity="other">%d añadidos</item>
+    </plurals>
+    <string name="barra_kcal">+%1$s\u00A0kcal</string>
+    <string name="barra_hecho">Hecho</string>
+    <string name="favoritos_seccion">Los que más usas</string>
+    <plurals name="favoritos_cuantos">
+        <item quantity="one">%d favorito</item>
+        <item quantity="other">%d favoritos</item>
+    </plurals>
+    <string name="favoritos_vacio">Aún no tienes favoritos.\nToca el corazón en la ficha de un alimento y lo tendrás aquí.</string>
+    <string name="favoritos_error">No se han podido cargar tus favoritos.</string>
+    <string name="favoritos_quitar">Quitar de favoritos</string>
+    <string name="propuesta_titulo">¿%1$s a favoritos?</string>
+    <plurals name="propuesta_veces">
+        <item quantity="one">Lo has añadido %d vez en dos semanas</item>
+        <item quantity="other">Lo has añadido %d veces en dos semanas</item>
+    </plurals>
+    <string name="propuesta_aceptar_a11y">Sí, guardar %1$s en favoritos</string>
+    <string name="propuesta_rechazar_a11y">No, gracias</string>
+    <string name="favorito_marcar_a11y">Guardar en favoritos</string>
+    <string name="favorito_quitar_a11y">Quitar de favoritos</string>
+    <string name="favorito_marcado">En favoritos</string>
+    <string name="favorito_no_marcado">No está en favoritos</string>
+    <string name="favorito_fallo_marcar">No se ha podido guardar en favoritos. %1$s</string>
+    <string name="favorito_fallo_quitar">No se ha podido quitar de favoritos. %1$s</string>
+    <string name="propuesta_fallo">No se ha podido responder a la propuesta. %1$s</string>
 </resources>
