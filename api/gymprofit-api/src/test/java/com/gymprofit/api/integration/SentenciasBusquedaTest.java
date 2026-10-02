@@ -36,6 +36,9 @@ class SentenciasBusquedaTest extends AbstractOwnershipTest {
     @jakarta.persistence.PersistenceContext
     private jakarta.persistence.EntityManager entityManager;
 
+    @Autowired
+    private javax.sql.DataSource dataSource;
+
     @BeforeEach
     void productos() {
         List<ProductoOffImportDTO> lote = new ArrayList<>();
@@ -63,6 +66,34 @@ class SentenciasBusquedaTest extends AbstractOwnershipTest {
         // Solo productos sin materializar: ni alimentos ni raciones.
         assertThat(contar("kzsentencias", 30)).isEqualTo(4);
         assertThat(contar("aceite", 30)).isLessThanOrEqualTo(5);
+    }
+
+    @Test
+    @DisplayName("lote 1.6.3: con lo tuyo apuntado, por raciones, y con favoritos, las mismas sentencias")
+    void ultima_y_favorito_sin_viajes_nuevos() throws Exception {
+        buscar("pollo", 30);
+        org.springframework.jdbc.core.JdbcTemplate jdbc = new org.springframework.jdbc.core.JdbcTemplate(dataSource);
+        // Un alimento propio con su ración, apuntado; y dos básicos de pollo apuntados y favoritos.
+        jdbc.update("INSERT INTO alimentos (nombre, calorias, usuario_id, activo, categoria) "
+                + "VALUES ('Pollo kzsentencias de casa', 150, ?, 1, 'Otro')", owner.getId());
+        Integer propio = jdbc.queryForObject("SELECT MAX(id) FROM alimentos WHERE usuario_id = ?", Integer.class, owner.getId());
+        jdbc.update("INSERT INTO alimento_raciones (alimento_id, nombre, nombre_en, gramos, fuente, orden) "
+                + "VALUES (?, '1 ración', '1 serving', 120, 'prueba', 1)", propio);
+        Integer racion = jdbc.queryForObject("SELECT MAX(id) FROM alimento_raciones WHERE alimento_id = ?", Integer.class, propio);
+        jdbc.update("INSERT INTO comidas (usuario_id, fecha, tipo_comida) VALUES (?, NOW(), 'COMIDA')", owner.getId());
+        Integer comida = jdbc.queryForObject("SELECT MAX(id) FROM comidas WHERE usuario_id = ?", Integer.class, owner.getId());
+        jdbc.update("INSERT INTO alimentos_comida (comida_id, alimento_id, cantidad_gramos, racion_id, raciones) "
+                + "VALUES (?, ?, 120, ?, 1)", comida, propio, racion);
+        List<Integer> basicos = jdbc.queryForList("SELECT id FROM alimentos WHERE usuario_id IS NULL AND fuente = 'CIQUAL' "
+                + "AND nombre LIKE '%pollo%' ORDER BY id LIMIT 2", Integer.class);
+        for (Integer b : basicos) {
+            jdbc.update("INSERT INTO alimentos_comida (comida_id, alimento_id, cantidad_gramos) VALUES (?, ?, 100)", comida, b);
+            jdbc.update("INSERT INTO favoritos (usuario_id, alimento_id, creado) VALUES (?, ?, NOW())", owner.getId(), b);
+        }
+
+        // Las mismas que sin nada tuyo: lo tuyo, sus favoritos y sus últimas líneas van en la misma consulta.
+        assertThat(contar("pollo", 30)).isEqualTo(5);
+        assertThat(contar("", 31)).isEqualTo(4);
     }
 
     // Cada búsqueda con la sesión de JPA limpia, como una petición de verdad: si no, lo

@@ -94,12 +94,18 @@ class RacionEnComidaTest extends AbstractOwnershipTest {
     }
 
     @Test
-    @DisplayName("si llegan también los gramos, mandan los gramos")
+    @DisplayName("si llegan también los gramos, mandan los gramos; si no cuadran con la ración, sale en gramos (GP-177)")
     void mandan_los_gramos() throws Exception {
+        // 2 rebanadas de 28 son 56 g, no 60: se guarda lo pedido, pero la línea ya no es
+        // «2 rebanadas» (lote 1.6.3). Hasta la 1.6.2 salía con la ración.
         pedir(owner, "PATCH /alimentos-comida/" + lineaId,
                 "{\"racionId\":" + rebanadaId + ",\"raciones\":2,\"cantidadGramos\":60}")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.cantidadGramos").value(60.0))
+                .andExpect(jsonPath("$.racionId").doesNotExist());
+        // Con los gramos que le tocan, sí.
+        pedir(owner, "PATCH /alimentos-comida/" + lineaId,
+                "{\"racionId\":" + rebanadaId + ",\"raciones\":2,\"cantidadGramos\":56}")
                 .andExpect(jsonPath("$.racionId").value(rebanadaId));
     }
 

@@ -26,6 +26,9 @@ public interface AlimentoMapper {
     @Mapping(source = "usuario.id", target = "usuarioId")
     @Mapping(target = "raciones", ignore = true)
     @Mapping(target = "grupo", ignore = true)
+    @Mapping(target = "categoriaClave", source = "categoria")
+    @Mapping(target = "favorito", ignore = true)
+    @Mapping(target = "ultima", ignore = true)
     AlimentoDTO toDTO(Alimento alimento);
 
     // Convierte una lista de entidades a su correspondiente lista de DTOs.
@@ -50,6 +53,8 @@ public interface AlimentoMapper {
     default void localizarTextos(Alimento alimento, @MappingTarget AlimentoDTO dto) {
         boolean ingles = "en".equals(LocaleContextHolder.getLocale().getLanguage());
         dto.setRaciones(raciones(alimento.getRaciones(), ingles));
+        // La clave va siempre sin traducir (A6); vacía es que no tiene.
+        if (dto.getCategoriaClave() != null && dto.getCategoriaClave().isBlank()) dto.setCategoriaClave(null);
 
         // Solo se traduce si el request llegó en inglés.
         if (!ingles) return;

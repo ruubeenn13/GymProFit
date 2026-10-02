@@ -142,6 +142,11 @@ public class BorradoCuentaService implements IBorradoCuentaService {
 
         borrar("Comidas", "DELETE FROM Comida c WHERE c.usuario.id = :id", usuarioId);
 
+        // Favoritos y propuestas (lote 1.6.3): sus claves ajenas borran en cascada, pero
+        // se borran aquí para que salgan en el log, y antes que sus alimentos.
+        borrarNativo("Favoritos", "DELETE FROM favoritos WHERE usuario_id = :id", usuarioId);
+        borrarNativo("Propuestas de favorito", "DELETE FROM propuestas_favorito WHERE usuario_id = :id", usuarioId);
+
         // Se borran, NO se despublican: ver la cabecera de la clase.
         borrar("Alimentos personalizados", "DELETE FROM Alimento a WHERE a.usuario.id = :id", usuarioId);
 
@@ -252,6 +257,15 @@ public class BorradoCuentaService implements IBorradoCuentaService {
         em.flush();
         em.clear();
         comidasAfectadas.forEach(alimentoComidaService::recalcularTotales);
+    }
+
+    // Como borrar(), para las tablas sin entidad que se borran en SQL nativo.
+    private void borrarNativo(String queSeBorra, String sql, Integer usuarioId) {
+        int filas = em.createNativeQuery(sql)
+                .setParameter("id", usuarioId)
+                .executeUpdate();
+
+        logger.info("Borrado de cuenta id={} · {}: {} filas", usuarioId, queSeBorra, filas);
     }
 
     // Ejecuta un borrado masivo y deja en el log cuántas filas se llevó. El nombre es

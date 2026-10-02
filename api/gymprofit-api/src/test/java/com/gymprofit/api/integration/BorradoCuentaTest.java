@@ -49,12 +49,14 @@ class BorradoCuentaTest extends AbstractOwnershipTest {
             "alimentos",
             "comidas",
             "device_tokens",
+            "favoritos",
             "fotos_perfil",
             "mediciones_corporales",
             "notificaciones",
             "objetivos_personales",
             "password_reset_codigos",
             "programas_usuario",
+            "propuestas_favorito",
             "progreso_ejercicios",
             "refresh_tokens",
             "rutinas",
@@ -94,6 +96,15 @@ class BorradoCuentaTest extends AbstractOwnershipTest {
         ejecutar("""
                 INSERT INTO alimentos_comida (comida_id, alimento_id, cantidad_gramos)
                 VALUES (%d, %d, 100)""".formatted(comidaId, alimentoCatalogoId));
+
+        // Lote 1.6.3: un favorito de su alimento y otro del catálogo, y una propuesta cerrada.
+        ejecutar("INSERT INTO favoritos (usuario_id, alimento_id, creado) VALUES (%d, %d, NOW())"
+                .formatted(owner.getId(), alimentoPersonalId));
+        ejecutar("INSERT INTO favoritos (usuario_id, alimento_id, creado) VALUES (%d, %d, NOW())"
+                .formatted(owner.getId(), alimentoCatalogoId));
+        ejecutar("""
+                INSERT INTO propuestas_favorito (usuario_id, alimento_id, motivo, creado)
+                VALUES (%d, %d, 'RECHAZADA', NOW())""".formatted(owner.getId(), alimentoCatalogoId));
 
         rutinaId = insertar("""
                 INSERT INTO rutinas (nombre, nivel, usuario_id)
