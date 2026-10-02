@@ -124,6 +124,10 @@ public final class Movimiento {
     public static final long ENCAJA = 200;
     /** 17 · Código leído: la hoja del producto sube. */
     public static final long HOJA = 450;
+    /** 20 · Borrar y deshacer: al soltarla, la fila se va de lado. */
+    public static final long SALE = 380;
+    /** 20 · Borrar y deshacer: la comida se recoloca (y la fila vuelve con «Deshacer»). */
+    public static final long RECOLOCA = 250;
     /** «Respira»: el botón principal llama la atención una vez. */
     public static final long RESPIRA = 1400;
 

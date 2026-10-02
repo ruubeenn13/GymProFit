@@ -600,8 +600,9 @@ Cuatro curvas: **enfatizada** `cubic-bezier(.05,.7,.1,1)` para lo que entra; **e
 | 12 · Récord | El trofeo salta (`TROFEO`), suelta seis chispas doradas (`CHISPAS`) y un brillo cruza la fila (`BRILLO`). En la bienvenida y en el resumen de cada sesión | 450 rebote · 700 · 900 | Éxito |
 | 16 · La lista entra en cascada | Las filas de Añadir y de los resultados suben 16 dp y aparecen, una tras otra (`CASCADA`, `CASCADA_ESCALON`). Solo la primera vez: al volver, ya están | 350 enfatizada, cada 40 | — |
 | 17 · Código leído | Mientras busca, una línea barre el marco (`BARRIDO`). Al leer, las esquinas pasan a verde y el marco encaja (`ENCAJA`), y la hoja del producto sube (`HOJA`) | 2400 de ida y vuelta · 200 estándar · 450 enfatizada | Éxito |
+| 20 · Borrar y deshacer | La fila sigue al dedo y, al soltarla, se va de lado (`SALE`); la comida se recoloca (`RECOLOCA`) y sube el aviso con «Deshacer», el de Material, que ya entra en lo que pide el lienzo. «Deshacer» devuelve la fila a su sitio con el mismo `RECOLOCA`. El anillo, los porcentajes y la barra del día pasan a su valor nuevo con `BARRA` | 380 estándar · 250 estándar · 500 estándar | — |
 
-La nutrición nueva (lienzo del 01-10, `documentacion/diseno/2026-10-01-nutricion/fuente/Movimiento.dc.html`) sigue la numeración del 13 al 22. Cada momento entra en esta tabla con el lote que lo construye: el 16 y el 17, con el 1.6.1 (2026-10-02); las barras de la ficha se llenan con `BARRA`, el del momento 5.
+La nutrición nueva (lienzo del 01-10, `documentacion/diseno/2026-10-01-nutricion/fuente/Movimiento.dc.html`) sigue la numeración del 13 al 22. Cada momento entra en esta tabla con el lote que lo construye: el 16 y el 17, con el 1.6.1 (2026-10-02); las barras de la ficha se llenan con `BARRA`, el del momento 5. El 20, con el 1.6.2, sale del lienzo del 02-10 (`documentacion/diseno/2026-10-02-nutricion/fuente/Movimiento.dc.html`): allí la fila tarda el 12 % de un bucle de 3,2 s (384 ms, aquí 380) y la comida se recoloca en 250. En el mismo lote, las filas de una comida entran con `CASCADA`, la hoja «¿A qué comida?» sube con `HOJA` y su check salta con `CHECK`.
 
 Las reglas:
 
