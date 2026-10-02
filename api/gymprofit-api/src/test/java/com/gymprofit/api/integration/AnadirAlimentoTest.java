@@ -58,6 +58,9 @@ class AnadirAlimentoTest extends AbstractOwnershipTest {
     @MockitoBean
     private OpenFoodFactsClient openFoodFactsClient;
 
+    @jakarta.persistence.PersistenceContext
+    private jakarta.persistence.EntityManager em;
+
     private Alimento yogur;
     private Integer envaseId;
 
@@ -256,10 +259,134 @@ class AnadirAlimentoTest extends AbstractOwnershipTest {
                 .andExpect(status().isForbidden());
     }
 
+    // --- Lote 1.6.3 (A2): «anterior», para deshacer exacto ----------------------
+
+    @Test
+    @DisplayName("A2: una línea nueva trae anterior null, y deshacerla (borrarla) deja la comida como estaba")
+    void anterior_nueva_y_deshacer() throws Exception {
+        Integer pan = crearAlimentoCatalogo().getId();
+        pedir(owner, "POST /comidas/anadir", cuerpo("MERIENDA", "\"alimentoId\":" + pan, "\"cantidadGramos\":50"))
+                .andExpect(status().isOk());
+        String antes = estadoComida();
+
+        JsonNode r = json(pedir(owner, "POST /comidas/anadir",
+                cuerpo("MERIENDA", "\"alimentoId\":" + yogur.getId(), "\"racionId\":" + envaseId + ",\"raciones\":1")));
+        assertThat(r.has("anterior")).isTrue();
+        assertThat(r.get("anterior").isNull()).isTrue();
+
+        pedir(owner, "DELETE /alimentos-comida/" + r.get("linea").get("id").asInt()).andExpect(status().isOk());
+        assertThat(estadoComida()).isEqualTo(antes);
+    }
+
+    @Test
+    @DisplayName("A2: si se suma, anterior trae la cantidad de antes, y el PATCH con ella deja la comida como estaba")
+    void anterior_suma_y_deshacer() throws Exception {
+        pedir(owner, "POST /comidas/anadir",
+                cuerpo("MERIENDA", "\"alimentoId\":" + yogur.getId(), "\"racionId\":" + envaseId + ",\"raciones\":1.5"))
+                .andExpect(status().isOk());
+        String antes = estadoComida();
+
+        // Se suma en gramos: la línea deja de ir por raciones.
+        JsonNode r = json(pedir(owner, "POST /comidas/anadir",
+                cuerpo("MERIENDA", "\"alimentoId\":" + yogur.getId(), "\"cantidadGramos\":30")));
+        JsonNode anterior = r.get("anterior");
+        assertThat(anterior.get("cantidadGramos").decimalValue()).isEqualByComparingTo("300");
+        assertThat(anterior.get("racionId").asInt()).isEqualTo(envaseId);
+        assertThat(anterior.get("raciones").decimalValue()).isEqualByComparingTo("1.5");
+        assertThat(r.get("linea").get("racionId").isNull()).isTrue();
+
+        pedir(owner, "PATCH /alimentos-comida/" + r.get("linea").get("id").asInt(), objectMapper.writeValueAsString(anterior))
+                .andExpect(status().isOk());
+        assertThat(estadoComida()).isEqualTo(antes);
+    }
+
+    @Test
+    @DisplayName("A2: sumada en gramos a una línea en gramos, anterior trae solo los gramos")
+    void anterior_en_gramos() throws Exception {
+        String g = cuerpo("MERIENDA", "\"alimentoId\":" + yogur.getId(), "\"cantidadGramos\":80");
+        pedir(owner, "POST /comidas/anadir", g).andExpect(status().isOk());
+        String antes = estadoComida();
+        JsonNode r = json(pedir(owner, "POST /comidas/anadir", g));
+        assertThat(r.get("anterior").get("cantidadGramos").decimalValue()).isEqualByComparingTo("80");
+        assertThat(r.get("anterior").get("racionId").isNull()).isTrue();
+        pedir(owner, "PATCH /alimentos-comida/" + r.get("linea").get("id").asInt(),
+                objectMapper.writeValueAsString(r.get("anterior"))).andExpect(status().isOk());
+        assertThat(estadoComida()).isEqualTo(antes);
+    }
+
+    // --- Lote 1.6.3 (A5, GP-177): una línea va por raciones solo si sus gramos cuadran ---
+
+    @Test
+    @DisplayName("A5: si la ración ya no pesa lo mismo, la línea sale en gramos; si vuelve a pesarlo, con su ración")
+    void racion_que_no_cuadra() throws Exception {
+        Alimento pan = crearAlimentoCatalogo();
+        pan.setUsuario(owner);
+        alimentoRepository.save(pan);
+        AlimentoRacion rebanada = racion(pan, "1 rebanada", "1 slice", "40.0", 1);
+        Integer comida = comidaId(pedir(owner, "POST /comidas/anadir",
+                cuerpo("MERIENDA", "\"alimentoId\":" + pan.getId(), "\"racionId\":" + rebanada.getId() + ",\"raciones\":1")));
+        String lineas = "GET /alimentos-comida/comida/" + comida;
+        pedir(owner, lineas).andExpect(jsonPath("$[0].racionId").value(rebanada.getId()))
+                .andExpect(jsonPath("$[0].raciones").value(1));
+
+        // Medio gramo de margen: 40,4 sigue siendo «1 rebanada».
+        rebanada.setGramos(new BigDecimal("40.4"));
+        racionRepository.saveAndFlush(rebanada);
+        pedir(owner, lineas).andExpect(jsonPath("$[0].racionId").value(rebanada.getId()));
+
+        rebanada.setGramos(new BigDecimal("50.0"));
+        racionRepository.saveAndFlush(rebanada);
+        pedir(owner, lineas)
+                .andExpect(jsonPath("$[0].cantidadGramos").value(40.0))
+                .andExpect(jsonPath("$[0].racionId").doesNotExist())
+                .andExpect(jsonPath("$[0].racionNombre").doesNotExist())
+                .andExpect(jsonPath("$[0].racionGramos").doesNotExist())
+                .andExpect(jsonPath("$[0].racionUnidad").doesNotExist())
+                .andExpect(jsonPath("$[0].raciones").doesNotExist());
+        // No se ha reescrito nada.
+        assertThat(jdbc.queryForObject("SELECT racion_id FROM alimentos_comida WHERE comida_id = ?", Integer.class, comida))
+                .isEqualTo(rebanada.getId());
+
+        rebanada.setGramos(new BigDecimal("40.0"));
+        racionRepository.saveAndFlush(rebanada);
+        pedir(owner, lineas).andExpect(jsonPath("$[0].racionId").value(rebanada.getId()))
+                .andExpect(jsonPath("$[0].racionUnidad").value("rebanada"));
+    }
+
+    @Test
+    @DisplayName("A5: sumar la misma ración a una línea que ya no cuadra no la cuenta como raciones")
+    void sumar_a_racion_que_no_cuadra() throws Exception {
+        String una = cuerpo("MERIENDA", "\"alimentoId\":" + yogur.getId(), "\"racionId\":" + envaseId + ",\"raciones\":1");
+        pedir(owner, "POST /comidas/anadir", una).andExpect(status().isOk());
+        AlimentoRacion envase = racionRepository.findById(envaseId).orElseThrow();
+        envase.setGramos(new BigDecimal("250.0"));
+        racionRepository.saveAndFlush(envase);
+        // 200 g de antes + 250 g de ahora no son «2 envases» de 250.
+        pedir(owner, "POST /comidas/anadir", una)
+                .andExpect(jsonPath("$.linea.cantidadGramos").value(450.0))
+                .andExpect(jsonPath("$.linea.racionId").doesNotExist());
+    }
+
     // --- Andamiaje ----------------------------------------------------------
 
     private int comidasDe(com.gymprofit.api.entity.Usuario u) {
         return jdbc.queryForObject("SELECT COUNT(*) FROM comidas WHERE usuario_id = ?", Integer.class, u.getId());
+    }
+
+    private JsonNode json(org.springframework.test.web.servlet.ResultActions r) throws Exception {
+        return objectMapper.readTree(r.andExpect(status().isOk()).andReturn().getResponse()
+                .getContentAsString(StandardCharsets.UTF_8));
+    }
+
+    // Lo que se ve de las comidas del dueño: totales y líneas, para comparar antes y después.
+    private String estadoComida() {
+        em.flush();
+        em.clear();
+        return jdbc.queryForList("""
+                SELECT c.id, c.total_calorias, c.total_proteinas, c.total_carbohidratos, c.total_grasas,
+                       ac.alimento_id, ac.cantidad_gramos, ac.racion_id, ac.raciones, ac.calorias_totales
+                FROM comidas c LEFT JOIN alimentos_comida ac ON ac.comida_id = c.id
+                WHERE c.usuario_id = ? ORDER BY c.id, ac.alimento_id""", owner.getId()).toString();
     }
 
     private Integer comidaId(org.springframework.test.web.servlet.ResultActions r) throws Exception {

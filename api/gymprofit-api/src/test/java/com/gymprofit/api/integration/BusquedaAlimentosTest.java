@@ -55,6 +55,9 @@ class BusquedaAlimentosTest extends AbstractOwnershipTest {
     @MockitoBean
     private OpenFoodFactsClient openFoodFactsClient;
 
+    @jakarta.persistence.PersistenceContext
+    private jakarta.persistence.EntityManager em;
+
     @BeforeEach
     void productos() {
         // Productos que compiten con los básicos: muy escaneados y con las mismas palabras.
@@ -264,6 +267,80 @@ class BusquedaAlimentosTest extends AbstractOwnershipTest {
 
     // --- Andamiaje ----------------------------------------------------------
 
+    // --- Lote 1.6.3 (A1 y A3): la última cantidad y el favorito, sin viajes nuevos ---
+
+    @Test
+    @DisplayName("A1: lo tuyo apuntado trae «ultima», la de su línea más reciente; lo nunca apuntado, no")
+    void ultima_cantidad() throws Exception {
+        Alimento pan = alimentoDe(owner, "Pan kzultima de casa");
+        Alimento nunca = alimentoDe(owner, "Pan kzultima sin apuntar");
+        Integer rebanada = racion(pan.getId(), "1 rebanada", "1 slice", "40.0");
+        apuntarCon(owner, pan.getId(), LocalDateTime.now().minusDays(3), "80", null, null);
+        apuntarCon(owner, pan.getId(), LocalDateTime.now().minusDays(1), "120", rebanada, "3");
+
+        JsonNode ultima = porId(buscar(owner, "kzultima"), pan.getId()).get("ultima");
+        assertThat(ultima.get("cantidadGramos").decimalValue()).isEqualByComparingTo("120");
+        assertThat(ultima.get("racionId").asInt()).isEqualTo(rebanada);
+        assertThat(ultima.get("raciones").decimalValue()).isEqualByComparingTo("3");
+        assertThat(ultima.get("racionNombre").asText()).isEqualTo("1 rebanada");
+        assertThat(ultima.get("racionGramos").decimalValue()).isEqualByComparingTo("40");
+        assertThat(ultima.get("racionUnidadPlural").asText()).isEqualTo("rebanadas");
+        assertThat(porId(buscar(owner, "kzultima"), nunca.getId()).get("ultima").isNull()).isTrue();
+
+        // El mismo día, manda la última creada.
+        LocalDateTime hoy = LocalDateTime.now().toLocalDate().atStartOfDay();
+        apuntarCon(owner, pan.getId(), hoy, "30", null, null);
+        apuntarCon(owner, pan.getId(), hoy, "45", null, null);
+        ultima = porId(buscar(owner, "kzultima"), pan.getId()).get("ultima");
+        assertThat(ultima.get("cantidadGramos").decimalValue()).isEqualByComparingTo("45");
+        assertThat(ultima.get("racionId").isNull()).isTrue();
+    }
+
+    @Test
+    @DisplayName("A1 y A5: si esa ración ya no pesa lo mismo, «ultima» trae solo los gramos")
+    void ultima_con_racion_que_no_cuadra() throws Exception {
+        Alimento pan = alimentoDe(owner, "Pan kzcuadra de casa");
+        Integer rebanada = racion(pan.getId(), "1 rebanada", "1 slice", "40.0");
+        apuntarCon(owner, pan.getId(), LocalDateTime.now().minusDays(1), "80", rebanada, "2");
+        jdbc.update("UPDATE alimento_raciones SET gramos = 50 WHERE id = ?", rebanada);
+
+        JsonNode ultima = porId(buscar(owner, "kzcuadra"), pan.getId()).get("ultima");
+        assertThat(ultima.get("cantidadGramos").decimalValue()).isEqualByComparingTo("80");
+        assertThat(ultima.get("racionId").isNull()).isTrue();
+        assertThat(ultima.get("raciones").isNull()).isTrue();
+        assertThat(ultima.get("racionNombre").isNull()).isTrue();
+    }
+
+    @Test
+    @DisplayName("A1: un básico apuntado sale en TUYO con su última cantidad; lo de otro no se ve")
+    void ultima_de_un_basico() throws Exception {
+        Integer platano = jdbc.queryForObject(
+                "SELECT id FROM alimentos WHERE fuente = 'CIQUAL' AND codigo_origen = '13005'", Integer.class);
+        apuntarCon(attacker, platano, LocalDateTime.now().minusDays(1), "250", null, null);
+        apuntarCon(owner, platano, LocalDateTime.now().minusDays(2), "118", null, null);
+        JsonNode fila = porId(buscar(owner, "platano"), platano);
+        assertThat(fila.get("grupo").asText()).isEqualTo("TUYO");
+        assertThat(fila.get("ultima").get("cantidadGramos").decimalValue()).isEqualByComparingTo("118");
+        // Lo que apunta otro no es «ultima» de nadie más.
+        assertThat(porId(buscar(guest, "platano"), platano).get("ultima").isNull()).isTrue();
+    }
+
+    @Test
+    @DisplayName("A3: cada resultado dice si es favorito de quien busca, y solo de quien busca")
+    void favorito_en_la_busqueda() throws Exception {
+        Integer platano = jdbc.queryForObject(
+                "SELECT id FROM alimentos WHERE fuente = 'CIQUAL' AND codigo_origen = '13005'", Integer.class);
+        pedir(owner, "PUT /favoritos/" + platano).andExpect(status().isOk());
+        JsonNode pagina = buscar(owner, "platano");
+        assertThat(porId(pagina, platano).get("favorito").asBoolean()).isTrue();
+        pagina.get("content").forEach(n -> {
+            if (n.get("id").isNull() || n.get("id").asInt() != platano) {
+                assertThat(n.get("favorito").asBoolean()).isFalse();
+            }
+        });
+        assertThat(porId(buscar(attacker, "platano"), platano).get("favorito").asBoolean()).isFalse();
+    }
+
     private JsonNode buscar(Usuario quien, String q) throws Exception {
         var peticion = get("/alimentos/buscar").header("Authorization", bearer(quien));
         if (q != null) peticion.param("q", q);
@@ -287,6 +364,33 @@ class BusquedaAlimentosTest extends AbstractOwnershipTest {
         a.setActivo(true);
         a.setUsuario(dueno);
         return alimentoRepository.saveAndFlush(a);
+    }
+
+    private static JsonNode porId(JsonNode pagina, Integer id) {
+        for (JsonNode n : pagina.get("content")) {
+            if (!n.get("id").isNull() && n.get("id").asInt() == id) return n;
+        }
+        throw new AssertionError("no sale el alimento " + id + " en " + pagina);
+    }
+
+    private Integer racion(Integer alimentoId, String nombre, String nombreEn, String gramos) {
+        jdbc.update("INSERT INTO alimento_raciones (alimento_id, nombre, nombre_en, gramos, fuente, orden) "
+                + "VALUES (?, ?, ?, ?, 'prueba', 1)", alimentoId, nombre, nombreEn, new java.math.BigDecimal(gramos));
+        // Fuera de la sesión de JPA del test: que la búsqueda cargue el alimento con ella.
+        em.flush();
+        em.clear();
+        return jdbc.queryForObject("SELECT MAX(id) FROM alimento_raciones WHERE alimento_id = ?", Integer.class, alimentoId);
+    }
+
+    // Una comida nueva con una línea de esa cantidad (y esa ración, si la hay).
+    private void apuntarCon(Usuario quien, Integer alimentoId, LocalDateTime cuando, String gramos, Integer racionId,
+                            String raciones) {
+        jdbc.update("INSERT INTO comidas (usuario_id, fecha, tipo_comida) VALUES (?, ?, 'COMIDA')",
+                quien.getId(), Timestamp.valueOf(cuando));
+        Integer comida = jdbc.queryForObject("SELECT MAX(id) FROM comidas WHERE usuario_id = ?", Integer.class, quien.getId());
+        jdbc.update("INSERT INTO alimentos_comida (comida_id, alimento_id, cantidad_gramos, calorias_totales, racion_id, raciones) "
+                        + "VALUES (?, ?, ?, 90, ?, ?)", comida, alimentoId, new java.math.BigDecimal(gramos), racionId,
+                raciones == null ? null : new java.math.BigDecimal(raciones));
     }
 
     private void apuntar(Usuario quien, Integer alimentoId, LocalDateTime cuando) {

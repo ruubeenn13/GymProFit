@@ -6,6 +6,7 @@ import com.gymprofit.api.dto.entity.alimento.AlimentoDTO;
 import com.gymprofit.api.dto.entity.alimento.RacionDTO;
 import com.gymprofit.api.entity.Alimento;
 import com.gymprofit.api.entity.ProductoOff;
+import com.gymprofit.api.service.alimentocomida.UltimaCantidad;
 import com.gymprofit.api.service.productooff.RacionesProducto;
 import com.gymprofit.api.mappers.AlimentoMapper;
 import com.gymprofit.api.repository.jpa.IAlimentoRepository;
@@ -86,6 +87,13 @@ public class BusquedaAlimentosService {
     }
 
     /**
+     * Lo del usuario que lee la búsqueda, en una sola consulta: sus alimentos y lo
+     * apuntado hace poco, sus favoritos (A3) y la última línea de cada uno de los suyos (A1).
+     */
+    private record LoTuyo(List<Tuyo> tuyos, Set<Integer> favoritos, Map<Integer, UltimaCantidad.Linea> ultimas) {
+    }
+
+    /**
      * Página de resultados.
      *
      * @param q         texto; vacío o null, sin texto.
@@ -101,7 +109,8 @@ public class BusquedaAlimentosService {
         List<String> consulta = Normalizador.terminos(q);
         Integer usuarioId = securityUtils.getCurrentUserId();
 
-        List<Tuyo> tuyos = cargarTuyos(usuarioId).stream()
+        LoTuyo loTuyo = cargarTuyos(usuarioId);
+        List<Tuyo> tuyos = loTuyo.tuyos().stream()
                 .filter(t -> cat == null || cat.equals(t.categoria()))
                 .toList();
         List<Ref> refs = new ArrayList<>();
@@ -130,7 +139,7 @@ public class BusquedaAlimentosService {
         int total = refs.size() + sinPintar;
         int desde = Math.min(refs.size(), pagina * tam);
         int hasta = Math.min(refs.size(), desde + tam);
-        List<AlimentoDTO> contenido = pintar(refs.subList(desde, hasta), catalogo);
+        List<AlimentoDTO> contenido = pintar(refs.subList(desde, hasta), catalogo, loTuyo);
         int totalPaginas = Math.max(1, (int) Math.ceil((double) total / tam));
         return new PageDTO<>(contenido, pagina, tam, total, totalPaginas, pagina * tam + tam >= total);
     }
@@ -319,28 +328,59 @@ public class BusquedaAlimentosService {
     // ver: catálogo o tuyos), en una sola consulta: cada viaje a Aiven son ~14 ms (GP-168).
     // Las dos mitades van por índice de usuario; un alimento tuyo apuntado hace poco sale
     // en las dos, y manda la primera, que lleva su último uso de siempre.
-    private List<Tuyo> cargarTuyos(Integer usuarioId) {
+    // En la misma consulta, sin viajes nuevos (lote 1.6.3): la parte 2, tus favoritos; la
+    // 3, la línea más reciente de cada alimento de lo tuyo (por la fecha de la comida y, a
+    // igualdad, la última creada). Para lo apuntado hace poco basta mirar los 60 días; para
+    // tus alimentos, todas sus líneas.
+    private LoTuyo cargarTuyos(Integer usuarioId) {
         Map<Integer, Tuyo> porId = new LinkedHashMap<>();
+        Set<Integer> favoritos = new HashSet<>();
+        Map<Integer, UltimaCantidad.Linea> ultimas = new HashMap<>();
         Timestamp desde = Timestamp.valueOf(LocalDateTime.now().minusDays(DIAS_RECIENTES));
         jdbc.query("""
                 SELECT 0 AS parte, a.id, a.nombre, a.nombre_en, a.categoria, a.marca,
                        (SELECT MAX(c.fecha) FROM alimentos_comida ac JOIN comidas c ON c.id = ac.comida_id
-                        WHERE ac.alimento_id = a.id AND c.usuario_id = ?) AS ultimo
+                        WHERE ac.alimento_id = a.id AND c.usuario_id = ?) AS ultimo,
+                       CAST(NULL AS DECIMAL(6,2)) AS gramos, CAST(NULL AS SIGNED) AS racion_id,
+                       CAST(NULL AS DECIMAL(5,2)) AS raciones
                 FROM alimentos a WHERE a.usuario_id = ? AND a.activo = 1
                 UNION ALL
-                SELECT 1 AS parte, a.id, a.nombre, a.nombre_en, a.categoria, a.marca, MAX(c.fecha) AS ultimo
+                SELECT 1 AS parte, a.id, a.nombre, a.nombre_en, a.categoria, a.marca, MAX(c.fecha) AS ultimo,
+                       NULL, NULL, NULL
                 FROM comidas c
                 JOIN alimentos_comida ac ON ac.comida_id = c.id
                 JOIN alimentos a ON a.id = ac.alimento_id
                 WHERE c.usuario_id = ? AND c.fecha >= ? AND a.activo = 1
                   AND (a.usuario_id IS NULL OR a.usuario_id = ?)
                 GROUP BY a.id, a.nombre, a.nombre_en, a.categoria, a.marca
+                UNION ALL
+                SELECT 2 AS parte, f.alimento_id, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+                FROM favoritos f WHERE f.usuario_id = ?
+                UNION ALL
+                SELECT 3 AS parte, x.alimento_id, NULL, NULL, NULL, NULL, NULL, x.cantidad_gramos, x.racion_id, x.raciones
+                FROM (SELECT ac.alimento_id, ac.cantidad_gramos, ac.racion_id, ac.raciones,
+                             ROW_NUMBER() OVER (PARTITION BY ac.alimento_id ORDER BY c.fecha DESC, ac.id DESC) AS n
+                      FROM comidas c
+                      JOIN alimentos_comida ac ON ac.comida_id = c.id
+                      JOIN alimentos a ON a.id = ac.alimento_id
+                      WHERE c.usuario_id = ? AND (c.fecha >= ? OR a.usuario_id = ?)) x
+                WHERE x.n = 1
                 ORDER BY parte""", rs -> {
-            porId.putIfAbsent(rs.getInt("id"), new Tuyo(rs.getInt("id"), rs.getString("nombre"),
-                    rs.getString("nombre_en"), rs.getString("categoria"), rs.getString("marca"),
-                    fecha(rs.getTimestamp("ultimo"))));
-        }, usuarioId, usuarioId, usuarioId, desde, usuarioId);
-        return new ArrayList<>(porId.values());
+            int parte = rs.getInt("parte");
+            int id = rs.getInt("id");
+            if (parte == 2) {
+                favoritos.add(id);
+            } else if (parte == 3) {
+                Number racion = (Number) rs.getObject("racion_id");
+                ultimas.put(id, new UltimaCantidad.Linea(rs.getBigDecimal("gramos"),
+                        racion == null ? null : racion.intValue(), rs.getBigDecimal("raciones")));
+            } else {
+                porId.putIfAbsent(id, new Tuyo(id, rs.getString("nombre"),
+                        rs.getString("nombre_en"), rs.getString("categoria"), rs.getString("marca"),
+                        fecha(rs.getTimestamp("ultimo"))));
+            }
+        }, usuarioId, usuarioId, usuarioId, desde, usuarioId, usuarioId, usuarioId, desde, usuarioId);
+        return new LoTuyo(new ArrayList<>(porId.values()), favoritos, ultimas);
     }
 
     private static LocalDateTime fecha(Timestamp t) {
@@ -349,7 +389,7 @@ public class BusquedaAlimentosService {
 
     // --- Pintar la página ---------------------------------------------------
 
-    private List<AlimentoDTO> pintar(List<Ref> pagina, IndiceAlimentos.Catalogo catalogo) {
+    private List<AlimentoDTO> pintar(List<Ref> pagina, IndiceAlimentos.Catalogo catalogo, LoTuyo loTuyo) {
         List<Integer> idsProductos = pagina.stream().filter(Ref::esProducto).map(Ref::id).toList();
         Map<Integer, ProductoOff> productos = new HashMap<>();
         productoOffRepository.findAllById(idsProductos).forEach(p -> productos.put(p.getId(), p));
@@ -374,7 +414,12 @@ public class BusquedaAlimentosService {
             AlimentoDTO dto = null;
             if (!ref.esProducto() || alimentoDeProducto.containsKey(ref.id())) {
                 Alimento a = alimentos.get(ref.esProducto() ? alimentoDeProducto.get(ref.id()) : ref.id());
-                if (a != null) dto = alimentoMapper.toDTO(a);
+                if (a != null) {
+                    dto = alimentoMapper.toDTO(a);
+                    if (TUYO.equals(ref.grupo())) {
+                        dto.setUltima(UltimaCantidad.de(loTuyo.ultimas().get(a.getId()), a.getRaciones(), ingles));
+                    }
+                }
             } else {
                 ProductoOff p = productos.get(ref.id());
                 if (p != null) dto = productoADto(p, ingles);
@@ -382,6 +427,7 @@ public class BusquedaAlimentosService {
             // Si se borró entre que se indexó y ahora, no sale.
             if (dto == null) continue;
             dto.setGrupo(ref.grupo());
+            dto.setFavorito(dto.getId() != null && loTuyo.favoritos().contains(dto.getId()));
             resultado.add(dto);
         }
         return resultado;

@@ -11,6 +11,7 @@ import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.alimento.IAlimentoService;
 import com.gymprofit.api.service.busqueda.BusquedaAlimentosService;
 import com.gymprofit.api.service.codigo.CodigoBarrasService;
+import com.gymprofit.api.service.favorito.FavoritoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -41,6 +42,7 @@ import java.util.Map;
 public class AlimentoController {
 
     private final IAlimentoService alimentoService;
+    private final FavoritoService favoritoService;
     private final BusquedaAlimentosService busquedaAlimentosService;
     private final CodigoBarrasService codigoBarrasService;
 
@@ -71,7 +73,8 @@ public class AlimentoController {
     public ResponseEntity<AlimentoDTO> obtenerAlimento(@PathVariable Integer id) {
         AlimentoDTO alimento = alimentoService.findById(id);
 
-        return ResponseEntity.ok(alimento);
+        // Lote 1.6.3: si es favorito de quien pregunta.
+        return ResponseEntity.ok(favoritoService.conFavorito(alimento));
     }
 
     @Operation(summary = "Crea un nuevo alimento")
@@ -273,7 +276,7 @@ public class AlimentoController {
     })
     @GetMapping("/alimentos/codigo/{codigo}")
     public ResponseEntity<AlimentoDTO> porCodigo(@PathVariable String codigo) {
-        return ResponseEntity.ok(codigoBarrasService.porCodigo(codigo));
+        return ResponseEntity.ok(favoritoService.conFavorito(codigoBarrasService.porCodigo(codigo)));
     }
 
     @Operation(summary = "Busca alimentos por rango de calorías")

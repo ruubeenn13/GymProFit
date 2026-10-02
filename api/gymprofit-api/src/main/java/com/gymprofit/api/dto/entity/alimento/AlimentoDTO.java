@@ -47,4 +47,16 @@ public class AlimentoDTO implements Serializable {
     private List<RacionDTO> raciones;
     // Solo en la búsqueda: TUYO, BASICO o PRODUCTO (el grupo en el que sale el resultado).
     private String grupo;
+
+    // --- Lote 1.6.3: opcionales, como los de arriba.
+
+    // La categoría canónica, sin traducir («Lácteos»), o null (A6). `categoria` sigue
+    // como estaba: en inglés se traduce en los básicos, y las builds repartidas la enseñan.
+    private String categoriaClave;
+    // Si es favorito de la cuenta que pregunta (A3): en la búsqueda, en GET
+    // /alimentos/{id}, en GET /alimentos/codigo/{codigo} y en la lista de favoritos.
+    private Boolean favorito;
+    // Lo último que apuntaste (A1): en la búsqueda, solo en TUYO; y en los favoritos.
+    // Null si nunca lo has apuntado.
+    private UltimaCantidadDTO ultima;
 }

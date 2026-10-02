@@ -200,6 +200,8 @@ public class SecurityConfig {
                                 .requestMatchers("/records/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers("/notificaciones/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers("/comidas/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+                                // Lote 1.6.3: el invitado no tiene favoritos, como no añade.
+                                .requestMatchers("/favoritos", "/favoritos/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers("/alimentos-comida/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers("/rutinas-ejercicios/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
 

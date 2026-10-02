@@ -4,6 +4,7 @@ import com.gymprofit.api.config.security.SecurityUtils;
 import com.gymprofit.api.dto.entity.alimento.AlimentoDTO;
 import com.gymprofit.api.dto.entity.comida.AnadirAlimentoDTO;
 import com.gymprofit.api.dto.entity.comida.AnadirAlimentoRespuestaDTO;
+import com.gymprofit.api.dto.entity.comida.CantidadAnteriorDTO;
 import com.gymprofit.api.entity.Alimento;
 import com.gymprofit.api.entity.AlimentoComida;
 import com.gymprofit.api.entity.AlimentoRacion;
@@ -17,6 +18,7 @@ import com.gymprofit.api.repository.jpa.IAlimentoComidaRepository;
 import com.gymprofit.api.repository.jpa.IAlimentoRepository;
 import com.gymprofit.api.repository.jpa.IComidaRepository;
 import com.gymprofit.api.service.alimentocomida.IAlimentoComidaService;
+import com.gymprofit.api.service.alimentocomida.RacionVigente;
 import com.gymprofit.api.service.codigo.CodigoBarrasService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 // ============================================================
 // AnadirAlimentoService — añadir un alimento a la comida de un día en un viaje (1.6.1)
@@ -109,15 +112,21 @@ public class AnadirAlimentoService {
         }
 
         Comida comida = comidaDelDia(tipo, pedido);
-        AlimentoComida linea = lineaRepository.findByComidaIdAndAlimentoId(comida.getId(), alimento.getId())
-                .map(existente -> sumar(existente, nueva))
+        Optional<AlimentoComida> existente = lineaRepository.findByComidaIdAndAlimentoId(comida.getId(), alimento.getId());
+        // Lo que tenía antes de sumar, tal cual (A2): la app deshace con ello.
+        CantidadAnteriorDTO anterior = existente
+                .map(e -> new CantidadAnteriorDTO(e.getCantidadGramos(),
+                        e.getRacion() == null ? null : e.getRacion().getId(), e.getRaciones()))
+                .orElse(null);
+        AlimentoComida linea = existente
+                .map(e -> sumar(e, nueva))
                 .orElseGet(() -> {
                     nueva.setComida(comida);
                     return nueva;
                 });
         AlimentoComida guardada = lineaRepository.save(linea);
         alimentoComidaService.recalcularTotales(comida.getId());
-        return new AnadirAlimentoRespuestaDTO(comidaMapper.toDTO(comida), lineaMapper.toDTO(guardada));
+        return new AnadirAlimentoRespuestaDTO(comidaMapper.toDTO(comida), lineaMapper.toDTO(guardada), anterior);
     }
 
     private static TipoComida tipo(String texto) {
@@ -174,7 +183,8 @@ public class AnadirAlimentoService {
     // dos son de la misma ración, siguen siéndolo; si no, la suma va en gramos.
     private AlimentoComida sumar(AlimentoComida existente, AlimentoComida nueva) {
         BigDecimal gramos = existente.getCantidadGramos().add(nueva.getCantidadGramos());
-        boolean mismaRacion = existente.getRacion() != null && nueva.getRacion() != null
+        // Una línea cuya ración ya no cuadra (GP-177) no son raciones: se suma en gramos.
+        boolean mismaRacion = RacionVigente.de(existente) != null && nueva.getRacion() != null
                 && existente.getRacion().getId().equals(nueva.getRacion().getId());
         if (mismaRacion) {
             alimentoComidaService.ponerCantidad(existente, gramos, existente.getRacion().getId(),

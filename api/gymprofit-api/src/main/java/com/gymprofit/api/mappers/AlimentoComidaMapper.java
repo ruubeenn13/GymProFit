@@ -64,6 +64,14 @@ public interface AlimentoComidaMapper {
             if (nombreEn != null && !nombreEn.isBlank()) dto.setNombreAlimento(nombreEn);
         }
         if (alimentoComida.getRacion() == null) return;
+        // GP-177: si la ración ya no pesa lo mismo, la línea sale en gramos, sin nada de
+        // la ración, y todas las builds la enseñan y la editan así.
+        if (com.gymprofit.api.service.alimentocomida.RacionVigente.de(alimentoComida) == null) {
+            dto.setRacionId(null);
+            dto.setRacionGramos(null);
+            dto.setRaciones(null);
+            return;
+        }
         String nombre = ingles ? alimentoComida.getRacion().getNombreEn() : alimentoComida.getRacion().getNombre();
         dto.setRacionNombre(nombre);
         com.gymprofit.api.service.busqueda.UnidadesRacion.de(nombre, ingles).ifPresent(u -> {
