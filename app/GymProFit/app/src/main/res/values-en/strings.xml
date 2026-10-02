@@ -1543,6 +1543,7 @@
     <string name="comida_quitar">Remove from meal</string>
     <string name="comida_eliminar_fondo">Remove</string>
     <string name="comida_quitado">Removed: %1$s</string>
+    <string name="comida_saliendo">Saving changes…</string>
     <string name="comida_cambiar_cantidad">Change amount</string>
     <string name="comida_anadir_alimento">Add food</string>
     <string name="comida_escanear_a11y">Scan a barcode</string>
@@ -1612,4 +1613,53 @@
     <string name="crear_error_numero">Type a number</string>
     <string name="crear_error_racion">Above 0 and up to 2000\u00A0g</string>
     <string name="crear_error_carga">Couldn\'t open this food</string>
+    <!-- ── Lote 1.6.3: añadir en un toque, la barra de «Hecho» y los favoritos ── -->
+    <string name="anadir_pestanas">Show</string>
+    <string name="anadir_pestana_todo">All</string>
+    <string name="anadir_pestana_favoritos">Favorites</string>
+    <string name="recientes_ver_todos">See all</string>
+    <string name="recientes_ver_todos_a11y">See all recent foods</string>
+    <string name="fila_cantidad_kcal">%1$s · %2$s\u00A0kcal</string>
+    <string name="fila_ultima_vez">Last time: %1$s · %2$s\u00A0kcal</string>
+    <string name="a_la_desayuno">to breakfast</string>
+    <string name="a_la_almuerzo">to mid-morning</string>
+    <string name="a_la_comida">to lunch</string>
+    <string name="a_la_merienda">to snack</string>
+    <string name="a_la_cena">to dinner</string>
+    <string name="fila_mas_a11y">Add %1$s, %2$s, %3$s</string>
+    <string name="fila_check_a11y">%1$s, added. Tap to remove it</string>
+    <string name="anadir_fallo_anadir">Couldn\'t add %1$s. %2$s</string>
+    <string name="anadir_fallo_quitar">Couldn\'t remove %1$s. %2$s</string>
+    <plurals name="barra_anadidos_a">
+        <item quantity="one">%1$d added %2$s</item>
+        <item quantity="other">%1$d added %2$s</item>
+    </plurals>
+    <plurals name="barra_anadidos">
+        <item quantity="one">%d added</item>
+        <item quantity="other">%d added</item>
+    </plurals>
+    <string name="barra_kcal">+%1$s\u00A0kcal</string>
+    <string name="barra_hecho">Done</string>
+    <string name="favoritos_seccion">Most used</string>
+    <plurals name="favoritos_cuantos">
+        <item quantity="one">%d favorite</item>
+        <item quantity="other">%d favorites</item>
+    </plurals>
+    <string name="favoritos_vacio">No favorites yet.\nTap the heart on a food\'s page and you\'ll find it here.</string>
+    <string name="favoritos_error">Couldn\'t load your favorites.</string>
+    <string name="favoritos_quitar">Remove from favorites</string>
+    <string name="propuesta_titulo">Add %1$s to favorites?</string>
+    <plurals name="propuesta_veces">
+        <item quantity="one">You\'ve added it %d time in two weeks</item>
+        <item quantity="other">You\'ve added it %d times in two weeks</item>
+    </plurals>
+    <string name="propuesta_aceptar_a11y">Yes, save %1$s to favorites</string>
+    <string name="propuesta_rechazar_a11y">No, thanks</string>
+    <string name="favorito_marcar_a11y">Save to favorites</string>
+    <string name="favorito_quitar_a11y">Remove from favorites</string>
+    <string name="favorito_marcado">In favorites</string>
+    <string name="favorito_no_marcado">Not in favorites</string>
+    <string name="favorito_fallo_marcar">Couldn\'t save to favorites. %1$s</string>
+    <string name="favorito_fallo_quitar">Couldn\'t remove from favorites. %1$s</string>
+    <string name="propuesta_fallo">Couldn\'t answer the suggestion. %1$s</string>
 </resources>

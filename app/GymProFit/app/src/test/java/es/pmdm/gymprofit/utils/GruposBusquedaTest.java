@@ -90,4 +90,55 @@ public class GruposBusquedaTest {
         long cabecerasProductos = l.stream().filter(e -> e.esCabecera() && e.seccion == GruposBusqueda.Seccion.PRODUCTOS).count();
         assertEquals(1, cabecerasProductos);
     }
+
+    // ── Lote 1.6.3 ──────────────────────────────────────────────────────────
+
+    private static java.util.List<Alimento> recientes(int n) {
+        java.util.List<Alimento> l = new java.util.ArrayList<>();
+        for (int i = 0; i < n; i++) l.add(a("Tuyo " + i, "TUYO"));
+        l.add(a("Pan", "BASICO"));
+        return l;
+    }
+
+    @Test
+    public void recientes_seis_y_ver_todos() {
+        List<GruposBusqueda.Elemento> l = GruposBusqueda.de(recientes(9), false, false);
+        assertTrue(l.get(0).verTodos);
+        // Cabecera, seis recientes, cabecera de habituales y el pan.
+        assertEquals(1 + 6 + 2, l.size());
+        assertEquals("Tuyo 5", l.get(6).alimento.getNombre());
+        assertEquals(GruposBusqueda.Seccion.HABITUALES, l.get(7).seccion);
+        // «Ver todos» despliega el resto ahí mismo.
+        List<GruposBusqueda.Elemento> todos = GruposBusqueda.de(recientes(9), false, true);
+        assertFalse(todos.get(0).verTodos);
+        assertEquals(1 + 9 + 2, todos.size());
+    }
+
+    @Test
+    public void con_seis_o_menos_no_hay_ver_todos() {
+        assertFalse(GruposBusqueda.de(recientes(6), false, false).get(0).verTodos);
+        assertEquals(1 + 6 + 2, GruposBusqueda.de(recientes(6), false, false).size());
+    }
+
+    @Test
+    public void favoritos_con_la_propuesta_arriba_y_cuantos() {
+        Alimento pan = a("Pan integral", null);
+        List<GruposBusqueda.Elemento> l = GruposBusqueda.favoritos(
+                Arrays.asList(a("Yogur", null), a("Pollo", null)),
+                new es.pmdm.gymprofit.model.alimento.Favoritos.Propuesta(pan, 4));
+        assertEquals(GruposBusqueda.Tipo.PROPUESTA, l.get(0).tipo);
+        assertSame(pan, l.get(0).alimento);
+        assertEquals(4, l.get(0).propuesta.getVeces());
+        assertEquals(GruposBusqueda.Seccion.FAVORITOS, l.get(1).seccion);
+        assertEquals(2, l.get(1).cuantos);
+        assertEquals(4, l.size());
+    }
+
+    @Test
+    public void sin_favoritos_ni_propuesta_no_hay_nada() {
+        assertTrue(GruposBusqueda.favoritos(Collections.emptyList(), null).isEmpty());
+        // Con propuesta y sin favoritos, solo la propuesta.
+        assertEquals(1, GruposBusqueda.favoritos(null,
+                new es.pmdm.gymprofit.model.alimento.Favoritos.Propuesta(a("Pan", null), 5)).size());
+    }
 }

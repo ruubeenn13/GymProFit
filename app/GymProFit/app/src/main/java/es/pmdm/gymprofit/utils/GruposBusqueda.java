@@ -9,15 +9,19 @@ import java.util.List;
 import java.util.Map;
 
 import es.pmdm.gymprofit.model.alimento.Alimento;
+import es.pmdm.gymprofit.model.alimento.Favoritos;
 
 // ============================================================
 // GruposBusqueda — de los resultados de /alimentos/buscar a la lista de la pantalla (1.6.1)
 //
 // La API devuelve cada alimento con su grupo (TUYO, BASICO o PRODUCTO), ya en orden.
-//   · Sin escribir (o con menos de 2 letras), Añadir: «Recientes» (TUYO) y
-//     «Habituales» (BASICO).
+//   · Sin escribir (o con menos de 2 letras), la pestaña «Todo» de Añadir: «Recientes»
+//     (TUYO) y «Habituales» (BASICO). Desde la 1.6.3, Recientes enseña seis y, si hay
+//     más, su cabecera lleva «Ver todos», que despliega el resto ahí mismo.
 //   · Buscando: «Tuyo», «Básicos» y «Productos», en ese orden, y al final
 //     «¿No lo encuentras?», también cuando no hay nada.
+//   · La pestaña «Favoritos» (1.6.3): arriba la propuesta, si la hay, y «Los que más
+//     usas» con cuántos son.
 // Cada grupo lleva su cabecera solo si tiene algo. Un grupo que no se conoce va con los
 // básicos: mejor enseñarlo que perderlo.
 // ============================================================
@@ -25,21 +29,37 @@ public final class GruposBusqueda {
 
     /** Menos letras que esto no es una búsqueda: se queda la lista de Añadir. */
     public static final int LETRAS_MINIMAS = 2;
+    /** Recientes que se ven sin tocar «Ver todos». */
+    public static final int RECIENTES_VISIBLES = 6;
 
-    public enum Seccion { RECIENTES, HABITUALES, TUYO, BASICOS, PRODUCTOS }
+    public enum Seccion { RECIENTES, HABITUALES, TUYO, BASICOS, PRODUCTOS, FAVORITOS }
 
-    public enum Tipo { CABECERA, ALIMENTO, NO_LO_ENCUENTRAS }
+    public enum Tipo { CABECERA, ALIMENTO, NO_LO_ENCUENTRAS, PROPUESTA }
 
-    /** Una fila de la lista: una cabecera de sección, un alimento o «¿No lo encuentras?». */
+    /** Una fila de la lista: una cabecera, un alimento, «¿No lo encuentras?» o la propuesta. */
     public static final class Elemento {
         @NonNull public final Tipo tipo;
         @Nullable public final Seccion seccion;
         @Nullable public final Alimento alimento;
+        /** En una cabecera: si lleva «Ver todos». */
+        public final boolean verTodos;
+        /** En la cabecera de favoritos: cuántos son; si no, -1. */
+        public final int cuantos;
+        /** La propuesta de favorito, en su fila. */
+        @Nullable public final Favoritos.Propuesta propuesta;
 
         private Elemento(@NonNull Tipo tipo, @Nullable Seccion seccion, @Nullable Alimento alimento) {
+            this(tipo, seccion, alimento, false, -1, null);
+        }
+
+        private Elemento(@NonNull Tipo tipo, @Nullable Seccion seccion, @Nullable Alimento alimento,
+                         boolean verTodos, int cuantos, @Nullable Favoritos.Propuesta propuesta) {
             this.tipo = tipo;
             this.seccion = seccion;
             this.alimento = alimento;
+            this.verTodos = verTodos;
+            this.cuantos = cuantos;
+            this.propuesta = propuesta;
         }
 
         public boolean esCabecera() {
@@ -55,12 +75,19 @@ public final class GruposBusqueda {
         return texto != null && texto.toString().trim().length() >= LETRAS_MINIMAS;
     }
 
-    /**
-     * @param alimentos lo que devolvió la búsqueda, en su orden.
-     * @param buscando  true con texto (los tres grupos y «¿No lo encuentras?»).
-     */
+    /** Como {@link #de(List, boolean, boolean)}, con todos los recientes a la vista. */
     @NonNull
     public static List<Elemento> de(@Nullable List<Alimento> alimentos, boolean buscando) {
+        return de(alimentos, buscando, true);
+    }
+
+    /**
+     * @param alimentos       lo que devolvió la búsqueda, en su orden.
+     * @param buscando        true con texto (los tres grupos y «¿No lo encuentras?»).
+     * @param recientesTodos  sin texto: false enseña seis recientes y «Ver todos».
+     */
+    @NonNull
+    public static List<Elemento> de(@Nullable List<Alimento> alimentos, boolean buscando, boolean recientesTodos) {
         Map<Seccion, List<Alimento>> porSeccion = new EnumMap<>(Seccion.class);
         if (alimentos != null) {
             for (Alimento a : alimentos) {
@@ -74,10 +101,29 @@ public final class GruposBusqueda {
         for (Seccion s : orden) {
             List<Alimento> deEsta = porSeccion.get(s);
             if (deEsta == null || deEsta.isEmpty()) continue;
-            lista.add(new Elemento(Tipo.CABECERA, s, null));
-            for (Alimento a : deEsta) lista.add(new Elemento(Tipo.ALIMENTO, s, a));
+            boolean recortar = s == Seccion.RECIENTES && !recientesTodos && deEsta.size() > RECIENTES_VISIBLES;
+            lista.add(new Elemento(Tipo.CABECERA, s, null, recortar, -1, null));
+            List<Alimento> visibles = recortar ? deEsta.subList(0, RECIENTES_VISIBLES) : deEsta;
+            for (Alimento a : visibles) lista.add(new Elemento(Tipo.ALIMENTO, s, a));
         }
         if (buscando) lista.add(new Elemento(Tipo.NO_LO_ENCUENTRAS, null, null));
+        return lista;
+    }
+
+    /**
+     * La pestaña «Favoritos»: la propuesta arriba, si la hay, y los favoritos por uso
+     * bajo «Los que más usas», con cuántos son. Sin favoritos, sin cabecera.
+     */
+    @NonNull
+    public static List<Elemento> favoritos(@Nullable List<Alimento> favoritos, @Nullable Favoritos.Propuesta propuesta) {
+        List<Elemento> lista = new ArrayList<>();
+        if (propuesta != null && propuesta.getAlimento() != null) {
+            lista.add(new Elemento(Tipo.PROPUESTA, null, propuesta.getAlimento(), false, -1, propuesta));
+        }
+        if (favoritos != null && !favoritos.isEmpty()) {
+            lista.add(new Elemento(Tipo.CABECERA, Seccion.FAVORITOS, null, false, favoritos.size(), null));
+            for (Alimento a : favoritos) lista.add(new Elemento(Tipo.ALIMENTO, Seccion.FAVORITOS, a));
+        }
         return lista;
     }
 

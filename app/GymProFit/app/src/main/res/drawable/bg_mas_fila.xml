@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_mas_fila — el círculo del «+» de cada fila (lote 1.6.3), con su onda al tocar: 44 dp dentro
+     de una zona de toque de 48 (2 dp de margen por lado). El
+     color lo pone el adaptador con backgroundTint: gp_surface_2 en «+», gp_success_container en ✓. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="?attr/colorControlHighlight">
+    <item android:left="2dp" android:top="2dp" android:right="2dp" android:bottom="2dp">
+        <shape android:shape="oval">
+            <solid android:color="@android:color/white" />
+        </shape>
+    </item>
+</ripple>

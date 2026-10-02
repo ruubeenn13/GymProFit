@@ -76,6 +76,8 @@ public class CrearAlimentoActivity extends BaseActivity {
 
     /** Extra: el código de barras con que se crea (del escáner). */
     public static final String EXTRA_CODIGO = "codigo";
+    /** Extra: lo que se buscaba al tocar «Créalo», que empieza siendo el nombre (GP-181). */
+    public static final String EXTRA_NOMBRE = "nombre";
     /** Extra: el id del alimento propio que se edita. */
     public static final String EXTRA_EDITAR = "editar";
 
@@ -136,9 +138,10 @@ public class CrearAlimentoActivity extends BaseActivity {
             pintar();
         }));
 
-        // Lo que se añade desde la ficha del alimento creado cierra también esta pantalla.
+        // Lo que se añade desde la ficha del alimento creado cierra también esta pantalla, y
+        // lo añadido sigue hasta Añadir, que lo cuenta en su barra (lote 1.6.3).
         fichaLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), r -> {
-            setResult(r.getResultCode() == RESULT_OK ? RESULT_OK : RESULT_CANCELED);
+            setResult(r.getResultCode() == RESULT_OK ? RESULT_OK : RESULT_CANCELED, r.getData());
             finish();
         });
 
@@ -165,6 +168,13 @@ public class CrearAlimentoActivity extends BaseActivity {
                 solo.setVisibility(View.GONE);
             }
             pintarCodigo(codigo, true);
+            // Lo que se buscaba es el nombre (GP-181). Antes de la foto: no es un cambio
+            // que haya que avisar al salir.
+            String nombre = EtiquetaAlimento.nombreDesdeBusqueda(getIntent().getStringExtra(EXTRA_NOMBRE));
+            if (savedInstanceState == null && nombre != null) {
+                etNombre.setText(nombre);
+                etNombre.setSelection(nombre.length());
+            }
             pintar();
             estadoInicial = foto();
         }
@@ -436,8 +446,8 @@ public class CrearAlimentoActivity extends BaseActivity {
             aviso.setVisibility(View.GONE);
             return;
         }
-        int energia = (int) Math.round(e);
-        boolean cuadra = EtiquetaAlimento.cuadra(energia, segun);
+        // Se compara por 100 g, se escriba por 100 g o por la ración (GP-178).
+        boolean cuadra = Boolean.TRUE.equals(EtiquetaAlimento.cuadra(escritas(), porRacion ? gramosBase : 100));
         int col = cuadra ? ContextCompat.getColor(this, R.color.gp_success)
                 : color(com.google.android.material.R.attr.colorOnSurfaceVariant);
         aviso.setText(cuadra ? getString(R.string.crear_cuadra)
@@ -688,7 +698,9 @@ public class CrearAlimentoActivity extends BaseActivity {
                     // A la ficha del alimento creado, con su ración: no se apunta nada sin
                     // ver cuánto.
                     fichaLauncher.launch(FichaAlimentoActivity.paraAnadir(CrearAlimentoActivity.this, creado.getId(),
-                            tipoComida, getIntent().getStringExtra(AnadirAlimentoActivity.EXTRA_FECHA)));
+                            tipoComida, getIntent().getStringExtra(AnadirAlimentoActivity.EXTRA_FECHA))
+                            .putExtra(AnadirAlimentoActivity.EXTRA_EN_ANADIR,
+                                    getIntent().getBooleanExtra(AnadirAlimentoActivity.EXTRA_EN_ANADIR, false)));
                     return;
                 }
                 // «Solo guardar»: se vuelve a donde se estaba, que recarga y lo enseña.

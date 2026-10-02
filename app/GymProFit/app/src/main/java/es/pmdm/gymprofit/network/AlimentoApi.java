@@ -5,6 +5,7 @@ import java.util.Map;
 
 import es.pmdm.gymprofit.model.PageDTO;
 import es.pmdm.gymprofit.model.alimento.Alimento;
+import es.pmdm.gymprofit.model.alimento.Favoritos;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -77,6 +78,29 @@ public interface AlimentoApi {
     // body: alimentoId o barcode, y motivo (VALORES, NOMBRE, RACION, REPETIDO, OTRO). 204.
     @POST("alimentos/avisos")
     Call<Void> reportar(@Body Map<String, Object> body);
+
+    // --- Favoritos (lote 1.6.3) -------------------------------------------------
+
+    // Los favoritos de la cuenta, por uso, y la propuesta de uno nuevo (o null).
+    @GET("favoritos")
+    Call<Favoritos> favoritos();
+
+    // Marca un alimento como favorito. Repetible. Devuelve el alimento.
+    @PUT("favoritos/{id}")
+    Call<Alimento> marcarFavorito(@Path("id") int id);
+
+    // Marca por su código un producto que aún no está en el catálogo: la API lo
+    // materializa y devuelve el alimento con su id.
+    @PUT("favoritos/codigo/{codigo}")
+    Call<Alimento> marcarFavoritoPorCodigo(@Path("codigo") String codigo);
+
+    // Quita un favorito. Repetible. 204.
+    @DELETE("favoritos/{id}")
+    Call<Void> quitarFavorito(@Path("id") int id);
+
+    // Rechaza la propuesta de ese alimento: no se vuelve a proponer. 204.
+    @PUT("favoritos/rechazados/{id}")
+    Call<Void> rechazarPropuesta(@Path("id") int id);
 
     // Reactiva un alimento previamente desactivado.
     @PUT("alimentos/{id}/activar")

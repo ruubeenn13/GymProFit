@@ -114,6 +114,10 @@ public final class Movimiento {
     public static final long TROFEO = 450;
     /** 12 · Récord: las chispas salen. */
     public static final long CHISPAS = 700;
+    /** 15 · El «+» se vuelve ✓: el botón se hunde a 0,94. */
+    public static final long HUNDE = 70;
+    /** 15 · El «+» se vuelve ✓: vuelve a su tamaño mientras se pone verde y el «+» se va. */
+    public static final long VERDE = 120;
     /** 16 · La lista entra en cascada: cada fila sube y aparece. */
     public static final long CASCADA = 350;
     /** 16 · La lista entra en cascada: retraso entre filas. */
@@ -124,6 +128,10 @@ public final class Movimiento {
     public static final long ENCAJA = 200;
     /** 17 · Código leído: la hoja del producto sube. */
     public static final long HOJA = 450;
+    /** 19 · El corazón late: se rellena y crece a 1,3, baja a 0,95 y vuelve. */
+    public static final long CORAZON = 450;
+    /** 19 · Un favorito nuevo entra en la lista con el fondo naranja suave, que se apaga. */
+    public static final long RESALTA = 1400;
     /** 20 · Borrar y deshacer: al soltarla, la fila se va de lado. */
     public static final long SALE = 380;
     /** 20 · Borrar y deshacer: la comida se recoloca (y la fila vuelve con «Deshacer»). */
@@ -442,6 +450,112 @@ public final class Movimiento {
             a.start();
         });
         brillar(fila, 0x4DFFECBE, retraso + 150, BRILLO);
+    }
+
+    /**
+     * 15 · El «+» se vuelve ✓ (o el ✓, «+»): el botón se hunde a 0,94, vuelve mientras su
+     * fondo pasa al color nuevo, y el icono nuevo salta con rebote. Vibración ligera.
+     * Con las animaciones quitadas, todo en su estado final (el fondo ya va puesto).
+     *
+     * @param boton      el botón redondo.
+     * @param icono      el icono que acaba de cambiar.
+     * @param fondoAntes el color de fondo de antes.
+     * @param fondoAhora el color de fondo nuevo.
+     */
+    public static void volverMas(@NonNull View boton, @NonNull View icono, @ColorInt int fondoAntes,
+                                 @ColorInt int fondoAhora) {
+        vibrar(boton, Vibracion.LIGERA);
+        boton.animate().cancel();
+        icono.animate().cancel();
+        if (quieto(boton.getContext())) {
+            boton.setScaleX(1f);
+            boton.setScaleY(1f);
+            icono.setScaleX(1f);
+            icono.setScaleY(1f);
+            icono.setAlpha(1f);
+            return;
+        }
+        boton.animate().scaleX(0.94f).scaleY(0.94f).setStartDelay(0).setDuration(HUNDE).setInterpolator(ESTANDAR)
+                .withEndAction(() -> boton.animate().scaleX(1f).scaleY(1f).setDuration(VERDE)
+                        .setInterpolator(ESTANDAR).start())
+                .start();
+        ValueAnimator color = ValueAnimator.ofArgb(fondoAntes, fondoAhora);
+        color.setStartDelay(HUNDE);
+        color.setDuration(VERDE);
+        color.setInterpolator(ESTANDAR);
+        color.addUpdateListener(a -> boton.setBackgroundTintList(
+                android.content.res.ColorStateList.valueOf((int) a.getAnimatedValue())));
+        boton.setBackgroundTintList(android.content.res.ColorStateList.valueOf(fondoAntes));
+        color.start();
+        icono.setScaleX(0f);
+        icono.setScaleY(0f);
+        icono.animate().scaleX(1f).scaleY(1f).alpha(1f).setStartDelay(HUNDE).setDuration(CHECK)
+                .setInterpolator(REBOTE).start();
+    }
+
+    /**
+     * 19 · El corazón late al marcar un favorito: crece a 1,3, baja a 0,95 y vuelve.
+     * Vibración ligera. Al quitarlo no se llama: se vacía sin latido.
+     */
+    public static void latirCorazon(@NonNull View corazon) {
+        vibrar(corazon, Vibracion.LIGERA);
+        corazon.animate().cancel();
+        corazon.setScaleX(1f);
+        corazon.setScaleY(1f);
+        if (quieto(corazon.getContext())) return;
+        ValueAnimator a = ValueAnimator.ofFloat(0f, 1f);
+        a.setDuration(CORAZON);
+        a.setInterpolator(REBOTE);
+        // Los fotogramas del tablero de la ficha: 1 → 1,3 (30 %) → 0,95 (60 %) → 1.
+        a.addUpdateListener(an -> {
+            float t = Math.max(0f, Math.min(1f, (float) an.getAnimatedValue()));
+            float s;
+            if (t < 0.3f) s = 1f + 0.3f * (t / 0.3f);
+            else if (t < 0.6f) s = 1.3f - 0.35f * ((t - 0.3f) / 0.3f);
+            else s = 0.95f + 0.05f * ((t - 0.6f) / 0.4f);
+            corazon.setScaleX(s);
+            corazon.setScaleY(s);
+        });
+        a.addListener(new AnimatorListenerAdapter() {
+            @Override public void onAnimationEnd(Animator animation) {
+                corazon.setScaleX(1f);
+                corazon.setScaleY(1f);
+            }
+        });
+        a.start();
+    }
+
+    /**
+     * 19 · Un favorito recién aceptado entra en la lista: baja 12 dp y aparece con el
+     * fondo {@code color} encima, que se apaga hasta el final.
+     */
+    public static void resaltar(@NonNull View fila, @ColorInt int color) {
+        if (quieto(fila.getContext())) return;
+        float d = fila.getResources().getDisplayMetrics().density;
+        android.graphics.drawable.ColorDrawable fondo = new android.graphics.drawable.ColorDrawable(color);
+        fila.post(() -> {
+            fondo.setBounds(0, 0, fila.getWidth(), fila.getHeight());
+            fila.getOverlay().add(fondo);
+            ValueAnimator a = ValueAnimator.ofFloat(0f, 1f);
+            a.setDuration(RESALTA);
+            a.setInterpolator(LINEAL);
+            a.addUpdateListener(an -> {
+                float t = (float) an.getAnimatedValue();
+                // Hasta el 40 %, entra; después, el fondo se apaga.
+                float e = ENFATIZADA.getInterpolation(Math.min(1f, t / 0.4f));
+                fila.setAlpha(e);
+                fila.setTranslationY(-12 * d * (1f - e));
+                fondo.setAlpha(t < 0.4f ? 255 : Math.round(255 * (1f - (t - 0.4f) / 0.6f)));
+            });
+            a.addListener(new AnimatorListenerAdapter() {
+                @Override public void onAnimationEnd(Animator animation) {
+                    fila.getOverlay().remove(fondo);
+                    fila.setAlpha(1f);
+                    fila.setTranslationY(0f);
+                }
+            });
+            a.start();
+        });
     }
 
     // Esquina de {@code hija} medida desde {@code padre}, que la contiene.

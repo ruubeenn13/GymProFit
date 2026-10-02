@@ -90,6 +90,25 @@ public class MovimientoTest {
     }
 
     @Test
+    public void elMasYElCorazonEstanEnLaTablaYEnElCodigo() throws IOException {
+        // Momentos 15 y 19 del lienzo del 02-10 (lote 1.6.3), con los números del
+        // tablero «Así se mueve».
+        Map<String, Long> tabla = duracionesDeLaTabla();
+        Map<String, Long> codigo = duracionesDelCodigo();
+        assertTrue("falta el momento 15 en DEC-039", decision().contains("| 15 · "));
+        assertTrue("falta el momento 19 en DEC-039", decision().contains("| 19 · "));
+        for (String c : new String[]{"HUNDE", "VERDE", "CHECK", "CORAZON", "RESALTA"}) {
+            assertTrue(c + " no está en la tabla", tabla.containsKey(c));
+            assertTrue(c + " no está en Movimiento", codigo.containsKey(c));
+        }
+        assertEquals(Long.valueOf(70), codigo.get("HUNDE"));
+        assertEquals(Long.valueOf(120), codigo.get("VERDE"));
+        assertEquals(Long.valueOf(260), codigo.get("CHECK"));
+        assertEquals(Long.valueOf(450), codigo.get("CORAZON"));
+        assertEquals(Long.valueOf(1400), codigo.get("RESALTA"));
+    }
+
+    @Test
     public void lasCuatroCurvasSonLasDeLaDecision() throws IOException {
         String codigo = new String(Files.readAllBytes(CODIGO), StandardCharsets.UTF_8);
         String dec = decision();

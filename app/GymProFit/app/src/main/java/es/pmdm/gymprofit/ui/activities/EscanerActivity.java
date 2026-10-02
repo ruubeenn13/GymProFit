@@ -141,10 +141,11 @@ public class EscanerActivity extends BaseActivity {
             if (concedido) iniciarCamara();
             else sinPermiso();
         });
-        // Cambiar cantidad (la ficha) o crear con el código: si se añade, se vuelve al diario.
+        // Cambiar cantidad (la ficha) o crear con el código: si se añade, se vuelve a quien
+        // abrió el escáner con lo añadido (Añadir lo cuenta en su barra, lote 1.6.3).
         despues = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), r -> {
             if (r.getResultCode() == RESULT_OK) {
-                setResult(RESULT_OK);
+                setResult(RESULT_OK, r.getData());
                 finish();
             }
         });
@@ -473,7 +474,8 @@ public class EscanerActivity extends BaseActivity {
                 nf.format(kcal), nf.format(p), nf.format(c), nf.format(gr)));
 
         secundario.setText(R.string.escaner_cambiar_cantidad);
-        secundario.setOnClickListener(v -> despues.launch(FichaAlimentoActivity.paraAnadir(this, a, tipoComida, fecha)));
+        secundario.setOnClickListener(v -> despues.launch(FichaAlimentoActivity.paraAnadir(this, a, tipoComida, fecha)
+                .putExtra(AnadirAlimentoActivity.EXTRA_EN_ANADIR, enAnadir())));
         principal.setText(AnadirAlimentoActivity.textoAnadirA(tipoComida));
         principal.setOnClickListener(v -> anadir(a, cantidad, principal));
     }
@@ -497,8 +499,20 @@ public class EscanerActivity extends BaseActivity {
                 LoadingDialog.hide(EscanerActivity.this);
                 if (isDestroyed()) return;
                 Movimiento.vibrar(boton, Movimiento.Vibracion.LIGERA);
-                UIHelper.mostrarToastExito(EscanerActivity.this, getString(R.string.ficha_anadido, a.getNombre()));
-                setResult(RESULT_OK);
+                Intent datos = new Intent();
+                if (r != null && r.getLinea() != null) {
+                    String texto = es.pmdm.gymprofit.utils.AnadirRapido.texto(
+                            es.pmdm.gymprofit.utils.Cantidades.Formatos.de(EscanerActivity.this),
+                            es.pmdm.gymprofit.utils.FechaUtils.localeDeLaApp(EscanerActivity.this), cantidad);
+                    datos.putExtra(AnadirAlimentoActivity.EXTRA_ANADIDO, new com.google.gson.Gson().toJson(
+                            es.pmdm.gymprofit.utils.Anadidos.Anadido.de(r, a.getBarcode(), tipoComida, texto,
+                                    es.pmdm.gymprofit.utils.AnadirRapido.kcal(a, cantidad))));
+                }
+                // Desde Añadir, lo dice su barra; desde una comida, el aviso de siempre.
+                if (!enAnadir()) {
+                    UIHelper.mostrarToastExito(EscanerActivity.this, getString(R.string.ficha_anadido, a.getNombre()));
+                }
+                setResult(RESULT_OK, datos);
                 finish();
             }
 
@@ -514,8 +528,13 @@ public class EscanerActivity extends BaseActivity {
     private void crearConCodigo() {
         despues.launch(new Intent(this, CrearAlimentoActivity.class)
                 .putExtra(CrearAlimentoActivity.EXTRA_CODIGO, estado.codigo())
+                .putExtra(AnadirAlimentoActivity.EXTRA_EN_ANADIR, enAnadir())
                 .putExtra(AnadirAlimentoActivity.EXTRA_TIPO, tipoComida)
                 .putExtra(AnadirAlimentoActivity.EXTRA_FECHA, fecha));
+    }
+
+    private boolean enAnadir() {
+        return getIntent().getBooleanExtra(AnadirAlimentoActivity.EXTRA_EN_ANADIR, false);
     }
 
     private void reintentar() {

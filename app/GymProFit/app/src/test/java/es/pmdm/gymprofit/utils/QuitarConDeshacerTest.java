@@ -135,4 +135,22 @@ public class QuitarConDeshacerTest {
         respuestas.get(0).ok();
         assertEquals(1, listos);
     }
+
+    // GP-179: una recarga con un borrado en vuelo no devuelve la fila. Hasta la 1.6.2 solo
+    // se apartaba mientras se podía deshacer; enviado y sin responder, volvía.
+    @Test
+    public void lo_enviado_sin_responder_sigue_apartado() {
+        q.quitar("arroz", 1);
+        assertEquals(List.of("arroz"), q.apartados());
+        q.confirmar();
+        assertEquals(List.of("arroz"), q.apartados());
+        q.quitar("pan", 0);
+        q.confirmar();
+        assertEquals(2, q.apartados().size());
+        respuestas.get(0).ok();
+        assertEquals(List.of("pan"), q.apartados());
+        // Si falla, vuelve a la lista (y la vista lo pone en su sitio).
+        respuestas.get(1).fallo(500, "x");
+        assertTrue(q.apartados().isEmpty());
+    }
 }

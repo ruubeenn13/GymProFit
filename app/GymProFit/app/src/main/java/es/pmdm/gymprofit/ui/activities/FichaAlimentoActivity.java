@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
@@ -64,6 +65,13 @@ import es.pmdm.gymprofit.utils.VistaEstado;
 //     en gramos; tocar la cifra la deja escribir. La unidad entre sus raciones y gramos
 //     (con más de dos, un selector). «Añadir a la merienda» va por POST /comidas/anadir
 //     y vuelve al diario; al editar, «Actualizar» va por el PATCH de la línea.
+// Lote 1.6.3:
+//   · Abierta desde Añadir (EXTRA_EN_ANADIR), añadir vuelve a Añadir con lo añadido
+//     (EXTRA_ANADIDO), que cuenta en su barra; «Actualizar» le devuelve la línea nueva.
+//   · El corazón, arriba a la derecha (tablero 7, momento 19): vacío o relleno; al
+//     marcarlo late. Cambia al tocar y la API va detrás, de una en una; si falla, vuelve
+//     y se dice. Un producto que aún no está en el catálogo se marca por su código. Quien
+//     abrió la ficha se entera (EXTRA_FAVORITO) aunque se salga sin añadir.
 // ============================================================
 public class FichaAlimentoActivity extends BaseActivity {
 
@@ -75,6 +83,14 @@ public class FichaAlimentoActivity extends BaseActivity {
     private static final String EXTRA_GRAMOS = "gramos";
     private static final String EXTRA_KCAL_LINEA = "kcalLinea";
     private static final String EXTRA_PROT_LINEA = "protLinea";
+
+    /** Resultado al actualizar (1.6.3): la línea como quedó (JSON), su cantidad escrita y sus kcal. */
+    public static final String EXTRA_LINEA = "linea";
+    public static final String EXTRA_TEXTO = "texto";
+    public static final String EXTRA_KCAL = "kcal";
+    /** Resultado (1.6.3): si el alimento quedó en favoritos, y su id. */
+    public static final String EXTRA_FAVORITO = "favorito";
+    public static final String EXTRA_FAVORITO_ID = "favoritoId";
 
     private final AlimentoApi alimentoApi = ApiClient.service(AlimentoApi.class);
     private final ComidaApi comidaApi = ApiClient.service(ComidaApi.class);
@@ -93,6 +109,12 @@ public class FichaAlimentoActivity extends BaseActivity {
 
     private VistaEstado estado;
     private NumberFormat nf;
+
+    // El corazón: lo que se ve, lo que sabe la API y si hay una petición en camino.
+    private boolean favoritoQuiere;
+    private boolean favoritoReal;
+    private boolean favoritoViajando;
+    private boolean favoritoCambiado;
 
     /** Para añadir un alimento que ya se tiene (de la lista o del escáner). */
     @NonNull
@@ -156,6 +178,7 @@ public class FichaAlimentoActivity extends BaseActivity {
         ((MaterialButton) findViewById(R.id.btnAnadirFicha)).setText(lineaId > 0 ? getString(R.string.ficha_actualizar)
                 : getString(AnadirAlimentoActivity.textoAnadirA(tipoComida)));
         findViewById(R.id.btnAnadirFicha).setOnClickListener(v -> guardar());
+        findViewById(R.id.btnFavoritoFicha).setOnClickListener(v -> tocarCorazon());
 
         String json = getIntent().getStringExtra(EXTRA_ALIMENTO);
         if (json != null) {
@@ -174,6 +197,7 @@ public class FichaAlimentoActivity extends BaseActivity {
             out.putDouble("valor", cantidad.valor());
         }
         out.putBoolean("info", infoAbierta);
+        out.putBoolean("favorito", favoritoReal);
     }
 
     // ── Cargar ──────────────────────────────────────────────────────────────
@@ -245,11 +269,18 @@ public class FichaAlimentoActivity extends BaseActivity {
 
         ((TextView) findViewById(R.id.tvNombreFicha)).setText(a.getNombre());
         ((TextView) findViewById(R.id.tvOrigenFicha)).setText(origen(a));
-        ((ImageView) findViewById(R.id.ivIconoFicha)).setImageResource(a.esProducto()
-                ? R.drawable.ic_ms_inventory_2 : R.drawable.ic_ms_restaurant);
+        ((ImageView) findViewById(R.id.ivIconoFicha)).setImageResource(
+                es.pmdm.gymprofit.ui.adapters.BusquedaAlimentoAdapter.icono(a));
         findViewById(R.id.ivRevisadoFicha).setVisibility(a.isRevisado() ? View.VISIBLE : View.GONE);
         // Lo tuyo no se reporta: se edita, y el administrador no ve los alimentos de nadie.
         findViewById(R.id.btnReportar).setVisibility(a.esPropio() ? View.GONE : View.VISIBLE);
+        if (estadoGuardado != null && estadoGuardado.containsKey("favorito")) {
+            favoritoQuiere = favoritoReal = estadoGuardado.getBoolean("favorito");
+        } else {
+            favoritoQuiere = favoritoReal = a.isFavorito();
+        }
+        pintarCorazon();
+        findViewById(R.id.btnFavoritoFicha).setVisibility(View.VISIBLE);
         pintarUnidades();
         pintarReparto();
         pintarInfo100();
@@ -582,13 +613,19 @@ public class FichaAlimentoActivity extends BaseActivity {
         boton.setEnabled(false);
         LoadingDialog.show(this);
         if (lineaId > 0) {
-            lineaApi.patch(lineaId, PedidoCantidad.actualizar(cantidad)).enqueue(new ApiCallback<Void>() {
+            lineaApi.patchLinea(lineaId, PedidoCantidad.actualizar(cantidad)).enqueue(new ApiCallback<AlimentoComida>() {
                 @Override
-                public void onOk(Void ignored) {
+                public void onOk(AlimentoComida linea) {
                     LoadingDialog.hide(FichaAlimentoActivity.this);
                     if (isDestroyed()) return;
                     UIHelper.mostrarToastExito(FichaAlimentoActivity.this, getString(R.string.ficha_actualizado));
-                    setResult(RESULT_OK);
+                    Intent datos = datosFavorito();
+                    if (linea != null) {
+                        datos.putExtra(EXTRA_LINEA, new Gson().toJson(linea));
+                        datos.putExtra(EXTRA_TEXTO, porcion());
+                        datos.putExtra(EXTRA_KCAL, Math.round(alimento.getCalorias() * cantidad.gramos() / 100.0));
+                    }
+                    setResult(RESULT_OK, datos);
                     finish();
                 }
 
@@ -609,8 +646,17 @@ public class FichaAlimentoActivity extends BaseActivity {
                 LoadingDialog.hide(FichaAlimentoActivity.this);
                 if (isDestroyed()) return;
                 Movimiento.vibrar(boton, Movimiento.Vibracion.LIGERA);
-                UIHelper.mostrarToastExito(FichaAlimentoActivity.this, getString(R.string.ficha_anadido, alimento.getNombre()));
-                setResult(RESULT_OK);
+                Intent datos = datosFavorito();
+                if (r != null && r.getLinea() != null) {
+                    long kcal = Math.round(alimento.getCalorias() * cantidad.gramos() / 100.0);
+                    datos.putExtra(AnadirAlimentoActivity.EXTRA_ANADIDO, new Gson().toJson(
+                            es.pmdm.gymprofit.utils.Anadidos.Anadido.de(r, alimento.getBarcode(), tipoComida, porcion(), kcal)));
+                }
+                // Desde Añadir, lo dice su barra; desde otro sitio (el escáner de una comida), el aviso.
+                if (!getIntent().getBooleanExtra(AnadirAlimentoActivity.EXTRA_EN_ANADIR, false)) {
+                    UIHelper.mostrarToastExito(FichaAlimentoActivity.this, getString(R.string.ficha_anadido, alimento.getNombre()));
+                }
+                setResult(RESULT_OK, datos);
                 finish();
             }
 
@@ -621,6 +667,86 @@ public class FichaAlimentoActivity extends BaseActivity {
                 UiFeedback.toastError(FichaAlimentoActivity.this, code, message);
             }
         });
+    }
+
+    // ── El corazón ──────────────────────────────────────────────────────────
+
+    // Cambia al tocar; la API va detrás, de una en una (como el «+» de Añadir).
+    private void tocarCorazon() {
+        if (alimento == null) return;
+        favoritoQuiere = !favoritoQuiere;
+        pintarCorazon();
+        if (favoritoQuiere) Movimiento.latirCorazon(findViewById(R.id.btnFavoritoFicha));
+        else Movimiento.vibrar(findViewById(R.id.btnFavoritoFicha), Movimiento.Vibracion.LIGERA);
+        sincronizarCorazon();
+    }
+
+    private void sincronizarCorazon() {
+        if (alimento == null || favoritoViajando || favoritoQuiere == favoritoReal) return;
+        boolean objetivo = favoritoQuiere;
+        favoritoViajando = true;
+        retrofit2.Call<?> llamada;
+        if (objetivo) {
+            llamada = alimento.getId() > 0 ? alimentoApi.marcarFavorito(alimento.getId())
+                    : alimentoApi.marcarFavoritoPorCodigo(alimento.getBarcode());
+        } else {
+            llamada = alimentoApi.quitarFavorito(alimento.getId());
+        }
+        @SuppressWarnings("unchecked")
+        retrofit2.Call<Object> c = (retrofit2.Call<Object>) llamada;
+        c.enqueue(new ApiCallback<Object>() {
+            @Override
+            public void onOk(Object respuesta) {
+                favoritoViajando = false;
+                if (isDestroyed() || alimento == null) return;
+                // Marcado por su código: ya está en el catálogo, con su id.
+                if (respuesta instanceof Alimento && ((Alimento) respuesta).getId() > 0 && alimento.getId() == 0) {
+                    alimento.setId(((Alimento) respuesta).getId());
+                }
+                favoritoReal = objetivo;
+                favoritoCambiado = true;
+                alimento.setFavorito(objetivo);
+                setResult(RESULT_CANCELED, datosFavorito());
+                sincronizarCorazon();
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                favoritoViajando = false;
+                if (isDestroyed()) return;
+                favoritoQuiere = favoritoReal;
+                pintarCorazon();
+                UIHelper.mostrarToastError(FichaAlimentoActivity.this, getString(
+                        objetivo ? R.string.favorito_fallo_marcar : R.string.favorito_fallo_quitar,
+                        UiFeedback.mensaje(FichaAlimentoActivity.this, code, message)));
+            }
+        });
+    }
+
+    private void pintarCorazon() {
+        ImageButton b = findViewById(R.id.btnFavoritoFicha);
+        b.setImageResource(favoritoQuiere ? R.drawable.ic_ms_favorite_fill : R.drawable.ic_ms_favorite);
+        b.setImageTintList(android.content.res.ColorStateList.valueOf(favoritoQuiere
+                ? ContextCompat.getColor(this, R.color.gp_error) : color(com.google.android.material.R.attr.colorOnSurface)));
+        b.setContentDescription(getString(favoritoQuiere ? R.string.favorito_quitar_a11y : R.string.favorito_marcar_a11y));
+        androidx.core.view.ViewCompat.setStateDescription(b,
+                getString(favoritoQuiere ? R.string.favorito_marcado : R.string.favorito_no_marcado));
+    }
+
+    // Lo que vuelve a quien abrió la ficha: si el corazón cambió, cómo quedó.
+    private Intent datosFavorito() {
+        Intent datos = new Intent();
+        if (favoritoCambiado && alimento != null) {
+            datos.putExtra(EXTRA_FAVORITO, favoritoReal);
+            datos.putExtra(EXTRA_FAVORITO_ID, alimento.getId());
+        }
+        return datos;
+    }
+
+    private int color(int attr) {
+        android.util.TypedValue tv = new android.util.TypedValue();
+        getTheme().resolveAttribute(attr, tv, true);
+        return tv.data;
     }
 
     // Con letra grande «proteína» no cabe en la cuarta parte del ancho sin bajar de 13 sp:
