@@ -58,4 +58,10 @@ public class AlimentoCreateDTO implements Serializable {
     // trae puesto. Solo cifras, como en GET /alimentos/codigo; único por dueño (DEC-040).
     @jakarta.validation.constraints.Pattern(regexp = "[0-9]{1,32}")
     private String barcode;
+
+    // Lote 1.6.2: la marca, opcional, y la ración del alimento propio (una, por ahora; es
+    // una lista para no cambiar el contrato el día que sean más).
+    @Size(max = 100)
+    private String marca;
+    private java.util.List<RacionPropiaDTO> raciones;
 }
