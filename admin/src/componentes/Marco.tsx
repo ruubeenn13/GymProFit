@@ -14,11 +14,13 @@ import { Dialogo } from './Dialogo';
 import { LineaApi } from './EstadoApi';
 import { Icono, type NombreIcono } from './Icono';
 
-const SECCIONES: { ruta: string; texto: string; icono: NombreIcono; iconoActivo: NombreIcono }[] = [
+// En el móvil, cuatro pestañas como en la app (DESIGN.md): Avisos se abre desde Alimentos.
+const SECCIONES: { ruta: string; texto: string; icono: NombreIcono; iconoActivo: NombreIcono; soloLateral?: boolean }[] = [
   { ruta: '/', texto: 'Resumen', icono: 'monitoring', iconoActivo: 'monitoring_relleno' },
   { ruta: '/usuarios', texto: 'Usuarios', icono: 'group', iconoActivo: 'group_relleno' },
   { ruta: '/ejercicios', texto: 'Ejercicios', icono: 'fitness_center', iconoActivo: 'fitness_center_relleno' },
   { ruta: '/alimentos', texto: 'Alimentos', icono: 'nutrition', iconoActivo: 'nutrition_relleno' },
+  { ruta: '/avisos', texto: 'Avisos', icono: 'warning', iconoActivo: 'warning', soloLateral: true },
 ];
 
 /**
@@ -37,7 +39,7 @@ function useSalir() {
 function Enlaces({ bloque }: { bloque: 'lateral' | 'pestanas' }) {
   return (
     <>
-      {SECCIONES.map((s) => (
+      {SECCIONES.filter((s) => bloque === 'lateral' || !s.soloLateral).map((s) => (
         <NavLink key={s.ruta} to={s.ruta} end={s.ruta === '/'} className={`${bloque}__enlace`}
                  aria-label={bloque === 'lateral' ? s.texto : undefined}>
           {({ isActive }) => (

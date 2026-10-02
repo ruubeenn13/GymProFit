@@ -7,6 +7,7 @@
 // pantalla, con «Volver a la lista» (GP-120).
 // ============================================================
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
+import { Link } from 'react-router-dom';
 import { admin, type Alimento, type AlimentoCambios } from '../api/admin';
 import { Icono } from '../componentes/Icono';
 import { Marco } from '../componentes/Marco';
@@ -90,11 +91,17 @@ function AvisoCalorias({ f }: { f: Formulario }) {
   );
 }
 
-function Editor({ alimento, categorias, alGuardado, alSiguiente, avisar, alCambiarSucio, enfocar }: {
+/**
+ * El editor de un alimento del catálogo. También lo usa Avisos (lote 1.6.1), sin
+ * «siguiente sin inglés».
+ *
+ * @param props.alSiguiente si llega, el botón «Guardar y siguiente sin inglés».
+ */
+export function Editor({ alimento, categorias, alGuardado, alSiguiente, avisar, alCambiarSucio, enfocar }: {
   alimento: Alimento; categorias: string[]; alCambiarSucio: (sucio: boolean) => void;
   /** Poner el foco en el título al abrirlo: a pantalla completa o al pasar al siguiente. */
   enfocar: boolean;
-  alGuardado: () => void; alSiguiente: (actual: number) => Promise<void>; avisar: (a: Aviso) => void;
+  alGuardado: () => void; alSiguiente?: (actual: number) => Promise<void>; avisar: (a: Aviso) => void;
 }) {
   const [f, setF] = useState<Formulario>(() => aFormulario(alimento));
   const [errores, setErrores] = useState<Partial<Record<keyof Formulario, string>>>({});
@@ -130,7 +137,7 @@ function Editor({ alimento, categorias, alGuardado, alSiguiente, avisar, alCambi
     try {
       await admin.guardarAlimento(alimento.id, cambios);
       alGuardado();
-      if (siguiente) await alSiguiente(alimento.id);
+      if (siguiente && alSiguiente) await alSiguiente(alimento.id);
       else avisar({ tipo: 'ok', texto: 'Guardado.' });
     } catch (err) {
       avisar({ tipo: 'error', texto: textoError(err) });
@@ -228,9 +235,11 @@ function Editor({ alimento, categorias, alGuardado, alSiguiente, avisar, alCambi
 
       <div className="editor__pie">
         <button type="submit" className="boton" disabled={guardando}>Guardar</button>
-        <button type="button" className="boton boton--principal" disabled={guardando} onClick={() => void guardar(true)}>
-          Guardar y siguiente sin inglés<Icono nombre="arrow_forward" tamano={20} />
-        </button>
+        {alSiguiente && (
+          <button type="button" className="boton boton--principal" disabled={guardando} onClick={() => void guardar(true)}>
+            Guardar y siguiente sin inglés<Icono nombre="arrow_forward" tamano={20} />
+          </button>
+        )}
       </div>
     </form>
   );
@@ -392,6 +401,7 @@ export function Alimentos() {
             </div>
             {total > 0 && <Paginacion pagina={pagina} tamano={POR_PAGINA} total={total} alCambiar={setPagina} />}
             <span className="lista__nota">Valores por 100 g. Los alimentos que crea cada persona son suyos y no salen aquí.</span>
+            {movil && <Link className="enlace-accion" to="/avisos">Ver los avisos de la gente</Link>}
           </section>
         )}
         {elegido ? (

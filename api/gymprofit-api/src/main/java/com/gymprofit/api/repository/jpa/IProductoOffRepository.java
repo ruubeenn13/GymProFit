@@ -18,4 +18,7 @@ import java.util.Optional;
 public interface IProductoOffRepository extends JpaRepository<ProductoOff, Integer> {
 
     Optional<ProductoOff> findByCodigo(String codigo);
+
+    // Los productos de esos códigos (los avisos pendientes de administración, lote 1.6.1).
+    java.util.List<ProductoOff> findByCodigoIn(java.util.Collection<String> codigos);
 }
