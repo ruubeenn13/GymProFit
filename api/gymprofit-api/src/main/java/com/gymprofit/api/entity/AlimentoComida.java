@@ -44,4 +44,14 @@ public class AlimentoComida {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "alimento_id", nullable = false)
     private Alimento alimento;
+
+    // Ración con la que se eligió (lote 1.6.1), opcional y siempre de este alimento. Los
+    // gramos siguen mandando: esto solo dice cómo enseñarlo («2 rebanadas»).
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "racion_id")
+    private AlimentoRacion racion;
+
+    // Cuántas raciones; con racion, nunca sin ella.
+    @Column(name = "raciones", precision = 5, scale = 2)
+    private BigDecimal raciones;
 }

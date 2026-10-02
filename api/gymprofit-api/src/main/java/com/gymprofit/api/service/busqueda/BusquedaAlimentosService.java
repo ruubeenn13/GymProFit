@@ -403,7 +403,7 @@ public class BusquedaAlimentosService {
         dto.setRevisado(false);
         BigDecimal gramos = p.getRacionGramos();
         dto.setRaciones(gramos == null || gramos.signum() <= 0 ? List.of()
-                : List.of(new RacionDTO(ingles ? "1 serving" : "1 ración", gramos)));
+                : List.of(new RacionDTO(null, ingles ? "1 serving" : "1 ración", gramos)));
         return dto;
     }
 }

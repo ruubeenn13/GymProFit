@@ -31,4 +31,14 @@ public class AlimentoComidaDTO implements Serializable {
     private BigDecimal proteinasTotales;
     private BigDecimal carbohidratosTotales;
     private BigDecimal grasasTotales;
+
+    // --- Lote 1.6.1: opcionales; una app que no los conozca los ignora.
+
+    // La ración con la que se eligió, si se eligió por raciones; null, en gramos.
+    private Integer racionId;
+    // Su nombre en el idioma de la petición («1 rebanada») y sus gramos.
+    private String racionNombre;
+    private BigDecimal racionGramos;
+    // Cuántas raciones (2 → «2 rebanadas»).
+    private BigDecimal raciones;
 }

@@ -66,7 +66,7 @@ public interface AlimentoMapper {
     static List<RacionDTO> raciones(List<AlimentoRacion> raciones, boolean ingles) {
         if (raciones == null) return List.of();
         return raciones.stream()
-                .map(r -> new RacionDTO(ingles ? r.getNombreEn() : r.getNombre(), r.getGramos()))
+                .map(r -> new RacionDTO(r.getId(), ingles ? r.getNombreEn() : r.getNombre(), r.getGramos()))
                 .toList();
     }
 }
