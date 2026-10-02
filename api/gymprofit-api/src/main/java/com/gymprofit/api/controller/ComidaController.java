@@ -1,6 +1,8 @@
 package com.gymprofit.api.controller;
 
 import com.gymprofit.api.dto.common.CountDTO;
+import com.gymprofit.api.dto.entity.comida.AnadirAlimentoDTO;
+import com.gymprofit.api.dto.entity.comida.AnadirAlimentoRespuestaDTO;
 import com.gymprofit.api.dto.entity.comida.ComidaCreateDTO;
 import com.gymprofit.api.dto.entity.comida.ComidaDTO;
 import com.gymprofit.api.dto.entity.comida.ComidaPatchDTO;
@@ -8,6 +10,7 @@ import com.gymprofit.api.dto.entity.comida.ResumenDiarioNutricionDTO;
 import com.gymprofit.api.enums.TipoComida;
 import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.exceptions.Response;
+import com.gymprofit.api.service.comida.AnadirAlimentoService;
 import com.gymprofit.api.service.comida.IComidaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -40,6 +43,28 @@ import java.util.Map;
 public class ComidaController {
 
     private final IComidaService comidaService;
+    private final AnadirAlimentoService anadirAlimentoService;
+
+    @Operation(summary = "Añade un alimento a la comida de un día, en un viaje",
+            description = "Encuentra o crea la comida de ese día y ese tipo del usuario del token, añade el "
+                    + "alimento (por id o por código de barras, que se materializa) en gramos o en raciones, "
+                    + "y devuelve la comida con sus totales y la línea. Si el alimento ya estaba, se suma.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Añadido",
+                    content = @Content(schema = @Schema(implementation = AnadirAlimentoRespuestaDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Datos que no cuadran o ración de otro alimento",
+                    content = @Content(schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "403", description = "El alimento es de otro usuario",
+                    content = @Content(schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "404", description = "El alimento o el código no existen",
+                    content = @Content(schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "503", description = "Sin cupo para leer el código de Open Food Facts",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @PostMapping("/comidas/anadir")
+    public ResponseEntity<AnadirAlimentoRespuestaDTO> anadirAlimento(@Valid @RequestBody AnadirAlimentoDTO pedido) {
+        return ResponseEntity.ok(anadirAlimentoService.anadir(pedido));
+    }
 
     @Operation(summary = "Obtiene todas las comidas")
     @ApiResponses(value = {

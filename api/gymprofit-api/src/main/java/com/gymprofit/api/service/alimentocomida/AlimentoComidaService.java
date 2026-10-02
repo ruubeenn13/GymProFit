@@ -369,6 +369,18 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         linea.setCaloriasTotales(calcularCalorias(linea.getAlimento(), cantidad));
     }
 
+    /**
+     * Pone los gramos de una línea y sus calorías (lote 1.6.1). No toca la ración.
+     *
+     * @param linea  la línea, con su alimento.
+     * @param gramos gramos, mayores que 0.
+     */
+    @Override
+    public void ponerGramos(AlimentoComida linea, BigDecimal gramos) {
+        linea.setCantidadGramos(gramos);
+        linea.setCaloriasTotales(calcularCalorias(linea.getAlimento(), gramos));
+    }
+
     // Calcula las calorías de la línea proporcionalmente a la cantidad en
     // gramos, tomando como base las calorías del alimento por cada 100g.
     private Integer calcularCalorias(Alimento alimento, BigDecimal cantidadGramos) {

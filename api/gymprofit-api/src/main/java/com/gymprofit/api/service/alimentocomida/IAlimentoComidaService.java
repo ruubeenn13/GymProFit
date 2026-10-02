@@ -64,6 +64,9 @@ public interface IAlimentoComidaService {
      */
     void recalcularTotales(Integer comidaId);
 
+    /** Pone los gramos y sus calorías en una línea, sin ración. */
+    void ponerGramos(com.gymprofit.api.entity.AlimentoComida linea, java.math.BigDecimal gramos);
+
     /** Pone ración, cuántas, gramos y calorías en una línea; ver AlimentoComidaService. */
     void ponerCantidad(com.gymprofit.api.entity.AlimentoComida linea, java.math.BigDecimal gramos,
                        Integer racionId, java.math.BigDecimal raciones);

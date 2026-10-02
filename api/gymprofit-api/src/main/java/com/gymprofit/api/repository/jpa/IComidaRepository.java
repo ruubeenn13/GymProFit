@@ -32,6 +32,11 @@ public interface IComidaRepository extends JpaRepository<Comida, Integer> {
     // Busca las comidas de un usuario dentro de un rango de fechas.
     List<Comida> findByUsuarioIdAndFechaBetween(Integer usuarioId, LocalDateTime inicio, LocalDateTime fin);
 
+    // La comida de un tipo en un día de un usuario (la primera, si hubiera varias): la que
+    // usa POST /comidas/anadir antes de crear otra (lote 1.6.1).
+    java.util.Optional<Comida> findFirstByUsuarioIdAndTipoComidaAndFechaBetweenOrderByIdAsc(
+            Integer usuarioId, TipoComida tipoComida, LocalDateTime inicio, LocalDateTime fin);
+
     // Busca las comidas de un usuario de un tipo concreto.
     List<Comida> findByUsuarioIdAndTipoComida(Integer usuarioId, TipoComida tipoComida);
 
