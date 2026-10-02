@@ -6,6 +6,21 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `f2d4ea8` | build(android): **versión 1.6.1** (10601). Misma clave de firma. Necesita la API de `b95fc8c` (desplegada). APK de 7 543 948 bytes. |
+| `ffe66df` | build(android): el modelo de ML Kit de Google Play Services, no dentro del APK: el release con el de dentro pesaba 28,8 MB (DEC-042). |
+| `e3fed3c` | feat(android,web): «Licencias › Datos» cita Ciqual 2025 (ANSES, Licence Ouverte) y USDA FoodData Central; `web/privacidad.html` dice para qué es la cámara. |
+| `12576dc` | feat(android): **Añadir, Buscar, el escáner y la ficha del alimento** (tableros 4 a 7, GP-162, GP-160): la píldora de la comida, los grupos, CameraX y ML Kit, «Cómo encaja en tu día», la cantidad en raciones, editar desde la comida y crear con el código. |
+| `3745a7d` | feat(android,decisiones): los momentos 16 (la lista en cascada) y 17 (código leído) en DEC-039 y en `Movimiento`. |
+| `b95fc8c` | Fusión de la API de `lote-1.6.1` en `main`, desplegada a las 11:52 con el CI en verde. |
+| `0b50951` | test(api): `AuthServiceTest` limpia el `SecurityContext` que dejaba el login y daba 403 al test siguiente. |
+| `34badaf` | feat(api,admin): **reportar un alimento** (`POST /alimentos/avisos`, sin guardar quién) y «Avisos» en la web de administración. |
+| `2ee9098` | feat(api): **`POST /comidas/anadir`**, añadir un alimento a la comida de un día en un viaje; si ya estaba, se suma. |
+| `1d677b9` | feat(api): el envase como ración de los productos, hasta 500 g: se lee en 55 413 de los 198 224. |
+| `cff2e11` | feat(api): la ración elegida se guarda en la línea de la comida (`V202610021100`); los gramos siguen mandando. |
+| `c7b1204` | feat(api): cupo por cuenta para las lecturas nuevas a Open Food Facts, 3 por minuto y 30 al día (GP-167). |
+| `98a1d42` | feat(api): `POST /alimentos` acepta el código de barras de un alimento propio; repetido, 409. |
+| `bfda098` | perf(api): la búsqueda de alimentos en 5 sentencias en vez de 7 (`SentenciasBusquedaTest`). |
+| `7ab36af` | docs(documentacion): el diseño aprobado de la nutrición nueva, antes que el código. |
 | `1965f0d` | Fusión de `lote-1.5.4` en `main`, CI en verde; etiquetada `v1.5.4`. Solo app: Render no despliega nada nuevo. Informe en `documentacion/estado/2026-10-02-lote-1.5.4.md`. |
 | `3a40a19` | build(android): **versión 1.5.4** (10504). Misma clave de firma. Solo app, sin API nueva. |
 | `06bb0a6` | fix(android): el botón de «Guarda tu plan» vuelve entero tras un error, aunque la API responda antes de que acabe de encoger; el éxito lo deja en círculo (GP-163). `AnchoCreandoTest`. |
