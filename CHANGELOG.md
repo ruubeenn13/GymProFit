@@ -6,6 +6,14 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `ed23c23` | build(android): **versión 1.6.2** (10602). Misma clave de firma. Necesita la API de `363a397` (desplegada a las 14:17). APK de 7 635 307 bytes. |
+| `9d15cc6` | docs(decisiones,documentacion): **DEC-043** (el plural como dato, la ración propia de una lista, quitar con deshacer sin preguntar, la categoría como clave y los límites de crear un alimento) y la rama de la que salió el lote 1.6.1 (`2003442`, no `3492729`). |
+| `2862b4c` | feat(android): **crear y editar un alimento como en la etiqueta** (tablero 13, decisión 17, GP-175): por 100 g o por la ración, el aviso de las calorías, «Así queda», «¿Cómo lo tomas?», y la misma pantalla edita lo propio. `EtiquetaAlimentoTest`. |
+| `c1a24d2` | feat(android): **elegir la comida con su hoja y una comida con anillo** (tableros 2, 2b y 4, decisiones 15 y 16): la etiqueta y «¿A qué comida?», el resumen con el reparto, quitar sin preguntar con «Deshacer», la comida vacía. `ElegirComidaTest`, `ResumenComidaTest`, `QuitarConDeshacerTest`. |
+| `f81106d` | feat(android,decisiones): el momento 20, borrar y deshacer (`SALE`, `RECOLOCA`), en DEC-039 y en `Movimiento`. |
+| `1b7a6ed` | fix(android): el número del día no se corta en la tira de Nutrición a letra 2,0 (GP-174). |
+| `1d73198` | feat(android): las cantidades en plural («2 rebanadas (56 g)», GP-172) y las categorías con su nombre y su icono (GP-175). `CantidadesTest`, `CategoriasTest`. |
+| `363a397` | Fusión de la API de `lote-1.6.2` en `main`, desplegada a las 14:17 con el CI en verde. |
 | `edc7217` | feat(api): **un alimento propio con marca y con su ración** (`POST /alimentos` y `PATCH /alimentos/{id}`, `raciones: [{unidad, gramos}]`): lista cerrada UNIDAD, RACION, ENVASE, REBANADA, una sola; al cambiarla conserva su fila; `RacionDTO.clave`. En el catálogo, 400. `RacionPropiaTest`. |
 | `5878dbf` | test(api): `UnidadesEnRespuestasTest` avisa al índice del catálogo y ya no depende del orden de los tests. |
 | `32d351c` | fix(api): el nombre del alimento de una línea de comida, en el idioma de la petición; la categoría sigue siendo la clave canónica (GP-176). `NombreLineaIdiomaTest`. |

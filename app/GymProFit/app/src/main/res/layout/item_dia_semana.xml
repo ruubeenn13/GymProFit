@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   item_dia_semana — un día de la tira de Nutrición (GP-105): inicial y número. El
-  elegido va en naranja; los que no han llegado, desactivados.
+  elegido va en naranja; los que no han llegado, desactivados. Alto mínimo 56 dp y no
+  fijo: con la letra a 2.0 el número se cortaba (GP-174).
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="0dp"
-    android:layout_height="56dp"
+    android:layout_height="wrap_content"
+    android:minHeight="56dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
     android:layout_weight="1"
     android:layout_marginStart="2dp"
     android:layout_marginEnd="2dp"

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- item_macro_comida — un macro en el resumen de una comida (lote 1.6.2): punto de color, nombre,
+     gramos y qué parte es de lo del día. ComidaActivity lo rellena. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <View
+        android:id="@+id/vPuntoMacro"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:background="@drawable/bg_punto_macro"
+        android:importantForAccessibility="no" />
+
+    <TextView
+        android:id="@+id/tvNombreMacro"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="6dp"
+        android:importantForAccessibility="no"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="@dimen/text_label" />
+
+    <TextView
+        android:id="@+id/tvGramosMacro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="no"
+        android:fontFeatureSettings="tnum"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="@dimen/text_body"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvPctMacro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="40dp"
+        android:layout_marginStart="8dp"
+        android:gravity="end"
+        android:importantForAccessibility="no"
+        android:fontFeatureSettings="tnum"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="@dimen/text_label" />
+</LinearLayout>

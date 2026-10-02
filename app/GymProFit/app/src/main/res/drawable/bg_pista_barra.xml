@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_pista_barra — la pista de la barra del día en una comida (lote 1.6.2): 8 de alto, radio 4. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="4dp" />
+    <solid android:color="@color/gp_meter_track" />
+</shape>

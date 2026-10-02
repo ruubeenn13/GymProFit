@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ic_ms_opacity — Material Symbols Rounded «opacity», peso 400.
+  Importado sin redibujar de @material-symbols/svg-400@0.47.5, rounded/opacity.svg.
+  Licencia Apache 2.0 (Google). El viewBox del SVG es 0 -960 960 960: el grupo
+  traslada 960 hacia abajo para que el trazado caiga en el viewport 0..960.
+  Color por defecto ?attr/colorOnSurface; quien lo tiñe, manda (lote 1.6.2).
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="960" android:viewportHeight="960">
+    <group android:translateY="960">
+        <path
+            android:fillColor="?attr/colorOnSurface"
+            android:pathData="M253.5-210.5Q160-301 160-434q0-66 25.5-123T255-658l193-191q7-7 15.5-10t16.5-3q8 0 16.5 3t15.5 10l193 191q44 44 69.5 101T800-434q0 133-93.5 223.5T480-120q-133 0-226.5-90.5ZM223-400h514q13-69-15-127t-56-85L480-795 294-612q-28 27-56 85t-15 127Z"/>
+    </group>
+</vector>

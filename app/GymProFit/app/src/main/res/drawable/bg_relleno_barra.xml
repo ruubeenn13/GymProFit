@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_relleno_barra — lo lleno de la barra del día en una comida (lote 1.6.2): el acento, radio 4. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="4dp" />
+    <solid android:color="?attr/colorPrimary" />
+</shape>

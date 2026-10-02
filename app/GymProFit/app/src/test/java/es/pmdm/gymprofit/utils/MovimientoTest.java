@@ -75,6 +75,21 @@ public class MovimientoTest {
     }
 
     @Test
+    public void borrarYDeshacerEstaEnLaTablaYEnElCodigo() throws IOException {
+        // Momento 20 del lienzo del 02-10 (lote 1.6.2): la fila se va, la comida se
+        // recoloca y el anillo pasa a su valor nuevo con BARRA.
+        Map<String, Long> tabla = duracionesDeLaTabla();
+        Map<String, Long> codigo = duracionesDelCodigo();
+        assertTrue("falta el momento 20 en DEC-039", decision().contains("| 20 · "));
+        for (String c : new String[]{"SALE", "RECOLOCA"}) {
+            assertTrue(c + " no está en la tabla", tabla.containsKey(c));
+            assertTrue(c + " no está en Movimiento", codigo.containsKey(c));
+        }
+        assertEquals(Long.valueOf(380), codigo.get("SALE"));
+        assertEquals(Long.valueOf(250), codigo.get("RECOLOCA"));
+    }
+
+    @Test
     public void lasCuatroCurvasSonLasDeLaDecision() throws IOException {
         String codigo = new String(Files.readAllBytes(CODIGO), StandardCharsets.UTF_8);
         String dec = decision();

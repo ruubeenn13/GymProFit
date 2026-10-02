@@ -321,17 +321,16 @@ public class FichaAlimentoActivity extends BaseActivity {
     }
 
     private String nombre(CantidadFicha.Unidad u) {
-        return u.esGramos() || u.nombre == null ? getString(R.string.ficha_unidad_gramos) : CantidadFicha.nombreUnidad(u.nombre);
+        if (u.esGramos() || u.nombre == null) return getString(R.string.ficha_unidad_gramos);
+        return u.unidad != null ? u.unidad : CantidadFicha.nombreUnidad(u.nombre);
     }
 
-    /** «1 envase (200 g)», «2 × envase (400 g)» o «150 g». */
+    /** «1 envase (200 g)», «2 envases (400 g)» o «150 g» (Cantidades, GP-172). */
     private String porcion() {
         if (cantidad == null) return "";
         CantidadFicha.Unidad u = cantidad.unidad();
-        String gramos = nf.format(Math.round(cantidad.gramos()));
-        if (u.esGramos() || u.nombre == null) return getString(R.string.cantidad_gramos, gramos);
-        if (cantidad.valor() == 1) return getString(R.string.cantidad_una_racion, u.nombre, gramos);
-        return getString(R.string.cantidad_raciones, nf.format(cantidad.valor()), CantidadFicha.nombreUnidad(u.nombre), gramos);
+        return es.pmdm.gymprofit.utils.Cantidades.de(this, u.nombre, u.unidad, u.unidadPlural, cantidad.raciones(),
+                cantidad.gramos());
     }
 
     private void pintarCantidad() {

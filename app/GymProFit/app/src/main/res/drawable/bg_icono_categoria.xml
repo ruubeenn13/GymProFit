@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_icono_categoria — el cuadro de 44 del icono de la categoría en una fila (lote 1.6.2): radio 14. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="14dp" />
+    <solid android:color="?attr/colorSurfaceVariant" />
+</shape>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- texto_opcion_ficha — el texto de una ficha (lote 1.6.2): elegida, el acento suave. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="?attr/colorOnPrimaryContainer" android:state_selected="true" />
+    <item android:color="?attr/colorOnSurfaceVariant" />
+</selector>

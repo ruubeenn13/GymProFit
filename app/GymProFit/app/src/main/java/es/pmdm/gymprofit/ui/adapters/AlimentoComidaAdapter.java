@@ -1,92 +1,107 @@
 package es.pmdm.gymprofit.ui.adapters;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.NumberFormat;
 import java.util.List;
-import java.util.Locale;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.comida.AlimentoComida;
+import es.pmdm.gymprofit.utils.Cantidades;
+import es.pmdm.gymprofit.utils.Categorias;
+import es.pmdm.gymprofit.utils.FechaUtils;
+import es.pmdm.gymprofit.utils.Movimiento;
 
 // ============================================================
-// AlimentoComidaAdapter — adapter de RecyclerView para los ítems de una comida.
-// Muestra cada alimento añadido a una comida concreta (nombre, gramos y
-// calorías totales del ítem) y permite eliminarlo/editarlo vía long-click,
-// dentro del flujo de registro de comidas del módulo de nutrición.
+// AlimentoComidaAdapter — los alimentos de una comida (decisión 16, tablero 2, lote 1.6.2)
+//
+// Cada fila: el icono de su categoría en un cuadro de 44, el nombre en una línea, la
+// cantidad debajo (Cantidades: «2 rebanadas (56 g)», «150 g») y a la derecha las kcal y
+// la proteína. Tocarla abre la ficha; mantenerla pulsada abre su menú; para TalkBack lleva
+// la acción «Quitar de la comida», que hace lo mismo que deslizarla.
+// La primera vez que se pinta la lista, las filas entran en cascada (momento 16).
 // ============================================================
-/**
- * Adapter para mostrar los alimentos de una comida en un RecyclerView.
- */
 public class AlimentoComidaAdapter extends RecyclerView.Adapter<AlimentoComidaAdapter.ViewHolder> {
 
-    /** Callback para long-press sobre un ítem. */
-    public interface OnItemLongClickListener {
-        void onItemLongClick(AlimentoComida item, View anchorView);
-    }
+    /** Lo que se puede hacer con una fila. */
+    public interface Acciones {
+        /** Tocarla: la ficha con su cantidad y «Actualizar». */
+        void abrir(@NonNull AlimentoComida item);
 
-    /** Tocar un alimento (lote 1.6.1): abre la ficha para cambiar su cantidad. */
-    public interface OnItemClickListener {
-        void onItemClick(AlimentoComida item);
+        /** Mantenerla pulsada: su menú. */
+        void menu(@NonNull AlimentoComida item, @NonNull View fila);
+
+        /** Quitarla de la comida, sin preguntar (deslizar o la acción de TalkBack). */
+        void quitar(@NonNull AlimentoComida item);
     }
 
     private final List<AlimentoComida> items;
-    private final OnItemLongClickListener longClickListener;
-    @androidx.annotation.Nullable private OnItemClickListener clickListener;
+    private final Acciones acciones;
+    // Hasta qué posición entra en cascada: solo la primera vez que se pinta la lista.
+    private int cascadaHasta = -1;
 
-    public void setOnItemClickListener(@androidx.annotation.Nullable OnItemClickListener l) {
-        this.clickListener = l;
-    }
-
-    // Constructor: recibe los ítems de la comida y el listener de long-click.
-    public AlimentoComidaAdapter(List<AlimentoComida> items, OnItemLongClickListener listener) {
+    public AlimentoComidaAdapter(@NonNull List<AlimentoComida> items, @NonNull Acciones acciones) {
         this.items = items;
-        this.longClickListener = listener;
+        this.acciones = acciones;
     }
 
-    // Infla el layout de un ítem alimento-comida y crea su ViewHolder.
+    /** La próxima vez que se pinte, las filas entran en cascada. */
+    public void entrarEnCascada() {
+        cascadaHasta = Math.min(items.size(), 14);
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_alimento_comida, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_alimento_comida, parent, false);
         return new ViewHolder(view);
     }
 
-    // Rellena nombre, gramos y calorías del ítem, y engancha el long-click.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder h, int position) {
         AlimentoComida item = items.get(position);
-        h.tvNombreAlimento.setText(item.getNombreAlimento());
-        h.tvCantidadGramos.setText(cantidad(h.itemView.getContext(), item));
-        h.tvCaloriasItem.setText(h.itemView.getContext().getString(R.string.unidad_kcal, item.getCaloriasTotales()));
-        h.itemView.setOnClickListener(v -> { if (clickListener != null) clickListener.onItemClick(item); });
+        Context ctx = h.itemView.getContext();
+        NumberFormat nf = NumberFormat.getNumberInstance(FechaUtils.localeDeLaApp(ctx));
+        nf.setMaximumFractionDigits(0);
+
+        String nombre = item.getNombreAlimento();
+        String cantidad = Cantidades.de(ctx, item);
+        String kcal = nf.format(item.getCaloriasTotales());
+        String prot = nf.format(Math.round(item.getProteinasTotales()));
+        h.icono.setImageResource(Categorias.icono(item.getCategoriaAlimento()));
+        h.nombre.setText(nombre);
+        h.cantidad.setText(cantidad);
+        h.kcal.setText(ctx.getString(R.string.comida_fila_kcal, kcal));
+        h.proteina.setText(ctx.getString(R.string.comida_fila_prot, prot));
+        h.itemView.setBackgroundResource(position == items.size() - 1
+                ? R.drawable.bg_fila_comida_ultima : R.drawable.bg_fila_comida);
+        h.itemView.setContentDescription(ctx.getString(R.string.comida_fila_a11y, nombre, cantidad, kcal, prot));
+
+        h.itemView.setOnClickListener(v -> acciones.abrir(item));
         h.itemView.setOnLongClickListener(v -> {
-            if (longClickListener != null) longClickListener.onItemLongClick(item, v);
+            acciones.menu(item, v);
             return true;
         });
-    }
+        ViewCompat.removeAccessibilityAction(h.itemView, h.accionQuitar);
+        h.accionQuitar = ViewCompat.addAccessibilityAction(h.itemView, ctx.getString(R.string.comida_quitar),
+                (v, args) -> {
+                    acciones.quitar(item);
+                    return true;
+                });
 
-    /**
-     * La cantidad de la línea: «2 × rebanada (56 g)» si se eligió por raciones (lote
-     * 1.6.1), o sus gramos.
-     */
-    static String cantidad(android.content.Context ctx, AlimentoComida item) {
-        if (item.getRacionNombre() == null || item.getRaciones() == null) {
-            return ctx.getString(R.string.unidad_g_redondeado, item.getCantidadGramos());
+        if (position < cascadaHasta) {
+            Movimiento.entrarUna(h.itemView, position * Movimiento.CASCADA_ESCALON, Movimiento.CASCADA, 16);
+            if (position >= cascadaHasta - 1) cascadaHasta = -1;
         }
-        java.text.NumberFormat nf = java.text.NumberFormat.getNumberInstance(
-                es.pmdm.gymprofit.utils.FechaUtils.localeDeLaApp(ctx));
-        nf.setMaximumFractionDigits(1);
-        String gramos = nf.format(Math.round(item.getCantidadGramos()));
-        if (item.getRaciones() == 1) return ctx.getString(R.string.cantidad_una_racion, item.getRacionNombre(), gramos);
-        return ctx.getString(R.string.cantidad_raciones, nf.format(item.getRaciones()),
-                es.pmdm.gymprofit.utils.CantidadFicha.nombreUnidad(item.getRacionNombre()), gramos);
     }
 
     @Override
@@ -94,15 +109,18 @@ public class AlimentoComidaAdapter extends RecyclerView.Adapter<AlimentoComidaAd
         return items.size();
     }
 
-    // ViewHolder con las referencias a las vistas de cada ítem de comida.
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvNombreAlimento, tvCantidadGramos, tvCaloriasItem;
+        final ImageView icono;
+        final TextView nombre, cantidad, kcal, proteina;
+        int accionQuitar = View.NO_ID;
 
-        ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvNombreAlimento = itemView.findViewById(R.id.tvNombreAlimento);
-            tvCantidadGramos = itemView.findViewById(R.id.tvCantidadGramos);
-            tvCaloriasItem   = itemView.findViewById(R.id.tvCaloriasItem);
+        ViewHolder(View v) {
+            super(v);
+            icono = v.findViewById(R.id.ivCategoriaFila);
+            nombre = v.findViewById(R.id.tvNombreAlimento);
+            cantidad = v.findViewById(R.id.tvCantidadGramos);
+            kcal = v.findViewById(R.id.tvCaloriasItem);
+            proteina = v.findViewById(R.id.tvProteinaItem);
         }
     }
 }

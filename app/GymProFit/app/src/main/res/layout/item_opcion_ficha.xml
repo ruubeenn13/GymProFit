@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_opcion_ficha — una ficha elegible (lote 1.6.2): categoría (con icono) o nombre de la
+  ración. 40 de alto dentro de 48 de toque. Elegida, el acento; para TalkBack, un botón de opción.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:minHeight="48dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp">
+
+    <LinearLayout
+        android:id="@+id/fichaOpcion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:minHeight="40dp"
+        android:background="@drawable/bg_opcion_ficha"
+        android:duplicateParentState="true"
+        android:gravity="center_vertical"
+        android:importantForAccessibility="no"
+        android:orientation="horizontal"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp">
+
+        <ImageView
+            android:id="@+id/ivIconoOpcion"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginEnd="6dp"
+            android:duplicateParentState="true"
+            android:importantForAccessibility="no"
+            android:visibility="gone"
+            app:tint="@color/texto_opcion_ficha" />
+
+        <TextView
+            android:id="@+id/tvOpcion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:duplicateParentState="true"
+            android:importantForAccessibility="no"
+            android:maxLines="1"
+            android:textColor="@color/texto_opcion_ficha"
+            android:textSize="@dimen/text_body"
+            android:textStyle="bold" />
+    </LinearLayout>
+</FrameLayout>

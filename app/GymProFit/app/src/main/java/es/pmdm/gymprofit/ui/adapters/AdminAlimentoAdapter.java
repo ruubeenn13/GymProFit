@@ -59,7 +59,8 @@ public class AdminAlimentoAdapter extends RecyclerView.Adapter<AdminAlimentoAdap
         h.tvNombre.setText(a.getNombre());
 
         String cat = a.getCategoria();
-        h.tvCategoria.setText((cat != null && !cat.isEmpty()) ? cat : "—");
+        // La clave canónica, traducida (GP-175).
+        h.tvCategoria.setText((cat != null && !cat.isEmpty()) ? es.pmdm.gymprofit.utils.Categorias.nombre(ctx, cat) : "—");
 
         h.tvCalorias.setText(h.itemView.getContext().getString(R.string.unidad_kcal_100g, a.getCalorias()));
 

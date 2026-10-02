@@ -41,8 +41,11 @@ public final class AvisoDescartar {
         if (cabecera != null) cabecera.setNavigationOnClickListener(v -> salir(act, hayCambios));
     }
 
-    // Sale directo si no hay nada que perder; si lo hay, pregunta antes.
-    private static void salir(AppCompatActivity act, BooleanSupplier hayCambios) {
+    /**
+     * Sale directo si no hay nada que perder; si lo hay, pregunta antes. Para una cabecera
+     * que no es una Toolbar (la X de crear un alimento, lote 1.6.2).
+     */
+    public static void salir(AppCompatActivity act, BooleanSupplier hayCambios) {
         if (!hayCambios.getAsBoolean()) {
             act.finish();
             return;

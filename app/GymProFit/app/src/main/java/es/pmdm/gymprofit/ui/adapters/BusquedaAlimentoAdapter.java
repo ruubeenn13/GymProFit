@@ -162,7 +162,8 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
                     ? a.getMarca().trim() : ctx.getString(R.string.fila_producto_envasado);
             List<Racion> r = a.getRaciones();
             String racion = r.isEmpty() ? ctx.getString(R.string.fila_por_100)
-                    : ctx.getString(R.string.cantidad_una_racion, r.get(0).getNombre(), nf.format(r.get(0).getGramos()));
+                    : es.pmdm.gymprofit.utils.Cantidades.de(ctx, r.get(0).getNombre(), r.get(0).getUnidad(),
+                    r.get(0).getUnidadPlural(), 1.0, r.get(0).getGramos());
             return ctx.getString(R.string.fila_producto, marca, racion);
         }
         return ctx.getString(R.string.fila_kcal_proteina, nf.format(a.getCalorias()), nf.format(a.getProteinas()));
