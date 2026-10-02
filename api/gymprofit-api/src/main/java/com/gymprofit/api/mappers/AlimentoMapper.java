@@ -62,11 +62,18 @@ public interface AlimentoMapper {
             dto.setDescripcion(alimento.getDescripcionEn());
     }
 
+    // La clave de una ración propia (lote 1.6.2), para que la app la marque al editar.
+    static String claveDe(AlimentoRacion r) {
+        if (!com.gymprofit.api.service.alimento.AlimentoService.FUENTE_PROPIA.equals(r.getFuente())) return null;
+        return com.gymprofit.api.enums.ClaveRacion.porNombre(r.getNombre()).map(Enum::name).orElse(null);
+    }
+
     // Raciones en el idioma de la petición (GP-127). Sin raciones, lista vacía.
     static List<RacionDTO> raciones(List<AlimentoRacion> raciones, boolean ingles) {
         if (raciones == null) return List.of();
         return raciones.stream()
-                .map(r -> new RacionDTO(r.getId(), ingles ? r.getNombreEn() : r.getNombre(), r.getGramos()))
+                .map(r -> RacionDTO.de(r.getId(), ingles ? r.getNombreEn() : r.getNombre(), r.getGramos(), ingles,
+                        claveDe(r)))
                 .toList();
     }
 }

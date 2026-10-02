@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Yogur proteico natural</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+button,input{font-family:inherit}
+button{cursor:pointer}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+.toque{transition:transform 120ms cubic-bezier(.2,0,0,1)}
+.toque:active{transform:scale(.97)}
+@keyframes entra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes llena0{from{width:0}}
+@keyframes late{0%{transform:scale(1)}30%{transform:scale(1.3)}60%{transform:scale(.95)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){.anim{animation:none !important;transition:none !important}.toque:active{transform:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 1180px; position: relative; overflow: hidden; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif;">
+<header style="display: flex; align-items: center; gap: 4px; padding: 8px 8px 0 4px;">
+<a href="Anadir.dc.html" aria-label="Atrás" class="toque" style="width: 48px; height: 48px; border-radius: 24px; color: #F2F2F3; display: flex; align-items: center; justify-content: center; text-decoration: none;"><span class="ms" aria-hidden="true">arrow_back</span></a>
+<span style="flex-grow: 1;"></span>
+<button type="button" onClick="{{ alternarFav }}" aria-pressed="{{ favPulsado }}" aria-label="Favorito" class="toque" style="width: 48px; height: 48px; border: none; border-radius: 24px; background: #1B1E24; color: {{ favColor }}; display: flex; align-items: center; justify-content: center;"><span class="{{ favClase }}" aria-hidden="true" style="animation: {{ favAnim }};">favorite</span></button>
+<a href="#" aria-label="Más opciones" class="toque" style="width: 48px; height: 48px; border-radius: 24px; color: #F2F2F3; display: flex; align-items: center; justify-content: center; text-decoration: none;"><span class="ms" aria-hidden="true">more_vert</span></a>
+</header>
+<main style="padding: 4px 16px 200px; display: flex; flex-direction: column; gap: 14px;">
+<div class="anim" style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; animation: entra 350ms cubic-bezier(.05,.7,.1,1) backwards;">
+<span style="position: relative; width: 80px; height: 80px; border-radius: 24px; background: #1B1E24; border: 1px solid #4A505B; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true" style="font-size: 40px; color: #C9CED6;">breakfast_dining</span><span class="ms f" role="img" aria-label="Datos revisados" style="position: absolute; right: -6px; bottom: -6px; font-size: 26px; color: #6BA6F5; background: #0B0C0E; border-radius: 13px;">verified</span></span>
+<h1 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 30px; line-height: 1.1;">Yogur proteico natural</h1>
+<span style="font-size: 15px; color: #A1A9B6;">Producto envasado · envase de 200 g</span>
+</div>
+<span style="text-align: center; font-size: 15px; color: #C9CED6;">Por {{ porcion }}</span>
+<div class="anim" role="img" aria-label="{{ cifrasA11y }}" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; animation: entra 350ms cubic-bezier(.05,.7,.1,1) 60ms backwards;">
+<span aria-hidden="true" style="padding: 12px 4px; border-radius: 16px; border: 1px solid #4A505B; display: flex; flex-direction: column; align-items: center; gap: 2px;"><strong style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-variant-numeric: tabular-nums;">{{ kcal }}</strong><span style="font-size: 13px; color: #A1A9B6;">kcal</span></span>
+<span aria-hidden="true" style="padding: 12px 4px; border-radius: 16px; border: 1px solid #4A505B; display: flex; flex-direction: column; align-items: center; gap: 2px;"><strong style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; color: #6BA6F5; font-variant-numeric: tabular-nums;">{{ p }}</strong><span style="font-size: 13px; color: #A1A9B6;">proteína</span></span>
+<span aria-hidden="true" style="padding: 12px 4px; border-radius: 16px; border: 1px solid #4A505B; display: flex; flex-direction: column; align-items: center; gap: 2px;"><strong style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-variant-numeric: tabular-nums;">{{ c }}</strong><span style="font-size: 13px; color: #A1A9B6;">carb.</span></span>
+<span aria-hidden="true" style="padding: 12px 4px; border-radius: 16px; border: 1px solid #4A505B; display: flex; flex-direction: column; align-items: center; gap: 2px;"><strong style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-variant-numeric: tabular-nums;">{{ g }}</strong><span style="font-size: 13px; color: #A1A9B6;">grasa</span></span>
+</div>
+<div class="anim" role="img" aria-label="De sus calorías, 67 por ciento de proteína, 30 de carbohidratos y 3 de grasa" style="display: flex; flex-direction: column; gap: 8px; animation: entra 350ms cubic-bezier(.05,.7,.1,1) 120ms backwards;">
+<div aria-hidden="true" style="display: flex; gap: 3px; height: 10px;"><span class="anim" style="width: 67%; border-radius: 5px; background: #6BA6F5; animation: llena0 500ms cubic-bezier(.2,0,0,1) 300ms backwards;"></span><span class="anim" style="width: 30%; border-radius: 5px; background: #E8A94B; animation: llena0 500ms cubic-bezier(.2,0,0,1) 400ms backwards;"></span><span class="anim" style="width: 3%; border-radius: 5px; background: #B295E8; animation: llena0 500ms cubic-bezier(.2,0,0,1) 500ms backwards;"></span></div>
+<div aria-hidden="true" style="display: flex; gap: 14px; font-size: 14px; color: #C9CED6;"><span style="display: flex; align-items: center; gap: 6px;"><span style="width: 8px; height: 8px; border-radius: 4px; background: #6BA6F5;"></span>Proteína 67 %</span><span style="display: flex; align-items: center; gap: 6px;"><span style="width: 8px; height: 8px; border-radius: 4px; background: #E8A94B;"></span>Carb. 30 %</span><span style="display: flex; align-items: center; gap: 6px;"><span style="width: 8px; height: 8px; border-radius: 4px; background: #B295E8;"></span>Grasa 3 %</span></div>
+</div>
+<section aria-label="Cómo encaja en tu día" class="anim" style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 14px; animation: entra 400ms cubic-bezier(.05,.7,.1,1) 180ms backwards;">
+<h2 style="margin: 0; color: #A1A9B6; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 1px; text-transform: uppercase;">Cómo encaja en tu día</h2>
+<div role="img" aria-label="{{ kcalEncajaA11y }}" style="display: flex; flex-direction: column; gap: 6px;">
+<div aria-hidden="true" style="display: flex; justify-content: space-between; font-size: 15px;"><span>Calorías</span><span style="font-variant-numeric: tabular-nums;">1.236 → <strong>{{ kcalDespues }}</strong> de 2.397</span></div>
+<div aria-hidden="true" style="height: 10px; border-radius: 5px; background: #353A43; overflow: hidden; display: flex;"><span style="width: 51.6%; background: #FF6A00;"></span><span style="width: {{ kcalExtra }}; background: #FFB27A;"></span></div>
+</div>
+<div role="img" aria-label="{{ protEncajaA11y }}" style="display: flex; flex-direction: column; gap: 6px;">
+<div aria-hidden="true" style="display: flex; justify-content: space-between; font-size: 15px;"><span>Proteína</span><span style="font-variant-numeric: tabular-nums;">82 → <strong>{{ pDespues }}</strong> de 136 g</span></div>
+<div aria-hidden="true" style="height: 10px; border-radius: 5px; background: #353A43; overflow: hidden; display: flex;"><span style="width: 60.3%; background: #6BA6F5;"></span><span style="width: {{ pExtra }}; background: #B8D4FA;"></span></div>
+</div>
+<p style="margin: 0; font-size: 16px; line-height: 1.4;">Te quedarán <strong>{{ quedanKcal }} kcal</strong> y <strong>{{ quedanP }} g de proteína</strong>.</p>
+</section>
+<a href="#" class="toque" style="min-height: 56px; border-radius: 16px; background: #1B1E24; border: 1px solid #4A505B; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; color: #F2F2F3; font-size: 16px; text-decoration: none;">Información nutricional por 100 g<span class="ms" aria-hidden="true" style="color: #A1A9B6;">expand_more</span></a>
+<a href="#" style="align-self: flex-start; min-height: 44px; display: flex; align-items: center; gap: 8px; color: #A1A9B6; font-size: 15px; text-decoration: none;"><span class="ms" aria-hidden="true" style="font-size: 20px;">flag</span>Reportar un problema con estos datos</a>
+</main>
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 16px 24px; background: #121418; border-top: 1px solid #252A31; display: flex; flex-direction: column; gap: 12px;">
+<div style="display: flex; align-items: center; gap: 10px;">
+<div role="group" aria-label="Cantidad" style="display: flex; align-items: center; gap: 2px; padding: 4px; border-radius: 26px; background: #1B1E24; border: 1px solid #4A505B;">
+<button type="button" onClick="{{ menos }}" aria-label="Menos" class="toque" style="width: 44px; height: 44px; border: none; border-radius: 22px; background: #252A31; color: #F2F2F3; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">remove</span></button>
+<span aria-live="polite" style="min-width: 56px; text-align: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 24px; font-variant-numeric: tabular-nums;">{{ cantidad }}</span>
+<button type="button" onClick="{{ mas }}" aria-label="Más" class="toque" style="width: 44px; height: 44px; border: none; border-radius: 22px; background: #252A31; color: #F2F2F3; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">add</span></button>
+</div>
+<div role="radiogroup" aria-label="Unidad" style="flex-grow: 1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 26px; background: #1B1E24; border: 1px solid #4A505B;">
+<button type="button" role="radio" aria-checked="{{ esEnvase }}" onClick="{{ aEnvase }}" style="min-height: 44px; border: none; border-radius: 22px; background: {{ fondoEnvase }}; color: {{ textoEnvase }}; font-size: 15px; font-weight: 700;">envase</button>
+<button type="button" role="radio" aria-checked="{{ esGramos }}" onClick="{{ aGramos }}" style="min-height: 44px; border: none; border-radius: 22px; background: {{ fondoGramos }}; color: {{ textoGramos }}; font-size: 15px; font-weight: 700;">gramos</button>
+</div>
+</div>
+<a href="Main.dc.html" class="toque" style="min-height: 52px; border-radius: 26px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700; text-decoration: none;">Añadir a la merienda</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1180}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { unidad: 'envase', envases: 1, gramos: 200, fav: false, favNuevo: false };
+  }
+  renderVals() {
+    const miles = (n) => (n >= 1000 ? Math.floor(n / 1000) + '.' + String(n % 1000).padStart(3, '0') : String(n));
+    const coma = (x) => (Math.round(x * 10) / 10).toString().replace('.', ',');
+    const envase = this.state.unidad === 'envase';
+    const gr = envase ? this.state.envases * 200 : this.state.gramos;
+    const kcal = Math.round(gr * 0.6);
+    const p = gr * 0.10, c = gr * 0.045, g = gr * 0.002;
+    const despues = 1236 + kcal;
+    const pDespues = Math.round(82 + p);
+    const pct = (x, max) => Math.min(100, (x / max) * 100).toFixed(1) + '%';
+    const porcion = envase
+      ? (this.state.envases === 1 ? '1 envase (200 g)' : this.state.envases + ' envases (' + gr + ' g)')
+      : gr + ' g';
+    const elegido = '#FF6A00', libre = 'transparent';
+    return {
+      porcion,
+      kcal: String(kcal),
+      p: coma(p) + ' g', c: coma(c) + ' g', g: coma(g) + ' g',
+      cifrasA11y: kcal + ' kilocalorías, ' + coma(p) + ' gramos de proteína, ' + coma(c) + ' de carbohidratos y ' + coma(g) + ' de grasa',
+      kcalDespues: miles(despues),
+      kcalExtra: pct(kcal, 2397),
+      pDespues: String(pDespues),
+      pExtra: pct(p, 136),
+      quedanKcal: miles(Math.max(0, 2397 - despues)),
+      quedanP: String(Math.max(0, 136 - pDespues)),
+      kcalEncajaA11y: 'Calorías: de 1236 a ' + despues + ' de 2397',
+      protEncajaA11y: 'Proteína: de 82 a ' + pDespues + ' de 136 gramos',
+      cantidad: envase ? String(this.state.envases) : String(this.state.gramos),
+      menos: () => {
+        if (envase) this.setState({ envases: Math.max(1, this.state.envases - 1) });
+        else this.setState({ gramos: Math.max(25, this.state.gramos - 25) });
+      },
+      mas: () => {
+        if (envase) this.setState({ envases: Math.min(6, this.state.envases + 1) });
+        else this.setState({ gramos: Math.min(1000, this.state.gramos + 25) });
+      },
+      esEnvase: envase ? 'true' : 'false',
+      esGramos: envase ? 'false' : 'true',
+      fondoEnvase: envase ? elegido : libre,
+      textoEnvase: envase ? '#1A0E00' : '#C9CED6',
+      fondoGramos: envase ? libre : elegido,
+      textoGramos: envase ? '#C9CED6' : '#1A0E00',
+      aEnvase: () => this.setState({ unidad: 'envase' }),
+      aGramos: () => this.setState({ unidad: 'g', gramos: this.state.envases * 200 }),
+      favPulsado: this.state.fav ? 'true' : 'false',
+      favColor: this.state.fav ? '#F87171' : '#F2F2F3',
+      favClase: this.state.fav ? 'ms f anim' : 'ms',
+      favAnim: this.state.favNuevo ? 'late 450ms cubic-bezier(.34,1.56,.64,1)' : 'none',
+      alternarFav: () => this.setState({ fav: !this.state.fav, favNuevo: !this.state.fav })
+    };
+  }
+}
+</script>
+</body>
+</html>

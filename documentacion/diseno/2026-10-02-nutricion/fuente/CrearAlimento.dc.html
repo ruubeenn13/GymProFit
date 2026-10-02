@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Crear un alimento</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+button,input{font-family:inherit}
+button{cursor:pointer}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+.toque{transition:transform 120ms cubic-bezier(.2,0,0,1)}
+.toque:active{transform:scale(.97)}
+@keyframes entra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes llena0{from{width:0}}
+@keyframes salta{0%{transform:scale(0)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){.anim{animation:none !important;transition:none !important}.toque:active{transform:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 1340px; position: relative; overflow: hidden; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif;">
+<header style="display: flex; align-items: center; gap: 4px; padding: 8px 12px 0 4px;">
+<a href="Buscar.dc.html" aria-label="Cerrar sin guardar" class="toque" style="width: 48px; height: 48px; border-radius: 24px; color: #F2F2F3; display: flex; align-items: center; justify-content: center; text-decoration: none;"><span class="ms" aria-hidden="true">close</span></a>
+<h1 style="flex-grow: 1; margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 28px;">Nuevo alimento</h1>
+</header>
+<main style="padding: 12px 16px 150px; display: flex; flex-direction: column; gap: 16px;">
+<div role="img" aria-label="Código de barras leído: 8400000720021" style="min-height: 52px; display: flex; align-items: center; gap: 12px; padding: 0 14px; border-radius: 16px; background: #1B1E24;">
+<span class="ms" aria-hidden="true" style="color: #C9CED6;">barcode</span>
+<span aria-hidden="true" style="flex-grow: 1; font-size: 16px; letter-spacing: 1px; font-variant-numeric: tabular-nums;">8 400000 720021</span>
+<span aria-hidden="true" style="display: flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 600; color: #4ADE80;"><span class="ms f" style="font-size: 18px;">check_circle</span>Leído</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<label for="nombreAlimento" style="padding: 0 4px; font-size: 14px; font-weight: 600; color: #A1A9B6;">Nombre</label>
+<input id="nombreAlimento" value="Galletas de la abuela" style="min-height: 52px; padding: 0 16px; border-radius: 16px; border: 1px solid #676F7E; background: #1B1E24; color: #F2F2F3; font-size: 17px; outline: none;">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<label for="marcaAlimento" style="padding: 0 4px; font-size: 14px; font-weight: 600; color: #A1A9B6;">Marca <span style="font-weight: 400;">(opcional)</span></label>
+<input id="marcaAlimento" placeholder="La que pone en el envase" style="min-height: 52px; padding: 0 16px; border-radius: 16px; border: 1px solid #676F7E; background: #1B1E24; color: #F2F2F3; font-size: 17px; outline: none;">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<span id="rotuloCategoria" style="padding: 0 4px; font-size: 14px; font-weight: 600; color: #A1A9B6;">Categoría</span>
+<div role="radiogroup" aria-labelledby="rotuloCategoria" style="display: flex; gap: 8px; margin: 0 -16px; padding: 0 16px; overflow-x: auto; white-space: nowrap;">
+<sc-for list="{{ categorias }}" as="c" hint-placeholder-count="6">
+<button type="button" role="radio" aria-checked="{{ c.marcada }}" onClick="{{ c.elegir }}" class="toque" style="flex-shrink: 0; min-height: 48px; padding: 4px 0; border: none; background: transparent; display: flex; align-items: center;"><span style="min-height: 40px; display: flex; align-items: center; gap: 6px; padding: 0 14px 0 10px; border-radius: 20px; border: 1px solid {{ c.borde }}; background: {{ c.fondo }}; color: {{ c.color }}; font-size: 15px; font-weight: 600;"><span class="ms" aria-hidden="true" style="font-size: 20px;">{{ c.icono }}</span>{{ c.nombre }}</span></button>
+</sc-for>
+</div>
+</div>
+<section aria-label="Como en la etiqueta" style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 14px 16px 16px; display: flex; flex-direction: column;">
+<div style="display: flex; align-items: center; gap: 10px; padding-bottom: 10px;">
+<h2 style="flex-grow: 1; margin: 0; font-size: 17px; font-weight: 700;">Como en la etiqueta</h2>
+<div role="radiogroup" aria-label="Valores por" style="display: flex; gap: 2px; padding: 3px; border-radius: 20px; background: #121418;">
+<button type="button" role="radio" aria-checked="{{ por100 }}" onClick="{{ aCien }}" style="min-height: 34px; padding: 0 12px; border: none; border-radius: 17px; background: {{ fondoCien }}; color: {{ colorCien }}; font-size: 14px; font-weight: 700;">100 g</button>
+<button type="button" role="radio" aria-checked="{{ porRacion }}" onClick="{{ aRacion }}" style="min-height: 34px; padding: 0 12px; border: none; border-radius: 17px; background: {{ fondoRacion }}; color: {{ colorRacion }}; font-size: 14px; font-weight: 700;">{{ racionCorta }}</button>
+</div>
+</div>
+<sc-for list="{{ filas }}" as="f" hint-placeholder-count="5">
+<div style="min-height: 52px; display: flex; align-items: center; gap: 10px; border-top: 1px solid #252A31;">
+<span style="flex-grow: 1; display: flex; align-items: center; gap: 8px; font-size: 16px;"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 4px; background: {{ f.punto }};"></span>{{ f.nombre }}<span style="font-size: 13px; color: #A1A9B6;">{{ f.nota }}</span></span>
+<span style="width: 96px; min-height: 40px; display: flex; align-items: center; justify-content: flex-end; gap: 6px; padding: 0 12px; border-radius: 12px; border: 1px solid #676F7E; background: #121418; box-sizing: border-box; font-variant-numeric: tabular-nums;"><strong style="font-size: 17px;">{{ f.valor }}</strong><span style="font-size: 14px; color: #A1A9B6;">{{ f.unidad }}</span></span>
+</div>
+</sc-for>
+<div role="status" style="margin-top: 4px; padding-top: 12px; border-top: 1px solid #252A31; display: flex; align-items: center; gap: 8px; font-size: 14px; color: #4ADE80;"><span class="ms f" aria-hidden="true" style="font-size: 18px;">check_circle</span>Las calorías cuadran con los macros</div>
+</section>
+<section aria-label="Así queda" style="display: flex; flex-direction: column; gap: 8px;">
+<h2 style="margin: 0; padding: 0 4px; color: #A1A9B6; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 1px; text-transform: uppercase;">{{ quedaTitulo }}</h2>
+<div role="img" aria-label="{{ quedaA11y }}" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px;">
+<span aria-hidden="true" style="padding: 12px 4px; border-radius: 16px; border: 1px solid #4A505B; display: flex; flex-direction: column; align-items: center; gap: 2px;"><strong style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-variant-numeric: tabular-nums;">{{ kcal }}</strong><span style="font-size: 13px; color: #A1A9B6;">kcal</span></span>
+<span aria-hidden="true" style="padding: 12px 4px; border-radius: 16px; border: 1px solid #4A505B; display: flex; flex-direction: column; align-items: center; gap: 2px;"><strong style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; color: #6BA6F5; font-variant-numeric: tabular-nums;">{{ p }}</strong><span style="font-size: 13px; color: #A1A9B6;">proteína</span></span>
+<span aria-hidden="true" style="padding: 12px 4px; border-radius: 16px; border: 1px solid #4A505B; display: flex; flex-direction: column; align-items: center; gap: 2px;"><strong style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-variant-numeric: tabular-nums;">{{ c }}</strong><span style="font-size: 13px; color: #A1A9B6;">carb.</span></span>
+<span aria-hidden="true" style="padding: 12px 4px; border-radius: 16px; border: 1px solid #4A505B; display: flex; flex-direction: column; align-items: center; gap: 2px;"><strong style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-variant-numeric: tabular-nums;">{{ g }}</strong><span style="font-size: 13px; color: #A1A9B6;">grasa</span></span>
+</div>
+<div role="img" aria-label="De sus calorías, 6 por ciento de proteína, 58 de carbohidratos y 36 de grasa" style="display: flex; flex-direction: column; gap: 8px; padding-top: 4px;">
+<div aria-hidden="true" style="display: flex; gap: 3px; height: 10px;"><span class="anim" style="width: 6%; border-radius: 5px; background: #6BA6F5; animation: llena0 500ms cubic-bezier(.2,0,0,1) 300ms backwards;"></span><span class="anim" style="width: 58%; border-radius: 5px; background: #E8A94B; animation: llena0 500ms cubic-bezier(.2,0,0,1) 400ms backwards;"></span><span class="anim" style="width: 36%; border-radius: 5px; background: #B295E8; animation: llena0 500ms cubic-bezier(.2,0,0,1) 500ms backwards;"></span></div>
+<div aria-hidden="true" style="display: flex; gap: 14px; font-size: 14px; color: #C9CED6;"><span style="display: flex; align-items: center; gap: 6px;"><span style="width: 8px; height: 8px; border-radius: 4px; background: #6BA6F5;"></span>Proteína 6 %</span><span style="display: flex; align-items: center; gap: 6px;"><span style="width: 8px; height: 8px; border-radius: 4px; background: #E8A94B;"></span>Carb. 58 %</span><span style="display: flex; align-items: center; gap: 6px;"><span style="width: 8px; height: 8px; border-radius: 4px; background: #B295E8;"></span>Grasa 36 %</span></div>
+</div>
+</section>
+<section aria-label="Una ración" style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 12px;">
+<h2 style="margin: 0; font-size: 17px; font-weight: 700;">¿Cómo lo tomas? <span style="font-weight: 400; font-size: 14px; color: #A1A9B6;">(opcional)</span></h2>
+<div role="radiogroup" aria-label="Nombre de la ración" style="display: flex; flex-wrap: wrap; gap: 8px;">
+<sc-for list="{{ nombresRacion }}" as="n" hint-placeholder-count="4">
+<button type="button" role="radio" aria-checked="{{ n.marcada }}" onClick="{{ n.elegir }}" class="toque" style="min-height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid {{ n.borde }}; background: {{ n.fondo }}; color: {{ n.color }}; font-size: 15px; font-weight: 600;">{{ n.nombre }}</button>
+</sc-for>
+</div>
+<div style="display: flex; align-items: center; gap: 10px; font-size: 16px;">
+<span>{{ racionFrase }}</span>
+<span style="width: 96px; min-height: 40px; display: flex; align-items: center; justify-content: flex-end; gap: 6px; padding: 0 12px; border-radius: 12px; border: 1px solid #676F7E; background: #121418; box-sizing: border-box; font-variant-numeric: tabular-nums;"><strong style="font-size: 17px;">12</strong><span style="font-size: 14px; color: #A1A9B6;">g</span></span>
+<span style="font-size: 14px; color: #A1A9B6; font-variant-numeric: tabular-nums;">54 kcal</span>
+</div>
+</section>
+<span style="display: flex; align-items: center; gap: 8px; padding: 0 4px; font-size: 14px; color: #A1A9B6;"><span class="ms" aria-hidden="true" style="font-size: 18px;">lock</span>Solo lo ves tú</span>
+</main>
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 16px 16px; background: #121418; border-top: 1px solid #252A31; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+<a href="Main.dc.html" class="toque" style="align-self: stretch; min-height: 52px; border-radius: 26px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700; text-decoration: none;">Guardar y añadir a la merienda</a>
+<a href="#" class="toque" style="min-height: 44px; display: flex; align-items: center; padding: 0 12px; color: #FFB27A; font-size: 15px; font-weight: 600; text-decoration: none;">Solo guardar</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1340}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { categoria: 'Snacks', base: 'cien', racion: 'unidad' };
+  }
+  renderVals() {
+    const coma = (x) => (Math.round(x * 10) / 10).toString().replace('.', ',');
+    const cien = { kcal: 450, grasas: 18, hidratos: 64, fibra: 3, proteinas: 7 };
+    const factor = this.state.base === 'cien' ? 1 : 0.12;
+    const v = (k) => coma(cien[k] * factor);
+    const cats = [
+      ['Snacks', 'cookie'], ['Cereales y pan', 'bakery_dining'], ['Lácteos', 'breakfast_dining'],
+      ['Carnes y aves', 'kebab_dining'], ['Pescado y marisco', 'set_meal'], ['Huevos', 'egg_alt'],
+      ['Legumbres', 'grain'], ['Frutas', 'nutrition'], ['Verduras', 'eco'], ['Frutos secos', 'spa'],
+      ['Aceites y grasas', 'opacity'], ['Bebidas', 'local_cafe'], ['Suplementos', 'pill'], ['Otro', 'restaurant']
+    ];
+    const chip = (elegida) => ({
+      marcada: elegida ? 'true' : 'false',
+      borde: elegida ? '#FF6A00' : '#676F7E',
+      fondo: elegida ? '#3A2110' : 'transparent',
+      color: elegida ? '#FFB27A' : '#C9CED6'
+    });
+    const categorias = cats.map(([nombre, icono]) => ({
+      nombre, icono, ...chip(nombre === this.state.categoria),
+      elegir: () => this.setState({ categoria: nombre })
+    }));
+    const nombresRacion = ['unidad', 'ración', 'envase', 'rebanada'].map((nombre) => ({
+      nombre, ...chip(nombre === this.state.racion),
+      elegir: () => this.setState({ racion: nombre })
+    }));
+    const filas = [
+      { nombre: 'Energía', nota: '', punto: '#FF6A00', valor: v('kcal'), unidad: 'kcal' },
+      { nombre: 'Grasas', nota: '', punto: '#B295E8', valor: v('grasas'), unidad: 'g' },
+      { nombre: 'Hidratos de carbono', nota: '', punto: '#E8A94B', valor: v('hidratos'), unidad: 'g' },
+      { nombre: 'Fibra', nota: 'opcional', punto: '#676F7E', valor: v('fibra'), unidad: 'g' },
+      { nombre: 'Proteínas', nota: '', punto: '#6BA6F5', valor: v('proteinas'), unidad: 'g' }
+    ];
+    const esCien = this.state.base === 'cien';
+    const articulo = this.state.racion === 'envase' ? '1 envase' : '1 ' + this.state.racion;
+    return {
+      categorias,
+      nombresRacion,
+      filas,
+      por100: esCien ? 'true' : 'false',
+      porRacion: esCien ? 'false' : 'true',
+      fondoCien: esCien ? '#FF6A00' : 'transparent',
+      colorCien: esCien ? '#1A0E00' : '#C9CED6',
+      fondoRacion: esCien ? 'transparent' : '#FF6A00',
+      colorRacion: esCien ? '#C9CED6' : '#1A0E00',
+      racionCorta: articulo,
+      racionFrase: articulo + ' son',
+      aCien: () => this.setState({ base: 'cien' }),
+      aRacion: () => this.setState({ base: 'racion' }),
+      quedaTitulo: esCien ? 'Así queda, por 100 g' : 'Así queda, por ' + articulo + ' (12 g)',
+      quedaA11y: v('kcal') + ' kilocalorías, ' + v('proteinas') + ' gramos de proteína, ' + v('hidratos') + ' de carbohidratos y ' + v('grasas') + ' de grasa',
+      kcal: v('kcal'),
+      p: v('proteinas') + ' g',
+      c: v('hidratos') + ' g',
+      g: v('grasas') + ' g'
+    };
+  }
+}
+</script>
+</body>
+</html>

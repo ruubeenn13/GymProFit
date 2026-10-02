@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>El día completo</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+@keyframes entra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes arcoFin{from{stroke-dasharray:300 364.42}to{stroke-dasharray:364.42 364.42}}
+@keyframes aura{0%{transform:scale(.8);opacity:0}30%{opacity:1}100%{transform:scale(1.3);opacity:0}}
+@keyframes pop{0%{transform:scale(.4)}55%{transform:scale(1.4)}100%{transform:scale(1)}}
+@keyframes oro{0%{box-shadow:0 0 0 0 rgba(232,184,75,0)}40%{box-shadow:0 0 14px 3px rgba(232,184,75,.65)}100%{box-shadow:0 0 0 0 rgba(232,184,75,0)}}
+@keyframes brillo{from{transform:translateX(-130%) skewX(-18deg)}to{transform:translateX(420%) skewX(-18deg)}}
+@keyframes llenaOro{from{width:88%}to{width:100%}}
+@keyframes salta{0%{transform:scale(0)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){.anim{animation:none !important;transition:none !important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif;">
+<header style="display: flex; align-items: center; gap: 4px; padding: 14px 8px 4px 20px;">
+<h1 style="flex-grow: 1; margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 34px; line-height: 1;">Nutrición</h1>
+<a href="#" aria-label="Elegir otro día" style="width: 48px; height: 48px; border-radius: 24px; color: #F2F2F3; display: flex; align-items: center; justify-content: center; text-decoration: none;"><span class="ms" aria-hidden="true">calendar_month</span></a>
+<a href="Semana.dc.html" aria-label="Tu semana de nutrición" style="width: 48px; height: 48px; border-radius: 24px; color: #F2F2F3; display: flex; align-items: center; justify-content: center; text-decoration: none;"><span class="ms" aria-hidden="true">bar_chart</span></a>
+</header>
+<nav aria-label="Días de esta semana" style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; padding: 6px 12px 0;">
+<span aria-label="Lunes 21: día completo, día de entreno" style="display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 6px 0 8px; color: #A1A9B6;"><span style="font-size: 13px;">L</span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 19px; color: #F2F2F3;">21</span><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 4px; background: #4ADE80;"></span><span aria-hidden="true" style="width: 14px; height: 3px; border-radius: 2px; background: #FF6A00;"></span></span>
+<span aria-label="Martes 22: a medias" style="display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 6px 0 8px; color: #A1A9B6;"><span style="font-size: 13px;">M</span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 19px; color: #F2F2F3;">22</span><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 4px; background: #E8A94B;"></span><span aria-hidden="true" style="width: 14px; height: 3px;"></span></span>
+<span aria-current="date" aria-label="Hoy, miércoles 23: día completo, día de entreno" style="display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 6px 0 8px; border-radius: 16px; color: #FFB27A; background: #3A2110; box-shadow: inset 0 0 0 1px #FF6A00;"><span style="font-size: 13px; font-weight: 600;">X</span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; color: #F2F2F3;">23</span><span class="anim" aria-hidden="true" style="width: 8px; height: 8px; border-radius: 4px; background: #4ADE80; animation: pop 450ms cubic-bezier(.34,1.56,.64,1) 900ms backwards;"></span><span aria-hidden="true" style="width: 14px; height: 3px; border-radius: 2px; background: #FF6A00;"></span></span>
+<span aria-label="Jueves 24" style="display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 6px 0 8px; color: #676F7E;"><span style="font-size: 13px;">J</span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 19px;">24</span></span>
+<span aria-label="Viernes 25" style="display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 6px 0 8px; color: #676F7E;"><span style="font-size: 13px;">V</span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 19px;">25</span></span>
+<span aria-label="Sábado 26" style="display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 6px 0 8px; color: #676F7E;"><span style="font-size: 13px;">S</span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 19px;">26</span></span>
+<span aria-label="Domingo 27" style="display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 6px 0 8px; color: #676F7E;"><span style="font-size: 13px;">D</span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 19px;">27</span></span>
+</nav>
+<main style="padding: 12px 16px 100px; display: flex; flex-direction: column; gap: 12px;">
+<section aria-label="Calorías y macros de hoy" style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 16px;">
+<div style="display: flex; align-items: center; gap: 16px;">
+<div style="position: relative; flex-shrink: 0; width: 136px; height: 136px;">
+<span class="anim" aria-hidden="true" style="position: absolute; inset: -12px; border-radius: 80px; background: radial-gradient(circle, rgba(74, 222, 128, 0.30), rgba(74, 222, 128, 0) 70%); opacity: 0; animation: aura 900ms ease-out 700ms forwards;"></span>
+<svg width="136" height="136" viewBox="0 0 136 136" aria-hidden="true" style="position: absolute; inset: 0; transform: rotate(-90deg);">
+<circle cx="68" cy="68" r="58" fill="none" stroke="#353A43" stroke-width="12"></circle>
+<circle class="anim" cx="68" cy="68" r="58" fill="none" stroke="#4ADE80" stroke-width="12" stroke-linecap="round" style="stroke-dasharray: 364.42 364.42; animation: arcoFin 600ms cubic-bezier(.2,0,0,1) 200ms backwards;"></circle>
+</svg>
+<div role="img" aria-label="2381 de 2397 kilocalorías" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;">
+<span aria-hidden="true" style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 36px; line-height: 1;">2.381</span>
+<span aria-hidden="true" style="font-size: 13px; color: #A1A9B6;">de 2.397 kcal</span>
+</div>
+</div>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 6px;">
+<span class="anim" style="width: 40px; height: 40px; border-radius: 20px; background: #143323; color: #4ADE80; display: flex; align-items: center; justify-content: center; animation: salta 260ms cubic-bezier(.34,1.56,.64,1) 800ms backwards;"><span class="ms" aria-hidden="true">check</span></span>
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 30px; line-height: 1.05;">Día completo</span>
+<span style="font-size: 14px; line-height: 1.35; color: #C9CED6;">Todas tus comidas, apuntadas</span>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px;">
+<div role="img" aria-label="Proteína conseguida: 138 de 136 gramos" style="display: flex; flex-direction: column; gap: 6px;">
+<div aria-hidden="true" style="display: flex; justify-content: space-between; align-items: baseline; font-size: 15px;"><span style="display: flex; align-items: center; gap: 8px; font-weight: 600; color: #E8B84B;"><span class="ms f" style="font-size: 18px;">trophy</span>Proteína conseguida</span><span><strong>138</strong> / 136 g</span></div>
+<div aria-hidden="true" class="anim" style="position: relative; height: 10px; border-radius: 5px; background: #353A43; overflow: hidden; animation: oro 900ms ease-out 1100ms;"><div class="anim" style="height: 10px; border-radius: 5px; background: #E8B84B; width: 100%; animation: llenaOro 500ms cubic-bezier(.2,0,0,1) 400ms backwards;"></div><span class="anim" style="position: absolute; top: 0; bottom: 0; left: 0; width: 30%; background: linear-gradient(90deg, rgba(255, 244, 217, 0), rgba(255, 244, 217, 0.7), rgba(255, 244, 217, 0)); transform: translateX(-130%) skewX(-18deg); animation: brillo 900ms ease-in-out 1200ms both;"></span></div>
+</div>
+<div role="img" aria-label="Carbohidratos: 305 de 314 gramos" style="display: flex; flex-direction: column; gap: 6px;">
+<div aria-hidden="true" style="display: flex; justify-content: space-between; align-items: baseline; font-size: 15px;"><span style="display: flex; align-items: center; gap: 8px;"><span style="width: 10px; height: 10px; border-radius: 5px; background: #E8A94B;"></span>Carbohidratos</span><span><strong>305</strong> / 314 g</span></div>
+<div aria-hidden="true" style="height: 8px; border-radius: 4px; background: #353A43; overflow: hidden;"><div style="height: 8px; border-radius: 4px; background: #E8A94B; width: 97%;"></div></div>
+</div>
+<div role="img" aria-label="Grasa: 64 de 66 gramos" style="display: flex; flex-direction: column; gap: 6px;">
+<div aria-hidden="true" style="display: flex; justify-content: space-between; align-items: baseline; font-size: 15px;"><span style="display: flex; align-items: center; gap: 8px;"><span style="width: 10px; height: 10px; border-radius: 5px; background: #B295E8;"></span>Grasa</span><span><strong>64</strong> / 66 g</span></div>
+<div aria-hidden="true" style="height: 8px; border-radius: 4px; background: #353A43; overflow: hidden;"><div style="height: 8px; border-radius: 4px; background: #B295E8; width: 97%;"></div></div>
+</div>
+</div>
+</section>
+<section aria-label="Tu semana" class="anim" style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 16px; display: flex; gap: 12px; align-items: flex-start; animation: entra 400ms cubic-bezier(.05,.7,.1,1) 1400ms backwards;">
+<span class="ms f" aria-hidden="true" style="color: #4ADE80;">calendar_month</span>
+<div style="display: flex; flex-direction: column; gap: 4px;">
+<span style="font-size: 16px; font-weight: 600;">2 días completos esta semana</span>
+<span style="font-size: 14px; line-height: 1.4; color: #C9CED6;">Y hoy, con entreno y tu proteína hecha. Así es como se nota.</span>
+</div>
+</section>
+</main>
+<nav aria-label="Navegación principal" style="position: absolute; left: 0; right: 0; bottom: 0; height: 80px; background: #121418; border-top: 1px solid #252A31; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 8px 4px 12px; box-sizing: border-box; align-items: start;">
+<a href="#" style="display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: #A1A9B6;"><span style="width: 56px; height: 32px; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">home</span></span><span style="font-size: 13px;">Inicio</span></a>
+<a href="#" style="display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: #A1A9B6;"><span style="width: 56px; height: 32px; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">fitness_center</span></span><span style="font-size: 13px;">Entrenar</span></a>
+<a href="#" aria-label="Acciones rápidas" style="justify-self: center; width: 56px; height: 56px; margin-top: -2px; border-radius: 28px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; justify-content: center; text-decoration: none;"><span class="ms" aria-hidden="true" style="font-size: 30px;">add</span></a>
+<a href="Main.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: #F2F2F3;"><span style="width: 56px; height: 32px; border-radius: 16px; background: #3A2110; display: flex; align-items: center; justify-content: center;"><span class="ms f" aria-hidden="true" style="color: #FF6A00;">restaurant</span></span><span style="font-size: 13px; font-weight: 700;">Nutrición</span></a>
+<a href="#" style="display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: #A1A9B6;"><span style="width: 56px; height: 32px; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">monitoring</span></span><span style="font-size: 13px;">Progreso</span></a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

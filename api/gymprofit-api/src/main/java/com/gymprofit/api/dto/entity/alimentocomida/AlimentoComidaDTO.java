@@ -41,4 +41,8 @@ public class AlimentoComidaDTO implements Serializable {
     private BigDecimal racionGramos;
     // Cuántas raciones (2 → «2 rebanadas»).
     private BigDecimal raciones;
+    // Lote 1.6.2 (GP-172): la unidad de esa ración en singular y en plural, en el idioma
+    // de la petición; null si no se eligió por raciones o el nombre no tiene unidad.
+    private String racionUnidad;
+    private String racionUnidadPlural;
 }

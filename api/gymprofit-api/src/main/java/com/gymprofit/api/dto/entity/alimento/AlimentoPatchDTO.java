@@ -31,4 +31,7 @@ public class AlimentoPatchDTO implements Serializable {
     private String nombreEn;
     private String marca;
     private String barcode;
+    // Lote 1.6.2: sin el campo, la ración no cambia; vacía, se quita; con una, se cambia
+    // en su misma fila (o se crea si no había).
+    private java.util.List<RacionPropiaDTO> raciones;
 }

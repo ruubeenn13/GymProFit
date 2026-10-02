@@ -34,6 +34,8 @@ public interface AlimentoComidaMapper {
     @Mapping(target = "racionId", source = "racion.id")
     @Mapping(target = "racionGramos", source = "racion.gramos")
     @Mapping(target = "racionNombre", ignore = true)
+    @Mapping(target = "racionUnidad", ignore = true)
+    @Mapping(target = "racionUnidadPlural", ignore = true)
     @Mapping(target = "grasasTotales", expression = "java(alimentoComida.getAlimento().getGrasas() != null ? alimentoComida.getAlimento().getGrasas().multiply(alimentoComida.getCantidadGramos()).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP) : BigDecimal.ZERO)")
     AlimentoComidaDTO toDTO(AlimentoComida alimentoComida);
 
@@ -50,11 +52,23 @@ public interface AlimentoComidaMapper {
     @Mapping(target = "raciones", ignore = true)
     AlimentoComida toEntity(AlimentoComidaCreateDTO alimentoComidaCreateDTO);
 
-    // El nombre de la ración en el idioma de la petición, como en AlimentoMapper.
+    // El nombre del alimento y el de la ración en el idioma de la petición, con el español
+    // de respaldo, como en AlimentoMapper (GP-176). La categoría NO se traduce: sale en su
+    // forma canónica (AlimentoController.CATEGORIAS) porque la app la usa como clave para
+    // el icono y el nombre (NombreLineaIdiomaTest lo fija).
     @AfterMapping
     default void nombreRacion(AlimentoComida alimentoComida, @MappingTarget AlimentoComidaDTO dto) {
-        if (alimentoComida.getRacion() == null) return;
         boolean ingles = "en".equals(LocaleContextHolder.getLocale().getLanguage());
-        dto.setRacionNombre(ingles ? alimentoComida.getRacion().getNombreEn() : alimentoComida.getRacion().getNombre());
+        if (ingles && alimentoComida.getAlimento() != null) {
+            String nombreEn = alimentoComida.getAlimento().getNombreEn();
+            if (nombreEn != null && !nombreEn.isBlank()) dto.setNombreAlimento(nombreEn);
+        }
+        if (alimentoComida.getRacion() == null) return;
+        String nombre = ingles ? alimentoComida.getRacion().getNombreEn() : alimentoComida.getRacion().getNombre();
+        dto.setRacionNombre(nombre);
+        com.gymprofit.api.service.busqueda.UnidadesRacion.de(nombre, ingles).ifPresent(u -> {
+            dto.setRacionUnidad(u.singular());
+            dto.setRacionUnidadPlural(u.plural());
+        });
     }
 }

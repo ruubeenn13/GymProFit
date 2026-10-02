@@ -6,15 +6,18 @@ import com.gymprofit.api.dto.entity.alimento.AlimentoDTO;
 import com.gymprofit.api.dto.entity.alimento.AlimentoPatchDTO;
 import com.gymprofit.api.dto.jooq.AlimentoJooqDTO;
 import com.gymprofit.api.entity.Alimento;
+import com.gymprofit.api.entity.AlimentoRacion;
 import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.exceptions.ConflictEntityException;
 import com.gymprofit.api.exceptions.CreateEntityException;
 import com.gymprofit.api.exceptions.DeleteEntityException;
+import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.UpdateEntityException;
 import com.gymprofit.api.mappers.AlimentoMapper;
 import com.gymprofit.api.repository.jooq.alimento.IAlimentoJooqRepository;
 import com.gymprofit.api.repository.jpa.IAlimentoRepository;
+import com.gymprofit.api.repository.jpa.IAlimentoRacionRepository;
 import com.gymprofit.api.repository.jpa.IUsuarioRepository;
 import com.gymprofit.api.service.busqueda.IndiceAlimentos;
 import lombok.AllArgsConstructor;
@@ -26,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 // ============================================================
 // AlimentoService — lógica de negocio de los alimentos del sistema
@@ -39,6 +43,7 @@ import java.util.List;
 public class AlimentoService implements IAlimentoService {
 
     private final IAlimentoRepository alimentoRepository;
+    private final IAlimentoRacionRepository racionRepository;
     private final IAlimentoJooqRepository alimentoJooqRepository;
     private final AlimentoMapper alimentoMapper;
     private final IUsuarioRepository usuarioRepository;
@@ -79,13 +84,17 @@ public class AlimentoService implements IAlimentoService {
 
         Alimento alimento = alimentoMapper.toEntity(alimentoCreateDTO);
         alimento.setActivo(true);
+        alimento.setMarca(alimentoCreateDTO.getMarca() == null ? null : textoONulo(alimentoCreateDTO.getMarca()));
         asignarPropietario(alimento, alimentoCreateDTO.getUsuarioId());
+        // La ración propia (lote 1.6.2), comprobada antes de guardar nada.
+        Optional<RacionPedida> racion = racionPedida(alimentoCreateDTO.getRaciones(), alimento);
         // Con código (1.6.1), único por dueño, como en el PATCH: repetido es un 409, no un
         // 500 de la clave única. Fuera del try, que lo convertiría en un error de creación.
         exigirCodigoLibre(alimento, -1);
 
         try {
             Alimento alimentoGuardado = alimentoRepository.save(alimento);
+            racion.ifPresent(r -> alimentoGuardado.getRaciones().add(racionRepository.save(nuevaRacion(alimentoGuardado, r))));
             avisarCatalogo();
 
             return alimentoMapper.toDTO(alimentoGuardado);
@@ -381,6 +390,9 @@ public class AlimentoService implements IAlimentoService {
         // El código de barras es único: repetido es un conflicto, no un 500 de la base.
         String barcode = patchDTO.getBarcode() == null ? null : textoONulo(patchDTO.getBarcode());
         exigirCodigoLibre(barcode, alimento, id);
+        // La ración propia (lote 1.6.2): null, no cambia; vacía, se quita; con una, se cambia.
+        Optional<RacionPedida> racion = patchDTO.getRaciones() == null ? Optional.empty()
+                : racionPedida(patchDTO.getRaciones(), alimento);
 
         try {
             if (patchDTO.getNombre() != null) alimento.setNombre(patchDTO.getNombre());
@@ -396,12 +408,85 @@ public class AlimentoService implements IAlimentoService {
             if (patchDTO.getNombreEn() != null) alimento.setNombreEn(textoONulo(patchDTO.getNombreEn()));
             if (patchDTO.getMarca() != null) alimento.setMarca(textoONulo(patchDTO.getMarca()));
             if (patchDTO.getBarcode() != null) alimento.setBarcode(textoONulo(patchDTO.getBarcode()));
+            if (patchDTO.getRaciones() != null) cambiarRacion(alimento, racion);
 
             Alimento guardado = alimentoRepository.save(alimento);
             avisarCatalogo();
             return alimentoMapper.toDTO(guardado);
         } catch (Exception e) {
             throw new UpdateEntityException(Alimento.class.getSimpleName(), id, e);
+        }
+    }
+
+    /** Fuente de una ración que pone el dueño del alimento (lote 1.6.2). */
+    public static final String FUENTE_PROPIA = "Usuario";
+    private static final java.math.BigDecimal GRAMOS_MAXIMOS = new java.math.BigDecimal("2000");
+
+    /** Una ración propia ya comprobada. */
+    private record RacionPedida(com.gymprofit.api.enums.ClaveRacion clave, java.math.BigDecimal gramos) {
+    }
+
+    /**
+     * Comprueba la ración pedida para un alimento propio (lote 1.6.2, DEC-043).
+     *
+     * @return vacío si la lista viene vacía (o null); la ración si trae una.
+     * @throws InvalidDataException (400) si es de un alimento del catálogo, trae más de una,
+     *                              una unidad que no es de la lista o unos gramos fuera de rango.
+     */
+    private Optional<RacionPedida> racionPedida(List<com.gymprofit.api.dto.entity.alimento.RacionPropiaDTO> raciones,
+                                                Alimento alimento) {
+        if (raciones == null || raciones.isEmpty()) {
+            if (raciones != null && alimento.getUsuario() == null) {
+                throw new InvalidDataException("error.racionPropia.catalogo");
+            }
+            return Optional.empty();
+        }
+        if (alimento.getUsuario() == null) throw new InvalidDataException("error.racionPropia.catalogo");
+        if (raciones.size() > 1) throw new InvalidDataException("error.racionPropia.varias");
+        com.gymprofit.api.dto.entity.alimento.RacionPropiaDTO r = raciones.get(0);
+        com.gymprofit.api.enums.ClaveRacion clave = com.gymprofit.api.enums.ClaveRacion.leer(r.getUnidad())
+                .orElseThrow(() -> new InvalidDataException("error.racionPropia.unidad", String.valueOf(r.getUnidad())));
+        if (r.getGramos() == null || r.getGramos().signum() <= 0 || r.getGramos().compareTo(GRAMOS_MAXIMOS) > 0) {
+            throw new InvalidDataException("error.racionPropia.gramos");
+        }
+        return Optional.of(new RacionPedida(clave, r.getGramos()));
+    }
+
+    private static AlimentoRacion nuevaRacion(Alimento alimento, RacionPedida pedida) {
+        AlimentoRacion r = new AlimentoRacion();
+        r.setAlimento(alimento);
+        r.setOrden(1);
+        ponerRacion(r, pedida);
+        return r;
+    }
+
+    private static void ponerRacion(AlimentoRacion r, RacionPedida pedida) {
+        r.setNombre(pedida.clave().getNombre());
+        r.setNombreEn(pedida.clave().getNombreEn());
+        r.setGramos(pedida.gramos());
+        r.setFuente(FUENTE_PROPIA);
+    }
+
+    // Con una ración, la que hubiera se cambia en su misma fila: las líneas de comidas que
+    // la usan no la pierden. Vacía, se quitan; la clave ajena deja esas líneas en gramos.
+    private void cambiarRacion(Alimento alimento, Optional<RacionPedida> pedida) {
+        List<AlimentoRacion> actuales = new java.util.ArrayList<>(alimento.getRaciones());
+        if (pedida.isEmpty()) {
+            racionRepository.deleteAll(actuales);
+            alimento.getRaciones().clear();
+            return;
+        }
+        if (actuales.isEmpty()) {
+            alimento.getRaciones().add(racionRepository.save(nuevaRacion(alimento, pedida.get())));
+            return;
+        }
+        AlimentoRacion primera = actuales.get(0);
+        ponerRacion(primera, pedida.get());
+        racionRepository.save(primera);
+        if (actuales.size() > 1) {
+            List<AlimentoRacion> sobran = actuales.subList(1, actuales.size());
+            racionRepository.deleteAll(sobran);
+            alimento.getRaciones().removeAll(sobran);
         }
     }
 
