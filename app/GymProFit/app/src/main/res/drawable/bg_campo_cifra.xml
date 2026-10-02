@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_campo_cifra — la caja de una cifra en «Como en la etiqueta» (lote 1.6.2): radio 12, borde
+     del tema; con el foco, borde del acento. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <corners android:radius="12dp" />
+            <solid android:color="?android:attr/colorBackground" />
+            <stroke android:width="2dp" android:color="?attr/colorPrimary" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="12dp" />
+            <solid android:color="?android:attr/colorBackground" />
+            <stroke android:width="1dp" android:color="?attr/colorOutline" />
+        </shape>
+    </item>
+</selector>

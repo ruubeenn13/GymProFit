@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_campo_texto — un campo de texto de crear un alimento (lote 1.6.2): 52 de alto, radio 16. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <corners android:radius="16dp" />
+            <solid android:color="?attr/colorSurface" />
+            <stroke android:width="2dp" android:color="?attr/colorPrimary" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="16dp" />
+            <solid android:color="?attr/colorSurface" />
+            <stroke android:width="1dp" android:color="?attr/colorOutline" />
+        </shape>
+    </item>
+</selector>

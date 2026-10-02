@@ -1,165 +1,552 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  activity_crear_alimento — formulario para crear un alimento personalizado.
-  Recoge nombre, categoría, calorías y macronutrientes por 100g/unidad.
+  activity_crear_alimento — crear o editar un alimento propio, como en la etiqueta (decisión
+  17, tablero 13, lote 1.6.2). Arriba, el código si llega del escáner (no se cambia). Nombre,
+  marca, categoría en fichas, las cifras en el orden del envase por 100 g o por la ración, el
+  aviso de si las calorías cuadran, «Así queda», «¿Cómo lo tomas?» y «Solo lo ves tú». Abajo,
+  fijo, «Guardar y añadir a…» y «Solo guardar», o «Guardar cambios» al editar.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="?attr/android:colorBackground">
+    android:background="?android:attr/colorBackground"
+    android:orientation="vertical">
 
-    <!-- Toolbar -->
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
-        style="@style/Widget.GymProFit.Cabecera"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="@string/crear_alimento_titulo" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="4dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="8dp">
 
-    <!-- Scrollable form -->
-    <ScrollView
+        <ImageButton
+            android:id="@+id/btnCerrarCrear"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/crear_cerrar_a11y"
+            android:src="@drawable/ic_ms_close"
+            app:tint="?attr/colorOnSurface" />
+
+        <TextView
+            android:id="@+id/tvTituloCrear"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp"
+            android:accessibilityHeading="true"
+            android:text="@string/crear_titulo_nuevo"
+            android:textAppearance="@style/TextAppearance.GymProFit.Headline"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="28sp"
+            tools:targetApi="28" />
+    </LinearLayout>
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <LinearLayout
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scrollCrear"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_height="match_parent">
 
-            <!-- El código de barras con que se crea, desde «Créalo» o el escáner (lote 1.6.1). -->
-            <TextView
-                android:id="@+id/tvCodigoCrear"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:drawablePadding="8dp"
-                android:gravity="center_vertical"
-                android:textSize="@dimen/text_body"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:visibility="gone" />
+                android:orientation="vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="24dp">
 
-            <!-- Nombre -->
-            <com.google.android.material.textfield.TextInputLayout
-        app:errorIconDrawable="@drawable/ic_ms_error"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:hint="@string/crear_alimento_nombre_hint"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                <LinearLayout
+                    android:id="@+id/filaCodigo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_tarjeta_16"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:minHeight="52dp"
+                    android:orientation="horizontal"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:visibility="gone">
 
-                <com.google.android.material.textfield.TextInputEditText
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_ms_barcode_scanner"
+                        app:tint="?attr/colorOnSurfaceVariant" />
+
+                    <TextView
+                        android:id="@+id/tvCodigoCrear"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="12dp"
+                        android:fontFeatureSettings="tnum"
+                        android:importantForAccessibility="no"
+                        android:letterSpacing="0.06"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="@dimen/text_fila" />
+
+                    <TextView
+                        android:id="@+id/tvCodigoLeido"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="4dp"
+                        android:gravity="center_vertical"
+                        android:importantForAccessibility="no"
+                        android:text="@string/crear_codigo_leido"
+                        android:textColor="@color/gp_success"
+                        android:textSize="@dimen/text_label"
+                        android:textStyle="bold"
+                        app:drawableStartCompat="@drawable/ic_ms_check_circle_fill"
+                        app:drawableTint="@color/gp_success" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvErrorCodigo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-10dp"
+                    android:layout_marginBottom="16dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:accessibilityLiveRegion="polite"
+                    android:textColor="?attr/colorError"
+                    android:textSize="@dimen/text_eyebrow"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tvRotuloNombre"
+                    style="@style/Widget.GymProFit.Alta.Etiqueta"
+                android:textSize="@dimen/text_label"
+                android:textAllCaps="false"
+                android:letterSpacing="0"
+                    android:labelFor="@id/etNombre"
+                    android:text="@string/crear_nombre" />
+
+                <EditText
                     android:id="@+id/etNombre"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textCapWords" />
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_campo_texto"
+                    android:imeOptions="actionNext"
+                    android:importantForAutofill="no"
+                    android:inputType="textCapSentences"
+                    android:maxLength="100"
+                    android:minHeight="52dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="@dimen/text_subtitle" />
 
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Categoría label -->
-            <TextView
-                android:textAppearance="@style/TextAppearance.GymProFit.Label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/crear_alimento_categoria_label"
-                android:textSize="@dimen/text_caption"
-                android:textAllCaps="true"
-                android:letterSpacing="0.12"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:layout_marginBottom="4dp" />
-
-            <!-- Categoría spinner -->
-            <Spinner
-                android:id="@+id/spCategoria"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp" />
-
-            <!-- Calorías -->
-            <com.google.android.material.textfield.TextInputLayout
-        app:errorIconDrawable="@drawable/ic_ms_error"
-                android:id="@+id/tilCalorias"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:hint="@string/crear_alimento_calorias_hint"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etCalorias"
+                <TextView
+                    android:id="@+id/tvErrorNombre"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="number" />
+                    android:layout_marginTop="4dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:accessibilityLiveRegion="polite"
+                    android:textColor="?attr/colorError"
+                    android:textSize="@dimen/text_eyebrow"
+                    android:visibility="gone" />
 
-            </com.google.android.material.textfield.TextInputLayout>
+                <TextView
+                    android:id="@+id/tvRotuloMarca"
+                    style="@style/Widget.GymProFit.Alta.Etiqueta"
+                android:textSize="@dimen/text_label"
+                android:textAllCaps="false"
+                android:letterSpacing="0"
+                    android:layout_marginTop="16dp"
+                    android:labelFor="@id/etMarca" />
 
-            <!-- Proteínas -->
-            <com.google.android.material.textfield.TextInputLayout
-        app:errorIconDrawable="@drawable/ic_ms_error"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:hint="@string/crear_alimento_proteinas_hint"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etProteinas"
+                <EditText
+                    android:id="@+id/etMarca"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:digits="0123456789.," />
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_campo_texto"
+                    android:hint="@string/crear_marca_hint"
+                    android:imeOptions="actionDone"
+                    android:importantForAutofill="no"
+                    android:inputType="textCapWords"
+                    android:maxLength="100"
+                    android:minHeight="52dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textColorHint="?attr/colorOnSurfaceVariant"
+                    android:textSize="@dimen/text_subtitle" />
 
-            </com.google.android.material.textfield.TextInputLayout>
+                <TextView
+                    android:id="@+id/tvRotuloCategoria"
+                    style="@style/Widget.GymProFit.Alta.Etiqueta"
+                android:textSize="@dimen/text_label"
+                android:textAllCaps="false"
+                android:letterSpacing="0"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/crear_categoria" />
 
-            <!-- Carbohidratos -->
-            <com.google.android.material.textfield.TextInputLayout
-        app:errorIconDrawable="@drawable/ic_ms_error"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:hint="@string/crear_alimento_carbos_hint"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etCarbohidratos"
+                <HorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:digits="0123456789.," />
+                    android:layout_marginStart="-16dp"
+                    android:layout_marginEnd="-16dp"
+                    android:layout_marginTop="2dp"
+                    android:clipToPadding="false"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:scrollbars="none">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <LinearLayout
+                        android:id="@+id/grupoCategorias"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" />
+                </HorizontalScrollView>
 
-            <!-- Grasas -->
-            <com.google.android.material.textfield.TextInputLayout
-        app:errorIconDrawable="@drawable/ic_ms_error"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:hint="@string/crear_alimento_grasas_hint"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etGrasas"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:digits="0123456789.," />
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/bg_tarjeta_20"
+                    android:orientation="vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="12dp">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <LinearLayout
+                        android:id="@+id/filaEtiqueta"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingBottom="10dp">
 
-            <!-- Botón guardar -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnGuardarAlimento"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/crear_alimento_guardar"
-                style="@style/Widget.MaterialComponents.Button" />
+                        <TextView
+                            android:id="@+id/tvTituloEtiqueta"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:accessibilityHeading="true"
+                            android:text="@string/crear_etiqueta"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="@dimen/text_subtitle"
+                            android:textStyle="bold"
+                            tools:targetApi="28" />
 
-        </LinearLayout>
-    </ScrollView>
+                        <LinearLayout
+                            android:id="@+id/conmutadorBase"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_conmutador"
+                            android:orientation="horizontal"
+                            android:padding="3dp">
 
+                            <TextView
+                                android:id="@+id/btnBaseCien"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_conmutador_lado"
+                                android:gravity="center"
+                                android:minHeight="42dp"
+                                android:minWidth="48dp"
+                                android:paddingStart="12dp"
+                                android:paddingEnd="12dp"
+                                android:textColor="@color/texto_conmutador"
+                                android:textSize="@dimen/text_label"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/btnBaseRacion"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="2dp"
+                                android:background="@drawable/bg_conmutador_lado"
+                                android:gravity="center"
+                                android:minHeight="42dp"
+                                android:minWidth="48dp"
+                                android:paddingStart="12dp"
+                                android:paddingEnd="12dp"
+                                android:textColor="@color/texto_conmutador"
+                                android:textSize="@dimen/text_label"
+                                android:textStyle="bold"
+                                android:visibility="gone" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/grupoCifras"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                    <TextView
+                        android:id="@+id/tvAvisoKcal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_raya_arriba"
+                        android:accessibilityLiveRegion="polite"
+                        android:drawablePadding="8dp"
+                        android:gravity="center_vertical"
+                        android:paddingTop="12dp"
+                        android:textSize="@dimen/text_label"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvTituloQueda"
+                    style="@style/Widget.GymProFit.Seccion"
+                    android:layout_marginTop="16dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:textAllCaps="true"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Label"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+                <LinearLayout
+                    android:id="@+id/cifrasQueda"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:focusable="true"
+                    android:orientation="horizontal">
+
+                    <include android:id="@+id/quedaKcal" layout="@layout/item_cifra_ficha" />
+
+                    <Space android:layout_width="8dp" android:layout_height="1dp" />
+
+                    <include android:id="@+id/quedaProteina" layout="@layout/item_cifra_ficha" />
+
+                    <Space android:layout_width="8dp" android:layout_height="1dp" />
+
+                    <include android:id="@+id/quedaCarb" layout="@layout/item_cifra_ficha" />
+
+                    <Space android:layout_width="8dp" android:layout_height="1dp" />
+
+                    <include android:id="@+id/quedaGrasa" layout="@layout/item_cifra_ficha" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/repartoQueda"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:focusable="true"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp"
+                        android:importantForAccessibility="noHideDescendants"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:id="@+id/tramoQuedaProteina"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_barra_redonda"
+                            android:backgroundTint="@color/gp_macro_proteinas" />
+
+                        <Space android:layout_width="3dp" android:layout_height="1dp" />
+
+                        <View
+                            android:id="@+id/tramoQuedaCarb"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_barra_redonda"
+                            android:backgroundTint="@color/gp_macro_carbos" />
+
+                        <Space android:layout_width="3dp" android:layout_height="1dp" />
+
+                        <View
+                            android:id="@+id/tramoQuedaGrasa"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_barra_redonda"
+                            android:backgroundTint="@color/gp_macro_grasas" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvLeyendaQueda"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:importantForAccessibility="no"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="@dimen/text_label" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/cardRacion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/bg_tarjeta_20"
+                    android:orientation="vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="16dp">
+
+                    <TextView
+                        android:id="@+id/tvTituloRacion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:accessibilityHeading="true"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="@dimen/text_subtitle"
+                        tools:targetApi="28" />
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/grupoRaciones"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:chipSpacingHorizontal="8dp"
+                        app:chipSpacingVertical="0dp" />
+
+                    <LinearLayout
+                        android:id="@+id/filaGramosRacion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/tvRacionSon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="@dimen/text_fila" />
+
+                        <LinearLayout
+                            android:layout_width="104dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:background="@drawable/bg_campo_cifra"
+                            android:gravity="center_vertical|end"
+                            android:minHeight="44dp"
+                            android:orientation="horizontal"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="12dp">
+
+                            <EditText
+                                android:id="@+id/etGramosRacion"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:fontFeatureSettings="tnum"
+                                android:gravity="end|center_vertical"
+                                android:importantForAutofill="no"
+                                android:inputType="numberDecimal"
+                                android:digits="0123456789.,"
+                                android:maxLength="6"
+                                android:minHeight="44dp"
+                                android:textColor="?attr/colorOnSurface"
+                                android:textSize="@dimen/text_subtitle"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvUnidadRacion"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:importantForAccessibility="no"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:textSize="@dimen/text_label" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvKcalRacion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:fontFeatureSettings="tnum"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textSize="@dimen/text_label" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvErrorRacion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:accessibilityLiveRegion="polite"
+                        android:textColor="?attr/colorError"
+                        android:textSize="@dimen/text_eyebrow"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:text="@string/crear_solo_tu"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="@dimen/text_label"
+                    app:drawableStartCompat="@drawable/ic_ms_lock"
+                    app:drawableTint="?attr/colorOnSurfaceVariant" />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <include
+            android:id="@+id/estadoCrear"
+            layout="@layout/view_estado" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_barra_inferior"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="16dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGuardarAnadir"
+            style="@style/Widget.GymProFit.BotonPildora"
+            android:layout_width="match_parent"
+            android:minHeight="52dp"
+            android:textSize="@dimen/text_subtitle"
+            android:textStyle="bold"
+            app:cornerRadius="26dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSoloGuardar"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:minHeight="48dp"
+            android:text="@string/crear_solo_guardar"
+            android:textColor="?attr/colorOnPrimaryContainer"
+            android:textSize="@dimen/text_body" />
+    </LinearLayout>
 </LinearLayout>
