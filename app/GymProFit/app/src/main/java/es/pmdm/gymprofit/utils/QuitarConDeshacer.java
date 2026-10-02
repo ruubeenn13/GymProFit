@@ -12,7 +12,9 @@ import androidx.annotation.Nullable;
 // porque se quita otra o porque se sale de la pantalla— y, al salir, la pantalla espera
 // la respuesta antes de volver, para que el diario no cuente lo que ya no está. Si la API
 // falla, la fila vuelve a su sitio y se dice.
-// Solo hay una pendiente a la vez: es la que puede deshacer el aviso que se ve.
+// Solo hay una pendiente a la vez: es la que puede deshacer el aviso que se ve. Lo
+// pendiente y lo enviado sin responder quedan apartados: una recarga no lo devuelve
+// (GP-179).
 // Sin vistas ni red: quien lo usa pone el envío y lo que se hace en pantalla.
 // ============================================================
 public final class QuitarConDeshacer<T> {
@@ -52,6 +54,8 @@ public final class QuitarConDeshacer<T> {
     private final Envio<T> envio;
     private final Vista<T> vista;
     @Nullable private Pendiente<T> pendiente;
+    // Lo enviado que aún no ha respondido.
+    private final java.util.List<T> enCamino = new java.util.ArrayList<>();
     private int enVuelo;
     private boolean saliendo;
     private boolean avisadoSalida;
@@ -79,12 +83,24 @@ public final class QuitarConDeshacer<T> {
         return pendiente != null;
     }
 
+    /**
+     * Lo que no tiene que volver a la lista si se recarga: la pendiente y lo enviado que
+     * aún no ha respondido (GP-179).
+     */
+    @NonNull
+    public java.util.List<T> apartados() {
+        java.util.List<T> l = new java.util.ArrayList<>(enCamino);
+        if (pendiente != null) l.add(pendiente.item);
+        return l;
+    }
+
     /** El aviso se ha ido: se manda la pendiente, si la hay. */
     public void confirmar() {
         Pendiente<T> p = pendiente;
         if (p == null) return;
         pendiente = null;
         enVuelo++;
+        enCamino.add(p.item);
         envio.enviar(p.item, new Respuesta() {
             private boolean respondida;
 
@@ -92,6 +108,7 @@ public final class QuitarConDeshacer<T> {
             public void ok() {
                 if (respondida) return;
                 respondida = true;
+                enCamino.remove(p.item);
                 terminado();
             }
 
@@ -99,6 +116,7 @@ public final class QuitarConDeshacer<T> {
             public void fallo(int code, @Nullable String message) {
                 if (respondida) return;
                 respondida = true;
+                enCamino.remove(p.item);
                 vista.devolver(p.item, p.posicion, code, message);
                 terminado();
             }

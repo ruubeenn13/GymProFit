@@ -1565,6 +1565,8 @@
     <string name="comida_quitar">Quitar de la comida</string>
     <string name="comida_eliminar_fondo">Eliminar</string>
     <string name="comida_quitado">Quitado: %1$s</string>
+    <!-- GP-179: al salir de una comida, mientras responde un borrado. -->
+    <string name="comida_saliendo">Guardando los cambios…</string>
     <string name="comida_cambiar_cantidad">Cambiar la cantidad</string>
     <string name="comida_anadir_alimento">Añadir alimento</string>
     <string name="comida_escanear_a11y">Escanear un código de barras</string>

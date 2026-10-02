@@ -48,6 +48,7 @@ import es.pmdm.gymprofit.utils.ComidaQueToca;
 import es.pmdm.gymprofit.utils.DiaNutricion;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.Movimiento;
+import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.QuitarConDeshacer;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
 import es.pmdm.gymprofit.utils.ResumenComida;
@@ -291,11 +292,12 @@ public class ComidaActivity extends BaseActivity {
             @Override
             public void onOk(List<AlimentoComida> lista) {
                 if (isDestroyed()) return;
-                // Con un aviso de «Deshacer» a la vista, la pendiente no vuelve a la lista.
+                // Lo quitado no vuelve a la lista: ni lo que aún se puede deshacer ni lo
+                // enviado sin responder (GP-179).
                 lineas.clear();
                 if (lista != null) {
                     for (AlimentoComida a : lista) {
-                        if (!quitar.hayPendiente() || !esPendiente(a)) lineas.add(a);
+                        if (!apartada(a)) lineas.add(a);
                     }
                 }
                 if (!yaPintada) adapter.entrarEnCascada();
@@ -310,10 +312,9 @@ public class ComidaActivity extends BaseActivity {
         });
     }
 
-    @Nullable private Integer idPendiente;
-
-    private boolean esPendiente(AlimentoComida a) {
-        return idPendiente != null && idPendiente == a.getId();
+    private boolean apartada(AlimentoComida a) {
+        for (AlimentoComida q : quitar.apartados()) if (q.getId() == a.getId()) return true;
+        return false;
     }
 
     // Sin nada en pantalla, el error ocupa su sitio con «Reintentar»; con algo, se avisa y
@@ -469,13 +470,11 @@ public class ComidaActivity extends BaseActivity {
                 alimentoComidaApi.eliminar(item.getId()).enqueue(new ApiCallback<Void>() {
                     @Override
                     public void onOk(Void ignorado) {
-                        if (idPendiente != null && idPendiente == item.getId()) idPendiente = null;
                         respuesta.ok();
                     }
 
                     @Override
                     public void onFail(int code, String message) {
-                        if (idPendiente != null && idPendiente == item.getId()) idPendiente = null;
                         respuesta.fallo(code, message);
                     }
                 }), new QuitarConDeshacer.Vista<AlimentoComida>() {
@@ -489,6 +488,8 @@ public class ComidaActivity extends BaseActivity {
             @Override
             public void listoParaSalir() {
                 if (isDestroyed()) return;
+                espera.removeCallbacks(verSaliendo);
+                LoadingDialog.hide(ComidaActivity.this);
                 setResult(RESULT_OK);
                 finish();
             }
@@ -504,7 +505,6 @@ public class ComidaActivity extends BaseActivity {
         // La que queda última pierde su raya.
         if (pos > 0 && pos == lineas.size()) adapter.notifyItemChanged(pos - 1);
         quitar.quitar(item, pos);
-        idPendiente = item.getId();
         pintar();
         mostrarAviso(item);
     }
@@ -538,7 +538,6 @@ public class ComidaActivity extends BaseActivity {
 
     private void deshacer() {
         QuitarConDeshacer.Pendiente<AlimentoComida> p = quitar.deshacer();
-        idPendiente = null;
         if (p != null) volverAPoner(p.item, p.posicion);
     }
 
@@ -552,9 +551,28 @@ public class ComidaActivity extends BaseActivity {
     }
 
     // Al salir, lo quitado se manda y se espera su respuesta: el diario ya lo cuenta bien.
+    // Si tarda más de ~300 ms, que se vea que está saliendo (GP-179): si no, parece que
+    // atrás no ha hecho nada.
+    private static final long ESPERA_SALIENDO = 300;
+    private final android.os.Handler espera = new android.os.Handler(android.os.Looper.getMainLooper());
+    private final Runnable verSaliendo = () -> {
+        if (!isDestroyed()) LoadingDialog.show(this, getString(R.string.comida_saliendo));
+    };
+
     private void salir() {
         quitar.salir();
         if (aviso != null) aviso.dismiss();
+        if (!isFinishing()) {
+            espera.removeCallbacks(verSaliendo);
+            espera.postDelayed(verSaliendo, ESPERA_SALIENDO);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        espera.removeCallbacks(verSaliendo);
+        LoadingDialog.hide(this);
+        super.onDestroy();
     }
 
     // ── Menú y ficha ────────────────────────────────────────────────────────
