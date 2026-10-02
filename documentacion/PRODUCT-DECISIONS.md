@@ -686,6 +686,24 @@ El `LIKE` con comodín delante no usa índice: barre la tabla entera en cada pul
 
 **Qué la invalidaría.** Que los avisos necesiten respuesta a quien los envió (entonces hace falta el usuario, y entra en la política). Que la app se publique solo por Play con App Bundle: entonces el modelo dentro de la app cuesta 3 a 5 MB por móvil y no 22, y se puede reconsiderar.
 
+
+### DEC-043 · El plural es un dato, la ración propia es de una lista, quitar no pregunta y la categoría es una clave
+**Estado:** Aceptada · **Fecha:** 2026-10-02 · **Tarea:** GP-162 (decisiones 15, 16 y 17 del lienzo), GP-172, GP-174, GP-175 y GP-176 (lote 1.6.2)
+
+**Contexto.** El 02-10 el propietario vio la 1.6.1 en su móvil y cambió tres tableros (`documentacion/diseno/2026-10-02-nutricion/`): elegir la comida con una etiqueta y una hoja, una comida con más vida y crear un alimento como en la etiqueta. Construirlos obligaba a decidir cuatro cosas que el lienzo no dice.
+
+**Decisión.**
+
+- **El plural de una ración es un dato, no una regla de la app.** La API manda la unidad de cada ración en singular y en plural, en el idioma de la petición (`unidad`, `unidadPlural`; en la línea de una comida, `racionUnidad` y `racionUnidadPlural`), sacadas de un diccionario versionado junto a los de la búsqueda (`busqueda/unidades_racion.txt`) que cubre todo nombre que empieza por «1 ». Así «flan» da «flanes» y «flans», «mango» da «mangos» y «mangoes», y la app solo elige: una, singular; si no, plural («1,5 rebanadas»). Un nombre sin «1 » («Media taza») no tiene unidad y se escribe como en la 1.6.1, «2 × media taza (120 g)»; una API anterior, igual. `nombre` y `racionNombre` no cambian: los usan las builds repartidas.
+- **La ración de un alimento propio sale de una lista cerrada**: unidad, ración, envase o rebanada, con sus gramos (más de 0 y hasta 2000), y una sola por ahora, aunque el campo sea una lista para no cambiar el contrato cuando sean más. Con texto libre la app no sabría ponerla en plural ni marcarla al editar (`RacionDTO.clave`). Cambiarla reescribe su misma fila, para que las líneas de comidas que la usan no la pierdan; quitarla deja esas líneas en gramos. En un alimento del catálogo, 400: sus raciones están revisadas.
+- **Quitar un alimento de una comida no pregunta.** La fila se va, los números pasan a su valor nuevo y un aviso con «Deshacer» la devuelve sin llamar a la API. El borrado se manda cuando el aviso se va —por tiempo, porque se quita otro o porque se sale de la pantalla, también a otra app—, y al salir hacia el diario se espera la respuesta, para que el diario no cuente lo quitado. Si falla, la fila vuelve a su sitio y se dice. El aviso dura **5 s**, no los 2,75 de Material: no daba para leer el nombre y llegar al botón; Material lo alarga además a lo que pida el sistema por accesibilidad, nunca menos. Dice «Quitado: Arroz blanco» y no «Arroz blanco quitado», que en español obliga a concordar con el género del alimento.
+- **La categoría viaja como clave canónica, en español** («Carnes y aves», `AlimentoController.CATEGORIAS`), y la app la traduce y le pone su icono (`Categorias`). La API no la traduce, ni en la línea de una comida (GP-176) ni en ningún sitio: si la app mandara el nombre traducido, un alimento creado en inglés quedaría en una categoría que no existe. Sin elegir, el alimento se guarda como «Otro».
+- **Las cifras de crear un alimento se escriben por 100 g o por la ración, y se guardan por 100 g.** La app hace la cuenta (`EtiquetaAlimento`) y conserva el valor exacto al cambiar de base, para que ir y volver no cambie lo que se guarda. Solo la energía es obligatoria, y 0 vale; un macro vacío es 0 y la fibra vacía no se sabe. Más de **900 kcal en 100 g** no se guarda: es más que la grasa pura, y casi siempre son kJ. Cada macro va de 0 a 100 g por 100 g, y grasas, hidratos, fibra y proteínas suman como mucho **102 g**: las etiquetas redondean cada cifra y la suma puede pasarse un poco. El aviso de las calorías compara la energía con 4·P + 4·C + 9·G y **cuadra** si se separa 20 kcal o un 15 % como mucho, lo que sea mayor; no impide guardar, porque la fibra y el alcohol cuentan aparte.
+
+**Consecuencias.** Un nombre de ración nuevo que empiece por «1 » necesita su línea en el diccionario, en los dos idiomas; `UnidadesRacionTest` lo exige para todas las de la semilla. Lo quitado y no confirmado se pierde si el sistema mata la app con el aviso a la vista: queda en la comida, que es el lado seguro. Una etiqueta con la energía en kJ de verdad (más de 900) hay que pasarla a kcal a mano.
+
+**Qué la invalidaría.** Un idioma con más de dos formas de plural (entonces la API tendría que mandar las formas de CLDR, no dos). Que el propietario quiera raciones propias libres o varias por alimento: la lista de `ClaveRacion` y el «una sola» son los que se cambiarían, no el contrato.
+
 ---
 
 ## Pendientes de decidir
