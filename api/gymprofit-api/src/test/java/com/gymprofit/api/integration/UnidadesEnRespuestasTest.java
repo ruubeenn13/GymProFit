@@ -53,6 +53,9 @@ class UnidadesEnRespuestasTest extends AbstractOwnershipTest {
     @Autowired
     private LimiteOpenFoodFacts limite;
 
+    @Autowired
+    private org.springframework.context.ApplicationEventPublisher eventos;
+
     @MockitoBean
     private OpenFoodFactsClient openFoodFactsClient;
 
@@ -79,6 +82,9 @@ class UnidadesEnRespuestasTest extends AbstractOwnershipTest {
         r.setFuente("prueba");
         r.setOrden(1);
         rebanadaId = racionRepository.save(r).getId();
+        // Guardado por el repositorio, el índice no se entera solo: sin esto, la búsqueda
+        // depende de que ningún test anterior lo haya construido ya.
+        eventos.publishEvent(new IndiceAlimentos.CatalogoCambiado());
         em.flush();
         em.clear();
     }
