@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Así se mueve la nutrición</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+@keyframes m13Barra{0%{width:51.6%;animation-timing-function:cubic-bezier(.33,1,.68,1)}37.5%,90%{width:60%}100%{width:51.6%}}
+@keyframes m14Arco{0%{stroke-dasharray:129.7 251.3;animation-timing-function:cubic-bezier(.33,1,.68,1)}37.5%,90%{stroke-dasharray:150.8 251.3}100%{stroke-dasharray:129.7 251.3}}
+@keyframes m15Fondo{0%,30%{background:#252A31;transform:scale(1)}33%{background:#252A31;transform:scale(.94)}38%,85%{background:#143323;transform:scale(1)}92%,100%{background:#252A31;transform:scale(1)}}
+@keyframes m15Mas{0%,31%{opacity:1;transform:scale(1)}36%,88%{opacity:0;transform:scale(.4)}94%,100%{opacity:1;transform:scale(1)}}
+@keyframes m15Check{0%,33%{opacity:0;transform:scale(0)}39%{opacity:1;transform:scale(1.15)}44%,86%{opacity:1;transform:scale(1)}92%,100%{opacity:0;transform:scale(0)}}
+@keyframes m16{0%{opacity:0;transform:translateY(16px);animation-timing-function:cubic-bezier(.05,.7,.1,1)}12.5%,80%{opacity:1;transform:none}92%,100%{opacity:0;transform:none}}
+@keyframes m17Linea{0%{top:8px;opacity:1}16%{top:84px;opacity:1}32%{top:8px;opacity:1}34%,96%{top:8px;opacity:0}100%{top:8px;opacity:1}}
+@keyframes m17Esq{0%,34%{border-color:#F2F2F3}36%,86%{border-color:#4ADE80}92%,100%{border-color:#F2F2F3}}
+@keyframes m17Marco{0%,34%{transform:scale(1)}35%{transform:scale(1.08);animation-timing-function:cubic-bezier(.2,0,0,1)}42%,100%{transform:scale(1)}}
+@keyframes m17Hoja{0%,40%{transform:translateY(110%);opacity:0;animation-timing-function:cubic-bezier(.05,.7,.1,1)}56%,86%{transform:none;opacity:1}94%,100%{transform:translateY(110%);opacity:0}}
+@keyframes m18Sug{0%,16%{opacity:1;transform:none}22%,92%{opacity:0;transform:scale(.96)}100%{opacity:1;transform:none}}
+@keyframes m18Fila{0%,20%{opacity:0;transform:translateY(-10px);animation-timing-function:cubic-bezier(.05,.7,.1,1)}32%,84%{opacity:1;transform:none}94%,100%{opacity:0;transform:none}}
+@keyframes m18Antes{0%,24%{opacity:1}28%,90%{opacity:0}96%,100%{opacity:1}}
+@keyframes m18Despues{0%,24%{opacity:0}30%,88%{opacity:1}96%,100%{opacity:0}}
+@keyframes m19{0%,30%{transform:scale(1);color:#F2F2F3;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}31%{color:#F87171;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24;animation-timing-function:cubic-bezier(.34,1.56,.64,1)}37%{transform:scale(1.3)}43%{transform:scale(.95)}49%,86%{transform:scale(1);color:#F87171;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}90%,100%{transform:scale(1);color:#F2F2F3;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}}
+@keyframes m20Fila{0%,18%{transform:translateX(0);animation-timing-function:cubic-bezier(.2,0,0,1)}30%,72%{transform:translateX(-110%)}80%,100%{transform:translateX(0)}}
+@keyframes m20Alto{0%,32%{height:48px;animation-timing-function:cubic-bezier(.2,0,0,1)}40%,72%{height:0}80%,100%{height:48px}}
+@keyframes m20Aviso{0%,38%{transform:translateY(70px);opacity:0;animation-timing-function:cubic-bezier(.05,.7,.1,1)}46%,72%{transform:none;opacity:1}80%,100%{transform:translateY(70px);opacity:0}}
+@keyframes m21Arco{0%,10%{stroke-dasharray:238.8 251.3;stroke:#FF6A00}22%,88%{stroke-dasharray:251.3 251.3;stroke:#4ADE80}96%,100%{stroke-dasharray:238.8 251.3;stroke:#FF6A00}}
+@keyframes m21Aura{0%,20%{transform:scale(.8);opacity:0}30%{opacity:.8}60%,100%{transform:scale(1.5);opacity:0}}
+@keyframes m21Punto{0%,15%{transform:scale(1);background:#353A43}22%{transform:scale(1.4);background:#4ADE80}30%,88%{transform:scale(1);background:#4ADE80}95%,100%{transform:scale(1);background:#353A43}}
+@keyframes m21Barra{0%,28%{background:#6BA6F5;box-shadow:0 0 0 0 rgba(232,184,75,0)}34%{background:#E8B84B;box-shadow:0 0 14px 3px rgba(232,184,75,.65)}50%,88%{background:#E8B84B;box-shadow:0 0 0 0 rgba(232,184,75,0)}96%,100%{background:#6BA6F5}}
+@keyframes m21Brillo{0%,36%{transform:translateX(-130%) skewX(-18deg)}62%,100%{transform:translateX(420%) skewX(-18deg)}}
+@keyframes m22Agua{0%,25%{height:0%;animation-timing-function:cubic-bezier(.34,1.56,.64,1)}44%,88%{height:70%}96%,100%{height:0%}}
+@keyframes m22Vaso{0%,25%{transform:scale(1)}31%{transform:scale(1.12)}40%,100%{transform:scale(1)}}
+@keyframes m22A{0%,30%{opacity:1}34%,92%{opacity:0}96%,100%{opacity:1}}
+@keyframes m22B{0%,30%{opacity:0}36%,90%{opacity:1}96%,100%{opacity:0}}
+@media (prefers-reduced-motion: reduce){.anim{animation:none !important;transition:none !important}}
+</style>
+</helmet>
+<div style="width: 1100px; height: 1640px; box-sizing: border-box; padding: 52px 56px; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif; display: flex; flex-direction: column; gap: 24px;">
+<div style="display: flex; flex-direction: column; gap: 8px;">
+<h1 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 46px; line-height: 1.05;">Así se mueve la nutrición</h1>
+<p style="margin: 0; font-size: 18px; line-height: 1.45; color: #C9CED6;">Los momentos nuevos, del 13 al 22, con las curvas de DEC-039. Aquí se repiten para verlos; en la app pasan una vez, cuando toca.</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px;">
+<section style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+<div aria-hidden="true" style="position: relative; height: 150px; border-radius: 14px; background: #121418; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;">
+<span style="display: flex; align-items: baseline; gap: 8px;"><strong style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 48px; line-height: 1; font-variant-numeric: tabular-nums;">{{ cuenta }}</strong><span style="font-size: 16px; color: #A1A9B6;">kcal</span></span>
+<span style="width: 200px; height: 10px; border-radius: 5px; background: #353A43; overflow: hidden;"><span class="anim" style="display: block; width: 60%; height: 100%; border-radius: 5px; background: #FF6A00; animation: m13Barra 3.2s infinite;"></span></span>
+</div>
+<h2 style="margin: 0; font-size: 18px; font-weight: 700;">13 · Las cifras cuentan</h2>
+<p style="margin: 0; font-size: 14px; line-height: 1.45; color: #C9CED6;">Al abrir el diario, desde cero; al añadir, desde la cifra anterior. 1.200 ms, frenando al final, y las barras de macros a la vez.</p>
+</section>
+<section style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+<div aria-hidden="true" style="position: relative; height: 150px; border-radius: 14px; background: #121418; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+<svg width="110" height="110" viewBox="0 0 110 110"><circle cx="55" cy="55" r="40" fill="none" stroke="#353A43" stroke-width="10"></circle><circle class="anim" cx="55" cy="55" r="40" fill="none" stroke="#FF6A00" stroke-width="10" stroke-linecap="round" transform="rotate(-90 55 55)" style="stroke-dasharray: 150.8 251.3; animation: m14Arco 3.2s infinite;"></circle></svg>
+<span class="ms f" style="position: absolute; font-size: 30px; color: #FFB27A;">local_fire_department</span>
+</div>
+<h2 style="margin: 0; font-size: 18px; font-weight: 700;">14 · El anillo se llena</h2>
+<p style="margin: 0; font-size: 14px; line-height: 1.45; color: #C9CED6;">El arco crece con las cifras y con la misma curva. Si te pasas, el anillo se queda lleno y el número lo dice, sin rojo.</p>
+</section>
+<section style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+<div aria-hidden="true" style="position: relative; height: 150px; border-radius: 14px; background: #121418; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+<div style="width: 260px; padding: 6px 6px 6px 14px; border-radius: 16px; background: #1B1E24; display: flex; align-items: center; gap: 10px; box-sizing: border-box;">
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 15px;">Yogur proteico natural</span><span style="font-size: 13px; color: #A1A9B6;">1 envase · 120 kcal</span></span>
+<span class="anim" style="position: relative; flex-shrink: 0; width: 44px; height: 44px; border-radius: 22px; background: #252A31; animation: m15Fondo 2.4s linear infinite;"><span class="ms anim" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #F2F2F3; animation: m15Mas 2.4s linear infinite;">add</span><span class="ms anim" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #4ADE80; opacity: 0; animation: m15Check 2.4s linear infinite;">check</span></span>
+</div>
+</div>
+<h2 style="margin: 0; font-size: 18px; font-weight: 700;">15 · El «+» se vuelve ✓</h2>
+<p style="margin: 0; font-size: 14px; line-height: 1.45; color: #C9CED6;">Se hunde un poco, pasa a verde y el check salta con rebote en 260 ms. Vibración ligera. Tocarlo otra vez lo quita.</p>
+</section>
+<section style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+<div aria-hidden="true" style="position: relative; height: 150px; border-radius: 14px; background: #121418; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+<div style="width: 250px; display: flex; flex-direction: column; gap: 8px;">
+<span class="anim" style="height: 24px; border-radius: 8px; background: #252A31; animation: m16 2.8s infinite both;"></span>
+<span class="anim" style="height: 24px; border-radius: 8px; background: #252A31; animation: m16 2.8s 40ms infinite both;"></span>
+<span class="anim" style="height: 24px; border-radius: 8px; background: #252A31; animation: m16 2.8s 80ms infinite both;"></span>
+<span class="anim" style="height: 24px; border-radius: 8px; background: #252A31; animation: m16 2.8s 120ms infinite both;"></span>
+</div>
+</div>
+<h2 style="margin: 0; font-size: 18px; font-weight: 700;">16 · La lista entra en cascada</h2>
+<p style="margin: 0; font-size: 14px; line-height: 1.45; color: #C9CED6;">Recientes, resultados y favoritos suben 16 px en 350 ms, con 40 ms entre filas. Solo la primera vez; al volver, ya están.</p>
+</section>
+<section style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+<div aria-hidden="true" style="position: relative; height: 150px; border-radius: 14px; background: #121418; overflow: hidden; display: flex; align-items: flex-start; justify-content: center; padding-top: 14px; box-sizing: border-box;">
+<span class="anim" style="position: relative; width: 150px; height: 96px; animation: m17Marco 2.8s infinite;">
+<span class="anim" style="position: absolute; left: 0; top: 0; width: 26px; height: 26px; border-left: 4px solid #F2F2F3; border-top: 4px solid #F2F2F3; border-top-left-radius: 12px; animation: m17Esq 2.8s infinite;"></span>
+<span class="anim" style="position: absolute; right: 0; top: 0; width: 26px; height: 26px; border-right: 4px solid #F2F2F3; border-top: 4px solid #F2F2F3; border-top-right-radius: 12px; animation: m17Esq 2.8s infinite;"></span>
+<span class="anim" style="position: absolute; left: 0; bottom: 0; width: 26px; height: 26px; border-left: 4px solid #F2F2F3; border-bottom: 4px solid #F2F2F3; border-bottom-left-radius: 12px; animation: m17Esq 2.8s infinite;"></span>
+<span class="anim" style="position: absolute; right: 0; bottom: 0; width: 26px; height: 26px; border-right: 4px solid #F2F2F3; border-bottom: 4px solid #F2F2F3; border-bottom-right-radius: 12px; animation: m17Esq 2.8s infinite;"></span>
+<span class="anim" style="position: absolute; left: 12px; right: 12px; top: 8px; height: 2px; background: #FF6A00; box-shadow: 0 0 10px 2px rgba(255, 106, 0, 0.6); opacity: 0; animation: m17Linea 2.8s infinite;"></span>
+</span>
+<div class="anim" style="position: absolute; left: 10px; right: 10px; bottom: 0; height: 40px; padding: 0 12px; border-radius: 12px 12px 0 0; background: #1B1E24; border-top: 1px solid #4A505B; display: flex; align-items: center; gap: 8px; animation: m17Hoja 2.8s infinite;"><span style="flex-grow: 1; font-size: 14px; font-weight: 600;">Yogur proteico natural</span><span style="padding: 4px 10px; border-radius: 12px; background: #FF6A00; color: #1A0E00; font-size: 12px; font-weight: 700;">Añadir</span></div>
+</div>
+<h2 style="margin: 0; font-size: 18px; font-weight: 700;">17 · Código leído</h2>
+<p style="margin: 0; font-size: 14px; line-height: 1.45; color: #C9CED6;">Las esquinas pasan a verde y el marco encaja en 200 ms, con una vibración. La hoja del producto sube en 450 ms.</p>
+</section>
+<section style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+<div aria-hidden="true" style="position: relative; height: 150px; border-radius: 14px; background: #121418; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+<div style="width: 260px; padding: 12px 14px; border-radius: 16px; background: #1B1E24; display: flex; flex-direction: column; gap: 8px; box-sizing: border-box;">
+<div style="position: relative; display: flex; align-items: center; justify-content: space-between;"><span style="font-size: 15px; font-weight: 700;">Merienda</span><span style="position: relative; width: 90px; height: 18px;"><span class="anim" style="position: absolute; right: 0; font-size: 13px; color: #A1A9B6; animation: m18Antes 3s infinite;">Sin apuntar</span><span class="anim" style="position: absolute; right: 0; font-size: 13px; color: #F2F2F3; opacity: 0; animation: m18Despues 3s infinite;">203 kcal</span></span></div>
+<div style="position: relative; height: 56px;">
+<span class="anim" style="position: absolute; inset: 0; border-radius: 12px; background: #3A2110; color: #FFB27A; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; font-weight: 600; animation: m18Sug 3s infinite;"><span class="ms" style="font-size: 18px;">content_copy</span>¿Copiar la de ayer?</span>
+<span class="anim" style="position: absolute; left: 0; right: 0; top: 2px; height: 22px; border-radius: 6px; background: #252A31; opacity: 0; animation: m18Fila 3s infinite;"></span>
+<span class="anim" style="position: absolute; left: 0; right: 0; top: 30px; height: 22px; border-radius: 6px; background: #252A31; opacity: 0; animation: m18Fila 3s 120ms infinite;"></span>
+</div>
+</div>
+</div>
+<h2 style="margin: 0; font-size: 18px; font-weight: 700;">18 · La copia de ayer</h2>
+<p style="margin: 0; font-size: 14px; line-height: 1.45; color: #C9CED6;">Con ✓, los alimentos caen en su comida uno detrás de otro y las cifras del día cuentan. Con ✗, la tarjeta se pliega y no vuelve ese día.</p>
+</section>
+<section style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+<div aria-hidden="true" style="position: relative; height: 150px; border-radius: 14px; background: #121418; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+<span style="width: 64px; height: 64px; border-radius: 32px; background: #1B1E24; display: flex; align-items: center; justify-content: center;"><span class="ms anim" style="font-size: 34px; color: #F2F2F3; animation: m19 2.4s infinite;">favorite</span></span>
+</div>
+<h2 style="margin: 0; font-size: 18px; font-weight: 700;">19 · El corazón late</h2>
+<p style="margin: 0; font-size: 14px; line-height: 1.45; color: #C9CED6;">Al marcar favorito, se rellena y late en 450 ms, con rebote. Al quitarlo, se vacía sin latido.</p>
+</section>
+<section style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+<div aria-hidden="true" style="position: relative; height: 150px; border-radius: 14px; background: #121418; overflow: hidden; display: flex; align-items: flex-start; justify-content: center; padding-top: 14px; box-sizing: border-box;">
+<div style="width: 260px; border-radius: 14px; background: #1B1E24; overflow: hidden; display: flex; flex-direction: column;">
+<span style="height: 48px; display: flex; align-items: center; padding: 0 14px; font-size: 14px; border-bottom: 1px solid #252A31;">Pechuga de pollo · 165 kcal</span>
+<span class="anim" style="position: relative; display: block; height: 48px; overflow: hidden; background: #3A1414; animation: m20Alto 3.2s infinite;"><span style="position: absolute; right: 14px; top: 14px; font-size: 13px; font-weight: 700; color: #F87171;">Eliminar</span><span class="anim" style="position: absolute; inset: 0; display: flex; align-items: center; padding: 0 14px; background: #1B1E24; font-size: 14px; animation: m20Fila 3.2s infinite;">Arroz blanco · 260 kcal</span></span>
+<span style="height: 48px; display: flex; align-items: center; padding: 0 14px; font-size: 14px; border-top: 1px solid #252A31;">Ensalada verde · 20 kcal</span>
+</div>
+<div class="anim" style="position: absolute; left: 16px; right: 16px; bottom: 10px; height: 36px; border-radius: 10px; background: #F2F2F3; color: #17181C; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; font-size: 13px; opacity: 0; animation: m20Aviso 3.2s infinite;"><span>Arroz blanco quitado</span><strong style="color: #B83E00;">Deshacer</strong></div>
+</div>
+<h2 style="margin: 0; font-size: 18px; font-weight: 700;">20 · Borrar y deshacer</h2>
+<p style="margin: 0; font-size: 14px; line-height: 1.45; color: #C9CED6;">La fila se desliza y se va; la comida se recoloca en 250 ms y sube el aviso. «Deshacer» la devuelve a su sitio.</p>
+</section>
+<section style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+<div aria-hidden="true" style="position: relative; height: 150px; border-radius: 14px; background: #121418; overflow: hidden; display: flex; align-items: center; justify-content: center; gap: 22px;">
+<span style="position: relative; width: 90px; height: 90px; display: flex; align-items: center; justify-content: center;">
+<span class="anim" style="position: absolute; inset: 0; border-radius: 45px; border: 3px solid #4ADE80; opacity: 0; animation: m21Aura 2.8s infinite;"></span>
+<svg width="90" height="90" viewBox="0 0 110 110"><circle cx="55" cy="55" r="40" fill="none" stroke="#353A43" stroke-width="10"></circle><circle class="anim" cx="55" cy="55" r="40" fill="none" stroke="#4ADE80" stroke-width="10" stroke-linecap="round" transform="rotate(-90 55 55)" style="stroke-dasharray: 251.3 251.3; animation: m21Arco 2.8s infinite;"></circle></svg>
+</span>
+<span style="display: flex; flex-direction: column; gap: 14px; align-items: flex-start;">
+<span class="anim" style="width: 16px; height: 16px; border-radius: 8px; background: #4ADE80; animation: m21Punto 2.8s infinite;"></span>
+<span class="anim" style="position: relative; width: 110px; height: 12px; border-radius: 6px; background: #E8B84B; overflow: hidden; animation: m21Barra 2.8s infinite;"><span class="anim" style="position: absolute; top: 0; bottom: 0; left: 0; width: 30%; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.6), rgba(255,255,255,0)); transform: translateX(-130%) skewX(-18deg); animation: m21Brillo 2.8s infinite;"></span></span>
+</span>
+</div>
+<h2 style="margin: 0; font-size: 18px; font-weight: 700;">21 · Día completo</h2>
+<p style="margin: 0; font-size: 14px; line-height: 1.45; color: #C9CED6;">Con la última comida, el punto del día salta a verde y el anillo hace un halo. Si llegaste a la proteína, su barra brilla en dorado. Vibración de éxito, una vez al día.</p>
+</section>
+<section style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+<div aria-hidden="true" style="position: relative; height: 150px; border-radius: 14px; background: #121418; overflow: hidden; display: flex; align-items: center; justify-content: center; gap: 22px;">
+<span class="anim" style="position: relative; width: 44px; height: 60px; border: 3px solid #56C2D6; border-top: none; border-radius: 4px 4px 14px 14px; overflow: hidden; box-sizing: border-box; animation: m22Vaso 2.8s infinite;"><span class="anim" style="position: absolute; left: 0; right: 0; bottom: 0; height: 70%; background: #56C2D6; animation: m22Agua 2.8s infinite;"></span></span>
+<span style="position: relative; width: 120px; height: 44px;"><span class="anim" style="position: absolute; left: 0; top: 0; display: flex; flex-direction: column; animation: m22A 2.8s infinite;"><strong style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px;">1,25 L</strong><span style="font-size: 13px; color: #A1A9B6;">5 vasos</span></span><span class="anim" style="position: absolute; left: 0; top: 0; display: flex; flex-direction: column; opacity: 0; animation: m22B 2.8s infinite;"><strong style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; color: #56C2D6;">1,5 L</strong><span style="font-size: 13px; color: #A1A9B6;">6 vasos</span></span></span>
+</div>
+<h2 style="margin: 0; font-size: 18px; font-weight: 700;">22 · Un vaso más</h2>
+<p style="margin: 0; font-size: 14px; line-height: 1.45; color: #C9CED6;">El vaso nuevo se llena de abajo arriba con un pequeño rebote, en 450 ms, y los litros del día cuentan a la vez.</p>
+</section>
+<section style="grid-column: span 2; border: 1px dashed #4A505B; border-radius: 20px; padding: 22px 24px; display: flex; flex-direction: column; gap: 10px; justify-content: center;">
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px;">Las reglas de siempre</h2>
+<p style="margin: 0; font-size: 16px; line-height: 1.5; color: #C9CED6;">Con «Quitar animaciones», cada momento salta a su estado final: las cifras ya contadas, el anillo y las barras en su sitio, sin cascadas ni rebotes.</p>
+<p style="margin: 0; font-size: 16px; line-height: 1.5; color: #C9CED6;">Nada espera a una animación: «+», «Hecho» y «Añadir» responden al instante. Curvas: enfatizada para lo que entra, estándar para lo que cambia y rebote solo para los checks, el corazón y el vaso.</p>
+</section>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1100,"height":1640}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { cuenta: 1439 };
+  }
+  componentDidMount() {
+    const quieto = typeof window !== 'undefined' && window.matchMedia
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (quieto) return;
+    const inicio = Date.now();
+    this.iv = setInterval(() => {
+      const t = Math.min(1, ((Date.now() - inicio) % 3200) / 1200);
+      const e = 1 - Math.pow(1 - t, 3);
+      this.setState({ cuenta: Math.round(1236 + (1439 - 1236) * e) });
+    }, 40);
+  }
+  componentWillUnmount() {
+    if (this.iv) clearInterval(this.iv);
+  }
+  renderVals() {
+    const n = this.state.cuenta;
+    const miles = n >= 1000 ? Math.floor(n / 1000) + '.' + String(n % 1000).padStart(3, '0') : String(n);
+    return { cuenta: miles };
+  }
+}
+</script>
+</body>
+</html>

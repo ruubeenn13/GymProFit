@@ -1,0 +1,200 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "Anadir.dc.html": {
+      "h": 1040,
+      "is_interactive": true,
+      "title": "4 · Añadir: lo tuyo primero",
+      "w": 390,
+      "x": 0,
+      "y": 1680
+    },
+    "Buscar.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "title": "5 · Buscar en nuestra base",
+      "w": 390,
+      "x": 470,
+      "y": 1680
+    },
+    "Comida.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "2 · Una comida, con deshacer",
+      "w": 390,
+      "x": 470,
+      "y": 0
+    },
+    "ComidaVacia.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "2b · Una comida, sin apuntar",
+      "w": 390,
+      "x": 940,
+      "y": 0
+    },
+    "CrearAlimento.dc.html": {
+      "h": 1340,
+      "is_interactive": true,
+      "title": "13 · Crear un alimento, como en la etiqueta",
+      "w": 390,
+      "x": 2350,
+      "y": 1680
+    },
+    "CrearPlato.dc.html": {
+      "h": 1180,
+      "is_interactive": true,
+      "title": "10 · Crear un plato",
+      "w": 390,
+      "x": 470,
+      "y": 3240
+    },
+    "Decisiones.dc.html": {
+      "h": 2680,
+      "title": "Decisiones aprobadas",
+      "w": 1100,
+      "x": 0,
+      "y": 4780
+    },
+    "DiaCompleto.dc.html": {
+      "h": 844,
+      "title": "3 · El día completo",
+      "w": 390,
+      "x": 1410,
+      "y": 0
+    },
+    "Entreno.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "title": "11 · Al acabar el entreno",
+      "w": 390,
+      "x": 940,
+      "y": 3240
+    },
+    "Escaner.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "6 · Escanear un código",
+      "w": 390,
+      "x": 940,
+      "y": 1680
+    },
+    "Favoritos.dc.html": {
+      "h": 920,
+      "is_interactive": true,
+      "title": "8 · Favoritos",
+      "w": 390,
+      "x": 1880,
+      "y": 1680
+    },
+    "Ficha.dc.html": {
+      "h": 1180,
+      "is_interactive": true,
+      "title": "7 · La ficha y la cantidad",
+      "w": 390,
+      "x": 1410,
+      "y": 1680
+    },
+    "Main.dc.html": {
+      "h": 1300,
+      "is_interactive": true,
+      "title": "1 · Nutrición, hoy: día de entreno",
+      "w": 390,
+      "x": 0,
+      "y": 0
+    },
+    "MisPlatos.dc.html": {
+      "h": 1220,
+      "is_interactive": true,
+      "title": "9 · Mis platos y lo que te encaja",
+      "w": 390,
+      "x": 0,
+      "y": 3240
+    },
+    "Movimiento.dc.html": {
+      "h": 1640,
+      "title": "Así se mueve: los momentos de nutrición",
+      "w": 1100,
+      "x": 1180,
+      "y": 4780
+    },
+    "Semana.dc.html": {
+      "h": 1240,
+      "title": "12 · Tu semana de nutrición",
+      "w": 390,
+      "x": 1410,
+      "y": 3240
+    },
+    "Tecnica.dc.html": {
+      "h": 1960,
+      "title": "Qué cambia por dentro",
+      "w": 1000,
+      "x": 2360,
+      "y": 4780
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-10-01T14:05:14Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "notes": {
+    "t1": {
+      "kind": "title1",
+      "maxW": 1800,
+      "text": "El diario: tu día de un vistazo",
+      "w": 240,
+      "x": 0,
+      "y": -260
+    },
+    "t2": {
+      "kind": "title1",
+      "maxW": 2740,
+      "text": "Añadir un alimento en segundos",
+      "w": 240,
+      "x": 0,
+      "y": 1420
+    },
+    "t3": {
+      "kind": "title1",
+      "maxW": 1800,
+      "text": "Mis platos, el entreno y la semana",
+      "w": 240,
+      "x": 0,
+      "y": 2980
+    },
+    "t4": {
+      "kind": "title1",
+      "maxW": 3360,
+      "text": "Lo aprobado, cómo se mueve y qué cambia por dentro",
+      "w": 240,
+      "x": 0,
+      "y": 4520
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Comida.dc.html",
+    "ComidaVacia.dc.html",
+    "DiaCompleto.dc.html",
+    "Anadir.dc.html",
+    "Buscar.dc.html",
+    "Escaner.dc.html",
+    "Ficha.dc.html",
+    "Favoritos.dc.html",
+    "CrearAlimento.dc.html",
+    "MisPlatos.dc.html",
+    "CrearPlato.dc.html",
+    "Entreno.dc.html",
+    "Semana.dc.html",
+    "Decisiones.dc.html",
+    "Movimiento.dc.html",
+    "Tecnica.dc.html"
+  ],
+  "pages": [],
+  "title": "Nutrición nueva"
+}

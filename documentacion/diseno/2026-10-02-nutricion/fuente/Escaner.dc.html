@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Escanear un código</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#000;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+button,input{font-family:inherit}
+button{cursor:pointer}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+.toque{transition:transform 120ms cubic-bezier(.2,0,0,1)}
+.toque:active{transform:scale(.97)}
+@keyframes barre{0%{top:14px}50%{top:150px}100%{top:14px}}
+@keyframes sube{from{opacity:0;transform:translateY(60px)}to{opacity:1;transform:none}}
+@keyframes encaja{0%{transform:scale(1.08)}100%{transform:scale(1)}}
+@keyframes salta{0%{transform:scale(0)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){.anim{animation:none !important;transition:none !important}.toque:active{transform:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #050607; color: #F2F2F3; font-family: 'Barlow', sans-serif;">
+<div aria-hidden="true" style="position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 42%, #2A2F36 0%, #14171B 55%, #050607 100%);"></div>
+<div aria-hidden="true" style="position: absolute; left: 95px; top: 230px; width: 200px; height: 250px; border-radius: 18px; background: #E9E4D8; box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5); transform: rotate(-4deg); display: flex; flex-direction: column; align-items: center; padding-top: 22px; box-sizing: border-box; gap: 10px;">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px; color: #2C3A55;">PROTEICO</span>
+<span style="font-size: 12px; color: #4A5468;">natural · 200 g</span>
+<span style="margin-top: 26px; width: 150px; height: 70px; background: repeating-linear-gradient(90deg, #111 0 2px, #E9E4D8 2px 4px, #111 4px 7px, #E9E4D8 7px 8px, #111 8px 9px, #E9E4D8 9px 12px); border: 6px solid #E9E4D8;"></span>
+<span style="font-size: 11px; letter-spacing: 2px; color: #222;">8 412345 678905</span>
+</div>
+<header style="position: absolute; top: 0; left: 0; right: 0; display: flex; align-items: center; gap: 8px; padding: 12px 12px 0;">
+<a href="Anadir.dc.html" aria-label="Cerrar el escáner" class="toque" style="width: 48px; height: 48px; border-radius: 24px; background: rgba(11, 12, 14, 0.7); color: #F2F2F3; display: flex; align-items: center; justify-content: center; text-decoration: none;"><span class="ms" aria-hidden="true">close</span></a>
+<span style="flex-grow: 1; text-align: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px;">Escanear</span>
+<button type="button" aria-label="Encender la linterna" class="toque" style="width: 48px; height: 48px; border: none; border-radius: 24px; background: rgba(11, 12, 14, 0.7); color: #F2F2F3; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">flashlight_off</span></button>
+</header>
+<div role="status" style="position: absolute; top: 96px; left: 0; right: 0; display: flex; justify-content: center;">
+<span style="min-height: 40px; display: flex; align-items: center; gap: 8px; padding: 0 16px; border-radius: 20px; background: rgba(11, 12, 14, 0.78); font-size: 15px; font-weight: 600; color: {{ avisoColor }};"><span class="ms" aria-hidden="true" style="font-size: 20px;">{{ avisoIcono }}</span>{{ aviso }}</span>
+</div>
+<button type="button" onClick="{{ leer }}" aria-label="{{ marcoEtiqueta }}" style="position: absolute; left: 65px; top: 300px; width: 260px; height: 170px; padding: 0; border: none; background: transparent;">
+<span class="{{ marcoClase }}" aria-hidden="true" style="position: absolute; inset: 0; animation: {{ marcoAnim }};">
+<span style="position: absolute; left: 0; top: 0; width: 36px; height: 36px; border-left: 4px solid {{ esquina }}; border-top: 4px solid {{ esquina }}; border-top-left-radius: 16px;"></span>
+<span style="position: absolute; right: 0; top: 0; width: 36px; height: 36px; border-right: 4px solid {{ esquina }}; border-top: 4px solid {{ esquina }}; border-top-right-radius: 16px;"></span>
+<span style="position: absolute; left: 0; bottom: 0; width: 36px; height: 36px; border-left: 4px solid {{ esquina }}; border-bottom: 4px solid {{ esquina }}; border-bottom-left-radius: 16px;"></span>
+<span style="position: absolute; right: 0; bottom: 0; width: 36px; height: 36px; border-right: 4px solid {{ esquina }}; border-bottom: 4px solid {{ esquina }}; border-bottom-right-radius: 16px;"></span>
+</span>
+<sc-if value="{{ buscando }}" hint-placeholder-val="{{ true }}">
+<span class="anim" aria-hidden="true" style="position: absolute; left: 16px; right: 16px; top: 14px; height: 2px; border-radius: 1px; background: #FF6A00; box-shadow: 0 0 10px 2px rgba(255, 106, 0, 0.6); animation: barre 2400ms ease-in-out infinite;"></span>
+</sc-if>
+</button>
+<sc-if value="{{ buscando }}" hint-placeholder-val="{{ true }}">
+<div style="position: absolute; left: 0; right: 0; bottom: 40px; display: flex; flex-direction: column; align-items: center; gap: 16px;">
+<span style="min-height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 18px; border-radius: 22px; background: #FF6A00; color: #1A0E00; font-size: 15px; font-weight: 700;"><span class="ms" aria-hidden="true" style="font-size: 20px;">barcode</span>Código</span>
+<a href="#" style="min-height: 44px; display: flex; align-items: center; gap: 8px; color: #F2F2F3; font-size: 15px; font-weight: 600; text-decoration: none;"><span class="ms" aria-hidden="true" style="font-size: 20px;">keyboard</span>Escribir el código</a>
+</div>
+</sc-if>
+<sc-if value="{{ leido }}" hint-placeholder-val="{{ false }}">
+<section aria-label="Producto encontrado" class="anim" style="position: absolute; left: 0; right: 0; bottom: 0; padding: 18px 16px 24px; border-radius: 24px 24px 0 0; background: #1B1E24; border-top: 1px solid #4A505B; display: flex; flex-direction: column; gap: 14px; animation: sube 450ms cubic-bezier(.05,.7,.1,1) backwards;">
+<div style="display: flex; align-items: center; gap: 12px;">
+<span style="flex-shrink: 0; width: 52px; height: 52px; border-radius: 16px; background: #252A31; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true" style="font-size: 28px; color: #C9CED6;">breakfast_dining</span></span>
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;"><span style="display: flex; align-items: center; gap: 6px; font-size: 18px; font-weight: 700;">Yogur proteico natural<span class="ms f" role="img" aria-label="Datos revisados" style="font-size: 18px; color: #6BA6F5;">verified</span></span><span style="font-size: 14px; color: #A1A9B6;">Producto envasado · 200 g</span></span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px;">
+<span style="padding: 10px 4px; border-radius: 14px; background: #252A31; display: flex; flex-direction: column; align-items: center;"><strong style="font-family: 'Barlow Condensed', sans-serif; font-size: 22px;">120</strong><span style="font-size: 13px; color: #A1A9B6;">kcal</span></span>
+<span style="padding: 10px 4px; border-radius: 14px; background: #252A31; display: flex; flex-direction: column; align-items: center;"><strong style="font-family: 'Barlow Condensed', sans-serif; font-size: 22px; color: #6BA6F5;">20 g</strong><span style="font-size: 13px; color: #A1A9B6;">proteína</span></span>
+<span style="padding: 10px 4px; border-radius: 14px; background: #252A31; display: flex; flex-direction: column; align-items: center;"><strong style="font-family: 'Barlow Condensed', sans-serif; font-size: 22px;">9 g</strong><span style="font-size: 13px; color: #A1A9B6;">carb.</span></span>
+<span style="padding: 10px 4px; border-radius: 14px; background: #252A31; display: flex; flex-direction: column; align-items: center;"><strong style="font-family: 'Barlow Condensed', sans-serif; font-size: 22px;">0,4 g</strong><span style="font-size: 13px; color: #A1A9B6;">grasa</span></span>
+</div>
+<div style="display: flex; gap: 8px;">
+<a href="Ficha.dc.html" class="toque" style="min-height: 52px; padding: 0 18px; border-radius: 26px; border: 1px solid #676F7E; color: #F2F2F3; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; text-decoration: none;">Cambiar cantidad</a>
+<a href="Main.dc.html" class="toque" style="flex-grow: 1; min-height: 52px; border-radius: 26px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700; text-decoration: none;">Añadir a la merienda</a>
+</div>
+<button type="button" onClick="{{ otraVez }}" style="align-self: center; min-height: 44px; padding: 0 12px; border: none; background: transparent; color: #FFB27A; font-size: 15px; font-weight: 600;">Escanear otro</button>
+</section>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { leido: false };
+  }
+  renderVals() {
+    const l = this.state.leido;
+    return {
+      leido: l,
+      buscando: !l,
+      esquina: l ? '#4ADE80' : '#F2F2F3',
+      marcoClase: l ? 'anim' : '',
+      marcoAnim: l ? 'encaja 200ms cubic-bezier(.2,0,0,1)' : 'none',
+      marcoEtiqueta: l ? 'Código leído' : 'Leer el código',
+      aviso: l ? 'Leído' : 'Apunta al código de barras',
+      avisoIcono: l ? 'check_circle' : 'barcode_reader',
+      avisoColor: l ? '#4ADE80' : '#F2F2F3',
+      leer: () => this.setState({ leido: true }),
+      otraVez: () => this.setState({ leido: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

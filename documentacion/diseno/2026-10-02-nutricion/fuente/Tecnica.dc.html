@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Qué cambia por dentro</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:15px;color:#F2F2F3}
+</style>
+</helmet>
+<div style="width: 1000px; height: 1960px; box-sizing: border-box; padding: 52px 56px; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif; display: flex; flex-direction: column; gap: 16px;">
+<div style="display: flex; flex-direction: column; gap: 8px;">
+<h1 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 46px; line-height: 1.05;">Qué cambia por dentro</h1>
+<p style="margin: 0; font-size: 18px; line-height: 1.45; color: #C9CED6;">Lo que pide cada pantalla, los datos nuevos y el orden de los lotes. Comprobado en el código de <code>60736eb</code>.</p>
+</div>
+<section style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px;">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700;">La base de alimentos pasa a ser nuestra</h2>
+<ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 16px; line-height: 1.45; color: #C9CED6;">
+<li><strong style="color: #F2F2F3;">Básicos:</strong> unos 400 genéricos, con nombre en español e inglés, por 100 g y con sus raciones («1 huevo = 60 g»). Salen de Ciqual, la tabla francesa, con licencia abierta que permite el uso comercial citándola, y de USDA, de dominio público, para lo que falte. Cada uno con su fuente y revisado antes de salir.</li>
+<li><strong style="color: #F2F2F3;">Productos:</strong> los que se venden en España, importados cada semana de la exportación de Open Food Facts, en su propia tabla y con su origen. Su licencia, ODbL, pide citarla, como ya se hace, y ofrecer las mejoras que hagamos sobre esos datos: va a la duda 2 del borrador legal (GP-153).</li>
+<li><strong style="color: #F2F2F3;">Tuyos:</strong> lo que creas y tus platos. Solo los ves tú, como hoy los alimentos personales.</li>
+</ul>
+</section>
+<section style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px;">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700;">Buscar sin salir de casa</h2>
+<ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 16px; line-height: 1.45; color: #C9CED6;">
+<li>Hoy, cada búsqueda y la lista al abrir piden a Open Food Facts mientras escribes (<code>AlimentoService.buscarCatalogo</code>), y su documentación lo prohíbe. Con esto deja de pasar (GP-164).</li>
+<li><code>GET /alimentos/buscar?q=</code> busca solo en lo nuestro: con tilde o sin ella, con una errata, sin duplicados y en el orden del tablero 5. El motor lo elige Claude Code, en MariaDB o en un índice dentro de la API, sin servicios de pago.</li>
+<li><code>GET /alimentos/codigo/{código}</code>: nuestra base primero; si no está, una sola lectura a Open Food Facts, dentro de su límite de 15 por minuto, y se guarda. Si tampoco está, la app ofrece crearlo con el código puesto.</li>
+<li>El escáner, en una pantalla propia con CameraX y ML Kit, que lee sin red. El permiso de cámara ya está en la app por la foto de perfil y se pide la primera vez. Es la cámara que usará la foto (GP-161); el escáner de Google no pide permiso, pero trae su pantalla y no deja sitio a la foto.</li>
+</ul>
+</section>
+<section style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px;">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700;">Datos nuevos</h2>
+<ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 16px; line-height: 1.45; color: #C9CED6;">
+<li><strong style="color: #F2F2F3;">Alimento:</strong> su fuente, si está revisado y sus raciones con nombre (envase, rebanada, unidad), en una tabla aparte.</li>
+<li><strong style="color: #F2F2F3;">Favoritos:</strong> usuario y alimento.</li>
+<li><strong style="color: #F2F2F3;">Platos:</strong> un alimento tuyo con ingredientes, raciones y, si quieres, el peso hecho. Así entra solo en la búsqueda, en recientes y en favoritos.</li>
+<li><strong style="color: #F2F2F3;">Lo apuntado guarda sus macros:</strong> hoy cada alimento de una comida guarda gramos y kcal, y sus macros salen del alimento. Guardarlos hace que editar un plato o corregir un dato no cambie los días pasados (GP-165).</li>
+<li><strong style="color: #F2F2F3;">Agua:</strong> mililitros por día. <strong style="color: #F2F2F3;">«Hoy no»:</strong> una marca en la comida.</li>
+</ul>
+</section>
+<section style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px;">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700;">Lo que sale de lo que ya hay</h2>
+<ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 16px; line-height: 1.45; color: #C9CED6;">
+<li>Recientes y comidas recientes, del historial, con la última cantidad: <code>GET /alimentos/recientes</code> y <code>GET /comidas/recientes</code>.</li>
+<li>«¿Copiar la de ayer?» y «Lo que te encaja», en el móvil, con lo que ya está cargado. El ✗ de ese día se queda en el móvil.</li>
+<li>El resumen semanal, del resumen diario que ya existe (<code>/comidas/usuario/{id}/resumen</code>), por semana, con el agua y las sesiones.</li>
+<li>El día de entreno, de las sesiones guardadas ese día. La tarjeta al acabar va en <code>ResumenSesionActivity</code>, entre la celebración y la sesión.</li>
+</ul>
+</section>
+<section style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px;">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700;">Por lotes</h2>
+<ol style="margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; font-size: 16px; line-height: 1.45; color: #C9CED6;">
+<li><strong style="color: #F2F2F3;">API:</strong> la base, la búsqueda y el código. Con la app de ahora, buscar «pollo» ya da el genérico.</li>
+<li><strong style="color: #F2F2F3;">App:</strong> Añadir, Buscar, el escáner y la ficha con su cantidad.</li>
+<li>Favoritos, recientes, «¿Copiar la de ayer?», deshacer y raciones.</li>
+<li>Mis platos y «Lo que te encaja».</li>
+<li>El agua, el entreno, el día completo y el resumen semanal.</li>
+</ol>
+<p style="margin: 0; font-size: 16px; line-height: 1.45; color: #C9CED6;">El movimiento va con cada pantalla, en su lote. En todos: ES y EN, claro y oscuro, TalkBack y letra grande.</p>
+</section>
+<section style="border: 1px dashed #4A505B; border-radius: 20px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px;">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700;">Riesgos</h2>
+<ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 16px; line-height: 1.45; color: #C9CED6;">
+<li><strong style="color: #F2F2F3;">Datos:</strong> un básico mal puesto se repite en miles de comidas. Por eso cada uno lleva su fuente, se revisa antes de salir y «Reportar» llega a la web de administración.</li>
+<li><strong style="color: #F2F2F3;">Tamaño:</strong> la exportación de Open Food Facts es muy grande. El import filtra España, va por partes y fuera de horas, y no puede frenar la API.</li>
+<li><strong style="color: #F2F2F3;">Esfuerzo:</strong> es lo más grande hecho hasta ahora. Cada lote se puede repartir por sí solo.</li>
+</ul>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1000,"height":1960}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

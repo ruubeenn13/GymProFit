@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Una comida</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+button,input{font-family:inherit}
+button{cursor:pointer}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+.toque{transition:transform 120ms cubic-bezier(.2,0,0,1)}
+.toque:active{transform:scale(.97)}
+.arco{transition:stroke-dasharray 500ms cubic-bezier(.2,0,0,1),stroke-dashoffset 500ms cubic-bezier(.2,0,0,1)}
+.barra{transition:width 500ms cubic-bezier(.2,0,0,1)}
+@keyframes entra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes arco{from{stroke-dasharray:0 238.76}}
+@keyframes llena{from{width:0}}
+@keyframes desliza{from{transform:translateX(0)}to{transform:translateX(-96px)}}
+@keyframes sube{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){.anim,.arco,.barra{animation:none !important;transition:none !important}.toque:active{transform:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif;">
+<header style="display: flex; align-items: center; gap: 4px; padding: 8px 16px 0 4px;">
+<a href="Main.dc.html" aria-label="Atrás" class="toque" style="width: 48px; height: 48px; border-radius: 24px; color: #F2F2F3; display: flex; align-items: center; justify-content: center; text-decoration: none;"><span class="ms" aria-hidden="true">arrow_back</span></a>
+<div style="flex-grow: 1; display: flex; flex-direction: column;">
+<h1 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 28px; line-height: 1.1;">Comida</h1>
+<span style="font-size: 14px; color: #A1A9B6;">Hoy, jueves 1 de octubre</span>
+</div>
+</header>
+<main style="padding: 12px 16px 0; display: flex; flex-direction: column; gap: 16px;">
+<section aria-label="Resumen de la comida" class="anim" style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 24px; padding: 18px; display: flex; flex-direction: column; gap: 16px; animation: entra 350ms cubic-bezier(.05,.7,.1,1) backwards;">
+<div style="display: flex; align-items: center; gap: 16px;">
+<div role="img" aria-label="{{ anilloA11y }}" style="position: relative; flex-shrink: 0; width: 112px; height: 112px; display: flex; align-items: center; justify-content: center;">
+<svg aria-hidden="true" width="112" height="112" viewBox="0 0 112 112" style="position: absolute; inset: 0;">
+<circle cx="56" cy="56" r="38" fill="none" stroke="#353A43" stroke-width="12"></circle>
+<circle class="arco anim" cx="56" cy="56" r="38" fill="none" stroke="#6BA6F5" stroke-width="12" transform="rotate(-90 56 56)" style="stroke-dasharray: {{ arcoP }}; stroke-dashoffset: {{ giroP }}; animation: arco 500ms cubic-bezier(.2,0,0,1) 150ms backwards;"></circle>
+<circle class="arco anim" cx="56" cy="56" r="38" fill="none" stroke="#E8A94B" stroke-width="12" transform="rotate(-90 56 56)" style="stroke-dasharray: {{ arcoC }}; stroke-dashoffset: {{ giroC }}; animation: arco 500ms cubic-bezier(.2,0,0,1) 250ms backwards;"></circle>
+<circle class="arco anim" cx="56" cy="56" r="38" fill="none" stroke="#B295E8" stroke-width="12" transform="rotate(-90 56 56)" style="stroke-dasharray: {{ arcoG }}; stroke-dashoffset: {{ giroG }}; animation: arco 500ms cubic-bezier(.2,0,0,1) 350ms backwards;"></circle>
+</svg>
+<span aria-hidden="true" style="display: flex; flex-direction: column; align-items: center; line-height: 1;"><strong style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 30px; font-variant-numeric: tabular-nums;">{{ kcal }}</strong><span style="margin-top: 2px; font-size: 13px; color: #A1A9B6;">kcal</span></span>
+</div>
+<div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px;">
+<span style="align-self: flex-end; font-size: 12px; color: #A1A9B6;">de tu día</span>
+<sc-for list="{{ macros }}" as="m" hint-placeholder-count="3">
+<div role="img" aria-label="{{ m.a11y }}" style="display: flex; align-items: center; gap: 6px;"><span aria-hidden="true" style="flex-shrink: 0; width: 10px; height: 10px; border-radius: 5px; background: {{ m.color }};"></span><span aria-hidden="true" style="flex-grow: 1; font-size: 14px;">{{ m.nombre }}</span><strong aria-hidden="true" style="font-size: 15px; font-variant-numeric: tabular-nums;">{{ m.gramos }}</strong><span aria-hidden="true" style="width: 36px; text-align: right; font-size: 14px; color: #A1A9B6; font-variant-numeric: tabular-nums;">{{ m.pct }}</span></div>
+</sc-for>
+</div>
+</div>
+<div role="img" aria-label="{{ diaA11y }}" style="display: flex; flex-direction: column; gap: 6px; padding-top: 14px; border-top: 1px solid #252A31;">
+<div aria-hidden="true" style="display: flex; justify-content: space-between; font-size: 14px; color: #C9CED6;"><span>El <strong style="color: #F2F2F3;">{{ diaPct }}</strong> de tus calorías de hoy</span><span style="font-variant-numeric: tabular-nums;">{{ diaDe }}</span></div>
+<div aria-hidden="true" style="height: 8px; border-radius: 4px; background: #353A43; overflow: hidden;"><span class="barra anim" style="display: block; width: {{ diaAncho }}; height: 100%; border-radius: 4px; background: #FF6A00; animation: llena 500ms cubic-bezier(.2,0,0,1) 350ms backwards;"></span></div>
+</div>
+</section>
+<section aria-label="Alimentos" style="display: flex; flex-direction: column; gap: 8px;">
+<h2 style="margin: 0; padding: 0 4px; color: #A1A9B6; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 1px; text-transform: uppercase;">{{ cuantos }}</h2>
+<div style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
+<sc-for list="{{ alimentos }}" as="a" hint-placeholder-count="4">
+<sc-if value="{{ a.quieta }}" hint-placeholder-val="{{ true }}">
+<a href="Ficha.dc.html" aria-label="{{ a.etiqueta }}" class="anim" style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: 1px solid #252A31; text-decoration: none; color: #F2F2F3; animation: entra 350ms cubic-bezier(.05,.7,.1,1) backwards; animation-delay: {{ a.retraso }};">
+<span aria-hidden="true" style="flex-shrink: 0; width: 44px; height: 44px; border-radius: 14px; background: #252A31; display: flex; align-items: center; justify-content: center;"><span class="ms" style="color: #C9CED6;">{{ a.icono }}</span></span>
+<span aria-hidden="true" style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ a.nombre }}</span><span style="font-size: 14px; color: #A1A9B6;">{{ a.cantidad }}</span></span>
+<span aria-hidden="true" style="flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-variant-numeric: tabular-nums;"><span style="font-size: 16px; font-weight: 600;">{{ a.kcal }}</span><span style="font-size: 13px; color: #6BA6F5;">{{ a.prot }}</span></span>
+</a>
+</sc-if>
+<sc-if value="{{ a.deslizada }}" hint-placeholder-val="{{ false }}">
+<div style="position: relative; border-bottom: 1px solid #252A31;">
+<button type="button" onClick="{{ a.quitar }}" aria-label="{{ a.quitarA11y }}" class="toque" style="position: absolute; top: 0; right: 0; bottom: 0; width: 96px; border: none; background: #3A1414; color: #F87171; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 13px; font-weight: 700;"><span class="ms" aria-hidden="true">delete</span>Eliminar</button>
+<a href="Ficha.dc.html" aria-label="{{ a.etiqueta }}" class="anim" style="position: relative; display: flex; align-items: center; gap: 12px; padding: 12px 14px; text-decoration: none; color: #F2F2F3; background: #1B1E24; transform: translateX(-96px); animation: desliza 450ms cubic-bezier(.2,0,0,1) 900ms backwards;">
+<span aria-hidden="true" style="flex-shrink: 0; width: 44px; height: 44px; border-radius: 14px; background: #252A31; display: flex; align-items: center; justify-content: center;"><span class="ms" style="color: #C9CED6;">{{ a.icono }}</span></span>
+<span aria-hidden="true" style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ a.nombre }}</span><span style="font-size: 14px; color: #A1A9B6;">{{ a.cantidad }}</span></span>
+<span aria-hidden="true" style="flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-variant-numeric: tabular-nums;"><span style="font-size: 16px; font-weight: 600;">{{ a.kcal }}</span><span style="font-size: 13px; color: #6BA6F5;">{{ a.prot }}</span></span>
+</a>
+</div>
+</sc-if>
+</sc-for>
+<a href="CrearPlato.dc.html" class="toque" style="min-height: 52px; display: flex; align-items: center; justify-content: center; gap: 8px; color: #C9CED6; font-size: 15px; font-weight: 600; text-decoration: none;"><span class="ms" aria-hidden="true" style="font-size: 20px;">bookmark_add</span>Guardar como plato</a>
+</div>
+</section>
+</main>
+<sc-if value="{{ aviso }}" hint-placeholder-val="{{ false }}">
+<div role="status" class="anim" style="position: absolute; left: 16px; right: 16px; bottom: 103px; min-height: 52px; border-radius: 14px; background: #F2F2F3; color: #17181C; display: flex; align-items: center; gap: 8px; padding: 0 6px 0 16px; animation: sube 250ms cubic-bezier(.05,.7,.1,1) backwards;">
+<span style="flex-grow: 1; font-size: 15px;">Arroz blanco quitado</span>
+<button type="button" onClick="{{ deshacer }}" class="toque" style="min-height: 44px; padding: 0 14px; border: none; border-radius: 22px; background: transparent; color: #B83E00; font-size: 15px; font-weight: 700;">Deshacer</button>
+</div>
+</sc-if>
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 16px 24px; background: #121418; border-top: 1px solid #252A31; display: flex; align-items: center; gap: 10px;">
+<a href="Anadir.dc.html" class="toque" style="flex-grow: 1; min-height: 52px; border-radius: 26px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 17px; font-weight: 700; text-decoration: none;"><span class="ms" aria-hidden="true">add</span>Añadir alimento</a>
+<a href="Escaner.dc.html" aria-label="Escanear un código de barras" class="toque" style="flex-shrink: 0; width: 52px; height: 52px; border-radius: 26px; background: #252A31; color: #F2F2F3; display: flex; align-items: center; justify-content: center; text-decoration: none;"><span class="ms" aria-hidden="true">barcode_scanner</span></a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { quitado: false };
+  }
+  renderVals() {
+    const objetivo = { kcal: 2397, p: 136, c: 314, g: 66 };
+    const todos = [
+      { id: 'pollo', icono: 'kebab_dining', nombre: 'Pechuga de pollo a la plancha', cantidad: '150 g', kcal: 165, p: 35, c: 0, g: 2 },
+      { id: 'arroz', icono: 'bakery_dining', nombre: 'Arroz blanco cocido', cantidad: '1 plato (200 g)', kcal: 260, p: 5, c: 56, g: 1 },
+      { id: 'ensalada', icono: 'eco', nombre: 'Ensalada verde', cantidad: '100 g', kcal: 20, p: 1, c: 3, g: 0 },
+      { id: 'aceite', icono: 'opacity', nombre: 'Aceite de oliva virgen extra', cantidad: '1 cucharada (10 g)', kcal: 90, p: 0, c: 0, g: 10 }
+    ];
+    const lista = todos.filter((a) => !(this.state.quitado && a.id === 'arroz'));
+    const suma = (k) => lista.reduce((t, a) => t + a[k], 0);
+    const kcal = suma('kcal'), p = suma('p'), c = suma('c'), g = suma('g');
+    const miles = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    const pct = (valor, de) => Math.round(valor * 100 / de) + ' %';
+
+    // El anillo reparte las kcal entre los macros (4, 4 y 9 kcal por gramo), con un hueco entre tramos.
+    const vuelta = 238.76, hueco = 3, util = vuelta - hueco * 3;
+    const partes = [p * 4, c * 4, g * 9];
+    const total = partes[0] + partes[1] + partes[2];
+    const largos = partes.map((x) => util * x / total);
+    const arco = (i) => largos[i].toFixed(1) + ' ' + (vuelta - largos[i]).toFixed(1);
+    const giro = (i) => '-' + (largos.slice(0, i).reduce((t, x) => t + x, 0) + hueco * i).toFixed(1);
+    const reparto = partes.map((x) => Math.round(x * 100 / total));
+
+    const alimentos = lista.map((a, i) => ({
+      ...a,
+      kcal: a.kcal + ' kcal',
+      prot: a.p + ' g prot.',
+      quieta: a.id !== 'arroz',
+      deslizada: a.id === 'arroz',
+      retraso: (150 + i * 40) + 'ms',
+      etiqueta: a.nombre + ', ' + a.cantidad + ', ' + a.kcal + ' kilocalorías, ' + a.p + ' gramos de proteína',
+      quitarA11y: 'Eliminar ' + a.nombre.toLowerCase() + ' de la comida',
+      quitar: () => this.setState({ quitado: true })
+    }));
+
+    return {
+      kcal: String(kcal),
+      anilloA11y: kcal + ' kilocalorías: ' + reparto[0] + ' por ciento de proteína, ' + reparto[1] + ' de carbohidratos y ' + reparto[2] + ' de grasa',
+      arcoP: arco(0), giroP: giro(0),
+      arcoC: arco(1), giroC: giro(1),
+      arcoG: arco(2), giroG: giro(2),
+      macros: [
+        { nombre: 'Proteína', color: '#6BA6F5', gramos: p + ' g', pct: pct(p, objetivo.p), a11y: 'Proteína: ' + p + ' gramos, el ' + Math.round(p * 100 / objetivo.p) + ' por ciento de la de tu día' },
+        { nombre: 'Carbohidratos', color: '#E8A94B', gramos: c + ' g', pct: pct(c, objetivo.c), a11y: 'Carbohidratos: ' + c + ' gramos, el ' + Math.round(c * 100 / objetivo.c) + ' por ciento de los de tu día' },
+        { nombre: 'Grasa', color: '#B295E8', gramos: g + ' g', pct: pct(g, objetivo.g), a11y: 'Grasa: ' + g + ' gramos, el ' + Math.round(g * 100 / objetivo.g) + ' por ciento de la de tu día' }
+      ],
+      diaPct: pct(kcal, objetivo.kcal),
+      diaDe: kcal + ' de ' + miles(objetivo.kcal),
+      diaAncho: (kcal * 100 / objetivo.kcal).toFixed(1) + '%',
+      diaA11y: 'Esta comida es el ' + Math.round(kcal * 100 / objetivo.kcal) + ' por ciento de tus calorías de hoy',
+      cuantos: lista.length + ' alimentos',
+      alimentos,
+      aviso: this.state.quitado,
+      deshacer: () => this.setState({ quitado: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

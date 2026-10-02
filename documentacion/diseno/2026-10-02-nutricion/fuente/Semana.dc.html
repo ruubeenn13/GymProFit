@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Tu semana</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+button{font-family:inherit;cursor:pointer}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+.toque{transition:transform 120ms cubic-bezier(.2,0,0,1)}
+.toque:active{transform:scale(.97)}
+@keyframes entra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes crece{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes llena0{from{width:0}}
+@keyframes pop{0%{transform:scale(.4)}55%{transform:scale(1.25)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){.anim{animation:none !important;transition:none !important}.toque:active{transform:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 1240px; position: relative; overflow: hidden; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif;">
+<header style="display: flex; align-items: center; gap: 4px; padding: 8px 12px 0 4px;">
+<a href="Main.dc.html" aria-label="Atrás" class="toque" style="width: 48px; height: 48px; border-radius: 24px; color: #F2F2F3; display: flex; align-items: center; justify-content: center; text-decoration: none;"><span class="ms" aria-hidden="true">arrow_back</span></a>
+<h1 style="flex-grow: 1; margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 28px;">Tu semana</h1>
+</header>
+<main style="padding: 4px 16px 32px; display: flex; flex-direction: column; gap: 14px;">
+<div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+<button type="button" aria-label="Semana anterior" class="toque" style="width: 44px; height: 44px; border: none; border-radius: 22px; background: transparent; color: #C9CED6; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">chevron_left</span></button>
+<span style="min-width: 170px; text-align: center; font-size: 16px; font-weight: 600;">21 – 27 de septiembre</span>
+<button type="button" aria-label="Semana siguiente" class="toque" style="width: 44px; height: 44px; border: none; border-radius: 22px; background: transparent; color: #C9CED6; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">chevron_right</span></button>
+</div>
+<section aria-label="Proteína" class="anim" style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 14px; animation: entra 400ms cubic-bezier(.05,.7,.1,1) backwards;">
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px;">
+<div style="display: flex; flex-direction: column; gap: 2px;">
+<h2 style="margin: 0; color: #A1A9B6; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 1px; text-transform: uppercase;">Proteína</h2>
+<span style="display: flex; align-items: baseline; gap: 8px;"><strong style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 44px; line-height: 1; color: #E8B84B;">5 de 7</strong><span style="font-size: 16px; color: #C9CED6;">días conseguida</span></span>
+</div>
+<span class="ms f anim" aria-hidden="true" style="font-size: 36px; color: #E8B84B; animation: pop 450ms cubic-bezier(.34,1.56,.64,1) 500ms backwards;">workspace_premium</span>
+</div>
+<div role="img" aria-label="Proteína por día, objetivo 136 gramos: lunes 140, martes 138, miércoles 142, jueves 137, viernes 139, sábado 101, domingo 107. Entrenaste lunes, miércoles y viernes." style="position: relative; padding-top: 4px;">
+<div aria-hidden="true" style="position: relative; height: 120px; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; align-items: end;">
+<span style="position: absolute; left: 0; right: 0; bottom: 102px; border-top: 2px dashed #676F7E;"></span>
+<span style="position: absolute; right: 0; bottom: 106px; font-size: 12px; color: #A1A9B6;">136 g</span>
+<sc-for list="{{ prot }}" as="d" hint-placeholder-count="7">
+<span class="anim" style="height: {{ d.alto }}; border-radius: 8px 8px 4px 4px; background: {{ d.color }}; transform-origin: bottom; animation: crece 600ms cubic-bezier(.2,0,0,1) backwards; animation-delay: {{ d.retraso }};"></span>
+</sc-for>
+</div>
+<div aria-hidden="true" style="margin-top: 8px; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px;">
+<sc-for list="{{ prot }}" as="d" hint-placeholder-count="7">
+<span style="display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 14px; color: #C9CED6;">{{ d.letra }}<span style="width: 16px; height: 3px; border-radius: 2px; background: {{ d.entreno }};"></span></span>
+</sc-for>
+</div>
+</div>
+<span style="font-size: 15px; color: #C9CED6;">Media: <strong style="color: #F2F2F3;">129 g</strong> de 136</span>
+<div style="display: flex; flex-direction: column; gap: 10px; padding-top: 12px; border-top: 1px solid #252A31;">
+<span style="display: flex; align-items: flex-start; gap: 10px; font-size: 15px; line-height: 1.4;"><span class="ms" aria-hidden="true" style="flex-shrink: 0; font-size: 20px; color: #FF6A00;">fitness_center</span>Los 3 días que entrenaste, llegaste a tu proteína.</span>
+<span style="display: flex; align-items: flex-start; gap: 10px; font-size: 15px; line-height: 1.4;"><span class="ms" aria-hidden="true" style="flex-shrink: 0; font-size: 20px; color: #FFB27A;">weekend</span>Entre semana llegas siempre; el fin de semana te quedas en 104 g.</span>
+</div>
+</section>
+<section aria-label="Días completos" class="anim" style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 16px; display: flex; align-items: center; gap: 14px; animation: entra 400ms cubic-bezier(.05,.7,.1,1) 80ms backwards;">
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;">
+<h2 style="margin: 0; color: #A1A9B6; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 1px; text-transform: uppercase;">Días completos</h2>
+<span style="display: flex; align-items: baseline; gap: 8px;"><strong style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 32px; line-height: 1; color: #4ADE80;">5 de 7</strong><span style="font-size: 14px; color: #C9CED6;">con todo apuntado</span></span>
+</div>
+<div role="img" aria-label="Completos de lunes a viernes; sábado y domingo, a medias" style="display: flex; gap: 6px;">
+<sc-for list="{{ completos }}" as="d" hint-placeholder-count="7">
+<span aria-hidden="true" style="display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; color: #A1A9B6;"><span class="anim" style="width: 14px; height: 14px; border-radius: 7px; background: {{ d.color }}; animation: pop 400ms cubic-bezier(.34,1.56,.64,1) backwards; animation-delay: {{ d.retraso }};"></span>{{ d.letra }}</span>
+</sc-for>
+</div>
+</section>
+<section aria-label="Calorías" class="anim" style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px; animation: entra 400ms cubic-bezier(.05,.7,.1,1) 160ms backwards;">
+<div style="display: flex; align-items: baseline; justify-content: space-between;">
+<div style="display: flex; flex-direction: column; gap: 2px;">
+<h2 style="margin: 0; color: #A1A9B6; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 1px; text-transform: uppercase;">Calorías</h2>
+<span style="display: flex; align-items: baseline; gap: 8px;"><strong style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 32px; line-height: 1;">2.310</strong><span style="font-size: 14px; color: #C9CED6;">de media al día</span></span>
+</div>
+<span style="font-size: 15px; color: #C9CED6;">96 % de 2.397</span>
+</div>
+<div role="img" aria-label="Calorías por día: lunes 2405, martes 2350, miércoles 2420, jueves 2290, viernes 2380, sábado 2150, domingo 2175; objetivo 2397" style="position: relative;">
+<div aria-hidden="true" style="position: relative; height: 80px; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; align-items: end;">
+<span style="position: absolute; left: 0; right: 0; bottom: 74px; border-top: 2px dashed #676F7E;"></span>
+<sc-for list="{{ kcal }}" as="d" hint-placeholder-count="7">
+<span class="anim" style="height: {{ d.alto }}; border-radius: 6px 6px 3px 3px; background: #FF6A00; opacity: .85; transform-origin: bottom; animation: crece 600ms cubic-bezier(.2,0,0,1) backwards; animation-delay: {{ d.retraso }};"></span>
+</sc-for>
+</div>
+<div aria-hidden="true" style="margin-top: 6px; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; text-align: center; font-size: 13px; color: #A1A9B6;">
+<sc-for list="{{ kcal }}" as="d" hint-placeholder-count="7"><span>{{ d.letra }}</span></sc-for>
+</div>
+</div>
+</section>
+<section aria-label="Agua" class="anim" style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 10px; animation: entra 400ms cubic-bezier(.05,.7,.1,1) 240ms backwards;">
+<div style="display: flex; align-items: baseline; justify-content: space-between;">
+<div style="display: flex; flex-direction: column; gap: 2px;">
+<h2 style="margin: 0; color: #A1A9B6; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 1px; text-transform: uppercase;">Agua</h2>
+<span style="display: flex; align-items: baseline; gap: 8px;"><strong style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 32px; line-height: 1; color: #56C2D6;">1,9 L</strong><span style="font-size: 14px; color: #C9CED6;">de media, de 2,2 L</span></span>
+</div>
+<span style="font-size: 15px; color: #C9CED6;">3 de 7 días</span>
+</div>
+<div role="img" aria-label="Media de agua: 1,9 de 2,2 litros" style="height: 10px; border-radius: 5px; background: #353A43; overflow: hidden;"><span class="anim" style="display: block; width: 87.7%; height: 100%; border-radius: 5px; background: #56C2D6; animation: llena0 700ms cubic-bezier(.2,0,0,1) 400ms backwards;"></span></div>
+</section>
+<section aria-label="Lo que más has comido" class="anim" style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 6px 16px; display: flex; flex-direction: column; animation: entra 400ms cubic-bezier(.05,.7,.1,1) 320ms backwards;">
+<h2 style="margin: 0; padding: 10px 0 4px; color: #A1A9B6; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 1px; text-transform: uppercase;">Lo que más has comido</h2>
+<div style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #252A31;"><span class="ms" aria-hidden="true" style="color: #A1A9B6;">set_meal</span><span style="flex-grow: 1; font-size: 16px;">Pechuga de pollo a la plancha</span><span style="font-size: 15px; color: #C9CED6;">6 veces</span></div>
+<div style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #252A31;"><span class="ms" aria-hidden="true" style="color: #A1A9B6;">breakfast_dining</span><span style="flex-grow: 1; font-size: 16px;">Yogur proteico natural</span><span style="font-size: 15px; color: #C9CED6;">5 veces</span></div>
+<div style="display: flex; align-items: center; gap: 12px; padding: 10px 0;"><span class="ms" aria-hidden="true" style="color: #A1A9B6;">rice_bowl</span><span style="flex-grow: 1; font-size: 16px;">Arroz blanco cocido</span><span style="font-size: 15px; color: #C9CED6;">5 veces</span></div>
+</section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1240}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const letras = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+    const p = [140, 138, 142, 137, 139, 101, 107];
+    const entreno = [true, false, true, false, true, false, false];
+    const k = [2405, 2350, 2420, 2290, 2380, 2150, 2175];
+    const completo = [true, true, true, true, true, false, false];
+    const prot = p.map((v, i) => ({
+      letra: letras[i],
+      alto: (v / 160 * 120).toFixed(1) + 'px',
+      color: v >= 136 ? '#E8B84B' : '#6BA6F5',
+      entreno: entreno[i] ? '#FF6A00' : 'transparent',
+      retraso: (200 + i * 50) + 'ms'
+    }));
+    const kcal = k.map((v, i) => ({
+      letra: letras[i],
+      alto: (v / 2600 * 80).toFixed(1) + 'px',
+      retraso: (300 + i * 50) + 'ms'
+    }));
+    const completos = completo.map((c, i) => ({
+      letra: letras[i],
+      color: c ? '#4ADE80' : '#E8A94B',
+      retraso: (300 + i * 50) + 'ms'
+    }));
+    return { prot, kcal, completos };
+  }
+}
+</script>
+</body>
+</html>

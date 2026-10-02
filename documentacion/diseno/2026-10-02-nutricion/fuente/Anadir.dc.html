@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Añadir alimento</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+button,input{font-family:inherit}
+button{cursor:pointer}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+.toque{transition:transform 120ms cubic-bezier(.2,0,0,1)}
+.toque:active{transform:scale(.97)}
+@keyframes entra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes salta{0%{transform:scale(0)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes velo{from{opacity:0}to{opacity:1}}
+@keyframes subeHoja{from{transform:translateY(100%)}to{transform:none}}
+@keyframes sube{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){.anim{animation:none !important;transition:none !important}.toque:active{transform:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 1040px; position: relative; overflow: hidden; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif;">
+<header style="display: flex; align-items: center; gap: 4px; padding: 8px 16px 0 4px;">
+<a href="Main.dc.html" aria-label="Cerrar" class="toque" style="width: 48px; height: 48px; border-radius: 24px; color: #F2F2F3; display: flex; align-items: center; justify-content: center; text-decoration: none;"><span class="ms" aria-hidden="true">close</span></a>
+<h1 style="flex-grow: 1; margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 24px;">Añadir alimento</h1>
+<button type="button" onClick="{{ abrir }}" aria-haspopup="dialog" aria-label="{{ chipA11y }}" class="toque" style="min-height: 48px; padding: 6px 0; border: none; background: transparent; display: flex; align-items: center;"><span style="min-height: 36px; display: flex; align-items: center; gap: 6px; padding: 0 8px 0 12px; border-radius: 18px; border: 1px solid #676F7E; color: #F2F2F3; font-size: 15px; font-weight: 600;"><span class="ms" aria-hidden="true" style="font-size: 18px; color: #FFB27A;">{{ chipIcono }}</span>{{ chipTexto }}<span class="ms" aria-hidden="true" style="font-size: 20px; color: #A1A9B6;">expand_more</span></span></button>
+</header>
+<main style="padding: 12px 16px 120px; display: flex; flex-direction: column; gap: 14px;">
+<div style="display: flex; gap: 8px;">
+<a href="Buscar.dc.html" class="toque" style="flex-grow: 1; min-height: 52px; display: flex; align-items: center; gap: 10px; padding: 0 16px; border-radius: 26px; background: #1B1E24; border: 1px solid #676F7E; color: #A1A9B6; text-decoration: none; font-size: 16px;"><span class="ms" aria-hidden="true">search</span>Busca un alimento o un plato</a>
+<a href="Escaner.dc.html" aria-label="Escanear un código de barras" class="toque" style="flex-shrink: 0; width: 52px; height: 52px; border-radius: 26px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; justify-content: center; text-decoration: none;"><span class="ms" aria-hidden="true">barcode_scanner</span></a>
+</div>
+<nav aria-label="Qué ver" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 26px; background: #1B1E24;">
+<a href="Anadir.dc.html" aria-current="page" style="min-height: 44px; border-radius: 22px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; text-decoration: none;">Todo</a>
+<a href="Favoritos.dc.html" style="min-height: 44px; border-radius: 22px; color: #C9CED6; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 15px; font-weight: 600; text-decoration: none;"><span class="ms" aria-hidden="true" style="font-size: 18px;">favorite</span>Favoritos</a>
+<a href="MisPlatos.dc.html" style="min-height: 44px; border-radius: 22px; color: #C9CED6; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 15px; font-weight: 600; text-decoration: none;"><span class="ms" aria-hidden="true" style="font-size: 18px;">menu_book</span>Mis platos</a>
+</nav>
+<section aria-label="Recientes" style="display: flex; flex-direction: column; gap: 8px;">
+<div style="display: flex; align-items: baseline; justify-content: space-between; padding: 0 4px;"><h2 style="margin: 0; color: #A1A9B6; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 1px; text-transform: uppercase;">Recientes</h2><a href="#" style="font-size: 15px; font-weight: 600; text-decoration: none; min-height: 32px; display: flex; align-items: center;">Ver todos</a></div>
+<div style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
+<sc-for list="{{ recientes }}" as="r" hint-placeholder-count="6">
+<div class="anim" style="display: flex; align-items: center; gap: 4px; padding: 4px 8px 4px 14px; border-bottom: 1px solid #252A31; animation: entra 350ms cubic-bezier(.05,.7,.1,1) backwards; animation-delay: {{ r.retraso }};">
+<a href="Ficha.dc.html" style="flex-grow: 1; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 10px 0; text-decoration: none; color: #F2F2F3;"><span class="ms" aria-hidden="true" style="color: #A1A9B6;">{{ r.icono }}</span><span style="min-width: 0; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ r.nombre }}</span><span style="font-size: 14px; color: #A1A9B6;">{{ r.ultima }}</span></span></a>
+<sc-if value="{{ r.libre }}" hint-placeholder-val="{{ true }}">
+<button type="button" onClick="{{ r.tocar }}" aria-label="{{ r.etiqueta }}" class="toque" style="flex-shrink: 0; width: 44px; height: 44px; border: none; border-radius: 22px; background: #252A31; color: #F2F2F3; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">add</span></button>
+</sc-if>
+<sc-if value="{{ r.anadido }}" hint-placeholder-val="{{ false }}">
+<button type="button" onClick="{{ r.tocar }}" aria-label="{{ r.etiquetaQuitar }}" class="toque" style="flex-shrink: 0; width: 44px; height: 44px; border: none; border-radius: 22px; background: #143323; color: #4ADE80; display: flex; align-items: center; justify-content: center;"><span class="ms anim" aria-hidden="true" style="animation: salta 260ms cubic-bezier(.34,1.56,.64,1) backwards;">check</span></button>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</section>
+<section aria-label="Comidas recientes" style="display: flex; flex-direction: column; gap: 8px;">
+<h2 style="margin: 0; padding: 0 4px; color: #A1A9B6; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 1px; text-transform: uppercase;">Comidas recientes</h2>
+<div style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
+<div style="display: flex; align-items: center; gap: 12px; padding: 12px 8px 12px 14px; border-bottom: 1px solid #252A31;"><span class="ms" aria-hidden="true" style="color: #A1A9B6;">bakery_dining</span><span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px;">Merienda de ayer</span><span style="font-size: 14px; color: #A1A9B6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pan integral, pechuga de pavo · 203 kcal</span></span><a href="Main.dc.html" class="toque" style="flex-shrink: 0; min-height: 44px; padding: 0 14px; border-radius: 22px; background: #252A31; color: #F2F2F3; display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 600; text-decoration: none;"><span class="ms" aria-hidden="true" style="font-size: 18px;">content_copy</span>Copiar</a></div>
+<div style="display: flex; align-items: center; gap: 12px; padding: 12px 8px 12px 14px;"><span class="ms" aria-hidden="true" style="color: #A1A9B6;">nutrition</span><span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px;">Almuerzo de hoy</span><span style="font-size: 14px; color: #A1A9B6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Yogur proteico natural, nueces · 251 kcal</span></span><a href="Main.dc.html" class="toque" style="flex-shrink: 0; min-height: 44px; padding: 0 14px; border-radius: 22px; background: #252A31; color: #F2F2F3; display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 600; text-decoration: none;"><span class="ms" aria-hidden="true" style="font-size: 18px;">content_copy</span>Copiar</a></div>
+</div>
+</section>
+</main>
+<sc-if value="{{ hayAlgo }}" hint-placeholder-val="{{ false }}">
+<div role="status" class="anim" style="position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 16px 24px; background: #121418; border-top: 1px solid #252A31; display: flex; align-items: center; gap: 12px; animation: sube 350ms cubic-bezier(.05,.7,.1,1) backwards;">
+<span style="flex-grow: 1; display: flex; flex-direction: column;"><span style="font-size: 16px; font-weight: 600;">{{ resumen }}</span><span style="font-size: 14px; color: #A1A9B6; font-variant-numeric: tabular-nums;">{{ kcalSuma }}</span></span>
+<a href="Main.dc.html" class="toque" style="min-height: 52px; padding: 0 28px; border-radius: 26px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; font-size: 17px; font-weight: 700; text-decoration: none;">Hecho</a>
+</div>
+</sc-if>
+<sc-if value="{{ abierta }}" hint-placeholder-val="{{ false }}">
+<button type="button" onClick="{{ cerrar }}" aria-label="Cerrar la lista de comidas" class="anim" style="position: absolute; inset: 0; border: none; padding: 0; background: rgba(5, 6, 7, 0.72); animation: velo 200ms cubic-bezier(.2,0,0,1) backwards;"></button>
+<section role="dialog" aria-label="A qué comida" class="anim" style="position: absolute; left: 0; right: 0; bottom: 0; padding: 10px 8px 20px; border-radius: 24px 24px 0 0; background: #1B1E24; border-top: 1px solid #4A505B; display: flex; flex-direction: column; animation: subeHoja 450ms cubic-bezier(.05,.7,.1,1) backwards;">
+<span aria-hidden="true" style="align-self: center; width: 36px; height: 4px; border-radius: 2px; background: #4A505B;"></span>
+<div style="padding: 14px 12px 8px; display: flex; flex-direction: column; gap: 2px;">
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 24px;">¿A qué comida?</h2>
+<span style="font-size: 14px; color: #A1A9B6;">Hoy, jueves 1 de octubre</span>
+</div>
+<sc-for list="{{ comidas }}" as="c" hint-placeholder-count="5">
+<button type="button" onClick="{{ c.elegir }}" role="radio" aria-checked="{{ c.marcada }}" class="toque" style="min-height: 60px; display: flex; align-items: center; gap: 14px; padding: 0 12px; border: none; border-radius: 16px; background: {{ c.fondo }}; color: #F2F2F3; text-align: left;">
+<span class="ms" aria-hidden="true" style="color: {{ c.icoColor }};">{{ c.icono }}</span>
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 17px; font-weight: 600;">{{ c.nombre }}</span><span style="font-size: 14px; color: {{ c.detalleColor }};">{{ c.detalle }}</span></span>
+<sc-if value="{{ c.elegida }}" hint-placeholder-val="{{ false }}"><span class="ms anim" aria-hidden="true" style="color: #FF6A00; animation: salta 260ms cubic-bezier(.34,1.56,.64,1) backwards;">check</span></sc-if>
+</button>
+</sc-for>
+</section>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1040}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { anadidos: {}, abierta: false, elegida: 'merienda' };
+  }
+  renderVals() {
+    const base = [
+      { id: 'yogur', icono: 'breakfast_dining', nombre: 'Yogur proteico natural', ultima: '1 envase (200 g) · 120 kcal', kcal: 120 },
+      { id: 'pan', icono: 'bakery_dining', nombre: 'Pan integral', ultima: '2 rebanadas (56 g) · 140 kcal', kcal: 140 },
+      { id: 'pavo', icono: 'set_meal', nombre: 'Pechuga de pavo', ultima: '60 g · 63 kcal', kcal: 63 },
+      { id: 'platano', icono: 'nutrition', nombre: 'Plátano', ultima: '1 unidad (120 g) · 107 kcal', kcal: 107 },
+      { id: 'nueces', icono: 'eco', nombre: 'Nueces', ultima: '20 g · 131 kcal', kcal: 131 },
+      { id: 'huevo', icono: 'egg_alt', nombre: 'Huevo', ultima: '2 unidades (120 g) · 172 kcal', kcal: 172 }
+    ];
+    const marcados = this.state.anadidos;
+    const recientes = base.map((r, i) => ({
+      ...r,
+      anadido: !!marcados[r.id],
+      libre: !marcados[r.id],
+      retraso: (i * 40) + 'ms',
+      etiqueta: 'Añadir ' + r.nombre.toLowerCase() + ', ' + r.ultima,
+      etiquetaQuitar: 'Quitar ' + r.nombre.toLowerCase(),
+      tocar: () => {
+        const nuevos = { ...this.state.anadidos };
+        if (nuevos[r.id]) delete nuevos[r.id]; else nuevos[r.id] = true;
+        this.setState({ anadidos: nuevos });
+      }
+    }));
+    const elegidos = base.filter((r) => marcados[r.id]);
+    const n = elegidos.length;
+    const suma = elegidos.reduce((s, r) => s + r.kcal, 0);
+    const lasComidas = [
+      { id: 'desayuno', icono: 'free_breakfast', nombre: 'Desayuno', a: 'al desayuno', detalle: '450 kcal' },
+      { id: 'almuerzo', icono: 'nutrition', nombre: 'Almuerzo', a: 'al almuerzo', detalle: '251 kcal' },
+      { id: 'comida', icono: 'restaurant', nombre: 'Comida', a: 'a la comida', detalle: '535 kcal' },
+      { id: 'merienda', icono: 'cookie', nombre: 'Merienda', a: 'a la merienda', detalle: 'Sin apuntar · ahora toca', toca: true },
+      { id: 'cena', icono: 'dinner_dining', nombre: 'Cena', a: 'a la cena', detalle: 'Sin apuntar' }
+    ];
+    const actual = lasComidas.find((c) => c.id === this.state.elegida);
+    const comidas = lasComidas.map((c) => {
+      const elegida = c.id === this.state.elegida;
+      return {
+        ...c,
+        elegida,
+        marcada: elegida ? 'true' : 'false',
+        fondo: elegida ? '#252A31' : 'transparent',
+        icoColor: elegida ? '#FFB27A' : '#A1A9B6',
+        detalleColor: c.toca ? '#FFB27A' : '#A1A9B6',
+        elegir: () => this.setState({ elegida: c.id, abierta: false })
+      };
+    });
+    return {
+      recientes,
+      comidas,
+      abierta: this.state.abierta,
+      chipTexto: actual.nombre,
+      chipIcono: actual.icono,
+      chipA11y: 'Se añade a: ' + actual.nombre + '. Cambiar de comida',
+      abrir: () => this.setState({ abierta: true }),
+      cerrar: () => this.setState({ abierta: false }),
+      hayAlgo: n > 0,
+      resumen: (n === 1 ? '1 añadido ' : n + ' añadidos ') + actual.a,
+      kcalSuma: '+' + suma + ' kcal'
+    };
+  }
+}
+</script>
+</body>
+</html>
