@@ -6,6 +6,7 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `ddc98b0` | Fusión de `lote-1.6.2` en `main` con la app, CI en verde (la API ya iba en `363a397`); etiquetada `v1.6.2`. Informe en `documentacion/estado/2026-10-02-lote-1.6.2.md`. |
 | `ed23c23` | build(android): **versión 1.6.2** (10602). Misma clave de firma. Necesita la API de `363a397` (desplegada a las 14:17). APK de 7 635 307 bytes. |
 | `9d15cc6` | docs(decisiones,documentacion): **DEC-043** (el plural como dato, la ración propia de una lista, quitar con deshacer sin preguntar, la categoría como clave y los límites de crear un alimento) y la rama de la que salió el lote 1.6.1 (`2003442`, no `3492729`). |
 | `2862b4c` | feat(android): **crear y editar un alimento como en la etiqueta** (tablero 13, decisión 17, GP-175): por 100 g o por la ración, el aviso de las calorías, «Así queda», «¿Cómo lo tomas?», y la misma pantalla edita lo propio. `EtiquetaAlimentoTest`. |
