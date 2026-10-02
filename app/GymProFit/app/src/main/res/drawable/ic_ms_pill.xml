@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ic_ms_pill — Material Symbols Rounded «pill», peso 400.
+  Importado sin redibujar de @material-symbols/svg-400@0.47.5, rounded/pill.svg.
+  Licencia Apache 2.0 (Google). El viewBox del SVG es 0 -960 960 960: el grupo
+  traslada 960 hacia abajo para que el trazado caiga en el viewport 0..960.
+  Color por defecto ?attr/colorOnSurface; quien lo tiñe, manda (lote 1.6.2).
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="960" android:viewportHeight="960">
+    <group android:translateY="960">
+        <path
+            android:fillColor="?attr/colorOnSurface"
+            android:pathData="M345-120q-94 0-159.5-65.5T120-345q0-45 17-86t49-73l270-270q32-32 73-49t86-17q94 0 159.5 65.5T840-615q0 45-17 86t-49 73L504-186q-32 32-73 49t-86 17Zm273-265 114-113q23-23 35.5-53.5T780-615q0-69-48-117t-117-48q-33 0-63.5 12.5T498-732L385-618l233 233ZM345-180q32 0 63-12.5t54-35.5l113-114-233-233-114 113q-23 23-35.5 53.5T180-345q0 69 48 117t117 48Z"/>
+    </group>
+</vector>

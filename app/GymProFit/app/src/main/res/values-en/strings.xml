@@ -1412,6 +1412,7 @@
     <string name="fila_revisada_a11y">%1$s, reviewed data. %2$s</string>
     <string name="cantidad_una_racion">%1$s (%2$s\u00A0g)</string>
     <string name="cantidad_raciones">%1$s × %2$s (%3$s\u00A0g)</string>
+    <string name="cantidad_con_unidad">%1$s %2$s (%3$s\u00A0g)</string>
     <string name="cantidad_gramos">%1$s\u00A0g</string>
     <string name="ficha_atras">Back</string>
     <string name="ficha_por">Per %1$s</string>
@@ -1512,4 +1513,20 @@
     <string name="ficha_proteina_corta">prot.</string>
     <string name="escaner_preparando">Getting the barcode reader ready…</string>
     <string name="escaner_sin_lector">The barcode reader could not be set up. Type the code by hand.</string>
+
+    <!-- Lote 1.6.2 (GP-175): el nombre de cada categoría; la clave que viaja es la española (Categorias) -->
+    <string name="categoria_carnes">Meat and poultry</string>
+    <string name="categoria_pescado">Fish and seafood</string>
+    <string name="categoria_huevos">Eggs</string>
+    <string name="categoria_lacteos">Dairy</string>
+    <string name="categoria_legumbres">Legumes</string>
+    <string name="categoria_cereales">Grains and bread</string>
+    <string name="categoria_frutas">Fruit</string>
+    <string name="categoria_verduras">Vegetables</string>
+    <string name="categoria_frutos_secos">Nuts</string>
+    <string name="categoria_aceites">Oils and fats</string>
+    <string name="categoria_bebidas">Drinks</string>
+    <string name="categoria_suplementos">Supplements</string>
+    <string name="categoria_snacks">Snacks</string>
+    <string name="categoria_otro">Other</string>
 </resources>

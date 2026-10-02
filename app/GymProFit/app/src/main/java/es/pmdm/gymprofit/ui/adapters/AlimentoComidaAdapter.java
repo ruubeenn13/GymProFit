@@ -72,21 +72,9 @@ public class AlimentoComidaAdapter extends RecyclerView.Adapter<AlimentoComidaAd
         });
     }
 
-    /**
-     * La cantidad de la línea: «2 × rebanada (56 g)» si se eligió por raciones (lote
-     * 1.6.1), o sus gramos.
-     */
+    /** La cantidad de la línea: «2 rebanadas (56 g)» o sus gramos (Cantidades, GP-172). */
     static String cantidad(android.content.Context ctx, AlimentoComida item) {
-        if (item.getRacionNombre() == null || item.getRaciones() == null) {
-            return ctx.getString(R.string.unidad_g_redondeado, item.getCantidadGramos());
-        }
-        java.text.NumberFormat nf = java.text.NumberFormat.getNumberInstance(
-                es.pmdm.gymprofit.utils.FechaUtils.localeDeLaApp(ctx));
-        nf.setMaximumFractionDigits(1);
-        String gramos = nf.format(Math.round(item.getCantidadGramos()));
-        if (item.getRaciones() == 1) return ctx.getString(R.string.cantidad_una_racion, item.getRacionNombre(), gramos);
-        return ctx.getString(R.string.cantidad_raciones, nf.format(item.getRaciones()),
-                es.pmdm.gymprofit.utils.CantidadFicha.nombreUnidad(item.getRacionNombre()), gramos);
+        return es.pmdm.gymprofit.utils.Cantidades.de(ctx, item);
     }
 
     @Override

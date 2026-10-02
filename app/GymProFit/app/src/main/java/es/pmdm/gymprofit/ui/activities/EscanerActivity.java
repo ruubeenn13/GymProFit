@@ -452,9 +452,8 @@ public class EscanerActivity extends BaseActivity {
         NumberFormat nf = NumberFormat.getNumberInstance(FechaUtils.localeDeLaApp(this));
         nf.setMaximumFractionDigits(1);
         CantidadFicha.Unidad u = cantidad.unidad();
-        String gramos = nf.format(Math.round(cantidad.gramos()));
-        String porcion = u.esGramos() || u.nombre == null ? getString(R.string.cantidad_gramos, gramos)
-                : getString(R.string.cantidad_una_racion, u.nombre, gramos);
+        String porcion = es.pmdm.gymprofit.utils.Cantidades.de(this, u.nombre, u.unidad, u.unidadPlural,
+                cantidad.raciones(), cantidad.gramos());
 
         ((android.widget.ImageView) findViewById(R.id.ivIconoHoja)).setImageResource(a.esProducto()
                 ? R.drawable.ic_ms_inventory_2 : R.drawable.ic_ms_restaurant);

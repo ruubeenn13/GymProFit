@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ic_ms_nutrition — Material Symbols Rounded «nutrition», peso 400.
+  Importado sin redibujar de @material-symbols/svg-400@0.47.5, rounded/nutrition.svg.
+  Licencia Apache 2.0 (Google). El viewBox del SVG es 0 -960 960 960: el grupo
+  traslada 960 hacia abajo para que el trazado caiga en el viewport 0..960.
+  Color por defecto ?attr/colorOnSurface; quien lo tiñe, manda (lote 1.6.2).
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="960" android:viewportHeight="960">
+    <group android:translateY="960">
+        <path
+            android:fillColor="?attr/colorOnSurface"
+            android:pathData="M281.5-201.5Q200-283 200-400q0-100 61.5-176.5T420-674q-26-5-50-14.5T327-717q-28-29-37.5-67t-9.5-78v-18q86-2 148 56.5T489-680q14-43 39.5-80t57.5-69q9-9 21-9t21 9q9 9 9 21t-9 21q-25 25-45 54t-34 61q94 24 152.5 99.5T760-400q0 117-81.5 198.5T480-120q-117 0-198.5-81.5ZM636-244q64-64 64-156t-64-156q-64-64-156-64t-156 64q-64 64-64 156t64 156q64 64 156 64t156-64ZM480-400Z"/>
+    </group>
+</vector>

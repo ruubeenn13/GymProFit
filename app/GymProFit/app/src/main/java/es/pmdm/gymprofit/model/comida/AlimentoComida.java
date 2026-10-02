@@ -25,6 +25,10 @@ public class AlimentoComida {
     private String racionNombre;
     private Double racionGramos;
     private Double raciones;
+    // Lote 1.6.2 (GP-172): la unidad de esa ración, en singular y en plural, en el idioma de
+    // la petición; null si va por gramos o la ración no tiene unidad («Media taza»).
+    private String racionUnidad;
+    private String racionUnidadPlural;
 
     public AlimentoComida() {}
 
@@ -65,4 +69,6 @@ public class AlimentoComida {
     public String getRacionNombre() { return racionNombre; }
     public Double getRacionGramos() { return racionGramos; }
     public Double getRaciones() { return raciones; }
+    public String getRacionUnidad() { return racionUnidad; }
+    public String getRacionUnidadPlural() { return racionUnidadPlural; }
 }

@@ -37,12 +37,18 @@ public final class CantidadFicha {
         @Nullable public final String nombre;
         /** Gramos de una ración; 1 en gramos. */
         public final double gramos;
+        /** La unidad en singular y en plural (lote 1.6.2), o null si no tiene. */
+        @Nullable public final String unidad;
+        @Nullable public final String unidadPlural;
 
-        Unidad(@Nullable Integer racionId, int indice, @Nullable String nombre, double gramos) {
+        Unidad(@Nullable Integer racionId, int indice, @Nullable String nombre, double gramos,
+               @Nullable String unidad, @Nullable String unidadPlural) {
             this.racionId = racionId;
             this.indice = indice;
             this.nombre = nombre;
             this.gramos = gramos;
+            this.unidad = unidad;
+            this.unidadPlural = unidadPlural;
         }
 
         public boolean esGramos() {
@@ -88,10 +94,12 @@ public final class CantidadFicha {
         if (raciones != null) {
             for (int i = 0; i < raciones.size(); i++) {
                 Racion r = raciones.get(i);
-                if (r.getGramos() > 0) u.add(new Unidad(r.getId(), i, r.getNombre(), r.getGramos()));
+                if (r.getGramos() > 0) {
+                    u.add(new Unidad(r.getId(), i, r.getNombre(), r.getGramos(), r.getUnidad(), r.getUnidadPlural()));
+                }
             }
         }
-        u.add(new Unidad(null, -1, null, 1));
+        u.add(new Unidad(null, -1, null, 1, null, null));
         return u;
     }
 
@@ -113,6 +121,12 @@ public final class CantidadFicha {
     /** Cuántas raciones, o cuántos gramos. */
     public double valor() {
         return valor;
+    }
+
+    /** Cuántas raciones, o null si va por gramos (para {@link Cantidades}). */
+    @Nullable
+    public Double raciones() {
+        return unidad().esGramos() ? null : valor;
     }
 
     /** Los gramos de la cantidad, que es lo que cuenta. */
