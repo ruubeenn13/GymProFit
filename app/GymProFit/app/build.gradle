@@ -167,6 +167,13 @@ dependencies {
     // Pantalla de licencias de terceros generada por el plugin. No es una comodidad:
     // Apache 2.0 pide acompañar la redistribución con su aviso (GP-082)
     implementation libs.oss.licenses
+    // Escáner de códigos de barras (lote 1.6.1): la cámara con CameraX y la lectura en el
+    // móvil con ML Kit, con el modelo dentro del APK: funciona nada más instalar, sin red
+    // y sin depender de Google Play, que es como se reparte la app hoy (fuera de Play).
+    implementation libs.camera.camera2
+    implementation libs.camera.lifecycle
+    implementation libs.camera.view
+    implementation libs.mlkit.barcode
     testImplementation libs.junit
     // InstantTaskExecutorRule: LiveData síncrono en los tests del ViewModel (GP-016)
     testImplementation libs.core.testing

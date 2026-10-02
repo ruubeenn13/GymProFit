@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_cifra_ficha — una de las cuatro cifras de la ficha y de la hoja del escáner
+  (lote 1.6.1): el número y, debajo, qué es. Lo lee TalkBack la fila entera, no cada
+  cifra: el contenedor lleva la frase completa.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp"
+    android:paddingStart="4dp"
+    android:paddingEnd="4dp"
+    android:importantForAccessibility="noHideDescendants"
+    android:background="@drawable/bg_cifra_progreso">
+
+    <TextView
+        android:id="@+id/tvValorCifra"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:maxLines="1"
+        app:autoSizeTextType="uniform"
+        app:autoSizeMinTextSize="13sp"
+        app:autoSizeMaxTextSize="@dimen/text_display"
+        android:textAppearance="@style/TextAppearance.GymProFit.Number"
+        android:textSize="@dimen/text_display"
+        android:textColor="?attr/colorOnSurface" />
+
+    <TextView
+        android:id="@+id/tvEtiquetaCifra"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textSize="@dimen/text_eyebrow"
+        android:textColor="?attr/colorOnSurfaceVariant" />
+</LinearLayout>

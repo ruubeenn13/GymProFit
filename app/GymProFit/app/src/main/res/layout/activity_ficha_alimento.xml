@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_ficha_alimento — la ficha del alimento y su cantidad (tablero 7, lote 1.6.1).
+  Nombre, de dónde es, las cuatro cifras de la cantidad elegida, el reparto de sus kcal
+  entre los tres macros, «Cómo encaja en tu día» (si hay objetivo), la información por
+  100 g plegada y «Reportar un problema». Abajo, fija, la cantidad (−, cifra, +), la
+  unidad y «Añadir a la merienda» (o «Actualizar» al editar una línea).
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?android:attr/colorBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="4dp"
+        android:paddingTop="8dp">
+
+        <ImageButton
+            android:id="@+id/btnAtrasFicha"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/ficha_atras"
+            android:src="@drawable/ic_ms_arrow_back"
+            app:tint="?attr/colorOnSurface" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scrollFicha"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:id="@+id/contenidoFicha"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="24dp">
+
+                <LinearLayout
+                    android:id="@+id/cabezaFicha"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal">
+
+                    <FrameLayout
+                        android:layout_width="86dp"
+                        android:layout_height="86dp">
+
+                        <FrameLayout
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:background="@drawable/bg_tile_ficha">
+
+                            <ImageView
+                                android:id="@+id/ivIconoFicha"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:layout_gravity="center"
+                                android:importantForAccessibility="no"
+                                app:tint="?attr/colorOnSurfaceVariant"
+                                android:src="@drawable/ic_ms_restaurant" />
+                        </FrameLayout>
+
+                        <ImageView
+                            android:id="@+id/ivRevisadoFicha"
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:layout_gravity="bottom|end"
+                            android:background="@drawable/bg_punto_lista"
+                            android:backgroundTint="?android:attr/colorBackground"
+                            android:contentDescription="@string/datos_revisados"
+                            android:src="@drawable/ic_ms_verified_fill"
+                            app:tint="@color/gp_macro_proteinas"
+                            android:visibility="gone" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/tvNombreFicha"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:accessibilityHeading="true"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Headline"
+                        android:textSize="@dimen/text_display_large"
+                        android:textColor="?attr/colorOnSurface"
+                        tools:targetApi="28" />
+
+                    <TextView
+                        android:id="@+id/tvOrigenFicha"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:gravity="center"
+                        android:textSize="@dimen/text_body"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvPorFicha"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:gravity="center"
+                    android:textSize="@dimen/text_body"
+                    android:textColor="?attr/colorOnSurface" />
+
+                <LinearLayout
+                    android:id="@+id/cifrasFicha"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:orientation="horizontal"
+                    android:focusable="true">
+
+                    <include android:id="@+id/cifraKcal" layout="@layout/item_cifra_ficha" />
+
+                    <Space android:layout_width="8dp" android:layout_height="1dp" />
+
+                    <include android:id="@+id/cifraProteina" layout="@layout/item_cifra_ficha" />
+
+                    <Space android:layout_width="8dp" android:layout_height="1dp" />
+
+                    <include android:id="@+id/cifraCarb" layout="@layout/item_cifra_ficha" />
+
+                    <Space android:layout_width="8dp" android:layout_height="1dp" />
+
+                    <include android:id="@+id/cifraGrasa" layout="@layout/item_cifra_ficha" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/repartoFicha"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:orientation="vertical"
+                    android:focusable="true">
+
+                    <LinearLayout
+                        android:id="@+id/barraReparto"
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp"
+                        android:orientation="horizontal"
+                        android:importantForAccessibility="noHideDescendants">
+
+                        <View
+                            android:id="@+id/tramoProteina"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_barra_redonda"
+                            android:backgroundTint="@color/gp_macro_proteinas" />
+
+                        <Space android:layout_width="3dp" android:layout_height="1dp" />
+
+                        <View
+                            android:id="@+id/tramoCarb"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_barra_redonda"
+                            android:backgroundTint="@color/gp_macro_carbos" />
+
+                        <Space android:layout_width="3dp" android:layout_height="1dp" />
+
+                        <View
+                            android:id="@+id/tramoGrasa"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_barra_redonda"
+                            android:backgroundTint="@color/gp_macro_grasas" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvLeyendaReparto"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:importantForAccessibility="no"
+                        android:lineSpacingMultiplier="1.2"
+                        android:textSize="@dimen/text_caption"
+                        android:textColor="?attr/colorOnSurface" />
+                </LinearLayout>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardEncaje"
+                    style="@style/Widget.GymProFit.Card.Estructura"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            style="@style/Widget.GymProFit.Seccion"
+                            android:textAppearance="@style/TextAppearance.GymProFit.Label"
+                            android:text="@string/ficha_encaja_titulo"
+                            android:textAllCaps="true"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
+
+                        <LinearLayout
+                            android:id="@+id/encajeKcal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:orientation="vertical"
+                            android:focusable="true">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:importantForAccessibility="noHideDescendants">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="@string/ficha_encaja_calorias"
+                                    android:textSize="@dimen/text_body"
+                                    android:textColor="?attr/colorOnSurface" />
+
+                                <TextView
+                                    android:id="@+id/tvEncajeKcal"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFeatureSettings="tnum"
+                                    android:textSize="@dimen/text_body"
+                                    android:textColor="?attr/colorOnSurface" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/barraEncajeKcal"
+                                android:layout_width="match_parent"
+                                android:layout_height="10dp"
+                                android:layout_marginTop="6dp"
+                                android:orientation="horizontal"
+                                android:background="@drawable/bg_barra_redonda"
+                                android:backgroundTint="@color/gp_meter_track"
+                                android:importantForAccessibility="noHideDescendants">
+
+                                <View
+                                    android:id="@+id/tramoKcalAntes"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/bg_barra_redonda"
+                                    android:backgroundTint="?attr/colorPrimary" />
+
+                                <View
+                                    android:id="@+id/tramoKcalSuma"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/bg_barra_redonda"
+                                    android:backgroundTint="?attr/colorPrimary"
+                                    android:alpha="0.5" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/encajeProt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:orientation="vertical"
+                            android:focusable="true">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:importantForAccessibility="noHideDescendants">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="@string/ficha_encaja_proteina"
+                                    android:textSize="@dimen/text_body"
+                                    android:textColor="?attr/colorOnSurface" />
+
+                                <TextView
+                                    android:id="@+id/tvEncajeProt"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFeatureSettings="tnum"
+                                    android:textSize="@dimen/text_body"
+                                    android:textColor="?attr/colorOnSurface" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/barraEncajeProt"
+                                android:layout_width="match_parent"
+                                android:layout_height="10dp"
+                                android:layout_marginTop="6dp"
+                                android:orientation="horizontal"
+                                android:background="@drawable/bg_barra_redonda"
+                                android:backgroundTint="@color/gp_meter_track"
+                                android:importantForAccessibility="noHideDescendants">
+
+                                <View
+                                    android:id="@+id/tramoProtAntes"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/bg_barra_redonda"
+                                    android:backgroundTint="@color/gp_macro_proteinas" />
+
+                                <View
+                                    android:id="@+id/tramoProtSuma"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/bg_barra_redonda"
+                                    android:backgroundTint="@color/gp_macro_proteinas"
+                                    android:alpha="0.5" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvQuedan"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:lineSpacingMultiplier="1.15"
+                            android:textSize="@dimen/text_fila"
+                            android:textColor="?attr/colorOnSurface" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <LinearLayout
+                    android:id="@+id/btnInfo100"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:minHeight="56dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="12dp"
+                    android:background="@drawable/bg_grupo_solo"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/ficha_info_100"
+                        android:textSize="@dimen/text_fila"
+                        android:textColor="?attr/colorOnSurface" />
+
+                    <ImageView
+                        android:id="@+id/ivInfo100"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_ms_keyboard_arrow_down"
+                        app:tint="?attr/colorOnSurfaceVariant" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/info100"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="8dp"
+                    android:visibility="gone" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnReportar"
+                    style="@style/Widget.Material3.Button.TextButton.Icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:minHeight="48dp"
+                    android:text="@string/ficha_reportar"
+                    android:textSize="@dimen/text_body"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    app:icon="@drawable/ic_ms_flag"
+                    app:iconTint="?attr/colorOnSurfaceVariant" />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <include
+            android:id="@+id/estadoFicha"
+            layout="@layout/view_estado" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/pieFicha"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="16dp"
+        android:background="@drawable/bg_pie_plan"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <LinearLayout
+                android:id="@+id/grupoCantidad"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="4dp"
+                android:background="@drawable/bg_campo_buscar">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnMenos"
+                    style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:contentDescription="@string/ficha_menos"
+                    app:icon="@drawable/ic_ms_remove"
+                    app:iconTint="?attr/colorOnSurface" />
+
+                <TextView
+                    android:id="@+id/tvCantidad"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:minHeight="48dp"
+                    android:minWidth="56dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:gravity="center"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:accessibilityLiveRegion="polite"
+                    android:fontFeatureSettings="tnum"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Number"
+                    android:textSize="@dimen/text_headline"
+                    android:textColor="?attr/colorOnSurface" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnMas"
+                    style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:contentDescription="@string/ficha_mas"
+                    app:icon="@drawable/ic_ms_add"
+                    app:iconTint="?attr/colorOnSurface" />
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/grupoUnidad"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                android:contentDescription="@string/ficha_unidad"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnUnidad0"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:backgroundTint="@color/sel_unidad_fondo"
+                    android:textColor="@color/sel_unidad_texto"
+                    android:textStyle="bold"
+                    app:strokeColor="?attr/colorOutline"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="48dp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:textSize="@dimen/text_body" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnUnidad1"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:backgroundTint="@color/sel_unidad_fondo"
+                    android:textColor="@color/sel_unidad_texto"
+                    android:textStyle="bold"
+                    app:strokeColor="?attr/colorOutline"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="48dp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:textSize="@dimen/text_body" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnUnidadVarias"
+                style="@style/Widget.GymProFit.BotonPildora.Contorno"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:visibility="gone"
+                app:icon="@drawable/ic_ms_keyboard_arrow_down"
+                app:iconGravity="end"
+                app:iconTint="?attr/colorOnSurface" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAnadirFicha"
+            style="@style/Widget.GymProFit.BotonPildora"
+            android:layout_width="match_parent"
+            android:layout_marginTop="12dp"
+            android:minHeight="52dp"
+            android:textSize="@dimen/text_subtitle" />
+    </LinearLayout>
+</LinearLayout>

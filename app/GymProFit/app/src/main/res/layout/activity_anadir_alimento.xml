@@ -1,135 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  activity_anadir_alimento — buscador de alimentos para añadir a una comida.
-  Muestra un campo de búsqueda, acceso a crear alimento propio y el listado
-  filtrado de resultados.
+  activity_anadir_alimento — Añadir y Buscar (tableros 4 y 5, lote 1.6.1).
+  Cabecera con cerrar y «Añadir a [merienda ▾]»: la píldora abre las cinco comidas.
+  Debajo, el buscador y el botón naranja del escáner. La lista es la de Añadir
+  (Recientes y Habituales) sin escribir, y la de la búsqueda con 2 letras o más.
+  Cargando, error con reintentar y vacío, con view_estado.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="?attr/android:colorBackground">
+    android:background="?android:attr/colorBackground">
 
-    <!-- Toolbar -->
-    <!-- Volver, título y acceso a crear alimento nuevo -->
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
-        style="@style/Widget.GymProFit.Cabecera"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:title="@string/anadir_alimento_titulo">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnCrearAlimento"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_caption"
-            android:text="@string/anadir_alimento_crear"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_gravity="end" />
-
-    </com.google.android.material.appbar.MaterialToolbar>
-
-    <!-- Para qué comida (GP-105): se ve y se puede cambiar antes de guardar. El atajo
-         del «+» llega con la que toca por la hora ya marcada. -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingStart="12dp">
+        android:paddingStart="4dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="8dp">
+
+        <ImageButton
+            android:id="@+id/btnCerrarAnadir"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/anadir_cerrar"
+            android:src="@drawable/ic_ms_close"
+            app:tint="?attr/colorOnSurface" />
 
         <TextView
+            android:id="@+id/tvAnadirA"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_marginStart="4dp"
+            android:accessibilityHeading="true"
             android:importantForAccessibility="no"
-            android:text="@string/anadir_alimento_para"
-            android:textSize="@dimen/text_body"
-            android:textColor="?attr/colorOnSurfaceVariant" />
+            android:text="@string/anadir_a"
+            android:textAppearance="@style/TextAppearance.GymProFit.Headline"
+            android:textSize="@dimen/text_display"
+            android:textColor="?attr/colorOnSurface"
+            tools:targetApi="28" />
 
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="none"
-            android:paddingEnd="12dp">
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chipGroupComida"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/anadir_alimento_para_a11y"
-                app:singleLine="true"
-                app:singleSelection="true"
-                app:selectionRequired="true">
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipComidaDesayuno"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/nutricion_desayuno" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipComidaAlmuerzo"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/nutricion_almuerzo" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipComidaComida"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/nutricion_comida" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipComidaMerienda"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/nutricion_merienda" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipComidaCena"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/nutricion_cena" />
-
-            </com.google.android.material.chip.ChipGroup>
-        </HorizontalScrollView>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnComidaAnadir"
+            style="@style/Widget.GymProFit.BotonPildora"
+            android:layout_width="wrap_content"
+            android:layout_marginStart="8dp"
+            android:minHeight="44dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="8dp"
+            android:textAppearance="@style/TextAppearance.GymProFit.Headline"
+            android:textSize="@dimen/text_display"
+            android:textAllCaps="false"
+            android:backgroundTint="?attr/colorPrimaryContainer"
+            android:textColor="?attr/colorOnPrimaryContainer"
+            app:icon="@drawable/ic_ms_keyboard_arrow_down"
+            app:iconGravity="end"
+            app:iconPadding="2dp"
+            app:iconTint="?attr/colorOnPrimaryContainer" />
     </LinearLayout>
 
-    <!-- Search -->
-    <!-- Campo de búsqueda de alimentos -->
-    <com.google.android.material.textfield.TextInputLayout
-        app:errorIconDrawable="@drawable/ic_ms_error"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="12dp"
-        android:hint="@string/anadir_alimento_buscar_hint"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="4dp">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etBuscador"
-            android:layout_width="match_parent"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilBuscarAnadir"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:inputType="text" />
+            android:layout_weight="1"
+            android:hint="@string/anadir_buscar_hint"
+            app:hintEnabled="false"
+            app:boxCornerRadiusTopStart="26dp"
+            app:boxCornerRadiusTopEnd="26dp"
+            app:boxCornerRadiusBottomStart="26dp"
+            app:boxCornerRadiusBottomEnd="26dp"
+            app:boxStrokeColor="?attr/colorPrimary"
+            app:boxBackgroundColor="?attr/colorSurface"
+            app:startIconDrawable="@drawable/ic_ms_search"
+            app:startIconTint="?attr/colorOnSurfaceVariant"
+            app:startIconContentDescription="@null"
+            app:endIconMode="clear_text"
+            app:endIconDrawable="@drawable/ic_ms_close"
+            app:endIconContentDescription="@string/buscar_borrar"
+            app:errorIconDrawable="@drawable/ic_ms_error">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etBuscarAnadir"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="52dp"
+                android:hint="@string/anadir_buscar_hint"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:singleLine="true"
+                android:textSize="@dimen/text_subtitle" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- RecyclerView -->
-    <!-- Resultados de la búsqueda de alimentos -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvAlimentos"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEscanear"
+            style="@style/Widget.Material3.Button.Icon"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_marginStart="8dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:padding="0dp"
+            android:contentDescription="@string/anadir_escanear"
+            app:cornerRadius="26dp"
+            app:icon="@drawable/ic_ms_barcode_scanner"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:iconSize="24dp"
+            app:iconTint="?attr/colorOnPrimary"
+            android:backgroundTint="?attr/colorPrimary" />
+    </LinearLayout>
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:padding="8dp"
-        android:clipToPadding="false" />
+        android:layout_weight="1">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvAnadir"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="24dp" />
+
+        <include
+            android:id="@+id/estadoAnadir"
+            layout="@layout/view_estado" />
+    </FrameLayout>
 </LinearLayout>

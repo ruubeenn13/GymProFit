@@ -20,6 +20,11 @@ public class AlimentoComida {
     private double grasasTotales;
     // Id del usuario propietario del alimento si es personalizado; null si es del catálogo global
     private Integer usuarioIdAlimento;
+    // Lote 1.6.1: la ración con la que se eligió, si se eligió por raciones («2 rebanadas»).
+    private Integer racionId;
+    private String racionNombre;
+    private Double racionGramos;
+    private Double raciones;
 
     public AlimentoComida() {}
 
@@ -55,4 +60,9 @@ public class AlimentoComida {
 
     public Integer getUsuarioIdAlimento() { return usuarioIdAlimento; }
     public void setUsuarioIdAlimento(Integer usuarioIdAlimento) { this.usuarioIdAlimento = usuarioIdAlimento; }
+
+    public Integer getRacionId() { return racionId; }
+    public String getRacionNombre() { return racionNombre; }
+    public Double getRacionGramos() { return racionGramos; }
+    public Double getRaciones() { return raciones; }
 }

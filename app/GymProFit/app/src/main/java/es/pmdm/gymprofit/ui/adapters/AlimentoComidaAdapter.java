@@ -30,8 +30,18 @@ public class AlimentoComidaAdapter extends RecyclerView.Adapter<AlimentoComidaAd
         void onItemLongClick(AlimentoComida item, View anchorView);
     }
 
+    /** Tocar un alimento (lote 1.6.1): abre la ficha para cambiar su cantidad. */
+    public interface OnItemClickListener {
+        void onItemClick(AlimentoComida item);
+    }
+
     private final List<AlimentoComida> items;
     private final OnItemLongClickListener longClickListener;
+    @androidx.annotation.Nullable private OnItemClickListener clickListener;
+
+    public void setOnItemClickListener(@androidx.annotation.Nullable OnItemClickListener l) {
+        this.clickListener = l;
+    }
 
     // Constructor: recibe los ítems de la comida y el listener de long-click.
     public AlimentoComidaAdapter(List<AlimentoComida> items, OnItemLongClickListener listener) {
@@ -53,12 +63,30 @@ public class AlimentoComidaAdapter extends RecyclerView.Adapter<AlimentoComidaAd
     public void onBindViewHolder(@NonNull ViewHolder h, int position) {
         AlimentoComida item = items.get(position);
         h.tvNombreAlimento.setText(item.getNombreAlimento());
-        h.tvCantidadGramos.setText(h.itemView.getContext().getString(R.string.unidad_g_redondeado, item.getCantidadGramos()));
+        h.tvCantidadGramos.setText(cantidad(h.itemView.getContext(), item));
         h.tvCaloriasItem.setText(h.itemView.getContext().getString(R.string.unidad_kcal, item.getCaloriasTotales()));
+        h.itemView.setOnClickListener(v -> { if (clickListener != null) clickListener.onItemClick(item); });
         h.itemView.setOnLongClickListener(v -> {
             if (longClickListener != null) longClickListener.onItemLongClick(item, v);
             return true;
         });
+    }
+
+    /**
+     * La cantidad de la línea: «2 × rebanada (56 g)» si se eligió por raciones (lote
+     * 1.6.1), o sus gramos.
+     */
+    static String cantidad(android.content.Context ctx, AlimentoComida item) {
+        if (item.getRacionNombre() == null || item.getRaciones() == null) {
+            return ctx.getString(R.string.unidad_g_redondeado, item.getCantidadGramos());
+        }
+        java.text.NumberFormat nf = java.text.NumberFormat.getNumberInstance(
+                es.pmdm.gymprofit.utils.FechaUtils.localeDeLaApp(ctx));
+        nf.setMaximumFractionDigits(1);
+        String gramos = nf.format(Math.round(item.getCantidadGramos()));
+        if (item.getRaciones() == 1) return ctx.getString(R.string.cantidad_una_racion, item.getRacionNombre(), gramos);
+        return ctx.getString(R.string.cantidad_raciones, nf.format(item.getRaciones()),
+                es.pmdm.gymprofit.utils.CantidadFicha.nombreUnidad(item.getRacionNombre()), gramos);
     }
 
     @Override

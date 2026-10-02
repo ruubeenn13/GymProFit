@@ -3,6 +3,7 @@ package es.pmdm.gymprofit.ui.activities;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.TextView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -34,12 +35,21 @@ import com.google.android.material.appbar.MaterialToolbar;
 // CrearAlimentoActivity — formulario de creación de alimento personalizado
 // Permite al usuario dar de alta un alimento propio con macros y categoría,
 // usada desde AnadirAlimentoActivity para ampliar el catálogo disponible.
+// Lote 1.6.1: «Créalo» (la búsqueda) y «Crear con este código» (el escáner) la abren;
+// el escáner con el código que no existía, que se enseña y se guarda con el alimento.
+// Al guardar, abre la ficha del alimento creado para añadirlo a la comida.
 // ============================================================
 /**
  * Formulario para crear un nuevo alimento personalizado.
  * Carga las categorías desde la API. Devuelve RESULT_OK al caller si se guarda.
  */
 public class CrearAlimentoActivity extends BaseActivity {
+
+    /** Extra: el código de barras con que se crea (del escáner). */
+    public static final String EXTRA_CODIGO = "codigo";
+
+    @androidx.annotation.Nullable private String codigo;
+    private androidx.activity.result.ActivityResultLauncher<android.content.Intent> fichaLauncher;
 
     private TextInputEditText etNombre;
     private Spinner spCategoria;
@@ -90,6 +100,19 @@ public class CrearAlimentoActivity extends BaseActivity {
         AvisoDescartar.instalar(this, toolbar, () -> AvisoDescartar.hayTexto(
                 etNombre.getText(), etCalorias.getText(), etProteinas.getText(),
                 etCarbohidratos.getText(), etGrasas.getText()));
+
+        codigo = getIntent().getStringExtra(EXTRA_CODIGO);
+        if (codigo != null && !codigo.isEmpty()) {
+            TextView tvCodigo = findViewById(R.id.tvCodigoCrear);
+            tvCodigo.setText(getString(R.string.crear_alimento_codigo, codigo));
+            tvCodigo.setVisibility(View.VISIBLE);
+        }
+        // Lo que se añade desde la ficha del alimento creado cierra también esta pantalla.
+        fichaLauncher = registerForActivityResult(
+                new androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult(), r -> {
+                    setResult(r.getResultCode() == RESULT_OK ? RESULT_OK : RESULT_CANCELED);
+                    finish();
+                });
 
         MaterialButton btnGuardar = findViewById(R.id.btnGuardarAlimento);
         btnGuardar.setOnClickListener(v -> guardarAlimento());
@@ -171,6 +194,7 @@ public class CrearAlimentoActivity extends BaseActivity {
         body.put("carbohidratos", BigDecimal.valueOf(carbohidratos));
         body.put("grasas", BigDecimal.valueOf(grasas));
         body.put("usuarioId", prefsManager.getUsuarioId());
+        if (codigo != null && !codigo.isEmpty()) body.put("barcode", codigo);
 
         // Muestra el spinner modal mientras se guarda el alimento en el servidor
         LoadingDialog.show(this);
@@ -179,6 +203,13 @@ public class CrearAlimentoActivity extends BaseActivity {
             public void onOk(Alimento creado) {
                 // Oculta el spinner al recibir respuesta correcta
                 LoadingDialog.hide(CrearAlimentoActivity.this);
+                String tipo = getIntent().getStringExtra(AnadirAlimentoActivity.EXTRA_TIPO);
+                if (creado != null && creado.getId() > 0 && tipo != null) {
+                    // A la ficha del alimento creado, para añadirlo (lote 1.6.1).
+                    fichaLauncher.launch(FichaAlimentoActivity.paraAnadir(CrearAlimentoActivity.this, creado.getId(),
+                            tipo, getIntent().getStringExtra(AnadirAlimentoActivity.EXTRA_FECHA)));
+                    return;
+                }
                 setResult(RESULT_OK);
                 finish();
             }
@@ -186,6 +217,11 @@ public class CrearAlimentoActivity extends BaseActivity {
             public void onFail(int code, String message) {
                 // Oculta el spinner y mapea el código de error a un mensaje de usuario
                 LoadingDialog.hide(CrearAlimentoActivity.this);
+                if (code == 409) {
+                    // Ya tienes un alimento con ese código (único por dueño).
+                    UIHelper.mostrarToastError(CrearAlimentoActivity.this, getString(R.string.crear_alimento_codigo_en_uso));
+                    return;
+                }
                 UiFeedback.toastError(CrearAlimentoActivity.this, code, message);
             }
         });

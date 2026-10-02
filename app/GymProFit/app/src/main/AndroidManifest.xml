@@ -153,6 +153,8 @@
         <activity android:name=".ui.activities.ComidaActivity" android:exported="false" />
         <activity android:name=".ui.activities.AnadirAlimentoActivity" android:exported="false" />
         <activity android:name=".ui.activities.CrearAlimentoActivity" android:exported="false" />
+        <activity android:name=".ui.activities.FichaAlimentoActivity" android:exported="false" />
+        <activity android:name=".ui.activities.EscanerActivity" android:exported="false" />
         <activity android:name=".ui.activities.AdminAlimentosActivity" android:exported="false" />
         <activity android:name=".ui.activities.AcercaDeActivity" android:exported="false" />
         <!-- Licencias de terceros (GP-082): el texto de lo que no sale de Gradle, y las
