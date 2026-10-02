@@ -72,6 +72,14 @@ class AuthServiceTest {
     private LoginDTO loginDTO;
     private RegisterDTO registerDTO;
 
+    // login() deja su autenticación (simulada) en el SecurityContext del hilo. Sin
+    // limpiarla, el siguiente test del mismo hilo que pase por MockMvc la hereda: el
+    // filtro JWT ve que ya hay una y no pone la del token, y la petición da 403.
+    @org.junit.jupiter.api.AfterEach
+    void limpiarContexto() {
+        org.springframework.security.core.context.SecurityContextHolder.clearContext();
+    }
+
     // Inicializa usuario, rol y DTOs de login/registro de prueba
     @BeforeEach
     void setUp() {
