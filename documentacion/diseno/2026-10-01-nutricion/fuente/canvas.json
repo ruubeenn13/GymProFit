@@ -1,0 +1,177 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-10-01T14:05:14Z"
+  },
+  "title": "Nutrición nueva",
+  "launch": {
+    "view": "canvas"
+  },
+  "pages": [],
+  "designSystems": [],
+  "boards": {
+    "Main.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 1300,
+      "title": "1 · Nutrición, hoy: día de entreno",
+      "is_interactive": true
+    },
+    "Comida.dc.html": {
+      "x": 470,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "2 · Una comida, con deshacer",
+      "is_interactive": true
+    },
+    "DiaCompleto.dc.html": {
+      "x": 940,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "3 · El día completo"
+    },
+    "Anadir.dc.html": {
+      "x": 0,
+      "y": 1680,
+      "w": 390,
+      "h": 1040,
+      "title": "4 · Añadir: lo tuyo primero",
+      "is_interactive": true
+    },
+    "Buscar.dc.html": {
+      "x": 470,
+      "y": 1680,
+      "w": 390,
+      "h": 900,
+      "title": "5 · Buscar en nuestra base",
+      "is_interactive": true
+    },
+    "Escaner.dc.html": {
+      "x": 940,
+      "y": 1680,
+      "w": 390,
+      "h": 844,
+      "title": "6 · Escanear un código",
+      "is_interactive": true
+    },
+    "Ficha.dc.html": {
+      "x": 1410,
+      "y": 1680,
+      "w": 390,
+      "h": 1180,
+      "title": "7 · La ficha y la cantidad",
+      "is_interactive": true
+    },
+    "Favoritos.dc.html": {
+      "x": 1880,
+      "y": 1680,
+      "w": 390,
+      "h": 920,
+      "title": "8 · Favoritos",
+      "is_interactive": true
+    },
+    "MisPlatos.dc.html": {
+      "x": 0,
+      "y": 3240,
+      "w": 390,
+      "h": 1220,
+      "title": "9 · Mis platos y lo que te encaja",
+      "is_interactive": true
+    },
+    "CrearPlato.dc.html": {
+      "x": 470,
+      "y": 3240,
+      "w": 390,
+      "h": 1180,
+      "title": "10 · Crear un plato",
+      "is_interactive": true
+    },
+    "Entreno.dc.html": {
+      "x": 940,
+      "y": 3240,
+      "w": 390,
+      "h": 960,
+      "title": "11 · Al acabar el entreno",
+      "is_interactive": true
+    },
+    "Semana.dc.html": {
+      "x": 1410,
+      "y": 3240,
+      "w": 390,
+      "h": 1240,
+      "title": "12 · Tu semana de nutrición"
+    },
+    "Decisiones.dc.html": {
+      "x": 0,
+      "y": 4780,
+      "w": 1100,
+      "h": 2100,
+      "title": "Decisiones para aprobar"
+    },
+    "Movimiento.dc.html": {
+      "x": 1180,
+      "y": 4780,
+      "w": 1100,
+      "h": 1640,
+      "title": "Así se mueve: los momentos de nutrición"
+    },
+    "Tecnica.dc.html": {
+      "x": 2360,
+      "y": 4780,
+      "w": 1000,
+      "h": 1960,
+      "title": "Qué cambia por dentro"
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Comida.dc.html",
+    "DiaCompleto.dc.html",
+    "Anadir.dc.html",
+    "Buscar.dc.html",
+    "Escaner.dc.html",
+    "Ficha.dc.html",
+    "Favoritos.dc.html",
+    "MisPlatos.dc.html",
+    "CrearPlato.dc.html",
+    "Entreno.dc.html",
+    "Semana.dc.html",
+    "Decisiones.dc.html",
+    "Movimiento.dc.html",
+    "Tecnica.dc.html"
+  ],
+  "notes": {
+    "t1": {
+      "x": 0,
+      "y": -260,
+      "text": "El diario: tu día de un vistazo",
+      "kind": "title1",
+      "maxW": 1330
+    },
+    "t2": {
+      "x": 0,
+      "y": 1420,
+      "text": "Añadir un alimento en segundos",
+      "kind": "title1",
+      "maxW": 2270
+    },
+    "t3": {
+      "x": 0,
+      "y": 2980,
+      "text": "Mis platos, el entreno y la semana",
+      "kind": "title1",
+      "maxW": 1800
+    },
+    "t4": {
+      "x": 0,
+      "y": 4520,
+      "text": "Lo que apruebas, cómo se mueve y qué cambia por dentro",
+      "kind": "title1",
+      "maxW": 3360
+    }
+  }
+}

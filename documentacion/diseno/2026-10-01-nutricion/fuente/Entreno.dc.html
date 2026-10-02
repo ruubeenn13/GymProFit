@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Sesión completada</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+button,input{font-family:inherit}
+button{cursor:pointer}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+.toque{transition:transform 120ms cubic-bezier(.2,0,0,1)}
+.toque:active{transform:scale(.97)}
+@keyframes entra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes salta{0%{transform:scale(0)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes oro{0%{box-shadow:0 0 0 0 rgba(232,184,75,0)}40%{box-shadow:0 0 14px 3px rgba(232,184,75,.65)}100%{box-shadow:0 0 0 0 rgba(232,184,75,0)}}
+@keyframes brillo{from{transform:translateX(-130%) skewX(-18deg)}to{transform:translateX(420%) skewX(-18deg)}}
+@media (prefers-reduced-motion: reduce){.anim{animation:none !important;transition:none !important}.toque:active{transform:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 960px; position: relative; overflow: hidden; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif;">
+<header style="display: flex; align-items: center; gap: 4px; padding: 8px 12px 0 4px;">
+<a href="Main.dc.html" aria-label="Cerrar el resumen" class="toque" style="width: 48px; height: 48px; border-radius: 24px; color: #F2F2F3; display: flex; align-items: center; justify-content: center; text-decoration: none;"><span class="ms" aria-hidden="true">close</span></a>
+<span style="flex-grow: 1; font-size: 16px; font-weight: 600; color: #C9CED6;">Sesión completada</span>
+</header>
+<main style="padding: 8px 16px 120px; display: flex; flex-direction: column; gap: 16px;">
+<section aria-label="Lo que has movido" class="anim" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0 4px; text-align: center; animation: entra 400ms cubic-bezier(.05,.7,.1,1) backwards;">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 2px; color: #FF6A00;">HAS MOVIDO</span>
+<strong style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 64px; line-height: 1; font-variant-numeric: tabular-nums;">8.420</strong>
+<span style="font-size: 16px; color: #C9CED6;">kilos en esta sesión</span>
+<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 10px;">
+<span style="min-height: 32px; display: flex; align-items: center; gap: 6px; padding: 0 12px; border-radius: 16px; background: #1B1E24; font-size: 14px;"><span class="ms" aria-hidden="true" style="font-size: 18px; color: #A1A9B6;">fitness_center</span>Cuerpo completo B</span>
+<span style="min-height: 32px; display: flex; align-items: center; gap: 6px; padding: 0 12px; border-radius: 16px; background: #1B1E24; font-size: 14px;"><span class="ms" aria-hidden="true" style="font-size: 18px; color: #A1A9B6;">timer</span>58 min</span>
+<span style="min-height: 32px; display: flex; align-items: center; gap: 6px; padding: 0 12px; border-radius: 16px; background: #2E2410; color: #E8B84B; font-size: 14px; font-weight: 600;"><span class="ms f" aria-hidden="true" style="font-size: 18px;">trophy</span>2 récords</span>
+</div>
+</section>
+<section aria-label="Para recuperar" class="anim" style="background: #1B1E24; border: 1px solid {{ borde }}; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px; animation: entra 400ms cubic-bezier(.05,.7,.1,1) 150ms backwards;">
+<div style="display: flex; align-items: flex-start; gap: 12px;">
+<span style="flex-shrink: 0; width: 40px; height: 40px; border-radius: 20px; background: {{ icoFondo }}; color: {{ icoColor }}; display: flex; align-items: center; justify-content: center;"><span class="ms f" aria-hidden="true">{{ icono }}</span></span>
+<div style="display: flex; flex-direction: column; gap: 4px;">
+<h2 aria-live="polite" style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 24px; line-height: 1.1; color: {{ tituloColor }};">{{ titulo }}</h2>
+<span style="font-size: 15px; color: #C9CED6;">Lo que cuenta es la proteína de todo el día.</span>
+</div>
+</div>
+<div role="img" aria-label="{{ barraA11y }}" style="display: flex; flex-direction: column; gap: 6px;">
+<div aria-hidden="true" style="display: flex; justify-content: space-between; font-size: 15px;"><span>Proteína de hoy</span><span style="font-variant-numeric: tabular-nums;"><strong>{{ p }}</strong> de 136 g</span></div>
+<div aria-hidden="true" class="{{ barraClase }}" style="position: relative; height: 12px; border-radius: 6px; background: #353A43; overflow: hidden; animation: {{ barraAnim }};"><span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{ ancho }}; border-radius: 6px; background: {{ barraColor }};"></span><sc-if value="{{ conseguida }}" hint-placeholder-val="{{ false }}"><span class="anim" style="position: absolute; top: 0; bottom: 0; left: 0; width: 30%; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.55), rgba(255,255,255,0)); animation: brillo 900ms cubic-bezier(.2,0,0,1) 200ms both;"></span></sc-if></div>
+</div>
+<div style="display: flex; flex-direction: column; border-radius: 16px; background: #121418; overflow: hidden;">
+<sc-for list="{{ ideas }}" as="r" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; gap: 4px; padding: 4px 8px 4px 14px; border-bottom: 1px solid #1B1E24;">
+<span style="flex-grow: 1; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 8px 0;"><span class="ms" aria-hidden="true" style="color: #A1A9B6;">{{ r.icono }}</span><span style="min-width: 0; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ r.nombre }}</span><span style="font-size: 14px; color: #A1A9B6;">{{ r.detalle }}</span></span></span>
+<sc-if value="{{ r.libre }}" hint-placeholder-val="{{ true }}">
+<button type="button" onClick="{{ r.tocar }}" aria-label="{{ r.etiqueta }}" class="toque" style="flex-shrink: 0; width: 44px; height: 44px; border: none; border-radius: 22px; background: #252A31; color: #F2F2F3; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">add</span></button>
+</sc-if>
+<sc-if value="{{ r.anadido }}" hint-placeholder-val="{{ false }}">
+<button type="button" onClick="{{ r.tocar }}" aria-label="{{ r.etiquetaQuitar }}" class="toque" style="flex-shrink: 0; width: 44px; height: 44px; border: none; border-radius: 22px; background: #143323; color: #4ADE80; display: flex; align-items: center; justify-content: center;"><span class="ms anim" aria-hidden="true" style="animation: salta 260ms cubic-bezier(.34,1.56,.64,1) backwards;">check</span></button>
+</sc-if>
+</div>
+</sc-for>
+</div>
+<span style="display: flex; align-items: center; gap: 6px; font-size: 14px; color: #A1A9B6;"><span class="ms" aria-hidden="true" style="font-size: 18px;">schedule</span>Se apuntan en la merienda, la comida que toca ahora</span>
+</section>
+<section aria-label="Sesión" class="anim" style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 6px 16px; display: flex; flex-direction: column; animation: entra 400ms cubic-bezier(.05,.7,.1,1) 250ms backwards;">
+<div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #252A31; font-size: 15px;"><span style="color: #A1A9B6;">Fecha</span><span>Jueves, 1 de octubre</span></div>
+<div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #252A31; font-size: 15px;"><span style="color: #A1A9B6;">Rutina</span><span>Cuerpo completo B</span></div>
+<div style="display: flex; justify-content: space-between; padding: 10px 0; font-size: 15px;"><span style="color: #A1A9B6;">Récords</span><span>Sentadilla 70 kg · Remo 45 kg</span></div>
+</section>
+</main>
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 16px 24px; background: #121418; border-top: 1px solid #252A31;">
+<a href="Main.dc.html" class="toque" style="min-height: 52px; border-radius: 26px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700; text-decoration: none;">Hecho</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":960}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { anadidos: {}, t: 1, desde: 82 };
+  }
+  componentWillUnmount() {
+    if (this.raf) cancelAnimationFrame(this.raf);
+  }
+  quieto() {
+    return typeof window !== 'undefined' && window.matchMedia
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+  ideasBase() {
+    return [
+      { id: 'batido', icono: 'menu_book', nombre: 'Batido post-entreno', detalle: 'Tu plato · 35 g de proteína · 365 kcal', prot: 35 },
+      { id: 'yogur', icono: 'breakfast_dining', nombre: 'Yogur proteico natural', detalle: '1 envase · 20 g de proteína · 120 kcal', prot: 20 },
+      { id: 'pollo', icono: 'set_meal', nombre: 'Pechuga de pollo a la plancha', detalle: '150 g · 35 g de proteína · 165 kcal', prot: 35 }
+    ];
+  }
+  total(anadidos) {
+    return 82 + this.ideasBase().filter((r) => anadidos[r.id]).reduce((s, r) => s + r.prot, 0);
+  }
+  renderVals() {
+    const fin = this.total(this.state.anadidos);
+    const e = 1 - Math.pow(1 - this.state.t, 3);
+    const p = Math.round(this.state.desde + (fin - this.state.desde) * e);
+    const conseguida = p >= 136;
+    const falta = Math.max(0, 136 - p);
+    const ideas = this.ideasBase().map((r) => {
+      const marcado = !!this.state.anadidos[r.id];
+      return {
+        ...r,
+        anadido: marcado,
+        libre: !marcado,
+        etiqueta: 'Apuntar ' + r.nombre.toLowerCase() + ', ' + r.detalle,
+        etiquetaQuitar: 'Quitar ' + r.nombre.toLowerCase(),
+        tocar: () => {
+          const nuevos = { ...this.state.anadidos };
+          if (nuevos[r.id]) delete nuevos[r.id]; else nuevos[r.id] = true;
+          const desde = p;
+          if (this.raf) cancelAnimationFrame(this.raf);
+          if (this.quieto() || typeof requestAnimationFrame !== 'function') {
+            this.setState({ anadidos: nuevos, t: 1, desde: this.total(nuevos) });
+            return;
+          }
+          const inicio = performance.now();
+          const paso = (ahora) => {
+            const t = Math.min(1, (ahora - inicio) / 900);
+            this.setState({ t });
+            if (t < 1) this.raf = requestAnimationFrame(paso);
+          };
+          this.setState({ anadidos: nuevos, t: 0, desde });
+          this.raf = requestAnimationFrame(paso);
+        }
+      };
+    });
+    return {
+      ideas,
+      p: String(p),
+      ancho: Math.min(100, (p / 136) * 100).toFixed(1) + '%',
+      conseguida,
+      titulo: conseguida ? 'Proteína del día, conseguida' : 'Para recuperar, hoy te faltan ' + falta + ' g de proteína',
+      tituloColor: conseguida ? '#E8B84B' : '#F2F2F3',
+      icono: conseguida ? 'workspace_premium' : 'restaurant',
+      icoFondo: conseguida ? '#2E2410' : '#3A2110',
+      icoColor: conseguida ? '#E8B84B' : '#FF6A00',
+      borde: conseguida ? '#E8B84B' : '#4A505B',
+      barraColor: conseguida ? '#E8B84B' : '#6BA6F5',
+      barraClase: conseguida ? 'anim' : '',
+      barraAnim: conseguida && this.state.t >= 1 ? 'oro 1200ms cubic-bezier(.2,0,0,1)' : 'none',
+      barraA11y: 'Proteína de hoy: ' + p + ' de 136 gramos' + (conseguida ? ', conseguida' : ', te faltan ' + falta)
+    };
+  }
+}
+</script>
+</body>
+</html>

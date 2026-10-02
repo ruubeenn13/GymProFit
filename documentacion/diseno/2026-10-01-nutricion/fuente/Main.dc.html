@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Nutrición, hoy</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+button,input{font-family:inherit}
+button{cursor:pointer}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+.toque{transition:transform 120ms cubic-bezier(.2,0,0,1)}
+.toque:active{transform:scale(.97)}
+@keyframes entra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes llena0{from{width:0}}
+@keyframes arco{from{stroke-dasharray:0 364.42}}
+@keyframes pop{0%{transform:scale(.4)}55%{transform:scale(1.25)}100%{transform:scale(1)}}
+@keyframes cae{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+@keyframes respira{0%{transform:scale(1);box-shadow:0 0 0 0 rgba(255,106,0,.55)}45%{transform:scale(1.03)}100%{transform:scale(1);box-shadow:0 0 0 14px rgba(255,106,0,0)}}
+@media (prefers-reduced-motion: reduce){.anim{animation:none !important;transition:none !important}.toque:active{transform:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 1300px; position: relative; overflow: hidden; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif;">
+<header style="display: flex; align-items: center; gap: 4px; padding: 14px 8px 4px 20px;">
+<h1 style="flex-grow: 1; margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 34px; line-height: 1;">Nutrición</h1>
+<a href="#" aria-label="Elegir otro día" class="toque" style="width: 48px; height: 48px; border-radius: 24px; color: #F2F2F3; display: flex; align-items: center; justify-content: center; text-decoration: none;"><span class="ms" aria-hidden="true">calendar_month</span></a>
+<a href="Semana.dc.html" aria-label="Tu semana de nutrición" class="toque" style="width: 48px; height: 48px; border-radius: 24px; color: #F2F2F3; display: flex; align-items: center; justify-content: center; text-decoration: none;"><span class="ms" aria-hidden="true">bar_chart</span></a>
+</header>
+<nav aria-label="Días de esta semana" style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; padding: 6px 12px 0;">
+<a href="#" aria-label="Lunes 21: día completo, día de entreno" style="display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 6px 0 8px; border-radius: 16px; text-decoration: none; color: #A1A9B6;"><span style="font-size: 13px;">L</span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 19px; color: #F2F2F3;">21</span><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 4px; background: #4ADE80;"></span><span aria-hidden="true" style="width: 14px; height: 3px; border-radius: 2px; background: #FF6A00;"></span></a>
+<a href="#" aria-label="Martes 22: a medias" style="display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 6px 0 8px; border-radius: 16px; text-decoration: none; color: #A1A9B6;"><span style="font-size: 13px;">M</span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 19px; color: #F2F2F3;">22</span><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 4px; background: #E8A94B;"></span><span aria-hidden="true" style="width: 14px; height: 3px;"></span></a>
+<a href="#" aria-current="date" aria-label="Hoy, miércoles 23: día de entreno" style="display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 6px 0 8px; border-radius: 16px; text-decoration: none; color: #FFB27A; background: #3A2110; box-shadow: inset 0 0 0 1px #FF6A00;"><span style="font-size: 13px; font-weight: 600;">X</span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; color: #F2F2F3;">23</span><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 4px; box-shadow: inset 0 0 0 2px #E8A94B;"></span><span aria-hidden="true" style="width: 14px; height: 3px; border-radius: 2px; background: #FF6A00;"></span></a>
+<span aria-label="Jueves 24" style="display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 6px 0 8px; color: #676F7E;"><span style="font-size: 13px;">J</span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 19px;">24</span><span aria-hidden="true" style="width: 8px; height: 8px;"></span><span aria-hidden="true" style="width: 14px; height: 3px;"></span></span>
+<span aria-label="Viernes 25" style="display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 6px 0 8px; color: #676F7E;"><span style="font-size: 13px;">V</span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 19px;">25</span><span aria-hidden="true" style="width: 8px; height: 8px;"></span><span aria-hidden="true" style="width: 14px; height: 3px;"></span></span>
+<span aria-label="Sábado 26" style="display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 6px 0 8px; color: #676F7E;"><span style="font-size: 13px;">S</span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 19px;">26</span><span aria-hidden="true" style="width: 8px; height: 8px;"></span><span aria-hidden="true" style="width: 14px; height: 3px;"></span></span>
+<span aria-label="Domingo 27" style="display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 6px 0 8px; color: #676F7E;"><span style="font-size: 13px;">D</span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 19px;">27</span><span aria-hidden="true" style="width: 8px; height: 8px;"></span><span aria-hidden="true" style="width: 14px; height: 3px;"></span></span>
+</nav>
+<main style="padding: 12px 16px 100px; display: flex; flex-direction: column; gap: 12px;">
+<a href="Entreno.dc.html" class="anim toque" style="align-self: flex-start; min-height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 16px 0 12px; border-radius: 22px; background: #3A2110; color: #FFB27A; text-decoration: none; font-size: 15px; font-weight: 600; animation: entra 350ms cubic-bezier(.05,.7,.1,1) backwards;"><span class="ms f" aria-hidden="true" style="font-size: 20px; color: #FF6A00;">fitness_center</span>Día de entreno · Cuerpo completo B</a>
+<section aria-label="Calorías y macros de hoy" class="anim" style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 16px; animation: entra 400ms cubic-bezier(.05,.7,.1,1) 60ms backwards;">
+<div style="display: flex; align-items: center; gap: 16px;">
+<div style="position: relative; flex-shrink: 0; width: 136px; height: 136px;">
+<svg width="136" height="136" viewBox="0 0 136 136" aria-hidden="true" style="position: absolute; inset: 0; transform: rotate(-90deg);">
+<circle cx="68" cy="68" r="58" fill="none" stroke="#353A43" stroke-width="12"></circle>
+<circle cx="68" cy="68" r="58" fill="none" stroke="#FF6A00" stroke-width="12" stroke-linecap="round" style="stroke-dasharray: {{ anillo }};"></circle>
+</svg>
+<div role="img" aria-label="{{ kcalA11y }}" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;">
+<span aria-hidden="true" style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 36px; line-height: 1; font-variant-numeric: tabular-nums;">{{ kcal }}</span>
+<span aria-hidden="true" style="font-size: 13px; color: #A1A9B6;">de 2.397 kcal</span>
+</div>
+</div>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px;">
+<span style="color: #A1A9B6; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 1px; text-transform: uppercase;">Te quedan</span>
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 40px; line-height: 1; font-variant-numeric: tabular-nums;">{{ quedan }}</span>
+<span style="font-size: 14px; color: #C9CED6;">kcal para hoy</span>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px;">
+<div role="img" aria-label="{{ protA11y }}" style="display: flex; flex-direction: column; gap: 6px;">
+<div aria-hidden="true" style="display: flex; justify-content: space-between; align-items: baseline; font-size: 15px;"><span style="display: flex; align-items: center; gap: 8px; font-weight: 600;"><span style="width: 10px; height: 10px; border-radius: 5px; background: #6BA6F5;"></span>Proteína</span><span style="font-variant-numeric: tabular-nums;"><strong>{{ p }}</strong> / 136 g</span></div>
+<div aria-hidden="true" style="height: 10px; border-radius: 5px; background: #353A43; overflow: hidden;"><div style="height: 10px; border-radius: 5px; background: #6BA6F5; width: {{ pAncho }};"></div></div>
+<span aria-hidden="true" style="font-size: 14px; color: #6BA6F5; font-weight: 600;">Te faltan {{ pFalta }} g</span>
+</div>
+<div role="img" aria-label="{{ carbA11y }}" style="display: flex; flex-direction: column; gap: 6px;">
+<div aria-hidden="true" style="display: flex; justify-content: space-between; align-items: baseline; font-size: 15px;"><span style="display: flex; align-items: center; gap: 8px;"><span style="width: 10px; height: 10px; border-radius: 5px; background: #E8A94B;"></span>Carbohidratos</span><span style="font-variant-numeric: tabular-nums;"><strong>{{ c }}</strong> / 314 g</span></div>
+<div aria-hidden="true" style="height: 8px; border-radius: 4px; background: #353A43; overflow: hidden;"><div style="height: 8px; border-radius: 4px; background: #E8A94B; width: {{ cAncho }};"></div></div>
+</div>
+<div role="img" aria-label="{{ grasaA11y }}" style="display: flex; flex-direction: column; gap: 6px;">
+<div aria-hidden="true" style="display: flex; justify-content: space-between; align-items: baseline; font-size: 15px;"><span style="display: flex; align-items: center; gap: 8px;"><span style="width: 10px; height: 10px; border-radius: 5px; background: #B295E8;"></span>Grasa</span><span style="font-variant-numeric: tabular-nums;"><strong>{{ g }}</strong> / 66 g</span></div>
+<div aria-hidden="true" style="height: 8px; border-radius: 4px; background: #353A43; overflow: hidden;"><div style="height: 8px; border-radius: 4px; background: #B295E8; width: {{ gAncho }};"></div></div>
+</div>
+</div>
+</section>
+<section aria-label="Agua" class="anim" style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; animation: entra 400ms cubic-bezier(.05,.7,.1,1) 120ms backwards;">
+<div style="display: flex; align-items: center; gap: 10px;">
+<span class="ms f" aria-hidden="true" style="color: #56C2D6;">water_drop</span>
+<span style="flex-grow: 1; display: flex; flex-direction: column;"><span style="font-size: 16px; font-weight: 600;">Agua</span><span style="font-size: 14px; color: #A1A9B6; font-variant-numeric: tabular-nums;">{{ litros }} de 2,2 L</span></span>
+<button type="button" onClick="{{ masVaso }}" aria-label="Añadir un vaso de agua, 250 mililitros" class="toque" style="height: 44px; padding: 0 16px 0 12px; border: none; border-radius: 22px; background: #10323A; color: #8FE3F0; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 6px;"><span class="ms" aria-hidden="true" style="font-size: 20px;">add</span>Vaso</button>
+</div>
+<div aria-hidden="true" style="display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 2px;">
+<sc-for list="{{ vasos }}" as="v" hint-placeholder-count="9">
+<sc-if value="{{ v.lleno }}" hint-placeholder-val="{{ true }}">
+<span class="{{ v.clase }}" style="display: flex; justify-content: center; animation: {{ v.anim }};"><span class="ms f" style="font-size: 28px; color: #56C2D6;">local_drink</span></span>
+</sc-if>
+<sc-if value="{{ v.vacio }}" hint-placeholder-val="{{ false }}">
+<span style="display: flex; justify-content: center;"><span class="ms" style="font-size: 28px; color: #676F7E;">local_drink</span></span>
+</sc-if>
+</sc-for>
+</div>
+</section>
+<section aria-label="Comidas de hoy" style="display: flex; flex-direction: column; gap: 10px;">
+<div class="anim" style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; display: flex; align-items: center; gap: 4px; padding: 6px 6px 6px 14px; animation: entra 350ms cubic-bezier(.05,.7,.1,1) 180ms backwards;">
+<a href="Comida.dc.html" style="flex-grow: 1; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 8px 0; text-decoration: none; color: #F2F2F3;"><span class="ms" aria-hidden="true" style="color: #A1A9B6;">free_breakfast</span><span style="min-width: 0; display: flex; flex-direction: column; gap: 2px;"><span style="display: flex; gap: 8px; align-items: baseline;"><span style="font-size: 16px; font-weight: 600;">Desayuno</span><span style="font-size: 14px; color: #A1A9B6; font-variant-numeric: tabular-nums;">450 kcal</span></span><span style="font-size: 14px; color: #A1A9B6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Copos de avena, leche semidesnatada, plátano</span></span></a>
+<a href="Anadir.dc.html" aria-label="Añadir al desayuno" class="toque" style="flex-shrink: 0; width: 48px; height: 48px; border-radius: 24px; background: #252A31; color: #F2F2F3; display: flex; align-items: center; justify-content: center; text-decoration: none;"><span class="ms" aria-hidden="true">add</span></a>
+</div>
+<div class="anim" style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; display: flex; align-items: center; gap: 4px; padding: 6px 6px 6px 14px; animation: entra 350ms cubic-bezier(.05,.7,.1,1) 220ms backwards;">
+<a href="Comida.dc.html" style="flex-grow: 1; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 8px 0; text-decoration: none; color: #F2F2F3;"><span class="ms" aria-hidden="true" style="color: #A1A9B6;">nutrition</span><span style="min-width: 0; display: flex; flex-direction: column; gap: 2px;"><span style="display: flex; gap: 8px; align-items: baseline;"><span style="font-size: 16px; font-weight: 600;">Almuerzo</span><span style="font-size: 14px; color: #A1A9B6; font-variant-numeric: tabular-nums;">251 kcal</span></span><span style="font-size: 14px; color: #A1A9B6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Yogur proteico natural, nueces</span></span></a>
+<a href="Anadir.dc.html" aria-label="Añadir al almuerzo" class="toque" style="flex-shrink: 0; width: 48px; height: 48px; border-radius: 24px; background: #252A31; color: #F2F2F3; display: flex; align-items: center; justify-content: center; text-decoration: none;"><span class="ms" aria-hidden="true">add</span></a>
+</div>
+<div class="anim" style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; display: flex; align-items: center; gap: 4px; padding: 6px 6px 6px 14px; animation: entra 350ms cubic-bezier(.05,.7,.1,1) 260ms backwards;">
+<a href="Comida.dc.html" style="flex-grow: 1; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 8px 0; text-decoration: none; color: #F2F2F3;"><span class="ms" aria-hidden="true" style="color: #A1A9B6;">restaurant</span><span style="min-width: 0; display: flex; flex-direction: column; gap: 2px;"><span style="display: flex; gap: 8px; align-items: baseline;"><span style="font-size: 16px; font-weight: 600;">Comida</span><span style="font-size: 14px; color: #A1A9B6; font-variant-numeric: tabular-nums;">535 kcal</span></span><span style="font-size: 14px; color: #A1A9B6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pechuga de pollo, arroz blanco, ensalada, aceite</span></span></a>
+<a href="Anadir.dc.html" aria-label="Añadir a la comida" class="toque" style="flex-shrink: 0; width: 48px; height: 48px; border-radius: 24px; background: #252A31; color: #F2F2F3; display: flex; align-items: center; justify-content: center; text-decoration: none;"><span class="ms" aria-hidden="true">add</span></a>
+</div>
+<div class="anim" style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; display: flex; flex-direction: column; animation: entra 350ms cubic-bezier(.05,.7,.1,1) 300ms backwards;">
+<div style="display: flex; align-items: center; gap: 4px; padding: 6px 6px 6px 14px;">
+<a href="Comida.dc.html" style="flex-grow: 1; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 8px 0; text-decoration: none; color: #F2F2F3;"><span class="ms" aria-hidden="true" style="color: #A1A9B6;">bakery_dining</span><span style="min-width: 0; display: flex; flex-direction: column; gap: 2px;"><span style="display: flex; gap: 8px; align-items: baseline;"><span style="font-size: 16px; font-weight: 600;">Merienda</span><span style="font-size: 14px; color: #FFB27A; font-weight: 600;">ahora toca</span></span><span style="font-size: 14px; color: #A1A9B6; font-variant-numeric: tabular-nums;">{{ meriendaResumen }}</span></span></a>
+<a href="Anadir.dc.html" aria-label="Añadir a la merienda" class="anim toque" style="flex-shrink: 0; width: 48px; height: 48px; border-radius: 24px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; justify-content: center; text-decoration: none; animation: respira 1400ms ease-in-out 1600ms;"><span class="ms" aria-hidden="true">add</span></a>
+</div>
+<sc-if value="{{ sugerencia }}" hint-placeholder-val="{{ true }}">
+<div style="margin: 0 10px 10px; padding: 6px 6px 6px 12px; border-radius: 14px; background: #252A31; display: flex; align-items: center; gap: 8px;">
+<span class="ms" aria-hidden="true" style="color: #A1A9B6;">content_copy</span>
+<span style="flex-grow: 1; display: flex; flex-direction: column;"><span style="font-size: 15px; font-weight: 600;">¿Copiar la de ayer?</span><span style="font-size: 13px; color: #A1A9B6;">2 alimentos · 203 kcal</span></span>
+<button type="button" onClick="{{ copiar }}" aria-label="Copiar la merienda de ayer" class="toque" style="width: 44px; height: 44px; border: none; border-radius: 22px; background: #143323; color: #4ADE80; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">check</span></button>
+<button type="button" onClick="{{ ocultar }}" aria-label="Ahora no" class="toque" style="width: 44px; height: 44px; border: none; border-radius: 22px; background: transparent; color: #A1A9B6; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">close</span></button>
+</div>
+</sc-if>
+<sc-if value="{{ copiado }}" hint-placeholder-val="{{ false }}">
+<div style="margin: 0 14px 12px; display: flex; flex-direction: column; gap: 6px;">
+<span class="anim" style="display: flex; justify-content: space-between; font-size: 14px; color: #C9CED6; animation: cae 350ms cubic-bezier(.05,.7,.1,1) backwards;"><span>Pan integral · 2 rebanadas</span><span style="font-variant-numeric: tabular-nums;">140 kcal</span></span>
+<span class="anim" style="display: flex; justify-content: space-between; font-size: 14px; color: #C9CED6; animation: cae 350ms cubic-bezier(.05,.7,.1,1) 60ms backwards;"><span>Pechuga de pavo · 60 g</span><span style="font-variant-numeric: tabular-nums;">63 kcal</span></span>
+</div>
+</sc-if>
+</div>
+<div class="anim" style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; display: flex; align-items: center; gap: 4px; padding: 6px 6px 6px 14px; animation: entra 350ms cubic-bezier(.05,.7,.1,1) 340ms backwards;">
+<a href="Comida.dc.html" style="flex-grow: 1; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 8px 0; text-decoration: none; color: #F2F2F3;"><span class="ms" aria-hidden="true" style="color: #A1A9B6;">dinner_dining</span><span style="min-width: 0; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px; font-weight: 600;">Cena</span><span style="font-size: 14px; color: #A1A9B6;">Sin apuntar</span></span></a>
+<a href="Anadir.dc.html" aria-label="Añadir a la cena" class="toque" style="flex-shrink: 0; width: 48px; height: 48px; border-radius: 24px; background: #252A31; color: #F2F2F3; display: flex; align-items: center; justify-content: center; text-decoration: none;"><span class="ms" aria-hidden="true">add</span></a>
+</div>
+</section>
+</main>
+<nav aria-label="Navegación principal" style="position: absolute; left: 0; right: 0; bottom: 0; height: 80px; background: #121418; border-top: 1px solid #252A31; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 8px 4px 12px; box-sizing: border-box; align-items: start;">
+<a href="#" style="display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: #A1A9B6;"><span style="width: 56px; height: 32px; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">home</span></span><span style="font-size: 13px;">Inicio</span></a>
+<a href="#" style="display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: #A1A9B6;"><span style="width: 56px; height: 32px; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">fitness_center</span></span><span style="font-size: 13px;">Entrenar</span></a>
+<a href="#" aria-label="Acciones rápidas" style="justify-self: center; width: 56px; height: 56px; margin-top: -2px; border-radius: 28px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; justify-content: center; text-decoration: none;"><span class="ms" aria-hidden="true" style="font-size: 30px;">add</span></a>
+<a href="#" aria-current="page" style="display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: #F2F2F3;"><span style="width: 56px; height: 32px; border-radius: 16px; background: #3A2110; display: flex; align-items: center; justify-content: center;"><span class="ms f" aria-hidden="true" style="color: #FF6A00;">restaurant</span></span><span style="font-size: 13px; font-weight: 700;">Nutrición</span></a>
+<a href="#" style="display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: #A1A9B6;"><span style="width: 56px; height: 32px; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">monitoring</span></span><span style="font-size: 13px;">Progreso</span></a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1300}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { t: 1, desde: null, copiado: false, oculto: false, vasos: 5, nuevo: -1 };
+  }
+  componentDidMount() {
+    this.animar({ kcal: 0, p: 0, c: 0, g: 0 });
+  }
+  componentWillUnmount() {
+    if (this.raf) cancelAnimationFrame(this.raf);
+  }
+  quieto() {
+    return typeof window !== 'undefined' && window.matchMedia
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+  animar(desde) {
+    if (this.raf) cancelAnimationFrame(this.raf);
+    if (this.quieto() || typeof requestAnimationFrame !== 'function') {
+      this.setState({ t: 1, desde: null });
+      return;
+    }
+    const inicio = performance.now();
+    const paso = (ahora) => {
+      const t = Math.min(1, (ahora - inicio) / 1200);
+      this.setState({ t });
+      if (t < 1) this.raf = requestAnimationFrame(paso);
+    };
+    this.setState({ t: 0, desde });
+    this.raf = requestAnimationFrame(paso);
+  }
+  objetivo() {
+    const base = { kcal: 1236, p: 82, c: 146, g: 35 };
+    if (!this.state.copiado) return base;
+    return { kcal: base.kcal + 203, p: base.p + 19, c: base.c + 25, g: base.g + 3 };
+  }
+  renderVals() {
+    const miles = (n) => (n >= 1000 ? Math.floor(n / 1000) + '.' + String(n % 1000).padStart(3, '0') : String(n));
+    const fin = this.objetivo();
+    const ini = this.state.desde || fin;
+    const e = 1 - Math.pow(1 - this.state.t, 3);
+    const v = (k) => Math.round(ini[k] + (fin[k] - ini[k]) * e);
+    const kcal = v('kcal'), p = v('p'), c = v('c'), g = v('g');
+    const pct = (x, max) => Math.min(100, (x / max) * 100).toFixed(1) + '%';
+    const vasos = [];
+    for (let i = 0; i < 9; i++) {
+      const lleno = i < this.state.vasos;
+      const nuevo = i === this.state.nuevo;
+      vasos.push({
+        lleno, vacio: !lleno,
+        clase: nuevo ? 'anim' : '',
+        anim: nuevo ? 'pop 450ms cubic-bezier(.34,1.56,.64,1)' : 'none'
+      });
+    }
+    const litros = (this.state.vasos * 0.25).toFixed(2).replace(/0$/, '').replace('.', ',');
+    return {
+      kcal: miles(kcal),
+      quedan: miles(Math.max(0, 2397 - kcal)),
+      kcalA11y: kcal + ' de 2397 kilocalorías',
+      anillo: (364.42 * Math.min(1, kcal / 2397)).toFixed(1) + ' 364.42',
+      p: String(p), c: String(c), g: String(g),
+      pFalta: String(Math.max(0, 136 - p)),
+      pAncho: pct(p, 136), cAncho: pct(c, 314), gAncho: pct(g, 66),
+      protA11y: 'Proteína: ' + p + ' de 136 gramos, te faltan ' + Math.max(0, 136 - p),
+      carbA11y: 'Carbohidratos: ' + c + ' de 314 gramos',
+      grasaA11y: 'Grasa: ' + g + ' de 66 gramos',
+      vasos,
+      litros,
+      masVaso: () => {
+        if (this.state.vasos >= 12) return;
+        this.setState({ vasos: this.state.vasos + 1, nuevo: this.state.vasos });
+      },
+      sugerencia: !this.state.copiado && !this.state.oculto,
+      copiado: this.state.copiado,
+      meriendaResumen: this.state.copiado ? '203 kcal · 19 P · 25 C · 3 G' : 'Sin apuntar',
+      copiar: () => {
+        const ahora = this.objetivo();
+        this.setState({ copiado: true });
+        this.animar(ahora);
+      },
+      ocultar: () => this.setState({ oculto: true })
+    };
+  }
+}
+</script>
+</body>
+</html>
