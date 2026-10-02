@@ -79,6 +79,16 @@ public class LetraGrandeTest {
                 "wrap_content".equals(etiqueta.getAttribute("android:layout_height")));
     }
 
+    @Test
+    public void el_dia_de_la_tira_de_nutricion_crece_con_la_letra() throws Exception {
+        // GP-174: a 56 dp fijos, con la letra a 2,0 el número del día se cortaba. A tamaño
+        // normal sigue midiendo 56: es su alto mínimo.
+        Element dia = (Element) DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                .parse(LAYOUT.resolve("item_dia_semana.xml").toFile()).getDocumentElement();
+        assertEquals("wrap_content", dia.getAttribute("android:layout_height"));
+        assertEquals("56dp", dia.getAttribute("android:minHeight"));
+    }
+
     private static Element porId(Path xml, String id) throws Exception {
         NodeList nodos = DocumentBuilderFactory.newInstance().newDocumentBuilder()
                 .parse(xml.toFile()).getElementsByTagName("*");
