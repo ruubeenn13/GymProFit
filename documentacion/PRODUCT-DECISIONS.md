@@ -706,6 +706,27 @@ El `LIKE` con comodín delante no usa índice: barre la tabla entera en cada pul
 
 **Qué la invalidaría.** Un idioma con más de dos formas de plural (entonces la API tendría que mandar las formas de CLDR, no dos). Que el propietario quiera raciones propias libres o varias por alimento: la lista de `ClaveRacion` y el «una sola» son los que se cambiarían, no el contrato.
 
+
+### DEC-044 · El «+» añade lo último sin preguntar, añadir no cierra Añadir, los favoritos se proponen una vez y una línea va por raciones solo si cuadra
+**Estado:** Aceptada · **Fecha:** 2026-10-02 · **Tarea:** GP-162 (decisiones 1, 2 y 6 del lienzo), GP-177, GP-178, GP-179 y GP-181 (lote 1.6.3)
+
+**Contexto.** Apuntar lo de siempre costaba cuatro idas y vueltas por alimento: abrir la ficha, elegir la cantidad, volver al diario y entrar otra vez en Añadir. El lienzo del 02-10 lo resuelve con un «+» en cada fila, una barra de «Hecho» y los favoritos, y construirlo obligaba a decidir qué añade el «+», qué pasa si se toca dos veces, cuándo se propone un favorito y qué es una línea cuya ración ya no pesa lo mismo.
+
+**Decisión.**
+
+- **El «+» añade sin preguntar la última cantidad que apuntaste de ese alimento**: la de su línea más reciente, por la fecha de la comida y, a igualdad, la última creada (`ultima` en lo tuyo de la búsqueda y en los favoritos). Si nunca lo apuntaste, lo que propondría la ficha: la primera ración por una, o 100 g. El «+» y la ficha nunca proponen cosas distintas. Para un producto, la primera ración es el envase (DEC-042): el «+» añade el envase entero, como el botón principal de la hoja del escáner.
+- **Cambia al tocar; la API va detrás, de una en una por alimento.** El «+» se vuelve ✓ al momento (momento 15). Un segundo toque mientras el primero viaja no sale a la API hasta que vuelva la respuesta, y entonces se hace lo que falte para que la API quede como dice la fila: nunca dos líneas, nunca un borrado perdido. Si añadir falla, la fila vuelve a «+»; si quitar falla, a ✓; las dos cosas se dicen.
+- **Quitar es exacto.** `POST /comidas/anadir` devuelve `anterior`: null si la línea es nueva, o la cantidad que tenía (gramos, ración y cuántas) si se sumó a una que ya estaba. Quitar borra la línea nueva o la deja como estaba con el PATCH de siempre.
+- **Añadir ya no cierra Añadir.** Lo añadido con el «+», desde la ficha, desde la hoja del escáner o tras crear un alimento se junta en la barra de abajo («2 añadidos a la merienda · +260 kcal»; si va a dos comidas, sin nombrar ninguna). «Hecho», cerrar y atrás hacen lo mismo: volver, esperando a lo que aún viaje y diciéndolo si tarda más de 300 ms. El aviso «Añadido a la cena» sale solo si todo fue a una comida y no es la de origen.
+- **Favoritos.** De una cuenta y de un alimento que esa cuenta ve, en `/favoritos`: marcar y quitar repetibles, por id o, un producto que aún no está en el catálogo, por su código (se materializa). Ordenados por las comidas en que aparecen en los últimos 60 días, hoy incluido; a igualdad, el usado más reciente y luego el nombre. El id ajeno es un 403 que no dice si existe; el invitado no tiene favoritos, como no añade. Son datos de nutrición: la política de privacidad los nombra y el borrado de la cuenta se los lleva.
+- **La propuesta sale una vez por alimento.** Como mucho uno que no es favorito y aparece en 4 comidas o más de los últimos 14 días (hoy y los 13 anteriores); si hay varios, el más usado. Lo que alguna vez fue favorito, aunque se quitara, y lo rechazado no se vuelven a proponer nunca (`propuestas_favorito`): ya lo conoces, y una propuesta que vuelve es un aviso que molesta.
+- **Una línea va por raciones solo mientras sus gramos sean los de su ración por cuántas**, con medio gramo de margen (GP-177). Si alguien cambia el peso de su ración, la línea sale en gramos, sin nada de la ración, y todas las builds la enseñan y la editan así. Se decide al leer: no se reescribe ningún dato, y si la ración vuelve a pesar lo que pesaba, la línea vuelve a salir con ella. La misma regla vale para `ultima` y para sumar al añadir.
+- **El «+» mide 44 dp, como el tablero, dentro de una zona de toque de 48**: la regla de las zonas pulsables (`CabeceraTest`) no baja de 48.
+
+**Consecuencias.** `SentenciasBusquedaTest` no cambia: la última línea y los favoritos de lo tuyo van en la misma consulta. Un producto añadido con el «+» se añade entero; quien quiera menos abre la ficha. Lo añadido y aún sin respuesta se pierde si el sistema mata la app en ese momento: la fila decía ✓ y la línea no existe, que es el lado seguro.
+
+**Qué la invalidaría.** Que los usuarios esperen que el «+» pregunte la cantidad (entonces la ficha vuelve a ser el único camino). Que las propuestas se queden cortas o molesten: el 4 en 14 días y el «una vez» son los números que se tocarían.
+
 ---
 
 ## Pendientes de decidir
