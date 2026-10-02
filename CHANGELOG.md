@@ -2,6 +2,13 @@
 
 Historial de cambios del proyecto (API Spring Boot + app Android). Ver también el [README](README.md).
 
+### 2026-10-02
+
+| Hash | Descripción |
+|---|---|
+| `3a40a19` | build(android): **versión 1.5.4** (10504). Misma clave de firma. Solo app, sin API nueva. |
+| `06bb0a6` | fix(android): el botón de «Guarda tu plan» vuelve entero tras un error, aunque la API responda antes de que acabe de encoger; el éxito lo deja en círculo (GP-163). `AnchoCreandoTest`. |
+
 ### 2026-10-01
 
 | Hash | Descripción |
