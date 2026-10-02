@@ -6,6 +6,7 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `69bcb36` | Fusión de `lote-1.6.1` en `main` con la app, CI en verde (API, app; la web de administración ya iba en `b95fc8c`); etiquetada `v1.6.1`. Informe en `documentacion/estado/2026-10-02-lote-1.6.1.md`. |
 | `f2d4ea8` | build(android): **versión 1.6.1** (10601). Misma clave de firma. Necesita la API de `b95fc8c` (desplegada). APK de 7 543 948 bytes. |
 | `ffe66df` | build(android): el modelo de ML Kit de Google Play Services, no dentro del APK: el release con el de dentro pesaba 28,8 MB (DEC-042). |
 | `e3fed3c` | feat(android,web): «Licencias › Datos» cita Ciqual 2025 (ANSES, Licence Ouverte) y USDA FoodData Central; `web/privacidad.html` dice para qué es la cámara. |
