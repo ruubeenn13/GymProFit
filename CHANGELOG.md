@@ -6,6 +6,18 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `a365bc0` | Fusión de `lote-1.6.3` en `main` con la app, CI en verde (la API ya iba en `eb68710`); etiquetada `v1.6.3`. Informe en `documentacion/estado/2026-10-02-lote-1.6.3.md`. |
+| `49fca26` | docs(decisiones,documentacion): **DEC-044** (el «+» añade lo último sin preguntar, añadir no cierra Añadir, la propuesta de favorito una vez, la línea por raciones solo si cuadra) y el informe del lote. |
+| `d31bf37` | build(android): **versión 1.6.3** (10603). Misma clave de firma. Necesita la API de `eb68710` (desplegada). APK de 7 655 472 bytes. |
+| `a4a6108` | feat(android): **añadir en un toque** (GP-162, decisiones 1, 2 y 6): el «+» con la última cantidad y su ✓, la barra de «Hecho» (la ficha, el escáner y crear vuelven a Añadir), las pestañas «Todo» y «Favoritos», la propuesta y el corazón de la ficha. `AnadidosTest`, `AnadirRapidoTest`, `GruposBusquedaTest`. |
+| `e9b6274` | feat(android,decisiones): los momentos 15 (el «+» se vuelve ✓: `HUNDE`, `VERDE`, `CHECK`) y 19 (el corazón late: `CORAZON`, `RESALTA`) en DEC-039 y en `Movimiento`. |
+| `e2b51fe` | refactor(android): fuera `AlimentoAdapter` e `item_alimento.xml`, que nada usaba. |
+| `94aadc9` | fix(android): salir de una comida con un borrado en vuelo dice «Guardando los cambios…» pasados 300 ms, y recargar no devuelve la fila enviada (GP-179). `QuitarConDeshacerTest`. |
+| `d1cf944` | fix(android): «Créalo» lleva lo escrito al nombre del alimento nuevo (GP-181). |
+| `a10352a` | fix(android): «Las calorías cuadran» compara siempre por 100 g (GP-178). `EtiquetaAlimentoTest`. |
+| `eb68710` | Fusión de la API de `lote-1.6.3` en `main`, desplegada con el CI en verde. |
+| `2fde92d` | docs(web): los favoritos y las propuestas rechazadas, en los datos de nutrición de la política de privacidad (zip `gymprofit-web-1.6.3.zip`, por subir). |
+| `d5d6d81` | feat(api,decisiones): **favoritos** (`/favoritos`, migración `V202610021500`), `ultima` y `favorito` en la búsqueda sin viajes nuevos, `anterior` en `POST /comidas/anadir`, la línea por raciones solo si cuadra (GP-177) y `categoriaClave`; DEC-043 corregida. `FavoritosTest`, `AnadirAlimentoTest`, `BusquedaAlimentosTest`, `SentenciasBusquedaTest`. |
 | `ddc98b0` | Fusión de `lote-1.6.2` en `main` con la app, CI en verde (la API ya iba en `363a397`); etiquetada `v1.6.2`. Informe en `documentacion/estado/2026-10-02-lote-1.6.2.md`. |
 | `ed23c23` | build(android): **versión 1.6.2** (10602). Misma clave de firma. Necesita la API de `363a397` (desplegada a las 14:17). APK de 7 635 307 bytes. |
 | `9d15cc6` | docs(decisiones,documentacion): **DEC-043** (el plural como dato, la ración propia de una lista, quitar con deshacer sin preguntar, la categoría como clave y los límites de crear un alimento) y la rama de la que salió el lote 1.6.1 (`2003442`, no `3492729`). |
