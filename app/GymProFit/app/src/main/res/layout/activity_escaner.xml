@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_escaner — escanear un código de barras (tablero 6, lote 1.6.1).
+  La imagen de la cámara a pantalla completa, el marco con sus esquinas y la línea,
+  arriba cerrar, «Escanear» y la linterna, y el aviso de qué pasa. Abajo, «Escribir el
+  código». Al leer, sube la hoja: el producto con sus cifras, «Cambiar cantidad»,
+  «Añadir a la merienda» y «Escanear otro»; o «No lo tenemos todavía», o sin cupo o sin
+  red, con reintentar. Sin permiso de cámara, lo explica y deja escribir el código o ir
+  a los ajustes.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/previewEscaner"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no" />
+
+    <es.pmdm.gymprofit.ui.nutricion.MarcoEscaner
+        android:id="@+id/marcoEscaner"
+        android:layout_width="260dp"
+        android:layout_height="170dp"
+        android:layout_gravity="center" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:orientation="vertical"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageButton
+                android:id="@+id/btnCerrarEscaner"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_velo_escaner"
+                android:contentDescription="@string/escaner_cerrar"
+                android:src="@drawable/ic_ms_close"
+                app:tint="@color/gp_escaner_texto" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:accessibilityHeading="true"
+                android:text="@string/escaner_titulo"
+                android:textAppearance="@style/TextAppearance.GymProFit.Headline"
+                android:textSize="@dimen/text_headline"
+                android:textColor="@color/gp_escaner_texto"
+                tools:targetApi="28" />
+
+            <ImageButton
+                android:id="@+id/btnLinterna"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_velo_escaner"
+                android:contentDescription="@string/escaner_linterna_encender"
+                android:src="@drawable/ic_ms_flashlight_off"
+                app:tint="@color/gp_escaner_texto" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvAvisoEscaner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="36dp"
+            android:minHeight="40dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:gravity="center_vertical"
+            android:drawablePadding="8dp"
+            android:accessibilityLiveRegion="polite"
+            android:background="@drawable/bg_velo_escaner"
+            android:text="@string/escaner_apunta"
+            android:textSize="@dimen/text_body"
+            android:textStyle="bold"
+            android:textColor="@color/gp_escaner_texto" />
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnEscribirCodigo"
+        style="@style/Widget.Material3.Button.TextButton.Icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="40dp"
+        android:minHeight="48dp"
+        android:text="@string/escaner_escribir"
+        android:textSize="@dimen/text_body"
+        android:textColor="@color/gp_escaner_texto"
+        app:icon="@drawable/ic_ms_keyboard"
+        app:iconTint="@color/gp_escaner_texto" />
+
+    <!-- Sin permiso de cámara: qué pasa y qué se puede hacer. -->
+    <LinearLayout
+        android:id="@+id/panelSinPermiso"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="20dp"
+        android:background="@drawable/bg_velo_escaner"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tvSinPermisoTitulo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="@dimen/text_subtitle"
+            android:textStyle="bold"
+            android:textColor="@color/gp_escaner_texto" />
+
+        <TextView
+            android:id="@+id/tvSinPermisoTexto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:textSize="@dimen/text_body"
+            android:textColor="@color/gp_escaner_texto" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAjustesCamara"
+            style="@style/Widget.GymProFit.BotonPildora"
+            android:layout_width="match_parent"
+            android:layout_marginTop="16dp"
+            android:text="@string/escaner_abrir_ajustes" />
+    </LinearLayout>
+
+    <!-- La hoja: producto, no existe, sin cupo o sin red. -->
+    <LinearLayout
+        android:id="@+id/hojaEscaner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="18dp"
+        android:paddingBottom="24dp"
+        android:background="@drawable/bg_hoja_escaner"
+        android:clickable="true"
+        android:focusable="false"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/pbEscaner"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center_horizontal"
+            android:indeterminateTint="?attr/colorPrimary"
+            android:contentDescription="@string/escaner_consultando" />
+
+        <LinearLayout
+            android:id="@+id/cabezaHoja"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:focusable="true">
+
+            <FrameLayout
+                android:id="@+id/tileHoja"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:background="@drawable/bg_cifra_progreso">
+
+                <ImageView
+                    android:id="@+id/ivIconoHoja"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_ms_inventory_2"
+                    app:tint="?attr/colorOnSurfaceVariant" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="12dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/tvTituloHoja"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:maxLines="2"
+                        android:ellipsize="end"
+                        android:textSize="@dimen/text_subtitle"
+                        android:textStyle="bold"
+                        android:textColor="?attr/colorOnSurface" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvTextoHoja"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textSize="@dimen/text_caption"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/cifrasHoja"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:orientation="horizontal"
+            android:focusable="true">
+
+            <include android:id="@+id/cifraHojaKcal" layout="@layout/item_cifra_ficha" />
+
+            <Space android:layout_width="8dp" android:layout_height="1dp" />
+
+            <include android:id="@+id/cifraHojaProteina" layout="@layout/item_cifra_ficha" />
+
+            <Space android:layout_width="8dp" android:layout_height="1dp" />
+
+            <include android:id="@+id/cifraHojaCarb" layout="@layout/item_cifra_ficha" />
+
+            <Space android:layout_width="8dp" android:layout_height="1dp" />
+
+            <include android:id="@+id/cifraHojaGrasa" layout="@layout/item_cifra_ficha" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/botonesHoja"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnHojaSecundario"
+                style="@style/Widget.GymProFit.BotonPildora.Contorno"
+                android:layout_width="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:minHeight="52dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnHojaPrincipal"
+                style="@style/Widget.GymProFit.BotonPildora"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:minHeight="52dp"
+                android:textSize="@dimen/text_subtitle" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnOtroMas"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="6dp"
+            android:minHeight="48dp"
+            android:text="@string/escaner_otro"
+            android:textSize="@dimen/text_body" />
+    </LinearLayout>
+</FrameLayout>

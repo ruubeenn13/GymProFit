@@ -1,6 +1,12 @@
 package es.pmdm.gymprofit.model.alimento;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.google.gson.annotations.JsonAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import es.pmdm.gymprofit.network.BooleanNumericAdapter;
 
@@ -26,6 +32,16 @@ public class Alimento {
     private String barcode;
     // Marca/fabricante del producto (Open Food Facts)
     private String marca;
+    // --- GP-127/GP-162 (API 1.6.0), lo usa la 1.6.1 ---
+    // De dónde salen los datos: CIQUAL, USDA, OFF; null, a mano.
+    @Nullable private String fuente;
+    // true en los básicos, curados uno a uno: la insignia azul de «datos revisados».
+    @Nullable private Boolean revisado;
+    // Raciones con nombre, en su orden; vacía si no tiene.
+    @Nullable private List<Racion> raciones;
+    // Solo en la búsqueda: TUYO, BASICO o PRODUCTO.
+    @Nullable private String grupo;
+    @Nullable private Double fibra;
     // Indica si el alimento está activo (borrado lógico)
     // La búsqueda admin (AlimentoJooqDTO) envía "activo" como Byte 0/1; el adaptador lo tolera.
     @JsonAdapter(BooleanNumericAdapter.class)
@@ -66,6 +82,20 @@ public class Alimento {
     // true si es un resultado de la búsqueda externa (OFF) aún sin importar
     // a la BD local (la API envía id null → Gson lo deserializa como 0)
     public boolean esExterno() { return id == 0; }
+
+    @Nullable public String getFuente() { return fuente; }
+    public void setFuente(@Nullable String fuente) { this.fuente = fuente; }
+    public boolean isRevisado() { return Boolean.TRUE.equals(revisado); }
+    public void setRevisado(boolean revisado) { this.revisado = revisado; }
+    @NonNull public List<Racion> getRaciones() { return raciones != null ? raciones : new ArrayList<>(); }
+    public void setRaciones(@Nullable List<Racion> raciones) { this.raciones = raciones; }
+    @Nullable public String getGrupo() { return grupo; }
+    public void setGrupo(@Nullable String grupo) { this.grupo = grupo; }
+    @Nullable public Double getFibra() { return fibra; }
+    /** Un producto envasado (de Open Food Facts, o con marca y código). */
+    public boolean esProducto() { return "OFF".equals(fuente) || "PRODUCTO".equals(grupo); }
+    /** Propio de la cuenta: no se reporta, se edita. */
+    public boolean esPropio() { return usuarioId != null; }
 
     public boolean isActivo() { return activo; }
     public void setActivo(boolean activo) { this.activo = activo; }

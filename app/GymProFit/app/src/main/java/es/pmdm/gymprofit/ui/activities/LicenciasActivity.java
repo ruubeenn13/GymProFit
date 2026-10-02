@@ -58,6 +58,9 @@ public class LicenciasActivity extends AppCompatActivity {
         fuente(R.id.filaFuenteFed, R.string.licencias_fed, R.string.licencias_fed_uso, R.string.url_fed);
         fuente(R.id.filaFuenteWger, R.string.licencias_wger, R.string.licencias_wger_uso, R.string.url_wger);
         fuente(R.id.filaFuenteOff, R.string.licencias_off, R.string.licencias_off_uso, R.string.url_off);
+        // Los básicos de la nutrición (lote 1.6.1): Ciqual pide citarla, USDA es de dominio público.
+        fuente(R.id.filaFuenteCiqual, R.string.licencias_ciqual, R.string.licencias_ciqual_uso, R.string.url_ciqual);
+        fuente(R.id.filaFuenteUsda, R.string.licencias_usda, R.string.licencias_usda_uso, R.string.url_usda);
     }
 
     // Una fuente de datos: nombre y licencia, qué trae, y su proyecto en el navegador.

@@ -63,6 +63,21 @@ public interface AlimentoApi {
     @POST("alimentos/importar")
     Call<Alimento> importar(@Body Map<String, Object> body);
 
+    // El alimento de un código de barras (GP-160, lote 1.6.1): el tuyo si lo tienes; si
+    // no, el del catálogo, materializándolo. 404 si no existe; 503 con Retry-After si
+    // hacía falta leerlo de Open Food Facts y no queda cupo.
+    @GET("alimentos/codigo/{codigo}")
+    Call<Alimento> porCodigo(@Path("codigo") String codigo);
+
+    // Un alimento por id (la ficha al editar una línea de una comida).
+    @GET("alimentos/{id}")
+    Call<Alimento> porId(@Path("id") int id);
+
+    // Reporta un problema de un alimento del catálogo (lote 1.6.1), sin guardar quién.
+    // body: alimentoId o barcode, y motivo (VALORES, NOMBRE, RACION, REPETIDO, OTRO). 204.
+    @POST("alimentos/avisos")
+    Call<Void> reportar(@Body Map<String, Object> body);
+
     // Reactiva un alimento previamente desactivado.
     @PUT("alimentos/{id}/activar")
     Call<Void> activar(@Path("id") int id);

@@ -37,8 +37,13 @@ public class AvisoDescartarUsoTest {
                 faltan.add(pantalla);
             }
         }
-        if (!leer(JAVA.resolve("ui/activities/AnadirAlimentoActivity.java")).contains("AvisoDescartar.instalarEnDialogo(")) {
-            faltan.add("AnadirAlimentoActivity (diálogo de cantidad)");
+        // Lote 1.6.1: la cantidad se escribe en la ficha (el diálogo de gramos de Añadir ya
+        // no existe), y el código a mano en el escáner.
+        if (!leer(JAVA.resolve("ui/activities/FichaAlimentoActivity.java")).contains("AvisoDescartar.instalarEnDialogo(")) {
+            faltan.add("FichaAlimentoActivity (escribir la cantidad)");
+        }
+        if (!leer(JAVA.resolve("ui/activities/EscanerActivity.java")).contains("AvisoDescartar.instalarEnDialogo(")) {
+            faltan.add("EscanerActivity (escribir el código)");
         }
         if (!leer(JAVA.resolve("utils/InputDialog.java")).contains("AvisoDescartar.instalarEnDialogo(")) {
             faltan.add("InputDialog (diálogo de mediciones)");

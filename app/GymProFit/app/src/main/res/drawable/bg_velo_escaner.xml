@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  bg_velo_escaner — píldoras y botones redondos sobre la cámara (escáner, lote 1.6.1):
+  negro translúcido para que el texto se lea encima de cualquier imagen. Radio grande
+  para que sirva de círculo en un botón de 48 dp y de píldora en el aviso.
+-->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="?attr/colorControlHighlight">
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="24dp" />
+            <solid android:color="@color/gp_escaner_velo" />
+        </shape>
+    </item>
+</ripple>

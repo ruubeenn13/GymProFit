@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_no_lo_encuentras — al final de la búsqueda, y cuando no hay nada (tablero 5,
+  lote 1.6.1): «¿No lo encuentras?», con «Escanéalo» y «Créalo».
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginTop="16dp"
+    android:layout_marginBottom="24dp"
+    android:padding="16dp"
+    android:orientation="vertical"
+    android:background="@drawable/bg_boton_discontinuo">
+
+    <TextView
+        android:id="@+id/tvNoLoEncuentras"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:accessibilityHeading="true"
+        tools:targetApi="28"
+        android:text="@string/buscar_no_lo_encuentras"
+        android:textSize="@dimen/text_fila"
+        android:textStyle="bold"
+        android:textColor="?attr/colorOnSurface" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEscanealo"
+            style="@style/Widget.GymProFit.BotonPildora.Contorno"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="@string/buscar_escanealo"
+            app:icon="@drawable/ic_ms_barcode_scanner"
+            app:iconTint="?attr/colorOnSurface" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCrealo"
+            style="@style/Widget.GymProFit.BotonPildora.Contorno"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/buscar_crealo"
+            app:icon="@drawable/ic_ms_add_circle"
+            app:iconTint="?attr/colorOnSurface" />
+    </LinearLayout>
+</LinearLayout>

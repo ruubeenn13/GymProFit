@@ -153,6 +153,8 @@
                     <include android:id="@+id/filaFuenteFed" layout="@layout/view_fila_fuente" />
                     <include android:id="@+id/filaFuenteWger" layout="@layout/view_fila_fuente" />
                     <include android:id="@+id/filaFuenteOff" layout="@layout/view_fila_fuente" />
+                    <include android:id="@+id/filaFuenteCiqual" layout="@layout/view_fila_fuente" />
+                    <include android:id="@+id/filaFuenteUsda" layout="@layout/view_fila_fuente" />
 
                 </LinearLayout>
 

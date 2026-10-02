@@ -114,6 +114,16 @@ public final class Movimiento {
     public static final long TROFEO = 450;
     /** 12 · Récord: las chispas salen. */
     public static final long CHISPAS = 700;
+    /** 16 · La lista entra en cascada: cada fila sube y aparece. */
+    public static final long CASCADA = 350;
+    /** 16 · La lista entra en cascada: retraso entre filas. */
+    public static final long CASCADA_ESCALON = 40;
+    /** 17 · Código leído: una ida y vuelta de la línea que barre el marco. */
+    public static final long BARRIDO = 2400;
+    /** 17 · Código leído: el marco encaja. */
+    public static final long ENCAJA = 200;
+    /** 17 · Código leído: la hoja del producto sube. */
+    public static final long HOJA = 450;
     /** «Respira»: el botón principal llama la atención una vez. */
     public static final long RESPIRA = 1400;
 

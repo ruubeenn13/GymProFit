@@ -324,6 +324,8 @@ En cada serie, `numero` (de 1 a 20) y `repeticiones` (de 0 a 100) son obligatori
 | PUT | `/admin/ejercicios/{id}` | ADMIN | Guarda el ejercicio entero. Un nombre en español distinto del inglés lo marca como revisado |
 | GET | `/admin/alimentos?q=&categoria=&sinIngles=&origen=&page=&size=` | ADMIN | Solo el catálogo (sin dueño), nunca los alimentos de un usuario. `origen` es `OPEN_FOOD_FACTS` (con código de barras) o `MANUAL`. Se editan con `PATCH /alimentos/{id}` |
 | GET | `/admin/alimentos/resumen` | ADMIN | Tamaño del catálogo, cuántos sin nombre en inglés y sus categorías |
+| GET | `/admin/avisos-alimento?page=&size=` | ADMIN | Avisos pendientes de alimentos (lote 1.6.1), los más repetidos primero, con el alimento para editarlo. Sin quién los envió (DEC-042) |
+| PUT | `/admin/avisos-alimento/{id}/resuelto` | ADMIN | Quita el aviso de pendientes; el siguiente del mismo alimento y motivo abre otro |
 
 **Idioma de los errores (GP-109).** Español por defecto; inglés con `Accept-Language: en`. Los textos son claves de `messages.properties` y `messages_en.properties`.
 

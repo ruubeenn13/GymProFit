@@ -2,11 +2,7 @@ package es.pmdm.gymprofit.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -18,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +28,6 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.ui.adapters.AlimentoComidaAdapter;
 import es.pmdm.gymprofit.utils.LoadingDialog;
-import es.pmdm.gymprofit.utils.Numeros;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -49,7 +43,6 @@ import com.google.android.material.appbar.MaterialToolbar;
  */
 public class ComidaActivity extends BaseActivity {
 
-    private static final String TAG = "ComidaActivity";
 
     private String tipoComida;
     private int comidaId;
@@ -134,6 +127,9 @@ public class ComidaActivity extends BaseActivity {
     // Inicializa el adapter y el layout manager del RecyclerView de alimentos
     private void configurarRecyclerView() {
         adapter = new AlimentoComidaAdapter(listaAlimentos, this::mostrarMenuContextual);
+        // Tocar un alimento abre su ficha con su cantidad y «Actualizar» (lote 1.6.1): el
+        // diálogo de gramos de antes ya no existe.
+        adapter.setOnItemClickListener(this::abrirFicha);
         rvAlimentosComida.setLayoutManager(new LinearLayoutManager(this));
         rvAlimentosComida.setAdapter(adapter);
     }
@@ -222,7 +218,7 @@ public class ComidaActivity extends BaseActivity {
 
         List<UIHelper.MenuAction> actions = new ArrayList<>();
         actions.add(new UIHelper.MenuAction(R.drawable.ic_ms_edit, getString(R.string.comida_editar_cantidad),
-                () -> mostrarDialogoEditarCantidad(item)));
+                () -> abrirFicha(item)));
         if (esAdmin && esPredefinido) {
             actions.add(new UIHelper.MenuAction(R.drawable.ic_ms_visibility_off, getString(R.string.comida_desactivar_alimento),
                     () -> UIHelper.mostrarDialogoConIcono(ComidaActivity.this,
@@ -240,77 +236,9 @@ public class ComidaActivity extends BaseActivity {
         UIHelper.mostrarMenuAnclado(this, anchorView, item.getNombreAlimento(), actions);
     }
 
-    // Muestra un diálogo para modificar los gramos del alimento, recalculando el preview de macros
-    private void mostrarDialogoEditarCantidad(AlimentoComida item) {
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_gramos, null);
-        EditText etGramos = dialogView.findViewById(R.id.etGramos);
-        TextView tvPreview = dialogView.findViewById(R.id.tvPreviewMacros);
-
-        etGramos.setText(String.format(Locale.getDefault(), "%.0f", item.getCantidadGramos()));
-        // Al abrir, los macros de la cantidad actual, desde recursos (GP-026). Antes se
-        // veía el texto de ejemplo del layout hasta tocar el campo.
-        tvPreview.setText(getString(R.string.anadir_alimento_preview,
-                item.getCaloriasTotales(),
-                item.getProteinasTotales(),
-                item.getCarbohidratosTotales(),
-                item.getGrasasTotales()));
-
-        etGramos.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
-            @Override
-            public void afterTextChanged(Editable s) {
-                try {
-                    double g = Numeros.leerDecimal(s.toString());
-                    // Las calorías almacenadas son por 100 g
-                    int kcal = item.getCaloriasTotales() > 0
-                            ? (int) Math.round((item.getCaloriasTotales() / item.getCantidadGramos()) * g)
-                            : 0;
-                    tvPreview.setText(getString(R.string.anadir_alimento_preview,
-                            kcal,
-                            (item.getProteinasTotales() / item.getCantidadGramos()) * g,
-                            (item.getCarbohidratosTotales() / item.getCantidadGramos()) * g,
-                            (item.getGrasasTotales() / item.getCantidadGramos()) * g));
-                } catch (NumberFormatException ignored) {
-                    tvPreview.setText("");
-                }
-            }
-        });
-
-        new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
-                .setTitle(getString(R.string.comida_editar_cantidad))
-                .setView(dialogView)
-                .setPositiveButton(getString(R.string.dialog_confirmar), (d, w) -> {
-                    String texto = etGramos.getText().toString().trim();
-                    if (texto.isEmpty()) return;
-                    try {
-                        double nuevosGramos = Numeros.leerDecimal(texto);
-                        if (nuevosGramos <= 0) return;
-                        // Cuerpo parcial: cantidadGramos como BigDecimal (decimal).
-                        Map<String, Object> body = new HashMap<>();
-                        body.put("cantidadGramos", BigDecimal.valueOf(nuevosGramos));
-                        // Spinner durante el guardado de la nueva cantidad.
-                        LoadingDialog.show(this);
-                        alimentoComidaApi.patch(item.getId(), body).enqueue(new ApiCallback<Void>() {
-                            @Override
-                            public void onOk(Void ignored) {
-                                // Oculta el spinner del guardado (cargarAlimentos gestiona el suyo).
-                                LoadingDialog.hide(ComidaActivity.this);
-                                cargarAlimentos();
-                            }
-                            @Override
-                            public void onFail(int code, String message) {
-                                // Oculta el spinner y mapea el error de guardado a feedback.
-                                LoadingDialog.hide(ComidaActivity.this);
-                                UiFeedback.toastError(ComidaActivity.this, code, message);
-                            }
-                        });
-                    } catch (NumberFormatException e) {
-                        Log.e(TAG, "Error editando cantidad: " + e.getMessage());
-                    }
-                })
-                .setNegativeButton(getString(R.string.dialog_cancelar), null)
-                .show();
+    // La ficha del alimento con la cantidad de esta línea, para cambiarla (lote 1.6.1).
+    private void abrirFicha(AlimentoComida item) {
+        anadirLauncher.launch(FichaAlimentoActivity.paraEditar(this, item, tipoComida, fecha));
     }
 
     // Desactiva el alimento predefinido asociado a este registro (solo admin)

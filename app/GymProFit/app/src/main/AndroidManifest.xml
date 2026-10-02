@@ -153,6 +153,13 @@
         <activity android:name=".ui.activities.ComidaActivity" android:exported="false" />
         <activity android:name=".ui.activities.AnadirAlimentoActivity" android:exported="false" />
         <activity android:name=".ui.activities.CrearAlimentoActivity" android:exported="false" />
+        <activity android:name=".ui.activities.FichaAlimentoActivity" android:exported="false" />
+        <activity android:name=".ui.activities.EscanerActivity" android:exported="false" />
+        <!-- El modelo de ML Kit para leer códigos de barras (lote 1.6.1): instalado desde
+             Play, Google Play Services lo baja con la app; si no, se pide al abrir el escáner. -->
+        <meta-data
+            android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="barcode" />
         <activity android:name=".ui.activities.AdminAlimentosActivity" android:exported="false" />
         <activity android:name=".ui.activities.AcercaDeActivity" android:exported="false" />
         <!-- Licencias de terceros (GP-082): el texto de lo que no sale de Gradle, y las

@@ -48,7 +48,8 @@ public abstract class ApiCallback<T> implements Callback<T> {
             onFail(401, "Sesión expirada");
         } else if (response.isSuccessful()) {
             onOk(response.body());
-        } else if (code == 429) {
+        } else if (code == 429 || code == 503) {
+            // 503 con Retry-After: sin cupo para leer de Open Food Facts (lote 1.6.1).
             String espera = response.headers().get("Retry-After");
             onFail(code, (espera != null ? PREFIJO_RETRY_AFTER + espera.trim() + ";" : "") + leerError(response));
         } else {

@@ -598,6 +598,10 @@ Cuatro curvas: **enfatizada** `cubic-bezier(.05,.7,.1,1)` para lo que entra; **e
 | 10 · Error | El campo tiembla (`TEMBLOR`) y el mensaje aparece debajo (`MENSAJE`) | 380 temblor · 250 | Error |
 | 11 · Aviso de ejemplo | Baja como una notificación de verdad y su icono zumba (`AVISO`, en bucle) | 5000 | — |
 | 12 · Récord | El trofeo salta (`TROFEO`), suelta seis chispas doradas (`CHISPAS`) y un brillo cruza la fila (`BRILLO`). En la bienvenida y en el resumen de cada sesión | 450 rebote · 700 · 900 | Éxito |
+| 16 · La lista entra en cascada | Las filas de Añadir y de los resultados suben 16 dp y aparecen, una tras otra (`CASCADA`, `CASCADA_ESCALON`). Solo la primera vez: al volver, ya están | 350 enfatizada, cada 40 | — |
+| 17 · Código leído | Mientras busca, una línea barre el marco (`BARRIDO`). Al leer, las esquinas pasan a verde y el marco encaja (`ENCAJA`), y la hoja del producto sube (`HOJA`) | 2400 de ida y vuelta · 200 estándar · 450 enfatizada | Éxito |
+
+La nutrición nueva (lienzo del 01-10, `documentacion/diseno/2026-10-01-nutricion/fuente/Movimiento.dc.html`) sigue la numeración del 13 al 22. Cada momento entra en esta tabla con el lote que lo construye: el 16 y el 17, con el 1.6.1 (2026-10-02); las barras de la ficha se llenan con `BARRA`, el del momento 5.
 
 Las reglas:
 
@@ -662,6 +666,24 @@ El `LIKE` con comodín delante no usa índice: barre la tabla entera en cada pul
 **Consecuencias.** Un producto que se quite de Open Food Facts sigue en `productos_off` hasta que se limpie a mano: la importación añade y actualiza, no borra. Un producto nuevo tarda como mucho una semana en salir en la búsqueda, salvo que alguien lo escanee (GP-160), que lo trae al momento.
 
 **Qué la invalidaría.** Que los productos de España dejen de caber en el presupuesto aun quedándose con los más escaneados. Que haga falta más de una fuente de productos: entonces la clave se queda corta y conviene una cuenta de servicio con su rol (DEC-012).
+
+### DEC-042 · Añadir en un viaje, la ración que se guarda, el envase como ración y los avisos sin quién
+**Estado:** Aceptada · **Fecha:** 2026-10-02 · **Tarea:** GP-162, GP-160 y GP-167 (lote 1.6.1)
+
+**Contexto.** La 1.6.1 trae a la app los tableros 4 a 7 del lienzo de la nutrición: Añadir, Buscar, el escáner y la ficha. Para que la ficha añada con una ración, el escáner apunte el envase y se pueda reportar un dato malo, la API necesitaba cuatro cosas que no tenía, y cada una obligaba a elegir.
+
+**Decisión.**
+
+- **Añadir es una ruta, no cuatro peticiones.** `POST /comidas/anadir` recibe el día, el tipo de comida, el alimento (por id o por código, que se materializa) y la cantidad (en gramos o en raciones), y encuentra o crea la comida del usuario del token (DEC-013). Todo en una transacción: un código que no existe no deja una comida vacía. **Si el alimento ya está en esa comida, se suma** en una sola línea (misma ración, más raciones; si no, en gramos) en vez del 400 de duplicado de `POST /alimentos-comida`, que no cambia para las builds repartidas.
+- **La ración elegida se guarda, pero mandan los gramos.** `alimentos_comida` gana `racion_id` y `raciones`, opcionales; las calorías y los macros salen de los gramos, como siempre. La ración solo dice cómo enseñarlo («2 × rebanada (56 g)»). Cambiar los gramos a mano la quita. Un producto que aún no está en el catálogo no tiene ids de ración: se elige por su **posición**, que es la misma al materializarlo.
+- **El envase es la primera ración de un producto, solo si se lee sin dudas y pesa 500 g o menos.** Una cantidad con su unidad, o un multipack de unidades iguales (que da «1 unidad»); el volumen cuenta 1 ml = 1 g, como hace Open Food Facts con sus valores. Lo demás (cifras sueltas, piezas, onzas, neto y escurrido) no se lee. **El tope de 500 g es una decisión de producto**: el escáner propone el envase por defecto, y un kilo de arroz o un litro de leche no se comen de una vez. De 198 224 productos, 55 413 traen un envase legible y 42 252 de ellos de hasta 500 g, más 4 957 multipacks.
+- **Los avisos no guardan quién.** Reportar un alimento guarda el alimento (o el código, si no está materializado), un motivo de una lista cerrada y las veces, sin usuario y sin texto libre: no es un dato personal y no entra en la política de privacidad ni en el borrado de la cuenta. El freno por cuenta (el mismo aviso cuenta una vez al día; como mucho diez por hora) vive en memoria y **no responde distinto**: quien se pasa no lo nota, y no hay nada que tantear. Lo tuyo no se reporta (400): lo editas tú, y el administrador no ve los alimentos de nadie (DEC-027).
+- **El cupo de Open Food Facts también es por cuenta** (GP-167): 3 lecturas nuevas por minuto y 30 al día, además de las 10 por minuto de toda la API. Una cuenta no puede dejar sin escáner a las demás.
+- **El escáner lee en el móvil con el modelo de Google Play Services**, no con el que va dentro del APK. El de dentro lleva una librería nativa de 3 a 5 MB por arquitectura, y un APK que se reparte fuera de Play las lleva todas: el release pasaba de 6,7 a 28,8 MB. Con Play Services queda en 7,5 MB, y el modelo se descarga la primera vez (instalada desde Play, con la app).
+
+**Consecuencias.** Los productos ya materializados antes de la 1.6.1 no tienen la ración del envase: la ganan si se vuelven a materializar, no antes. Un móvil sin Google Play Services no puede leer códigos con la cámara, pero sí escribirlos. Los avisos de una cuenta que se pasa del freno se pierden, y es lo que se quiere.
+
+**Qué la invalidaría.** Que los avisos necesiten respuesta a quien los envió (entonces hace falta el usuario, y entra en la política). Que la app se publique solo por Play con App Bundle: entonces el modelo dentro de la app cuesta 3 a 5 MB por móvil y no 22, y se puede reconsiderar.
 
 ---
 

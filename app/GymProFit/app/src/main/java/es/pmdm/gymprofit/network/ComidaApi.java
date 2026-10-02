@@ -3,6 +3,7 @@ package es.pmdm.gymprofit.network;
 import java.util.List;
 import java.util.Map;
 
+import es.pmdm.gymprofit.model.comida.AnadirRespuesta;
 import es.pmdm.gymprofit.model.comida.Comida;
 import es.pmdm.gymprofit.model.comida.ResumenDiarioNutricion;
 import retrofit2.Call;
@@ -39,6 +40,12 @@ public interface ComidaApi {
     // incluye el id generado (necesario para asociarle luego los alimentos).
     @POST("comidas")
     Call<Comida> crear(@Body Map<String, Object> body);
+
+    // Añade un alimento a la comida de un día en un viaje (lote 1.6.1): la encuentra o la
+    // crea. body: fecha (yyyy-MM-dd), tipoComida, alimentoId o barcode, y cantidadGramos
+    // o racionId/racionIndice con raciones. Devuelve la comida con sus totales y la línea.
+    @POST("comidas/anadir")
+    Call<AnadirRespuesta> anadir(@Body Map<String, Object> body);
 
     // Elimina una comida registrada por su id.
     @DELETE("comidas/{id}")

@@ -1,5 +1,6 @@
 package es.pmdm.gymprofit.ui.activities;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -7,14 +8,14 @@ import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.EditText;
+import android.view.inputmethod.EditorInfo;
+import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,155 +32,293 @@ import java.util.Map;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.PageDTO;
 import es.pmdm.gymprofit.model.alimento.Alimento;
-import es.pmdm.gymprofit.model.comida.Comida;
 import es.pmdm.gymprofit.network.AlimentoApi;
-import es.pmdm.gymprofit.network.AlimentoComidaApi;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
-import es.pmdm.gymprofit.network.ComidaApi;
-import es.pmdm.gymprofit.ui.adapters.AlimentoAdapter;
-import es.pmdm.gymprofit.utils.AvisoDescartar;
+import es.pmdm.gymprofit.ui.adapters.BusquedaAlimentoAdapter;
 import es.pmdm.gymprofit.utils.CamposMacro;
+import es.pmdm.gymprofit.utils.GruposBusqueda;
 import es.pmdm.gymprofit.utils.LoadingDialog;
-import es.pmdm.gymprofit.utils.Numeros;
 import es.pmdm.gymprofit.utils.PaginacionScrollListener;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
-import com.google.android.material.appbar.MaterialToolbar;
-
+import es.pmdm.gymprofit.utils.VistaEstado;
+import retrofit2.Call;
 
 // ============================================================
-// AnadirAlimentoActivity — buscador y selector de alimentos para una comida
-// Permite buscar alimentos (búsqueda en SERVIDOR, paginada con scroll
-// infinito), crear uno nuevo, editar/eliminar los propios (o desactivar
-// predefinidos si es admin) y añadirlos con gramos.
+// AnadirAlimentoActivity — Añadir y Buscar (tableros 4 y 5 del lienzo, lote 1.6.1)
+//
+// Cabecera con cerrar y «Añadir a [merienda ▾]»: la píldora abre las cinco comidas y
+// sustituye a los chips de antes. Debajo, el buscador y el botón naranja del escáner.
+//   · Sin escribir (o con menos de 2 letras): lo que da la búsqueda vacía, «Recientes»
+//     (lo tuyo) y «Habituales» (los básicos). La última lista se guarda en memoria y se
+//     enseña al instante al volver a entrar, refrescándola por detrás.
+//   · Buscando: Tuyo, Básicos y Productos, y al final «¿No lo encuentras?», con
+//     «Escanéalo» y «Créalo». Espera 250 ms tras la última tecla y cancela la petición
+//     anterior; una respuesta vieja que llegue tarde no pisa la nueva.
+// Cada fila abre la ficha, que es la que añade. Mantener pulsado un alimento propio da
+// editar y eliminar (y, a un ADMIN, desactivar uno del catálogo), como antes.
+// Al añadir desde la ficha o el escáner, la pantalla se cierra y el diario recarga.
 // ============================================================
-/**
- * Permite al usuario buscar un alimento y añadirlo a una comida del día.
- * Long-press sobre alimento propio muestra menú para editar o eliminar.
- */
 public class AnadirAlimentoActivity extends BaseActivity {
 
-    // Tamaño de página del catálogo y retardo del debounce del buscador
+    /** Extras: la comida (DESAYUNO…CENA) y el día (yyyy-MM-dd). */
+    public static final String EXTRA_TIPO = "tipoComida";
+    public static final String EXTRA_FECHA = "fecha";
+
+    static final String[] TIPOS = {"DESAYUNO", "ALMUERZO", "COMIDA", "MERIENDA", "CENA"};
+    private static final int[] NOMBRES = {R.string.nutricion_desayuno, R.string.nutricion_almuerzo,
+            R.string.nutricion_comida, R.string.nutricion_merienda, R.string.nutricion_cena};
+    private static final int[] ANADIR_A = {R.string.comida_anadir_desayuno, R.string.comida_anadir_almuerzo,
+            R.string.comida_anadir_comida, R.string.comida_anadir_merienda, R.string.comida_anadir_cena};
+
     private static final int TAM_PAGINA = 30;
-    private static final long DEBOUNCE_MS = 400;
+    private static final long ESPERA_MS = 250;
 
-    // Tipo de comida al que se añadirá el alimento (DESAYUNO, ALMUERZO, ...)
+    // La última lista sin texto, para enseñarla al instante la próxima vez (B1). Solo en
+    // memoria: se pierde con el proceso, y entonces se carga como la primera vez.
+    @Nullable private static List<Alimento> listaGuardada;
+
     private String tipoComida;
-    // Id de la comida existente, o -1 si aún no se ha creado
-    private int comidaId;
-    // Fecha (YYYY-MM-DD) de la comida
     private String fecha;
-    // Tipo con el que se abrió: si se cambia en los chips, el comidaId ya no vale y
-    // hay que buscar (o crear) la comida del tipo elegido.
-    private String tipoInicial;
 
-    // Lista mostrada en el RecyclerView (se rellena por páginas del servidor)
-    private final List<Alimento> listaAlimentos = new ArrayList<>();
-    private AlimentoAdapter adapter;
-
-    // Estado de la búsqueda paginada en servidor
-    private String queryActual = "";
-    private int paginaActual = 0;
-    private boolean cargando = false;
-    private boolean ultimaPagina = false;
-
-    // Debounce del buscador: pospone la petición hasta que el usuario deja de teclear
-    private final Handler debounceHandler = new Handler(Looper.getMainLooper());
-    private Runnable debounceRunnable;
-
-    // Launcher para lanzar CrearAlimentoActivity y recargar la lista si se creó uno nuevo
-    private ActivityResultLauncher<Intent> crearAlimentoLauncher;
-
-    // Servicios Retrofit tipados de los dominios alimentos, comidas y alimentos-comida (etapa 2).
     private final AlimentoApi alimentoApi = ApiClient.service(AlimentoApi.class);
-    private final ComidaApi comidaApi = ApiClient.service(ComidaApi.class);
-    private final AlimentoComidaApi alimentoComidaApi = ApiClient.service(AlimentoComidaApi.class);
+    private BusquedaAlimentoAdapter adapter;
+    private VistaEstado estado;
+    private MaterialButton btnComida;
+    private TextInputEditText etBuscar;
+
+    // Búsqueda en curso: la petición, su texto, la página y lo acumulado.
+    @Nullable private Call<PageDTO<Alimento>> enCurso;
+    private int turno;
+    private String consulta = "";
+    private int pagina;
+    private boolean ultimaPagina = true;
+    private boolean cargando;
+    private final List<Alimento> resultados = new ArrayList<>();
+    private boolean yaEntro;
+
+    private final Handler espera = new Handler(Looper.getMainLooper());
+    private final Runnable buscarAhora = this::buscarDesdeCero;
+
+    private ActivityResultLauncher<Intent> fichaLauncher;
+    private ActivityResultLauncher<Intent> escanerLauncher;
+    private ActivityResultLauncher<Intent> crearLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_anadir_alimento);
 
-        tipoComida = getIntent().getStringExtra("tipoComida");
-        comidaId   = getIntent().getIntExtra("comidaId", -1);
-        fecha      = getIntent().getStringExtra("fecha");
-        tipoInicial = tipoComida;
-        configurarSelectorComida();
+        tipoComida = getIntent().getStringExtra(EXTRA_TIPO);
+        if (tipoComida == null || indiceTipo(tipoComida) < 0) tipoComida = "MERIENDA";
+        fecha = getIntent().getStringExtra(EXTRA_FECHA);
+        if (savedInstanceState != null) {
+            tipoComida = savedInstanceState.getString(EXTRA_TIPO, tipoComida);
+        }
 
-        MaterialToolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setNavigationOnClickListener(v -> finish());
+        // Lo que se añade desde la ficha, el escáner o lo creado vuelve aquí con OK:
+        // se cierra la pantalla y el diario recarga.
+        fichaLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                r -> { if (r.getResultCode() == RESULT_OK) volverAlDiario(); else refrescar(); });
+        escanerLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                r -> { if (r.getResultCode() == RESULT_OK) volverAlDiario(); });
+        crearLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                r -> { if (r.getResultCode() == RESULT_OK) volverAlDiario(); else refrescar(); });
 
-        RecyclerView rvAlimentos = findViewById(R.id.rvAlimentos);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        rvAlimentos.setLayoutManager(layoutManager);
-        adapter = new AlimentoAdapter(listaAlimentos, this::onAlimentoSeleccionado);
-        adapter.setOnItemLongClickListener((alimento, anchor) -> {
-            // Los resultados externos (OFF, sin id local) no se pueden editar/borrar
-            if (alimento.esExterno()) return;
-            boolean esAdmin = "ROLE_ADMIN".equals(prefsManager.getRol());
-            boolean esPropio = alimento.getUsuarioId() != null
-                    && alimento.getUsuarioId() == prefsManager.getUsuarioId();
-            if (esPropio || esAdmin) {
-                mostrarMenuContextualAlimento(alimento, anchor);
-            }
+        findViewById(R.id.btnCerrarAnadir).setOnClickListener(v -> finish());
+        btnComida = findViewById(R.id.btnComidaAnadir);
+        btnComida.setOnClickListener(this::elegirComida);
+        pintarComida();
+        findViewById(R.id.btnEscanear).setOnClickListener(v -> abrirEscaner());
+
+        estado = new VistaEstado(findViewById(R.id.estadoAnadir));
+        RecyclerView rv = findViewById(R.id.rvAnadir);
+        LinearLayoutManager lm = new LinearLayoutManager(this);
+        rv.setLayoutManager(lm);
+        adapter = new BusquedaAlimentoAdapter(new BusquedaAlimentoAdapter.Acciones() {
+            @Override public void abrir(@NonNull Alimento alimento) { abrirFicha(alimento); }
+            @Override public boolean tieneOpciones(@NonNull Alimento a) { return puedeOpciones(a); }
+            @Override public void opciones(@NonNull Alimento a, @NonNull View fila) { mostrarMenuContextualAlimento(a, fila); }
+            @Override public void escanear() { abrirEscaner(); }
+            @Override public void crear() { abrirCrear(); }
         });
-        rvAlimentos.setAdapter(adapter);
-        // Scroll infinito: pide la siguiente página al acercarse al final
-        rvAlimentos.addOnScrollListener(new PaginacionScrollListener(layoutManager) {
-            @Override protected void cargarMas() { cargarPagina(paginaActual + 1); }
+        rv.setAdapter(adapter);
+        rv.addOnScrollListener(new PaginacionScrollListener(lm) {
+            @Override protected void cargarMas() { siguientePagina(); }
             @Override protected boolean isCargando() { return cargando; }
             @Override protected boolean esUltimaPagina() { return ultimaPagina; }
         });
 
-        EditText etBuscador = findViewById(R.id.etBuscador);
-        // Buscador con debounce: la búsqueda se resuelve en el servidor
-        etBuscador.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void afterTextChanged(Editable s) {}
-
+        etBuscar = findViewById(R.id.etBuscarAnadir);
+        etBuscar.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int a, int b, int c) { }
+            @Override public void onTextChanged(CharSequence s, int a, int b, int c) { }
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                queryActual = s.toString().trim();
-                if (debounceRunnable != null) debounceHandler.removeCallbacks(debounceRunnable);
-                debounceRunnable = () -> cargarAlimentos();
-                debounceHandler.postDelayed(debounceRunnable, DEBOUNCE_MS);
+            public void afterTextChanged(Editable s) {
+                espera.removeCallbacks(buscarAhora);
+                espera.postDelayed(buscarAhora, ESPERA_MS);
             }
         });
-
-        crearAlimentoLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK) {
-                        cargarAlimentos();
-                    }
-                });
-
-        MaterialButton btnCrearAlimento = findViewById(R.id.btnCrearAlimento);
-        btnCrearAlimento.setOnClickListener(v -> {
-            Intent intent = new Intent(this, CrearAlimentoActivity.class);
-            crearAlimentoLauncher.launch(intent);
+        etBuscar.setOnEditorActionListener((v, accion, ev) -> {
+            if (accion != EditorInfo.IME_ACTION_SEARCH) return false;
+            espera.removeCallbacks(buscarAhora);
+            buscarDesdeCero();
+            return true;
         });
 
-        cargarAlimentos();
+        // Al instante lo de la última vez; por detrás, lo de ahora.
+        if (listaGuardada != null) {
+            pintar(listaGuardada, false);
+            yaEntro = true;
+        }
+        buscarDesdeCero();
     }
 
-    // Los cinco chips de «Para»: se ve a qué comida va y se puede cambiar (GP-105).
-    private static final String[] TIPOS = {"DESAYUNO", "ALMUERZO", "COMIDA", "MERIENDA", "CENA"};
-    private static final int[] CHIPS = {R.id.chipComidaDesayuno, R.id.chipComidaAlmuerzo,
-            R.id.chipComidaComida, R.id.chipComidaMerienda, R.id.chipComidaCena};
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle out) {
+        super.onSaveInstanceState(out);
+        out.putString(EXTRA_TIPO, tipoComida);
+    }
 
-    private void configurarSelectorComida() {
-        com.google.android.material.chip.ChipGroup grupo = findViewById(R.id.chipGroupComida);
+    @Override
+    protected void onDestroy() {
+        espera.removeCallbacks(buscarAhora);
+        if (enCurso != null) enCurso.cancel();
+        super.onDestroy();
+    }
+
+    // ── La comida ───────────────────────────────────────────────────────────
+
+    static int indiceTipo(String tipo) {
+        for (int i = 0; i < TIPOS.length; i++) if (TIPOS[i].equals(tipo)) return i;
+        return -1;
+    }
+
+    /** «Añadir a la merienda», «Add to snack»… para la comida que toca. */
+    static int textoAnadirA(String tipo) {
+        int i = indiceTipo(tipo);
+        return ANADIR_A[i < 0 ? 3 : i];
+    }
+
+    private void pintarComida() {
+        String nombre = getString(NOMBRES[indiceTipo(tipoComida)])
+                .toLowerCase(es.pmdm.gymprofit.utils.FechaUtils.localeDeLaApp(this));
+        btnComida.setText(nombre);
+        btnComida.setContentDescription(getString(R.string.anadir_comida_a11y, nombre));
+    }
+
+    // La píldora abre las cinco comidas, con la de ahora marcada.
+    private void elegirComida(View ancla) {
+        PopupMenu menu = new PopupMenu(this, ancla);
         for (int i = 0; i < TIPOS.length; i++) {
-            if (TIPOS[i].equals(tipoComida)) grupo.check(CHIPS[i]);
+            menu.getMenu().add(0, i, i, NOMBRES[i]).setCheckable(true).setChecked(TIPOS[i].equals(tipoComida));
         }
-        grupo.setOnCheckedStateChangeListener((g, ids) -> {
-            if (ids.isEmpty()) return;
-            for (int i = 0; i < CHIPS.length; i++) {
-                if (CHIPS[i] == ids.get(0)) tipoComida = TIPOS[i];
+        menu.getMenu().setGroupCheckable(0, true, true);
+        menu.setOnMenuItemClickListener(item -> {
+            tipoComida = TIPOS[item.getItemId()];
+            pintarComida();
+            return true;
+        });
+        menu.show();
+    }
+
+    // ── Abrir ───────────────────────────────────────────────────────────────
+
+    private void abrirFicha(Alimento alimento) {
+        fichaLauncher.launch(FichaAlimentoActivity.paraAnadir(this, alimento, tipoComida, fecha));
+    }
+
+    private void abrirEscaner() {
+        escanerLauncher.launch(new Intent(this, EscanerActivity.class)
+                .putExtra(EXTRA_TIPO, tipoComida).putExtra(EXTRA_FECHA, fecha));
+    }
+
+    private void abrirCrear() {
+        crearLauncher.launch(new Intent(this, CrearAlimentoActivity.class)
+                .putExtra(EXTRA_TIPO, tipoComida).putExtra(EXTRA_FECHA, fecha));
+    }
+
+    private void volverAlDiario() {
+        setResult(RESULT_OK);
+        finish();
+    }
+
+    // ── Buscar ──────────────────────────────────────────────────────────────
+
+    // Tras editar o borrar un alimento propio, o al volver de la ficha sin añadir.
+    private void refrescar() {
+        buscarDesdeCero();
+    }
+
+    private void buscarDesdeCero() {
+        CharSequence texto = etBuscar.getText();
+        consulta = GruposBusqueda.esBusqueda(texto) ? texto.toString().trim() : "";
+        pagina = 0;
+        ultimaPagina = true;
+        pedir(0);
+    }
+
+    private void siguientePagina() {
+        if (!ultimaPagina && !cargando) pedir(pagina + 1);
+    }
+
+    private void pedir(int numero) {
+        if (enCurso != null) enCurso.cancel();
+        int miTurno = ++turno;
+        cargando = true;
+        boolean buscando = !consulta.isEmpty();
+        // Solo se enseña «cargando» si no hay nada que enseñar mientras tanto.
+        if (numero == 0 && adapter.getItemCount() == 0) estado.cargando();
+        Call<PageDTO<Alimento>> llamada = alimentoApi.buscar(buscando ? consulta : null, null, numero, TAM_PAGINA);
+        enCurso = llamada;
+        llamada.enqueue(new ApiCallback<PageDTO<Alimento>>() {
+            @Override
+            public void onOk(PageDTO<Alimento> pag) {
+                if (miTurno != turno || isDestroyed()) return;
+                cargando = false;
+                List<Alimento> contenido = pag != null && pag.getContent() != null ? pag.getContent() : new ArrayList<>();
+                if (numero == 0) resultados.clear();
+                resultados.addAll(contenido);
+                pagina = pag != null ? pag.getPage() : 0;
+                ultimaPagina = pag == null || pag.isLast();
+                if (!buscando && numero == 0) listaGuardada = new ArrayList<>(contenido);
+                pintar(resultados, numero == 0 && !yaEntro);
+                yaEntro = true;
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                // Una petición cancelada (otra búsqueda la ha sustituido) también llega
+                // aquí: no es un error, y la nueva pintará lo suyo.
+                if (miTurno != turno || isDestroyed()) return;
+                cargando = false;
+                if (numero > 0) {
+                    UiFeedback.toastError(AnadirAlimentoActivity.this, code, message);
+                    return;
+                }
+                adapter.poner(new ArrayList<>(), false);
+                estado.error(VistaEstado.mensaje(AnadirAlimentoActivity.this, R.string.anadir_error_lista, code, message),
+                        AnadirAlimentoActivity.this::buscarDesdeCero);
             }
         });
+    }
+
+    private void pintar(List<Alimento> alimentos, boolean cascada) {
+        boolean buscando = !consulta.isEmpty();
+        List<GruposBusqueda.Elemento> lista = GruposBusqueda.de(alimentos, buscando);
+        adapter.poner(lista, cascada);
+        if (lista.isEmpty()) estado.vacio(R.string.anadir_vacio);
+        else estado.oculto();
+    }
+
+    // ── Mantener pulsado: lo de siempre ─────────────────────────────────────
+
+    private boolean puedeOpciones(Alimento alimento) {
+        if (alimento.esExterno()) return false;
+        boolean esAdmin = "ROLE_ADMIN".equals(prefsManager.getRol());
+        boolean esPropio = alimento.getUsuarioId() != null && alimento.getUsuarioId() == prefsManager.getUsuarioId();
+        return esPropio || esAdmin;
     }
 
     // Construye el menú contextual (editar/desactivar/eliminar) según el rol y si es propio o predefinido
@@ -248,7 +387,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
                     public void onOk(Void ignored) {
                         // Oculta el spinner al confirmarse la edición
                         LoadingDialog.hide(AnadirAlimentoActivity.this);
-                        cargarAlimentos();
+                        refrescar();
                     }
                     @Override
                     public void onFail(int code, String message) {
@@ -278,7 +417,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
             public void onOk(Void ignored) {
                 // Oculta el spinner al confirmarse la desactivación
                 LoadingDialog.hide(AnadirAlimentoActivity.this);
-                cargarAlimentos();
+                refrescar();
             }
             @Override
             public void onFail(int code, String message) {
@@ -298,7 +437,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
             public void onOk(Void ignored) {
                 // Oculta el spinner al confirmarse la eliminación
                 LoadingDialog.hide(AnadirAlimentoActivity.this);
-                cargarAlimentos();
+                refrescar();
             }
             @Override
             public void onFail(int code, String message) {
@@ -308,245 +447,4 @@ public class AnadirAlimentoActivity extends BaseActivity {
             }
         });
     }
-
-    // Reinicia la búsqueda desde la página 0 con el texto actual (también se
-    // usa para recargar tras crear/editar/eliminar un alimento).
-    private void cargarAlimentos() {
-        paginaActual = 0;
-        ultimaPagina = false;
-        cargarPagina(0);
-    }
-
-    // Pide una página al servidor; la 0 reemplaza la lista (con spinner),
-    // las siguientes se añaden al final en silencio (scroll infinito).
-    private void cargarPagina(int pagina) {
-        cargando = true;
-        // SIN diálogo de carga. LoadingDialog es setCancelable(false) y atenúa la
-        // pantalla al 50 %, así que con el debounce de 400 ms escribir "pollo" eran
-        // cinco parpadeos de overlay modal sobre el teclado — y saltaba también al
-        // abrir la pantalla, con la búsqueda vacía. La lista anterior se queda
-        // visible mientras llega la respuesta, que es lo que hace cualquier buscador.
-        alimentoApi.buscar(queryActual.isEmpty() ? null : queryActual, null, pagina, TAM_PAGINA)
-                .enqueue(new ApiCallback<PageDTO<Alimento>>() {
-                    @Override
-                    public void onOk(PageDTO<Alimento> resultado) {
-                        cargando = false;
-                        if (pagina == 0) LoadingDialog.hide(AnadirAlimentoActivity.this);
-                        if (resultado == null) return;
-                        paginaActual = resultado.getPage();
-                        ultimaPagina = resultado.isLast();
-                        List<Alimento> alimentos = resultado.getContent() != null
-                                ? resultado.getContent() : new ArrayList<>();
-                        if (pagina == 0) {
-                            listaAlimentos.clear();
-                            listaAlimentos.addAll(alimentos);
-                            adapter.notifyDataSetChanged();
-                        } else if (!alimentos.isEmpty()) {
-                            int desde = listaAlimentos.size();
-                            listaAlimentos.addAll(alimentos);
-                            adapter.notifyItemRangeInserted(desde, alimentos.size());
-                        }
-                    }
-
-                    @Override
-                    public void onFail(int code, String message) {
-                        cargando = false;
-                        if (pagina == 0) LoadingDialog.hide(AnadirAlimentoActivity.this);
-                        UiFeedback.toastError(AnadirAlimentoActivity.this, code, message);
-                    }
-                });
-    }
-
-    // Cancela el debounce pendiente al destruir la Activity.
-    @Override
-    protected void onDestroy() {
-        if (debounceRunnable != null) debounceHandler.removeCallbacks(debounceRunnable);
-        super.onDestroy();
-    }
-
-    // Gestiona la selección de un alimento: los locales van directos al diálogo
-    // de gramos; los externos (OFF, id 0) se importan primero a la BD local
-    // para tener id referenciable desde la comida.
-    private void onAlimentoSeleccionado(Alimento alimento) {
-        if (!alimento.esExterno()) {
-            mostrarDialogoGramos(alimento);
-            return;
-        }
-        if (alimento.getBarcode() == null) return; // externo sin barcode: no importable
-
-        Map<String, Object> body = new HashMap<>();
-        body.put("barcode", alimento.getBarcode());
-        // Spinner mientras se materializa el producto OFF en el catálogo local
-        LoadingDialog.show(this);
-        alimentoApi.importar(body).enqueue(new ApiCallback<Alimento>() {
-            @Override
-            public void onOk(Alimento importado) {
-                LoadingDialog.hide(AnadirAlimentoActivity.this);
-                if (importado == null) {
-                    UiFeedback.toastError(AnadirAlimentoActivity.this, -1, null);
-                    return;
-                }
-                mostrarDialogoGramos(importado);
-            }
-
-            @Override
-            public void onFail(int code, String message) {
-                LoadingDialog.hide(AnadirAlimentoActivity.this);
-                UiFeedback.toastError(AnadirAlimentoActivity.this, code, message);
-            }
-        });
-    }
-
-    // Muestra un diálogo para introducir los gramos a añadir, con preview de macros en tiempo real
-    private void mostrarDialogoGramos(Alimento alimento) {
-        android.view.View dialogView = getLayoutInflater().inflate(R.layout.dialog_gramos, null);
-        EditText etGramos = dialogView.findViewById(R.id.etGramos);
-        TextView tvPreviewMacros = dialogView.findViewById(R.id.tvPreviewMacros);
-        // Valor inicial desde recursos, en el idioma de la app (GP-026).
-        tvPreviewMacros.setText(getString(R.string.anadir_alimento_preview, 0, 0.0, 0.0, 0.0));
-
-        etGramos.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void afterTextChanged(Editable s) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String raw = s.toString().trim();
-                if (raw.isEmpty()) {
-                    tvPreviewMacros.setText(getString(R.string.anadir_alimento_preview, 0, 0.0, 0.0, 0.0));
-                    return;
-                }
-                try {
-                    double gramos = Numeros.leerDecimal(raw);
-                    int kcal  = (int) (alimento.getCalorias()      * gramos / 100);
-                    double prot  = alimento.getProteinas()     * gramos / 100;
-                    double carbs = alimento.getCarbohidratos() * gramos / 100;
-                    double gras  = alimento.getGrasas()        * gramos / 100;
-                    tvPreviewMacros.setText(getString(R.string.anadir_alimento_preview, kcal, prot, carbs, gras));
-                } catch (NumberFormatException ignored) {
-                    tvPreviewMacros.setText(getString(R.string.anadir_alimento_preview, 0, 0.0, 0.0, 0.0));
-                }
-            }
-        });
-
-        androidx.appcompat.app.AlertDialog dialogo = new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
-                .setView(dialogView)
-                .setPositiveButton(getString(R.string.btn_anadir), (dialog, which) -> {
-                    String raw = etGramos.getText().toString().trim();
-                    if (raw.isEmpty()) {
-                        Toast.makeText(this, getString(R.string.anadir_alimento_gramos_hint), Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    double gramos;
-                    try {
-                        gramos = Numeros.leerDecimal(raw);
-                    } catch (NumberFormatException e) {
-                        Toast.makeText(this, getString(R.string.anadir_alimento_gramos_hint), Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    if (gramos <= 0) {
-                        Toast.makeText(this, getString(R.string.anadir_alimento_gramos_hint), Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    anadirAlimento(alimento, gramos);
-                })
-                .setNegativeButton(getString(R.string.dialog_cancelar), null)
-                .create();
-        // Salir con una cantidad escrita pregunta antes de tirarla (GP-108).
-        AvisoDescartar.instalarEnDialogo(this, dialogo, () -> AvisoDescartar.hayTexto(etGramos.getText()), etGramos);
-        dialogo.show();
-    }
-
-    // Añade el alimento a la comida; si la comida aún no existe (comidaId == -1) la crea primero
-    private void anadirAlimento(Alimento alimento, double gramos) {
-        // Sin id, o con otra comida elegida en los chips: se busca la de ese tipo y ese
-        // día antes de crear una, para no duplicarla (el atajo del «+» llega sin id).
-        if (comidaId == -1 || !tipoComida.equals(tipoInicial)) {
-            LoadingDialog.show(this);
-            comidaApi.getDeUsuarioFecha(prefsManager.getUsuarioId(), fecha).enqueue(new ApiCallback<List<Comida>>() {
-                @Override
-                public void onOk(List<Comida> lista) {
-                    LoadingDialog.hide(AnadirAlimentoActivity.this);
-                    comidaId = -1;
-                    tipoInicial = tipoComida;
-                    if (lista != null) {
-                        for (Comida c : lista) if (tipoComida.equals(c.getTipoComida())) comidaId = c.getId();
-                    }
-                    crearOAnadir(alimento, gramos);
-                }
-                @Override
-                public void onFail(int code, String message) {
-                    LoadingDialog.hide(AnadirAlimentoActivity.this);
-                    UiFeedback.toastError(AnadirAlimentoActivity.this, code, message);
-                }
-            });
-            return;
-        }
-        crearOAnadir(alimento, gramos);
-    }
-
-    // Añade el alimento a la comida; si la comida aún no existe (comidaId == -1) la crea primero
-    private void crearOAnadir(Alimento alimento, double gramos) {
-        if (comidaId == -1) {
-            // Cuerpo de creación: la fecha del path es yyyy-MM-dd; aquí se envía como ISO con hora 00:00:00.
-            Map<String, Object> body = new HashMap<>();
-            body.put("usuarioId", prefsManager.getUsuarioId());
-            body.put("tipoComida", tipoComida);
-            body.put("fecha", fecha + "T00:00:00");
-            // Muestra el spinner modal mientras se crea la comida contenedora
-            LoadingDialog.show(this);
-            comidaApi.crear(body).enqueue(new ApiCallback<Comida>() {
-                @Override
-                public void onOk(Comida creada) {
-                    if (creada == null) {
-                        // Oculta el spinner si la respuesta viene vacía
-                        LoadingDialog.hide(AnadirAlimentoActivity.this);
-                        Toast.makeText(AnadirAlimentoActivity.this,
-                                getString(R.string.error_conexion), Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    // El spinner permanece: postAlimentoComida encadena la segunda llamada
-                    comidaId = creada.getId();
-                    postAlimentoComida(alimento, gramos);
-                }
-                @Override
-                public void onFail(int code, String message) {
-                    // Oculta el spinner y mapea el código de error a un mensaje de usuario
-                    LoadingDialog.hide(AnadirAlimentoActivity.this);
-                    UiFeedback.toastError(AnadirAlimentoActivity.this, code, message);
-                }
-            });
-        } else {
-            postAlimentoComida(alimento, gramos);
-        }
-    }
-
-    // Envía la petición que asocia el alimento (con sus gramos) a la comida y cierra la pantalla al éxito
-    private void postAlimentoComida(Alimento alimento, double gramos) {
-        // Cuerpo parcial: cantidadGramos como BigDecimal (decimal).
-        Map<String, Object> body = new HashMap<>();
-        body.put("comidaId", comidaId);
-        body.put("alimentoId", alimento.getId());
-        body.put("cantidadGramos", BigDecimal.valueOf(gramos));
-        // Muestra el spinner modal mientras se asocia el alimento a la comida
-        LoadingDialog.show(this);
-        alimentoComidaApi.anadir(body).enqueue(new ApiCallback<Void>() {
-            @Override
-            public void onOk(Void ignored) {
-                // Oculta el spinner al confirmarse el añadido
-                LoadingDialog.hide(AnadirAlimentoActivity.this);
-                Intent result = new Intent();
-                result.putExtra("comidaId", comidaId);
-                setResult(RESULT_OK, result);
-                finish();
-            }
-            @Override
-            public void onFail(int code, String message) {
-                // Oculta el spinner y mapea el código de error a un mensaje de usuario
-                LoadingDialog.hide(AnadirAlimentoActivity.this);
-                UiFeedback.toastError(AnadirAlimentoActivity.this, code, message);
-            }
-        });
-    }
-
 }

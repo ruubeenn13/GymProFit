@@ -55,6 +55,25 @@ public class MovimientoTest {
         assertTrue("duraciones de Movimiento que DEC-039 no recoge: " + sinTabla, sinTabla.isEmpty());
     }
 
+    // Lote 1.6.1: la nutrición trae los momentos 16 (la lista en cascada) y 17 (código
+    // leído) a la tabla de DEC-039, con sus constantes en Movimiento.
+    @Test
+    public void losMomentosDeLaNutricionEstanEnLaTablaYEnElCodigo() throws IOException {
+        Map<String, Long> tabla = duracionesDeLaTabla();
+        Map<String, Long> codigo = duracionesDelCodigo();
+        String dec = decision();
+        assertTrue("falta el momento 16 en DEC-039", dec.contains("| 16 · "));
+        assertTrue("falta el momento 17 en DEC-039", dec.contains("| 17 · "));
+        for (String c : new String[]{"CASCADA", "CASCADA_ESCALON", "ENCAJA", "HOJA", "BARRIDO"}) {
+            assertTrue(c + " no está en la tabla", tabla.containsKey(c));
+            assertTrue(c + " no está en Movimiento", codigo.containsKey(c));
+        }
+        assertEquals(Long.valueOf(350), codigo.get("CASCADA"));
+        assertEquals(Long.valueOf(40), codigo.get("CASCADA_ESCALON"));
+        assertEquals(Long.valueOf(200), codigo.get("ENCAJA"));
+        assertEquals(Long.valueOf(450), codigo.get("HOJA"));
+    }
+
     @Test
     public void lasCuatroCurvasSonLasDeLaDecision() throws IOException {
         String codigo = new String(Files.readAllBytes(CODIGO), StandardCharsets.UTF_8);
