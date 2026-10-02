@@ -35,6 +35,7 @@ import es.pmdm.gymprofit.network.AuthApi;
 import es.pmdm.gymprofit.network.ProgramaApi;
 import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.network.UtilREST;
+import es.pmdm.gymprofit.ui.alta.AnchoCreando;
 import es.pmdm.gymprofit.ui.alta.CheckTrazado;
 import es.pmdm.gymprofit.utils.ErrorAlta;
 import es.pmdm.gymprofit.utils.Movimiento;
@@ -78,7 +79,8 @@ public class GuardaPlanActivity extends BaseActivity {
     // Si el alta ya respondió bien: un reintento entra, no vuelve a crearla.
     private boolean cuentaCreada;
     private boolean creando;
-    private int anchoBoton;
+    // El encogido del botón a círculo: cada salida de «creando» lo para (GP-163).
+    private AnchoCreando ancho;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +104,11 @@ public class GuardaPlanActivity extends BaseActivity {
 
         crear.setStateListAnimator(android.animation.AnimatorInflater.loadStateListAnimator(this, R.animator.toque));
         crear.setOnClickListener(v -> crear());
+        ancho = new AnchoCreando(this::animarAncho, px -> {
+            ViewGroup.LayoutParams lp = crear.getLayoutParams();
+            lp.width = px;
+            crear.setLayoutParams(lp);
+        }, ViewGroup.LayoutParams.MATCH_PARENT);
         findViewById(R.id.btnEntrarGuarda).setOnClickListener(v -> irAEntrar(null));
         findViewById(R.id.btnEntrarConCorreo).setOnClickListener(v -> irAEntrar(texto(etCorreo)));
         montarLegal();
@@ -125,6 +132,12 @@ public class GuardaPlanActivity extends BaseActivity {
                     findViewById(R.id.bloqueCorreo), findViewById(R.id.bloqueClave), crear);
             Movimiento.saltar(findViewById(R.id.ivPlanListo), 400);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        ancho.parar();
+        super.onDestroy();
     }
 
     @Override
@@ -326,6 +339,7 @@ public class GuardaPlanActivity extends BaseActivity {
         boolean conPrograma = !programa.isEmpty() && prefsManager.getProgramaPendienteCodigo().isEmpty();
         PerfilAlta.terminar(prefsManager, usuario);
         creando = false;
+        ancho.quedarseEnCirculo();
 
         Movimiento.vibrar(crear, Movimiento.Vibracion.EXITO);
         View capa = findViewById(R.id.capaListo);
@@ -372,20 +386,11 @@ public class GuardaPlanActivity extends BaseActivity {
     // Momento 9: el botón se hace círculo de 52 dp y gira; debajo, los pasos.
     private void empezarCreando() {
         creando = true;
-        anchoBoton = crear.getWidth();
         int circulo = Math.round(52 * getResources().getDisplayMetrics().density);
         crear.setText(null);
         crear.setContentDescription(getString(R.string.guarda_creando_a11y));
         crear.setClickable(false);
-        ValueAnimator a = ValueAnimator.ofInt(anchoBoton, circulo);
-        a.setDuration(Movimiento.CIRCULO);
-        a.setInterpolator(Movimiento.ESTANDAR);
-        a.addUpdateListener(an -> {
-            ViewGroup.LayoutParams lp = crear.getLayoutParams();
-            lp.width = (int) an.getAnimatedValue();
-            crear.setLayoutParams(lp);
-        });
-        a.start();
+        ancho.encoger(crear.getWidth(), circulo);
         giro.setVisibility(View.VISIBLE);
 
         pasos.setVisibility(View.VISIBLE);
@@ -395,6 +400,27 @@ public class GuardaPlanActivity extends BaseActivity {
         pasoPrograma.setVisibility(programa.isEmpty() ? View.GONE : View.VISIBLE);
         prepararPaso(R.id.pasoPrograma, getString(R.string.guarda_paso_programa, programa), false);
         Movimiento.entrar(0, pasos);
+    }
+
+    // El ValueAnimator de verdad detrás de AnchoCreando: cancel() no pone más anchos y
+    // end() salta al círculo.
+    private AnchoCreando.EnMarcha animarAncho(int desde, int hasta, AnchoCreando.Ancho alPaso) {
+        ValueAnimator a = ValueAnimator.ofInt(desde, hasta);
+        a.setDuration(Movimiento.CIRCULO);
+        a.setInterpolator(Movimiento.ESTANDAR);
+        a.addUpdateListener(an -> alPaso.poner((int) an.getAnimatedValue()));
+        a.start();
+        return new AnchoCreando.EnMarcha() {
+            @Override
+            public void cancelar() {
+                a.cancel();
+            }
+
+            @Override
+            public void acabar() {
+                a.end();
+            }
+        };
     }
 
     private void prepararPaso(int id, String texto, boolean hecho) {
@@ -422,9 +448,8 @@ public class GuardaPlanActivity extends BaseActivity {
         pasos.setVisibility(View.GONE);
         crear.setClickable(true);
         crear.setContentDescription(null);
-        ViewGroup.LayoutParams lp = crear.getLayoutParams();
-        lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        crear.setLayoutParams(lp);
+        // Antes que el texto: si la animación siguiera, volvería a encoger el botón.
+        ancho.volverEntero();
 
         ErrorAlta.Tipo tipo = ErrorAlta.de(code, cuerpo);
         crear.setText(tipo == ErrorAlta.Tipo.SIN_RED ? R.string.btn_reintentar : R.string.guarda_crear_cuenta);
