@@ -52,11 +52,18 @@ public interface AlimentoComidaMapper {
     @Mapping(target = "raciones", ignore = true)
     AlimentoComida toEntity(AlimentoComidaCreateDTO alimentoComidaCreateDTO);
 
-    // El nombre de la ración en el idioma de la petición, como en AlimentoMapper.
+    // El nombre del alimento y el de la ración en el idioma de la petición, con el español
+    // de respaldo, como en AlimentoMapper (GP-176). La categoría NO se traduce: sale en su
+    // forma canónica (AlimentoController.CATEGORIAS) porque la app la usa como clave para
+    // el icono y el nombre (NombreLineaIdiomaTest lo fija).
     @AfterMapping
     default void nombreRacion(AlimentoComida alimentoComida, @MappingTarget AlimentoComidaDTO dto) {
-        if (alimentoComida.getRacion() == null) return;
         boolean ingles = "en".equals(LocaleContextHolder.getLocale().getLanguage());
+        if (ingles && alimentoComida.getAlimento() != null) {
+            String nombreEn = alimentoComida.getAlimento().getNombreEn();
+            if (nombreEn != null && !nombreEn.isBlank()) dto.setNombreAlimento(nombreEn);
+        }
+        if (alimentoComida.getRacion() == null) return;
         String nombre = ingles ? alimentoComida.getRacion().getNombreEn() : alimentoComida.getRacion().getNombre();
         dto.setRacionNombre(nombre);
         com.gymprofit.api.service.busqueda.UnidadesRacion.de(nombre, ingles).ifPresent(u -> {
