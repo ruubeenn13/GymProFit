@@ -598,6 +598,10 @@ Cuatro curvas: **enfatizada** `cubic-bezier(.05,.7,.1,1)` para lo que entra; **e
 | 10 · Error | El campo tiembla (`TEMBLOR`) y el mensaje aparece debajo (`MENSAJE`) | 380 temblor · 250 | Error |
 | 11 · Aviso de ejemplo | Baja como una notificación de verdad y su icono zumba (`AVISO`, en bucle) | 5000 | — |
 | 12 · Récord | El trofeo salta (`TROFEO`), suelta seis chispas doradas (`CHISPAS`) y un brillo cruza la fila (`BRILLO`). En la bienvenida y en el resumen de cada sesión | 450 rebote · 700 · 900 | Éxito |
+| 16 · La lista entra en cascada | Las filas de Añadir y de los resultados suben 16 dp y aparecen, una tras otra (`CASCADA`, `CASCADA_ESCALON`). Solo la primera vez: al volver, ya están | 350 enfatizada, cada 40 | — |
+| 17 · Código leído | Mientras busca, una línea barre el marco (`BARRIDO`). Al leer, las esquinas pasan a verde y el marco encaja (`ENCAJA`), y la hoja del producto sube (`HOJA`) | 2400 de ida y vuelta · 200 estándar · 450 enfatizada | Éxito |
+
+La nutrición nueva (lienzo del 01-10, `documentacion/diseno/2026-10-01-nutricion/fuente/Movimiento.dc.html`) sigue la numeración del 13 al 22. Cada momento entra en esta tabla con el lote que lo construye: el 16 y el 17, con el 1.6.1 (2026-10-02); las barras de la ficha se llenan con `BARRA`, el del momento 5.
 
 Las reglas:
 
