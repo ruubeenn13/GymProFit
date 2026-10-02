@@ -125,4 +125,13 @@ public class EtiquetaAlimentoTest {
         // Sin los tres macros no se sabe.
         assertNull(EtiquetaAlimento.cuadra(cifras(60.0, 1.0, null, null, 2.0), 12));
     }
+
+    // GP-181: «Créalo» lleva lo escrito al nombre del alimento nuevo.
+    @Test
+    public void el_nombre_sale_de_lo_que_se_buscaba() {
+        assertEquals("Pan de espelta", EtiquetaAlimento.nombreDesdeBusqueda("  pan   de espelta "));
+        assertEquals("Kéfir", EtiquetaAlimento.nombreDesdeBusqueda("kéfir"));
+        assertNull(EtiquetaAlimento.nombreDesdeBusqueda("   "));
+        assertNull(EtiquetaAlimento.nombreDesdeBusqueda(null));
+    }
 }

@@ -263,8 +263,10 @@ public class AnadirAlimentoActivity extends BaseActivity {
     }
 
     private void abrirCrear() {
+        // «Créalo» lleva lo que se buscaba al nombre (GP-181).
         crearLauncher.launch(new Intent(this, CrearAlimentoActivity.class)
-                .putExtra(EXTRA_TIPO, tipoComida).putExtra(EXTRA_FECHA, fecha));
+                .putExtra(EXTRA_TIPO, tipoComida).putExtra(EXTRA_FECHA, fecha)
+                .putExtra(CrearAlimentoActivity.EXTRA_NOMBRE, consulta));
     }
 
     private void volverAlDiario() {

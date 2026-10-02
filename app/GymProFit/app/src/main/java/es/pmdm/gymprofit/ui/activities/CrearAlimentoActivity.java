@@ -76,6 +76,8 @@ public class CrearAlimentoActivity extends BaseActivity {
 
     /** Extra: el código de barras con que se crea (del escáner). */
     public static final String EXTRA_CODIGO = "codigo";
+    /** Extra: lo que se buscaba al tocar «Créalo», que empieza siendo el nombre (GP-181). */
+    public static final String EXTRA_NOMBRE = "nombre";
     /** Extra: el id del alimento propio que se edita. */
     public static final String EXTRA_EDITAR = "editar";
 
@@ -165,6 +167,13 @@ public class CrearAlimentoActivity extends BaseActivity {
                 solo.setVisibility(View.GONE);
             }
             pintarCodigo(codigo, true);
+            // Lo que se buscaba es el nombre (GP-181). Antes de la foto: no es un cambio
+            // que haya que avisar al salir.
+            String nombre = EtiquetaAlimento.nombreDesdeBusqueda(getIntent().getStringExtra(EXTRA_NOMBRE));
+            if (savedInstanceState == null && nombre != null) {
+                etNombre.setText(nombre);
+                etNombre.setSelection(nombre.length());
+            }
             pintar();
             estadoInicial = foto();
         }

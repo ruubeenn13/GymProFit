@@ -135,6 +135,19 @@ public final class EtiquetaAlimento {
         return cuadra((int) Math.round(c.energia * f), (int) Math.round(segun * f));
     }
 
+    /**
+     * El nombre con que empieza un alimento creado desde «Créalo» (GP-181): lo que se
+     * buscaba, sin espacios de más y con la primera letra en mayúscula, como los del
+     * catálogo. Null si no se buscaba nada.
+     */
+    @Nullable
+    public static String nombreDesdeBusqueda(@Nullable String buscado) {
+        if (buscado == null) return null;
+        String t = buscado.trim().replaceAll("\\s+", " ");
+        if (t.isEmpty()) return null;
+        return Character.toUpperCase(t.charAt(0)) + t.substring(1);
+    }
+
     /** Lo que saldría, redondeado a 10 para el aviso («unas 430 kcal»). */
     public static int redondeoAviso(int kcal) {
         return (int) (Math.round(kcal / 10.0) * 10);
