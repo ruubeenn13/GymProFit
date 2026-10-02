@@ -9,7 +9,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -46,10 +45,12 @@ import es.pmdm.gymprofit.utils.VistaEstado;
 import retrofit2.Call;
 
 // ============================================================
-// AnadirAlimentoActivity — Añadir y Buscar (tableros 4 y 5 del lienzo, lote 1.6.1)
+// AnadirAlimentoActivity — Añadir y Buscar (tableros 4 y 5 del lienzo, lotes 1.6.1 y 1.6.2)
 //
-// Cabecera con cerrar y «Añadir a [merienda ▾]»: la píldora abre las cinco comidas y
-// sustituye a los chips de antes. Debajo, el buscador y el botón naranja del escáner.
+// Cabecera con cerrar, «Añadir alimento» y la etiqueta de la comida (decisión 15), que
+// abre «¿A qué comida?» con lo que lleva cada una ese día (ElegirComida). Si se añade a
+// otra comida que la de origen, al volver se dice a cuál (EXTRA_ANADIDO_A).
+// Debajo, el buscador y el botón naranja del escáner.
 //   · Sin escribir (o con menos de 2 letras): lo que da la búsqueda vacía, «Recientes»
 //     (lo tuyo) y «Habituales» (los básicos). La última lista se guarda en memoria y se
 //     enseña al instante al volver a entrar, refrescándola por detrás.
@@ -65,10 +66,10 @@ public class AnadirAlimentoActivity extends BaseActivity {
     /** Extras: la comida (DESAYUNO…CENA) y el día (yyyy-MM-dd). */
     public static final String EXTRA_TIPO = "tipoComida";
     public static final String EXTRA_FECHA = "fecha";
+    /** Resultado: la comida a la que se añadió, solo si no es la de origen (decisión 15). */
+    public static final String EXTRA_ANADIDO_A = "anadidoA";
 
     static final String[] TIPOS = {"DESAYUNO", "ALMUERZO", "COMIDA", "MERIENDA", "CENA"};
-    private static final int[] NOMBRES = {R.string.nutricion_desayuno, R.string.nutricion_almuerzo,
-            R.string.nutricion_comida, R.string.nutricion_merienda, R.string.nutricion_cena};
     private static final int[] ANADIR_A = {R.string.comida_anadir_desayuno, R.string.comida_anadir_almuerzo,
             R.string.comida_anadir_comida, R.string.comida_anadir_merienda, R.string.comida_anadir_cena};
 
@@ -80,12 +81,15 @@ public class AnadirAlimentoActivity extends BaseActivity {
     @Nullable private static List<Alimento> listaGuardada;
 
     private String tipoComida;
+    private String tipoInicial;
     private String fecha;
+    // Las kcal de cada comida del día, para la hoja; null mientras carga o si falla.
+    @Nullable private Map<String, Integer> kcalDia;
 
     private final AlimentoApi alimentoApi = ApiClient.service(AlimentoApi.class);
     private BusquedaAlimentoAdapter adapter;
     private VistaEstado estado;
-    private MaterialButton btnComida;
+    private View etiqueta;
     private TextInputEditText etBuscar;
 
     // Búsqueda en curso: la petición, su texto, la página y lo acumulado.
@@ -113,6 +117,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
         tipoComida = getIntent().getStringExtra(EXTRA_TIPO);
         if (tipoComida == null || indiceTipo(tipoComida) < 0) tipoComida = "MERIENDA";
         fecha = getIntent().getStringExtra(EXTRA_FECHA);
+        tipoInicial = tipoComida;
         if (savedInstanceState != null) {
             tipoComida = savedInstanceState.getString(EXTRA_TIPO, tipoComida);
         }
@@ -127,9 +132,13 @@ public class AnadirAlimentoActivity extends BaseActivity {
                 r -> { if (r.getResultCode() == RESULT_OK) volverAlDiario(); else refrescar(); });
 
         findViewById(R.id.btnCerrarAnadir).setOnClickListener(v -> finish());
-        btnComida = findViewById(R.id.btnComidaAnadir);
-        btnComida.setOnClickListener(this::elegirComida);
+        etiqueta = findViewById(R.id.etiquetaComida);
+        etiqueta.setOnClickListener(v -> elegirComida());
+        es.pmdm.gymprofit.ui.nutricion.ElegirComida.colocarEtiqueta(etiqueta, findViewById(R.id.filaTituloAnadir),
+                findViewById(R.id.tvTituloAnadir), findViewById(R.id.ranuraEtiquetaDerecha),
+                findViewById(R.id.ranuraEtiquetaDebajo));
         pintarComida();
+        cargarDia();
         findViewById(R.id.btnEscanear).setOnClickListener(v -> abrirEscaner());
 
         estado = new VistaEstado(findViewById(R.id.estadoAnadir));
@@ -202,25 +211,46 @@ public class AnadirAlimentoActivity extends BaseActivity {
     }
 
     private void pintarComida() {
-        String nombre = getString(NOMBRES[indiceTipo(tipoComida)])
-                .toLowerCase(es.pmdm.gymprofit.utils.FechaUtils.localeDeLaApp(this));
-        btnComida.setText(nombre);
-        btnComida.setContentDescription(getString(R.string.anadir_comida_a11y, nombre));
+        es.pmdm.gymprofit.ui.nutricion.ElegirComida.pintarEtiqueta(etiqueta, tipoComida);
     }
 
-    // La píldora abre las cinco comidas, con la de ahora marcada.
-    private void elegirComida(View ancla) {
-        PopupMenu menu = new PopupMenu(this, ancla);
-        for (int i = 0; i < TIPOS.length; i++) {
-            menu.getMenu().add(0, i, i, NOMBRES[i]).setCheckable(true).setChecked(TIPOS[i].equals(tipoComida));
-        }
-        menu.getMenu().setGroupCheckable(0, true, true);
-        menu.setOnMenuItemClickListener(item -> {
-            tipoComida = TIPOS[item.getItemId()];
+    // La etiqueta abre «¿A qué comida?»; elegir cambia la etiqueta y nada más.
+    private void elegirComida() {
+        es.pmdm.gymprofit.ui.nutricion.ElegirComida.abrirHoja(this, fecha, tipoComida, kcalDia, t -> {
+            tipoComida = t;
             pintarComida();
-            return true;
+            // La etiqueta puede cambiar de ancho («Almuerzo» frente a «Cena»).
+            etiqueta.requestLayout();
         });
-        menu.show();
+    }
+
+    // Lo que lleva cada comida del día, para la hoja. Sin esto la hoja funciona igual,
+    // solo que sin las kcal: por eso un fallo no se enseña (y se reintenta al volver).
+    private void cargarDia() {
+        int usuarioId = prefsManager.getUsuarioId();
+        if (usuarioId == -1) return;
+        String dia = fecha != null ? fecha
+                : new java.text.SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new java.util.Date());
+        ApiClient.service(es.pmdm.gymprofit.network.ComidaApi.class).getDeUsuarioFecha(usuarioId, dia)
+                .enqueue(new ApiCallback<List<es.pmdm.gymprofit.model.comida.Comida>>() {
+                    @Override
+                    public void onOk(List<es.pmdm.gymprofit.model.comida.Comida> lista) {
+                        Map<String, Integer> m = new HashMap<>();
+                        if (lista != null) {
+                            for (es.pmdm.gymprofit.model.comida.Comida c : lista) {
+                                m.put(c.getTipoComida(), c.getTotalCalorias());
+                            }
+                        }
+                        kcalDia = m;
+                    }
+
+                    @Override
+                    public void onFail(int code, String message) {
+                        // Se ignora a propósito: la hoja sigue sirviendo para elegir, solo
+                        // que sin decir lo que lleva cada comida; no hay nada que reintentar
+                        // a la vista del usuario.
+                    }
+                });
     }
 
     // ── Abrir ───────────────────────────────────────────────────────────────
@@ -240,7 +270,9 @@ public class AnadirAlimentoActivity extends BaseActivity {
     }
 
     private void volverAlDiario() {
-        setResult(RESULT_OK);
+        Intent datos = new Intent();
+        if (!tipoComida.equals(tipoInicial)) datos.putExtra(EXTRA_ANADIDO_A, tipoComida);
+        setResult(RESULT_OK, datos);
         finish();
     }
 

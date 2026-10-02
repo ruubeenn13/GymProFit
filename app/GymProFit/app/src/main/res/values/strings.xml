@@ -104,12 +104,8 @@
     <string name="nutricion_comida">Comida</string>
     <string name="nutricion_merienda">Merienda</string>
     <string name="nutricion_cena">Cena</string>
-    <string name="comida_eliminar_titulo">Confirmar eliminación</string>
-    <string name="comida_eliminar_confirmar">Eliminar alimento de la comida</string>
     <string name="comida_sin_alimentos">Sin alimentos registrados</string>
-    <string name="comida_editar_cantidad">Editar cantidad</string>
     <string name="comida_desactivar_alimento">Desactivar alimento</string>
-    <string name="comida_eliminar_de_comida">Eliminar</string>
 
     <!-- PERFIL -->
     <string name="perfil_nombre">Nombre</string>
@@ -648,9 +644,6 @@
     </plurals>
     <!-- Patrones de fecha (SimpleDateFormat) por idioma (GP-071) -->
     <string name="home_fecha_patron" translatable="false">EEEE, d \'de\' MMMM</string>
-    <string name="comida_total_prot">%.1f\u00A0g prot</string>
-    <string name="comida_total_carbos">%.1f\u00A0g carbos</string>
-    <string name="comida_total_grasas">%.1f\u00A0g grasas</string>
     <string name="ejercicio_sin_nombre">Ejercicio %d</string>
     <!-- Récords (GP-088) -->
     <string name="records_vacio_titulo">Todavía sin récords</string>
@@ -1410,8 +1403,6 @@
 
     <!-- Lote 1.6.1: Añadir, Buscar, el escáner y la ficha del alimento (GP-162, GP-160). -->
     <string name="anadir_cerrar">Cerrar</string>
-    <string name="anadir_a">Añadir a</string>
-    <string name="anadir_comida_a11y">Cambiar de comida: ahora, %1$s</string>
     <string name="anadir_buscar_hint">Busca un alimento</string>
     <string name="anadir_escanear">Escanear un código de barras</string>
     <string name="anadir_vacio">Aún no hay nada aquí. Busca un alimento o escanéalo.</string>
@@ -1551,4 +1542,50 @@
     <string name="categoria_suplementos">Suplementos</string>
     <string name="categoria_snacks">Snacks</string>
     <string name="categoria_otro">Otro</string>
+
+    <!-- Lote 1.6.2 (decisión 15): la etiqueta de la comida y la hoja «¿A qué comida?» -->
+    <string name="anadir_titulo">Añadir alimento</string>
+    <string name="etiqueta_comida_a11y">Se añade a: %1$s. Cambiar de comida</string>
+    <string name="hoja_comida_titulo">¿A qué comida?</string>
+    <string name="hoja_comida_hoy">Hoy, %1$s</string>
+    <string name="hoja_comida_patron">EEEE d \'de\' MMMM</string>
+    <string name="hoja_comida_sin_apuntar">Sin apuntar</string>
+    <string name="anadido_a_desayuno">Añadido al desayuno</string>
+    <string name="anadido_a_almuerzo">Añadido al almuerzo</string>
+    <string name="anadido_a_comida">Añadido a la comida</string>
+    <string name="anadido_a_merienda">Añadido a la merienda</string>
+    <string name="anadido_a_cena">Añadido a la cena</string>
+
+    <!-- Lote 1.6.2 (decisión 16): una comida, con su anillo, sus filas y quitar con deshacer -->
+    <string name="comida_de_tu_dia">de tu día</string>
+    <string name="comida_proteina">Proteína</string>
+    <string name="comida_carbohidratos">Carbohidratos</string>
+    <string name="comida_grasa">Grasa</string>
+    <string name="comida_gramos">%1$s\u00A0g</string>
+    <string name="comida_pct">%1$d\u00A0%%</string>
+    <string name="comida_dia_pct">El %1$s de tus calorías de hoy</string>
+    <string name="comida_dia_de">%1$s de %2$s</string>
+    <string name="comida_kcal_corto">kcal</string>
+    <string name="comida_anillo_a11y">%1$s kilocalorías: %2$d por ciento de proteína, %3$d de carbohidratos y %4$d de grasa</string>
+    <string name="comida_anillo_sin_macros_a11y">%1$s kilocalorías</string>
+    <string name="comida_macro_a11y">%1$s: %2$s gramos, el %3$d por ciento de lo de tu día</string>
+    <string name="comida_macro_sin_objetivo_a11y">%1$s: %2$s gramos</string>
+    <string name="comida_dia_a11y">Esta comida es el %1$d por ciento de tus calorías de hoy: %2$s de %3$s</string>
+    <string name="comida_fila_kcal">%1$s\u00A0kcal</string>
+    <string name="comida_fila_prot">%1$s\u00A0g prot.</string>
+    <string name="comida_fila_a11y">%1$s, %2$s, %3$s kilocalorías, %4$s gramos de proteína</string>
+    <string name="comida_quitar">Quitar de la comida</string>
+    <string name="comida_eliminar_fondo">Eliminar</string>
+    <string name="comida_quitado">Quitado: %1$s</string>
+    <string name="comida_cambiar_cantidad">Cambiar la cantidad</string>
+    <string name="comida_anadir_alimento">Añadir alimento</string>
+    <string name="comida_escanear_a11y">Escanear un código de barras</string>
+    <string name="comida_vacia_desayuno">Aún no has apuntado el desayuno</string>
+    <string name="comida_vacia_almuerzo">Aún no has apuntado el almuerzo</string>
+    <string name="comida_vacia_comida">Aún no has apuntado la comida</string>
+    <string name="comida_vacia_merienda">Aún no has apuntado la merienda</string>
+    <string name="comida_vacia_cena">Aún no has apuntado la cena</string>
+    <string name="comida_es_la_que_toca">Es la que toca ahora</string>
+    <string name="comida_error_lista">No se ha podido cargar la comida</string>
+    <string name="comida_quitar_error">No se ha podido quitar %1$s</string>
 </resources>

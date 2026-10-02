@@ -77,7 +77,17 @@ public class NutricionFragment extends BaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         recargar = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                result -> { if (result.getResultCode() == Activity.RESULT_OK) cargarComidas(); });
+                result -> {
+                    if (result.getResultCode() != Activity.RESULT_OK) return;
+                    cargarComidas();
+                    // Se añadió a otra comida que la de la tarjeta: se dice a cuál (decisión 15).
+                    String a = result.getData() != null
+                            ? result.getData().getStringExtra(AnadirAlimentoActivity.EXTRA_ANADIDO_A) : null;
+                    if (a != null) {
+                        es.pmdm.gymprofit.utils.UIHelper.mostrarToastExito(requireActivity(),
+                                getString(es.pmdm.gymprofit.ui.nutricion.ElegirComida.anadidoA(a)));
+                    }
+                });
     }
 
     @Nullable

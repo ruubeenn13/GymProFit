@@ -141,4 +141,6 @@
     <color name="gp_escaner_velo">#C70B0C0E</color>
 
     <color name="ic_launcher_fondo">#0B0C0E</color>
+    <!-- La acción de un aviso invertido («Deshacer», lote 1.6.2): el naranja del otro tema, sobre el fondo oscuro del aviso en claro. -->
+    <color name="gp_accion_inversa">#FF8A3D</color>
 </resources>

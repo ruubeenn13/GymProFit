@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_fila_comida — una fila de alimento en una comida (lote 1.6.2): fondo de la tarjeta (para
+     tapar el rojo de quitar mientras se desliza), raya abajo y el de pulsar. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="?attr/colorControlHighlight">
+    <item>
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="?attr/colorSurfaceVariant" />
+                </shape>
+            </item>
+            <item android:bottom="1dp">
+                <shape android:shape="rectangle">
+                    <solid android:color="?attr/colorSurface" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</ripple>

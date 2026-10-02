@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_etiqueta_comida — la etiqueta de la comida (decisión 15): borde de 1, sin relleno, radio 18.
+     Pulsada, el fondo de pulsar del tema. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="?attr/colorControlHighlight">
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="18dp" />
+            <stroke android:width="1dp" android:color="?attr/colorOutline" />
+        </shape>
+    </item>
+</ripple>

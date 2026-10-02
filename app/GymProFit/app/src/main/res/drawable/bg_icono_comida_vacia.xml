@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_icono_comida_vacia — el icono de una comida sin apuntar (tablero 2b): 72, radio 24, acento suave. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="24dp" />
+    <solid android:color="?attr/colorPrimaryContainer" />
+</shape>

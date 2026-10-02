@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_tirador_hoja — el tirador de una hoja (lote 1.6.2): 36 x 4, radio 2, color de las líneas. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="2dp" />
+    <solid android:color="?attr/colorOutlineVariant" />
+</shape>

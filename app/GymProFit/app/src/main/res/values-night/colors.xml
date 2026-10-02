@@ -81,4 +81,6 @@
     <color name="green_chip_text">@color/gp_success</color>
     <color name="red_chip">@color/gp_error_container</color>
     <color name="red_chip_text">@color/gp_error</color>
+    <!-- La acción de un aviso invertido («Deshacer», lote 1.6.2): el naranja del otro tema, sobre el fondo claro del aviso en oscuro. -->
+    <color name="gp_accion_inversa">#B83E00</color>
 </resources>

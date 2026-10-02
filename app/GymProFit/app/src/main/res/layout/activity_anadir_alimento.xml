@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  activity_anadir_alimento — Añadir y Buscar (tableros 4 y 5, lote 1.6.1).
-  Cabecera con cerrar y «Añadir a [merienda ▾]»: la píldora abre las cinco comidas.
+  activity_anadir_alimento — Añadir y Buscar (tableros 4 y 5, lotes 1.6.1 y 1.6.2).
+  Cabecera con cerrar, «Añadir alimento» y la etiqueta de la comida (view_etiqueta_comida),
+  que abre la hoja «¿A qué comida?». Si la etiqueta no cabe al lado del título, baja a la
+  ranura de debajo (ElegirComida.colocarEtiqueta).
   Debajo, el buscador y el botón naranja del escáner. La lista es la de Añadir
   (Recientes y Habituales) sin escribir, y la de la búsqueda con 2 letras o más.
   Cargando, error con reintentar y vacío, con view_estado.
@@ -15,12 +17,13 @@
     android:background="?android:attr/colorBackground">
 
     <LinearLayout
+        android:id="@+id/filaTituloAnadir"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:paddingStart="4dp"
-        android:paddingEnd="12dp"
+        android:paddingEnd="16dp"
         android:paddingTop="8dp">
 
         <ImageButton
@@ -33,36 +36,35 @@
             app:tint="?attr/colorOnSurface" />
 
         <TextView
-            android:id="@+id/tvAnadirA"
-            android:layout_width="wrap_content"
+            android:id="@+id/tvTituloAnadir"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:layout_marginStart="4dp"
             android:accessibilityHeading="true"
-            android:importantForAccessibility="no"
-            android:text="@string/anadir_a"
+            android:text="@string/anadir_titulo"
             android:textAppearance="@style/TextAppearance.GymProFit.Headline"
-            android:textSize="@dimen/text_display"
+            android:textSize="24sp"
             android:textColor="?attr/colorOnSurface"
             tools:targetApi="28" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnComidaAnadir"
-            style="@style/Widget.GymProFit.BotonPildora"
+        <FrameLayout
+            android:id="@+id/ranuraEtiquetaDerecha"
             android:layout_width="wrap_content"
-            android:layout_marginStart="8dp"
-            android:minHeight="44dp"
-            android:paddingStart="12dp"
-            android:paddingEnd="8dp"
-            android:textAppearance="@style/TextAppearance.GymProFit.Headline"
-            android:textSize="@dimen/text_display"
-            android:textAllCaps="false"
-            android:backgroundTint="?attr/colorPrimaryContainer"
-            android:textColor="?attr/colorOnPrimaryContainer"
-            app:icon="@drawable/ic_ms_keyboard_arrow_down"
-            app:iconGravity="end"
-            app:iconPadding="2dp"
-            app:iconTint="?attr/colorOnPrimaryContainer" />
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp">
+
+            <include layout="@layout/view_etiqueta_comida" />
+        </FrameLayout>
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/ranuraEtiquetaDebajo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="56dp"
+        android:paddingEnd="16dp"
+        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="match_parent"

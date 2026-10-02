@@ -1,48 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  item_alimento_comida — Item de RecyclerView para un alimento dentro de una comida registrada
-  Muestra nombre del alimento, cantidad en gramos y las calorías totales de esa cantidad.
+  item_alimento_comida — un alimento de una comida (decisión 16, tablero 2, lote 1.6.2): el
+  icono de su categoría en un cuadro de 44, el nombre en una línea, la cantidad debajo
+  («2 rebanadas (56 g)»), y a la derecha las kcal y la proteína. Tocarla abre la ficha;
+  deslizarla o mantenerla pulsada, quitarla. Una raya la separa de la siguiente.
 -->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
+    android:background="@drawable/bg_fila_comida"
+    android:clickable="true"
+    android:focusable="true"
     android:gravity="center_vertical"
-    android:padding="16dp"
-    android:background="?attr/selectableItemBackground">
+    android:minHeight="68dp"
+    android:orientation="horizontal"
+    android:paddingStart="14dp"
+    android:paddingEnd="14dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp">
+
+    <FrameLayout
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:background="@drawable/bg_icono_categoria"
+        android:importantForAccessibility="no">
+
+        <ImageView
+            android:id="@+id/ivCategoriaFila"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:importantForAccessibility="no"
+            app:tint="?attr/colorOnSurfaceVariant" />
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:layout_marginStart="12dp"
+        android:importantForAccessibility="noHideDescendants"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/tvNombreAlimento"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/text_body"
-            android:textStyle="bold"
-            android:textColor="?attr/colorOnSurface" />
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="@dimen/text_fila" />
 
         <TextView
             android:id="@+id/tvCantidadGramos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="@dimen/text_label" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:gravity="end"
+        android:importantForAccessibility="noHideDescendants"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvCaloriasItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFeatureSettings="tnum"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="@dimen/text_fila"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvProteinaItem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:textSize="@dimen/text_label"
-            android:textColor="?attr/colorOnSurfaceVariant" />
-
+            android:fontFeatureSettings="tnum"
+            android:textColor="@color/gp_macro_proteinas"
+            android:textSize="@dimen/text_eyebrow" />
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/tvCaloriasItem"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/text_body"
-        android:textStyle="bold"
-        android:textColor="?attr/colorPrimary"
-        android:gravity="end" />
-
 </LinearLayout>
