@@ -6,6 +6,11 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `a3e066f` | docs(decisiones): **S22 y S23**, contados en DEC-046 una vez confirmados en producción: los favoritos de cualquier cuenta con un token de invitado y la caída de la API al subir fotos. |
+| `d3a0935` | Fusión de `quitar-data-rest` en `main`, CI en verde, desplegada: `/`, `/profile` y `/favoritoes` dan 404 a un USER y a un invitado, y un error sin `Accept` sale en JSON. |
+| `747b46e` | docs(decisiones): DEC-046, la regla de los repositorios pasa a ser que Spring Data REST no está; medido al quitarla: 9 librerías menos y la misma memoria. |
+| `a223c20` | fix(api): **fuera Spring Data REST** (GP-186): la dependencia, las 25 anotaciones y los `@Hidden` de los repositorios, el `RepositoryRestConfigurer` de `WebConfig` y la propiedad. Los errores sin `Accept` siguen en JSON por el resolvedor de MVC (GP-075). `SinSpringDataRestTest` en lugar de `RepositoriosNoExportadosTest`. |
+| `cdb310d` | refactor(api): el `@ResponseStatus` del 400 y su comentario, de vuelta encima de `handleInvalidDataException`. |
 | `9e7ad2a` | fix(api): la línea de memoria cuenta el code cache sin segmentar: con C1 y 24 MB su pool se llama `CodeCache` y salía 0 en producción (GP-187). `MemoriaProcesoTest`. |
 | `5319649` | Fusión de `lote-1.6.5` en `main` con la versión y el informe (la API y la app ya iban en `f39484e`); etiquetada `v1.6.5`. Informe en `documentacion/estado/2026-10-03-lote-1.6.5.md`. |
 | `548056c` | docs(documentacion): el informe del lote 1.6.5. |
