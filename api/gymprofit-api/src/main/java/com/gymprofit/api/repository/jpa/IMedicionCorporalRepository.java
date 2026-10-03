@@ -1,11 +1,9 @@
 package com.gymprofit.api.repository.jpa;
 
 import com.gymprofit.api.entity.MedicionCorporal;
-import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -17,9 +15,7 @@ import java.util.Optional;
 // Acceso a datos del histórico de mediciones corporales (peso, medidas, etc.) del usuario.
 // Usado para mostrar la evolución física en gráficos y estadísticas.
 // ============================================================
-@Hidden
 @Repository
-@RepositoryRestResource(exported = false)
 public interface IMedicionCorporalRepository extends JpaRepository<MedicionCorporal, Integer> {
 
     // Busca todas las mediciones de un usuario.

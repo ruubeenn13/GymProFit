@@ -2,9 +2,7 @@ package com.gymprofit.api.repository.jpa;
 
 import com.gymprofit.api.entity.Comida;
 import com.gymprofit.api.enums.TipoComida;
-import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -15,9 +13,7 @@ import java.util.List;
 // Acceso a datos de las comidas registradas por los usuarios (desayuno, almuerzo, cena, etc.).
 // Permite filtrar por usuario, tipo de comida y rango de fechas para el histórico nutricional.
 // ============================================================
-@Hidden
 @Repository
-@RepositoryRestResource(exported = false)
 public interface IComidaRepository extends JpaRepository<Comida, Integer> {
 
     // Busca todas las comidas registradas por un usuario.

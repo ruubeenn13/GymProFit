@@ -1,12 +1,10 @@
 package com.gymprofit.api.repository.jpa;
 
 import com.gymprofit.api.entity.PasswordResetCodigo;
-import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -16,11 +14,9 @@ import java.util.Optional;
 // IPasswordResetCodigoRepository — repositorio JPA de los códigos de recuperación
 // Acceso a los códigos de un solo uso emitidos para restablecer contraseñas:
 // último código vivo de un usuario, invalidación masiva al emitir uno nuevo o al
-// consumirlo, y limpieza de los ya inútiles. No exportado como recurso REST.
+// consumirlo, y limpieza de los ya inútiles.
 // ============================================================
-@Hidden
 @Repository
-@RepositoryRestResource(exported = false)
 public interface IPasswordResetCodigoRepository extends JpaRepository<PasswordResetCodigo, Integer> {
 
     /**

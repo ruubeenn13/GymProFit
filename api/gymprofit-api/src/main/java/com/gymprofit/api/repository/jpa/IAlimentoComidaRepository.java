@@ -1,11 +1,9 @@
 package com.gymprofit.api.repository.jpa;
 
 import com.gymprofit.api.entity.AlimentoComida;
-import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,11 +12,9 @@ import java.util.Optional;
 // ============================================================
 // IAlimentoComidaRepository — acceso JPA a la tabla intermedia alimento-comida
 // Gestiona la relación N:M entre alimentos y comidas (cantidad de cada
-// alimento dentro de una comida registrada). No expuesto vía REST directo.
+// alimento dentro de una comida registrada).
 // ============================================================
-@Hidden
 @Repository
-@RepositoryRestResource(exported = false)
 public interface IAlimentoComidaRepository extends JpaRepository<AlimentoComida, Integer> {
 
     // Devuelve todos los alimentos asociados a una comida.

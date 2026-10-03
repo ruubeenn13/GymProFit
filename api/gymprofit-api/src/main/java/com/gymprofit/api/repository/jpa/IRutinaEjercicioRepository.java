@@ -3,9 +3,7 @@ package com.gymprofit.api.repository.jpa;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import com.gymprofit.api.entity.RutinaEjercicio;
-import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,11 +12,9 @@ import java.util.Optional;
 // ============================================================
 // IRutinaEjercicioRepository — repositorio JPA de la relación rutina-ejercicio
 // Gestiona la tabla intermedia que asocia ejercicios a rutinas, con su orden
-// dentro de la rutina. No exportado como recurso REST.
+// dentro de la rutina.
 // ============================================================
-@Hidden
 @Repository
-@RepositoryRestResource(exported = false)
 public interface IRutinaEjercicioRepository extends JpaRepository<RutinaEjercicio, Integer> {
 
     // Ejercicios asociados a una rutina.
