@@ -84,7 +84,7 @@
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-mysql</artifactId>
-			<version>11.15.0</version>
+			<version>13.8.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mapstruct</groupId>
