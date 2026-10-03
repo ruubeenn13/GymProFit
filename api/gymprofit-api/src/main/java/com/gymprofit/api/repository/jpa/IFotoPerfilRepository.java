@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 // ============================================================
 // IFotoPerfilRepository — repositorio JPA de las fotos de perfil (BLOB en BD).
 // PK = usuario_id. Guardar y leer van sin cargar la entidad (GP-188): sustituir una foto
-// no lee la anterior (y Hibernate no guarda otra copia para compararla), y servirla lee
-// solo los bytes. No exportado como recurso REST.
+// no lee la anterior (y Hibernate no guarda otra copia para compararla). Servirla, con
+// JDBC en UsuarioService.getFotoPerfil. No exportado como recurso REST.
 // ============================================================
 @Hidden
 @Repository
@@ -36,7 +36,4 @@ public interface IFotoPerfilRepository extends JpaRepository<FotoPerfil, Integer
                  @org.springframework.data.repository.query.Param("tipo") String tipo,
                  @org.springframework.data.repository.query.Param("fecha") java.time.LocalDateTime fecha);
 
-    /** Solo los bytes de la foto, sin la entidad. */
-    @org.springframework.data.jpa.repository.Query("SELECT f.datos FROM FotoPerfil f WHERE f.usuarioId = :usuario")
-    java.util.Optional<byte[]> datos(@org.springframework.data.repository.query.Param("usuario") Integer usuario);
 }

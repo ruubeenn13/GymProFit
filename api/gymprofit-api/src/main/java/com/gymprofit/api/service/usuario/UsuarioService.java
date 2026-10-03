@@ -53,6 +53,8 @@ public class UsuarioService implements IUsuarioService {
     private final RefreshTokenService refreshTokenService;
     // Fotos de perfil persistidas en BD (BLOB): el FS de Render es efímero.
     private final com.gymprofit.api.repository.jpa.IFotoPerfilRepository fotoPerfilRepository;
+    // Para leer los bytes de la foto tal cual (GP-188): un byte[] de JDBC, sin conversiones.
+    private final org.springframework.jdbc.core.JdbcTemplate jdbc;
     // Logger para trazar las operaciones del servicio.
     private final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
 
@@ -476,9 +478,13 @@ public class UsuarioService implements IUsuarioService {
     public byte[] getFotoPerfil(Integer id) {
         securityUtils.checkOwnership(id);
 
-        // Solo los bytes: sin la entidad no hay segunda copia para comparar (GP-188).
-        return fotoPerfilRepository.datos(id)
-                .orElseThrow(() -> new NotFoundEntityException("error.foto.noExiste", id));
+        // Solo los bytes, con JDBC (GP-188): sin la entidad no hay segunda copia para
+        // comparar, y una consulta de Spring Data que devuelve byte[] lo convierte byte a
+        // byte, con caja: una foto de 1 MB serían decenas de MB.
+        java.util.List<byte[]> datos = jdbc.query("SELECT datos FROM fotos_perfil WHERE usuario_id = ?",
+                (rs, i) -> rs.getBytes(1), id);
+        if (datos.isEmpty()) throw new NotFoundEntityException("error.foto.noExiste", id);
+        return datos.get(0);
     }
 
     // Cambia el rol de un usuario (uso administrativo), validando que el rol exista.

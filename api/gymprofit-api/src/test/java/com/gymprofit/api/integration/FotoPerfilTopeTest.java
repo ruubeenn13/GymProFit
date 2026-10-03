@@ -81,6 +81,37 @@ class FotoPerfilTopeTest extends AbstractOwnershipTest {
                 .allMatch(s -> !s.toLowerCase(Locale.ROOT).contains("content_type"));
     }
 
+    @Test
+    @DisplayName("servir una foto de 1 MB reserva unas pocas veces su tamaño, no decenas")
+    void servir_sin_copias() throws Exception {
+        subir(jpeg(MB), "es").andExpect(status().isOk());
+        em.flush();
+        em.clear();
+        subirDescargar(); // la primera vez carga clases y planes de consulta
+        com.sun.management.ThreadMXBean hilos =
+                (com.sun.management.ThreadMXBean) java.lang.management.ManagementFactory.getThreadMXBean();
+        // Con el log de Spring MVC en INFO, como en prod: en DEBUG (perfil dev) Spring pasa el
+        // cuerpo entero a texto para el log, y eso no es lo que cuesta en producción.
+        ch.qos.logback.classic.Logger web =
+                (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger("org.springframework.web");
+        ch.qos.logback.classic.Level nivel = web.getLevel();
+        web.setLevel(ch.qos.logback.classic.Level.INFO);
+        long antes;
+        byte[] servida;
+        long reservado;
+        try {
+            antes = hilos.getCurrentThreadAllocatedBytes();
+            servida = subirDescargar();
+            reservado = hilos.getCurrentThreadAllocatedBytes() - antes;
+        } finally {
+            web.setLevel(nivel);
+        }
+        assertThat(servida).hasSize(MB);
+        // La foto, el búfer del driver y las copias de la respuesta de MockMvc: unos 9 MB.
+        // Convertida byte a byte (una consulta de Spring Data que devuelve byte[]), 375 MB.
+        assertThat(reservado).isLessThan(12L * MB);
+    }
+
     private ResultActions subir(byte[] datos, String idioma) throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders.multipart("/usuarios/" + owner.getId() + "/foto")
                 .file(new MockMultipartFile("foto", "foto.jpg", "image/jpeg", datos))
