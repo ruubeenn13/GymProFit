@@ -2,9 +2,7 @@ package com.gymprofit.api.repository.jpa;
 
 import com.gymprofit.api.entity.Notificacion;
 import com.gymprofit.api.enums.TipoNotificacion;
-import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -14,9 +12,7 @@ import java.util.List;
 // INotificacionRepository — repositorio JPA de la entidad Notificacion
 // Acceso a datos de las notificaciones enviadas a los usuarios (leídas/no leídas, por tipo).
 // ============================================================
-@Hidden
 @Repository
-@RepositoryRestResource(exported = false)
 public interface INotificacionRepository extends JpaRepository<Notificacion, Integer> {
 
     // Busca todas las notificaciones de un usuario.

@@ -3,11 +3,9 @@ package com.gymprofit.api.repository.jpa;
 import com.gymprofit.api.entity.Rutina;
 import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.enums.Nivel;
-import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,11 +13,9 @@ import java.util.List;
 // ============================================================
 // IRutinaRepository — repositorio JPA de rutinas de entrenamiento
 // Acceso a las rutinas de los usuarios y a las rutinas predefinidas del
-// sistema, filtrables por nivel, nombre o estado activo. No exportado como REST.
+// sistema, filtrables por nivel, nombre o estado activo.
 // ============================================================
-@Hidden
 @Repository
-@RepositoryRestResource(exported = false)
 public interface IRutinaRepository extends JpaRepository<Rutina, Integer> {
 
     // Rutinas de un usuario dado (por entidad Usuario).

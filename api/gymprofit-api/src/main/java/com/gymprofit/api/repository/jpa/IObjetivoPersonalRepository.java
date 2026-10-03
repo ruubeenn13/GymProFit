@@ -2,9 +2,7 @@ package com.gymprofit.api.repository.jpa;
 
 import com.gymprofit.api.entity.ObjetivoPersonal;
 import com.gymprofit.api.enums.TipoObjetivo;
-import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -15,9 +13,7 @@ import java.util.List;
 // Acceso a datos de los objetivos personales que se marca el usuario (peso, rendimiento, etc.).
 // Permite consultar objetivos completados/pendientes y su histórico.
 // ============================================================
-@Hidden
 @Repository
-@RepositoryRestResource(exported = false)
 public interface IObjetivoPersonalRepository extends JpaRepository<ObjetivoPersonal, Integer> {
 
     // Busca todos los objetivos de un usuario.

@@ -1,11 +1,9 @@
 package com.gymprofit.api.repository.jpa;
 
 import com.gymprofit.api.entity.EjercicioRealizado;
-import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -16,9 +14,7 @@ import java.util.List;
 // Acceso a datos de los ejercicios efectivamente realizados dentro de una sesión de entrenamiento.
 // Usado para calcular progreso y estadísticas de rendimiento del usuario.
 // ============================================================
-@Hidden
 @Repository
-@RepositoryRestResource(exported = false)
 public interface IEjercicioRealizadoRepository extends JpaRepository<EjercicioRealizado, Integer> {
 
     // Busca los ejercicios realizados en una sesión de entrenamiento.

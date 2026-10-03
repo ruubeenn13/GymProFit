@@ -2,12 +2,10 @@ package com.gymprofit.api.repository.jpa;
 
 import com.gymprofit.api.entity.AvisoAlimento;
 import com.gymprofit.api.enums.MotivoAviso;
-import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -16,8 +14,6 @@ import java.util.Optional;
 // IAvisoAlimentoRepository — los avisos de alimentos (lote 1.6.1)
 // ============================================================
 @Repository
-@Hidden
-@RepositoryRestResource(exported = false)
 public interface IAvisoAlimentoRepository extends JpaRepository<AvisoAlimento, Integer> {
 
     // El aviso abierto de ese alimento (o código) y motivo, si lo hay.

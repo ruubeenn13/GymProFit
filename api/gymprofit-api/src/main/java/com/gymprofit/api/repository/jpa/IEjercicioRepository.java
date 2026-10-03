@@ -4,13 +4,11 @@ import com.gymprofit.api.entity.Ejercicio;
 import com.gymprofit.api.enums.Dificultad;
 import com.gymprofit.api.enums.Equipamiento;
 import com.gymprofit.api.enums.GrupoMuscular;
-import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -20,9 +18,7 @@ import java.util.List;
 // IEjercicioRepository — repositorio JPA de la entidad Ejercicio
 // Acceso al catálogo de ejercicios disponibles (por grupo muscular y dificultad) usados en las rutinas.
 // ============================================================
-@Hidden
 @Repository
-@RepositoryRestResource(exported = false)
 public interface IEjercicioRepository extends JpaRepository<Ejercicio, Integer> {
 
     /**

@@ -1,12 +1,10 @@
 package com.gymprofit.api.repository.jpa;
 
 import com.gymprofit.api.entity.DeviceToken;
-import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,11 +13,9 @@ import java.util.Optional;
 // ============================================================
 // IDeviceTokenRepository — repositorio JPA de tokens FCM de dispositivo.
 // Acceso a los tokens push: búsqueda por valor, por usuario y borrado del
-// token (para reasignar o limpiar tokens muertos). No exportado como recurso REST.
+// token (para reasignar o limpiar tokens muertos).
 // ============================================================
-@Hidden
 @Repository
-@RepositoryRestResource(exported = false)
 public interface IDeviceTokenRepository extends JpaRepository<DeviceToken, Integer> {
 
     // Busca un token de dispositivo por su valor FCM.

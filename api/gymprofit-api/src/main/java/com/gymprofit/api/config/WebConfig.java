@@ -1,14 +1,9 @@
 package com.gymprofit.api.config;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
 import org.springframework.http.MediaType;
-import org.springframework.web.accept.ContentNegotiationManager;
-import org.springframework.web.accept.FixedContentNegotiationStrategy;
-import org.springframework.web.accept.HeaderContentNegotiationStrategy;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 
 // ============================================================
 // WebConfig — negociación de contenido (GP-075)
@@ -18,23 +13,15 @@ import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExc
 // Firebase). Ningún cliente de la API lee XML: sin Accept, la respuesta es JSON. Quien
 // quiera otro tipo lo sigue pidiendo con Accept.
 //
-// Hace falta en dos sitios porque Spring Data REST registra su PROPIO resolvedor de
-// excepciones delante del de Spring MVC, con una negociación que solo mira la
-// cabecera; y es ese el que ejecuta ControllerExceptionHandler. Sin el segundo
-// ajuste, las respuestas normales salen en JSON y los errores siguen en XML.
+// Vale también para los errores: ControllerExceptionHandler lo ejecuta el resolvedor de
+// excepciones de Spring MVC, que usa esta misma negociación. Hasta la 1.6.5 hacía falta un
+// segundo ajuste para el resolvedor propio de Spring Data REST, que ya no está (DEC-046).
 // ============================================================
 @Configuration
-public class WebConfig implements WebMvcConfigurer, RepositoryRestConfigurer {
+public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
         configurer.defaultContentType(MediaType.APPLICATION_JSON);
-    }
-
-    @Override
-    public void configureExceptionHandlerExceptionResolver(ExceptionHandlerExceptionResolver resolver) {
-        resolver.setContentNegotiationManager(new ContentNegotiationManager(
-                new HeaderContentNegotiationStrategy(),
-                new FixedContentNegotiationStrategy(MediaType.APPLICATION_JSON)));
     }
 }

@@ -1,11 +1,9 @@
 package com.gymprofit.api.repository.jpa;
 
 import com.gymprofit.api.entity.SesionEntrenamiento;
-import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -15,11 +13,9 @@ import java.util.Optional;
 // ============================================================
 // ISesionEntrenamientoRepository — repositorio JPA de sesiones de entrenamiento
 // Acceso a las sesiones (entrenos) realizadas por los usuarios, con filtros
-// por rutina, rango de fechas y estado de completado. No exportado como REST.
+// por rutina, rango de fechas y estado de completado.
 // ============================================================
-@Hidden
 @Repository
-@RepositoryRestResource(exported = false)
 public interface ISesionEntrenamientoRepository extends JpaRepository<SesionEntrenamiento, Integer> {
 
     // Sesión creada por un intento de guardado concreto (GP-006). El par
