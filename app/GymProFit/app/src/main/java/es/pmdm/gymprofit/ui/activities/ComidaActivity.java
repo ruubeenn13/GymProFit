@@ -34,21 +34,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.model.alimento.Alimento;
 import es.pmdm.gymprofit.model.comida.AlimentoComida;
+import es.pmdm.gymprofit.model.comida.AnadirRespuesta;
 import es.pmdm.gymprofit.model.comida.Comida;
+import es.pmdm.gymprofit.model.comida.ComidaReciente;
+import es.pmdm.gymprofit.model.comida.CopiaRespuesta;
 import es.pmdm.gymprofit.network.AlimentoApi;
 import es.pmdm.gymprofit.network.AlimentoComidaApi;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.ComidaApi;
 import es.pmdm.gymprofit.ui.adapters.AlimentoComidaAdapter;
+import es.pmdm.gymprofit.ui.adapters.BusquedaAlimentoAdapter;
 import es.pmdm.gymprofit.ui.nutricion.AnilloComida;
+import es.pmdm.gymprofit.ui.nutricion.CopiarComida;
+import es.pmdm.gymprofit.ui.nutricion.TarjetaCopiarAyer;
 import es.pmdm.gymprofit.ui.nutricion.ElegirComida;
+import es.pmdm.gymprofit.utils.AnadirRapido;
+import es.pmdm.gymprofit.utils.CantidadFicha;
+import es.pmdm.gymprofit.utils.Cantidades;
 import es.pmdm.gymprofit.utils.ComidaQueToca;
+import es.pmdm.gymprofit.utils.ComidasRecientes;
 import es.pmdm.gymprofit.utils.DiaNutricion;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.Movimiento;
 import es.pmdm.gymprofit.utils.LoadingDialog;
+import es.pmdm.gymprofit.utils.PedidoCantidad;
 import es.pmdm.gymprofit.utils.QuitarConDeshacer;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
 import es.pmdm.gymprofit.utils.ResumenComida;
@@ -70,6 +82,10 @@ import es.pmdm.gymprofit.utils.VistaEstado;
 // al salir se espera su respuesta antes de volver al diario. Si falla, la fila vuelve.
 // Sin alimentos (tablero 2b): el icono de la comida, «Aún no has apuntado…» y, si toca
 // por la hora y el día es hoy, «Es la que toca ahora». Sin tarjeta de resumen.
+// Desde la 1.6.4, vacía (tablero 2b): «¿Copiar la de ayer?» si la misma comida del día
+// anterior tuvo algo, sea el día que sea (la ✓ copia y sus alimentos caen en la lista,
+// momento 18; la ✗ la pliega para ese día y esa comida), y «Lo que sueles merendar», con
+// un «+» que añade y deja la pantalla con la comida ya apuntada. Sin nada, no salen.
 // Abajo, fija, «Añadir alimento» (Añadir con esta comida) y el escáner (con esta comida).
 // Cargando y error, con view_estado; nada de diálogos que bloqueen.
 // Extras: tipoComida, comidaId (-1 si aún no existe) y fecha (yyyy-MM-dd).
@@ -95,6 +111,17 @@ public class ComidaActivity extends BaseActivity {
     private QuitarConDeshacer<AlimentoComida> quitar;
 
     private ActivityResultLauncher<Intent> volverYRecargar;
+
+    // Comida vacía (1.6.4): la de ayer que se copiaría y lo que sueles; null si no hay o
+    // si falló. Lo que se está copiando o añadiendo, para no pedirlo dos veces.
+    @Nullable private ComidaReciente copiaAyer;
+    @Nullable private List<Alimento> sueles;
+    private boolean copiando;
+    private final java.util.Set<Integer> anadiendo = new java.util.HashSet<>();
+    private int turnoSugerencias;
+    // Al recargar tras copiar, las filas caen (momento 18); tras «Lo que sueles», entran.
+    private boolean caerAlCargar;
+    private boolean entrarAlCargar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -300,7 +327,10 @@ public class ComidaActivity extends BaseActivity {
                         if (!apartada(a)) lineas.add(a);
                     }
                 }
-                if (!yaPintada) adapter.entrarEnCascada();
+                if (caerAlCargar) adapter.caerUnaTrasOtra();
+                else if (!yaPintada || entrarAlCargar) adapter.entrarEnCascada();
+                caerAlCargar = false;
+                entrarAlCargar = false;
                 adapter.notifyDataSetChanged();
                 pintar();
             }
@@ -345,11 +375,13 @@ public class ComidaActivity extends BaseActivity {
             cardAlimentos.setVisibility(View.GONE);
             vacia.setVisibility(View.VISIBLE);
             pintarVacia(!yaVacia);
+            if (!yaVacia) pedirSugerencias();
             kcalPintadas = 0;
             return;
         }
         boolean entraResumen = entrada || card.getVisibility() != View.VISIBLE;
         vacia.setVisibility(View.GONE);
+        findViewById(R.id.bloqueSugerencias).setVisibility(View.GONE);
         card.setVisibility(View.VISIBLE);
         cuantos.setVisibility(View.VISIBLE);
         cardAlimentos.setVisibility(View.VISIBLE);
@@ -451,6 +483,184 @@ public class ComidaActivity extends BaseActivity {
                         .setInterpolator(Movimiento.REBOTE).start();
             }
         }
+    }
+
+    // ── Comida vacía: copiar la de ayer y lo que sueles (1.6.4) ─────────────
+
+    private String dia() {
+        return fecha != null ? fecha
+                : new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(new java.util.Date());
+    }
+
+    // Las dos se piden a la vez; cada una sale cuando llega, si la comida sigue vacía. Un
+    // fallo no se enseña: son atajos, y la barra de abajo sigue ahí.
+    private void pedirSugerencias() {
+        int miTurno = ++turnoSugerencias;
+        copiaAyer = null;
+        sueles = null;
+        pintarSugerencias(false);
+        ComidaApi api = ApiClient.service(ComidaApi.class);
+        String dia = dia();
+        if (!prefsManager.copiaAyerDescartada(dia, tipoComida)) {
+            api.recientes(dia, tipoComida).enqueue(new ApiCallback<List<ComidaReciente>>() {
+                @Override
+                public void onOk(List<ComidaReciente> lista) {
+                    if (isDestroyed() || miTurno != turnoSugerencias) return;
+                    copiaAyer = ComidasRecientes.deAyer(lista, tipoComida, dia);
+                    pintarSugerencias(true);
+                }
+
+                @Override
+                public void onFail(int code, String message) {
+                    // Se ignora a propósito: sin la tarjeta, se apunta igual.
+                }
+            });
+        }
+        api.habituales(tipoComida).enqueue(new ApiCallback<List<Alimento>>() {
+            @Override
+            public void onOk(List<Alimento> lista) {
+                if (isDestroyed() || miTurno != turnoSugerencias) return;
+                sueles = lista != null && !lista.isEmpty() ? lista : null;
+                pintarSugerencias(true);
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                // Se ignora a propósito: sin «Lo que sueles», se apunta igual.
+            }
+        });
+    }
+
+    private void pintarSugerencias(boolean entra) {
+        View bloque = findViewById(R.id.bloqueSugerencias);
+        boolean vacia = lineas.isEmpty() && findViewById(R.id.bloqueVacia).getVisibility() == View.VISIBLE;
+        android.view.ViewGroup ranura = findViewById(R.id.ranuraCopiarComida);
+        View seccion = findViewById(R.id.seccionSueles);
+        boolean conCopia = vacia && copiaAyer != null && !copiando;
+        boolean conSueles = vacia && sueles != null;
+        bloque.setVisibility(conCopia || conSueles ? View.VISIBLE : View.GONE);
+
+        boolean copiaNueva = conCopia && ranura.getVisibility() != View.VISIBLE;
+        ranura.setVisibility(conCopia ? View.VISIBLE : View.GONE);
+        if (conCopia) {
+            ranura.removeAllViews();
+            View tarjeta = getLayoutInflater().inflate(R.layout.view_copiar_ayer_comida, ranura, false);
+            ComidaReciente ayer = copiaAyer;
+            TarjetaCopiarAyer.pintar(tarjeta, ayer, tipoComida, new TarjetaCopiarAyer.Respuesta() {
+                @Override public void si() { copiarAyer(tarjeta, ayer); }
+                @Override public void no() { noCopiarAyer(tarjeta); }
+            });
+            ranura.addView(tarjeta);
+            if (entra && copiaNueva) Movimiento.entrarUna(tarjeta, 100, Movimiento.ENTRA, 16);
+        }
+
+        boolean suelesNuevos = conSueles && seccion.getVisibility() != View.VISIBLE;
+        seccion.setVisibility(conSueles ? View.VISIBLE : View.GONE);
+        if (conSueles) pintarSueles(entra && suelesNuevos);
+    }
+
+    private void pintarSueles(boolean entra) {
+        ((TextView) findViewById(R.id.tvSueles)).setText(CopiarComida.sueles(tipoComida));
+        android.widget.LinearLayout lista = findViewById(R.id.listaSueles);
+        lista.removeAllViews();
+        NumberFormat nf = NumberFormat.getIntegerInstance(FechaUtils.localeDeLaApp(this));
+        List<Alimento> deEsta = sueles != null ? sueles : new ArrayList<>();
+        for (int i = 0; i < deEsta.size(); i++) {
+            Alimento a = deEsta.get(i);
+            View fila = getLayoutInflater().inflate(R.layout.item_sueles, lista, false);
+            CantidadFicha c = AnadirRapido.cantidad(a);
+            String cantidad = AnadirRapido.texto(Cantidades.Formatos.de(this), FechaUtils.localeDeLaApp(this), c);
+            String detalle = getString(R.string.fila_cantidad_kcal, cantidad, nf.format(AnadirRapido.kcal(a, c)));
+            ((ImageView) fila.findViewById(R.id.ivIconoSueles)).setImageResource(BusquedaAlimentoAdapter.icono(a));
+            ((TextView) fila.findViewById(R.id.tvNombreSueles)).setText(a.getNombre());
+            ((TextView) fila.findViewById(R.id.tvCantidadSueles)).setText(detalle);
+            fila.findViewById(R.id.textosSueles).setContentDescription(
+                    getString(R.string.fila_a11y, a.getNombre(), detalle));
+            fila.findViewById(R.id.rayaSueles).setVisibility(i < deEsta.size() - 1 ? View.VISIBLE : View.GONE);
+            View mas = fila.findViewById(R.id.btnMasSueles);
+            ImageView iconoMas = fila.findViewById(R.id.ivMasSueles);
+            boolean viaja = anadiendo.contains(a.getId());
+            BusquedaAlimentoAdapter.pintarMas(mas, iconoMas, viaja);
+            mas.setContentDescription(viaja ? getString(R.string.fila_check_a11y, a.getNombre())
+                    : getString(R.string.fila_mas_a11y, a.getNombre(), cantidad,
+                    getString(AnadirAlimentoActivity.aLa(tipoComida))));
+            mas.setOnClickListener(v -> anadirSueles(a, mas, iconoMas));
+            lista.addView(fila);
+            if (entra) Movimiento.entrarUna(fila, 200 + i * Movimiento.ENTRA_ESCALON, Movimiento.ENTRA, 16);
+        }
+    }
+
+    // El «+» de «Lo que sueles»: se vuelve ✓ al momento (momento 15) y, al llegar la línea,
+    // la pantalla pasa a la de la comida con ese alimento. Si falla, vuelve a «+» y se dice.
+    private void anadirSueles(@NonNull Alimento a, @NonNull View mas, @NonNull ImageView iconoMas) {
+        if (anadiendo.contains(a.getId())) return;
+        anadiendo.add(a.getId());
+        BusquedaAlimentoAdapter.pintarMas(mas, iconoMas, true);
+        Movimiento.volverMas(mas, iconoMas, ContextCompat.getColor(this, R.color.gp_surface_2),
+                ContextCompat.getColor(this, R.color.gp_success_container));
+        Movimiento.vibrar(mas, Movimiento.Vibracion.LIGERA);
+        ApiClient.service(ComidaApi.class).anadir(PedidoCantidad.anadir(a, AnadirRapido.cantidad(a), dia(), tipoComida))
+                .enqueue(new ApiCallback<AnadirRespuesta>() {
+                    @Override
+                    public void onOk(AnadirRespuesta r) {
+                        anadiendo.remove(a.getId());
+                        if (isDestroyed()) return;
+                        if (r != null && r.getComida() != null) comidaId = r.getComida().getId();
+                        entrarAlCargar = true;
+                        cargar();
+                    }
+
+                    @Override
+                    public void onFail(int code, String message) {
+                        anadiendo.remove(a.getId());
+                        if (isDestroyed()) return;
+                        pintarSugerencias(false);
+                        UIHelper.mostrarToastError(ComidaActivity.this, getString(R.string.anadir_fallo_anadir,
+                                a.getNombre(), UiFeedback.mensaje(ComidaActivity.this, code, message)));
+                    }
+                });
+    }
+
+    // La ✓: la tarjeta se pliega y la comida se copia; sus alimentos caen en la lista
+    // (momento 18). Si falla, la tarjeta vuelve y se dice.
+    private void copiarAyer(@NonNull View tarjeta, @NonNull ComidaReciente ayer) {
+        if (copiando) return;
+        copiando = true;
+        Movimiento.vibrar(tarjeta, Movimiento.Vibracion.LIGERA);
+        Movimiento.plegar(tarjeta, null);
+        java.util.Map<String, Object> cuerpo = new java.util.HashMap<>();
+        cuerpo.put("comidaId", ayer.getId());
+        cuerpo.put("fecha", dia());
+        cuerpo.put("tipoComida", tipoComida);
+        ApiClient.service(ComidaApi.class).copiar(cuerpo).enqueue(new ApiCallback<CopiaRespuesta>() {
+            @Override
+            public void onOk(CopiaRespuesta r) {
+                copiando = false;
+                if (isDestroyed()) return;
+                copiaAyer = null;
+                if (r != null && r.getComida() != null) comidaId = r.getComida().getId();
+                caerAlCargar = true;
+                cargar();
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                copiando = false;
+                if (isDestroyed()) return;
+                pintarSugerencias(false);
+                UIHelper.mostrarToastError(ComidaActivity.this, getString(R.string.copiar_ayer_fallo,
+                        UiFeedback.mensaje(ComidaActivity.this, code, message)));
+            }
+        });
+    }
+
+    // La ✗: se pliega y no vuelve ese día para esta comida, ni aquí ni en el diario.
+    private void noCopiarAyer(@NonNull View tarjeta) {
+        prefsManager.descartarCopiaAyer(dia(), tipoComida);
+        copiaAyer = null;
+        Movimiento.plegar(tarjeta, () -> {
+            if (!isDestroyed()) pintarSugerencias(false);
+        });
     }
 
     private static int vaciaTexto(String tipo) {

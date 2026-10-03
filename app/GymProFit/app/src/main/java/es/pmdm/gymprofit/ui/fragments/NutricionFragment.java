@@ -37,6 +37,8 @@ import java.util.TimeZone;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.comida.AlimentoComida;
 import es.pmdm.gymprofit.model.comida.Comida;
+import es.pmdm.gymprofit.model.comida.ComidaReciente;
+import es.pmdm.gymprofit.model.comida.CopiaRespuesta;
 import es.pmdm.gymprofit.network.AlimentoComidaApi;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
@@ -44,7 +46,11 @@ import es.pmdm.gymprofit.network.ComidaApi;
 import es.pmdm.gymprofit.ui.activities.AnadirAlimentoActivity;
 import es.pmdm.gymprofit.ui.activities.ComidaActivity;
 import es.pmdm.gymprofit.ui.activities.EstadisticasNutricionActivity;
+import es.pmdm.gymprofit.ui.nutricion.TarjetaCopiarAyer;
 import es.pmdm.gymprofit.utils.ComidaQueToca;
+import es.pmdm.gymprofit.utils.ComidasRecientes;
+import es.pmdm.gymprofit.utils.Movimiento;
+import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.DiaNutricion;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.UiFeedback;
@@ -59,6 +65,10 @@ import es.pmdm.gymprofit.utils.UiFeedback;
 // siempre. Debajo, las cinco comidas: tocar abre la comida; su «+» abre directamente
 // añadir alimento, y el de la comida que toca por la hora va en naranja si está sin
 // registrar.
+// Desde la 1.6.4 (tablero 1), la comida que toca ahora, si el día es hoy, está vacía y la
+// misma comida de ayer tuvo algo, lleva debajo «¿Copiar la de ayer?»: la ✓ la copia y el
+// día se recarga; la ✗ la pliega y no vuelve ese día (se guarda en el móvil). Las dos
+// pliegan la tarjeta (momento 18); las cifras que cuentan llegan con la 1.6.6.
 // ============================================================
 public class NutricionFragment extends BaseFragment {
 
@@ -72,6 +82,13 @@ public class NutricionFragment extends BaseFragment {
     private final Map<Integer, List<AlimentoComida>> alimentosPorComida = new HashMap<>();
 
     private ActivityResultLauncher<Intent> recargar;
+
+    // «¿Copiar la de ayer?» (1.6.4): la comida de ayer y a qué comida de hoy va; null si no
+    // toca. Mientras se copia no se vuelve a pintar, y si falla vuelve.
+    @Nullable private ComidaReciente copiaAyer;
+    @Nullable private String copiaAyerTipo;
+    private boolean copiandoAyer;
+    private int turnoCopiaAyer;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -237,6 +254,7 @@ public class NutricionFragment extends BaseFragment {
                 if (lista != null) for (Comida c : lista) comidasDia.put(c.getTipoComida(), c);
                 pintar();
                 cargarAlimentos(fecha);
+                buscarCopiaAyer(fecha);
             }
             @Override
             public void onFail(int code, String message) {
@@ -266,6 +284,80 @@ public class NutricionFragment extends BaseFragment {
                 }
             });
         }
+    }
+
+    // ── «¿Copiar la de ayer?» (1.6.4, B2) ───────────────────────────────────
+
+    // Solo hoy, solo la comida que toca ahora, solo si está vacía y no se ha dicho que no.
+    // Un fallo no se enseña: sin la tarjeta, el diario es el de siempre.
+    private void buscarCopiaAyer(String fecha) {
+        int miTurno = ++turnoCopiaAyer;
+        String tipo = ComidaQueToca.ahora();
+        if (copiandoAyer) return;
+        if (!esHoy() || registrada(comidasDia.get(tipo)) || prefsManager.copiaAyerDescartada(fecha, tipo)) {
+            if (copiaAyer != null) {
+                copiaAyer = null;
+                pintarComidas();
+            }
+            return;
+        }
+        comidaApi.recientes(fecha, tipo).enqueue(new ApiCallback<List<ComidaReciente>>() {
+            @Override
+            public void onOk(List<ComidaReciente> lista) {
+                if (!isAdded() || miTurno != turnoCopiaAyer || !fecha.equals(fechaSelStr())) return;
+                copiaAyer = ComidasRecientes.deAyer(lista, tipo, fecha);
+                copiaAyerTipo = tipo;
+                pintarComidas();
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                // Se ignora a propósito: la tarjeta es un atajo; sin ella se apunta igual.
+            }
+        });
+    }
+
+    // La ✓: la tarjeta se pliega al momento y la comida se copia; al volver, el día se
+    // recarga con ella. Si falla, la tarjeta vuelve y se dice.
+    private void copiarAyer(@NonNull View tarjeta, @NonNull ComidaReciente ayer, @NonNull String tipo) {
+        if (copiandoAyer) return;
+        copiandoAyer = true;
+        String fecha = fechaSelStr();
+        Movimiento.vibrar(tarjeta, Movimiento.Vibracion.LIGERA);
+        Movimiento.plegar(tarjeta, null);
+        Map<String, Object> cuerpo = new HashMap<>();
+        cuerpo.put("comidaId", ayer.getId());
+        cuerpo.put("fecha", fecha);
+        cuerpo.put("tipoComida", tipo);
+        comidaApi.copiar(cuerpo).enqueue(new ApiCallback<CopiaRespuesta>() {
+            @Override
+            public void onOk(CopiaRespuesta r) {
+                copiandoAyer = false;
+                if (!isAdded()) return;
+                copiaAyer = null;
+                cargarComidas();
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                copiandoAyer = false;
+                if (!isAdded()) return;
+                pintarComidas();
+                UIHelper.mostrarToastError(requireActivity(), getString(R.string.copiar_ayer_fallo,
+                        UiFeedback.mensaje(requireContext(), code, message)));
+            }
+        });
+    }
+
+    // La ✗: se pliega y no vuelve hoy para esta comida, ni aquí ni en su pantalla.
+    private void noCopiarAyer(@NonNull View tarjeta, @NonNull String tipo) {
+        prefsManager.descartarCopiaAyer(fechaSelStr(), tipo);
+        copiaAyer = null;
+        Movimiento.plegar(tarjeta, null);
+    }
+
+    private static boolean registrada(@Nullable Comida c) {
+        return c != null && c.getTotalCalorias() > 0;
     }
 
     // ── Pintado ─────────────────────────────────────────────────────────────
@@ -341,7 +433,7 @@ public class NutricionFragment extends BaseFragment {
 
         for (String tipo : ComidaQueToca.TIPOS) {
             Comida c = comidasDia.get(tipo);
-            boolean registrada = c != null && c.getTotalCalorias() > 0;
+            boolean registrada = registrada(c);
             boolean toca = tipo.equals(queToca) && !registrada;
 
             View card = inflater.inflate(R.layout.item_comida_dia, lista, false);
@@ -359,6 +451,17 @@ public class NutricionFragment extends BaseFragment {
                 mas.setImageTintList(ColorStateList.valueOf(color(com.google.android.material.R.attr.colorOnPrimary)));
             }
             mas.setOnClickListener(v -> anadirAlimento(tipo));
+            if (toca && copiaAyer != null && tipo.equals(copiaAyerTipo) && !copiandoAyer) {
+                ViewGroup ranura = card.findViewById(R.id.ranuraCopiarAyer);
+                View tarjeta = inflater.inflate(R.layout.view_copiar_ayer_diario, ranura, false);
+                ComidaReciente ayer = copiaAyer;
+                TarjetaCopiarAyer.pintar(tarjeta, ayer, tipo, new TarjetaCopiarAyer.Respuesta() {
+                    @Override public void si() { copiarAyer(tarjeta, ayer, tipo); }
+                    @Override public void no() { noCopiarAyer(tarjeta, tipo); }
+                });
+                ranura.addView(tarjeta);
+                ranura.setVisibility(View.VISIBLE);
+            }
             lista.addView(card);
         }
     }

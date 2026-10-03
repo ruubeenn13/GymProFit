@@ -1662,4 +1662,41 @@
     <string name="favorito_fallo_marcar">Couldn\'t save to favorites. %1$s</string>
     <string name="favorito_fallo_quitar">Couldn\'t remove from favorites. %1$s</string>
     <string name="propuesta_fallo">Couldn\'t answer the suggestion. %1$s</string>
+
+    <!-- Batch 1.6.4 · Copying meals: recent ones (Add), yesterday's and your usual -->
+    <string name="seccion_comidas_recientes">Recent meals</string>
+    <string name="reciente_copiar">Copy</string>
+    <string name="reciente_copiada">Copied</string>
+    <!-- %1$s: the meal in lower case («snack»); the app capitalises the first letter. -->
+    <string name="reciente_hoy">Today\'s %1$s</string>
+    <string name="reciente_ayer">Yesterday\'s %1$s</string>
+    <!-- %2$s: the weekday («Monday»). -->
+    <string name="reciente_semana">%2$s\'s %1$s</string>
+    <!-- %2$s: the date, with reciente_fecha_patron («28 September»). -->
+    <string name="reciente_fecha">%1$s on %2$s</string>
+    <string name="reciente_fecha_patron">d MMMM</string>
+    <string name="reciente_a11y">%1$s: %2$s, %3$s\u00A0kcal</string>
+    <!-- %1$s: «Yesterday's snack»; %2$s: «to dinner». -->
+    <string name="reciente_copiar_a11y">Copy %1$s %2$s</string>
+    <string name="reciente_copiada_a11y">%1$s, copied</string>
+    <string name="reciente_fallo">Couldn\'t copy %1$s. %2$s</string>
+    <string name="copiar_ayer_titulo">Same as yesterday?</string>
+    <plurals name="copiar_ayer_resumen">
+        <item quantity="one">%1$d food · %2$s\u00A0kcal</item>
+        <item quantity="other">%1$d foods · %2$s\u00A0kcal</item>
+    </plurals>
+    <string name="copiar_ayer_desayuno">Yes, copy yesterday\'s breakfast</string>
+    <string name="copiar_ayer_almuerzo">Yes, copy yesterday\'s mid-morning</string>
+    <string name="copiar_ayer_comida">Yes, copy yesterday\'s lunch</string>
+    <string name="copiar_ayer_merienda">Yes, copy yesterday\'s snack</string>
+    <string name="copiar_ayer_cena">Yes, copy yesterday\'s dinner</string>
+    <string name="copiar_ayer_no_a11y">Not today</string>
+    <string name="copiar_ayer_linea">%1$s · %2$s</string>
+    <string name="copiar_ayer_linea_a11y">%1$s, %2$s, %3$s\u00A0kcal</string>
+    <string name="copiar_ayer_fallo">Couldn\'t copy yesterday\'s. %1$s</string>
+    <string name="sueles_desayuno">Your usual breakfast</string>
+    <string name="sueles_almuerzo">Your usual mid-morning</string>
+    <string name="sueles_comida">Your usual lunch</string>
+    <string name="sueles_merienda">Your usual snack</string>
+    <string name="sueles_cena">Your usual dinner</string>
 </resources>

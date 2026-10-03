@@ -213,6 +213,21 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
     public String getFcmTokenEnviado() { return prefs.getString("fcm_token_enviado", ""); }
     public void clearFcmTokenEnviado() { editor.remove("fcm_token_enviado"); editor.apply(); }
 
+    // ── «¿Copiar la de ayer?» (lote 1.6.4) ──
+    // La ✗ la pliega ese día para esa comida, en el diario y en su pantalla, y no vuelve.
+    // Por cuenta: en un móvil con dos cuentas cada una descarta lo suyo.
+    private static final String PREFIJO_COPIA_DESCARTADA = "copia_ayer_descartada_";
+
+    public boolean copiaAyerDescartada(@NonNull String fecha, @NonNull String tipo) {
+        return prefs.getStringSet(PREFIJO_COPIA_DESCARTADA + getUsuarioId(), java.util.Collections.emptySet())
+                .contains(ComidasRecientes.claveDescarte(fecha, tipo));
+    }
+
+    public void descartarCopiaAyer(@NonNull String fecha, @NonNull String tipo) {
+        String clave = PREFIJO_COPIA_DESCARTADA + getUsuarioId();
+        editor.putStringSet(clave, ComidasRecientes.descartar(prefs.getStringSet(clave, null), fecha, tipo)).apply();
+    }
+
     // ── Programas (GP-074, lote 1.2.1) ──
     // Dónde entrena y cuántos días, lo último que eligió en Programas. Por cuenta: en un
     // móvil con dos cuentas cada una tiene lo suyo. La primera vez, gimnasio y 3 días.

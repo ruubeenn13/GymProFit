@@ -128,6 +128,12 @@ public final class Movimiento {
     public static final long ENCAJA = 200;
     /** 17 · Código leído: la hoja del producto sube. */
     public static final long HOJA = 450;
+    /** 18 · La copia de ayer: la tarjeta «¿Copiar la de ayer?» se pliega (encoge a 0,96 y se apaga). */
+    public static final long PLIEGA = 180;
+    /** 18 · La copia de ayer: cada alimento copiado cae 10 dp y aparece... */
+    public static final long CAE = 360;
+    /** 18 · ...uno detrás de otro. */
+    public static final long CAE_ESCALON = 120;
     /** 19 · El corazón late: se rellena y crece a 1,3, baja a 0,95 y vuelve. */
     public static final long CORAZON = 450;
     /** 19 · Un favorito nuevo entra en la lista con el fondo naranja suave, que se apaga. */
@@ -523,6 +529,41 @@ public final class Movimiento {
             }
         });
         a.start();
+    }
+
+    /**
+     * 18 · La tarjeta «¿Copiar la de ayer?» se pliega: encoge a 0,96 y se apaga, y después
+     * deja de ocupar sitio. {@code alFinal} se hace también con «Quitar animaciones».
+     */
+    public static void plegar(@NonNull View tarjeta, @Nullable Runnable alFinal) {
+        tarjeta.animate().cancel();
+        if (quieto(tarjeta.getContext())) {
+            tarjeta.setVisibility(View.GONE);
+            if (alFinal != null) alFinal.run();
+            return;
+        }
+        tarjeta.animate().alpha(0f).scaleX(0.96f).scaleY(0.96f).setDuration(PLIEGA).setInterpolator(ESTANDAR)
+                .withEndAction(() -> {
+                    tarjeta.setVisibility(View.GONE);
+                    tarjeta.setAlpha(1f);
+                    tarjeta.setScaleX(1f);
+                    tarjeta.setScaleY(1f);
+                    if (alFinal != null) alFinal.run();
+                }).start();
+    }
+
+    /**
+     * 18 · Un alimento copiado cae en su comida: baja 10 dp y aparece, {@code orden} veces
+     * CAE_ESCALON después del primero.
+     */
+    public static void caer(@NonNull View fila, int orden) {
+        if (quieto(fila.getContext())) return;
+        float d = fila.getResources().getDisplayMetrics().density;
+        fila.animate().cancel();
+        fila.setAlpha(0f);
+        fila.setTranslationY(-10 * d);
+        fila.animate().alpha(1f).translationY(0f).setStartDelay(orden * CAE_ESCALON).setDuration(CAE)
+                .setInterpolator(ENFATIZADA).start();
     }
 
     /**
