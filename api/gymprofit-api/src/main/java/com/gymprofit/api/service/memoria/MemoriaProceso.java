@@ -111,7 +111,7 @@ public final class MemoriaProceso {
         for (MemoryPoolMXBean p : ManagementFactory.getMemoryPoolMXBeans()) {
             long usado = p.getUsage() != null ? p.getUsage().getUsed() : 0;
             if ("Metaspace".equals(p.getName())) metaspace = usado;
-            else if (p.getName().startsWith("CodeHeap") || "Code Cache".equals(p.getName())) codeCache += usado;
+            else if (esCodeCache(p.getName())) codeCache += usado;
         }
         long directa = 0;
         for (BufferPoolMXBean b : ManagementFactory.getPlatformMXBeans(BufferPoolMXBean.class)) {
@@ -119,6 +119,14 @@ public final class MemoriaProceso {
         }
         return new Jvm(heap.getUsed(), heap.getCommitted(), heap.getMax(), metaspace, codeCache, directa,
                 ManagementFactory.getThreadMXBean().getThreadCount());
+    }
+
+    /**
+     * Si un pool de memoria es del code cache. Con el code cache segmentado (C2, más de 240 MB
+     * reservados) son tres «CodeHeap '…'»; sin segmentar, como con C1 y 24 MB, uno solo, «CodeCache».
+     */
+    static boolean esCodeCache(String pool) {
+        return pool.startsWith("CodeHeap") || "CodeCache".equals(pool);
     }
 
     // «max» o un número muy grande (v1 sin límite) es que no hay límite: -1.

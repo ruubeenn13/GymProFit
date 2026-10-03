@@ -122,4 +122,15 @@ class MemoriaProcesoTest {
     private void uso(int mb) throws IOException {
         Files.writeString(raiz.resolve("memory.current"), String.valueOf(mb * MB));
     }
+
+    @Test
+    @DisplayName("el code cache cuenta sin segmentar (C1, como en producción) y segmentado (C2)")
+    void code_cache_segmentado_o_no() {
+        assertThat(MemoriaProceso.esCodeCache("CodeCache")).isTrue();
+        assertThat(MemoriaProceso.esCodeCache("CodeHeap 'non-nmethods'")).isTrue();
+        assertThat(MemoriaProceso.esCodeCache("CodeHeap 'profiled nmethods'")).isTrue();
+        assertThat(MemoriaProceso.esCodeCache("CodeHeap 'non-profiled nmethods'")).isTrue();
+        assertThat(MemoriaProceso.esCodeCache("Metaspace")).isFalse();
+        assertThat(MemoriaProceso.esCodeCache("Compressed Class Space")).isFalse();
+    }
 }

@@ -6,6 +6,7 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `9e7ad2a` | fix(api): la línea de memoria cuenta el code cache sin segmentar: con C1 y 24 MB su pool se llama `CodeCache` y salía 0 en producción (GP-187). `MemoriaProcesoTest`. |
 | `5319649` | Fusión de `lote-1.6.5` en `main` con la versión y el informe (la API y la app ya iban en `f39484e`); etiquetada `v1.6.5`. Informe en `documentacion/estado/2026-10-03-lote-1.6.5.md`. |
 | `548056c` | docs(documentacion): el informe del lote 1.6.5. |
 | `b54d537` | build(android): **versión 1.6.5** (10605). Misma clave de firma. Necesita la API de `f39484e` (desplegada). APK de 7 696 605 bytes. |
