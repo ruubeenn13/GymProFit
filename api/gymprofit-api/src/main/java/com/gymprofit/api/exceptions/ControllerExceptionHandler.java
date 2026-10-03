@@ -198,8 +198,6 @@ public class ControllerExceptionHandler {
         );
     }
 
-    // Datos de entrada inválidos a nivel de negocio: 400.
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     // La foto de perfil pasa del tope (GP-188): la para el multipart de Tomcat
     // (MaxUploadSizeExceededException) o el servicio. 413, diciendo que es la foto y cuánto
     // admite; sin esto salía el genérico «La petición es demasiado grande».
@@ -213,6 +211,8 @@ public class ControllerExceptionHandler {
         );
     }
 
+    // Datos de entrada inválidos a nivel de negocio: 400.
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidDataException.class)
     public ResponseEntity<Response> handleInvalidDataException(InvalidDataException ex) {
         return new ResponseEntity<>(
