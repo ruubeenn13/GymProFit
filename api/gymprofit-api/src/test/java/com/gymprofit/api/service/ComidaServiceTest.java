@@ -47,6 +47,9 @@ class ComidaServiceTest {
     private IUsuarioRepository usuarioRepository;
 
     @Mock
+    private com.gymprofit.api.repository.jpa.IAlimentoComidaRepository alimentoComidaRepository;
+
+    @Mock
     private ComidaMapper comidaMapper;
 
     @Mock
@@ -171,7 +174,10 @@ class ComidaServiceTest {
 
         assertDoesNotThrow(() -> comidaService.deleteById(1));
 
-        verify(comidaRepository).delete(comida);
+        // GP-190: primero sus líneas, después la comida.
+        org.mockito.InOrder orden = org.mockito.Mockito.inOrder(alimentoComidaRepository, comidaRepository);
+        orden.verify(alimentoComidaRepository).borrarDeComida(1);
+        orden.verify(comidaRepository).deleteById(1);
     }
 
     // Comprueba que deleteById lanza NotFoundEntityException si la comida no existe

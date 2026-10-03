@@ -39,6 +39,12 @@ public interface IAlimentoComidaRepository extends JpaRepository<AlimentoComida,
     // Elimina todos los alimentos asociados a una comida (p. ej. al borrar la comida).
     void deleteByComidaId(Integer comidaId);
 
+    // Borra las líneas de una comida en una sentencia (GP-190): la clave ajena no borra en
+    // cascada, y la comida no se puede borrar mientras tenga líneas.
+    @org.springframework.data.jpa.repository.Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("DELETE FROM AlimentoComida ac WHERE ac.comida.id = :comida")
+    int borrarDeComida(@Param("comida") Integer comida);
+
     // Elimina la asociación concreta entre una comida y un alimento.
     void deleteByComidaIdAndAlimentoId(Integer comidaId, Integer alimentoId);
 
