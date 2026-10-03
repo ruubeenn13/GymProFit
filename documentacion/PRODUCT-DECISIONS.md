@@ -641,7 +641,7 @@ Las reglas:
 | Memoria de la API | nada | 12,5 MB de heap tras GC (68,4 → 80,9 MB), para 198 224 productos y 37 777 términos distintos |
 | Construir | — | 1,3 s, en segundo plano al arrancar |
 
-El `LIKE` con comodín delante no usa índice: barre la tabla entera en cada pulsación, y eso en un ordenador de sobremesa ya se come casi todo el presupuesto de 150 ms; en el MySQL compartido de Aiven, más. Hacer en SQL lo que hace el normalizador (plurales, erratas) obligaría a columnas o tablas de n-gramas propias, que con 200 000 productos multiplican el disco, que es justo lo escaso (1 GB entre todo). El parser ngram de MySQL no existe en MariaDB, y lo que solo existe en uno no se usa. El índice en memoria cabe con holgura en los ~300 MB de heap de Render y no cuesta disco.
+El `LIKE` con comodín delante no usa índice: barre la tabla entera en cada pulsación, y eso en un ordenador de sobremesa ya se come casi todo el presupuesto de 150 ms; en el MySQL compartido de Aiven, más. Hacer en SQL lo que hace el normalizador (plurales, erratas) obligaría a columnas o tablas de n-gramas propias, que con 200 000 productos multiplican el disco, que es justo lo escaso (1 GB entre todo). El parser ngram de MySQL no existe en MariaDB, y lo que solo existe en uno no se usa. El índice en memoria ocupa unos 12,5 MB de heap y no cuesta disco; lo que limita no es el heap sino los 512 MB del contenedor entero, y su presupuesto está en DEC-046 (corregido el 2026-10-03: decía que cabía «con holgura en los ~300 MB de heap de Render», mirando solo el heap).
 
 **En producción, con la tabla llena** (Render gratis, 0,1 de CPU; rondas de 20 búsquedas distintas contra `/actuator/health`): **en caliente, la mediana queda 134 ms por encima de health** (321 frente a 187 ms; peor caso, 511), dentro de los 150. **Recién desplegada, no**: entre 310 y 317 ms por encima, por el JIT y la caché de planes de Hibernate en frío con tan poca CPU; se estabiliza tras unas 60 búsquedas. El índice no es lo que cuesta: una búsqueda sin resultados tarda lo que health, y en local cada búsqueda gasta unos 4 ms de CPU, la mitad en Hibernate. El detalle y lo que queda por probar, en el informe del lote 1.6.0.
 
@@ -748,6 +748,37 @@ El `LIKE` con comodín delante no usa índice: barre la tabla entera en cada pul
 **Consecuencias.** Una comida con solo cosas sin kcal (el agua, un café solo) cuenta como vacía y puede proponer la de ayer. Un descarte se pierde con los datos de la app, y entonces la tarjeta vuelve a salir ese día. Un producto que alguien ya apuntó con el envase sigue apuntado así (manda la línea, no el orden), pero su próximo «+» propone la ración, salvo que su última cantidad fuera el envase, que es lo que se repite (DEC-044). Copiar no avisa de lo que se ha saltado: lo que se salta no se enseñaba en la lista.
 
 **Qué la invalidaría.** Que se copie más a menudo una comida que no es la de ayer (entonces la de ayer no tendría por qué ir primera). Que «lo que sueles» proponga cosas que ya no se comen: los 60 días y los dos días son los números que se tocarían. Que los usuarios quieran deshacer una copia de un toque: entonces hace falta quitar varias líneas en una petición, que hoy no existe.
+
+
+### DEC-046 · La memoria de la API tiene presupuesto, la foto de perfil pesa como mucho 1 MB y ningún repositorio se publica solo
+**Estado:** Aceptada · **Fecha:** 2026-10-03 · **Tarea:** GP-186, GP-187 y GP-188 (lote 1.6.5)
+
+**Contexto.** El 03-10 Render mató el contenedor de la API por pasarse de memoria, y cada caída eran unos 4 minutos sin API. El Dockerfile solo decía `-XX:MaxRAMPercentage=60`: el heap podía llegar a 297 MB, y fuera del heap ya había unos 160 MB nada más arrancar (DEC-040 miraba solo el heap). Producción vivía al 92–93 % de sus 512 MB, y el plan gratis de Render no enseña la memoria ni deja nada en el log al matar.
+
+**Decisión.**
+
+- **La memoria, a la vista.** Una línea `Memoria:` en el log al arrancar y cada 10 minutos, con lo que mira Render (uso y límite del cgroup, v1 o v2, y cuánto es memoria anónima y cuánto caché), el heap usado, reservado y máximo, metaspace, code cache, memoria directa e hilos; en WARN si el contenedor pasa del 90 %, una vez por subida (se rearma al bajar del 85 %).
+- **Cada parte de la memoria con su tope**, de modo que todas al máximo, más lo que no tiene tope, dejen al menos 40 MB libres de los 512. Medido con los 198 224 productos en Docker a 512 MB y 0,1 de CPU, con NMT, en cinco momentos (recién arrancada, construyendo el índice, tras recorrer la app con jOOQ, reconstruyendo el índice tras una importación y subiendo fotos):
+
+  | Parte | Tope | Medido |
+  |---|---|---|
+  | Heap (Serial, el que elige la JVM con 1 CPU) | 160 MB | 74 MB vivos en reposo; como mucho 108 tras un GC completo, al reconstruir el índice con el anterior vivo |
+  | Metaspace (con el espacio de clases) | 150 MB | 125 tras recorrer la app entera |
+  | Code cache (solo C1) | 24 MB | 16 |
+  | Memoria directa | 16 MB | 0 |
+  | Pilas de hilos | 512 KB cada una | 32–35 hilos; Tomcat con 20 como mucho y 5 conexiones a la base |
+  | Sin tope: symbol, GC y resto | — | ~55 + ~10 MB |
+  | Sin tope: fuera de lo que cuenta la JVM (malloc, con `MALLOC_ARENA_MAX=2`) | — | ~30 MB |
+
+  Con todo al máximo, unos 445 MB. Medido de verdad, el pico pasa de 501 MB (y muerte por falta de memoria al reconstruir el índice y al subir fotos) a 438 MB, y el contenedor recién arrancado de 412 a 335. El arranque, en el mismo Docker a 0,1 de CPU, de 1228 a 207 s.
+- **El heap no se recorta más:** el índice se construye después de que el health dé verde, y con `-XX:+ExitOnOutOfMemoryError` un heap corto sería un bucle de reinicios. Con 160 MB queda medio heap libre sobre lo vivo.
+- **Solo C1** (`-XX:TieredStopAtLevel=1`): la mitad de code cache, sin la memoria del compilador C2, y el arranque más corto. En el mismo Docker a 0,1 de CPU, frente a C2 con todo lo demás igual: arranque de 207 s frente a 347, búsqueda 222 ms por encima de health frente a 416 (rondas de 20 tras 20 de calentamiento, como en GP-168), y 35 MB menos de pico. Falta medirlo en producción, que es lo que manda.
+- **La foto de perfil, como mucho 1 MB**, en todos los perfiles y en un solo sitio (`spring.servlet.multipart`). Por encima, 413 que dice que es la foto y cuánto admite, también cuando lo para el multipart de Tomcat (que se traga hasta 10 MB del resto para que el 413 llegue). La app la manda reducida: 512 × 512, JPEG a calidad 85, sin metadatos, decenas de KB. Guardarla no lee la anterior y servirla lee los bytes con JDBC: una consulta de Spring Data que devuelve `byte[]` los convierte uno a uno, y una foto de 1 MB costaba 375 MB de memoria.
+- **Ningún repositorio se publica como recurso REST por omisión** (`spring.data.rest.detection-strategy=annotated`, en todos los perfiles), y todos llevan además `exported = false`. La API se sirve con controladores propios, cada uno con sus reglas de acceso. `RepositoriosNoExportadosTest` recorre todos los repositorios del contexto y falla si alguno se publica o si su ruta responde algo que no sea 404.
+
+**Consecuencias.** Las builds repartidas antes de la 1.6.5 mandan la foto sin reducir: con una de más de 1 MB reciben el 413 y su aviso. Si la app crece en clases (una librería grande, más consultas), el metaspace se acerca a su tope: la línea `Memoria:` lo enseña antes de que pase. Spring Data REST sigue en el classpath solo por su resolvedor de excepciones; quitarlo costaría quitar las 25 anotaciones y un método de `WebConfig`, y la batería entera pasa sin él (medido en el lote 1.6.5).
+
+**Qué la invalidaría.** Que la línea `Memoria:` de producción pase del 85 % de forma sostenida: entonces se mide qué parte creció y se recorta esa, o se pasa a un plan con más memoria. Que la búsqueda en caliente en producción quede por encima de los 150 ms sobre health con C1 y no con C2: entonces vuelve C2 con su code cache. Que la app necesite subir otras imágenes más grandes que la foto.
 
 ---
 
