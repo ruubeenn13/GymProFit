@@ -322,6 +322,10 @@
     <string name="perfil_foto_subiendo">Uploading photo…</string>
     <string name="perfil_foto_ok">Photo updated</string>
     <string name="perfil_foto_error">Error uploading photo</string>
+    <string name="perfil_foto_sin_conexion">No connection: the photo wasn\'t uploaded</string>
+    <string name="perfil_foto_pesa">The photo is too large</string>
+    <string name="perfil_foto_no_subida">Couldn\'t upload the photo. %1$s</string>
+    <string name="perfil_foto_ilegible">Couldn\'t read that photo</string>
     <string name="perfil_permiso_camara">Camera permission is required to take photos</string>
 
     <!-- Edit profile -->
@@ -1477,6 +1481,7 @@
     <string name="escaner_error_titulo">The code could not be looked up</string>
     <string name="escaner_hoja_a11y">Product found</string>
     <string name="escribir_codigo_titulo">Type the code</string>
+    <string name="escribir_codigo_campo">Barcode</string>
     <string name="escribir_codigo_hint">The digits under the bars</string>
     <string name="escribir_codigo_buscar">Look up</string>
     <string name="codigo_error_longitud">A product code has 8, 12 or 13 digits.</string>

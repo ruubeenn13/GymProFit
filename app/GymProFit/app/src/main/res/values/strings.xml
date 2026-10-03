@@ -320,6 +320,10 @@
     <string name="perfil_foto_subiendo">Subiendo foto…</string>
     <string name="perfil_foto_ok">Foto actualizada</string>
     <string name="perfil_foto_error">Error al subir la foto</string>
+    <string name="perfil_foto_sin_conexion">Sin conexión: la foto no se ha subido</string>
+    <string name="perfil_foto_pesa">La foto pesa demasiado</string>
+    <string name="perfil_foto_no_subida">No se ha podido subir la foto. %1$s</string>
+    <string name="perfil_foto_ilegible">No se ha podido leer esa foto</string>
     <string name="perfil_permiso_camara">Se necesita permiso de cámara para tomar fotos</string>
 
     <!-- OBJETIVOS -->
@@ -1499,6 +1503,7 @@
     <string name="escaner_error_titulo">No se ha podido consultar el código</string>
     <string name="escaner_hoja_a11y">Producto encontrado</string>
     <string name="escribir_codigo_titulo">Escribe el código</string>
+    <string name="escribir_codigo_campo">Código de barras</string>
     <string name="escribir_codigo_hint">Las cifras de debajo de las barras</string>
     <string name="escribir_codigo_buscar">Buscar</string>
     <string name="codigo_error_longitud">Un código de producto tiene 8, 12 o 13 cifras.</string>

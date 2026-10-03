@@ -31,6 +31,8 @@ public final class AvatarUtils {
     private static final UsuarioApi API = ApiClient.service(UsuarioApi.class);
 
     @Nullable private static Bitmap foto;
+    // Lo que se decodifica de una foto descargada: el avatar es pequeño (GP-188).
+    private static final int LADO_AVATAR = 256;
     private static int usuarioDeLaFoto = -1;
     private static boolean consultado = false;
 
@@ -64,10 +66,22 @@ public final class AvatarUtils {
             @Override
             public void onOk(ResponseBody body) {
                 if (body == null) return;
-                Bitmap bmp = BitmapFactory.decodeStream(body.byteStream());
-                if (bmp == null || usuarioDeLaFoto != usuarioId) return;
-                foto = bmp;
-                mostrar(ivFoto, bmp);
+                // Fuera del hilo principal y reduciendo (GP-188): puede quedar alguna foto
+                // grande de antes, sin reducir y con su EXIF.
+                new Thread(() -> {
+                    Bitmap bmp;
+                    try {
+                        bmp = FotoParaSubir.paraPintar(body.bytes(), LADO_AVATAR);
+                    } catch (java.io.IOException | OutOfMemoryError e) {
+                        bmp = null;
+                    }
+                    Bitmap lista = bmp;
+                    ivFoto.post(() -> {
+                        if (lista == null || usuarioDeLaFoto != usuarioId) return;
+                        foto = lista;
+                        mostrar(ivFoto, lista);
+                    });
+                }).start();
             }
             @Override
             public void onFail(int code, String message) {

@@ -144,6 +144,8 @@ dependencies {
     implementation libs.constraintlayout
     // Navegación principal por pestañas: 1 Activity + ViewPager2 + Fragments
     implementation 'androidx.viewpager2:viewpager2:1.1.0'
+    // EXIF de la foto de perfil (GP-188); ya llegaba con CameraX, aqui declarada con su version.
+    implementation 'androidx.exifinterface:exifinterface:1.4.2'
     implementation 'androidx.fragment:fragment:1.9.1'
     // ViewModel + SavedStateHandle + LiveData: el borrador de Registrar sesión sobrevive a
     // girar y a que Android mate el proceso (GP-016). Ya llegaban por activity y fragment;
