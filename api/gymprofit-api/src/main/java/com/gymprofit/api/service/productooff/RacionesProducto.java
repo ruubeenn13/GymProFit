@@ -10,12 +10,16 @@ import java.util.Optional;
 // ============================================================
 // RacionesProducto — las raciones de un producto de Open Food Facts (lote 1.6.1)
 //
-// Por orden, que es el orden en que la app las ofrece (la primera, por defecto):
-//   1. El envase, «1 envase», si se lee sin ambigüedad (EnvaseProducto); en un multipack,
-//      «1 unidad». Solo hasta 500 g: un paquete de 1 kg de arroz o un litro de leche no
-//      se comen de una vez, y como cantidad por defecto apuntarían un disparate.
-//   2. La ración que declara el producto, «1 ración», si la trae y no pesa lo mismo que
-//      el envase.
+// Por orden, que es el orden en que la app las ofrece (la primera, por defecto, en la
+// ficha, la hoja del escáner y el «+»):
+//   - El envase, «1 envase», si se lee sin ambigüedad (EnvaseProducto); en un multipack,
+//     «1 unidad». Solo hasta 500 g: un paquete de 1 kg de arroz o un litro de leche no
+//     se comen de una vez, y como cantidad por defecto apuntarían un disparate.
+//   - La ración que declara el producto, «1 ración», si la trae y no pesa lo mismo que
+//     el envase.
+// Va primero el envase, salvo que la ración declarada sea más pequeña que él y no sea
+// un multipack (GP-182, lote 1.6.4): unas galletas de 400 g con ración de 30 proponen
+// 30 g, no el paquete. En un multipack la unidad ya es lo que se come de una vez.
 // La usan el materializador (filas de alimento_raciones) y la búsqueda (un producto sin
 // materializar, sin ids).
 // ============================================================
@@ -51,9 +55,11 @@ public final class RacionesProducto {
 
         if (racionGramos != null && racionGramos.signum() > 0
                 && leido.map(e -> e.gramos().compareTo(racionGramos) != 0).orElse(true)) {
-            raciones.add(new Racion("1 ración", "1 serving", racionGramos,
+            Racion racion = new Racion("1 ración", "1 serving", racionGramos,
                     recortar("Open Food Facts: " + (racionTexto == null
-                            ? racionGramos.stripTrailingZeros().toPlainString() + " g" : racionTexto))));
+                            ? racionGramos.stripTrailingZeros().toPlainString() + " g" : racionTexto)));
+            boolean delante = leido.map(e -> !e.unidad() && racionGramos.compareTo(e.gramos()) < 0).orElse(false);
+            raciones.add(delante ? 0 : raciones.size(), racion);
         }
         return raciones;
     }
