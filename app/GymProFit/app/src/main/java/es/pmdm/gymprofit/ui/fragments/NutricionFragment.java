@@ -68,7 +68,7 @@ import es.pmdm.gymprofit.utils.UiFeedback;
 // Desde la 1.6.4 (tablero 1), la comida que toca ahora, si el día es hoy, está vacía y la
 // misma comida de ayer tuvo algo, lleva debajo «¿Copiar la de ayer?»: la ✓ la copia y el
 // día se recarga; la ✗ la pliega y no vuelve ese día (se guarda en el móvil). Las dos
-// pliegan la tarjeta (momento 18); las cifras que cuentan llegan con la 1.6.6.
+// pliegan la tarjeta (momento 18); las cifras que cuentan llegan con la 1.6.7.
 // ============================================================
 public class NutricionFragment extends BaseFragment {
 
