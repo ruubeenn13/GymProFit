@@ -312,7 +312,11 @@ public class EscanerActivity extends BaseActivity {
         View vista = getLayoutInflater().inflate(R.layout.dialog_cantidad, null);
         EditText et = vista.findViewById(R.id.etCantidad);
         et.setInputType(InputType.TYPE_CLASS_NUMBER);
-        et.setHint(R.string.escribir_codigo_hint);
+        // El campo es el del código, no el de la cantidad del que sale (GP-191): su
+        // etiqueta, la que lee TalkBack, y debajo la pista de dónde está.
+        com.google.android.material.textfield.TextInputLayout campo = vista.findViewById(R.id.tilCantidad);
+        campo.setHint(getString(R.string.escribir_codigo_campo));
+        campo.setHelperText(getString(R.string.escribir_codigo_hint));
         ((TextView) vista.findViewById(R.id.tvUnidadCantidad)).setVisibility(View.GONE);
         androidx.appcompat.app.AlertDialog d = new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.escribir_codigo_titulo)

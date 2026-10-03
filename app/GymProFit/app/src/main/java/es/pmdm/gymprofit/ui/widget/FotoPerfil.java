@@ -16,9 +16,7 @@ import androidx.core.content.FileProvider;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.InputStream;
 import java.util.function.Supplier;
 
 import es.pmdm.gymprofit.R;
@@ -26,6 +24,9 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.utils.AvatarUtils;
+import es.pmdm.gymprofit.utils.ErrorFoto;
+import es.pmdm.gymprofit.utils.FotoParaSubir;
+import es.pmdm.gymprofit.utils.UiFeedback;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -36,6 +37,9 @@ import okhttp3.RequestBody;
 // Estaba dentro de la pestaña Perfil; ahora la usan el avatar de Progreso y «Foto de
 // perfil» de Ajustes, así que vive aquí una vez. Los launchers se registran al crear
 // la pantalla (antes de STARTED), por eso se construye en onCreate.
+// Desde la 1.6.5 (GP-188) la foto se reduce antes de subirla (FotoParaSubir: 512 × 512,
+// JPEG 85, sin metadatos), fuera del hilo principal; si falla, el aviso dice por qué
+// (ErrorFoto); y la foto temporal de la cámara se borra al acabar.
 // ============================================================
 public final class FotoPerfil {
 
@@ -92,45 +96,71 @@ public final class FotoPerfil {
 
     private void lanzarCamara() {
         Activity act = actividad.get();
-        File foto = new File(act.getCacheDir(), "perfil_temp.jpg");
+        File foto = temporal(act);
         uriCamara = FileProvider.getUriForFile(act, act.getPackageName() + ".fileprovider", foto);
         camara.launch(uriCamara);
     }
 
-    // Sube la foto y, si sale bien, la deja en AvatarUtils para Inicio y Progreso.
+    private static File temporal(Activity act) {
+        return new File(act.getCacheDir(), "perfil_temp.jpg");
+    }
+
+    // Reduce la foto fuera del hilo principal, la sube y, si sale bien, la deja en
+    // AvatarUtils para Inicio y Progreso. Al acabar, bien o mal, borra la de la cámara.
     private void subir(Uri uri) {
         Activity act = actividad.get();
         Toast.makeText(act, R.string.perfil_foto_subiendo, Toast.LENGTH_SHORT).show();
         new Thread(() -> {
-            try (InputStream is = act.getContentResolver().openInputStream(uri)) {
-                if (is == null) {
-                    act.runOnUiThread(() -> Toast.makeText(act, R.string.perfil_foto_error, Toast.LENGTH_SHORT).show());
-                    return;
-                }
-                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-                byte[] trozo = new byte[8192];
-                int n;
-                while ((n = is.read(trozo)) != -1) buffer.write(trozo, 0, n);
-                byte[] bytes = buffer.toByteArray();
-                RequestBody cuerpo = RequestBody.create(bytes, MediaType.parse("image/jpeg"));
-                MultipartBody.Part parte = MultipartBody.Part.createFormData("foto", "foto.jpg", cuerpo);
-
-                ApiClient.service(UsuarioApi.class).subirFoto(usuarioId, parte).enqueue(new ApiCallback<Void>() {
-                    @Override
-                    public void onOk(Void body) {
-                        Toast.makeText(act, R.string.perfil_foto_ok, Toast.LENGTH_SHORT).show();
-                        Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        if (bmp != null) AvatarUtils.ponerFoto(usuarioId, bmp);
-                        alSubir.run();
-                    }
-                    @Override
-                    public void onFail(int code, String message) {
-                        Toast.makeText(act, R.string.perfil_foto_error, Toast.LENGTH_SHORT).show();
-                    }
+            byte[] bytes;
+            try {
+                bytes = FotoParaSubir.preparar(act.getContentResolver(), uri);
+            } catch (Exception | OutOfMemoryError e) {
+                act.runOnUiThread(() -> {
+                    borrarTemporal(act);
+                    Toast.makeText(act, R.string.perfil_foto_ilegible, Toast.LENGTH_LONG).show();
                 });
-            } catch (Exception e) {
-                act.runOnUiThread(() -> Toast.makeText(act, R.string.perfil_foto_error, Toast.LENGTH_SHORT).show());
+                return;
             }
+            Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            RequestBody cuerpo = RequestBody.create(bytes, MediaType.parse("image/jpeg"));
+            MultipartBody.Part parte = MultipartBody.Part.createFormData("foto", "foto.jpg", cuerpo);
+            ApiClient.service(UsuarioApi.class).subirFoto(usuarioId, parte).enqueue(new ApiCallback<Void>() {
+                @Override
+                public void onOk(Void body) {
+                    borrarTemporal(act);
+                    Toast.makeText(act, R.string.perfil_foto_ok, Toast.LENGTH_SHORT).show();
+                    if (bmp != null) AvatarUtils.ponerFoto(usuarioId, bmp);
+                    alSubir.run();
+                }
+
+                @Override
+                public void onFail(int code, String message) {
+                    borrarTemporal(act);
+                    Toast.makeText(act, aviso(act, code, message), Toast.LENGTH_LONG).show();
+                }
+            });
         }).start();
+    }
+
+    // El aviso por su causa: sin conexión, demasiado grande o lo que diga UiFeedback.
+    private static String aviso(Activity act, int code, String message) {
+        switch (ErrorFoto.causa(code, hayRed(act))) {
+            case SIN_CONEXION:   return act.getString(R.string.perfil_foto_sin_conexion);
+            case PESA_DEMASIADO: return act.getString(R.string.perfil_foto_pesa);
+            default:             return act.getString(R.string.perfil_foto_no_subida, UiFeedback.mensaje(act, code, message));
+        }
+    }
+
+    private static boolean hayRed(Activity act) {
+        android.net.ConnectivityManager cm = act.getSystemService(android.net.ConnectivityManager.class);
+        if (cm == null) return true;
+        android.net.NetworkCapabilities nc = cm.getNetworkCapabilities(cm.getActiveNetwork());
+        return nc != null && nc.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET);
+    }
+
+    // La foto de la cámara solo hacía falta para subirla.
+    private static void borrarTemporal(Activity act) {
+        File f = temporal(act);
+        if (f.exists() && !f.delete()) android.util.Log.w("GymProFit", "No se ha podido borrar la foto temporal");
     }
 }
