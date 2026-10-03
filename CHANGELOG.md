@@ -2,6 +2,18 @@
 
 Historial de cambios del proyecto (API Spring Boot + app Android). Ver también el [README](README.md).
 
+### 2026-10-03
+
+| Hash | Descripción |
+|---|---|
+| `a4700d1` | Fusión de `lote-1.6.4` en `main` con la app (la API ya iba en `93e3990`); etiquetada `v1.6.4`. Informe en `documentacion/estado/2026-10-03-lote-1.6.4.md`. |
+| `2e357b7` | docs(documentacion): el informe del lote 1.6.4. |
+| `41cf800` | build(android): **versión 1.6.4** (10604). Misma clave de firma. Necesita la API de `93e3990` (desplegada). APK de 7 694 257 bytes. |
+| `5e8ddd7` | docs(decisiones): **DEC-045** (comidas recientes, copiar, «lo que sueles», dónde sale «¿Copiar la de ayer?» y la ración de un producto delante del envase), el momento 18 en DEC-039 y la corrección de DEC-042 y DEC-044. |
+| `e5c2c91` | feat(android): **copiar comidas** (GP-162): «Comidas recientes» en Añadir, «¿Copiar la de ayer?» en el diario y en la comida vacía, «Lo que sueles» con su «+», y el momento 18 (`PLIEGA`, `CAE`, `CAE_ESCALON`). De la 1.6.3: cada fila es de un alimento en una comida (GP-185), la ficha de una fila en ✓ espera a su línea (GP-183) y Favoritos con solo la propuesta dice lo de la pestaña vacía (GP-184). `ComidasRecientesTest`, `AnadidosTest`, `GruposBusquedaTest`, `MovimientoTest`. |
+| `93e3990` | Fusión de la API de `lote-1.6.4` en `main`, desplegada con el CI en verde. |
+| `fb304ef` | feat(api): `GET /comidas/recientes`, `POST /comidas/copiar` y `GET /comidas/habituales`; la ración declarada de un producto delante de su envase si es más pequeña (GP-182), con la migración `V202610031000` que reordena lo materializado sin cambiar ids. `AtajosComidaTest`, `RacionAntesQueEnvaseMigracionTest`, `RacionesProductoTest`. |
+
 ### 2026-10-02
 
 | Hash | Descripción |
