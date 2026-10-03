@@ -200,6 +200,19 @@ public class ControllerExceptionHandler {
 
     // Datos de entrada inválidos a nivel de negocio: 400.
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    // La foto de perfil pasa del tope (GP-188): la para el multipart de Tomcat
+    // (MaxUploadSizeExceededException) o el servicio. 413, diciendo que es la foto y cuánto
+    // admite; sin esto salía el genérico «La petición es demasiado grande».
+    @ExceptionHandler({FotoDemasiadoGrandeException.class,
+            org.springframework.web.multipart.MaxUploadSizeExceededException.class})
+    public ResponseEntity<Response> handleFotoDemasiadoGrande(Exception ex) {
+        return new ResponseEntity<>(
+                Response.generalError(HttpStatus.PAYLOAD_TOO_LARGE.value(), mensajes.texto("error.foto.tamano"),
+                        FotoDemasiadoGrandeException.CODIGO),
+                HttpStatus.PAYLOAD_TOO_LARGE
+        );
+    }
+
     @ExceptionHandler(InvalidDataException.class)
     public ResponseEntity<Response> handleInvalidDataException(InvalidDataException ex) {
         return new ResponseEntity<>(
