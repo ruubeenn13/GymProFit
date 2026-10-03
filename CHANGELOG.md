@@ -6,6 +6,22 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `5319649` | Fusión de `lote-1.6.5` en `main` con la versión y el informe (la API y la app ya iban en `f39484e`); etiquetada `v1.6.5`. Informe en `documentacion/estado/2026-10-03-lote-1.6.5.md`. |
+| `548056c` | docs(documentacion): el informe del lote 1.6.5. |
+| `b54d537` | build(android): **versión 1.6.5** (10605). Misma clave de firma. Necesita la API de `f39484e` (desplegada). APK de 7 696 605 bytes. |
+| `f39484e` | Fusión de la parte 2 de `lote-1.6.5` en `main` con el pool del CI, CI en verde, desplegada. |
+| `3a8391e` | test(api): el perfil `ci` con 3 conexiones por contexto; el contexto con servidor de `FotoPerfilServidorTest` agotaba las de MariaDB. |
+| `33b2c17` | Fusión de la parte 2 de `lote-1.6.5` en `main` (CI en rojo: «Too many connections»). |
+| `a967d46` | feat(android): **la foto de perfil, reducida antes de subirla** (GP-188): 512 × 512 JPEG 85, derecha según el EXIF, sin metadatos, fuera del hilo principal; avisos por su causa (sin conexión, pesa demasiado, el resto); el avatar descargado se reduce fuera del hilo principal. El campo de «Escribir el código» dice «Código de barras», también a TalkBack (GP-191). `ReducirFotoTest`, `ErrorFotoTest`. |
+| `5a56cff` | docs(decisiones): **DEC-046** (la memoria a la vista, su presupuesto, el tope de la foto y que ningún repositorio se publica) y DEC-040 corregida. |
+| `d2bf7d2` | fix(api): **cada parte de la memoria con su tope** (GP-187): heap 160 MB, metaspace, code cache, memoria directa, C1, SerialGC; Hikari a 5 y Tomcat a 20 hilos en `prod`. Pico medido 438 de 512 MB. |
+| `5f1be94` | fix(api): servir la foto de perfil lee sus bytes con JDBC (GP-188). `FotoPerfilTopeTest`. |
+| `10a50cc` | fix(api): **la foto de perfil, como mucho de 1 MB** (413 con su mensaje en ES y EN) y sin copias de más al guardarla (GP-188). `FotoPerfilTopeTest`, `FotoPerfilServidorTest`. |
+| `0911811` | fix(api): borrar una comida con alimentos borra también sus líneas, en la misma transacción (GP-190). `BorrarComidaTest`. |
+| `4786d3d` | Fusión de la parte 1 de `lote-1.6.5` en `main`, CI en verde, desplegada. |
+| `8cc2d32` | fix(api): **ningún repositorio se publica por omisión** (GP-186) y la memoria del contenedor en el log al arrancar y cada 10 minutos, con aviso por encima del 90 % (GP-187). `RepositoriosNoExportadosTest`, `MemoriaProcesoTest`. |
+| `878b5fc` | docs(documentacion): el informe de la 1.6.4 vuelve a como se escribió. |
+| `b794955` | docs(decisiones,documentacion): «Mis platos» pasa a la 1.6.6 y el diario nuevo a la 1.6.7. |
 | `a4700d1` | Fusión de `lote-1.6.4` en `main` con la app (la API ya iba en `93e3990`); etiquetada `v1.6.4`. Informe en `documentacion/estado/2026-10-03-lote-1.6.4.md`. |
 | `2e357b7` | docs(documentacion): el informe del lote 1.6.4. |
 | `41cf800` | build(android): **versión 1.6.4** (10604). Misma clave de firma. Necesita la API de `93e3990` (desplegada). APK de 7 694 257 bytes. |
