@@ -53,11 +53,14 @@ public class UsuarioService implements IUsuarioService {
     private final RefreshTokenService refreshTokenService;
     // Fotos de perfil persistidas en BD (BLOB): el FS de Render es efímero.
     private final com.gymprofit.api.repository.jpa.IFotoPerfilRepository fotoPerfilRepository;
+    // Para leer los bytes de la foto tal cual (GP-188): un byte[] de JDBC, sin conversiones.
+    private final org.springframework.jdbc.core.JdbcTemplate jdbc;
     // Logger para trazar las operaciones del servicio.
     private final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
 
-    // Tamaño máximo de la foto de perfil (5 MB): evita meter binarios enormes en la BD.
-    private static final long MAX_FOTO_BYTES = 5 * 1024 * 1024;
+    // Tamaño máximo de la foto de perfil (1 MB, GP-188): la app la manda en 512 × 512 y
+    // decenas de KB. El mismo tope que el multipart (spring.servlet.multipart).
+    static final long MAX_FOTO_BYTES = 1024 * 1024;
 
 
     // Carga el usuario por username para el proceso de autenticación de Spring Security.
@@ -398,7 +401,7 @@ public class UsuarioService implements IUsuarioService {
             throw new InvalidDataException("error.foto.vacia");
         }
         if (file.getSize() > MAX_FOTO_BYTES) {
-            throw new InvalidDataException("error.foto.tamano");
+            throw new com.gymprofit.api.exceptions.FotoDemasiadoGrandeException();
         }
 
         // Se leen los bytes una sola vez para poder inspeccionar la cabecera y persistirla.
@@ -416,13 +419,13 @@ public class UsuarioService implements IUsuarioService {
             throw new InvalidDataException("error.foto.formato");
         }
 
-        // Upsert por usuario (PK = usuario_id): reutiliza la fila si ya tenía foto.
-        FotoPerfil foto = fotoPerfilRepository.findById(id).orElseGet(FotoPerfil::new);
-        foto.setUsuarioId(id);
-        foto.setDatos(datos);
-        foto.setContentType(tipoReal);
-        foto.setFechaActualizacion(LocalDateTime.now());
-        fotoPerfilRepository.save(foto);
+        // Por usuario (PK = usuario_id), sin leer la foto anterior (GP-188): se sustituye
+        // y, si no había, se inserta. Si dos primeras fotos llegan a la vez, el INSERT de la
+        // segunda sustituye en vez de chocar con la clave.
+        LocalDateTime ahora = LocalDateTime.now();
+        if (fotoPerfilRepository.sustituir(id, datos, tipoReal, ahora) == 0) {
+            fotoPerfilRepository.insertar(id, datos, tipoReal, ahora);
+        }
 
         // La columna legacy foto_perfil queda como marcador de "tiene foto".
         usuario.setFotoPerfil(id + ".jpg");
@@ -475,9 +478,13 @@ public class UsuarioService implements IUsuarioService {
     public byte[] getFotoPerfil(Integer id) {
         securityUtils.checkOwnership(id);
 
-        return fotoPerfilRepository.findById(id)
-                .map(FotoPerfil::getDatos)
-                .orElseThrow(() -> new NotFoundEntityException("error.foto.noExiste", id));
+        // Solo los bytes, con JDBC (GP-188): sin la entidad no hay segunda copia para
+        // comparar, y una consulta de Spring Data que devuelve byte[] lo convierte byte a
+        // byte, con caja: una foto de 1 MB serían decenas de MB.
+        java.util.List<byte[]> datos = jdbc.query("SELECT datos FROM fotos_perfil WHERE usuario_id = ?",
+                (rs, i) -> rs.getBytes(1), id);
+        if (datos.isEmpty()) throw new NotFoundEntityException("error.foto.noExiste", id);
+        return datos.get(0);
     }
 
     // Cambia el rol de un usuario (uso administrativo), validando que el rol exista.

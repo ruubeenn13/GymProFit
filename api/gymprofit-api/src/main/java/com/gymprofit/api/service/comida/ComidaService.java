@@ -41,6 +41,7 @@ import java.util.TreeMap;
 public class ComidaService implements IComidaService {
 
     private final IComidaRepository comidaRepository;
+    private final com.gymprofit.api.repository.jpa.IAlimentoComidaRepository alimentoComidaRepository;
     private final IUsuarioRepository usuarioRepository;
     private final ComidaMapper comidaMapper;
     private final SecurityUtils securityUtils;
@@ -136,7 +137,9 @@ public class ComidaService implements IComidaService {
         }
     }
 
-    // Elimina una comida (verifica propiedad antes de borrar).
+    // Elimina una comida con sus alimentos (verifica propiedad antes de borrar). Las
+    // líneas primero, en la misma transacción: sin ellas, la clave ajena hacía de una
+    // comida con alimentos un 500 (GP-190).
     @Transactional
     @Override
     public void deleteById(Integer id) {
@@ -148,7 +151,9 @@ public class ComidaService implements IComidaService {
         securityUtils.checkOwnership(comida.getUsuario().getId());
 
         try {
-            comidaRepository.delete(comida);
+            alimentoComidaRepository.borrarDeComida(id);
+            comidaRepository.deleteById(id);
+            comidaRepository.flush();
 
             logger.info("Comida con id {} eliminada correctamente", id);
         } catch (Exception ex) {
