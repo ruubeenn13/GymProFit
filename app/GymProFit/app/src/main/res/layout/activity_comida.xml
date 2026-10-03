@@ -305,6 +305,51 @@
                         android:textSize="@dimen/text_body"
                         android:visibility="gone" />
                 </LinearLayout>
+
+                <!-- Lote 1.6.4 (tablero 2b): con la comida vacía, «¿Copiar la de ayer?» y
+                     «Lo que sueles merendar». Las rellena ComidaActivity. -->
+                <LinearLayout
+                    android:id="@+id/bloqueSugerencias"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <FrameLayout
+                        android:id="@+id/ranuraCopiarComida"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:visibility="gone" />
+
+                    <LinearLayout
+                        android:id="@+id/seccionSueles"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/tvSueles"
+                            style="@style/Widget.GymProFit.Seccion"
+                            android:layout_marginBottom="8dp"
+                            android:accessibilityHeading="true"
+                            android:paddingStart="4dp"
+                            android:paddingEnd="4dp"
+                            android:textAllCaps="true"
+                            android:textAppearance="@style/TextAppearance.GymProFit.Label"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            tools:targetApi="28" />
+
+                        <LinearLayout
+                            android:id="@+id/listaSueles"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_tarjeta_20"
+                            android:orientation="vertical" />
+                    </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 

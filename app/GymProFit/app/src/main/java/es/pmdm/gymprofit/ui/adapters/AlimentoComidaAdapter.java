@@ -48,6 +48,8 @@ public class AlimentoComidaAdapter extends RecyclerView.Adapter<AlimentoComidaAd
     private final Acciones acciones;
     // Hasta qué posición entra en cascada: solo la primera vez que se pinta la lista.
     private int cascadaHasta = -1;
+    // Lo copiado de ayer cae en vez de subir (momento 18, lote 1.6.4).
+    private boolean caer;
 
     public AlimentoComidaAdapter(@NonNull List<AlimentoComida> items, @NonNull Acciones acciones) {
         this.items = items;
@@ -57,6 +59,13 @@ public class AlimentoComidaAdapter extends RecyclerView.Adapter<AlimentoComidaAd
     /** La próxima vez que se pinte, las filas entran en cascada. */
     public void entrarEnCascada() {
         cascadaHasta = Math.min(items.size(), 14);
+        caer = false;
+    }
+
+    /** La próxima vez que se pinte, las filas caen una detrás de otra: lo copiado (momento 18). */
+    public void caerUnaTrasOtra() {
+        cascadaHasta = Math.min(items.size(), 14);
+        caer = true;
     }
 
     @NonNull
@@ -99,7 +108,8 @@ public class AlimentoComidaAdapter extends RecyclerView.Adapter<AlimentoComidaAd
                 });
 
         if (position < cascadaHasta) {
-            Movimiento.entrarUna(h.itemView, position * Movimiento.CASCADA_ESCALON, Movimiento.CASCADA, 16);
+            if (caer) Movimiento.caer(h.itemView, position);
+            else Movimiento.entrarUna(h.itemView, position * Movimiento.CASCADA_ESCALON, Movimiento.CASCADA, 16);
             if (position >= cascadaHasta - 1) cascadaHasta = -1;
         }
     }

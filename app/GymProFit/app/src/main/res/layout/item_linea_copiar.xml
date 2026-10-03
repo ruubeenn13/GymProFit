@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_linea_copiar — un alimento de «¿Copiar la de ayer?» en el diario (tablero 1, lote
+  1.6.4): «Pan integral · 2 rebanadas» y, a la derecha, sus kcal.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="6dp"
+    android:focusable="true"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/tvLineaCopiar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:importantForAccessibility="no"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="@dimen/text_caption" />
+
+    <TextView
+        android:id="@+id/tvKcalLineaCopiar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:fontFeatureSettings="tnum"
+        android:importantForAccessibility="no"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="@dimen/text_caption" />
+</LinearLayout>

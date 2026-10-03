@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_sin_favoritos — debajo de la propuesta de favorito, cuando aún no hay ninguno
+  (GP-184, lote 1.6.4): lo mismo que dice la pestaña vacía. Al aceptar la propuesta, el
+  favorito entra en la lista y esto se va.
+-->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tvSinFavoritos"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:paddingStart="32dp"
+    android:paddingEnd="32dp"
+    android:paddingTop="24dp"
+    android:paddingBottom="24dp"
+    android:text="@string/favoritos_vacio"
+    android:textColor="?attr/colorOnSurfaceVariant"
+    android:textSize="@dimen/text_body" />

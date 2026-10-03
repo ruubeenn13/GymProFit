@@ -3,8 +3,11 @@ package es.pmdm.gymprofit.network;
 import java.util.List;
 import java.util.Map;
 
+import es.pmdm.gymprofit.model.alimento.Alimento;
 import es.pmdm.gymprofit.model.comida.AnadirRespuesta;
 import es.pmdm.gymprofit.model.comida.Comida;
+import es.pmdm.gymprofit.model.comida.ComidaReciente;
+import es.pmdm.gymprofit.model.comida.CopiaRespuesta;
 import es.pmdm.gymprofit.model.comida.ResumenDiarioNutricion;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -46,6 +49,21 @@ public interface ComidaApi {
     // o racionId/racionIndice con raciones. Devuelve la comida con sus totales y la línea.
     @POST("comidas/anadir")
     Call<AnadirRespuesta> anadir(@Body Map<String, Object> body);
+
+    // Lote 1.6.4: hasta tres comidas que se pueden copiar a la de ese día y ese tipo; la
+    // primera, la del mismo tipo de antes de ese día («la de ayer», si la hubo).
+    @GET("comidas/recientes")
+    Call<List<ComidaReciente>> recientes(@Query("fecha") String fecha, @Query("tipoComida") String tipoComida);
+
+    // Lote 1.6.4: copia una comida entera a la de ese día y ese tipo (la encuentra o la
+    // crea). body: comidaId (origen), fecha (yyyy-MM-dd) y tipoComida. Lo que ya estaba se suma.
+    @POST("comidas/copiar")
+    Call<CopiaRespuesta> copiar(@Body Map<String, Object> body);
+
+    // Lote 1.6.4: «Lo que sueles»: hasta tres alimentos de ese tipo de comida, con su
+    // última cantidad en ese tipo.
+    @GET("comidas/habituales")
+    Call<List<Alimento>> habituales(@Query("tipoComida") String tipoComida);
 
     // Elimina una comida registrada por su id.
     @DELETE("comidas/{id}")

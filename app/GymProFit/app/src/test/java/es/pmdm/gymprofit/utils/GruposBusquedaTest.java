@@ -137,8 +137,51 @@ public class GruposBusquedaTest {
     @Test
     public void sin_favoritos_ni_propuesta_no_hay_nada() {
         assertTrue(GruposBusqueda.favoritos(Collections.emptyList(), null).isEmpty());
-        // Con propuesta y sin favoritos, solo la propuesta.
-        assertEquals(1, GruposBusqueda.favoritos(null,
-                new es.pmdm.gymprofit.model.alimento.Favoritos.Propuesta(a("Pan", null), 5)).size());
+    }
+
+    // ── Lote 1.6.4 ──────────────────────────────────────────────────────────
+
+    @Test
+    public void gp184_con_la_propuesta_y_sin_favoritos_debajo_el_texto_de_la_pestana_vacia() {
+        List<GruposBusqueda.Elemento> l = GruposBusqueda.favoritos(null,
+                new es.pmdm.gymprofit.model.alimento.Favoritos.Propuesta(a("Pan", null), 5));
+        assertEquals(2, l.size());
+        assertEquals(GruposBusqueda.Tipo.PROPUESTA, l.get(0).tipo);
+        assertEquals(GruposBusqueda.Tipo.SIN_FAVORITOS, l.get(1).tipo);
+        // Aceptada, el favorito ya está en la lista y el texto se va.
+        List<GruposBusqueda.Elemento> aceptada = GruposBusqueda.favoritos(
+                Collections.singletonList(a("Pan", null)), null);
+        for (GruposBusqueda.Elemento e : aceptada) assertFalse(e.tipo == GruposBusqueda.Tipo.SIN_FAVORITOS);
+    }
+
+    @Test
+    public void comidas_recientes_entre_recientes_y_habituales() {
+        List<es.pmdm.gymprofit.model.comida.ComidaReciente> comidas = Arrays.asList(
+                new es.pmdm.gymprofit.model.comida.ComidaReciente(1, "MERIENDA", "2026-09-30", 203, null),
+                new es.pmdm.gymprofit.model.comida.ComidaReciente(2, "ALMUERZO", "2026-10-01", 251, null));
+        List<GruposBusqueda.Elemento> l = GruposBusqueda.de(Arrays.asList(
+                a("Yogur", "TUYO"), a("Pan", "BASICO")), false, true, comidas);
+        assertEquals(GruposBusqueda.Seccion.RECIENTES, l.get(0).seccion);
+        assertEquals(GruposBusqueda.Seccion.COMIDAS_RECIENTES, l.get(2).seccion);
+        assertTrue(l.get(2).esCabecera());
+        assertEquals(GruposBusqueda.Tipo.COMIDA_RECIENTE, l.get(3).tipo);
+        assertEquals(1, l.get(3).comida.getId());
+        assertEquals(2, l.get(4).comida.getId());
+        assertEquals(GruposBusqueda.Seccion.HABITUALES, l.get(5).seccion);
+        assertEquals(7, l.size());
+    }
+
+    @Test
+    public void sin_comidas_recientes_ni_cabecera_y_buscando_tampoco() {
+        List<es.pmdm.gymprofit.model.comida.ComidaReciente> comidas = Collections.singletonList(
+                new es.pmdm.gymprofit.model.comida.ComidaReciente(1, "MERIENDA", "2026-09-30", 203, null));
+        assertEquals(4, GruposBusqueda.de(Arrays.asList(a("Yogur", "TUYO"), a("Pan", "BASICO")), false, true,
+                Collections.emptyList()).size());
+        for (GruposBusqueda.Elemento e : GruposBusqueda.de(Collections.singletonList(a("Pan", "BASICO")), true, true, comidas)) {
+            assertFalse(e.tipo == GruposBusqueda.Tipo.COMIDA_RECIENTE);
+        }
+        // Sin nada tuyo ni habituales, las comidas siguen saliendo.
+        assertEquals(GruposBusqueda.Tipo.COMIDA_RECIENTE,
+                GruposBusqueda.de(Collections.emptyList(), false, true, comidas).get(1).tipo);
     }
 }

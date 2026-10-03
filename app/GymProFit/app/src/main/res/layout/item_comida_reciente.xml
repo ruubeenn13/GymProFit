@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_comida_reciente — una comida reciente en Añadir (tablero 4, lote 1.6.4).
+  El icono de la comida, «Merienda de ayer» y, debajo, sus alimentos y sus kcal en una
+  línea. A la derecha, «Copiar», que añade todos sus alimentos a la comida de la
+  etiqueta y pasa a «Copiada» con su ✓, sin poder tocarse ya. Las filas del grupo hacen
+  su tarjeta con bg_grupo_*, como las de los alimentos; lo pone el adaptador.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:background="@drawable/bg_grupo_solo"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="64dp"
+        android:orientation="horizontal"
+        android:paddingStart="14dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+        <ImageView
+            android:id="@+id/ivIconoReciente"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_ms_restaurant"
+            app:tint="?attr/colorOnSurfaceVariant" />
+
+        <LinearLayout
+            android:id="@+id/textosReciente"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:focusable="true"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvNombreReciente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:importantForAccessibility="no"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="@dimen/text_fila" />
+
+            <TextView
+                android:id="@+id/tvDetalleReciente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:importantForAccessibility="no"
+                android:maxLines="1"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="@dimen/text_caption" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCopiarReciente"
+            style="@style/Widget.GymProFit.BotonPildora"
+            android:layout_width="wrap_content"
+            android:layout_marginStart="8dp"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:text="@string/reciente_copiar"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="@dimen/text_body"
+            android:textStyle="bold"
+            app:backgroundTint="@color/gp_surface_2"
+            app:icon="@drawable/ic_ms_content_copy"
+            app:iconSize="18dp"
+            app:iconTint="?attr/colorOnSurface" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/rayaReciente"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="14dp"
+        android:background="?attr/colorOutlineVariant"
+        android:importantForAccessibility="no" />
+</LinearLayout>

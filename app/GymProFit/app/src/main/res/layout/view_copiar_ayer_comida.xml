@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  view_copiar_ayer_comida — «¿Copiar la de ayer?» en una comida sin apuntar (tablero 2b,
+  lote 1.6.4), sea el día que sea. Sus alimentos y sus kcal en una línea, la ✓ que copia
+  y la ✗ que la pliega para ese día y esa comida. La rellena TarjetaCopiarAyer.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/tarjetaCopiarAyer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_tarjeta_copiar"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="16dp"
+    android:paddingEnd="8dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
+
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_ms_content_copy"
+        app:tint="?attr/colorOnPrimaryContainer" />
+
+    <LinearLayout
+        android:id="@+id/textosCopiar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:focusable="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvTituloCopiar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:importantForAccessibility="no"
+            android:text="@string/copiar_ayer_titulo"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="@dimen/text_fila"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvDetalleCopiar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:importantForAccessibility="no"
+            android:maxLines="1"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="@dimen/text_caption" />
+    </LinearLayout>
+
+    <!-- La ✓: un círculo de 48 en el acento suave. -->
+    <FrameLayout
+        android:id="@+id/btnSiCopiar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="4dp"
+        android:background="@drawable/bg_mas_fila"
+        android:backgroundTint="?attr/colorPrimaryContainer"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_ms_check"
+            app:tint="?attr/colorPrimary" />
+    </FrameLayout>
+
+    <ImageButton
+        android:id="@+id/btnNoCopiar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/copiar_ayer_no_a11y"
+        android:src="@drawable/ic_ms_close"
+        app:tint="?attr/colorOnSurfaceVariant" />
+</LinearLayout>

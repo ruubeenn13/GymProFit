@@ -109,6 +109,23 @@ public class MovimientoTest {
     }
 
     @Test
+    public void laCopiaDeAyerEstaEnLaTablaYEnElCodigo() throws IOException {
+        // Momento 18 del lienzo del 02-10 (lote 1.6.4), con los números del tablero «Así se
+        // mueve»: la tarjeta se pliega del 16 al 22 % de un bucle de 3 s (180 ms) y cada
+        // alimento cae del 20 al 32 % (360 ms), el segundo 120 ms después.
+        Map<String, Long> tabla = duracionesDeLaTabla();
+        Map<String, Long> codigo = duracionesDelCodigo();
+        assertTrue("falta el momento 18 en DEC-039", decision().contains("| 18 · "));
+        for (String c : new String[]{"PLIEGA", "CAE", "CAE_ESCALON"}) {
+            assertTrue(c + " no está en la tabla", tabla.containsKey(c));
+            assertTrue(c + " no está en Movimiento", codigo.containsKey(c));
+        }
+        assertEquals(Long.valueOf(180), codigo.get("PLIEGA"));
+        assertEquals(Long.valueOf(360), codigo.get("CAE"));
+        assertEquals(Long.valueOf(120), codigo.get("CAE_ESCALON"));
+    }
+
+    @Test
     public void lasCuatroCurvasSonLasDeLaDecision() throws IOException {
         String codigo = new String(Files.readAllBytes(CODIGO), StandardCharsets.UTF_8);
         String dec = decision();

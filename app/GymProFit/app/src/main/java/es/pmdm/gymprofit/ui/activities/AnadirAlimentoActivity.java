@@ -41,6 +41,7 @@ import es.pmdm.gymprofit.model.alimento.Favoritos;
 import es.pmdm.gymprofit.model.comida.AlimentoComida;
 import es.pmdm.gymprofit.model.comida.AnadirRespuesta;
 import es.pmdm.gymprofit.model.comida.CantidadAnterior;
+import es.pmdm.gymprofit.model.comida.ComidaReciente;
 import es.pmdm.gymprofit.network.AlimentoApi;
 import es.pmdm.gymprofit.network.AlimentoComidaApi;
 import es.pmdm.gymprofit.network.ApiCallback;
@@ -84,6 +85,11 @@ import retrofit2.Call;
 // sola comida y no es la de origen, al volver se dice a cuál (EXTRA_ANADIDO_A).
 // Mantener pulsado un alimento propio da editar y eliminar (y, a un ADMIN, desactivar uno
 // del catálogo); en Favoritos, «Quitar de favoritos».
+// Lote 1.6.4: en «Todo», «Comidas recientes» (B1): hasta tres comidas para la de la
+// etiqueta, que se vuelven a pedir al cambiarla. «Copiar» añade todos sus alimentos a la
+// comida de la etiqueta y pasa a «Copiada»; lo copiado cuenta en la barra y sus filas
+// quedan en ✓, cada una con su quitar exacto. Cada fila enseña el ✓ de la comida de la
+// etiqueta (GP-185), y una fila en ✓ cuyo «+» aún viaja abre la ficha al llegar (GP-183).
 // ============================================================
 public class AnadirAlimentoActivity extends BaseActivity {
 
@@ -141,6 +147,12 @@ public class AnadirAlimentoActivity extends BaseActivity {
     private boolean yaEntro;
     private boolean recientesTodos;
 
+    // Comidas recientes (1.6.4): las de la comida de la etiqueta, null mientras llegan o si
+    // fallan (entonces la sección no sale), y las copiadas, «comida|id».
+    @Nullable private List<ComidaReciente> comidasRecientes;
+    private final java.util.Set<String> copiadas = new java.util.HashSet<>();
+    private int turnoRecientes;
+
     // Favoritos: la pestaña, lo cargado y si hay que volver a pedirlo.
     private boolean enFavoritos;
     @Nullable private Favoritos favoritos;
@@ -151,6 +163,8 @@ public class AnadirAlimentoActivity extends BaseActivity {
     private Anadidos anadidos;
     private final Map<String, String> nombres = new HashMap<>();
     private boolean saliendo;
+    // La comida de la fila en ✓ cuya ficha se ha abierto con «Actualizar».
+    private String tipoActualizando = "MERIENDA";
 
     private final Handler espera = new Handler(Looper.getMainLooper());
     private final Runnable buscarAhora = this::buscarDesdeCero;
@@ -204,6 +218,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
                 findViewById(R.id.ranuraEtiquetaDebajo));
         pintarComida();
         cargarDia();
+        cargarRecientes();
         findViewById(R.id.btnEscanear).setOnClickListener(v -> abrirEscaner());
 
         barra = findViewById(R.id.barraHecho);
@@ -304,12 +319,15 @@ public class AnadirAlimentoActivity extends BaseActivity {
     // La etiqueta abre «¿A qué comida?»; elegir cambia la etiqueta y lo que dice el «+».
     private void elegirComida() {
         es.pmdm.gymprofit.ui.nutricion.ElegirComida.abrirHoja(this, fecha, tipoComida, kcalDia, t -> {
+            boolean cambia = !t.equals(tipoComida);
             tipoComida = t;
             pintarComida();
             // La etiqueta puede cambiar de ancho («Almuerzo» frente a «Cena»).
             etiqueta.requestLayout();
-            // TalkBack del «+» dice a qué comida va.
+            // Cada fila enseña el ✓ de esta comida (GP-185), y TalkBack del «+» dice a cuál va.
             adapter.notifyDataSetChanged();
+            // Las comidas recientes son para la comida de la etiqueta: se vuelven a pedir.
+            if (cambia) cargarRecientes();
         });
     }
 
@@ -348,13 +366,16 @@ public class AnadirAlimentoActivity extends BaseActivity {
     // ── Abrir ───────────────────────────────────────────────────────────────
 
     private void abrirFicha(Alimento alimento) {
-        String clave = Anadidos.clave(alimento.getId(), alimento.getBarcode());
+        String clave = clave(alimento);
         if (anadidos.marcado(clave)) {
-            Anadidos.Anadido hecho = anadidos.hecho(clave);
-            // Mientras el «+» aún viaja no hay línea que actualizar: llega en un momento.
-            if (hecho == null) return;
-            actualizarLauncher.launch(FichaAlimentoActivity.paraEditar(this, hecho.getLinea(), hecho.getTipoComida(),
-                    fecha).putExtra(EXTRA_EN_ANADIR, true));
+            // Mientras el «+» aún viaja no hay línea que actualizar: se abre en cuanto llega
+            // (GP-183). Si añadir falla, no se abre nada y el fallo ya se dice.
+            anadidos.cuandoEste(clave, hecho -> {
+                if (isDestroyed() || saliendo) return;
+                tipoActualizando = hecho.getTipoComida();
+                actualizarLauncher.launch(FichaAlimentoActivity.paraEditar(this, hecho.getLinea(),
+                        hecho.getTipoComida(), fecha).putExtra(EXTRA_EN_ANADIR, true));
+            });
             return;
         }
         fichaLauncher.launch(FichaAlimentoActivity.paraAnadir(this, alimento, tipoComida, fecha)
@@ -381,7 +402,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
         if (datos != null) apuntarFavorito(datos);
         if (json != null) {
             Anadidos.Anadido a = new Gson().fromJson(json, Anadidos.Anadido.class);
-            nombres.put(Anadidos.clave(a.getAlimentoId(), null), a.getLinea().getNombreAlimento());
+            nombres.put(Anadidos.clave(a.getTipoComida(), a.getAlimentoId(), null), a.getLinea().getNombreAlimento());
             anadidos.marcar(a);
             pintarBarra();
         } else if (r.getResultCode() == RESULT_OK) {
@@ -400,7 +421,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
         if (r.getResultCode() == RESULT_OK && json != null) {
             AlimentoComida linea = new Gson().fromJson(json, AlimentoComida.class);
             String texto = datos.getStringExtra(FichaAlimentoActivity.EXTRA_TEXTO);
-            anadidos.actualizar(linea.getAlimentoId(), linea, texto != null ? texto : "",
+            anadidos.actualizar(tipoActualizando, linea.getAlimentoId(), linea, texto != null ? texto : "",
                     datos.getLongExtra(FichaAlimentoActivity.EXTRA_KCAL, 0));
             pintarBarra();
         }
@@ -447,6 +468,11 @@ public class AnadirAlimentoActivity extends BaseActivity {
 
     // ── El «+» ──────────────────────────────────────────────────────────────
 
+    // La fila de ese alimento en la comida de la etiqueta (GP-185).
+    private String clave(@NonNull Alimento a) {
+        return Anadidos.clave(tipoComida, a.getId(), a.getBarcode());
+    }
+
     private Anadidos.Pedido pedido(@NonNull Alimento a) {
         CantidadFicha c = AnadirRapido.cantidad(a);
         return new Anadidos.Pedido(a.getId(), a.getBarcode(), tipoComida,
@@ -456,7 +482,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
     }
 
     private void tocarMas(@NonNull Alimento a, @NonNull View boton, @NonNull ImageView icono) {
-        String clave = Anadidos.clave(a.getId(), a.getBarcode());
+        String clave = clave(a);
         boolean antes = anadidos.marcado(clave);
         nombres.put(clave, a.getNombre());
         anadidos.tocar(pedido(a));
@@ -557,6 +583,92 @@ public class AnadirAlimentoActivity extends BaseActivity {
         return Math.round(v * getResources().getDisplayMetrics().density);
     }
 
+    // ── Comidas recientes (1.6.4, B1) ───────────────────────────────────────
+
+    // Las de la comida de la etiqueta. Mientras llegan, o si fallan, la sección no sale y
+    // lo demás sigue igual: es un atajo, no hay nada que reintentar a la vista.
+    private void cargarRecientes() {
+        int miTurno = ++turnoRecientes;
+        String tipo = tipoComida;
+        if (comidasRecientes != null) {
+            comidasRecientes = null;
+            if (!mirandoFavoritos() && consulta.isEmpty() && yaEntro) pintarActual(false);
+        }
+        comidaApi.recientes(dia(), tipo).enqueue(new ApiCallback<List<ComidaReciente>>() {
+            @Override
+            public void onOk(List<ComidaReciente> lista) {
+                if (miTurno != turnoRecientes || isDestroyed()) return;
+                comidasRecientes = lista != null && !lista.isEmpty() ? lista : null;
+                if (comidasRecientes != null && !mirandoFavoritos() && consulta.isEmpty() && yaEntro) {
+                    pintarActual(false);
+                }
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                // Se ignora a propósito: sin la sección, Añadir sirve igual (B1).
+            }
+        });
+    }
+
+    private String claveCopiada(@NonNull ComidaReciente c) {
+        return tipoComida + "|" + c.getId();
+    }
+
+    // «Copiar»: pasa a «Copiada» al momento; la API va detrás. Lo copiado cuenta en la barra
+    // y sus filas quedan en ✓. Si falla, vuelve a «Copiar» y se dice.
+    private void copiar(@NonNull ComidaReciente c) {
+        String clave = claveCopiada(c);
+        if (copiadas.contains(clave)) return;
+        String tipo = tipoComida;
+        copiadas.add(clave);
+        adapter.cambioComida(c.getId());
+        Movimiento.vibrar(rv, Movimiento.Vibracion.LIGERA);
+        anadidos.empezarAparte();
+        Map<String, Object> cuerpo = new HashMap<>();
+        cuerpo.put("comidaId", c.getId());
+        cuerpo.put("fecha", dia());
+        cuerpo.put("tipoComida", tipo);
+        comidaApi.copiar(cuerpo).enqueue(new ApiCallback<es.pmdm.gymprofit.model.comida.CopiaRespuesta>() {
+            @Override
+            public void onOk(es.pmdm.gymprofit.model.comida.CopiaRespuesta r) {
+                if (!isDestroyed() && r != null) {
+                    for (es.pmdm.gymprofit.model.comida.CopiaRespuesta.Copiada x : r.getLineas()) {
+                        marcarCopiada(c, tipo, x);
+                    }
+                    pintarBarra();
+                }
+                anadidos.terminarAparte();
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                if (!isDestroyed()) {
+                    copiadas.remove(clave);
+                    adapter.cambioComida(c.getId());
+                    UIHelper.mostrarToastError(AnadirAlimentoActivity.this, getString(R.string.reciente_fallo,
+                            es.pmdm.gymprofit.ui.nutricion.CopiarComida.nombre(AnadirAlimentoActivity.this, c),
+                            UiFeedback.mensaje(AnadirAlimentoActivity.this, code, message)));
+                }
+                anadidos.terminarAparte();
+            }
+        });
+    }
+
+    // Un alimento copiado, como si se hubiera añadido aquí: en la barra cuenta lo copiado
+    // (la cantidad y las kcal de la comida de origen), y su ✓ deja la línea como estaba.
+    private void marcarCopiada(@NonNull ComidaReciente origen, @NonNull String tipo,
+                               @NonNull es.pmdm.gymprofit.model.comida.CopiaRespuesta.Copiada x) {
+        AlimentoComida linea = x.getLinea();
+        if (linea == null) return;
+        AlimentoComida deOrigen = null;
+        for (AlimentoComida l : origen.getLineas()) if (l.getAlimentoId() == linea.getAlimentoId()) deOrigen = l;
+        AlimentoComida cuanto = deOrigen != null ? deOrigen : linea;
+        nombres.put(Anadidos.clave(tipo, linea.getAlimentoId(), null), linea.getNombreAlimento());
+        anadidos.marcar(new Anadidos.Anadido(linea.getAlimentoId(), null, tipo, linea, x.getAnterior(),
+                Cantidades.de(this, cuanto), cuanto.getCaloriasTotales()));
+    }
+
     // ── Lo que dice cada fila ───────────────────────────────────────────────
 
     private String kcalYCantidad(String cantidad, long kcal) {
@@ -564,7 +676,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
     }
 
     private String detalle(@NonNull Alimento a, @Nullable GruposBusqueda.Seccion s) {
-        String clave = Anadidos.clave(a.getId(), a.getBarcode());
+        String clave = clave(a);
         if (anadidos.marcado(clave)) {
             // En ✓, lo que se ha añadido.
             String texto = anadidos.texto(clave);
@@ -584,7 +696,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
     }
 
     private String etiquetaMas(@NonNull Alimento a) {
-        String clave = Anadidos.clave(a.getId(), a.getBarcode());
+        String clave = clave(a);
         if (anadidos.marcado(clave)) return getString(R.string.fila_check_a11y, a.getNombre());
         CantidadFicha c = AnadirRapido.cantidad(a);
         String cantidad = AnadirRapido.texto(Cantidades.Formatos.de(this), FechaUtils.localeDeLaApp(this), c);
@@ -616,7 +728,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
 
             @Override
             public boolean marcado(@NonNull Alimento a) {
-                return anadidos.marcado(Anadidos.clave(a.getId(), a.getBarcode()));
+                return anadidos.marcado(clave(a));
             }
 
             @NonNull @Override
@@ -637,6 +749,18 @@ public class AnadirAlimentoActivity extends BaseActivity {
 
             @Override public void aceptarPropuesta(@NonNull Favoritos.Propuesta p) { responderPropuesta(p, true); }
             @Override public void rechazarPropuesta(@NonNull Favoritos.Propuesta p) { responderPropuesta(p, false); }
+
+            @Override public void copiar(@NonNull ComidaReciente c) { AnadirAlimentoActivity.this.copiar(c); }
+
+            @Override
+            public boolean copiada(@NonNull ComidaReciente c) {
+                return copiadas.contains(claveCopiada(c));
+            }
+
+            @NonNull @Override
+            public String aLaComida() {
+                return getString(aLa(tipoComida));
+            }
         };
     }
 
@@ -720,7 +844,8 @@ public class AnadirAlimentoActivity extends BaseActivity {
             estado.cargando();
             return;
         }
-        List<GruposBusqueda.Elemento> lista = GruposBusqueda.de(resultados, buscando, recientesTodos);
+        List<GruposBusqueda.Elemento> lista = GruposBusqueda.de(resultados, buscando, recientesTodos,
+                buscando ? null : comidasRecientes);
         adapter.poner(lista, cascada);
         if (lista.isEmpty()) estado.vacio(R.string.anadir_vacio);
         else estado.oculto();
@@ -783,17 +908,25 @@ public class AnadirAlimentoActivity extends BaseActivity {
     private void responderPropuesta(@NonNull Favoritos.Propuesta p, boolean aceptar) {
         if (favoritos == null) return;
         Favoritos antes = favoritos;
-        favoritos = new Favoritos(antes.getFavoritos(), null);
-        pintarFavoritos();
         int id = p.getAlimento().getId();
-        if (aceptar) Movimiento.vibrar(rv, Movimiento.Vibracion.LIGERA);
+        List<Alimento> lista = new ArrayList<>(antes.getFavoritos());
+        if (aceptar) {
+            // Entra en la lista al momento, resaltado (momento 19): con ella ya no hay
+            // pestaña vacía que decir (GP-184). La API confirma detrás.
+            p.getAlimento().setFavorito(true);
+            lista.add(0, p.getAlimento());
+            adapter.resaltar(id);
+            Movimiento.vibrar(rv, Movimiento.Vibracion.LIGERA);
+        }
+        favoritos = new Favoritos(lista, null);
+        pintarFavoritos();
         Runnable bien = () -> {
             if (isDestroyed() || !aceptar) return;
-            adapter.resaltar(id);
             cargarFavoritos();
         };
         java.util.function.BiConsumer<Integer, String> mal = (code, message) -> {
             if (isDestroyed()) return;
+            if (aceptar) p.getAlimento().setFavorito(false);
             favoritos = antes;
             if (mirandoFavoritos()) pintarFavoritos();
             UIHelper.mostrarToastError(AnadirAlimentoActivity.this, getString(R.string.propuesta_fallo,

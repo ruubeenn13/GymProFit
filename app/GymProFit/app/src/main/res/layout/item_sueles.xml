@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_sueles — un alimento de «Lo que sueles merendar» (tablero 2b, lote 1.6.4): el icono
+  de su categoría en un cuadro de 44, su nombre, la cantidad y las kcal de la última vez
+  en esta comida, y su «+», que lo añade y deja la pantalla con la comida ya apuntada.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="14dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+        <FrameLayout
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_icono_categoria"
+            android:importantForAccessibility="no">
+
+            <ImageView
+                android:id="@+id/ivIconoSueles"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no"
+                app:tint="?attr/colorOnSurfaceVariant" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/textosSueles"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:focusable="true"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvNombreSueles"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:importantForAccessibility="no"
+                android:maxLines="2"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="@dimen/text_fila" />
+
+            <TextView
+                android:id="@+id/tvCantidadSueles"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:importantForAccessibility="no"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="@dimen/text_caption" />
+        </LinearLayout>
+
+        <!-- El «+»: un círculo de 44 en una zona de 48, como en Añadir. -->
+        <FrameLayout
+            android:id="@+id/btnMasSueles"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="6dp"
+            android:background="@drawable/bg_mas_fila"
+            android:backgroundTint="@color/gp_surface_2"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:id="@+id/ivMasSueles"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_ms_add"
+                app:tint="?attr/colorOnSurface" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/rayaSueles"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?attr/colorOutlineVariant"
+        android:importantForAccessibility="no" />
+</LinearLayout>

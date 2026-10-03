@@ -21,6 +21,7 @@ import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.alimento.Alimento;
 import es.pmdm.gymprofit.model.alimento.Favoritos;
 import es.pmdm.gymprofit.model.alimento.Racion;
+import es.pmdm.gymprofit.model.comida.ComidaReciente;
 import es.pmdm.gymprofit.utils.Anadidos;
 import es.pmdm.gymprofit.utils.Categorias;
 import es.pmdm.gymprofit.utils.FechaUtils;
@@ -41,6 +42,9 @@ import es.pmdm.gymprofit.utils.Movimiento;
 // el «+» (decisión 1): tocarlo añade sin preguntar y lo vuelve ✓ (momento 15); tocar el
 // ✓ lo quita. El resto de la fila abre la ficha.
 // La primera lista entra en cascada (momento 16); al volver, ya está.
+// Desde la 1.6.4, en «Todo», las comidas recientes con su «Copiar» (que pasa a «Copiada»,
+// con su ✓, y ya no se toca), y en «Favoritos», bajo la propuesta y sin ningún favorito,
+// el texto de la pestaña vacía (GP-184).
 // ============================================================
 public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -77,6 +81,16 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
         void aceptarPropuesta(@NonNull Favoritos.Propuesta propuesta);
 
         void rechazarPropuesta(@NonNull Favoritos.Propuesta propuesta);
+
+        /** «Copiar» de una comida reciente (1.6.4). */
+        void copiar(@NonNull ComidaReciente comida);
+
+        /** ¿Está ya copiada (o copiándose)? Entonces dice «Copiada» y no se toca. */
+        boolean copiada(@NonNull ComidaReciente comida);
+
+        /** «a la merienda», la comida de la etiqueta, para TalkBack de «Copiar». */
+        @NonNull
+        String aLaComida();
     }
 
     private static final int CABECERA = 0;
@@ -84,6 +98,8 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
     private static final int NO_LO_ENCUENTRAS = 2;
     private static final int CABECERA_EXTRA = 3;
     private static final int PROPUESTA = 4;
+    private static final int COMIDA_RECIENTE = 5;
+    private static final int SIN_FAVORITOS = 6;
 
     /** Payload: solo cambia el «+» de la fila (y su detalle). */
     private static final Object SOLO_MAS = new Object();
@@ -117,13 +133,22 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
         resaltarId = alimentoId;
     }
 
-    /** Repinta el «+» de las filas de esa clave (Anadidos.clave). */
+    /** Repinta la fila de esa comida reciente («Copiar» o «Copiada»). */
+    public void cambioComida(int comidaId) {
+        for (int i = 0; i < elementos.size(); i++) {
+            ComidaReciente c = elementos.get(i).comida;
+            if (c != null && c.getId() == comidaId) notifyItemChanged(i);
+        }
+    }
+
+    /** Repinta el «+» de las filas de ese alimento (Anadidos.clave, de cualquier comida). */
     public void cambioMas(@NonNull String clave) {
+        String alimento = Anadidos.parteAlimento(clave);
         for (int i = 0; i < elementos.size(); i++) {
             Alimento a = elementos.get(i).alimento;
             if (elementos.get(i).tipo == GruposBusqueda.Tipo.ALIMENTO && a != null
-                    && (clave.equals(Anadidos.clave(a.getId(), a.getBarcode()))
-                    || clave.equals(Anadidos.clave(0, a.getBarcode())))) {
+                    && (alimento.equals(Anadidos.parteAlimento(Anadidos.clave("", a.getId(), a.getBarcode())))
+                    || alimento.equals(Anadidos.parteAlimento(Anadidos.clave("", 0, a.getBarcode()))))) {
                 notifyItemChanged(i, SOLO_MAS);
             }
         }
@@ -137,6 +162,8 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
                 return e.verTodos || e.cuantos >= 0 ? CABECERA_EXTRA : CABECERA;
             case NO_LO_ENCUENTRAS: return NO_LO_ENCUENTRAS;
             case PROPUESTA: return PROPUESTA;
+            case COMIDA_RECIENTE: return COMIDA_RECIENTE;
+            case SIN_FAVORITOS: return SIN_FAVORITOS;
             default: return ALIMENTO;
         }
     }
@@ -167,6 +194,12 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
         if (viewType == PROPUESTA) {
             return new RecyclerView.ViewHolder(inflater.inflate(R.layout.item_propuesta_favorito, parent, false)) { };
         }
+        if (viewType == COMIDA_RECIENTE) {
+            return new RecyclerView.ViewHolder(inflater.inflate(R.layout.item_comida_reciente, parent, false)) { };
+        }
+        if (viewType == SIN_FAVORITOS) {
+            return new RecyclerView.ViewHolder(inflater.inflate(R.layout.item_sin_favoritos, parent, false)) { };
+        }
         return new FilaHolder(inflater.inflate(R.layout.item_alimento_busqueda, parent, false));
     }
 
@@ -189,6 +222,8 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
             ((FilaHolder) holder).pintar(e.alimento, e.seccion, fondo(position));
         } else if (e.tipo == GruposBusqueda.Tipo.PROPUESTA && e.propuesta != null) {
             pintarPropuesta(holder.itemView, e.propuesta);
+        } else if (e.tipo == GruposBusqueda.Tipo.COMIDA_RECIENTE && e.comida != null) {
+            pintarReciente(holder.itemView, e.comida, fondo(position));
         }
         if (position < cascadaHasta) {
             Movimiento.entrarUna(holder.itemView, position * Movimiento.CASCADA_ESCALON, Movimiento.CASCADA, 16);
@@ -237,10 +272,44 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
         v.findViewById(R.id.btnRechazarPropuesta).setOnClickListener(b -> acciones.rechazarPropuesta(p));
     }
 
-    // Primera, media, última o sola dentro de su grupo, según los vecinos.
+    // Una comida reciente: su icono, su nombre, lo que lleva y «Copiar» o «Copiada».
+    private void pintarReciente(@NonNull View v, @NonNull ComidaReciente c, int fondo) {
+        Context ctx = v.getContext();
+        v.setBackgroundResource(fondo);
+        v.findViewById(R.id.rayaReciente).setVisibility(fondo == R.drawable.bg_grupo_media
+                || fondo == R.drawable.bg_grupo_primera ? View.VISIBLE : View.INVISIBLE);
+        ((ImageView) v.findViewById(R.id.ivIconoReciente)).setImageResource(
+                es.pmdm.gymprofit.ui.nutricion.ElegirComida.icono(c.getTipoComida()));
+        String nombre = es.pmdm.gymprofit.ui.nutricion.CopiarComida.nombre(ctx, c);
+        ((TextView) v.findViewById(R.id.tvNombreReciente)).setText(nombre);
+        ((TextView) v.findViewById(R.id.tvDetalleReciente)).setText(
+                es.pmdm.gymprofit.ui.nutricion.CopiarComida.detalle(ctx, c));
+        NumberFormat nf = NumberFormat.getIntegerInstance(FechaUtils.localeDeLaApp(ctx));
+        v.findViewById(R.id.textosReciente).setContentDescription(ctx.getString(R.string.reciente_a11y, nombre,
+                es.pmdm.gymprofit.utils.ComidasRecientes.nombres(c.getLineas()), nf.format(c.getKcal())));
+
+        com.google.android.material.button.MaterialButton boton = v.findViewById(R.id.btnCopiarReciente);
+        boolean copiada = acciones.copiada(c);
+        int texto = copiada ? ContextCompat.getColor(ctx, R.color.gp_success) : color(ctx,
+                com.google.android.material.R.attr.colorOnSurface);
+        boton.setText(copiada ? R.string.reciente_copiada : R.string.reciente_copiar);
+        boton.setIconResource(copiada ? R.drawable.ic_ms_check : R.drawable.ic_ms_content_copy);
+        boton.setIconTint(ColorStateList.valueOf(texto));
+        boton.setTextColor(texto);
+        boton.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(ctx,
+                copiada ? R.color.gp_success_container : R.color.gp_surface_2)));
+        // Copiada no se vuelve a tocar: lo copiado se quita con el ✓ de cada alimento.
+        boton.setEnabled(!copiada);
+        boton.setContentDescription(copiada ? ctx.getString(R.string.reciente_copiada_a11y, nombre)
+                : ctx.getString(R.string.reciente_copiar_a11y, nombre, acciones.aLaComida()));
+        boton.setOnClickListener(copiada ? null : b -> acciones.copiar(c));
+    }
+
+    // Primera, media, última o sola dentro de su grupo, según los vecinos del mismo tipo.
     private int fondo(int pos) {
-        boolean antes = pos > 0 && elementos.get(pos - 1).tipo == GruposBusqueda.Tipo.ALIMENTO;
-        boolean despues = pos + 1 < elementos.size() && elementos.get(pos + 1).tipo == GruposBusqueda.Tipo.ALIMENTO;
+        GruposBusqueda.Tipo tipo = elementos.get(pos).tipo;
+        boolean antes = pos > 0 && elementos.get(pos - 1).tipo == tipo;
+        boolean despues = pos + 1 < elementos.size() && elementos.get(pos + 1).tipo == tipo;
         if (antes && despues) return R.drawable.bg_grupo_media;
         if (antes) return R.drawable.bg_grupo_ultima;
         if (despues) return R.drawable.bg_grupo_primera;
@@ -255,6 +324,7 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
             case TUYO: return R.string.seccion_tuyo;
             case PRODUCTOS: return R.string.seccion_productos;
             case FAVORITOS: return R.string.favoritos_seccion;
+            case COMIDAS_RECIENTES: return R.string.seccion_comidas_recientes;
             default: return R.string.seccion_basicos;
         }
     }

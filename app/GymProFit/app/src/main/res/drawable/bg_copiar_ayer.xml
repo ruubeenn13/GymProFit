@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_copiar_ayer — «¿Copiar la de ayer?» dentro de la tarjeta de su comida en el diario
+     (tablero 1, lote 1.6.4): superficie elevada y radio 14. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="14dp" />
+    <solid android:color="?attr/colorSurfaceVariant" />
+</shape>

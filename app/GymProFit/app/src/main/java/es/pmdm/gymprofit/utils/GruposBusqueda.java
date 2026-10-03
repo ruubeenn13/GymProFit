@@ -10,6 +10,7 @@ import java.util.Map;
 
 import es.pmdm.gymprofit.model.alimento.Alimento;
 import es.pmdm.gymprofit.model.alimento.Favoritos;
+import es.pmdm.gymprofit.model.comida.ComidaReciente;
 
 // ============================================================
 // GruposBusqueda — de los resultados de /alimentos/buscar a la lista de la pantalla (1.6.1)
@@ -21,7 +22,10 @@ import es.pmdm.gymprofit.model.alimento.Favoritos;
 //   · Buscando: «Tuyo», «Básicos» y «Productos», en ese orden, y al final
 //     «¿No lo encuentras?», también cuando no hay nada.
 //   · La pestaña «Favoritos» (1.6.3): arriba la propuesta, si la hay, y «Los que más
-//     usas» con cuántos son.
+//     usas» con cuántos son. Con la propuesta y ningún favorito, debajo de ella el texto
+//     de la pestaña vacía (GP-184, lote 1.6.4).
+//   · Desde la 1.6.4, en «Todo», «Comidas recientes» entre Recientes y Habituales: hasta
+//     tres comidas que se copian enteras con un toque.
 // Cada grupo lleva su cabecera solo si tiene algo. Un grupo que no se conoce va con los
 // básicos: mejor enseñarlo que perderlo.
 // ============================================================
@@ -32,9 +36,9 @@ public final class GruposBusqueda {
     /** Recientes que se ven sin tocar «Ver todos». */
     public static final int RECIENTES_VISIBLES = 6;
 
-    public enum Seccion { RECIENTES, HABITUALES, TUYO, BASICOS, PRODUCTOS, FAVORITOS }
+    public enum Seccion { RECIENTES, COMIDAS_RECIENTES, HABITUALES, TUYO, BASICOS, PRODUCTOS, FAVORITOS }
 
-    public enum Tipo { CABECERA, ALIMENTO, NO_LO_ENCUENTRAS, PROPUESTA }
+    public enum Tipo { CABECERA, ALIMENTO, NO_LO_ENCUENTRAS, PROPUESTA, COMIDA_RECIENTE, SIN_FAVORITOS }
 
     /** Una fila de la lista: una cabecera, un alimento, «¿No lo encuentras?» o la propuesta. */
     public static final class Elemento {
@@ -47,19 +51,28 @@ public final class GruposBusqueda {
         public final int cuantos;
         /** La propuesta de favorito, en su fila. */
         @Nullable public final Favoritos.Propuesta propuesta;
+        /** La comida reciente, en su fila (1.6.4). */
+        @Nullable public final ComidaReciente comida;
 
         private Elemento(@NonNull Tipo tipo, @Nullable Seccion seccion, @Nullable Alimento alimento) {
-            this(tipo, seccion, alimento, false, -1, null);
+            this(tipo, seccion, alimento, false, -1, null, null);
         }
 
         private Elemento(@NonNull Tipo tipo, @Nullable Seccion seccion, @Nullable Alimento alimento,
                          boolean verTodos, int cuantos, @Nullable Favoritos.Propuesta propuesta) {
+            this(tipo, seccion, alimento, verTodos, cuantos, propuesta, null);
+        }
+
+        private Elemento(@NonNull Tipo tipo, @Nullable Seccion seccion, @Nullable Alimento alimento,
+                         boolean verTodos, int cuantos, @Nullable Favoritos.Propuesta propuesta,
+                         @Nullable ComidaReciente comida) {
             this.tipo = tipo;
             this.seccion = seccion;
             this.alimento = alimento;
             this.verTodos = verTodos;
             this.cuantos = cuantos;
             this.propuesta = propuesta;
+            this.comida = comida;
         }
 
         public boolean esCabecera() {
@@ -81,13 +94,21 @@ public final class GruposBusqueda {
         return de(alimentos, buscando, true);
     }
 
+    /** Como {@link #de(List, boolean, boolean, List)}, sin comidas recientes. */
+    @NonNull
+    public static List<Elemento> de(@Nullable List<Alimento> alimentos, boolean buscando, boolean recientesTodos) {
+        return de(alimentos, buscando, recientesTodos, null);
+    }
+
     /**
      * @param alimentos       lo que devolvió la búsqueda, en su orden.
      * @param buscando        true con texto (los tres grupos y «¿No lo encuentras?»).
      * @param recientesTodos  sin texto: false enseña seis recientes y «Ver todos».
+     * @param comidas         sin texto, las comidas recientes que se pueden copiar (1.6.4).
      */
     @NonNull
-    public static List<Elemento> de(@Nullable List<Alimento> alimentos, boolean buscando, boolean recientesTodos) {
+    public static List<Elemento> de(@Nullable List<Alimento> alimentos, boolean buscando, boolean recientesTodos,
+                                    @Nullable List<ComidaReciente> comidas) {
         Map<Seccion, List<Alimento>> porSeccion = new EnumMap<>(Seccion.class);
         if (alimentos != null) {
             for (Alimento a : alimentos) {
@@ -99,6 +120,12 @@ public final class GruposBusqueda {
                 : new Seccion[]{Seccion.RECIENTES, Seccion.HABITUALES};
         List<Elemento> lista = new ArrayList<>();
         for (Seccion s : orden) {
+            if (s == Seccion.HABITUALES && comidas != null && !comidas.isEmpty()) {
+                lista.add(new Elemento(Tipo.CABECERA, Seccion.COMIDAS_RECIENTES, null));
+                for (ComidaReciente c : comidas) {
+                    lista.add(new Elemento(Tipo.COMIDA_RECIENTE, Seccion.COMIDAS_RECIENTES, null, false, -1, null, c));
+                }
+            }
             List<Alimento> deEsta = porSeccion.get(s);
             if (deEsta == null || deEsta.isEmpty()) continue;
             boolean recortar = s == Seccion.RECIENTES && !recientesTodos && deEsta.size() > RECIENTES_VISIBLES;
@@ -123,6 +150,9 @@ public final class GruposBusqueda {
         if (favoritos != null && !favoritos.isEmpty()) {
             lista.add(new Elemento(Tipo.CABECERA, Seccion.FAVORITOS, null, false, favoritos.size(), null));
             for (Alimento a : favoritos) lista.add(new Elemento(Tipo.ALIMENTO, Seccion.FAVORITOS, a));
+        } else if (!lista.isEmpty()) {
+            // Solo la propuesta: debajo, lo que diría la pestaña vacía (GP-184).
+            lista.add(new Elemento(Tipo.SIN_FAVORITOS, Seccion.FAVORITOS, null));
         }
         return lista;
     }

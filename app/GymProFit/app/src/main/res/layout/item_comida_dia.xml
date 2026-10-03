@@ -4,6 +4,8 @@
   («3 alimentos · 820 kcal» o «Sin registrar») y un «+» de 48 dp que abre añadir
   alimento. Tocar la tarjeta abre la comida. El «+» de la comida que toca por la hora
   va en naranja si está sin registrar.
+  Desde la 1.6.4, debajo, la ranura de «¿Copiar la de ayer?» (view_copiar_ayer_diario):
+  solo en la comida que toca ahora, hoy, vacía y con la de ayer apuntada.
 -->
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -13,6 +15,11 @@
     android:layout_marginTop="12dp"
     android:clickable="true"
     android:focusable="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -54,5 +61,12 @@
             style="@style/Widget.GymProFit.BotonRedondo"
             android:layout_marginStart="12dp"
             android:src="@drawable/ic_ms_add" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/ranuraCopiarAyer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
