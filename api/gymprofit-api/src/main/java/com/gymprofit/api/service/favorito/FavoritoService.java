@@ -9,12 +9,9 @@ import com.gymprofit.api.exceptions.UnauthorizedException;
 import com.gymprofit.api.mappers.AlimentoMapper;
 import com.gymprofit.api.repository.jpa.IAlimentoRepository;
 import com.gymprofit.api.repository.jpa.IFavoritoRepository;
-import com.gymprofit.api.service.alimentocomida.UltimaCantidad;
+import com.gymprofit.api.service.alimentocomida.AlimentosConUltima;
 import com.gymprofit.api.service.codigo.CodigoBarrasService;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +19,6 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -62,18 +58,18 @@ public class FavoritoService {
     private final CodigoBarrasService codigoBarrasService;
     private final SecurityUtils securityUtils;
     private final JdbcTemplate jdbc;
-    private final NamedParameterJdbcTemplate jdbcConNombres;
+    private final AlimentosConUltima alimentosConUltima;
 
     public FavoritoService(IFavoritoRepository favoritoRepository, IAlimentoRepository alimentoRepository,
                            AlimentoMapper alimentoMapper, CodigoBarrasService codigoBarrasService,
-                           SecurityUtils securityUtils, JdbcTemplate jdbc) {
+                           SecurityUtils securityUtils, JdbcTemplate jdbc, AlimentosConUltima alimentosConUltima) {
         this.favoritoRepository = favoritoRepository;
         this.alimentoRepository = alimentoRepository;
         this.alimentoMapper = alimentoMapper;
         this.codigoBarrasService = codigoBarrasService;
         this.securityUtils = securityUtils;
         this.jdbc = jdbc;
-        this.jdbcConNombres = new NamedParameterJdbcTemplate(jdbc);
+        this.alimentosConUltima = alimentosConUltima;
     }
 
     /**
@@ -181,7 +177,7 @@ public class FavoritoService {
         Set<Integer> ids = new LinkedHashSet<>();
         usos.forEach(u -> ids.add(u.id()));
         propuestas.forEach(p -> ids.add(p.id()));
-        Map<Integer, AlimentoDTO> dtos = pintar(ids, usuarioId);
+        Map<Integer, AlimentoDTO> dtos = alimentosConUltima.pintar(ids, usuarioId, null);
 
         Map<Integer, Uso> usoDe = new HashMap<>();
         usos.forEach(u -> usoDe.put(u.id(), u));
@@ -230,32 +226,6 @@ public class FavoritoService {
                 INSERT INTO propuestas_favorito (usuario_id, alimento_id, motivo, creado) VALUES (?, ?, ?, NOW())
                 ON DUPLICATE KEY UPDATE alimento_id = alimento_id""",
                 securityUtils.getCurrentUserId(), alimentoId, motivo);
-    }
-
-    // Los alimentos con sus raciones y su última cantidad, en el idioma de la petición.
-    private Map<Integer, AlimentoDTO> pintar(Collection<Integer> ids, Integer usuarioId) {
-        Map<Integer, AlimentoDTO> dtos = new HashMap<>();
-        if (ids.isEmpty()) return dtos;
-        Map<Integer, UltimaCantidad.Linea> ultimas = new HashMap<>();
-        jdbcConNombres.query("""
-                SELECT x.alimento_id, x.cantidad_gramos, x.racion_id, x.raciones
-                FROM (SELECT ac.alimento_id, ac.cantidad_gramos, ac.racion_id, ac.raciones,
-                             ROW_NUMBER() OVER (PARTITION BY ac.alimento_id ORDER BY c.fecha DESC, ac.id DESC) AS n
-                      FROM comidas c JOIN alimentos_comida ac ON ac.comida_id = c.id
-                      WHERE c.usuario_id = :usuario AND ac.alimento_id IN (:ids)) x
-                WHERE x.n = 1""",
-                new MapSqlParameterSource("usuario", usuarioId).addValue("ids", ids), rs -> {
-                    Number racion = (Number) rs.getObject("racion_id");
-                    ultimas.put(rs.getInt("alimento_id"), new UltimaCantidad.Linea(rs.getBigDecimal("cantidad_gramos"),
-                            racion == null ? null : racion.intValue(), rs.getBigDecimal("raciones")));
-                });
-        boolean ingles = "en".equals(LocaleContextHolder.getLocale().getLanguage());
-        for (Alimento a : alimentoRepository.conRaciones(ids)) {
-            AlimentoDTO dto = alimentoMapper.toDTO(a);
-            dto.setUltima(UltimaCantidad.de(ultimas.get(a.getId()), a.getRaciones(), ingles));
-            dtos.put(a.getId(), dto);
-        }
-        return dtos;
     }
 
     // El primer instante de los últimos {@code dias} días, hoy incluido.

@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -111,8 +112,29 @@ public class AnadirAlimentoService {
             alimentoComidaService.ponerGramos(nueva, pedido.getCantidadGramos());
         }
 
-        Comida comida = comidaDelDia(tipo, pedido);
-        Optional<AlimentoComida> existente = lineaRepository.findByComidaIdAndAlimentoId(comida.getId(), alimento.getId());
+        Comida comida = comidaDelDia(tipo, pedido.getFecha());
+        Puesta puesta = ponerEn(comida, nueva);
+        alimentoComidaService.recalcularTotales(comida.getId());
+        return new AnadirAlimentoRespuestaDTO(comidaMapper.toDTO(comida), lineaMapper.toDTO(puesta.linea()),
+                puesta.anterior());
+    }
+
+    /** Una línea ya en su comida, y lo que tenía antes si se sumó a una que ya estaba. */
+    public record Puesta(AlimentoComida linea, CantidadAnteriorDTO anterior) {
+    }
+
+    /**
+     * Pone la línea en la comida con la regla de añadir: si el alimento ya está, se suma
+     * (con la misma ración, más raciones; si no, en gramos); si no, es una línea nueva.
+     * No recalcula los totales de la comida: lo hace quien llama, una vez.
+     *
+     * @param comida la comida de destino, ya guardada.
+     * @param nueva  la línea con su alimento y su cantidad, sin comida.
+     * @return la línea guardada y lo que tenía antes (null si es nueva).
+     */
+    public Puesta ponerEn(Comida comida, AlimentoComida nueva) {
+        Optional<AlimentoComida> existente = lineaRepository.findByComidaIdAndAlimentoId(comida.getId(),
+                nueva.getAlimento().getId());
         // Lo que tenía antes de sumar, tal cual (A2): la app deshace con ello.
         CantidadAnteriorDTO anterior = existente
                 .map(e -> new CantidadAnteriorDTO(e.getCantidadGramos(),
@@ -124,12 +146,18 @@ public class AnadirAlimentoService {
                     nueva.setComida(comida);
                     return nueva;
                 });
-        AlimentoComida guardada = lineaRepository.save(linea);
-        alimentoComidaService.recalcularTotales(comida.getId());
-        return new AnadirAlimentoRespuestaDTO(comidaMapper.toDTO(comida), lineaMapper.toDTO(guardada), anterior);
+        return new Puesta(lineaRepository.save(linea), anterior);
     }
 
-    private static TipoComida tipo(String texto) {
+    /**
+     * El tipo de comida pedido, o 400.
+     *
+     * @throws InvalidDataException (400) si no es uno de TipoComida.
+     */
+    public static TipoComida tipo(String texto) {
+        if (texto == null) {
+            throw new InvalidDataException("error.tipoComida.vacio");
+        }
         try {
             return TipoComida.valueOf(texto.trim().toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException e) {
@@ -160,10 +188,13 @@ public class AnadirAlimentoService {
         return raciones.get(indice).getId();
     }
 
-    private Comida comidaDelDia(TipoComida tipo, AnadirAlimentoDTO pedido) {
+    /**
+     * La comida de ese día y ese tipo del usuario del token (DEC-013); si no hay, se crea.
+     */
+    public Comida comidaDelDia(TipoComida tipo, LocalDate fecha) {
         Integer usuarioId = securityUtils.getCurrentUserId();
-        LocalDateTime inicio = pedido.getFecha().atStartOfDay();
-        LocalDateTime fin = pedido.getFecha().atTime(LocalTime.MAX);
+        LocalDateTime inicio = fecha.atStartOfDay();
+        LocalDateTime fin = fecha.atTime(LocalTime.MAX);
         return comidaRepository.findFirstByUsuarioIdAndTipoComidaAndFechaBetweenOrderByIdAsc(usuarioId, tipo, inicio, fin)
                 .orElseGet(() -> {
                     Comida comida = new Comida();

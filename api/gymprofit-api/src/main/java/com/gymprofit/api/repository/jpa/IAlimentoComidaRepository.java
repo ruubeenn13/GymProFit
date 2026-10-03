@@ -3,6 +3,8 @@ package com.gymprofit.api.repository.jpa;
 import com.gymprofit.api.entity.AlimentoComida;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
@@ -21,6 +23,12 @@ public interface IAlimentoComidaRepository extends JpaRepository<AlimentoComida,
 
     // Devuelve todos los alimentos asociados a una comida.
     List<AlimentoComida> findByComidaId(Integer comidaId);
+
+    // Las líneas de varias comidas con su alimento y su ración, en una consulta (lote
+    // 1.6.4): las comidas recientes y copiar no hacen un viaje por comida ni por línea.
+    @Query("SELECT ac FROM AlimentoComida ac JOIN FETCH ac.alimento LEFT JOIN FETCH ac.racion "
+            + "WHERE ac.comida.id IN :comidas ORDER BY ac.id")
+    List<AlimentoComida> conAlimento(@Param("comidas") java.util.Collection<Integer> comidas);
 
     // Devuelve todas las comidas en las que aparece un alimento.
     List<AlimentoComida> findByAlimentoId(Integer alimentoId);

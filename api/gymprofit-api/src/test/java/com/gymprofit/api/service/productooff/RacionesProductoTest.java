@@ -9,7 +9,9 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 // ============================================================
-// RacionesProductoTest — el envase primero, después la ración declarada (lote 1.6.1)
+// RacionesProductoTest — qué ración propone un producto (lotes 1.6.1 y 1.6.4)
+// La primera es la que proponen la ficha, la hoja del escáner y el «+». Desde la 1.6.4
+// (GP-182), una ración declarada más pequeña que el envase va delante de él.
 // ============================================================
 class RacionesProductoTest {
 
@@ -18,13 +20,30 @@ class RacionesProductoTest {
     }
 
     @Test
-    @DisplayName("un yogur de 200 g con ración de 125: «1 envase» y después «1 ración»")
-    void envase_y_racion() {
-        List<RacionesProducto.Racion> r = RacionesProducto.de("200 g", g("125"), "125 g");
-        assertThat(r).extracting(RacionesProducto.Racion::nombre).containsExactly("1 envase", "1 ración");
-        assertThat(r.get(0).gramos()).isEqualByComparingTo("200");
-        assertThat(r.get(0).nombreEn()).isEqualTo("1 pack");
-        assertThat(r.get(1).nombreEn()).isEqualTo("1 serving");
+    @DisplayName("GP-182: unas galletas de 400 g con ración de 30 proponen la ración, y el envase después")
+    void racion_antes_que_envase() {
+        List<RacionesProducto.Racion> r = RacionesProducto.de("400 g", g("30"), "30 g");
+        assertThat(r).extracting(RacionesProducto.Racion::nombre).containsExactly("1 ración", "1 envase");
+        assertThat(r.get(0).gramos()).isEqualByComparingTo("30");
+        assertThat(r.get(0).nombreEn()).isEqualTo("1 serving");
+        assertThat(r.get(1).gramos()).isEqualByComparingTo("400");
+        assertThat(r.get(1).nombreEn()).isEqualTo("1 pack");
+    }
+
+    @Test
+    @DisplayName("GP-182: un yogur de 125 g, sin ración más pequeña, propone el envase")
+    void yogur_envase() {
+        assertThat(RacionesProducto.de("125 g", null, null))
+                .extracting(RacionesProducto.Racion::nombre).containsExactly("1 envase");
+        assertThat(RacionesProducto.de("125 g", g("125"), "125 g"))
+                .extracting(RacionesProducto.Racion::nombre).containsExactly("1 envase");
+    }
+
+    @Test
+    @DisplayName("una ración declarada mayor que el envase no se adelanta: como hasta ahora")
+    void racion_mayor() {
+        assertThat(RacionesProducto.de("200 g", g("250"), "250 g"))
+                .extracting(RacionesProducto.Racion::nombre).containsExactly("1 envase", "1 ración");
     }
 
     @Test
@@ -34,6 +53,13 @@ class RacionesProductoTest {
         assertThat(r).extracting(RacionesProducto.Racion::nombre).containsExactly("1 unidad");
         assertThat(r.get(0).gramos()).isEqualByComparingTo("125");
         assertThat(r.get(0).nombreEn()).isEqualTo("1 unit");
+    }
+
+    @Test
+    @DisplayName("GP-182: en un multipack, la unidad sigue primero aunque la ración sea más pequeña")
+    void multipack_con_racion() {
+        assertThat(RacionesProducto.de("6 x 40 g", g("20"), "20 g"))
+                .extracting(RacionesProducto.Racion::nombre).containsExactly("1 unidad", "1 ración");
     }
 
     @Test
