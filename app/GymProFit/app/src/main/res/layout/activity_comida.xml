@@ -321,6 +321,29 @@
                         android:textColor="?attr/colorOnPrimaryContainer"
                         android:textSize="@dimen/text_body"
                         android:visibility="gone" />
+
+                    <!-- «Hoy no» (lote 1.6.8, decisión 10): la comida que ese día no se hace
+                         cuenta para el día completo. Marcada, lo dice y se puede quitar. -->
+                    <TextView
+                        android:id="@+id/tvHoyNoMarcada"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
+                        android:text="@string/hoy_no_marcada"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="@dimen/text_body"
+                        android:visibility="gone" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnHoyNo"
+                        style="@style/Widget.GymProFit.BotonPildora.Contorno"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:minHeight="48dp"
+                        android:text="@string/hoy_no_boton"
+                        android:visibility="gone" />
                 </LinearLayout>
 
                 <!-- Lote 1.6.4 (tablero 2b): con la comida vacía, «¿Copiar la de ayer?» y

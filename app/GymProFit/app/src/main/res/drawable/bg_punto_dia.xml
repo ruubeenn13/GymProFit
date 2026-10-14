@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_punto_dia — un punto redondo (lote 1.6.8): el de cada día en la tira (verde completo,
+     ámbar a medias) y el de cada macro. Blanco para teñirlo desde el código. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="#FFFFFF" />
+</shape>

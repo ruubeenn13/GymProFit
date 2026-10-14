@@ -28,15 +28,17 @@ import es.pmdm.gymprofit.model.alimento.Alimento;
 //     proteína (menos de medio gramo), el que mejor encaja en las kcal: el más cercano a
 //     lo que queda. Con todo igual, el orden de uso: platos, favoritos y recientes.
 //   · El motivo: «Lo sueles tomar en…», «Tu … de ayer», «Mucha proteína para lo que te
-//     falta» (desde el 25 % de la que falta) o, si nada de eso, «Cabe en lo que te queda».
+//     falta» o, si nada de eso, «Cabe en lo que te queda». «Mucha proteína» se la lleva
+//     uno solo: el que más proteína cubre de los que salen, si cubre más que todos los
+//     demás (1.6.8; antes era desde el 25 % de la que falta, y con mucha pendiente lo
+//     decían todos o ninguno).
+//   · Lo que ya está apuntado en esa comida ese día no se propone (1.6.8).
 // Sin kcal que queden o sin candidatos, no hay sección (null): no ocupa sitio.
 // ============================================================
 public final class LoQueTeEncaja {
 
     /** Cuántos como mucho. */
     public static final int MAXIMO = 3;
-    /** Desde qué parte de la proteína que falta es «mucha proteína», en %. */
-    public static final int MUCHA_PROTEINA_PCT = 25;
     /** Por debajo de esto ya no falta proteína (como en la ficha). */
     private static final double SIN_PROTEINA = 0.5;
 
@@ -115,16 +117,19 @@ public final class LoQueTeEncaja {
      * @param recientes      lo que has usado últimamente, en su orden.
      * @param habituales     ids de lo habitual en la comida a la que se añade.
      * @param deAyer         ids de lo que llevó ayer esa misma comida.
+     * @param yaApuntados    ids de lo que ya lleva esa comida ese día: no se proponen.
      * @return null si no hay sección: sin kcal que queden o sin nada que quepa.
      */
     @Nullable
     public static Resultado de(int kcalQuedan, double proteinaQuedan, @Nullable List<Alimento> platos,
                                @Nullable List<Alimento> favoritos, @Nullable List<Alimento> recientes,
-                               @Nullable Set<Integer> habituales, @Nullable Set<Integer> deAyer) {
+                               @Nullable Set<Integer> habituales, @Nullable Set<Integer> deAyer,
+                               @Nullable Set<Integer> yaApuntados) {
         // Sin kcal que queden no hay nada que quepa (lo que no suma kcal no sale): null.
         double falta = proteinaQuedan >= SIN_PROTEINA ? proteinaQuedan : 0;
         Set<Integer> suele = habituales != null ? habituales : Collections.emptySet();
         Set<Integer> ayer = deAyer != null ? deAyer : Collections.emptySet();
+        Set<Integer> yaEsta = yaApuntados != null ? yaApuntados : Collections.emptySet();
 
         List<Candidato> candidatos = new ArrayList<>();
         Set<Integer> vistos = new HashSet<>();
@@ -135,7 +140,7 @@ public final class LoQueTeEncaja {
         for (List<Alimento> fuente : fuentes) {
             if (fuente == null) continue;
             for (Alimento a : fuente) {
-                if (a == null || a.esExterno() || !vistos.add(a.getId())) continue;
+                if (a == null || a.esExterno() || yaEsta.contains(a.getId()) || !vistos.add(a.getId())) continue;
                 CantidadFicha c = AnadirRapido.cantidad(a);
                 long kcal = AnadirRapido.kcal(a, c);
                 if (kcal <= 0 || kcal > kcalQuedan) continue;
@@ -147,11 +152,13 @@ public final class LoQueTeEncaja {
         if (candidatos.isEmpty()) return null;
 
         candidatos.sort(orden(falta, kcalQuedan));
+        List<Candidato> salen = candidatos.subList(0, Math.min(MAXIMO, candidatos.size()));
+        Candidato masProteico = falta > 0 ? masProteico(salen, falta) : null;
         List<Sugerencia> lista = new ArrayList<>();
-        for (Candidato c : candidatos.subList(0, Math.min(MAXIMO, candidatos.size()))) {
+        for (Candidato c : salen) {
             int cubre = falta > 0 ? (int) Math.round(c.proteina * 100.0 / falta) : -1;
             lista.add(new Sugerencia(c.alimento, c.cantidad, c.kcal, c.proteina,
-                    motivo(c.alimento.getId(), suele, ayer, cubre), cubre));
+                    motivo(c.alimento.getId(), suele, ayer, c == masProteico), cubre));
         }
         return new Resultado(kcalQuedan, (int) Math.round(falta), lista);
     }
@@ -162,16 +169,40 @@ public final class LoQueTeEncaja {
         Comparator<Candidato> bloque = Comparator.comparing(c -> !c.sueles);
         Comparator<Candidato> segun = falta > 0
                 // A décimas de gramo, para que dos cifras iguales en pantalla empaten.
-                ? Comparator.<Candidato>comparingLong(c -> -Math.round(Math.min(c.proteina, falta) * 10))
+                ? Comparator.<Candidato>comparingLong(c -> -cubre(c, falta))
                 .thenComparingLong(c -> c.kcal)
                 : Comparator.comparingLong(c -> kcalQuedan - c.kcal);
         return bloque.thenComparing(segun).thenComparingInt(c -> c.uso);
     }
 
-    private static Motivo motivo(int id, Set<Integer> suele, Set<Integer> ayer, int cubre) {
+    // El que cubre más proteína que cada uno de los demás que salen, a décimas de gramo y
+    // sin contar lo que pasa de la que falta; null si sale uno solo o hay empate arriba.
+    @Nullable
+    private static Candidato masProteico(List<Candidato> salen, double falta) {
+        Candidato mejor = null;
+        long mejorCubre = 0;
+        boolean empate = false;
+        for (Candidato c : salen) {
+            long cubre = cubre(c, falta);
+            if (cubre > mejorCubre) {
+                mejor = c;
+                mejorCubre = cubre;
+                empate = false;
+            } else if (cubre == mejorCubre && mejor != null) {
+                empate = true;
+            }
+        }
+        return salen.size() > 1 && !empate ? mejor : null;
+    }
+
+    private static long cubre(Candidato c, double falta) {
+        return Math.round(Math.min(c.proteina, falta) * 10);
+    }
+
+    private static Motivo motivo(int id, Set<Integer> suele, Set<Integer> ayer, boolean masProteico) {
         if (suele.contains(id)) return Motivo.SUELES;
         if (ayer.contains(id)) return Motivo.AYER;
-        if (cubre >= MUCHA_PROTEINA_PCT) return Motivo.PROTEINA;
+        if (masProteico) return Motivo.PROTEINA;
         return Motivo.CABE;
     }
 }

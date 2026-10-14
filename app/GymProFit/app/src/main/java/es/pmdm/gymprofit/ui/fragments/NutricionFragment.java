@@ -3,21 +3,28 @@ package es.pmdm.gymprofit.ui.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.drawable.ClipDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.AttrRes;
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointBackward;
@@ -39,47 +46,85 @@ import es.pmdm.gymprofit.model.comida.AlimentoComida;
 import es.pmdm.gymprofit.model.comida.Comida;
 import es.pmdm.gymprofit.model.comida.ComidaReciente;
 import es.pmdm.gymprofit.model.comida.CopiaRespuesta;
+import es.pmdm.gymprofit.model.comida.DiaDiario;
 import es.pmdm.gymprofit.network.AlimentoComidaApi;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.ComidaApi;
+import es.pmdm.gymprofit.network.DiarioApi;
 import es.pmdm.gymprofit.ui.activities.AnadirAlimentoActivity;
 import es.pmdm.gymprofit.ui.activities.ComidaActivity;
 import es.pmdm.gymprofit.ui.activities.EstadisticasNutricionActivity;
+import es.pmdm.gymprofit.ui.nutricion.AnilloDia;
+import es.pmdm.gymprofit.ui.nutricion.ElegirComida;
 import es.pmdm.gymprofit.ui.nutricion.TarjetaCopiarAyer;
+import es.pmdm.gymprofit.utils.Agua;
 import es.pmdm.gymprofit.utils.ComidaQueToca;
 import es.pmdm.gymprofit.utils.ComidasRecientes;
-import es.pmdm.gymprofit.utils.Movimiento;
-import es.pmdm.gymprofit.utils.UIHelper;
+import es.pmdm.gymprofit.utils.DiaCompleto;
 import es.pmdm.gymprofit.utils.DiaNutricion;
 import es.pmdm.gymprofit.utils.FechaUtils;
+import es.pmdm.gymprofit.utils.Movimiento;
+import es.pmdm.gymprofit.utils.ResultadoNutricional;
+import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
-// NutricionFragment — pestaña Nutrición (GP-105), según 03-nutricion.png.
+// NutricionFragment — pestaña Nutrición (GP-105), el diario.
 //
 // La tira de la semana (de lunes a domingo, con los días futuros desactivados)
 // sustituye a las flechas ‹ ›; el calendario abre un selector de fecha hasta hoy; el
-// botón de gráficas abre «Historial y estadísticas». La tarjeta de kcal y macros sale
-// de DiaNutricion, igual que «Nutrición de hoy» en Inicio, con las reglas de color de
-// siempre. Debajo, las cinco comidas: tocar abre la comida; su «+» abre directamente
-// añadir alimento, y el de la comida que toca por la hora va en naranja si está sin
-// registrar.
+// botón de gráficas abre «Historial y estadísticas». Debajo, las cinco comidas: tocar
+// abre la comida; su «+» abre directamente añadir alimento, y el de la comida que toca
+// por la hora va en naranja si está sin registrar.
 // Desde la 1.6.4 (tablero 1), la comida que toca ahora, si el día es hoy, está vacía y la
 // misma comida de ayer tuvo algo, lleva debajo «¿Copiar la de ayer?»: la ✓ la copia y el
-// día se recarga; la ✗ la pliega y no vuelve ese día (se guarda en el móvil). Las dos
-// pliegan la tarjeta (momento 18); las cifras que cuentan llegan con el diario nuevo.
+// día se recarga; la ✗ la pliega y no vuelve ese día (se guarda en el móvil).
+//
+// Desde la 1.6.8, el diario nuevo (tableros 1 y 3, GP-162 con GP-166):
+//   · El anillo de las kcal del día, lo que queda y los macros, de DiaNutricion. Sin rojo
+//     en lo que queda: pasarse se dice, no se riñe.
+//   · El agua, a vasos hacia el objetivo del plan (Agua): «Vaso» suma uno, tocar el último
+//     lleno lo quita. Se guarda el total del día en la API, uno detrás de otro.
+//   · La tira, con el punto de cada día (DiaCompleto) y la marca del entreno; «Día de
+//     entreno · …» si ese día hubo una sesión terminada. Todo sale de GET /diario, una
+//     petición por semana.
+//   · El día completo: las cinco comidas apuntadas o marcadas «Hoy no» (en la pantalla de
+//     la comida). El anillo se cierra en verde, «Día completo» y «Tu semana». Al completarse
+//     mientras se mira, el momento 21, una vez al día.
 // ============================================================
 public class NutricionFragment extends BaseFragment {
 
+    /** Vasos por fila, como el tablero 1. */
+    private static final int VASOS_POR_FILA = 9;
+
     private final ComidaApi comidaApi = ApiClient.service(ComidaApi.class);
     private final AlimentoComidaApi alimentoComidaApi = ApiClient.service(AlimentoComidaApi.class);
+    private final DiarioApi diarioApi = ApiClient.service(DiarioApi.class);
 
     // Día que se está viendo (por defecto hoy; nunca uno que no ha llegado).
     private final Calendar fechaSel = Calendar.getInstance();
     private final Map<String, Comida> comidasDia = new HashMap<>();
     // Qué hay dentro de cada comida, para su resumen («Tostadas, café · 420 kcal»).
     private final Map<Integer, List<AlimentoComida>> alimentosPorComida = new HashMap<>();
+
+    // La semana de la tira, de GET /diario (fecha → día); vacía hasta que llega.
+    private final Map<String, DiaDiario> semana = new HashMap<>();
+    private int turnoDiario;
+    // Si cada día estaba completo la última vez que se pintó: para celebrar solo el paso.
+    private final Map<String, Boolean> completoVisto = new HashMap<>();
+    // El día cuyas cifras ya han contado al entrar (momento 7): las siguientes, pasan.
+    @Nullable private String fechaContada;
+
+    // El agua del día elegido: lo que se ve y lo último que confirmó la API. Se manda de
+    // una en una; lo que se toque mientras tanto sale después, con el total de ese momento.
+    private int aguaMostrada, aguaConfirmada;
+    private boolean enviandoAgua, aguaPendiente;
+    // La acción de TalkBack «Quitar un vaso» del resumen del agua, o NO_ID.
+    private int accionQuitarVaso = View.NO_ID;
+    // El día de las comidas que hay en comidasDia: hasta que llegan las del día elegido,
+    // la tarjeta del anillo no se repinta con las de otro.
+    @Nullable private String comidasDe;
 
     private ActivityResultLauncher<Intent> recargar;
 
@@ -97,12 +142,12 @@ public class NutricionFragment extends BaseFragment {
                 result -> {
                     if (result.getResultCode() != Activity.RESULT_OK) return;
                     cargarComidas();
+                    cargarDiario();
                     // Se añadió a otra comida que la de la tarjeta: se dice a cuál (decisión 15).
                     String a = result.getData() != null
                             ? result.getData().getStringExtra(AnadirAlimentoActivity.EXTRA_ANADIDO_A) : null;
                     if (a != null) {
-                        es.pmdm.gymprofit.utils.UIHelper.mostrarToastExito(requireActivity(),
-                                getString(es.pmdm.gymprofit.ui.nutricion.ElegirComida.anadidoA(a)));
+                        UIHelper.mostrarToastExito(requireActivity(), getString(ElegirComida.anadidoA(a)));
                     }
                 });
     }
@@ -117,15 +162,36 @@ public class NutricionFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        fechaContada = null;
         findViewById(R.id.btnHistorial).setOnClickListener(v ->
                 startActivity(new Intent(requireContext(), EstadisticasNutricionActivity.class)));
         findViewById(R.id.btnCalendario).setOnClickListener(v -> elegirFecha());
-        ((TextView) findViewById(R.id.macroProteinas).findViewById(R.id.tvMacroNombre)).setText(R.string.nutricion_proteinas);
-        ((TextView) findViewById(R.id.macroCarbos).findViewById(R.id.tvMacroNombre)).setText(R.string.nutricion_carbohidratos);
-        ((TextView) findViewById(R.id.macroGrasas).findViewById(R.id.tvMacroNombre)).setText(R.string.nutricion_grasas);
-        colorBarra(R.id.macroProteinas, R.color.gp_macro_proteinas);
-        colorBarra(R.id.macroCarbos, R.color.gp_macro_carbos);
-        colorBarra(R.id.macroGrasas, R.color.gp_macro_grasas);
+        prepararMacro(R.id.macroProteinas, R.string.nutricion_proteinas, R.color.gp_macro_proteinas, 10);
+        prepararMacro(R.id.macroCarbos, R.string.nutricion_carbohidratos, R.color.gp_macro_carbos, 8);
+        prepararMacro(R.id.macroGrasas, R.string.nutricion_grasas, R.color.gp_macro_grasas, 8);
+        findViewById(R.id.btnVaso).setOnClickListener(v -> anadirVaso(v));
+        findViewById(R.id.cardAgua).setVisibility(View.GONE);
+        // Con letra grande (1,3 o más) el centro del anillo no cabía en 136 al lado de lo que
+        // queda: se apilan, el anillo arriba y a 200, y lo que queda (o «Día completo») debajo.
+        if (getResources().getConfiguration().fontScale >= 1.3f) {
+            float d = getResources().getDisplayMetrics().density;
+            LinearLayout fila = findViewById(R.id.filaKcal);
+            fila.setOrientation(LinearLayout.VERTICAL);
+            fila.setGravity(Gravity.CENTER_HORIZONTAL);
+            View marco = findViewById(R.id.marcoAnilloDia);
+            ViewGroup.LayoutParams lp = marco.getLayoutParams();
+            lp.width = lp.height = Math.round(200 * d);
+            marco.setLayoutParams(lp);
+            for (int id : new int[]{R.id.grupoQuedan, R.id.grupoCompleto}) {
+                View g = findViewById(id);
+                LinearLayout.LayoutParams lg = (LinearLayout.LayoutParams) g.getLayoutParams();
+                lg.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                lg.weight = 0;
+                lg.setMarginStart(0);
+                lg.topMargin = Math.round(16 * d);
+                g.setLayoutParams(lg);
+            }
+        }
     }
 
     @Override
@@ -134,13 +200,15 @@ public class NutricionFragment extends BaseFragment {
         // Si la app se quedó abierta de un día para otro, «hoy» ya es otro.
         Calendar hoy = Calendar.getInstance();
         if (fechaSel.after(hoy)) fechaSel.setTime(hoy.getTime());
-        pintarSemana();
+        pintarSemana(false);
         cargarComidas();
+        cargarDiario();
     }
 
     // ── Tira de la semana ───────────────────────────────────────────────────
 
-    private void pintarSemana() {
+    // Con el día completándose mientras se mira, su punto salta (momento 21).
+    private void pintarSemana(boolean saltaPuntoElegido) {
         LinearLayout tira = findViewById(R.id.tiraSemana);
         tira.removeAllViews();
         String[] iniciales = getResources().getStringArray(R.array.dias_semana_iniciales);
@@ -148,20 +216,20 @@ public class NutricionFragment extends BaseFragment {
         SimpleDateFormat largo = new SimpleDateFormat(getString(R.string.home_fecha_patron), idioma);
 
         Calendar hoy = Calendar.getInstance();
-        Calendar dia = (Calendar) fechaSel.clone();
-        dia.add(Calendar.DAY_OF_MONTH, -((dia.get(Calendar.DAY_OF_WEEK) + 5) % 7));   // lunes
+        Calendar dia = lunesDe(fechaSel);
 
-        int primario = color(androidx.appcompat.R.attr.colorPrimary);
-        int sobrePrimario = color(com.google.android.material.R.attr.colorOnPrimary);
         int texto = color(com.google.android.material.R.attr.colorOnSurface);
         int secundario = color(com.google.android.material.R.attr.colorOnSurfaceVariant);
         int apagado = color(com.google.android.material.R.attr.colorOutline);
+        int sobreContenedor = ContextCompat.getColor(requireContext(), R.color.gp_on_primary_container);
 
         LayoutInflater inflater = LayoutInflater.from(requireContext());
         for (int i = 0; i < 7; i++) {
             final Calendar esteDia = (Calendar) dia.clone();
             boolean elegido = mismoDia(esteDia, fechaSel);
-            boolean futuro = esteDia.after(hoy) && !mismoDia(esteDia, hoy);
+            boolean esHoy = mismoDia(esteDia, hoy);
+            boolean futuro = esteDia.after(hoy) && !esHoy;
+            DiaDiario dd = semana.get(fechaStr(esteDia));
 
             View celda = inflater.inflate(R.layout.item_dia_semana, tira, false);
             TextView tvInicial = celda.findViewById(R.id.tvInicial);
@@ -171,8 +239,9 @@ public class NutricionFragment extends BaseFragment {
 
             if (elegido) {
                 celda.setBackgroundResource(R.drawable.bg_dia_elegido);
-                tvInicial.setTextColor(sobrePrimario);
-                tvNumero.setTextColor(sobrePrimario);
+                tvInicial.setTextColor(sobreContenedor);
+                tvInicial.setTypeface(tvInicial.getTypeface(), android.graphics.Typeface.BOLD);
+                tvNumero.setTextColor(texto);
                 tvNumero.setTypeface(tvNumero.getTypeface(), android.graphics.Typeface.BOLD);
             } else {
                 celda.setBackgroundResource(fondoPulsable());
@@ -180,18 +249,63 @@ public class NutricionFragment extends BaseFragment {
                 tvNumero.setTextColor(futuro ? apagado : texto);
             }
 
+            DiaCompleto.Punto punto = DiaCompleto.punto(dd, esHoy, futuro);
+            View vPunto = celda.findViewById(R.id.vPuntoDia);
+            pintarPunto(vPunto, punto);
+            boolean entreno = dd != null && dd.getEntrenos() > 0 && !futuro;
+            celda.findViewById(R.id.vMarcaEntreno).setBackgroundResource(entreno ? R.drawable.bg_marca_entreno : 0);
+            if (elegido && saltaPuntoElegido && punto == DiaCompleto.Punto.COMPLETO && !Movimiento.quieto(requireContext())) {
+                Movimiento.saltar(vPunto, Movimiento.PUNTO);
+            }
+
             String nombre = largo.format(esteDia.getTime());
-            celda.setContentDescription(futuro ? getString(R.string.dia_futuro_a11y, nombre) : nombre);
+            celda.setContentDescription(futuro ? getString(R.string.dia_futuro_a11y, nombre)
+                    : descripcionDia(nombre, punto, entreno));
             celda.setSelected(elegido);
             celda.setEnabled(!futuro);
             celda.setOnClickListener(futuro ? null : v -> {
                 fechaSel.setTime(esteDia.getTime());
-                pintarSemana();
+                pintarSemana(false);
                 cargarComidas();
+                if (semana.containsKey(fechaSelStr())) pintarDiario();
+                else cargarDiario();
             });
             tira.addView(celda);
             dia.add(Calendar.DAY_OF_MONTH, 1);
         }
+    }
+
+    private void pintarPunto(View v, DiaCompleto.Punto punto) {
+        switch (punto) {
+            case COMPLETO:
+                v.setBackgroundResource(R.drawable.bg_punto_dia);
+                v.setBackgroundTintList(ColorStateList.valueOf(
+                        ContextCompat.getColor(requireContext(), R.color.gp_success)));
+                break;
+            case A_MEDIAS:
+                v.setBackgroundResource(R.drawable.bg_punto_dia);
+                v.setBackgroundTintList(ColorStateList.valueOf(
+                        ContextCompat.getColor(requireContext(), R.color.gp_macro_carbos)));
+                break;
+            case EN_CURSO:
+                v.setBackgroundTintList(null);
+                v.setBackgroundResource(R.drawable.bg_punto_dia_en_curso);
+                break;
+            default:
+                v.setBackgroundTintList(null);
+                v.setBackground(null);
+        }
+    }
+
+    // «Lunes 21 de septiembre: día completo, día de entreno».
+    private String descripcionDia(String nombre, DiaCompleto.Punto punto, boolean entreno) {
+        List<String> partes = new ArrayList<>();
+        if (punto == DiaCompleto.Punto.COMPLETO) partes.add(getString(R.string.dia_a11y_completo));
+        else if (punto == DiaCompleto.Punto.A_MEDIAS) partes.add(getString(R.string.dia_a11y_a_medias));
+        else if (punto == DiaCompleto.Punto.EN_CURSO) partes.add(getString(R.string.dia_a11y_en_curso));
+        if (entreno) partes.add(getString(R.string.dia_a11y_entreno));
+        if (partes.isEmpty()) return nombre;
+        return getString(R.string.dia_a11y, nombre, android.text.TextUtils.join(", ", partes));
     }
 
     // Selector de fecha hasta hoy; la tira salta a la semana del día elegido.
@@ -208,8 +322,9 @@ public class NutricionFragment extends BaseFragment {
             Calendar u = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
             u.setTimeInMillis(utc);
             fechaSel.set(u.get(Calendar.YEAR), u.get(Calendar.MONTH), u.get(Calendar.DAY_OF_MONTH));
-            pintarSemana();
+            pintarSemana(false);
             cargarComidas();
+            cargarDiario();
         });
         picker.show(getParentFragmentManager(), "fecha_nutricion");
     }
@@ -219,6 +334,12 @@ public class NutricionFragment extends BaseFragment {
         u.clear();
         u.set(local.get(Calendar.YEAR), local.get(Calendar.MONTH), local.get(Calendar.DAY_OF_MONTH));
         return u.getTimeInMillis();
+    }
+
+    private static Calendar lunesDe(Calendar c) {
+        Calendar lunes = (Calendar) c.clone();
+        lunes.add(Calendar.DAY_OF_MONTH, -((lunes.get(Calendar.DAY_OF_WEEK) + 5) % 7));
+        return lunes;
     }
 
     private static boolean mismoDia(Calendar a, Calendar b) {
@@ -231,7 +352,11 @@ public class NutricionFragment extends BaseFragment {
     }
 
     private String fechaSelStr() {
-        return new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(fechaSel.getTime());
+        return fechaStr(fechaSel);
+    }
+
+    private static String fechaStr(Calendar c) {
+        return new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(c.getTime());
     }
 
     // ── Carga ───────────────────────────────────────────────────────────────
@@ -242,6 +367,7 @@ public class NutricionFragment extends BaseFragment {
         if (usuarioId == -1) {
             comidasDia.clear();
             alimentosPorComida.clear();
+            comidasDe = fecha;
             pintar();
             return;
         }
@@ -252,6 +378,7 @@ public class NutricionFragment extends BaseFragment {
                 comidasDia.clear();
                 alimentosPorComida.clear();
                 if (lista != null) for (Comida c : lista) comidasDia.put(c.getTipoComida(), c);
+                comidasDe = fecha;
                 pintar();
                 cargarAlimentos(fecha);
                 buscarCopiaAyer(fecha);
@@ -264,6 +391,56 @@ public class NutricionFragment extends BaseFragment {
                 UiFeedback.toastError(requireActivity(), code, message);
             }
         });
+    }
+
+    // La semana de la tira: puntos, entrenos, agua y «Hoy no» de cada día. Si falla se
+    // dice, y el diario se queda sin lo que sale de aquí (puntos, agua, día completo):
+    // lo de las comidas sigue siendo cierto.
+    private void cargarDiario() {
+        if (prefsManager.getUsuarioId() == -1) return;
+        int miTurno = ++turnoDiario;
+        Calendar lunes = lunesDe(fechaSel);
+        Calendar domingo = (Calendar) lunes.clone();
+        domingo.add(Calendar.DAY_OF_MONTH, 6);
+        diarioApi.dias(fechaStr(lunes), fechaStr(domingo)).enqueue(new ApiCallback<List<DiaDiario>>() {
+            @Override
+            public void onOk(List<DiaDiario> dias) {
+                if (!isAdded() || miTurno != turnoDiario) return;
+                semana.clear();
+                if (dias != null) for (DiaDiario d : dias) if (d.getFecha() != null) semana.put(d.getFecha(), d);
+                pintarDiario();
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                if (!isAdded() || miTurno != turnoDiario) return;
+                UIHelper.mostrarToastError(requireActivity(), getString(R.string.diario_fallo,
+                        UiFeedback.mensaje(requireContext(), code, message)));
+            }
+        });
+    }
+
+    // Lo que depende del día del diario: celebra si se acaba de completar.
+    private void pintarDiario() {
+        String fecha = fechaSelStr();
+        DiaDiario dd = semana.get(fecha);
+        boolean completo = DiaCompleto.completo(dd);
+        boolean celebrar = false;
+        if (dd != null) {
+            Boolean antes = completoVisto.put(fecha, completo);
+            celebrar = DiaCompleto.celebrar(antes, completo, fecha, prefsManager.getDiaCompletoCelebrado());
+            if (celebrar) prefsManager.setDiaCompletoCelebrado(fecha);
+            if (!enviandoAgua) {
+                aguaMostrada = dd.getAguaMl();
+                aguaConfirmada = dd.getAguaMl();
+            }
+        }
+        pintarSemana(celebrar);
+        pintarKcal(celebrar);
+        pintarEntreno(dd);
+        pintarAgua(-1, -1);
+        pintarSemanaCompleta(dd, celebrar);
+        pintarComidas();
     }
 
     // Lo que hay dentro de cada comida, para su resumen. Si alguna falla, esa comida
@@ -336,6 +513,7 @@ public class NutricionFragment extends BaseFragment {
                 if (!isAdded()) return;
                 copiaAyer = null;
                 cargarComidas();
+                cargarDiario();
             }
 
             @Override
@@ -360,70 +538,432 @@ public class NutricionFragment extends BaseFragment {
         return c != null && c.getTotalCalorias() > 0;
     }
 
+    // Apuntada: con kcal, o con algo dentro según el diario (un café solo no suma kcal).
+    private boolean apuntada(String tipo) {
+        if (registrada(comidasDia.get(tipo))) return true;
+        DiaDiario dd = semana.get(fechaSelStr());
+        return dd != null && dd.getComidasApuntadas().contains(tipo);
+    }
+
+    private boolean hoyNo(String tipo) {
+        DiaDiario dd = semana.get(fechaSelStr());
+        return dd != null && dd.getHoyNo().contains(tipo) && !apuntada(tipo);
+    }
+
     // ── Pintado ─────────────────────────────────────────────────────────────
 
     private void pintar() {
-        pintarKcal();
+        pintarKcal(false);
         pintarComidas();
     }
 
-    private void pintarKcal() {
+    // El anillo, lo que queda y los macros (tablero 1); con el día completo, el tablero 3.
+    private void pintarKcal(boolean celebrar) {
         DiaNutricion d = DiaNutricion.de(new ArrayList<>(comidasDia.values()), DiaNutricion.objetivo(prefsManager));
         NumberFormat nf = NumberFormat.getIntegerInstance(FechaUtils.localeDeLaApp(requireContext()));
+        String fecha = fechaSelStr();
+        if (!fecha.equals(comidasDe)) return;
+        boolean completo = DiaCompleto.completo(semana.get(fecha));
 
-        ((TextView) findViewById(R.id.tvKcal)).setText(nf.format(d.kcal));
+        AnilloDia anillo = findViewById(R.id.anilloDia);
+        AnilloDia.Modo modo;
+        if (!fecha.equals(fechaContada)) {
+            modo = AnilloDia.Modo.CONTAR;
+            fechaContada = fecha;
+        } else {
+            modo = celebrar ? AnilloDia.Modo.CERRAR : AnilloDia.Modo.PASAR;
+        }
+        float fraccion = d.sinObjetivo ? 0f : d.objetivoKcal > 0 ? (float) d.kcal / d.objetivoKcal : 0f;
+        anillo.poner(fraccion, completo, modo);
+
+        TextView tvKcal = findViewById(R.id.tvKcal);
+        TextView tvObjetivo = findViewById(R.id.tvKcalObjetivo);
         TextView rotulo = findViewById(R.id.tvQuedanRotulo);
         TextView quedan = findViewById(R.id.tvQuedan);
+        TextView unidad = findViewById(R.id.tvQuedanUnidad);
+        findViewById(R.id.grupoQuedan).setVisibility(completo ? View.GONE : View.VISIBLE);
+        findViewById(R.id.grupoCompleto).setVisibility(completo ? View.VISIBLE : View.GONE);
+
+        String a11y;
         if (d.sinObjetivo) {
             // Sin peso ni altura (GP-103): lo comido, sin objetivo que restar.
-            ((TextView) findViewById(R.id.tvKcalObjetivo)).setText(R.string.nutricion_sin_objetivo);
+            tvObjetivo.setText(R.string.nutricion_kcal_sola);
             rotulo.setText(R.string.nutricion_sin_objetivo_rotulo);
-            quedan.setText(R.string.nutricion_sin_objetivo_accion);
-            quedan.setTextColor(color(com.google.android.material.R.attr.colorOnSurface));
-            ((LinearProgressIndicator) findViewById(R.id.barraKcal)).setProgressCompat(0, false);
-            findViewById(R.id.filaKcal).setContentDescription(
-                    getString(R.string.nutricion_sin_objetivo_a11y, nf.format(d.kcal)));
-            macroSinObjetivo(R.id.macroProteinas, d.proteinas);
-            macroSinObjetivo(R.id.macroCarbos, d.carbohidratos);
-            macroSinObjetivo(R.id.macroGrasas, d.grasas);
+            quedan.setVisibility(View.GONE);
+            unidad.setText(R.string.nutricion_sin_objetivo_accion);
+            contarKcal(tvKcal, null, d.kcal, 0, modo, nf);
+            a11y = getString(R.string.nutricion_sin_objetivo_a11y, nf.format(d.kcal));
+        } else {
+            tvObjetivo.setText(getString(R.string.nutricion_kcal_de, nf.format(d.objetivoKcal)));
+            int restantes = d.kcalRestantes();
+            rotulo.setText(restantes >= 0 ? R.string.nutricion_te_quedan : R.string.nutricion_te_pasas);
+            quedan.setVisibility(View.VISIBLE);
+            unidad.setText(restantes >= 0 ? R.string.nutricion_kcal_para_hoy : R.string.nutricion_kcal_hoy);
+            contarKcal(tvKcal, quedan, d.kcal, d.objetivoKcal, modo, nf);
+            a11y = getString(R.string.nutricion_kcal_a11y, nf.format(d.kcal), nf.format(d.objetivoKcal),
+                    rotulo.getText(), getString(R.string.nutricion_kcal_valor, nf.format(Math.abs(restantes))));
+        }
+        findViewById(R.id.filaKcal).setContentDescription(completo
+                ? getString(R.string.dia_completo_a11y, a11y) : a11y);
+
+        boolean proteinaHecha = !d.sinObjetivo && d.estadoProteinas() == DiaNutricion.Estado.LOGRADO;
+        macroProteina(d, completo, proteinaHecha, celebrar);
+        macro(R.id.macroCarbos, d.carbohidratos, d.objetivoCarbohidratos, d.sinObjetivo,
+                completo ? DiaNutricion.Estado.NORMAL : d.estadoCarbohidratos());
+        macro(R.id.macroGrasas, d.grasas, d.objetivoGrasas, d.sinObjetivo,
+                completo ? DiaNutricion.Estado.NORMAL : d.estadoGrasas());
+
+        if (celebrar) {
+            // Momento 21: el ✓ salta, el anillo suelta su halo y vibra una vez.
+            View check = findViewById(R.id.checkCompleto);
+            if (!Movimiento.quieto(requireContext())) Movimiento.saltar(check, Movimiento.CHECK);
+            anillo.soltarHalo(Movimiento.CIERRA / 2);
+            Movimiento.vibrar(anillo, Movimiento.Vibracion.EXITO);
+        }
+    }
+
+    // Las cifras del centro y de lo que queda: cuentan al entrar (momento 7), si no, saltan.
+    private void contarKcal(TextView tvKcal, @Nullable TextView quedan, int kcal, int objetivo,
+                            AnilloDia.Modo modo, NumberFormat nf) {
+        if (modo != AnilloDia.Modo.CONTAR || Movimiento.quieto(requireContext())) {
+            tvKcal.setText(nf.format(kcal));
+            if (quedan != null) quedan.setText(nf.format(Math.abs(objetivo - kcal)));
             return;
         }
-        ((TextView) findViewById(R.id.tvKcalObjetivo)).setText(getString(R.string.nutricion_kcal_de, nf.format(d.objetivoKcal)));
-        int restantes = d.kcalRestantes();
-        rotulo.setText(restantes >= 0 ? R.string.nutricion_te_quedan : R.string.nutricion_te_pasas);
-        quedan.setText(getString(R.string.nutricion_kcal_valor, nf.format(Math.abs(restantes))));
-        quedan.setTextColor(restantes >= 0 ? color(com.google.android.material.R.attr.colorOnSurface)
-                : color(androidx.appcompat.R.attr.colorError));
-        ((LinearProgressIndicator) findViewById(R.id.barraKcal)).setProgressCompat(
-                DiaNutricion.porcentaje(d.kcal, d.objetivoKcal), false);
-        findViewById(R.id.filaKcal).setContentDescription(getString(R.string.nutricion_kcal_a11y,
-                nf.format(d.kcal), nf.format(d.objetivoKcal), rotulo.getText(), quedan.getText()));
-
-        macro(R.id.macroProteinas, d.proteinas, d.objetivoProteinas, d.estadoProteinas());
-        macro(R.id.macroCarbos, d.carbohidratos, d.objetivoCarbohidratos, d.estadoCarbohidratos());
-        macro(R.id.macroGrasas, d.grasas, d.objetivoGrasas, d.estadoGrasas());
+        Movimiento.contar(0, Movimiento.CIFRAS, f -> {
+            if (!isAdded()) return;
+            int ahora = Math.round(kcal * f);
+            tvKcal.setText(nf.format(ahora));
+            if (quedan != null) quedan.setText(nf.format(Math.abs(objetivo - ahora)));
+        });
     }
 
-    private void macroSinObjetivo(int id, double valor) {
+    private void prepararMacro(int id, int nombre, int colorRes, int grosorDp) {
         View fila = findViewById(id);
-        TextView tvValor = fila.findViewById(R.id.tvMacroValor);
-        tvValor.setText(getString(R.string.nutricion_macro_solo, (int) Math.round(valor)));
-        tvValor.setTextColor(color(com.google.android.material.R.attr.colorOnSurface));
-        ((LinearProgressIndicator) fila.findViewById(R.id.barraMacro)).setProgressCompat(0, false);
-        fila.setContentDescription(((TextView) fila.findViewById(R.id.tvMacroNombre)).getText()
-                + ", " + tvValor.getText());
+        ((TextView) fila.findViewById(R.id.tvMacroNombre)).setText(nombre);
+        int c = ContextCompat.getColor(requireContext(), colorRes);
+        fila.findViewById(R.id.vMacroPunto).setBackgroundTintList(ColorStateList.valueOf(c));
+        LinearProgressIndicator barra = fila.findViewById(R.id.barraMacro);
+        barra.setIndicatorColor(c);
+        int px = Math.round(grosorDp * getResources().getDisplayMetrics().density);
+        barra.setTrackThickness(px);
+        barra.setTrackCornerRadius(px / 2);
     }
 
-    private void macro(int id, double valor, int objetivo, DiaNutricion.Estado estado) {
+    // La proteína: «Te faltan 54 g» debajo; con el día completo y llegada, «Proteína
+    // conseguida» en dorado con su trofeo (tablero 3), y al celebrarlo su barra brilla.
+    private void macroProteina(DiaNutricion d, boolean completo, boolean hecha, boolean celebrar) {
+        View fila = findViewById(R.id.macroProteinas);
+        TextView nombre = fila.findViewById(R.id.tvMacroNombre);
+        TextView valor = fila.findViewById(R.id.tvMacroValor);
+        TextView falta = fila.findViewById(R.id.tvMacroFalta);
+        ImageView trofeo = fila.findViewById(R.id.ivMacroIcono);
+        View punto = fila.findViewById(R.id.vMacroPunto);
+        LinearProgressIndicator barra = fila.findViewById(R.id.barraMacro);
+        int azul = ContextCompat.getColor(requireContext(), R.color.gp_macro_proteinas);
+        int oro = ContextCompat.getColor(requireContext(), R.color.gp_gold);
+        int oroTexto = ContextCompat.getColor(requireContext(), R.color.gp_gold_text);
+        int gramos = (int) Math.round(d.proteinas);
+
+        boolean dorada = completo && hecha;
+        trofeo.setVisibility(dorada ? View.VISIBLE : View.GONE);
+        trofeo.setImageTintList(ColorStateList.valueOf(oro));
+        punto.setVisibility(dorada ? View.GONE : View.VISIBLE);
+        nombre.setText(dorada ? R.string.proteina_conseguida : R.string.nutricion_proteinas);
+        nombre.setTextColor(dorada ? oroTexto : color(com.google.android.material.R.attr.colorOnSurface));
+        nombre.setTypeface(null, android.graphics.Typeface.BOLD);
+        barra.setIndicatorColor(dorada ? oro : azul);
+
+        if (d.sinObjetivo) {
+            valor.setText(getString(R.string.nutricion_macro_solo, gramos));
+            valor.setTextColor(color(com.google.android.material.R.attr.colorOnSurface));
+            barra.setProgressCompat(0, false);
+            falta.setVisibility(View.GONE);
+            fila.setContentDescription(nombre.getText() + ", " + valor.getText());
+            return;
+        }
+        valor.setText(getString(R.string.nutricion_macro_valor, gramos, d.objetivoProteinas));
+        valor.setTextColor(hecha && !dorada ? ContextCompat.getColor(requireContext(), R.color.gp_success)
+                : color(com.google.android.material.R.attr.colorOnSurface));
+        barra.setProgressCompat(DiaNutricion.porcentaje(d.proteinas, d.objetivoProteinas), animar());
+        int faltan = Math.max(0, d.objetivoProteinas - gramos);
+        falta.setVisibility(faltan > 0 ? View.VISIBLE : View.GONE);
+        falta.setText(getString(R.string.nutricion_te_faltan, faltan));
+        String a11y = getString(R.string.nutricion_macro_a11y, nombre.getText(), gramos, d.objetivoProteinas);
+        fila.setContentDescription(faltan > 0 ? getString(R.string.nutricion_macro_falta_a11y, a11y, faltan) : a11y);
+        if (celebrar && dorada) {
+            Movimiento.brillar(barra, ContextCompat.getColor(requireContext(), R.color.gp_brillo_oro),
+                    Movimiento.CIERRA, Movimiento.BRILLO);
+        }
+    }
+
+    private void macro(int id, double valor, int objetivo, boolean sinObjetivo, DiaNutricion.Estado estado) {
         View fila = findViewById(id);
+        TextView nombre = fila.findViewById(R.id.tvMacroNombre);
         TextView tvValor = fila.findViewById(R.id.tvMacroValor);
-        tvValor.setText(getString(R.string.nutricion_macro_valor, (int) Math.round(valor), objetivo));
+        LinearProgressIndicator barra = fila.findViewById(R.id.barraMacro);
+        int gramos = (int) Math.round(valor);
+        if (sinObjetivo) {
+            tvValor.setText(getString(R.string.nutricion_macro_solo, gramos));
+            tvValor.setTextColor(color(com.google.android.material.R.attr.colorOnSurface));
+            barra.setProgressCompat(0, false);
+            fila.setContentDescription(nombre.getText() + ", " + tvValor.getText());
+            return;
+        }
+        tvValor.setText(getString(R.string.nutricion_macro_valor, gramos, objetivo));
         tvValor.setTextColor(colorEstado(estado));
-        ((LinearProgressIndicator) fila.findViewById(R.id.barraMacro))
-                .setProgressCompat(DiaNutricion.porcentaje(valor, objetivo), false);
-        fila.setContentDescription(((TextView) fila.findViewById(R.id.tvMacroNombre)).getText()
-                + ", " + tvValor.getText());
+        barra.setProgressCompat(DiaNutricion.porcentaje(valor, objetivo), animar());
+        fila.setContentDescription(getString(R.string.nutricion_macro_a11y, nombre.getText(), gramos, objetivo));
     }
+
+    private boolean animar() {
+        return !Movimiento.quieto(requireContext());
+    }
+
+    // «Día de entreno · Cuerpo completo B»: de las sesiones terminadas ese día. Sin tocar:
+    // lo de después del entreno (tablero 11) llega en la 1.6.9.
+    private void pintarEntreno(@Nullable DiaDiario dd) {
+        View pildora = findViewById(R.id.pildoraEntreno);
+        if (dd == null || dd.getEntrenos() <= 0) {
+            pildora.setVisibility(View.GONE);
+            return;
+        }
+        String rutina = dd.getRutinaEntreno();
+        String texto = rutina != null && !rutina.isEmpty()
+                ? getString(R.string.entreno_dia_rutina, rutina) : getString(R.string.entreno_dia);
+        ((TextView) findViewById(R.id.tvEntreno)).setText(texto);
+        pildora.setContentDescription(texto);
+        pildora.setVisibility(View.VISIBLE);
+    }
+
+    // «2 días completos esta semana» y lo que hubo ese día; solo con el día completo.
+    private void pintarSemanaCompleta(@Nullable DiaDiario dd, boolean celebrar) {
+        View card = findViewById(R.id.cardSemana);
+        if (!DiaCompleto.completo(dd)) {
+            card.setVisibility(View.GONE);
+            return;
+        }
+        List<DiaDiario> dias = new ArrayList<>(semana.values());
+        int n = DiaCompleto.completosEnSemana(dias);
+        DiaNutricion d = DiaNutricion.de(new ArrayList<>(comidasDia.values()), DiaNutricion.objetivo(prefsManager));
+        boolean proteina = !d.sinObjetivo && d.estadoProteinas() == DiaNutricion.Estado.LOGRADO;
+        String titulo = getResources().getQuantityString(R.plurals.dias_completos_semana, n, n);
+        String texto = getString(frase(DiaCompleto.frase(esHoy(), dd.getEntrenos() > 0, proteina)));
+        ((TextView) findViewById(R.id.tvSemanaTitulo)).setText(titulo);
+        ((TextView) findViewById(R.id.tvSemanaTexto)).setText(texto);
+        findViewById(R.id.filaSemana).setContentDescription(titulo + ". " + texto);
+        boolean entra = card.getVisibility() != View.VISIBLE;
+        card.setVisibility(View.VISIBLE);
+        if (celebrar) Movimiento.entrarUna(card, 1400, Movimiento.ENTRA, 16);
+        else if (entra) Movimiento.entrarUna(card, 0, Movimiento.ENTRA, 16);
+    }
+
+    private static int frase(DiaCompleto.Frase f) {
+        switch (f) {
+            case HOY_ENTRENO_Y_PROTEINA: return R.string.semana_frase_hoy_entreno_proteina;
+            case HOY_ENTRENO: return R.string.semana_frase_hoy_entreno;
+            case HOY_PROTEINA: return R.string.semana_frase_hoy_proteina;
+            case HOY: return R.string.semana_frase_hoy;
+            case ESE_DIA_ENTRENO_Y_PROTEINA: return R.string.semana_frase_dia_entreno_proteina;
+            case ESE_DIA_ENTRENO: return R.string.semana_frase_dia_entreno;
+            case ESE_DIA_PROTEINA: return R.string.semana_frase_dia_proteina;
+            default: return R.string.semana_frase_dia;
+        }
+    }
+
+    // ── El agua (GP-166) ────────────────────────────────────────────────────
+
+    /**
+     * Pinta el agua del día elegido.
+     *
+     * @param nuevo    índice del vaso que se acaba de llenar (momento 22), o -1.
+     * @param mlAntes  los ml antes de ese vaso, para que los litros cuenten; -1 sin cuenta.
+     */
+    private void pintarAgua(int nuevo, int mlAntes) {
+        View card = findViewById(R.id.cardAgua);
+        if (!semana.containsKey(fechaSelStr())) {
+            card.setVisibility(View.GONE);
+            return;
+        }
+        card.setVisibility(View.VISIBLE);
+        Locale idioma = FechaUtils.localeDeLaApp(requireContext());
+        int vaso = prefsManager.getVasoMl();
+        ResultadoNutricional objetivo = DiaNutricion.objetivo(prefsManager);
+        double litrosObjetivo = objetivo != null ? objetivo.agua : 0;
+        int llenos = Agua.vasosLlenos(aguaMostrada, vaso);
+        int total = Agua.vasosAPintar(llenos, Agua.vasosObjetivo(litrosObjetivo, vaso));
+
+        TextView tvLitros = findViewById(R.id.tvAguaLitros);
+        if (mlAntes >= 0 && !Movimiento.quieto(requireContext())) {
+            int desde = mlAntes;
+            int hasta = aguaMostrada;
+            Movimiento.contar(0, Movimiento.VASO, f -> {
+                if (isAdded()) tvLitros.setText(textoLitros(Math.round(desde + (hasta - desde) * f), litrosObjetivo, idioma));
+            });
+        } else {
+            tvLitros.setText(textoLitros(aguaMostrada, litrosObjetivo, idioma));
+        }
+
+        String vasos = getResources().getQuantityString(R.plurals.agua_vasos, llenos, llenos);
+        String litros = litrosObjetivo > 0
+                ? getString(R.string.agua_a11y, Agua.litros(aguaMostrada, idioma), Agua.litrosObjetivo(litrosObjetivo, idioma), vasos)
+                : getString(R.string.agua_a11y_sin_objetivo, Agua.litros(aguaMostrada, idioma), vasos);
+        View resumen = findViewById(R.id.resumenAgua);
+        resumen.setContentDescription(litros);
+        // Quitar un vaso con TalkBack: los vasos son dibujo, la acción va en el resumen.
+        if (accionQuitarVaso != View.NO_ID) ViewCompat.removeAccessibilityAction(resumen, accionQuitarVaso);
+        accionQuitarVaso = llenos > 0
+                ? ViewCompat.addAccessibilityAction(resumen, getString(R.string.agua_quitar_a11y), (v, args) -> {
+                    quitarVaso(v);
+                    return true;
+                })
+                : View.NO_ID;
+        findViewById(R.id.btnVaso).setContentDescription(getString(R.string.agua_vaso_a11y, vaso));
+
+        LinearLayout filas = findViewById(R.id.filasVasos);
+        filas.removeAllViews();
+        LinearLayout fila = null;
+        int azul = ContextCompat.getColor(requireContext(), R.color.gp_agua);
+        int vacio = ContextCompat.getColor(requireContext(), R.color.gp_stroke);
+        int alto = Math.round(48 * getResources().getDisplayMetrics().density);
+        for (int i = 0; i < total; i++) {
+            if (i % VASOS_POR_FILA == 0) {
+                fila = new LinearLayout(requireContext());
+                fila.setOrientation(LinearLayout.HORIZONTAL);
+                fila.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+                filas.addView(fila, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, alto));
+            }
+            fila.addView(vaso(i, llenos, i == nuevo, azul, vacio),
+                    new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
+        }
+        // La última fila se completa con huecos para que los vasos no se estiren.
+        if (fila != null) {
+            for (int i = total % VASOS_POR_FILA; i != 0 && i < VASOS_POR_FILA; i++) {
+                fila.addView(new View(requireContext()),
+                        new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
+            }
+        }
+    }
+
+    // Un vaso: el contorno y, encima, el relleno recortado desde abajo. El nuevo se llena
+    // de abajo arriba con rebote y crece un poco (momento 22).
+    private View vaso(int i, int llenos, boolean nuevo, @ColorInt int azul, @ColorInt int vacio) {
+        FrameLayout celda = new FrameLayout(requireContext());
+        int lado = Math.round(28 * getResources().getDisplayMetrics().density);
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(lado, lado, Gravity.CENTER);
+        ImageView contorno = new ImageView(requireContext());
+        contorno.setImageResource(R.drawable.ic_ms_local_drink);
+        contorno.setImageTintList(ColorStateList.valueOf(i < llenos ? azul : vacio));
+        celda.addView(contorno, lp);
+        if (i < llenos) {
+            Drawable relleno = ContextCompat.getDrawable(requireContext(), R.drawable.ic_ms_local_drink_fill);
+            if (relleno != null) {
+                relleno = relleno.mutate();
+                relleno.setTint(azul);
+                ClipDrawable recorte = new ClipDrawable(relleno, Gravity.BOTTOM, ClipDrawable.VERTICAL);
+                recorte.setLevel(10000);
+                ImageView lleno = new ImageView(requireContext());
+                lleno.setImageDrawable(recorte);
+                celda.addView(lleno, new FrameLayout.LayoutParams(lado, lado, Gravity.CENTER));
+                if (nuevo && !Movimiento.quieto(requireContext())) {
+                    android.animation.ValueAnimator a = android.animation.ValueAnimator.ofInt(0, 10000);
+                    a.setDuration(Movimiento.VASO);
+                    a.setInterpolator(Movimiento.REBOTE);
+                    a.addUpdateListener(an -> recorte.setLevel(Math.min(10000, (int) an.getAnimatedValue())));
+                    a.start();
+                    celda.setScaleX(1f);
+                    celda.animate().scaleX(1.12f).scaleY(1.12f).setDuration(Movimiento.VASO / 3)
+                            .setInterpolator(Movimiento.ESTANDAR)
+                            .withEndAction(() -> celda.animate().scaleX(1f).scaleY(1f)
+                                    .setDuration(Movimiento.VASO * 2 / 3).setInterpolator(Movimiento.ESTANDAR).start())
+                            .start();
+                }
+            }
+        }
+        Agua.Toque toque = Agua.toque(i, llenos);
+        if (toque != Agua.Toque.NADA) {
+            celda.setBackgroundResource(fondoPulsableSinBorde());
+            celda.setOnClickListener(v -> {
+                if (toque == Agua.Toque.QUITAR) quitarVaso(v);
+                else anadirVaso(v);
+            });
+        }
+        celda.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        return celda;
+    }
+
+    private String textoLitros(int ml, double litrosObjetivo, Locale idioma) {
+        return litrosObjetivo > 0
+                ? getString(R.string.agua_litros, Agua.litros(ml, idioma), Agua.litrosObjetivo(litrosObjetivo, idioma))
+                : getString(R.string.agua_litros_sin_objetivo, Agua.litros(ml, idioma));
+    }
+
+    private void anadirVaso(View origen) {
+        if (!semana.containsKey(fechaSelStr())) return;
+        int vaso = prefsManager.getVasoMl();
+        int antes = aguaMostrada;
+        aguaMostrada = Agua.mas(aguaMostrada, vaso);
+        if (aguaMostrada == antes) return;
+        Movimiento.vibrar(origen, Movimiento.Vibracion.LIGERA);
+        pintarAgua(Agua.vasosLlenos(aguaMostrada, vaso) - 1, antes);
+        enviarAgua();
+    }
+
+    private void quitarVaso(View origen) {
+        if (!semana.containsKey(fechaSelStr())) return;
+        int antes = aguaMostrada;
+        aguaMostrada = Agua.menos(aguaMostrada, prefsManager.getVasoMl());
+        if (aguaMostrada == antes) return;
+        Movimiento.vibrar(origen, Movimiento.Vibracion.LIGERA);
+        pintarAgua(-1, -1);
+        origen.announceForAccessibility(getString(R.string.agua_quitado_a11y));
+        enviarAgua();
+    }
+
+    // Manda el total que se ve. Si ya hay uno en camino, sale después con el total de ese
+    // momento: así nunca llegan dos a la vez y gana el último toque. Si falla, vuelve a lo
+    // último guardado y se dice.
+    private void enviarAgua() {
+        if (enviandoAgua) {
+            aguaPendiente = true;
+            return;
+        }
+        enviandoAgua = true;
+        final String fecha = fechaSelStr();
+        final int valor = aguaMostrada;
+        Map<String, Object> cuerpo = new HashMap<>();
+        cuerpo.put("mililitros", valor);
+        diarioApi.guardarAgua(fecha, cuerpo).enqueue(new ApiCallback<Map<String, Object>>() {
+            @Override
+            public void onOk(Map<String, Object> r) {
+                enviandoAgua = false;
+                DiaDiario dd = semana.get(fecha);
+                if (dd != null) dd.setAguaMl(valor);
+                if (!isAdded() || !fecha.equals(fechaSelStr())) {
+                    aguaPendiente = false;
+                    return;
+                }
+                aguaConfirmada = valor;
+                if (aguaPendiente) {
+                    aguaPendiente = false;
+                    if (aguaMostrada != valor) enviarAgua();
+                }
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                enviandoAgua = false;
+                aguaPendiente = false;
+                if (!isAdded() || !fecha.equals(fechaSelStr())) return;
+                aguaMostrada = aguaConfirmada;
+                pintarAgua(-1, -1);
+                UIHelper.mostrarToastError(requireActivity(), getString(R.string.agua_fallo,
+                        UiFeedback.mensaje(requireContext(), code, message)));
+            }
+        });
+    }
+
+    // ── Las comidas ─────────────────────────────────────────────────────────
 
     private void pintarComidas() {
         LinearLayout lista = findViewById(R.id.listaComidas);
@@ -433,13 +973,15 @@ public class NutricionFragment extends BaseFragment {
 
         for (String tipo : ComidaQueToca.TIPOS) {
             Comida c = comidasDia.get(tipo);
-            boolean registrada = registrada(c);
-            boolean toca = tipo.equals(queToca) && !registrada;
+            boolean registrada = apuntada(tipo);
+            boolean hoyNo = hoyNo(tipo);
+            boolean toca = tipo.equals(queToca) && !registrada && !hoyNo;
 
             View card = inflater.inflate(R.layout.item_comida_dia, lista, false);
+            ((ImageView) card.findViewById(R.id.ivComidaIcono)).setImageResource(ElegirComida.icono(tipo));
             String nombre = getString(ComidaQueToca.titulo(tipo));
             ((TextView) card.findViewById(R.id.tvComidaNombre)).setText(nombre);
-            String resumen = resumenComida(c, toca);
+            String resumen = hoyNo ? getString(R.string.comida_hoy_no) : resumenComida(c, toca);
             ((TextView) card.findViewById(R.id.tvComidaResumen)).setText(resumen);
             card.setContentDescription(nombre + ". " + resumen);
             card.setOnClickListener(v -> abrirComida(tipo));
@@ -497,13 +1039,17 @@ public class NutricionFragment extends BaseFragment {
         }
     }
 
-    // Tocar la tarjeta abre la comida del día elegido, como antes.
+    // Tocar la tarjeta abre la comida del día elegido, como antes; desde la 1.6.8, con su
+    // «Hoy no» para que la pantalla de la comida vacía lo enseñe y lo deje quitar.
     private void abrirComida(String tipo) {
         Intent intent = new Intent(requireContext(), ComidaActivity.class);
         intent.putExtra("tipoComida", tipo);
         Comida c = comidasDia.get(tipo);
         intent.putExtra("comidaId", c != null ? c.getId() : -1);
         intent.putExtra("fecha", fechaSelStr());
+        DiaDiario dd = semana.get(fechaSelStr());
+        intent.putExtra(ComidaActivity.EXTRA_HOY_NO, dd != null && dd.getHoyNo().contains(tipo));
+        intent.putExtra(ComidaActivity.EXTRA_DIARIO_LISTO, dd != null);
         recargar.launch(intent);
     }
 
@@ -519,22 +1065,23 @@ public class NutricionFragment extends BaseFragment {
 
     // ── Utilidades ──────────────────────────────────────────────────────────
 
-    private void colorBarra(int filaId, int colorRes) {
-        ((LinearProgressIndicator) findViewById(filaId).findViewById(R.id.barraMacro))
-                .setIndicatorColor(ContextCompat.getColor(requireContext(), colorRes));
-    }
-
     private int colorEstado(DiaNutricion.Estado e) {
         switch (e) {
             case LOGRADO: return ContextCompat.getColor(requireContext(), R.color.gp_success);
             case PASADO:  return color(androidx.appcompat.R.attr.colorError);
-            default:      return color(com.google.android.material.R.attr.colorOnSurfaceVariant);
+            default:      return color(com.google.android.material.R.attr.colorOnSurface);
         }
     }
 
     private int fondoPulsable() {
         TypedValue tv = new TypedValue();
         requireContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackground, tv, true);
+        return tv.resourceId;
+    }
+
+    private int fondoPulsableSinBorde() {
+        TypedValue tv = new TypedValue();
+        requireContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, tv, true);
         return tv.resourceId;
     }
 

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_check_completo — el círculo del ✓ de «Día completo» (lote 1.6.8, tablero 3): verde suave. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="@color/gp_success_container" />
+</shape>

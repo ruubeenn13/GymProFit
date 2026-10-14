@@ -3,13 +3,16 @@
   item_dia_semana — un día de la tira de Nutrición (GP-105): inicial y número. El
   elegido va en naranja; los que no han llegado, desactivados. Alto mínimo 56 dp y no
   fijo: con la letra a 2.0 el número se cortaba (GP-174).
+  Desde la 1.6.8 (tablero 1), debajo, el punto del día (verde completo, ámbar a medias, aro
+  si es hoy y va en curso) y la marca naranja del día de entreno. Los dos son dibujo: lo
+  que dicen va en la descripción de la celda.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:minHeight="56dp"
-    android:paddingTop="4dp"
-    android:paddingBottom="4dp"
+    android:paddingTop="6dp"
+    android:paddingBottom="8dp"
     android:layout_weight="1"
     android:layout_marginStart="2dp"
     android:layout_marginEnd="2dp"
@@ -31,5 +34,19 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
         android:textSize="@dimen/text_body"
+        android:importantForAccessibility="no" />
+
+    <View
+        android:id="@+id/vPuntoDia"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:layout_marginTop="5dp"
+        android:importantForAccessibility="no" />
+
+    <View
+        android:id="@+id/vMarcaEntreno"
+        android:layout_width="14dp"
+        android:layout_height="3dp"
+        android:layout_marginTop="5dp"
         android:importantForAccessibility="no" />
 </LinearLayout>

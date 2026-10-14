@@ -228,6 +228,31 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
         editor.putStringSet(clave, ComidasRecientes.descartar(prefs.getStringSet(clave, null), fecha, tipo)).apply();
     }
 
+    // ── El agua y el día completo (lote 1.6.8) ──
+    // El tamaño del vaso es del móvil, no de la cuenta (decisión 11 del lienzo): es el vaso
+    // de casa. El día celebrado, por cuenta, para que el momento 21 salga una vez al día.
+    private static final String KEY_VASO_ML = "vaso_ml";
+    private static final String PREFIJO_DIA_CELEBRADO = "dia_completo_celebrado_";
+
+    /** El vaso de agua en ml, de {@link Agua#VASOS}; 250 si no se ha elegido. */
+    public int getVasoMl() {
+        return Agua.vasoOPorDefecto(prefs.getInt(KEY_VASO_ML, Agua.VASO_POR_DEFECTO));
+    }
+
+    public void setVasoMl(int ml) {
+        editor.putInt(KEY_VASO_ML, Agua.vasoOPorDefecto(ml)).apply();
+    }
+
+    /** El último día (yyyy-MM-dd) en que se celebró el día completo, o null. */
+    @androidx.annotation.Nullable
+    public String getDiaCompletoCelebrado() {
+        return prefs.getString(PREFIJO_DIA_CELEBRADO + getUsuarioId(), null);
+    }
+
+    public void setDiaCompletoCelebrado(@NonNull String fecha) {
+        editor.putString(PREFIJO_DIA_CELEBRADO + getUsuarioId(), fecha).apply();
+    }
+
     // ── Programas (GP-074, lote 1.2.1) ──
     // Dónde entrena y cuántos días, lo último que eligió en Programas. Por cuenta: en un
     // móvil con dos cuentas cada una tiene lo suyo. La primera vez, gimnasio y 3 días.
