@@ -77,6 +77,16 @@ Los commits ya existentes se quedan como están: esto aplica de aquí en adelant
 El cuerpo explica **por qué**, no qué líneas cambiaron.
 Todo cambio funcional se anota en `CHANGELOG.md` con su hash.
 
+## Cómo se entrega
+
+Reglas fijas: no hace falta repetirlas en cada encargo.
+
+- **Flujo.** Rama por tarea → CI en verde → fusión en `main` → esperar a que Render despliegue la API (`/actuator/info` da el commit) → comprobar en producción con cuentas de prueba, que luego se borran → borrar la rama. Etiqueta solo cuando el lote sube la versión de la app.
+- **Autoría.** Nunca `Co-Authored-By` ni ninguna mención a Claude como autor, ni en commits ni en el `CHANGELOG.md`.
+- **Credenciales.** Nunca en ficheros, commits, logs ni informes: solo en variables de entorno de los comandos.
+- **Web.** Si cambia `web/`, el zip va al escritorio con el formato de `web/README.md`, y el informe lo dice.
+- **Informe.** El largo, en `documentacion/estado/AAAA-MM-DD-<lote>.md`. Al propietario, un resumen de unas 15 líneas: commits, tests (cuántos y cuáles se vieron en rojo), comprobación en producción, decisiones tomadas, tareas manuales suyas y dudas o bloqueos. El detalle de un fallo de seguridad aún no contado va aparte, después del resumen.
+
 ## Dónde vive cada cosa
 
 - **Decisiones vigentes** → `documentacion/PRODUCT-DECISIONS.md` (este repositorio).
