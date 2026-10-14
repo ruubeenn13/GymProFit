@@ -1,520 +1,213 @@
 <div align="center">
 
-# 💪 GymProFit
+<a href="https://gymprofit.app">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="documentacion/img/readme/portada-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="documentacion/img/readme/portada-light.svg">
+  <img src="documentacion/img/readme/portada-light.svg" width="100%" alt="GymProFit: entrena, come bien y mide tu progreso en una sola app. App Android, API REST en Spring Boot y panel web en React. Versión 1.6.5, en desarrollo activo.">
+</picture>
+</a>
 
-### Aplicación Android de gestión de entrenamientos y nutrición
+[![CI](https://github.com/ruubeenn13/GymProFit/actions/workflows/ci.yml/badge.svg)](https://github.com/ruubeenn13/GymProFit/actions/workflows/ci.yml)
+[![Último commit](https://img.shields.io/github/last-commit/ruubeenn13/GymProFit?label=%C3%BAltimo%20commit&color=ff6a00)](https://github.com/ruubeenn13/GymProFit/commits/main)
+[![Versión](https://img.shields.io/github/v/tag/ruubeenn13/GymProFit?label=versi%C3%B3n&color=ff6a00)](CHANGELOG.md)
+[![API](https://img.shields.io/website?url=https%3A%2F%2Fapi.gymprofit.app%2Fapi%2Factuator%2Fhealth&label=api.gymprofit.app&up_message=en%20l%C3%ADnea&down_message=dormida)](https://api.gymprofit.app/api/actuator/health)
 
-![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)
-![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
-![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
-![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white)
-
-*Producto en desarrollo · Autor: Rubén Juan Candela*
+**[gymprofit.app](https://gymprofit.app)** &nbsp;·&nbsp; [Novedades](CHANGELOG.md) &nbsp;·&nbsp; [Decisiones de producto](documentacion/PRODUCT-DECISIONS.md) &nbsp;·&nbsp; [Despliegue](documentacion/DESPLIEGUE.md)
 
 </div>
 
----
+<br>
 
-## 📋 Tabla de contenidos
+> [!NOTE]
+> GymProFit nació como mi proyecto final de DAM y lo estoy convirtiendo en un producto de verdad, camino de Google Play. Todavía no está publicado: se reparte en APK a un grupo de prueba mientras se rehace la nutrición.
 
-- [Descripción general](#-descripción-general)
-- [Estructura del repositorio](#-estructura-del-repositorio)
-- [App Android](#-app-android-appgymprofit)
-- [API REST](#-api-rest-apigymprofit-api)
-- [Base de datos](#-base-de-datos-db)
-- [Tecnologías](#-tecnologías)
-- [Requisitos previos](#-requisitos-previos)
-- [Instalación y configuración](#-instalación-y-configuración)
-- [Despliegue en producción](#-despliegue-en-producción)
-- [Changelog](CHANGELOG.md)
+## Lo que hace
 
----
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="documentacion/img/readme/modulos-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="documentacion/img/readme/modulos-light.svg">
+  <img src="documentacion/img/readme/modulos-light.svg" width="100%" alt="Entrenar: sesión en vivo con series, pistas de la última vez y descanso con alarma. Nutrición: escáner, búsqueda en 198.000 productos, favoritos y copiar la comida de ayer. Progreso: récords, mediciones, objetivos y logros. Avisos: diez recordatorios push en español e inglés.">
+</picture>
 
-## 📱 Descripción general
+Empiezas respondiendo cinco preguntas (objetivo, nivel, tu cuerpo, dónde entrenas y cuántos días) y la app te da **tu plan**: un programa de entreno y tus calorías y macros del día. A partir de ahí, cada sesión, cada comida y cada medición alimentan lo demás.
 
-**GymProFit** es un proyecto full-stack compuesto por una aplicación Android nativa y una API REST propia. Permite a los usuarios registrarse, gestionar sus rutinas de entrenamiento, registrar sesiones, consultar un catálogo de ejercicios, hacer seguimiento de mediciones corporales, ver sus logros desbloqueados, llevar un registro nutricional diario y calcular sus necesidades nutricionales personalizadas según su perfil físico.
+## En cifras
 
-Incluye además **notificaciones push** (Firebase Cloud Messaging) con 10 recordatorios automáticos programados en el servidor, que cada cuenta enciende o apaga por tipo (entrenar, comidas y progreso), soporte **multiidioma completo (ES/EN)** — interfaz, push y catálogo de la BD — y autenticación con **refresh token** (renovación de sesión transparente). La API está **desplegada en producción** en Render + Aiven MySQL (ver [Despliegue en producción](#-despliegue-en-producción)).
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="documentacion/img/readme/cifras-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="documentacion/img/readme/cifras-light.svg">
+  <img src="documentacion/img/readme/cifras-light.svg" width="100%" alt="1.147 tests de la API, 518 tests de la app, más de 250 endpoints REST, 30 tablas y 51 migraciones, 198.000 productos en el buscador, y español e inglés de punta a punta.">
+</picture>
 
-El sistema distingue tres roles de usuario: **GUEST**, **USER** y **ADMIN**, con permisos diferenciados para cada operación de la API, comprobación de *ownership* en los recursos de usuario y rate-limiting en los endpoints de autenticación.
+## Cómo encaja todo
 
----
+```mermaid
+flowchart LR
+    app(["📱 App Android<br/><sub>Java · Material 3</sub>"])
+    panel(["🛠️ Panel de administración<br/><sub>React · TypeScript</sub>"])
+    web(["🌐 gymprofit.app<br/><sub>web estática</sub>"])
+    api["⚙️ API REST<br/><sub>Spring Boot · Java 21</sub>"]
+    db[("🗄️ MySQL<br/><sub>Aiven</sub>")]
+    fcm(["🔔 Firebase<br/><sub>push</sub>"])
+    gh(["🤖 GitHub Actions<br/><sub>CI · importación semanal</sub>"])
 
-## 🗂️ Estructura del repositorio
+    app -- "JWT + refresh" --> api
+    panel -- "rol ADMIN" --> api
+    api --> db
+    api -- "10 recordatorios" --> fcm --> app
+    gh -- "productos de España" --> api
 
-```
-GymProFit/
-├── 📂 app/            # Aplicación Android (Android Studio - Java)
-├── 📂 api/            # API REST backend (Spring Boot - Java)
-├── 📂 db/             # Script SQL de referencia (el esquema real lo crean las migraciones Flyway)
-├── 📂 web/            # Sitio público de gymprofit.app (estático; privacidad y eliminación de cuenta, exigidas por Play)
-└── 📂 documentacion/  # Guías: despliegue, entorno de desarrollo y de pruebas, notificaciones, auditorías y planes
-                    #   · ENTORNO-PRUEBAS.md          → cómo trabajar sin tocar producción
-                    #   · AUDITORIA-UX-2026-09.md     → estado de las 42 pantallas y plan de rediseño
-                    #   · AUDITORIA-DISENO-2026-09.md → lo medible del sistema visual, con capturas
-```
-
----
-
-## 📱 App Android (`app/GymProFit`)
-
-Aplicación Android nativa desarrollada en Java con Android Studio. Consume la API REST mediante **Retrofit2 + OkHttp3 + Gson** con interfaces tipadas por dominio, guarda los tokens (access + refresh) cifrados en `EncryptedSharedPreferences` vía `PreferencesManager` y recibe **notificaciones push** de Firebase Cloud Messaging. Interfaz completa en **español e inglés**.
-
-### Flujo de navegación
-
-La navegación principal es **`MainActivity` + `ViewPager2` + 5 Fragments** con una
-**`FloatingNavBar` fija** (barra "liquid glass" estilo iOS: cápsula translúcida +
-burbuja de cristal que refracta y magnifica el destino activo). Las pantallas de
-detalle/formulario siguen siendo Activities sueltas lanzadas con `startActivity`.
-
-```
-SplashActivity
-     ↓ (sin sesión)
-BienvenidaActivity ──«Ya tengo cuenta»──→ LoginActivity (correo o usuario)
-     ↓ «Empezar»                               ↓ (cuenta sin onboarding)
-AltaActivity: objetivo → nivel → sobre ti → dónde → días → tu plan
-     ↓ «Guarda tu plan»                        ↓ «Empezar» (PATCH + seguir programa)
-GuardaPlanActivity → AvisosActivity            ↓
-     ↓
-MainActivity — ViewPager2 (5 Fragments) + FloatingNavBar liquid glass fija
-  ├── HomeFragment
-  ├── RutinasFragment → tarjeta "+ Crear rutina" → CrearRutinaActivity → AnadirEjerciciosActivity → ResumenCrearRutinaActivity
-  │        └── DetalleRutinaActivity → EditarRutinaActivity
-  ├── EjerciciosFragment → DetalleEjercicioActivity (demo animada + instrucciones)
-  ├── NutricionFragment → ComidaActivity → AnadirAlimentoActivity / CrearAlimentoActivity
-  │        └── EstadisticasNutricionActivity
-  └── PerfilFragment → EditarPerfilActivity
-        ├── Empezar → SesionEnVivoActivity → ResumenSesionActivity
-        ├── «+» Apuntar → RegistrarSesionActivity → ResumenSesionActivity
-        ├── MedicionesActivity → RegistrarMedicionActivity
-        ├── LogrosActivity
-        ├── AcercaDeActivity
-        └── AdminActivity  (solo ROLE_ADMIN)
-              ├── AdminUsuariosActivity
-              ├── AdminRutinasActivity
-              ├── AdminEjerciciosActivity
-              └── AdminAlimentosActivity
+    classDef naranja fill:#ff6a00,stroke:#ff6a00,color:#1a0e00
+    class api naranja
 ```
 
-**Transiciones entre pantallas** (registradas globalmente en `GymProFitApp` vía
-`AnimUtils` / `overrideActivityTransition`): **push** lateral para detalle/editar,
-**modal** desde abajo para crear/registrar (`CrearRutina`, `RegistrarSesion`,
-`RegistrarMedicion`, `AnadirEjercicios`) y **shared-axis** (slide + fade) al cambiar
-de pestaña. La pestaña activa se conserva al recrearse la Activity (cambio de tema/idioma).
-
----
-
-### 📁 Estructura de la App
-
-#### `app/src/main/java/es/pmdm/gymprofit/`
-
----
-
-#### 🧩 `model/`
-
-POJOs puros sin dependencias de red ni de Android.
-
-| Clase | Descripción |
-|---|---|
-| `usuario/Usuario.java` | Perfil completo: id, username, email, peso, altura, edad, nivelExperiencia, objetivo, activo, rol |
-| `ejercicio/Ejercicio.java` | Ejercicio con nombre, grupo muscular, dificultad, descripción, calorías e icono |
-| `rutina/Rutina.java` | Rutina con nombre, nivel, descripción, duración y calorías |
-| `sesion/SesionEntrenamiento.java` | Sesión con fechaInicio, fechaFin, duracionMinutos, caloriasQuemadas, notas, completada |
-| `logro/Logro.java` | Logro con id, nombre, descripción, icono y tipo |
-| `objetivo/ObjetivoPersonal.java` | Objetivo personal con progreso y fechas |
-| `medicion/MedicionCorporal.java` | Medición corporal con peso, altura, IMC, grasa, músculo, perímetros |
-
----
-
-#### 🌐 `network/`
-
-Capa de red basada en **Retrofit2 + OkHttp3 + Gson**, con una interfaz tipada por dominio.
-
-**`ApiClient.java`** — Singleton que construye el `Retrofit` (con la `BASE_URL` de `BuildConfig`) y cachea las interfaces vía `service(Clase.class)`. Su `OkHttpClient` lleva tres piezas: `AuthInterceptor` (inyecta `Authorization: Bearer <access>` en cada petición), `TokenAuthenticator` (ante un **401** renueva el access token con el refresh token y reintenta la petición de forma transparente) y el header `Accept-Language` con el idioma de la app (para recibir el catálogo localizado).
-
-**Interfaces por dominio** — `AuthApi`, `UsuarioApi`, `RutinaApi`, `SesionApi`, `EjercicioApi`, `LogroApi`, `MedicionApi`, `ObjetivoApi`, `AlimentoApi`, `ComidaApi`, `AlimentoComidaApi`, `AdminApi` y `DeviceTokenApi`. Cada una declara sus endpoints con anotaciones Retrofit (`@GET`, `@POST`, `@PATCH`, `@Multipart`…) y trabaja directamente con los POJOs de `model/` (de)serializados por Gson. El contrato completo de endpoints está documentado en **Swagger** (`/api/swagger-ui.html`).
-
-**`ApiCallback<T>` / `UiApiCallback<T>`** — Callback común sobre `enqueue` que unifica `onSuccess(T)` / `onError(code, msg)`. La variante `UiApiCallback` además oculta automáticamente el `LoadingDialog` y muestra el error con `UiFeedback`.
-
-**`BooleanNumericAdapter`** — TypeAdapter de Gson para los campos `activo` que la API devuelve como `0/1`.
-
-**`UtilREST.java`** — Reducido a la gestión de tokens de sesión (`setToken` / `getToken` / `clearToken`, access + refresh); la persistencia cifrada vive en `PreferencesManager`.
-
----
-
-#### 🖼️ `ui/activities/`
-
-| Activity | Descripción |
-|---|---|
-| `SplashActivity` | Carga inicial. Restaura la sesión (tokens cifrados en `EncryptedSharedPreferences`) y redirige a Home o Login |
-| `LoginActivity` | Inicio de sesión. Guarda access + refresh token, id, username y rol; registra el token FCM del dispositivo. Detecta si onboarding ya fue completado |
-| `BienvenidaActivity` | Primera pantalla sin sesión (1.5.1): la demostración en bucle, el idioma, «Empezar» y «Ya tengo cuenta». Despierta la API al abrirse |
-| `AltaActivity` | El cuestionario del alta (GP-103): cinco preguntas en cuatro capítulos y «Tu plan» (calorías de `CalculadoraNutricional` y el programa de `GET /programas/recomendado` sin token). Las respuestas van al borrador según se eligen. Con una cuenta sin onboarding acaba en «Empezar» |
-| `GuardaPlanActivity` | «Guarda tu plan»: nombre, correo y contraseña; alta con el perfil entero, entrar con el correo y seguir el programa |
-| `AvisosActivity` | «¿Te avisamos?»: los tres avisos de la cuenta (GP-112) antes del permiso de Android |
-| `NotificacionesActivity` | Ajustes › Notificaciones: los mismos tres interruptores, guardados con el PATCH |
-| `HomeActivity` | Pantalla principal con BottomNav. Estadísticas reales de la semana (entrenamientos, calorías, minutos) cargadas en `onResume`. Detecta JWT expirado → redirige a Login |
-| `EjerciciosActivity` | Catálogo con filtro por grupo muscular y búsqueda |
-| `RutinasActivity` | Listado de rutinas del usuario y predefinidas. Filtro por nivel |
-| `CrearRutinaActivity` | Paso 1/3 crear rutina: nombre, descripción, nivel, duración |
-| `AnadirEjerciciosActivity` | Paso 2/3: buscador + filtro dificultad, selección con series/reps via dialog |
-| `ResumenCrearRutinaActivity` | Paso 3/3: revisión antes de guardar. POST /rutinas + POST /rutinas-ejercicios × N |
-| `DetalleRutinaActivity` | Vista readonly de rutina. Botón editar visible solo si es propia |
-| `EditarRutinaActivity` | PATCH nombre/desc/nivel/duración + añadir/eliminar ejercicios |
-| `NutricionActivity` | Objetivos dinámicos (CalculadoraNutricional en onResume), barras de progreso consumido vs objetivo (rojo si supera), 5 cards de comida → ComidaActivity |
-| `ComidaActivity` | Log diario de una comida: lista alimentos registrados, totales, FAB añadir |
-| `AnadirAlimentoActivity` | Buscar alimento, seleccionar gramos, preview macros en tiempo real, añadir a comida |
-| `CrearAlimentoActivity` | Crear alimento propio con macros por 100g |
-| `AdminAlimentosActivity` | Gestión admin de alimentos: toggle activo, editar (solo ROLE_ADMIN) |
-| `PerfilActivity` | Perfil con datos reales de la API. Config tema/idioma + cerrar sesión. Botón "Sobre GymProFit" al pie |
-| `AcercaDeActivity` | Pantalla "Acerca de": logo adaptativo claro/oscuro, info extendida de la app (descripción, 6 features, tech stack) e info del desarrollador (bio, formación, 3 FCTs, email clickable). Botón "Compartir": abre el selector de compartir del sistema con el enlace de la app (sin permisos adicionales) |
-| `EditarPerfilActivity` | Editar email, peso, altura, edad, nivel, objetivo. PATCH /usuarios/{id} |
-| `SesionesActivity` | Historial de sesiones con opción de eliminar |
-| `SesionEnVivoActivity` | La sesión en vivo (GP-012): la abren todos los «Empezar», con el reloj en marcha desde el toque. Una tarjeta por ejercicio con su pauta y una fila por serie con «Anterior» y pistas de la última vez (`GET /sesiones/ultima-vez`, GP-014); marcar confirma la última vez (sin ella, pide el número); cronómetro en las series por tiempo. El descanso entre series (GP-013, 1.4.0): empieza al marcar con el de la pauta o el de Ajustes, abajo con «Después», cuenta atrás, ±15 s y «Saltar»; con la app fuera o la pantalla apagada, una alarma a su hora (exacta con `SCHEDULE_EXACT_ALARM`) publica «Descanso terminado» en el canal «Descanso». La sesión vive en `SesionEnCursoRepositorio` (un fichero por cuenta, escrito de forma atómica a cada cambio), que observan también la barra sobre la navegación, la notificación continua, Inicio, Entrenar y el «+». Se guarda por POST /sesiones/completa y desde el primer intento ya no se edita |
-| `RegistrarSesionActivity` | Apuntar un entrenamiento ya hecho, desde el «+», con su fecha (hoy por defecto, nunca futura) y su duración (GP-012). Formulario para registrar sesión: rutina (spinner), ejercicios serie a serie (`EjercicioPesoAdapter`), duración, notas y valoración (RatingBar 1-5). Guarda todo en un solo POST /sesiones/completa idempotente (GP-006). El borrador vive en `RegistrarSesionViewModel` (`SavedStateHandle`) y la red en `RegistroSesionRepositorio`: girar o que Android mate la app no pierde nada (GP-016) |
-| `ResumenSesionActivity` | Detalle de sesión completada + estadísticas del usuario + logros desbloqueados |
-| `MedicionesActivity` | Historial de mediciones corporales con opción de eliminar |
-| `RegistrarMedicionActivity` | Formulario para añadir medición (peso obligatorio, resto opcionales) |
-| `LogrosActivity` | Lista todos los logros. Desbloqueados resaltados. Dos llamadas paralelas con AtomicInteger |
-| `AdminActivity` | Panel admin: 6 KPIs globales + acceso a gestión de usuarios, rutinas predefinidas y ejercicios (solo ROLE_ADMIN) |
-| `AdminUsuariosActivity` | Lista usuarios con búsqueda, filtros estado/rol, toggle activo/inactivo y cambio de rol |
-| `AdminRutinasActivity` | Lista rutinas predefinidas con filtros nivel/estado, toggle activa y edición completa vía `EditarRutinaAdminActivity` |
-| `AdminEjerciciosActivity` | Lista catálogo de ejercicios con filtro estado, toggle activo y edición completa vía `EditarEjercicioAdminActivity` |
-| `EditarRutinaAdminActivity` | Edición completa de rutina predefinida: nombre, descripción, nivel, duración, calorías, categoría, días semana |
-| `EditarEjercicioAdminActivity` | Edición completa de ejercicio: nombre, descripción, grupo muscular, dificultad, calorías, equipo, instrucciones |
-
-**`ui/adapters/`**
-
-| Adapter | Descripción |
-|---|---|
-| `EjercicioAdapter` | Tarjeta de ejercicio con nombre, grupo muscular y calorías |
-| `RutinaAdapter` | Rutina con nombre, nivel, duración y botón eliminar |
-| `SesionAdapter` | Sesión con fecha, rutina asociada, duración y calorías |
-| `MedicionAdapter` | Medición con peso, IMC y extras (grasa, músculo) |
-| `LogroAdapter` | Logro con icono emoji, nombre, descripción y check si desbloqueado |
-| `AdminUsuarioAdapter` | Usuario con username, email, chip rol y chip activo/inactivo. Popup contextual: toggle activo + cambiar rol |
-| `AdminRutinaAdapter` | Rutina predefinida con nombre, nivel, estado y contador de ejercicios. Popup contextual: toggle activa + editar |
-| `AdminEjercicioAdapter` | Ejercicio con nombre, grupo, dificultad y chip activo/inactivo. Popup contextual: toggle activo + editar |
-| `AdminAlimentoAdapter` | Alimento con nombre, categoría, calorías, chip activo/inactivo. Popup contextual: toggle activo + editar |
-| `AlimentoAdapter` | Ítem en buscador de AnadirAlimentoActivity: nombre, categoría, macros por 100g |
-| `AlimentoComidaAdapter` | Ítem en ComidaActivity: nombre, gramos, calorías totales, macros |
-
----
-
-#### 🛠️ `utils/`
-
-| Clase | Descripción |
-|---|---|
-| `PreferencesManager` | Preferencias centralizadas. Los **tokens (access + refresh)** y la caché del **token FCM enviado** van cifrados en `EncryptedSharedPreferences`; el resto (usuarioId, username, rol, nivel, objetivo, sexo, actividad, calorías/macros/agua, onboarding, tema, idioma) en SharedPreferences normales. `cerrarSesion()` limpia tokens + id + username. `KEY_ONBOARDING` persiste entre sesiones; tracking adicional por usuario via `onboarding_done_<username>` |
-| `CalculadoraNutricional` | BMR con Mifflin-St Jeor, factor de actividad y distribución de macros según objetivo |
-| `ResultadoNutricional` | Modelo con calorías totales, proteínas, carbohidratos y grasas |
-| `UIHelper` | Toasts personalizados (éxito, error, info), diálogos de confirmación con icono y traducción de enums (nivel, grupo muscular). Ancho diálogo = 90% pantalla |
-| `NotificationHelper` | Notificaciones locales con 5 canales: sesión completada, medición guardada, rutina creada, logro desbloqueado y push FCM (`notificarPush`) |
-| `LoadingDialog` | Spinner modal reutilizable (overlay) para cargas y submits, sin tocar los layouts |
-| `UiFeedback` | Mapea errores HTTP a toasts localizados: `-1` → cold-start, `≥500` → servidor, `404` → estado vacío benigno (sin toast) |
-| `PushTokenManager` | Registro del token FCM tras el login (con caché, incluye idioma), baja en logout y re-sync al cambiar idioma |
-| `FechaUtils` | Formateo de fechas ISO para la vista (Sesiones, Mediciones) |
-| `EjercicioNavHelper` | Centraliza el Intent hacia `DetalleEjercicioActivity` con todos sus extras |
-
----
-
-#### 🔔 Notificaciones push (FCM)
-
-| Clase | Descripción |
-|---|---|
-| `GymProFitApp` (Application) | Pre-crea el canal de notificaciones push al arrancar (necesario para que Android pinte las push en background) |
-| `services/GymFirebaseMessagingService` | `onNewToken` → re-registra el token rotado por Firebase; `onMessageReceived` → muestra la push en foreground vía `NotificationHelper.notificarPush` |
-| `network/DeviceTokenApi` | `POST`/`DELETE /notificaciones/token` (registro y baja del dispositivo) |
-
-Detalle end-to-end del sistema (backend + Android) en [documentacion/NOTIFICACIONES.md](documentacion/NOTIFICACIONES.md).
-
----
-
-#### ⚙️ Configuración
-
-**`build.gradle`** — `BASE_URL` por **buildType**: `debug` la lee de `local.properties` (API local) y `release` apunta a producción (Render) con **minify + shrinkResources (R8)** y reglas ProGuard para Gson/Retrofit (APK ~5 MB). Dependencias principales: Retrofit2, OkHttp3, Gson, Firebase BoM (Messaging + Analytics) y security-crypto.
-
-**`AndroidManifest.xml`** — Declara `GymProFitApp` como Application, todas las Activities, el servicio FCM, los receptores del fin del descanso (`FinDescansoReceiver`, no exportado, y `PermisoAlarmasReceiver`, que recibe el cambio del permiso de alarmas exactas) y los permisos `INTERNET`, `POST_NOTIFICATIONS`, `VIBRATE`, `SCHEDULE_EXACT_ALARM` (nunca `USE_EXACT_ALARM`), `CAMERA`, `READ_MEDIA_IMAGES`, `READ_EXTERNAL_STORAGE` (≤API 32).
-
-**`local.properties`** *(no versionado)* — Contiene `sdk.dir` y `BASE_URL=http://10.0.2.2:8080/api/` (solo aplica al buildType `debug`).
-
-**`google-services.json`** *(no versionado)* — Configuración del proyecto Firebase para FCM.
-
----
-
-## 🌐 API REST (`api/gymprofit-api`)
-
-Backend desarrollado con Spring Boot 3, Java 21, MariaDB (MySQL gestionado en producción), Flyway para migraciones, jOOQ para consultas avanzadas, MapStruct para mapeo de DTOs, Spring Security con JWT + refresh tokens, Firebase Admin SDK para notificaciones push y Swagger/OpenAPI.
-
-### Arquitectura
-
-```
-Controller → Service → Repository (JPA / jOOQ) → MariaDB
-```
-
----
-
-### 📁 Estructura de la API
-
-#### `config/`
-
-| Clase | Descripción |
-|---|---|
-| `SecurityConfig` | CORS con lista blanca configurable, sesiones stateless, reglas por rol. `/auth/**` y Swagger públicos (Swagger deshabilitado en prod) |
-| `FirebaseConfig` | Inicializa el Firebase Admin SDK una sola vez. Init *graceful*: sin credencial → push desactivadas y la API arranca igual (no rompe CI) |
-| `FlywayConfig` | Migraciones de base de datos |
-| `JooqConfig` | Consultas SQL tipadas |
-| `SwaggerConfig` | OpenAPI en `/swagger-ui.html` |
-| `security/JwtTokenProvider` | Genera y valida el access JWT (30 min). Configurable con `jwt.secret` y `jwt.expiration` |
-| `security/JwtAuthenticationFilter` | Extrae y valida JWT en cada petición |
-| `security/AuthRateLimitFilter` | Rate-limiting por IP en tres niveles, ventana fija de 60 s → 429 + `Retry-After`: autenticación 15, recomendado y vista previa del programa 30 (GP-148), resto 200 |
-| `security/SecurityUtils` | Comprobación de *ownership* (`checkOwnership`): un USER solo accede a sus propios recursos (protección anti-IDOR) |
-
----
-
-#### `controller/`
-
-| Controlador | Ruta base | Descripción |
+| Pieza | Dónde vive | Con qué |
 |---|---|---|
-| `AuthController` | `/auth` | Login (con el usuario o el correo), registro (el usuario es opcional: sin él lo propone la API con el correo), guest, **refresh** y logout. Access JWT de 30 min + refresh opaco rotado/revocable |
-| `UsuarioController` | `/usuarios` | CRUD completo. Solo ADMIN lista todos |
-| `EjercicioController` | `/ejercicios` | CRUD. Filtros por grupo, dificultad y nombre. Escritura solo ADMIN |
-| `RutinaController` | `/rutinas` | CRUD rutinas. Predefinidas y de usuario |
-| `RutinaEjercicioController` | `/rutinas-ejercicios` | Relación rutina↔ejercicio |
-| `SesionEntrenamientoController` | `/sesiones` | Registro de sesiones completadas |
-| `EjercicioRealizadoController` | `/ejercicios-realizados` | Detalle ejercicios por sesión |
-| `RecordController` | `/records` | Récords y progresión por ejercicio, calculados de las series (GP-088). Sin id de usuario: sale del token |
-| `ProgresoEjercicioController` | `/progreso-ejercicios` | Solo `historial` y `record-destacado`, para las builds ya repartidas; leen de las series |
-| `MedicionCorporalController` | `/mediciones-corporales` | Mediciones corporales. `GET /usuario/{id}/ordenadas` para historial |
-| `ObjetivoPersonalController` | `/objetivos-personales` | Objetivos con progreso |
-| `AlimentoController` | `/alimentos` | Catálogo nutricional |
-| `ComidaController` | `/comidas` | Comidas diarias |
-| `AlimentoComidaController` | `/alimentos-comida` | Alimentos por comida |
-| `NotificacionController` | `/notificaciones` | Notificaciones in-app: inmediata → push al momento; programada → la envía el job al vencer |
-| `DeviceTokenController` | `/notificaciones/token` | Registro/baja del token FCM del dispositivo (upsert idempotente, usuario del JWT, guarda el idioma) |
-| `LogroController` | `/logros` | Catálogo de logros y logros por usuario |
-| `AdminController` | `/admin` | Estadísticas globales (6 KPIs), lista usuarios con filtros jOOQ, toggle activo, cambiar rol, búsqueda rutinas predefinidas y ejercicios con filtros dinámicos |
-| `EjercicioJooqController` | `/jooq/ejercicios` | Consultas avanzadas jOOQ |
-| `UsuarioJooqController` | `/jooq/usuarios` | Consultas avanzadas jOOQ (solo ADMIN) |
+| **App Android** | APK de prueba (Play, más adelante) | Java, vistas XML, Material 3, Retrofit, CameraX y ML Kit para el escáner |
+| **API** | [Render](https://render.com), en `api.gymprofit.app` | Spring Boot 3.5, Spring Security, JPA + jOOQ, Flyway, MapStruct |
+| **Base de datos** | Aiven for MySQL, con TLS verificado | 30 tablas, todo el esquema en migraciones |
+| **Panel** | Cloudflare Workers, en `admin.gymprofit.app`, detrás de Cloudflare Access | React, Vite, TypeScript y Vitest, sin librerías de componentes |
+| **Web** | Cloudflare Pages, en `gymprofit.app` | HTML y CSS: privacidad, términos y borrado de cuenta |
 
----
+## Por dentro
 
-#### `entity/`
+<details>
+<summary><b>📱 La app Android</b> — de la primera pantalla a la última serie</summary>
 
-| Entidad | Tabla |
-|---|---|
-| `Usuario` | `usuarios` — implementa `UserDetails`. `isEnabled()` devuelve `activo != null && activo` |
-| `Role` | `roles` — ADMIN, USER, GUEST |
-| `Ejercicio` | `ejercicios` |
-| `Rutina` | `rutinas` |
-| `RutinaEjercicio` | `rutina_ejercicios` |
-| `SesionEntrenamiento` | `sesiones_entrenamiento` |
-| `EjercicioRealizado` | `ejercicios_realizados` |
-| `MedicionCorporal` | `mediciones_corporales` |
-| `ObjetivoPersonal` | `objetivos_personales` |
-| `Alimento` | `alimentos` |
-| `Comida` | `comidas` |
-| `AlimentoComida` | `alimentos_comida` |
-| `Notificacion` | `notificaciones` |
-| `Logro` | `logros` |
-| `UsuarioLogro` | `usuario_logros` |
-| `RefreshToken` | `refresh_tokens` — refresh opacos con rotación y revocación (purga diaria con `RefreshTokenCleanupTask`) |
-| `DeviceToken` | `device_tokens` — tokens FCM por dispositivo + idioma para push localizadas |
+<br>
 
----
+- **Navegación**: Inicio, Entrenar, Nutrición y Progreso sobre una barra flotante, y una pantalla propia para todo lo que se crea o se edita.
+- **La sesión en vivo** vive en un repositorio que se escribe en disco a cada cambio: si Android mata la app a mitad del entreno, no se pierde ni una serie. El descanso suena con una alarma exacta aunque la pantalla esté apagada.
+- **La nutrición** se está rehaciendo por lotes desde un lienzo de diseño aprobado: buscar «lo tuyo» primero, el «+» que añade sin preguntar, el escáner con su propia cámara, favoritos y copiar comidas. Viene detrás Mis platos.
+- **Todo en español e inglés, claro y oscuro**, accesible con TalkBack y con letra grande. Cada animación tiene su momento numerado y respeta «Quitar animaciones».
+- **Sesión segura**: tokens cifrados en el dispositivo y renovación transparente cuando caducan.
 
-#### `enums/`
+Código en [`app/GymProFit`](app/GymProFit).
 
-`GrupoMuscular`, `Dificultad`, `NivelExperiencia`, `TipoComida`, `TipoNotificacion`, `TipoObjetivo`, `RoleType`.
+</details>
 
----
+<details>
+<summary><b>⚙️ La API</b> — Spring Boot, con la seguridad mirada con lupa</summary>
 
-#### `exceptions/`
+<br>
 
-`ControllerExceptionHandler` (`@RestControllerAdvice`). Excepciones: `NotFoundEntityException` (404), `DuplicateEntityException` (409), `InvalidCredentialsException` (401), `InvalidDataException` (400), `UnauthorizedException` (403), `CreateEntityException` / `UpdateEntityException` / `DeleteEntityException` (500).
+- **Autenticación con JWT de 30 minutos** y refresh token opaco, rotado en cada uso y revocable. Tres roles: invitado, usuario y administrador.
+- **Nadie ve lo de otro**: el usuario sale siempre del token, y cada ruta con un id tiene su test de acceso ajeno contra un contexto de Spring de verdad, sin mocks.
+- **Búsqueda de alimentos propia**: un índice en memoria sobre 198.000 productos de Open Food Facts y cientos de básicos de Ciqual y USDA, sin depender de ningún servicio externo mientras escribes.
+- **Memoria con presupuesto**: cabe en los 512 MB del plan gratuito con cada parte de la JVM limitada y medida, y deja una línea en el log cada 10 minutos para vigilarlo.
+- **Rate limiting por IP** en tres niveles y correo transaccional por HTTP.
 
----
+Código en [`api/gymprofit-api`](api/gymprofit-api).
 
-#### 🔔 Notificaciones push (FCM)
+</details>
 
-`PushNotificationService` envía las push a todos los dispositivos del usuario vía **Firebase Admin SDK** (tolerante a fallos, borra tokens muertos). Dos jobs `@Scheduled` completan el sistema: `NotificacionProgramadaTask` (cada 60 s envía las notificaciones programadas vencidas) y `RecordatorioNotificacionesTask`, con **10 recordatorios automáticos** (5 comidas, inactividad, resumen semanal, logro próximo, medición mensual y objetivo por vencer — cron `Europe/Madrid`, solo usuarios con dispositivo registrado y con ese tipo de aviso encendido, anti-spam por título). Los avisos por tipo (GP-112): entrenar y progreso encendidos de serie, comidas apagado. Los textos se resuelven con `MessageSource` según `device_tokens.idioma` (push localizadas ES/EN). Detalle completo en [documentacion/NOTIFICACIONES.md](documentacion/NOTIFICACIONES.md).
+<details>
+<summary><b>🛠️ El panel de administración</b> — catálogo y usuarios desde el navegador</summary>
 
----
+<br>
 
-#### `src/main/resources/`
+Usuarios, ejercicios, alimentos y los avisos de datos que reportan los usuarios desde la app. Solo habla con la API con rol de administrador, guarda los tokens solo en memoria y no lleva ningún secreto: el repositorio es público. Se adapta del móvil al escritorio.
 
-| Archivo | Descripción |
-|---|---|
-| `application.properties` | Puerto 8080, context-path `/api`, perfil `dev` por defecto |
-| `application-dev.properties` | BD local, logging DEBUG |
-| `application-prod.properties` | Producción 12-factor: todo por variables de entorno (BD, JWT, Firebase, CORS) |
-| `application-ci.properties` | Perfil para GitHub Actions (MariaDB efímera, rate-limit off) |
-| `application-example.properties` | Plantilla para nuevos desarrolladores |
-| `messages.properties` / `messages_en.properties` | Textos de las notificaciones push (ES/EN) resueltos con `MessageSource` |
-| `logback-spring.xml` | Logs diarios en `logs/gymprofit_YYYY-MM-DD.log` en dev; solo consola en prod (FS efímero) |
+Código y detalles en [`admin`](admin).
 
-> **Nota:** Las migraciones Flyway de `db/migration/` tienen prefijo `V` y **se ejecutan automáticamente al arrancar** la API (`ddl-auto=validate`): el esquema se crea y versiona solo, sin tocar la BD a mano.
+</details>
 
----
+<details>
+<summary><b>✅ Calidad</b> — lo que tiene que pasar antes de llegar a producción</summary>
 
-#### `src/test/`
+<br>
 
-**329 tests**: unitarios de services (Mockito), de controllers con MockMvc y de integración end-to-end. Incluyen los tests de **ownership/IDOR** (`AbstractOwnershipTest`: `@SpringBootTest` sin mocks con usuarios reales owner/attacker — recurso ajeno → 403, propio → 200), la cadena de **recuperación de contraseña** (`PasswordResetServiceTest`), el **borrado de cuenta** (`BorradoCuentaTest`, que saca del esquema la lista de tablas a comprobar para que una tabla nueva no se quede sin borrar en silencio), rate-limit (`AuthRateLimitFilterTest`), el **pool asíncrono de correo** (`CorreoAsyncConfigTest`), recordatorios push (`RecordatorioNotificacionesTaskTest`) y catálogo multiidioma (`CatalogoI18nTest`).
+- **CI en GitHub Actions** para la API (contra una MariaDB que nace vacía), la app y el panel. La API solo se despliega si el CI está en verde.
+- **Cada regla nueva se ve fallar** antes de darla por buena: se rompe a propósito el código y se comprueba que su test se pone en rojo.
+- **Decisiones escritas**: cada decisión de producto o de arquitectura queda en [`PRODUCT-DECISIONS.md`](documentacion/PRODUCT-DECISIONS.md), con su contexto y lo que la haría cambiar.
+- **Dependabot** propone las actualizaciones y solo se fusionan con el CI en verde.
 
----
+</details>
 
-## 🗄️ Base de datos (`db/`)
+## En marcha
 
-MariaDB en `localhost:3308` en desarrollo (base de datos `gymprofit_db`); **MySQL gestionado (Aiven)** en producción. El esquema lo crean y versionan las migraciones **Flyway** al arrancar la API; `db/schema.sql` queda como referencia.
+- [x] El alta nueva: cinco preguntas y tu plan
+- [x] La sesión en vivo, con descanso y récords
+- [x] Buscar, escanear y añadir alimentos en un toque
+- [x] Favoritos, comidas recientes y «¿Copiar la de ayer?»
+- [ ] **Mis platos**: tus recetas, por raciones o por peso
+- [ ] «Lo que te encaja»: sugerencias con lo que te queda del día
+- [ ] El diario nuevo: agua, día completo y resumen semanal
+- [ ] Publicación en Google Play
 
-| Tabla | Descripción |
-|---|---|
-| `usuarios` | Perfil completo. `activo TINYINT(1)` — debe ser 1 para poder hacer login |
-| `roles` / `usuario_roles` | Sistema de roles ADMIN, USER, GUEST |
-| `ejercicios` | Catálogo con grupo muscular y dificultad como enum |
-| `rutinas` | Flag `es_predefinida` para distinguir rutinas del sistema |
-| `rutina_ejercicios` | Series, reps, peso recomendado y orden |
-| `sesiones_entrenamiento` | fechaInicio, fechaFin, duracion, calorias |
-| `ejercicios_realizados` | Detalle por sesión |
-| `progreso_ejercicios` | **Sin uso desde GP-088**: ni se lee ni se escribe; se retira en una migración posterior, cuando los récords estén comprobados en producción |
-| `mediciones_corporales` | Peso, altura, IMC, grasa, músculo, perímetros |
-| `objetivos_personales` | Valor actual vs meta, fechas y estado |
-| `alimentos` / `comidas` / `alimentos_comida` | Módulo nutricional |
-| `notificaciones` | Recordatorios y logros (con `push_enviada` para las programadas) |
-| `logros` / `usuario_logros` | Sistema de logros con evaluación automática |
-| `refresh_tokens` | Refresh tokens opacos con rotación y revocación |
-| `device_tokens` | Tokens FCM por dispositivo + idioma para push localizadas |
+<details>
+<summary><b>🚀 Arrancarlo en local</b></summary>
 
-> El catálogo (ejercicios, alimentos, logros, rutinas predefinidas) tiene columnas `*_en` para el multiidioma, resueltas en la API según el header `Accept-Language` (fallback a ES).
+<br>
 
----
-
-## 🛠️ Tecnologías
-
-### App Android
-
-| Tecnología | Uso |
-|---|---|
-| Java 11 | Lenguaje principal |
-| Android SDK 36 (minSdk 24) | Plataforma objetivo |
-| Retrofit 3 + OkHttp 4.12 + Gson 2.14 | Cliente HTTP tipado (interceptor de token + authenticator de refresh) |
-| Firebase (BoM 34.19.0) | Cloud Messaging (push), Analytics y Crashlytics |
-| Material Components 1.14 (Material Design 3) | Componentes visuales y temas claro/oscuro |
-| EncryptedSharedPreferences (security-crypto 1.1.0) | Persistencia cifrada de tokens y datos de sesión |
-| Gradle 9.8 + plugin de Android 9.2.1 | Build system (minify/R8 en release); pide JDK 17 o superior |
-
-### API REST
-
-| Tecnología | Versión | Uso |
-|---|---|---|
-| Java | 21 | Lenguaje principal |
-| Spring Boot | 3.5.16 | Framework web |
-| Spring Security | — | JWT + refresh tokens, roles, rate-limiting |
-| Spring Data JPA | — | ORM y CRUD estándar |
-| jOOQ | 3.19 | Consultas SQL complejas y tipadas |
-| Flyway | 11.15 | Migraciones versionadas (automáticas al arrancar) |
-| MapStruct | 1.6.3 | Mapeo DTO↔entidad (+ resolución i18n del catálogo) |
-| Lombok | — | Reducción de boilerplate |
-| JJWT | 0.13.0 | Generación y validación JWT |
-| Firebase Admin SDK | 9.8.0 | Envío de notificaciones push (FCM) |
-| SpringDoc OpenAPI | 2.8.15 | Documentación Swagger |
-| MariaDB / MySQL | — | Base de datos relacional (MariaDB en dev, Aiven MySQL en prod) |
-| JUnit 5 + Mockito | — | Tests unitarios e integración (230) |
-| Maven | — | Gestión de dependencias |
-
----
-
-## 📋 Requisitos previos
-
-- **Android Studio** Hedgehog o superior
-- **JDK 21** para la API y **JDK 11** para la app Android
-- **MariaDB** 10.6+ (`localhost:3308`)
-- **Maven** 3.8+ (o usar `./mvnw`)
-
----
-
-## 🚀 Instalación y configuración
-
-### 1. Clonar el repositorio
+Necesitas **JDK 21**, **MariaDB** y **Android Studio**.
 
 ```bash
 git clone https://github.com/ruubeenn13/GymProFit.git
 cd GymProFit
 ```
 
-### 2. Configurar la base de datos
-
-Basta con crear la base de datos vacía — **las migraciones Flyway crean el esquema completo automáticamente al arrancar la API**:
+**1. La base de datos.** Basta con crearla vacía: las migraciones montan el esquema al arrancar la API.
 
 ```sql
 CREATE DATABASE gymprofit_db CHARACTER SET utf8mb4;
 ```
 
-> `db/schema.sql` se mantiene solo como referencia del esquema.
-
-### 3. Configurar la API
-
-```bash
-cd api/gymprofit-api/src/main/resources
-cp application-example.properties application-dev.properties
-```
-
-Edita `application-dev.properties` con tus credenciales de BD, la clave JWT y
-`app.seed.admin.password` (la contraseña del usuario `admin`, que ya no está en el código: sin
-esa propiedad no se crea ninguna cuenta de administración). Ver
-[ENTORNO-DESARROLLO.md](documentacion/ENTORNO-DESARROLLO.md).
-
-> **Opcional (push):** para probar las notificaciones push en dev, define la variable de entorno `FIREBASE_CREDENTIALS_PATH` apuntando al JSON de la service account de Firebase (no versionado). Sin ella la API arranca igual, con las push desactivadas.
-
-### 4. Arrancar la API
+**2. La API.** Copia la plantilla de configuración, rellena la base de datos, la clave JWT y la contraseña del administrador, y arranca.
 
 ```bash
 cd api/gymprofit-api
-./mvnw spring-boot:run
+cp src/main/resources/application-example.properties src/main/resources/application-dev.properties
+sh ./mvnw spring-boot:run
 ```
 
-API disponible en `http://localhost:8080/api`. Swagger en `http://localhost:8080/api/swagger-ui.html`.
+Queda en `http://localhost:8080/api`, con Swagger en `/api/swagger-ui.html`.
 
-### 5. Configurar la App Android
-
-Crea `app/GymProFit/local.properties`:
+**3. La app.** En `app/GymProFit/local.properties`:
 
 ```properties
-sdk.dir=C\:\\Users\\TuUsuario\\AppData\\Local\\Android\\Sdk
 BASE_URL=http://10.0.2.2:8080/api/
 ```
 
-> `10.0.2.2` es la IP del emulador para `localhost`. Con dispositivo físico, usar la IP local de la máquina. `BASE_URL` solo aplica al buildType `debug`; `release` apunta directamente a producción.
+Ábrela en Android Studio y ejecútala. `10.0.2.2` es tu ordenador visto desde el emulador.
 
-### 6. Ejecutar la App
+**4. El panel**, si lo quieres:
 
-Abre `app/GymProFit` en Android Studio, sincroniza Gradle y ejecuta en emulador o dispositivo.
+```bash
+cd admin && npm ci && npm run dev
+```
 
----
+La guía completa está en [`ENTORNO-DESARROLLO.md`](documentacion/ENTORNO-DESARROLLO.md), y cómo probar sin tocar producción, en [`ENTORNO-PRUEBAS.md`](documentacion/ENTORNO-PRUEBAS.md).
 
-## ☁️ Despliegue en producción
+</details>
 
-| Componente | Dónde |
-|---|---|
-| API | **Render** (Docker multi-stage, free tier) — `https://api.gymprofit.app/api` (dominio propio por CNAME; ver DEC-029) |
-| Base de datos | **Aiven for MySQL** (always-free, TLS `verify-full` con CA) |
-| App Android | buildTypes: `debug` → API local, `release` → producción con minify/R8 (APK ~5 MB) |
-| CI | **GitHub Actions**: build + 329 tests contra MariaDB efímera en cada push/PR |
-| Keep-alive | Cron cada 10 min a `/actuator/health` para que el free tier de Render no se duerma |
+<details>
+<summary><b>🗂️ Qué hay en cada carpeta</b></summary>
 
-Guía completa paso a paso en [documentacion/DESPLIEGUE.md](documentacion/DESPLIEGUE.md).
+<br>
 
----
+```
+GymProFit/
+├── app/            App Android
+├── api/            API REST en Spring Boot
+├── admin/          Panel de administración (React)
+├── web/            gymprofit.app
+├── db/             Esquema de referencia (el real, en las migraciones)
+└── documentacion/  Decisiones, despliegue, entornos, diseño e informes de cada lote
+```
 
-## 📝 Changelog
+</details>
 
-El historial de cambios se ha movido a **[CHANGELOG.md](CHANGELOG.md)**.
+## Créditos de los datos
 
----
+Los alimentos básicos salen de **[Ciqual 2025](https://ciqual.anses.fr)** (ANSES, licencia abierta) y de **[USDA FoodData Central](https://fdc.nal.usda.gov)** (dominio público). Los productos envasados, de **[Open Food Facts](https://world.openfoodfacts.org)**, bajo licencia ODbL.
+
+<br>
 
 <div align="center">
 
-Desarrollado por **Rubén Juan Candela**
-CFGS Desarrollo de Aplicaciones Multiplataforma · 2º DAM · 2026
+Hecho por **[Rubén Juan Candela](https://github.com/ruubeenn13)** en Crevillente.<br>
+<sub>¿Te interesa el proyecto? Escríbeme a <a href="mailto:rubenjuancandela06@gmail.com">rubenjuancandela06@gmail.com</a>.</sub>
 
 </div>
