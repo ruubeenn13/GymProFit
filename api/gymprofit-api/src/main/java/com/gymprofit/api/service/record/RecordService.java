@@ -105,7 +105,7 @@ public class RecordService implements IRecordService {
     @Override
     @Transactional(readOnly = true)
     public Optional<RecordDestacadoDTO> recordDestacado(Integer usuarioId) {
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
         Resultado r = calcular(usuarioId);
         // El de más peso; a igual peso, el más reciente: "sigues ahí", no "una vez lo hiciste".
         return r.recordVigentePorEjercicio().values().stream()
@@ -123,7 +123,7 @@ public class RecordService implements IRecordService {
     @Override
     @Transactional(readOnly = true)
     public List<ProgresoEjercicioDTO> historialLegado(Integer usuarioId, Integer ejercicioId) {
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
         if (!usuarioRepository.existsById(usuarioId)) {
             throw new NotFoundEntityException("error.usuario.noExiste", usuarioId);
         }

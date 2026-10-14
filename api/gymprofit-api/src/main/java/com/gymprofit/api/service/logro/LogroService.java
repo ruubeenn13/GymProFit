@@ -78,7 +78,7 @@ public class LogroService implements ILogroService {
      */
     @Override
     public List<UsuarioLogroDTO> findByUsuarioId(Integer usuarioId) {
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         if (!usuarioRepository.existsById(usuarioId)) {
             throw new NotFoundEntityException("error.usuario.noExiste", usuarioId);

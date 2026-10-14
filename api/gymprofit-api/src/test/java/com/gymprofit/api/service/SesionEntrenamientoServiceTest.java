@@ -59,7 +59,7 @@ class SesionEntrenamientoServiceTest {
     @Mock
     private IRecordService recordService;
 
-    // Mock de SecurityUtils: checkOwnership/requireAdmin quedan como no-op en las lecturas
+    // Mock de SecurityUtils: checkDueno/requireAdmin quedan como no-op en las lecturas
     @Mock
     private SecurityUtils securityUtils;
 
@@ -149,8 +149,8 @@ class SesionEntrenamientoServiceTest {
     @Test
     @DisplayName("save correcto guarda la sesión con completada=false")
     void save_correcto_guarda_sesion() {
-        // Como ADMIN, el service respeta el usuarioId del DTO (1) sin sobrescribirlo
-        when(securityUtils.isAdmin()).thenReturn(true);
+        // El dueño sale del token (1), también para un ADMIN (GP-198)
+        when(securityUtils.getCurrentUserId()).thenReturn(1);
         when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuario));
         when(rutinaRepository.findById(1)).thenReturn(Optional.of(rutina));
         when(sesionEntrenamientoMapper.toEntity(sesionEntrenamientoCreateDTO)).thenReturn(sesionEntrenamiento);
@@ -168,8 +168,8 @@ class SesionEntrenamientoServiceTest {
     @Test
     @DisplayName("save con usuario inexistente lanza NotFoundEntityException")
     void save_usuario_inexistente_lanza_excepcion() {
-        // Como ADMIN, el service busca el usuarioId del DTO (1) que no existe
-        when(securityUtils.isAdmin()).thenReturn(true);
+        // El usuario del token (1) no existe
+        when(securityUtils.getCurrentUserId()).thenReturn(1);
         when(usuarioRepository.findById(1)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundEntityException.class, () -> sesionEntrenamientoService.save(sesionEntrenamientoCreateDTO));

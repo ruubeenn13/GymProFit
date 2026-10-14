@@ -48,7 +48,7 @@ public class SesionEntrenamientoController {
     // Guardado completo con la recuperación de la carrera fuera de la transacción (GP-076).
     private final IGuardadoSesionCompletaService guardadoSesionCompletaService;
 
-    @Operation(summary = "Obtiene todas las sesiones de entrenamiento")
+    @Operation(summary = "Las sesiones de quien llama (solo ADMIN)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de sesiones",
                     content = @Content(schema = @Schema(implementation = SesionEntrenamientoDTO.class))),
@@ -207,7 +207,7 @@ public class SesionEntrenamientoController {
         return ResponseEntity.ok(sesiones);
     }
 
-    @Operation(summary = "Obtiene todas las sesiones de una rutina")
+    @Operation(summary = "Las sesiones de quien llama con una rutina (solo ADMIN)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sesiones encontradas",
                     content = @Content(schema = @Schema(implementation = SesionEntrenamientoDTO.class))),
@@ -222,7 +222,7 @@ public class SesionEntrenamientoController {
         return ResponseEntity.ok(sesiones);
     }
 
-    @Operation(summary = "Obtiene todas las sesiones completadas")
+    @Operation(summary = "Las sesiones completadas de quien llama (solo ADMIN)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sesiones completadas",
                     content = @Content(schema = @Schema(implementation = SesionEntrenamientoDTO.class)))
@@ -235,7 +235,7 @@ public class SesionEntrenamientoController {
         return ResponseEntity.ok(sesiones);
     }
 
-    @Operation(summary = "Obtiene todas las sesiones pendientes")
+    @Operation(summary = "Las sesiones pendientes de quien llama (solo ADMIN)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sesiones pendientes",
                     content = @Content(schema = @Schema(implementation = SesionEntrenamientoDTO.class)))
@@ -294,7 +294,7 @@ public class SesionEntrenamientoController {
         return ResponseEntity.ok(sesiones);
     }
 
-    @Operation(summary = "Obtiene sesiones por fecha")
+    @Operation(summary = "Las sesiones de quien llama en una fecha (solo ADMIN)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sesiones encontradas",
                     content = @Content(schema = @Schema(implementation = SesionEntrenamientoDTO.class)))

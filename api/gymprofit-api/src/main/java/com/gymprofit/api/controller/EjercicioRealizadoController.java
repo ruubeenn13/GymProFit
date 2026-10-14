@@ -38,7 +38,7 @@ public class EjercicioRealizadoController {
     private final IEjercicioRealizadoService ejercicioRealizadoService;
 
     // Devuelve todos los ejercicios realizados registrados
-    @Operation(summary = "Obtiene todos los ejercicios realizados")
+    @Operation(summary = "Los ejercicios realizados de quien llama (solo ADMIN)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de ejercicios realizados",
                     content = @Content(schema = @Schema(implementation = EjercicioRealizadoDTO.class))),
@@ -132,7 +132,7 @@ public class EjercicioRealizadoController {
         return ResponseEntity.ok(ejerciciosRealizados);
     }
 
-    @Operation(summary = "Obtiene todos los ejercicios realizados de un ejercicio")
+    @Operation(summary = "Los ejercicios realizados de quien llama de un ejercicio")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ejercicios realizados encontrados",
                     content = @Content(schema = @Schema(implementation = EjercicioRealizadoDTO.class))),
@@ -177,7 +177,7 @@ public class EjercicioRealizadoController {
         return ResponseEntity.ok(new CountDTO(count));
     }
 
-    @Operation(summary = "Cuenta los ejercicios realizados de un ejercicio")
+    @Operation(summary = "Cuenta los ejercicios realizados de quien llama de un ejercicio")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Total de veces que se ha realizado el ejercicio"),
             @ApiResponse(responseCode = "500", description = "Error al contar los ejercicios realizados",

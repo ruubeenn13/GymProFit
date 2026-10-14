@@ -41,7 +41,7 @@ import static org.mockito.Mockito.*;
 class LogroServiceTest {
 
     // Repositorio de logros simulado
-    // Sin este mock, el checkOwnership de findByUsuarioId revienta con NPE. Simulado y no
+    // Sin este mock, el checkDueno de findByUsuarioId revienta con NPE. Simulado y no
     // real a propósito: aquí se prueba la lógica del servicio, y el 403 de verdad —con el
     // contexto levantado— lo cubre LogroOwnershipTest, que es donde vale.
     @Mock private SecurityUtils securityUtils;

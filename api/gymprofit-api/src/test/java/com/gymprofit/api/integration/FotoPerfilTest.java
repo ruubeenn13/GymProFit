@@ -93,7 +93,7 @@ class FotoPerfilTest extends AbstractOwnershipTest {
      * todos los usuarios. Ahora la ruta ni siquiera admite ese rol.
      * <p>
      * Pide <b>su propia</b> foto, no la del owner: con el id ajeno el 403 lo daría ya
-     * {@code checkOwnership} y el test pasaría aunque SecurityConfig siguiera dejando
+     * {@code checkDueno} y el test pasaría aunque SecurityConfig siguiera dejando
      * entrar a GUEST. Pidiendo la suya, lo único que puede rechazarlo es la regla de rol.
      */
     @Test

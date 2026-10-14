@@ -50,7 +50,8 @@ public class RutinaService implements IRutinaService {
                 .anyMatch(role -> role.getNombre() == RoleType.ADMIN);
     }
 
-    // Devuelve todas las rutinas del sistema. Solo ADMIN.
+    // Las rutinas de quien llama y las que no tienen dueño (catálogo y plantillas). Solo ADMIN
+    // (GP-198): las de otros usuarios son suyas.
     @Override
     public List<RutinaDTO> findAll() {
         logger.info("Buscando todas las rutinas");
@@ -59,7 +60,7 @@ public class RutinaService implements IRutinaService {
             throw new UnauthorizedException("error.rutina.listarTodas");
         }
 
-        return rutinaMapper.toDTOList(rutinaRepository.findAll());
+        return rutinaMapper.toDTOList(rutinaRepository.findAll().stream().filter(this::canView).toList());
     }
 
     // Busca una rutina por id, verificando que el usuario puede visualizarla.
@@ -90,7 +91,8 @@ public class RutinaService implements IRutinaService {
         if (predefinida && !admin) {
             throw new UnauthorizedException("error.rutina.predefinidaCrear");
         }
-        if (!predefinida && !admin && !currentUser.getId().equals(rutinaCreateDTO.getUsuarioId())) {
+        // Una rutina a nombre de otro: 403, también a un ADMIN (GP-198).
+        if (!predefinida && !currentUser.getId().equals(rutinaCreateDTO.getUsuarioId())) {
             throw new UnauthorizedException("error.rutina.paraOtro");
         }
 
@@ -100,9 +102,7 @@ public class RutinaService implements IRutinaService {
             rutina.setActiva(true);
 
             if (!predefinida) {
-                Integer targetId = admin && rutinaCreateDTO.getUsuarioId() != null
-                        ? rutinaCreateDTO.getUsuarioId()
-                        : currentUser.getId();
+                Integer targetId = currentUser.getId();
                 Usuario propietario = usuarioRepository.findById(targetId)
                         .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", targetId));
                 rutina.setUsuario(propietario);
@@ -200,15 +200,14 @@ public class RutinaService implements IRutinaService {
         }
     }
 
-    // Lista las rutinas propias de un usuario. Solo el propio usuario o ADMIN pueden consultarlas.
+    // Lista las rutinas propias de un usuario. Solo el propio usuario, también si es ADMIN (GP-198).
     @Override
     public List<RutinaDTO> findByUsuarioId(Integer usuarioId) {
         logger.info("Buscando rutinas por el usuario con id: {}", usuarioId);
 
         exigirUsuarioExistente(usuarioId);
 
-        Usuario currentUser = getCurrentUser();
-        if (!isAdmin(currentUser) && !currentUser.getId().equals(usuarioId)) {
+        if (!getCurrentUser().getId().equals(usuarioId)) {
             throw new UnauthorizedException("error.rutina.deOtro");
         }
 
@@ -243,15 +242,14 @@ public class RutinaService implements IRutinaService {
         return rutinaMapper.toDTOList(rutinaRepository.findByEsPredefinidaTrue());
     }
 
-    // Lista las rutinas activas propias de un usuario. Solo el propio usuario o ADMIN.
+    // Lista las rutinas activas propias de un usuario. Solo el propio usuario, también si es ADMIN.
     @Override
     public List<RutinaDTO> findByUsuarioIdAndActivas(Integer usuarioId) {
         logger.info("Buscando rutinas activas del usuario id: {}", usuarioId);
 
         exigirUsuarioExistente(usuarioId);
 
-        Usuario currentUser = getCurrentUser();
-        if (!isAdmin(currentUser) && !currentUser.getId().equals(usuarioId)) {
+        if (!getCurrentUser().getId().equals(usuarioId)) {
             throw new UnauthorizedException("error.rutina.deOtro");
         }
 
@@ -309,12 +307,13 @@ public class RutinaService implements IRutinaService {
      */
     /**
      * Indica si el usuario autenticado puede visualizar la rutina.
-     * Son visibles las rutinas predefinidas (compartidas), las propias y todas para ADMIN.
+     * Son visibles las rutinas predefinidas (compartidas) y las propias. Un ADMIN ve además las
+     * que no tienen dueño, que son catálogo y plantillas; las de otro usuario, no (GP-198).
      */
     private boolean canView(Rutina rutina) {
         Usuario currentUser = getCurrentUser();
-        if (isAdmin(currentUser)) return true;
         if (Boolean.TRUE.equals(rutina.getEsPredefinida())) return true;
+        if (rutina.getUsuario() == null && isAdmin(currentUser)) return true;
         return rutina.getUsuario() != null && currentUser.getId().equals(rutina.getUsuario().getId());
     }
 
@@ -332,11 +331,12 @@ public class RutinaService implements IRutinaService {
                 .toList();
     }
 
-    // Verifica que el usuario autenticado pueda modificar/eliminar la rutina: ADMIN siempre,
-    // o el propio dueño si la rutina no es predefinida; lanza UnauthorizedException si no.
+    // Verifica que el usuario autenticado pueda modificar/eliminar la rutina. Una sin dueño
+    // (predefinida o plantilla) es de administración: solo ADMIN. Una con dueño, solo su dueño,
+    // también frente a un ADMIN (GP-198). Lanza UnauthorizedException si no.
     private void checkOwnership(Rutina rutina) {
         Usuario currentUser = getCurrentUser();
-        if (isAdmin(currentUser)) return;
+        if (rutina.getUsuario() == null && isAdmin(currentUser)) return;
 
         if (Boolean.TRUE.equals(rutina.getEsPredefinida())) {
             throw new UnauthorizedException("error.rutina.predefinidaModificar");

@@ -93,15 +93,26 @@ class SesionOwnershipTest extends AbstractOwnershipTest {
             "GET /sesiones",
             "GET /sesiones/completadas",
             "GET /sesiones/pendientes",
-            "GET /sesiones/fecha/{fecha}",
-            "GET /sesiones/rutina/{rutina}",
-            "GET /sesiones/count/rutina/{rutina}"
+            "GET /sesiones/fecha/{fecha}"
     })
     @DisplayName("listado global → 403 a un USER; ADMIN no")
     void soloAdmin_403(String plantillaRuta) throws Exception {
         String ruta = rellenar(plantillaRuta, ids);
         assertThat(estado(attacker, ruta)).as("USER en " + ruta).isEqualTo(403);
         assertThat(estado(admin, ruta)).as("ADMIN en " + ruta).isNotEqualTo(403);
+    }
+
+    // La rutina de otro usuario: 403 a un USER y, desde GP-198, también a un ADMIN.
+    @ParameterizedTest(name = "{0}")
+    @ValueSource(strings = {
+            "GET /sesiones/rutina/{rutina}",
+            "GET /sesiones/count/rutina/{rutina}"
+    })
+    @DisplayName("por rutina ajena → 403 a un USER y a un ADMIN")
+    void rutinaAjena_403(String plantillaRuta) throws Exception {
+        String ruta = rellenar(plantillaRuta, ids);
+        assertThat(estado(attacker, ruta)).as("USER en " + ruta).isEqualTo(403);
+        assertThat(estado(admin, ruta)).as("ADMIN en " + ruta).isEqualTo(403);
     }
 
     // --- Ids en el cuerpo ------------------------------------------------------

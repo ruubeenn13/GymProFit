@@ -38,7 +38,7 @@ public class MedicionCorporalController {
     private final IMedicionCorporalService medicionCorporalService;
 
     // Devuelve todas las mediciones corporales registradas
-    @Operation(summary = "Obtiene todas las mediciones corporales")
+    @Operation(summary = "Las mediciones corporales de quien llama (solo ADMIN)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de mediciones corporales",
                     content = @Content(schema = @Schema(implementation = MedicionCorporalDTO.class))),

@@ -70,7 +70,7 @@ class LogroOwnershipTest extends AbstractOwnershipTest {
      * existir, así que si pudiera leer esto podría leerlo cualquiera.
      * <p>
      * Pide <b>su propio</b> id a propósito, no el del owner: con el id ajeno el 403 lo
-     * daría ya {@code checkOwnership} y el test pasaría aunque SecurityConfig siguiera
+     * daría ya {@code checkDueno} y el test pasaría aunque SecurityConfig siguiera
      * dejando entrar a GUEST. Pidiendo el suyo, la propiedad se cumple y lo único que
      * puede rechazarlo es la regla de rol, que es justo la que hay que fijar aquí.
      */

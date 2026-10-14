@@ -44,14 +44,13 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
 
     /**
      * Verifica que el usuario autenticado pueda MODIFICAR los ejercicios de una rutina.
-     * ADMIN puede operar sobre cualquier rutina.
-     * Las rutinas predefinidas solo las modifica ADMIN.
-     * Las rutinas propias solo las modifica su dueño (o ADMIN).
+     * Las rutinas sin dueño (predefinidas y plantillas) solo las modifica ADMIN.
+     * Las rutinas propias solo las modifica su dueño, también frente a un ADMIN (GP-198).
      *
      * @throws UnauthorizedException (→ 403) si no cumple la regla.
      */
     private void checkRutinaOwnership(Rutina rutina) {
-        if (securityUtils.isAdmin()) return;
+        if (rutina.getUsuario() == null && securityUtils.isAdmin()) return;
 
         if (Boolean.TRUE.equals(rutina.getEsPredefinida())) {
             throw new UnauthorizedException("error.rutina.predefinidaEjercicios");
@@ -65,7 +64,8 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
     /**
      * Verifica que el usuario autenticado pueda LEER los ejercicios de una rutina.
      * Las rutinas predefinidas son públicas: cualquier usuario autenticado puede leerlas.
-     * Las rutinas propias solo las lee su dueño (o ADMIN).
+     * Las rutinas propias solo las lee su dueño, también frente a un ADMIN (GP-198); las que no
+     * tienen dueño, además, un ADMIN.
      *
      * @throws UnauthorizedException (→ 403) si no cumple la regla.
      */
@@ -78,8 +78,8 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
     // La regla de lectura, sin lanzar: la usan también los listados por ejercicio, que
     // filtran en vez de rechazar porque su id es del catálogo y no tiene dueño (DEC-027).
     private boolean puedeLeer(Rutina rutina) {
-        if (securityUtils.isAdmin()) return true;
         if (Boolean.TRUE.equals(rutina.getEsPredefinida())) return true;
+        if (rutina.getUsuario() == null && securityUtils.isAdmin()) return true;
         return rutina.getUsuario() != null
                 && securityUtils.getCurrentUserId().equals(rutina.getUsuario().getId());
     }
@@ -91,14 +91,16 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
                 .orElseThrow(() -> new NotFoundEntityException("error.rutina.noExiste", rutinaId));
     }
 
-    // Lista todos los registros rutina-ejercicio del sistema (solo ADMIN).
+    // Los registros rutina-ejercicio que quien llama puede leer (solo ADMIN, GP-198).
     @Override
     public List<RutinaEjercicioDTO> findAll() {
         logger.info("Buscando todos los ejercicios de rutinas");
 
         securityUtils.requireAdmin();
 
-        List<RutinaEjercicio> lista = rutinaEjercicioRepository.findAll();
+        List<RutinaEjercicio> lista = rutinaEjercicioRepository.findAll().stream()
+                .filter(re -> puedeLeer(re.getRutina()))
+                .toList();
 
         return rutinaEjercicioMapper.toDTOList(lista);
     }
@@ -274,10 +276,7 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
     public Long countByEjercicioId(Integer ejercicioId) {
         logger.info("Contando rutinas que contienen el ejercicio id: {}", ejercicioId);
 
-        // Solo cuenta las rutinas que el usuario puede leer; ADMIN, todas (GP-048).
-        if (securityUtils.isAdmin()) {
-            return rutinaEjercicioRepository.countByEjercicioId(ejercicioId);
-        }
+        // Solo cuenta las rutinas que el usuario puede leer, también un ADMIN (GP-048, GP-198).
         return rutinaEjercicioRepository.findByEjercicioId(ejercicioId).stream()
                 .filter(re -> puedeLeer(re.getRutina()))
                 .count();

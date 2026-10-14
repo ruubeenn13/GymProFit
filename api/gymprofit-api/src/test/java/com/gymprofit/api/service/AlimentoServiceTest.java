@@ -59,7 +59,7 @@ class AlimentoServiceTest {
     private IUsuarioRepository usuarioRepository;
 
     // Desde que la escritura de alimentos comprueba quién llama, el servicio no arranca
-    // sin esto: un mock sin stubbing deja pasar requireAdmin() y checkOwnership().
+    // sin esto: un mock sin stubbing deja pasar requireAdmin() y checkDueno().
     @Mock
     private SecurityUtils securityUtils;
 

@@ -34,13 +34,13 @@ import java.util.Map;
 
 // ============================================================
 // AbstractOwnershipTest — base de los tests e2e de ownership (IDOR).
-// Los controller-tests normales mockean el service, por lo que checkOwnership
+// Los controller-tests normales mockean el service, por lo que checkDueno
 // (SecurityUtils) nunca se ejecuta y el 403 IDOR real nunca se produce. Esta base
 // levanta el contexto COMPLETO (sin mocks de service), siembra dos usuarios USER
 // reales (owner + atacante) y expone helpers para:
 //   - sembrar un recurso como su dueño real (runAs), fijando el SecurityContext;
 //   - autenticar el request como el atacante con @WithUserDetails(setupBefore=TEST_EXECUTION)
-//     en cada test, de modo que SecurityUtils.checkOwnership se ejecute de verdad y
+//     en cada test, de modo que SecurityUtils.checkDueno se ejecute de verdad y
 //     ControllerExceptionHandler traduzca UnauthorizedException → 403.
 // @Transactional: toda la siembra + el request se revierten al acabar cada test
 // (no ensucia la BD dev/ci). Las subclases añaden la creación del recurso concreto.

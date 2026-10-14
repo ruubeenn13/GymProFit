@@ -37,7 +37,7 @@ public class RutinaController {
     private final IRutinaService rutinaService;
 
     // Devuelve todas las rutinas registradas
-    @Operation(summary = "Obtiene todas las rutinas")
+    @Operation(summary = "Las rutinas de quien llama y las que no tienen dueño (solo ADMIN)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de rutinas",
                     content = @Content(schema = @Schema(implementation = RutinaDTO.class))),
