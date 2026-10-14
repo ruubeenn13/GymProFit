@@ -206,6 +206,8 @@ public class SecurityConfig {
                                 .requestMatchers("/comidas/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 // Lote 1.6.3: el invitado no tiene favoritos, como no añade.
                                 .requestMatchers("/favoritos", "/favoritos/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+                                // Lote 1.6.8: el agua y «Hoy no» van con las comidas; el invitado no apunta.
+                                .requestMatchers("/diario", "/diario/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers("/alimentos-comida/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers("/rutinas-ejercicios/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
 
