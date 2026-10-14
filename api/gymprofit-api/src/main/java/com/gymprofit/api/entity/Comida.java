@@ -43,15 +43,15 @@ public class Comida {
     private Integer totalCalorias;
 
     // Proteínas totales acumuladas (g).
-    @Column(name = "total_proteinas", precision = 5, scale = 2)
+    @Column(name = "total_proteinas", precision = 8, scale = 2)
     private BigDecimal totalProteinas;
 
     // Carbohidratos totales acumulados (g).
-    @Column(name = "total_carbohidratos", precision = 5, scale = 2)
+    @Column(name = "total_carbohidratos", precision = 8, scale = 2)
     private BigDecimal totalCarbohidratos;
 
     // Grasas totales acumuladas (g).
-    @Column(name = "total_grasas", precision = 5, scale = 2)
+    @Column(name = "total_grasas", precision = 8, scale = 2)
     private BigDecimal totalGrasas;
 
     // Notas u observaciones libres del usuario sobre la comida.

@@ -417,7 +417,7 @@ public class BusquedaAlimentosService {
                 if (a != null) {
                     dto = alimentoMapper.toDTO(a);
                     if (TUYO.equals(ref.grupo())) {
-                        dto.setUltima(UltimaCantidad.de(loTuyo.ultimas().get(a.getId()), a.getRaciones(), ingles));
+                        dto.setUltima(UltimaCantidad.de(loTuyo.ultimas().get(a.getId()), a, ingles));
                     }
                 }
             } else {

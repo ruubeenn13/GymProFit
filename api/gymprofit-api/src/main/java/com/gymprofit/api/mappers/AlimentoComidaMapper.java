@@ -15,28 +15,26 @@ import java.util.List;
 
 // ============================================================
 // AlimentoComidaMapper — conversión entre AlimentoComida y sus DTOs
-// Mapper MapStruct que traduce la relación alimento-comida a DTO,
-// calculando los macros totales (proteínas/carbohidratos/grasas)
-// proporcionalmente a la cantidad de gramos consumidos.
+// Mapper MapStruct que traduce la relación alimento-comida a DTO. Los macros
+// (proteínas/carbohidratos/grasas) son los guardados en la línea al escribirla
+// (lote 1.6.6, A1), no los de hoy del alimento.
 // ============================================================
 @Mapper(componentModel = "spring", imports = {BigDecimal.class, RoundingMode.class})
 public interface AlimentoComidaMapper {
 
-    // Convierte la entidad a DTO, calculando los totales de macros
-    // en función de los gramos consumidos (regla de tres sobre 100g).
+    // Convierte la entidad a DTO; kcal y macros, tal como se guardaron.
     @Mapping(target = "comidaId", source = "comida.id")
     @Mapping(target = "alimentoId", source = "alimento.id")
     @Mapping(target = "nombreAlimento", source = "alimento.nombre")
     @Mapping(target = "categoriaAlimento", source = "alimento.categoria")
     @Mapping(target = "usuarioIdAlimento", source = "alimento.usuario.id")
-    @Mapping(target = "proteinasTotales", expression = "java(alimentoComida.getAlimento().getProteinas() != null ? alimentoComida.getAlimento().getProteinas().multiply(alimentoComida.getCantidadGramos()).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP) : BigDecimal.ZERO)")
-    @Mapping(target = "carbohidratosTotales", expression = "java(alimentoComida.getAlimento().getCarbohidratos() != null ? alimentoComida.getAlimento().getCarbohidratos().multiply(alimentoComida.getCantidadGramos()).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP) : BigDecimal.ZERO)")
     @Mapping(target = "racionId", source = "racion.id")
     @Mapping(target = "racionGramos", source = "racion.gramos")
     @Mapping(target = "racionNombre", ignore = true)
     @Mapping(target = "racionUnidad", ignore = true)
     @Mapping(target = "racionUnidadPlural", ignore = true)
-    @Mapping(target = "grasasTotales", expression = "java(alimentoComida.getAlimento().getGrasas() != null ? alimentoComida.getAlimento().getGrasas().multiply(alimentoComida.getCantidadGramos()).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP) : BigDecimal.ZERO)")
+    @Mapping(target = "racionSinPeso", ignore = true)
+    @Mapping(target = "alimentoEsPlato", ignore = true)
     AlimentoComidaDTO toDTO(AlimentoComida alimentoComida);
 
     // Convierte una lista de entidades a su correspondiente lista de DTOs.
@@ -50,6 +48,9 @@ public interface AlimentoComidaMapper {
     @Mapping(target = "caloriasTotales", ignore = true)
     @Mapping(target = "racion", ignore = true)
     @Mapping(target = "raciones", ignore = true)
+    @Mapping(target = "proteinasTotales", ignore = true)
+    @Mapping(target = "carbohidratosTotales", ignore = true)
+    @Mapping(target = "grasasTotales", ignore = true)
     AlimentoComida toEntity(AlimentoComidaCreateDTO alimentoComidaCreateDTO);
 
     // El nombre del alimento y el de la ración en el idioma de la petición, con el español
@@ -63,7 +64,11 @@ public interface AlimentoComidaMapper {
             String nombreEn = alimentoComida.getAlimento().getNombreEn();
             if (nombreEn != null && !nombreEn.isBlank()) dto.setNombreAlimento(nombreEn);
         }
+        // Un plato (lote 1.6.6): la app le pone su marca, y una línea con la ración de un plato
+        // sin peso hecho no enseña gramos, porque no son de verdad.
+        dto.setAlimentoEsPlato(com.gymprofit.api.service.plato.Platos.esPlato(alimentoComida.getAlimento()));
         if (alimentoComida.getRacion() == null) return;
+        dto.setRacionSinPeso(com.gymprofit.api.service.plato.Platos.esRacionSinPeso(alimentoComida.getRacion()));
         // GP-177: si la ración ya no pesa lo mismo, la línea sale en gramos, sin nada de
         // la ración, y todas las builds la enseñan y la editan así.
         if (com.gymprofit.api.service.alimentocomida.RacionVigente.de(alimentoComida) == null) {

@@ -59,4 +59,12 @@ public class AlimentoDTO implements Serializable {
     // Lo último que apuntaste (A1): en la búsqueda, solo en TUYO; y en los favoritos.
     // Null si nunca lo has apuntado.
     private UltimaCantidadDTO ultima;
+
+    // --- Lote 1.6.6 (DEC-047): opcionales, como los de arriba.
+
+    // Si es un plato propio, cuántas raciones salen; null si no es un plato.
+    private Integer platoRaciones;
+    // El peso del plato hecho; null si no lo tiene (entonces se apunta solo por raciones,
+    // y sus valores son los de una ración, no los de 100 g).
+    private BigDecimal platoPesoGramos;
 }

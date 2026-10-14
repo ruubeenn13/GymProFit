@@ -35,6 +35,18 @@ public class AlimentoComida {
     @Column(name = "calorias_totales")
     private Integer caloriasTotales;
 
+    // Macros de la línea (lote 1.6.6, A1): se calculan al escribirla con los valores del
+    // alimento de ese momento y se leen tal cual, como las calorías. Corregir el alimento
+    // después no cambia lo ya apuntado.
+    @Column(name = "proteinas_totales", nullable = false, precision = 8, scale = 2)
+    private BigDecimal proteinasTotales = BigDecimal.ZERO;
+
+    @Column(name = "carbohidratos_totales", nullable = false, precision = 8, scale = 2)
+    private BigDecimal carbohidratosTotales = BigDecimal.ZERO;
+
+    @Column(name = "grasas_totales", nullable = false, precision = 8, scale = 2)
+    private BigDecimal grasasTotales = BigDecimal.ZERO;
+
     // Comida a la que pertenece esta línea.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comida_id", nullable = false)

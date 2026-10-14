@@ -70,6 +70,7 @@ class BorradoCuentaTest extends AbstractOwnershipTest {
     // Ids sembrados que hacen falta para comprobar las tablas sin usuario_id propio.
     private Integer comidaId;
     private Integer alimentoPersonalId;
+    private Integer platoId;
     private Integer rutinaId;
     private Integer sesionId;
     private Integer ejercicioRealizadoId;
@@ -105,6 +106,19 @@ class BorradoCuentaTest extends AbstractOwnershipTest {
         ejecutar("""
                 INSERT INTO propuestas_favorito (usuario_id, alimento_id, motivo, creado)
                 VALUES (%d, %d, 'RECHAZADA', NOW())""".formatted(owner.getId(), alimentoCatalogoId));
+
+        // Lote 1.6.6: un plato suyo con dos ingredientes, uno suyo y otro del catálogo, y su
+        // ración de sin peso. El suyo no se puede borrar mientras el plato lo use.
+        platoId = insertar("""
+                INSERT INTO alimentos (nombre, calorias, usuario_id, activo, plato_raciones)
+                VALUES ('Lentejas de casa', 474, %d, true, 4)""".formatted(owner.getId()));
+        ejecutar("""
+                INSERT INTO alimento_raciones (alimento_id, nombre, nombre_en, gramos, fuente, orden)
+                VALUES (%d, '1 ración', '1 serving', 100, 'Plato sin peso hecho', 1)""".formatted(platoId));
+        ejecutar("""
+                INSERT INTO plato_ingredientes (plato_id, alimento_id, cantidad_gramos, orden)
+                VALUES (%d, %d, 200, 1), (%d, %d, 100, 2)"""
+                .formatted(platoId, alimentoPersonalId, platoId, alimentoCatalogoId));
 
         rutinaId = insertar("""
                 INSERT INTO rutinas (nombre, nivel, usuario_id)
@@ -232,6 +246,12 @@ class BorradoCuentaTest extends AbstractOwnershipTest {
         // Tablas sin usuario_id propio: cuelgan de algo suyo y se comprueban por el padre.
         assertThat(contar("SELECT COUNT(*) FROM alimentos_comida WHERE comida_id = " + comidaId))
                 .as("líneas de su comida").isZero();
+        assertThat(contar("SELECT COUNT(*) FROM plato_ingredientes WHERE plato_id = " + platoId))
+                .as("ingredientes de su plato").isZero();
+        assertThat(contar("SELECT COUNT(*) FROM alimento_raciones WHERE alimento_id = " + platoId))
+                .as("raciones de su plato").isZero();
+        assertThat(contar("SELECT COUNT(*) FROM alimentos WHERE id = " + platoId))
+                .as("su plato").isZero();
         assertThat(contar("SELECT COUNT(*) FROM rutina_ejercicio WHERE rutina_id = " + rutinaId))
                 .as("ejercicios de su rutina").isZero();
         assertThat(contar("SELECT COUNT(*) FROM ejercicios_realizados WHERE sesion_id = " + sesionId))

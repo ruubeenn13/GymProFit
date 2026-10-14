@@ -147,6 +147,14 @@ public class BorradoCuentaService implements IBorradoCuentaService {
         borrarNativo("Favoritos", "DELETE FROM favoritos WHERE usuario_id = :id", usuarioId);
         borrarNativo("Propuestas de favorito", "DELETE FROM propuestas_favorito WHERE usuario_id = :id", usuarioId);
 
+        // Los ingredientes de sus platos (lote 1.6.6), antes que los alimentos: un ingrediente
+        // suyo no se puede borrar mientras un plato lo use, y la base no ordena las filas de
+        // un mismo DELETE. Sus raciones se van en cascada con cada alimento.
+        borrarNativo("Ingredientes de platos", """
+                DELETE FROM plato_ingredientes
+                WHERE plato_id IN (SELECT id FROM (SELECT id FROM alimentos WHERE usuario_id = :id) AS suyos)""",
+                usuarioId);
+
         // Se borran, NO se despublican: ver la cabecera de la clase.
         borrar("Alimentos personalizados", "DELETE FROM Alimento a WHERE a.usuario.id = :id", usuarioId);
 
