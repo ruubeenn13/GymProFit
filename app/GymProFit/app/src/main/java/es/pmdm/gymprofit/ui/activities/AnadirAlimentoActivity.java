@@ -99,6 +99,13 @@ import retrofit2.Call;
 //     hay etiqueta de comida, ni «Comidas recientes», ni «Mis platos», ni platos en ninguna
 //     lista. Abajo, «3 ingredientes» y «Hecho», que devuelve la lista (EXTRA_INGREDIENTES).
 //     Nada va a la API hasta guardar el plato.
+// Lote 1.6.7: arriba de «Mis platos», «Lo que te encaja» (LoQueTeEncaja): de tus platos,
+// favoritos y recientes, lo que cabe en las kcal que te quedan, con lo que añadiría su «+».
+// Se calcula aquí, con lo que Añadir ya pide (el día, lo tuyo, favoritos, «Todo», las
+// comidas recientes y lo habitual en la comida de la etiqueta), cuando ha llegado todo; un
+// atajo que falla cuenta como vacío. Mientras se está en la pantalla no cambia (lo que se
+// toca no se mueve); al cambiar de comida se vuelve a calcular. Sin objetivo, sin el día,
+// sin kcal que queden o sin nada que quepa, no ocupa sitio.
 // ============================================================
 public class AnadirAlimentoActivity extends BaseActivity {
 
@@ -177,6 +184,15 @@ public class AnadirAlimentoActivity extends BaseActivity {
     private boolean enPlatos;
     @Nullable private es.pmdm.gymprofit.model.plato.LoMio loMio;
     private int turnoLoMio;
+
+    // «Lo que te encaja» (1.6.7): lo que hace falta para calcularlo, si ya ha llegado (o
+    // fallado), y el resultado de la comida de la etiqueta; null sin sección.
+    @Nullable private List<es.pmdm.gymprofit.model.comida.Comida> comidasDia;
+    private boolean diaListo, todoListo, favoritosListos, recientesListas, habitualesListos;
+    @Nullable private List<Alimento> habituales;
+    private int turnoHabituales, turnoDia;
+    private boolean encajaCalculado, encajaEntro;
+    @Nullable private es.pmdm.gymprofit.utils.LoQueTeEncaja.Resultado encaja;
 
     // Modo ingredientes (1.6.6): los del plato, que se devuelven al salir.
     private boolean modoIngredientes;
@@ -270,6 +286,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
         } else {
             cargarDia();
             cargarRecientes();
+            cargarHabituales();
         }
         findViewById(R.id.btnEscanear).setOnClickListener(v -> abrirEscaner());
 
@@ -327,8 +344,8 @@ public class AnadirAlimentoActivity extends BaseActivity {
         favoritos = favoritosGuardados;
         pintarActual(false);
         buscarDesdeCero();
-        if (enFavoritos) cargarFavoritos();
-        if (enPlatos) cargarLoMio();
+        if (enFavoritos || !modoIngredientes) cargarFavoritos();
+        if (enPlatos || !modoIngredientes) cargarLoMio();
         if (modoIngredientes) pintarBarra();
     }
 
@@ -385,7 +402,13 @@ public class AnadirAlimentoActivity extends BaseActivity {
             // Cada fila enseña el ✓ de esta comida (GP-185), y TalkBack del «+» dice a cuál va.
             adapter.notifyDataSetChanged();
             // Las comidas recientes son para la comida de la etiqueta: se vuelven a pedir.
-            if (cambia) cargarRecientes();
+            // «Lo que te encaja» también es de esa comida: se recalcula cuando llegue todo.
+            if (cambia) {
+                olvidarEncaja();
+                cargarDia();
+                cargarRecientes();
+                cargarHabituales();
+            }
         });
     }
 
@@ -394,10 +417,16 @@ public class AnadirAlimentoActivity extends BaseActivity {
     private void cargarDia() {
         int usuarioId = prefsManager.getUsuarioId();
         if (usuarioId == -1) return;
+        int miTurno = ++turnoDia;
+        diaListo = false;
         comidaApi.getDeUsuarioFecha(usuarioId, dia())
                 .enqueue(new ApiCallback<List<es.pmdm.gymprofit.model.comida.Comida>>() {
                     @Override
                     public void onOk(List<es.pmdm.gymprofit.model.comida.Comida> lista) {
+                        if (miTurno != turnoDia || isDestroyed()) return;
+                        comidasDia = lista != null ? lista : new ArrayList<>();
+                        diaListo = true;
+                        quizaEncaja();
                         Map<String, Integer> m = new HashMap<>();
                         if (lista != null) {
                             for (es.pmdm.gymprofit.model.comida.Comida c : lista) {
@@ -411,7 +440,11 @@ public class AnadirAlimentoActivity extends BaseActivity {
                     public void onFail(int code, String message) {
                         // Se ignora a propósito: la hoja sigue sirviendo para elegir, solo
                         // que sin decir lo que lleva cada comida; no hay nada que reintentar
-                        // a la vista del usuario.
+                        // a la vista del usuario. Sin el día tampoco hay «Lo que te encaja»:
+                        // no se sabe qué queda, y la sección simplemente no sale.
+                        if (miTurno != turnoDia || isDestroyed()) return;
+                        comidasDia = null;
+                        diaListo = true;
                     }
                 });
     }
@@ -739,6 +772,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
     // lo demás sigue igual: es un atajo, no hay nada que reintentar a la vista.
     private void cargarRecientes() {
         int miTurno = ++turnoRecientes;
+        recientesListas = false;
         String tipo = tipoComida;
         if (comidasRecientes != null) {
             comidasRecientes = null;
@@ -749,6 +783,8 @@ public class AnadirAlimentoActivity extends BaseActivity {
             public void onOk(List<ComidaReciente> lista) {
                 if (miTurno != turnoRecientes || isDestroyed()) return;
                 comidasRecientes = lista != null && !lista.isEmpty() ? lista : null;
+                recientesListas = true;
+                quizaEncaja();
                 if (comidasRecientes != null && !mirandoFavoritos() && consulta.isEmpty() && yaEntro) {
                     pintarActual(false);
                 }
@@ -756,7 +792,11 @@ public class AnadirAlimentoActivity extends BaseActivity {
 
             @Override
             public void onFail(int code, String message) {
-                // Se ignora a propósito: sin la sección, Añadir sirve igual (B1).
+                // Se ignora a propósito: sin la sección, Añadir sirve igual (B1). Para «Lo
+                // que te encaja» cuenta como que ayer no hubo nada.
+                if (miTurno != turnoRecientes || isDestroyed()) return;
+                recientesListas = true;
+                quizaEncaja();
             }
         });
     }
@@ -943,6 +983,11 @@ public class AnadirAlimentoActivity extends BaseActivity {
             @Override public void crearPlato() { abrirCrearPlato(); }
 
             @Override public void crearAlimento() { abrirCrear(); }
+
+            @NonNull @Override
+            public String tipoComida() {
+                return tipoComida;
+            }
         };
     }
 
@@ -993,7 +1038,11 @@ public class AnadirAlimentoActivity extends BaseActivity {
                 resultados.addAll(contenido);
                 pagina = pag != null ? pag.getPage() : 0;
                 ultimaPagina = pag == null || pag.isLast();
-                if (!buscando && numero == 0) listaGuardada = new ArrayList<>(contenido);
+                if (!buscando && numero == 0) {
+                    listaGuardada = new ArrayList<>(contenido);
+                    todoListo = true;
+                    quizaEncaja();
+                }
                 boolean primera = !yaEntro;
                 yaEntro = true;
                 if (!mirandoFavoritos() && !mirandoPlatos()) pintarActual(numero == 0 && primera);
@@ -1005,6 +1054,11 @@ public class AnadirAlimentoActivity extends BaseActivity {
                 // aquí: no es un error, y la nueva pintará lo suyo.
                 if (miTurno != turno || isDestroyed()) return;
                 cargando = false;
+                if (numero == 0 && !buscando) {
+                    // Sin «Todo», «Lo que te encaja» va sin recientes.
+                    todoListo = true;
+                    quizaEncaja();
+                }
                 if (numero > 0) {
                     UiFeedback.toastError(AnadirAlimentoActivity.this, code, message);
                     return;
@@ -1076,7 +1130,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
             public void onOk(es.pmdm.gymprofit.model.plato.LoMio m) {
                 if (miTurno != turnoLoMio || isDestroyed()) return;
                 loMio = m != null ? m : new es.pmdm.gymprofit.model.plato.LoMio();
-                if (mirandoPlatos()) pintarPlatos();
+                if (!quizaEncaja() && mirandoPlatos()) pintarPlatos();
             }
 
             @Override
@@ -1100,8 +1154,83 @@ public class AnadirAlimentoActivity extends BaseActivity {
             estado.cargando();
             return;
         }
-        adapter.poner(GruposBusqueda.misPlatos(loMio.getPlatos(), loMio.getAlimentos()), false);
+        List<GruposBusqueda.Elemento> lista = GruposBusqueda.misPlatos(loMio.getPlatos(), loMio.getAlimentos(),
+                modoIngredientes ? null : encaja);
+        // La sección entra en cascada la primera vez que sale (momento 16); al volver, ya está.
+        boolean entra = !encajaEntro && encaja != null;
+        if (entra) encajaEntro = true;
+        adapter.poner(lista, entra ? GruposBusqueda.filasEncaja(lista) : -1);
         estado.oculto();
+    }
+
+    // ── «Lo que te encaja» (1.6.7) ──────────────────────────────────────────
+
+    // Lo habitual en la comida de la etiqueta («Lo sueles tomar en…»). Si falla, cuenta
+    // como que no hay nada habitual: la sección sale igual, ordenada por la proteína.
+    private void cargarHabituales() {
+        int miTurno = ++turnoHabituales;
+        habitualesListos = false;
+        comidaApi.habituales(tipoComida).enqueue(new ApiCallback<List<Alimento>>() {
+            @Override
+            public void onOk(List<Alimento> lista) {
+                if (miTurno != turnoHabituales || isDestroyed()) return;
+                habituales = lista;
+                habitualesListos = true;
+                quizaEncaja();
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                // Se ignora a propósito: es un orden, no un dato que falte a la vista.
+                if (miTurno != turnoHabituales || isDestroyed()) return;
+                habituales = null;
+                habitualesListos = true;
+                quizaEncaja();
+            }
+        });
+    }
+
+    // Al cambiar de comida: lo calculado era de la otra.
+    private void olvidarEncaja() {
+        encaja = null;
+        encajaCalculado = false;
+        encajaEntro = false;
+        if (mirandoPlatos() && loMio != null) pintarPlatos();
+    }
+
+    /**
+     * Calcula «Lo que te encaja» si ya ha llegado todo y aún no se ha hecho para esta
+     * comida, y lo pinta si se está mirando «Mis platos».
+     *
+     * @return true si ha pintado la pestaña.
+     */
+    private boolean quizaEncaja() {
+        if (modoIngredientes || encajaCalculado) return false;
+        if (!diaListo || !todoListo || !favoritosListos || !recientesListas || !habitualesListos || loMio == null) {
+            return false;
+        }
+        encajaCalculado = true;
+        encaja = calcularEncaja();
+        if (!mirandoPlatos()) return false;
+        pintarPlatos();
+        return true;
+    }
+
+    @Nullable
+    private es.pmdm.gymprofit.utils.LoQueTeEncaja.Resultado calcularEncaja() {
+        es.pmdm.gymprofit.utils.ResultadoNutricional objetivo =
+                es.pmdm.gymprofit.utils.DiaNutricion.objetivo(prefsManager);
+        if (objetivo == null || comidasDia == null || loMio == null) return null;
+        es.pmdm.gymprofit.utils.DiaNutricion d = es.pmdm.gymprofit.utils.DiaNutricion.de(comidasDia, objetivo);
+        List<Alimento> recientes = new ArrayList<>();
+        if (listaGuardada != null) for (Alimento a : listaGuardada) if ("TUYO".equals(a.getGrupo())) recientes.add(a);
+        java.util.Set<Integer> suele = new java.util.HashSet<>();
+        if (habituales != null) for (Alimento a : habituales) suele.add(a.getId());
+        java.util.Set<Integer> ayer = new java.util.HashSet<>();
+        ComidaReciente deAyer = es.pmdm.gymprofit.utils.ComidasRecientes.deAyer(comidasRecientes, tipoComida, dia());
+        if (deAyer != null) for (AlimentoComida l : deAyer.getLineas()) ayer.add(l.getAlimentoId());
+        return es.pmdm.gymprofit.utils.LoQueTeEncaja.de(d.kcalRestantes(), d.objetivoProteinas - d.proteinas,
+                loMio.getPlatos(), favoritos != null ? favoritos.getFavoritos() : null, recientes, suele, ayer);
     }
 
     // «Crear un plato»: su hoja añade una ración a la comida de la etiqueta (o no).
@@ -1123,12 +1252,17 @@ public class AnadirAlimentoActivity extends BaseActivity {
                 favoritos = f != null ? f : new Favoritos();
                 favoritosGuardados = favoritos;
                 favoritosViejos = false;
+                favoritosListos = true;
+                quizaEncaja();
                 if (mirandoFavoritos()) pintarFavoritos();
             }
 
             @Override
             public void onFail(int code, String message) {
                 if (miTurno != turnoFavoritos || isDestroyed()) return;
+                // Para «Lo que te encaja», sin favoritos.
+                favoritosListos = true;
+                quizaEncaja();
                 if (!mirandoFavoritos()) return;
                 if (favoritos != null) {
                     // Con algo ya en pantalla, se avisa y se deja lo que había.
