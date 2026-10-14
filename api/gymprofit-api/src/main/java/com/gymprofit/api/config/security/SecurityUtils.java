@@ -109,6 +109,35 @@ public class SecurityUtils {
     }
 
     /**
+     * Verifica que el usuario autenticado es el dueño del recurso, sin excepción para ADMIN.
+     * <p>
+     * Para lo que un usuario guarda de su nutrición —sus alimentos, sus platos y las líneas
+     * de su diario—: es solo suyo, también para un ADMIN (DEC-042). Un id de otro da el mismo
+     * 403 que a un USER (DEC-014).
+     *
+     * @param ownerId id del usuario propietario del recurso.
+     * @throws UnauthorizedException (→ 403) si quien llama no es el dueño.
+     */
+    public void checkDueno(Integer ownerId) {
+        if (!getCurrentUserId().equals(ownerId)) {
+            throw new UnauthorizedException("error.acceso.recurso");
+        }
+    }
+
+    /**
+     * {@link #checkDueno(Integer)} solo cuando el recurso tiene dueño: un {@code ownerId} nulo
+     * es catálogo, de todos, y ahí no hay nada que comprobar.
+     *
+     * @param ownerId id del propietario, o {@code null} si el recurso es de catálogo.
+     * @throws UnauthorizedException (→ 403) si el recurso tiene dueño y no es quien llama.
+     */
+    public void checkDuenoSiLoTiene(Integer ownerId) {
+        if (ownerId != null) {
+            checkDueno(ownerId);
+        }
+    }
+
+    /**
      * Exige que el usuario autenticado sea ADMIN (p. ej. listados globales {@code findAll}).
      *
      * @throws UnauthorizedException (→ 403) si no es ADMIN.

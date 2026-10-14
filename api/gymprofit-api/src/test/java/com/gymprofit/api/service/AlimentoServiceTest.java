@@ -293,17 +293,17 @@ class AlimentoServiceTest {
         verify(alimentoRepository).findByActivoTrue();
     }
 
-    // Comprueba que countActivos, para ADMIN, delega en el repositorio y devuelve el total.
-    // Para el resto cuenta solo los visibles (GP-048): eso lo fija AlimentoVisibilidadTest.
+    // Comprueba que countActivos cuenta los visibles: el catálogo y los propios, también
+    // para un ADMIN (GP-048, DEC-042). Con el contexto levantado lo fija NutricionSoloDelDuenoTest.
     @Test
-    @DisplayName("countActivos devuelve el número de alimentos activos (ADMIN)")
+    @DisplayName("countActivos cuenta el catálogo y los propios")
     void countActivos_devuelve_total() {
-        when(securityUtils.isAdmin()).thenReturn(true);
-        when(alimentoRepository.countByActivoTrue()).thenReturn(5L);
+        when(securityUtils.getCurrentUserId()).thenReturn(7);
+        when(alimentoRepository.findByActivoTrue()).thenReturn(List.of(alimento, alimento));
 
         Long result = alimentoService.countActivos();
 
-        assertEquals(5L, result);
+        assertEquals(2L, result);
     }
 
     // Comprueba que busquedaAdmin delega en el repositorio jOOQ y devuelve los resultados
