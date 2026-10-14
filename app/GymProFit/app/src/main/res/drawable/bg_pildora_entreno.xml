@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_pildora_entreno — «Día de entreno · …» en Nutrición (lote 1.6.8, tablero 1): radio 22,
+     el contenedor naranja suave. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="22dp" />
+    <solid android:color="@color/gp_primary_container" />
+</shape>

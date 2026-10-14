@@ -546,7 +546,7 @@
     <string name="eliminar_cuenta_borra_2">Your profile: sex, age, height, weight, activity level, experience level, goal and the alerts you chose.</string>
     <string name="eliminar_cuenta_borra_3">Your profile picture, if you uploaded one.</string>
     <string name="eliminar_cuenta_borra_4">Your whole training history: the programme you follow, routines, sessions, exercises performed, sets with their weights and reps, notes and progress.</string>
-    <string name="eliminar_cuenta_borra_5">Your whole nutrition log: meals, foods eaten, any custom foods and dishes you created, with their ingredients, and your favorites.</string>
+    <string name="eliminar_cuenta_borra_5">Your whole nutrition log: meals, foods eaten, any custom foods and dishes you created, with their ingredients, your favorites, the water of each day and the meals marked “Not today”.</string>
     <string name="eliminar_cuenta_borra_6">Your body measurements, personal goals and achievements.</string>
     <string name="eliminar_cuenta_borra_7">Your open sessions and your device identifier for notifications.</string>
     <string name="eliminar_cuenta_que_no_se_borra">What does not get deleted</string>
@@ -1824,4 +1824,65 @@
     <string name="encaja_motivo_cabe">Fits in what you have left</string>
     <string name="encaja_plato_a11y">%1$s, dish</string>
     <string name="encaja_a11y">%1$s. %2$s. %3$s</string>
+    <!-- ── Batch 1.6.8: the new diary, water, "Not today" and the complete day (GP-162, GP-166) ── -->
+    <string name="dia_a11y">%1$s: %2$s</string>
+    <string name="dia_a11y_completo">complete day</string>
+    <string name="dia_a11y_a_medias">partly logged</string>
+    <string name="dia_a11y_en_curso">in progress</string>
+    <string name="dia_a11y_entreno">training day</string>
+    <string name="diario_fallo">Couldn\'t load water and the complete day: %1$s</string>
+    <string name="nutricion_kcal_sola">kcal</string>
+    <string name="nutricion_kcal_para_hoy">kcal for today</string>
+    <string name="nutricion_kcal_hoy">kcal today</string>
+    <string name="dia_completo_titulo">Day complete</string>
+    <string name="dia_completo_texto">All your meals, logged</string>
+    <string name="dia_completo_a11y">Day complete: all your meals logged. %1$s</string>
+    <string name="proteina_conseguida">Protein reached</string>
+    <string name="nutricion_te_faltan">%1$d\u00A0g to go</string>
+    <string name="nutricion_macro_a11y">%1$s: %2$d of %3$d grams</string>
+    <string name="nutricion_macro_falta_a11y">%1$s, %2$d to go</string>
+    <string name="entreno_dia">Training day</string>
+    <string name="entreno_dia_rutina">Training day · %1$s</string>
+    <plurals name="dias_completos_semana">
+        <item quantity="one">%d complete day this week</item>
+        <item quantity="other">%d complete days this week</item>
+    </plurals>
+    <string name="semana_frase_hoy_entreno_proteina">And today, with a workout and your protein done. That\'s how it shows.</string>
+    <string name="semana_frase_hoy_entreno">And today, with a workout. That\'s how it shows.</string>
+    <string name="semana_frase_hoy_proteina">And today, with your protein done. That\'s how it shows.</string>
+    <string name="semana_frase_hoy">And today, with everything logged. That\'s how it shows.</string>
+    <string name="semana_frase_dia_entreno_proteina">That day, with a workout and your protein done.</string>
+    <string name="semana_frase_dia_entreno">That day, with a workout.</string>
+    <string name="semana_frase_dia_proteina">That day, with your protein done.</string>
+    <string name="semana_frase_dia">That day, with everything logged.</string>
+    <string name="agua_titulo">Water</string>
+    <string name="agua_vaso">Glass</string>
+    <string name="agua_litros">%1$s of %2$s\u00A0L</string>
+    <string name="agua_litros_sin_objetivo">%1$s\u00A0L</string>
+    <string name="agua_a11y">Water: %1$s of %2$s litres, %3$s</string>
+    <string name="agua_a11y_sin_objetivo">Water: %1$s litres, %2$s</string>
+    <plurals name="agua_vasos">
+        <item quantity="one">%d glass</item>
+        <item quantity="other">%d glasses</item>
+    </plurals>
+    <string name="agua_vaso_a11y">Add a glass of water, %1$d millilitres</string>
+    <string name="agua_quitar_a11y">Remove a glass</string>
+    <string name="agua_quitado_a11y">Glass removed</string>
+    <string name="agua_fallo">Water wasn\'t saved: %1$s</string>
+    <string name="comida_hoy_no">Not today</string>
+    <string name="hoy_no_boton">Not today</string>
+    <string name="hoy_no_boton_a11y">Not today: marks that you skip it; it counts towards a complete day</string>
+    <string name="hoy_no_marcada">It counts towards a complete day.</string>
+    <string name="hoy_no_quitar">Undo “Not today”</string>
+    <string name="hoy_no_quitar_a11y">Undo “Not today”: it goes back to not logged</string>
+    <string name="hoy_no_quitada_a11y">“Not today” undone</string>
+    <string name="hoy_no_fallo">“Not today” wasn\'t saved: %1$s</string>
+    <string name="hoy_no_titulo_desayuno">No breakfast</string>
+    <string name="hoy_no_titulo_almuerzo">No mid-morning meal</string>
+    <string name="hoy_no_titulo_comida">No lunch</string>
+    <string name="hoy_no_titulo_merienda">No snack</string>
+    <string name="hoy_no_titulo_cena">No dinner</string>
+    <string name="perfil_vaso">Glass of water</string>
+    <string name="perfil_vaso_ml">%1$d\u00A0ml</string>
+
 </resources>

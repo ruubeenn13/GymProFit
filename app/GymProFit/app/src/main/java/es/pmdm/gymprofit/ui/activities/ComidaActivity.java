@@ -88,13 +88,26 @@ import es.pmdm.gymprofit.utils.VistaEstado;
 // un «+» que añade y deja la pantalla con la comida ya apuntada. Sin nada, no salen.
 // Abajo, fija, «Añadir alimento» (Añadir con esta comida) y el escáner (con esta comida).
 // Cargando y error, con view_estado; nada de diálogos que bloqueen.
-// Extras: tipoComida, comidaId (-1 si aún no existe) y fecha (yyyy-MM-dd).
+// Desde la 1.6.8, vacía, «Hoy no» (decisión 10): marca que esa comida ese día no se hace,
+// y cuenta para el día completo; marcada, lo dice y se quita con el mismo botón. Solo si
+// el diario sabía cómo estaba (EXTRA_DIARIO_LISTO): sin eso no se ofrece lo que no se sabe.
+// Extras: tipoComida, comidaId (-1 si aún no existe), fecha (yyyy-MM-dd), EXTRA_HOY_NO y
+// EXTRA_DIARIO_LISTO.
 // ============================================================
 public class ComidaActivity extends BaseActivity {
+
+    /** Si la comida está marcada «Hoy no» ese día (lote 1.6.8). */
+    public static final String EXTRA_HOY_NO = "hoyNo";
+    /** Si el diario sabía qué comidas están marcadas: sin eso no sale «Hoy no». */
+    public static final String EXTRA_DIARIO_LISTO = "diarioListo";
 
     private String tipoComida;
     private int comidaId;
     private String fecha;
+    // «Hoy no» (1.6.8): si se puede ofrecer, si está marcada y si va una petición en camino.
+    private boolean hoyNoDisponible, hoyNo, cambiandoHoyNo;
+    private final es.pmdm.gymprofit.network.DiarioApi diarioApi =
+            ApiClient.service(es.pmdm.gymprofit.network.DiarioApi.class);
 
     private final List<AlimentoComida> lineas = new ArrayList<>();
     private AlimentoComidaAdapter adapter;
@@ -133,6 +146,9 @@ public class ComidaActivity extends BaseActivity {
         comidaId = getIntent().getIntExtra("comidaId", -1);
         fecha = getIntent().getStringExtra("fecha");
         objetivo = DiaNutricion.objetivo(prefsManager);
+        hoyNoDisponible = getIntent().getBooleanExtra(EXTRA_DIARIO_LISTO, false);
+        hoyNo = getIntent().getBooleanExtra(EXTRA_HOY_NO, false);
+        findViewById(R.id.btnHoyNo).setOnClickListener(v -> cambiarHoyNo());
 
         ((TextView) findViewById(R.id.tvTituloComida)).setText(ComidaQueToca.titulo(tipoComida));
         ((TextView) findViewById(R.id.tvDiaComida)).setText(ElegirComida.textoDia(this, fecha));
@@ -475,10 +491,7 @@ public class ComidaActivity extends BaseActivity {
     private void pintarVacia(boolean entra) {
         ImageView icono = findViewById(R.id.ivIconoVacia);
         icono.setImageResource(ElegirComida.icono(tipoComida));
-        TextView titulo = findViewById(R.id.tvVacia);
-        titulo.setText(vaciaTexto(tipoComida));
-        boolean toca = ElegirComida.esHoy(fecha) && tipoComida.equals(ComidaQueToca.ahora());
-        findViewById(R.id.tvVaciaToca).setVisibility(toca ? View.VISIBLE : View.GONE);
+        pintarHoyNo();
         if (entra) {
             Movimiento.entrarUna(findViewById(R.id.bloqueVacia), 0, Movimiento.ENTRA, 16);
             View marco = findViewById(R.id.marcoIconoVacia);
@@ -537,9 +550,67 @@ public class ComidaActivity extends BaseActivity {
         });
     }
 
+    // El título, «Es la que toca ahora» y «Hoy no». Marcada, ni toca ni se sugiere nada.
+    private void pintarHoyNo() {
+        TextView titulo = findViewById(R.id.tvVacia);
+        titulo.setText(hoyNo ? hoyNoTitulo(tipoComida) : vaciaTexto(tipoComida));
+        boolean toca = !hoyNo && ElegirComida.esHoy(fecha) && tipoComida.equals(ComidaQueToca.ahora());
+        findViewById(R.id.tvVaciaToca).setVisibility(toca ? View.VISIBLE : View.GONE);
+        findViewById(R.id.tvHoyNoMarcada).setVisibility(hoyNo ? View.VISIBLE : View.GONE);
+        com.google.android.material.button.MaterialButton boton = findViewById(R.id.btnHoyNo);
+        boton.setVisibility(hoyNoDisponible ? View.VISIBLE : View.GONE);
+        boton.setText(hoyNo ? R.string.hoy_no_quitar : R.string.hoy_no_boton);
+        boton.setContentDescription(getString(hoyNo ? R.string.hoy_no_quitar_a11y : R.string.hoy_no_boton_a11y));
+    }
+
+    // Marca o quita «Hoy no». Se ve al momento; si la API falla, vuelve como estaba y se dice.
+    private void cambiarHoyNo() {
+        if (cambiandoHoyNo) return;
+        cambiandoHoyNo = true;
+        boolean marcar = !hoyNo;
+        hoyNo = marcar;
+        View boton = findViewById(R.id.btnHoyNo);
+        Movimiento.vibrar(boton, Movimiento.Vibracion.LIGERA);
+        pintarHoyNo();
+        pintarSugerencias(false);
+        if (marcar) Movimiento.entrarUna(findViewById(R.id.tvHoyNoMarcada), 0, Movimiento.MENSAJE, 8);
+        boton.announceForAccessibility(getString(marcar ? R.string.hoy_no_marcada : R.string.hoy_no_quitada_a11y));
+        String dia = dia();
+        retrofit2.Call<Void> llamada = marcar ? diarioApi.marcarHoyNo(dia, tipoComida)
+                : diarioApi.quitarHoyNo(dia, tipoComida);
+        llamada.enqueue(new es.pmdm.gymprofit.network.ApiCallback<Void>() {
+            @Override
+            public void onOk(Void r) {
+                cambiandoHoyNo = false;
+                setResult(RESULT_OK);
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                cambiandoHoyNo = false;
+                if (isDestroyed()) return;
+                hoyNo = !marcar;
+                pintarHoyNo();
+                pintarSugerencias(false);
+                UIHelper.mostrarToastError(ComidaActivity.this, getString(R.string.hoy_no_fallo,
+                        UiFeedback.mensaje(ComidaActivity.this, code, message)));
+            }
+        });
+    }
+
+    private static int hoyNoTitulo(String tipo) {
+        switch (tipo) {
+            case "DESAYUNO": return R.string.hoy_no_titulo_desayuno;
+            case "ALMUERZO": return R.string.hoy_no_titulo_almuerzo;
+            case "COMIDA":   return R.string.hoy_no_titulo_comida;
+            case "MERIENDA": return R.string.hoy_no_titulo_merienda;
+            default:         return R.string.hoy_no_titulo_cena;
+        }
+    }
+
     private void pintarSugerencias(boolean entra) {
         View bloque = findViewById(R.id.bloqueSugerencias);
-        boolean vacia = lineas.isEmpty() && findViewById(R.id.bloqueVacia).getVisibility() == View.VISIBLE;
+        boolean vacia = !hoyNo && lineas.isEmpty() && findViewById(R.id.bloqueVacia).getVisibility() == View.VISIBLE;
         android.view.ViewGroup ranura = findViewById(R.id.ranuraCopiarComida);
         View seccion = findViewById(R.id.seccionSueles);
         boolean conCopia = vacia && copiaAyer != null && !copiando;

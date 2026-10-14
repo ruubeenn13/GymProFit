@@ -67,6 +67,13 @@
     <color name="gp_error_container">#3A1414</color>
 
     <!-- Pista del medidor de nivel: #353A43 frente a #FF6A00 da 3,98:1 (GP-078). -->
+    <!-- El agua (lote 1.6.8, tablero 1): el vaso y la gota en gp_agua (8,02:1 sobre la tarjeta);
+         el botón «Vaso», gp_on_agua_container sobre gp_agua_container (9,36:1). -->
+    <!-- El brillo que cruza la barra dorada de la proteína con el día completo (momento 21). -->
+    <color name="gp_brillo_oro">#B3FFF4D9</color>
+    <color name="gp_agua">#56C2D6</color>
+    <color name="gp_agua_container">#10323A</color>
+    <color name="gp_on_agua_container">#8FE3F0</color>
     <color name="gp_meter_track">#353A43</color>
 
     <!-- ── Alias legados usados por layouts existentes ───────────────────── -->

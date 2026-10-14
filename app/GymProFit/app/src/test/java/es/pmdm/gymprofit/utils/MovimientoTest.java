@@ -126,6 +126,23 @@ public class MovimientoTest {
     }
 
     @Test
+    public void elDiaCompletoYElVasoEstanEnLaTablaYEnElCodigo() throws IOException {
+        // Momentos 21 y 22 (lote 1.6.8), del tablero 3 y de «Así se mueve»: el anillo se
+        // cierra en 600 ms, el punto salta en 450 y el vaso se llena en 450.
+        Map<String, Long> tabla = duracionesDeLaTabla();
+        Map<String, Long> codigo = duracionesDelCodigo();
+        assertTrue("falta el momento 21 en DEC-039", decision().contains("| 21 · "));
+        assertTrue("falta el momento 22 en DEC-039", decision().contains("| 22 · "));
+        for (String c : new String[]{"CIERRA", "PUNTO", "VASO", "HALO", "BRILLO"}) {
+            assertTrue(c + " no está en la tabla", tabla.containsKey(c));
+            assertTrue(c + " no está en Movimiento", codigo.containsKey(c));
+        }
+        assertEquals(Long.valueOf(600), codigo.get("CIERRA"));
+        assertEquals(Long.valueOf(450), codigo.get("PUNTO"));
+        assertEquals(Long.valueOf(450), codigo.get("VASO"));
+    }
+
+    @Test
     public void elPlatoEstaEnLaTablaYEnElCodigo() throws IOException {
         // Momento 23 (lote 1.6.6), con los números de los tableros 9 y 10: las cifras caen
         // en 250 ms, el velo en 250, la hoja sube en 450 y su ✓ salta en 450, 200 después.

@@ -61,6 +61,8 @@
                 <include android:id="@+id/filaSexoActividad" layout="@layout/view_fila_ajuste" />
                 <include android:id="@+id/filaObjetivo" layout="@layout/view_fila_ajuste" />
                 <include android:id="@+id/filaNivel" layout="@layout/view_fila_ajuste" />
+                <!-- El vaso de agua (lote 1.6.8): del móvil, no de la cuenta. -->
+                <include android:id="@+id/filaVaso" layout="@layout/view_fila_ajuste" />
             </LinearLayout>
 
             <TextView

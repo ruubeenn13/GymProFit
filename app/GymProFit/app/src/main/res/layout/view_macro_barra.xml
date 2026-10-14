@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  view_macro_barra — una macro en la tarjeta de Nutrición (GP-105): nombre a la
-  izquierda, «86 / 149 g» a la derecha y una barra de 6 dp de su color.
+  view_macro_barra — una macro en la tarjeta de Nutrición (GP-105). Desde la 1.6.8 (tablero 1):
+  el punto de su color y el nombre a la izquierda, «82 / 136 g» a la derecha, la barra de su
+  color (10 dp la proteína, 8 las otras, desde el código) y, solo en la proteína, «Te faltan
+  54 g». Con el día completo y la proteína hecha, el trofeo y el dorado (tablero 3).
+  Para TalkBack, la fila entera es una imagen con su descripción.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -14,14 +17,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:gravity="center_vertical"
         android:importantForAccessibility="noHideDescendants">
+
+        <ImageView
+            android:id="@+id/ivMacroIcono"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginEnd="6dp"
+            android:visibility="gone"
+            android:src="@drawable/ic_ms_trophy_fill" />
+
+        <View
+            android:id="@+id/vMacroPunto"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/bg_punto_dia" />
 
         <TextView
             android:id="@+id/tvMacroNombre"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textSize="@dimen/text_caption"
+            android:textSize="@dimen/text_body"
             android:textColor="?attr/colorOnSurface" />
 
         <TextView
@@ -29,8 +48,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:textSize="@dimen/text_caption"
-            android:textColor="?attr/colorOnSurfaceVariant" />
+            android:fontFeatureSettings="tnum"
+            android:textSize="@dimen/text_body"
+            android:textColor="?attr/colorOnSurface" />
     </LinearLayout>
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
@@ -38,8 +58,19 @@
         style="@style/Widget.GymProFit.BarraProgreso"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="6dp"
         android:importantForAccessibility="no"
-        app:trackThickness="6dp"
-        app:trackCornerRadius="3dp" />
+        app:trackThickness="8dp"
+        app:trackCornerRadius="4dp" />
+
+    <TextView
+        android:id="@+id/tvMacroFalta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:visibility="gone"
+        android:importantForAccessibility="no"
+        android:textSize="@dimen/text_caption"
+        android:textStyle="bold"
+        android:textColor="@color/gp_macro_proteinas" />
 </LinearLayout>

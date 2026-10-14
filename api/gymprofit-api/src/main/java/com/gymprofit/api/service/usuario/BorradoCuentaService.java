@@ -147,6 +147,10 @@ public class BorradoCuentaService implements IBorradoCuentaService {
         borrarNativo("Favoritos", "DELETE FROM favoritos WHERE usuario_id = :id", usuarioId);
         borrarNativo("Propuestas de favorito", "DELETE FROM propuestas_favorito WHERE usuario_id = :id", usuarioId);
 
+        // El agua y «Hoy no» (lote 1.6.8): también en cascada; aquí, por el log.
+        borrarNativo("Agua", "DELETE FROM agua_diaria WHERE usuario_id = :id", usuarioId);
+        borrarNativo("Comidas «Hoy no»", "DELETE FROM comidas_hoy_no WHERE usuario_id = :id", usuarioId);
+
         // Los ingredientes de sus platos (lote 1.6.6), antes que los alimentos: un ingrediente
         // suyo no se puede borrar mientras un plato lo use, y la base no ordena las filas de
         // un mismo DELETE. Sus raciones se van en cascada con cada alimento.

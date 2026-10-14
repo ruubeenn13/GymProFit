@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_punto_dia_en_curso — hoy, con algo apuntado y sin completar (lote 1.6.8): un aro de 2 dp
+     del ámbar de los carbohidratos, como en el tablero 1. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <stroke android:width="2dp" android:color="@color/gp_macro_carbos" />
+</shape>

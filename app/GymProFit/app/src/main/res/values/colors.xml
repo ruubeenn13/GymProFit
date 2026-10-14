@@ -87,6 +87,13 @@
          y eso pide 3:1 (WCAG 1.4.11). #D6D6D0 frente a #B83E00 da 3,86:1.
          No reutiliza gp_stroke a propósito: el borde tiene que oscurecerse para
          delimitar la tarjeta, y cuanto más oscuro, menos se distingue de la marca. -->
+    <!-- El agua (lote 1.6.8, tablero 1): el vaso y la gota en gp_agua (4,89:1 sobre la tarjeta blanca);
+         el botón «Vaso», gp_on_agua_container sobre gp_agua_container (7,20:1). -->
+    <!-- El brillo que cruza la barra dorada de la proteína con el día completo (momento 21). -->
+    <color name="gp_brillo_oro">#B3FFF4D9</color>
+    <color name="gp_agua">#0E7C8F</color>
+    <color name="gp_agua_container">#D7F2F6</color>
+    <color name="gp_on_agua_container">#0B5562</color>
     <color name="gp_meter_track">#D6D6D0</color>
 
     <!-- ── Alias legados (layouts existentes; apuntan a la paleta nueva) ──── -->

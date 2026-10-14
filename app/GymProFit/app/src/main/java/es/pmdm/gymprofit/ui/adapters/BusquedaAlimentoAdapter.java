@@ -564,6 +564,26 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
             cubre = v.findViewById(R.id.tvCubreEncaja);
             iconoMotivo = v.findViewById(R.id.ivMotivoEncaja);
             motivo = v.findViewById(R.id.tvMotivoEncaja);
+            apilarConLetraGrande(v);
+        }
+
+        // Con letra grande (1,3 o más, como en el resto de la app), «123 % de lo que falta»
+        // se comía el ancho y la barra quedaba en un trozo (1.6.8): va debajo, a lo ancho.
+        private void apilarConLetraGrande(@NonNull View v) {
+            if (v.getResources().getConfiguration().fontScale < 1.3f) return;
+            ((android.widget.LinearLayout) barra).setOrientation(android.widget.LinearLayout.VERTICAL);
+            ((android.widget.LinearLayout) barra).setGravity(android.view.Gravity.START);
+            View pista = v.findViewById(R.id.pistaEncaja);
+            android.widget.LinearLayout.LayoutParams lpPista =
+                    (android.widget.LinearLayout.LayoutParams) pista.getLayoutParams();
+            lpPista.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            lpPista.weight = 0;
+            pista.setLayoutParams(lpPista);
+            android.widget.LinearLayout.LayoutParams lpCubre =
+                    (android.widget.LinearLayout.LayoutParams) cubre.getLayoutParams();
+            lpCubre.setMarginStart(0);
+            lpCubre.topMargin = Math.round(6 * v.getResources().getDisplayMetrics().density);
+            cubre.setLayoutParams(lpCubre);
         }
 
         void pintar(@NonNull LoQueTeEncaja.Sugerencia s, boolean entra) {

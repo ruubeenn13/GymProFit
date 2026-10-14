@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  fragment_nutricion — pestaña Nutrición (GP-105), según 03-nutricion.png.
-  Cabecera con historial y calendario, la tira de la semana (de lunes a domingo; los
-  días que no han llegado, desactivados), la tarjeta de kcal y macros, y las cinco
-  comidas con su «+». La tira y las comidas las rellena NutricionFragment.
+  fragment_nutricion — pestaña Nutrición (GP-105). Desde la 1.6.8, el diario nuevo del
+  tablero 1 (y el 3 con el día completo), lienzo del 02-10:
+  cabecera con historial y calendario; la tira de la semana con el punto de cada día y la
+  marca del entreno; «Día de entreno · …» si ese día hubo; la tarjeta del anillo, lo que
+  queda y los macros (con el día completo, el ✓ y «Día completo»); el agua a vasos; con el
+  día completo, «Tu semana»; y las cinco comidas con su «+». Lo rellena NutricionFragment.
 -->
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -41,10 +43,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingTop="6dp"
-            android:paddingBottom="4dp" />
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="6dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -52,11 +53,46 @@
             android:orientation="vertical"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            android:paddingTop="8dp"
+            android:paddingTop="12dp"
             android:paddingBottom="16dp">
 
-            <!-- Kcal y macros -->
+            <!-- «Día de entreno · Cuerpo completo B»: de las sesiones terminadas ese día. -->
+            <LinearLayout
+                android:id="@+id/pildoraEntreno"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:minHeight="44dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_pildora_entreno"
+                android:focusable="true"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_ms_fitness_center_fill"
+                    app:tint="?attr/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/tvEntreno"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textSize="@dimen/text_body"
+                    android:textStyle="bold"
+                    android:textColor="@color/gp_on_primary_container" />
+            </LinearLayout>
+
+            <!-- El anillo, lo que queda y los macros -->
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardDia"
                 style="@style/Widget.GymProFit.Card.Estructura"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -72,36 +108,62 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:gravity="bottom"
+                        android:gravity="center_vertical"
                         android:focusable="true">
 
+                        <FrameLayout
+                            android:id="@+id/marcoAnilloDia"
+                            android:layout_width="136dp"
+                            android:layout_height="136dp"
+                            android:importantForAccessibility="noHideDescendants">
+
+                            <es.pmdm.gymprofit.ui.nutricion.AnilloDia
+                                android:id="@+id/anilloDia"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:paddingStart="26dp"
+                                android:paddingEnd="26dp"
+                                android:orientation="vertical"
+                                android:gravity="center_horizontal">
+
+                                <TextView
+                                    android:id="@+id/tvKcal"
+                                    android:layout_width="match_parent"
+                                    android:gravity="center"
+                                    android:layout_height="wrap_content"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    app:autoSizeTextType="uniform"
+                                    app:autoSizeMinTextSize="18sp"
+                                    app:autoSizeMaxTextSize="36sp"
+                                    android:fontFeatureSettings="tnum"
+                                    android:textAppearance="@style/TextAppearance.GymProFit.Number"
+                                    android:textSize="36sp" />
+
+                                <TextView
+                                    android:id="@+id/tvKcalObjetivo"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:maxLines="2"
+                                    android:textSize="@dimen/text_eyebrow"
+                                    android:textColor="?attr/colorOnSurfaceVariant" />
+                            </LinearLayout>
+                        </FrameLayout>
+
+                        <!-- Lo que queda -->
                         <LinearLayout
+                            android:id="@+id/grupoQuedan"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:layout_marginStart="16dp"
                             android:orientation="vertical"
-                            android:importantForAccessibility="noHideDescendants">
-
-                            <TextView
-                                android:id="@+id/tvKcal"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:includeFontPadding="false"
-                                android:textAppearance="@style/TextAppearance.GymProFit.Number" />
-
-                            <TextView
-                                android:id="@+id/tvKcalObjetivo"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textSize="@dimen/text_caption"
-                                android:textColor="?attr/colorOnSurfaceVariant" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:gravity="end"
                             android:importantForAccessibility="noHideDescendants">
 
                             <TextView
@@ -109,48 +171,244 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/nutricion_te_quedan"
-                                android:textSize="@dimen/text_caption"
-                                android:textColor="?attr/colorOnSurfaceVariant" />
+                                android:textAppearance="@style/TextAppearance.GymProFit.Label"
+                                android:textSize="@dimen/text_eyebrow" />
 
                             <TextView
                                 android:id="@+id/tvQuedan"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textSize="@dimen/text_subtitle"
-                                android:textStyle="bold"
+                                android:layout_marginTop="4dp"
+                                android:includeFontPadding="false"
+                                android:fontFeatureSettings="tnum"
+                                android:textAppearance="@style/TextAppearance.GymProFit.Number"
+                                android:textSize="40sp" />
+
+                            <TextView
+                                android:id="@+id/tvQuedanUnidad"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="@string/nutricion_kcal_para_hoy"
+                                android:textSize="@dimen/text_caption"
+                                android:textColor="?attr/colorOnSurfaceVariant" />
+                        </LinearLayout>
+
+                        <!-- Con el día completo (tablero 3) -->
+                        <LinearLayout
+                            android:id="@+id/grupoCompleto"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="16dp"
+                            android:orientation="vertical"
+                            android:visibility="gone"
+                            android:importantForAccessibility="noHideDescendants">
+
+                            <FrameLayout
+                                android:id="@+id/checkCompleto"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:background="@drawable/bg_check_completo">
+
+                                <ImageView
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/ic_ms_check"
+                                    app:tint="@color/gp_success" />
+                            </FrameLayout>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:text="@string/dia_completo_titulo"
+                                android:textAppearance="@style/TextAppearance.GymProFit.Display" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:text="@string/dia_completo_texto"
+                                android:textSize="@dimen/text_caption"
                                 android:textColor="?attr/colorOnSurface" />
                         </LinearLayout>
                     </LinearLayout>
-
-                    <com.google.android.material.progressindicator.LinearProgressIndicator
-                        android:id="@+id/barraKcal"
-                        style="@style/Widget.GymProFit.BarraProgreso"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        app:trackThickness="8dp"
-                        app:trackCornerRadius="4dp" />
 
                     <include
                         android:id="@+id/macroProteinas"
                         layout="@layout/view_macro_barra"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp" />
+                        android:layout_marginTop="16dp" />
 
                     <include
                         android:id="@+id/macroCarbos"
                         layout="@layout/view_macro_barra"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp" />
+                        android:layout_marginTop="12dp" />
 
                     <include
                         android:id="@+id/macroGrasas"
                         layout="@layout/view_macro_barra"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp" />
+                        android:layout_marginTop="12dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- El agua (GP-166) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardAgua"
+                style="@style/Widget.GymProFit.Card.Estructura"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp">
+
+                <LinearLayout
+                    android:id="@+id/grupoAgua"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="8dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <LinearLayout
+                            android:id="@+id/resumenAgua"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:focusable="true">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_ms_water_drop_fill"
+                                app:tint="@color/gp_agua" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginStart="10dp"
+                                android:orientation="vertical"
+                                android:importantForAccessibility="noHideDescendants">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/agua_titulo"
+                                    android:textSize="@dimen/text_fila"
+                                    android:textStyle="bold"
+                                    android:textColor="?attr/colorOnSurface" />
+
+                                <TextView
+                                    android:id="@+id/tvAguaLitros"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFeatureSettings="tnum"
+                                    android:textSize="@dimen/text_caption"
+                                    android:textColor="?attr/colorOnSurfaceVariant" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnVaso"
+                            style="@style/Widget.Material3.Button.UnelevatedButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:minHeight="48dp"
+                            android:insetTop="2dp"
+                            android:insetBottom="2dp"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="16dp"
+                            android:text="@string/agua_vaso"
+                            android:textSize="@dimen/text_body"
+                            android:textStyle="bold"
+                            android:textAllCaps="false"
+                            android:textColor="@color/gp_on_agua_container"
+                            app:backgroundTint="@color/gp_agua_container"
+                            app:icon="@drawable/ic_ms_add"
+                            app:iconSize="20dp"
+                            app:iconPadding="6dp"
+                            app:iconTint="@color/gp_on_agua_container"
+                            app:cornerRadius="22dp" />
+                    </LinearLayout>
+
+                    <!-- Los vasos: los rellena NutricionFragment, en filas de nueve. -->
+                    <LinearLayout
+                        android:id="@+id/filasVasos"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:orientation="vertical"
+                        android:importantForAccessibility="no" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Tu semana: con el día completo (tablero 3) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardSemana"
+                style="@style/Widget.GymProFit.Card.Estructura"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:focusable="true"
+                    android:id="@+id/filaSemana">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_ms_calendar_month"
+                        app:tint="@color/gp_success" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="12dp"
+                        android:orientation="vertical"
+                        android:importantForAccessibility="noHideDescendants">
+
+                        <TextView
+                            android:id="@+id/tvSemanaTitulo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/text_fila"
+                            android:textStyle="bold"
+                            android:textColor="?attr/colorOnSurface" />
+
+                        <TextView
+                            android:id="@+id/tvSemanaTexto"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:lineSpacingMultiplier="1.1"
+                            android:textSize="@dimen/text_caption"
+                            android:textColor="?attr/colorOnSurface" />
+                    </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

@@ -46,8 +46,10 @@ class BorradoCuentaTest extends AbstractOwnershipTest {
     // Tablas con FK directa a usuarios que el borrado conoce y que este test siembra.
     // Fuente de verdad: el esquema. Esto es solo la copia que se compara contra él.
     private static final Set<String> TABLAS_CONOCIDAS = Set.of(
+            "agua_diaria",
             "alimentos",
             "comidas",
+            "comidas_hoy_no",
             "device_tokens",
             "favoritos",
             "fotos_perfil",
@@ -106,6 +108,13 @@ class BorradoCuentaTest extends AbstractOwnershipTest {
         ejecutar("""
                 INSERT INTO propuestas_favorito (usuario_id, alimento_id, motivo, creado)
                 VALUES (%d, %d, 'RECHAZADA', NOW())""".formatted(owner.getId(), alimentoCatalogoId));
+
+        // Lote 1.6.8: el agua de un día y una comida marcada «Hoy no».
+        ejecutar("INSERT INTO agua_diaria (usuario_id, fecha, mililitros, actualizado) VALUES (%d, CURDATE(), 750, NOW())"
+                .formatted(owner.getId()));
+        ejecutar("""
+                INSERT INTO comidas_hoy_no (usuario_id, fecha, tipo_comida, creado)
+                VALUES (%d, CURDATE(), 'MERIENDA', NOW())""".formatted(owner.getId()));
 
         // Lote 1.6.6: un plato suyo con dos ingredientes, uno suyo y otro del catálogo, y su
         // ración de sin peso. El suyo no se puede borrar mientras el plato lo use.

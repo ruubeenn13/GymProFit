@@ -189,6 +189,8 @@ public class AnadirAlimentoActivity extends BaseActivity {
     // fallado), y el resultado de la comida de la etiqueta; null sin sección.
     @Nullable private List<es.pmdm.gymprofit.model.comida.Comida> comidasDia;
     private boolean diaListo, todoListo, favoritosListos, recientesListas, habitualesListos;
+    // Lo que ya lleva la comida de la etiqueta ese día (1.6.8): no se vuelve a proponer.
+    private final java.util.Set<Integer> yaApuntados = new java.util.HashSet<>();
     @Nullable private List<Alimento> habituales;
     private int turnoHabituales, turnoDia;
     private boolean encajaCalculado, encajaEntro;
@@ -425,8 +427,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
                     public void onOk(List<es.pmdm.gymprofit.model.comida.Comida> lista) {
                         if (miTurno != turnoDia || isDestroyed()) return;
                         comidasDia = lista != null ? lista : new ArrayList<>();
-                        diaListo = true;
-                        quizaEncaja();
+                        cargarYaApuntados(miTurno);
                         Map<String, Integer> m = new HashMap<>();
                         if (lista != null) {
                             for (es.pmdm.gymprofit.model.comida.Comida c : lista) {
@@ -447,6 +448,41 @@ public class AnadirAlimentoActivity extends BaseActivity {
                         diaListo = true;
                     }
                 });
+    }
+
+    // Las líneas de la comida de la etiqueta, para no proponer en «Lo que te encaja» lo que
+    // ya lleva (1.6.8). Sin esa comida no hay nada apuntado. Si falla, se propone como antes:
+    // es un filtro, y sin él la sección sigue siendo cierta.
+    private void cargarYaApuntados(int miTurno) {
+        yaApuntados.clear();
+        es.pmdm.gymprofit.model.comida.Comida esta = null;
+        if (comidasDia != null) {
+            for (es.pmdm.gymprofit.model.comida.Comida c : comidasDia) {
+                if (tipoComida.equals(c.getTipoComida())) esta = c;
+            }
+        }
+        if (esta == null || esta.getId() <= 0) {
+            diaListo = true;
+            quizaEncaja();
+            return;
+        }
+        lineaApi.getDeComida(esta.getId()).enqueue(new ApiCallback<List<AlimentoComida>>() {
+            @Override
+            public void onOk(List<AlimentoComida> lineas) {
+                if (miTurno != turnoDia || isDestroyed()) return;
+                if (lineas != null) for (AlimentoComida l : lineas) yaApuntados.add(l.getAlimentoId());
+                diaListo = true;
+                quizaEncaja();
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                // Se ignora a propósito: sin las líneas se propone como en la 1.6.7.
+                if (miTurno != turnoDia || isDestroyed()) return;
+                diaListo = true;
+                quizaEncaja();
+            }
+        });
     }
 
     private String dia() {
@@ -1230,7 +1266,8 @@ public class AnadirAlimentoActivity extends BaseActivity {
         ComidaReciente deAyer = es.pmdm.gymprofit.utils.ComidasRecientes.deAyer(comidasRecientes, tipoComida, dia());
         if (deAyer != null) for (AlimentoComida l : deAyer.getLineas()) ayer.add(l.getAlimentoId());
         return es.pmdm.gymprofit.utils.LoQueTeEncaja.de(d.kcalRestantes(), d.objetivoProteinas - d.proteinas,
-                loMio.getPlatos(), favoritos != null ? favoritos.getFavoritos() : null, recientes, suele, ayer);
+                loMio.getPlatos(), favoritos != null ? favoritos.getFavoritos() : null, recientes, suele, ayer,
+                yaApuntados);
     }
 
     // «Crear un plato»: su hoja añade una ración a la comida de la etiqueta (o no).

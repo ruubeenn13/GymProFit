@@ -150,6 +150,12 @@ public final class Movimiento {
     public static final long SALTA_OK = 450;
     /** 23 · El plato: el ✓ salta cuando la hoja ya está subiendo. */
     public static final long SALTA_OK_RETRASO = 200;
+    /** 21 · Día completo: el anillo se cierra y se pone verde. */
+    public static final long CIERRA = 600;
+    /** 21 · Día completo: el punto del día en la tira salta a verde. */
+    public static final long PUNTO = 450;
+    /** 22 · Un vaso más: el vaso se llena de abajo arriba, con rebote. */
+    public static final long VASO = 450;
     /** «Respira»: el botón principal llama la atención una vez. */
     public static final long RESPIRA = 1400;
 

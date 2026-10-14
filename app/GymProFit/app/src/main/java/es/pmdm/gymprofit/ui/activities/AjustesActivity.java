@@ -76,6 +76,8 @@ public class AjustesActivity extends BaseActivity {
         fila(R.id.filaSexoActividad, R.drawable.ic_ms_directions_run, R.string.ajustes_sexo_actividad, editarPerfil);
         fila(R.id.filaObjetivo, R.drawable.ic_ms_flag, R.string.ajustes_objetivo, editarPerfil);
         fila(R.id.filaNivel, R.drawable.ic_ms_stairs, R.string.ajustes_nivel, editarPerfil);
+        // El vaso de agua (lote 1.6.8, decisión 11): se guarda en el móvil, sin pasar por la API.
+        fila(R.id.filaVaso, R.drawable.ic_ms_local_drink, R.string.perfil_vaso, this::elegirVaso);
 
         // Entrenamiento (GP-013)
         configurarEntrenamiento();
@@ -135,6 +137,7 @@ public class AjustesActivity extends BaseActivity {
         valor(R.id.filaSexoActividad, R.string.ajustes_sexo_actividad,
                 UIHelper.traducirActividad(this, prefsManager.getActividad()));
         valor(R.id.filaObjetivo, R.string.ajustes_objetivo, UIHelper.traducirObjetivo(this, prefsManager.getObjetivo()));
+        valor(R.id.filaVaso, R.string.perfil_vaso, getString(R.string.perfil_vaso_ml, prefsManager.getVasoMl()));
         valor(R.id.filaNivel, R.string.ajustes_nivel,
                 prefsManager.getNivel().isEmpty() ? null : UIHelper.traducirNivel(this, prefsManager.getNivel()));
         valor(R.id.filaTema, R.string.ajustes_tema, getString(
@@ -238,6 +241,27 @@ public class AjustesActivity extends BaseActivity {
         return segundos % 60 == 0 && segundos >= 120
                 ? getString(R.string.ajustes_descanso_minutos, segundos / 60)
                 : getString(R.string.ajustes_descanso_segundos, segundos);
+    }
+
+    // El tamaño del vaso de agua, de una lista cerrada (Agua.VASOS). Lo que ya se bebió no
+    // cambia: el agua se guarda en mililitros; solo cambia lo que suma cada toque.
+    private void elegirVaso() {
+        int[] opciones = es.pmdm.gymprofit.utils.Agua.VASOS;
+        String[] textos = new String[opciones.length];
+        int elegida = 0;
+        for (int i = 0; i < opciones.length; i++) {
+            textos[i] = getString(R.string.perfil_vaso_ml, opciones[i]);
+            if (opciones[i] == prefsManager.getVasoMl()) elegida = i;
+        }
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.perfil_vaso)
+                .setSingleChoiceItems(textos, elegida, (d, i) -> {
+                    prefsManager.setVasoMl(opciones[i]);
+                    pintarValores();
+                    d.dismiss();
+                })
+                .setNegativeButton(R.string.dialog_cancelar, null)
+                .show();
     }
 
     private void elegirDescansoSinPauta() {
