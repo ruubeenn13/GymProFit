@@ -6,6 +6,8 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `fdec8f7` | Fusión de `fix-alimentos-admin` en `main`, CI en verde y desplegada en Render. Solo API, sin versión de app ni etiqueta. |
+| `adface8` | fix(api): **la nutrición de un usuario es solo suya, también para un ADMIN** (DEC-042). Sus alimentos, sus platos y las líneas de su diario se comprueban contra su dueño sin excepción de rol: un ADMIN ve y mantiene el catálogo como siempre, en sus listados y contadores sale el catálogo y lo suyo, y un id de otro le da el mismo 403 que a un USER (DEC-014). Las rutas de `/alimentos-comida` que siguen siendo de ADMIN devuelven lo de quien llama. Corregida **DEC-027**. `NutricionSoloDelDuenoTest`. |
 | `ceadf31` | Fusión de `fix-busqueda-panel` en `main`, CI en verde y desplegada en Render. Solo API, sin versión de app ni etiqueta. |
 | `7e9c22e` | fix(api): **GP-195**, la búsqueda de alimentos del panel (`GET /admin/alimentos/busqueda`) se limita al catálogo, activo o no, igual que el listado del catálogo de la web de administración. Revisadas las demás consultas de `/admin`: ninguna necesita el mismo cambio. `BusquedaAdminCatalogoTest`. |
 | `c4ca21c` | docs(documentacion): el informe del lote 1.6.6, con la prueba de nueve pasos en producción. |
