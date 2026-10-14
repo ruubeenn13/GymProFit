@@ -69,51 +69,13 @@ public class SecurityUtils {
     }
 
     /**
-     * Verifica que el usuario autenticado es el propietario del recurso, o ADMIN.
-     *
-     * @param ownerId id del usuario propietario del recurso.
-     * @throws UnauthorizedException (→ 403) si no es propietario ni ADMIN.
-     */
-    public void checkOwnership(Integer ownerId) {
-        Usuario current = getCurrentUser();
-
-        boolean admin = current.getRoles().stream()
-                .anyMatch(role -> role.getNombre() == RoleType.ADMIN);
-
-        if (!admin && !current.getId().equals(ownerId)) {
-            throw new UnauthorizedException("error.acceso.recurso");
-        }
-    }
-
-    /**
-     * Verifica la propiedad solo cuando el recurso tiene dueño (DEC-027).
-     * <p>
-     * Para los recursos que pueden ser de catálogo público o de un usuario, según que su
-     * columna {@code usuario_id} sea NULL o no: un alimento creado por alguien es suyo y
-     * nadie más lo toca, pero uno del catálogo es de todos y negarlo rompería el uso
-     * normal. Un {@code ownerId} nulo significa «no es de nadie», y ahí no hay nada que
-     * comprobar.
-     * <p>
-     * No vale llamar a {@link #checkOwnership(Integer)} con null: ahí un recurso sin dueño
-     * se rechazaría a todo el mundo menos a ADMIN.
-     *
-     * @param ownerId id del propietario, o {@code null} si el recurso es de catálogo.
-     * @throws UnauthorizedException (→ 403) si el recurso tiene dueño y no es quien llama.
-     */
-    public void checkOwnershipIfOwned(Integer ownerId) {
-        if (ownerId == null) {
-            return;
-        }
-
-        checkOwnership(ownerId);
-    }
-
-    /**
      * Verifica que el usuario autenticado es el dueño del recurso, sin excepción para ADMIN.
      * <p>
-     * Para lo que un usuario guarda de su nutrición —sus alimentos, sus platos y las líneas
-     * de su diario—: es solo suyo, también para un ADMIN (DEC-042). Un id de otro da el mismo
-     * 403 que a un USER (DEC-014).
+     * Lo que guarda un usuario —su nutrición (DEC-042), sus entrenamientos, sus medidas, sus
+     * objetivos, sus avisos, sus rutinas y su cuenta— es solo suyo, también para un ADMIN
+     * (GP-198). Un id de otro da el mismo 403 que a un USER (DEC-014). Lo que es de
+     * administración —el catálogo, las rutinas sin dueño, la gestión de cuentas de /admin—
+     * se comprueba aparte, con {@link #requireAdmin()}.
      *
      * @param ownerId id del usuario propietario del recurso.
      * @throws UnauthorizedException (→ 403) si quien llama no es el dueño.
@@ -126,7 +88,7 @@ public class SecurityUtils {
 
     /**
      * {@link #checkDueno(Integer)} solo cuando el recurso tiene dueño: un {@code ownerId} nulo
-     * es catálogo, de todos, y ahí no hay nada que comprobar.
+     * es catálogo, de todos, y ahí no hay nada que comprobar (DEC-027).
      *
      * @param ownerId id del propietario, o {@code null} si el recurso es de catálogo.
      * @throws UnauthorizedException (→ 403) si el recurso tiene dueño y no es quien llama.

@@ -109,7 +109,7 @@ class MedicionCorporalServiceTest {
 
         assertNotNull(result);
         assertEquals(1, result.getId());
-        verify(securityUtils).checkOwnership(usuario.getId());
+        verify(securityUtils).checkDueno(usuario.getId());
     }
 
     // Comprueba que findById lanza NotFoundEntityException si la medición no existe
@@ -125,7 +125,6 @@ class MedicionCorporalServiceTest {
     @Test
     @DisplayName("save crea la medición y calcula el IMC")
     void save_crea_medicion() {
-        when(securityUtils.isAdmin()).thenReturn(false);
         when(securityUtils.getCurrentUserId()).thenReturn(1);
         when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuario));
         when(medicionCorporalMapper.toEntity(medicionCreateDTO)).thenReturn(medicion);
@@ -143,7 +142,6 @@ class MedicionCorporalServiceTest {
     @Test
     @DisplayName("save con usuario inexistente lanza NotFoundEntityException")
     void save_usuario_inexistente_lanza_excepcion() {
-        when(securityUtils.isAdmin()).thenReturn(false);
         when(securityUtils.getCurrentUserId()).thenReturn(1);
         when(usuarioRepository.findById(1)).thenReturn(Optional.empty());
 
@@ -200,7 +198,7 @@ class MedicionCorporalServiceTest {
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        verify(securityUtils).checkOwnership(1);
+        verify(securityUtils).checkDueno(1);
     }
 
     // Comprueba que findByUsuarioIdOrdenadas devuelve las mediciones ordenadas por fecha descendente

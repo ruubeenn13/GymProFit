@@ -1,6 +1,7 @@
 package com.gymprofit.api.integration;
 
 import com.gymprofit.api.dto.entity.rutina.RutinaCreateDTO;
+import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.enums.RoleType;
 import com.gymprofit.api.service.rutina.IRutinaService;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,11 +48,12 @@ class ListaVaciaContratoTest extends AbstractOwnershipTest {
 
     @BeforeEach
     void seedContrato() {
-        crearUsuario(ADMIN, RoleType.ADMIN);
+        Usuario admin = crearUsuario(ADMIN, RoleType.ADMIN);
 
-        runAs(owner, () -> {
+        // La rutina es del ADMIN: desde GP-198 la de otro usuario le da 403.
+        runAs(admin, () -> {
             RutinaCreateDTO dto = new RutinaCreateDTO();
-            dto.setUsuarioId(owner.getId());
+            dto.setUsuarioId(admin.getId());
             dto.setNombre("Rutina sin sesiones");
             dto.setNivel("INTERMEDIO");
             dto.setEsPredefinida(false);
@@ -134,20 +136,23 @@ class ListaVaciaContratoTest extends AbstractOwnershipTest {
 
     // ── Recurso padre inexistente → 404, comprobado explícitamente ────────────
 
+    // Un id de usuario que no es el de quien llama da 403 exista o no, también a un ADMIN
+    // (GP-198): la propiedad va antes que la existencia para no decir si el id existe. Por
+    // eso el 404 de «usuario inexistente» ya no lo ve nadie en estas rutas.
     @Test
-    @DisplayName("GET sesiones/usuario/{inexistente} → 404")
+    @DisplayName("GET sesiones/usuario/{inexistente} → 403, también a un ADMIN")
     @WithUserDetails(value = ADMIN, setupBefore = TestExecutionEvent.TEST_EXECUTION)
-    void sesionesDeUsuarioInexistente_devuelve404() throws Exception {
+    void sesionesDeUsuarioInexistente_devuelve403() throws Exception {
         mockMvc.perform(get("/sesiones/usuario/" + ID_INEXISTENTE))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isForbidden());
     }
 
     @Test
-    @DisplayName("GET mediciones-corporales/usuario/{inexistente}/ordenadas → 404")
+    @DisplayName("GET mediciones-corporales/usuario/{inexistente}/ordenadas → 403, también a un ADMIN")
     @WithUserDetails(value = ADMIN, setupBefore = TestExecutionEvent.TEST_EXECUTION)
-    void medicionesDeUsuarioInexistente_devuelve404() throws Exception {
+    void medicionesDeUsuarioInexistente_devuelve403() throws Exception {
         mockMvc.perform(get("/mediciones-corporales/usuario/" + ID_INEXISTENTE + "/ordenadas"))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isForbidden());
     }
 
     @Test

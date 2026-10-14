@@ -42,14 +42,14 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
     private final Logger logger = LoggerFactory.getLogger(ObjetivoPersonalService.class);
 
 
-    // Devuelve todos los objetivos personales del sistema. Solo ADMIN.
+    // Los objetivos personales de quien llama. Solo ADMIN (GP-198).
     @Override
     public List<ObjetivoPersonalDTO> findAll() {
         securityUtils.requireAdmin();
 
         logger.info("Buscando todos los objetivos personales");
 
-        List<ObjetivoPersonal> objetivosPersonales = objetivoPersonalRepository.findAll();
+        List<ObjetivoPersonal> objetivosPersonales = propios(objetivoPersonalRepository.findAll());
 
         return objetivoPersonalMapper.toDTOList(objetivosPersonales);
     }
@@ -62,7 +62,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         ObjetivoPersonal objetivoPersonal = objetivoPersonalRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("error.objetivo.noExiste", id));
 
-        securityUtils.checkOwnership(objetivoPersonal.getUsuario().getId());
+        securityUtils.checkDueno(objetivoPersonal.getUsuario().getId());
 
         return objetivoPersonalMapper.toDTO(objetivoPersonal);
     }
@@ -71,7 +71,8 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
     @Transactional
     @Override
     public ObjetivoPersonalDTO save(ObjetivoPersonalCreateDTO objetivoPersonalCreateDTO) {
-        if (!securityUtils.isAdmin()) objetivoPersonalCreateDTO.setUsuarioId(securityUtils.getCurrentUserId());
+        // Siempre de quien llama, también si es ADMIN: el usuarioId del cuerpo se ignora (GP-198).
+        objetivoPersonalCreateDTO.setUsuarioId(securityUtils.getCurrentUserId());
 
         logger.info("Creando un nuevo objetivo personal para usuario id: {}", objetivoPersonalCreateDTO.getUsuarioId());
 
@@ -106,7 +107,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         ObjetivoPersonal objetivoPersonal = objetivoPersonalRepository.findById(objetivoPersonalUpdateDTO.getId())
                 .orElseThrow(() -> new NotFoundEntityException("error.objetivo.noExiste", objetivoPersonalUpdateDTO.getId()));
 
-        securityUtils.checkOwnership(objetivoPersonal.getUsuario().getId());
+        securityUtils.checkDueno(objetivoPersonal.getUsuario().getId());
 
         try {
             objetivoPersonal.setValorObjetivo(objetivoPersonalUpdateDTO.getValorObjetivo());
@@ -129,7 +130,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         ObjetivoPersonal objetivoPersonal = objetivoPersonalRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("error.objetivo.noExiste", id));
 
-        securityUtils.checkOwnership(objetivoPersonal.getUsuario().getId());
+        securityUtils.checkDueno(objetivoPersonal.getUsuario().getId());
 
         try {
             objetivoPersonalRepository.delete(objetivoPersonal);
@@ -143,7 +144,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
     // Lista todos los objetivos personales de un usuario.
     @Override
     public List<ObjetivoPersonalDTO> findByUsuarioId(Integer usuarioId) {
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         exigirUsuarioExistente(usuarioId);
 
@@ -157,7 +158,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
     // Lista los objetivos de un usuario ordenados por fecha de inicio descendente.
     @Override
     public List<ObjetivoPersonalDTO> findByUsuarioIdOrdenados(Integer usuarioId) {
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         exigirUsuarioExistente(usuarioId);
 
@@ -171,7 +172,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
     // Lista solo los objetivos pendientes (no completados) de un usuario.
     @Override
     public List<ObjetivoPersonalDTO> findPendientesByUsuarioId(Integer usuarioId) {
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         exigirUsuarioExistente(usuarioId);
 
@@ -185,7 +186,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
     // Lista solo los objetivos ya completados de un usuario.
     @Override
     public List<ObjetivoPersonalDTO> findCompletadosByUsuarioId(Integer usuarioId) {
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         exigirUsuarioExistente(usuarioId);
 
@@ -196,7 +197,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         return objetivoPersonalMapper.toDTOList(objetivosPersonales);
     }
 
-    // Lista objetivos por tipo (p.ej. PESO, REPETICIONES) en todo el sistema. Solo ADMIN.
+    // Los objetivos de quien llama de un tipo. Solo ADMIN (GP-198).
     @Override
     public List<ObjetivoPersonalDTO> findByTipoObjetivo(String tipoObjetivo) {
         securityUtils.requireAdmin();
@@ -205,7 +206,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
 
         TipoObjetivo tipo = TipoObjetivo.valueOf(tipoObjetivo.toUpperCase());
 
-        List<ObjetivoPersonal> objetivosPersonales = objetivoPersonalRepository.findByTipoObjetivo(tipo);
+        List<ObjetivoPersonal> objetivosPersonales = propios(objetivoPersonalRepository.findByTipoObjetivo(tipo));
 
         return objetivoPersonalMapper.toDTOList(objetivosPersonales);
     }
@@ -219,7 +220,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         ObjetivoPersonal objetivoPersonal = objetivoPersonalRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("error.objetivo.noExiste", id));
 
-        securityUtils.checkOwnership(objetivoPersonal.getUsuario().getId());
+        securityUtils.checkDueno(objetivoPersonal.getUsuario().getId());
 
         if (objetivoPersonal.getCompletado()) {
             throw new ObjetivoAlreadyCompletedException("error.objetivo.completado", id);
@@ -238,7 +239,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
     // Cuenta el total de objetivos personales de un usuario.
     @Override
     public Long countByUsuarioId(Integer usuarioId) {
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         logger.info("Contando objetivos del usuario id: {}", usuarioId);
 
@@ -248,7 +249,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
     // Cuenta los objetivos completados de un usuario.
     @Override
     public Long countCompletadosByUsuarioId(Integer usuarioId) {
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         logger.info("Contando objetivos completados del usuario id: {}", usuarioId);
 
@@ -258,7 +259,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
     // Cuenta los objetivos pendientes (no completados) de un usuario.
     @Override
     public Long countPendientesByUsuarioId(Integer usuarioId) {
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         logger.info("Contando objetivos pendientes del usuario id: {}", usuarioId);
 
@@ -274,7 +275,7 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         ObjetivoPersonal objetivo = objetivoPersonalRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("error.objetivo.noExiste", id));
 
-        securityUtils.checkOwnership(objetivo.getUsuario().getId());
+        securityUtils.checkDueno(objetivo.getUsuario().getId());
 
         try {
             if (patchDTO.getDescripcion() != null) objetivo.setDescripcion(patchDTO.getDescripcion());
@@ -300,5 +301,13 @@ public class ObjetivoPersonalService implements IObjetivoPersonalService{
         if (!usuarioRepository.existsById(usuarioId)) {
             throw new NotFoundEntityException("error.usuario.noExiste", usuarioId);
         }
+    }
+
+    // Solo los objetivos de quien llama (GP-198).
+    private List<ObjetivoPersonal> propios(List<ObjetivoPersonal> objetivos) {
+        Integer yo = securityUtils.getCurrentUserId();
+        return objetivos.stream()
+                .filter(o -> o.getUsuario().getId().equals(yo))
+                .toList();
     }
 }

@@ -51,7 +51,7 @@ class AlimentoOwnershipTest extends AbstractOwnershipTest {
 
     /**
      * Pide <b>su propio</b> id, no el del owner: con el id ajeno el 403 lo daría ya
-     * {@code checkOwnership} y el test pasaría aunque SecurityConfig siguiera abriendo la
+     * {@code checkDueno} y el test pasaría aunque SecurityConfig siguiera abriendo la
      * ruta a GUEST. Pidiendo el suyo, lo único que puede rechazarlo es la regla de rol.
      */
     @Test

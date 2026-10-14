@@ -70,22 +70,24 @@ public class UsuarioService implements IUsuarioService {
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
     }
 
-    // Lista todos los usuarios del sistema.
+    // La cuenta de quien llama (la ruta es solo de ADMIN). Las demás cuentas se gestionan
+    // desde /admin, que no enseña sus datos de salud (GP-198).
     @Override
     public List<UsuarioDTO> findAll() {
         logger.info("Buscando todos los usuarios");
 
-        List<Usuario> usuarios = usuarioRepository.findAll();
+        List<Usuario> usuarios = propia(usuarioRepository.findAll());
 
         return usuarioMapper.toDTOList(usuarios);
     }
 
-    // Busca un usuario por id, comprobando que el solicitante sea el propio usuario o ADMIN.
+    // Busca un usuario por id, comprobando que el solicitante sea el propio usuario, también
+    // si es ADMIN (GP-198).
     @Override
     public UsuarioDTO findById(Integer id) {
         logger.info("Buscando usuario por id: {}", id);
 
-        securityUtils.checkOwnership(id);
+        securityUtils.checkDueno(id);
 
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", id));
@@ -129,6 +131,8 @@ public class UsuarioService implements IUsuarioService {
     public void deleteById(Integer id) {
         logger.info("Intento de eliminar un usuario con id: {}", id);
 
+        securityUtils.checkDueno(id);
+
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", id));
 
@@ -149,6 +153,8 @@ public class UsuarioService implements IUsuarioService {
     public void activateById(Integer id) {
         logger.info("Activando usuario con id: {}", id);
 
+        securityUtils.checkDueno(id);
+
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", id));
 
@@ -168,6 +174,8 @@ public class UsuarioService implements IUsuarioService {
     public void permanentDeleteById(Integer id) {
         logger.info("Eliminando permanentemente usuario con id: {}", id);
 
+        securityUtils.checkDueno(id);
+
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", id));
 
@@ -185,6 +193,8 @@ public class UsuarioService implements IUsuarioService {
     @Transactional
     public UsuarioDTO modify(UsuarioUpdateDTO usuarioUpdateDTO) {
         logger.info("Intento de modificar usuario con id: {}", usuarioUpdateDTO.getId());
+
+        securityUtils.checkDueno(usuarioUpdateDTO.getId());
 
         Usuario usuario = usuarioRepository.findById(usuarioUpdateDTO.getId())
                 .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", usuarioUpdateDTO.getId()));
@@ -211,7 +221,7 @@ public class UsuarioService implements IUsuarioService {
         Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExisteUsername", username));
 
-        securityUtils.checkOwnership(usuario.getId());
+        securityUtils.checkDueno(usuario.getId());
 
         return usuarioMapper.toDTO(usuario);
     }
@@ -223,6 +233,9 @@ public class UsuarioService implements IUsuarioService {
 
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExisteEmail", email));
+
+        // La cuenta de otro, 403, también a un ADMIN (GP-198).
+        securityUtils.checkDueno(usuario.getId());
 
         return usuarioMapper.toDTO(usuario);
     }
@@ -247,7 +260,8 @@ public class UsuarioService implements IUsuarioService {
 
         securityUtils.requireAdmin();
 
-        List<Usuario> usuarios = usuarioRepository.findByActivoTrue();
+        // La de quien llama, también si es ADMIN (GP-198).
+        List<Usuario> usuarios = propia(usuarioRepository.findByActivoTrue());
 
         return usuarioMapper.toDTOList(usuarios);
     }
@@ -271,7 +285,7 @@ public class UsuarioService implements IUsuarioService {
     public UsuarioDTO patch(Integer id, UsuarioPatchDTO patchDTO) {
         logger.info("Aplicando patch a usuario con id: {}", id);
 
-        securityUtils.checkOwnership(id);
+        securityUtils.checkDueno(id);
 
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", id));
@@ -319,7 +333,7 @@ public class UsuarioService implements IUsuarioService {
     // Obtiene las estadísticas personales de un usuario mediante una consulta jOOQ optimizada.
     @Override
     public UsuarioEstadisticasDTO getEstadisticas(Integer usuarioId) {
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         if (!usuarioRepository.existsById(usuarioId)) {
             throw new NotFoundEntityException("error.usuario.noExiste", usuarioId);
@@ -391,7 +405,7 @@ public class UsuarioService implements IUsuarioService {
     public UsuarioDTO uploadFotoPerfil(Integer id, MultipartFile file) {
         logger.info("Subiendo foto de perfil para usuario id={}", id);
 
-        securityUtils.checkOwnership(id);
+        securityUtils.checkDueno(id);
 
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", id));
@@ -476,7 +490,7 @@ public class UsuarioService implements IUsuarioService {
      */
     @Override
     public byte[] getFotoPerfil(Integer id) {
-        securityUtils.checkOwnership(id);
+        securityUtils.checkDueno(id);
 
         // Solo los bytes, con JDBC (GP-188): sin la entidad no hay segunda copia para
         // comparar, y una consulta de Spring Data que devuelve byte[] lo convierte byte a
@@ -518,5 +532,13 @@ public class UsuarioService implements IUsuarioService {
         } catch (Exception e) {
             throw new UpdateEntityException(Usuario.class.getSimpleName(), id, e);
         }
+    }
+
+    // Solo la cuenta de quien llama (GP-198).
+    private List<Usuario> propia(List<Usuario> usuarios) {
+        Integer yo = securityUtils.getCurrentUserId();
+        return usuarios.stream()
+                .filter(u -> u.getId().equals(yo))
+                .toList();
     }
 }

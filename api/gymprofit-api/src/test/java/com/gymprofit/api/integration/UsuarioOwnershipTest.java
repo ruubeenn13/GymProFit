@@ -59,12 +59,8 @@ class UsuarioOwnershipTest extends AbstractOwnershipTest {
             "GET /admin/estadisticas-globales",
             "GET /usuarios",
             "GET /usuarios/activos",
-            "GET /usuarios/email/{email}",
             "GET /usuarios/exists/username/{username}",
             "GET /usuarios/exists/email/{email}",
-            "PUT /usuarios/{owner}/activar",
-            "DELETE /usuarios/{owner}",
-            "DELETE /usuarios/{owner}/permanente",
             "GET /jooq/usuarios/nivel/PRINCIPIANTE"
     })
     @DisplayName("ruta de administración → 403 a un USER; ADMIN no")
@@ -72,6 +68,22 @@ class UsuarioOwnershipTest extends AbstractOwnershipTest {
         String ruta = rellenar(plantillaRuta, ids);
         assertThat(estado(attacker, ruta)).as("USER en " + ruta).isEqualTo(403);
         assertThat(estado(admin, ruta)).as("ADMIN en " + ruta).isNotEqualTo(403);
+    }
+
+    // Rutas solo de ADMIN fuera de /admin con la cuenta de otro: desde GP-198, 403 también a
+    // un ADMIN. Las cuentas ajenas se gestionan desde /admin.
+    @ParameterizedTest(name = "{0}")
+    @ValueSource(strings = {
+            "GET /usuarios/email/{email}",
+            "PUT /usuarios/{owner}/activar",
+            "DELETE /usuarios/{owner}",
+            "DELETE /usuarios/{owner}/permanente"
+    })
+    @DisplayName("cuenta ajena fuera de /admin → 403 a un USER y a un ADMIN")
+    void cuentaAjena_403(String plantillaRuta) throws Exception {
+        String ruta = rellenar(plantillaRuta, ids);
+        assertThat(estado(attacker, ruta)).as("USER en " + ruta).isEqualTo(403);
+        assertThat(estado(admin, ruta)).as("ADMIN en " + ruta).isEqualTo(403);
     }
 
     @ParameterizedTest(name = "{0}")

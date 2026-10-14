@@ -71,7 +71,7 @@ class UsuarioServiceTest {
 
     /**
      * @Mock de SecurityUtils. En las lecturas/borrados el service llama a
-     * checkOwnership(id), que con el mock queda como no-op (método void).
+     * checkDueno(id), que con el mock queda como no-op (método void).
      */
     @Mock
     private SecurityUtils securityUtils;

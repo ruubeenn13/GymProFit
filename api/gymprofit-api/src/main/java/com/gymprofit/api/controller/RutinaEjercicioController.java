@@ -38,7 +38,7 @@ public class RutinaEjercicioController {
     // Servicio con la lógica de negocio de rutina-ejercicio
     private final IRutinaEjercicioService rutinaEjercicioService;
 
-    @Operation(summary = "Obtiene todos los ejercicios de las rutinas")
+    @Operation(summary = "Los ejercicios de las rutinas que quien llama puede leer (solo ADMIN)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de ejercicios de las rutinas",
                     content = @Content(schema = @Schema(implementation = RutinaEjercicioDTO.class))),

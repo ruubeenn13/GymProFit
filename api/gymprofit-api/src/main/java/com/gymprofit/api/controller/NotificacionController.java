@@ -39,7 +39,7 @@ public class NotificacionController {
     private final INotificacionService notificacionService;
 
     // Devuelve todas las notificaciones registradas
-    @Operation(summary = "Obtiene todas las notificaciones")
+    @Operation(summary = "Las notificaciones de quien llama (solo ADMIN)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de notificaciones",
                     content = @Content(schema = @Schema(implementation = NotificacionDTO.class))),

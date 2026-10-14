@@ -41,7 +41,7 @@ public class ObjetivoPersonalController {
     private final IObjetivoPersonalService objetivoPersonalService;
 
     // Devuelve todos los objetivos personales registrados
-    @Operation(summary = "Obtiene todos los objetivos personales")
+    @Operation(summary = "Los objetivos personales de quien llama (solo ADMIN)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de los objetivos personales",
                     content = @Content(schema = @Schema(implementation = ObjetivoPersonalDTO.class))),
@@ -181,7 +181,7 @@ public class ObjetivoPersonalController {
         return ResponseEntity.ok(objetivosPersonales);
     }
 
-    @Operation(summary = "Obtiene objetivos por tipo")
+    @Operation(summary = "Los objetivos de quien llama de un tipo (solo ADMIN)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Objetivos encontrados",
                     content = @Content(schema = @Schema(implementation = ObjetivoPersonalDTO.class)))

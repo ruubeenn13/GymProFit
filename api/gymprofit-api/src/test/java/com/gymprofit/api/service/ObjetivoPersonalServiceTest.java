@@ -43,7 +43,7 @@ class ObjetivoPersonalServiceTest {
     @Mock private ObjetivoPersonalMapper objetivoPersonalMapper;
     // Servicio de logros simulado, para verificar que se evalúan logros al completar objetivo
     @Mock private ILogroService logroService;
-    // Mock de SecurityUtils: checkOwnership/requireAdmin quedan como no-op en las lecturas
+    // Mock de SecurityUtils: checkDueno/requireAdmin quedan como no-op en las lecturas
     @Mock private SecurityUtils securityUtils;
 
     @InjectMocks
@@ -118,8 +118,8 @@ class ObjetivoPersonalServiceTest {
     @Test
     @DisplayName("save correcto guarda el objetivo con completado=false")
     void save_correcto_guarda_objetivo() {
-        // Como ADMIN, el service respeta el usuarioId del DTO (1) sin sobrescribirlo
-        when(securityUtils.isAdmin()).thenReturn(true);
+        // El dueño sale del token (1), también para un ADMIN (GP-198)
+        when(securityUtils.getCurrentUserId()).thenReturn(1);
         when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuario));
         when(objetivoPersonalMapper.toEntity(createDTO)).thenReturn(objetivo);
         when(objetivoPersonalRepository.save(any())).thenReturn(objetivo);
@@ -137,8 +137,8 @@ class ObjetivoPersonalServiceTest {
     @Test
     @DisplayName("save con usuario inexistente lanza NotFoundEntityException")
     void save_usuario_inexistente_lanza_excepcion() {
-        // Como ADMIN, el service busca el usuarioId del DTO (1) que no existe
-        when(securityUtils.isAdmin()).thenReturn(true);
+        // El usuario del token (1) no existe
+        when(securityUtils.getCurrentUserId()).thenReturn(1);
         when(usuarioRepository.findById(1)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundEntityException.class, () -> objetivoPersonalService.save(createDTO));

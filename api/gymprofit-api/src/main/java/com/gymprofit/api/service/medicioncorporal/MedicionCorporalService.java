@@ -28,7 +28,7 @@ import java.util.List;
 // MedicionCorporalService — implementación del servicio de mediciones corporales
 // Gestiona el CRUD de mediciones corporales del usuario, calculando el IMC
 // automáticamente a partir de peso y altura, y aplicando control de propiedad
-// (checkOwnership) para que cada usuario solo vea/modifique sus propios datos.
+// (checkDueno) para que cada usuario solo vea/modifique sus propios datos.
 // ============================================================
 @Service
 @AllArgsConstructor
@@ -41,14 +41,17 @@ public class MedicionCorporalService implements IMedicionCorporalService {
     private final SecurityUtils securityUtils;
     private final Logger logger = LoggerFactory.getLogger(MedicionCorporalService.class);
 
-    // Devuelve todas las mediciones corporales; requiere rol ADMIN.
+    // Las mediciones corporales de quien llama; requiere rol ADMIN (GP-198).
     @Override
     public List<MedicionCorporalDTO> findAll() {
         logger.info("Buscando todas las mediciones corporales");
 
         securityUtils.requireAdmin();
 
-        List<MedicionCorporal> lista = medicionCorporalRepository.findAll();
+        Integer yo = securityUtils.getCurrentUserId();
+        List<MedicionCorporal> lista = medicionCorporalRepository.findAll().stream()
+                .filter(m -> m.getUsuario().getId().equals(yo))
+                .toList();
 
         return medicionCorporalMapper.toDTOList(lista);
     }
@@ -61,18 +64,17 @@ public class MedicionCorporalService implements IMedicionCorporalService {
         MedicionCorporal medicion = medicionCorporalRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("error.medicion.noExiste", id));
 
-        securityUtils.checkOwnership(medicion.getUsuario().getId());
+        securityUtils.checkDueno(medicion.getUsuario().getId());
 
         return medicionCorporalMapper.toDTO(medicion);
     }
 
-    // Crea una nueva medición corporal; si no es admin, fuerza el usuarioId al usuario autenticado.
+    // Crea una nueva medición corporal, siempre de quien llama, también si es ADMIN: el
+    // usuarioId del cuerpo se ignora (DEC-013, GP-198).
     @Transactional
     @Override
     public MedicionCorporalDTO save(MedicionCorporalCreateDTO createDTO) {
-        if (!securityUtils.isAdmin()) {
-            createDTO.setUsuarioId(securityUtils.getCurrentUserId());
-        }
+        createDTO.setUsuarioId(securityUtils.getCurrentUserId());
 
         logger.info("Creando nueva medición corporal para usuario id: {}", createDTO.getUsuarioId());
 
@@ -116,7 +118,7 @@ public class MedicionCorporalService implements IMedicionCorporalService {
         MedicionCorporal medicion = medicionCorporalRepository.findById(dto.getId())
                 .orElseThrow(() -> new NotFoundEntityException("error.medicion.noExiste", dto.getId()));
 
-        securityUtils.checkOwnership(medicion.getUsuario().getId());
+        securityUtils.checkDueno(medicion.getUsuario().getId());
 
         try {
             medicion.setPeso(dto.getPeso());
@@ -156,7 +158,7 @@ public class MedicionCorporalService implements IMedicionCorporalService {
         MedicionCorporal medicion = medicionCorporalRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("error.medicion.noExiste", id));
 
-        securityUtils.checkOwnership(medicion.getUsuario().getId());
+        securityUtils.checkDueno(medicion.getUsuario().getId());
 
         try {
             medicionCorporalRepository.delete(medicion);
@@ -173,7 +175,7 @@ public class MedicionCorporalService implements IMedicionCorporalService {
     public List<MedicionCorporalDTO> findByUsuarioId(Integer usuarioId) {
         logger.info("Buscando mediciones corporales del usuario id: {}", usuarioId);
 
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         exigirUsuarioExistente(usuarioId);
 
@@ -187,7 +189,7 @@ public class MedicionCorporalService implements IMedicionCorporalService {
     public List<MedicionCorporalDTO> findByUsuarioIdOrdenadas(Integer usuarioId) {
         logger.info("Buscando mediciones corporales del usuario id: {} ordenadas por fecha", usuarioId);
 
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         exigirUsuarioExistente(usuarioId);
 
@@ -201,7 +203,7 @@ public class MedicionCorporalService implements IMedicionCorporalService {
     public List<MedicionCorporalDTO> findByUsuarioIdAndFechaBetween(Integer usuarioId, LocalDateTime inicio, LocalDateTime fin) {
         logger.info("Buscando mediciones corporales del usuario id: {} entre {} y {}", usuarioId, inicio, fin);
 
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         exigirUsuarioExistente(usuarioId);
 
@@ -215,7 +217,7 @@ public class MedicionCorporalService implements IMedicionCorporalService {
     public List<MedicionCorporalDTO> getUltimasMediciones(Integer usuarioId) {
         logger.info("Obteniendo últimas mediciones del usuario id: {}", usuarioId);
 
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         exigirUsuarioExistente(usuarioId);
 
@@ -233,7 +235,7 @@ public class MedicionCorporalService implements IMedicionCorporalService {
         MedicionCorporal medicion = medicionCorporalRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("error.medicion.noExiste", id));
 
-        securityUtils.checkOwnership(medicion.getUsuario().getId());
+        securityUtils.checkDueno(medicion.getUsuario().getId());
 
         try {
             if (patchDTO.getFecha() != null) medicion.setFecha(patchDTO.getFecha());

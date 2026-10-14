@@ -53,7 +53,7 @@ public class UsuarioController {
     // Cambio del correo propio con reautenticación (GP-083).
     private final ICambioEmailService cambioEmailService;
 
-    @Operation(summary = "Obtiene todos los usuarios")
+    @Operation(summary = "La cuenta de quien llama (solo ADMIN; las demás, en /admin)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de usuarios",
                     content = @Content(schema = @Schema(implementation = UsuarioDTO.class))),
@@ -188,7 +188,7 @@ public class UsuarioController {
         return ResponseEntity.ok(usuario);
     }
 
-    @Operation(summary = "Busca un usuario por email")
+    @Operation(summary = "La cuenta de quien llama por su email (solo ADMIN)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuario encontrado",
                     content = @Content(schema = @Schema(implementation = UsuarioDTO.class))),
@@ -231,7 +231,7 @@ public class UsuarioController {
         return ResponseEntity.ok(new ExistsDTO(exists));
     }
 
-    @Operation(summary = "Obtiene todos los usuarios activos")
+    @Operation(summary = "La cuenta de quien llama, si está activa (solo ADMIN)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de usuarios activos",
                     content = @Content(schema = @Schema(implementation = UsuarioDTO.class)))

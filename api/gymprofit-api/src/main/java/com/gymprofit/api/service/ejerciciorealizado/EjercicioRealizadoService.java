@@ -30,7 +30,7 @@ import java.util.List;
 // EjercicioRealizadoService — implementación del registro de ejercicios realizados
 // Gestiona la persistencia de los ejercicios efectivamente ejecutados en
 // cada sesión de entrenamiento, validando la propiedad de la sesión
-// (checkOwnership) para que cada usuario solo acceda a sus propios datos.
+// (checkDueno) para que cada usuario solo acceda a sus propios datos.
 // ============================================================
 @Service
 @AllArgsConstructor
@@ -45,14 +45,17 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
     private final Logger logger = LoggerFactory.getLogger(EjercicioRealizadoService.class);
 
 
-    // Devuelve todos los ejercicios realizados; requiere rol ADMIN.
+    // Los ejercicios realizados de quien llama; requiere rol ADMIN (GP-198).
     @Override
     public List<EjercicioRealizadoDTO> findAll() {
         logger.info("Buscando todos los ejercicios realizados");
 
         securityUtils.requireAdmin();
 
-        List<EjercicioRealizado> ejerciciosRealizados = ejercicioRealizadoRepository.findAll();
+        Integer yo = securityUtils.getCurrentUserId();
+        List<EjercicioRealizado> ejerciciosRealizados = ejercicioRealizadoRepository.findAll().stream()
+                .filter(er -> er.getSesion().getUsuario().getId().equals(yo))
+                .toList();
 
         return ejercicioRealizadoMapper.toDTOList(ejerciciosRealizados);
     }
@@ -65,7 +68,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         EjercicioRealizado ejercicioRealizado = ejercicioRealizadoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("error.ejercicioRealizado.noExiste", id));
 
-        securityUtils.checkOwnership(ejercicioRealizado.getSesion().getUsuario().getId());
+        securityUtils.checkDueno(ejercicioRealizado.getSesion().getUsuario().getId());
 
         return ejercicioRealizadoMapper.toDTO(ejercicioRealizado);
     }
@@ -79,7 +82,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         SesionEntrenamiento sesion = sesionEntrenamientoRepository.findById(ejercicioRealizadoCreateDTO.getSesionId())
                 .orElseThrow(() -> new NotFoundEntityException("error.sesion.noExiste", ejercicioRealizadoCreateDTO.getSesionId()));
 
-        securityUtils.checkOwnership(sesion.getUsuario().getId());
+        securityUtils.checkDueno(sesion.getUsuario().getId());
 
         Ejercicio ejercicio = ejercicioRepository.findById(ejercicioRealizadoCreateDTO.getEjercicioId())
                 .orElseThrow(() -> new NotFoundEntityException("error.ejercicio.noExiste", ejercicioRealizadoCreateDTO.getEjercicioId()));
@@ -153,7 +156,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         EjercicioRealizado ejercicioRealizado = ejercicioRealizadoRepository.findById(ejercicioRealizadoDTO.getId())
                 .orElseThrow(() -> new NotFoundEntityException("error.ejercicioRealizado.noExiste", ejercicioRealizadoDTO.getId()));
 
-        securityUtils.checkOwnership(ejercicioRealizado.getSesion().getUsuario().getId());
+        securityUtils.checkDueno(ejercicioRealizado.getSesion().getUsuario().getId());
 
         try {
             ejercicioRealizado.setSeriesCompletadas(ejercicioRealizadoDTO.getSeriesCompletadas());
@@ -179,7 +182,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         EjercicioRealizado ejercicioRealizado = ejercicioRealizadoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("error.ejercicioRealizado.noExiste", id));
 
-        securityUtils.checkOwnership(ejercicioRealizado.getSesion().getUsuario().getId());
+        securityUtils.checkDueno(ejercicioRealizado.getSesion().getUsuario().getId());
 
         try {
             ejercicioRealizadoRepository.delete(ejercicioRealizado);
@@ -198,7 +201,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         SesionEntrenamiento sesion = sesionEntrenamientoRepository.findById(sesionId)
                 .orElseThrow(() -> new NotFoundEntityException("error.sesion.noExiste", sesionId));
 
-        securityUtils.checkOwnership(sesion.getUsuario().getId());
+        securityUtils.checkDueno(sesion.getUsuario().getId());
 
         List<EjercicioRealizado> ejerciciosRealizados = ejercicioRealizadoRepository.findBySesionId(sesionId);
 
@@ -226,10 +229,9 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
 
         exigirEjercicioExistente(ejercicioId);
 
-        List<EjercicioRealizado> ejerciciosRealizados = securityUtils.isAdmin()
-                ? ejercicioRealizadoRepository.findByEjercicioId(ejercicioId)
-                : ejercicioRealizadoRepository.findByEjercicioIdAndSesionUsuarioId(
-                        ejercicioId, securityUtils.getCurrentUserId());
+        // Los de quien llama, también si es ADMIN (GP-198).
+        List<EjercicioRealizado> ejerciciosRealizados = ejercicioRealizadoRepository.findByEjercicioIdAndSesionUsuarioId(
+                ejercicioId, securityUtils.getCurrentUserId());
 
         return ejercicioRealizadoMapper.toDTOList(ejerciciosRealizados);
     }
@@ -242,7 +244,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         SesionEntrenamiento sesion = sesionEntrenamientoRepository.findById(sesionId)
                 .orElseThrow(() -> new NotFoundEntityException("error.sesion.noExiste", sesionId));
 
-        securityUtils.checkOwnership(sesion.getUsuario().getId());
+        securityUtils.checkDueno(sesion.getUsuario().getId());
 
         List<EjercicioRealizado> ejerciciosRealizados = ejercicioRealizadoRepository.findBySesionIdAndEjercicioId(sesionId, ejercicioId);
 
@@ -267,7 +269,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         SesionEntrenamiento sesion = sesionEntrenamientoRepository.findById(sesionId)
                 .orElseThrow(() -> new NotFoundEntityException("error.sesion.noExiste", sesionId));
 
-        securityUtils.checkOwnership(sesion.getUsuario().getId());
+        securityUtils.checkDueno(sesion.getUsuario().getId());
 
         return ejercicioRealizadoRepository.countBySesionId(sesionId);
     }
@@ -286,10 +288,9 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
     public Long countByEjercicioId(Integer ejercicioId) {
         logger.info("Contando ejercicios realizados por ejercicio id: {}", ejercicioId);
 
-        return securityUtils.isAdmin()
-                ? ejercicioRealizadoRepository.countByEjercicioId(ejercicioId)
-                : ejercicioRealizadoRepository.countByEjercicioIdAndSesionUsuarioId(
-                        ejercicioId, securityUtils.getCurrentUserId());
+        // Los de quien llama, también si es ADMIN (GP-198).
+        return ejercicioRealizadoRepository.countByEjercicioIdAndSesionUsuarioId(
+                ejercicioId, securityUtils.getCurrentUserId());
     }
 
     // Elimina todos los ejercicios realizados de una sesión, comprobando su propiedad.
@@ -301,7 +302,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         SesionEntrenamiento sesion = sesionEntrenamientoRepository.findById(sesionId)
                 .orElseThrow(() -> new NotFoundEntityException("error.sesion.noExiste", sesionId));
 
-        securityUtils.checkOwnership(sesion.getUsuario().getId());
+        securityUtils.checkDueno(sesion.getUsuario().getId());
 
         try {
             ejercicioRealizadoRepository.deleteBySesionId(sesionId);
@@ -321,7 +322,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         SesionEntrenamiento sesion = sesionEntrenamientoRepository.findById(sesionId)
                 .orElseThrow(() -> new NotFoundEntityException("error.sesion.noExiste", sesionId));
 
-        securityUtils.checkOwnership(sesion.getUsuario().getId());
+        securityUtils.checkDueno(sesion.getUsuario().getId());
 
         try {
             ejercicioRealizadoRepository.deleteBySesionIdAndEjercicioId(sesionId, ejercicioId);
@@ -348,7 +349,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         SesionEntrenamiento sesion = sesionEntrenamientoRepository.findById(sesionId)
                 .orElseThrow(() -> new NotFoundEntityException("error.sesion.noExiste", sesionId));
 
-        securityUtils.checkOwnership(sesion.getUsuario().getId());
+        securityUtils.checkDueno(sesion.getUsuario().getId());
 
         return ejercicioRealizadoRepository.existsBySesionIdAndEjercicioId(sesionId, ejercicioId);
     }
@@ -362,7 +363,7 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
         EjercicioRealizado ejercicioRealizado = ejercicioRealizadoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("error.ejercicioRealizado.noExiste", id));
 
-        securityUtils.checkOwnership(ejercicioRealizado.getSesion().getUsuario().getId());
+        securityUtils.checkDueno(ejercicioRealizado.getSesion().getUsuario().getId());
 
         try {
             if (patchDTO.getSeriesCompletadas() != null) ejercicioRealizado.setSeriesCompletadas(patchDTO.getSeriesCompletadas());

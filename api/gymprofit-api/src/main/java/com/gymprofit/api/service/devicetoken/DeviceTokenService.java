@@ -85,7 +85,7 @@ public class DeviceTokenService implements IDeviceTokenService {
     @Override
     public void eliminar(String token) {
         deviceTokenRepository.findByToken(token).ifPresent(deviceToken -> {
-            securityUtils.checkOwnership(deviceToken.getUsuario().getId());
+            securityUtils.checkDueno(deviceToken.getUsuario().getId());
             deviceTokenRepository.deleteByToken(token);
             logger.info("Token FCM eliminado (logout) del usuario id: {}", deviceToken.getUsuario().getId());
         });

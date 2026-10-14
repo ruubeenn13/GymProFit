@@ -39,14 +39,17 @@ public class NotificacionService implements INotificacionService {
     private final Logger logger = LoggerFactory.getLogger(NotificacionService.class);
 
 
-    // Devuelve todas las notificaciones del sistema. Solo ADMIN.
+    // Las notificaciones de quien llama. Solo ADMIN (GP-198).
     @Override
     public List<NotificacionDTO> findAll() {
         logger.info("Buscando todas las notificaciones");
 
         securityUtils.requireAdmin();
 
-        List<Notificacion> notificaciones = notificacionRepository.findAll();
+        Integer yo = securityUtils.getCurrentUserId();
+        List<Notificacion> notificaciones = notificacionRepository.findAll().stream()
+                .filter(n -> n.getUsuario().getId().equals(yo))
+                .toList();
 
         return notificacionMapper.toDTOList(notificaciones);
     }
@@ -59,12 +62,14 @@ public class NotificacionService implements INotificacionService {
         Notificacion notificacion = notificacionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("error.notificacion.noExiste", id));
 
-        securityUtils.checkOwnership(notificacion.getUsuario().getId());
+        securityUtils.checkDueno(notificacion.getUsuario().getId());
 
         return notificacionMapper.toDTO(notificacion);
     }
 
     // Crea una notificación nueva; valida el tipo y fuerza el usuario propietario si no es ADMIN.
+    // La excepción se conserva a propósito (GP-198): enviar un aviso a otra cuenta es
+    // administración, y la respuesta solo trae lo que el ADMIN ha escrito.
     @Transactional
     @Override
     public NotificacionDTO save(NotificacionCreateDTO notificacionCreateDTO) {
@@ -154,7 +159,7 @@ public class NotificacionService implements INotificacionService {
         Notificacion notificacion = notificacionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("error.notificacion.noExiste", id));
 
-        securityUtils.checkOwnership(notificacion.getUsuario().getId());
+        securityUtils.checkDueno(notificacion.getUsuario().getId());
 
         try {
             notificacionRepository.delete(notificacion);
@@ -170,7 +175,7 @@ public class NotificacionService implements INotificacionService {
     public List<NotificacionDTO> findByUsuarioId(Integer usuarioId) {
         logger.info("Buscando notificaciones del usuario id: {}", usuarioId);
 
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         exigirUsuarioExistente(usuarioId);
 
@@ -184,7 +189,7 @@ public class NotificacionService implements INotificacionService {
     public List<NotificacionDTO> findByUsuarioIdOrdenadas(Integer usuarioId) {
         logger.info("Buscando notificaciones del usuario id: {} ordenadas por fecha", usuarioId);
 
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         exigirUsuarioExistente(usuarioId);
 
@@ -198,7 +203,7 @@ public class NotificacionService implements INotificacionService {
     public List<NotificacionDTO> findNoLeidasByUsuarioId(Integer usuarioId) {
         logger.info("Buscando notifiacaciones no leídas del usuario id: {}", usuarioId);
 
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         exigirUsuarioExistente(usuarioId);
 
@@ -212,7 +217,7 @@ public class NotificacionService implements INotificacionService {
     public List<NotificacionDTO> findLeidasByUsuarioId(Integer usuarioId) {
         logger.info("Buscando notificaciones leídas del usuario id: {}", usuarioId);
 
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         exigirUsuarioExistente(usuarioId);
 
@@ -226,7 +231,7 @@ public class NotificacionService implements INotificacionService {
     public List<NotificacionDTO> findByUsuarioIdAndTipo(Integer usuarioId, String tipo) {
         logger.info("Buscando notifiacaiones del usuario id: {} de tipo: {}", usuarioId, tipo);
 
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         TipoNotificacion tipoNotificacion;
 
@@ -250,7 +255,7 @@ public class NotificacionService implements INotificacionService {
         Notificacion notificacion = notificacionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("error.notificacion.noExiste", id));
 
-        securityUtils.checkOwnership(notificacion.getUsuario().getId());
+        securityUtils.checkDueno(notificacion.getUsuario().getId());
 
         notificacion.setLeida(true);
 
@@ -265,7 +270,7 @@ public class NotificacionService implements INotificacionService {
     public void marcarTodasComoLeidas(Integer usuarioId) {
         logger.info("Marcando todas las notifiacaiones del usuario id: {} como leídas", usuarioId);
 
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         List<Notificacion> noLeidas = notificacionRepository.findByUsuarioIdAndLeidaFalse(usuarioId);
 
@@ -280,7 +285,7 @@ public class NotificacionService implements INotificacionService {
     public void deleteByUsuarioId(Integer usuarioId) {
         logger.info("Eliminando todas las notificaciones del usuario id: {}", usuarioId);
 
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         try {
             notificacionRepository.deleteByUsuarioId(usuarioId);
@@ -294,7 +299,7 @@ public class NotificacionService implements INotificacionService {
     public Long countByUsuarioId(Integer usuarioId) {
         logger.info("Contando notificaciones del usuario id: {}", usuarioId);
 
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         return notificacionRepository.countByUsuarioId(usuarioId);
     }
@@ -304,7 +309,7 @@ public class NotificacionService implements INotificacionService {
     public Long countNoLeidasByUsuarioId(Integer usuarioId) {
         logger.info("Contando notifiacaiones no leídas del usuario id: {}", usuarioId);
 
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         return notificacionRepository.countByUsuarioIdAndLeidaFalse(usuarioId);
     }
@@ -314,7 +319,7 @@ public class NotificacionService implements INotificacionService {
     public boolean existenNoLeidasByUsuarioId(Integer usuarioId) {
         logger.info("Verificando si existen notificaciones no leídas del usuario id: {}", usuarioId);
 
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         return notificacionRepository.existsByUsuarioIdAndLeidaFalse(usuarioId);
     }
@@ -328,7 +333,7 @@ public class NotificacionService implements INotificacionService {
         Notificacion notificacion = notificacionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("error.notificacion.noExiste", id));
 
-        securityUtils.checkOwnership(notificacion.getUsuario().getId());
+        securityUtils.checkDueno(notificacion.getUsuario().getId());
 
         try {
             if (patchDTO.getTitulo() != null) notificacion.setTitulo(patchDTO.getTitulo());
