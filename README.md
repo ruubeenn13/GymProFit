@@ -79,7 +79,7 @@ flowchart LR
 
 - **Navegación**: Inicio, Entrenar, Nutrición y Progreso sobre una barra flotante, y una pantalla propia para todo lo que se crea o se edita.
 - **La sesión en vivo** vive en un repositorio que se escribe en disco a cada cambio: si Android mata la app a mitad del entreno, no se pierde ni una serie. El descanso suena con una alarma exacta aunque la pantalla esté apagada.
-- **La nutrición** se está rehaciendo por lotes desde un lienzo de diseño aprobado: buscar «lo tuyo» primero, el «+» que añade sin preguntar, el escáner con su propia cámara, favoritos, copiar comidas y Mis platos, los platos propios que se apuntan de un toque. Viene detrás el diario nuevo.
+- **La nutrición** se está rehaciendo por lotes desde un lienzo de diseño aprobado: buscar «lo tuyo» primero, el «+» que añade sin preguntar, el escáner con su propia cámara, favoritos, copiar comidas, Mis platos, los platos propios que se apuntan de un toque, y «Lo que te encaja», lo tuyo que cabe en lo que te queda del día. Viene detrás el diario nuevo.
 - **Todo en español e inglés, claro y oscuro**, accesible con TalkBack y con letra grande. Cada animación tiene su momento numerado y respeta «Quitar animaciones».
 - **Sesión segura**: tokens cifrados en el dispositivo y renovación transparente cuando caducan.
 
@@ -132,7 +132,7 @@ Código y detalles en [`admin`](admin).
 - [x] Buscar, escanear y añadir alimentos en un toque
 - [x] Favoritos, comidas recientes y «¿Copiar la de ayer?»
 - [x] Mis platos: tus recetas, por raciones o por peso
-- [ ] «Lo que te encaja»: sugerencias con lo que te queda del día
+- [x] «Lo que te encaja»: sugerencias con lo que te queda del día
 - [ ] El diario nuevo: agua, día completo y resumen semanal
 - [ ] Publicación en Google Play
 

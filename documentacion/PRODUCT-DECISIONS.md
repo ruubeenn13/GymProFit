@@ -814,6 +814,27 @@ El `LIKE` con comodín delante no usa índice: barre la tabla entera en cada pul
 
 ---
 
+### DEC-048 · «Lo que te encaja» propone sin escalar, por lo que sueles en esa comida y por la proteína que falta
+**Estado:** Aceptada · **Fecha:** 2026-10-14 · **Tarea:** GP-165 (decisión 7 del lienzo, lote 1.6.7)
+
+**Contexto.** La decisión 7 del lienzo del 02-10 pide «Lo que te encaja», sin IA: de tus platos, favoritos y recientes, lo que cabe en las kcal que te quedan, por la proteína que falta y lo que sueles tomar, tres como mucho (tablero 9). El tablero no dice con qué cantidad, en qué orden ni qué dice cada uno cuando no hay nada que decir de la proteína. El 14-10 el propietario fijó que solo se proponen alimentos o platos sueltos, nunca comidas combinadas.
+
+**Decisión.**
+
+- **Se calcula en el móvil**, con lo que Añadir ya pide: el día (las comidas y el objetivo del perfil), lo tuyo (`/alimentos/mios`), los favoritos, la lista de «Todo» (sus recientes), las comidas recientes y lo habitual en la comida de la etiqueta (`/comidas/habituales`). Sin contratos nuevos. Se calcula cuando ha llegado todo; un atajo que falla cuenta como vacío, pero sin el día o sin objetivo no hay sección.
+- **Candidatos**: tus platos, tus favoritos y tus recientes, sin repetir, cada uno con lo que añadiría su «+» (`AnadirRapido`: la última cantidad que usaste o, si nunca lo usaste, lo que propondría la ficha, que en un plato es 1 ración). **Sin escalar**: si con esa cantidad no cabe en las kcal que quedan, no sale. Lo que no suma kcal tampoco.
+- **Orden.** Delante, lo que sueles tomar **en esa comida** (por su tipo, no por la hora del reloj): lo habitual en ella y lo que llevó ayer. Dentro de cada bloque, lo que más cubre la proteína que falta (pasarse no cubre más que llegar justo); con la misma proteína, a décimas de gramo, el de menos kcal. Si ya no falta proteína (menos de medio gramo), el que más se acerca a las kcal que quedan. Con todo igual, el orden de uso: platos, favoritos y recientes.
+- **El motivo**, una línea: «Lo sueles tomar en la merienda» (habitual, aunque también fuera de ayer), «Tu merienda de ayer», «Mucha proteína para lo que te falta» desde el **25 %** de la que falta y, si nada de eso, «Cabe en lo que te queda». «Hoy has entrenado» llega con el entreno (1.6.8).
+- **La barra** «X % de lo que falta», con «Cubre el X por ciento de la proteína que te falta» para TalkBack; el % no tiene tope y la barra sí. Sin proteína pendiente, ni barra ni proteína en la cabecera («Te quedan 1.161 kcal»).
+- **Sin kcal que queden, sin objetivo o sin candidatos, la sección no ocupa sitio**: el tablero no da una línea para eso, y nada sale en rojo.
+- **Dónde**: arriba de la pestaña «Mis platos», como en el tablero 9. Mientras se está en Añadir no cambia, para que lo que se toca no se mueva; al cambiar de comida se vuelve a calcular. El «+» es el de las filas (momento 15) y la sección entra en cascada la primera vez que sale (momento 16); su barra se llena con `BARRA`. La lógica vive en `LoQueTeEncaja`, sin vistas, con sus tests.
+
+**Consecuencias.** Un alimento que ya está hoy en esa comida puede volver a proponerse: la app no tiene a mano las líneas del día, solo sus totales. Un candidato grande no sale aunque media ración cupiera. El icono de la cabecera es `star_shine`: el `auto_awesome` del tablero ya no está en el paquete de Material Symbols del que se importan los iconos.
+
+**Qué la invalidaría.** Que los usuarios esperen cantidades ajustadas a lo que queda (entonces se escalaría, con un mínimo de ración). Que el umbral del 25 % deje casi siempre «Cabe en lo que te queda» en los días con mucha proteína pendiente. Que haga falta proponer comidas enteras.
+
+---
+
 ## Pendientes de decidir
 
 Se registran aquí para que no se decidan por omisión.
