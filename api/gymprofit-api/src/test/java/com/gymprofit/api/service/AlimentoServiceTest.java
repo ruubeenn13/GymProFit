@@ -156,18 +156,18 @@ class AlimentoServiceTest {
         verify(alimentoRepository).save(any());
     }
 
-    // Solo un ADMIN puede crear un alimento a nombre de otra cuenta: para el resto, el
+    // Nadie, tampoco un ADMIN, crea un alimento a nombre de otra cuenta (GP-197): el
     // usuarioId del cuerpo se ignora y manda el token.
     @Test
-    @DisplayName("save de un ADMIN sí respeta el usuarioId del cuerpo")
+    @DisplayName("save de un ADMIN con usuarioId de otro: el dueño sale del token (GP-197)")
     void save_con_usuario_asocia_usuario() {
         Usuario usuario = new Usuario();
-        usuario.setId(7);
+        usuario.setId(3);
         alimentoCreateDTO.setUsuarioId(7);
 
-        when(securityUtils.isAdmin()).thenReturn(true);
+        when(securityUtils.getCurrentUserId()).thenReturn(3);
         when(alimentoMapper.toEntity(alimentoCreateDTO)).thenReturn(alimento);
-        when(usuarioRepository.findById(7)).thenReturn(Optional.of(usuario));
+        when(usuarioRepository.findById(3)).thenReturn(Optional.of(usuario));
         when(alimentoRepository.save(any())).thenReturn(alimento);
         when(alimentoMapper.toDTO(alimento)).thenReturn(alimentoDTO);
 

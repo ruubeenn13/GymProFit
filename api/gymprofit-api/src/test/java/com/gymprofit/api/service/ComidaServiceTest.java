@@ -111,7 +111,7 @@ class ComidaServiceTest {
 
         assertNotNull(result);
         assertEquals(1, result.getId());
-        verify(securityUtils).checkOwnership(usuario.getId());
+        verify(securityUtils).checkDueno(usuario.getId());
     }
 
     // Comprueba que findById lanza NotFoundEntityException si la comida no existe
@@ -127,7 +127,6 @@ class ComidaServiceTest {
     @Test
     @DisplayName("save crea la comida para el usuario autenticado")
     void save_crea_comida() {
-        when(securityUtils.isAdmin()).thenReturn(false);
         when(securityUtils.getCurrentUserId()).thenReturn(1);
         when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuario));
         when(comidaMapper.toEntity(comidaCreateDTO)).thenReturn(comida);
@@ -145,7 +144,6 @@ class ComidaServiceTest {
     @Test
     @DisplayName("save con usuario inexistente lanza NotFoundEntityException")
     void save_usuario_inexistente_lanza_excepcion() {
-        when(securityUtils.isAdmin()).thenReturn(false);
         when(securityUtils.getCurrentUserId()).thenReturn(1);
         when(usuarioRepository.findById(1)).thenReturn(Optional.empty());
 
@@ -204,7 +202,7 @@ class ComidaServiceTest {
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        verify(securityUtils).checkOwnership(1);
+        verify(securityUtils).checkDueno(1);
     }
 
     // Comprueba que findByTipoComida (solo ADMIN) devuelve las comidas del tipo indicado
@@ -236,7 +234,7 @@ class ComidaServiceTest {
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        verify(securityUtils).checkOwnership(1);
+        verify(securityUtils).checkDueno(1);
     }
 
     // Comprueba que countByUsuarioId verifica propiedad y devuelve el número de comidas del usuario
@@ -248,7 +246,7 @@ class ComidaServiceTest {
         Long result = comidaService.countByUsuarioId(1);
 
         assertEquals(4L, result);
-        verify(securityUtils).checkOwnership(1);
+        verify(securityUtils).checkDueno(1);
     }
 
     // Comprueba que patch modifica solo los campos no nulos de la comida

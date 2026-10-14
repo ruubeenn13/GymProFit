@@ -297,20 +297,18 @@ public class AlimentoService implements IAlimentoService {
      * eso era escritura anónima en la comida compartida; en una aplicación de nutrición el
      * daño son macros falsos que la gente se cree.
      * <p>
-     * Solo un ADMIN puede crear catálogo, y solo un ADMIN puede crear un alimento a nombre
-     * de otro usuario.
+     * Solo un ADMIN puede crear catálogo, y nadie, tampoco un ADMIN, crea un alimento a
+     * nombre de otro usuario (GP-197). El id del cuerpo se ignora en vez de rechazarse: la
+     * app lo manda siempre con el suyo, también en la cuenta de un ADMIN, y un 400 rompería
+     * las builds repartidas fuera de Play, que no se actualizan solas.
      *
      * @param alimento  entidad nueva, todavía sin propietario.
-     * @param usuarioIdDelCuerpo lo que pedía el cliente; se ignora salvo que sea ADMIN.
+     * @param usuarioIdDelCuerpo lo que pedía el cliente; solo cuenta si falta, y solo a un
+     *                           ADMIN: entonces es catálogo.
      */
     private void asignarPropietario(Alimento alimento, Integer usuarioIdDelCuerpo) {
-        if (securityUtils.isAdmin()) {
-            // El panel de administración sí crea catálogo (sin usuarioId) y sí puede
-            // asignar un alimento a una cuenta concreta.
-            if (usuarioIdDelCuerpo != null) {
-                alimento.setUsuario(usuarioRepository.findById(usuarioIdDelCuerpo)
-                        .orElseThrow(() -> new NotFoundEntityException("error.usuario.noExiste", usuarioIdDelCuerpo)));
-            }
+        if (usuarioIdDelCuerpo == null && securityUtils.isAdmin()) {
+            // El catálogo: sin dueño.
             return;
         }
 
