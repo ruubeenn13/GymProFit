@@ -6,6 +6,8 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `ceadf31` | Fusión de `fix-busqueda-panel` en `main`, CI en verde y desplegada en Render. Solo API, sin versión de app ni etiqueta. |
+| `7e9c22e` | fix(api): **GP-195**, la búsqueda de alimentos del panel (`GET /admin/alimentos/busqueda`) se limita al catálogo, activo o no, igual que el listado del catálogo de la web de administración. Revisadas las demás consultas de `/admin`: ninguna necesita el mismo cambio. `BusquedaAdminCatalogoTest`. |
 | `c4ca21c` | docs(documentacion): el informe del lote 1.6.6, con la prueba de nueve pasos en producción. |
 | `d83895e` | Fusión de `lote-1.6.6` en `main`, CI en verde (API, app y admin); etiquetada `v1.6.6`. APK de release 1.6.6 (10606), 7 758 181 bytes, con la clave de siempre. Necesita la API de `51ac0d1` (desplegada). |
 | `a145480` | docs(readme): Mis platos, hecho. |
