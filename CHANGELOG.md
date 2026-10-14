@@ -6,6 +6,10 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `68c188c` | docs(documentacion): el [informe del lote 1.6.7](documentacion/estado/2026-10-14-lote-1.6.7.md), con la prueba en producción. |
+| `1396fc0` | Fusión de `lote-1.6.7` en `main`, CI en verde; etiquetada `v1.6.7`. APK de release 1.6.7 (10607), 7 773 785 bytes, con la clave de siempre. Solo app: sin API nueva. |
+| `4a36a11` | docs(decisiones): **DEC-048**, las reglas de «Lo que te encaja»; README al día. |
+| `054b042` | feat(android): **«Lo que te encaja»** (GP-165) arriba de Mis platos: hasta tres de tus platos, favoritos y recientes que caben en las kcal que quedan, con su cantidad y sin escalar; delante lo que sueles en esa comida, después la proteína que falta. Motivo, barra de proteína y «+» como en el resto de Añadir. `LoQueTeEncajaTest`. |
 | `4305c5f` | docs(documentacion): S26 en [el informe de seguridad de las cuentas ADMIN](documentacion/estado/2026-10-14-seguridad-admin.md), ya desplegado y confirmado. |
 | `1d952c9` | Fusión de `fix-datos-admin` en `main`, CI en verde y desplegada en Render. Solo API, sin versión de app ni etiqueta. |
 | `175fae2` | fix(api): **GP-198 (S26)**, los datos de un usuario son solo suyos, también para un ADMIN: sesiones, ejercicios realizados, mediciones, objetivos, notificaciones, rutinas propias y sus ejercicios, logros, récords y la cuenta por id. Las rutas solo de ADMIN fuera de `/admin` devuelven lo de quien llama; lo que se crea es de quien llama. Se conservan el catálogo, las rutinas sin dueño, `/admin` y enviar un aviso a otra cuenta. `checkOwnership` desaparece en favor de `checkDueno`. Un id de usuario ajeno da 403 exista o no. DEC-027 ampliada. `DatosSoloDelDuenoTest`. |
