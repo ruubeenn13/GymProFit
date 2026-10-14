@@ -19,7 +19,8 @@ public final class ErrorFoto {
      */
     public static Causa causa(int code, boolean hayRed) {
         if (code == 413) return Causa.PESA_DEMASIADO;
-        if (code == -1 && !hayRed) return Causa.SIN_CONEXION;
+        // La misma regla que el resto de la app (GP-194).
+        if (UiFeedback.sinConexion(code, hayRed)) return Causa.SIN_CONEXION;
         return Causa.OTRA;
     }
 }

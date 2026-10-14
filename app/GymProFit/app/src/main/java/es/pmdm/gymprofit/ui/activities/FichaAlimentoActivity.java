@@ -72,6 +72,12 @@ import es.pmdm.gymprofit.utils.VistaEstado;
 //     marcarlo late. Cambia al tocar y la API va detrás, de una en una; si falla, vuelve
 //     y se dice. Un producto que aún no está en el catálogo se marca por su código. Quien
 //     abrió la ficha se entera (EXTRA_FAVORITO) aunque se salga sin añadir.
+// Lote 1.6.6:
+//   · Un plato: la cantidad en raciones, y en gramos solo con peso hecho; sin peso hecho la
+//     información es por ración, no por 100 g. Su origen, «Tu plato · 6 ingredientes»;
+//     arriba, «Editar», que abre su pantalla. Sin «Reportar un problema» (es tuyo).
+//   · En modo ingrediente (paraIngrediente), «Añadir al plato» (o «Actualizar», si ya
+//     estaba) no va a la API: devuelve el ingrediente con su cantidad (EXTRA_INGREDIENTE).
 // ============================================================
 public class FichaAlimentoActivity extends BaseActivity {
 
@@ -91,10 +97,18 @@ public class FichaAlimentoActivity extends BaseActivity {
     /** Resultado (1.6.3): si el alimento quedó en favoritos, y su id. */
     public static final String EXTRA_FAVORITO = "favorito";
     public static final String EXTRA_FAVORITO_ID = "favoritoId";
+    /** Lote 1.6.6: el ingrediente elegido (IngredienteElegido en JSON), de ida y de vuelta. */
+    public static final String EXTRA_INGREDIENTE = "ingrediente";
+    private static final String EXTRA_MODO_INGREDIENTE = "modoIngrediente";
 
     private final AlimentoApi alimentoApi = ApiClient.service(AlimentoApi.class);
     private final ComidaApi comidaApi = ApiClient.service(ComidaApi.class);
     private final AlimentoComidaApi lineaApi = ApiClient.service(AlimentoComidaApi.class);
+    private final es.pmdm.gymprofit.network.PlatoApi platoApi = ApiClient.service(es.pmdm.gymprofit.network.PlatoApi.class);
+    private boolean modoIngrediente;
+    // Cuántos ingredientes tiene el plato, para su origen; -1 mientras no se sabe.
+    private int ingredientesPlato = -1;
+    private androidx.activity.result.ActivityResultLauncher<Intent> editarPlatoLauncher;
 
     private String tipoComida;
     private String fecha;
@@ -136,6 +150,20 @@ public class FichaAlimentoActivity extends BaseActivity {
                 .putExtra(AnadirAlimentoActivity.EXTRA_FECHA, fecha);
     }
 
+    /**
+     * Para elegir la cantidad de un ingrediente de un plato (lote 1.6.6): «Añadir al plato»
+     * o, si ya está, «Actualizar» con la suya. No va a la API.
+     */
+    @NonNull
+    public static Intent paraIngrediente(@NonNull Context ctx, @NonNull Alimento alimento,
+                                         @Nullable es.pmdm.gymprofit.model.plato.IngredienteElegido actual) {
+        Intent i = new Intent(ctx, FichaAlimentoActivity.class)
+                .putExtra(EXTRA_ALIMENTO, new Gson().toJson(alimento))
+                .putExtra(EXTRA_MODO_INGREDIENTE, true);
+        if (actual != null) i.putExtra(EXTRA_INGREDIENTE, new Gson().toJson(actual));
+        return i;
+    }
+
     /** Para editar la cantidad de una línea de una comida. */
     @NonNull
     public static Intent paraEditar(@NonNull Context ctx, @NonNull AlimentoComida linea,
@@ -167,6 +195,19 @@ public class FichaAlimentoActivity extends BaseActivity {
         if (tipoComida == null) tipoComida = "MERIENDA";
         fecha = getIntent().getStringExtra(AnadirAlimentoActivity.EXTRA_FECHA);
         lineaId = getIntent().getIntExtra(EXTRA_LINEA_ID, -1);
+        modoIngrediente = getIntent().getBooleanExtra(EXTRA_MODO_INGREDIENTE, false);
+        // De editar el plato: vuelve con sus valores nuevos.
+        editarPlatoLauncher = registerForActivityResult(
+                new androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult(), r -> {
+                    if (r.getResultCode() == RESULT_OK) {
+                        estadoGuardado = null;
+                        ingredientesPlato = -1;
+                        cargarAlimento();
+                    }
+                });
+        findViewById(R.id.btnEditarPlatoFicha).setOnClickListener(v -> {
+            if (alimento != null) editarPlatoLauncher.launch(CrearPlatoActivity.paraEditar(this, alimento.getId()));
+        });
 
         findViewById(R.id.btnAtrasFicha).setOnClickListener(v -> finish());
         estado = new VistaEstado(findViewById(R.id.estadoFicha));
@@ -175,7 +216,9 @@ public class FichaAlimentoActivity extends BaseActivity {
         findViewById(R.id.btnMenos).setOnClickListener(v -> { if (cantidad != null) { cantidad.menos(); pintarCantidad(); } });
         findViewById(R.id.btnMas).setOnClickListener(v -> { if (cantidad != null) { cantidad.mas(); pintarCantidad(); } });
         findViewById(R.id.tvCantidad).setOnClickListener(v -> escribirCantidad());
-        ((MaterialButton) findViewById(R.id.btnAnadirFicha)).setText(lineaId > 0 ? getString(R.string.ficha_actualizar)
+        boolean actualizar = lineaId > 0 || (modoIngrediente && getIntent().hasExtra(EXTRA_INGREDIENTE));
+        ((MaterialButton) findViewById(R.id.btnAnadirFicha)).setText(actualizar ? getString(R.string.ficha_actualizar)
+                : modoIngrediente ? getString(R.string.ficha_anadir_al_plato)
                 : getString(AnadirAlimentoActivity.textoAnadirA(tipoComida)));
         findViewById(R.id.btnAnadirFicha).setOnClickListener(v -> guardar());
         findViewById(R.id.btnFavoritoFicha).setOnClickListener(v -> tocarCorazon());
@@ -203,7 +246,7 @@ public class FichaAlimentoActivity extends BaseActivity {
     // ── Cargar ──────────────────────────────────────────────────────────────
 
     private void cargarAlimento() {
-        int id = getIntent().getIntExtra(EXTRA_ALIMENTO_ID, -1);
+        int id = alimento != null ? alimento.getId() : getIntent().getIntExtra(EXTRA_ALIMENTO_ID, -1);
         estado.cargando();
         alimentoApi.porId(id).enqueue(new ApiCallback<Alimento>() {
             @Override
@@ -254,12 +297,22 @@ public class FichaAlimentoActivity extends BaseActivity {
         findViewById(R.id.scrollFicha).setVisibility(View.VISIBLE);
         findViewById(R.id.pieFicha).setVisibility(View.VISIBLE);
 
-        if (lineaId > 0) {
+        String ingrediente = modoIngrediente ? getIntent().getStringExtra(EXTRA_INGREDIENTE) : null;
+        if (ingrediente != null) {
+            cantidad = new Gson().fromJson(ingrediente, es.pmdm.gymprofit.model.plato.IngredienteElegido.class).cantidad();
+        } else if (lineaId > 0) {
             Integer racionId = getIntent().hasExtra(EXTRA_RACION_ID) ? getIntent().getIntExtra(EXTRA_RACION_ID, -1) : null;
             Double raciones = getIntent().hasExtra(EXTRA_RACIONES) ? getIntent().getDoubleExtra(EXTRA_RACIONES, 0) : null;
-            cantidad = CantidadFicha.deLinea(a.getRaciones(), racionId, raciones, getIntent().getDoubleExtra(EXTRA_GRAMOS, 100));
+            // La línea de un plato cuya ración ya no es la de hoy (le pusieron o quitaron el
+            // peso): sus raciones son de las de hoy, como las apunta la API.
+            if (a.esPlato() && racionId != null && raciones != null && !a.getRaciones().isEmpty()
+                    && !racionId.equals(a.getRaciones().get(0).getId())) {
+                racionId = a.getRaciones().get(0).getId();
+            }
+            cantidad = CantidadFicha.deLinea(a, racionId, raciones, getIntent().getDoubleExtra(EXTRA_GRAMOS, 100));
         } else {
-            cantidad = CantidadFicha.nueva(a.getRaciones());
+            // Un plato sin peso hecho, sin gramos (lote 1.6.6).
+            cantidad = CantidadFicha.nueva(a);
         }
         if (estadoGuardado != null && estadoGuardado.containsKey("unidad")) {
             cantidad.elegir(estadoGuardado.getInt("unidad"));
@@ -274,6 +327,12 @@ public class FichaAlimentoActivity extends BaseActivity {
         findViewById(R.id.ivRevisadoFicha).setVisibility(a.isRevisado() ? View.VISIBLE : View.GONE);
         // Lo tuyo no se reporta: se edita, y el administrador no ve los alimentos de nadie.
         findViewById(R.id.btnReportar).setVisibility(a.esPropio() ? View.GONE : View.VISIBLE);
+        // Un plato propio se edita en su pantalla (1.6.6); uno borrado, ya no.
+        findViewById(R.id.btnEditarPlatoFicha).setVisibility(a.esPlato() && a.isActivo() && !modoIngrediente
+                ? View.VISIBLE : View.GONE);
+        ((TextView) findViewById(R.id.tvInfo100)).setText(a.esPlatoSinPeso()
+                ? R.string.ficha_info_racion : R.string.ficha_info_100);
+        if (a.esPlato() && ingredientesPlato < 0) contarIngredientes(a.getId());
         if (estadoGuardado != null && estadoGuardado.containsKey("favorito")) {
             favoritoQuiere = favoritoReal = estadoGuardado.getBoolean("favorito");
         } else {
@@ -293,6 +352,10 @@ public class FichaAlimentoActivity extends BaseActivity {
     }
 
     private String origen(Alimento a) {
+        if (a.esPlato()) {
+            return ingredientesPlato > 0 ? getResources().getQuantityString(R.plurals.ficha_origen_plato_n,
+                    ingredientesPlato, ingredientesPlato) : getString(R.string.ficha_origen_plato);
+        }
         if (a.esPropio()) return getString(R.string.ficha_origen_tuyo);
         if ("CIQUAL".equals(a.getFuente())) return getString(R.string.ficha_origen_ciqual);
         if ("USDA".equals(a.getFuente())) return getString(R.string.ficha_origen_usda);
@@ -301,6 +364,24 @@ public class FichaAlimentoActivity extends BaseActivity {
             return marca != null ? getString(R.string.ficha_origen_producto, marca) : getString(R.string.fila_producto_envasado);
         }
         return getString(R.string.ficha_origen_catalogo);
+    }
+
+    // «Tu plato · 6 ingredientes»: el número llega con el plato. Si no llega, se queda en
+    // «Tu plato», que ya dice lo que importa; no hay nada que reintentar a la vista.
+    private void contarIngredientes(int platoId) {
+        platoApi.porId(platoId).enqueue(new ApiCallback<es.pmdm.gymprofit.model.plato.Plato>() {
+            @Override
+            public void onOk(es.pmdm.gymprofit.model.plato.Plato p) {
+                if (isDestroyed() || p == null || alimento == null) return;
+                ingredientesPlato = p.getIngredientes().size();
+                ((TextView) findViewById(R.id.tvOrigenFicha)).setText(origen(alimento));
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                // Se ignora a propósito: el origen sigue diciendo «Tu plato».
+            }
+        });
     }
 
     private void pintarUnidades() {
@@ -361,7 +442,7 @@ public class FichaAlimentoActivity extends BaseActivity {
         if (cantidad == null) return "";
         CantidadFicha.Unidad u = cantidad.unidad();
         return es.pmdm.gymprofit.utils.Cantidades.de(this, u.nombre, u.unidad, u.unidadPlural, cantidad.raciones(),
-                cantidad.gramos());
+                cantidad.gramos(), !cantidad.conGramos());
     }
 
     private void pintarCantidad() {
@@ -609,6 +690,15 @@ public class FichaAlimentoActivity extends BaseActivity {
 
     private void guardar() {
         if (alimento == null || cantidad == null) return;
+        if (modoIngrediente) {
+            // Al plato, no a una comida: nada va a la API hasta guardar el plato.
+            Intent datos = datosFavorito();
+            datos.putExtra(EXTRA_INGREDIENTE, new Gson().toJson(
+                    es.pmdm.gymprofit.model.plato.IngredienteElegido.de(alimento, cantidad)));
+            setResult(RESULT_OK, datos);
+            finish();
+            return;
+        }
         View boton = findViewById(R.id.btnAnadirFicha);
         boton.setEnabled(false);
         LoadingDialog.show(this);

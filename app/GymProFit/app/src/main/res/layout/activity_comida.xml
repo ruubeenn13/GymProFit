@@ -256,6 +256,23 @@
                         android:overScrollMode="never" />
                 </FrameLayout>
 
+                <!-- Lote 1.6.6: con dos alimentos o más, «Guardar como plato» (tablero 2). -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnGuardarComoPlato"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="4dp"
+                    android:minHeight="52dp"
+                    android:text="@string/comida_guardar_como_plato"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="@dimen/text_body"
+                    android:visibility="gone"
+                    app:icon="@drawable/ic_ms_bookmark_add"
+                    app:iconSize="20dp"
+                    app:iconTint="?attr/colorOnSurfaceVariant" />
+
                 <LinearLayout
                     android:id="@+id/bloqueVacia"
                     android:layout_width="match_parent"

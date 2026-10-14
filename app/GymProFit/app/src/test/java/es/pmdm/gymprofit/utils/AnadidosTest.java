@@ -332,4 +332,48 @@ public class AnadidosTest {
         assertTrue(anadidos.marcado(M7));
         assertEquals(63, anadidos.resumen().kcal);
     }
+
+    // GP-192: si lo que viaja es el quitar de ese alimento, lo copiado también espera a su
+    // respuesta. Antes se anotaba al momento; al volver el quitar lo borraba y volvía a
+    // mandar el «+» de antes.
+    @Test
+    public void gp192_una_copia_que_llega_mientras_viaja_el_quitar_espera_y_no_repite_el_mas() {
+        anadidos.tocar(pedido(7, "MERIENDA", 120));
+        servidor.anadidoOk(7, null);
+        anadidos.tocar(pedido(7, "MERIENDA", 120));
+        assertEquals(1, servidor.deshacer.size());
+        // La copia llega mientras el quitar viaja: en la API, una línea nueva (102).
+        AlimentoComida copiada = new AlimentoComida();
+        copiada.setId(102);
+        copiada.setAlimentoId(7);
+        anadidos.marcar(new Anadidos.Anadido(7, null, "MERIENDA", copiada, null, "60 g", 63));
+        assertTrue(anadidos.ocupado());
+        servidor.deshecho();
+        // Lo copiado se queda, en ✓, y no sale otro «+».
+        assertTrue(anadidos.marcado(M7));
+        assertEquals(102, anadidos.hecho(M7).getLinea().getId());
+        assertTrue(servidor.anadir.isEmpty());
+        assertEquals(63, anadidos.resumen().kcal);
+        assertFalse(anadidos.ocupado());
+        // Su ✓ quita lo copiado, nada más.
+        anadidos.tocar(pedido(7, "MERIENDA", 120));
+        assertEquals(102, servidor.deshacerQue.get(1).getLinea().getId());
+    }
+
+    @Test
+    public void gp192_si_el_quitar_falla_la_copia_se_anota_igual() {
+        anadidos.tocar(pedido(7, "MERIENDA", 120));
+        servidor.anadidoOk(7, null);
+        anadidos.tocar(pedido(7, "MERIENDA", 120));
+        AlimentoComida copiada = new AlimentoComida();
+        copiada.setId(101);
+        copiada.setAlimentoId(7);
+        anadidos.marcar(new Anadidos.Anadido(7, null, "MERIENDA", copiada, new CantidadAnterior(200, null, null),
+                "60 g", 63));
+        servidor.deshacer.remove(0).fallo(500, "x");
+        assertTrue(anadidos.marcado(M7));
+        assertTrue(servidor.anadir.isEmpty());
+        assertTrue(servidor.deshacer.isEmpty());
+        assertEquals(1, anadidos.resumen().cuantos);
+    }
 }

@@ -35,6 +35,20 @@
             android:layout_height="1dp"
             android:layout_weight="1" />
 
+        <!-- Lote 1.6.6: «Editar» en la ficha de un plato propio, que abre su pantalla. -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEditarPlatoFicha"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:layout_marginEnd="4dp"
+            android:text="@string/ficha_editar_plato"
+            android:textSize="@dimen/text_body"
+            android:visibility="gone"
+            app:icon="@drawable/ic_ms_edit"
+            app:iconSize="18dp" />
+
         <!-- El corazón (tablero 7, lote 1.6.3): vacío o relleno; al marcarlo, late. -->
         <ImageButton
             android:id="@+id/btnFavoritoFicha"
@@ -380,6 +394,7 @@
                     android:focusable="true">
 
                     <TextView
+                        android:id="@+id/tvInfo100"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"

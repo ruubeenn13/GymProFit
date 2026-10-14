@@ -16,6 +16,8 @@ public class UltimaCantidad {
     @Nullable private Double raciones;
     @Nullable private String racionUnidad;
     @Nullable private String racionUnidadPlural;
+    // Lote 1.6.6: la ración de un plato sin peso hecho (sus gramos no se enseñan).
+    @Nullable private Boolean racionSinPeso;
 
     public UltimaCantidad() {
     }
@@ -43,4 +45,6 @@ public class UltimaCantidad {
     @Nullable public String getRacionUnidad() { return racionUnidad; }
 
     @Nullable public String getRacionUnidadPlural() { return racionUnidadPlural; }
+
+    public boolean isRacionSinPeso() { return Boolean.TRUE.equals(racionSinPeso); }
 }

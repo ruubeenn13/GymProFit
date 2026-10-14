@@ -144,18 +144,11 @@ public final class FotoPerfil {
 
     // El aviso por su causa: sin conexión, demasiado grande o lo que diga UiFeedback.
     private static String aviso(Activity act, int code, String message) {
-        switch (ErrorFoto.causa(code, hayRed(act))) {
+        switch (ErrorFoto.causa(code, UiFeedback.hayRed(act))) {
             case SIN_CONEXION:   return act.getString(R.string.perfil_foto_sin_conexion);
             case PESA_DEMASIADO: return act.getString(R.string.perfil_foto_pesa);
             default:             return act.getString(R.string.perfil_foto_no_subida, UiFeedback.mensaje(act, code, message));
         }
-    }
-
-    private static boolean hayRed(Activity act) {
-        android.net.ConnectivityManager cm = act.getSystemService(android.net.ConnectivityManager.class);
-        if (cm == null) return true;
-        android.net.NetworkCapabilities nc = cm.getNetworkCapabilities(cm.getActiveNetwork());
-        return nc != null && nc.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET);
     }
 
     // La foto de la cámara solo hacía falta para subirla.

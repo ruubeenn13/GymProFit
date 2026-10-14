@@ -369,6 +369,7 @@ public class ComidaActivity extends BaseActivity {
         View cardAlimentos = findViewById(R.id.cardAlimentos);
         View vacia = findViewById(R.id.bloqueVacia);
         if (r.vacia) {
+            findViewById(R.id.btnGuardarComoPlato).setVisibility(View.GONE);
             boolean yaVacia = vacia.getVisibility() == View.VISIBLE;
             card.setVisibility(View.GONE);
             cuantos.setVisibility(View.GONE);
@@ -385,6 +386,11 @@ public class ComidaActivity extends BaseActivity {
         card.setVisibility(View.VISIBLE);
         cuantos.setVisibility(View.VISIBLE);
         cardAlimentos.setVisibility(View.VISIBLE);
+        // «Guardar como plato» (lote 1.6.6): con dos alimentos o más, debajo de la lista.
+        View guardarComoPlato = findViewById(R.id.btnGuardarComoPlato);
+        guardarComoPlato.setVisibility(lineas.size() >= 2 ? View.VISIBLE : View.GONE);
+        guardarComoPlato.setOnClickListener(v ->
+                startActivity(CrearPlatoActivity.desdeComida(this, new java.util.ArrayList<>(lineas))));
         ((TextView) cuantos).setText(getResources().getQuantityString(R.plurals.comida_n_alimentos,
                 lineas.size(), lineas.size()));
         if (entraResumen) Movimiento.entrarUna(card, 0, Movimiento.ENTRA, 16);

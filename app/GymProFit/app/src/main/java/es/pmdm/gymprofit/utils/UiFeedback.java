@@ -9,7 +9,10 @@ import es.pmdm.gymprofit.network.ApiCallback;
 // UiFeedback — mapeo centralizado de códigos de error de red a mensajes de usuario.
 // Traduce el (code, message) que entrega ApiCallback.onFail a un toast con texto
 // legible y localizado (nunca hardcodeado). Evita repetir el switch en cada Activity.
-//   code == -1  → fallo de transporte (timeout/red caída) → mensaje de cold-start.
+//   code == -1  → sin respuesta HTTP. Si el móvil no tiene red, «Sin conexión»; con red,
+//                 el servidor despertando (cold start de Render). GP-194: antes todo
+//                 fallo sin respuesta decía lo segundo, también en modo avión. La regla
+//                 vive aquí (sinConexion) y la usa también la foto de perfil (ErrorFoto).
 //   code == 401 → ya lo gestiona ApiCallback (notifyUnauthorized) → NO se toca aquí.
 //   code == 404 → el recurso PADRE no existe → error real, con su propio mensaje.
 //                 Hasta GP-069 la API respondía 404 también a una colección vacía, y
@@ -92,8 +95,39 @@ public final class UiFeedback {
      * @return texto localizado, listo para mostrar.
      */
     public static String mensaje(Context context, int code) {
+        return context.getString(recurso(code, hayRed(context)));
+    }
+
+    /**
+     * Sin respuesta y sin red en el móvil (GP-194): el fallo es del móvil, no del servidor.
+     *
+     * @param code   código entregado por ApiCallback.onFail; -1 si no hubo respuesta.
+     * @param hayRed si el móvil tiene red ahora.
+     */
+    public static boolean sinConexion(int code, boolean hayRed) {
+        return code == -1 && !hayRed;
+    }
+
+    /** ¿Tiene el móvil una red con internet ahora? Si no se puede saber, se supone que sí. */
+    public static boolean hayRed(Context context) {
+        android.net.ConnectivityManager cm = context.getSystemService(android.net.ConnectivityManager.class);
+        if (cm == null) return true;
+        android.net.NetworkCapabilities nc = cm.getNetworkCapabilities(cm.getActiveNetwork());
+        return nc != null && nc.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET);
+    }
+
+    /**
+     * El texto que le corresponde a un código, sin Android: lo que decide, para probarlo.
+     *
+     * @param code   código entregado por ApiCallback.onFail.
+     * @param hayRed si el móvil tiene red (solo cuenta sin respuesta, code == -1).
+     * @return el id del texto en strings.xml.
+     */
+    public static int recurso(int code, boolean hayRed) {
         int res;
-        if (code == 404) {
+        if (sinConexion(code, hayRed)) {
+            res = R.string.feedback_error_sin_conexion;
+        } else if (code == 404) {
             // El recurso que se pide no existe. Ya NO significa "lista vacía": desde
             // GP-069 eso es un 200 con [] y no pasa por aquí.
             res = R.string.feedback_error_no_encontrado;
@@ -107,7 +141,6 @@ public final class UiFeedback {
         } else {
             res = R.string.feedback_error_generico;
         }
-
-        return context.getString(res);
+        return res;
     }
 }

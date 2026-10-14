@@ -49,6 +49,12 @@ public class Alimento {
     @Nullable private Boolean favorito;
     // Lo último que apuntaste (en lo tuyo de la búsqueda y en los favoritos); null si nunca.
     @Nullable private UltimaCantidad ultima;
+    // --- Lote 1.6.6 (DEC-047) ---
+    // Si es un plato propio, cuántas raciones salen; null si no es un plato.
+    @Nullable private Integer platoRaciones;
+    // El peso del plato hecho; null si no lo tiene: entonces se apunta solo por raciones y
+    // sus valores son los de una ración, no los de 100 g.
+    @Nullable private Double platoPesoGramos;
     // Indica si el alimento está activo (borrado lógico)
     // La búsqueda admin (AlimentoJooqDTO) envía "activo" como Byte 0/1; el adaptador lo tolera.
     @JsonAdapter(BooleanNumericAdapter.class)
@@ -110,6 +116,16 @@ public class Alimento {
     public void setFavorito(boolean favorito) { this.favorito = favorito; }
     @Nullable public UltimaCantidad getUltima() { return ultima; }
     public void setUltima(@Nullable UltimaCantidad ultima) { this.ultima = ultima; }
+    /** Un plato propio (lote 1.6.6). */
+    public boolean esPlato() { return platoRaciones != null; }
+    /** Cuántas raciones salen del plato; 0 si no es un plato. */
+    public int getPlatoRaciones() { return platoRaciones != null ? platoRaciones : 0; }
+    public void setPlatoRaciones(@Nullable Integer platoRaciones) { this.platoRaciones = platoRaciones; }
+    @Nullable public Double getPlatoPesoGramos() { return platoPesoGramos; }
+    public void setPlatoPesoGramos(@Nullable Double platoPesoGramos) { this.platoPesoGramos = platoPesoGramos; }
+    /** Un plato sin peso hecho: no tiene gramos que enseñar, y sus valores son por ración. */
+    public boolean esPlatoSinPeso() { return esPlato() && platoPesoGramos == null; }
+    public void setFibra(@Nullable Double fibra) { this.fibra = fibra; }
     public boolean isActivo() { return activo; }
     public void setActivo(boolean activo) { this.activo = activo; }
 }

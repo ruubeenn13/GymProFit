@@ -1,6 +1,7 @@
 package es.pmdm.gymprofit.utils;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -53,6 +54,35 @@ public final class PedidoCantidad {
         } else {
             b.put("cantidadGramos", decimal(cantidad.gramos()));
         }
+        return b;
+    }
+
+    /**
+     * El cuerpo de crear o cambiar un plato (lote 1.6.6): nombre, raciones, el peso hecho si
+     * lo tiene y cada ingrediente con su cantidad como al añadir (sin día ni comida).
+     */
+    @NonNull
+    public static Map<String, Object> plato(@NonNull String nombre, int raciones, @Nullable Double peso,
+                                            @NonNull java.util.List<es.pmdm.gymprofit.model.plato.IngredienteElegido> ingredientes) {
+        Map<String, Object> b = new HashMap<>();
+        b.put("nombre", nombre.trim());
+        b.put("raciones", raciones);
+        if (peso != null) b.put("pesoGramos", decimal(peso));
+        java.util.List<Map<String, Object>> lista = new java.util.ArrayList<>();
+        for (es.pmdm.gymprofit.model.plato.IngredienteElegido i : ingredientes) {
+            Map<String, Object> x = new HashMap<>();
+            if (i.getAlimento().getId() > 0) x.put("alimentoId", i.getAlimento().getId());
+            else x.put("barcode", i.getAlimento().getBarcode());
+            if (i.getRaciones() != null && (i.getRacionId() != null || i.getRacionIndice() >= 0)) {
+                if (i.getRacionId() != null) x.put("racionId", i.getRacionId());
+                else x.put("racionIndice", i.getRacionIndice());
+                x.put("raciones", decimal(i.getRaciones()));
+            } else {
+                x.put("cantidadGramos", decimal(i.getGramos()));
+            }
+            lista.add(x);
+        }
+        b.put("ingredientes", lista);
         return b;
     }
 

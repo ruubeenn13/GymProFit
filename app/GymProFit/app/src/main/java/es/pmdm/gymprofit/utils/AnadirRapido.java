@@ -26,9 +26,9 @@ public final class AnadirRapido {
     public static CantidadFicha cantidad(@NonNull Alimento a) {
         UltimaCantidad u = a.getUltima();
         if (u != null && u.getCantidadGramos() > 0) {
-            return CantidadFicha.deLinea(a.getRaciones(), u.getRacionId(), u.getRaciones(), u.getCantidadGramos());
+            return CantidadFicha.deLinea(a, u.getRacionId(), u.getRaciones(), u.getCantidadGramos());
         }
-        return CantidadFicha.nueva(a.getRaciones());
+        return CantidadFicha.nueva(a);
     }
 
     /** ¿Tiene una última cantidad que enseñar? */
@@ -41,10 +41,10 @@ public final class AnadirRapido {
         return Math.round(a.getCalorias() * c.gramos() / 100.0);
     }
 
-    /** «1 envase (200 g)», «2 rebanadas (56 g)» o «150 g». */
+    /** «1 envase (200 g)», «2 rebanadas (56 g)» o «150 g»; de un plato sin peso, «1 ración». */
     @NonNull
     public static String texto(@NonNull Cantidades.Formatos f, @NonNull Locale locale, @NonNull CantidadFicha c) {
         CantidadFicha.Unidad u = c.unidad();
-        return Cantidades.texto(f, locale, u.nombre, u.unidad, u.unidadPlural, c.raciones(), c.gramos());
+        return Cantidades.texto(f, locale, u.nombre, u.unidad, u.unidadPlural, c.raciones(), c.gramos(), !c.conGramos());
     }
 }

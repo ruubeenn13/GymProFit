@@ -126,6 +126,23 @@ public class MovimientoTest {
     }
 
     @Test
+    public void elPlatoEstaEnLaTablaYEnElCodigo() throws IOException {
+        // Momento 23 (lote 1.6.6), con los números de los tableros 9 y 10: las cifras caen
+        // en 250 ms, el velo en 250, la hoja sube en 450 y su ✓ salta en 450, 200 después.
+        Map<String, Long> tabla = duracionesDeLaTabla();
+        Map<String, Long> codigo = duracionesDelCodigo();
+        assertTrue("falta el momento 23 en DEC-039", decision().contains("| 23 · "));
+        for (String c : new String[]{"CIFRA", "VELO", "SALTA_OK", "SALTA_OK_RETRASO", "HOJA", "CASCADA"}) {
+            assertTrue(c + " no está en la tabla", tabla.containsKey(c));
+            assertTrue(c + " no está en Movimiento", codigo.containsKey(c));
+        }
+        assertEquals(Long.valueOf(250), codigo.get("CIFRA"));
+        assertEquals(Long.valueOf(250), codigo.get("VELO"));
+        assertEquals(Long.valueOf(450), codigo.get("SALTA_OK"));
+        assertEquals(Long.valueOf(200), codigo.get("SALTA_OK_RETRASO"));
+    }
+
+    @Test
     public void lasCuatroCurvasSonLasDeLaDecision() throws IOException {
         String codigo = new String(Files.readAllBytes(CODIGO), StandardCharsets.UTF_8);
         String dec = decision();

@@ -26,6 +26,10 @@ import es.pmdm.gymprofit.model.comida.ComidaReciente;
 //     de la pestaña vacía (GP-184, lote 1.6.4).
 //   · Desde la 1.6.4, en «Todo», «Comidas recientes» entre Recientes y Habituales: hasta
 //     tres comidas que se copian enteras con un toque.
+//   · La pestaña «Mis platos» (1.6.6, tablero 9): los platos, con «Crear un plato» al
+//     final (sin ninguno, una línea que lo explica y el botón), y los alimentos que has
+//     creado, con «Crear un alimento». En modo ingredientes no hay platos en ninguna lista
+//     (sinPlatos): un plato no puede ser ingrediente de otro.
 // Cada grupo lleva su cabecera solo si tiene algo. Un grupo que no se conoce va con los
 // básicos: mejor enseñarlo que perderlo.
 // ============================================================
@@ -36,9 +40,10 @@ public final class GruposBusqueda {
     /** Recientes que se ven sin tocar «Ver todos». */
     public static final int RECIENTES_VISIBLES = 6;
 
-    public enum Seccion { RECIENTES, COMIDAS_RECIENTES, HABITUALES, TUYO, BASICOS, PRODUCTOS, FAVORITOS }
+    public enum Seccion { RECIENTES, COMIDAS_RECIENTES, HABITUALES, TUYO, BASICOS, PRODUCTOS, FAVORITOS, MIS_PLATOS, CREADOS }
 
-    public enum Tipo { CABECERA, ALIMENTO, NO_LO_ENCUENTRAS, PROPUESTA, COMIDA_RECIENTE, SIN_FAVORITOS }
+    public enum Tipo { CABECERA, ALIMENTO, NO_LO_ENCUENTRAS, PROPUESTA, COMIDA_RECIENTE, SIN_FAVORITOS, SIN_PLATOS,
+        CREAR_PLATO, CREAR_ALIMENTO }
 
     /** Una fila de la lista: una cabecera, un alimento, «¿No lo encuentras?» o la propuesta. */
     public static final class Elemento {
@@ -155,6 +160,32 @@ public final class GruposBusqueda {
             lista.add(new Elemento(Tipo.SIN_FAVORITOS, Seccion.FAVORITOS, null));
         }
         return lista;
+    }
+
+    /**
+     * La pestaña «Mis platos» (lote 1.6.6): «Mis platos», sus filas y «Crear un plato» (sin
+     * platos, la línea que lo explica y el botón); y «Alimentos que has creado», sus filas y
+     * «Crear un alimento».
+     */
+    @NonNull
+    public static List<Elemento> misPlatos(@NonNull List<Alimento> platos, @NonNull List<Alimento> creados) {
+        List<Elemento> lista = new ArrayList<>();
+        lista.add(new Elemento(Tipo.CABECERA, Seccion.MIS_PLATOS, null));
+        if (platos.isEmpty()) lista.add(new Elemento(Tipo.SIN_PLATOS, Seccion.MIS_PLATOS, null));
+        for (Alimento a : platos) lista.add(new Elemento(Tipo.ALIMENTO, Seccion.MIS_PLATOS, a));
+        lista.add(new Elemento(Tipo.CREAR_PLATO, Seccion.MIS_PLATOS, null));
+        lista.add(new Elemento(Tipo.CABECERA, Seccion.CREADOS, null));
+        for (Alimento a : creados) lista.add(new Elemento(Tipo.ALIMENTO, Seccion.CREADOS, a));
+        lista.add(new Elemento(Tipo.CREAR_ALIMENTO, Seccion.CREADOS, null));
+        return lista;
+    }
+
+    /** Sin platos (modo ingredientes): un plato no puede ser ingrediente de otro. */
+    @NonNull
+    public static List<Alimento> sinPlatos(@Nullable List<Alimento> alimentos) {
+        List<Alimento> quedan = new ArrayList<>();
+        if (alimentos != null) for (Alimento a : alimentos) if (!a.esPlato()) quedan.add(a);
+        return quedan;
     }
 
     public static boolean tieneNoLoEncuentras(@NonNull List<Elemento> lista) {

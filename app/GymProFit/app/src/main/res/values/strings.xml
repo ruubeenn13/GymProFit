@@ -559,7 +559,7 @@
     <string name="eliminar_cuenta_borra_2">Tu perfil: sexo, edad, altura, peso, nivel de actividad, nivel de experiencia, objetivo y los avisos que elegiste.</string>
     <string name="eliminar_cuenta_borra_3">Tu fotografía de perfil, si subiste alguna.</string>
     <string name="eliminar_cuenta_borra_4">Todo tu historial de entrenamiento: el programa que sigues, rutinas, sesiones, ejercicios realizados, series con sus pesos y repeticiones, notas y progreso.</string>
-    <string name="eliminar_cuenta_borra_5">Todo tu registro de nutrición: comidas, alimentos consumidos y alimentos personalizados que hayas creado.</string>
+    <string name="eliminar_cuenta_borra_5">Todo tu registro de nutrición: comidas, alimentos consumidos, alimentos personalizados y platos que hayas creado, con sus ingredientes, y tus favoritos.</string>
     <string name="eliminar_cuenta_borra_6">Tus mediciones corporales, objetivos personales y logros.</string>
     <string name="eliminar_cuenta_borra_7">Tus sesiones abiertas y el identificador de tu dispositivo para notificaciones.</string>
     <string name="eliminar_cuenta_que_no_se_borra">Qué no se borra</string>
@@ -1396,7 +1396,7 @@
 
     <!-- Lote 1.6.1: Añadir, Buscar, el escáner y la ficha del alimento (GP-162, GP-160). -->
     <string name="anadir_cerrar">Cerrar</string>
-    <string name="anadir_buscar_hint">Busca un alimento</string>
+    <string name="anadir_buscar_hint">Busca un alimento o un plato</string>
     <string name="anadir_escanear">Escanear un código de barras</string>
     <string name="anadir_vacio">Aún no hay nada aquí. Busca un alimento o escanéalo.</string>
     <string name="anadir_error_lista">No se ha podido cargar la lista.</string>
@@ -1729,4 +1729,101 @@
     <string name="sueles_comida">Lo que sueles comer</string>
     <string name="sueles_merienda">Lo que sueles merendar</string>
     <string name="sueles_cena">Lo que sueles cenar</string>
+    <!-- ════ Lote 1.6.6: Mis platos (tableros 2, 8, 9 y 10) y GP-194 ════ -->
+    <string name="feedback_error_sin_conexion">Sin conexión. Revisa tu red y vuelve a intentarlo</string>
+    <string name="cantidad_sin_gramos_unidad">%1$s %2$s</string>
+    <string name="cantidad_sin_gramos_raciones">%1$s × %2$s</string>
+    <string name="plato_marca">Plato</string>
+    <string name="fila_plato_fraccion">%1$s (1/%2$d)</string>
+    <string name="fila_plato">%1$s · %2$s kcal · %3$s g prot.</string>
+    <string name="fila_plato_a11y">%1$s, plato. %2$s</string>
+    <string name="anadir_pestana_platos">Mis platos</string>
+    <string name="misplatos_seccion_platos">Mis platos</string>
+    <string name="misplatos_seccion_creados">Alimentos que has creado</string>
+    <string name="misplatos_crear_plato">Crear un plato</string>
+    <string name="misplatos_crear_alimento">Crear un alimento</string>
+    <string name="misplatos_vacio">Junta varios alimentos en uno, como tus lentejas o tu batido, y apúntalo de un toque</string>
+    <string name="misplatos_error">No hemos podido cargar tus platos.</string>
+    <string name="misplatos_con_codigo">%1$s · con su código</string>
+    <string name="ingredientes_titulo">Añadir ingrediente</string>
+    <string name="ingredientes_buscar_hint">Busca un ingrediente</string>
+    <string name="ingrediente_anadir_a11y">Añadir %1$s al plato, %2$s</string>
+    <string name="ingrediente_quitar_a11y">Quitar %1$s del plato</string>
+    <plurals name="plato_ingredientes">
+        <item quantity="one">%d ingrediente</item>
+        <item quantity="other">%d ingredientes</item>
+    </plurals>
+    <string name="plato_kcal_en_total">%1$s kcal en total</string>
+    <string name="plato_ingredientes_maximo">Un plato lleva %1$d ingredientes como mucho</string>
+    <string name="ficha_editar_plato">Editar</string>
+    <string name="ficha_anadir_al_plato">Añadir al plato</string>
+    <string name="ficha_info_racion">Información por ración</string>
+    <string name="ficha_origen_plato">Tu plato</string>
+    <plurals name="ficha_origen_plato_n">
+        <item quantity="one">Tu plato · %d ingrediente</item>
+        <item quantity="other">Tu plato · %d ingredientes</item>
+    </plurals>
+    <string name="comida_guardar_como_plato">Guardar como plato</string>
+    <string name="comida_fila_plato_a11y">%1$s, plato, %2$s, %3$s kilocalorías, %4$s gramos de proteína</string>
+    <string name="plato_cerrar_a11y">Cerrar sin guardar</string>
+    <string name="plato_titulo_nuevo">Nuevo plato</string>
+    <string name="plato_titulo_editar">Editar plato</string>
+    <string name="plato_nombre">Nombre</string>
+    <string name="plato_seccion_ingredientes">Ingredientes</string>
+    <plurals name="plato_total_ingredientes">
+        <item quantity="one">%1$d · %2$s kcal en total</item>
+        <item quantity="other">%1$d · %2$s kcal en total</item>
+    </plurals>
+    <string name="plato_anadir_ingrediente">Añadir ingrediente</string>
+    <string name="plato_escanear_a11y">Escanear un ingrediente</string>
+    <string name="plato_ingrediente_a11y">%1$s, %2$s, %3$s</string>
+    <string name="plato_ingrediente_cambiar_a11y">cambiar la cantidad</string>
+    <string name="plato_ingrediente_quitar_a11y">Quitar del plato</string>
+    <string name="plato_quitar_fondo">Quitar</string>
+    <string name="plato_raciones_pregunta">¿Cuántas raciones salen?</string>
+    <string name="plato_racion_menos">Una ración menos</string>
+    <string name="plato_racion_mas">Una ración más</string>
+    <plurals name="plato_raciones_a11y">
+        <item quantity="one">%d ración. Toca para escribirlo</item>
+        <item quantity="other">%d raciones. Toca para escribirlo</item>
+    </plurals>
+    <string name="plato_raciones_unidad">raciones</string>
+    <string name="plato_raciones_invalidas">Entre 1 y %1$d raciones</string>
+    <string name="plato_peso">Peso del plato hecho</string>
+    <string name="plato_peso_unidad">g</string>
+    <string name="plato_peso_ayuda_vacio">Si lo pesas, también podrás apuntarlo en gramos</string>
+    <string name="plato_peso_ayuda">Para apuntarlo también en gramos: %1$s kcal por 100 g</string>
+    <string name="plato_peso_malo">El peso tiene que ser de al menos 1 g por ración y hasta 50.000 g</string>
+    <string name="plato_peso_demasiadas_kcal">Con ese peso salen más de %1$s kcal por 100 g: revisa el peso</string>
+    <string name="plato_el_plato_entero">El plato entero</string>
+    <string name="plato_por_racion_de">Por ración, de %1$d</string>
+    <string name="plato_cifras_racion_a11y">Por ración: %1$s kilocalorías, %2$s gramos de proteína, %3$s de carbohidratos y %4$s de grasa</string>
+    <string name="plato_cifras_entero_a11y">El plato entero: %1$s kilocalorías, %2$s gramos de proteína, %3$s de carbohidratos y %4$s de grasa</string>
+    <string name="plato_guardar">Guardar plato</string>
+    <string name="plato_guardar_cambios">Guardar cambios</string>
+    <string name="plato_error_nombre">Ponle un nombre al plato</string>
+    <string name="plato_error_ingredientes">Añade al menos un ingrediente</string>
+    <string name="plato_error_cargar">No hemos podido cargar el plato.</string>
+    <string name="plato_cambiado">Plato guardado</string>
+    <plurals name="plato_platos_fuera">
+        <item quantity="one">No entra %1$s: un plato no puede ser ingrediente de otro</item>
+        <item quantity="other">No entran %1$s: un plato no puede ser ingrediente de otro</item>
+    </plurals>
+    <string name="plato_guardado_a11y">Plato guardado</string>
+    <string name="plato_hoja_titulo">%1$s, en Mis platos</string>
+    <plurals name="plato_hoja_detalle">
+        <item quantity="one">%1$d ración de %2$s kcal y %3$s g de proteína</item>
+        <item quantity="other">%1$d raciones de %2$s kcal y %3$s g de proteína</item>
+    </plurals>
+    <string name="plato_hoja_detalle_entero">El plato entero: %1$s kcal y %2$s g de proteína</string>
+    <string name="plato_hoja_anadir_desayuno">Añadir 1 ración al desayuno</string>
+    <string name="plato_hoja_anadir_almuerzo">Añadir 1 ración al almuerzo</string>
+    <string name="plato_hoja_anadir_comida">Añadir 1 ración a la comida</string>
+    <string name="plato_hoja_anadir_merienda">Añadir 1 ración a la merienda</string>
+    <string name="plato_hoja_anadir_cena">Añadir 1 ración a la cena</string>
+    <string name="plato_hoja_ver_platos">Ver Mis platos</string>
+    <string name="plato_hoja_volver">Volver a la comida</string>
+    <string name="plato_menu_editar">Editar plato</string>
+    <string name="plato_menu_eliminar">Eliminar plato</string>
+    <string name="plato_eliminar_confirmar">¿Eliminar este plato? Deja de salir en tus listas; lo que ya has apuntado no cambia.</string>
 </resources>

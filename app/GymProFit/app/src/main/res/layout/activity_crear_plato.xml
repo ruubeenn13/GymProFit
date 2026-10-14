@@ -1,0 +1,578 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_crear_plato — crear o editar un plato propio (tablero 10, lote 1.6.6).
+  El nombre; los ingredientes, cada uno con su icono, su cantidad y sus kcal, con cuántos
+  son y las kcal en total arriba, «Añadir ingrediente» y el escáner al final de su tarjeta;
+  «¿Cuántas raciones salen?» con sus botones (tocar el número deja escribirlo) y el peso
+  del plato hecho, opcional, con lo que da por 100 g; y «Por ración», las cuatro cifras en
+  vivo. Abajo, fijo, «Guardar plato» o «Guardar cambios». Al guardar un plato nuevo sube la
+  hoja del tablero, con su velo.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/raizCrearPlato"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="4dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="8dp">
+
+            <ImageButton
+                android:id="@+id/btnCerrarPlato"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/plato_cerrar_a11y"
+                android:src="@drawable/ic_ms_close"
+                app:tint="?attr/colorOnSurface" />
+
+            <TextView
+                android:id="@+id/tvTituloPlato"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="4dp"
+                android:accessibilityHeading="true"
+                android:text="@string/plato_titulo_nuevo"
+                android:textAppearance="@style/TextAppearance.GymProFit.Headline"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="28sp"
+                tools:targetApi="28" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/scrollPlato"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="24dp">
+
+                    <TextView
+                        android:id="@+id/tvRotuloNombrePlato"
+                        style="@style/Widget.GymProFit.Alta.Etiqueta"
+                        android:textSize="@dimen/text_label"
+                        android:textAllCaps="false"
+                        android:letterSpacing="0"
+                        android:labelFor="@id/etNombrePlato"
+                        android:text="@string/plato_nombre" />
+
+                    <EditText
+                        android:id="@+id/etNombrePlato"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:background="@drawable/bg_campo_texto"
+                        android:imeOptions="actionDone"
+                        android:importantForAutofill="no"
+                        android:inputType="textCapSentences"
+                        android:maxLength="100"
+                        android:minHeight="52dp"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="@dimen/text_subtitle" />
+
+                    <TextView
+                        android:id="@+id/tvErrorNombrePlato"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:paddingStart="4dp"
+                        android:paddingEnd="4dp"
+                        android:accessibilityLiveRegion="polite"
+                        android:textColor="?attr/colorError"
+                        android:textSize="@dimen/text_eyebrow"
+                        android:visibility="gone" />
+
+                    <!-- Ingredientes: el rótulo con cuántos son y lo que suman. -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:gravity="bottom"
+                        android:orientation="horizontal"
+                        android:paddingStart="4dp"
+                        android:paddingEnd="4dp"
+                        android:paddingBottom="8dp">
+
+                        <TextView
+                            android:id="@+id/tvSeccionIngredientes"
+                            style="@style/Widget.GymProFit.Seccion"
+                            android:layout_width="wrap_content"
+                            android:accessibilityHeading="true"
+                            android:text="@string/plato_seccion_ingredientes"
+                            android:textAllCaps="true"
+                            android:textAppearance="@style/TextAppearance.GymProFit.Label"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            tools:targetApi="28" />
+
+                        <TextView
+                            android:id="@+id/tvTotalIngredientes"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="8dp"
+                            android:fontFeatureSettings="tnum"
+                            android:gravity="end"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textSize="@dimen/text_caption" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/cardIngredientes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_tarjeta_20"
+                        android:orientation="vertical">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvIngredientes"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:nestedScrollingEnabled="false"
+                            android:overScrollMode="never" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingEnd="8dp">
+
+                            <LinearLayout
+                                android:id="@+id/btnAnadirIngrediente"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:background="?attr/selectableItemBackground"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:gravity="center_vertical"
+                                android:minHeight="56dp"
+                                android:orientation="horizontal"
+                                android:paddingStart="16dp"
+                                android:paddingEnd="8dp">
+
+                                <ImageView
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:importantForAccessibility="no"
+                                    android:src="@drawable/ic_ms_add_circle"
+                                    app:tint="?attr/colorPrimary" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="12dp"
+                                    android:paddingTop="12dp"
+                                    android:paddingBottom="12dp"
+                                    android:text="@string/plato_anadir_ingrediente"
+                                    android:textColor="?attr/colorPrimary"
+                                    android:textSize="@dimen/text_fila"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <FrameLayout
+                                android:id="@+id/btnEscanearIngrediente"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:background="@drawable/bg_mas_fila"
+                                android:backgroundTint="@color/gp_surface_2"
+                                android:clickable="true"
+                                android:contentDescription="@string/plato_escanear_a11y"
+                                android:focusable="true">
+
+                                <ImageView
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:layout_gravity="center"
+                                    android:importantForAccessibility="no"
+                                    android:src="@drawable/ic_ms_barcode_scanner"
+                                    app:tint="?attr/colorOnSurface" />
+                            </FrameLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvErrorIngredientes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:paddingStart="4dp"
+                        android:paddingEnd="4dp"
+                        android:accessibilityLiveRegion="polite"
+                        android:textColor="?attr/colorError"
+                        android:textSize="@dimen/text_eyebrow"
+                        android:visibility="gone" />
+
+                    <!-- «Guardar como plato»: los platos de la comida no entran, y se dice. -->
+                    <TextView
+                        android:id="@+id/tvPlatosFuera"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:drawablePadding="6dp"
+                        android:paddingStart="4dp"
+                        android:paddingEnd="4dp"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="@dimen/text_caption"
+                        android:visibility="gone"
+                        app:drawableStartCompat="@drawable/ic_ms_info"
+                        app:drawableTint="?attr/colorOnSurfaceVariant" />
+
+                    <!-- Raciones y peso -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/bg_tarjeta_20"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <LinearLayout
+                            android:id="@+id/filaRaciones"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tvRotuloRaciones"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginEnd="12dp"
+                                android:text="@string/plato_raciones_pregunta"
+                                android:textColor="?attr/colorOnSurface"
+                                android:textSize="@dimen/text_fila"
+                                android:textStyle="bold" />
+
+                            <LinearLayout
+                                android:id="@+id/grupoRaciones"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_conmutador"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:padding="4dp">
+
+                                <FrameLayout
+                                    android:id="@+id/btnMenosRaciones"
+                                    android:layout_width="48dp"
+                                    android:layout_height="48dp"
+                                    android:background="@drawable/bg_mas_fila"
+                                    android:backgroundTint="@color/gp_surface_2"
+                                    android:clickable="true"
+                                    android:contentDescription="@string/plato_racion_menos"
+                                    android:focusable="true">
+
+                                    <ImageView
+                                        android:layout_width="24dp"
+                                        android:layout_height="24dp"
+                                        android:layout_gravity="center"
+                                        android:importantForAccessibility="no"
+                                        android:src="@drawable/ic_ms_remove"
+                                        app:tint="?attr/colorOnSurface" />
+                                </FrameLayout>
+
+                                <TextView
+                                    android:id="@+id/tvRaciones"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="48dp"
+                                    android:minHeight="48dp"
+                                    android:minWidth="48dp"
+                                    android:accessibilityLiveRegion="polite"
+                                    android:background="?attr/selectableItemBackground"
+                                    android:clickable="true"
+                                    android:focusable="true"
+                                    android:gravity="center"
+                                    android:fontFeatureSettings="tnum"
+                                    android:textAppearance="@style/TextAppearance.GymProFit.Number"
+                                    android:textColor="?attr/colorOnSurface"
+                                    android:textSize="24sp" />
+
+                                <FrameLayout
+                                    android:id="@+id/btnMasRaciones"
+                                    android:layout_width="48dp"
+                                    android:layout_height="48dp"
+                                    android:background="@drawable/bg_mas_fila"
+                                    android:backgroundTint="@color/gp_surface_2"
+                                    android:clickable="true"
+                                    android:contentDescription="@string/plato_racion_mas"
+                                    android:focusable="true">
+
+                                    <ImageView
+                                        android:layout_width="24dp"
+                                        android:layout_height="24dp"
+                                        android:layout_gravity="center"
+                                        android:importantForAccessibility="no"
+                                        android:src="@drawable/ic_ms_add"
+                                        app:tint="?attr/colorOnSurface" />
+                                </FrameLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="14dp"
+                            android:layout_marginBottom="14dp"
+                            android:importantForAccessibility="no"
+                            android:background="?attr/colorOutlineVariant" />
+
+                        <TextView
+                            android:id="@+id/tvRotuloPeso"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:labelFor="@id/etPesoPlato"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="@dimen/text_fila"
+                            android:textStyle="bold" />
+
+                        <LinearLayout
+                            android:id="@+id/filaPeso"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="140dp"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_campo_texto"
+                                android:gravity="center_vertical"
+                                android:minHeight="48dp"
+                                android:orientation="horizontal"
+                                android:paddingStart="14dp"
+                                android:paddingEnd="14dp">
+
+                                <EditText
+                                    android:id="@+id/etPesoPlato"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:background="@null"
+                                    android:importantForAutofill="no"
+                                    android:digits="0123456789"
+                                    android:inputType="number"
+                                    android:maxLength="5"
+                                    android:minHeight="48dp"
+                                    android:fontFeatureSettings="tnum"
+                                    android:textColor="?attr/colorOnSurface"
+                                    android:textSize="@dimen/text_subtitle" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:importantForAccessibility="no"
+                                    android:text="@string/plato_peso_unidad"
+                                    android:textColor="?attr/colorOnSurfaceVariant"
+                                    android:textSize="@dimen/text_fila" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/tvAyudaPeso"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginStart="10dp"
+                                android:accessibilityLiveRegion="polite"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:textSize="@dimen/text_caption" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Por ración: lo que se apuntará, en vivo. -->
+                    <TextView
+                        android:id="@+id/tvTituloPorRacion"
+                        style="@style/Widget.GymProFit.Seccion"
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="16dp"
+                        android:accessibilityHeading="true"
+                        android:paddingStart="4dp"
+                        android:paddingEnd="4dp"
+                        android:paddingBottom="8dp"
+                        android:textAllCaps="true"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Label"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        tools:targetApi="28" />
+
+                    <LinearLayout
+                        android:id="@+id/cifrasPlato"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="true"
+                        android:orientation="horizontal">
+
+                        <include
+                            android:id="@+id/cifraPlatoKcal"
+                            layout="@layout/item_cifra_ficha" />
+
+                        <Space
+                            android:layout_width="8dp"
+                            android:layout_height="1dp" />
+
+                        <include
+                            android:id="@+id/cifraPlatoProteina"
+                            layout="@layout/item_cifra_ficha" />
+
+                        <Space
+                            android:layout_width="8dp"
+                            android:layout_height="1dp" />
+
+                        <include
+                            android:id="@+id/cifraPlatoCarb"
+                            layout="@layout/item_cifra_ficha" />
+
+                        <Space
+                            android:layout_width="8dp"
+                            android:layout_height="1dp" />
+
+                        <include
+                            android:id="@+id/cifraPlatoGrasa"
+                            layout="@layout/item_cifra_ficha" />
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+
+            <include
+                android:id="@+id/estadoPlato"
+                layout="@layout/view_estado" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/pieCrearPlato"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_barra_inferior"
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="16dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnGuardarPlato"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="52dp"
+                android:text="@string/plato_guardar"
+                android:textSize="@dimen/text_subtitle"
+                android:textStyle="bold"
+                app:cornerRadius="26dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Al guardar un plato nuevo: el velo y la hoja (tablero 10). -->
+    <View
+        android:id="@+id/veloPlato"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/gp_velo"
+        android:clickable="true"
+        android:focusable="false"
+        android:importantForAccessibility="no"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/hojaPlato"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:accessibilityPaneTitle="@string/plato_guardado_a11y"
+        android:background="@drawable/bg_hoja_escaner"
+        android:clickable="true"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp"
+        android:visibility="gone"
+        tools:targetApi="28">
+
+        <FrameLayout
+            android:id="@+id/okPlato"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/bg_mas_fila"
+            android:backgroundTint="@color/gp_success_container"
+            android:importantForAccessibility="no">
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_ms_check"
+                app:tint="@color/gp_success" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tvTituloHojaPlato"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:accessibilityHeading="true"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.GymProFit.Headline"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="26sp"
+            tools:targetApi="28" />
+
+        <TextView
+            android:id="@+id/tvDetalleHojaPlato"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="@dimen/text_body" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnHojaAnadirRacion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:minHeight="52dp"
+            android:textSize="@dimen/text_subtitle"
+            android:textStyle="bold"
+            app:cornerRadius="26dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnHojaVerPlatos"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:minHeight="48dp"
+            android:text="@string/plato_hoja_ver_platos"
+            android:textSize="@dimen/text_body" />
+    </LinearLayout>
+</FrameLayout>
