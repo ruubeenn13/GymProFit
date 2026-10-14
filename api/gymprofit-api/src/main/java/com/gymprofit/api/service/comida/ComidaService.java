@@ -47,20 +47,21 @@ public class ComidaService implements IComidaService {
     private final SecurityUtils securityUtils;
     private final Logger logger = LoggerFactory.getLogger(ComidaService.class);
 
-    // Devuelve todas las comidas (requiere rol ADMIN).
+    // Las comidas de quien llama (requiere rol ADMIN). Las de los demás son de su diario,
+    // solo suyas también para un ADMIN (GP-197, DEC-042).
     @Override
     public List<ComidaDTO> findAll() {
         logger.info("Buscando todas las comidas");
 
         securityUtils.requireAdmin();
 
-        List<Comida> comidas = comidaRepository.findAll();
+        List<Comida> comidas = propias(comidaRepository.findAll());
 
         return comidaMapper.toDTOList(comidas);
     }
 
     // Busca una comida por id y verifica que el usuario autenticado es su
-    // propietario (o ADMIN).
+    // propietario, también si es ADMIN (GP-197).
     @Override
     public ComidaDTO findById(Integer id) {
         logger.info("Buscando comida por id: {}", id);
@@ -68,21 +69,19 @@ public class ComidaService implements IComidaService {
         Comida comida = comidaRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("error.comida.noExiste", id));
 
-        securityUtils.checkOwnership(comida.getUsuario().getId());
+        securityUtils.checkDueno(comida.getUsuario().getId());
 
         return comidaMapper.toDTO(comida);
     }
 
-    // Crea una nueva comida. Si el solicitante no es ADMIN, fuerza el
-    // usuarioId al usuario autenticado (evita crear comidas para terceros).
+    // Crea una nueva comida, siempre de quien llama, también si es ADMIN: el usuarioId del
+    // cuerpo se ignora (DEC-013, GP-197). Sigue siendo obligatorio porque las builds lo mandan.
     @Override
     @Transactional
     public ComidaDTO save(ComidaCreateDTO comidaCreateDTO) {
         logger.info("Creando nueva comida de tipo: {}", comidaCreateDTO.getTipoComida());
 
-        if (!securityUtils.isAdmin()) {
-            comidaCreateDTO.setUsuarioId(securityUtils.getCurrentUserId());
-        }
+        comidaCreateDTO.setUsuarioId(securityUtils.getCurrentUserId());
 
         try {
             Usuario usuario = usuarioRepository.findById(comidaCreateDTO.getUsuarioId())
@@ -116,7 +115,7 @@ public class ComidaService implements IComidaService {
         Comida comida = comidaRepository.findById(comidaDTO.getId())
                 .orElseThrow(() -> new NotFoundEntityException("error.comida.noExiste", comidaDTO.getId()));
 
-        securityUtils.checkOwnership(comida.getUsuario().getId());
+        securityUtils.checkDueno(comida.getUsuario().getId());
 
         try {
             comida.setFecha(comidaDTO.getFecha());
@@ -148,7 +147,7 @@ public class ComidaService implements IComidaService {
         Comida comida = comidaRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("error.comida.noExiste", id));
 
-        securityUtils.checkOwnership(comida.getUsuario().getId());
+        securityUtils.checkDueno(comida.getUsuario().getId());
 
         try {
             alimentoComidaRepository.borrarDeComida(id);
@@ -166,7 +165,7 @@ public class ComidaService implements IComidaService {
     public List<ComidaDTO> findByUsuarioId(Integer usuarioId) {
         logger.info("Buscando comidas por usuario id: {}", usuarioId);
 
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         exigirUsuarioExistente(usuarioId);
 
@@ -175,7 +174,7 @@ public class ComidaService implements IComidaService {
         return comidaMapper.toDTOList(comidas);
     }
 
-    // Busca comidas por tipo entre todos los usuarios (requiere ADMIN).
+    // Las comidas de quien llama de un tipo (requiere ADMIN, GP-197).
     @Override
     public List<ComidaDTO> findByTipoComida(String tipoComida) {
         logger.info("Buscando comidas por tipo: {}", tipoComida);
@@ -183,13 +182,13 @@ public class ComidaService implements IComidaService {
         securityUtils.requireAdmin();
 
         TipoComida tipo = TipoComida.valueOf(tipoComida.toUpperCase());
-        List<Comida> comidas = comidaRepository.findByTipoComida(tipo);
+        List<Comida> comidas = propias(comidaRepository.findByTipoComida(tipo));
 
         return comidaMapper.toDTOList(comidas);
     }
 
-    // Busca comidas registradas en una fecha concreta entre todos los
-    // usuarios (requiere ADMIN); construye el rango [00:00, 23:59:59].
+    // Las comidas de quien llama en una fecha concreta (requiere ADMIN, GP-197);
+    // construye el rango [00:00, 23:59:59].
     @Override
     public List<ComidaDTO> findByFecha(LocalDate fecha) {
         logger.info("Buscando comidas por fecha: {}", fecha);
@@ -199,7 +198,7 @@ public class ComidaService implements IComidaService {
         LocalDateTime inicio = fecha.atStartOfDay();
         LocalDateTime fin = fecha.atTime(23, 59, 59);
 
-        List<Comida> comidas = comidaRepository.findByFechaBetween(inicio, fin);
+        List<Comida> comidas = propias(comidaRepository.findByFechaBetween(inicio, fin));
         return comidaMapper.toDTOList(comidas);
     }
 
@@ -208,7 +207,7 @@ public class ComidaService implements IComidaService {
     public List<ComidaDTO> findByUsuarioIdAndFecha(Integer usuarioId, LocalDate fecha) {
         logger.info("Buscando comidas por usuario {} y fecha {}", usuarioId, fecha);
 
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         exigirUsuarioExistente(usuarioId);
 
@@ -227,7 +226,7 @@ public class ComidaService implements IComidaService {
     public List<ResumenDiarioNutricionDTO> obtenerResumenDiario(Integer usuarioId, LocalDate inicio, LocalDate fin) {
         logger.info("Resumen nutricional diario del usuario {} entre {} y {}", usuarioId, inicio, fin);
 
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         LocalDateTime desde = inicio.atStartOfDay();
         LocalDateTime hasta = fin.atTime(23, 59, 59);
@@ -259,7 +258,7 @@ public class ComidaService implements IComidaService {
     public List<ComidaDTO> findByUsuarioIdAndTipoComida(Integer usuarioId, String tipoComida) {
         logger.info("Buscando comidas por usuario {} y tipo {}", usuarioId, tipoComida);
 
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         exigirUsuarioExistente(usuarioId);
 
@@ -275,12 +274,12 @@ public class ComidaService implements IComidaService {
     public Long countByUsuarioId(Integer usuarioId) {
         logger.info("Contando comidas del usuario: {}", usuarioId);
 
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         return comidaRepository.countByUsuarioId(usuarioId);
     }
 
-    // Cuenta las comidas por tipo entre todos los usuarios (requiere ADMIN).
+    // Cuenta las comidas de quien llama de un tipo (requiere ADMIN, GP-197).
     @Override
     public Long countByTipoComida(String tipoComida) {
         logger.info("Contando comidas por tipo: {}", tipoComida);
@@ -289,7 +288,7 @@ public class ComidaService implements IComidaService {
 
         TipoComida tipo = TipoComida.valueOf(tipoComida.toUpperCase());
 
-        return comidaRepository.countByTipoComida(tipo);
+        return comidaRepository.countByUsuarioIdAndTipoComida(securityUtils.getCurrentUserId(), tipo);
     }
 
     // Cuenta las comidas de un usuario filtradas por tipo (verifica propiedad).
@@ -297,7 +296,7 @@ public class ComidaService implements IComidaService {
     public Long countByUsuarioIdAndTipoComida(Integer usuarioId, String tipoComida) {
         logger.info("Contando commidas del usuario {} por tipo {}", usuarioId, tipoComida);
 
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         TipoComida tipo = TipoComida.valueOf(tipoComida.toUpperCase());
 
@@ -313,7 +312,7 @@ public class ComidaService implements IComidaService {
         Comida comida = comidaRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("error.comida.noExiste", id));
 
-        securityUtils.checkOwnership(comida.getUsuario().getId());
+        securityUtils.checkDueno(comida.getUsuario().getId());
 
         try {
             if (patchDTO.getFecha() != null) comida.setFecha(patchDTO.getFecha());
@@ -342,5 +341,13 @@ public class ComidaService implements IComidaService {
         if (!usuarioRepository.existsById(usuarioId)) {
             throw new NotFoundEntityException("error.usuario.noExiste", usuarioId);
         }
+    }
+
+    // Solo las comidas de quien llama (GP-197, DEC-042).
+    private List<Comida> propias(List<Comida> comidas) {
+        Integer yo = securityUtils.getCurrentUserId();
+        return comidas.stream()
+                .filter(c -> c.getUsuario().getId().equals(yo))
+                .toList();
     }
 }

@@ -66,7 +66,7 @@ public class ComidaController {
         return ResponseEntity.ok(anadirAlimentoService.anadir(pedido));
     }
 
-    @Operation(summary = "Obtiene todas las comidas")
+    @Operation(summary = "Las comidas de quien llama (solo ADMIN)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de comidas",
                     content = @Content(schema = @Schema(implementation = ComidaDTO.class))),
@@ -159,7 +159,7 @@ public class ComidaController {
         return ResponseEntity.ok(comidas);
     }
 
-    @Operation(summary = "Busca comidas por tipo (DESAYUNO, ALMUERZO, COMIDA, MERIENDA, CENA O SNACK)")
+    @Operation(summary = "Las comidas de quien llama por tipo, solo ADMIN (DESAYUNO, ALMUERZO, COMIDA, MERIENDA, CENA O SNACK)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Comidas encontradas",
                     content = @Content(schema = @Schema(implementation = ComidaDTO.class))),
@@ -179,7 +179,7 @@ public class ComidaController {
         return ResponseEntity.ok(comidas);
     }
 
-    @Operation(summary = "Busca comidas por fecha")
+    @Operation(summary = "Las comidas de quien llama en una fecha (solo ADMIN)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Comidas encontradas",
                     content = @Content(schema = @Schema(implementation = ComidaDTO.class)))
@@ -263,7 +263,7 @@ public class ComidaController {
         return ResponseEntity.ok(new CountDTO(count));
     }
 
-    @Operation(summary = "Cuenta las comidas por tipo")
+    @Operation(summary = "Cuenta las comidas de quien llama por tipo (solo ADMIN)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Cantidad de comidas por tipo"),
             @ApiResponse(responseCode = "400", description = "Tipo de comida inválido",
