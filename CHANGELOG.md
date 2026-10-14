@@ -6,6 +6,9 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `4305c5f` | docs(documentacion): S26 en [el informe de seguridad de las cuentas ADMIN](documentacion/estado/2026-10-14-seguridad-admin.md), ya desplegado y confirmado. |
+| `1d952c9` | Fusión de `fix-datos-admin` en `main`, CI en verde y desplegada en Render. Solo API, sin versión de app ni etiqueta. |
+| `175fae2` | fix(api): **GP-198 (S26)**, los datos de un usuario son solo suyos, también para un ADMIN: sesiones, ejercicios realizados, mediciones, objetivos, notificaciones, rutinas propias y sus ejercicios, logros, récords y la cuenta por id. Las rutas solo de ADMIN fuera de `/admin` devuelven lo de quien llama; lo que se crea es de quien llama. Se conservan el catálogo, las rutinas sin dueño, `/admin` y enviar un aviso a otra cuenta. `checkOwnership` desaparece en favor de `checkDueno`. Un id de usuario ajeno da 403 exista o no. DEC-027 ampliada. `DatosSoloDelDuenoTest`. |
 | `05d20a4` | docs(reglas): **«Cómo se entrega»** en `CLAUDE.md`: flujo de rama a producción, autoría, credenciales, zip de la web y forma del informe. |
 | `d766af7` | docs(documentacion): [lo que una cuenta ADMIN veía de las demás](documentacion/estado/2026-10-14-seguridad-admin.md), ya cerrado y desplegado: S24 (`7e9c22e`), S25 (`adface8`) y GP-197 (`8ca9908`). |
 | `2201f7a` | Fusión de `fix-comidas-admin` en `main`, CI en verde y desplegada en Render. Solo API, sin versión de app ni etiqueta. |
