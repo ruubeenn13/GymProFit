@@ -37,7 +37,7 @@ public class AlimentoComidaController {
 
     private final IAlimentoComidaService alimentoComidaService;
 
-    @Operation(summary = "Obtiene todas las relaciones alimento-comida")
+    @Operation(summary = "Las relaciones alimento-comida de quien llama (solo ADMIN)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de relaciones",
                     content = @Content(schema = @Schema(implementation = AlimentoComidaDTO.class))),
@@ -126,7 +126,7 @@ public class AlimentoComidaController {
         return ResponseEntity.ok(alimentosComida);
     }
 
-    @Operation(summary = "Obtiene todas las comidas que contienen un alimento")
+    @Operation(summary = "Las comidas de quien llama que contienen un alimento (solo ADMIN)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Comidas encontradas",
                     content = @Content(schema = @Schema(implementation = AlimentoComidaDTO.class))),
@@ -213,7 +213,7 @@ public class AlimentoComidaController {
         return ResponseEntity.ok(new CountDTO(count));
     }
 
-    @Operation(summary = "Cuenta en cuántas comidas se usa un alimento")
+    @Operation(summary = "Cuenta en cuántas comidas de quien llama se usa un alimento (solo ADMIN)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Cantidad de comidas")
     })

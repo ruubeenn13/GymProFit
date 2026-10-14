@@ -71,8 +71,9 @@ public class AlimentoService implements IAlimentoService {
         Alimento alimento = alimentoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("error.alimento.noExiste", id));
 
-        // Un alimento personal no es catálogo: lleva la dieta de alguien (GP-048).
-        securityUtils.checkOwnershipIfOwned(alimento.getUsuario() != null ? alimento.getUsuario().getId() : null);
+        // Un alimento personal no es catálogo: lleva la dieta de alguien (GP-048), y es
+        // solo suyo, también para un ADMIN (DEC-042).
+        securityUtils.checkDuenoSiLoTiene(alimento.getUsuario() != null ? alimento.getUsuario().getId() : null);
 
         return alimentoMapper.toDTO(alimento);
     }
@@ -253,7 +254,6 @@ public class AlimentoService implements IAlimentoService {
     public Long countActivos() {
         logger.info("Contando alimentos activos");
 
-        if (securityUtils.isAdmin()) return alimentoRepository.countByActivoTrue();
         return (long) visibles(alimentoRepository.findByActivoTrue()).size();
     }
 
@@ -262,7 +262,6 @@ public class AlimentoService implements IAlimentoService {
     public Long countByCategoria(String categoria) {
         logger.info("Contando alimmentos por categoría: {}", categoria);
 
-        if (securityUtils.isAdmin()) return alimentoRepository.countByCategoria(categoria);
         return (long) visibles(alimentoRepository.findByCategoria(categoria)).size();
     }
 
@@ -273,13 +272,14 @@ public class AlimentoService implements IAlimentoService {
      * los crea el usuario y llevan su dieta dentro. Sin la comprobación se listaban iterando
      * ids con un token de invitado, que se obtiene sin credenciales.
      *
-     * @param usuarioId usuario cuyos alimentos se piden; tiene que ser el del token, salvo ADMIN.
+     * @param usuarioId usuario cuyos alimentos se piden; tiene que ser el del token, también
+     *                  para un ADMIN (DEC-042).
      */
     @Override
     public List<AlimentoDTO> findByUsuarioId(Integer usuarioId) {
         logger.info("Buscando alimentos del usuario con id: {}", usuarioId);
 
-        securityUtils.checkOwnership(usuarioId);
+        securityUtils.checkDueno(usuarioId);
 
         List<Alimento> alimentos = alimentoRepository.findByUsuarioId(usuarioId);
 
@@ -353,8 +353,8 @@ public class AlimentoService implements IAlimentoService {
      * Verifica que quien llama puede escribir sobre este alimento.
      * <p>
      * Un alimento del catálogo (sin dueño) es de todos y lo toca solo un ADMIN: cambiarle
-     * los macros a uno del catálogo se lo cambia a todo el mundo. Uno con dueño es suyo, y
-     * ahí vale el criterio de siempre (DEC-027). Sin esto, el agujero de la creación se
+     * los macros a uno del catálogo se lo cambia a todo el mundo. Uno con dueño es solo
+     * suyo, también para un ADMIN (DEC-042). Sin esto, el agujero de la creación se
      * podía reabrir por la puerta de al lado, editando o desactivando lo que ya existe.
      *
      * @param alimento alimento ya cargado sobre el que se va a escribir.
@@ -362,14 +362,13 @@ public class AlimentoService implements IAlimentoService {
      */
     /**
      * Deja solo los alimentos que el usuario autenticado puede ver: el catálogo global
-     * (sin dueño) y los suyos. ADMIN, todos.
+     * (sin dueño) y los suyos. Un ADMIN, igual (DEC-042).
      * <p>
      * GP-048: los listados del catálogo devolvían también los alimentos personales de
      * todos los usuarios, a cualquiera y también al invitado. Es el hermano de
      * /alimentos/usuario/{id}, que se cerró sin mirar las demás rutas que los devolvían.
      */
     private List<Alimento> visibles(List<Alimento> alimentos) {
-        if (securityUtils.isAdmin()) return alimentos;
         Integer yo = securityUtils.getCurrentUserId();
         return alimentos.stream()
                 .filter(a -> a.getUsuario() == null || a.getUsuario().getId().equals(yo))
@@ -382,7 +381,7 @@ public class AlimentoService implements IAlimentoService {
             return;
         }
 
-        securityUtils.checkOwnership(alimento.getUsuario().getId());
+        securityUtils.checkDueno(alimento.getUsuario().getId());
     }
 
     // Actualización parcial: solo modifica los campos no nulos del patchDTO.

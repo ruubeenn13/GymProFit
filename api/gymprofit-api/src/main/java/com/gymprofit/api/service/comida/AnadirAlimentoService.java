@@ -169,8 +169,8 @@ public class AnadirAlimentoService {
     private Alimento porId(Integer id) {
         Alimento alimento = alimentoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("error.alimento.noExiste", id));
-        // El id llega en el cuerpo: uno de otro usuario es suyo, 403 (DEC-027).
-        securityUtils.checkOwnershipIfOwned(alimento.getUsuario() == null ? null : alimento.getUsuario().getId());
+        // El id llega en el cuerpo: uno de otro usuario es suyo, 403, también a un ADMIN (DEC-042).
+        securityUtils.checkDuenoSiLoTiene(alimento.getUsuario() == null ? null : alimento.getUsuario().getId());
         return alimento;
     }
 

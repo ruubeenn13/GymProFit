@@ -125,7 +125,7 @@ class AlimentoComidaServiceTest {
 
         assertNotNull(result);
         assertEquals(1, result.getId());
-        verify(securityUtils).checkOwnership(usuario.getId());
+        verify(securityUtils).checkDueno(usuario.getId());
     }
 
     // Comprueba que findById lanza NotFoundEntityException si la línea no existe
@@ -235,7 +235,10 @@ class AlimentoComidaServiceTest {
     void findByAlimentoId_devuelve_lista() {
         // El servicio comprueba que el recurso padre existe antes de listar: una lista
         // vacía ya no significa 404 (DEC-033), así que la existencia hay que simularla.
-        when(alimentoRepository.existsById(20)).thenReturn(true);
+        // Y que el alimento se le puede enseñar (DEC-042); el del catálogo, sí.
+        when(alimentoRepository.findById(20)).thenReturn(Optional.of(alimento));
+        // Solo las líneas de quien llama (DEC-042): esta es suya.
+        when(securityUtils.getCurrentUserId()).thenReturn(usuario.getId());
 
         when(alimentoComidaRepository.findByAlimentoId(20)).thenReturn(List.of(alimentoComida));
         when(alimentoComidaMapper.toDTOList(any())).thenReturn(List.of(alimentoComidaDTO));

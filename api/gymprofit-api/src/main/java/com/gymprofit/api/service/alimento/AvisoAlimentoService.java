@@ -176,7 +176,7 @@ public class AvisoAlimentoService {
         Alimento alimento = alimentoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEntityException("error.alimento.noExiste", id));
         if (alimento.getUsuario() != null) {
-            securityUtils.checkOwnershipIfOwned(alimento.getUsuario().getId());
+            securityUtils.checkDuenoSiLoTiene(alimento.getUsuario().getId());
             throw new InvalidDataException("error.aviso.propio");
         }
         return alimento;
