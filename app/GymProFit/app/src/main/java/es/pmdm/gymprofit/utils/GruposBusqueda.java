@@ -30,6 +30,8 @@ import es.pmdm.gymprofit.model.comida.ComidaReciente;
 //     final (sin ninguno, una línea que lo explica y el botón), y los alimentos que has
 //     creado, con «Crear un alimento». En modo ingredientes no hay platos en ninguna lista
 //     (sinPlatos): un plato no puede ser ingrediente de otro.
+//   · Desde la 1.6.7, arriba de «Mis platos», «Lo que te encaja» (LoQueTeEncaja): su
+//     cabecera, con lo que queda del día, y como mucho tres tarjetas. Sin sección, nada.
 // Cada grupo lleva su cabecera solo si tiene algo. Un grupo que no se conoce va con los
 // básicos: mejor enseñarlo que perderlo.
 // ============================================================
@@ -43,7 +45,7 @@ public final class GruposBusqueda {
     public enum Seccion { RECIENTES, COMIDAS_RECIENTES, HABITUALES, TUYO, BASICOS, PRODUCTOS, FAVORITOS, MIS_PLATOS, CREADOS }
 
     public enum Tipo { CABECERA, ALIMENTO, NO_LO_ENCUENTRAS, PROPUESTA, COMIDA_RECIENTE, SIN_FAVORITOS, SIN_PLATOS,
-        CREAR_PLATO, CREAR_ALIMENTO }
+        CREAR_PLATO, CREAR_ALIMENTO, ENCAJA_CABECERA, ENCAJA }
 
     /** Una fila de la lista: una cabecera, un alimento, «¿No lo encuentras?» o la propuesta. */
     public static final class Elemento {
@@ -58,6 +60,10 @@ public final class GruposBusqueda {
         @Nullable public final Favoritos.Propuesta propuesta;
         /** La comida reciente, en su fila (1.6.4). */
         @Nullable public final ComidaReciente comida;
+        /** «Lo que te encaja» (1.6.7): la sección, en su cabecera y en cada tarjeta. */
+        @Nullable public final LoQueTeEncaja.Resultado encaja;
+        /** La tarjeta de «Lo que te encaja»: el alimento va también en {@link #alimento}. */
+        @Nullable public final LoQueTeEncaja.Sugerencia sugerencia;
 
         private Elemento(@NonNull Tipo tipo, @Nullable Seccion seccion, @Nullable Alimento alimento) {
             this(tipo, seccion, alimento, false, -1, null, null);
@@ -71,6 +77,13 @@ public final class GruposBusqueda {
         private Elemento(@NonNull Tipo tipo, @Nullable Seccion seccion, @Nullable Alimento alimento,
                          boolean verTodos, int cuantos, @Nullable Favoritos.Propuesta propuesta,
                          @Nullable ComidaReciente comida) {
+            this(tipo, seccion, alimento, verTodos, cuantos, propuesta, comida, null, null);
+        }
+
+        private Elemento(@NonNull Tipo tipo, @Nullable Seccion seccion, @Nullable Alimento alimento,
+                         boolean verTodos, int cuantos, @Nullable Favoritos.Propuesta propuesta,
+                         @Nullable ComidaReciente comida, @Nullable LoQueTeEncaja.Resultado encaja,
+                         @Nullable LoQueTeEncaja.Sugerencia sugerencia) {
             this.tipo = tipo;
             this.seccion = seccion;
             this.alimento = alimento;
@@ -78,6 +91,8 @@ public final class GruposBusqueda {
             this.cuantos = cuantos;
             this.propuesta = propuesta;
             this.comida = comida;
+            this.encaja = encaja;
+            this.sugerencia = sugerencia;
         }
 
         public boolean esCabecera() {
@@ -169,7 +184,23 @@ public final class GruposBusqueda {
      */
     @NonNull
     public static List<Elemento> misPlatos(@NonNull List<Alimento> platos, @NonNull List<Alimento> creados) {
+        return misPlatos(platos, creados, null);
+    }
+
+    /**
+     * Como {@link #misPlatos(List, List)}, con «Lo que te encaja» arriba (lote 1.6.7): su
+     * cabecera y una tarjeta por sugerencia. Sin sección (null o vacía), como siempre.
+     */
+    @NonNull
+    public static List<Elemento> misPlatos(@NonNull List<Alimento> platos, @NonNull List<Alimento> creados,
+                                           @Nullable LoQueTeEncaja.Resultado encaja) {
         List<Elemento> lista = new ArrayList<>();
+        if (encaja != null && !encaja.sugerencias.isEmpty()) {
+            lista.add(new Elemento(Tipo.ENCAJA_CABECERA, null, null, false, -1, null, null, encaja, null));
+            for (LoQueTeEncaja.Sugerencia s : encaja.sugerencias) {
+                lista.add(new Elemento(Tipo.ENCAJA, null, s.alimento, false, -1, null, null, encaja, s));
+            }
+        }
         lista.add(new Elemento(Tipo.CABECERA, Seccion.MIS_PLATOS, null));
         if (platos.isEmpty()) lista.add(new Elemento(Tipo.SIN_PLATOS, Seccion.MIS_PLATOS, null));
         for (Alimento a : platos) lista.add(new Elemento(Tipo.ALIMENTO, Seccion.MIS_PLATOS, a));
@@ -186,6 +217,13 @@ public final class GruposBusqueda {
         List<Alimento> quedan = new ArrayList<>();
         if (alimentos != null) for (Alimento a : alimentos) if (!a.esPlato()) quedan.add(a);
         return quedan;
+    }
+
+    /** Cuántas filas ocupa arriba «Lo que te encaja» (cabecera y tarjetas); 0 sin sección. */
+    public static int filasEncaja(@NonNull List<Elemento> lista) {
+        int n = 0;
+        while (n < lista.size() && (lista.get(n).tipo == Tipo.ENCAJA_CABECERA || lista.get(n).tipo == Tipo.ENCAJA)) n++;
+        return n;
     }
 
     public static boolean tieneNoLoEncuentras(@NonNull List<Elemento> lista) {

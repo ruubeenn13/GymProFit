@@ -26,6 +26,7 @@ import es.pmdm.gymprofit.utils.Anadidos;
 import es.pmdm.gymprofit.utils.Categorias;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.GruposBusqueda;
+import es.pmdm.gymprofit.utils.LoQueTeEncaja;
 import es.pmdm.gymprofit.utils.Movimiento;
 
 // ============================================================
@@ -48,6 +49,9 @@ import es.pmdm.gymprofit.utils.Movimiento;
 // Desde la 1.6.6, la pestaña «Mis platos»: sus cabeceras, «Crear un plato» y «Crear un
 // alimento» al final de su tarjeta y, sin platos, la línea que lo explica. Un plato lleva
 // en cualquier lista el icono de Mis platos y la marca «Plato» junto al nombre (tablero 8).
+// Desde la 1.6.7, arriba de «Mis platos», «Lo que te encaja»: su cabecera y una tarjeta por
+// sugerencia, con su «+» (el mismo de las filas), la barra de la proteína y el motivo. Entra
+// en cascada la primera vez que sale (momento 16); su barra se llena con BARRA.
 // ============================================================
 public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -100,6 +104,10 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         /** «Crear un alimento», en «Mis platos» (1.6.6). */
         default void crearAlimento() { crear(); }
+
+        /** La comida a la que se añade (DESAYUNO…CENA), para el motivo de «Lo que te encaja». */
+        @NonNull
+        String tipoComida();
     }
 
     private static final int CABECERA = 0;
@@ -111,6 +119,8 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
     private static final int SIN_FAVORITOS = 6;
     private static final int SIN_PLATOS = 7;
     private static final int CREAR = 8;
+    private static final int ENCAJA_CABECERA = 9;
+    private static final int ENCAJA = 10;
 
     /** Payload: solo cambia el «+» de la fila (y su detalle). */
     private static final Object SOLO_MAS = new Object();
@@ -133,9 +143,19 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
      * @param cascada true si entra en cascada (la primera vez de la pantalla).
      */
     public void poner(@NonNull List<GruposBusqueda.Elemento> nuevos, boolean cascada) {
+        poner(nuevos, cascada ? Math.min(nuevos.size(), 14) : -1);
+    }
+
+    /**
+     * Cambia la lista y hace entrar en cascada solo sus primeras filas: «Lo que te encaja»
+     * cuando aparece sobre una lista que ya estaba (1.6.7).
+     *
+     * @param entranHasta cuántas filas, desde arriba, entran en cascada; -1, ninguna.
+     */
+    public void poner(@NonNull List<GruposBusqueda.Elemento> nuevos, int entranHasta) {
         elementos.clear();
         elementos.addAll(nuevos);
-        cascadaHasta = cascada ? Math.min(nuevos.size(), 14) : -1;
+        cascadaHasta = entranHasta > 0 ? Math.min(nuevos.size(), entranHasta) : -1;
         notifyDataSetChanged();
     }
 
@@ -157,7 +177,8 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
         String alimento = Anadidos.parteAlimento(clave);
         for (int i = 0; i < elementos.size(); i++) {
             Alimento a = elementos.get(i).alimento;
-            if (elementos.get(i).tipo == GruposBusqueda.Tipo.ALIMENTO && a != null
+            GruposBusqueda.Tipo t = elementos.get(i).tipo;
+            if ((t == GruposBusqueda.Tipo.ALIMENTO || t == GruposBusqueda.Tipo.ENCAJA) && a != null
                     && (alimento.equals(Anadidos.parteAlimento(Anadidos.clave("", a.getId(), a.getBarcode())))
                     || alimento.equals(Anadidos.parteAlimento(Anadidos.clave("", 0, a.getBarcode()))))) {
                 notifyItemChanged(i, SOLO_MAS);
@@ -179,6 +200,8 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
             case CREAR_PLATO:
             case CREAR_ALIMENTO:
                 return CREAR;
+            case ENCAJA_CABECERA: return ENCAJA_CABECERA;
+            case ENCAJA: return ENCAJA;
             default: return ALIMENTO;
         }
     }
@@ -221,6 +244,14 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
         if (viewType == CREAR) {
             return new RecyclerView.ViewHolder(inflater.inflate(R.layout.item_crear_lista, parent, false)) { };
         }
+        if (viewType == ENCAJA_CABECERA) {
+            View v = inflater.inflate(R.layout.item_encaja_cabecera, parent, false);
+            androidx.core.view.ViewCompat.setAccessibilityHeading(v.findViewById(R.id.tvTituloEncaja), true);
+            return new RecyclerView.ViewHolder(v) { };
+        }
+        if (viewType == ENCAJA) {
+            return new EncajaHolder(inflater.inflate(R.layout.item_encaja, parent, false));
+        }
         return new FilaHolder(inflater.inflate(R.layout.item_alimento_busqueda, parent, false));
     }
 
@@ -229,6 +260,10 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
         GruposBusqueda.Elemento e = elementos.get(position);
         if (payloads.contains(SOLO_MAS) && holder instanceof FilaHolder && e.alimento != null) {
             ((FilaHolder) holder).pintarMas(e.alimento, e.seccion);
+            return;
+        }
+        if (payloads.contains(SOLO_MAS) && holder instanceof EncajaHolder && e.sugerencia != null) {
+            ((EncajaHolder) holder).pintarMas(e.sugerencia);
             return;
         }
         onBindViewHolder(holder, position);
@@ -249,6 +284,10 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
             holder.itemView.setBackgroundResource(fondo(position));
         } else if (e.tipo == GruposBusqueda.Tipo.CREAR_PLATO || e.tipo == GruposBusqueda.Tipo.CREAR_ALIMENTO) {
             pintarCrear(holder.itemView, e.tipo == GruposBusqueda.Tipo.CREAR_PLATO, fondo(position));
+        } else if (e.tipo == GruposBusqueda.Tipo.ENCAJA_CABECERA && e.encaja != null) {
+            pintarCabeceraEncaja(holder.itemView, e.encaja);
+        } else if (e.tipo == GruposBusqueda.Tipo.ENCAJA && e.sugerencia != null) {
+            ((EncajaHolder) holder).pintar(e.sugerencia, position < cascadaHasta);
         }
         if (position < cascadaHasta) {
             Movimiento.entrarUna(holder.itemView, position * Movimiento.CASCADA_ESCALON, Movimiento.CASCADA, 16);
@@ -282,6 +321,27 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
                 cuantos.setText(v.getResources().getQuantityString(R.plurals.favoritos_cuantos, e.cuantos, e.cuantos));
             }
         }
+    }
+
+    // «Te quedan 1.161 kcal y 54 g de proteína», con las cifras en negrita y en el color del
+    // texto; sin proteína pendiente, solo las kcal.
+    private void pintarCabeceraEncaja(@NonNull View v, @NonNull LoQueTeEncaja.Resultado r) {
+        Context ctx = v.getContext();
+        NumberFormat nf = NumberFormat.getIntegerInstance(FechaUtils.localeDeLaApp(ctx));
+        String kcal = ctx.getString(R.string.encaja_kcal, nf.format(r.kcalQuedan));
+        String prot = r.conProteina() ? ctx.getString(R.string.encaja_proteina, nf.format(r.proteinaQuedan)) : null;
+        String texto = prot != null ? ctx.getString(R.string.encaja_quedan, kcal, prot)
+                : ctx.getString(R.string.encaja_quedan_kcal, kcal);
+        android.text.SpannableString s = new android.text.SpannableString(texto);
+        int fuerte = color(ctx, com.google.android.material.R.attr.colorOnSurface);
+        for (String cifra : new String[]{kcal, prot}) {
+            if (cifra == null) continue;
+            int i = texto.indexOf(cifra);
+            if (i < 0) continue;
+            s.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), i, i + cifra.length(), 0);
+            s.setSpan(new android.text.style.ForegroundColorSpan(fuerte), i, i + cifra.length(), 0);
+        }
+        ((TextView) v.findViewById(R.id.tvQuedanEncaja)).setText(s);
     }
 
     private void pintarPropuesta(@NonNull View v, @NonNull Favoritos.Propuesta p) {
@@ -478,6 +538,116 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
                     : a.isRevisado()
                     ? ctx.getString(R.string.fila_revisada_a11y, a.getNombre(), det)
                     : ctx.getString(R.string.fila_a11y, a.getNombre(), det));
+        }
+    }
+
+    // Una tarjeta de «Lo que te encaja» (1.6.7).
+    final class EncajaHolder extends RecyclerView.ViewHolder {
+        private final TextView nombre;
+        private final TextView detalle;
+        private final View mas;
+        private final ImageView iconoMas;
+        private final View barra;
+        private final View relleno;
+        private final TextView cubre;
+        private final ImageView iconoMotivo;
+        private final TextView motivo;
+
+        EncajaHolder(@NonNull View v) {
+            super(v);
+            nombre = v.findViewById(R.id.tvNombreEncaja);
+            detalle = v.findViewById(R.id.tvDetalleEncaja);
+            mas = v.findViewById(R.id.btnMasEncaja);
+            iconoMas = v.findViewById(R.id.ivMasEncaja);
+            barra = v.findViewById(R.id.barraEncaja);
+            relleno = v.findViewById(R.id.rellenoEncaja);
+            cubre = v.findViewById(R.id.tvCubreEncaja);
+            iconoMotivo = v.findViewById(R.id.ivMotivoEncaja);
+            motivo = v.findViewById(R.id.tvMotivoEncaja);
+        }
+
+        void pintar(@NonNull LoQueTeEncaja.Sugerencia s, boolean entra) {
+            Context ctx = itemView.getContext();
+            Alimento a = s.alimento;
+            nombre.setText(es.pmdm.gymprofit.ui.nutricion.MarcaPlato.nombre(ctx, a.getNombre(), a.esPlato()));
+            itemView.setOnClickListener(v -> acciones.abrir(a));
+            mas.setOnClickListener(v -> acciones.tocarMas(a, mas, iconoMas));
+
+            motivo.setText(textoMotivo(ctx, s.motivo, acciones.tipoComida()));
+            iconoMotivo.setImageResource(iconoMotivo(s.motivo));
+
+            // La barra, solo si falta proteína: lo que cubre, con tope en el ancho.
+            barra.setVisibility(s.cubre >= 0 ? View.VISIBLE : View.GONE);
+            if (s.cubre >= 0) {
+                NumberFormat nf = NumberFormat.getIntegerInstance(FechaUtils.localeDeLaApp(ctx));
+                cubre.setText(ctx.getString(R.string.encaja_cubre, nf.format(s.cubre)));
+                barra.setContentDescription(ctx.getString(R.string.encaja_cubre_a11y, nf.format(s.cubre)));
+                View pista = (View) relleno.getParent();
+                relleno.animate().cancel();
+                relleno.setScaleX(1f);
+                pista.post(() -> {
+                    ViewGroup.LayoutParams lp = relleno.getLayoutParams();
+                    lp.width = Math.round(pista.getWidth() * Math.min(100, s.cubre) / 100f);
+                    relleno.setLayoutParams(lp);
+                });
+                if (entra && !Movimiento.quieto(ctx)) {
+                    // Se llena de izquierda a derecha cuando la tarjeta ya ha subido (BARRA),
+                    // con el mismo retraso que las barras de la ficha.
+                    relleno.setPivotX(0);
+                    relleno.setScaleX(0f);
+                    relleno.animate().scaleX(1f).setStartDelay(300).setDuration(Movimiento.BARRA)
+                            .setInterpolator(Movimiento.ESTANDAR).start();
+                }
+            }
+            pintarMas(s);
+        }
+
+        // El «+» y lo que dice la tarjeta, que cambia con él.
+        void pintarMas(@NonNull LoQueTeEncaja.Sugerencia s) {
+            Context ctx = itemView.getContext();
+            Alimento a = s.alimento;
+            boolean marcado = acciones.marcado(a);
+            BusquedaAlimentoAdapter.pintarMas(mas, iconoMas, marcado);
+            mas.setContentDescription(acciones.etiquetaMas(a));
+            // La tarjeta dice siempre lo que propone, con su proteína: en ✓ lo añadido es eso
+            // mismo, y la barra de abajo ya suma lo que se lleva.
+            java.util.Locale locale = FechaUtils.localeDeLaApp(ctx);
+            NumberFormat nf = NumberFormat.getIntegerInstance(locale);
+            String det = ctx.getString(R.string.encaja_detalle,
+                    es.pmdm.gymprofit.utils.AnadirRapido.texto(es.pmdm.gymprofit.utils.Cantidades.Formatos.de(ctx),
+                            locale, s.cantidad),
+                    nf.format(s.kcal), nf.format(Math.round(s.proteina)));
+            detalle.setText(det);
+            String quien = a.esPlato() ? ctx.getString(R.string.encaja_plato_a11y, a.getNombre()) : a.getNombre();
+            itemView.setContentDescription(ctx.getString(R.string.encaja_a11y, quien, det, motivo.getText()));
+        }
+    }
+
+    private static final int[] SUELES = {R.string.encaja_sueles_desayuno, R.string.encaja_sueles_almuerzo,
+            R.string.encaja_sueles_comida, R.string.encaja_sueles_merienda, R.string.encaja_sueles_cena};
+    private static final int[] AYER = {R.string.encaja_ayer_desayuno, R.string.encaja_ayer_almuerzo,
+            R.string.encaja_ayer_comida, R.string.encaja_ayer_merienda, R.string.encaja_ayer_cena};
+    private static final String[] TIPOS = {"DESAYUNO", "ALMUERZO", "COMIDA", "MERIENDA", "CENA"};
+
+    /** La línea del motivo: «Lo sueles tomar en la merienda», «Tu merienda de ayer»… */
+    @NonNull
+    public static String textoMotivo(@NonNull Context ctx, @NonNull LoQueTeEncaja.Motivo m, @NonNull String tipoComida) {
+        int i = java.util.Arrays.asList(TIPOS).indexOf(tipoComida);
+        if (i < 0) i = 3;
+        switch (m) {
+            case SUELES: return ctx.getString(SUELES[i]);
+            case AYER: return ctx.getString(AYER[i]);
+            case PROTEINA: return ctx.getString(R.string.encaja_motivo_proteina);
+            default: return ctx.getString(R.string.encaja_motivo_cabe);
+        }
+    }
+
+    private static int iconoMotivo(@NonNull LoQueTeEncaja.Motivo m) {
+        switch (m) {
+            case SUELES: return R.drawable.ic_ms_schedule;
+            case AYER: return R.drawable.ic_ms_history;
+            case PROTEINA: return R.drawable.ic_ms_bolt;
+            default: return R.drawable.ic_ms_check_circle;
         }
     }
 }

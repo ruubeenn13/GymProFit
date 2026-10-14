@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_encaja — una tarjeta de «Lo que te encaja» (lote 1.6.7, tablero 9). Arriba, el nombre
+  (con la marca «Plato» si lo es) y lo que añade su «+»: cantidad, kcal y proteína; a la
+  derecha, el «+» de 44 dp en zona de 48, como en las filas de Añadir, que añade y se vuelve
+  ✓ (momento 15). Debajo, la barra de lo que cubre de la proteína que falta, con su texto
+  para TalkBack (sin proteína pendiente no sale), y el motivo con su icono.
+  Tocar la tarjeta abre la ficha.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/tarjetaEncaja"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="8dp"
+    android:orientation="vertical"
+    android:paddingStart="14dp"
+    android:paddingEnd="8dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp"
+    android:background="@drawable/bg_grupo_solo"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:importantForAccessibility="noHideDescendants">
+
+            <TextView
+                android:id="@+id/tvNombreEncaja"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:textSize="@dimen/text_fila"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurface" />
+
+            <TextView
+                android:id="@+id/tvDetalleEncaja"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textSize="@dimen/text_caption"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+        </LinearLayout>
+
+        <!-- El «+» (o el ✓), igual que en item_alimento_busqueda. -->
+        <FrameLayout
+            android:id="@+id/btnMasEncaja"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/bg_mas_fila"
+            android:backgroundTint="@color/gp_surface_2"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:id="@+id/ivMasEncaja"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_ms_add"
+                app:tint="?attr/colorOnSurface" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <!-- Lo que cubre de la proteína que falta: una imagen para TalkBack, con su texto. -->
+    <LinearLayout
+        android:id="@+id/barraEncaja"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:paddingEnd="6dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:focusable="true">
+
+        <FrameLayout
+            android:id="@+id/pistaEncaja"
+            android:layout_width="0dp"
+            android:layout_height="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_barra_redonda"
+            android:backgroundTint="@color/gp_meter_track"
+            android:importantForAccessibility="no">
+
+            <View
+                android:id="@+id/rellenoEncaja"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_barra_redonda"
+                android:backgroundTint="@color/gp_macro_proteinas" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tvCubreEncaja"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:importantForAccessibility="no"
+            android:textSize="@dimen/text_caption"
+            android:fontFeatureSettings="tnum"
+            android:textColor="?attr/colorOnSurfaceVariant" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:importantForAccessibility="noHideDescendants">
+
+        <ImageView
+            android:id="@+id/ivMotivoEncaja"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/ic_ms_schedule"
+            app:tint="?attr/colorOnSurfaceVariant" />
+
+        <TextView
+            android:id="@+id/tvMotivoEncaja"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="6dp"
+            android:textSize="@dimen/text_caption"
+            android:textColor="?attr/colorOnSurfaceVariant" />
+    </LinearLayout>
+</LinearLayout>

@@ -1826,4 +1826,27 @@
     <string name="plato_menu_editar">Editar plato</string>
     <string name="plato_menu_eliminar">Eliminar plato</string>
     <string name="plato_eliminar_confirmar">¿Eliminar este plato? Deja de salir en tus listas; lo que ya has apuntado no cambia.</string>
+    <!-- «Lo que te encaja», arriba de Mis platos (lote 1.6.7, tablero 9) -->
+    <string name="encaja_titulo">Lo que te encaja</string>
+    <string name="encaja_quedan">Te quedan %1$s y %2$s</string>
+    <string name="encaja_quedan_kcal">Te quedan %1$s</string>
+    <string name="encaja_kcal">%1$s kcal</string>
+    <string name="encaja_proteina">%1$s g de proteína</string>
+    <string name="encaja_detalle">%1$s · %2$s kcal · %3$s g de proteína</string>
+    <string name="encaja_cubre">%1$s %% de lo que falta</string>
+    <string name="encaja_cubre_a11y">Cubre el %1$s por ciento de la proteína que te falta</string>
+    <string name="encaja_sueles_desayuno">Lo sueles tomar en el desayuno</string>
+    <string name="encaja_sueles_almuerzo">Lo sueles tomar en el almuerzo</string>
+    <string name="encaja_sueles_comida">Lo sueles tomar en la comida</string>
+    <string name="encaja_sueles_merienda">Lo sueles tomar en la merienda</string>
+    <string name="encaja_sueles_cena">Lo sueles tomar en la cena</string>
+    <string name="encaja_ayer_desayuno">Tu desayuno de ayer</string>
+    <string name="encaja_ayer_almuerzo">Tu almuerzo de ayer</string>
+    <string name="encaja_ayer_comida">Tu comida de ayer</string>
+    <string name="encaja_ayer_merienda">Tu merienda de ayer</string>
+    <string name="encaja_ayer_cena">Tu cena de ayer</string>
+    <string name="encaja_motivo_proteina">Mucha proteína para lo que te falta</string>
+    <string name="encaja_motivo_cabe">Cabe en lo que te queda</string>
+    <string name="encaja_plato_a11y">%1$s, plato</string>
+    <string name="encaja_a11y">%1$s. %2$s. %3$s</string>
 </resources>

@@ -1801,4 +1801,27 @@
     <string name="plato_menu_editar">Edit dish</string>
     <string name="plato_menu_eliminar">Delete dish</string>
     <string name="plato_eliminar_confirmar">Delete this dish? It won\'t show up in your lists any more; what you\'ve already logged doesn\'t change.</string>
+    <!-- "What fits", on top of My dishes (release 1.6.7, board 9) -->
+    <string name="encaja_titulo">What fits today</string>
+    <string name="encaja_quedan">You have %1$s and %2$s left</string>
+    <string name="encaja_quedan_kcal">You have %1$s left</string>
+    <string name="encaja_kcal">%1$s kcal</string>
+    <string name="encaja_proteina">%1$s g of protein</string>
+    <string name="encaja_detalle">%1$s · %2$s kcal · %3$s g protein</string>
+    <string name="encaja_cubre">%1$s%% of what\'s left</string>
+    <string name="encaja_cubre_a11y">Covers %1$s percent of the protein you still need</string>
+    <string name="encaja_sueles_desayuno">You usually have it at breakfast</string>
+    <string name="encaja_sueles_almuerzo">You usually have it mid-morning</string>
+    <string name="encaja_sueles_comida">You usually have it at lunch</string>
+    <string name="encaja_sueles_merienda">You usually have it as a snack</string>
+    <string name="encaja_sueles_cena">You usually have it at dinner</string>
+    <string name="encaja_ayer_desayuno">Your breakfast yesterday</string>
+    <string name="encaja_ayer_almuerzo">Your mid-morning snack yesterday</string>
+    <string name="encaja_ayer_comida">Your lunch yesterday</string>
+    <string name="encaja_ayer_merienda">Your snack yesterday</string>
+    <string name="encaja_ayer_cena">Your dinner yesterday</string>
+    <string name="encaja_motivo_proteina">Lots of protein for what you need</string>
+    <string name="encaja_motivo_cabe">Fits in what you have left</string>
+    <string name="encaja_plato_a11y">%1$s, dish</string>
+    <string name="encaja_a11y">%1$s. %2$s. %3$s</string>
 </resources>
