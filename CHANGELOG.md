@@ -6,6 +6,11 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `5fe9300` | docs(documentacion): el [informe del lote 1.6.8](documentacion/estado/2026-10-14-lote-1.6.8.md), con la prueba en producción. |
+| `c008da9` | Fusión de `lote-1.6.8` en `main`, CI en verde y desplegada en Render; etiquetada `v1.6.8`. APK de release 1.6.8 (10608), 7 804 970 bytes. Zip `gymprofit-web-1.6.8.zip` en el escritorio. |
+| `a75e2e5` | feat(web): la política de privacidad y eliminar cuenta nombran **el agua y «Hoy no»**. |
+| `e2c8823` | feat(android,decisiones): **el diario nuevo** (GP-162, tablero 1): anillo del día, macros, marca del entreno y punto de cada día; **el agua a vasos** (GP-166) con el vaso en Ajustes; **el día completo** (tablero 3) y **«Hoy no»** en la comida vacía; momentos 21 y 22. «Lo que te encaja» no propone lo ya apuntado, «Mucha proteína» solo al que más cubre y su barra a lo ancho con letra grande. **DEC-049**, DEC-048 y DEC-039 al día. `DiaCompletoTest`, `AguaTest`, `LoQueTeEncajaTest`, `MovimientoTest`. |
+| `181f31f` | feat(api): **`GET /diario`**, **`PUT /diario/{fecha}/agua`** y **`PUT`/`DELETE /diario/{fecha}/hoy-no/{tipo}`**, del usuario del token. Migración `V202610141500`. `DiarioTest`, `BorradoCuentaTest`. |
 | `68c188c` | docs(documentacion): el [informe del lote 1.6.7](documentacion/estado/2026-10-14-lote-1.6.7.md), con la prueba en producción. |
 | `1396fc0` | Fusión de `lote-1.6.7` en `main`, CI en verde; etiquetada `v1.6.7`. APK de release 1.6.7 (10607), 7 773 785 bytes, con la clave de siempre. Solo app: sin API nueva. |
 | `4a36a11` | docs(decisiones): **DEC-048**, las reglas de «Lo que te encaja»; README al día. |
