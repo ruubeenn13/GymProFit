@@ -6,6 +6,10 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `05d20a4` | docs(reglas): **«Cómo se entrega»** en `CLAUDE.md`: flujo de rama a producción, autoría, credenciales, zip de la web y forma del informe. |
+| `d766af7` | docs(documentacion): [lo que una cuenta ADMIN veía de las demás](documentacion/estado/2026-10-14-seguridad-admin.md), ya cerrado y desplegado: S24 (`7e9c22e`), S25 (`adface8`) y GP-197 (`8ca9908`). |
+| `2201f7a` | Fusión de `fix-comidas-admin` en `main`, CI en verde y desplegada en Render. Solo API, sin versión de app ni etiqueta. |
+| `8ca9908` | fix(api): **GP-197**, las comidas de un usuario son solo suyas, también para un ADMIN: `/comidas` (listado, por tipo, por fecha, contador por tipo, por id y por usuario) da a un ADMIN solo las suyas y un id de otro, 403. Lo que se crea, comidas y alimentos, es siempre de quien llama (DEC-013): el `usuarioId` del cuerpo se ignora. `ComidasSoloDelDuenoTest`. |
 | `fdec8f7` | Fusión de `fix-alimentos-admin` en `main`, CI en verde y desplegada en Render. Solo API, sin versión de app ni etiqueta. |
 | `adface8` | fix(api): **la nutrición de un usuario es solo suya, también para un ADMIN** (DEC-042). Sus alimentos, sus platos y las líneas de su diario se comprueban contra su dueño sin excepción de rol: un ADMIN ve y mantiene el catálogo como siempre, en sus listados y contadores sale el catálogo y lo suyo, y un id de otro le da el mismo 403 que a un USER (DEC-014). Las rutas de `/alimentos-comida` que siguen siendo de ADMIN devuelven lo de quien llama. Corregida **DEC-027**. `NutricionSoloDelDuenoTest`. |
 | `ceadf31` | Fusión de `fix-busqueda-panel` en `main`, CI en verde y desplegada en Render. Solo API, sin versión de app ni etiqueta. |
