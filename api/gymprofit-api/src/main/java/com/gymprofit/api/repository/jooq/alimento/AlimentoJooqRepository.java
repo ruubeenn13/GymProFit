@@ -27,9 +27,11 @@ public class AlimentoJooqRepository implements IAlimentoJooqRepository {
     // Búsqueda de alimentos para el panel de administración con filtros
     // opcionales por nombre (contiene, insensible a mayúsculas), categoría
     // exacta y estado activo/inactivo; devuelve resultados ordenados por nombre.
+    // Solo el catálogo, sin dueño (GP-195), como buscarCatalogoAdmin.
     @Override
     public List<AlimentoJooqDTO> busquedaAdmin(String nombre, String categoria, Boolean activo) {
         var conditions = new ArrayList<Condition>();
+        conditions.add(ALIMENTOS.USUARIO_ID.isNull());
 
         // Filtro por nombre solo si se proporciona un valor no vacío.
         if (nombre != null && !nombre.isBlank()) {
