@@ -45,6 +45,9 @@ import es.pmdm.gymprofit.utils.Movimiento;
 // Desde la 1.6.4, en «Todo», las comidas recientes con su «Copiar» (que pasa a «Copiada»,
 // con su ✓, y ya no se toca), y en «Favoritos», bajo la propuesta y sin ningún favorito,
 // el texto de la pestaña vacía (GP-184).
+// Desde la 1.6.6, la pestaña «Mis platos»: sus cabeceras, «Crear un plato» y «Crear un
+// alimento» al final de su tarjeta y, sin platos, la línea que lo explica. Un plato lleva
+// en cualquier lista el icono de Mis platos y la marca «Plato» junto al nombre (tablero 8).
 // ============================================================
 public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -91,6 +94,12 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
         /** «a la merienda», la comida de la etiqueta, para TalkBack de «Copiar». */
         @NonNull
         String aLaComida();
+
+        /** «Crear un plato», en «Mis platos» (1.6.6). */
+        default void crearPlato() { }
+
+        /** «Crear un alimento», en «Mis platos» (1.6.6). */
+        default void crearAlimento() { crear(); }
     }
 
     private static final int CABECERA = 0;
@@ -100,6 +109,8 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
     private static final int PROPUESTA = 4;
     private static final int COMIDA_RECIENTE = 5;
     private static final int SIN_FAVORITOS = 6;
+    private static final int SIN_PLATOS = 7;
+    private static final int CREAR = 8;
 
     /** Payload: solo cambia el «+» de la fila (y su detalle). */
     private static final Object SOLO_MAS = new Object();
@@ -164,6 +175,10 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
             case PROPUESTA: return PROPUESTA;
             case COMIDA_RECIENTE: return COMIDA_RECIENTE;
             case SIN_FAVORITOS: return SIN_FAVORITOS;
+            case SIN_PLATOS: return SIN_PLATOS;
+            case CREAR_PLATO:
+            case CREAR_ALIMENTO:
+                return CREAR;
             default: return ALIMENTO;
         }
     }
@@ -200,6 +215,12 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
         if (viewType == SIN_FAVORITOS) {
             return new RecyclerView.ViewHolder(inflater.inflate(R.layout.item_sin_favoritos, parent, false)) { };
         }
+        if (viewType == SIN_PLATOS) {
+            return new RecyclerView.ViewHolder(inflater.inflate(R.layout.item_sin_platos, parent, false)) { };
+        }
+        if (viewType == CREAR) {
+            return new RecyclerView.ViewHolder(inflater.inflate(R.layout.item_crear_lista, parent, false)) { };
+        }
         return new FilaHolder(inflater.inflate(R.layout.item_alimento_busqueda, parent, false));
     }
 
@@ -224,6 +245,10 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
             pintarPropuesta(holder.itemView, e.propuesta);
         } else if (e.tipo == GruposBusqueda.Tipo.COMIDA_RECIENTE && e.comida != null) {
             pintarReciente(holder.itemView, e.comida, fondo(position));
+        } else if (e.tipo == GruposBusqueda.Tipo.SIN_PLATOS) {
+            holder.itemView.setBackgroundResource(fondo(position));
+        } else if (e.tipo == GruposBusqueda.Tipo.CREAR_PLATO || e.tipo == GruposBusqueda.Tipo.CREAR_ALIMENTO) {
+            pintarCrear(holder.itemView, e.tipo == GruposBusqueda.Tipo.CREAR_PLATO, fondo(position));
         }
         if (position < cascadaHasta) {
             Movimiento.entrarUna(holder.itemView, position * Movimiento.CASCADA_ESCALON, Movimiento.CASCADA, 16);
@@ -305,11 +330,36 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
         boton.setOnClickListener(copiada ? null : b -> acciones.copiar(c));
     }
 
+    // «Crear un plato» o «Crear un alimento»: al final de la tarjeta de su sección (1.6.6).
+    private void pintarCrear(@NonNull View v, boolean plato, int fondo) {
+        v.setBackgroundResource(fondo);
+        TextView texto = v.findViewById(R.id.tvCrearLista);
+        texto.setText(plato ? R.string.misplatos_crear_plato : R.string.misplatos_crear_alimento);
+        v.setOnClickListener(b -> {
+            if (plato) acciones.crearPlato();
+            else acciones.crearAlimento();
+        });
+    }
+
+    // Las filas que hacen tarjeta juntas: las de un alimento y, en «Mis platos», la línea
+    // sin platos y los botones de crear, que cierran su tarjeta.
+    private static int grupo(@NonNull GruposBusqueda.Tipo tipo) {
+        switch (tipo) {
+            case ALIMENTO:
+            case SIN_PLATOS:
+            case CREAR_PLATO:
+            case CREAR_ALIMENTO:
+                return 1;
+            default:
+                return tipo.ordinal() + 10;
+        }
+    }
+
     // Primera, media, última o sola dentro de su grupo, según los vecinos del mismo tipo.
     private int fondo(int pos) {
-        GruposBusqueda.Tipo tipo = elementos.get(pos).tipo;
-        boolean antes = pos > 0 && elementos.get(pos - 1).tipo == tipo;
-        boolean despues = pos + 1 < elementos.size() && elementos.get(pos + 1).tipo == tipo;
+        int tipo = grupo(elementos.get(pos).tipo);
+        boolean antes = pos > 0 && grupo(elementos.get(pos - 1).tipo) == tipo;
+        boolean despues = pos + 1 < elementos.size() && grupo(elementos.get(pos + 1).tipo) == tipo;
         if (antes && despues) return R.drawable.bg_grupo_media;
         if (antes) return R.drawable.bg_grupo_ultima;
         if (despues) return R.drawable.bg_grupo_primera;
@@ -325,12 +375,15 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
             case PRODUCTOS: return R.string.seccion_productos;
             case FAVORITOS: return R.string.favoritos_seccion;
             case COMIDAS_RECIENTES: return R.string.seccion_comidas_recientes;
+            case MIS_PLATOS: return R.string.misplatos_seccion_platos;
+            case CREADOS: return R.string.misplatos_seccion_creados;
             default: return R.string.seccion_basicos;
         }
     }
 
-    /** El icono de la fila: el de su categoría; sin categoría, el de producto (B2). */
+    /** El icono de la fila: el de Mis platos en un plato; el de su categoría; sin categoría, el de producto (B2). */
     public static int icono(@NonNull Alimento a) {
+        if (a.esPlato()) return R.drawable.ic_ms_menu_book;
         String clave = a.getCategoriaClave();
         return clave != null && !clave.trim().isEmpty() ? Categorias.icono(clave) : R.drawable.ic_ms_inventory_2;
     }
@@ -341,6 +394,8 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
      */
     @NonNull
     public static String detalle(@NonNull Context ctx, @NonNull Alimento a) {
+        // Un plato (1.6.6): una ración y lo que vale, nunca «por 100 g» ni sus gramos.
+        if (a.esPlato()) return es.pmdm.gymprofit.utils.FilaPlato.de(ctx, a);
         NumberFormat nf = NumberFormat.getNumberInstance(FechaUtils.localeDeLaApp(ctx));
         nf.setMaximumFractionDigits(1);
         if (a.esProducto()) {
@@ -392,7 +447,8 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
         void pintar(@NonNull Alimento a, @Nullable GruposBusqueda.Seccion seccion, int fondo) {
             Context ctx = itemView.getContext();
             icono.setImageResource(icono(a));
-            nombre.setText(es.pmdm.gymprofit.ui.nutricion.Insignia.nombre(ctx, a.getNombre(), a.isRevisado(), 18));
+            nombre.setText(es.pmdm.gymprofit.ui.nutricion.MarcaPlato.nombre(ctx,
+                    es.pmdm.gymprofit.ui.nutricion.Insignia.nombre(ctx, a.getNombre(), a.isRevisado(), 18), a.esPlato()));
             itemView.setBackgroundResource(fondo);
             raya.setVisibility(fondo == R.drawable.bg_grupo_media || fondo == R.drawable.bg_grupo_primera
                     ? View.VISIBLE : View.INVISIBLE);
@@ -417,7 +473,9 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
             mas.setContentDescription(acciones.etiquetaMas(a));
             String det = acciones.detalle(a, seccion);
             detalle.setText(det);
-            itemView.setContentDescription(a.isRevisado()
+            itemView.setContentDescription(a.esPlato()
+                    ? ctx.getString(R.string.fila_plato_a11y, a.getNombre(), det)
+                    : a.isRevisado()
                     ? ctx.getString(R.string.fila_revisada_a11y, a.getNombre(), det)
                     : ctx.getString(R.string.fila_a11y, a.getNombre(), det));
         }

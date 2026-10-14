@@ -86,14 +86,17 @@ public class AlimentoComidaAdapter extends RecyclerView.Adapter<AlimentoComidaAd
         String cantidad = Cantidades.de(ctx, item);
         String kcal = nf.format(item.getCaloriasTotales());
         String prot = nf.format(Math.round(item.getProteinasTotales()));
-        h.icono.setImageResource(Categorias.icono(item.getCategoriaAlimento()));
-        h.nombre.setText(nombre);
+        // Un plato (lote 1.6.6): el icono de Mis platos y su marca junto al nombre.
+        h.icono.setImageResource(item.isAlimentoEsPlato() ? R.drawable.ic_ms_menu_book
+                : Categorias.icono(item.getCategoriaAlimento()));
+        h.nombre.setText(es.pmdm.gymprofit.ui.nutricion.MarcaPlato.nombre(ctx, nombre, item.isAlimentoEsPlato()));
         h.cantidad.setText(cantidad);
         h.kcal.setText(ctx.getString(R.string.comida_fila_kcal, kcal));
         h.proteina.setText(ctx.getString(R.string.comida_fila_prot, prot));
         h.itemView.setBackgroundResource(position == items.size() - 1
                 ? R.drawable.bg_fila_comida_ultima : R.drawable.bg_fila_comida);
-        h.itemView.setContentDescription(ctx.getString(R.string.comida_fila_a11y, nombre, cantidad, kcal, prot));
+        h.itemView.setContentDescription(ctx.getString(item.isAlimentoEsPlato() ? R.string.comida_fila_plato_a11y
+                : R.string.comida_fila_a11y, nombre, cantidad, kcal, prot));
 
         h.itemView.setOnClickListener(v -> acciones.abrir(item));
         h.itemView.setOnLongClickListener(v -> {

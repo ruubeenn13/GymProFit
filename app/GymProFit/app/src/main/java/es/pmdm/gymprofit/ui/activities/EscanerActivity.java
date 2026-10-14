@@ -144,9 +144,18 @@ public class EscanerActivity extends BaseActivity {
         // Cambiar cantidad (la ficha) o crear con el código: si se añade, se vuelve a quien
         // abrió el escáner con lo añadido (Añadir lo cuenta en su barra, lote 1.6.3).
         despues = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), r -> {
-            if (r.getResultCode() == RESULT_OK) {
+            if (r.getResultCode() == RESULT_OK && (!modoIngredientes() || r.getData() != null
+                    && r.getData().hasExtra(FichaAlimentoActivity.EXTRA_INGREDIENTE))) {
                 setResult(RESULT_OK, r.getData());
                 finish();
+            } else if (modoIngredientes() && estado.estado() == EstadoEscaner.Estado.NO_EXISTE) {
+                // Creado con su código: se vuelve a leer, y ya sale para añadirlo al plato.
+                String codigo = estado.codigo();
+                otroMas();
+                if (codigo != null && estado.escrito(codigo)) {
+                    analizar = false;
+                    consultar();
+                }
             }
         });
 
@@ -453,12 +462,12 @@ public class EscanerActivity extends BaseActivity {
     private void pintarProducto(TextView titulo, TextView texto, MaterialButton principal, MaterialButton secundario) {
         Alimento a = alimento;
         if (a == null) return;
-        CantidadFicha cantidad = CantidadFicha.nueva(a.getRaciones());
+        CantidadFicha cantidad = CantidadFicha.nueva(a);
         NumberFormat nf = NumberFormat.getNumberInstance(FechaUtils.localeDeLaApp(this));
         nf.setMaximumFractionDigits(1);
         CantidadFicha.Unidad u = cantidad.unidad();
         String porcion = es.pmdm.gymprofit.utils.Cantidades.de(this, u.nombre, u.unidad, u.unidadPlural,
-                cantidad.raciones(), cantidad.gramos());
+                cantidad.raciones(), cantidad.gramos(), !cantidad.conGramos());
 
         ((android.widget.ImageView) findViewById(R.id.ivIconoHoja)).setImageResource(a.esProducto()
                 ? R.drawable.ic_ms_inventory_2 : R.drawable.ic_ms_restaurant);
@@ -478,6 +487,18 @@ public class EscanerActivity extends BaseActivity {
                 nf.format(kcal), nf.format(p), nf.format(c), nf.format(gr)));
 
         secundario.setText(R.string.escaner_cambiar_cantidad);
+        if (modoIngredientes()) {
+            // Al plato (lote 1.6.6): nada va a la API hasta guardarlo.
+            secundario.setOnClickListener(v -> despues.launch(FichaAlimentoActivity.paraIngrediente(this, a, null)));
+            principal.setText(R.string.ficha_anadir_al_plato);
+            principal.setOnClickListener(v -> {
+                Movimiento.vibrar(principal, Movimiento.Vibracion.LIGERA);
+                setResult(RESULT_OK, new Intent().putExtra(FichaAlimentoActivity.EXTRA_INGREDIENTE,
+                        new com.google.gson.Gson().toJson(es.pmdm.gymprofit.model.plato.IngredienteElegido.de(a, cantidad))));
+                finish();
+            });
+            return;
+        }
         secundario.setOnClickListener(v -> despues.launch(FichaAlimentoActivity.paraAnadir(this, a, tipoComida, fecha)
                 .putExtra(AnadirAlimentoActivity.EXTRA_EN_ANADIR, enAnadir())));
         principal.setText(AnadirAlimentoActivity.textoAnadirA(tipoComida));
@@ -530,11 +551,22 @@ public class EscanerActivity extends BaseActivity {
     }
 
     private void crearConCodigo() {
+        if (modoIngredientes()) {
+            // Sin comida: «Solo guardar», y al volver se lee otra vez el código.
+            despues.launch(new Intent(this, CrearAlimentoActivity.class)
+                    .putExtra(CrearAlimentoActivity.EXTRA_CODIGO, estado.codigo()));
+            return;
+        }
         despues.launch(new Intent(this, CrearAlimentoActivity.class)
                 .putExtra(CrearAlimentoActivity.EXTRA_CODIGO, estado.codigo())
                 .putExtra(AnadirAlimentoActivity.EXTRA_EN_ANADIR, enAnadir())
                 .putExtra(AnadirAlimentoActivity.EXTRA_TIPO, tipoComida)
                 .putExtra(AnadirAlimentoActivity.EXTRA_FECHA, fecha));
+    }
+
+    // Lote 1.6.6: abierto para elegir un ingrediente de un plato.
+    private boolean modoIngredientes() {
+        return getIntent().getBooleanExtra(AnadirAlimentoActivity.EXTRA_MODO_INGREDIENTES, false);
     }
 
     private boolean enAnadir() {

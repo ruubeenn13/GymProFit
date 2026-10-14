@@ -33,6 +33,9 @@ import es.pmdm.gymprofit.model.comida.CantidadAnterior;
 // Cada fila es de un alimento EN UNA COMIDA (GP-185, lote 1.6.4): el yogur añadido a la
 // merienda no deja en ✓ su fila cuando la etiqueta pasa a la cena, y se puede añadir
 // también ahí. La barra cuenta lo de todas las comidas.
+// GP-192 (lote 1.6.6): lo copiado espera a la respuesta de lo que viaje de esa fila, sea
+// un «+» o un quitar. Antes solo esperaba al «+»: con un quitar en vuelo se anotaba al
+// momento, el quitar al volver lo borraba y volvía a mandar el «+» de antes.
 // Sin vistas ni red: la red la pone quien lo usa (Servidor), para probarlo solo.
 // ============================================================
 public final class Anadidos {
@@ -146,7 +149,7 @@ public final class Anadidos {
         boolean viajando;
         // Quien espera la línea de un «+» que aún viaja (GP-183).
         final List<Consumer<Anadido>> esperan = new ArrayList<>();
-        // Lo copiado que llegó mientras su «+» viajaba: se junta al volver este.
+        // Lo copiado que llegó mientras viajaba algo de esta fila: se junta al volver.
         final List<Anadido> porJuntar = new ArrayList<>();
 
         Estado(String clave) {
@@ -205,8 +208,9 @@ public final class Anadidos {
     public void marcar(@NonNull Anadido a) {
         Estado e = estado(clave(a.getTipoComida(), a.getAlimentoId(), null));
         if (a.getBarcode() != null) estados.put(clave(a.getTipoComida(), 0, a.getBarcode()), e);
-        if (e.viajando && e.hecho == null) {
-            // Su «+» aún viaja: se junta cuando vuelva, salga bien o mal.
+        if (e.viajando) {
+            // Algo de esta fila aún viaja (su «+» o su quitar): se junta cuando vuelva, salga
+            // bien o mal (GP-192).
             e.porJuntar.add(a);
             huboCambios = true;
             return;
@@ -389,6 +393,7 @@ public final class Anadidos {
                     e.viajando = false;
                     e.hecho = null;
                     huboCambios = true;
+                    juntar(e);
                     oyente.cambio(e.clave);
                     seguir(e);
                 }
@@ -397,6 +402,7 @@ public final class Anadidos {
                 public void fallo(int code, @Nullable String message) {
                     e.viajando = false;
                     e.quiere = true;
+                    juntar(e);
                     oyente.cambio(e.clave);
                     oyente.fallo(e.clave, false, code, message);
                     seguir(e);

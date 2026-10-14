@@ -142,6 +142,14 @@ public final class Movimiento {
     public static final long SALE = 380;
     /** 20 · Borrar y deshacer: la comida se recoloca (y la fila vuelve con «Deshacer»). */
     public static final long RECOLOCA = 250;
+    /** 23 · El plato: al cambiar las raciones, cada cifra de «Por ración» cae 6 dp. */
+    public static final long CIFRA = 250;
+    /** 23 · El plato: al guardar, el velo oscurece la pantalla detrás de la hoja. */
+    public static final long VELO = 250;
+    /** 23 · El plato: el ✓ de la hoja salta de 0,4 a 1,25 y a 1. */
+    public static final long SALTA_OK = 450;
+    /** 23 · El plato: el ✓ salta cuando la hoja ya está subiendo. */
+    public static final long SALTA_OK_RETRASO = 200;
     /** «Respira»: el botón principal llama la atención una vez. */
     public static final long RESPIRA = 1400;
 
@@ -597,6 +605,64 @@ public final class Movimiento {
             });
             a.start();
         });
+    }
+
+    /**
+     * 23 · Una cifra de «Por ración» cambia: cae 6 dp desde 0,3 de opacidad hasta su sitio.
+     * Con «Quitar animaciones», ya está.
+     */
+    public static void caerCifra(@NonNull View cifra) {
+        cifra.animate().cancel();
+        cifra.setAlpha(1f);
+        cifra.setTranslationY(0f);
+        if (quieto(cifra.getContext())) return;
+        float d = cifra.getResources().getDisplayMetrics().density;
+        cifra.setAlpha(0.3f);
+        cifra.setTranslationY(-6 * d);
+        cifra.animate().alpha(1f).translationY(0f).setDuration(CIFRA).setInterpolator(ESTANDAR).start();
+    }
+
+    /**
+     * 23 · El plato guardado: el velo se oscurece (VELO), la hoja sube desde abajo (HOJA) y
+     * su ✓ salta de 0,4 a 1,25 y a 1 (SALTA_OK), SALTA_OK_RETRASO después. Vibra con éxito.
+     * Todo se puede tocar desde el primer fotograma.
+     */
+    public static void subirHojaPlato(@NonNull View velo, @NonNull View hoja, @NonNull View check) {
+        vibrar(hoja, Vibracion.EXITO);
+        velo.setVisibility(View.VISIBLE);
+        hoja.setVisibility(View.VISIBLE);
+        velo.animate().cancel();
+        hoja.animate().cancel();
+        check.animate().cancel();
+        if (quieto(hoja.getContext())) {
+            velo.setAlpha(1f);
+            hoja.setAlpha(1f);
+            hoja.setTranslationY(0f);
+            check.setScaleX(1f);
+            check.setScaleY(1f);
+            return;
+        }
+        float d = hoja.getResources().getDisplayMetrics().density;
+        velo.setAlpha(0f);
+        velo.animate().alpha(1f).setDuration(VELO).setInterpolator(ESTANDAR).start();
+        hoja.setAlpha(0f);
+        hoja.setTranslationY(60 * d);
+        hoja.animate().alpha(1f).translationY(0f).setDuration(HOJA).setInterpolator(ENFATIZADA).start();
+        check.setScaleX(0.4f);
+        check.setScaleY(0.4f);
+        ValueAnimator a = ValueAnimator.ofFloat(0f, 1f);
+        a.setDuration(SALTA_OK);
+        a.setStartDelay(SALTA_OK_RETRASO);
+        a.setInterpolator(LINEAL);
+        // Como el tablero: de 0,4 a 1,25 hasta el 55 % y de ahí a 1, cada tramo con el rebote.
+        a.addUpdateListener(an -> {
+            float t = (float) an.getAnimatedValue();
+            float s = t < 0.55f ? 0.4f + 0.85f * REBOTE.getInterpolation(t / 0.55f)
+                    : 1.25f - 0.25f * REBOTE.getInterpolation((t - 0.55f) / 0.45f);
+            check.setScaleX(s);
+            check.setScaleY(s);
+        });
+        a.start();
     }
 
     // Esquina de {@code hija} medida desde {@code padre}, que la contiene.

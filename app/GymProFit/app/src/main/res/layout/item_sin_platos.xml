@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_sin_platos — «Mis platos» sin ningún plato (tablero 9, lote 1.6.6): una línea que
+  explica qué es un plato, dentro de la tarjeta de la sección y encima de «Crear un plato».
+  El fondo (bg_grupo_*) lo pone el adaptador.
+-->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tvSinPlatos"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:background="@drawable/bg_grupo_primera"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="8dp"
+    android:text="@string/misplatos_vacio"
+    android:textColor="?attr/colorOnSurfaceVariant"
+    android:textSize="@dimen/text_body" />

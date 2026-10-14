@@ -29,6 +29,10 @@ public class AlimentoComida {
     // la petición; null si va por gramos o la ración no tiene unidad («Media taza»).
     private String racionUnidad;
     private String racionUnidadPlural;
+    // Lote 1.6.6: si el alimento es un plato propio, y si la ración es la de un plato sin
+    // peso hecho (pesa 100 g por dentro: sus gramos no se enseñan).
+    private Boolean alimentoEsPlato;
+    private Boolean racionSinPeso;
 
     public AlimentoComida() {}
 
@@ -71,4 +75,17 @@ public class AlimentoComida {
     public Double getRaciones() { return raciones; }
     public String getRacionUnidad() { return racionUnidad; }
     public String getRacionUnidadPlural() { return racionUnidadPlural; }
+    public boolean isAlimentoEsPlato() { return Boolean.TRUE.equals(alimentoEsPlato); }
+    public boolean isRacionSinPeso() { return Boolean.TRUE.equals(racionSinPeso); }
+    public void setAlimentoEsPlato(boolean v) { this.alimentoEsPlato = v; }
+    public void setRacion(Integer racionId, String nombre, Double gramos, Double raciones, String unidad,
+                          String unidadPlural, boolean sinPeso) {
+        this.racionId = racionId;
+        this.racionNombre = nombre;
+        this.racionGramos = gramos;
+        this.raciones = raciones;
+        this.racionUnidad = unidad;
+        this.racionUnidadPlural = unidadPlural;
+        this.racionSinPeso = sinPeso;
+    }
 }

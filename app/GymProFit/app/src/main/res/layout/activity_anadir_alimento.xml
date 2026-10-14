@@ -7,8 +7,9 @@
   Debajo, el buscador y el botón naranja del escáner. La lista es la de Añadir
   (Recientes y Habituales) sin escribir, y la de la búsqueda con 2 letras o más.
   Cargando, error con reintentar y vacío, con view_estado.
-  Lote 1.6.3: sin texto, las pestañas «Todo» y «Favoritos» (tablero 4; «Mis platos» no se
-  dibuja hasta su lote), y abajo la barra de «Hecho» con lo añadido, que sube con el primero.
+  Lote 1.6.3: sin texto, las pestañas «Todo» y «Favoritos» (tablero 4), y abajo la barra de
+  «Hecho» con lo añadido, que sube con el primero. Lote 1.6.6: la tercera pestaña, «Mis
+  platos» (tablero 9); al elegir ingredientes de un plato no hay etiqueta ni esa pestaña.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -172,6 +173,28 @@
             app:icon="@drawable/ic_ms_favorite"
             app:iconGravity="textStart"
             app:iconSize="18dp"
+            app:iconTint="@color/sel_unidad_texto"
+            app:strokeColor="?attr/colorOutline" />
+
+        <!-- Lote 1.6.6: «Mis platos» (tablero 9). No sale al elegir ingredientes. -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPestanaPlatos"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minHeight="48dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:backgroundTint="@color/sel_unidad_fondo"
+            android:textColor="@color/sel_unidad_texto"
+            android:textStyle="bold"
+            android:textSize="@dimen/text_body"
+            android:text="@string/anadir_pestana_platos"
+            app:icon="@drawable/ic_ms_menu_book"
+            app:iconGravity="textStart"
+            app:iconSize="18dp"
+            app:iconPadding="6dp"
             app:iconTint="@color/sel_unidad_texto"
             app:strokeColor="?attr/colorOutline" />
     </com.google.android.material.button.MaterialButtonToggleGroup>

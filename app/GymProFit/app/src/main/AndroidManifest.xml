@@ -155,6 +155,8 @@
         <activity android:name=".ui.activities.ComidaActivity" android:exported="false" />
         <activity android:name=".ui.activities.AnadirAlimentoActivity" android:exported="false" />
         <activity android:name=".ui.activities.CrearAlimentoActivity" android:exported="false" />
+        <!-- Lote 1.6.6: crear y editar un plato propio (tablero 10). -->
+        <activity android:name=".ui.activities.CrearPlatoActivity" android:exported="false" />
         <activity android:name=".ui.activities.FichaAlimentoActivity" android:exported="false" />
         <activity android:name=".ui.activities.EscanerActivity" android:exported="false" />
         <!-- El modelo de ML Kit para leer códigos de barras (lote 1.6.1): instalado desde

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import es.pmdm.gymprofit.model.alimento.Alimento;
 import es.pmdm.gymprofit.model.alimento.Racion;
 
 // ============================================================
@@ -18,6 +19,8 @@ import es.pmdm.gymprofit.model.alimento.Racion;
 // bajar del paso; la cifra también se escribe. Cambiar de unidad conserva los gramos:
 // a gramos, tal cual; a raciones, a la media ración más cercana (y nunca cero).
 // Sin vistas: la ficha la pinta y AnadirAlimento la manda con estos datos.
+// Un plato sin peso hecho (lote 1.6.6) no tiene gramos: solo su ración, que pesa 100 g
+// por dentro y no se enseña (nueva(Alimento) y deLinea(Alimento, …) lo saben).
 // ============================================================
 public final class CantidadFicha {
 
@@ -69,8 +72,26 @@ public final class CantidadFicha {
     /** Para añadir: la primera ración por una, o 100 g. */
     @NonNull
     public static CantidadFicha nueva(@Nullable List<Racion> raciones) {
-        List<Unidad> u = unidadesDe(raciones);
-        return u.size() > 1 ? new CantidadFicha(u, 0, 1) : new CantidadFicha(u, 0, GRAMOS_POR_DEFECTO);
+        return nueva(raciones, true);
+    }
+
+    /** Para añadir ese alimento: sin gramos si es un plato sin peso hecho. */
+    @NonNull
+    public static CantidadFicha nueva(@NonNull Alimento a) {
+        return nueva(a.getRaciones(), !a.esPlatoSinPeso());
+    }
+
+    @NonNull
+    private static CantidadFicha nueva(@Nullable List<Racion> raciones, boolean conGramos) {
+        List<Unidad> u = unidadesDe(raciones, conGramos);
+        return u.get(0).esGramos() ? new CantidadFicha(u, 0, GRAMOS_POR_DEFECTO) : new CantidadFicha(u, 0, 1);
+    }
+
+    /** Como {@link #deLinea(List, Integer, Double, double)}, sabiendo si el alimento tiene gramos. */
+    @NonNull
+    public static CantidadFicha deLinea(@NonNull Alimento a, @Nullable Integer racionId, @Nullable Double cuantas,
+                                        double gramos) {
+        return deLinea(a.getRaciones(), racionId, cuantas, gramos, !a.esPlatoSinPeso());
     }
 
     /**
@@ -80,16 +101,31 @@ public final class CantidadFicha {
     @NonNull
     public static CantidadFicha deLinea(@Nullable List<Racion> raciones, @Nullable Integer racionId,
                                         @Nullable Double cuantas, double gramos) {
-        List<Unidad> u = unidadesDe(raciones);
+        return deLinea(raciones, racionId, cuantas, gramos, true);
+    }
+
+    @NonNull
+    private static CantidadFicha deLinea(@Nullable List<Racion> raciones, @Nullable Integer racionId,
+                                         @Nullable Double cuantas, double gramos, boolean conGramos) {
+        List<Unidad> u = unidadesDe(raciones, conGramos);
         if (racionId != null && cuantas != null && cuantas > 0) {
-            for (int i = 0; i < u.size() - 1; i++) {
-                if (racionId.equals(u.get(i).racionId)) return new CantidadFicha(u, i, cuantas);
+            for (int i = 0; i < u.size(); i++) {
+                if (!u.get(i).esGramos() && racionId.equals(u.get(i).racionId)) return new CantidadFicha(u, i, cuantas);
             }
+        }
+        if (!u.get(u.size() - 1).esGramos()) {
+            // Sin gramos (un plato sin peso hecho): en raciones, a la media más cercana y nunca cero.
+            return new CantidadFicha(u, 0, Math.max(0.5, Math.round(gramos / u.get(0).gramos * 2) / 2.0));
         }
         return new CantidadFicha(u, u.size() - 1, gramos);
     }
 
-    private static List<Unidad> unidadesDe(@Nullable List<Racion> raciones) {
+    /** ¿Se puede elegir en gramos? (Un plato sin peso hecho, no.) */
+    public boolean conGramos() {
+        return unidades.get(unidades.size() - 1).esGramos();
+    }
+
+    private static List<Unidad> unidadesDe(@Nullable List<Racion> raciones, boolean conGramos) {
         List<Unidad> u = new ArrayList<>();
         if (raciones != null) {
             for (int i = 0; i < raciones.size(); i++) {
@@ -99,7 +135,7 @@ public final class CantidadFicha {
                 }
             }
         }
-        u.add(new Unidad(null, -1, null, 1, null, null));
+        if (conGramos || u.isEmpty()) u.add(new Unidad(null, -1, null, 1, null, null));
         return u;
     }
 

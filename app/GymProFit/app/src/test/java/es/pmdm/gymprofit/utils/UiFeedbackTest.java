@@ -78,4 +78,33 @@ public class UiFeedbackTest {
         assertEquals(Integer.valueOf(15), UiFeedback.minutosDeEspera(900));
         assertEquals(Integer.valueOf(16), UiFeedback.minutosDeEspera(901));
     }
+
+    // --- GP-194: sin red no es el servidor despertando ------------------------
+
+    @Test
+    public void sin_respuesta_y_sin_red_dice_sin_conexion() {
+        assertEquals(es.pmdm.gymprofit.R.string.feedback_error_sin_conexion, UiFeedback.recurso(-1, false));
+    }
+
+    @Test
+    public void sin_respuesta_con_red_es_el_servidor_despertando() {
+        assertEquals(es.pmdm.gymprofit.R.string.feedback_error_cold_start, UiFeedback.recurso(-1, true));
+    }
+
+    @Test
+    public void con_respuesta_la_red_no_cuenta() {
+        assertEquals(es.pmdm.gymprofit.R.string.feedback_error_servidor, UiFeedback.recurso(503, false));
+        assertEquals(es.pmdm.gymprofit.R.string.feedback_error_no_encontrado, UiFeedback.recurso(404, false));
+        assertEquals(es.pmdm.gymprofit.R.string.feedback_error_generico, UiFeedback.recurso(400, false));
+    }
+
+    @Test
+    public void la_foto_de_perfil_usa_la_misma_regla() {
+        for (int code : new int[]{-1, 400, 404, 500}) {
+            for (boolean red : new boolean[]{true, false}) {
+                assertEquals(UiFeedback.sinConexion(code, red),
+                        ErrorFoto.causa(code, red) == ErrorFoto.Causa.SIN_CONEXION);
+            }
+        }
+    }
 }

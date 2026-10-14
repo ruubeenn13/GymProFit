@@ -546,7 +546,7 @@
     <string name="eliminar_cuenta_borra_2">Your profile: sex, age, height, weight, activity level, experience level, goal and the alerts you chose.</string>
     <string name="eliminar_cuenta_borra_3">Your profile picture, if you uploaded one.</string>
     <string name="eliminar_cuenta_borra_4">Your whole training history: the programme you follow, routines, sessions, exercises performed, sets with their weights and reps, notes and progress.</string>
-    <string name="eliminar_cuenta_borra_5">Your whole nutrition log: meals, foods eaten and any custom foods you created.</string>
+    <string name="eliminar_cuenta_borra_5">Your whole nutrition log: meals, foods eaten, any custom foods and dishes you created, with their ingredients, and your favorites.</string>
     <string name="eliminar_cuenta_borra_6">Your body measurements, personal goals and achievements.</string>
     <string name="eliminar_cuenta_borra_7">Your open sessions and your device identifier for notifications.</string>
     <string name="eliminar_cuenta_que_no_se_borra">What does not get deleted</string>
@@ -1374,7 +1374,7 @@
 
     <!-- Lote 1.6.1: Añadir, Buscar, el escáner y la ficha del alimento (GP-162, GP-160). -->
     <string name="anadir_cerrar">Close</string>
-    <string name="anadir_buscar_hint">Search for a food</string>
+    <string name="anadir_buscar_hint">Search for a food or a dish</string>
     <string name="anadir_escanear">Scan a barcode</string>
     <string name="anadir_vacio">Nothing here yet. Search for a food or scan it.</string>
     <string name="anadir_error_lista">The list could not be loaded.</string>
@@ -1704,4 +1704,101 @@
     <string name="sueles_comida">Your usual lunch</string>
     <string name="sueles_merienda">Your usual snack</string>
     <string name="sueles_cena">Your usual dinner</string>
+    <!-- ════ Batch 1.6.6: My dishes (boards 2, 8, 9 and 10) and GP-194 ════ -->
+    <string name="feedback_error_sin_conexion">No connection. Check your network and try again</string>
+    <string name="cantidad_sin_gramos_unidad">%1$s %2$s</string>
+    <string name="cantidad_sin_gramos_raciones">%1$s × %2$s</string>
+    <string name="plato_marca">Dish</string>
+    <string name="fila_plato_fraccion">%1$s (1/%2$d)</string>
+    <string name="fila_plato">%1$s · %2$s kcal · %3$s g prot.</string>
+    <string name="fila_plato_a11y">%1$s, dish. %2$s</string>
+    <string name="anadir_pestana_platos">My dishes</string>
+    <string name="misplatos_seccion_platos">My dishes</string>
+    <string name="misplatos_seccion_creados">Foods you\'ve created</string>
+    <string name="misplatos_crear_plato">Create a dish</string>
+    <string name="misplatos_crear_alimento">Create a food</string>
+    <string name="misplatos_vacio">Put several foods together into one, like your lentil stew or your shake, and log it in one tap</string>
+    <string name="misplatos_error">We couldn\'t load your dishes.</string>
+    <string name="misplatos_con_codigo">%1$s · with its barcode</string>
+    <string name="ingredientes_titulo">Add ingredient</string>
+    <string name="ingredientes_buscar_hint">Search for an ingredient</string>
+    <string name="ingrediente_anadir_a11y">Add %1$s to the dish, %2$s</string>
+    <string name="ingrediente_quitar_a11y">Remove %1$s from the dish</string>
+    <plurals name="plato_ingredientes">
+        <item quantity="one">%d ingredient</item>
+        <item quantity="other">%d ingredients</item>
+    </plurals>
+    <string name="plato_kcal_en_total">%1$s kcal in total</string>
+    <string name="plato_ingredientes_maximo">A dish can have up to %1$d ingredients</string>
+    <string name="ficha_editar_plato">Edit</string>
+    <string name="ficha_anadir_al_plato">Add to the dish</string>
+    <string name="ficha_info_racion">Nutrition per serving</string>
+    <string name="ficha_origen_plato">Your dish</string>
+    <plurals name="ficha_origen_plato_n">
+        <item quantity="one">Your dish · %d ingredient</item>
+        <item quantity="other">Your dish · %d ingredients</item>
+    </plurals>
+    <string name="comida_guardar_como_plato">Save as a dish</string>
+    <string name="comida_fila_plato_a11y">%1$s, dish, %2$s, %3$s kilocalories, %4$s grams of protein</string>
+    <string name="plato_cerrar_a11y">Close without saving</string>
+    <string name="plato_titulo_nuevo">New dish</string>
+    <string name="plato_titulo_editar">Edit dish</string>
+    <string name="plato_nombre">Name</string>
+    <string name="plato_seccion_ingredientes">Ingredients</string>
+    <plurals name="plato_total_ingredientes">
+        <item quantity="one">%1$d · %2$s kcal in total</item>
+        <item quantity="other">%1$d · %2$s kcal in total</item>
+    </plurals>
+    <string name="plato_anadir_ingrediente">Add ingredient</string>
+    <string name="plato_escanear_a11y">Scan an ingredient</string>
+    <string name="plato_ingrediente_a11y">%1$s, %2$s, %3$s</string>
+    <string name="plato_ingrediente_cambiar_a11y">change the amount</string>
+    <string name="plato_ingrediente_quitar_a11y">Remove from the dish</string>
+    <string name="plato_quitar_fondo">Remove</string>
+    <string name="plato_raciones_pregunta">How many servings does it make?</string>
+    <string name="plato_racion_menos">One serving fewer</string>
+    <string name="plato_racion_mas">One serving more</string>
+    <plurals name="plato_raciones_a11y">
+        <item quantity="one">%d serving. Tap to type it</item>
+        <item quantity="other">%d servings. Tap to type it</item>
+    </plurals>
+    <string name="plato_raciones_unidad">servings</string>
+    <string name="plato_raciones_invalidas">Between 1 and %1$d servings</string>
+    <string name="plato_peso">Cooked weight</string>
+    <string name="plato_peso_unidad">g</string>
+    <string name="plato_peso_ayuda_vacio">If you weigh it, you can also log it in grams</string>
+    <string name="plato_peso_ayuda">To log it in grams too: %1$s kcal per 100 g</string>
+    <string name="plato_peso_malo">The weight must be at least 1 g per serving and up to 50,000 g</string>
+    <string name="plato_peso_demasiadas_kcal">With that weight it comes to more than %1$s kcal per 100 g: check the weight</string>
+    <string name="plato_el_plato_entero">The whole dish</string>
+    <string name="plato_por_racion_de">Per serving, of %1$d</string>
+    <string name="plato_cifras_racion_a11y">Per serving: %1$s kilocalories, %2$s grams of protein, %3$s of carbs and %4$s of fat</string>
+    <string name="plato_cifras_entero_a11y">The whole dish: %1$s kilocalories, %2$s grams of protein, %3$s of carbs and %4$s of fat</string>
+    <string name="plato_guardar">Save dish</string>
+    <string name="plato_guardar_cambios">Save changes</string>
+    <string name="plato_error_nombre">Give the dish a name</string>
+    <string name="plato_error_ingredientes">Add at least one ingredient</string>
+    <string name="plato_error_cargar">We couldn\'t load the dish.</string>
+    <string name="plato_cambiado">Dish saved</string>
+    <plurals name="plato_platos_fuera">
+        <item quantity="one">%1$s is left out: a dish can\'t be an ingredient of another dish</item>
+        <item quantity="other">%1$s are left out: a dish can\'t be an ingredient of another dish</item>
+    </plurals>
+    <string name="plato_guardado_a11y">Dish saved</string>
+    <string name="plato_hoja_titulo">%1$s, in My dishes</string>
+    <plurals name="plato_hoja_detalle">
+        <item quantity="one">%1$d serving of %2$s kcal and %3$s g of protein</item>
+        <item quantity="other">%1$d servings of %2$s kcal and %3$s g of protein</item>
+    </plurals>
+    <string name="plato_hoja_detalle_entero">The whole dish: %1$s kcal and %2$s g of protein</string>
+    <string name="plato_hoja_anadir_desayuno">Add 1 serving to breakfast</string>
+    <string name="plato_hoja_anadir_almuerzo">Add 1 serving to mid-morning</string>
+    <string name="plato_hoja_anadir_comida">Add 1 serving to lunch</string>
+    <string name="plato_hoja_anadir_merienda">Add 1 serving to snack</string>
+    <string name="plato_hoja_anadir_cena">Add 1 serving to dinner</string>
+    <string name="plato_hoja_ver_platos">See My dishes</string>
+    <string name="plato_hoja_volver">Back to the meal</string>
+    <string name="plato_menu_editar">Edit dish</string>
+    <string name="plato_menu_eliminar">Delete dish</string>
+    <string name="plato_eliminar_confirmar">Delete this dish? It won\'t show up in your lists any more; what you\'ve already logged doesn\'t change.</string>
 </resources>

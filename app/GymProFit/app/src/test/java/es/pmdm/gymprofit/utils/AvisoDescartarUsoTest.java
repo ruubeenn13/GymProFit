@@ -32,7 +32,7 @@ public class AvisoDescartarUsoTest {
     public void los_formularios_enganchan_el_aviso() throws IOException {
         List<String> faltan = new ArrayList<>();
         for (String pantalla : new String[]{"EditarPerfilActivity", "CambiarPasswordActivity",
-                "CambiarCorreoActivity", "CrearAlimentoActivity"}) {
+                "CambiarCorreoActivity", "CrearAlimentoActivity", "CrearPlatoActivity"}) {
             if (!leer(JAVA.resolve("ui/activities/" + pantalla + ".java")).contains("AvisoDescartar.instalar(")) {
                 faltan.add(pantalla);
             }

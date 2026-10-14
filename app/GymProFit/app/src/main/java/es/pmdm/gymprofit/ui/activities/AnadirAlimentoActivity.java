@@ -90,6 +90,15 @@ import retrofit2.Call;
 // comida de la etiqueta y pasa a «Copiada»; lo copiado cuenta en la barra y sus filas
 // quedan en ✓, cada una con su quitar exacto. Cada fila enseña el ✓ de la comida de la
 // etiqueta (GP-185), y una fila en ✓ cuyo «+» aún viaja abre la ficha al llegar (GP-183).
+// Lote 1.6.6:
+//   · La tercera pestaña, «Mis platos» (tablero 9): los platos y los alimentos creados
+//     (GET /alimentos/mios), con «Crear un plato» y «Crear un alimento». Lo añadido aquí
+//     cuenta en la barra como en las otras. Mantener pulsado un plato, editarlo o eliminarlo.
+//   · En modo ingredientes (EXTRA_MODO_INGREDIENTES, desde la pantalla del plato), el «+»
+//     y la ficha («Añadir al plato») añaden al plato, no a una comida, y el ✓ lo quita: no
+//     hay etiqueta de comida, ni «Comidas recientes», ni «Mis platos», ni platos en ninguna
+//     lista. Abajo, «3 ingredientes» y «Hecho», que devuelve la lista (EXTRA_INGREDIENTES).
+//     Nada va a la API hasta guardar el plato.
 // ============================================================
 public class AnadirAlimentoActivity extends BaseActivity {
 
@@ -102,6 +111,10 @@ public class AnadirAlimentoActivity extends BaseActivity {
     public static final String EXTRA_ANADIDO = "anadido";
     /** La ficha, el escáner y crear se abren desde Añadir: vuelven aquí, sin aviso de añadido. */
     public static final String EXTRA_EN_ANADIR = "enAnadir";
+    /** Lote 1.6.6: elegir ingredientes de un plato en vez de añadir a una comida. */
+    public static final String EXTRA_MODO_INGREDIENTES = "modoIngredientes";
+    /** Los ingredientes del plato (lista de IngredienteElegido en JSON), de ida y de vuelta. */
+    public static final String EXTRA_INGREDIENTES = "ingredientes";
 
     static final String[] TIPOS = {"DESAYUNO", "ALMUERZO", "COMIDA", "MERIENDA", "CENA"};
     private static final int[] ANADIR_A = {R.string.comida_anadir_desayuno, R.string.comida_anadir_almuerzo,
@@ -127,6 +140,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
     private final AlimentoApi alimentoApi = ApiClient.service(AlimentoApi.class);
     private final ComidaApi comidaApi = ApiClient.service(ComidaApi.class);
     private final AlimentoComidaApi lineaApi = ApiClient.service(AlimentoComidaApi.class);
+    private final es.pmdm.gymprofit.network.PlatoApi platoApi = ApiClient.service(es.pmdm.gymprofit.network.PlatoApi.class);
     private BusquedaAlimentoAdapter adapter;
     private VistaEstado estado;
     private View etiqueta;
@@ -159,6 +173,15 @@ public class AnadirAlimentoActivity extends BaseActivity {
     private boolean favoritosViejos = true;
     private int turnoFavoritos;
 
+    // «Mis platos» (1.6.6): la pestaña, lo cargado y el turno de la petición.
+    private boolean enPlatos;
+    @Nullable private es.pmdm.gymprofit.model.plato.LoMio loMio;
+    private int turnoLoMio;
+
+    // Modo ingredientes (1.6.6): los del plato, que se devuelven al salir.
+    private boolean modoIngredientes;
+    private es.pmdm.gymprofit.utils.IngredientesPlato ingredientes;
+
     // Lo añadido sin salir (1.6.3) y el nombre de cada clave, para decir qué ha fallado.
     private Anadidos anadidos;
     private final Map<String, String> nombres = new HashMap<>();
@@ -177,6 +200,8 @@ public class AnadirAlimentoActivity extends BaseActivity {
     private ActivityResultLauncher<Intent> crearLauncher;
     private ActivityResultLauncher<Intent> editarLauncher;
     private ActivityResultLauncher<Intent> actualizarLauncher;
+    private ActivityResultLauncher<Intent> ingredienteLauncher;
+    private ActivityResultLauncher<Intent> platoLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,21 +213,39 @@ public class AnadirAlimentoActivity extends BaseActivity {
         if (tipoComida == null || indiceTipo(tipoComida) < 0) tipoComida = "MERIENDA";
         fecha = getIntent().getStringExtra(EXTRA_FECHA);
         tipoInicial = tipoComida;
+        modoIngredientes = getIntent().getBooleanExtra(EXTRA_MODO_INGREDIENTES, false);
+        ingredientes = new es.pmdm.gymprofit.utils.IngredientesPlato(leerIngredientes(
+                savedInstanceState != null ? savedInstanceState.getString(EXTRA_INGREDIENTES)
+                        : getIntent().getStringExtra(EXTRA_INGREDIENTES)));
         if (savedInstanceState != null) {
             tipoComida = savedInstanceState.getString(EXTRA_TIPO, tipoComida);
             enFavoritos = savedInstanceState.getBoolean("favoritos");
+            enPlatos = savedInstanceState.getBoolean("platos");
             recientesTodos = savedInstanceState.getBoolean("recientesTodos");
         }
+        if (modoIngredientes) enPlatos = false;
         anadidos = new Anadidos(servidor(), oyente());
 
         // Lo añadido desde la ficha, el escáner o lo creado vuelve aquí: cuenta en la barra.
         fichaLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), this::alVolver);
         escanerLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), this::alVolver);
         crearLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), this::alVolver);
-        editarLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                r -> refrescar());
+        editarLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), r -> {
+            refrescar();
+            if (mirandoPlatos()) cargarLoMio();
+        });
         actualizarLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 this::alVolverDeActualizar);
+        // Lo que vuelve de la ficha o del escáner en modo ingredientes: entra en el plato.
+        ingredienteLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                this::alVolverDeIngrediente);
+        // De crear o editar un plato: lo añadido desde su hoja cuenta en la barra; la
+        // pestaña se recarga.
+        platoLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), r -> {
+            loMio = null;
+            alVolver(r);
+            if (mirandoPlatos()) cargarLoMio();
+        });
 
         findViewById(R.id.btnCerrarAnadir).setOnClickListener(v -> salir());
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -217,8 +260,17 @@ public class AnadirAlimentoActivity extends BaseActivity {
                 findViewById(R.id.tvTituloAnadir), findViewById(R.id.ranuraEtiquetaDerecha),
                 findViewById(R.id.ranuraEtiquetaDebajo));
         pintarComida();
-        cargarDia();
-        cargarRecientes();
+        if (modoIngredientes) {
+            // Sin comida a la que añadir: ni etiqueta, ni el día, ni comidas recientes.
+            etiqueta.setVisibility(View.GONE);
+            findViewById(R.id.ranuraEtiquetaDebajo).setVisibility(View.GONE);
+            ((TextView) findViewById(R.id.tvTituloAnadir)).setText(R.string.ingredientes_titulo);
+            ((TextView) findViewById(R.id.etBuscarAnadir)).setHint(R.string.ingredientes_buscar_hint);
+            findViewById(R.id.btnPestanaPlatos).setVisibility(View.GONE);
+        } else {
+            cargarDia();
+            cargarRecientes();
+        }
         findViewById(R.id.btnEscanear).setOnClickListener(v -> abrirEscaner());
 
         barra = findViewById(R.id.barraHecho);
@@ -233,18 +285,20 @@ public class AnadirAlimentoActivity extends BaseActivity {
         rv.addOnScrollListener(new PaginacionScrollListener(lm) {
             @Override protected void cargarMas() { siguientePagina(); }
             @Override protected boolean isCargando() { return cargando; }
-            @Override protected boolean esUltimaPagina() { return ultimaPagina || mirandoFavoritos(); }
+            @Override protected boolean esUltimaPagina() { return ultimaPagina || mirandoFavoritos() || mirandoPlatos(); }
         });
 
         pestanas = findViewById(R.id.pestanasAnadir);
-        pestanas.check(enFavoritos ? R.id.btnPestanaFavoritos : R.id.btnPestanaTodo);
+        pestanas.check(enPlatos ? R.id.btnPestanaPlatos : enFavoritos ? R.id.btnPestanaFavoritos : R.id.btnPestanaTodo);
         pintarPestanas();
         pestanas.addOnButtonCheckedListener((g, id, marcado) -> {
             if (!marcado) return;
             enFavoritos = id == R.id.btnPestanaFavoritos;
+            enPlatos = id == R.id.btnPestanaPlatos;
             pintarPestanas();
             pintarActual(false);
             if (enFavoritos) cargarFavoritos();
+            if (enPlatos) cargarLoMio();
         });
 
         etBuscar = findViewById(R.id.etBuscarAnadir);
@@ -274,6 +328,8 @@ public class AnadirAlimentoActivity extends BaseActivity {
         pintarActual(false);
         buscarDesdeCero();
         if (enFavoritos) cargarFavoritos();
+        if (enPlatos) cargarLoMio();
+        if (modoIngredientes) pintarBarra();
     }
 
     @Override
@@ -281,7 +337,9 @@ public class AnadirAlimentoActivity extends BaseActivity {
         super.onSaveInstanceState(out);
         out.putString(EXTRA_TIPO, tipoComida);
         out.putBoolean("favoritos", enFavoritos);
+        out.putBoolean("platos", enPlatos);
         out.putBoolean("recientesTodos", recientesTodos);
+        out.putString(EXTRA_INGREDIENTES, new Gson().toJson(ingredientes.lista()));
     }
 
     @Override
@@ -366,6 +424,11 @@ public class AnadirAlimentoActivity extends BaseActivity {
     // ── Abrir ───────────────────────────────────────────────────────────────
 
     private void abrirFicha(Alimento alimento) {
+        if (modoIngredientes) {
+            // La ficha añade al plato («Añadir al plato») o, si ya está, cambia su cantidad.
+            ingredienteLauncher.launch(FichaAlimentoActivity.paraIngrediente(this, alimento, ingredientes.de(alimento)));
+            return;
+        }
         String clave = clave(alimento);
         if (anadidos.marcado(clave)) {
             // Mientras el «+» aún viaja no hay línea que actualizar: se abre en cuanto llega
@@ -383,11 +446,21 @@ public class AnadirAlimentoActivity extends BaseActivity {
     }
 
     private void abrirEscaner() {
+        if (modoIngredientes) {
+            ingredienteLauncher.launch(new Intent(this, EscanerActivity.class).putExtra(EXTRA_MODO_INGREDIENTES, true));
+            return;
+        }
         escanerLauncher.launch(new Intent(this, EscanerActivity.class)
                 .putExtra(EXTRA_TIPO, tipoComida).putExtra(EXTRA_FECHA, fecha).putExtra(EXTRA_EN_ANADIR, true));
     }
 
     private void abrirCrear() {
+        if (modoIngredientes) {
+            // Sin comida: «Solo guardar», y al volver sale en lo tuyo para añadirlo al plato.
+            crearLauncher.launch(new Intent(this, CrearAlimentoActivity.class)
+                    .putExtra(CrearAlimentoActivity.EXTRA_NOMBRE, consulta));
+            return;
+        }
         // «Créalo» lleva lo que se buscaba al nombre (GP-181).
         crearLauncher.launch(new Intent(this, CrearAlimentoActivity.class)
                 .putExtra(EXTRA_TIPO, tipoComida).putExtra(EXTRA_FECHA, fecha)
@@ -405,11 +478,42 @@ public class AnadirAlimentoActivity extends BaseActivity {
             nombres.put(Anadidos.clave(a.getTipoComida(), a.getAlimentoId(), null), a.getLinea().getNombreAlimento());
             anadidos.marcar(a);
             pintarBarra();
-        } else if (r.getResultCode() == RESULT_OK) {
+        } else if (r.getResultCode() == RESULT_OK || modoIngredientes) {
             // Lo creado sin añadir sale al refrescar.
             refrescar();
         }
+        if (mirandoPlatos()) cargarLoMio();
         if (enFavoritos && favoritosViejos) cargarFavoritos();
+    }
+
+    // De la ficha o del escáner en modo ingredientes: el ingrediente entra en el plato (o
+    // cambia su cantidad, si ya estaba).
+    private void alVolverDeIngrediente(ActivityResult r) {
+        Intent datos = r.getData();
+        if (datos != null) apuntarFavorito(datos);
+        String json = datos != null ? datos.getStringExtra(FichaAlimentoActivity.EXTRA_INGREDIENTE) : null;
+        if (r.getResultCode() != RESULT_OK || json == null) return;
+        es.pmdm.gymprofit.model.plato.IngredienteElegido i =
+                new Gson().fromJson(json, es.pmdm.gymprofit.model.plato.IngredienteElegido.class);
+        if (!ingredientes.tiene(i.getAlimento()) && ingredientes.lleno()) {
+            UIHelper.mostrarToastError(this, getString(R.string.plato_ingredientes_maximo, maxIngredientes()));
+            return;
+        }
+        ingredientes.poner(i);
+        adapter.cambioMas(Anadidos.clave(tipoComida, i.getAlimento().getId(), i.getAlimento().getBarcode()));
+        pintarBarra();
+    }
+
+    private static int maxIngredientes() {
+        return es.pmdm.gymprofit.utils.CuentaPlato.INGREDIENTES_MAX;
+    }
+
+    @Nullable
+    private static List<es.pmdm.gymprofit.model.plato.IngredienteElegido> leerIngredientes(@Nullable String json) {
+        if (json == null) return null;
+        es.pmdm.gymprofit.model.plato.IngredienteElegido[] lista =
+                new Gson().fromJson(json, es.pmdm.gymprofit.model.plato.IngredienteElegido[].class);
+        return lista != null ? java.util.Arrays.asList(lista) : null;
     }
 
     // De la ficha en «Actualizar», abierta desde una fila en ✓.
@@ -442,6 +546,12 @@ public class AnadirAlimentoActivity extends BaseActivity {
     // «Hecho», cerrar y atrás: todo está guardado o en camino. Se espera a lo que viaja y,
     // si tarda, se dice (como al salir de una comida, GP-179).
     private void salir() {
+        if (modoIngredientes) {
+            // Nada va a la API hasta guardar el plato: se devuelve la lista tal cual.
+            setResult(RESULT_OK, new Intent().putExtra(EXTRA_INGREDIENTES, new Gson().toJson(ingredientes.lista())));
+            finish();
+            return;
+        }
         if (saliendo) return;
         saliendo = true;
         if (anadidos.ocupado()) espera.postDelayed(verSaliendo, ESPERA_SALIENDO);
@@ -482,6 +592,21 @@ public class AnadirAlimentoActivity extends BaseActivity {
     }
 
     private void tocarMas(@NonNull Alimento a, @NonNull View boton, @NonNull ImageView icono) {
+        if (modoIngredientes) {
+            boolean antes = ingredientes.tiene(a);
+            if (!antes && ingredientes.lleno()) {
+                UIHelper.mostrarToastError(this, getString(R.string.plato_ingredientes_maximo, maxIngredientes()));
+                return;
+            }
+            ingredientes.alternar(a, AnadirRapido.cantidad(a));
+            BusquedaAlimentoAdapter.pintarMas(boton, icono, !antes);
+            Movimiento.volverMas(boton, icono,
+                    ContextCompat.getColor(this, antes ? R.color.gp_success_container : R.color.gp_surface_2),
+                    ContextCompat.getColor(this, antes ? R.color.gp_surface_2 : R.color.gp_success_container));
+            adapter.cambioMas(clave(a));
+            pintarBarra();
+            return;
+        }
         String clave = clave(a);
         boolean antes = anadidos.marcado(clave);
         nombres.put(clave, a.getNombre());
@@ -556,6 +681,10 @@ public class AnadirAlimentoActivity extends BaseActivity {
     // ── La barra de «Hecho» ─────────────────────────────────────────────────
 
     private void pintarBarra() {
+        if (modoIngredientes) {
+            pintarBarraIngredientes();
+            return;
+        }
         Anadidos.Resumen r = anadidos.resumen();
         if (r.cuantos == 0) {
             barra.setVisibility(View.GONE);
@@ -573,6 +702,27 @@ public class AnadirAlimentoActivity extends BaseActivity {
         if (barra.getVisibility() != View.VISIBLE) {
             barra.setVisibility(View.VISIBLE);
             // Sube con el primer añadido (ENTRA, 40 dp, como el tablero).
+            Movimiento.entrarUna(barra, 0, Movimiento.ENTRA, 40);
+        }
+        barra.post(() -> rv.setPadding(rv.getPaddingLeft(), rv.getPaddingTop(), rv.getPaddingRight(),
+                barra.getHeight() + dp(24)));
+    }
+
+    // En modo ingredientes: «3 ingredientes», lo que suman y «Hecho».
+    private void pintarBarraIngredientes() {
+        int n = ingredientes.cuantos();
+        if (n == 0) {
+            barra.setVisibility(View.GONE);
+            rv.setPadding(rv.getPaddingLeft(), rv.getPaddingTop(), rv.getPaddingRight(), dp(24));
+            return;
+        }
+        String texto = getResources().getQuantityString(R.plurals.plato_ingredientes, n, n);
+        ((TextView) findViewById(R.id.tvResumenHecho)).setText(texto);
+        String kcal = getString(R.string.plato_kcal_en_total, nf.format(ingredientes.total().kcal));
+        ((TextView) findViewById(R.id.tvKcalHecho)).setText(kcal);
+        findViewById(R.id.textosBarraHecho).setContentDescription(texto + ", " + kcal);
+        if (barra.getVisibility() != View.VISIBLE) {
+            barra.setVisibility(View.VISIBLE);
             Movimiento.entrarUna(barra, 0, Movimiento.ENTRA, 40);
         }
         barra.post(() -> rv.setPadding(rv.getPaddingLeft(), rv.getPaddingTop(), rv.getPaddingRight(),
@@ -676,6 +826,27 @@ public class AnadirAlimentoActivity extends BaseActivity {
     }
 
     private String detalle(@NonNull Alimento a, @Nullable GruposBusqueda.Seccion s) {
+        if (modoIngredientes) {
+            es.pmdm.gymprofit.model.plato.IngredienteElegido i = ingredientes.de(a);
+            if (i != null) {
+                CantidadFicha c = i.cantidad();
+                return kcalYCantidad(AnadirRapido.texto(Cantidades.Formatos.de(this), FechaUtils.localeDeLaApp(this), c),
+                        AnadirRapido.kcal(a, c));
+            }
+            return BusquedaAlimentoAdapter.detalle(this, a);
+        }
+        // «Mis platos» (1.6.6): el plato dice qué es una ración y lo que vale; lo creado, lo
+        // que añade su «+» y si lleva código.
+        if (s == GruposBusqueda.Seccion.MIS_PLATOS && !anadidos.marcado(clave(a))) {
+            return es.pmdm.gymprofit.utils.FilaPlato.de(this, a);
+        }
+        if (s == GruposBusqueda.Seccion.CREADOS && !anadidos.marcado(clave(a))) {
+            CantidadFicha c = AnadirRapido.cantidad(a);
+            String base = kcalYCantidad(AnadirRapido.texto(Cantidades.Formatos.de(this), FechaUtils.localeDeLaApp(this), c),
+                    AnadirRapido.kcal(a, c));
+            return a.getBarcode() != null && !a.getBarcode().trim().isEmpty()
+                    ? getString(R.string.misplatos_con_codigo, base) : base;
+        }
         String clave = clave(a);
         if (anadidos.marcado(clave)) {
             // En ✓, lo que se ha añadido.
@@ -696,6 +867,12 @@ public class AnadirAlimentoActivity extends BaseActivity {
     }
 
     private String etiquetaMas(@NonNull Alimento a) {
+        if (modoIngredientes) {
+            if (ingredientes.tiene(a)) return getString(R.string.ingrediente_quitar_a11y, a.getNombre());
+            String cantidad = AnadirRapido.texto(Cantidades.Formatos.de(this), FechaUtils.localeDeLaApp(this),
+                    AnadirRapido.cantidad(a));
+            return getString(R.string.ingrediente_anadir_a11y, a.getNombre(), cantidad);
+        }
         String clave = clave(a);
         if (anadidos.marcado(clave)) return getString(R.string.fila_check_a11y, a.getNombre());
         CantidadFicha c = AnadirRapido.cantidad(a);
@@ -709,6 +886,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
 
             @Override
             public boolean tieneOpciones(@NonNull Alimento a, @Nullable GruposBusqueda.Seccion s) {
+                if (modoIngredientes) return false;
                 return s == GruposBusqueda.Seccion.FAVORITOS || puedeOpciones(a);
             }
 
@@ -728,7 +906,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
 
             @Override
             public boolean marcado(@NonNull Alimento a) {
-                return anadidos.marcado(clave(a));
+                return modoIngredientes ? ingredientes.tiene(a) : anadidos.marcado(clave(a));
             }
 
             @NonNull @Override
@@ -761,6 +939,10 @@ public class AnadirAlimentoActivity extends BaseActivity {
             public String aLaComida() {
                 return getString(aLa(tipoComida));
             }
+
+            @Override public void crearPlato() { abrirCrearPlato(); }
+
+            @Override public void crearAlimento() { abrirCrear(); }
         };
     }
 
@@ -773,6 +955,10 @@ public class AnadirAlimentoActivity extends BaseActivity {
 
     private boolean mirandoFavoritos() {
         return enFavoritos && consulta.isEmpty();
+    }
+
+    private boolean mirandoPlatos() {
+        return enPlatos && consulta.isEmpty();
     }
 
     private void buscarDesdeCero() {
@@ -801,6 +987,8 @@ public class AnadirAlimentoActivity extends BaseActivity {
                 if (miTurno != turno || isDestroyed()) return;
                 cargando = false;
                 List<Alimento> contenido = pag != null && pag.getContent() != null ? pag.getContent() : new ArrayList<>();
+                // Un plato no puede ser ingrediente de otro (DEC-047).
+                if (modoIngredientes) contenido = GruposBusqueda.sinPlatos(contenido);
                 if (numero == 0) resultados.clear();
                 resultados.addAll(contenido);
                 pagina = pag != null ? pag.getPage() : 0;
@@ -808,7 +996,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
                 if (!buscando && numero == 0) listaGuardada = new ArrayList<>(contenido);
                 boolean primera = !yaEntro;
                 yaEntro = true;
-                if (!mirandoFavoritos()) pintarActual(numero == 0 && primera);
+                if (!mirandoFavoritos() && !mirandoPlatos()) pintarActual(numero == 0 && primera);
             }
 
             @Override
@@ -821,7 +1009,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
                     UiFeedback.toastError(AnadirAlimentoActivity.this, code, message);
                     return;
                 }
-                if (mirandoFavoritos()) return;
+                if (mirandoFavoritos() || mirandoPlatos()) return;
                 yaEntro = true;
                 adapter.poner(new ArrayList<>(), false);
                 estado.error(VistaEstado.mensaje(AnadirAlimentoActivity.this, R.string.anadir_error_lista, code, message),
@@ -836,6 +1024,10 @@ public class AnadirAlimentoActivity extends BaseActivity {
         pestanas.setVisibility(buscando ? View.GONE : View.VISIBLE);
         if (mirandoFavoritos()) {
             pintarFavoritos();
+            return;
+        }
+        if (mirandoPlatos()) {
+            pintarPlatos();
             return;
         }
         if (!yaEntro) {
@@ -853,10 +1045,69 @@ public class AnadirAlimentoActivity extends BaseActivity {
 
     // ── Favoritos ───────────────────────────────────────────────────────────
 
-    // El corazón de la pestaña, relleno cuando está elegida (tablero 8).
+    // El corazón de la pestaña, relleno cuando está elegida (tablero 8). Con letra grande,
+    // tres pestañas no caben con su icono (1.6.6): sin icono y hasta dos líneas, sin cortar.
     private void pintarPestanas() {
+        if (getResources().getConfiguration().fontScale >= 1.3f) {
+            for (int id : new int[]{R.id.btnPestanaTodo, R.id.btnPestanaFavoritos, R.id.btnPestanaPlatos}) {
+                com.google.android.material.button.MaterialButton b =
+                        (com.google.android.material.button.MaterialButton) findViewById(id);
+                b.setIcon(null);
+                b.setMaxLines(2);
+                b.setEllipsize(null);
+                b.setPaddingRelative(dp(4), b.getPaddingTop(), dp(4), b.getPaddingBottom());
+            }
+            return;
+        }
         ((com.google.android.material.button.MaterialButton) findViewById(R.id.btnPestanaFavoritos))
                 .setIconResource(enFavoritos ? R.drawable.ic_ms_favorite_fill : R.drawable.ic_ms_favorite);
+    }
+
+    // ── Mis platos (1.6.6) ──────────────────────────────────────────────────
+
+    private void cargarLoMio() {
+        int miTurno = ++turnoLoMio;
+        if (loMio == null && mirandoPlatos()) {
+            adapter.poner(new ArrayList<>(), false);
+            estado.cargando();
+        }
+        platoApi.loMio().enqueue(new ApiCallback<es.pmdm.gymprofit.model.plato.LoMio>() {
+            @Override
+            public void onOk(es.pmdm.gymprofit.model.plato.LoMio m) {
+                if (miTurno != turnoLoMio || isDestroyed()) return;
+                loMio = m != null ? m : new es.pmdm.gymprofit.model.plato.LoMio();
+                if (mirandoPlatos()) pintarPlatos();
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                if (miTurno != turnoLoMio || isDestroyed() || !mirandoPlatos()) return;
+                if (loMio != null) {
+                    // Con algo ya en pantalla, se avisa y se deja lo que había.
+                    UiFeedback.toastError(AnadirAlimentoActivity.this, code, message);
+                    return;
+                }
+                adapter.poner(new ArrayList<>(), false);
+                estado.error(VistaEstado.mensaje(AnadirAlimentoActivity.this, R.string.misplatos_error, code, message),
+                        AnadirAlimentoActivity.this::cargarLoMio);
+            }
+        });
+    }
+
+    private void pintarPlatos() {
+        if (loMio == null) {
+            adapter.poner(new ArrayList<>(), false);
+            estado.cargando();
+            return;
+        }
+        adapter.poner(GruposBusqueda.misPlatos(loMio.getPlatos(), loMio.getAlimentos()), false);
+        estado.oculto();
+    }
+
+    // «Crear un plato»: su hoja añade una ración a la comida de la etiqueta (o no).
+    private void abrirCrearPlato() {
+        platoLauncher.launch(new Intent(this, CrearPlatoActivity.class)
+                .putExtra(EXTRA_TIPO, tipoComida).putExtra(EXTRA_FECHA, fecha));
     }
 
     private void cargarFavoritos() {
@@ -897,9 +1148,15 @@ public class AnadirAlimentoActivity extends BaseActivity {
             estado.cargando();
             return;
         }
-        List<GruposBusqueda.Elemento> lista = GruposBusqueda.favoritos(favoritos.getFavoritos(), favoritos.getPropuesta());
+        List<Alimento> deFavoritos = modoIngredientes ? GruposBusqueda.sinPlatos(favoritos.getFavoritos())
+                : favoritos.getFavoritos();
+        Favoritos.Propuesta propuesta = favoritos.getPropuesta();
+        if (modoIngredientes && propuesta != null && propuesta.getAlimento() != null && propuesta.getAlimento().esPlato()) {
+            propuesta = null;
+        }
+        List<GruposBusqueda.Elemento> lista = GruposBusqueda.favoritos(deFavoritos, propuesta);
         adapter.poner(lista, false);
-        if (favoritos.getFavoritos().isEmpty() && favoritos.getPropuesta() == null) estado.vacio(R.string.favoritos_vacio);
+        if (deFavoritos.isEmpty() && propuesta == null) estado.vacio(R.string.favoritos_vacio);
         else estado.oculto();
     }
 
@@ -994,7 +1251,9 @@ public class AnadirAlimentoActivity extends BaseActivity {
         boolean esPredefinido = alimento.getUsuarioId() == null;
 
         List<UIHelper.MenuAction> actions = new ArrayList<>();
-        actions.add(new UIHelper.MenuAction(R.drawable.ic_ms_edit, getString(R.string.alimento_editar),
+        boolean plato = alimento.esPlato();
+        actions.add(new UIHelper.MenuAction(R.drawable.ic_ms_edit,
+                getString(plato ? R.string.plato_menu_editar : R.string.alimento_editar),
                 () -> mostrarDialogoEditarAlimento(alimento)));
         if (esAdmin && esPredefinido) {
             actions.add(new UIHelper.MenuAction(R.drawable.ic_ms_visibility_off, getString(R.string.comida_desactivar_alimento),
@@ -1004,10 +1263,11 @@ public class AnadirAlimentoActivity extends BaseActivity {
                             R.drawable.ic_ms_visibility_off,
                             () -> desactivarAlimento(alimento))));
         }
-        actions.add(new UIHelper.MenuAction(R.drawable.ic_ms_delete, getString(R.string.alimento_eliminar), true,
+        actions.add(new UIHelper.MenuAction(R.drawable.ic_ms_delete,
+                getString(plato ? R.string.plato_menu_eliminar : R.string.alimento_eliminar), true,
                 () -> UIHelper.mostrarDialogoConIcono(this,
-                        getString(R.string.alimento_eliminar),
-                        getString(R.string.alimento_eliminar_confirmar),
+                        getString(plato ? R.string.plato_menu_eliminar : R.string.alimento_eliminar),
+                        getString(plato ? R.string.plato_eliminar_confirmar : R.string.alimento_eliminar_confirmar),
                         R.drawable.ic_ms_delete,
                         () -> eliminarAlimento(alimento))));
         UIHelper.mostrarMenuAnclado(this, anchorView, alimento.getNombre(), actions);
@@ -1016,6 +1276,11 @@ public class AnadirAlimentoActivity extends BaseActivity {
     // Editar abre la pantalla de crear en modo edición (decisión 17): la misma etiqueta,
     // la ración y la categoría, en vez del diálogo de antes. Al volver, se recarga.
     private void mostrarDialogoEditarAlimento(Alimento alimento) {
+        if (alimento.esPlato()) {
+            // Un plato se edita en su pantalla (1.6.6), sin hoja al acabar.
+            platoLauncher.launch(CrearPlatoActivity.paraEditar(this, alimento.getId()));
+            return;
+        }
         editarLauncher.launch(CrearAlimentoActivity.paraEditar(this, alimento.getId()));
     }
 
@@ -1049,6 +1314,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
                 // Oculta el spinner al confirmarse la eliminación
                 LoadingDialog.hide(AnadirAlimentoActivity.this);
                 refrescar();
+                if (mirandoPlatos()) cargarLoMio();
             }
             @Override
             public void onFail(int code, String message) {
