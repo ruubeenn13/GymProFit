@@ -45,6 +45,13 @@ class AlimentoServiceTest {
     @Mock
     private IAlimentoJooqRepository alimentoJooqRepository;
 
+    // Lote 1.6.6: borrar del todo mira si el alimento está en una comida o en un plato.
+    @Mock
+    private com.gymprofit.api.repository.jpa.IPlatoIngredienteRepository ingredienteRepository;
+
+    @Mock
+    private com.gymprofit.api.repository.jpa.IAlimentoComidaRepository lineaRepository;
+
     @Mock
     private AlimentoMapper alimentoMapper;
 

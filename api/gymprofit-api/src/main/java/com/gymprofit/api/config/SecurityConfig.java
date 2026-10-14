@@ -159,6 +159,10 @@ public class SecurityConfig {
                                 // gasta cupo de Open Food Facts: como POST /alimentos/importar, solo
                                 // con cuenta (GP-160).
                                 .requestMatchers(HttpMethod.GET, "/alimentos/codigo/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+                                // Lote 1.6.6: lo de la pestaña «Mis platos» es de la cuenta; el
+                                // invitado no tiene nada que listar. Antes del GET general.
+                                .requestMatchers(HttpMethod.GET, "/alimentos/mios").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+                                .requestMatchers("/platos", "/platos/**").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
                                 .requestMatchers(HttpMethod.GET, "/alimentos/**").hasAnyRole(RoleType.GUEST.name(), RoleType.USER.name(), RoleType.ADMIN.name())
 
                                 // JOOQ ejercicios - accesibles por todos los roles

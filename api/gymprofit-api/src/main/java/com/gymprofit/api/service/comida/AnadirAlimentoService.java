@@ -20,6 +20,7 @@ import com.gymprofit.api.repository.jpa.IComidaRepository;
 import com.gymprofit.api.service.alimentocomida.IAlimentoComidaService;
 import com.gymprofit.api.service.alimentocomida.RacionVigente;
 import com.gymprofit.api.service.codigo.CodigoBarrasService;
+import com.gymprofit.api.service.plato.Platos;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -179,9 +180,10 @@ public class AnadirAlimentoService {
                 .orElseThrow(() -> new NotFoundEntityException("error.alimento.noExiste", dto.getId()));
     }
 
-    // La ración en esa posición de la lista del alimento (en su orden).
+    // La ración en esa posición de la lista del alimento (en su orden), la que se enseña:
+    // de un plato, solo la de hoy.
     private static Integer racionEn(Alimento alimento, int indice) {
-        List<AlimentoRacion> raciones = alimento.getRaciones();
+        List<AlimentoRacion> raciones = Platos.racionesVisibles(alimento);
         if (raciones == null || indice >= raciones.size()) {
             throw new InvalidDataException("error.racion.otroAlimento", indice);
         }
@@ -213,6 +215,7 @@ public class AnadirAlimentoService {
     // El alimento ya estaba en la comida: una sola línea, con la cantidad sumada. Si las
     // dos son de la misma ración, siguen siéndolo; si no, la suma va en gramos.
     private AlimentoComida sumar(AlimentoComida existente, AlimentoComida nueva) {
+        if (Platos.esPlato(existente.getAlimento())) return sumarPlato(existente, nueva);
         BigDecimal gramos = existente.getCantidadGramos().add(nueva.getCantidadGramos());
         // Una línea cuya ración ya no cuadra (GP-177) no son raciones: se suma en gramos.
         boolean mismaRacion = RacionVigente.de(existente) != null && nueva.getRacion() != null
@@ -225,6 +228,32 @@ public class AnadirAlimentoService {
             existente.setRaciones(null);
             alimentoComidaService.ponerGramos(existente, gramos);
         }
+        return existente;
+    }
+
+    // Un plato (lote 1.6.6): sus gramos solo son de verdad con peso hecho y fuera de la
+    // ración sin peso, así que se suma en raciones siempre que se pueda, de las que tiene
+    // hoy; en gramos, solo con peso hecho y si alguna de las dos va en gramos.
+    private AlimentoComida sumarPlato(AlimentoComida existente, AlimentoComida nueva) {
+        Alimento plato = existente.getAlimento();
+        AlimentoRacion actual = Platos.racionActual(plato);
+        AlimentoRacion r = existente.getRacion();
+        boolean existenteEnRaciones = Platos.esRacionSinPeso(r)
+                || (Platos.esRacionDePlato(r) && RacionVigente.de(existente) != null);
+        BigDecimal antes = Platos.racionesDe(existente);
+        boolean nuevaEnRaciones = nueva.getRacion() != null;
+        if (actual != null && nuevaEnRaciones && (existenteEnRaciones || !Platos.conPeso(plato))) {
+            BigDecimal suma = (antes == null ? BigDecimal.ZERO : antes).add(nueva.getRaciones());
+            alimentoComidaService.ponerCantidad(existente, null, actual.getId(), suma);
+            return existente;
+        }
+        // Con peso hecho y algo en gramos: los de la ración sin peso no son de verdad, y
+        // se pasan a gramos con la ración de hoy.
+        BigDecimal gramosAntes = Platos.esRacionSinPeso(r) && actual != null && antes != null
+                ? actual.getGramos().multiply(antes) : existente.getCantidadGramos();
+        existente.setRacion(null);
+        existente.setRaciones(null);
+        alimentoComidaService.ponerGramos(existente, gramosAntes.add(nueva.getCantidadGramos()));
         return existente;
     }
 }

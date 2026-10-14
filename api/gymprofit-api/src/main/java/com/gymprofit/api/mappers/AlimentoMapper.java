@@ -43,6 +43,8 @@ public interface AlimentoMapper {
     @Mapping(target = "codigoOrigen", ignore = true)
     @Mapping(target = "revisado", ignore = true)
     @Mapping(target = "raciones", ignore = true)
+    @Mapping(target = "platoRaciones", ignore = true)
+    @Mapping(target = "platoPesoGramos", ignore = true)
     Alimento toEntity(AlimentoCreateDTO alimentoCreateDTO);
 
     // Tras el mapeo base, localiza los textos del DTO: si el idioma del request
@@ -52,7 +54,8 @@ public interface AlimentoMapper {
     @AfterMapping
     default void localizarTextos(Alimento alimento, @MappingTarget AlimentoDTO dto) {
         boolean ingles = "en".equals(LocaleContextHolder.getLocale().getLanguage());
-        dto.setRaciones(raciones(alimento.getRaciones(), ingles));
+        // De un plato, solo su ración de hoy (lote 1.6.6): la otra la guardan las líneas viejas.
+        dto.setRaciones(raciones(com.gymprofit.api.service.plato.Platos.racionesVisibles(alimento), ingles));
         // La clave va siempre sin traducir (A6); vacía es que no tiene.
         if (dto.getCategoriaClave() != null && dto.getCategoriaClave().isBlank()) dto.setCategoriaClave(null);
 

@@ -107,6 +107,16 @@ public class Alimento {
     @Column(nullable = false)
     private boolean revisado;
 
+    // Lote 1.6.6 (DEC-047): un plato es un alimento del usuario con ingredientes. Cuántas
+    // raciones salen (1 a 99); null en lo que no es un plato.
+    @Column(name = "plato_raciones")
+    private Integer platoRaciones;
+
+    // El peso del plato hecho, opcional. Sin él, los valores de arriba son los de una
+    // ración; con él, por 100 g, como cualquier alimento.
+    @Column(name = "plato_peso_gramos", precision = 7, scale = 1)
+    private BigDecimal platoPesoGramos;
+
     // Raciones con nombre y peso (GP-127). Por lotes, para que un listado no haga una
     // consulta por alimento.
     @OneToMany(mappedBy = "alimento", fetch = FetchType.LAZY)

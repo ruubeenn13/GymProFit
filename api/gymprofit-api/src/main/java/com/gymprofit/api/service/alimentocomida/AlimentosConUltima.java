@@ -72,7 +72,7 @@ public class AlimentosConUltima {
         boolean ingles = "en".equals(LocaleContextHolder.getLocale().getLanguage());
         for (Alimento a : alimentoRepository.conRaciones(ids)) {
             AlimentoDTO dto = alimentoMapper.toDTO(a);
-            dto.setUltima(UltimaCantidad.de(ultimas.get(a.getId()), a.getRaciones(), ingles));
+            dto.setUltima(UltimaCantidad.de(ultimas.get(a.getId()), a, ingles));
             dtos.put(a.getId(), dto);
         }
         return dtos;

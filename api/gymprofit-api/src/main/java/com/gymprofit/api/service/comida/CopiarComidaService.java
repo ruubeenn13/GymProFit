@@ -18,10 +18,12 @@ import com.gymprofit.api.repository.jpa.IAlimentoComidaRepository;
 import com.gymprofit.api.repository.jpa.IComidaRepository;
 import com.gymprofit.api.service.alimentocomida.IAlimentoComidaService;
 import com.gymprofit.api.service.alimentocomida.RacionVigente;
+import com.gymprofit.api.service.plato.Platos;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -172,9 +174,16 @@ public class CopiarComidaService {
         for (AlimentoComida l : lineas) {
             AlimentoComida nueva = new AlimentoComida();
             nueva.setAlimento(l.getAlimento());
-            // Con su ración si sigue pesando lo mismo (GP-177); si no, en gramos.
+            // Con su ración si sigue pesando lo mismo (GP-177); si no, en gramos. Un plato
+            // (lote 1.6.6), en raciones de las que tiene hoy siempre que se pueda.
             AlimentoRacion racion = RacionVigente.de(l);
-            if (racion != null) {
+            BigDecimal racionesPlato = Platos.esPlato(l.getAlimento()) ? Platos.racionesDe(l) : null;
+            boolean platoEnRaciones = racionesPlato != null
+                    && (racion != null || !Platos.conPeso(l.getAlimento()));
+            if (platoEnRaciones) {
+                alimentoComidaService.ponerCantidad(nueva, null, Platos.racionActual(l.getAlimento()).getId(),
+                        racionesPlato);
+            } else if (racion != null) {
                 alimentoComidaService.ponerCantidad(nueva, l.getCantidadGramos(), racion.getId(), l.getRaciones());
             } else {
                 alimentoComidaService.ponerGramos(nueva, l.getCantidadGramos());

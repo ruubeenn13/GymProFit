@@ -14,6 +14,7 @@ import com.gymprofit.api.repository.jpa.IAlimentoComidaRepository;
 import com.gymprofit.api.repository.jpa.IAlimentoRacionRepository;
 import com.gymprofit.api.repository.jpa.IAlimentoRepository;
 import com.gymprofit.api.repository.jpa.IComidaRepository;
+import com.gymprofit.api.service.plato.Platos;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,9 +97,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
             AlimentoComida alimentoComida = alimentoComidaMapper.toEntity(alimentoComidaCreateDTO);
             alimentoComida.setComida(comida);
             alimentoComida.setAlimento(alimento);
-
-            Integer caloriasTotales = calcularCalorias(alimento, alimentoComidaCreateDTO.getCantidadGramos());
-            alimentoComida.setCaloriasTotales(caloriasTotales);
+            ponerGramos(alimentoComida, alimentoComidaCreateDTO.getCantidadGramos());
 
             AlimentoComida alimentoComidaGuardado = alimentoComidaRepository.save(alimentoComida);
             recalcularTotalesComida(comida);
@@ -136,10 +135,9 @@ public class AlimentoComidaService implements IAlimentoComidaService {
 
             alimentoComida.setComida(comida);
             alimentoComida.setAlimento(alimento);
-            alimentoComida.setCantidadGramos(alimentoComidaDTO.getCantidadGramos());
-
-            Integer caloriasTotales = calcularCalorias(alimento, alimentoComidaDTO.getCantidadGramos());
-            alimentoComida.setCaloriasTotales(caloriasTotales);
+            alimentoComida.setRacion(null);
+            alimentoComida.setRaciones(null);
+            ponerGramos(alimentoComida, alimentoComidaDTO.getCantidadGramos());
 
             AlimentoComida alimentoComidaActualizado = alimentoComidaRepository.save(alimentoComida);
             recalcularTotalesComida(comida);
@@ -268,8 +266,10 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         return alimentoComidaRepository.countByAlimentoId(alimentoId);
     }
 
-    // Aplica una actualización parcial: si cambia la cantidad recalcula las
-    // calorías; si viene calorías directamente, las respeta. Recalcula totales.
+    // Aplica una actualización parcial: la cantidad nueva recalcula la línea entera con
+    // los valores de hoy del alimento (lote 1.6.6, A1). Unas kcal escritas por el cliente
+    // ya no se aceptan: una línea guarda kcal y macros de la misma cuenta, y ninguna build
+    // las mandaba. Recalcula totales.
     @Transactional
     @Override
     public AlimentoComidaDTO patch(Integer id, AlimentoComidaPatchDTO patchDTO) {
@@ -282,6 +282,12 @@ public class AlimentoComidaService implements IAlimentoComidaService {
 
         // Fuera del try: una ración mal pedida es un 400, no un error de actualización.
         boolean conRacion = patchDTO.getRacionId() != null || patchDTO.getRaciones() != null;
+        if (!conRacion && patchDTO.getCantidadGramos() == null && patchDTO.getCaloriasTotales() != null) {
+            throw new InvalidDataException("error.linea.caloriasAMano");
+        }
+        if (!conRacion && patchDTO.getCantidadGramos() != null && patchDTO.getCantidadGramos().signum() <= 0) {
+            throw new InvalidDataException("error.anadir.cantidad");
+        }
         if (conRacion) {
             ponerCantidad(alimentoComida, patchDTO.getCantidadGramos(), patchDTO.getRacionId(), patchDTO.getRaciones());
         }
@@ -293,10 +299,7 @@ public class AlimentoComidaService implements IAlimentoComidaService {
                 // Solo gramos: ya no es «2 rebanadas».
                 alimentoComida.setRacion(null);
                 alimentoComida.setRaciones(null);
-                alimentoComida.setCantidadGramos(patchDTO.getCantidadGramos());
-                alimentoComida.setCaloriasTotales(calcularCalorias(alimentoComida.getAlimento(), patchDTO.getCantidadGramos()));
-            } else if (patchDTO.getCaloriasTotales() != null) {
-                alimentoComida.setCaloriasTotales(patchDTO.getCaloriasTotales());
+                ponerGramos(alimentoComida, patchDTO.getCantidadGramos());
             }
 
             AlimentoComida saved = alimentoComidaRepository.save(alimentoComida);
@@ -361,33 +364,43 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         AlimentoRacion racion = racionRepository.findById(racionId)
                 .filter(r -> r.getAlimento().getId().equals(linea.getAlimento().getId()))
                 .orElseThrow(() -> new InvalidDataException("error.racion.otroAlimento", racionId));
+        // Un plato (lote 1.6.6): «2 raciones» son dos de las que tiene hoy, venga la que
+        // venga (la de otra build, la de una línea copiada de antes de cambiarlo), y sus
+        // gramos salen siempre de ella: los de un plato sin peso no son de verdad.
+        if (Platos.esPlato(linea.getAlimento())) {
+            AlimentoRacion actual = Platos.racionActual(linea.getAlimento());
+            if (actual == null) throw new InvalidDataException("error.racion.otroAlimento", racionId);
+            racion = actual;
+            gramos = null;
+        }
         BigDecimal cantidad = gramos != null ? gramos
                 : racion.getGramos().multiply(raciones).setScale(2, java.math.RoundingMode.HALF_UP);
         linea.setRacion(racion);
         linea.setRaciones(raciones);
         linea.setCantidadGramos(cantidad);
-        linea.setCaloriasTotales(calcularCalorias(linea.getAlimento(), cantidad));
+        ValoresLinea.de(linea.getAlimento(), cantidad).ponerEn(linea);
     }
 
     /**
-     * Pone los gramos de una línea y sus calorías (lote 1.6.1). No toca la ración.
+     * Pone los gramos de una línea, sus calorías y sus macros (lotes 1.6.1 y 1.6.6). No toca
+     * la ración, salvo en un plato sin peso hecho: ahí no hay gramos de verdad, y los que
+     * lleguen (de una build anterior, que ve «1 ración (100 g)») son raciones de 100 g.
      *
      * @param linea  la línea, con su alimento.
      * @param gramos gramos, mayores que 0.
      */
     @Override
     public void ponerGramos(AlimentoComida linea, BigDecimal gramos) {
-        linea.setCantidadGramos(gramos);
-        linea.setCaloriasTotales(calcularCalorias(linea.getAlimento(), gramos));
-    }
-
-    // Calcula las calorías de la línea proporcionalmente a la cantidad en
-    // gramos, tomando como base las calorías del alimento por cada 100g.
-    private Integer calcularCalorias(Alimento alimento, BigDecimal cantidadGramos) {
-        if (alimento.getCalorias() == null || cantidadGramos == null) {
-            return 0;
+        Alimento alimento = linea.getAlimento();
+        if (Platos.esPlato(alimento) && !Platos.conPeso(alimento) && gramos != null) {
+            AlimentoRacion actual = Platos.racionActual(alimento);
+            BigDecimal raciones = gramos.divide(Platos.GRAMOS_SIN_PESO, 2, java.math.RoundingMode.HALF_UP);
+            if (actual == null || raciones.signum() <= 0) throw new InvalidDataException("error.anadir.cantidad");
+            ponerCantidad(linea, null, actual.getId(), raciones);
+            return;
         }
-        return (int) Math.round((alimento.getCalorias() * cantidadGramos.doubleValue()) / 100.0);
+        linea.setCantidadGramos(gramos);
+        ValoresLinea.de(alimento, gramos).ponerEn(linea);
     }
 
     // Recorre todas las líneas alimento-comida de una comida y recalcula
@@ -413,19 +426,12 @@ public class AlimentoComidaService implements IAlimentoComidaService {
         BigDecimal totalCarb = BigDecimal.ZERO;
         BigDecimal totalGras = BigDecimal.ZERO;
 
+        // Lo guardado en cada línea (lote 1.6.6, A1), no los valores de hoy del alimento.
         for (AlimentoComida item : items) {
             if (item.getCaloriasTotales() != null) totalCal += item.getCaloriasTotales();
-            Alimento a = item.getAlimento();
-            if (a != null && item.getCantidadGramos() != null) {
-                BigDecimal cantidad = item.getCantidadGramos();
-                BigDecimal cien = BigDecimal.valueOf(100);
-                if (a.getProteinas() != null)
-                    totalProt = totalProt.add(a.getProteinas().multiply(cantidad).divide(cien, 2, java.math.RoundingMode.HALF_UP));
-                if (a.getCarbohidratos() != null)
-                    totalCarb = totalCarb.add(a.getCarbohidratos().multiply(cantidad).divide(cien, 2, java.math.RoundingMode.HALF_UP));
-                if (a.getGrasas() != null)
-                    totalGras = totalGras.add(a.getGrasas().multiply(cantidad).divide(cien, 2, java.math.RoundingMode.HALF_UP));
-            }
+            if (item.getProteinasTotales() != null) totalProt = totalProt.add(item.getProteinasTotales());
+            if (item.getCarbohidratosTotales() != null) totalCarb = totalCarb.add(item.getCarbohidratosTotales());
+            if (item.getGrasasTotales() != null) totalGras = totalGras.add(item.getGrasasTotales());
         }
 
         comida.setTotalCalorias(totalCal);

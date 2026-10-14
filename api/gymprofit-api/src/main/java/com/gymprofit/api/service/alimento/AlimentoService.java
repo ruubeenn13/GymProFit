@@ -44,6 +44,8 @@ public class AlimentoService implements IAlimentoService {
 
     private final IAlimentoRepository alimentoRepository;
     private final IAlimentoRacionRepository racionRepository;
+    private final com.gymprofit.api.repository.jpa.IPlatoIngredienteRepository ingredienteRepository;
+    private final com.gymprofit.api.repository.jpa.IAlimentoComidaRepository lineaRepository;
     private final IAlimentoJooqRepository alimentoJooqRepository;
     private final AlimentoMapper alimentoMapper;
     private final IUsuarioRepository usuarioRepository;
@@ -157,6 +159,12 @@ public class AlimentoService implements IAlimentoService {
                 .orElseThrow(() -> new NotFoundEntityException("error.alimento.noExiste", id));
 
         checkPuedeEscribir(alimento);
+        // Lote 1.6.6: lo que está en una comida o en un plato no se borra del todo. Antes era
+        // un 500 de la clave ajena; ahora se dice, y desactivarlo sigue siendo posible. Así
+        // un ADMIN no rompe el plato de nadie al limpiar el catálogo.
+        if (lineaRepository.countByAlimentoId(id) > 0 || ingredienteRepository.existsByAlimentoId(id)) {
+            throw new ConflictEntityException("error.alimento.enUso");
+        }
 
         try {
             alimentoRepository.delete(alimento);
@@ -178,6 +186,7 @@ public class AlimentoService implements IAlimentoService {
                 .orElseThrow(() -> new NotFoundEntityException("error.alimento.noExiste", alimentoDTO.getId()));
 
         checkPuedeEscribir(alimento);
+        exigirNoPlato(alimento);
 
         try {
             // Mapear los cambios del DTO a la entidad
@@ -386,6 +395,9 @@ public class AlimentoService implements IAlimentoService {
                 .orElseThrow(() -> new NotFoundEntityException("error.alimento.noExiste", id));
 
         checkPuedeEscribir(alimento);
+        // Un plato (lote 1.6.6): sus valores salen de sus ingredientes, no se escriben a mano.
+        // Desactivarlo va por DELETE, como cualquier alimento propio.
+        exigirNoPlato(alimento);
 
         // El código de barras es único: repetido es un conflicto, no un 500 de la base.
         String barcode = patchDTO.getBarcode() == null ? null : textoONulo(patchDTO.getBarcode());
@@ -487,6 +499,13 @@ public class AlimentoService implements IAlimentoService {
             List<AlimentoRacion> sobran = actuales.subList(1, actuales.size());
             racionRepository.deleteAll(sobran);
             alimento.getRaciones().removeAll(sobran);
+        }
+    }
+
+    // Un plato se cambia por /platos/{id} (lote 1.6.6): 400 si se intenta por aquí.
+    private static void exigirNoPlato(Alimento alimento) {
+        if (com.gymprofit.api.service.plato.Platos.esPlato(alimento)) {
+            throw new InvalidDataException("error.plato.valoresAMano");
         }
     }
 

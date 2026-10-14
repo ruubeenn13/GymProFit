@@ -26,4 +26,6 @@ public class UltimaCantidadDTO implements Serializable {
     private BigDecimal raciones;
     private String racionUnidad;
     private String racionUnidadPlural;
+    // Lote 1.6.6: true si es la ración de un plato sin peso hecho (sus gramos no se enseñan).
+    private Boolean racionSinPeso;
 }

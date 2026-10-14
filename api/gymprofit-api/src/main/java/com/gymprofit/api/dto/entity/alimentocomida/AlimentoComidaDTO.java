@@ -45,4 +45,12 @@ public class AlimentoComidaDTO implements Serializable {
     // de la petición; null si no se eligió por raciones o el nombre no tiene unidad.
     private String racionUnidad;
     private String racionUnidadPlural;
+
+    // --- Lote 1.6.6: opcionales, como los de arriba.
+
+    // Si el alimento es un plato propio (DEC-047).
+    private Boolean alimentoEsPlato;
+    // true si la ración es la de un plato sin peso hecho: pesa 100 g por dentro y sus gramos
+    // no se enseñan («1 ración», no «1 ración (100 g)»). Null sin ración.
+    private Boolean racionSinPeso;
 }
