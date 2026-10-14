@@ -2,6 +2,20 @@
 
 Historial de cambios del proyecto (API Spring Boot + app Android). Ver también el [README](README.md).
 
+### 2026-10-14
+
+| Hash | Descripción |
+|---|---|
+| `c4ca21c` | docs(documentacion): el informe del lote 1.6.6, con la prueba de nueve pasos en producción. |
+| `d83895e` | Fusión de `lote-1.6.6` en `main`, CI en verde (API, app y admin); etiquetada `v1.6.6`. APK de release 1.6.6 (10606), 7 758 181 bytes, con la clave de siempre. Necesita la API de `51ac0d1` (desplegada). |
+| `a145480` | docs(readme): Mis platos, hecho. |
+| `51ac0d1` | Fusión de la API de `lote-1.6.6` en `main`, sola, CI en verde y desplegada antes de fusionar la app. |
+| `dde1b4c` | docs(web): la política de privacidad y eliminar cuenta nombran los platos que creas y sus ingredientes; la pantalla de Eliminar cuenta de la app dice lo mismo. Zip `gymprofit-web-1.6.6.zip` en el escritorio para subir a Cloudflare Pages. |
+| `c9a4691` | docs(decisiones): **DEC-047** (qué es un plato y cómo se guarda, las reglas 2 a 6, los macros guardados en las líneas, el 409 al borrar del todo un alimento en uso), el momento 23 en DEC-039 y el diario nuevo sin número de lote en DEC-039 y DEC-045. |
+| `cbc004d` | feat(android): **Mis platos** (GP-162, GP-165): la tercera pestaña de Añadir, crear y editar un plato con «Por ración» en vivo (la misma cuenta que la API, con la misma tabla de casos), Añadir y el escáner en modo ingredientes, «Guardar como plato» desde una comida y la marca «Plato» en filas, ficha y líneas. **GP-194**: sin red, «Sin conexión». **GP-192**: lo copiado espera también a un quitar en vuelo. `PlatosAppTest`, `CuentaPlatoTest`, `FilaPlatoTest`, `AnadidosTest`, `UiFeedbackTest`, `MovimientoTest`. |
+| `4140c5b` | feat(api): **platos propios** (`/platos`, `GET /alimentos/mios`) y **cada línea guarda sus macros** al escribirse; borrar del todo un alimento en uso, 409; el PATCH de una línea ya no acepta kcal a mano. Migraciones `V202610141000`, `V202610141001` y `V202610141100`. `PlatosTest`, `MacrosLineaTest`, `MacrosLineaMigracionTest`, `PlatosCuentaTest`, `BorradoCuentaTest`. |
+| `f672a74` | docs(readme): el README general, rehecho y con imágenes animadas. |
+
 ### 2026-10-03
 
 | Hash | Descripción |
