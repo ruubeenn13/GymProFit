@@ -15,7 +15,9 @@ TODO.md
 
 # Configuracion local de Claude Code: rutas absolutas de la maquina de desarrollo,
 # no sirve a nadie mas y expone la estructura de un equipo concreto.
-.claude/
+# Las skills del proyecto si se versionan (GP-205): son las mismas para todos.
+.claude/*
+!.claude/skills/
 
 # SO
 .DS_Store
