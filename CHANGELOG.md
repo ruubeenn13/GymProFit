@@ -6,6 +6,7 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `4ad0417` | fix(web,android): **las hojas van versionadas por su contenido** (`?v=<hash>`) y `_headers` revalida siempre el HTML y guarda las hojas un año; las fuentes y las imágenes, con la revalidación de Pages. `scripts/versionar-hojas-web.py` y `HojasVersionadasWebTest`. Zip `gymprofit-web-gp-201.zip` rehecho. |
 | `f15f12e` | docs(documentacion): la tercera vuelta en el [informe de GP-201](documentacion/estado/2026-10-20-gp-201-beta.md). |
 | `807e2ff` | feat(web,android): **`/beta` se ve al instante y no repite nada** (GP-201, tercera vuelta): entradas de 320 ms como mucho que acaban a los 600 ms sin partir de opacidad 0, el formulario en su tarjeta y sin animar, una línea bajo el titular, el iPhone una sola vez; fuera la pastilla y la caja de Android y el «¿Te apuntas?» final. `BetaWebTest` comprueba que ninguna frase se repita. Zip `gymprofit-web-gp-201.zip` rehecho. |
 | `fd8cdd6` | docs(decisiones): **DEC-050** reescrita: el formulario de la beta es nuestro y se envía por POST a Brevo, sin JavaScript; qué no puede hacer así y qué la invalidaría. |
