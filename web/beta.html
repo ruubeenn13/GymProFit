@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Beta de GymProFit · Pruébala antes que nadie</title>
-<meta name="description" content="Apúntate a la beta de GymProFit: entreno, dieta y progreso en una sola app. Te avisamos en cuanto abra.">
+<meta name="description" content="Apúntate a la beta de GymProFit para Android: entreno, dieta y progreso en una sola app. Te avisamos en cuanto abra.">
 <meta name="theme-color" content="#0B0C0E" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#F5F1EA" media="(prefers-color-scheme: light)">
 <link rel="icon" href="/img/favicon-claro.png" media="(prefers-color-scheme: light)">
@@ -25,7 +25,7 @@
       <span class="luz" aria-hidden="true"></span>
       <picture>
         <source srcset="/img/logo-oscuro-256.webp" media="(prefers-color-scheme: dark)">
-        <img src="/img/logo-claro-256.webp" alt="" width="64" height="64">
+        <img src="/img/logo-claro-256.webp" alt="" width="56" height="56">
       </picture>
       GYMPROFIT
     </a>
@@ -40,12 +40,31 @@
     </div>
 
     <div class="llamada">
-    <p class="entrada"><strong>La beta de GymProFit está a punto.</strong> Apúntate y te escribimos en cuanto abra.</p>
+    <p class="entrada amplia"><strong>La beta de GymProFit está a punto.</strong> Déjanos tu correo y te avisamos en cuanto abra.</p>
 
-    <div class="accion">
-      <a class="boton" href="https://c66652ae.sibforms.com/serve/MUIFAORtSwe7_YQbPHZ1hfBdigRHNkNWnE7eaZati3CifuqQ3yIKNj2HQV6oOvbjfyUYusgHznzE_WWAA1fhZNqg84lw5KkyrVJxhLaYEyL0XUYchj8wmMdvuu6lNVZIDrylva7nkhY_bEC7VLwLrLIgS7kAabyxan0UmamnG80VnAInVeNAjUYo1BkWePjfwN9ptal3PQSa2H17mA==">Apuntarme</a>
-    </div>
-    <p class="nota">Solo tu correo y qué móvil tienes.</p>
+    <!-- El formulario es nuestro y se envía por POST normal a Brevo, sin JavaScript (DEC-050).
+         Los nombres de los campos son los que espera Brevo: no se cambian sin cambiarlos allí. -->
+    <form class="alta" id="apuntarse" method="post" action="https://c66652ae.sibforms.com/serve/MUIFAORtSwe7_YQbPHZ1hfBdigRHNkNWnE7eaZati3CifuqQ3yIKNj2HQV6oOvbjfyUYusgHznzE_WWAA1fhZNqg84lw5KkyrVJxhLaYEyL0XUYchj8wmMdvuu6lNVZIDrylva7nkhY_bEC7VLwLrLIgS7kAabyxan0UmamnG80VnAInVeNAjUYo1BkWePjfwN9ptal3PQSa2H17mA==">
+      <div class="fila-etiqueta">
+        <label class="etiqueta" for="correo">Tu correo</label>
+        <span class="pastilla">Solo para Android</span>
+      </div>
+      <input class="correo" id="correo" type="email" name="EMAIL" required autocomplete="email" autocapitalize="off" spellcheck="false" placeholder="nombre@correo.com">
+
+      <label class="consentimiento">
+        <input type="checkbox" name="OPT_IN" value="1" required>
+        <span>Quiero que GymProFit me avise por correo cuando abra la beta y cuando se publique la app. Puedo darme de baja cuando quiera. <a href="/privacidad#beta">Cómo tratamos tus datos</a>.</span>
+      </label>
+
+      <!-- Trampa para bots: tiene que llegar vacía. Nadie la ve, ni con lector de pantalla. -->
+      <div class="trampa" aria-hidden="true"><input type="text" name="email_address_check" value="" tabindex="-1" autocomplete="off"></div>
+      <input type="hidden" name="locale" value="es">
+      <input type="hidden" name="html_type" value="simple">
+
+      <button class="boton" type="submit">Apuntarme</button>
+    </form>
+
+    <p class="aviso"><strong>La beta es solo para Android</strong>, porque se instala desde Google Play. Si tienes iPhone, mejor no te apuntes todavía: sigue a @gymprofit en <a href="https://www.tiktok.com/@gymprofit">TikTok</a> o <a href="https://www.instagram.com/gymprofit">Instagram</a> y te enterarás cuando llegue.</p>
     </div>
   </section>
 
@@ -55,8 +74,8 @@
       <p>Entreno, dieta y progreso en el mismo sitio: lo que levantas, lo que comes y cómo cambias, sin saltar de una app a otra.</p>
     </li>
     <li class="razon">
-      <h2>Primero en Android</h2>
-      <p>La beta se abre en Google Play, de momento solo para Android. ¿Tienes iPhone? Apúntate igual y te avisamos cuando llegue.</p>
+      <h2>Desde Google Play</h2>
+      <p>La beta se instala desde Google Play como cualquier app, en tu móvil Android. Cuando abra, te llega el enlace por correo.</p>
     </li>
     <li class="razon tuya">
       <h2>Tu opinión cambia la app</h2>
@@ -66,11 +85,11 @@
 
   <section class="cierre" aria-label="Apuntarse">
     <p>¿Te apuntas?</p>
-    <a class="boton" href="https://c66652ae.sibforms.com/serve/MUIFAORtSwe7_YQbPHZ1hfBdigRHNkNWnE7eaZati3CifuqQ3yIKNj2HQV6oOvbjfyUYusgHznzE_WWAA1fhZNqg84lw5KkyrVJxhLaYEyL0XUYchj8wmMdvuu6lNVZIDrylva7nkhY_bEC7VLwLrLIgS7kAabyxan0UmamnG80VnAInVeNAjUYo1BkWePjfwN9ptal3PQSa2H17mA==">Apuntarme</a>
+    <a class="boton" href="#apuntarse">Apuntarme</a>
   </section>
 
   <footer class="pie">
-    <p>El botón te lleva al formulario de Brevo, el servicio con el que gestionamos la lista. Después te llega un correo para confirmar tu dirección: hasta que no lo confirmas, no estás apuntado.</p>
+    <p>Al apuntarte te llega un correo para confirmar tu dirección: hasta que no lo confirmas, no estás en la lista.</p>
     <p>Puedes darte de baja cuando quieras con el enlace de cualquiera de nuestros correos. Lo que hacemos con tus datos está en la <a href="/privacidad">política de privacidad</a>.</p>
     <nav aria-label="Más de GymProFit">
       <a href="/">Inicio</a>

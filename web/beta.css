@@ -31,6 +31,7 @@
   --fondo:     #0B0C0E;
   --panel:     #15161A;
   --linea:     #2C2D33;
+  --borde-campo: #6E6A62; /* el borde de un campo: 3,6:1 sobre el fondo (WCAG 1.4.11) */
   --naranja:   #E8710A;
   --dorado:    #CBA135;
   --texto:     #F5F1EA;
@@ -59,6 +60,7 @@
     --fondo:   #F5F1EA;
     --panel:   #FFFFFF;
     --linea:   #DDD6CA;
+    --borde-campo: #8A8378; /* 3,3:1 sobre el fondo */
     --texto:   #0B0C0E;
     --texto-2: #57524A;   /* 6,9:1 sobre el fondo */
     --enlace:  #A44700;   /* 5,4:1 sobre el fondo */
@@ -118,7 +120,7 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
   font-size: 19px;
   letter-spacing: 0.12em;
 }
-.firma img { position: relative; width: 64px; height: 64px; display: block; }
+.firma img { position: relative; width: 56px; height: 56px; display: block; }
 
 /* La luz que respira detrás del logo: un degradado radial, sin imagen.
    Desborda hacia el titular a propósito: es la única fuente de luz de la página. */
@@ -135,10 +137,10 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
 
 .titular {
   position: relative;
-  margin: 30px 0 0;
+  margin: 24px 0 0;
   font-family: var(--cond);
   font-weight: 700;
-  line-height: 0.84;
+  line-height: 0.83;
   letter-spacing: -0.01em;
   text-transform: uppercase;
 }
@@ -154,8 +156,8 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
 .tajo {
   display: block;
   width: 38%;
-  height: 10px;
-  margin: 18px 0 0 4px;
+  height: 8px;
+  margin: 12px 0 0 4px;
   background: var(--naranja);
   transform: skewX(-32deg);
   transform-origin: left center;
@@ -169,10 +171,11 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
 }
 .entrada strong { color: var(--texto); font-weight: 600; }
 
-.accion { margin-top: 26px; }
-
 .boton {
   position: relative;
+  border: 0;
+  cursor: pointer;
+  line-height: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -194,16 +197,148 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
 .boton:active { transform: scale(0.97); }
 .boton:focus-visible { outline-color: var(--texto); }
 
-/* El pulso: un aro que sale del botón y se apaga */
+/* El pulso: un aro que sale del botón y se apaga. Es una sombra y no un
+   escalado, para que en un botón a todo el ancho no desborde la pantalla. */
 .boton::after {
   content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  border: 2px solid var(--naranja);
-  opacity: 0;
   pointer-events: none;
 }
+
+/* ── El formulario ───────────────────────────────────────────────── */
+/* Nuestro, enviado por POST normal a Brevo (DEC-050). La validación es la del
+   navegador: el correo con type="email" y la casilla con required. */
+
+/* En móvil, la frase de entrada de /beta se queda fuera para que el formulario
+   entero quepa en el primer pantallazo: la casilla ya dice qué se pide. */
+@media (max-width: 899px) {
+  .entrada.amplia { display: none; }
+}
+
+.alta {
+  display: grid;
+  gap: 12px;
+  max-width: 30rem;
+  margin-top: 16px;
+  scroll-margin-top: 24px;
+}
+
+/* La etiqueta y, en la misma fila, el recordatorio de que es solo Android:
+   así se ve antes de escribir el correo sin ocupar una línea más. */
+.fila-etiqueta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: -4px;
+}
+.etiqueta {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--texto);
+}
+.pastilla {
+  padding: 1px 11px;
+  border: 1.5px solid var(--dorado);
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--texto);
+  white-space: nowrap;
+}
+
+.correo {
+  width: 100%;
+  min-height: 56px;
+  padding: 0 18px;
+  border: 2px solid var(--borde-campo);
+  border-radius: 16px;
+  background: var(--panel);
+  color: var(--texto);
+  font-family: var(--sans);
+  font-size: 20px;
+  transition: border-color 160ms var(--frenada), box-shadow 160ms var(--frenada);
+}
+.correo::placeholder { color: var(--texto-2); opacity: 1; }
+/* El foco es naranja y se ve sin depender del contorno del sistema */
+.correo:focus {
+  outline: none;
+  border-color: var(--naranja);
+  box-shadow: 0 0 0 4px rgba(232, 113, 10, 0.3);
+}
+
+.consentimiento {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--texto-2);
+  cursor: pointer;
+}
+/* La casilla es la nativa con otra cara: sigue siendo un checkbox para el teclado,
+   el lector de pantalla y la validación del formulario. */
+.consentimiento input {
+  -webkit-appearance: none;
+  appearance: none;
+  display: grid;
+  place-content: center;
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  border: 2px solid var(--borde-campo);
+  border-radius: 8px;
+  background: var(--panel);
+  cursor: pointer;
+  transition: background-color 160ms var(--frenada), border-color 160ms var(--frenada);
+}
+/* La marca: una L girada, del color de la letra del botón */
+.consentimiento input::before {
+  content: "";
+  width: 13px;
+  height: 7px;
+  border-left: 3px solid var(--sobre-naranja);
+  border-bottom: 3px solid var(--sobre-naranja);
+  transform: translateY(-2px) rotate(-45deg) scale(0);
+}
+.consentimiento input:checked { background: var(--naranja); border-color: var(--naranja); }
+.consentimiento input:checked::before { transform: translateY(-2px) rotate(-45deg) scale(1); }
+.consentimiento input:focus-visible { outline: 3px solid var(--texto); outline-offset: 3px; }
+
+/* Con colores forzados (alto contraste de Windows) las sombras desaparecen: el
+   foco del campo vuelve al contorno del sistema y la marca, al color del texto. */
+@media (forced-colors: active) {
+  .correo:focus { outline: 3px solid Highlight; }
+  .consentimiento input::before { border-color: CanvasText; }
+}
+
+/* La trampa para bots: fuera de la pantalla, fuera del tabulador y, con el
+   aria-hidden del HTML, fuera del lector de pantalla. Se envía vacía. */
+.trampa {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.alta .boton { width: 100%; }
+
+.aviso {
+  max-width: 30rem;
+  margin: 18px 0 0;
+  padding: 14px 16px;
+  border: 1px solid var(--linea);
+  border-radius: 14px;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--texto-2);
+}
+.aviso strong { color: var(--texto); font-weight: 600; }
 
 .nota {
   margin: 14px 0 0;
@@ -305,6 +440,9 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
   stroke-linejoin: round;
 }
 
+/* /beta/revisa: un sobre dentro del mismo círculo, más fino que la marca */
+.sello.sobre path { --largo: 130; stroke-dasharray: 130; stroke-width: 4; }
+
 /* Las esquirlas: tajos como el del logo que salen del sello una vez */
 .esquirlas { position: absolute; inset: 0; pointer-events: none; }
 .esquirlas i {
@@ -351,7 +489,7 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
 /* ── Escritorio ──────────────────────────────────────────────────── */
 
 @media (min-width: 900px) {
-  :root { --margen: 40px; --ancho-titular: min(56vw, 720px); }
+  :root { --margen: 40px; --ancho-titular: min(48vw, 620px); }
   .portada { padding: 34px 0 64px; }
   .firma img { width: 76px; height: 76px; }
   .luz { left: -170px; top: -180px; width: 440px; height: 440px; }
@@ -360,7 +498,7 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
   .portada {
     display: grid;
     grid-template-columns: var(--ancho-titular) minmax(0, 1fr);
-    column-gap: 56px;
+    column-gap: 48px;
     align-items: end;
   }
   .firma { grid-column: 1 / -1; justify-self: start; }
@@ -395,8 +533,12 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
   .tajo { animation: tajo 380ms var(--frenada) 700ms both; }
 
   .entrada { animation: subir 520ms var(--frenada) 780ms both; }
-  .accion  { animation: subir 520ms var(--frenada) 880ms both; }
+  .alta    { animation: subir 520ms var(--frenada) 880ms both; }
+  .aviso   { animation: subir 520ms var(--frenada) 960ms both; }
   .nota    { animation: subir 520ms var(--frenada) 960ms both; }
+
+  /* La marca de la casilla entra con un rebote corto al marcarla */
+  .consentimiento input::before { transition: transform 220ms var(--golpe); }
 
   /* El pulso, cada cuatro segundos: el aro ocupa el primer 30 % y el resto espera */
   .boton::after { animation: pulso 4s var(--frenada) 1.9s infinite; }
@@ -450,9 +592,9 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
 }
 
 @keyframes pulso {
-  0%   { opacity: 0.75; transform: scale(1); }
-  30%  { opacity: 0;    transform: scale(1.22, 1.5); }
-  100% { opacity: 0;    transform: scale(1.22, 1.5); }
+  0%   { box-shadow: 0 0 0 0 rgba(232, 113, 10, 0.7); }
+  30%  { box-shadow: 0 0 0 14px rgba(232, 113, 10, 0); }
+  100% { box-shadow: 0 0 0 14px rgba(232, 113, 10, 0); }
 }
 
 @keyframes sello {

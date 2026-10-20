@@ -1,12 +1,12 @@
 # web — sitio público de GymProFit
 
 Sitio estático de `gymprofit.app`: portada, política de privacidad, términos de uso,
-la página de eliminación de cuenta y la de la beta (`/beta` y `/beta/dentro`). HTML y CSS a mano, sin build, sin dependencias y sin
+la página de eliminación de cuenta y la de la beta (`/beta`, `/beta/revisa` y `/beta/dentro`). HTML y CSS a mano, sin build, sin dependencias y sin
 JavaScript. Lo que hay en esta carpeta es exactamente lo que se sirve.
 
 ```
 index.html · privacidad.html · terminos.html · eliminar-cuenta.html · estilo.css
-beta.html · beta/dentro.html · beta.css   (la beta, GP-201)
+beta.html · beta/revisa.html · beta/dentro.html · beta.css   (la beta, GP-201)
 fuentes/  seis .woff2: Barlow 400 / 500 / 600 y Barlow Condensed 500 / 600 / 700
 img/      logos claro y oscuro (256 y 512, webp) + favicons y apple-touch-icon
 ```
@@ -39,20 +39,29 @@ nuevo también las resuelve, o los enlaces declarados en la ficha se rompen.
 
 ## La beta
 
-`/beta` es la página a la que llega quien viene de TikTok o Instagram. Su botón
-«Apuntarme» es un **enlace** al formulario alojado de Brevo, en la misma pestaña:
-la web no recoge nada. Brevo pide confirmar el correo y después redirige a
-`/beta/dentro` (DEC-050). Si el enlace del formulario cambia en Brevo, se cambia en
-los dos botones de `beta.html` y en `BetaWebTest`, que lo fija.
+`/beta` es la página a la que llega quien viene de TikTok o Instagram. Lleva su
+propio **formulario**, que se envía por POST normal al endpoint del formulario de
+Brevo, sin JavaScript (DEC-050). Brevo pide confirmar el correo: tras enviar
+redirige a `/beta/revisa` y tras confirmar, a `/beta/dentro`. Las dos
+redirecciones se configuran en Brevo, no aquí.
 
-- **Rutas.** `beta.html` sirve `/beta` y `beta/dentro.html` sirve `/beta/dentro`:
-  Pages resuelve por fichero, así que la carpeta `beta/` no le quita la ruta a
-  `beta.html`. No hace falta `beta/index.html`, que daría `/beta/` con barra.
+- **Los campos son los de Brevo**: `EMAIL`, `OPT_IN` (`value="1"`),
+  `email_address_check` (trampa para bots, vacía y oculta para todos),
+  `locale=es` y `html_type=simple`. Si la action o un nombre cambian en Brevo, se
+  cambian en `beta.html` y en `BetaWebTest`, que los fija.
+- **Solo Android.** La beta se instala desde Google Play; la página lo dice junto
+  al formulario y no pregunta el móvil.
+- **Rutas.** `beta.html` sirve `/beta`, y `beta/revisa.html` y `beta/dentro.html`
+  sirven sus rutas: Pages resuelve por fichero, así que la carpeta `beta/` no le
+  quita la ruta a `beta.html`. No hace falta `beta/index.html`, que daría `/beta/`
+  con barra.
 - **Su hoja es `beta.css`, no `estilo.css`.** La paleta es la de los vídeos
   (`#E8710A`, `#CBA135`, `#F5F1EA` sobre `#0B0C0E`), no la de la app: es lo que
   reconoce quien llega desde un vídeo. Las fuentes son los mismos ficheros.
 - **El titular llena el ancho** línea a línea: cada `<span>` lleva `--k`, su ancho
   en em medido en el navegador. Si cambia el texto, hay que volver a medirlo.
+- **El formulario entero cabe en el primer pantallazo a 375 × 667.** Va justo:
+  cualquier línea de más en esa zona lo empuja fuera.
 - **El movimiento es solo CSS** y vive entero dentro de
   `@media (prefers-reduced-motion: no-preference)`. Fuera de ese bloque la página
   está ya en su estado final, así que con movimiento reducido se ve quieta y completa.
