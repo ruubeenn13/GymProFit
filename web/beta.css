@@ -1,0 +1,473 @@
+/* ------------------------------------------------------------------
+   GymProFit — hoja de la beta (/beta y /beta/dentro), GP-201
+   Quien llega aquí viene de un vídeo de TikTok o Instagram, así que la
+   paleta es la de los vídeos (src/lib/marca.ts del repositorio de
+   marketing), no la de la app: naranja #E8710A, dorado #CBA135 y texto
+   #F5F1EA sobre #0B0C0E. Es una página de llegada, no una pantalla de
+   la app; lo que tiene que reconocer es el vídeo del que viene.
+   Sin JavaScript: todo el movimiento es CSS, y solo entra con
+   prefers-reduced-motion: no-preference. Sin esa preferencia la página
+   se pinta quieta y completa, porque el estado final es el de partida.
+   ------------------------------------------------------------------ */
+
+/* Los mismos ficheros que estilo.css, servidos desde el dominio (ver README). */
+@font-face {
+  font-family: "Barlow Condensed";
+  src: url("/fuentes/barlow-condensed-700.woff2") format("woff2");
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Barlow";
+  src: url("/fuentes/barlow-400.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Barlow";
+  src: url("/fuentes/barlow-600.woff2") format("woff2");
+  font-weight: 600; font-style: normal; font-display: swap;
+}
+
+:root {
+  --fondo:     #0B0C0E;
+  --panel:     #15161A;
+  --linea:     #2C2D33;
+  --naranja:   #E8710A;
+  --dorado:    #CBA135;
+  --texto:     #F5F1EA;
+  --texto-2:   #ABA59B;   /* 8,0:1 sobre el fondo */
+  --enlace:    #F08A2E;   /* el naranja como texto: 7,8:1 sobre el fondo */
+  --sobre-naranja: #0B0C0E; /* 6,3:1 sobre el naranja */
+  --luz:       rgba(232, 113, 10, 0.55);
+
+  --sans: "Barlow", sans-serif;
+  --cond: "Barlow Condensed", var(--sans);
+
+  /* Curvas con frenada: entrar deprisa y posarse. Ninguna lineal. */
+  --frenada: cubic-bezier(0.16, 1, 0.3, 1);
+  --golpe:   cubic-bezier(0.2, 0.9, 0.25, 1.15);
+
+  --margen: 20px;
+  /* Ancho que llena el titular: el de la pantalla en móvil */
+  --ancho-titular: calc(100vw - 2 * var(--margen));
+}
+
+/* En claro, el texto de los vídeos pasa a ser el fondo. El naranja de marca
+   no se lee como texto sobre crema (2,7:1), así que los enlaces usan uno más
+   oscuro; el botón sigue siendo el naranja de siempre con letra oscura. */
+@media (prefers-color-scheme: light) {
+  :root {
+    --fondo:   #F5F1EA;
+    --panel:   #FFFFFF;
+    --linea:   #DDD6CA;
+    --texto:   #0B0C0E;
+    --texto-2: #57524A;   /* 6,9:1 sobre el fondo */
+    --enlace:  #A44700;   /* 5,4:1 sobre el fondo */
+    --dorado:  #9C7A1F;
+    --luz:     rgba(232, 113, 10, 0.32);
+  }
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--fondo);
+  color: var(--texto);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+
+:focus-visible {
+  outline: 3px solid var(--texto);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.marco {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 var(--margen);
+}
+
+/* La franja de 4 px de la web y los correos (DEC-026), aquí en el naranja de los vídeos */
+.franja { height: 4px; background: var(--naranja); }
+
+/* ── Primer pantallazo ───────────────────────────────────────────── */
+
+.portada {
+  position: relative;
+  padding: 22px 0 40px;
+}
+
+.firma {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--texto);
+  text-decoration: none;
+  font-family: var(--cond);
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: 0.12em;
+}
+.firma img { position: relative; width: 64px; height: 64px; display: block; }
+
+/* La luz que respira detrás del logo: un degradado radial, sin imagen.
+   Desborda hacia el titular a propósito: es la única fuente de luz de la página. */
+.luz {
+  position: absolute;
+  left: -110px;
+  top: -120px;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--luz), transparent);
+  pointer-events: none;
+}
+
+.titular {
+  position: relative;
+  margin: 30px 0 0;
+  font-family: var(--cond);
+  font-weight: 700;
+  line-height: 0.84;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+/* Cada línea llena el ancho por su cuenta: --k es el ancho de esa línea en
+   em, medido en el navegador. Las tres miden lo mismo y tienen tamaños distintos. */
+.titular span {
+  display: block;
+  font-size: calc(var(--ancho-titular) / var(--k));
+  white-space: nowrap;
+}
+
+/* El tajo del logo, debajo de la última línea */
+.tajo {
+  display: block;
+  width: 38%;
+  height: 10px;
+  margin: 18px 0 0 4px;
+  background: var(--naranja);
+  transform: skewX(-32deg);
+  transform-origin: left center;
+}
+
+.entrada {
+  max-width: 34em;
+  margin: 22px 0 0;
+  font-size: 19px;
+  color: var(--texto-2);
+}
+.entrada strong { color: var(--texto); font-weight: 600; }
+
+.accion { margin-top: 26px; }
+
+.boton {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  min-width: 220px;
+  padding: 0 34px;
+  border-radius: 999px;
+  background: var(--naranja);
+  color: var(--sobre-naranja);
+  font-family: var(--cond);
+  font-weight: 700;
+  font-size: 23px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: transform 160ms var(--frenada), background-color 160ms var(--frenada);
+}
+.boton:hover { background: #F58220; }
+.boton:active { transform: scale(0.97); }
+.boton:focus-visible { outline-color: var(--texto); }
+
+/* El pulso: un aro que sale del botón y se apaga */
+.boton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 2px solid var(--naranja);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nota {
+  margin: 14px 0 0;
+  font-size: 15px;
+  color: var(--texto-2);
+}
+
+/* ── Las tres razones ────────────────────────────────────────────── */
+
+.razones {
+  display: grid;
+  gap: 14px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.razon {
+  position: relative;
+  overflow: hidden;
+  background: var(--panel);
+  border: 1px solid var(--linea);
+  border-radius: 20px;
+  padding: 24px 22px 24px;
+}
+/* El tajo del logo en la esquina; dorado en la que habla de ti */
+.razon::before {
+  content: "";
+  position: absolute;
+  top: -14px;
+  right: 26px;
+  width: 16px;
+  height: 64px;
+  background: var(--naranja);
+  transform: skewX(-32deg);
+}
+.razon.tuya::before { background: var(--dorado); }
+/* La primera es la que vende la app: naranja macizo, y el tajo en el color del fondo */
+.razon.maciza { background: var(--naranja); border-color: var(--naranja); color: var(--sobre-naranja); }
+.razon.maciza::before { background: var(--sobre-naranja); }
+.razon.maciza p { color: #2B1503; } /* 5,6:1 sobre el naranja */
+
+.razon h2 {
+  margin: 0 40px 10px 0;
+  font-family: var(--cond);
+  font-weight: 700;
+  font-size: 34px;
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+.razon p { margin: 0; color: var(--texto-2); }
+
+.cierre {
+  margin: 44px 0 0;
+  padding: 0 0 8px;
+}
+.cierre p {
+  margin: 0 0 18px;
+  font-family: var(--cond);
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+/* ── Pie ─────────────────────────────────────────────────────────── */
+
+.pie {
+  margin-top: 56px;
+  border-top: 1px solid var(--linea);
+  padding: 26px 0 48px;
+  font-size: 15px;
+  color: var(--texto-2);
+}
+.pie p { margin: 0 0 12px; max-width: 44em; }
+.pie nav { display: flex; flex-wrap: wrap; gap: 4px 22px; margin-top: 18px; }
+/* Enlaces del pie con zona de toque de 48 px aunque la letra sea pequeña */
+.pie nav a { display: inline-flex; align-items: center; min-height: 48px; }
+
+/* ── /beta/dentro ────────────────────────────────────────────────── */
+
+.dentro .titular { margin-top: 22px; }
+.dentro .entrada + .entrada { margin-top: 10px; }
+
+/* El sello: un círculo y una marca que se trazan solos */
+.sello {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  margin-top: 34px;
+}
+.sello svg { position: relative; display: block; width: 100%; height: 100%; }
+.sello circle { fill: none; stroke: var(--naranja); stroke-width: 5; }
+.sello path {
+  fill: none;
+  stroke: var(--texto);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Las esquirlas: tajos como el del logo que salen del sello una vez */
+.esquirlas { position: absolute; inset: 0; pointer-events: none; }
+.esquirlas i {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 7px;
+  height: 22px;
+  margin: -11px 0 0 -3.5px;
+  background: var(--naranja);
+  opacity: 0;
+  transform: rotate(var(--a)) translateY(-70px) skewX(-20deg);
+}
+.esquirlas i:nth-child(even) { background: var(--dorado); height: 14px; }
+/* Diez esquirlas repartidas en círculo, un poco giradas para que no salgan en cruz */
+.esquirlas i:nth-child(1) { --a: 8deg; }
+.esquirlas i:nth-child(2) { --a: 44deg; }
+.esquirlas i:nth-child(3) { --a: 80deg; }
+.esquirlas i:nth-child(4) { --a: 116deg; }
+.esquirlas i:nth-child(5) { --a: 152deg; }
+.esquirlas i:nth-child(6) { --a: 188deg; }
+.esquirlas i:nth-child(7) { --a: 224deg; }
+.esquirlas i:nth-child(8) { --a: 260deg; }
+.esquirlas i:nth-child(9) { --a: 296deg; }
+.esquirlas i:nth-child(10) { --a: 332deg; }
+
+.redes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 22px;
+}
+.boton.hueco {
+  min-width: 0;
+  background: transparent;
+  color: var(--texto);
+  box-shadow: inset 0 0 0 2px var(--naranja);
+  font-size: 21px;
+  padding: 0 26px;
+}
+.boton.hueco:hover { background: rgba(232, 113, 10, 0.14); }
+.boton.hueco::after { content: none; }
+
+/* ── Escritorio ──────────────────────────────────────────────────── */
+
+@media (min-width: 900px) {
+  :root { --margen: 40px; --ancho-titular: min(56vw, 720px); }
+  .portada { padding: 34px 0 64px; }
+  .firma img { width: 76px; height: 76px; }
+  .luz { left: -170px; top: -180px; width: 440px; height: 440px; }
+  /* Dos columnas: el titular manda y la llamada se apoya en su base, para que el
+     botón quede a la vista también en una pantalla de portátil */
+  .portada {
+    display: grid;
+    grid-template-columns: var(--ancho-titular) minmax(0, 1fr);
+    column-gap: 56px;
+    align-items: end;
+  }
+  .firma { grid-column: 1 / -1; justify-self: start; }
+  .titular { margin-top: 40px; }
+  .llamada { padding-bottom: 6px; }
+  .entrada { margin-top: 0; }
+  .entrada { font-size: 21px; }
+  .razones { grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .razon { padding: 30px 28px; }
+  .razon h2 { font-size: 38px; }
+  .cierre p { font-size: 40px; }
+}
+
+/* ── Movimiento ──────────────────────────────────────────────────── */
+/* Todo lo de aquí es lo único que se mueve. Fuera de este bloque la página
+   está ya en su estado final: con movimiento reducido no hay nada que esperar. */
+
+@media (prefers-reduced-motion: no-preference) {
+
+  .luz { animation: respirar 5.6s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate; }
+
+  .firma { animation: aparecer 420ms var(--frenada) both; }
+
+  /* Golpes: cada línea cae grande y borrosa, se clava y rebota un pelo */
+  .titular span { animation: golpe 560ms var(--golpe) both; transform-origin: 0 70%; }
+  .titular span:nth-child(1) { animation-delay: 120ms; }
+  .titular span:nth-child(2) { animation-delay: 270ms; }
+  .titular span:nth-child(3) { animation-delay: 420ms; }
+  /* El bloque acusa cada golpe con un temblor corto */
+  .titular { animation: temblor 620ms var(--frenada) 160ms both; }
+
+  .tajo { animation: tajo 380ms var(--frenada) 700ms both; }
+
+  .entrada { animation: subir 520ms var(--frenada) 780ms both; }
+  .accion  { animation: subir 520ms var(--frenada) 880ms both; }
+  .nota    { animation: subir 520ms var(--frenada) 960ms both; }
+
+  /* El pulso, cada cuatro segundos: el aro ocupa el primer 30 % y el resto espera */
+  .boton::after { animation: pulso 4s var(--frenada) 1.9s infinite; }
+
+  .razon { animation: subir 560ms var(--frenada) both; }
+  .razon:nth-child(1) { animation-delay: 1060ms; }
+  .razon:nth-child(2) { animation-delay: 1160ms; }
+  .razon:nth-child(3) { animation-delay: 1260ms; }
+
+  /* /beta/dentro: el sello se traza y suelta las esquirlas */
+  .sello { animation: sello 560ms var(--golpe) 560ms both; }
+  .sello circle { stroke-dasharray: 230; animation: trazo 620ms var(--frenada) 620ms both; }
+  .sello path   { --largo: 60; stroke-dasharray: 60; animation: trazo 380ms var(--frenada) 980ms both; }
+  .esquirlas i  { animation: esquirla 900ms var(--frenada) 1040ms both; }
+  .esquirlas i:nth-child(3n) { animation-delay: 1100ms; }
+}
+
+@keyframes respirar {
+  from { transform: scale(0.88); opacity: 0.7; }
+  to   { transform: scale(1.1);  opacity: 1; }
+}
+
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(-8px); }
+}
+
+@keyframes golpe {
+  0%   { opacity: 0; transform: translateY(-34%) scale(1.28); filter: blur(10px); }
+  52%  { opacity: 1; transform: translateY(3%) scale(0.98);   filter: blur(0); }
+  76%  { transform: translateY(-1%) scale(1.006); }
+  100% { opacity: 1; transform: none; filter: none; }
+}
+
+@keyframes temblor {
+  0%, 100% { transform: none; }
+  12% { transform: translate(-2px, 2px); }
+  24% { transform: translate(2px, -1px); }
+  36% { transform: translate(-1px, 1px); }
+  48% { transform: none; }
+  60% { transform: translate(1px, 2px); }
+  72% { transform: none; }
+}
+
+@keyframes tajo {
+  from { transform: skewX(-32deg) scaleX(0); }
+  to   { transform: skewX(-32deg) scaleX(1); }
+}
+
+@keyframes subir {
+  from { opacity: 0; transform: translateY(22px); }
+}
+
+@keyframes pulso {
+  0%   { opacity: 0.75; transform: scale(1); }
+  30%  { opacity: 0;    transform: scale(1.22, 1.5); }
+  100% { opacity: 0;    transform: scale(1.22, 1.5); }
+}
+
+@keyframes sello {
+  0%   { opacity: 0; transform: scale(0.4) rotate(-20deg); }
+  70%  { opacity: 1; transform: scale(1.08) rotate(3deg); }
+  100% { opacity: 1; transform: none; }
+}
+
+@keyframes trazo {
+  from { stroke-dashoffset: var(--largo, 230); }
+  to   { stroke-dashoffset: 0; }
+}
+
+@keyframes esquirla {
+  0%   { opacity: 0; transform: rotate(var(--a)) translateY(-30px) skewX(-20deg) scale(0.6); }
+  25%  { opacity: 1; }
+  100% { opacity: 0; transform: rotate(var(--a)) translateY(-96px) skewX(-20deg) scale(1); }
+}

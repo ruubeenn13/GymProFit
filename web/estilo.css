@@ -192,9 +192,13 @@ li { margin-bottom: 8px; }
   margin: 0 0 24px;
 }
 .acento p:last-child { margin-bottom: 0; }
+/* La invitación a la beta de la portada (GP-201) */
+.acento.beta h2 { margin-top: 0; }
+.acento.beta p { margin-bottom: 16px; }
 
 .btn {
   display: inline-block;
+  min-height: 48px;
   background: var(--primary);
   color: var(--on-primary);
   text-decoration: none;
@@ -203,6 +207,7 @@ li { margin-bottom: 8px; }
   border-radius: var(--radius);
 }
 .btn:hover { opacity: 0.9; }
+.btn:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
 
 table {
   width: 100%;
