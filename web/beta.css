@@ -138,6 +138,7 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
 .titular {
   position: relative;
   margin: 14px 0 0;
+  container-type: inline-size;
   font-family: var(--cond);
   font-weight: 700;
   line-height: 0.83;
@@ -145,10 +146,13 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
   text-transform: uppercase;
 }
 /* Cada línea llena el ancho por su cuenta: --k es el ancho de esa línea en
-   em, medido en el navegador. Las tres miden lo mismo y tienen tamaños distintos. */
+   em, medido en el navegador. Las tres miden lo mismo y tienen tamaños distintos.
+   El tamaño sale del ancho real de la columna (cqi), con un 4 % de holgura para el
+   trazo de las letras, y acotado; el primer font-size es el respaldo sin cqi. */
 .titular span {
   display: block;
-  font-size: calc(var(--ancho-titular) / var(--k));
+  font-size: clamp(26px, calc(var(--ancho-titular) * 0.96 / var(--k)), 280px);
+  font-size: clamp(26px, calc(96cqi / var(--k)), 280px);
   white-space: nowrap;
 }
 
@@ -473,6 +477,77 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
 .boton.hueco:hover { background: rgba(232, 113, 10, 0.14); }
 .boton.hueco::after { content: none; }
 
+/* ── El grupo de probadores (GP-202, DEC-052) ───────────────────── */
+
+/* /beta/dentro: el paso que hay que dar ya, en su tarjeta */
+.destacado {
+  max-width: 36rem;
+  margin-top: 28px;
+  padding: 22px;
+  border: 2px solid var(--naranja);
+  border-radius: 22px;
+  background: var(--panel);
+}
+.destacado h2, .paso h2 {
+  margin: 0 0 8px;
+  font-family: var(--cond);
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.destacado p, .paso p { margin: 0 0 18px; font-size: 16px; line-height: 1.5; color: var(--texto-2); }
+.destacado p strong { color: var(--texto); font-weight: 600; }
+.destacado + .entrada { margin-top: 26px; }
+
+/* /beta/entrar: los tres pasos, numerados porque son una secuencia */
+.pasos {
+  display: grid;
+  gap: 14px;
+  max-width: 36rem;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: paso;
+}
+.paso {
+  counter-increment: paso;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid var(--linea);
+  border-radius: 22px;
+  background: var(--panel);
+}
+.paso::before {
+  content: counter(paso);
+  font-family: var(--cond);
+  font-weight: 700;
+  font-size: 48px;
+  line-height: 0.85;
+  color: var(--naranja);
+}
+.paso p:last-child { margin-bottom: 0; }
+/* En los móviles más estrechos el número va encima, para que el botón quepa entero */
+@media (max-width: 359px) {
+  .paso { grid-template-columns: 1fr; gap: 8px; }
+}
+.paso .boton { min-width: 0; font-size: 20px; padding: 0 26px; }
+
+/* El paso que aún no se puede dar: se ve, pero apagado y sin enlace */
+.paso.apagado::before { color: var(--texto-2); }
+.paso.apagado h2 { color: var(--texto-2); }
+.boton.apagado {
+  background: transparent;
+  color: var(--texto-2);
+  box-shadow: inset 0 0 0 2px var(--linea);
+  cursor: default;
+}
+/* En el móvil más estrecho el aviso no cabe en una línea: entonces se parte centrado */
+.paso .boton.apagado { min-height: 48px; padding: 8px 20px; font-size: 17px; line-height: 1.15; text-align: center; }
+.boton.apagado::after { content: none; }
+
 /* ── Escritorio ──────────────────────────────────────────────────── */
 
 @media (min-width: 900px) {
@@ -525,8 +600,8 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
   .razon:nth-child(2) { animation-delay: 230ms; }
   .razon:nth-child(3) { animation-delay: 300ms; }
 
-  /* /beta/revisa y /beta/dentro */
-  .entrada, .redes, .nota { animation: subir 300ms var(--frenada) 200ms both; }
+  /* /beta/revisa, /beta/dentro y /beta/entrar */
+  .entrada, .redes, .nota, .destacado, .pasos { animation: subir 300ms var(--frenada) 200ms both; }
   .sello { animation: sello 320ms var(--golpe) 100ms both; }
   .sello circle { stroke-dasharray: 230; animation: trazo 360ms var(--frenada) 120ms both; }
   .sello path   { --largo: 60; stroke-dasharray: 60; animation: trazo 240ms var(--frenada) 340ms both; }

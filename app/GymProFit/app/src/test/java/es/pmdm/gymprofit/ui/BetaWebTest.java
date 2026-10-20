@@ -32,10 +32,12 @@ import java.util.stream.Stream;
 // terceros ni lleva JavaScript, así que la beta tampoco. Y la política tiene que
 // nombrar el tratamiento con su base legal, su plazo y la baja.
 //
-// /beta/entrar es el enlace de los correos de «beta abierta» (GP-202): existe desde ya
-// con su página de «abre muy pronto», y el día de apertura una regla de _redirects
-// le gana y manda a la prueba cerrada de Play (DEC-051). Ese enlace solo puede estar
-// en _redirects: si se cuela en una página, la beta queda abierta antes de tiempo.
+// /beta/entrar es el enlace de los correos de «beta abierta» (GP-202) y es una página
+// de tres pasos: unirse al Grupo de Google de probadores, aceptar la prueba en Play e
+// instalar (DEC-052). Abrir la beta es cambiar un solo bloque marcado: hasta entonces
+// el enlace de Play espera comentado dentro de él, y fuera de ese bloque no puede estar
+// en ninguna parte de la web, o la beta queda abierta antes de tiempo. El del grupo,
+// solo en /beta/dentro y /beta/entrar.
 // ============================================================
 public class BetaWebTest {
 
@@ -47,6 +49,9 @@ public class BetaWebTest {
 
     /** El principio de cualquier enlace de unión a una prueba cerrada de Google Play. */
     private static final String PRUEBA_CERRADA = "play.google.com/apps/testing";
+
+    /** El Grupo de Google que hace de lista de probadores (DEC-052). */
+    private static final String GRUPO = "groups.google.com/g/gymprofit-beta";
 
     @Test
     public void elFormularioEnviaABrevoPorPost() throws IOException {
@@ -158,18 +163,60 @@ public class BetaWebTest {
     }
 
     @Test
-    public void entrarDiceQueAbreProntoYVuelveALaBeta() throws IOException {
+    public void dentroPideUnirseYaAlGrupo() throws IOException {
+        String html = pagina("beta/dentro.html");
+        Matcher destacado = Pattern.compile("<div class=\"destacado\">(.*?)</div>", Pattern.DOTALL).matcher(html);
+        assertTrue("/beta/dentro no tiene el paso destacado", destacado.find());
+        String paso = destacado.group(1);
+        assertTrue("el paso no se llama como se aprobó", texto(paso).contains("Únete ya al grupo de probadores"));
+        assertTrue("el paso no enlaza al grupo", paso.contains("href=\"https://" + GRUPO + "\""));
+        assertTrue("no dice que hace falta una cuenta de Google", texto(paso).contains("cuenta de Google"));
+        assertTrue("no dice que así el día de apertura solo hay que aceptar",
+                texto(paso).contains("el día de apertura solo tendrás que aceptar la prueba"));
+    }
+
+    @Test
+    public void entrarSonTresPasosYNoSeIndexa() throws IOException {
         String html = pagina("beta/entrar.html");
         assertTrue("/beta/entrar se indexa", html.contains("<meta name=\"robots\" content=\"noindex\">"));
-        String texto = texto(html.replaceAll("(?s)<head>.*?</head>", ""));
-        assertTrue("no dice que abre pronto", texto.contains("Abre muy pronto."));
-        assertTrue("no dice que se avisará por correo", texto.contains("Te avisaremos por correo"));
+        // Los pasos de verdad, sin contar el que espera comentado dentro del bloque de apertura
+        String visible = sinComentarios(html);
+        assertEquals("/beta/entrar no tiene tres pasos", 3, ocurrencias(visible, "<li class=\"paso"));
+        String[] pasos = visible.split("<li class=\"paso");
+        assertTrue("el primer paso no enlaza al grupo", pasos[1].contains("href=\"https://" + GRUPO + "\""));
+        assertTrue("el segundo paso no es aceptar la prueba", texto(pasos[2]).contains("Acepta la prueba en Google Play"));
+        assertTrue("el tercer paso no es instalar", texto(pasos[3]).contains("Instala GymProFit"));
         assertTrue("no tiene el botón de vuelta a /beta",
                 html.contains("<a class=\"boton hueco\" href=\"/beta\">Volver a la beta</a>"));
     }
 
     @Test
-    public void elEnlaceDeLaPruebaCerradaSoloEstaEnRedirects() throws IOException {
+    public void abrirLaBetaEsCambiarUnSoloBloque() throws IOException {
+        String html = pagina("beta/entrar.html");
+        assertEquals("el bloque de apertura tiene que estar una vez", 1, ocurrencias(html, "▼ APERTURA DE LA BETA"));
+        assertEquals("el bloque de apertura no se cierra una vez", 1, ocurrencias(html, "▲ FIN DE LA APERTURA DE LA BETA"));
+        String bloque = html.substring(html.indexOf("▼ APERTURA DE LA BETA"), html.indexOf("▲ FIN DE LA APERTURA DE LA BETA"));
+        String fuera = html.replace(bloque, "");
+        assertEquals("el enlace de Play tiene que estar una vez, dentro del bloque", 1, ocurrencias(bloque, PRUEBA_CERRADA));
+        assertFalse("el enlace de Play está fuera del bloque de apertura", fuera.contains(PRUEBA_CERRADA));
+        assertTrue("el enlace no es el de unión de la prueba de GymProFit",
+                bloque.contains("href=\"https://" + PRUEBA_CERRADA + "/com.gymprofit.app\""));
+        // El bloque empieza dentro del comentario de las instrucciones: se reabre para quitarlo
+        String visible = sinComentarios("<!--" + bloque);
+        boolean cerrada = visible.contains("Disponible el día de apertura");
+        boolean enlaceVisible = visible.contains(PRUEBA_CERRADA);
+        // O cerrada, con el paso apagado y el enlace comentado, o abierta, con el enlace y sin el aviso
+        assertTrue("el bloque está a medias: cerrada=" + cerrada + ", enlace visible=" + enlaceVisible,
+                cerrada != enlaceVisible);
+        assertEquals("el bloque tiene que dejar un solo segundo paso", 1, ocurrencias(visible, "<li class=\"paso"));
+        if (cerrada) {
+            assertTrue("el paso cerrado no está apagado",
+                    visible.contains("<span class=\"boton apagado\" aria-disabled=\"true\">"));
+        }
+    }
+
+    @Test
+    public void elEnlaceDePlaySoloEstaEnEntrarYElDelGrupoEnDentroYEntrar() throws IOException {
         Path web = raiz().resolve("web");
         List<Path> ficheros;
         try (Stream<Path> todos = Files.walk(web)) {
@@ -179,28 +226,32 @@ public class BetaWebTest {
         }
         assertTrue("no hay ficheros de texto en web/", ficheros.size() >= 8);
         for (Path f : ficheros) {
-            if (f.equals(web.resolve("_redirects"))) continue;
+            String nombre = web.relativize(f).toString().replace('\\', '/');
             String contenido = new String(Files.readAllBytes(f), StandardCharsets.UTF_8);
-            assertFalse("el enlace de la prueba cerrada está en " + web.relativize(f), contenido.contains(PRUEBA_CERRADA));
+            if (!nombre.equals("beta/entrar.html")) {
+                assertFalse("el enlace de la prueba cerrada está en " + nombre, contenido.contains(PRUEBA_CERRADA));
+            }
+            if (!nombre.equals("beta/entrar.html") && !nombre.equals("beta/dentro.html")) {
+                assertFalse("el enlace del grupo de probadores está en " + nombre, contenido.contains(GRUPO));
+            }
         }
     }
 
     @Test
-    public void laRedireccionDeEntrarEstaListaEnUnaLinea() throws IOException {
-        String regla = "/beta/entrar https://" + PRUEBA_CERRADA + "/com.gymprofit.app 302";
-        int encontradas = 0;
-        for (String linea : pagina("_redirects").split("\\R")) {
-            String l = linea.trim();
-            if (l.isEmpty()) continue;
-            if (l.startsWith("#")) {
-                if (l.substring(1).trim().equals(regla)) encontradas++;
-                continue;
-            }
-            // Una regla activa solo puede ser esa: ninguna otra ruta se redirige
-            assertEquals("regla inesperada en _redirects", regla, l);
-            encontradas++;
+    public void entrarYaNoEsUnaRedireccion() {
+        // DEC-052 sustituye a DEC-051: /beta/entrar es una página y ninguna regla le gana
+        assertFalse("vuelve web/_redirects", Files.exists(raiz().resolve("web").resolve("_redirects")));
+    }
+
+    @Test
+    public void laPoliticaCuentaElGrupoDeProbadores() throws IOException {
+        String texto = texto(pagina("privacidad.html"));
+        Matcher grupo = Pattern.compile("El grupo de probadores:([^•]*?)(?:Datos que se generan|$)").matcher(texto);
+        assertTrue("la política no cuenta el grupo de probadores", grupo.find());
+        String parrafo = grupo.group(1);
+        for (String debe : new String[]{"voluntario", "Google", "sus propias condiciones", "solo vemos la dirección de correo"}) {
+            assertTrue("lo del grupo no dice «" + debe + "»", parrafo.contains(debe));
         }
-        assertEquals("la redirección de /beta/entrar tiene que estar una vez, comentada o no", 1, encontradas);
     }
 
     @Test
@@ -242,6 +293,11 @@ public class BetaWebTest {
         Matcher m = Pattern.compile("<input\\b[^>]*name=\"" + nombre + "\"[^>]*>").matcher(form);
         assertTrue("falta el campo " + nombre, m.find());
         return m.group();
+    }
+
+    // El HTML sin sus comentarios: lo que de verdad pinta el navegador.
+    private static String sinComentarios(String html) {
+        return html.replaceAll("(?s)<!--.*?-->", "");
     }
 
     private static int ocurrencias(String texto, String buscado) {

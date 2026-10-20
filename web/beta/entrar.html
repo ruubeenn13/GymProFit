@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Abre muy pronto · Beta de GymProFit</title>
-<meta name="description" content="La beta de GymProFit abre muy pronto. Te avisaremos por correo en cuanto puedas entrar.">
+<title>Entra en la beta · GymProFit</title>
+<meta name="description" content="Los tres pasos para entrar en la beta de GymProFit en Google Play: unirte al grupo de probadores, aceptar la prueba e instalar la app.">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#0B0C0E" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#F5F1EA" media="(prefers-color-scheme: light)">
@@ -13,7 +13,7 @@
 <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
 <link rel="preload" href="/fuentes/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fuentes/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/beta.css?v=be26edd3">
+<link rel="stylesheet" href="/beta.css?v=bd0345f2">
 </head>
 <body>
 
@@ -32,18 +32,56 @@
     </a>
 
     <div class="golpe">
-      <div class="sello" aria-hidden="true">
-        <svg viewBox="0 0 84 84"><circle cx="42" cy="42" r="36"/><path d="M42 23 v20 l13 9"/></svg>
-      </div>
       <h1 class="titular" id="titular">
-        <span style="--k: 3.56">Abre muy</span>
-        <span style="--k: 3.06">pronto.</span>
+        <span style="--k: 3.53">Entra en</span>
+        <span style="--k: 3.15">la beta.</span>
       </h1>
       <span class="tajo" aria-hidden="true"></span>
     </div>
 
     <div class="llamada">
-      <p class="entrada"><strong>La beta todavía no está abierta.</strong> Te avisaremos por correo en cuanto puedas entrar.</p>
+      <p class="entrada"><strong>La beta es una prueba cerrada de Google Play.</strong> Necesitas una cuenta de Google, la misma en los tres pasos.</p>
+
+      <!-- Los correos de «beta abierta» enlazan aquí y la URL no cambia nunca (DEC-052).
+           El enlace al grupo solo va aquí y en /beta/dentro; el de Play, solo aquí. -->
+      <ol class="pasos">
+        <li class="paso">
+          <div>
+            <h2>Únete al grupo de probadores</h2>
+            <p>Con la cuenta de Google de tu móvil. Solo entran en la prueba las cuentas del grupo.</p>
+            <a class="boton hueco" href="https://groups.google.com/g/gymprofit-beta">Unirme al grupo</a>
+          </div>
+        </li>
+
+<!-- ▼ APERTURA DE LA BETA (DEC-052): el único bloque que se cambia el día de apertura.
+     Para abrir: quita el comentario que envuelve el paso con el enlace de Google Play
+     y borra el paso apagado de debajo. Ver web/README.md. -->
+<!--
+        <li class="paso">
+          <div>
+            <h2>Acepta la prueba en Google Play</h2>
+            <p>Con la misma cuenta de Google con la que te uniste al grupo.</p>
+            <a class="boton" href="https://play.google.com/apps/testing/com.gymprofit.app">Aceptar la prueba</a>
+          </div>
+        </li>
+-->
+        <li class="paso apagado">
+          <div>
+            <h2>Acepta la prueba en Google Play</h2>
+            <p>Te avisaremos por correo en cuanto abra.</p>
+            <span class="boton apagado" aria-disabled="true">Disponible el día de apertura</span>
+          </div>
+        </li>
+<!-- ▲ FIN DE LA APERTURA DE LA BETA -->
+
+        <li class="paso">
+          <div>
+            <h2>Instala GymProFit</h2>
+            <p>Desde Google Play, como cualquier app. Si al aceptar la prueba todavía no aparece, espera unos minutos.</p>
+          </div>
+        </li>
+      </ol>
+
       <div class="redes">
         <a class="boton hueco" href="/beta">Volver a la beta</a>
       </div>
@@ -51,7 +89,7 @@
   </section>
 
   <footer class="pie">
-    <p>Puedes darte de baja cuando quieras con el enlace de cualquiera de nuestros correos, o escribiendo a <a href="mailto:privacidad@gymprofit.app">privacidad@gymprofit.app</a>. Lo que hacemos con tus datos está en la <a href="/privacidad">política de privacidad</a>.</p>
+    <p>Unirte al grupo es voluntario y lo gestiona Google con sus propias condiciones; nosotros solo vemos el correo de cada miembro. Lo cuenta la <a href="/privacidad#beta">política de privacidad</a>.</p>
     <nav aria-label="Más de GymProFit">
       <a href="/">Inicio</a>
       <a href="/privacidad">Privacidad</a>
