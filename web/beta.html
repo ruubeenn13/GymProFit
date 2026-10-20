@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Beta de GymProFit · Pruébala antes que nadie</title>
-<meta name="description" content="Apúntate a la beta de GymProFit: entreno, dieta y progreso en una sola app. Te avisamos en cuanto abra.">
+<meta name="description" content="Apúntate a la beta de GymProFit para Android: entreno, dieta y progreso en una sola app. Te avisamos en cuanto abra.">
 <meta name="theme-color" content="#0B0C0E" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#F5F1EA" media="(prefers-color-scheme: light)">
 <link rel="icon" href="/img/favicon-claro.png" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
 <link rel="preload" href="/fuentes/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fuentes/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/beta.css">
+<link rel="stylesheet" href="/beta.css?v=be26edd3">
 </head>
 <body>
 
@@ -25,7 +25,7 @@
       <span class="luz" aria-hidden="true"></span>
       <picture>
         <source srcset="/img/logo-oscuro-256.webp" media="(prefers-color-scheme: dark)">
-        <img src="/img/logo-claro-256.webp" alt="" width="64" height="64">
+        <img src="/img/logo-claro-256.webp" alt="" width="36" height="36">
       </picture>
       GYMPROFIT
     </a>
@@ -37,44 +37,54 @@
       <span style="--k: 3.93">que nadie.</span>
     </h1>
     <span class="tajo" aria-hidden="true"></span>
+    <p class="linea">Entreno, dieta y progreso en una sola app. Solo Android.</p>
     </div>
 
-    <div class="llamada">
-    <p class="entrada"><strong>La beta de GymProFit está a punto.</strong> Apúntate y te escribimos en cuanto abra.</p>
+    <!-- El formulario es nuestro y se envía por POST normal a Brevo, sin JavaScript (DEC-050).
+         Los nombres de los campos son los que espera Brevo: no se cambian sin cambiarlos allí.
+         No lleva animación de entrada: se ve desde el primer fotograma. -->
+    <form class="alta" id="apuntarse" method="post" action="https://c66652ae.sibforms.com/serve/MUIFAORtSwe7_YQbPHZ1hfBdigRHNkNWnE7eaZati3CifuqQ3yIKNj2HQV6oOvbjfyUYusgHznzE_WWAA1fhZNqg84lw5KkyrVJxhLaYEyL0XUYchj8wmMdvuu6lNVZIDrylva7nkhY_bEC7VLwLrLIgS7kAabyxan0UmamnG80VnAInVeNAjUYo1BkWePjfwN9ptal3PQSa2H17mA==">
+      <!-- Etiqueta flotante: dentro del campo hasta que se escribe o se toca, sin JS (:placeholder-shown) -->
+      <div class="campo">
+        <input class="correo" id="correo" type="email" name="EMAIL" required autocomplete="email" autocapitalize="off" spellcheck="false" placeholder=" ">
+        <label for="correo">Tu correo</label>
+      </div>
 
-    <div class="accion">
-      <a class="boton" href="https://c66652ae.sibforms.com/serve/MUIFAORtSwe7_YQbPHZ1hfBdigRHNkNWnE7eaZati3CifuqQ3yIKNj2HQV6oOvbjfyUYusgHznzE_WWAA1fhZNqg84lw5KkyrVJxhLaYEyL0XUYchj8wmMdvuu6lNVZIDrylva7nkhY_bEC7VLwLrLIgS7kAabyxan0UmamnG80VnAInVeNAjUYo1BkWePjfwN9ptal3PQSa2H17mA==">Apuntarme</a>
-    </div>
-    <p class="nota">Solo tu correo y qué móvil tienes.</p>
-    </div>
+      <label class="consentimiento">
+        <input type="checkbox" name="OPT_IN" value="1" required>
+        <span>Avísame por correo de la beta y del lanzamiento. Me doy de baja cuando quiera. <a href="/privacidad#beta">Privacidad</a></span>
+      </label>
+
+      <!-- Trampa para bots: tiene que llegar vacía. Nadie la ve, ni con lector de pantalla. -->
+      <div class="trampa" aria-hidden="true"><input type="text" name="email_address_check" value="" tabindex="-1" autocomplete="off"></div>
+      <input type="hidden" name="locale" value="es">
+      <input type="hidden" name="html_type" value="simple">
+
+      <button class="boton" type="submit">Apuntarme</button>
+    </form>
   </section>
+
+  <p class="iphone">La beta se instala desde Google Play. ¿Tienes iPhone? Sigue a @gymprofit en <a href="https://www.tiktok.com/@gymprofit">TikTok</a> o <a href="https://www.instagram.com/gymprofit">Instagram</a> para enterarte cuando llegue.</p>
 
   <ul class="razones">
     <li class="razon maciza">
-      <h2>Una sola app</h2>
-      <p>Entreno, dieta y progreso en el mismo sitio: lo que levantas, lo que comes y cómo cambias, sin saltar de una app a otra.</p>
+      <h2>Todo junto</h2>
+      <p>Lo que levantas, lo que comes y cómo cambias, sin cambiar de app.</p>
     </li>
     <li class="razon">
-      <h2>Primero en Android</h2>
-      <p>La beta se abre en Google Play, de momento solo para Android. ¿Tienes iPhone? Apúntate igual y te avisamos cuando llegue.</p>
+      <h2>Por tandas</h2>
+      <p>Abrimos poco a poco: apuntarte no asegura plaza.</p>
     </li>
     <li class="razon tuya">
-      <h2>Tu opinión cambia la app</h2>
-      <p>Probarás versiones sin terminar, y lo que nos cuentes decide qué se arregla primero. Abrimos por tandas: apuntarte no asegura plaza, pero te escribimos en cuanto haya sitio.</p>
+      <h2>Tu opinión cuenta</h2>
+      <p>Lo que nos cuentes decide qué se arregla antes.</p>
     </li>
   </ul>
 
-  <section class="cierre" aria-label="Apuntarse">
-    <p>¿Te apuntas?</p>
-    <a class="boton" href="https://c66652ae.sibforms.com/serve/MUIFAORtSwe7_YQbPHZ1hfBdigRHNkNWnE7eaZati3CifuqQ3yIKNj2HQV6oOvbjfyUYusgHznzE_WWAA1fhZNqg84lw5KkyrVJxhLaYEyL0XUYchj8wmMdvuu6lNVZIDrylva7nkhY_bEC7VLwLrLIgS7kAabyxan0UmamnG80VnAInVeNAjUYo1BkWePjfwN9ptal3PQSa2H17mA==">Apuntarme</a>
-  </section>
-
   <footer class="pie">
-    <p>El botón te lleva al formulario de Brevo, el servicio con el que gestionamos la lista. Después te llega un correo para confirmar tu dirección: hasta que no lo confirmas, no estás apuntado.</p>
-    <p>Puedes darte de baja cuando quieras con el enlace de cualquiera de nuestros correos. Lo que hacemos con tus datos está en la <a href="/privacidad">política de privacidad</a>.</p>
+    <p>Al apuntarte te llega un correo para confirmar tu dirección: hasta que no lo confirmas, no estás en la lista. Cada correo nuestro lleva su enlace de baja.</p>
     <nav aria-label="Más de GymProFit">
       <a href="/">Inicio</a>
-      <a href="/privacidad">Privacidad</a>
       <a href="/terminos">Términos</a>
       <a href="mailto:soporte@gymprofit.app">Soporte</a>
     </nav>

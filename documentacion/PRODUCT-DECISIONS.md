@@ -860,22 +860,24 @@ El `LIKE` con comodín delante no usa índice: barre la tabla entera en cada pul
 
 ---
 
-### DEC-050 · La lista de espera de la beta es un formulario alojado de Brevo con doble confirmación, y la web sigue sin JavaScript
+### DEC-050 · La lista de espera de la beta es un formulario nuestro que se envía por POST a Brevo, sin JavaScript
 **Estado:** Aceptada · **Fecha:** 2026-10-20 · **Tarea:** GP-201
 
-**Contexto.** La beta necesita una lista de espera a la que llegue gente desde TikTok e Instagram, y `gymprofit.app` es un sitio estático sin build, sin JavaScript y sin peticiones a terceros al cargar (`web/README.md`). Recoger correos en la propia web pediría un endpoint, una API de Brevo con su clave y un script en la página, o un `<form>` que publique en un tercero.
+**Contexto.** La beta necesita una lista de espera a la que llegue gente desde TikTok e Instagram, y `gymprofit.app` es un sitio estático sin build, sin JavaScript y sin peticiones a terceros al cargar (`web/README.md`). La primera versión de GP-201 enlazaba al formulario alojado de Brevo: la página de Brevo quedaba pobre al lado de `/beta`, era un salto a otro dominio en el navegador de TikTok y preguntaba el tipo de móvil, que sobra porque la beta es solo para Android.
 
 **Decisión.**
 
-- **Las altas las recoge un formulario alojado de Brevo**, con doble confirmación: quien se apunta recibe un correo y no está en la lista hasta que lo confirma. Brevo redirige después a `/beta/dentro`. El formulario pide el correo y el tipo de móvil (Android o iPhone).
-- **`/beta` no tiene formulario**: su botón «Apuntarme» es un enlace al de Brevo en la misma pestaña. Así la web sigue sin JavaScript y sin pedir nada a terceros al cargar; Brevo solo recibe los datos de conexión de quien pulsa, y la política lo dice.
-- **El movimiento de `/beta` y `/beta/dentro` es solo CSS**, y con `prefers-reduced-motion` la página está quieta y completa: el estado final es el de partida y las animaciones solo entran con `no-preference`.
-- **La paleta de la beta es la de los vídeos** (`#E8710A`, `#CBA135`, `#F5F1EA` sobre `#0B0C0E`), en `web/beta.css`, aparte de `estilo.css`. Es una página de llegada desde un vídeo; lo que tiene que reconocer quien llega es el vídeo, no la app. El resto del sitio sigue con los tokens de la app. El dorado sale como detalle gráfico y en la celebración de `/beta/dentro`, que es justo el uso que DEC-026 le reserva.
-- **Tratamiento propio en la política**, «Lista de espera de la beta»: correo y tipo de móvil, para avisar de la beta y del lanzamiento, con consentimiento (art. 6.1.a), hasta la baja o como mucho 6 meses después de publicar la app. `BetaWebTest` fija el enlace de `/beta` y ese tratamiento.
+- **El formulario es nuestro, dentro de `/beta`**, con el diseño de la página, y se envía por **POST normal** al endpoint del formulario de Brevo (`<form method="post" action="https://….sibforms.com/serve/…">`), sin JavaScript. Brevo guarda el alta con doble confirmación y responde con una redirección (303) a `/beta/revisa`; tras confirmar desde el correo, redirige a `/beta/dentro`. Comprobado el 2026-10-20 con un navegador sin JavaScript.
+- **Los campos son los que espera Brevo**: `EMAIL` (`type="email"`, obligatorio), `OPT_IN` (casilla, `value="1"`, obligatoria y sin marcar), `email_address_check` (trampa para bots: vacía, fuera de la pantalla, fuera del tabulador y con `aria-hidden`), y `locale=es` y `html_type=simple` ocultos. Validación, la del navegador. `BetaWebTest` fija la action y cada campo: si se cambian en Brevo, se cambian aquí y en el test.
+- **Solo se pide el correo.** La beta es solo para Android porque se instala desde Google Play, y la página lo dice junto al formulario; a quien tiene iPhone se le pide que no se apunte todavía y siga a @gymprofit.
+- **Nada sale de la página hasta que se pulsa «Apuntarme».** Al pulsar, el correo va directamente a Brevo, que recibe también los datos de conexión; la política lo dice.
+- **El movimiento de las tres páginas (`/beta`, `/beta/revisa`, `/beta/dentro`) es solo CSS**, y con `prefers-reduced-motion` están quietas y completas: el estado final es el de partida y las animaciones solo entran con `no-preference`.
+- **La paleta de la beta es la de los vídeos** (`#E8710A`, `#CBA135`, `#F5F1EA` sobre `#0B0C0E`), en `web/beta.css`, aparte de `estilo.css`. Es una página de llegada desde un vídeo; lo que tiene que reconocer quien llega es el vídeo, no la app. El dorado sale como detalle gráfico y en la celebración de `/beta/dentro`, que es el uso que DEC-026 le reserva.
+- **Tratamiento propio en la política**, «Lista de espera de la beta»: solo el correo, para avisar de la beta y del lanzamiento, con consentimiento (art. 6.1.a) marcado en la casilla y confirmado por correo, hasta la baja o como mucho 6 meses después de publicar la app.
 
-**Consecuencias.** El salto a otro dominio cuesta gente: el formulario de Brevo carga su página y sus recursos, con su aspecto, dentro del navegador de TikTok. A cambio no hay clave, ni endpoint, ni nada que mantener en la API. Si el enlace del formulario cambia en Brevo, hay que cambiarlo en `beta.html` y en el test.
+**Consecuencias.** Sin clave, sin endpoint propio y sin nada que mantener en la API. Los errores de Brevo (un correo que rechaza, el formulario desactivado) no se pueden mostrar en `/beta`: sin JavaScript, la página no se entera de la respuesta, solo de adónde redirige. La trampa para bots es la única defensa: un captcha pediría JavaScript y recursos de terceros.
 
-**Qué la invalidaría.** Que el salto pierda demasiada gente: si de quienes pulsan «Apuntarme» confirman muchos menos de los que cabría esperar, se pasa a un formulario propio en `/beta` que dé de alta por la API de Brevo desde nuestro servidor, con la doble confirmación de Brevo igual. Eso traería un endpoint nuevo y un `<form>` en la web, aunque seguiría sin hacer falta JavaScript.
+**Qué la invalidaría.** Que Brevo deje de aceptar el POST normal o deje de redirigir (respondiendo con JSON o con una página suya): entonces el alta pasaría por un endpoint nuestro que dé de alta por la API de Brevo, con la doble confirmación de Brevo igual. Que lleguen altas de bots que la trampa no para. Que la beta llegue a iPhone, que devolvería la pregunta del móvil.
 
 ---
 

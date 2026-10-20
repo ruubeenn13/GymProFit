@@ -1,12 +1,13 @@
 # web — sitio público de GymProFit
 
 Sitio estático de `gymprofit.app`: portada, política de privacidad, términos de uso,
-la página de eliminación de cuenta y la de la beta (`/beta` y `/beta/dentro`). HTML y CSS a mano, sin build, sin dependencias y sin
+la página de eliminación de cuenta y la de la beta (`/beta`, `/beta/revisa` y `/beta/dentro`). HTML y CSS a mano, sin build, sin dependencias y sin
 JavaScript. Lo que hay en esta carpeta es exactamente lo que se sirve.
 
 ```
 index.html · privacidad.html · terminos.html · eliminar-cuenta.html · estilo.css
-beta.html · beta/dentro.html · beta.css   (la beta, GP-201)
+beta.html · beta/revisa.html · beta/dentro.html · beta.css   (la beta, GP-201)
+_headers  la caché de Cloudflare Pages (ver «Caché y versiones»)
 fuentes/  seis .woff2: Barlow 400 / 500 / 600 y Barlow Condensed 500 / 600 / 700
 img/      logos claro y oscuro (256 y 512, webp) + favicons y apple-touch-icon
 ```
@@ -19,15 +20,38 @@ despliega nada**. El dominio `gymprofit.app` apunta a ese proyecto.
 
 ## Cómo se despliega a mano
 
-1. Comprimir el **contenido** de `web/` menos este README, no la carpeta. El zip
-   que se sube es eso: lo que hay aquí, salvo `README.md`.
-2. Proyecto `gymprofit` en Cloudflare Pages → pestaña **Implementaciones** → subir
+1. Si ha cambiado alguna hoja, poner su versión nueva en las páginas, desde la
+   raíz del repositorio: `python scripts/versionar-hojas-web.py`. Con
+   `--comprobar` solo dice si falta; el test `HojasVersionadasWebTest` también
+   falla si una hoja cambia y su versión no.
+2. Comprimir el **contenido** de `web/` menos este README, no la carpeta. El zip
+   que se sube es eso: lo que hay aquí, salvo `README.md`. `_headers` va dentro.
+3. Proyecto `gymprofit` en Cloudflare Pages → pestaña **Implementaciones** → subir
    el zip.
 
 Lo del contenido no es manía: el zip se descomprime en la raíz del sitio, así que
 si dentro va una carpeta `web/`, todo queda colgando de `/web/...` y las rutas
 absolutas del HTML —`/estilo.css`, `/fuentes/...`, `/img/...`— apuntan a ficheros
 que no existen. El sitio se ve sin estilos y sin tipografía.
+
+## Caché y versiones
+
+Un navegador que ya había visitado `/beta` mezcló la página nueva con el
+`beta.css` de su caché (GP-201). Para que no vuelva a pasar:
+
+- **Las hojas van versionadas por su contenido**: cada página pide
+  `/beta.css?v=<hash>` o `/estilo.css?v=<hash>`, con los 8 primeros caracteres
+  del SHA-256 de la hoja (saltos de línea normalizados a `\n`, para que salga
+  igual en Windows y en el CI). La URL cambia solo cuando cambia la hoja. La
+  versión la pone `scripts/versionar-hojas-web.py`; nunca a mano.
+- **`_headers`**: el HTML, con `Cache-Control: no-cache` (se revalida siempre,
+  y es lo que dice qué versión pedir); `estilo.css` y `beta.css`, un año e
+  `immutable`. Las fuentes y las imágenes **no** van versionadas, así que se
+  quedan con la revalidación de Pages: si un día se versionan, pueden pasar a
+  `immutable`.
+- **Ninguna regla `/*`**: si dos reglas ponen `Cache-Control` a la misma ruta,
+  Pages une sus valores con una coma. Por eso cada página tiene su regla. Una
+  página nueva necesita la suya, o se queda con la caché por defecto de Pages.
 
 ## Rutas limpias
 
@@ -39,20 +63,35 @@ nuevo también las resuelve, o los enlaces declarados en la ficha se rompen.
 
 ## La beta
 
-`/beta` es la página a la que llega quien viene de TikTok o Instagram. Su botón
-«Apuntarme» es un **enlace** al formulario alojado de Brevo, en la misma pestaña:
-la web no recoge nada. Brevo pide confirmar el correo y después redirige a
-`/beta/dentro` (DEC-050). Si el enlace del formulario cambia en Brevo, se cambia en
-los dos botones de `beta.html` y en `BetaWebTest`, que lo fija.
+`/beta` es la página a la que llega quien viene de TikTok o Instagram. Lleva su
+propio **formulario**, que se envía por POST normal al endpoint del formulario de
+Brevo, sin JavaScript (DEC-050). Brevo pide confirmar el correo: tras enviar
+redirige a `/beta/revisa` y tras confirmar, a `/beta/dentro`. Las dos
+redirecciones se configuran en Brevo, no aquí.
 
-- **Rutas.** `beta.html` sirve `/beta` y `beta/dentro.html` sirve `/beta/dentro`:
-  Pages resuelve por fichero, así que la carpeta `beta/` no le quita la ruta a
-  `beta.html`. No hace falta `beta/index.html`, que daría `/beta/` con barra.
+- **Los campos son los de Brevo**: `EMAIL`, `OPT_IN` (`value="1"`),
+  `email_address_check` (trampa para bots, vacía y oculta para todos),
+  `locale=es` y `html_type=simple`. Si la action o un nombre cambian en Brevo, se
+  cambian en `beta.html` y en `BetaWebTest`, que los fija.
+- **Solo Android.** La beta se instala desde Google Play; la página lo dice junto
+  al formulario y no pregunta el móvil.
+- **Rutas.** `beta.html` sirve `/beta`, y `beta/revisa.html` y `beta/dentro.html`
+  sirven sus rutas: Pages resuelve por fichero, así que la carpeta `beta/` no le
+  quita la ruta a `beta.html`. No hace falta `beta/index.html`, que daría `/beta/`
+  con barra.
 - **Su hoja es `beta.css`, no `estilo.css`.** La paleta es la de los vídeos
   (`#E8710A`, `#CBA135`, `#F5F1EA` sobre `#0B0C0E`), no la de la app: es lo que
   reconoce quien llega desde un vídeo. Las fuentes son los mismos ficheros.
 - **El titular llena el ancho** línea a línea: cada `<span>` lleva `--k`, su ancho
   en em medido en el navegador. Si cambia el texto, hay que volver a medirlo.
+- **El primer pantallazo a 375 × 667 es logo, titular, una línea y la tarjeta
+  del formulario**, entera. Va justo: cualquier línea de más en esa zona la empuja
+  fuera. El iPhone se nombra una sola vez, debajo; ningún texto se repite, y
+  `BetaWebTest` lo comprueba frase a frase.
+- **Todo se ve en 0,6 s.** Cada entrada dura 400 ms como mucho, el escalonado
+  acaba antes de 600 ms y ninguna parte de opacidad 0, así que el contenido está a
+  la vista aunque la animación tarde en arrancar. El formulario no se anima. Lo que
+  respira, pulsa o celebra empieza después.
 - **El movimiento es solo CSS** y vive entero dentro de
   `@media (prefers-reduced-motion: no-preference)`. Fuera de ese bloque la página
   está ya en su estado final, así que con movimiento reducido se ve quieta y completa.

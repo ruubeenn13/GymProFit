@@ -12,49 +12,131 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 // ============================================================
-// BetaWebTest — la página de la beta lleva al formulario de Brevo y la política
-// cuenta ese tratamiento (GP-201).
+// BetaWebTest — el formulario de /beta envía a Brevo y la política cuenta ese
+// tratamiento (GP-201).
 //
-// Las altas de la lista de espera las recoge un formulario alojado de Brevo con doble
-// confirmación (DEC-050): si el enlace de /beta cambia sin querer, la gente que llega
-// desde TikTok se apunta a ninguna parte. Y la web no carga nada de terceros ni lleva
-// JavaScript, así que la beta tampoco. La política tiene que nombrar el tratamiento
-// nuevo con su base legal, su plazo y la baja; si alguien la reescribe y se lo deja,
-// esto lo dice.
+// Las altas de la lista de espera las recoge Brevo con doble confirmación, pero el
+// formulario es nuestro y se envía por POST normal, sin JavaScript (DEC-050): si la
+// action o el nombre de un campo cambian sin querer, la gente que llega desde TikTok
+// se apunta a ninguna parte, y Brevo no avisa. La trampa para bots tiene que llegar
+// vacía, así que nadie debe poder verla ni rellenarla. La web no carga nada de
+// terceros ni lleva JavaScript, así que la beta tampoco. Y la política tiene que
+// nombrar el tratamiento con su base legal, su plazo y la baja.
 // ============================================================
 public class BetaWebTest {
 
-    /** El formulario alojado de Brevo, tal cual lo da su panel. */
+    /** El endpoint del formulario de Brevo, tal cual lo da su panel. */
     private static final String FORMULARIO_BREVO = "https://c66652ae.sibforms.com/serve/"
             + "MUIFAORtSwe7_YQbPHZ1hfBdigRHNkNWnE7eaZati3CifuqQ3yIKNj2HQV6oOvbjfyUYusgHznzE_WWAA1fhZNqg84lw5KkyrVJxhLaYEyL0XUYchj8wmMdvuu6lNVZIDrylva7nkhY_bEC7VLwLrLIgS7kAabyxan0UmamnG80VnAInVeNAjUYo1BkWePjfwN9ptal3PQSa2H17mA==";
 
+    private static final String[] PAGINAS = {"beta.html", "beta/revisa.html", "beta/dentro.html"};
+
     @Test
-    public void elBotonDeLaBetaLlevaAlFormularioDeBrevoEnLaMismaPestana() throws IOException {
+    public void elFormularioEnviaABrevoPorPost() throws IOException {
+        String form = formulario();
+        String apertura = form.substring(0, form.indexOf('>') + 1);
+        assertTrue("el formulario no es POST: " + apertura, apertura.contains("method=\"post\""));
+        assertTrue("el formulario no envía a Brevo: " + apertura,
+                apertura.contains("action=\"" + FORMULARIO_BREVO + "\""));
+        assertFalse("el formulario abre otra pestaña", apertura.contains("target="));
+    }
+
+    @Test
+    public void losCamposSonLosQueEsperaBrevo() throws IOException {
+        String form = formulario();
+        String correo = campo(form, "EMAIL");
+        assertTrue("EMAIL no es type=email: " + correo, correo.contains("type=\"email\""));
+        assertTrue("EMAIL no es obligatorio", correo.contains(" required"));
+        String casilla = campo(form, "OPT_IN");
+        assertTrue("OPT_IN no es una casilla: " + casilla, casilla.contains("type=\"checkbox\""));
+        assertTrue("OPT_IN no vale 1", casilla.contains("value=\"1\""));
+        assertTrue("OPT_IN no es obligatoria", casilla.contains(" required"));
+        assertFalse("OPT_IN viene marcada", casilla.contains("checked"));
+        assertTrue(campo(form, "locale").contains("type=\"hidden\" name=\"locale\" value=\"es\""));
+        assertTrue(campo(form, "html_type").contains("type=\"hidden\" name=\"html_type\" value=\"simple\""));
+        assertFalse("ya no se pregunta el móvil", form.contains("name=\"MOVIL\""));
+    }
+
+    @Test
+    public void elTextoDelConsentimientoEsElAprobado() throws IOException {
+        String texto = texto(formulario());
+        assertTrue("falta el texto del consentimiento", texto.contains(
+                "Avísame por correo de la beta y del lanzamiento. Me doy de baja cuando quiera."));
+        assertTrue("el consentimiento no enlaza la política",
+                Pattern.compile("<label class=\"consentimiento\">.*?href=\"/privacidad(#beta)?\".*?</label>", Pattern.DOTALL)
+                        .matcher(formulario()).find());
+    }
+
+    @Test
+    public void laTrampaParaBotsNoLaVeNadie() throws IOException {
+        String form = formulario();
+        String trampa = campo(form, "email_address_check");
+        assertTrue("la trampa no va vacía", trampa.contains("value=\"\""));
+        assertTrue("la trampa se alcanza con el tabulador", trampa.contains("tabindex=\"-1\""));
+        assertTrue("el navegador puede autorrellenar la trampa", trampa.contains("autocomplete=\"off\""));
+        // Su contenedor, oculto también para los lectores de pantalla
+        Matcher caja = Pattern.compile("<div class=\"trampa\" aria-hidden=\"true\">\\s*<input[^>]*name=\"email_address_check\"")
+                .matcher(form);
+        assertTrue("la trampa no está dentro de un contenedor aria-hidden", caja.find());
+        assertTrue("la trampa no se oculta en la hoja", pagina("beta.css").contains(".trampa {"));
+    }
+
+    @Test
+    public void diceQueEsSoloAndroidYNombraElIphoneUnaVez() throws IOException {
+        String texto = texto(pagina("beta.html"));
+        assertTrue("falta la línea de debajo del titular",
+                texto.contains("Entreno, dieta y progreso en una sola app. Solo Android."));
+        assertEquals("el iPhone se nombra más de una vez", 1, ocurrencias(texto, "iPhone"));
+        Matcher iphone = Pattern.compile("[^.]*iPhone[^.]*\\.").matcher(texto);
+        assertTrue(iphone.find());
+        assertTrue("la línea del iPhone no manda a seguir a @gymprofit", iphone.group().contains("@gymprofit"));
+        assertTrue("no dice que la beta se instala desde Google Play", texto.contains("Google Play"));
+        assertFalse("se sigue diciendo que el formulario es de Brevo", texto.contains("formulario de Brevo"));
+    }
+
+    @Test
+    public void nadaSeRepite() throws IOException {
         String html = pagina("beta.html");
-        Matcher boton = Pattern.compile("<a\\b[^>]*class=\"[^\"]*boton[^\"]*\"[^>]*>").matcher(html);
-        assertTrue("/beta no tiene botón", boton.find());
-        String etiqueta = boton.group();
-        assertTrue("el botón no lleva al formulario de Brevo: " + etiqueta,
-                etiqueta.contains("href=\"" + FORMULARIO_BREVO + "\""));
-        assertFalse("el botón abre otra pestaña", etiqueta.contains("target="));
+        assertFalse("vuelve la pastilla de Android", html.contains("pastilla"));
+        assertFalse("vuelve la caja de Android", html.contains("class=\"aviso\""));
+        assertFalse("vuelve el «¿Te apuntas?» del final", html.contains("¿Te apuntas?"));
+        assertEquals("«Apuntarme» sale más de una vez", 1, ocurrencias(texto(html), "Apuntarme"));
+        // Ninguna frase dos veces en la página
+        Set<String> vistas = new HashSet<>();
+        for (String frase : texto(html.replaceAll("(?s)<head>.*?</head>", "")).split("(?<=[.?!:])\\s+")) {
+            String f = frase.trim();
+            if (f.length() < 12) continue;
+            assertTrue("frase repetida: «" + f + "»", vistas.add(f));
+        }
     }
 
     @Test
     public void laBetaNoLlevaJavaScriptNiCargaNadaDeFuera() throws IOException {
-        for (String nombre : new String[]{"beta.html", "beta/dentro.html"}) {
+        for (String nombre : PAGINAS) {
             String html = pagina(nombre);
             assertFalse(nombre + " lleva JavaScript", html.contains("<script"));
-            // Lo que se pide al cargar: src, srcset y los <link>. Los <a> no cuentan.
+            assertFalse(nombre + " lleva manejadores de eventos", Pattern.compile("\\son[a-z]+=").matcher(html).find());
+            // Lo que se pide al cargar: src, srcset y los <link>. Los <a> y la action no cuentan.
             Matcher carga = Pattern.compile("(?:src|srcset)=\"([^\"]*)\"|<link\\b[^>]*href=\"([^\"]*)\"").matcher(html);
             while (carga.find()) {
                 String url = carga.group(1) != null ? carga.group(1) : carga.group(2);
                 assertTrue(nombre + " carga algo de fuera: " + url, url.startsWith("/"));
             }
         }
+    }
+
+    @Test
+    public void revisaPideConfirmarYMirarEnSpam() throws IOException {
+        String texto = texto(pagina("beta/revisa.html"));
+        assertTrue(texto.contains("Revisa tu correo"));
+        assertTrue("no dice que se confirma desde el correo", texto.contains("confirma"));
+        assertTrue("no dice que mire en spam", texto.contains("spam"));
     }
 
     @Test
@@ -76,10 +158,10 @@ public class BetaWebTest {
         Matcher seccion = Pattern.compile("Lista de espera de la beta(.*?)Datos que se generan").matcher(texto);
         assertTrue("falta el tratamiento «Lista de espera de la beta»", seccion.find());
         String lista = seccion.group(1);
-        for (String debe : new String[]{"correo", "tipo de móvil", "art. 6.1.a", "6 meses", "baja",
-                "privacidad@gymprofit.app"}) {
+        for (String debe : new String[]{"correo", "art. 6.1.a", "6 meses", "baja", "privacidad@gymprofit.app"}) {
             assertTrue("el tratamiento no dice «" + debe + "»", lista.contains(debe));
         }
+        assertFalse("la política sigue pidiendo el tipo de móvil", texto.contains("tipo de móvil"));
         // La fila de Brevo en la tabla de proveedores, no cualquier mención.
         Matcher brevo = Pattern.compile("<tr><td>Brevo</td>(.*?)</tr>", Pattern.DOTALL).matcher(html);
         assertTrue("Brevo no está en la tabla de proveedores", brevo.find());
@@ -89,13 +171,30 @@ public class BetaWebTest {
                 1, ocurrencias(texto, "Última actualización: 20 de octubre de 2026"));
     }
 
+    // El único <form> de /beta.
+    private static String formulario() throws IOException {
+        String html = pagina("beta.html");
+        assertEquals("/beta tiene que tener un formulario y solo uno", 1, ocurrencias(html, "<form"));
+        Matcher m = Pattern.compile("<form\\b.*?</form>", Pattern.DOTALL).matcher(html);
+        assertTrue(m.find());
+        return m.group();
+    }
+
+    // La etiqueta <input> con ese name.
+    private static String campo(String form, String nombre) {
+        Matcher m = Pattern.compile("<input\\b[^>]*name=\"" + nombre + "\"[^>]*>").matcher(form);
+        assertTrue("falta el campo " + nombre, m.find());
+        return m.group();
+    }
+
     private static int ocurrencias(String texto, String buscado) {
         return texto.split(Pattern.quote(buscado), -1).length - 1;
     }
 
     // El texto de la página sin etiquetas ni saltos de más.
     private static String texto(String html) {
-        return html.replaceAll("<[^>]+>", " ").replace("&amp;", "&").replaceAll("\\s+", " ");
+        return html.replaceAll("<[^>]+>", " ").replace("&amp;", "&").replaceAll("\\s+", " ")
+                .replaceAll(" ([.,:;])", "$1");
     }
 
     private static String pagina(String nombre) throws IOException {

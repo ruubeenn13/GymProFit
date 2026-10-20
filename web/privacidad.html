@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
 <link rel="preload" href="/fuentes/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fuentes/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/estilo.css">
+<link rel="stylesheet" href="/estilo.css?v=222cae66">
 </head>
 <body>
 
@@ -70,10 +70,10 @@
     <h3 id="beta">Lista de espera de la beta</h3>
     <p>Si te apuntas a la beta desde <a href="/beta">gymprofit.app/beta</a>, es un tratamiento aparte, sin cuenta en la aplicación:</p>
     <ul>
-      <li><strong>Datos:</strong> tu dirección de correo y el tipo de móvil que tienes (Android o iPhone).</li>
+      <li><strong>Datos:</strong> solo tu dirección de correo.</li>
       <li><strong>Para qué:</strong> avisarte de cuándo abre la beta y de cuándo se publica la aplicación. Nada más.</li>
-      <li><strong>Base legal:</strong> tu consentimiento (art. 6.1.a RGPD), que das al apuntarte y confirmas con el correo que recibes después. Hasta que no lo confirmas, no estás en la lista.</li>
-      <li><strong>Quién lo gestiona:</strong> el formulario y la lista son de Brevo. Al abrir su formulario, Brevo recibe también los datos de conexión de tu navegador, como cualquier web que visitas.</li>
+      <li><strong>Base legal:</strong> tu consentimiento (art. 6.1.a RGPD), que das marcando la casilla al apuntarte y confirmas con el correo que recibes después. Hasta que no lo confirmas, no estás en la lista.</li>
+      <li><strong>Quién lo gestiona:</strong> la lista está en Brevo. Al pulsar «Apuntarme», el formulario envía tu correo directamente a Brevo, que recibe también los datos de conexión de tu navegador, como cualquier web a la que te conectas. Hasta que no pulsas, la página no le envía nada.</li>
       <li><strong>Cuánto tiempo:</strong> hasta que te des de baja o, como mucho, 6 meses después de que se publique la aplicación.</li>
       <li><strong>Darte de baja:</strong> con el enlace que lleva cada correo o escribiendo a <a href="mailto:privacidad@gymprofit.app">privacidad@gymprofit.app</a>.</li>
     </ul>
@@ -126,7 +126,7 @@
       <tbody>
         <tr><td>Render</td><td>Alojamiento de la API</td><td>Todo el tráfico de la aplicación</td></tr>
         <tr><td>Aiven</td><td>Base de datos gestionada</td><td>Los datos almacenados de tu cuenta</td></tr>
-        <tr><td>Brevo</td><td>Envío de correo transaccional y la lista de espera de la beta</td><td>Tu dirección de correo y el contenido del mensaje; en la lista de espera, también el tipo de móvil y, al abrir su formulario, los datos de conexión</td></tr>
+        <tr><td>Brevo</td><td>Envío de correo transaccional y la lista de espera de la beta</td><td>Tu dirección de correo y el contenido del mensaje; en la lista de espera, también los datos de conexión al enviar el formulario</td></tr>
         <tr><td>Google (Firebase)</td><td>Notificaciones, informes de fallo y uso básico</td><td>Identificador de dispositivo y datos técnicos</td></tr>
         <tr><td>Cloudflare</td><td>DNS, correo entrante y esta web</td><td>Datos de conexión</td></tr>
         <tr><td>Open Food Facts</td><td>Consulta de alimentos por código de barras</td><td>Solo el código de barras consultado; ningún dato tuyo</td></tr>
