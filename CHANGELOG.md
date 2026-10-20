@@ -2,6 +2,13 @@
 
 Historial de cambios del proyecto (API Spring Boot + app Android). Ver también el [README](README.md).
 
+### 2026-10-20
+
+| Hash | Descripción |
+|---|---|
+| `4586b15` | docs(decisiones): **DEC-050**, la lista de espera de la beta va por un formulario alojado de Brevo con doble confirmación y la web sigue sin JavaScript; si el salto pierde demasiada gente, formulario propio con la API. |
+| `09e4371` | feat(web,android): **la página de la beta** (GP-201): `/beta`, con el titular a golpes, la luz del logo, «Apuntarme» al formulario de Brevo y las tres razones, y `/beta/dentro`, adonde redirige Brevo al confirmar. Solo CSS, quieta con movimiento reducido, paleta de los vídeos en `beta.css`. La portada invita a la beta; la política estrena «Lista de espera de la beta» y nombra a Brevo para ello. `BetaWebTest`. Zip `gymprofit-web-gp-201.zip` en el escritorio. |
+
 ### 2026-10-14
 
 | Hash | Descripción |
