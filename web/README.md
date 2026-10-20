@@ -7,6 +7,7 @@ JavaScript. Lo que hay en esta carpeta es exactamente lo que se sirve.
 ```
 index.html · privacidad.html · terminos.html · eliminar-cuenta.html · estilo.css
 beta.html · beta/revisa.html · beta/dentro.html · beta.css   (la beta, GP-201)
+_headers  la caché de Cloudflare Pages (ver «Caché y versiones»)
 fuentes/  seis .woff2: Barlow 400 / 500 / 600 y Barlow Condensed 500 / 600 / 700
 img/      logos claro y oscuro (256 y 512, webp) + favicons y apple-touch-icon
 ```
@@ -19,15 +20,38 @@ despliega nada**. El dominio `gymprofit.app` apunta a ese proyecto.
 
 ## Cómo se despliega a mano
 
-1. Comprimir el **contenido** de `web/` menos este README, no la carpeta. El zip
-   que se sube es eso: lo que hay aquí, salvo `README.md`.
-2. Proyecto `gymprofit` en Cloudflare Pages → pestaña **Implementaciones** → subir
+1. Si ha cambiado alguna hoja, poner su versión nueva en las páginas, desde la
+   raíz del repositorio: `python scripts/versionar-hojas-web.py`. Con
+   `--comprobar` solo dice si falta; el test `HojasVersionadasWebTest` también
+   falla si una hoja cambia y su versión no.
+2. Comprimir el **contenido** de `web/` menos este README, no la carpeta. El zip
+   que se sube es eso: lo que hay aquí, salvo `README.md`. `_headers` va dentro.
+3. Proyecto `gymprofit` en Cloudflare Pages → pestaña **Implementaciones** → subir
    el zip.
 
 Lo del contenido no es manía: el zip se descomprime en la raíz del sitio, así que
 si dentro va una carpeta `web/`, todo queda colgando de `/web/...` y las rutas
 absolutas del HTML —`/estilo.css`, `/fuentes/...`, `/img/...`— apuntan a ficheros
 que no existen. El sitio se ve sin estilos y sin tipografía.
+
+## Caché y versiones
+
+Un navegador que ya había visitado `/beta` mezcló la página nueva con el
+`beta.css` de su caché (GP-201). Para que no vuelva a pasar:
+
+- **Las hojas van versionadas por su contenido**: cada página pide
+  `/beta.css?v=<hash>` o `/estilo.css?v=<hash>`, con los 8 primeros caracteres
+  del SHA-256 de la hoja (saltos de línea normalizados a `\n`, para que salga
+  igual en Windows y en el CI). La URL cambia solo cuando cambia la hoja. La
+  versión la pone `scripts/versionar-hojas-web.py`; nunca a mano.
+- **`_headers`**: el HTML, con `Cache-Control: no-cache` (se revalida siempre,
+  y es lo que dice qué versión pedir); `estilo.css` y `beta.css`, un año e
+  `immutable`. Las fuentes y las imágenes **no** van versionadas, así que se
+  quedan con la revalidación de Pages: si un día se versionan, pueden pasar a
+  `immutable`.
+- **Ninguna regla `/*`**: si dos reglas ponen `Cache-Control` a la misma ruta,
+  Pages une sus valores con una coma. Por eso cada página tiene su regla. Una
+  página nueva necesita la suya, o se queda con la caché por defecto de Pages.
 
 ## Rutas limpias
 
