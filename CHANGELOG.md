@@ -6,6 +6,8 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `f15f12e` | docs(documentacion): la tercera vuelta en el [informe de GP-201](documentacion/estado/2026-10-20-gp-201-beta.md). |
+| `807e2ff` | feat(web,android): **`/beta` se ve al instante y no repite nada** (GP-201, tercera vuelta): entradas de 320 ms como mucho que acaban a los 600 ms sin partir de opacidad 0, el formulario en su tarjeta y sin animar, una línea bajo el titular, el iPhone una sola vez; fuera la pastilla y la caja de Android y el «¿Te apuntas?» final. `BetaWebTest` comprueba que ninguna frase se repita. Zip `gymprofit-web-gp-201.zip` rehecho. |
 | `fd8cdd6` | docs(decisiones): **DEC-050** reescrita: el formulario de la beta es nuestro y se envía por POST a Brevo, sin JavaScript; qué no puede hacer así y qué la invalidaría. |
 | `e914ece` | feat(web,android): **el formulario de la beta dentro de `/beta`** (GP-201, segunda vuelta): correo, casilla de consentimiento propia, trampa para bots y «Apuntarme», enviado por POST normal a Brevo, que redirige a la nueva **`/beta/revisa`**. La beta es **solo para Android** y la página lo dice; la política deja de pedir el tipo de móvil. `BetaWebTest` ampliado. Zip `gymprofit-web-gp-201.zip` rehecho. |
 | `4586b15` | docs(decisiones): **DEC-050**, la lista de espera de la beta va por un formulario alojado de Brevo con doble confirmación y la web sigue sin JavaScript; si el salto pierde demasiada gente, formulario propio con la API. |
