@@ -1,13 +1,15 @@
 # web — sitio público de GymProFit
 
 Sitio estático de `gymprofit.app`: portada, política de privacidad, términos de uso,
-la página de eliminación de cuenta y la de la beta (`/beta`, `/beta/revisa` y `/beta/dentro`). HTML y CSS a mano, sin build, sin dependencias y sin
+la página de eliminación de cuenta y la de la beta (`/beta`, `/beta/revisa`, `/beta/dentro` y `/beta/entrar`). HTML y CSS a mano, sin build, sin dependencias y sin
 JavaScript. Lo que hay en esta carpeta es exactamente lo que se sirve.
 
 ```
 index.html · privacidad.html · terminos.html · eliminar-cuenta.html · estilo.css
 beta.html · beta/revisa.html · beta/dentro.html · beta.css   (la beta, GP-201)
+beta/entrar.html   el enlace de los correos de «beta abierta» (GP-202)
 _headers  la caché de Cloudflare Pages (ver «Caché y versiones»)
+_redirects  la redirección de /beta/entrar, comentada hasta el día de apertura
 fuentes/  seis .woff2: Barlow 400 / 500 / 600 y Barlow Condensed 500 / 600 / 700
 img/      logos claro y oscuro (256 y 512, webp) + favicons y apple-touch-icon
 ```
@@ -25,7 +27,8 @@ despliega nada**. El dominio `gymprofit.app` apunta a ese proyecto.
    `--comprobar` solo dice si falta; el test `HojasVersionadasWebTest` también
    falla si una hoja cambia y su versión no.
 2. Comprimir el **contenido** de `web/` menos este README, no la carpeta. El zip
-   que se sube es eso: lo que hay aquí, salvo `README.md`. `_headers` va dentro.
+   que se sube es eso: lo que hay aquí, salvo `README.md`. `_headers` y
+   `_redirects` van dentro.
 3. Proyecto `gymprofit` en Cloudflare Pages → pestaña **Implementaciones** → subir
    el zip.
 
@@ -95,6 +98,25 @@ redirecciones se configuran en Brevo, no aquí.
 - **El movimiento es solo CSS** y vive entero dentro de
   `@media (prefers-reduced-motion: no-preference)`. Fuera de ese bloque la página
   está ya en su estado final, así que con movimiento reducido se ve quieta y completa.
+
+## El día que abre la beta
+
+Los correos de Brevo de «beta abierta» enlazan a `/beta/entrar`, y esa URL no
+cambia nunca: las plantillas no se tocan (GP-202, DEC-051). Hasta el día de
+apertura sirve `beta/entrar.html` («abre muy pronto», con vuelta a `/beta`). Una
+regla de `_redirects` **gana al fichero de la misma ruta** —«Redirects are always
+followed, regardless of whether or not an asset matches the incoming request»,
+documentación de Cloudflare Pages—, así que abrir es cambiar una línea:
+
+1. En `web/_redirects`, quitar el `#` de la línea de `/beta/entrar` y comprobar
+   que su enlace es el de unión de la prueba cerrada que da Play Console. Se queda
+   en **302**: un 301 lo guarda el navegador para siempre.
+2. Pasar `BetaWebTest`: el enlace de la prueba cerrada solo puede estar en
+   `_redirects`, y esa regla es la única activa.
+3. Hacer el zip y subirlo como en «Cómo se despliega a mano». `beta/entrar.html`
+   se queda: si la prueba se cierra, basta con volver a poner el `#`.
+4. Comprobar: `curl -I https://gymprofit.app/beta/entrar` da `302` y
+   `location:` con el enlace de Play.
 
 ## Los colores son los de la app
 
