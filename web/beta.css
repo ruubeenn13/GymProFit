@@ -105,31 +105,31 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
 
 .portada {
   position: relative;
-  padding: 22px 0 40px;
+  padding: 16px 0 0;
 }
 
 .firma {
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   color: var(--texto);
   text-decoration: none;
   font-family: var(--cond);
   font-weight: 700;
-  font-size: 19px;
+  font-size: 16px;
   letter-spacing: 0.12em;
 }
-.firma img { position: relative; width: 56px; height: 56px; display: block; }
+.firma img { position: relative; width: 36px; height: 36px; display: block; }
 
 /* La luz que respira detrás del logo: un degradado radial, sin imagen.
    Desborda hacia el titular a propósito: es la única fuente de luz de la página. */
 .luz {
   position: absolute;
-  left: -110px;
-  top: -120px;
-  width: 300px;
-  height: 300px;
+  left: -90px;
+  top: -100px;
+  width: 240px;
+  height: 240px;
   border-radius: 50%;
   background: radial-gradient(closest-side, var(--luz), transparent);
   pointer-events: none;
@@ -137,7 +137,7 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
 
 .titular {
   position: relative;
-  margin: 24px 0 0;
+  margin: 14px 0 0;
   font-family: var(--cond);
   font-weight: 700;
   line-height: 0.83;
@@ -156,8 +156,8 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
 .tajo {
   display: block;
   width: 38%;
-  height: 8px;
-  margin: 12px 0 0 4px;
+  height: 6px;
+  margin: 8px 0 0 4px;
   background: var(--naranja);
   transform: skewX(-32deg);
   transform-origin: left center;
@@ -170,6 +170,15 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
   color: var(--texto-2);
 }
 .entrada strong { color: var(--texto); font-weight: 600; }
+
+/* La línea de debajo del titular en /beta: qué es y para quién, en una frase */
+.linea {
+  max-width: 30em;
+  margin: 10px 0 0;
+  font-size: 17px;
+  line-height: 1.4;
+  color: var(--texto-2);
+}
 
 .boton {
   position: relative;
@@ -211,58 +220,52 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
 /* Nuestro, enviado por POST normal a Brevo (DEC-050). La validación es la del
    navegador: el correo con type="email" y la casilla con required. */
 
-/* En móvil, la frase de entrada de /beta se queda fuera para que el formulario
-   entero quepa en el primer pantallazo: la casilla ya dice qué se pide. */
-@media (max-width: 899px) {
-  .entrada.amplia { display: none; }
-}
-
+/* Una tarjeta propia, que no se anima: se ve desde el primer fotograma */
 .alta {
   display: grid;
-  gap: 12px;
+  gap: 14px;
   max-width: 30rem;
   margin-top: 16px;
-  scroll-margin-top: 24px;
+  padding: 16px;
+  border: 1px solid var(--linea);
+  border-radius: 22px;
+  background: var(--panel);
+  scroll-margin-top: 16px;
 }
 
-/* La etiqueta y, en la misma fila, el recordatorio de que es solo Android:
-   así se ve antes de escribir el correo sin ocupar una línea más. */
-.fila-etiqueta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: -4px;
+/* Etiqueta flotante sin JavaScript: dentro del campo mientras está vacío y sin
+   foco, arriba en cuanto se toca o se escribe (:placeholder-shown, con un
+   placeholder de un espacio). Sigue siendo un <label for>, visible siempre. */
+.campo { position: relative; }
+.campo label {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  transform-origin: left center;
+  font-size: 18px;
+  color: var(--texto-2);
+  pointer-events: none;
+  transition: transform 160ms var(--frenada), color 160ms var(--frenada);
 }
-.etiqueta {
-  font-weight: 600;
-  font-size: 15px;
-  color: var(--texto);
+.correo:focus + label,
+.correo:not(:placeholder-shown) + label {
+  transform: translateY(calc(-50% - 14px)) scale(0.72);
 }
-.pastilla {
-  padding: 1px 11px;
-  border: 1.5px solid var(--dorado);
-  border-radius: 999px;
-  font-weight: 600;
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--texto);
-  white-space: nowrap;
-}
+.correo:focus + label { color: var(--enlace); }
 
 .correo {
   width: 100%;
   min-height: 56px;
-  padding: 0 18px;
+  padding: 20px 18px 4px;
   border: 2px solid var(--borde-campo);
   border-radius: 16px;
-  background: var(--panel);
+  background: var(--fondo);
   color: var(--texto);
   font-family: var(--sans);
-  font-size: 20px;
+  font-size: 18px;
   transition: border-color 160ms var(--frenada), box-shadow 160ms var(--frenada);
 }
-.correo::placeholder { color: var(--texto-2); opacity: 1; }
 /* El foco es naranja y se ve sin depender del contorno del sistema */
 .correo:focus {
   outline: none;
@@ -292,7 +295,7 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
   margin: 0;
   border: 2px solid var(--borde-campo);
   border-radius: 8px;
-  background: var(--panel);
+  background: var(--fondo);
   cursor: pointer;
   transition: background-color 160ms var(--frenada), border-color 160ms var(--frenada);
 }
@@ -328,17 +331,14 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
 
 .alta .boton { width: 100%; }
 
-.aviso {
-  max-width: 30rem;
-  margin: 18px 0 0;
-  padding: 14px 16px;
-  border: 1px solid var(--linea);
-  border-radius: 14px;
-  font-size: 15px;
-  line-height: 1.45;
+/* El iPhone, una sola vez y en voz baja, debajo del formulario */
+.iphone {
+  max-width: 34em;
+  margin: 16px 0 0;
+  font-size: 14.5px;
+  line-height: 1.5;
   color: var(--texto-2);
 }
-.aviso strong { color: var(--texto); font-weight: 600; }
 
 .nota {
   margin: 14px 0 0;
@@ -350,8 +350,8 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
 
 .razones {
   display: grid;
-  gap: 14px;
-  margin: 8px 0 0;
+  gap: 18px;
+  margin: 40px 0 0;
   padding: 0;
   list-style: none;
 }
@@ -362,7 +362,7 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
   background: var(--panel);
   border: 1px solid var(--linea);
   border-radius: 20px;
-  padding: 24px 22px 24px;
+  padding: 22px;
 }
 /* El tajo del logo en la esquina; dorado en la que habla de ti */
 .razon::before {
@@ -385,24 +385,11 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
   margin: 0 40px 10px 0;
   font-family: var(--cond);
   font-weight: 700;
-  font-size: 34px;
+  font-size: 30px;
   line-height: 0.95;
   text-transform: uppercase;
 }
-.razon p { margin: 0; color: var(--texto-2); }
-
-.cierre {
-  margin: 44px 0 0;
-  padding: 0 0 8px;
-}
-.cierre p {
-  margin: 0 0 18px;
-  font-family: var(--cond);
-  font-weight: 700;
-  font-size: 30px;
-  line-height: 1;
-  text-transform: uppercase;
-}
+.razon p { margin: 0; font-size: 16px; line-height: 1.45; color: var(--texto-2); }
 
 /* ── Pie ─────────────────────────────────────────────────────────── */
 
@@ -490,8 +477,8 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
 
 @media (min-width: 900px) {
   :root { --margen: 40px; --ancho-titular: min(48vw, 620px); }
-  .portada { padding: 34px 0 64px; }
-  .firma img { width: 76px; height: 76px; }
+  .portada { padding: 30px 0 0; }
+  .firma img { width: 56px; height: 56px; }
   .luz { left: -170px; top: -180px; width: 440px; height: 440px; }
   /* Dos columnas: el titular manda y la llamada se apoya en su base, para que el
      botón quede a la vista también en una pantalla de portátil */
@@ -506,10 +493,11 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
   .llamada { padding-bottom: 6px; }
   .entrada { margin-top: 0; }
   .entrada { font-size: 21px; }
-  .razones { grid-template-columns: repeat(3, 1fr); gap: 18px; }
-  .razon { padding: 30px 28px; }
-  .razon h2 { font-size: 38px; }
-  .cierre p { font-size: 40px; }
+  .linea { font-size: 19px; }
+  .alta { margin-top: 0; padding: 24px; }
+  .razones { grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 56px; }
+  .razon { padding: 28px; }
+  .razon h2 { font-size: 36px; }
 }
 
 /* ── Movimiento ──────────────────────────────────────────────────── */
@@ -518,42 +506,40 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
 
 @media (prefers-reduced-motion: no-preference) {
 
-  .luz { animation: respirar 5.6s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate; }
-
-  .firma { animation: aparecer 420ms var(--frenada) both; }
+  /* Entradas: cortas (400 ms como mucho), escalonadas en 600 ms como mucho, y
+     ninguna parte de opacidad 0: si el navegador tarda en arrancarlas, el
+     contenido ya está a la vista. El formulario no se anima. */
 
   /* Golpes: cada línea cae grande y borrosa, se clava y rebota un pelo */
-  .titular span { animation: golpe 560ms var(--golpe) both; transform-origin: 0 70%; }
-  .titular span:nth-child(1) { animation-delay: 120ms; }
-  .titular span:nth-child(2) { animation-delay: 270ms; }
-  .titular span:nth-child(3) { animation-delay: 420ms; }
-  /* El bloque acusa cada golpe con un temblor corto */
-  .titular { animation: temblor 620ms var(--frenada) 160ms both; }
+  .titular span { animation: golpe 320ms var(--golpe) both; transform-origin: 0 70%; }
+  .titular span:nth-child(2) { animation-delay: 70ms; }
+  .titular span:nth-child(3) { animation-delay: 140ms; }
+  /* El bloque acusa los golpes con un temblor corto */
+  .titular { animation: temblor 300ms var(--frenada) 60ms both; }
 
-  .tajo { animation: tajo 380ms var(--frenada) 700ms both; }
+  .tajo  { animation: tajo 240ms var(--frenada) 280ms both; }
+  .linea { animation: subir 300ms var(--frenada) 200ms both; }
 
-  .entrada { animation: subir 520ms var(--frenada) 780ms both; }
-  .alta    { animation: subir 520ms var(--frenada) 880ms both; }
-  .aviso   { animation: subir 520ms var(--frenada) 960ms both; }
-  .nota    { animation: subir 520ms var(--frenada) 960ms both; }
+  .razon { animation: subir 300ms var(--frenada) both; }
+  .razon:nth-child(1) { animation-delay: 160ms; }
+  .razon:nth-child(2) { animation-delay: 230ms; }
+  .razon:nth-child(3) { animation-delay: 300ms; }
+
+  /* /beta/revisa y /beta/dentro */
+  .entrada, .redes, .nota { animation: subir 300ms var(--frenada) 200ms both; }
+  .sello { animation: sello 320ms var(--golpe) 100ms both; }
+  .sello circle { stroke-dasharray: 230; animation: trazo 360ms var(--frenada) 120ms both; }
+  .sello path   { --largo: 60; stroke-dasharray: 60; animation: trazo 240ms var(--frenada) 340ms both; }
 
   /* La marca de la casilla entra con un rebote corto al marcarla */
   .consentimiento input::before { transition: transform 220ms var(--golpe); }
 
+  /* Lo que respira, pulsa o celebra va después, con todo ya quieto */
+  .luz { animation: respirar 5.6s cubic-bezier(0.45, 0, 0.55, 1) 800ms infinite alternate; }
   /* El pulso, cada cuatro segundos: el aro ocupa el primer 30 % y el resto espera */
-  .boton::after { animation: pulso 4s var(--frenada) 1.9s infinite; }
-
-  .razon { animation: subir 560ms var(--frenada) both; }
-  .razon:nth-child(1) { animation-delay: 1060ms; }
-  .razon:nth-child(2) { animation-delay: 1160ms; }
-  .razon:nth-child(3) { animation-delay: 1260ms; }
-
-  /* /beta/dentro: el sello se traza y suelta las esquirlas */
-  .sello { animation: sello 560ms var(--golpe) 560ms both; }
-  .sello circle { stroke-dasharray: 230; animation: trazo 620ms var(--frenada) 620ms both; }
-  .sello path   { --largo: 60; stroke-dasharray: 60; animation: trazo 380ms var(--frenada) 980ms both; }
-  .esquirlas i  { animation: esquirla 900ms var(--frenada) 1040ms both; }
-  .esquirlas i:nth-child(3n) { animation-delay: 1100ms; }
+  .boton::after { animation: pulso 4s var(--frenada) 1.2s infinite; }
+  .esquirlas i  { animation: esquirla 800ms var(--frenada) 600ms both; }
+  .esquirlas i:nth-child(3n) { animation-delay: 660ms; }
 }
 
 @keyframes respirar {
@@ -561,15 +547,10 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
   to   { transform: scale(1.1);  opacity: 1; }
 }
 
-@keyframes aparecer {
-  from { opacity: 0; transform: translateY(-8px); }
-}
-
 @keyframes golpe {
-  0%   { opacity: 0; transform: translateY(-34%) scale(1.28); filter: blur(10px); }
-  52%  { opacity: 1; transform: translateY(3%) scale(0.98);   filter: blur(0); }
-  76%  { transform: translateY(-1%) scale(1.006); }
-  100% { opacity: 1; transform: none; filter: none; }
+  0%   { transform: translateY(-16%) scale(1.14); filter: blur(6px); }
+  60%  { transform: translateY(2%) scale(0.99);    filter: blur(0); }
+  100% { transform: none; filter: none; }
 }
 
 @keyframes temblor {
@@ -588,7 +569,7 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
 }
 
 @keyframes subir {
-  from { opacity: 0; transform: translateY(22px); }
+  from { opacity: 0.35; transform: translateY(14px); }
 }
 
 @keyframes pulso {
@@ -598,9 +579,9 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
 }
 
 @keyframes sello {
-  0%   { opacity: 0; transform: scale(0.4) rotate(-20deg); }
-  70%  { opacity: 1; transform: scale(1.08) rotate(3deg); }
-  100% { opacity: 1; transform: none; }
+  0%   { transform: scale(0.6) rotate(-16deg); }
+  70%  { transform: scale(1.06) rotate(3deg); }
+  100% { transform: none; }
 }
 
 @keyframes trazo {

@@ -60,8 +60,14 @@ redirecciones se configuran en Brevo, no aquí.
   reconoce quien llega desde un vídeo. Las fuentes son los mismos ficheros.
 - **El titular llena el ancho** línea a línea: cada `<span>` lleva `--k`, su ancho
   en em medido en el navegador. Si cambia el texto, hay que volver a medirlo.
-- **El formulario entero cabe en el primer pantallazo a 375 × 667.** Va justo:
-  cualquier línea de más en esa zona lo empuja fuera.
+- **El primer pantallazo a 375 × 667 es logo, titular, una línea y la tarjeta
+  del formulario**, entera. Va justo: cualquier línea de más en esa zona la empuja
+  fuera. El iPhone se nombra una sola vez, debajo; ningún texto se repite, y
+  `BetaWebTest` lo comprueba frase a frase.
+- **Todo se ve en 0,6 s.** Cada entrada dura 400 ms como mucho, el escalonado
+  acaba antes de 600 ms y ninguna parte de opacidad 0, así que el contenido está a
+  la vista aunque la animación tarde en arrancar. El formulario no se anima. Lo que
+  respira, pulsa o celebra empieza después.
 - **El movimiento es solo CSS** y vive entero dentro de
   `@media (prefers-reduced-motion: no-preference)`. Fuera de ese bloque la página
   está ya en su estado final, así que con movimiento reducido se ve quieta y completa.

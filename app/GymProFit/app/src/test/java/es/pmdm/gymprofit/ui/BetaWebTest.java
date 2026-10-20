@@ -12,6 +12,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -64,8 +66,8 @@ public class BetaWebTest {
     @Test
     public void elTextoDelConsentimientoEsElAprobado() throws IOException {
         String texto = texto(formulario());
-        assertTrue("falta el texto del consentimiento", texto.contains("Quiero que GymProFit me avise por correo "
-                + "cuando abra la beta y cuando se publique la app. Puedo darme de baja cuando quiera."));
+        assertTrue("falta el texto del consentimiento", texto.contains(
+                "Avísame por correo de la beta y del lanzamiento. Me doy de baja cuando quiera."));
         assertTrue("el consentimiento no enlaza la política",
                 Pattern.compile("<label class=\"consentimiento\">.*?href=\"/privacidad(#beta)?\".*?</label>", Pattern.DOTALL)
                         .matcher(formulario()).find());
@@ -86,12 +88,32 @@ public class BetaWebTest {
     }
 
     @Test
-    public void avisaDeQueLaBetaEsSoloParaAndroid() throws IOException {
+    public void diceQueEsSoloAndroidYNombraElIphoneUnaVez() throws IOException {
         String texto = texto(pagina("beta.html"));
-        assertTrue("falta el aviso de Android", texto.contains("La beta es solo para Android"));
-        assertTrue(texto.contains("Google Play"));
-        assertFalse("se sigue invitando al iPhone", texto.contains("Apúntate igual"));
+        assertTrue("falta la línea de debajo del titular",
+                texto.contains("Entreno, dieta y progreso en una sola app. Solo Android."));
+        assertEquals("el iPhone se nombra más de una vez", 1, ocurrencias(texto, "iPhone"));
+        Matcher iphone = Pattern.compile("[^.]*iPhone[^.]*\\.").matcher(texto);
+        assertTrue(iphone.find());
+        assertTrue("la línea del iPhone no manda a seguir a @gymprofit", iphone.group().contains("@gymprofit"));
+        assertTrue("no dice que la beta se instala desde Google Play", texto.contains("Google Play"));
         assertFalse("se sigue diciendo que el formulario es de Brevo", texto.contains("formulario de Brevo"));
+    }
+
+    @Test
+    public void nadaSeRepite() throws IOException {
+        String html = pagina("beta.html");
+        assertFalse("vuelve la pastilla de Android", html.contains("pastilla"));
+        assertFalse("vuelve la caja de Android", html.contains("class=\"aviso\""));
+        assertFalse("vuelve el «¿Te apuntas?» del final", html.contains("¿Te apuntas?"));
+        assertEquals("«Apuntarme» sale más de una vez", 1, ocurrencias(texto(html), "Apuntarme"));
+        // Ninguna frase dos veces en la página
+        Set<String> vistas = new HashSet<>();
+        for (String frase : texto(html.replaceAll("(?s)<head>.*?</head>", "")).split("(?<=[.?!:])\\s+")) {
+            String f = frase.trim();
+            if (f.length() < 12) continue;
+            assertTrue("frase repetida: «" + f + "»", vistas.add(f));
+        }
     }
 
     @Test

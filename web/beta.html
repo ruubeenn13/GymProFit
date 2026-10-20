@@ -25,7 +25,7 @@
       <span class="luz" aria-hidden="true"></span>
       <picture>
         <source srcset="/img/logo-oscuro-256.webp" media="(prefers-color-scheme: dark)">
-        <img src="/img/logo-claro-256.webp" alt="" width="56" height="56">
+        <img src="/img/logo-claro-256.webp" alt="" width="36" height="36">
       </picture>
       GYMPROFIT
     </a>
@@ -37,23 +37,22 @@
       <span style="--k: 3.93">que nadie.</span>
     </h1>
     <span class="tajo" aria-hidden="true"></span>
+    <p class="linea">Entreno, dieta y progreso en una sola app. Solo Android.</p>
     </div>
 
-    <div class="llamada">
-    <p class="entrada amplia"><strong>La beta de GymProFit está a punto.</strong> Déjanos tu correo y te avisamos en cuanto abra.</p>
-
     <!-- El formulario es nuestro y se envía por POST normal a Brevo, sin JavaScript (DEC-050).
-         Los nombres de los campos son los que espera Brevo: no se cambian sin cambiarlos allí. -->
+         Los nombres de los campos son los que espera Brevo: no se cambian sin cambiarlos allí.
+         No lleva animación de entrada: se ve desde el primer fotograma. -->
     <form class="alta" id="apuntarse" method="post" action="https://c66652ae.sibforms.com/serve/MUIFAORtSwe7_YQbPHZ1hfBdigRHNkNWnE7eaZati3CifuqQ3yIKNj2HQV6oOvbjfyUYusgHznzE_WWAA1fhZNqg84lw5KkyrVJxhLaYEyL0XUYchj8wmMdvuu6lNVZIDrylva7nkhY_bEC7VLwLrLIgS7kAabyxan0UmamnG80VnAInVeNAjUYo1BkWePjfwN9ptal3PQSa2H17mA==">
-      <div class="fila-etiqueta">
-        <label class="etiqueta" for="correo">Tu correo</label>
-        <span class="pastilla">Solo para Android</span>
+      <!-- Etiqueta flotante: dentro del campo hasta que se escribe o se toca, sin JS (:placeholder-shown) -->
+      <div class="campo">
+        <input class="correo" id="correo" type="email" name="EMAIL" required autocomplete="email" autocapitalize="off" spellcheck="false" placeholder=" ">
+        <label for="correo">Tu correo</label>
       </div>
-      <input class="correo" id="correo" type="email" name="EMAIL" required autocomplete="email" autocapitalize="off" spellcheck="false" placeholder="nombre@correo.com">
 
       <label class="consentimiento">
         <input type="checkbox" name="OPT_IN" value="1" required>
-        <span>Quiero que GymProFit me avise por correo cuando abra la beta y cuando se publique la app. Puedo darme de baja cuando quiera. <a href="/privacidad#beta">Cómo tratamos tus datos</a>.</span>
+        <span>Avísame por correo de la beta y del lanzamiento. Me doy de baja cuando quiera. <a href="/privacidad#beta">Privacidad</a></span>
       </label>
 
       <!-- Trampa para bots: tiene que llegar vacía. Nadie la ve, ni con lector de pantalla. -->
@@ -63,37 +62,29 @@
 
       <button class="boton" type="submit">Apuntarme</button>
     </form>
-
-    <p class="aviso"><strong>La beta es solo para Android</strong>, porque se instala desde Google Play. Si tienes iPhone, mejor no te apuntes todavía: sigue a @gymprofit en <a href="https://www.tiktok.com/@gymprofit">TikTok</a> o <a href="https://www.instagram.com/gymprofit">Instagram</a> y te enterarás cuando llegue.</p>
-    </div>
   </section>
+
+  <p class="iphone">La beta se instala desde Google Play. ¿Tienes iPhone? Sigue a @gymprofit en <a href="https://www.tiktok.com/@gymprofit">TikTok</a> o <a href="https://www.instagram.com/gymprofit">Instagram</a> para enterarte cuando llegue.</p>
 
   <ul class="razones">
     <li class="razon maciza">
-      <h2>Una sola app</h2>
-      <p>Entreno, dieta y progreso en el mismo sitio: lo que levantas, lo que comes y cómo cambias, sin saltar de una app a otra.</p>
+      <h2>Todo junto</h2>
+      <p>Lo que levantas, lo que comes y cómo cambias, sin cambiar de app.</p>
     </li>
     <li class="razon">
-      <h2>Desde Google Play</h2>
-      <p>La beta se instala desde Google Play como cualquier app, en tu móvil Android. Cuando abra, te llega el enlace por correo.</p>
+      <h2>Por tandas</h2>
+      <p>Abrimos poco a poco: apuntarte no asegura plaza.</p>
     </li>
     <li class="razon tuya">
-      <h2>Tu opinión cambia la app</h2>
-      <p>Probarás versiones sin terminar, y lo que nos cuentes decide qué se arregla primero. Abrimos por tandas: apuntarte no asegura plaza, pero te escribimos en cuanto haya sitio.</p>
+      <h2>Tu opinión cuenta</h2>
+      <p>Lo que nos cuentes decide qué se arregla antes.</p>
     </li>
   </ul>
 
-  <section class="cierre" aria-label="Apuntarse">
-    <p>¿Te apuntas?</p>
-    <a class="boton" href="#apuntarse">Apuntarme</a>
-  </section>
-
   <footer class="pie">
-    <p>Al apuntarte te llega un correo para confirmar tu dirección: hasta que no lo confirmas, no estás en la lista.</p>
-    <p>Puedes darte de baja cuando quieras con el enlace de cualquiera de nuestros correos. Lo que hacemos con tus datos está en la <a href="/privacidad">política de privacidad</a>.</p>
+    <p>Al apuntarte te llega un correo para confirmar tu dirección: hasta que no lo confirmas, no estás en la lista. Cada correo nuestro lleva su enlace de baja.</p>
     <nav aria-label="Más de GymProFit">
       <a href="/">Inicio</a>
-      <a href="/privacidad">Privacidad</a>
       <a href="/terminos">Términos</a>
       <a href="mailto:soporte@gymprofit.app">Soporte</a>
     </nav>
