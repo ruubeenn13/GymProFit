@@ -1,0 +1,469 @@
+/* ------------------------------------------------------------------
+   GymProFit — hoja de la portada (/), GP-203
+   La portada enseña la app, así que usa sus colores: los mismos tokens que
+   estilo.css, que a su vez son los de values/colors.xml y
+   values-night/colors.xml. Si allí cambian, aquí también.
+   Sin JavaScript: el movimiento es solo CSS y solo entra con
+   prefers-reduced-motion: no-preference. Fuera de ese bloque la página está
+   ya en su estado final.
+   ------------------------------------------------------------------ */
+
+/* Los mismos ficheros que el resto de la web, servidos desde el dominio (ver README). */
+@font-face {
+  font-family: "Barlow Condensed";
+  src: url("/fuentes/barlow-condensed-600.woff2") format("woff2");
+  font-weight: 600; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Barlow Condensed";
+  src: url("/fuentes/barlow-condensed-700.woff2") format("woff2");
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Barlow";
+  src: url("/fuentes/barlow-400.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Barlow";
+  src: url("/fuentes/barlow-600.woff2") format("woff2");
+  font-weight: 600; font-style: normal; font-display: swap;
+}
+
+:root {
+  --bg:        #0B0C0E;
+  --surface:   #1B1E24;
+  --stroke:    #4A505B;
+  --linea:     #2A2E36;
+  --primary:   #FF6A00;   /* el naranja de la app */
+  --on-primary:#1A0E00;   /* 7,3:1 sobre el naranja */
+  --enlace:    #FF8A3D;   /* el naranja como texto: 7,9:1 sobre el fondo */
+  --text:      #F2F2F3;
+  --text-2:    #A1A9B6;   /* 8,1:1 sobre el fondo */
+  --marco:     #22252C;   /* el canto del móvil */
+
+  --sans: "Barlow", sans-serif;
+  --cond: "Barlow Condensed", var(--sans);
+
+  --frenada: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --margen: 20px;
+  --ancho: 1180px;
+  /* Lo que llena el titular: el ancho de la pantalla en móvil */
+  --ancho-titular: calc(100vw - 2 * var(--margen));
+  --ancho-problema: calc(100vw - 2 * var(--margen));
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg:        #F1F1EE;
+    --surface:   #FFFFFF;
+    --stroke:    #C9C9C2;
+    --linea:     #DCDCD5;
+    --enlace:    #B83E00;   /* 5,3:1 sobre el fondo; el naranja de la app no se lee como texto en claro */
+    --text:      #17181C;
+    --text-2:    #55575D;   /* 6,6:1 sobre el fondo */
+    --marco:     #17181C;   /* el móvil sigue siendo un móvil oscuro */
+  }
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+strong { font-weight: 600; }
+
+:focus-visible {
+  outline: 3px solid var(--text);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; }
+
+.marco {
+  max-width: var(--ancho);
+  margin: 0 auto;
+  padding: 0 var(--margen);
+}
+
+/* La franja de 4 px de la web y los correos (DEC-026) */
+.franja { height: 4px; background: var(--primary); }
+
+.firma {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  margin-top: 14px;
+  color: var(--text);
+  text-decoration: none;
+  font-family: var(--cond);
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: 0.12em;
+}
+.firma img { width: 32px; height: 32px; display: block; }
+
+/* ── El botón ────────────────────────────────────────────────────── */
+
+.boton {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  padding: 0 32px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: var(--on-primary);
+  font-family: var(--cond);
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  transition: transform 160ms var(--frenada), background-color 160ms var(--frenada);
+}
+.boton:hover { background: #FF8124; }
+.boton:active { transform: scale(0.97); }
+/* El brillo: una franja de luz que cruza el botón. Quieta, fuera del botón;
+   solo se mueve dentro del bloque de movimiento. */
+.boton::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -60%;
+  width: 40%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  transform: translateX(-100%) skewX(-20deg);
+  pointer-events: none;
+}
+
+/* ── Hero ────────────────────────────────────────────────────────── */
+
+.hero {
+  display: grid;
+  gap: 36px;
+  padding-block: 28px 64px;
+}
+
+/* Cada línea llena el ancho por su cuenta: --k es su ancho en em, medido en el navegador */
+.titular {
+  container-type: inline-size;
+  line-height: 0.9;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+}
+/* El tamaño sale del ancho real de la columna (cqi), con un 4 % de holgura para el
+   trazo de las letras, y acotado: nunca toca el borde ni crece sin fin. El primer
+   font-size es el respaldo para un navegador sin unidades de contenedor. */
+.titular span {
+  display: block;
+  font-size: clamp(26px, calc(var(--ancho-titular) * 0.96 / var(--k)), 150px);
+  font-size: clamp(26px, calc(96cqi / var(--k)), 150px);
+  white-space: nowrap;
+}
+
+.subtitulo {
+  max-width: 30em;
+  margin: 22px 0 28px;
+  font-size: 19px;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+.subtitulo strong { color: var(--text); }
+
+/* El móvil: la captura dentro de un canto redondeado, sin ninguna imagen de marco */
+.movil {
+  margin: 0;
+  justify-self: center;
+  width: min(72vw, 300px);
+  padding: 9px;
+  border-radius: 46px;
+  background: var(--marco);
+  box-shadow: 0 0 0 1px var(--linea), 0 40px 80px -30px rgba(255, 106, 0, 0.35);
+}
+.movil img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 37px;
+}
+
+/* ── El problema: el único bloque a todo color ──────────────────── */
+
+.problema {
+  background: var(--primary);
+  color: var(--on-primary);
+  padding: 64px 0 68px;
+}
+.problema h2 {
+  container-type: inline-size;
+  line-height: 0.86;
+  text-transform: uppercase;
+}
+/* Las dos frases llenan el ancho, cada una a su tamaño: --k es su ancho en em */
+.problema h2 span {
+  display: block;
+  font-size: clamp(26px, calc(var(--ancho-problema) * 0.96 / var(--k)), 240px);
+  font-size: clamp(26px, calc(96cqi / var(--k)), 240px);
+  white-space: nowrap;
+}
+.problema p {
+  max-width: 34em;
+  margin: 26px 0 0;
+  font-size: 19px;
+  line-height: 1.5;
+  color: #2B1300; /* 6,0:1 sobre el naranja */
+}
+
+/* ── Los tres pilares ────────────────────────────────────────────── */
+
+.pilares { padding-block: 24px; }
+
+.pilar {
+  display: grid;
+  gap: 32px;
+  padding: 56px 0;
+  border-bottom: 1px solid var(--linea);
+}
+.pilar:last-child { border-bottom: 0; }
+
+.pilar h2 {
+  font-size: clamp(44px, 11vw, 84px);
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+.pilar .lema {
+  max-width: 26em;
+  margin: 14px 0 0;
+  font-size: 20px;
+  line-height: 1.4;
+  color: var(--text-2);
+}
+
+.funciones {
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 18px;
+  max-width: 32em;
+}
+.funciones li {
+  position: relative;
+  padding-left: 34px;
+  font-size: 17px;
+  line-height: 1.5;
+}
+/* El tajo del logo como viñeta */
+.funciones li::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 0.32em;
+  width: 7px;
+  height: 18px;
+  background: var(--primary);
+  transform: skewX(-24deg);
+}
+.funciones strong { display: block; font-size: 18px; }
+.funciones span { color: var(--text-2); }
+
+.pilar .movil { width: min(64vw, 270px); }
+
+/* ── La beta en tres pasos ──────────────────────────────────────── */
+
+.beta { padding: 72px 0 24px; }
+.beta h2, .preguntas h2 {
+  font-size: clamp(40px, 9vw, 64px);
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+.beta > .marco > p { max-width: 34em; margin: 16px 0 0; color: var(--text-2); font-size: 18px; }
+
+.pasos {
+  margin: 36px 0 32px;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 14px;
+  counter-reset: paso;
+}
+.pasos li {
+  counter-increment: paso;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  padding: 22px;
+  background: var(--surface);
+  border: 1px solid var(--linea);
+  border-radius: 20px;
+}
+/* Son una secuencia de verdad: el número es la información */
+.pasos li::before {
+  content: counter(paso);
+  font-family: var(--cond);
+  font-weight: 700;
+  font-size: 56px;
+  line-height: 0.8;
+  color: var(--primary);
+}
+.pasos h3 { font-size: 24px; line-height: 1.1; margin-bottom: 6px; }
+.pasos p { margin: 0; color: var(--text-2); font-size: 16px; line-height: 1.5; }
+
+/* ── Preguntas frecuentes ───────────────────────────────────────── */
+
+.preguntas { padding: 64px 0 8px; }
+.preguntas .lista { margin-top: 28px; max-width: 46em; border-top: 1px solid var(--linea); }
+
+.preguntas details { border-bottom: 1px solid var(--linea); }
+.preguntas summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 64px;
+  padding: 12px 0;
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--cond);
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 1.15;
+}
+.preguntas summary::-webkit-details-marker { display: none; }
+/* Un más que se vuelve menos al abrir: dos barras, la vertical gira y se esconde */
+.preguntas summary::after {
+  content: "";
+  flex: none;
+  width: 18px;
+  height: 18px;
+  background:
+    linear-gradient(var(--primary), var(--primary)) center / 18px 3px no-repeat,
+    linear-gradient(var(--primary), var(--primary)) center / 3px 18px no-repeat;
+}
+.preguntas details[open] summary::after {
+  background: linear-gradient(var(--primary), var(--primary)) center / 18px 3px no-repeat;
+}
+.preguntas details p { margin: 0 0 22px; max-width: 40em; color: var(--text-2); }
+
+/* ── Pie ─────────────────────────────────────────────────────────── */
+
+.pie {
+  margin-top: 64px;
+  border-top: 1px solid var(--linea);
+  padding-block: 32px 48px;
+  font-size: 15px;
+  color: var(--text-2);
+}
+.pie p { margin: 0 0 8px; }
+.pie nav { display: flex; flex-wrap: wrap; gap: 0 24px; margin-top: 16px; }
+/* Zona de toque de 48 px aunque la letra sea pequeña */
+.pie nav a { display: inline-flex; align-items: center; min-height: 48px; }
+
+/* ── Escritorio ──────────────────────────────────────────────────── */
+
+@media (min-width: 900px) {
+  :root { --margen: 40px; --ancho-titular: min(52vw, 640px); --ancho-problema: min(100vw - 2 * var(--margen), 1100px); }
+  .firma { margin-top: 24px; }
+  .hero {
+    grid-template-columns: var(--ancho-titular) minmax(0, 1fr);
+    align-items: center;
+    gap: 48px;
+    padding-block: 36px 96px;
+  }
+  .hero .movil { width: 320px; }
+  .subtitulo { font-size: 21px; }
+
+  .problema { padding: 96px 0 100px; }
+  .problema p { font-size: 21px; }
+
+  /* Captura y texto se turnan de lado de un pilar al siguiente */
+  .pilar {
+    grid-template-columns: minmax(0, 1fr) 300px;
+    align-items: center;
+    gap: 80px;
+    padding: 88px 0;
+  }
+  .pilar .movil { width: 300px; }
+  .pilar:nth-child(even) { grid-template-columns: 300px minmax(0, 1fr); }
+  .pilar:nth-child(even) .movil { order: -1; }
+
+  .beta { padding-top: 96px; }
+  /* Número, título y texto comparten filas en las tres tarjetas (subgrid): quedan a
+     la misma altura aunque un texto sea más largo que otro */
+  .pasos { grid-template-columns: repeat(3, 1fr); grid-template-rows: auto auto 1fr; gap: 0 18px; }
+  .pasos li {
+    grid-row: span 3;
+    grid-template-columns: 1fr;
+    grid-template-rows: subgrid;
+    row-gap: 0;
+    padding: 26px;
+  }
+  .pasos li > div { display: contents; }
+  .pasos li::before { font-size: 72px; margin-bottom: 14px; }
+  .pasos h3 { margin-bottom: 8px; }
+}
+
+/* ── Movimiento ──────────────────────────────────────────────────── */
+/* Lo único que se mueve. Con movimiento reducido no entra nada de esto y la
+   página se ve quieta y completa. Ninguna entrada parte de opacidad 0. */
+
+@media (prefers-reduced-motion: no-preference) {
+
+  /* La entrada del hero, escalonada: acaba antes de 600 ms */
+  .titular span { animation: subir 380ms var(--frenada) both; }
+  .titular span:nth-child(2) { animation-delay: 70ms; }
+  .titular span:nth-child(3) { animation-delay: 140ms; }
+  .subtitulo { animation: subir 380ms var(--frenada) 200ms both; }
+  .hero .boton { animation: subir 380ms var(--frenada) 260ms both; }
+  .hero .movil { animation: movil 520ms var(--frenada) 80ms both; }
+
+  /* El brillo del botón: cruza una vez cada seis segundos, después de la entrada */
+  .boton::after { animation: brillo 6s ease-in-out 1.4s infinite; }
+
+  /* Las secciones aparecen al llegar a ellas, donde el navegador sabe atar una
+     animación al scroll. Donde no, se ven sin más: no hay nada que esperar. */
+  @supports (animation-timeline: view()) {
+    .aparece {
+      animation: aparecer linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 45%;
+    }
+  }
+
+  .preguntas summary::after { transition: background 160ms var(--frenada); }
+}
+
+@keyframes subir {
+  from { opacity: 0.3; transform: translateY(18px); }
+}
+
+@keyframes movil {
+  from { opacity: 0.4; transform: translateY(36px) rotate(2deg); }
+}
+
+@keyframes brillo {
+  0%        { transform: translateX(-100%) skewX(-20deg); }
+  22%, 100% { transform: translateX(480%) skewX(-20deg); }
+}
+
+@keyframes aparecer {
+  from { opacity: 0.25; transform: translateY(40px); }
+}
