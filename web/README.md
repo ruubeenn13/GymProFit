@@ -1,11 +1,12 @@
 # web — sitio público de GymProFit
 
-Sitio estático de `gymprofit.app`: portada, política de privacidad, términos de uso
-y la página de eliminación de cuenta. HTML y CSS a mano, sin build, sin dependencias y sin
+Sitio estático de `gymprofit.app`: portada, política de privacidad, términos de uso,
+la página de eliminación de cuenta y la de la beta (`/beta` y `/beta/dentro`). HTML y CSS a mano, sin build, sin dependencias y sin
 JavaScript. Lo que hay en esta carpeta es exactamente lo que se sirve.
 
 ```
 index.html · privacidad.html · terminos.html · eliminar-cuenta.html · estilo.css
+beta.html · beta/dentro.html · beta.css   (la beta, GP-201)
 fuentes/  seis .woff2: Barlow 400 / 500 / 600 y Barlow Condensed 500 / 600 / 700
 img/      logos claro y oscuro (256 y 512, webp) + favicons y apple-touch-icon
 ```
@@ -36,9 +37,29 @@ resuelve la ruta limpia al fichero correspondiente. Esas dos URL públicas son
 cuenta—, así que si alguna vez se cambia de alojamiento hay que comprobar que el
 nuevo también las resuelve, o los enlaces declarados en la ficha se rompen.
 
+## La beta
+
+`/beta` es la página a la que llega quien viene de TikTok o Instagram. Su botón
+«Apuntarme» es un **enlace** al formulario alojado de Brevo, en la misma pestaña:
+la web no recoge nada. Brevo pide confirmar el correo y después redirige a
+`/beta/dentro` (DEC-050). Si el enlace del formulario cambia en Brevo, se cambia en
+los dos botones de `beta.html` y en `BetaWebTest`, que lo fija.
+
+- **Rutas.** `beta.html` sirve `/beta` y `beta/dentro.html` sirve `/beta/dentro`:
+  Pages resuelve por fichero, así que la carpeta `beta/` no le quita la ruta a
+  `beta.html`. No hace falta `beta/index.html`, que daría `/beta/` con barra.
+- **Su hoja es `beta.css`, no `estilo.css`.** La paleta es la de los vídeos
+  (`#E8710A`, `#CBA135`, `#F5F1EA` sobre `#0B0C0E`), no la de la app: es lo que
+  reconoce quien llega desde un vídeo. Las fuentes son los mismos ficheros.
+- **El titular llena el ancho** línea a línea: cada `<span>` lleva `--k`, su ancho
+  en em medido en el navegador. Si cambia el texto, hay que volver a medirlo.
+- **El movimiento es solo CSS** y vive entero dentro de
+  `@media (prefers-reduced-motion: no-preference)`. Fuera de ese bloque la página
+  está ya en su estado final, así que con movimiento reducido se ve quieta y completa.
+
 ## Los colores son los de la app
 
-Los tokens de `:root` en `estilo.css` son **los mismos valores** que
+Salvo la beta (arriba), los tokens de `:root` en `estilo.css` son **los mismos valores** que
 `app/GymProFit/app/src/main/res/values/colors.xml` (tema claro) y
 `values-night/colors.xml` (tema oscuro). Están copiados a mano porque no hay
 forma razonable de compartirlos entre un `colors.xml` y una hoja de estilos:

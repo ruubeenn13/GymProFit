@@ -860,6 +860,25 @@ El `LIKE` con comodín delante no usa índice: barre la tabla entera en cada pul
 
 ---
 
+### DEC-050 · La lista de espera de la beta es un formulario alojado de Brevo con doble confirmación, y la web sigue sin JavaScript
+**Estado:** Aceptada · **Fecha:** 2026-10-20 · **Tarea:** GP-201
+
+**Contexto.** La beta necesita una lista de espera a la que llegue gente desde TikTok e Instagram, y `gymprofit.app` es un sitio estático sin build, sin JavaScript y sin peticiones a terceros al cargar (`web/README.md`). Recoger correos en la propia web pediría un endpoint, una API de Brevo con su clave y un script en la página, o un `<form>` que publique en un tercero.
+
+**Decisión.**
+
+- **Las altas las recoge un formulario alojado de Brevo**, con doble confirmación: quien se apunta recibe un correo y no está en la lista hasta que lo confirma. Brevo redirige después a `/beta/dentro`. El formulario pide el correo y el tipo de móvil (Android o iPhone).
+- **`/beta` no tiene formulario**: su botón «Apuntarme» es un enlace al de Brevo en la misma pestaña. Así la web sigue sin JavaScript y sin pedir nada a terceros al cargar; Brevo solo recibe los datos de conexión de quien pulsa, y la política lo dice.
+- **El movimiento de `/beta` y `/beta/dentro` es solo CSS**, y con `prefers-reduced-motion` la página está quieta y completa: el estado final es el de partida y las animaciones solo entran con `no-preference`.
+- **La paleta de la beta es la de los vídeos** (`#E8710A`, `#CBA135`, `#F5F1EA` sobre `#0B0C0E`), en `web/beta.css`, aparte de `estilo.css`. Es una página de llegada desde un vídeo; lo que tiene que reconocer quien llega es el vídeo, no la app. El resto del sitio sigue con los tokens de la app. El dorado sale como detalle gráfico y en la celebración de `/beta/dentro`, que es justo el uso que DEC-026 le reserva.
+- **Tratamiento propio en la política**, «Lista de espera de la beta»: correo y tipo de móvil, para avisar de la beta y del lanzamiento, con consentimiento (art. 6.1.a), hasta la baja o como mucho 6 meses después de publicar la app. `BetaWebTest` fija el enlace de `/beta` y ese tratamiento.
+
+**Consecuencias.** El salto a otro dominio cuesta gente: el formulario de Brevo carga su página y sus recursos, con su aspecto, dentro del navegador de TikTok. A cambio no hay clave, ni endpoint, ni nada que mantener en la API. Si el enlace del formulario cambia en Brevo, hay que cambiarlo en `beta.html` y en el test.
+
+**Qué la invalidaría.** Que el salto pierda demasiada gente: si de quienes pulsan «Apuntarme» confirman muchos menos de los que cabría esperar, se pasa a un formulario propio en `/beta` que dé de alta por la API de Brevo desde nuestro servidor, con la doble confirmación de Brevo igual. Eso traería un endpoint nuevo y un `<form>` en la web, aunque seguiría sin hacer falta JavaScript.
+
+---
+
 ## Pendientes de decidir
 
 Se registran aquí para que no se decidan por omisión.
