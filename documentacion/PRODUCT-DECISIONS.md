@@ -879,6 +879,22 @@ El `LIKE` con comodín delante no usa índice: barre la tabla entera en cada pul
 
 **Qué la invalidaría.** Que Brevo deje de aceptar el POST normal o deje de redirigir (respondiendo con JSON o con una página suya): entonces el alta pasaría por un endpoint nuestro que dé de alta por la API de Brevo, con la doble confirmación de Brevo igual. Que lleguen altas de bots que la trampa no para. Que la beta llegue a iPhone, que devolvería la pregunta del móvil.
 
+### DEC-051 · /beta/entrar existe desde ya y el día de apertura la redirige una línea de _redirects
+**Estado:** Aceptada · **Fecha:** 2026-10-20 · **Tarea:** GP-202
+
+**Contexto.** Los correos de «beta abierta» de Brevo enlazan a `https://gymprofit.app/beta/entrar`, y no queremos tocar las plantillas el día de apertura. La web es estática, sin JavaScript (DEC-050) y se despliega subiendo un zip a Cloudflare Pages. La documentación de Pages dice que una redirección de `_redirects` se sigue «regardless of whether or not an asset matches the incoming request» (comprobado el 2026-10-20).
+
+**Decisión.**
+
+- **`web/beta/entrar.html` existe desde ya**: «abre muy pronto, te avisaremos por correo», con vuelta a `/beta`, `noindex` y el estilo de `/beta/dentro`. Así el enlace nunca da 404, ni antes de abrir ni en un correo de prueba.
+- **La apertura es una regla de `web/_redirects`**, `/beta/entrar <enlace de unión de Play> 302`, que está **comentada** hasta ese día. Abrir es quitar el `#`; cerrar, volver a ponerlo. La página no se borra.
+- **302 y no 301**: el 301 lo guarda el navegador para siempre y no se podría volver a la página si la prueba cerrada se cierra o cambia de enlace.
+- **El enlace de la prueba cerrada solo puede estar en `_redirects`**, y esa es la única regla activa: `BetaWebTest` lo comprueba sobre todo `web/`.
+
+**Consecuencias.** El día de apertura no se toca ni Brevo ni ninguna página, solo una línea, y se ve en el diff. La redirección la hace Pages en el borde, sin JavaScript y sin pedir nada a terceros al cargar.
+
+**Qué la invalidaría.** Que Pages deje de dar prioridad a `_redirects` sobre los ficheros (habría que borrar `beta/entrar.html` al abrir), o que la web pase a un alojamiento sin `_redirects`.
+
 ---
 
 ## Pendientes de decidir

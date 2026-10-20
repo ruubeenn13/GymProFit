@@ -13,9 +13,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 // ============================================================
 // BetaWebTest — el formulario de /beta envía a Brevo y la política cuenta ese
@@ -28,6 +31,11 @@ import java.util.regex.Pattern;
 // vacía, así que nadie debe poder verla ni rellenarla. La web no carga nada de
 // terceros ni lleva JavaScript, así que la beta tampoco. Y la política tiene que
 // nombrar el tratamiento con su base legal, su plazo y la baja.
+//
+// /beta/entrar es el enlace de los correos de «beta abierta» (GP-202): existe desde ya
+// con su página de «abre muy pronto», y el día de apertura una regla de _redirects
+// le gana y manda a la prueba cerrada de Play (DEC-051). Ese enlace solo puede estar
+// en _redirects: si se cuela en una página, la beta queda abierta antes de tiempo.
 // ============================================================
 public class BetaWebTest {
 
@@ -35,7 +43,10 @@ public class BetaWebTest {
     private static final String FORMULARIO_BREVO = "https://c66652ae.sibforms.com/serve/"
             + "MUIFAORtSwe7_YQbPHZ1hfBdigRHNkNWnE7eaZati3CifuqQ3yIKNj2HQV6oOvbjfyUYusgHznzE_WWAA1fhZNqg84lw5KkyrVJxhLaYEyL0XUYchj8wmMdvuu6lNVZIDrylva7nkhY_bEC7VLwLrLIgS7kAabyxan0UmamnG80VnAInVeNAjUYo1BkWePjfwN9ptal3PQSa2H17mA==";
 
-    private static final String[] PAGINAS = {"beta.html", "beta/revisa.html", "beta/dentro.html"};
+    private static final String[] PAGINAS = {"beta.html", "beta/revisa.html", "beta/dentro.html", "beta/entrar.html"};
+
+    /** El principio de cualquier enlace de unión a una prueba cerrada de Google Play. */
+    private static final String PRUEBA_CERRADA = "play.google.com/apps/testing";
 
     @Test
     public void elFormularioEnviaABrevoPorPost() throws IOException {
@@ -147,6 +158,52 @@ public class BetaWebTest {
     }
 
     @Test
+    public void entrarDiceQueAbreProntoYVuelveALaBeta() throws IOException {
+        String html = pagina("beta/entrar.html");
+        assertTrue("/beta/entrar se indexa", html.contains("<meta name=\"robots\" content=\"noindex\">"));
+        String texto = texto(html.replaceAll("(?s)<head>.*?</head>", ""));
+        assertTrue("no dice que abre pronto", texto.contains("Abre muy pronto."));
+        assertTrue("no dice que se avisará por correo", texto.contains("Te avisaremos por correo"));
+        assertTrue("no tiene el botón de vuelta a /beta",
+                html.contains("<a class=\"boton hueco\" href=\"/beta\">Volver a la beta</a>"));
+    }
+
+    @Test
+    public void elEnlaceDeLaPruebaCerradaSoloEstaEnRedirects() throws IOException {
+        Path web = raiz().resolve("web");
+        List<Path> ficheros;
+        try (Stream<Path> todos = Files.walk(web)) {
+            ficheros = todos.filter(Files::isRegularFile)
+                    .filter(f -> !f.toString().matches(".*\\.(woff2|webp|png|ico|jpg|svg)$"))
+                    .collect(Collectors.toList());
+        }
+        assertTrue("no hay ficheros de texto en web/", ficheros.size() >= 8);
+        for (Path f : ficheros) {
+            if (f.equals(web.resolve("_redirects"))) continue;
+            String contenido = new String(Files.readAllBytes(f), StandardCharsets.UTF_8);
+            assertFalse("el enlace de la prueba cerrada está en " + web.relativize(f), contenido.contains(PRUEBA_CERRADA));
+        }
+    }
+
+    @Test
+    public void laRedireccionDeEntrarEstaListaEnUnaLinea() throws IOException {
+        String regla = "/beta/entrar https://" + PRUEBA_CERRADA + "/com.gymprofit.app 302";
+        int encontradas = 0;
+        for (String linea : pagina("_redirects").split("\\R")) {
+            String l = linea.trim();
+            if (l.isEmpty()) continue;
+            if (l.startsWith("#")) {
+                if (l.substring(1).trim().equals(regla)) encontradas++;
+                continue;
+            }
+            // Una regla activa solo puede ser esa: ninguna otra ruta se redirige
+            assertEquals("regla inesperada en _redirects", regla, l);
+            encontradas++;
+        }
+        assertEquals("la redirección de /beta/entrar tiene que estar una vez, comentada o no", 1, encontradas);
+    }
+
+    @Test
     public void laPortadaInvitaALaBeta() throws IOException {
         assertTrue(pagina("index.html").contains("href=\"/beta\""));
     }
@@ -198,11 +255,16 @@ public class BetaWebTest {
     }
 
     private static String pagina(String nombre) throws IOException {
+        Path fichero = raiz().resolve("web").resolve(nombre);
+        assertTrue("no existe web/" + nombre, Files.exists(fichero));
+        return new String(Files.readAllBytes(fichero), StandardCharsets.UTF_8);
+    }
+
+    // La raíz del repositorio: la primera carpeta hacia arriba que contiene web/.
+    private static Path raiz() {
         Path raiz = Paths.get("").toAbsolutePath();
         while (raiz != null && !Files.isDirectory(raiz.resolve("web"))) raiz = raiz.getParent();
         assertNotNull("no se encuentra la carpeta web", raiz);
-        Path fichero = raiz.resolve("web").resolve(nombre);
-        assertTrue("no existe web/" + nombre, Files.exists(fichero));
-        return new String(Files.readAllBytes(fichero), StandardCharsets.UTF_8);
+        return raiz;
     }
 }

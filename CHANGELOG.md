@@ -6,6 +6,8 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `02de136` | docs(decisiones): **DEC-051**, `/beta/entrar` existe desde ya y el día de apertura la redirige una línea de `_redirects`; por qué 302 y qué la invalidaría. |
+| `d817830` | feat(web,android): **`/beta/entrar`** (GP-202), el enlace de los correos de «beta abierta»: «abre muy pronto», vuelta a `/beta`, `noindex`, estilo de `/beta/dentro`. La redirección 302 a la prueba cerrada de Play espera comentada en `web/_redirects`, que gana al fichero de la misma ruta. Procedimiento de apertura en `web/README.md`. `BetaWebTest` ampliado. Zip `gymprofit-web-gp-202.zip`. |
 | `4ad0417` | fix(web,android): **las hojas van versionadas por su contenido** (`?v=<hash>`) y `_headers` revalida siempre el HTML y guarda las hojas un año; las fuentes y las imágenes, con la revalidación de Pages. `scripts/versionar-hojas-web.py` y `HojasVersionadasWebTest`. Zip `gymprofit-web-gp-201.zip` rehecho. |
 | `f15f12e` | docs(documentacion): la tercera vuelta en el [informe de GP-201](documentacion/estado/2026-10-20-gp-201-beta.md). |
 | `807e2ff` | feat(web,android): **`/beta` se ve al instante y no repite nada** (GP-201, tercera vuelta): entradas de 320 ms como mucho que acaban a los 600 ms sin partir de opacidad 0, el formulario en su tarjeta y sin animar, una línea bajo el titular, el iPhone una sola vez; fuera la pastilla y la caja de Android y el «¿Te apuntas?» final. `BetaWebTest` comprueba que ninguna frase se repita. Zip `gymprofit-web-gp-201.zip` rehecho. |
