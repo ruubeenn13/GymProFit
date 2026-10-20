@@ -6,8 +6,10 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `fd8cdd6` | docs(decisiones): **DEC-050** reescrita: el formulario de la beta es nuestro y se envía por POST a Brevo, sin JavaScript; qué no puede hacer así y qué la invalidaría. |
+| `e914ece` | feat(web,android): **el formulario de la beta dentro de `/beta`** (GP-201, segunda vuelta): correo, casilla de consentimiento propia, trampa para bots y «Apuntarme», enviado por POST normal a Brevo, que redirige a la nueva **`/beta/revisa`**. La beta es **solo para Android** y la página lo dice; la política deja de pedir el tipo de móvil. `BetaWebTest` ampliado. Zip `gymprofit-web-gp-201.zip` rehecho. |
 | `4586b15` | docs(decisiones): **DEC-050**, la lista de espera de la beta va por un formulario alojado de Brevo con doble confirmación y la web sigue sin JavaScript; si el salto pierde demasiada gente, formulario propio con la API. |
-| `09e4371` | feat(web,android): **la página de la beta** (GP-201): `/beta`, con el titular a golpes, la luz del logo, «Apuntarme» al formulario de Brevo y las tres razones, y `/beta/dentro`, adonde redirige Brevo al confirmar. Solo CSS, quieta con movimiento reducido, paleta de los vídeos en `beta.css`. La portada invita a la beta; la política estrena «Lista de espera de la beta» y nombra a Brevo para ello. `BetaWebTest`. Zip `gymprofit-web-gp-201.zip` en el escritorio. |
+| `09e4371` | feat(web,android): **la página de la beta** (GP-201): `/beta`, con el titular a golpes, la luz del logo, «Apuntarme» al formulario de Brevo y las tres razones, y `/beta/dentro`, adonde redirige Brevo al confirmar. Solo CSS, quieta con movimiento reducido, paleta de los vídeos en `beta.css`. La portada invita a la beta; la política estrena «Lista de espera de la beta» y nombra a Brevo para ello. `BetaWebTest`. |
 
 ### 2026-10-14
 
