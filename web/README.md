@@ -5,13 +5,14 @@ la página de eliminación de cuenta y la de la beta (`/beta`, `/beta/revisa`, `
 JavaScript. Lo que hay en esta carpeta es exactamente lo que se sirve.
 
 ```
-index.html · privacidad.html · terminos.html · eliminar-cuenta.html · estilo.css
+index.html · portada.css   la portada de producto (GP-203)
+privacidad.html · terminos.html · eliminar-cuenta.html · estilo.css
 beta.html · beta/revisa.html · beta/dentro.html · beta.css   (la beta, GP-201)
-beta/entrar.html   el enlace de los correos de «beta abierta» (GP-202)
+beta/entrar.html   los pasos para entrar, enlace de los correos de «beta abierta» (GP-202)
 _headers  la caché de Cloudflare Pages (ver «Caché y versiones»)
-_redirects  la redirección de /beta/entrar, comentada hasta el día de apertura
 fuentes/  seis .woff2: Barlow 400 / 500 / 600 y Barlow Condensed 500 / 600 / 700
 img/      logos claro y oscuro (256 y 512, webp) + favicons y apple-touch-icon
+img/capturas/  las cuatro capturas de la portada, en webp a 360 y 720 de ancho
 ```
 
 ## Dónde vive
@@ -27,8 +28,8 @@ despliega nada**. El dominio `gymprofit.app` apunta a ese proyecto.
    `--comprobar` solo dice si falta; el test `HojasVersionadasWebTest` también
    falla si una hoja cambia y su versión no.
 2. Comprimir el **contenido** de `web/` menos este README, no la carpeta. El zip
-   que se sube es eso: lo que hay aquí, salvo `README.md`. `_headers` y
-   `_redirects` van dentro.
+   que se sube es eso: lo que hay aquí, salvo `README.md`. `_headers` va
+   dentro.
 3. Proyecto `gymprofit` en Cloudflare Pages → pestaña **Implementaciones** → subir
    el zip.
 
@@ -43,12 +44,12 @@ Un navegador que ya había visitado `/beta` mezcló la página nueva con el
 `beta.css` de su caché (GP-201). Para que no vuelva a pasar:
 
 - **Las hojas van versionadas por su contenido**: cada página pide
-  `/beta.css?v=<hash>` o `/estilo.css?v=<hash>`, con los 8 primeros caracteres
+  `/beta.css?v=<hash>`, `/estilo.css?v=<hash>` o `/portada.css?v=<hash>`, con los 8 primeros caracteres
   del SHA-256 de la hoja (saltos de línea normalizados a `\n`, para que salga
   igual en Windows y en el CI). La URL cambia solo cuando cambia la hoja. La
   versión la pone `scripts/versionar-hojas-web.py`; nunca a mano.
 - **`_headers`**: el HTML, con `Cache-Control: no-cache` (se revalida siempre,
-  y es lo que dice qué versión pedir); `estilo.css` y `beta.css`, un año e
+  y es lo que dice qué versión pedir); `estilo.css`, `beta.css` y `portada.css`, un año e
   `immutable`. Las fuentes y las imágenes **no** van versionadas, así que se
   quedan con la revalidación de Pages: si un día se versionan, pueden pasar a
   `immutable`.
@@ -102,25 +103,48 @@ redirecciones se configuran en Brevo, no aquí.
 ## El día que abre la beta
 
 Los correos de Brevo de «beta abierta» enlazan a `/beta/entrar`, y esa URL no
-cambia nunca: las plantillas no se tocan (GP-202, DEC-051). Hasta el día de
-apertura sirve `beta/entrar.html` («abre muy pronto», con vuelta a `/beta`). Una
-regla de `_redirects` **gana al fichero de la misma ruta** —«Redirects are always
-followed, regardless of whether or not an asset matches the incoming request»,
-documentación de Cloudflare Pages—, así que abrir es cambiar una línea:
+cambia nunca: las plantillas no se tocan (GP-202). Es una página de tres pasos
+(DEC-052, que sustituye a DEC-051): unirse al Grupo de Google de probadores,
+aceptar la prueba en Google Play e instalar. Una prueba cerrada solo admite las
+cuentas de su lista, y esa lista es el grupo, así que el grupo se ofrece ya en
+`/beta/dentro`. Hasta el día de apertura el paso 2 se ve apagado, con «Disponible
+el día de apertura». Abrir es cambiar un solo bloque de `beta/entrar.html`, el que
+va entre `▼ APERTURA DE LA BETA` y `▲ FIN DE LA APERTURA DE LA BETA`:
 
-1. En `web/_redirects`, quitar el `#` de la línea de `/beta/entrar` y comprobar
-   que su enlace es el de unión de la prueba cerrada que da Play Console. Se queda
-   en **302**: un 301 lo guarda el navegador para siempre.
-2. Pasar `BetaWebTest`: el enlace de la prueba cerrada solo puede estar en
-   `_redirects`, y esa regla es la única activa.
-3. Hacer el zip y subirlo como en «Cómo se despliega a mano». `beta/entrar.html`
-   se queda: si la prueba se cierra, basta con volver a poner el `#`.
-4. Comprobar: `curl -I https://gymprofit.app/beta/entrar` da `302` y
-   `location:` con el enlace de Play.
+1. Dentro de ese bloque, quitar las marcas `<!--` y `-->` que envuelven el paso con
+   el botón «Aceptar la prueba», y borrar el paso apagado de debajo. Antes,
+   comprobar que su enlace es el de unión que da Play Console.
+2. Pasar `BetaWebTest`. Falla si el bloque queda a medias (los dos pasos a la vista o
+   ninguno) y si el enlace de Play aparece fuera del bloque o en otra página.
+3. Hacer el zip y subirlo como en «Cómo se despliega a mano».
+4. Comprobar en `https://gymprofit.app/beta/entrar` que el botón está y lleva a la
+   prueba. Si la prueba se cierra, se deshace igual: vuelve el paso apagado.
+
+## La portada
+
+`/` es la página de producto (GP-203): qué hace la app y cómo se entra en la beta.
+Usa su propia hoja, `portada.css`, con los colores de la app, porque enseña la app.
+
+- **Las capturas son de la app real**, con la cuenta demo del entorno local
+  (`scripts/README.md` explica cómo se regeneran). En `img/capturas/`, en webp a 360 y
+  720 de ancho, con `width` y `height` para que no salten al cargar. Solo la del hero
+  carga sin esperar; las demás llevan `loading="lazy"`.
+- **Cada función que nombra existe en `main`**: si una desaparece de la app, se quita
+  de aquí. Sin cifras, testimonios, valoraciones ni logos de prensa, y sin redes por
+  ahora.
+- **Los titulares que llenan el ancho** (el del hero y «Entrenas en serio. Comes a
+  ojo.») llevan `--k` por línea, como la beta: si cambia el texto, se vuelve a medir.
+- **El movimiento es solo CSS** y vive dentro de
+  `@media (prefers-reduced-motion: no-preference)`: la entrada escalonada del hero,
+  el brillo del botón y las secciones que aparecen al llegar a ellas. Esto último usa
+  `animation-timeline: view()` solo donde el navegador la conoce
+  (`@supports`); donde no, las secciones se ven sin más.
+- `PortadaWebTest` fija el orden de las secciones, el único `h1`, las capturas, las
+  preguntas y que no carga nada de fuera.
 
 ## Los colores son los de la app
 
-Salvo la beta (arriba), los tokens de `:root` en `estilo.css` son **los mismos valores** que
+Salvo la beta (arriba), los tokens de `:root` en `estilo.css` y en `portada.css` son **los mismos valores** que
 `app/GymProFit/app/src/main/res/values/colors.xml` (tema claro) y
 `values-night/colors.xml` (tema oscuro). Están copiados a mano porque no hay
 forma razonable de compartirlos entre un `colors.xml` y una hoja de estilos:

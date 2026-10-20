@@ -880,7 +880,7 @@ El `LIKE` con comodín delante no usa índice: barre la tabla entera en cada pul
 **Qué la invalidaría.** Que Brevo deje de aceptar el POST normal o deje de redirigir (respondiendo con JSON o con una página suya): entonces el alta pasaría por un endpoint nuestro que dé de alta por la API de Brevo, con la doble confirmación de Brevo igual. Que lleguen altas de bots que la trampa no para. Que la beta llegue a iPhone, que devolvería la pregunta del móvil.
 
 ### DEC-051 · /beta/entrar existe desde ya y el día de apertura la redirige una línea de _redirects
-**Estado:** Aceptada · **Fecha:** 2026-10-20 · **Tarea:** GP-202
+**Estado:** Sustituida por DEC-052 · **Fecha:** 2026-10-20 · **Tarea:** GP-202
 
 **Contexto.** Los correos de «beta abierta» de Brevo enlazan a `https://gymprofit.app/beta/entrar`, y no queremos tocar las plantillas el día de apertura. La web es estática, sin JavaScript (DEC-050) y se despliega subiendo un zip a Cloudflare Pages. La documentación de Pages dice que una redirección de `_redirects` se sigue «regardless of whether or not an asset matches the incoming request» (comprobado el 2026-10-20).
 
@@ -894,6 +894,24 @@ El `LIKE` con comodín delante no usa índice: barre la tabla entera en cada pul
 **Consecuencias.** El día de apertura no se toca ni Brevo ni ninguna página, solo una línea, y se ve en el diff. La redirección la hace Pages en el borde, sin JavaScript y sin pedir nada a terceros al cargar.
 
 **Qué la invalidaría.** Que Pages deje de dar prioridad a `_redirects` sobre los ficheros (habría que borrar `beta/entrar.html` al abrir), o que la web pase a un alojamiento sin `_redirects`.
+
+### DEC-052 · Se entra en la beta por un Grupo de Google, y /beta/entrar es una página de pasos
+**Estado:** Aceptada · **Fecha:** 2026-10-20 · **Tarea:** GP-202 · **Sustituye a:** DEC-051
+
+**Contexto.** Una prueba cerrada de Google Play solo admite las cuentas de su lista de probadores, y esas cuentas son de Google. La lista de espera de la beta (DEC-050) recoge correos de cualquier proveedor, así que con la redirección de DEC-051 quien se hubiera apuntado con otro correo llegaría a Play y no podría entrar. La lista de probadores será un Grupo de Google abierto, `groups.google.com/g/gymprofit-beta`.
+
+**Decisión.**
+
+- **El grupo se ofrece en cuanto se confirma el correo**: `/beta/dentro` lleva el paso destacado «Únete ya al grupo de probadores», que explica que hace falta una cuenta de Google y que así el día de apertura solo hay que aceptar la prueba.
+- **`/beta/entrar` deja de ser una redirección y es una página de tres pasos**: unirse al grupo, aceptar la prueba en Google Play (`play.google.com/apps/testing/com.gymprofit.app`) e instalar. La URL de los correos de «beta abierta» no cambia y las plantillas no se tocan.
+- **Abrir la beta es cambiar un solo bloque** de `beta/entrar.html`, marcado con comentarios: hasta entonces el paso 2 se ve apagado con «Disponible el día de apertura», y el paso con el enlace de Play espera comentado dentro del mismo bloque. El procedimiento está en `web/README.md`.
+- **Sin `web/_redirects`**: con la regla fuera, solo quedaban comentarios.
+- **Dónde puede estar cada enlace**: el de Play, solo dentro de ese bloque de `beta/entrar.html`; el del grupo, solo en `beta/dentro.html` y `beta/entrar.html`. `BetaWebTest` lo comprueba sobre todo `web/`.
+- **Enlazar el grupo es navegación**, no un recurso que la página cargue: la web sigue sin pedir nada a terceros al cargar. Unirse es voluntario y lo trata Google con sus condiciones; de nosotros, la política dice que solo vemos el correo de cada miembro.
+
+**Consecuencias.** La gente puede ir uniéndose al grupo desde ya, y el día de apertura el aviso por correo lleva a una página que ya conocen. La apertura sigue siendo un cambio pequeño y visible en el diff, pero ahora es de una página y pasa por un despliegue de la web, como cualquier otro.
+
+**Qué la invalidaría.** Que la prueba pase a ser abierta (sin lista de probadores): entonces sobran el grupo y el paso 1. Que Google retire los grupos como lista de probadores, o que la lista pase a gestionarse por correos en Play Console.
 
 ---
 

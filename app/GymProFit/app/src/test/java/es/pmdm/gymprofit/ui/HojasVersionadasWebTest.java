@@ -66,12 +66,12 @@ public class HojasVersionadasWebTest {
                 "/*.html"}) {
             assertEquals("la regla de " + ruta + " no pide revalidar", "no-cache", regla(cabeceras, ruta));
         }
-        for (String hoja : new String[]{"/estilo.css", "/beta.css"}) {
+        for (String hoja : new String[]{"/estilo.css", "/beta.css", "/portada.css"}) {
             assertEquals(hoja + " no lleva caché larga", "public, max-age=31536000, immutable", regla(cabeceras, hoja));
         }
         // Las fuentes y las imágenes no van versionadas: no pueden ser immutable
         assertFalse("hay algo immutable que no va versionado",
-                cabeceras.replaceAll("(?m)^/(estilo|beta)\\.css\\R[^\\n]*\\R?", "").contains("immutable"));
+                cabeceras.replaceAll("(?m)^/(estilo|beta|portada)\\.css\\R[^\\n]*\\R?", "").contains("immutable"));
         // Ninguna regla con comodín para todo: Pages uniría su Cache-Control con el de las demás
         assertFalse("una regla /* se sumaría a las demás", Pattern.compile("(?m)^/\\*\\s*$").matcher(cabeceras).find());
     }
