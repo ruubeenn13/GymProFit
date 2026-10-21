@@ -40,6 +40,14 @@ public class PaginaNoEncontradaWebTest {
     }
 
     @Test
+    public void esUnDorsalDelSistemaSinElJavaScriptDeLaPortada() throws IOException {
+        String html = pagina();
+        assertTrue("404.html no usa la hoja de la portada", html.contains("href=\"/portada.css?v="));
+        assertTrue("404.html no es un dorsal", html.contains("<div class=\"dorsal\">"));
+        assertFalse("404.html carga el JavaScript de la portada", html.contains("portada.js"));
+    }
+
+    @Test
     public void todoLoQueCargaVaConRutaAbsoluta() throws IOException {
         String html = pagina();
         assertFalse("404.html lleva JavaScript", html.contains("<script"));

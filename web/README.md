@@ -66,7 +66,8 @@ Un navegador que ya había visitado `/beta` mezcló la página nueva con el
 ## La 404
 
 Cloudflare Pages sirve `404.html`, con estado **404**, en cualquier ruta que no
-exista. Sin ese fichero, Pages trata el sitio como una aplicación de una página y
+exista. Es un dorsal sin número, caído sobre la tela: usa `portada.css` pero no su
+JavaScript, y cabe en una pantalla sin bajar. Sin ese fichero, Pages trata el sitio como una aplicación de una página y
 responde a cualquier ruta con la portada y un **200**, que los buscadores indexan
 como páginas duplicadas. `scripts/servir-web.py` hace lo mismo en local.
 

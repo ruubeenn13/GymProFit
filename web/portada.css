@@ -603,6 +603,40 @@ h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; text-wrap: b
 /* Zona de toque de 48 px aunque la letra sea pequeña */
 .pie nav a { display: inline-flex; align-items: center; min-height: 48px; }
 
+/* ── La 404: un dorsal sin número, caído sobre la tela ────────────── */
+/* La misma pieza del hero, sin número y girada al otro lado; todo cabe en una
+   pantalla, sin bajar. */
+
+.perdido main {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  min-height: calc(100svh - 80px);
+  padding-block: 20px 36px;
+}
+.perdido .dorsal {
+  width: min(100%, 540px);
+  transform: rotate(4deg);
+}
+.dorsal-cuerpo { padding: 22px 26px 20px; }
+.dorsal-cuerpo h1 {
+  font-size: clamp(40px, 11vw, 76px);
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+.dorsal-cuerpo p {
+  max-width: 26em;
+  margin: 14px 0 0;
+  font-size: 17px;
+  line-height: 1.45;
+  color: var(--tinta-2);
+}
+.perdido-beta {
+  margin: 36px 0 0;
+  text-align: center;
+  color: var(--text-2);
+}
+
 /* ── Escritorio ──────────────────────────────────────────────────── */
 
 @media (min-width: 900px) {
@@ -723,6 +757,8 @@ h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; text-wrap: b
 @media (prefers-reduced-motion: no-preference) {
 
   .dorsal { animation: asentar 700ms var(--tela) backwards; }
+  /* La 404: el dorsal cae y se queda torcido */
+  .perdido .dorsal { animation: caer 700ms var(--tela) backwards; }
   .titular > span > span { animation: linea 650ms var(--salida) backwards; }
   .titular > span:nth-child(1) > span { animation-delay: 140ms; }
   .titular > span:nth-child(2) > span { animation-delay: 210ms; }
@@ -751,6 +787,9 @@ h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; text-wrap: b
 
 @keyframes asentar {
   from { transform: translateY(-22px) rotate(-5deg); }
+}
+@keyframes caer {
+  from { transform: translateY(-28px) rotate(-3deg); }
 }
 @keyframes linea {
   from { transform: translateY(104%); }
