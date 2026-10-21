@@ -322,6 +322,16 @@ h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; text-wrap: b
 }
 .pantalla { position: relative; overflow: hidden; }
 
+/* La reserva de cada captura: mientras la de verdad no ha llegado o no está
+   decodificada, se ve ella misma en diminuto y borrosa, nunca un hueco negro.
+   Se regenera con el script cuando cambia una captura. */
+/* ▼ RESERVAS DE LAS CAPTURAS (scripts/reservas-capturas-web.py): no se editan a mano */
+.movil img[src*="/inicio-"] { background: #2B2621 url("data:image/webp;base64,UklGRsoAAABXRUJQVlA4IL4AAABwBQCdASoUACwAPu1kqE2ppaOiMAgBMB2JQBhFJ3BgWcB8Lgb7CkBQnKzZTuFlE8TJJMQAAP7w1mSyAXRqQuBuGQ+zj6XSLjDkFPwSwdjnvqwrb0uCmrmpNUVpR6u3W8p+aGgbn/nKjKUx4DFq/02uwzcA+zm0bli+Bgz4rslSDaAAIAwpSE45S6koOiKPJEbmZmWbi8voVXRoX/wfifz93gZYjo6Dl26H5zep7YQOS20x6XmutjtGGUwyE1AA") 0 0 / 100% 100%; }
+.movil img[src*="/entreno-"] { background: #242224 url("data:image/webp;base64,UklGRqgAAABXRUJQVlA4IJwAAAAQBgCdASoUACwAPu1mrE+ppSQiKrgMATAdiWUAxzAL7mt0bxhptmDGeBHV9G+Bd5R1Hn9qdJWQeTAA/u7i3e/cBT5cvWf/XB3mcQG2KM9DTZSm7E9RAO2TAVsHvhXQVYPPJr9QFdMLbJ2qY0g/Fxz1qWBGnPUcbq5eiWQZjcnhxnlXUKEZwit9uip2kWvXVEDxYzeR4rCPclStkAA=") 0 0 / 100% 100%; }
+.movil img[src*="/nutricion-"] { background: #212225 url("data:image/webp;base64,UklGRrQAAABXRUJQVlA4IKgAAADQBQCdASoUACwAPulgpE2pJaMiMAqpIB0JZQDE3AgBSaxOT02YCaEuvlLNAxIWXstovPIey6uwAP7ynfvlz3dmJ5Wv5cocXtR85UhaEobJJqNr0+cmhYO1K3GPe02xyqRViBSD/i7c+ZrnnQ08x1yvAxuIfWdAIgXEEYcbTTurMFWhINDjlAOzxGK2fzbpVBIGiaqaQHUuIML7cu/BFud7XBcCOXG52AA=") 0 0 / 100% 100%; }
+.movil img[src*="/progreso-"] { background: #251F1E url("data:image/webp;base64,UklGRrgAAABXRUJQVlA4IKwAAAAwBgCdASoUACwAPuVcpk2pJSOiNVv4ASAciWMAypkEgv9B2JP91OA3hyn3nCRlBoqTasJ/bSFmZdcAAP7yrQ/aigBYQ4ver3l7mnVetwZy7wddh6lHWZZ5G0qUcxs0RVJaL1Z7Ll595yw7NOdL0wYbpDgCBEKdLiIPzwoCD/Mfc4WejvLCE3IOms4wjNqt6/XbI3xuNPq8UxBwmH3WuWKkP/T0U6ofMpaZQAAA") 0 0 / 100% 100%; }
+/* ▲ FIN DE LAS RESERVAS */
+
 /* Las líneas-guía: un punto justo detrás del dato y una línea que sale del móvil hasta
    su nombre, a la derecha. --x y --y son el sitio del dato en la captura, en
    fracciones (la captura es de 1080 × 2400); el 9 px es el canto del móvil, así

@@ -11,6 +11,9 @@
 (function () {
   "use strict";
 
+  // Esto no es movimiento: vale también con movimiento reducido
+  precargarCapturas();
+
   var menos = window.matchMedia("(prefers-reduced-motion: reduce)");
   if (menos.matches) return;
 
@@ -36,6 +39,41 @@
     function trasLaEntrada() { setTimeout(ya, ENTRADA_MS); }
     if (document.readyState === "complete") trasLaEntrada();
     else window.addEventListener("load", trasLaEntrada, { once: true });
+  }
+
+  /* Cada captura se pide y se decodifica un viewport antes de entrar en pantalla.
+     El lazy del navegador deja el margen a su criterio y, con un scroll rápido en
+     un 4G, el móvil llegaba vacío. Sin este script queda el lazy del navegador, y
+     debajo de cada captura, su reserva borrosa (portada.css). */
+  function precargarCapturas() {
+    var imagenes = document.querySelectorAll('.movil img[loading="lazy"]');
+    if (!("IntersectionObserver" in window)) {
+      Array.prototype.forEach.call(imagenes, preparar);
+      return;
+    }
+    var vigia = new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        vigia.unobserve(e.target);
+        preparar(e.target);
+      });
+    }, { rootMargin: "100% 0px" });
+    Array.prototype.forEach.call(imagenes, function (img) { vigia.observe(img); });
+  }
+
+  function preparar(img) {
+    img.loading = "eager";
+    decodificada(img, 0);
+  }
+
+  /** Promesa que se cumple con la imagen decodificada, o al pasar tope ms (0: sin tope). */
+  function decodificada(img, tope) {
+    var lista = img.complete && img.naturalWidth > 0
+      ? Promise.resolve()
+      // Si la decodificación falla, la reserva sigue debajo: se muestra igual
+      : (img.decode ? img.decode().catch(function () {}) : Promise.resolve());
+    if (!tope) return lista;
+    return Promise.race([lista, new Promise(function (hecho) { setTimeout(hecho, tope); })]);
   }
 
   /** Carga los scripts en orden y llama a listo cuando ha llegado el último. */
@@ -141,12 +179,13 @@
     var imagenes = figuras.map(function (f) { return f.querySelector("img"); });
 
     imagenes.forEach(function (img) {
-      img.loading = "eager";
       destino.appendChild(img);
+      preparar(img);
     });
     pantallas.hidden = false;
 
     var actual = -1;
+    var turno = 0;
     var cortinas = [];
     gsap.set(imagenes, { clipPath: "inset(100% 0% 0% 0%)" });
     mostrar(0, false);
@@ -163,6 +202,7 @@
     function mostrar(i, animar) {
       if (i === actual) return;
       var baja = i > actual;
+      var mio = ++turno;
       pilares.forEach(function (p, j) { p.classList.toggle("activo", j === i); });
       pantallas.setAttribute("data-activa", figuras[i].getAttribute("data-pantalla"));
       imagenes.forEach(function (img, j) { img.style.zIndex = j === i ? 2 : (j === actual ? 1 : 0); });
@@ -170,9 +210,14 @@
       cortinas = [];
       var desde = baja ? "inset(100% 0% 0% 0%)" : "inset(0% 0% 100% 0%)";
       if (animar) {
-        cortinas.push(gsap.fromTo(imagenes[i], { clipPath: desde }, {
-          clipPath: "inset(0% 0% 0% 0%)", duration: 0.42, ease: "power3.inOut"
-        }));
+        // La cortina abre sobre la captura ya decodificada; si tarda más de 250 ms,
+        // abre sobre su reserva. Mientras, se sigue viendo la pantalla anterior.
+        decodificada(imagenes[i], 250).then(function () {
+          if (mio !== turno) return;
+          cortinas.push(gsap.fromTo(imagenes[i], { clipPath: desde }, {
+            clipPath: "inset(0% 0% 0% 0%)", duration: 0.42, ease: "power3.inOut"
+          }));
+        });
       } else {
         gsap.set(imagenes[i], { clipPath: "inset(0% 0% 0% 0%)" });
       }

@@ -178,6 +178,12 @@ regla, en DEC-053.
 - **Presupuesto**: todo el JavaScript de la portada, ≤ 60 KB comprimido
   (`PortadaWebTest`). Actualizar una librería es copiar su `.min.js` con su aviso de
   licencia en `js/vendor/` y volver a versionar.
+- **Ningún móvil se ve vacío.** Cada captura lleva de fondo su reserva: ella misma
+  a 20 × 44 px, borrosa, en línea en `portada.css` (con su color medio debajo). Si
+  cambia una captura, se regenera con `python scripts/reservas-capturas-web.py`
+  (`PortadaWebTest` falla si falta una). Además, `portada.js` pide y decodifica cada
+  captura un viewport antes de que entre en pantalla, también con movimiento
+  reducido; sin JavaScript queda el `loading="lazy"` del navegador.
 - **Las líneas-guía** llevan en `--x` y `--y` dónde acaba el dato en la captura, en
   fracciones (1080 × 2400). Si cambia una captura, se vuelven a colocar. Debajo de
   1200 px no caben y se ve, en su lugar, una etiqueta bajo el móvil.

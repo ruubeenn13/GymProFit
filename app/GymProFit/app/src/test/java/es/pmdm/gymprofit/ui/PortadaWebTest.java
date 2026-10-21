@@ -151,6 +151,24 @@ public class PortadaWebTest {
     }
 
     @Test
+    public void cadaCapturaTieneSuReservaYSePrecarga() throws IOException {
+        // GP-205: con un scroll rápido en un 4G, los móviles llegaban como rectángulos
+        // negros. Cada captura lleva debajo su reserva borrosa (portada.css, regenerada con
+        // scripts/reservas-capturas-web.py) y portada.js la pide un viewport antes.
+        String css = new String(Files.readAllBytes(web().resolve("portada.css")), StandardCharsets.UTF_8);
+        for (String captura : new String[]{"inicio", "entreno", "nutricion", "progreso"}) {
+            Matcher reserva = Pattern.compile("\\.movil img\\[src\\*=\"/" + captura + "-\"\\] \\{ background: #[0-9A-F]{6} url\\(\"data:image/webp;base64,[A-Za-z0-9+/=]+\"\\)").matcher(css);
+            assertTrue("la captura " + captura + " no tiene reserva", reserva.find());
+            assertFalse("la reserva de " + captura + " es negra pura", reserva.group().contains("#000000"));
+        }
+        String js = new String(Files.readAllBytes(web().resolve("js/portada.js")), StandardCharsets.UTF_8);
+        assertTrue("portada.js no precarga con un viewport de margen", js.contains("rootMargin: \"100% 0px\""));
+        assertTrue("portada.js no decodifica antes de mostrar", js.contains(".decode()"));
+        assertTrue("la precarga no corre antes de mirar el movimiento reducido",
+                js.indexOf("precargarCapturas();") < js.indexOf("matchMedia(\"(prefers-reduced-motion: reduce)\")"));
+    }
+
+    @Test
     public void lasPreguntasSonLasAprobadas() throws IOException {
         String preguntas = entre(portada(), "id=\"preguntas\"", "</section>");
         assertEquals("tiene que haber tres preguntas", 3, ocurrencias(preguntas, "<details>"));
