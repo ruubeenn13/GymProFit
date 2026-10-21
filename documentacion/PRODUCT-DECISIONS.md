@@ -913,6 +913,24 @@ El `LIKE` con comodín delante no usa índice: barre la tabla entera en cada pul
 
 **Qué la invalidaría.** Que la prueba pase a ser abierta (sin lista de probadores): entonces sobran el grupo y el paso 1. Que Google retire los grupos como lista de probadores, o que la lista pase a gestionarse por correos en Play Console.
 
+### DEC-053 · La web admite JavaScript propio como mejora progresiva, servido desde el dominio y con presupuesto
+**Estado:** Aceptada · **Fecha:** 2026-10-21 · **Tarea:** GP-205 · **Sustituye a:** la parte «sin JavaScript» de DEC-050
+
+**Contexto.** `gymprofit.app` era HTML y CSS sin una línea de JavaScript (DEC-050). El rediseño de GP-205 quiere movimiento atado al scroll (un móvil que se queda quieto y cambia de pantalla, un dorsal que se suelta al bajar), que CSS solo no resuelve en todos los navegadores, empezando por el integrado de TikTok.
+
+**Decisión.**
+
+- **Se permite JavaScript propio como mejora progresiva**: sin JS, todo se ve y funciona. Nada de contenido que dependa de un script para aparecer.
+- **Las librerías se sirven desde nuestro dominio**, nunca desde un CDN: GSAP y ScrollTrigger (licencia estándar sin coste de GSAP, que desde 2025 cubre todos sus plugins, SplitText incluido, comprobado el 2026-10-21) y Lenis (MIT) para el scroll suave. Se mantiene **cero peticiones a terceros al cargar**.
+- **Presupuesto**: JS ≤ 60 KB comprimido en la portada, LCP < 2,5 s en móvil 4G y CLS < 0,05.
+- **Movimiento reducido**: con `prefers-reduced-motion: reduce` no hay movimiento ni scroll suave, y las librerías no se descargan.
+- **Los `.js` van versionados como las hojas**, con `scripts/versionar-hojas-web.py`, e `immutable` en `_headers`.
+- **El formulario de `/beta` sigue sin JavaScript**: se envía por POST normal a Brevo, como dice DEC-050.
+
+**Consecuencias.** Hay dependencias de terceros dentro del repositorio (`web/js/vendor/`), con su versión y su licencia, que se actualizan a mano. Cada página que cargue un script nuevo necesita su regla en `_headers`. El test de la portada deja de exigir «sin JavaScript» y pasa a exigir solo scripts propios, cero recursos de fuera y el presupuesto.
+
+**Qué la invalidaría.** Que el presupuesto deje de cumplirse sin quitar movimiento que importa (entonces se quita el movimiento, no se sube el presupuesto). Que la licencia de GSAP cambie y deje fuera este uso.
+
 ---
 
 ## Pendientes de decidir

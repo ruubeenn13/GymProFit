@@ -1,15 +1,20 @@
 # web — sitio público de GymProFit
 
 Sitio estático de `gymprofit.app`: portada, política de privacidad, términos de uso,
-la página de eliminación de cuenta y la de la beta (`/beta`, `/beta/revisa`, `/beta/dentro` y `/beta/entrar`). HTML y CSS a mano, sin build, sin dependencias y sin
-JavaScript. Lo que hay en esta carpeta es exactamente lo que se sirve.
+la página de eliminación de cuenta, la de la beta (`/beta`, `/beta/revisa`, `/beta/dentro` y `/beta/entrar`) y la 404. HTML y CSS a mano, sin build. La portada lleva
+JavaScript propio como mejora progresiva (DEC-053, ver «El movimiento de la portada»);
+el resto de páginas, ninguno. Lo que hay en esta carpeta es lo que se sirve, salvo
+lo que se queda fuera del zip (abajo).
 
 ```
 index.html · portada.css   la portada de producto (GP-203)
 privacidad.html · terminos.html · eliminar-cuenta.html · estilo.css
 beta.html · beta/revisa.html · beta/dentro.html · beta.css   (la beta, GP-201)
 beta/entrar.html   los pasos para entrar, enlace de los correos de «beta abierta» (GP-202)
+404.html  lo que Pages sirve, con estado 404, en cualquier ruta que no existe (GP-205)
+js/       portada.js y, en js/vendor/, GSAP, ScrollTrigger y Lenis con su licencia (DEC-053)
 _headers  la caché de Cloudflare Pages (ver «Caché y versiones»)
+DISENO.md · PRODUCT.md · .impeccable/   el diseño de GP-205: no van en el zip
 fuentes/  seis .woff2: Barlow 400 / 500 / 600 y Barlow Condensed 500 / 600 / 700
 img/      logos claro y oscuro (256 y 512, webp) + favicons y apple-touch-icon
 img/capturas/  las cuatro capturas de la portada, en webp a 360 y 720 de ancho
@@ -27,9 +32,9 @@ despliega nada**. El dominio `gymprofit.app` apunta a ese proyecto.
    raíz del repositorio: `python scripts/versionar-hojas-web.py`. Con
    `--comprobar` solo dice si falta; el test `HojasVersionadasWebTest` también
    falla si una hoja cambia y su versión no.
-2. Comprimir el **contenido** de `web/` menos este README, no la carpeta. El zip
-   que se sube es eso: lo que hay aquí, salvo `README.md`. `_headers` va
-   dentro.
+2. Comprimir el **contenido** de `web/`, no la carpeta, **sin** `README.md`,
+   `DISENO.md`, `PRODUCT.md` ni `.impeccable/`: son documentación del diseño, no
+   páginas. `_headers` y `404.html` van dentro.
 3. Proyecto `gymprofit` en Cloudflare Pages → pestaña **Implementaciones** → subir
    el zip.
 
@@ -43,19 +48,28 @@ que no existen. El sitio se ve sin estilos y sin tipografía.
 Un navegador que ya había visitado `/beta` mezcló la página nueva con el
 `beta.css` de su caché (GP-201). Para que no vuelva a pasar:
 
-- **Las hojas van versionadas por su contenido**: cada página pide
+- **Las hojas y los scripts van versionados por su contenido**: cada página pide
   `/beta.css?v=<hash>`, `/estilo.css?v=<hash>` o `/portada.css?v=<hash>`, con los 8 primeros caracteres
   del SHA-256 de la hoja (saltos de línea normalizados a `\n`, para que salga
-  igual en Windows y en el CI). La URL cambia solo cuando cambia la hoja. La
+  igual en Windows y en el CI). La URL cambia solo cuando cambia la hoja. Los `.js`
+  igual, también los de la lista `data-libs` que carga `portada.js`. La
   versión la pone `scripts/versionar-hojas-web.py`; nunca a mano.
 - **`_headers`**: el HTML, con `Cache-Control: no-cache` (se revalida siempre,
-  y es lo que dice qué versión pedir); `estilo.css`, `beta.css` y `portada.css`, un año e
-  `immutable`. Las fuentes y las imágenes **no** van versionadas, así que se
+  y es lo que dice qué versión pedir); `estilo.css`, `beta.css`, `portada.css` y
+  todo `/js/*`, un año e `immutable`. Las fuentes y las imágenes **no** van versionadas, así que se
   quedan con la revalidación de Pages: si un día se versionan, pueden pasar a
   `immutable`.
 - **Ninguna regla `/*`**: si dos reglas ponen `Cache-Control` a la misma ruta,
   Pages une sus valores con una coma. Por eso cada página tiene su regla. Una
   página nueva necesita la suya, o se queda con la caché por defecto de Pages.
+
+## La 404
+
+Cloudflare Pages sirve `404.html`, con estado **404**, en cualquier ruta que no
+exista. Es un dorsal sin número, caído sobre la tela: usa `portada.css` pero no su
+JavaScript, y cabe en una pantalla sin bajar. Sin ese fichero, Pages trata el sitio como una aplicación de una página y
+responde a cualquier ruta con la portada y un **200**, que los buscadores indexan
+como páginas duplicadas. `scripts/servir-web.py` hace lo mismo en local.
 
 ## Rutas limpias
 
@@ -99,6 +113,13 @@ redirecciones se configuran en Brevo, no aquí.
 - **El movimiento es solo CSS** y vive entero dentro de
   `@media (prefers-reduced-motion: no-preference)`. Fuera de ese bloque la página
   está ya en su estado final, así que con movimiento reducido se ve quieta y completa.
+  Desde GP-205 usa las curvas de la portada, sin rebotes, y nada se mueve sin parar
+  (fuera el pulso del botón y la luz que respiraba).
+- **El formulario es el dorsal** (GP-205): el único panel claro, con la banda, los
+  ojales y el troquel de la portada, en el crema de los vídeos. No se gira ni se
+  anima, y no puede crecer: la banda ocupa el relleno de arriba y el troquel va en
+  el hueco de encima del botón, para que a 375 × 667 siga entero en la primera
+  pantalla.
 
 ## El día que abre la beta
 
@@ -134,13 +155,39 @@ Usa su propia hoja, `portada.css`, con los colores de la app, porque enseña la 
   ahora.
 - **Los titulares que llenan el ancho** (el del hero y «Entrenas en serio. Comes a
   ojo.») llevan `--k` por línea, como la beta: si cambia el texto, se vuelve a medir.
-- **El movimiento es solo CSS** y vive dentro de
-  `@media (prefers-reduced-motion: no-preference)`: la entrada escalonada del hero,
-  el brillo del botón y las secciones que aparecen al llegar a ellas. Esto último usa
-  `animation-timeline: view()` solo donde el navegador la conoce
-  (`@supports`); donde no, las secciones se ven sin más.
 - `PortadaWebTest` fija el orden de las secciones, el único `h1`, las capturas, las
-  preguntas y que no carga nada de fuera.
+  preguntas, que no carga nada de fuera, que sus scripts son propios y el
+  presupuesto de JavaScript.
+
+## El movimiento de la portada
+
+La dirección de diseño (el dorsal, la tela, el móvil fijo) está en `DISENO.md`; la
+regla, en DEC-053.
+
+- **Mejora progresiva.** Sin JavaScript la página está entera y quieta. La entrada
+  del hero es CSS; lo que va atado al scroll lo hace `js/portada.js`, que carga
+  GSAP, ScrollTrigger y Lenis desde `js/vendor/` **después del evento `load`** (antes
+  retrasaban el LCP) y añade `.movimiento` a `<html>`.
+- **Con movimiento reducido no se descarga nada**: `portada.js` sale antes de pedir
+  las librerías, y las animaciones CSS viven dentro de
+  `@media (prefers-reduced-motion: no-preference)`.
+- **`portada.js` no cambia la altura de la página.** El layout de escritorio es el
+  mismo con JavaScript que sin él: los móviles de cada pilar guardan su sitio con
+  `visibility: hidden` y el móvil fijo los sustituye. Si el script cambiara alturas
+  al arrancar, un ancla (`/#pilar-progreso`) o el scroll que el navegador restaura
+  al recargar caerían en otro sitio.
+- **Presupuesto**: todo el JavaScript de la portada, ≤ 60 KB comprimido
+  (`PortadaWebTest`). Actualizar una librería es copiar su `.min.js` con su aviso de
+  licencia en `js/vendor/` y volver a versionar.
+- **Ningún móvil se ve vacío.** Cada captura lleva de fondo su reserva: ella misma
+  a 20 × 44 px, borrosa, en línea en `portada.css` (con su color medio debajo). Si
+  cambia una captura, se regenera con `python scripts/reservas-capturas-web.py`
+  (`PortadaWebTest` falla si falta una). Además, `portada.js` pide y decodifica cada
+  captura un viewport antes de que entre en pantalla, también con movimiento
+  reducido; sin JavaScript queda el `loading="lazy"` del navegador.
+- **Las líneas-guía** llevan en `--x` y `--y` dónde acaba el dato en la captura, en
+  fracciones (1080 × 2400). Si cambia una captura, se vuelven a colocar. Debajo de
+  1200 px no caben y se ve, en su lugar, una etiqueta bajo el móvil.
 
 ## Los colores son los de la app
 
@@ -157,8 +204,18 @@ Los seis `.woff2` se generaron desde los `.ttf` de
 `app/GymProFit/app/src/main/res/font/` (`barlow_regular`, `_medium` y `_semibold`;
 `barlow_condensed_medium`, `_semibold` y `_bold`), por lo mismo: la web y la app
 tienen que verse iguales. Una familia, dos anchos: la condensada en titulares,
-cifras y etiquetas, y Barlow en todo el texto. Para regenerarlos hace falta
-`fonttools` con `brotli`: `TTFont(ttf); f.flavor = "woff2"; f.save(woff2)`.
+cifras y etiquetas, y Barlow en todo el texto. Desde GP-205 van **recortados a los
+caracteres de la web** (Latin-1, la puntuación general, € y ™), con el kerning y
+las métricas intactos: pesan un 40 % menos (de ~39 a ~23 KB cada una) y eso bajaba
+el LCP de la portada en un 4G lento. Para regenerarlos hace falta `fonttools` con
+`brotli`, una vez por fichero:
+
+```
+pyftsubset barlow_regular.ttf --flavor=woff2 --layout-features='*'   --unicodes="U+0020-007E,U+00A0-00FF,U+0131,U+0152-0153,U+2010-2027,U+2030,U+2039-203A,U+20AC,U+2122,U+2212"   --output-file=barlow-400.woff2
+```
+
+Si un texto nuevo lleva un carácter fuera de ese rango (una flecha, un símbolo),
+se añade al rango y se regeneran las seis; si no, ese carácter sale con otra fuente.
 
 Se sirven **desde el propio dominio a propósito**, y no desde Google Fonts. Pedir
 una fuente a un tercero le entrega la IP del visitante; hacerlo justo en la página

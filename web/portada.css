@@ -1,11 +1,11 @@
 /* ------------------------------------------------------------------
-   GymProFit — hoja de la portada (/), GP-203
-   La portada enseña la app, así que usa sus colores: los mismos tokens que
-   estilo.css, que a su vez son los de values/colors.xml y
-   values-night/colors.xml. Si allí cambian, aquí también.
-   Sin JavaScript: el movimiento es solo CSS y solo entra con
-   prefers-reduced-motion: no-preference. Fuera de ese bloque la página está
-   ya en su estado final.
+   GymProFit · hoja de la portada (/), GP-205
+   El mundo es un dorsal prendido sobre tela técnica oscura (web/DISENO.md).
+   Los colores son los de la app (values/colors.xml y values-night): si allí
+   cambian, aquí también.
+   Sin JavaScript la página está entera y en su estado final. La entrada del
+   hero es CSS y solo entra con prefers-reduced-motion: no-preference; lo que
+   va atado al scroll lo hace js/portada.js, que añade .movimiento a <html>.
    ------------------------------------------------------------------ */
 
 /* Los mismos ficheros que el resto de la web, servidos desde el dominio (ver README). */
@@ -31,6 +31,7 @@
 }
 
 :root {
+  color-scheme: dark;
   --bg:        #0B0C0E;
   --surface:   #1B1E24;
   --stroke:    #4A505B;
@@ -41,21 +42,34 @@
   --text:      #F2F2F3;
   --text-2:    #A1A9B6;   /* 8,1:1 sobre el fondo */
   --marco:     #22252C;   /* el canto del móvil */
+  --guia:      #A1A9B6;   /* la línea-guía: cruza la pantalla, siempre oscura, y el fondo */
+
+  /* El dorsal: el único panel claro de la página */
+  --panel:     #ECECE8;
+  --tinta:     #17181C;   /* 15:1 sobre el panel */
+  --tinta-2:   #4C4F57;   /* 7,2:1 sobre el panel */
+  --sombra:    rgba(0, 0, 0, 0.55);
+  --punto:     0.07;      /* cuánto se ve el punto de la tela */
 
   --sans: "Barlow", sans-serif;
   --cond: "Barlow Condensed", var(--sans);
 
-  --frenada: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Las curvas (DISENO.md): lo que entra, lo que se desplaza, el dorsal al asentarse */
+  --salida:    cubic-bezier(0.23, 1, 0.32, 1);
+  --recorrido: cubic-bezier(0.77, 0, 0.175, 1);
+  --tela:      cubic-bezier(0.32, 0.72, 0, 1);
 
   --margen: 20px;
   --ancho: 1180px;
-  /* Lo que llena el titular: el ancho de la pantalla en móvil */
-  --ancho-titular: calc(100vw - 2 * var(--margen));
+  --movil: min(70vw, 300px);
+  /* Respaldo del titular para navegadores sin unidades de contenedor */
+  --ancho-titular: calc(100vw - 2 * var(--margen) - 36px);
   --ancho-problema: calc(100vw - 2 * var(--margen));
 }
 
 @media (prefers-color-scheme: light) {
   :root {
+    color-scheme: light;
     --bg:        #F1F1EE;
     --surface:   #FFFFFF;
     --stroke:    #C9C9C2;
@@ -64,6 +78,10 @@
     --text:      #17181C;
     --text-2:    #55575D;   /* 6,6:1 sobre el fondo */
     --marco:     #17181C;   /* el móvil sigue siendo un móvil oscuro */
+    --guia:      #6B6E75;   /* 3,3:1 sobre la pantalla y 4,9:1 sobre el fondo */
+    --panel:     #FFFFFF;
+    --sombra:    rgba(70, 45, 20, 0.34);   /* sombra cálida: en claro el dorsal se separa por ella */
+    --punto:     0.10;
   }
 }
 
@@ -79,8 +97,37 @@ body {
   font-size: 17px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
+
+/* La tela: el punto de una camiseta técnica y una sola luz cálida, alta, a la
+   izquierda. Capa fija y sin puntero: no se repinta al desplazar. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(70% 55% at 12% -8%, rgba(255, 106, 0, 0.09), transparent 70%),
+    url("/img/tela.webp") 0 0 / 96px 96px;
+  opacity: 1;
+}
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--bg);
+  opacity: calc(1 - var(--punto));
+}
+@media (prefers-color-scheme: light) {
+  /* En claro, el punto es oscuro */
+  body::before { filter: invert(1); background: url("/img/tela.webp") 0 0 / 96px 96px; }
+}
+
+::selection { background: var(--primary); color: var(--on-primary); }
 
 a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness: 1px; }
 strong { font-weight: 600; }
@@ -91,7 +138,7 @@ strong { font-weight: 600; }
   border-radius: 4px;
 }
 
-h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; }
+h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; text-wrap: balance; }
 
 .marco {
   max-width: var(--ancho);
@@ -99,15 +146,14 @@ h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; }
   padding: 0 var(--margen);
 }
 
-/* La franja de 4 px de la web y los correos (DEC-026) */
-.franja { height: 4px; background: var(--primary); }
+/* ── Cabecera ────────────────────────────────────────────────────── */
 
 .firma {
   display: inline-flex;
   align-items: center;
   gap: 10px;
   min-height: 48px;
-  margin-top: 14px;
+  margin-top: 12px;
   color: var(--text);
   text-decoration: none;
   font-family: var(--cond);
@@ -120,8 +166,6 @@ h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; }
 /* ── El botón ────────────────────────────────────────────────────── */
 
 .boton {
-  position: relative;
-  overflow: hidden;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -135,76 +179,231 @@ h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; }
   font-size: 22px;
   letter-spacing: 0.02em;
   text-decoration: none;
-  transition: transform 160ms var(--frenada), background-color 160ms var(--frenada);
+  white-space: nowrap;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.35) inset, 0 6px 14px -8px rgba(0, 0, 0, 0.5);
+  transition: transform 140ms var(--salida), background-color 160ms ease;
 }
-.boton:hover { background: #FF8124; }
 .boton:active { transform: scale(0.97); }
-/* El brillo: una franja de luz que cruza el botón. Quieta, fuera del botón;
-   solo se mueve dentro del bloque de movimiento. */
-.boton::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: -60%;
-  width: 40%;
-  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.45), transparent);
-  transform: translateX(-100%) skewX(-20deg);
-  pointer-events: none;
+@media (hover: hover) and (pointer: fine) {
+  .boton:hover { background: #FF8124; }
 }
 
-/* ── Hero ────────────────────────────────────────────────────────── */
+/* ── Hero: el dorsal ─────────────────────────────────────────────── */
 
 .hero {
   display: grid;
-  gap: 36px;
-  padding-block: 28px 64px;
+  gap: 40px;
+  padding-block: 20px 56px;
 }
 
-/* Cada línea llena el ancho por su cuenta: --k es su ancho en em, medido en el navegador */
+.dorsal {
+  position: relative;
+  border-radius: 14px;
+  color: var(--tinta);
+  background: var(--panel);
+  box-shadow: 0 1px 1px var(--sombra), 0 26px 50px -24px var(--sombra);
+  transform: rotate(-2deg);
+}
+/* El Tyvek: la fibra del panel, apenas visible, en una capa aparte y debajo del
+   contenido (el transform del dorsal hace de contexto de apilamiento). Como fondo
+   del propio dorsal, la fibra era el LCP de la portada y lo retrasaba hasta que
+   llegaba la imagen; así el LCP es el titular, que es lo que se lee. */
+.dorsal::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: url("/img/tyvek.webp") 0 0 / 256px 256px;
+  opacity: 0.09;
+  pointer-events: none;
+}
+
+.dorsal-banda {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  padding: 9px 38px;
+  border-radius: 14px 14px 0 0;
+  background: var(--primary);
+  color: var(--on-primary);
+  font-family: var(--cond);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.2;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* El titular ocupa el sitio del número: cada línea llena el panel (--k es su
+   ancho en em, medido en el navegador), acotada con clamp() */
 .titular {
   container-type: inline-size;
-  line-height: 0.9;
+  padding: 16px 18px 12px;
+  line-height: 0.86;
   letter-spacing: -0.005em;
   text-transform: uppercase;
 }
-/* El tamaño sale del ancho real de la columna (cqi), con un 4 % de holgura para el
-   trazo de las letras, y acotado: nunca toca el borde ni crece sin fin. El primer
-   font-size es el respaldo para un navegador sin unidades de contenedor. */
-.titular span {
+.titular > span {
   display: block;
-  font-size: clamp(26px, calc(var(--ancho-titular) * 0.96 / var(--k)), 150px);
-  font-size: clamp(26px, calc(96cqi / var(--k)), 150px);
+  font-size: clamp(30px, calc(var(--ancho-titular) * 0.96 / var(--k)), 168px);
+  font-size: clamp(30px, calc(96cqi / var(--k)), 168px);
   white-space: nowrap;
+  /* Recorta la línea al entrar sin cortar la coma ni el trazo de las letras */
+  clip-path: inset(-0.1em -0.2em -0.14em -0.2em);
 }
+.titular > span > span { display: block; }
+
+/* El troquel y la tira desprendible, con la acción */
+.dorsal-tira {
+  position: relative;
+  padding: 18px 34px 20px;
+  background: radial-gradient(circle, rgba(23, 24, 28, 0.32) 1.4px, transparent 1.9px) 0 0 / 9px 4px repeat-x;
+}
+.dorsal-tira::before,
+.dorsal-tira::after {
+  /* Las dos muescas del troquel: dejan ver la tela */
+  content: "";
+  position: absolute;
+  top: -7px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--bg);
+}
+.dorsal-tira::before { left: -7px; }
+.dorsal-tira::after { right: -7px; }
+.dorsal-tira .boton { width: 100%; }
+
+/* Los cuatro ojales de los imperdibles */
+.ojal {
+  position: absolute;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--bg);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6), 0 0 0 2px #B7BBC2, 0 0 0 3px rgba(0, 0, 0, 0.18);
+}
+.ojal:nth-of-type(1) { top: 12px; left: 14px; }
+.ojal:nth-of-type(2) { top: 12px; right: 14px; }
+.ojal:nth-of-type(3) { bottom: 14px; left: 14px; }
+.ojal:nth-of-type(4) { bottom: 14px; right: 14px; }
 
 .subtitulo {
   max-width: 30em;
-  margin: 22px 0 28px;
-  font-size: 19px;
+  margin: 30px 0 0;
+  font-size: 18px;
   line-height: 1.5;
   color: var(--text-2);
 }
 .subtitulo strong { color: var(--text); }
 
-/* El móvil: la captura dentro de un canto redondeado, sin ninguna imagen de marco */
+/* ── El móvil ────────────────────────────────────────────────────── */
+/* La captura dentro de un canto redondeado, sin ninguna imagen de marco */
+
 .movil {
+  position: relative;
   margin: 0;
   justify-self: center;
-  width: min(72vw, 300px);
+  width: var(--movil);
   padding: 9px;
   border-radius: 46px;
   background: var(--marco);
-  box-shadow: 0 0 0 1px var(--linea), 0 40px 80px -30px rgba(255, 106, 0, 0.35);
+  /* Sombra larga y neutra: nada de halo naranja (DISENO.md, «nada de brillos de neón») */
+  box-shadow: 0 0 0 1px var(--linea), 0 30px 60px -28px rgba(0, 0, 0, 0.8);
 }
-.movil img {
+.movil img,
+.pantalla {
   display: block;
   width: 100%;
   height: auto;
   border-radius: 37px;
 }
+.pantalla { position: relative; overflow: hidden; }
 
-/* ── El problema: el único bloque a todo color ──────────────────── */
+/* La reserva de cada captura: mientras la de verdad no ha llegado o no está
+   decodificada, se ve ella misma en diminuto y borrosa, nunca un hueco negro.
+   Se regenera con el script cuando cambia una captura. */
+/* ▼ RESERVAS DE LAS CAPTURAS (scripts/reservas-capturas-web.py): no se editan a mano */
+.movil img[src*="/inicio-"] { background: #2B2621 url("data:image/webp;base64,UklGRsoAAABXRUJQVlA4IL4AAABwBQCdASoUACwAPu1kqE2ppaOiMAgBMB2JQBhFJ3BgWcB8Lgb7CkBQnKzZTuFlE8TJJMQAAP7w1mSyAXRqQuBuGQ+zj6XSLjDkFPwSwdjnvqwrb0uCmrmpNUVpR6u3W8p+aGgbn/nKjKUx4DFq/02uwzcA+zm0bli+Bgz4rslSDaAAIAwpSE45S6koOiKPJEbmZmWbi8voVXRoX/wfifz93gZYjo6Dl26H5zep7YQOS20x6XmutjtGGUwyE1AA") 0 0 / 100% 100%; }
+.movil img[src*="/entreno-"] { background: #242224 url("data:image/webp;base64,UklGRqgAAABXRUJQVlA4IJwAAAAQBgCdASoUACwAPu1mrE+ppSQiKrgMATAdiWUAxzAL7mt0bxhptmDGeBHV9G+Bd5R1Hn9qdJWQeTAA/u7i3e/cBT5cvWf/XB3mcQG2KM9DTZSm7E9RAO2TAVsHvhXQVYPPJr9QFdMLbJ2qY0g/Fxz1qWBGnPUcbq5eiWQZjcnhxnlXUKEZwit9uip2kWvXVEDxYzeR4rCPclStkAA=") 0 0 / 100% 100%; }
+.movil img[src*="/nutricion-"] { background: #212225 url("data:image/webp;base64,UklGRrQAAABXRUJQVlA4IKgAAADQBQCdASoUACwAPulgpE2pJaMiMAqpIB0JZQDE3AgBSaxOT02YCaEuvlLNAxIWXstovPIey6uwAP7ynfvlz3dmJ5Wv5cocXtR85UhaEobJJqNr0+cmhYO1K3GPe02xyqRViBSD/i7c+ZrnnQ08x1yvAxuIfWdAIgXEEYcbTTurMFWhINDjlAOzxGK2fzbpVBIGiaqaQHUuIML7cu/BFud7XBcCOXG52AA=") 0 0 / 100% 100%; }
+.movil img[src*="/progreso-"] { background: #251F1E url("data:image/webp;base64,UklGRrgAAABXRUJQVlA4IKwAAAAwBgCdASoUACwAPuVcpk2pJSOiNVv4ASAciWMAypkEgv9B2JP91OA3hyn3nCRlBoqTasJ/bSFmZdcAAP7yrQ/aigBYQ4ver3l7mnVetwZy7wddh6lHWZZ5G0qUcxs0RVJaL1Z7Ll595yw7NOdL0wYbpDgCBEKdLiIPzwoCD/Mfc4WejvLCE3IOms4wjNqt6/XbI3xuNPq8UxBwmH3WuWKkP/T0U6ofMpaZQAAA") 0 0 / 100% 100%; }
+/* ▲ FIN DE LAS RESERVAS */
+
+/* Las líneas-guía: un punto justo detrás del dato y una línea que sale del móvil hasta
+   su nombre, a la derecha. --x y --y son el sitio del dato en la captura, en
+   fracciones (la captura es de 1080 × 2400); el 9 px es el canto del móvil, así
+   que el punto cae donde está el dato sea cual sea el tamaño del móvil. */
+.guia {
+  display: none;
+  position: absolute;
+  left: calc(9px + (100% - 18px) * var(--x));
+  right: -64px;
+  top: calc(9px + (100% - 18px) * var(--y));
+  height: 1px;
+  pointer-events: none;
+}
+.guia::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--guia);
+  box-shadow: 0 0 0 1px rgba(11, 12, 14, 0.35);
+  transform-origin: left;
+}
+.guia::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  left: -4px;
+  top: -4px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  /* El punto cae siempre sobre la pantalla, que es oscura en los dos temas */
+  background: #F2F2F3;
+  box-shadow: 0 0 0 3px rgba(11, 12, 14, 0.6);
+}
+.guia > span,
+.etiqueta {
+  font-family: var(--cond);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--text-2);
+}
+.guia > span {
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 0;
+  transform: translateY(-50%);
+}
+
+/* Donde no caben las guías, una etiqueta corta debajo de la pantalla, en el mismo tono */
+.etiqueta {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 18px);
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+.etiqueta::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text);
+}
+.hero-movil { margin-bottom: 36px; }
+
+/* ── El problema: el bloque a todo color ────────────────────────── */
 
 .problema {
   background: var(--primary);
@@ -217,12 +416,14 @@ h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; }
   text-transform: uppercase;
 }
 /* Las dos frases llenan el ancho, cada una a su tamaño: --k es su ancho en em */
-.problema h2 span {
+.problema h2 > span {
   display: block;
-  font-size: clamp(26px, calc(var(--ancho-problema) * 0.96 / var(--k)), 240px);
-  font-size: clamp(26px, calc(96cqi / var(--k)), 240px);
+  font-size: clamp(26px, calc(var(--ancho-problema) * 0.96 / var(--k)), 220px);
+  font-size: clamp(26px, calc(96cqi / var(--k)), 220px);
   white-space: nowrap;
+  clip-path: inset(-0.1em -0.2em -0.14em -0.2em);
 }
+.problema h2 > span > span { display: block; }
 .problema p {
   max-width: 34em;
   margin: 26px 0 0;
@@ -233,7 +434,8 @@ h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; }
 
 /* ── Los tres pilares ────────────────────────────────────────────── */
 
-.pilares { padding-block: 24px; }
+.recorrido { padding-block: 24px; }
+.pantallas[hidden] { display: none; }
 
 .pilar {
   display: grid;
@@ -244,12 +446,12 @@ h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; }
 .pilar:last-child { border-bottom: 0; }
 
 .pilar h2 {
-  font-size: clamp(44px, 11vw, 84px);
+  font-size: clamp(44px, 11vw, 96px);
   line-height: 0.9;
   text-transform: uppercase;
 }
 .pilar .lema {
-  max-width: 26em;
+  max-width: 24em;
   margin: 14px 0 0;
   font-size: 20px;
   line-height: 1.4;
@@ -284,9 +486,10 @@ h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; }
 .funciones strong { display: block; font-size: 18px; }
 .funciones span { color: var(--text-2); }
 
-.pilar .movil { width: min(64vw, 270px); }
+.pilar .movil { width: min(64vw, 280px); margin-bottom: 36px; }
 
 /* ── La beta en tres pasos ──────────────────────────────────────── */
+/* Una tira troquelada en tres partes, oscura: el único panel claro es el dorsal */
 
 .beta { padding: 72px 0 24px; }
 .beta h2, .preguntas h2 {
@@ -301,8 +504,10 @@ h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; }
   padding: 0;
   list-style: none;
   display: grid;
-  gap: 14px;
   counter-reset: paso;
+  background: var(--surface);
+  border-radius: 14px;
+  box-shadow: 0 1px 1px var(--sombra), 0 22px 44px -26px var(--sombra);
 }
 .pasos li {
   counter-increment: paso;
@@ -310,10 +515,15 @@ h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; }
   grid-template-columns: 40px minmax(0, 1fr);
   gap: 14px;
   align-items: start;
-  padding: 22px;
-  background: var(--surface);
-  border: 1px solid var(--linea);
-  border-radius: 20px;
+  padding: 24px 22px;
+}
+/* El troquel entre parte y parte: una línea de puntos y una muesca en cada
+   borde, que deja ver la tela. En el móvil la tira va de arriba abajo. */
+.pasos li + li {
+  background:
+    radial-gradient(circle at 0 0, var(--bg) 7px, transparent 7.5px),
+    radial-gradient(circle at 100% 0, var(--bg) 7px, transparent 7.5px),
+    radial-gradient(circle, var(--stroke) 1.4px, transparent 1.9px) 0 0 / 9px 4px repeat-x;
 }
 /* Son una secuencia de verdad: el número es la información */
 .pasos li::before {
@@ -348,7 +558,7 @@ h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; }
   line-height: 1.15;
 }
 .preguntas summary::-webkit-details-marker { display: none; }
-/* Un más que se vuelve menos al abrir: dos barras, la vertical gira y se esconde */
+/* Un más que se vuelve menos al abrir */
 .preguntas summary::after {
   content: "";
   flex: none;
@@ -362,6 +572,22 @@ h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; }
   background: linear-gradient(var(--primary), var(--primary)) center / 18px 3px no-repeat;
 }
 .preguntas details p { margin: 0 0 22px; max-width: 40em; color: var(--text-2); }
+
+/* ── Cierre: la acción una última vez ───────────────────────────── */
+
+.cierre {
+  padding-block: 72px 8px;
+}
+.cierre p {
+  max-width: 14em;
+  margin: 0 0 26px;
+  font-family: var(--cond);
+  font-weight: 700;
+  font-size: clamp(36px, 8vw, 72px);
+  line-height: 0.9;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
 
 /* ── Pie ─────────────────────────────────────────────────────────── */
 
@@ -377,93 +603,214 @@ h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; }
 /* Zona de toque de 48 px aunque la letra sea pequeña */
 .pie nav a { display: inline-flex; align-items: center; min-height: 48px; }
 
+/* ── La 404: un dorsal sin número, caído sobre la tela ────────────── */
+/* La misma pieza del hero, sin número y girada al otro lado; todo cabe en una
+   pantalla, sin bajar. */
+
+.perdido main {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  min-height: calc(100svh - 80px);
+  padding-block: 20px 36px;
+}
+.perdido .dorsal {
+  width: min(100%, 540px);
+  transform: rotate(4deg);
+}
+.dorsal-cuerpo { padding: 22px 26px 20px; }
+.dorsal-cuerpo h1 {
+  font-size: clamp(40px, 11vw, 76px);
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+.dorsal-cuerpo p {
+  max-width: 26em;
+  margin: 14px 0 0;
+  font-size: 17px;
+  line-height: 1.45;
+  color: var(--tinta-2);
+}
+.perdido-beta {
+  margin: 36px 0 0;
+  text-align: center;
+  color: var(--text-2);
+}
+
 /* ── Escritorio ──────────────────────────────────────────────────── */
 
 @media (min-width: 900px) {
-  :root { --margen: 40px; --ancho-titular: min(52vw, 640px); --ancho-problema: min(100vw - 2 * var(--margen), 1100px); }
-  .firma { margin-top: 24px; }
+  :root {
+    --margen: 40px;
+    /* El móvil cabe entero en la primera pantalla también en un portátil bajo */
+    --movil: clamp(240px, calc((100svh - 150px) * 0.43), 312px);
+    --ancho-titular: min(54vw, 660px);
+    --ancho-problema: min(100vw - 2 * var(--margen), 1100px);
+  }
+  .firma { margin-top: 18px; }
   .hero {
-    grid-template-columns: var(--ancho-titular) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 660px) minmax(0, 1fr);
     align-items: center;
     gap: 48px;
-    padding-block: 36px 96px;
+    min-height: calc(100svh - 66px);
+    padding-block: 12px 40px;
   }
-  .hero .movil { width: 320px; }
-  .subtitulo { font-size: 21px; }
+  .dorsal-banda { font-size: 15px; padding-block: 11px; }
+  .titular { padding: 22px 26px 16px; }
+  .dorsal-tira { padding: 22px 26px 26px; }
+  .dorsal-tira .boton { width: auto; min-width: 280px; }
+  .subtitulo { font-size: 21px; margin-left: 6px; }
+  /* El móvil a la izquierda de su columna: a su derecha queda sitio para la línea-guía */
+  .hero-movil { justify-self: start; }
 
   .problema { padding: 96px 0 100px; }
   .problema p { font-size: 21px; }
 
-  /* Captura y texto se turnan de lado de un pilar al siguiente */
-  .pilar {
-    grid-template-columns: minmax(0, 1fr) 300px;
-    align-items: center;
-    gap: 80px;
-    padding: 88px 0;
+  /* Los pilares: el texto a la izquierda y su móvil al lado, igual con
+     JavaScript que sin él. portada.js no cambia la altura de nada: si la
+     cambiara al arrancar, un ancla o el scroll que el navegador restaura al
+     recargar caerían en otro sitio. */
+  .recorrido {
+    display: grid;
+    /* La tercera columna, vacía, es el sitio de los nombres de las líneas-guía */
+    grid-template-columns: minmax(0, 1fr) var(--movil) minmax(0, 220px);
+    column-gap: clamp(60px, 9vw, 150px);
+    padding-block: 0;
   }
-  .pilar .movil { width: 300px; }
-  .pilar:nth-child(even) { grid-template-columns: 300px minmax(0, 1fr); }
-  .pilar:nth-child(even) .movil { order: -1; }
+  .pilar {
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    column-gap: normal; /* en un subgrid, «normal» es el hueco de la rejilla madre */
+    row-gap: 0;
+    align-items: center;
+    min-height: 92svh;
+    padding: 0;
+    border: 0;
+  }
+  .pilar:nth-of-type(1) { grid-row: 1; }
+  .pilar:nth-of-type(2) { grid-row: 2; }
+  .pilar:nth-of-type(3) { grid-row: 3; }
+  .pilar > div { grid-column: 1; transition: opacity 300ms ease; }
+  .pilar .movil { grid-column: 2; width: var(--movil); margin-bottom: 0; }
+
+  /* Con movimiento: un solo móvil quieto (sticky) en la columna de los móviles,
+     que cambia de pantalla. Los de cada pilar guardan su sitio sin verse. */
+  .pantallas {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    align-self: start;
+    position: sticky;
+    top: calc(50svh - var(--movil) * 1.11 - 9px);
+    margin-block: 10svh;
+    z-index: 1;
+  }
+  /* isolation: el z-index de las capturas se queda dentro de la pantalla; sin él
+     tapaban el punto y el tramo de la línea-guía que cae encima */
+  .pantallas .pantalla { aspect-ratio: 360 / 800; isolation: isolate; }
+  .pantallas img { position: absolute; inset: 0; }
+  .movimiento .pilar .movil { visibility: hidden; }
+  .movimiento .pilar:not(.activo) > div { opacity: 0.32; }
+  .pantallas .guia,
+  .pantallas .etiqueta { opacity: 0; transition: opacity 200ms ease; }
+  .pantallas .guia::after { transform: scaleX(0); transition: transform 420ms var(--salida) 120ms; }
+  .pantallas[data-activa="entreno"] [data-de="entreno"],
+  .pantallas[data-activa="nutricion"] [data-de="nutricion"],
+  .pantallas[data-activa="progreso"] [data-de="progreso"] { opacity: 1; }
+  .pantallas[data-activa="entreno"] .guia[data-de="entreno"]::after,
+  .pantallas[data-activa="nutricion"] .guia[data-de="nutricion"]::after,
+  .pantallas[data-activa="progreso"] .guia[data-de="progreso"]::after { transform: scaleX(1); }
 
   .beta { padding-top: 96px; }
-  /* Número, título y texto comparten filas en las tres tarjetas (subgrid): quedan a
-     la misma altura aunque un texto sea más largo que otro */
-  .pasos { grid-template-columns: repeat(3, 1fr); grid-template-rows: auto auto 1fr; gap: 0 18px; }
+  .cierre { padding-top: 112px; }
+  /* Número, título y texto comparten filas en las tres tarjetas (subgrid) */
+  .pasos { grid-template-columns: repeat(3, 1fr); grid-template-rows: auto auto 1fr; }
   .pasos li {
     grid-row: span 3;
     grid-template-columns: 1fr;
     grid-template-rows: subgrid;
     row-gap: 0;
-    padding: 26px;
+    padding: 30px 32px;
+  }
+  .pasos li + li {
+    background:
+      radial-gradient(circle at 0 0, var(--bg) 7px, transparent 7.5px),
+      radial-gradient(circle at 0 100%, var(--bg) 7px, transparent 7.5px),
+      radial-gradient(circle, var(--stroke) 1.4px, transparent 1.9px) 0 0 / 4px 9px repeat-y;
   }
   .pasos li > div { display: contents; }
   .pasos li::before { font-size: 72px; margin-bottom: 14px; }
   .pasos h3 { margin-bottom: 8px; }
 }
 
+/* Las líneas-guía solo donde caben sin pisar nada */
+@media (min-width: 1200px) {
+  .guia { display: block; }
+  .etiqueta { display: none; }
+}
+
 /* ── Movimiento ──────────────────────────────────────────────────── */
-/* Lo único que se mueve. Con movimiento reducido no entra nada de esto y la
-   página se ve quieta y completa. Ninguna entrada parte de opacidad 0. */
+/* La entrada del hero, en CSS: empieza en el primer pintado y corre fuera del
+   hilo principal. Con movimiento reducido no entra nada de esto. Todas usan
+   «backwards»: al acabar sueltan el elemento, y el scroll (portada.js) puede
+   moverlo sin pelearse con ellas. */
 
 @media (prefers-reduced-motion: no-preference) {
 
-  /* La entrada del hero, escalonada: acaba antes de 600 ms */
-  .titular span { animation: subir 380ms var(--frenada) both; }
-  .titular span:nth-child(2) { animation-delay: 70ms; }
-  .titular span:nth-child(3) { animation-delay: 140ms; }
-  .subtitulo { animation: subir 380ms var(--frenada) 200ms both; }
-  .hero .boton { animation: subir 380ms var(--frenada) 260ms both; }
-  .hero .movil { animation: movil 520ms var(--frenada) 80ms both; }
+  .dorsal { animation: asentar 700ms var(--tela) backwards; }
+  /* La 404: el dorsal cae y se queda torcido */
+  .perdido .dorsal { animation: caer 700ms var(--tela) backwards; }
+  .titular > span > span { animation: linea 650ms var(--salida) backwards; }
+  .titular > span:nth-child(1) > span { animation-delay: 140ms; }
+  .titular > span:nth-child(2) > span { animation-delay: 210ms; }
+  .titular > span:nth-child(3) > span { animation-delay: 280ms; }
+  .ojal { animation: prender 360ms var(--salida) 620ms backwards; }
+  .dorsal-tira .boton { animation: subir 500ms var(--salida) 380ms backwards; }
+  .subtitulo { animation: subir 500ms var(--salida) 420ms backwards; }
+  .hero-movil .pantalla { animation: encender 700ms var(--salida) 200ms backwards; }
+  .hero-movil { animation: subir 800ms var(--salida) 120ms backwards; }
+  .hero-movil .guia { animation: aparecer-guia 400ms var(--salida) 900ms backwards; }
+  .hero-movil .guia::after { animation: trazar 500ms var(--salida) 950ms backwards; }
+  .hero-movil .etiqueta { animation: aparecer-guia 400ms var(--salida) 900ms backwards; }
 
-  /* El brillo del botón: cruza una vez cada seis segundos, después de la entrada */
-  .boton::after { animation: brillo 6s ease-in-out 1.4s infinite; }
-
-  /* Las secciones aparecen al llegar a ellas, donde el navegador sabe atar una
-     animación al scroll. Donde no, se ven sin más: no hay nada que esperar. */
+  /* Las secciones de abajo aparecen al llegar, donde el navegador sabe atar una
+     animación al scroll. Con portada.js, lo hace él. */
   @supports (animation-timeline: view()) {
-    .aparece {
+    html:not(.movimiento) .aparece {
       animation: aparecer linear both;
       animation-timeline: view();
       animation-range: entry 0% entry 45%;
     }
   }
 
-  .preguntas summary::after { transition: background 160ms var(--frenada); }
+  .preguntas summary::after { transition: background 160ms ease; }
 }
 
+@keyframes asentar {
+  from { transform: translateY(-22px) rotate(-5deg); }
+}
+@keyframes caer {
+  from { transform: translateY(-28px) rotate(-3deg); }
+}
+@keyframes linea {
+  from { transform: translateY(104%); }
+}
+@keyframes prender {
+  from { transform: scale(1.8); opacity: 0; }
+}
 @keyframes subir {
-  from { opacity: 0.3; transform: translateY(18px); }
+  from { opacity: 0.35; transform: translateY(18px); }
 }
-
-@keyframes movil {
-  from { opacity: 0.4; transform: translateY(36px) rotate(2deg); }
+@keyframes encender {
+  from { opacity: 0.2; }
 }
-
-@keyframes brillo {
-  0%        { transform: translateX(-100%) skewX(-20deg); }
-  22%, 100% { transform: translateX(480%) skewX(-20deg); }
+@keyframes aparecer-guia {
+  from { opacity: 0; }
 }
-
+@keyframes trazar {
+  from { transform: scaleX(0); }
+}
+/* Solo se desplaza: con la opacidad, lo que espera por debajo se quedaba con
+   el contraste a medias, y eso es lo que mide un lector o un auditor */
 @keyframes aparecer {
-  from { opacity: 0.25; transform: translateY(40px); }
+  from { transform: translateY(40px); }
 }

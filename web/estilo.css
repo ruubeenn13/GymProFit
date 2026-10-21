@@ -59,7 +59,8 @@
   --sans: "Barlow", sans-serif;
   --cond: "Barlow Condensed", var(--sans);
 
-  --radius: 10px;
+  --radius: 14px;   /* la escala de la portada (DISENO.md): el canto del dorsal */
+  --punto: 0.07;    /* cuánto se ve el punto de la tela */
   --gutter: 20px;
   --maxw: 760px;
 }
@@ -75,6 +76,7 @@
     --gold:      #B58A2A;
     --text:      #17181C;
     --text-2:    #5A5C62;
+    --punto:     0.10;
   }
 }
 
@@ -90,6 +92,22 @@ body {
   font-size: 17px;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
+}
+
+/* La tela de la portada (GP-205): el punto de una camiseta técnica, en una capa
+   fija y sin puntero. En las páginas de lectura no hay nada más que la tela. */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+body::before { background: url("/img/tela.webp") 0 0 / 96px 96px; }
+body::after { background: var(--bg); opacity: calc(1 - var(--punto)); }
+@media (prefers-color-scheme: light) {
+  body::before { filter: invert(1); }
 }
 
 /* Condensada para titulares, cifras y etiquetas; Barlow normal para el
@@ -133,8 +151,8 @@ header.sitio {
   display: inline-flex;
   align-items: center;
   gap: 11px;
-  font-size: 20px;
-  letter-spacing: 1.5px;
+  font-size: 18px;
+  letter-spacing: 0.12em;
   color: var(--text);
   text-decoration: none;
 }
@@ -160,7 +178,7 @@ footer.sitio nav { margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 18p
   margin: 0 0 12px;
 }
 
-h1 { font-size: 46px; line-height: 1.08; margin: 0 0 18px; }
+h1 { font-size: 52px; line-height: 0.95; margin: 0 0 18px; text-transform: uppercase; text-wrap: balance; }
 h2 { font-size: 26px; line-height: 1.2; margin: 44px 0 12px; }
 h3 { font-size: 20px; line-height: 1.25; margin: 30px 0 8px; }
 
@@ -185,9 +203,10 @@ li { margin-bottom: 8px; }
 .tarjeta p:last-child { margin-bottom: 0; }
 
 .acento {
-  border-left: 3px solid var(--primary);
+  /* Un aviso entero, no una pestaña de color en el borde */
+  border: 1px solid var(--stroke);
   background: var(--surface-2);
-  border-radius: 0 var(--radius) var(--radius) 0;
+  border-radius: var(--radius);
   padding: 18px 22px;
   margin: 0 0 24px;
 }
@@ -204,7 +223,7 @@ li { margin-bottom: 8px; }
   text-decoration: none;
   font-size: 18px;
   padding: 13px 26px;
-  border-radius: var(--radius);
+  border-radius: 999px;
 }
 .btn:hover { opacity: 0.9; }
 .btn:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
@@ -280,7 +299,7 @@ th {
 
 @media (max-width: 600px) {
   body { font-size: 16px; }
-  h1 { font-size: 34px; }
+  h1 { font-size: 40px; }
   h2 { font-size: 23px; }
   .lead { font-size: 18px; }
   .hero { padding: 40px 0 16px; }

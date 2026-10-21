@@ -2,6 +2,21 @@
 
 Historial de cambios del proyecto (API Spring Boot + app Android). Ver también el [README](README.md).
 
+### 2026-10-21
+
+| Hash | Descripción |
+|---|---|
+| `13d2cf9` | feat(scripts): `scripts/servir-web.py --red` sirve la web en la red local, para probarla en un móvil de verdad antes de subirla; por defecto sigue solo en 127.0.0.1. |
+| `2d89ce3` | feat(web): **la 404 es un dorsal caído sobre la tela** (GP-205): «Esta página no existe», el botón al inicio y el enlace a la beta, con `portada.css` y sin su JavaScript; cabe en una pantalla y sigue respondiendo 404. `PaginaNoEncontradaWebTest` ampliado. |
+| `1dedbcb` | fix(web): **ningún móvil de la portada se ve vacío** (GP-205): cada captura lleva de fondo una reserva borrosa en línea (`scripts/reservas-capturas-web.py`), y `portada.js` la pide y la decodifica un viewport antes de que entre en pantalla; en escritorio, la cortina abre sobre la captura ya decodificada. Con scroll rápido en 4G, de 42 fotogramas con el móvil negro a 0. `PortadaWebTest` ampliado. |
+| `630dfb2` | fix(web): **en escritorio, el formulario de `/beta` pesa como el titular** (GP-205): columna de 400 px como mínimo (queda en 424), campo y botón de 64 px, alineado con las tarjetas; el móvil, igual. `BetaWebTest` ampliado. |
+| `8cb1446` | docs(documentacion): el [informe de GP-205](documentacion/estado/2026-10-21-gp-205-web.md). |
+| `ee96d10` | fix(web): lo que la auditoría de diseño encontró fuera del sistema (GP-205): fuera el halo naranja del móvil y del botón, la luz de la beta más tenue, el aviso de las legales sin pestaña lateral y sin antetítulos sobre el `h1`. |
+| `a11eb4f` | perf(web): **el LCP de la portada baja de 3,1 a 2,2 s** en Lighthouse móvil (rendimiento de 92–94 a 99): las librerías se piden al acabar la entrada del hero o al primer gesto, la fibra del dorsal pasa a una capa aparte y las seis fuentes van recortadas a los caracteres de la web (−40 %). |
+| `0e0b355` | feat(web,android): **el resto de la web en el mundo del dorsal** (GP-205): los pasos de la beta como tira troquelada y un cierre en la portada; `/beta` y sus pasos con la tela, el formulario como dorsal y las curvas de la portada, sin rebotes ni nada que se mueva sin parar; las legales en la tela; **`404.html`** que responde 404 en Pages. `_headers` guarda `/js/*` un año. Gradle declara `web/` como entrada de los tests. `PaginaNoEncontradaWebTest`, `MovimientoWebTest`. |
+| `e6a176b` | feat(web,decisiones): **la portada con el dorsal y movimiento atado al scroll** (GP-205): el hero como dorsal prendido sobre tela técnica, el móvil fijo que cambia de pantalla en los pilares y líneas-guía a datos reales de las capturas. **DEC-053**: JavaScript propio como mejora progresiva, GSAP, ScrollTrigger y Lenis servidos desde el dominio, 54 KB comprimidos, nada con movimiento reducido. `web/DISENO.md` y `web/PRODUCT.md`. Los tests de la web exigen solo scripts propios, el presupuesto, la licencia y la versión de cada script. |
+| `42b76fa` | build(skills): las skills de diseño del proyecto (design-taste-frontend, impeccable y emil-design-eng), versionadas en `.claude/skills`. |
+
 ### 2026-10-20
 
 | Hash | Descripción |

@@ -1,8 +1,8 @@
 # Caché de gymprofit.app en Cloudflare Pages (GP-201). Ver web/README.md.
 #
 # El HTML se revalida siempre: es lo que dice qué versión de cada hoja pedir.
-# Las hojas van versionadas por su contenido (/beta.css?v=<hash>), así que se
-# guardan un año sin preguntar. Las fuentes y las imágenes no van versionadas:
+# Las hojas y los scripts van versionados por su contenido (/beta.css?v=<hash>),
+# así que se guardan un año sin preguntar. Las fuentes y las imágenes no van versionadas:
 # se quedan con la revalidación de Pages.
 #
 # Ninguna regla /* a propósito: si dos reglas ponen Cache-Control a la misma
@@ -36,4 +36,7 @@
   Cache-Control: public, max-age=31536000, immutable
 
 /portada.css
+  Cache-Control: public, max-age=31536000, immutable
+
+/js/*
   Cache-Control: public, max-age=31536000, immutable
