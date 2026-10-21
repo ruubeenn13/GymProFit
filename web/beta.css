@@ -42,7 +42,7 @@
   --texto-2:   #ABA59B;   /* 8,0:1 sobre el fondo */
   --enlace:    #F08A2E;   /* el naranja como texto: 7,8:1 sobre el fondo */
   --sobre-naranja: #0B0C0E; /* 6,3:1 sobre el naranja */
-  --luz:       rgba(232, 113, 10, 0.55);
+  --luz:       rgba(232, 113, 10, 0.2);   /* tenue, como la de la portada: luz, no foco */
   --tela:      var(--fondo); /* el color que se ve por las muescas del troquel */
   --punto:     0.07;         /* cuánto se ve el punto de la tela */
 
@@ -80,7 +80,7 @@
     --texto-2: #57524A;   /* 6,9:1 sobre el fondo */
     --enlace:  #A44700;   /* 5,4:1 sobre el fondo */
     --dorado:  #9C7A1F;
-    --luz:     rgba(232, 113, 10, 0.32);
+    --luz:     rgba(232, 113, 10, 0.14);
     --punto:   0.10;
     /* En claro el dorsal es blanco sobre el crema, y se separa por una sombra cálida */
     --dorsal:      #FFFFFF;

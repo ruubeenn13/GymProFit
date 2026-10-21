@@ -203,9 +203,10 @@ li { margin-bottom: 8px; }
 .tarjeta p:last-child { margin-bottom: 0; }
 
 .acento {
-  border-left: 3px solid var(--primary);
+  /* Un aviso entero, no una pestaña de color en el borde */
+  border: 1px solid var(--stroke);
   background: var(--surface-2);
-  border-radius: 0 var(--radius) var(--radius) 0;
+  border-radius: var(--radius);
   padding: 18px 22px;
   margin: 0 0 24px;
 }

@@ -180,7 +180,7 @@ h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; text-wrap: b
   letter-spacing: 0.02em;
   text-decoration: none;
   white-space: nowrap;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.35) inset, 0 6px 14px -6px rgba(255, 106, 0, 0.6);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.35) inset, 0 6px 14px -8px rgba(0, 0, 0, 0.5);
   transition: transform 140ms var(--salida), background-color 160ms ease;
 }
 .boton:active { transform: scale(0.97); }
@@ -310,7 +310,8 @@ h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; text-wrap: b
   padding: 9px;
   border-radius: 46px;
   background: var(--marco);
-  box-shadow: 0 0 0 1px var(--linea), 0 30px 60px -28px rgba(0, 0, 0, 0.8), 0 40px 90px -40px rgba(255, 106, 0, 0.35);
+  /* Sombra larga y neutra: nada de halo naranja (DISENO.md, «nada de brillos de neón») */
+  box-shadow: 0 0 0 1px var(--linea), 0 30px 60px -28px rgba(0, 0, 0, 0.8);
 }
 .movil img,
 .pantalla {
