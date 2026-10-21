@@ -4,6 +4,7 @@ Uso, desde la raíz del repositorio:
 
     python scripts/servir-web.py            # http://127.0.0.1:8205
     python scripts/servir-web.py 9000       # otro puerto
+    python scripts/servir-web.py 8205 --red # también desde el móvil, en la misma wifi
 
 Lo que imita de Pages (GP-205), porque es lo que se mide con Lighthouse y lo que
 comprueban las grabaciones:
@@ -98,9 +99,14 @@ class Pages(BaseHTTPRequestHandler):
 
 
 def main() -> None:
-    puerto = int(sys.argv[1]) if len(sys.argv) > 1 else 8205
-    print(f"Sirviendo web/ en http://127.0.0.1:{puerto}")
-    ThreadingHTTPServer(("127.0.0.1", puerto), Pages).serve_forever()
+    argumentos = [a for a in sys.argv[1:] if a != "--red"]
+    puerto = int(argumentos[0]) if argumentos else 8205
+    # Con --red escucha en todas las interfaces, para probar en un móvil de verdad.
+    # Sin él, solo en este equipo: nadie más de la red ve la web a medio hacer.
+    red = "--red" in sys.argv
+    host = "0.0.0.0" if red else "127.0.0.1"
+    print(f"Sirviendo web/ en http://{'<IP de este equipo>' if red else '127.0.0.1'}:{puerto}")
+    ThreadingHTTPServer((host, puerto), Pages).serve_forever()
 
 
 if __name__ == "__main__":
