@@ -7,19 +7,24 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.regex.Matcher;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
+import java.util.zip.GZIPOutputStream;
 
 // ============================================================
 // PortadaWebTest — la portada de gymprofit.app explica la app y lleva a la beta (GP-203).
 //
-// Es la página que más gente ve, así que cumple las mismas reglas que el resto de la
-// web: sin JavaScript y sin pedir nada a terceros al cargar. Las secciones van en el
+// Es la página que más gente ve, así que no pide nada a terceros al cargar. Desde GP-205
+// lleva JavaScript propio como mejora (DEC-053): solo scripts del dominio, sin manejadores
+// en línea y dentro del presupuesto de 60 KB comprimidos. Las secciones van en el
 // orden aprobado, con un solo h1. Las capturas son de la app real, con su texto
 // alternativo y su tamaño fijo para que la página no salte al cargar; solo la del hero
 // carga sin esperar. Y no lleva lo que se dejó fuera a propósito: ni redes todavía, ni
@@ -27,10 +32,12 @@ import java.util.regex.Pattern;
 // ============================================================
 public class PortadaWebTest {
 
+    /** DEC-053: el JavaScript de la portada, comprimido, no pasa de 60 KB. */
+    private static final int PRESUPUESTO_JS_GZIP = 60 * 1024;
+
     @Test
-    public void noLlevaJavaScriptNiCargaNadaDeFuera() throws IOException {
+    public void soloScriptsPropiosYCeroRecursosDeFuera() throws IOException {
         String html = portada();
-        assertFalse("la portada lleva JavaScript", html.contains("<script"));
         assertFalse("la portada lleva manejadores de eventos", Pattern.compile("\\son[a-z]+=").matcher(html).find());
         Matcher carga = Pattern.compile("(?:src|srcset)=\"([^\"]*)\"|<link\\b[^>]*href=\"([^\"]*)\"").matcher(html);
         int recursos = 0;
@@ -43,6 +50,40 @@ public class PortadaWebTest {
             }
         }
         assertTrue("no se ha encontrado ningún recurso", recursos > 5);
+        // Ningún script en línea: cada <script> es un fichero propio
+        Matcher script = Pattern.compile("<script\\b([^>]*)>").matcher(html);
+        while (script.find()) {
+            Matcher src = Pattern.compile(" src=\"([^\"]*)\"").matcher(script.group(1));
+            assertTrue("un script en línea: " + script.group(), src.find());
+            assertTrue("un script de fuera: " + src.group(1), src.group(1).startsWith("/js/"));
+        }
+    }
+
+    @Test
+    public void elJavaScriptCabeEnElPresupuesto() throws IOException {
+        int total = 0;
+        List<String> rutas = scripts(portada());
+        for (String ruta : rutas) {
+            Path fichero = web().resolve(ruta.substring(1));
+            assertTrue("no existe web" + ruta, Files.exists(fichero));
+            total += gzip(Files.readAllBytes(fichero));
+        }
+        assertEquals("la portada tiene que cargar su script y sus tres librerías", 4, rutas.size());
+        assertTrue("el JavaScript de la portada pesa " + total + " B comprimido, más de " + PRESUPUESTO_JS_GZIP,
+                total <= PRESUPUESTO_JS_GZIP);
+    }
+
+    @Test
+    public void lasLibreriasLlevanSuLicencia() throws IOException {
+        int librerias = 0;
+        for (String ruta : scripts(portada())) {
+            if (!ruta.startsWith("/js/vendor/")) continue;
+            librerias++;
+            String js = new String(Files.readAllBytes(web().resolve(ruta.substring(1))), StandardCharsets.UTF_8);
+            String cabecera = js.substring(0, Math.min(js.length(), 800)).toLowerCase();
+            assertTrue(ruta + " no lleva su aviso de licencia", cabecera.contains("license") || cabecera.contains("mit"));
+        }
+        assertEquals("tiene que haber tres librerías", 3, librerias);
     }
 
     @Test
@@ -137,6 +178,24 @@ public class PortadaWebTest {
         assertFalse("la portada enlaza a Instagram", html.contains("instagram.com"));
         assertFalse("la portada lleva el enlace de la prueba cerrada", html.contains("play.google.com"));
         assertFalse("la portada lleva el enlace del grupo", html.contains("groups.google.com"));
+    }
+
+    // Las rutas, sin versión, de los scripts que pide la portada: los src y la lista data-libs.
+    private static List<String> scripts(String html) {
+        List<String> rutas = new ArrayList<>();
+        Matcher m = Pattern.compile("(?:src|data-libs)=\"([^\"]*\\.js[^\"]*)\"").matcher(html);
+        while (m.find()) {
+            for (String ruta : m.group(1).trim().split("\\s+")) rutas.add(ruta.replaceAll("\\?v=.*$", ""));
+        }
+        return rutas;
+    }
+
+    private static int gzip(byte[] datos) throws IOException {
+        ByteArrayOutputStream salida = new ByteArrayOutputStream();
+        try (GZIPOutputStream gz = new GZIPOutputStream(salida)) {
+            gz.write(datos);
+        }
+        return salida.size();
     }
 
     private static String entre(String html, String desde, String hasta) {

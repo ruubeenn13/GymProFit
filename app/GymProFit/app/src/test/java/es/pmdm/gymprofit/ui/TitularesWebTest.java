@@ -54,8 +54,8 @@ public class TitularesWebTest {
 
     @Test
     public void losTitularesQueLlenanElAnchoSalenDeSuColumna() throws IOException {
-        comprobarTitular("portada.css", ".titular span", ".titular {");
-        comprobarTitular("portada.css", ".problema h2 span", ".problema h2 {");
+        comprobarTitular("portada.css", ".titular > span", ".titular {");
+        comprobarTitular("portada.css", ".problema h2 > span", ".problema h2 {");
         comprobarTitular("beta.css", ".titular span", ".titular {");
     }
 

@@ -31,6 +31,8 @@ import java.util.stream.Stream;
 // hoja cambia y la versión del HTML no, este test falla. La versión se regenera con
 // scripts/versionar-hojas-web.py (ver web/README.md). El hash se calcula con los saltos
 // de línea normalizados a \n, para que salga igual en Windows y en el CI.
+// Desde GP-205 (DEC-053) vale igual para los scripts: los de src y los de la lista
+// data-libs que carga portada.js.
 // ============================================================
 public class HojasVersionadasWebTest {
 
@@ -59,6 +61,26 @@ public class HojasVersionadasWebTest {
     }
 
     @Test
+    public void cadaScriptVaConLaVersionDeSuContenido() throws Exception {
+        Path web = web();
+        int scripts = 0;
+        for (Path pagina : paginas(web)) {
+            Matcher lista = Pattern.compile("(?:src|data-libs)=\"([^\"]*\\.js[^\"]*)\"").matcher(leer(pagina));
+            while (lista.find()) {
+                for (String ruta : lista.group(1).trim().split("\\s+")) {
+                    scripts++;
+                    Matcher v = Pattern.compile("^(/js/[A-Za-z0-9/_.-]+\\.js)\\?v=([0-9a-f]{8})$").matcher(ruta);
+                    assertTrue(web.relativize(pagina) + " pide un script sin versión: " + ruta, v.matches());
+                    assertEquals(web.relativize(pagina) + ": " + v.group(1) + " ha cambiado y su versión no; "
+                            + "regenera con scripts/versionar-hojas-web.py",
+                            version(web.resolve(v.group(1).substring(1))), v.group(2));
+                }
+            }
+        }
+        assertTrue("no se ha encontrado ningún script", scripts >= 4);
+    }
+
+    @Test
     public void elHtmlSeRevalidaSiempreYLasHojasSeGuardanUnAno() throws IOException {
         String cabeceras = leer(web().resolve("_headers"));
         // Cada página, con una regla que la cubra y sin caché
@@ -69,9 +91,11 @@ public class HojasVersionadasWebTest {
         for (String hoja : new String[]{"/estilo.css", "/beta.css", "/portada.css"}) {
             assertEquals(hoja + " no lleva caché larga", "public, max-age=31536000, immutable", regla(cabeceras, hoja));
         }
+        assertEquals("los scripts no llevan caché larga", "public, max-age=31536000, immutable",
+                regla(cabeceras, "/js/*"));
         // Las fuentes y las imágenes no van versionadas: no pueden ser immutable
         assertFalse("hay algo immutable que no va versionado",
-                cabeceras.replaceAll("(?m)^/(estilo|beta|portada)\\.css\\R[^\\n]*\\R?", "").contains("immutable"));
+                cabeceras.replaceAll("(?m)^/((estilo|beta|portada)\\.css|js/\\*)\\R[^\\n]*\\R?", "").contains("immutable"));
         // Ninguna regla con comodín para todo: Pages uniría su Cache-Control con el de las demás
         assertFalse("una regla /* se sumaría a las demás", Pattern.compile("(?m)^/\\*\\s*$").matcher(cabeceras).find());
     }

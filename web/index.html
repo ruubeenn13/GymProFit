@@ -12,13 +12,14 @@
 <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
 <link rel="preload" href="/fuentes/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fuentes/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/portada.css?v=ea100fd2">
+<link rel="stylesheet" href="/portada.css?v=583af2af">
+<!-- El movimiento es una mejora (DEC-053): sin este script la página está entera.
+     Él solo carga GSAP, ScrollTrigger y Lenis si el visitante no ha pedido menos movimiento. -->
+<script defer src="/js/portada.js?v=dbe8041e" data-libs="/js/vendor/gsap.min.js?v=92bb9a96 /js/vendor/ScrollTrigger.min.js?v=b0b14d67 /js/vendor/lenis.min.js?v=a9b9c28c"></script>
 </head>
 <body>
 
-<div class="franja"></div>
-
-<header class="marco">
+<header class="cabecera marco">
   <a class="firma" href="/">
     <picture>
       <source srcset="/img/logo-oscuro-256.webp" media="(prefers-color-scheme: dark)">
@@ -31,31 +32,61 @@
 <main>
 
   <section class="marco hero" aria-labelledby="titular">
-    <div>
-      <h1 class="titular" id="titular">
-        <span style="--k: 4.47">Tu entreno</span>
-        <span style="--k: 4.08">y tu dieta,</span>
-        <span style="--k: 5.99">por fin juntos.</span>
-      </h1>
+    <div class="hero-texto">
+      <!-- El dorsal: lo único claro de la página. La entrada es CSS; el scroll, de portada.js. -->
+      <div class="soltar">
+        <div class="dorsal">
+          <p class="dorsal-banda" aria-hidden="true"><span>GymProFit · Beta</span><span>Android</span></p>
+          <h1 class="titular" id="titular">
+            <span style="--k: 4.47"><span>Tu entreno</span></span>
+            <span style="--k: 4.08"><span>y tu dieta,</span></span>
+            <span style="--k: 5.99"><span>por fin juntos.</span></span>
+          </h1>
+          <div class="dorsal-tira">
+            <a class="boton" href="/beta">Entra en la beta</a>
+          </div>
+          <i class="ojal" aria-hidden="true"></i><i class="ojal" aria-hidden="true"></i><i class="ojal" aria-hidden="true"></i><i class="ojal" aria-hidden="true"></i>
+        </div>
+      </div>
       <p class="subtitulo">GymProFit apunta tus series, tus comidas y tu peso, y te dice qué toca hoy. <strong>Para Android, en beta.</strong></p>
-      <a class="boton" href="/beta">Entra en la beta</a>
     </div>
     <!-- La única captura que no es lazy: es lo primero que se ve -->
-    <figure class="movil">
-      <img src="/img/capturas/inicio-360.webp" srcset="/img/capturas/inicio-360.webp 360w, /img/capturas/inicio-720.webp 720w" sizes="(min-width: 900px) 302px, 70vw" width="360" height="800" fetchpriority="high" alt="Pantalla de inicio de GymProFit: hoy toca Torso A, las zonas trabajadas esta semana, el último récord en peso muerto y la nutrición del día.">
+    <figure class="movil hero-movil">
+      <div class="pantalla">
+        <img src="/img/capturas/inicio-360.webp" srcset="/img/capturas/inicio-360.webp 360w, /img/capturas/inicio-720.webp 720w" sizes="(min-width: 900px) 312px, 70vw" width="360" height="800" fetchpriority="high" alt="Pantalla de inicio de GymProFit: hoy toca Torso A, las zonas trabajadas esta semana, el último récord en peso muerto y la nutrición del día.">
+      </div>
+      <span class="guia" style="--x: .29; --y: .228" aria-hidden="true"><span>Lo que toca hoy</span></span>
+      <span class="etiqueta" aria-hidden="true">Lo que toca hoy</span>
     </figure>
   </section>
 
   <section class="problema aparece" aria-labelledby="problema">
     <div class="marco">
-      <h2 id="problema"><span style="--k: 7.39">Entrenas en serio.</span> <span style="--k: 4.89">Comes a ojo.</span></h2>
+      <h2 id="problema"><span style="--k: 7.39"><span>Entrenas en serio.</span></span> <span style="--k: 4.89"><span>Comes a ojo.</span></span></h2>
       <p>Apuntas cada serie al kilo, pero la comida va de memoria, y lo que comes decide buena parte de lo que pasa en el gimnasio. GymProFit pone las dos cosas en el mismo sitio, y al lado, cómo cambias.</p>
     </div>
   </section>
 
-  <div class="marco pilares">
+  <div class="marco recorrido">
 
-    <section class="pilar aparece" aria-labelledby="entreno">
+    <!-- En escritorio y con movimiento, portada.js pasa aquí las capturas de los tres
+         pilares: el móvil se queda quieto y cambia de pantalla al llegar a cada uno. -->
+    <div class="pantallas movil" hidden>
+      <div class="pantalla"></div>
+      <!-- --x y --y: dónde acaba el dato, en fracciones de la captura (1080 × 2400): el punto
+           va justo detrás de la cifra, no encima, para no taparla -->
+      <span class="guia" data-de="entreno" style="--x: .30; --y: .398" aria-hidden="true"><span>Lo de la última vez</span></span>
+      <span class="guia" data-de="entreno" style="--x: .985; --y: .844" aria-hidden="true"><span>El descanso, contando</span></span>
+      <span class="guia" data-de="nutricion" style="--x: .70; --y: .328" aria-hidden="true"><span>Lo que te queda hoy</span></span>
+      <span class="guia" data-de="nutricion" style="--x: .42; --y: .715" aria-hidden="true"><span>El agua, a vasos</span></span>
+      <span class="guia" data-de="progreso" style="--x: .46; --y: .27" aria-hidden="true"><span>Tus récords</span></span>
+      <span class="guia" data-de="progreso" style="--x: .64; --y: .687" aria-hidden="true"><span>Tu peso</span></span>
+      <span class="etiqueta" data-de="entreno" aria-hidden="true">Lo de la última vez</span>
+      <span class="etiqueta" data-de="nutricion" aria-hidden="true">Lo que te queda hoy</span>
+      <span class="etiqueta" data-de="progreso" aria-hidden="true">Tu peso, semana a semana</span>
+    </div>
+
+    <section class="pilar" id="pilar-entreno" aria-labelledby="entreno">
       <div>
         <h2 id="entreno">Entreno</h2>
         <p class="lema">Abres la app y sabes qué toca, con qué peso y cuánto descansar.</p>
@@ -65,12 +96,13 @@
           <li><strong>El descanso cuenta solo</strong> <span>Y te avisa cuando acaba, aunque tengas la pantalla apagada.</span></li>
         </ul>
       </div>
-      <figure class="movil">
-        <img src="/img/capturas/entreno-360.webp" srcset="/img/capturas/entreno-360.webp 360w, /img/capturas/entreno-720.webp 720w" sizes="(min-width: 900px) 282px, 62vw" width="360" height="800" loading="lazy" decoding="async" alt="Sesión en curso de Torso A: el press de banca con la primera serie hecha, lo de la última vez al lado de cada serie y el descanso contando.">
+      <figure class="movil" data-pantalla="entreno">
+        <img src="/img/capturas/entreno-360.webp" srcset="/img/capturas/entreno-360.webp 360w, /img/capturas/entreno-720.webp 720w" sizes="(min-width: 900px) 312px, 62vw" width="360" height="800" loading="lazy" decoding="async" alt="Sesión en curso de Torso A: el press de banca con la primera serie hecha, lo de la última vez al lado de cada serie y el descanso contando.">
+        <span class="etiqueta" aria-hidden="true">Lo de la última vez</span>
       </figure>
     </section>
 
-    <section class="pilar aparece" aria-labelledby="nutricion">
+    <section class="pilar" id="pilar-nutricion" aria-labelledby="nutricion">
       <div>
         <h2 id="nutricion">Nutrición</h2>
         <p class="lema">Apuntar lo que comes cuesta lo que tardas en encontrarlo.</p>
@@ -80,12 +112,13 @@
           <li><strong>Sin apuntar dos veces lo mismo</strong> <span>Copia la comida de ayer y lleva el agua a vasos.</span></li>
         </ul>
       </div>
-      <figure class="movil">
-        <img src="/img/capturas/nutricion-360.webp" srcset="/img/capturas/nutricion-360.webp 360w, /img/capturas/nutricion-720.webp 720w" sizes="(min-width: 900px) 282px, 62vw" width="360" height="800" loading="lazy" decoding="async" alt="Nutrición del día: el anillo de calorías con las que quedan, las proteínas, los carbohidratos y las grasas, y el agua en vasos.">
+      <figure class="movil" data-pantalla="nutricion">
+        <img src="/img/capturas/nutricion-360.webp" srcset="/img/capturas/nutricion-360.webp 360w, /img/capturas/nutricion-720.webp 720w" sizes="(min-width: 900px) 312px, 62vw" width="360" height="800" loading="lazy" decoding="async" alt="Nutrición del día: el anillo de calorías con las que quedan, las proteínas, los carbohidratos y las grasas, y el agua en vasos.">
+        <span class="etiqueta" aria-hidden="true">Lo que te queda hoy</span>
       </figure>
     </section>
 
-    <section class="pilar aparece" aria-labelledby="progreso">
+    <section class="pilar" id="pilar-progreso" aria-labelledby="progreso">
       <div>
         <h2 id="progreso">Progreso</h2>
         <p class="lema">Lo que has mejorado, sin hacer cuentas.</p>
@@ -95,8 +128,9 @@
           <li><strong>La semana, por zonas</strong> <span>Qué músculos has trabajado y cuántas series les has dado.</span></li>
         </ul>
       </div>
-      <figure class="movil">
-        <img src="/img/capturas/progreso-360.webp" srcset="/img/capturas/progreso-360.webp 360w, /img/capturas/progreso-720.webp 720w" sizes="(min-width: 900px) 282px, 62vw" width="360" height="800" loading="lazy" decoding="async" alt="Progreso: las sesiones, los récords y los logros, y la gráfica del peso bajando poco a poco en tres semanas.">
+      <figure class="movil" data-pantalla="progreso">
+        <img src="/img/capturas/progreso-360.webp" srcset="/img/capturas/progreso-360.webp 360w, /img/capturas/progreso-720.webp 720w" sizes="(min-width: 900px) 312px, 62vw" width="360" height="800" loading="lazy" decoding="async" alt="Progreso: las sesiones, los récords y los logros, y la gráfica del peso bajando poco a poco en tres semanas.">
+        <span class="etiqueta" aria-hidden="true">Tu peso, semana a semana</span>
       </figure>
     </section>
 
