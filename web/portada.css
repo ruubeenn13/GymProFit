@@ -200,13 +200,23 @@ h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; text-wrap: b
   position: relative;
   border-radius: 14px;
   color: var(--tinta);
-  /* El Tyvek: el panel con su fibra, apenas visible */
-  background:
-    linear-gradient(color-mix(in srgb, var(--panel) 91%, transparent), color-mix(in srgb, var(--panel) 91%, transparent)),
-    url("/img/tyvek.webp") 0 0 / 256px 256px,
-    var(--panel);
+  background: var(--panel);
   box-shadow: 0 1px 1px var(--sombra), 0 26px 50px -24px var(--sombra);
   transform: rotate(-2deg);
+}
+/* El Tyvek: la fibra del panel, apenas visible, en una capa aparte y debajo del
+   contenido (el transform del dorsal hace de contexto de apilamiento). Como fondo
+   del propio dorsal, la fibra era el LCP de la portada y lo retrasaba hasta que
+   llegaba la imagen; así el LCP es el titular, que es lo que se lee. */
+.dorsal::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: url("/img/tyvek.webp") 0 0 / 256px 256px;
+  opacity: 0.09;
+  pointer-events: none;
 }
 
 .dorsal-banda {
@@ -749,6 +759,8 @@ h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; text-wrap: b
 @keyframes trazar {
   from { transform: scaleX(0); }
 }
+/* Solo se desplaza: con la opacidad, lo que espera por debajo se quedaba con
+   el contraste a medias, y eso es lo que mide un lector o un auditor */
 @keyframes aparecer {
-  from { opacity: 0.25; transform: translateY(40px); }
+  from { transform: translateY(40px); }
 }

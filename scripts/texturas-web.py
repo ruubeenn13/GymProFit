@@ -66,7 +66,9 @@ def main() -> None:
     """Escribe las dos texturas en web/img."""
     DESTINO.mkdir(parents=True, exist_ok=True)
     punto_de_tela().save(DESTINO / "tela.webp", "WEBP", lossless=True, method=6)
-    fibra_de_tyvek().save(DESTINO / "tyvek.webp", "WEBP", quality=55, method=6)
+    # La fibra se ve al 9 %: con calidad 40 y el alfa a 30 pesa la mitad (24,6 → 11,6 KB) sin
+    # diferencia a la vista, y es el fondo del dorsal, que es el LCP de la portada (GP-205)
+    fibra_de_tyvek().save(DESTINO / "tyvek.webp", "WEBP", quality=40, alpha_quality=30, method=6)
     for nombre in ("tela.webp", "tyvek.webp"):
         print(nombre, (DESTINO / nombre).stat().st_size, "bytes")
 

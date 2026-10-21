@@ -3,7 +3,9 @@
  * Es una mejora: sin este script la página está entera y quieta. Si el visitante
  * no ha pedido menos movimiento, carga GSAP, ScrollTrigger y Lenis desde nuestro
  * dominio (las rutas, versionadas, van en data-libs) y ata al scroll lo que CSS
- * no puede atar. Con prefers-reduced-motion: reduce no descarga nada. La
+ * no puede atar. Las pide cuando acaba la entrada del hero (CSS, no las necesita)
+ * o en cuanto el visitante desplaza la página, lo que llegue antes: pedirlas al
+ * cargar competía con la entrada y retrasaba el LCP medio segundo en un 4G lento. Con prefers-reduced-motion: reduce no descarga nada. La
  * coreografía está en web/DISENO.md.
  */
 (function () {
@@ -12,11 +14,29 @@
   var menos = window.matchMedia("(prefers-reduced-motion: reduce)");
   if (menos.matches) return;
 
+  var ENTRADA_MS = 1300;
   var yo = document.currentScript;
   var libs = ((yo && yo.getAttribute("data-libs")) || "").split(/\s+/).filter(Boolean);
   if (!libs.length) return;
 
-  cargar(libs, iniciar);
+  cuandoHagaFalta(function () { cargar(libs, iniciar); });
+
+  /** Llama a listo una sola vez: tras el load y la entrada del hero, o al primer gesto de desplazamiento. */
+  function cuandoHagaFalta(listo) {
+    var hecho = false;
+    var gestos = ["scroll", "wheel", "touchstart", "keydown"];
+    function ya() {
+      if (hecho) return;
+      hecho = true;
+      gestos.forEach(function (g) { window.removeEventListener(g, ya); });
+      listo();
+    }
+    gestos.forEach(function (g) { window.addEventListener(g, ya, { passive: true }); });
+    // La entrada del hero acaba hacia 1,3 s (portada.css): después, nada compite con ella
+    function trasLaEntrada() { setTimeout(ya, ENTRADA_MS); }
+    if (document.readyState === "complete") trasLaEntrada();
+    else window.addEventListener("load", trasLaEntrada, { once: true });
+  }
 
   /** Carga los scripts en orden y llama a listo cuando ha llegado el último. */
   function cargar(rutas, listo) {
@@ -104,7 +124,7 @@
       scrollTrigger: { trigger: problema, start: "top 70%", once: true }
     });
     tl.from(lineas, { yPercent: 104, duration: 0.8, stagger: 0.09 })
-      .from(texto, { y: 24, opacity: 0.3, duration: 0.7 }, 0.25);
+      .from(texto, { y: 24, duration: 0.7 }, 0.25);
   }
 
   /* Escritorio: las capturas de los pilares pasan a un solo móvil que se queda

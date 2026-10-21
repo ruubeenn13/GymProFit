@@ -165,7 +165,8 @@ regla, en DEC-053.
 
 - **Mejora progresiva.** Sin JavaScript la página está entera y quieta. La entrada
   del hero es CSS; lo que va atado al scroll lo hace `js/portada.js`, que carga
-  GSAP, ScrollTrigger y Lenis desde `js/vendor/` y añade `.movimiento` a `<html>`.
+  GSAP, ScrollTrigger y Lenis desde `js/vendor/` **después del evento `load`** (antes
+  retrasaban el LCP) y añade `.movimiento` a `<html>`.
 - **Con movimiento reducido no se descarga nada**: `portada.js` sale antes de pedir
   las librerías, y las animaciones CSS viven dentro de
   `@media (prefers-reduced-motion: no-preference)`.
@@ -196,8 +197,18 @@ Los seis `.woff2` se generaron desde los `.ttf` de
 `app/GymProFit/app/src/main/res/font/` (`barlow_regular`, `_medium` y `_semibold`;
 `barlow_condensed_medium`, `_semibold` y `_bold`), por lo mismo: la web y la app
 tienen que verse iguales. Una familia, dos anchos: la condensada en titulares,
-cifras y etiquetas, y Barlow en todo el texto. Para regenerarlos hace falta
-`fonttools` con `brotli`: `TTFont(ttf); f.flavor = "woff2"; f.save(woff2)`.
+cifras y etiquetas, y Barlow en todo el texto. Desde GP-205 van **recortados a los
+caracteres de la web** (Latin-1, la puntuación general, € y ™), con el kerning y
+las métricas intactos: pesan un 40 % menos (de ~39 a ~23 KB cada una) y eso bajaba
+el LCP de la portada en un 4G lento. Para regenerarlos hace falta `fonttools` con
+`brotli`, una vez por fichero:
+
+```
+pyftsubset barlow_regular.ttf --flavor=woff2 --layout-features='*'   --unicodes="U+0020-007E,U+00A0-00FF,U+0131,U+0152-0153,U+2010-2027,U+2030,U+2039-203A,U+20AC,U+2122,U+2212"   --output-file=barlow-400.woff2
+```
+
+Si un texto nuevo lleva un carácter fuera de ese rango (una flecha, un símbolo),
+se añade al rango y se regeneran las seis; si no, ese carácter sale con otra fuente.
 
 Se sirven **desde el propio dominio a propósito**, y no desde Google Fonts. Pedir
 una fuente a un tercero le entrega la IP del visitante; hacerlo justo en la página
