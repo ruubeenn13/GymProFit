@@ -636,16 +636,19 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
 /* ── Escritorio ──────────────────────────────────────────────────── */
 
 @media (min-width: 900px) {
-  :root { --margen: 40px; --ancho-titular: min(48vw, 620px); }
+  :root { --margen: 40px; --ancho-titular: min(44vw, 560px); }
   .portada { padding: 30px 0 0; }
   .firma img { width: 56px; height: 56px; }
   .luz { left: -170px; top: -180px; width: 440px; height: 440px; }
-  /* Dos columnas: el titular manda y la llamada se apoya en su base, para que el
-     botón quede a la vista también en una pantalla de portátil */
+  /* Dos columnas: el titular y la llamada, que se apoya en su base para que el
+     botón quede a la vista también en una pantalla de portátil. En /beta la
+     llamada es el formulario, la acción principal: pesa tanto como el titular
+     (GP-205), así que su columna nunca baja de 400 px y llega al borde derecho,
+     el mismo en el que acaban las tres tarjetas de debajo. */
   .portada {
     display: grid;
-    grid-template-columns: var(--ancho-titular) minmax(0, 1fr);
-    column-gap: 48px;
+    grid-template-columns: var(--ancho-titular) minmax(400px, 1fr);
+    column-gap: 56px;
     align-items: end;
   }
   .firma { grid-column: 1 / -1; justify-self: start; }
@@ -654,10 +657,14 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
   .entrada { margin-top: 0; }
   .entrada { font-size: 21px; }
   .linea { font-size: 19px; }
-  .alta { margin-top: 0; padding: 0 24px 24px; }
-  .alta::before { height: 20px; margin: 0 -24px -4px; }
-  .alta .boton::before { left: -24px; right: -24px; }
-  .alta::after { inset: 6px; }
+  .alta { max-width: none; margin-top: 0; padding: 0 32px 32px; gap: 18px; }
+  .alta::before { height: 22px; margin: 0 -32px -2px; }
+  .alta .boton::before { left: -32px; right: -32px; top: -18px; height: 18px; }
+  .alta::after { inset: 8px; }
+  .correo { min-height: 64px; font-size: 20px; padding-inline: 20px; }
+  .campo label { font-size: 19px; }
+  .consentimiento { font-size: 16px; }
+  .alta .boton { min-height: 64px; font-size: 26px; }
   .razones { grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 56px; }
   .razon { padding: 28px; }
   .razon h2 { font-size: 36px; }

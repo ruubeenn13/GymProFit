@@ -255,6 +255,20 @@ public class BetaWebTest {
     }
 
     @Test
+    public void enEscritorioElFormularioPesaComoElTitular() throws IOException {
+        // GP-205: a 1280 y 1440 el formulario quedaba estrecho frente al titular. Su
+        // columna no baja de 380 px y el formulario la llena hasta el borde derecho.
+        String css = pagina("beta.css");
+        int escritorio = css.indexOf("@media (min-width: 900px)");
+        assertTrue("beta.css no tiene bloque de escritorio", escritorio >= 0);
+        String bloque = css.substring(escritorio);
+        Matcher columnas = Pattern.compile("grid-template-columns:\\s*var\\(--ancho-titular\\)\\s+minmax\\((\\d+)px").matcher(bloque);
+        assertTrue("la columna del formulario no tiene mínimo en px", columnas.find());
+        assertTrue("la columna del formulario baja de 380 px: " + columnas.group(1), Integer.parseInt(columnas.group(1)) >= 380);
+        assertTrue("el formulario no llena su columna en escritorio", bloque.contains(".alta { max-width: none;"));
+    }
+
+    @Test
     public void laPortadaInvitaALaBeta() throws IOException {
         assertTrue(pagina("index.html").contains("href=\"/beta\""));
     }
