@@ -191,3 +191,9 @@ dependencies {
     // Crashlytics: reporte automático de crashes en producción (versión por el BOM)
     implementation 'com.google.firebase:firebase-crashlytics'
 }
+// Los tests *WebTest leen ../../web (GP-201, GP-203, GP-205). Gradle no lo sabe y daba
+// la tarea de tests por al día cuando solo cambiaba la web: el test no se volvía a
+// ejecutar y un fallo nuevo pasaba en verde. Con la carpeta como entrada, se repiten.
+tasks.withType(Test).configureEach {
+    inputs.dir(rootProject.file('../../web')).withPropertyName('web').withPathSensitivity(PathSensitivity.RELATIVE)
+}

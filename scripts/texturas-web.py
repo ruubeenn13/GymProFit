@@ -7,8 +7,7 @@ Uso, desde la raíz del repositorio:
 Escribe ``web/img/tela.webp`` y ``web/img/tyvek.webp``. Son mosaicos sin costura
 (lo que sale por un borde entra por el contrario) con transparencia (el punto en blanco,
 para la tela oscura; la fibra en negro, para el panel claro): la hoja decide su
-opacidad. La semilla
-es fija, de modo que dos ejecuciones dan el mismo fichero.
+opacidad. La semilla es fija, de modo que dos ejecuciones dan el mismo fichero.
 """
 
 from pathlib import Path

@@ -13,6 +13,7 @@ comprueban las grabaciones:
 - Las cabeceras de web/_headers, regla a regla (con * como comodín).
 - Compresión gzip de HTML, CSS, JS, SVG y JSON cuando el navegador la acepta.
 - No sirve lo que no va en el zip: README.md, DISENO.md, PRODUCT.md y .impeccable/.
+- Responde a HEAD con las mismas cabeceras que GET, para mirarlas con curl -I.
 """
 
 import gzip
@@ -65,7 +66,12 @@ def resolver(ruta: str) -> Path | None:
 class Pages(BaseHTTPRequestHandler):
     reglas = leer_cabeceras()
 
-    def do_GET(self) -> None:  # noqa: N802 (nombre de http.server)
+    def do_HEAD(self) -> None:  # noqa: N802 (nombre de http.server)
+        """Las mismas cabeceras que GET, sin cuerpo: para comprobar la caché con curl -I."""
+        self.do_GET(cuerpo=False)
+
+    def do_GET(self, cuerpo: bool = True) -> None:  # noqa: N802 (nombre de http.server)
+        enviar_cuerpo = cuerpo
         ruta = unquote(urlsplit(self.path).path)
         fichero, estado = resolver(ruta), 200
         if fichero is None:
@@ -84,7 +90,8 @@ class Pages(BaseHTTPRequestHandler):
             self.send_header(nombre, valor)
         self.send_header("Content-Length", str(len(cuerpo)))
         self.end_headers()
-        self.wfile.write(cuerpo)
+        if enviar_cuerpo:
+            self.wfile.write(cuerpo)
 
     def log_message(self, formato: str, *args) -> None:
         pass

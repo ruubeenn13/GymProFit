@@ -468,6 +468,7 @@ h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; text-wrap: b
 .pilar .movil { width: min(64vw, 280px); margin-bottom: 36px; }
 
 /* ── La beta en tres pasos ──────────────────────────────────────── */
+/* Una tira troquelada en tres partes, oscura: el único panel claro es el dorsal */
 
 .beta { padding: 72px 0 24px; }
 .beta h2, .preguntas h2 {
@@ -482,8 +483,10 @@ h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; text-wrap: b
   padding: 0;
   list-style: none;
   display: grid;
-  gap: 14px;
   counter-reset: paso;
+  background: var(--surface);
+  border-radius: 14px;
+  box-shadow: 0 1px 1px var(--sombra), 0 22px 44px -26px var(--sombra);
 }
 .pasos li {
   counter-increment: paso;
@@ -491,10 +494,15 @@ h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; text-wrap: b
   grid-template-columns: 40px minmax(0, 1fr);
   gap: 14px;
   align-items: start;
-  padding: 22px;
-  background: var(--surface);
-  border: 1px solid var(--linea);
-  border-radius: 14px;
+  padding: 24px 22px;
+}
+/* El troquel entre parte y parte: una línea de puntos y una muesca en cada
+   borde, que deja ver la tela. En el móvil la tira va de arriba abajo. */
+.pasos li + li {
+  background:
+    radial-gradient(circle at 0 0, var(--bg) 7px, transparent 7.5px),
+    radial-gradient(circle at 100% 0, var(--bg) 7px, transparent 7.5px),
+    radial-gradient(circle, var(--stroke) 1.4px, transparent 1.9px) 0 0 / 9px 4px repeat-x;
 }
 /* Son una secuencia de verdad: el número es la información */
 .pasos li::before {
@@ -543,6 +551,22 @@ h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; text-wrap: b
   background: linear-gradient(var(--primary), var(--primary)) center / 18px 3px no-repeat;
 }
 .preguntas details p { margin: 0 0 22px; max-width: 40em; color: var(--text-2); }
+
+/* ── Cierre: la acción una última vez ───────────────────────────── */
+
+.cierre {
+  padding-block: 72px 8px;
+}
+.cierre p {
+  max-width: 14em;
+  margin: 0 0 26px;
+  font-family: var(--cond);
+  font-weight: 700;
+  font-size: clamp(36px, 8vw, 72px);
+  line-height: 0.9;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
 
 /* ── Pie ─────────────────────────────────────────────────────────── */
 
@@ -642,14 +666,21 @@ h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; text-wrap: b
   .pantallas[data-activa="progreso"] .guia[data-de="progreso"]::after { transform: scaleX(1); }
 
   .beta { padding-top: 96px; }
+  .cierre { padding-top: 112px; }
   /* Número, título y texto comparten filas en las tres tarjetas (subgrid) */
-  .pasos { grid-template-columns: repeat(3, 1fr); grid-template-rows: auto auto 1fr; gap: 0 18px; }
+  .pasos { grid-template-columns: repeat(3, 1fr); grid-template-rows: auto auto 1fr; }
   .pasos li {
     grid-row: span 3;
     grid-template-columns: 1fr;
     grid-template-rows: subgrid;
     row-gap: 0;
-    padding: 26px;
+    padding: 30px 32px;
+  }
+  .pasos li + li {
+    background:
+      radial-gradient(circle at 0 0, var(--bg) 7px, transparent 7.5px),
+      radial-gradient(circle at 0 100%, var(--bg) 7px, transparent 7.5px),
+      radial-gradient(circle, var(--stroke) 1.4px, transparent 1.9px) 0 0 / 4px 9px repeat-y;
   }
   .pasos li > div { display: contents; }
   .pasos li::before { font-size: 72px; margin-bottom: 14px; }
