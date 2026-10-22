@@ -36,6 +36,7 @@
             <com.google.android.material.button.MaterialButtonToggleGroup
                 android:id="@+id/chipsPeriodo"
                 style="@style/Widget.GymProFit.GrupoConectado"
+    app:checkedButton="@id/chipSemana"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 

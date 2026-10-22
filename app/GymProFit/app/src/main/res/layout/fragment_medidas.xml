@@ -110,6 +110,7 @@
                         <com.google.android.material.button.MaterialButtonToggleGroup
                             android:id="@+id/chipsMetrica"
                             style="@style/Widget.GymProFit.GrupoConectado"
+    app:checkedButton="@id/chipMetPeso"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp">
@@ -167,6 +168,7 @@
                         <com.google.android.material.button.MaterialButtonToggleGroup
                             android:id="@+id/chipsRango"
                             style="@style/Widget.GymProFit.GrupoConectado"
+    app:checkedButton="@id/chipRangoTodo"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp">
