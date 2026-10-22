@@ -196,9 +196,7 @@ public class PasoPlanFragment extends PasoAltaFragment {
         Movimiento.Paso paso = f -> {
             kcal.setText(entero.format(Math.round(n.calorias * f)));
             for (int i = 0; i < 3; i++) {
-                macros[i].setText(i == 0 && n.tieneRangoProteina()
-                        ? getString(R.string.proteina_rango, Math.round(gramos[i] * f), Math.round(n.proteinaMinima * f))
-                        : getString(R.string.alta_plan_gramos, Math.round(gramos[i] * f)));
+                macros[i].setText(getString(R.string.alta_plan_gramos, Math.round(gramos[i] * f)));
             }
             agua.setText(getString(R.string.alta_plan_litros, litros.format(n.agua * f)));
         };
@@ -214,8 +212,11 @@ public class PasoPlanFragment extends PasoAltaFragment {
         }
     }
 
-    // Sobre qué se calculó la proteína (GP-206); nada si el cálculo no lo sabe.
+    // El mínimo eficaz bajo la cifra y sobre qué se calculó la proteína (GP-206); cada cosa solo si se sabe.
     private void pintarNotaProteina(@NonNull ResultadoNutricional n) {
+        TextView rango = raiz.findViewById(R.id.macroProtPlan).findViewById(R.id.tvRangoMacro);
+        rango.setVisibility(n.tieneRangoProteina() ? View.VISIBLE : View.GONE);
+        if (n.tieneRangoProteina()) rango.setText(getString(R.string.proteina_minimo, n.proteinaMinima));
         TextView nota = raiz.findViewById(R.id.tvNotaProteina);
         int texto = ProteinaTexto.base(n.baseProteina);
         nota.setVisibility(texto == 0 ? View.GONE : View.VISIBLE);
