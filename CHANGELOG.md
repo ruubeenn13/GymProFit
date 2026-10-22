@@ -2,6 +2,14 @@
 
 Historial de cambios del proyecto (API Spring Boot + app Android). Ver también el [README](README.md).
 
+### 2026-10-22
+
+| Hash | Descripción |
+|---|---|
+| `5777b11` | docs(documentacion): el [informe de GP-206](documentacion/estado/2026-10-22-gp-206-proteina.md). |
+| `ec604a3` | fix(android): el mínimo eficaz de la proteína va bajo la cifra en «Tu plan» (GP-206); en la misma línea partía «Proteína» en vertical. |
+| `d63b325` | feat(android,documentacion): **la proteína sigue la evidencia y los datos de cada persona** (GP-206, DEC-054): sobre masa magra con un % de grasa válido y reciente, sobre un peso de referencia sin él, con su mínimo eficaz a la vista en el alta y en Nutrición. **El objetivo guardado ya no se recalcula solo** al abrir una pantalla: recalculan el alta, Editar perfil y el perfil remoto. `MedicionCorporal.grasaCorporal` pasa a `Double`. Sin cambios en la API. |
+
 ### 2026-10-21
 
 | Hash | Descripción |
