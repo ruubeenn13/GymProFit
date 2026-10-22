@@ -168,8 +168,8 @@ Lo que un monitor dice así en un gimnasio español. Dentro de un nombre en espa
 ## 4. Descripciones
 
 - **De tú, en imperativo**: «túmbate», «agarra», «mantén», «baja», «exhala». Nunca «usted» ni formas como «recuéstese», «asegúrese», «colóquese».
-- **De 3 a 6 pasos numerados** (`1. …`, uno por línea), con frases cortas. Si el original solo da dos ideas, son dos pasos: no se rellena.
-- **Sin inventar técnica**: todo lo que se dice está en el texto en inglés. Se puede unir o partir pasos, pero no añadir consejos, series, repeticiones ni advertencias que el original no traiga.
+- **De 3 a 6 pasos numerados** (`1. …`, uno por línea), con frases cortas y en este orden: posición inicial → movimiento → vuelta → un consejo de seguridad o de técnica. Si el original no lo dice, se completa con técnica estándar y segura de gimnasio.
+- **Sin variantes raras ni cifras de calorías** (DEC-004). Las medidas van en lenguaje de gimnasio («algo más abiertas que los hombros»), no en centímetros. Una descripción nunca es una definición («X es un ejercicio…») ni un calco del inglés («dominada con barbilla»).
 - Orden natural: posición de partida, movimiento, vuelta a la posición, repetición. Una respiración solo si el original la menciona.
 - Medidas: las pulgadas y las libras del original pasan a centímetros y kilos redondeados («12 pulgadas» → «unos 30 cm»).
 - Español de gimnasio: «mancuernas», «barra», «polea», «fitball», «banco», «rack», «agarre», «series y repeticiones».
@@ -190,4 +190,4 @@ Los únicos tres ejercicios cuyo nombre en español es el mismo que el inglés, 
 
 ## 7. Descripciones que quedan vacías
 
-Siete ejercicios no tienen texto original que traducir (o el original no es una descripción: «Mira el vídeo…», un enlace, «Halterofilia olímpica»). No se inventa técnica: su descripción queda vacía en español, como estaba en inglés. `Hip_Circles_prone`, `Iron_Cross`, `One-Arm_Kettlebell_Swings`, `Power_Clean`, `Quad_Stretch`, `Romanian_Deadlift` (esta sí sale en plantillas) y `Side_Jackknife`.
+Siete ejercicios no tenían texto original que traducir (o el original no era una descripción: «Mira el vídeo…», un enlace, «Halterofilia olímpica»): `Hip_Circles_prone`, `Iron_Cross`, `One-Arm_Kettlebell_Swings`, `Power_Clean`, `Quad_Stretch`, `Romanian_Deadlift` y `Side_Jackknife`. Desde el 22-10 (GP-217, segunda pasada) tienen descripción escrita con técnica estándar de gimnasio, no traducida del original; un test comprueba que ninguna descripción del catálogo queda vacía.

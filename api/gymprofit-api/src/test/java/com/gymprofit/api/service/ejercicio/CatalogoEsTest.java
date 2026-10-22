@@ -173,23 +173,41 @@ class CatalogoEsTest {
     }
 
     @Test
-    @DisplayName("cada descripción son de 1 a 6 pasos numerados, y solo siete quedan vacías (sin texto original)")
+    @DisplayName("cada descripción son de 3 a 6 pasos numerados, ninguna queda vacía")
     void pasos_numerados() {
-        List<String> vacias = new ArrayList<>();
         for (CatalogoEs.Entrada e : real().todas()) {
-            if (e.descripcion().isEmpty()) {
-                vacias.add(e.fedId());
-                continue;
-            }
+            assertThat(e.descripcion()).as("descripción vacía en " + e.fedId()).isNotEmpty();
             String[] pasos = e.descripcion().split("\n");
-            assertThat(pasos.length).as("pasos de " + e.fedId()).isBetween(1, 6);
+            assertThat(pasos.length).as("pasos de " + e.fedId()).isBetween(3, 6);
             for (int i = 0; i < pasos.length; i++) {
                 assertThat(pasos[i]).as("paso " + (i + 1) + " de " + e.fedId()).startsWith((i + 1) + ". ");
                 assertThat(pasos[i].length()).as("paso vacío en " + e.fedId()).isGreaterThan(5);
             }
         }
-        assertThat(vacias).containsExactlyInAnyOrder("Hip_Circles_prone", "Iron_Cross", "One-Arm_Kettlebell_Swings",
-                "Power_Clean", "Quad_Stretch", "Romanian_Deadlift", "Side_Jackknife");
+    }
+
+    @Test
+    @DisplayName("ninguna descripción empieza por una definición («X es un ejercicio…») ni da medidas de 90 cm")
+    void sin_definiciones_ni_medidas_de_calco() {
+        Pattern definicion = Pattern.compile("^1\\. [^.]{0,80}? (es|son) (un|una|el|la) ");
+        for (CatalogoEs.Entrada e : real().todas()) {
+            assertThat(definicion.matcher(e.descripcion()).find()).as("definición en " + e.fedId()).isFalse();
+            assertThat(e.descripcion()).as("«90 cm» en " + e.fedId()).doesNotContain("90 cm");
+            assertThat(e.descripcion()).as("calco «dominada con barbilla» en " + e.fedId())
+                    .doesNotContain("dominada con barbilla");
+            assertThat(e.descripcion()).as("«Haz un/una» como primer paso en " + e.fedId())
+                    .doesNotStartWith("1. Haz un ").doesNotStartWith("1. Haz una ");
+        }
+    }
+
+    @Test
+    @DisplayName("los siete que estaban vacíos ya tienen descripción escrita")
+    void los_siete_ya_no_estan_vacios() {
+        CatalogoEs c = real();
+        for (String f : List.of("Romanian_Deadlift", "Iron_Cross", "One-Arm_Kettlebell_Swings", "Side_Jackknife",
+                "Hip_Circles_prone", "Quad_Stretch", "Power_Clean")) {
+            assertThat(c.de(f).orElseThrow().descripcion()).as(f).isNotEmpty();
+        }
     }
 
     @Test
@@ -201,7 +219,7 @@ class CatalogoEsTest {
     }
 
     @Test
-    @DisplayName("los 62 ejercicios de las plantillas y los programas conservan el nombre que aprobó el propietario")
+    @DisplayName("los 62 ejercicios de las plantillas y los programas conservan el nombre que aprobó el propietario y tienen descripción")
     void plantillas_con_su_nombre() throws IOException {
         JsonNode catalogo = new ObjectMapper().readTree(Files.readAllBytes(raiz().resolve(
                 "api/gymprofit-api/src/main/resources/db/semillas/catalogo-plantillas-v1.json")));
@@ -210,6 +228,8 @@ class CatalogoEsTest {
         for (JsonNode e : catalogo.get("ejercicios")) {
             assertThat(c.de(e.get("fedId").asText())).as(e.get("fedId").asText()).isPresent();
             assertThat(c.de(e.get("fedId").asText()).orElseThrow().nombre()).isEqualTo(e.get("nombre").asText());
+            assertThat(c.de(e.get("fedId").asText()).orElseThrow().descripcion())
+                    .as("descripción de " + e.get("fedId").asText()).isNotEmpty();
         }
     }
 
