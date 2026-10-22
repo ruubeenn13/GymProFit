@@ -1,6 +1,36 @@
 {
   "version": 1,
   "skills": {
+    "android-cli": {
+      "source": "android/skills",
+      "sourceType": "github",
+      "skillPath": "devtools/android-cli/SKILL.md",
+      "computedHash": "67308215de0bf09ed27f059d7d53e0d956a0c32954217b907c393501c582a4cb"
+    },
+    "android-design": {
+      "source": "allexp1/android-design",
+      "sourceType": "github",
+      "skillPath": "android-design/SKILL.md",
+      "computedHash": "ad2c68b8851e1567de1975bbc0f6420d429c98f58583905572f0c1beb534e2dd"
+    },
+    "android-intent-security": {
+      "source": "android/skills",
+      "sourceType": "github",
+      "skillPath": "security/android-intent-security/SKILL.md",
+      "computedHash": "03610900557109083941ad1868882f74521294055d8e4354f5487f6653616e55"
+    },
+    "android-permissions-security": {
+      "source": "android/skills",
+      "sourceType": "github",
+      "skillPath": "security/android-permissions-security/SKILL.md",
+      "computedHash": "1494a6fee121de3116cb70803ff7c4c3dd2e8052ffe9a01d2c579af5deb1d07b"
+    },
+    "anr-audit-and-fix": {
+      "source": "android/skills",
+      "sourceType": "github",
+      "skillPath": "performance/anr-audit-and-fix/SKILL.md",
+      "computedHash": "361f9dc0bde520a7ca500272556c05c0649c4f21d5b1779f32ccd4a441cad13f"
+    },
     "design-taste-frontend": {
       "source": "Leonxlnx/taste-skill",
       "sourceType": "github",
@@ -18,6 +48,18 @@
       "sourceType": "github",
       "skillPath": ".agents/skills/impeccable/SKILL.md",
       "computedHash": "1a563228fc964107046ceda86034c60f527b1037a40b9372fac16e2473a83c82"
+    },
+    "play-policy-insights": {
+      "source": "android/skills",
+      "sourceType": "github",
+      "skillPath": "play/play-policy-insights/SKILL.md",
+      "computedHash": "be04243a343915b08c633cd4356b58969d125aa7339f291e7a0d1a7e60e4ea8d"
+    },
+    "r8-analyzer": {
+      "source": "android/skills",
+      "sourceType": "github",
+      "skillPath": "performance/r8-analyzer/SKILL.md",
+      "computedHash": "5e2384cf330c98600ff86f74a42795adafb75c69e9d3a883e662edc23d1c09ba"
     }
   }
 }

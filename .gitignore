@@ -18,6 +18,7 @@ TODO.md
 # Las skills del proyecto si se versionan (GP-205): son las mismas para todos.
 .claude/*
 !.claude/skills/
+!.claude/agents/
 
 # SO
 .DS_Store
