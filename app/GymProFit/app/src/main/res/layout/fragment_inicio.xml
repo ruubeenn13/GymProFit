@@ -449,7 +449,7 @@
                         android:gravity="center"
                         android:text="@string/inicio_fundador_inicial"
                         android:textAppearance="@style/TextAppearance.GymProFit.Display"
-                        android:textSize="20sp"
+                        android:textSize="@dimen/text_title"
                         android:textColor="?attr/colorOnPrimaryContainer"
                         android:importantForAccessibility="no" />
 

@@ -117,6 +117,7 @@ public class InicioFragment extends BaseFragment {
         avatar.setOnClickListener(v -> irATab(NavTabs.PROGRESO));
         findViewById(R.id.btnRegistrarComida).setOnClickListener(v -> registrarComida());
         findViewById(R.id.cardNutricionHoy).setOnClickListener(v -> irATab(NavTabs.NUTRICION));
+        nombrarTarjetaNutricion(null);
         prepararPrimerDia();
 
         // Hoy toca dice «En curso» con la sesión de su rutina en marcha (GP-012). Al
@@ -626,8 +627,18 @@ public class InicioFragment extends BaseFragment {
         macro(R.id.tvMacroCarbosHoy, R.string.macro_carbos_corto, d.carbohidratos, d.objetivoCarbohidratos, d.estadoCarbohidratos());
         macro(R.id.tvMacroGrasasHoy, R.string.macro_grasas_corto, d.grasas, d.objetivoGrasas, d.estadoGrasas());
 
-        findViewById(R.id.filaKcalHoy).setContentDescription(
-                getString(R.string.nutricion_hoy_a11y, nf.format(d.kcal), nf.format(d.objetivoKcal)));
+        String resumen = getString(R.string.nutricion_hoy_a11y, nf.format(d.kcal), nf.format(d.objetivoKcal));
+        findViewById(R.id.filaKcalHoy).setContentDescription(resumen);
+        nombrarTarjetaNutricion(resumen);
+    }
+
+    // La tarjeta de nutrición es pulsable (abre la pestaña): su nombre accesible es el título
+    // y, cuando ya hay datos, lo que cuenta la fila de kcal (GP-212). El «Registrar» de dentro
+    // sigue siendo su propio foco.
+    private void nombrarTarjetaNutricion(@Nullable String resumen) {
+        String titulo = getString(R.string.nutricion_de_hoy);
+        findViewById(R.id.cardNutricionHoy).setContentDescription(
+                resumen == null ? titulo : titulo + ". " + resumen);
     }
 
     // Sin peso ni altura (GP-103, «Prefiero no decirlo»): lo comido, sin objetivo ni barra.
@@ -644,8 +655,9 @@ public class InicioFragment extends BaseFragment {
         TextView grasas = findViewById(R.id.tvMacroGrasasHoy);
         grasas.setText(getString(R.string.macro_grasas_solo, (int) Math.round(d.grasas)));
         grasas.setTextColor(normal);
-        findViewById(R.id.filaKcalHoy).setContentDescription(
-                getString(R.string.nutricion_sin_objetivo_a11y, nf.format(d.kcal)));
+        String resumen = getString(R.string.nutricion_sin_objetivo_a11y, nf.format(d.kcal));
+        findViewById(R.id.filaKcalHoy).setContentDescription(resumen);
+        nombrarTarjetaNutricion(resumen);
     }
 
     private void macro(int id, int formato, double valor, int objetivo, DiaNutricion.Estado estado) {
