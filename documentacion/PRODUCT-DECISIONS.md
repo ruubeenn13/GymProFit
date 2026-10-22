@@ -933,6 +933,33 @@ El `LIKE` con comodín delante no usa índice: barre la tabla entera en cada pul
 
 ---
 
+### DEC-054 · La proteína recomendada sigue la evidencia y los datos de cada persona, y el objetivo guardado no se recalcula solo
+**Estado:** Aceptada · **Fecha:** 2026-10-22 · **Tarea:** GP-206 · **Sustituye a:** los 2,0 / 2,2 / 2,5 / 1,8 g/kg sobre peso total de `CalculadoraNutricional`
+
+**Contexto.** La app daba 2,0 (perder), 2,2 (ganar), 2,5 (fuerza) y 1,8 (mantener) g por kilo de peso total. Es más de lo que respalda la evidencia y crece sin freno con la grasa: 120 kg a 1,70 m perdiendo grasa daban 240 g, cuando el músculo a proteger no crece con la grasa.
+
+**Decisión.** Calorías, grasas y agua no cambian; los carbohidratos siguen saliendo del resto. La proteína:
+
+- **Con un % de grasa válido** (de 3 a 60, medido hace 90 días o menos; se usa la medición más reciente que lo tenga): sobre masa magra, `MM = peso × (1 − %/100)`. **Perder grasa 2,4 g/kg MM; resto de objetivos 2,0 g/kg MM.**
+- **Sin él**: sobre el peso de referencia. **Perder 2,0 · ganar 1,8 · fuerza 1,8 · mantener 1,6 g/kg.** El peso de referencia es el total, salvo con IMC ≥ 30: el peso que daría IMC 25 con su altura.
+- **Mínimo eficaz** = 1,6 g/kg del peso de referencia (también con %). Se enseña junto a la cifra: «157 g (mínimo eficaz: 126 g)». Nunca supera la recomendada: con mucha grasa (p. ej. 40 %) la masa magra puede dar menos de 1,6 × peso, y entonces el mínimo se iguala a la cifra y solo se muestra esta.
+- La cifra se trunca a entero (como siempre) y el mínimo se redondea.
+- Una línea dice sobre qué se calculó: masa magra, peso, o peso de referencia (IMC 25).
+- **De 14 a 17 años**, «Perder grasa» sigue dando mantenimiento (GP-103), también en proteína.
+- **El % de grasa no se pide en el alta**: se usa solo si ya existe una medición (`mediciones_corporales.grasa_corporal`, NULL permitido). Un NULL nunca se trata como 0 %.
+
+**El objetivo guardado no se recalcula solo.** Hasta GP-206, `DiaNutricion.objetivo(prefs)` recalculaba y sobrescribía el objetivo en cada apertura de pantalla. Ahora lee lo guardado y solo calcula si no hay nada; recalculan el alta, Editar perfil y el perfil remoto cuando cambia (GP-129). Así quien ya tenía 240 g sigue viéndolos hasta que recalcule él. Un objetivo guardado antes de GP-206 no trae mínimo ni base: se enseña la cifra sola, sin inventar el rango.
+
+**Fuentes.**
+- Morton RW et al., *A systematic review, meta-analysis and meta-regression of the effect of protein supplementation on resistance training-induced gains in muscle mass and strength in healthy adults*, Br J Sports Med 2018;52:376-384. El beneficio deja de crecer hacia 1,6 g/kg/día.
+- Jäger R et al., *International Society of Sports Nutrition Position Stand: protein and exercise*, J Int Soc Sports Nutr 2017;14:20. 1,4–2,0 g/kg/día en general; más, sobre masa magra, en déficit calórico.
+
+**Consecuencias.** Sin cambios en la API. El `% de grasa` y su fecha se guardan en el móvil, ligados a la cuenta, cada vez que se cargan las mediciones. Tres claves nuevas en las preferencias (mínimo, base y la grasa reciente). Las cuentas con el objetivo viejo conservan su cifra hasta pulsar Guardar en Editar perfil.
+
+**Qué la invalidaría.** Una guía de consenso nueva que cambie los g/kg, o que la medición del % de grasa en móvil (impedancia, calibres, estimación a ojo) resulte tan poco fiable que mande más ruido que señal: entonces la regla sin % pasa a ser la única.
+
+---
+
 ## Pendientes de decidir
 
 Se registran aquí para que no se decidan por omisión.

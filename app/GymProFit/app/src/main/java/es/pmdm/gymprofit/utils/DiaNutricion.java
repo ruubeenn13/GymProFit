@@ -31,13 +31,17 @@ public final class DiaNutricion {
     public final boolean sinObjetivo;
     /** De 14 a 17 años con «Perder grasa»: el objetivo es el de mantenimiento, y se dice. */
     public final boolean mantenimientoPorEdad;
+    /** Mínimo eficaz de proteína y sobre qué se calculó (GP-206); 0 si no se conocen. */
+    public final int proteinaMinima, baseProteina;
 
     /** Cómo se pinta una cifra respecto a su objetivo. */
     public enum Estado { NORMAL, LOGRADO, PASADO }
 
     DiaNutricion(int kcal, double proteinas, double carbohidratos, double grasas,
                  int objetivoKcal, int objetivoProteinas, int objetivoCarbohidratos, int objetivoGrasas,
-                 boolean sinObjetivo, boolean mantenimientoPorEdad) {
+                 boolean sinObjetivo, boolean mantenimientoPorEdad, int proteinaMinima, int baseProteina) {
+        this.proteinaMinima = proteinaMinima;
+        this.baseProteina = baseProteina;
         this.sinObjetivo = sinObjetivo;
         this.mantenimientoPorEdad = mantenimientoPorEdad;
         this.kcal = kcal;
@@ -67,15 +71,17 @@ public final class DiaNutricion {
                 g += x.getTotalGrasas();
             }
         }
-        if (objetivo == null) return new DiaNutricion(kcal, p, c, g, 0, 0, 0, 0, true, false);
+        if (objetivo == null) return new DiaNutricion(kcal, p, c, g, 0, 0, 0, 0, true, false, 0, 0);
         return new DiaNutricion(kcal, p, c, g,
                 objetivo.calorias, objetivo.proteinas, objetivo.carbohidratos, objetivo.grasas,
-                false, objetivo.mantenimientoPorEdad);
+                false, objetivo.mantenimientoPorEdad, objetivo.proteinaMinima, objetivo.baseProteina);
     }
 
     /**
-     * El objetivo diario a partir del perfil guardado, y lo deja guardado para las
-     * pantallas que lo leen de preferencias.
+     * El objetivo diario guardado. Lo guardado no se recalcula solo (GP-206, DEC-054): solo se
+     * calcula si no hay nada, y recalculan el alta, Editar perfil y el perfil remoto con
+     * {@link #recalcular}. Así un cambio en la regla no mueve el objetivo de nadie al abrir una
+     * pantalla.
      *
      * @return null si el perfil no tiene peso y altura de esta cuenta: «Prefiero no
      *         decirlo» en el alta (GP-103), o una cuenta que nunca los puso.
@@ -83,10 +89,37 @@ public final class DiaNutricion {
     @Nullable
     public static ResultadoNutricional objetivo(PreferencesManager prefs) {
         if (!prefs.hayDatosParaCalorias()) return null;
+        if (!prefs.hayObjetivoGuardado()) return recalcular(prefs);
+        ResultadoNutricional r = new ResultadoNutricional(prefs.getCaloriasDiarias(), prefs.getProteinasDiarias(),
+                prefs.getCarbosDiarios(), prefs.getGrasasDiarias(), prefs.getAguaDiaria());
+        r.proteinaMinima = prefs.getProteinaMinima();
+        r.baseProteina = prefs.getBaseProteina();
+        int edad = prefs.getEdad();
+        r.mantenimientoPorEdad = CalculadoraNutricional.OBJETIVO_PERDER_PESO.equals(prefs.getObjetivo())
+                && edad > 0 && edad <= CalculadoraNutricional.EDAD_SIN_DEFICIT;
+        return r;
+    }
+
+    /**
+     * Calcula el objetivo con el perfil guardado y el % de grasa reciente que haya en el
+     * móvil, y lo deja guardado.
+     *
+     * @return null si no hay datos para calcular (ver {@link #objetivo})
+     */
+    @Nullable
+    public static ResultadoNutricional recalcular(PreferencesManager prefs) {
+        return recalcular(prefs, prefs.getGrasaReciente());
+    }
+
+    /** Como {@link #recalcular(PreferencesManager)} con un % de grasa dado (null: ninguno). */
+    @Nullable
+    public static ResultadoNutricional recalcular(PreferencesManager prefs, @Nullable GrasaReciente.Medida grasa) {
+        if (!prefs.hayDatosParaCalorias()) return null;
         ResultadoNutricional r = CalculadoraNutricional.calcular(
                 prefs.getPeso(), prefs.getAltura(), prefs.getEdad(),
-                "HOMBRE".equals(prefs.getSexo()), prefs.getActividad(), prefs.getObjetivo());
-        prefs.saveResultadoNutricional(r.calorias, r.proteinas, r.carbohidratos, r.grasas, r.agua);
+                "HOMBRE".equals(prefs.getSexo()), prefs.getActividad(), prefs.getObjetivo(),
+                grasa == null ? null : grasa.pct, grasa == null ? 0 : grasa.dias(System.currentTimeMillis()));
+        prefs.saveResultadoNutricional(r);
         return r;
     }
 

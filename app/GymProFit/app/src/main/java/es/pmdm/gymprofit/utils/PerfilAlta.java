@@ -72,7 +72,7 @@ public final class PerfilAlta {
         if (!r.objetivo.isEmpty()) prefs.saveObjetivo(r.objetivo);
         if (!r.nivel.isEmpty()) prefs.saveNivel(NivelVisible.valor(r.nivel));
         if (!r.donde.isEmpty()) prefs.saveProgramasFiltros(r.donde, r.dias);
-        DiaNutricion.objetivo(prefs);
+        DiaNutricion.recalcular(prefs);
     }
 
     /**

@@ -64,7 +64,7 @@ public final class PerfilRemoto {
         PerfilCuenta.Resultado r = PerfilCuenta.alEntrar(prefs, usuario, PerfilCuenta.deUsuario(u));
         // Con otro peso, otra edad u otro objetivo, el objetivo nutricional guardado ya no
         // vale: se recalcula ya, para las pantallas que lo leen de preferencias (GP-129).
-        if (r.cambiado) DiaNutricion.objetivo(prefs);
+        if (r.cambiado) DiaNutricion.recalcular(prefs);
         if (r.subir.isEmpty()) return;
 
         ApiClient.service(UsuarioApi.class).patch(u.getId(), r.subir).enqueue(new ApiCallback<Void>() {

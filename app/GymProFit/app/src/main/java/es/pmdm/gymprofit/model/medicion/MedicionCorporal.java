@@ -20,7 +20,8 @@ public class MedicionCorporal {
     // Índice de masa corporal calculado.
     private double imc;
     // Porcentaje de grasa corporal.
-    private double grasaCorporal;
+    // Nulo si no se midió: nunca equivale a un 0 % (GP-206).
+    private Double grasaCorporal;
     // Porcentaje/masa de masa muscular.
     private double masaMuscular;
     // Perímetro de cintura (cm).
@@ -54,8 +55,8 @@ public class MedicionCorporal {
     public double getImc() { return imc; }
     public void setImc(double imc) { this.imc = imc; }
 
-    public double getGrasaCorporal() { return grasaCorporal; }
-    public void setGrasaCorporal(double grasaCorporal) { this.grasaCorporal = grasaCorporal; }
+    public Double getGrasaCorporal() { return grasaCorporal; }
+    public void setGrasaCorporal(Double grasaCorporal) { this.grasaCorporal = grasaCorporal; }
 
     public double getMasaMuscular() { return masaMuscular; }
     public void setMasaMuscular(double masaMuscular) { this.masaMuscular = masaMuscular; }

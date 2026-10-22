@@ -50,6 +50,12 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
     private static final String KEY_CARBOS = "carbos_diarios";
     private static final String KEY_GRASAS = "grasas_diarias";
     private static final String KEY_AGUA = "agua_diaria";
+    // GP-206: mínimo eficaz y base de la proteína guardada, y el % de grasa reciente de la cuenta.
+    private static final String KEY_PROTEINA_MIN = "proteina_minima";
+    private static final String KEY_PROTEINA_BASE = "proteina_base";
+    private static final String KEY_GRASA_PCT = "grasa_reciente_pct";
+    private static final String KEY_GRASA_FECHA = "grasa_reciente_fecha";
+    private static final String KEY_GRASA_DUENO = "grasa_reciente_dueno";
     private static final String KEY_ONBOARDING = "onboarding_completado";
     private static final String KEY_ROL = "usuario_rol";
     private static final String KEY_PESO   = "usuario_peso";
@@ -372,14 +378,52 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
         return PerfilCuenta.usable(PerfilCuenta.propiedad(getDuenoPerfil(), getCuentasConOnboarding(), getUsername()));
     }
 
-    // Guarda de una sola vez el resultado nutricional calculado en el onboarding.
-    public void saveResultadoNutricional(int calorias, int proteinas, int carbos, int grasas, double agua) {
-        editor.putInt(KEY_CALORIAS, calorias);
-        editor.putInt(KEY_PROTEINAS, proteinas);
-        editor.putInt(KEY_CARBOS, carbos);
-        editor.putInt(KEY_GRASAS, grasas);
-        editor.putFloat(KEY_AGUA, (float) agua);
+    // Guarda de una sola vez el resultado nutricional calculado (alta, Editar perfil, perfil remoto).
+    public void saveResultadoNutricional(ResultadoNutricional r) {
+        editor.putInt(KEY_CALORIAS, r.calorias);
+        editor.putInt(KEY_PROTEINAS, r.proteinas);
+        editor.putInt(KEY_CARBOS, r.carbohidratos);
+        editor.putInt(KEY_GRASAS, r.grasas);
+        editor.putFloat(KEY_AGUA, (float) r.agua);
+        editor.putInt(KEY_PROTEINA_MIN, r.proteinaMinima);
+        editor.putInt(KEY_PROTEINA_BASE, r.baseProteina);
         editor.apply();
+    }
+
+    /** Si ya hay un objetivo calculado y guardado (GP-206: lo guardado no se recalcula solo). */
+    public boolean hayObjetivoGuardado() { return prefs.contains(KEY_CALORIAS); }
+
+    /** Mínimo eficaz de proteína guardado; 0 si el objetivo es anterior a GP-206. */
+    public int getProteinaMinima() { return prefs.getInt(KEY_PROTEINA_MIN, 0); }
+
+    /** Una de {@code ResultadoNutricional.BASE_*}; desconocida si el objetivo es anterior a GP-206. */
+    public int getBaseProteina() { return prefs.getInt(KEY_PROTEINA_BASE, ResultadoNutricional.BASE_DESCONOCIDA); }
+
+    /**
+     * Guarda el % de grasa más reciente de la cuenta actual, o lo borra si no hay ninguno
+     * (null). Ligado al usuario para no usar el de otra cuenta del mismo móvil.
+     */
+    public void saveGrasaReciente(@Nullable GrasaReciente.Medida m) {
+        if (m == null) {
+            editor.remove(KEY_GRASA_PCT).remove(KEY_GRASA_FECHA).remove(KEY_GRASA_DUENO);
+        } else {
+            editor.putString(KEY_GRASA_PCT, Double.toString(m.pct));
+            editor.putLong(KEY_GRASA_FECHA, m.fechaMs);
+            editor.putString(KEY_GRASA_DUENO, getUsername());
+        }
+        editor.apply();
+    }
+
+    /** El % de grasa reciente guardado de la cuenta actual, o null. */
+    @Nullable
+    public GrasaReciente.Medida getGrasaReciente() {
+        String pct = prefs.getString(KEY_GRASA_PCT, null);
+        if (pct == null || !getUsername().equals(prefs.getString(KEY_GRASA_DUENO, null))) return null;
+        try {
+            return new GrasaReciente.Medida(Double.parseDouble(pct), prefs.getLong(KEY_GRASA_FECHA, 0));
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     /**

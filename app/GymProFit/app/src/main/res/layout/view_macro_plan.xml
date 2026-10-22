@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   view_macro_plan — un macro en «Tu plan» (GP-103): su punto de color, el nombre y los
-  gramos, que cuentan al entrar. TalkBack lo lee con la lista entera.
+  gramos, que cuentan al entrar. TalkBack lo lee con la lista entera. En la proteína, debajo,
+  «mínimo eficaz: 126 g» (GP-206): en la misma línea no cabe y partía el nombre en vertical.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:importantForAccessibility="noHideDescendants">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
     <View
         android:id="@+id/puntoMacro"
@@ -30,4 +36,15 @@
         android:fontFeatureSettings="tnum"
         android:textSize="@dimen/text_caption"
         android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvRangoMacro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:gravity="end"
+        android:visibility="gone"
+        android:textSize="@dimen/text_caption"
+        android:textColor="?attr/colorOnSurfaceVariant" />
 </LinearLayout>
