@@ -108,6 +108,38 @@ public class SesionEnCurso {
         /** Día de la última vez, «yyyy-MM-ddTHH:mm:ss»; null si no la hubo. */
         @Nullable public String anteriorFecha;
         public List<SerieAnterior> anterior = new ArrayList<>();
+
+        /** Si ya se supo cuál es su mejor marca (GP-210). Sin saberlo no se celebra nada. */
+        public boolean marcaCargada;
+        /** Su mejor marca de siempre antes de esta sesión; null si nunca la hubo. */
+        @Nullable public Marca marca;
+        /**
+         * La serie que batió la marca y se celebró. Una sola por ejercicio y sesión
+         * (DEC-039, decisión 4 de la firma visual): que esté puesta ya es haberla celebrado.
+         */
+        @Nullable public Long recordSerieId;
+    }
+
+    /**
+     * Una marca de un ejercicio, con la misma regla que la API (GP-088): kilos con sus
+     * repeticiones, solo repeticiones o segundos. El peso va como texto con punto
+     * decimal («82.5») para comparar sin errores de coma flotante.
+     */
+    public static class Marca {
+        /** PESO, REPETICIONES o TIEMPO, como {@code Record.TIPO_*}. */
+        public String tipo;
+        @Nullable public String peso;
+        public int repeticiones;
+        public int segundos;
+
+        public Marca() { }
+
+        public Marca(String tipo, @Nullable String peso, int repeticiones, int segundos) {
+            this.tipo = tipo;
+            this.peso = peso;
+            this.repeticiones = repeticiones;
+            this.segundos = segundos;
+        }
     }
 
     /** Una serie tal como se va escribiendo. */

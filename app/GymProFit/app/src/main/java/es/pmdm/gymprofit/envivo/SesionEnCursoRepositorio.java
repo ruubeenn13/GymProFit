@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -57,7 +58,28 @@ public class SesionEnCursoRepositorio {
 
         void ultimaVez(List<Integer> ejercicioIds, Respuesta<List<UltimaVez>> r);
 
+        /**
+         * La mejor marca de siempre de cada ejercicio (GP-210). Los que nunca tuvieron una
+         * no vienen en el mapa.
+         */
+        void mejoresMarcas(List<Integer> ejercicioIds, Respuesta<Map<Integer, SesionEnCurso.Marca>> r);
+
         void guardarCompleta(Map<String, Object> cuerpo, Respuesta<SesionEntrenamiento> r);
+    }
+
+    /** Un récord recién batido en mitad de la sesión: la pantalla lo celebra una vez. */
+    public static final class RecordBatido {
+        public final long ejercicioId;
+        public final long serieId;
+        public final SesionEnCurso.Marca nueva;
+        @Nullable public final SesionEnCurso.Marca anterior;
+
+        RecordBatido(long ejercicioId, long serieId, SesionEnCurso.Marca nueva, @Nullable SesionEnCurso.Marca anterior) {
+            this.ejercicioId = ejercicioId;
+            this.serieId = serieId;
+            this.nueva = nueva;
+            this.anterior = anterior;
+        }
     }
 
     /** La hora, para que los tests la muevan. */
@@ -168,6 +190,9 @@ public class SesionEnCursoRepositorio {
     private boolean reintentoAlAbrirHecho;
     private boolean pidiendoEjercicios;
     private boolean pidiendoUltimaVez;
+    private boolean pidiendoMarcas;
+    /** El récord que acaba de batir la última serie marcada, hasta que la pantalla lo recoja. */
+    @Nullable private RecordBatido recordPendiente;
 
     /** La de la app, con su fichero en files/sesion_en_curso. */
     @NonNull
@@ -376,6 +401,7 @@ public class SesionEnCursoRepositorio {
                 if (actual() != pedida) return;
                 LogicaSesion.aplicarUltimaVez(pedida, pedidos, lista);
                 publicar(pedida);
+                pedirMarcas();
                 // Si eran más de 30, la siguiente tanda.
                 pedirUltimaVez();
             }
@@ -387,6 +413,62 @@ public class SesionEnCursoRepositorio {
                 pidiendoUltimaVez = false;
             }
         });
+    }
+
+    /**
+     * Pregunta la mejor marca de los ejercicios que ya se han entrenado alguna vez (GP-210),
+     * de 30 en 30, cuando ya se sabe su última vez. Sin red se queda sin preguntar —no se
+     * celebra nada, que es lo seguro— y se vuelve a pedir al abrir la pantalla.
+     */
+    public void pedirMarcas() {
+        SesionEnCurso s = actual();
+        if (s == null || pidiendoMarcas) return;
+        List<Integer> faltan = LogicaRecordVivo.sinMarca(s);
+        if (faltan.isEmpty()) {
+            // Puede que sinMarca haya dado por sabido el de algún ejercicio nuevo.
+            almacen.escribir(s);
+            return;
+        }
+        List<Integer> pedidos = new ArrayList<>(faltan.subList(0, Math.min(MAX_POR_PETICION, faltan.size())));
+        pidiendoMarcas = true;
+        final SesionEnCurso pedida = s;
+        red.mejoresMarcas(pedidos, new Red.Respuesta<Map<Integer, SesionEnCurso.Marca>>() {
+            @Override public void ok(Map<Integer, SesionEnCurso.Marca> marcas) {
+                pidiendoMarcas = false;
+                if (actual() != pedida) return;
+                LogicaRecordVivo.aplicarMarcas(pedida, pedidos, marcas != null ? marcas : new HashMap<>());
+                publicar(pedida);
+                pedirMarcas();
+            }
+
+            @Override public void fallo(int codigo, String mensaje) {
+                // Se deja sin preguntar a propósito: sin saber su marca no se celebra nada
+                // (mejor ningún récord que uno falso), y «Tu récord» no sale. Se vuelve a
+                // pedir al abrir la pantalla.
+                pidiendoMarcas = false;
+            }
+        });
+    }
+
+    /**
+     * El récord que acaba de batir la última serie marcada, para celebrarlo. Se entrega
+     * una sola vez; si la pantalla no estaba delante, no se celebra después.
+     */
+    @Nullable
+    public RecordBatido tomarRecord() {
+        RecordBatido r = recordPendiente;
+        recordPendiente = null;
+        return r;
+    }
+
+    // Tras marcar una serie: si bate la marca del ejercicio y es la primera vez en la sesión,
+    // queda para la pantalla. Lo hecho se guarda con la sesión (recordSerieId).
+    private void alBatirMarca(SesionEnCurso s, long serieId) {
+        SesionEnCurso.Ejercicio e = ejercicioDeSerie(s, serieId);
+        if (e == null) return;
+        SesionEnCurso.Marca anterior = e.marca;
+        SesionEnCurso.Marca nueva = LogicaRecordVivo.alMarcar(e, serieId);
+        if (nueva != null) recordPendiente = new RecordBatido(e.id, serieId, nueva, anterior);
     }
 
     // ── Editar ───────────────────────────────────────────────
@@ -460,8 +542,10 @@ public class SesionEnCursoRepositorio {
         SesionEnCurso.Ejercicio e = s != null ? ejercicioDeSerie(s, serieId) : null;
         if (e == null) return null;
         int indice = indiceDe(e, serieId);
+        recordPendiente = null;
         LogicaSesion.Marcado m = LogicaSesion.marcar(e, indice, locale);
         if (m == LogicaSesion.Marcado.HECHA) {
+            alBatirMarca(s, serieId);
             alHacerSerie(s, serieId);
             publicar(s);
         } else if (m == LogicaSesion.Marcado.DESMARCADA) {
@@ -632,6 +716,8 @@ public class SesionEnCursoRepositorio {
         }
         serie.segundos = LogicaSesion.tiempo(segundos);
         serie.hecha = true;
+        recordPendiente = null;
+        alBatirMarca(s, serie.id);
         alHacerSerie(s, serie.id);
         publicar(s);
         return true;

@@ -179,6 +179,35 @@ public class MovimientoTest {
     }
 
     @Test
+    public void laSesionEnVivoYElDescansoEstanEnLaTablaYEnElCodigo() throws IOException {
+        // Momentos 24 a 27 del lienzo de la firma visual (GP-210, paso 3). El 24 usa RELLENO,
+        // CHECK y BARRA, que ya existían, y estrena SUMA (600, la cifra que suma al marcar);
+        // el 25 estrena ORO (900) y reutiliza ENTRA, TROFEO, CHISPAS y BRILLO; el 26 estrena
+        // BAJA (250) y reutiliza HOJA y LATIDO. El 27 es la notificación del sistema y no
+        // trae número.
+        Map<String, Long> tabla = duracionesDeLaTabla();
+        Map<String, Long> codigo = duracionesDelCodigo();
+        String dec = decision();
+        for (String n : new String[]{"24", "25", "26", "27"}) {
+            assertTrue("falta el momento " + n + " en DEC-039", dec.contains("| " + n + " · "));
+        }
+        for (String c : new String[]{"RELLENO", "CHECK", "SUMA", "BARRA", "ORO", "ENTRA", "TROFEO", "CHISPAS",
+                "BRILLO", "HOJA", "LATIDO", "BAJA"}) {
+            assertTrue(c + " no está en la tabla", tabla.containsKey(c));
+            assertTrue(c + " no está en Movimiento", codigo.containsKey(c));
+        }
+        assertEquals(Long.valueOf(150), codigo.get("RELLENO"));
+        assertEquals(Long.valueOf(260), codigo.get("CHECK"));
+        assertEquals(Long.valueOf(600), codigo.get("SUMA"));
+        assertEquals(Long.valueOf(500), codigo.get("BARRA"));
+        assertEquals(Long.valueOf(900), codigo.get("ORO"));
+        assertEquals(Long.valueOf(350), codigo.get("ENTRA"));
+        assertEquals(Long.valueOf(450), codigo.get("HOJA"));
+        assertEquals(Long.valueOf(900), codigo.get("LATIDO"));
+        assertEquals(Long.valueOf(250), codigo.get("BAJA"));
+    }
+
+    @Test
     public void lasCuatroCurvasSonLasDeLaDecision() throws IOException {
         String codigo = new String(Files.readAllBytes(CODIGO), StandardCharsets.UTF_8);
         String dec = decision();

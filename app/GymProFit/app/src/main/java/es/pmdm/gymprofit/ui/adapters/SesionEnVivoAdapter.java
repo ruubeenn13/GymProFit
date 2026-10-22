@@ -30,9 +30,13 @@ import java.util.Objects;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.envivo.LogicaDescanso;
+import es.pmdm.gymprofit.envivo.LogicaRecordVivo;
 import es.pmdm.gymprofit.envivo.LogicaSesion;
 import es.pmdm.gymprofit.envivo.SesionEnCursoRepositorio;
 import es.pmdm.gymprofit.model.envivo.SesionEnCurso;
+import es.pmdm.gymprofit.model.record.Record;
+import es.pmdm.gymprofit.utils.Marcas;
+import es.pmdm.gymprofit.utils.Movimiento;
 import es.pmdm.gymprofit.utils.Pauta;
 import es.pmdm.gymprofit.utils.TiempoRelativo;
 
@@ -71,12 +75,22 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         // Cabecera
         String nombre, pauta, notas, ultimaVez;
         boolean porTiempo, menu;
+        /** «Tu récord: …» o «Primera vez: …» (GP-210); null si aún no se sabe. */
+        String record;
+        /** Si la línea del récord va en dorado (hay marca) o neutra (primera vez). */
+        boolean recordDorado;
+        /** El aviso «¡Récord!» de este ejercicio, o null si no lo hay (GP-210). */
+        String avisoTitulo, avisoAntes, avisoA11y;
         // Serie
         int numero;
         String anterior, anteriorA11y, peso, reps, segundos, pistaPeso, pistaReps, pistaSegundos;
         boolean hecha, editable;
         /** La que toca tras el descanso: se resalta mientras dura (GP-013). */
         boolean siguiente;
+        /** La primera sin marcar de la sesión: su botón va en el color principal (GP-210). */
+        boolean toca;
+        /** La serie que batió el récord del ejercicio: su fila va en dorado (GP-210). */
+        boolean oro;
         // Pie
         boolean puedeAnadir;
         // Final
@@ -92,6 +106,9 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             return tipo == o.tipo && id == o.id && Objects.equals(nombre, o.nombre)
                     && Objects.equals(pauta, o.pauta) && Objects.equals(notas, o.notas)
                     && Objects.equals(ultimaVez, o.ultimaVez) && porTiempo == o.porTiempo && menu == o.menu
+                    && Objects.equals(record, o.record) && recordDorado == o.recordDorado
+                    && Objects.equals(avisoTitulo, o.avisoTitulo) && Objects.equals(avisoAntes, o.avisoAntes)
+                    && Objects.equals(avisoA11y, o.avisoA11y) && toca == o.toca && oro == o.oro
                     && numero == o.numero && Objects.equals(anterior, o.anterior)
                     && Objects.equals(peso, o.peso) && Objects.equals(reps, o.reps)
                     && Objects.equals(segundos, o.segundos) && Objects.equals(pistaPeso, o.pistaPeso)
@@ -106,6 +123,14 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final SesionEnCursoRepositorio repo;
     private final Acciones acciones;
     private List<Fila> filas = new ArrayList<>();
+
+    // Lo que anima el próximo repintado (GP-210): la serie recién marcada y, si bate el
+    // récord, su fila dorada y el aviso de su ejercicio. Se piden desde la pantalla justo
+    // antes de que la lista se repinte y se agotan en cuanto se pinta la fila marcada.
+    private long marcadaSerieId = -1;
+    private boolean marcadaEsRecord;
+    private long recordSerieId = -1;
+    private long recordEjercicioId = -1;
 
     public SesionEnVivoAdapter(@NonNull Context ctx, @NonNull SesionEnCursoRepositorio repo,
                                @NonNull Acciones acciones) {
@@ -146,11 +171,16 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             long siguienteId = sig != null ? sig.serieId : Long.MIN_VALUE;
             LogicaSesion.Textos t = textos();
             Locale locale = locale();
+            boolean tocaDada = false;
             for (SesionEnCurso.Ejercicio e : s.ejercicios) {
                 nuevas.add(cabecera(e, editable));
                 for (int i = 0; i < e.series.size(); i++) {
                     Fila f = serie(e, i, editable, t, locale);
                     f.siguiente = f.id == siguienteId;
+                    // La primera sin marcar de toda la sesión es la que toca.
+                    f.toca = !tocaDada && !f.hecha;
+                    tocaDada |= f.toca;
+                    f.oro = f.hecha && e.recordSerieId != null && e.recordSerieId == f.id;
                     nuevas.add(f);
                 }
                 Fila pie = new Fila(PIE, -e.id);
@@ -201,13 +231,67 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             if (e.notasPauta != null && !e.notasPauta.trim().isEmpty()) extra.add(e.notasPauta.trim());
             f.notas = String.join(ctx.getString(R.string.separador_punto), extra);
         }
-        if (LogicaSesion.primeraVez(e)) {
-            f.ultimaVez = ctx.getString(R.string.envivo_primera_vez);
-        } else if (e.anteriorCargado && e.anteriorFecha != null) {
+        if (!LogicaSesion.primeraVez(e) && e.anteriorCargado && e.anteriorFecha != null) {
             String cuando = TiempoRelativo.texto(ctx, e.anteriorFecha);
             f.ultimaVez = cuando != null ? ctx.getString(R.string.envivo_ultima_vez, cuando) : null;
         }
+        recordDe(e, f);
         return f;
+    }
+
+    // «Tu récord» y su aviso (GP-210). Sin historial: «Primera vez». Sin saberlo aún (no ha
+    // llegado la respuesta o no hubo red): ninguna de las dos, que es lo honesto.
+    private void recordDe(SesionEnCurso.Ejercicio e, Fila f) {
+        SesionEnCurso.Marca m = LogicaRecordVivo.mostrada(e);
+        if (m != null) {
+            String marca = textoMarca(m);
+            f.record = ctx.getString(LogicaRecordVivo.esDeHoy(e)
+                    ? R.string.envivo_record_tu_hoy : R.string.envivo_record_tu, marca);
+            f.recordDorado = true;
+        } else if (LogicaSesion.primeraVez(e)) {
+            f.record = ctx.getString(R.string.envivo_primera_vez);
+        }
+        if (e.recordSerieId == null || e.marca == null) return;
+        for (SesionEnCurso.Serie s : e.series) {
+            if (s.id != e.recordSerieId || !s.hecha) continue;
+            SesionEnCurso.Marca nueva = LogicaRecordVivo.deSerie(e, s);
+            if (nueva == null) return;
+            String antes = textoMarca(e.marca);
+            f.avisoTitulo = ctx.getString(R.string.envivo_record_aviso, textoMarca(nueva));
+            f.avisoAntes = ctx.getString(R.string.envivo_record_aviso_antes, antes);
+            f.avisoA11y = ctx.getString(R.string.envivo_record_aviso_a11y, textoMarca(nueva), antes);
+            return;
+        }
+    }
+
+    // «85 kg × 7», «12 reps» o «1:05», como en el resumen (Marcas).
+    private String textoMarca(SesionEnCurso.Marca m) {
+        if (Record.TIPO_TIEMPO.equals(m.tipo)) return Marcas.tiempo(m.segundos);
+        if (Record.TIPO_PESO.equals(m.tipo)) {
+            double kilos;
+            try {
+                kilos = m.peso != null ? Double.parseDouble(m.peso) : 0;
+            } catch (NumberFormatException e) {
+                kilos = 0;
+            }
+            return ctx.getString(R.string.record_peso_por_reps, Marcas.kilos(ctx, kilos), m.repeticiones);
+        }
+        return ctx.getResources().getQuantityString(R.plurals.record_repeticiones, m.repeticiones, m.repeticiones);
+    }
+
+    /**
+     * La pantalla acaba de marcar una serie: al repintarla se anima (momento 24) y, si bate el
+     * récord del ejercicio, se dora su fila y baja el aviso (momento 25). Se llama justo
+     * después de marcar, antes de que la lista se repinte.
+     *
+     * @param serieId   la serie marcada.
+     * @param ejercicio el ejercicio de un récord recién batido, o -1 si no lo hubo.
+     */
+    public void animarMarcada(long serieId, long ejercicio) {
+        marcadaSerieId = serieId;
+        marcadaEsRecord = ejercicio != -1;
+        recordSerieId = ejercicio != -1 ? serieId : -1;
+        recordEjercicioId = ejercicio;
     }
 
     private Fila serie(SesionEnCurso.Ejercicio e, int i, boolean editable, LogicaSesion.Textos t, Locale locale) {
@@ -230,10 +314,25 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return f;
     }
 
+    // El color de fondo del botón de marcar según su estado.
+    private int fondoBoton(boolean hecha, boolean toca) {
+        if (hecha) return ContextCompat.getColor(ctx, R.color.gp_success_container);
+        if (toca) return MaterialColors.getColor(ctx, androidx.appcompat.R.attr.colorPrimary, 0);
+        return MaterialColors.getColor(ctx, com.google.android.material.R.attr.colorSurfaceVariant, 0);
+    }
+
     /** Posición de la cabecera del ejercicio de una serie sin marcar, para «Revisar». */
     public int primeraSinMarcar() {
         for (int i = 0; i < filas.size(); i++) {
             if (filas.get(i).tipo == SERIE && !filas.get(i).hecha) return i;
+        }
+        return -1;
+    }
+
+    /** Posición de una serie en la lista, o -1 si no está. */
+    public int posicionSerie(long serieId) {
+        for (int i = 0; i < filas.size(); i++) {
+            if (filas.get(i).tipo == SERIE && filas.get(i).id == serieId) return i;
         }
         return -1;
     }
@@ -302,8 +401,9 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     final class CabeceraVH extends RecyclerView.ViewHolder {
-        final TextView tvNombre, tvPauta, tvNotas, tvUltimaVez, tvRotuloKg, tvRotuloReps;
-        final View grupo;
+        final TextView tvNombre, tvPauta, tvNotas, tvUltimaVez, tvRotuloKg, tvRotuloReps, tvRecord;
+        final TextView tvRecordTitulo, tvRecordAntes;
+        final View grupo, avisoRecord, marcoTrofeo;
         final ImageButton btnMenu;
 
         CabeceraVH(View v) {
@@ -312,6 +412,11 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             tvPauta = v.findViewById(R.id.tvPauta);
             tvNotas = v.findViewById(R.id.tvNotas);
             tvUltimaVez = v.findViewById(R.id.tvUltimaVez);
+            tvRecord = v.findViewById(R.id.tvRecord);
+            avisoRecord = v.findViewById(R.id.avisoRecord);
+            marcoTrofeo = v.findViewById(R.id.marcoTrofeo);
+            tvRecordTitulo = v.findViewById(R.id.tvRecordTitulo);
+            tvRecordAntes = v.findViewById(R.id.tvRecordAntes);
             tvRotuloKg = v.findViewById(R.id.tvRotuloKg);
             tvRotuloReps = v.findViewById(R.id.tvRotuloReps);
             grupo = v.findViewById(R.id.grupoCabecera);
@@ -326,6 +431,7 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             texto(tvPauta, f.pauta);
             texto(tvNotas, f.notas);
             texto(tvUltimaVez, f.ultimaVez);
+            pintarRecord(f);
             // Por tiempo, una columna «Tiempo» donde van kg y reps.
             tvRotuloKg.setText(f.porTiempo ? R.string.envivo_col_tiempo : R.string.envivo_col_kg);
             android.widget.LinearLayout.LayoutParams lp =
@@ -338,6 +444,7 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             a11y.add(f.nombre);
             if (f.pauta != null) a11y.add(f.pauta);
             if (f.notas != null && !f.notas.isEmpty()) a11y.add(f.notas);
+            if (f.record != null) a11y.add(f.record);
             if (f.ultimaVez != null) a11y.add(f.ultimaVez);
             grupo.setContentDescription(String.join(". ", a11y));
             ViewCompat.setAccessibilityHeading(grupo, true);
@@ -345,6 +452,31 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             btnMenu.setVisibility(f.menu ? View.VISIBLE : View.GONE);
             btnMenu.setContentDescription(ctx.getString(R.string.envivo_menu_ejercicio, f.nombre));
             btnMenu.setOnClickListener(v -> acciones.menuEjercicio(v, f.id, f.nombre));
+        }
+
+        // «Tu récord: …» (con su trofeo dorado) o «Primera vez»; y el aviso «¡Récord!», que
+        // baja con el trofeo, las chispas y el brillo la vez que se bate (momento 25).
+        private void pintarRecord(Fila f) {
+            texto(tvRecord, f.record);
+            tvRecord.setTextColor(f.recordDorado
+                    ? ContextCompat.getColor(ctx, R.color.gp_gold_text)
+                    : MaterialColors.getColor(tvRecord, androidx.appcompat.R.attr.colorPrimary));
+            tvRecord.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                    f.recordDorado ? R.drawable.ic_ms_trophy : 0, 0, 0, 0);
+
+            boolean hayAviso = f.avisoTitulo != null;
+            boolean yaVisible = avisoRecord.getVisibility() == View.VISIBLE;
+            avisoRecord.setVisibility(hayAviso ? View.VISIBLE : View.GONE);
+            if (!hayAviso) return;
+            tvRecordTitulo.setText(f.avisoTitulo);
+            tvRecordAntes.setText(f.avisoAntes);
+            avisoRecord.setContentDescription(f.avisoA11y);
+            if (f.id == recordEjercicioId && !yaVisible) {
+                recordEjercicioId = -1;
+                int oro = ContextCompat.getColor(ctx, R.color.gp_gold);
+                Movimiento.bajarAviso(avisoRecord);
+                Movimiento.celebrarRecord((android.view.ViewGroup) avisoRecord, marcoTrofeo, oro, oro, 120);
+            }
         }
     }
 
@@ -431,22 +563,47 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             rotular(etTiempo, ctx.getString(R.string.envivo_tiempo_a11y, f.numero), f.pistaSegundos);
             pintando = false;
 
-            // Hecha: la fila se tiñe y el botón lo dice con el icono y con su estado. La
-            // siguiente, durante el descanso, lleva el borde del color principal.
-            if (f.hecha) {
-                fila.setBackgroundColor(MaterialColors.getColor(fila,
-                        com.google.android.material.R.attr.colorPrimaryContainer));
-            } else if (f.siguiente) {
+            // La fila: dorada si es la del récord (momento 25), con el borde del color principal
+            // si es la siguiente tras el descanso (GP-013), sin relleno en las demás.
+            boolean marcadaAhora = f.hecha && f.id == marcadaSerieId;
+            if (f.oro) {
+                int oroFila = ContextCompat.getColor(ctx, R.color.gp_gold_fila);
+                if (marcadaAhora && marcadaEsRecord) {
+                    Movimiento.dorarFila(fila, MaterialColors.getColor(fila, com.google.android.material.R.attr.colorSurface),
+                            ContextCompat.getColor(ctx, R.color.gp_gold_container), oroFila);
+                } else {
+                    fila.setBackgroundColor(oroFila);
+                }
+            } else if (f.siguiente && !f.hecha) {
                 fila.setBackgroundResource(R.drawable.bg_serie_siguiente);
             } else {
                 fila.setBackgroundColor(android.graphics.Color.TRANSPARENT);
             }
-            btnMarcar.setImageResource(f.hecha ? R.drawable.ic_ms_check_circle_fill : R.drawable.ic_ms_radio_button_unchecked);
-            btnMarcar.setImageTintList(ColorStateList.valueOf(MaterialColors.getColor(btnMarcar, f.hecha
-                    ? androidx.appcompat.R.attr.colorPrimary : com.google.android.material.R.attr.colorOnSurfaceVariant)));
-            btnMarcar.setContentDescription(ctx.getString(R.string.envivo_marcar, f.numero));
+
+            // El botón: verde si está hecha, del color principal si es la que toca y gris si no
+            // (el check lo dice también con su estado, no solo con el color).
+            int fondo = fondoBoton(f.hecha, f.toca);
+            int tinte = MaterialColors.getColor(btnMarcar, f.hecha
+                    ? androidx.appcompat.R.attr.colorPrimary : f.toca ? com.google.android.material.R.attr.colorOnPrimary
+                    : com.google.android.material.R.attr.colorOnSurfaceVariant);
+            btnMarcar.setImageResource(R.drawable.ic_ms_check);
+            btnMarcar.setImageTintList(ColorStateList.valueOf(f.hecha ? ContextCompat.getColor(ctx, R.color.gp_success) : tinte));
+            if (marcadaAhora) {
+                int antes = fondoBoton(false, true);
+                Movimiento.marcarSerie(btnMarcar, antes, fondo, !marcadaEsRecord);
+            } else {
+                btnMarcar.setBackgroundTintList(ColorStateList.valueOf(fondo));
+            }
+            if (f.id == marcadaSerieId) {
+                // Agotado: la cabecera (más arriba) ya se pintó en esta pasada.
+                marcadaSerieId = -1;
+                marcadaEsRecord = false;
+                recordSerieId = -1;
+                recordEjercicioId = -1;
+            }
             ViewCompat.setStateDescription(btnMarcar,
                     ctx.getString(f.hecha ? R.string.envivo_hecha : R.string.envivo_sin_hacer));
+            btnMarcar.setContentDescription(ctx.getString(R.string.envivo_marcar, f.numero));
             btnMarcar.setEnabled(f.editable);
             btnMarcar.setOnClickListener(v -> acciones.marcar(f.id, f.numero));
 

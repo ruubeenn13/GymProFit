@@ -4,7 +4,6 @@
     "typescript-lsp@claude-plugins-official": true,
     "render@claude-plugins-official": true
   },
-  "autoMemoryDirectory": "C:/Users/ruben/vault/claude/gymprofit-app",
   "attribution": {
     "commit": "",
     "pr": ""

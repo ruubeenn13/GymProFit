@@ -121,6 +121,25 @@ public final class LogicaSesion {
         return new Totales(hechas, total, ejHechos, s.ejercicios.size());
     }
 
+    /**
+     * Kilos movidos: peso × repeticiones de cada serie marcada (GP-210 paso 3, la cifra de
+     * la cabecera que suma al marcar). El peso corporal, las series por tiempo y lo que no
+     * se lee como número no suman: la definición de volumen de GP-011.
+     */
+    public static double volumen(@NonNull SesionEnCurso s) {
+        BigDecimal total = BigDecimal.ZERO;
+        for (SesionEnCurso.Ejercicio e : s.ejercicios) {
+            for (SesionEnCurso.Serie serie : e.series) {
+                if (!serie.hecha) continue;
+                Integer reps = Numeros.entero(serie.repeticiones, 1, 100);
+                BigDecimal peso = Numeros.exacto(serie.peso, 0, 500);
+                if (reps == null || peso == null) continue;
+                total = total.add(peso.multiply(BigDecimal.valueOf(reps)));
+            }
+        }
+        return total.doubleValue();
+    }
+
     // ── Por tiempo y pauta ───────────────────────────────────
 
     /**

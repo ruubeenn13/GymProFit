@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   activity_sesion_en_vivo — la sesión en vivo (GP-012).
-  Arriba, minimizar, la rutina y su programa, y «Terminar». Debajo, el tiempo, las
-  series hechas de las totales y los ejercicios hechos, con una barra de progreso.
+  Arriba, minimizar, la rutina y su programa, y «Terminar». Debajo, el tiempo en grande,
+  el volumen y las series hechas de las totales (suman al marcar, momento 24), con la
+  barra de progreso de la sesión (GP-210).
   Si se intentó guardar, el estado del guardado. Luego la lista: una tarjeta por
   ejercicio con una fila por serie, y al final «Añadir ejercicio» y «Descartar».
   Abajo, sobre la lista, el descanso entre series (GP-013, view_descanso); la lista deja
@@ -29,7 +30,9 @@
             android:layout_width="wrap_content"
             android:layout_gravity="end"
             android:layout_marginEnd="12dp"
-            android:text="@string/envivo_terminar" />
+            android:backgroundTint="?attr/colorPrimaryContainer"
+            android:text="@string/envivo_terminar"
+            android:textColor="?attr/colorOnPrimaryContainer" />
     </com.google.android.material.appbar.MaterialToolbar>
 
     <!-- Tiempo, series y ejercicios. TalkBack lo lee de una vez. -->
@@ -47,10 +50,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:baselineAligned="false"
-            android:importantForAccessibility="noHideDescendants">
+            android:gravity="bottom"
+            android:importantForAccessibility="noHideDescendants"
+            android:orientation="horizontal">
 
+            <!-- El tiempo, en grande. A letra grande se encoge hasta caber, no se parte. -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -68,56 +73,85 @@
 
                 <TextView
                     android:id="@+id/tvTiempo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.GymProFit.Number"
-                    android:textSize="@dimen/text_headline" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/tvRotuloSeries"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/envivo_series"
-                    android:textAppearance="@style/TextAppearance.GymProFit.Label"
-                    android:textSize="@dimen/text_eyebrow"
-                    android:textColor="?attr/colorOnSurfaceVariant" />
-
-                <TextView
-                    android:id="@+id/tvSeries"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:maxLines="1"
                     android:textAppearance="@style/TextAppearance.GymProFit.Number"
-                    android:textSize="@dimen/text_headline" />
+                    android:textSize="@dimen/text_number_hero" />
             </LinearLayout>
 
+            <!-- Volumen y series: suman al marcar una serie (momento 24). -->
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:layout_marginStart="12dp"
+                android:gravity="end"
+                android:orientation="vertical"
+                android:paddingBottom="4dp">
 
-                <TextView
-                    android:id="@+id/tvRotuloEjercicios"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/envivo_ejercicios"
-                    android:textAppearance="@style/TextAppearance.GymProFit.Label"
-                    android:textSize="@dimen/text_eyebrow"
-                    android:textColor="?attr/colorOnSurfaceVariant" />
-
-                <TextView
-                    android:id="@+id/tvEjercicios"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.GymProFit.Number"
-                    android:textSize="@dimen/text_headline" />
+                    android:baselineAligned="true"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvRotuloVolumen"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/envivo_volumen"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="@dimen/text_eyebrow" />
+
+                    <TextView
+                        android:id="@+id/tvVolumen"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:accessibilityLiveRegion="none"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Number"
+                        android:textSize="@dimen/text_display" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:text="@string/envivo_unidad_kg"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="@dimen/text_caption" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:baselineAligned="true"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvRotuloSeries"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/envivo_series"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="@dimen/text_eyebrow" />
+
+                    <TextView
+                        android:id="@+id/tvSeries"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Number"
+                        android:textSize="@dimen/text_headline" />
+
+                    <TextView
+                        android:id="@+id/tvSeriesDe"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="@dimen/text_caption" />
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
 

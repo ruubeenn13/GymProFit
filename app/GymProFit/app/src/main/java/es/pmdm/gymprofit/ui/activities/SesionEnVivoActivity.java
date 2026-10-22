@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.os.VibratorManager;
+import android.animation.ValueAnimator;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.view.WindowManager;
@@ -30,6 +31,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.progressindicator.BaseProgressIndicator;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -56,6 +59,7 @@ import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
 import es.pmdm.gymprofit.ui.adapters.SesionEnVivoAdapter;
 import es.pmdm.gymprofit.utils.InputDialog;
 import es.pmdm.gymprofit.utils.Marcas;
+import es.pmdm.gymprofit.utils.Movimiento;
 import es.pmdm.gymprofit.utils.Numeros;
 import es.pmdm.gymprofit.utils.Pauta;
 import es.pmdm.gymprofit.utils.PreferencesManager;
@@ -91,7 +95,7 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
     private SesionEnCursoRepositorio repo;
     private SesionEnVivoAdapter adapter;
     private MaterialToolbar toolbar;
-    private TextView tvTiempo, tvSeries, tvEjercicios;
+    private TextView tvTiempo, tvSeries, tvSeriesDe, tvVolumen;
     private View filaResumen, cardGuardado, btnTerminar;
     private LinearProgressIndicator barraProgreso;
     private RecyclerView rv;
@@ -106,10 +110,23 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         }
     };
 
-    // El descanso (GP-013): el panel de abajo y el aviso de su fin.
+    // Lo último que se pintó en la cabecera, para que las cifras sumen desde ahí (momento 24).
+    private double volumenPintado = -1;
+    private int seriesPintadas = -1;
+    private int progresoPintado = -1;
+    @Nullable private ValueAnimator contandoVolumen, contandoSeries;
+
+    // El descanso (GP-013): el panel de abajo y el aviso de su fin; con el aro que se vacía y
+    // sus momentos (GP-210, 26): sube al empezar, el número late a falta de 10 s y baja al acabar.
     private View zonaDescanso, panelDescanso, grupoCuentaAtras, avisoFin, btnDescansoMas;
     private TextView tvDescansoTiempo, tvDescansoDespues, tvFinTitulo, tvFinTexto;
-    private LinearProgressIndicator barraDescanso;
+    private CircularProgressIndicator aroDescanso;
+    @Nullable private ValueAnimator vaciandoAro;
+    private long aroFinMs = -1, aroDuracionMs = -1;
+    private long latidoDeFinMs = -1;
+    private boolean bajandoPanel;
+    // La serie a la que llevar la lista cuando el panel acabe de medirse; -1 si ninguna.
+    private long irASerie = -1;
 
     @Nullable private BottomSheetDialog hojaCrono;
     @Nullable private TextView tvCronoTiempo;
@@ -139,12 +156,14 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         toolbar.setNavigationOnClickListener(v -> salir());
         tvTiempo = findViewById(R.id.tvTiempo);
         tvSeries = findViewById(R.id.tvSeries);
-        tvEjercicios = findViewById(R.id.tvEjercicios);
+        tvSeriesDe = findViewById(R.id.tvSeriesDe);
+        tvVolumen = findViewById(R.id.tvVolumen);
         filaResumen = findViewById(R.id.filaResumen);
         barraProgreso = findViewById(R.id.barraProgreso);
-        for (int id : new int[]{R.id.tvRotuloTiempo, R.id.tvRotuloSeries, R.id.tvRotuloEjercicios}) {
-            es.pmdm.gymprofit.utils.Rotulos.limitar(findViewById(id));
-        }
+        es.pmdm.gymprofit.utils.Rotulos.limitar(findViewById(R.id.tvRotuloTiempo));
+        // El tiempo, en grande; con letra grande se encoge hasta caber junto al volumen en vez de partirse.
+        androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(tvTiempo, 28, 56, 1,
+                android.util.TypedValue.COMPLEX_UNIT_SP);
         cardGuardado = findViewById(R.id.cardGuardado);
         btnTerminar = findViewById(R.id.btnTerminar);
         btnTerminar.setOnClickListener(v -> abrirTerminar());
@@ -187,6 +206,7 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         // mientras llegaban, y la última vez de los que aún no la tienen.
         repo.cargarEjercicios();
         repo.pedirUltimaVez();
+        repo.pedirMarcas();
     }
 
     @Override
@@ -203,6 +223,9 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
 
     @Override
     protected void onDestroy() {
+        if (contandoVolumen != null) contandoVolumen.cancel();
+        if (contandoSeries != null) contandoSeries.cancel();
+        if (vaciandoAro != null) vaciandoAro.cancel();
         if (hojaCrono != null) hojaCrono.dismiss();
         if (hojaTerminar != null) hojaTerminar.dismiss();
         super.onDestroy();
@@ -226,10 +249,7 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         toolbar.setTitle(EmpezarSesion.nombre(this, s.rutinaNombre));
         toolbar.setSubtitle(s.programaNombre);
 
-        LogicaSesion.Totales t = LogicaSesion.totales(s);
-        tvSeries.setText(getString(R.string.envivo_de, t.seriesHechas, t.seriesTotales));
-        tvEjercicios.setText(getString(R.string.envivo_de, t.ejerciciosHechos, t.ejerciciosTotales));
-        barraProgreso.setProgress(t.seriesTotales == 0 ? 0 : Math.round(100f * t.seriesHechas / t.seriesTotales));
+        pintarCifras(s);
         pintarReloj();
 
         adapter.pintar(s);
@@ -250,6 +270,40 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         }
     }
 
+    // Volumen, series y barra de la cabecera. La primera vez se pintan tal cual; después, cada
+    // cambio (marcar o desmarcar una serie) suma desde la cifra de antes (momento 24).
+    private void pintarCifras(SesionEnCurso s) {
+        LogicaSesion.Totales t = LogicaSesion.totales(s);
+        double volumen = LogicaSesion.volumen(s);
+        int progreso = t.seriesTotales == 0 ? 0 : Math.round(100f * t.seriesHechas / t.seriesTotales);
+        tvSeriesDe.setText(getString(R.string.envivo_de_total, t.seriesTotales));
+        boolean primera = seriesPintadas == -1;
+        if (contandoVolumen != null) contandoVolumen.cancel();
+        if (contandoSeries != null) contandoSeries.cancel();
+        if (primera || volumen == volumenPintado) {
+            tvVolumen.setText(formatoVolumen(volumen));
+        } else {
+            contandoVolumen = Movimiento.sumar(volumenPintado, volumen, v -> tvVolumen.setText(formatoVolumen(v)));
+        }
+        if (primera || t.seriesHechas == seriesPintadas) {
+            tvSeries.setText(String.valueOf(t.seriesHechas));
+        } else {
+            contandoSeries = Movimiento.sumar(seriesPintadas, t.seriesHechas,
+                    v -> tvSeries.setText(String.valueOf(Math.round(v))));
+        }
+        if (primera || progreso == progresoPintado) barraProgreso.setProgress(progreso);
+        else Movimiento.llenarBarra(barraProgreso, progresoPintado, progreso);
+        volumenPintado = volumen;
+        seriesPintadas = t.seriesHechas;
+        progresoPintado = progreso;
+    }
+
+    // «4210» o «12.345», con el separador de miles de la lengua del móvil.
+    private String formatoVolumen(double kilos) {
+        return java.text.NumberFormat.getIntegerInstance(getResources().getConfiguration().getLocales().get(0))
+                .format(Math.round(kilos));
+    }
+
     private void pintarReloj() {
         SesionEnCurso s = repo.actual();
         if (s == null) return;
@@ -259,7 +313,7 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         LogicaSesion.Totales t = LogicaSesion.totales(s);
         String minutos = getString(R.string.duracion_min, LogicaSesion.minutosReloj(s.inicioMs, repo.ahora()));
         String descripcion = getString(R.string.envivo_resumen_a11y, minutos,
-                t.seriesHechas, t.seriesTotales, t.ejerciciosHechos, t.ejerciciosTotales);
+                formatoVolumen(LogicaSesion.volumen(s)), t.seriesHechas, t.seriesTotales);
         if (!descripcion.contentEquals(filaResumen.getContentDescription() != null
                 ? filaResumen.getContentDescription() : "")) {
             filaResumen.setContentDescription(descripcion);
@@ -296,7 +350,7 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         tvDescansoDespues = findViewById(R.id.tvDescansoDespues);
         tvFinTitulo = findViewById(R.id.tvFinTitulo);
         tvFinTexto = findViewById(R.id.tvFinTexto);
-        barraDescanso = findViewById(R.id.barraDescanso);
+        aroDescanso = findViewById(R.id.aroDescanso);
         btnDescansoMas = findViewById(R.id.btnDescansoMas);
         findViewById(R.id.btnDescansoMenos).setOnClickListener(v -> repo.ajustarDescanso(-LogicaDescanso.PASO_SEGUNDOS));
         btnDescansoMas.setOnClickListener(v -> repo.ajustarDescanso(LogicaDescanso.PASO_SEGUNDOS));
@@ -331,31 +385,85 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
             int alto = panelDescanso.getVisibility() == View.VISIBLE || avisoFin.getVisibility() == View.VISIBLE
                     ? v.getHeight() : 0;
             int abajo = Math.max(hueco, alto);
-            if (rv.getPaddingBottom() != abajo) {
-                rv.post(() -> rv.setPadding(rv.getPaddingLeft(), rv.getPaddingTop(), rv.getPaddingRight(), abajo));
-            }
+            rv.post(() -> {
+                if (rv.getPaddingBottom() != abajo) {
+                    rv.setPadding(rv.getPaddingLeft(), rv.getPaddingTop(), rv.getPaddingRight(), abajo);
+                }
+                // Al empezar el descanso, la serie que toca queda a la vista sobre el panel
+                // (con letra grande el panel ocupa media pantalla y la tapaba).
+                if (irASerie != -1 && alto > 0) {
+                    int pos = adapter.posicionSerie(irASerie);
+                    irASerie = -1;
+                    if (pos >= 0) rv.smoothScrollToPosition(pos);
+                }
+            });
         });
     }
 
-    // Cada segundo y a cada cambio: la cuenta atrás, «Después», la barra y el aviso del fin.
+    // Cada segundo y a cada cambio: la cuenta atrás, el aro, la serie que viene y el aviso del
+    // fin. El panel sube al empezar el descanso y baja al acabar o saltarlo (momento 26).
     private void pintarDescanso(@Nullable SesionEnCurso s) {
         if (panelDescanso == null) return;
         SesionEnCurso.Descanso d = s != null ? s.descanso : null;
-        SesionEnCursoRepositorio.FinDescanso fin = d == null ? repo.finDescanso() : null;
-        panelDescanso.setVisibility(d != null ? View.VISIBLE : View.GONE);
-        avisoFin.setVisibility(fin != null ? View.VISIBLE : View.GONE);
+        SesionEnCursoRepositorio.FinDescanso finDescanso = d == null ? repo.finDescanso() : null;
+        boolean visible = panelDescanso.getVisibility() == View.VISIBLE && !bajandoPanel;
+        avisoFin.setVisibility(finDescanso != null ? View.VISIBLE : View.GONE);
         if (d != null) {
+            bajandoPanel = false;
+            panelDescanso.animate().cancel();
+            panelDescanso.setTranslationY(0f);
+            if (panelDescanso.getVisibility() != View.VISIBLE) {
+                panelDescanso.setVisibility(View.VISIBLE);
+                Movimiento.subirPanel(panelDescanso);
+                LogicaDescanso.Siguiente sig = LogicaDescanso.siguiente(s);
+                if (sig != null) irASerie = sig.serieId;
+            }
             long ahora = repo.ahora();
             tvDescansoTiempo.setText(LogicaSesion.tiempo(LogicaDescanso.restanteSegundos(d, ahora)));
-            tvDescansoDespues.setText(TextosDescanso.despues(this, s));
-            barraDescanso.setProgress(LogicaDescanso.progreso(d, ahora));
+            tvDescansoDespues.setText(TextosDescanso.siguiente(this, s));
+            pintarAro(d, ahora);
             btnDescansoMas.setEnabled(LogicaDescanso.puedeSumar(d, ahora));
+            if (LogicaDescanso.restanteSegundos(d, ahora) == 10 && latidoDeFinMs != d.finMs) {
+                latidoDeFinMs = d.finMs;
+                Movimiento.latirNumero(tvDescansoTiempo);
+            }
+        } else {
+            latidoDeFinMs = -1;
+            aroFinMs = -1;
+            if (vaciandoAro != null) vaciandoAro.cancel();
+            if (panelDescanso.getVisibility() == View.VISIBLE && !bajandoPanel) {
+                bajandoPanel = true;
+                Movimiento.bajarPanel(panelDescanso, () -> bajandoPanel = false);
+            }
         }
-        if (fin != null) {
-            tvFinTitulo.setText(TextosDescanso.tituloFin(this, fin));
+        if (finDescanso != null) {
+            tvFinTitulo.setText(TextosDescanso.tituloFin(this, finDescanso));
             tvFinTexto.setText(getString(R.string.envivo_fin_texto,
-                    TextosDescanso.ejercicio(this, fin.ejercicio, fin.ejercicioId)));
+                    TextosDescanso.ejercicio(this, finDescanso.ejercicio, finDescanso.ejercicioId)));
         }
+    }
+
+    // El aro se vacía en lineal hasta el final del descanso (momento 26). Se lanza una vez por
+    // descanso y de nuevo si cambia (±15 s); con las animaciones quitadas baja a saltos de un
+    // segundo, que es el estado de cada instante y no un salto al final.
+    private void pintarAro(SesionEnCurso.Descanso d, long ahora) {
+        long queda = LogicaDescanso.restanteMs(d, ahora);
+        int ahoraProgreso = d.duracionMs <= 0 ? 0 : (int) (1000L * queda / d.duracionMs);
+        if (Movimiento.quieto(this)) {
+            aroDescanso.setProgress(ahoraProgreso);
+            return;
+        }
+        if (aroFinMs == d.finMs && aroDuracionMs == d.duracionMs) return;
+        aroFinMs = d.finMs;
+        aroDuracionMs = d.duracionMs;
+        if (vaciandoAro != null) vaciandoAro.cancel();
+        aroDescanso.setProgress(ahoraProgreso);
+        if (queda <= 0) return;
+        vaciandoAro = ValueAnimator.ofInt(ahoraProgreso, 0);
+        vaciandoAro.setDuration(queda);
+        vaciandoAro.setInterpolator(Movimiento.LINEAL);
+        vaciandoAro.addUpdateListener(a -> aroDescanso.setProgress((int) a.getAnimatedValue()));
+        vaciandoAro.start();
     }
 
     // La primera vez que empieza un descanso sin lo necesario para avisar con la pantalla
@@ -386,7 +494,8 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
     // «Descanso: quedan 1 minuto y 42 segundos. Después: Hip thrust con barra, serie 3».
     private String descripcionDescanso(SesionEnCurso s) {
         return getString(R.string.envivo_descanso_a11y,
-                TextosDescanso.duracionHablada(this, LogicaDescanso.restanteSegundos(s.descanso, repo.ahora())), TextosDescanso.despues(this, s));
+                TextosDescanso.duracionHablada(this, LogicaDescanso.restanteSegundos(s.descanso, repo.ahora())),
+                TextosDescanso.siguiente(this, s));
     }
 
     // ── Lista ────────────────────────────────────────────────
@@ -404,9 +513,19 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
                         ? R.string.envivo_falta_reps : R.string.envivo_falta_segundos);
                 break;
             case NO_VALIDO: avisar(R.string.envivo_no_valido); break;
-            case HECHA: quizaPedirPermiso(); break;
+            case HECHA:
+                animarMarcada(serieId);
+                quizaPedirPermiso();
+                break;
             default: break;
         }
+    }
+
+    // Antes de que la lista se repinte: la serie marcada se anima (momento 24) y, si bate el
+    // récord del ejercicio, también su fila y su aviso (momento 25).
+    private void animarMarcada(long serieId) {
+        SesionEnCursoRepositorio.RecordBatido r = repo.tomarRecord();
+        adapter.animarMarcada(serieId, r != null ? r.ejercicioId : -1);
     }
 
     private void avisar(int texto) {
@@ -521,7 +640,12 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
             tvCronoTiempo = v.findViewById(R.id.tvCronoTiempo);
             barraCrono = v.findViewById(R.id.barraCrono);
             v.findViewById(R.id.btnParar).setOnClickListener(b -> {
-                if (repo.pararYApuntar()) quizaPedirPermiso();
+                SesionEnCurso antes = repo.actual();
+                long serieCrono = antes != null && antes.cronometro != null ? antes.cronometro.serieId : -1;
+                if (repo.pararYApuntar()) {
+                    animarMarcada(serieCrono);
+                    quizaPedirPermiso();
+                }
             });
             v.findViewById(R.id.btnCancelarCrono).setOnClickListener(b -> repo.cancelarCronometro());
             hojaCrono.setContentView(v);

@@ -20,6 +20,9 @@ colors:
   gold-light: "#AE8528"
   gold-text-light: "#8A6920"
   gold-container-light: "#FFF4D9"
+  # Fila de la serie que batió el récord en la sesión en vivo (GP-210)
+  gold-row-dark: "#2A2414"
+  gold-row-light: "#FFF8E6"
   # Superficies y bordes
   background-dark: "#0B0C0E"
   surface-dark: "#1B1E24"
@@ -335,6 +338,7 @@ Lo que está en uso. Todo se tematiza por `Theme.GymProFit` (`values/themes.xml`
 - **Grupo de Ajustes:** una tarjeta de 18 dp con filas de 52 dp y separadores (`GrupoAjustes`, `FilaAjuste`).
 
 - **Ficha del resumen** (`item_ficha_resumen.xml`, `bg_ficha_resumen*.xml`): píldora informativa de 32 dp (16 dp de radio, `colorSurface`) con un icono de 18 dp; verde (`gp_success_container`) si la sesión sube frente a la anterior de la misma rutina. Bajar no se pinta de rojo.
+- **Sesión en vivo** (`activity_sesion_en_vivo.xml`, `item_envivo_*.xml`, `view_descanso.xml`; GP-210 paso 3): cabecera con el tiempo en 56 sp que se encoge hasta caber (`autoSize`, 28–56 sp), el volumen (26 sp) y las series (22 sp) a su derecha, y la barra de la sesión debajo. Cada ejercicio lleva «Tu récord: 85 kg × 7» (trofeo y texto `gp_gold` / `gp_gold_text`, «, de hoy» si lo ha superado hoy) o, sin historial, «Primera vez: es tu punto de partida» en neutro; no sale mientras no se sabe la marca. El botón de marcar es un círculo de 48 dp teñido por estado (`bg_check`): gris `colorSurfaceVariant`, `colorPrimary` la primera sin marcar de la sesión y `gp_success_container` con su check `gp_success` si está hecha. La fila del récord va en `gp_gold_fila` y su aviso (`bg_aviso_record`: `gp_gold_container`, borde `gp_gold`, 14 dp) baja encima de las columnas. El panel del descanso (`bg_panel_descanso`, sin velo) lleva un aro de 72 dp (`CircularProgressIndicator`, 7 dp, `colorPrimary` sobre `gp_divider`) que se vacía, la cuenta atrás de 46 sp, «Siguiente: serie 4 · 85 kg × 7» y −15 s, +15 s, Saltar. Notificación: Live Update con barra por tramos (una por serie del ejercicio que toca) y «+15 s» y «Saltar».
 - **Tarjeta de récords del resumen** (`activity_resumen_sesion.xml`): `Card.Estructura` con `gp_gold_container` y borde `gp_gold`; una fila `item_record` por récord, con la marca anterior debajo del nombre y las rayas en dorado al 30 %.
 - **«Frente a la última vez»** (`item_ultima_vez.xml`): fila de 48 dp con el ejercicio, sus kilos y el % (verde si sube, neutro si baja o es igual); la primera vez lleva «Primera vez: es tu punto de partida» y ningún %. Entra en cascada (`CASCADA`).
 - **«Para recuperar»** (`view_para_recuperar.xml`, `ui/nutricion/ParaRecuperarSeccion.java`): tarjeta con la proteína del día, su barra (`gp_macro_proteinas`, dorada al conseguirla) y hasta tres ideas con su «+» de 44 dp (`item_idea_recuperar.xml`), el mismo `Anadidos` de Añadir.
@@ -375,7 +379,7 @@ El movimiento sale de `Movimiento` (`utils/Movimiento.java`) y de nada más: las
 | `TIEMBLA` | `cubic-bezier(.36,.07,.19,.97)` | el error |
 | `LINEAL` | lineal | lo que gira |
 
-**Duraciones** (`Movimiento.java:62-160`, ms): `TOQUE` 120 · `RELLENO` 150 · `CHECK` 260 · `ICONO` 420 · `ENCIENDE` 380 · `ENTRA` 350 (+40 por escalón) · `CAPITULO` 450 · `LATIDO` 900 · `BARRA` 500 · `DESTELLO` 700 · `PILDORA` 320 · `DIA` 280 (+35) · `CIFRAS` 1200 · `HALO` 900 · `CARTA` 450 · `FILA` 300 (+100) · `BRILLO` 900 · `CIRCULO` 300 · `GIRO` 700 · `TRAZO` 420 · `TEMBLOR` 380 · `MENSAJE` 250 · `AVISO` 5000 · `TROFEO` 450 · `CHISPAS` 700 · `HUNDE` 70 · `VERDE` 120 · `CASCADA` 350 (+40) · `BARRIDO` 2400 · `ENCAJA` 200 · `HOJA` 450 · `PLIEGA` 180 · `CAE` 360 (+120) · `CORAZON` 450 · `RESALTA` 1400 · `SALE` 380 · `RECOLOCA` 250 · `CIFRA` 250 · `VELO` 250 · `SALTA_OK` 450 (+200) · `CIERRA` 600 · `PUNTO` 450 · `VASO` 450 · `RESPIRA` 1400.
+**Duraciones** (`Movimiento.java:62-160`, ms): `TOQUE` 120 · `RELLENO` 150 · `CHECK` 260 · `ICONO` 420 · `ENCIENDE` 380 · `ENTRA` 350 (+40 por escalón) · `CAPITULO` 450 · `LATIDO` 900 · `BARRA` 500 · `DESTELLO` 700 · `PILDORA` 320 · `DIA` 280 (+35) · `CIFRAS` 1200 · `HALO` 900 · `CARTA` 450 · `FILA` 300 (+100) · `BRILLO` 900 · `CIRCULO` 300 · `GIRO` 700 · `TRAZO` 420 · `TEMBLOR` 380 · `MENSAJE` 250 · `AVISO` 5000 · `TROFEO` 450 · `CHISPAS` 700 · `HUNDE` 70 · `VERDE` 120 · `CASCADA` 350 (+40) · `BARRIDO` 2400 · `ENCAJA` 200 · `HOJA` 450 · `PLIEGA` 180 · `CAE` 360 (+120) · `CORAZON` 450 · `RESALTA` 1400 · `SALE` 380 · `RECOLOCA` 250 · `CIFRA` 250 · `VELO` 250 · `SALTA_OK` 450 (+200) · `CIERRA` 600 · `PUNTO` 450 · `VASO` 450 · `RESPIRA` 1400 · `SUMA` 600 · `ORO` 900 · `BAJA` 250.
 
 **Momentos** (tabla completa en DEC-039; aquí el resumen por familia):
 
@@ -383,10 +387,11 @@ El movimiento sale de `Movimiento` (`utils/Movimiento.java`) y de nada más: las
 |---|---|---|
 | Elegir y encender | 1 Elegir, 2 «Siguiente», 6 Selector, 15 «+» a ✓, 19 Corazón | estándar → rebote |
 | Entrar en pantalla | 3 Entrar, 8 El programa llega, 16 Cascada, 23 Plato | enfatizada, con escalón |
-| Progreso y cifras | 5 Barra, 7 Cifras que cuentan, 21 Día completo, 22 Un vaso más | estándar y rebote; cifras con `1 − (1 − t)³` |
-| Éxito | 9 Cuenta creada, 12 Récord, 17 Código leído, 28 El resumen del entreno | rebote, enfatizada |
+| Progreso y cifras | 5 Barra, 7 Cifras que cuentan, 21 Día completo, 22 Un vaso más, 24 Serie marcada | estándar y rebote; cifras con `1 − (1 − t)³` |
+| Éxito | 9 Cuenta creada, 12 Récord, 17 Código leído, 25 Récord en mitad de la serie, 28 El resumen del entreno | rebote, enfatizada |
 | Error | 10 Error | temblar + mensaje |
 | Salida | 18 Copia de ayer, 20 Borrar y deshacer | estándar |
+| Descanso | 26 El descanso empieza y acaba (27 es la notificación del sistema) | enfatizada al subir, estándar al bajar, aro lineal |
 
 **Hápticos** (`Movimiento.vibrar`, `Movimiento.java:174-197`; por `performHapticFeedback`, así que respetan el ajuste de vibración al tocar): `LIGERA` → `CLOCK_TICK` (elegir, «+», copiar); `MEDIA` → `CONTEXT_CLICK` (abrir capítulo); `EXITO` → `CONFIRM` en Android 11+ (`LONG_PRESS` antes): cuenta creada, récord, código leído, guardar plato, día completo (una vez al día); `ERROR` → `REJECT` en Android 11+ (`LONG_PRESS` antes).
 

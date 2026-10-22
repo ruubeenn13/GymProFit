@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  bg_check — el círculo del botón de marcar una serie en la sesión en vivo (GP-210). Va
+  en blanco y se tiñe por código, porque el momento 24 anima el color: sin marcar (gris),
+  la que toca (el color principal) y hecha (verde, gp_success_container).
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="@android:color/white" />
+</shape>

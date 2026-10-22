@@ -31,6 +31,10 @@
          (GP-079, WCAG 1.4.11). Es muy claro a la fuerza: con el dorado gráfico
          que exige 3:1 sobre el fondo, no cabe un contenedor más saturado. -->
     <color name="gp_gold_container">#FFF4D9</color>
+    <!-- Fila de la serie que batió el récord en la sesión en vivo (GP-210, momento 25):
+         un dorado más suave que el contenedor, para que el aviso de arriba mande.
+         El texto secundario (gp_text_secondary) da 6,31:1 encima. -->
+    <color name="gp_gold_fila">#FFF8E6</color>
 
     <!-- ── Superficies ───────────────────────────────────────────────────── -->
     <!-- La tarjeta tiene que VERSE. Antes surface estaba a 1,07:1 del fondo y
