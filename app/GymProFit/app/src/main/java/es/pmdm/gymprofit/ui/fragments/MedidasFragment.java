@@ -29,6 +29,7 @@ import java.util.Map;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.utils.ChartMarker;
+import es.pmdm.gymprofit.utils.GrasaReciente;
 import es.pmdm.gymprofit.utils.ChartStyler;
 import es.pmdm.gymprofit.utils.InputDialog;
 import es.pmdm.gymprofit.model.medicion.MedicionCorporal;
@@ -180,7 +181,8 @@ public class MedidasFragment extends BaseFragment {
 
         findViewById(R.id.rowGrasa).setOnClickListener(v ->
                 editarCampoNumerico("grasaCorporal", getString(R.string.medicion_label_grasa),
-                        ultimaMedicion != null ? ultimaMedicion.getGrasaCorporal() : 0));
+                        ultimaMedicion != null && ultimaMedicion.getGrasaCorporal() != null
+                                ? ultimaMedicion.getGrasaCorporal() : 0));
 
         findViewById(R.id.rowMusculo).setOnClickListener(v ->
                 editarCampoNumerico("masaMuscular", getString(R.string.medicion_label_musculo),
@@ -222,6 +224,8 @@ public class MedidasFragment extends BaseFragment {
         medicionApi.getOrdenadas(usuarioId).enqueue(new ApiCallback<List<MedicionCorporal>>() {
             @Override
             public void onOk(List<MedicionCorporal> lista) {
+                // Para la proteína sobre masa magra (GP-206): el % más reciente, o ninguno.
+                prefsManager.saveGrasaReciente(GrasaReciente.elegir(lista));
                 if (lista == null || lista.isEmpty()) {
                     intentarCrearDesdePerfil(usuarioId);
                 } else {
@@ -360,7 +364,7 @@ public class MedidasFragment extends BaseFragment {
     // Valor de la métrica pedida para una medición (0 si no registrada).
     private double valorMetrica(MedicionCorporal m, int metrica) {
         switch (metrica) {
-            case MET_GRASA:   return m.getGrasaCorporal();
+            case MET_GRASA:   return m.getGrasaCorporal() != null ? m.getGrasaCorporal() : 0;
             case MET_CINTURA: return m.getCintura();
             default:          return m.getPeso();
         }
@@ -414,7 +418,7 @@ public class MedidasFragment extends BaseFragment {
 
         tvPesoVal.setText(ultimaMedicion.getPeso() > 0
                 ? getString(R.string.unidad_kg_decimal, ultimaMedicion.getPeso()) : anadir);
-        tvGrasaVal.setText(ultimaMedicion.getGrasaCorporal() > 0
+        tvGrasaVal.setText(ultimaMedicion.getGrasaCorporal() != null && ultimaMedicion.getGrasaCorporal() > 0
                 ? String.format(Locale.getDefault(), "%.1f%%", ultimaMedicion.getGrasaCorporal()) : anadir);
         tvMusculoVal.setText(ultimaMedicion.getMasaMuscular() > 0
                 ? getString(R.string.unidad_kg_decimal, ultimaMedicion.getMasaMuscular()) : anadir);
@@ -530,7 +534,7 @@ public class MedidasFragment extends BaseFragment {
         body.put("usuarioId", prefsManager.getUsuarioId());
         if (ultimaMedicion.getPeso() > 0)          body.put("peso", BigDecimal.valueOf(ultimaMedicion.getPeso()));
         if (ultimaMedicion.getAltura() > 0)        body.put("altura", BigDecimal.valueOf(ultimaMedicion.getAltura()));
-        if (ultimaMedicion.getGrasaCorporal() > 0) body.put("grasaCorporal", BigDecimal.valueOf(ultimaMedicion.getGrasaCorporal()));
+        if (ultimaMedicion.getGrasaCorporal() != null && ultimaMedicion.getGrasaCorporal() > 0) body.put("grasaCorporal", BigDecimal.valueOf(ultimaMedicion.getGrasaCorporal()));
         if (ultimaMedicion.getMasaMuscular() > 0)  body.put("masaMuscular", BigDecimal.valueOf(ultimaMedicion.getMasaMuscular()));
         if (ultimaMedicion.getCintura() > 0)       body.put("cintura", BigDecimal.valueOf(ultimaMedicion.getCintura()));
         if (ultimaMedicion.getPecho() > 0)         body.put("pecho", BigDecimal.valueOf(ultimaMedicion.getPecho()));

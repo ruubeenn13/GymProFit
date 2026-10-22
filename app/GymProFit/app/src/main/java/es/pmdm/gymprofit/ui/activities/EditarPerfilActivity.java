@@ -26,7 +26,11 @@ import es.pmdm.gymprofit.utils.NombreVisible;
 import es.pmdm.gymprofit.utils.Numeros;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.ReglasEdad;
-import es.pmdm.gymprofit.utils.ResultadoNutricional;
+import es.pmdm.gymprofit.utils.DiaNutricion;
+import es.pmdm.gymprofit.utils.GrasaReciente;
+import es.pmdm.gymprofit.model.medicion.MedicionCorporal;
+import es.pmdm.gymprofit.network.MedicionApi;
+import java.util.List;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
 
@@ -284,6 +288,36 @@ public class EditarPerfilActivity extends AppCompatActivity {
         etEdad.requestFocus();
     }
 
+    /**
+     * Recalcula el objetivo con los datos nuevos y el % de grasa más reciente (GP-206). Pide las
+     * mediciones para no usar un % viejo; si no llegan, va con el último guardado en el móvil.
+     */
+    private void recalcularObjetivo(int usuarioId) {
+        LoadingDialog.show(this);
+        ApiClient.service(MedicionApi.class).getOrdenadas(usuarioId).enqueue(new ApiCallback<List<MedicionCorporal>>() {
+            @Override
+            public void onOk(List<MedicionCorporal> lista) {
+                prefsManager.saveGrasaReciente(GrasaReciente.elegir(lista));
+                terminarGuardado();
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                // El perfil ya está guardado: se recalcula con el % que hubiera en el móvil, que
+                // como mucho es el de la última vez, y el usuario no pierde nada.
+                terminarGuardado();
+            }
+        });
+    }
+
+    private void terminarGuardado() {
+        LoadingDialog.hide(this);
+        DiaNutricion.recalcular(prefsManager);
+        UIHelper.mostrarToastExito(this, getString(R.string.editar_perfil_guardado));
+        setResult(RESULT_OK);
+        finish();
+    }
+
     // Guarda el perfil por PATCH y, al tener éxito, guarda sexo y actividad en el
     // teléfono y recalcula las macros con los datos nuevos.
     private void guardarPerfil() {
@@ -330,15 +364,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
                     prefsManager.saveActividad(ACTIVIDADES[spActividad.getSelectedItemPosition()]);
                     prefsManager.apuntarDuenoPerfil(prefsManager.getUsername());
 
-                    // Recalcular macros con los nuevos datos
-                    ResultadoNutricional r = CalculadoraNutricional.calcular(prefsManager.getPeso(),
-                            prefsManager.getAltura(), prefsManager.getEdad(),
-                            "HOMBRE".equals(prefsManager.getSexo()), prefsManager.getActividad(), objetivo);
-                    prefsManager.saveResultadoNutricional(r.calorias, r.proteinas, r.carbohidratos, r.grasas, r.agua);
-
-                    UIHelper.mostrarToastExito(EditarPerfilActivity.this, getString(R.string.editar_perfil_guardado));
-                    setResult(RESULT_OK);
-                    finish();
+                    recalcularObjetivo(id);
                 }
 
                 @Override

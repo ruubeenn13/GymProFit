@@ -66,4 +66,15 @@ public class DiaNutricionTest {
         assertEquals(DiaNutricion.Estado.NORMAL, d.estadoCarbohidratos());
         assertEquals(DiaNutricion.Estado.NORMAL, d.estadoGrasas());
     }
+
+    @Test
+    public void elDiaLlevaElMinimoEficazYLaBaseDeLaProteina() {
+        ResultadoNutricional o = new ResultadoNutricional(2000, 157, 200, 60, 2.5);
+        o.proteinaMinima = 126;
+        o.baseProteina = ResultadoNutricional.BASE_PESO;
+        DiaNutricion d = DiaNutricion.de(null, o);
+        assertEquals(126, d.proteinaMinima);
+        assertEquals(ResultadoNutricional.BASE_PESO, d.baseProteina);
+        assertEquals(0, DiaNutricion.de(null, null).proteinaMinima);
+    }
 }

@@ -65,6 +65,7 @@ import es.pmdm.gymprofit.utils.DiaCompleto;
 import es.pmdm.gymprofit.utils.DiaNutricion;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.Movimiento;
+import es.pmdm.gymprofit.utils.ProteinaTexto;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
@@ -683,6 +684,19 @@ public class NutricionFragment extends BaseFragment {
             return;
         }
         valor.setText(getString(R.string.nutricion_macro_valor, gramos, d.objetivoProteinas));
+        // El rango y sobre qué se calculó (GP-206); un objetivo anterior no los trae y no se inventan.
+        TextView base = fila.findViewById(R.id.tvMacroBase);
+        StringBuilder detalle = new StringBuilder();
+        if (d.proteinaMinima > 0 && d.proteinaMinima < d.objetivoProteinas) {
+            detalle.append(getString(R.string.nutricion_proteina_rango, d.objetivoProteinas, d.proteinaMinima));
+        }
+        int textoBase = ProteinaTexto.base(d.baseProteina);
+        if (textoBase != 0) {
+            if (detalle.length() > 0) detalle.append('\n');
+            detalle.append(getString(textoBase));
+        }
+        base.setVisibility(detalle.length() > 0 ? View.VISIBLE : View.GONE);
+        base.setText(detalle);
         valor.setTextColor(hecha && !dorada ? ContextCompat.getColor(requireContext(), R.color.gp_success)
                 : color(com.google.android.material.R.attr.colorOnSurface));
         barra.setProgressCompat(DiaNutricion.porcentaje(d.proteinas, d.objetivoProteinas), animar());
@@ -690,6 +704,7 @@ public class NutricionFragment extends BaseFragment {
         falta.setVisibility(faltan > 0 ? View.VISIBLE : View.GONE);
         falta.setText(getString(R.string.nutricion_te_faltan, faltan));
         String a11y = getString(R.string.nutricion_macro_a11y, nombre.getText(), gramos, d.objetivoProteinas);
+        if (detalle.length() > 0) a11y = a11y + ". " + detalle.toString().replace('\n', ' ');
         fila.setContentDescription(faltan > 0 ? getString(R.string.nutricion_macro_falta_a11y, a11y, faltan) : a11y);
         if (celebrar && dorada) {
             Movimiento.brillar(barra, ContextCompat.getColor(requireContext(), R.color.gp_brillo_oro),

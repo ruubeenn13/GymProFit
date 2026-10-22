@@ -469,6 +469,8 @@ public class MainActivity extends BaseActivity {
         medicionApi.getOrdenadas(uid).enqueue(new ApiCallback<List<MedicionCorporal>>() {
             @Override
             public void onOk(List<MedicionCorporal> lista) {
+                // De paso, el % de grasa más reciente para la proteína (GP-206).
+                prefsManager.saveGrasaReciente(es.pmdm.gymprofit.utils.GrasaReciente.elegir(lista));
                 if (isFinishing()) return;
                 for (MedicionCorporal m : lista != null ? lista : java.util.Collections.<MedicionCorporal>emptyList()) {
                     if (m.getPeso() > 0) { publicarUltimoPeso(m); return; }

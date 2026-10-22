@@ -1232,6 +1232,12 @@
     <string name="alta_plan_litros">%1$s L</string>
     <string name="alta_plan_kcal_a11y">%1$s kilocalories a day</string>
     <string name="alta_plan_macros_a11y">Protein, %1$d grams. Carbs, %2$d grams. Fat, %3$d grams. Water, %4$s litres.</string>
+    <string name="alta_plan_macros_a11y_rango">Protein, %1$d grams, effective minimum %5$d grams. Carbs, %2$d grams. Fat, %3$d grams. Water, %4$s litres.</string>
+    <string name="proteina_rango">%1$d g (effective minimum: %2$d g)</string>
+    <string name="nutricion_proteina_rango">Target: %1$d g (effective minimum: %2$d g)</string>
+    <string name="proteina_base_masa_magra">Calculated on your lean mass.</string>
+    <string name="proteina_base_peso">Calculated on your body weight.</string>
+    <string name="proteina_base_peso_referencia">Calculated on a reference weight (BMI 25), not your total weight.</string>
     <string name="alta_plan_nota_perder">20% less than you burn, to lose fat.</string>
     <string name="alta_plan_nota_musculo">15% more than you burn, to build muscle.</string>
     <string name="alta_plan_nota_mantener">What you burn, to stay where you are.</string>

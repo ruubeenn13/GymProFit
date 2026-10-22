@@ -63,6 +63,18 @@
         app:trackThickness="8dp"
         app:trackCornerRadius="4dp" />
 
+    <!-- Solo en la proteína (GP-206): el objetivo con su mínimo eficaz y sobre qué se calculó. -->
+    <TextView
+        android:id="@+id/tvMacroBase"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:visibility="gone"
+        android:importantForAccessibility="no"
+        android:lineSpacingMultiplier="1.15"
+        android:textSize="@dimen/text_caption"
+        android:textColor="?attr/colorOnSurfaceVariant" />
+
     <TextView
         android:id="@+id/tvMacroFalta"
         android:layout_width="wrap_content"

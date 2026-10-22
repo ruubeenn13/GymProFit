@@ -36,6 +36,9 @@ import es.pmdm.gymprofit.network.ProgramaApi;
 import es.pmdm.gymprofit.utils.AltaPasos;
 import es.pmdm.gymprofit.utils.CalculadoraNutricional;
 import es.pmdm.gymprofit.utils.Enumeracion;
+import es.pmdm.gymprofit.utils.GrasaReciente;
+import es.pmdm.gymprofit.utils.PreferencesManager;
+import es.pmdm.gymprofit.utils.ProteinaTexto;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.Movimiento;
 import es.pmdm.gymprofit.utils.NivelVisible;
@@ -158,8 +161,12 @@ public class PasoPlanFragment extends PasoAltaFragment {
             nota.setText(R.string.alta_plan_sin_calorias);
             return;
         }
+        // Sin pedir el % de grasa en el alta (GP-206): solo si ya hay una medición de esta cuenta.
+        GrasaReciente.Medida grasa = new PreferencesManager(requireContext()).getGrasaReciente();
         ResultadoNutricional n = CalculadoraNutricional.calcular(peso, r.altura, r.edad,
-                "HOMBRE".equals(r.sexo), r.actividad, r.objetivo);
+                "HOMBRE".equals(r.sexo), r.actividad, r.objetivo,
+                grasa == null ? null : grasa.pct, grasa == null ? 0 : grasa.dias(System.currentTimeMillis()));
+        pintarNotaProteina(n);
         nota.setText(n.mantenimientoPorEdad ? getString(R.string.alta_plan_nota_menores) : getString(notaObjetivo(r.objetivo)));
 
         Locale idioma = FechaUtils.localeDeLaApp(requireContext());
@@ -179,14 +186,19 @@ public class PasoPlanFragment extends PasoAltaFragment {
 
         raiz.findViewById(R.id.marcoAnillo).setContentDescription(
                 getString(R.string.alta_plan_kcal_a11y, entero.format(n.calorias)));
-        raiz.findViewById(R.id.listaMacros).setContentDescription(getString(R.string.alta_plan_macros_a11y,
-                n.proteinas, n.carbohidratos, n.grasas, litros.format(n.agua)));
+        raiz.findViewById(R.id.listaMacros).setContentDescription(n.tieneRangoProteina()
+                ? getString(R.string.alta_plan_macros_a11y_rango, n.proteinas, n.carbohidratos, n.grasas,
+                        litros.format(n.agua), n.proteinaMinima)
+                : getString(R.string.alta_plan_macros_a11y, n.proteinas, n.carbohidratos, n.grasas,
+                        litros.format(n.agua)));
 
         ((AnilloMacros) raiz.findViewById(R.id.anilloMacros)).mostrar(n.proteinas, n.carbohidratos, n.grasas, animar);
         Movimiento.Paso paso = f -> {
             kcal.setText(entero.format(Math.round(n.calorias * f)));
             for (int i = 0; i < 3; i++) {
-                macros[i].setText(getString(R.string.alta_plan_gramos, Math.round(gramos[i] * f)));
+                macros[i].setText(i == 0 && n.tieneRangoProteina()
+                        ? getString(R.string.proteina_rango, Math.round(gramos[i] * f), Math.round(n.proteinaMinima * f))
+                        : getString(R.string.alta_plan_gramos, Math.round(gramos[i] * f)));
             }
             agua.setText(getString(R.string.alta_plan_litros, litros.format(n.agua * f)));
         };
@@ -200,6 +212,14 @@ public class PasoPlanFragment extends PasoAltaFragment {
         } else {
             paso.en(1f);
         }
+    }
+
+    // Sobre qué se calculó la proteína (GP-206); nada si el cálculo no lo sabe.
+    private void pintarNotaProteina(@NonNull ResultadoNutricional n) {
+        TextView nota = raiz.findViewById(R.id.tvNotaProteina);
+        int texto = ProteinaTexto.base(n.baseProteina);
+        nota.setVisibility(texto == 0 ? View.GONE : View.VISIBLE);
+        if (texto != 0) nota.setText(texto);
     }
 
     @StringRes

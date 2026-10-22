@@ -1251,6 +1251,12 @@
     <string name="alta_plan_litros">%1$s L</string>
     <string name="alta_plan_kcal_a11y">%1$s kilocalorías al día</string>
     <string name="alta_plan_macros_a11y">Proteína, %1$d gramos. Carbohidratos, %2$d gramos. Grasa, %3$d gramos. Agua, %4$s litros.</string>
+    <string name="alta_plan_macros_a11y_rango">Proteína, %1$d gramos, mínimo eficaz %5$d gramos. Carbohidratos, %2$d gramos. Grasa, %3$d gramos. Agua, %4$s litros.</string>
+    <string name="proteina_rango">%1$d g (mínimo eficaz: %2$d g)</string>
+    <string name="nutricion_proteina_rango">Objetivo: %1$d g (mínimo eficaz: %2$d g)</string>
+    <string name="proteina_base_masa_magra">Calculada sobre tu masa magra.</string>
+    <string name="proteina_base_peso">Calculada sobre tu peso.</string>
+    <string name="proteina_base_peso_referencia">Calculada sobre un peso de referencia (IMC 25), no sobre tu peso total.</string>
     <string name="alta_plan_nota_perder">Un 20 % menos de lo que gastas, para perder grasa.</string>
     <string name="alta_plan_nota_musculo">Un 15 % más de lo que gastas, para ganar músculo.</string>
     <string name="alta_plan_nota_mantener">Lo mismo que gastas, para mantenerte.</string>
