@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Sesión en vivo</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+button,input{font-family:inherit}
+button{cursor:pointer}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+.toque{transition:transform 120ms cubic-bezier(.2,0,0,1)}
+.toque:active{transform:scale(.97)}
+.campo{width:100%;box-sizing:border-box;height:40px;border-radius:10px;border:1px solid #353A43;background:#121418;color:#F2F2F3;font-size:17px;font-weight:600;text-align:center;font-variant-numeric:tabular-nums}
+.campo:focus{outline:none;border-color:#FF6A00}
+@keyframes salta{0%{transform:scale(.4)}60%{transform:scale(1.18)}100%{transform:scale(1)}}
+@keyframes entra{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+@keyframes sube{from{transform:translateY(100%)}to{transform:none}}
+@keyframes oro{0%{background:#1B1E24}25%{background:#3A2E12}100%{background:#2A2414}}
+@keyframes brillo{from{transform:translateX(-140%) skewX(-18deg)}to{transform:translateX(520%) skewX(-18deg)}}
+@keyframes c1{to{transform:translate(-26px,-22px);opacity:0}}
+@keyframes c2{to{transform:translate(0,-32px);opacity:0}}
+@keyframes c3{to{transform:translate(26px,-22px);opacity:0}}
+@keyframes c4{to{transform:translate(30px,6px);opacity:0}}
+@keyframes c5{to{transform:translate(-30px,6px);opacity:0}}
+@keyframes c6{to{transform:translate(0,26px);opacity:0}}
+@keyframes late{0%,100%{transform:scale(1)}40%{transform:scale(1.08)}}
+.chispa{position:absolute;left:14px;top:14px;width:6px;height:6px;border-radius:3px;background:#E8B84B;opacity:1}
+.ultimos{display:inline-block;animation:late 900ms cubic-bezier(.2,0,0,1)}
+@media (prefers-reduced-motion: reduce){.anim,.chispa,.ultimos{animation:none !important;transition:none !important}.chispa{display:none}.toque:active{transform:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 1000px; position: relative; overflow: hidden; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif;">
+<header style="display: flex; align-items: center; gap: 4px; padding: 8px 12px 0 4px;">
+<button type="button" aria-label="Minimizar la sesión" class="toque" style="width: 48px; height: 48px; border: none; border-radius: 24px; background: transparent; color: #F2F2F3; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">expand_more</span></button>
+<div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+<span style="font-size: 17px; font-weight: 600;">Cuerpo completo B</span>
+<span style="font-size: 13px; color: #A1A9B6;">Ejercicio 1 de 5</span>
+</div>
+<button type="button" class="toque" style="min-height: 44px; padding: 0 18px; border: none; border-radius: 22px; background: #3A2110; color: #FFB27A; font-size: 15px; font-weight: 700;">Terminar</button>
+</header>
+<section aria-label="Cómo va la sesión" style="padding: 12px 16px 4px; display: flex; flex-direction: column; gap: 12px;">
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px;">
+<div style="display: flex; flex-direction: column; gap: 2px;">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 2px; color: #A1A9B6;">TIEMPO</span>
+<strong role="timer" aria-label="{{ tiempoA11y }}" style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 56px; line-height: 1; font-variant-numeric: tabular-nums;">{{ tiempo }}</strong>
+</div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px; padding-bottom: 4px;">
+<span style="display: flex; align-items: baseline; gap: 6px;"><span style="font-size: 13px; color: #A1A9B6;">Volumen</span><strong aria-live="polite" style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px; line-height: 1; font-variant-numeric: tabular-nums;">{{ volumen }}</strong><span style="font-size: 14px; color: #A1A9B6;">kg</span></span>
+<span style="display: flex; align-items: baseline; gap: 6px;"><span style="font-size: 13px; color: #A1A9B6;">Series</span><strong style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px; line-height: 1; font-variant-numeric: tabular-nums;">{{ series }}</strong><span style="font-size: 14px; color: #A1A9B6;">de 16</span></span>
+</div>
+</div>
+<div role="progressbar" aria-label="Series hechas" aria-valuemin="0" aria-valuemax="16" aria-valuenow="{{ seriesNum }}" style="height: 6px; border-radius: 3px; background: #353A43; overflow: hidden;"><div class="anim" style="height: 100%; width: {{ progreso }}; background: #FF6A00; border-radius: 3px; transition: width 500ms cubic-bezier(.2,0,0,1);"></div></div>
+</section>
+<main style="padding: 12px 16px 230px; display: flex; flex-direction: column; gap: 12px;">
+<section aria-label="Press de banca" style="background: #1B1E24; border: 1px solid #676F7E; border-radius: 20px; padding: 14px 12px 8px; display: flex; flex-direction: column; gap: 10px;">
+<div style="display: flex; align-items: flex-start; gap: 10px; padding-left: 4px;">
+<span style="flex-shrink: 0; width: 40px; height: 40px; border-radius: 20px; background: #3A2110; color: #FF6A00; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">fitness_center</span></span>
+<div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px;">
+<h2 style="margin: 0; font-size: 19px; font-weight: 600;">Press de banca</h2>
+<span style="font-size: 14px; color: #A1A9B6;">4 × 6–8 · descanso 2:30</span>
+<span style="display: flex; align-items: center; gap: 5px; font-size: 14px; color: #E8B84B;"><span class="ms" aria-hidden="true" style="font-size: 17px;">trophy</span>{{ recordTexto }}</span>
+</div>
+<button type="button" aria-label="Opciones de press de banca" class="toque" style="flex-shrink: 0; width: 44px; height: 44px; border: none; border-radius: 22px; background: transparent; color: #A1A9B6; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">more_vert</span></button>
+</div>
+<sc-if value="{{ hayRecord }}" hint-placeholder-val="{{ false }}">
+<div role="status" class="anim" style="position: relative; overflow: hidden; display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; background: #3A2E12; border: 1px solid #E8B84B; animation: entra 350ms cubic-bezier(.05,.7,.1,1) backwards;">
+<span style="position: relative; flex-shrink: 0; width: 34px; height: 34px;">
+<span class="ms f anim" aria-hidden="true" style="position: absolute; left: 5px; top: 5px; font-size: 24px; color: #E8B84B; animation: salta 450ms cubic-bezier(.34,1.56,.64,1) 120ms backwards;">trophy</span>
+<span class="chispa" aria-hidden="true" style="animation: c1 700ms cubic-bezier(.2,0,0,1) 200ms forwards;"></span>
+<span class="chispa" aria-hidden="true" style="animation: c2 700ms cubic-bezier(.2,0,0,1) 200ms forwards;"></span>
+<span class="chispa" aria-hidden="true" style="animation: c3 700ms cubic-bezier(.2,0,0,1) 200ms forwards;"></span>
+<span class="chispa" aria-hidden="true" style="animation: c4 700ms cubic-bezier(.2,0,0,1) 200ms forwards;"></span>
+<span class="chispa" aria-hidden="true" style="animation: c5 700ms cubic-bezier(.2,0,0,1) 200ms forwards;"></span>
+<span class="chispa" aria-hidden="true" style="animation: c6 700ms cubic-bezier(.2,0,0,1) 200ms forwards;"></span>
+</span>
+<span style="display: flex; flex-direction: column; gap: 2px;"><strong style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px; color: #E8B84B; line-height: 1.1;">¡Récord! 85 kg × 7</strong><span style="font-size: 14px; color: #E9DDBF;">Tu mejor marca era 82,5 kg × 8</span></span>
+<span class="anim" aria-hidden="true" style="position: absolute; top: 0; bottom: 0; left: 0; width: 70px; background: linear-gradient(90deg, rgba(255,244,217,0), rgba(255,244,217,.35), rgba(255,244,217,0)); animation: brillo 900ms cubic-bezier(.2,0,0,1) 250ms backwards;"></span>
+</div>
+</sc-if>
+<div aria-hidden="true" style="display: grid; grid-template-columns: 40px minmax(0, 1fr) 72px 56px 48px; gap: 8px; align-items: center; padding: 0 4px; font-size: 13px; color: #A1A9B6;">
+<span style="text-align: center;">Serie</span><span>Anterior</span><span style="text-align: center;">kg</span><span style="text-align: center;">Reps</span><span></span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px;">
+<div style="display: grid; grid-template-columns: 40px minmax(0, 1fr) 72px 56px 48px; gap: 8px; align-items: center; padding: 4px; border-radius: 12px;">
+<span style="text-align: center; font-weight: 600;">1</span><span style="font-size: 15px; color: #A1A9B6; font-variant-numeric: tabular-nums;">80 × 8</span>
+<input class="campo" readOnly="{{ true }}" value="82,5" aria-label="Kilos de la serie 1">
+<input class="campo" readOnly="{{ true }}" value="8" aria-label="Repeticiones de la serie 1">
+<button type="button" aria-label="Serie 1, hecha" class="toque" style="width: 44px; height: 44px; border: none; border-radius: 22px; background: #143323; color: #4ADE80; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">check</span></button>
+</div>
+<div style="display: grid; grid-template-columns: 40px minmax(0, 1fr) 72px 56px 48px; gap: 8px; align-items: center; padding: 4px; border-radius: 12px;">
+<span style="text-align: center; font-weight: 600;">2</span><span style="font-size: 15px; color: #A1A9B6; font-variant-numeric: tabular-nums;">80 × 8</span>
+<input class="campo" readOnly="{{ true }}" value="82,5" aria-label="Kilos de la serie 2">
+<input class="campo" readOnly="{{ true }}" value="8" aria-label="Repeticiones de la serie 2">
+<button type="button" aria-label="Serie 2, hecha" class="toque" style="width: 44px; height: 44px; border: none; border-radius: 22px; background: #143323; color: #4ADE80; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">check</span></button>
+</div>
+<div class="{{ fila3Clase }}" style="position: relative; overflow: hidden; display: grid; grid-template-columns: 40px minmax(0, 1fr) 72px 56px 48px; gap: 8px; align-items: center; padding: 4px; border-radius: 12px; background: {{ fila3Fondo }}; animation: {{ fila3Anim }};">
+<span style="text-align: center; font-weight: 600;">3</span><span style="font-size: 15px; color: #A1A9B6; font-variant-numeric: tabular-nums;">80 × 7</span>
+<input class="campo" readOnly="{{ true }}" value="85" aria-label="Kilos de la serie 3" style="border-color: {{ campo3Borde }};">
+<input class="campo" readOnly="{{ true }}" value="7" aria-label="Repeticiones de la serie 3" style="border-color: {{ campo3Borde }};">
+<button type="button" onClick="{{ marcar }}" aria-label="{{ marcarA11y }}" aria-pressed="{{ hecha3 }}" class="toque" style="width: 44px; height: 44px; border: none; border-radius: 22px; background: {{ check3Fondo }}; color: {{ check3Color }}; display: flex; align-items: center; justify-content: center;"><span class="{{ check3Clase }}" aria-hidden="true" style="animation: {{ check3Anim }};">check</span></button>
+</div>
+<div style="display: grid; grid-template-columns: 40px minmax(0, 1fr) 72px 56px 48px; gap: 8px; align-items: center; padding: 4px; border-radius: 12px;">
+<span style="text-align: center; font-weight: 600;">4</span><span style="font-size: 15px; color: #A1A9B6; font-variant-numeric: tabular-nums;">77,5 × 7</span>
+<input class="campo" readOnly="{{ true }}" value="" placeholder="85" aria-label="Kilos de la serie 4" style="color: #A1A9B6;">
+<input class="campo" readOnly="{{ true }}" value="" placeholder="7" aria-label="Repeticiones de la serie 4" style="color: #A1A9B6;">
+<button type="button" aria-label="Marcar la serie 4" class="toque" style="width: 44px; height: 44px; border: none; border-radius: 22px; background: #252A31; color: #A1A9B6; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">check</span></button>
+</div>
+</div>
+<button type="button" class="toque" style="align-self: flex-start; min-height: 44px; display: flex; align-items: center; gap: 6px; padding: 0 12px; border: none; border-radius: 22px; background: transparent; color: #FF8A3D; font-size: 15px; font-weight: 600;"><span class="ms" aria-hidden="true" style="font-size: 20px;">add</span>Añadir serie</button>
+</section>
+<section aria-label="Sentadilla, después" style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 12px 8px 12px 16px; display: flex; align-items: center; gap: 12px;">
+<span style="flex-shrink: 0; width: 40px; height: 40px; border-radius: 20px; background: #252A31; color: #A1A9B6; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">fitness_center</span></span>
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 17px; font-weight: 600;">Sentadilla</span><span style="font-size: 14px; color: #A1A9B6;">0 de 4 · 4 × 5 · descanso 3:00</span></span>
+<button type="button" aria-label="Abrir sentadilla" class="toque" style="width: 44px; height: 44px; border: none; border-radius: 22px; background: transparent; color: #A1A9B6; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">keyboard_arrow_down</span></button>
+</section>
+<section aria-label="Remo con barra, después" style="background: #1B1E24; border: 1px solid #4A505B; border-radius: 20px; padding: 12px 8px 12px 16px; display: flex; align-items: center; gap: 12px;">
+<span style="flex-shrink: 0; width: 40px; height: 40px; border-radius: 20px; background: #252A31; color: #A1A9B6; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">fitness_center</span></span>
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 17px; font-weight: 600;">Remo con barra</span><span style="font-size: 14px; color: #A1A9B6;">0 de 4 · 4 × 8–10 · descanso 2:00</span></span>
+<button type="button" aria-label="Abrir remo con barra" class="toque" style="width: 44px; height: 44px; border: none; border-radius: 22px; background: transparent; color: #A1A9B6; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">keyboard_arrow_down</span></button>
+</section>
+</main>
+<sc-if value="{{ enDescanso }}" hint-placeholder-val="{{ false }}">
+<section aria-label="Descanso" class="anim" style="position: absolute; left: 0; right: 0; bottom: 0; padding: 18px 16px 24px; background: #121418; border-top: 1px solid #353A43; border-radius: 24px 24px 0 0; display: flex; flex-direction: column; gap: 14px; animation: sube 450ms cubic-bezier(.05,.7,.1,1) backwards;">
+<div style="display: flex; align-items: center; gap: 16px;">
+<svg width="72" height="72" viewBox="0 0 72 72" aria-hidden="true" style="flex-shrink: 0;"><circle cx="36" cy="36" r="31" fill="none" stroke="#353A43" strokeWidth="7"></circle><circle cx="36" cy="36" r="31" fill="none" stroke="#FF6A00" strokeWidth="7" strokeLinecap="round" strokeDasharray="194.8" strokeDashoffset="{{ aroOffset }}" transform="rotate(-90 36 36)"></circle></svg>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 2px; color: #A1A9B6;">DESCANSO</span>
+<strong role="timer" aria-label="{{ descansoA11y }}" class="{{ descansoClase }}" style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 46px; line-height: 1; font-variant-numeric: tabular-nums;">{{ descanso }}</strong>
+<span style="font-size: 14px; color: #A1A9B6;">Siguiente: serie 4 · 85 kg × 7</span>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;">
+<button type="button" onClick="{{ menos }}" class="toque" style="min-height: 48px; border: none; border-radius: 24px; background: #252A31; color: #F2F2F3; font-size: 16px; font-weight: 600;">−15 s</button>
+<button type="button" onClick="{{ mas }}" class="toque" style="min-height: 48px; border: none; border-radius: 24px; background: #252A31; color: #F2F2F3; font-size: 16px; font-weight: 600;">+15 s</button>
+<button type="button" onClick="{{ saltar }}" class="toque" style="min-height: 48px; border: none; border-radius: 24px; background: #FF6A00; color: #1A0E00; font-size: 16px; font-weight: 700;">Saltar</button>
+</div>
+</section>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1000}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { seg: 2292, hecha3: false, fin: 0, ahora: 0, vol: 4210, volDesde: 4210, volHasta: 4210, t: 1 };
+  }
+  componentDidMount() {
+    this.reloj = setInterval(() => {
+      this.setState({ seg: this.state.seg + 1, ahora: Date.now() });
+    }, 1000);
+  }
+  componentWillUnmount() {
+    clearInterval(this.reloj);
+    if (this.raf) cancelAnimationFrame(this.raf);
+  }
+  quieto() {
+    return typeof window !== 'undefined' && window.matchMedia
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+  contar(desde, hasta) {
+    if (this.raf) cancelAnimationFrame(this.raf);
+    if (this.quieto() || typeof requestAnimationFrame !== 'function') {
+      this.setState({ volDesde: hasta, volHasta: hasta, t: 1 });
+      return;
+    }
+    const inicio = performance.now();
+    const paso = (ahora) => {
+      const t = Math.min(1, (ahora - inicio) / 600);
+      this.setState({ t });
+      if (t < 1) this.raf = requestAnimationFrame(paso);
+    };
+    this.setState({ volDesde: desde, volHasta: hasta, t: 0 });
+    this.raf = requestAnimationFrame(paso);
+  }
+  mmss(s) {
+    const m = Math.floor(s / 60);
+    const r = s % 60;
+    return m + ':' + (r < 10 ? '0' : '') + r;
+  }
+  miles(n) {
+    return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+  renderVals() {
+    const s = this.state;
+    const e = 1 - Math.pow(1 - s.t, 3);
+    const vol = Math.round(s.volDesde + (s.volHasta - s.volDesde) * e);
+    const ahora = s.ahora || Date.now();
+    const quedan = s.fin ? Math.max(0, Math.round((s.fin - ahora) / 1000)) : 0;
+    const enDescanso = s.hecha3 && s.fin > 0 && quedan > 0;
+    const hechas = s.hecha3 ? 10 : 9;
+    const h = Math.floor(s.seg / 3600);
+    const tiempo = (h > 0 ? h + ':' : '') + this.mmss(s.seg % 3600).padStart(h > 0 ? 5 : 0, '0');
+    return {
+      tiempo,
+      tiempoA11y: 'Tiempo de sesión ' + tiempo,
+      volumen: this.miles(vol),
+      series: String(hechas),
+      seriesNum: hechas,
+      progreso: ((hechas / 16) * 100).toFixed(1) + '%',
+      hecha3: s.hecha3,
+      hayRecord: s.hecha3,
+      recordTexto: s.hecha3 ? 'Tu récord: 85 kg × 7, de hoy' : 'Tu récord: 82,5 kg × 8',
+      fila3Clase: s.hecha3 ? 'anim' : '',
+      fila3Fondo: s.hecha3 ? '#2A2414' : 'transparent',
+      fila3Anim: s.hecha3 ? 'oro 900ms cubic-bezier(.2,0,0,1) backwards' : 'none',
+      campo3Borde: s.hecha3 ? '#5C4A1E' : '#FF6A00',
+      check3Fondo: s.hecha3 ? '#143323' : '#FF6A00',
+      check3Color: s.hecha3 ? '#4ADE80' : '#1A0E00',
+      check3Clase: s.hecha3 ? 'ms anim' : 'ms',
+      check3Anim: s.hecha3 ? 'salta 260ms cubic-bezier(.34,1.56,.64,1)' : 'none',
+      marcarA11y: s.hecha3 ? 'Serie 3, hecha. Tocar para desmarcarla' : 'Marcar la serie 3: 85 kilos por 7',
+      marcar: () => {
+        if (this.state.hecha3) {
+          this.setState({ hecha3: false, fin: 0 });
+          this.contar(4805, 4210);
+        } else {
+          this.setState({ hecha3: true, fin: Date.now() + 150000, ahora: Date.now() });
+          this.contar(4210, 4805);
+        }
+      },
+      enDescanso,
+      descanso: this.mmss(quedan),
+      descansoA11y: 'Descanso, quedan ' + this.mmss(quedan),
+      descansoClase: quedan > 0 && quedan <= 10 ? 'ultimos' : '',
+      aroOffset: (194.8 * (1 - quedan / 150)).toFixed(1),
+      menos: () => this.setState({ fin: Math.max(Date.now() + 1000, this.state.fin - 15000), ahora: Date.now() }),
+      mas: () => this.setState({ fin: this.state.fin + 15000, ahora: Date.now() }),
+      saltar: () => this.setState({ fin: 0 })
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Decisiones para aprobar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;display=block">
+<style>
+body{margin:0;background:#101114;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.tarjeta{background:#16181C;border:1px solid #252A31;border-radius:20px;padding:18px 20px;display:flex;flex-direction:column;gap:10px}
+.tarjeta.fuera{background:transparent;border:1px dashed #4A505B}
+.cab{display:flex;align-items:center;gap:12px}
+.num{flex-shrink:0;width:30px;height:30px;border-radius:15px;background:#3A2110;color:#FFB27A;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:17px}
+.fuera .num{background:#252A31;color:#C9CED6}
+.tit{margin:0;font-size:19px;font-weight:600;line-height:1.2}
+.txt{margin:0;font-size:15px;line-height:1.45;color:#C9CED6}
+.porque{margin:0;font-size:14px;line-height:1.4;color:#A1A9B6}
+.porque b{color:#F2F2F3;font-weight:600}
+th{text-align:left;font-size:13px;font-weight:600;color:#A1A9B6;padding:10px 12px;border-bottom:1px solid #4A505B}
+td{vertical-align:top;font-size:15px;line-height:1.4;padding:12px;border-bottom:1px solid #252A31;color:#C9CED6}
+td.n{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;color:#FF6A00}
+td.t{font-weight:600;color:#F2F2F3}
+</style>
+</helmet>
+<div style="width: 1100px; min-height: 2100px; box-sizing: border-box; padding: 40px; background: #101114; color: #F2F2F3; font-family: 'Barlow', sans-serif; display: flex; flex-direction: column; gap: 24px;">
+<header style="display: flex; flex-direction: column; gap: 6px;">
+<h1 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 40px;">Decisiones para aprobar</h1>
+<p style="margin: 0; font-size: 17px; color: #C9CED6;">Once decisiones y un orden. Lo aprobado entra en el backlog bajo GP-210, y el movimiento, en DEC-039.</p>
+</header>
+<ol style="list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px;">
+<li class="tarjeta">
+<div class="cab"><span class="num">1</span><h2 class="tit">Profi, solo donde suma</h2></div>
+<p class="txt">En el alta, las pantallas vacías, los logros y «Tu semana». Nunca en la sesión en vivo, en errores ni en notificaciones. Recortado en Canva, con dos juegos de capas: en el tema oscuro, la ropa negra pasa a gris carbón para que no se pierda.</p>
+<p class="porque"><b>Por qué:</b> pone cara a la marca sin quitarle foco al dato.</p>
+</li>
+<li class="tarjeta">
+<div class="cab"><span class="num">2</span><h2 class="tit">Profi animado, en nativo</h2></div>
+<p class="txt">Saluda, señala, celebra y parpadea (momentos 39 a 42). Va en capas —cuerpo, mano y ojos— que mueve Movimiento, como el resto de la app. Sin Lottie.</p>
+<p class="porque"><b>Por qué:</b> con las capas, Lottie solo añade una dependencia; así se prueba con MovimientoTest.</p>
+</li>
+<li class="tarjeta">
+<div class="cab"><span class="num">3</span><h2 class="tit">La sesión en vivo, a la altura</h2></div>
+<p class="txt">Tiempo, volumen y series arriba, que suman al marcar; «Tu récord» junto a «Anterior» (GP-014). El descanso sigue abajo y sin velo, como la barra de GP-013, pero con aro y la serie siguiente: nunca tapa el registro.</p>
+<p class="porque"><b>Por qué:</b> es donde más tiempo pasa la gente; cada serie tiene que notarse.</p>
+</li>
+<li class="tarjeta">
+<div class="cab"><span class="num">4</span><h2 class="tit">Una sola regla de récord</h2></div>
+<p class="txt">Récord es superar la mejor marca del ejercicio según GP-088. Se celebra una vez por ejercicio y sesión, en dorado (DEC-018), e igual en la sesión, el resumen y la tarjeta.</p>
+<p class="porque"><b>Por qué:</b> si celebra de más, deja de significar algo.</p>
+</li>
+<li class="tarjeta">
+<div class="cab"><span class="num">5</span><h2 class="tit">El descanso, con el móvil bloqueado</h2></div>
+<p class="txt">La notificación de la sesión que ya existe (GP-012 y GP-013) pasa a Live Update en Android 16: chip en la barra de estado y tarjeta en la pantalla de bloqueo. Gana «+15 s» y «Saltar»; si el sistema no la promueve, sigue como hoy.</p>
+<p class="porque"><b>Por qué:</b> sin desbloquear, ves cuánto queda y lo alargas o lo saltas.</p>
+</li>
+<li class="tarjeta">
+<div class="cab"><span class="num">6</span><h2 class="tit">El resumen nuevo va en la 1.6.9</h2></div>
+<p class="txt">El tablero 3 sustituye al 11 del lienzo de nutrición y cierra GP-023: kilos por ejercicio frente a la última vez, porque las marcas ya salen en los récords, y en la primera sesión, «Primera vez: es tu punto de partida». El prompt de la 1.6.9 se rehace.</p>
+<p class="porque"><b>Por qué:</b> construir el 11 para cambiarlo después sería trabajo doble.</p>
+</li>
+<li class="tarjeta">
+<div class="cab"><span class="num">7</span><h2 class="tit">La tarjeta, privada por defecto</h2></div>
+<p class="txt">Solo datos del entreno: récords y duración, activados; tu nombre, apagado. Nunca peso, medidas, fotos ni comidas. Se crea en el móvil y sale por el menú de compartir de Android; no se sube nada.</p>
+<p class="porque"><b>Por qué:</b> cada tarjeta enseña la app a alguien, sin sustos de privacidad.</p>
+</li>
+<li class="tarjeta">
+<div class="cab"><span class="num">8</span><h2 class="tit">«Tu semana», los lunes</h2></div>
+<p class="txt">Una tarjeta en Inicio abre cinco páginas: la semana, entrenos, récords, nutrición y lo siguiente. Pasa al tocar y una semana floja no culpa. Convive con «Esta semana» (GP-090). Necesita el resumen semanal de la API (GP-011).</p>
+<p class="porque"><b>Por qué:</b> un motivo para volver cada lunes, sin rachas.</p>
+</li>
+<li class="tarjeta">
+<div class="cab"><span class="num">9</span><h2 class="tit">Transiciones de Material</h2></div>
+<p class="txt">Tarjeta a detalle con container transform, flujos con eje compartido X y pestañas con fundido, afinando el de GP-105. El atrás predictivo entre pantallas ya lo da Android 16; faltan las hojas propias, como la del «+».</p>
+<p class="porque"><b>Por qué:</b> cada pantalla sale de la anterior en vez de aparecer.</p>
+</li>
+<li class="tarjeta">
+<div class="cab"><span class="num">10</span><h2 class="tit">Pasada Expressive, acotada</h2></div>
+<p class="txt">Cuatro piezas de Material 1.14: botones que cambian de forma, botones conectados donde las opciones se excluyen, el indicador de carga en esperas cortas y la escala enfatizada en las cifras clave. Lo demás, igual.</p>
+<p class="porque"><b>Por qué:</b> carácter sin rehacer la app; ya viene en la versión que usa.</p>
+</li>
+<li class="tarjeta">
+<div class="cab"><span class="num">11</span><h2 class="tit">Momentos 24 a 42, a DEC-039</h2></div>
+<p class="txt">Los diecinueve del tablero de al lado entran en DEC-039 y en Movimiento, con las reglas de siempre: «Quitar animaciones» deja el estado final, nada espera y las vibraciones se quedan.</p>
+<p class="porque"><b>Por qué:</b> un solo sistema de movimiento, y MovimientoTest lo vigila.</p>
+</li>
+<li class="tarjeta fuera">
+<div class="cab"><span class="num">—</span><h2 class="tit">Fuera de GP-210</h2></div>
+<p class="txt">Lottie, sonidos, widgets y Wear OS. Se replantean con datos de uso, después del lanzamiento.</p>
+</li>
+</ol>
+<section aria-label="El orden" style="display: flex; flex-direction: column; gap: 10px;">
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 30px;">El orden</h2>
+<p style="margin: 0; font-size: 16px; color: #C9CED6;">Después de GP-207 y GP-209. Cada paso es un lote con su prompt y su informe; las decisiones 2 y 11 valen para todos.</p>
+<table style="width: 100%; border-collapse: collapse;">
+<thead><tr><th style="width: 52px;">Paso</th><th>Qué se construye</th><th style="width: 120px;">Decisiones</th><th style="width: 340px;">Necesita</th></tr></thead>
+<tbody>
+<tr><td class="n">1</td><td class="t">El resumen, en la 1.6.9 rehecha</td><td>4 · 6</td><td>El logro del resumen va sin Profi hasta el paso 5.</td></tr>
+<tr><td class="n">2</td><td class="t">Transiciones y pasada Expressive</td><td>9 · 10</td><td>—</td></tr>
+<tr><td class="n">3</td><td class="t">Sesión en vivo y descanso con Live Update</td><td>3 · 4 · 5</td><td>—</td></tr>
+<tr><td class="n">4</td><td class="t">La tarjeta para compartir</td><td>7</td><td>Los pasos 1 y 2.</td></tr>
+<tr><td class="n">5</td><td class="t">Profi animado: alta, vacíos, logros y resumen</td><td>1 · 2</td><td>Nada: las capas ya están recortadas y van en un zip con su prompt.</td></tr>
+<tr><td class="n">6</td><td class="t">«Tu semana»</td><td>8</td><td>El resumen semanal en la API (GP-011) y el paso 5.</td></tr>
+</tbody>
+</table>
+</section>
+<p style="margin: 0; font-size: 16px; color: #C9CED6;">Al aprobarlo, GP-210 se actualiza en el backlog con estas decisiones y los seis pasos, y el prompt de la 1.6.9 se rehace para el paso 1.</p>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1100,"height":2100}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

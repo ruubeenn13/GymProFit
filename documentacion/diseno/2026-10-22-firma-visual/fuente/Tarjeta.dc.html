@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Compartir la sesión</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+button{font-family:inherit;cursor:pointer}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+.toque{transition:transform 120ms cubic-bezier(.2,0,0,1)}
+.toque:active{transform:scale(.97)}
+@keyframes carta{from{opacity:0;transform:translateY(24px) scale(.98)}to{opacity:1;transform:none}}
+.tarjeta{transition:background-color 200ms cubic-bezier(.2,0,0,1),color 200ms cubic-bezier(.2,0,0,1)}
+@media (prefers-reduced-motion: reduce){.anim,.tarjeta{animation:none !important;transition:none !important}.toque:active{transform:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif;">
+<header style="display: flex; align-items: center; gap: 4px; padding: 8px 12px 0 4px;">
+<a href="Resumen.dc.html" aria-label="Volver al resumen" class="toque" style="width: 48px; height: 48px; border-radius: 24px; color: #F2F2F3; display: flex; align-items: center; justify-content: center; text-decoration: none;"><span class="ms" aria-hidden="true">arrow_back</span></a>
+<h1 style="margin: 0; flex-grow: 1; font-size: 19px; font-weight: 600;">Compartir</h1>
+</header>
+<main style="padding: 8px 16px 0; display: flex; flex-direction: column; align-items: center; gap: 16px;">
+<div role="img" aria-label="{{ tarjetaA11y }}" class="anim tarjeta" style="width: 234px; height: 416px; box-sizing: border-box; border-radius: 22px; border: 1px solid {{ borde }}; background: {{ fondo }}; color: {{ texto }}; padding: 20px 18px 16px; display: flex; flex-direction: column; justify-content: space-between; animation: carta 450ms cubic-bezier(.05,.7,.1,1) backwards;">
+<div aria-hidden="true" style="display: flex; align-items: center; gap: 8px;">
+<sc-if value="{{ oscura }}" hint-placeholder-val="{{ true }}"><img src="/_blob/344f18165d89a9c9ba306e836b415172" alt="" style="width: 26px; height: 26px;"></sc-if>
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 3px;">GYMPROFIT</span>
+</div>
+<div aria-hidden="true" style="display: flex; flex-direction: column; gap: 2px;">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 2px; color: {{ acento }};">CUERPO COMPLETO B · 23 OCT</span>
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 72px; line-height: .95; font-variant-numeric: tabular-nums;">8.420</span>
+<span style="font-size: 15px; font-weight: 500;">{{ subtitulo }}</span>
+</div>
+<sc-if value="{{ conRecords }}" hint-placeholder-val="{{ true }}">
+<div aria-hidden="true" style="display: flex; flex-direction: column; gap: 6px; padding: 12px; border-radius: 14px; background: {{ cajaRecords }};">
+<span style="display: flex; align-items: center; gap: 6px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; color: {{ oro }};"><span class="ms f" style="font-size: 18px;">trophy</span>2 récords</span>
+<span style="display: flex; justify-content: space-between; font-size: 13px;"><span>Press de banca</span><strong style="color: {{ oro }};">85 kg × 7</strong></span>
+<span style="display: flex; justify-content: space-between; font-size: 13px;"><span>Sentadilla</span><strong style="color: {{ oro }};">100 kg × 5</strong></span>
+</div>
+</sc-if>
+<div aria-hidden="true" style="display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; font-weight: 500;"><span>{{ firma }}</span><span style="font-weight: 700;">gymprofit.app</span></div>
+</div>
+<div role="group" aria-label="Estilo de la tarjeta" style="display: flex; gap: 2px; width: 100%;">
+<button type="button" onClick="{{ ponOscura }}" aria-pressed="{{ oscura }}" class="toque" style="flex: 1; min-height: 44px; border: none; border-radius: 22px 6px 6px 22px; background: {{ btnOscuraFondo }}; color: {{ btnOscuraTexto }}; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px;"><sc-if value="{{ oscura }}" hint-placeholder-val="{{ true }}"><span class="ms" aria-hidden="true" style="font-size: 18px;">check</span></sc-if>Oscura</button>
+<button type="button" onClick="{{ ponNaranja }}" aria-pressed="{{ naranja }}" class="toque" style="flex: 1; min-height: 44px; border: none; border-radius: 6px 22px 22px 6px; background: {{ btnNaranjaFondo }}; color: {{ btnNaranjaTexto }}; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px;"><sc-if value="{{ naranja }}" hint-placeholder-val="{{ false }}"><span class="ms" aria-hidden="true" style="font-size: 18px;">check</span></sc-if>Naranja</button>
+</div>
+<div style="width: 100%; display: flex; flex-direction: column; border-radius: 16px; background: #1B1E24; overflow: hidden;">
+<sc-for list="{{ opciones }}" as="o" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 8px 4px 16px; border-bottom: 1px solid #252A31;">
+<span style="font-size: 15px;">{{ o.etiqueta }}</span>
+<button type="button" role="switch" aria-checked="{{ o.activo }}" aria-label="{{ o.etiqueta }}" onClick="{{ o.tocar }}" class="toque" style="width: 60px; height: 44px; border: none; background: transparent; display: flex; align-items: center; justify-content: center;"><span aria-hidden="true" style="width: 48px; height: 28px; box-sizing: border-box; border-radius: 14px; background: {{ o.pista }}; border: 2px solid {{ o.borde }}; display: flex; align-items: center; padding: 0 3px; justify-content: {{ o.lado }};"><span style="width: 18px; height: 18px; border-radius: 9px; background: {{ o.punto }};"></span></span></button>
+</div>
+</sc-for>
+</div>
+<span style="width: 100%; font-size: 14px; color: #A1A9B6;">Solo sale lo que ves en la tarjeta: nada de tu peso ni de lo que comes.</span>
+</main>
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 16px 24px; background: #121418; border-top: 1px solid #252A31; display: flex; gap: 10px;">
+<button type="button" class="toque" style="flex: 1; min-height: 52px; border-radius: 26px; border: 1px solid #676F7E; background: transparent; color: #F2F2F3; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 16px; font-weight: 600;"><span class="ms" aria-hidden="true" style="font-size: 20px;">download</span>Guardar</button>
+<button type="button" class="toque" style="flex: 1.4; min-height: 52px; border: none; border-radius: 26px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 16px; font-weight: 700;"><span class="ms" aria-hidden="true" style="font-size: 20px;">share</span>Compartir imagen</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { estilo: 'oscura', records: true, duracion: true, nombre: false };
+  }
+  renderVals() {
+    const s = this.state;
+    const oscura = s.estilo === 'oscura';
+    const op = (clave, etiqueta) => ({
+      etiqueta,
+      activo: s[clave],
+      pista: s[clave] ? '#FF6A00' : '#252A31',
+      borde: s[clave] ? '#FF6A00' : '#676F7E',
+      punto: s[clave] ? '#1A0E00' : '#A1A9B6',
+      lado: s[clave] ? 'flex-end' : 'flex-start',
+      tocar: () => this.setState({ [clave]: !this.state[clave] })
+    });
+    const subtitulo = s.duracion ? 'kilos movidos en 58 min' : 'kilos movidos';
+    return {
+      oscura,
+      naranja: !oscura,
+      fondo: oscura ? '#0B0C0E' : '#FF6A00',
+      texto: oscura ? '#F2F2F3' : '#1A0E00',
+      borde: oscura ? '#353A43' : '#FF6A00',
+      acento: oscura ? '#FF6A00' : '#1A0E00',
+      oro: oscura ? '#E8B84B' : '#1A0E00',
+      cajaRecords: oscura ? '#2A2414' : '#FF8A3D',
+      conRecords: s.records,
+      subtitulo,
+      firma: s.nombre ? 'Lucía' : '',
+      tarjetaA11y: 'Tarjeta ' + (oscura ? 'oscura' : 'naranja') + ': Cuerpo completo B, 23 de octubre, 8.420 ' + subtitulo + (s.records ? ', 2 récords: press de banca 85 kg por 7 y sentadilla 100 kg por 5' : '') + (s.nombre ? ', firmada por Lucía' : '') + '. gymprofit.app',
+      btnOscuraFondo: oscura ? '#3A2110' : '#252A31',
+      btnOscuraTexto: oscura ? '#FFB27A' : '#F2F2F3',
+      btnNaranjaFondo: oscura ? '#252A31' : '#3A2110',
+      btnNaranjaTexto: oscura ? '#F2F2F3' : '#FFB27A',
+      ponOscura: () => this.setState({ estilo: 'oscura' }),
+      ponNaranja: () => this.setState({ estilo: 'naranja' }),
+      opciones: [op('records', 'Récords'), op('duracion', 'Duración'), op('nombre', 'Mi nombre')]
+    };
+  }
+}
+</script>
+</body>
+</html>
