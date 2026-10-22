@@ -30,8 +30,11 @@ android {
         applicationId "com.gymprofit.app"
         minSdk 24
         targetSdk 36
-        // Versión a lo Minecraft: MAYOR.MENOR.PARCHE (1.0.0, 1.0.1, 1.1.0… y 2.0.0 solo
-        // en un salto grande). Solo se toca versionName. versionCode —el número interno
+        // Versión: MAYOR.MENOR.PARCHE. Hasta publicar en Google Play los lotes NO la suben:
+        // solo se sube el PARCHE (1.8.0 → 1.8.1) cuando el propietario pide un APK para
+        // dárselo a alguien, y entonces se etiqueta. El lanzamiento en Play será la 2.0.0 y
+        // después vuelve la regla de siempre (1.0.1 un arreglo, 1.1.0 algo nuevo…); ver
+        // DEC-056. Solo se toca versionName. versionCode —el número interno
         // que Android exige que suba en cada entrega para instalar encima— se deriva de
         // él: 1.0.0 → 10000, 1.0.1 → 10001, 1.2.3 → 10203. Cada parte admite hasta 99.
         versionName "1.8.0"

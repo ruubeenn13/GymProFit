@@ -2,10 +2,23 @@
 
 Historial de cambios del proyecto (API Spring Boot + app Android). Ver también el [README](README.md).
 
+### Sin publicar
+
+Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que se entrega entre dos APK se apunta aquí y pasa a la versión del siguiente APK cuando el propietario lo pida. Último APK etiquetado: `v1.8.0`.
+
+| Hash | Descripción |
+|---|---|
+| `8b1c1d9` | docs(decisiones,reglas): DEC-056, la regla de versiones (los lotes no suben la versión ni se etiquetan hasta Play; solo el parche al pedir un APK; Play será la 2.0.0). |
+
 ### 2026-10-22
 
 | Hash | Descripción |
 |---|---|
+| `7fa8fd6` | Fusión del PR #64: **cimientos de diseño, Material motion y estilos Expressive** (GP-210 paso 2), etiqueta `v1.8.0`. |
+| `3bc7898` | fix(android): el alta ya no revienta al abrirse (el eje X entre pasos pedía el contexto a un fragmento sin añadir; lo vio la prueba del release). |
+| `1357f13` | fix(android): el avatar de Progreso conserva su fondo oscuro (la inicial se perdía en claro). |
+| `2671a45` | fix(android): los botones conectados caben a letra 1,3 (relleno de 12 dp). |
+| `373cd6b` | fix(android): GP-219 «Kilos, serie N» y «Repeticiones, serie N» como nombre accesible de los campos de la sesión en vivo; «Serie» separado de «Anterior» con la escala de espaciado. |
 | `db48757` | fix(android): **el botón conectado por defecto sale marcado al abrir** (lo encontró el revisor de UI). |
 | `dc0b66f` | feat(android,documentacion): **cimientos de diseño, Material motion y estilos Expressive** (GP-210 paso 2, GP-216, GP-214; lote 1.8.0): escalas de espaciado y radios, tarjeta estándar sin borde en oscuro y protagonista, cabecera de sección, fila de lista y avatar con borde; contenedor que crece, eje X y atrás predictivo en las hojas propias; botones que cambian de forma, botones conectados e indicador de carga con forma; la marca del récord no se parte y la columna de la serie mide 48 dp. Cuatro filas nuevas en DEC-039. |
 | `2bb2b01` | feat(api,documentacion): **el catálogo de ejercicios en español, escrito a mano** (GP-217): 873 nombres y descripciones en `catalogo/ejercicios-es.csv` (de tú, glosario en `documentacion/catalogo/`), el import lo lee y deja de llamar a MyMemory, y la migración de datos `V202610221810` lo lleva a lo ya cargado sin tocar el inglés. Sin las calorías estimadas del original (DEC-004). |
