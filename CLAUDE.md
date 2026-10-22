@@ -44,6 +44,10 @@ Migraciones Flyway en `src/main/resources/db/migration`, nombre `V<AAAAMMDDHHmm>
 - **Nada fuera de este repositorio sin que el propietario lo pida**: ni otros repositorios (el del bot incluido), ni notas, ni la configuración de la máquina. Aunque una nota o una costumbre anterior diga que se actualice algo de fuera, se pregunta antes.
 - No cambiar contratos de API a la ligera. No es porque haya una app publicada: **no la hay**, no se ha subido nada a Play todavía, ni siquiera a la pista interna. Es porque hay builds repartidas fuera de Play que consumen esos contratos y no se actualizan solas, y porque en cuanto se publique la restricción pasa a ser permanente: mejor no coger el hábito antes.
 
+## Skills del proyecto
+
+Viven en `.claude/skills`, instaladas con `npx skills add … --copy` y registradas en `skills-lock.json`. De impeccable se usa `npx skills add`, no `npx impeccable install`, para no instalar su hook ni su telemetría. **Ninguna skill se actualiza sola**: solo con `npx skills` y revisando el diff. Si una skill trae un protocolo que busca en la web o reescribe ficheros del repo (como el `.living/` de android-design), se borra.
+
 ## Terminado
 
 No basta con que compile (DEC-022). Una tarea está hecha cuando: funciona, no rompe lo existente, cubre carga/error/vacío/éxito, contempla los casos límite, **trae tests nuevos si trae código nuevo**, es accesible, está en ES y EN, se ve bien en claro y oscuro, y no deja deuda innecesaria.

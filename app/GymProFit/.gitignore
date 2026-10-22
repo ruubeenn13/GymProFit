@@ -36,3 +36,7 @@ CLAUDE_API.md
 TODO.md
 .claude
 DOCUMENTACION_COMPLETA.md
+# Eclipse / JDT.LS (el plugin jdtls-lsp los genera)
+.project
+.classpath
+.settings/
