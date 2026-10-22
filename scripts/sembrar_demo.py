@@ -1,9 +1,11 @@
 """Siembra la cuenta demo de las capturas (@dani.entrena) en la API LOCAL de pruebas.
 
-Tres semanas que acaban hoy: 4 entrenos por semana con pesos que suben poco a poco,
-comidas españolas de cada día con su agua y una medición de peso cada 3 días que baja
-de forma suave. La sesión de torso con press de banca cae hace 3 días y la de pierna,
-ayer, para que «Hoy toca» un torso sin repetir rutina de un día para otro (GP-203).
+Sigue el programa «Torso y pierna» (GIM-TP, 60 min) y tiene tres semanas de historial que
+acaban hoy: 4 entrenos por semana, cada uno con la rutina del programa que le toca (torso A,
+pierna A, torso B, pierna B) y con pesos que suben poco a poco; comidas españolas de cada día
+con su agua y una medición de peso cada 3 días que baja de forma suave. Así el revisor ve
+«Hoy toca» con rutina, el resumen del entreno con su comparación frente a la sesión anterior
+de la misma rutina y «Tu semana» de nutrición con datos (GP-210, GP-216).
 
 Solo habla con la API local y con la BD local del 3308: se niega a arrancar si la URL
 no es de localhost o 127.0.0.1. La API pone a cada medición la fecha del momento en que
@@ -30,13 +32,12 @@ HOSTS_LOCALES = {"localhost", "127.0.0.1"}
 USUARIO, CORREO = "dani.entrena", "demo@gymprofit.app"
 DIAS = 21
 
-# Ejercicios del catálogo local: (id, peso inicial en kg, reps, series, subida por semana)
-TORSO_A = [(903, 70, 8, 4, 2.5), (1631, 40, 8, 3, 1.25), (939, 60, 10, 3, 2.5), (1083, 12, 12, 3, 0)]
-PIERNA_A = [(923, 85, 6, 4, 2.5), (1463, 80, 8, 3, 2.5), (911, 90, 10, 3, 5), (1167, 100, 10, 3, 5)]
-TORSO_B = [(1419, 0, 8, 4, 0), (912, 55, 10, 3, 2.5), (1081, 24, 10, 3, 2), (904, 30, 10, 3, 0)]
-PIERNA_B = [(906, 110, 5, 3, 5), (1592, 16, 10, 3, 2), (1650, 22, 12, 3, 0), (1161, 24, 12, 3, 0)]
-# Lunes pierna, miércoles torso, jueves pierna y sábado torso: alternan, y el martes descansa
-PLAN = {0: PIERNA_B, 2: TORSO_B, 3: PIERNA_A, 5: TORSO_A}
+# El programa que sigue y sus minutos por sesión; seguirlo copia sus rutinas a la cuenta
+PROGRAMA, MINUTOS = "GIM-TP", 60
+# Lunes torso A, martes pierna A, jueves torso B y viernes pierna B: las del programa, en su orden
+PLAN = {0: "GIM-TORSO-A", 1: "GIM-PIERNA-A", 3: "GIM-TORSO-B", 4: "GIM-PIERNA-B"}
+# Kilos de partida por tipo de ejercicio de la rutina y lo que sube cada semana
+KILOS = {"BASICO": (60, 2.5), "EXTRA": (20, 1.25)}
 
 # Alimentos del catálogo local: (id, gramos)
 DESAYUNOS = [[(6554, 200), (6405, 60), (6466, 50), (6543, 10)],  # café con leche, tostada con tomate y aceite
@@ -94,20 +95,36 @@ def dar_de_alta(clave: str) -> str:
     return login["token"]
 
 
-def entrenar(token: str, dia: date, ejercicios: list, semana: int) -> None:
-    """Un entreno completo: el peso sube cada semana y la última serie a veces cae una repetición."""
+def seguir_programa(token: str) -> dict:
+    """Sigue el programa y devuelve las rutinas que se copian a la cuenta, por código de rutina."""
+    pedir("POST", f"/programas/{PROGRAMA}/seguir", {"minutos": MINUTOS}, token)
+    seguido = pedir("GET", "/programas/seguido", None, token)
+    # Las copias de la cuenta llevan el código de su plantilla en plantillaCodigo
+    rutinas = {r["plantillaCodigo"]: r for r in seguido["rutinas"]}
+    faltan = [c for c in PLAN.values() if c not in rutinas]
+    if faltan:
+        sys.exit(f"El programa {PROGRAMA} no trae las rutinas {faltan}: ¿cambió su semana?")
+    return rutinas
+
+
+def entrenar(token: str, dia: date, rutina: dict, semana: int) -> None:
+    """Un entreno completo de una rutina del programa: el peso sube cada semana y la última serie
+    a veces cae una repetición."""
     inicio = datetime.combine(dia, datetime.min.time()).replace(
         hour=18 + random.choice([0, 1]), minute=random.choice([5, 20, 35]))
     cuerpo = []
-    for eid, peso, reps, series, sube in ejercicios:
-        p = round((peso + sube * semana) / 1.25) * 1.25
+    for e in sorted(rutina["ejercicios"], key=lambda x: x["orden"]):
+        base, sube = KILOS.get(e["tipo"], KILOS["EXTRA"])
+        # Cada ejercicio parte de un peso distinto, siempre el mismo (se deduce del id)
+        kilos = round((base + (e["ejercicioId"] % 5) * 5 + sube * semana) / 1.25) * 1.25
+        reps, series = e["repeticiones"], e["series"]
         lista = [{"numero": n, "repeticiones": reps - (1 if n == series and random.random() < 0.5 else 0),
-                  "peso": p if p > 0 else None, "completada": True} for n in range(1, series + 1)]
-        cuerpo.append({"ejercicioId": eid, "repeticionesReales": reps, "series": lista})
+                  "peso": kilos, "completada": True} for n in range(1, series + 1)]
+        cuerpo.append({"ejercicioId": e["ejercicioId"], "repeticionesReales": reps, "series": lista})
     pedir("POST", "/sesiones/completa", {
         "claveIdempotencia": str(uuid.uuid4()), "fechaInicio": inicio.isoformat(timespec="seconds"),
-        "duracionMinutos": random.choice([52, 58, 63, 67, 71]), "valoracion": random.choice([4, 4, 5]),
-        "completada": True, "ejercicios": cuerpo}, token)
+        "rutinaId": rutina["id"], "duracionMinutos": random.choice([52, 58, 63, 67, 71]),
+        "valoracion": random.choice([4, 4, 5]), "completada": True, "ejercicios": cuerpo}, token)
 
 
 def comer(token: str, dia: date, tipo: str, platos: list) -> None:
@@ -132,13 +149,16 @@ def main() -> None:
     clave_demo, clave_bd = comprobar_entorno()
     random.seed(42)
     token = dar_de_alta(clave_demo)
+    rutinas = seguir_programa(token)
     hoy = date.today()
     inicio = hoy - timedelta(days=DIAS)
     mediciones = []
+    entrenos = 0
     for i in range(DIAS + 1):
         dia = inicio + timedelta(days=i)
         if dia < hoy and dia.weekday() in PLAN:
-            entrenar(token, dia, PLAN[dia.weekday()], i // 7)
+            entrenar(token, dia, rutinas[PLAN[dia.weekday()]], i // 7)
+            entrenos += 1
         comer(token, dia, "DESAYUNO", random.choice(DESAYUNOS))
         comer(token, dia, "COMIDA", COMIDAS[i % len(COMIDAS)])
         # Hoy van apuntados el desayuno y la comida; la merienda y la cena, todavía no
@@ -153,7 +173,8 @@ def main() -> None:
                                                          "altura": 178, "cintura": round(86 - i * 0.08, 1)}, token)
             mediciones.append((m["id"], dia))
     fechar_mediciones(clave_bd, mediciones)
-    print(f"Cuenta @{USUARIO} sembrada: {DIAS + 1} días, {len(mediciones)} mediciones.")
+    print(f"Cuenta @{USUARIO} sembrada: sigue {PROGRAMA}, {entrenos} entrenos con rutina, "
+          f"{DIAS + 1} días de comidas, {len(mediciones)} mediciones.")
 
 
 if __name__ == "__main__":
