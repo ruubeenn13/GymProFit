@@ -256,6 +256,24 @@ public class CimientosTest {
         assertTrue(leer(RES.resolve("values/themes.xml")).contains("TextAppearance.GymProFit.Seccion.Fila"));
     }
 
+    // GP-219 y el pendiente del encargo: los campos de la sesión en vivo tienen nombre y «SERIE»
+    // se separa de «ANTERIOR» con la escala de espaciado.
+    @Test
+    public void los_campos_de_la_sesion_en_vivo_tienen_nombre_y_las_columnas_respiran() throws IOException {
+        String es = leer(RES.resolve("values/strings.xml"));
+        String en = leer(RES.resolve("values-en/strings.xml"));
+        assertTrue(es.contains("<string name=\"envivo_kg_a11y\">Kilos, serie %1$d</string>"));
+        assertTrue(es.contains("<string name=\"envivo_reps_a11y\">Repeticiones, serie %1$d</string>"));
+        assertTrue(en.contains("<string name=\"envivo_kg_a11y\">Kilos, set %1$d</string>"));
+        assertTrue(en.contains("<string name=\"envivo_reps_a11y\">Reps, set %1$d</string>"));
+        for (String f : new String[]{"layout/item_envivo_serie.xml", "layout/item_envivo_ejercicio.xml"}) {
+            Matcher m = Pattern.compile("android:id=\"@\\+id/(tvAnterior|tvRotuloAnterior)\"[\\s\\S]*?/>").matcher(leer(RES.resolve(f)));
+            assertTrue(f, m.find());
+            assertTrue(f + ": «Anterior» separado de «Serie» con la escala",
+                    m.group().contains("android:paddingStart=\"@dimen/espacio_8\""));
+        }
+    }
+
     @Test
     public void DESIGN_recoge_los_cimientos() throws IOException {
         Path design = Paths.get("..", "DESIGN.md");
