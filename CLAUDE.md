@@ -10,7 +10,8 @@ Monorepo: `api/gymprofit-api` · `app/GymProFit` · `db` · `web` · `documentac
 1. Lee `documentacion/PRODUCT-DECISIONS.md`. Son decisiones vigentes, no sugerencias.
 2. Inspecciona lo que ya existe antes de escribir: puede estar resuelto, o resuelto a medias.
 3. Comprueba API y BD si la tarea las toca. La documentación puede estar desfasada; **el código manda**.
-4. Plan breve, cambio mínimo coherente, y nada de refactors no relacionados.
+4. Todo trabajo de UI en `app/` lee antes `app/GymProFit/DESIGN.md` (y `PRODUCT.md`, del mismo sitio) y lo deja al día en el mismo cambio si toca un token o un patrón: colores, tipografía, medidas, componentes o movimiento.
+5. Plan breve, cambio mínimo coherente, y nada de refactors no relacionados.
 
 ## Comandos
 
