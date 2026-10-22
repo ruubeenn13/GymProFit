@@ -78,6 +78,11 @@
                         app:tint="?attr/colorOnSurfaceVariant" />
                 </LinearLayout>
 
+                <!-- Cargando, error y vacío: debajo del selector, que es lo que permite pasar de semana. -->
+                <include
+                    android:id="@+id/estadoSemana"
+                    layout="@layout/view_estado" />
+
                 <LinearLayout
                     android:id="@+id/contenidoSemana"
                     android:layout_width="match_parent"
@@ -428,8 +433,5 @@
             </LinearLayout>
         </ScrollView>
 
-        <include
-            android:id="@+id/estadoSemana"
-            layout="@layout/view_estado" />
     </FrameLayout>
 </LinearLayout>
