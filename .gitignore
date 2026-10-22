@@ -15,10 +15,13 @@ TODO.md
 
 # Configuracion local de Claude Code: rutas absolutas de la maquina de desarrollo,
 # no sirve a nadie mas y expone la estructura de un equipo concreto.
-# Las skills del proyecto si se versionan (GP-205): son las mismas para todos.
+# Las skills del proyecto si se versionan (GP-205): son las mismas para todos. Tambien
+# settings.json (sin atribucion y con el hook de git) y el hook que usa; settings.local.json no.
 .claude/*
 !.claude/skills/
 !.claude/agents/
+!.claude/settings.json
+!.claude/hooks/
 
 # SO
 .DS_Store
