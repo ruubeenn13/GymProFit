@@ -69,3 +69,9 @@ Probado con un agente genérico que sigue `revisor-ui-android.md` (el agente por
 2. Las tarjetas con `cardElevation="0dp"` a mano contradicen el 1 dp de `Widget.GymProFit.Card`. ¿Es deliberado (borde en vez de sombra) o se unifica? DESIGN.md recoge la regla «borde, no sombra» como la vigente.
 3. «Tu semana»: en Inicio hoy la tarjeta se titula «ESTA SEMANA». DESIGN.md/PRODUCT.md usan «Tu semana» solo al citar la decisión de Profi del 22-10; si es otra pantalla, hay que decir cuál.
 4. El `.claude/agents/revisor-ui-android.md` sigue sin poder invocarse por su nombre hasta reiniciar Claude Code; la prueba se hizo con un agente genérico que sigue el fichero.
+
+## Resolución de las dudas (22-10, lote GP-211/212)
+
+- **DEC-039**: la tabla recoge ya los momentos 13 y 14 (existen en `documentacion/diseno/2026-10-01-nutricion/fuente/Movimiento.dc.html`: «Las cifras cuentan» y «El anillo se llena», 1200 ms; el código los resuelve con `CIFRAS`, sin constante propia) y `RESPIRA` como fila «— · Respira» (no es un momento del lienzo, existe solo en `Movimiento.java`). `MovimientoTest` ahora acepta filas «— · …» y ya no tiene excepciones; en verde. El título «doce momentos» no se tocó.
+- **Elevación**: decidida «borde, no sombra»; `Widget.GymProFit.Card` pasa a 0 dp con borde en el paso 2 de GP-210. Hasta entonces, hueco decidido y pendiente en `DESIGN.md`.
+- **«Tu semana»**: pantalla nueva desde una tarjeta de los lunes en Inicio (GP-210, paso 6). «ESTA SEMANA» (GP-090) no cambia y Profi no entra en ella. Recogido en `DESIGN.md`.

@@ -94,3 +94,18 @@ Para commitear: `.gitignore`, `skills-lock.json`, `.claude/skills/{android-cli,a
 
 1. ¿Subo la rama y la fusiono como el resto de lotes, o prefieres revisar las siete skills antes? Traen instrucciones con permisos completos de agente («Review skills before use»).
 2. `syncClaudeAiSkills: false` apaga también las skills de código de claude.ai en este repo. ¿Aceptable?
+
+## Comprobaciones tras reiniciar (22-10, lote GP-211/212)
+
+| Comprobación | Resultado |
+|---|---|
+| `/agents`: `revisor-ui-android` | Aparece en la lista de agentes de la sesión con sus herramientas (Read, Glob, Grep, Bash). Su invocación por nombre va en el informe de GP-212 |
+| jdtls en `api/` | **Funciona.** Se añadió `int x = "texto";` a `GymProFitApiApplication.java` y llegó el diagnóstico `Type mismatch: cannot convert from String to int`; deshecho. `jdtls.cmd` se resuelve bien sin shell. Con la línea rota, MapStruct da errores en cascada en los mappers (son ruido de ese error, desaparecen al deshacerlo) |
+| typescript-lsp en `admin/` | **Fallaba**: `Could not find a valid TypeScript installation`. Causa: el `typescript` global era el 7.0.2 (port nativo, sin `tsserver.js`) y `typescript-language-server` 6.0.2 necesita el servidor JS. Arreglo: `npm i -g typescript@6.0.3`. Después, `hover` y diagnósticos (`Type 'string' is not assignable to type 'number'` en `admin/src/util/formato.ts`, deshecho). El `typescript ^7.0.2` de `admin/` no se toca: solo lo usa el build del panel |
+| Render MCP | `/mcp` lista el servidor y conecta. Herramientas reales de escritura: `create_cron_job`, `create_key_value`, `create_postgres`, `create_static_site`, `create_web_service`, `trigger_deploy`, `update_environment_variables`. **No existen** `update_web_service`, `update_static_site` ni `update_cron_job`: quitadas de `permissions.ask` (quedan 7). `query_render_postgres` solo lee. Solo hay un espacio de trabajo («My Workspace») |
+| Render, último despliegue (solo lectura) | `gymprofit-api` (`srv-d93muovaqgkc73c9pb3g`, Docker, free, Frankfurt): último despliegue `dep-db7o75u0tbcc73c4hf80`, `live`, commit `c008da95` (fusión del lote 1.6.8, 14-10). Los logs de la app acaban el 15-10 14:11 con el `VigilanteMemoria` (368 de 512 MB, 72 %): la instancia free se duerme sin tráfico |
+| `render login` (CLI) | **Pendiente de ti**: `render whoami` sigue pidiendo `render login` |
+| `.androidrc` | Se lee (con un `--sdk` falso en el fichero, `android info` lo usó; restaurado). `--no-metrics` se acepta como opción global (una opción inexistente falla con `Unrecognized option`, esta no). Se queda como está. No hay forma de comprobar desde fuera que la telemetría quede apagada; la propia CLI lo documenta como la vía |
+| Ficheros de jdtls en `app/` | El plugin generó `.project`, `.classpath` y `.settings/` sin ignorar; añadidos a `app/GymProFit/.gitignore` |
+
+Decisiones sobre las dudas: **las siete skills se quedan**; se borra el `.living/` de `android-design` (su protocolo busca en la web y reescribe ficheros del repo) y `CLAUDE.md` gana la sección «Skills del proyecto» (ninguna se actualiza sola); `syncClaudeAiSkills` y `syncClaudeAiPlugins` siguen en `false`. Nota: `CLAUDE.md` no tenía todavía una regla de skills de GP-205 donde añadir la frase; se creó la sección.
