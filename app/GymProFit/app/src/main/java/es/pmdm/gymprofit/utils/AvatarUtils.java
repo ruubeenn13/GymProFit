@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
 
 import java.util.Locale;
@@ -44,14 +43,12 @@ public final class AvatarUtils {
      * @param avatar     la raíz de view_avatar.
      * @param nombre     de dónde sale la inicial.
      * @param usuarioId  -1 sin cuenta (solo inicial).
-     * @param colorTexto color de la inicial.
      */
-    public static void pintar(View avatar, @Nullable String nombre, int usuarioId, @ColorInt int colorTexto) {
+    public static void pintar(View avatar, @Nullable String nombre, int usuarioId) {
         TextView inicial = avatar.findViewById(R.id.tvInicial);
         ImageView ivFoto = avatar.findViewById(R.id.ivFoto);
         String n = nombre == null ? "" : nombre.trim();
         inicial.setText(n.isEmpty() ? "" : n.substring(0, 1).toUpperCase(Locale.ROOT));
-        inicial.setTextColor(colorTexto);
 
         if (usuarioId != usuarioDeLaFoto) {
             foto = null;

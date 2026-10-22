@@ -139,8 +139,6 @@
         android:accessibilityLiveRegion="polite"
         android:visibility="gone"
         app:cardBackgroundColor="?attr/colorPrimary"
-        app:cardCornerRadius="24dp"
-        app:cardElevation="0dp"
         app:strokeWidth="0dp">
 
         <LinearLayout

@@ -208,6 +208,51 @@ public class MovimientoTest {
     }
 
     @Test
+    public void lasTransicionesYElBotonQueCambiaDeFormaEstanEnLaTablaYEnElCodigo() throws IOException {
+        // GP-210 paso 2 (Material motion y Expressive): cuatro filas sin número en DEC-039 —tarjeta a
+        // detalle, avanzar en un flujo, atrás en una hoja propia y el botón que cambia de forma—.
+        Map<String, Long> tabla = duracionesDeLaTabla();
+        Map<String, Long> codigo = duracionesDelCodigo();
+        String dec = decision();
+        for (String f : new String[]{"Tarjeta a detalle", "Avanzar en un flujo", "Atrás en una hoja propia", "El botón cambia de forma"}) {
+            assertTrue("falta la fila «" + f + "» en DEC-039", dec.contains("| — · " + f));
+        }
+        for (String c : new String[]{"CONTENEDOR_ABRE", "CONTENEDOR_VUELVE", "EJE_X", "ATRAS_SUELTA", "TOQUE"}) {
+            assertTrue(c + " no está en la tabla", tabla.containsKey(c));
+            assertTrue(c + " no está en Movimiento", codigo.containsKey(c));
+        }
+        assertEquals("el contenedor crece en 400 ms", Long.valueOf(400), codigo.get("CONTENEDOR_ABRE"));
+        assertEquals("y vuelve en 350", Long.valueOf(350), codigo.get("CONTENEDOR_VUELVE"));
+        assertEquals("eje X compartido en 300", Long.valueOf(300), codigo.get("EJE_X"));
+        assertEquals("al soltar el atrás, 250", Long.valueOf(250), codigo.get("ATRAS_SUELTA"));
+        assertEquals("la forma del botón, con el toque", Long.valueOf(120), codigo.get("TOQUE"));
+
+        String m = new String(Files.readAllBytes(CODIGO), StandardCharsets.UTF_8);
+        assertTrue("eje X de 30 dp", m.contains("EJE_X_DP = 30;"));
+        assertTrue("la hoja sigue al dedo hasta 0,9", m.contains("ATRAS_ESCALA = 0.9f;"));
+        // La dec lo dice con las mismas cifras.
+        assertTrue(dec.contains("30 dp"));
+        assertTrue(dec.contains("90 %"));
+        assertTrue(dec.contains("de 26 a 12 dp"));
+    }
+
+    @Test
+    public void lasTransicionesNoEscribenMilisegundosNiCurvas() throws IOException {
+        // Las clases nuevas piden el momento a Movimiento: ni una duración ni una curva suelta.
+        Path base = CODIGO.getParent().getParent();
+        for (String f : new String[]{"utils/Transiciones.java", "utils/AtrasHoja.java", "ui/widget/BotonExpresivo.java"}) {
+            String c = new String(Files.readAllBytes(base.resolve(f)), StandardCharsets.UTF_8);
+            assertFalse(f + " escribe una duración", Pattern.compile("setDuration\\(\\s*\\d").matcher(c).find());
+            assertFalse(f + " escribe una curva", c.contains("new PathInterpolator") || c.contains("DecelerateInterpolator")
+                    || c.contains("AccelerateDecelerateInterpolator"));
+        }
+        String t = new String(Files.readAllBytes(base.resolve("utils/Transiciones.java")), StandardCharsets.UTF_8);
+        assertTrue(t.contains("Movimiento.CONTENEDOR_ABRE") && t.contains("Movimiento.CONTENEDOR_VUELVE"));
+        assertTrue(t.contains("Movimiento.ENFATIZADA") && t.contains("Movimiento.ESTANDAR"));
+        assertTrue("con «Quitar animaciones» no hay transición de escena", t.contains("Movimiento.quieto("));
+    }
+
+    @Test
     public void lasCuatroCurvasSonLasDeLaDecision() throws IOException {
         String codigo = new String(Files.readAllBytes(CODIGO), StandardCharsets.UTF_8);
         String dec = decision();

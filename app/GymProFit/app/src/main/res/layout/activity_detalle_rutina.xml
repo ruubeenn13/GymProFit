@@ -165,7 +165,6 @@
             android:text="@string/detalle_rutina_editar"
             android:textSize="@dimen/text_subtitle"
             android:visibility="gone"
-            app:cornerRadius="12dp"
             app:icon="@drawable/ic_ms_edit"
             app:iconGravity="textStart" />
 
@@ -176,7 +175,6 @@
             android:layout_weight="1"
             android:text="@string/detalle_rutina_entrenar"
             android:textSize="@dimen/text_subtitle"
-            app:cornerRadius="12dp"
             app:icon="@drawable/ic_ms_fitness_center"
             app:iconGravity="textStart" />
 

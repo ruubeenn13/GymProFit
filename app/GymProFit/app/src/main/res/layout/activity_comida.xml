@@ -48,7 +48,7 @@
                 android:accessibilityHeading="true"
                 android:textAppearance="@style/TextAppearance.GymProFit.Headline"
                 android:textColor="?attr/colorOnSurface"
-                android:textSize="28sp"
+                android:textSize="@dimen/text_display_large"
                 tools:targetApi="28" />
 
             <TextView
@@ -124,7 +124,7 @@
                                     android:maxLines="1"
                                     android:textAppearance="@style/TextAppearance.GymProFit.Headline"
                                     android:textColor="?attr/colorOnSurface"
-                                    android:textSize="30sp" />
+                                    android:textSize="@dimen/text_cifra_pequena" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
@@ -309,7 +309,7 @@
                         android:gravity="center"
                         android:textAppearance="@style/TextAppearance.GymProFit.Headline"
                         android:textColor="?attr/colorOnSurface"
-                        android:textSize="26sp" />
+                        android:textSize="@dimen/text_cifra_pequena" />
 
                     <TextView
                         android:id="@+id/tvVaciaToca"
@@ -416,7 +416,6 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:minHeight="52dp"
-            app:cornerRadius="26dp"
             android:text="@string/comida_anadir_alimento"
             android:textSize="@dimen/text_subtitle"
             android:textStyle="bold"

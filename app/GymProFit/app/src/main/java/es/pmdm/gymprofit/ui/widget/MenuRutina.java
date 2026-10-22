@@ -17,6 +17,7 @@ import es.pmdm.gymprofit.network.RutinaApi;
 import es.pmdm.gymprofit.ui.activities.DetalleRutinaActivity;
 import es.pmdm.gymprofit.ui.activities.EditarRutinaActivity;
 import es.pmdm.gymprofit.ui.activities.EditarRutinaAdminActivity;
+import es.pmdm.gymprofit.utils.Transiciones;
 import es.pmdm.gymprofit.utils.UIHelper;
 
 // ============================================================
@@ -29,8 +30,9 @@ public final class MenuRutina {
 
     private MenuRutina() { }
 
-    /** Abre el detalle de la rutina con sus datos en extras. */
-    public static void abrirDetalle(FragmentActivity act, ActivityResultLauncher<Intent> launcher, Rutina rutina) {
+    /** Abre el detalle de la rutina con sus datos en extras; la tarjeta pulsada crece hasta él. */
+    public static void abrirDetalle(FragmentActivity act, ActivityResultLauncher<Intent> launcher, Rutina rutina,
+                                    View tarjeta) {
         Intent intent = new Intent(act, DetalleRutinaActivity.class);
         intent.putExtra("rutinaId",      rutina.getId());
         intent.putExtra("nombre",        rutina.getNombre());
@@ -42,7 +44,7 @@ public final class MenuRutina {
         intent.putExtra("usuarioId",     rutina.getUsuarioId());
         // De qué programa es, si es de uno (lote 1.2.1); null en las propias.
         intent.putExtra(DetalleRutinaActivity.EXTRA_PROGRAMA_NOMBRE, rutina.getProgramaNombre());
-        launcher.launch(intent);
+        Transiciones.abrirTarjeta(act, tarjeta, intent, launcher);
     }
 
     /**

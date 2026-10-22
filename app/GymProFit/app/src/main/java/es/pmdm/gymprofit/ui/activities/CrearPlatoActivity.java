@@ -53,6 +53,7 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.ComidaApi;
 import es.pmdm.gymprofit.network.PlatoApi;
 import es.pmdm.gymprofit.ui.adapters.IngredientesPlatoAdapter;
+import es.pmdm.gymprofit.utils.AtrasHoja;
 import es.pmdm.gymprofit.utils.Anadidos;
 import es.pmdm.gymprofit.utils.AvisoDescartar;
 import es.pmdm.gymprofit.utils.CantidadFicha;
@@ -118,7 +119,7 @@ public class CrearPlatoActivity extends BaseActivity {
     private NumberFormat nfEntero;
     @Nullable private Snackbar aviso;
     @Nullable private Plato guardado;
-    private OnBackPressedCallback cerrarHoja;
+    private AtrasHoja cerrarHoja;
 
     private ActivityResultLauncher<Intent> anadirLauncher;
     private ActivityResultLauncher<Intent> ingredienteLauncher;
@@ -191,9 +192,9 @@ public class CrearPlatoActivity extends BaseActivity {
         // plato ya está guardado: atrás es «Ver Mis platos».
         AvisoDescartar.instalar(this, null, this::hayCambios);
         findViewById(R.id.btnCerrarPlato).setOnClickListener(v -> AvisoDescartar.salir(this, this::hayCambios));
-        cerrarHoja = new OnBackPressedCallback(false) {
+        cerrarHoja = new AtrasHoja(findViewById(R.id.hojaPlato)) {
             @Override
-            public void handleOnBackPressed() {
+            protected void cerrar() {
                 terminarGuardado();
             }
         };

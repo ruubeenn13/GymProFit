@@ -33,7 +33,7 @@
             android:text="@string/hoja_comida_titulo"
             android:textAppearance="@style/TextAppearance.GymProFit.Headline"
             android:textColor="?attr/colorOnSurface"
-            android:textSize="24sp" />
+            android:textSize="@dimen/text_title" />
 
         <TextView
             android:id="@+id/tvDiaHoja"

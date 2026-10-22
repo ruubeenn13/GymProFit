@@ -27,7 +27,7 @@
     <!-- Sin programa -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardElegirPrograma"
-        style="@style/Widget.GymProFit.Card.Estructura"
+        style="@style/Widget.GymProFit.Card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
@@ -87,7 +87,7 @@
     <!-- Con programa -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardPrograma"
-        style="@style/Widget.GymProFit.Card.Estructura"
+        style="@style/Widget.GymProFit.Card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
@@ -190,9 +190,9 @@
                     android:layout_marginTop="8dp"
                     android:orientation="vertical" />
 
-                <com.google.android.material.button.MaterialButton
+                <es.pmdm.gymprofit.ui.widget.BotonExpresivo
                     android:id="@+id/btnEmpezarHoy"
-                    style="@style/Widget.GymProFit.BotonPildora"
+                    style="@style/Widget.GymProFit.BotonPildora.Expresivo"
                     android:layout_width="match_parent"
                     android:layout_marginTop="12dp"
                     android:text="@string/btn_empezar"

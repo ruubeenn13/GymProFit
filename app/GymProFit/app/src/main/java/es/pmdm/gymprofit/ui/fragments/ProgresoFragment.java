@@ -213,7 +213,7 @@ public class ProgresoFragment extends BaseFragment {
     private void pintarAvatar() {
         if (!isAdded()) return;
         AvatarUtils.pintar(findViewById(R.id.avatarProgreso), nombreVisible(),
-                prefsManager.getUsuarioId(), color(com.google.android.material.R.attr.colorOnPrimaryContainer));
+                prefsManager.getUsuarioId());
     }
 
     // El nombre para mostrar y, sin él, el de usuario (GP-116). El «@usuario» del

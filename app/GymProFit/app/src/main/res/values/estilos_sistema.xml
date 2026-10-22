@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  estilos_sistema — los cimientos de GP-210 paso 2 / GP-216: roles de texto, tarjetas, cabecera de
+  sección, fila de lista y avatar. Las medidas salen de dimens.xml («Cimientos»); aquí no se
+  escribe un número a mano. DESIGN.md lo explica entero.
+-->
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- ══ Roles de texto ═══════════════════════════════════════════════════════
+         Título de pantalla (34, condensada 700), cifra protagonista (26 a 48, condensada),
+         sección (20), cuerpo (16) y apoyo (13 a 14). Display y Number ya existen en
+         themes.xml y son el título y la cifra; aquí van los que faltaban. -->
+
+    <!-- Cifra protagonista pequeña (26): la de una tarjeta, no la de la pantalla. -->
+    <style name="TextAppearance.GymProFit.Cifra.Pequena" parent="TextAppearance.GymProFit.Number">
+        <item name="android:textSize">@dimen/text_cifra_pequena</item>
+    </style>
+
+    <!-- Cifra protagonista grande (48): la de una pantalla de resumen. -->
+    <style name="TextAppearance.GymProFit.Cifra.Grande" parent="TextAppearance.GymProFit.Number">
+        <item name="android:textSize">@dimen/text_cifra_grande</item>
+    </style>
+
+    <!-- Sección (20, Barlow SemiBold): el título de un bloque de la pantalla. -->
+    <style name="TextAppearance.GymProFit.Seccion" parent="TextAppearance.Material3.TitleLarge">
+        <item name="fontFamily">@font/barlow</item>
+        <item name="android:fontFamily">@font/barlow</item>
+        <item name="android:textFontWeight" tools:targetApi="28">600</item>
+        <item name="android:textSize">@dimen/text_title</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <!-- Cuerpo (16, Barlow): el texto de lectura. -->
+    <style name="TextAppearance.GymProFit.Cuerpo" parent="TextAppearance.Material3.BodyLarge">
+        <item name="fontFamily">@font/barlow</item>
+        <item name="android:fontFamily">@font/barlow</item>
+        <item name="android:textSize">@dimen/text_body</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <!-- Apoyo (14, Barlow, texto secundario): descripciones y metadatos. -->
+    <style name="TextAppearance.GymProFit.Apoyo" parent="TextAppearance.Material3.BodyMedium">
+        <item name="fontFamily">@font/barlow</item>
+        <item name="android:fontFamily">@font/barlow</item>
+        <item name="android:textSize">@dimen/text_caption</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <!-- Título de fila (16, Barlow SemiBold): el nombre de una fila o de una cabecera compacta. -->
+    <style name="TextAppearance.GymProFit.Seccion.Fila">
+        <item name="android:textSize">@dimen/text_fila</item>
+    </style>
+
+    <!-- Apoyo pequeño (13, el suelo): la segunda línea de una fila. -->
+    <style name="TextAppearance.GymProFit.Apoyo.Pequeno">
+        <item name="android:textSize">@dimen/text_eyebrow</item>
+    </style>
+
+    <!-- Enlace de una cabecera de sección (15, Barlow 600, naranja de enlace). -->
+    <style name="TextAppearance.GymProFit.Enlace" parent="TextAppearance.GymProFit.Cuerpo">
+        <item name="android:textFontWeight" tools:targetApi="28">600</item>
+        <item name="android:textSize">@dimen/text_enlace_seccion</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
+    </style>
+
+    <!-- Texto sobre la tarjeta protagonista: título #FFF4E8 y apoyo #FFD3B0. -->
+    <style name="TextAppearance.GymProFit.Hero.Titulo" parent="TextAppearance.GymProFit.Headline">
+        <item name="android:textColor">@color/gp_on_hero</item>
+    </style>
+    <style name="TextAppearance.GymProFit.Hero.Apoyo" parent="TextAppearance.GymProFit.Apoyo">
+        <item name="android:textColor">@color/gp_on_hero_variant</item>
+    </style>
+
+    <!-- ══ Tarjetas ═════════════════════════════════════════════════════════════
+         La estándar es Widget.GymProFit.Card (themes.xml, radio 24). Las otras dos solo
+         cambian el radio y, la protagonista, el fondo. -->
+
+    <!-- Tarjeta pequeña (20): una pieza dentro de otra, un dato suelto. -->
+    <style name="Widget.GymProFit.Card.Pequena">
+        <item name="cardCornerRadius">@dimen/radio_tarjeta_pequena</item>
+    </style>
+
+    <!-- Tarjeta protagonista (28): «Hoy toca» y los resúmenes. #3A2110, sin borde en ningún tema.
+         Lleva su propio tema (ThemeOverlay.GymProFit.Hero): lo de dentro lee los colores de la
+         tarjeta y no los del tema claro u oscuro de la app. -->
+    <style name="Widget.GymProFit.Card.Protagonista">
+        <item name="android:theme">@style/ThemeOverlay.GymProFit.Hero</item>
+        <item name="cardBackgroundColor">@color/gp_hero</item>
+        <item name="cardCornerRadius">@dimen/radio_protagonista</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+
+    <!-- Los colores de dentro de la tarjeta protagonista, iguales en los dos temas: texto #FFF4E8,
+         apoyo y borde de botón #FFD3B0, y el naranja de oscuro (#FF6A00, 5,21:1 sobre #3A2110; el
+         #B83E00 del tema claro daba 2,1:1 y el botón se perdía). -->
+    <style name="ThemeOverlay.GymProFit.Hero" parent="">
+        <item name="colorPrimary">@color/gp_primary_sobre_hero</item>
+        <item name="colorOnPrimary">@color/gp_on_primary_sobre_hero</item>
+        <item name="colorSurface">@color/gp_hero</item>
+        <item name="colorOnSurface">@color/gp_on_hero</item>
+        <item name="colorOnSurfaceVariant">@color/gp_on_hero_variant</item>
+        <item name="colorOutline">@color/gp_on_hero_variant</item>
+        <item name="android:textColorPrimary">@color/gp_on_hero</item>
+        <item name="android:textColorSecondary">@color/gp_on_hero_variant</item>
+    </style>
+
+    <!-- ══ Cabecera de sección ══════════════════════════════════════════════════
+         Título de 20 sp a la izquierda y, si hace falta, un enlace de 15 sp a la derecha con
+         44 dp de alto. Va como fila (LinearLayout) con Titulo y Enlace dentro. -->
+    <style name="Widget.GymProFit.CabeceraSeccion" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:minHeight">@dimen/seccion_enlace_alto</item>
+    </style>
+
+    <style name="Widget.GymProFit.CabeceraSeccion.Titulo" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:accessibilityHeading" tools:targetApi="28">true</item>
+        <item name="android:textAppearance">@style/TextAppearance.GymProFit.Seccion</item>
+    </style>
+
+    <style name="Widget.GymProFit.CabeceraSeccion.Enlace" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/seccion_enlace_alto</item>
+        <item name="android:gravity">center_vertical|end</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:textAppearance">@style/TextAppearance.GymProFit.Enlace</item>
+    </style>
+
+    <!-- ══ Fila de lista ════════════════════════════════════════════════════════
+         64 dp mínimo, 16 a los lados, icono en círculo de 40 sobre surface_2, título de 16 y
+         apoyo de 13. Las filas van dentro de una tarjeta de radio 24 y se separan con Separador. -->
+    <style name="Widget.GymProFit.Fila" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">@dimen/fila_alto_min</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingStart">@dimen/fila_padding_horizontal</item>
+        <item name="android:paddingEnd">@dimen/fila_padding_horizontal</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+
+    <style name="Widget.GymProFit.Fila.Icono" parent="">
+        <item name="android:layout_width">@dimen/fila_icono_circulo</item>
+        <item name="android:layout_height">@dimen/fila_icono_circulo</item>
+        <item name="android:padding">9dp</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:background">@drawable/bg_fila_icono</item>
+        <item name="android:importantForAccessibility">no</item>
+        <item name="tint">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="Widget.GymProFit.Fila.Textos" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginStart">@dimen/fila_icono_a_texto</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingTop">@dimen/espacio_8</item>
+        <item name="android:paddingBottom">@dimen/espacio_8</item>
+    </style>
+
+    <style name="Widget.GymProFit.Fila.Titulo" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">@style/TextAppearance.GymProFit.Cuerpo</item>
+    </style>
+
+    <style name="Widget.GymProFit.Fila.Apoyo" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">@style/TextAppearance.GymProFit.Apoyo.Pequeno</item>
+    </style>
+
+    <!-- Separador de 1 dp en surface_2 con sangría hasta el texto (70 dp). -->
+    <style name="Widget.GymProFit.Separador" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/separador_alto</item>
+        <item name="android:layout_marginStart">@dimen/fila_sangria_separador</item>
+        <item name="android:background">?attr/colorSurfaceVariant</item>
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+
+    <!-- ══ Avatar de cabecera ═══════════════════════════════════════════════════
+         48 dp, borde de 2 dp en naranja, fondo #3A2110 e inicial en condensada. El borde
+         (gp_primary) da 4,98:1 sobre el fondo claro y 6,82:1 sobre el oscuro. -->
+    <style name="Widget.GymProFit.Avatar" parent="">
+        <item name="android:layout_width">@dimen/avatar_cabecera</item>
+        <item name="android:layout_height">@dimen/avatar_cabecera</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/bg_avatar_cabecera</item>
+        <item name="android:textAppearance">@style/TextAppearance.GymProFit.Avatar</item>
+    </style>
+
+    <style name="TextAppearance.GymProFit.Avatar" parent="TextAppearance.GymProFit.Headline">
+        <item name="android:textColor">@color/gp_on_hero</item>
+    </style>
+
+    <!-- ══ Botones Expressive ═══════════════════════════════════════════════════
+         «Empezar», «Hecho» y el «+»: esquinas de 26 dp en reposo y 12 al pulsar, en 120 ms
+         (BotonExpresivo; Movimiento.TOQUE). -->
+    <style name="Widget.GymProFit.Button.Expresivo">
+        <item name="cornerRadius">@dimen/boton_radio_reposo</item>
+    </style>
+
+    <!-- Botones conectados (Material 3 Expressive): opciones que se excluyen entre sí, en un solo
+         bloque en vez de chips sueltos. El marcado lleva el contenedor naranja, como el chip. -->
+    <style name="Widget.GymProFit.GrupoConectado" parent="Widget.Material3Expressive.MaterialButtonToggleGroup">
+        <item name="singleSelection">true</item>
+        <item name="selectionRequired">true</item>
+    </style>
+
+    <style name="Widget.GymProFit.BotonConectado" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:minHeight">48dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:textSize">@dimen/text_caption</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/chip_text_selector</item>
+        <item name="backgroundTint">@color/chip_background_selector</item>
+        <item name="strokeColor">?attr/colorOutline</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.GymProFit.Circulo</item>
+    </style>
+
+    <style name="Widget.GymProFit.BotonPildora.Expresivo">
+        <item name="cornerRadius">@dimen/boton_radio_reposo</item>
+    </style>
+</resources>

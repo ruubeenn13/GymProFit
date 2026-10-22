@@ -164,6 +164,19 @@ public final class Movimiento {
     public static final long ORO = 900;
     /** 26 · El panel del descanso baja al acabar o saltarse. */
     public static final long BAJA = 250;
+    /** — · Tarjeta a detalle: el contenedor crece hasta la pantalla (curva enfatizada). */
+    public static final long CONTENEDOR_ABRE = 400;
+    /** — · Tarjeta a detalle: al volver, el contenedor se encoge a su tarjeta (curva estándar). */
+    public static final long CONTENEDOR_VUELVE = 350;
+    /** — · Avanzar en un flujo: eje X compartido, curva estándar. */
+    public static final long EJE_X = 300;
+    /** — · Atrás predictivo en una hoja propia: al soltar, vuelve o se va en este tiempo (estándar). */
+    public static final long ATRAS_SUELTA = 250;
+
+    /** Distancia del eje X compartido, en dp. */
+    public static final int EJE_X_DP = 30;
+    /** Hasta dónde sigue la hoja al dedo en el atrás predictivo: el 90 % de su tamaño. */
+    public static final float ATRAS_ESCALA = 0.9f;
 
     // ── Vibraciones ─────────────────────────────────────────────────────────
 

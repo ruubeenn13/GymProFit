@@ -4,16 +4,13 @@
   Muestra nombre, descripción, chips de grupo muscular/dificultad/estado y un botón de acciones.
 -->
 <com.google.android.material.card.MaterialCardView
+    style="@style/Widget.GymProFit.Card.Pequena"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="0dp"
-    app:cardBackgroundColor="?attr/colorSurface"
-    app:strokeWidth="1dp"
-    app:strokeColor="?attr/colorOutline">
+    app:cardBackgroundColor="?attr/colorSurface">
 
     <LinearLayout
         android:layout_width="match_parent"

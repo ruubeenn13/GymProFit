@@ -48,6 +48,7 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.ComidaApi;
 import es.pmdm.gymprofit.ui.adapters.BusquedaAlimentoAdapter;
+import es.pmdm.gymprofit.utils.Transiciones;
 import es.pmdm.gymprofit.utils.Anadidos;
 import es.pmdm.gymprofit.utils.AnadirRapido;
 import es.pmdm.gymprofit.utils.CantidadFicha;
@@ -492,10 +493,11 @@ public class AnadirAlimentoActivity extends BaseActivity {
 
     // ── Abrir ───────────────────────────────────────────────────────────────
 
-    private void abrirFicha(Alimento alimento) {
+    private void abrirFicha(Alimento alimento, View fila) {
         if (modoIngredientes) {
             // La ficha añade al plato («Añadir al plato») o, si ya está, cambia su cantidad.
-            ingredienteLauncher.launch(FichaAlimentoActivity.paraIngrediente(this, alimento, ingredientes.de(alimento)));
+            Transiciones.abrirTarjeta(this, fila,
+                    FichaAlimentoActivity.paraIngrediente(this, alimento, ingredientes.de(alimento)), ingredienteLauncher);
             return;
         }
         String clave = clave(alimento);
@@ -510,8 +512,8 @@ public class AnadirAlimentoActivity extends BaseActivity {
             });
             return;
         }
-        fichaLauncher.launch(FichaAlimentoActivity.paraAnadir(this, alimento, tipoComida, fecha)
-                .putExtra(EXTRA_EN_ANADIR, true));
+        Transiciones.abrirTarjeta(this, fila, FichaAlimentoActivity.paraAnadir(this, alimento, tipoComida, fecha)
+                .putExtra(EXTRA_EN_ANADIR, true), fichaLauncher);
     }
 
     private void abrirEscaner() {
@@ -958,7 +960,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
 
     private BusquedaAlimentoAdapter.Acciones acciones() {
         return new BusquedaAlimentoAdapter.Acciones() {
-            @Override public void abrir(@NonNull Alimento alimento) { abrirFicha(alimento); }
+            @Override public void abrir(@NonNull Alimento alimento, @NonNull View fila) { abrirFicha(alimento, fila); }
 
             @Override
             public boolean tieneOpciones(@NonNull Alimento a, @Nullable GruposBusqueda.Seccion s) {

@@ -57,7 +57,8 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     /** Lo que se puede hacer desde la lista. */
     public interface Acciones {
-        void abrir(@NonNull Alimento alimento);
+        /** Abre la ficha; {@code fila} es la tarjeta que se pulsó y que crece hasta la ficha. */
+        void abrir(@NonNull Alimento alimento, @NonNull View fila);
 
         /** ¿Tiene menú al mantenerlo pulsado? */
         boolean tieneOpciones(@NonNull Alimento alimento, @Nullable GruposBusqueda.Seccion seccion);
@@ -512,7 +513,7 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
             itemView.setBackgroundResource(fondo);
             raya.setVisibility(fondo == R.drawable.bg_grupo_media || fondo == R.drawable.bg_grupo_primera
                     ? View.VISIBLE : View.INVISIBLE);
-            itemView.setOnClickListener(v -> acciones.abrir(a));
+            itemView.setOnClickListener(v -> acciones.abrir(a, v));
             if (acciones.tieneOpciones(a, seccion)) {
                 itemView.setOnLongClickListener(v -> {
                     acciones.opciones(a, seccion, v);
@@ -590,7 +591,7 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
             Context ctx = itemView.getContext();
             Alimento a = s.alimento;
             nombre.setText(es.pmdm.gymprofit.ui.nutricion.MarcaPlato.nombre(ctx, a.getNombre(), a.esPlato()));
-            itemView.setOnClickListener(v -> acciones.abrir(a));
+            itemView.setOnClickListener(v -> acciones.abrir(a, v));
             mas.setOnClickListener(v -> acciones.tocarMas(a, mas, iconoMas));
 
             motivo.setText(textoMotivo(ctx, s.motivo, acciones.tipoComida()));

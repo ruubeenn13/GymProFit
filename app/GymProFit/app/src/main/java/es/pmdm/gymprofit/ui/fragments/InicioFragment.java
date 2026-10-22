@@ -164,8 +164,7 @@ public class InicioFragment extends BaseFragment {
         String nombre = NombreVisible.de(prefsManager.getNombre(), prefsManager.getUsername());
         if (nombre.isEmpty()) nombre = getString(R.string.home_usuario_defecto);
         ((TextView) findViewById(R.id.tvHola)).setText(getString(R.string.inicio_hola, nombre));
-        AvatarUtils.pintar(findViewById(R.id.avatarInicio), nombre, prefsManager.getUsuarioId(),
-                color(com.google.android.material.R.attr.colorOnSurface));
+        AvatarUtils.pintar(findViewById(R.id.avatarInicio), nombre, prefsManager.getUsuarioId());
     }
 
     // ── Hoy toca y Esta semana ────────────────────────────────────────────────
@@ -554,12 +553,14 @@ public class InicioFragment extends BaseFragment {
         MaterialCardView card = findViewById(R.id.cardRecordHome);
         card.setVisibility(View.VISIBLE);
         String nombre = record.nombre(FechaUtils.localeDeLaApp(requireContext()));
-        String marca = Marcas.texto(requireContext(), record);
+        // La marca («60 kg × 10») no se parte: con letra grande dejaba el «10» solo en una tercera línea.
+        String marca = Marcas.texto(requireContext(), record).replace(' ', '\u00A0');
         ((TextView) findViewById(R.id.tvRecordEjercicio)).setText(getString(R.string.hoy_toca_separador, nombre, marca));
 
         TextView antes = findViewById(R.id.tvRecordAntes);
         String cuando = TiempoRelativo.texto(requireContext(), record.getFecha());
         String anterior = Marcas.anteriorSolo(requireContext(), record);
+        if (anterior != null) anterior = anterior.replace(' ', '\u00A0');
         if (anterior != null && cuando != null) {
             antes.setText(getString(R.string.ultimo_record_sub, anterior, cuando));
         } else {

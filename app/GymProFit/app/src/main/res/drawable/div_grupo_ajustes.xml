@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- div_grupo_ajustes — la línea de 1 dp entre filas de un grupo de Ajustes (GP-105). -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
-    <size android:height="1dp" />
-    <solid android:color="?attr/colorSurfaceVariant" />
-</shape>
+<!-- div_grupo_ajustes — la línea de 1 dp entre filas de un grupo, con sangría hasta el texto (70 dp). -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:insetLeft="@dimen/fila_sangria_separador">
+    <shape android:shape="rectangle">
+        <size android:height="@dimen/separador_alto" />
+        <solid android:color="?attr/colorSurfaceVariant" />
+    </shape>
+</inset>

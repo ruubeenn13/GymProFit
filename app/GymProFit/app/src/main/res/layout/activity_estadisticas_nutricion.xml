@@ -33,30 +33,28 @@
             android:padding="16dp">
 
             <!-- Selector de periodo -->
-            <com.google.android.material.chip.ChipGroup
+            <com.google.android.material.button.MaterialButtonToggleGroup
                 android:id="@+id/chipsPeriodo"
+                style="@style/Widget.GymProFit.GrupoConectado"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:singleLine="true"
-                app:singleSelection="true"
-                app:selectionRequired="true">
+                android:layout_height="wrap_content">
 
-                <com.google.android.material.chip.Chip
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/chipSemana"
-                    style="@style/Widget.Material3.Chip.Filter"
+                    style="@style/Widget.GymProFit.BotonConectado"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/stats_periodo_semana"
                     android:checked="true" />
 
-                <com.google.android.material.chip.Chip
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/chipMes"
-                    style="@style/Widget.Material3.Chip.Filter"
+                    style="@style/Widget.GymProFit.BotonConectado"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/stats_periodo_mes" />
 
-            </com.google.android.material.chip.ChipGroup>
+            </com.google.android.material.button.MaterialButtonToggleGroup>
 
             <!-- Navegación de periodo -->
             <LinearLayout

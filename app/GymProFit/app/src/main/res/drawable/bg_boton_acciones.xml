@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  bg_boton_acciones — el «+» central de la barra (GP-105): círculo naranja con la
-  onda de pulsación recortada a su forma.
+  bg_boton_acciones — el «+» central de la barra (GP-105): naranja, con esquinas de 26 dp que al
+  pulsar pasan a 12 (BotonExpresivo.alPulsar, GP-210 paso 2). Sobre 56 dp, 26 es casi un círculo.
 -->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
     android:color="?attr/colorControlHighlight">
     <item>
-        <shape android:shape="oval">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/boton_radio_reposo" />
             <solid android:color="?attr/colorPrimary" />
         </shape>
     </item>

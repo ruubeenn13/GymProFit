@@ -243,7 +243,6 @@
         android:layout_width="match_parent"
         android:layout_height="52dp"
         android:layout_margin="16dp"
-        android:text="@string/sesiones_guardar"
-        app:cornerRadius="12dp" />
+        android:text="@string/sesiones_guardar" />
 
 </LinearLayout>

@@ -31,7 +31,7 @@ public class SesionAdapter extends RecyclerView.Adapter<SesionAdapter.ViewHolder
 
     // Callback invocado al pulsar sobre el item completo de la sesión.
     public interface OnClickListener {
-        void onClick(SesionEntrenamiento sesion);
+        void onClick(SesionEntrenamiento sesion, View tarjeta);
     }
 
     private final List<SesionEntrenamiento> items;
@@ -86,7 +86,7 @@ public class SesionAdapter extends RecyclerView.Adapter<SesionAdapter.ViewHolder
 
         h.btnEliminar.setOnClickListener(v -> deleteListener.onDelete(s));
         if (clickListener != null) {
-            h.itemView.setOnClickListener(v -> clickListener.onClick(s));
+            h.itemView.setOnClickListener(v -> clickListener.onClick(s, v));
         }
     }
 

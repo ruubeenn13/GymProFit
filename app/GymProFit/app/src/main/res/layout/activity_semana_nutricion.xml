@@ -92,7 +92,7 @@
                     <!-- Proteína -->
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/cardProteina"
-                        style="@style/Widget.GymProFit.Card.Estructura"
+                        style="@style/Widget.GymProFit.Card"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="14dp">
@@ -182,7 +182,7 @@
                     <!-- Días completos -->
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/cardCompletos"
-                        style="@style/Widget.GymProFit.Card.Estructura"
+                        style="@style/Widget.GymProFit.Card"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="14dp">
@@ -244,7 +244,7 @@
                     <!-- Calorías -->
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/cardKcal"
-                        style="@style/Widget.GymProFit.Card.Estructura"
+                        style="@style/Widget.GymProFit.Card"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="14dp">
@@ -316,7 +316,7 @@
                     <!-- Agua -->
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/cardAgua"
-                        style="@style/Widget.GymProFit.Card.Estructura"
+                        style="@style/Widget.GymProFit.Card"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="14dp">
@@ -394,7 +394,7 @@
                     <!-- Lo que más has comido -->
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/cardMasComido"
-                        style="@style/Widget.GymProFit.Card.Estructura"
+                        style="@style/Widget.GymProFit.Card"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="14dp"

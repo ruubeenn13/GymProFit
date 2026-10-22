@@ -19,7 +19,7 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class EstadisticasNutricionActivity extends BaseActivity {
     private ImageView btnNext;
     private TextView tvPeriodo, tvVacia;
     private TextView tvMedia, tvDias, tvObjetivo, tvAdherencia;
-    private ChipGroup chipsPeriodo;
+    private MaterialButtonToggleGroup chipsPeriodo;
     private BarChart chartKcal;
     private PieChart chartMacros;
     private TextView tvMacrosVacia;
@@ -113,8 +113,9 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
 
         // Cambio de periodo (semana/mes): reinicia el desplazamiento al periodo actual.
-        chipsPeriodo.setOnCheckedStateChangeListener((g, ids) -> {
-            lenDias = (chipsPeriodo.getCheckedChipId() == R.id.chipMes) ? 30 : 7;
+        chipsPeriodo.addOnButtonCheckedListener((g, id, marcado) -> {
+            if (!marcado) return;
+            lenDias = (chipsPeriodo.getCheckedButtonId() == R.id.chipMes) ? 30 : 7;
             offset = 0;
             cargar();
         });

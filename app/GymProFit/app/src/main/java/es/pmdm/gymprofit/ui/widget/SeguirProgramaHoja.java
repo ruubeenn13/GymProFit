@@ -10,8 +10,8 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,13 +62,13 @@ public final class SeguirProgramaHoja {
 
         boolean mismo = seguido != null && seguido.getPrograma() != null
                 && codigo.equals(seguido.getPrograma().getCodigo());
-        ChipGroup chips = raiz.findViewById(R.id.chipsMinutos);
+        MaterialButtonToggleGroup chips = raiz.findViewById(R.id.chipsMinutos);
         Map<Integer, Integer> minutosDe = new HashMap<>();
         int[] ids = {R.id.chip30, R.id.chip45, R.id.chip60, R.id.chip75};
         for (int i = 0; i < ids.length; i++) {
             minutosDe.put(ids[i], MINUTOS[i]);
             if (MINUTOS[i] != 75) {
-                ((Chip) raiz.findViewById(ids[i])).setText(act.getString(R.string.seguir_chip_min, MINUTOS[i]));
+                ((MaterialButton) raiz.findViewById(ids[i])).setText(act.getString(R.string.seguir_chip_min, MINUTOS[i]));
             }
         }
         int inicial = mismo ? seguido.getMinutos() : 60;
@@ -84,7 +84,7 @@ public final class SeguirProgramaHoja {
 
         Runnable[] cargar = new Runnable[1];
         cargar[0] = () -> {
-            int minutos = minutosDe.get(chips.getCheckedChipId());
+            int minutos = minutosDe.get(chips.getCheckedButtonId());
             pintarAviso(act, aviso, boton, mismo, seguido, nombre, minutos);
             int esta = ++pedida[0];
             estado.cargando();
@@ -104,10 +104,10 @@ public final class SeguirProgramaHoja {
                 }
             });
         };
-        chips.setOnCheckedStateChangeListener((g, marcados) -> cargar[0].run());
+        chips.addOnButtonCheckedListener((g, id, marcado) -> { if (marcado) cargar[0].run(); });
 
         boton.setOnClickListener(v -> {
-            int minutos = minutosDe.get(chips.getCheckedChipId());
+            int minutos = minutosDe.get(chips.getCheckedButtonId());
             Map<String, Object> cuerpo = new HashMap<>();
             cuerpo.put("minutos", minutos);
             LoadingDialog.show(act);

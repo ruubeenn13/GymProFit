@@ -31,7 +31,7 @@
     <dimen name="text_caption">14sp</dimen>
 
     <!-- Cuerpo. Es el tamaño más usado de la app. Sustituye a 14 y 15 sp. -->
-    <dimen name="text_body">15sp</dimen>
+    <dimen name="text_body">16sp</dimen>
 
     <!-- Fila de lista y nombre en tarjetas pequeñas de la estructura de GP-105 (hoja
          del «+», comidas, plantillas, récords de Progreso). El lienzo aprobado el
@@ -39,19 +39,19 @@
     <dimen name="text_fila">16sp</dimen>
 
     <!-- Título de fila o de tarjeta. Sustituye a 16 y 17 sp. -->
-    <dimen name="text_subtitle">17sp</dimen>
+    <dimen name="text_subtitle">16sp</dimen>
 
     <!-- Cabecera de sección. Sustituye a 18 y 20 sp. -->
-    <dimen name="text_title">19sp</dimen>
+    <dimen name="text_title">20sp</dimen>
 
     <!-- Titular de tarjeta grande. Sustituye a 22, 24 y 26 sp. -->
-    <dimen name="text_headline">22sp</dimen>
+    <dimen name="text_headline">20sp</dimen>
 
     <!-- Título de pantalla. Sustituye a 28, 30 y 32 sp. -->
     <dimen name="text_display">26sp</dimen>
 
     <!-- Título de pantalla grande. Sustituye a 34 y 40 sp. -->
-    <dimen name="text_display_large">30sp</dimen>
+    <dimen name="text_display_large">34sp</dimen>
 
     <!-- Cifra de estadística. Sustituye a 52 y 60 sp. -->
     <dimen name="text_number">44sp</dimen>
@@ -64,11 +64,70 @@
     <dimen name="text_number_gigante">72sp</dimen>
 
 
+    <!-- ══ Cimientos de GP-210 paso 2 / GP-216: espaciado, radios y piezas ══════════
+         Nada de esto se escribe a mano en un layout: se pide por nombre. Los números
+         son los de DESIGN.md («Cimientos»). -->
+
+    <!-- Espaciado: 4, 8, 12, 16, 20, 24, 28 y 36 dp. -->
+    <dimen name="espacio_4">4dp</dimen>
+    <dimen name="espacio_8">8dp</dimen>
+    <dimen name="espacio_12">12dp</dimen>
+    <dimen name="espacio_16">16dp</dimen>
+    <dimen name="espacio_20">20dp</dimen>
+    <dimen name="espacio_24">24dp</dimen>
+    <dimen name="espacio_28">28dp</dimen>
+    <dimen name="espacio_36">36dp</dimen>
+    <!-- Margen lateral de pantalla, entre secciones (36 en las pestañas, 28 en las
+         subpantallas) y del título de sección a su contenido. -->
+    <dimen name="margen_pantalla">20dp</dimen>
+    <dimen name="separacion_pestana">36dp</dimen>
+    <dimen name="separacion_subpantalla">28dp</dimen>
+    <dimen name="titulo_a_contenido">14dp</dimen>
+
+    <!-- Radios. Botones y píldoras: la mitad de su altura (cornerSize 50 %). -->
+    <dimen name="radio_chip">12dp</dimen>
+    <dimen name="radio_miniatura">16dp</dimen>
+    <dimen name="radio_tarjeta_pequena">20dp</dimen>
+    <dimen name="radio_tarjeta">24dp</dimen>
+    <dimen name="radio_protagonista">28dp</dimen>
+
+    <!-- Borde de la tarjeta estándar: 1 dp en claro, ninguno en oscuro (values-night). -->
+    <dimen name="tarjeta_borde">1dp</dimen>
+
+    <!-- Fila de lista: 64 dp mínimo, 16 a los lados, icono en círculo de 40 y separador
+         con sangría hasta el texto (16 + 40 + 14 = 70). -->
+    <dimen name="fila_alto_min">64dp</dimen>
+    <dimen name="fila_padding_horizontal">16dp</dimen>
+    <dimen name="fila_icono_circulo">40dp</dimen>
+    <dimen name="fila_icono">22dp</dimen>
+    <dimen name="fila_icono_a_texto">14dp</dimen>
+    <dimen name="fila_sangria_separador">70dp</dimen>
+    <dimen name="separador_alto">1dp</dimen>
+
+    <!-- Cabecera de sección: el enlace de la derecha mide 44 dp de alto. -->
+    <dimen name="seccion_enlace_alto">44dp</dimen>
+
+    <!-- Avatar de cabecera: 48 dp, borde de 2 dp en naranja. -->
+    <dimen name="avatar_cabecera">48dp</dimen>
+    <dimen name="avatar_cabecera_borde">2dp</dimen>
+
+    <!-- Botones que cambian de forma al pulsar (Expressive): de 26 a 12 dp. -->
+    <dimen name="boton_radio_reposo">26dp</dimen>
+    <dimen name="boton_radio_pulsado">12dp</dimen>
+
+    <!-- Hojas inferiores propias: atrás predictivo, esquinas de 28 dp. -->
+    <dimen name="hoja_radio_atras">28dp</dimen>
+
+    <!-- Roles de texto (los de DESIGN.md): título de pantalla 34, cifra 26 a 48, sección 20,
+         cuerpo 16 y apoyo 13 a 14. Los escalones de arriba (text_*) apuntan a estos tamaños. -->
+    <dimen name="text_enlace_seccion">15sp</dimen>
+    <dimen name="text_cifra_pequena">26sp</dimen>
+    <dimen name="text_cifra_grande">48sp</dimen>
 
     <!-- Sesión en vivo (GP-012): hueco libre al final de la lista para el descanso (GP-013). -->
     <dimen name="envivo_hueco_descanso">160dp</dimen>
     <!-- La cuenta atrás del descanso: grande, se lee de un vistazo (GP-013). -->
     <dimen name="envivo_descanso_numero">46sp</dimen>
-    <!-- Ancho de la columna del número de serie. -->
-    <dimen name="envivo_col_serie">40dp</dimen>
+    <!-- Ancho de la columna del número de serie. 48 y no 40: con letra 1,3 «SERIE» tocaba a «ANTERIOR». -->
+    <dimen name="envivo_col_serie">48dp</dimen>
 </resources>

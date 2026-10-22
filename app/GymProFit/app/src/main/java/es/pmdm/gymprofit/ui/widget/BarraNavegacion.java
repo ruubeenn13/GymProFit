@@ -130,6 +130,7 @@ public class BarraNavegacion extends LinearLayout {
         btnAcciones.setOnClickListener(v -> { if (oyente != null) oyente.onAcciones(); });
         // El «+» no tiene etiqueta: su nombre, al mantenerlo pulsado, como las pestañas.
         TooltipCompat.setTooltipText(btnAcciones, btnAcciones.getContentDescription());
+        BotonExpresivo.alPulsar(btnAcciones);
         pintarAcciones(false);
     }
 

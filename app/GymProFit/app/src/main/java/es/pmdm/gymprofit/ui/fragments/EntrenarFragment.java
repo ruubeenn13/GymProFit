@@ -259,7 +259,7 @@ public class EntrenarFragment extends BaseFragment {
 
             card.setContentDescription(r.getNombre() + ". " + resumen
                     + (enCurso ? ". " + getString(R.string.envivo_en_curso) : toca ? ". " + getString(R.string.toca_hoy) : ""));
-            card.setOnClickListener(v -> MenuRutina.abrirDetalle(requireActivity(), recargar, r));
+            card.setOnClickListener(v -> MenuRutina.abrirDetalle(requireActivity(), recargar, r, v));
             card.setOnLongClickListener(v -> {
                 MenuRutina.mostrar(requireActivity(), v, r, recargar, this::cargarMisRutinas);
                 return true;
@@ -293,8 +293,8 @@ public class EntrenarFragment extends BaseFragment {
                 startActivity(new Intent(requireContext(), ProgramasActivity.class));
             }
             @Override public void empezar(Rutina rutina) { EntrenarFragment.this.empezar(rutina); }
-            @Override public void abrirRutina(Rutina rutina) {
-                MenuRutina.abrirDetalle(requireActivity(), recargar, rutina);
+            @Override public void abrirRutina(Rutina rutina, View tarjeta) {
+                MenuRutina.abrirDetalle(requireActivity(), recargar, rutina, tarjeta);
             }
             @Override public void menuRutina(View ancla, Rutina rutina) {
                 MenuRutina.mostrar(requireActivity(), ancla, rutina, recargar, EntrenarFragment.this::cargarMisRutinas);

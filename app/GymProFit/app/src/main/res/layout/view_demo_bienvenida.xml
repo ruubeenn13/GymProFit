@@ -122,7 +122,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/demo_descanso_tiempo"
                     android:textAppearance="@style/TextAppearance.GymProFit.Display"
-                    android:textSize="20sp" />
+                    android:textSize="@dimen/text_title" />
             </LinearLayout>
 
             <FrameLayout
@@ -177,7 +177,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/demo_sesion_guardada"
                     android:textAppearance="@style/TextAppearance.GymProFit.Display"
-                    android:textSize="22sp" />
+                    android:textSize="@dimen/text_title" />
 
                 <TextView
                     android:layout_width="wrap_content"

@@ -53,7 +53,7 @@ public class CabeceraTest {
             Matcher m = ELEMENTO.matcher(leer(f));
             while (m.find()) {
                 if (m.group(1).endsWith("MaterialToolbar")
-                        && !m.group(2).contains("style=\"@style/Widget.GymProFit.Cabecera\"")) {
+                        && !Pattern.compile("style=\"@style/Widget\\.GymProFit\\.Cabecera(\\.\\w+)?\"").matcher(m.group(2)).find()) {
                     fallos.add(f.getFileName().toString());
                 }
             }

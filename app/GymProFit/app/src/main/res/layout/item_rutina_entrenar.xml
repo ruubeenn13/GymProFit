@@ -7,7 +7,7 @@
 -->
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/Widget.GymProFit.Card.Estructura"
+    style="@style/Widget.GymProFit.Card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="12dp"
@@ -56,9 +56,9 @@
                 android:visibility="gone" />
         </LinearLayout>
 
-        <com.google.android.material.button.MaterialButton
+        <es.pmdm.gymprofit.ui.widget.BotonExpresivo
             android:id="@+id/btnEmpezarLleno"
-            style="@style/Widget.GymProFit.BotonPildora"
+            style="@style/Widget.GymProFit.BotonPildora.Expresivo"
             android:layout_width="wrap_content"
             android:layout_marginStart="12dp"
             android:textSize="@dimen/text_body"

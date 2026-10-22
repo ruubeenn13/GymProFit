@@ -27,7 +27,7 @@
             <!-- La notificación de ejemplo -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardAvisoEjemplo"
-                style="@style/Widget.GymProFit.Card.Estructura"
+                style="@style/Widget.GymProFit.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -100,7 +100,7 @@
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
                 android:text="@string/avisos_titulo"
-                android:textSize="38sp" />
+                android:textSize="@dimen/text_display_large" />
 
             <TextView
                 android:id="@+id/tvTextoAvisos"
@@ -118,7 +118,7 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardTiposAviso"
-                style="@style/Widget.GymProFit.Card.Estructura"
+                style="@style/Widget.GymProFit.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"

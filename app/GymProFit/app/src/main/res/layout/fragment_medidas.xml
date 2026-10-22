@@ -107,38 +107,36 @@
                             android:textColor="?attr/colorOnSurfaceVariant" />
 
                         <!-- Toggle de métrica: qué medida se representa -->
-                        <com.google.android.material.chip.ChipGroup
+                        <com.google.android.material.button.MaterialButtonToggleGroup
                             android:id="@+id/chipsMetrica"
+                            style="@style/Widget.GymProFit.GrupoConectado"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            app:singleLine="true"
-                            app:singleSelection="true"
-                            app:selectionRequired="true">
+                            android:layout_marginTop="8dp">
 
-                            <com.google.android.material.chip.Chip
+                            <com.google.android.material.button.MaterialButton
                                 android:id="@+id/chipMetPeso"
-                                style="@style/Widget.Material3.Chip.Filter"
+                                style="@style/Widget.GymProFit.BotonConectado"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/grafica_met_peso"
                                 android:checked="true" />
 
-                            <com.google.android.material.chip.Chip
+                            <com.google.android.material.button.MaterialButton
                                 android:id="@+id/chipMetGrasa"
-                                style="@style/Widget.Material3.Chip.Filter"
+                                style="@style/Widget.GymProFit.BotonConectado"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/grafica_met_grasa" />
 
-                            <com.google.android.material.chip.Chip
+                            <com.google.android.material.button.MaterialButton
                                 android:id="@+id/chipMetCintura"
-                                style="@style/Widget.Material3.Chip.Filter"
+                                style="@style/Widget.GymProFit.BotonConectado"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/grafica_met_cintura" />
 
-                        </com.google.android.material.chip.ChipGroup>
+                        </com.google.android.material.button.MaterialButtonToggleGroup>
 
                         <!-- Área de gráfica: la línea o, si esa métrica no tiene ≥2 datos,
                              un mensaje de estado vacío (la card y los chips NO desaparecen). -->
@@ -166,38 +164,36 @@
                         </FrameLayout>
 
                         <!-- Rango temporal de la gráfica -->
-                        <com.google.android.material.chip.ChipGroup
+                        <com.google.android.material.button.MaterialButtonToggleGroup
                             android:id="@+id/chipsRango"
+                            style="@style/Widget.GymProFit.GrupoConectado"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            app:singleLine="true"
-                            app:singleSelection="true"
-                            app:selectionRequired="true">
+                            android:layout_marginTop="4dp">
 
-                            <com.google.android.material.chip.Chip
+                            <com.google.android.material.button.MaterialButton
                                 android:id="@+id/chipRango30"
-                                style="@style/Widget.Material3.Chip.Filter"
+                                style="@style/Widget.GymProFit.BotonConectado"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/grafica_rango_30" />
 
-                            <com.google.android.material.chip.Chip
+                            <com.google.android.material.button.MaterialButton
                                 android:id="@+id/chipRango90"
-                                style="@style/Widget.Material3.Chip.Filter"
+                                style="@style/Widget.GymProFit.BotonConectado"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/grafica_rango_90" />
 
-                            <com.google.android.material.chip.Chip
+                            <com.google.android.material.button.MaterialButton
                                 android:id="@+id/chipRangoTodo"
-                                style="@style/Widget.Material3.Chip.Filter"
+                                style="@style/Widget.GymProFit.BotonConectado"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/grafica_rango_todo"
                                 android:checked="true" />
 
-                        </com.google.android.material.chip.ChipGroup>
+                        </com.google.android.material.button.MaterialButtonToggleGroup>
 
                     </LinearLayout>
 

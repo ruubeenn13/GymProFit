@@ -62,7 +62,7 @@
             -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardAvisoSemana"
-                style="@style/Widget.GymProFit.Card.Estructura"
+                style="@style/Widget.GymProFit.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
@@ -169,7 +169,7 @@
             <!-- El anillo, lo que queda y los macros -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardDia"
-                style="@style/Widget.GymProFit.Card.Estructura"
+                style="@style/Widget.GymProFit.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -219,7 +219,7 @@
                                     app:autoSizeMaxTextSize="36sp"
                                     android:fontFeatureSettings="tnum"
                                     android:textAppearance="@style/TextAppearance.GymProFit.Number"
-                                    android:textSize="36sp" />
+                                    android:textSize="@dimen/text_number" />
 
                                 <TextView
                                     android:id="@+id/tvKcalObjetivo"
@@ -258,7 +258,7 @@
                                 android:includeFontPadding="false"
                                 android:fontFeatureSettings="tnum"
                                 android:textAppearance="@style/TextAppearance.GymProFit.Number"
-                                android:textSize="40sp" />
+                                android:textSize="@dimen/text_number" />
 
                             <TextView
                                 android:id="@+id/tvQuedanUnidad"
@@ -338,7 +338,7 @@
             <!-- El agua (GP-166) -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardAgua"
-                style="@style/Widget.GymProFit.Card.Estructura"
+                style="@style/Widget.GymProFit.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp">
@@ -421,8 +421,7 @@
                             app:icon="@drawable/ic_ms_add"
                             app:iconSize="20dp"
                             app:iconPadding="6dp"
-                            app:iconTint="@color/gp_on_agua_container"
-                            app:cornerRadius="22dp" />
+                            app:iconTint="@color/gp_on_agua_container" />
                     </LinearLayout>
 
                     <!-- Los vasos: los rellena NutricionFragment, en filas de nueve. -->
@@ -439,7 +438,7 @@
             <!-- Tu semana: con el día completo (tablero 3) -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardSemana"
-                style="@style/Widget.GymProFit.Card.Estructura"
+                style="@style/Widget.GymProFit.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"

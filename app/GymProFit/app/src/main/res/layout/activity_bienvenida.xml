@@ -67,7 +67,7 @@
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
             android:text="@string/bienvenida_titulo"
-            android:textSize="38sp" />
+            android:textSize="@dimen/text_display_large" />
 
         <TextView
             android:id="@+id/tvTextoBienvenida"

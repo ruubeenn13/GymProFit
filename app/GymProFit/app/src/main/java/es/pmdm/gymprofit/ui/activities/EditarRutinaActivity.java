@@ -11,7 +11,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONArray;
@@ -55,7 +55,7 @@ public class EditarRutinaActivity extends AppCompatActivity {
     }
 
     private TextInputEditText etNombre, etDescripcion, etDuracion;
-    private ChipGroup chipGroupNivel;
+    private MaterialButtonToggleGroup chipGroupNivel;
     private TextView tvEjerciciosTitulo;
     private EjercicioSeleccionadoAdapter adapter;
     private PreferencesManager prefsManager;
@@ -100,14 +100,14 @@ public class EditarRutinaActivity extends AppCompatActivity {
         nombreInicial      = String.valueOf(etNombre.getText());
         descripcionInicial = String.valueOf(etDescripcion.getText());
         duracionInicial    = String.valueOf(etDuracion.getText());
-        nivelInicial       = chipGroupNivel.getCheckedChipId();
+        nivelInicial       = chipGroupNivel.getCheckedButtonId();
 
         // Salir con cambios sin guardar pregunta antes de tirarlos (GP-098).
         AvisoDescartar.instalar(this, toolbar, () ->
                 AvisoDescartar.distinto(nombreInicial, etNombre.getText())
                         || AvisoDescartar.distinto(descripcionInicial, etDescripcion.getText())
                         || AvisoDescartar.distinto(duracionInicial, etDuracion.getText())
-                        || chipGroupNivel.getCheckedChipId() != nivelInicial);
+                        || chipGroupNivel.getCheckedButtonId() != nivelInicial);
 
         anadirLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -138,7 +138,7 @@ public class EditarRutinaActivity extends AppCompatActivity {
 
     // Traduce el chip de nivel seleccionado a su valor de texto para la API.
     private String obtenerNivel() {
-        int id = chipGroupNivel.getCheckedChipId();
+        int id = chipGroupNivel.getCheckedButtonId();
         if (id == R.id.chipEditarIntermedio) return "INTERMEDIO";
         if (id == R.id.chipEditarAvanzado)   return "AVANZADO";
         return "PRINCIPIANTE";

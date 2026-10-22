@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- En oscuro la tarjeta se distingue por el tono (#1B1E24 sobre #0B0C0E): sin borde. -->
+<resources>
+    <dimen name="tarjeta_borde">0dp</dimen>
+</resources>

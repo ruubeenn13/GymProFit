@@ -3,6 +3,8 @@ package es.pmdm.gymprofit.ui.activities;
 import android.os.Handler;
 import android.os.Looper;
 import es.pmdm.gymprofit.envivo.EmpezarSesion;
+import es.pmdm.gymprofit.utils.Movimiento;
+import es.pmdm.gymprofit.utils.AtrasHoja;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.envivo.LogicaSesion;
 import es.pmdm.gymprofit.envivo.SesionEnCursoRepositorio;
@@ -93,12 +95,8 @@ public class MainActivity extends BaseActivity {
     };
 
     // Con la hoja abierta, atrás la cierra. Se registra después y por eso manda.
-    private final OnBackPressedCallback atrasCierraHoja = new OnBackPressedCallback(false) {
-        @Override
-        public void handleOnBackPressed() {
-            cerrarAcciones();
-        }
-    };
+    // Es un AtrasHoja: la hoja sigue al dedo en el atrás predictivo (se crea en onCreate, con la vista).
+    private AtrasHoja atrasCierraHoja;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +107,12 @@ public class MainActivity extends BaseActivity {
         barra = findViewById(R.id.barra);
         velo  = findViewById(R.id.veloAcciones);
         hoja  = findViewById(R.id.hojaAcciones);
+        atrasCierraHoja = new AtrasHoja(hoja) {
+            @Override
+            protected void cerrar() {
+                cerrarAcciones();
+            }
+        };
 
         aplicarInsets();
 
@@ -361,7 +365,7 @@ public class MainActivity extends BaseActivity {
         hojaAbierta = true;
         pintarSubtitulos();
 
-        long dur = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        long dur = Movimiento.HOJA;
         velo.animate().cancel();
         velo.setAlpha(0f);
         velo.setVisibility(View.VISIBLE);
@@ -372,7 +376,7 @@ public class MainActivity extends BaseActivity {
         hoja.post(() -> {
             hoja.setTranslationY(hoja.getHeight() + getResources().getDisplayMetrics().density * 16);
             hoja.animate().translationY(0f).setDuration(dur)
-                    .setInterpolator(new android.view.animation.DecelerateInterpolator())
+                    .setInterpolator(Movimiento.ENFATIZADA)
                     .start();
         });
 
@@ -390,13 +394,13 @@ public class MainActivity extends BaseActivity {
         if (!hojaAbierta) return;
         hojaAbierta = false;
 
-        long dur = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        long dur = Movimiento.BAJA;
         velo.animate().cancel();
         velo.animate().alpha(0f).setDuration(dur)
                 .withEndAction(() -> velo.setVisibility(View.GONE)).start();
         hoja.animate().cancel();
         hoja.animate().translationY(hoja.getHeight() + getResources().getDisplayMetrics().density * 16)
-                .setDuration(dur)
+                .setDuration(dur).setInterpolator(Movimiento.ESTANDAR)
                 .withEndAction(() -> hoja.setVisibility(View.GONE)).start();
 
         barra.setAccionesAbiertas(false);

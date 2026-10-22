@@ -42,7 +42,7 @@
             android:text="@string/crear_titulo_nuevo"
             android:textAppearance="@style/TextAppearance.GymProFit.Headline"
             android:textColor="?attr/colorOnSurface"
-            android:textSize="28sp"
+            android:textSize="@dimen/text_display_large"
             tools:targetApi="28" />
     </LinearLayout>
 
@@ -535,8 +535,7 @@
             android:layout_width="match_parent"
             android:minHeight="52dp"
             android:textSize="@dimen/text_subtitle"
-            android:textStyle="bold"
-            app:cornerRadius="26dp" />
+            android:textStyle="bold" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSoloGuardar"

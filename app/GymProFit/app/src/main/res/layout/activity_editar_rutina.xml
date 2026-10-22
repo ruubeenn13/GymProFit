@@ -87,35 +87,34 @@
                 android:letterSpacing="0.12"
                 android:textColor="?attr/colorOnSurfaceVariant" />
 
-            <com.google.android.material.chip.ChipGroup
+            <com.google.android.material.button.MaterialButtonToggleGroup
                 android:id="@+id/chipGroupNivelEditar"
+                style="@style/Widget.GymProFit.GrupoConectado"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:singleSelection="true"
-                app:selectionRequired="true">
+                android:layout_height="wrap_content">
 
-                <com.google.android.material.chip.Chip
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/chipEditarPrincipiante"
+                    style="@style/Widget.GymProFit.BotonConectado"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/rutinas_principiante"
-                    style="@style/Widget.Material3.Chip.Filter" />
+                    android:text="@string/rutinas_principiante" />
 
-                <com.google.android.material.chip.Chip
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/chipEditarIntermedio"
+                    style="@style/Widget.GymProFit.BotonConectado"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/rutinas_intermedio"
-                    style="@style/Widget.Material3.Chip.Filter" />
+                    android:text="@string/rutinas_intermedio" />
 
-                <com.google.android.material.chip.Chip
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/chipEditarAvanzado"
+                    style="@style/Widget.GymProFit.BotonConectado"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/rutinas_avanzado"
-                    style="@style/Widget.Material3.Chip.Filter" />
+                    android:text="@string/rutinas_avanzado" />
 
-            </com.google.android.material.chip.ChipGroup>
+            </com.google.android.material.button.MaterialButtonToggleGroup>
 
             <!-- Campo de duración estimada de la rutina -->
             <com.google.android.material.textfield.TextInputLayout
@@ -167,7 +166,6 @@
                 android:layout_height="48dp"
                 android:layout_marginTop="12dp"
                 android:text="@string/editar_rutina_anadir_ejercicio"
-                app:cornerRadius="12dp"
                 app:icon="@drawable/ic_ms_add"
                 app:iconGravity="textStart"
                 style="@style/Widget.Material3.Button.OutlinedButton" />
@@ -183,7 +181,6 @@
         android:layout_height="56dp"
         android:layout_margin="16dp"
         android:text="@string/editar_rutina_guardar"
-        android:textSize="@dimen/text_subtitle"
-        app:cornerRadius="12dp" />
+        android:textSize="@dimen/text_subtitle" />
 
 </LinearLayout>
