@@ -2,6 +2,7 @@ package com.gymprofit.api.service.diario;
 
 import com.gymprofit.api.config.security.SecurityUtils;
 import com.gymprofit.api.dto.entity.diario.AguaDiaDTO;
+import com.gymprofit.api.dto.entity.diario.AlimentoApuntadoDTO;
 import com.gymprofit.api.dto.entity.diario.DiaDiarioDTO;
 import com.gymprofit.api.enums.TipoComida;
 import com.gymprofit.api.exceptions.InvalidDataException;
@@ -43,6 +44,12 @@ public class DiarioService {
 
     /** Días como mucho en un rango: un mes, que es lo más que pinta la app. */
     static final int MAXIMO_DIAS = 31;
+
+    /** Días como mucho en «Lo que más has comido»: una semana. */
+    static final int MAXIMO_DIAS_SEMANA = 7;
+
+    /** Cuántos alimentos salen en «Lo que más has comido». */
+    static final int MAS_APUNTADOS = 3;
 
     private final SecurityUtils securityUtils;
     private final IAguaDiariaRepository aguaRepository;
@@ -138,6 +145,42 @@ public class DiarioService {
             dia.getHoyNo().addAll(hoyNo.getOrDefault(dia.getFecha(), Set.of()));
         }
         return new ArrayList<>(dias.values());
+    }
+
+    /**
+     * Los alimentos que más se apuntaron en el rango, con las veces (tablero 12 de nutrición).
+     * Cuenta apuntes, no gramos: tres veces pollo son tres, pese a las cantidades. Empata por
+     * nombre y, después, por id, para que la lista no baile entre dos peticiones.
+     *
+     * @param desde primer día.
+     * @param hasta último día, como mucho 6 después de {@code desde} (una semana).
+     * @return hasta {@value #MAS_APUNTADOS} alimentos, de más a menos; vacío si no hay nada.
+     * @throws InvalidDataException (400) si el rango va al revés o pasa de 7 días.
+     */
+    @Transactional(readOnly = true)
+    public List<AlimentoApuntadoDTO> masApuntados(LocalDate desde, LocalDate hasta) {
+        if (hasta.isBefore(desde)) throw new InvalidDataException("error.diario.rango.invertido");
+        if (ChronoUnit.DAYS.between(desde, hasta) + 1 > MAXIMO_DIAS_SEMANA) {
+            throw new InvalidDataException("error.diario.rango.largo", MAXIMO_DIAS_SEMANA);
+        }
+        boolean ingles = "en".equals(LocaleContextHolder.getLocale().getLanguage());
+        return jdbc.query("""
+                SELECT a.id, a.nombre, a.nombre_en, COUNT(*) AS veces
+                FROM alimentos_comida ac
+                JOIN comidas c ON c.id = ac.comida_id
+                JOIN alimentos a ON a.id = ac.alimento_id
+                WHERE c.usuario_id = ? AND c.fecha >= ? AND c.fecha < ?
+                GROUP BY a.id
+                ORDER BY veces DESC, a.nombre, a.id
+                LIMIT ?""",
+                (rs, n) -> {
+                    String nombre = rs.getString("nombre");
+                    String en = rs.getString("nombre_en");
+                    if (ingles && en != null && !en.isBlank()) nombre = en;
+                    return new AlimentoApuntadoDTO(rs.getInt("id"), nombre, rs.getInt("veces"));
+                },
+                securityUtils.getCurrentUserId(), Timestamp.valueOf(desde.atStartOfDay()),
+                Timestamp.valueOf(hasta.plusDays(1).atStartOfDay()), MAS_APUNTADOS);
     }
 
     /**
