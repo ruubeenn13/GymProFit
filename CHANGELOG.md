@@ -6,6 +6,16 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `e3abf69` | fix(android): **arreglos del revisor de UI** en el resumen y la semana (GP-210): los puntos de «Días completos» pasan debajo con letra 1,3 y llevan el estado también por la forma, «Para recuperar» no propone alimentos con menos de 10 g de proteína y la raya del objetivo no cruza su etiqueta. Versión **1.6.9**. |
+| `95da689` | docs(decisiones): **DEC-055** (el resumen del entreno y «Tu semana» salen del servidor lo que no se puede agregar en el móvil) y el momento 28 en DEC-039. El resumen por sesión ya sale del servidor: nota en GP-011. |
+| `5db4ee9` | feat(android): **«Tu semana de nutrición»** (tablero 12, decisión 13 de nutrición) y la tarjeta de los lunes, sin notificación; el botón de la cabecera de Nutrición la abre y las estadísticas quedan en «Ver semanas y meses». |
+| `a3c8acc` | feat(android): **el resumen del entreno nuevo** (GP-210 paso 1, GP-023): los kilos cuentan desde cero, la variación frente a la sesión anterior de la misma rutina, los récords en su tarjeta dorada, «Frente a la última vez» por ejercicio y «Para recuperar» con la regla de los 20 g (decisión 12). |
+| `39b9ccc` | build(scripts): `dani.entrena` sigue «Torso y pierna» y entrena con las rutinas del programa. |
+| `e8478e5` | docs(decisiones,android): DEC-039 y `Movimiento` dejan de contar los momentos en el título. |
+| `f73da72` | fix(android): **carbohidratos y grasas ya no se pintan de rojo** al pasarse (`Estado.PASADO` desaparece). |
+| `0db8248` | docs(documentacion): el lienzo de la firma visual de GP-210 (`documentacion/diseno/2026-10-22-firma-visual/`), tal como llegó. |
+| `2b51697` | build(reglas): se versiona `.claude/settings.json` con su hook de git. |
+| `11bcfae` | feat(api): **`GET /sesiones/{id}/resumen` y `GET /diario/mas-apuntados`**: kilos y series por ejercicio, última vez y sesión anterior de la misma rutina (definición de volumen de GP-011), y los tres alimentos más apuntados de una semana. Solo lectura, con test de acceso ajeno y de aislamiento. |
 | `2990ac3` | fix(android): **arreglos de Inicio de la revisión** (GP-212): la nota de «Esta semana» explica el número de cada zona en ES y EN, la tarjeta de nutrición tiene nombre accesible y el «R» del fundador sale de los sp a mano; los títulos que no crecen a letra 1,3 son la curva de Android 14+, anotado en `DESIGN.md`. `InicioRevisionTest`. GP-211 no se reproduce: [informe](documentacion/estado/2026-10-22-gp-211-212-inicio.md). |
 | `a75a198` | Fusión del PR #57: las herramientas de Claude Code (GP-207), `PRODUCT.md` y `DESIGN.md` de la app (GP-209) y DEC-039 con los momentos 13, 14 y Respira. |
 | `5777b11` | docs(documentacion): el [informe de GP-206](documentacion/estado/2026-10-22-gp-206-proteina.md). |
