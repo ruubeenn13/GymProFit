@@ -3,6 +3,7 @@ package es.pmdm.gymprofit.network;
 import java.util.List;
 import java.util.Map;
 
+import es.pmdm.gymprofit.model.comida.AlimentoApuntado;
 import es.pmdm.gymprofit.model.comida.DiaDiario;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -22,6 +23,10 @@ public interface DiarioApi {
     // Cada día del rango, ambos incluidos y en orden (como mucho 31).
     @GET("diario")
     Call<List<DiaDiario>> dias(@Query("desde") String desde, @Query("hasta") String hasta);
+
+    // Los tres alimentos más apuntados del rango, con las veces (como mucho 7 días).
+    @GET("diario/mas-apuntados")
+    Call<List<AlimentoApuntado>> masApuntados(@Query("desde") String desde, @Query("hasta") String hasta);
 
     // body: mililitros (0..20000), el total del día. Devuelve fecha y mililitros.
     @PUT("diario/{fecha}/agua")

@@ -59,6 +59,10 @@
     <!-- La cifra protagonista de una pantalla. Sustituye a 64 sp. -->
     <dimen name="text_number_hero">56sp</dimen>
 
+    <!-- La cifra del resumen del entreno (tablero 3 de GP-210, «8.420»): la única que se cuenta
+         desde cero a 72 px del lienzo. Solo la usa el resumen; el resto de cifras héroe, 56. -->
+    <dimen name="text_number_gigante">72sp</dimen>
+
 
 
     <!-- Sesión en vivo (GP-012): hueco libre al final de la lista para el descanso (GP-013). -->

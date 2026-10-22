@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_ficha_resumen_verde — la ficha «+6 % que el jueves» cuando se sube (tablero 3 de GP-210): contenedor de éxito. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="16dp" />
+    <solid android:color="@color/gp_success_container" />
+</shape>

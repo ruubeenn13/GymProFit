@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import es.pmdm.gymprofit.model.envivo.UltimaVez;
+import es.pmdm.gymprofit.model.sesion.ResumenSesion;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
 import es.pmdm.gymprofit.model.sesion.VolumenMuscular;
 import retrofit2.Call;
@@ -83,4 +84,11 @@ public interface SesionApi {
      */
     @GET("sesiones/ultima-vez")
     Call<List<UltimaVez>> ultimaVez(@Query("ejercicios") String ejercicios);
+
+    /**
+     * El resumen del entreno (GP-210): kilos y series por ejercicio, lo de la última vez de
+     * cada uno y la sesión anterior de la misma rutina. Sirve también sesiones del historial.
+     */
+    @GET("sesiones/{id}/resumen")
+    Call<ResumenSesion> resumen(@Path("id") int id);
 }

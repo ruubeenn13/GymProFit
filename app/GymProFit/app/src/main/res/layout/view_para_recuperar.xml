@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  view_para_recuperar — «Para recuperar» del resumen del entreno (tablero 3 de GP-210; el
+  contenido es el del tablero 11 de nutrición, decisión 12): lo que falta de proteína, su
+  barra y tres ideas con su «+». Solo sale si faltan 20 g o más (ParaRecuperar) y no cambia
+  los objetivos del día. Conseguida la proteína, el borde, el título y la barra pasan a
+  dorado (es de lo conseguido). Cargando y error, con view_estado dentro de la tarjeta.
+  Lo maneja ParaRecuperarSeccion.
+-->
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardRecuperar"
+    style="@style/Widget.GymProFit.Card.Estructura"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:visibility="gone">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:id="@+id/cabeceraRecuperar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/fondoIconoRecuperar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_circulo_contenedor"
+                android:importantForAccessibility="no">
+
+                <ImageView
+                    android:id="@+id/ivIconoRecuperar"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_ms_restaurant_fill"
+                    app:tint="?attr/colorPrimary" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvTituloRecuperar"
+                    style="@style/TextAppearance.GymProFit.Headline"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:accessibilityLiveRegion="polite"
+                    android:textColor="?attr/colorOnSurface" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/recuperar_subtitulo"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="@dimen/text_body" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/barraRecuperar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:importantForAccessibility="noHideDescendants"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/recuperar_barra_rotulo"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="@dimen/text_body" />
+
+                <TextView
+                    android:id="@+id/tvProteinaRecuperar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="@dimen/text_body" />
+            </LinearLayout>
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/progresoRecuperar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:importantForAccessibility="no"
+                android:max="100"
+                app:indicatorColor="@color/gp_macro_proteinas"
+                app:trackColor="@color/gp_meter_track"
+                app:indicatorTrackGapSize="0dp"
+                app:trackCornerRadius="6dp"
+                app:trackStopIndicatorSize="0dp"
+                app:trackThickness="12dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/listaRecuperar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_lista_recuperar"
+            android:clipToOutline="true"
+            android:orientation="vertical" />
+
+        <TextView
+            android:id="@+id/tvNotaRecuperar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:drawablePadding="6dp"
+            android:gravity="center_vertical"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="@dimen/text_caption"
+            app:drawableStartCompat="@drawable/ic_ms_schedule"
+            app:drawableTint="?attr/colorOnSurfaceVariant" />
+
+        <include
+            android:id="@+id/estadoRecuperar"
+            layout="@layout/view_estado" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

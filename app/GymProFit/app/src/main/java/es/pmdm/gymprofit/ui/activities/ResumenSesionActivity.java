@@ -1,55 +1,74 @@
 package es.pmdm.gymprofit.ui.activities;
 
+import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.widget.TextView;
 
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.ColorUtils;
+import androidx.core.view.ViewCompat;
+
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.chip.ChipGroup;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.logro.LogroProgreso;
 import es.pmdm.gymprofit.model.record.Record;
+import es.pmdm.gymprofit.model.sesion.ResumenSesion;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
-import es.pmdm.gymprofit.model.usuario.UsuarioEstadisticas;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.LogroApi;
 import es.pmdm.gymprofit.network.SesionApi;
-import es.pmdm.gymprofit.network.UsuarioApi;
-import es.pmdm.gymprofit.ui.adapters.LogroAdapter;
+import es.pmdm.gymprofit.ui.nutricion.ParaRecuperarSeccion;
+import es.pmdm.gymprofit.utils.ComparacionEntreno;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.Marcas;
+import es.pmdm.gymprofit.utils.Movimiento;
 import es.pmdm.gymprofit.utils.NotificationHelper;
 import es.pmdm.gymprofit.utils.PreferencesManager;
-import es.pmdm.gymprofit.utils.UiFeedback;
-import com.google.android.material.appbar.MaterialToolbar;
+import es.pmdm.gymprofit.utils.VistaEstado;
 
 // ============================================================
-// ResumenSesionActivity — pantalla de resumen tras registrar/consultar una sesión.
-// Muestra los datos de la sesión de entrenamiento, las estadísticas globales del
-// usuario y los logros desbloqueados, combinando 4 llamadas asíncronas a la API
-// que se sincronizan mediante un contador atómico antes de pintar la UI.
+// ResumenSesionActivity — el resumen del entreno (GP-210 paso 1, GP-023, GP-011).
+//
+// Tablero 3 «Resumen» de documentacion/diseno/2026-10-22-firma-visual/, que sustituye a
+// «Sesión completada» del tablero 11 de nutrición. La recompensa del final del entreno, de
+// arriba abajo (momento 28 de DEC-039):
+//   1. Los kilos que cuentan desde cero (CIFRAS) y tres fichas: la variación frente a la
+//      sesión anterior de la misma rutina, la duración y las series.
+//   2. La tarjeta dorada de récords, con la marca anterior (momento 12, regla de GP-088).
+//   3. «Frente a la última vez», por ejercicio, en cascada (CASCADA). La primera vez de un
+//      ejercicio no lleva porcentaje (GP-014: «Primera vez: es tu punto de partida»).
+//   4. El logro conseguido, con el medallón dorado. Sin Profi: llega en el paso 5.
+//   5. «Para recuperar» (ParaRecuperarSeccion): la proteína del día y tres ideas con su «+».
+// Abajo, «Hecho». «Compartir» no se dibuja hasta la tarjeta del paso 4.
+//
+// Los kilos, las series y las comparaciones salen del servidor (GET /sesiones/{id}/resumen,
+// con la definición de volumen de GP-011) y sirven también las sesiones del historial; los
+// récords y los logros nuevos solo los trae el guardado, así que al abrir una sesión vieja
+// esas dos tarjetas no aparecen. Cargando y error, con VistaEstado.
 // ============================================================
 public class ResumenSesionActivity extends AppCompatActivity {
 
-    /**
-     * Extra booleano: la sesión no tiene rutina, es un entrenamiento libre (GP-057).
-     *
-     * <p>Lo manda quien abre esta pantalla porque ya lo sabe. Aquí se vuelve a pedir
-     * la sesión a la API, pero hasta que responde el rótulo tiene que decir algo, y
-     * sin el aviso diría «sin rutina asociada» un instante antes de corregirse.
-     */
-    public static final String EXTRA_ENTRENAMIENTO_LIBRE = "entrenamientoLibre";
     /** Récords que batió la sesión recién guardada (ArrayList de Record), GP-088. */
     public static final String EXTRA_RECORDS = "recordsBatidos";
     /** Cuántos ejercicios se hacían por primera vez en la sesión recién guardada. */
@@ -61,41 +80,24 @@ public class ResumenSesionActivity extends AppCompatActivity {
         super.attachBaseContext(es.pmdm.gymprofit.utils.ScaleUtils.wrap(newBase));
     }
 
-    private TextView tvFecha, tvDuracion, tvRutina, tvValoracion, tvNotas, tvCompletada;
-    private View layoutValoracion;
-    private View layoutNotas;
-    private TextView tvStatSesiones, tvStatCompletadas, tvStatMinutos, tvStatEjercicios;
-    private TextView tvStatRacha, tvStatMejorRacha;
+    private PreferencesManager prefsManager;
+    private final SesionApi sesionApi = ApiClient.service(SesionApi.class);
+    private final LogroApi logroApi = ApiClient.service(LogroApi.class);
+
+    private View scroll;
+    private VistaEstado estado;
     private View layoutCelebracion;
     private TextView tvVolumenHero;
-    private RecyclerView rvLogros;
-    private TextView tvLogrosVacio;
+    private ChipGroup fichas;
 
-    private PreferencesManager prefsManager;
-    // Interfaz Retrofit tipada del dominio sesiones (etapa 2)
-    private final SesionApi sesionApi = ApiClient.service(SesionApi.class);
-    // Interfaz Retrofit tipada del dominio usuarios (etapa 2)
-    private final UsuarioApi usuarioApi = ApiClient.service(UsuarioApi.class);
-    // Interfaz Retrofit tipada del dominio logros (etapa 2)
-    private final LogroApi logroApi = ApiClient.service(LogroApi.class);
-    // Contador de llamadas asíncronas pendientes (sesión, estadísticas y logros con progreso)
-    private final AtomicInteger pendientes = new AtomicInteger(3);
-
+    private int sesionId;
     private SesionEntrenamiento sesion;
-    private UsuarioEstadisticas estadisticas;
-    private List<LogroProgreso> logros = new ArrayList<>();
+    private ResumenSesion resumen;
     private ArrayList<String> nuevosLogros = new ArrayList<>();
-    // Indica si se llegó desde el registro de una sesión (para lanzar notificaciones)
+    // Se llegó desde el registro de la sesión (no desde el historial): lanza las notificaciones.
     private boolean fromRegistrar = false;
-    // Aviso de quien abre la pantalla: la sesión no tiene rutina (GP-057). Lo confirma
-    // después la propia sesión, cuando llega de la API.
-    private boolean entrenamientoLibre = false;
-    // Nombre de la rutina que traía el Intent, si lo traía. Aquí no se resuelve: el
-    // mapa id→nombre lo tiene la pantalla de la que se viene.
-    private String rutinaNombre;
+    private int turno;
 
-    // Inicializa la actividad: aplica tema/idioma, recupera extras del intent
-    // y dispara las 4 cargas asíncronas necesarias para el resumen.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,275 +105,385 @@ public class ResumenSesionActivity extends AppCompatActivity {
         prefsManager.applyTheme();
         setContentView(R.layout.activity_resumen_sesion);
 
-        int sesionId = getIntent().getIntExtra("sesionId", -1);
+        sesionId = getIntent().getIntExtra("sesionId", -1);
         if (sesionId == -1) { finish(); return; }
 
-        String rutinaNombre = getIntent().getStringExtra("rutinaNombre");
-        entrenamientoLibre = getIntent().getBooleanExtra(EXTRA_ENTRENAMIENTO_LIBRE, false);
         ArrayList<String> extras = getIntent().getStringArrayListExtra("nuevosLogros");
         if (extras != null) {
             nuevosLogros = extras;
             fromRegistrar = true;
         }
 
-        inicializarVistas(rutinaNombre);
-        pintarRecords();
+        ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
+        findViewById(R.id.btnHechoResumen).setOnClickListener(v -> finish());
+        scroll = findViewById(R.id.scrollResumen);
+        estado = new VistaEstado(findViewById(R.id.estadoResumen));
+        layoutCelebracion = findViewById(R.id.layoutCelebracion);
+        tvVolumenHero = findViewById(R.id.tvVolumenHero);
+        fichas = findViewById(R.id.fichasResumen);
+        ViewCompat.setAccessibilityHeading(findViewById(R.id.tvUltimaVezTitulo), true);
+        ViewCompat.setAccessibilityHeading(findViewById(R.id.tvRecordsTituloResumen), true);
 
-        int usuarioId = prefsManager.getUsuarioId();
-        cargarVolumen(sesionId);
-        cargarSesion(sesionId);
-        cargarEstadisticas(usuarioId);
-        cargarLogros();
+        cargar();
     }
 
-    /**
-     * Carga los kilos movidos en la sesión y los pinta como el número grande.
-     * <p>
-     * Va por su cuenta y no entra en el contador de las otras cuatro llamadas: si el
-     * volumen tarda o falla, el resto del resumen se pinta igual. Cuando no hay pesos
-     * registrados el bloque entero desaparece, porque un cero enorme celebra lo
-     * contrario de lo que se pretende.
-     *
-     * @param sesionId sesión que se acaba de terminar o consultar.
-     */
-    private void cargarVolumen(int sesionId) {
-        sesionApi.getVolumenSesion(sesionId).enqueue(new ApiCallback<Map<String, Double>>() {
-            @Override
-            public void onOk(Map<String, Double> cuerpo) {
-                Double kilos = cuerpo == null ? null : cuerpo.get("volumenKg");
-                if (kilos == null || kilos <= 0) {
-                    layoutCelebracion.setVisibility(View.GONE);
-                    return;
-                }
-                layoutCelebracion.setVisibility(View.VISIBLE);
-                // Sin decimales: a esta escala el gramo no dice nada y estorba al n\u00famero.
-                tvVolumenHero.setText(String.format(Locale.getDefault(), "%,d", Math.round(kilos)));
+    // ── Carga ───────────────────────────────────────────────────────────────
+
+    // La sesión (duración, día) y su resumen (kilos, series, comparaciones): hacen falta las
+    // dos, y si una falla se dice y se puede reintentar. Los logros se piden aparte, después.
+    private void cargar() {
+        int miTurno = ++turno;
+        sesion = null;
+        resumen = null;
+        scroll.setVisibility(View.INVISIBLE);
+        estado.cargando();
+        AtomicInteger pendientes = new AtomicInteger(2);
+        boolean[] fallo = {false};
+        String[] porque = {null};
+
+        sesionApi.getPorId(sesionId).enqueue(new ApiCallback<SesionEntrenamiento>() {
+            @Override public void onOk(SesionEntrenamiento body) {
+                sesion = body;
+                llego(miTurno, pendientes, fallo, porque);
             }
-            @Override
-            public void onFail(int code, String message) {
-                layoutCelebracion.setVisibility(View.GONE);
+            @Override public void onFail(int code, String message) {
+                fallo[0] = true;
+                porque[0] = VistaEstado.mensaje(ResumenSesionActivity.this, R.string.resumen_error, code, message).toString();
+                llego(miTurno, pendientes, fallo, porque);
+            }
+        });
+        sesionApi.resumen(sesionId).enqueue(new ApiCallback<ResumenSesion>() {
+            @Override public void onOk(ResumenSesion body) {
+                resumen = body;
+                llego(miTurno, pendientes, fallo, porque);
+            }
+            @Override public void onFail(int code, String message) {
+                fallo[0] = true;
+                porque[0] = VistaEstado.mensaje(ResumenSesionActivity.this, R.string.resumen_error, code, message).toString();
+                llego(miTurno, pendientes, fallo, porque);
             }
         });
     }
 
-    // Vincula las vistas del layout y muestra el nombre de la rutina asociada (si existe).
-    private void inicializarVistas(String rutinaNombre) {
-        ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
+    private void llego(int miTurno, AtomicInteger pendientes, boolean[] fallo, String[] porque) {
+        if (miTurno != turno || isDestroyed()) return;
+        if (pendientes.decrementAndGet() > 0) return;
+        if (fallo[0] || sesion == null || resumen == null) {
+            estado.error(porque[0] != null ? porque[0] : getString(R.string.resumen_error), this::cargar);
+            return;
+        }
+        mostrarContenido();
+    }
 
-        tvFecha      = findViewById(R.id.tvFechaResumen);
-        tvDuracion   = findViewById(R.id.tvDuracionResumen);
-        tvRutina     = findViewById(R.id.tvRutinaResumen);
-        tvValoracion = findViewById(R.id.tvValoracionResumen);
-        layoutValoracion = findViewById(R.id.layoutValoracionResumen);
-        layoutNotas  = findViewById(R.id.layoutNotasResumen);
-        tvNotas      = findViewById(R.id.tvNotasResumen);
-        tvCompletada = findViewById(R.id.tvCompletadaResumen);
+    // ── Pintar ──────────────────────────────────────────────────────────────
 
-        tvStatSesiones   = findViewById(R.id.tvStatSesiones);
-        tvStatCompletadas = findViewById(R.id.tvStatCompletadas);
-        tvStatMinutos    = findViewById(R.id.tvStatMinutos);
-        tvStatEjercicios = findViewById(R.id.tvStatEjercicios);
-        tvStatRacha      = findViewById(R.id.tvStatRacha);
-        tvStatMejorRacha = findViewById(R.id.tvStatMejorRacha);
+    private void mostrarContenido() {
+        estado.oculto();
+        scroll.setVisibility(View.VISIBLE);
+        pintarCabecera();
+        pintarRecords();
+        pintarUltimaVez();
+        pintarLogro();
+        arrancarParaRecuperar();
 
-        layoutCelebracion = findViewById(R.id.layoutCelebracion);
-        tvVolumenHero     = findViewById(R.id.tvVolumenHero);
+        if (fromRegistrar) {
+            NotificationHelper.notificarSesionCompletada(this, sesion.getDuracionMinutos());
+            if (!nuevosLogros.isEmpty()) {
+                NotificationHelper.notificarLogrosDesbloqueados(this, nuevosLogros);
+            }
+        }
+    }
 
-        rvLogros      = findViewById(R.id.rvLogrosResumen);
-        tvLogrosVacio = findViewById(R.id.tvLogrosVacioResumen);
-        rvLogros.setLayoutManager(new LinearLayoutManager(this));
+    // Los kilos desde cero y las tres fichas. Sin pesos que contar el número enorme celebraría
+    // un cero: se dice y se siguen enseñando la duración y las series.
+    private void pintarCabecera() {
+        double kilos = resumen.getVolumenKg();
+        TextView sinKilos = findViewById(R.id.tvSinKilos);
+        if (kilos <= 0) {
+            layoutCelebracion.setVisibility(View.GONE);
+            sinKilos.setVisibility(View.VISIBLE);
+        } else {
+            sinKilos.setVisibility(View.GONE);
+            layoutCelebracion.setVisibility(View.VISIBLE);
+            String total = formatoMiles(Math.round(kilos));
+            // Una sola frase para TalkBack: el número no se anuncia contando.
+            layoutCelebracion.setContentDescription(getString(R.string.resumen_a11y_kilos, total));
+            ViewCompat.setImportantForAccessibility(layoutCelebracion, View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            layoutCelebracion.setFocusable(true);
+            for (int i = 0; i < ((LinearLayout) layoutCelebracion).getChildCount(); i++) {
+                ((LinearLayout) layoutCelebracion).getChildAt(i)
+                        .setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+            }
+            tvVolumenHero.setText(formatoMiles(0));
+            Movimiento.entrar(0, layoutCelebracion);
+            // Momento 28: los kilos cuentan desde cero (CIFRAS).
+            Movimiento.contar(0, Movimiento.CIFRAS,
+                    f -> tvVolumenHero.setText(formatoMiles(Math.round(kilos * f))));
+        }
 
-        this.rutinaNombre = rutinaNombre;
-        pintarRutina();
+        fichas.removeAllViews();
+        ComparacionEntreno.Variacion v = ComparacionEntreno.variacionDeSesion(resumen);
+        if (v != null) anadirFichaVariacion(v);
+        anadirFicha(R.drawable.ic_ms_timer, getString(R.string.sesiones_min, sesion.getDuracionMinutos()), false);
+        int series = resumen.getSeries();
+        if (series > 0) {
+            anadirFicha(R.drawable.ic_ms_fitness_center,
+                    getResources().getQuantityString(R.plurals.resumen_series_chip, series, series), false);
+        }
+    }
+
+    // «+6 % que el jueves», en verde si sube. Si baja o es igual no se pinta de rojo: una
+    // sesión más floja no es un fallo, y el porcentaje ya lo dice.
+    private void anadirFichaVariacion(ComparacionEntreno.Variacion v) {
+        String cuando = cuandoFue(resumen.getAnterior().getFecha());
+        switch (v.tendencia) {
+            case SUBE:
+                anadirFicha(R.drawable.ic_ms_trending_up, getString(R.string.resumen_vs_sube, v.porcentaje, cuando), true);
+                break;
+            case BAJA:
+                anadirFicha(R.drawable.ic_ms_trending_down, getString(R.string.resumen_vs_baja, -v.porcentaje, cuando), false);
+                break;
+            default:
+                anadirFicha(R.drawable.ic_ms_check, getString(R.string.resumen_vs_igual, cuando), false);
+        }
+    }
+
+    private void anadirFicha(@DrawableRes int icono, String texto, boolean verde) {
+        TextView ficha = (TextView) LayoutInflater.from(this).inflate(R.layout.item_ficha_resumen, fichas, false);
+        ficha.setText(texto);
+        ficha.setBackgroundResource(verde ? R.drawable.bg_ficha_resumen_verde : R.drawable.bg_ficha_resumen);
+        Drawable d = ContextCompat.getDrawable(this, icono);
+        if (d != null) {
+            d = d.mutate();
+            int px = (int) (18 * getResources().getDisplayMetrics().density);
+            d.setBounds(0, 0, px, px);
+            d.setTint(verde ? ContextCompat.getColor(this, R.color.gp_success) : color(com.google.android.material.R.attr.colorOnSurfaceVariant));
+            ficha.setCompoundDrawablesRelative(d, null, null, null);
+        }
+        if (verde) ficha.setTextColor(ContextCompat.getColor(this, R.color.gp_success));
+        fichas.addView(ficha);
+    }
+
+    // «el jueves» si la sesión anterior fue hace menos de una semana; si no, «la última vez».
+    private String cuandoFue(@Nullable String isoAnterior) {
+        Locale idioma = FechaUtils.localeDeLaApp(this);
+        try {
+            SimpleDateFormat iso = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+            Date antes = iso.parse(isoAnterior);
+            Date ahora = sesion.getFechaInicio() != null ? iso.parse(sesion.getFechaInicio()) : new Date();
+            if (antes != null && ahora != null && ahora.getTime() - antes.getTime() < 7L * 24 * 3600 * 1000) {
+                return getString(R.string.resumen_vs_dia, new SimpleDateFormat("EEEE", idioma).format(antes));
+            }
+        } catch (ParseException | NullPointerException e) {
+            // Una fecha que no se entiende solo quita el nombre del día: «la última vez» dice lo mismo.
+        }
+        return getString(R.string.resumen_vs_ultima);
     }
 
     /**
      * Pinta los récords que batió la sesión y cuántas primeras marcas dejó (GP-088).
      *
-     * <p>Los trae el guardado, así que solo existen al llegar desde el registro; al
-     * abrir el resumen de una sesión vieja la sección no aparece. Tampoco aparece si
-     * no hay nada: una sección de récords vacía es un reproche.
+     * <p>Los trae el guardado, así que solo existen al llegar desde el registro; al abrir el
+     * resumen de una sesión vieja la tarjeta no aparece. Tampoco aparece si no hay nada: una
+     * sección de récords vacía es un reproche.
      */
     @SuppressWarnings("unchecked")
     private void pintarRecords() {
         java.io.Serializable extra = getIntent().getSerializableExtra(EXTRA_RECORDS);
         List<Record> records = extra instanceof List ? (List<Record>) extra : new ArrayList<>();
         int primeras = getIntent().getIntExtra(EXTRA_PRIMERAS_MARCAS, 0);
-        if (records.isEmpty() && primeras == 0) return;
-
-        findViewById(R.id.layoutRecordsResumen).setVisibility(View.VISIBLE);
-        findViewById(R.id.tvRecordsTituloResumen).setVisibility(records.isEmpty() ? View.GONE : View.VISIBLE);
+        MaterialCardView tarjeta = findViewById(R.id.layoutRecordsResumen);
+        if (records.isEmpty() && primeras == 0) {
+            tarjeta.setVisibility(View.GONE);
+            return;
+        }
+        tarjeta.setVisibility(View.VISIBLE);
+        findViewById(R.id.cabeceraRecordsResumen).setVisibility(records.isEmpty() ? View.GONE : View.VISIBLE);
+        ((TextView) findViewById(R.id.tvRecordsTituloResumen)).setText(
+                getResources().getQuantityString(R.plurals.resumen_records_titulo, records.size(), records.size()));
 
         LinearLayout contenedor = findViewById(R.id.contenedorRecordsResumen);
-        java.util.Locale idioma = FechaUtils.localeDeLaApp(this);
-        int oro = androidx.core.content.ContextCompat.getColor(this, R.color.gp_gold);
-        int claro = androidx.core.content.ContextCompat.getColor(this, R.color.gp_on_primary_container);
+        contenedor.removeAllViews();
+        contenedor.setVisibility(records.isEmpty() ? View.GONE : View.VISIBLE);
+        Locale idioma = FechaUtils.localeDeLaApp(this);
+        int oro = ContextCompat.getColor(this, R.color.gp_gold);
+        int oroTexto = ContextCompat.getColor(this, R.color.gp_gold_text);
+        int claro = ContextCompat.getColor(this, R.color.gp_on_primary_container);
         int orden = 0;
-        for (Record r : records) {
+        for (int i = 0; i < records.size(); i++) {
+            Record r = records.get(i);
             View fila = getLayoutInflater().inflate(R.layout.item_record, contenedor, false);
             // El trofeo dorado de cada récord batido, que celebra al entrar (GP-104, momento 12).
-            android.widget.ImageView trofeo = fila.findViewById(R.id.ivTrofeoRecord);
+            ImageView trofeo = fila.findViewById(R.id.ivTrofeoRecord);
             trofeo.setImageResource(R.drawable.ic_ms_trophy_fill);
-            trofeo.setImageTintList(android.content.res.ColorStateList.valueOf(oro));
+            trofeo.setImageTintList(ColorStateList.valueOf(oro));
             String nombre = r.nombre(idioma);
             String marca = Marcas.texto(this, r);
             String antes = Marcas.anterior(this, r);
             ((TextView) fila.findViewById(R.id.tvNombreRecord)).setText(nombre);
             TextView tvMarca = fila.findViewById(R.id.tvMarcaRecord);
             tvMarca.setText(marca);
+            tvMarca.setTextColor(oroTexto);
             // Por tiempo (GP-125), el cronómetro delante de «1:05».
             Marcas.iconoTiempo(tvMarca, r);
             TextView tvDetalle = fila.findViewById(R.id.tvDetalleRecord);
             tvDetalle.setText(antes);
             tvDetalle.setVisibility(antes == null ? View.GONE : View.VISIBLE);
+            View raya = fila.findViewById(R.id.divRecord);
+            raya.setBackgroundColor(ColorUtils.setAlphaComponent(oro, 77));
+            raya.setVisibility(i == records.size() - 1 ? View.GONE : View.VISIBLE);
             // Aquí la fila solo informa: no lleva a ningún sitio.
             fila.setClickable(false);
             fila.setFocusable(true);
             fila.setContentDescription(getString(R.string.record_a11y, nombre, marca, antes != null ? antes : ""));
             contenedor.addView(fila);
-            // Uno detrás de otro, para que cada récord se vea celebrar.
-            es.pmdm.gymprofit.utils.Movimiento.celebrarRecord((android.view.ViewGroup) fila, trofeo,
-                    oro, claro, 400L + 300L * orden++);
+            // Uno detrás de otro, para que cada récord se vea celebrar (momento 12).
+            Movimiento.celebrarRecord((android.view.ViewGroup) fila, trofeo, oro, claro, 400L + 300L * orden++);
         }
 
         TextView tvPrimeras = findViewById(R.id.tvPrimerasMarcasResumen);
         if (primeras > 0) {
             tvPrimeras.setText(getResources().getQuantityString(R.plurals.resumen_primeras_marcas, primeras, primeras));
             tvPrimeras.setVisibility(View.VISIBLE);
-        }
-    }
-
-    /**
-     * Escribe el rótulo de la rutina. Tres casos, no dos (GP-057):
-     * <ul>
-     *   <li>entrenamiento libre: la sesión no tiene rutina, y eso es un estado válido
-     *       del modelo desde la primera migración, no un dato que falte;</li>
-     *   <li>rutina con nombre: el que venga de quien abrió la pantalla;</li>
-     *   <li>rutina sin nombre resoluble (archivada): «sin rutina asociada».</li>
-     * </ul>
-     *
-     * <p>Se llama dos veces: al montar la vista con el aviso del Intent, y otra vez
-     * cuando llega la sesión de la API, que es la que manda.
-     */
-    private void pintarRutina() {
-        if (entrenamientoLibre) {
-            tvRutina.setText(getString(R.string.sesiones_entrenamiento_libre));
-        } else if (rutinaNombre != null && !rutinaNombre.isEmpty()) {
-            tvRutina.setText(rutinaNombre);
         } else {
-            tvRutina.setText(getString(R.string.sesiones_sin_rutina));
+            tvPrimeras.setVisibility(View.GONE);
+        }
+        Movimiento.entrarUna(tarjeta, 150, Movimiento.ENTRA, 16);
+    }
+
+    // «Frente a la última vez»: una fila por ejercicio que mueve kilos, en cascada. La primera
+    // vez de un ejercicio no tiene porcentaje, sino «Primera vez: es tu punto de partida».
+    private void pintarUltimaVez() {
+        MaterialCardView tarjeta = findViewById(R.id.cardUltimaVez);
+        List<ComparacionEntreno.Fila> filas = ComparacionEntreno.filas(resumen);
+        LinearLayout contenedor = findViewById(R.id.contenedorUltimaVez);
+        contenedor.removeAllViews();
+        if (filas.isEmpty()) {
+            tarjeta.setVisibility(View.GONE);
+            return;
+        }
+        tarjeta.setVisibility(View.VISIBLE);
+        for (int i = 0; i < filas.size(); i++) {
+            ComparacionEntreno.Fila f = filas.get(i);
+            View fila = getLayoutInflater().inflate(R.layout.item_ultima_vez, contenedor, false);
+            ((TextView) fila.findViewById(R.id.tvNombreUltimaVez)).setText(f.nombre);
+            String kilos = getString(R.string.resumen_kilos_fila, formatoMiles(Math.round(f.kilos)));
+            ((TextView) fila.findViewById(R.id.tvKilosUltimaVez)).setText(kilos);
+            TextView tvPct = fila.findViewById(R.id.tvPctUltimaVez);
+            String pct;
+            String pctHablado;
+            if (f.primeraVez()) {
+                fila.findViewById(R.id.tvPrimeraVez).setVisibility(View.VISIBLE);
+                tvPct.setVisibility(View.GONE);
+                pct = null;
+                pctHablado = getString(R.string.envivo_primera_vez);
+            } else {
+                switch (f.variacion.tendencia) {
+                    case SUBE:
+                        pct = getString(R.string.resumen_pct_sube, f.variacion.porcentaje);
+                        pctHablado = getString(R.string.resumen_pct_sube_a11y, f.variacion.porcentaje);
+                        tvPct.setTextColor(ContextCompat.getColor(this, R.color.gp_success));
+                        break;
+                    case BAJA:
+                        // Neutro, no rojo: bajar un día no es un fallo.
+                        pct = getString(R.string.resumen_pct_baja, -f.variacion.porcentaje);
+                        pctHablado = getString(R.string.resumen_pct_baja_a11y, -f.variacion.porcentaje);
+                        tvPct.setTextColor(color(com.google.android.material.R.attr.colorOnSurfaceVariant));
+                        break;
+                    default:
+                        pct = getString(R.string.resumen_pct_igual);
+                        pctHablado = getString(R.string.resumen_pct_igual_a11y);
+                        tvPct.setTextColor(color(com.google.android.material.R.attr.colorOnSurfaceVariant));
+                }
+                tvPct.setText(pct);
+            }
+            fila.setContentDescription(getString(R.string.resumen_fila_a11y, f.nombre, kilos, pctHablado));
+            fila.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            fila.setFocusable(true);
+            fila.findViewById(R.id.rayaUltimaVez).setVisibility(i == filas.size() - 1 ? View.GONE : View.VISIBLE);
+            contenedor.addView(fila);
+            // Momento 28: la comparación en cascada, detrás de los récords.
+            Movimiento.entrarUna(fila, 700 + (long) i * Movimiento.CASCADA_ESCALON, Movimiento.CASCADA, 16);
         }
     }
 
-    // Obtiene los datos de la sesión de entrenamiento por su id (ya deserializados por Gson).
-    private void cargarSesion(int sesionId) {
-        sesionApi.getPorId(sesionId).enqueue(new ApiCallback<SesionEntrenamiento>() {
-            @Override public void onOk(SesionEntrenamiento body) {
-                sesion = body;
-                comprobarYMostrar();
-            }
-            @Override public void onFail(int code, String message) { comprobarYMostrar(); }
-        });
+    // El logro conseguido, con el medallón dorado. Sale solo con los logros nuevos que trae el
+    // guardado (no los que ya se tenían). Su descripción llega después, de la lista de logros.
+    private void pintarLogro() {
+        MaterialCardView tarjeta = findViewById(R.id.cardLogroResumen);
+        if (nuevosLogros.isEmpty()) {
+            tarjeta.setVisibility(View.GONE);
+            return;
+        }
+        tarjeta.setVisibility(View.VISIBLE);
+        String nombre = nuevosLogros.get(0);
+        TextView tvNombre = findViewById(R.id.tvLogroNombreResumen);
+        TextView tvDetalle = findViewById(R.id.tvLogroDetalleResumen);
+        tvNombre.setText(nombre);
+        if (nuevosLogros.size() > 1) {
+            int mas = nuevosLogros.size() - 1;
+            tvDetalle.setText(getResources().getQuantityString(R.plurals.resumen_logro_mas, mas, mas));
+            tvDetalle.setVisibility(View.VISIBLE);
+        } else {
+            tvDetalle.setVisibility(View.GONE);
+        }
+        findViewById(R.id.filaLogroResumen).setContentDescription(getString(R.string.resumen_logro_a11y, nombre));
+        Movimiento.entrarUna(tarjeta, 900, Movimiento.ENTRA, 16);
+        View medallon = findViewById(R.id.ivMedallonLogro);
+        if (!Movimiento.quieto(this)) {
+            medallon.setAlpha(0f);
+            medallon.postDelayed(() -> {
+                if (!isDestroyed()) {
+                    Movimiento.saltar(medallon, Movimiento.TROFEO);
+                    Movimiento.vibrar(medallon, Movimiento.Vibracion.EXITO);
+                }
+            }, 900);
+        }
+        if (nuevosLogros.size() == 1) pedirDescripcionDelLogro(nombre);
     }
 
-    // Obtiene las estadísticas globales de entrenamiento del usuario (ya deserializadas por Gson).
-    private void cargarEstadisticas(int usuarioId) {
-        usuarioApi.getEstadisticas(usuarioId).enqueue(new ApiCallback<UsuarioEstadisticas>() {
-            @Override public void onOk(UsuarioEstadisticas body) {
-                estadisticas = body;
-                comprobarYMostrar();
-            }
-            @Override public void onFail(int code, String message) { comprobarYMostrar(); }
-        });
-    }
-
-    // Logros con su estado, de GET /logros/progreso (GP-079). Aquí solo se enseñan
-    // los conseguidos; el fallo no bloquea el resumen, que tiene más cosas.
-    private void cargarLogros() {
+    private void pedirDescripcionDelLogro(String nombre) {
         logroApi.getProgreso().enqueue(new ApiCallback<List<LogroProgreso>>() {
             @Override public void onOk(List<LogroProgreso> lista) {
-                if (lista != null) logros = lista;
-                comprobarYMostrar();
+                if (isDestroyed() || lista == null) return;
+                for (LogroProgreso l : lista) {
+                    if (nombre.equals(l.getNombre()) && l.getDescripcion() != null && !l.getDescripcion().isEmpty()) {
+                        TextView tvDetalle = findViewById(R.id.tvLogroDetalleResumen);
+                        tvDetalle.setText(l.getDescripcion());
+                        tvDetalle.setVisibility(View.VISIBLE);
+                        return;
+                    }
+                }
             }
             @Override public void onFail(int code, String message) {
-                // El resto del resumen sí llegó: se avisa de que los logros faltan
-                // en vez de dejar un «sin logros» que podría ser falso.
-                UiFeedback.toastError(ResumenSesionActivity.this, code, message);
-                comprobarYMostrar();
+                // Se ignora a propósito: la descripción es un extra y la tarjeta ya dice el nombre
+                // del logro, que es lo que importa. No hay nada que reintentar aquí.
             }
         });
     }
 
-    // Decrementa el contador de llamadas pendientes; cuando llegan todas a 0
-    // pinta el contenido (los callbacks Retrofit ya entregan en el hilo de UI).
-    private void comprobarYMostrar() {
-        if (pendientes.decrementAndGet() == 0) {
-            mostrarContenido();
+    // «Para recuperar» solo tiene sentido el día de la sesión: la proteína es la de hoy. Una
+    // sesión vieja abierta desde el historial no la enseña.
+    private void arrancarParaRecuperar() {
+        View tarjeta = findViewById(R.id.cardParaRecuperar);
+        String hoy = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date());
+        String dia = sesion.getFechaInicio();
+        if (dia == null || !dia.startsWith(hoy)) {
+            tarjeta.setVisibility(View.GONE);
+            return;
         }
+        new ParaRecuperarSeccion(this, (MaterialCardView) tarjeta, prefsManager).cargar();
     }
 
-    // Rellena la UI con los datos de la sesión, las estadísticas y los logros
-    // desbloqueados; si viene de registrar la sesión, dispara notificaciones locales.
-    private void mostrarContenido() {
-        if (sesion != null) {
-            // La sesión que responde la API manda sobre el aviso del Intent (GP-057):
-            // si llega con rutina_id nulo es un entrenamiento libre, lo dijera quien
-            // lo dijera al abrir esta pantalla.
-            entrenamientoLibre = sesion.esEntrenamientoLibre();
-            pintarRutina();
+    // ── Utilidades ──────────────────────────────────────────────────────────
 
-            String fecha = sesion.getFechaInicio();
-            tvFecha.setText(fecha == null || fecha.isEmpty()
-                    ? "—" : FechaUtils.formatearFechaHora(fecha));
-            tvDuracion.setText(getString(R.string.sesiones_min, sesion.getDuracionMinutos()));
+    private String formatoMiles(long valor) {
+        return String.format(FechaUtils.localeDeLaApp(this), "%,d", valor);
+    }
 
-            // La valoración es un campo desde GP-070, y puede no estar: no valorar es
-            // un caso normal y la fila se queda oculta.
-            Integer valoracion = sesion.getValoracion();
-            if (valoracion != null) {
-                tvValoracion.setText(getString(R.string.resumen_valoracion_fmt, valoracion));
-                layoutValoracion.setVisibility(View.VISIBLE);
-            }
-
-            // OJO con el null: hasta GP-070 las notas nunca venían vacías porque la app
-            // metía dentro la valoración. Ahora una sesión sin notas trae null, y esto
-            // reventaba la pantalla entera al volver de guardar.
-            String notas = sesion.getNotas();
-            if (notas != null && !notas.isEmpty()) {
-                tvNotas.setText(notas);
-                layoutNotas.setVisibility(View.VISIBLE);
-            }
-            tvCompletada.setVisibility(sesion.isCompletada() ? View.VISIBLE : View.GONE);
-        }
-
-        if (estadisticas != null) {
-            tvStatSesiones.setText(String.valueOf(estadisticas.getTotalSesiones()));
-            tvStatCompletadas.setText(String.valueOf(estadisticas.getSesionesCompletadas()));
-            tvStatMinutos.setText(String.valueOf(estadisticas.getTotalMinutosEntrenados()));
-            tvStatEjercicios.setText(String.valueOf(estadisticas.getTotalEjerciciosRealizados()));
-            tvStatRacha.setText(String.valueOf(estadisticas.getRachaActualDias()));
-            tvStatMejorRacha.setText(String.valueOf(estadisticas.getMejorRachaDias()));
-        }
-
-        List<LogroProgreso> filtrados = new ArrayList<>();
-        for (LogroProgreso l : logros) {
-            if (l.isConseguido()) filtrados.add(l);
-        }
-
-        if (fromRegistrar && sesion != null) {
-            NotificationHelper.notificarSesionCompletada(this, sesion.getDuracionMinutos());
-            if (!nuevosLogros.isEmpty()) {
-                NotificationHelper.notificarLogrosDesbloqueados(this, nuevosLogros);
-            }
-        }
-
-        if (filtrados.isEmpty()) {
-            tvLogrosVacio.setVisibility(View.VISIBLE);
-            rvLogros.setVisibility(View.GONE);
-        } else {
-            tvLogrosVacio.setVisibility(View.GONE);
-            rvLogros.setVisibility(View.VISIBLE);
-            rvLogros.setAdapter(new LogroAdapter(filtrados));
-        }
+    private int color(int atributo) {
+        android.util.TypedValue tv = new android.util.TypedValue();
+        getTheme().resolveAttribute(atributo, tv, true);
+        return tv.data;
     }
 }

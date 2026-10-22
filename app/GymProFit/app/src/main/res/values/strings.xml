@@ -1916,4 +1916,59 @@
     <string name="perfil_vaso">Vaso de agua</string>
     <string name="perfil_vaso_ml">%1$d\u00A0ml</string>
 
+    <!-- ===== Resumen del entreno (GP-210 paso 1, GP-023) ===== -->
+    <string name="resumen_cabecera">Sesión completada</string>
+    <string name="resumen_cerrar_a11y">Cerrar el resumen</string>
+    <string name="resumen_hecho">Hecho</string>
+    <string name="resumen_cargando_a11y">Cargando el resumen de la sesión</string>
+    <string name="resumen_error">No se ha podido cargar el resumen de la sesión.</string>
+    <string name="resumen_sin_kilos">Esta sesión no tiene pesos que contar</string>
+    <string name="resumen_a11y_kilos">%1$s kilos en esta sesión</string>
+    <string name="resumen_vs_sube">+%1$d %% que %2$s</string>
+    <string name="resumen_vs_baja">−%1$d %% que %2$s</string>
+    <string name="resumen_vs_igual">Igual que %1$s</string>
+    <string name="resumen_vs_dia">el %1$s</string>
+    <string name="resumen_vs_ultima">la última vez</string>
+    <plurals name="resumen_series_chip">
+        <item quantity="one">%d serie</item>
+        <item quantity="other">%d series</item>
+    </plurals>
+    <plurals name="resumen_records_titulo">
+        <item quantity="one">%d récord nuevo</item>
+        <item quantity="other">%d récords nuevos</item>
+    </plurals>
+    <string name="resumen_ultima_vez_titulo">Frente a la última vez</string>
+    <string name="resumen_kilos_fila">%1$s kg</string>
+    <string name="resumen_pct_sube">+%1$d %%</string>
+    <string name="resumen_pct_baja">−%1$d %%</string>
+    <string name="resumen_pct_igual">igual</string>
+    <string name="resumen_fila_a11y">%1$s: %2$s, %3$s</string>
+    <string name="resumen_pct_sube_a11y">%1$d por ciento más</string>
+    <string name="resumen_pct_baja_a11y">%1$d por ciento menos</string>
+    <string name="resumen_pct_igual_a11y">igual que la última vez</string>
+    <string name="resumen_logro_eyebrow">LOGRO CONSEGUIDO</string>
+    <plurals name="resumen_logro_mas">
+        <item quantity="one">y %d logro más</item>
+        <item quantity="other">y %d logros más</item>
+    </plurals>
+    <string name="resumen_logro_a11y">Logro conseguido: %1$s</string>
+
+    <!-- Para recuperar (tablero 11 de nutrición, decisión 12) -->
+    <string name="recuperar_titulo_falta">Para recuperar, hoy te faltan %1$d g de proteína</string>
+    <string name="recuperar_titulo_conseguida">Proteína del día, conseguida</string>
+    <string name="recuperar_subtitulo">Lo que cuenta es la proteína de todo el día.</string>
+    <string name="recuperar_barra_rotulo">Proteína de hoy</string>
+    <string name="recuperar_barra_valor">%1$d de %2$d g</string>
+    <string name="recuperar_barra_a11y">Proteína de hoy: %1$d de %2$d gramos</string>
+    <string name="recuperar_barra_a11y_falta">Proteína de hoy: %1$d de %2$d gramos, te faltan %3$d</string>
+    <string name="recuperar_barra_a11y_conseguida">Proteína de hoy: %1$d de %2$d gramos, conseguida</string>
+    <string name="recuperar_idea_detalle">%1$s · %2$d g de proteína · %3$d kcal</string>
+    <string name="recuperar_idea_apuntar">Apuntar %1$s, %2$s</string>
+    <string name="recuperar_idea_quitar">Quitar %1$s</string>
+    <string name="recuperar_nota_desayuno">Se apuntan en el desayuno, la comida que toca ahora</string>
+    <string name="recuperar_nota_almuerzo">Se apuntan en el almuerzo, la comida que toca ahora</string>
+    <string name="recuperar_nota_comida">Se apuntan en la comida, la que toca ahora</string>
+    <string name="recuperar_nota_merienda">Se apuntan en la merienda, la comida que toca ahora</string>
+    <string name="recuperar_nota_cena">Se apuntan en la cena, la comida que toca ahora</string>
+    <string name="recuperar_error">No se han podido cargar las ideas para recuperar.</string>
 </resources>

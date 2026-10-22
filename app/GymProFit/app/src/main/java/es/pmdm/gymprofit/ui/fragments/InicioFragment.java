@@ -267,7 +267,7 @@ public class InicioFragment extends BaseFragment {
             titulo.setText(nombre != null ? nombre : getString(R.string.hecho_hoy_libre));
             sub.setText(getString(R.string.duracion_min, deHoy.getDuracionMinutos()));
             // Tocar la tarjeta abre el resumen de la sesión de hoy.
-            card.setOnClickListener(v -> abrirResumen(deHoy, nombre));
+            card.setOnClickListener(v -> abrirResumen(deHoy));
             principal.setText(R.string.btn_empezar_otra);
             principal.setIconResource(R.drawable.ic_ms_play_arrow_fill);
             principal.setOnClickListener(v -> elegirRutina());
@@ -405,11 +405,9 @@ public class InicioFragment extends BaseFragment {
         EmpezarSesion.empezar(requireActivity(), r);
     }
 
-    private void abrirResumen(SesionEntrenamiento s, @Nullable String nombre) {
+    private void abrirResumen(SesionEntrenamiento s) {
         Intent intent = new Intent(requireContext(), ResumenSesionActivity.class);
         intent.putExtra("sesionId", s.getId());
-        intent.putExtra(ResumenSesionActivity.EXTRA_ENTRENAMIENTO_LIBRE, s.esEntrenamientoLibre());
-        intent.putExtra("rutinaNombre", nombre != null ? nombre : "");
         startActivity(intent);
     }
 
