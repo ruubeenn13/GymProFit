@@ -575,7 +575,7 @@ DEC-027 y DEC-014 no se relajan; lo único que cambia es **cómo se afirma el ai
 
 ---
 
-### DEC-039 · El movimiento: doce momentos, cuatro curvas y nada que esperar
+### DEC-039 · El movimiento: los momentos, cuatro curvas y nada que esperar
 **Estado:** Aceptada · **Fecha:** 2026-10-01 · **Tarea:** GP-104 (lote 1.5.1)
 
 **Contexto.** La app se movía a trozos: cada pantalla elegía su duración y su curva (260 ms aquí, 600 allá, un `DecelerateInterpolator` suelto), y nadie sabía qué tenía que pasar con «Quitar animaciones». El alta nueva se aprobó con su movimiento dibujado al milisegundo (`documentacion/diseno/2026-09-30-alta/fuente/Movimiento.dc.html`), y hacía falta un sitio donde vivieran esos números para que la siguiente pantalla no se los inventara.

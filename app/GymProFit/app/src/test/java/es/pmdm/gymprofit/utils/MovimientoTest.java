@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 // ============================================================
 // MovimientoTest — GP-104: lo que dice DEC-039 es lo que hace la app.
 //
-// La tabla de los doce momentos de DEC-039 nombra cada constante de Movimiento entre
+// La tabla de los momentos de DEC-039 nombra cada constante de Movimiento entre
 // comillas invertidas y da sus milisegundos en la columna de duración, en el mismo
 // orden. Este test lee las dos cosas —el Markdown y el código— y falla si un número
 // se separa, si la tabla nombra una constante que no existe o si Movimiento tiene una
