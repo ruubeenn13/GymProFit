@@ -40,7 +40,7 @@
                 android:paddingStart="4dp"
                 android:paddingEnd="4dp"
                 android:text="@string/alta_capitulo_plan"
-                android:textSize="38sp" />
+                android:textSize="@dimen/text_display_large" />
 
             <TextView
                 android:id="@+id/tvTextoPaso"
@@ -52,7 +52,7 @@
             <!-- Cada día -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardCadaDia"
-                style="@style/Widget.GymProFit.Card.Estructura"
+                style="@style/Widget.GymProFit.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp">
@@ -104,7 +104,7 @@
                                     android:layout_height="wrap_content"
                                     android:fontFeatureSettings="tnum"
                                     android:textAppearance="@style/TextAppearance.GymProFit.Display"
-                                    android:textSize="38sp" />
+                                    android:textSize="@dimen/text_number" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
@@ -209,7 +209,7 @@
             <!-- Tu programa -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardPrograma"
-                style="@style/Widget.GymProFit.Card.Estructura"
+                style="@style/Widget.GymProFit.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp">
@@ -235,12 +235,9 @@
                         android:orientation="horizontal"
                         android:accessibilityLiveRegion="polite">
 
-                        <com.google.android.material.progressindicator.CircularProgressIndicator
+                        <com.google.android.material.loadingindicator.LoadingIndicator
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:indeterminate="true"
-                            app:indicatorSize="24dp"
-                            app:trackThickness="3dp"
                             android:importantForAccessibility="no" />
 
                         <TextView
@@ -293,7 +290,7 @@
                             android:layout_height="wrap_content"
                             android:accessibilityHeading="true"
                             android:textAppearance="@style/TextAppearance.GymProFit.Display"
-                            android:textSize="28sp" />
+                            android:textSize="@dimen/text_cifra_pequena" />
 
                         <TextView
                             android:id="@+id/tvDetallePrograma"

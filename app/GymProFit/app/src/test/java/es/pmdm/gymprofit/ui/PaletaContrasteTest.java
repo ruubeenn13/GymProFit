@@ -73,6 +73,36 @@ public class PaletaContrasteTest {
         if (!fallos.isEmpty()) fail("Pares por debajo de 3:1:\n" + String.join("\n", fallos));
     }
 
+    // GP-210 paso 2: la tarjeta protagonista (#3A2110) es igual en los dos temas, así que sus textos
+    // se miden contra ella y no contra la tarjeta del tema.
+    @Test
+    public void la_tarjeta_protagonista_pasa_aa_en_los_dos_temas() throws IOException {
+        List<String> fallos = new ArrayList<>();
+        String[][] texto = {
+                { "gp_on_hero", "gp_hero" }, { "gp_on_hero_variant", "gp_hero" },
+                { "gp_on_primary_sobre_hero", "gp_primary_sobre_hero" },
+        };
+        for (String tema : TEMAS) medir(tema, texto, 4.5, fallos);
+        if (!fallos.isEmpty()) fail("Pares por debajo de 4,5:1:\n" + String.join("\n", fallos));
+
+        // El botón principal dentro de la tarjeta se ve contra ella (3:1 gráfico).
+        List<String> graficos = new ArrayList<>();
+        for (String tema : TEMAS) medir(tema, new String[][]{ { "gp_primary_sobre_hero", "gp_hero" } }, 3.0, graficos);
+        if (!graficos.isEmpty()) fail("Pares por debajo de 3:1:\n" + String.join("\n", graficos));
+    }
+
+    // GP-214: el avatar de cabecera (fondo #3A2110, borde naranja de 2 dp) se distingue del fondo
+    // de la pantalla a 3:1 en claro y en oscuro; con el avatar sin borde en claro eran ~1,1:1.
+    @Test
+    public void el_avatar_de_cabecera_se_distingue_del_fondo_a_3_a_1() throws IOException {
+        List<String> fallos = new ArrayList<>();
+        // En claro el fondo del avatar ya se distingue solo (13,2:1); en oscuro (1,3:1) lo hace el borde naranja.
+        medir("values", new String[][]{ { "gp_hero", FONDO } }, 3.0, fallos);
+        String[][] pares = { { "gp_primary", FONDO }, { "gp_on_hero", "gp_hero" } };
+        for (String tema : TEMAS) medir(tema, pares, 3.0, fallos);
+        if (!fallos.isEmpty()) fail("Pares por debajo de 3:1:\n" + String.join("\n", fallos));
+    }
+
     @Test
     public void ningun_texto_lleva_alpha_en_los_layouts() throws IOException {
         Pattern etiqueta = Pattern.compile("<([\\w.]+)((?:[^>\"]|\"[^\"]*\")*)>");

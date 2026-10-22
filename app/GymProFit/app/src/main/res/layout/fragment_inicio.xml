@@ -61,7 +61,7 @@
             <!-- Hoy toca -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardHoyToca"
-                style="@style/Widget.GymProFit.Card.Estructura"
+                style="@style/Widget.GymProFit.Card.Protagonista"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -117,9 +117,9 @@
                         android:clipChildren="false"
                         android:clipToPadding="false">
 
-                        <com.google.android.material.button.MaterialButton
+                        <es.pmdm.gymprofit.ui.widget.BotonExpresivo
                             android:id="@+id/btnHoyPrincipal"
-                            style="@style/Widget.GymProFit.BotonPildora"
+                            style="@style/Widget.GymProFit.BotonPildora.Expresivo"
                             android:layout_width="0dp"
                             android:layout_weight="1"
                             android:text="@string/btn_empezar"
@@ -139,7 +139,7 @@
                  ocultar y desaparecen al completarse. -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardPrimerosPasos"
-                style="@style/Widget.GymProFit.Card.Estructura"
+                style="@style/Widget.GymProFit.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -194,7 +194,7 @@
             <!-- Esta semana -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardSemana"
-                style="@style/Widget.GymProFit.Card.Estructura"
+                style="@style/Widget.GymProFit.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp">
@@ -256,7 +256,7 @@
             <!-- Último récord -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardRecordHome"
-                style="@style/Widget.GymProFit.Card.Estructura"
+                style="@style/Widget.GymProFit.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -326,7 +326,7 @@
             <!-- Nutrición de hoy -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardNutricionHoy"
-                style="@style/Widget.GymProFit.Card.Estructura"
+                style="@style/Widget.GymProFit.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp">

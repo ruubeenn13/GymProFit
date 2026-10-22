@@ -101,12 +101,14 @@ public class RecordsFragment extends BaseFragment {
     }
 
     // La ficha espera el ejercicio entero en extras: se pide al pulsar.
-    private void abrirEjercicio(Record record) {
+    private void abrirEjercicio(Record record, View tarjeta) {
         ejercicioApi.getPorId(record.getEjercicioId()).enqueue(new ApiCallback<Ejercicio>() {
             @Override
             public void onOk(Ejercicio ejercicio) {
                 if (!isAdded() || ejercicio == null) return;
-                EjercicioNavHelper.abrir(requireContext(), ejercicio);
+                // El récord crece hasta la progresión de su ejercicio, si su tarjeta sigue en pantalla.
+                if (tarjeta.isAttachedToWindow()) EjercicioNavHelper.abrir(requireActivity(), tarjeta, ejercicio);
+                else EjercicioNavHelper.abrir(requireContext(), ejercicio);
             }
             @Override
             public void onFail(int code, String message) {

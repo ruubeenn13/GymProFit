@@ -44,6 +44,6 @@
         android:layout_marginStart="12dp"
         android:maxLines="1"
         android:textAppearance="@style/TextAppearance.GymProFit.Display"
-        android:textSize="20sp"
+        android:textSize="@dimen/text_title"
         android:importantForAccessibility="no" />
 </LinearLayout>

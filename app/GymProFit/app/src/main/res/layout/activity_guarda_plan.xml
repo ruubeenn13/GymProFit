@@ -69,7 +69,7 @@
                     android:paddingStart="4dp"
                     android:paddingEnd="4dp"
                     android:text="@string/alta_guarda_tu_plan"
-                    android:textSize="38sp" />
+                    android:textSize="@dimen/text_display_large" />
 
                 <TextView
                     android:id="@+id/tvTextoGuarda"
@@ -268,17 +268,13 @@
                     android:layout_gravity="center_horizontal"
                     android:text="@string/guarda_crear_cuenta" />
 
-                <com.google.android.material.progressindicator.CircularProgressIndicator
+                <com.google.android.material.loadingindicator.LoadingIndicator
                     android:id="@+id/giroCrear"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:indeterminate="true"
                     android:visibility="gone"
                     app:indicatorColor="?attr/colorOnPrimary"
-                    app:trackColor="@android:color/transparent"
-                    app:indicatorSize="24dp"
-                    app:trackThickness="3dp"
                     android:importantForAccessibility="no" />
             </FrameLayout>
 
@@ -377,7 +373,7 @@
             android:accessibilityLiveRegion="polite"
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.GymProFit.Display"
-            android:textSize="36sp" />
+            android:textSize="@dimen/text_display_large" />
 
         <TextView
             android:id="@+id/tvTextoListo"

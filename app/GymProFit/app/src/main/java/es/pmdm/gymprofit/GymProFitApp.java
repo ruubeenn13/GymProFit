@@ -192,6 +192,8 @@ public class GymProFitApp extends Application {
                 } else {
                     AnimUtils.aplicarDeslizamiento(a);
                 }
+                // Material motion: el lado de llegada de un contenedor que crece o de un eje X.
+                es.pmdm.gymprofit.utils.Transiciones.prepararDestino(a);
                 // Distintivo de entorno de pruebas: solo en builds de desarrollo, y
                 // una vez por instancia de Activity. Se aplaza a que la ventana tenga
                 // ya su contenido montado.

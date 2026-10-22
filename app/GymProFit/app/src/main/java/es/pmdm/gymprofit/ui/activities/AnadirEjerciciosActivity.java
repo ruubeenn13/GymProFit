@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.utils.Transiciones;
 import es.pmdm.gymprofit.utils.AvisoDescartar;
 import es.pmdm.gymprofit.model.PageDTO;
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
@@ -279,7 +280,7 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
         intent.putExtra("nivel",       getIntent().getStringExtra("nivel"));
         intent.putExtra("duracion",    getIntent().getIntExtra("duracion", 0));
         intent.putExtra("ejerciciosJson", serializarEjercicios());
-        resumenLauncher.launch(intent);
+        Transiciones.avanzar(this, intent, resumenLauncher);
     }
 
     // Serializa la lista de ejercicios seleccionados a JSON para pasarla entre activities

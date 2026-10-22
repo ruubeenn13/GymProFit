@@ -33,7 +33,7 @@
             <!-- Sin permiso del sistema, nada llega: se dice y se ofrece activarlo. -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardPermisoAvisos"
-                style="@style/Widget.GymProFit.Card.Estructura"
+                style="@style/Widget.GymProFit.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"

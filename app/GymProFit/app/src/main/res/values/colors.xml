@@ -100,6 +100,19 @@
     <color name="gp_on_agua_container">#0B5562</color>
     <color name="gp_meter_track">#D6D6D0</color>
 
+    <!-- Tarjeta protagonista («Hoy toca», resúmenes): igual en los dos temas, como el velo.
+         #FFF4E8 sobre #3A2110 da 13,78:1 y #FFD3B0 sobre #3A2110, 10,82:1 (medido en PaletaContrasteTest). -->
+    <!-- Borde de las tarjetas dibujadas a mano (grupos de filas): outlineVariant en claro y el
+         color de la superficie en oscuro, donde la tarjeta no lleva borde. -->
+    <color name="gp_tarjeta_borde">@color/gp_divider</color>
+
+    <color name="gp_hero">#3A2110</color>
+    <color name="gp_on_hero">#FFF4E8</color>
+    <color name="gp_on_hero_variant">#FFD3B0</color>
+    <!-- El botón principal dentro de la tarjeta protagonista: el naranja de oscuro y su texto. -->
+    <color name="gp_primary_sobre_hero">#FF6A00</color>
+    <color name="gp_on_primary_sobre_hero">#1A0E00</color>
+
     <!-- ── Alias legados (layouts existentes; apuntan a la paleta nueva) ──── -->
     <color name="primary_light">@color/gp_primary</color>
     <color name="on_primary_light">@color/gp_on_primary</color>

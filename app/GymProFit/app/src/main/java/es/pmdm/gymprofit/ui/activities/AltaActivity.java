@@ -26,6 +26,7 @@ import es.pmdm.gymprofit.ui.alta.PasoDiasFragment;
 import es.pmdm.gymprofit.ui.alta.PasoOpcionesFragment;
 import es.pmdm.gymprofit.ui.alta.PasoPlanFragment;
 import es.pmdm.gymprofit.ui.alta.PasoSobreTiFragment;
+import es.pmdm.gymprofit.utils.Transiciones;
 import es.pmdm.gymprofit.utils.AltaPasos;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PerfilAlta;
@@ -111,7 +112,7 @@ public class AltaActivity extends BaseActivity implements Alta {
         if (esCuentaExistente()) {
             terminarCuentaExistente();
         } else {
-            startActivity(new Intent(this, GuardaPlanActivity.class));
+            Transiciones.avanzar(this, new Intent(this, GuardaPlanActivity.class));
         }
     }
 
@@ -126,8 +127,16 @@ public class AltaActivity extends BaseActivity implements Alta {
         paso = nuevo;
         prefsManager.guardarBorradorPaso(nuevo.ordinal());
         barra.mostrar(nuevo, anterior, nombreCapitulo(nuevo));
+        // Avanzar en el flujo: eje X compartido. El de ahora se va y el nuevo llega por el
+        // mismo lado; al retroceder, al revés (Movimiento.EJE_X).
+        boolean adelante = anterior == null || nuevo.ordinal() >= anterior.ordinal();
+        Fragment actual = getSupportFragmentManager().findFragmentById(R.id.contenedorAlta);
+        Fragment siguiente = fragmento(nuevo);
+        if (actual != null) Transiciones.ejeX(this, actual, false, adelante);
+        Transiciones.ejeX(this, siguiente, true, adelante);
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.contenedorAlta, fragmento(nuevo), nuevo.name())
+                .setReorderingAllowed(true)
+                .replace(R.id.contenedorAlta, siguiente, nuevo.name())
                 .commit();
     }
 

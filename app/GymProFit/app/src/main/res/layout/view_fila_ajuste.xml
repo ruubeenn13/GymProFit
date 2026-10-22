@@ -10,18 +10,16 @@
 
     <ImageView
         android:id="@+id/ivIcono"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        app:tint="?attr/colorOnSurfaceVariant"
-        android:importantForAccessibility="no" />
+        style="@style/Widget.GymProFit.Fila.Icono"
+        app:tint="?attr/colorOnSurfaceVariant" />
 
     <TextView
         android:id="@+id/tvTitulo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:layout_marginStart="14dp"
-        android:textSize="@dimen/text_body"
+        android:layout_marginStart="@dimen/fila_icono_a_texto"
+        android:textSize="@dimen/text_fila"
         android:textColor="?attr/colorOnSurface"
         android:importantForAccessibility="no" />
 

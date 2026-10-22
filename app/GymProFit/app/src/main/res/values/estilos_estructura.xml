@@ -6,7 +6,7 @@
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Título de pantalla de las cuatro pestañas: Barlow Condensed 700 a 30 sp. -->
+    <!-- Título de pantalla de las cuatro pestañas: Barlow Condensed 700 a 34 sp. -->
     <style name="Widget.GymProFit.TituloPestana" parent="">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
@@ -15,14 +15,14 @@
         <item name="android:textAppearance">@style/TextAppearance.GymProFit.Display</item>
     </style>
 
-    <!-- Cabecera de pestaña: 18 arriba, 20 a los lados, 6 abajo. -->
+    <!-- Cabecera de pestaña: 18 arriba, margen de pantalla a los lados, 6 abajo. -->
     <style name="Widget.GymProFit.CabeceraPestana" parent="">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:orientation">horizontal</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingStart">20dp</item>
-        <item name="android:paddingEnd">20dp</item>
+        <item name="android:paddingStart">@dimen/margen_pantalla</item>
+        <item name="android:paddingEnd">@dimen/margen_pantalla</item>
         <item name="android:paddingTop">18dp</item>
         <item name="android:paddingBottom">6dp</item>
     </style>
@@ -48,23 +48,15 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <!-- Tarjeta de la estructura nueva: radio 20 dp y borde del tema (GP-063). -->
-    <!-- Plana: la elevación de Material 3 tiñe la tarjeta de naranja en oscuro, y el
-         lienzo la quiere del color de superficie. La delimita el borde (3:1, GP-063). -->
-    <style name="Widget.GymProFit.Card.Estructura">
-        <item name="cardCornerRadius">20dp</item>
-        <item name="cardElevation">0dp</item>
-    </style>
-
-    <!-- Fila de la hoja del «+»: 60 dp de alto, icono de 40 y dos líneas. -->
+    <!-- Fila de la hoja del «+»: 64 dp de alto, icono de 40 y dos líneas. -->
     <style name="Widget.GymProFit.FilaAccion" parent="">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:minHeight">60dp</item>
+        <item name="android:minHeight">@dimen/fila_alto_min</item>
         <item name="android:orientation">horizontal</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingStart">12dp</item>
-        <item name="android:paddingEnd">12dp</item>
+        <item name="android:paddingStart">@dimen/fila_padding_horizontal</item>
+        <item name="android:paddingEnd">@dimen/fila_padding_horizontal</item>
         <item name="android:paddingTop">4dp</item>
         <item name="android:paddingBottom">4dp</item>
         <item name="android:clickable">true</item>
@@ -76,7 +68,7 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:layout_marginStart">14dp</item>
+        <item name="android:layout_marginStart">@dimen/fila_icono_a_texto</item>
         <item name="android:orientation">vertical</item>
         <item name="android:importantForAccessibility">no</item>
     </style>
@@ -98,15 +90,15 @@
         <item name="android:visibility">gone</item>
     </style>
 
-    <!-- Fila de Ajustes: 52 dp, icono gris, texto de 15 sp y valor a la derecha. -->
+    <!-- Fila de Ajustes: 64 dp, icono en círculo de 40, texto de 16 sp y valor a la derecha. -->
     <style name="Widget.GymProFit.FilaAjuste" parent="">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:minHeight">52dp</item>
+        <item name="android:minHeight">@dimen/fila_alto_min</item>
         <item name="android:orientation">horizontal</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingStart">14dp</item>
-        <item name="android:paddingEnd">14dp</item>
+        <item name="android:paddingStart">@dimen/fila_padding_horizontal</item>
+        <item name="android:paddingEnd">@dimen/fila_padding_horizontal</item>
         <item name="android:paddingTop">6dp</item>
         <item name="android:paddingBottom">6dp</item>
         <item name="android:clickable">true</item>
@@ -114,7 +106,7 @@
         <item name="android:background">?attr/selectableItemBackground</item>
     </style>
 
-    <!-- Grupo de filas de Ajustes: fondo de tarjeta con radio 18, sin borde. -->
+    <!-- Grupo de filas de Ajustes: fondo de tarjeta con radio 24. -->
     <style name="Widget.GymProFit.GrupoAjustes" parent="">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -142,7 +134,7 @@
         <item name="android:minHeight">48dp</item>
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
-        <item name="cornerRadius">24dp</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.GymProFit.Circulo</item>
         <item name="android:fontFamily">@font/barlow</item>
         <item name="fontFamily">@font/barlow</item>
         <item name="android:letterSpacing">0</item>
@@ -158,7 +150,7 @@
         <item name="android:minHeight">48dp</item>
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
-        <item name="cornerRadius">24dp</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.GymProFit.Circulo</item>
         <item name="strokeColor">?attr/colorOutline</item>
         <item name="android:fontFamily">@font/barlow</item>
         <item name="fontFamily">@font/barlow</item>

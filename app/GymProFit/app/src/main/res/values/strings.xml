@@ -1023,9 +1023,9 @@
     <string name="envivo_marcar">Marcar la serie %1$d</string>
     <string name="envivo_hecha">Hecha</string>
     <string name="envivo_sin_hacer">Sin hacer</string>
-    <string name="envivo_kg_a11y">Kilos de la serie %1$d</string>
-    <string name="envivo_reps_a11y">Repeticiones de la serie %1$d</string>
-    <string name="envivo_tiempo_a11y">Tiempo de la serie %1$d</string>
+    <string name="envivo_kg_a11y">Kilos, serie %1$d</string>
+    <string name="envivo_reps_a11y">Repeticiones, serie %1$d</string>
+    <string name="envivo_tiempo_a11y">Tiempo, serie %1$d</string>
     <string name="envivo_falta_reps">Escribe las repeticiones para marcarla</string>
     <string name="envivo_falta_segundos">Escribe el tiempo o usa el cronómetro</string>
     <string name="envivo_no_valido">Revisa el número de esa serie</string>

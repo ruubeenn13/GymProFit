@@ -343,7 +343,6 @@
                         android:text="@string/eliminar_cuenta_btn"
                         android:textColor="?attr/colorError"
                         android:textSize="@dimen/text_body"
-                        app:cornerRadius="12dp"
                         app:icon="@drawable/ic_ms_delete"
                         app:iconGravity="start"
                         app:iconTint="?attr/colorError"

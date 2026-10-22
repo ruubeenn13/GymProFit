@@ -19,6 +19,15 @@ public final class EjercicioNavHelper {
 
     // Abre DetalleEjercicioActivity pasando los datos del ejercicio como extras del Intent.
     public static void abrir(Context context, Ejercicio e) {
+        context.startActivity(intentDe(context, e));
+    }
+
+    // Igual, con la tarjeta pulsada creciendo hasta la ficha (récord a progresión).
+    public static void abrir(android.app.Activity act, android.view.View tarjeta, Ejercicio e) {
+        Transiciones.abrirTarjeta(act, tarjeta, intentDe(act, e));
+    }
+
+    private static Intent intentDe(Context context, Ejercicio e) {
         Intent intent = new Intent(context, DetalleEjercicioActivity.class);
         intent.putExtra("id",              e.getId());
         intent.putExtra("nombre",          e.getNombre());
@@ -30,7 +39,7 @@ public final class EjercicioNavHelper {
         intent.putExtra("equipoNecesario", e.getEquipoNecesario());
         intent.putExtra("imagenUrl",       e.getImagenUrl());
         intent.putExtra("imagenUrl2",      e.getImagenUrl2());
-        context.startActivity(intent);
+        return intent;
     }
 
     // Sobrecarga que extrae el Ejercicio de un EjercicioSeleccionado (usado en rutinas).

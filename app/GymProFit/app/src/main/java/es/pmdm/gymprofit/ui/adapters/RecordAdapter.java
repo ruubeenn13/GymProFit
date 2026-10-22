@@ -33,7 +33,7 @@ import es.pmdm.gymprofit.utils.Zonas;
 public class RecordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     /** Qué hacer al pulsar un récord: abrir la ficha de su ejercicio. */
-    public interface OnRecordClick { void onClick(Record record); }
+    public interface OnRecordClick { void onClick(Record record, View tarjeta); }
 
     private static final int TIPO_SECCION = 0;
     private static final int TIPO_RECORD = 1;
@@ -141,7 +141,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         h.divider.setVisibility(ultima ? View.GONE : View.VISIBLE);
 
         h.itemView.setContentDescription(ctx.getString(R.string.record_a11y, nombre, marca, detalle));
-        h.itemView.setOnClickListener(v -> { if (listener != null) listener.onClick(r); });
+        h.itemView.setOnClickListener(v -> { if (listener != null) listener.onClick(r, v); });
     }
 
     @Override

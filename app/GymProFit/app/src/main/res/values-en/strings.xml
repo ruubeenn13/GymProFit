@@ -1004,9 +1004,9 @@
     <string name="envivo_marcar">Mark set %1$d</string>
     <string name="envivo_hecha">Done</string>
     <string name="envivo_sin_hacer">Not done</string>
-    <string name="envivo_kg_a11y">Kilos for set %1$d</string>
-    <string name="envivo_reps_a11y">Reps for set %1$d</string>
-    <string name="envivo_tiempo_a11y">Time for set %1$d</string>
+    <string name="envivo_kg_a11y">Kilos, set %1$d</string>
+    <string name="envivo_reps_a11y">Reps, set %1$d</string>
+    <string name="envivo_tiempo_a11y">Time, set %1$d</string>
     <string name="envivo_falta_reps">Enter the reps to mark it</string>
     <string name="envivo_falta_segundos">Enter the time or use the stopwatch</string>
     <string name="envivo_no_valido">Check the number in that set</string>

@@ -34,8 +34,6 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
                 app:cardBackgroundColor="?attr/colorSurface">
 
                 <TextView
@@ -69,8 +67,6 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="260dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
                 app:cardBackgroundColor="#FFFFFF"
                 app:cardUseCompatPadding="false"
                 app:cardPreventCornerOverlap="false">
@@ -116,8 +112,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
                 app:cardBackgroundColor="?attr/colorSurface">
 
                 <LinearLayout
@@ -263,8 +257,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
                 android:visibility="gone">
 
                 <LinearLayout
@@ -297,8 +289,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
                 app:cardBackgroundColor="?attr/colorSurface">
 
                 <LinearLayout
@@ -335,8 +325,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="8dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
                 app:cardBackgroundColor="?attr/colorSurface">
 
                 <LinearLayout

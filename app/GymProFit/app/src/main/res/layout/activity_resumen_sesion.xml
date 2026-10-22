@@ -112,7 +112,7 @@
                 <!-- 2. Récords -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/layoutRecordsResumen"
-                    style="@style/Widget.GymProFit.Card.Estructura"
+                    style="@style/Widget.GymProFit.Card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -173,7 +173,7 @@
                 <!-- 3. Frente a la última vez -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardUltimaVez"
-                    style="@style/Widget.GymProFit.Card.Estructura"
+                    style="@style/Widget.GymProFit.Card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -209,7 +209,7 @@
                 <!-- 4. Logro conseguido (sin Profi hasta el paso 5) -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardLogroResumen"
-                    style="@style/Widget.GymProFit.Card.Estructura"
+                    style="@style/Widget.GymProFit.Card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -296,9 +296,9 @@
         android:paddingTop="14dp"
         android:paddingBottom="14dp">
 
-        <com.google.android.material.button.MaterialButton
+        <es.pmdm.gymprofit.ui.widget.BotonExpresivo
             android:id="@+id/btnHechoResumen"
-            style="@style/Widget.GymProFit.BotonPildora"
+            style="@style/Widget.GymProFit.BotonPildora.Expresivo"
             android:layout_width="match_parent"
             android:minHeight="52dp"
             android:text="@string/resumen_hecho" />

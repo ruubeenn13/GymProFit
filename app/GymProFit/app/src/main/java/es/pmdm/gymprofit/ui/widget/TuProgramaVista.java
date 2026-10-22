@@ -36,7 +36,7 @@ public class TuProgramaVista {
     public interface Acciones {
         void elegirPrograma();
         void empezar(Rutina rutina);
-        void abrirRutina(Rutina rutina);
+        void abrirRutina(Rutina rutina, View tarjeta);
         void menuRutina(View ancla, Rutina rutina);
         void menuPrograma(View ancla, ProgramaQueSigue seguido);
         void volverASeguir(ProgramaQueSigue seguido);
@@ -163,7 +163,7 @@ public class TuProgramaVista {
             boton.setOnClickListener(v -> acciones.empezar(r));
             card.setContentDescription(r.getNombre() + ". " + resumen
                     + (enCurso ? ". " + ctx.getString(R.string.envivo_en_curso) : ""));
-            card.setOnClickListener(v -> acciones.abrirRutina(r));
+            card.setOnClickListener(v -> acciones.abrirRutina(r, v));
             card.setOnLongClickListener(v -> {
                 acciones.menuRutina(v, r);
                 return true;

@@ -8,10 +8,11 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.textfield.TextInputEditText;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.utils.Transiciones;
 import es.pmdm.gymprofit.utils.AvisoDescartar;
 import es.pmdm.gymprofit.utils.Numeros;
 import es.pmdm.gymprofit.utils.PreferencesManager;
@@ -34,7 +35,7 @@ public class CrearRutinaActivity extends AppCompatActivity {
     // Campos de texto del formulario de creación.
     private TextInputEditText etNombre, etDescripcion, etDuracion;
     // Selector de nivel (principiante/intermedio/avanzado).
-    private ChipGroup chipGroupNivel;
+    private MaterialButtonToggleGroup chipGroupNivel;
     private PreferencesManager prefsManager;
 
     // Nivel marcado al abrir: cambiarlo también es algo apuntado (GP-098).
@@ -57,12 +58,12 @@ public class CrearRutinaActivity extends AppCompatActivity {
         etDescripcion  = findViewById(R.id.etDescripcion);
         etDuracion     = findViewById(R.id.etDuracion);
         chipGroupNivel = findViewById(R.id.chipGroupNivel);
-        nivelInicial   = chipGroupNivel.getCheckedChipId();
+        nivelInicial   = chipGroupNivel.getCheckedButtonId();
 
         // Salir con algo apuntado pregunta antes de tirarlo (GP-098).
         AvisoDescartar.instalar(this, toolbar, () ->
                 AvisoDescartar.hayTexto(etNombre.getText(), etDescripcion.getText(), etDuracion.getText())
-                        || chipGroupNivel.getCheckedChipId() != nivelInicial);
+                        || chipGroupNivel.getCheckedButtonId() != nivelInicial);
 
         anadirLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -103,7 +104,7 @@ public class CrearRutinaActivity extends AppCompatActivity {
         intent.putExtra("descripcion", desc);
         intent.putExtra("nivel", obtenerNivel());
         intent.putExtra("duracion", duracion);
-        anadirLauncher.launch(intent);
+        Transiciones.avanzar(this, intent, anadirLauncher);
     }
 
     // Marca el error en el propio campo (no en un toast suelto) y le da el foco,
@@ -115,7 +116,7 @@ public class CrearRutinaActivity extends AppCompatActivity {
 
     // Traduce el chip de nivel seleccionado a su valor de texto para la API.
     private String obtenerNivel() {
-        int id = chipGroupNivel.getCheckedChipId();
+        int id = chipGroupNivel.getCheckedButtonId();
         if (id == R.id.chipIntermedio) return "INTERMEDIO";
         if (id == R.id.chipAvanzado)   return "AVANZADO";
         return "PRINCIPIANTE";

@@ -93,7 +93,6 @@ public class ProgresoFragment extends BaseFragment {
                 startActivity(new Intent(requireContext(), AjustesActivity.class)));
 
         View avatar = findViewById(R.id.avatarProgreso);
-        avatar.setBackgroundResource(R.drawable.bg_circulo_contenedor);
         avatar.setContentDescription(getString(R.string.progreso_avatar_a11y));
         avatar.setOnClickListener(v -> fotoPerfil.elegir());
         ((TextView) avatar.findViewById(R.id.tvInicial)).setTextSize(TypedValue.COMPLEX_UNIT_PX,
@@ -213,7 +212,7 @@ public class ProgresoFragment extends BaseFragment {
     private void pintarAvatar() {
         if (!isAdded()) return;
         AvatarUtils.pintar(findViewById(R.id.avatarProgreso), nombreVisible(),
-                prefsManager.getUsuarioId(), color(com.google.android.material.R.attr.colorOnPrimaryContainer));
+                prefsManager.getUsuarioId());
     }
 
     // El nombre para mostrar y, sin él, el de usuario (GP-116). El «@usuario» del

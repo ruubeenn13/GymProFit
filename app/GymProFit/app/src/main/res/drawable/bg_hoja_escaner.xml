@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   bg_hoja_escaner — la hoja que sube al leer un código (escáner, lote 1.6.1): esquinas de
-  arriba redondas, superficie del tema y una raya arriba.
+  arriba de 28 dp (hoja inferior), superficie del tema y una raya arriba que en oscuro no se ve.
 -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="rectangle">
-            <corners android:topLeftRadius="24dp" android:topRightRadius="24dp" />
-            <solid android:color="?attr/colorOutline" />
+            <corners android:topLeftRadius="@dimen/radio_protagonista" android:topRightRadius="@dimen/radio_protagonista" />
+            <solid android:color="@color/gp_tarjeta_borde" />
         </shape>
     </item>
     <item android:top="1dp">
         <shape android:shape="rectangle">
-            <corners android:topLeftRadius="24dp" android:topRightRadius="24dp" />
+            <corners android:topLeftRadius="27dp" android:topRightRadius="27dp" />
             <solid android:color="?attr/colorSurface" />
         </shape>
     </item>

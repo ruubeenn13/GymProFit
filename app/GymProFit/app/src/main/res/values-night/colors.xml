@@ -42,6 +42,8 @@
          que no delimitan nada. -->
     <color name="gp_background">#0B0C0E</color>
     <color name="gp_surface">#1B1E24</color>
+    <!-- Sin borde en oscuro: el de las tarjetas dibujadas a mano pinta el color de la superficie. -->
+    <color name="gp_tarjeta_borde">@color/gp_surface</color>
     <color name="gp_surface_2">#252A31</color>
     <color name="gp_stroke">#676F7E</color>
     <color name="gp_divider">#4A505B</color>

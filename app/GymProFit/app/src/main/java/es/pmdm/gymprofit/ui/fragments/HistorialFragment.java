@@ -24,6 +24,7 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.ui.activities.ResumenSesionActivity;
 import es.pmdm.gymprofit.ui.adapters.SesionAdapter;
+import es.pmdm.gymprofit.utils.Transiciones;
 import es.pmdm.gymprofit.utils.HistorialSesiones;
 import es.pmdm.gymprofit.utils.NombresRutina;
 import es.pmdm.gymprofit.utils.UIHelper;
@@ -113,10 +114,10 @@ public class HistorialFragment extends BaseFragment {
                 this::abrirResumen));
     }
 
-    private void abrirResumen(SesionEntrenamiento sesion) {
+    private void abrirResumen(SesionEntrenamiento sesion, View tarjeta) {
         Intent intent = new Intent(requireContext(), ResumenSesionActivity.class);
         intent.putExtra("sesionId", sesion.getId());
-        startActivity(intent);
+        Transiciones.abrirTarjeta(requireActivity(), tarjeta, intent);
     }
 
     private void eliminar(SesionEntrenamiento sesion) {

@@ -40,7 +40,7 @@
                 android:paddingStart="4dp"
                 android:paddingEnd="4dp"
                 android:text="@string/entrar_titulo"
-                android:textSize="38sp" />
+                android:textSize="@dimen/text_display_large" />
 
             <TextView
                 android:id="@+id/tvTextoEntrar"

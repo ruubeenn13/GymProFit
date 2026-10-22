@@ -26,6 +26,7 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.ProgramaApi;
 import es.pmdm.gymprofit.ui.widget.TuProgramaVista;
+import es.pmdm.gymprofit.utils.Transiciones;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.VistaEstado;
 
@@ -194,7 +195,8 @@ public class ProgramasActivity extends BaseActivity {
         a11y.append(". ").append(resumen);
         if (motivo != null && !motivo.isEmpty()) a11y.append(". ").append(motivo);
         card.setContentDescription(a11y);
-        card.setOnClickListener(v -> startActivity(new Intent(this, ProgramaDetalleActivity.class)
+        // Seguir un programa es un flujo: del listado a su detalle, eje X compartido.
+        card.setOnClickListener(v -> Transiciones.avanzar(this, new Intent(this, ProgramaDetalleActivity.class)
                 .putExtra(ProgramaDetalleActivity.EXTRA_CODIGO, p.getCodigo())));
         return card;
     }
