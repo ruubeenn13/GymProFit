@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_ultima_vez — una fila de «Frente a la última vez» del resumen (tablero 3 de GP-210,
+  GP-023): el ejercicio a la izquierda y, a la derecha, sus kilos y el % frente a la última
+  vez que se hizo. La primera vez lleva «Primera vez: es tu punto de partida» y ningún %.
+  Entra en cascada (CASCADA). La raya de debajo la quita la última fila.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="48dp"
+        android:orientation="horizontal"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvNombreUltimaVez"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="@dimen/text_body" />
+
+            <TextView
+                android:id="@+id/tvPrimeraVez"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/envivo_primera_vez"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="@dimen/text_caption"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvKilosUltimaVez"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="@dimen/text_body" />
+
+        <TextView
+            android:id="@+id/tvPctUltimaVez"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:minWidth="52dp"
+            android:gravity="end"
+            android:textSize="@dimen/text_body"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/rayaUltimaVez"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?attr/colorSurfaceVariant"
+        android:importantForAccessibility="no" />
+</LinearLayout>

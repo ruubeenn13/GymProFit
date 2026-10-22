@@ -45,13 +45,20 @@ public class DiaNutricionTest {
     }
 
     @Test
-    public void proteina_es_suelo_y_carbos_grasas_techo() {
+    public void proteina_es_suelo_y_carbos_grasas_no_se_pintan_de_rojo() {
         DiaNutricion d = DiaNutricion.de(Arrays.asList(comida(2300, 150, 201, 70)), OBJETIVO);
         assertEquals(DiaNutricion.Estado.LOGRADO, d.estadoProteinas());
-        assertEquals(DiaNutricion.Estado.PASADO, d.estadoCarbohidratos());
-        assertEquals(DiaNutricion.Estado.NORMAL, d.estadoGrasas());
+        // Pasarse de carbohidratos o de grasas ya no tiene estado propio: el lienzo de
+        // nutrición no tiene rojo («sin culpa»). Lo que sobra lo dice el texto, no el color.
+        assertEquals(java.util.List.of("NORMAL", "LOGRADO"), nombresDeEstado());
         assertEquals(-300, d.kcalRestantes());
         assertEquals(100, DiaNutricion.porcentaje(d.kcal, d.objetivoKcal));
+    }
+
+    private static java.util.List<String> nombresDeEstado() {
+        java.util.List<String> nombres = new java.util.ArrayList<>();
+        for (DiaNutricion.Estado e : DiaNutricion.Estado.values()) nombres.add(e.name());
+        return nombres;
     }
 
     @Test
@@ -63,8 +70,6 @@ public class DiaNutricionTest {
         assertEquals(0, d.objetivoKcal);
         assertEquals(0, DiaNutricion.porcentaje(d.kcal, d.objetivoKcal));
         assertEquals(DiaNutricion.Estado.NORMAL, d.estadoProteinas());
-        assertEquals(DiaNutricion.Estado.NORMAL, d.estadoCarbohidratos());
-        assertEquals(DiaNutricion.Estado.NORMAL, d.estadoGrasas());
     }
 
     @Test

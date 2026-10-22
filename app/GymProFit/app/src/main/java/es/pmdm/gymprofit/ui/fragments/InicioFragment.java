@@ -267,7 +267,7 @@ public class InicioFragment extends BaseFragment {
             titulo.setText(nombre != null ? nombre : getString(R.string.hecho_hoy_libre));
             sub.setText(getString(R.string.duracion_min, deHoy.getDuracionMinutos()));
             // Tocar la tarjeta abre el resumen de la sesión de hoy.
-            card.setOnClickListener(v -> abrirResumen(deHoy, nombre));
+            card.setOnClickListener(v -> abrirResumen(deHoy));
             principal.setText(R.string.btn_empezar_otra);
             principal.setIconResource(R.drawable.ic_ms_play_arrow_fill);
             principal.setOnClickListener(v -> elegirRutina());
@@ -405,11 +405,9 @@ public class InicioFragment extends BaseFragment {
         EmpezarSesion.empezar(requireActivity(), r);
     }
 
-    private void abrirResumen(SesionEntrenamiento s, @Nullable String nombre) {
+    private void abrirResumen(SesionEntrenamiento s) {
         Intent intent = new Intent(requireContext(), ResumenSesionActivity.class);
         intent.putExtra("sesionId", s.getId());
-        intent.putExtra(ResumenSesionActivity.EXTRA_ENTRENAMIENTO_LIBRE, s.esEntrenamientoLibre());
-        intent.putExtra("rutinaNombre", nombre != null ? nombre : "");
         startActivity(intent);
     }
 
@@ -624,8 +622,8 @@ public class InicioFragment extends BaseFragment {
                 DiaNutricion.porcentaje(d.kcal, d.objetivoKcal), false);
 
         macro(R.id.tvMacroProtHoy, R.string.macro_prot_corto, d.proteinas, d.objetivoProteinas, d.estadoProteinas());
-        macro(R.id.tvMacroCarbosHoy, R.string.macro_carbos_corto, d.carbohidratos, d.objetivoCarbohidratos, d.estadoCarbohidratos());
-        macro(R.id.tvMacroGrasasHoy, R.string.macro_grasas_corto, d.grasas, d.objetivoGrasas, d.estadoGrasas());
+        macro(R.id.tvMacroCarbosHoy, R.string.macro_carbos_corto, d.carbohidratos, d.objetivoCarbohidratos, DiaNutricion.Estado.NORMAL);
+        macro(R.id.tvMacroGrasasHoy, R.string.macro_grasas_corto, d.grasas, d.objetivoGrasas, DiaNutricion.Estado.NORMAL);
 
         String resumen = getString(R.string.nutricion_hoy_a11y, nf.format(d.kcal), nf.format(d.objetivoKcal));
         findViewById(R.id.filaKcalHoy).setContentDescription(resumen);
@@ -669,7 +667,6 @@ public class InicioFragment extends BaseFragment {
     private int colorEstado(DiaNutricion.Estado e) {
         switch (e) {
             case LOGRADO: return ContextCompat.getColor(requireContext(), R.color.gp_success);
-            case PASADO:  return color(androidx.appcompat.R.attr.colorError);
             default:      return color(com.google.android.material.R.attr.colorOnSurface);
         }
     }

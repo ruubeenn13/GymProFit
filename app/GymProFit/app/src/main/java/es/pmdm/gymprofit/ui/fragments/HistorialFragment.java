@@ -116,11 +116,6 @@ public class HistorialFragment extends BaseFragment {
     private void abrirResumen(SesionEntrenamiento sesion) {
         Intent intent = new Intent(requireContext(), ResumenSesionActivity.class);
         intent.putExtra("sesionId", sesion.getId());
-        // El resumen vuelve a pedir la sesión, pero tarda: sin este aviso un
-        // entrenamiento libre se pintaría un instante como «sin rutina asociada» (GP-057).
-        intent.putExtra(ResumenSesionActivity.EXTRA_ENTRENAMIENTO_LIBRE, sesion.esEntrenamientoLibre());
-        String nombre = sesion.esEntrenamientoLibre() ? null : rutinaNombres.get(sesion.getRutinaId());
-        intent.putExtra("rutinaNombre", nombre != null ? nombre : "");
         startActivity(intent);
     }
 

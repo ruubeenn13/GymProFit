@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Transiciones entre pantallas</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#101114;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+button,input{font-family:inherit}
+button{cursor:pointer}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+.toque{transition:transform 120ms cubic-bezier(.2,0,0,1)}
+.toque:active{transform:scale(.97)}
+.movil{position:relative;width:220px;height:400px;border-radius:28px;border:1px solid #353A43;background:#0B0C0E;overflow:hidden}
+@keyframes ejeA{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
+@keyframes ejeB{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
+@keyframes fundeA{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:none}}
+@keyframes fundeB{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){.anim{animation:none !important;transition:none !important}.toque:active{transform:none}}
+</style>
+</helmet>
+<div style="width: 1240px; height: 760px; box-sizing: border-box; padding: 40px; background: #101114; color: #F2F2F3; font-family: 'Barlow', sans-serif; display: flex; flex-direction: column; gap: 28px;">
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<h1 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 40px;">Cómo se pasa de una pantalla a otra</h1>
+<p style="margin: 0; font-size: 17px; color: #C9CED6;">Cuatro patrones de Material motion, ya incluidos en Material 1.14. Cada pantalla usa uno, siempre el mismo para lo mismo.</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px;">
+<section aria-label="Tarjeta a detalle" style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start;">
+<div class="movil">
+<div style="padding: 16px 12px; display: flex; flex-direction: column; gap: 8px;">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px;">Mis rutinas</span>
+<span style="height: 64px; border-radius: 16px; background: #1B1E24;"></span>
+<span style="height: 64px;"></span>
+<span style="height: 64px; border-radius: 16px; background: #1B1E24;"></span>
+</div>
+<div class="anim" style="position: absolute; top: {{ aTop }}; left: {{ aLeft }}; width: {{ aAncho }}; height: {{ aAlto }}; border-radius: {{ aRadio }}; background: #1B1E24; border: 1px solid #676F7E; box-sizing: border-box; overflow: hidden; transition: {{ aTransicion }};">
+<div style="padding: 12px; display: flex; align-items: center; gap: 10px;"><span style="width: 32px; height: 32px; border-radius: 16px; background: #3A2110; color: #FF6A00; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true" style="font-size: 18px;">fitness_center</span></span><span style="display: flex; flex-direction: column;"><span style="font-size: 14px; font-weight: 600;">Pierna A</span><span style="font-size: 12px; color: #A1A9B6;">6 ejercicios · 50 min</span></span></div>
+<div class="anim" style="padding: 0 12px; display: flex; flex-direction: column; gap: 6px; opacity: {{ aDetalle }}; transition: opacity 200ms cubic-bezier(.2,0,0,1) {{ aRetraso }};">
+<span style="height: 36px; border-radius: 10px; background: #252A31;"></span><span style="height: 36px; border-radius: 10px; background: #252A31;"></span><span style="height: 36px; border-radius: 10px; background: #252A31;"></span><span style="height: 40px; border-radius: 20px; background: #FF6A00; margin-top: 8px;"></span>
+</div>
+</div>
+</div>
+<button type="button" onClick="{{ aJugar }}" class="toque" style="min-height: 44px; padding: 0 16px; border: none; border-radius: 22px; background: #252A31; color: #F2F2F3; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><span class="ms" aria-hidden="true" style="font-size: 20px;">{{ aIcono }}</span>{{ aBoton }}</button>
+<h2 style="margin: 0; font-size: 18px; font-weight: 600;">Tarjeta → detalle</h2>
+<p style="margin: 0; font-size: 15px; color: #C9CED6; line-height: 1.4;">La tarjeta crece hasta ser su pantalla. 400 ms enfatizada al abrir, 350 ms estándar al volver.</p>
+<p style="margin: 0; font-size: 14px; color: #A1A9B6; line-height: 1.4;">Rutina → detalle · sesión del historial → detalle · alimento → ficha · récord → progresión.</p>
+</section>
+<section aria-label="Avanzar en un flujo" style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start;">
+<div class="movil">
+<div class="anim" style="padding: 18px 14px; display: flex; flex-direction: column; gap: 10px; animation: {{ bAnim }};">
+<span style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 3px;"><span style="height: 4px; border-radius: 2px; background: #FF6A00;"></span><span style="height: 4px; border-radius: 2px; background: {{ bBarra2 }};"></span><span style="height: 4px; border-radius: 2px; background: #353A43;"></span><span style="height: 4px; border-radius: 2px; background: #353A43;"></span></span>
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px; margin-top: 8px;">{{ bTitulo }}</span>
+<span style="height: 52px; border-radius: 14px; background: #1B1E24;"></span>
+<span style="height: 52px; border-radius: 14px; background: {{ bOpcion }}; border: 1px solid {{ bOpcionBorde }};"></span>
+<span style="height: 52px; border-radius: 14px; background: #1B1E24;"></span>
+</div>
+</div>
+<button type="button" onClick="{{ bJugar }}" class="toque" style="min-height: 44px; padding: 0 16px; border: none; border-radius: 22px; background: #252A31; color: #F2F2F3; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><span class="ms" aria-hidden="true" style="font-size: 20px;">play_arrow</span>{{ bBoton }}</button>
+<h2 style="margin: 0; font-size: 18px; font-weight: 600;">Avanzar en un flujo</h2>
+<p style="margin: 0; font-size: 15px; color: #C9CED6; line-height: 1.4;">Eje compartido X: lo nuevo entra 30 dp desde el lado al que vas. 300 ms estándar.</p>
+<p style="margin: 0; font-size: 14px; color: #A1A9B6; line-height: 1.4;">El alta · crear una rutina · «Tu semana» · seguir un programa.</p>
+</section>
+<section aria-label="Cambiar de pestaña" style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start;">
+<div class="movil">
+<div class="anim" style="padding: 16px 12px; display: flex; flex-direction: column; gap: 8px; animation: {{ cAnim }};">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px;">{{ cTitulo }}</span>
+<span style="height: 96px; border-radius: 16px; background: {{ cBloque }};"></span>
+<span style="height: 52px; border-radius: 14px; background: #1B1E24;"></span>
+<span style="height: 52px; border-radius: 14px; background: #1B1E24;"></span>
+</div>
+<div style="position: absolute; left: 0; right: 0; bottom: 0; height: 56px; background: #121418; border-top: 1px solid #252A31; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center; justify-items: center;">
+<span class="{{ cIcono1 }}" aria-hidden="true" style="font-size: 20px; color: {{ cColor1 }};">home</span>
+<span class="{{ cIcono2 }}" aria-hidden="true" style="font-size: 20px; color: {{ cColor2 }};">fitness_center</span>
+<span aria-hidden="true" style="width: 34px; height: 34px; border-radius: 17px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; justify-content: center;"><span class="ms" style="font-size: 20px;">add</span></span>
+<span class="ms" aria-hidden="true" style="font-size: 20px; color: #A1A9B6;">restaurant</span>
+<span class="ms" aria-hidden="true" style="font-size: 20px; color: #A1A9B6;">insights</span>
+</div>
+</div>
+<button type="button" onClick="{{ cJugar }}" class="toque" style="min-height: 44px; padding: 0 16px; border: none; border-radius: 22px; background: #252A31; color: #F2F2F3; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><span class="ms" aria-hidden="true" style="font-size: 20px;">play_arrow</span>{{ cBoton }}</button>
+<h2 style="margin: 0; font-size: 18px; font-weight: 600;">Cambiar de pestaña</h2>
+<p style="margin: 0; font-size: 15px; color: #C9CED6; line-height: 1.4;">Fundido: lo de antes se va en 90 ms y lo nuevo entra en 210 ms desde 0,92. Sin deslizar de lado.</p>
+<p style="margin: 0; font-size: 14px; color: #A1A9B6; line-height: 1.4;">La barra de navegación, entre Inicio, Entrenar, Nutrición y Progreso.</p>
+</section>
+<section aria-label="Atrás predictivo" style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start;">
+<div class="movil" style="background: #0B0C0E;">
+<div style="padding: 16px 12px; display: flex; flex-direction: column; gap: 8px;">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px;">Mis rutinas</span>
+<span style="height: 64px; border-radius: 16px; background: #1B1E24;"></span><span style="height: 64px; border-radius: 16px; background: #1B1E24;"></span><span style="height: 64px; border-radius: 16px; background: #1B1E24;"></span>
+</div>
+<div class="anim" style="position: absolute; inset: 0; background: #16181C; border-radius: {{ dRadio }}; transform: {{ dTransform }}; transform-origin: right center; transition: {{ dTransicion }}; box-shadow: 0 0 0 1px #353A43; padding: 16px 12px; display: flex; flex-direction: column; gap: 8px;">
+<span style="display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600;"><span class="ms" aria-hidden="true" style="font-size: 18px;">arrow_back</span>Pierna A</span>
+<span style="height: 40px; border-radius: 10px; background: #252A31;"></span><span style="height: 40px; border-radius: 10px; background: #252A31;"></span><span style="height: 40px; border-radius: 10px; background: #252A31;"></span><span style="height: 40px; border-radius: 20px; background: #FF6A00; margin-top: 6px;"></span>
+</div>
+</div>
+<label for="gestoAtras" style="font-size: 15px; font-weight: 600;">Arrastra el gesto atrás</label>
+<input id="gestoAtras" type="range" min="0" max="100" value="{{ dValor }}" onChange="{{ dMover }}" onInput="{{ dMover }}" style="width: 220px; accent-color: #FF6A00;">
+<button type="button" onClick="{{ dSoltar }}" class="toque" style="min-height: 44px; padding: 0 16px; border: none; border-radius: 22px; background: #252A31; color: #F2F2F3; font-size: 15px; font-weight: 600;">Soltar: volver</button>
+<p style="margin: 0; font-size: 15px; color: #C9CED6; line-height: 1.4;">Atrás predictivo: la pantalla sigue al dedo hasta 0,9 con esquinas de 28 dp; al soltar, 250 ms estándar. Si cancelas, vuelve sin cambiar nada.</p>
+</section>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1240,"height":760}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { a: false, b: 1, bVeces: 0, c: 1, cVeces: 0, d: 0, dSuelto: false };
+  }
+  componentWillUnmount() {
+    if (this.tA) clearTimeout(this.tA);
+    if (this.tD) clearTimeout(this.tD);
+  }
+  renderVals() {
+    const s = this.state;
+    const abierta = s.a;
+    const bPar = s.bVeces % 2 === 0;
+    const cPar = s.cVeces % 2 === 0;
+    const dEscala = 1 - (s.d / 100) * 0.1;
+    const dX = s.dSuelto ? 240 : (s.d / 100) * 18;
+    return {
+      aTop: abierta ? '0px' : '128px',
+      aLeft: abierta ? '0px' : '12px',
+      aAncho: abierta ? '220px' : '196px',
+      aAlto: abierta ? '400px' : '64px',
+      aRadio: abierta ? '28px' : '16px',
+      aTransicion: abierta
+        ? 'top 400ms cubic-bezier(.05,.7,.1,1), left 400ms cubic-bezier(.05,.7,.1,1), width 400ms cubic-bezier(.05,.7,.1,1), height 400ms cubic-bezier(.05,.7,.1,1), border-radius 400ms cubic-bezier(.05,.7,.1,1)'
+        : 'top 350ms cubic-bezier(.2,0,0,1), left 350ms cubic-bezier(.2,0,0,1), width 350ms cubic-bezier(.2,0,0,1), height 350ms cubic-bezier(.2,0,0,1), border-radius 350ms cubic-bezier(.2,0,0,1)',
+      aDetalle: abierta ? 1 : 0,
+      aRetraso: abierta ? '200ms' : '0ms',
+      aBoton: abierta ? 'Volver' : 'Abrir la tarjeta',
+      aIcono: abierta ? 'undo' : 'play_arrow',
+      aJugar: () => this.setState({ a: !this.state.a }),
+      bAnim: s.bVeces === 0 ? 'none' : (bPar ? 'ejeA' : 'ejeB') + ' 300ms cubic-bezier(.2,0,0,1)',
+      bTitulo: s.b === 1 ? '¿Cuál es tu objetivo?' : '¿Cuántos días entrenas?',
+      bBarra2: s.b === 1 ? '#353A43' : '#FF6A00',
+      bOpcion: s.b === 1 ? '#3A2110' : '#1B1E24',
+      bOpcionBorde: s.b === 1 ? '#FF6A00' : '#1B1E24',
+      bBoton: s.b === 1 ? 'Siguiente' : 'Otra vez',
+      bJugar: () => this.setState({ b: this.state.b === 1 ? 2 : 1, bVeces: this.state.bVeces + 1 }),
+      cAnim: s.cVeces === 0 ? 'none' : (cPar ? 'fundeA' : 'fundeB') + ' 210ms cubic-bezier(.2,0,0,1) 90ms backwards',
+      cTitulo: s.c === 1 ? 'Inicio' : 'Entrenar',
+      cBloque: s.c === 1 ? '#3A2110' : '#1B1E24',
+      cIcono1: s.c === 1 ? 'ms f' : 'ms',
+      cIcono2: s.c === 2 ? 'ms f' : 'ms',
+      cColor1: s.c === 1 ? '#FF6A00' : '#A1A9B6',
+      cColor2: s.c === 2 ? '#FF6A00' : '#A1A9B6',
+      cBoton: s.c === 1 ? 'Ir a Entrenar' : 'Ir a Inicio',
+      cJugar: () => this.setState({ c: this.state.c === 1 ? 2 : 1, cVeces: this.state.cVeces + 1 }),
+      dValor: s.d,
+      dRadio: s.d > 0 || s.dSuelto ? '28px' : '0px',
+      dTransform: 'translateX(' + dX + 'px) scale(' + (s.dSuelto ? 0.9 : dEscala).toFixed(3) + ')',
+      dTransicion: s.dSuelto ? 'transform 250ms cubic-bezier(.2,0,0,1)' : 'none',
+      dMover: (e) => this.setState({ d: Number(e.target.value), dSuelto: false }),
+      dSoltar: () => {
+        this.setState({ dSuelto: true, d: 100 });
+        if (this.tD) clearTimeout(this.tD);
+        this.tD = setTimeout(() => this.setState({ dSuelto: false, d: 0 }), 1400);
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

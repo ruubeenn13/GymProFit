@@ -2,6 +2,7 @@ package com.gymprofit.api.controller;
 
 import com.gymprofit.api.dto.entity.diario.AguaDiaDTO;
 import com.gymprofit.api.dto.entity.diario.AguaPedidoDTO;
+import com.gymprofit.api.dto.entity.diario.AlimentoApuntadoDTO;
 import com.gymprofit.api.dto.entity.diario.DiaDiarioDTO;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.diario.DiarioService;
@@ -48,6 +49,23 @@ public class DiarioController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta) {
         return ResponseEntity.ok(diarioService.dias(desde, hasta));
+    }
+
+    @Operation(summary = "Los 3 alimentos más apuntados del rango, con las veces (tablero 12 de nutrición)",
+            description = "Solo lectura, del usuario del token. Hasta 7 días: es «Lo que más has comido» de «Tu semana».")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Hasta tres alimentos, de más a menos; [] si no hay nada",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = AlimentoApuntadoDTO.class)))),
+            @ApiResponse(responseCode = "400", description = "Sin fechas, rango al revés o de más de 7 días",
+                    content = @Content(schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "403", description = "Invitado",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @GetMapping("/mas-apuntados")
+    public ResponseEntity<List<AlimentoApuntadoDTO>> masApuntados(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta) {
+        return ResponseEntity.ok(diarioService.masApuntados(desde, hasta));
     }
 
     @Operation(summary = "Guarda el agua de un día: el total en mililitros (repetible)")

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Todo listo</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+button{font-family:inherit;cursor:pointer}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+.toque{transition:transform 120ms cubic-bezier(.2,0,0,1)}
+.toque:active{transform:scale(.97)}
+@keyframes entra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes profi{0%{opacity:0;transform:translateY(24px) scale(.96)}100%{opacity:1;transform:none}}
+@keyframes bocadillo{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:none}}
+@keyframes pr-entra{0%{opacity:0;transform:translateY(8%) scale(.96)}100%{opacity:1;transform:none}}@keyframes pr-parpadeo{0%,2.4%{opacity:1}2.5%,100%{opacity:0}}
+@keyframes pr-saluda-ola{0%{transform:rotate(0deg);animation-timing-function:cubic-bezier(.45,0,.55,1)}16.667%{transform:rotate(-12deg);animation-timing-function:cubic-bezier(.45,0,.55,1)}33.333%{transform:rotate(12deg);animation-timing-function:cubic-bezier(.45,0,.55,1)}50%{transform:rotate(-10deg);animation-timing-function:cubic-bezier(.45,0,.55,1)}66.667%{transform:rotate(9deg);animation-timing-function:cubic-bezier(.45,0,.55,1)}83.333%{transform:rotate(-5deg);animation-timing-function:cubic-bezier(.45,0,.55,1)}100%{transform:rotate(0deg)}}
+@media (prefers-reduced-motion: reduce){.anim{animation:none !important;transition:none !important}.toque:active{transform:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif; display: flex; flex-direction: column;">
+<div role="progressbar" aria-label="Alta completada" aria-valuemin="0" aria-valuemax="4" aria-valuenow="4" style="margin: 16px 16px 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px;">
+<span style="height: 6px; border-radius: 3px; background: #FF6A00;"></span><span style="height: 6px; border-radius: 3px; background: #FF6A00;"></span><span style="height: 6px; border-radius: 3px; background: #FF6A00;"></span><span style="height: 6px; border-radius: 3px; background: #FF6A00;"></span>
+</div>
+<main style="flex-grow: 1; padding: 28px 24px 0; display: flex; flex-direction: column; gap: 18px;">
+<h1 class="anim" style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 44px; line-height: 1; animation: entra 350ms cubic-bezier(.05,.7,.1,1) backwards;">Todo listo, Lucía</h1>
+<div style="display: flex; align-items: flex-end; gap: 4px; min-height: 330px;">
+<div role="img" aria-label="Profi te saluda" style="position: relative; flex-shrink: 0; height: 320px; aspect-ratio: 307 / 726; margin-left: -12px;"><div class="anim" style="position: absolute; inset: 0; transform-origin: 50% 99%; animation: pr-entra 500ms cubic-bezier(.34,1.56,.64,1) 150ms backwards;"><div style="position: absolute; inset: 0; transform-origin: 50% 99%;"><img src="/_blob/849a992f2b252642d8da83a989b0eaaf" alt="" style="position: absolute; left: 0%; top: 0%; width: 100%; height: 100%;"><img src="/_blob/87a6d08929ba22b4790536c4e53949e9" alt="" class="anim" style="position: absolute; left: 2.606%; top: 10.193%; width: 30.293%; height: 21.074%; transform-origin: 40.86% 86.928%; animation: pr-saluda-ola 960ms linear 550ms both;"><img src="/_blob/c3bc89ecbd0ddddf259b4e19ac272c14" alt="" style="position: absolute; left: 7.492%; top: 28.237%; width: 17.264%; height: 3.03%;"><img src="/_blob/4e80685ed5fd47d83d8dfcd7c2d43d11" alt="" class="anim" style="position: absolute; left: 46.58%; top: 12.672%; width: 28.664%; height: 5.923%; animation: pr-parpadeo 4200ms linear 1650ms infinite; opacity: 0;"></div></div></div>
+<div class="anim" style="align-self: flex-start; margin-top: 18px; position: relative; padding: 14px 16px; border-radius: 18px 18px 18px 4px; background: #1B1E24; border: 1px solid #353A43; display: flex; flex-direction: column; gap: 6px; transform-origin: left bottom; animation: bocadillo 250ms cubic-bezier(.2,0,0,1) 650ms backwards;">
+<strong style="font-size: 16px;">Soy Profi.</strong>
+<span style="font-size: 15px; color: #C9CED6; line-height: 1.35;">Te aviso de lo importante y te celebro los récords. Sin agobiar.</span>
+</div>
+</div>
+<section aria-label="Tu primer entreno" class="anim" style="background: #1B1E24; border: 1px solid #676F7E; border-radius: 20px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; animation: entra 350ms cubic-bezier(.05,.7,.1,1) 450ms backwards;">
+<span style="flex-shrink: 0; width: 44px; height: 44px; border-radius: 22px; background: #3A2110; color: #FF6A00; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">fitness_center</span></span>
+<span style="display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 13px; color: #A1A9B6;">Tu primer entreno</span><span style="font-size: 17px; font-weight: 600;">Cuerpo completo A</span><span style="font-size: 14px; color: #A1A9B6;">45 min · 6 ejercicios · gimnasio</span></span>
+</section>
+</main>
+<div style="padding: 16px 16px 24px; display: flex; flex-direction: column; gap: 6px;">
+<a href="Main.dc.html" class="toque" style="min-height: 52px; border-radius: 26px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700; text-decoration: none;">Empezar mi primer entreno</a>
+<button type="button" class="toque" style="min-height: 48px; border: none; border-radius: 24px; background: transparent; color: #F2F2F3; font-size: 16px; font-weight: 600;">Ahora no</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

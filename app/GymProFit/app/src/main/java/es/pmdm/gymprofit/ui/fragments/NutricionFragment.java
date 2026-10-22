@@ -54,7 +54,7 @@ import es.pmdm.gymprofit.network.ComidaApi;
 import es.pmdm.gymprofit.network.DiarioApi;
 import es.pmdm.gymprofit.ui.activities.AnadirAlimentoActivity;
 import es.pmdm.gymprofit.ui.activities.ComidaActivity;
-import es.pmdm.gymprofit.ui.activities.EstadisticasNutricionActivity;
+import es.pmdm.gymprofit.ui.activities.SemanaNutricionActivity;
 import es.pmdm.gymprofit.ui.nutricion.AnilloDia;
 import es.pmdm.gymprofit.ui.nutricion.ElegirComida;
 import es.pmdm.gymprofit.ui.nutricion.TarjetaCopiarAyer;
@@ -164,8 +164,9 @@ public class NutricionFragment extends BaseFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         fechaContada = null;
+        // «Tu semana de nutrición» (tablero 12); desde ahí se llega a las semanas y los meses.
         findViewById(R.id.btnHistorial).setOnClickListener(v ->
-                startActivity(new Intent(requireContext(), EstadisticasNutricionActivity.class)));
+                startActivity(new Intent(requireContext(), SemanaNutricionActivity.class)));
         findViewById(R.id.btnCalendario).setOnClickListener(v -> elegirFecha());
         prepararMacro(R.id.macroProteinas, R.string.nutricion_proteinas, R.color.gp_macro_proteinas, 10);
         prepararMacro(R.id.macroCarbos, R.string.nutricion_carbohidratos, R.color.gp_macro_carbos, 8);
@@ -204,6 +205,38 @@ public class NutricionFragment extends BaseFragment {
         pintarSemana(false);
         cargarComidas();
         cargarDiario();
+        pintarAvisoSemana();
+    }
+
+    // ── «Tu semana de nutrición», los lunes ─────────────────────────────────
+
+    /**
+     * Los lunes, una tarjeta que lleva al resumen de la semana pasada (decisión 13): sin
+     * notificación, y solo si no se ha cerrado ya ese lunes. El resto de la semana no sale; el
+     * resumen sigue en el botón de la cabecera.
+     */
+    private void pintarAvisoSemana() {
+        View tarjeta = findViewById(R.id.cardAvisoSemana);
+        Calendar hoy = Calendar.getInstance();
+        java.text.SimpleDateFormat iso = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US);
+        String lunes = iso.format(hoy.getTime());
+        if (hoy.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY || lunes.equals(prefsManager.getAvisoSemanaCerrado())) {
+            tarjeta.setVisibility(View.GONE);
+            return;
+        }
+        tarjeta.setVisibility(View.VISIBLE);
+        Calendar pasada = (Calendar) hoy.clone();
+        pasada.add(Calendar.DAY_OF_YEAR, -7);
+        findViewById(R.id.filaAvisoSemana).setOnClickListener(v -> {
+            // Se ha visto: no vuelve a salir hasta el lunes que viene.
+            prefsManager.setAvisoSemanaCerrado(lunes);
+            startActivity(new Intent(requireContext(), SemanaNutricionActivity.class)
+                    .putExtra(SemanaNutricionActivity.EXTRA_LUNES, iso.format(pasada.getTime())));
+        });
+        findViewById(R.id.btnCerrarAvisoSemana).setOnClickListener(v -> {
+            prefsManager.setAvisoSemanaCerrado(lunes);
+            tarjeta.setVisibility(View.GONE);
+        });
     }
 
     // ── Tira de la semana ───────────────────────────────────────────────────
@@ -609,10 +642,8 @@ public class NutricionFragment extends BaseFragment {
 
         boolean proteinaHecha = !d.sinObjetivo && d.estadoProteinas() == DiaNutricion.Estado.LOGRADO;
         macroProteina(d, completo, proteinaHecha, celebrar);
-        macro(R.id.macroCarbos, d.carbohidratos, d.objetivoCarbohidratos, d.sinObjetivo,
-                completo ? DiaNutricion.Estado.NORMAL : d.estadoCarbohidratos());
-        macro(R.id.macroGrasas, d.grasas, d.objetivoGrasas, d.sinObjetivo,
-                completo ? DiaNutricion.Estado.NORMAL : d.estadoGrasas());
+        macro(R.id.macroCarbos, d.carbohidratos, d.objetivoCarbohidratos, d.sinObjetivo, DiaNutricion.Estado.NORMAL);
+        macro(R.id.macroGrasas, d.grasas, d.objetivoGrasas, d.sinObjetivo, DiaNutricion.Estado.NORMAL);
 
         if (celebrar) {
             // Momento 21: el ✓ salta, el anillo suelta su halo y vibra una vez.
@@ -1083,7 +1114,6 @@ public class NutricionFragment extends BaseFragment {
     private int colorEstado(DiaNutricion.Estado e) {
         switch (e) {
             case LOGRADO: return ContextCompat.getColor(requireContext(), R.color.gp_success);
-            case PASADO:  return color(androidx.appcompat.R.attr.colorError);
             default:      return color(com.google.android.material.R.attr.colorOnSurface);
         }
     }

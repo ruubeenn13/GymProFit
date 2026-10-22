@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_idea_recuperar — una de las tres ideas de «Para recuperar» (tablero 11 de nutrición,
+  decisión 12): icono, nombre, lo que lleva (cantidad, proteína y kcal) y el «+» de 48 dp (44 en el lienzo: la zona pulsable manda, DEC-019) que
+  la apunta en la comida que toca; apuntada, es un ✓ verde que la quita (momento 15).
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="60dp"
+        android:orientation="horizontal"
+        android:paddingStart="14dp"
+        android:paddingEnd="8dp">
+
+        <ImageView
+            android:id="@+id/ivIdeaRecuperar"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:importantForAccessibility="no" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
+
+            <TextView
+                android:id="@+id/tvIdeaNombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="@dimen/text_fila" />
+
+            <TextView
+                android:id="@+id/tvIdeaDetalle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="@dimen/text_caption" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/btnIdeaMas"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="4dp"
+            android:background="@drawable/bg_circulo_superficie"
+            android:backgroundTint="?attr/colorSurfaceVariant"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:id="@+id/ivIdeaMas"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_ms_add" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/rayaIdea"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?attr/colorSurface"
+        android:importantForAccessibility="no" />
+</LinearLayout>

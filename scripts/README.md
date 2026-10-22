@@ -34,15 +34,15 @@ demostración en el entorno **local** de pruebas: ni producción ni datos de nad
 
 Deja tres semanas que acaban hoy:
 
-- 12 entrenos: lunes y jueves, pierna; miércoles y sábado, torso. El press de banca
-  cae hace 3 días y la pierna, ayer.
+- Sigue el programa «Torso y pierna» (`GIM-TP`, 60 min) y 12 entrenos con sus rutinas:
+  lunes torso A, martes pierna A, jueves torso B y viernes pierna B, con los pesos subiendo
+  cada semana. Así hay «Hoy toca» con rutina, resumen con la comparación frente a la sesión
+  anterior de la misma rutina (GP-210) y semana de nutrición con datos.
 - Comidas españolas de cada día. Hoy, solo el desayuno y la comida.
 - El agua de cada día.
 - 8 pesos, de 78,6 a 76,9 kg. La API fecha cada medición al guardarla, así que el
   script la lleva después a su día con el cliente de MariaDB.
 
-El programa «Torso y pierna» se elige después desde la app (Inicio → Elige tu programa →
-60 min), como lo haría cualquiera.
 
 ### Hacer las capturas
 

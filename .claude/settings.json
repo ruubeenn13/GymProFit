@@ -1,0 +1,36 @@
+{
+  "enabledPlugins": {
+    "jdtls-lsp@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "render@claude-plugins-official": true
+  },
+  "autoMemoryDirectory": "C:/Users/ruben/vault/claude/gymprofit-app",
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/bloquear-git-add-masivo.js\""
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "ask": [
+      "mcp__plugin_render_render__trigger_deploy",
+      "mcp__plugin_render_render__create_web_service",
+      "mcp__plugin_render_render__create_static_site",
+      "mcp__plugin_render_render__create_cron_job",
+      "mcp__plugin_render_render__create_postgres",
+      "mcp__plugin_render_render__create_key_value",
+      "mcp__plugin_render_render__update_environment_variables"
+    ]
+  }
+}

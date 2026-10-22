@@ -22,7 +22,7 @@ import androidx.annotation.Nullable;
 // ============================================================
 // Movimiento — el sistema de movimiento de la app (GP-104, DEC-039).
 //
-// Los doce momentos del lienzo (documentacion/diseno/2026-09-30-alta/fuente/
+// Los momentos del lienzo (documentacion/diseno/2026-09-30-alta/fuente/
 // Movimiento.dc.html) salen de aquí: sus duraciones, sus cuatro curvas y sus cuatro
 // vibraciones. Las pantallas no escriben un número de milisegundos ni una curva: piden
 // el momento. Así lo que dice DEC-039 y lo que hace la app no se separan, y

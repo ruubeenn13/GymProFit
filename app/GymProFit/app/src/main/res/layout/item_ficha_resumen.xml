@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_ficha_resumen — una ficha de la cabecera del resumen (tablero 3 de GP-210): icono
+  y texto en una píldora de 32 dp. La rellena ResumenSesionActivity. Es informativa, no se
+  pulsa: la descripción para TalkBack es su texto.
+-->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_ficha_resumen"
+    android:drawablePadding="6dp"
+    android:gravity="center_vertical"
+    android:minHeight="32dp"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
+    android:textColor="?attr/colorOnSurface"
+    android:textSize="@dimen/text_caption" />

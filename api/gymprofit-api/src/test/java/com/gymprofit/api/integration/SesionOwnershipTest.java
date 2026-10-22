@@ -67,6 +67,7 @@ class SesionOwnershipTest extends AbstractOwnershipTest {
             "PATCH /sesiones/{sesion}",
             "PUT /sesiones/{sesion}/completar",
             "GET /sesiones/{sesion}/volumen",
+            "GET /sesiones/{sesion}/resumen",
             "DELETE /sesiones/{sesion}",
             "GET /sesiones/usuario/{owner}",
             "GET /sesiones/usuario/{owner}/completadas",

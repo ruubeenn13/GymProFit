@@ -215,7 +215,73 @@ class DiarioTest extends AbstractOwnershipTest {
         pedir(guest, "PUT /diario/" + hoy + "/hoy-no/CENA").andExpect(status().isForbidden());
     }
 
+    // --- Lo que más has comido (tablero 12 de nutrición, GP-162) ----------------
+
+    @Test
+    @DisplayName("los 3 alimentos más apuntados de la semana, con cuántas veces; empate por nombre")
+    void masApuntados() throws Exception {
+        Integer pollo = alimentoNombrado("Pechuga de pollo");
+        Integer yogur = alimentoNombrado("Yogur proteico");
+        Integer arroz = alimentoNombrado("Arroz blanco");
+        Integer pan = alimentoNombrado("Pan");
+        for (int i = 0; i < 3; i++) comidaConAlimento(owner, hoy.minusDays(i), "COMIDA", pollo);
+        for (int i = 0; i < 2; i++) comidaConAlimento(owner, hoy.minusDays(i), "CENA", yogur);
+        for (int i = 0; i < 2; i++) comidaConAlimento(owner, hoy.minusDays(i), "ALMUERZO", arroz);
+        comidaConAlimento(owner, hoy, "DESAYUNO", pan);
+
+        pedir(owner, "GET /diario/mas-apuntados?desde=" + hoy.minusDays(6) + "&hasta=" + hoy)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0].nombre").value("Pechuga de pollo"))
+                .andExpect(jsonPath("$[0].veces").value(3))
+                .andExpect(jsonPath("$[0].alimentoId").value(pollo))
+                .andExpect(jsonPath("$[1].nombre").value("Arroz blanco"))
+                .andExpect(jsonPath("$[1].veces").value(2))
+                .andExpect(jsonPath("$[2].nombre").value("Yogur proteico"));
+    }
+
+    @Test
+    @DisplayName("lo de fuera del rango no cuenta, y una semana sin nada da [] y no 404")
+    void masApuntadosRango() throws Exception {
+        Integer pollo = alimentoNombrado("Pechuga de pollo");
+        comidaConAlimento(owner, hoy.minusDays(10), "COMIDA", pollo);
+
+        pedir(owner, "GET /diario/mas-apuntados?desde=" + hoy.minusDays(6) + "&hasta=" + hoy)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", empty()));
+    }
+
+    @Test
+    @DisplayName("máximo 7 días, el rango no va al revés y las fechas son obligatorias")
+    void masApuntadosValidacion() throws Exception {
+        pedir(owner, "GET /diario/mas-apuntados?desde=" + hoy.minusDays(7) + "&hasta=" + hoy)
+                .andExpect(status().isBadRequest());
+        pedir(owner, "GET /diario/mas-apuntados?desde=" + hoy + "&hasta=" + hoy.minusDays(1))
+                .andExpect(status().isBadRequest());
+        pedir(owner, "GET /diario/mas-apuntados?desde=" + hoy.minusDays(6) + "&hasta=" + hoy)
+                .andExpect(status().isOk());
+        pedir(owner, "GET /diario/mas-apuntados").andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("aislamiento: lo apuntado por otra cuenta no cuenta, y el invitado no entra")
+    void masApuntadosAislado() throws Exception {
+        Integer pollo = alimentoNombrado("Pechuga de pollo");
+        for (int i = 0; i < 3; i++) comidaConAlimento(attacker, hoy.minusDays(i), "COMIDA", pollo);
+
+        pedir(owner, "GET /diario/mas-apuntados?desde=" + hoy.minusDays(6) + "&hasta=" + hoy)
+                .andExpect(jsonPath("$", empty()));
+        pedir(guest, "GET /diario/mas-apuntados?desde=" + hoy.minusDays(6) + "&hasta=" + hoy)
+                .andExpect(status().isForbidden());
+    }
+
     // --- Siembra ------------------------------------------------------------
+
+    private Integer alimentoNombrado(String nombre) {
+        Integer id = crearAlimentoCatalogo().getId();
+        jdbc.update("UPDATE alimentos SET nombre = ? WHERE id = ?", nombre, id);
+        return id;
+    }
 
     private int filas(String tabla, Usuario quien) {
         Integer n = jdbc.queryForObject("SELECT COUNT(*) FROM " + tabla + " WHERE usuario_id = ?",

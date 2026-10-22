@@ -3,6 +3,7 @@ package com.gymprofit.api.controller;
 import io.swagger.v3.oas.annotations.Parameter;
 import java.time.LocalDateTime;
 import com.gymprofit.api.dto.common.CountDTO;
+import com.gymprofit.api.dto.entity.sesionentrenamiento.ResumenSesionDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionCompletaCreateDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoCreateDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoDTO;
@@ -12,6 +13,7 @@ import com.gymprofit.api.dto.entity.sesionentrenamiento.VolumenMuscularDTO;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.sesionentrenamiento.IGuardadoSesionCompletaService;
 import com.gymprofit.api.service.sesionentrenamiento.ISesionEntrenamientoService;
+import com.gymprofit.api.service.sesionentrenamiento.ResumenSesionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -47,6 +49,9 @@ public class SesionEntrenamientoController {
 
     // Guardado completo con la recuperación de la carrera fuera de la transacción (GP-076).
     private final IGuardadoSesionCompletaService guardadoSesionCompletaService;
+
+    // El resumen del entreno: kilos y series por ejercicio y su comparación (GP-210, GP-023).
+    private final ResumenSesionService resumenSesionService;
 
     @Operation(summary = "Las sesiones de quien llama (solo ADMIN)")
     @ApiResponses(value = {
@@ -437,5 +442,23 @@ public class SesionEntrenamientoController {
         respuesta.put("volumenKg", sesionEntrenamientoService.getVolumenLevantado(id));
 
         return ResponseEntity.ok(respuesta);
+    }
+
+    @Operation(summary = "Resumen del entreno: kilos y series por ejercicio y comparación (GP-210)",
+            description = "Para cualquier sesión del usuario del token, también del historial: los kilos y " +
+                    "las series de cada ejercicio con lo que movió la última vez que lo hizo antes, y la " +
+                    "sesión anterior de la misma rutina. Los kilos usan la definición de GP-011. Las " +
+                    "comparaciones son nulas la primera vez.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Resumen de la sesión",
+                    content = @Content(schema = @Schema(implementation = ResumenSesionDTO.class))),
+            @ApiResponse(responseCode = "403", description = "La sesión es de otro usuario",
+                    content = @Content(schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "404", description = "Sesión no encontrada",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @GetMapping("/sesiones/{id}/resumen")
+    public ResponseEntity<ResumenSesionDTO> resumen(@PathVariable Integer id) {
+        return ResponseEntity.ok(resumenSesionService.resumir(id));
     }
 }

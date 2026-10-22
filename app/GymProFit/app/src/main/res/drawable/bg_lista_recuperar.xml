@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_lista_recuperar — el fondo hundido de las tres ideas de «Para recuperar» (tablero 3 de GP-210): el del fondo de la pantalla, 16 dp. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="16dp" />
+    <solid android:color="?attr/android:colorBackground" />
+</shape>

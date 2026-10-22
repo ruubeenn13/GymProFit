@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Logro conseguido</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 48}
+button{font-family:inherit;cursor:pointer}
+a{color:#FF6A00}a:hover{color:#FFB27A}
+.toque{transition:transform 120ms cubic-bezier(.2,0,0,1)}
+.toque:active{transform:scale(.97)}
+@keyframes entra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes medallon{0%{opacity:0;transform:scale(.4)}60%{opacity:1;transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes aro{0%{box-shadow:0 0 0 0 rgba(232,184,75,.55)}100%{box-shadow:0 0 0 22px rgba(232,184,75,0)}}
+@keyframes profi{0%{opacity:0;transform:translateY(40px) scale(.96)}100%{opacity:1;transform:none}}
+@keyframes llena{from{width:0}to{width:33.3%}}
+@keyframes d1{to{transform:translate(-70px,-50px);opacity:0}}
+@keyframes d2{to{transform:translate(0,-80px);opacity:0}}
+@keyframes d3{to{transform:translate(70px,-50px);opacity:0}}
+@keyframes d4{to{transform:translate(80px,20px);opacity:0}}
+@keyframes d5{to{transform:translate(-80px,20px);opacity:0}}
+@keyframes d6{to{transform:translate(0,70px);opacity:0}}
+.chispa{position:absolute;left:55px;top:55px;width:10px;height:10px;border-radius:5px;background:#E8B84B}
+@keyframes pr-aparece{from{opacity:0}to{opacity:1}}
+@keyframes pr-salta{0%{transform:none;animation-timing-function:cubic-bezier(.2,0,0,1)}7.447%{transform:scale(1.04,.92);animation-timing-function:cubic-bezier(.05,.7,.1,1)}22.34%{transform:translateY(-14.9%) scale(.97,1.06);animation-timing-function:cubic-bezier(.3,0,.8,.15)}34.043%{transform:none;animation-timing-function:cubic-bezier(.2,0,0,1)}39.362%{transform:scale(1.04,.93);animation-timing-function:cubic-bezier(.34,1.56,.64,1)}51.064%{transform:none;animation-timing-function:cubic-bezier(.2,0,0,1)}58.511%{transform:none;animation-timing-function:cubic-bezier(.2,0,0,1)}65.957%{transform:scale(1.03,.95);animation-timing-function:cubic-bezier(.05,.7,.1,1)}76.596%{transform:translateY(-7.4%) scale(.98,1.04);animation-timing-function:cubic-bezier(.3,0,.8,.15)}86.17%{transform:none;animation-timing-function:cubic-bezier(.2,0,0,1)}90.426%{transform:scale(1.03,.96);animation-timing-function:cubic-bezier(.34,1.56,.64,1)}100%{transform:none}}
+@keyframes pr-salta-sombra{0%{transform:scaleX(1);opacity:.55;animation-timing-function:cubic-bezier(.2,0,0,1)}7.447%{transform:scaleX(1.06);opacity:.6;animation-timing-function:cubic-bezier(.05,.7,.1,1)}22.34%{transform:scaleX(.62);opacity:.25;animation-timing-function:cubic-bezier(.3,0,.8,.15)}34.043%{transform:scaleX(1);opacity:.55;animation-timing-function:cubic-bezier(.2,0,0,1)}39.362%{transform:scaleX(1.1);opacity:.6;animation-timing-function:cubic-bezier(.34,1.56,.64,1)}51.064%{transform:scaleX(1);opacity:.55;animation-timing-function:cubic-bezier(.2,0,0,1)}58.511%{transform:scaleX(1);opacity:.55;animation-timing-function:cubic-bezier(.2,0,0,1)}65.957%{transform:scaleX(1.05);opacity:.6;animation-timing-function:cubic-bezier(.05,.7,.1,1)}76.596%{transform:scaleX(.78);opacity:.35;animation-timing-function:cubic-bezier(.3,0,.8,.15)}86.17%{transform:scaleX(1);opacity:.55;animation-timing-function:cubic-bezier(.2,0,0,1)}90.426%{transform:scaleX(1.06);opacity:.6;animation-timing-function:cubic-bezier(.34,1.56,.64,1)}100%{transform:scaleX(1);opacity:.55}}
+@media (prefers-reduced-motion: reduce){.anim,.chispa{animation:none !important;transition:none !important}.chispa{display:none}.toque:active{transform:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif; display: flex; flex-direction: column;">
+<header style="display: flex; justify-content: flex-end; padding: 8px 4px 0;">
+<button type="button" aria-label="Cerrar" class="toque" style="width: 48px; height: 48px; border: none; border-radius: 24px; background: transparent; color: #F2F2F3; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">close</span></button>
+</header>
+<main style="flex-grow: 1; padding: 0 24px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;">
+<div style="position: relative; display: flex; align-items: flex-end; justify-content: center; width: 100%; height: 300px;">
+<div style="position: absolute; left: 40px; top: 70px; width: 120px; height: 120px;">
+<span class="anim" aria-hidden="true" style="position: absolute; inset: 0; border-radius: 60px; background: #3A2E12; border: 3px solid #E8B84B; display: flex; align-items: center; justify-content: center; animation: medallon 450ms cubic-bezier(.34,1.56,.64,1) backwards, aro 900ms cubic-bezier(.2,0,0,1) 400ms;"><span class="ms f" style="font-size: 60px; color: #E8B84B;">workspace_premium</span></span>
+<span class="chispa" aria-hidden="true" style="animation: d1 700ms cubic-bezier(.2,0,0,1) 250ms backwards;"></span>
+<span class="chispa" aria-hidden="true" style="animation: d2 700ms cubic-bezier(.2,0,0,1) 250ms backwards;"></span>
+<span class="chispa" aria-hidden="true" style="animation: d3 700ms cubic-bezier(.2,0,0,1) 250ms backwards;"></span>
+<span class="chispa" aria-hidden="true" style="animation: d4 700ms cubic-bezier(.2,0,0,1) 250ms backwards;"></span>
+<span class="chispa" aria-hidden="true" style="animation: d5 700ms cubic-bezier(.2,0,0,1) 250ms backwards;"></span>
+<span class="chispa" aria-hidden="true" style="animation: d6 700ms cubic-bezier(.2,0,0,1) 250ms backwards;"></span>
+</div>
+<div role="img" aria-label="Profi salta de alegría" style="position: absolute; right: 28px; bottom: 0; height: 290px; aspect-ratio: 352 / 739;"><span class="anim" aria-hidden="true" style="position: absolute; left: 20%; right: 20%; bottom: -1.5%; height: 3.5%; border-radius: 50%; background: #000000; opacity: .55; animation: pr-salta-sombra 1880ms linear 120ms both;"></span><div class="anim" style="position: absolute; inset: 0; transform-origin: 50% 99%; animation: pr-aparece 150ms cubic-bezier(.2,0,0,1) 120ms backwards;"><div class="anim" style="position: absolute; inset: 0; transform-origin: 50% 99%; animation: pr-salta 1880ms linear 120ms both;"><img src="/_blob/760ea88039dc5fea0447a40835099f4c" alt="" style="position: absolute; left: 0%; top: 0%; width: 100%; height: 100%;"></div></div></div>
+</div>
+<span class="anim" style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 2px; color: #E8B84B; animation: entra 350ms cubic-bezier(.05,.7,.1,1) 300ms backwards;">LOGRO CONSEGUIDO</span>
+<h1 class="anim" style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 52px; line-height: 1; animation: entra 350ms cubic-bezier(.05,.7,.1,1) 340ms backwards;">10 sesiones</h1>
+<p class="anim" style="margin: 0; font-size: 17px; color: #C9CED6; animation: entra 350ms cubic-bezier(.05,.7,.1,1) 380ms backwards;">Has entrenado 10 veces desde el 1 de octubre.</p>
+<div role="img" aria-label="Siguiente logro, 30 sesiones: llevas 10" class="anim" style="width: 100%; margin-top: 10px; padding: 14px 16px; box-sizing: border-box; border-radius: 18px; background: #1B1E24; display: flex; flex-direction: column; gap: 8px; text-align: left; animation: entra 350ms cubic-bezier(.05,.7,.1,1) 420ms backwards;">
+<div aria-hidden="true" style="display: flex; justify-content: space-between; font-size: 15px;"><span>Siguiente: 30 sesiones</span><span style="color: #C9CED6; font-variant-numeric: tabular-nums;">10 de 30</span></div>
+<div aria-hidden="true" style="height: 10px; border-radius: 5px; background: #353A43; overflow: hidden;"><span class="anim" style="display: block; height: 100%; width: 33.3%; background: #FF6A00; border-radius: 5px; animation: llena 500ms cubic-bezier(.2,0,0,1) 600ms backwards;"></span></div>
+</div>
+</main>
+<div style="padding: 16px 16px 24px; display: flex; gap: 10px;">
+<a href="#" class="toque" style="flex: 1; min-height: 52px; border-radius: 26px; border: 1px solid #676F7E; color: #F2F2F3; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; text-decoration: none;">Ver mis logros</a>
+<a href="Resumen.dc.html" class="toque" style="flex: 1; min-height: 52px; border-radius: 26px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700; text-decoration: none;">Seguir</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

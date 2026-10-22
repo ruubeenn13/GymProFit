@@ -713,8 +713,6 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         if (sesion.getNuevosLogros() != null) nuevosLogros.addAll(sesion.getNuevosLogros());
         Intent intent = new Intent(this, ResumenSesionActivity.class);
         intent.putExtra("sesionId", sesion.getId());
-        intent.putExtra("rutinaNombre", guardadaEnCurso.rutinaNombre != null ? guardadaEnCurso.rutinaNombre : "");
-        intent.putExtra(ResumenSesionActivity.EXTRA_ENTRENAMIENTO_LIBRE, guardadaEnCurso.rutinaId == null);
         intent.putStringArrayListExtra("nuevosLogros", nuevosLogros);
         intent.putExtra(ResumenSesionActivity.EXTRA_RECORDS, new ArrayList<>(sesion.getRecordsBatidos()));
         intent.putExtra(ResumenSesionActivity.EXTRA_PRIMERAS_MARCAS,
