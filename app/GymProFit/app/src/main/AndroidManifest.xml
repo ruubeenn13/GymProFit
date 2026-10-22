@@ -19,6 +19,10 @@
          calendarios. En Android 14 o más, las instalaciones nuevas lo tienen denegado y
          se pide con una hoja la primera vez que empieza un descanso. -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <!-- Live Update de la notificación de la sesión en Android 16 (GP-210, momento 27). Es un
+         permiso normal: se concede al instalar, sin preguntar; el usuario lo apaga en los ajustes
+         de notificaciones de la app. -->
+    <uses-permission android:name="android.permission.POST_PROMOTED_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.CAMERA" />
     <!-- El escáner de alimentos usa la cámara, pero la app sirve sin ella: que no la
          exija a los dispositivos que no tienen (lint, GP-155). -->
@@ -65,6 +69,11 @@
              exactas, que manda el sistema (acción protegida). -->
         <receiver
             android:name=".envivo.FinDescansoReceiver"
+            android:exported="false" />
+        <!-- «+15 s» y «Saltar» de la notificación de la sesión (GP-210). Solo los despiertan
+             sus propios botones. -->
+        <receiver
+            android:name=".envivo.AccionDescansoReceiver"
             android:exported="false" />
         <receiver
             android:name=".envivo.PermisoAlarmasReceiver"

@@ -2,8 +2,8 @@
 <!--
   view_descanso — el descanso entre series (GP-013), abajo en la sesión en vivo, en el
   hueco que dejó la 1.3.0. Nunca bloquea: la lista sigue debajo, se escribe y se marca.
-  · panelDescanso: «Descanso», qué viene después, la cuenta atrás, la barra, «−15 s»,
-    «+15 s» y «Saltar». TalkBack lo lee como un temporizador al llegar a él o tocarlo
+  · panelDescanso: el aro que se vacía, «Descanso», la cuenta atrás, qué serie viene
+    (GP-210), «−15 s», «+15 s» y «Saltar». TalkBack lo lee como un temporizador al llegar a él o tocarlo
     (la descripción se calcula en ese momento; no se anuncia cada segundo).
   · avisoFinDescanso: «¡A por la serie 3!» con el ejercicio y su cerrar; se va solo.
 -->
@@ -37,11 +37,27 @@
             android:layout_height="wrap_content"
             android:focusable="true"
             android:gravity="center_vertical"
+            android:importantForAccessibility="yes"
             android:orientation="horizontal">
+
+            <!-- El aro que se vacía (GP-210, momento 26): mil pasos para que baje sin saltos. -->
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/aroDescanso"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:importantForAccessibility="no"
+                android:max="1000"
+                android:progress="1000"
+                app:indicatorColor="?attr/colorPrimary"
+                app:indicatorSize="72dp"
+                app:trackColor="@color/gp_divider"
+                app:trackCornerRadius="4dp"
+                app:trackThickness="7dp" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
                 android:layout_weight="1"
                 android:importantForAccessibility="noHideDescendants"
                 android:orientation="vertical">
@@ -53,8 +69,16 @@
                     android:text="@string/envivo_descanso"
                     android:textAllCaps="true"
                     android:textAppearance="@style/TextAppearance.GymProFit.Label"
-                    android:textColor="?attr/colorPrimary"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:textSize="@dimen/text_eyebrow" />
+
+                <TextView
+                    android:id="@+id/tvDescansoTiempo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:importantForAccessibility="no"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Number"
+                    android:textSize="@dimen/envivo_descanso_numero" />
 
                 <TextView
                     android:id="@+id/tvDescansoDespues"
@@ -62,26 +86,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="@dimen/text_body" />
+                    android:textSize="@dimen/text_caption" />
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/tvDescansoTiempo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:importantForAccessibility="no"
-                android:textAppearance="@style/TextAppearance.GymProFit.Number"
-                android:textSize="@dimen/envivo_descanso_numero" />
         </LinearLayout>
-
-        <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:id="@+id/barraDescanso"
-            style="@style/Widget.GymProFit.BarraProgreso"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:importantForAccessibility="no" />
 
         <LinearLayout
             android:layout_width="match_parent"

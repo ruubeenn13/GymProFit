@@ -158,6 +158,12 @@ public final class Movimiento {
     public static final long VASO = 450;
     /** «Respira»: el botón principal llama la atención una vez. */
     public static final long RESPIRA = 1400;
+    /** 24 · Las cifras de la cabecera suman al marcar una serie, frenando como CIFRAS. */
+    public static final long SUMA = 600;
+    /** 25 · La fila del récord pasa a dorado. */
+    public static final long ORO = 900;
+    /** 26 · El panel del descanso baja al acabar o saltarse. */
+    public static final long BAJA = 250;
 
     // ── Vibraciones ─────────────────────────────────────────────────────────
 
@@ -667,6 +673,160 @@ public final class Movimiento {
                     : 1.25f - 0.25f * REBOTE.getInterpolation((t - 0.55f) / 0.45f);
             check.setScaleX(s);
             check.setScaleY(s);
+        });
+        a.start();
+    }
+
+    // ── Sesión en vivo y descanso (GP-210 paso 3, momentos 24 a 26) ─────────
+
+    /**
+     * 24 · Serie marcada: el botón se rellena del color nuevo (RELLENO) y su check salta
+     * (CHECK). Vibración ligera, salvo que la serie sea un récord y vibre con éxito. Con
+     * las animaciones quitadas, el botón ya queda del color final.
+     *
+     * @param boton        el botón redondo de marcar, teñido con su fondo.
+     * @param antes        el color de fondo de antes.
+     * @param ahora        el color de fondo nuevo.
+     * @param conVibracion si vibra: no cuando el récord ya vibra por su cuenta.
+     */
+    public static void marcarSerie(@NonNull View boton, @ColorInt int antes, @ColorInt int ahora, boolean conVibracion) {
+        if (conVibracion) vibrar(boton, Vibracion.LIGERA);
+        boton.setBackgroundTintList(android.content.res.ColorStateList.valueOf(ahora));
+        if (quieto(boton.getContext())) return;
+        ValueAnimator a = ValueAnimator.ofArgb(antes, ahora);
+        a.setDuration(RELLENO);
+        a.setInterpolator(ESTANDAR);
+        a.addUpdateListener(an -> boton.setBackgroundTintList(
+                android.content.res.ColorStateList.valueOf((int) an.getAnimatedValue())));
+        a.start();
+        boton.setScaleX(0.4f);
+        boton.setScaleY(0.4f);
+        boton.animate().scaleX(1f).scaleY(1f).setStartDelay(0).setDuration(CHECK)
+                .setInterpolator(REBOTE).start();
+    }
+
+    /**
+     * 24 · Una cifra de la cabecera que suma: cuenta de la de antes a la nueva con la curva
+     * de las cifras (1 − (1 − t)³) en SUMA ms. Con las animaciones quitadas salta a la nueva.
+     *
+     * @param paso recibe el valor intermedio ya interpolado.
+     */
+    public static ValueAnimator sumar(double desde, double hasta, @NonNull ValorPaso paso) {
+        return contar(0, SUMA, f -> paso.en(desde + (hasta - desde) * f));
+    }
+
+    /** Lo que se hace en cada fotograma de una cifra que suma. */
+    public interface ValorPaso { void en(double valor); }
+
+    /**
+     * 24 · La barra de la sesión avanza (o retrocede, si se desmarca) de {@code desde} a
+     * {@code hasta} en BARRA ms con la curva estándar. Con las animaciones quitadas, salta a
+     * {@code hasta}.
+     */
+    public static void llenarBarra(@NonNull com.google.android.material.progressindicator.BaseProgressIndicator<?> barra,
+                                   int desde, int hasta) {
+        if (quieto(barra.getContext()) || desde == hasta) {
+            barra.setProgress(hasta);
+            return;
+        }
+        ValueAnimator a = ValueAnimator.ofInt(desde, hasta);
+        a.setDuration(BARRA);
+        a.setInterpolator(ESTANDAR);
+        a.addUpdateListener(an -> barra.setProgress((int) an.getAnimatedValue()));
+        a.start();
+    }
+
+    /**
+     * 25 · La fila del récord pasa a dorado: un destello a {@code pico} al 25 % y se asienta
+     * en {@code fin} (los colores del lienzo, #3A2E12 y #2A2414), en ORO ms con la curva
+     * estándar. Con las animaciones quitadas queda en {@code fin}.
+     */
+    public static void dorarFila(@NonNull View fila, @ColorInt int desde, @ColorInt int pico, @ColorInt int fin) {
+        fila.setBackgroundColor(fin);
+        if (quieto(fila.getContext())) return;
+        ValueAnimator a = ValueAnimator.ofFloat(0f, 1f);
+        a.setDuration(ORO);
+        a.setInterpolator(LINEAL);
+        a.addUpdateListener(an -> {
+            float t = (float) an.getAnimatedValue();
+            // La curva estándar a cada tramo: del fondo al destello hasta el 25 %, y de ahí al fin.
+            int color = t < 0.25f
+                    ? mezclar(desde, pico, ESTANDAR.getInterpolation(t / 0.25f))
+                    : mezclar(pico, fin, ESTANDAR.getInterpolation((t - 0.25f) / 0.75f));
+            fila.setBackgroundColor(color);
+        });
+        a.start();
+    }
+
+    private static int mezclar(@ColorInt int a, @ColorInt int b, float f) {
+        return android.graphics.Color.argb(
+                Math.round(android.graphics.Color.alpha(a) + (android.graphics.Color.alpha(b) - android.graphics.Color.alpha(a)) * f),
+                Math.round(android.graphics.Color.red(a) + (android.graphics.Color.red(b) - android.graphics.Color.red(a)) * f),
+                Math.round(android.graphics.Color.green(a) + (android.graphics.Color.green(b) - android.graphics.Color.green(a)) * f),
+                Math.round(android.graphics.Color.blue(a) + (android.graphics.Color.blue(b) - android.graphics.Color.blue(a)) * f));
+    }
+
+    /**
+     * 25 · El aviso del récord baja desde 8 dp y aparece (ENTRA, enfatizada). Se puede tocar
+     * desde el primer fotograma.
+     */
+    public static void bajarAviso(@NonNull View aviso) {
+        entrarUna(aviso, 0, ENTRA, -8);
+    }
+
+    /**
+     * 26 · El panel del descanso sube desde abajo (HOJA, enfatizada). No hay velo: la lista
+     * sigue debajo y se puede tocar.
+     */
+    public static void subirPanel(@NonNull View panel) {
+        panel.animate().cancel();
+        panel.setAlpha(1f);
+        if (quieto(panel.getContext())) {
+            panel.setTranslationY(0f);
+            return;
+        }
+        panel.setTranslationY(panel.getHeight() > 0 ? panel.getHeight() : 120 * panel.getResources().getDisplayMetrics().density);
+        panel.animate().translationY(0f).setStartDelay(0).setDuration(HOJA).setInterpolator(ENFATIZADA).start();
+    }
+
+    /**
+     * 26 · El panel del descanso baja (BAJA, estándar) y, al acabar, se esconde y avisa.
+     * Con las animaciones quitadas se esconde al momento.
+     *
+     * @param alFinal lo que pasa cuando ya no se ve (puede ser null).
+     */
+    public static void bajarPanel(@NonNull View panel, @Nullable Runnable alFinal) {
+        panel.animate().cancel();
+        if (quieto(panel.getContext())) {
+            panel.setVisibility(View.GONE);
+            if (alFinal != null) alFinal.run();
+            return;
+        }
+        panel.animate().translationY(panel.getHeight()).setStartDelay(0).setDuration(BAJA)
+                .setInterpolator(ESTANDAR).withEndAction(() -> {
+                    panel.setVisibility(View.GONE);
+                    panel.setTranslationY(0f);
+                    if (alFinal != null) alFinal.run();
+                }).start();
+    }
+
+    /** 26 · A falta de 10 s el número late una vez: crece a 1,08 al 40 % y vuelve (LATIDO). */
+    public static void latirNumero(@NonNull View numero) {
+        if (quieto(numero.getContext())) return;
+        ValueAnimator a = ValueAnimator.ofFloat(0f, 1f);
+        a.setDuration(LATIDO);
+        a.setInterpolator(ESTANDAR);
+        a.addUpdateListener(an -> {
+            float t = (float) an.getAnimatedValue();
+            float s = t < 0.4f ? 1f + 0.08f * (t / 0.4f) : 1.08f - 0.08f * ((t - 0.4f) / 0.6f);
+            numero.setScaleX(s);
+            numero.setScaleY(s);
+        });
+        a.addListener(new AnimatorListenerAdapter() {
+            @Override public void onAnimationEnd(Animator animation) {
+                numero.setScaleX(1f);
+                numero.setScaleY(1f);
+            }
         });
         a.start();
     }

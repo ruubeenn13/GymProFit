@@ -2,7 +2,8 @@
 <!--
   item_envivo_serie — una serie en la sesión en vivo (GP-012): número, «Anterior»
   (GP-014), kg y reps —o el tiempo y su cronómetro en una serie por tiempo— y el botón
-  de marcar. Hecha, la fila se tiñe (y lo dice su estado, no solo el color).
+  de marcar: gris, del color principal si es la que toca y verde si está hecha (y lo dice
+  su estado, no solo el color); la serie de un récord lleva la fila dorada (GP-210).
   Se quita deslizándola, y con TalkBack desde sus acciones.
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -117,7 +118,9 @@
             android:id="@+id/btnMarcar"
             style="@style/Widget.GymProFit.BotonIcono"
             android:layout_marginStart="2dp"
-            android:src="@drawable/ic_ms_radio_button_unchecked"
+            android:background="@drawable/bg_check"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_ms_check"
             app:tint="?attr/colorOnSurfaceVariant" />
     </LinearLayout>
 </FrameLayout>

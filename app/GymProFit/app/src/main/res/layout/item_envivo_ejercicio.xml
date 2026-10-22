@@ -2,7 +2,8 @@
 <!--
   item_envivo_ejercicio — cabecera de la tarjeta de un ejercicio en la sesión en vivo
   (GP-012): nombre, pauta y notas como en el detalle de la rutina, la última vez
-  (GP-014), el menú del ejercicio y los rótulos de las columnas de las series.
+  (GP-014), «Tu récord» y el aviso del récord (GP-210), el menú del ejercicio y los rótulos
+  de las columnas de las series.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -57,6 +58,20 @@
                 android:textSize="@dimen/text_caption"
                 android:textColor="?attr/colorOnSurfaceVariant" />
 
+            <!-- «Tu récord: 85 kg × 7», con su trofeo dorado, o «Primera vez» (GP-210). -->
+            <TextView
+                android:id="@+id/tvRecord"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                app:drawableStartCompat="@drawable/ic_ms_trophy"
+                android:drawablePadding="5dp"
+                app:drawableTint="@color/gp_gold"
+                android:importantForAccessibility="no"
+                android:textColor="@color/gp_gold_text"
+                android:textSize="@dimen/text_caption"
+                android:visibility="gone" />
+
             <TextView
                 android:id="@+id/tvUltimaVez"
                 android:layout_width="match_parent"
@@ -72,6 +87,66 @@
             style="@style/Widget.GymProFit.BotonIcono"
             android:src="@drawable/ic_ms_more_vert"
             app:tint="?attr/colorOnSurfaceVariant" />
+    </LinearLayout>
+
+    <!-- El aviso del récord (GP-210, momento 25): baja con el trofeo, las chispas y el brillo. -->
+    <LinearLayout
+        android:id="@+id/avisoRecord"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="12dp"
+        android:background="@drawable/bg_aviso_record"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="14dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="12dp"
+        android:visibility="gone">
+
+        <FrameLayout
+            android:id="@+id/marcoTrofeo"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:importantForAccessibility="no">
+
+            <ImageView
+                android:id="@+id/ivTrofeo"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_ms_trophy_fill"
+                app:tint="@color/gp_gold" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:importantForAccessibility="no"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvRecordTitulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.GymProFit.Number"
+                android:textColor="@color/gp_gold_text"
+                android:textSize="@dimen/text_title" />
+
+            <TextView
+                android:id="@+id/tvRecordAntes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="@dimen/text_caption" />
+        </LinearLayout>
     </LinearLayout>
 
     <!-- Rótulos de las columnas. Solo para la vista: cada fila se lee entera. -->
