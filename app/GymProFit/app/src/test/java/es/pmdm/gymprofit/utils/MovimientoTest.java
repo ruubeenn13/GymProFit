@@ -34,8 +34,8 @@ public class MovimientoTest {
     private static final Path CODIGO = Paths.get("src", "main", "java", "es", "pmdm", "gymprofit",
             "utils", "Movimiento.java");
 
-    /** Duraciones de Movimiento que no son un momento del lienzo y no van en la tabla. */
-    private static final Set<String> FUERA_DE_LA_TABLA = Set.of("RESPIRA");
+    /** Duraciones de Movimiento que la tabla no recoge a propósito: ninguna («Respira» va como «— · Respira»). */
+    private static final Set<String> FUERA_DE_LA_TABLA = Set.of();
 
     @Test
     public void cadaDuracionDeLaTablaEsLaDelCodigo() throws IOException {
@@ -192,7 +192,7 @@ public class MovimientoTest {
         Pattern nombre = Pattern.compile("`([A-Z_]+)`");
         Pattern numero = Pattern.compile("\\d+");
         for (String linea : decision().split("\n")) {
-            if (!linea.matches("\\| \\d+ · .*")) continue;
+            if (!linea.matches("\\| (\\d+|—) · .*")) continue;
             String[] col = linea.split("\\|");
             List<String> nombres = new ArrayList<>();
             Matcher mn = nombre.matcher(col[2]);

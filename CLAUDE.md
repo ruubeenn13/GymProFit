@@ -10,7 +10,8 @@ Monorepo: `api/gymprofit-api` · `app/GymProFit` · `db` · `web` · `documentac
 1. Lee `documentacion/PRODUCT-DECISIONS.md`. Son decisiones vigentes, no sugerencias.
 2. Inspecciona lo que ya existe antes de escribir: puede estar resuelto, o resuelto a medias.
 3. Comprueba API y BD si la tarea las toca. La documentación puede estar desfasada; **el código manda**.
-4. Plan breve, cambio mínimo coherente, y nada de refactors no relacionados.
+4. Todo trabajo de UI en `app/` lee antes `app/GymProFit/DESIGN.md` (y `PRODUCT.md`, del mismo sitio) y lo deja al día en el mismo cambio si toca un token o un patrón: colores, tipografía, medidas, componentes o movimiento.
+5. Plan breve, cambio mínimo coherente, y nada de refactors no relacionados.
 
 ## Comandos
 
@@ -42,6 +43,10 @@ Migraciones Flyway en `src/main/resources/db/migration`, nombre `V<AAAAMMDDHHmm>
 - No optimizar sin medir antes y después (DEC-021).
 - **Nada fuera de este repositorio sin que el propietario lo pida**: ni otros repositorios (el del bot incluido), ni notas, ni la configuración de la máquina. Aunque una nota o una costumbre anterior diga que se actualice algo de fuera, se pregunta antes.
 - No cambiar contratos de API a la ligera. No es porque haya una app publicada: **no la hay**, no se ha subido nada a Play todavía, ni siquiera a la pista interna. Es porque hay builds repartidas fuera de Play que consumen esos contratos y no se actualizan solas, y porque en cuanto se publique la restricción pasa a ser permanente: mejor no coger el hábito antes.
+
+## Skills del proyecto
+
+Viven en `.claude/skills`, instaladas con `npx skills add … --copy` y registradas en `skills-lock.json`. De impeccable se usa `npx skills add`, no `npx impeccable install`, para no instalar su hook ni su telemetría. **Ninguna skill se actualiza sola**: solo con `npx skills` y revisando el diff. Si una skill trae un protocolo que busca en la web o reescribe ficheros del repo (como el `.living/` de android-design), se borra.
 
 ## Terminado
 
