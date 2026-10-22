@@ -1001,6 +1001,19 @@ El `LIKE` con comodín delante no usa índice: barre la tabla entera en cada pul
 
 ---
 
+### DEC-056 · Hasta publicar en Google Play los lotes no suben la versión
+**Estado:** Aceptada · **Fecha:** 2026-10-22
+
+**Contexto.** Cada lote subía la versión (1.6.0, 1.6.1… 1.8.0) y la etiquetaba, aunque la app no está en Play ni en la pista interna: las versiones que existen fuera son los APK que se reparten a mano. El número dejó de decir qué APK tiene alguien y pasó a contar lotes.
+
+**Decisión.** Un lote no cambia `versionName` ni crea etiqueta. Solo se sube el **PARCHE** (1.8.0 → 1.8.1) cuando el propietario pide un APK para dárselo a alguien, y entonces se etiqueta en el commit del que sale. El lanzamiento en Google Play será la **2.0.0**. Después del lanzamiento vuelve la regla MAYOR.MENOR.PARCHE de siempre (un arreglo sube el parche, algo nuevo el menor). Lo entregado entre dos APK va en la sección «Sin publicar» del `CHANGELOG.md` y pasa a la versión de ese APK cuando se genera.
+
+**Consecuencias.** `versionCode` no cambia de cálculo (sigue derivándose de `versionName`). La versión actual (1.8.0) y las etiquetas existentes se quedan como están. Entre APK, «Acerca de» enseña la versión del último APK y no la del último lote.
+
+**Qué la invalidaría.** Repartir APK con mucha frecuencia, hasta que el parche pierda el sentido (entonces, Firebase App Distribution, ver `project_distribucion_apk`), o publicar en Play antes de lo previsto.
+
+---
+
 ## Pendientes de decidir
 
 Se registran aquí para que no se decidan por omisión.

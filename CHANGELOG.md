@@ -2,6 +2,14 @@
 
 Historial de cambios del proyecto (API Spring Boot + app Android). Ver también el [README](README.md).
 
+### Sin publicar
+
+Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que se entrega entre dos APK se apunta aquí y pasa a la versión del siguiente APK cuando el propietario lo pida. Último APK etiquetado: `v1.8.0`.
+
+| Hash | Descripción |
+|---|---|
+| — | docs(decisiones,reglas): DEC-056, la regla de versiones (los lotes no suben la versión ni se etiquetan hasta Play; solo el parche al pedir un APK; Play será la 2.0.0). |
+
 ### 2026-10-22
 
 | Hash | Descripción |

@@ -86,7 +86,8 @@ Todo cambio funcional se anota en `CHANGELOG.md` con su hash.
 
 Reglas fijas: no hace falta repetirlas en cada encargo.
 
-- **Flujo.** Rama por tarea → CI en verde → fusión en `main` → esperar a que Render despliegue la API (`/actuator/info` da el commit) → comprobar en producción con cuentas de prueba, que luego se borran → borrar la rama. Etiqueta solo cuando el lote sube la versión de la app.
+- **Flujo.** Rama por tarea → CI en verde → fusión en `main` → esperar a que Render despliegue la API (`/actuator/info` da el commit) → comprobar en producción con cuentas de prueba, que luego se borran → borrar la rama. Un lote **no cambia `versionName` ni crea etiqueta** (DEC-056).
+- **Versión.** Hasta publicar en Google Play, los lotes no suben la versión. Solo se sube el **PARCHE** (1.8.0 → 1.8.1) cuando el propietario pide un APK para dárselo a alguien, y entonces se etiqueta (`vX.Y.Z`). El lanzamiento en Google Play será la **2.0.0**; después vuelve la regla MAYOR.MENOR.PARCHE de siempre. Lo que se entrega entre APK va en «Sin publicar» del `CHANGELOG.md`.
 - **Autoría.** Nunca `Co-Authored-By` ni ninguna mención a Claude como autor, ni en commits ni en el `CHANGELOG.md`.
 - **Credenciales.** Nunca en ficheros, commits, logs ni informes: solo en variables de entorno de los comandos.
 - **Web.** Si cambia `web/`, el zip va al escritorio con el formato de `web/README.md`, y el informe lo dice.
