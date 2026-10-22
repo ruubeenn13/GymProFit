@@ -8,6 +8,7 @@ import com.gymprofit.api.enums.Equipamiento;
 import com.gymprofit.api.enums.GrupoMuscular;
 import com.gymprofit.api.exceptions.ExternalServiceException;
 import com.gymprofit.api.repository.jpa.IEjercicioRepository;
+import com.gymprofit.api.service.ejercicio.CatalogoEs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -156,15 +157,11 @@ public class WgerImportService {
     private final RestClient restClient;
     private final Logger logger = LoggerFactory.getLogger(WgerImportService.class);
 
-    // Traducción automática EN→ES (MyMemory) para los ejercicios que wger no cubre,
-    // así TODO el catálogo es bilingüe. Cacheada para no repetir llamadas.
-    // OJO: el "|" de langpair va codificado (%7C); si no, URI.create lo rechaza y toda
-    // traducción lanza excepción → el catálogo quedaría en inglés.
-    private static final String MYMEMORY_URL =
-            "https://api.mymemory.translated.net/get?langpair=en%%7Ces&de=gymprofit.dev@gmail.com&q=%s";
-    private final Map<String, String> cacheTraduccion = new HashMap<>();
+    // El español de nombres y descripciones sale de catalogo/ejercicios-es.csv (GP-217), escrito
+    // a mano. Ya no hay traductor automático: lo que no está en el CSV se queda en inglés y se
+    // avisa en el log.
+    private final CatalogoEs catalogoEs;
 
-    // Resumen del import devuelto al panel admin.
     public record ImportResumen(int nuevos, int actualizados, int omitidos, int desactivados) {}
 
     // Ejercicio de free-exercise-db relevante para el cruce: 2 fotogramas,
@@ -175,9 +172,11 @@ public class WgerImportService {
     // Entrada del índice difuso: tokens del nombre FED + su ejercicio.
     private record FedTokens(Set<String> tokens, FedEjercicio ejercicio) {}
 
-    public WgerImportService(IEjercicioRepository ejercicioRepository, ObjectMapper objectMapper) {
+    public WgerImportService(IEjercicioRepository ejercicioRepository, ObjectMapper objectMapper,
+                             CatalogoEs catalogoEs) {
         this.ejercicioRepository = ejercicioRepository;
         this.objectMapper = objectMapper;
+        this.catalogoEs = catalogoEs;
         // Import batch (no interactivo) → timeouts más generosos
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setConnectTimeout(10_000);
@@ -298,20 +297,6 @@ public class WgerImportService {
         return indice;
     }
 
-    // Traduce las instrucciones FED al español frase a frase (cada paso <480 → traducible)
-    // y las une numeradas "1. ...\n2. ...". Fallback: la frase en inglés si no traduce.
-    private String traducirPasos(JsonNode nodo) {
-        StringBuilder sb = new StringBuilder();
-        int paso = 1;
-        for (JsonNode inst : nodo.path("instructions")) {
-            String texto = inst.asText("").trim();
-            if (texto.isEmpty()) continue;
-            if (sb.length() > 0) sb.append('\n');
-            sb.append(paso++).append(". ").append(traducir(texto));
-        }
-        return sb.length() == 0 ? null : sb.toString();
-    }
-
     // Instrucciones EN de FED como pasos numerados "1. ...\n2. ..."
     private String instruccionesFed(JsonNode e) {
         StringBuilder sb = new StringBuilder();
@@ -382,8 +367,8 @@ public class WgerImportService {
     }
 
     // Convierte un ejercicio de free-exercise-db en entidad Ejercicio. TODOS traen
-    // 2 fotogramas → todos con demostración. Enriquece nombre/descripción con la
-    // traducción ES de wger si el nombre matchea; si no, queda en inglés (fallback).
+    // 2 fotogramas → todos con demostración. El español sale del CSV del catálogo; sin él,
+    // queda en inglés (fallback).
     // Visible en el paquete para los tests (GP-122).
     Optional<Ejercicio> mapearFed(JsonNode nodo, Map<String, WgerEs> wgerEs) {
         JsonNode imagenes = nodo.path("images");
@@ -409,12 +394,18 @@ public class WgerImportService {
         String[] equipoFed = EQUIPO_FED.get(nodo.path("equipment").asText(null));
         String fedProse = instruccionesFed(nodo);   // pasos EN numerados (descripción base)
 
-        // BILINGÜE: nombre/descripción ES desde wger si matchea (traducción humana);
-        // si no, se traducen automáticamente (MyMemory, frase a frase); EN = el de FED.
+        // BILINGÜE: el español es el del CSV del catálogo (GP-217); si el ejercicio no está,
+        // se queda en inglés y se avisa. El inglés no cambia: el de wger si matchea, si no el de FED.
         WgerEs w = wgerEs.get(claveEstricta(nombreEn));
-        String nombreEs = (w != null && w.nombreEs() != null) ? w.nombreEs() : traducir(nombreEn);
-        String descEs = (w != null && w.descEs() != null) ? w.descEs() : traducirPasos(nodo);
+        Optional<CatalogoEs.Entrada> es = catalogoEs.de(fedId);
+        if (es.isEmpty()) {
+            logger.warn("Ejercicio sin español en {}: {} ({}); se queda en inglés",
+                    CatalogoEs.RECURSO, fedId, nombreEn);
+        }
         String descEn = (w != null && w.descEn() != null) ? w.descEn() : fedProse;
+        String nombreEs = es.map(CatalogoEs.Entrada::nombre).orElse(nombreEn);
+        // Sin texto original no hay descripción que traducir: queda vacía en el CSV y aquí.
+        String descEs = es.map(CatalogoEs.Entrada::descripcion).map(d -> d.isEmpty() ? null : d).orElse(descEn);
 
         Ejercicio e = new Ejercicio();
         e.setFedId(truncar(fedId, 120));
@@ -558,32 +549,5 @@ public class WgerImportService {
     // Más precisa que claveExacta → menos falsos positivos en el cruce con wger.
     private String claveEstricta(String nombre) {
         return nombre.toLowerCase().replaceAll("\\(.*?\\)", "").replaceAll("[^a-z0-9]", "");
-    }
-
-    // Traduce EN→ES vía MyMemory (gratis). Cacheada. Ante cualquier problema (fallo de
-    // red, cuota, texto demasiado largo) devuelve el original en inglés como fallback.
-    private String traducir(String textoEn) {
-        if (textoEn == null || textoEn.isBlank() || textoEn.length() > 480) return textoEn;
-        String cache = cacheTraduccion.get(textoEn);
-        if (cache != null) return cache;
-
-        String resultado = textoEn;
-        try {
-            // Throttle: MyMemory rate-limitea los bursts (sin esto, todo cae a inglés).
-            Thread.sleep(90);
-            String url = String.format(MYMEMORY_URL,
-                    java.net.URLEncoder.encode(textoEn, java.nio.charset.StandardCharsets.UTF_8));
-            String body = restClient.get().uri(java.net.URI.create(url)).retrieve().body(String.class);
-            JsonNode d = objectMapper.readTree(body);
-            String t = d.path("responseData").path("translatedText").asText("");
-            String up = t.toUpperCase();
-            if (!t.isBlank() && !up.contains("QUOTA") && !up.contains("MYMEMORY WARNING") && !up.contains("INVALID")) {
-                resultado = t;
-            }
-        } catch (Exception ignore) {
-            // fallback: queda el inglés
-        }
-        cacheTraduccion.put(textoEn, resultado);
-        return resultado;
     }
 }
