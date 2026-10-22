@@ -6,6 +6,11 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `780a06b` | fix(android): **arreglos del revisor de UI en la sesión en vivo** (GP-210): la notificación sale en el idioma de la app y dice lo mismo que el panel, «−15 s» y «+15 s» son tonales y «Saltar» el botón principal, «Terminar» es tonal, la serie que toca queda a la vista sobre el panel con letra 1,3 y «La última vez» deja de usar el color de acento. |
+| `0a25cce` | feat(android,documentacion): **la sesión en vivo y el descanso con Live Update** (GP-210 paso 3): cabecera con tiempo, volumen y series que suman al marcar, «Tu récord» junto a «Anterior», aviso dorado con trofeo, chispas y brillo, panel del descanso con aro que se vacía y la serie siguiente, y la notificación de la sesión promovida a Live Update en Android 16 con «+15 s» y «Saltar» (en todas las versiones). Momentos 24 a 27 en DEC-039 y `Movimiento` (`SUMA`, `ORO`, `BAJA`). Permiso normal `POST_PROMOTED_NOTIFICATIONS`. Versión **1.7.0**. Sin cambios en la API. |
+| `185bd72` | feat(android): **el récord en mitad de la serie y el volumen de la sesión** (GP-210): la regla de GP-088 al marcar, una sola celebración por ejercicio y sesión (también tras matar la app), mejor marca desde `/records` y la progresión. |
+| `c15b676` | build(reglas): `autoMemoryDirectory` pasa de `.claude/settings.json` a `settings.local.json`. |
+| `53df5ea` | docs(documentacion): el informe de GP-207 recoge el login de Render hecho. |
 | `fe4be42` | docs(documentacion): el [informe del lote 1.6.9](documentacion/estado/2026-10-22-lote-1.6.9.md). |
 | `3f7d9eb` | docs(documentacion): **inventario de pantallas de la app** (GP-216): 46 entradas y 97 capturas de la cuenta sembrada, con cómo se llega a cada una, observaciones y la tabla de medidas de `res/`. |
 | `ffb694b` | build(scripts): `scripts/medir-layouts.py` cuenta padding, margin, radios, elevación y `textSize` frente a `dimens.xml`. |
