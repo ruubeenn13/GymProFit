@@ -352,4 +352,46 @@ public class LogicaSesionTest {
         assertEquals(2, t.ejerciciosTotales);
         assertEquals(3, t.sinMarcar());
     }
+
+    // ── Volumen (GP-210 paso 3: la cabecera suma al marcar) ──
+
+    @Test
+    public void el_volumen_suma_peso_por_repeticiones_de_las_series_hechas() {
+        SesionEnCurso s = new SesionEnCurso();
+        SesionEnCurso.Ejercicio e = ejercicio(1, 3);
+        e.series.get(0).peso = "82,5";
+        e.series.get(0).repeticiones = "8";
+        e.series.get(0).hecha = true;
+        e.series.get(1).peso = "85";
+        e.series.get(1).repeticiones = "7";
+        e.series.get(1).hecha = true;
+        e.series.get(2).peso = "90";
+        e.series.get(2).repeticiones = "5";
+        s.ejercicios = Collections.singletonList(e);
+
+        assertEquals("82,5×8 + 85×7; la tercera no está hecha", 660 + 595, LogicaSesion.volumen(s), 0.001);
+    }
+
+    @Test
+    public void el_volumen_no_cuenta_peso_corporal_ni_tiempo_ni_lo_ilegible() {
+        SesionEnCurso s = new SesionEnCurso();
+        SesionEnCurso.Ejercicio e = ejercicio(1, 4);
+        e.series.get(0).repeticiones = "12";           // peso corporal
+        e.series.get(1).segundos = "0:45";             // por tiempo
+        e.series.get(2).peso = "abc";
+        e.series.get(2).repeticiones = "8";            // ilegible
+        e.series.get(3).peso = "50";
+        e.series.get(3).repeticiones = "10";
+        for (SesionEnCurso.Serie serie : e.series) serie.hecha = true;
+        s.ejercicios = Collections.singletonList(e);
+
+        assertEquals(500, LogicaSesion.volumen(s), 0.001);
+    }
+
+    @Test
+    public void sin_series_hechas_el_volumen_es_cero() {
+        SesionEnCurso s = new SesionEnCurso();
+        s.ejercicios = Collections.singletonList(ejercicio(1, 2));
+        assertEquals(0, LogicaSesion.volumen(s), 0.001);
+    }
 }

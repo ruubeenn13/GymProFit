@@ -44,6 +44,8 @@ public class SesionEnCursoRepositorioTest {
         final List<Respuesta<List<RutinaEjercicio>>> ejercicios = new ArrayList<>();
         final List<List<Integer>> ultimaVezPedidos = new ArrayList<>();
         final List<Respuesta<List<UltimaVez>>> ultimaVez = new ArrayList<>();
+        final List<List<Integer>> marcasPedidas = new ArrayList<>();
+        final List<Respuesta<Map<Integer, SesionEnCurso.Marca>>> marcas = new ArrayList<>();
         final List<Map<String, Object>> guardados = new ArrayList<>();
         final List<Respuesta<SesionEntrenamiento>> guardar = new ArrayList<>();
 
@@ -52,6 +54,11 @@ public class SesionEnCursoRepositorioTest {
         @Override public void ultimaVez(List<Integer> ids, Respuesta<List<UltimaVez>> r) {
             ultimaVezPedidos.add(ids);
             ultimaVez.add(r);
+        }
+
+        @Override public void mejoresMarcas(List<Integer> ids, Respuesta<Map<Integer, SesionEnCurso.Marca>> r) {
+            marcasPedidas.add(ids);
+            marcas.add(r);
         }
 
         @Override public void guardarCompleta(Map<String, Object> cuerpo, Respuesta<SesionEntrenamiento> r) {
