@@ -783,7 +783,7 @@
     </string-array>
 
     <!-- GP-105 · Nutrición -->
-    <string name="nutricion_historial_a11y">Historial y estadísticas</string>
+    <string name="nutricion_historial_a11y">Tu semana de nutrición</string>
     <string name="nutricion_elegir_dia_a11y">Elegir otro día</string>
     <string name="nutricion_te_quedan">Te quedan</string>
     <string name="nutricion_te_pasas">Te pasas</string>
@@ -1938,7 +1938,7 @@
         <item quantity="other">%d récords nuevos</item>
     </plurals>
     <string name="resumen_ultima_vez_titulo">Frente a la última vez</string>
-    <string name="resumen_kilos_fila">%1$s kg</string>
+    <string name="resumen_kilos_fila">%1$s kg</string>
     <string name="resumen_pct_sube">+%1$d %%</string>
     <string name="resumen_pct_baja">−%1$d %%</string>
     <string name="resumen_pct_igual">igual</string>
@@ -1954,15 +1954,15 @@
     <string name="resumen_logro_a11y">Logro conseguido: %1$s</string>
 
     <!-- Para recuperar (tablero 11 de nutrición, decisión 12) -->
-    <string name="recuperar_titulo_falta">Para recuperar, hoy te faltan %1$d g de proteína</string>
+    <string name="recuperar_titulo_falta">Para recuperar, hoy te faltan %1$d g de proteína</string>
     <string name="recuperar_titulo_conseguida">Proteína del día, conseguida</string>
     <string name="recuperar_subtitulo">Lo que cuenta es la proteína de todo el día.</string>
     <string name="recuperar_barra_rotulo">Proteína de hoy</string>
-    <string name="recuperar_barra_valor">%1$d de %2$d g</string>
+    <string name="recuperar_barra_valor">%1$d de %2$d g</string>
     <string name="recuperar_barra_a11y">Proteína de hoy: %1$d de %2$d gramos</string>
     <string name="recuperar_barra_a11y_falta">Proteína de hoy: %1$d de %2$d gramos, te faltan %3$d</string>
     <string name="recuperar_barra_a11y_conseguida">Proteína de hoy: %1$d de %2$d gramos, conseguida</string>
-    <string name="recuperar_idea_detalle">%1$s · %2$d g de proteína · %3$d kcal</string>
+    <string name="recuperar_idea_detalle">%1$s · %2$d g de proteína · %3$d kcal</string>
     <string name="recuperar_idea_apuntar">Apuntar %1$s, %2$s</string>
     <string name="recuperar_idea_quitar">Quitar %1$s</string>
     <string name="recuperar_nota_desayuno">Se apuntan en el desayuno, la comida que toca ahora</string>
@@ -1971,4 +1971,62 @@
     <string name="recuperar_nota_merienda">Se apuntan en la merienda, la comida que toca ahora</string>
     <string name="recuperar_nota_cena">Se apuntan en la cena, la comida que toca ahora</string>
     <string name="recuperar_error">No se han podido cargar las ideas para recuperar.</string>
+
+    <!-- ===== Tu semana de nutrición (tablero 12, decisión 13; GP-210 paso 1) ===== -->
+    <string name="sn_titulo">Tu semana</string>
+    <string name="sn_a11y_anterior">Semana anterior</string>
+    <string name="sn_a11y_siguiente">Semana siguiente</string>
+    <string name="sn_rango_mismo_mes">%1$d – %2$d de %3$s</string>
+    <string name="sn_rango_distinto_mes">%1$d de %2$s – %3$d de %4$s</string>
+    <string name="sn_error">No se ha podido cargar tu semana de nutrición.</string>
+    <string name="sn_vacio">No hay nada apuntado en esta semana.</string>
+    <string name="sn_ver_mas">Ver semanas y meses</string>
+
+    <string name="sn_proteina">Proteína</string>
+    <string name="sn_proteina_dias">%1$d de %2$d</string>
+    <plurals name="sn_proteina_unidad">
+        <item quantity="one">día conseguida</item>
+        <item quantity="other">días conseguida</item>
+    </plurals>
+    <string name="sn_proteina_media">Media: %1$d g de %2$d</string>
+    <string name="sn_proteina_media_sin_objetivo">Media: %1$d g</string>
+    <string name="sn_objetivo_g">%1$d g</string>
+    <string name="sn_proteina_a11y">Proteína por día, objetivo %1$d gramos: %2$s.</string>
+    <string name="sn_proteina_a11y_sin_objetivo">Proteína por día: %1$s.</string>
+    <string name="sn_a11y_dia_valor">%1$s %2$d</string>
+    <string name="sn_a11y_dia_sin_datos">%1$s sin datos</string>
+    <string name="sn_a11y_entrenaste">Entrenaste %1$s.</string>
+    <plurals name="sn_obs_entreno">
+        <item quantity="one">El día que entrenaste, llegaste a tu proteína.</item>
+        <item quantity="other">Los %d días que entrenaste, llegaste a tu proteína.</item>
+    </plurals>
+    <string name="sn_obs_finde">Entre semana llegas siempre; el fin de semana te quedas en %1$d g.</string>
+
+    <string name="sn_completos">Días completos</string>
+    <string name="sn_completos_unidad">con todo apuntado</string>
+    <string name="sn_completos_a11y">Días completos: %1$d de %2$d. %3$s</string>
+
+    <string name="sn_kcal">Calorías</string>
+    <string name="sn_kcal_unidad">de media al día</string>
+    <string name="sn_kcal_pct">%1$d %% de %2$s</string>
+    <string name="sn_kcal_a11y">Calorías por día: %1$s.</string>
+    <string name="sn_kcal_a11y_objetivo">Calorías por día, objetivo %1$d: %2$s.</string>
+
+    <string name="sn_agua">Agua</string>
+    <string name="sn_agua_unidad_objetivo">de media, de %1$s</string>
+    <string name="sn_agua_unidad">de media</string>
+    <string name="sn_agua_litros">%1$s L</string>
+    <string name="sn_agua_dias">%1$d de %2$d días</string>
+    <string name="sn_agua_a11y_objetivo">Media de agua: %1$s de %2$s litros</string>
+    <string name="sn_agua_a11y">Media de agua: %1$s litros</string>
+
+    <string name="sn_mas_comido">Lo que más has comido</string>
+    <plurals name="sn_veces">
+        <item quantity="one">%d vez</item>
+        <item quantity="other">%d veces</item>
+    </plurals>
+
+    <string name="sn_lunes_titulo">Tu semana de nutrición</string>
+    <string name="sn_lunes_texto">Mira cómo fue la semana pasada: proteína, días completos, calorías y agua.</string>
+    <string name="sn_lunes_cerrar">Cerrar el aviso de tu semana</string>
 </resources>

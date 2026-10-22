@@ -259,6 +259,19 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
         editor.putString(PREFIJO_DIA_CELEBRADO + getUsuarioId(), fecha).apply();
     }
 
+    // ── «Tu semana de nutrición» de los lunes (GP-210 paso 1) ──
+    private static final String PREFIJO_AVISO_SEMANA = "aviso_semana_cerrado_";
+
+    /** El lunes (yyyy-MM-dd) de la última tarjeta de «Tu semana» que se cerró, o null. Por cuenta. */
+    @androidx.annotation.Nullable
+    public String getAvisoSemanaCerrado() {
+        return prefs.getString(PREFIJO_AVISO_SEMANA + getUsuarioId(), null);
+    }
+
+    public void setAvisoSemanaCerrado(@NonNull String lunes) {
+        editor.putString(PREFIJO_AVISO_SEMANA + getUsuarioId(), lunes).apply();
+    }
+
     // ── Programas (GP-074, lote 1.2.1) ──
     // Dónde entrena y cuántos días, lo último que eligió en Programas. Por cuenta: en un
     // móvil con dos cuentas cada una tiene lo suyo. La primera vez, gimnasio y 3 días.

@@ -208,7 +208,7 @@ public class ResumenSesionActivity extends AppCompatActivity {
             String total = formatoMiles(Math.round(kilos));
             // Una sola frase para TalkBack: el número no se anuncia contando.
             layoutCelebracion.setContentDescription(getString(R.string.resumen_a11y_kilos, total));
-            ViewCompat.setImportantForAccessibility(layoutCelebracion, View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            ViewCompat.setImportantForAccessibility(layoutCelebracion, ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_YES);
             layoutCelebracion.setFocusable(true);
             for (int i = 0; i < ((LinearLayout) layoutCelebracion).getChildCount(); i++) {
                 ((LinearLayout) layoutCelebracion).getChildAt(i)

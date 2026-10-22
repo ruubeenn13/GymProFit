@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_semana_nutricion — «Tu semana de nutrición» (tablero 12 del lienzo de nutrición,
+  decisión 13; GP-210 paso 1). De lunes a domingo, con el selector de semana arriba y cinco
+  tarjetas: proteína (con sus observaciones), días completos, calorías, agua y lo que más has
+  comido. Sin notificación: se llega desde la cabecera de Nutrición y desde la tarjeta de los
+  lunes. Cargando, error y vacío, con view_estado. Lo rellena SemanaNutricionActivity.
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?attr/android:colorBackground">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/Widget.GymProFit.Cabecera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/android:colorBackground"
+        app:title="@string/sn_titulo" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ScrollView
+            android:id="@+id/scrollSemana"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="32dp">
+
+                <!-- El selector de semana -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/btnSemanaAnterior"
+                        style="@style/Widget.GymProFit.BotonIcono"
+                        android:contentDescription="@string/sn_a11y_anterior"
+                        android:rotation="180"
+                        android:src="@drawable/ic_ms_chevron_right"
+                        app:tint="?attr/colorOnSurfaceVariant" />
+
+                    <TextView
+                        android:id="@+id/tvRangoSemana"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:accessibilityLiveRegion="polite"
+                        android:gravity="center"
+                        android:minWidth="170dp"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="@dimen/text_fila"
+                        android:textStyle="bold" />
+
+                    <ImageButton
+                        android:id="@+id/btnSemanaSiguiente"
+                        style="@style/Widget.GymProFit.BotonIcono"
+                        android:contentDescription="@string/sn_a11y_siguiente"
+                        android:src="@drawable/ic_ms_chevron_right"
+                        app:tint="?attr/colorOnSurfaceVariant" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/contenidoSemana"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- Proteína -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardProteina"
+                        style="@style/Widget.GymProFit.Card.Estructura"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="bottom"
+                                android:orientation="horizontal">
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        style="@style/Widget.GymProFit.Seccion"
+                                        android:text="@string/sn_proteina"
+                                        android:textColor="?attr/colorOnSurfaceVariant" />
+
+                                    <LinearLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:baselineAligned="true"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:id="@+id/tvProteinaDias"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:fontFamily="@font/barlow_condensed"
+                                            android:includeFontPadding="false"
+                                            android:textColor="@color/gp_gold_text"
+                                            android:textSize="@dimen/text_number"
+                                            android:textStyle="bold" />
+
+                                        <TextView
+                                            android:id="@+id/tvProteinaUnidad"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="8dp"
+                                            android:textColor="?attr/colorOnSurfaceVariant"
+                                            android:textSize="@dimen/text_fila" />
+                                    </LinearLayout>
+                                </LinearLayout>
+
+                                <ImageView
+                                    android:id="@+id/ivProteinaMedalla"
+                                    android:layout_width="36dp"
+                                    android:layout_height="36dp"
+                                    android:importantForAccessibility="no"
+                                    android:src="@drawable/ic_ms_workspace_premium_fill"
+                                    app:tint="@color/gp_gold" />
+                            </LinearLayout>
+
+                            <es.pmdm.gymprofit.ui.widget.BarrasSemanaView
+                                android:id="@+id/barrasProteina"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="14dp"
+                                android:focusable="true" />
+
+                            <TextView
+                                android:id="@+id/tvProteinaMedia"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="14dp"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:textSize="@dimen/text_body" />
+
+                            <LinearLayout
+                                android:id="@+id/observacionesSemana"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="12dp"
+                                android:orientation="vertical" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Días completos -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardCompletos"
+                        style="@style/Widget.GymProFit.Card.Estructura"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="16dp">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    style="@style/Widget.GymProFit.Seccion"
+                                    android:text="@string/sn_completos"
+                                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/tvCompletosDias"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/barlow_condensed"
+                                        android:includeFontPadding="false"
+                                        android:textColor="@color/gp_success"
+                                        android:textSize="@dimen/text_display"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="8dp"
+                                        android:text="@string/sn_completos_unidad"
+                                        android:textColor="?attr/colorOnSurfaceVariant"
+                                        android:textSize="@dimen/text_caption" />
+                                </LinearLayout>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/puntosCompletos"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:focusable="true"
+                                android:orientation="horizontal" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Calorías -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardKcal"
+                        style="@style/Widget.GymProFit.Card.Estructura"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        style="@style/Widget.GymProFit.Seccion"
+                                        android:text="@string/sn_kcal"
+                                        android:textColor="?attr/colorOnSurfaceVariant" />
+
+                                    <LinearLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:id="@+id/tvKcalMedia"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:fontFamily="@font/barlow_condensed"
+                                            android:includeFontPadding="false"
+                                            android:textColor="?attr/colorOnSurface"
+                                            android:textSize="@dimen/text_display"
+                                            android:textStyle="bold" />
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="8dp"
+                                            android:text="@string/sn_kcal_unidad"
+                                            android:textColor="?attr/colorOnSurfaceVariant"
+                                            android:textSize="@dimen/text_caption" />
+                                    </LinearLayout>
+                                </LinearLayout>
+
+                                <TextView
+                                    android:id="@+id/tvKcalPorcentaje"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="?attr/colorOnSurfaceVariant"
+                                    android:textSize="@dimen/text_body" />
+                            </LinearLayout>
+
+                            <es.pmdm.gymprofit.ui.widget.BarrasSemanaView
+                                android:id="@+id/barrasKcal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="12dp"
+                                android:focusable="true" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Agua -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardAgua"
+                        style="@style/Widget.GymProFit.Card.Estructura"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        style="@style/Widget.GymProFit.Seccion"
+                                        android:text="@string/sn_agua"
+                                        android:textColor="?attr/colorOnSurfaceVariant" />
+
+                                    <LinearLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+
+                                        <TextView
+                                            android:id="@+id/tvAguaMedia"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:fontFamily="@font/barlow_condensed"
+                                            android:includeFontPadding="false"
+                                            android:textColor="@color/gp_agua"
+                                            android:textSize="@dimen/text_display"
+                                            android:textStyle="bold" />
+
+                                        <TextView
+                                            android:id="@+id/tvAguaUnidad"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="8dp"
+                                            android:textColor="?attr/colorOnSurfaceVariant"
+                                            android:textSize="@dimen/text_caption" />
+                                    </LinearLayout>
+                                </LinearLayout>
+
+                                <TextView
+                                    android:id="@+id/tvAguaDias"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="?attr/colorOnSurfaceVariant"
+                                    android:textSize="@dimen/text_body" />
+                            </LinearLayout>
+
+                            <com.google.android.material.progressindicator.LinearProgressIndicator
+                                android:id="@+id/progresoAgua"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:max="100"
+                                app:indicatorColor="@color/gp_agua"
+                                app:indicatorTrackGapSize="0dp"
+                                app:trackColor="@color/gp_meter_track"
+                                app:trackCornerRadius="5dp"
+                                app:trackStopIndicatorSize="0dp"
+                                app:trackThickness="10dp" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Lo que más has comido -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardMasComido"
+                        style="@style/Widget.GymProFit.Card.Estructura"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:visibility="gone">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:paddingStart="16dp"
+                            android:paddingEnd="16dp"
+                            android:paddingTop="12dp"
+                            android:paddingBottom="6dp">
+
+                            <TextView
+                                style="@style/Widget.GymProFit.Seccion"
+                                android:paddingBottom="4dp"
+                                android:text="@string/sn_mas_comido"
+                                android:textColor="?attr/colorOnSurfaceVariant" />
+
+                            <LinearLayout
+                                android:id="@+id/listaMasComido"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnVerMas"
+                        style="@style/Widget.GymProFit.BotonPildora.Contorno"
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="18dp"
+                        android:text="@string/sn_ver_mas" />
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+
+        <include
+            android:id="@+id/estadoSemana"
+            layout="@layout/view_estado" />
+    </FrameLayout>
+</LinearLayout>

@@ -765,7 +765,7 @@
     </string-array>
 
     <!-- GP-105 · Nutrición -->
-    <string name="nutricion_historial_a11y">History and stats</string>
+    <string name="nutricion_historial_a11y">Your nutrition week</string>
     <string name="nutricion_elegir_dia_a11y">Pick another day</string>
     <string name="nutricion_te_quedan">Left</string>
     <string name="nutricion_te_pasas">Over by</string>
@@ -1913,7 +1913,7 @@
         <item quantity="other">%d new records</item>
     </plurals>
     <string name="resumen_ultima_vez_titulo">Compared with last time</string>
-    <string name="resumen_kilos_fila">%1$s kg</string>
+    <string name="resumen_kilos_fila">%1$s kg</string>
     <string name="resumen_pct_sube">+%1$d%%</string>
     <string name="resumen_pct_baja">−%1$d%%</string>
     <string name="resumen_pct_igual">same</string>
@@ -1929,15 +1929,15 @@
     <string name="resumen_logro_a11y">Achievement unlocked: %1$s</string>
 
     <!-- To recover (nutrition board 11, decision 12) -->
-    <string name="recuperar_titulo_falta">To recover, you\'re %1$d g of protein short today</string>
+    <string name="recuperar_titulo_falta">To recover, you\'re %1$d g of protein short today</string>
     <string name="recuperar_titulo_conseguida">Daily protein, reached</string>
     <string name="recuperar_subtitulo">What counts is the protein of the whole day.</string>
     <string name="recuperar_barra_rotulo">Protein today</string>
-    <string name="recuperar_barra_valor">%1$d of %2$d g</string>
+    <string name="recuperar_barra_valor">%1$d of %2$d g</string>
     <string name="recuperar_barra_a11y">Protein today: %1$d of %2$d grams</string>
     <string name="recuperar_barra_a11y_falta">Protein today: %1$d of %2$d grams, %3$d to go</string>
     <string name="recuperar_barra_a11y_conseguida">Protein today: %1$d of %2$d grams, reached</string>
-    <string name="recuperar_idea_detalle">%1$s · %2$d g of protein · %3$d kcal</string>
+    <string name="recuperar_idea_detalle">%1$s · %2$d g of protein · %3$d kcal</string>
     <string name="recuperar_idea_apuntar">Log %1$s, %2$s</string>
     <string name="recuperar_idea_quitar">Remove %1$s</string>
     <string name="recuperar_nota_desayuno">They go in your breakfast, the meal that\'s up now</string>
@@ -1946,4 +1946,62 @@
     <string name="recuperar_nota_merienda">They go in your snack, the meal that\'s up now</string>
     <string name="recuperar_nota_cena">They go in your dinner, the meal that\'s up now</string>
     <string name="recuperar_error">Couldn\'t load the recovery ideas.</string>
+
+    <!-- ===== Your nutrition week (board 12, decision 13; GP-210 step 1) ===== -->
+    <string name="sn_titulo">Your week</string>
+    <string name="sn_a11y_anterior">Previous week</string>
+    <string name="sn_a11y_siguiente">Next week</string>
+    <string name="sn_rango_mismo_mes">%3$s %1$d – %2$d</string>
+    <string name="sn_rango_distinto_mes">%2$s %1$d – %4$s %3$d</string>
+    <string name="sn_error">Couldn\'t load your nutrition week.</string>
+    <string name="sn_vacio">Nothing logged this week.</string>
+    <string name="sn_ver_mas">See weeks and months</string>
+
+    <string name="sn_proteina">Protein</string>
+    <string name="sn_proteina_dias">%1$d of %2$d</string>
+    <plurals name="sn_proteina_unidad">
+        <item quantity="one">day reached</item>
+        <item quantity="other">days reached</item>
+    </plurals>
+    <string name="sn_proteina_media">Average: %1$d g of %2$d</string>
+    <string name="sn_proteina_media_sin_objetivo">Average: %1$d g</string>
+    <string name="sn_objetivo_g">%1$d g</string>
+    <string name="sn_proteina_a11y">Protein per day, goal %1$d grams: %2$s.</string>
+    <string name="sn_proteina_a11y_sin_objetivo">Protein per day: %1$s.</string>
+    <string name="sn_a11y_dia_valor">%1$s %2$d</string>
+    <string name="sn_a11y_dia_sin_datos">%1$s no data</string>
+    <string name="sn_a11y_entrenaste">You trained on %1$s.</string>
+    <plurals name="sn_obs_entreno">
+        <item quantity="one">The day you trained, you hit your protein.</item>
+        <item quantity="other">The %d days you trained, you hit your protein.</item>
+    </plurals>
+    <string name="sn_obs_finde">On weekdays you always get there; at the weekend you land on %1$d g.</string>
+
+    <string name="sn_completos">Complete days</string>
+    <string name="sn_completos_unidad">with everything logged</string>
+    <string name="sn_completos_a11y">Complete days: %1$d of %2$d. %3$s</string>
+
+    <string name="sn_kcal">Calories</string>
+    <string name="sn_kcal_unidad">on average per day</string>
+    <string name="sn_kcal_pct">%1$d%% of %2$s</string>
+    <string name="sn_kcal_a11y">Calories per day: %1$s.</string>
+    <string name="sn_kcal_a11y_objetivo">Calories per day, goal %1$d: %2$s.</string>
+
+    <string name="sn_agua">Water</string>
+    <string name="sn_agua_unidad_objetivo">on average, of %1$s</string>
+    <string name="sn_agua_unidad">on average</string>
+    <string name="sn_agua_litros">%1$s L</string>
+    <string name="sn_agua_dias">%1$d of %2$d days</string>
+    <string name="sn_agua_a11y_objetivo">Average water: %1$s of %2$s liters</string>
+    <string name="sn_agua_a11y">Average water: %1$s liters</string>
+
+    <string name="sn_mas_comido">What you ate most</string>
+    <plurals name="sn_veces">
+        <item quantity="one">%d time</item>
+        <item quantity="other">%d times</item>
+    </plurals>
+
+    <string name="sn_lunes_titulo">Your nutrition week</string>
+    <string name="sn_lunes_texto">See how last week went: protein, complete days, calories and water.</string>
+    <string name="sn_lunes_cerrar">Dismiss the week reminder</string>
 </resources>

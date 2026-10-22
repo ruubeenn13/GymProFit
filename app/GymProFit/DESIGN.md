@@ -65,6 +65,10 @@ typography:
   number-hero:
     fontFamily: "Barlow Condensed"
     fontSize: "56px"
+  number-gigante:
+    fontFamily: "Barlow Condensed"
+    fontSize: "72px"
+    fontWeight: 700
   number:
     fontFamily: "Barlow Condensed"
     fontSize: "44px"
@@ -246,6 +250,7 @@ Los tamaños son los once escalones de `values/dimens.xml` (más `envivo_descans
 | Rol | Familia · tamaño | Dónde (fichero) |
 |---|---|---|
 | Cifra héroe | Condensada · `text_number_hero` 56 sp | La cifra protagonista de una pantalla |
+| Cifra del resumen | Condensada 700 · `text_number_gigante` 72 sp | Los kilos que cuentan desde cero en el resumen del entreno (GP-210, paso 1); la única cifra por encima del héroe |
 | Cifra | Condensada 700 · `text_number` 44 sp | `TextAppearance.GymProFit.Number` y `Font.GymProFit.DisplayLarge`: kcal de hoy, peso, estadísticas |
 | Título de pantalla grande | Condensada 700 · `text_display_large` 30 sp, interletraje 0,01 | `TextAppearance.GymProFit.Display`; título de las cuatro pestañas (`Widget.GymProFit.TituloPestana`) |
 | Título de pantalla | Condensada · `text_display` 26 sp | `Font.GymProFit.DisplaySmall` y `HeadlineLarge` |
@@ -329,6 +334,13 @@ Lo que está en uso. Todo se tematiza por `Theme.GymProFit` (`values/themes.xml`
 - **Tarjeta de récord** (`layout/fragment_inicio.xml`): `cardBackgroundColor` `gp_gold_container` y `strokeColor` `gp_gold`, con el trofeo.
 - **Grupo de Ajustes:** una tarjeta de 18 dp con filas de 52 dp y separadores (`GrupoAjustes`, `FilaAjuste`).
 
+- **Ficha del resumen** (`item_ficha_resumen.xml`, `bg_ficha_resumen*.xml`): píldora informativa de 32 dp (16 dp de radio, `colorSurface`) con un icono de 18 dp; verde (`gp_success_container`) si la sesión sube frente a la anterior de la misma rutina. Bajar no se pinta de rojo.
+- **Tarjeta de récords del resumen** (`activity_resumen_sesion.xml`): `Card.Estructura` con `gp_gold_container` y borde `gp_gold`; una fila `item_record` por récord, con la marca anterior debajo del nombre y las rayas en dorado al 30 %.
+- **«Frente a la última vez»** (`item_ultima_vez.xml`): fila de 48 dp con el ejercicio, sus kilos y el % (verde si sube, neutro si baja o es igual); la primera vez lleva «Primera vez: es tu punto de partida» y ningún %. Entra en cascada (`CASCADA`).
+- **«Para recuperar»** (`view_para_recuperar.xml`, `ui/nutricion/ParaRecuperarSeccion.java`): tarjeta con la proteína del día, su barra (`gp_macro_proteinas`, dorada al conseguirla) y hasta tres ideas con su «+» de 44 dp (`item_idea_recuperar.xml`), el mismo `Anadidos` de Añadir.
+- **Barras de la semana** (`ui/widget/BarrasSemanaView.java`): siete barras con raya discontinua en el objetivo, la letra del día debajo y, en la proteína, un trazo naranja bajo los días entrenados. Vista dibujada a mano: lleva una sola descripción para TalkBack con los siete valores (DEC-019).
+- **Tarjeta de los lunes** (`fragment_nutricion.xml`, `cardAvisoSemana`): en Nutrición, solo los lunes, lleva a la semana pasada; se cierra y vuelve el lunes siguiente.
+
 ### Inputs / Fields
 - `TextInputLayout` de Material (142 apariciones en `res/layout`), tematizado por `Theme.GymProFit` (`colorOutline` y la escala de la app). Error: `UIHelper.marcarError` pone el mensaje en el `TextInputLayout` (sin él, un toast) y lo quita al editar; `Movimiento.temblar` (momento 10) agita el campo o la tarjeta en `CrearAlimentoActivity` y `CrearPlatoActivity`. Contraseña con `ui/widget/CampoContrasena.java`.
 - Selectores: `Spinner` con flecha Material Symbols y 48 dp de alto mínimo (`Widget.GymProFit.Spinner`); píldora deslizante para opciones (`ui/alta/SelectorPildora.java`).
@@ -372,7 +384,7 @@ El movimiento sale de `Movimiento` (`utils/Movimiento.java`) y de nada más: las
 | Elegir y encender | 1 Elegir, 2 «Siguiente», 6 Selector, 15 «+» a ✓, 19 Corazón | estándar → rebote |
 | Entrar en pantalla | 3 Entrar, 8 El programa llega, 16 Cascada, 23 Plato | enfatizada, con escalón |
 | Progreso y cifras | 5 Barra, 7 Cifras que cuentan, 21 Día completo, 22 Un vaso más | estándar y rebote; cifras con `1 − (1 − t)³` |
-| Éxito | 9 Cuenta creada, 12 Récord, 17 Código leído | rebote, enfatizada |
+| Éxito | 9 Cuenta creada, 12 Récord, 17 Código leído, 28 El resumen del entreno | rebote, enfatizada |
 | Error | 10 Error | temblar + mensaje |
 | Salida | 18 Copia de ayer, 20 Borrar y deshacer | estándar |
 
@@ -411,10 +423,9 @@ Lo que hoy es incoherente o no existe. Aquí no se arregla nada.
 4. **Profi, todavía fuera de la app.** Se decidió (22-10-2026) que entre solo en el alta, las pantallas vacías, los logros y «Tu semana», pero no hay ningún recurso, ilustración, estilo ni texto suyo en `res/`; su material vive en el repositorio de marketing. Las pantallas vacías de arriba son justo donde aparecería. «Tu semana» es una pantalla nueva que se abre desde una tarjeta de los lunes en Inicio (GP-210, paso 6). La tarjeta «ESTA SEMANA» (GP-090) se queda como está y Profi no entra en ella.
 5. **Sin escala de espaciado ni de radios declarada.** Los márgenes y radios se escriben en cada layout; hay 13 valores de radio y más de 10 de márgenes en uso (ver Layout y Shapes). Las medidas «del lienzo» viven en estilos sueltos (`estilos_estructura.xml`, `estilos_alta.xml`).
 6. **Elevación incoherente (decidida, pendiente de GP-210, paso 2).** `Widget.GymProFit.Card` declara 1 dp, `Card.Estructura` 0 dp y 21 tarjetas lo fijan a 0 a mano; el comentario de GP-063 dice que el 1 dp es lo que despega la tarjeta en claro. La regla es «borde, no sombra»: `Card` pasa a 0 dp con borde en ese paso.
-7. **Título de DEC-039 desfasado.** La tabla ya recoge los momentos 13 y 14 (del lienzo de nutrición, con `CIFRAS`) y `RESPIRA` (fila «— · Respira», sin número porque no es un momento del lienzo), y `MovimientoTest` la lee entera; pero el título sigue diciendo «doce momentos» y la tabla llega al 23.
-8. **Alias de color heredados sin retirar** (`primary_light`, `golden`, `orange_dark`, `text_primary_dark`, `green_chip`, `red_chip`…), con valores que ya no coinciden en parte con los `gp_*`.
-9. **Contenido de base de datos sin traducir** (DEC-020): 752 de 873 ejercicios con el nombre igual en ES y EN. Se ve en la pantalla de Entrenar.
-10. **Títulos grandes y letra 1,3: no es un fallo nuestro.** Ver «The System Curve Rule» en Typography. Se queda aquí solo para que el medidor, que divide por la escala lineal, no lo vuelva a dar por defecto.
-11. **`sp` escritos a mano que la regla prohíbe.** Quedan 22 `android:textSize="…sp"` literales en `res/layout`, ninguno en `fragment_inicio.xml` (GP-212 pasó el «R» del fundador a `text_title`; `InicioRevisionTest` lo vigila).
-12. **Borde discontinuo sin documentar.** La tarjeta del fundador (`drawable/bg_tarjeta_fundador.xml`), el botón discontinuo (`bg_boton_discontinuo.xml`) y «nueva rutina» (`bg_nueva_rutina.xml`) usan trazo discontinuo, una tercera forma de borde que «Components» no recoge y que el diseño de Inicio aprobado no tiene.
-13. **Inicio con errores de carga.** Con la API devolviendo error, Inicio enseña el mismo mensaje en dos sitios, deja la tarjeta de nutrición sin cifra ni reintento y los puntos de macros sin texto; no usa `VistaEstado`. `cardNutricionHoy` tiene ya nombre accesible (GP-212): el título y, con datos, el resumen de kcal.
+7. **Alias de color heredados sin retirar** (`primary_light`, `golden`, `orange_dark`, `text_primary_dark`, `green_chip`, `red_chip`…), con valores que ya no coinciden en parte con los `gp_*`.
+8. **Contenido de base de datos sin traducir** (DEC-020): 752 de 873 ejercicios con el nombre igual en ES y EN. Se ve en la pantalla de Entrenar.
+9. **Títulos grandes y letra 1,3: no es un fallo nuestro.** Ver «The System Curve Rule» en Typography. Se queda aquí solo para que el medidor, que divide por la escala lineal, no lo vuelva a dar por defecto.
+10. **`sp` escritos a mano que la regla prohíbe.** Quedan 22 `android:textSize="…sp"` literales en `res/layout`, ninguno en `fragment_inicio.xml` (GP-212 pasó el «R» del fundador a `text_title`; `InicioRevisionTest` lo vigila).
+11. **Borde discontinuo sin documentar.** La tarjeta del fundador (`drawable/bg_tarjeta_fundador.xml`), el botón discontinuo (`bg_boton_discontinuo.xml`) y «nueva rutina» (`bg_nueva_rutina.xml`) usan trazo discontinuo, una tercera forma de borde que «Components» no recoge y que el diseño de Inicio aprobado no tiene.
+12. **Inicio con errores de carga.** Con la API devolviendo error, Inicio enseña el mismo mensaje en dos sitios, deja la tarjeta de nutrición sin cifra ni reintento y los puntos de macros sin texto; no usa `VistaEstado`. `cardNutricionHoy` tiene ya nombre accesible (GP-212): el título y, con datos, el resumen de kcal.

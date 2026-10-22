@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   item_idea_recuperar — una de las tres ideas de «Para recuperar» (tablero 11 de nutrición,
-  decisión 12): icono, nombre, lo que lleva (cantidad, proteína y kcal) y el «+» de 44 dp que
+  decisión 12): icono, nombre, lo que lleva (cantidad, proteína y kcal) y el «+» de 48 dp (44 en el lienzo: la zona pulsable manda, DEC-019) que
   la apunta en la comida que toca; apuntada, es un ✓ verde que la quita (momento 15).
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -53,8 +53,8 @@
 
         <FrameLayout
             android:id="@+id/btnIdeaMas"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_marginStart="4dp"
             android:background="@drawable/bg_circulo_superficie"
             android:backgroundTint="?attr/colorSurfaceVariant"
