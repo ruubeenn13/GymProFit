@@ -6,6 +6,10 @@ Historial de cambios del proyecto (API Spring Boot + app Android). Ver también 
 
 | Hash | Descripción |
 |---|---|
+| `fe4be42` | docs(documentacion): el [informe del lote 1.6.9](documentacion/estado/2026-10-22-lote-1.6.9.md). |
+| `3f7d9eb` | docs(documentacion): **inventario de pantallas de la app** (GP-216): 46 entradas y 97 capturas de la cuenta sembrada, con cómo se llega a cada una, observaciones y la tabla de medidas de `res/`. |
+| `ffb694b` | build(scripts): `scripts/medir-layouts.py` cuenta padding, margin, radios, elevación y `textSize` frente a `dimens.xml`. |
+| `d7acca3` | fix(android): el vacío y el error de «Tu semana» ya no tapan el selector de semana (lo encontró el inventario; posterior a `v1.6.9`). |
 | `e3abf69` | fix(android): **arreglos del revisor de UI** en el resumen y la semana (GP-210): los puntos de «Días completos» pasan debajo con letra 1,3 y llevan el estado también por la forma, «Para recuperar» no propone alimentos con menos de 10 g de proteína y la raya del objetivo no cruza su etiqueta. Versión **1.6.9**. |
 | `95da689` | docs(decisiones): **DEC-055** (el resumen del entreno y «Tu semana» salen del servidor lo que no se puede agregar en el móvil) y el momento 28 en DEC-039. El resumen por sesión ya sale del servidor: nota en GP-011. |
 | `5db4ee9` | feat(android): **«Tu semana de nutrición»** (tablero 12, decisión 13 de nutrición) y la tarjeta de los lunes, sin notificación; el botón de la cabecera de Nutrición la abre y las estadísticas quedan en «Ver semanas y meses». |
