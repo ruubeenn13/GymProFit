@@ -2,6 +2,7 @@ package es.pmdm.gymprofit.utils;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -116,12 +117,14 @@ public final class Transiciones {
      * Pone el eje X compartido a un fragmento que entra o sale, para pasar de un paso al
      * siguiente (adelante) o al anterior (atrás).
      *
+     * @param contexto  el de la pantalla que monta el paso.
      * @param fragmento el fragmento que entra o el que sale.
      * @param entra     true si es el que entra.
      * @param adelante  true si se avanza en el flujo.
      */
-    public static void ejeX(@NonNull Fragment fragmento, boolean entra, boolean adelante) {
-        if (Movimiento.quieto(fragmento.requireContext())) return;
+    public static void ejeX(@NonNull Context contexto, @NonNull Fragment fragmento, boolean entra, boolean adelante) {
+        // El contexto lo da quien monta el paso: el fragmento nuevo aún no está añadido y no tiene el suyo.
+        if (Movimiento.quieto(contexto)) return;
         com.google.android.material.transition.MaterialSharedAxis t =
                 new com.google.android.material.transition.MaterialSharedAxis(
                         com.google.android.material.transition.MaterialSharedAxis.X, adelante);

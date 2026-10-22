@@ -132,8 +132,8 @@ public class AltaActivity extends BaseActivity implements Alta {
         boolean adelante = anterior == null || nuevo.ordinal() >= anterior.ordinal();
         Fragment actual = getSupportFragmentManager().findFragmentById(R.id.contenedorAlta);
         Fragment siguiente = fragmento(nuevo);
-        if (actual != null) Transiciones.ejeX(actual, false, adelante);
-        Transiciones.ejeX(siguiente, true, adelante);
+        if (actual != null) Transiciones.ejeX(this, actual, false, adelante);
+        Transiciones.ejeX(this, siguiente, true, adelante);
         getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
                 .replace(R.id.contenedorAlta, siguiente, nuevo.name())

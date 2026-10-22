@@ -250,6 +250,9 @@ public class MovimientoTest {
         assertTrue(t.contains("Movimiento.CONTENEDOR_ABRE") && t.contains("Movimiento.CONTENEDOR_VUELVE"));
         assertTrue(t.contains("Movimiento.ENFATIZADA") && t.contains("Movimiento.ESTANDAR"));
         assertTrue("con «Quitar animaciones» no hay transición de escena", t.contains("Movimiento.quieto("));
+        // El fragmento de un paso aún no está añadido al montarle la transición: pedirle su contexto
+        // reventaba AltaActivity al abrirla (lo vio la prueba del release).
+        assertFalse("Transiciones no puede pedir el contexto a un fragmento sin añadir", t.contains("requireContext"));
     }
 
     @Test
