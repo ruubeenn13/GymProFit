@@ -14,9 +14,9 @@ import es.pmdm.gymprofit.model.comida.Comida;
 // comidas del día de la API) y el mismo objetivo (CalculadoraNutricional con el
 // perfil guardado). Antes lo hacía solo NutricionFragment.
 //
-// Las reglas de color también viven aquí (GP-011 y anteriores): la proteína es un
-// suelo —llegar es bueno, se pone en verde—; carbohidratos y grasas son un techo
-// —pasarse se pone en rojo—.
+// Las reglas de color también viven aquí: la proteína es un suelo —llegar es bueno,
+// se pone en verde—. Carbohidratos y grasas no se pintan: pasarse no es un fallo y el
+// lienzo de nutrición no tiene rojo («sin culpa»); lo que sobra lo dice el texto.
 // ============================================================
 public final class DiaNutricion {
 
@@ -35,7 +35,7 @@ public final class DiaNutricion {
     public final int proteinaMinima, baseProteina;
 
     /** Cómo se pinta una cifra respecto a su objetivo. */
-    public enum Estado { NORMAL, LOGRADO, PASADO }
+    public enum Estado { NORMAL, LOGRADO }
 
     DiaNutricion(int kcal, double proteinas, double carbohidratos, double grasas,
                  int objetivoKcal, int objetivoProteinas, int objetivoCarbohidratos, int objetivoGrasas,
@@ -134,13 +134,5 @@ public final class DiaNutricion {
 
     public Estado estadoProteinas() {
         return proteinas >= objetivoProteinas && objetivoProteinas > 0 ? Estado.LOGRADO : Estado.NORMAL;
-    }
-
-    public Estado estadoCarbohidratos() {
-        return !sinObjetivo && carbohidratos > objetivoCarbohidratos ? Estado.PASADO : Estado.NORMAL;
-    }
-
-    public Estado estadoGrasas() {
-        return !sinObjetivo && grasas > objetivoGrasas ? Estado.PASADO : Estado.NORMAL;
     }
 }

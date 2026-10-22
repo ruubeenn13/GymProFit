@@ -609,10 +609,8 @@ public class NutricionFragment extends BaseFragment {
 
         boolean proteinaHecha = !d.sinObjetivo && d.estadoProteinas() == DiaNutricion.Estado.LOGRADO;
         macroProteina(d, completo, proteinaHecha, celebrar);
-        macro(R.id.macroCarbos, d.carbohidratos, d.objetivoCarbohidratos, d.sinObjetivo,
-                completo ? DiaNutricion.Estado.NORMAL : d.estadoCarbohidratos());
-        macro(R.id.macroGrasas, d.grasas, d.objetivoGrasas, d.sinObjetivo,
-                completo ? DiaNutricion.Estado.NORMAL : d.estadoGrasas());
+        macro(R.id.macroCarbos, d.carbohidratos, d.objetivoCarbohidratos, d.sinObjetivo, DiaNutricion.Estado.NORMAL);
+        macro(R.id.macroGrasas, d.grasas, d.objetivoGrasas, d.sinObjetivo, DiaNutricion.Estado.NORMAL);
 
         if (celebrar) {
             // Momento 21: el ✓ salta, el anillo suelta su halo y vibra una vez.
@@ -1083,7 +1081,6 @@ public class NutricionFragment extends BaseFragment {
     private int colorEstado(DiaNutricion.Estado e) {
         switch (e) {
             case LOGRADO: return ContextCompat.getColor(requireContext(), R.color.gp_success);
-            case PASADO:  return color(androidx.appcompat.R.attr.colorError);
             default:      return color(com.google.android.material.R.attr.colorOnSurface);
         }
     }
