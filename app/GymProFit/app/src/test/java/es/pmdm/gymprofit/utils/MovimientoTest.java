@@ -75,6 +75,25 @@ public class MovimientoTest {
     }
 
     @Test
+    public void elResumenDelEntrenoEstaEnLaTablaYEnElCodigo() throws IOException {
+        // Momento 28 del lienzo de la firma visual (GP-210, paso 1): los kilos cuentan desde cero
+        // (CIFRAS), los récords entran con el momento 12, la comparación cae en cascada
+        // (CASCADA, cada CASCADA_ESCALON) y el medallón del logro salta con TROFEO. No trae
+        // nombres nuevos: reutiliza los de los momentos 7, 12 y 16.
+        Map<String, Long> tabla = duracionesDeLaTabla();
+        Map<String, Long> codigo = duracionesDelCodigo();
+        assertTrue("falta el momento 28 en DEC-039", decision().contains("| 28 · "));
+        for (String c : new String[]{"CIFRAS", "CASCADA", "CASCADA_ESCALON", "TROFEO"}) {
+            assertTrue(c + " no está en la tabla", tabla.containsKey(c));
+            assertTrue(c + " no está en Movimiento", codigo.containsKey(c));
+        }
+        assertEquals(Long.valueOf(1200), codigo.get("CIFRAS"));
+        assertEquals(Long.valueOf(350), codigo.get("CASCADA"));
+        assertEquals(Long.valueOf(40), codigo.get("CASCADA_ESCALON"));
+        assertEquals(Long.valueOf(450), codigo.get("TROFEO"));
+    }
+
+    @Test
     public void borrarYDeshacerEstaEnLaTablaYEnElCodigo() throws IOException {
         // Momento 20 del lienzo del 02-10 (lote 1.6.2): la fila se va, la comida se
         // recoloca y el anillo pasa a su valor nuevo con BARRA.
