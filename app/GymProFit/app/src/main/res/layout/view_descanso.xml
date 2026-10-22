@@ -98,19 +98,23 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDescansoMenos"
-                style="@style/Widget.GymProFit.BotonPildora.Contorno"
+                style="@style/Widget.GymProFit.BotonPildora"
                 android:layout_width="0dp"
+                android:backgroundTint="?attr/colorSurfaceVariant"
                 android:layout_weight="1"
+                android:textColor="?attr/colorOnSurface"
                 android:contentDescription="@string/envivo_descanso_menos_a11y"
                 android:minHeight="48dp"
                 android:text="@string/envivo_descanso_menos" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDescansoMas"
-                style="@style/Widget.GymProFit.BotonPildora.Contorno"
+                style="@style/Widget.GymProFit.BotonPildora"
                 android:layout_width="0dp"
+                android:backgroundTint="?attr/colorSurfaceVariant"
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
+                android:textColor="?attr/colorOnSurface"
                 android:contentDescription="@string/envivo_descanso_mas_a11y"
                 android:minHeight="48dp"
                 android:text="@string/envivo_descanso_mas" />
@@ -121,11 +125,9 @@
                 android:layout_width="0dp"
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
-                android:backgroundTint="?attr/colorPrimaryContainer"
                 android:contentDescription="@string/envivo_descanso_saltar_a11y"
                 android:minHeight="48dp"
-                android:text="@string/envivo_descanso_saltar"
-                android:textColor="?attr/colorOnPrimaryContainer" />
+                android:text="@string/envivo_descanso_saltar" />
         </LinearLayout>
     </LinearLayout>
 

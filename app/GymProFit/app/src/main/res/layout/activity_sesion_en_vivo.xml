@@ -30,7 +30,9 @@
             android:layout_width="wrap_content"
             android:layout_gravity="end"
             android:layout_marginEnd="12dp"
-            android:text="@string/envivo_terminar" />
+            android:backgroundTint="?attr/colorPrimaryContainer"
+            android:text="@string/envivo_terminar"
+            android:textColor="?attr/colorOnPrimaryContainer" />
     </com.google.android.material.appbar.MaterialToolbar>
 
     <!-- Tiempo, series y ejercicios. TalkBack lo lee de una vez. -->

@@ -53,7 +53,9 @@ public final class NotificacionSesion {
     private NotificacionSesion() { }
 
     /** Publica o quita la notificación según haya sesión o no. */
-    public static void pintar(@NonNull Context ctx, @Nullable SesionEnCurso s) {
+    public static void pintar(@NonNull Context contexto, @Nullable SesionEnCurso s) {
+        // El idioma de la app, no el del sistema: la Application no lo sigue sola (GP-210).
+        Context ctx = IdiomaContexto.de(contexto);
         if (s == null) {
             quitar(ctx);
             return;
@@ -95,9 +97,7 @@ public final class NotificacionSesion {
                     : SesionEnCursoRepositorio.ejercicioDeSerie(s, s.descanso.serieId);
             String ejercicio = e != null ? TextosDescanso.ejercicio(ctx, e.nombre, e.ejercicioId) : "";
             b.setContentTitle(ctx.getString(R.string.envivo_notif_descanso_titulo, ejercicio))
-                    .setContentText(sig != null
-                            ? ctx.getString(R.string.envivo_notif_descanso_texto, sig.numero, nombre)
-                            : nombre)
+                    .setContentText(sig != null ? TextosDescanso.siguiente(ctx, s) : nombre)
                     .setWhen(s.descanso.finMs).setShowWhen(true).setUsesChronometer(true)
                     .setChronometerCountDown(true);
         } else if (!sinGuardar) {

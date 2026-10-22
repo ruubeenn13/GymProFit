@@ -29,7 +29,8 @@ public final class NotificacionDescanso {
 
     private NotificacionDescanso() { }
 
-    public static void publicar(@NonNull Context ctx, @NonNull SesionEnCursoRepositorio.FinDescanso fin) {
+    public static void publicar(@NonNull Context contexto, @NonNull SesionEnCursoRepositorio.FinDescanso fin) {
+        Context ctx = IdiomaContexto.de(contexto);
         if (!PermisosDescanso.notificaciones(ctx)) return;
         crearCanal(ctx);
         String ejercicio = TextosDescanso.ejercicio(ctx, fin.ejercicio, fin.ejercicioId);

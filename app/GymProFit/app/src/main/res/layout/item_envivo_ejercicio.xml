@@ -79,7 +79,7 @@
                 android:layout_marginTop="4dp"
                 android:importantForAccessibility="no"
                 android:textSize="@dimen/text_caption"
-                android:textColor="?attr/colorOnPrimaryContainer" />
+                android:textColor="?attr/colorOnSurfaceVariant" />
         </LinearLayout>
 
         <ImageButton

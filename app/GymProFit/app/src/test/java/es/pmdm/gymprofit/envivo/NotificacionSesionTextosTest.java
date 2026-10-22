@@ -30,9 +30,10 @@ public class NotificacionSesionTextosTest {
     @Test
     public void elTextoDelDescansoSoloLlevaSerieYRutina() throws IOException {
         for (String carpeta : new String[]{"values", "values-en"}) {
-            String texto = cadena(carpeta, "envivo_notif_descanso_texto");
-            assertNotNull(carpeta + ": falta envivo_notif_descanso_texto", texto);
-            assertEquals(carpeta + ": «" + texto + "» lleva algo más que la serie y la rutina",
+            // GP-210: la notificación dice lo mismo que el panel, «Siguiente: serie 4 · 85 kg × 7».
+            String texto = cadena(carpeta, "envivo_descanso_siguiente_serie");
+            assertNotNull(carpeta + ": falta envivo_descanso_siguiente_serie", texto);
+            assertEquals(carpeta + ": «" + texto + "» lleva algo más que la serie y la marca",
                     2, huecos(texto));
         }
     }

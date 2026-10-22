@@ -1122,7 +1122,6 @@
     <string name="descanso_canal_descripcion">Avisa al acabar el descanso entre series</string>
     <string name="descanso_notif_texto">%1$s, serie %2$d</string>
     <string name="envivo_notif_descanso_titulo">Descanso · %1$s</string>
-    <string name="envivo_notif_descanso_texto">Después: serie %1$d · %2$s</string>
     <string name="descanso_permiso_titulo">Avisarte con la pantalla apagada</string>
     <string name="descanso_permiso_texto_alarmas">Para sonar justo al acabar el descanso, aunque lleves el móvil en el bolsillo, GymProFit necesita el permiso «Alarmas y recordatorios». Solo lo usa en los descansos.</string>
     <string name="descanso_permiso_texto_notificaciones">Para avisarte al acabar el descanso, aunque lleves el móvil en el bolsillo, GymProFit necesita poder mandarte notificaciones.</string>

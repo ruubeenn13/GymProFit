@@ -125,6 +125,8 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
     private long aroFinMs = -1, aroDuracionMs = -1;
     private long latidoDeFinMs = -1;
     private boolean bajandoPanel;
+    // La serie a la que llevar la lista cuando el panel acabe de medirse; -1 si ninguna.
+    private long irASerie = -1;
 
     @Nullable private BottomSheetDialog hojaCrono;
     @Nullable private TextView tvCronoTiempo;
@@ -383,9 +385,18 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
             int alto = panelDescanso.getVisibility() == View.VISIBLE || avisoFin.getVisibility() == View.VISIBLE
                     ? v.getHeight() : 0;
             int abajo = Math.max(hueco, alto);
-            if (rv.getPaddingBottom() != abajo) {
-                rv.post(() -> rv.setPadding(rv.getPaddingLeft(), rv.getPaddingTop(), rv.getPaddingRight(), abajo));
-            }
+            rv.post(() -> {
+                if (rv.getPaddingBottom() != abajo) {
+                    rv.setPadding(rv.getPaddingLeft(), rv.getPaddingTop(), rv.getPaddingRight(), abajo);
+                }
+                // Al empezar el descanso, la serie que toca queda a la vista sobre el panel
+                // (con letra grande el panel ocupa media pantalla y la tapaba).
+                if (irASerie != -1 && alto > 0) {
+                    int pos = adapter.posicionSerie(irASerie);
+                    irASerie = -1;
+                    if (pos >= 0) rv.smoothScrollToPosition(pos);
+                }
+            });
         });
     }
 
@@ -404,6 +415,8 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
             if (panelDescanso.getVisibility() != View.VISIBLE) {
                 panelDescanso.setVisibility(View.VISIBLE);
                 Movimiento.subirPanel(panelDescanso);
+                LogicaDescanso.Siguiente sig = LogicaDescanso.siguiente(s);
+                if (sig != null) irASerie = sig.serieId;
             }
             long ahora = repo.ahora();
             tvDescansoTiempo.setText(LogicaSesion.tiempo(LogicaDescanso.restanteSegundos(d, ahora)));

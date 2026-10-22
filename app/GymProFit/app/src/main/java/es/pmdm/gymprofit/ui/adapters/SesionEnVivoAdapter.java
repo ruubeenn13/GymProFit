@@ -329,6 +329,14 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return -1;
     }
 
+    /** Posición de una serie en la lista, o -1 si no está. */
+    public int posicionSerie(long serieId) {
+        for (int i = 0; i < filas.size(); i++) {
+            if (filas.get(i).tipo == SERIE && filas.get(i).id == serieId) return i;
+        }
+        return -1;
+    }
+
     /** Si la fila es una serie que se puede quitar deslizándola. */
     public boolean esSerieQuitable(int posicion) {
         return posicion >= 0 && posicion < filas.size()
