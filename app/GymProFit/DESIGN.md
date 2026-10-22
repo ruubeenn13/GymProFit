@@ -262,6 +262,7 @@ Los tamaños son los once escalones de `values/dimens.xml` (más `envivo_descans
 **The No-Raw-sp Rule.** Ningún layout escribe un `sp` a mano: usa un `@dimen/text_*`. Hubo 21 tamaños distintos antes de la escala (`dimens.xml`, cabecera).
 **The Floor Rule.** Nada baja de 13 sp (GP-089). El contenido de lectura no baja de 15 sp.
 **The Two Widths Rule.** Cifras, títulos y etiquetas en condensada; todo texto que se lea de corrido, en Barlow normal.
+**The System Curve Rule.** Desde Android 14 la letra grande no escala en línea recta: cuanto mayor el tamaño, menos crece (escalado no lineal del sistema). Medido en Inicio a letra 1,3 (API 36, GP-212): `tvHola` 30 sp se queda en 30 (×1,00), `tvHoyTitulo` 26 sp ×1,05, `tvSemanaZonas` 22 sp ×1,14 y el cuerpo de 15 sp ×1,29; el «D» del avatar crece (×1,18) pero su círculo mide 48 dp fijos, así que sus límites no cambian. Nada de eso es un tope nuestro (los `dimens` van en sp, sin tamaño automático ni alturas fijas): es la curva del sistema y no se corrige. Quien mida con `MedidorAccesibilidad` debe saber que sus «sp equivalentes» dividen por la escala lineal y por eso bajan en los títulos.
 
 ## Layout
 
@@ -413,7 +414,7 @@ Lo que hoy es incoherente o no existe. Aquí no se arregla nada.
 7. **Título de DEC-039 desfasado.** La tabla ya recoge los momentos 13 y 14 (del lienzo de nutrición, con `CIFRAS`) y `RESPIRA` (fila «— · Respira», sin número porque no es un momento del lienzo), y `MovimientoTest` la lee entera; pero el título sigue diciendo «doce momentos» y la tabla llega al 23.
 8. **Alias de color heredados sin retirar** (`primary_light`, `golden`, `orange_dark`, `text_primary_dark`, `green_chip`, `red_chip`…), con valores que ya no coinciden en parte con los `gp_*`.
 9. **Contenido de base de datos sin traducir** (DEC-020): 752 de 873 ejercicios con el nombre igual en ES y EN. Se ve en la pantalla de Entrenar.
-10. **Títulos grandes que no crecen con la letra 1,3** en Inicio (`tvHola`, `tvHoyTitulo`, `tvSemanaZonas`, `tvInicial`): medido con el medidor (revisión de Inicio, GP-207). Puede ser un tope deliberado; no está documentado.
-11. **`sp` escritos a mano que la regla prohíbe.** Quedan 23 `android:textSize="…sp"` literales en `res/layout` (por ejemplo el «R» del fundador, 20 sp, en `fragment_inicio.xml`).
+10. **Títulos grandes y letra 1,3: no es un fallo nuestro.** Ver «The System Curve Rule» en Typography. Se queda aquí solo para que el medidor, que divide por la escala lineal, no lo vuelva a dar por defecto.
+11. **`sp` escritos a mano que la regla prohíbe.** Quedan 22 `android:textSize="…sp"` literales en `res/layout`, ninguno en `fragment_inicio.xml` (GP-212 pasó el «R» del fundador a `text_title`; `InicioRevisionTest` lo vigila).
 12. **Borde discontinuo sin documentar.** La tarjeta del fundador (`drawable/bg_tarjeta_fundador.xml`), el botón discontinuo (`bg_boton_discontinuo.xml`) y «nueva rutina» (`bg_nueva_rutina.xml`) usan trazo discontinuo, una tercera forma de borde que «Components» no recoge y que el diseño de Inicio aprobado no tiene.
-13. **Inicio con errores de carga.** Con la API devolviendo error, Inicio enseña el mismo mensaje en dos sitios, deja la tarjeta de nutrición sin cifra ni reintento y los puntos de macros sin texto; no usa `VistaEstado`. `cardNutricionHoy` es pulsable y no tiene nombre accesible (medidor de GP-209).
+13. **Inicio con errores de carga.** Con la API devolviendo error, Inicio enseña el mismo mensaje en dos sitios, deja la tarjeta de nutrición sin cifra ni reintento y los puntos de macros sin texto; no usa `VistaEstado`. `cardNutricionHoy` tiene ya nombre accesible (GP-212): el título y, con datos, el resumen de kcal.

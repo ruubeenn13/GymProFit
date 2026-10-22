@@ -722,7 +722,7 @@
     <string name="duracion_min">%1$d\u00A0min</string>
     <string name="semana_zonas">%1$d of %2$d areas</string>
     <string name="semana_chip">%1$s · %2$d</string>
-    <string name="semana_nota">The number is sets this week.</string>
+    <string name="semana_nota">Next to each zone, the sets you have done this week.</string>
     <plurals name="semana_zona_hecha_a11y">
         <item quantity="one">%1$s, %2$d set</item>
         <item quantity="other">%1$s, %2$d sets</item>
