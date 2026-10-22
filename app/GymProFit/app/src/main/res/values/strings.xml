@@ -2004,6 +2004,8 @@
 
     <string name="sn_completos">Días completos</string>
     <string name="sn_completos_unidad">con todo apuntado</string>
+    <string name="sn_completos_lista">Completos: %1$s.</string>
+    <string name="sn_a_medias_lista">A medias: %1$s.</string>
     <string name="sn_completos_a11y">Días completos: %1$d de %2$d. %3$s</string>
 
     <string name="sn_kcal">Calorías</string>

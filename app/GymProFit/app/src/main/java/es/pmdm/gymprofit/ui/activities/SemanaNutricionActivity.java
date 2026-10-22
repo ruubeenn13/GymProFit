@@ -390,10 +390,25 @@ public class SemanaNutricionActivity extends AppCompatActivity {
                 : color(com.google.android.material.R.attr.colorOnSurface));
         LinearLayout puntos = findViewById(R.id.puntosCompletos);
         puntos.removeAllViews();
+        // Con letra grande (1,3 o más) el texto no cabía al lado de los siete puntos y se cortaba:
+        // los puntos pasan debajo, como el anillo de Nutrición.
+        LinearLayout fila = findViewById(R.id.filaCompletos);
+        View texto = findViewById(R.id.textoCompletos);
+        boolean apilar = getResources().getConfiguration().fontScale >= 1.3f;
+        fila.setOrientation(apilar ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL);
+        fila.setGravity(apilar ? android.view.Gravity.START : android.view.Gravity.CENTER_VERTICAL);
+        LinearLayout.LayoutParams lpTexto = (LinearLayout.LayoutParams) texto.getLayoutParams();
+        lpTexto.width = apilar ? LinearLayout.LayoutParams.MATCH_PARENT : 0;
+        lpTexto.weight = apilar ? 0 : 1;
+        texto.setLayoutParams(lpTexto);
+        LinearLayout.LayoutParams lpPuntos = (LinearLayout.LayoutParams) puntos.getLayoutParams();
+        lpPuntos.topMargin = apilar ? Math.round(12 * getResources().getDisplayMetrics().density) : 0;
+        puntos.setLayoutParams(lpPuntos);
         String[] letras = getResources().getStringArray(R.array.dias_semana_iniciales);
         int verde = ContextCompat.getColor(this, R.color.gp_success);
         int ambar = ContextCompat.getColor(this, R.color.gp_macro_carbos);
-        StringBuilder completosDias = new StringBuilder();
+        List<String> completosLista = new ArrayList<>();
+        List<String> aMediasLista = new ArrayList<>();
         List<SemanaNutricion.Entrada> dias = s.dias();
         float dp = getResources().getDisplayMetrics().density;
         for (int i = 0; i < 7; i++) {
@@ -410,12 +425,17 @@ public class SemanaNutricionActivity extends AppCompatActivity {
             punto.setLayoutParams(new LinearLayout.LayoutParams((int) (14 * dp), (int) (14 * dp)));
             android.graphics.drawable.GradientDrawable fondo = new android.graphics.drawable.GradientDrawable();
             fondo.setShape(android.graphics.drawable.GradientDrawable.OVAL);
-            // Verde, completo; ámbar, a medias. Un día que no ha llegado, sin relleno. Nunca rojo.
+            // El estado va por la forma y no solo por el color: completo, círculo lleno y verde;
+            // a medias, aro ámbar vacío; un día que no ha llegado, un aro fino y gris. Nunca rojo,
+            // y el ámbar de un día a medias no se confunde con el dorado de lo conseguido.
             if (!llego) {
                 fondo.setColor(android.graphics.Color.TRANSPARENT);
                 fondo.setStroke((int) dp, color(com.google.android.material.R.attr.colorOutline));
+            } else if (e.completo) {
+                fondo.setColor(verde);
             } else {
-                fondo.setColor(e.completo ? verde : ambar);
+                fondo.setColor(android.graphics.Color.TRANSPARENT);
+                fondo.setStroke((int) (2 * dp), ambar);
             }
             punto.setBackground(fondo);
             punto.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
@@ -428,8 +448,9 @@ public class SemanaNutricionActivity extends AppCompatActivity {
             col.addView(letra);
             puntos.addView(col);
             if (llego && e.completo) {
-                if (completosDias.length() > 0) completosDias.append(", ");
-                completosDias.append(nombres[i]);
+                completosLista.add(nombres[i]);
+            } else if (llego) {
+                aMediasLista.add(nombres[i]);
             }
             if (!Movimiento.quieto(this)) {
                 punto.setScaleX(0.4f);
@@ -438,8 +459,13 @@ public class SemanaNutricionActivity extends AppCompatActivity {
                         .setDuration(Movimiento.CHECK).setInterpolator(Movimiento.REBOTE).start();
             }
         }
-        puntos.setContentDescription(getString(R.string.sn_completos_a11y, completos, llegados,
-                completosDias.length() > 0 ? completosDias.toString() : ""));
+        StringBuilder detalle = new StringBuilder();
+        if (!completosLista.isEmpty()) detalle.append(getString(R.string.sn_completos_lista, unir(completosLista)));
+        if (!aMediasLista.isEmpty()) {
+            if (detalle.length() > 0) detalle.append(' ');
+            detalle.append(getString(R.string.sn_a_medias_lista, unir(aMediasLista)));
+        }
+        puntos.setContentDescription(getString(R.string.sn_completos_a11y, completos, llegados, detalle.toString()).trim());
     }
 
     private void pintarKcal(SemanaNutricion s, String[] letras, String[] nombres, Locale idioma) {

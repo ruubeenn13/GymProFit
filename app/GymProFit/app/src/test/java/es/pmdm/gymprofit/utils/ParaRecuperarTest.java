@@ -58,4 +58,13 @@ public class ParaRecuperarTest {
         assertEquals(34, ParaRecuperar.falta(136, 82 + 20));
         assertTrue(ParaRecuperar.conseguida(136, 82 + 20 + 35));
     }
+
+    @Test
+    public void una_idea_que_casi_no_tiene_proteina_no_sirve_para_recuperar() {
+        // Una lechuga de 1 g no ayuda a llegar a la proteína del día: no se propone como idea.
+        assertFalse(ParaRecuperar.sirveDeIdea(1));
+        assertFalse(ParaRecuperar.sirveDeIdea(9.9));
+        assertTrue(ParaRecuperar.sirveDeIdea(10));
+        assertTrue(ParaRecuperar.sirveDeIdea(35));
+    }
 }

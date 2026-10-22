@@ -169,7 +169,7 @@ public class BarrasSemanaView extends View {
                 Paint p = new Paint(texto);
                 p.setTextAlign(Paint.Align.RIGHT);
                 p.setTextSize(sp(12));
-                canvas.drawText(rotuloObjetivo, ancho, y - dp(4), p);
+                canvas.drawText(rotuloObjetivo, ancho, y - dp(8), p);
             }
         }
 

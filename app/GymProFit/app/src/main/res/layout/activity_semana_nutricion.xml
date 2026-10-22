@@ -183,6 +183,7 @@
                         android:layout_marginTop="14dp">
 
                         <LinearLayout
+                            android:id="@+id/filaCompletos"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
@@ -190,6 +191,7 @@
                             android:padding="16dp">
 
                             <LinearLayout
+                                android:id="@+id/textoCompletos"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"

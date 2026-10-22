@@ -248,8 +248,13 @@ public final class ParaRecuperarSeccion {
         LoQueTeEncaja.Resultado r = LoQueTeEncaja.de(d.kcalRestantes(), d.objetivoProteinas - d.proteinas,
                 loMio != null ? loMio.getPlatos() : null, favoritos != null ? favoritos.getFavoritos() : null,
                 suelen, suele, null, yaApuntados);
-        if (r == null || r.sugerencias.isEmpty()) {
-            // Sin ideas que quepan en las kcal que quedan no hay nada que apuntar: no hay sección.
+        List<LoQueTeEncaja.Sugerencia> ideas = new ArrayList<>();
+        if (r != null) {
+            // Solo lo que aporta proteína de verdad: una lechuga de 1 g no ayuda a recuperar.
+            for (LoQueTeEncaja.Sugerencia s : r.sugerencias) if (ParaRecuperar.sirveDeIdea(s.proteina)) ideas.add(s);
+        }
+        if (ideas.isEmpty()) {
+            // Sin ideas que quepan en las kcal que quedan y aporten proteína no hay nada que apuntar.
             card.setVisibility(View.GONE);
             return;
         }
@@ -269,7 +274,6 @@ public final class ParaRecuperarSeccion {
         LinearLayout lista = card.findViewById(R.id.listaRecuperar);
         lista.removeAllViews();
         LayoutInflater inflater = LayoutInflater.from(activity);
-        List<LoQueTeEncaja.Sugerencia> ideas = r.sugerencias;
         for (int i = 0; i < ideas.size(); i++) {
             LoQueTeEncaja.Sugerencia s = ideas.get(i);
             View fila = inflater.inflate(R.layout.item_idea_recuperar, lista, false);

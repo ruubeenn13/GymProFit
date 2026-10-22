@@ -1979,6 +1979,8 @@
 
     <string name="sn_completos">Complete days</string>
     <string name="sn_completos_unidad">with everything logged</string>
+    <string name="sn_completos_lista">Complete: %1$s.</string>
+    <string name="sn_a_medias_lista">Partial: %1$s.</string>
     <string name="sn_completos_a11y">Complete days: %1$d of %2$d. %3$s</string>
 
     <string name="sn_kcal">Calories</string>

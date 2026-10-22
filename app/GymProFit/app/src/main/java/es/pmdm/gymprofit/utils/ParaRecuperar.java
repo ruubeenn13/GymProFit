@@ -14,7 +14,15 @@ public final class ParaRecuperar {
     /** Gramos de proteína que tienen que faltar para que la sección salga. */
     public static final int FALTA_MINIMA = 20;
 
+    /** Gramos de proteína que tiene que aportar una idea para proponerla: una lechuga no recupera nada. */
+    public static final int PROTEINA_MINIMA_IDEA = 10;
+
     private ParaRecuperar() { }
+
+    /** ¿Aporta una idea la proteína suficiente para proponerla en «Para recuperar»? */
+    public static boolean sirveDeIdea(double proteinaGramos) {
+        return proteinaGramos >= PROTEINA_MINIMA_IDEA;
+    }
 
     /**
      * ¿Sale la sección?
