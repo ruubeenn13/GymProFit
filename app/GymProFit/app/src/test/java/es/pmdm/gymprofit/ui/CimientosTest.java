@@ -177,6 +177,8 @@ public class CimientosTest {
         String v = leer(RES.resolve("layout/view_avatar.xml"));
         assertTrue(v.contains("@drawable/bg_avatar_cabecera"));
         assertTrue(v.contains("TextAppearance.GymProFit.Avatar"));
+        // Progreso no pisa el fondo del avatar: la inicial va en #FFF4E8 y sobre otro fondo se perdía en claro.
+        assertFalse(leer(JAVA.resolve("es/pmdm/gymprofit/ui/fragments/ProgresoFragment.java")).contains("avatar.setBackgroundResource"));
     }
 
     // ── Expressive ──────────────────────────────────────────────────────────

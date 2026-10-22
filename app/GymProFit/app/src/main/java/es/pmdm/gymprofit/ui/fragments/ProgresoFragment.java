@@ -93,7 +93,6 @@ public class ProgresoFragment extends BaseFragment {
                 startActivity(new Intent(requireContext(), AjustesActivity.class)));
 
         View avatar = findViewById(R.id.avatarProgreso);
-        avatar.setBackgroundResource(R.drawable.bg_circulo_contenedor);
         avatar.setContentDescription(getString(R.string.progreso_avatar_a11y));
         avatar.setOnClickListener(v -> fotoPerfil.elegir());
         ((TextView) avatar.findViewById(R.id.tvInicial)).setTextSize(TypedValue.COMPLEX_UNIT_PX,
