@@ -2171,6 +2171,7 @@
     <string name="acerca_pieza_4">Records, achievements and measurements</string>
     <string name="inicio_dos_lineas" translatable="false">%1$s\n%2$s</string>
     <string name="inicio_kilos_n" translatable="false">%1$s\u00A0kg</string>
+    <string name="datos_guardar">Save</string>
     <!-- Plurales de GP-216 -->
     <plurals name="inicio_zona_series">
         <item quantity="one">%1$d set</item>

@@ -69,7 +69,7 @@ public class AcercaDeActivity extends AppCompatActivity {
 
         fila(R.id.llAcercaEmail, R.drawable.ic_ms_mail, getString(R.string.acerca_autor_email_label),
                 R.drawable.ic_ms_open_in_new, v -> abrirEmail());
-        fila(R.id.llAcercaCompartir, R.drawable.ic_ms_support_agent, getString(R.string.acerca_compartir_label),
+        fila(R.id.llAcercaCompartir, R.drawable.ic_ms_share, getString(R.string.acerca_compartir_label),
                 R.drawable.ic_ms_chevron_right, v -> compartirViaSms());
         fila(R.id.llAcercaLicencias, R.drawable.ic_ms_license, getString(R.string.licencias_titulo),
                 R.drawable.ic_ms_chevron_right, v -> startActivity(new Intent(this, LicenciasActivity.class)));

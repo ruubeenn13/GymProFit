@@ -277,8 +277,13 @@ public class TusDatosActivity extends AppCompatActivity {
     }
 
     private void repetible(View boton, UnaryOperator<DatosPerfil> paso) {
+        // El paso se da al SOLTAR: apoyar el dedo para desplazar la pantalla no cambia nada (si la pantalla
+        // se lleva el gesto llega un CANCEL). Solo repite quien mantiene el dedo quieto más de la espera.
         final Runnable[] repetir = new Runnable[1];
+        final boolean[] repitiendo = {false};
         repetir[0] = () -> {
+            repitiendo[0] = true;
+            boton.getParent().requestDisallowInterceptTouchEvent(true);
             cambiar(paso);
             repeticion.postDelayed(repetir[0], REPETIR_CADA_MS);
         };
@@ -286,10 +291,14 @@ public class TusDatosActivity extends AppCompatActivity {
             switch (ev.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
                     v.setPressed(true);
-                    cambiar(paso);
+                    repitiendo[0] = false;
                     repeticion.postDelayed(repetir[0], REPETIR_ESPERA_MS);
                     return true;
                 case MotionEvent.ACTION_UP:
+                    v.setPressed(false);
+                    repeticion.removeCallbacks(repetir[0]);
+                    if (!repitiendo[0]) cambiar(paso);
+                    return true;
                 case MotionEvent.ACTION_CANCEL:
                     v.setPressed(false);
                     repeticion.removeCallbacks(repetir[0]);
@@ -351,7 +360,13 @@ public class TusDatosActivity extends AppCompatActivity {
         MaterialButton b = (MaterialButton) getLayoutInflater().inflate(R.layout.view_boton_conectado, grupo, false);
         b.setId(View.generateViewId());
         b.setText(texto);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+        // Con la letra muy grande tres o cuatro opciones no caben en fila sin cortar el texto: van una
+        // debajo de otra, de ancho completo.
+        boolean enVertical = getResources().getConfiguration().fontScale >= 1.2f;
+        grupo.setOrientation(enVertical ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL);
+        LinearLayout.LayoutParams lp = enVertical
+                ? new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                : new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
         grupo.addView(b, lp);
         return b;
     }

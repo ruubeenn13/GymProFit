@@ -240,7 +240,8 @@ public class PerfilActivity extends BaseActivity {
             int mes = Integer.parseInt(iso.substring(5, 7));
             if (mes < 1 || mes > 12) return null;
             Locale idioma = FechaUtils.localeDeLaApp(this);
-            String nombre = new DateFormatSymbols(idioma).getMonths()[mes - 1].toLowerCase(idioma);
+            String mes1 = new DateFormatSymbols(idioma).getMonths()[mes - 1];
+            String nombre = "es".equals(idioma.getLanguage()) ? mes1.toLowerCase(idioma) : mes1;
             boolean esteAnio = anio == Calendar.getInstance().get(Calendar.YEAR);
             return esteAnio ? getString(R.string.perfil_desde, nombre) : getString(R.string.perfil_desde_anio, nombre, anio);
         } catch (NumberFormatException e) {

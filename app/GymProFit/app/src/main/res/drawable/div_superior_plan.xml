@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- div_superior_plan — la línea de 1 dp sobre las cifras del plan en la tarjeta «Tus datos y objetivos» de Perfil (GP-216, tablero 17). -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:gravity="top" android:height="@dimen/separador_alto">
+        <shape android:shape="rectangle">
+            <solid android:color="?attr/colorSurfaceVariant" />
+        </shape>
+    </item>
+</layer-list>

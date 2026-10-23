@@ -123,7 +123,8 @@ public final class InicioHoyDetalle {
 
         LinearLayout carrusel = raiz.findViewById(R.id.listaHoyEjercicios);
         carrusel.removeAllViews();
-        LayoutInflater inflater = LayoutInflater.from(fragment.requireContext());
+        // El contexto del carrusel es el de la tarjeta protagonista: lleva su tema (texto #FFF4E8 también en claro).
+        LayoutInflater inflater = LayoutInflater.from(carrusel.getContext());
         Pauta.Formatos formatos = Pauta.Formatos.de(fragment.requireContext());
         Map<Integer, View> tarjetas = new HashMap<>();
         for (RutinaEjercicio re : ejercicios) {

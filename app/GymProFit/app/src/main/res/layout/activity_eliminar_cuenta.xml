@@ -40,7 +40,7 @@
                 android:layout_marginEnd="@dimen/margen_pantalla"
                 android:accessibilityHeading="true"
                 android:text="@string/eliminar_cuenta_titular"
-                android:textAppearance="@style/TextAppearance.GymProFit.Display" />
+                android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena" />
 
             <TextView
                 android:layout_width="match_parent"

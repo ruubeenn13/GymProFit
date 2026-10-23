@@ -137,7 +137,9 @@
                         android:id="@+id/bloquePlan"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/espacio_12"
+                        android:layout_marginTop="@dimen/espacio_16"
+                        android:background="@drawable/div_superior_plan"
+                        android:paddingTop="@dimen/espacio_16"
                         android:baselineAligned="false"
                         android:orientation="horizontal">
 

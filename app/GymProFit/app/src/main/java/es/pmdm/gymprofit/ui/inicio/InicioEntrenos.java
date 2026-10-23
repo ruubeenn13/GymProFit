@@ -234,10 +234,12 @@ public final class InicioEntrenos {
         Date dia = c.getTime();
         String diaSemana = mayuscula(new SimpleDateFormat("EEEE", idioma).format(dia), idioma);
         if (dias == 0) return fragment.getString(R.string.tiempo_hoy_mayuscula);
+        // En español los días y los meses van en minúscula dentro de una frase; en inglés, siempre en mayúscula.
+        String enFrase = "es".equals(idioma.getLanguage()) ? diaSemana.toLowerCase(idioma) : diaSemana;
         if (dias == 1) return fragment.getString(R.string.hoy_toca_separador,
-                fragment.getString(R.string.tiempo_ayer_mayuscula), diaSemana.toLowerCase(idioma));
+                fragment.getString(R.string.tiempo_ayer_mayuscula), enFrase);
         if (dias < 7) return diaSemana;
-        if (dias < 14) return fragment.getString(R.string.inicio_dia_pasado, diaSemana.toLowerCase(idioma));
+        if (dias < 14) return fragment.getString(R.string.inicio_dia_pasado, enFrase);
         return mayuscula(new SimpleDateFormat(fragment.getString(R.string.inicio_fecha_corta_patron), idioma).format(dia), idioma);
     }
 

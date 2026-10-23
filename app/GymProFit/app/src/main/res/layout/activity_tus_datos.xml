@@ -74,13 +74,17 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilNombre"
-                style="@style/Widget.Material3.TextInputLayout.FilledBox"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margen_pantalla"
                 android:layout_marginTop="@dimen/espacio_8"
                 android:layout_marginEnd="@dimen/margen_pantalla"
                 android:hint="@string/datos_nombre"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp"
                 app:helperText="@string/datos_nombre_ayuda">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -262,7 +266,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.GymProFit.Seccion.Fila"
-                android:textSize="@dimen/text_headline" />
+                android:textSize="@dimen/text_body" />
 
             <TextView
                 android:id="@+id/tvPlanMinimo"
@@ -283,6 +287,6 @@
             style="@style/Widget.GymProFit.BotonPildora"
             android:layout_width="wrap_content"
             android:layout_marginStart="@dimen/espacio_12"
-            android:text="@string/editar_perfil_guardar" />
+            android:text="@string/datos_guardar" />
     </LinearLayout>
 </LinearLayout>
