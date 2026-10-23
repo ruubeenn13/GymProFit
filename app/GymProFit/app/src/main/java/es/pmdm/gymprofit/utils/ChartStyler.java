@@ -53,7 +53,7 @@ public final class ChartStyler {
         chart.setHighlightPerTapEnabled(true);    // tocar un punto lo resalta (para el tooltip)
         chart.setExtraBottomOffset(8f);
         // La última etiqueta del eje X se centra bajo el último punto y, con letra grande, se salía por la derecha.
-        chart.setExtraRightOffset(16f);
+        chart.setExtraRightOffset(28f);
         chart.setNoDataText("");                  // el empty state lo pinta la pantalla
         chart.animateX(500);
 

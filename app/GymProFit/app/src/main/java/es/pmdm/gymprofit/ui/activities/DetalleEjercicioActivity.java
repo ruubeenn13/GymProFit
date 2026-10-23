@@ -467,7 +467,9 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
             @Override
             public String getAxisLabel(float value, AxisBase axis) {
                 int idx = Math.round(value);
-                return (idx >= 0 && idx < etiquetas.size()) ? etiquetas.get(idx) : "";
+                if (idx < 0 || idx >= etiquetas.size()) return "";
+                // Varias sesiones del mismo día repetirían la misma fecha bajo puntos contiguos.
+                return idx > 0 && etiquetas.get(idx).equals(etiquetas.get(idx - 1)) ? "" : etiquetas.get(idx);
             }
         });
         // Tooltip: marca + fecha, con «· PR» en el récord.
@@ -519,10 +521,17 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
                 : color(com.google.android.material.R.attr.colorOnSurfaceVariant));
     }
 
-    // Fecha ISO («yyyy-MM-dd...») → etiqueta corta «dd/MM».
+    // Fecha ISO («yyyy-MM-dd...») → etiqueta corta en el idioma de la app («28 sept» / «Sep 28»).
     private String fechaCorta(String iso) {
         if (iso == null || iso.length() < 10) return "";
-        return iso.substring(8, 10) + "/" + iso.substring(5, 7);
+        try {
+            Locale loc = getResources().getConfiguration().getLocales().get(0);
+            java.util.Date d = new java.text.SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).parse(iso.substring(0, 10));
+            String patron = android.text.format.DateFormat.getBestDateTimePattern(loc, "dMMM");
+            return new java.text.SimpleDateFormat(patron, loc).format(d);
+        } catch (java.text.ParseException e) {
+            return iso.substring(8, 10) + "/" + iso.substring(5, 7);   // ISO mal formada: el día y el mes tal cual
+        }
     }
 
     // ── Tus últimas veces ───────────────────────────────────────────────────
