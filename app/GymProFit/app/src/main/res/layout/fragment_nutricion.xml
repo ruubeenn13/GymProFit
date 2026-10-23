@@ -172,6 +172,11 @@
                     android:textColor="@color/gp_on_primary_container" />
             </LinearLayout>
 
+            <!-- Sin red o con la API caída: el fallo y «Reintentar» donde irían las cifras. -->
+            <include
+                android:id="@+id/estadoNutricion"
+                layout="@layout/view_estado" />
+
             <!-- El anillo, lo que queda y los macros -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardDia"

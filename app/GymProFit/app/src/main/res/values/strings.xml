@@ -2320,4 +2320,5 @@
         <item quantity="one">%1$s récord</item>
         <item quantity="other">%1$s récords</item>
     </plurals>
+    <string name="nutricion_error_dia">No se ha podido cargar tu día.</string>
 </resources>

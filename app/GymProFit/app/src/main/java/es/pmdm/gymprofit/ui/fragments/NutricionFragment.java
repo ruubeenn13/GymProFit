@@ -70,6 +70,7 @@ import es.pmdm.gymprofit.utils.ProteinaTexto;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import es.pmdm.gymprofit.utils.VistaEstado;
 
 // ============================================================
 // NutricionFragment — pestaña Nutrición (GP-105), el diario.
@@ -129,6 +130,8 @@ public class NutricionFragment extends BaseFragment {
     @Nullable private String comidasDe;
 
     private ActivityResultLauncher<Intent> recargar;
+    // El fallo de cargar el día, con su «Reintentar» (como Progreso e Historial).
+    private VistaEstado estado;
 
     // «¿Copiar la de ayer?» (1.6.4): la comida de ayer y a qué comida de hoy va; null si no
     // toca. Mientras se copia no se vuelve a pintar, y si falla vuelve.
@@ -166,6 +169,7 @@ public class NutricionFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         fechaContada = null;
         // «Tu semana de nutrición» (tablero 12); desde ahí se llega a las semanas y los meses.
+        estado = new VistaEstado(findViewById(R.id.estadoNutricion));
         findViewById(R.id.btnHistorial).setOnClickListener(v ->
                 startActivity(new Intent(requireContext(), SemanaNutricionActivity.class)));
         findViewById(R.id.btnCalendario).setOnClickListener(v -> elegirFecha());
@@ -415,6 +419,7 @@ public class NutricionFragment extends BaseFragment {
                 alimentosPorComida.clear();
                 if (lista != null) for (Comida c : lista) comidasDia.put(c.getTipoComida(), c);
                 comidasDe = fecha;
+                contenidoDia(true);
                 pintar();
                 cargarAlimentos(fecha);
                 buscarCopiaAyer(fecha);
@@ -423,10 +428,29 @@ public class NutricionFragment extends BaseFragment {
             public void onFail(int code, String message) {
                 if (!isAdded()) return;
                 // Un día sin comidas no llega aquí: es 200 con []. Esto es un fallo de
-                // verdad, y se avisa; no se pinta un día vacío que no lo es.
-                UiFeedback.toastError(requireActivity(), code, message);
+                // verdad: se dice dónde irían las cifras, con su botón; no se pinta un día vacío que no lo es.
+                contenidoDia(false);
+                estado.error(VistaEstado.mensaje(requireContext(), R.string.nutricion_error_dia, code, message),
+                        () -> {
+                            estado.cargando();
+                            cargarComidas();
+                            cargarDiario();
+                        });
             }
         });
+    }
+
+    // Con el día cargado se ve el diario; con el fallo, solo el aviso y su botón.
+    private void contenidoDia(boolean hay) {
+        if (hay) estado.oculto();
+        int v = hay ? View.VISIBLE : View.GONE;
+        findViewById(R.id.cardDia).setVisibility(v);
+        findViewById(R.id.listaComidas).setVisibility(v);
+        if (!hay) {
+            findViewById(R.id.pildoraEntreno).setVisibility(View.GONE);
+            findViewById(R.id.cardAgua).setVisibility(View.GONE);
+            findViewById(R.id.cardSemana).setVisibility(View.GONE);
+        }
     }
 
     // La semana de la tira: puntos, entrenos, agua y «Hoy no» de cada día. Si falla se
