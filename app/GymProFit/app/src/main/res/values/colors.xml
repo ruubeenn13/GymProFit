@@ -76,6 +76,9 @@
          (#C27C12) daba 3,39:1 y proteínas (#2F6FD0) 4,31:1 sobre el fondo. -->
     <color name="gp_macro_proteinas">#2E6CCB</color>
     <color name="gp_macro_carbos">#99620E</color>
+    <!-- El ámbar del nivel intermedio (Biblioteca, GP-216): el mismo de los carbohidratos, que
+         ya pasa contraste en los dos temas; en oscuro lo da values-night. -->
+    <color name="gp_nivel_intermedio">@color/gp_macro_carbos</color>
     <color name="gp_macro_grasas">#7A54C4</color>
 
     <!-- ── Estados ───────────────────────────────────────────────────────── -->

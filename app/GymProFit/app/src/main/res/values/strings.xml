@@ -204,10 +204,34 @@
     <string name="dialogo_escribe_nota">Escribe una nota</string>
     <string name="medicion_registrar_primera">Registrar medición</string>
     <string name="nutricion_estadisticas">Estadísticas</string>
-    <string name="detalle_progresion_titulo">PROGRESIÓN · PESO MÁX.</string>
+    <string name="detalle_progresion_titulo">Peso máximo</string>
     <string name="detalle_progresion_pr">PR</string>
-    <string name="detalle_progresion_titulo_tiempo">PROGRESIÓN · MEJOR TIEMPO (S)</string>
-    <string name="detalle_progresion_titulo_reps">PROGRESIÓN · MÁS REPETICIONES</string>
+    <string name="detalle_progresion_titulo_tiempo">Mejor tiempo</string>
+    <string name="detalle_progresion_titulo_reps">Más repeticiones</string>
+    <string name="detalle_progresion_peso_maximo">Peso máximo</string>
+    <string name="detalle_ejercicio_maximo_estimado">máximo estimado</string>
+    <string name="detalle_ejercicio_tab_progreso">Tu progreso</string>
+    <string name="detalle_ejercicio_tab_como">Cómo se hace</string>
+    <string name="detalle_periodo_4">4 sem.</string>
+    <string name="detalle_periodo_8">8 sem.</string>
+    <string name="detalle_periodo_todo">Todo</string>
+    <string name="detalle_periodo_a11y">Periodo: %1$s</string>
+    <string name="detalle_ejercicio_sin_datos">Todavía no has hecho este ejercicio. Cuando lo hagas, aquí verás cómo progresas.</string>
+    <string name="detalle_ejercicio_ultimas_veces">Tus últimas veces</string>
+    <string name="detalle_ejercicio_sin_pasos">Este ejercicio todavía no tiene los pasos explicados.</string>
+    <string name="detalle_ejercicio_mejor_marca">Tu mejor marca · %1$s</string>
+    <string name="detalle_ejercicio_mejor_marca_sola">Tu mejor marca</string>
+    <string name="detalle_ejercicio_marca_a11y">Tu mejor marca: %1$s, %2$s</string>
+    <string name="detalle_vez_sub">%1$s · %2$s</string>
+    <string name="detalle_por_reps">× %1$d</string>
+    <string name="detalle_kg_total">%1$s kg</string>
+    <string name="detalle_kg_mas">+%1$s kg</string>
+    <string name="detalle_kg_menos">−%1$s kg</string>
+    <string name="detalle_serie_a11y">%1$s por %2$d</string>
+    <string name="detalle_series_a11y">Series: %1$s</string>
+    <string name="detalle_vez_record_a11y">%1$s, récord</string>
+    <string name="detalle_pista_subir">La próxima vez, sube el peso: ya llegaste a las %1$d repeticiones en todas las series.</string>
+    <string name="detalle_progresion_a11y">%1$s por sesión, de %2$s a %3$s</string>
     <string name="stats_periodo_semana">Semana</string>
     <string name="stats_periodo_mes">Mes</string>
     <string name="stats_kpi_media">Media kcal/día</string>
@@ -768,10 +792,24 @@
     <string name="mis_rutinas_vacio">Todavía no tienes rutinas propias. Crea una a tu medida o sigue un programa.</string>
     <string name="mis_rutinas_error">No se han podido cargar tus rutinas.</string>
     <string name="biblioteca_ejercicios">Biblioteca de ejercicios</string>
-    <string name="biblioteca_titulo">Biblioteca de ejercicios</string>
+    <string name="biblioteca_titulo">Ejercicios</string>
     <string name="biblioteca_buscar_n">Busca entre %1$s ejercicios</string>
     <string name="biblioteca_buscar">Busca un ejercicio</string>
     <string name="biblioteca_zona_a11y">Ejercicios de %1$s</string>
+    <string name="biblioteca_mas_haces">Los que más haces</string>
+    <string name="biblioteca_lista">De la A a la Z</string>
+    <string name="ejercicios_limpiar_busqueda">Borrar la búsqueda</string>
+    <plurals name="biblioteca_cuantos">
+        <item quantity="one">%1$s ejercicio</item>
+        <item quantity="other">%1$s ejercicios</item>
+    </plurals>
+    <plurals name="biblioteca_veces">
+        <item quantity="one">%d vez</item>
+        <item quantity="other">%d veces</item>
+    </plurals>
+    <string name="biblioteca_mas_haces_a11y">%1$s, %2$s</string>
+    <string name="biblioteca_detalle_fila">%1$s · %2$s</string>
+    <string name="biblioteca_fila_a11y">%1$s. %2$s. Nivel %3$s</string>
     <string-array name="dias_semana_iniciales">
         <item>L</item>
         <item>M</item>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- chip_biblioteca_texto — texto e icono de los chips de la Biblioteca: sobre el naranja, el color «sobre primario». -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true" android:color="?attr/colorOnPrimary" />
+    <item android:color="?attr/colorOnSurface" />
+</selector>

@@ -1,361 +1,395 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  activity_detalle_ejercicio — ficha detallada de un ejercicio.
-  Muestra nombre, vídeo demostrativo, estadísticas (músculo, nivel, calorías,
-  equipamiento), descripción e instrucciones paso a paso.
+  activity_detalle_ejercicio — ficha de un ejercicio (GP-216, tablero 30). Arriba la demostración
+  (los dos fotogramas del catálogo, alternados), el nombre con sus datos, tu mejor marca en dorado
+  con el máximo estimado y dos pestañas: «Tu progreso» (gráfica por periodo y tus últimas veces) y
+  «Cómo se hace» (los pasos numerados). Todo lo que depende de tus datos se oculta si no hay.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="?attr/android:colorBackground">
 
-    <!-- Toolbar con navegación hacia atrás -->
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
-        style="@style/Widget.GymProFit.Cabecera"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:title="@string/detalle_ejercicio_titulo" />
-
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollDetalle"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingBottom="@dimen/espacio_36">
 
-            <!-- Nombre del ejercicio -->
+            <!-- Demostración: debajo del botón de volver, 24 dp de radio -->
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardDemo"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardBackgroundColor="?attr/colorSurface">
-
-                <TextView
-                    android:id="@+id/tvNombreDetalle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="20dp"
-                    android:textSize="@dimen/text_headline"
-                    android:textStyle="bold"
-                    android:textColor="?attr/colorOnSurface"
-                    android:lineSpacingMultiplier="1.1" />
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Label Demostración -->
-            <TextView
-                android:textAppearance="@style/TextAppearance.GymProFit.Label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="6dp"
-                android:paddingStart="4dp"
-                android:text="@string/detalle_ejercicio_demostracion"
-                android:textSize="@dimen/text_eyebrow"
-                android:textAllCaps="true"
-                android:letterSpacing="0.1"
-                android:textColor="?attr/colorOnSurfaceVariant" />
-
-            <!-- Card demostración: fondo blanco (las demos de wger/FED lo tienen)
-                 y la imagen se muestra COMPLETA (fitCenter), nunca recortada. -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="260dp"
-                app:cardBackgroundColor="#FFFFFF"
-                app:cardUseCompatPadding="false"
-                app:cardPreventCornerOverlap="false">
+                android:layout_height="238dp"
+                android:layout_marginStart="@dimen/margen_pantalla"
+                android:layout_marginTop="72dp"
+                android:layout_marginEnd="@dimen/margen_pantalla"
+                app:cardBackgroundColor="?attr/colorSurfaceVariant"
+                app:cardCornerRadius="@dimen/radio_tarjeta"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp">
 
                 <FrameLayout
+                    android:id="@+id/layoutVideoPlaceholder"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#FFFFFF">
+                    android:layout_height="match_parent">
 
-                    <LinearLayout
-                        android:id="@+id/layoutVideoPlaceholder"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:gravity="center">
-
-                        <ImageView
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
-                            android:src="@drawable/ic_ms_fitness_center"
-                            app:tint="#33000000"
-                            android:contentDescription="@null" />
-
-                    </LinearLayout>
-
-                    <!-- Demostración del ejercicio (Glide, 2 fotogramas animados);
-                         fitCenter = se ve el monigote completo, sin cortar. -->
+                    <!-- Sin foto: la silueta de la zona, nunca un bloque en blanco. -->
                     <ImageView
-                        android:id="@+id/ivImagenDetalle"
+                        android:id="@+id/ivSilueta"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_margin="@dimen/espacio_16"
+                        android:contentDescription="@null"
                         android:scaleType="fitCenter"
-                        android:padding="6dp"
-                        android:visibility="gone"
-                        android:contentDescription="@null" />
-
+                        android:src="@drawable/ic_body_full" />
                 </FrameLayout>
 
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Stats: Músculo / Nivel / Calorías / Equipamiento -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                app:cardBackgroundColor="?attr/colorSurface">
-
-                <LinearLayout
+                <ImageView
+                    android:id="@+id/ivImagenDetalle"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_height="match_parent"
+                    android:contentDescription="@null"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
 
-                    <!-- Músculo -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:paddingStart="20dp"
-                        android:paddingEnd="20dp">
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_ms_fitness_center"
-                            android:alpha="0.55"
-                            android:contentDescription="@null" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginStart="14dp"
-                            android:text="@string/detalle_ejercicio_musculo"
-                            android:textSize="@dimen/text_body"
-                            android:textColor="?attr/colorOnSurfaceVariant" />
-
-                        <TextView
-                            android:id="@+id/tvStatMusculo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="@dimen/text_body"
-                            android:textStyle="bold"
-                            android:textColor="?attr/colorOnSurface" />
-
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="54dp"
-                        android:background="?attr/colorOutlineVariant" />
-
-                    <!-- Nivel -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:paddingStart="20dp"
-                        android:paddingEnd="20dp">
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_ms_stairs"
-                            android:alpha="0.55"
-                            android:contentDescription="@null" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginStart="14dp"
-                            android:text="@string/detalle_ejercicio_nivel"
-                            android:textSize="@dimen/text_body"
-                            android:textColor="?attr/colorOnSurfaceVariant" />
-
-                        <TextView
-                            android:id="@+id/tvStatNivel"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="@dimen/text_body"
-                            android:textStyle="bold"
-                            android:textColor="?attr/colorOnSurface" />
-
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="54dp"
-                        android:background="?attr/colorOutlineVariant" />
-
-                    <!-- AQUÍ HABÍA UNA FILA DE CALORÍAS, Y SE RETIRA (DEC-004 / GP-010).
-                         Salía de una constante por grupo muscular: «5 kcal» era el mismo
-                         número para cualquiera que hiciera el ejercicio. -->
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="54dp"
-                        android:background="?attr/colorOutlineVariant" />
-
-                    <!-- Equipamiento -->
-                    <LinearLayout
-                        android:id="@+id/rowEquipamiento"
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:paddingStart="20dp"
-                        android:paddingEnd="20dp">
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_ms_info"
-                            android:alpha="0.55"
-                            android:contentDescription="@null" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginStart="14dp"
-                            android:text="@string/detalle_ejercicio_equipamiento"
-                            android:textSize="@dimen/text_body"
-                            android:textColor="?attr/colorOnSurfaceVariant" />
-
-                        <TextView
-                            android:id="@+id/tvStatEquipamiento"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="@dimen/text_body"
-                            android:textStyle="bold"
-                            android:textColor="?attr/colorOnSurface" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
+                <!-- Segundo fotograma: se funde con el primero en bucle -->
+                <ImageView
+                    android:id="@+id/ivImagenDetalle2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:alpha="0"
+                    android:contentDescription="@null"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Progresión (peso máximo en el tiempo); oculta si hay <2 registros -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardProgresion"
+            <TextView
+                android:id="@+id/tvNombreDetalle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginStart="@dimen/margen_pantalla"
+                android:layout_marginTop="@dimen/espacio_20"
+                android:layout_marginEnd="@dimen/margen_pantalla"
+                android:accessibilityHeading="true"
+                android:lineSpacingMultiplier="1.05"
+                android:textAppearance="@style/TextAppearance.GymProFit.Display"
+                android:textSize="32sp" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipsDetalle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margen_pantalla"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="@dimen/margen_pantalla"
+                app:chipSpacingHorizontal="6dp"
+                app:chipSpacingVertical="6dp" />
+
+            <!-- Tu mejor marca, en dorado: solo si ya tiene récord -->
+            <LinearLayout
+                android:id="@+id/cardMarca"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margen_pantalla"
+                android:layout_marginTop="@dimen/espacio_24"
+                android:layout_marginEnd="@dimen/margen_pantalla"
+                android:background="@drawable/bg_marca_oro"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="18dp"
                 android:visibility="gone">
 
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_ms_trophy_fill"
+                    app:tint="@color/gp_gold" />
+
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/tvProgresionTitulo"
+                        android:id="@+id/tvMarcaFecha"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="@dimen/text_eyebrow" />
+
+                    <TextView
+                        android:id="@+id/tvMarcaValor"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Number"
+                        android:textColor="@color/gp_gold_text"
+                        android:textSize="30sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/bloqueMaximo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/espacio_8"
+                    android:gravity="end"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tvMaximoValor"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/detalle_progresion_titulo"
-                        android:textAppearance="@style/TextAppearance.GymProFit.Label"
-                        android:textColor="?attr/colorOnSurfaceVariant" />
+                        android:textAppearance="@style/TextAppearance.GymProFit.Number"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="22sp" />
 
-                    <com.github.mikephil.charting.charts.LineChart
-                        android:id="@+id/chartProgresion"
-                        android:layout_width="match_parent"
-                        android:layout_height="200dp"
-                        android:layout_marginTop="8dp" />
-
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/detalle_ejercicio_maximo_estimado"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="12sp" />
                 </LinearLayout>
+            </LinearLayout>
 
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Descripción -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardDescripcion"
+            <!-- Pestañas -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                app:cardBackgroundColor="?attr/colorSurface">
+                android:layout_marginStart="@dimen/margen_pantalla"
+                android:layout_marginTop="@dimen/espacio_24"
+                android:layout_marginEnd="@dimen/margen_pantalla"
+                android:background="@drawable/bg_pestanas_progreso"
+                android:orientation="horizontal"
+                android:padding="4dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
+                <TextView
+                    android:id="@+id/btnTabProgreso"
+                    style="@style/Widget.GymProFit.PestanaFicha"
+                    android:text="@string/detalle_ejercicio_tab_progreso" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/detalle_ejercicio_descripcion"
-                        android:textSize="@dimen/text_body"
-                        android:textStyle="bold"
-                        android:textColor="?attr/colorOnSurface"
-                        android:layout_marginBottom="10dp" />
+                <TextView
+                    android:id="@+id/btnTabComo"
+                    style="@style/Widget.GymProFit.PestanaFicha"
+                    android:text="@string/detalle_ejercicio_tab_como" />
+            </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/tvDescripcion"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/text_body"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:lineSpacingMultiplier="1.5" />
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Instrucciones -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardInstrucciones"
+            <!-- Tu progreso -->
+            <LinearLayout
+                android:id="@+id/panelProgreso"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:layout_marginBottom="8dp"
-                app:cardBackgroundColor="?attr/colorSurface">
+                android:layout_marginTop="@dimen/espacio_20"
+                android:orientation="vertical">
 
-                <LinearLayout
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardProgresion"
+                    style="@style/Widget.GymProFit.Card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margen_pantalla"
+                    android:layout_marginEnd="@dimen/margen_pantalla"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/espacio_16">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tvProgresionTitulo"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/detalle_progresion_peso_maximo"
+                                android:textColor="?attr/colorOnSurface"
+                                android:textSize="@dimen/text_body"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvProgresionDelta"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="@dimen/text_caption"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <com.github.mikephil.charting.charts.LineChart
+                            android:id="@+id/chartProgresion"
+                            android:layout_width="match_parent"
+                            android:layout_height="170dp"
+                            android:layout_marginTop="@dimen/espacio_8" />
+
+                        <LinearLayout
+                            android:id="@+id/periodos"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/espacio_8"
+                            android:orientation="horizontal"
+                            android:weightSum="3">
+
+                            <TextView
+                                android:id="@+id/btnPeriodo4"
+                                style="@style/Widget.GymProFit.PeriodoFicha"
+                                android:text="@string/detalle_periodo_4" />
+
+                            <TextView
+                                android:id="@+id/btnPeriodo8"
+                                style="@style/Widget.GymProFit.PeriodoFicha"
+                                android:text="@string/detalle_periodo_8" />
+
+                            <TextView
+                                android:id="@+id/btnPeriodoTodo"
+                                style="@style/Widget.GymProFit.PeriodoFicha"
+                                android:text="@string/detalle_periodo_todo" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Sin ninguna vez todavía -->
+                <TextView
+                    android:id="@+id/tvSinDatos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margen_pantalla"
+                    android:layout_marginEnd="@dimen/margen_pantalla"
+                    android:text="@string/detalle_ejercicio_sin_datos"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="@dimen/text_body"
+                    android:visibility="gone" />
+
+                <!-- Tus últimas veces -->
+                <LinearLayout
+                    android:id="@+id/bloqueVeces"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/espacio_20"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:visibility="gone">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/detalle_ejercicio_instrucciones"
-                        android:textSize="@dimen/text_body"
-                        android:textStyle="bold"
-                        android:textColor="?attr/colorOnSurface"
-                        android:layout_marginBottom="10dp" />
+                        android:layout_marginStart="@dimen/margen_pantalla"
+                        android:layout_marginEnd="@dimen/margen_pantalla"
+                        android:accessibilityHeading="true"
+                        android:text="@string/detalle_ejercicio_ultimas_veces"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Seccion" />
 
-                    <TextView
-                        android:id="@+id/tvInstrucciones"
+                    <!-- La pista solo sale si hay una regla que la respalde (ProximaVez) -->
+                    <LinearLayout
+                        android:id="@+id/cardPista"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="@dimen/text_body"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:lineSpacingMultiplier="1.7" />
+                        android:layout_marginStart="@dimen/margen_pantalla"
+                        android:layout_marginTop="@dimen/espacio_12"
+                        android:layout_marginEnd="@dimen/margen_pantalla"
+                        android:background="@drawable/bg_pista_ejercicio"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="14dp"
+                        android:visibility="gone">
 
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_ms_trending_up"
+                            app:tint="@color/gp_primary_sobre_hero" />
+
+                        <TextView
+                            android:id="@+id/tvPista"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/espacio_12"
+                            android:layout_weight="1"
+                            android:lineSpacingMultiplier="1.1"
+                            android:textColor="@color/gp_on_hero"
+                            android:textSize="15sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/listaVeces"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margen_pantalla"
+                        android:layout_marginTop="@dimen/espacio_12"
+                        android:layout_marginEnd="@dimen/margen_pantalla"
+                        android:orientation="vertical" />
                 </LinearLayout>
+            </LinearLayout>
 
-            </com.google.android.material.card.MaterialCardView>
+            <!-- Cómo se hace -->
+            <LinearLayout
+                android:id="@+id/panelComo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margen_pantalla"
+                android:layout_marginTop="@dimen/espacio_20"
+                android:layout_marginEnd="@dimen/margen_pantalla"
+                android:orientation="vertical"
+                android:visibility="gone">
 
+                <TextView
+                    android:id="@+id/tvDescripcion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/espacio_16"
+                    android:lineSpacingMultiplier="1.15"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="15sp"
+                    android:visibility="gone" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardPasos"
+                    style="@style/Widget.GymProFit.Card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:id="@+id/listaPasos"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/espacio_20" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:id="@+id/tvSinPasos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/detalle_ejercicio_sin_pasos"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="@dimen/text_body"
+                    android:visibility="gone" />
+            </LinearLayout>
         </LinearLayout>
-
     </androidx.core.widget.NestedScrollView>
 
-</LinearLayout>
+    <!-- Volver, sobre la demostración -->
+    <ImageButton
+        android:id="@+id/btnAtras"
+        style="@style/Widget.GymProFit.BotonRedondo"
+        android:layout_marginStart="@dimen/espacio_8"
+        android:layout_marginTop="@dimen/espacio_12"
+        android:contentDescription="@string/ficha_atras"
+        android:src="@drawable/ic_ms_arrow_back" />
+</FrameLayout>

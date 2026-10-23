@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_pista_ejercicio — la pista «La próxima vez…» de la ficha del ejercicio (GP-216): el naranja de la tarjeta protagonista, radio 20. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/gp_hero" />
+    <corners android:radius="@dimen/radio_tarjeta_pequena" />
+</shape>

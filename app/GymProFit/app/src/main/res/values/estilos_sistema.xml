@@ -210,6 +210,55 @@
         <item name="android:textColor">@color/gp_on_hero</item>
     </style>
 
+    <!-- ══ Chip de grupo de la Biblioteca (GP-216, tablero 29) ═════════════════════
+         44 dp de alto, icono de 20 y el nombre; el elegido, naranja de la marca con texto
+         «sobre primario». El icono ya dice cuál está elegido, así que no lleva el check. -->
+    <style name="Widget.GymProFit.Chip.Biblioteca" parent="Widget.Material3.Chip.Filter">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="chipBackgroundColor">@color/chip_biblioteca_fondo</item>
+        <item name="android:textColor">@color/chip_biblioteca_texto</item>
+        <item name="chipIconTint">@color/chip_biblioteca_texto</item>
+        <item name="chipIconSize">20dp</item>
+        <item name="chipIconVisible">true</item>
+        <item name="checkedIconVisible">false</item>
+        <item name="chipMinHeight">44dp</item>
+        <item name="chipCornerRadius">22dp</item>
+        <item name="chipStrokeWidth">@dimen/tarjeta_borde</item>
+        <item name="chipStrokeColor">?attr/colorOutlineVariant</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- ══ Pestañas y periodos de la ficha del ejercicio (GP-216, tablero 30) ═══════
+         Pestaña: 44 dp, mitad del carril cada una, elegida en el contenedor naranja.
+         Periodo: 40 dp, un tercio cada uno, elegido en superficie 2. Se marcan con selected. -->
+    <style name="Widget.GymProFit.PestanaFicha" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">44dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:background">@drawable/bg_pestana_ficha</item>
+        <item name="android:textColor">@color/texto_pestana_ficha</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Widget.GymProFit.PeriodoFicha" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:background">@drawable/bg_periodo_ficha</item>
+        <item name="android:textColor">@color/texto_periodo_ficha</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <!-- ══ Botones Expressive ═══════════════════════════════════════════════════
          «Empezar», «Hecho» y el «+»: esquinas de 26 dp en reposo y 12 al pulsar, en 120 ms
          (BotonExpresivo; Movimiento.TOQUE). -->

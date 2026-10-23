@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_buscador_pildora — el buscador de la Biblioteca (GP-216, tablero 29): píldora de 56 dp sobre la superficie. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="28dp" />
+    <solid android:color="?attr/colorSurface" />
+    <stroke android:width="@dimen/tarjeta_borde" android:color="?attr/colorOutlineVariant" />
+</shape>

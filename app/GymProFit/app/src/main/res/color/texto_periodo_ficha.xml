@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- texto_periodo_ficha — el texto de un periodo de la gráfica de la ficha del ejercicio (GP-216): elegido, el principal; si no, de apoyo. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true" android:color="?attr/colorOnSurface" />
+    <item android:color="?attr/colorOnSurfaceVariant" />
+</selector>

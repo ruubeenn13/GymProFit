@@ -1,114 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  item_ejercicio — item de RecyclerView para un ejercicio del catálogo.
-  Muestra la foto real del ejercicio (silueta muscular de reserva si no la tiene),
-  nombre, descripción y chips de dificultad y grupo muscular.
+  item_ejercicio — una fila de la Biblioteca (GP-216, tablero 29): foto de 52 dp, nombre, grupo y
+  material, y a la derecha el nivel con su punto de color. El fondo (primera, media, última o sola
+  de la tarjeta) lo pone el adaptador. Sin foto, la silueta del músculo; nunca un bloque en blanco.
 -->
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="10dp"
+    android:layout_marginStart="@dimen/margen_pantalla"
+    android:layout_marginEnd="@dimen/margen_pantalla"
+    android:minHeight="76dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingStart="@dimen/fila_padding_horizontal"
+    android:paddingEnd="@dimen/fila_padding_horizontal"
+    android:paddingTop="@dimen/espacio_12"
+    android:paddingBottom="@dimen/espacio_12"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="?attr/selectableItemBackground"
-    app:cardBackgroundColor="?attr/colorSurface">
+    android:background="@drawable/bg_grupo_media">
 
-    <!-- Fila principal: icono + info + chevron -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:gravity="center_vertical">
+    <!-- Primer fotograma de la demostración; la silueta si el ejercicio no tiene. -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        app:cardBackgroundColor="?attr/colorSurfaceVariant"
+        app:cardCornerRadius="@dimen/radio_miniatura"
+        app:cardElevation="0dp"
+        app:strokeWidth="0dp">
 
-        <!-- Primer fotograma real de la demostración. Cuando el ejercicio no tiene
-             imagen se cae a la silueta con la zona trabajada en naranja, que es lo
-             que enseñaban las 873 filas hasta ahora. La animación completa sigue
-             estando en el detalle. -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            app:cardCornerRadius="@dimen/radio_miniatura"
-            app:cardBackgroundColor="?attr/colorSurfaceVariant">
-
-            <ImageView
-                android:id="@+id/ivIconoEjercicio"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_body_full"
-                android:contentDescription="@null" />
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="14dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tvNombreEjercicio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/text_subtitle"
-                android:textStyle="bold"
-                android:textColor="?attr/colorOnSurface" />
-
-            <!-- Descripción limitada a 2 líneas: las de wger son largas y
-                 reventaban la card; el texto completo se ve en el detalle -->
-            <TextView
-                android:id="@+id/tvDescripcionEjercicio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:textSize="@dimen/text_caption"
-                android:maxLines="2"
-                android:ellipsize="end"
-                android:textColor="?attr/colorOnSurfaceVariant" />
-
-            <!-- Chips de dificultad y grupo muscular -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal">
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipDificultad"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_body"
-                    app:chipMinHeight="34dp"
-                    android:clickable="false"
-                    android:focusable="false"
-                    style="@style/Widget.Material3.Chip.Assist" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipGrupo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
-                    android:textSize="@dimen/text_body"
-                    app:chipMinHeight="34dp"
-                    android:clickable="false"
-                    android:focusable="false"
-                    style="@style/Widget.Material3.Chip.Assist" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <!-- Chevron indicador de navegación al detalle -->
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/ic_ms_chevron_right"
-            android:contentDescription="@null" />
+            android:id="@+id/ivIconoEjercicio"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_body_full" />
+    </com.google.android.material.card.MaterialCardView>
 
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/fila_icono_a_texto"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvNombreEjercicio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="@dimen/text_fila"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvDetalleEjercicio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="@dimen/text_eyebrow" />
     </LinearLayout>
 
-</com.google.android.material.card.MaterialCardView>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/espacio_8"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <View
+            android:id="@+id/puntoNivel"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:background="@drawable/bg_punto_nivel"
+            android:importantForAccessibility="no" />
+
+        <TextView
+            android:id="@+id/tvNivelEjercicio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="@dimen/text_eyebrow" />
+    </LinearLayout>
+</LinearLayout>
