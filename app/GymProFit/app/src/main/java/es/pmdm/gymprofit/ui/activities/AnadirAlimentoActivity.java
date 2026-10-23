@@ -523,8 +523,8 @@ public class AnadirAlimentoActivity extends BaseActivity {
             anadidos.cuandoEste(clave, hecho -> {
                 if (isDestroyed() || saliendo) return;
                 tipoActualizando = hecho.getTipoComida();
-                actualizarLauncher.launch(FichaAlimentoActivity.paraEditar(this, hecho.getLinea(),
-                        hecho.getTipoComida(), fecha).putExtra(EXTRA_EN_ANADIR, true));
+                Transiciones.abrirTarjeta(this, fila, FichaAlimentoActivity.paraEditar(this, hecho.getLinea(),
+                        hecho.getTipoComida(), fecha).putExtra(EXTRA_EN_ANADIR, true), actualizarLauncher);
             });
             return;
         }

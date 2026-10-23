@@ -35,7 +35,7 @@ public class AlimentoComidaAdapter extends RecyclerView.Adapter<AlimentoComidaAd
     /** Lo que se puede hacer con una fila. */
     public interface Acciones {
         /** Tocarla: la ficha con su cantidad y «Actualizar». */
-        void abrir(@NonNull AlimentoComida item);
+        void abrir(@NonNull AlimentoComida item, @NonNull View fila);
 
         /** Mantenerla pulsada: su menú. */
         void menu(@NonNull AlimentoComida item, @NonNull View fila);
@@ -98,7 +98,7 @@ public class AlimentoComidaAdapter extends RecyclerView.Adapter<AlimentoComidaAd
         h.itemView.setContentDescription(ctx.getString(item.isAlimentoEsPlato() ? R.string.comida_fila_plato_a11y
                 : R.string.comida_fila_a11y, nombre, cantidad, kcal, prot));
 
-        h.itemView.setOnClickListener(v -> acciones.abrir(item));
+        h.itemView.setOnClickListener(v -> acciones.abrir(item, v));
         h.itemView.setOnLongClickListener(v -> {
             acciones.menu(item, v);
             return true;

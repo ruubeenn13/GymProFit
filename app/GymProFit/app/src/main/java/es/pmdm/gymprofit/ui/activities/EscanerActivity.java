@@ -61,6 +61,7 @@ import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.Movimiento;
 import es.pmdm.gymprofit.utils.PedidoCantidad;
+import es.pmdm.gymprofit.utils.Transiciones;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
 
@@ -491,7 +492,8 @@ public class EscanerActivity extends BaseActivity {
         secundario.setText(R.string.escaner_cambiar_cantidad);
         if (modoIngredientes()) {
             // Al plato (lote 1.6.6): nada va a la API hasta guardarlo.
-            secundario.setOnClickListener(v -> despues.launch(FichaAlimentoActivity.paraIngrediente(this, a, null)));
+            secundario.setOnClickListener(v -> Transiciones.abrirTarjeta(this, hoja,
+                    FichaAlimentoActivity.paraIngrediente(this, a, null), despues));
             principal.setText(R.string.ficha_anadir_al_plato);
             principal.setOnClickListener(v -> {
                 Movimiento.vibrar(principal, Movimiento.Vibracion.LIGERA);
@@ -501,8 +503,9 @@ public class EscanerActivity extends BaseActivity {
             });
             return;
         }
-        secundario.setOnClickListener(v -> despues.launch(FichaAlimentoActivity.paraAnadir(this, a, tipoComida, fecha)
-                .putExtra(AnadirAlimentoActivity.EXTRA_EN_ANADIR, enAnadir())));
+        secundario.setOnClickListener(v -> Transiciones.abrirTarjeta(this, hoja,
+                FichaAlimentoActivity.paraAnadir(this, a, tipoComida, fecha)
+                        .putExtra(AnadirAlimentoActivity.EXTRA_EN_ANADIR, enAnadir()), despues));
         principal.setText(AnadirAlimentoActivity.textoAnadirA(tipoComida));
         principal.setOnClickListener(v -> anadir(a, cantidad, principal));
     }

@@ -66,6 +66,7 @@ import es.pmdm.gymprofit.utils.PedidoCantidad;
 import es.pmdm.gymprofit.utils.QuitarConDeshacer;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
 import es.pmdm.gymprofit.utils.ResumenComida;
+import es.pmdm.gymprofit.utils.Transiciones;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
 import es.pmdm.gymprofit.utils.VistaEstado;
@@ -214,7 +215,7 @@ public class ComidaActivity extends BaseActivity {
         RecyclerView rv = findViewById(R.id.rvAlimentosComida);
         rv.setLayoutManager(new LinearLayoutManager(this));
         adapter = new AlimentoComidaAdapter(lineas, new AlimentoComidaAdapter.Acciones() {
-            @Override public void abrir(@NonNull AlimentoComida item) { abrirFicha(item); }
+            @Override public void abrir(@NonNull AlimentoComida item, @NonNull View fila) { abrirFicha(item, fila); }
             @Override public void menu(@NonNull AlimentoComida item, @NonNull View fila) { mostrarMenu(item, fila); }
             @Override public void quitar(@NonNull AlimentoComida item) { quitarLinea(item); }
         });
@@ -964,7 +965,7 @@ public class ComidaActivity extends BaseActivity {
         boolean esAdmin = "ROLE_ADMIN".equals(prefsManager.getRol());
         List<UIHelper.MenuAction> acciones = new ArrayList<>();
         acciones.add(new UIHelper.MenuAction(R.drawable.ic_ms_edit, getString(R.string.comida_cambiar_cantidad),
-                () -> abrirFicha(item)));
+                () -> abrirFicha(item, fila)));
         if (esAdmin && item.getUsuarioIdAlimento() == null) {
             acciones.add(new UIHelper.MenuAction(R.drawable.ic_ms_visibility_off, getString(R.string.comida_desactivar_alimento),
                     () -> UIHelper.mostrarDialogoConIcono(this, getString(R.string.comida_desactivar_alimento),
@@ -976,8 +977,10 @@ public class ComidaActivity extends BaseActivity {
         UIHelper.mostrarMenuAnclado(this, fila, item.getNombreAlimento(), acciones);
     }
 
-    private void abrirFicha(AlimentoComida item) {
-        volverYRecargar.launch(FichaAlimentoActivity.paraEditar(this, item, tipoComida, fecha));
+    // La fila crece hasta la ficha (contenedor, DEC-039).
+    private void abrirFicha(AlimentoComida item, View fila) {
+        Transiciones.abrirTarjeta(this, fila, FichaAlimentoActivity.paraEditar(this, item, tipoComida, fecha),
+                volverYRecargar);
     }
 
     // Solo ADMIN: desactiva el alimento del catálogo de esta línea (lo de antes).
