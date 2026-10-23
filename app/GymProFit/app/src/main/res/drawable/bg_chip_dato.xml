@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_chip_dato — la píldora de un dato de «Tus datos y objetivos» en Perfil (GP-216): superficie 2, radio 12. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="?attr/colorSurfaceVariant" />
+    <corners android:radius="@dimen/radio_chip" />
+</shape>

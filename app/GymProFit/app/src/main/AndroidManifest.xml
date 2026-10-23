@@ -109,9 +109,9 @@
         <activity
             android:name=".ui.activities.EditarEjercicioAdminActivity"
             android:exported="false" />
-        <!-- Perfil, logros y mediciones corporales -->
+        <!-- Tus datos y objetivos (GP-216; antes Editar perfil), logros y mediciones corporales -->
         <activity
-            android:name=".ui.activities.EditarPerfilActivity"
+            android:name=".ui.activities.TusDatosActivity"
             android:exported="false" />
         <!-- Sesiones de entrenamiento -->
         <activity
@@ -191,11 +191,11 @@
             android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
             android:theme="@style/Theme.GymProFit.ConBarra"
             tools:replace="android:theme" />
-        <!-- Borrado definitivo de la cuenta (GP-008); se abre desde Ajustes -->
+        <!-- Borrado definitivo de la cuenta (GP-008); se abre desde Perfil y ajustes -->
         <activity android:name=".ui.activities.EliminarCuentaActivity" android:exported="false" />
-        <!-- Estructura de GP-105: Ajustes y lo que cuelga de él, la biblioteca de
-             ejercicios y todas las plantillas (antes, pestañas o parte del perfil). -->
-        <activity android:name=".ui.activities.AjustesActivity" android:exported="false" />
+        <!-- Perfil y ajustes (GP-216; antes Ajustes, GP-105) y lo que cuelga de él: se abre con el
+             avatar de las cuatro pestañas. -->
+        <activity android:name=".ui.activities.PerfilActivity" android:exported="false" />
         <!-- Ajustes › Notificaciones y «¿Te avisamos?» del alta (GP-112, lote 1.5.1). -->
         <activity android:name=".ui.activities.NotificacionesActivity" android:exported="false" />
         <activity android:name=".ui.activities.AvisosActivity" android:exported="false" />

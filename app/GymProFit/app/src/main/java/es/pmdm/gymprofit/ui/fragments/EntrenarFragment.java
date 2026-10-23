@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.utils.AvatarUtils;
 import es.pmdm.gymprofit.model.PageDTO;
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
 import es.pmdm.gymprofit.model.programa.ProgramaQueSigue;
@@ -144,6 +145,7 @@ public class EntrenarFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        AvatarUtils.cabecera(requireContext(), findViewById(R.id.avatarCabecera), prefsManager);
         cargarMisRutinas();
     }
 

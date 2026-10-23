@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_objetivo_elegido — el objetivo elegido (GP-216, tablero 18): contenedor naranja y borde naranja de 2 dp. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="?attr/colorPrimaryContainer" />
+    <corners android:radius="@dimen/radio_tarjeta_pequena" />
+    <stroke
+        android:width="@dimen/opcion_borde"
+        android:color="?attr/colorPrimary" />
+</shape>

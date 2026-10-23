@@ -1,54 +1,51 @@
 package es.pmdm.gymprofit.ui.activities;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import es.pmdm.gymprofit.utils.ConfirmarEliminar;
+
 // ============================================================
-// EliminarCuentaActivityTest — la puerta del borrado de cuenta (GP-008).
+// EliminarCuentaActivityTest — la puerta del borrado de cuenta (GP-008; GP-216, tablero 21).
 //
-// Solo se prueba puedeEliminar(), que es la única barrera entre un toque
-// distraído y una cuenta vaciada sin vuelta atrás. Es estática y sin Android
-// dentro justamente para poder probarla sin levantar la pantalla.
-//
-// Lo que estos tests defienden es que NADA de lo de abajo vuelva a abrir el
-// botón: ni la casilla sola, ni la contraseña sola, ni unos espacios.
+// Desde GP-216 la casilla enciende el botón y, con la contraseña vacía, pulsar la pide en vez de
+// borrar (ConfirmarEliminar, que tiene sus propios tests de la casilla). La barrera de siempre
+// sigue entera: no se borra sin las DOS cosas, la casilla y la contraseña, y estos tests defienden
+// que nada de lo de abajo la abra: ni la casilla sola, ni la contraseña sola, ni unos espacios.
 // ============================================================
 public class EliminarCuentaActivityTest {
 
     @Test
-    public void con_password_y_casilla_marcada_se_puede_borrar() {
-        assertTrue(EliminarCuentaActivity.puedeEliminar("Contrasena1!", true));
+    public void con_password_y_casilla_marcada_se_borra() {
+        assertEquals(ConfirmarEliminar.Paso.BORRAR, ConfirmarEliminar.alPulsar(true, "Contrasena1!"));
     }
 
     @Test
-    public void la_casilla_sin_password_no_basta() {
-        assertFalse(EliminarCuentaActivity.puedeEliminar("", true));
+    public void la_casilla_sin_password_no_borra() {
+        assertEquals(ConfirmarEliminar.Paso.PEDIR_CLAVE, ConfirmarEliminar.alPulsar(true, ""));
     }
 
     @Test
-    public void la_password_sin_casilla_no_basta() {
-        // Escribir la contraseña es reflejo; marcar la casilla es la parte
-        // deliberada. Sin ella no hay borrado.
-        assertFalse(EliminarCuentaActivity.puedeEliminar("Contrasena1!", false));
+    public void la_password_sin_casilla_no_borra() {
+        // Escribir la contraseña es reflejo; marcar la casilla es la parte deliberada. Sin ella no hay borrado.
+        assertEquals(ConfirmarEliminar.Paso.NADA, ConfirmarEliminar.alPulsar(false, "Contrasena1!"));
     }
 
     @Test
     public void solo_espacios_no_cuenta_como_password() {
-        assertFalse(EliminarCuentaActivity.puedeEliminar("    ", true));
+        assertEquals(ConfirmarEliminar.Paso.PEDIR_CLAVE, ConfirmarEliminar.alPulsar(true, "    "));
     }
 
     @Test
-    public void password_nula_no_revienta_ni_abre_el_boton() {
+    public void password_nula_no_revienta_ni_borra() {
         // El campo devuelve null antes del primer tecleo si se toca a mano.
-        assertFalse(EliminarCuentaActivity.puedeEliminar(null, true));
+        assertEquals(ConfirmarEliminar.Paso.PEDIR_CLAVE, ConfirmarEliminar.alPulsar(true, null));
     }
 
     @Test
     public void ni_casilla_ni_password_es_el_estado_inicial_de_la_pantalla() {
-        assertFalse(EliminarCuentaActivity.puedeEliminar("", false));
+        assertEquals(ConfirmarEliminar.Paso.NADA, ConfirmarEliminar.alPulsar(false, ""));
     }
 
     // --- GP-119: la contraseña se recorta como en el resto de la app (DEC-034) ---

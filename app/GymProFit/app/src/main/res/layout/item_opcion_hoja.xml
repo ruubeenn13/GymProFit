@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_opcion_hoja — una opción de la hoja de elegir (GP-216, tablero 22): una miniatura opcional
+  (solo la del tema) y debajo el radio con el nombre. Elegida lleva el borde naranja. Un radio para
+  TalkBack: la fila entera es la opción y dice su estado.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:background="@drawable/bg_opcion_hoja"
+    android:clickable="true"
+    android:focusable="true"
+    android:minHeight="56dp"
+    android:orientation="vertical"
+    android:padding="@dimen/espacio_12">
+
+    <FrameLayout
+        android:id="@+id/vistaPreviaOpcion"
+        android:layout_width="match_parent"
+        android:layout_height="132dp"
+        android:layout_marginBottom="@dimen/espacio_12"
+        android:importantForAccessibility="no"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="48dp"
+        android:orientation="horizontal"
+        android:importantForAccessibility="no">
+
+        <ImageView
+            android:id="@+id/ivRadioOpcion"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_ms_radio_button_unchecked"
+            app:tint="?attr/colorOutline" />
+
+        <TextView
+            android:id="@+id/tvTextoOpcion"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/espacio_8"
+            android:importantForAccessibility="no"
+            android:textAppearance="@style/TextAppearance.GymProFit.Seccion.Fila" />
+    </LinearLayout>
+</LinearLayout>

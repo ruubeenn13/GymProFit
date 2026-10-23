@@ -37,7 +37,6 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.LogroApi;
 import es.pmdm.gymprofit.network.RecordApi;
 import es.pmdm.gymprofit.network.UsuarioApi;
-import es.pmdm.gymprofit.ui.activities.AjustesActivity;
 import es.pmdm.gymprofit.ui.widget.FotoPerfil;
 import es.pmdm.gymprofit.utils.AvatarUtils;
 import es.pmdm.gymprofit.utils.LogrosVisibles;
@@ -89,9 +88,6 @@ public class ProgresoFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        findViewById(R.id.btnAjustes).setOnClickListener(v ->
-                startActivity(new Intent(requireContext(), AjustesActivity.class)));
-
         View avatar = findViewById(R.id.avatarProgreso);
         avatar.setContentDescription(getString(R.string.progreso_avatar_a11y));
         avatar.setOnClickListener(v -> fotoPerfil.elegir());
@@ -135,6 +131,7 @@ public class ProgresoFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        AvatarUtils.cabecera(requireContext(), findViewById(R.id.avatarCabecera), prefsManager);
         pintarPerfil();
         cargarCifras();
     }

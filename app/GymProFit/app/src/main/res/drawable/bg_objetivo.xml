@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_objetivo — una opción de «Tu objetivo» sin elegir (GP-216, tablero 18): superficie de tarjeta y borde de 2 dp de la superficie 2. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="?attr/colorSurface" />
+    <corners android:radius="@dimen/radio_tarjeta_pequena" />
+    <stroke
+        android:width="@dimen/opcion_borde"
+        android:color="?attr/colorSurfaceVariant" />
+</shape>

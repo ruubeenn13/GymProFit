@@ -58,6 +58,19 @@
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Los requisitos del correo nuevo, con el mismo patrón que la contraseña (GP-216, tablero 20) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/espacio_4"
+                android:layout_marginTop="@dimen/espacio_12"
+                android:layout_marginEnd="@dimen/espacio_4"
+                android:orientation="vertical">
+
+                <include android:id="@+id/reqForma" layout="@layout/view_requisito" />
+                <include android:id="@+id/reqDistinto" layout="@layout/view_requisito" />
+            </LinearLayout>
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilPasswordEmail"
                 android:layout_width="match_parent"

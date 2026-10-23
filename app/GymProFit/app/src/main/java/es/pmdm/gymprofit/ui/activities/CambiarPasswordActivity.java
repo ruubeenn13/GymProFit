@@ -23,6 +23,8 @@ import es.pmdm.gymprofit.utils.AvisoDescartar;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PoliticaCuenta;
 import es.pmdm.gymprofit.utils.PreferencesManager;
+import es.pmdm.gymprofit.utils.RequisitosClave;
+import es.pmdm.gymprofit.ui.widget.RequisitosUi;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
 
@@ -65,6 +67,25 @@ public class CambiarPasswordActivity extends AppCompatActivity {
         AvisoDescartar.instalar(this, findViewById(R.id.toolbar),
                 () -> AvisoDescartar.hayTexto(etActual.getText(), etNueva.getText()));
         findViewById(R.id.btnGuardar).setOnClickListener(v -> cambiar());
+
+        // Los requisitos se marcan solos al escribir (GP-216, tablero 20).
+        android.text.TextWatcher alEscribir = new android.text.TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int a, int b, int c) { }
+            @Override public void onTextChanged(CharSequence s, int a, int b, int c) { }
+            @Override public void afterTextChanged(android.text.Editable e) {
+                tilNueva.setError(null);
+                pintarRequisitos();
+            }
+        };
+        etNueva.addTextChangedListener(alEscribir);
+        etActual.addTextChangedListener(alEscribir);
+        pintarRequisitos();
+    }
+
+    // La barra de fortaleza y la lista de requisitos, con lo escrito ahora.
+    private void pintarRequisitos() {
+        String nueva = texto(etNueva);
+        RequisitosUi.clave(findViewById(android.R.id.content), RequisitosClave.de(nueva, texto(etActual)), nueva.isEmpty());
     }
 
     private void cambiar() {
@@ -79,6 +100,10 @@ public class CambiarPasswordActivity extends AppCompatActivity {
             tilActual.setError(null);
         }
         String problema = UIHelper.mensajePassword(this, PoliticaCuenta.problemaPassword(nueva));
+        // La misma que la actual: se dice en el campo, sin salir a la red para que la API la rechace.
+        if (problema == null && !RequisitosClave.de(nueva, actual).distinta) {
+            problema = getString(R.string.cambiar_password_igual);
+        }
         tilNueva.setError(problema);
         if (problema != null) valido = false;
         if (!valido) return;

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  bg_burbuja_profi — el bocadillo de Profi (GP-216, tablero 13): superficie de tarjeta con la
+  esquina de la cola más cerrada (4) y las otras tres a 16, la escala de las miniaturas.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="?attr/colorSurface" />
+    <corners
+        android:topLeftRadius="@dimen/espacio_4"
+        android:topRightRadius="@dimen/radio_miniatura"
+        android:bottomRightRadius="@dimen/radio_miniatura"
+        android:bottomLeftRadius="@dimen/radio_miniatura" />
+</shape>

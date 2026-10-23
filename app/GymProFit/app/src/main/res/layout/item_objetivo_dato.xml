@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_objetivo_dato — una opción de «Tu objetivo» en Tus datos (GP-216, tablero 18): un icono y el
+  nombre, en una tarjeta de 112 de alto; elegida lleva el borde y el fondo naranja. Es un radio
+  para TalkBack. La rellena TusDatosActivity.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:background="@drawable/bg_objetivo"
+    android:clickable="true"
+    android:focusable="true"
+    android:minHeight="112dp"
+    android:orientation="vertical"
+    android:padding="@dimen/espacio_12">
+
+    <ImageView
+        android:id="@+id/ivObjetivo"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:importantForAccessibility="no"
+        app:tint="?attr/colorOnSurfaceVariant" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <TextView
+        android:id="@+id/tvObjetivo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="no"
+        android:textAppearance="@style/TextAppearance.GymProFit.Seccion.Fila" />
+</LinearLayout>

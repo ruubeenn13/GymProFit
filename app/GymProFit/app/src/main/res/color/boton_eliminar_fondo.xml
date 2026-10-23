@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  boton_eliminar_fondo — el fondo del botón «Eliminar mi cuenta» (GP-216, tablero 21): el rojo fijo
+  de las dos temas cuando se puede pulsar y la superficie 2 cuando está apagado (casilla sin marcar).
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_enabled="false" android:color="?attr/colorSurfaceVariant" />
+    <item android:color="@color/gp_eliminar_fondo" />
+</selector>

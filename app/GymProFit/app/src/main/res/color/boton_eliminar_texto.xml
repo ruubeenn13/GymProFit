@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  boton_eliminar_texto — el texto del botón «Eliminar mi cuenta» (GP-216, tablero 21): blanco sobre
+  el rojo fijo (5,62:1) y el apagado, en el color de borde, sobre la superficie 2.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_enabled="false" android:color="?attr/colorOnSurfaceVariant" />
+    <item android:color="@color/gp_eliminar_texto" />
+</selector>

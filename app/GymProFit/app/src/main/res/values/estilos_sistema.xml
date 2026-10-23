@@ -52,6 +52,8 @@
     <!-- Título de fila (16, Barlow SemiBold): el nombre de una fila o de una cabecera compacta. -->
     <style name="TextAppearance.GymProFit.Seccion.Fila">
         <item name="android:textSize">@dimen/text_fila</item>
+        <!-- Sin esto heredaba los 28 sp de interlineado del título y las filas de dos líneas se separaban -->
+        <item name="android:lineHeight" tools:targetApi="28">@dimen/linea_titulo_fila</item>
     </style>
 
     <!-- Apoyo pequeño (13, el suelo): la segunda línea de una fila. -->
@@ -241,5 +243,23 @@
 
     <style name="Widget.GymProFit.BotonPildora.Expresivo">
         <item name="cornerRadius">@dimen/boton_radio_reposo</item>
+    </style>
+
+    <!-- ══ Perfil y ajustes (GP-216, tableros 17 a 23) ═══════════════════════════
+         Rótulo de un grupo de filas (14, Barlow 600, texto secundario) y el grupo con los márgenes
+         de pantalla: una tarjeta de radio 24 con filas de 64 y separadores con sangría de 70. -->
+    <style name="Widget.GymProFit.RotuloGrupo" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/margen_pantalla</item>
+        <item name="android:layout_marginEnd">@dimen/margen_pantalla</item>
+        <item name="android:accessibilityHeading" tools:targetApi="28">true</item>
+        <item name="android:textAppearance">@style/TextAppearance.GymProFit.Apoyo</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="Widget.GymProFit.GrupoAjustes.Pantalla">
+        <item name="android:layout_marginStart">@dimen/margen_pantalla</item>
+        <item name="android:layout_marginEnd">@dimen/margen_pantalla</item>
+        <item name="android:layout_marginTop">@dimen/espacio_8</item>
     </style>
 </resources>

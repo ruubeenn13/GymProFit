@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_stepper_dato — una fila de «Tu cuerpo» en Tus datos (GP-216, tablero 18): el nombre del dato,
+  un botón − de 48, el valor con su unidad y un botón +. Mantener pulsado repite. Tocar el valor abre
+  la hoja para escribirlo (peso con décimas, altura, edad), que es también el camino sin repetir.
+  La rellena TusDatosActivity.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:minHeight="72dp"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/espacio_16"
+    android:paddingEnd="@dimen/espacio_8">
+
+    <TextView
+        android:id="@+id/tvNombreDato"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textAppearance="@style/TextAppearance.GymProFit.Cuerpo" />
+
+    <ImageButton
+        android:id="@+id/btnMenos"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_boton_stepper"
+        android:scaleType="fitCenter"
+        android:padding="@dimen/espacio_12"
+        android:src="@drawable/ic_ms_remove"
+        app:tint="?attr/colorOnSurface" />
+
+    <LinearLayout
+        android:id="@+id/valorDato"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:minWidth="92dp"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/espacio_4"
+        android:paddingEnd="@dimen/espacio_4">
+
+        <TextView
+            android:id="@+id/tvValorDato"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:importantForAccessibility="no"
+            android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena" />
+
+        <TextView
+            android:id="@+id/tvUnidadDato"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/espacio_4"
+            android:importantForAccessibility="no"
+            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/btnMas"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_boton_stepper"
+        android:scaleType="fitCenter"
+        android:padding="@dimen/espacio_12"
+        android:src="@drawable/ic_ms_add"
+        app:tint="?attr/colorOnSurface" />
+</LinearLayout>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  view_requisito — un requisito que se marca solo al escribir (GP-216, tablero 20): un icono, vacío
+  si falta y con su check en verde si ya se cumple, y su texto. Lo rellena RequisitosUi, que le pone
+  su descripción para TalkBack («Al menos 8 caracteres, cumplido»); no se pulsa.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:minHeight="28dp"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/ivRequisito"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_ms_radio_button_unchecked"
+        app:tint="?attr/colorOnSurfaceVariant" />
+
+    <TextView
+        android:id="@+id/tvRequisito"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="@dimen/espacio_8"
+        android:importantForAccessibility="no"
+        android:textAppearance="@style/TextAppearance.GymProFit.Apoyo" />
+</LinearLayout>

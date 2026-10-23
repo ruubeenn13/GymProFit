@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  bg_icono_hero_ejercicio — el bloque del icono de cada ejercicio en el carrusel de «Hoy toca»
+  (GP-216, tablero 13): el carbón cálido de «sobre el naranja» dentro de la tarjeta protagonista,
+  con la esquina de las miniaturas (16). Igual en los dos temas, como la tarjeta.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/gp_on_primary_sobre_hero" />
+    <corners android:radius="@dimen/radio_miniatura" />
+</shape>

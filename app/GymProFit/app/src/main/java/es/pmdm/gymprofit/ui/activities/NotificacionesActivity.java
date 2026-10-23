@@ -147,6 +147,11 @@ public class NotificacionesActivity extends BaseActivity {
     private void pintarPermiso() {
         boolean permitidas = NotificationManagerCompat.from(this).areNotificationsEnabled();
         findViewById(R.id.cardPermisoAvisos).setVisibility(permitidas ? View.GONE : View.VISIBLE);
+        // Sin el permiso los interruptores se ven apagados (GP-216, tablero 19): lo que se elija se guarda,
+        // pero no llegará nada hasta activarlo.
+        for (FilaAviso f : new FilaAviso[]{entrenar, comidas, progreso}) {
+            if (f != null) f.atenuarInterruptor(!permitidas);
+        }
     }
 
     // Si Android aún deja pedirlo, se pide; si no (o antes de Android 13), solo quedan

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_opcion_hoja — una opción sin elegir de la hoja de elegir (GP-216, tablero 22): fondo de pantalla y borde de 2 dp. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="?android:attr/colorBackground" />
+    <corners android:radius="@dimen/radio_tarjeta_pequena" />
+    <stroke
+        android:width="@dimen/opcion_borde"
+        android:color="?attr/colorSurfaceVariant" />
+</shape>

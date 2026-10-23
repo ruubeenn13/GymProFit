@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  view_fortaleza — la barra de fortaleza de la contraseña nueva (GP-216, tablero 20): cuatro
+  tramos que se llenan según RequisitosClave.segmentos y su palabra debajo. La palabra lleva
+  el significado, así que el color no es lo único que dice cómo va; el texto es una región viva
+  educada para que TalkBack lo anuncie al cambiar. Lo rellena RequisitosUi.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/tramosFortaleza"
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:importantForAccessibility="no"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_tramo_fortaleza" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/espacio_4"
+            android:layout_weight="1"
+            android:background="@drawable/bg_tramo_fortaleza" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/espacio_4"
+            android:layout_weight="1"
+            android:background="@drawable/bg_tramo_fortaleza" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/espacio_4"
+            android:layout_weight="1"
+            android:background="@drawable/bg_tramo_fortaleza" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvFortaleza"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/espacio_8"
+        android:accessibilityLiveRegion="polite"
+        android:textAppearance="@style/TextAppearance.GymProFit.Enlace" />
+</LinearLayout>

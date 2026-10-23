@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  activity_acerca_de — Pantalla "Acerca de".
-  Información de la app, su versión y el contacto (soporte@gymprofit.app), compartir y
-  la política de privacidad. Las licencias tienen su propia pantalla desde GP-105.
+  activity_acerca_de — Acerca de GymProFit (GP-216, tablero 23): el logo, la versión y lo que es la
+  app, cuatro de sus piezas en tarjetas y, debajo, el contacto, compartir la app y las licencias.
+  Los términos y la política de privacidad están en Perfil y ajustes › Legal.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="?attr/android:colorBackground">
+    android:background="?android:attr/colorBackground"
+    android:orientation="vertical">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         style="@style/Widget.GymProFit.Cabecera"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="@string/acerca_btn" />
+        app:title="@string/ajustes_acerca" />
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
@@ -28,28 +27,29 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingTop="@dimen/espacio_24"
+            android:paddingBottom="@dimen/espacio_36">
 
-            <!-- HEADER: logo + nombre + versión + tagline -->
+            <!-- La marca -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
                 android:orientation="vertical"
-                android:gravity="center"
-                android:paddingTop="24dp"
-                android:paddingBottom="28dp">
+                android:paddingStart="@dimen/margen_pantalla"
+                android:paddingEnd="@dimen/margen_pantalla">
 
                 <ImageView
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:src="@drawable/logo"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:importantForAccessibility="no"
                     android:scaleType="fitCenter"
-                    android:contentDescription="@string/app_name" />
+                    android:src="@drawable/logo" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="@dimen/espacio_8"
                     android:text="@string/app_name"
                     android:textAppearance="@style/TextAppearance.GymProFit.Display" />
 
@@ -57,329 +57,73 @@
                     android:id="@+id/tvVersion"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    tools:text="v1.0.0"
-                    android:textSize="@dimen/text_body"
-                    android:textColor="?attr/colorPrimary" />
+                    android:layout_marginTop="@dimen/espacio_8"
+                    android:background="@drawable/bg_chip_dato"
+                    android:paddingStart="@dimen/espacio_12"
+                    android:paddingTop="@dimen/espacio_4"
+                    android:paddingEnd="@dimen/espacio_12"
+                    android:paddingBottom="@dimen/espacio_4"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Apoyo"
+                    android:textColor="?attr/colorOnSurface" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="@string/splash_subtitle"
-                    android:textSize="@dimen/text_body"
-                    android:textColor="?attr/colorOnSurfaceVariant" />
-
+                    android:layout_marginTop="@dimen/espacio_12"
+                    android:gravity="center"
+                    android:lineSpacingMultiplier="1.1"
+                    android:text="@string/acerca_lema"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Cuerpo" />
             </LinearLayout>
 
-            <!-- CARD: Sobre la aplicación -->
-            <com.google.android.material.card.MaterialCardView
+            <!-- Qué hace: cuatro piezas -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp">
+                android:layout_marginStart="@dimen/margen_pantalla"
+                android:layout_marginTop="@dimen/separacion_subpantalla"
+                android:layout_marginEnd="@dimen/margen_pantalla"
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/acerca_app_titulo"
-                        android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
+                    <include
+                        android:id="@+id/pieza1"
+                        layout="@layout/item_pieza_acerca" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="12dp"
-                        android:layout_marginBottom="12dp"
-                        android:background="?attr/colorOutlineVariant" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/acerca_app_descripcion"
-                        android:textSize="@dimen/text_body"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:lineSpacingMultiplier="1.45" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="14dp"
-                        android:layout_marginBottom="10dp"
-                        android:background="?attr/colorOutlineVariant" />
-
-                    <TextView
-                        android:textAppearance="@style/TextAppearance.GymProFit.Label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/acerca_funcionalidades"
-                        android:textSize="@dimen/text_caption"
-                        android:textAllCaps="true"
-                        android:letterSpacing="0.12"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:layout_marginBottom="10dp" />
-
-                    <!-- Feature 1 -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginBottom="8dp">
-                        <ImageView android:layout_width="14dp" android:layout_height="14dp"
-                            android:src="@drawable/ic_ms_check" android:alpha="0.45" android:contentDescription="@null" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                            android:layout_weight="1" android:layout_marginStart="10dp"
-                            android:text="@string/acerca_feat_1" android:textSize="@dimen/text_caption"
-                            android:textColor="?attr/colorOnSurfaceVariant" />
-                    </LinearLayout>
-
-                    <!-- Feature 2 -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginBottom="8dp">
-                        <ImageView android:layout_width="14dp" android:layout_height="14dp"
-                            android:src="@drawable/ic_ms_check" android:alpha="0.45" android:contentDescription="@null" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                            android:layout_weight="1" android:layout_marginStart="10dp"
-                            android:text="@string/acerca_feat_2" android:textSize="@dimen/text_caption"
-                            android:textColor="?attr/colorOnSurfaceVariant" />
-                    </LinearLayout>
-
-                    <!-- Feature 3 -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginBottom="8dp">
-                        <ImageView android:layout_width="14dp" android:layout_height="14dp"
-                            android:src="@drawable/ic_ms_check" android:alpha="0.45" android:contentDescription="@null" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                            android:layout_weight="1" android:layout_marginStart="10dp"
-                            android:text="@string/acerca_feat_3" android:textSize="@dimen/text_caption"
-                            android:textColor="?attr/colorOnSurfaceVariant" />
-                    </LinearLayout>
-
-                    <!-- Feature 4 -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginBottom="8dp">
-                        <ImageView android:layout_width="14dp" android:layout_height="14dp"
-                            android:src="@drawable/ic_ms_check" android:alpha="0.45" android:contentDescription="@null" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                            android:layout_weight="1" android:layout_marginStart="10dp"
-                            android:text="@string/acerca_feat_4" android:textSize="@dimen/text_caption"
-                            android:textColor="?attr/colorOnSurfaceVariant" />
-                    </LinearLayout>
-
-                    <!-- Feature 5 -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginBottom="8dp">
-                        <ImageView android:layout_width="14dp" android:layout_height="14dp"
-                            android:src="@drawable/ic_ms_check" android:alpha="0.45" android:contentDescription="@null" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                            android:layout_weight="1" android:layout_marginStart="10dp"
-                            android:text="@string/acerca_feat_5" android:textSize="@dimen/text_caption"
-                            android:textColor="?attr/colorOnSurfaceVariant" />
-                    </LinearLayout>
-
-                    <!-- Feature 6 -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-                        <ImageView android:layout_width="14dp" android:layout_height="14dp"
-                            android:src="@drawable/ic_ms_check" android:alpha="0.45" android:contentDescription="@null" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                            android:layout_weight="1" android:layout_marginStart="10dp"
-                            android:text="@string/acerca_feat_6" android:textSize="@dimen/text_caption"
-                            android:textColor="?attr/colorOnSurfaceVariant" />
-                    </LinearLayout>
-
+                    <include
+                        android:id="@+id/pieza2"
+                        layout="@layout/item_pieza_acerca" />
                 </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- CARD: Contacto -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
+                    android:layout_marginTop="@dimen/espacio_12"
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/acerca_contacto_titulo"
-                        android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
+                    <include
+                        android:id="@+id/pieza3"
+                        layout="@layout/item_pieza_acerca" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="@string/acerca_contacto_texto"
-                        android:textSize="@dimen/text_caption"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:lineSpacingMultiplier="1.35" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="14dp"
-                        android:layout_marginBottom="12dp"
-                        android:background="?attr/colorOutlineVariant" />
-
-                    <!-- Email clickable -->
-                    <LinearLayout
-                        android:id="@+id/llAcercaEmail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:padding="4dp">
-
-                        <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:src="@drawable/ic_ms_mail"
-                            android:alpha="0.55"
-                            android:contentDescription="@null" />
-
-                        <TextView
-                            android:id="@+id/tvAcercaEmail"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:text="@string/acerca_autor_email_label"
-                            android:textSize="@dimen/text_body"
-                            android:textColor="?attr/colorPrimary" />
-
-                    </LinearLayout>
-
-                    <!-- Compartir clickable -->
-                    <LinearLayout
-                        android:id="@+id/llAcercaCompartir"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:padding="4dp"
-                        android:layout_marginTop="6dp">
-
-                        <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:src="@drawable/ic_ms_share"
-                            android:alpha="0.55"
-                            android:contentDescription="@null" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:text="@string/acerca_compartir_label"
-                            android:textSize="@dimen/text_body"
-                            android:textColor="?attr/colorPrimary" />
-
-                    </LinearLayout>
-
-                    <!-- Política de privacidad (GP-008): el texto vive en
-                         gymprofit.app, no dentro del APK, para poder corregirlo sin
-                         publicar versión. Esta es la vía de consulta desde la app. -->
-                    <LinearLayout
-                        android:id="@+id/llAcercaPrivacidad"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:minHeight="48dp"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:padding="4dp"
-                        android:layout_marginTop="6dp">
-
-                        <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:src="@drawable/ic_ms_open_in_new"
-                            android:alpha="0.55"
-                            android:contentDescription="@null" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:text="@string/politica_privacidad"
-                            android:textSize="@dimen/text_body"
-                            android:textColor="?attr/colorPrimary" />
-
-                    </LinearLayout>
-
-                    <!-- Términos de uso (GP-087), junto a la política y por la misma vía:
-                         el texto vive en gymprofit.app. -->
-                    <LinearLayout
-                        android:id="@+id/llAcercaTerminos"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:minHeight="48dp"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:padding="4dp">
-
-                        <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:src="@drawable/ic_ms_open_in_new"
-                            android:alpha="0.55"
-                            android:contentDescription="@null" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:text="@string/ajustes_terminos"
-                            android:textSize="@dimen/text_body"
-                            android:textColor="?attr/colorPrimary" />
-
-                    </LinearLayout>
-
+                    <include
+                        android:id="@+id/pieza4"
+                        layout="@layout/item_pieza_acerca" />
                 </LinearLayout>
+            </LinearLayout>
 
-            </com.google.android.material.card.MaterialCardView>
+            <!-- Contacto, compartir y licencias -->
+            <LinearLayout
+                style="@style/Widget.GymProFit.GrupoAjustes.Pantalla"
+                android:layout_marginTop="@dimen/separacion_subpantalla">
 
+                <include android:id="@+id/llAcercaEmail" layout="@layout/view_fila_ajuste" />
+                <include android:id="@+id/llAcercaCompartir" layout="@layout/view_fila_ajuste" />
+                <include android:id="@+id/llAcercaLicencias" layout="@layout/view_fila_ajuste" />
+            </LinearLayout>
         </LinearLayout>
-
-    </ScrollView>
-
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>

@@ -2040,4 +2040,193 @@
     <string name="sn_lunes_titulo">Tu semana de nutrición</string>
     <string name="sn_lunes_texto">Mira cómo fue la semana pasada: proteína, días completos, calorías y agua.</string>
     <string name="sn_lunes_cerrar">Cerrar el aviso de tu semana</string>
+
+    <!-- Inicio (GP-216, tablero 13) -->
+    <string name="inicio_tu_dia">Tu día</string>
+    <string name="inicio_ver_dia">Ver el día</string>
+    <string name="inicio_musculos">Tus músculos esta semana</string>
+    <string name="inicio_detalle">Detalle</string>
+    <string name="inicio_progreso">Tu progreso</string>
+    <string name="inicio_ver_todo">Ver todo</string>
+    <string name="inicio_entrenos">Tus últimos entrenos</string>
+    <string name="inicio_historial">Historial</string>
+    <string name="avatar_perfil_a11y">Tu perfil y ajustes</string>
+    <string name="inicio_kilos_semana">Kilos por semana</string>
+    <string name="inicio_semana_corta">S%1$d</string>
+    <string name="inicio_variacion">%1$s%2$d\u00A0%% en %3$d semanas</string>
+    <string name="inicio_kilos_a11y">Kilos movidos por semana, de la más antigua a la actual: %1$s.</string>
+    <string name="inicio_progreso_error">No se han podido cargar tus kilos.</string>
+    <string name="inicio_progreso_vacio">Aún no hay kilos que contar. Tu primer entreno aparecerá aquí.</string>
+    <string name="inicio_musculos_a11y">Músculos trabajados esta semana. %1$s.</string>
+    <string name="inicio_zonas_hoy_a11y">Zonas de hoy: %1$s.</string>
+    <string name="inicio_ejercicio_ultima">Última: %1$s</string>
+    <string name="inicio_hoy_dia_programa">Hoy toca · día %1$d de %2$d</string>
+    <string name="inicio_hoy_ultima">La última vez, %1$s</string>
+    <string name="inicio_hoy_nunca">Todavía no la has hecho</string>
+    <string name="inicio_dia_calorias">Calorías</string>
+    <string name="inicio_dia_proteina">Proteína</string>
+    <string name="inicio_dia_agua">Agua</string>
+    <string name="inicio_dia_quedan">te quedan</string>
+    <string name="inicio_dia_pasas">de más</string>
+    <string name="inicio_dia_kcal_hoy">kcal hoy</string>
+    <string name="inicio_dia_kcal_hoy_g">de hoy</string>
+    <string name="inicio_dia_de">de %1$s</string>
+    <string name="inicio_dia_agua_hoy">bebidos hoy</string>
+    <string name="inicio_cifra_g">%1$d\u00A0g</string>
+    <string name="inicio_cifra_l">%1$s\u00A0L</string>
+    <string name="inicio_dia_proteina_a11y">Proteína: %1$d de %2$d gramos</string>
+    <string name="inicio_dia_proteina_sin_objetivo_a11y">Proteína: %1$d gramos hoy</string>
+    <string name="inicio_dia_agua_a11y">Agua: %1$s de %2$s litros, %3$d de %4$d vasos</string>
+    <string name="inicio_dia_agua_sin_objetivo_a11y">Agua: %1$s litros, %2$d vasos</string>
+    <string name="inicio_dia_error">No se ha podido cargar tu día.</string>
+    <string name="inicio_apuntar_desayuno">Apuntar el desayuno</string>
+    <string name="inicio_apuntar_almuerzo">Apuntar el almuerzo</string>
+    <string name="inicio_apuntar_comida">Apuntar la comida</string>
+    <string name="inicio_apuntar_merienda">Apuntar la merienda</string>
+    <string name="inicio_apuntar_cena">Apuntar la cena</string>
+    <string name="inicio_toca_ahora">Toca ahora</string>
+    <string name="inicio_toca_ahora_proteina">Toca ahora · te faltan %1$d\u00A0g de proteína</string>
+    <string name="inicio_entreno_sube">+%1$d\u00A0%% que la anterior</string>
+    <string name="inicio_entreno_baja">\u2212%1$d\u00A0%% que la anterior</string>
+    <string name="inicio_entreno_sin_records">Sin récords</string>
+    <string name="inicio_entrenos_error">No se han podido cargar tus entrenos.</string>
+    <string name="inicio_entrenos_vacio">Todavía no has terminado ningún entreno. El primero aparecerá aquí.</string>
+    <string name="tiempo_hoy_mayuscula">Hoy</string>
+    <string name="tiempo_ayer_mayuscula">Ayer</string>
+    <string name="inicio_dia_pasado">%1$s pasado</string>
+    <string name="inicio_fecha_corta_patron">d MMM</string>
+    <!-- Profi (GP-216): una frase con un dato tuyo; la segunda parte, en negrita -->
+    <string name="profi_sin_entrenos">Aún no has entrenado.</string>
+    <string name="profi_sin_entrenos_b">Cuando quieras, empezamos.</string>
+    <string name="profi_hoy_rutina">Hoy ya has hecho %1$s.</string>
+    <string name="profi_hoy_libre">Hoy ya has entrenado.</string>
+    <string name="profi_hoy_bien">Buen trabajo.</string>
+    <string name="profi_proteina">Hoy te faltan %1$d\u00A0g de proteína.</string>
+    <string name="profi_proteina_b">Una comida con proteína lo arregla.</string>
+    <string name="profi_empezamos_por">Hoy empezamos por %1$s.</string>
+    <string name="profi_hoy_toca">Hoy toca %1$s.</string>
+    <!-- Perfil y ajustes (GP-216, tablero 17) -->
+    <string name="perfil_titulo">Perfil y ajustes</string>
+    <string name="perfil_cambiar_foto_a11y">Cambiar la foto de perfil</string>
+    <string name="perfil_datos_titulo">Tus datos y objetivos</string>
+    <string name="perfil_datos_editar">Editar</string>
+    <string name="perfil_plan_al_dia">al día</string>
+    <string name="perfil_plan_proteina">de proteína</string>
+    <string name="perfil_plan_kcal">%1$s\u00A0kcal</string>
+    <string name="perfil_plan_a11y">Tu plan: %1$s kilocalorías y %2$d gramos de proteína</string>
+    <string name="perfil_dato_kg">%1$s\u00A0kg</string>
+    <string name="perfil_dato_cm">%1$d\u00A0cm</string>
+    <string name="perfil_la_app">La app</string>
+    <string name="perfil_desde">desde %1$s</string>
+    <string name="perfil_desde_anio">desde %1$s de %2$d</string>
+    <string name="perfil_notificaciones_n">%1$d de %2$d</string>
+    <string name="perfil_descanso_al_marcar_sub">Suena y vibra según el modo del móvil</string>
+    <string name="perfil_hoja_nota">Se aplica al momento.</string>
+    <string name="perfil_vaso_nota">Lo que ya has bebido no cambia: solo cambia lo que suma cada vaso.</string>
+    <!-- Tus datos y objetivos (GP-216, tablero 18) -->
+    <string name="datos_profi">Con esto calculo tus calorías y tu proteína. Abajo ves cómo cambia tu plan antes de guardar.</string>
+    <string name="datos_como_te_llamamos">Cómo te llamamos</string>
+    <string name="datos_nombre">Nombre</string>
+    <string name="datos_nombre_ayuda">En blanco, usamos tu nombre de usuario</string>
+    <string name="datos_tu_cuerpo">Tu cuerpo</string>
+    <string name="datos_sexo">Sexo</string>
+    <string name="datos_tu_objetivo">Tu objetivo</string>
+    <string name="datos_tu_dia_a_dia">Tu día a día</string>
+    <string name="datos_actividad">Actividad física</string>
+    <string name="datos_experiencia">Experiencia en el gimnasio</string>
+    <string name="actividad_corta_poca">Poca</string>
+    <string name="actividad_corta_ligera">Ligera</string>
+    <string name="actividad_corta_moderada">Moderada</string>
+    <string name="actividad_corta_mucha">Mucha</string>
+    <string name="datos_menos_a11y">Bajar %1$s</string>
+    <string name="datos_mas_a11y">Subir %1$s</string>
+    <string name="datos_escribir_a11y">%1$s: tocar para escribir el valor</string>
+    <string name="datos_valor_a11y">%1$s: %2$s</string>
+    <string name="datos_sin_valor">—</string>
+    <string name="datos_sin_valor_a11y">sin poner</string>
+    <string name="datos_plan_quedara">Tu plan quedará en</string>
+    <string name="datos_plan_cifras">%1$s\u00A0kcal · %2$d\u00A0g prot.</string>
+    <string name="datos_plan_sin_datos">Pon peso, altura y edad para ver tu plan</string>
+    <string name="datos_plan_igual">Sin cambios respecto a ahora</string>
+    <string name="datos_plan_mas">+%1$s\u00A0kcal respecto a ahora</string>
+    <string name="datos_plan_menos">\u2212%1$s\u00A0kcal respecto a ahora</string>
+    <string name="datos_plan_minimo">Mínimo eficaz de proteína: %1$d\u00A0g</string>
+    <string name="editar_perfil_error_carga_corto">No se ha podido cargar tu perfil.</string>
+    <!-- Contraseña y correo (GP-216, tablero 20) -->
+    <string name="cambiar_password_cierra_sesiones">Al cambiarla, se cierra la sesión en tus otros móviles.</string>
+    <string name="clave_req_longitud">Al menos 8 caracteres</string>
+    <string name="clave_req_distinta">No es la misma que la actual</string>
+    <string name="clave_req_cabe">Como mucho 72 bytes (unos 72 caracteres)</string>
+    <string name="clave_req_frase">Mejor una frase que una palabra (opcional)</string>
+    <string name="clave_fuerza_corta">Demasiado corta</string>
+    <string name="clave_fuerza_larga">Demasiado larga</string>
+    <string name="clave_fuerza_justa">Aceptable</string>
+    <string name="clave_fuerza_buena">Buena</string>
+    <string name="clave_fuerza_segura">Segura</string>
+    <string name="correo_req_forma">Tiene forma de correo (nombre@dominio.es)</string>
+    <string name="correo_req_distinto">Es distinto del actual</string>
+    <string name="requisito_cumplido_a11y">%1$s, cumplido</string>
+    <string name="requisito_pendiente_a11y">%1$s, pendiente</string>
+    <!-- Notificaciones (GP-216, tablero 19) -->
+    <string name="notificaciones_profi">Ahora mismo no puedo avisarte. Android me lo bloquea hasta que lo actives.</string>
+    <string name="notificaciones_activar_avisos">Activar avisos</string>
+    <!-- Eliminar cuenta (GP-216, tablero 21) -->
+    <string name="eliminar_cuenta_titular">Se borra todo y no se puede recuperar</string>
+    <string name="eliminar_cuenta_intro_corta">Es inmediato: no hay papelera ni plazo para arrepentirse.</string>
+    <string name="eliminar_pierde_cuenta">Tu cuenta y tu perfil</string>
+    <string name="eliminar_pierde_cuenta_sub">Nombre, correo, foto y objetivos</string>
+    <string name="eliminar_pierde_entrenos">Tus entrenos y récords</string>
+    <string name="eliminar_pierde_entrenos_n">%1$s y %2$s</string>
+    <string name="eliminar_pierde_entrenos_sub">Programa, rutinas, series y notas</string>
+    <string name="eliminar_pierde_diario">Tu diario de comidas</string>
+    <string name="eliminar_pierde_diario_sub">Alimentos, platos y agua</string>
+    <string name="eliminar_pierde_progreso">Tu peso, medidas y logros</string>
+    <string name="eliminar_pierde_progreso_sub">Todo tu progreso</string>
+    <string name="eliminar_cuenta_ver_detalle">Ver todo lo que se borra</string>
+    <string name="eliminar_cuenta_ocultar_detalle">Ocultar el detalle</string>
+    <string name="eliminar_cuenta_confirmacion_corta">Entiendo que no se puede deshacer</string>
+    <string name="eliminar_cuenta_btn_corto">Eliminar mi cuenta</string>
+    <string name="eliminar_cuenta_mejor_no">Mejor no</string>
+    <!-- Acerca de (GP-216, tablero 23) -->
+    <string name="acerca_lema">Entrenamiento, comida y progreso en una sola app. Hecha en Crevillente.</string>
+    <string name="acerca_version">Versión %1$s</string>
+    <string name="acerca_pieza_1">Programas y rutinas a tu nivel</string>
+    <string name="acerca_pieza_2">Sesión en vivo con descanso</string>
+    <string name="acerca_pieza_3">Calorías y macros por comida</string>
+    <string name="acerca_pieza_4">Récords, logros y medidas</string>
+    <string name="inicio_dos_lineas" translatable="false">%1$s\n%2$s</string>
+    <string name="inicio_kilos_n" translatable="false">%1$s\u00A0kg</string>
+    <!-- Plurales de GP-216 -->
+    <plurals name="inicio_zona_series">
+        <item quantity="one">%1$d serie</item>
+        <item quantity="other">%1$d series</item>
+    </plurals>
+    <plurals name="inicio_entreno_records">
+        <item quantity="one">%1$d récord</item>
+        <item quantity="other">%1$d récords</item>
+    </plurals>
+    <plurals name="profi_hoy_records">
+        <item quantity="one">Batiste %1$d récord.</item>
+        <item quantity="other">Batiste %1$d récords.</item>
+    </plurals>
+    <plurals name="profi_records">
+        <item quantity="one">La última vez en %1$s batiste %2$d récord.</item>
+        <item quantity="other">La última vez en %1$s batiste %2$d récords.</item>
+    </plurals>
+    <plurals name="profi_semana">
+        <item quantity="one">Llevas %1$d entreno esta semana.</item>
+        <item quantity="other">Llevas %1$d entrenos esta semana.</item>
+    </plurals>
+    <plurals name="perfil_dato_anios">
+        <item quantity="one">%1$d año</item>
+        <item quantity="other">%1$d años</item>
+    </plurals>
+    <plurals name="eliminar_entrenos">
+        <item quantity="one">%1$s entreno</item>
+        <item quantity="other">%1$s entrenos</item>
+    </plurals>
+    <plurals name="eliminar_records">
+        <item quantity="one">%1$s récord</item>
+        <item quantity="other">%1$s récords</item>
+    </plurals>
 </resources>

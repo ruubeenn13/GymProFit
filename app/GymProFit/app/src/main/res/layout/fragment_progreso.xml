@@ -30,11 +30,12 @@
                     style="@style/Widget.GymProFit.TituloPestana"
                     android:text="@string/progreso_titulo" />
 
-                <ImageButton
-                    android:id="@+id/btnAjustes"
-                    style="@style/Widget.GymProFit.BotonRedondo"
-                    android:contentDescription="@string/ajustes_titulo"
-                    android:src="@drawable/ic_ms_settings" />
+                <include
+                    android:id="@+id/avatarCabecera"
+                layout="@layout/view_avatar"
+                    android:layout_width="@dimen/avatar_cabecera"
+                    android:layout_height="@dimen/avatar_cabecera"
+                    android:layout_marginStart="@dimen/espacio_8" />
             </LinearLayout>
 
             <!-- Perfil -->

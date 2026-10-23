@@ -42,12 +42,20 @@ public final class FilaAviso {
     public FilaAviso(@NonNull View fila, @DrawableRes int icono, @StringRes int titulo, @StringRes int sub,
                      boolean conInterruptor) {
         this.fila = fila;
-        ((ImageView) fila.findViewById(R.id.ivIconoAviso)).setImageResource(icono);
-        TextView t = fila.findViewById(R.id.tvTituloAviso);
-        TextView s = fila.findViewById(R.id.tvSubAviso);
+        // Sirve a las dos filas: la del alta (view_fila_aviso) y la de Perfil y ajustes (view_fila_ajuste,
+        // GP-216), que tiene su propio interruptor y segunda línea ocultos hasta que se usan.
+        boolean deAjustes = fila.findViewById(R.id.tvTitulo) != null;
+        ((ImageView) fila.findViewById(deAjustes ? R.id.ivIcono : R.id.ivIconoAviso)).setImageResource(icono);
+        TextView t = fila.findViewById(deAjustes ? R.id.tvTitulo : R.id.tvTituloAviso);
+        TextView s = fila.findViewById(deAjustes ? R.id.tvSub : R.id.tvSubAviso);
         t.setText(titulo);
         s.setText(sub);
-        MaterialSwitch sw = fila.findViewById(R.id.swAviso);
+        s.setVisibility(View.VISIBLE);
+        MaterialSwitch sw = fila.findViewById(deAjustes ? R.id.swInterruptor : R.id.swAviso);
+        if (deAjustes) {
+            fila.findViewById(R.id.ivFlecha).setVisibility(View.GONE);
+            if (conInterruptor) sw.setVisibility(View.VISIBLE);
+        }
         String texto = fila.getContext().getString(R.string.ajustes_fila_sub_a11y, t.getText(), s.getText());
         fila.setContentDescription(texto);
         if (!conInterruptor) {
@@ -94,5 +102,14 @@ public final class FilaAviso {
     public void setHabilitada(boolean habilitada) {
         fila.setEnabled(habilitada);
         if (interruptor != null) interruptor.setEnabled(habilitada);
+    }
+
+    /**
+     * Apaga a la vista solo el interruptor (a media opacidad), sin tocar el texto: sin el permiso del
+     * sistema no llega ningún aviso (GP-216, tablero 19), y bajar la opacidad del texto lo dejaría por
+     * debajo del contraste. La fila sigue funcionando: lo que se elige se guarda en la cuenta.
+     */
+    public void atenuarInterruptor(boolean atenuado) {
+        if (interruptor != null) interruptor.setAlpha(atenuado ? 0.5f : 1f);
     }
 }

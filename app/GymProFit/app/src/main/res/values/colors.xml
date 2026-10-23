@@ -167,4 +167,21 @@
     <color name="ic_launcher_fondo">#0B0C0E</color>
     <!-- La acción de un aviso invertido («Deshacer», lote 1.6.2): el naranja del otro tema, sobre el fondo oscuro del aviso en claro. -->
     <color name="gp_accion_inversa">#FF8A3D</color>
+
+    <!-- Las miniaturas de la hoja «Tema» (GP-216, tablero 22): cada una enseña su tema entero, así que
+         llevan los valores de los dos temas fijos y no cambian con el que esté puesto. Son los de
+         gp_background, gp_surface y gp_on_surface de oscuro y de claro. Decoración: ningún texto va
+         encima, y el nombre del tema va escrito debajo de cada una. -->
+    <color name="gp_vista_tema_oscuro_fondo">#0B0C0E</color>
+    <color name="gp_vista_tema_oscuro_tarjeta">#1B1E24</color>
+    <color name="gp_vista_tema_oscuro_trazo">#F2F2F3</color>
+    <color name="gp_vista_tema_claro_fondo">#F1F1EE</color>
+    <color name="gp_vista_tema_claro_tarjeta">#FFFFFF</color>
+    <color name="gp_vista_tema_claro_trazo">#17181C</color>
+
+    <!-- El botón «Eliminar mi cuenta» (GP-216, tablero 21): el rojo de error del tema claro y blanco encima
+         (5,62:1), igual en los dos temas. Con el #F87171 del tema oscuro el blanco daba 2,6:1 y por eso el
+         botón era de contorno; relleno y con este rojo se lee en los dos. -->
+    <color name="gp_eliminar_fondo">#C62828</color>
+    <color name="gp_eliminar_texto">#FFFFFF</color>
 </resources>
