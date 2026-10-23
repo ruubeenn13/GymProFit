@@ -256,7 +256,7 @@ Un solo sistema de espaciado, radios, tarjetas, filas y textos (GP-210 paso 2, b
 
 ### Cabecera de sección
 
-`Widget.GymProFit.CabeceraSeccion` (fila) con `.Titulo` (20 sp, Barlow SemiBold, `TextAppearance.GymProFit.Seccion`) y, opcional a la derecha, `.Enlace` (15 sp, Barlow 600, en `colorPrimary`, 44 dp de alto). No sustituye al rótulo en mayúsculas de dentro de una tarjeta (`Widget.GymProFit.Seccion`, 13 sp), que se queda.
+`Widget.GymProFit.CabeceraSeccion` (fila) con `.Titulo` (20 sp, Barlow SemiBold, `TextAppearance.GymProFit.Seccion`) y, opcional a la derecha, `.Enlace` (15 sp, Barlow 600, en `colorPrimary`, 48 dp de alto: DEC-019). No sustituye al rótulo en mayúsculas de dentro de una tarjeta (`Widget.GymProFit.Seccion`, 13 sp), que se queda.
 
 ### Fila de lista
 

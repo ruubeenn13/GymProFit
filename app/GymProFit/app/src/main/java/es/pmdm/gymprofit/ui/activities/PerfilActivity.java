@@ -85,7 +85,9 @@ public class PerfilActivity extends BaseActivity {
 
         // Perfil: la cámara sobre el avatar es «Foto de perfil».
         View avatar = findViewById(R.id.avatarPerfil);
-        avatar.setContentDescription(getString(R.string.perfil_cambiar_foto_a11y));
+        // El avatar y la cámara abren lo mismo: para TalkBack basta una parada, la de la cámara.
+        avatar.setContentDescription(null);
+        avatar.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         avatar.setOnClickListener(v -> fotoPerfil.elegir());
         findViewById(R.id.btnCamaraPerfil).setOnClickListener(v -> fotoPerfil.elegir());
         ((TextView) avatar.findViewById(R.id.tvInicial)).setTextSize(TypedValue.COMPLEX_UNIT_PX,

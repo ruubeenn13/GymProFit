@@ -145,7 +145,7 @@ public class CimientosTest {
     @Test
     public void la_cabecera_de_seccion_y_la_fila_de_lista_son_las_de_DESIGN() throws IOException {
         String d = dimens();
-        assertEquals("enlace de 44 dp", "44dp", dimen(d, "seccion_enlace_alto"));
+        assertEquals("enlace de 48 dp", "48dp", dimen(d, "seccion_enlace_alto"));
         assertEquals("fila mínima de 64", "64dp", dimen(d, "fila_alto_min"));
         assertEquals("padding horizontal 16", "16dp", dimen(d, "fila_padding_horizontal"));
         assertEquals("círculo del icono 40", "40dp", dimen(d, "fila_icono_circulo"));
