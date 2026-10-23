@@ -51,6 +51,7 @@
                 android:layout_height="wrap_content"
                 android:importantForAccessibility="no"
                 android:max="100"
+                app:indicatorInset="0dp"
                 app:indicatorSize="72dp"
                 app:indicatorTrackGapSize="0dp"
                 app:trackColor="@color/gp_meter_track"

@@ -2238,6 +2238,8 @@
     <string name="datos_plan_igual">Sin cambios respecto a ahora</string>
     <string name="datos_plan_mas">+%1$s\u00A0kcal respecto a ahora</string>
     <string name="datos_plan_menos">\u2212%1$s\u00A0kcal respecto a ahora</string>
+    <string name="datos_plan_prot_mas">+%1$d g de proteína respecto a ahora</string>
+    <string name="datos_plan_prot_menos">−%1$d g de proteína respecto a ahora</string>
     <string name="datos_plan_minimo">Mínimo eficaz de proteína: %1$d\u00A0g</string>
     <string name="editar_perfil_error_carga_corto">No se ha podido cargar tu perfil.</string>
     <!-- Contraseña y correo (GP-216, tablero 20) -->

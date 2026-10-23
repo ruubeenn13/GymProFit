@@ -476,12 +476,18 @@ public class TusDatosActivity extends AppCompatActivity {
             if (!hayAntes) {
                 dif.setText(null);
                 dif.setVisibility(View.GONE);
-            } else if (plan.difKcal == 0) {
+            } else if (plan.sinCambios()) {
                 dif.setText(R.string.datos_plan_igual);
                 dif.setTextColor(colorDe(com.google.android.material.R.attr.colorOnSurfaceVariant));
             } else {
-                String n = entero.format(Math.abs(plan.difKcal));
-                dif.setText(getString(plan.difKcal > 0 ? R.string.datos_plan_mas : R.string.datos_plan_menos, n));
+                // Las kcal mandan; si son las mismas y cambia la proteína, se dice la proteína: «sin cambios» sería falso.
+                if (plan.difKcal != 0) {
+                    String n = entero.format(Math.abs(plan.difKcal));
+                    dif.setText(getString(plan.difKcal > 0 ? R.string.datos_plan_mas : R.string.datos_plan_menos, n));
+                } else {
+                    dif.setText(getString(plan.difProteinas > 0 ? R.string.datos_plan_prot_mas : R.string.datos_plan_prot_menos,
+                            Math.abs(plan.difProteinas)));
+                }
                 dif.setTextColor(colorDe(com.google.android.material.R.attr.colorOnPrimaryContainer));
             }
             // El mínimo eficaz, junto a la cifra, cuando hay rango que enseñar (DEC-054).

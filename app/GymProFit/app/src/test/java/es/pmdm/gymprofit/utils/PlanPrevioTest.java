@@ -46,6 +46,15 @@ public class PlanPrevioTest {
     }
 
     @Test
+    public void sinCambiosSoloSiNiLasKcalNiLaProteinaCambian() {
+        PlanPrevio base = PlanPrevio.de(dani(), null, 0L, 0, 0);
+        assertTrue(PlanPrevio.de(dani(), null, 0L, base.kcal, base.proteinas).sinCambios());
+        // Mismas kcal y otra proteína: el plan sí cambia, no se puede decir «sin cambios».
+        assertFalse(PlanPrevio.de(dani(), null, 0L, base.kcal, base.proteinas + 7).sinCambios());
+        assertFalse(PlanPrevio.de(dani(), null, 0L, base.kcal + 50, base.proteinas).sinCambios());
+    }
+
+    @Test
     public void ladiferenciaEsContraLasKcalGuardadas() {
         PlanPrevio base = PlanPrevio.de(dani(), null, 0L, 0, 0);
         PlanPrevio igual = PlanPrevio.de(dani(), null, 0L, base.kcal, base.proteinas);

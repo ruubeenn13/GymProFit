@@ -21,6 +21,11 @@ public final class PlanPrevio {
     public final int difKcal;
     public final int difProteinas;
 
+    /** Si el plan que quedaría es el de ahora: ni las kcal ni la proteína cambian. */
+    public boolean sinCambios() {
+        return difKcal == 0 && difProteinas == 0;
+    }
+
     private PlanPrevio(ResultadoNutricional r, int kcalActuales, int proteinasActuales) {
         this.kcal = r.calorias;
         this.proteinas = r.proteinas;

@@ -2213,6 +2213,8 @@
     <string name="datos_plan_igual">No change from now</string>
     <string name="datos_plan_mas">+%1$s\u00A0kcal from now</string>
     <string name="datos_plan_menos">\u2212%1$s\u00A0kcal from now</string>
+    <string name="datos_plan_prot_mas">+%1$d g of protein from now</string>
+    <string name="datos_plan_prot_menos">−%1$d g of protein from now</string>
     <string name="datos_plan_minimo">Effective protein minimum: %1$d\u00A0g</string>
     <string name="editar_perfil_error_carga_corto">Couldn\'t load your profile.</string>
     <!-- Contraseña y correo (GP-216, tablero 20) -->
