@@ -473,14 +473,15 @@ public class TusDatosActivity extends AppCompatActivity {
             dif.setVisibility(View.VISIBLE);
             // Sin objetivo guardado todavía no hay «respecto a ahora» que decir.
             boolean hayAntes = prefs.hayObjetivoGuardado() && prefs.getCaloriasDiarias() > 0;
-            if (!hayAntes) {
+            PlanPrevio.Aviso aviso = plan.aviso(hayCambios(), hayAntes);
+            if (aviso == PlanPrevio.Aviso.NINGUNO) {
                 dif.setText(null);
                 dif.setVisibility(View.GONE);
-            } else if (plan.sinCambios()) {
+            } else if (aviso == PlanPrevio.Aviso.IGUAL) {
                 dif.setText(R.string.datos_plan_igual);
                 dif.setTextColor(colorDe(com.google.android.material.R.attr.colorOnSurfaceVariant));
             } else {
-                // Las kcal mandan; si son las mismas y cambia la proteína, se dice la proteína: «sin cambios» sería falso.
+                // Las kcal mandan; si son las mismas y cambia la proteína, se dice la proteína.
                 if (plan.difKcal != 0) {
                     String n = entero.format(Math.abs(plan.difKcal));
                     dif.setText(getString(plan.difKcal > 0 ? R.string.datos_plan_mas : R.string.datos_plan_menos, n));

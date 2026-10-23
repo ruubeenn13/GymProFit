@@ -140,4 +140,15 @@ public class PlanPrevioTest {
         assertFalse(dani().conNombre("").distintoDe(dani().conNombre("   ")));
         assertFalse(dani().conNombre("Dani").distintoDe(dani().conNombre(" Dani ")));
     }
+
+    @Test
+    public void sinTocarNadaDiceSinCambiosAunqueLoGuardadoNoCoincidaConLaFormula() {
+        // Cuenta de prueba: la fórmula de hoy da 128 g y hay 135 g guardados de antes (DEC-054).
+        PlanPrevio base = PlanPrevio.de(dani(), null, 0L, 0, 0);
+        PlanPrevio p = PlanPrevio.de(dani(), null, 0L, base.kcal, base.proteinas + 7);
+        assertEquals(PlanPrevio.Aviso.IGUAL, p.aviso(false, true));
+        // Al tocar un dato sí se cuenta la diferencia.
+        assertEquals(PlanPrevio.Aviso.MENOS_PROTEINA, p.aviso(true, true));
+        assertEquals(PlanPrevio.Aviso.NINGUNO, p.aviso(true, false));
+    }
 }
