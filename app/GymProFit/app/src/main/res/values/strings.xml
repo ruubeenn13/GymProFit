@@ -2330,4 +2330,9 @@
     <string name="ideas_titulo_proteina">Para tus %1$d g de proteína</string>
     <string name="ideas_detalle">%1$s · %2$s kcal · %3$s g prot.</string>
     <string name="comida_buscar_otro">Buscar otro alimento</string>
+    <string name="ficha_cantidad_titulo">Cantidad</string>
+    <string name="ficha_boton_kcal">%1$s · %2$s\u00A0kcal</string>
+    <string name="ficha_atajo_media">½</string>
+    <string name="ficha_atajo_gramos">%1$s\u00A0g</string>
+    <string name="ficha_atajo_a11y">%1$s %2$s</string>
 </resources>

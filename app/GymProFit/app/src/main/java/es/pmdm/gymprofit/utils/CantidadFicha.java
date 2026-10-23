@@ -203,6 +203,14 @@ public final class CantidadFicha {
         return true;
     }
 
+    /**
+     * Los atajos de la cantidad: ½, 1 y 2 en raciones; 100, 150 y 200 en gramos (tablero 26).
+     */
+    @NonNull
+    public double[] atajos() {
+        return unidad().esGramos() ? new double[]{100, 150, 200} : new double[]{0.5, 1, 2};
+    }
+
     /** Cambia de unidad conservando los gramos. */
     public void elegir(int indice) {
         if (indice < 0 || indice >= unidades.size() || indice == elegida) return;

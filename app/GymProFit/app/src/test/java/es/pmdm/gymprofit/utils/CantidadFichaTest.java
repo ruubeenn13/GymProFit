@@ -1,5 +1,6 @@
 package es.pmdm.gymprofit.utils;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -154,5 +155,23 @@ public class CantidadFichaTest {
         assertEquals("media taza", CantidadFicha.nombreUnidad("Media taza"));
         assertEquals("2 sardinas", CantidadFicha.nombreUnidad("2 sardinas"));
         assertEquals("slice", CantidadFicha.nombreUnidad("1 slice"));
+    }
+
+    // Los atajos de la ficha (GP-216, tablero 26): ½, 1 y 2 en raciones; 100, 150 y 200 en gramos.
+    @Test
+    public void atajos_en_raciones_y_en_gramos() {
+        CantidadFicha c = CantidadFicha.nueva(yogur());
+        assertArrayEquals(new double[]{0.5, 1, 2}, c.atajos(), D);
+        c.elegir(c.unidades().size() - 1);
+        assertArrayEquals(new double[]{100, 150, 200}, c.atajos(), D);
+    }
+
+    @Test
+    public void un_atajo_pone_la_cifra_y_conserva_la_unidad() {
+        CantidadFicha c = CantidadFicha.nueva(yogur());
+        assertTrue(c.escribir(c.atajos()[0]));
+        assertEquals(0.5, c.valor(), D);
+        assertEquals(0, c.elegida());
+        assertEquals(100, c.gramos(), D);
     }
 }

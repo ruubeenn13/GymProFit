@@ -120,6 +120,8 @@ public class FichaAlimentoActivity extends BaseActivity {
     // Lo que llevas hoy, para «Cómo encaja»; null mientras no se sabe (o si no hay objetivo).
     @Nullable private DiaNutricion dia;
     private boolean infoAbierta;
+    // El texto del botón de abajo sin las kcal («Añadir a la merienda», «Actualizar»…).
+    private String textoBoton = "";
 
     private VistaEstado estado;
     private NumberFormat nf;
@@ -217,9 +219,10 @@ public class FichaAlimentoActivity extends BaseActivity {
         findViewById(R.id.btnMas).setOnClickListener(v -> { if (cantidad != null) { cantidad.mas(); pintarCantidad(); } });
         findViewById(R.id.tvCantidad).setOnClickListener(v -> escribirCantidad());
         boolean actualizar = lineaId > 0 || (modoIngrediente && getIntent().hasExtra(EXTRA_INGREDIENTE));
-        ((MaterialButton) findViewById(R.id.btnAnadirFicha)).setText(actualizar ? getString(R.string.ficha_actualizar)
+        textoBoton = actualizar ? getString(R.string.ficha_actualizar)
                 : modoIngrediente ? getString(R.string.ficha_anadir_al_plato)
-                : getString(AnadirAlimentoActivity.textoAnadirA(tipoComida)));
+                : getString(AnadirAlimentoActivity.textoAnadirA(tipoComida));
+        ((MaterialButton) findViewById(R.id.btnAnadirFicha)).setText(textoBoton);
         findViewById(R.id.btnAnadirFicha).setOnClickListener(v -> guardar());
         findViewById(R.id.btnFavoritoFicha).setOnClickListener(v -> tocarCorazon());
 
@@ -447,17 +450,26 @@ public class FichaAlimentoActivity extends BaseActivity {
 
     private void pintarCantidad() {
         if (cantidad == null || alimento == null) return;
-        TextView tv = findViewById(R.id.tvCantidad);
-        tv.setText(nf.format(cantidad.valor()));
-        tv.setContentDescription(getString(R.string.ficha_cantidad_a11y, porcion()));
+        ((TextView) findViewById(R.id.tvCifraCantidad)).setText(nf.format(cantidad.valor()));
+        // La unidad al lado de la cifra, y los gramos debajo si la unidad es una ración.
+        ((TextView) findViewById(R.id.tvUnidadCantidad)).setText(nombre(cantidad.unidad()));
+        TextView gramos = findViewById(R.id.tvGramosCantidad);
+        boolean conPeso = !cantidad.unidad().esGramos() && cantidad.conGramos();
+        gramos.setVisibility(conPeso ? View.VISIBLE : View.INVISIBLE);
+        gramos.setText(conPeso ? getString(R.string.ficha_gramos_valor, nf.format(Math.round(cantidad.gramos()))) : "");
+        findViewById(R.id.tvCantidad).setContentDescription(getString(R.string.ficha_cantidad_a11y, porcion()));
         findViewById(R.id.btnMenos).setEnabled(cantidad.puedeMenos());
         ((TextView) findViewById(R.id.tvPorFicha)).setText(getString(R.string.ficha_por, porcion()));
+        pintarAtajos();
 
         double g = cantidad.gramos();
         long kcal = Math.round(alimento.getCalorias() * g / 100.0);
         double p = alimento.getProteinas() * g / 100.0;
         double c = alimento.getCarbohidratos() * g / 100.0;
         double gr = alimento.getGrasas() * g / 100.0;
+        // «Añadir a la merienda · 141 kcal»: lo que sumará, en el propio botón (tablero 26).
+        ((MaterialButton) findViewById(R.id.btnAnadirFicha)).setText(
+                getString(R.string.ficha_boton_kcal, textoBoton, nf.format(kcal)));
         cifra(R.id.cifraKcal, nf.format(kcal), R.string.ficha_kcal, 0);
         cifra(R.id.cifraProteina, getString(R.string.ficha_gramos_valor, nf.format(p)), etiquetaProteina(),
                 ContextCompat.getColor(this, R.color.gp_macro_proteinas));
@@ -466,6 +478,42 @@ public class FichaAlimentoActivity extends BaseActivity {
         findViewById(R.id.cifrasFicha).setContentDescription(getString(R.string.ficha_cifras_a11y,
                 nf.format(kcal), nf.format(p), nf.format(c), nf.format(gr)));
         pintarEncaje();
+    }
+
+    // ½, 1 y 2 (o 100, 150 y 200 g): ponen la cifra de golpe; el que coincide con la cantidad va marcado.
+    private void pintarAtajos() {
+        if (cantidad == null) return;
+        LinearLayout fila = findViewById(R.id.atajosCantidad);
+        fila.removeAllViews();
+        boolean gramos = cantidad.unidad().esGramos();
+        for (double valor : cantidad.atajos()) {
+            boolean elegido = Math.abs(cantidad.valor() - valor) < 0.001;
+            MaterialButton chip = new MaterialButton(this, null, elegido
+                    ? com.google.android.material.R.attr.materialButtonStyle
+                    : com.google.android.material.R.attr.materialButtonOutlinedStyle);
+            String texto = valor == 0.5 ? getString(R.string.ficha_atajo_media)
+                    : gramos ? getString(R.string.ficha_atajo_gramos, nf.format(valor)) : nf.format(valor);
+            chip.setText(texto);
+            chip.setMinWidth(0);
+            chip.setMinimumWidth(0);
+            chip.setMinHeight(0);
+            chip.setMinimumHeight(0);
+            chip.setInsetTop(0);
+            chip.setInsetBottom(0);
+            chip.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.text_body));
+            chip.setContentDescription(getString(R.string.ficha_atajo_a11y, texto, nombre(cantidad.unidad())));
+            float d = getResources().getDisplayMetrics().density;
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, Math.round(48 * d));
+            lp.setMarginStart(Math.round(4 * d));
+            lp.setMarginEnd(Math.round(4 * d));
+            chip.setLayoutParams(lp);
+            chip.setSelected(elegido);
+            chip.setOnClickListener(v -> {
+                if (cantidad != null && cantidad.escribir(valor)) pintarCantidad();
+            });
+            fila.addView(chip);
+        }
     }
 
     private void cifra(int id, String valor, int etiqueta, int color) {
