@@ -153,6 +153,15 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
+    <!-- Fondo tras el botón de volver al desplazar (BarraSuperior) -->
+    <View
+        android:id="@+id/barraSuperior"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:background="?android:attr/colorBackground"
+        android:importantForAccessibility="no"
+        android:visibility="invisible" />
+
     <!-- Volver y editar, sobre el contenido -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -162,13 +171,6 @@
         android:layout_marginEnd="@dimen/espacio_8"
         android:orientation="horizontal">
 
-    <View
-        android:id="@+id/barraSuperior"
-        android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:background="?android:attr/colorBackground"
-        android:importantForAccessibility="no"
-        android:visibility="invisible" />
 
         <ImageButton
             android:id="@+id/btnAtras"

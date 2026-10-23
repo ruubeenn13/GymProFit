@@ -265,7 +265,7 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         // Récords: «Tu mejor marca».
         recordApi.getRecords(null).enqueue(new ApiCallback<Records>() {
             @Override public void onOk(Records r) {
-                if (isFinishing() || r == null) return;
+                if ((isFinishing() || isDestroyed()) || r == null) return;
                 for (Record x : r.getRecords()) {
                     if (x.getEjercicioId() == ejercicioId) { recordVigente = x; break; }
                 }
@@ -280,7 +280,7 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         // Progresión: la gráfica.
         recordApi.getProgresion(ejercicioId).enqueue(new ApiCallback<List<PuntoProgresion>>() {
             @Override public void onOk(List<PuntoProgresion> lista) {
-                if (isFinishing()) return;
+                if ((isFinishing() || isDestroyed())) return;
                 progresion = lista != null ? lista : new ArrayList<>();
                 pintarGrafica();
                 unaMas();

@@ -92,7 +92,7 @@ public class ProgramaDetalleActivity extends BaseActivity {
                 listo();
             }
             @Override public void onFail(int code, String message) {
-                if (isFinishing()) return;
+                if ((isFinishing() || isDestroyed())) return;
                 fallo = true;
                 estado.error(VistaEstado.mensaje(ProgramaDetalleActivity.this, R.string.programa_detalle_error,
                         code, message), ProgramaDetalleActivity.this::cargar);
@@ -114,7 +114,7 @@ public class ProgramaDetalleActivity extends BaseActivity {
     }
 
     private void listo() {
-        if (fallo || detalle == null || !seguidoListo || isFinishing()) return;
+        if (fallo || detalle == null || !seguidoListo || (isFinishing() || isDestroyed())) return;
         estado.oculto();
         findViewById(R.id.contenidoDetalle).setVisibility(View.VISIBLE);
         findViewById(R.id.barraSeguir).setVisibility(View.VISIBLE);

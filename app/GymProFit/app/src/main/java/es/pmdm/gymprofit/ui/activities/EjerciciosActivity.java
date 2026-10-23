@@ -163,7 +163,7 @@ public class EjerciciosActivity extends AppCompatActivity {
                         if (pagina == 0) LoadingDialog.hide(EjerciciosActivity.this);
                         if (miGeneracion != generacion) return;
                         cargando = false;
-                        if (resultado == null || isFinishing()) return;
+                        if (resultado == null || (isFinishing() || isDestroyed())) return;
                         paginaActual = resultado.getPage();
                         ultimaPagina = resultado.isLast();
                         List<Ejercicio> lista = resultado.getContent() != null
@@ -179,7 +179,7 @@ public class EjerciciosActivity extends AppCompatActivity {
                         if (pagina == 0) LoadingDialog.hide(EjerciciosActivity.this);
                         if (miGeneracion != generacion) return;
                         cargando = false;
-                        if (isFinishing()) return;
+                        if ((isFinishing() || isDestroyed())) return;
                         UiFeedback.toastError(EjerciciosActivity.this, code, message);
                         actualizarEstadoVacio();
                     }
@@ -195,7 +195,7 @@ public class EjerciciosActivity extends AppCompatActivity {
     private void cargarMasHaces() {
         sesionApi.masHechos(MAS_HECHOS).enqueue(new ApiCallback<List<EjercicioMasHecho>>() {
             @Override public void onOk(List<EjercicioMasHecho> lista) {
-                if (isFinishing() || lista == null || lista.isEmpty()) return;
+                if ((isFinishing() || isDestroyed()) || lista == null || lista.isEmpty()) return;
                 completarMasHaces(lista);
             }
             @Override public void onFail(int code, String message) {
@@ -242,7 +242,7 @@ public class EjerciciosActivity extends AppCompatActivity {
 
     private void pintarMasHaces(List<EjercicioMasHecho> ids, Map<Integer, Ejercicio> ejercicios,
                                 Map<Integer, Record> marcas) {
-        if (isFinishing()) return;
+        if ((isFinishing() || isDestroyed())) return;
         List<BibliotecaCabeceraAdapter.MasHaces> tarjetas = new ArrayList<>();
         for (EjercicioMasHecho m : ids) {
             Ejercicio e = ejercicios.get(m.getEjercicioId());

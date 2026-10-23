@@ -229,7 +229,7 @@ public class DetalleRutinaActivity extends AppCompatActivity {
     // Con el catálogo y las relaciones: se pinta la lista, las zonas y se piden las marcas.
     private void listaLista() {
         LoadingDialog.hide(this);
-        if (isFinishing()) return;
+        if ((isFinishing() || isDestroyed())) return;
         Collections.sort(relaciones, (a, b) -> Integer.compare(a.getOrden(), b.getOrden()));
         ((TextView) findViewById(R.id.tvEjerciciosTituloDetalle)).setText(
                 getString(R.string.detalle_rutina_ejercicios_fmt, relaciones.size()));
@@ -350,7 +350,7 @@ public class DetalleRutinaActivity extends AppCompatActivity {
 
     // Cuando están la última vez y los récords: «Última: 80 kg × 8 · récord» o «Primera vez».
     private void pintarMarcas() {
-        if (!ultimasListas || !recordsListos || isFinishing()) return;
+        if (!ultimasListas || !recordsListos || (isFinishing() || isDestroyed())) return;
         LinearLayout lista = findViewById(R.id.listaEjerciciosRutina);
         int oro = ContextCompat.getColor(this, R.color.gp_gold_text);
         for (int i = 0; i < lista.getChildCount(); i++) {
@@ -429,7 +429,7 @@ public class DetalleRutinaActivity extends AppCompatActivity {
         if (programaNombre != null && !programaNombre.isEmpty()) {
             programaApi.seguido().enqueue(new ApiCallback<ProgramaQueSigue>() {
                 @Override public void onOk(ProgramaQueSigue s) {
-                    if (s == null || s.getCiclo() == null || isFinishing()) return;
+                    if (s == null || s.getCiclo() == null || (isFinishing() || isDestroyed())) return;
                     int dia = 0, total = s.getCiclo().size();
                     for (int i = 0; i < total; i++) {
                         Integer rid = s.getCiclo().get(i).getRutinaId();
@@ -447,7 +447,7 @@ public class DetalleRutinaActivity extends AppCompatActivity {
         if (uid == -1 || rutinaId <= 0) return;
         sesionApi.getDeUsuario(uid).enqueue(new ApiCallback<List<SesionEntrenamiento>>() {
             @Override public void onOk(List<SesionEntrenamiento> lista) {
-                if (lista == null || isFinishing()) return;
+                if (lista == null || (isFinishing() || isDestroyed())) return;
                 SesionEntrenamiento ultima = null;
                 for (SesionEntrenamiento s : lista) {
                     if (s.getRutinaId() == null || s.getRutinaId() != rutinaId || s.getFechaInicio() == null) continue;
@@ -468,7 +468,7 @@ public class DetalleRutinaActivity extends AppCompatActivity {
         pintarUltimaVez(getString(R.string.detalle_rutina_ultima_vez_sin_kilos, cuando, dur));
         sesionApi.resumen(s.getId()).enqueue(new ApiCallback<ResumenSesion>() {
             @Override public void onOk(ResumenSesion r) {
-                if (r == null || isFinishing() || r.getVolumenKg() <= 0) return;
+                if (r == null || (isFinishing() || isDestroyed()) || r.getVolumenKg() <= 0) return;
                 String kilos = getString(R.string.detalle_kg_total, java.text.NumberFormat
                         .getIntegerInstance(FechaUtils.localeDeLaApp(DetalleRutinaActivity.this))
                         .format(Math.round(r.getVolumenKg())));
