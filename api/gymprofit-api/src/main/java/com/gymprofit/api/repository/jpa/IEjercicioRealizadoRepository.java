@@ -136,6 +136,21 @@ public interface IEjercicioRealizadoRepository extends JpaRepository<EjercicioRe
                                              @Param("desde") LocalDateTime desde,
                                              @Param("hasta") LocalDateTime hasta);
 
+    /**
+     * Los ejercicios con más sesiones terminadas del usuario (GP-216, «Los que más haces»).
+     * Una sesión cuenta una vez por ejercicio aunque lo repita. Las filas llegan ordenadas de más
+     * a menos y, a igualdad, por id de ejercicio.
+     *
+     * @return filas {@code [ejercicioId, sesiones]}.
+     */
+    @Query("SELECT er.ejercicio.id, COUNT(DISTINCT s.id) " +
+           "FROM EjercicioRealizado er JOIN er.sesion s " +
+           "WHERE s.usuario.id = :usuarioId AND s.completada = true " +
+           "GROUP BY er.ejercicio.id " +
+           "ORDER BY COUNT(DISTINCT s.id) DESC, er.ejercicio.id ASC")
+    List<Object[]> masHechos(@Param("usuarioId") Integer usuarioId,
+                             org.springframework.data.domain.Pageable limite);
+
     // Elimina todos los ejercicios realizados asociados a una sesión.
     void deleteBySesionId(Integer sesionId);
 

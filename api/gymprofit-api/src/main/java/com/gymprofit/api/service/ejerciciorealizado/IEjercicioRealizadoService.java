@@ -49,4 +49,12 @@ public interface IEjercicioRealizadoService {
 
     // Actualiza parcialmente un ejercicio realizado (solo campos no nulos).
     EjercicioRealizadoDTO patch(Integer id, EjercicioRealizadoPatchDTO patchDTO);
+
+    /**
+     * Los ejercicios que más hace quien llama, por sesiones terminadas (GP-216). Solo lo suyo: el
+     * usuario sale del token (DEC-013), también para un ADMIN.
+     *
+     * @param limite de 1 a {@code MAX_MAS_HECHOS}.
+     */
+    List<com.gymprofit.api.dto.entity.ejerciciorealizado.EjercicioMasHechoDTO> masHechos(int limite);
 }
