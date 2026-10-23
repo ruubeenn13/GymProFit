@@ -40,7 +40,7 @@
                 android:ellipsize="end"
                 android:maxLines="2"
                 android:textColor="?attr/colorOnSurface"
-                android:textSize="15sp"
+                android:textSize="@dimen/text_enlace_seccion"
                 android:textStyle="bold" />
 
             <TextView

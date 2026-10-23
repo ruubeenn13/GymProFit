@@ -94,7 +94,7 @@ public final class Marcas {
         tv.setCompoundDrawablesRelative(d, null, null, null);
     }
 
-    private static String texto(Context ctx, boolean dePeso, double peso, int reps) {
+    public static String texto(Context ctx, boolean dePeso, double peso, int reps) {
         if (!dePeso) {
             return ctx.getResources().getQuantityString(R.plurals.record_repeticiones, reps, reps);
         }

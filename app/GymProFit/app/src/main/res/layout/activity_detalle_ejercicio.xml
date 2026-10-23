@@ -25,6 +25,7 @@
 
             <!-- Demostración: debajo del botón de volver, 24 dp de radio -->
             <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.GymProFit.Card"
                 android:id="@+id/cardDemo"
                 android:layout_width="match_parent"
                 android:layout_height="238dp"
@@ -33,7 +34,6 @@
                 android:layout_marginEnd="@dimen/margen_pantalla"
                 app:cardBackgroundColor="?attr/colorSurfaceVariant"
                 app:cardCornerRadius="@dimen/radio_tarjeta"
-                app:cardElevation="0dp"
                 app:strokeWidth="0dp">
 
                 <FrameLayout
@@ -81,7 +81,7 @@
                 android:accessibilityHeading="true"
                 android:lineSpacingMultiplier="1.05"
                 android:textAppearance="@style/TextAppearance.GymProFit.Display"
-                android:textSize="32sp" />
+                android:textSize="@dimen/text_display_large" />
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipsDetalle"
@@ -134,7 +134,7 @@
                         android:layout_height="wrap_content"
                         android:textAppearance="@style/TextAppearance.GymProFit.Number"
                         android:textColor="@color/gp_gold_text"
-                        android:textSize="30sp" />
+                        android:textSize="@dimen/text_cifra_pequena" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -152,14 +152,14 @@
                         android:layout_height="wrap_content"
                         android:textAppearance="@style/TextAppearance.GymProFit.Number"
                         android:textColor="?attr/colorOnSurface"
-                        android:textSize="22sp" />
+                        android:textSize="@dimen/text_title" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/detalle_ejercicio_maximo_estimado"
                         android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="12sp" />
+                        android:textSize="@dimen/text_eyebrow" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -323,7 +323,7 @@
                             android:layout_weight="1"
                             android:lineSpacingMultiplier="1.1"
                             android:textColor="@color/gp_on_hero"
-                            android:textSize="15sp" />
+                            android:textSize="@dimen/text_enlace_seccion" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -355,7 +355,7 @@
                     android:layout_marginBottom="@dimen/espacio_16"
                     android:lineSpacingMultiplier="1.15"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="15sp"
+                    android:textSize="@dimen/text_enlace_seccion"
                     android:visibility="gone" />
 
                 <com.google.android.material.card.MaterialCardView

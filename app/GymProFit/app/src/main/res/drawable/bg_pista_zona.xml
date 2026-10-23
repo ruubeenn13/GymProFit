@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_pista_zona — la pista de la barra de una zona en la tarjeta protagonista (GP-216, tablero 32): negro al 30 %, radio 4. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="4dp" />
+    <solid android:color="#4D000000" />
+</shape>

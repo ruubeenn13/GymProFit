@@ -188,10 +188,10 @@ public class CimientosTest {
         String d = dimens();
         assertEquals("26dp", dimen(d, "boton_radio_reposo"));
         assertEquals("12dp", dimen(d, "boton_radio_pulsado"));
-        // «Empezar» (cuatro sitios), «Hecho» (dos) y el «+» de la barra.
+        // «Empezar» (Inicio, «Hoy» de Entrenar y el detalle de la rutina), «Hecho» (dos) y el «+» de la barra.
         String[][] botones = {
                 {"layout/fragment_inicio.xml", "btnHoyPrincipal"},
-                {"layout/item_rutina_entrenar.xml", "btnEmpezarLleno"},
+                {"layout/activity_detalle_rutina.xml", "btnEntrenarRutina"},
                 {"layout/view_tu_programa.xml", "btnEmpezarHoy"},
                 {"layout/activity_resumen_sesion.xml", "btnHechoResumen"},
                 {"layout/activity_anadir_alimento.xml", "btnHecho"},

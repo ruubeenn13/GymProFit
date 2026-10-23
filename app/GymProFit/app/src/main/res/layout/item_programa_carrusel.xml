@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_programa_carrusel — un programa de «Más programas» en Entrenar (GP-216, tablero 14): una
+  franja con el color de su material y el nombre, y debajo los días y minutos. 200 dp de ancho.
+-->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Widget.GymProFit.Card.Pequena"
+    android:layout_width="200dp"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/franjaPrograma"
+            android:layout_width="match_parent"
+            android:layout_height="96dp"
+            android:padding="@dimen/espacio_12">
+
+            <TextView
+                android:id="@+id/tvProgramaMaterial"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|start"
+                android:textColor="@color/gp_on_hero"
+                android:textSize="@dimen/text_eyebrow"
+                android:textStyle="bold" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/espacio_12">
+
+            <TextView
+                android:id="@+id/tvProgramaNombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="@dimen/text_fila"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvProgramaResumen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="@dimen/text_eyebrow" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

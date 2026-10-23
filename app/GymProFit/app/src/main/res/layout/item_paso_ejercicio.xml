@@ -15,7 +15,7 @@
         android:importantForAccessibility="no"
         android:textAppearance="@style/TextAppearance.GymProFit.Number"
         android:textColor="?attr/colorOnPrimaryContainer"
-        android:textSize="17sp" />
+        android:textSize="@dimen/text_fila" />
 
     <TextView
         android:id="@+id/tvPasoTexto"
@@ -26,5 +26,5 @@
         android:lineSpacingMultiplier="1.15"
         android:paddingTop="5dp"
         android:textColor="?attr/colorOnSurface"
-        android:textSize="15sp" />
+        android:textSize="@dimen/text_enlace_seccion" />
 </LinearLayout>

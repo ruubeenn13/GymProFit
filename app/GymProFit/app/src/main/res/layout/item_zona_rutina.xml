@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_zona_rutina — una zona en la cabecera del detalle de la rutina (GP-216, tablero 32): su
+  nombre, una barra con lo que pesa en la rutina y sus series. Va dentro de la tarjeta protagonista,
+  así que lee los colores de su tema (texto claro sobre #3A2110). El relleno lo dimensiona el código.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/espacio_8"
+    android:gravity="center_vertical"
+    android:importantForAccessibility="no"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/tvZonaNombre"
+        android:layout_width="74dp"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="@dimen/text_caption" />
+
+    <LinearLayout
+        android:id="@+id/barraZona"
+        android:layout_width="0dp"
+        android:layout_height="8dp"
+        android:layout_marginStart="@dimen/espacio_8"
+        android:layout_marginEnd="@dimen/espacio_8"
+        android:layout_weight="1"
+        android:background="@drawable/bg_pista_zona"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <View
+            android:id="@+id/rellenoZona"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_relleno_zona" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvZonaSeries"
+        android:layout_width="64dp"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="@dimen/text_caption" />
+</LinearLayout>

@@ -23,11 +23,11 @@
 
     <!-- Primer fotograma de la demostración; la silueta si el ejercicio no tiene. -->
     <com.google.android.material.card.MaterialCardView
+        style="@style/Widget.GymProFit.Card"
         android:layout_width="52dp"
         android:layout_height="52dp"
         app:cardBackgroundColor="?attr/colorSurfaceVariant"
         app:cardCornerRadius="@dimen/radio_miniatura"
-        app:cardElevation="0dp"
         app:strokeWidth="0dp">
 
         <ImageView
