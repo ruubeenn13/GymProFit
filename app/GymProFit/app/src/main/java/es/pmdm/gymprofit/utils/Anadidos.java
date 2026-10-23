@@ -88,6 +88,9 @@ public final class Anadidos {
 
         public long getKcal() { return kcal; }
 
+        /** Los gramos de proteína de la línea añadida. */
+        public double getProteina() { return linea != null ? linea.getProteinasTotales() : 0; }
+
         /** El mismo, con la línea como quedó al actualizarla desde la ficha. */
         @NonNull
         public Anadido actualizado(@NonNull AlimentoComida nueva, @NonNull String texto, long kcal) {
@@ -103,9 +106,17 @@ public final class Anadidos {
         @NonNull public final Map<String, Object> cuerpo;
         @NonNull public final String texto;
         public final long kcal;
+        /** Los gramos de proteína que añade, para la barra de Añadir (GP-216, tablero 25). */
+        public final double proteina;
 
         public Pedido(int alimentoId, @Nullable String barcode, @NonNull String tipoComida,
                       @NonNull Map<String, Object> cuerpo, @NonNull String texto, long kcal) {
+            this(alimentoId, barcode, tipoComida, cuerpo, texto, kcal, 0);
+        }
+
+        public Pedido(int alimentoId, @Nullable String barcode, @NonNull String tipoComida,
+                      @NonNull Map<String, Object> cuerpo, @NonNull String texto, long kcal, double proteina) {
+            this.proteina = proteina;
             this.alimentoId = alimentoId;
             this.barcode = barcode;
             this.tipoComida = tipoComida;
@@ -286,11 +297,13 @@ public final class Anadidos {
     public static final class Resumen {
         public final int cuantos;
         public final long kcal;
+        public final double proteina;
         @NonNull public final Set<String> comidas;
 
-        Resumen(int cuantos, long kcal, @NonNull Set<String> comidas) {
+        Resumen(int cuantos, long kcal, double proteina, @NonNull Set<String> comidas) {
             this.cuantos = cuantos;
             this.kcal = kcal;
+            this.proteina = proteina;
             this.comidas = comidas;
         }
     }
@@ -299,19 +312,22 @@ public final class Anadidos {
     public Resumen resumen() {
         int n = 0;
         long kcal = 0;
+        double proteina = 0;
         Set<String> comidas = new LinkedHashSet<>();
         for (Estado e : unicos()) {
             if (!e.quiere) continue;
             n++;
             if (e.hecho != null) {
                 kcal += e.hecho.getKcal();
+                proteina += e.hecho.getProteina();
                 comidas.add(e.hecho.getTipoComida());
             } else if (e.pedido != null) {
                 kcal += e.pedido.kcal;
+                proteina += e.pedido.proteina;
                 comidas.add(e.pedido.tipoComida);
             }
         }
-        return new Resumen(n, kcal, comidas);
+        return new Resumen(n, kcal, proteina, comidas);
     }
 
     /** ¿Queda algo por llegar a la API? */

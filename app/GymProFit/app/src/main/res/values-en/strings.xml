@@ -1619,7 +1619,6 @@
 
     <!-- Lote 1.6.2 (decisión 15): la etiqueta de la comida y la hoja «¿A qué comida?» -->
     <string name="anadir_titulo">Add food</string>
-    <string name="etiqueta_comida_a11y">Adding to: %1$s. Change meal</string>
     <string name="hoja_comida_titulo">Which meal?</string>
     <string name="hoja_comida_hoy">Today, %1$s</string>
     <string name="hoja_comida_patron">EEEE, MMMM d</string>
@@ -1723,7 +1722,7 @@
     <string name="crear_error_carga">Couldn\'t open this food</string>
     <!-- ── Lote 1.6.3: añadir en un toque, la barra de «Hecho» y los favoritos ── -->
     <string name="anadir_pestanas">Show</string>
-    <string name="anadir_pestana_todo">All</string>
+    <string name="anadir_pestana_todo">Recent</string>
     <string name="anadir_pestana_favoritos">Favorites</string>
     <string name="recientes_ver_todos">See all</string>
     <string name="recientes_ver_todos_a11y">See all recent foods</string>
@@ -2310,4 +2309,10 @@
     <string name="ficha_atajo_media">½</string>
     <string name="ficha_atajo_gramos">%1$s\u00A0g</string>
     <string name="ficha_atajo_a11y">%1$s %2$s</string>
+    <string name="anadir_cambiar_comida_a11y">%1$s. Tap to change meal</string>
+    <string name="barra_kcal_proteina">+%1$s\u00A0kcal · %2$s\u00A0g of protein</string>
+    <string name="barra_proteina_falta">%1$s\u00A0g of protein to go</string>
+    <string name="barra_proteina_cubierta">Today\'s protein covered!</string>
+    <string name="barra_a11y_dos">%1$s, %2$s</string>
+    <string name="barra_a11y_tres">%1$s, %2$s, %3$s</string>
 </resources>

@@ -19,6 +19,7 @@
     android:orientation="vertical"
     android:background="?android:attr/colorBackground">
 
+    <!-- La cabecera (tablero 25): atrás y «Añadir a la merienda ⌄»; tocar el título cambia de comida. -->
     <LinearLayout
         android:id="@+id/filaTituloAnadir"
         android:layout_width="match_parent"
@@ -34,8 +35,8 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/anadir_cerrar"
-            android:src="@drawable/ic_ms_close"
+            android:contentDescription="@string/ficha_atras"
+            android:src="@drawable/ic_ms_arrow_back"
             app:tint="?attr/colorOnSurface" />
 
         <TextView
@@ -44,30 +45,21 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginStart="4dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:drawableEnd="@drawable/ic_ms_keyboard_arrow_down"
+            android:drawableTint="?attr/colorOnSurfaceVariant"
+            android:drawablePadding="4dp"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:minHeight="48dp"
             android:accessibilityHeading="true"
             android:text="@string/anadir_titulo"
             android:textAppearance="@style/TextAppearance.GymProFit.Headline"
-            android:textSize="@dimen/text_display_large"
+            android:textSize="@dimen/text_display"
             android:textColor="?attr/colorOnSurface"
             tools:targetApi="28" />
-
-        <FrameLayout
-            android:id="@+id/ranuraEtiquetaDerecha"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp">
-
-            <include layout="@layout/view_etiqueta_comida" />
-        </FrameLayout>
     </LinearLayout>
-
-    <FrameLayout
-        android:id="@+id/ranuraEtiquetaDebajo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="56dp"
-        android:paddingEnd="16dp"
-        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -252,6 +244,31 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFeatureSettings="tnum"
+                    android:textSize="@dimen/text_caption"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="6dp"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_barra_redonda"
+                    android:backgroundTint="@color/gp_meter_track"
+                    android:importantForAccessibility="no">
+
+                    <View
+                        android:id="@+id/progresoProteinaHecho"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_barra_redonda"
+                        android:backgroundTint="@color/gp_macro_proteinas"
+                        android:scaleX="0" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tvFaltaHecho"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
                     android:textSize="@dimen/text_caption"
                     android:textColor="?attr/colorOnSurfaceVariant" />
             </LinearLayout>

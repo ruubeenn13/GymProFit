@@ -184,4 +184,24 @@ public class GruposBusquedaTest {
         assertEquals(GruposBusqueda.Tipo.COMIDA_RECIENTE,
                 GruposBusqueda.de(Collections.emptyList(), false, true, comidas).get(1).tipo);
     }
+
+    // «Lo que te encaja» arriba de cualquier pestaña (GP-216, tablero 25): su cabecera y una
+    // tarjeta por sugerencia delante de la lista, y filasEncaja las cuenta.
+    @Test
+    public void lo_que_te_encaja_se_pone_delante_de_la_lista() {
+        Alimento atun = a("Atún", "TUYO");
+        atun.setId(5);
+        atun.setCalorias(100);
+        atun.setProteinas(23);
+        LoQueTeEncaja.Resultado encaja = LoQueTeEncaja.de(500, 48, null, null, Arrays.asList(atun), null, null, null);
+        List<GruposBusqueda.Elemento> base = GruposBusqueda.de(Arrays.asList(a("Yogur", "TUYO")), false);
+
+        List<GruposBusqueda.Elemento> con = GruposBusqueda.conEncaja(base, encaja);
+        assertEquals(base.size() + 2, con.size());
+        assertEquals(GruposBusqueda.Tipo.ENCAJA_CABECERA, con.get(0).tipo);
+        assertEquals(GruposBusqueda.Tipo.ENCAJA, con.get(1).tipo);
+        assertEquals(2, GruposBusqueda.filasEncaja(con));
+        // Sin sección, la lista queda como estaba.
+        assertSame(base, GruposBusqueda.conEncaja(base, null));
+    }
 }

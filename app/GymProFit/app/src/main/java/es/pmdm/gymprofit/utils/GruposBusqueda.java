@@ -211,6 +211,22 @@ public final class GruposBusqueda {
         return lista;
     }
 
+    /**
+     * Pone «Lo que te encaja» delante de una lista (GP-216, tablero 25): arriba de Recientes y de
+     * Favoritos, como ya estaba en Mis platos. Sin sección, la misma lista.
+     */
+    @NonNull
+    public static List<Elemento> conEncaja(@NonNull List<Elemento> lista, @Nullable LoQueTeEncaja.Resultado encaja) {
+        if (encaja == null || encaja.sugerencias.isEmpty()) return lista;
+        List<Elemento> con = new ArrayList<>();
+        con.add(new Elemento(Tipo.ENCAJA_CABECERA, null, null, false, -1, null, null, encaja, null));
+        for (LoQueTeEncaja.Sugerencia s : encaja.sugerencias) {
+            con.add(new Elemento(Tipo.ENCAJA, null, s.alimento, false, -1, null, null, encaja, s));
+        }
+        con.addAll(lista);
+        return con;
+    }
+
     /** Sin platos (modo ingredientes): un plato no puede ser ingrediente de otro. */
     @NonNull
     public static List<Alimento> sinPlatos(@Nullable List<Alimento> alimentos) {

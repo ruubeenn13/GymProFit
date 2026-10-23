@@ -144,6 +144,9 @@ public class AnadirAlimentoActivity extends BaseActivity {
     private String fecha;
     // Las kcal de cada comida del día, para la hoja; null mientras carga o si falla.
     @Nullable private Map<String, Integer> kcalDia;
+    // La proteína que faltaba hoy al abrir (objetivo - lo apuntado), para decir cuánto falta
+    // mientras se añade; se fija con el primer día que llega y no cambia en la visita.
+    @Nullable private Double faltaProteinaAlAbrir;
 
     private final AlimentoApi alimentoApi = ApiClient.service(AlimentoApi.class);
     private final ComidaApi comidaApi = ApiClient.service(ComidaApi.class);
@@ -273,16 +276,15 @@ public class AnadirAlimentoActivity extends BaseActivity {
                 salir();
             }
         });
-        etiqueta = findViewById(R.id.etiquetaComida);
+        // El título dice a qué comida vas y se cambia tocándolo (tablero 25).
+        etiqueta = findViewById(R.id.tvTituloAnadir);
         etiqueta.setOnClickListener(v -> elegirComida());
-        es.pmdm.gymprofit.ui.nutricion.ElegirComida.colocarEtiqueta(etiqueta, findViewById(R.id.filaTituloAnadir),
-                findViewById(R.id.tvTituloAnadir), findViewById(R.id.ranuraEtiquetaDerecha),
-                findViewById(R.id.ranuraEtiquetaDebajo));
         pintarComida();
         if (modoIngredientes) {
-            // Sin comida a la que añadir: ni etiqueta, ni el día, ni comidas recientes.
-            etiqueta.setVisibility(View.GONE);
-            findViewById(R.id.ranuraEtiquetaDebajo).setVisibility(View.GONE);
+            // Sin comida a la que añadir: el título no se toca, ni hay el día ni comidas recientes.
+            etiqueta.setOnClickListener(null);
+            etiqueta.setClickable(false);
+            ((TextView) etiqueta).setCompoundDrawablesRelative(null, null, null, null);
             ((TextView) findViewById(R.id.tvTituloAnadir)).setText(R.string.ingredientes_titulo);
             ((TextView) findViewById(R.id.etBuscarAnadir)).setHint(R.string.ingredientes_buscar_hint);
             findViewById(R.id.btnPestanaPlatos).setVisibility(View.GONE);
@@ -391,7 +393,11 @@ public class AnadirAlimentoActivity extends BaseActivity {
     }
 
     private void pintarComida() {
-        es.pmdm.gymprofit.ui.nutricion.ElegirComida.pintarEtiqueta(etiqueta, tipoComida);
+        if (modoIngredientes) return;
+        // «Añadir a la merienda ⌄»: el título es lo que se toca para cambiar de comida.
+        String titulo = getString(textoAnadirA(tipoComida));
+        ((TextView) etiqueta).setText(titulo);
+        etiqueta.setContentDescription(getString(R.string.anadir_cambiar_comida_a11y, titulo));
     }
 
     // La etiqueta abre «¿A qué comida?»; elegir cambia la etiqueta y lo que dice el «+».
@@ -400,8 +406,6 @@ public class AnadirAlimentoActivity extends BaseActivity {
             boolean cambia = !t.equals(tipoComida);
             tipoComida = t;
             pintarComida();
-            // La etiqueta puede cambiar de ancho («Almuerzo» frente a «Cena»).
-            etiqueta.requestLayout();
             // Cada fila enseña el ✓ de esta comida (GP-185), y TalkBack del «+» dice a cuál va.
             adapter.notifyDataSetChanged();
             // Las comidas recientes son para la comida de la etiqueta: se vuelven a pedir.
@@ -428,6 +432,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
                     public void onOk(List<es.pmdm.gymprofit.model.comida.Comida> lista) {
                         if (miTurno != turnoDia || isDestroyed()) return;
                         comidasDia = lista != null ? lista : new ArrayList<>();
+                        fijarFaltaProteina();
                         cargarYaApuntados(miTurno);
                         Map<String, Integer> m = new HashMap<>();
                         if (lista != null) {
@@ -449,6 +454,17 @@ public class AnadirAlimentoActivity extends BaseActivity {
                         diaListo = true;
                     }
                 });
+    }
+
+    // Lo que faltaba de proteína al abrir: solo con la primera lista del día, porque las siguientes
+    // (al cambiar de comida) ya llevarían lo añadido en esta visita y se contaría dos veces.
+    private void fijarFaltaProteina() {
+        if (faltaProteinaAlAbrir != null || comidasDia == null) return;
+        es.pmdm.gymprofit.utils.ResultadoNutricional meta = es.pmdm.gymprofit.utils.DiaNutricion.objetivo(prefsManager);
+        if (meta == null || meta.proteinas <= 0) return;
+        es.pmdm.gymprofit.utils.DiaNutricion d = es.pmdm.gymprofit.utils.DiaNutricion.de(comidasDia, meta);
+        faltaProteinaAlAbrir = Math.max(0, d.objetivoProteinas - d.proteinas);
+        pintarBarra();
     }
 
     // Las líneas de la comida de la etiqueta, para no proponer en «Lo que te encaja» lo que
@@ -659,7 +675,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
         return new Anadidos.Pedido(a.getId(), a.getBarcode(), tipoComida,
                 PedidoCantidad.anadir(a, c, dia(), tipoComida),
                 AnadirRapido.texto(Cantidades.Formatos.de(this), FechaUtils.localeDeLaApp(this), c),
-                AnadirRapido.kcal(a, c));
+                AnadirRapido.kcal(a, c), AnadirRapido.proteina(a, c));
     }
 
     private void tocarMas(@NonNull Alimento a, @NonNull View boton, @NonNull ImageView icono) {
@@ -767,9 +783,28 @@ public class AnadirAlimentoActivity extends BaseActivity {
                 getString(aLa(r.comidas.iterator().next())))
                 : getResources().getQuantityString(R.plurals.barra_anadidos, r.cuantos, r.cuantos);
         ((TextView) findViewById(R.id.tvResumenHecho)).setText(texto);
-        String kcal = getString(R.string.barra_kcal, nf.format(r.kcal));
+        String kcal = getString(R.string.barra_kcal_proteina, nf.format(r.kcal), nf.format(Math.round(r.proteina)));
         ((TextView) findViewById(R.id.tvKcalHecho)).setText(kcal);
-        findViewById(R.id.textosBarraHecho).setContentDescription(texto + ", " + kcal);
+        // «Te faltan 21 g de proteína» o «¡Proteína de hoy cubierta!», con una barra fina (tablero 25).
+        TextView falta = findViewById(R.id.tvFaltaHecho);
+        View progreso = findViewById(R.id.progresoProteinaHecho);
+        String linea = null;
+        if (faltaProteinaAlAbrir != null && faltaProteinaAlAbrir > 0.5) {
+            double resta = Math.max(0, faltaProteinaAlAbrir - r.proteina);
+            boolean cubierta = resta < 0.5;
+            linea = cubierta ? getString(R.string.barra_proteina_cubierta)
+                    : getString(R.string.barra_proteina_falta, nf.format(Math.round(resta)));
+            falta.setTextColor(ContextCompat.getColor(this, cubierta ? R.color.gp_success : R.color.gp_text_secondary));
+            ((View) progreso.getParent()).setVisibility(View.VISIBLE);
+            progreso.setPivotX(0f);
+            progreso.setScaleX((float) Math.min(1.0, r.proteina / faltaProteinaAlAbrir));
+        } else {
+            ((View) progreso.getParent()).setVisibility(View.GONE);
+        }
+        falta.setVisibility(linea == null ? View.GONE : View.VISIBLE);
+        if (linea != null) falta.setText(linea);
+        findViewById(R.id.textosBarraHecho).setContentDescription(linea != null
+                ? getString(R.string.barra_a11y_tres, texto, kcal, linea) : getString(R.string.barra_a11y_dos, texto, kcal));
         if (barra.getVisibility() != View.VISIBLE) {
             barra.setVisibility(View.VISIBLE);
             // Sube con el primer añadido (ENTRA, 40 dp, como el tablero).
@@ -791,6 +826,8 @@ public class AnadirAlimentoActivity extends BaseActivity {
         ((TextView) findViewById(R.id.tvResumenHecho)).setText(texto);
         String kcal = getString(R.string.plato_kcal_en_total, nf.format(ingredientes.total().kcal));
         ((TextView) findViewById(R.id.tvKcalHecho)).setText(kcal);
+        findViewById(R.id.tvFaltaHecho).setVisibility(View.GONE);
+        ((View) findViewById(R.id.progresoProteinaHecho).getParent()).setVisibility(View.GONE);
         findViewById(R.id.textosBarraHecho).setContentDescription(texto + ", " + kcal);
         if (barra.getVisibility() != View.VISIBLE) {
             barra.setVisibility(View.VISIBLE);
@@ -1130,7 +1167,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
         }
         List<GruposBusqueda.Elemento> lista = GruposBusqueda.de(resultados, buscando, recientesTodos,
                 buscando ? null : comidasRecientes);
-        adapter.poner(lista, cascada);
+        ponerLista(lista, cascada);
         if (lista.isEmpty()) estado.vacio(R.string.anadir_vacio);
         else estado.oculto();
     }
@@ -1249,9 +1286,24 @@ public class AnadirAlimentoActivity extends BaseActivity {
         }
         encajaCalculado = true;
         encaja = calcularEncaja();
-        if (!mirandoPlatos()) return false;
-        pintarPlatos();
+        // Buscando, no sale: la lista es la de la búsqueda.
+        if (!consulta.isEmpty()) return false;
+        if (mirandoPlatos()) pintarPlatos();
+        else if (mirandoFavoritos()) pintarFavoritos();
+        else pintarActual(false);
         return true;
+    }
+
+    // «Lo que te encaja» va arriba de la pestaña que se mira (tablero 25), y entra en cascada
+    // la primera vez que sale (momento 16). Buscando o en modo ingredientes, no.
+    private void ponerLista(@NonNull List<GruposBusqueda.Elemento> base, boolean cascada) {
+        boolean conEncaja = !modoIngredientes && consulta.isEmpty() && encaja != null;
+        List<GruposBusqueda.Elemento> lista = conEncaja ? GruposBusqueda.conEncaja(base, encaja) : base;
+        boolean entra = conEncaja && !encajaEntro && lista != base;
+        if (entra) encajaEntro = true;
+        if (entra) adapter.poner(lista, GruposBusqueda.filasEncaja(lista));
+        else adapter.poner(lista, cascada);
+        if (lista != base) estado.oculto();
     }
 
     @Nullable
@@ -1328,9 +1380,13 @@ public class AnadirAlimentoActivity extends BaseActivity {
             propuesta = null;
         }
         List<GruposBusqueda.Elemento> lista = GruposBusqueda.favoritos(deFavoritos, propuesta);
-        adapter.poner(lista, false);
-        if (deFavoritos.isEmpty() && propuesta == null) estado.vacio(R.string.favoritos_vacio);
+        ponerLista(lista, false);
+        if (deFavoritos.isEmpty() && propuesta == null && !hayEncaja()) estado.vacio(R.string.favoritos_vacio);
         else estado.oculto();
+    }
+
+    private boolean hayEncaja() {
+        return !modoIngredientes && encaja != null && !encaja.sugerencias.isEmpty();
     }
 
     // Aceptar (el corazón) o rechazar (la equis): la tarjeta se va al tocar y, si la API
