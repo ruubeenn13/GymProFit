@@ -107,6 +107,17 @@ public interface ISesionEntrenamientoService {
     java.math.BigDecimal getVolumenLevantado(Integer sesionId);
 
     /**
+     * Kilos movidos por semana, de {@code semanas} semanas seguidas desde {@code desde}
+     * (GP-216): una entrada por semana, también las de cero, en orden.
+     *
+     * @param usuarioId dueño de las sesiones (se comprueba la propiedad).
+     * @param desde     lunes a las 00:00 de la primera semana, en la hora del usuario.
+     * @param semanas   de 1 a 12.
+     */
+    List<com.gymprofit.api.dto.entity.sesionentrenamiento.VolumenSemanalDTO> getVolumenSemanal(
+            Integer usuarioId, LocalDateTime desde, int semanas);
+
+    /**
      * Series de la última sesión terminada del usuario del token que tenga series de
      * cada ejercicio pedido (GP-014). Los ejercicios sin ninguna no salen.
      *

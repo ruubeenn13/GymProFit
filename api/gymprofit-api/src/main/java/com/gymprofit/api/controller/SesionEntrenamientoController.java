@@ -10,6 +10,7 @@ import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoPatchDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.UltimaVezDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.VolumenMuscularDTO;
+import com.gymprofit.api.dto.entity.sesionentrenamiento.VolumenSemanalDTO;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.service.sesionentrenamiento.IGuardadoSesionCompletaService;
 import com.gymprofit.api.service.sesionentrenamiento.ISesionEntrenamientoService;
@@ -424,6 +425,28 @@ public class SesionEntrenamientoController {
             return ResponseEntity.ok(sesionEntrenamientoService.getVolumenMuscularDesde(usuarioId, desde));
         }
         return ResponseEntity.ok(sesionEntrenamientoService.getVolumenMuscular(usuarioId, dias));
+    }
+
+    @Operation(summary = "Kilos movidos por semana (GP-216)",
+            description = "Para «Tu progreso» de Inicio: una entrada por semana, de «semanas» seguidas " +
+                    "desde «desde», también las de cero. La semana de una sesión es la de su inicio y " +
+                    "los kilos usan la definición de GP-011. El lunes lo manda la app en su hora local.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Kilos de cada semana, en orden",
+                    content = @Content(schema = @Schema(implementation = VolumenSemanalDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Semanas fuera de 1 a 12",
+                    content = @Content(schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "403", description = "No es tu usuario ni eres ADMIN",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @GetMapping("/sesiones/usuario/{usuarioId}/volumen-semanal")
+    public ResponseEntity<List<VolumenSemanalDTO>> obtenerVolumenSemanal(
+            @PathVariable Integer usuarioId,
+            @Parameter(description = "Lunes a las 00:00 de la primera semana en la hora local del usuario "
+                    + "(p. ej. 2026-09-14T00:00:00).")
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde,
+            @RequestParam(defaultValue = "6") int semanas) {
+        return ResponseEntity.ok(sesionEntrenamientoService.getVolumenSemanal(usuarioId, desde, semanas));
     }
 
     @Operation(summary = "Kilos movidos en una sesión",
