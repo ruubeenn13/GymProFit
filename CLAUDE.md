@@ -91,6 +91,7 @@ Reglas fijas: no hace falta repetirlas en cada encargo.
 - **Autoría.** Nunca `Co-Authored-By` ni ninguna mención a Claude como autor, ni en commits ni en el `CHANGELOG.md`.
 - **Credenciales.** Nunca en ficheros, commits, logs ni informes: solo en variables de entorno de los comandos.
 - **Web.** Si cambia `web/`, el zip va al escritorio con el formato de `web/README.md`, y el informe lo dice.
+- **Revisor de UI.** Tras arreglar lo que encuentre el revisor de UI, se vuelve a pasar el revisor completo (mismas pantallas y combinaciones). Un lote no se da por hecho sin esa segunda pasada limpia de medios y altos.
 - **Informe.** El largo, en `documentacion/estado/AAAA-MM-DD-<lote>.md`. Al propietario, un resumen de unas 15 líneas: commits, tests (cuántos y cuáles se vieron en rojo), comprobación en producción, decisiones tomadas, tareas manuales suyas y dudas o bloqueos. El detalle de un fallo de seguridad aún no contado va aparte, después del resumen.
 
 ## Dónde vive cada cosa

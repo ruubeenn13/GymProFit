@@ -390,4 +390,20 @@ public class EjercicioRealizadoService implements IEjercicioRealizadoService{
             throw new NotFoundEntityException("error.ejercicio.noExiste", ejercicioId);
         }
     }
+
+    /** Tope de «Los que más haces» (GP-216). */
+    static final int MAX_MAS_HECHOS = 20;
+
+    @Override
+    public List<com.gymprofit.api.dto.entity.ejerciciorealizado.EjercicioMasHechoDTO> masHechos(int limite) {
+        if (limite < 1 || limite > MAX_MAS_HECHOS) {
+            throw new com.gymprofit.api.exceptions.InvalidDataException("error.masHechos.limite", MAX_MAS_HECHOS);
+        }
+        Integer yo = securityUtils.getCurrentUserId();
+        return ejercicioRealizadoRepository.masHechos(yo, org.springframework.data.domain.PageRequest.of(0, limite))
+                .stream()
+                .map(f -> new com.gymprofit.api.dto.entity.ejerciciorealizado.EjercicioMasHechoDTO(
+                        (Integer) f[0], ((Number) f[1]).longValue()))
+                .toList();
+    }
 }

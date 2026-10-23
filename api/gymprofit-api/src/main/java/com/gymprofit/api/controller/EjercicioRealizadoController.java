@@ -2,6 +2,7 @@ package com.gymprofit.api.controller;
 
 import com.gymprofit.api.dto.common.CountDTO;
 import com.gymprofit.api.dto.common.ExistsDTO;
+import com.gymprofit.api.dto.entity.ejerciciorealizado.EjercicioMasHechoDTO;
 import com.gymprofit.api.dto.entity.ejerciciorealizado.EjercicioRealizadoCreateDTO;
 import com.gymprofit.api.dto.entity.ejerciciorealizado.EjercicioRealizadoDTO;
 import com.gymprofit.api.dto.entity.ejerciciorealizado.EjercicioRealizadoPatchDTO;
@@ -52,6 +53,22 @@ public class EjercicioRealizadoController {
         List<EjercicioRealizadoDTO> ejerciciosRealizados = ejercicioRealizadoService.findAll();
 
         return ResponseEntity.ok(ejerciciosRealizados);
+    }
+
+    @Operation(summary = "Los ejercicios que más haces (GP-216, «Los que más haces» de la Biblioteca)",
+            description = "Del usuario del token: los ejercicios con más sesiones terminadas y cuántas, de más a menos. "
+                    + "Una sesión cuenta una vez por ejercicio. [] si no hay ninguna.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Hasta «limite» ejercicios, de más a menos",
+                    content = @Content(schema = @Schema(implementation = EjercicioMasHechoDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Límite fuera de 1 a 20",
+                    content = @Content(schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "403", description = "Invitado",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @GetMapping("/ejercicios-realizados/mas-hechos")
+    public ResponseEntity<List<EjercicioMasHechoDTO>> masHechos(@RequestParam(defaultValue = "8") int limite) {
+        return ResponseEntity.ok(ejercicioRealizadoService.masHechos(limite));
     }
 
     @Operation(summary = "Obtiene un ejercicio realizado por ID")

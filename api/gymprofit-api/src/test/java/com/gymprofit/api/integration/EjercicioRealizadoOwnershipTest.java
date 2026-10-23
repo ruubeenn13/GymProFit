@@ -286,4 +286,17 @@ class EjercicioRealizadoOwnershipTest extends AbstractOwnershipTest {
                 "{\"sesionId\":" + sesionIdOwner + ",\"ejercicioId\":" + ejercicioIdCatalogo + "}")
                 .andReturn().getResponse().getStatus()).isEqualTo(403);
     }
+
+    @Test
+    @DisplayName("GP-216: GET /ejercicios-realizados/mas-hechos → solo lo de quien llama, sin id que rechazar")
+    void gp216_masHechosSoloLoMio() throws Exception {
+        String cuerpo = ("{\"claveIdempotencia\":\"gp216-mas-hechos\",\"fechaInicio\":\"2026-09-14T18:00:00\","
+                + "\"duracionMinutos\":50,\"completada\":true,\"ejercicios\":[{\"ejercicioId\":" + ejercicioIdCatalogo
+                + ",\"series\":[{\"numero\":1,\"repeticiones\":8,\"peso\":50,\"completada\":true}]}]}");
+        pedir(owner, "POST /sesiones/completa", cuerpo).andExpect(status().isOk());
+
+        // El dueño lo ve; el atacante, que pide lo mismo, no ve nada del dueño (200 con [], no 403: no hay id ajeno).
+        pedir(owner, "GET /ejercicios-realizados/mas-hechos").andExpect(status().isOk()).andExpect(jsonPath("$", hasSize(1)));
+        pedir(attacker, "GET /ejercicios-realizados/mas-hechos").andExpect(status().isOk()).andExpect(jsonPath("$", hasSize(0)));
+    }
 }
