@@ -264,6 +264,7 @@ public class EjerciciosActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 queryActual = s.toString().trim();
                 btnLimpiar.setVisibility(s.length() > 0 ? View.VISIBLE : View.GONE);
+                cabecera.setBuscando(!queryActual.isEmpty());
                 cabecera.setFiltrando(!queryActual.isEmpty() || grupoActual != null);
                 if (debounceRunnable != null) debounceHandler.removeCallbacks(debounceRunnable);
                 debounceRunnable = () -> cargarEjercicios();

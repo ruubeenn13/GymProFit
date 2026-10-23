@@ -18,7 +18,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 
 import com.google.android.material.chip.ChipGroup;
-import com.google.android.material.color.MaterialColors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,6 +72,7 @@ public class ProgramaDetalleActivity extends BaseActivity {
         setContentView(R.layout.activity_programa_detalle);
         codigo = getIntent().getStringExtra(EXTRA_CODIGO);
         findViewById(R.id.btnAtras).setOnClickListener(v -> finish());
+        es.pmdm.gymprofit.ui.widget.BarraSuperior.enlazar(findViewById(R.id.scrollPantalla), findViewById(R.id.barraSuperior));
         estado = new VistaEstado(findViewById(R.id.estadoDetalle));
         cargar();
     }
@@ -135,7 +135,7 @@ public class ProgramaDetalleActivity extends BaseActivity {
 
     // ── Cabecera ────────────────────────────────────────────────────────────
 
-    // El color de su material que se funde con el fondo, el nombre y tres datos.
+    // El color de su material, el nombre y tres datos.
     private void pintarCabecera(ProgramaDetalle p) {
         ((TextView) findViewById(R.id.tvDetalleMaterial)).setText(getString(R.string.programa_eyebrow,
                 TuProgramaVista.equipamiento(this, p.getEquipamiento()).toLowerCase(
@@ -143,8 +143,12 @@ public class ProgramaDetalleActivity extends BaseActivity {
         ((TextView) findViewById(R.id.tvDetalleNombre)).setText(p.getNombre());
 
         int color = ContextCompat.getColor(this, TuProgramaVista.colorDe(p.getEquipamiento()));
-        int fondo = MaterialColors.getColor(findViewById(R.id.cabeceraPrograma), android.R.attr.colorBackground);
-        GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{color, fondo});
+
+        // Sólido y con el borde de abajo redondeado: un degradado hasta el fondo dejaba el título claro sobre un fondo claro en el tema claro.
+        GradientDrawable g = new GradientDrawable();
+        g.setColor(color);
+        float r = getResources().getDimension(R.dimen.radio_protagonista);
+        g.setCornerRadii(new float[]{0, 0, 0, 0, r, r, r, r});
         findViewById(R.id.cabeceraPrograma).setBackground(g);
 
         ChipGroup chips = findViewById(R.id.chipsPrograma);

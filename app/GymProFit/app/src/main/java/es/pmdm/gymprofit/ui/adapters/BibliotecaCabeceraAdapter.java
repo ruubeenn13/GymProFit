@@ -52,6 +52,7 @@ public class BibliotecaCabeceraAdapter extends RecyclerView.Adapter<BibliotecaCa
     private final AlTocar alTocar;
     private final List<MasHaces> masHaces = new ArrayList<>();
     private boolean filtrando;
+    private boolean buscando;
     private long cuantos = -1;
     private ViewHolder holder;
 
@@ -69,6 +70,12 @@ public class BibliotecaCabeceraAdapter extends RecyclerView.Adapter<BibliotecaCa
     /** Si hay búsqueda o grupo puesto: entonces «Los que más haces» se esconde. */
     public void setFiltrando(boolean filtrando) {
         this.filtrando = filtrando;
+        refrescar();
+    }
+
+    /** Si hay texto en el buscador: el rótulo de la lista pasa de «De la A a la Z» a «Resultados». */
+    public void setBuscando(boolean buscando) {
+        this.buscando = buscando;
         refrescar();
     }
 
@@ -102,6 +109,7 @@ public class BibliotecaCabeceraAdapter extends RecyclerView.Adapter<BibliotecaCa
         boolean ver = !filtrando && !masHaces.isEmpty();
         holder.bloqueMasHaces.setVisibility(ver ? View.VISIBLE : View.GONE);
         if (ver) pintarCarrusel(ctx);
+        holder.tvTituloLista.setText(buscando ? R.string.biblioteca_resultados : R.string.biblioteca_lista);
         if (cuantos < 0) {
             holder.tvCuantos.setText("");
         } else {
@@ -139,13 +147,14 @@ public class BibliotecaCabeceraAdapter extends RecyclerView.Adapter<BibliotecaCa
     static final class ViewHolder extends RecyclerView.ViewHolder {
         final View bloqueMasHaces;
         final LinearLayout listaMasHaces;
-        final TextView tvCuantos;
+        final TextView tvCuantos, tvTituloLista;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             bloqueMasHaces = itemView.findViewById(R.id.bloqueMasHaces);
             listaMasHaces = itemView.findViewById(R.id.listaMasHaces);
             tvCuantos = itemView.findViewById(R.id.tvCuantos);
+            tvTituloLista = itemView.findViewById(R.id.tvTituloLista);
         }
     }
 }

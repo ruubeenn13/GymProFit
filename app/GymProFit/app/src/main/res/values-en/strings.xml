@@ -780,6 +780,7 @@
     <string name="biblioteca_zona_a11y">%1$s exercises</string>
     <string name="biblioteca_mas_haces">The ones you do most</string>
     <string name="biblioteca_lista">A to Z</string>
+    <string name="biblioteca_resultados">Results</string>
     <string name="ejercicios_limpiar_busqueda">Clear the search</string>
     <plurals name="biblioteca_cuantos">
         <item quantity="one">%1$s exercise</item>

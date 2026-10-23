@@ -12,6 +12,7 @@
     android:background="?attr/android:colorBackground">
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollPantalla"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
@@ -161,6 +162,14 @@
         android:layout_marginEnd="@dimen/espacio_8"
         android:orientation="horizontal">
 
+    <View
+        android:id="@+id/barraSuperior"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:background="?android:attr/colorBackground"
+        android:importantForAccessibility="no"
+        android:visibility="invisible" />
+
         <ImageButton
             android:id="@+id/btnAtras"
             style="@style/Widget.GymProFit.BotonRedondo"
@@ -195,7 +204,9 @@
             android:id="@+id/btnEntrenarRutina"
             style="@style/Widget.GymProFit.BotonPildora.Expresivo"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            android:minHeight="56dp"
             app:icon="@drawable/ic_ms_play_arrow_fill" />
     </FrameLayout>
 </FrameLayout>

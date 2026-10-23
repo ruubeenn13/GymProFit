@@ -12,6 +12,7 @@
     android:background="?attr/android:colorBackground">
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollPantalla"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
@@ -77,6 +78,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/margen_pantalla"
+                    android:layout_marginTop="@dimen/espacio_28"
                     android:layout_marginEnd="@dimen/margen_pantalla"
                     android:accessibilityHeading="true"
                     android:text="@string/programa_ciclo_titulo"
@@ -186,6 +188,14 @@
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <View
+        android:id="@+id/barraSuperior"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:background="?android:attr/colorBackground"
+        android:importantForAccessibility="no"
+        android:visibility="invisible" />
 
     <ImageButton
         android:id="@+id/btnAtras"

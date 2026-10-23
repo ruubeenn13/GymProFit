@@ -235,7 +235,7 @@
          Periodo: 40 dp, un tercio cada uno, elegido en superficie 2. Se marcan con selected. -->
     <style name="Widget.GymProFit.PestanaFicha" parent="">
         <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">44dp</item>
+        <item name="android:layout_height">48dp</item>
         <item name="android:layout_weight">1</item>
         <item name="android:gravity">center</item>
         <item name="android:clickable">true</item>
@@ -248,7 +248,7 @@
 
     <style name="Widget.GymProFit.PeriodoFicha" parent="">
         <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_height">48dp</item>
         <item name="android:layout_weight">1</item>
         <item name="android:gravity">center</item>
         <item name="android:clickable">true</item>

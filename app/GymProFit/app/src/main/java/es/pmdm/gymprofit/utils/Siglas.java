@@ -12,13 +12,13 @@ public final class Siglas {
 
     private Siglas() { }
 
-    /** Dos palabras dan sus iniciales; una, sus dos primeras letras; sin nombre, un guion. */
+    /** Dos o más palabras dan la inicial de la primera y la de la última («Full body C» es FC, no FB: así las rutinas de un mismo programa no se confunden); una, sus dos primeras letras; sin nombre, un guion. */
     public static String de(@Nullable String nombre) {
         if (nombre == null || nombre.trim().isEmpty()) return "—";
         String[] palabras = nombre.trim().split("[ \t]+");
         String s;
         if (palabras.length >= 2) {
-            s = palabras[0].substring(0, 1) + palabras[1].substring(0, 1);
+            s = palabras[0].substring(0, 1) + palabras[palabras.length - 1].substring(0, 1);
         } else {
             s = palabras[0].length() >= 2 ? palabras[0].substring(0, 2) : palabras[0];
         }

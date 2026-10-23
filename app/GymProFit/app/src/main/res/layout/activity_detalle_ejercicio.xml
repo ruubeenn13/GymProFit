@@ -385,6 +385,14 @@
     </androidx.core.widget.NestedScrollView>
 
     <!-- Volver, sobre la demostración -->
+    <View
+        android:id="@+id/barraSuperior"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:background="?android:attr/colorBackground"
+        android:importantForAccessibility="no"
+        android:visibility="invisible" />
+
     <ImageButton
         android:id="@+id/btnAtras"
         style="@style/Widget.GymProFit.BotonRedondo"

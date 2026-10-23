@@ -28,8 +28,15 @@ public class SiglasTest {
     }
 
     @Test
-    public void masDeDosPalabrasSoloLasDosPrimeras() {
-        assertEquals("FB", Siglas.de("Full body completo"));
+    public void masDeDosPalabrasLaPrimeraYLaUltima() {
+        assertEquals("FC", Siglas.de("Full body completo"));
+    }
+
+    @Test
+    public void lasRutinasDeUnMismoProgramaNoSeConfunden() {
+        assertEquals("FA", Siglas.de("Full body A"));
+        assertEquals("FB", Siglas.de("Full body B"));
+        assertEquals("FC", Siglas.de("Full body C"));
     }
 
     @Test

@@ -122,6 +122,7 @@ public class DetalleRutinaActivity extends AppCompatActivity {
         programaNombre  = getIntent().getStringExtra(EXTRA_PROGRAMA_NOMBRE);
 
         findViewById(R.id.btnAtras).setOnClickListener(v -> finish());
+        es.pmdm.gymprofit.ui.widget.BarraSuperior.enlazar(findViewById(R.id.scrollPantalla), findViewById(R.id.barraSuperior));
         editarLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {

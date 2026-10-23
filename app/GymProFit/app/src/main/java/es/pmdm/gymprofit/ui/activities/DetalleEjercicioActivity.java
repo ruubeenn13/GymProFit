@@ -115,6 +115,7 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detalle_ejercicio);
 
         findViewById(R.id.btnAtras).setOnClickListener(v -> finish());
+        es.pmdm.gymprofit.ui.widget.BarraSuperior.enlazar(findViewById(R.id.scrollDetalle), findViewById(R.id.barraSuperior));
 
         String nombre        = getIntent().getStringExtra("nombre");
         String descripcion   = getIntent().getStringExtra("descripcion");
@@ -216,6 +217,9 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         btnTabComo = findViewById(R.id.btnTabComo);
         btnTabProgreso.setOnClickListener(v -> elegirPestana(true));
         btnTabComo.setOnClickListener(v -> elegirPestana(false));
+        // Cada pestaña dice que lo es y si está elegida (el estado lo lee del propio selected).
+        rol(btnTabProgreso, getString(R.string.nav_rol_pestana), null);
+        rol(btnTabComo, getString(R.string.nav_rol_pestana), null);
         elegirPestana(true);
     }
 
@@ -368,11 +372,32 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         int[] semanas = {4, 8, 0};
         for (int i = 0; i < botones.length; i++) {
             final int s = semanas[i];
+            rol(botones[i], null, android.widget.RadioButton.class.getName());
             botones[i].setOnClickListener(v -> {
                 periodoSemanas = s;
                 pintarGrafica();
             });
         }
+    }
+
+    // El rol y el estado de un botón que no es de Material: pestaña (roleDescription) o una opción
+    // de un grupo (RadioButton); los dos dicen si están elegidos.
+    private static void rol(View v, @Nullable String rol, @Nullable String clase) {
+        androidx.core.view.ViewCompat.setAccessibilityDelegate(v, new androidx.core.view.AccessibilityDelegateCompat() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(View host,
+                                                          androidx.core.view.accessibility.AccessibilityNodeInfoCompat info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                if (rol != null) info.setRoleDescription(rol);
+                if (clase != null) {
+                    info.setClassName(clase);
+                    info.setCheckable(true);
+                    info.setChecked(host.isSelected());
+                } else {
+                    info.setSelected(host.isSelected());
+                }
+            }
+        });
     }
 
     private void marcarPeriodo() {
@@ -607,8 +632,8 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
             col.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM);
             // Con una o dos series, la columna no se estira: una barra de ancho completo no dice nada.
             LinearLayout.LayoutParams lpCol = t.series.size() < 3
-                    ? new LinearLayout.LayoutParams(Math.round(72 * dp), ViewGroup.LayoutParams.MATCH_PARENT)
-                    : new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
+                    ? new LinearLayout.LayoutParams(Math.round(72 * dp), ViewGroup.LayoutParams.WRAP_CONTENT)
+                    : new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
             if (i > 0) lpCol.setMarginStart(Math.round(10 * dp));
             barras.addView(col, lpCol);
 
