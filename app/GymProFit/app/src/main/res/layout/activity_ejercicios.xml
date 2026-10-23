@@ -1,163 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  activity_ejercicios.xml — Biblioteca de ejercicios (GP-105: antes, pestaña).
-  Cabecera con volver, buscador, filtros por grupo muscular (chips) y listado con
-  scroll infinito. Se abre desde Entrenar, ya filtrada o con el teclado abierto.
+  activity_ejercicios.xml — Biblioteca de ejercicios (GP-216, tablero 29). Arriba, fijos: volver,
+  el buscador en píldora y los chips de grupo con su icono (filtran en el servidor). Debajo, una
+  sola lista que se desplaza entera: «Los que más haces», el rótulo con cuántos hay y las filas
+  dentro de una tarjeta. Se abre desde Entrenar, ya filtrada o con el teclado abierto.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="?attr/android:colorBackground">
+    android:background="?attr/android:colorBackground"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/Widget.GymProFit.Cabecera"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        app:title="@string/biblioteca_titulo" />
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            style="@style/Widget.GymProFit.Cabecera"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:title="@string/biblioteca_titulo" />
+    <!-- Buscador: píldora de 56 dp -->
+    <LinearLayout
+        android:id="@+id/campoBuscarBiblioteca"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginStart="@dimen/margen_pantalla"
+        android:layout_marginTop="@dimen/espacio_12"
+        android:layout_marginEnd="@dimen/margen_pantalla"
+        android:background="@drawable/bg_buscador_pildora"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="18dp"
+        android:paddingEnd="@dimen/espacio_8">
 
-        <!-- Buscador -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:paddingBottom="12dp"
-            android:background="?attr/colorSurface">
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_ms_search"
+            app:tint="?attr/colorOnSurfaceVariant" />
 
-            <com.google.android.material.textfield.TextInputLayout
-        app:errorIconDrawable="@drawable/ic_ms_error"
-                android:id="@+id/tilBuscar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/ejercicios_buscar"
-                app:boxBackgroundMode="outline"
-                app:boxCornerRadiusTopStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusBottomEnd="12dp"
-                app:startIconDrawable="@drawable/ic_ms_search"
-                app:startIconContentDescription="@string/ejercicios_buscar">
+        <EditText
+            android:id="@+id/etBuscar"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:background="@null"
+            android:hint="@string/ejercicios_buscar"
+            android:imeOptions="actionSearch"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:maxLines="1"
+            android:textColor="?attr/colorOnSurface"
+            android:textColorHint="?attr/colorOnSurfaceVariant"
+            android:textSize="@dimen/text_body" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etBuscar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:maxLines="1" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-        </LinearLayout>
-
-        <!-- Chips de filtrado por grupo muscular -->
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/colorSurface"
-            android:scrollbars="none"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="12dp">
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chipGroupFiltros"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:singleSelection="true"
-                app:selectionRequired="true">
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipTodos"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/ejercicios_todos"
-                    android:checked="true"
-                    style="@style/Widget.Material3.Chip.Filter" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipPecho"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/ejercicios_pecho"
-                    style="@style/Widget.Material3.Chip.Filter" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipEspalda"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/ejercicios_espalda"
-                    style="@style/Widget.Material3.Chip.Filter" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipPiernas"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/ejercicios_piernas"
-                    style="@style/Widget.Material3.Chip.Filter" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipBrazos"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/ejercicios_brazos"
-                    style="@style/Widget.Material3.Chip.Filter" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipHombros"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/ejercicios_hombros"
-                    style="@style/Widget.Material3.Chip.Filter" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipCore"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/ejercicios_core"
-                    style="@style/Widget.Material3.Chip.Filter" />
-
-            </com.google.android.material.chip.ChipGroup>
-
-        </HorizontalScrollView>
-
-        <!-- Listado de ejercicios del catálogo + estado vacío superpuesto -->
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvEjercicios"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="16dp"
-                android:clipToPadding="false" />
-
-            <!-- Mensaje "no hay nada aún"; oculto por defecto, lo gestiona la Activity -->
-            <TextView
-                android:id="@+id/tvEmpty"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="24dp"
-                android:gravity="center"
-                android:text="@string/feedback_lista_vacia"
-                android:textSize="@dimen/text_subtitle"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:visibility="gone" />
-
-        </FrameLayout>
-
+        <ImageButton
+            android:id="@+id/btnLimpiarBusqueda"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/ejercicios_limpiar_busqueda"
+            android:src="@drawable/ic_ms_close"
+            android:visibility="gone"
+            app:tint="?attr/colorOnSurfaceVariant" />
     </LinearLayout>
 
+    <!-- Grupo muscular: un chip por grupo, con su icono -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:paddingStart="@dimen/margen_pantalla"
+        android:paddingTop="@dimen/espacio_16"
+        android:paddingEnd="@dimen/margen_pantalla"
+        android:paddingBottom="@dimen/espacio_4"
+        android:scrollbars="none">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupFiltros"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:chipSpacingHorizontal="@dimen/espacio_8"
+            app:selectionRequired="true"
+            app:singleLine="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipTodos"
+                style="@style/Widget.GymProFit.Chip.Biblioteca"
+                android:checked="true"
+                android:text="@string/ejercicios_todos"
+                app:chipIcon="@drawable/ic_ms_splitscreen" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipPecho"
+                style="@style/Widget.GymProFit.Chip.Biblioteca"
+                android:text="@string/ejercicios_pecho"
+                app:chipIcon="@drawable/ic_ms_fitness_center" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipEspalda"
+                style="@style/Widget.GymProFit.Chip.Biblioteca"
+                android:text="@string/ejercicios_espalda"
+                app:chipIcon="@drawable/ic_ms_accessibility_new" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipPiernas"
+                style="@style/Widget.GymProFit.Chip.Biblioteca"
+                android:text="@string/ejercicios_piernas"
+                app:chipIcon="@drawable/ic_ms_directions_run" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipHombros"
+                style="@style/Widget.GymProFit.Chip.Biblioteca"
+                android:text="@string/ejercicios_hombros"
+                app:chipIcon="@drawable/ic_ms_bolt" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipBrazos"
+                style="@style/Widget.GymProFit.Chip.Biblioteca"
+                android:text="@string/ejercicios_brazos"
+                app:chipIcon="@drawable/ic_ms_target" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipCore"
+                style="@style/Widget.GymProFit.Chip.Biblioteca"
+                android:text="@string/ejercicios_core"
+                app:chipIcon="@drawable/ic_ms_spa" />
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
+
+    <!-- Lista + estado vacío superpuesto -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvEjercicios"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/espacio_28" />
+
+        <!-- «No hay nada»: sobre la lista, debajo de la cabecera de «Los que más haces» -->
+        <TextView
+            android:id="@+id/tvEmpty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="120dp"
+            android:gravity="center"
+            android:padding="24dp"
+            android:text="@string/feedback_lista_vacia"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="@dimen/text_subtitle"
+            android:visibility="gone" />
+    </FrameLayout>
 </LinearLayout>

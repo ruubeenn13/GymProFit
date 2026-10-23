@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_vez_ejercicio — una sesión de «Tus últimas veces» (GP-216, tablero 30): el día, hace cuánto y
+  el total de kilos, la diferencia con la sesión anterior y las series en barras (la del récord, en
+  dorado). Las barras las pinta DetalleEjercicioActivity; TalkBack lee las series de una vez.
+-->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Widget.GymProFit.Card.Pequena"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/espacio_12">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/espacio_16">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvVezDia"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="@dimen/text_body"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvVezSub"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="@dimen/text_eyebrow" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvVezDiferencia"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/espacio_8"
+                android:background="@drawable/bg_chip_dato"
+                android:paddingStart="10dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="4dp"
+                android:textSize="@dimen/text_eyebrow"
+                android:textStyle="bold"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/barrasVez"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="118dp"
+            android:layout_marginTop="@dimen/espacio_16"
+            android:gravity="bottom"
+            android:orientation="horizontal" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

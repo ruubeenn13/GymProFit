@@ -76,6 +76,9 @@
          (#C27C12) daba 3,39:1 y proteínas (#2F6FD0) 4,31:1 sobre el fondo. -->
     <color name="gp_macro_proteinas">#2E6CCB</color>
     <color name="gp_macro_carbos">#99620E</color>
+    <!-- El ámbar del nivel intermedio (Biblioteca, GP-216): el mismo de los carbohidratos, que
+         ya pasa contraste en los dos temas; en oscuro lo da values-night. -->
+    <color name="gp_nivel_intermedio">@color/gp_macro_carbos</color>
     <color name="gp_macro_grasas">#7A54C4</color>
 
     <!-- ── Estados ───────────────────────────────────────────────────────── -->
@@ -106,6 +109,11 @@
          color de la superficie en oscuro, donde la tarjeta no lleva borde. -->
     <color name="gp_tarjeta_borde">@color/gp_divider</color>
 
+    <!-- La cabecera del detalle de un programa (GP-216, tablero 31) lleva el color de su material;
+         igual en los dos temas, con texto #FFF4E8 encima y fundiéndose con el fondo por abajo. -->
+    <color name="gp_programa_gimnasio">#2A3A6A</color>
+    <color name="gp_programa_mancuernas">#7A3A10</color>
+    <color name="gp_programa_corporal">#0E5562</color>
     <color name="gp_hero">#3A2110</color>
     <color name="gp_on_hero">#FFF4E8</color>
     <color name="gp_on_hero_variant">#FFD3B0</color>

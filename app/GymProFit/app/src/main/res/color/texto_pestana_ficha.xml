@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- texto_pestana_ficha — el texto de una pestaña o periodo de la ficha del ejercicio (GP-216): elegido, sobre su contenedor; si no, de apoyo. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true" android:color="?attr/colorOnPrimaryContainer" />
+    <item android:color="?attr/colorOnSurfaceVariant" />
+</selector>

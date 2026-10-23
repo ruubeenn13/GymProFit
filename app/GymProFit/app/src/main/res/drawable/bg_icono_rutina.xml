@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_icono_rutina — el cuadrado del icono de una rutina en Entrenar (GP-216, tablero 14): radio 16; el color lo pone el código (naranja si toca hoy). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="@dimen/radio_miniatura" />
+    <solid android:color="?attr/colorSurfaceVariant" />
+</shape>

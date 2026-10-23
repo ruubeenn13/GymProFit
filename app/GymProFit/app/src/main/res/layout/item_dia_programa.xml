@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_dia_programa — un día del ciclo de un programa (GP-216, tablero 31): su número arriba y, en un
+  círculo de 38 dp, las siglas de la rutina que toca (TA = Torso A). La tira entera la lee TalkBack
+  de una vez; lo de dentro no lleva nombre propio.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="52dp"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:importantForAccessibility="no"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvDiaNumero"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="@dimen/text_eyebrow" />
+
+    <TextView
+        android:id="@+id/tvDiaSiglas"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/bg_circulo_primario"
+        android:gravity="center"
+        android:textColor="?attr/colorOnPrimary"
+        android:textSize="@dimen/text_eyebrow"
+        android:textStyle="bold" />
+</LinearLayout>

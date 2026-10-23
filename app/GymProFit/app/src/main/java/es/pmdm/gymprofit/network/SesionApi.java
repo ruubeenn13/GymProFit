@@ -3,6 +3,8 @@ package es.pmdm.gymprofit.network;
 import java.util.List;
 import java.util.Map;
 
+import es.pmdm.gymprofit.model.ejercicio.EjercicioMasHecho;
+import es.pmdm.gymprofit.model.ejercicio.EjercicioRealizado;
 import es.pmdm.gymprofit.model.envivo.UltimaVez;
 import es.pmdm.gymprofit.model.sesion.ResumenSesion;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
@@ -61,6 +63,20 @@ public interface SesionApi {
     // peso usado). body: sesionId + datos del ejercicio; la respuesta se ignora.
     @POST("ejercicios-realizados")
     Call<Void> crearEjercicioRealizado(@Body Map<String, Object> body);
+
+    /**
+     * Los ejercicios que más hace el usuario del token (GP-216, Biblioteca): el id y en cuántas
+     * sesiones terminadas sale, de más a menos. Límite de 1 a 20.
+     */
+    @GET("ejercicios-realizados/mas-hechos")
+    Call<List<EjercicioMasHecho>> masHechos(@Query("limite") int limite);
+
+    /**
+     * Las ejecuciones del usuario del token en un ejercicio del catálogo, con sus series
+     * (GP-216, ficha del ejercicio: «Tus últimas veces»). Lista vacía si nunca lo ha hecho.
+     */
+    @GET("ejercicios-realizados/ejercicio/{ejercicioId}")
+    Call<List<EjercicioRealizado>> ejecucionesDe(@Path("ejercicioId") int ejercicioId);
 
     // Series por músculo del usuario en los últimos `dias` días. Alimenta la silueta
     // de Home: solo vienen los músculos tocados, el resto se pintan en gris.

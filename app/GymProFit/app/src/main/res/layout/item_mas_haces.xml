@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_mas_haces — una tarjeta de «Los que más haces» (GP-216, tablero 29): foto, nombre y tu
+  marca en dorado (o, si no hay récord, las veces). 150 dp de ancho en el carrusel.
+-->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Widget.GymProFit.Card.Pequena"
+    android:layout_width="150dp"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/ivMasHaces"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="?attr/colorSurfaceVariant"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_body_full" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/espacio_12"
+            android:paddingTop="10dp"
+            android:paddingEnd="@dimen/espacio_12"
+            android:paddingBottom="@dimen/espacio_12">
+
+            <TextView
+                android:id="@+id/tvMasHacesNombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="@dimen/text_enlace_seccion"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvMasHacesMarca"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/gp_gold_text"
+                android:textSize="@dimen/text_eyebrow" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

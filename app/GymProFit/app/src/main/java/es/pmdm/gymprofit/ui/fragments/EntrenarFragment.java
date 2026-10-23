@@ -4,6 +4,7 @@ import es.pmdm.gymprofit.envivo.SesionEnCursoRepositorio;
 import es.pmdm.gymprofit.model.envivo.SesionEnCurso;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,21 +16,21 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import es.pmdm.gymprofit.R;
-import es.pmdm.gymprofit.utils.AvatarUtils;
-import es.pmdm.gymprofit.model.PageDTO;
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
+import es.pmdm.gymprofit.model.programa.Programa;
 import es.pmdm.gymprofit.model.programa.ProgramaQueSigue;
 import es.pmdm.gymprofit.model.rutina.Rutina;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
-import es.pmdm.gymprofit.network.EjercicioApi;
+import es.pmdm.gymprofit.network.CatalogoEjercicios;
 import es.pmdm.gymprofit.network.ProgramaApi;
 import es.pmdm.gymprofit.network.RutinaApi;
 import es.pmdm.gymprofit.network.SesionApi;
@@ -41,33 +42,32 @@ import es.pmdm.gymprofit.envivo.EmpezarSesion;
 import es.pmdm.gymprofit.ui.widget.MenuRutina;
 import es.pmdm.gymprofit.ui.widget.SeguirProgramaHoja;
 import es.pmdm.gymprofit.ui.widget.TuProgramaVista;
-import es.pmdm.gymprofit.utils.FechaUtils;
+import es.pmdm.gymprofit.utils.AvatarUtils;
 import es.pmdm.gymprofit.utils.HoyToca;
+import es.pmdm.gymprofit.utils.Transiciones;
 import es.pmdm.gymprofit.utils.TuPrograma;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
 import es.pmdm.gymprofit.utils.VistaEstado;
 
 // ============================================================
-// EntrenarFragment — pestaña Entrenar (GP-105), según 02-entrenar.png.
+// EntrenarFragment — pestaña Entrenar (GP-105, rehecha en GP-216, tablero 14).
 //
-// Junta las antiguas pestañas Rutinas y Ejercicios:
-//   · Tu programa (GP-074, lote 1.2.1): sin programa, «Elige tu programa»; con él, su
-//     ciclo, «Hoy toca» y el resto de sus rutinas, y el menú para verlo, cambiar el
-//     tiempo, cambiar de programa o dejarlo. Lo pinta TuProgramaVista.
-//   · Mis rutinas: solo las propias (las de un programa van arriba); tarjetas con
-//     Empezar, tocar abre el detalle y la pulsación larga el menú de siempre. Sin
-//     programa, la de Hoy toca lleva «Toca hoy» y el Empezar relleno.
-//   · Empezar sin rutina: registrar sesión en entrenamiento libre.
-//   · Biblioteca: el buscador y las zonas abren la pantalla de ejercicios, ya
-//     filtrada o con el teclado abierto. El número de la ayuda sale de la API.
+// Arriba el buscador de ejercicios (abre la Biblioteca) y el avatar. Debajo:
+//   · Tu programa (GP-074): sin programa, «Elige tu programa»; con él, su tarjeta con «día N de
+//     M» y la tira del ciclo, el bloque «Hoy» con el botón de empezar y las rutinas del
+//     programa con sus músculos y cuándo toca cada una. Lo pinta TuProgramaVista; el menú de la
+//     tarjeta deja ver el programa, cambiar el tiempo, cambiar de programa o dejarlo.
+//   · Mis rutinas: solo las propias; tocar abre el detalle, la pulsación larga el menú de siempre y
+//     el botón, la sesión. Sin programa, la de Hoy toca lleva «Toca hoy».
+//   · Por tu cuenta: entreno libre (registrar sesión sin rutina) y crear una rutina.
+//   · Más programas: un carrusel con los demás programas de tu material; «Ver todos» abre la lista.
 // El carrusel de plantillas se fue con la 1.2.0: desde entonces no hay predefinidas.
 // ============================================================
 public class EntrenarFragment extends BaseFragment {
 
     private final RutinaApi rutinaApi = ApiClient.service(RutinaApi.class);
     private final SesionApi sesionApi = ApiClient.service(SesionApi.class);
-    private final EjercicioApi ejercicioApi = ApiClient.service(EjercicioApi.class);
     private final ProgramaApi programaApi = ApiClient.service(ProgramaApi.class);
 
     private ActivityResultLauncher<Intent> recargar;
@@ -80,6 +80,8 @@ public class EntrenarFragment extends BaseFragment {
     @Nullable private ProgramaQueSigue seguido;
     private boolean seguidoListo;
     private boolean falloPropias;
+    // Para que una respuesta de «Más programas» de una carga anterior no pise la actual.
+    private int generacionProgramas;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -101,21 +103,16 @@ public class EntrenarFragment extends BaseFragment {
         findViewById(R.id.btnCrearRutina).setOnClickListener(v -> crearRutina());
         findViewById(R.id.btnCrearPrimera).setOnClickListener(v -> crearRutina());
         findViewById(R.id.btnSinRutina).setOnClickListener(v -> empezar(null));
+        findViewById(R.id.btnBuscarEjercicios).setOnClickListener(v -> abrirBiblioteca());
+        findViewById(R.id.btnVerTodosProgramas).setOnClickListener(v ->
+                startActivity(new Intent(requireContext(), ProgramasActivity.class)));
         tuPrograma = new TuProgramaVista(findViewById(R.id.tuPrograma), accionesPrograma());
-        findViewById(R.id.campoBuscar).setOnClickListener(v -> abrirBiblioteca(null, true));
 
-        zona(R.id.btnZonaPecho, "PECHO");
-        zona(R.id.btnZonaEspalda, "ESPALDA");
-        zona(R.id.btnZonaPierna, "PIERNAS");
-        zona(R.id.btnZonaHombros, "HOMBROS");
-        zona(R.id.btnZonaBrazos, "BRAZOS");
-        zona(R.id.btnZonaCore, "ABDOMEN");
+        // Los músculos de cada rutina salen del catálogo; si no llega, las filas salen sin ellos.
+        CatalogoEjercicios.cargar(porId -> { if (isAdded() && porId != null) catalogoListo(porId); });
 
-        pintarAyudaBuscador(null);
-        cargarTotalEjercicios();
-
-        // La tarjeta de la rutina en curso dice «En curso» (GP-012): al empezar, guardar o
-        // descartar se repinta con lo que ya hay, sin volver a pedirlo.
+        // La rutina en curso dice «En curso» (GP-012): al empezar, guardar o descartar se repinta con
+        // lo que ya hay, sin volver a pedirlo.
         SesionEnCursoRepositorio.get(requireContext()).getSesion().observe(getViewLifecycleOwner(), s -> {
             // Guardada: el programa avanza y cambia qué toca; se vuelve a pedir.
             boolean guardadaODescartada = habiaSesion && s == null;
@@ -149,6 +146,10 @@ public class EntrenarFragment extends BaseFragment {
         cargarMisRutinas();
     }
 
+    private void catalogoListo(Map<Integer, Ejercicio> porId) {
+        tuPrograma.setCatalogo(porId);
+    }
+
     // ── Mis rutinas ─────────────────────────────────────────────────────────
 
     private void cargarMisRutinas() {
@@ -165,6 +166,7 @@ public class EntrenarFragment extends BaseFragment {
             seguidoListo = true;
             tuPrograma.sinPrograma();
             pintarMisRutinas();
+            cargarMasProgramas(null);
             return;
         }
         cargarPrograma();
@@ -201,6 +203,7 @@ public class EntrenarFragment extends BaseFragment {
                     tuPrograma.setRutinaEnCurso(rutinaEnCurso());
                     tuPrograma.pintar(s);
                 }
+                cargarMasProgramas(s);
                 listo();
             }
             @Override public void onFail(int code, String message) {
@@ -210,6 +213,7 @@ public class EntrenarFragment extends BaseFragment {
                 seguidoListo = true;
                 tuPrograma.error(VistaEstado.mensaje(requireContext(), R.string.tu_programa_error, code, message),
                         () -> cargarMisRutinas());
+                cargarMasProgramas(null);
                 listo();
             }
         });
@@ -225,6 +229,7 @@ public class EntrenarFragment extends BaseFragment {
         lista.removeAllViews();
         List<Rutina> mias = TuPrograma.misRutinas(propias);
         boolean vacia = mias.isEmpty();
+        findViewById(R.id.cardMisRutinas).setVisibility(vacia ? View.GONE : View.VISIBLE);
         findViewById(R.id.layoutRutinasVacio).setVisibility(vacia ? View.VISIBLE : View.GONE);
         ((TextView) findViewById(R.id.tvRutinasVacio)).setText(R.string.mis_rutinas_vacio);
         findViewById(R.id.btnCrearPrimera).setVisibility(View.VISIBLE);
@@ -233,45 +238,70 @@ public class EntrenarFragment extends BaseFragment {
         // Siguiendo un programa, lo que toca está arriba: aquí no se marca ninguna.
         HoyToca.Eleccion hoy = HoyToca.elegir(seguido, propias, sesiones);
         LayoutInflater inflater = LayoutInflater.from(requireContext());
-        for (Rutina r : mias) {
+        int primario = com.google.android.material.color.MaterialColors.getColor(lista,
+                androidx.appcompat.R.attr.colorPrimary);
+        int sobrePrimario = com.google.android.material.color.MaterialColors.getColor(lista,
+                com.google.android.material.R.attr.colorOnPrimary);
+        for (int i = 0; i < mias.size(); i++) {
+            Rutina r = mias.get(i);
             boolean toca = hoy != null && !hoy.delPrograma && hoy.rutina.getId() == r.getId();
-            View card = inflater.inflate(R.layout.item_rutina_entrenar, lista, false);
-            ((TextView) card.findViewById(R.id.tvNombre)).setText(r.getNombre());
-            String resumen = getString(R.string.rutina_resumen,
-                    getResources().getQuantityString(R.plurals.rutina_num_ejercicios, r.getNumEjercicios(), r.getNumEjercicios()),
-                    getString(R.string.duracion_min, r.getDuracionMinutos()));
-            ((TextView) card.findViewById(R.id.tvResumen)).setText(resumen);
             // La de la sesión en curso dice «En curso» y vuelve a ella (GP-012).
             Integer enCursoId = rutinaEnCurso();
             boolean enCurso = enCursoId != null && enCursoId == r.getId();
-            TextView etiqueta = card.findViewById(R.id.tvTocaHoy);
+            boolean destacada = toca || enCurso;
+
+            View fila = inflater.inflate(R.layout.item_rutina_fila, lista, false);
+            ((TextView) fila.findViewById(R.id.tvNombre)).setText(r.getNombre());
+            String resumen = TuProgramaVista.resumen(requireContext(), r);
+            ((TextView) fila.findViewById(R.id.tvMusculos)).setText(resumen);
+            fila.findViewById(R.id.tvResumen).setVisibility(View.GONE);
+
+            TextView etiqueta = fila.findViewById(R.id.tvCuando);
             etiqueta.setText(enCurso ? R.string.envivo_en_curso : R.string.toca_hoy);
-            etiqueta.setVisibility(toca || enCurso ? View.VISIBLE : View.GONE);
+            etiqueta.setVisibility(destacada ? View.VISIBLE : View.GONE);
+            etiqueta.setTextColor(primario);
+            fila.findViewById(R.id.ivRutinaFlecha).setVisibility(View.GONE);
+            if (destacada) {
+                fila.findViewById(R.id.fondoIconoRutina).setBackgroundTintList(ColorStateList.valueOf(primario));
+                ((android.widget.ImageView) fila.findViewById(R.id.ivRutinaIcono))
+                        .setImageTintList(ColorStateList.valueOf(sobrePrimario));
+            }
 
-            com.google.android.material.button.MaterialButton lleno = card.findViewById(R.id.btnEmpezarLleno);
-            com.google.android.material.button.MaterialButton contorno = card.findViewById(R.id.btnEmpezarContorno);
-            boolean destacado = toca || enCurso;
-            lleno.setVisibility(destacado ? View.VISIBLE : View.GONE);
-            contorno.setVisibility(destacado ? View.GONE : View.VISIBLE);
-            com.google.android.material.button.MaterialButton boton = destacado ? lleno : contorno;
-            boton.setText(enCurso ? R.string.envivo_volver : R.string.btn_empezar);
-            boton.setContentDescription(enCurso ? getString(R.string.envivo_volver_rutina_a11y, r.getNombre())
+            android.widget.ImageButton empezar = fila.findViewById(R.id.btnEmpezarFila);
+            empezar.setVisibility(View.VISIBLE);
+            empezar.setContentDescription(enCurso ? getString(R.string.envivo_volver_rutina_a11y, r.getNombre())
                     : getString(R.string.empezar_rutina_a11y, r.getNombre()));
-            boton.setOnClickListener(v -> empezar(r));
+            empezar.setOnClickListener(v -> empezar(r));
 
-            card.setContentDescription(r.getNombre() + ". " + resumen
+            fila.setContentDescription(r.getNombre() + ". " + resumen
                     + (enCurso ? ". " + getString(R.string.envivo_en_curso) : toca ? ". " + getString(R.string.toca_hoy) : ""));
-            card.setOnClickListener(v -> MenuRutina.abrirDetalle(requireActivity(), recargar, r, v));
-            card.setOnLongClickListener(v -> {
+            fila.setOnClickListener(v -> MenuRutina.abrirDetalle(requireActivity(), recargar, r, v));
+            fila.setOnLongClickListener(v -> {
                 MenuRutina.mostrar(requireActivity(), v, r, recargar, this::cargarMisRutinas);
                 return true;
             });
-            lista.addView(card);
+            lista.addView(fila);
+            if (i < mias.size() - 1) lista.addView(raya());
         }
+    }
+
+    // La raya entre filas, con la sangría del texto.
+    private View raya() {
+        View v = new View(requireContext());
+        v.setBackgroundColor(com.google.android.material.color.MaterialColors.getColor(v,
+                com.google.android.material.R.attr.colorSurfaceVariant));
+        v.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        float dp = getResources().getDisplayMetrics().density;
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, Math.max(1, Math.round(dp)));
+        lp.setMarginStart(Math.round(80 * dp));
+        v.setLayoutParams(lp);
+        return v;
     }
 
     private void pintarErrorMisRutinas() {
         ((LinearLayout) findViewById(R.id.listaMisRutinas)).removeAllViews();
+        findViewById(R.id.cardMisRutinas).setVisibility(View.GONE);
         findViewById(R.id.layoutRutinasVacio).setVisibility(View.VISIBLE);
         ((TextView) findViewById(R.id.tvRutinasVacio)).setText(R.string.mis_rutinas_error);
         findViewById(R.id.btnCrearPrimera).setVisibility(View.GONE);
@@ -342,40 +372,63 @@ public class EntrenarFragment extends BaseFragment {
                         }));
     }
 
-    // ── Biblioteca ──────────────────────────────────────────────────────────
+    // ── Más programas ───────────────────────────────────────────────────────
 
-    private void zona(int id, String grupo) {
-        TextView b = findViewById(id);
-        b.setContentDescription(getString(R.string.biblioteca_zona_a11y, b.getText()));
-        b.setOnClickListener(v -> abrirBiblioteca(grupo, false));
-    }
-
-    private void abrirBiblioteca(@Nullable String grupo, boolean buscar) {
-        Intent i = new Intent(requireContext(), EjerciciosActivity.class);
-        if (grupo != null) i.putExtra(EjerciciosActivity.EXTRA_GRUPO, grupo);
-        i.putExtra(EjerciciosActivity.EXTRA_BUSCAR, buscar);
-        startActivity(i);
-    }
-
-    // El total de ejercicios lo da la API (totalElements de una página de uno); si no
-    // llega, la ayuda dice «Busca un ejercicio». Nunca un número escrito a mano.
-    private void cargarTotalEjercicios() {
-        ejercicioApi.buscar(null, null, null, 0, 1).enqueue(new ApiCallback<PageDTO<Ejercicio>>() {
-            @Override public void onOk(PageDTO<Ejercicio> p) {
-                if (isAdded()) pintarAyudaBuscador(p != null && p.getTotalElements() > 0 ? p.getTotalElements() : null);
+    // Los demás programas del mismo material que el que sigue (o del que se eligió en Programas);
+    // sin ellos el bloque no sale. Es un atajo a la lista, así que si falla no se avisa.
+    private void cargarMasProgramas(@Nullable ProgramaQueSigue s) {
+        final int esta = ++generacionProgramas;
+        String equipamiento = s != null && s.getPrograma() != null && s.getPrograma().getEquipamiento() != null
+                ? s.getPrograma().getEquipamiento() : prefsManager.getProgramasEquipamiento();
+        final String codigoSeguido = s != null && s.getPrograma() != null ? s.getPrograma().getCodigo() : null;
+        programaApi.listar(equipamiento).enqueue(new ApiCallback<List<Programa>>() {
+            @Override public void onOk(List<Programa> lista) {
+                if (!isAdded() || esta != generacionProgramas) return;
+                pintarMasProgramas(lista, codigoSeguido);
             }
             @Override public void onFail(int code, String message) {
-                // Se ignora a propósito (GP-017): sin el total, la ayuda del buscador dice
-                // «Busca un ejercicio», que es cierto; el buscador funciona igual.
+                // Se ignora a propósito: sin el carrusel, «Ver todos» y el menú del programa llevan a la lista.
+                if (isAdded() && esta == generacionProgramas) findViewById(R.id.bloqueMasProgramas).setVisibility(View.GONE);
             }
         });
     }
 
-    private void pintarAyudaBuscador(@Nullable Long total) {
-        TextView hint = findViewById(R.id.tvBuscarHint);
-        hint.setText(total == null ? getString(R.string.biblioteca_buscar)
-                : getString(R.string.biblioteca_buscar_n,
-                NumberFormat.getIntegerInstance(FechaUtils.localeDeLaApp(requireContext())).format(total)));
-        findViewById(R.id.campoBuscar).setContentDescription(hint.getText());
+    private void pintarMasProgramas(@Nullable List<Programa> lista, @Nullable String codigoSeguido) {
+        LinearLayout carrusel = findViewById(R.id.listaMasProgramas);
+        carrusel.removeAllViews();
+        LayoutInflater inflater = LayoutInflater.from(requireContext());
+        float dp = getResources().getDisplayMetrics().density;
+        int n = 0;
+        if (lista != null) {
+            for (Programa p : lista) {
+                if (p.getCodigo() != null && p.getCodigo().equals(codigoSeguido)) continue;
+                View card = inflater.inflate(R.layout.item_programa_carrusel, carrusel, false);
+                ((TextView) card.findViewById(R.id.tvProgramaNombre)).setText(p.getNombre());
+                String material = TuProgramaVista.equipamiento(requireContext(), p.getEquipamiento());
+                ((TextView) card.findViewById(R.id.tvProgramaMaterial)).setText(material);
+                card.findViewById(R.id.franjaPrograma).setBackgroundColor(
+                        ContextCompat.getColor(requireContext(), TuProgramaVista.colorDe(p.getEquipamiento())));
+                String resumen = ProgramasActivity.diasYMinutos(requireContext(), p);
+                ((TextView) card.findViewById(R.id.tvProgramaResumen)).setText(resumen);
+                card.setContentDescription(getString(R.string.entrenar_programa_card_a11y, p.getNombre(),
+                        material + ", " + resumen));
+                card.setOnClickListener(v -> Transiciones.abrirTarjeta(requireActivity(), v,
+                        new Intent(requireContext(), ProgramaDetalleActivity.class)
+                                .putExtra(ProgramaDetalleActivity.EXTRA_CODIGO, p.getCodigo())));
+                if (n > 0) ((LinearLayout.LayoutParams) card.getLayoutParams()).setMarginStart(Math.round(12 * dp));
+                carrusel.addView(card);
+                n++;
+            }
+        }
+        findViewById(R.id.bloqueMasProgramas).setVisibility(n > 0 ? View.VISIBLE : View.GONE);
+    }
+
+    // ── Biblioteca ──────────────────────────────────────────────────────────
+
+    // El buscador de arriba abre la Biblioteca con el teclado listo; los grupos se eligen con sus chips.
+    private void abrirBiblioteca() {
+        Intent i = new Intent(requireContext(), EjerciciosActivity.class);
+        i.putExtra(EjerciciosActivity.EXTRA_BUSCAR, true);
+        startActivity(i);
     }
 }

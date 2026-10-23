@@ -27,6 +27,14 @@ public final class EjercicioNavHelper {
         Transiciones.abrirTarjeta(act, tarjeta, intentDe(act, e));
     }
 
+    // Igual, desde una rutina de programa: lleva el máximo de repeticiones de su pauta, con el que
+    // la ficha decide si toca subir el peso (ProximaVez). Un máximo no positivo se ignora.
+    public static void abrir(android.app.Activity act, android.view.View tarjeta, Ejercicio e, int repsMax) {
+        Intent intent = intentDe(act, e);
+        if (repsMax > 0) intent.putExtra(DetalleEjercicioActivity.EXTRA_REPS_MAX, repsMax);
+        Transiciones.abrirTarjeta(act, tarjeta, intent);
+    }
+
     private static Intent intentDe(Context context, Ejercicio e) {
         Intent intent = new Intent(context, DetalleEjercicioActivity.class);
         intent.putExtra("id",              e.getId());

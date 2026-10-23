@@ -206,10 +206,34 @@
     <string name="dialogo_escribe_nota">Write a note</string>
     <string name="medicion_registrar_primera">Log measurement</string>
     <string name="nutricion_estadisticas">Statistics</string>
-    <string name="detalle_progresion_titulo">PROGRESSION · MAX WEIGHT</string>
+    <string name="detalle_progresion_titulo">Max weight</string>
     <string name="detalle_progresion_pr">PR</string>
-    <string name="detalle_progresion_titulo_tiempo">PROGRESSION · BEST TIME (S)</string>
-    <string name="detalle_progresion_titulo_reps">PROGRESSION · MOST REPS</string>
+    <string name="detalle_progresion_titulo_tiempo">Best time</string>
+    <string name="detalle_progresion_titulo_reps">Most reps</string>
+    <string name="detalle_progresion_peso_maximo">Max weight</string>
+    <string name="detalle_ejercicio_maximo_estimado">estimated max</string>
+    <string name="detalle_ejercicio_tab_progreso">Your progress</string>
+    <string name="detalle_ejercicio_tab_como">How to do it</string>
+    <string name="detalle_periodo_4">4 wks</string>
+    <string name="detalle_periodo_8">8 wks</string>
+    <string name="detalle_periodo_todo">All</string>
+    <string name="detalle_periodo_a11y">Period: %1$s</string>
+    <string name="detalle_ejercicio_sin_datos">You haven\'t done this exercise yet. Once you do, you\'ll see how you progress here.</string>
+    <string name="detalle_ejercicio_ultimas_veces">Your last sessions</string>
+    <string name="detalle_ejercicio_sin_pasos">This exercise doesn\'t have its steps explained yet.</string>
+    <string name="detalle_ejercicio_mejor_marca">Your best · %1$s</string>
+    <string name="detalle_ejercicio_mejor_marca_sola">Your best</string>
+    <string name="detalle_ejercicio_marca_a11y">Your best: %1$s, %2$s</string>
+    <string name="detalle_vez_sub">%1$s · %2$s</string>
+    <string name="detalle_por_reps">× %1$d</string>
+    <string name="detalle_kg_total">%1$s kg</string>
+    <string name="detalle_kg_mas">+%1$s kg</string>
+    <string name="detalle_kg_menos">−%1$s kg</string>
+    <string name="detalle_serie_a11y">%1$s for %2$d</string>
+    <string name="detalle_series_a11y">Sets: %1$s</string>
+    <string name="detalle_vez_record_a11y">%1$s, record</string>
+    <string name="detalle_pista_subir">Next time, go up in weight: you hit %1$d reps on every set.</string>
+    <string name="detalle_progresion_a11y">%1$s per session, from %2$s to %3$s</string>
     <string name="stats_periodo_semana">Week</string>
     <string name="stats_periodo_mes">Month</string>
     <string name="stats_kpi_media">Avg kcal/day</string>
@@ -750,10 +774,25 @@
     <string name="mis_rutinas_vacio">You don\'t have any routines of your own yet. Build one for you or follow a program.</string>
     <string name="mis_rutinas_error">Your routines couldn\'t be loaded.</string>
     <string name="biblioteca_ejercicios">Exercise library</string>
-    <string name="biblioteca_titulo">Exercise library</string>
+    <string name="biblioteca_titulo">Exercises</string>
     <string name="biblioteca_buscar_n">Search %1$s exercises</string>
     <string name="biblioteca_buscar">Search for an exercise</string>
     <string name="biblioteca_zona_a11y">%1$s exercises</string>
+    <string name="biblioteca_mas_haces">The ones you do most</string>
+    <string name="biblioteca_lista">A to Z</string>
+    <string name="biblioteca_resultados">Results</string>
+    <string name="ejercicios_limpiar_busqueda">Clear the search</string>
+    <plurals name="biblioteca_cuantos">
+        <item quantity="one">%1$s exercise</item>
+        <item quantity="other">%1$s exercises</item>
+    </plurals>
+    <plurals name="biblioteca_veces">
+        <item quantity="one">%d time</item>
+        <item quantity="other">%d times</item>
+    </plurals>
+    <string name="biblioteca_mas_haces_a11y">%1$s, %2$s</string>
+    <string name="biblioteca_detalle_fila">%1$s · %2$s</string>
+    <string name="biblioteca_fila_a11y">%1$s. %2$s. %3$s level</string>
     <string-array name="dias_semana_iniciales">
         <item>M</item>
         <item>T</item>
@@ -887,7 +926,33 @@
     <string name="tu_programa_elige_sub">A multi-day plan made for your level, your equipment and your time.</string>
     <string name="tu_programa_resumen">%1$s · %2$s per session</string>
     <string name="tu_programa_ciclo_a11y">Cycle of %1$d days. %2$s Today is number %3$d.</string>
-    <string name="tu_programa_despues">Next</string>
+    <string name="tu_programa_rutinas_titulo">Program routines</string>
+    <string name="tu_programa_dia_de">Day %1$d of %2$d</string>
+    <plurals name="tu_programa_hechas_corto">
+        <item quantity="one">%d done this round</item>
+        <item quantity="other">%d done this round</item>
+    </plurals>
+    <string name="tu_programa_hoy_dia">Today · %1$s</string>
+    <string name="tu_programa_siguiente">Next</string>
+    <plurals name="tu_programa_en_n">
+        <item quantity="one">In %d workout</item>
+        <item quantity="other">In %d workouts</item>
+    </plurals>
+    <string name="tu_programa_resumen_largo">%1$s · %2$s · %3$s</string>
+    <string name="tu_programa_dia_siglas_a11y">day %1$d: %2$s, %3$s</string>
+    <string name="tu_programa_estado_hecha">done</string>
+    <string name="tu_programa_estado_hoy">today</string>
+    <string name="tu_programa_estado_pendiente">pending</string>
+    <string name="tu_programa_estado_borrada">deleted</string>
+    <string name="entrenar_buscar_a11y">Search exercises</string>
+    <string name="entrenar_por_tu_cuenta">On your own</string>
+    <string name="entrenar_entreno_libre">Free workout</string>
+    <string name="entrenar_entreno_libre_sub">Log what you do, no routine</string>
+    <string name="entrenar_crear_rutina">Create a routine</string>
+    <string name="entrenar_crear_rutina_sub">With your exercises</string>
+    <string name="entrenar_mas_programas">More programs</string>
+    <string name="entrenar_ver_todos">See all</string>
+    <string name="entrenar_programa_card_a11y">%1$s. %2$s</string>
     <string name="tu_programa_menu_a11y">Your program options</string>
     <string name="tu_programa_ver">View the program</string>
     <string name="tu_programa_cambiar_tiempo">Change session time</string>
@@ -916,6 +981,16 @@
     <string name="programa_ciclo_explicacion">In this order, then back to the start. If you miss a day, next time just carry on with the next one.</string>
     <string name="programa_ciclo_dia">%1$d. %2$s</string>
     <string name="programa_rutinas_titulo">The routines</string>
+    <plurals name="programa_rutinas_n">
+        <item quantity="one">The routine</item>
+        <item quantity="other">The %d routines, in order</item>
+    </plurals>
+    <string name="programa_de_que_va">What it\'s about</string>
+    <string name="programa_leer_mas">Read more</string>
+    <string name="programa_leer_menos">Read less</string>
+    <string name="programa_eyebrow">Program · %1$s</string>
+    <string name="programa_ciclo_a11y">%1$d-day cycle: %2$s</string>
+    <string name="programa_ciclo_dia_a11y">day %1$d, %2$s</string>
     <string name="programa_rutina_abierta">Expanded</string>
     <string name="programa_rutina_cerrada">Collapsed</string>
     <string name="programa_seguir">Follow this program</string>
@@ -940,6 +1015,19 @@
     <string name="seguir_error_vista">We could not work out how it would look.</string>
     <string name="seguir_hecho">You now follow %1$s</string>
     <string name="seguir_rutina_linea">%1$s · %2$s</string>
+    <string name="detalle_rutina_tuya">Your routine</string>
+    <string name="detalle_rutina_programa_dia">%1$s · day %2$d of %3$d</string>
+    <string name="detalle_rutina_resumen">%1$s · %2$s · %3$s</string>
+    <string name="detalle_rutina_sin_ejercicios">This routine has no exercises yet.</string>
+    <string name="detalle_rutina_ultima_vez">Last time, %1$s: %2$s and %3$s</string>
+    <string name="detalle_rutina_ultima_vez_sin_kilos">Last time, %1$s: %2$s</string>
+    <string name="detalle_rutina_empezar">Start %1$s</string>
+    <string name="detalle_rutina_ultima_marca">Last: %1$s</string>
+    <string name="detalle_rutina_ultima_marca_record">Last: %1$s · record</string>
+    <string name="detalle_rutina_primera_vez">First time</string>
+    <string name="detalle_rutina_zona_a11y">Sets per area: %1$s</string>
+    <string name="detalle_rutina_fila_a11y">%1$s. %2$s. %3$s</string>
+    <string name="detalle_rutina_pauta_descanso">%1$s · %2$s</string>
     <string name="detalle_rutina_de_programa">From the program %1$s</string>
     <string name="hoy_toca_sin_rutinas_sub_programa">Choose a program or create your own routine.</string>
     <plurals name="tu_programa_hechas">
@@ -2125,6 +2213,8 @@
     <string name="datos_plan_igual">No change from now</string>
     <string name="datos_plan_mas">+%1$s\u00A0kcal from now</string>
     <string name="datos_plan_menos">\u2212%1$s\u00A0kcal from now</string>
+    <string name="datos_plan_prot_mas">+%1$d g of protein from now</string>
+    <string name="datos_plan_prot_menos">−%1$d g of protein from now</string>
     <string name="datos_plan_minimo">Effective protein minimum: %1$d\u00A0g</string>
     <string name="editar_perfil_error_carga_corto">Couldn\'t load your profile.</string>
     <!-- Contraseña y correo (GP-216, tablero 20) -->

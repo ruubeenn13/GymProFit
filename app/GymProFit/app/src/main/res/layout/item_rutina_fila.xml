@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_rutina_fila — una rutina en Entrenar (GP-216, tablero 14): un cuadrado con el icono, el nombre,
+  los músculos que trabaja y, a la derecha, cuándo toca (en las del programa) o «Empezar» (en las
+  propias). Toda la fila abre el detalle de la rutina; la pulsación larga, su menú. TalkBack la lee
+  de una vez.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:minHeight="84dp"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/fila_padding_horizontal"
+    android:paddingTop="@dimen/espacio_12"
+    android:paddingEnd="@dimen/fila_padding_horizontal"
+    android:paddingBottom="@dimen/espacio_12">
+
+    <FrameLayout
+        android:id="@+id/fondoIconoRutina"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_icono_rutina">
+
+        <ImageView
+            android:id="@+id/ivRutinaIcono"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_ms_fitness_center_fill" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/fila_icono_a_texto"
+        android:layout_weight="1"
+        android:importantForAccessibility="no"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvNombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="@dimen/text_fila"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvMusculos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="@dimen/text_eyebrow" />
+
+        <TextView
+            android:id="@+id/tvResumen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="@dimen/text_eyebrow" />
+    </LinearLayout>
+
+    <!-- Cuándo toca: «Hoy», «Siguiente», «En 3 entrenos» -->
+    <TextView
+        android:id="@+id/tvCuando"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/espacio_8"
+        android:importantForAccessibility="no"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="@dimen/text_eyebrow"
+        android:textStyle="bold" />
+
+    <!-- Empezar, solo en las rutinas propias (las del programa empiezan desde «Hoy» o su detalle) -->
+    <ImageButton
+        android:id="@+id/btnEmpezarFila"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="@dimen/espacio_8"
+        android:background="@drawable/bg_circulo_superficie"
+        android:src="@drawable/ic_ms_play_arrow_fill"
+        android:visibility="gone"
+        app:tint="?attr/colorPrimary" />
+
+    <ImageView
+        android:id="@+id/ivRutinaFlecha"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="@dimen/espacio_4"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_ms_chevron_right"
+        app:tint="?attr/colorOutline" />
+</LinearLayout>

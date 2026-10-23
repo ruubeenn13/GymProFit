@@ -105,7 +105,7 @@
     <dimen name="separador_alto">1dp</dimen>
 
     <!-- Cabecera de sección: el enlace de la derecha mide 44 dp de alto. -->
-    <dimen name="seccion_enlace_alto">44dp</dimen>
+    <dimen name="seccion_enlace_alto">48dp</dimen>
 
     <!-- Avatar de cabecera: 48 dp, borde de 2 dp en naranja. -->
     <dimen name="avatar_cabecera">48dp</dimen>

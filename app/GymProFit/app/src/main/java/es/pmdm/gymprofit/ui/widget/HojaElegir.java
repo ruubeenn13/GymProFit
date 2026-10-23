@@ -119,8 +119,12 @@ public final class HojaElegir {
 
         hoja.setContentView(contenido);
         // La hoja lleva la superficie de la app (#1B1E24 / blanco) y no el lila por defecto de Material.
-        View contenedor = hoja.findViewById(com.google.android.material.R.id.design_bottom_sheet);
-        if (contenedor != null) contenedor.setBackgroundResource(R.drawable.bg_hoja_escaner);
+        // El comportamiento de la hoja vuelve a poner su fondo de Material en su primer layout, y
+        // se queda el lila: se repone al mostrarla, ya con la hoja puesta en pantalla.
+        hoja.setOnShowListener(d -> {
+            View contenedor = hoja.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+            if (contenedor != null) contenedor.post(() -> contenedor.setBackgroundResource(R.drawable.bg_hoja_escaner));
+        });
         BottomSheetBehavior<?> b = hoja.getBehavior();
         b.setSkipCollapsed(true);
         b.setState(BottomSheetBehavior.STATE_EXPANDED);
