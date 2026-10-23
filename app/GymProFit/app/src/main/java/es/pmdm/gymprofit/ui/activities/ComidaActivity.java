@@ -37,9 +37,11 @@ import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.alimento.Alimento;
 import es.pmdm.gymprofit.model.comida.AlimentoComida;
 import es.pmdm.gymprofit.model.comida.AnadirRespuesta;
+import es.pmdm.gymprofit.model.alimento.Favoritos;
 import es.pmdm.gymprofit.model.comida.Comida;
 import es.pmdm.gymprofit.model.comida.ComidaReciente;
 import es.pmdm.gymprofit.model.comida.CopiaRespuesta;
+import es.pmdm.gymprofit.model.plato.LoMio;
 import es.pmdm.gymprofit.network.AlimentoApi;
 import es.pmdm.gymprofit.network.AlimentoComidaApi;
 import es.pmdm.gymprofit.network.ApiCallback;
@@ -47,7 +49,7 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.ComidaApi;
 import es.pmdm.gymprofit.ui.adapters.AlimentoComidaAdapter;
 import es.pmdm.gymprofit.ui.adapters.BusquedaAlimentoAdapter;
-import es.pmdm.gymprofit.ui.nutricion.AnilloComida;
+import es.pmdm.gymprofit.ui.nutricion.BarraReparto;
 import es.pmdm.gymprofit.ui.nutricion.CopiarComida;
 import es.pmdm.gymprofit.ui.nutricion.TarjetaCopiarAyer;
 import es.pmdm.gymprofit.ui.nutricion.ElegirComida;
@@ -59,6 +61,7 @@ import es.pmdm.gymprofit.utils.ComidasRecientes;
 import es.pmdm.gymprofit.utils.DiaNutricion;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.Movimiento;
+import es.pmdm.gymprofit.utils.LoQueTeEncaja;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PedidoCantidad;
 import es.pmdm.gymprofit.utils.QuitarConDeshacer;
@@ -129,6 +132,13 @@ public class ComidaActivity extends BaseActivity {
     // si falló. Lo que se está copiando o añadiendo, para no pedirlo dos veces.
     @Nullable private ComidaReciente copiaAyer;
     @Nullable private List<Alimento> sueles;
+    // «Para tus 48 g de proteína» (tablero 24): lo que cabe, de LoQueTeEncaja, con lo que llega de
+    // la API (el día, favoritos, tus platos, lo habitual y la comida de ayer); null si no hay.
+    @Nullable private LoQueTeEncaja.Resultado ideas;
+    @Nullable private List<Comida> comidasDelDia;
+    @Nullable private Favoritos favoritos;
+    @Nullable private LoMio loMio;
+    private int ideasPendientes;
     private boolean copiando;
     private final java.util.Set<Integer> anadiendo = new java.util.HashSet<>();
     private int turnoSugerencias;
@@ -274,20 +284,21 @@ public class ComidaActivity extends BaseActivity {
         }
     }
 
-    // Con letra grande, el anillo y los macros no caben lado a lado sin recortar el nombre
-    // del macro: el anillo va arriba, centrado, y los macros debajo a todo el ancho.
+    // Con letra grande, los tres macros no caben en fila sin recortar «Carbohidratos»: se apilan
+    // a todo el ancho, cada uno con sus gramos y su nombre.
     private void apilarConLetraGrande() {
         if (getResources().getConfiguration().fontScale < 1.3f) return;
-        android.widget.LinearLayout fila = findViewById(R.id.filaAnilloMacros);
-        fila.setOrientation(android.widget.LinearLayout.VERTICAL);
-        fila.setGravity(android.view.Gravity.CENTER_HORIZONTAL);
-        View columna = findViewById(R.id.columnaMacros);
-        android.widget.LinearLayout.LayoutParams lp = (android.widget.LinearLayout.LayoutParams) columna.getLayoutParams();
-        lp.width = android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-        lp.weight = 0;
-        lp.setMarginStart(0);
-        lp.topMargin = Math.round(16 * getResources().getDisplayMetrics().density);
-        columna.setLayoutParams(lp);
+        android.widget.LinearLayout columna = findViewById(R.id.columnaMacros);
+        columna.setOrientation(android.widget.LinearLayout.VERTICAL);
+        float d = getResources().getDisplayMetrics().density;
+        for (int i = 0; i < columna.getChildCount(); i++) {
+            android.widget.LinearLayout.LayoutParams lp =
+                    (android.widget.LinearLayout.LayoutParams) columna.getChildAt(i).getLayoutParams();
+            lp.width = android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+            lp.weight = 0;
+            lp.topMargin = i == 0 ? 0 : Math.round(12 * d);
+            columna.getChildAt(i).setLayoutParams(lp);
+        }
     }
 
     // ── Cargar ──────────────────────────────────────────────────────────────
@@ -381,14 +392,20 @@ public class ComidaActivity extends BaseActivity {
         yaPintada = true;
         ResumenComida r = ResumenComida.de(lineas, objetivo);
         View card = findViewById(R.id.cardResumen);
-        View cuantos = findViewById(R.id.tvCuantos);
+        View cuantos = findViewById(R.id.filaCuantos);
+        View pista = findViewById(R.id.tvPistaAlimentos);
         View cardAlimentos = findViewById(R.id.cardAlimentos);
         View vacia = findViewById(R.id.bloqueVacia);
+        // Vacía, la barra de abajo busca otro alimento (tablero 24); con algo, añade.
+        com.google.android.material.button.MaterialButton anadir = findViewById(R.id.btnAnadirComida);
+        anadir.setText(r.vacia ? R.string.comida_buscar_otro : R.string.comida_anadir_alimento);
+        anadir.setIconResource(r.vacia ? R.drawable.ic_ms_search : R.drawable.ic_ms_add);
         if (r.vacia) {
             findViewById(R.id.btnGuardarComoPlato).setVisibility(View.GONE);
             boolean yaVacia = vacia.getVisibility() == View.VISIBLE;
             card.setVisibility(View.GONE);
             cuantos.setVisibility(View.GONE);
+            pista.setVisibility(View.GONE);
             cardAlimentos.setVisibility(View.GONE);
             vacia.setVisibility(View.VISIBLE);
             pintarVacia(!yaVacia);
@@ -401,13 +418,14 @@ public class ComidaActivity extends BaseActivity {
         findViewById(R.id.bloqueSugerencias).setVisibility(View.GONE);
         card.setVisibility(View.VISIBLE);
         cuantos.setVisibility(View.VISIBLE);
+        pista.setVisibility(View.VISIBLE);
         cardAlimentos.setVisibility(View.VISIBLE);
-        // «Guardar como plato» (lote 1.6.6): con dos alimentos o más, debajo de la lista.
+        // «Guardar como plato» (lote 1.6.6): con dos alimentos o más, a la derecha de «N alimentos».
         View guardarComoPlato = findViewById(R.id.btnGuardarComoPlato);
         guardarComoPlato.setVisibility(lineas.size() >= 2 ? View.VISIBLE : View.GONE);
         guardarComoPlato.setOnClickListener(v ->
                 startActivity(CrearPlatoActivity.desdeComida(this, new java.util.ArrayList<>(lineas))));
-        ((TextView) cuantos).setText(getResources().getQuantityString(R.plurals.comida_n_alimentos,
+        ((TextView) findViewById(R.id.tvCuantos)).setText(getResources().getQuantityString(R.plurals.comida_n_alimentos,
                 lineas.size(), lineas.size()));
         if (entraResumen) Movimiento.entrarUna(card, 0, Movimiento.ENTRA, 16);
         pintarResumen(r, entraResumen);
@@ -415,17 +433,13 @@ public class ComidaActivity extends BaseActivity {
 
     private void pintarResumen(ResumenComida r, boolean entrada) {
         NumberFormat nf = NumberFormat.getIntegerInstance(FechaUtils.localeDeLaApp(this));
-        ((AnilloComida) findViewById(R.id.anilloComida)).mostrar(r.reparto, entrada);
+        ((BarraReparto) findViewById(R.id.barraReparto)).mostrar(r.reparto, entrada);
         contarKcal(r.kcal, entrada, nf);
-        View marco = findViewById(R.id.marcoAnillo);
-        marco.setContentDescription(r.reparto == null
-                ? getString(R.string.comida_anillo_sin_macros_a11y, nf.format(r.kcal))
-                : getString(R.string.comida_anillo_a11y, nf.format(r.kcal), r.reparto[0], r.reparto[1], r.reparto[2]));
 
-        findViewById(R.id.tvDeTuDia).setVisibility(r.sinObjetivo ? View.GONE : View.VISIBLE);
         int[] filas = {R.id.filaProteina, R.id.filaCarbos, R.id.filaGrasa};
         int[] nombres = {R.string.comida_proteina, R.string.comida_carbohidratos, R.string.comida_grasa};
         int[] colores = {R.color.gp_macro_proteinas, R.color.gp_macro_carbos, R.color.gp_macro_grasas};
+        StringBuilder macros = new StringBuilder();
         for (int i = 0; i < 3; i++) {
             View fila = findViewById(filas[i]);
             String nombre = getString(nombres[i]);
@@ -434,41 +448,29 @@ public class ComidaActivity extends BaseActivity {
                     ColorStateList.valueOf(ContextCompat.getColor(this, colores[i])));
             ((TextView) fila.findViewById(R.id.tvNombreMacro)).setText(nombre);
             ((TextView) fila.findViewById(R.id.tvGramosMacro)).setText(getString(R.string.comida_gramos, gramos));
-            TextView pct = fila.findViewById(R.id.tvPctMacro);
             int p = r.pctMacro(i);
-            pct.setVisibility(p < 0 ? View.GONE : View.VISIBLE);
-            if (p >= 0) pct.setText(getString(R.string.comida_pct, p));
-            fila.setFocusable(true);
-            fila.setContentDescription(p < 0 ? getString(R.string.comida_macro_sin_objetivo_a11y, nombre, gramos)
+            if (macros.length() > 0) macros.append("; ");
+            macros.append(p < 0 ? getString(R.string.comida_macro_sin_objetivo_a11y, nombre, gramos)
                     : getString(R.string.comida_macro_a11y, nombre, gramos, p));
         }
 
-        View bloqueDia = findViewById(R.id.bloqueDia);
-        bloqueDia.setVisibility(r.sinObjetivo ? View.GONE : View.VISIBLE);
-        if (r.sinObjetivo) return;
-        String pctTexto = getString(R.string.comida_pct, r.pctDia());
-        String frase = getString(R.string.comida_dia_pct, pctTexto);
-        SpannableString s = new SpannableString(frase);
-        int ini = frase.indexOf(pctTexto);
-        if (ini >= 0) {
-            s.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), ini, ini + pctTexto.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            s.setSpan(new ForegroundColorSpan(color(com.google.android.material.R.attr.colorOnSurface)),
-                    ini, ini + pctTexto.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
-        ((TextView) findViewById(R.id.tvDiaPct)).setText(s);
-        String de = getString(R.string.comida_dia_de, nf.format(r.kcal), nf.format(r.objetivoKcal()));
-        ((TextView) findViewById(R.id.tvDiaDe)).setText(de);
-        bloqueDia.setContentDescription(getString(R.string.comida_dia_a11y, r.pctDia(), nf.format(r.kcal),
-                nf.format(r.objetivoKcal())));
-        View barra = findViewById(R.id.vBarraDia);
-        barra.setPivotX(0f);
-        barra.animate().cancel();
-        if (Movimiento.quieto(this)) {
-            barra.setScaleX(r.barraDia());
+        // Una sola frase para TalkBack: las kcal, qué parte es del día y cada macro.
+        TextView pctDia = findViewById(R.id.tvDiaPct);
+        StringBuilder voz = new StringBuilder(getString(R.string.comida_anillo_sin_macros_a11y, nf.format(r.kcal)));
+        if (r.sinObjetivo) {
+            pctDia.setVisibility(View.GONE);
         } else {
-            barra.animate().scaleX(r.barraDia()).setStartDelay(entrada ? 350 : 0).setDuration(Movimiento.BARRA)
-                    .setInterpolator(Movimiento.ESTANDAR).start();
+            pctDia.setVisibility(View.VISIBLE);
+            pctDia.setText(getString(R.string.comida_pct_de_tu_dia, getString(R.string.comida_pct, r.pctDia())));
+            voz.append(". ").append(getString(R.string.comida_dia_a11y, r.pctDia(), nf.format(r.kcal),
+                    nf.format(r.objetivoKcal())));
         }
+        voz.append(". ").append(macros);
+        findViewById(R.id.marcoAnillo).setContentDescription(voz);
+
+        // «Comida alta en proteína: ¡bien hecho!» (tablero 28).
+        boolean alta = r.altaEnProteina();
+        findViewById(R.id.filaComentario).setVisibility(alta ? View.VISIBLE : View.GONE);
     }
 
     // Las kcal del anillo pasan de las de antes a las nuevas con BARRA (momento 20).
@@ -511,27 +513,35 @@ public class ComidaActivity extends BaseActivity {
                 : new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(new java.util.Date());
     }
 
-    // Las dos se piden a la vez; cada una sale cuando llega, si la comida sigue vacía. Un
-    // fallo no se enseña: son atajos, y la barra de abajo sigue ahí.
+    // Todo se pide a la vez; cada cosa sale cuando llega, si la comida sigue vacía. Un fallo no
+    // se enseña: son atajos, y la barra de abajo sigue ahí.
     private void pedirSugerencias() {
         int miTurno = ++turnoSugerencias;
         copiaAyer = null;
         sueles = null;
+        ideas = null;
+        comidasDelDia = null;
+        favoritos = null;
+        loMio = null;
+        boolean conCopia = !prefsManager.copiaAyerDescartada(dia(), tipoComida);
+        ideasPendientes = conCopia ? 5 : 4;
         pintarSugerencias(false);
         ComidaApi api = ApiClient.service(ComidaApi.class);
         String dia = dia();
-        if (!prefsManager.copiaAyerDescartada(dia, tipoComida)) {
+        if (conCopia) {
             api.recientes(dia, tipoComida).enqueue(new ApiCallback<List<ComidaReciente>>() {
                 @Override
                 public void onOk(List<ComidaReciente> lista) {
                     if (isDestroyed() || miTurno != turnoSugerencias) return;
                     copiaAyer = ComidasRecientes.deAyer(lista, tipoComida, dia);
                     pintarSugerencias(true);
+                    ideaLista(miTurno);
                 }
 
                 @Override
                 public void onFail(int code, String message) {
-                    // Se ignora a propósito: sin la tarjeta, se apunta igual.
+                    // Se ignora a propósito: sin la copia, se apunta igual.
+                    ideaLista(miTurno);
                 }
             });
         }
@@ -540,14 +550,77 @@ public class ComidaActivity extends BaseActivity {
             public void onOk(List<Alimento> lista) {
                 if (isDestroyed() || miTurno != turnoSugerencias) return;
                 sueles = lista != null && !lista.isEmpty() ? lista : null;
-                pintarSugerencias(true);
+                ideaLista(miTurno);
             }
 
             @Override
             public void onFail(int code, String message) {
-                // Se ignora a propósito: sin «Lo que sueles», se apunta igual.
+                // Se ignora a propósito: sin lo habitual, las ideas salen igual.
+                ideaLista(miTurno);
             }
         });
+        int usuario = prefsManager.getUsuarioId();
+        api.getDeUsuarioFecha(usuario, dia).enqueue(new ApiCallback<List<Comida>>() {
+            @Override
+            public void onOk(List<Comida> lista) {
+                comidasDelDia = lista;
+                ideaLista(miTurno);
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                // Sin el día no se sabe qué falta: no hay ideas, y la pantalla sigue.
+                ideaLista(miTurno);
+            }
+        });
+        alimentoApi.favoritos().enqueue(new ApiCallback<Favoritos>() {
+            @Override
+            public void onOk(Favoritos f) {
+                favoritos = f;
+                ideaLista(miTurno);
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                // Se ignora a propósito: sin favoritos, las ideas salen de lo demás.
+                ideaLista(miTurno);
+            }
+        });
+        ApiClient.service(es.pmdm.gymprofit.network.PlatoApi.class).loMio().enqueue(new ApiCallback<LoMio>() {
+            @Override
+            public void onOk(LoMio m) {
+                loMio = m;
+                ideaLista(miTurno);
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                // Se ignora a propósito: sin tus platos, las ideas salen de lo demás.
+                ideaLista(miTurno);
+            }
+        });
+    }
+
+    // Cuando ha llegado todo (o ha fallado), se calculan las ideas y se pintan.
+    private void ideaLista(int miTurno) {
+        if (isDestroyed() || miTurno != turnoSugerencias) return;
+        if (--ideasPendientes > 0) return;
+        ideas = calcularIdeas();
+        pintarSugerencias(true);
+    }
+
+    @Nullable
+    private LoQueTeEncaja.Resultado calcularIdeas() {
+        ResultadoNutricional meta = DiaNutricion.objetivo(prefsManager);
+        if (meta == null || comidasDelDia == null) return null;
+        DiaNutricion d = DiaNutricion.de(comidasDelDia, meta);
+        java.util.Set<Integer> suele = new java.util.HashSet<>();
+        if (sueles != null) for (Alimento a : sueles) suele.add(a.getId());
+        java.util.Set<Integer> ayer = new java.util.HashSet<>();
+        if (copiaAyer != null) for (AlimentoComida l : copiaAyer.getLineas()) ayer.add(l.getAlimentoId());
+        return LoQueTeEncaja.de(d.kcalRestantes(), d.objetivoProteinas - d.proteinas,
+                loMio != null ? loMio.getPlatos() : null, favoritos != null ? favoritos.getFavoritos() : null,
+                sueles, suele, ayer, null);
     }
 
     // El título, «Es la que toca ahora» y «Hoy no». Marcada, ni toca ni se sugiere nada.
@@ -614,40 +687,62 @@ public class ComidaActivity extends BaseActivity {
         android.view.ViewGroup ranura = findViewById(R.id.ranuraCopiarComida);
         View seccion = findViewById(R.id.seccionSueles);
         boolean conCopia = vacia && copiaAyer != null && !copiando;
-        boolean conSueles = vacia && sueles != null;
-        bloque.setVisibility(conCopia || conSueles ? View.VISIBLE : View.GONE);
+        boolean conIdeas = vacia && ideas != null;
+        bloque.setVisibility(conCopia || conIdeas ? View.VISIBLE : View.GONE);
 
         boolean copiaNueva = conCopia && ranura.getVisibility() != View.VISIBLE;
         ranura.setVisibility(conCopia ? View.VISIBLE : View.GONE);
         if (conCopia) {
             ranura.removeAllViews();
-            View tarjeta = getLayoutInflater().inflate(R.layout.view_copiar_ayer_comida, ranura, false);
+            View tarjeta = getLayoutInflater().inflate(R.layout.view_profi_copiar, ranura, false);
             ComidaReciente ayer = copiaAyer;
-            TarjetaCopiarAyer.pintar(tarjeta, ayer, tipoComida, new TarjetaCopiarAyer.Respuesta() {
-                @Override public void si() { copiarAyer(tarjeta, ayer); }
-                @Override public void no() { noCopiarAyer(tarjeta); }
-            });
+            pintarProfi(tarjeta, ayer);
+            tarjeta.findViewById(R.id.btnSiCopiar).setOnClickListener(v -> copiarAyer(tarjeta, ayer));
+            tarjeta.findViewById(R.id.btnNoCopiar).setOnClickListener(v -> noCopiarAyer(tarjeta));
             ranura.addView(tarjeta);
             if (entra && copiaNueva) Movimiento.entrarUna(tarjeta, 100, Movimiento.ENTRA, 16);
         }
 
-        boolean suelesNuevos = conSueles && seccion.getVisibility() != View.VISIBLE;
-        seccion.setVisibility(conSueles ? View.VISIBLE : View.GONE);
-        if (conSueles) pintarSueles(entra && suelesNuevos);
+        boolean ideasNuevas = conIdeas && seccion.getVisibility() != View.VISIBLE;
+        seccion.setVisibility(conIdeas ? View.VISIBLE : View.GONE);
+        if (conIdeas) pintarIdeas(entra && ideasNuevas);
     }
 
-    private void pintarSueles(boolean entra) {
-        ((TextView) findViewById(R.id.tvSueles)).setText(CopiarComida.sueles(tipoComida));
+    // «Merienda de ayer: yogur griego y fresas, 171 kcal y 9 g de proteína. ¿Lo repetimos?»
+    private void pintarProfi(@NonNull View tarjeta, @NonNull ComidaReciente ayer) {
+        NumberFormat nf = NumberFormat.getIntegerInstance(FechaUtils.localeDeLaApp(this));
+        double proteina = 0;
+        for (AlimentoComida l : ayer.getLineas()) proteina += l.getProteinasTotales();
+        String nombres = ComidasRecientes.nombres(ayer.getLineas());
+        String frase = getString(R.string.copiar_profi_mensaje, CopiarComida.nombre(this, ayer), nombres,
+                nf.format(ayer.getKcal()), nf.format(Math.round(proteina)));
+        SpannableString texto = new SpannableString(frase);
+        int ini = frase.indexOf(nombres);
+        if (ini >= 0 && !nombres.isEmpty()) {
+            texto.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), ini, ini + nombres.length(),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        ((TextView) tarjeta.findViewById(R.id.tvMensajeProfi)).setText(texto);
+        tarjeta.findViewById(R.id.btnSiCopiar).setContentDescription(getString(CopiarComida.siCopiar(tipoComida)));
+    }
+
+    // «Para tus 48 g de proteína»: hasta tres, cada uno con lo que añade su «+».
+    private void pintarIdeas(boolean entra) {
+        LoQueTeEncaja.Resultado r = ideas;
+        if (r == null) return;
+        ((TextView) findViewById(R.id.tvSueles)).setText(r.conProteina()
+                ? getString(R.string.ideas_titulo_proteina, r.proteinaQuedan) : getString(R.string.encaja_titulo));
         android.widget.LinearLayout lista = findViewById(R.id.listaSueles);
         lista.removeAllViews();
         NumberFormat nf = NumberFormat.getIntegerInstance(FechaUtils.localeDeLaApp(this));
-        List<Alimento> deEsta = sueles != null ? sueles : new ArrayList<>();
+        List<LoQueTeEncaja.Sugerencia> deEsta = r.sugerencias;
         for (int i = 0; i < deEsta.size(); i++) {
-            Alimento a = deEsta.get(i);
+            LoQueTeEncaja.Sugerencia sg = deEsta.get(i);
+            Alimento a = sg.alimento;
             View fila = getLayoutInflater().inflate(R.layout.item_sueles, lista, false);
-            CantidadFicha c = AnadirRapido.cantidad(a);
-            String cantidad = AnadirRapido.texto(Cantidades.Formatos.de(this), FechaUtils.localeDeLaApp(this), c);
-            String detalle = getString(R.string.fila_cantidad_kcal, cantidad, nf.format(AnadirRapido.kcal(a, c)));
+            String cantidad = AnadirRapido.texto(Cantidades.Formatos.de(this), FechaUtils.localeDeLaApp(this), sg.cantidad);
+            String detalle = getString(R.string.ideas_detalle, cantidad, nf.format(sg.kcal),
+                    nf.format(Math.round(sg.proteina)));
             ((ImageView) fila.findViewById(R.id.ivIconoSueles)).setImageResource(BusquedaAlimentoAdapter.icono(a));
             ((TextView) fila.findViewById(R.id.tvNombreSueles)).setText(a.getNombre());
             ((TextView) fila.findViewById(R.id.tvCantidadSueles)).setText(detalle);
@@ -667,7 +762,7 @@ public class ComidaActivity extends BaseActivity {
         }
     }
 
-    // El «+» de «Lo que sueles»: se vuelve ✓ al momento (momento 15) y, al llegar la línea,
+    // El «+» de una idea: se vuelve ✓ al momento (momento 15) y, al llegar la línea,
     // la pantalla pasa a la de la comida con ese alimento. Si falla, vuelve a «+» y se dice.
     private void anadirSueles(@NonNull Alimento a, @NonNull View mas, @NonNull ImageView iconoMas) {
         if (anadiendo.contains(a.getId())) return;

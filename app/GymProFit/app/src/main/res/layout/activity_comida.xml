@@ -80,40 +80,34 @@
                 android:paddingEnd="16dp"
                 android:paddingTop="12dp">
 
-                <LinearLayout
+                <!-- Resumen en la tarjeta protagonista (tablero 28): las kcal, qué parte es del día, el
+                     reparto en una barra, los gramos de cada macro y, si es alta en proteína, el comentario. -->
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardResumen"
+                    style="@style/Widget.GymProFit.Card.Protagonista"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_tarjeta_24"
-                    android:orientation="vertical"
-                    android:padding="18dp"
                     android:visibility="gone">
 
                     <LinearLayout
-                        android:id="@+id/filaAnilloMacros"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:orientation="vertical"
+                        android:padding="20dp">
 
-                        <FrameLayout
+                        <LinearLayout
                             android:id="@+id/marcoAnillo"
-                            android:layout_width="112dp"
-                            android:layout_height="112dp"
-                            android:focusable="true">
-
-                            <es.pmdm.gymprofit.ui.nutricion.AnilloComida
-                                android:id="@+id/anilloComida"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent" />
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:focusable="true"
+                            android:orientation="vertical">
 
                             <LinearLayout
-                                android:layout_width="wrap_content"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:gravity="center_horizontal"
+                                android:baselineAligned="true"
                                 android:importantForAccessibility="noHideDescendants"
-                                android:orientation="vertical">
+                                android:orientation="horizontal">
 
                                 <TextView
                                     android:id="@+id/tvKcalComida"
@@ -122,124 +116,117 @@
                                     android:fontFeatureSettings="tnum"
                                     android:includeFontPadding="false"
                                     android:maxLines="1"
-                                    android:textAppearance="@style/TextAppearance.GymProFit.Headline"
-                                    android:textColor="?attr/colorOnSurface"
-                                    android:textSize="@dimen/text_cifra_pequena" />
+                                    android:textAppearance="@style/TextAppearance.GymProFit.Hero.Titulo"
+                                    android:textSize="@dimen/text_cifra_grande" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="2dp"
+                                    android:layout_marginStart="6dp"
                                     android:text="@string/comida_kcal_corto"
-                                    android:textColor="?attr/colorOnSurfaceVariant"
-                                    android:textSize="@dimen/text_eyebrow" />
+                                    android:textAppearance="@style/TextAppearance.GymProFit.Hero.Apoyo"
+                                    android:textSize="@dimen/text_body" />
+
+                                <TextView
+                                    android:id="@+id/tvDiaPct"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:gravity="end"
+                                    android:textAppearance="@style/TextAppearance.GymProFit.Hero.Apoyo"
+                                    android:textSize="@dimen/text_label" />
                             </LinearLayout>
-                        </FrameLayout>
 
-                        <LinearLayout
-                            android:id="@+id/columnaMacros"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginStart="16dp"
-                            android:orientation="vertical">
+                            <es.pmdm.gymprofit.ui.nutricion.BarraReparto
+                                android:id="@+id/barraReparto"
+                                android:layout_width="match_parent"
+                                android:layout_height="12dp"
+                                android:layout_marginTop="16dp" />
 
-                            <TextView
-                                android:id="@+id/tvDeTuDia"
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:id="@+id/columnaMacros"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_gravity="end"
-                                android:layout_marginBottom="10dp"
-                                android:importantForAccessibility="no"
-                                android:text="@string/comida_de_tu_dia"
-                                android:textColor="?attr/colorOnSurfaceVariant"
-                                android:textSize="@dimen/text_eyebrow" />
+                                android:layout_marginTop="16dp"
+                                android:importantForAccessibility="noHideDescendants"
+                                android:orientation="horizontal">
 
-                <include
-                    android:id="@+id/filaProteina"
-                    layout="@layout/item_macro_comida"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="0dp" />
+                                <include
+                                    android:id="@+id/filaProteina"
+                                    layout="@layout/item_macro_comida"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1" />
 
-                <include
-                    android:id="@+id/filaCarbos"
-                    layout="@layout/item_macro_comida"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp" />
+                                <include
+                                    android:id="@+id/filaCarbos"
+                                    layout="@layout/item_macro_comida"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1" />
 
-                <include
-                    android:id="@+id/filaGrasa"
-                    layout="@layout/item_macro_comida"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp" />
+                                <include
+                                    android:id="@+id/filaGrasa"
+                                    layout="@layout/item_macro_comida"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1" />
+                            </LinearLayout>
                         </LinearLayout>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/bloqueDia"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:background="@drawable/bg_raya_arriba"
-                        android:focusable="true"
-                        android:orientation="vertical"
-                        android:paddingTop="14dp">
 
                         <LinearLayout
+                            android:id="@+id/filaComentario"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:importantForAccessibility="noHideDescendants"
-                            android:orientation="horizontal">
+                            android:layout_marginTop="16dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:visibility="gone">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_ms_check_circle_fill"
+                                app:tint="@color/gp_success" />
 
                             <TextView
-                                android:id="@+id/tvDiaPct"
+                                android:id="@+id/tvComentarioComida"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:textColor="?attr/colorOnSurfaceVariant"
-                                android:textSize="@dimen/text_label" />
-
-                            <TextView
-                                android:id="@+id/tvDiaDe"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
                                 android:layout_marginStart="8dp"
-                                android:fontFeatureSettings="tnum"
-                                android:textColor="?attr/colorOnSurfaceVariant"
-                                android:textSize="@dimen/text_label" />
+                                android:text="@string/comida_alta_proteina"
+                                android:textAppearance="@style/TextAppearance.GymProFit.Hero.Titulo"
+                                android:textSize="@dimen/text_body" />
                         </LinearLayout>
-
-                        <FrameLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="8dp"
-                            android:layout_marginTop="6dp"
-                            android:background="@drawable/bg_pista_barra"
-                            android:importantForAccessibility="no">
-
-                            <View
-                                android:id="@+id/vBarraDia"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:background="@drawable/bg_relleno_barra"
-                                android:scaleX="0" />
-                        </FrameLayout>
                     </LinearLayout>
-                </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
-                <TextView
-                    android:id="@+id/tvCuantos"
-                    style="@style/Widget.GymProFit.Seccion"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="8dp"
-                    android:paddingStart="4dp"
-                    android:paddingEnd="4dp"
-                    android:textAllCaps="true"
-                    android:textAppearance="@style/TextAppearance.GymProFit.Label"
-                    android:textColor="?attr/colorOnSurfaceVariant"
-                    android:visibility="gone" />
+                <LinearLayout
+                    android:id="@+id/filaCuantos"
+                    style="@style/Widget.GymProFit.CabeceraSeccion"
+                    android:layout_marginTop="12dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tvCuantos"
+                        style="@style/Widget.GymProFit.CabeceraSeccion.Titulo" />
+
+                    <!-- Lote 1.6.6: con dos alimentos o más, «Guardar como plato». -->
+                    <TextView
+                        android:id="@+id/btnGuardarComoPlato"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackground"
+                        android:gravity="center_vertical"
+                        android:minHeight="48dp"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:text="@string/comida_guardar_como_plato"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Enlace"
+                        android:visibility="gone" />
+                </LinearLayout>
 
                 <FrameLayout
                     android:id="@+id/cardAlimentos"
@@ -256,22 +243,17 @@
                         android:overScrollMode="never" />
                 </FrameLayout>
 
-                <!-- Lote 1.6.6: con dos alimentos o más, «Guardar como plato» (tablero 2). -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnGuardarComoPlato"
-                    style="@style/Widget.Material3.Button.TextButton"
-                    android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/tvPistaAlimentos"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="4dp"
-                    android:minHeight="52dp"
-                    android:text="@string/comida_guardar_como_plato"
+                    android:layout_marginTop="12dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:text="@string/comida_pista"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="@dimen/text_body"
-                    android:visibility="gone"
-                    app:icon="@drawable/ic_ms_bookmark_add"
-                    app:iconSize="20dp"
-                    app:iconTint="?attr/colorOnSurfaceVariant" />
+                    android:textSize="@dimen/text_label"
+                    android:visibility="gone" />
 
                 <LinearLayout
                     android:id="@+id/bloqueVacia"

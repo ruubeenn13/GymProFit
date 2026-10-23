@@ -94,4 +94,22 @@ public class ResumenComidaTest {
         assertFalse(s.vacia);
         assertNull(s.reparto);
     }
+
+    // «Comida alta en proteína: ¡bien hecho!» (GP-216, tablero 28): 30 g o más, o una buena parte
+    // de las kcal con un mínimo de proteína; ni una comida vacía ni una con unos gramos sueltos.
+    @Test
+    public void altaEnProteina_conTreintaGramosOMasOUnaBuenaParteDeLasKcal() {
+        assertTrue(ResumenComida.de(Arrays.asList(linea(752, 99, 38, 20)), OBJETIVO).altaEnProteina());
+        assertTrue(ResumenComida.de(Arrays.asList(linea(310, 30, 20, 8)), OBJETIVO).altaEnProteina());
+        // 20 g son el 35 % de 230 kcal: poca comida pero casi toda proteína.
+        assertTrue(ResumenComida.de(Arrays.asList(linea(230, 20, 10, 5)), OBJETIVO).altaEnProteina());
+    }
+
+    @Test
+    public void altaEnProteina_noEnVaciaNiConUnosPocosGramos() {
+        assertFalse(ResumenComida.de(new ArrayList<>(), OBJETIVO).altaEnProteina());
+        assertFalse(ResumenComida.de(Arrays.asList(linea(535, 12, 80, 15)), OBJETIVO).altaEnProteina());
+        // 5 g son el 40 % de 50 kcal, pero 5 g no es una comida alta en proteína.
+        assertFalse(ResumenComida.de(Arrays.asList(linea(50, 5, 1, 1)), OBJETIVO).altaEnProteina());
+    }
 }

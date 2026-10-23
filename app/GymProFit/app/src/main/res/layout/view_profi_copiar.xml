@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  view_profi_copiar — «Copiar la de ayer» en una comida sin apuntar (GP-216, tablero 24): Profi
+  señala y su bocadillo dice qué se tomó (nombres, kcal y proteína) con el botón que copia y un
+  «Ahora no» que la pliega ese día para esa comida. La rellena ComidaActivity.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tarjetaCopiarAyer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:baselineAligned="false"
+    android:gravity="bottom"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="130dp"
+        android:adjustViewBounds="true"
+        android:importantForAccessibility="no"
+        android:src="@drawable/profi_senala_base" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="14dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_burbuja_profi"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tvMensajeProfi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="@dimen/text_body" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSiCopiar"
+            style="@style/Widget.GymProFit.BotonPildora"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:minHeight="48dp"
+            android:text="@string/copiar_profi_boton"
+            app:icon="@drawable/ic_ms_content_copy"
+            xmlns:app="http://schemas.android.com/apk/res-auto" />
+
+        <TextView
+            android:id="@+id/btnNoCopiar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center_vertical"
+            android:minHeight="48dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="8dp"
+            android:text="@string/copiar_profi_ahora_no"
+            android:textAppearance="@style/TextAppearance.GymProFit.Enlace" />
+    </LinearLayout>
+</LinearLayout>

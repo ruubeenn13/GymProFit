@@ -2296,4 +2296,13 @@
         <item quantity="other">%1$s records</item>
     </plurals>
     <string name="nutricion_error_dia">Couldn\'t load your day.</string>
+    <string name="comida_alta_proteina">High-protein meal: well done!</string>
+    <string name="comida_pct_de_tu_dia">%1$s of your day</string>
+    <string name="comida_pista">Swipe a food to remove it; tap it to change the amount.</string>
+    <string name="copiar_profi_mensaje">%1$s: %2$s, %3$s kcal and %4$s g of protein. Shall we repeat it?</string>
+    <string name="copiar_profi_boton">Copy yesterday\'s</string>
+    <string name="copiar_profi_ahora_no">Not now</string>
+    <string name="ideas_titulo_proteina">For your %1$d g of protein</string>
+    <string name="ideas_detalle">%1$s · %2$s kcal · %3$s g prot.</string>
+    <string name="comida_buscar_otro">Find another food</string>
 </resources>

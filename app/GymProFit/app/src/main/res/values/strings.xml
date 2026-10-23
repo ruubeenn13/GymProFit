@@ -2321,4 +2321,13 @@
         <item quantity="other">%1$s récords</item>
     </plurals>
     <string name="nutricion_error_dia">No se ha podido cargar tu día.</string>
+    <string name="comida_alta_proteina">Comida alta en proteína: ¡bien hecho!</string>
+    <string name="comida_pct_de_tu_dia">%1$s de tu día</string>
+    <string name="comida_pista">Desliza un alimento para quitarlo; tócalo para cambiar la cantidad.</string>
+    <string name="copiar_profi_mensaje">%1$s: %2$s, %3$s kcal y %4$s g de proteína. ¿Lo repetimos?</string>
+    <string name="copiar_profi_boton">Copiar la de ayer</string>
+    <string name="copiar_profi_ahora_no">Ahora no</string>
+    <string name="ideas_titulo_proteina">Para tus %1$d g de proteína</string>
+    <string name="ideas_detalle">%1$s · %2$s kcal · %3$s g prot.</string>
+    <string name="comida_buscar_otro">Buscar otro alimento</string>
 </resources>
