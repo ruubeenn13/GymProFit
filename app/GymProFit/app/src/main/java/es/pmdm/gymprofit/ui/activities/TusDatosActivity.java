@@ -472,7 +472,7 @@ public class TusDatosActivity extends AppCompatActivity {
             quedara.setText(getString(R.string.datos_plan_cifras, entero.format(plan.kcal), plan.proteinas));
             dif.setVisibility(View.VISIBLE);
             // Sin objetivo guardado todavía no hay «respecto a ahora» que decir.
-            boolean hayAntes = prefs.getCaloriasDiarias() > 0;
+            boolean hayAntes = prefs.hayObjetivoGuardado() && prefs.getCaloriasDiarias() > 0;
             if (!hayAntes) {
                 dif.setText(null);
                 dif.setVisibility(View.GONE);
