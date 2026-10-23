@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Eliminar cuenta</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;display:inline-block;white-space:nowrap;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+button{font-family:inherit;cursor:pointer}
+a{color:#FF8A3D}a:hover{color:#FFB27A}
+.toque{transition:transform 120ms cubic-bezier(.2,0,0,1),background-color 150ms cubic-bezier(.2,0,0,1)}.toque:active{transform:scale(.97)}
+.bc{font-family:'Barlow Condensed',sans-serif;font-weight:700}
+.caja{margin:0 20px;border-radius:24px;background:#1B1E24}
+.fila{display:flex;align-items:center;gap:14px;min-height:64px;padding:0 16px;text-decoration:none;color:#F2F2F3;background:transparent;border:none;width:100%;box-sizing:border-box;text-align:left;font-size:16px}
+.ico{flex-shrink:0;width:40px;height:40px;border-radius:20px;display:flex;align-items:center;justify-content:center}
+.sub{font-size:13px;color:#A1A9B6}
+.sep{height:1px;background:#252A31;margin-left:70px}
+.rot{margin:0 20px;font-size:14px;font-weight:600;color:#A1A9B6}
+.sw{flex-shrink:0;width:52px;height:32px;border-radius:16px;position:relative;transition:background-color 200ms cubic-bezier(.2,0,0,1)}
+.sw i{position:absolute;top:4px;width:24px;height:24px;border-radius:12px;transition:left 200ms cubic-bezier(.2,0,0,1)}
+@media (prefers-reduced-motion: reduce){.toque,.sw,.sw i{transition:none}.toque:active{transform:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 1100px; position: relative; overflow: hidden; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif;">
+<header style="padding: 12px 8px 0 4px; display: flex; align-items: center;"><button type="button" aria-label="Volver" class="toque" style="width: 48px; height: 48px; border: none; border-radius: 24px; background: transparent; color: #F2F2F3;"><span class="ms" aria-hidden="true">arrow_back</span></button><h1 style="margin: 0; font-size: 19px; font-weight: 600;">Eliminar cuenta</h1></header>
+<main style="padding: 16px 0 40px; display: flex; flex-direction: column; gap: 24px;">
+<section style="margin: 0 20px; display: flex; flex-direction: column; gap: 8px;"><h2 class="bc" style="margin: 0; font-size: 30px; line-height: 1.05;">Se borra todo y no se puede recuperar</h2><p style="margin: 0; font-size: 15px; line-height: 1.4; color: #C9CED6;">Es inmediato: no hay papelera ni plazo para arrepentirse.</p></section>
+<section aria-label="Lo que pierdes" class="caja" style="padding: 6px 0;"><ul style="margin: 0; padding: 0; list-style: none;"><li style="display: flex; align-items: center; gap: 14px; min-height: 56px; padding: 0 16px;"><span class="ico" style="background: #2A1616; color: #FF8A80;"><span class="ms" aria-hidden="true" style="font-size: 22px;">person</span></span><span style="display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px;">Tu cuenta y tu perfil</span><span class="sub">Nombre, correo, foto y objetivos</span></span></li><li style="display: flex; align-items: center; gap: 14px; min-height: 56px; padding: 0 16px;"><span class="ico" style="background: #2A1616; color: #FF8A80;"><span class="ms" aria-hidden="true" style="font-size: 22px;">fitness_center</span></span><span style="display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px;">13 entrenos y 25 récords</span><span class="sub">Programa, rutinas, series y notas</span></span></li><li style="display: flex; align-items: center; gap: 14px; min-height: 56px; padding: 0 16px;"><span class="ico" style="background: #2A1616; color: #FF8A80;"><span class="ms" aria-hidden="true" style="font-size: 22px;">restaurant</span></span><span style="display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px;">Tu diario de comidas</span><span class="sub">Alimentos, platos y agua</span></span></li><li style="display: flex; align-items: center; gap: 14px; min-height: 56px; padding: 0 16px;"><span class="ico" style="background: #2A1616; color: #FF8A80;"><span class="ms" aria-hidden="true" style="font-size: 22px;">monitoring</span></span><span style="display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px;">Tu peso, medidas y logros</span><span class="sub">Todo tu progreso</span></span></li></ul>
+<button type="button" onClick="{{ abrir }}" class="fila toque" style="min-height: 52px; color: #FF8A3D; font-weight: 600; font-size: 15px;"><span style="flex-grow: 1; padding-left: 4px;">{{ verTexto }}</span><span class="ms" aria-hidden="true">{{ flecha }}</span></button>
+<sc-if value="{{ detalle }}" hint-placeholder-val="{{ false }}"><div style="padding: 0 20px 16px; font-size: 14px; line-height: 1.45; color: #C9CED6;">También tus sesiones abiertas y el identificador del móvil para avisos. <strong style="color: #F2F2F3;">No se borra:</strong> los informes de fallos ya enviados, que son anónimos.</div></sc-if></section>
+<section aria-label="Confirmar" style="display: flex; flex-direction: column; gap: 14px;">
+<div style="margin: 0 20px; padding: 10px 8px 10px 18px; border-radius: 18px; background: #1B1E24; border: 2px solid transparent; display: flex; align-items: center;"><span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 13px; color: #A1A9B6;">Tu contraseña</span><span style="font-size: 18px; letter-spacing: 3px;">••••••••••</span></span><button type="button" aria-label="Mostrar contraseña" class="toque" style="width: 44px; height: 44px; border: none; border-radius: 22px; background: transparent; color: #A1A9B6;"><span class="ms" aria-hidden="true">visibility</span></button></div>
+<button type="button" role="checkbox" aria-checked="{{ ok }}" onClick="{{ tap }}" class="toque" style="margin: 0 20px; min-height: 52px; padding: 0 4px; border: none; background: transparent; color: #F2F2F3; display: flex; align-items: center; gap: 12px; text-align: left; font-size: 15px;"><span aria-hidden="true" style="flex-shrink: 0; width: 24px; height: 24px; border-radius: 6px; border: 2px solid {{ borde }}; background: {{ caja }}; color: #1A0E00; display: flex; align-items: center; justify-content: center;"><span class="ms" style="font-size: 20px;">{{ marca }}</span></span>Entiendo que no se puede deshacer</button>
+</section>
+<section style="margin: 0 20px; display: flex; flex-direction: column; gap: 10px;"><button type="button" aria-disabled="{{ btnDis }}" class="toque" style="min-height: 56px; border: none; border-radius: 28px; background: {{ btnBg }}; color: {{ btnCo }}; font-size: 16px; font-weight: 700;">Eliminar mi cuenta</button><button type="button" class="toque" style="min-height: 52px; border: none; border-radius: 26px; background: transparent; color: #F2F2F3; font-size: 16px; font-weight: 600;">Mejor no</button></section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1100}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { ok: false, detalle: false }; }
+  renderVals() {
+    const ok = this.state.ok;
+    return { ok: String(ok), caja: ok ? '#FF8A80' : 'transparent', borde: ok ? '#FF8A80' : '#676F7E', marca: ok ? 'check' : '',
+      tap: () => this.setState({ ok: !ok }), btnBg: ok ? '#C62828' : '#252A31', btnCo: ok ? '#FFFFFF' : '#676F7E', btnDis: String(!ok),
+      detalle: this.state.detalle, flecha: this.state.detalle ? 'expand_less' : 'expand_more', verTexto: this.state.detalle ? 'Ocultar el detalle' : 'Ver todo lo que se borra',
+      abrir: () => this.setState({ detalle: !this.state.detalle }) };
+  }
+}
+</script>
+</body>
+</html>

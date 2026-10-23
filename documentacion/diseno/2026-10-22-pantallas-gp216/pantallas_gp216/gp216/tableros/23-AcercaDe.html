@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Acerca de</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;display:inline-block;white-space:nowrap;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+button{font-family:inherit;cursor:pointer}
+a{color:#FF8A3D}a:hover{color:#FFB27A}
+.toque{transition:transform 120ms cubic-bezier(.2,0,0,1),background-color 150ms cubic-bezier(.2,0,0,1)}.toque:active{transform:scale(.97)}
+.bc{font-family:'Barlow Condensed',sans-serif;font-weight:700}
+.caja{margin:0 20px;border-radius:24px;background:#1B1E24}
+.fila{display:flex;align-items:center;gap:14px;min-height:64px;padding:0 16px;text-decoration:none;color:#F2F2F3;background:transparent;border:none;width:100%;box-sizing:border-box;text-align:left;font-size:16px}
+.ico{flex-shrink:0;width:40px;height:40px;border-radius:20px;display:flex;align-items:center;justify-content:center}
+.sub{font-size:13px;color:#A1A9B6}
+.sep{height:1px;background:#252A31;margin-left:70px}
+.rot{margin:0 20px;font-size:14px;font-weight:600;color:#A1A9B6}
+.sw{flex-shrink:0;width:52px;height:32px;border-radius:16px;position:relative;transition:background-color 200ms cubic-bezier(.2,0,0,1)}
+.sw i{position:absolute;top:4px;width:24px;height:24px;border-radius:12px;transition:left 200ms cubic-bezier(.2,0,0,1)}
+@media (prefers-reduced-motion: reduce){.toque,.sw,.sw i{transition:none}.toque:active{transform:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif;">
+<header style="padding: 12px 8px 0 4px; display: flex; align-items: center;"><button type="button" aria-label="Volver" class="toque" style="width: 48px; height: 48px; border: none; border-radius: 24px; background: transparent; color: #F2F2F3;"><span class="ms" aria-hidden="true">arrow_back</span></button><h1 style="margin: 0; font-size: 19px; font-weight: 600;">Acerca de GymProFit</h1></header>
+<main style="padding: 24px 0 40px; display: flex; flex-direction: column; gap: 28px;">
+<section style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;"><img src="../img/logo.webp" alt="" style="width: 96px; height: 96px; object-fit: contain;"><span class="bc" style="font-size: 32px;">GymProFit</span><span style="padding: 4px 10px; border-radius: 10px; background: #252A31; font-size: 13px; color: #C9CED6;">Versión 1.6.9</span><span style="margin-top: 6px; max-width: 300px; font-size: 16px; line-height: 1.4; color: #C9CED6;">Entrenamiento, comida y progreso en una sola app. Hecha en Crevillente.</span></section>
+<section aria-label="Qué hace" style="margin: 0 20px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;"><span style="padding: 14px; border-radius: 20px; background: #1B1E24; display: flex; flex-direction: column; gap: 8px;"><span class="ms f" aria-hidden="true" style="color: #FF8A3D;">fitness_center</span><span style="font-size: 15px; font-weight: 600;">Programas y rutinas a tu nivel</span></span><span style="padding: 14px; border-radius: 20px; background: #1B1E24; display: flex; flex-direction: column; gap: 8px;"><span class="ms f" aria-hidden="true" style="color: #FF8A3D;">timer</span><span style="font-size: 15px; font-weight: 600;">Sesión en vivo con descanso</span></span><span style="padding: 14px; border-radius: 20px; background: #1B1E24; display: flex; flex-direction: column; gap: 8px;"><span class="ms f" aria-hidden="true" style="color: #6BA6F5;">restaurant</span><span style="font-size: 15px; font-weight: 600;">Calorías y macros por comida</span></span><span style="padding: 14px; border-radius: 20px; background: #1B1E24; display: flex; flex-direction: column; gap: 8px;"><span class="ms f" aria-hidden="true" style="color: #E8B84B;">trophy</span><span style="font-size: 15px; font-weight: 600;">Récords, logros y medidas</span></span></section>
+<div class="caja" style="padding: 4px 0;"><a href="#" class="fila toque"><span class="ico" style="background: #252A31; color: #C9CED6;"><span class="ms" aria-hidden="true" style="font-size: 22px;">mail</span></span><span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px; color: #F2F2F3;"><span>soporte@gymprofit.app</span></span><span class="ms" aria-hidden="true" style="color: #676F7E; font-size: 20px;">open_in_new</span></a><div class="sep"></div><a href="#" class="fila toque"><span class="ico" style="background: #252A31; color: #C9CED6;"><span class="ms" aria-hidden="true" style="font-size: 22px;">description</span></span><span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px; color: #F2F2F3;"><span>Licencias de terceros</span></span><span class="ms" aria-hidden="true" style="color: #676F7E; font-size: 20px;">chevron_right</span></a></div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

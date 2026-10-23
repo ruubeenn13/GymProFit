@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Añadir alimento</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;display:inline-block;white-space:nowrap;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+button{font-family:inherit;cursor:pointer}
+a{color:#FF8A3D}a:hover{color:#FFB27A}
+.toque{transition:transform 120ms cubic-bezier(.2,0,0,1),background-color 150ms cubic-bezier(.2,0,0,1)}.toque:active{transform:scale(.97)}
+.bc{font-family:'Barlow Condensed',sans-serif;font-weight:700}
+.caja{margin:0 20px;border-radius:24px;background:#1B1E24}
+.fila{display:flex;align-items:center;gap:14px;min-height:64px;padding:0 16px;text-decoration:none;color:#F2F2F3;background:transparent;border:none;width:100%;box-sizing:border-box;text-align:left;font-size:16px}
+.ico{flex-shrink:0;width:40px;height:40px;border-radius:20px;display:flex;align-items:center;justify-content:center}
+.sub{font-size:13px;color:#A1A9B6}
+.sep{height:1px;background:#252A31;margin-left:70px}
+.rot{margin:0 20px;font-size:14px;font-weight:600;color:#A1A9B6}
+.sw{flex-shrink:0;width:52px;height:32px;border-radius:16px;position:relative;transition:background-color 200ms cubic-bezier(.2,0,0,1)}
+.sw i{position:absolute;top:4px;width:24px;height:24px;border-radius:12px;transition:left 200ms cubic-bezier(.2,0,0,1)}
+@media (prefers-reduced-motion: reduce){.toque,.sw,.sw i{transition:none}.toque:active{transform:none}}
+@keyframes sube{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}@media (prefers-reduced-motion: reduce){[role=region]{animation:none !important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 1500px; position: relative; overflow: hidden; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif;">
+<header style="padding: 12px 20px 0 4px; display: flex; align-items: center; gap: 4px;"><button type="button" aria-label="Volver" class="toque" style="width: 48px; height: 48px; border: none; border-radius: 24px; background: transparent; color: #F2F2F3;"><span class="ms" aria-hidden="true">arrow_back</span></button>
+<button type="button" aria-label="Cambiar de comida: merienda" class="toque" style="flex-grow: 1; min-height: 48px; border: none; background: transparent; color: #F2F2F3; display: flex; align-items: center; gap: 6px; padding: 0 4px;"><span class="bc" style="font-size: 26px;">Añadir a la merienda</span><span class="ms" aria-hidden="true" style="color: #A1A9B6;">expand_more</span></button></header>
+<div style="margin: 12px 20px 0; min-height: 56px; border-radius: 28px; background: #1B1E24; display: flex; align-items: center; gap: 10px; padding: 0 6px 0 18px;"><span class="ms" aria-hidden="true" style="color: #A1A9B6;">search</span><span style="flex-grow: 1; font-size: 16px; color: #8A93A1;">Busca un alimento o un plato</span><button type="button" aria-label="Escanear código de barras" class="toque" style="width: 44px; height: 44px; border: none; border-radius: 22px; background: #FF6A00; color: #1A0E00;"><span class="ms" aria-hidden="true">barcode_scanner</span></button></div>
+<main style="padding: 28px 0 200px; display: flex; flex-direction: column; gap: 32px;">
+<section aria-label="Lo que te encaja" style="display: flex; flex-direction: column; gap: 12px;">
+<div style="margin: 0 20px; display: flex; align-items: center; gap: 10px;"><span aria-hidden="true" style="flex-shrink: 0; position: relative; width: 36px; height: 36px; border-radius: 18px; overflow: hidden; background: #0B0C0E;"><img src="../img/profi_cara.webp" alt="" style="position: absolute; left: 0; top: 0; width: 100%;"></span><span style="display: flex; flex-direction: column;"><span style="font-size: 17px; font-weight: 600;">Lo que te encaja</span><span class="sub">Te faltan 48 g de proteína y 1.048 kcal</span></span></div>
+<div class="carrusel" style="display: flex; gap: 12px; overflow-x: auto; padding: 0 20px 4px; scrollbar-width: none;"><sc-for list="{{ sug }}" as="s" hint-placeholder-count="2"><div style="flex-shrink: 0; width: 220px; padding: 16px; border-radius: 22px; background: #1B1E24; display: flex; flex-direction: column; gap: 12px;">
+<span style="display: flex; align-items: flex-start; justify-content: space-between;"><span aria-hidden="true" style="width: 44px; height: 44px; border-radius: 16px; background: {{ s.b }}; color: {{ s.c }}; display: flex; align-items: center; justify-content: center;"><span class="ms f">{{ s.ic }}</span></span><button type="button" aria-label="{{ s.aria }}" onClick="{{ s.tap }}" class="toque" style="width: 44px; height: 44px; border: none; border-radius: 22px; background: {{ s.bb }}; color: {{ s.bc }};"><span class="ms" aria-hidden="true">{{ s.sym }}</span></button></span>
+<span style="display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px; font-weight: 600;">{{ s.n }}</span><span class="sub">{{ s.d }}</span></span>
+<span style="display: flex; flex-direction: column; gap: 6px;"><span style="font-size: 13px;"><strong style="color: #6BA6F5;">{{ s.prot }}</strong> <span style="color: #A1A9B6;">de proteína</span></span><span aria-hidden="true" style="height: 6px; border-radius: 3px; background: #2A2E35; overflow: hidden;"><span style="display: block; width: {{ s.pct }}; height: 100%; background: #6BA6F5;"></span></span></span>
+</div></sc-for></div></section>
+<section aria-label="Tus alimentos" style="display: flex; flex-direction: column; gap: 12px;">
+<div role="tablist" style="margin: 0 20px; display: flex; gap: 4px; padding: 4px; border-radius: 26px; background: #121418;"><sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3"><button type="button" role="tab" aria-selected="{{ t.on }}" onClick="{{ t.tap }}" class="toque" style="flex: 1; min-height: 44px; border: none; border-radius: 22px; background: {{ t.bg }}; color: {{ t.co }}; font-size: 15px; font-weight: 600;">{{ t.t }}</button></sc-for></div>
+<div class="caja" style="padding: 4px 0;"><sc-for list="{{ filas }}" as="f" hint-placeholder-count="4"><div class="fila" style="min-height: 72px; border-bottom: 1px solid #22262C;"><span aria-hidden="true" style="flex-shrink: 0; width: 44px; height: 44px; border-radius: 16px; background: {{ f.b }}; color: {{ f.c }}; display: flex; align-items: center; justify-content: center;"><span class="ms f">{{ f.ic }}</span></span><a href="#" style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px; text-decoration: none; color: #F2F2F3;"><span>{{ f.n }}</span><span class="sub">{{ f.d }}</span></a><button type="button" aria-label="{{ f.aria }}" onClick="{{ f.tap }}" class="toque" style="flex-shrink: 0; width: 44px; height: 44px; border: none; border-radius: 22px; background: {{ f.bb }}; color: {{ f.bc }};"><span class="ms" aria-hidden="true">{{ f.sym }}</span></button></div></sc-for>
+<a href="#" class="fila toque" style="min-height: 52px; color: #FF8A3D; font-weight: 600; font-size: 15px;"><span style="flex-grow: 1; padding-left: 4px;">Ver todos los recientes</span></a></div>
+<div style="margin: 0 20px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;"><button type="button" class="toque" style="min-height: 56px; border: none; border-radius: 20px; background: #1B1E24; color: #F2F2F3; display: flex; align-items: center; gap: 8px; padding: 0 14px; font-size: 15px; font-weight: 600;"><span class="ms" aria-hidden="true" style="color: #FF8A3D;">content_copy</span>Merienda de ayer</button><button type="button" class="toque" style="min-height: 56px; border: none; border-radius: 20px; background: #1B1E24; color: #F2F2F3; display: flex; align-items: center; gap: 8px; padding: 0 14px; font-size: 15px; font-weight: 600;"><span class="ms" aria-hidden="true" style="color: #FF8A3D;">add_circle</span>Crear alimento</button></div>
+</section>
+</main>
+<sc-if value="{{ hay }}" hint-placeholder-val="{{ true }}"><div role="region" aria-label="Lo que has añadido" aria-live="polite" style="position: absolute; left: 12px; right: 12px; bottom: 16px; padding: 14px 14px 14px 18px; border-radius: 26px; background: #252A31; border: 1px solid #353A43; box-shadow: 0 12px 32px rgba(0,0,0,.5); display: flex; align-items: center; gap: 12px; animation: sube 250ms cubic-bezier(.05,.7,.1,1);">
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px;"><span style="font-size: 15px; font-weight: 600;">{{ n }} · {{ tot }}</span><span aria-hidden="true" style="height: 6px; border-radius: 3px; background: #1B1E24; overflow: hidden;"><span style="display: block; width: {{ barra }}; height: 100%; background: #6BA6F5; transition: width 300ms cubic-bezier(.2,0,0,1);"></span></span><span style="font-size: 13px; color: {{ faltaCo }};">{{ falta }}</span></span>
+<button type="button" class="toque" style="flex-shrink: 0; min-height: 48px; padding: 0 18px; border: none; border-radius: 24px; background: #FF6A00; color: #1A0E00; font-size: 15px; font-weight: 700;">Listo</button></div></sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { cesta: [], tab: 0 }; }
+  renderVals() {
+    const R = [
+      ['Yogur griego natural','125 g · 129 kcal','egg_alt','lac',129,4],
+      ['Pechuga de pollo, a la plancha','180 g · 254 kcal','set_meal','prot',254,54],
+      ['Café con leche sin azúcar','200 g · 44 kcal','local_cafe','lac',44,3],
+      ['Plátano','120 g · 107 kcal','nutrition','fruta',107,1],
+      ['Pan tostado','60 g · 236 kcal','bakery_dining','cer',236,7],
+      ['Atún al natural','1 lata · 99 kcal','set_meal','prot',99,23]
+    ];
+    const C = { lac: ['#252A31','#C9CED6'], prot: ['#16263F','#6BA6F5'], fruta: ['#3A1620','#F08AA0'], cer: ['#3A2E12','#E8B84B'] };
+    const cs = this.state.cesta;
+    const kcal = cs.reduce((a, i) => a + R[i][4], 0), prot = cs.reduce((a, i) => a + R[i][5], 0);
+    const falta = Math.max(0, 48 - prot);
+    const tog = (i) => { const a = cs.includes(i) ? cs.filter(x => x !== i) : cs.concat([i]); this.setState({ cesta: a }); };
+    const mk = (i) => { const r = R[i], on = cs.includes(i); return { n: r[0], d: r[1], ic: r[2], b: C[r[3]][0], c: C[r[3]][1], on, aria: (on ? 'Quitar ' : 'Añadir ') + r[0], sym: on ? 'check' : 'add', bb: on ? '#4ADE80' : '#252A31', bc: on ? '#0B2416' : '#F2F2F3', tap: () => tog(i) }; };
+    const sug = [0, 5].map(i => Object.assign(mk(i), { prot: R[i][5] + ' g', pct: Math.min(100, Math.round(R[i][5] / 48 * 100)) + '%' }));
+    return {
+      sug, filas: [1, 2, 3, 4].map(mk),
+      tabs: ['Recientes','Favoritos','Mis platos'].map((t, i) => ({ t, bg: i === this.state.tab ? '#3A2110' : 'transparent', co: i === this.state.tab ? '#FFB27A' : '#C9CED6', on: String(i === this.state.tab), tap: () => this.setState({ tab: i }) })),
+      hay: cs.length > 0, n: cs.length === 1 ? '1 añadido' : cs.length + ' añadidos',
+      tot: kcal + ' kcal · ' + prot + ' g de proteína',
+      falta: falta === 0 ? '¡Proteína de la merienda cubierta!' : 'Te faltan ' + falta + ' g de proteína',
+      faltaCo: falta === 0 ? '#4ADE80' : '#A1A9B6',
+      barra: Math.min(100, Math.round(prot / 48 * 100)) + '%'
+    };
+  }
+}
+</script>
+</body>
+</html>
