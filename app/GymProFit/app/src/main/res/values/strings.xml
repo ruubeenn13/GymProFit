@@ -1596,7 +1596,7 @@
     <string name="escaner_sin_camara">No se ha podido abrir la cámara. Escribe el código a mano.</string>
     <string name="escaner_producto_sub">Producto envasado · %1$s</string>
     <string name="escaner_cambiar_cantidad">Cambiar cantidad</string>
-    <string name="escaner_otro">Escanear otro</string>
+    <string name="escaner_otro">Seguir escaneando</string>
     <string name="escaner_no_existe_titulo">No lo tenemos todavía</string>
     <string name="escaner_no_existe_texto">El código %1$s no está en nuestra base ni en Open Food Facts.</string>
     <string name="escaner_crear_con_codigo">Crear con este código</string>
@@ -2340,4 +2340,5 @@
     <string name="barra_proteina_cubierta">¡Proteína de hoy cubierta!</string>
     <string name="barra_a11y_dos">%1$s, %2$s</string>
     <string name="barra_a11y_tres">%1$s, %2$s, %3$s</string>
+    <string name="escaner_encontrado">¡Encontrado!</string>
 </resources>

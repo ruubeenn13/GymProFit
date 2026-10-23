@@ -408,6 +408,8 @@ public class EscanerActivity extends BaseActivity {
         TextView titulo = findViewById(R.id.tvTituloHoja);
         TextView texto = findViewById(R.id.tvTextoHoja);
         View tile = findViewById(R.id.tileHoja);
+        findViewById(R.id.pildoraEncontrado).setVisibility(
+                estado.estado() == EstadoEscaner.Estado.PRODUCTO ? View.VISIBLE : View.GONE);
 
         EstadoEscaner.Estado e = estado.estado();
         progreso.setVisibility(e == EstadoEscaner.Estado.CONSULTANDO ? View.VISIBLE : View.GONE);
@@ -469,8 +471,8 @@ public class EscanerActivity extends BaseActivity {
         String porcion = es.pmdm.gymprofit.utils.Cantidades.de(this, u.nombre, u.unidad, u.unidadPlural,
                 cantidad.raciones(), cantidad.gramos(), !cantidad.conGramos());
 
-        ((android.widget.ImageView) findViewById(R.id.ivIconoHoja)).setImageResource(a.esProducto()
-                ? R.drawable.ic_ms_inventory_2 : R.drawable.ic_ms_restaurant);
+        // El icono de su tipo de alimento, como en las listas (tablero 27).
+        ((android.widget.ImageView) findViewById(R.id.ivIconoHoja)).setImageResource(BusquedaAlimentoAdapter.icono(a));
         titulo.setText(es.pmdm.gymprofit.ui.nutricion.Insignia.nombre(this, a.getNombre(), a.isRevisado(), 18));
         texto.setText(a.esProducto() ? getString(R.string.escaner_producto_sub, porcion)
                 : BusquedaAlimentoAdapter.detalle(this, a));
