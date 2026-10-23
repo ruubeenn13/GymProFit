@@ -51,7 +51,6 @@ import es.pmdm.gymprofit.ui.adapters.AlimentoComidaAdapter;
 import es.pmdm.gymprofit.ui.adapters.BusquedaAlimentoAdapter;
 import es.pmdm.gymprofit.ui.nutricion.BarraReparto;
 import es.pmdm.gymprofit.ui.nutricion.CopiarComida;
-import es.pmdm.gymprofit.ui.nutricion.TarjetaCopiarAyer;
 import es.pmdm.gymprofit.ui.nutricion.ElegirComida;
 import es.pmdm.gymprofit.utils.AnadirRapido;
 import es.pmdm.gymprofit.utils.CantidadFicha;

@@ -1787,19 +1787,12 @@
     <string name="reciente_copiar_a11y">Copy %1$s %2$s</string>
     <string name="reciente_copiada_a11y">%1$s, copied</string>
     <string name="reciente_fallo">Couldn\'t copy %1$s. %2$s</string>
-    <string name="copiar_ayer_titulo">Same as yesterday?</string>
-    <plurals name="copiar_ayer_resumen">
-        <item quantity="one">%1$d food · %2$s\u00A0kcal</item>
-        <item quantity="other">%1$d foods · %2$s\u00A0kcal</item>
-    </plurals>
     <string name="copiar_ayer_desayuno">Yes, copy yesterday\'s breakfast</string>
     <string name="copiar_ayer_almuerzo">Yes, copy yesterday\'s mid-morning</string>
     <string name="copiar_ayer_comida">Yes, copy yesterday\'s lunch</string>
     <string name="copiar_ayer_merienda">Yes, copy yesterday\'s snack</string>
     <string name="copiar_ayer_cena">Yes, copy yesterday\'s dinner</string>
     <string name="copiar_ayer_no_a11y">Not today</string>
-    <string name="copiar_ayer_linea">%1$s · %2$s</string>
-    <string name="copiar_ayer_linea_a11y">%1$s, %2$s, %3$s\u00A0kcal</string>
     <string name="copiar_ayer_fallo">Couldn\'t copy yesterday\'s. %1$s</string>
     <string name="sueles_desayuno">Your usual breakfast</string>
     <string name="sueles_almuerzo">Your usual mid-morning</string>
@@ -2316,4 +2309,18 @@
     <string name="barra_a11y_dos">%1$s, %2$s</string>
     <string name="barra_a11y_tres">%1$s, %2$s, %3$s</string>
     <string name="escaner_encontrado">Found it!</string>
+    <string name="nutricion_comidas">Meals</string>
+    <string name="nutricion_copiar_ayer">Copy yesterday</string>
+    <string name="nutricion_tu_semana">Your week</string>
+    <string name="nutricion_ver_semana">See the week</string>
+    <plurals name="nutricion_semana_proteina">
+        <item quantity="one">%1$d of %2$d day on your protein</item>
+        <item quantity="other">%1$d of %2$d days on your protein</item>
+    </plurals>
+    <plurals name="nutricion_semana_apuntados">
+        <item quantity="one">%1$d day with food logged</item>
+        <item quantity="other">%1$d days with food logged</item>
+    </plurals>
+    <string name="nutricion_semana_kcal">%1$s\u00A0kcal on average</string>
+    <string name="nutricion_toca_proteina">Up next · %1$d\u00A0g of protein to go</string>
 </resources>

@@ -57,11 +57,12 @@ import es.pmdm.gymprofit.ui.activities.AnadirAlimentoActivity;
 import es.pmdm.gymprofit.ui.activities.ComidaActivity;
 import es.pmdm.gymprofit.ui.activities.SemanaNutricionActivity;
 import es.pmdm.gymprofit.ui.nutricion.AnilloDia;
+import es.pmdm.gymprofit.ui.nutricion.CopiarComida;
 import es.pmdm.gymprofit.ui.nutricion.ElegirComida;
-import es.pmdm.gymprofit.ui.nutricion.TarjetaCopiarAyer;
 import es.pmdm.gymprofit.utils.Agua;
 import es.pmdm.gymprofit.utils.ComidaQueToca;
 import es.pmdm.gymprofit.utils.ComidasRecientes;
+import es.pmdm.gymprofit.model.comida.ResumenDiarioNutricion;
 import es.pmdm.gymprofit.utils.DiaCompleto;
 import es.pmdm.gymprofit.utils.DiaNutricion;
 import es.pmdm.gymprofit.utils.FechaUtils;
@@ -70,6 +71,7 @@ import es.pmdm.gymprofit.utils.ProteinaTexto;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import es.pmdm.gymprofit.utils.SemanaNutricion;
 import es.pmdm.gymprofit.utils.VistaEstado;
 
 // ============================================================
@@ -113,6 +115,12 @@ public class NutricionFragment extends BaseFragment {
 
     // La semana de la tira, de GET /diario (fecha → día); vacía hasta que llega.
     private final Map<String, DiaDiario> semana = new HashMap<>();
+    // «Tu semana» (tablero 15): lo comido cada día de esa semana, de GET /comidas/usuario/{id}/resumen.
+    private final Map<String, ResumenDiarioNutricion> resumenSemana = new HashMap<>();
+    @Nullable private String semanaResumida;
+    private int turnoResumen;
+    // La línea del día completo («2 días completos esta semana…»), o null.
+    @Nullable private String semanaExtra;
     private int turnoDiario;
     // Si cada día estaba completo la última vez que se pintó: para celebrar solo el paso.
     private final Map<String, Boolean> completoVisto = new HashMap<>();
@@ -170,6 +178,9 @@ public class NutricionFragment extends BaseFragment {
         fechaContada = null;
         // «Tu semana de nutrición» (tablero 12); desde ahí se llega a las semanas y los meses.
         estado = new VistaEstado(findViewById(R.id.estadoNutricion));
+        findViewById(R.id.cardSemana).setOnClickListener(v -> startActivity(
+                new Intent(requireContext(), SemanaNutricionActivity.class)
+                        .putExtra(SemanaNutricionActivity.EXTRA_LUNES, fechaStr(lunesDe(fechaSel)))));
         findViewById(R.id.btnHistorial).setOnClickListener(v ->
                 startActivity(new Intent(requireContext(), SemanaNutricionActivity.class)));
         findViewById(R.id.btnCalendario).setOnClickListener(v -> elegirFecha());
@@ -446,6 +457,7 @@ public class NutricionFragment extends BaseFragment {
         int v = hay ? View.VISIBLE : View.GONE;
         findViewById(R.id.cardDia).setVisibility(v);
         findViewById(R.id.listaComidas).setVisibility(v);
+        findViewById(R.id.cabeceraComidas).setVisibility(v);
         if (!hay) {
             findViewById(R.id.pildoraEntreno).setVisibility(View.GONE);
             findViewById(R.id.cardAgua).setVisibility(View.GONE);
@@ -469,6 +481,7 @@ public class NutricionFragment extends BaseFragment {
                 semana.clear();
                 if (dias != null) for (DiaDiario d : dias) if (d.getFecha() != null) semana.put(d.getFecha(), d);
                 pintarDiario();
+                cargarResumenSemana(lunes, domingo, miTurno);
             }
 
             @Override
@@ -554,14 +567,14 @@ public class NutricionFragment extends BaseFragment {
         });
     }
 
-    // La ✓: la tarjeta se pliega al momento y la comida se copia; al volver, el día se
-    // recarga con ella. Si falla, la tarjeta vuelve y se dice.
+    // «Copiar ayer»: el enlace se va al momento y la comida se copia; al volver, el día se
+    // recarga con ella. Si falla, el enlace vuelve y se dice.
     private void copiarAyer(@NonNull View tarjeta, @NonNull ComidaReciente ayer, @NonNull String tipo) {
         if (copiandoAyer) return;
         copiandoAyer = true;
         String fecha = fechaSelStr();
         Movimiento.vibrar(tarjeta, Movimiento.Vibracion.LIGERA);
-        Movimiento.plegar(tarjeta, null);
+        findViewById(R.id.btnCopiarAyerDiario).setVisibility(View.GONE);
         Map<String, Object> cuerpo = new HashMap<>();
         cuerpo.put("comidaId", ayer.getId());
         cuerpo.put("fecha", fecha);
@@ -585,13 +598,6 @@ public class NutricionFragment extends BaseFragment {
                         UiFeedback.mensaje(requireContext(), code, message)));
             }
         });
-    }
-
-    // La ✗: se pliega y no vuelve hoy para esta comida, ni aquí ni en su pantalla.
-    private void noCopiarAyer(@NonNull View tarjeta, @NonNull String tipo) {
-        prefsManager.descartarCopiaAyer(fechaSelStr(), tipo);
-        copiaAyer = null;
-        Movimiento.plegar(tarjeta, null);
     }
 
     private static boolean registrada(@Nullable Comida c) {
@@ -808,11 +814,12 @@ public class NutricionFragment extends BaseFragment {
         pildora.setVisibility(View.VISIBLE);
     }
 
-    // «2 días completos esta semana» y lo que hubo ese día; solo con el día completo.
+    // «2 días completos esta semana» y lo que hubo ese día; solo con el día completo. Va como
+    // una línea más de «Tu semana».
     private void pintarSemanaCompleta(@Nullable DiaDiario dd, boolean celebrar) {
-        View card = findViewById(R.id.cardSemana);
         if (!DiaCompleto.completo(dd)) {
-            card.setVisibility(View.GONE);
+            semanaExtra = null;
+            pintarTuSemana();
             return;
         }
         List<DiaDiario> dias = new ArrayList<>(semana.values());
@@ -821,13 +828,84 @@ public class NutricionFragment extends BaseFragment {
         boolean proteina = !d.sinObjetivo && d.estadoProteinas() == DiaNutricion.Estado.LOGRADO;
         String titulo = getResources().getQuantityString(R.plurals.dias_completos_semana, n, n);
         String texto = getString(frase(DiaCompleto.frase(esHoy(), dd.getEntrenos() > 0, proteina)));
+        semanaExtra = titulo + ". " + texto;
+        pintarTuSemana();
+        if (celebrar) Movimiento.entrarUna(findViewById(R.id.cardSemana), 1400, Movimiento.ENTRA, 16);
+    }
+
+    // Lo comido cada día de la semana elegida, para el resumen. Un fallo no se enseña: «Tu semana»
+    // es un atajo a la semana completa, y sin las cifras la tarjeta no sale.
+    private void cargarResumenSemana(Calendar lunes, Calendar domingo, int turnoDiarioDeEsta) {
+        int uid = prefsManager.getUsuarioId();
+        if (uid == -1) return;
+        String desde = fechaStr(lunes);
+        int miTurno = ++turnoResumen;
+        comidaApi.getResumen(uid, desde, fechaStr(domingo)).enqueue(new ApiCallback<List<ResumenDiarioNutricion>>() {
+            @Override
+            public void onOk(List<ResumenDiarioNutricion> lista) {
+                if (!isAdded() || miTurno != turnoResumen || turnoDiarioDeEsta != turnoDiario) return;
+                resumenSemana.clear();
+                if (lista != null) for (ResumenDiarioNutricion r : lista) if (r.getFecha() != null) resumenSemana.put(r.getFecha(), r);
+                semanaResumida = desde;
+                pintarTuSemana();
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                // Se ignora a propósito: sin las cifras, «Tu semana» no sale; la semana completa sigue en el historial.
+                if (!isAdded() || miTurno != turnoResumen) return;
+                semanaResumida = null;
+                pintarTuSemana();
+            }
+        });
+    }
+
+    // «Tu semana»: «3 de 4 días con tu proteína» y «2.240 kcal de media», con enlace a la semana.
+    private void pintarTuSemana() {
+        View card = findViewById(R.id.cardSemana);
+        Calendar lunes = lunesDe(fechaSel);
+        if (semanaResumida == null || !semanaResumida.equals(fechaStr(lunes)) || comidasDia == null) {
+            card.setVisibility(View.GONE);
+            return;
+        }
+        List<SemanaNutricion.Entrada> siete = new ArrayList<>();
+        Calendar dia = (Calendar) lunes.clone();
+        for (int i = 0; i < 7; i++) {
+            String f = fechaStr(dia);
+            ResumenDiarioNutricion r = resumenSemana.get(f);
+            DiaDiario d = semana.get(f);
+            boolean hayComida = r != null && (r.getCalorias() > 0 || r.getProteinas() > 0);
+            siete.add(new SemanaNutricion.Entrada(f, hayComida, r != null ? r.getProteinas() : 0,
+                    r != null ? r.getCalorias() : 0, DiaCompleto.completo(d), d != null && d.getEntrenos() > 0,
+                    d != null ? d.getAguaMl() : 0));
+            dia.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        ResultadoNutricional objetivo = DiaNutricion.objetivo(prefsManager);
+        SemanaNutricion sn = SemanaNutricion.de(siete, fechaStr(Calendar.getInstance()),
+                objetivo != null ? objetivo.proteinas : 0, objetivo != null ? objetivo.calorias : 0, 0);
+        if (sn.vacia()) {
+            card.setVisibility(View.GONE);
+            return;
+        }
+        NumberFormat nf = NumberFormat.getIntegerInstance(FechaUtils.localeDeLaApp(requireContext()));
+        int dias = sn.diasConDatos();
+        String titulo = sn.hayObjetivoProteina()
+                ? getResources().getQuantityString(R.plurals.nutricion_semana_proteina, dias, sn.proteinaConseguida(), dias)
+                : getResources().getQuantityString(R.plurals.nutricion_semana_apuntados, dias, dias);
+        Integer media = sn.mediaKcal();
+        String texto = media != null ? getString(R.string.nutricion_semana_kcal, nf.format(media)) : "";
         ((TextView) findViewById(R.id.tvSemanaTitulo)).setText(titulo);
-        ((TextView) findViewById(R.id.tvSemanaTexto)).setText(texto);
-        findViewById(R.id.filaSemana).setContentDescription(titulo + ". " + texto);
+        TextView tvTexto = findViewById(R.id.tvSemanaTexto);
+        tvTexto.setText(texto);
+        tvTexto.setVisibility(texto.isEmpty() ? View.GONE : View.VISIBLE);
+        TextView extra = findViewById(R.id.tvSemanaExtra);
+        extra.setText(semanaExtra);
+        extra.setVisibility(semanaExtra == null ? View.GONE : View.VISIBLE);
+        card.setContentDescription(getString(R.string.nutricion_tu_semana) + ". " + titulo
+                + (texto.isEmpty() ? "" : ". " + texto) + (semanaExtra == null ? "" : ". " + semanaExtra));
         boolean entra = card.getVisibility() != View.VISIBLE;
         card.setVisibility(View.VISIBLE);
-        if (celebrar) Movimiento.entrarUna(card, 1400, Movimiento.ENTRA, 16);
-        else if (entra) Movimiento.entrarUna(card, 0, Movimiento.ENTRA, 16);
+        if (entra) Movimiento.entrarUna(card, 0, Movimiento.ENTRA, 16);
     }
 
     private static int frase(DiaCompleto.Frase f) {
@@ -1042,6 +1120,9 @@ public class NutricionFragment extends BaseFragment {
         lista.removeAllViews();
         String queToca = esHoy() ? ComidaQueToca.ahora() : null;
         LayoutInflater inflater = LayoutInflater.from(requireContext());
+        NumberFormat nf = NumberFormat.getIntegerInstance(FechaUtils.localeDeLaApp(requireContext()));
+        DiaNutricion dia = DiaNutricion.de(new ArrayList<>(comidasDia.values()), DiaNutricion.objetivo(prefsManager));
+        int faltaProteina = dia.sinObjetivo ? 0 : (int) Math.round(dia.objetivoProteinas - dia.proteinas);
 
         for (String tipo : ComidaQueToca.TIPOS) {
             Comida c = comidasDia.get(tipo);
@@ -1053,52 +1134,59 @@ public class NutricionFragment extends BaseFragment {
             ((ImageView) card.findViewById(R.id.ivComidaIcono)).setImageResource(ElegirComida.icono(tipo));
             String nombre = getString(ComidaQueToca.titulo(tipo));
             ((TextView) card.findViewById(R.id.tvComidaNombre)).setText(nombre);
-            String resumen = hoyNo ? getString(R.string.comida_hoy_no) : resumenComida(c, toca);
-            ((TextView) card.findViewById(R.id.tvComidaResumen)).setText(resumen);
-            card.setContentDescription(nombre + ". " + resumen);
+            String resumen = hoyNo ? getString(R.string.comida_hoy_no)
+                    : toca && faltaProteina > 0 ? getString(R.string.nutricion_toca_proteina, faltaProteina)
+                    : resumenComida(c, toca);
+            TextView tvResumen = card.findViewById(R.id.tvComidaResumen);
+            tvResumen.setText(resumen);
+            tvResumen.setVisibility(resumen.isEmpty() ? View.GONE : View.VISIBLE);
+            // Apuntada, sus kcal a la derecha; pendiente, el «+» (tablero 15).
+            boolean conKcal = c != null && c.getTotalCalorias() > 0 && !hoyNo;
+            TextView tvKcal = card.findViewById(R.id.tvComidaKcal);
+            String kcalTexto = conKcal ? getString(R.string.unidad_kcal, c.getTotalCalorias()) : "";
+            tvKcal.setText(kcalTexto);
+            tvKcal.setVisibility(conKcal ? View.VISIBLE : View.GONE);
+            card.setContentDescription(nombre + ". " + (resumen.isEmpty() ? kcalTexto : resumen + ". " + kcalTexto));
             card.setOnClickListener(v -> abrirComida(tipo));
 
             ImageButton mas = card.findViewById(R.id.btnAnadirComida);
             mas.setContentDescription(getString(anadirA11y(tipo)));
+            mas.setVisibility(conKcal ? View.GONE : View.VISIBLE);
             if (toca) {
                 mas.setBackgroundResource(R.drawable.bg_circulo_primario_pulsable);
                 mas.setImageTintList(ColorStateList.valueOf(color(com.google.android.material.R.attr.colorOnPrimary)));
             }
             mas.setOnClickListener(v -> anadirAlimento(tipo));
-            if (toca && copiaAyer != null && tipo.equals(copiaAyerTipo) && !copiandoAyer) {
-                ViewGroup ranura = card.findViewById(R.id.ranuraCopiarAyer);
-                View tarjeta = inflater.inflate(R.layout.view_copiar_ayer_diario, ranura, false);
-                ComidaReciente ayer = copiaAyer;
-                TarjetaCopiarAyer.pintar(tarjeta, ayer, tipo, new TarjetaCopiarAyer.Respuesta() {
-                    @Override public void si() { copiarAyer(tarjeta, ayer, tipo); }
-                    @Override public void no() { noCopiarAyer(tarjeta, tipo); }
-                });
-                ranura.addView(tarjeta);
-                ranura.setVisibility(View.VISIBLE);
-            }
             lista.addView(card);
+        }
+
+        // «Copiar ayer»: solo hoy y con la de ayer a mano para la comida que toca.
+        TextView copiar = findViewById(R.id.btnCopiarAyerDiario);
+        ComidaReciente ayer = copiaAyer;
+        String tipoAyer = copiaAyerTipo;
+        boolean puede = ayer != null && tipoAyer != null && !copiandoAyer && esHoy();
+        copiar.setVisibility(puede ? View.VISIBLE : View.GONE);
+        if (puede) {
+            copiar.setContentDescription(getString(CopiarComida.siCopiar(tipoAyer)));
+            copiar.setOnClickListener(v -> copiarAyer(v, ayer, tipoAyer));
         }
     }
 
-    // «Tostadas con aguacate, café con leche · 420 kcal» con uno o dos alimentos;
-    // «3 alimentos · 820 kcal» con más; «Sin registrar», con «· ahora toca» si toca.
+    // «Tostadas con aguacate, café con leche» con uno o dos alimentos; «3 alimentos» con más;
+    // «Sin registrar», con «· ahora toca» si toca. Las kcal van aparte, a la derecha.
     private String resumenComida(@Nullable Comida c, boolean toca) {
         if (c == null || c.getTotalCalorias() <= 0) {
             return toca ? getString(R.string.comida_resumen, getString(R.string.sin_registrar),
                     getString(R.string.comida_ahora_toca)) : getString(R.string.sin_registrar);
         }
-        String kcal = getString(R.string.unidad_kcal, c.getTotalCalorias());
         List<AlimentoComida> alimentos = alimentosPorComida.get(c.getId());
-        if (alimentos == null || alimentos.isEmpty()) return kcal;
-        String queHay;
+        if (alimentos == null || alimentos.isEmpty()) return "";
         if (alimentos.size() <= 2) {
             List<String> nombres = new ArrayList<>();
             for (AlimentoComida a : alimentos) nombres.add(a.getNombreAlimento());
-            queHay = android.text.TextUtils.join(", ", nombres);
-        } else {
-            queHay = getResources().getQuantityString(R.plurals.comida_n_alimentos, alimentos.size(), alimentos.size());
+            return android.text.TextUtils.join(", ", nombres);
         }
-        return getString(R.string.comida_resumen, queHay, kcal);
+        return getResources().getQuantityString(R.plurals.comida_n_alimentos, alimentos.size(), alimentos.size());
     }
 
     private static int anadirA11y(String tipo) {
