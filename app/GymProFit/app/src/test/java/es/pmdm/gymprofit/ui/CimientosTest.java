@@ -249,7 +249,7 @@ public class CimientosTest {
     @Test
     public void los_bajos_del_revisor_estan_arreglados() throws IOException {
         // «Último récord»: la marca no se parte, o el «10» quedaba solo con letra 1,3.
-        String inicio = leer(JAVA.resolve("es/pmdm/gymprofit/ui/fragments/InicioFragment.java"));
+        String inicio = leer(JAVA.resolve("es/pmdm/gymprofit/ui/inicio/InicioProgreso.java"));
         assertTrue("la marca del récord lleva espacios duros", inicio.contains("replace(' ', '\\u00A0')"));
         // «SERIE» y «ANTERIOR» ya no se pegan: la columna de la serie mide 48 dp.
         assertEquals("48dp", dimen(dimens(), "envivo_col_serie"));

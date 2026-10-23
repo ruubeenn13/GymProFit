@@ -130,4 +130,9 @@
     <dimen name="envivo_descanso_numero">46sp</dimen>
     <!-- Ancho de la columna del número de serie. 48 y no 40: con letra 1,3 «SERIE» tocaba a «ANTERIOR». -->
     <dimen name="envivo_col_serie">48dp</dimen>
+    <!-- GP-216: el anillo de la cámara del avatar de Perfil y el borde de una opción de la hoja de elegir. -->
+    <dimen name="avatar_camara_anillo">3dp</dimen>
+    <dimen name="opcion_borde">2dp</dimen>
+    <!-- Interlineado del título de una fila (GP-216): 22 sp para 16 sp de texto. -->
+    <dimen name="linea_titulo_fila">22sp</dimen>
 </resources>

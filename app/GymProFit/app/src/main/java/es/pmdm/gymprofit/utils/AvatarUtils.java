@@ -93,6 +93,20 @@ public final class AvatarUtils {
         });
     }
 
+    /**
+     * El avatar de la cabecera de una pestaña (GP-216): abre Perfil y ajustes y enseña la foto o la
+     * inicial. Se llama al volver a la pestaña, porque el nombre o la foto pueden haber cambiado.
+     *
+     * @param avatar la raíz de view_avatar con id avatarCabecera.
+     */
+    public static void cabecera(android.content.Context ctx, View avatar, PreferencesManager prefs) {
+        avatar.setContentDescription(ctx.getString(R.string.avatar_perfil_a11y));
+        avatar.setOnClickListener(v -> ctx.startActivity(
+                new android.content.Intent(ctx, es.pmdm.gymprofit.ui.activities.PerfilActivity.class)));
+        String nombre = NombreVisible.de(prefs.getNombre(), prefs.getUsername());
+        pintar(avatar, nombre.isEmpty() ? ctx.getString(R.string.home_usuario_defecto) : nombre, prefs.getUsuarioId());
+    }
+
     /** La foto recién subida: la enseñan ya Inicio y Progreso sin volver a pedirla. */
     public static void ponerFoto(int usuarioId, Bitmap bmp) {
         usuarioDeLaFoto = usuarioId;

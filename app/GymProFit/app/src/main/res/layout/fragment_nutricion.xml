@@ -36,6 +36,12 @@
                 android:layout_marginStart="8dp"
                 android:contentDescription="@string/nutricion_elegir_dia_a11y"
                 android:src="@drawable/ic_ms_calendar_month" />
+            <include
+                android:id="@+id/avatarCabecera"
+                layout="@layout/view_avatar"
+                android:layout_width="@dimen/avatar_cabecera"
+                android:layout_height="@dimen/avatar_cabecera"
+                android:layout_marginStart="@dimen/espacio_8" />
         </LinearLayout>
 
         <LinearLayout

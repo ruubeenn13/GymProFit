@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  view_boton_conectado — un botón de un grupo de botones conectados (GP-216): para montarlos en
+  código (Tus datos: actividad y nivel) con el estilo del sistema, que un botón creado con `new`
+  no recibe.
+-->
+<com.google.android.material.button.MaterialButton xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Widget.GymProFit.BotonConectado"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:maxLines="2" />

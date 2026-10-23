@@ -6,25 +6,27 @@ import es.pmdm.gymprofit.model.envivo.SesionEnCurso;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.StyleSpan;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -36,63 +38,68 @@ import java.util.Map;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.comida.Comida;
-import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
-import es.pmdm.gymprofit.model.record.Record;
-import es.pmdm.gymprofit.model.record.Records;
 import es.pmdm.gymprofit.model.programa.ProgramaQueSigue;
+import es.pmdm.gymprofit.model.record.Records;
 import es.pmdm.gymprofit.model.rutina.Rutina;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
 import es.pmdm.gymprofit.model.sesion.VolumenMuscular;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
-import es.pmdm.gymprofit.network.ComidaApi;
 import es.pmdm.gymprofit.network.ProgramaApi;
-import es.pmdm.gymprofit.network.EjercicioApi;
-import es.pmdm.gymprofit.network.RecordApi;
 import es.pmdm.gymprofit.network.RutinaApi;
 import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.ui.activities.AnadirAlimentoActivity;
 import es.pmdm.gymprofit.ui.activities.CrearRutinaActivity;
+import es.pmdm.gymprofit.ui.activities.PerfilActivity;
 import es.pmdm.gymprofit.ui.activities.ProgramasActivity;
 import es.pmdm.gymprofit.envivo.EmpezarSesion;
 import es.pmdm.gymprofit.ui.activities.ResumenSesionActivity;
+import es.pmdm.gymprofit.ui.inicio.InicioEntrenos;
+import es.pmdm.gymprofit.ui.inicio.InicioHoyDetalle;
+import es.pmdm.gymprofit.ui.inicio.InicioProgreso;
+import es.pmdm.gymprofit.ui.inicio.InicioTuDia;
 import es.pmdm.gymprofit.ui.widget.ElegirRutinaHoja;
+import es.pmdm.gymprofit.ui.widget.MenuRutina;
+import es.pmdm.gymprofit.ui.widget.SiluetaMuscularView;
 import es.pmdm.gymprofit.utils.AvatarUtils;
 import es.pmdm.gymprofit.utils.ComidaQueToca;
 import es.pmdm.gymprofit.utils.DiaNutricion;
-import es.pmdm.gymprofit.utils.EjercicioNavHelper;
 import es.pmdm.gymprofit.utils.FechaUtils;
+import es.pmdm.gymprofit.utils.FraseProfi;
+import es.pmdm.gymprofit.utils.HistorialSesiones;
 import es.pmdm.gymprofit.utils.HoyToca;
-import es.pmdm.gymprofit.utils.Marcas;
 import es.pmdm.gymprofit.utils.Movimiento;
 import es.pmdm.gymprofit.utils.PrimerosPasos;
 import es.pmdm.gymprofit.utils.NombreVisible;
 import es.pmdm.gymprofit.utils.NavTabs;
+import es.pmdm.gymprofit.utils.ResultadoNutricional;
 import es.pmdm.gymprofit.utils.TiempoRelativo;
+import es.pmdm.gymprofit.utils.TuPrograma;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import es.pmdm.gymprofit.utils.VistaEstado;
 import es.pmdm.gymprofit.utils.Zonas;
 
 // ============================================================
-// InicioFragment — pestaña Inicio (GP-105), según 01-inicio.png.
+// InicioFragment — pestaña Inicio, según el tablero 13 de GP-216 (22-10-2026).
 //
-// Cabecera (fecha, «Hola, <nombre>» y avatar que lleva a Progreso) y cuatro tarjetas:
-//   · Hoy toca: siguiendo un programa, la que toca en él (lote 1.2.1); sin programa, la
-//     rutina propia que más tiempo lleva sin hacerse (HoyToca), con Empezar y Cambiar;
-//     «Hecho hoy» si ya hay una sesión hoy; y, sin programa ni rutinas, «Elige tu
-//     programa» (a Programas) y «Crea tu primera rutina».
-//   · Esta semana (GP-090): sesiones y tiempo desde el lunes, y las seis zonas con
-//     sus series de la semana natural (/volumen-muscular?desde=, A.4).
-//   · Último récord: la tarjeta dorada de siempre, con lo de antes y cuándo.
-//   · Nutrición de hoy: lo mismo que la pestaña Nutrición, calculado por DiaNutricion.
-// La silueta muscular y la racha salen de aquí; SiluetaMuscularView sigue en el código.
+// Cabecera (fecha, «Hola, <nombre>» y avatar, que abre Perfil y ajustes), el bocadillo de Profi y
+// seis bloques:
+//   · Hoy toca: siguiendo un programa, la que toca en él (lote 1.2.1); sin programa, la rutina
+//     propia que más tiempo lleva sin hacerse (HoyToca), con Empezar y Cambiar; «Hecho hoy» si ya
+//     hay una sesión hoy; y, sin programa ni rutinas, «Elige tu programa» (a Programas) y «Crea tu
+//     primera rutina». Con rutina de hoy, InicioHoyDetalle suma los ejercicios en carrusel y las
+//     zonas en el cuerpo, y la tarjeta crece hasta la rutina al pulsarla.
+//   · Tu día (InicioTuDia): calorías, proteína y agua, y la comida que toca.
+//   · Tus músculos esta semana: las series por zona desde el lunes (/volumen-muscular?desde=).
+//   · Tu progreso (InicioProgreso): kilos por semana y el último récord.
+//   · Tus últimos entrenos (InicioEntrenos).
+//   · Primeros pasos y el fundador, solo el primer día (GP-103).
+// Cada bloque con datos de red dice su carga, su vacío y su fallo dentro (GP-211), sin toast.
 // ============================================================
 public class InicioFragment extends BaseFragment {
 
     private final SesionApi sesionApi = ApiClient.service(SesionApi.class);
     private final RutinaApi rutinaApi = ApiClient.service(RutinaApi.class);
-    private final RecordApi recordApi = ApiClient.service(RecordApi.class);
-    private final ComidaApi comidaApi = ApiClient.service(ComidaApi.class);
-    private final EjercicioApi ejercicioApi = ApiClient.service(EjercicioApi.class);
     private final ProgramaApi programaApi = ApiClient.service(ProgramaApi.class);
 
     // Lo cargado para Hoy toca; las tres llamadas se esperan unas a otras.
@@ -101,6 +108,25 @@ public class InicioFragment extends BaseFragment {
     @Nullable private ProgramaQueSigue seguido;
     private boolean falloHoyToca;
     private int pendientesHoyToca;
+
+    private InicioTuDia tuDia;
+    private InicioProgreso progreso;
+    private InicioEntrenos entrenos;
+    private InicioHoyDetalle hoyDetalle;
+    private VistaEstado estadoMusculos;
+
+    // Lo que Profi necesita saber, según va llegando.
+    @Nullable private Records records;
+    private boolean recordsListos;
+    @Nullable private String primerEjercicioHoy;
+    @Nullable private String zonasHoy;
+    private int proteinaFalta;
+
+    // Al volver de una rutina abierta desde Hoy toca (editarla o borrarla): se recarga todo.
+    private final ActivityResultLauncher<Intent> lanzadorRutina = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(), r -> {
+                if (isAdded()) cargarTodo();
+            });
 
     @Nullable
     @Override
@@ -113,11 +139,16 @@ public class InicioFragment extends BaseFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         View avatar = findViewById(R.id.avatarInicio);
-        avatar.setContentDescription(getString(R.string.inicio_avatar_a11y));
-        avatar.setOnClickListener(v -> irATab(NavTabs.PROGRESO));
-        findViewById(R.id.btnRegistrarComida).setOnClickListener(v -> registrarComida());
-        findViewById(R.id.cardNutricionHoy).setOnClickListener(v -> irATab(NavTabs.NUTRICION));
-        nombrarTarjetaNutricion(null);
+        avatar.setContentDescription(getString(R.string.avatar_perfil_a11y));
+        avatar.setOnClickListener(v -> startActivity(new Intent(requireContext(), PerfilActivity.class)));
+
+        hoyDetalle = new InicioHoyDetalle(this, view);
+        tuDia = new InicioTuDia(this, view, prefsManager, () -> irATab(NavTabs.NUTRICION), this::registrarComida,
+                this::alTenerComidas);
+        progreso = new InicioProgreso(this, view, prefsManager, () -> irATab(NavTabs.PROGRESO), this::alTenerRecords);
+        entrenos = new InicioEntrenos(this, view, () -> irAProgreso(ProgresoFragment.HISTORIAL));
+        estadoMusculos = new VistaEstado(view.findViewById(R.id.estadoMusculos));
+        findViewById(R.id.enlaceMusculos).setOnClickListener(v -> irAProgreso(ProgresoFragment.RECORDS));
         prepararPrimerDia();
 
         // Hoy toca dice «En curso» con la sesión de su rutina en marcha (GP-012). Al
@@ -126,9 +157,7 @@ public class InicioFragment extends BaseFragment {
         // semana ya no son los de antes: se vuelven a pedir.
         SesionEnCursoRepositorio.get(requireContext()).getSesion().observe(getViewLifecycleOwner(), s -> {
             if (habiaSesion && s == null) {
-                cargarHoyTocaYSemana();
-                cargarVolumenSemana();
-                cargarRecord();
+                cargarTodo();
             } else if (hoyTocaPintado) {
                 pintarHoyToca();
             }
@@ -145,10 +174,18 @@ public class InicioFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         pintarCabecera();
+        cargarTodo();
+    }
+
+    private void cargarTodo() {
         cargarHoyTocaYSemana();
         cargarVolumenSemana();
-        cargarRecord();
-        cargarNutricion();
+        progreso.cargar();
+        tuDia.cargar();
+    }
+
+    private void irAProgreso(int seccion) {
+        if (main() != null) main().irAProgreso(seccion);
     }
 
     // ── Cabecera ─────────────────────────────────────────────────────────────
@@ -165,6 +202,110 @@ public class InicioFragment extends BaseFragment {
         if (nombre.isEmpty()) nombre = getString(R.string.home_usuario_defecto);
         ((TextView) findViewById(R.id.tvHola)).setText(getString(R.string.inicio_hola, nombre));
         AvatarUtils.pintar(findViewById(R.id.avatarInicio), nombre, prefsManager.getUsuarioId());
+    }
+
+    // ── Profi ────────────────────────────────────────────────────────────────
+
+    // Una frase con un dato tuyo que sea verdad; sin dato, no hay bocadillo (FraseProfi).
+    private void pintarProfi() {
+        View fila = findViewById(R.id.filaProfi);
+        if (fila == null) return;
+        if (sesiones == null) {
+            fila.setVisibility(View.GONE);
+            return;
+        }
+        HoyToca.Eleccion eleccion = HoyToca.elegir(seguido, propias, sesiones);
+        FraseProfi.Datos d = new FraseProfi.Datos();
+        List<SesionEntrenamiento> hechas = new ArrayList<>();
+        for (SesionEntrenamiento s : HistorialSesiones.masRecientePrimero(sesiones)) {
+            if (s.isCompletada()) hechas.add(s);
+        }
+        d.hayEntrenos = !hechas.isEmpty();
+        d.entrenadoHoy = HoyToca.sesionDeHoy(sesiones, TiempoRelativo.hoy()) != null;
+        if (d.hayEntrenos) {
+            d.ultimaRutina = hechas.get(0).getRutinaNombre();
+            d.recordsUltima = InicioEntrenos.recordsDe(records, hechas.get(0).getId());
+        }
+        d.rutinaHoy = eleccion == null ? null : eleccion.rutina.getNombre();
+        d.primerEjercicioHoy = primerEjercicioHoy;
+        d.sesionesSemana = contarSemana();
+        d.proteinaFalta = proteinaFalta;
+        // Los récords de la última sesión se saben cuando llegan: antes, Profi no los da por ceros.
+        if (!recordsListos) d.recordsUltima = 0;
+
+        FraseProfi f = FraseProfi.elegir(d);
+        CharSequence texto = textoProfi(f);
+        if (texto == null) {
+            fila.setVisibility(View.GONE);
+            return;
+        }
+        ((TextView) findViewById(R.id.tvProfi)).setText(texto);
+        fila.setVisibility(View.VISIBLE);
+    }
+
+    @Nullable
+    private CharSequence textoProfi(FraseProfi f) {
+        switch (f.tipo) {
+            case SIN_ENTRENOS:
+                return negrita(getString(R.string.profi_sin_entrenos), getString(R.string.profi_sin_entrenos_b));
+            case ENTRENADO_HOY:
+                String hecho = f.rutina == null ? getString(R.string.profi_hoy_libre)
+                        : getString(R.string.profi_hoy_rutina, f.rutina);
+                return negrita(hecho, f.n > 0
+                        ? getResources().getQuantityString(R.plurals.profi_hoy_records, f.n, f.n)
+                        : getString(R.string.profi_hoy_bien));
+            case RECORDS_ULTIMA:
+                return negrita(getResources().getQuantityString(R.plurals.profi_records, f.n, f.rutina, f.n),
+                        deHoy(f));
+            case SEMANA:
+                return negrita(getResources().getQuantityString(R.plurals.profi_semana, f.n, f.n), deHoy(f));
+            case PROTEINA:
+                return negrita(getString(R.string.profi_proteina, f.n), getString(R.string.profi_proteina_b));
+            case HOY_TOCA:
+                return negrita("", deHoy(f));
+            default:
+                return null;
+        }
+    }
+
+    // «Hoy empezamos por Press banca.» o «Hoy toca Torso B.»; null si no hay rutina de hoy.
+    @Nullable
+    private String deHoy(FraseProfi f) {
+        if (f.ejercicioHoy != null) return getString(R.string.profi_empezamos_por, f.ejercicioHoy);
+        if (f.rutinaHoy != null) return getString(R.string.profi_hoy_toca, f.rutinaHoy);
+        return null;
+    }
+
+    // «base» normal y, detrás, «destacada» en negrita.
+    private static CharSequence negrita(String base, @Nullable String destacada) {
+        SpannableStringBuilder sb = new SpannableStringBuilder(base);
+        if (destacada != null && !destacada.isEmpty()) {
+            if (sb.length() > 0) sb.append(' ');
+            int desde = sb.length();
+            sb.append(destacada);
+            sb.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), desde, sb.length(),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        return sb;
+    }
+
+    private void alTenerRecords(@Nullable Records r) {
+        records = r;
+        recordsListos = true;
+        entrenos.setRecords(r);
+        pintarProfi();
+    }
+
+    // Las comidas de hoy: la primera marca «Primeros pasos» y la proteína que falta, a Profi.
+    private void alTenerComidas(@Nullable List<Comida> comidas) {
+        if (comidas != null && !comidas.isEmpty() && !prefsManager.getUsername().isEmpty()) {
+            prefsManager.marcarPrimeraComida(prefsManager.getUsername());
+            pintarPrimerDia();
+        }
+        ResultadoNutricional objetivo = DiaNutricion.objetivo(prefsManager);
+        DiaNutricion d = DiaNutricion.de(comidas, objetivo);
+        proteinaFalta = d.sinObjetivo ? 0 : Math.max(0, d.objetivoProteinas - (int) Math.round(d.proteinas));
+        pintarProfi();
     }
 
     // ── Hoy toca y Esta semana ────────────────────────────────────────────────
@@ -206,14 +347,15 @@ public class InicioFragment extends BaseFragment {
         }
     }
 
+    // El fallo se dice dentro de cada bloque (Hoy toca y Tus últimos entrenos), sin toast: antes salía
+    // el mismo mensaje en dos sitios y además como aviso que se va (GP-211).
     private void falloHoyToca(int code, String message) {
-        if (!isAdded()) return;
-        if (!falloHoyToca) {
-            falloHoyToca = true;
-            UiFeedback.toastError(requireActivity(), code, message);
-        }
+        if (!isAdded() || falloHoyToca) return;
+        falloHoyToca = true;
         pintarHoyTocaError();
+        entrenos.fallo(code, message, this::cargarHoyTocaYSemana);
         ((TextView) findViewById(R.id.tvSemanaResumen)).setText(R.string.semana_error);
+        pintarProfi();
     }
 
     private void hoyTocaListo() {
@@ -221,7 +363,9 @@ public class InicioFragment extends BaseFragment {
         if (--pendientesHoyToca > 0) return;
         pintarHoyToca();
         pintarSemanaSesiones();
+        entrenos.setSesiones(sesiones);
         pintarPrimerDia();
+        pintarProfi();
     }
 
     private void pintarHoyToca() {
@@ -231,9 +375,11 @@ public class InicioFragment extends BaseFragment {
         ImageView icono = findViewById(R.id.ivHoyIcono);
         TextView titulo = findViewById(R.id.tvHoyTitulo);
         TextView sub = findViewById(R.id.tvHoySub);
+        TextView ultima = findViewById(R.id.tvHoyUltima);
         MaterialCardView card = findViewById(R.id.cardHoyToca);
         card.setOnClickListener(null);
         card.setClickable(false);
+        ultima.setVisibility(View.GONE);
         apilarBotones(false);
 
         HoyToca.Eleccion eleccion = HoyToca.elegir(seguido, propias, sesiones);
@@ -246,6 +392,7 @@ public class InicioFragment extends BaseFragment {
         SesionEnCurso enCurso = repo.actual();
         if (eleccion != null && enCurso != null && enCurso.rutinaId != null
                 && enCurso.rutinaId == eleccion.rutina.getId()) {
+            hoyDetalle.ocultar();
             eyebrow.setText(R.string.envivo_en_curso);
             icono.setImageResource(R.drawable.ic_ms_timer);
             titulo.setText(eleccion.rutina.getNombre());
@@ -260,13 +407,14 @@ public class InicioFragment extends BaseFragment {
 
         SesionEntrenamiento deHoy = HoyToca.sesionDeHoy(sesiones, TiempoRelativo.hoy());
         if (deHoy != null) {
+            hoyDetalle.ocultar();
             eyebrow.setText(R.string.hecho_hoy);
             icono.setImageResource(R.drawable.ic_ms_check_circle_fill);
             String nombre = deHoy.getRutinaNombre();
             titulo.setText(nombre != null ? nombre : getString(R.string.hecho_hoy_libre));
             sub.setText(getString(R.string.duracion_min, deHoy.getDuracionMinutos()));
-            // Tocar la tarjeta abre el resumen de la sesión de hoy.
-            card.setOnClickListener(v -> abrirResumen(deHoy));
+            // Tocar la tarjeta abre el resumen de la sesión de hoy, y la tarjeta crece hasta él.
+            card.setOnClickListener(v -> abrirResumen(deHoy, card));
             principal.setText(R.string.btn_empezar_otra);
             principal.setIconResource(R.drawable.ic_ms_play_arrow_fill);
             principal.setOnClickListener(v -> elegirRutina());
@@ -278,11 +426,13 @@ public class InicioFragment extends BaseFragment {
         icono.setImageResource(R.drawable.ic_ms_event_available);
 
         if (eleccion == null && !prefsManager.getProgramaPendienteCodigo().isEmpty()) {
+            hoyDetalle.ocultar();
             pintarProgramaPendiente(titulo, sub, principal, secundario);
             return;
         }
 
         if (eleccion == null) {
+            hoyDetalle.ocultar();
             // Sin programa ni rutinas: lo principal es elegir un programa; crear una rutina
             // propia se queda. Entrenar a su aire sigue en el «+» y en Entrenar.
             titulo.setText(R.string.hoy_toca_sin_rutinas);
@@ -299,24 +449,72 @@ public class InicioFragment extends BaseFragment {
         }
 
         Rutina r = eleccion.rutina;
+        // Las zonas de otra rutina no se enseñan ni un instante con la de ahora.
+        if (rutinaDelDetalle != r.getId()) zonasHoy = null;
+        eyebrow.setText(eyebrowDelPrograma(eleccion));
         titulo.setText(r.getNombre());
-        sub.setText(subtituloHoyToca(r, eleccion.ultimoDia));
+        String base = subtituloHoyToca(r);
+        sub.setText(zonasHoy == null ? base : getString(R.string.hoy_toca_separador, base, zonasHoy));
+        String cuando = TiempoRelativo.texto(requireContext(), eleccion.ultimoDia);
+        ultima.setText(eleccion.ultimoDia == null || cuando == null
+                ? getString(R.string.inicio_hoy_nunca) : getString(R.string.inicio_hoy_ultima, cuando));
+        ultima.setVisibility(View.VISIBLE);
         principal.setText(R.string.btn_empezar);
         principal.setIconResource(R.drawable.ic_ms_play_arrow_fill);
         principal.setOnClickListener(v -> empezar(r));
         secundario.setVisibility(View.VISIBLE);
         secundario.setText(R.string.btn_cambiar);
         secundario.setOnClickListener(v -> elegirRutina());
+        // Tocar la tarjeta abre la rutina, y la tarjeta crece hasta ella.
+        card.setOnClickListener(v -> MenuRutina.abrirDetalle(requireActivity(), lanzadorRutina, r, card));
         // El primer día, «Empezar» llama la atención dos veces, una sola vez (GP-104).
         if (esPrimerDia() && !empezarAnimado) {
             empezarAnimado = true;
             Movimiento.respirar(principal, 1300);
             Movimiento.respirar(principal, 2700);
         }
+        mostrarDetalleDeHoy(r);
+    }
+
+    // Los ejercicios en carrusel y las zonas en el cuerpo; solo se piden cuando cambia la rutina.
+    private int rutinaDelDetalle = -1;
+
+    private void mostrarDetalleDeHoy(Rutina r) {
+        if (rutinaDelDetalle == r.getId() && findViewById(R.id.scrollHoyEjercicios).getVisibility() == View.VISIBLE) {
+            return;
+        }
+        rutinaDelDetalle = r.getId();
+        zonasHoy = null;
+        primerEjercicioHoy = null;
+        hoyDetalle.mostrar(r, new InicioHoyDetalle.AlInformar() {
+            @Override
+            public void ejercicios(@Nullable String primerEjercicio) {
+                primerEjercicioHoy = primerEjercicio;
+                pintarProfi();
+            }
+
+            @Override
+            public void zonas(@Nullable String texto) {
+                zonasHoy = texto;
+                if (hoyTocaPintado) pintarHoyToca();
+            }
+        });
     }
 
     // Si «Empezar» ya llamó la atención en esta vista.
     private boolean empezarAnimado;
+
+    // «Hoy toca · día 2 de 4» siguiendo un programa; «Hoy toca» a secas si no.
+    private String eyebrowDelPrograma(HoyToca.Eleccion eleccion) {
+        if (!eleccion.delPrograma || seguido == null) return getString(R.string.hoy_toca);
+        int dias = 0;
+        if (seguido.getCiclo() != null) {
+            for (ProgramaQueSigue.DiaCiclo d : seguido.getCiclo()) if (d.isActiva()) dias++;
+        }
+        if (dias <= 0) return getString(R.string.hoy_toca);
+        int hecha = Math.min(dias, TuPrograma.hechas(seguido) + 1);
+        return getString(R.string.inicio_hoy_dia_programa, hecha, dias);
+    }
 
     // El programa que el alta no pudo seguir (GP-103): Inicio lo ofrece con sus minutos.
     private void pintarProgramaPendiente(TextView titulo, TextView sub, MaterialButton principal,
@@ -353,29 +551,25 @@ public class InicioFragment extends BaseFragment {
         });
     }
 
-    // «6 ejercicios · unos 55 min · la última, hace 4 días»
-    private String subtituloHoyToca(Rutina r, @Nullable String ultimoDia) {
+    // «6 ejercicios · unos 55 min»; las zonas, si ya se saben, las suma quien la llama.
+    private String subtituloHoyToca(Rutina r) {
         List<String> partes = new ArrayList<>();
         partes.add(getResources().getQuantityString(R.plurals.rutina_num_ejercicios,
                 r.getNumEjercicios(), r.getNumEjercicios()));
         if (r.getDuracionMinutos() > 0) partes.add(getString(R.string.hoy_toca_unos_min, r.getDuracionMinutos()));
-        String cuando = TiempoRelativo.texto(requireContext(), ultimoDia);
-        partes.add(ultimoDia == null || cuando == null
-                ? getString(R.string.hoy_toca_nunca)
-                : getString(R.string.hoy_toca_ultima, cuando));
         return unir(partes);
     }
 
     // Los dos botones de Hoy toca, en fila (Empezar · Cambiar) o uno sobre otro.
     private void apilarBotones(boolean apilar) {
-        android.widget.LinearLayout fila = findViewById(R.id.filaBotonesHoy);
-        fila.setOrientation(apilar ? android.widget.LinearLayout.VERTICAL : android.widget.LinearLayout.HORIZONTAL);
-        int margen = Math.round(8 * getResources().getDisplayMetrics().density);
-        android.widget.LinearLayout.LayoutParams p1 = (android.widget.LinearLayout.LayoutParams)
+        LinearLayout fila = findViewById(R.id.filaBotonesHoy);
+        fila.setOrientation(apilar ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL);
+        int margen = getResources().getDimensionPixelSize(R.dimen.espacio_8);
+        LinearLayout.LayoutParams p1 = (LinearLayout.LayoutParams)
                 findViewById(R.id.btnHoyPrincipal).getLayoutParams();
         p1.width = apilar ? ViewGroup.LayoutParams.MATCH_PARENT : 0;
         p1.weight = apilar ? 0 : 1;
-        android.widget.LinearLayout.LayoutParams p2 = (android.widget.LinearLayout.LayoutParams)
+        LinearLayout.LayoutParams p2 = (LinearLayout.LayoutParams)
                 findViewById(R.id.btnHoySecundario).getLayoutParams();
         p2.width = apilar ? ViewGroup.LayoutParams.MATCH_PARENT : ViewGroup.LayoutParams.WRAP_CONTENT;
         p2.setMarginStart(apilar ? 0 : margen);
@@ -385,8 +579,11 @@ public class InicioFragment extends BaseFragment {
     }
 
     private void pintarHoyTocaError() {
+        hoyDetalle.ocultar();
+        rutinaDelDetalle = -1;
         ((TextView) findViewById(R.id.tvHoyTitulo)).setText(R.string.hoy_toca);
         ((TextView) findViewById(R.id.tvHoySub)).setText(R.string.hoy_toca_error);
+        findViewById(R.id.tvHoyUltima).setVisibility(View.GONE);
         MaterialButton principal = findViewById(R.id.btnHoyPrincipal);
         principal.setIcon(null);
         principal.setText(R.string.btn_reintentar);
@@ -404,20 +601,20 @@ public class InicioFragment extends BaseFragment {
         EmpezarSesion.empezar(requireActivity(), r);
     }
 
-    private void abrirResumen(SesionEntrenamiento s) {
+    private void abrirResumen(SesionEntrenamiento s, View tarjeta) {
         Intent intent = new Intent(requireContext(), ResumenSesionActivity.class);
         intent.putExtra("sesionId", s.getId());
-        startActivity(intent);
+        es.pmdm.gymprofit.utils.Transiciones.abrirTarjeta(requireActivity(), tarjeta, intent);
     }
 
     // «2 sesiones · 1 h 50 min», desde el lunes a las 00:00.
     private void pintarSemanaSesiones() {
+        int n = contarSemana();
+        int minutos = 0;
         String lunes = lunesIso();
-        int n = 0, minutos = 0;
         if (sesiones != null) {
             for (SesionEntrenamiento s : sesiones) {
                 if (s.getFechaInicio() != null && s.getFechaInicio().compareTo(lunes) >= 0) {
-                    n++;
                     minutos += Math.max(0, s.getDuracionMinutos());
                 }
             }
@@ -429,7 +626,18 @@ public class InicioFragment extends BaseFragment {
                 getResources().getQuantityString(R.plurals.semana_sesiones, n, n), tiempo));
     }
 
-    // Las seis zonas con sus series de la semana natural.
+    // Sesiones desde el lunes (las que empiezan desde esa hora).
+    private int contarSemana() {
+        if (sesiones == null) return 0;
+        String lunes = lunesIso();
+        int n = 0;
+        for (SesionEntrenamiento s : sesiones) {
+            if (s.getFechaInicio() != null && s.getFechaInicio().compareTo(lunes) >= 0) n++;
+        }
+        return n;
+    }
+
+    // Las series por zona de la semana natural, y el cuerpo encendido.
     private void cargarVolumenSemana() {
         int uid = prefsManager.getUsuarioId();
         if (uid == -1) { pintarZonas(null); return; }
@@ -448,68 +656,57 @@ public class InicioFragment extends BaseFragment {
             @Override
             public void onFail(int code, String message) {
                 if (!isAdded()) return;
-                // El aviso ya lo da Hoy toca, que pide a la vez las sesiones; aquí se dice
-                // en la tarjeta en vez de enseñar seis zonas pendientes que no lo son.
-                ((TextView) findViewById(R.id.tvSemanaZonas)).setText(R.string.semana_error);
-                ((ChipGroup) findViewById(R.id.grupoZonas)).removeAllViews();
-                findViewById(R.id.tvSemanaNota).setVisibility(View.GONE);
+                // Se dice en el bloque, con su «Reintentar», en vez de enseñar seis zonas a cero que
+                // no lo son.
+                findViewById(R.id.cardMusculos).setVisibility(View.GONE);
+                estadoMusculos.error(VistaEstado.mensaje(requireContext(), R.string.semana_error, code, message),
+                        InicioFragment.this::cargarVolumenSemana);
             }
         });
     }
 
     private void pintarZonas(@Nullable Map<String, Integer> porMusculo) {
-        LinkedHashMap<Zonas.Zona, Integer> porZona = Zonas.seriesPorZona(porMusculo);
-        ChipGroup grupo = findViewById(R.id.grupoZonas);
-        grupo.removeAllViews();
-        findViewById(R.id.tvSemanaNota).setVisibility(View.VISIBLE);
+        estadoMusculos.oculto();
+        findViewById(R.id.cardMusculos).setVisibility(View.VISIBLE);
+        SiluetaMuscularView silueta = findViewById(R.id.siluetaSemana);
+        silueta.setVolumen(porMusculo);
 
-        int hechas = 0;
-        List<String> hechasA11y = new ArrayList<>();
-        List<String> pendientesA11y = new ArrayList<>();
+        LinkedHashMap<Zonas.Zona, Integer> porZona = Zonas.seriesPorZona(porMusculo);
+        int maximo = 1;
+        for (int series : porZona.values()) maximo = Math.max(maximo, series);
+
+        LinearLayout lista = findViewById(R.id.listaZonasSemana);
+        lista.removeAllViews();
         LayoutInflater inflater = LayoutInflater.from(requireContext());
+        List<String> a11y = new ArrayList<>();
         for (Map.Entry<Zonas.Zona, Integer> e : porZona.entrySet()) {
             String nombre = getString(e.getKey().titulo);
             int series = e.getValue();
-            TextView chip = (TextView) inflater.inflate(R.layout.item_chip_zona, grupo, false);
-            if (series > 0) {
-                hechas++;
-                chip.setText(getString(R.string.semana_chip, nombre, series));
-                chip.setBackgroundResource(R.drawable.bg_chip_zona_hecha);
-                chip.setTextColor(color(com.google.android.material.R.attr.colorOnPrimaryContainer));
-                chip.setTypeface(chip.getTypeface(), android.graphics.Typeface.BOLD);
-                chip.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_ms_check_circle_fill, 0, 0, 0);
-                hechasA11y.add(getResources().getQuantityString(R.plurals.semana_zona_hecha_a11y, series, nombre, series));
-            } else {
-                chip.setText(nombre);
-                chip.setBackgroundResource(R.drawable.bg_chip_zona_pendiente);
-                chip.setTextColor(color(com.google.android.material.R.attr.colorOnSurfaceVariant));
-                chip.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_ms_radio_button_unchecked, 0, 0, 0);
-                pendientesA11y.add(nombre);
-            }
-            // El icono, a 18 dp y del color del texto.
-            android.graphics.drawable.Drawable d = chip.getCompoundDrawablesRelative()[0];
-            if (d != null) {
-                int px = Math.round(18 * getResources().getDisplayMetrics().density);
-                d.setBounds(0, 0, px, px);
-                chip.setCompoundDrawablesRelative(d, null, null, null);
-                chip.setCompoundDrawableTintList(ColorStateList.valueOf(chip.getCurrentTextColor()));
-            }
-            grupo.addView(chip);
+            View fila = inflater.inflate(R.layout.item_zona_semana, lista, false);
+            ((TextView) fila.findViewById(R.id.tvZonaNombre)).setText(nombre);
+            String texto = getResources().getQuantityString(R.plurals.inicio_zona_series, series, series);
+            ((TextView) fila.findViewById(R.id.tvZonaSeries)).setText(texto);
+            LinearProgressIndicator barra = fila.findViewById(R.id.barraZona);
+            barra.setProgressCompat(series * 100 / maximo, false);
+            // Cuanto más trabajada, más intensa; sin series, solo la pista.
+            barra.setIndicatorColor(colorBarra(series, maximo));
+            fila.setContentDescription(getString(R.string.hoy_toca_separador, nombre, texto));
+            fila.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            lista.addView(fila);
+            a11y.add(nombre + ": " + texto);
         }
+        silueta.setContentDescription(getString(R.string.inicio_musculos_a11y, android.text.TextUtils.join(", ", a11y)));
+        silueta.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+    }
 
-        TextView tvZonas = findViewById(R.id.tvSemanaZonas);
-        tvZonas.setText(getString(R.string.semana_zonas, hechas, porZona.size()));
-
-        // TalkBack lee la tarjeta de una vez: cuántas, cuáles hechas y cuáles no.
-        StringBuilder a11y = new StringBuilder(tvZonas.getText()).append(". ");
-        a11y.append(hechasA11y.isEmpty() ? getString(R.string.semana_ninguna_hecha_a11y)
-                : getString(R.string.semana_hechas_a11y, unirComas(hechasA11y)));
-        if (!pendientesA11y.isEmpty()) {
-            a11y.append(' ').append(getString(R.string.semana_pendientes_a11y, unirComas(pendientesA11y)));
-        }
-        grupo.setContentDescription(a11y.toString());
-        grupo.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
-        tvZonas.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+    // El naranja entero para lo más trabajado y dos escalones mezclados con la pista (sin transparencia, que
+    // dejaba ver el borde redondeado de la barra): el valor va escrito en la fila.
+    private int colorBarra(int series, int maximo) {
+        int primario = color(androidx.appcompat.R.attr.colorPrimary);
+        float proporcion = series / (float) maximo;
+        float mezcla = proporcion >= 0.66f ? 1f : proporcion >= 0.33f ? 0.7f : 0.4f;
+        return androidx.core.graphics.ColorUtils.blendARGB(
+                androidx.core.content.ContextCompat.getColor(requireContext(), R.color.gp_meter_track), primario, mezcla);
     }
 
     // Lunes de esta semana a las 00:00, en la hora del teléfono.
@@ -522,154 +719,6 @@ public class InicioFragment extends BaseFragment {
         int dow = cal.get(Calendar.DAY_OF_WEEK);
         cal.add(Calendar.DAY_OF_MONTH, -((dow + 5) % 7));
         return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US).format(cal.getTime());
-    }
-
-    // ── Último récord ────────────────────────────────────────────────────────
-
-    private void cargarRecord() {
-        MaterialCardView card = findViewById(R.id.cardRecordHome);
-        if (prefsManager.getUsuarioId() == -1) { card.setVisibility(View.GONE); return; }
-
-        recordApi.getRecords(null).enqueue(new ApiCallback<Records>() {
-            @Override
-            public void onOk(Records r) {
-                if (!isAdded()) return;
-                if (r == null || r.getRecords().isEmpty()) { card.setVisibility(View.GONE); return; }
-                pintarRecord(r.getRecords().get(0));
-            }
-            @Override
-            public void onFail(int code, String message) {
-                if (!isAdded()) return;
-                // La tarjeta es un extra de la pantalla: si falla se queda oculta y el
-                // resto de Inicio se lee igual. Queda rastro en el log.
-                Log.w("GymProFit", "cargarRecord falló (" + code + "): " + message);
-                card.setVisibility(View.GONE);
-            }
-        });
-    }
-
-    // «Press de banca · 90 kg × 10» y «Antes: 82,5 kg × 10 · hace 2 días».
-    private void pintarRecord(Record record) {
-        MaterialCardView card = findViewById(R.id.cardRecordHome);
-        card.setVisibility(View.VISIBLE);
-        String nombre = record.nombre(FechaUtils.localeDeLaApp(requireContext()));
-        // La marca («60 kg × 10») no se parte: con letra grande dejaba el «10» solo en una tercera línea.
-        String marca = Marcas.texto(requireContext(), record).replace(' ', '\u00A0');
-        ((TextView) findViewById(R.id.tvRecordEjercicio)).setText(getString(R.string.hoy_toca_separador, nombre, marca));
-
-        TextView antes = findViewById(R.id.tvRecordAntes);
-        String cuando = TiempoRelativo.texto(requireContext(), record.getFecha());
-        String anterior = Marcas.anteriorSolo(requireContext(), record);
-        if (anterior != null) anterior = anterior.replace(' ', '\u00A0');
-        if (anterior != null && cuando != null) {
-            antes.setText(getString(R.string.ultimo_record_sub, anterior, cuando));
-        } else {
-            antes.setText(cuando);
-        }
-        antes.setVisibility(antes.getText().length() == 0 ? View.GONE : View.VISIBLE);
-        card.setContentDescription(getString(R.string.ultimo_record) + ". "
-                + ((TextView) findViewById(R.id.tvRecordEjercicio)).getText() + ". " + antes.getText());
-
-        // La ficha espera el ejercicio entero en extras: se pide al pulsar.
-        card.setOnClickListener(v ->
-                ejercicioApi.getPorId(record.getEjercicioId()).enqueue(new ApiCallback<Ejercicio>() {
-                    @Override
-                    public void onOk(Ejercicio ejercicio) {
-                        if (!isAdded() || ejercicio == null) return;
-                        EjercicioNavHelper.abrir(requireContext(), ejercicio);
-                    }
-                    @Override
-                    public void onFail(int code, String message) {
-                        if (!isAdded()) return;
-                        UiFeedback.toastError(requireActivity(), code, message);
-                    }
-                }));
-    }
-
-    // ── Nutrición de hoy ─────────────────────────────────────────────────────
-
-    private void cargarNutricion() {
-        int uid = prefsManager.getUsuarioId();
-        if (uid == -1) { pintarNutricion(null); return; }
-        comidaApi.getDeUsuarioFecha(uid, TiempoRelativo.hoy()).enqueue(new ApiCallback<List<Comida>>() {
-            @Override public void onOk(List<Comida> lista) { if (isAdded()) pintarNutricion(lista); }
-            @Override public void onFail(int code, String message) {
-                if (!isAdded()) return;
-                // Sin las comidas no se sabe cuánto se ha comido: mejor no enseñar un 0
-                // que parezca un dato. Se avisa y la tarjeta se queda con lo último.
-                UiFeedback.toastError(requireActivity(), code, message);
-            }
-        });
-    }
-
-    private void pintarNutricion(@Nullable List<Comida> comidas) {
-        // La primera comida de «Primeros pasos»: Inicio solo pide las de hoy, así que se
-        // apunta la primera vez que aparece una y ya se queda hecha.
-        if (comidas != null && !comidas.isEmpty() && !prefsManager.getUsername().isEmpty()) {
-            prefsManager.marcarPrimeraComida(prefsManager.getUsername());
-            pintarPrimerDia();
-        }
-        DiaNutricion d = DiaNutricion.de(comidas, DiaNutricion.objetivo(prefsManager));
-        NumberFormat nf = NumberFormat.getIntegerInstance(FechaUtils.localeDeLaApp(requireContext()));
-        TextView kcal = findViewById(R.id.tvKcalHoy);
-        kcal.setText(nf.format(d.kcal));
-        if (d.sinObjetivo) {
-            pintarNutricionSinObjetivo(d, nf);
-            return;
-        }
-        findViewById(R.id.barraKcalHoy).setVisibility(View.VISIBLE);
-        ((TextView) findViewById(R.id.tvKcalObjetivoHoy)).setText(getString(R.string.nutricion_de_kcal, nf.format(d.objetivoKcal)));
-        ((LinearProgressIndicator) findViewById(R.id.barraKcalHoy)).setProgressCompat(
-                DiaNutricion.porcentaje(d.kcal, d.objetivoKcal), false);
-
-        macro(R.id.tvMacroProtHoy, R.string.macro_prot_corto, d.proteinas, d.objetivoProteinas, d.estadoProteinas());
-        macro(R.id.tvMacroCarbosHoy, R.string.macro_carbos_corto, d.carbohidratos, d.objetivoCarbohidratos, DiaNutricion.Estado.NORMAL);
-        macro(R.id.tvMacroGrasasHoy, R.string.macro_grasas_corto, d.grasas, d.objetivoGrasas, DiaNutricion.Estado.NORMAL);
-
-        String resumen = getString(R.string.nutricion_hoy_a11y, nf.format(d.kcal), nf.format(d.objetivoKcal));
-        findViewById(R.id.filaKcalHoy).setContentDescription(resumen);
-        nombrarTarjetaNutricion(resumen);
-    }
-
-    // La tarjeta de nutrición es pulsable (abre la pestaña): su nombre accesible es el título
-    // y, cuando ya hay datos, lo que cuenta la fila de kcal (GP-212). El «Registrar» de dentro
-    // sigue siendo su propio foco.
-    private void nombrarTarjetaNutricion(@Nullable String resumen) {
-        String titulo = getString(R.string.nutricion_de_hoy);
-        findViewById(R.id.cardNutricionHoy).setContentDescription(
-                resumen == null ? titulo : titulo + ". " + resumen);
-    }
-
-    // Sin peso ni altura (GP-103, «Prefiero no decirlo»): lo comido, sin objetivo ni barra.
-    private void pintarNutricionSinObjetivo(DiaNutricion d, NumberFormat nf) {
-        ((TextView) findViewById(R.id.tvKcalObjetivoHoy)).setText(R.string.nutricion_sin_objetivo);
-        findViewById(R.id.barraKcalHoy).setVisibility(View.GONE);
-        int normal = color(com.google.android.material.R.attr.colorOnSurface);
-        TextView prot = findViewById(R.id.tvMacroProtHoy);
-        prot.setText(getString(R.string.macro_prot_solo, (int) Math.round(d.proteinas)));
-        prot.setTextColor(normal);
-        TextView carbos = findViewById(R.id.tvMacroCarbosHoy);
-        carbos.setText(getString(R.string.macro_carbos_solo, (int) Math.round(d.carbohidratos)));
-        carbos.setTextColor(normal);
-        TextView grasas = findViewById(R.id.tvMacroGrasasHoy);
-        grasas.setText(getString(R.string.macro_grasas_solo, (int) Math.round(d.grasas)));
-        grasas.setTextColor(normal);
-        String resumen = getString(R.string.nutricion_sin_objetivo_a11y, nf.format(d.kcal));
-        findViewById(R.id.filaKcalHoy).setContentDescription(resumen);
-        nombrarTarjetaNutricion(resumen);
-    }
-
-    private void macro(int id, int formato, double valor, int objetivo, DiaNutricion.Estado estado) {
-        TextView tv = findViewById(id);
-        tv.setText(getString(formato, (int) Math.round(valor), objetivo));
-        tv.setTextColor(colorEstado(estado));
-    }
-
-    private int colorEstado(DiaNutricion.Estado e) {
-        switch (e) {
-            case LOGRADO: return ContextCompat.getColor(requireContext(), R.color.gp_success);
-            default:      return color(com.google.android.material.R.attr.colorOnSurface);
-        }
     }
 
     // Registrar comida → añadir alimento, hoy, en la comida que toca por la hora.
@@ -775,10 +824,6 @@ public class InicioFragment extends BaseFragment {
         String s = partes.get(0);
         for (int i = 1; i < partes.size(); i++) s = getString(R.string.hoy_toca_separador, s, partes.get(i));
         return s;
-    }
-
-    private static String unirComas(List<String> l) {
-        return android.text.TextUtils.join(", ", l);
     }
 
     private int color(@AttrRes int attr) {

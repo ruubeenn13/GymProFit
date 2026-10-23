@@ -343,7 +343,11 @@ public class MainActivity extends BaseActivity {
     // Lleva a la sección de Progreso que pida el intent (notificaciones).
     private void aplicarDestino(Intent intent) {
         if (!intent.hasExtra(NavTabs.EXTRA_SECCION_PROGRESO)) return;
-        int seccion = intent.getIntExtra(NavTabs.EXTRA_SECCION_PROGRESO, ProgresoFragment.RECORDS);
+        irAProgreso(intent.getIntExtra(NavTabs.EXTRA_SECCION_PROGRESO, ProgresoFragment.RECORDS));
+    }
+
+    /** Va a Progreso y enseña una de sus secciones (ProgresoFragment.RECORDS…HISTORIAL). */
+    public void irAProgreso(int seccion) {
         irATab(NavTabs.PROGRESO);
         pager.post(() -> {
             ProgresoFragment p = progreso();

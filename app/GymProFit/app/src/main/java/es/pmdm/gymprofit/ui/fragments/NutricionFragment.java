@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.utils.AvatarUtils;
 import es.pmdm.gymprofit.model.comida.AlimentoComida;
 import es.pmdm.gymprofit.model.comida.Comida;
 import es.pmdm.gymprofit.model.comida.ComidaReciente;
@@ -199,6 +200,7 @@ public class NutricionFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        AvatarUtils.cabecera(requireContext(), findViewById(R.id.avatarCabecera), prefsManager);
         // Si la app se quedó abierta de un día para otro, «hoy» ya es otro.
         Calendar hoy = Calendar.getInstance();
         if (fechaSel.after(hoy)) fechaSel.setTime(hoy.getTime());

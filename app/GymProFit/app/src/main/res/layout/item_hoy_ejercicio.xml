@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_hoy_ejercicio — un ejercicio del carrusel de «Hoy toca» (GP-216, tablero 13): el icono
+  de su zona (provisional, hasta tener ilustraciones), su nombre y su pauta. No es pulsable:
+  se pulsa la tarjeta entera, que abre la rutina. Va dentro de la tarjeta protagonista, así
+  que sus colores salen de ThemeOverlay.GymProFit.Hero.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="118dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="84dp"
+        android:background="@drawable/bg_icono_hero_ejercicio"
+        android:importantForAccessibility="no">
+
+        <ImageView
+            android:id="@+id/ivIconoEjercicio"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:importantForAccessibility="no"
+            app:tint="?attr/colorPrimary" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tvNombreEjercicio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/espacio_8"
+        android:maxLines="3"
+        android:ellipsize="end"
+        android:textAppearance="@style/TextAppearance.GymProFit.Apoyo"
+        android:textStyle="bold"
+        android:textColor="?attr/colorOnSurface" />
+
+    <TextView
+        android:id="@+id/tvMetaEjercicio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/espacio_4"
+        android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
+        android:textColor="?attr/colorOnSurfaceVariant" />
+</LinearLayout>

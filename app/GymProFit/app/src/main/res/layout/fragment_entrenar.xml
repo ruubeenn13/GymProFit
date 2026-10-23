@@ -27,6 +27,12 @@
                 style="@style/Widget.GymProFit.BotonRedondo"
                 android:contentDescription="@string/entrenar_crear_rutina_a11y"
                 android:src="@drawable/ic_ms_add" />
+            <include
+                android:id="@+id/avatarCabecera"
+                layout="@layout/view_avatar"
+                android:layout_width="@dimen/avatar_cabecera"
+                android:layout_height="@dimen/avatar_cabecera"
+                android:layout_marginStart="@dimen/espacio_8" />
         </LinearLayout>
 
         <LinearLayout

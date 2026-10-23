@@ -47,15 +47,14 @@ public class InicioRevisionTest {
     }
 
     @Test
-    public void la_tarjeta_de_nutricion_tiene_nombre_accesible() throws IOException {
-        String java = leer(INICIO);
-        assertTrue("falta el nombre de la tarjeta",
-                java.contains("findViewById(R.id.cardNutricionHoy).setContentDescription("));
-        // Al arrancar (sin datos) y en las dos formas de pintar el día: con y sin objetivo.
-        int llamadas = java.split("nombrarTarjetaNutricion\\(", -1).length - 1;
-        assertTrue("nombrarTarjetaNutricion se llama al arrancar y al pintar con y sin objetivo",
-                llamadas >= 4); // la definición y tres llamadas
-        assertFalse("sin título, la tarjeta no tiene nombre", cadena("values", "nutricion_de_hoy").isEmpty());
+    public void las_tarjetas_de_tu_dia_tienen_nombre_accesible() throws IOException {
+        // «Tu día» (GP-216): cada tarjeta del carrusel es pulsable (abre Nutrición) y se nombra con su
+        // rótulo y lo que cuenta, con y sin objetivo; también la comida que toca.
+        String java = leer(Paths.get("src", "main", "java", "es", "pmdm", "gymprofit", "ui", "inicio", "InicioTuDia.java"));
+        int nombres = java.split("setContentDescription\\(", -1).length - 1;
+        assertTrue("las tres tarjetas del día y la comida que toca se nombran (" + nombres + ")", nombres >= 4);
+        assertTrue("con y sin objetivo", java.contains("nutricion_sin_objetivo_a11y") && java.contains("nutricion_hoy_a11y"));
+        assertFalse("sin rótulo, la tarjeta no tiene nombre", cadena("values", "inicio_dia_calorias").isEmpty());
     }
 
     private static String cadena(String carpeta, String nombre) throws IOException {

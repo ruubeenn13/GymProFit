@@ -55,15 +55,45 @@ public class AcercaDeActivity extends AppCompatActivity {
 
         // La versión se lee del build: un texto fijo se quedaba atrás en cada entrega.
         ((android.widget.TextView) findViewById(R.id.tvVersion))
-                .setText(getString(R.string.splash_version, es.pmdm.gymprofit.BuildConfig.VERSION_NAME));
-        findViewById(R.id.llAcercaEmail).setOnClickListener(v -> abrirEmail());
-        findViewById(R.id.llAcercaCompartir).setOnClickListener(v -> compartirViaSms());
-        // La política se abre en el navegador: no viaja dentro del APK (GP-008).
-        findViewById(R.id.llAcercaPrivacidad).setOnClickListener(v ->
-                es.pmdm.gymprofit.utils.UIHelper.abrirUrl(this, getString(R.string.url_privacidad)));
-        findViewById(R.id.llAcercaTerminos).setOnClickListener(v ->
-                es.pmdm.gymprofit.utils.UIHelper.abrirUrl(this, getString(R.string.url_terminos)));
+                .setText(getString(R.string.acerca_version, es.pmdm.gymprofit.BuildConfig.VERSION_NAME));
 
+        pieza(R.id.pieza1, R.drawable.ic_ms_fitness_center, R.color.gp_primary, R.string.acerca_pieza_1);
+        pieza(R.id.pieza2, R.drawable.ic_ms_timer, R.color.gp_primary, R.string.acerca_pieza_2);
+        pieza(R.id.pieza3, R.drawable.ic_ms_restaurant, R.color.gp_macro_proteinas, R.string.acerca_pieza_3);
+        pieza(R.id.pieza4, R.drawable.ic_ms_trophy_fill, R.color.gp_gold_text, R.string.acerca_pieza_4);
+        // Las dos de la derecha, separadas de las de la izquierda con la escala de espaciado.
+        for (int id : new int[]{R.id.pieza2, R.id.pieza4}) {
+            ((android.widget.LinearLayout.LayoutParams) findViewById(id).getLayoutParams())
+                    .setMarginStart(getResources().getDimensionPixelSize(R.dimen.espacio_12));
+        }
+
+        fila(R.id.llAcercaEmail, R.drawable.ic_ms_mail, getString(R.string.acerca_autor_email_label),
+                R.drawable.ic_ms_open_in_new, v -> abrirEmail());
+        fila(R.id.llAcercaCompartir, R.drawable.ic_ms_share, getString(R.string.acerca_compartir_label),
+                R.drawable.ic_ms_chevron_right, v -> compartirViaSms());
+        fila(R.id.llAcercaLicencias, R.drawable.ic_ms_license, getString(R.string.licencias_titulo),
+                R.drawable.ic_ms_chevron_right, v -> startActivity(new Intent(this, LicenciasActivity.class)));
+    }
+
+    // Una pieza de «Qué hace»: un icono con su color y su frase.
+    private void pieza(int id, int icono, int color, int texto) {
+        android.view.View p = findViewById(id);
+        android.widget.ImageView iv = p.findViewById(R.id.ivPieza);
+        iv.setImageResource(icono);
+        iv.setImageTintList(android.content.res.ColorStateList.valueOf(
+                androidx.core.content.ContextCompat.getColor(this, color)));
+        ((android.widget.TextView) p.findViewById(R.id.tvPieza)).setText(texto);
+    }
+
+    // Una fila del grupo de abajo: icono, texto y la flecha que dice si abre dentro o fuera.
+    private void fila(int id, int icono, String titulo, int flecha, android.view.View.OnClickListener accion) {
+        android.view.View f = findViewById(id);
+        ((android.widget.ImageView) f.findViewById(R.id.ivIcono)).setImageResource(icono);
+        ((android.widget.TextView) f.findViewById(R.id.tvTitulo)).setText(titulo);
+        ((android.widget.ImageView) f.findViewById(R.id.ivFlecha)).setImageResource(flecha);
+        f.setContentDescription(flecha == R.drawable.ic_ms_open_in_new
+                ? getString(R.string.ajustes_abre_fuera_a11y, titulo) : titulo);
+        f.setOnClickListener(accion);
     }
 
     // Comparte la app por SMS: abre el selector de contactos del sistema. El picker

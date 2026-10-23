@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Inicio: el panel</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#0B0C0E;font-family:'Barlow',sans-serif;color:#F2F2F3}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;display:inline-block;white-space:nowrap;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+button{font-family:inherit;cursor:pointer}
+a{color:#FF8A3D}a:hover{color:#FFB27A}
+.toque{transition:transform 120ms cubic-bezier(.2,0,0,1)}.toque:active{transform:scale(.97)}
+.bc{font-family:'Barlow Condensed',sans-serif;font-weight:700}
+.tit{margin:0;font-size:20px;font-weight:600}
+.cab{display:flex;align-items:center;justify-content:space-between;padding:0 20px}
+.enl{font-size:15px;font-weight:600;text-decoration:none;min-height:44px;display:flex;align-items:center}
+.carrusel{display:flex;gap:12px;overflow-x:auto;padding:0 20px 4px;scrollbar-width:none}
+.mini{flex-shrink:0;width:150px;box-sizing:border-box;padding:16px;border-radius:22px;background:#1B1E24;display:flex;flex-direction:column;gap:10px}
+.ej{flex-shrink:0;width:118px;display:flex;flex-direction:column;gap:8px}
+@keyframes entra{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){.anim{animation:none !important}.toque:active{transform:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 1820px; position: relative; overflow: hidden; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif;">
+<header style="padding: 24px 20px 0; display: flex; align-items: center; gap: 12px;">
+<div style="flex-grow: 1;"><span style="font-size: 15px; color: #A1A9B6;">Jueves, 22 de octubre</span><h1 class="bc" style="margin: 2px 0 0; font-size: 34px;">Hola, Dani</h1></div>
+<button type="button" aria-label="Tu perfil y ajustes" class="toque" style="width: 48px; height: 48px; border-radius: 24px; border: 2px solid #FF6A00; background: #3A2110; color: #FFB27A; font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 700; display: flex; align-items: center; justify-content: center;">D</button>
+</header>
+<div style="margin: 18px 20px 0; display: flex; align-items: center; gap: 10px;">
+<span aria-hidden="true" style="flex-shrink: 0; position: relative; width: 44px; height: 44px; border-radius: 22px; overflow: hidden; background: #3A2110;"><img src="../img/profi_cara.webp" alt="" style="position: absolute; left: 0; top: 2px; width: 100%; height: auto;"></span>
+<span style="padding: 10px 14px; border-radius: 4px 16px 16px 16px; background: #1B1E24; font-size: 15px; line-height: 1.35; color: #C9CED6;">La última vez en Pierna A batiste 2 récords. <strong style="color: #F2F2F3;">Hoy vamos a por la sentadilla.</strong></span>
+</div>
+<main style="padding: 24px 0 120px; display: flex; flex-direction: column; gap: 36px;">
+<section aria-label="Hoy toca" class="anim" style="margin: 0 20px; border-radius: 28px; background: #3A2110; overflow: hidden; animation: entra 350ms cubic-bezier(.05,.7,.1,1) backwards;">
+<div style="display: flex; align-items: center; gap: 8px; padding: 22px 22px 0;">
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px;">
+<span style="font-size: 14px; font-weight: 600; color: #FFB27A;">Hoy toca · semana 3 de 8</span>
+<span class="bc" style="font-size: 38px; line-height: 1; color: #FFF4E8;">Pierna A</span>
+<span style="font-size: 15px; color: #FFD3B0;">6 ejercicios · 50 min · cuádriceps, glúteo y femoral</span>
+</div>
+<svg width="96" height="192" viewBox="0 0 120 240" role="img" aria-label="Zonas de hoy: pierna y gemelo">
+<circle cx="60" cy="20" r="14" fill="#353A43"></circle>
+<rect x="53" y="33" width="14" height="8" rx="3" fill="#353A43"></rect>
+<path d="M30 46 Q60 38 90 46 L88 60 L32 60 Z" fill="#2A2E35"></path>
+<rect x="36" y="60" width="48" height="30" rx="8" fill="#2A2E35"></rect>
+<rect x="40" y="93" width="40" height="34" rx="8" fill="#5A2A0A"></rect>
+<rect x="14" y="50" width="16" height="44" rx="8" fill="#2A2E35"></rect>
+<rect x="90" y="50" width="16" height="44" rx="8" fill="#2A2E35"></rect>
+<rect x="10" y="98" width="14" height="40" rx="7" fill="#353A43"></rect>
+<rect x="96" y="98" width="14" height="40" rx="7" fill="#353A43"></rect>
+<rect x="38" y="131" width="20" height="54" rx="9" fill="#FF6A00"></rect>
+<rect x="62" y="131" width="20" height="54" rx="9" fill="#FF6A00"></rect>
+<rect x="40" y="189" width="16" height="44" rx="8" fill="#B34A00"></rect>
+<rect x="64" y="189" width="16" height="44" rx="8" fill="#B34A00"></rect>
+</svg>
+</div>
+<div class="carrusel" style="margin-top: 16px; padding: 0 22px 4px;">
+<sc-for list="{{ ejercicios }}" as="e" hint-placeholder-count="4">
+<div class="ej"><span style="height: 84px; border-radius: 16px; background: #1A0E00; display: flex; align-items: center; justify-content: center; color: #FF8A3D;"><span class="ms f" aria-hidden="true" style="font-size: 40px;">{{ e.icono }}</span></span><span style="font-size: 14px; font-weight: 600; line-height: 1.2; color: #FFF4E8;">{{ e.nombre }}</span><span style="font-size: 13px; color: #FFD3B0;">{{ e.meta }}</span></div>
+</sc-for>
+</div>
+<div style="padding: 18px 22px 22px;"><button type="button" class="toque" style="width: 100%; min-height: 56px; border: none; border-radius: 28px; background: #FF6A00; color: #1A0E00; font-size: 18px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;"><span class="ms f" aria-hidden="true">play_arrow</span>Empezar</button></div>
+</section>
+<section aria-label="Tu día" style="display: flex; flex-direction: column; gap: 14px;">
+<div class="cab"><h2 class="tit">Tu día</h2><a href="#" class="enl">Ver el día</a></div>
+<div class="carrusel">
+<div class="mini"><span style="display: flex; align-items: center; gap: 6px; font-size: 14px; color: #A1A9B6;"><span class="ms" aria-hidden="true" style="font-size: 18px; color: #FF8A3D;">local_fire_department</span>Calorías</span><svg width="72" height="72" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="30" fill="none" stroke="#353A43" stroke-width="8"></circle><circle cx="36" cy="36" r="30" fill="none" stroke="#FF6A00" stroke-width="8" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="90.6" transform="rotate(-90 36 36)"></circle></svg><span><strong class="bc" style="font-size: 24px;">1.048</strong><span style="display: block; font-size: 13px; color: #A1A9B6;">te quedan</span></span></div>
+<div class="mini"><span style="display: flex; align-items: center; gap: 6px; font-size: 14px; color: #A1A9B6;"><span class="ms" aria-hidden="true" style="font-size: 18px; color: #6BA6F5;">egg_alt</span>Proteína</span><svg width="72" height="72" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="30" fill="none" stroke="#353A43" stroke-width="8"></circle><circle cx="36" cy="36" r="30" fill="none" stroke="#6BA6F5" stroke-width="8" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="58.4" transform="rotate(-90 36 36)"></circle></svg><span><strong class="bc" style="font-size: 24px;">109 g</strong><span style="display: block; font-size: 13px; color: #A1A9B6;">de 157</span></span></div>
+<div class="mini"><span style="display: flex; align-items: center; gap: 6px; font-size: 14px; color: #A1A9B6;"><span class="ms" aria-hidden="true" style="font-size: 18px; color: #5EC8E5;">water_drop</span>Agua</span><span style="display: flex; flex-wrap: wrap; gap: 4px; min-height: 72px; align-content: center;"><span style="width: 14px; height: 20px; border-radius: 3px 3px 5px 5px; background: #5EC8E5;"></span><span style="width: 14px; height: 20px; border-radius: 3px 3px 5px 5px; background: #5EC8E5;"></span><span style="width: 14px; height: 20px; border-radius: 3px 3px 5px 5px; background: #5EC8E5;"></span><span style="width: 14px; height: 20px; border-radius: 3px 3px 5px 5px; background: #5EC8E5;"></span><span style="width: 14px; height: 20px; border-radius: 3px 3px 5px 5px; background: #5EC8E5;"></span><span style="width: 14px; height: 20px; border-radius: 3px 3px 5px 5px; background: #5EC8E5;"></span><span style="width: 14px; height: 20px; border-radius: 3px 3px 5px 5px; background: #353A43;"></span><span style="width: 14px; height: 20px; border-radius: 3px 3px 5px 5px; background: #353A43;"></span><span style="width: 14px; height: 20px; border-radius: 3px 3px 5px 5px; background: #353A43;"></span></span><span><strong class="bc" style="font-size: 24px;">1,5 L</strong><span style="display: block; font-size: 13px; color: #A1A9B6;">de 2,8</span></span></div>
+</div><button type="button" class="toque" style="margin: 4px 20px 0; min-height: 64px; padding: 0 16px; border: none; border-radius: 22px; background: #1B1E24; color: #F2F2F3; display: flex; align-items: center; gap: 14px; text-align: left;"><span style="flex-shrink: 0; width: 40px; height: 40px; border-radius: 20px; background: #3A2110; color: #FF8A3D; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">cookie</span></span><span style="flex-grow: 1; display: flex; flex-direction: column;"><span style="font-size: 16px; font-weight: 600;">Apuntar la merienda</span><span style="font-size: 13px; color: #A1A9B6;">Toca ahora · te faltan 48 g de proteína</span></span><span style="flex-shrink: 0; width: 40px; height: 40px; border-radius: 20px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">add</span></span></button>
+
+</section>
+<section aria-label="Tus músculos esta semana" style="display: flex; flex-direction: column; gap: 14px;">
+<div class="cab"><h2 class="tit">Tus músculos esta semana</h2><a href="#" class="enl">Detalle</a></div>
+<div style="margin: 0 20px; padding: 18px; border-radius: 24px; background: #1B1E24; display: flex; align-items: center; gap: 18px;">
+<svg width="110" height="220" viewBox="0 0 120 240" role="img" aria-label="Más trabajado esta semana: pecho y pierna">
+<circle cx="60" cy="20" r="14" fill="#353A43"></circle>
+<rect x="53" y="33" width="14" height="8" rx="3" fill="#353A43"></rect>
+<path d="M30 46 Q60 38 90 46 L88 60 L32 60 Z" fill="#B34A00"></path>
+<rect x="36" y="60" width="48" height="30" rx="8" fill="#FF6A00"></rect>
+<rect x="40" y="93" width="40" height="34" rx="8" fill="#5A2A0A"></rect>
+<rect x="14" y="50" width="16" height="44" rx="8" fill="#B34A00"></rect>
+<rect x="90" y="50" width="16" height="44" rx="8" fill="#B34A00"></rect>
+<rect x="10" y="98" width="14" height="40" rx="7" fill="#353A43"></rect>
+<rect x="96" y="98" width="14" height="40" rx="7" fill="#353A43"></rect>
+<rect x="38" y="131" width="20" height="54" rx="9" fill="#FF6A00"></rect>
+<rect x="62" y="131" width="20" height="54" rx="9" fill="#FF6A00"></rect>
+<rect x="40" y="189" width="16" height="44" rx="8" fill="#5A2A0A"></rect>
+<rect x="64" y="189" width="16" height="44" rx="8" fill="#5A2A0A"></rect>
+</svg>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 10px;">
+<sc-for list="{{ zonas }}" as="z" hint-placeholder-count="5">
+<span style="display: flex; flex-direction: column; gap: 4px;"><span style="display: flex; justify-content: space-between; font-size: 14px;"><span>{{ z.nombre }}</span><span style="color: #A1A9B6; font-variant-numeric: tabular-nums;">{{ z.series }} series</span></span><span aria-hidden="true" style="height: 6px; border-radius: 3px; background: #2A2E35; overflow: hidden;"><span style="display: block; height: 100%; width: {{ z.ancho }}; background: {{ z.color }}; border-radius: 3px;"></span></span></span>
+</sc-for>
+</div>
+</div>
+</section>
+<section aria-label="Tu progreso" style="display: flex; flex-direction: column; gap: 14px;">
+<div class="cab"><h2 class="tit">Tu progreso</h2><a href="#" class="enl">Ver todo</a></div>
+<div style="margin: 0 20px; padding: 18px; border-radius: 24px; background: #1B1E24; display: flex; flex-direction: column; gap: 12px;">
+<span style="display: flex; align-items: baseline; justify-content: space-between;"><span style="font-size: 14px; color: #A1A9B6;">Kilos por semana</span><strong style="font-size: 14px; color: #4ADE80;">+12 % en 6 semanas</strong></span>
+<div role="img" aria-label="Kilos por semana, de 18.200 a 20.400" style="display: flex; align-items: flex-end; gap: 10px; height: 96px;">
+<sc-for list="{{ barras }}" as="b" hint-placeholder-count="6"><span style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px;"><span style="width: 100%; height: {{ b.alto }}; border-radius: 8px 8px 4px 4px; background: {{ b.color }};"></span><span style="font-size: 12px; color: #A1A9B6;">{{ b.s }}</span></span></sc-for>
+</div>
+<div style="display: flex; align-items: center; gap: 14px; padding-top: 12px; border-top: 1px solid #252A31;"><span style="width: 40px; height: 40px; border-radius: 20px; background: #3A2E12; color: #E8B84B; display: flex; align-items: center; justify-content: center;"><span class="ms f" aria-hidden="true" style="font-size: 22px;">trophy</span></span><span style="flex-grow: 1; display: flex; flex-direction: column;"><span style="font-size: 15px; font-weight: 600;">Aperturas en máquina</span><span style="font-size: 13px; color: #A1A9B6;">Último récord · hoy</span></span><strong class="bc" style="font-size: 19px; color: #E8B84B;">38,8 × 15</strong></div>
+</div>
+</section>
+<section aria-label="Tus últimos entrenos" style="display: flex; flex-direction: column; gap: 14px;">
+<div class="cab"><h2 class="tit">Tus últimos entrenos</h2><a href="#" class="enl">Historial</a></div>
+<div class="carrusel">
+<sc-for list="{{ sesiones }}" as="s" hint-placeholder-count="3">
+<div style="flex-shrink: 0; width: 220px; box-sizing: border-box; padding: 16px; border-radius: 22px; background: #1B1E24; display: flex; flex-direction: column; gap: 8px;"><span style="font-size: 13px; color: #A1A9B6;">{{ s.cuando }}</span><span class="bc" style="font-size: 22px;">{{ s.rutina }}</span><span style="display: flex; gap: 14px; font-size: 14px; color: #C9CED6;"><span>{{ s.kilos }}</span><span>{{ s.min }}</span></span><span style="font-size: 13px; font-weight: 600; color: {{ s.extraColor }};">{{ s.extra }}</span></div>
+</sc-for>
+</div>
+</section>
+</main>
+<nav aria-label="Navegación" style="position: absolute; left: 0; right: 0; bottom: 0; height: 80px; background: #121418; border-top: 1px solid #252A31; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center; justify-items: center;">
+<span style="display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; font-weight: 600;"><span style="width: 56px; height: 30px; border-radius: 15px; background: #3A2110; color: #FFB27A; display: flex; align-items: center; justify-content: center;"><span class="ms f" aria-hidden="true">home</span></span>Inicio</span>
+<span style="display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; color: #A1A9B6;"><span class="ms" aria-hidden="true">fitness_center</span>Entrenar</span>
+<span style="width: 56px; height: 56px; border-radius: 28px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; justify-content: center;"><span class="ms" aria-hidden="true">add</span></span>
+<span style="display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; color: #A1A9B6;"><span class="ms" aria-hidden="true">restaurant</span>Nutrición</span>
+<span style="display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; color: #A1A9B6;"><span class="ms" aria-hidden="true">trending_up</span>Progreso</span>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1820}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const max = 20400;
+    const kilos = [18200, 18900, 18600, 19500, 19800, 20400];
+    return {
+      ejercicios: [
+        { icono: 'fitness_center', nombre: 'Sentadilla con barra', meta: '4 × 8 · a por 82,5' },
+        { icono: 'airline_seat_recline_extra', nombre: 'Prensa de piernas', meta: '3 × 12' },
+        { icono: 'accessibility_new', nombre: 'Curl femoral tumbado', meta: '3 × 15' },
+        { icono: 'directions_walk', nombre: 'Zancadas', meta: '3 × 10 por pierna' }
+      ],
+      zonas: [
+        { nombre: 'Pierna', series: 15, ancho: '100%', color: '#FF6A00' },
+        { nombre: 'Pecho', series: 9, ancho: '60%', color: '#FF6A00' },
+        { nombre: 'Espalda', series: 12, ancho: '80%', color: '#FF6A00' },
+        { nombre: 'Hombros y brazos', series: 9, ancho: '60%', color: '#B34A00' },
+        { nombre: 'Core', series: 3, ancho: '20%', color: '#5A2A0A' }
+      ],
+      barras: kilos.map((k, i) => ({ alto: Math.round(k / max * 76) + 'px', color: i === kilos.length - 1 ? '#FF6A00' : '#4A505B', s: 'S' + (i + 1) })),
+      sesiones: [
+        { cuando: 'Ayer · martes', rutina: 'Torso B', kilos: '6.120 kg', min: '52 min', extra: '1 récord', extraColor: '#E8B84B' },
+        { cuando: 'Lunes', rutina: 'Pierna A', kilos: '8.400 kg', min: '58 min', extra: '+4 % que la anterior', extraColor: '#4ADE80' },
+        { cuando: 'Jueves pasado', rutina: 'Torso A', kilos: '5.880 kg', min: '71 min', extra: 'Sin récords', extraColor: '#A1A9B6' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -23,6 +23,8 @@ import es.pmdm.gymprofit.utils.Correo;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
+import es.pmdm.gymprofit.utils.RequisitosClave;
+import es.pmdm.gymprofit.ui.widget.RequisitosUi;
 import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
@@ -60,12 +62,23 @@ public class CambiarCorreoActivity extends AppCompatActivity {
         AvisoDescartar.instalar(this, findViewById(R.id.toolbar),
                 () -> AvisoDescartar.hayTexto(etEmail.getText(), etPassword.getText()));
         findViewById(R.id.btnGuardar).setOnClickListener(v -> guardar());
+        // Los requisitos se marcan solos al escribir, como en la contraseña (GP-216, tablero 20).
+        etEmail.addTextChangedListener(new android.text.TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int a, int b, int c) { }
+            @Override public void onTextChanged(CharSequence s, int a, int b, int c) { }
+            @Override public void afterTextChanged(android.text.Editable e) {
+                tilEmail.setError(null);
+                pintarRequisitos();
+            }
+        });
+        pintarRequisitos();
 
         usuarioApi.getPorId(prefs.getUsuarioId()).enqueue(new ApiCallback<Usuario>() {
             @Override
             public void onOk(Usuario u) {
                 if (u == null || isFinishing()) return;
                 emailActual = u.getEmail();
+                pintarRequisitos();
                 ((TextView) findViewById(R.id.tvCorreoActual))
                         .setText(getString(R.string.cambiar_correo_actual, Correo.enmascarar(emailActual)));
             }
@@ -76,6 +89,13 @@ public class CambiarCorreoActivity extends AppCompatActivity {
                 UiFeedback.toastError(CambiarCorreoActivity.this, code, message);
             }
         });
+    }
+
+    // Los requisitos del correo nuevo, con lo escrito ahora y el correo de la cuenta.
+    private void pintarRequisitos() {
+        String escrito = etEmail.getText() == null ? "" : etEmail.getText().toString();
+        RequisitosUi.correo(findViewById(android.R.id.content), RequisitosClave.correo(escrito, emailActual),
+                escrito.trim().isEmpty());
     }
 
     /**

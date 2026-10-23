@@ -9,6 +9,7 @@ import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoPatch
 import com.gymprofit.api.config.security.SecurityUtils;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.UltimaVezDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.VolumenMuscularDTO;
+import com.gymprofit.api.dto.entity.sesionentrenamiento.VolumenSemanalDTO;
 import com.gymprofit.api.dto.entity.record.RecordDTO;
 import com.gymprofit.api.repository.jpa.IEjercicioRealizadoRepository;
 import com.gymprofit.api.entity.Ejercicio;
@@ -721,6 +722,60 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
         java.math.BigDecimal porResumen = ejercicioRealizadoRepository.volumenDeResumen(sesionId);
         return porResumen == null ? java.math.BigDecimal.ZERO : porResumen;
+    }
+
+    /** Tope de semanas que se pueden pedir de una vez (tres meses largos). */
+    static final int MAX_SEMANAS_VOLUMEN = 12;
+
+    /**
+     * Kilos movidos por semana, para las barras de «Tu progreso» (GP-216).
+     * <p>
+     * Tres consultas fijas, sin una por sesión: las sesiones del rango, sus kilos serie a
+     * serie y sus kilos por el resumen del ejercicio. Manda el detalle por serie cuando la
+     * sesión lo tiene y, si no, el resumen, igual que {@link #getVolumenLevantado}. La
+     * semana de una sesión es la de su inicio, y el lunes lo manda la app en su hora.
+     */
+    @Override
+    public List<VolumenSemanalDTO> getVolumenSemanal(Integer usuarioId, LocalDateTime desde, int semanas) {
+        securityUtils.checkDueno(usuarioId);
+        if (semanas < 1 || semanas > MAX_SEMANAS_VOLUMEN) {
+            throw new InvalidDataException("error.volumenSemanal.semanas", MAX_SEMANAS_VOLUMEN);
+        }
+        LocalDateTime hasta = desde.plusWeeks(semanas);
+
+        Map<Integer, BigDecimal> porSeries = kilosPorSesion(
+                ejercicioRealizadoRepository.volumenDeSeriesPorSesion(usuarioId, desde, hasta));
+        Map<Integer, BigDecimal> porResumen = kilosPorSesion(
+                ejercicioRealizadoRepository.volumenDeResumenPorSesion(usuarioId, desde, hasta));
+
+        BigDecimal[] kilos = new BigDecimal[semanas];
+        int[] sesiones = new int[semanas];
+        java.util.Arrays.fill(kilos, BigDecimal.ZERO);
+        for (Object[] fila : sesionEntrenamientoRepository.idsYComienzoTerminadas(usuarioId, desde, hasta)) {
+            Integer id = (Integer) fila[0];
+            LocalDateTime inicio = (LocalDateTime) fila[1];
+            int semana = (int) (java.time.Duration.between(desde, inicio).toDays() / 7);
+            BigDecimal deSeries = porSeries.get(id);
+            BigDecimal volumen = deSeries != null && deSeries.signum() > 0
+                    ? deSeries : porResumen.getOrDefault(id, BigDecimal.ZERO);
+            kilos[semana] = kilos[semana].add(volumen);
+            sesiones[semana]++;
+        }
+
+        List<VolumenSemanalDTO> resultado = new java.util.ArrayList<>(semanas);
+        for (int i = 0; i < semanas; i++) {
+            resultado.add(new VolumenSemanalDTO(desde.plusWeeks(i), kilos[i], sesiones[i]));
+        }
+        return resultado;
+    }
+
+    // Filas [sesionId, kilos] a mapa; un NULL (sin pesos) cuenta como cero.
+    private static Map<Integer, BigDecimal> kilosPorSesion(List<Object[]> filas) {
+        Map<Integer, BigDecimal> mapa = new java.util.HashMap<>();
+        for (Object[] f : filas) {
+            mapa.put((Integer) f[0], f[1] == null ? BigDecimal.ZERO : new BigDecimal(f[1].toString()));
+        }
+        return mapa;
     }
 
     /**

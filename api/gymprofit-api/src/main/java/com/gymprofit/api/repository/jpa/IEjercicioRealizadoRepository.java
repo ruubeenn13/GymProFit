@@ -105,6 +105,37 @@ public interface IEjercicioRealizadoRepository extends JpaRepository<EjercicioRe
            "FROM EjercicioRealizado er WHERE er.sesion.id = :sesionId")
     java.math.BigDecimal volumenDeResumen(@Param("sesionId") Integer sesionId);
 
+    /**
+     * Kilos movidos por sesión terminada, serie a serie, de las sesiones que empiezan en
+     * {@code [desde, hasta)} (GP-216). Misma definición que {@link #volumenDeSeries}, en
+     * una sola consulta para todas las sesiones del rango.
+     *
+     * @return filas {@code [sesionId, kilos]}; solo salen las sesiones con series.
+     */
+    @Query("SELECT s.id, SUM(sr.peso * sr.repeticiones) " +
+           "FROM SerieRealizada sr JOIN sr.ejercicioRealizado er JOIN er.sesion s " +
+           "WHERE s.usuario.id = :usuarioId AND s.completada = true " +
+           "AND s.fechaInicio >= :desde AND s.fechaInicio < :hasta AND sr.segundos IS NULL " +
+           "GROUP BY s.id")
+    List<Object[]> volumenDeSeriesPorSesion(@Param("usuarioId") Integer usuarioId,
+                                            @Param("desde") LocalDateTime desde,
+                                            @Param("hasta") LocalDateTime hasta);
+
+    /**
+     * Como {@link #volumenDeSeriesPorSesion} pero desde el resumen por ejercicio, para las
+     * sesiones anteriores al registro por serie.
+     *
+     * @return filas {@code [sesionId, kilos]}.
+     */
+    @Query("SELECT s.id, SUM(er.pesoUsado * er.repeticionesReales * er.seriesCompletadas) " +
+           "FROM EjercicioRealizado er JOIN er.sesion s " +
+           "WHERE s.usuario.id = :usuarioId AND s.completada = true " +
+           "AND s.fechaInicio >= :desde AND s.fechaInicio < :hasta " +
+           "GROUP BY s.id")
+    List<Object[]> volumenDeResumenPorSesion(@Param("usuarioId") Integer usuarioId,
+                                             @Param("desde") LocalDateTime desde,
+                                             @Param("hasta") LocalDateTime hasta);
+
     // Elimina todos los ejercicios realizados asociados a una sesión.
     void deleteBySesionId(Integer sesionId);
 

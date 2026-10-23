@@ -42,12 +42,13 @@ public class LegalTest {
     }
 
     @Test
-    public void ajustesYAcercaDeAbrenLosTerminos() throws IOException {
-        String ajustes = java("AjustesActivity.java");
-        assertFalse("la fila de los términos sigue oculta",
-                ajustes.contains("filaTerminos).setVisibility(View.GONE)"));
-        assertTrue(ajustes.contains("R.string.url_terminos"));
-        assertTrue("Acerca de no enlaza los términos", java("AcercaDeActivity.java").contains("R.string.url_terminos"));
+    public void perfilYAjustesAbreLosTerminosYLaPrivacidad() throws IOException {
+        // Desde GP-216 Ajustes es Perfil y ajustes, y «Acerca de» ya no lleva los enlaces legales (el
+        // tablero 23 solo tiene contacto, compartir y licencias): viven en el grupo Legal de Perfil.
+        String perfil = java("PerfilActivity.java");
+        assertFalse("la fila de los términos sigue oculta", perfil.contains("filaTerminos).setVisibility(View.GONE)"));
+        assertTrue(perfil.contains("R.string.url_terminos"));
+        assertTrue("falta la privacidad", perfil.contains("R.string.url_privacidad"));
     }
 
     @Test

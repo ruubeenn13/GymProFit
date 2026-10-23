@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  view_fila_ajuste — una fila de Ajustes (GP-105): icono gris, texto, valor opcional a
-  la derecha («Oscuro», «r***@gmail.com») y chevron o «abre fuera». La rellena
-  AjustesActivity; TalkBack la lee de una vez («Tema, Oscuro»).
+  view_fila_ajuste — LA fila de Perfil y ajustes (GP-216, tableros 17 a 23): un solo patrón para
+  las 22 filas. Icono en círculo de 40, título de 16, una segunda línea opcional, a la derecha un
+  valor, un interruptor o un botón, y al final la flecha (o «abre fuera»). Lo que no se usa se
+  queda en gone. La rellena quien la incluye; TalkBack la lee de una vez («Tema, Oscuro»), por
+  eso lo de dentro no lleva nombre propio.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -13,34 +15,69 @@
         style="@style/Widget.GymProFit.Fila.Icono"
         app:tint="?attr/colorOnSurfaceVariant" />
 
-    <TextView
-        android:id="@+id/tvTitulo"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:layout_marginStart="@dimen/fila_icono_a_texto"
-        android:textSize="@dimen/text_fila"
-        android:textColor="?attr/colorOnSurface"
-        android:importantForAccessibility="no" />
+        android:layout_weight="1"
+        android:importantForAccessibility="no"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvTitulo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:importantForAccessibility="no"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="@dimen/text_fila" />
+
+        <TextView
+            android:id="@+id/tvSub"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/espacio_4"
+            android:importantForAccessibility="no"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="@dimen/text_eyebrow"
+            android:visibility="gone" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tvValor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="@dimen/espacio_12"
         android:maxWidth="180dp"
         android:gravity="end"
-        android:textSize="@dimen/text_caption"
+        android:importantForAccessibility="no"
         android:textColor="?attr/colorOnSurfaceVariant"
-        android:visibility="gone"
-        android:importantForAccessibility="no" />
+        android:textSize="@dimen/text_caption"
+        android:visibility="gone" />
+
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/swInterruptor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/espacio_12"
+        android:clickable="false"
+        android:focusable="false"
+        android:importantForAccessibility="no"
+        android:visibility="gone" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAccion"
+        style="@style/Widget.GymProFit.BotonPildora"
+        android:layout_width="wrap_content"
+        android:layout_marginStart="@dimen/espacio_12"
+        android:minHeight="48dp"
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/ivFlecha"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_marginStart="14dp"
+        android:layout_marginStart="@dimen/espacio_12"
+        android:importantForAccessibility="no"
         android:src="@drawable/ic_ms_chevron_right"
-        app:tint="?attr/colorOnSurfaceVariant"
-        android:importantForAccessibility="no" />
+        app:tint="?attr/colorOnSurfaceVariant" />
 </LinearLayout>

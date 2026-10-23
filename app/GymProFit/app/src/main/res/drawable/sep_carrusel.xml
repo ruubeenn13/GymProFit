@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- sep_carrusel — el hueco de 12 entre las tarjetas de un carrusel de Inicio (GP-216). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <size android:width="@dimen/espacio_12" android:height="@dimen/espacio_12" />
+    <solid android:color="@android:color/transparent" />
+</shape>

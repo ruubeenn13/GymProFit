@@ -7,6 +7,7 @@ import es.pmdm.gymprofit.model.envivo.UltimaVez;
 import es.pmdm.gymprofit.model.sesion.ResumenSesion;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
 import es.pmdm.gymprofit.model.sesion.VolumenMuscular;
+import es.pmdm.gymprofit.model.sesion.VolumenSemanal;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -72,6 +73,14 @@ public interface SesionApi {
     @GET("sesiones/usuario/{usuarioId}/volumen-muscular")
     Call<List<VolumenMuscular>> getVolumenMuscularDesde(@Path("usuarioId") int usuarioId,
                                                         @Query("desde") String desde);
+
+    // Kilos movidos por semana (GP-216, «Tu progreso» de Inicio): «semanas» seguidas desde el
+    // lunes «desde» (00:00 en la hora local, «yyyy-MM-ddTHH:mm:ss»), una entrada por semana,
+    // también las de cero, en orden. De 1 a 12 semanas.
+    @GET("sesiones/usuario/{usuarioId}/volumen-semanal")
+    Call<List<VolumenSemanal>> getVolumenSemanal(@Path("usuarioId") int usuarioId,
+                                                 @Query("desde") String desde,
+                                                 @Query("semanas") int semanas);
 
     // Kilos movidos en una sesión. Respuesta: {"volumenKg": 4250.00}. Es el número
     // grande del resumen tras entrenar.

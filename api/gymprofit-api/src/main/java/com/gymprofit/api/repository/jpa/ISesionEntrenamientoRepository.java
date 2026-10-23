@@ -92,4 +92,17 @@ public interface ISesionEntrenamientoRepository extends JpaRepository<SesionEntr
             "WHERE s.usuario.id = :usuarioId AND s.completada = true " +
             "ORDER BY s.fechaInicio DESC ")
     List<SesionEntrenamiento> getSesionesCompletadasByUsuario(@Param("usuarioId") Integer usuarioId);
+
+    /**
+     * Id y comienzo de las sesiones terminadas del usuario que empiezan en
+     * {@code [desde, hasta)} (GP-216, kilos por semana).
+     *
+     * @return filas {@code [id, fechaInicio]}.
+     */
+    @Query("SELECT s.id, s.fechaInicio FROM SesionEntrenamiento s " +
+           "WHERE s.usuario.id = :usuarioId AND s.completada = true " +
+           "AND s.fechaInicio >= :desde AND s.fechaInicio < :hasta")
+    List<Object[]> idsYComienzoTerminadas(@Param("usuarioId") Integer usuarioId,
+                                          @Param("desde") LocalDateTime desde,
+                                          @Param("hasta") LocalDateTime hasta);
 }

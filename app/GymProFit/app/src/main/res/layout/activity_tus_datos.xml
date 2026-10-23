@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_tus_datos — Tus datos y objetivos (GP-216, tablero 18). Sustituye a Editar perfil: botones
+  −/+ en vez de campos, opciones a la vista en vez de desplegables, y abajo el plan recalculado
+  antes de guardar, con la fórmula real de la app (DEC-054). «Guardar» está apagado si nada cambia.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/raizTusDatos"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/Widget.GymProFit.Cabecera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="@string/perfil_datos_titulo" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/espacio_12"
+            android:paddingBottom="@dimen/espacio_28">
+
+            <!-- Profi dice para qué sirve -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margen_pantalla"
+                android:layout_marginEnd="@dimen/margen_pantalla"
+                android:gravity="top"
+                android:orientation="horizontal">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@color/gp_hero"
+                    android:importantForAccessibility="no"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/profi_cara"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.GymProFit.Circulo" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/espacio_8"
+                    android:background="@drawable/bg_burbuja_profi"
+                    android:paddingStart="@dimen/espacio_16"
+                    android:paddingEnd="@dimen/espacio_16"
+                    android:paddingTop="@dimen/espacio_12"
+                    android:paddingBottom="@dimen/espacio_12"
+                    android:text="@string/datos_profi"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Apoyo"
+                    android:textSize="@dimen/text_body" />
+            </LinearLayout>
+
+            <!-- Cómo te llamamos -->
+            <TextView
+                style="@style/Widget.GymProFit.RotuloGrupo"
+                android:layout_marginTop="@dimen/separacion_subpantalla"
+                android:text="@string/datos_como_te_llamamos" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilNombre"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margen_pantalla"
+                android:layout_marginTop="@dimen/espacio_8"
+                android:layout_marginEnd="@dimen/margen_pantalla"
+                android:hint="@string/datos_nombre"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:helperText="@string/datos_nombre_ayuda">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etNombre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionDone"
+                    android:inputType="textPersonName|textCapWords"
+                    android:maxLength="50"
+                    android:textSize="@dimen/text_body" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Tu cuerpo -->
+            <TextView
+                style="@style/Widget.GymProFit.RotuloGrupo"
+                android:layout_marginTop="@dimen/separacion_subpantalla"
+                android:text="@string/datos_tu_cuerpo" />
+
+            <LinearLayout style="@style/Widget.GymProFit.GrupoAjustes.Pantalla">
+
+                <include android:id="@+id/stepperPeso" layout="@layout/item_stepper_dato" />
+                <include android:id="@+id/stepperAltura" layout="@layout/item_stepper_dato" />
+                <include android:id="@+id/stepperEdad" layout="@layout/item_stepper_dato" />
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/Widget.GymProFit.GrupoAjustes.Pantalla"
+                android:showDividers="none"
+                android:padding="@dimen/espacio_16">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/datos_sexo"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Cuerpo" />
+
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/grupoSexo"
+                    style="@style/Widget.GymProFit.GrupoConectado"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/espacio_8">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSexoHombre"
+                        style="@style/Widget.GymProFit.BotonConectado"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/onboarding_hombre" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSexoMujer"
+                        style="@style/Widget.GymProFit.BotonConectado"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/onboarding_mujer" />
+                </com.google.android.material.button.MaterialButtonToggleGroup>
+            </LinearLayout>
+
+            <!-- Tu objetivo -->
+            <TextView
+                style="@style/Widget.GymProFit.RotuloGrupo"
+                android:layout_marginTop="@dimen/separacion_subpantalla"
+                android:text="@string/datos_tu_objetivo" />
+
+            <LinearLayout
+                android:id="@+id/gridObjetivo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margen_pantalla"
+                android:layout_marginTop="@dimen/espacio_8"
+                android:layout_marginEnd="@dimen/margen_pantalla"
+                android:orientation="vertical" />
+
+            <!-- De 14 a 17 años, «Perder grasa» da calorías de mantenimiento (GP-103). -->
+            <TextView
+                android:id="@+id/tvNotaObjetivo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margen_pantalla"
+                android:layout_marginTop="@dimen/espacio_8"
+                android:layout_marginEnd="@dimen/margen_pantalla"
+                android:text="@string/editar_perfil_nota_menores"
+                android:textAppearance="@style/TextAppearance.GymProFit.Apoyo"
+                android:visibility="gone" />
+
+            <!-- Tu día a día -->
+            <TextView
+                style="@style/Widget.GymProFit.RotuloGrupo"
+                android:layout_marginTop="@dimen/separacion_subpantalla"
+                android:text="@string/datos_tu_dia_a_dia" />
+
+            <LinearLayout
+                style="@style/Widget.GymProFit.GrupoAjustes.Pantalla"
+                android:showDividers="none"
+                android:padding="@dimen/espacio_16">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/datos_actividad"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Cuerpo" />
+
+                    <TextView
+                        android:id="@+id/tvActividadTexto"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/espacio_8"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Apoyo" />
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/grupoActividad"
+                    style="@style/Widget.GymProFit.GrupoConectado"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/espacio_8" />
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/Widget.GymProFit.GrupoAjustes.Pantalla"
+                android:layout_marginTop="@dimen/espacio_12"
+                android:showDividers="none"
+                android:padding="@dimen/espacio_16">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/datos_experiencia"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Cuerpo" />
+
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/grupoNivel"
+                    style="@style/Widget.GymProFit.GrupoConectado"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/espacio_8" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- El plan recalculado y Guardar: fijo abajo -->
+    <LinearLayout
+        android:id="@+id/barraPlan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/margen_pantalla"
+        android:paddingTop="@dimen/espacio_12"
+        android:paddingEnd="@dimen/margen_pantalla"
+        android:paddingBottom="@dimen/espacio_16">
+
+        <LinearLayout
+            android:id="@+id/textosPlan"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:accessibilityLiveRegion="polite"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/datos_plan_quedara"
+                android:textAppearance="@style/TextAppearance.GymProFit.Apoyo" />
+
+            <TextView
+                android:id="@+id/tvPlanQuedara"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.GymProFit.Seccion.Fila"
+                android:textSize="@dimen/text_body" />
+
+            <TextView
+                android:id="@+id/tvPlanMinimo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvPlanDif"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGuardar"
+            style="@style/Widget.GymProFit.BotonPildora"
+            android:layout_width="wrap_content"
+            android:layout_marginStart="@dimen/espacio_12"
+            android:text="@string/datos_guardar" />
+    </LinearLayout>
+</LinearLayout>
