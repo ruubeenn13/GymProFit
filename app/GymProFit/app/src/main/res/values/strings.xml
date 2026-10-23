@@ -1499,7 +1499,7 @@
 
     <!-- Lote 1.6.1: Añadir, Buscar, el escáner y la ficha del alimento (GP-162, GP-160). -->
     <string name="anadir_cerrar">Cerrar</string>
-    <string name="anadir_buscar_hint">Busca un alimento o un plato</string>
+    <string name="anadir_buscar_hint">Alimento o plato</string>
     <string name="anadir_escanear">Escanear un código de barras</string>
     <string name="anadir_vacio">Aún no hay nada aquí. Busca un alimento o escanéalo.</string>
     <string name="anadir_error_lista">No se ha podido cargar la lista.</string>

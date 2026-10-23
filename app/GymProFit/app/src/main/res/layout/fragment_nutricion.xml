@@ -373,11 +373,18 @@
                     android:visibility="gone" />
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/listaComidas"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardComidas"
+                style="@style/Widget.GymProFit.Card"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" />
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/listaComidas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </com.google.android.material.card.MaterialCardView>
             <!-- El agua (GP-166) -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardAgua"

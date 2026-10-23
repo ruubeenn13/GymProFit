@@ -8,14 +8,15 @@
   Desde GP-216 (tablero 15), las kcal a la derecha si está apuntada y el «+» si está pendiente;
   «Copiar ayer» vive en la cabecera «Comidas».
 -->
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/Widget.GymProFit.Card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="12dp"
+    android:background="?attr/selectableItemBackground"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    android:minHeight="68dp"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -33,13 +34,22 @@
         android:paddingBottom="6dp">
 
         <!-- El icono de la comida (lote 1.6.8, tablero 1): dibujo, lo dice el nombre. -->
-        <ImageView
-            android:id="@+id/ivComidaIcono"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+        <FrameLayout
+            android:id="@+id/circuloComida"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_marginEnd="12dp"
-            android:importantForAccessibility="no"
-            app:tint="?attr/colorOnSurfaceVariant" />
+            android:background="@drawable/bg_circulo_superficie"
+            android:importantForAccessibility="no">
+
+            <ImageView
+                android:id="@+id/ivComidaIcono"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no"
+                app:tint="?attr/colorOnSurfaceVariant" />
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -88,4 +98,4 @@
     </LinearLayout>
 
     </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+</LinearLayout>

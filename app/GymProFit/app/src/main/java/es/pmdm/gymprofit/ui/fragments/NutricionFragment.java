@@ -456,7 +456,7 @@ public class NutricionFragment extends BaseFragment {
         if (hay) estado.oculto();
         int v = hay ? View.VISIBLE : View.GONE;
         findViewById(R.id.cardDia).setVisibility(v);
-        findViewById(R.id.listaComidas).setVisibility(v);
+        findViewById(R.id.cardComidas).setVisibility(v);
         findViewById(R.id.cabeceraComidas).setVisibility(v);
         if (!hay) {
             findViewById(R.id.pildoraEntreno).setVisibility(View.GONE);
@@ -1157,6 +1157,24 @@ public class NutricionFragment extends BaseFragment {
                 mas.setImageTintList(ColorStateList.valueOf(color(com.google.android.material.R.attr.colorOnPrimary)));
             }
             mas.setOnClickListener(v -> anadirAlimento(tipo));
+            // El círculo del icono: naranja tintado si está apuntada, gris si falta (tablero 15).
+            View circulo = card.findViewById(R.id.circuloComida);
+            ImageView icono = card.findViewById(R.id.ivComidaIcono);
+            circulo.setBackgroundTintList(conKcal ? ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), R.color.gp_primary_container)) : null);
+            icono.setImageTintList(ColorStateList.valueOf(conKcal
+                    ? ContextCompat.getColor(requireContext(), R.color.gp_on_primary_container)
+                    : color(com.google.android.material.R.attr.colorOnSurfaceVariant)));
+            if (lista.getChildCount() > 0) {
+                View raya = new View(requireContext());
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        Math.max(1, Math.round(getResources().getDisplayMetrics().density)));
+                lp.setMarginStart(Math.round(70 * getResources().getDisplayMetrics().density));
+                raya.setLayoutParams(lp);
+                raya.setBackgroundColor(color(com.google.android.material.R.attr.colorOutlineVariant));
+                raya.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+                lista.addView(raya);
+            }
             lista.addView(card);
         }
 
