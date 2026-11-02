@@ -157,8 +157,7 @@ public class SelectorPildora extends FrameLayout {
             o.setMaxLines(2);
             // A letra grande una palabra que no cabe («Moderada») se parte por sílabas, con guion,
             // no por letras: la opción crece a dos líneas y nunca corta.
-            o.setBreakStrategy(android.text.Layout.BREAK_STRATEGY_HIGH_QUALITY);
-            o.setHyphenationFrequency(android.text.Layout.HYPHENATION_FREQUENCY_FULL);
+            partirPorSilabas(o);
             o.setTypeface(ResourcesCompat.getFont(getContext(), R.font.barlow_condensed_semibold));
             o.setTextSize(TypedValue.COMPLEX_UNIT_PX, r.getDimension(R.dimen.text_body));
             o.setAllCaps(false);
@@ -359,6 +358,14 @@ public class SelectorPildora extends FrameLayout {
             return tv.resourceId != 0 ? c.getColor(tv.resourceId) : tv.data;
         }
         return ContextCompat.getColor(c, recurso);
+    }
+
+    // Partir por sílabas, con guion. La constante de Layout vale lo mismo que la de LineBreaker,
+    // que lint pide pero no existe hasta la API 29 (la app empieza en la 24).
+    @android.annotation.SuppressLint("WrongConstant")
+    private static void partirPorSilabas(@NonNull TextView o) {
+        o.setBreakStrategy(android.text.Layout.BREAK_STRATEGY_HIGH_QUALITY);
+        o.setHyphenationFrequency(android.text.Layout.HYPHENATION_FREQUENCY_FULL);
     }
 
     // ── El giro: la elegida se guarda con la vista (si tiene id) ───────────────
