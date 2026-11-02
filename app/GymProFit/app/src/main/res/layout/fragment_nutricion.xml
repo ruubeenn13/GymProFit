@@ -463,7 +463,7 @@
                                         android:layout_marginStart="@dimen/espacio_4"
                                         android:fontFeatureSettings="tnum"
                                         android:textColor="?attr/colorOnSurfaceVariant"
-                                        android:textSize="@dimen/text_body" />
+                                        android:textSize="@dimen/text_caption" />
                                 </LinearLayout>
                             </LinearLayout>
                         </LinearLayout>

@@ -922,8 +922,10 @@ public class NutricionFragment extends BaseFragment {
         TextView extra = findViewById(R.id.tvSemanaExtra);
         extra.setText(semanaExtra);
         extra.setVisibility(semanaExtra == null ? View.GONE : View.VISIBLE);
+        // Con el enlace que se ve («Ver la semana»), para TalkBack y el control por voz.
         card.setContentDescription(getString(R.string.nutricion_tu_semana) + ". " + titulo
-                + (texto.isEmpty() ? "" : ". " + texto) + (semanaExtra == null ? "" : ". " + semanaExtra));
+                + (texto.isEmpty() ? "" : ". " + texto) + (semanaExtra == null ? "" : ". " + semanaExtra)
+                + ". " + getString(R.string.nutricion_ver_semana));
         boolean entra = card.getVisibility() != View.VISIBLE;
         card.setVisibility(View.VISIBLE);
         if (entra) Movimiento.entrarUna(card, 0, Movimiento.ENTRA, 16);
