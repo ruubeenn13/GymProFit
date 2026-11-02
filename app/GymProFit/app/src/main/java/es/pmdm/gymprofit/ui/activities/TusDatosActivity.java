@@ -174,6 +174,10 @@ public class TusDatosActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle out) {
         super.onSaveInstanceState(out);
+        // Solo lo que el usuario ha cambiado sobre lo que llegó de la API. Si la pantalla se recrea
+        // antes de que llegue (al aplicar el tema claro, por ejemplo), no hay borrador: si lo
+        // hubiera, lo del móvil pisaría lo de la API y «Guardar» se encendería sin tocar nada.
+        if (!hayCambios()) return;
         out.putString("b_nombre", actual.nombre);
         out.putDouble("b_peso", actual.peso);
         out.putInt("b_altura", actual.altura);

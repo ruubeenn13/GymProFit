@@ -129,4 +129,18 @@ public class SelectorPildoraTest {
         });
         assertEquals(2, despues.getElegida());
     }
+
+    // Tanda 1 del revisor: la opción respondía en 40 dp (la píldora) y no en los 48 de la pista.
+    @Test
+    public void cada_opcion_responde_al_toque_en_los_48_dp_de_la_pista() {
+        SelectorPildora s = selector();
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> s.measure(
+                View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)));
+        int zona = contexto().getResources().getDimensionPixelSize(R.dimen.zona_tactil);
+        for (int i = 0; i < s.getCuantas(); i++) {
+            assertTrue("opción " + i + " mide " + s.getOpcion(i).getMeasuredHeight(),
+                    s.getOpcion(i).getMeasuredHeight() >= zona);
+        }
+    }
 }

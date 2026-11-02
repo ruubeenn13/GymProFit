@@ -73,7 +73,7 @@ public class SelectorPildora extends FrameLayout {
         super(context, attrs);
         Resources r = getResources();
         int relleno = r.getDimensionPixelSize(R.dimen.selector_relleno);
-        setPadding(relleno, relleno, relleno, relleno);
+        setPadding(relleno, 0, relleno, 0);
         setMinimumHeight(r.getDimensionPixelSize(R.dimen.zona_tactil));
         GradientDrawable pista = new GradientDrawable();
         pista.setColor(ContextCompat.getColor(context, R.color.gp_surface_2));
@@ -134,9 +134,12 @@ public class SelectorPildora extends FrameLayout {
         fila.removeAllViews();
         opciones = new TextView[textos.length];
         if (elegida >= textos.length) elegida = -1;
-        int alto = r.getDimensionPixelSize(R.dimen.selector_opcion_alto);
-        int lado = r.getDimensionPixelSize(R.dimen.espacio_8);
-        int arriba = r.getDimensionPixelSize(R.dimen.espacio_4);
+        // Cada opción mide la pista entera (48 dp) y responde al toque en toda ella; la píldora,
+        // la capa y el anillo van 4 dp hacia dentro, en los 40 dp de la opción visible.
+        int relleno = r.getDimensionPixelSize(R.dimen.selector_relleno);
+        int alto = r.getDimensionPixelSize(R.dimen.selector_opcion_alto) + 2 * relleno;
+        int lado = r.getDimensionPixelSize(R.dimen.espacio_4);
+        int arriba = relleno + r.getDimensionPixelSize(R.dimen.espacio_4);
         for (int i = 0; i < textos.length; i++) {
             TextView o = new TextView(getContext());
             o.setText(textos[i]);
@@ -145,13 +148,17 @@ public class SelectorPildora extends FrameLayout {
             o.setMinHeight(alto);
             o.setPadding(lado, arriba, lado, arriba);
             o.setMaxLines(2);
+            // A letra grande una palabra que no cabe («Moderada») se parte por sílabas, con guion,
+            // no por letras: la opción crece a dos líneas y nunca corta.
+            o.setBreakStrategy(android.text.Layout.BREAK_STRATEGY_HIGH_QUALITY);
+            o.setHyphenationFrequency(android.text.Layout.HYPHENATION_FREQUENCY_FULL);
             o.setTypeface(ResourcesCompat.getFont(getContext(), R.font.barlow_condensed_semibold));
             o.setTextSize(TypedValue.COMPLEX_UNIT_PX, r.getDimension(R.dimen.text_body));
             o.setAllCaps(false);
             o.setClickable(true);
             o.setFocusable(true);
             o.setStateListAnimator(AnimatorInflater.loadStateListAnimator(getContext(), R.animator.toque));
-            o.setForeground(capa(alto));
+            o.setForeground(capa(relleno));
             final int indice = i;
             o.setOnClickListener(v -> elegirConElDedo(indice));
             ViewCompat.setAccessibilityDelegate(o, new AccessibilityDelegateCompat() {
@@ -256,23 +263,31 @@ public class SelectorPildora extends FrameLayout {
         if (alElegir != null) alElegir.elegida(indice);
     }
 
-    // Pulsada, una capa del 10 % del texto; con foco de teclado, un anillo de 2 dp.
+    // Pulsada, una capa del 10 % del texto; con foco de teclado, un anillo de 2 dp. Las dos, 4 dp
+    // hacia dentro y con el radio completo, como la píldora.
     @NonNull
-    private StateListDrawable capa(int alto) {
+    private android.graphics.drawable.Drawable capa(int relleno) {
         Resources r = getResources();
+        float radio = radioCompleto();
         int sobre = ContextCompat.getColor(getContext(), R.color.gp_on_surface);
         int alfa = Math.round(255 * ResourcesCompat.getFloat(r, R.dimen.selector_capa_pulsado));
         GradientDrawable pulsado = new GradientDrawable();
-        pulsado.setCornerRadius(alto / 2f);
+        pulsado.setCornerRadius(radio);
         pulsado.setColor((sobre & 0x00FFFFFF) | (alfa << 24));
         GradientDrawable foco = new GradientDrawable();
-        foco.setCornerRadius(alto / 2f);
+        foco.setCornerRadius(radio);
         foco.setStroke(r.getDimensionPixelSize(R.dimen.selector_anillo_foco), sobre);
         StateListDrawable s = new StateListDrawable();
         s.addState(new int[]{android.R.attr.state_pressed}, pulsado);
         s.addState(new int[]{android.R.attr.state_focused}, foco);
         s.addState(new int[]{}, new ColorDrawable(0));
-        return s;
+        return new android.graphics.drawable.InsetDrawable(s, 0, relleno, 0, relleno);
+    }
+
+    // Un radio que el dibujo recorta a la mitad del lado corto: radio completo con cualquier alto
+    // (la opción crece con letra grande).
+    private float radioCompleto() {
+        return getResources().getDimension(R.dimen.zona_tactil);
     }
 
     private void colocarPildora(boolean animar) {
@@ -283,12 +298,15 @@ public class SelectorPildora extends FrameLayout {
         }
         TextView o = opciones[elegida];
         if (o.getWidth() == 0) return;
+        // La píldora: la opción menos 4 dp arriba y abajo (40 dp con una línea), radio completo.
+        int relleno = getResources().getDimensionPixelSize(R.dimen.selector_relleno);
         LayoutParams lp = (LayoutParams) pildora.getLayoutParams();
-        if (lp.width != o.getWidth() || lp.height != o.getHeight()) {
+        int altoPildora = o.getHeight() - 2 * relleno;
+        if (lp.width != o.getWidth() || lp.height != altoPildora || lp.topMargin != relleno) {
             lp.width = o.getWidth();
-            lp.height = o.getHeight();
-            ((GradientDrawable) pildora.getBackground()).setCornerRadius(
-                    getResources().getDimensionPixelSize(R.dimen.selector_opcion_alto) / 2f);
+            lp.height = altoPildora;
+            lp.topMargin = relleno;
+            ((GradientDrawable) pildora.getBackground()).setCornerRadius(radioCompleto());
             pildora.setLayoutParams(lp);
         }
         float x = getLayoutDirection() == LAYOUT_DIRECTION_RTL

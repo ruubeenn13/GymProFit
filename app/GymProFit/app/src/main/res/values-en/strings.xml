@@ -1733,7 +1733,7 @@
     <string name="crear_error_racion">Above 0 and up to 2000\u00A0g</string>
     <string name="crear_error_carga">Couldn\'t open this food</string>
     <!-- ── Lote 1.6.3: añadir en un toque, la barra de «Hecho» y los favoritos ── -->
-    <string name="anadir_pestanas">Show</string>
+    <string name="anadir_pestanas">Food lists</string>
     <string name="anadir_pestana_todo">Recent</string>
     <string name="anadir_pestana_favoritos">Favorites</string>
     <string name="recientes_ver_todos">See all</string>

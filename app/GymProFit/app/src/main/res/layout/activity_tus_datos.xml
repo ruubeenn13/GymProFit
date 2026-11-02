@@ -213,7 +213,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/espacio_8"
-                    app:selectorNombreGrupo="@string/selector_grupo_nivel" />
+                    app:selectorNombreGrupo="@string/datos_experiencia" />
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
