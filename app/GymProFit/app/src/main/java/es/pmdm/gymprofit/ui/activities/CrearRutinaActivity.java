@@ -8,10 +8,10 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.textfield.TextInputEditText;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.ui.widget.SelectorPildora;
 import es.pmdm.gymprofit.utils.Transiciones;
 import es.pmdm.gymprofit.utils.AvisoDescartar;
 import es.pmdm.gymprofit.utils.Numeros;
@@ -35,7 +35,7 @@ public class CrearRutinaActivity extends AppCompatActivity {
     // Campos de texto del formulario de creación.
     private TextInputEditText etNombre, etDescripcion, etDuracion;
     // Selector de nivel (principiante/intermedio/avanzado).
-    private MaterialButtonToggleGroup chipGroupNivel;
+    private SelectorPildora chipGroupNivel;
     private PreferencesManager prefsManager;
 
     // Nivel marcado al abrir: cambiarlo también es algo apuntado (GP-098).
@@ -58,12 +58,12 @@ public class CrearRutinaActivity extends AppCompatActivity {
         etDescripcion  = findViewById(R.id.etDescripcion);
         etDuracion     = findViewById(R.id.etDuracion);
         chipGroupNivel = findViewById(R.id.chipGroupNivel);
-        nivelInicial   = chipGroupNivel.getCheckedButtonId();
+        nivelInicial   = chipGroupNivel.getElegida();
 
         // Salir con algo apuntado pregunta antes de tirarlo (GP-098).
         AvisoDescartar.instalar(this, toolbar, () ->
                 AvisoDescartar.hayTexto(etNombre.getText(), etDescripcion.getText(), etDuracion.getText())
-                        || chipGroupNivel.getCheckedButtonId() != nivelInicial);
+                        || chipGroupNivel.getElegida() != nivelInicial);
 
         anadirLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -116,9 +116,9 @@ public class CrearRutinaActivity extends AppCompatActivity {
 
     // Traduce el chip de nivel seleccionado a su valor de texto para la API.
     private String obtenerNivel() {
-        int id = chipGroupNivel.getCheckedButtonId();
-        if (id == R.id.chipIntermedio) return "INTERMEDIO";
-        if (id == R.id.chipAvanzado)   return "AVANZADO";
+        int i = chipGroupNivel.getElegida();
+        if (i == 1) return "INTERMEDIO";
+        if (i == 2) return "AVANZADO";
         return "PRINCIPIANTE";
     }
 }

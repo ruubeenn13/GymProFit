@@ -2390,4 +2390,12 @@
     <string name="agua_cifra">%1$s\u00A0L</string>
     <string name="agua_de">de %1$s</string>
     <string name="nutricion_toca_proteina">Toca ahora · te faltan %1$d\u00A0g de proteína</string>
+    <!-- El papel de una opción de SelectorPildora con semántica de pestañas (GP-224). -->
+    <string name="selector_pestana">pestaña</string>
+    <!-- El nombre de cada grupo de SelectorPildora para TalkBack (GP-224). -->
+    <string name="selector_grupo_nivel">Nivel</string>
+    <string name="selector_grupo_periodo">Periodo</string>
+    <string name="selector_grupo_metrica">Medida</string>
+    <string name="selector_grupo_rango">Rango</string>
+    <string name="selector_grupo_minutos">Minutos por sesión</string>
 </resources>

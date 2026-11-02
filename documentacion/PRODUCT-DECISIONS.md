@@ -591,7 +591,7 @@ Cuatro curvas: **enfatizada** `cubic-bezier(.05,.7,.1,1)` para lo que entra; **e
 | 3 · Entrar en pantalla | Título, texto y opciones suben 16 dp, uno tras otro (`ENTRA`, `ENTRA_ESCALON`) | 350 enfatizada, cada 40 | — |
 | 4 · Abrir capítulo | El icono del capítulo salta (`CAPITULO`) y su aro late dos veces (`LATIDO`) | 450 rebote · 900 ×2 | Media |
 | 5 · Barra de progreso | El tramo se llena (`BARRA`) y, al cerrar un capítulo, destella (`DESTELLO`) | 500 estándar · 700 | — |
-| 6 · Selector que se desliza | La píldora viaja a la opción (`PILDORA`) y la semana de ejemplo se enciende día a día (`DIA`, `DIA_ESCALON`) | 320 rebote · 280 rebote, cada 35 | Ligera |
+| 6 · Selector que se desliza | La píldora viaja a la opción (`PILDORA`), su texto cambia de color (`TEXTO_OPCION`, GP-224) y la semana de ejemplo se enciende día a día (`DIA`, `DIA_ESCALON`) | 320 rebote · 200 estándar · 280 rebote, cada 35 | Ligera |
 | 7 · Cifras que cuentan | Las calorías cuentan mientras el anillo se dibuja por macros (`CIFRAS`), y al final un halo (`HALO`) | 1200 con 1 − (1 − t)³ · 900 | — |
 | 8 · El programa llega | La tarjeta sube (`CARTA`), las rutinas entran de una en una (`FILA`, `FILA_ESCALON`) y un brillo la cruza una vez (`BRILLO`) | 450 enfatizada · 300, cada 100 · 900 | — |
 | 9 · Cuenta creada | El botón se hace círculo (`CIRCULO`), gira mientras responde la API (`GIRO`) y acaba en un check que se traza (`TRAZO`) | 300 estándar · 700 lineal · 420 | Éxito |

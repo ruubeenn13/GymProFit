@@ -21,7 +21,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -34,6 +33,7 @@ import java.util.Map;
 import java.util.function.UnaryOperator;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.ui.widget.SelectorPildora;
 import es.pmdm.gymprofit.model.medicion.MedicionCorporal;
 import es.pmdm.gymprofit.model.usuario.Usuario;
 import es.pmdm.gymprofit.network.ApiCallback;
@@ -114,7 +114,7 @@ public class TusDatosActivity extends AppCompatActivity {
 
     private TextInputEditText etNombre;
     private View stepperPeso, stepperAltura, stepperEdad;
-    private MaterialButtonToggleGroup grupoSexo, grupoActividad, grupoNivel;
+    private SelectorPildora grupoSexo, grupoActividad, grupoNivel;
     private final View[] opcionesObjetivo = new View[OBJETIVOS.length];
     private MaterialButton btnGuardar;
 
@@ -130,6 +130,8 @@ public class TusDatosActivity extends AppCompatActivity {
     private boolean guardando;
     // Para no repintar el formulario mientras se está pintando.
     private boolean pintando;
+    // Lo que se estaba editando antes de un giro: manda sobre lo que llegue de la API.
+    @Nullable private DatosPerfil borrador;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,6 +153,8 @@ public class TusDatosActivity extends AppCompatActivity {
         btnGuardar = findViewById(R.id.btnGuardar);
         prepararSteppers();
         prepararOpciones();
+        borrador = leerBorrador(savedInstanceState);
+        if (borrador != null) actual = borrador;
         pintar();
 
         etNombre.addTextChangedListener(new android.text.TextWatcher() {
@@ -164,6 +168,28 @@ public class TusDatosActivity extends AppCompatActivity {
         btnGuardar.setOnClickListener(v -> guardar());
         cargarPerfil();
         cargarGrasa();
+    }
+
+    // El formulario sin guardar sobrevive al giro (GP-224): lo que se ha tocado, no lo de la API.
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle out) {
+        super.onSaveInstanceState(out);
+        out.putString("b_nombre", actual.nombre);
+        out.putDouble("b_peso", actual.peso);
+        out.putInt("b_altura", actual.altura);
+        out.putInt("b_edad", actual.edad);
+        out.putString("b_sexo", actual.sexo);
+        out.putString("b_actividad", actual.actividad);
+        out.putString("b_objetivo", actual.objetivo);
+        out.putString("b_nivel", actual.nivel);
+    }
+
+    @Nullable
+    private static DatosPerfil leerBorrador(@Nullable Bundle b) {
+        if (b == null || !b.containsKey("b_sexo")) return null;
+        return new DatosPerfil(b.getString("b_nombre"), b.getDouble("b_peso"), b.getInt("b_altura"),
+                b.getInt("b_edad"), b.getString("b_sexo"), b.getString("b_actividad"), b.getString("b_objetivo"),
+                b.getString("b_nivel"));
     }
 
     @Override
@@ -195,7 +221,8 @@ public class TusDatosActivity extends AppCompatActivity {
                         u.getNivelActividad() != null ? u.getNivelActividad() : prefs.getActividad(),
                         u.getObjetivo() != null ? u.getObjetivo() : prefs.getObjetivo(),
                         NivelVisible.valor(nivelGuardado));
-                actual = inicial;
+                actual = borrador != null ? borrador : inicial;
+                borrador = null;
                 perfilCargado = true;
                 pintar();
             }
@@ -312,23 +339,17 @@ public class TusDatosActivity extends AppCompatActivity {
     }
 
     private void prepararOpciones() {
+        // Sexo, actividad y nivel: el selector de la app (GP-224). Con letra grande la opción
+        // parte en dos líneas y la pista crece: ya no van una debajo de otra.
         grupoSexo = findViewById(R.id.grupoSexo);
-        grupoSexo.addOnButtonCheckedListener((g, id, marcado) -> {
-            if (marcado && !pintando) cambiar(d -> d.conSexo(id == R.id.btnSexoMujer ? SEXOS[1] : SEXOS[0]));
-        });
+        grupoSexo.setAlElegir(i -> { if (!pintando) cambiar(d -> d.conSexo(SEXOS[i])); });
 
         grupoActividad = findViewById(R.id.grupoActividad);
-        for (int i = 0; i < ACTIVIDADES.length; i++) {
-            MaterialButton b = boton(grupoActividad, ACTIVIDAD_CORTA[i]);
-            final int indice = i;
-            b.setOnClickListener(v -> { if (!pintando) cambiar(d -> d.conActividad(ACTIVIDADES[indice])); });
-        }
+        grupoActividad.setOpciones(textos(ACTIVIDAD_CORTA));
+        grupoActividad.setAlElegir(i -> { if (!pintando) cambiar(d -> d.conActividad(ACTIVIDADES[i])); });
         grupoNivel = findViewById(R.id.grupoNivel);
-        for (int i = 0; i < NIVELES.length; i++) {
-            MaterialButton b = boton(grupoNivel, NIVEL_TEXTOS[i]);
-            final int indice = i;
-            b.setOnClickListener(v -> { if (!pintando) cambiar(d -> d.conNivel(NIVELES[indice])); });
-        }
+        grupoNivel.setOpciones(textos(NIVEL_TEXTOS));
+        grupoNivel.setAlElegir(i -> { if (!pintando) cambiar(d -> d.conNivel(NIVELES[i])); });
 
         // Los objetivos, de dos en dos.
         LinearLayout grid = findViewById(R.id.gridObjetivo);
@@ -356,19 +377,10 @@ public class TusDatosActivity extends AppCompatActivity {
         }
     }
 
-    private MaterialButton boton(MaterialButtonToggleGroup grupo, @StringRes int texto) {
-        MaterialButton b = (MaterialButton) getLayoutInflater().inflate(R.layout.view_boton_conectado, grupo, false);
-        b.setId(View.generateViewId());
-        b.setText(texto);
-        // Con la letra muy grande tres o cuatro opciones no caben en fila sin cortar el texto: van una
-        // debajo de otra, de ancho completo.
-        boolean enVertical = getResources().getConfiguration().fontScale >= 1.2f;
-        grupo.setOrientation(enVertical ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL);
-        LinearLayout.LayoutParams lp = enVertical
-                ? new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-                : new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
-        grupo.addView(b, lp);
-        return b;
+    private CharSequence[] textos(@StringRes int[] ids) {
+        CharSequence[] t = new CharSequence[ids.length];
+        for (int i = 0; i < ids.length; i++) t[i] = getString(ids[i]);
+        return t;
     }
 
     // ── Estado y pintar ──────────────────────────────────────────────────────
@@ -395,9 +407,9 @@ public class TusDatosActivity extends AppCompatActivity {
         String nombre = etNombre.getText() == null ? "" : etNombre.getText().toString();
         if (!nombre.equals(actual.nombre)) etNombre.setText(actual.nombre);
 
-        grupoSexo.check("MUJER".equalsIgnoreCase(actual.sexo) ? R.id.btnSexoMujer : R.id.btnSexoHombre);
-        marcar(grupoActividad, indiceDe(ACTIVIDADES, actual.actividad, 2));
-        marcar(grupoNivel, indiceDe(NIVELES, actual.nivel, 1));
+        grupoSexo.setElegida(indiceDe(SEXOS, actual.sexo, 0), false);
+        grupoActividad.setElegida(indiceDe(ACTIVIDADES, actual.actividad, 2), false);
+        grupoNivel.setElegida(indiceDe(NIVELES, actual.nivel, 1), false);
         int objetivo = indiceDe(OBJETIVOS, actual.objetivo, 0);
         for (int i = 0; i < opcionesObjetivo.length; i++) pintarObjetivo(opcionesObjetivo[i], i == objetivo);
         ((TextView) findViewById(R.id.tvActividadTexto)).setText(ACTIVIDAD_DESC[indiceDe(ACTIVIDADES, actual.actividad, 2)]);
@@ -420,11 +432,6 @@ public class TusDatosActivity extends AppCompatActivity {
         fila.findViewById(R.id.valorDato).setContentDescription(getString(R.string.datos_valor_a11y,
                 nombre.getText(), valor == null ? getString(R.string.datos_sin_valor_a11y)
                         : valor + (unidad.getVisibility() == View.VISIBLE ? " " + unidad.getText() : "")));
-    }
-
-    private static void marcar(MaterialButtonToggleGroup grupo, int indice) {
-        View b = grupo.getChildAt(indice);
-        if (b != null) grupo.check(b.getId());
     }
 
     private static int indiceDe(String[] valores, String valor, int pordefecto) {

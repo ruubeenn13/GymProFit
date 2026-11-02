@@ -21,7 +21,6 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.Gson;
 
@@ -35,6 +34,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.ui.widget.SelectorPildora;
 import es.pmdm.gymprofit.model.PageDTO;
 import es.pmdm.gymprofit.model.alimento.Alimento;
 import es.pmdm.gymprofit.model.alimento.Favoritos;
@@ -156,7 +156,11 @@ public class AnadirAlimentoActivity extends BaseActivity {
     private VistaEstado estado;
     private View etiqueta;
     private TextInputEditText etBuscar;
-    private MaterialButtonToggleGroup pestanas;
+    private SelectorPildora pestanas;
+    // El orden de las pestañas en el selector.
+    private static final int PESTANA_TODO = 0;
+    private static final int PESTANA_FAVORITOS = 1;
+    private static final int PESTANA_PLATOS = 2;
     private RecyclerView rv;
     private View barra;
     private NumberFormat nf;
@@ -287,7 +291,6 @@ public class AnadirAlimentoActivity extends BaseActivity {
             ((TextView) etiqueta).setCompoundDrawablesRelative(null, null, null, null);
             ((TextView) findViewById(R.id.tvTituloAnadir)).setText(R.string.ingredientes_titulo);
             ((TextView) findViewById(R.id.etBuscarAnadir)).setHint(R.string.ingredientes_buscar_hint);
-            findViewById(R.id.btnPestanaPlatos).setVisibility(View.GONE);
         } else {
             cargarDia();
             cargarRecientes();
@@ -310,14 +313,16 @@ public class AnadirAlimentoActivity extends BaseActivity {
             @Override protected boolean esUltimaPagina() { return ultimaPagina || mirandoFavoritos() || mirandoPlatos(); }
         });
 
+        // Recientes, Favoritos y Mis platos: el selector con semántica de pestañas (GP-224). En
+        // modo ingredientes no hay platos: un plato no puede ser ingrediente de otro.
         pestanas = findViewById(R.id.pestanasAnadir);
-        pestanas.check(enPlatos ? R.id.btnPestanaPlatos : enFavoritos ? R.id.btnPestanaFavoritos : R.id.btnPestanaTodo);
-        pintarPestanas();
-        pestanas.addOnButtonCheckedListener((g, id, marcado) -> {
-            if (!marcado) return;
-            enFavoritos = id == R.id.btnPestanaFavoritos;
-            enPlatos = id == R.id.btnPestanaPlatos;
-            pintarPestanas();
+        pestanas.setOpciones(new CharSequence[]{getString(R.string.anadir_pestana_todo),
+                getString(R.string.anadir_pestana_favoritos), getString(R.string.anadir_pestana_platos)});
+        if (modoIngredientes) pestanas.getOpcion(PESTANA_PLATOS).setVisibility(View.GONE);
+        pestanas.setElegida(enPlatos ? PESTANA_PLATOS : enFavoritos ? PESTANA_FAVORITOS : PESTANA_TODO, false);
+        pestanas.setAlElegir(i -> {
+            enFavoritos = i == PESTANA_FAVORITOS;
+            enPlatos = i == PESTANA_PLATOS;
             pintarActual(false);
             // La pestaña nueva empieza arriba: con la lista bajada se abría a mitad (lo vio el revisor).
             rv.scrollToPosition(0);
@@ -1175,24 +1180,6 @@ public class AnadirAlimentoActivity extends BaseActivity {
     }
 
     // ── Favoritos ───────────────────────────────────────────────────────────
-
-    // El corazón de la pestaña, relleno cuando está elegida (tablero 8). Con letra grande,
-    // tres pestañas no caben con su icono (1.6.6): sin icono y hasta dos líneas, sin cortar.
-    private void pintarPestanas() {
-        if (getResources().getConfiguration().fontScale >= 1.3f) {
-            for (int id : new int[]{R.id.btnPestanaTodo, R.id.btnPestanaFavoritos, R.id.btnPestanaPlatos}) {
-                com.google.android.material.button.MaterialButton b =
-                        (com.google.android.material.button.MaterialButton) findViewById(id);
-                b.setIcon(null);
-                b.setMaxLines(2);
-                b.setEllipsize(null);
-                b.setPaddingRelative(dp(4), b.getPaddingTop(), dp(4), b.getPaddingBottom());
-            }
-            return;
-        }
-        ((com.google.android.material.button.MaterialButton) findViewById(R.id.btnPestanaFavoritos))
-                .setIconResource(enFavoritos ? R.drawable.ic_ms_favorite_fill : R.drawable.ic_ms_favorite);
-    }
 
     // ── Mis platos (1.6.6) ──────────────────────────────────────────────────
 

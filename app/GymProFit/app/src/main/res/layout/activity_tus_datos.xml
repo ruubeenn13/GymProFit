@@ -121,29 +121,13 @@
                     android:text="@string/datos_sexo"
                     android:textAppearance="@style/TextAppearance.GymProFit.Cuerpo" />
 
-                <com.google.android.material.button.MaterialButtonToggleGroup
+                <es.pmdm.gymprofit.ui.widget.SelectorPildora
                     android:id="@+id/grupoSexo"
-                    style="@style/Widget.GymProFit.GrupoConectado"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/espacio_8">
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnSexoHombre"
-                        style="@style/Widget.GymProFit.BotonConectado"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/onboarding_hombre" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnSexoMujer"
-                        style="@style/Widget.GymProFit.BotonConectado"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/onboarding_mujer" />
-                </com.google.android.material.button.MaterialButtonToggleGroup>
+                    android:layout_marginTop="@dimen/espacio_8"
+                    app:selectorOpciones="@array/selector_sexos"
+                    app:selectorNombreGrupo="@string/datos_sexo" />
             </LinearLayout>
 
             <!-- Tu objetivo -->
@@ -204,12 +188,12 @@
                         android:textAppearance="@style/TextAppearance.GymProFit.Apoyo" />
                 </LinearLayout>
 
-                <com.google.android.material.button.MaterialButtonToggleGroup
+                <es.pmdm.gymprofit.ui.widget.SelectorPildora
                     android:id="@+id/grupoActividad"
-                    style="@style/Widget.GymProFit.GrupoConectado"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/espacio_8" />
+                    android:layout_marginTop="@dimen/espacio_8"
+                    app:selectorNombreGrupo="@string/datos_actividad" />
             </LinearLayout>
 
             <LinearLayout
@@ -224,12 +208,12 @@
                     android:text="@string/datos_experiencia"
                     android:textAppearance="@style/TextAppearance.GymProFit.Cuerpo" />
 
-                <com.google.android.material.button.MaterialButtonToggleGroup
+                <es.pmdm.gymprofit.ui.widget.SelectorPildora
                     android:id="@+id/grupoNivel"
-                    style="@style/Widget.GymProFit.GrupoConectado"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/espacio_8" />
+                    android:layout_marginTop="@dimen/espacio_8"
+                    app:selectorNombreGrupo="@string/selector_grupo_nivel" />
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

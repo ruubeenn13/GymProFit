@@ -20,7 +20,6 @@ import android.content.res.ColorStateList;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.gson.Gson;
 
@@ -30,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.ui.widget.SelectorPildora;
 import es.pmdm.gymprofit.model.alimento.Alimento;
 import es.pmdm.gymprofit.model.comida.AlimentoComida;
 import es.pmdm.gymprofit.model.comida.AnadirRespuesta;
@@ -391,7 +391,7 @@ public class FichaAlimentoActivity extends BaseActivity {
     private void pintarUnidades() {
         if (cantidad == null) return;
         List<CantidadFicha.Unidad> u = cantidad.unidades();
-        MaterialButtonToggleGroup grupo = findViewById(R.id.grupoUnidad);
+        SelectorPildora grupo = findViewById(R.id.grupoUnidad);
         MaterialButton varias = findViewById(R.id.btnUnidadVarias);
         if (u.size() == 1) {
             // Solo gramos: no hay nada que elegir.
@@ -402,15 +402,13 @@ public class FichaAlimentoActivity extends BaseActivity {
         if (u.size() == 2) {
             varias.setVisibility(View.GONE);
             grupo.setVisibility(View.VISIBLE);
-            MaterialButton b0 = findViewById(R.id.btnUnidad0);
-            MaterialButton b1 = findViewById(R.id.btnUnidad1);
-            b0.setText(nombre(u.get(0)));
-            b1.setText(nombre(u.get(1)));
-            grupo.clearOnButtonCheckedListeners();
-            grupo.check(cantidad.elegida() == 0 ? R.id.btnUnidad0 : R.id.btnUnidad1);
-            grupo.addOnButtonCheckedListener((g, id, marcado) -> {
-                if (!marcado || cantidad == null) return;
-                cantidad.elegir(id == R.id.btnUnidad0 ? 0 : 1);
+            // Dos unidades: el selector de la app (GP-224); con tres o más, el desplegable.
+            grupo.setAlElegir(null);
+            grupo.setOpciones(new CharSequence[]{nombre(u.get(0)), nombre(u.get(1))});
+            grupo.setElegida(cantidad.elegida() == 0 ? 0 : 1, false);
+            grupo.setAlElegir(i -> {
+                if (cantidad == null) return;
+                cantidad.elegir(i);
                 pintarCantidad();
             });
             return;

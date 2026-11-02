@@ -209,8 +209,10 @@ public class CimientosTest {
         assertFalse("BotonExpresivo no escribe milisegundos", Pattern.compile("setDuration\\(\\s*\\d").matcher(c).find());
     }
 
+    // GP-224: un solo selector de opciones en toda la app. Los botones conectados y la unidad
+    // de la ficha (sel_unidad_*) se fueron; donde las opciones se excluyen, SelectorPildora.
     @Test
-    public void las_opciones_que_se_excluyen_van_en_botones_conectados() throws IOException {
+    public void las_opciones_que_se_excluyen_van_en_el_selector_de_la_app() throws IOException {
         String[][] grupos = {
                 {"layout/activity_estadisticas_nutricion.xml", "chipsPeriodo"},
                 {"layout/activity_crear_rutina.xml", "chipGroupNivel"},
@@ -218,14 +220,44 @@ public class CimientosTest {
                 {"layout/fragment_medidas.xml", "chipsMetrica"},
                 {"layout/fragment_medidas.xml", "chipsRango"},
                 {"layout/dialog_seguir_programa.xml", "chipsMinutos"},
+                {"layout/activity_ficha_alimento.xml", "grupoUnidad"},
+                {"layout/activity_anadir_alimento.xml", "pestanasAnadir"},
+                {"layout/activity_tus_datos.xml", "grupoSexo"},
+                {"layout/activity_tus_datos.xml", "grupoActividad"},
+                {"layout/activity_tus_datos.xml", "grupoNivel"},
+                {"layout/fragment_paso_dias.xml", "selectorDias"},
+                {"layout/fragment_paso_dias.xml", "selectorMinutos"},
         };
         for (String[] g : grupos) {
             String x = leer(RES.resolve(g[0]));
-            Matcher m = Pattern.compile("<com\\.google\\.android\\.material\\.button\\.MaterialButtonToggleGroup[^>]*android:id=\"@\\+id/" + g[1] + "\"").matcher(x);
-            assertTrue(g[1] + " en " + g[0] + " tiene que ser un grupo de botones conectados", m.find());
+            Matcher m = Pattern.compile("<es\\.pmdm\\.gymprofit\\.ui\\.widget\\.SelectorPildora\\s+android:id=\"@\\+id/" + g[1] + "\"").matcher(x);
+            assertTrue(g[1] + " en " + g[0] + " tiene que ser el SelectorPildora", m.find());
         }
-        String s = leer(RES.resolve("values/estilos_sistema.xml"));
-        assertTrue(s.contains("parent=\"Widget.Material3Expressive.MaterialButtonToggleGroup\""));
+        // No queda ningún resto de los tres diseños anteriores.
+        try (Stream<Path> todos = Files.walk(RES)) {
+            for (Path f : todos.filter(Files::isRegularFile).collect(Collectors.toList())) {
+                String n = f.getFileName().toString();
+                assertFalse("sobra " + n, n.startsWith("sel_unidad_") || n.equals("view_boton_conectado.xml"));
+                if (!n.endsWith(".xml")) continue;
+                String x = leer(f);
+                for (String resto : new String[]{"MaterialButtonToggleGroup", "GrupoConectado", "BotonConectado",
+                        "sel_unidad_", "ui.alta.SelectorPildora"}) {
+                    assertFalse(RES.relativize(f) + " usa " + resto, x.contains(resto));
+                }
+            }
+        }
+        // La pieza no escribe milisegundos ni dp: pide los de Movimiento y los de dimens.
+        String c = leer(JAVA.resolve("es/pmdm/gymprofit/ui/widget/SelectorPildora.java"));
+        assertTrue(c.contains("Movimiento.PILDORA") && c.contains("Movimiento.REBOTE") && c.contains("Movimiento.TEXTO_OPCION"));
+        assertTrue("con «Quitar animaciones», la píldora salta", c.contains("Movimiento.quieto"));
+        assertFalse("SelectorPildora no escribe milisegundos", Pattern.compile("setDuration\\(\\s*\\d").matcher(c).find());
+        assertFalse("SelectorPildora no escribe dp", Pattern.compile("\\d+\\s*\\*\\s*d\\b|density").matcher(c).find());
+        String d = dimens();
+        assertEquals("4dp", dimen(d, "selector_relleno"));
+        assertEquals("40dp", dimen(d, "selector_opcion_alto"));
+        assertEquals("2dp", dimen(d, "selector_anillo_foco"));
+        assertEquals("48dp", dimen(d, "zona_tactil"));
+        assertFalse("no queda la vieja pieza del alta", Files.exists(JAVA.resolve("es/pmdm/gymprofit/ui/alta/SelectorPildora.java")));
     }
 
     @Test
@@ -281,7 +313,7 @@ public class CimientosTest {
         Path design = Paths.get("..", "DESIGN.md");
         String x = leer(design);
         for (String clave : new String[]{"## Cimientos", "espacio_36", "radio_protagonista", "Tarjeta protagonista",
-                "Cabecera de sección", "Fila de lista", "BotonExpresivo", "Botones conectados", "Transiciones"}) {
+                "Cabecera de sección", "Fila de lista", "BotonExpresivo", "SelectorPildora", "Transiciones"}) {
             assertTrue("DESIGN.md no recoge «" + clave + "»", x.contains(clave));
         }
     }

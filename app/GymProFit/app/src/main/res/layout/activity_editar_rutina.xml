@@ -87,34 +87,12 @@
                 android:letterSpacing="0.12"
                 android:textColor="?attr/colorOnSurfaceVariant" />
 
-            <com.google.android.material.button.MaterialButtonToggleGroup
+            <es.pmdm.gymprofit.ui.widget.SelectorPildora
                 android:id="@+id/chipGroupNivelEditar"
-                style="@style/Widget.GymProFit.GrupoConectado"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/chipEditarPrincipiante"
-                    style="@style/Widget.GymProFit.BotonConectado"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/rutinas_principiante" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/chipEditarIntermedio"
-                    style="@style/Widget.GymProFit.BotonConectado"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/rutinas_intermedio" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/chipEditarAvanzado"
-                    style="@style/Widget.GymProFit.BotonConectado"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/rutinas_avanzado" />
-
-            </com.google.android.material.button.MaterialButtonToggleGroup>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:selectorOpciones="@array/selector_niveles"
+                app:selectorNombreGrupo="@string/selector_grupo_nivel" />
 
             <!-- Campo de duración estimada de la rutina -->
             <com.google.android.material.textfield.TextInputLayout

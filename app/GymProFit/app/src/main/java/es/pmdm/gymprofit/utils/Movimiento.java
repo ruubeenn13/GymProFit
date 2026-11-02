@@ -82,6 +82,8 @@ public final class Movimiento {
     public static final long DESTELLO = 700;
     /** 6 · Selector: la píldora viaja a la opción. */
     public static final long PILDORA = 320;
+    /** El texto de una opción del selector cambia de color al elegirla (GP-224). */
+    public static final long TEXTO_OPCION = 200;
     /** 6 · Selector: cada día de la semana de ejemplo. */
     public static final long DIA = 280;
     /** 6 · Selector: retraso entre un día y el siguiente. */
