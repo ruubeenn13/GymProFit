@@ -136,4 +136,15 @@ public class SemanaNutricionTest {
         assertFalse(s.hayObjetivoProteina());
         assertTrue(s.observaciones().isEmpty());
     }
+
+    // GP-216 lote 3, revisor: «Tu semana» decía «0 de 1 día con tu proteína» el lunes por la
+    // mañana. Hoy no cuenta hasta que esté completo; hasta entonces, la semana llega a ayer.
+    @Test
+    public void hoy_solo_cuenta_en_tu_semana_si_el_dia_esta_completo() {
+        assertEquals("2026-11-01", SemanaNutricion.cuentaHasta("2026-11-02", "2026-11-01", false));
+        assertEquals("2026-11-02", SemanaNutricion.cuentaHasta("2026-11-02", "2026-11-01", true));
+        List<SemanaNutricion.Entrada> l = new ArrayList<>();
+        l.add(new SemanaNutricion.Entrada("2026-11-02", true, 10, 335, false, false, 0));
+        assertTrue(SemanaNutricion.de(l, SemanaNutricion.cuentaHasta("2026-11-02", "2026-11-01", false), 157, 2180, 0).vacia());
+    }
 }

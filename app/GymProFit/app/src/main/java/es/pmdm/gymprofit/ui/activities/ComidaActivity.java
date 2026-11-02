@@ -109,6 +109,10 @@ public class ComidaActivity extends BaseActivity {
     private String fecha;
     // «Hoy no» (1.6.8): si se puede ofrecer, si está marcada y si va una petición en camino.
     private boolean hoyNoDisponible, hoyNo, cambiandoHoyNo;
+    /** ¿Está Profi en pantalla proponiendo copiar la de ayer? Entonces la vacía no lleva cabecera. */
+    private boolean profiVisible;
+    /** Los colores de «Añadir alimento» tal como los pone su estilo, para volver a ellos. */
+    private ColorStateList fondoAnadir, textoAnadir, iconoAnadir;
     private final es.pmdm.gymprofit.network.DiarioApi diarioApi =
             ApiClient.service(es.pmdm.gymprofit.network.DiarioApi.class);
 
@@ -173,6 +177,10 @@ public class ComidaActivity extends BaseActivity {
         estado = new VistaEstado(findViewById(R.id.estadoComida));
         apilarConLetraGrande();
         findViewById(R.id.cardAlimentos).setClipToOutline(true);
+        View sepCabecera = findViewById(R.id.sepCabeceraComida);
+        ((androidx.core.widget.NestedScrollView) findViewById(R.id.scrollComida)).setOnScrollChangeListener(
+                (androidx.core.widget.NestedScrollView.OnScrollChangeListener) (v, x, y, antesX, antesY) ->
+                        sepCabecera.setVisibility(y > 0 ? View.VISIBLE : View.GONE));
         configurarLista();
         configurarQuitar();
 
@@ -400,6 +408,7 @@ public class ComidaActivity extends BaseActivity {
         com.google.android.material.button.MaterialButton anadir = findViewById(R.id.btnAnadirComida);
         anadir.setText(r.vacia ? R.string.comida_buscar_otro : R.string.comida_anadir_alimento);
         anadir.setIconResource(r.vacia ? R.drawable.ic_ms_search : R.drawable.ic_ms_add);
+        pintarBotonAnadir(anadir, r.vacia);
         if (r.vacia) {
             findViewById(R.id.btnGuardarComoPlato).setVisibility(View.GONE);
             boolean yaVacia = vacia.getVisibility() == View.VISIBLE;
@@ -431,6 +440,27 @@ public class ComidaActivity extends BaseActivity {
         pintarResumen(r, entraResumen);
     }
 
+    // Vacía, «Buscar otro alimento» va en superficie 2: el naranja es para copiar la de ayer
+    // (tablero 24, una sola voz). Con algo apuntado vuelve a ser el botón principal.
+    private void pintarBotonAnadir(com.google.android.material.button.MaterialButton boton, boolean vacia) {
+        if (fondoAnadir == null) {
+            fondoAnadir = boton.getBackgroundTintList();
+            textoAnadir = boton.getTextColors();
+            iconoAnadir = boton.getIconTint();
+        }
+        if (vacia) {
+            ColorStateList sobre = ColorStateList.valueOf(com.google.android.material.color.MaterialColors.getColor(
+                    boton, com.google.android.material.R.attr.colorOnSurface));
+            boton.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.gp_surface_2)));
+            boton.setTextColor(sobre);
+            boton.setIconTint(sobre);
+        } else {
+            boton.setBackgroundTintList(fondoAnadir);
+            boton.setTextColor(textoAnadir);
+            boton.setIconTint(iconoAnadir);
+        }
+    }
+
     private void pintarResumen(ResumenComida r, boolean entrada) {
         NumberFormat nf = NumberFormat.getIntegerInstance(FechaUtils.localeDeLaApp(this));
         ((BarraReparto) findViewById(R.id.barraReparto)).mostrar(r.reparto, entrada);
@@ -438,7 +468,7 @@ public class ComidaActivity extends BaseActivity {
 
         int[] filas = {R.id.filaProteina, R.id.filaCarbos, R.id.filaGrasa};
         int[] nombres = {R.string.comida_proteina, R.string.comida_carbohidratos, R.string.comida_grasa};
-        int[] colores = {R.color.gp_macro_proteinas, R.color.gp_macro_carbos, R.color.gp_macro_grasas};
+        int[] colores = {R.color.gp_hero_macro_proteinas, R.color.gp_hero_macro_carbos, R.color.gp_hero_macro_grasas};
         StringBuilder macros = new StringBuilder();
         for (int i = 0; i < 3; i++) {
             View fila = findViewById(filas[i]);
@@ -450,8 +480,10 @@ public class ComidaActivity extends BaseActivity {
             ((TextView) fila.findViewById(R.id.tvGramosMacro)).setText(getString(R.string.comida_gramos, gramos));
             int p = r.pctMacro(i);
             if (macros.length() > 0) macros.append("; ");
-            macros.append(p < 0 ? getString(R.string.comida_macro_sin_objetivo_a11y, nombre, gramos)
-                    : getString(R.string.comida_macro_a11y, nombre, gramos, p));
+            String gramosA11y = getResources().getQuantityString(R.plurals.a11y_gramos,
+                    (int) Math.round(r.gramos(i)), gramos);
+            macros.append(p < 0 ? getString(R.string.comida_macro_sin_objetivo_a11y, nombre, gramosA11y)
+                    : getString(R.string.comida_macro_a11y, nombre, gramosA11y, p));
         }
 
         // Una sola frase para TalkBack: las kcal, qué parte es del día y cada macro.
@@ -627,7 +659,12 @@ public class ComidaActivity extends BaseActivity {
     private void pintarHoyNo() {
         TextView titulo = findViewById(R.id.tvVacia);
         titulo.setText(hoyNo ? hoyNoTitulo(tipoComida) : vaciaTexto(tipoComida));
-        boolean toca = !hoyNo && ElegirComida.esHoy(fecha) && tipoComida.equals(ComidaQueToca.ahora());
+        // Con Profi proponiendo copiar la de ayer, la pantalla va del título a Profi (tablero 24):
+        // el icono y «Aún no has apuntado…» sobran. Sin él, son lo único que dice que está vacía.
+        boolean conCabecera = hoyNo || !profiVisible;
+        findViewById(R.id.marcoIconoVacia).setVisibility(conCabecera ? View.VISIBLE : View.GONE);
+        titulo.setVisibility(conCabecera ? View.VISIBLE : View.GONE);
+        boolean toca = conCabecera && !hoyNo && ElegirComida.esHoy(fecha) && tipoComida.equals(ComidaQueToca.ahora());
         findViewById(R.id.tvVaciaToca).setVisibility(toca ? View.VISIBLE : View.GONE);
         findViewById(R.id.tvHoyNoMarcada).setVisibility(hoyNo ? View.VISIBLE : View.GONE);
         com.google.android.material.button.MaterialButton boton = findViewById(R.id.btnHoyNo);
@@ -688,6 +725,10 @@ public class ComidaActivity extends BaseActivity {
         View seccion = findViewById(R.id.seccionSueles);
         boolean conCopia = vacia && copiaAyer != null && !copiando;
         boolean conIdeas = vacia && ideas != null;
+        if (profiVisible != conCopia) {
+            profiVisible = conCopia;
+            pintarHoyNo();
+        }
         bloque.setVisibility(conCopia || conIdeas ? View.VISIBLE : View.GONE);
 
         boolean copiaNueva = conCopia && ranura.getVisibility() != View.VISIBLE;

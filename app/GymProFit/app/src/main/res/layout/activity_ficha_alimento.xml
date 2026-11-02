@@ -162,22 +162,18 @@
                         tools:targetApi="28" />
 
                     <com.google.android.material.button.MaterialButtonToggleGroup
+                style="@style/Widget.GymProFit.GrupoConectado"
                 android:id="@+id/grupoUnidad"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="10dp"
+                android:layout_marginTop="12dp"
                 android:contentDescription="@string/ficha_unidad"
                 app:singleSelection="true"
                 app:selectionRequired="true">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnUnidad0"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:backgroundTint="@color/sel_unidad_fondo"
-                    android:textColor="@color/sel_unidad_texto"
-                    android:textStyle="bold"
-                    app:strokeColor="?attr/colorOutline"
+                    style="@style/Widget.GymProFit.BotonConectado"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -188,11 +184,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnUnidad1"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:backgroundTint="@color/sel_unidad_fondo"
-                    android:textColor="@color/sel_unidad_texto"
-                    android:textStyle="bold"
-                    app:strokeColor="?attr/colorOutline"
+                    style="@style/Widget.GymProFit.BotonConectado"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -222,16 +214,16 @@
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
-                        <com.google.android.material.button.MaterialButton
+                        <ImageButton
                             android:id="@+id/btnMenos"
-                            style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
                             android:layout_width="48dp"
                             android:layout_height="48dp"
-                            android:insetTop="0dp"
-                            android:insetBottom="0dp"
+                            android:background="@drawable/bg_boton_stepper"
                             android:contentDescription="@string/ficha_menos"
-                            app:icon="@drawable/ic_ms_remove"
-                            app:iconTint="?attr/colorOnSurface" />
+                            android:padding="12dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_ms_remove"
+                            app:tint="?attr/colorOnSurface" />
 
                         <!-- La cifra, la unidad y los gramos; tocarla deja escribir. -->
                         <LinearLayout
@@ -282,16 +274,16 @@
                                 android:textSize="@dimen/text_label" />
                         </LinearLayout>
 
-                        <com.google.android.material.button.MaterialButton
+                        <ImageButton
                             android:id="@+id/btnMas"
-                            style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
                             android:layout_width="48dp"
                             android:layout_height="48dp"
-                            android:insetTop="0dp"
-                            android:insetBottom="0dp"
+                            android:background="@drawable/bg_boton_stepper"
                             android:contentDescription="@string/ficha_mas"
-                            app:icon="@drawable/ic_ms_add"
-                            app:iconTint="?attr/colorOnSurface" />
+                            android:padding="12dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_ms_add"
+                            app:tint="?attr/colorOnSurface" />
                     </LinearLayout>
 
                     <!-- ½, 1, 2 o 100, 150, 200 g: los pone FichaAlimentoActivity. -->
@@ -586,6 +578,8 @@
                     style="@style/Widget.Material3.Button.TextButton.Icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
                     android:layout_marginTop="8dp"
                     android:minHeight="48dp"
                     android:text="@string/ficha_reportar"

@@ -1663,12 +1663,28 @@
     <string name="comida_kcal_corto">kcal</string>
     <string name="comida_anillo_a11y">%1$s kilocalorías: %2$d por ciento de proteína, %3$d de carbohidratos y %4$d de grasa</string>
     <string name="comida_anillo_sin_macros_a11y">%1$s kilocalorías</string>
-    <string name="comida_macro_a11y">%1$s: %2$s gramos, el %3$d por ciento de lo de tu día</string>
-    <string name="comida_macro_sin_objetivo_a11y">%1$s: %2$s gramos</string>
+    <string name="comida_macro_a11y">%1$s: %2$s, el %3$d por ciento de lo de tu día</string>
+    <string name="comida_macro_sin_objetivo_a11y">%1$s: %2$s</string>
     <string name="comida_dia_a11y">Esta comida es el %1$d por ciento de tus calorías de hoy: %2$s de %3$s</string>
     <string name="comida_fila_kcal">%1$s\u00A0kcal</string>
     <string name="comida_fila_prot">%1$s\u00A0g prot.</string>
-    <string name="comida_fila_a11y">%1$s, %2$s, %3$s kilocalorías, %4$s gramos de proteína</string>
+    <string name="comida_fila_a11y">%1$s, %2$s, %3$s, %4$s</string>
+    <!-- Lo que lee TalkBack en las filas y los macros de una comida, con su plural (DEC-020). -->
+    <plurals name="a11y_kilocalorias">
+        <item quantity="one">%1$s kilocaloría</item>
+        <item quantity="many">%1$s kilocalorías</item>
+        <item quantity="other">%1$s kilocalorías</item>
+    </plurals>
+    <plurals name="a11y_gramos">
+        <item quantity="one">%1$s gramo</item>
+        <item quantity="many">%1$s gramos</item>
+        <item quantity="other">%1$s gramos</item>
+    </plurals>
+    <plurals name="a11y_gramos_proteina">
+        <item quantity="one">%1$s gramo de proteína</item>
+        <item quantity="many">%1$s gramos de proteína</item>
+        <item quantity="other">%1$s gramos de proteína</item>
+    </plurals>
     <string name="comida_quitar">Quitar de la comida</string>
     <string name="comida_eliminar_fondo">Eliminar</string>
     <string name="comida_quitado">Quitado: %1$s</string>
@@ -1751,6 +1767,8 @@
     <string name="recientes_ver_todos_a11y">Ver todos los recientes</string>
     <!-- Una fila: la cantidad y sus kcal (tablero 4). -->
     <string name="fila_cantidad_kcal">%1$s · %2$s\u00A0kcal</string>
+    <!-- Una comida reciente: las kcal delante, para que no se las lleve el corte de una lista larga. -->
+    <string name="reciente_detalle">%1$s\u00A0kcal · %2$s</string>
     <string name="fila_ultima_vez">Última vez: %1$s · %2$s\u00A0kcal</string>
     <string name="a_la_desayuno">al desayuno</string>
     <string name="a_la_almuerzo">al almuerzo</string>
@@ -1859,7 +1877,7 @@
         <item quantity="other">Tu plato · %d ingredientes</item>
     </plurals>
     <string name="comida_guardar_como_plato">Guardar como plato</string>
-    <string name="comida_fila_plato_a11y">%1$s, plato, %2$s, %3$s kilocalorías, %4$s gramos de proteína</string>
+    <string name="comida_fila_plato_a11y">%1$s, plato, %2$s, %3$s, %4$s</string>
     <string name="plato_cerrar_a11y">Cerrar sin guardar</string>
     <string name="plato_titulo_nuevo">Nuevo plato</string>
     <string name="plato_titulo_editar">Editar plato</string>
@@ -2336,6 +2354,11 @@
     <string name="escaner_encontrado">¡Encontrado!</string>
     <string name="nutricion_comidas">Comidas</string>
     <string name="nutricion_copiar_ayer">Copiar ayer</string>
+    <string name="nutricion_copiar_ayer_desayuno">Copiar ayer: el desayuno de ayer, a hoy</string>
+    <string name="nutricion_copiar_ayer_almuerzo">Copiar ayer: el almuerzo de ayer, a hoy</string>
+    <string name="nutricion_copiar_ayer_comida">Copiar ayer: la comida de ayer, a hoy</string>
+    <string name="nutricion_copiar_ayer_merienda">Copiar ayer: la merienda de ayer, a hoy</string>
+    <string name="nutricion_copiar_ayer_cena">Copiar ayer: la cena de ayer, a hoy</string>
     <string name="nutricion_tu_semana">Tu semana</string>
     <string name="nutricion_ver_semana">Ver la semana</string>
     <plurals name="nutricion_semana_proteina">

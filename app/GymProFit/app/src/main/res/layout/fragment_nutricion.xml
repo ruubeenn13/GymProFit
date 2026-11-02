@@ -474,7 +474,7 @@
                             app:iconTint="@color/gp_on_agua_container" />
                     </LinearLayout>
 
-                    <!-- Los vasos: los rellena NutricionFragment, en filas de nueve. -->
+                    <!-- Los vasos: los rellena NutricionFragment, tantos por fila como quepan a 48 dp (hasta nueve). -->
                     <LinearLayout
                         android:id="@+id/filasVasos"
                         android:layout_width="match_parent"

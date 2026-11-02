@@ -95,8 +95,12 @@ public class AlimentoComidaAdapter extends RecyclerView.Adapter<AlimentoComidaAd
         h.proteina.setText(ctx.getString(R.string.comida_fila_prot, prot));
         h.itemView.setBackgroundResource(position == items.size() - 1
                 ? R.drawable.bg_fila_comida_ultima : R.drawable.bg_fila_comida);
+        // Con su plural: «1 gramo de proteína», no «1 gramos» (DEC-020).
+        long protRedondeada = Math.round(item.getProteinasTotales());
         h.itemView.setContentDescription(ctx.getString(item.isAlimentoEsPlato() ? R.string.comida_fila_plato_a11y
-                : R.string.comida_fila_a11y, nombre, cantidad, kcal, prot));
+                : R.string.comida_fila_a11y, nombre, cantidad,
+                ctx.getResources().getQuantityString(R.plurals.a11y_kilocalorias, item.getCaloriasTotales(), kcal),
+                ctx.getResources().getQuantityString(R.plurals.a11y_gramos_proteina, (int) protRedondeada, prot)));
 
         h.itemView.setOnClickListener(v -> acciones.abrir(item, v));
         h.itemView.setOnLongClickListener(v -> {

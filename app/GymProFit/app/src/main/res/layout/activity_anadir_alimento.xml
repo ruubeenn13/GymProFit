@@ -82,7 +82,7 @@
             app:boxCornerRadiusTopEnd="26dp"
             app:boxCornerRadiusBottomStart="26dp"
             app:boxCornerRadiusBottomEnd="26dp"
-            app:boxStrokeColor="?attr/colorPrimary"
+            app:boxStrokeColor="@color/sel_borde_campo"
             app:boxBackgroundColor="?attr/colorSurface"
             app:startIconDrawable="@drawable/ic_ms_search"
             app:startIconTint="?attr/colorOnSurfaceVariant"
@@ -123,6 +123,7 @@
     </LinearLayout>
 
     <com.google.android.material.button.MaterialButtonToggleGroup
+        style="@style/Widget.GymProFit.GrupoConectado"
         android:id="@+id/pestanasAnadir"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -136,57 +137,45 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnPestanaTodo"
-            style="@style/Widget.Material3.Button.OutlinedButton"
+            style="@style/Widget.GymProFit.BotonConectado"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:minHeight="48dp"
-            android:backgroundTint="@color/sel_unidad_fondo"
-            android:textColor="@color/sel_unidad_texto"
-            android:textStyle="bold"
             android:textSize="@dimen/text_body"
-            android:text="@string/anadir_pestana_todo"
-            app:strokeColor="?attr/colorOutline" />
+            android:text="@string/anadir_pestana_todo" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnPestanaFavoritos"
-            style="@style/Widget.Material3.Button.OutlinedButton"
+            style="@style/Widget.GymProFit.BotonConectado"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:minHeight="48dp"
-            android:backgroundTint="@color/sel_unidad_fondo"
-            android:textColor="@color/sel_unidad_texto"
-            android:textStyle="bold"
             android:textSize="@dimen/text_body"
             android:text="@string/anadir_pestana_favoritos"
             app:icon="@drawable/ic_ms_favorite"
             app:iconGravity="textStart"
             app:iconSize="18dp"
-            app:iconTint="@color/sel_unidad_texto"
-            app:strokeColor="?attr/colorOutline" />
+            app:iconTint="@color/chip_text_selector" />
 
         <!-- Lote 1.6.6: «Mis platos» (tablero 9). No sale al elegir ingredientes. -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnPestanaPlatos"
-            style="@style/Widget.Material3.Button.OutlinedButton"
+            style="@style/Widget.GymProFit.BotonConectado"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:minHeight="48dp"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
-            android:backgroundTint="@color/sel_unidad_fondo"
-            android:textColor="@color/sel_unidad_texto"
-            android:textStyle="bold"
             android:textSize="@dimen/text_body"
             android:text="@string/anadir_pestana_platos"
             app:icon="@drawable/ic_ms_menu_book"
             app:iconGravity="textStart"
             app:iconSize="18dp"
             app:iconPadding="6dp"
-            app:iconTint="@color/sel_unidad_texto"
-            app:strokeColor="?attr/colorOutline" />
+            app:iconTint="@color/chip_text_selector" />
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <FrameLayout

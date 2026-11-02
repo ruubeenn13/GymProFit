@@ -85,4 +85,14 @@ public class AguaTest {
         assertEquals("2,2", Agua.litrosObjetivo(2.2, es));
         assertEquals("1.25", Agua.litros(1250, Locale.ENGLISH));
     }
+
+    // GP-216 lote 3, revisor: con nueve por fila cada vaso medía 38 dp de ancho y se puede
+    // tocar; caben los que den 48 dp cada uno, entre uno y nueve.
+    @Test
+    public void en_cada_fila_caben_los_vasos_que_dan_48_dp_y_nunca_mas_de_nueve() {
+        assertEquals(7, Agua.vasosPorFila(342));
+        assertEquals(6, Agua.vasosPorFila(290));
+        assertEquals(9, Agua.vasosPorFila(600));
+        assertEquals(1, Agua.vasosPorFila(30));
+    }
 }

@@ -15,7 +15,7 @@ import es.pmdm.gymprofit.model.alimento.Racion;
 //
 // Las unidades son las raciones del alimento, en su orden, y al final los gramos. Por
 // defecto, la primera ración (el envase de un producto, si lo tiene) por una, o 100 g si
-// no tiene raciones. − y + van de uno en uno en raciones y de 25 en 25 en gramos, sin
+// no tiene raciones. − y + van de media en media en raciones y de 10 en 10 en gramos (tablero 26), sin
 // bajar del paso; la cifra también se escribe. Cambiar de unidad conserva los gramos:
 // a gramos, tal cual; a raciones, a la media ración más cercana (y nunca cero).
 // Sin vistas: la ficha la pinta y AnadirAlimento la manda con estos datos.
@@ -24,8 +24,8 @@ import es.pmdm.gymprofit.model.alimento.Racion;
 // ============================================================
 public final class CantidadFicha {
 
-    public static final double PASO_GRAMOS = 25;
-    public static final double PASO_RACIONES = 1;
+    public static final double PASO_GRAMOS = 10;
+    public static final double PASO_RACIONES = 0.5;
     public static final double MAX_GRAMOS = 5000;
     public static final double MAX_RACIONES = 99;
     public static final double GRAMOS_POR_DEFECTO = 100;
@@ -222,6 +222,17 @@ public final class CantidadFicha {
             double medias = Math.round(gramos / unidad().gramos * 2) / 2.0;
             valor = Math.min(MAX_RACIONES, Math.max(0.5, medias));
         }
+    }
+
+    /**
+     * La unidad que va junto a la cifra: en plural salvo con una («1 taza», «1,5 tazas», como
+     * {@link Cantidades}); sin plural de la API, el nombre de la ración. Null en gramos.
+     */
+    @Nullable
+    public static String unidadPara(@NonNull Unidad u, double valor) {
+        if (u.esGramos() || u.nombre == null) return null;
+        if (valor != 1 && u.unidad != null && u.unidadPlural != null) return u.unidadPlural;
+        return u.unidad != null ? u.unidad : nombreUnidad(u.nombre);
     }
 
     /**

@@ -105,7 +105,7 @@ public class PlatosAppTest {
         assertEquals(1, c.valor(), D);
         assertEquals(100, c.gramos(), D);
         assertEquals("1 ración", sinDuro(AnadirRapido.texto(F, ES, c)));
-        c.mas();
+        c.escribir(2);
         assertEquals("2 raciones", sinDuro(AnadirRapido.texto(F, ES, c)));
         assertEquals(948, AnadirRapido.kcal(plato(null, 100), c));
     }
@@ -230,7 +230,7 @@ public class PlatosAppTest {
         rebanada.add(new Racion(9, "1 rebanada", 28));
         pan.setRaciones(rebanada);
         CantidadFicha dos = CantidadFicha.nueva(pan.getRaciones());
-        dos.mas();
+        dos.escribir(2);
         Alimento sinId = alimento(0, "Producto");
         sinId.setBarcode("8410000000000");
         List<IngredienteElegido> lista = List.of(IngredienteElegido.de(pan, dos),

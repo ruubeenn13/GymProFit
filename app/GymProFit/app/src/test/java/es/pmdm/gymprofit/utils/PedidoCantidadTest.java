@@ -68,7 +68,7 @@ public class PedidoCantidadTest {
     public void actualizar_por_racion_deja_los_gramos_a_la_api() {
         Alimento a = yogur(7, 11);
         CantidadFicha c = CantidadFicha.nueva(a.getRaciones());
-        c.mas();
+        c.escribir(2);
         Map<String, Object> b = PedidoCantidad.actualizar(c);
         assertEquals(11, b.get("racionId"));
         assertEquals(0, new BigDecimal("2").compareTo((BigDecimal) b.get("raciones")));

@@ -1641,12 +1641,24 @@
     <string name="comida_kcal_corto">kcal</string>
     <string name="comida_anillo_a11y">%1$s kilocalories: %2$d percent protein, %3$d carbs and %4$d fat</string>
     <string name="comida_anillo_sin_macros_a11y">%1$s kilocalories</string>
-    <string name="comida_macro_a11y">%1$s: %2$s grams, %3$d percent of your day</string>
-    <string name="comida_macro_sin_objetivo_a11y">%1$s: %2$s grams</string>
+    <string name="comida_macro_a11y">%1$s: %2$s, %3$d percent of your day</string>
+    <string name="comida_macro_sin_objetivo_a11y">%1$s: %2$s</string>
     <string name="comida_dia_a11y">This meal is %1$d percent of your calories today: %2$s of %3$s</string>
     <string name="comida_fila_kcal">%1$s\u00A0kcal</string>
     <string name="comida_fila_prot">%1$s\u00A0g prot.</string>
-    <string name="comida_fila_a11y">%1$s, %2$s, %3$s kilocalories, %4$s grams of protein</string>
+    <string name="comida_fila_a11y">%1$s, %2$s, %3$s, %4$s</string>
+    <plurals name="a11y_kilocalorias">
+        <item quantity="one">%1$s kilocalorie</item>
+        <item quantity="other">%1$s kilocalories</item>
+    </plurals>
+    <plurals name="a11y_gramos">
+        <item quantity="one">%1$s gram</item>
+        <item quantity="other">%1$s grams</item>
+    </plurals>
+    <plurals name="a11y_gramos_proteina">
+        <item quantity="one">%1$s gram of protein</item>
+        <item quantity="other">%1$s grams of protein</item>
+    </plurals>
     <string name="comida_quitar">Remove from meal</string>
     <string name="comida_eliminar_fondo">Remove</string>
     <string name="comida_quitado">Removed: %1$s</string>
@@ -1659,7 +1671,7 @@
     <string name="comida_vacia_comida">You haven\'t logged lunch yet</string>
     <string name="comida_vacia_merienda">You haven\'t logged your snack yet</string>
     <string name="comida_vacia_cena">You haven\'t logged dinner yet</string>
-    <string name="comida_es_la_que_toca">It\'s the one for now</string>
+    <string name="comida_es_la_que_toca">This is the meal for right now</string>
     <string name="comida_error_lista">Couldn\'t load this meal</string>
     <string name="comida_quitar_error">Couldn\'t remove %1$s</string>
 
@@ -1727,6 +1739,7 @@
     <string name="recientes_ver_todos">See all</string>
     <string name="recientes_ver_todos_a11y">See all recent foods</string>
     <string name="fila_cantidad_kcal">%1$s · %2$s\u00A0kcal</string>
+    <string name="reciente_detalle">%1$s\u00A0kcal · %2$s</string>
     <string name="fila_ultima_vez">Last time: %1$s · %2$s\u00A0kcal</string>
     <string name="a_la_desayuno">to breakfast</string>
     <string name="a_la_almuerzo">to mid-morning</string>
@@ -1834,7 +1847,7 @@
         <item quantity="other">Your dish · %d ingredients</item>
     </plurals>
     <string name="comida_guardar_como_plato">Save as a dish</string>
-    <string name="comida_fila_plato_a11y">%1$s, dish, %2$s, %3$s kilocalories, %4$s grams of protein</string>
+    <string name="comida_fila_plato_a11y">%1$s, dish, %2$s, %3$s, %4$s</string>
     <string name="plato_cerrar_a11y">Close without saving</string>
     <string name="plato_titulo_nuevo">New dish</string>
     <string name="plato_titulo_editar">Edit dish</string>
@@ -2311,6 +2324,11 @@
     <string name="escaner_encontrado">Found it!</string>
     <string name="nutricion_comidas">Meals</string>
     <string name="nutricion_copiar_ayer">Copy yesterday</string>
+    <string name="nutricion_copiar_ayer_desayuno">Copy yesterday: yesterday\'s breakfast to today</string>
+    <string name="nutricion_copiar_ayer_almuerzo">Copy yesterday: yesterday\'s mid-morning to today</string>
+    <string name="nutricion_copiar_ayer_comida">Copy yesterday: yesterday\'s lunch to today</string>
+    <string name="nutricion_copiar_ayer_merienda">Copy yesterday: yesterday\'s snack to today</string>
+    <string name="nutricion_copiar_ayer_cena">Copy yesterday: yesterday\'s dinner to today</string>
     <string name="nutricion_tu_semana">Your week</string>
     <string name="nutricion_ver_semana">See the week</string>
     <plurals name="nutricion_semana_proteina">

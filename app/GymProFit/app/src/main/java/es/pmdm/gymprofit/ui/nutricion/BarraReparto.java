@@ -45,7 +45,7 @@ public class BarraReparto extends View {
         setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
         hueco = 2 * getResources().getDisplayMetrics().density;
         pista.setColor(0x33FFFFFF);
-        int[] colores = {R.color.gp_macro_proteinas, R.color.gp_macro_carbos, R.color.gp_macro_grasas};
+        int[] colores = {R.color.gp_hero_macro_proteinas, R.color.gp_hero_macro_carbos, R.color.gp_hero_macro_grasas};
         for (int i = 0; i < 3; i++) {
             tramos[i] = new Paint(Paint.ANTI_ALIAS_FLAG);
             tramos[i].setColor(ContextCompat.getColor(context, colores[i]));

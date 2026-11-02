@@ -100,8 +100,10 @@ import es.pmdm.gymprofit.utils.VistaEstado;
 // ============================================================
 public class NutricionFragment extends BaseFragment {
 
+    /** Márgenes de la pantalla y de la tarjeta del agua a los lados de los vasos, en dp. */
+    private static final int MARGEN_VASOS_DP = 70;
+
     /** Vasos por fila, como el tablero 1. */
-    private static final int VASOS_POR_FILA = 9;
 
     private final ComidaApi comidaApi = ApiClient.service(ComidaApi.class);
     private final AlimentoComidaApi alimentoComidaApi = ApiClient.service(AlimentoComidaApi.class);
@@ -881,7 +883,13 @@ public class NutricionFragment extends BaseFragment {
             dia.add(Calendar.DAY_OF_MONTH, 1);
         }
         ResultadoNutricional objetivo = DiaNutricion.objetivo(prefsManager);
-        SemanaNutricion sn = SemanaNutricion.de(siete, fechaStr(Calendar.getInstance()),
+        // Hoy cuenta solo si está completo: a medias, la semana llega a ayer.
+        Calendar hoyCal = Calendar.getInstance();
+        Calendar ayerCal = (Calendar) hoyCal.clone();
+        ayerCal.add(Calendar.DAY_OF_MONTH, -1);
+        String hoyStr = fechaStr(hoyCal);
+        String hasta = SemanaNutricion.cuentaHasta(hoyStr, fechaStr(ayerCal), DiaCompleto.completo(semana.get(hoyStr)));
+        SemanaNutricion sn = SemanaNutricion.de(siete, hasta,
                 objetivo != null ? objetivo.proteinas : 0, objetivo != null ? objetivo.calorias : 0, 0);
         if (sn.vacia()) {
             card.setVisibility(View.GONE);
@@ -976,8 +984,14 @@ public class NutricionFragment extends BaseFragment {
         int azul = ContextCompat.getColor(requireContext(), R.color.gp_agua);
         int vacio = ContextCompat.getColor(requireContext(), R.color.gp_stroke);
         int alto = Math.round(48 * getResources().getDisplayMetrics().density);
+        // Cada vaso se puede tocar: caben los que den 48 dp de ancho. El ancho es el de la
+        // fila ya medida; antes de medirse, la pantalla menos los márgenes de la tarjeta.
+        float densidad = getResources().getDisplayMetrics().density;
+        int anchoDp = filas.getWidth() > 0 ? Math.round(filas.getWidth() / densidad)
+                : getResources().getConfiguration().screenWidthDp - MARGEN_VASOS_DP;
+        int porFila = Agua.vasosPorFila(anchoDp);
         for (int i = 0; i < total; i++) {
-            if (i % VASOS_POR_FILA == 0) {
+            if (i % porFila == 0) {
                 fila = new LinearLayout(requireContext());
                 fila.setOrientation(LinearLayout.HORIZONTAL);
                 fila.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
@@ -988,7 +1002,7 @@ public class NutricionFragment extends BaseFragment {
         }
         // La última fila se completa con huecos para que los vasos no se estiren.
         if (fila != null) {
-            for (int i = total % VASOS_POR_FILA; i != 0 && i < VASOS_POR_FILA; i++) {
+            for (int i = total % porFila; i != 0 && i < porFila; i++) {
                 fila.addView(new View(requireContext()),
                         new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
             }
@@ -1185,7 +1199,7 @@ public class NutricionFragment extends BaseFragment {
         boolean puede = ayer != null && tipoAyer != null && !copiandoAyer && esHoy();
         copiar.setVisibility(puede ? View.VISIBLE : View.GONE);
         if (puede) {
-            copiar.setContentDescription(getString(CopiarComida.siCopiar(tipoAyer)));
+            copiar.setContentDescription(getString(CopiarComida.copiarAyer(tipoAyer)));
             copiar.setOnClickListener(v -> copiarAyer(v, ayer, tipoAyer));
         }
     }

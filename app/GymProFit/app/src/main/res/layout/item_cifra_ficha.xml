@@ -16,7 +16,7 @@
     android:paddingStart="4dp"
     android:paddingEnd="4dp"
     android:importantForAccessibility="noHideDescendants"
-    android:background="@drawable/bg_cifra_progreso">
+    android:background="@drawable/bg_cifra_ficha">
 
     <TextView
         android:id="@+id/tvValorCifra"

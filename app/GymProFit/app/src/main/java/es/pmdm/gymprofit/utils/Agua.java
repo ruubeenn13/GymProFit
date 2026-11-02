@@ -30,6 +30,19 @@ public final class Agua {
     private Agua() {
     }
 
+    /** Como mucho, tantos vasos en una fila. */
+    public static final int VASOS_POR_FILA_MAX = 9;
+    /** Lo que mide de ancho, como poco, un vaso que se puede tocar (DEC-019). */
+    public static final int ANCHO_VASO_DP = 48;
+
+    /**
+     * Cuántos vasos van en cada fila para un ancho en dp: los que den 48 dp cada uno
+     * (se pueden tocar), entre uno y nueve.
+     */
+    public static int vasosPorFila(int anchoDp) {
+        return Math.max(1, Math.min(VASOS_POR_FILA_MAX, anchoDp / ANCHO_VASO_DP));
+    }
+
     /** Vasos hasta el objetivo del plan, redondeando hacia arriba; 0 sin objetivo. */
     public static int vasosObjetivo(double litros, int vaso) {
         if (litros <= 0 || vaso <= 0) return 0;

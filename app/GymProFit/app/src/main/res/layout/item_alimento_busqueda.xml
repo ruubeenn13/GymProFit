@@ -31,12 +31,10 @@
         android:paddingTop="10dp"
         android:paddingBottom="10dp">
 
+    <!-- El icono en su círculo de 40 dp sobre superficie 2 (DESIGN.md «Fila de lista»). -->
     <ImageView
         android:id="@+id/ivIconoFila"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:importantForAccessibility="no"
-        app:tint="?attr/colorOnSurfaceVariant"
+        style="@style/Widget.GymProFit.Fila.Icono"
         android:src="@drawable/ic_ms_restaurant" />
 
     <LinearLayout
