@@ -172,6 +172,11 @@
                     android:textColor="@color/gp_on_primary_container" />
             </LinearLayout>
 
+            <!-- Sin red o con la API caída: el fallo y «Reintentar» donde irían las cifras. -->
+            <include
+                android:id="@+id/estadoNutricion"
+                layout="@layout/view_estado" />
+
             <!-- El anillo, lo que queda y los macros -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardDia"
@@ -341,6 +346,45 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- «Comidas» y, si hay la de ayer que copiar, «Copiar ayer» (tablero 15). -->
+            <LinearLayout
+                android:id="@+id/cabeceraComidas"
+                style="@style/Widget.GymProFit.CabeceraSeccion"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    style="@style/Widget.GymProFit.CabeceraSeccion.Titulo"
+                    android:text="@string/nutricion_comidas" />
+
+                <TextView
+                    android:id="@+id/btnCopiarAyerDiario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:drawablePadding="6dp"
+                    android:drawableStart="@drawable/ic_ms_content_copy"
+                    android:drawableTint="?attr/colorPrimary"
+                    android:gravity="center_vertical"
+                    android:minHeight="48dp"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:text="@string/nutricion_copiar_ayer"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Enlace"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardComidas"
+                style="@style/Widget.GymProFit.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/listaComidas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </com.google.android.material.card.MaterialCardView>
             <!-- El agua (GP-166) -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardAgua"
@@ -397,13 +441,30 @@
                                     android:textStyle="bold"
                                     android:textColor="?attr/colorOnSurface" />
 
-                                <TextView
-                                    android:id="@+id/tvAguaLitros"
+                                <!-- «1,5 L» en cifra condensada y «de 2,8» de pie (tablero 15). -->
+                                <LinearLayout
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:fontFeatureSettings="tnum"
-                                    android:textSize="@dimen/text_caption"
-                                    android:textColor="?attr/colorOnSurfaceVariant" />
+                                    android:baselineAlignedChildIndex="0"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/tvAguaLitros"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFeatureSettings="tnum"
+                                        android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena"
+                                        android:textColor="?attr/colorOnSurface" />
+
+                                    <TextView
+                                        android:id="@+id/tvAguaDe"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="@dimen/espacio_4"
+                                        android:fontFeatureSettings="tnum"
+                                        android:textColor="?attr/colorOnSurfaceVariant"
+                                        android:textSize="@dimen/text_caption" />
+                                </LinearLayout>
                             </LinearLayout>
                         </LinearLayout>
 
@@ -430,7 +491,7 @@
                             app:iconTint="@color/gp_on_agua_container" />
                     </LinearLayout>
 
-                    <!-- Los vasos: los rellena NutricionFragment, en filas de nueve. -->
+                    <!-- Los vasos: los rellena NutricionFragment, tantos por fila como quepan a 48 dp (hasta nueve). -->
                     <LinearLayout
                         android:id="@+id/filasVasos"
                         android:layout_width="match_parent"
@@ -441,63 +502,109 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Tu semana: con el día completo (tablero 3) -->
+            <!-- Tu semana: un resumen con enlace a la semana (tablero 15). -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardSemana"
                 style="@style/Widget.GymProFit.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
+                android:clickable="true"
+                android:focusable="true"
                 android:visibility="gone">
 
                 <LinearLayout
+                    android:id="@+id/filaSemana"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="16dp"
-                    android:focusable="true"
-                    android:id="@+id/filaSemana">
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:importantForAccessibility="no"
-                        android:src="@drawable/ic_ms_calendar_month"
-                        app:tint="@color/gp_success" />
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
                     <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="12dp"
-                        android:orientation="vertical"
+                        style="@style/Widget.GymProFit.CabeceraSeccion"
                         android:importantForAccessibility="noHideDescendants">
 
                         <TextView
-                            android:id="@+id/tvSemanaTitulo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="@dimen/text_fila"
-                            android:textStyle="bold"
-                            android:textColor="?attr/colorOnSurface" />
+                            style="@style/Widget.GymProFit.CabeceraSeccion.Titulo"
+                            android:text="@string/nutricion_tu_semana" />
 
                         <TextView
-                            android:id="@+id/tvSemanaTexto"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:lineSpacingMultiplier="1.1"
-                            android:textSize="@dimen/text_caption"
-                            android:textColor="?attr/colorOnSurface" />
+                            android:text="@string/nutricion_ver_semana"
+                            android:textAppearance="@style/TextAppearance.GymProFit.Enlace" />
                     </LinearLayout>
+
+                    <!-- Dos columnas (tablero 15): «3 de 4» en el azul de la proteína con «días con
+                         tu proteína» debajo, y «2.240» con «kcal de media». Si con letra grande no
+                         caben en una fila, NutricionFragment las apila. -->
+                    <LinearLayout
+                        android:id="@+id/cifrasSemana"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/espacio_8"
+                        android:importantForAccessibility="noHideDescendants"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:id="@+id/columnaSemanaDias"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tvSemanaDias"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFeatureSettings="tnum"
+                                android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena"
+                                android:textColor="@color/gp_macro_proteinas" />
+
+                            <TextView
+                                android:id="@+id/tvSemanaDiasPie"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:textSize="@dimen/text_caption" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/columnaSemanaKcal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/espacio_24"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tvSemanaKcal"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFeatureSettings="tnum"
+                                android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena"
+                                android:textColor="?attr/colorOnSurface" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/nutricion_semana_kcal_pie"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:textSize="@dimen/text_caption" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Con el día completo (tablero 3): cuántos van y lo que hubo ese día. -->
+                    <TextView
+                        android:id="@+id/tvSemanaExtra"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:importantForAccessibility="no"
+                        android:lineSpacingMultiplier="1.1"
+                        android:textSize="@dimen/text_caption"
+                        android:textColor="@color/gp_success"
+                        android:visibility="gone" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-
-            <LinearLayout
-                android:id="@+id/listaComidas"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" />
         </LinearLayout>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

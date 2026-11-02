@@ -378,8 +378,17 @@
          Material 1.13 puso autoajuste de tamaño (hasta 16sp) a los días y a sus
          iniciales; con la escala de letra de la app salían 2 px más altos que en la
          1.12, sin que nadie lo decidiera. Se deja el estilo de Material sin el
-         autoajuste, como el color de los chips (GP-136). -->
+         autoajuste, como el color de los chips (GP-136).
+         Los contenedores de superficie (GP-216, lote 3): el tema no los define y el diálogo
+         salía lavanda en claro y gris violáceo en oscuro, el color de serie de Material. -->
     <style name="ThemeOverlay.GymProFit.Calendario" parent="ThemeOverlay.Material3.MaterialCalendar">
+        <item name="colorSurfaceContainerLowest">@color/gp_surface</item>
+        <item name="colorSurfaceContainerLow">@color/gp_surface</item>
+        <item name="colorSurfaceContainer">@color/gp_surface</item>
+        <item name="colorSurfaceContainerHigh">@color/gp_surface</item>
+        <item name="colorSurfaceContainerHighest">@color/gp_surface_2</item>
+        <!-- Sin el tinte de elevación: mezclaba un 11 % de naranja en el fondo del diálogo. -->
+        <item name="elevationOverlayEnabled">false</item>
         <item name="materialCalendarDay">@style/Widget.GymProFit.CalendarioDia</item>
         <item name="materialCalendarDayOfWeekLabel">@style/Widget.GymProFit.CalendarioSemana</item>
     </style>

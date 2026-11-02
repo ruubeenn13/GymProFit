@@ -1,5 +1,6 @@
 package es.pmdm.gymprofit.utils;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -52,35 +53,42 @@ public class CantidadFichaTest {
         assertFalse(c.unidades().get(0).esGramos());
     }
 
+    // Tablero 26 (GP-216, lote 3): media ración y 10 g por toque, y el mínimo es el paso. Con
+    // una ración de paso el − se apagaba en 1 aunque el atajo ½ existe, y desde ½ el + saltaba
+    // a 1,5 sin poder volver a 1 (lo vio el revisor).
     @Test
-    public void mas_y_menos_de_uno_en_uno_en_raciones() {
+    public void mas_y_menos_de_media_en_media_en_raciones() {
         CantidadFicha c = CantidadFicha.nueva(yogur());
+        assertTrue("en 1 se puede bajar a ½", c.puedeMenos());
         c.mas();
-        assertEquals(2, c.valor(), D);
-        assertEquals(400, c.gramos(), D);
+        assertEquals(1.5, c.valor(), D);
+        assertEquals(300, c.gramos(), D);
         c.menos();
         c.menos();
-        assertEquals("no baja de una ración", 1, c.valor(), D);
+        c.menos();
+        assertEquals("no baja de media ración", 0.5, c.valor(), D);
         assertFalse(c.puedeMenos());
+        c.mas();
+        assertEquals("desde ½, el + vuelve a 1", 1, c.valor(), D);
     }
 
     @Test
-    public void mas_y_menos_de_25_en_25_en_gramos() {
+    public void mas_y_menos_de_10_en_10_en_gramos() {
         CantidadFicha c = CantidadFicha.nueva(Collections.emptyList());
         c.mas();
-        assertEquals(125, c.gramos(), D);
-        for (int i = 0; i < 10; i++) c.menos();
-        assertEquals("no baja de 25 g", 25, c.gramos(), D);
+        assertEquals(110, c.gramos(), D);
+        for (int i = 0; i < 20; i++) c.menos();
+        assertEquals("no baja de 10 g", 10, c.gramos(), D);
     }
 
     @Test
     public void menos_desde_una_cifra_escrita_baja_al_paso() {
         CantidadFicha c = CantidadFicha.nueva(Collections.emptyList());
-        assertTrue(c.escribir(40));
+        assertTrue(c.escribir(15));
         c.menos();
-        assertEquals(25, c.gramos(), D);
-        assertTrue(c.escribir(10));
-        assertFalse("10 g ya está por debajo del paso: no baja más", c.puedeMenos());
+        assertEquals(10, c.gramos(), D);
+        assertTrue(c.escribir(5));
+        assertFalse("5 g ya está por debajo del paso: no baja más", c.puedeMenos());
     }
 
     @Test
@@ -99,7 +107,7 @@ public class CantidadFichaTest {
     @Test
     public void cambiar_de_unidad_conserva_los_gramos() {
         CantidadFicha c = CantidadFicha.nueva(yogur());
-        c.mas(); // 2 envases, 400 g
+        c.escribir(2); // 2 envases, 400 g
         c.elegir(2);
         assertTrue(c.unidad().esGramos());
         assertEquals(400, c.valor(), D);
@@ -154,5 +162,36 @@ public class CantidadFichaTest {
         assertEquals("media taza", CantidadFicha.nombreUnidad("Media taza"));
         assertEquals("2 sardinas", CantidadFicha.nombreUnidad("2 sardinas"));
         assertEquals("slice", CantidadFicha.nombreUnidad("1 slice"));
+    }
+
+    // Los atajos de la ficha (GP-216, tablero 26): ½, 1 y 2 en raciones; 100, 150 y 200 en gramos.
+    @Test
+    public void atajos_en_raciones_y_en_gramos() {
+        CantidadFicha c = CantidadFicha.nueva(yogur());
+        assertArrayEquals(new double[]{0.5, 1, 2}, c.atajos(), D);
+        c.elegir(c.unidades().size() - 1);
+        assertArrayEquals(new double[]{100, 150, 200}, c.atajos(), D);
+    }
+
+    @Test
+    public void un_atajo_pone_la_cifra_y_conserva_la_unidad() {
+        CantidadFicha c = CantidadFicha.nueva(yogur());
+        assertTrue(c.escribir(c.atajos()[0]));
+        assertEquals(0.5, c.valor(), D);
+        assertEquals(0, c.elegida());
+        assertEquals(100, c.gramos(), D);
+    }
+
+    // GP-216 lote 3, revisor: junto a la cifra salía «1,5 taza» mientras debajo decía «Por 1,5
+    // tazas». La unidad va en plural salvo con una (la misma regla que Cantidades).
+    @Test
+    public void la_unidad_junto_a_la_cifra_va_en_plural_salvo_con_una() {
+        CantidadFicha.Unidad taza = new CantidadFicha.Unidad(7, 0, "1 taza", 237, "taza", "tazas");
+        assertEquals("taza", CantidadFicha.unidadPara(taza, 1));
+        assertEquals("tazas", CantidadFicha.unidadPara(taza, 1.5));
+        assertEquals("tazas", CantidadFicha.unidadPara(taza, 0.5));
+        CantidadFicha.Unidad envase = new CantidadFicha.Unidad(11, 0, "1 Envase", 200, null, null);
+        assertEquals("sin plural de la API, el nombre de la ración", "envase", CantidadFicha.unidadPara(envase, 2));
+        assertNull("en gramos no hay nombre de ración", CantidadFicha.unidadPara(CantidadFicha.nueva(Collections.emptyList()).unidad(), 100));
     }
 }

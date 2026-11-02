@@ -30,6 +30,21 @@ public final class Agua {
     private Agua() {
     }
 
+    /** Como mucho, tantos vasos en una fila. */
+    public static final int VASOS_POR_FILA_MAX = 9;
+
+    /**
+     * Cuántos vasos van en cada fila: los que quepan con el ancho de la zona táctil cada uno
+     * (se pueden tocar, DEC-019), entre uno y nueve. Los dos anchos, en la misma unidad.
+     *
+     * @param ancho      el ancho de la fila.
+     * @param anchoVaso  lo que mide, como poco, un vaso que se puede tocar (zona_tactil).
+     */
+    public static int vasosPorFila(int ancho, int anchoVaso) {
+        if (anchoVaso <= 0) return VASOS_POR_FILA_MAX;
+        return Math.max(1, Math.min(VASOS_POR_FILA_MAX, ancho / anchoVaso));
+    }
+
     /** Vasos hasta el objetivo del plan, redondeando hacia arriba; 0 sin objetivo. */
     public static int vasosObjetivo(double litros, int vaso) {
         if (litros <= 0 || vaso <= 0) return 0;

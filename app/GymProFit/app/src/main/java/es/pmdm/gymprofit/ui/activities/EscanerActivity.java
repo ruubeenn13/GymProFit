@@ -61,6 +61,7 @@ import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.Movimiento;
 import es.pmdm.gymprofit.utils.PedidoCantidad;
+import es.pmdm.gymprofit.utils.Transiciones;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
 
@@ -408,6 +409,8 @@ public class EscanerActivity extends BaseActivity {
         TextView titulo = findViewById(R.id.tvTituloHoja);
         TextView texto = findViewById(R.id.tvTextoHoja);
         View tile = findViewById(R.id.tileHoja);
+        findViewById(R.id.pildoraEncontrado).setVisibility(
+                estado.estado() == EstadoEscaner.Estado.PRODUCTO ? View.VISIBLE : View.GONE);
 
         EstadoEscaner.Estado e = estado.estado();
         progreso.setVisibility(e == EstadoEscaner.Estado.CONSULTANDO ? View.VISIBLE : View.GONE);
@@ -469,8 +472,8 @@ public class EscanerActivity extends BaseActivity {
         String porcion = es.pmdm.gymprofit.utils.Cantidades.de(this, u.nombre, u.unidad, u.unidadPlural,
                 cantidad.raciones(), cantidad.gramos(), !cantidad.conGramos());
 
-        ((android.widget.ImageView) findViewById(R.id.ivIconoHoja)).setImageResource(a.esProducto()
-                ? R.drawable.ic_ms_inventory_2 : R.drawable.ic_ms_restaurant);
+        // El icono de su tipo de alimento, como en las listas (tablero 27).
+        ((android.widget.ImageView) findViewById(R.id.ivIconoHoja)).setImageResource(BusquedaAlimentoAdapter.icono(a));
         titulo.setText(es.pmdm.gymprofit.ui.nutricion.Insignia.nombre(this, a.getNombre(), a.isRevisado(), 18));
         texto.setText(a.esProducto() ? getString(R.string.escaner_producto_sub, porcion)
                 : BusquedaAlimentoAdapter.detalle(this, a));
@@ -489,7 +492,8 @@ public class EscanerActivity extends BaseActivity {
         secundario.setText(R.string.escaner_cambiar_cantidad);
         if (modoIngredientes()) {
             // Al plato (lote 1.6.6): nada va a la API hasta guardarlo.
-            secundario.setOnClickListener(v -> despues.launch(FichaAlimentoActivity.paraIngrediente(this, a, null)));
+            secundario.setOnClickListener(v -> Transiciones.abrirTarjeta(this, hoja,
+                    FichaAlimentoActivity.paraIngrediente(this, a, null), despues));
             principal.setText(R.string.ficha_anadir_al_plato);
             principal.setOnClickListener(v -> {
                 Movimiento.vibrar(principal, Movimiento.Vibracion.LIGERA);
@@ -499,8 +503,9 @@ public class EscanerActivity extends BaseActivity {
             });
             return;
         }
-        secundario.setOnClickListener(v -> despues.launch(FichaAlimentoActivity.paraAnadir(this, a, tipoComida, fecha)
-                .putExtra(AnadirAlimentoActivity.EXTRA_EN_ANADIR, enAnadir())));
+        secundario.setOnClickListener(v -> Transiciones.abrirTarjeta(this, hoja,
+                FichaAlimentoActivity.paraAnadir(this, a, tipoComida, fecha)
+                        .putExtra(AnadirAlimentoActivity.EXTRA_EN_ANADIR, enAnadir()), despues));
         principal.setText(AnadirAlimentoActivity.textoAnadirA(tipoComida));
         principal.setOnClickListener(v -> anadir(a, cantidad, principal));
     }

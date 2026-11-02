@@ -83,6 +83,8 @@
     <dimen name="separacion_pestana">36dp</dimen>
     <dimen name="separacion_subpantalla">28dp</dimen>
     <dimen name="titulo_a_contenido">14dp</dimen>
+    <!-- Ancho de una tarjeta de carrusel (Inicio, «Lo que te encaja» en Añadir). -->
+    <dimen name="tarjeta_carrusel">220dp</dimen>
 
     <!-- Radios. Botones y píldoras: la mitad de su altura (cornerSize 50 %). -->
     <dimen name="radio_chip">12dp</dimen>
@@ -93,6 +95,11 @@
 
     <!-- Borde de la tarjeta estándar: 1 dp en claro, ninguno en oscuro (values-night). -->
     <dimen name="tarjeta_borde">1dp</dimen>
+
+    <!-- Zona táctil mínima (DEC-019): 48 dp. -->
+    <dimen name="zona_tactil">48dp</dimen>
+    <!-- Hueco entre los tramos de la barra de reparto de una comida. -->
+    <dimen name="reparto_hueco">2dp</dimen>
 
     <!-- Fila de lista: 64 dp mínimo, 16 a los lados, icono en círculo de 40 y separador
          con sangría hasta el texto (16 + 40 + 14 = 70). -->

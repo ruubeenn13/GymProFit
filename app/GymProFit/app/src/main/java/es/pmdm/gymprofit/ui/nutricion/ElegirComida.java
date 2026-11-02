@@ -95,47 +95,6 @@ public final class ElegirComida {
         return desde.equals(a) ? null : anadidoA(a);
     }
 
-    // ── La etiqueta ─────────────────────────────────────────────────────────
-
-    /** Pinta la etiqueta (view_etiqueta_comida) con la comida. */
-    public static void pintarEtiqueta(@NonNull View etiqueta, @NonNull String tipo) {
-        Context ctx = etiqueta.getContext();
-        String nombre = ctx.getString(ComidaQueToca.titulo(tipo));
-        ((ImageView) etiqueta.findViewById(R.id.ivIconoEtiqueta)).setImageResource(icono(tipo));
-        ((TextView) etiqueta.findViewById(R.id.tvEtiquetaComida)).setText(nombre);
-        etiqueta.setContentDescription(ctx.getString(R.string.etiqueta_comida_a11y, nombre));
-    }
-
-    /**
-     * Pone la etiqueta a la derecha del título si cabe en la línea; si no, debajo. Se
-     * vuelve a decidir cada vez que cambia el ancho (giro, ventana partida).
-     *
-     * @param fila    la línea del título, que lleva la ranura de la derecha.
-     * @param derecha ranura junto al título.
-     * @param debajo  ranura de la segunda línea.
-     */
-    public static void colocarEtiqueta(@NonNull View etiqueta, @NonNull ViewGroup fila, @NonNull TextView titulo,
-                                       @NonNull ViewGroup derecha, @NonNull ViewGroup debajo) {
-        fila.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) -> {
-            if (r - l == or - ol && etiqueta.getParent() != null) return;
-            fila.post(() -> decidir(etiqueta, fila, titulo, derecha, debajo));
-        });
-    }
-
-    private static void decidir(View etiqueta, ViewGroup fila, TextView titulo, ViewGroup derecha, ViewGroup debajo) {
-        etiqueta.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-        float textoTitulo = titulo.getPaint().measureText(titulo.getText().toString())
-                + titulo.getPaddingStart() + titulo.getPaddingEnd();
-        int libre = fila.getWidth() - fila.getPaddingStart() - fila.getPaddingEnd() - (titulo.getLeft() - fila.getPaddingStart());
-        boolean cabe = textoTitulo + etiqueta.getMeasuredWidth() <= libre;
-        ViewGroup destino = cabe ? derecha : debajo;
-        if (etiqueta.getParent() == destino) return;
-        if (etiqueta.getParent() != null) ((ViewGroup) etiqueta.getParent()).removeView(etiqueta);
-        destino.addView(etiqueta);
-        debajo.setVisibility(cabe ? View.GONE : View.VISIBLE);
-    }
-
     // ── La hoja ─────────────────────────────────────────────────────────────
 
     /**

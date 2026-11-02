@@ -31,7 +31,8 @@ import es.pmdm.gymprofit.model.comida.ComidaReciente;
 //     creado, con «Crear un alimento». En modo ingredientes no hay platos en ninguna lista
 //     (sinPlatos): un plato no puede ser ingrediente de otro.
 //   · Desde la 1.6.7, arriba de «Mis platos», «Lo que te encaja» (LoQueTeEncaja): su
-//     cabecera, con lo que queda del día, y como mucho tres tarjetas. Sin sección, nada.
+//     cabecera, con lo que queda del día, y como mucho tres tarjetas, que desde GP-216
+//     (lote 3) van en un carrusel de una sola fila (ENCAJA_CARRUSEL). Sin sección, nada.
 // Cada grupo lleva su cabecera solo si tiene algo. Un grupo que no se conoce va con los
 // básicos: mejor enseñarlo que perderlo.
 // ============================================================
@@ -45,7 +46,7 @@ public final class GruposBusqueda {
     public enum Seccion { RECIENTES, COMIDAS_RECIENTES, HABITUALES, TUYO, BASICOS, PRODUCTOS, FAVORITOS, MIS_PLATOS, CREADOS }
 
     public enum Tipo { CABECERA, ALIMENTO, NO_LO_ENCUENTRAS, PROPUESTA, COMIDA_RECIENTE, SIN_FAVORITOS, SIN_PLATOS,
-        CREAR_PLATO, CREAR_ALIMENTO, ENCAJA_CABECERA, ENCAJA }
+        CREAR_PLATO, CREAR_ALIMENTO, ENCAJA_CABECERA, ENCAJA_CARRUSEL }
 
     /** Una fila de la lista: una cabecera, un alimento, «¿No lo encuentras?» o la propuesta. */
     public static final class Elemento {
@@ -62,7 +63,7 @@ public final class GruposBusqueda {
         @Nullable public final ComidaReciente comida;
         /** «Lo que te encaja» (1.6.7): la sección, en su cabecera y en cada tarjeta. */
         @Nullable public final LoQueTeEncaja.Resultado encaja;
-        /** La tarjeta de «Lo que te encaja»: el alimento va también en {@link #alimento}. */
+        /** Una sugerencia suelta de «Lo que te encaja» (el carrusel las lleva todas en {@link #encaja}). */
         @Nullable public final LoQueTeEncaja.Sugerencia sugerencia;
 
         private Elemento(@NonNull Tipo tipo, @Nullable Seccion seccion, @Nullable Alimento alimento) {
@@ -189,7 +190,7 @@ public final class GruposBusqueda {
 
     /**
      * Como {@link #misPlatos(List, List)}, con «Lo que te encaja» arriba (lote 1.6.7): su
-     * cabecera y una tarjeta por sugerencia. Sin sección (null o vacía), como siempre.
+     * cabecera y el carrusel con sus sugerencias. Sin sección (null o vacía), como siempre.
      */
     @NonNull
     public static List<Elemento> misPlatos(@NonNull List<Alimento> platos, @NonNull List<Alimento> creados,
@@ -197,9 +198,7 @@ public final class GruposBusqueda {
         List<Elemento> lista = new ArrayList<>();
         if (encaja != null && !encaja.sugerencias.isEmpty()) {
             lista.add(new Elemento(Tipo.ENCAJA_CABECERA, null, null, false, -1, null, null, encaja, null));
-            for (LoQueTeEncaja.Sugerencia s : encaja.sugerencias) {
-                lista.add(new Elemento(Tipo.ENCAJA, null, s.alimento, false, -1, null, null, encaja, s));
-            }
+            lista.add(new Elemento(Tipo.ENCAJA_CARRUSEL, null, null, false, -1, null, null, encaja, null));
         }
         lista.add(new Elemento(Tipo.CABECERA, Seccion.MIS_PLATOS, null));
         if (platos.isEmpty()) lista.add(new Elemento(Tipo.SIN_PLATOS, Seccion.MIS_PLATOS, null));
@@ -211,6 +210,20 @@ public final class GruposBusqueda {
         return lista;
     }
 
+    /**
+     * Pone «Lo que te encaja» delante de una lista (GP-216, tablero 25): arriba de Recientes y de
+     * Favoritos, como ya estaba en Mis platos. Sin sección, la misma lista.
+     */
+    @NonNull
+    public static List<Elemento> conEncaja(@NonNull List<Elemento> lista, @Nullable LoQueTeEncaja.Resultado encaja) {
+        if (encaja == null || encaja.sugerencias.isEmpty()) return lista;
+        List<Elemento> con = new ArrayList<>();
+        con.add(new Elemento(Tipo.ENCAJA_CABECERA, null, null, false, -1, null, null, encaja, null));
+        con.add(new Elemento(Tipo.ENCAJA_CARRUSEL, null, null, false, -1, null, null, encaja, null));
+        con.addAll(lista);
+        return con;
+    }
+
     /** Sin platos (modo ingredientes): un plato no puede ser ingrediente de otro. */
     @NonNull
     public static List<Alimento> sinPlatos(@Nullable List<Alimento> alimentos) {
@@ -219,10 +232,10 @@ public final class GruposBusqueda {
         return quedan;
     }
 
-    /** Cuántas filas ocupa arriba «Lo que te encaja» (cabecera y tarjetas); 0 sin sección. */
+    /** Cuántas filas ocupa arriba «Lo que te encaja» (cabecera y carrusel); 0 sin sección. */
     public static int filasEncaja(@NonNull List<Elemento> lista) {
         int n = 0;
-        while (n < lista.size() && (lista.get(n).tipo == Tipo.ENCAJA_CABECERA || lista.get(n).tipo == Tipo.ENCAJA)) n++;
+        while (n < lista.size() && (lista.get(n).tipo == Tipo.ENCAJA_CABECERA || lista.get(n).tipo == Tipo.ENCAJA_CARRUSEL)) n++;
         return n;
     }
 

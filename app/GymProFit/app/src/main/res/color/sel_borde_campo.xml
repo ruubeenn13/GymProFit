@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- sel_borde_campo — el borde de un campo de texto: naranja con el foco y, sin él, gp_stroke
+     (3:1 contra el fondo en los dos temas, DESIGN.md «Neutral»). Sin selector, Material ponía
+     un trazo que en oscuro no se veía (1,04:1). -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="?attr/colorPrimary" android:state_focused="true" />
+    <item android:color="?attr/colorPrimary" android:state_hovered="true" />
+    <item android:color="@color/gp_stroke" />
+</selector>

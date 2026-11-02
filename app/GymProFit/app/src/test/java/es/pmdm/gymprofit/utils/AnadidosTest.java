@@ -376,4 +376,20 @@ public class AnadidosTest {
         assertTrue(servidor.deshacer.isEmpty());
         assertEquals(1, anadidos.resumen().cuantos);
     }
+
+    // La barra de Añadir dice cuánta proteína suma lo añadido (GP-216, tablero 25): la de lo que
+    // viaja, con la del pedido, y la de lo que ya llegó, con la de su línea.
+    @Test
+    public void el_resumen_suma_la_proteina_de_lo_que_viaja_y_de_lo_hecho() {
+        anadidos.tocar(new Anadidos.Pedido(7, null, "MERIENDA", new HashMap<>(), "1 envase (200 g)", 120, 4.5));
+        assertEquals(4.5, anadidos.resumen().proteina, 0.001);
+        AlimentoComida linea = new AlimentoComida();
+        linea.setId(1);
+        linea.setAlimentoId(7);
+        linea.setProteinasTotales(5.0);
+        servidor.anadir.remove(0).ok(new AnadirRespuesta(null, linea, null));
+        anadidos.tocar(new Anadidos.Pedido(8, null, "MERIENDA", new HashMap<>(), "100 g", 99, 23));
+        assertEquals(28.0, anadidos.resumen().proteina, 0.001);
+        assertEquals(2, anadidos.resumen().cuantos);
+    }
 }

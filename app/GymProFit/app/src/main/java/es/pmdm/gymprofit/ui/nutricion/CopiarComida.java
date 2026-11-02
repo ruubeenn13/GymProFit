@@ -26,6 +26,9 @@ public final class CopiarComida {
 
     private static final int[] SI_COPIAR = {R.string.copiar_ayer_desayuno, R.string.copiar_ayer_almuerzo,
             R.string.copiar_ayer_comida, R.string.copiar_ayer_merienda, R.string.copiar_ayer_cena};
+    private static final int[] COPIAR_AYER = {R.string.nutricion_copiar_ayer_desayuno,
+            R.string.nutricion_copiar_ayer_almuerzo, R.string.nutricion_copiar_ayer_comida,
+            R.string.nutricion_copiar_ayer_merienda, R.string.nutricion_copiar_ayer_cena};
     private static final int[] SUELES = {R.string.sueles_desayuno, R.string.sueles_almuerzo,
             R.string.sueles_comida, R.string.sueles_merienda, R.string.sueles_cena};
 
@@ -59,17 +62,29 @@ public final class CopiarComida {
         return texto.isEmpty() ? texto : texto.substring(0, 1).toUpperCase(idioma) + texto.substring(1);
     }
 
-    /** «Pan integral, Pechuga de pavo · 203 kcal». */
+    /**
+     * «203 kcal · Pan integral, Pechuga de pavo»: las kcal delante, porque una lista larga se
+     * corta por el final y no se puede llevar la cifra (lo vio el revisor con letra 1,3).
+     */
     @NonNull
     public static String detalle(@NonNull Context ctx, @NonNull ComidaReciente c) {
         NumberFormat nf = NumberFormat.getIntegerInstance(FechaUtils.localeDeLaApp(ctx));
-        return ctx.getString(R.string.fila_cantidad_kcal, ComidasRecientes.nombres(c.getLineas()), nf.format(c.getKcal()));
+        return ctx.getString(R.string.reciente_detalle, nf.format(c.getKcal()), ComidasRecientes.nombres(c.getLineas()));
     }
 
-    /** «Sí, copiar la merienda de ayer». */
+    /** «Copiar la de ayer: la merienda», el nombre accesible del botón de Profi (empieza por lo que se ve). */
     @StringRes
     public static int siCopiar(@NonNull String tipo) {
         return SI_COPIAR[indice(tipo)];
+    }
+
+    /**
+     * «Copiar ayer: la merienda de ayer, a hoy», el nombre accesible del enlace de Nutrición:
+     * empieza por el texto que se ve (control por voz) y dice qué comida copia.
+     */
+    @StringRes
+    public static int copiarAyer(@NonNull String tipo) {
+        return COPIAR_AYER[indice(tipo)];
     }
 
     /** «Lo que sueles merendar». */

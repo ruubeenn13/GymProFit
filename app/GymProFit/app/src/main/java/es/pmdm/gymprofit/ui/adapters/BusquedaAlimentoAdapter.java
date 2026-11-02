@@ -49,9 +49,11 @@ import es.pmdm.gymprofit.utils.Movimiento;
 // Desde la 1.6.6, la pestaña «Mis platos»: sus cabeceras, «Crear un plato» y «Crear un
 // alimento» al final de su tarjeta y, sin platos, la línea que lo explica. Un plato lleva
 // en cualquier lista el icono de Mis platos y la marca «Plato» junto al nombre (tablero 8).
-// Desde la 1.6.7, arriba de «Mis platos», «Lo que te encaja»: su cabecera y una tarjeta por
-// sugerencia, con su «+» (el mismo de las filas), la barra de la proteína y el motivo. Entra
-// en cascada la primera vez que sale (momento 16); su barra se llena con BARRA.
+// Desde la 1.6.7, arriba de cada pestaña, «Lo que te encaja»: su cabecera y, desde GP-216
+// (lote 3, tablero 25), un carrusel con una tarjeta de 220 dp por sugerencia: icono, su «+»
+// (el mismo de las filas), nombre, detalle y la barra de la proteína; el motivo va para TalkBack.
+// Las tarjetas entran en cascada la primera vez que sale (momento 16) y su barra se llena con
+// BARRA. Tocar un «+» repinta las tarjetas en su sitio: el carrusel no se recrea.
 // ============================================================
 public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -121,7 +123,7 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
     private static final int SIN_PLATOS = 7;
     private static final int CREAR = 8;
     private static final int ENCAJA_CABECERA = 9;
-    private static final int ENCAJA = 10;
+    private static final int ENCAJA_CARRUSEL = 10;
 
     /** Payload: solo cambia el «+» de la fila (y su detalle). */
     private static final Object SOLO_MAS = new Object();
@@ -179,12 +181,26 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
         for (int i = 0; i < elementos.size(); i++) {
             Alimento a = elementos.get(i).alimento;
             GruposBusqueda.Tipo t = elementos.get(i).tipo;
-            if ((t == GruposBusqueda.Tipo.ALIMENTO || t == GruposBusqueda.Tipo.ENCAJA) && a != null
-                    && (alimento.equals(Anadidos.parteAlimento(Anadidos.clave("", a.getId(), a.getBarcode())))
-                    || alimento.equals(Anadidos.parteAlimento(Anadidos.clave("", 0, a.getBarcode()))))) {
+            if (t == GruposBusqueda.Tipo.ALIMENTO && a != null && esDe(alimento, a)) {
                 notifyItemChanged(i, SOLO_MAS);
             }
+            // El carrusel, si lleva ese alimento: solo se repintan sus «+», no se recrea.
+            LoQueTeEncaja.Resultado r = elementos.get(i).encaja;
+            if (t == GruposBusqueda.Tipo.ENCAJA_CARRUSEL && r != null) {
+                for (LoQueTeEncaja.Sugerencia s : r.sugerencias) {
+                    if (esDe(alimento, s.alimento)) {
+                        notifyItemChanged(i, SOLO_MAS);
+                        break;
+                    }
+                }
+            }
         }
+    }
+
+    // ¿Es la clave (sin comida) de ese alimento, por id o por código de barras?
+    private static boolean esDe(@NonNull String alimento, @NonNull Alimento a) {
+        return alimento.equals(Anadidos.parteAlimento(Anadidos.clave("", a.getId(), a.getBarcode())))
+                || alimento.equals(Anadidos.parteAlimento(Anadidos.clave("", 0, a.getBarcode())));
     }
 
     @Override
@@ -202,7 +218,7 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
             case CREAR_ALIMENTO:
                 return CREAR;
             case ENCAJA_CABECERA: return ENCAJA_CABECERA;
-            case ENCAJA: return ENCAJA;
+            case ENCAJA_CARRUSEL: return ENCAJA_CARRUSEL;
             default: return ALIMENTO;
         }
     }
@@ -250,8 +266,8 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
             androidx.core.view.ViewCompat.setAccessibilityHeading(v.findViewById(R.id.tvTituloEncaja), true);
             return new RecyclerView.ViewHolder(v) { };
         }
-        if (viewType == ENCAJA) {
-            return new EncajaHolder(inflater.inflate(R.layout.item_encaja, parent, false));
+        if (viewType == ENCAJA_CARRUSEL) {
+            return new CarruselHolder(inflater.inflate(R.layout.item_encaja_carrusel, parent, false));
         }
         return new FilaHolder(inflater.inflate(R.layout.item_alimento_busqueda, parent, false));
     }
@@ -263,8 +279,8 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
             ((FilaHolder) holder).pintarMas(e.alimento, e.seccion);
             return;
         }
-        if (payloads.contains(SOLO_MAS) && holder instanceof EncajaHolder && e.sugerencia != null) {
-            ((EncajaHolder) holder).pintarMas(e.sugerencia);
+        if (payloads.contains(SOLO_MAS) && holder instanceof CarruselHolder) {
+            ((CarruselHolder) holder).pintarMas();
             return;
         }
         onBindViewHolder(holder, position);
@@ -287,8 +303,10 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
             pintarCrear(holder.itemView, e.tipo == GruposBusqueda.Tipo.CREAR_PLATO, fondo(position));
         } else if (e.tipo == GruposBusqueda.Tipo.ENCAJA_CABECERA && e.encaja != null) {
             pintarCabeceraEncaja(holder.itemView, e.encaja);
-        } else if (e.tipo == GruposBusqueda.Tipo.ENCAJA && e.sugerencia != null) {
-            ((EncajaHolder) holder).pintar(e.sugerencia, position < cascadaHasta);
+        } else if (e.tipo == GruposBusqueda.Tipo.ENCAJA_CARRUSEL && e.encaja != null) {
+            // Las tarjetas entran una a una dentro del carrusel (momento 16), no la fila entera.
+            ((CarruselHolder) holder).pintar(e.encaja, position < cascadaHasta);
+            return;
         }
         if (position < cascadaHasta) {
             Movimiento.entrarUna(holder.itemView, position * Movimiento.CASCADA_ESCALON, Movimiento.CASCADA, 16);
@@ -542,8 +560,54 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
     }
 
-    // Una tarjeta de «Lo que te encaja» (1.6.7).
-    final class EncajaHolder extends RecyclerView.ViewHolder {
+    // El carrusel de «Lo que te encaja» (GP-216, lote 3, tablero 25): una tarjeta por
+    // sugerencia. Si llegan las mismas sugerencias, se repintan en su sitio (el carrusel no
+    // salta ni pierde el foco de TalkBack); solo se crean de nuevo si cambian.
+    final class CarruselHolder extends RecyclerView.ViewHolder {
+        private final android.widget.LinearLayout lista;
+        private final List<TarjetaEncaja> tarjetas = new ArrayList<>();
+        @Nullable private String clave;
+
+        CarruselHolder(@NonNull View v) {
+            super(v);
+            lista = v.findViewById(R.id.listaEncaja);
+        }
+
+        void pintar(@NonNull LoQueTeEncaja.Resultado r, boolean entra) {
+            StringBuilder c = new StringBuilder();
+            for (LoQueTeEncaja.Sugerencia s : r.sugerencias) {
+                c.append(s.alimento.getId()).append('/').append(s.alimento.getBarcode()).append('/')
+                        .append(s.cubre).append(';');
+            }
+            String nueva = c.toString();
+            if (nueva.equals(clave) && tarjetas.size() == r.sugerencias.size()) {
+                for (int i = 0; i < tarjetas.size(); i++) tarjetas.get(i).pintar(r.sugerencias.get(i), false);
+                return;
+            }
+            clave = nueva;
+            lista.removeAllViews();
+            tarjetas.clear();
+            ((android.widget.HorizontalScrollView) itemView).scrollTo(0, 0);
+            LayoutInflater inflater = LayoutInflater.from(itemView.getContext());
+            for (int i = 0; i < r.sugerencias.size(); i++) {
+                TarjetaEncaja t = new TarjetaEncaja(inflater.inflate(R.layout.item_encaja, lista, false));
+                lista.addView(t.vista);
+                tarjetas.add(t);
+                t.pintar(r.sugerencias.get(i), entra);
+                if (entra) Movimiento.entrarUna(t.vista, i * Movimiento.CASCADA_ESCALON, Movimiento.CASCADA, 16);
+            }
+        }
+
+        // Tras tocar un «+»: solo el «+» y lo que dice cada tarjeta.
+        void pintarMas() {
+            for (TarjetaEncaja t : tarjetas) if (t.sugerencia != null) t.pintarMas(t.sugerencia);
+        }
+    }
+
+    // Una tarjeta del carrusel de «Lo que te encaja» (1.6.7; en carrusel desde GP-216, lote 3).
+    final class TarjetaEncaja {
+        final View vista;
+        private final ImageView icono;
         private final TextView nombre;
         private final TextView detalle;
         private final View mas;
@@ -551,11 +615,11 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
         private final View barra;
         private final View relleno;
         private final TextView cubre;
-        private final ImageView iconoMotivo;
-        private final TextView motivo;
+        @Nullable LoQueTeEncaja.Sugerencia sugerencia;
 
-        EncajaHolder(@NonNull View v) {
-            super(v);
+        TarjetaEncaja(@NonNull View v) {
+            vista = v;
+            icono = v.findViewById(R.id.ivIconoEncaja);
             nombre = v.findViewById(R.id.tvNombreEncaja);
             detalle = v.findViewById(R.id.tvDetalleEncaja);
             mas = v.findViewById(R.id.btnMasEncaja);
@@ -563,39 +627,20 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
             barra = v.findViewById(R.id.barraEncaja);
             relleno = v.findViewById(R.id.rellenoEncaja);
             cubre = v.findViewById(R.id.tvCubreEncaja);
-            iconoMotivo = v.findViewById(R.id.ivMotivoEncaja);
-            motivo = v.findViewById(R.id.tvMotivoEncaja);
-            apilarConLetraGrande(v);
-        }
-
-        // Con letra grande (1,3 o más, como en el resto de la app), «123 % de lo que falta»
-        // se comía el ancho y la barra quedaba en un trozo (1.6.8): va debajo, a lo ancho.
-        private void apilarConLetraGrande(@NonNull View v) {
-            if (v.getResources().getConfiguration().fontScale < 1.3f) return;
-            ((android.widget.LinearLayout) barra).setOrientation(android.widget.LinearLayout.VERTICAL);
-            ((android.widget.LinearLayout) barra).setGravity(android.view.Gravity.START);
-            View pista = v.findViewById(R.id.pistaEncaja);
-            android.widget.LinearLayout.LayoutParams lpPista =
-                    (android.widget.LinearLayout.LayoutParams) pista.getLayoutParams();
-            lpPista.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            lpPista.weight = 0;
-            pista.setLayoutParams(lpPista);
-            android.widget.LinearLayout.LayoutParams lpCubre =
-                    (android.widget.LinearLayout.LayoutParams) cubre.getLayoutParams();
-            lpCubre.setMarginStart(0);
-            lpCubre.topMargin = Math.round(6 * v.getResources().getDisplayMetrics().density);
-            cubre.setLayoutParams(lpCubre);
+            // TalkBack dice qué hace tocar la tarjeta: abrir la ficha. El «+» dice lo suyo.
+            androidx.core.view.ViewCompat.replaceAccessibilityAction(v,
+                    androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK,
+                    v.getContext().getString(R.string.encaja_ver_ficha_a11y), null);
         }
 
         void pintar(@NonNull LoQueTeEncaja.Sugerencia s, boolean entra) {
-            Context ctx = itemView.getContext();
+            sugerencia = s;
+            Context ctx = vista.getContext();
             Alimento a = s.alimento;
+            icono.setImageResource(icono(a));
             nombre.setText(es.pmdm.gymprofit.ui.nutricion.MarcaPlato.nombre(ctx, a.getNombre(), a.esPlato()));
-            itemView.setOnClickListener(v -> acciones.abrir(a, v));
+            vista.setOnClickListener(v -> acciones.abrir(a, v));
             mas.setOnClickListener(v -> acciones.tocarMas(a, mas, iconoMas));
-
-            motivo.setText(textoMotivo(ctx, s.motivo, acciones.tipoComida()));
-            iconoMotivo.setImageResource(iconoMotivo(s.motivo));
 
             // La barra, solo si falta proteína: lo que cubre, con tope en el ancho.
             barra.setVisibility(s.cubre >= 0 ? View.VISIBLE : View.GONE);
@@ -616,7 +661,7 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
                     // con el mismo retraso que las barras de la ficha.
                     relleno.setPivotX(0);
                     relleno.setScaleX(0f);
-                    relleno.animate().scaleX(1f).setStartDelay(300).setDuration(Movimiento.BARRA)
+                    relleno.animate().scaleX(1f).setStartDelay(Movimiento.FILA).setDuration(Movimiento.BARRA)
                             .setInterpolator(Movimiento.ESTANDAR).start();
                 }
             }
@@ -625,7 +670,7 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         // El «+» y lo que dice la tarjeta, que cambia con él.
         void pintarMas(@NonNull LoQueTeEncaja.Sugerencia s) {
-            Context ctx = itemView.getContext();
+            Context ctx = vista.getContext();
             Alimento a = s.alimento;
             boolean marcado = acciones.marcado(a);
             BusquedaAlimentoAdapter.pintarMas(mas, iconoMas, marcado);
@@ -640,7 +685,8 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
                     nf.format(s.kcal), nf.format(Math.round(s.proteina)));
             detalle.setText(det);
             String quien = a.esPlato() ? ctx.getString(R.string.encaja_plato_a11y, a.getNombre()) : a.getNombre();
-            itemView.setContentDescription(ctx.getString(R.string.encaja_a11y, quien, det, motivo.getText()));
+            vista.setContentDescription(ctx.getString(R.string.encaja_a11y, quien, det,
+                    textoMotivo(ctx, s.motivo, acciones.tipoComida())));
         }
     }
 
@@ -663,12 +709,4 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
     }
 
-    private static int iconoMotivo(@NonNull LoQueTeEncaja.Motivo m) {
-        switch (m) {
-            case SUELES: return R.drawable.ic_ms_schedule;
-            case AYER: return R.drawable.ic_ms_history;
-            case PROTEINA: return R.drawable.ic_ms_bolt;
-            default: return R.drawable.ic_ms_check_circle;
-        }
-    }
 }

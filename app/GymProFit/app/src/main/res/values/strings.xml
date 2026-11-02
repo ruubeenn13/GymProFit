@@ -1499,7 +1499,7 @@
 
     <!-- Lote 1.6.1: Añadir, Buscar, el escáner y la ficha del alimento (GP-162, GP-160). -->
     <string name="anadir_cerrar">Cerrar</string>
-    <string name="anadir_buscar_hint">Busca un alimento o un plato</string>
+    <string name="anadir_buscar_hint">Alimento o plato</string>
     <string name="anadir_escanear">Escanear un código de barras</string>
     <string name="anadir_vacio">Aún no hay nada aquí. Busca un alimento o escanéalo.</string>
     <string name="anadir_error_lista">No se ha podido cargar la lista.</string>
@@ -1596,7 +1596,7 @@
     <string name="escaner_sin_camara">No se ha podido abrir la cámara. Escribe el código a mano.</string>
     <string name="escaner_producto_sub">Producto envasado · %1$s</string>
     <string name="escaner_cambiar_cantidad">Cambiar cantidad</string>
-    <string name="escaner_otro">Escanear otro</string>
+    <string name="escaner_otro">Seguir escaneando</string>
     <string name="escaner_no_existe_titulo">No lo tenemos todavía</string>
     <string name="escaner_no_existe_texto">El código %1$s no está en nuestra base ni en Open Food Facts.</string>
     <string name="escaner_crear_con_codigo">Crear con este código</string>
@@ -1641,7 +1641,6 @@
 
     <!-- Lote 1.6.2 (decisión 15): la etiqueta de la comida y la hoja «¿A qué comida?» -->
     <string name="anadir_titulo">Añadir alimento</string>
-    <string name="etiqueta_comida_a11y">Se añade a: %1$s. Cambiar de comida</string>
     <string name="hoja_comida_titulo">¿A qué comida?</string>
     <string name="hoja_comida_hoy">Hoy, %1$s</string>
     <string name="hoja_comida_patron">EEEE d \'de\' MMMM</string>
@@ -1664,12 +1663,28 @@
     <string name="comida_kcal_corto">kcal</string>
     <string name="comida_anillo_a11y">%1$s kilocalorías: %2$d por ciento de proteína, %3$d de carbohidratos y %4$d de grasa</string>
     <string name="comida_anillo_sin_macros_a11y">%1$s kilocalorías</string>
-    <string name="comida_macro_a11y">%1$s: %2$s gramos, el %3$d por ciento de lo de tu día</string>
-    <string name="comida_macro_sin_objetivo_a11y">%1$s: %2$s gramos</string>
+    <string name="comida_macro_a11y">%1$s: %2$s, el %3$d por ciento de lo de tu día</string>
+    <string name="comida_macro_sin_objetivo_a11y">%1$s: %2$s</string>
     <string name="comida_dia_a11y">Esta comida es el %1$d por ciento de tus calorías de hoy: %2$s de %3$s</string>
     <string name="comida_fila_kcal">%1$s\u00A0kcal</string>
     <string name="comida_fila_prot">%1$s\u00A0g prot.</string>
-    <string name="comida_fila_a11y">%1$s, %2$s, %3$s kilocalorías, %4$s gramos de proteína</string>
+    <string name="comida_fila_a11y">%1$s, %2$s, %3$s, %4$s</string>
+    <!-- Lo que lee TalkBack en las filas y los macros de una comida, con su plural (DEC-020). -->
+    <plurals name="a11y_kilocalorias">
+        <item quantity="one">%1$s kilocaloría</item>
+        <item quantity="many">%1$s kilocalorías</item>
+        <item quantity="other">%1$s kilocalorías</item>
+    </plurals>
+    <plurals name="a11y_gramos">
+        <item quantity="one">%1$s gramo</item>
+        <item quantity="many">%1$s gramos</item>
+        <item quantity="other">%1$s gramos</item>
+    </plurals>
+    <plurals name="a11y_gramos_proteina">
+        <item quantity="one">%1$s gramo de proteína</item>
+        <item quantity="many">%1$s gramos de proteína</item>
+        <item quantity="other">%1$s gramos de proteína</item>
+    </plurals>
     <string name="comida_quitar">Quitar de la comida</string>
     <string name="comida_eliminar_fondo">Eliminar</string>
     <string name="comida_quitado">Quitado: %1$s</string>
@@ -1746,12 +1761,14 @@
     <string name="crear_error_carga">No se ha podido abrir el alimento</string>
     <!-- ── Lote 1.6.3: añadir en un toque, la barra de «Hecho» y los favoritos ── -->
     <string name="anadir_pestanas">Qué ver</string>
-    <string name="anadir_pestana_todo">Todo</string>
+    <string name="anadir_pestana_todo">Recientes</string>
     <string name="anadir_pestana_favoritos">Favoritos</string>
     <string name="recientes_ver_todos">Ver todos</string>
     <string name="recientes_ver_todos_a11y">Ver todos los recientes</string>
     <!-- Una fila: la cantidad y sus kcal (tablero 4). -->
     <string name="fila_cantidad_kcal">%1$s · %2$s\u00A0kcal</string>
+    <!-- Una comida reciente: las kcal delante, para que no se las lleve el corte de una lista larga. -->
+    <string name="reciente_detalle">%1$s\u00A0kcal · %2$s</string>
     <string name="fila_ultima_vez">Última vez: %1$s · %2$s\u00A0kcal</string>
     <string name="a_la_desayuno">al desayuno</string>
     <string name="a_la_almuerzo">al almuerzo</string>
@@ -1772,7 +1789,7 @@
         <item quantity="other">%d añadidos</item>
     </plurals>
     <string name="barra_kcal">+%1$s\u00A0kcal</string>
-    <string name="barra_hecho">Hecho</string>
+    <string name="barra_hecho">Listo</string>
     <string name="favoritos_seccion">Los que más usas</string>
     <plurals name="favoritos_cuantos">
         <item quantity="one">%d favorito</item>
@@ -1813,19 +1830,12 @@
     <string name="reciente_copiar_a11y">Copiar %1$s %2$s</string>
     <string name="reciente_copiada_a11y">%1$s, copiada</string>
     <string name="reciente_fallo">No se ha podido copiar %1$s. %2$s</string>
-    <string name="copiar_ayer_titulo">¿Copiar la de ayer?</string>
-    <plurals name="copiar_ayer_resumen">
-        <item quantity="one">%1$d alimento · %2$s\u00A0kcal</item>
-        <item quantity="other">%1$d alimentos · %2$s\u00A0kcal</item>
-    </plurals>
-    <string name="copiar_ayer_desayuno">Sí, copiar el desayuno de ayer</string>
-    <string name="copiar_ayer_almuerzo">Sí, copiar el almuerzo de ayer</string>
-    <string name="copiar_ayer_comida">Sí, copiar la comida de ayer</string>
-    <string name="copiar_ayer_merienda">Sí, copiar la merienda de ayer</string>
-    <string name="copiar_ayer_cena">Sí, copiar la cena de ayer</string>
+    <string name="copiar_ayer_desayuno">Copiar la de ayer: el desayuno</string>
+    <string name="copiar_ayer_almuerzo">Copiar la de ayer: el almuerzo</string>
+    <string name="copiar_ayer_comida">Copiar la de ayer: la comida</string>
+    <string name="copiar_ayer_merienda">Copiar la de ayer: la merienda</string>
+    <string name="copiar_ayer_cena">Copiar la de ayer: la cena</string>
     <string name="copiar_ayer_no_a11y">No, hoy no</string>
-    <string name="copiar_ayer_linea">%1$s · %2$s</string>
-    <string name="copiar_ayer_linea_a11y">%1$s, %2$s, %3$s\u00A0kcal</string>
     <string name="copiar_ayer_fallo">No se ha podido copiar la de ayer. %1$s</string>
     <string name="sueles_desayuno">Lo que sueles desayunar</string>
     <string name="sueles_almuerzo">Lo que sueles almorzar</string>
@@ -1867,7 +1877,7 @@
         <item quantity="other">Tu plato · %d ingredientes</item>
     </plurals>
     <string name="comida_guardar_como_plato">Guardar como plato</string>
-    <string name="comida_fila_plato_a11y">%1$s, plato, %2$s, %3$s kilocalorías, %4$s gramos de proteína</string>
+    <string name="comida_fila_plato_a11y">%1$s, plato, %2$s, %3$s, %4$s</string>
     <string name="plato_cerrar_a11y">Cerrar sin guardar</string>
     <string name="plato_titulo_nuevo">Nuevo plato</string>
     <string name="plato_titulo_editar">Editar plato</string>
@@ -1952,6 +1962,8 @@
     <string name="encaja_motivo_cabe">Cabe en lo que te queda</string>
     <string name="encaja_plato_a11y">%1$s, plato</string>
     <string name="encaja_a11y">%1$s. %2$s. %3$s</string>
+    <!-- Lo que hace tocar una tarjeta de «Lo que te encaja», para TalkBack. -->
+    <string name="encaja_ver_ficha_a11y">ver la ficha</string>
     <!-- ── Lote 1.6.8: el diario nuevo, el agua, «Hoy no» y el día completo (GP-162, GP-166) ── -->
     <string name="dia_a11y">%1$s: %2$s</string>
     <string name="dia_a11y_completo">día completo</string>
@@ -1962,6 +1974,9 @@
     <string name="nutricion_kcal_sola">kcal</string>
     <string name="nutricion_kcal_para_hoy">kcal para hoy</string>
     <string name="nutricion_kcal_hoy">kcal, hoy</string>
+    <!-- Lo mismo mirando otro día: «para hoy» solo es verdad hoy. -->
+    <string name="nutricion_kcal_para_ese_dia">kcal para ese día</string>
+    <string name="nutricion_kcal_ese_dia">kcal, ese día</string>
     <string name="dia_completo_titulo">Día completo</string>
     <string name="dia_completo_texto">Todas tus comidas, apuntadas</string>
     <string name="dia_completo_a11y">Día completo: todas tus comidas, apuntadas. %1$s</string>
@@ -1985,8 +2000,6 @@
     <string name="semana_frase_dia">Ese día, con todo apuntado.</string>
     <string name="agua_titulo">Agua</string>
     <string name="agua_vaso">Vaso</string>
-    <string name="agua_litros">%1$s de %2$s\u00A0L</string>
-    <string name="agua_litros_sin_objetivo">%1$s\u00A0L</string>
     <string name="agua_a11y">Agua: %1$s de %2$s litros, %3$s</string>
     <string name="agua_a11y_sin_objetivo">Agua: %1$s litros, %2$s</string>
     <plurals name="agua_vasos">
@@ -2320,4 +2333,61 @@
         <item quantity="one">%1$s récord</item>
         <item quantity="other">%1$s récords</item>
     </plurals>
+    <string name="nutricion_error_dia">No se ha podido cargar tu día.</string>
+    <string name="comida_alta_proteina">Comida alta en proteína: ¡bien hecho!</string>
+    <string name="comida_pct_de_tu_dia">%1$s de tu día</string>
+    <string name="comida_pista">Desliza un alimento para quitarlo; tócalo para cambiar la cantidad.</string>
+    <string name="copiar_profi_mensaje">%1$s: %2$s, %3$s kcal y %4$s g de proteína. ¿Lo repetimos?</string>
+    <string name="copiar_profi_boton">Copiar la de ayer</string>
+    <string name="copiar_profi_ahora_no">Ahora no</string>
+    <string name="ideas_titulo_proteina">Para tus %1$d g de proteína</string>
+    <string name="ideas_detalle">%1$s · %2$s kcal · %3$s g prot.</string>
+    <string name="comida_buscar_otro">Buscar otro alimento</string>
+    <string name="ficha_cantidad_titulo">Cantidad</string>
+    <string name="ficha_boton_kcal">%1$s · %2$s\u00A0kcal</string>
+    <string name="ficha_atajo_media">½</string>
+    <string name="ficha_atajo_gramos">%1$s\u00A0g</string>
+    <string name="ficha_atajo_a11y">%1$s %2$s</string>
+    <string name="anadir_cambiar_comida_a11y">%1$s. Toca para cambiar de comida</string>
+    <string name="barra_kcal_proteina">+%1$s\u00A0kcal · %2$s\u00A0g de proteína</string>
+    <string name="barra_proteina_falta">Te faltan %1$s\u00A0g de proteína</string>
+    <string name="barra_proteina_cubierta">¡Proteína de hoy cubierta!</string>
+    <string name="barra_a11y_dos">%1$s, %2$s</string>
+    <string name="barra_a11y_tres">%1$s, %2$s, %3$s</string>
+    <string name="escaner_encontrado">¡Encontrado!</string>
+    <string name="nutricion_comidas">Comidas</string>
+    <string name="nutricion_copiar_ayer">Copiar ayer</string>
+    <string name="nutricion_copiar_ayer_desayuno">Copiar ayer: el desayuno de ayer, a hoy</string>
+    <string name="nutricion_copiar_ayer_almuerzo">Copiar ayer: el almuerzo de ayer, a hoy</string>
+    <string name="nutricion_copiar_ayer_comida">Copiar ayer: la comida de ayer, a hoy</string>
+    <string name="nutricion_copiar_ayer_merienda">Copiar ayer: la merienda de ayer, a hoy</string>
+    <string name="nutricion_copiar_ayer_cena">Copiar ayer: la cena de ayer, a hoy</string>
+    <string name="nutricion_tu_semana">Tu semana</string>
+    <string name="nutricion_ver_semana">Ver la semana</string>
+    <plurals name="nutricion_semana_proteina">
+        <item quantity="one">%1$d de %2$d día con tu proteína</item>
+        <item quantity="other">%1$d de %2$d días con tu proteína</item>
+    </plurals>
+    <plurals name="nutricion_semana_apuntados">
+        <item quantity="one">%1$d día con comida apuntada</item>
+        <item quantity="other">%1$d días con comida apuntada</item>
+    </plurals>
+    <string name="nutricion_semana_kcal">%1$s\u00A0kcal de media</string>
+    <!-- «Tu semana» en dos columnas (tablero 15): la cifra arriba y lo que es, debajo. -->
+    <string name="nutricion_semana_dias_cifra">%1$d de %2$d</string>
+    <plurals name="nutricion_semana_proteina_pie">
+        <item quantity="one">día con tu proteína</item>
+        <item quantity="many">días con tu proteína</item>
+        <item quantity="other">días con tu proteína</item>
+    </plurals>
+    <plurals name="nutricion_semana_apuntados_pie">
+        <item quantity="one">día con comida apuntada</item>
+        <item quantity="many">días con comida apuntada</item>
+        <item quantity="other">días con comida apuntada</item>
+    </plurals>
+    <string name="nutricion_semana_kcal_pie">kcal de media</string>
+    <!-- El agua: los litros en cifra y el objetivo de pie (tablero 15). -->
+    <string name="agua_cifra">%1$s\u00A0L</string>
+    <string name="agua_de">de %1$s</string>
+    <string name="nutricion_toca_proteina">Toca ahora · te faltan %1$d\u00A0g de proteína</string>
 </resources>

@@ -327,7 +327,7 @@ public final class ParaRecuperarSeccion {
         // El pedido es el mismo que el «+» de Añadir: la última cantidad, a la comida que toca.
         // Anadidos cambia la fila al momento (oyente.cambio) y la API va detrás.
         anadidos.tocar(new Anadidos.Pedido(s.alimento.getId(), s.alimento.getBarcode(), tipo,
-                PedidoCantidad.anadir(s.alimento, c, hoy, tipo), cantidad, s.kcal));
+                PedidoCantidad.anadir(s.alimento, c, hoy, tipo), cantidad, s.kcal, s.proteina));
     }
 
     // Pinta la fila como dice Anadidos y, si cambió de estado, con el momento 15.

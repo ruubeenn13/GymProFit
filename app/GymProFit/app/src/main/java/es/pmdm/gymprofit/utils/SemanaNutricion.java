@@ -94,6 +94,18 @@ public final class SemanaNutricion {
         return new SemanaNutricion(new ArrayList<>(siete), hoy, objetivoProteinas, objetivoKcal, objetivoAguaMl);
     }
 
+    /**
+     * Hasta qué día cuenta el resumen de la semana en Nutrición: hoy solo si el día está
+     * completo; si no, ayer. Un día a medias no es un día sin la proteína, y la media de
+     * kcal no se hace con el desayuno.
+     *
+     * @return la fecha que se pasa como {@code hoy} a {@link #de}.
+     */
+    @NonNull
+    public static String cuentaHasta(@NonNull String hoy, @NonNull String ayer, boolean hoyCompleto) {
+        return hoyCompleto ? hoy : ayer;
+    }
+
     @NonNull
     public List<Entrada> dias() { return dias; }
 

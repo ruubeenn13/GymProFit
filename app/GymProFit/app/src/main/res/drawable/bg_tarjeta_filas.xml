@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_tarjeta_filas — la tarjeta estándar dibujada a mano para un grupo de filas (DESIGN.md
+     «Tarjeta estándar» y «Fila de lista»; GP-216, lote 3): radio 24, borde de 1 dp en claro y
+     ninguno en oscuro (gp_tarjeta_borde es la propia superficie). El contenedor deja dentro un
+     relleno de tarjeta_borde para que las filas no pinten encima del borde. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="@dimen/radio_tarjeta" />
+    <solid android:color="?attr/colorSurface" />
+    <stroke android:width="@dimen/tarjeta_borde" android:color="@color/gp_tarjeta_borde" />
+</shape>

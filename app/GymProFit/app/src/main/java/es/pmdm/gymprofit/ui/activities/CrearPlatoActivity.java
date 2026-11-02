@@ -54,6 +54,7 @@ import es.pmdm.gymprofit.network.ComidaApi;
 import es.pmdm.gymprofit.network.PlatoApi;
 import es.pmdm.gymprofit.ui.adapters.IngredientesPlatoAdapter;
 import es.pmdm.gymprofit.utils.AtrasHoja;
+import es.pmdm.gymprofit.utils.Transiciones;
 import es.pmdm.gymprofit.utils.Anadidos;
 import es.pmdm.gymprofit.utils.AvisoDescartar;
 import es.pmdm.gymprofit.utils.CantidadFicha;
@@ -567,7 +568,11 @@ public class CrearPlatoActivity extends BaseActivity {
         if (posicion < 0 || posicion >= ingredientes.cuantos()) return;
         cambiando = posicion;
         IngredienteElegido i = ingredientes.lista().get(posicion);
-        cambiarLauncher.launch(FichaAlimentoActivity.paraIngrediente(this, i.getAlimento(), i));
+        RecyclerView.ViewHolder fila = ((RecyclerView) findViewById(R.id.rvIngredientes))
+                .findViewHolderForAdapterPosition(posicion);
+        Intent ficha = FichaAlimentoActivity.paraIngrediente(this, i.getAlimento(), i);
+        if (fila != null) Transiciones.abrirTarjeta(this, fila.itemView, ficha, cambiarLauncher);
+        else cambiarLauncher.launch(ficha);
     }
 
     private void alVolverDeCambiar(ActivityResult r) {

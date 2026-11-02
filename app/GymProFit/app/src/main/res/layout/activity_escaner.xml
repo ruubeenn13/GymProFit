@@ -170,6 +170,39 @@
             android:indeterminateTint="?attr/colorPrimary"
             android:contentDescription="@string/escaner_consultando" />
 
+        <!-- «¡Encontrado!» (tablero 27): el aviso de que el código se ha leído, sobre el alimento. -->
+        <LinearLayout
+            android:id="@+id/pildoraEncontrado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_pildora_encontrado"
+            android:gravity="center_vertical"
+            android:minHeight="32dp"
+            android:orientation="horizontal"
+            android:paddingStart="10dp"
+            android:paddingEnd="14dp"
+            android:visibility="gone"
+            android:accessibilityLiveRegion="polite">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_ms_check_circle_fill"
+                app:tint="@color/gp_success" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="@string/escaner_encontrado"
+                android:textColor="@color/gp_success"
+                android:textSize="@dimen/text_label"
+                android:textStyle="bold" />
+        </LinearLayout>
+
         <LinearLayout
             android:id="@+id/cabezaHoja"
             android:layout_width="match_parent"
@@ -284,6 +317,8 @@
             android:layout_marginTop="6dp"
             android:minHeight="48dp"
             android:text="@string/escaner_otro"
-            android:textSize="@dimen/text_body" />
+            android:textSize="@dimen/text_body"
+            app:icon="@drawable/ic_ms_barcode_scanner"
+            app:iconSize="20dp" />
     </LinearLayout>
 </FrameLayout>

@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import android.content.res.ColorStateList;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.material.button.MaterialButton;
@@ -120,6 +121,8 @@ public class FichaAlimentoActivity extends BaseActivity {
     // Lo que llevas hoy, para «Cómo encaja»; null mientras no se sabe (o si no hay objetivo).
     @Nullable private DiaNutricion dia;
     private boolean infoAbierta;
+    // El texto del botón de abajo sin las kcal («Añadir a la merienda», «Actualizar»…).
+    private String textoBoton = "";
 
     private VistaEstado estado;
     private NumberFormat nf;
@@ -217,9 +220,10 @@ public class FichaAlimentoActivity extends BaseActivity {
         findViewById(R.id.btnMas).setOnClickListener(v -> { if (cantidad != null) { cantidad.mas(); pintarCantidad(); } });
         findViewById(R.id.tvCantidad).setOnClickListener(v -> escribirCantidad());
         boolean actualizar = lineaId > 0 || (modoIngrediente && getIntent().hasExtra(EXTRA_INGREDIENTE));
-        ((MaterialButton) findViewById(R.id.btnAnadirFicha)).setText(actualizar ? getString(R.string.ficha_actualizar)
+        textoBoton = actualizar ? getString(R.string.ficha_actualizar)
                 : modoIngrediente ? getString(R.string.ficha_anadir_al_plato)
-                : getString(AnadirAlimentoActivity.textoAnadirA(tipoComida)));
+                : getString(AnadirAlimentoActivity.textoAnadirA(tipoComida));
+        ((MaterialButton) findViewById(R.id.btnAnadirFicha)).setText(textoBoton);
         findViewById(R.id.btnAnadirFicha).setOnClickListener(v -> guardar());
         findViewById(R.id.btnFavoritoFicha).setOnClickListener(v -> tocarCorazon());
 
@@ -432,6 +436,20 @@ public class FichaAlimentoActivity extends BaseActivity {
         });
     }
 
+    // «taza» o «tazas» junto a la cifra (o «gramos»), con el plural de la cantidad.
+    private String unidadJunto(double valor) {
+        String u = CantidadFicha.unidadPara(cantidad.unidad(), valor);
+        return u != null ? u : getString(R.string.ficha_unidad_gramos);
+    }
+
+    // «2 tazas» o «100 gramos»: lo que lee TalkBack en un atajo (con su plural, DEC-020).
+    private String atajoA11y(double valor) {
+        if (cantidad.unidad().esGramos()) {
+            return getResources().getQuantityString(R.plurals.a11y_gramos, (int) Math.round(valor), nf.format(valor));
+        }
+        return getString(R.string.ficha_atajo_a11y, nf.format(valor), unidadJunto(valor));
+    }
+
     private String nombre(CantidadFicha.Unidad u) {
         if (u.esGramos() || u.nombre == null) return getString(R.string.ficha_unidad_gramos);
         return u.unidad != null ? u.unidad : CantidadFicha.nombreUnidad(u.nombre);
@@ -447,25 +465,93 @@ public class FichaAlimentoActivity extends BaseActivity {
 
     private void pintarCantidad() {
         if (cantidad == null || alimento == null) return;
-        TextView tv = findViewById(R.id.tvCantidad);
-        tv.setText(nf.format(cantidad.valor()));
-        tv.setContentDescription(getString(R.string.ficha_cantidad_a11y, porcion()));
-        findViewById(R.id.btnMenos).setEnabled(cantidad.puedeMenos());
+        ((TextView) findViewById(R.id.tvCifraCantidad)).setText(nf.format(cantidad.valor()));
+        // La unidad al lado de la cifra, y los gramos debajo si la unidad es una ración.
+        ((TextView) findViewById(R.id.tvUnidadCantidad)).setText(unidadJunto(cantidad.valor()));
+        TextView gramos = findViewById(R.id.tvGramosCantidad);
+        boolean conPeso = !cantidad.unidad().esGramos() && cantidad.conGramos();
+        gramos.setVisibility(conPeso ? View.VISIBLE : View.INVISIBLE);
+        gramos.setText(conPeso ? getString(R.string.ficha_gramos_valor, nf.format(Math.round(cantidad.gramos()))) : "");
+        findViewById(R.id.tvCantidad).setContentDescription(getString(R.string.ficha_cantidad_a11y, porcion()));
+        View menos = findViewById(R.id.btnMenos);
+        menos.setEnabled(cantidad.puedeMenos());
+        menos.setAlpha(menos.isEnabled() ? 1f : 0.38f); // sin el estilo Material, el fondo propio no se apaga solo
         ((TextView) findViewById(R.id.tvPorFicha)).setText(getString(R.string.ficha_por, porcion()));
+        pintarAtajos();
 
         double g = cantidad.gramos();
         long kcal = Math.round(alimento.getCalorias() * g / 100.0);
         double p = alimento.getProteinas() * g / 100.0;
         double c = alimento.getCarbohidratos() * g / 100.0;
         double gr = alimento.getGrasas() * g / 100.0;
+        // «Añadir a la merienda · 141 kcal»: lo que sumará, en el propio botón (tablero 26).
+        ((MaterialButton) findViewById(R.id.btnAnadirFicha)).setText(
+                getString(R.string.ficha_boton_kcal, textoBoton, nf.format(kcal)));
         cifra(R.id.cifraKcal, nf.format(kcal), R.string.ficha_kcal, 0);
         cifra(R.id.cifraProteina, getString(R.string.ficha_gramos_valor, nf.format(p)), etiquetaProteina(),
                 ContextCompat.getColor(this, R.color.gp_macro_proteinas));
-        cifra(R.id.cifraCarb, getString(R.string.ficha_gramos_valor, nf.format(c)), R.string.ficha_carb, 0);
-        cifra(R.id.cifraGrasa, getString(R.string.ficha_gramos_valor, nf.format(gr)), R.string.ficha_grasa, 0);
+        cifra(R.id.cifraCarb, getString(R.string.ficha_gramos_valor, nf.format(c)), R.string.ficha_carb,
+                ContextCompat.getColor(this, R.color.gp_macro_carbos));
+        cifra(R.id.cifraGrasa, getString(R.string.ficha_gramos_valor, nf.format(gr)), R.string.ficha_grasa,
+                ContextCompat.getColor(this, R.color.gp_macro_grasas));
         findViewById(R.id.cifrasFicha).setContentDescription(getString(R.string.ficha_cifras_a11y,
                 nf.format(kcal), nf.format(p), nf.format(c), nf.format(gr)));
         pintarEncaje();
+    }
+
+    // ½, 1 y 2 (o 100, 150 y 200 g): ponen la cifra de golpe; el que coincide con la cantidad va
+    // marcado en el contenedor naranja y los demás en superficie 2 (tablero 26: una sola voz).
+    // Los botones solo se crean de nuevo si cambian los atajos (otra unidad): al marcar uno no se
+    // recrean, para que TalkBack no pierda el foco del que se acaba de pulsar.
+    private void pintarAtajos() {
+        if (cantidad == null) return;
+        LinearLayout fila = findViewById(R.id.atajosCantidad);
+        boolean gramos = cantidad.unidad().esGramos();
+        double[] atajos = cantidad.atajos();
+        String clave = (gramos ? "g" : "r") + java.util.Arrays.toString(atajos);
+        if (!clave.equals(fila.getTag()) || fila.getChildCount() != atajos.length) {
+            fila.removeAllViews();
+            fila.setTag(clave);
+            int alto = getResources().getDimensionPixelSize(R.dimen.zona_tactil);
+            int margen = getResources().getDimensionPixelSize(R.dimen.espacio_4);
+            for (double valor : atajos) {
+                MaterialButton chip = new MaterialButton(this);
+                String texto = valor == 0.5 ? getString(R.string.ficha_atajo_media)
+                        : gramos ? getString(R.string.ficha_atajo_gramos, nf.format(valor)) : nf.format(valor);
+                chip.setText(texto);
+                chip.setMinWidth(0);
+                chip.setMinimumWidth(0);
+                chip.setMinHeight(0);
+                chip.setMinimumHeight(0);
+                chip.setInsetTop(0);
+                chip.setInsetBottom(0);
+                chip.setStrokeWidth(0);
+                chip.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.text_body));
+                chip.setContentDescription(atajoA11y(valor));
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT, alto);
+                lp.setMarginStart(margen);
+                lp.setMarginEnd(margen);
+                chip.setLayoutParams(lp);
+                chip.setOnClickListener(v -> {
+                    if (cantidad != null && cantidad.escribir(valor)) pintarCantidad();
+                });
+                fila.addView(chip);
+            }
+        }
+        int fondoElegido = ContextCompat.getColor(this, R.color.gp_primary_container);
+        int textoElegido = ContextCompat.getColor(this, R.color.gp_on_primary_container);
+        int fondo = ContextCompat.getColor(this, R.color.gp_surface_2);
+        int texto = com.google.android.material.color.MaterialColors.getColor(fila,
+                com.google.android.material.R.attr.colorOnSurface);
+        for (int i = 0; i < atajos.length; i++) {
+            MaterialButton chip = (MaterialButton) fila.getChildAt(i);
+            boolean elegido = Math.abs(cantidad.valor() - atajos[i]) < 0.001;
+            chip.setBackgroundTintList(ColorStateList.valueOf(elegido ? fondoElegido : fondo));
+            chip.setTextColor(elegido ? textoElegido : texto);
+            chip.setSelected(elegido);
+            chip.setContentDescription(atajoA11y(atajos[i]));
+        }
     }
 
     private void cifra(int id, String valor, int etiqueta, int color) {

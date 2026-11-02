@@ -54,6 +54,15 @@ public final class ResumenComida {
         return new ResumenComida(kcal, p, c, g, lineas.isEmpty(), objetivo);
     }
 
+    /**
+     * Si la comida es alta en proteína: 30 g o más, o al menos 15 g que sean el 30 % de sus kcal.
+     * Es lo que decide el comentario de la tarjeta (GP-216, tablero 28).
+     */
+    public boolean altaEnProteina() {
+        if (vacia) return false;
+        return proteinas >= 30 || (proteinas >= 15 && proteinas * 4 >= kcal * 0.30);
+    }
+
     /** Los gramos de un macro (0 proteína, 1 carbohidratos, 2 grasa). */
     public double gramos(int macro) {
         return macro == 0 ? proteinas : macro == 1 ? carbohidratos : grasas;

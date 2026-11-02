@@ -1477,7 +1477,7 @@
 
     <!-- Lote 1.6.1: Añadir, Buscar, el escáner y la ficha del alimento (GP-162, GP-160). -->
     <string name="anadir_cerrar">Close</string>
-    <string name="anadir_buscar_hint">Search for a food or a dish</string>
+    <string name="anadir_buscar_hint">Food or dish</string>
     <string name="anadir_escanear">Scan a barcode</string>
     <string name="anadir_vacio">Nothing here yet. Search for a food or scan it.</string>
     <string name="anadir_error_lista">The list could not be loaded.</string>
@@ -1574,7 +1574,7 @@
     <string name="escaner_sin_camara">The camera could not be opened. Type the code by hand.</string>
     <string name="escaner_producto_sub">Packaged product · %1$s</string>
     <string name="escaner_cambiar_cantidad">Change amount</string>
-    <string name="escaner_otro">Scan another</string>
+    <string name="escaner_otro">Keep scanning</string>
     <string name="escaner_no_existe_titulo">We do not have it yet</string>
     <string name="escaner_no_existe_texto">Code %1$s is not in our database or in Open Food Facts.</string>
     <string name="escaner_crear_con_codigo">Create with this code</string>
@@ -1619,7 +1619,6 @@
 
     <!-- Lote 1.6.2 (decisión 15): la etiqueta de la comida y la hoja «¿A qué comida?» -->
     <string name="anadir_titulo">Add food</string>
-    <string name="etiqueta_comida_a11y">Adding to: %1$s. Change meal</string>
     <string name="hoja_comida_titulo">Which meal?</string>
     <string name="hoja_comida_hoy">Today, %1$s</string>
     <string name="hoja_comida_patron">EEEE, MMMM d</string>
@@ -1642,12 +1641,24 @@
     <string name="comida_kcal_corto">kcal</string>
     <string name="comida_anillo_a11y">%1$s kilocalories: %2$d percent protein, %3$d carbs and %4$d fat</string>
     <string name="comida_anillo_sin_macros_a11y">%1$s kilocalories</string>
-    <string name="comida_macro_a11y">%1$s: %2$s grams, %3$d percent of your day</string>
-    <string name="comida_macro_sin_objetivo_a11y">%1$s: %2$s grams</string>
+    <string name="comida_macro_a11y">%1$s: %2$s, %3$d percent of your day</string>
+    <string name="comida_macro_sin_objetivo_a11y">%1$s: %2$s</string>
     <string name="comida_dia_a11y">This meal is %1$d percent of your calories today: %2$s of %3$s</string>
     <string name="comida_fila_kcal">%1$s\u00A0kcal</string>
     <string name="comida_fila_prot">%1$s\u00A0g prot.</string>
-    <string name="comida_fila_a11y">%1$s, %2$s, %3$s kilocalories, %4$s grams of protein</string>
+    <string name="comida_fila_a11y">%1$s, %2$s, %3$s, %4$s</string>
+    <plurals name="a11y_kilocalorias">
+        <item quantity="one">%1$s kilocalorie</item>
+        <item quantity="other">%1$s kilocalories</item>
+    </plurals>
+    <plurals name="a11y_gramos">
+        <item quantity="one">%1$s gram</item>
+        <item quantity="other">%1$s grams</item>
+    </plurals>
+    <plurals name="a11y_gramos_proteina">
+        <item quantity="one">%1$s gram of protein</item>
+        <item quantity="other">%1$s grams of protein</item>
+    </plurals>
     <string name="comida_quitar">Remove from meal</string>
     <string name="comida_eliminar_fondo">Remove</string>
     <string name="comida_quitado">Removed: %1$s</string>
@@ -1660,7 +1671,7 @@
     <string name="comida_vacia_comida">You haven\'t logged lunch yet</string>
     <string name="comida_vacia_merienda">You haven\'t logged your snack yet</string>
     <string name="comida_vacia_cena">You haven\'t logged dinner yet</string>
-    <string name="comida_es_la_que_toca">It\'s the one for now</string>
+    <string name="comida_es_la_que_toca">This is the meal for right now</string>
     <string name="comida_error_lista">Couldn\'t load this meal</string>
     <string name="comida_quitar_error">Couldn\'t remove %1$s</string>
 
@@ -1723,11 +1734,12 @@
     <string name="crear_error_carga">Couldn\'t open this food</string>
     <!-- ── Lote 1.6.3: añadir en un toque, la barra de «Hecho» y los favoritos ── -->
     <string name="anadir_pestanas">Show</string>
-    <string name="anadir_pestana_todo">All</string>
+    <string name="anadir_pestana_todo">Recent</string>
     <string name="anadir_pestana_favoritos">Favorites</string>
     <string name="recientes_ver_todos">See all</string>
     <string name="recientes_ver_todos_a11y">See all recent foods</string>
     <string name="fila_cantidad_kcal">%1$s · %2$s\u00A0kcal</string>
+    <string name="reciente_detalle">%1$s\u00A0kcal · %2$s</string>
     <string name="fila_ultima_vez">Last time: %1$s · %2$s\u00A0kcal</string>
     <string name="a_la_desayuno">to breakfast</string>
     <string name="a_la_almuerzo">to mid-morning</string>
@@ -1788,19 +1800,12 @@
     <string name="reciente_copiar_a11y">Copy %1$s %2$s</string>
     <string name="reciente_copiada_a11y">%1$s, copied</string>
     <string name="reciente_fallo">Couldn\'t copy %1$s. %2$s</string>
-    <string name="copiar_ayer_titulo">Same as yesterday?</string>
-    <plurals name="copiar_ayer_resumen">
-        <item quantity="one">%1$d food · %2$s\u00A0kcal</item>
-        <item quantity="other">%1$d foods · %2$s\u00A0kcal</item>
-    </plurals>
-    <string name="copiar_ayer_desayuno">Yes, copy yesterday\'s breakfast</string>
-    <string name="copiar_ayer_almuerzo">Yes, copy yesterday\'s mid-morning</string>
-    <string name="copiar_ayer_comida">Yes, copy yesterday\'s lunch</string>
-    <string name="copiar_ayer_merienda">Yes, copy yesterday\'s snack</string>
-    <string name="copiar_ayer_cena">Yes, copy yesterday\'s dinner</string>
+    <string name="copiar_ayer_desayuno">Copy yesterday\'s breakfast</string>
+    <string name="copiar_ayer_almuerzo">Copy yesterday\'s mid-morning</string>
+    <string name="copiar_ayer_comida">Copy yesterday\'s lunch</string>
+    <string name="copiar_ayer_merienda">Copy yesterday\'s snack</string>
+    <string name="copiar_ayer_cena">Copy yesterday\'s dinner</string>
     <string name="copiar_ayer_no_a11y">Not today</string>
-    <string name="copiar_ayer_linea">%1$s · %2$s</string>
-    <string name="copiar_ayer_linea_a11y">%1$s, %2$s, %3$s\u00A0kcal</string>
     <string name="copiar_ayer_fallo">Couldn\'t copy yesterday\'s. %1$s</string>
     <string name="sueles_desayuno">Your usual breakfast</string>
     <string name="sueles_almuerzo">Your usual mid-morning</string>
@@ -1842,7 +1847,7 @@
         <item quantity="other">Your dish · %d ingredients</item>
     </plurals>
     <string name="comida_guardar_como_plato">Save as a dish</string>
-    <string name="comida_fila_plato_a11y">%1$s, dish, %2$s, %3$s kilocalories, %4$s grams of protein</string>
+    <string name="comida_fila_plato_a11y">%1$s, dish, %2$s, %3$s, %4$s</string>
     <string name="plato_cerrar_a11y">Close without saving</string>
     <string name="plato_titulo_nuevo">New dish</string>
     <string name="plato_titulo_editar">Edit dish</string>
@@ -1927,6 +1932,7 @@
     <string name="encaja_motivo_cabe">Fits in what you have left</string>
     <string name="encaja_plato_a11y">%1$s, dish</string>
     <string name="encaja_a11y">%1$s. %2$s. %3$s</string>
+    <string name="encaja_ver_ficha_a11y">open its details</string>
     <!-- ── Batch 1.6.8: the new diary, water, "Not today" and the complete day (GP-162, GP-166) ── -->
     <string name="dia_a11y">%1$s: %2$s</string>
     <string name="dia_a11y_completo">complete day</string>
@@ -1937,6 +1943,8 @@
     <string name="nutricion_kcal_sola">kcal</string>
     <string name="nutricion_kcal_para_hoy">kcal for today</string>
     <string name="nutricion_kcal_hoy">kcal today</string>
+    <string name="nutricion_kcal_para_ese_dia">kcal for that day</string>
+    <string name="nutricion_kcal_ese_dia">kcal that day</string>
     <string name="dia_completo_titulo">Day complete</string>
     <string name="dia_completo_texto">All your meals, logged</string>
     <string name="dia_completo_a11y">Day complete: all your meals logged. %1$s</string>
@@ -1960,8 +1968,6 @@
     <string name="semana_frase_dia">That day, with everything logged.</string>
     <string name="agua_titulo">Water</string>
     <string name="agua_vaso">Glass</string>
-    <string name="agua_litros">%1$s of %2$s\u00A0L</string>
-    <string name="agua_litros_sin_objetivo">%1$s\u00A0L</string>
     <string name="agua_a11y">Water: %1$s of %2$s litres, %3$s</string>
     <string name="agua_a11y_sin_objetivo">Water: %1$s litres, %2$s</string>
     <plurals name="agua_vasos">
@@ -2295,4 +2301,57 @@
         <item quantity="one">%1$s record</item>
         <item quantity="other">%1$s records</item>
     </plurals>
+    <string name="nutricion_error_dia">Couldn\'t load your day.</string>
+    <string name="comida_alta_proteina">High-protein meal: well done!</string>
+    <string name="comida_pct_de_tu_dia">%1$s of your day</string>
+    <string name="comida_pista">Swipe a food to remove it; tap it to change the amount.</string>
+    <string name="copiar_profi_mensaje">%1$s: %2$s, %3$s kcal and %4$s g of protein. Shall we repeat it?</string>
+    <string name="copiar_profi_boton">Copy yesterday\'s</string>
+    <string name="copiar_profi_ahora_no">Not now</string>
+    <string name="ideas_titulo_proteina">For your %1$d g of protein</string>
+    <string name="ideas_detalle">%1$s · %2$s kcal · %3$s g prot.</string>
+    <string name="comida_buscar_otro">Find another food</string>
+    <string name="ficha_cantidad_titulo">Amount</string>
+    <string name="ficha_boton_kcal">%1$s · %2$s\u00A0kcal</string>
+    <string name="ficha_atajo_media">½</string>
+    <string name="ficha_atajo_gramos">%1$s\u00A0g</string>
+    <string name="ficha_atajo_a11y">%1$s %2$s</string>
+    <string name="anadir_cambiar_comida_a11y">%1$s. Tap to change meal</string>
+    <string name="barra_kcal_proteina">+%1$s\u00A0kcal · %2$s\u00A0g of protein</string>
+    <string name="barra_proteina_falta">%1$s\u00A0g of protein to go</string>
+    <string name="barra_proteina_cubierta">Today\'s protein covered!</string>
+    <string name="barra_a11y_dos">%1$s, %2$s</string>
+    <string name="barra_a11y_tres">%1$s, %2$s, %3$s</string>
+    <string name="escaner_encontrado">Found it!</string>
+    <string name="nutricion_comidas">Meals</string>
+    <string name="nutricion_copiar_ayer">Copy yesterday</string>
+    <string name="nutricion_copiar_ayer_desayuno">Copy yesterday: yesterday\'s breakfast to today</string>
+    <string name="nutricion_copiar_ayer_almuerzo">Copy yesterday: yesterday\'s mid-morning to today</string>
+    <string name="nutricion_copiar_ayer_comida">Copy yesterday: yesterday\'s lunch to today</string>
+    <string name="nutricion_copiar_ayer_merienda">Copy yesterday: yesterday\'s snack to today</string>
+    <string name="nutricion_copiar_ayer_cena">Copy yesterday: yesterday\'s dinner to today</string>
+    <string name="nutricion_tu_semana">Your week</string>
+    <string name="nutricion_ver_semana">See the week</string>
+    <plurals name="nutricion_semana_proteina">
+        <item quantity="one">%1$d of %2$d day on your protein</item>
+        <item quantity="other">%1$d of %2$d days on your protein</item>
+    </plurals>
+    <plurals name="nutricion_semana_apuntados">
+        <item quantity="one">%1$d day with food logged</item>
+        <item quantity="other">%1$d days with food logged</item>
+    </plurals>
+    <string name="nutricion_semana_kcal">%1$s\u00A0kcal on average</string>
+    <string name="nutricion_semana_dias_cifra">%1$d of %2$d</string>
+    <plurals name="nutricion_semana_proteina_pie">
+        <item quantity="one">day on your protein</item>
+        <item quantity="other">days on your protein</item>
+    </plurals>
+    <plurals name="nutricion_semana_apuntados_pie">
+        <item quantity="one">day with food logged</item>
+        <item quantity="other">days with food logged</item>
+    </plurals>
+    <string name="nutricion_semana_kcal_pie">kcal on average</string>
+    <string name="agua_cifra">%1$s\u00A0L</string>
+    <string name="agua_de">of %1$s</string>
+    <string name="nutricion_toca_proteina">Up next · %1$d\u00A0g of protein to go</string>
 </resources>

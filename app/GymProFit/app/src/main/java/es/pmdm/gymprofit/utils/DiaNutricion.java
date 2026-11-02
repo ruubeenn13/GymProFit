@@ -125,6 +125,17 @@ public final class DiaNutricion {
 
     /** Kcal que quedan hasta el objetivo; negativo si ya se ha pasado. */
     public int kcalRestantes() { return objetivoKcal - kcal; }
+    /**
+     * El rótulo bajo la cifra de kcal: «kcal para hoy» o «kcal, hoy» si es hoy, y «para ese
+     * día» o «ese día» si se mira otro.
+     *
+     * @param quedan ¿quedan kcal (te quedan) o se ha pasado (te pasas)?
+     */
+    public static int rotuloKcal(boolean hoy, boolean quedan) {
+        if (hoy) return quedan ? es.pmdm.gymprofit.R.string.nutricion_kcal_para_hoy : es.pmdm.gymprofit.R.string.nutricion_kcal_hoy;
+        return quedan ? es.pmdm.gymprofit.R.string.nutricion_kcal_para_ese_dia : es.pmdm.gymprofit.R.string.nutricion_kcal_ese_dia;
+    }
+
 
     /** Porcentaje 0..100 de una cifra sobre su objetivo, para las barras. */
     public static int porcentaje(double valor, int objetivo) {

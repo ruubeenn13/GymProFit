@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_tarjeta_filas_dentro — el contorno por dentro del borde de bg_tarjeta_filas (GP-216,
+     lote 3): la lista se recorta por aquí y no por fuera, para que las filas, que son opacas,
+     no tapen el borde en las esquinas. Radio 24 menos el borde. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="23dp" />
+    <solid android:color="@android:color/transparent" />
+</shape>

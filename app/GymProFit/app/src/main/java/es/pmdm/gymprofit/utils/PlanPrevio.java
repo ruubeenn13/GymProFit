@@ -26,6 +26,24 @@ public final class PlanPrevio {
         return difKcal == 0 && difProteinas == 0;
     }
 
+    /** Qué se dice de la diferencia «respecto a ahora». */
+    public enum Aviso { NINGUNO, IGUAL, MAS_KCAL, MENOS_KCAL, MAS_PROTEINA, MENOS_PROTEINA }
+
+    /**
+     * La diferencia solo se cuenta si el usuario ha tocado algún dato: con el formulario como estaba al
+     * abrir es «sin cambios», aunque lo guardado (DEC-054, plan anterior) no coincida con la fórmula de hoy.
+     *
+     * @param formularioCambiado si algún dato del formulario difiere de lo que había al abrir.
+     * @param hayObjetivoGuardado si existe un objetivo guardado con el que comparar.
+     */
+    public Aviso aviso(boolean formularioCambiado, boolean hayObjetivoGuardado) {
+        if (!hayObjetivoGuardado) return Aviso.NINGUNO;
+        if (!formularioCambiado || sinCambios()) return Aviso.IGUAL;
+        // Las kcal mandan; si son las mismas y cambia la proteína, se dice la proteína.
+        if (difKcal != 0) return difKcal > 0 ? Aviso.MAS_KCAL : Aviso.MENOS_KCAL;
+        return difProteinas > 0 ? Aviso.MAS_PROTEINA : Aviso.MENOS_PROTEINA;
+    }
+
     private PlanPrevio(ResultadoNutricional r, int kcalActuales, int proteinasActuales) {
         this.kcal = r.calorias;
         this.proteinas = r.proteinas;

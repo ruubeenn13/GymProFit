@@ -41,6 +41,11 @@ public final class AnadirRapido {
         return Math.round(a.getCalorias() * c.gramos() / 100.0);
     }
 
+    /** Los gramos de proteína de esa cantidad. */
+    public static double proteina(@NonNull Alimento a, @NonNull CantidadFicha c) {
+        return a.getProteinas() * c.gramos() / 100.0;
+    }
+
     /** «1 envase (200 g)», «2 rebanadas (56 g)» o «150 g»; de un plato sin peso, «1 ración». */
     @NonNull
     public static String texto(@NonNull Cantidades.Formatos f, @NonNull Locale locale, @NonNull CantidadFicha c) {
