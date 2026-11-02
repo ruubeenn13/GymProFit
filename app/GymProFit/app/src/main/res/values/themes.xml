@@ -387,6 +387,8 @@
         <item name="colorSurfaceContainer">@color/gp_surface</item>
         <item name="colorSurfaceContainerHigh">@color/gp_surface</item>
         <item name="colorSurfaceContainerHighest">@color/gp_surface_2</item>
+        <!-- Sin el tinte de elevación: mezclaba un 11 % de naranja en el fondo del diálogo. -->
+        <item name="elevationOverlayEnabled">false</item>
         <item name="materialCalendarDay">@style/Widget.GymProFit.CalendarioDia</item>
         <item name="materialCalendarDayOfWeekLabel">@style/Widget.GymProFit.CalendarioSemana</item>
     </style>

@@ -319,6 +319,8 @@ public class AnadirAlimentoActivity extends BaseActivity {
             enPlatos = id == R.id.btnPestanaPlatos;
             pintarPestanas();
             pintarActual(false);
+            // La pestaña nueva empieza arriba: con la lista bajada se abría a mitad (lo vio el revisor).
+            rv.scrollToPosition(0);
             if (enFavoritos) cargarFavoritos();
             if (enPlatos) cargarLoMio();
         });

@@ -368,6 +368,8 @@ public class NutricionFragment extends BaseFragment {
                 .setSelection(utcDe(fechaSel))
                 .setCalendarConstraints(new CalendarConstraints.Builder()
                         .setEnd(hoyUtc)
+                        // En lunes, como la tira de días, también en inglés (el calendario seguía al idioma).
+                        .setFirstDayOfWeek(Calendar.MONDAY)
                         .setValidator(DateValidatorPointBackward.before(hoyUtc + 1))
                         .build())
                 .build();

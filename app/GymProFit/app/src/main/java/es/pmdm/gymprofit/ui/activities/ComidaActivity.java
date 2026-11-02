@@ -665,9 +665,14 @@ public class ComidaActivity extends BaseActivity {
         boolean conCabecera = hoyNo || !profiVisible;
         View bloque = findViewById(R.id.bloqueVacia);
         float d = getResources().getDisplayMetrics().density;
-        // Sin cabecera, el bloque no aporta su relleno: del título a Profi van 24 dp (tablero 24).
+        // Sin cabecera, el bloque no aporta su relleno y las sugerencias se acercan: de la fecha a
+        // Profi van 24 dp (tablero 24): 8 de la cabecera, 12 del contenido y 4 de margen.
         bloque.setPadding(bloque.getPaddingStart(), conCabecera ? Math.round(20 * d) : 0, bloque.getPaddingEnd(),
                 conCabecera ? Math.round(8 * d) : 0);
+        View sugerencias = findViewById(R.id.bloqueSugerencias);
+        android.view.ViewGroup.MarginLayoutParams lp = (android.view.ViewGroup.MarginLayoutParams) sugerencias.getLayoutParams();
+        lp.topMargin = Math.round((conCabecera ? 16 : 4) * d);
+        sugerencias.setLayoutParams(lp);
         findViewById(R.id.marcoIconoVacia).setVisibility(conCabecera ? View.VISIBLE : View.GONE);
         titulo.setVisibility(conCabecera ? View.VISIBLE : View.GONE);
         boolean toca = conCabecera && !hoyNo && ElegirComida.esHoy(fecha) && tipoComida.equals(ComidaQueToca.ahora());

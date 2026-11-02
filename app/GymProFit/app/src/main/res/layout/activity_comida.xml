@@ -361,7 +361,7 @@
                             style="@style/Widget.GymProFit.CabeceraSeccion.Titulo"
                             android:layout_width="match_parent"
                             android:layout_weight="0"
-                            android:layout_marginBottom="8dp"
+                            android:layout_marginBottom="@dimen/titulo_a_contenido"
                             android:accessibilityHeading="true"
                             tools:targetApi="28" />
 
