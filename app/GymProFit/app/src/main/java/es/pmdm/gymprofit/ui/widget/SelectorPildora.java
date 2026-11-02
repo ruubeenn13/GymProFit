@@ -59,6 +59,10 @@ public class SelectorPildora extends FrameLayout {
 
     private final View pildora;
     private final LinearLayout fila;
+    // Los colores, leídos una vez del tema de la pantalla (no de los recursos): si la
+    // configuración cambia con la pantalla abierta (al encender un servicio de accesibilidad,
+    // con la app en un tema distinto del sistema), los recursos devolvían los del otro tema.
+    private final int colorTexto, colorTextoElegido, colorSobre;
     private TextView[] opciones = new TextView[0];
     private int elegida = -1;
     private boolean pestanas;
@@ -72,15 +76,18 @@ public class SelectorPildora extends FrameLayout {
     public SelectorPildora(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         Resources r = getResources();
+        colorTexto = color(context, com.google.android.material.R.attr.colorOnSurfaceVariant, R.color.gp_text_secondary);
+        colorTextoElegido = color(context, com.google.android.material.R.attr.colorOnPrimary, R.color.gp_on_primary);
+        colorSobre = color(context, com.google.android.material.R.attr.colorOnSurface, R.color.gp_on_surface);
         int relleno = r.getDimensionPixelSize(R.dimen.selector_relleno);
         setPadding(relleno, 0, relleno, 0);
         setMinimumHeight(r.getDimensionPixelSize(R.dimen.zona_tactil));
         GradientDrawable pista = new GradientDrawable();
-        pista.setColor(ContextCompat.getColor(context, R.color.gp_surface_2));
+        pista.setColor(color(context, com.google.android.material.R.attr.colorSurfaceVariant, R.color.gp_surface_2));
         setBackground(pista);
 
         GradientDrawable fondo = new GradientDrawable();
-        fondo.setColor(ContextCompat.getColor(context, R.color.gp_primary));
+        fondo.setColor(color(context, androidx.appcompat.R.attr.colorPrimary, R.color.gp_primary));
         pildora = new View(context);
         pildora.setBackground(fondo);
         pildora.setVisibility(INVISIBLE);
@@ -269,7 +276,7 @@ public class SelectorPildora extends FrameLayout {
     private android.graphics.drawable.Drawable capa(int relleno) {
         Resources r = getResources();
         float radio = radioCompleto();
-        int sobre = ContextCompat.getColor(getContext(), R.color.gp_on_surface);
+        int sobre = colorSobre;
         int alfa = Math.round(255 * ResourcesCompat.getFloat(r, R.dimen.selector_capa_pulsado));
         GradientDrawable pulsado = new GradientDrawable();
         pulsado.setCornerRadius(radio);
@@ -323,8 +330,8 @@ public class SelectorPildora extends FrameLayout {
 
     // El texto de cada opción: sobre naranja la elegida, en gris secundario las demás.
     private void pintar(boolean animar) {
-        int texto = ContextCompat.getColor(getContext(), R.color.gp_text_secondary);
-        int textoElegido = ContextCompat.getColor(getContext(), R.color.gp_on_primary);
+        int texto = colorTexto;
+        int textoElegido = colorTextoElegido;
         boolean quieto = !animar || Movimiento.quieto(getContext());
         ArgbEvaluator mezcla = new ArgbEvaluator();
         for (int i = 0; i < opciones.length; i++) {
@@ -342,6 +349,16 @@ public class SelectorPildora extends FrameLayout {
             a.addUpdateListener(an -> o.setTextColor((int) mezcla.evaluate((float) an.getAnimatedValue(), ini, fin)));
             a.start();
         }
+    }
+
+    // Un color del tema (gp_surface_2 es colorSurfaceVariant, gp_text_secondary es
+    // colorOnSurfaceVariant…); sin el atributo, el recurso.
+    private static int color(@NonNull Context c, int atributo, int recurso) {
+        TypedValue tv = new TypedValue();
+        if (c.getTheme().resolveAttribute(atributo, tv, true)) {
+            return tv.resourceId != 0 ? c.getColor(tv.resourceId) : tv.data;
+        }
+        return ContextCompat.getColor(c, recurso);
     }
 
     // ── El giro: la elegida se guarda con la vista (si tiene id) ───────────────
