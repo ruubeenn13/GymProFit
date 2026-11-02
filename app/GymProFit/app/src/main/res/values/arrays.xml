@@ -40,4 +40,28 @@
         <item>Snacks</item>
         <item>Otro</item>
     </string-array>
+    <!-- Las opciones de cada SelectorPildora que se monta desde el layout (GP-224). -->
+    <string-array name="selector_niveles">
+        <item>@string/rutinas_principiante</item>
+        <item>@string/rutinas_intermedio</item>
+        <item>@string/rutinas_avanzado</item>
+    </string-array>
+    <string-array name="selector_periodos">
+        <item>@string/stats_periodo_semana</item>
+        <item>@string/stats_periodo_mes</item>
+    </string-array>
+    <string-array name="selector_metricas">
+        <item>@string/grafica_met_peso</item>
+        <item>@string/grafica_met_grasa</item>
+        <item>@string/grafica_met_cintura</item>
+    </string-array>
+    <string-array name="selector_rangos">
+        <item>@string/grafica_rango_30</item>
+        <item>@string/grafica_rango_90</item>
+        <item>@string/grafica_rango_todo</item>
+    </string-array>
+    <string-array name="selector_sexos">
+        <item>@string/onboarding_hombre</item>
+        <item>@string/onboarding_mujer</item>
+    </string-array>
 </resources>

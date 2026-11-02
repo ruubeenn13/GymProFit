@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Atributos de SelectorPildora (GP-224): las opciones y el nombre del grupo desde el layout. -->
+<resources>
+    <declare-styleable name="SelectorPildora">
+        <!-- Lo que se ve en cada opción («Semana», «Mes»). -->
+        <attr name="selectorOpciones" format="reference" />
+        <!-- Lo que lee TalkBack en cada opción, si no es lo mismo que se ve («2 días»). -->
+        <attr name="selectorNombres" format="reference" />
+        <!-- El nombre del grupo para TalkBack («Unidad», «Sexo»). -->
+        <attr name="selectorNombreGrupo" format="string" />
+        <!-- true: semántica de pestañas («pestaña, 1 de 3») en vez de botones de opción. -->
+        <attr name="selectorPestanas" format="boolean" />
+        <!-- La opción elegida al montar; sin él, ninguna. -->
+        <attr name="selectorElegida" format="integer" />
+    </declare-styleable>
+</resources>

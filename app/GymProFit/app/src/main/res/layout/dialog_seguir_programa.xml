@@ -28,39 +28,12 @@
             android:textAppearance="@style/TextAppearance.GymProFit.Display"
             android:textSize="@dimen/text_headline" />
 
-        <com.google.android.material.button.MaterialButtonToggleGroup
+        <es.pmdm.gymprofit.ui.widget.SelectorPildora
             android:id="@+id/chipsMinutos"
-            style="@style/Widget.GymProFit.GrupoConectado"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/chip30"
-                style="@style/Widget.GymProFit.BotonConectado"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/chip45"
-                style="@style/Widget.GymProFit.BotonConectado"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/chip60"
-                style="@style/Widget.GymProFit.BotonConectado"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/chip75"
-                style="@style/Widget.GymProFit.BotonConectado"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/seguir_chip_75" />
-
-        </com.google.android.material.button.MaterialButtonToggleGroup>
+            android:layout_marginTop="12dp"
+            app:selectorNombreGrupo="@string/selector_grupo_minutos" />
 
         <include
             android:id="@+id/estadoVistaPrevia"

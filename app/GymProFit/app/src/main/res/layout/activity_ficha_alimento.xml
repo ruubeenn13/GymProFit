@@ -161,38 +161,12 @@
                         android:textColor="?attr/colorOnSurfaceVariant"
                         tools:targetApi="28" />
 
-                    <com.google.android.material.button.MaterialButtonToggleGroup
-                style="@style/Widget.GymProFit.GrupoConectado"
-                android:id="@+id/grupoUnidad"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:contentDescription="@string/ficha_unidad"
-                app:singleSelection="true"
-                app:selectionRequired="true">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnUnidad0"
-                    style="@style/Widget.GymProFit.BotonConectado"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:minHeight="48dp"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    android:textSize="@dimen/text_body" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnUnidad1"
-                    style="@style/Widget.GymProFit.BotonConectado"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:minHeight="48dp"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    android:textSize="@dimen/text_body" />
-            </com.google.android.material.button.MaterialButtonToggleGroup>
+                    <es.pmdm.gymprofit.ui.widget.SelectorPildora
+                        android:id="@+id/grupoUnidad"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        app:selectorNombreGrupo="@string/ficha_unidad" />
 
 
             <com.google.android.material.button.MaterialButton

@@ -121,29 +121,13 @@
                     android:text="@string/datos_sexo"
                     android:textAppearance="@style/TextAppearance.GymProFit.Cuerpo" />
 
-                <com.google.android.material.button.MaterialButtonToggleGroup
+                <es.pmdm.gymprofit.ui.widget.SelectorPildora
                     android:id="@+id/grupoSexo"
-                    style="@style/Widget.GymProFit.GrupoConectado"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/espacio_8">
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnSexoHombre"
-                        style="@style/Widget.GymProFit.BotonConectado"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/onboarding_hombre" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnSexoMujer"
-                        style="@style/Widget.GymProFit.BotonConectado"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/onboarding_mujer" />
-                </com.google.android.material.button.MaterialButtonToggleGroup>
+                    android:layout_marginTop="@dimen/espacio_8"
+                    app:selectorOpciones="@array/selector_sexos"
+                    app:selectorNombreGrupo="@string/datos_sexo" />
             </LinearLayout>
 
             <!-- Tu objetivo -->
@@ -184,32 +168,34 @@
                 android:showDividers="none"
                 android:padding="@dimen/espacio_16">
 
+                <!-- El rótulo arriba y lo que significa la opción elegida debajo (GP-224): en una
+                     fila, la descripción larga («Ejercicio intenso casi a diario») aplastaba el
+                     rótulo hasta partirlo por letras y el selector saltaba de alto al elegir. -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
                     <TextView
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:text="@string/datos_actividad"
                         android:textAppearance="@style/TextAppearance.GymProFit.Cuerpo" />
 
                     <TextView
                         android:id="@+id/tvActividadTexto"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/espacio_8"
+                        android:layout_marginTop="@dimen/espacio_4"
                         android:textAppearance="@style/TextAppearance.GymProFit.Apoyo" />
                 </LinearLayout>
 
-                <com.google.android.material.button.MaterialButtonToggleGroup
+                <es.pmdm.gymprofit.ui.widget.SelectorPildora
                     android:id="@+id/grupoActividad"
-                    style="@style/Widget.GymProFit.GrupoConectado"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/espacio_8" />
+                    android:layout_marginTop="@dimen/espacio_8"
+                    app:selectorNombreGrupo="@string/datos_actividad" />
             </LinearLayout>
 
             <LinearLayout
@@ -224,12 +210,12 @@
                     android:text="@string/datos_experiencia"
                     android:textAppearance="@style/TextAppearance.GymProFit.Cuerpo" />
 
-                <com.google.android.material.button.MaterialButtonToggleGroup
+                <es.pmdm.gymprofit.ui.widget.SelectorPildora
                     android:id="@+id/grupoNivel"
-                    style="@style/Widget.GymProFit.GrupoConectado"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/espacio_8" />
+                    android:layout_marginTop="@dimen/espacio_8"
+                    app:selectorNombreGrupo="@string/datos_experiencia" />
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

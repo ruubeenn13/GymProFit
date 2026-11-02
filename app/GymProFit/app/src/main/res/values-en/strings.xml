@@ -1733,7 +1733,7 @@
     <string name="crear_error_racion">Above 0 and up to 2000\u00A0g</string>
     <string name="crear_error_carga">Couldn\'t open this food</string>
     <!-- ── Lote 1.6.3: añadir en un toque, la barra de «Hecho» y los favoritos ── -->
-    <string name="anadir_pestanas">Show</string>
+    <string name="anadir_pestanas">Food lists</string>
     <string name="anadir_pestana_todo">Recent</string>
     <string name="anadir_pestana_favoritos">Favorites</string>
     <string name="recientes_ver_todos">See all</string>
@@ -2354,4 +2354,12 @@
     <string name="agua_cifra">%1$s\u00A0L</string>
     <string name="agua_de">of %1$s</string>
     <string name="nutricion_toca_proteina">Up next · %1$d\u00A0g of protein to go</string>
+    <!-- El papel de una opción de SelectorPildora con semántica de pestañas (GP-224). -->
+    <string name="selector_pestana">tab</string>
+    <!-- El nombre de cada grupo de SelectorPildora para TalkBack (GP-224). -->
+    <string name="selector_grupo_nivel">Level</string>
+    <string name="selector_grupo_periodo">Period</string>
+    <string name="selector_grupo_metrica">Measurement</string>
+    <string name="selector_grupo_rango">Range</string>
+    <string name="selector_grupo_minutos">Minutes per session</string>
 </resources>

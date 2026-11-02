@@ -17,7 +17,6 @@ import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.button.MaterialButtonToggleGroup;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -28,6 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.ui.widget.SelectorPildora;
 import es.pmdm.gymprofit.utils.ChartMarker;
 import es.pmdm.gymprofit.utils.GrasaReciente;
 import es.pmdm.gymprofit.utils.ChartStyler;
@@ -65,7 +65,7 @@ public class MedidasFragment extends BaseFragment {
     private LineChart chartPeso;
     private TextView tvGraficaTitulo;
     private TextView tvGraficaVacia;
-    private MaterialButtonToggleGroup chipsMetrica, chipsRango;
+    private SelectorPildora chipsMetrica, chipsRango;
     private List<MedicionCorporal> historial;
     // Métricas representables en la gráfica (solo las que la gente mide de verdad).
     private static final int MET_PESO = 0, MET_GRASA = 1, MET_CINTURA = 2;
@@ -110,8 +110,8 @@ public class MedidasFragment extends BaseFragment {
         layoutMasDetalles = findViewById(R.id.layoutMasDetalles);
 
         // Re-pinta la gráfica al cambiar de métrica (peso/grasa/cintura) o de rango (30/90/todo).
-        chipsMetrica.addOnButtonCheckedListener((g, id, marcado) -> { if (marcado) pintarGrafica(); });
-        chipsRango.addOnButtonCheckedListener((g, id, marcado) -> { if (marcado) pintarGrafica(); });
+        chipsMetrica.setAlElegir(i -> pintarGrafica());
+        chipsRango.setAlElegir(i -> pintarGrafica());
 
         // Feedback háptico sutil al seleccionar un punto (aparece el tooltip).
         chartPeso.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
@@ -304,14 +304,14 @@ public class MedidasFragment extends BaseFragment {
         // Métrica + unidad según el chip activo.
         final int metrica;
         final int formatoTooltip;
-        if (chipsMetrica.getCheckedButtonId() == R.id.chipMetGrasa) { metrica = MET_GRASA; formatoTooltip = R.string.grafica_pct_fecha; }
-        else if (chipsMetrica.getCheckedButtonId() == R.id.chipMetCintura) { metrica = MET_CINTURA; formatoTooltip = R.string.grafica_cm_fecha; }
+        if (chipsMetrica.getElegida() == 1) { metrica = MET_GRASA; formatoTooltip = R.string.grafica_pct_fecha; }
+        else if (chipsMetrica.getElegida() == 2) { metrica = MET_CINTURA; formatoTooltip = R.string.grafica_cm_fecha; }
         else { metrica = MET_PESO; formatoTooltip = R.string.grafica_kg_fecha_simple; }
 
         // Rango: fecha de corte (null = "Todo").
         String corte = null;
-        if (chipsRango.getCheckedButtonId() == R.id.chipRango30) corte = fechaCutoff(30);
-        else if (chipsRango.getCheckedButtonId() == R.id.chipRango90) corte = fechaCutoff(90);
+        if (chipsRango.getElegida() == 0) corte = fechaCutoff(30);
+        else if (chipsRango.getElegida() == 1) corte = fechaCutoff(90);
 
         List<Entry> entradas = new ArrayList<>();
         final List<String> etiquetas = new ArrayList<>();

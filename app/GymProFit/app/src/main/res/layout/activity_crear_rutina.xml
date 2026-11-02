@@ -89,36 +89,13 @@
                 android:textColor="?attr/colorOnSurfaceVariant" />
 
             <!-- Selector de nivel de dificultad -->
-            <com.google.android.material.button.MaterialButtonToggleGroup
+            <es.pmdm.gymprofit.ui.widget.SelectorPildora
                 android:id="@+id/chipGroupNivel"
-                style="@style/Widget.GymProFit.GrupoConectado"
-    app:checkedButton="@id/chipPrincipiante"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/chipPrincipiante"
-                    style="@style/Widget.GymProFit.BotonConectado"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/rutinas_principiante"
-                    android:checked="true" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/chipIntermedio"
-                    style="@style/Widget.GymProFit.BotonConectado"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/rutinas_intermedio" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/chipAvanzado"
-                    style="@style/Widget.GymProFit.BotonConectado"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/rutinas_avanzado" />
-
-            </com.google.android.material.button.MaterialButtonToggleGroup>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:selectorOpciones="@array/selector_niveles"
+                app:selectorNombreGrupo="@string/selector_grupo_nivel"
+                app:selectorElegida="0" />
 
             <!-- Duración estimada en minutos -->
             <com.google.android.material.textfield.TextInputLayout

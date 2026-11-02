@@ -10,8 +10,6 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.button.MaterialButtonToggleGroup;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,18 +60,17 @@ public final class SeguirProgramaHoja {
 
         boolean mismo = seguido != null && seguido.getPrograma() != null
                 && codigo.equals(seguido.getPrograma().getCodigo());
-        MaterialButtonToggleGroup chips = raiz.findViewById(R.id.chipsMinutos);
-        Map<Integer, Integer> minutosDe = new HashMap<>();
-        int[] ids = {R.id.chip30, R.id.chip45, R.id.chip60, R.id.chip75};
-        for (int i = 0; i < ids.length; i++) {
-            minutosDe.put(ids[i], MINUTOS[i]);
-            if (MINUTOS[i] != 75) {
-                ((MaterialButton) raiz.findViewById(ids[i])).setText(act.getString(R.string.seguir_chip_min, MINUTOS[i]));
-            }
+        // Los minutos por sesión en el selector de la app (GP-224); «75+» es el último.
+        SelectorPildora chips = raiz.findViewById(R.id.chipsMinutos);
+        CharSequence[] textos = new CharSequence[MINUTOS.length];
+        for (int i = 0; i < MINUTOS.length; i++) {
+            textos[i] = MINUTOS[i] == 75 ? act.getString(R.string.seguir_chip_75)
+                    : act.getString(R.string.seguir_chip_min, MINUTOS[i]);
         }
+        chips.setOpciones(textos);
         int inicial = mismo ? seguido.getMinutos() : 60;
-        for (int id : ids) {
-            if (minutosDe.get(id) == inicial) chips.check(id);
+        for (int i = 0; i < MINUTOS.length; i++) {
+            if (MINUTOS[i] == inicial) chips.setElegida(i, false);
         }
 
         TextView aviso = raiz.findViewById(R.id.tvAvisoSeguir);
@@ -84,7 +81,7 @@ public final class SeguirProgramaHoja {
 
         Runnable[] cargar = new Runnable[1];
         cargar[0] = () -> {
-            int minutos = minutosDe.get(chips.getCheckedButtonId());
+            int minutos = MINUTOS[Math.max(0, chips.getElegida())];
             pintarAviso(act, aviso, boton, mismo, seguido, nombre, minutos);
             int esta = ++pedida[0];
             estado.cargando();
@@ -104,10 +101,10 @@ public final class SeguirProgramaHoja {
                 }
             });
         };
-        chips.addOnButtonCheckedListener((g, id, marcado) -> { if (marcado) cargar[0].run(); });
+        chips.setAlElegir(i -> cargar[0].run());
 
         boton.setOnClickListener(v -> {
-            int minutos = minutosDe.get(chips.getCheckedButtonId());
+            int minutos = MINUTOS[Math.max(0, chips.getElegida())];
             Map<String, Object> cuerpo = new HashMap<>();
             cuerpo.put("minutos", minutos);
             LoadingDialog.show(act);

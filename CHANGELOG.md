@@ -8,6 +8,13 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `c6b0206` | fix(android): la píldora del selector mide lo que su opción al cambiar de opciones (en una ficha nueva salía más estrecha; lo vio la prueba del release en producción). |
+| `5daeb43` | fix(android): partir por sílabas sin el aviso de lint de constante equivocada. |
+| `1eecba8` | fix(android): en Tus datos la descripción de la actividad va bajo su rótulo (la larga aplastaba «Actividad física» hasta partirlo por letras). |
+| `756f929` | fix(android): el selector lee sus colores del tema una vez y no se repinta con los del otro tema si la configuración cambia con la pantalla abierta. |
+| `e757b85` | fix(android): el selector responde al toque en sus 48 dp, parte una palabra larga por sílabas a letra grande y conserva la píldora de radio completo; Tus datos ya no enciende «Guardar» solo al recrearse antes de cargar el perfil. |
+| `bc2ca97` | feat(android): **un solo selector de opciones en toda la app** (GP-224, `SelectorPildora`): una pista de 48 dp con una píldora naranja que viaja a la elegida, con los contrastes medidos en los dos temas, sustituye a los botones conectados (la elegida apenas se distinguía, 1,02:1) y a la unidad de la ficha en nueve pantallas: ficha, Añadir (con semántica de pestañas), Tus datos, crear y editar rutina, estadísticas de nutrición, Medidas, seguir un programa y el alta. TalkBack anuncia el grupo y la opción con su estado y su posición; la elegida sobrevive al giro. Se borran `GrupoConectado`, `BotonConectado`, `view_boton_conectado` y `sel_unidad_*`. |
+| `d705656` | Fusión del PR #71: **GP-216, lote 3** (Nutrición y el flujo de apuntar comida). Sin versión ni etiqueta. |
 | `d3cb883` | fix(android): el carrusel de «Lo que te encaja» ya no rebana las tarjetas mientras entran en cascada, el pie del agua va al tamaño de apoyo y «Tu semana» dice «Ver la semana» a TalkBack. |
 | `c54af4d` | docs(reglas): el revisor de UI se repite como mucho tres veces; los medios de la última se arreglan y se miden a mano, y un alto o un cambio de diseño posterior vuelven a pedirlo. |
 | `59b4e3e` | feat(android): **«Lo que te encaja» en carrusel** (tablero 25; decisión del 02-11: las tarjetas verticales se comían unos 450 dp de Añadir): tarjetas de 220 dp a la altura de la más alta, con icono, «+», nombre, detalle y barra de proteína, que se repintan en su sitio al tocar un «+». **Agua y «Tu semana» con las cifras condensadas** del tablero 15: «1,5 L de 2,8» y dos columnas, «3 de 4» días con tu proteína en azul (5,09:1 en claro, 6,68:1 en oscuro) y la media de kcal, apiladas si con letra grande no caben. Los dp que el lote escribía en Java pasan a `@dimen`. |

@@ -101,6 +101,14 @@
     <!-- Hueco entre los tramos de la barra de reparto de una comida. -->
     <dimen name="reparto_hueco">2dp</dimen>
 
+    <!-- Selector de opciones (GP-224): pista de 48 dp con 4 de relleno, píldora y opción de 40,
+         anillo de foco de 2 dp; pulsado, capa del 10 %; desactivado, al 38 %. -->
+    <dimen name="selector_relleno">4dp</dimen>
+    <dimen name="selector_opcion_alto">40dp</dimen>
+    <dimen name="selector_anillo_foco">2dp</dimen>
+    <item name="selector_capa_pulsado" format="float" type="dimen">0.10</item>
+    <item name="alfa_desactivado" format="float" type="dimen">0.38</item>
+
     <!-- Fila de lista: 64 dp mínimo, 16 a los lados, icono en círculo de 40 y separador
          con sangría hasta el texto (16 + 40 + 14 = 70). -->
     <dimen name="fila_alto_min">64dp</dimen>

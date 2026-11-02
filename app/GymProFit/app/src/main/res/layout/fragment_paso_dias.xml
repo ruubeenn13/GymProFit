@@ -43,7 +43,7 @@
                     style="@style/Widget.GymProFit.Alta.Etiqueta"
                     android:text="@string/alta_dias_etiqueta" />
 
-                <es.pmdm.gymprofit.ui.alta.SelectorPildora
+                <es.pmdm.gymprofit.ui.widget.SelectorPildora
                     android:id="@+id/selectorDias"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -81,7 +81,7 @@
                     android:layout_marginTop="24dp"
                     android:text="@string/alta_tiempo_etiqueta" />
 
-                <es.pmdm.gymprofit.ui.alta.SelectorPildora
+                <es.pmdm.gymprofit.ui.widget.SelectorPildora
                     android:id="@+id/selectorMinutos"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.ui.widget.SelectorPildora;
 import es.pmdm.gymprofit.utils.AltaPasos;
 
 // ============================================================
@@ -52,8 +53,8 @@ public class PasoDiasFragment extends PasoAltaFragment {
             textosDias[i] = String.valueOf(d);
             nombresDias[i] = getResources().getQuantityString(R.plurals.alta_dias_a11y, d, d);
         }
-        dias.setOpciones(textosDias, nombresDias, 56, true);
-        dias.setContentDescription(getString(R.string.alta_dias_etiqueta));
+        dias.setOpciones(textosDias, nombresDias);
+        dias.setNombreGrupo(getString(R.string.alta_dias_etiqueta));
         int diasGuardados = prefs.getBorradorDias();
         if (diasGuardados >= AltaPasos.DIAS_MIN && diasGuardados <= AltaPasos.DIAS_MAX) {
             dias.setElegida(diasGuardados - AltaPasos.DIAS_MIN, false);
@@ -78,8 +79,8 @@ public class PasoDiasFragment extends PasoAltaFragment {
             nombresMin[i] = getString(ultimo ? R.string.alta_minutos_o_mas_a11y : R.string.alta_minutos_a11y, min);
             if (min == prefs.getBorradorMinutos()) guardados = i;
         }
-        minutos.setOpciones(textosMin, nombresMin, 52, false);
-        minutos.setContentDescription(getString(R.string.alta_tiempo_etiqueta));
+        minutos.setOpciones(textosMin, nombresMin);
+        minutos.setNombreGrupo(getString(R.string.alta_tiempo_etiqueta));
         if (guardados >= 0) minutos.setElegida(guardados, false);
         minutos.setAlElegir(i -> {
             prefs.guardarBorradorMinutos(AltaPasos.MINUTOS[i]);

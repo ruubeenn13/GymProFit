@@ -19,7 +19,6 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.google.android.material.button.MaterialButtonToggleGroup;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.ui.widget.SelectorPildora;
 import es.pmdm.gymprofit.model.comida.ResumenDiarioNutricion;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
@@ -50,7 +50,7 @@ public class EstadisticasNutricionActivity extends BaseActivity {
     private ImageView btnNext;
     private TextView tvPeriodo, tvVacia;
     private TextView tvMedia, tvDias, tvObjetivo, tvAdherencia;
-    private MaterialButtonToggleGroup chipsPeriodo;
+    private SelectorPildora chipsPeriodo;
     private BarChart chartKcal;
     private PieChart chartMacros;
     private TextView tvMacrosVacia;
@@ -73,6 +73,22 @@ public class EstadisticasNutricionActivity extends BaseActivity {
     // Longitud del periodo en días (7 = semana, 30 = mes) y desplazamiento hacia atrás
     // en periodos (0 = actual, 1 = anterior, ...). El objetivo diario de kcal del perfil.
     private int lenDias = 7;
+
+    // Semana (0) o mes (1) en el selector: 7 o 30 días.
+    private int diasDelPeriodo() {
+        return chipsPeriodo.getElegida() == 1 ? 30 : 7;
+    }
+
+    // Tras un giro, el selector recupera el periodo elegido: se recarga si no es el que se pintó.
+    @Override
+    protected void onRestoreInstanceState(@androidx.annotation.NonNull android.os.Bundle estado) {
+        super.onRestoreInstanceState(estado);
+        if (diasDelPeriodo() != lenDias) {
+            lenDias = diasDelPeriodo();
+            offset = 0;
+            cargar();
+        }
+    }
     private int offset = 0;
     private int objetivoKcal = 2000;
     // Sin peso ni altura no hay objetivo (GP-103): ni línea de meta ni días «en objetivo».
@@ -113,9 +129,8 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
 
         // Cambio de periodo (semana/mes): reinicia el desplazamiento al periodo actual.
-        chipsPeriodo.addOnButtonCheckedListener((g, id, marcado) -> {
-            if (!marcado) return;
-            lenDias = (chipsPeriodo.getCheckedButtonId() == R.id.chipMes) ? 30 : 7;
+        chipsPeriodo.setAlElegir(i -> {
+            lenDias = diasDelPeriodo();
             offset = 0;
             cargar();
         });
