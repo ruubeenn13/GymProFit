@@ -82,4 +82,14 @@ public class DiaNutricionTest {
         assertEquals(ResultadoNutricional.BASE_PESO, d.baseProteina);
         assertEquals(0, DiaNutricion.de(null, null).proteinaMinima);
     }
+
+    // GP-216 lote 3, revisor: mirando el domingo, la tarjeta decía «TE QUEDAN 696 · kcal para
+    // hoy». «Para hoy» solo es verdad hoy.
+    @Test
+    public void el_rotulo_de_las_kcal_dice_hoy_solo_hoy() {
+        assertEquals(es.pmdm.gymprofit.R.string.nutricion_kcal_para_hoy, DiaNutricion.rotuloKcal(true, true));
+        assertEquals(es.pmdm.gymprofit.R.string.nutricion_kcal_hoy, DiaNutricion.rotuloKcal(true, false));
+        assertEquals(es.pmdm.gymprofit.R.string.nutricion_kcal_para_ese_dia, DiaNutricion.rotuloKcal(false, true));
+        assertEquals(es.pmdm.gymprofit.R.string.nutricion_kcal_ese_dia, DiaNutricion.rotuloKcal(false, false));
+    }
 }

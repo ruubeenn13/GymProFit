@@ -241,6 +241,7 @@
                         android:id="@+id/rvAlimentosComida"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="@drawable/bg_tarjeta_filas_dentro"
                         android:nestedScrollingEnabled="false"
                         android:overScrollMode="never" />
                 </FrameLayout>

@@ -1800,11 +1800,11 @@
     <string name="reciente_copiar_a11y">Copy %1$s %2$s</string>
     <string name="reciente_copiada_a11y">%1$s, copied</string>
     <string name="reciente_fallo">Couldn\'t copy %1$s. %2$s</string>
-    <string name="copiar_ayer_desayuno">Yes, copy yesterday\'s breakfast</string>
-    <string name="copiar_ayer_almuerzo">Yes, copy yesterday\'s mid-morning</string>
-    <string name="copiar_ayer_comida">Yes, copy yesterday\'s lunch</string>
-    <string name="copiar_ayer_merienda">Yes, copy yesterday\'s snack</string>
-    <string name="copiar_ayer_cena">Yes, copy yesterday\'s dinner</string>
+    <string name="copiar_ayer_desayuno">Copy yesterday\'s breakfast</string>
+    <string name="copiar_ayer_almuerzo">Copy yesterday\'s mid-morning</string>
+    <string name="copiar_ayer_comida">Copy yesterday\'s lunch</string>
+    <string name="copiar_ayer_merienda">Copy yesterday\'s snack</string>
+    <string name="copiar_ayer_cena">Copy yesterday\'s dinner</string>
     <string name="copiar_ayer_no_a11y">Not today</string>
     <string name="copiar_ayer_fallo">Couldn\'t copy yesterday\'s. %1$s</string>
     <string name="sueles_desayuno">Your usual breakfast</string>
@@ -1942,6 +1942,8 @@
     <string name="nutricion_kcal_sola">kcal</string>
     <string name="nutricion_kcal_para_hoy">kcal for today</string>
     <string name="nutricion_kcal_hoy">kcal today</string>
+    <string name="nutricion_kcal_para_ese_dia">kcal for that day</string>
+    <string name="nutricion_kcal_ese_dia">kcal that day</string>
     <string name="dia_completo_titulo">Day complete</string>
     <string name="dia_completo_texto">All your meals, logged</string>
     <string name="dia_completo_a11y">Day complete: all your meals logged. %1$s</string>

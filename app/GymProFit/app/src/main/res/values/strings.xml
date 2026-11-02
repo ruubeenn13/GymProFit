@@ -1830,11 +1830,11 @@
     <string name="reciente_copiar_a11y">Copiar %1$s %2$s</string>
     <string name="reciente_copiada_a11y">%1$s, copiada</string>
     <string name="reciente_fallo">No se ha podido copiar %1$s. %2$s</string>
-    <string name="copiar_ayer_desayuno">Sí, copiar el desayuno de ayer</string>
-    <string name="copiar_ayer_almuerzo">Sí, copiar el almuerzo de ayer</string>
-    <string name="copiar_ayer_comida">Sí, copiar la comida de ayer</string>
-    <string name="copiar_ayer_merienda">Sí, copiar la merienda de ayer</string>
-    <string name="copiar_ayer_cena">Sí, copiar la cena de ayer</string>
+    <string name="copiar_ayer_desayuno">Copiar la de ayer: el desayuno</string>
+    <string name="copiar_ayer_almuerzo">Copiar la de ayer: el almuerzo</string>
+    <string name="copiar_ayer_comida">Copiar la de ayer: la comida</string>
+    <string name="copiar_ayer_merienda">Copiar la de ayer: la merienda</string>
+    <string name="copiar_ayer_cena">Copiar la de ayer: la cena</string>
     <string name="copiar_ayer_no_a11y">No, hoy no</string>
     <string name="copiar_ayer_fallo">No se ha podido copiar la de ayer. %1$s</string>
     <string name="sueles_desayuno">Lo que sueles desayunar</string>
@@ -1972,6 +1972,9 @@
     <string name="nutricion_kcal_sola">kcal</string>
     <string name="nutricion_kcal_para_hoy">kcal para hoy</string>
     <string name="nutricion_kcal_hoy">kcal, hoy</string>
+    <!-- Lo mismo mirando otro día: «para hoy» solo es verdad hoy. -->
+    <string name="nutricion_kcal_para_ese_dia">kcal para ese día</string>
+    <string name="nutricion_kcal_ese_dia">kcal, ese día</string>
     <string name="dia_completo_titulo">Día completo</string>
     <string name="dia_completo_texto">Todas tus comidas, apuntadas</string>
     <string name="dia_completo_a11y">Día completo: todas tus comidas, apuntadas. %1$s</string>

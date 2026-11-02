@@ -666,7 +666,8 @@ public class NutricionFragment extends BaseFragment {
             int restantes = d.kcalRestantes();
             rotulo.setText(restantes >= 0 ? R.string.nutricion_te_quedan : R.string.nutricion_te_pasas);
             quedan.setVisibility(View.VISIBLE);
-            unidad.setText(restantes >= 0 ? R.string.nutricion_kcal_para_hoy : R.string.nutricion_kcal_hoy);
+            // «para hoy» solo hoy; mirando otro día, «para ese día» (lo vio el revisor).
+            unidad.setText(DiaNutricion.rotuloKcal(esHoy(), restantes >= 0));
             contarKcal(tvKcal, quedan, d.kcal, d.objetivoKcal, modo, nf);
             a11y = getString(R.string.nutricion_kcal_a11y, nf.format(d.kcal), nf.format(d.objetivoKcal),
                     rotulo.getText(), getString(R.string.nutricion_kcal_valor, nf.format(Math.abs(restantes))));

@@ -72,7 +72,7 @@ public final class CopiarComida {
         return ctx.getString(R.string.reciente_detalle, nf.format(c.getKcal()), ComidasRecientes.nombres(c.getLineas()));
     }
 
-    /** «Sí, copiar la merienda de ayer». */
+    /** «Copiar la de ayer: la merienda», el nombre accesible del botón de Profi (empieza por lo que se ve). */
     @StringRes
     public static int siCopiar(@NonNull String tipo) {
         return SI_COPIAR[indice(tipo)];

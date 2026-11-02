@@ -176,7 +176,8 @@ public class ComidaActivity extends BaseActivity {
 
         estado = new VistaEstado(findViewById(R.id.estadoComida));
         apilarConLetraGrande();
-        findViewById(R.id.cardAlimentos).setClipToOutline(true);
+        // Se recorta la lista por dentro del borde: recortando la tarjeta, las filas lo tapaban en las esquinas.
+        findViewById(R.id.rvAlimentosComida).setClipToOutline(true);
         View sepCabecera = findViewById(R.id.sepCabeceraComida);
         ((androidx.core.widget.NestedScrollView) findViewById(R.id.scrollComida)).setOnScrollChangeListener(
                 (androidx.core.widget.NestedScrollView.OnScrollChangeListener) (v, x, y, antesX, antesY) ->
@@ -662,6 +663,11 @@ public class ComidaActivity extends BaseActivity {
         // Con Profi proponiendo copiar la de ayer, la pantalla va del título a Profi (tablero 24):
         // el icono y «Aún no has apuntado…» sobran. Sin él, son lo único que dice que está vacía.
         boolean conCabecera = hoyNo || !profiVisible;
+        View bloque = findViewById(R.id.bloqueVacia);
+        float d = getResources().getDisplayMetrics().density;
+        // Sin cabecera, el bloque no aporta su relleno: del título a Profi van 24 dp (tablero 24).
+        bloque.setPadding(bloque.getPaddingStart(), conCabecera ? Math.round(20 * d) : 0, bloque.getPaddingEnd(),
+                conCabecera ? Math.round(8 * d) : 0);
         findViewById(R.id.marcoIconoVacia).setVisibility(conCabecera ? View.VISIBLE : View.GONE);
         titulo.setVisibility(conCabecera ? View.VISIBLE : View.GONE);
         boolean toca = conCabecera && !hoyNo && ElegirComida.esHoy(fecha) && tipoComida.equals(ComidaQueToca.ahora());
