@@ -143,4 +143,25 @@ public class SelectorPildoraTest {
                     s.getOpcion(i).getMeasuredHeight() >= zona);
         }
     }
+
+    // Prueba del release en producción: al abrir otra ficha, el selector cambia de opciones sin
+    // que cambie el ancho de la fila, y la píldora se quedaba con el ancho de las de antes.
+    @Test
+    public void la_pildora_mide_lo_que_su_opcion_al_cambiar_de_opciones() {
+        SelectorPildora s = selector();
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            colocar(s);
+            s.setElegida(0, false);
+            s.setOpciones(new CharSequence[]{"taza", "gramos"}, null);
+            s.setElegida(0, false);
+            colocar(s);
+        });
+        assertEquals(s.getOpcion(0).getWidth(), s.anchoPildora());
+    }
+
+    private static void colocar(SelectorPildora s) {
+        s.measure(View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        s.layout(0, 0, s.getMeasuredWidth(), s.getMeasuredHeight());
+    }
 }

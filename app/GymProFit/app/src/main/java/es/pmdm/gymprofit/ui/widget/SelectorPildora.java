@@ -65,6 +65,8 @@ public class SelectorPildora extends FrameLayout {
     private final int colorTexto, colorTextoElegido, colorSobre;
     private TextView[] opciones = new TextView[0];
     private int elegida = -1;
+    // La píldora está viajando: un repintado de la vista no la devuelve a su sitio de golpe.
+    private boolean viajando;
     private boolean pestanas;
     @Nullable private CharSequence nombreGrupo;
     @Nullable private AlElegir alElegir;
@@ -98,7 +100,6 @@ public class SelectorPildora extends FrameLayout {
         fila.setOrientation(LinearLayout.HORIZONTAL);
         fila.setBaselineAligned(false);
         addView(fila, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-        fila.addOnLayoutChangeListener((v, l, t, rr, b, ol, ot, or, ob) -> colocarPildora(false));
 
         ViewCompat.setAccessibilityDelegate(this, new AccessibilityDelegateCompat() {
             @Override
@@ -224,6 +225,12 @@ public class SelectorPildora extends FrameLayout {
         return opciones.length;
     }
 
+    /** El ancho con que está colocada la píldora (para los tests). */
+    @androidx.annotation.VisibleForTesting
+    int anchoPildora() {
+        return pildora.getWidth();
+    }
+
     /** La vista de una opción (para ocultarla, por ejemplo). */
     @NonNull
     public TextView getOpcion(int indice) {
@@ -253,6 +260,15 @@ public class SelectorPildora extends FrameLayout {
     private void aplicarActivo(boolean enabled) {
         for (TextView o : opciones) o.setEnabled(enabled);
         setAlpha(enabled ? 1f : ResourcesCompat.getFloat(getResources(), R.dimen.alfa_desactivado));
+    }
+
+    // Cada vez que se colocan las opciones, la píldora se ajusta a la elegida: al cambiar las
+    // opciones sin que cambie el ancho de la fila (otra ficha con otras unidades), conservaba el
+    // ancho de antes (lo vio la prueba en producción: 434 px para una opción de 487).
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+        if (!viajando) colocarPildora(false);
     }
 
     // La pista, con el radio completo para el alto que tenga (crece con letra grande).
@@ -315,13 +331,20 @@ public class SelectorPildora extends FrameLayout {
             ((GradientDrawable) pildora.getBackground()).setCornerRadius(radioCompleto());
             pildora.setLayoutParams(lp);
         }
+        // Y se coloca ya: cambiar los LayoutParams dentro de onLayout no vuelve a medir la píldora
+        // hasta otro pase, que puede no llegar (se quedaba con el ancho de las opciones de antes).
+        if (pildora.getWidth() != lp.width || pildora.getHeight() != lp.height) {
+            pildora.layout(getPaddingLeft(), relleno, getPaddingLeft() + lp.width, relleno + lp.height);
+        }
         float x = getLayoutDirection() == LAYOUT_DIRECTION_RTL
                 ? -(fila.getWidth() - o.getRight()) : o.getLeft();
         pildora.setVisibility(VISIBLE);
         if (animar && !Movimiento.quieto(getContext())) {
+            viajando = true;
             pildora.animate().translationX(x).setDuration(Movimiento.PILDORA)
-                    .setInterpolator(Movimiento.REBOTE).start();
+                    .setInterpolator(Movimiento.REBOTE).withEndAction(() -> viajando = false).start();
         } else {
+            viajando = false;
             pildora.animate().cancel();
             pildora.setTranslationX(x);
         }
