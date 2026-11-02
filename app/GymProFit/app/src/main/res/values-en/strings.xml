@@ -1932,6 +1932,7 @@
     <string name="encaja_motivo_cabe">Fits in what you have left</string>
     <string name="encaja_plato_a11y">%1$s, dish</string>
     <string name="encaja_a11y">%1$s. %2$s. %3$s</string>
+    <string name="encaja_ver_ficha_a11y">open its details</string>
     <!-- ── Batch 1.6.8: the new diary, water, "Not today" and the complete day (GP-162, GP-166) ── -->
     <string name="dia_a11y">%1$s: %2$s</string>
     <string name="dia_a11y_completo">complete day</string>
@@ -1967,8 +1968,6 @@
     <string name="semana_frase_dia">That day, with everything logged.</string>
     <string name="agua_titulo">Water</string>
     <string name="agua_vaso">Glass</string>
-    <string name="agua_litros">%1$s of %2$s\u00A0L</string>
-    <string name="agua_litros_sin_objetivo">%1$s\u00A0L</string>
     <string name="agua_a11y">Water: %1$s of %2$s litres, %3$s</string>
     <string name="agua_a11y_sin_objetivo">Water: %1$s litres, %2$s</string>
     <plurals name="agua_vasos">
@@ -2342,5 +2341,17 @@
         <item quantity="other">%1$d days with food logged</item>
     </plurals>
     <string name="nutricion_semana_kcal">%1$s\u00A0kcal on average</string>
+    <string name="nutricion_semana_dias_cifra">%1$d of %2$d</string>
+    <plurals name="nutricion_semana_proteina_pie">
+        <item quantity="one">day on your protein</item>
+        <item quantity="other">days on your protein</item>
+    </plurals>
+    <plurals name="nutricion_semana_apuntados_pie">
+        <item quantity="one">day with food logged</item>
+        <item quantity="other">days with food logged</item>
+    </plurals>
+    <string name="nutricion_semana_kcal_pie">kcal on average</string>
+    <string name="agua_cifra">%1$s\u00A0L</string>
+    <string name="agua_de">of %1$s</string>
     <string name="nutricion_toca_proteina">Up next · %1$d\u00A0g of protein to go</string>
 </resources>

@@ -512,7 +512,8 @@ public class FichaAlimentoActivity extends BaseActivity {
         if (!clave.equals(fila.getTag()) || fila.getChildCount() != atajos.length) {
             fila.removeAllViews();
             fila.setTag(clave);
-            float d = getResources().getDisplayMetrics().density;
+            int alto = getResources().getDimensionPixelSize(R.dimen.zona_tactil);
+            int margen = getResources().getDimensionPixelSize(R.dimen.espacio_4);
             for (double valor : atajos) {
                 MaterialButton chip = new MaterialButton(this);
                 String texto = valor == 0.5 ? getString(R.string.ficha_atajo_media)
@@ -528,9 +529,9 @@ public class FichaAlimentoActivity extends BaseActivity {
                 chip.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.text_body));
                 chip.setContentDescription(atajoA11y(valor));
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT, Math.round(48 * d));
-                lp.setMarginStart(Math.round(4 * d));
-                lp.setMarginEnd(Math.round(4 * d));
+                        ViewGroup.LayoutParams.WRAP_CONTENT, alto);
+                lp.setMarginStart(margen);
+                lp.setMarginEnd(margen);
                 chip.setLayoutParams(lp);
                 chip.setOnClickListener(v -> {
                     if (cantidad != null && cantidad.escribir(valor)) pintarCantidad();

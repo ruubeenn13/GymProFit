@@ -185,21 +185,28 @@ public class GruposBusquedaTest {
                 GruposBusqueda.de(Collections.emptyList(), false, true, comidas).get(1).tipo);
     }
 
-    // «Lo que te encaja» arriba de cualquier pestaña (GP-216, tablero 25): su cabecera y una
-    // tarjeta por sugerencia delante de la lista, y filasEncaja las cuenta.
+    // «Lo que te encaja» arriba de cualquier pestaña (GP-216, tablero 25): su cabecera y el
+    // carrusel, una sola fila con todas las sugerencias (decisión del 02-11: las tarjetas
+    // verticales se comían unos 450 dp de la lista), y filasEncaja las cuenta.
     @Test
-    public void lo_que_te_encaja_se_pone_delante_de_la_lista() {
+    public void lo_que_te_encaja_se_pone_delante_de_la_lista_en_un_carrusel() {
         Alimento atun = a("Atún", "TUYO");
         atun.setId(5);
         atun.setCalorias(100);
         atun.setProteinas(23);
-        LoQueTeEncaja.Resultado encaja = LoQueTeEncaja.de(500, 48, null, null, Arrays.asList(atun), null, null, null);
+        Alimento pollo = a("Pollo", "TUYO");
+        pollo.setId(6);
+        pollo.setCalorias(110);
+        pollo.setProteinas(25);
+        LoQueTeEncaja.Resultado encaja = LoQueTeEncaja.de(500, 48, null, null, Arrays.asList(atun, pollo), null, null, null);
+        assertEquals(2, encaja.sugerencias.size());
         List<GruposBusqueda.Elemento> base = GruposBusqueda.de(Arrays.asList(a("Yogur", "TUYO")), false);
 
         List<GruposBusqueda.Elemento> con = GruposBusqueda.conEncaja(base, encaja);
-        assertEquals(base.size() + 2, con.size());
+        assertEquals("cabecera y un carrusel, tenga las sugerencias que tenga", base.size() + 2, con.size());
         assertEquals(GruposBusqueda.Tipo.ENCAJA_CABECERA, con.get(0).tipo);
-        assertEquals(GruposBusqueda.Tipo.ENCAJA, con.get(1).tipo);
+        assertEquals(GruposBusqueda.Tipo.ENCAJA_CARRUSEL, con.get(1).tipo);
+        assertSame(encaja, con.get(1).encaja);
         assertEquals(2, GruposBusqueda.filasEncaja(con));
         // Sin sección, la lista queda como estaba.
         assertSame(base, GruposBusqueda.conEncaja(base, null));

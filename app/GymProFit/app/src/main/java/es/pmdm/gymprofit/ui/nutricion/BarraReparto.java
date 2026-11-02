@@ -43,7 +43,7 @@ public class BarraReparto extends View {
     public BarraReparto(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
-        hueco = 2 * getResources().getDisplayMetrics().density;
+        hueco = getResources().getDimension(R.dimen.reparto_hueco);
         pista.setColor(0x33FFFFFF);
         int[] colores = {R.color.gp_hero_macro_proteinas, R.color.gp_hero_macro_carbos, R.color.gp_hero_macro_grasas};
         for (int i = 0; i < 3; i++) {

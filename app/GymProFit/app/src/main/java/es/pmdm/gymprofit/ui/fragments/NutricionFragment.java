@@ -100,9 +100,6 @@ import es.pmdm.gymprofit.utils.VistaEstado;
 // ============================================================
 public class NutricionFragment extends BaseFragment {
 
-    /** Márgenes de la pantalla y de la tarjeta del agua a los lados de los vasos, en dp. */
-    private static final int MARGEN_VASOS_DP = 70;
-
     /** Vasos por fila, como el tablero 1. */
 
     private final ComidaApi comidaApi = ApiClient.service(ComidaApi.class);
@@ -905,10 +902,23 @@ public class NutricionFragment extends BaseFragment {
                 : getResources().getQuantityString(R.plurals.nutricion_semana_apuntados, dias, dias);
         Integer media = sn.mediaKcal();
         String texto = media != null ? getString(R.string.nutricion_semana_kcal, nf.format(media)) : "";
-        ((TextView) findViewById(R.id.tvSemanaTitulo)).setText(titulo);
-        TextView tvTexto = findViewById(R.id.tvSemanaTexto);
-        tvTexto.setText(texto);
-        tvTexto.setVisibility(texto.isEmpty() ? View.GONE : View.VISIBLE);
+        // Las dos cifras (tablero 15): los días en el azul de la proteína si hay objetivo; sin
+        // él, cuántos días con comida, en el color del texto.
+        TextView tvDias = findViewById(R.id.tvSemanaDias);
+        TextView tvDiasPie = findViewById(R.id.tvSemanaDiasPie);
+        if (sn.hayObjetivoProteina()) {
+            tvDias.setText(getString(R.string.nutricion_semana_dias_cifra, sn.proteinaConseguida(), dias));
+            tvDias.setTextColor(ContextCompat.getColor(requireContext(), R.color.gp_macro_proteinas));
+            tvDiasPie.setText(getResources().getQuantityString(R.plurals.nutricion_semana_proteina_pie, dias));
+        } else {
+            tvDias.setText(nf.format(dias));
+            tvDias.setTextColor(com.google.android.material.color.MaterialColors.getColor(tvDias,
+                    com.google.android.material.R.attr.colorOnSurface));
+            tvDiasPie.setText(getResources().getQuantityString(R.plurals.nutricion_semana_apuntados_pie, dias));
+        }
+        findViewById(R.id.columnaSemanaKcal).setVisibility(media != null ? View.VISIBLE : View.GONE);
+        if (media != null) ((TextView) findViewById(R.id.tvSemanaKcal)).setText(nf.format(media));
+        apilarSiNoCabe(findViewById(R.id.cifrasSemana), findViewById(R.id.columnaSemanaKcal));
         TextView extra = findViewById(R.id.tvSemanaExtra);
         extra.setText(semanaExtra);
         extra.setVisibility(semanaExtra == null ? View.GONE : View.VISIBLE);
@@ -954,15 +964,14 @@ public class NutricionFragment extends BaseFragment {
         int llenos = Agua.vasosLlenos(aguaMostrada, vaso);
         int total = Agua.vasosAPintar(llenos, Agua.vasosObjetivo(litrosObjetivo, vaso));
 
-        TextView tvLitros = findViewById(R.id.tvAguaLitros);
         if (mlAntes >= 0 && !Movimiento.quieto(requireContext())) {
             int desde = mlAntes;
             int hasta = aguaMostrada;
             Movimiento.contar(0, Movimiento.VASO, f -> {
-                if (isAdded()) tvLitros.setText(textoLitros(Math.round(desde + (hasta - desde) * f), litrosObjetivo, idioma));
+                if (isAdded()) pintarLitros(Math.round(desde + (hasta - desde) * f), litrosObjetivo, idioma);
             });
         } else {
-            tvLitros.setText(textoLitros(aguaMostrada, litrosObjetivo, idioma));
+            pintarLitros(aguaMostrada, litrosObjetivo, idioma);
         }
 
         String vasos = getResources().getQuantityString(R.plurals.agua_vasos, llenos, llenos);
@@ -987,12 +996,13 @@ public class NutricionFragment extends BaseFragment {
         int azul = ContextCompat.getColor(requireContext(), R.color.gp_agua);
         int vacio = ContextCompat.getColor(requireContext(), R.color.gp_stroke);
         int alto = Math.round(48 * getResources().getDisplayMetrics().density);
-        // Cada vaso se puede tocar: caben los que den 48 dp de ancho. El ancho es el de la
-        // fila ya medida; antes de medirse, la pantalla menos los márgenes de la tarjeta.
-        float densidad = getResources().getDisplayMetrics().density;
-        int anchoDp = filas.getWidth() > 0 ? Math.round(filas.getWidth() / densidad)
-                : getResources().getConfiguration().screenWidthDp - MARGEN_VASOS_DP;
-        int porFila = Agua.vasosPorFila(anchoDp);
+        // Cada vaso se puede tocar: caben los que den la zona táctil de ancho. El ancho es el de
+        // la fila ya medida; antes de medirse, la pantalla menos el margen y el relleno de la tarjeta.
+        android.content.res.Resources res = getResources();
+        int ancho = filas.getWidth() > 0 ? filas.getWidth()
+                : res.getDisplayMetrics().widthPixels
+                - 2 * (res.getDimensionPixelSize(R.dimen.margen_pantalla) + res.getDimensionPixelSize(R.dimen.espacio_16));
+        int porFila = Agua.vasosPorFila(ancho, res.getDimensionPixelSize(R.dimen.zona_tactil));
         for (int i = 0; i < total; i++) {
             if (i % porFila == 0) {
                 fila = new LinearLayout(requireContext());
@@ -1059,10 +1069,39 @@ public class NutricionFragment extends BaseFragment {
         return celda;
     }
 
-    private String textoLitros(int ml, double litrosObjetivo, Locale idioma) {
-        return litrosObjetivo > 0
-                ? getString(R.string.agua_litros, Agua.litros(ml, idioma), Agua.litrosObjetivo(litrosObjetivo, idioma))
-                : getString(R.string.agua_litros_sin_objetivo, Agua.litros(ml, idioma));
+    // Dos columnas en una fila; si con letra grande no caben, una debajo de la otra.
+    private void apilarSiNoCabe(@NonNull LinearLayout fila, @NonNull View segunda) {
+        fila.setOrientation(LinearLayout.HORIZONTAL);
+        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) segunda.getLayoutParams();
+        int hueco = getResources().getDimensionPixelSize(R.dimen.espacio_24);
+        lp.setMarginStart(hueco);
+        lp.topMargin = 0;
+        segunda.setLayoutParams(lp);
+        fila.post(() -> {
+            if (!isAdded() || fila.getWidth() == 0 || segunda.getVisibility() != View.VISIBLE) return;
+            int sin = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+            int ocupa = 0;
+            for (int i = 0; i < fila.getChildCount(); i++) {
+                View hijo = fila.getChildAt(i);
+                if (hijo.getVisibility() != View.VISIBLE) continue;
+                hijo.measure(sin, sin);
+                ocupa += hijo.getMeasuredWidth();
+            }
+            if (ocupa + hueco <= fila.getWidth()) return;
+            fila.setOrientation(LinearLayout.VERTICAL);
+            LinearLayout.LayoutParams apilada = (LinearLayout.LayoutParams) segunda.getLayoutParams();
+            apilada.setMarginStart(0);
+            apilada.topMargin = getResources().getDimensionPixelSize(R.dimen.espacio_12);
+            segunda.setLayoutParams(apilada);
+        });
+    }
+
+    // «1,5 L» en la cifra y «de 2,8» de pie (tablero 15); sin objetivo, solo la cifra.
+    private void pintarLitros(int ml, double litrosObjetivo, Locale idioma) {
+        ((TextView) findViewById(R.id.tvAguaLitros)).setText(getString(R.string.agua_cifra, Agua.litros(ml, idioma)));
+        TextView de = findViewById(R.id.tvAguaDe);
+        de.setVisibility(litrosObjetivo > 0 ? View.VISIBLE : View.GONE);
+        if (litrosObjetivo > 0) de.setText(getString(R.string.agua_de, Agua.litrosObjetivo(litrosObjetivo, idioma)));
     }
 
     private void anadirVaso(View origen) {
@@ -1185,8 +1224,8 @@ public class NutricionFragment extends BaseFragment {
             if (lista.getChildCount() > 0) {
                 View raya = new View(requireContext());
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                        Math.max(1, Math.round(getResources().getDisplayMetrics().density)));
-                lp.setMarginStart(Math.round(70 * getResources().getDisplayMetrics().density));
+                        getResources().getDimensionPixelSize(R.dimen.separador_alto));
+                lp.setMarginStart(getResources().getDimensionPixelSize(R.dimen.fila_sangria_separador));
                 raya.setLayoutParams(lp);
                 raya.setBackgroundColor(color(com.google.android.material.R.attr.colorOutlineVariant));
                 raya.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);

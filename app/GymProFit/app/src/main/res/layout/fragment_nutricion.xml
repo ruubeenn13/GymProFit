@@ -441,13 +441,30 @@
                                     android:textStyle="bold"
                                     android:textColor="?attr/colorOnSurface" />
 
-                                <TextView
-                                    android:id="@+id/tvAguaLitros"
+                                <!-- «1,5 L» en cifra condensada y «de 2,8» de pie (tablero 15). -->
+                                <LinearLayout
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:fontFeatureSettings="tnum"
-                                    android:textSize="@dimen/text_caption"
-                                    android:textColor="?attr/colorOnSurfaceVariant" />
+                                    android:baselineAlignedChildIndex="0"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/tvAguaLitros"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFeatureSettings="tnum"
+                                        android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena"
+                                        android:textColor="?attr/colorOnSurface" />
+
+                                    <TextView
+                                        android:id="@+id/tvAguaDe"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="@dimen/espacio_4"
+                                        android:fontFeatureSettings="tnum"
+                                        android:textColor="?attr/colorOnSurfaceVariant"
+                                        android:textSize="@dimen/text_body" />
+                                </LinearLayout>
                             </LinearLayout>
                         </LinearLayout>
 
@@ -518,24 +535,62 @@
                             android:textAppearance="@style/TextAppearance.GymProFit.Enlace" />
                     </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/tvSemanaTitulo"
+                    <!-- Dos columnas (tablero 15): «3 de 4» en el azul de la proteína con «días con
+                         tu proteína» debajo, y «2.240» con «kcal de media». Si con letra grande no
+                         caben en una fila, NutricionFragment las apila. -->
+                    <LinearLayout
+                        android:id="@+id/cifrasSemana"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:importantForAccessibility="no"
-                        android:textSize="@dimen/text_fila"
-                        android:textStyle="bold"
-                        android:textColor="?attr/colorOnSurface" />
+                        android:layout_marginTop="@dimen/espacio_8"
+                        android:importantForAccessibility="noHideDescendants"
+                        android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/tvSemanaTexto"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:importantForAccessibility="no"
-                        android:textSize="@dimen/text_caption"
-                        android:textColor="?attr/colorOnSurfaceVariant" />
+                        <LinearLayout
+                            android:id="@+id/columnaSemanaDias"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tvSemanaDias"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFeatureSettings="tnum"
+                                android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena"
+                                android:textColor="@color/gp_macro_proteinas" />
+
+                            <TextView
+                                android:id="@+id/tvSemanaDiasPie"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:textSize="@dimen/text_caption" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/columnaSemanaKcal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/espacio_24"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tvSemanaKcal"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFeatureSettings="tnum"
+                                android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena"
+                                android:textColor="?attr/colorOnSurface" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/nutricion_semana_kcal_pie"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:textSize="@dimen/text_caption" />
+                        </LinearLayout>
+                    </LinearLayout>
 
                     <!-- Con el día completo (tablero 3): cuántos van y lo que hubo ese día. -->
                     <TextView

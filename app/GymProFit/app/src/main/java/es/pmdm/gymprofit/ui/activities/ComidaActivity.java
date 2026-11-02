@@ -299,13 +299,13 @@ public class ComidaActivity extends BaseActivity {
         if (getResources().getConfiguration().fontScale < 1.3f) return;
         android.widget.LinearLayout columna = findViewById(R.id.columnaMacros);
         columna.setOrientation(android.widget.LinearLayout.VERTICAL);
-        float d = getResources().getDisplayMetrics().density;
+        int hueco = getResources().getDimensionPixelSize(R.dimen.espacio_12);
         for (int i = 0; i < columna.getChildCount(); i++) {
             android.widget.LinearLayout.LayoutParams lp =
                     (android.widget.LinearLayout.LayoutParams) columna.getChildAt(i).getLayoutParams();
             lp.width = android.view.ViewGroup.LayoutParams.MATCH_PARENT;
             lp.weight = 0;
-            lp.topMargin = i == 0 ? 0 : Math.round(12 * d);
+            lp.topMargin = i == 0 ? 0 : hueco;
             columna.getChildAt(i).setLayoutParams(lp);
         }
     }
@@ -664,14 +664,14 @@ public class ComidaActivity extends BaseActivity {
         // el icono y «Aún no has apuntado…» sobran. Sin él, son lo único que dice que está vacía.
         boolean conCabecera = hoyNo || !profiVisible;
         View bloque = findViewById(R.id.bloqueVacia);
-        float d = getResources().getDisplayMetrics().density;
+        android.content.res.Resources res = getResources();
         // Sin cabecera, el bloque no aporta su relleno y las sugerencias se acercan: de la fecha a
         // Profi van 24 dp (tablero 24): 8 de la cabecera, 12 del contenido y 4 de margen.
-        bloque.setPadding(bloque.getPaddingStart(), conCabecera ? Math.round(20 * d) : 0, bloque.getPaddingEnd(),
-                conCabecera ? Math.round(8 * d) : 0);
+        bloque.setPadding(bloque.getPaddingStart(), conCabecera ? res.getDimensionPixelSize(R.dimen.espacio_20) : 0,
+                bloque.getPaddingEnd(), conCabecera ? res.getDimensionPixelSize(R.dimen.espacio_8) : 0);
         View sugerencias = findViewById(R.id.bloqueSugerencias);
         android.view.ViewGroup.MarginLayoutParams lp = (android.view.ViewGroup.MarginLayoutParams) sugerencias.getLayoutParams();
-        lp.topMargin = Math.round((conCabecera ? 16 : 4) * d);
+        lp.topMargin = res.getDimensionPixelSize(conCabecera ? R.dimen.espacio_16 : R.dimen.espacio_4);
         sugerencias.setLayoutParams(lp);
         findViewById(R.id.marcoIconoVacia).setVisibility(conCabecera ? View.VISIBLE : View.GONE);
         titulo.setVisibility(conCabecera ? View.VISIBLE : View.GONE);

@@ -90,9 +90,11 @@ public class AguaTest {
     // tocar; caben los que den 48 dp cada uno, entre uno y nueve.
     @Test
     public void en_cada_fila_caben_los_vasos_que_dan_48_dp_y_nunca_mas_de_nueve() {
-        assertEquals(7, Agua.vasosPorFila(342));
-        assertEquals(6, Agua.vasosPorFila(290));
-        assertEquals(9, Agua.vasosPorFila(600));
-        assertEquals(1, Agua.vasosPorFila(30));
+        assertEquals(7, Agua.vasosPorFila(342, 48));
+        assertEquals(6, Agua.vasosPorFila(290, 48));
+        assertEquals(9, Agua.vasosPorFila(600, 48));
+        assertEquals(1, Agua.vasosPorFila(30, 48));
+        // En píxeles a 420 ppp (2,625 px/dp), igual que en dp.
+        assertEquals(7, Agua.vasosPorFila(898, 126));
     }
 }

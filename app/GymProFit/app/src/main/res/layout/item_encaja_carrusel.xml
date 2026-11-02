@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_encaja_carrusel — el carrusel de «Lo que te encaja» en Añadir (GP-216, lote 3,
+  tablero 25): una fila que se desliza con una tarjeta item_encaja por sugerencia, con el
+  patrón de los carruseles de Inicio (sep_carrusel entre tarjetas, el margen de pantalla
+  dentro para que la primera se alinee y la última no se corte). Lo rellena
+  BusquedaAlimentoAdapter y, al tocar un «+», solo repinta las tarjetas: no se recrea.
+-->
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollEncaja"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipToPadding="false"
+    android:overScrollMode="never"
+    android:paddingStart="@dimen/margen_pantalla"
+    android:paddingEnd="@dimen/margen_pantalla"
+    android:paddingBottom="@dimen/espacio_12"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:id="@+id/listaEncaja"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:divider="@drawable/sep_carrusel"
+        android:orientation="horizontal"
+        android:showDividers="middle" />
+</HorizontalScrollView>

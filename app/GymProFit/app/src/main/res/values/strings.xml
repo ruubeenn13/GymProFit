@@ -1962,6 +1962,8 @@
     <string name="encaja_motivo_cabe">Cabe en lo que te queda</string>
     <string name="encaja_plato_a11y">%1$s, plato</string>
     <string name="encaja_a11y">%1$s. %2$s. %3$s</string>
+    <!-- Lo que hace tocar una tarjeta de «Lo que te encaja», para TalkBack. -->
+    <string name="encaja_ver_ficha_a11y">ver la ficha</string>
     <!-- ── Lote 1.6.8: el diario nuevo, el agua, «Hoy no» y el día completo (GP-162, GP-166) ── -->
     <string name="dia_a11y">%1$s: %2$s</string>
     <string name="dia_a11y_completo">día completo</string>
@@ -1998,8 +2000,6 @@
     <string name="semana_frase_dia">Ese día, con todo apuntado.</string>
     <string name="agua_titulo">Agua</string>
     <string name="agua_vaso">Vaso</string>
-    <string name="agua_litros">%1$s de %2$s\u00A0L</string>
-    <string name="agua_litros_sin_objetivo">%1$s\u00A0L</string>
     <string name="agua_a11y">Agua: %1$s de %2$s litros, %3$s</string>
     <string name="agua_a11y_sin_objetivo">Agua: %1$s litros, %2$s</string>
     <plurals name="agua_vasos">
@@ -2373,5 +2373,21 @@
         <item quantity="other">%1$d días con comida apuntada</item>
     </plurals>
     <string name="nutricion_semana_kcal">%1$s\u00A0kcal de media</string>
+    <!-- «Tu semana» en dos columnas (tablero 15): la cifra arriba y lo que es, debajo. -->
+    <string name="nutricion_semana_dias_cifra">%1$d de %2$d</string>
+    <plurals name="nutricion_semana_proteina_pie">
+        <item quantity="one">día con tu proteína</item>
+        <item quantity="many">días con tu proteína</item>
+        <item quantity="other">días con tu proteína</item>
+    </plurals>
+    <plurals name="nutricion_semana_apuntados_pie">
+        <item quantity="one">día con comida apuntada</item>
+        <item quantity="many">días con comida apuntada</item>
+        <item quantity="other">días con comida apuntada</item>
+    </plurals>
+    <string name="nutricion_semana_kcal_pie">kcal de media</string>
+    <!-- El agua: los litros en cifra y el objetivo de pie (tablero 15). -->
+    <string name="agua_cifra">%1$s\u00A0L</string>
+    <string name="agua_de">de %1$s</string>
     <string name="nutricion_toca_proteina">Toca ahora · te faltan %1$d\u00A0g de proteína</string>
 </resources>

@@ -356,19 +356,18 @@ public class LoQueTeEncajaTest {
     // ── En la pestaña «Mis platos» ──────────────────────────────────────────
 
     @Test
-    public void en_mis_platos_va_arriba_con_su_cabecera_y_una_tarjeta_por_sugerencia() {
+    public void en_mis_platos_va_arriba_con_su_cabecera_y_el_carrusel() {
         Alimento a = alimento(1, 100, 30, 100);
         Alimento b = alimento(2, 100, 20, 100);
         LoQueTeEncaja.Resultado r = LoQueTeEncaja.de(1000, 50, lista(a), lista(b), lista(), NADA, NADA, NADA);
+        assertEquals(2, r.sugerencias.size());
         List<GruposBusqueda.Elemento> l = GruposBusqueda.misPlatos(lista(a), lista(), r);
         assertEquals(GruposBusqueda.Tipo.ENCAJA_CABECERA, l.get(0).tipo);
         assertEquals(r, l.get(0).encaja);
-        assertEquals(GruposBusqueda.Tipo.ENCAJA, l.get(1).tipo);
-        assertEquals(1, l.get(1).alimento.getId());
-        assertEquals(r.sugerencias.get(0), l.get(1).sugerencia);
-        assertEquals(GruposBusqueda.Tipo.ENCAJA, l.get(2).tipo);
-        assertEquals(GruposBusqueda.Seccion.MIS_PLATOS, l.get(3).seccion);
-        assertEquals(3, GruposBusqueda.filasEncaja(l));
+        assertEquals(GruposBusqueda.Tipo.ENCAJA_CARRUSEL, l.get(1).tipo);
+        assertEquals(r, l.get(1).encaja);
+        assertEquals(GruposBusqueda.Seccion.MIS_PLATOS, l.get(2).seccion);
+        assertEquals(2, GruposBusqueda.filasEncaja(l));
     }
 
     @Test
