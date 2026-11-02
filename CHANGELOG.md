@@ -8,6 +8,21 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `d3cb883` | fix(android): el carrusel de «Lo que te encaja» ya no rebana las tarjetas mientras entran en cascada, el pie del agua va al tamaño de apoyo y «Tu semana» dice «Ver la semana» a TalkBack. |
+| `c54af4d` | docs(reglas): el revisor de UI se repite como mucho tres veces; los medios de la última se arreglan y se miden a mano, y un alto o un cambio de diseño posterior vuelven a pedirlo. |
+| `59b4e3e` | feat(android): **«Lo que te encaja» en carrusel** (tablero 25; decisión del 02-11: las tarjetas verticales se comían unos 450 dp de Añadir): tarjetas de 220 dp a la altura de la más alta, con icono, «+», nombre, detalle y barra de proteína, que se repintan en su sitio al tocar un «+». **Agua y «Tu semana» con las cifras condensadas** del tablero 15: «1,5 L de 2,8» y dos columnas, «3 de 4» días con tu proteína en azul (5,09:1 en claro, 6,68:1 en oscuro) y la media de kcal, apiladas si con letra grande no caben. Los dp que el lote escribía en Java pasan a `@dimen`. |
+| `4ee6575` | fix(android): cuarta pasada del revisor: el calendario de «Elegir otro día» sin el tinte naranja de Material y empezando en lunes también en inglés; de la fecha a Profi en la comida vacía, 24 dp; al cambiar de pestaña en Añadir, la lista vuelve arriba. |
+| `0b1bb79` | fix(android): tercera pasada del revisor: «kcal para ese día» al mirar otro día, el calendario con las superficies de la app, el borde de la tarjeta de alimentos entero en las esquinas, «Copiar la de ayer» con el texto visible en su nombre accesible, el texto de ayuda del buscador a 4,5:1 y el margen lateral de Añadir a 20 dp. |
+| `bf05e7b` | fix(android): segunda pasada del revisor. **− y + de la ficha van de media en media ración y de 10 en 10 g** (antes, de una en una y de 25 en 25), con el paso como mínimo: el − ya no se apaga en 1 con el atajo ½ al lado. Además: vasos del agua de 48 dp, «Tu semana» sin contar el día a medias, macros de la tarjeta protagonista iguales en los dos temas, tarjetas estándar, botones conectados en Añadir y en la ficha, plurales para TalkBack y en la unidad junto a la cifra, atajos sin naranja salvo el marcado. |
+| `b98edfb` | fix(android): primera pasada del revisor en el lote 3: buscador sin cortar, lupa con nombre, comidas en una tarjeta y barra «Listo» flotante. |
+| `7d82b4f` | feat(android): la ficha del alimento crece desde su fila en Comida, Añadir, Escáner y Crear plato (GP-216, lote 3). |
+| `16793f7` | feat(android): **Nutrición** (tablero 15): las comidas en kcal o «+», «Copiar ayer» en su cabecera y «Tu semana» como resumen. |
+| `a7b9c00` | feat(android): **la hoja del escáner** (tablero 27) avisa «¡Encontrado!», usa el icono del alimento y ofrece «Seguir escaneando». |
+| `dabf9b5` | feat(android): **Añadir alimento** (tablero 25): el título cambia de comida, «Lo que te encaja» arriba de las pestañas y la barra de abajo con la proteína que falta. |
+| `a3c8cff` | feat(android): **la ficha del alimento** (tablero 26): la cantidad arriba, atajos ½, 1, 2 o 100, 150, 200 g y las kcal en el botón. |
+| `6b6c205` | feat(android): **comida vacía** con Profi y las ideas de proteína (tablero 24) y **comida apuntada** en la tarjeta protagonista (tablero 28). |
+| `0314319` | fix(android): Nutrición sin red enseña el fallo y «Reintentar» en vez del anillo vacío. |
+| `bd838e4` | fix(android): «Tus datos» dice «Sin cambios» si no se toca nada, aunque lo guardado difiera de la fórmula. |
 | `0252633` | fix(android): el eje de la gráfica de la ficha usa la fecha en el idioma de la app («Sep 28» / «28 sept»), no repite el día cuando hay varias sesiones el mismo día y deja margen a la derecha para que la última etiqueta no se corte con letra 1,3. |
 | `da9cea4` | fix(android): el detalle de rutina recupera sus botones de volver y editar, no revienta si se recrea con la actividad destruida y la gráfica no corta su última fecha. |
 | `110dda7` | fix(android): los aros de «Tu día» no se recortan y «Tus datos» ya no dice «sin cambios» cuando la proteína sí cambia. |
