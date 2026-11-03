@@ -89,10 +89,17 @@ public class TarjetaEstadosTest {
         String foco = leer(JAVA.resolve(Paths.get("es", "pmdm", "gymprofit", "ui", "widget", "FocoVisible.java")));
         // Por fuera y separado del borde: por dentro pisaba el texto de las filas sin aire, quedaba a
         // 1,4:1 dentro de un botón relleno y no se distinguía en una tarjeta oscura (segunda pasada).
-        assertTrue("por fuera, a 2 dp del borde", foco.contains("int fuera = Math.round(HUECO_DP * d) + ancho;")
+        assertTrue("por fuera, a 2 dp del borde", foco.contains("return porDentro(v) ? -Math.round(HUECO_DP * d) : Math.round(HUECO_DP * d) + ancho;")
                 && foco.contains("private static final int HUECO_DP = 2;"));
         assertTrue("en la capa de la ventana, que no recorta ningún padre", foco.contains("decor.getOverlay().add(anillo);"));
         assertTrue("sigue a la vista", foco.contains("public boolean onPreDraw()"));
+        // Tercera pasada: la flecha girada de Estadísticas tenía el anillo desplazado su tamaño; los
+        // iconos sueltos lo sacaban de la pantalla; un carrusel a sangre dejaba un lado fuera.
+        assertTrue("sin las transformaciones de la vista", foco.contains("decor.offsetDescendantRectToMyCoords(v, enDecor);")
+                && !foco.contains(".getLocationInWindow("));
+        assertTrue("por dentro en un icono suelto, no en el avatar",
+                foco.contains("return v instanceof ImageView && !(v instanceof ShapeableImageView);"));
+        assertTrue("se desplaza a la vista con el anillo entero", foco.contains("ahora.requestRectangleOnScreen("));
         assertTrue("con el radio de la tarjeta", foco.contains("((MaterialCardView) v).getRadius()"));
         assertTrue("lo que se desplaza y los campos: sin anillo ni velo", foco.contains("v instanceof ScrollView")
                 && foco.contains("v instanceof NestedScrollView") && foco.contains("v instanceof HorizontalScrollView")

@@ -138,6 +138,9 @@ public class InicioFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        // El carrusel de «Hoy toca» no es una parada del teclado (se para en lo que tiene dentro):
+        // HorizontalScrollView se hace enfocable en su constructor y el atributo del XML no basta.
+        view.findViewById(R.id.scrollHoyEjercicios).setFocusable(false);
         View avatar = findViewById(R.id.avatarInicio);
         avatar.setContentDescription(getString(R.string.avatar_perfil_a11y));
         avatar.setOnClickListener(v -> startActivity(new Intent(requireContext(), PerfilActivity.class)));

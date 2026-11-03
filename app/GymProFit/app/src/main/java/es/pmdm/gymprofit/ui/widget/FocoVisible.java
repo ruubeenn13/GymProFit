@@ -10,6 +10,7 @@ import android.view.ViewParent;
 import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 
 import androidx.annotation.NonNull;
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.color.MaterialColors;
+import com.google.android.material.imageview.ShapeableImageView;
 
 import es.pmdm.gymprofit.R;
 
@@ -41,6 +43,12 @@ import es.pmdm.gymprofit.R;
 //   - los campos de texto: su borde de foco, el de la app;
 //   - lo marcado con R.id.tag_anillo_propio (la pestaña de la barra, en su píldora, y las opciones
 //     del selector, que dibuja el suyo).
+// Un icono suelto (ImageView, ImageButton: «Volver», papeleras, el calendario de un campo) no tiene
+// texto que pisar, y por fuera el anillo se salía de la pantalla o cruzaba el borde de su campo
+// (revisor, tercera pasada): ahí va por dentro, 2 dp hacia dentro de su borde. El avatar
+// (ShapeableImageView, sobre una foto) lo lleva por fuera.
+// Al ganar el foco, lo enfocado se desplaza a la vista con el anillo entero: un carrusel a sangre lo
+// dejaba pegado al borde de la pantalla, con un lado del anillo fuera.
 // En modo táctil no hay anillo: al tocar la pantalla se quita.
 // ============================================================
 public final class FocoVisible implements ViewTreeObserver.OnGlobalFocusChangeListener,
@@ -53,8 +61,7 @@ public final class FocoVisible implements ViewTreeObserver.OnGlobalFocusChangeLi
 
     private final ViewGroup decor;
     private final GradientDrawable anillo = new GradientDrawable();
-    private final int[] enVentana = new int[2];
-    private final int[] decorEnVentana = new int[2];
+    private final android.graphics.Rect enDecor = new android.graphics.Rect();
     private final android.graphics.Rect donde = new android.graphics.Rect();
     @Nullable private View conAnillo;
 
@@ -86,6 +93,12 @@ public final class FocoVisible implements ViewTreeObserver.OnGlobalFocusChangeLi
         decor.getOverlay().add(anillo);
         decor.getViewTreeObserver().addOnPreDrawListener(this);
         colocar();
+        // Que se vea entera con su anillo: el scroll que la contiene se desplaza lo que haga falta.
+        int fuera = fuera(ahora);
+        if (fuera > 0) {
+            ahora.requestRectangleOnScreen(new android.graphics.Rect(-fuera, -fuera,
+                    ahora.getWidth() + fuera, ahora.getHeight() + fuera), false);
+        }
     }
 
     @Override
@@ -119,22 +132,40 @@ public final class FocoVisible implements ViewTreeObserver.OnGlobalFocusChangeLi
         conAnillo = null;
     }
 
+    /** Si el anillo va por dentro: un icono suelto, que no tiene texto que pisar. */
+    static boolean porDentro(@NonNull View v) {
+        return v instanceof ImageView && !(v instanceof ShapeableImageView);
+    }
+
+    // Lo que el anillo sale del borde de la vista: hueco y trazo por fuera; por dentro, hacia dentro.
+    private static int fuera(View v) {
+        float d = v.getResources().getDisplayMetrics().density;
+        int ancho = v.getResources().getDimensionPixelSize(R.dimen.selector_anillo_foco);
+        return porDentro(v) ? -Math.round(HUECO_DP * d) : Math.round(HUECO_DP * d) + ancho;
+    }
+
     // El anillo alrededor de la vista: separado HUECO_DP de su borde y con su forma.
     private void colocar() {
         View v = conAnillo;
         if (v == null) return;
         float d = v.getResources().getDisplayMetrics().density;
-        int ancho = v.getResources().getDimensionPixelSize(R.dimen.selector_anillo_foco);
-        int fuera = Math.round(HUECO_DP * d) + ancho;
-        v.getLocationInWindow(enVentana);
-        decor.getLocationInWindow(decorEnVentana);
-        int x = enVentana[0] - decorEnVentana[0], y = enVentana[1] - decorEnVentana[1];
+        int fuera = fuera(v);
+        // Sin transformaciones: una vista girada (la flecha de «Periodo anterior», rotation 180)
+        // daba con getLocationInWindow su esquina opuesta y el anillo salía desplazado su tamaño.
+        enDecor.set(0, 0, v.getWidth(), v.getHeight());
+        try {
+            decor.offsetDescendantRectToMyCoords(v, enDecor);
+        } catch (IllegalArgumentException e) {
+            quitar();   // ya no cuelga de esta ventana: no hay dónde ponerlo
+            return;
+        }
+        int x = enDecor.left, y = enDecor.top;
         // Solo si se ha movido: invalidar en cada fotograma redibujaría la ventana sin parar.
         if (donde.left == x - fuera && donde.top == y - fuera && donde.width() == v.getWidth() + 2 * fuera
                 && donde.height() == v.getHeight() + 2 * fuera && anillo.getCallback() != null) return;
         donde.set(x - fuera, y - fuera, x + v.getWidth() + fuera, y + v.getHeight() + fuera);
         anillo.setBounds(donde);
-        anillo.setCornerRadius(radio(v, d) + fuera);
+        anillo.setCornerRadius(Math.max(0f, radio(v, d) + fuera));
         decor.invalidate();
     }
 

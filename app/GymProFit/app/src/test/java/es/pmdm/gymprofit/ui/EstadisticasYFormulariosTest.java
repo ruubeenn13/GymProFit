@@ -108,11 +108,8 @@ public class EstadisticasYFormulariosTest {
         assertTrue(inicio.contains("card.setContentDescription(getString(R.string.abrir_resumen_a11y, titulo.getText()));"));
         String programa = leer(UI.resolve("widget/TuProgramaVista.java"));
         assertTrue(programa.contains("bloque.setContentDescription(ctx.getString(R.string.abrir_rutina_a11y, hoy.getNombre()));"));
-        assertTrue("el carrusel de Hoy toca no es una parada vacía",
-                leer(RES.resolve("layout/fragment_inicio.xml")).contains(
-                        "android:id=\"@+id/scrollHoyEjercicios\"\n                        android:focusable=\"false\"")
-                        || leer(RES.resolve("layout/fragment_inicio.xml")).contains(
-                        "android:id=\"@+id/scrollHoyEjercicios\"\r\n                        android:focusable=\"false\""));
+        assertTrue("el carrusel de Hoy toca no es una parada vacía (por código: el constructor lo hace enfocable)",
+                inicio.contains("view.findViewById(R.id.scrollHoyEjercicios).setFocusable(false);"));
     }
 
     @Test
