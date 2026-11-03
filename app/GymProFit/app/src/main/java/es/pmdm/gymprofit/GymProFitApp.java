@@ -194,8 +194,8 @@ public class GymProFitApp extends Application {
                 }
                 // Material motion: el lado de llegada de un contenedor que crece o de un eje X.
                 es.pmdm.gymprofit.utils.Transiciones.prepararDestino(a);
-                // El anillo de foco de las tarjetas (GP-227), en todas las pantallas.
-                es.pmdm.gymprofit.ui.widget.FocoTarjeta.instalar(a);
+                // El anillo de foco (GP-227), igual en todas las pantallas.
+                es.pmdm.gymprofit.ui.widget.FocoVisible.instalar(a);
                 // Distintivo de entorno de pruebas: solo en builds de desarrollo, y
                 // una vez por instancia de Activity. Se aplaza a que la ventana tenga
                 // ya su contenido montado.

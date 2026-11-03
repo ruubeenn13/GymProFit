@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 // La tarjeta llevaba de capa gp_primary_container opaco: con el foco del teclado tapaba el texto
 // (3,55:1 y 2,26:1 medidos en Historial). Ahora, como el selector de opciones (GP-224): pulsada,
 // una capa del 10 % de gp_on_surface; con foco, ninguna capa y un anillo de 2 dp en gp_on_surface
-// (FocoTarjeta). Aquí se fija el estilo y se mide, en claro y en oscuro, que el texto sobre la
+// (FocoVisible, el mismo para todo lo pulsable). Aquí se fija el estilo y se mide, en claro y en oscuro, que el texto sobre la
 // tarjeta con foco y pulsada pasa 4,5:1 (salvo el naranja pulsado
 // en oscuro, 4,40:1, acotado aparte) y que el anillo pasa 3:1 contra la tarjeta y contra el fondo.
 // ============================================================
@@ -51,12 +51,12 @@ public class TarjetaEstadosTest {
 
     @Test
     public void elAnilloEsDeDosDpEnElColorDelTexto() throws IOException {
-        String foco = leer(JAVA.resolve(Paths.get("es", "pmdm", "gymprofit", "ui", "widget", "FocoTarjeta.java")));
+        String foco = leer(JAVA.resolve(Paths.get("es", "pmdm", "gymprofit", "ui", "widget", "FocoVisible.java")));
         assertTrue(foco.contains("R.dimen.selector_anillo_foco"));
         assertTrue(foco.contains("R.color.gp_on_surface"));
         assertTrue(leer(RES.resolve("values/dimens.xml")).contains("<dimen name=\"selector_anillo_foco\">2dp</dimen>"));
         String app = leer(JAVA.resolve(Paths.get("es", "pmdm", "gymprofit", "GymProFitApp.java")));
-        assertTrue("se instala en todas las pantallas", app.contains("FocoTarjeta.instalar(a)"));
+        assertTrue("se instala en todas las pantallas", app.contains("FocoVisible.instalar(a)"));
     }
 
     @Test
@@ -67,17 +67,35 @@ public class TarjetaEstadosTest {
         assertTrue(temas.contains("<item name=\"selectableItemBackground\">@drawable/fondo_pulsable</item>"));
         assertTrue(temas.contains("<item name=\"selectableItemBackgroundBorderless\">@drawable/fondo_pulsable_redondo</item>"));
         assertTrue(temas.contains("<item name=\"actionBarItemBackground\">@drawable/fondo_pulsable_redondo</item>"));
-        for (String d : new String[]{ "fondo_pulsable", "fondo_pulsable_redondo" }) {
+        for (String d : new String[]{ "fondo_pulsable", "fondo_pulsable_redondo", "bg_circulo_superficie" }) {
             String xml = leer(RES.resolve("drawable/" + d + ".xml"));
             assertTrue(d + ": pulsado, la capa de la tarjeta", xml.contains("android:color=\"@color/tarjeta_capa\""));
-            assertTrue(d + ": con foco, el anillo", xml.contains("android:state_focused=\"true\"")
-                    && xml.contains("<stroke android:width=\"@dimen/selector_anillo_foco\" android:color=\"@color/gp_on_surface\""));
+            assertTrue(d + ": el anillo lo pone FocoVisible, no el fondo (saldría dos veces)",
+                    !xml.contains("state_focused"));
         }
         String main = leer(JAVA.resolve(Paths.get("es", "pmdm", "gymprofit", "ui", "activities", "MainActivity.java")));
         assertTrue("la página del pager no se vela con el foco", main.contains("setDefaultFocusHighlightEnabled(false)"));
         assertTrue("ni es una parada del tabulador", main.contains("pager.getChildAt(0).setFocusable(false);"));
         assertTrue("las pestañas que no se ven no toman el foco en su raíz",
                 main.contains("v.setFocusable(esta && Boolean.TRUE.equals(v.getTag(R.id.tag_enfocable_original)));"));
+    }
+
+    @Test
+    public void elAnilloLlegaATodoLoPulsable() throws IOException {
+        // Los botones de Material solo cambiaban su capa (1,13 a 1,19:1); los redondos y las filas sin
+        // fondo pulsable, el gris del sistema (1,17 a 1,47:1); un scroll velaba la pantalla entera
+        // (revisor, grupo B). FocoVisible decide para cualquier vista.
+        String foco = leer(JAVA.resolve(Paths.get("es", "pmdm", "gymprofit", "ui", "widget", "FocoVisible.java")));
+        assertTrue("una tarjeta: el anillo en su borde", foco.contains("if (v instanceof MaterialCardView) return Trato.BORDE_DE_TARJETA;"));
+        assertTrue("lo que se desplaza y los campos: sin anillo ni velo", foco.contains("v instanceof ScrollView")
+                && foco.contains("v instanceof NestedScrollView") && foco.contains("v instanceof HorizontalScrollView")
+                && foco.contains("v instanceof RecyclerView") && foco.contains("v instanceof EditText"));
+        assertTrue("todo lo demás: el anillo", foco.contains("return Trato.ANILLO;"));
+        assertTrue("sin el resaltado del sistema", foco.contains("v.setDefaultFocusHighlightEnabled(false)"));
+        assertTrue("con el radio del botón de Material", foco.contains("getShapeAppearanceModel()"));
+        assertTrue("al tocar la pantalla se quita", foco.contains("if (tactil && conAnillo != null) quitar(conAnillo);"));
+        String barra = leer(JAVA.resolve(Paths.get("es", "pmdm", "gymprofit", "ui", "widget", "BarraNavegacion.java")));
+        assertTrue("la pestaña lo lleva en su píldora", barra.contains("p.setTag(R.id.tag_anillo_propio, Boolean.TRUE);"));
     }
 
     @Test

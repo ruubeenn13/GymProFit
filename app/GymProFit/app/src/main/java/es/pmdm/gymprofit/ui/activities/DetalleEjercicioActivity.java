@@ -463,7 +463,7 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         chart.setMarker(new ChartMarker(this, (e, h) -> {
             String fecha = EjeFechas.etiqueta(e.getX(), idioma, patron);
             String sufijo = e.getY() >= pr ? " · " + getString(R.string.detalle_progresion_pr) : "";
-            if (enKilos) return getString(R.string.grafica_kg_fecha, e.getY(), sufijo, fecha);
+            if (enKilos) return getString(R.string.grafica_kg_fecha, numero(e.getY()), sufijo, fecha);
             if (enSegundos) {
                 return getString(R.string.grafica_tiempo_fecha, Marcas.tiempo(Math.round(e.getY())), sufijo, fecha);
             }
@@ -483,6 +483,12 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         ds.setCircleRadius(4.5f);
         // Con muchas sesiones los círculos tapan la línea: por encima de 30 solo la línea.
         ds.setDrawCircles(entradas.size() <= 30);
+        // Al cambiar de período no se queda marcado un punto del anterior, y los extremos tienen aire
+        // para no pisar las cifras del eje (revisor, GP-228).
+        chart.highlightValues(null);
+        float rango = entradas.get(entradas.size() - 1).getX() - entradas.get(0).getX();
+        chart.getXAxis().setSpaceMin(Math.max(1f, rango * 0.04f));
+        chart.getXAxis().setSpaceMax(Math.max(1f, rango * 0.04f));
         chart.setData(new LineData(ds));
         chart.invalidate();
 

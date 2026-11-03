@@ -205,7 +205,7 @@
     <string name="medicion_registrar_primera">Registrar medición</string>
     <string name="nutricion_estadisticas">Estadísticas</string>
     <string name="detalle_progresion_titulo">Peso máximo</string>
-    <string name="detalle_progresion_pr">PR</string>
+    <string name="detalle_progresion_pr">récord</string>
     <string name="detalle_progresion_titulo_tiempo">Mejor tiempo</string>
     <string name="detalle_progresion_titulo_reps">Más repeticiones</string>
     <string name="detalle_progresion_peso_maximo">Peso máximo</string>
@@ -235,7 +235,7 @@
     <string name="detalle_series_a11y">Series: %1$s</string>
     <string name="detalle_vez_record_a11y">%1$s, récord</string>
     <string name="detalle_pista_subir">La próxima vez, sube el peso: ya llegaste a las %1$d repeticiones en todas las series.</string>
-    <string name="detalle_progresion_a11y">%1$s por sesión, de %2$s a %3$s</string>
+    <string name="detalle_progresion_a11y">%1$s, la mejor marca de cada día, del %2$s al %3$s</string>
     <string name="stats_periodo_semana">Semana</string>
     <string name="stats_periodo_mes">Mes</string>
     <string name="stats_kpi_media">Media kcal/día</string>
@@ -652,7 +652,7 @@
     <string name="series_por_reps">%1$d × %2$d</string>
     <string name="nivel_y_duracion">%1$s  ·  %2$d\u00A0min</string>
     <string name="grafica_kcal_fecha">%1$d\u00A0kcal\n%2$s</string>
-    <string name="grafica_kg_fecha">%1$.1f\u00A0kg%2$s\n%3$s</string>
+    <string name="grafica_kg_fecha">%1$s\u00A0kg%2$s\n%3$s</string>
     <string name="grafica_cm_fecha">%1$.1f\u00A0cm\n%2$s</string>
     <string name="grafica_pct_fecha">%1$.1f %%\n%2$s</string>
     <string name="grafica_kg_fecha_simple">%1$.1f\u00A0kg\n%2$s</string>
@@ -2471,4 +2471,15 @@
     <string name="medicion_detalles_cerrados">Plegados</string>
     <!-- GP-228: la grasa de Medidas con el % como se escribe en español, separado. -->
     <string name="medicion_grasa_valor">%1$s %%</string>
+    <!-- GP-228 (revisor): Estadísticas de nutrición. %1$s y %2$s: primera y última fecha; %3$s y %4$s: la menor y la mayor; %5$s: el objetivo. -->
+    <string name="estadisticas_kcal_a11y">Calorías por día del %1$s al %2$s: entre %3$s y %4$s kcal; objetivo, %5$s kcal</string>
+    <string name="estadisticas_kcal_a11y_sin_objetivo">Calorías por día del %1$s al %2$s: entre %3$s y %4$s kcal</string>
+    <string name="estadisticas_macros_a11y">Reparto de macros: proteína %1$s, carbohidratos %2$s, grasa %3$s</string>
+    <string name="estadisticas_mapa_a11y">Días en objetivo: %1$d. Fuera: %2$d. Sin datos: %3$d</string>
+    <string name="estadisticas_mapa_a11y_sin_objetivo">Días con comidas: %1$d. Sin datos: %2$d</string>
+    <string name="estadisticas_periodo_vacio">No hay comidas apuntadas en estas fechas.</string>
+    <string name="estadisticas_porcentaje">%1$d %%</string>
+    <string name="sesiones_fecha_elegir">Elegir la fecha</string>
+    <!-- GP-228 (revisor): el nombre empieza por el texto visible de la tarjeta. -->
+    <string name="entrenar_entreno_libre_a11y">Entreno libre: empezar sin rutina</string>
 </resources>

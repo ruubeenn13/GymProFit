@@ -1,25 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Fondo pulsable común (?attr/selectableItemBackground del tema, GP-227): los estados de la
-  tarjeta y del selector de opciones. Pulsado, la capa del 10 % de gp_on_surface (tarjeta_capa);
-  con el foco del teclado o del DPAD, sin capa y con un anillo de 2 dp en gp_on_surface. El
-  resaltado gris de Material daba 1,18:1 en claro y 1,45:1 en oscuro (revisor, GP-228).
+  Fondo pulsable común (?attr/selectableItemBackground del tema, GP-227): pulsado, la capa del
+  10 % de gp_on_surface (tarjeta_capa); con el foco, sin capa: el anillo de 2 dp lo pone
+  FocoVisible, el mismo para todo lo pulsable. El resaltado gris de Material daba 1,18:1 en
+  claro y 1,45:1 en oscuro (revisor, GP-228).
 -->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
     android:color="@color/tarjeta_capa">
     <item android:id="@android:id/mask">
         <color android:color="@android:color/white" />
-    </item>
-    <item>
-        <selector>
-            <item android:state_focused="true">
-                <inset android:inset="2dp">
-                    <shape android:shape="rectangle">
-                        <stroke android:width="@dimen/selector_anillo_foco" android:color="@color/gp_on_surface" />
-                        <corners android:radius="@dimen/radio_chip" />
-                    </shape>
-                </inset>
-            </item>
-        </selector>
     </item>
 </ripple>

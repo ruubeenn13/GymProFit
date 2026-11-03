@@ -237,7 +237,7 @@
     <string name="detalle_series_a11y">Sets: %1$s</string>
     <string name="detalle_vez_record_a11y">%1$s, record</string>
     <string name="detalle_pista_subir">Next time, go up in weight: you hit %1$d reps on every set.</string>
-    <string name="detalle_progresion_a11y">%1$s per session, from %2$s to %3$s</string>
+    <string name="detalle_progresion_a11y">%1$s, best of each day, from %2$s to %3$s</string>
     <string name="stats_periodo_semana">Week</string>
     <string name="stats_periodo_mes">Month</string>
     <string name="stats_kpi_media">Avg kcal/day</string>
@@ -635,7 +635,7 @@
     <string name="series_por_reps">%1$d × %2$d</string>
     <string name="nivel_y_duracion">%1$s  ·  %2$d\u00A0min</string>
     <string name="grafica_kcal_fecha">%1$d\u00A0kcal\n%2$s</string>
-    <string name="grafica_kg_fecha">%1$.1f\u00A0kg%2$s\n%3$s</string>
+    <string name="grafica_kg_fecha">%1$s\u00A0kg%2$s\n%3$s</string>
     <string name="grafica_cm_fecha">%1$.1f\u00A0cm\n%2$s</string>
     <string name="grafica_pct_fecha">%1$.1f %%\n%2$s</string>
     <string name="grafica_kg_fecha_simple">%1$.1f\u00A0kg\n%2$s</string>
@@ -2430,4 +2430,13 @@
     <string name="medicion_detalles_abiertos">Expanded</string>
     <string name="medicion_detalles_cerrados">Collapsed</string>
     <string name="medicion_grasa_valor">%1$s%%</string>
+    <string name="estadisticas_kcal_a11y">Calories per day from %1$s to %2$s: between %3$s and %4$s kcal; goal, %5$s kcal</string>
+    <string name="estadisticas_kcal_a11y_sin_objetivo">Calories per day from %1$s to %2$s: between %3$s and %4$s kcal</string>
+    <string name="estadisticas_macros_a11y">Macro split: protein %1$s, carbs %2$s, fat %3$s</string>
+    <string name="estadisticas_mapa_a11y">Days on target: %1$d. Off target: %2$d. No data: %3$d</string>
+    <string name="estadisticas_mapa_a11y_sin_objetivo">Days with meals: %1$d. No data: %2$d</string>
+    <string name="estadisticas_periodo_vacio">No meals logged on these dates.</string>
+    <string name="estadisticas_porcentaje">%1$d%%</string>
+    <string name="sesiones_fecha_elegir">Pick the date</string>
+    <string name="entrenar_entreno_libre_a11y">Free workout: start without a routine</string>
 </resources>

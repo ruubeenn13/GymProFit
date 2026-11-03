@@ -93,6 +93,8 @@ public class BarraNavegacion extends LinearLayout {
             final int indice = i;
             View p = findViewById(ids[i]);
             pestanas[i] = p;
+            // Su anillo de foco va en la píldora (anillo_pildora), no alrededor de la pestaña (FocoVisible).
+            p.setTag(R.id.tag_anillo_propio, Boolean.TRUE);
             TextView etiqueta = p.findViewById(R.id.tvEtiqueta);
             etiqueta.setText(ETIQUETAS[i]);
             etiqueta.setTextSize(TypedValue.COMPLEX_UNIT_PX, tamEtiqueta);

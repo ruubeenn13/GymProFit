@@ -32,8 +32,9 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Rutina -->
+            <!-- Rutina: el rótulo nombra al desplegable para TalkBack (revisor, GP-228). -->
             <TextView
+                android:labelFor="@+id/spRutina"
                 android:textAppearance="@style/TextAppearance.GymProFit.Label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -72,6 +73,7 @@
                 app:boxCornerRadiusTopEnd="12dp"
                 app:boxCornerRadiusTopStart="12dp"
                 app:endIconDrawable="@drawable/ic_ms_calendar_month"
+                app:endIconContentDescription="@string/sesiones_fecha_elegir"
                 app:endIconMode="custom">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -197,6 +199,7 @@
                         android:numStars="5"
                         android:stepSize="1"
                         android:rating="0"
+                        android:progressBackgroundTint="@color/gp_stroke"
                         style="@style/Widget.AppCompat.RatingBar" />
 
                     <!-- Estado en palabras, y la salida para deshacer un toque por error:

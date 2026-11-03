@@ -200,4 +200,6 @@
          botón era de contorno; relleno y con este rojo se lee en los dos. -->
     <color name="gp_eliminar_fondo">#C62828</color>
     <color name="gp_eliminar_texto">#FFFFFF</color>
+    <!-- GP-228: texto sobre un macro (donut de Estadísticas): blanco sobre los de claro. -->
+    <color name="gp_texto_sobre_macro">#FFFFFF</color>
 </resources>
