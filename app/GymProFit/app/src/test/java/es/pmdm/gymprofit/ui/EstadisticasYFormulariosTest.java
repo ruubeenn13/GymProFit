@@ -40,7 +40,14 @@ public class EstadisticasYFormulariosTest {
         assertTrue("sin colores a fuego", !a.contains("Color.parseColor("));
         assertTrue(a.contains("R.color.gp_macro_proteinas") && a.contains("R.color.gp_macro_carbos")
                 && a.contains("R.color.gp_macro_grasas"));
-        assertTrue("un período vacío no dice «aún no has registrado»", a.contains("R.string.estadisticas_periodo_vacio"));
+        assertTrue("un período vacío no dice «aún no has registrado»",
+                a.contains("tvVacia.setText(R.string.estadisticas_periodo_vacio);")
+                        && a.contains("tvMacrosVacia.setText(R.string.estadisticas_periodo_vacio);"));
+        assertTrue("un hueco por día del período, no solo los días con comidas",
+                a.contains("entradas.add(new BarEntry(d - dia0, r.getCalorias()));")
+                        && a.contains("chartKcal.getXAxis().setAxisMaximum(lenDias - 0.5f);"));
+        assertTrue("la descripción dice el período, no el primer y último día con comidas",
+                a.contains("getString(R.string.estadisticas_kcal_a11y, inicioPeriodo, finPeriodo,"));
         for (String idioma : new String[]{ "values", "values-en" }) {
             String xml = leer(RES.resolve(idioma + "/strings.xml"));
             for (String n : new String[]{ "estadisticas_kcal_a11y", "estadisticas_macros_a11y", "estadisticas_mapa_a11y",
@@ -92,6 +99,20 @@ public class EstadisticasYFormulariosTest {
             String visible = valor(xml, "entrenar_entreno_libre"), nombre = valor(xml, "entrenar_entreno_libre_a11y");
             assertTrue(idioma + ": «" + nombre + "» no empieza por «" + visible + "»", nombre.startsWith(visible));
         }
+    }
+
+    @Test
+    public void lasTarjetasPulsablesDeHoyDicenQueAbren() throws IOException {
+        String inicio = leer(UI.resolve("fragments/InicioFragment.java"));
+        assertTrue(inicio.contains("card.setContentDescription(getString(R.string.abrir_rutina_a11y, r.getNombre()));"));
+        assertTrue(inicio.contains("card.setContentDescription(getString(R.string.abrir_resumen_a11y, titulo.getText()));"));
+        String programa = leer(UI.resolve("widget/TuProgramaVista.java"));
+        assertTrue(programa.contains("bloque.setContentDescription(ctx.getString(R.string.abrir_rutina_a11y, hoy.getNombre()));"));
+        assertTrue("el carrusel de Hoy toca no es una parada vacía",
+                leer(RES.resolve("layout/fragment_inicio.xml")).contains(
+                        "android:id=\"@+id/scrollHoyEjercicios\"\n                        android:focusable=\"false\"")
+                        || leer(RES.resolve("layout/fragment_inicio.xml")).contains(
+                        "android:id=\"@+id/scrollHoyEjercicios\"\r\n                        android:focusable=\"false\""));
     }
 
     @Test

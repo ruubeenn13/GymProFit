@@ -35,6 +35,7 @@ import es.pmdm.gymprofit.model.comida.ResumenDiarioNutricion;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.ComidaApi;
+import es.pmdm.gymprofit.utils.EjeFechas;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.ChartMarker;
 import es.pmdm.gymprofit.utils.ChartStyler;
@@ -73,6 +74,9 @@ public class EstadisticasNutricionActivity extends BaseActivity {
     // Longitud del periodo en días (7 = semana, 30 = mes) y desplazamiento hacia atrás
     // en periodos (0 = actual, 1 = anterior, ...). El objetivo diario de kcal del perfil.
     private int lenDias = 7;
+    // El primer día del período (ISO) y las dos fechas cortas que lo delimitan, para el eje y TalkBack.
+    private String inicioIso = "";
+    private String inicioPeriodo = "", finPeriodo = "";
 
     // Semana (0) o mes (1) en el selector: 7 o 30 días.
     private int diasDelPeriodo() {
@@ -168,6 +172,9 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         windowStartMillis = cal.getTimeInMillis();
 
         tvPeriodo.setText(getString(R.string.fecha_rango, inicioCorta, finCorta));
+        inicioIso = inicio;
+        inicioPeriodo = inicioCorta;
+        finPeriodo = finCorta;
 
         int usuarioId = prefs.getUsuarioId();
         comidaApi.getResumen(usuarioId, inicio, fin).enqueue(new ApiCallback<List<ResumenDiarioNutricion>>() {
@@ -221,21 +228,27 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         chartKcal.setVisibility(View.VISIBLE);
         tvVacia.setVisibility(View.GONE);
 
+        // Un hueco por día del período (GP-228, revisor): con solo los días con comidas, una semana
+        // de 7 días enseñaba 4 barras y un mes con una sola, una barra de medio ancho. La x es el día
+        // desde el primero del período, y la etiqueta, su fecha corta en el idioma de la app.
+        final Long dia0 = EjeFechas.dia(inicioIso);
+        final java.util.Locale idioma = FechaUtils.localeDeLaApp(this);
+        final String patron = getString(R.string.inicio_fecha_corta_patron);
         List<BarEntry> entradas = new ArrayList<>();
-        final List<String> etiquetas = new ArrayList<>();
-        for (int i = 0; i < lista.size(); i++) {
-            ResumenDiarioNutricion r = lista.get(i);
-            entradas.add(new BarEntry(i, r.getCalorias()));
-            etiquetas.add(fechaCorta(r.getFecha()));
+        for (ResumenDiarioNutricion r : lista) {
+            Long d = EjeFechas.dia(r.getFecha());
+            if (d == null || dia0 == null) continue;
+            entradas.add(new BarEntry(d - dia0, r.getCalorias()));
         }
 
         ChartStyler.styleBar(chartKcal, new ValueFormatter() {
             @Override
             public String getAxisLabel(float value, AxisBase axis) {
-                int idx = Math.round(value);
-                return (idx >= 0 && idx < etiquetas.size()) ? etiquetas.get(idx) : "";
+                return dia0 == null ? "" : EjeFechas.etiqueta(dia0 + value, idioma, patron);
             }
         });
+        chartKcal.getXAxis().setAxisMinimum(-0.5f);
+        chartKcal.getXAxis().setAxisMaximum(lenDias - 0.5f);
 
         // Línea de objetivo de kcal.
         chartKcal.getAxisLeft().removeAllLimitLines();
@@ -250,11 +263,8 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         }
 
         // Tooltip: kcal + fecha.
-        chartKcal.setMarker(new ChartMarker(this, (e, h) -> {
-            int idx = Math.round(e.getX());
-            String fecha = (idx >= 0 && idx < etiquetas.size()) ? etiquetas.get(idx) : "";
-            return getString(R.string.grafica_kcal_fecha, (int) e.getY(), fecha);
-        }));
+        chartKcal.setMarker(new ChartMarker(this, (e, h) -> getString(R.string.grafica_kcal_fecha, (int) e.getY(),
+                dia0 == null ? "" : EjeFechas.etiqueta(dia0 + e.getX(), idioma, patron))));
 
         BarDataSet ds = new BarDataSet(entradas, "kcal");
         ChartStyler.styleBarDataSet(ds, this);
@@ -281,10 +291,10 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         chartKcal.invalidate();
         // Las barras no son nada para TalkBack sin descripción (DEC-019).
         chartKcal.setContentDescription(conObjetivo
-                ? getString(R.string.estadisticas_kcal_a11y, etiquetas.get(0), etiquetas.get(etiquetas.size() - 1),
+                ? getString(R.string.estadisticas_kcal_a11y, inicioPeriodo, finPeriodo,
                         nf.format(minKcal), nf.format(maxKcal), nf.format(objetivoKcal))
-                : getString(R.string.estadisticas_kcal_a11y_sin_objetivo, etiquetas.get(0),
-                        etiquetas.get(etiquetas.size() - 1), nf.format(minKcal), nf.format(maxKcal)));
+                : getString(R.string.estadisticas_kcal_a11y_sin_objetivo, inicioPeriodo, finPeriodo,
+                        nf.format(minKcal), nf.format(maxKcal)));
     }
 
     // Donut del reparto de macros (gramos totales de proteína/carbohidratos/grasa del periodo).
@@ -298,6 +308,8 @@ public class EstadisticasNutricionActivity extends BaseActivity {
 
         if (prot + carb + grasa <= 0) {
             chartMacros.setVisibility(View.GONE);
+            // Con comidas en otras fechas no es «aún no has registrado comidas» (revisor, GP-228).
+            tvMacrosVacia.setText(R.string.estadisticas_periodo_vacio);
             tvMacrosVacia.setVisibility(View.VISIBLE);
             return;
         }
@@ -310,7 +322,9 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         entradas.add(new PieEntry((float) grasa, getString(R.string.macro_grasa)));
 
         ChartStyler.stylePie(chartMacros);
-        chartMacros.setCenterText(getString(R.string.unidad_g_redondeado, prot + carb + grasa));
+        // El total es la suma de lo que se enseña redondeado: 12 + 52 + 12 no puede decir 77.
+        chartMacros.setCenterText(getString(R.string.unidad_g_redondeado,
+                (double) (Math.round(prot) + Math.round(carb) + Math.round(grasa))));
 
         PieDataSet ds = new PieDataSet(entradas, "");
         ChartStyler.stylePieDataSet(ds, coloresMacros, this);
@@ -398,13 +412,6 @@ public class EstadisticasNutricionActivity extends BaseActivity {
 
     private float dp(float v) {
         return v * getResources().getDisplayMetrics().density;
-    }
-
-    // Fecha ISO («yyyy-MM-dd...») → etiqueta corta en el idioma de la app («28 sept» / «Sep 28»).
-    private String fechaCorta(String isoStr) {
-        String r = FechaUtils.fechaCorta(isoStr, FechaUtils.localeDeLaApp(this),
-                getString(R.string.inicio_fecha_corta_patron));
-        return r != null ? r : "";
     }
 
     // Resuelve un color del tema.

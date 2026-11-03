@@ -2482,4 +2482,7 @@
     <string name="sesiones_fecha_elegir">Elegir la fecha</string>
     <!-- GP-228 (revisor): el nombre empieza por el texto visible de la tarjeta. -->
     <string name="entrenar_entreno_libre_a11y">Entreno libre: empezar sin rutina</string>
+    <!-- GP-228 (revisor): lo que abre una tarjeta pulsable de Inicio o Entrenar. -->
+    <string name="abrir_rutina_a11y">Abrir %1$s</string>
+    <string name="abrir_resumen_a11y">Ver el resumen de %1$s</string>
 </resources>

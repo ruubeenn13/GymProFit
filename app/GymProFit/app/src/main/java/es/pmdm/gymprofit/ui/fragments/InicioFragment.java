@@ -379,6 +379,7 @@ public class InicioFragment extends BaseFragment {
         MaterialCardView card = findViewById(R.id.cardHoyToca);
         card.setOnClickListener(null);
         card.setClickable(false);
+        card.setContentDescription(null);
         ultima.setVisibility(View.GONE);
         apilarBotones(false);
 
@@ -415,6 +416,8 @@ public class InicioFragment extends BaseFragment {
             sub.setText(getString(R.string.duracion_min, deHoy.getDuracionMinutos()));
             // Tocar la tarjeta abre el resumen de la sesión de hoy, y la tarjeta crece hasta él.
             card.setOnClickListener(v -> abrirResumen(deHoy, card));
+            // Pulsable, la tarjeta dice qué abre (revisor, GP-228: el teclado se paraba en ella sin nombre).
+            card.setContentDescription(getString(R.string.abrir_resumen_a11y, titulo.getText()));
             principal.setText(R.string.btn_empezar_otra);
             principal.setIconResource(R.drawable.ic_ms_play_arrow_fill);
             principal.setOnClickListener(v -> elegirRutina());
@@ -467,6 +470,7 @@ public class InicioFragment extends BaseFragment {
         secundario.setOnClickListener(v -> elegirRutina());
         // Tocar la tarjeta abre la rutina, y la tarjeta crece hasta ella.
         card.setOnClickListener(v -> MenuRutina.abrirDetalle(requireActivity(), lanzadorRutina, r, card));
+        card.setContentDescription(getString(R.string.abrir_rutina_a11y, r.getNombre()));
         // El primer día, «Empezar» llama la atención dos veces, una sola vez (GP-104).
         if (esPrimerDia() && !empezarAnimado) {
             empezarAnimado = true;

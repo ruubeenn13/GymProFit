@@ -2439,4 +2439,6 @@
     <string name="estadisticas_porcentaje">%1$d%%</string>
     <string name="sesiones_fecha_elegir">Pick the date</string>
     <string name="entrenar_entreno_libre_a11y">Free workout: start without a routine</string>
+    <string name="abrir_rutina_a11y">Open %1$s</string>
+    <string name="abrir_resumen_a11y">See the summary of %1$s</string>
 </resources>

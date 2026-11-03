@@ -53,7 +53,8 @@ public class TarjetaEstadosTest {
     public void elAnilloEsDeDosDpEnElColorDelTexto() throws IOException {
         String foco = leer(JAVA.resolve(Paths.get("es", "pmdm", "gymprofit", "ui", "widget", "FocoVisible.java")));
         assertTrue(foco.contains("R.dimen.selector_anillo_foco"));
-        assertTrue(foco.contains("R.color.gp_on_surface"));
+        assertTrue("el color del texto sobre lo que hay detrás (el padre)",
+                foco.contains("MaterialColors.getColor(fondo, com.google.android.material.R.attr.colorOnSurface)"));
         assertTrue(leer(RES.resolve("values/dimens.xml")).contains("<dimen name=\"selector_anillo_foco\">2dp</dimen>"));
         String app = leer(JAVA.resolve(Paths.get("es", "pmdm", "gymprofit", "GymProFitApp.java")));
         assertTrue("se instala en todas las pantallas", app.contains("FocoVisible.instalar(a)"));
@@ -86,14 +87,21 @@ public class TarjetaEstadosTest {
         // fondo pulsable, el gris del sistema (1,17 a 1,47:1); un scroll velaba la pantalla entera
         // (revisor, grupo B). FocoVisible decide para cualquier vista.
         String foco = leer(JAVA.resolve(Paths.get("es", "pmdm", "gymprofit", "ui", "widget", "FocoVisible.java")));
-        assertTrue("una tarjeta: el anillo en su borde", foco.contains("if (v instanceof MaterialCardView) return Trato.BORDE_DE_TARJETA;"));
+        // Por fuera y separado del borde: por dentro pisaba el texto de las filas sin aire, quedaba a
+        // 1,4:1 dentro de un botón relleno y no se distinguía en una tarjeta oscura (segunda pasada).
+        assertTrue("por fuera, a 2 dp del borde", foco.contains("int fuera = Math.round(HUECO_DP * d) + ancho;")
+                && foco.contains("private static final int HUECO_DP = 2;"));
+        assertTrue("en la capa de la ventana, que no recorta ningún padre", foco.contains("decor.getOverlay().add(anillo);"));
+        assertTrue("sigue a la vista", foco.contains("public boolean onPreDraw()"));
+        assertTrue("con el radio de la tarjeta", foco.contains("((MaterialCardView) v).getRadius()"));
         assertTrue("lo que se desplaza y los campos: sin anillo ni velo", foco.contains("v instanceof ScrollView")
                 && foco.contains("v instanceof NestedScrollView") && foco.contains("v instanceof HorizontalScrollView")
                 && foco.contains("v instanceof RecyclerView") && foco.contains("v instanceof EditText"));
-        assertTrue("todo lo demás: el anillo", foco.contains("return Trato.ANILLO;"));
-        assertTrue("sin el resaltado del sistema", foco.contains("v.setDefaultFocusHighlightEnabled(false)"));
+        assertTrue("sin el resaltado del sistema", foco.contains("ahora.setDefaultFocusHighlightEnabled(false)"));
         assertTrue("con el radio del botón de Material", foco.contains("getShapeAppearanceModel()"));
-        assertTrue("al tocar la pantalla se quita", foco.contains("if (tactil && conAnillo != null) quitar(conAnillo);"));
+        assertTrue("al tocar la pantalla se quita", foco.contains("if (tactil) quitar();"));
+        String selector = leer(JAVA.resolve(Paths.get("es", "pmdm", "gymprofit", "ui", "widget", "SelectorPildora.java")));
+        assertTrue("las opciones del selector llevan el suyo: no sale doble", selector.contains("o.setTag(R.id.tag_anillo_propio, Boolean.TRUE);"));
         String barra = leer(JAVA.resolve(Paths.get("es", "pmdm", "gymprofit", "ui", "widget", "BarraNavegacion.java")));
         assertTrue("la pestaña lo lleva en su píldora", barra.contains("p.setTag(R.id.tag_anillo_propio, Boolean.TRUE);"));
     }
