@@ -91,6 +91,19 @@ public final class FocoVisible implements ViewTreeObserver.OnGlobalFocusChangeLi
     public void onGlobalFocusChanged(@Nullable View antes, @Nullable View ahora) {
         quitar();
         if (ahora == null || ahora.isInTouchMode()) return;
+        // Un carrusel no es una parada: con algo enfocable dentro, deja de serlo y el foco pasa a lo
+        // primero que tiene (HorizontalScrollView se hace enfocable en su constructor; el tabulador se
+        // paraba en él sin enseñar nada, revisor, GP-228).
+        if (ahora instanceof HorizontalScrollView) {
+            java.util.ArrayList<View> dentro = new java.util.ArrayList<>();
+            ((ViewGroup) ahora).addFocusables(dentro, View.FOCUS_FORWARD);
+            dentro.remove(ahora);
+            if (!dentro.isEmpty()) {
+                ahora.setFocusable(false);
+                dentro.get(0).requestFocus();
+                return;
+            }
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) ahora.setDefaultFocusHighlightEnabled(false);
         if (!llevaAnillo(ahora)) return;
         conAnillo = ahora;

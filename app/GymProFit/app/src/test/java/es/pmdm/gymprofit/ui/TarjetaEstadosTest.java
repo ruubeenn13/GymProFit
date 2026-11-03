@@ -120,6 +120,8 @@ public class TarjetaEstadosTest {
         assertTrue("sin el resaltado del sistema", foco.contains("ahora.setDefaultFocusHighlightEnabled(false)"));
         assertTrue("con el radio del botón de Material", foco.contains("getShapeAppearanceModel()"));
         assertTrue("al tocar la pantalla se quita", foco.contains("if (tactil) quitar();"));
+        assertTrue("un carrusel con algo enfocable dentro no es parada: el foco pasa a lo primero",
+                foco.contains("ahora.setFocusable(false);") && foco.contains("dentro.get(0).requestFocus();"));
         String selector = leer(JAVA.resolve(Paths.get("es", "pmdm", "gymprofit", "ui", "widget", "SelectorPildora.java")));
         assertTrue("las opciones del selector llevan el suyo: no sale doble", selector.contains("o.setTag(R.id.tag_anillo_propio, Boolean.TRUE);"));
         String barra = leer(JAVA.resolve(Paths.get("es", "pmdm", "gymprofit", "ui", "widget", "BarraNavegacion.java")));
