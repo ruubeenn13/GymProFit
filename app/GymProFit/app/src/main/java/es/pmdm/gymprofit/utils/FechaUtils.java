@@ -51,8 +51,8 @@ public final class FechaUtils {
     }
 
     /**
-     * Fecha y hora de un ISO-8601 en el formato del idioma dado: «30 sept 2026, 18:05» en español,
-     * «Sep 30, 2026, 6:05 PM» en inglés. Sin hora en el ISO, solo la fecha.
+     * Fecha y hora de un ISO-8601 en el formato del idioma dado: «30 sept 2026 18:05» en español,
+     * «Sep 30, 2026 6:05 PM» en inglés (en Android; la JVM pone una coma antes de la hora). Sin hora en el ISO, solo la fecha.
      *
      * @return la fecha formateada, o {@code null} si no se puede leer
      */

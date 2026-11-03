@@ -18,5 +18,7 @@
     <item name="tag_borde_tarjeta" type="id"/>
     <!-- La ventana ya escucha el foco para el anillo de las tarjetas. Ver FocoTarjeta. -->
     <item name="tag_foco_tarjeta" type="id"/>
+    <!-- Si la raíz de una pestaña era enfocable antes de apartarla del foco. Ver MainActivity. -->
+    <item name="tag_enfocable_original" type="id"/>
 
 </resources>

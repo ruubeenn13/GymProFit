@@ -20,6 +20,7 @@
         <item name="selectableItemBackground">@drawable/fondo_pulsable</item>
         <item name="selectableItemBackgroundBorderless">@drawable/fondo_pulsable_redondo</item>
         <item name="actionBarItemBackground">@drawable/fondo_pulsable_redondo</item>
+        <item name="toolbarNavigationButtonStyle">@style/Widget.GymProFit.Cabecera.Volver</item>
         <!-- Paleta M3 mapeada a los tokens gp_* -->
         <item name="colorPrimary">@color/gp_primary</item>
         <item name="colorOnPrimary">@color/gp_on_primary</item>
@@ -309,6 +310,12 @@
         <item name="navigationContentDescription">@string/btn_volver</item>
         <item name="titleTextAppearance">@style/TextAppearance.GymProFit.Headline</item>
         <item name="titleTextColor">?attr/colorOnSurface</item>
+    </style>
+
+    <!-- «Volver» de la cabecera: el botón de navegación de la MaterialToolbar no usa el fondo
+         pulsable del tema; sin esto, con foco salía un círculo gris a 1,18:1 (revisor, GP-228). -->
+    <style name="Widget.GymProFit.Cabecera.Volver" parent="Widget.AppCompat.Toolbar.Button.Navigation">
+        <item name="android:background">@drawable/fondo_pulsable_redondo</item>
     </style>
 
     <!-- Cabecera de la sesión en vivo: el nombre de la rutina como título de fila (16, Barlow

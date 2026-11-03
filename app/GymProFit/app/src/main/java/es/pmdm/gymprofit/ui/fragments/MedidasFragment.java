@@ -439,7 +439,8 @@ public class MedidasFragment extends BaseFragment {
         tvPesoVal.setText(ultimaMedicion.getPeso() > 0
                 ? getString(R.string.unidad_kg_decimal, ultimaMedicion.getPeso()) : anadir);
         tvGrasaVal.setText(ultimaMedicion.getGrasaCorporal() != null && ultimaMedicion.getGrasaCorporal() > 0
-                ? String.format(FechaUtils.localeDeLaApp(requireContext()), "%.1f%%", ultimaMedicion.getGrasaCorporal()) : anadir);
+                ? getString(R.string.medicion_grasa_valor,
+                        String.format(idioma(), "%.1f", ultimaMedicion.getGrasaCorporal())) : anadir);
         tvMusculoVal.setText(ultimaMedicion.getMasaMuscular() > 0
                 ? getString(R.string.unidad_kg_decimal, ultimaMedicion.getMasaMuscular()) : anadir);
         tvCinturaVal.setText(ultimaMedicion.getCintura() > 0

@@ -75,6 +75,25 @@ public class TarjetaEstadosTest {
         }
         String main = leer(JAVA.resolve(Paths.get("es", "pmdm", "gymprofit", "ui", "activities", "MainActivity.java")));
         assertTrue("la página del pager no se vela con el foco", main.contains("setDefaultFocusHighlightEnabled(false)"));
+        assertTrue("ni es una parada del tabulador", main.contains("pager.getChildAt(0).setFocusable(false);"));
+        assertTrue("las pestañas que no se ven no toman el foco en su raíz",
+                main.contains("v.setFocusable(esta && Boolean.TRUE.equals(v.getTag(R.id.tag_enfocable_original)));"));
+    }
+
+    @Test
+    public void volverYLosEnlacesTambien() throws IOException {
+        // «Volver» de la MaterialToolbar no usaba el fondo del tema (1,18:1 con foco), y el anillo de
+        // un enlace de texto sin aire cortaba sus letras (revisor, GP-228, segunda pasada).
+        String temas = leer(RES.resolve("values/themes.xml"));
+        assertTrue(temas.contains("<item name=\"toolbarNavigationButtonStyle\">@style/Widget.GymProFit.Cabecera.Volver</item>"));
+        Matcher m = Pattern.compile("<style name=\"Widget.GymProFit.Cabecera.Volver\"[\\s\\S]*?</style>").matcher(temas);
+        assertTrue(m.find());
+        assertTrue(m.group().contains("@drawable/fondo_pulsable_redondo"));
+        String sistema = leer(RES.resolve("values/estilos_sistema.xml"));
+        m = Pattern.compile("<style name=\"Widget.GymProFit.CabeceraSeccion.Enlace\"[\\s\\S]*?</style>").matcher(sistema);
+        assertTrue(m.find());
+        assertTrue("aire a los lados para el anillo", m.group().contains("<item name=\"android:paddingStart\">@dimen/espacio_8</item>")
+                && m.group().contains("<item name=\"android:paddingEnd\">@dimen/espacio_8</item>"));
     }
 
     @Test

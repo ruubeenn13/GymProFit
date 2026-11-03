@@ -2469,4 +2469,6 @@
     <!-- GP-227: el estado de «Más detalles» de Medidas para TalkBack. -->
     <string name="medicion_detalles_abiertos">Desplegados</string>
     <string name="medicion_detalles_cerrados">Plegados</string>
+    <!-- GP-228: la grasa de Medidas con el % como se escribe en español, separado. -->
+    <string name="medicion_grasa_valor">%1$s %%</string>
 </resources>

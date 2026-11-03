@@ -137,6 +137,11 @@
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
         <item name="android:background">?attr/selectableItemBackground</item>
+        <!-- Aire para el anillo de foco (GP-227): sin él, el trazo de 2 dp cortaba las letras. El
+             margen negativo lo devuelve y el texto sigue alineado con el borde de la tarjeta. -->
+        <item name="android:paddingStart">@dimen/espacio_8</item>
+        <item name="android:paddingEnd">@dimen/espacio_8</item>
+        <item name="android:layout_marginEnd">@dimen/enlace_aire_fuera</item>
         <item name="android:textAppearance">@style/TextAppearance.GymProFit.Enlace</item>
     </style>
 

@@ -124,6 +124,8 @@ public class MainActivity extends BaseActivity {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             pager.getChildAt(0).setDefaultFocusHighlightEnabled(false);
         }
+        // Y no es una parada del tabulador: no se desliza a mano (setUserInputEnabled en falso).
+        pager.getChildAt(0).setFocusable(false);
         // Las cuatro vivas: cambiar de pestaña no re-infla; cada una recarga al volver.
         pager.setOffscreenPageLimit(NavTabs.TOTAL - 1);
         // Cada pestaña que se crea fuera de la vista nace ya apartada del foco.
@@ -341,6 +343,10 @@ public class MainActivity extends BaseActivity {
             boolean esta = i == visible;
             ((android.view.ViewGroup) v).setDescendantFocusability(esta
                     ? android.view.ViewGroup.FOCUS_AFTER_DESCENDANTS : android.view.ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+            // La raíz de la pestaña (un NestedScrollView, enfocable para desplazarse con teclas) también:
+            // si no, los primeros tabuladores caían en páginas que no se ven (revisor, GP-228).
+            if (v.getTag(R.id.tag_enfocable_original) == null) v.setTag(R.id.tag_enfocable_original, v.isFocusable());
+            v.setFocusable(esta && Boolean.TRUE.equals(v.getTag(R.id.tag_enfocable_original)));
             v.setImportantForAccessibility(esta ? View.IMPORTANT_FOR_ACCESSIBILITY_AUTO
                     : View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
         }

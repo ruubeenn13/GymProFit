@@ -2429,4 +2429,5 @@
     <string name="sesiones_eliminar_fecha_patron">MMMM d</string>
     <string name="medicion_detalles_abiertos">Expanded</string>
     <string name="medicion_detalles_cerrados">Collapsed</string>
+    <string name="medicion_grasa_valor">%1$s%%</string>
 </resources>
