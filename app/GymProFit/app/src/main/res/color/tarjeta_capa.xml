@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Capa de la tarjeta (GP-227), igual que el selector de opciones (GP-224): pulsada, el 10 % de
+  gp_on_surface (el mismo 0.10 que selector_capa_pulsado); con el foco del teclado, ninguna (lo marca el anillo de 2 dp, FocoTarjeta).
+  Antes era gp_primary_container opaco y, con el foco, tapaba el texto (3,55:1 y 2,26:1 en Historial).
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true" android:color="@color/gp_on_surface" android:alpha="0.10" />
+    <item android:color="@android:color/transparent" />
+</selector>

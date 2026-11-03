@@ -2405,4 +2405,22 @@
     <string name="progreso_cuerpo_vacio">Log your weight to see how it changes here.</string>
     <string name="progreso_cuerpo_error">Couldn\'t load your measurements.</string>
     <string name="progreso_historial_vacio">You haven\'t finished a workout yet. The first one will show up here.</string>
+
+    <!-- GP-227: each bin in the history says which session it deletes. %1$s: the routine; %2$s: the date with reciente_fecha_patron («30 September»). -->
+    <string name="sesiones_eliminar_a11y">Delete %1$s from %2$s</string>
+    <string name="sesiones_eliminar_a11y_sin_fecha">Delete %1$s</string>
+    <!-- GP-228: a period between two short dates. -->
+    <string name="fecha_rango">%1$s – %2$s</string>
+    <!-- GP-227: the name of each Measurements row, «Weight, 79.2 kilos». -->
+    <string name="medicion_fila_a11y">%1$s, %2$s</string>
+    <!-- %s: the number already formatted («79.2»); the quantity only picks singular or plural. -->
+    <plurals name="medicion_a11y_kilos">
+        <item quantity="one">%s kilo</item>
+        <item quantity="other">%s kilos</item>
+    </plurals>
+    <plurals name="medicion_a11y_centimetros">
+        <item quantity="one">%s centimetre</item>
+        <item quantity="other">%s centimetres</item>
+    </plurals>
+    <string name="medicion_a11y_por_ciento">%1$s percent</string>
 </resources>

@@ -49,6 +49,7 @@ import es.pmdm.gymprofit.network.RecordApi;
 import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.utils.ChartMarker;
 import es.pmdm.gymprofit.utils.ChartStyler;
+import es.pmdm.gymprofit.utils.EjeFechas;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.Marcas;
 import es.pmdm.gymprofit.utils.Movimiento;
@@ -429,13 +430,15 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         for (float v : valores) max = Math.max(max, v);
         final float pr = max;
 
+        // Por fecha y no por orden (GP-228): la x es el día; con varias sesiones el mismo día,
+        // la mejor marca de ese día (EjeFechas).
         int desde = PeriodoProgreso.primerIndice(fechas, TiempoRelativo.hoy(), periodoSemanas);
-        final List<String> etiquetas = new ArrayList<>();
+        final List<EjeFechas.Punto> puntos = EjeFechas.porDia(fechas.subList(desde, fechas.size()),
+                valores.subList(desde, valores.size()), EjeFechas.DelDia.MAYOR);
         List<Entry> entradas = new ArrayList<>();
-        for (int i = desde; i < valores.size(); i++) {
-            entradas.add(new Entry(entradas.size(), valores.get(i)));
-            etiquetas.add(fechaCorta(fechas.get(i)));
-        }
+        for (EjeFechas.Punto pt : puntos) entradas.add(new Entry(pt.x, pt.y));
+        final Locale idioma = FechaUtils.localeDeLaApp(this);
+        final String patron = getString(R.string.inicio_fecha_corta_patron);
         if (entradas.isEmpty()) {
             // Ninguna sesión en el período: se dice, en la gráfica y a TalkBack, en vez de dejar
             // la tarjeta en blanco con la descripción del período anterior (DEC-019, DEC-022).
@@ -453,16 +456,12 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         ChartStyler.styleLine(chart, new ValueFormatter() {
             @Override
             public String getAxisLabel(float value, AxisBase axis) {
-                int idx = Math.round(value);
-                if (idx < 0 || idx >= etiquetas.size()) return "";
-                // Varias sesiones del mismo día repetirían la misma fecha bajo puntos contiguos.
-                return idx > 0 && etiquetas.get(idx).equals(etiquetas.get(idx - 1)) ? "" : etiquetas.get(idx);
+                return EjeFechas.llevaEtiqueta(value, puntos) ? EjeFechas.etiqueta(value, idioma, patron) : "";
             }
         });
         // Tooltip: marca + fecha, con «· PR» en el récord.
         chart.setMarker(new ChartMarker(this, (e, h) -> {
-            int idx = Math.round(e.getX());
-            String fecha = (idx >= 0 && idx < etiquetas.size()) ? etiquetas.get(idx) : "";
+            String fecha = EjeFechas.etiqueta(e.getX(), idioma, patron);
             String sufijo = e.getY() >= pr ? " · " + getString(R.string.detalle_progresion_pr) : "";
             if (enKilos) return getString(R.string.grafica_kg_fecha, e.getY(), sufijo, fecha);
             if (enSegundos) {
@@ -492,7 +491,8 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
                 ? (double) entradas.get(entradas.size() - 1).getY() - entradas.get(0).getY() : null);
         chart.setContentDescription(getString(R.string.detalle_progresion_a11y,
                 ((TextView) findViewById(R.id.tvProgresionTitulo)).getText(),
-                etiquetas.get(0), etiquetas.get(etiquetas.size() - 1)));
+                EjeFechas.etiqueta(puntos.get(0).x, idioma, patron),
+                EjeFechas.etiqueta(puntos.get(puntos.size() - 1).x, idioma, patron)));
     }
 
     private void pintarDelta(@Nullable Double kilos) {
@@ -506,19 +506,6 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         tv.setText(getString(kilos >= 0 ? R.string.detalle_kg_mas : R.string.detalle_kg_menos, n));
         tv.setTextColor(kilos > 0 ? ContextCompat.getColor(this, R.color.gp_success)
                 : color(com.google.android.material.R.attr.colorOnSurfaceVariant));
-    }
-
-    // Fecha ISO («yyyy-MM-dd...») → etiqueta corta en el idioma de la app («28 sept» / «Sep 28»).
-    private String fechaCorta(String iso) {
-        if (iso == null || iso.length() < 10) return "";
-        try {
-            Locale loc = getResources().getConfiguration().getLocales().get(0);
-            java.util.Date d = new java.text.SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).parse(iso.substring(0, 10));
-            String patron = android.text.format.DateFormat.getBestDateTimePattern(loc, "dMMM");
-            return new java.text.SimpleDateFormat(patron, loc).format(d);
-        } catch (java.text.ParseException e) {
-            return iso.substring(8, 10) + "/" + iso.substring(5, 7);   // ISO mal formada: el día y el mes tal cual
-        }
     }
 
     // ── Tus últimas veces ───────────────────────────────────────────────────
@@ -578,8 +565,13 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
     // Una sesión: día, hace cuánto y total, la diferencia con la anterior y las barras.
     private View tarjeta(LayoutInflater inflater, ViewGroup padre, UltimasVeces.Tarjeta t, boolean porTiempo) {
         View v = inflater.inflate(R.layout.item_vez_ejercicio, padre, false);
-        ((TextView) v.findViewById(R.id.tvVezDia)).setText(diaDeLaSemana(t.fecha));
-        String cuando = TiempoRelativo.texto(this, t.fecha);
+        // La misma regla que Inicio y el historial (GP-228): «Hoy», «Ayer · martes», «Lunes»,
+        // «Jueves pasado» o la fecha corta; antes, una sesión de hace un mes salía «Lunes».
+        ((TextView) v.findViewById(R.id.tvVezDia)).setText(FechaUtils.diaRelativo(this, t.fecha));
+        // «hace 3 días» bajo «Hoy» o «Ayer» lo repetiría: ahí solo el total.
+        FechaUtils.Relativo tramo = FechaUtils.relativo(t.fecha, TiempoRelativo.hoy());
+        String cuando = tramo == FechaUtils.Relativo.HOY || tramo == FechaUtils.Relativo.AYER
+                ? null : TiempoRelativo.texto(this, t.fecha);
         String total = porTiempo ? null : getString(R.string.detalle_kg_total, numero(t.totalKg));
         TextView sub = v.findViewById(R.id.tvVezSub);
         String subTexto = cuando != null && total != null && t.totalKg > 0
@@ -682,20 +674,6 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
     }
 
     // ── Utilidades ──────────────────────────────────────────────────────────
-
-    // «Lunes» a partir de una fecha ISO; en el idioma de la app y con mayúscula inicial.
-    private String diaDeLaSemana(String iso) {
-        if (iso == null || iso.length() < 10) return "";
-        try {
-            Locale loc = FechaUtils.localeDeLaApp(this);
-            java.text.SimpleDateFormat entrada = new java.text.SimpleDateFormat("yyyy-MM-dd", Locale.ROOT);
-            java.util.Date d = entrada.parse(iso.substring(0, 10));
-            String dia = new java.text.SimpleDateFormat("EEEE", loc).format(d);
-            return dia.isEmpty() ? dia : dia.substring(0, 1).toUpperCase(loc) + dia.substring(1);
-        } catch (java.text.ParseException e) {
-            return "";
-        }
-    }
 
     // Un número con coma decimal solo si hace falta («77,5», «1.880»), en el idioma de la app.
     private String numero(double v) {

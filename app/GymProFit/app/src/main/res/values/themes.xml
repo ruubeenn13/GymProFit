@@ -240,7 +240,8 @@
         <item name="cardElevation">0dp</item>
         <item name="strokeColor">?attr/colorOutlineVariant</item>
         <item name="strokeWidth">@dimen/tarjeta_borde</item>
-        <item name="rippleColor">@color/gp_primary_container</item>
+        <!-- Pulsada, capa del 10 % de gp_on_surface; con foco, anillo de 2 dp (FocoTarjeta). GP-227. -->
+        <item name="rippleColor">@color/tarjeta_capa</item>
     </style>
 
     <!-- ── Botón principal: sólido naranja, contundente ────────────────────── -->

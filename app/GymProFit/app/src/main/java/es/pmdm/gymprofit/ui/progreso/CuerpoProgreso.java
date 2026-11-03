@@ -30,6 +30,7 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.MedicionApi;
 import es.pmdm.gymprofit.utils.AvisosCuenta;
 import es.pmdm.gymprofit.utils.CambioPeso;
+import es.pmdm.gymprofit.utils.EjeFechas;
 import es.pmdm.gymprofit.utils.ChartStyler;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.InputDialog;
@@ -189,10 +190,17 @@ final class CuerpoProgreso {
     }
 
     private static void pintarLinea(LineChart c, List<CambioPeso.Punto> puntos) {
-        // Un punto por medición, a la misma distancia, como el tablero: por días, varias del mismo
-        // día caían en la misma x y la línea salía vertical. Las semanas ya las dice el texto.
+        // Por fecha y no por orden (GP-228): dos pesajes separados un día no salen igual de lejos
+        // que dos separados un mes. Varios el mismo día darían una línea vertical: se queda el
+        // último del día (EjeFechas). Las semanas ya las dice el texto.
+        List<String> fechas = new ArrayList<>();
+        List<Float> pesos = new ArrayList<>();
+        for (CambioPeso.Punto p : puntos) {
+            fechas.add(p.fecha);
+            pesos.add((float) p.peso);
+        }
         List<Entry> e = new ArrayList<>();
-        for (int i = 0; i < puntos.size(); i++) e.add(new Entry(i, (float) puntos.get(i).peso));
+        for (EjeFechas.Punto p : EjeFechas.porDia(fechas, pesos, EjeFechas.DelDia.ULTIMO)) e.add(new Entry(p.x, p.y));
         LineDataSet ds = new LineDataSet(e, null);
         ChartStyler.styleLineDataSet(ds, c.getContext());
         ds.setDrawFilled(false);
@@ -211,7 +219,7 @@ final class CuerpoProgreso {
     private void apuntarPeso() {
         if (!fragment.isAdded() || !medicionesListas) return;
         String inicial = ultima != null && ultima.getPeso() > 0
-                ? String.format(Locale.getDefault(), "%.1f", ultima.getPeso()) : null;
+                ? String.format(FechaUtils.localeDeLaApp(fragment.requireContext()), "%.1f", ultima.getPeso()) : null;
         InputDialog.numerico(fragment.requireActivity(), fragment.getString(R.string.perfil_peso),
                 fragment.getString(R.string.dialogo_nuevo_valor), inicial, fragment.getString(R.string.progreso_unidad_kg),
                 valor -> guardar(valor));

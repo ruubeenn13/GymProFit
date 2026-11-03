@@ -34,6 +34,7 @@ import es.pmdm.gymprofit.model.comida.ResumenDiarioNutricion;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.ComidaApi;
+import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.ChartMarker;
 import es.pmdm.gymprofit.utils.ChartStyler;
 import es.pmdm.gymprofit.utils.PreferencesManager;
@@ -148,7 +149,9 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         btnNext.setVisibility(offset > 0 ? View.VISIBLE : View.INVISIBLE);
 
         SimpleDateFormat iso = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        SimpleDateFormat corta = new SimpleDateFormat("dd/MM", Locale.getDefault());
+        // En el idioma de la app (GP-228): «28 sept – 4 oct» / «Sep 28 – Oct 4».
+        SimpleDateFormat corta = new SimpleDateFormat(getString(R.string.inicio_fecha_corta_patron),
+                FechaUtils.localeDeLaApp(this));
 
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DAY_OF_YEAR, -offset * lenDias);
@@ -160,7 +163,7 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         String inicioCorta = corta.format(cal.getTime());
         windowStartMillis = cal.getTimeInMillis();
 
-        tvPeriodo.setText(inicioCorta + " – " + finCorta);
+        tvPeriodo.setText(getString(R.string.fecha_rango, inicioCorta, finCorta));
 
         int usuarioId = prefs.getUsuarioId();
         comidaApi.getResumen(usuarioId, inicio, fin).enqueue(new ApiCallback<List<ResumenDiarioNutricion>>() {
@@ -347,10 +350,11 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         return v * getResources().getDisplayMetrics().density;
     }
 
-    // Fecha ISO ("yyyy-MM-dd...") → etiqueta corta "dd/MM".
+    // Fecha ISO («yyyy-MM-dd...») → etiqueta corta en el idioma de la app («28 sept» / «Sep 28»).
     private String fechaCorta(String isoStr) {
-        if (isoStr == null || isoStr.length() < 10) return "";
-        return isoStr.substring(8, 10) + "/" + isoStr.substring(5, 7);
+        String r = FechaUtils.fechaCorta(isoStr, FechaUtils.localeDeLaApp(this),
+                getString(R.string.inicio_fecha_corta_patron));
+        return r != null ? r : "";
     }
 
     // Resuelve un color del tema.
