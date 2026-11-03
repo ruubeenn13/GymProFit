@@ -160,7 +160,4 @@
     <dimen name="opcion_borde">2dp</dimen>
     <!-- Interlineado del título de una fila (GP-216): 22 sp para 16 sp de texto. -->
     <dimen name="linea_titulo_fila">22sp</dimen>
-    <!-- Lo que el enlace de una cabecera de sección sale hacia fuera para que su aire (el del anillo de
-         foco) no lo meta hacia dentro: menos espacio_8. -->
-    <dimen name="enlace_aire_fuera">-8dp</dimen>
 </resources>

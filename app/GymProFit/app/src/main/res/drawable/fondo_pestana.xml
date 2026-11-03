@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Fondo de una pestaña de la barra (GP-227): la capa del 10 % de gp_on_surface al pulsar, en un
+  círculo; el foco no lo dibuja este fondo sino el anillo de la píldora (anillo_pildora).
+-->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/tarjeta_capa">
+    <item android:id="@android:id/mask">
+        <shape android:shape="oval">
+            <solid android:color="@android:color/white" />
+        </shape>
+    </item>
+</ripple>

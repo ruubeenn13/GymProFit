@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Anillo de foco de una pestaña de la barra (GP-227): como en Material 3, va alrededor de la
+  píldora del icono y no de toda la pestaña, que con letra 1,3 lo cruzaba por la etiqueta
+  (revisor, GP-228, tercera pasada). La píldora lo pinta encima de su relleno, así que la
+  activa también lo enseña entero. 2 dp en gp_on_surface, como el de la tarjeta.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <stroke android:width="@dimen/selector_anillo_foco" android:color="@color/gp_on_surface" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+</selector>

@@ -94,6 +94,23 @@ public class TarjetaEstadosTest {
         assertTrue(m.find());
         assertTrue("aire a los lados para el anillo", m.group().contains("<item name=\"android:paddingStart\">@dimen/espacio_8</item>")
                 && m.group().contains("<item name=\"android:paddingEnd\">@dimen/espacio_8</item>"));
+        assertTrue("sin margen negativo: el padre recortaba el lado derecho del anillo",
+                !m.group().contains("layout_marginEnd"));
+    }
+
+    @Test
+    public void elAnilloDeLaBarraVaEnLaPildora() throws IOException {
+        // Un óvalo en toda la pestaña cruzaba la etiqueta (revisor, tercera pasada): como en
+        // Material 3, el foco se marca en la píldora del icono.
+        String pestana = leer(RES.resolve("layout/view_pestana.xml"));
+        assertTrue(pestana.contains("android:background=\"@drawable/fondo_pestana\""));
+        assertTrue(pestana.contains("android:duplicateParentState=\"true\"")
+                && pestana.contains("android:foreground=\"@drawable/anillo_pildora\""));
+        String fondo = leer(RES.resolve("drawable/fondo_pestana.xml"));
+        assertTrue("el fondo de la pestaña no dibuja el foco", !fondo.contains("state_focused"));
+        String anillo = leer(RES.resolve("drawable/anillo_pildora.xml"));
+        assertTrue(anillo.contains("android:state_focused=\"true\"")
+                && anillo.contains("<stroke android:width=\"@dimen/selector_anillo_foco\" android:color=\"@color/gp_on_surface\""));
     }
 
     @Test

@@ -14,12 +14,14 @@
     android:gravity="center_horizontal"
     android:clickable="true"
     android:focusable="true"
-    android:background="?attr/selectableItemBackgroundBorderless">
+    android:background="@drawable/fondo_pestana">
 
     <FrameLayout
         android:id="@+id/flPildora"
         android:layout_width="56dp"
-        android:layout_height="32dp">
+        android:layout_height="32dp"
+        android:duplicateParentState="true"
+        android:foreground="@drawable/anillo_pildora">
 
         <ImageView
             android:id="@+id/ivIcono"
