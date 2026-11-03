@@ -8,6 +8,15 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `8311d31` | fix(android): una cuenta nueva ve el vacío de «Kilos movidos» y no ocho semanas a cero (lo vio la prueba del release). |
+| `9c551c5` | fix(android): el carrusel de Logros también se toca y se arrastra en sus bordes (cuarta pasada del revisor). |
+| `ac61a6f` | fix(android): el carrusel de Logros de Progreso llega a los bordes de la pantalla sin cortar la última tarjeta (tercera pasada del revisor). |
+| `5d64c38` | fix(android): primera pasada del revisor en Progreso, sus listas y la ficha: «Ver todo» de 48 dp de ancho, cifras con el radio y el borde de las tarjetas, línea del peso en azul, diálogos sin lavanda ni tinte naranja, hueco bajo la cabecera en Logros e Historial, papelera legible y sesiones con nombre accesible, y la ficha dice «Sin sesiones en estas semanas» en vez de dejar la gráfica en blanco. |
+| `1d580ed` | fix(android): **el tema claro u oscuro ya no se pierde al encender o apagar TalkBack**: lo que se pintaba al volver de otra pantalla salía con los colores del otro tema. |
+| `e0b568b` | docs(revisor): las listas de Progreso se abren por el trampolín, y un cambio de tema o idioma de toda la pantalla con `MedidorAccesibilidad` encendido se confirma con TalkBack real antes de darlo por alto (GP-219b). |
+| `cb73089` | feat(android): **la ficha del ejercicio usa el selector de la app** en sus pestañas (con semántica de pestaña) y en el período de la gráfica; se borran los estilos propios (hueco 15 de DESIGN.md, cerrado). DESIGN.md recoge Progreso y apunta en el hueco 14 lo que el tablero 16 dibuja sin que la API lo tenga. |
+| `0ecb602` | feat(android): **Progreso en una sola pantalla** (GP-216, lote 4, tablero 16): resumen, «Kilos movidos» con 4 sem. · 8 sem. · Todo y su avance frente a la semana pasada, récords recientes, logros, «Tu cuerpo» (último peso, su cambio, la línea, el objetivo y «Apuntar peso» sin salir) e historial. Sin pestañas ni el perfil de dentro; cada «Ver todo» abre la lista completa en su pantalla, también desde las notificaciones y el atajo del peso, y atrás vuelve a Progreso. Peticiones en paralelo y la lista de sesiones una sola vez; cada sección con su carga, su vacío y su error con «Reintentar». |
+| `7941dc5` | Fusión del PR #73: **GP-216, lote 4, API** (kilos por semana hasta 104 semanas). Desplegada en Render. |
 | `303c849` | feat(api): **los kilos por semana se piden hasta 104 semanas** (antes 12), para «Todo» en los kilos de Progreso (GP-216, lote 4); 105 o más, 400. |
 | `c6b0206` | fix(android): la píldora del selector mide lo que su opción al cambiar de opciones (en una ficha nueva salía más estrecha; lo vio la prueba del release en producción). |
 | `5daeb43` | fix(android): partir por sílabas sin el aviso de lint de constante equivocada. |
