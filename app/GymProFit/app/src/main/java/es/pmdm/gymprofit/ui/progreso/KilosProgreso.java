@@ -108,11 +108,8 @@ final class KilosProgreso {
                     sesiones.code(), sesiones.mensaje()), pedirSesiones);
             return;
         }
-        // Una cuenta sin entrenos: el vacío, sin selector ni barras a cero.
-        if (sesiones != null && sesiones.ok() && HistorialSesiones.terminadas(sesiones.dato()).isEmpty()) {
-            selector.setVisibility(View.GONE);
-            mostrarEstado();
-            estado.vacio(R.string.progreso_kilos_vacio);
+        if (cuentaNueva()) {
+            pintarVacioCuentaNueva();
             return;
         }
         selector.setVisibility(View.VISIBLE);
@@ -131,12 +128,29 @@ final class KilosProgreso {
         pintarKilos();
     }
 
+    // Una cuenta sin entrenos: el vacío, sin selector ni barras a cero.
+    private boolean cuentaNueva() {
+        return sesiones != null && sesiones.ok() && HistorialSesiones.terminadas(sesiones.dato()).isEmpty();
+    }
+
+    private void pintarVacioCuentaNueva() {
+        selector.setVisibility(View.GONE);
+        mostrarEstado();
+        estado.vacio(R.string.progreso_kilos_vacio);
+    }
+
     private void mostrarEstado() {
         raiz.findViewById(R.id.bloqueKilosProgreso).setVisibility(View.GONE);
     }
 
     private void pintarKilos() {
         if (!fragment.isAdded() || !kilos.lista()) return;
+        // Los kilos se piden a la vez que las sesiones: si llegan después y la cuenta no tiene
+        // entrenos, no pintan ocho semanas a cero encima del vacío (lo vio el release, lote 4).
+        if (cuentaNueva()) {
+            pintarVacioCuentaNueva();
+            return;
+        }
         Context ctx = fragment.requireContext();
         if (kilos.fallo()) {
             mostrarEstado();
