@@ -34,12 +34,10 @@
                 android:layout_marginStart="@dimen/espacio_8" />
         </LinearLayout>
 
-        <!-- clipChildren y clipToPadding en falso: el carrusel de Logros sale del relleno
-             hasta los bordes de la pantalla (y su sección, igual). -->
+        <!-- clipToPadding en falso: la sección de Logros sale del relleno hasta los bordes. -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clipChildren="false"
             android:clipToPadding="false"
             android:orientation="vertical"
             android:paddingStart="@dimen/margen_pantalla"
@@ -217,15 +215,21 @@
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
-            <!-- Logros -->
+            <!-- Logros: la sección entera sale del relleno de la columna (margen negativo), para
+                 que el carrusel llegue a los bordes y también reciba los toques ahí; su cabecera
+                 y su estado vuelven a los 20 dp con su propio margen. -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margen_pantalla_fuera"
                 android:layout_marginTop="@dimen/separacion_pestana"
-                android:clipChildren="false"
+                android:layout_marginEnd="@dimen/margen_pantalla_fuera"
                 android:orientation="vertical">
 
-                <LinearLayout style="@style/Widget.GymProFit.CabeceraSeccion">
+                <LinearLayout
+                    style="@style/Widget.GymProFit.CabeceraSeccion"
+                    android:layout_marginStart="@dimen/margen_pantalla"
+                    android:layout_marginEnd="@dimen/margen_pantalla">
 
                     <TextView
                         style="@style/Widget.GymProFit.CabeceraSeccion.Titulo"
@@ -239,15 +243,17 @@
 
                 <include
                     android:id="@+id/estadoLogros"
-                    layout="@layout/view_estado" />
+                    layout="@layout/view_estado"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margen_pantalla"
+                    android:layout_marginEnd="@dimen/margen_pantalla" />
 
                 <HorizontalScrollView
                     android:id="@+id/scrollLogros"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margen_pantalla_fuera"
                     android:layout_marginTop="@dimen/titulo_a_contenido"
-                    android:layout_marginEnd="@dimen/margen_pantalla_fuera"
                     android:paddingStart="@dimen/margen_pantalla"
                     android:paddingEnd="@dimen/margen_pantalla"
                     android:clipToPadding="false"
